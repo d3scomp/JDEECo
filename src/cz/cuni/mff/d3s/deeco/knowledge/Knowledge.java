@@ -15,10 +15,15 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.knowledge;
 
-
 /**
+ * Base class for representing knowledge.
+ * 
+ * It is extended by component knowledge and knowledge interfaces. Any class
+ * extending <code>Knowledge</code> is decomposed when stored to the knowledge
+ * repository.
+ * 
  * @author Michal Kit
- *
+ * 
  */
 public class Knowledge {
 

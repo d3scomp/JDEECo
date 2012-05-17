@@ -15,31 +15,53 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.knowledge;
 
+/**
+ * Base class used to wrap output parameters, making them mutable from the level
+ * of a function.
+ * 
+ * @author Michal Kit
+ * 
+ * @param <T>
+ *            wrapped item type
+ */
 public class OutWrapper<T> {
+	/**
+	 * Wrapped item.
+	 */
 	public T item;
-	
+
 	public OutWrapper() {
 		item = null;
 	}
-	
+
 	public OutWrapper(T item) {
 		this.item = item;
 	}
-	
-    @Override
-    public boolean equals(Object obj) {
-         if ( this == obj ) 
-             return true;
-         if (obj == null)
-            return false;
-        if ( !(obj instanceof OutWrapper<?>) ) 
-            return false;
-        OutWrapper<?> other = (OutWrapper<?>) obj;
-        return item == null ? other.item == null : item.equals(other.item);
-    }
 
-    @Override
-    public int hashCode() {
-        return item == null ? 0 : item.hashCode();
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof OutWrapper<?>))
+			return false;
+		OutWrapper<?> other = (OutWrapper<?>) obj;
+		return item == null ? other.item == null : item.equals(other.item);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		return item == null ? 0 : item.hashCode();
+	}
 }

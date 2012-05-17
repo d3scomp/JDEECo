@@ -17,12 +17,23 @@ package cz.cuni.mff.d3s.deeco.knowledge;
 
 import net.jini.space.JavaSpace05;
 
+/**
+ * Utility class providing tuple space related functionalities.
+ * 
+ * @author Michal Kit
+ * 
+ */
 public class TSUtils {
-	
+
 	private static JavaSpace05 space = null;
-	
+
 	private static Object spaceLock = new Object();
 
+	/**
+	 * Retrieves a java space object.
+	 * 
+	 * @return java space instance
+	 */
 	public static JavaSpace05 getSpace() {
 		synchronized (spaceLock) {
 			try {
@@ -39,6 +50,16 @@ public class TSUtils {
 		}
 	}
 
+	/**
+	 * Creates a <code>Tuple</code> instance, with specified <code>key</code>
+	 * and <code>value</code>.
+	 * 
+	 * @param key
+	 *            tuple key
+	 * @param value
+	 *            tuple value
+	 * @return tuple instance
+	 */
 	public static Tuple createTuple(String key, Object value) {
 		Tuple result = new Tuple();
 		result.key = key;
@@ -46,6 +67,14 @@ public class TSUtils {
 		return result;
 	}
 
+	/**
+	 * Creates a tuple, which is used as a template when searching through a
+	 * knowledge repository.
+	 * 
+	 * @param key
+	 *            template key (null is treated as a wildcard)
+	 * @return tamplate
+	 */
 	public static Tuple createTemplate(String key) {
 		Tuple result = new Tuple();
 		result.key = key;

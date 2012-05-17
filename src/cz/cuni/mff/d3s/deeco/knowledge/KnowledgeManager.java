@@ -35,7 +35,7 @@ public abstract class KnowledgeManager {
 	 * 
 	 * @param knowledgePath
 	 *            nesting at which the knowledge structure should be rooted
-	 * @param structure
+	 * @param type
 	 *            Knowledge structure (Knowledge Interface)
 	 * @param session
 	 *            a session object within which all the retrieval should be
@@ -56,15 +56,21 @@ public abstract class KnowledgeManager {
 	 *            nesting at which the knowledge object should be stored
 	 * @param value
 	 *            knowledge to be stored
+	 * @param type
+	 *            Knowledge structure (Knowledge Interface)
 	 * @param session
 	 *            a session object within which all the put operations should be
 	 *            performed
+	 * @param replace
+	 *            states whether the put operation should replace an existing
+	 *            entry if necessary or whether it should create a new tuple in
+	 *            the knowledge repository
 	 * @throws KMException
 	 *             thrown whenever there is a problem accessing the knowledge
 	 *             repository
 	 */
-	public abstract void putKnowledge(String knowledgePath, Object value, Type type,
-			ISession session, boolean replace) throws KMException;
+	public abstract void putKnowledge(String knowledgePath, Object value,
+			Type type, ISession session, boolean replace) throws KMException;
 
 	/**
 	 * Withdraws the knowledge from the knowledge repository. This method is
@@ -72,7 +78,7 @@ public abstract class KnowledgeManager {
 	 * 
 	 * @param knowledgePath
 	 *            nesting at which the knowledge structure should be rooted
-	 * @param structure
+	 * @param type
 	 *            Knowledge structure (Knowledge Interface)
 	 * @param session
 	 *            a session object within which all the withdrawals should be
@@ -112,7 +118,7 @@ public abstract class KnowledgeManager {
 	 * 
 	 * @param knowledgePath
 	 *            nesting at which the knowledge structure should be rooted
-	 * @param structure
+	 * @param type
 	 *            Knowledge structure (Knowledge Interface)
 	 * @return retrieved knowledge object of type structure
 	 * @throws KMException
@@ -131,12 +137,14 @@ public abstract class KnowledgeManager {
 	 *            nesting at which the knowledge object should be stored
 	 * @param value
 	 *            knowledge to be stored
+	 * @param type
+	 *            Knowledge structure (Knowledge Interface)
 	 * @throws KMException
 	 *             thrown whenever there is a problem accessing the knowledge
 	 *             repository
 	 */
-	public void putKnowledge(String knowledgePath, Object value, Type type, ISession session)
-			throws KMException {
+	public void putKnowledge(String knowledgePath, Object value, Type type,
+			ISession session) throws KMException {
 		putKnowledge(knowledgePath, value, type, session, true);
 	}
 
@@ -145,7 +153,7 @@ public abstract class KnowledgeManager {
 	 * 
 	 * @param knowledgePath
 	 *            nesting at which the knowledge structure should be rooted
-	 * @param structure
+	 * @param type
 	 *            Knowledge structure (Knowledge Interface)
 	 * @return retrieved knowledge object of type structure
 	 * @throws KMException
@@ -173,11 +181,34 @@ public abstract class KnowledgeManager {
 	}
 	
 	
+	/**
+	 * Puts knowledge object to the knowledge repository.
+	 * 
+	 * @param knowledgePath
+	 *            nesting at which the knowledge object should be stored
+	 * @param value
+	 *            knowledge to be stored
+	 * @param type
+	 *            Knowledge structure (Knowledge Interface)
+	 * @throws KMException
+	 *             thrown whenever there is a problem accessing the knowledge
+	 *             repository
+	 */
 	public void putKnowledge(String knowledgePath, Object value, Type type)
 			throws KMException {
 		putKnowledge(knowledgePath, value, type, null, true);
 	}
 
+	/**
+	 * Withdraws the knowledge from the knowledge repository.
+	 * 
+	 * @param knowledgePath
+	 *            nesting at which the knowledge structure should be rooted
+	 * @return retrieved knowledge object of type structure
+	 * @throws KMException
+	 *             thrown whenever there is a problem accessing the knowledge
+	 *             repository
+	 */
 	public Object takeKnowledge(String knowledgePath) throws KMException {
 		return takeKnowledge(knowledgePath, null);
 	}

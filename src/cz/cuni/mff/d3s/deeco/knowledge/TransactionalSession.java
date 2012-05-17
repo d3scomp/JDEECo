@@ -18,6 +18,12 @@ package cz.cuni.mff.d3s.deeco.knowledge;
 import cz.cuni.mff.d3s.deeco.exceptions.SessionException;
 import net.jini.core.transaction.Transaction;
 
+/**
+ * Class implementing session functionalities, using transaction.
+ * 
+ * @author Michal Kit
+ * 
+ */
 public class TransactionalSession implements ISession {
 
 	private static final int MAX_REPETITIONS = 5;
@@ -26,12 +32,22 @@ public class TransactionalSession implements ISession {
 	private boolean succeeded = false;
 	private int count = MAX_REPETITIONS;
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see cz.cuni.mff.d3s.deeco.knowledge.ISession#begin()
+	 */
 	@Override
 	public void begin() {
 		if (tx == null)
 			tx = TransactionUtils.createTransaction();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see cz.cuni.mff.d3s.deeco.knowledge.ISession#end()
+	 */
 	@Override
 	public void end() throws SessionException {
 		if (tx != null)
@@ -46,6 +62,11 @@ public class TransactionalSession implements ISession {
 			throw new SessionException("Session not started!");
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see cz.cuni.mff.d3s.deeco.knowledge.ISession#cancel()
+	 */
 	@Override
 	public void cancel() throws SessionException {
 		if (tx != null)
@@ -60,15 +81,30 @@ public class TransactionalSession implements ISession {
 				throw new SessionException("Session has already ended!");
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see cz.cuni.mff.d3s.deeco.knowledge.ISession#repeat()
+	 */
 	@Override
 	public boolean repeat() {
 		return !succeeded && count > 0;
 	}
 
+	/**
+	 * Returns the transaction object, used as this session implementation.
+	 * 
+	 * @return transaction object wrapped by this session
+	 */
 	public Transaction getTransaction() {
 		return tx;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see cz.cuni.mff.d3s.deeco.knowledge.ISession#hasSucceeded()
+	 */
 	@Override
 	public boolean hasSucceeded() {
 		return succeeded;

@@ -38,23 +38,52 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 		this.kr = kr;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager#createSession()
+	 */
 	@Override
 	public ISession createSession() {
 		return kr.createSession();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager#getKnowledge(java.lang
+	 * .String, java.lang.reflect.Type,
+	 * cz.cuni.mff.d3s.deeco.knowledge.ISession)
+	 */
 	@Override
 	public Object getKnowledge(String knowledgePath, Type type, ISession session)
 			throws KMException {
 		return retrieveKnowledge(false, knowledgePath, type, session);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager#takeKnowledge(java.lang
+	 * .String, java.lang.reflect.Type,
+	 * cz.cuni.mff.d3s.deeco.knowledge.ISession)
+	 */
 	@Override
 	public Object takeKnowledge(String knowledgePath, Type type,
 			ISession session) throws KMException {
 		return retrieveKnowledge(true, knowledgePath, type, session);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager#putKnowledge(java.lang
+	 * .String, java.lang.Object, java.lang.reflect.Type,
+	 * cz.cuni.mff.d3s.deeco.knowledge.ISession, boolean)
+	 */
 	@Override
 	public void putKnowledge(String knowledgePath, Object value, Type type,
 			ISession session, boolean replace) throws KMException {
@@ -109,6 +138,13 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager#findAllProperties(java
+	 * .lang.String, cz.cuni.mff.d3s.deeco.knowledge.ISession)
+	 */
 	@Override
 	public Object[] findAllProperties(String knowledgePath, ISession session) {
 		ISession localSession = (session == null) ? kr.createSession()
@@ -231,7 +267,8 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 		removeRedundantTraversable(knowledgePath, keys, session);
 		putKnowledge(KPBuilder.appendToRoot(knowledgePath,
 				ConstantKeys.TRAVERSABLE_KEYS_ID),
-				(keys != null) ? keys.toArray(new String[keys.size()]) : null, null, session, replace);
+				(keys != null) ? keys.toArray(new String[keys.size()]) : null,
+				null, session, replace);
 		putKnowledge(KPBuilder.appendToRoot(knowledgePath,
 				ConstantKeys.TRAVERSABLE_CLASS_ID), structure, null, session,
 				replace);

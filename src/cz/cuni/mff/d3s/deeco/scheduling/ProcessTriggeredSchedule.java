@@ -15,6 +15,12 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.scheduling;
 
+/**
+ * Class representing triggered schedule.
+ * 
+ * @author Michal Kit
+ * 
+ */
 public class ProcessTriggeredSchedule implements ProcessSchedule {
 
 }

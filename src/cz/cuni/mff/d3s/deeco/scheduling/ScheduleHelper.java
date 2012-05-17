@@ -20,7 +20,20 @@ import java.lang.annotation.Annotation;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoTriggeredScheduling;
 
+/**
+ * Helper class for handling scheduling information.
+ * 
+ * @author Michal Kit
+ * 
+ */
 public class ScheduleHelper {
+	/**
+	 * Retrieves scheduling information from the provided annotation.
+	 * 
+	 * @param scheduleAnnotation
+	 *            annotation to be parsed
+	 * @return schedule information
+	 */
 	public static ProcessSchedule getSchedule(Annotation scheduleAnnotation) {
 		if (scheduleAnnotation == null) {
 			return new ProcessPeriodicSchedule();

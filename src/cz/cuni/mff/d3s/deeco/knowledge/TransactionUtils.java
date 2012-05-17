@@ -19,12 +19,23 @@ import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionFactory;
 import net.jini.core.transaction.server.TransactionManager;
 
+/**
+ * Utility class, used for accessing the transaction manager.
+ * 
+ * @author Michal Kit
+ * 
+ */
 public class TransactionUtils {
 	protected final static Long DEFAULT_LEASE_TIMEOUT = 100000L; // 100 sec
 	private static TransactionManager txManager = null;
-	
+
 	private static Object transactionLock = new Object();
 
+	/**
+	 * Returns transaction instance retrieved from the transaction manager.
+	 * 
+	 * @return transaction instance
+	 */
 	public static Transaction createTransaction() {
 		synchronized (transactionLock) {
 			try {
@@ -34,8 +45,8 @@ public class TransactionUtils {
 					txManager = (TransactionManager) transactionLookup
 							.getService();
 				}
-				Transaction.Created trc = TransactionFactory.create(
-						txManager, DEFAULT_LEASE_TIMEOUT);
+				Transaction.Created trc = TransactionFactory.create(txManager,
+						DEFAULT_LEASE_TIMEOUT);
 				return trc.transaction;
 			} catch (Exception e) {
 				System.out.println("ERROR - Transaction retrieval error: "

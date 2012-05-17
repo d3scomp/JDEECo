@@ -29,7 +29,19 @@ public class ConstantKeys {
 	 * RootKnowledge class.
 	 */
 	public static final String ROOT_KNOWLEDGE_ID_FIELD = "id";
+	/**
+	 * Defines key field name for storing and retrieving key set for map and
+	 * collections.
+	 */
 	public static final String TRAVERSABLE_KEYS_ID = "keys";
+	/**
+	 * Defines class key name for storing and retrieving key set for map and
+	 * collections.
+	 */
 	public static final String TRAVERSABLE_CLASS_ID = "class";
+	/**
+	 * Defines element class name for storing and retrieving key set for map and
+	 * collections.
+	 */
 	public static final String TRAVERSABLE_ELEMENT_CLASS_ID = "elementClass";
 }

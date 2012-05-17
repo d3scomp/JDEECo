@@ -33,18 +33,6 @@ import java.util.Map;
  */
 public class KMHelper {
 
-	/**
-	 * Function checks whether the given class is a hierarchical structure, i.e.
-	 * it contains public fields.
-	 * 
-	 * @param structure
-	 *            class that needs to be checked
-	 * @return true or false regarding the class structure
-	 */
-	public static boolean isHierarchical(Class structure) {
-		return structure != null && structure.getFields().length > 0;
-	}
-
 	public static boolean isKnowledge(Type type) {
 		Class structure = getClass(type);
 		return structure != null && Knowledge.class.isAssignableFrom(structure);
@@ -55,12 +43,6 @@ public class KMHelper {
 		return structure != null
 				&& (Collection.class.isAssignableFrom(structure) || Map.class
 						.isAssignableFrom(structure));
-	}
-
-	public static boolean isGeneric(Type type) {
-		return type != null
-				&& (type instanceof ParameterizedType || (type instanceof Class && ((Class) type)
-						.getGenericSuperclass() instanceof ParameterizedType));
 	}
 
 	public static Class<?> getClass(Type type) {
@@ -121,22 +103,6 @@ public class KMHelper {
 			throw new InstantiationException();
 	}
 
-	public static Field[] getFields(Type type) {
-		Class resultC = getClass(type);
-		if (resultC != null)
-			return resultC.getFields();
-		else
-			return null;
-	}
-
-	public static Map<String, Object> getMapFromArray(Object[] objects) {
-		Map<String, Object> result = new HashMap<String, Object>();
-		for (int i = 0; i < objects.length; i++) {
-			result.put(Integer.toString(i), objects[i]);
-		}
-		return result;
-	}
-
 	public static Map<String, Object> translateToMap(Object object) {
 		Class objectClass = object.getClass();
 		if (Collection.class.isAssignableFrom(objectClass))
@@ -144,5 +110,13 @@ public class KMHelper {
 		else if (Map.class.isAssignableFrom(objectClass))
 			return (Map) object;
 		return null;
+	}
+	
+	private static Map<String, Object> getMapFromArray(Object[] objects) {
+		Map<String, Object> result = new HashMap<String, Object>();
+		for (int i = 0; i < objects.length; i++) {
+			result.put(Integer.toString(i), objects[i]);
+		}
+		return result;
 	}
 }

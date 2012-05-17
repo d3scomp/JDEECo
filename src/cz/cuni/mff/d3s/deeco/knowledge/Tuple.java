@@ -17,16 +17,20 @@ package cz.cuni.mff.d3s.deeco.knowledge;
 
 import net.jini.core.entry.Entry;
 
+/**
+ * Class used to represent a single entry in the tuple space
+ * 
+ * @author Michal Kit
+ * 
+ */
 public class Tuple implements Entry {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -5729672632918164790L;
-	
+
 	public String key;
 	public Object value;
-	
-	public Tuple() {}
+
+	public Tuple() {
+	}
 
 }

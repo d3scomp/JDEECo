@@ -15,14 +15,22 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.scheduling;
 
-
+/**
+ * Class representing periodic schedule
+ * 
+ * @author Michal Kit
+ * 
+ */
 public class ProcessPeriodicSchedule implements ProcessSchedule {
+	/**
+	 * Period interval in ms.
+	 */
 	public long interval;
-	
+
 	public ProcessPeriodicSchedule() {
 		this.interval = 1000;
 	}
-	
+
 	public ProcessPeriodicSchedule(long interval) {
 		this.interval = interval;
 	}

@@ -21,6 +21,12 @@ import cz.cuni.mff.d3s.deeco.invokable.InvokableManager;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 
+/**
+ * Class representing DEECo runtime
+ * 
+ * @author Michal Kit
+ * 
+ */
 public class Runtime {
 
 	private InvokableManager<? extends SchedulableProcess> ensembleManager;
@@ -40,11 +46,17 @@ public class Runtime {
 		startRuntime();
 	}
 
+	/**
+	 * Starts components and ensembles operation.
+	 */
 	public synchronized void startRuntime() {
 		componentManager.startInvokables();
 		ensembleManager.startInvokables();
 	}
 
+	/**
+	 * Stops components and ensembles operation.
+	 */
 	public synchronized void stopRuntime() {
 		componentManager.stopInvokables();
 		ensembleManager.stopInvokables();
