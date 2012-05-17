@@ -39,7 +39,7 @@ public class CarPlanner extends RootKnowledge {
 		k.position = new Position(0,0);
 		k.currentScheduleTarget = null;
 		k.state = State.Idle;
-		k.schedule = new LinkedList<>();
+		k.schedule = new LinkedList();
 		//TODO init schedule
 		return k;
 	}

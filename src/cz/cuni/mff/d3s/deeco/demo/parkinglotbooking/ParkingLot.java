@@ -27,7 +27,7 @@ public class ParkingLot extends RootKnowledge {
 	@DEECoInitialize
 	public static RootKnowledge getInitialKnowledge() {
 		ParkingLot k = new ParkingLot();
-		k.schedule = new HashMap<>();
+		k.schedule = new HashMap();
 		k.incomingRequest = null;
 		k.processedResponse = null;
 		k.position = new Position(1,1);
