@@ -26,6 +26,12 @@ import cz.cuni.mff.d3s.deeco.annotations.DEECoMemberOut;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.knowledge.Knowledge;
 
+/**
+ * Sample ensemble class.
+ * 
+ * @author Michal Kit
+ *
+ */
 @DEECoEnsemble
 @DEECoPeriodicScheduling(2000)
 public class ConvoyEnsemble {

@@ -1,0 +1,100 @@
+<project name="JDEECo" default="all" basedir=".">
+    <description>
+        JDEECo build file
+    </description>
+  <!-- set global properties for this build -->
+  <property name="jdeeco-src" location="jdeeco-src"/>
+  <property name="demo-src" location="demo-src"/>
+  <property name="build" location="build"/>
+  <property name="dist"  location="dist"/>
+  
+  <target name="init">
+    <tstamp/>
+    <mkdir dir="${build}"/>
+	<mkdir dir="${dist}"/>
+  </target>
+
+  <target name="compile-jdeeco" depends="init"
+        description="compile the jdeeco sources" >
+	<mkdir dir="${build}/jdeeco"/>
+    <javac srcdir="${jdeeco-src}" destdir="${build}/jdeeco">
+	<classpath>
+		<pathelement location="lib/jsk-lib.jar"/>
+		<pathelement location="lib/jsk-platform.jar"/>
+	</classpath>
+    </javac>
+  </target>
+  
+  <target name="compile-demo" depends="dist-jdeeco"
+        description="compile the demo sources" >
+	<mkdir dir="${build}/demo"/>
+    <javac srcdir="${demo-src}" destdir="${build}/demo">
+	<classpath>
+		<pathelement location="lib/jsk-lib.jar"/>
+		<pathelement location="lib/jsk-platform.jar"/>
+		<pathelement location="${dist}/jdeeco.jar"/>
+	</classpath>
+    </javac>
+  </target>
+
+  <target name="dist-jdeeco" depends="compile-jdeeco"
+        description="generate the jdeeco distribution" >
+    <jar jarfile="${dist}/jdeeco.jar" basedir="${build}/jdeeco"/>
+  </target>
+  
+  <target name="dist-demo" depends="compile-demo"
+        description="generate the demo distribution" >
+    <jar jarfile="${dist}/demo.jar" basedir="${build}/demo"/>
+  </target>
+  
+  <target name="zip" depends="init"
+        description="zip source files" >
+    <zip destfile="${dist}/sources.zip">
+		<zipfileset dir="jdeeco-src"/>
+		<zipfileset dir="demo-src"/>
+	</zip>
+  </target>
+  
+  <target name="get-ar">
+	  <get	src="http://apache.mirror.dkm.cz/pub/apache/river/river-2.2.0/apache-river-2.2.0-bin.zip" 
+			dest="${dist}/ApacheRiver.zip" verbose="on"/>
+			<mkdir dir="${dist}/ApacheRiver"/>
+	  <unzip src="${dist}/ApacheRiver.zip" dest="${dist}"/>
+	  <move file="${dist}/apache-river-2.2.0" tofile="${dist}/ApacheRiver"/>
+	  <delete file="${dist}/ApacheRiver.zip"/>
+	  <copy file="startApacheRiver.bat" todir="${dist}/ApacheRiver/examples/hello"/>
+  </target>
+  
+  <!--target name="start-ar">
+		<exec executable="cmd">
+			<arg value="call startServices.bat"/>
+		</exec>
+  </target>
+  
+  <target name="run-demo" depends="start-ar">
+	<java classname="cz.cuni.mff.d3s.deeco.demo.Launcher" fork="enabled">
+		<classpath>
+			<pathelement location="${dist}/demo.jar"/>
+			<pathelement location="${dist}/jdeeco.jar"/>
+			<pathelement location="lib/jsk-lib.jar"/>
+			<pathelement location="lib/jsk-platform.jar"/>
+		</classpath>
+		<jvmarg value="-Djava.security.policy=${workspace_loc:cz.cuni.mff.d3s.deeco}\policy.all"/>
+		<jvmarg value="-Djava.rmi.server.RMIClassLoaderSpi=net.jini.loader.pref.PreferredClassProvider"/>
+	</java>
+  </target-->
+  
+  <target name="all">
+	<antcall target="clean"/>
+    <antcall target="dist-demo"/>
+    <antcall target="zip"/>
+	<antcall target="get-ar"/>
+  </target>
+  
+  <target name="clean"
+        description="clean up" >
+    <!-- Delete the ${build} and ${dist} directory trees -->
+    <delete dir="${build}"/>
+    <delete dir="${dist}"/>
+  </target>
+</project>

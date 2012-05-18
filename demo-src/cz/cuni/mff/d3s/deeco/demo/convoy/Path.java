@@ -20,6 +20,12 @@ import java.util.List;
 import cz.cuni.mff.d3s.deeco.knowledge.Knowledge;
 
 
+/**
+ * Class describing a robot path.
+ * 
+ * @author Michal Kit
+ *
+ */
 public class Path extends Knowledge {
 	public Integer currentPosition;
 	public List<Integer> remainingPath;
