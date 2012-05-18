@@ -16,28 +16,41 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
 import java.lang.reflect.Array;
-import java.lang.reflect.Field;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Class used to provide utility function for checking class structure.
+ * Class used to provide utility function for knowledge manager.
  * 
  * @author Michal Kit
  * 
  */
 public class KMHelper {
 
+	/**
+	 * Checks if the provided type is the <code>Knowledge</code> class.
+	 * 
+	 * @param type
+	 *            type that needs to be checked
+	 * @return true or false depending on the check result
+	 */
 	public static boolean isKnowledge(Type type) {
 		Class structure = getClass(type);
 		return structure != null && Knowledge.class.isAssignableFrom(structure);
 	}
 
+	/**
+	 * Checks whether the provided type is either <code>Collection</code> or
+	 * <code>Map</code> class.
+	 * 
+	 * @param type
+	 *            type that needs to be checked
+	 * @return true or false depending on the check result
+	 */
 	public static boolean isTraversable(Type type) {
 		Class structure = getClass(type);
 		return structure != null
@@ -45,6 +58,14 @@ public class KMHelper {
 						.isAssignableFrom(structure));
 	}
 
+	/**
+	 * Returns class instance for the specified type. Handles also generic
+	 * types.
+	 * 
+	 * @param type
+	 *            type for which class instance is retrieved
+	 * @return class instance for the specified type
+	 */
 	public static Class<?> getClass(Type type) {
 		if (type instanceof Class) {
 			return (Class) type;
@@ -63,14 +84,30 @@ public class KMHelper {
 			return null;
 		}
 	}
-	
+
+	/**
+	 * Retrieves type parameter from the {@link OutWrapper} generic class.
+	 * 
+	 * @param type
+	 *            <code>OutWrapper</code> type valued specification
+	 * @return type parameter from the <code>OutWrapper</code> valued
+	 *         specification
+	 */
 	public static Type getOutWrapperParamType(Type type) {
 		if (type instanceof ParameterizedType) {
 			return ((ParameterizedType) type).getActualTypeArguments()[0];
-		} else 
+		} else
 			return null;
 	}
-	
+
+	/**
+	 * Retrieves type parameter from the parameterized type (either
+	 * <code>Map</code> or <code>Collection</code>) specification.
+	 * 
+	 * @param type
+	 *            generic type valued specification
+	 * @return parameter type from the provided generic specification
+	 */
 	public static Type getTraversableElementType(Type type) {
 		Class structure = getClass(type);
 		if (Collection.class.isAssignableFrom(structure))
@@ -80,20 +117,52 @@ public class KMHelper {
 		else
 			return null;
 	}
-	
-	public static void addElementToTraversable(Object element, Object traversable, String key) {
+
+	/**
+	 * Adds a single element to either to the <code>Collection</code> or
+	 * <code>Map</code>.
+	 * 
+	 * @param element
+	 *            object that needs to be added
+	 * @param traversable
+	 *            object where the element should be added
+	 * @param key
+	 *            in case of the map, key which should be assigned to the added
+	 *            element
+	 */
+	public static void addElementToTraversable(Object element,
+			Object traversable, String key) {
 		if (traversable instanceof Collection)
 			((Collection) traversable).add(element);
 		else if (traversable instanceof Map)
 			((Map) traversable).put(key, element);
 	}
 
+	/**
+	 * Checks if the type is the {@link OutWrapper} class.
+	 * 
+	 * @param type
+	 *            type that needs to be checked
+	 * @return true or false depending on the check result
+	 */
 	public static boolean isOutputWrapper(Type type) {
 		Class structure = getClass(type);
 		return structure != null
 				&& OutWrapper.class.isAssignableFrom(structure);
 	}
 
+	/**
+	 * Creates the object instance for the specified type.
+	 * 
+	 * @param type
+	 *            type that needs to be instantiated
+	 * @return type instance.
+	 * @throws InstantiationException
+	 *             thrown whenever the instantiation
+	 * @throws IllegalAccessException
+	 *             thrown whenever type cannot be instantiated (as class object
+	 *             cannot be obtained)
+	 */
 	public static Object getInstance(Type type) throws InstantiationException,
 			IllegalAccessException {
 		Class resultC = getClass(type);
@@ -103,6 +172,14 @@ public class KMHelper {
 			throw new InstantiationException();
 	}
 
+	/**
+	 * Converts <code>Collection</code> object to map or in case the input
+	 * parameter is <code>Map</code> instance, returns it unchanged.
+	 * 
+	 * @param object
+	 *            object that needs to be converted
+	 * @return resulting map
+	 */
 	public static Map<String, Object> translateToMap(Object object) {
 		Class objectClass = object.getClass();
 		if (Collection.class.isAssignableFrom(objectClass))
@@ -111,7 +188,14 @@ public class KMHelper {
 			return (Map) object;
 		return null;
 	}
-	
+
+	/**
+	 * Converts array of objects to map.
+	 * 
+	 * @param objects
+	 *            array that needs to be converted
+	 * @return resulting map
+	 */
 	private static Map<String, Object> getMapFromArray(Object[] objects) {
 		Map<String, Object> result = new HashMap<String, Object>();
 		for (int i = 0; i < objects.length; i++) {

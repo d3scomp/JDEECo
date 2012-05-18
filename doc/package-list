@@ -1,10 +1,10 @@
 cz.cuni.mff.d3s.deeco.annotations
 cz.cuni.mff.d3s.deeco.demo
+cz.cuni.mff.d3s.deeco.demo.convoy
+cz.cuni.mff.d3s.deeco.demo.parkinglotbooking
 cz.cuni.mff.d3s.deeco.ducktype
 cz.cuni.mff.d3s.deeco.exceptions
 cz.cuni.mff.d3s.deeco.invokable
 cz.cuni.mff.d3s.deeco.knowledge
-cz.cuni.mff.d3s.deeco.launcher
 cz.cuni.mff.d3s.deeco.runtime
 cz.cuni.mff.d3s.deeco.scheduling
-cz.cuni.mff.d3s.deeco.typeholders
