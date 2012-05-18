@@ -4,7 +4,7 @@ JDEECo is a Java implementation of the DEECo domponent system. For further infor
 ##Requirements
 To compile and run the JDEECo framework, the following software has to be available on your system:
 
-* Java SDK >= 1.7.0 ([http://java.com/en/]())
+* Java SDK >= 1.6.0 ([http://java.com/en/]())
 * Apache River distributed tuple-space >= 2.2.0 ([http://river.apache.org]())
 
 ## Compilation and Deployment
