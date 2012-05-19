@@ -8,7 +8,7 @@ To compile and run the JDEECo framework, the following software has to be availa
 * Apache River distributed tuple-space >= 2.2.0 ([http://river.apache.org](http://river.apache.org))
 
 ## Compilation and Deployment
-To compile the project you will need to have Apache Ant (http://ant.apache.org/) installed on your machine (version used was 1.8.3).
+To compile the project you will need to have Apache Ant (http://ant.apache.org/) installed on your machine (version 1.8.3 was used when writing the script).
 
 Compilation is performed by simply executing `ant` command in the JDEECo folder.
 All generated binaries together with zipped sources are placed in the `dist` folder. 
