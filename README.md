@@ -16,5 +16,5 @@ Additionally AppacheRiver 2.2 is downloaded, set up and all necessary scripts ar
 
 To run the demo application simply execute `ant demo`, which should automatically start all necessary services and the main application.
 
-At the moment support for the Windows machine is provided, however shell scripts will be provided shortly.
+At the moment support for the Windows machine is provided only, however shell scripts will be given shortly.
 
