@@ -1,5 +1,7 @@
 package cz.cuni.mff.d3s.deeco.demo;
 
+import java.rmi.RMISecurityManager;
+
 import cz.cuni.mff.d3s.deeco.demo.convoy.ConvoyEnsemble;
 import cz.cuni.mff.d3s.deeco.demo.convoy.RobotFollowerComponent;
 import cz.cuni.mff.d3s.deeco.demo.convoy.RobotLeaderComponent;
@@ -20,6 +22,8 @@ public class Launcher {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		if (System.getSecurityManager() == null)
+			System.setSecurityManager(new RMISecurityManager());
 		Class[] classes = { RobotLeaderComponent.class,
 				RobotFollowerComponent.class };
 		Class[] ensembles = { ConvoyEnsemble.class };

@@ -45,6 +45,7 @@
   <target name="dist-demo" depends="compile-demo"
         description="generate the demo distribution" >
     <jar jarfile="${dist}/demo.jar" basedir="${build}/demo"/>
+	<copy file="policy.all" todir="${dist}"/>
   </target>
   
   <target name="zip" depends="init"
@@ -63,26 +64,29 @@
 	  <move file="${dist}/apache-river-2.2.0" tofile="${dist}/ApacheRiver"/>
 	  <delete file="${dist}/ApacheRiver.zip"/>
 	  <copy file="startApacheRiver.bat" todir="${dist}/ApacheRiver/examples/hello"/>
+	  <copy file="startServices.bat" todir="${dist}"/>
+	  <copy file="policy.all" todir="${dist}/ApacheRiver/examples/hello/config"/>
   </target>
   
-  <!--target name="start-ar">
+  <target name="start-ar">
 		<exec executable="cmd">
-			<arg value="call startServices.bat"/>
+			<arg value="/c"/>
+			<arg value="startServicesAnt.bat"/>
 		</exec>
   </target>
   
-  <target name="run-demo" depends="start-ar">
-	<java classname="cz.cuni.mff.d3s.deeco.demo.Launcher" fork="enabled">
+  <target name="demo" depends="start-ar">
+	<java classname="cz.cuni.mff.d3s.deeco.demo.Launcher" fork="true">
 		<classpath>
 			<pathelement location="${dist}/demo.jar"/>
 			<pathelement location="${dist}/jdeeco.jar"/>
 			<pathelement location="lib/jsk-lib.jar"/>
 			<pathelement location="lib/jsk-platform.jar"/>
 		</classpath>
-		<jvmarg value="-Djava.security.policy=${workspace_loc:cz.cuni.mff.d3s.deeco}\policy.all"/>
+		<jvmarg value="-Djava.security.policy=${dist}/policy.all"/>
 		<jvmarg value="-Djava.rmi.server.RMIClassLoaderSpi=net.jini.loader.pref.PreferredClassProvider"/>
 	</java>
-  </target-->
+  </target>
   
   <target name="all">
 	<antcall target="clean"/>

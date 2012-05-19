@@ -21,6 +21,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -132,7 +133,10 @@ public class KMHelper {
 	 */
 	public static void addElementToTraversable(Object element,
 			Object traversable, String key) {
-		if (traversable instanceof Collection)
+		if (traversable instanceof List) {
+			List lTraversable = (List) traversable;
+			lTraversable.add(Math.min(lTraversable.size(), Integer.parseInt(key)), element);
+		} else if (traversable instanceof Collection)
 			((Collection) traversable).add(element);
 		else if (traversable instanceof Map)
 			((Map) traversable).put(key, element);

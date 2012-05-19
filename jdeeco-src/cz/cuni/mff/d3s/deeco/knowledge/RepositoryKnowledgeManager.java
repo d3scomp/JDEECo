@@ -17,7 +17,9 @@ package cz.cuni.mff.d3s.deeco.knowledge;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -303,23 +305,24 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 			Type tElementType = null;
 			if (withdrawal)
 				tElementType = (Type) kr.take(KPBuilder.appendToRoot(
-						knowledgePath, ConstantKeys.TRAVERSABLE_CLASS_ID),
+						knowledgePath, ConstantKeys.TRAVERSABLE_ELEMENT_CLASS_ID),
 						session);
 			else
 				tElementType = (Type) kr.get(KPBuilder.appendToRoot(
-						knowledgePath, ConstantKeys.TRAVERSABLE_CLASS_ID),
+						knowledgePath, ConstantKeys.TRAVERSABLE_ELEMENT_CLASS_ID),
 						session);
-			resultClass.newInstance();
+			tResult = KMHelper.getInstance(resultClass);
+			if (tResult instanceof Collection)
+				Arrays.sort(currentKeys);
 			Object currentElement;
 			for (String k : currentKeys) {
-				currentElement = retrieveKnowledge(false,
+				currentElement = retrieveKnowledge(withdrawal,
 						KPBuilder.appendToRoot(knowledgePath, k), tElementType,
 						session);
 				KMHelper.addElementToTraversable(currentElement, tResult, k);
 			}
 		}
 		return tResult;
-
 	}
 
 	private void removeRedundantTraversable(String knowledgePath,
@@ -332,7 +335,7 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 		} catch (UnavailableEntryException uee) {
 		}
 		if (currentKeys != null) {
-			List<String> listOfCurrentKeys = Arrays.asList(currentKeys);
+			List<String> listOfCurrentKeys = new ArrayList<String>(Arrays.asList(currentKeys));
 			if (listOfCurrentKeys != null) {
 				if (keys != null)
 					listOfCurrentKeys.removeAll(keys);

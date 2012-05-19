@@ -15,6 +15,7 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.demo.convoy;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -40,9 +41,9 @@ public class RobotLeaderComponent extends RootKnowledge {
 		k.battery = new Integer(100);
 		k.path = new Path();
 		k.path.currentPosition = new Integer(0);
-		k.path.remainingPath = Arrays.asList(new Integer[] {new Integer(1), new Integer(2),
+		k.path.remainingPath = new ArrayList<Integer>(Arrays.asList(new Integer[] {new Integer(1), new Integer(2),
 				new Integer(3), new Integer(4), new Integer(5), new Integer(6),
-				new Integer(7), new Integer(8), new Integer(9)});
+				new Integer(7), new Integer(8), new Integer(9)}));
 		k.convoyRobot = null;
 		k.crossingRobots = null;
 		return k;
