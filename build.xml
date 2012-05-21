@@ -3,8 +3,8 @@
         JDEECo build file
     </description>
   <!-- set global properties for this build -->
-  <property name="jdeeco-src" location="jdeeco-src"/>
-  <property name="demo-src" location="demo-src"/>
+  <property name="src" location="src"/>
+  <property name="demo" location="demo"/>
   <property name="build" location="build"/>
   <property name="dist"  location="dist"/>
   
@@ -17,7 +17,7 @@
   <target name="compile-jdeeco" depends="init"
         description="compile the jdeeco sources" >
 	<mkdir dir="${build}/jdeeco"/>
-    <javac srcdir="${jdeeco-src}" destdir="${build}/jdeeco">
+    <javac srcdir="${src}" destdir="${build}/jdeeco">
 	<classpath>
 		<pathelement location="lib/jsk-lib.jar"/>
 		<pathelement location="lib/jsk-platform.jar"/>
@@ -28,7 +28,7 @@
   <target name="compile-demo" depends="dist-jdeeco"
         description="compile the demo sources" >
 	<mkdir dir="${build}/demo"/>
-    <javac srcdir="${demo-src}" destdir="${build}/demo">
+    <javac srcdir="${demo}" destdir="${build}/demo">
 	<classpath>
 		<pathelement location="lib/jsk-lib.jar"/>
 		<pathelement location="lib/jsk-platform.jar"/>
@@ -51,8 +51,8 @@
   <target name="zip" depends="init"
         description="zip source files" >
     <zip destfile="${dist}/sources.zip">
-		<zipfileset dir="jdeeco-src"/>
-		<zipfileset dir="demo-src"/>
+		<zipfileset dir="src"/>
+		<zipfileset dir="demo"/>
 	</zip>
   </target>
   
