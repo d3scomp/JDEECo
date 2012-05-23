@@ -14,7 +14,9 @@ Compilation is performed by simply executing `ant` command in the JDEECo folder.
 All generated binaries together with zipped sources are placed in the `dist` folder. 
 Additionally AppacheRiver 2.2 is downloaded, set up and all necessary scripts are generated.
 
-To run the demo application simply execute `ant demo`, which should automatically start all necessary services and the main application.
+To run the demo application perform the following two step:
 
-At the moment support for the Windows machine is provided only, however shell scripts will be given shortly.
+* Start the Apache River by executing `ant start-ar`
+* Start the demo by executing `ant demo`
+
 
