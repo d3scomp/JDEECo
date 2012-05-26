@@ -122,6 +122,20 @@
 			<jvmarg value="-Djava.rmi.server.RMIClassLoaderSpi=net.jini.loader.pref.PreferredClassProvider"/>
 		</java>
 	</target>
+	
+	<target name="demo-parking" depends="dist-demo"
+		description="Runs the parking lot booking demo">
+		<java classname="cz.cuni.mff.d3s.deeco.demo.parkinglotbooking.Launcher" fork="true">
+			<classpath>
+				<pathelement location="${dist}/demo.jar"/>
+				<pathelement location="${dist}/jdeeco.jar"/>
+				<pathelement location="lib/jsk-lib.jar"/>
+				<pathelement location="lib/jsk-platform.jar"/>
+			</classpath>
+			<jvmarg value="-Djava.security.policy=${river}-config/start.policy"/>
+			<jvmarg value="-Djava.rmi.server.RMIClassLoaderSpi=net.jini.loader.pref.PreferredClassProvider"/>
+		</java>
+	</target>
 
 	<target name="all"
 		description="Cleans the projects and creates a distribution of JDEECo, demos and sources from scratch">

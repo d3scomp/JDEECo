@@ -13,6 +13,7 @@ import cz.cuni.mff.d3s.deeco.annotations.DEECoProcess;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoProcessIn;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoProcessInOut;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoProcessOut;
+import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 import cz.cuni.mff.d3s.deeco.knowledge.RootKnowledge;
 
 @DEECoComponent
@@ -49,18 +50,22 @@ public class CarPlanner extends RootKnowledge {
 	public static void requestParkingPlaceForCurrentTarget(
 			@DEECoProcessIn("carId") CarId carId,
 			@DEECoProcessIn("currentScheduleTarget") CarScheduleItem currentScheduleTarget,
-			@DEECoProcessInOut("request") ProcessOutHolder<Request> request
+			@DEECoProcessInOut("request") OutWrapper<Request> request
 			) {
 		
 		boolean isRequestActual = false;
 		
-		if ((request.get() != null) && (currentScheduleTarget != null)) {
-			isRequestActual = currentScheduleTarget.dateEquals(request.get().scheduleItem);
+		if ((request.item != null) && (currentScheduleTarget != null)) {
+			isRequestActual = currentScheduleTarget.dateEquals(request.item.scheduleItem);
 		} 
 		
 		if (!isRequestActual) {
-			request.set(new Request(new ParkingLotScheduleItem(
-							carId, currentScheduleTarget.from, currentScheduleTarget.to)));
+			System.out.printf("Car %s is issuing request on position %s from %s to %s.\n", 
+					carId, currentScheduleTarget.item.toString(), 
+					currentScheduleTarget.from.toString(), currentScheduleTarget.to.toString());
+			
+			request.item = new Request(new ParkingLotScheduleItem(
+							carId, currentScheduleTarget.from, currentScheduleTarget.to));
 		}			
 	}
 	
@@ -70,18 +75,19 @@ public class CarPlanner extends RootKnowledge {
 			@DEECoProcessIn("response") Response response,
 			@DEECoProcessIn("request") Request request,
 			@DEECoProcessIn("currentScheduleTarget") CarScheduleItem currentScheduleTarget,
-			@DEECoProcessInOut("position") ProcessOutHolder<Position> position
+			@DEECoProcessInOut("position") OutWrapper<Position> position
 			) {
 		// if the parking lot acknowledged the parking place, move to the target
 		if ((response != null) && (response.matchesRequest(request)) 
 				&& (currentScheduleTarget != null) 
-				&& (!position.get().equals(currentScheduleTarget.item))) {
+				&& (!position.item.equals(currentScheduleTarget.item))) {
 			
-			System.out.printf("Moving the car to the target %s on place %s", 
+			System.out.printf("Moving the car %s to the target %s on place %s", 
+					request.scheduleItem.item.toString(),
 					currentScheduleTarget.item.toString(), 
 					response.assignedParkingPlace.toString());
 			
-			position.set(currentScheduleTarget.item);
+			position.item = currentScheduleTarget.item;
 		}
 	}
 	
