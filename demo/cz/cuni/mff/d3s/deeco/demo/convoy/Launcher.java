@@ -19,7 +19,7 @@ public class Launcher {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Class[] classes = { RobotLeaderComponent.class };
+		Class[] classes = { ListComponent.class };
 		KnowledgeManager km = new RepositoryKnowledgeManager(
 				new TSKnowledgeRepository());
 		Runtime runtime = new Runtime(classes, null, km);

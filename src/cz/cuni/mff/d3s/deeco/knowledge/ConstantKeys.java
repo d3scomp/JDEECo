@@ -33,15 +33,15 @@ public class ConstantKeys {
 	 * Defines key field name for storing and retrieving key set for map and
 	 * collections.
 	 */
-	public static final String TRAVERSABLE_KEYS_ID = "keys";
+	public static final String TRAVERSABLE_KEYS_ID = "#colKeys";
 	/**
 	 * Defines class key name for storing and retrieving key set for map and
 	 * collections.
 	 */
-	public static final String TRAVERSABLE_CLASS_ID = "class";
+	public static final String TRAVERSABLE_CLASS_ID = "#colClass";
 	/**
 	 * Defines element class name for storing and retrieving key set for map and
 	 * collections.
 	 */
-	public static final String TRAVERSABLE_ELEMENT_CLASS_ID = "elementClass";
+	public static final String TRAVERSABLE_ELEMENT_CLASS_ID = "#colElementClass";
 }

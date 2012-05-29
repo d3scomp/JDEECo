@@ -70,7 +70,7 @@ public class KMHelper {
 	public static Class<?> getClass(Type type) {
 		if (type instanceof Class) {
 			return (Class) type;
-		} else if (type instanceof ParameterizedType) {
+		} else if (isGenericType(type)) {
 			return getClass(((ParameterizedType) type).getRawType());
 		} else if (type instanceof GenericArrayType) {
 			Type componentType = ((GenericArrayType) type)
@@ -100,6 +100,10 @@ public class KMHelper {
 		} else
 			return null;
 	}
+	
+	public static boolean isGenericType(Type type) {
+		return type instanceof ParameterizedType;
+	}
 
 	/**
 	 * Retrieves type parameter from the parameterized type (either
@@ -109,14 +113,18 @@ public class KMHelper {
 	 *            generic type valued specification
 	 * @return parameter type from the provided generic specification
 	 */
-	public static Type getTraversableElementType(Type type) {
+	public static Type getGenericElementType(Type type) {
 		Class structure = getClass(type);
-		if (Collection.class.isAssignableFrom(structure))
-			return ((ParameterizedType) type).getActualTypeArguments()[0];
-		else if (Map.class.isAssignableFrom(structure))
+		if (Map.class.isAssignableFrom(structure))
 			return ((ParameterizedType) type).getActualTypeArguments()[1];
-		else
-			return null;
+		else if (isGenericType(type)) {
+			Type[] typeArguments = ((ParameterizedType) type)
+					.getActualTypeArguments();
+			if (typeArguments.length == 1) {
+				return typeArguments[0];
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -135,7 +143,9 @@ public class KMHelper {
 			Object traversable, String key) {
 		if (traversable instanceof List) {
 			List lTraversable = (List) traversable;
-			lTraversable.add(Math.min(lTraversable.size(), Integer.parseInt(key)), element);
+			lTraversable.add(
+					Math.min(lTraversable.size(), Integer.parseInt(key)),
+					element);
 		} else if (traversable instanceof Collection)
 			((Collection) traversable).add(element);
 		else if (traversable instanceof Map)

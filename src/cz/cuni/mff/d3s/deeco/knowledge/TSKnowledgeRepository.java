@@ -63,7 +63,7 @@ public class TSKnowledgeRepository extends KnowledgeRepository {
 					TSUtils.createTemplate(entryKey), tx, Lease.FOREVER);
 			if (tuple == null)
 				throw new UnavailableEntryException("Entry " + entryKey
-						+ "unavailable!");
+						+ " unavailable!");
 			return tuple.value;
 		} catch (UnavailableEntryException uee) {
 			throw uee;
