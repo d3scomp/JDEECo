@@ -30,7 +30,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeRepository;
  * 
  * It uses a big global lock to protect a sessions. Thus it serializes all sessions working on the repository
  * (for the whole duration of the session). This means that with the current implementation, there is no benefit
- * on multicores. This repository is thus aimed to be used with single-threaded scheduling (e.g. for JPF checking).  
+ * on multicores. This repository is thus aimed to be used e.g. for JPF-based verification.  
  * 
  * @author Tomas Bures
  *
