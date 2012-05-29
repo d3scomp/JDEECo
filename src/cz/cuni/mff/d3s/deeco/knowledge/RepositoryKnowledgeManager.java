@@ -89,11 +89,14 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 	@Override
 	public void putKnowledge(String knowledgePath, Object value, Type type,
 			ISession session, boolean replace) throws KMException {
-		ISession localSession = (session == null) ? kr.createSession()
-				: session;
+		ISession localSession;
+		if (session == null) {
+			localSession = kr.createSession();
+			localSession.begin();
+		} else
+			localSession = session;
 		try {
 			while (localSession.repeat()) {
-				localSession.begin();
 				if (KMHelper.isOutputWrapper(type)) {
 					putKnowledge(knowledgePath,
 							(value != null) ? ((OutWrapper) value).item : null,
@@ -149,13 +152,16 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 	 */
 	@Override
 	public Object[] findAllProperties(String knowledgePath, ISession session) {
-		ISession localSession = (session == null) ? kr.createSession()
-				: session;
+		ISession localSession;
+		if (session == null) {
+			localSession = kr.createSession();
+			localSession.begin();
+		} else
+			localSession = session;
 		try {
 			Object[] result = null;
 			while (localSession.repeat()) {
-				localSession.begin();
-				result = kr.findAll(knowledgePath, localSession);
+				result = kr.getAll(knowledgePath, localSession);
 				if (session == null)
 					localSession.end();
 				else
@@ -175,12 +181,15 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 	private Object retrieveKnowledge(boolean withdrawal, String knowledgePath,
 			Type type, ISession session) throws KMException {
 		Object result = null;
-		ISession localSession = (session == null) ? kr.createSession()
-				: session;
+		ISession localSession;
+		if (session == null) {
+			localSession = kr.createSession();
+			localSession.begin();
+		} else
+			localSession = session;
 		try {
 			Class structure = KMHelper.getClass(type);
 			while (localSession.repeat()) {
-				localSession.begin();
 				if (KMHelper.isOutputWrapper(structure)) {
 					OutWrapper owi = (OutWrapper) KMHelper.getInstance(type);
 					owi.item = retrieveKnowledge(withdrawal, knowledgePath,
@@ -348,7 +357,11 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 				if (keys != null)
 					listOfCurrentKeys.removeAll(keys);
 				for (String s : listOfCurrentKeys)
-					kr.take(KPBuilder.appendToRoot(knowledgePath, s), session);
+					try { 
+						kr.take(KPBuilder.appendToRoot(knowledgePath, s), session);
+					} catch (UnavailableEntryException e) {
+						e.printStackTrace();
+					}
 			}
 		}
 	}

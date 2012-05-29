@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package cz.cuni.mff.d3s.deeco.knowledge;
+package cz.cuni.mff.d3s.deeco.knowledge.jini;
 
 import cz.cuni.mff.d3s.deeco.exceptions.SessionException;
+import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import net.jini.core.transaction.Transaction;
 
 /**
@@ -39,8 +40,14 @@ public class TransactionalSession implements ISession {
 	 */
 	@Override
 	public void begin() {
-		if (tx == null)
-			tx = TransactionUtils.createTransaction();
+		if (tx != null) {
+			try {
+				cancel();
+			} catch (SessionException se) {
+				
+			}
+		}
+		tx = TransactionUtils.createTransaction();
 	}
 
 	/*
@@ -57,6 +64,8 @@ public class TransactionalSession implements ISession {
 				tx = null;
 				succeeded = true;
 			} catch (Exception e) {
+				if (repeat())
+					tx = TransactionUtils.createTransaction();
 			}
 		else
 			throw new SessionException("Session not started!");

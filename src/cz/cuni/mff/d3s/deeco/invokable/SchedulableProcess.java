@@ -61,8 +61,6 @@ public abstract class SchedulableProcess {
 	protected Object[] getParameterMethodValues(List<Parameter> in,
 			List<Parameter> inOut, List<Parameter> out, String root, Object [] target,
 			ISession session) throws KMException {
-		ISession localSession = (session == null) ? km.createSession()
-				: session;
 		List<Parameter> parameters = new ArrayList<Parameter>();
 		parameters.addAll(in);
 		parameters.addAll(inOut);
@@ -72,10 +70,15 @@ public abstract class SchedulableProcess {
 				+ ((out != null) ? out.size() : 0)];
 		else 
 			result = target;
+		ISession localSession;
+		if (session == null) {
+			localSession = km.createSession();
+			localSession.begin();
+		} else
+			localSession = session;
 		try {
 			Parameter dp;
 			while (localSession.repeat()) {
-				localSession.begin();
 				for (Parameter p: parameters) {
 					result[p.index] = km.getKnowledge(
 							KPBuilder.appendToRoot(root, p.name), p.type,
@@ -142,13 +145,16 @@ public abstract class SchedulableProcess {
 			List<Parameter> parameters = new ArrayList<Parameter>();
 			parameters.addAll(out);
 			parameters.addAll(inOut);
-			ISession localSession = (session == null) ? km.createSession()
-					: session;
 			Object value;
 			String completeName;
+			ISession localSession;
+			if (session == null) {
+				localSession = km.createSession();
+				localSession.begin();
+			} else
+				localSession = session;
 			try {
 				while (localSession.repeat()) {
-					localSession.begin();
 					for (Parameter p : parameters) {
 						value = parameterValues[p.index];
 						completeName = KPBuilder.appendToRoot(root, p.name);

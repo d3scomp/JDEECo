@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package cz.cuni.mff.d3s.deeco.knowledge;
+package cz.cuni.mff.d3s.deeco.knowledge.jini;
 
 import java.rmi.RMISecurityManager;
 import java.util.Arrays;
@@ -29,6 +29,8 @@ import net.jini.space.JavaSpace05;
 import net.jini.space.MatchSet;
 import cz.cuni.mff.d3s.deeco.exceptions.KnowledgeRepositoryException;
 import cz.cuni.mff.d3s.deeco.exceptions.UnavailableEntryException;
+import cz.cuni.mff.d3s.deeco.knowledge.ISession;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeRepository;
 
 /**
  * Class implementing <code>KnowledgeRepository</code> with use of tuple spaces
@@ -54,24 +56,25 @@ public class TSKnowledgeRepository extends KnowledgeRepository {
 	@Override
 	public Object get(String entryKey, ISession session)
 			throws UnavailableEntryException, KnowledgeRepositoryException {
+
 		Tuple tuple = null;
+
 		try {
 			JavaSpace space = TSUtils.getSpace();
 			Transaction tx = (session != null) ? ((TransactionalSession) session)
 					.getTransaction() : null;
 			tuple = (Tuple) space.readIfExists(
 					TSUtils.createTemplate(entryKey), tx, Lease.FOREVER);
-			if (tuple == null)
-				throw new UnavailableEntryException("Entry " + entryKey
-						+ " unavailable!");
-			return tuple.value;
-		} catch (UnavailableEntryException uee) {
-			throw uee;
 		} catch (Exception e) {
 			throw new KnowledgeRepositoryException(
 					"TSKnowledgeRepository error when reading property: "
 							+ entryKey + " - " + e.getMessage());
 		}
+		
+		if (tuple == null)
+			throw new UnavailableEntryException("Entry " + entryKey
+					+ "unavailable!");
+		return tuple.value;
 	}
 
 	/*
@@ -105,19 +108,28 @@ public class TSKnowledgeRepository extends KnowledgeRepository {
 	 */
 	@Override
 	public Object take(String entryKey, ISession session)
-			throws KnowledgeRepositoryException {
+			throws KnowledgeRepositoryException, UnavailableEntryException {
+
+		Tuple tuple = null;
+		
 		try {
 			JavaSpace space = TSUtils.getSpace();
 			Transaction tx = (session != null) ? ((TransactionalSession) session)
 					.getTransaction() : null;
-			Tuple tuple = (Tuple) space.takeIfExists(
+			tuple = (Tuple) space.takeIfExists(
 					TSUtils.createTemplate(entryKey), tx, Lease.FOREVER);
-			return (tuple != null) ? tuple.value : null;
+
 		} catch (Exception e) {
 			throw new KnowledgeRepositoryException(
 					"TSKnowledgeRepository error when taking property: "
 							+ entryKey + " - " + e.getMessage());
 		}
+
+		if (tuple == null)
+			throw new UnavailableEntryException("Entry " + entryKey
+					+ "unavailable!");
+
+		return tuple.value;
 	}
 
 	/*
@@ -162,7 +174,7 @@ public class TSKnowledgeRepository extends KnowledgeRepository {
 	 * .String, cz.cuni.mff.d3s.deeco.knowledge.ISession)
 	 */
 	@Override
-	public Object[] findAll(String entryKey, ISession session)
+	public Object[] getAll(String entryKey, ISession session)
 			throws KnowledgeRepositoryException {
 		try {
 			List<Object> resultList = new LinkedList<Object>();

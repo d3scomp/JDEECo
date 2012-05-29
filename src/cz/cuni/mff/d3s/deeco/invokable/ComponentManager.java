@@ -75,8 +75,8 @@ public class ComponentManager extends
 		if (rootKnowledge != null) {
 			ISession session = km.createSession();
 			try {
+				session.begin();
 				while (session.repeat()) {
-					session.begin();
 					km.putKnowledge(ConstantKeys.ROOT_KNOWLEDGE_ID_FIELD,
 							rootKnowledge.id, null, session, false);
 					km.putKnowledge(rootKnowledge.id, rootKnowledge, rootKnowledge.getClass(), session);

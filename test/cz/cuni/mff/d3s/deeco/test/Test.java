@@ -21,8 +21,8 @@ import java.util.Arrays;
 import net.jini.core.lease.Lease;
 import net.jini.space.JavaSpace05;
 import net.jini.space.MatchSet;
-import cz.cuni.mff.d3s.deeco.knowledge.TSUtils;
-import cz.cuni.mff.d3s.deeco.knowledge.Tuple;
+import cz.cuni.mff.d3s.deeco.knowledge.jini.TSUtils;
+import cz.cuni.mff.d3s.deeco.knowledge.jini.Tuple;
 
 public class Test {
 	

@@ -36,7 +36,7 @@ public abstract class KnowledgeManager {
 	 * @param knowledgePath
 	 *            nesting at which the knowledge structure should be rooted
 	 * @param type
-	 *            Knowledge structure (Knowledge Interface)
+	 *            Knowledge structure (Knowledge Interface) 
 	 * @param session
 	 *            a session object within which all the retrieval should be
 	 *            performed

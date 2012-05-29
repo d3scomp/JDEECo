@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package cz.cuni.mff.d3s.deeco.knowledge;
+package cz.cuni.mff.d3s.deeco.knowledge.jini;
 
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionFactory;
@@ -26,7 +26,7 @@ import net.jini.core.transaction.server.TransactionManager;
  * 
  */
 public class TransactionUtils {
-	protected final static Long DEFAULT_LEASE_TIMEOUT = 100000L; // 100 sec
+	protected final static Long DEFAULT_LEASE_TIMEOUT = 1000L; // 1 sec
 	private volatile static TransactionManager txManager = null;
 
 	/**

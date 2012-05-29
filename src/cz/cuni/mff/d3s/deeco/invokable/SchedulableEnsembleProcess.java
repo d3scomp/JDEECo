@@ -93,8 +93,8 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 		ISession coordinatorSession = null, memberSession = null;
 		try {
 			Object[] ids = null;
+			session.begin();
 			while (session.repeat()) {
-				session.begin();
 				ids = km.findAllProperties(
 						ConstantKeys.ROOT_KNOWLEDGE_ID_FIELD, session);
 				session.end();
@@ -105,8 +105,8 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 			Object[] membershipParams = getParameterList(membership), mapperParams = getParameterList(mapper);
 			cloop: for (Object oid : ids) {
 				coordinatorSession = km.createSession();
+				coordinatorSession.begin();
 				while (coordinatorSession.repeat()) {
-					coordinatorSession.begin();
 					try {
 						getParameterMethodValues(membership.coordinatorIn,
 								membership.coordinatorInOut,
@@ -126,8 +126,8 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 					}
 					mloop: for (Object iid : ids) {
 						memberSession = km.createSession();
+						memberSession.begin();
 						while (memberSession.repeat()) {
-							memberSession.begin();
 							try {
 								getParameterMethodValues(membership.memberIn,
 										membership.memberInOut,

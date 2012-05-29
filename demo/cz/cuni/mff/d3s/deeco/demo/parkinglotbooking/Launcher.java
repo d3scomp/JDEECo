@@ -7,7 +7,7 @@ import cz.cuni.mff.d3s.deeco.demo.convoy.RobotFollowerComponent;
 import cz.cuni.mff.d3s.deeco.demo.convoy.RobotLeaderComponent;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.RepositoryKnowledgeManager;
-import cz.cuni.mff.d3s.deeco.knowledge.TSKnowledgeRepository;
+import cz.cuni.mff.d3s.deeco.knowledge.jini.TSKnowledgeRepository;
 import cz.cuni.mff.d3s.deeco.runtime.Runtime;
 
 /**
