@@ -92,19 +92,6 @@ public abstract class KnowledgeManager {
 			ISession session) throws KMException;
 
 	/**
-	 * Finds all the flat (not hierarchical structures) properties in the
-	 * knowledge repository. This method is session oriented.
-	 * 
-	 * @param knowledgePath
-	 *            absolute name (knowledge path) of the property
-	 * @param session
-	 *            a session object within which finding should be performed
-	 * @return an array of matched objects
-	 */
-	public abstract Object[] findAllProperties(String knowledgePath,
-			ISession session);
-
-	/**
 	 * Creates {@link ISession} instance used for enclosing all knowledge
 	 * operations within a single session.
 	 * 
@@ -211,17 +198,5 @@ public abstract class KnowledgeManager {
 	 */
 	public Object takeKnowledge(String knowledgePath) throws KMException {
 		return takeKnowledge(knowledgePath, null);
-	}
-
-	/**
-	 * Finds all the flat (not hierarchical structures) properties in the
-	 * knowledge repository.
-	 * 
-	 * @param knowledgePath
-	 *            absolute name (knowledge path) of the property
-	 * @return an array of matched objects
-	 */
-	public Object[] findAllProperties(String knowledgePath) {
-		return findAllProperties(knowledgePath, null);
 	}
 }

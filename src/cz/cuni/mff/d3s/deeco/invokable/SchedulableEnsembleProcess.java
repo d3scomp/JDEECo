@@ -95,8 +95,8 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 			Object[] ids = null;
 			session.begin();
 			while (session.repeat()) {
-				ids = km.findAllProperties(
-						ConstantKeys.ROOT_KNOWLEDGE_ID_FIELD, session);
+				ids = (Object[]) km.getKnowledge(
+						ConstantKeys.ROOT_KNOWLEDGE_ID_FIELD, null, session);
 				session.end();
 			}
 			if (!(session.repeat() || session.hasSucceeded())) {

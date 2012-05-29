@@ -143,41 +143,6 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager#findAllProperties(java
-	 * .lang.String, cz.cuni.mff.d3s.deeco.knowledge.ISession)
-	 */
-	@Override
-	public Object[] findAllProperties(String knowledgePath, ISession session) {
-		ISession localSession;
-		if (session == null) {
-			localSession = kr.createSession();
-			localSession.begin();
-		} else
-			localSession = session;
-		try {
-			Object[] result = null;
-			while (localSession.repeat()) {
-				result = kr.getAll(knowledgePath, localSession);
-				if (session == null)
-					localSession.end();
-				else
-					break;
-			}
-			return (result == null || result.length == 0) ? null : result;
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			try {
-				session.cancel();
-			} catch (SessionException se) {
-			}
-			return null;
-		}
-	}
-
 	private Object retrieveKnowledge(boolean withdrawal, String knowledgePath,
 			Type type, ISession session) throws KMException {
 		Object result = null;
@@ -190,7 +155,9 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 		try {
 			Class structure = KMHelper.getClass(type);
 			while (localSession.repeat()) {
-				if (KMHelper.isOutputWrapper(structure)) {
+				if (type == null) {//assuming that requested properties are flat.
+					result = kr.getAll(knowledgePath, localSession);
+				} else if (KMHelper.isOutputWrapper(structure)) {
 					OutWrapper owi = (OutWrapper) KMHelper.getInstance(type);
 					owi.item = retrieveKnowledge(withdrawal, knowledgePath,
 							KMHelper.getOutWrapperParamType(type), localSession);
