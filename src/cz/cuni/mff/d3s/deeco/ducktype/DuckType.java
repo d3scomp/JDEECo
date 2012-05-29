@@ -19,6 +19,7 @@ import java.lang.reflect.Field;
 
 import cz.cuni.mff.d3s.deeco.knowledge.RootKnowledge;
 
+//TODO: This should be commented along with the methods below.
 public class DuckType {
 	public static boolean interfaceMatchesKnowledge(Class interfaceClass,
 			Class knowledgeClass) {
@@ -58,6 +59,8 @@ public class DuckType {
 			Object knowledgeInstance) {
 		for (Field field : interfaceInstance.getClass().getFields()) {
 			try {
+				// TODO: This seems suspicious - the same field is used to access both the instances.
+				//        What if interfaceInstence and knowledgeInstance are different classes?
 				field.set(interfaceInstance, field.get(knowledgeInstance));
 			} catch (Exception e) {
 				return false;

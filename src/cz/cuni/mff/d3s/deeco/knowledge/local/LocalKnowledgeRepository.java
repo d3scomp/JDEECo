@@ -50,6 +50,7 @@ public class LocalKnowledgeRepository extends KnowledgeRepository {
 			throw new UnavailableEntryException("Key " + entryKey + " is not in the local knowledge repository.");
 		}
 		
+		// TODO: Here we should create a deep copy.
 		return vals.get(0);
 	}
 
@@ -63,6 +64,7 @@ public class LocalKnowledgeRepository extends KnowledgeRepository {
 			return new Object[0];
 		}
 		
+		// TODO: Here we should create a deep copy.
 		return vals.toArray();
 	}
 
@@ -77,6 +79,7 @@ public class LocalKnowledgeRepository extends KnowledgeRepository {
 			ts.put(entryKey, vals);
 		}
 		
+		// TODO: Here we should create a deep copy.
 		vals.add(value);		
 	}
 
@@ -94,6 +97,7 @@ public class LocalKnowledgeRepository extends KnowledgeRepository {
 			ts.remove(entryKey);
 		}
 		
+		// TODO: Here we should create a deep copy.
 		return vals.remove(0);
 	}
 
@@ -109,6 +113,7 @@ public class LocalKnowledgeRepository extends KnowledgeRepository {
 		
 		ts.remove(entryKey);
 		
+		// TODO: Here we should create a deep copy.
 		return vals.toArray();
 	}
 
