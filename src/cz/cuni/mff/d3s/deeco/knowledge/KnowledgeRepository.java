@@ -61,7 +61,7 @@ public abstract class KnowledgeRepository {
 	 *             thrown whenever there is a knowledge repository access
 	 *             problem
 	 */
-	public abstract Object[] findAll(String entryKey, ISession session)
+	public abstract Object[] getAll(String entryKey, ISession session)
 			throws KnowledgeRepositoryException;
 
 	/**
@@ -97,7 +97,7 @@ public abstract class KnowledgeRepository {
 	 *             problem
 	 */
 	public abstract Object take(String entryKey, ISession session)
-			throws KnowledgeRepositoryException;
+			throws UnavailableEntryException, KnowledgeRepositoryException;
 
 	/**
 	 * Withdraws all the objects (matching the specified key) from the knowledge
@@ -168,7 +168,7 @@ public abstract class KnowledgeRepository {
 	 *             thrown whenever there is a knowledge repository access
 	 *             problem
 	 */
-	public Object take(String entryKey) throws KnowledgeRepositoryException {
+	public Object take(String entryKey) throws UnavailableEntryException, KnowledgeRepositoryException {
 		return take(entryKey, null);
 	}
 
@@ -200,6 +200,6 @@ public abstract class KnowledgeRepository {
 	 */
 	public Object[] findAll(String entryKey)
 			throws KnowledgeRepositoryException {
-		return findAll(entryKey, null);
+		return getAll(entryKey, null);
 	}
 }

@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package cz.cuni.mff.d3s.deeco.knowledge;
+package cz.cuni.mff.d3s.deeco.knowledge.jini;
 
 import cz.cuni.mff.d3s.deeco.exceptions.SessionException;
+import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import net.jini.core.transaction.Transaction;
 
 /**

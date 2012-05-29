@@ -155,7 +155,7 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 			Object[] result = null;
 			while (localSession.repeat()) {
 				localSession.begin();
-				result = kr.findAll(knowledgePath, localSession);
+				result = kr.getAll(knowledgePath, localSession);
 				if (session == null)
 					localSession.end();
 				else
@@ -340,7 +340,11 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 				if (keys != null)
 					listOfCurrentKeys.removeAll(keys);
 				for (String s : listOfCurrentKeys)
-					kr.take(KPBuilder.appendToRoot(knowledgePath, s), session);
+					try { 
+						kr.take(KPBuilder.appendToRoot(knowledgePath, s), session);
+					} catch (UnavailableEntryException e) {
+						e.printStackTrace();
+					}
 			}
 		}
 	}
