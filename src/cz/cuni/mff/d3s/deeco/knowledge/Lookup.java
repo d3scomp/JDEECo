@@ -40,6 +40,8 @@ import net.jini.discovery.DiscoveryEvent;
    @version 1.00, 7/9/2003
  */
 class Lookup implements DiscoveryListener {
+	private static final String LOOKUP_GROUP_ID = "cz.cuni.mff.d3s.deeco.lookupGroup";
+	
     private ServiceTemplate theTemplate;
     private LookupDiscovery theDiscoverer;
 
@@ -69,7 +71,7 @@ class Lookup implements DiscoveryListener {
 
                 try {
                     theDiscoverer =
-                        new LookupDiscovery(LookupDiscovery.ALL_GROUPS);
+                        new LookupDiscovery(new String[] {LOOKUP_GROUP_ID});
                     theDiscoverer.addDiscoveryListener(this);
                 } catch (IOException anIOE) {
                     System.err.println("Failed to init lookup");
@@ -165,5 +167,6 @@ class Lookup implements DiscoveryListener {
        new ServiceRegistrars, we do nothing here.
      */
     public void discarded(DiscoveryEvent anEvent) {
+    	System.out.println("Disappeared");
     }
 }

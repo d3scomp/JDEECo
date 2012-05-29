@@ -15,7 +15,6 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.test;
 
-import java.lang.reflect.Modifier;
 import java.rmi.RMISecurityManager;
 import java.util.Arrays;
 

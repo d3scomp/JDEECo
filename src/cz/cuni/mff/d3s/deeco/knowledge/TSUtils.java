@@ -27,26 +27,22 @@ public class TSUtils {
 
 	private static JavaSpace05 space = null;
 
-	private static Object spaceLock = new Object();
-
 	/**
 	 * Retrieves a java space object.
 	 * 
 	 * @return java space instance
 	 */
-	public static JavaSpace05 getSpace() {
-		synchronized (spaceLock) {
-			try {
-				if (space == null) {
-					Lookup lookup = new Lookup(JavaSpace05.class);
-					space = (JavaSpace05) lookup.getService();
-				}
-				return space;
-			} catch (Exception e) {
-				System.out.println("ERROR - Space retrieval error: "
-						+ e.getMessage());
-				return null;
+	public synchronized static JavaSpace05 getSpace() {
+		try {
+			if (space == null) {
+				Lookup lookup = new Lookup(JavaSpace05.class);
+				space = (JavaSpace05) lookup.getService();
 			}
+			return space;
+		} catch (Exception e) {
+			System.out.println("ERROR - Space retrieval error: "
+					+ e.getMessage());
+			return null;
 		}
 	}
 

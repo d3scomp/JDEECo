@@ -37,8 +37,6 @@
 		</javac>
 	</target>
 
-
-
 	<target name="dist-jdeeco" depends="compile-jdeeco"
         description="Generates a jar with JDEECo runtime" >
 		<jar jarfile="${dist}/jdeeco.jar" basedir="${build}/jdeeco"/>
@@ -100,7 +98,6 @@
 
 	<target name="start-ar"
 		description="Starts the Apache River">
-		
 		<parallel>
 			<antcall target="start-ar-httpd"/>
 			<antcall target="start-ar-jrmp-reggie"/>
@@ -111,7 +108,7 @@
 
 	<target name="demo" depends="dist-demo"
 		description="Runs the convoy demo">
-		<java classname="cz.cuni.mff.d3s.deeco.demo.Launcher" fork="true">
+		<java classname="cz.cuni.mff.d3s.deeco.demo.convoy.Launcher" fork="true">
 			<classpath>
 				<pathelement location="${dist}/demo.jar"/>
 				<pathelement location="${dist}/jdeeco.jar"/>

@@ -26,33 +26,27 @@ import net.jini.core.transaction.server.TransactionManager;
  * 
  */
 public class TransactionUtils {
-	protected final static Long DEFAULT_LEASE_TIMEOUT = 100000L; // 100 sec
-	private static TransactionManager txManager = null;
-
-	private static Object transactionLock = new Object();
+	protected final static Long DEFAULT_LEASE_TIMEOUT = 2000L; // 2 sec
+	private volatile static TransactionManager txManager = null;
 
 	/**
 	 * Returns transaction instance retrieved from the transaction manager.
 	 * 
 	 * @return transaction instance
 	 */
-	public static Transaction createTransaction() {
-		synchronized (transactionLock) {
-			try {
-				if (txManager == null) {
-					Lookup transactionLookup = new Lookup(
-							TransactionManager.class);
-					txManager = (TransactionManager) transactionLookup
-							.getService();
-				}
-				Transaction.Created trc = TransactionFactory.create(txManager,
-						DEFAULT_LEASE_TIMEOUT);
-				return trc.transaction;
-			} catch (Exception e) {
-				System.out.println("ERROR - Transaction retrieval error: "
-						+ e.getMessage());
-				return null;
+	public synchronized static Transaction createTransaction() {
+		try {
+			if (txManager == null) {
+				Lookup transactionLookup = new Lookup(TransactionManager.class);
+				txManager = (TransactionManager) transactionLookup.getService();
 			}
+			Transaction.Created trc = TransactionFactory.create(txManager,
+					DEFAULT_LEASE_TIMEOUT);
+			return trc.transaction;
+		} catch (Exception e) {
+			System.out.println("ERROR - Transaction retrieval error: "
+					+ e.getMessage());
+			return null;
 		}
 	}
 }
