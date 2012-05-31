@@ -25,5 +25,4 @@ public class Launcher {
 //				new TSKnowledgeRepository());
 		Runtime runtime = new Runtime(classes, ensembles, km);
 	}
-
 }

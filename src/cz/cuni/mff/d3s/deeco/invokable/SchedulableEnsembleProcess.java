@@ -88,7 +88,7 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 	 * @see cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess#invoke()
 	 */
 	@Override
-	protected void invoke() {
+	public void invoke() {
 		ISession session = km.createSession();
 		ISession coordinatorSession = null, memberSession = null;
 		try {

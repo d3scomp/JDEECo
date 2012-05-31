@@ -41,7 +41,8 @@ public class ScheduleHelper {
 			return new ProcessPeriodicSchedule(
 					((DEECoPeriodicScheduling) scheduleAnnotation).value());
 		} else if (scheduleAnnotation instanceof DEECoTriggeredScheduling) {
-			return new ProcessTriggeredSchedule();
+			DEECoTriggeredScheduling dtsa = (DEECoTriggeredScheduling) scheduleAnnotation;
+			return new ProcessTriggeredSchedule(dtsa.value());
 		} else
 			return null;
 	}

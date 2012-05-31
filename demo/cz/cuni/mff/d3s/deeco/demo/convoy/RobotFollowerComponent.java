@@ -25,6 +25,7 @@ import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoProcess;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoProcessIn;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoProcessInOut;
+import cz.cuni.mff.d3s.deeco.annotations.ELockingMode;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 import cz.cuni.mff.d3s.deeco.knowledge.RootKnowledge;
 

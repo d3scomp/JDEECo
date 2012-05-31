@@ -13,18 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package cz.cuni.mff.d3s.deeco.scheduling;
+package cz.cuni.mff.d3s.deeco.annotations;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Class representing triggered schedule.
+ * Used to mark a method to use strong locking mechanism i.e. lock is acquired
+ * before method parameter retrieval and released after out parameters are
+ * persisted.
  * 
  * @author Michal Kit
  * 
  */
-public class ProcessTriggeredSchedule implements ProcessSchedule {
-	public String [] properties;
-	
-	public ProcessTriggeredSchedule(String [] properties) {
-		this.properties = properties;
-	}
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.METHOD, ElementType.TYPE })
+public @interface DEECoStrongLocking {
 }

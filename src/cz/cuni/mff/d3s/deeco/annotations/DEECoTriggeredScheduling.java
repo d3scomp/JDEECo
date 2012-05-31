@@ -24,11 +24,14 @@ import java.lang.annotation.Target;
  * Used to mark an ensemble class or a component process to be event triggered.
  * (Not used currently)
  * 
+ * <code>value</code> - describes the property which change triggers the method
+ * execution.
+ * 
  * @author Michal Kit
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD, ElementType.TYPE})
+@Target({ ElementType.METHOD, ElementType.TYPE })
 public @interface DEECoTriggeredScheduling {
-
+	String[] value();
 }

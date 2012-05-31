@@ -57,7 +57,6 @@ public abstract class SchedulableProcess {
 		return getParameterMethodValues(in, out, inOut, root, target, null);
 	}
 
-
 	protected Object[] getParameterMethodValues(List<Parameter> in,
 			List<Parameter> inOut, List<Parameter> out, String root, Object [] target,
 			ISession session) throws KMException {
@@ -77,7 +76,6 @@ public abstract class SchedulableProcess {
 		} else
 			localSession = session;
 		try {
-			Parameter dp;
 			while (localSession.repeat()) {
 				for (Parameter p: parameters) {
 					result[p.index] = km.getKnowledge(
@@ -175,7 +173,7 @@ public abstract class SchedulableProcess {
 	/**
 	 * Function invokes single process execution.
 	 */
-	protected abstract void invoke();
+	public abstract void invoke();
 
 	/**
 	 * Function starts the process execution. In case its scheduling is periodic

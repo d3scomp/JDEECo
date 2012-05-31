@@ -41,7 +41,7 @@ public class ParkingLot extends RootKnowledge {
 	}
 
 	@DEECoProcess
-	@DEECoTriggeredScheduling
+	@DEECoTriggeredScheduling("incomingRequests[*]")
 	public static void processRequests(
 			@DEECoProcessInOut("scheduleItem") Map<ParkingPlaceId, List<ParkingLotScheduleItem> > schedule,					
 			@DEECoProcessIn("parkingPlaces") ParkingPlaceId[] parkingPlaces,

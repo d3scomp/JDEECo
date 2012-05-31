@@ -21,8 +21,13 @@ import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoProcess;
+import cz.cuni.mff.d3s.deeco.annotations.DEECoStrongLocking;
+import cz.cuni.mff.d3s.deeco.annotations.ELockingMode;
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
+import cz.cuni.mff.d3s.deeco.exceptions.SessionException;
+import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.scheduling.ProcessPeriodicSchedule;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
 import cz.cuni.mff.d3s.deeco.scheduling.ScheduleHelper;
 
@@ -35,11 +40,14 @@ import cz.cuni.mff.d3s.deeco.scheduling.ScheduleHelper;
 public class SchedulableKnowledgeProcess extends SchedulableProcess {
 
 	private ProcessParametrizedMethod process;
+	private ELockingMode lockingMode;
 
 	public SchedulableKnowledgeProcess(ProcessParametrizedMethod process,
-			ProcessSchedule scheduling, KnowledgeManager km) {
+			ProcessSchedule scheduling, ELockingMode lockingMode,
+			KnowledgeManager km) {
 		super(scheduling, km);
 		this.process = process;
+		this.lockingMode = lockingMode;
 	}
 
 	/*
@@ -48,16 +56,44 @@ public class SchedulableKnowledgeProcess extends SchedulableProcess {
 	 * @see cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess#invoke()
 	 */
 	@Override
-	protected void invoke() {
+	public void invoke() {
 		try {
-			Object[] processParameters = getParameterMethodValues(process.in,
-					process.inOut, process.out, process.root);
-			process.invoke(processParameters);
-			putParameterMethodValues(processParameters, process.inOut,
-					process.out, process.root);
+
+			if (lockingMode.equals(ELockingMode.STRONG)) {
+				ISession session = km.createSession();
+				session.begin();
+				try {
+					while (session.repeat()) {
+						evaluateMethod(session);
+						session.end();
+					}
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
+					try {
+						session.cancel();
+					} catch (SessionException se) {
+					}
+				}
+			} else {
+				evaluateMethod();
+			}
 		} catch (KMException kme) {
 			System.out.println(kme.getMessage());
 		}
+	}
+
+	private void evaluateMethod() throws KMException {
+		evaluateMethod(null);
+	}
+
+	private void evaluateMethod(ISession session) throws KMException {
+		System.out.println("Getting input");
+		Object[] processParameters = getParameterMethodValues(process.in,
+				process.inOut, process.out, process.root, null, session);
+		process.invoke(processParameters);
+		putParameterMethodValues(processParameters, process.inOut, process.out,
+				process.root, session);
+		System.out.println("Putting output");
 	}
 
 	/**
@@ -82,17 +118,23 @@ public class SchedulableKnowledgeProcess extends SchedulableProcess {
 			List<Method> methods = AnnotationHelper.getAnnotatedMethods(c,
 					DEECoProcess.class);
 			ProcessParametrizedMethod currentMethod;
+			ProcessSchedule ps;
+			ELockingMode lm;
 			if (methods != null && methods.size() > 0) {
 				for (Method m : methods) {
 					currentMethod = ProcessParametrizedMethod
 							.extractParametrizedMethod(m, root);
 					if (currentMethod != null) {
+						ps = ScheduleHelper.getSchedule(AnnotationHelper
+								.getAnnotation(DEECoPeriodicScheduling.class,
+										m.getAnnotations()));
+						if (AnnotationHelper.getAnnotation(
+								DEECoStrongLocking.class, m.getAnnotations()) == null)
+							lm = (ps instanceof ProcessPeriodicSchedule) ? ELockingMode.WEAK : ELockingMode.STRONG;
+						else 
+							lm = ELockingMode.STRONG;
 						result.add(new SchedulableKnowledgeProcess(
-								currentMethod,
-								ScheduleHelper.getSchedule(AnnotationHelper
-										.getAnnotation(
-												DEECoPeriodicScheduling.class,
-												m.getAnnotations())), km));
+								currentMethod, ps, lm, km));
 					}
 				}
 			}
