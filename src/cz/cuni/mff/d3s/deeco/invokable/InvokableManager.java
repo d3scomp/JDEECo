@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
 
 /**
  * Generic class used to provide common functionalities for all
@@ -34,10 +35,12 @@ public abstract class InvokableManager<T extends SchedulableProcess> {
 
 	protected List<T> processes;
 	protected KnowledgeManager km;
+	protected Scheduler scheduler;
 
-	public InvokableManager(KnowledgeManager km) {
+	public InvokableManager(KnowledgeManager km, Scheduler scheduler) {
 		processes = new ArrayList<T>();
 		this.km = km;
+		this.scheduler = scheduler;
 	}
 
 	/**
@@ -47,22 +50,4 @@ public abstract class InvokableManager<T extends SchedulableProcess> {
 	 *            class having a definitions of potential schedulable processes.
 	 */
 	public abstract void addInvokable(Class invokableDefinition);
-
-	/**
-	 * Starts the execution of all schedulable processes.
-	 */
-	public void startInvokables() {
-		for (T i : processes) {
-			i.start();
-		}
-	}
-
-	/**
-	 * Stops the execution of all schedulable processes.
-	 */
-	public void stopInvokables() {
-		for (T i : processes) {
-			i.stop();
-		}
-	}
 }

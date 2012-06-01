@@ -20,6 +20,7 @@ import cz.cuni.mff.d3s.deeco.invokable.EnsembleManager;
 import cz.cuni.mff.d3s.deeco.invokable.InvokableManager;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
 
 /**
  * Class representing DEECo runtime
@@ -31,10 +32,12 @@ public class Runtime {
 
 	private InvokableManager<? extends SchedulableProcess> ensembleManager;
 	private InvokableManager<? extends SchedulableProcess> componentManager;
+	private Scheduler scheduler;
 
-	public Runtime(Class[] components, Class[] ensembles, KnowledgeManager km) {
-		componentManager = new ComponentManager(km);
-		ensembleManager = new EnsembleManager(km);
+	public Runtime(Class[] components, Class[] ensembles, KnowledgeManager km, Scheduler scheduler) {
+		componentManager = new ComponentManager(km, scheduler);
+		ensembleManager = new EnsembleManager(km, scheduler);
+		this.scheduler = scheduler;
 		if (components != null)
 			for (Class c : components) {
 				componentManager.addInvokable(c);
@@ -43,6 +46,7 @@ public class Runtime {
 			for (Class e : ensembles) {
 				ensembleManager.addInvokable(e);
 			}
+		
 		startRuntime();
 	}
 
@@ -50,15 +54,13 @@ public class Runtime {
 	 * Starts components and ensembles operation.
 	 */
 	public synchronized void startRuntime() {
-		componentManager.startInvokables();
-		ensembleManager.startInvokables();
+		scheduler.start();
 	}
 
 	/**
 	 * Stops components and ensembles operation.
 	 */
 	public synchronized void stopRuntime() {
-		componentManager.stopInvokables();
-		ensembleManager.stopInvokables();
+		scheduler.stop();
 	}
 }

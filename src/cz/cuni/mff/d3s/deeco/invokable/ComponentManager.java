@@ -23,6 +23,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.RootKnowledge;
+import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
 
 /**
  * Class providing component managing functionalities.
@@ -33,8 +34,8 @@ import cz.cuni.mff.d3s.deeco.knowledge.RootKnowledge;
 public class ComponentManager extends
 		InvokableManager<SchedulableKnowledgeProcess> {
 
-	public ComponentManager(KnowledgeManager km) {
-		super(km);
+	public ComponentManager(KnowledgeManager km, Scheduler scheduler) {
+		super(km, scheduler);
 	}
 
 	/* (non-Javadoc)
@@ -50,6 +51,7 @@ public class ComponentManager extends
 							.extractKnowledgeProcesses(invokableDefinition,
 									ik.id, km);
 					processes.addAll(invokables);
+					scheduler.register(invokables);
 				}
 			}
 		}

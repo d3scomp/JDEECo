@@ -16,6 +16,7 @@
 package cz.cuni.mff.d3s.deeco.invokable;
 
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
 
 /**
  * Class providing ensemble managing functionalities.
@@ -26,8 +27,8 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 public class EnsembleManager extends
 		InvokableManager<SchedulableEnsembleProcess> {
 
-	public EnsembleManager(KnowledgeManager km) {
-		super(km);
+	public EnsembleManager(KnowledgeManager km, Scheduler scheduler) {
+		super(km, scheduler);
 	}
 
 	/* (non-Javadoc)
@@ -39,6 +40,7 @@ public class EnsembleManager extends
 			SchedulableEnsembleProcess invokable = SchedulableEnsembleProcess
 					.extractEnsembleProcesses(invokableDefinition, km);
 			processes.add(invokable);
+			scheduler.register(invokable);
 		}
 	}
 
