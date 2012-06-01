@@ -43,9 +43,15 @@ public class JDEECoParser
 
 PARSER_END(JDEECoParser)
 
+TOKEN [ IGNORE_CASE ] :
+{
+  < COORD : "coord" >
+| < MEMBER : "member" >
+}
+
 TOKEN :
 {
-  < #IDENTIFIER :
+  < IDENTIFIER :
     < LETTER >
     (
       < LETTER >
@@ -56,7 +62,6 @@ TOKEN :
 | < SEPARATOR : [ "." ] >
 | < OPEN : [ "[" ] >
 | < CLOSE : [ "]" ] >
-| < PATH : < IDENTIFIER > (< SEPARATOR > < IDENTIFIER >)* >
 }
 
 PNode parseExpression() :
@@ -66,9 +71,19 @@ PNode parseExpression() :
 }
 {
   (
-    (t = < PATH >
+    (t = < IDENTIFIER >
     {
       node.value = t.image;
+    }
+    )
+  | (t = < COORD >
+    {
+      node.value = EEnsembleParty.COORDINATOR;
+    }
+    )
+  | (t = < MEMBER >
+    {
+      node.value = EEnsembleParty.MEMBER;
     }
     )
   |

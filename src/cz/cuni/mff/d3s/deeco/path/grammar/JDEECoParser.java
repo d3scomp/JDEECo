@@ -16,9 +16,17 @@ public class JDEECoParser implements JDEECoParserConstants {
   Token t;
   PNode node = new PNode();
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case PATH:
-      t = jj_consume_token(PATH);
+    case IDENTIFIER:
+      t = jj_consume_token(IDENTIFIER);
       node.value = t.image;
+      break;
+    case COORD:
+      t = jj_consume_token(COORD);
+      node.value = EEnsembleParty.COORDINATOR;
+      break;
+    case MEMBER:
+      t = jj_consume_token(MEMBER);
+      node.value = EEnsembleParty.MEMBER;
       break;
     case OPEN:
       jj_consume_token(OPEN);
@@ -63,7 +71,7 @@ public class JDEECoParser implements JDEECoParserConstants {
       jj_la1_init_0();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0xa0,0x10,};
+      jj_la1_0 = new int[] {0x8e,0x40,};
    }
 
   /** Constructor with InputStream. */
@@ -201,7 +209,7 @@ public class JDEECoParser implements JDEECoParserConstants {
   /** Generate ParseException. */
   static public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[8];
+    boolean[] la1tokens = new boolean[9];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -215,7 +223,7 @@ public class JDEECoParser implements JDEECoParserConstants {
         }
       }
     }
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 9; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

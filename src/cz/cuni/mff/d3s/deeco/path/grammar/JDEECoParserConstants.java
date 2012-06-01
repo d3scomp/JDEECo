@@ -11,19 +11,21 @@ public interface JDEECoParserConstants {
   /** End of File. */
   int EOF = 0;
   /** RegularExpression Id. */
-  int IDENTIFIER = 1;
+  int COORD = 1;
   /** RegularExpression Id. */
-  int LETTER = 2;
+  int MEMBER = 2;
   /** RegularExpression Id. */
-  int DIGIT = 3;
+  int IDENTIFIER = 3;
   /** RegularExpression Id. */
-  int SEPARATOR = 4;
+  int LETTER = 4;
   /** RegularExpression Id. */
-  int OPEN = 5;
+  int DIGIT = 5;
   /** RegularExpression Id. */
-  int CLOSE = 6;
+  int SEPARATOR = 6;
   /** RegularExpression Id. */
-  int PATH = 7;
+  int OPEN = 7;
+  /** RegularExpression Id. */
+  int CLOSE = 8;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -31,13 +33,14 @@ public interface JDEECoParserConstants {
   /** Literal token values. */
   String[] tokenImage = {
     "<EOF>",
+    "\"coord\"",
+    "\"member\"",
     "<IDENTIFIER>",
     "<LETTER>",
     "<DIGIT>",
     "<SEPARATOR>",
     "<OPEN>",
     "<CLOSE>",
-    "<PATH>",
   };
 
 }

@@ -25,6 +25,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.KPBuilder;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessPeriodicSchedule;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
+import cz.cuni.mff.d3s.deeco.scheduling.ProcessTriggeredSchedule;
 
 /**
  * Base class defining common functionalities for all schedulable processes.
@@ -33,8 +34,6 @@ import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
  * 
  */
 public abstract class SchedulableProcess {
-
-	private Thread processThread;
 
 	protected KnowledgeManager km;
 
@@ -169,48 +168,27 @@ public abstract class SchedulableProcess {
 			}
 		}
 	}
+	
+	/**
+	 * Checks if the process has periodic scheduling.
+	 * 
+	 * @return true or false depending on the process scheduling.
+	 */
+	public boolean isPeriodic() {
+		return scheduling instanceof ProcessPeriodicSchedule;
+	}
+	
+	/**
+	 * Checks if the process has triggered scheduling.
+	 * 
+	 * @return true or false depending on the process scheduling.
+	 */
+	public boolean isTriggered() {
+		return scheduling instanceof ProcessTriggeredSchedule;
+	}
 
 	/**
 	 * Function invokes single process execution.
 	 */
 	public abstract void invoke();
-
-	/**
-	 * Function starts the process execution. In case its scheduling is periodic
-	 * it creates a thread within which it invokes process execution
-	 * periodically.
-	 */
-	public void start() {
-		final ProcessPeriodicSchedule s = (ProcessPeriodicSchedule) scheduling;
-		if (s != null) {
-			if (processThread != null)
-				stop();
-			processThread = new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					try {
-						while (true) {
-							invoke();
-							Thread.sleep(s.interval);
-						}
-					} catch (Exception e) {
-						System.out.println("ERROR - Process execution error: "
-								+ e.getMessage());
-					}
-				}
-			});
-			processThread.start();
-		}
-	}
-
-	/**
-	 * Stops the process execution. In case its scheduling is periodic it
-	 * interrupts the thread.
-	 */
-	public void stop() {
-		if (processThread != null) {
-			processThread.interrupt();
-		}
-	}
 }

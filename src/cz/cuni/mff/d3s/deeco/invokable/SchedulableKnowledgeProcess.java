@@ -87,13 +87,11 @@ public class SchedulableKnowledgeProcess extends SchedulableProcess {
 	}
 
 	private void evaluateMethod(ISession session) throws KMException {
-		System.out.println("Getting input");
 		Object[] processParameters = getParameterMethodValues(process.in,
 				process.inOut, process.out, process.root, null, session);
 		process.invoke(processParameters);
 		putParameterMethodValues(processParameters, process.inOut, process.out,
 				process.root, session);
-		System.out.println("Putting output");
 	}
 
 	/**
