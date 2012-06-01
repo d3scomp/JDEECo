@@ -4,16 +4,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 
 public abstract class Scheduler {
 
 	protected List<SchedulableProcess> processes;
-	protected KnowledgeManager km;
 	protected boolean running;
 
-	public Scheduler(KnowledgeManager km) {
-		this.km = km;
+	public Scheduler() {
 		processes = new LinkedList<SchedulableProcess>();
 		running = false;
 	}

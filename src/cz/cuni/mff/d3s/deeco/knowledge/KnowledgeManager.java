@@ -18,6 +18,7 @@ package cz.cuni.mff.d3s.deeco.knowledge;
 import java.lang.reflect.Type;
 
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
+import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
 
 /**
  * An abstract class providing higher level interface for accessing the
@@ -36,7 +37,7 @@ public abstract class KnowledgeManager {
 	 * @param knowledgePath
 	 *            nesting at which the knowledge structure should be rooted
 	 * @param type
-	 *            Knowledge structure (Knowledge Interface) 
+	 *            Knowledge structure (Knowledge Interface)
 	 * @param session
 	 *            a session object within which all the retrieval should be
 	 *            performed
@@ -98,6 +99,16 @@ public abstract class KnowledgeManager {
 	 * @return {@link ISession} object instance.
 	 */
 	public abstract ISession createSession();
+
+	/**
+	 * Register a listener that should be notified by the knowledge manager
+	 * whenever a specified properties are changing.
+	 * 
+	 * @param knowledgePaths array of properties that the listener is interested in
+	 * @param listener listening object
+	 */
+//	public abstract void listenForChange(String[] knowledgePaths,
+//			IKnowledgeChangeListener listener);
 
 	/**
 	 * Retrieves knowledge from the knowledge repository, defined by both
@@ -166,8 +177,7 @@ public abstract class KnowledgeManager {
 	public Object getKnowledge(String knowledgePath) throws KMException {
 		return getKnowledge(knowledgePath, null);
 	}
-	
-	
+
 	/**
 	 * Puts knowledge object to the knowledge repository.
 	 * 

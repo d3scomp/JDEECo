@@ -2,31 +2,34 @@ package cz.cuni.mff.d3s.deeco.scheduling;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 
-public class MultithreadedScheduler extends Scheduler {
+public class MultithreadedScheduler extends Scheduler implements
+		IKnowledgeChangeListener {
 
-	private Map<SchedulableProcess, Thread> threads;
+	protected KnowledgeManager km;
+	private Map<SchedulableProcess, ScheduledExecutorService> threads;
 
 	public MultithreadedScheduler(KnowledgeManager km) {
-		super(km);
-		threads = new HashMap<SchedulableProcess, Thread>();
+		super();
+		this.km = km;
+		threads = new HashMap<SchedulableProcess, ScheduledExecutorService>();
 	}
 
 	@Override
 	public void start() {
 		if (!running) {
-			Thread processThread;
 			for (SchedulableProcess sp : processes) {
 				if (sp.isTriggered()) {
 					// TODO register listener in km.
 				} else if (sp.isPeriodic()) {
-					processThread = new Thread(new PeriodicProcessThread(sp,
-							((ProcessPeriodicSchedule) sp.scheduling).interval));
-					threads.put(sp, processThread);
-					processThread.start();
+					startPeriodicProcess(sp,
+							((ProcessPeriodicSchedule) sp.scheduling).interval);
 				}
 			}
 		}
@@ -39,34 +42,35 @@ public class MultithreadedScheduler extends Scheduler {
 				if (sp.isTriggered()) {
 					// TODO unregister listener from km.
 				} else if (sp.isPeriodic()) {
-					threads.get(sp).interrupt();
+					threads.get(sp).shutdown();
 				}
 			}
 		}
 	}
 
+	private void startPeriodicProcess(SchedulableProcess process, long period) {
+		ScheduledExecutorService ses = Executors.newScheduledThreadPool(1);
+		ses.scheduleAtFixedRate(new PeriodicProcessThread(process) , 0, period, TimeUnit.MILLISECONDS);
+		threads.put(process, ses);
+	}
+
 	class PeriodicProcessThread implements Runnable {
 
 		private SchedulableProcess process;
-		private long period;
 
-		public PeriodicProcessThread(SchedulableProcess process, long period) {
+		public PeriodicProcessThread(SchedulableProcess process) {
 			this.process = process;
-			this.period = period;
 		}
 
 		@Override
 		public void run() {
-			try {
-				while (true) {
-					process.invoke();
-					Thread.sleep(period);
-				}
-			} catch (Exception e) {
-				System.out.println("ERROR - Process execution error: "
-						+ e.getMessage());
-			}
+			process.invoke();
 		}
+
+	}
+
+	@Override
+	public void knowledgeChanged(String knowledgePathChanged) {
 
 	}
 
