@@ -73,7 +73,7 @@ public class TSKnowledgeRepository extends KnowledgeRepository {
 		
 		if (tuple == null)
 			throw new UnavailableEntryException("Entry " + entryKey
-					+ "unavailable!");
+					+ " unavailable!");
 		return tuple.value;
 	}
 
@@ -127,7 +127,7 @@ public class TSKnowledgeRepository extends KnowledgeRepository {
 
 		if (tuple == null)
 			throw new UnavailableEntryException("Entry " + entryKey
-					+ "unavailable!");
+					+ " unavailable!");
 
 		return tuple.value;
 	}

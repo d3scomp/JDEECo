@@ -106,9 +106,23 @@
 		</parallel>
 	</target>
 
-	<target name="demo" depends="dist-demo"
+	<target name="demo-local" depends="dist-demo"
 		description="Runs the convoy demo">
-		<java classname="cz.cuni.mff.d3s.deeco.demo.convoy.Launcher" fork="true">
+		<java classname="cz.cuni.mff.d3s.deeco.demo.convoy.LocalLauncher" fork="true">
+			<classpath>
+				<pathelement location="${dist}/demo.jar"/>
+				<pathelement location="${dist}/jdeeco.jar"/>
+				<pathelement location="lib/jsk-lib.jar"/>
+				<pathelement location="lib/jsk-platform.jar"/>
+			</classpath>
+			<jvmarg value="-Djava.security.policy=${river}-config/start.policy"/>
+			<jvmarg value="-Djava.rmi.server.RMIClassLoaderSpi=net.jini.loader.pref.PreferredClassProvider"/>
+		</java>
+	</target>
+	
+	<target name="demo-ts" depends="dist-demo"
+		description="Runs the convoy demo">
+		<java classname="cz.cuni.mff.d3s.deeco.demo.convoy.TupleSpaceLauncher" fork="true">
 			<classpath>
 				<pathelement location="${dist}/demo.jar"/>
 				<pathelement location="${dist}/jdeeco.jar"/>

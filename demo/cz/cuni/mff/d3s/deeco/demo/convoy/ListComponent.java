@@ -3,15 +3,18 @@ package cz.cuni.mff.d3s.deeco.demo.convoy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoProcess;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoProcessIn;
+import cz.cuni.mff.d3s.deeco.knowledge.Knowledge;
 import cz.cuni.mff.d3s.deeco.knowledge.RootKnowledge;
 
 public class ListComponent extends RootKnowledge {
 	public List<List<Path>> listOfLists;
+	public Path path;
 
 	@DEECoInitialize
 	public static RootKnowledge getInitialKnowledge() {
@@ -23,6 +26,9 @@ public class ListComponent extends RootKnowledge {
 		p.currentPosition = 0;
 		le.add(p);
 		k.listOfLists.add(le);
+		k.path = new Path();
+		k.path.remainingPath = new ArrayList<Integer>(Arrays.asList(new Integer [] {1,2,3,4,5,6}));
+		k.path.currentPosition = 0;
 		return k;
 	}
 
@@ -31,7 +37,7 @@ public class ListComponent extends RootKnowledge {
 	 */
 	@DEECoPeriodicScheduling(2000)
 	@DEECoProcess
-	public static void process(@DEECoProcessIn("listOfLists") List<List<Integer>> lol) {
+	public static void process(@DEECoProcessIn("path") Map<String, Integer> lol) {
 		System.out.println("lol retrieved");
 	}
 }

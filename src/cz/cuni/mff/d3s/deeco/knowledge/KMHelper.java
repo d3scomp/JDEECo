@@ -16,6 +16,7 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -100,7 +101,7 @@ public class KMHelper {
 		} else
 			return null;
 	}
-	
+
 	public static boolean isGenericType(Type type) {
 		return type instanceof ParameterizedType;
 	}
@@ -201,6 +202,20 @@ public class KMHelper {
 		else if (Map.class.isAssignableFrom(objectClass))
 			return (Map) object;
 		return null;
+	}
+
+	public static String[] getFieldNames(Class structure) {
+		String[] result = null;
+		if (structure != null) {
+			Field[] fields = structure.getFields();
+			if (fields.length > 0) {
+				result = new String [fields.length];
+				for (int i = 0; i < fields.length; i++) {
+					result[i] = fields[i].getName();
+				}
+			}
+		}
+		return result;
 	}
 
 	/**

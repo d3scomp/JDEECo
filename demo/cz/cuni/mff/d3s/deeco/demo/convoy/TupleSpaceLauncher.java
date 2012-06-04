@@ -19,9 +19,8 @@ public class TupleSpaceLauncher {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Class[] classes = { RobotLeaderComponent.class,
-				RobotFollowerComponent.class };
-		Class[] ensembles = { ConvoyEnsemble.class };
+		Class[] classes = { ListComponent.class};
+		Class[] ensembles = { };
 		KnowledgeManager km = new RepositoryKnowledgeManager(
 				new TSKnowledgeRepository());
 		Scheduler scheduler = new MultithreadedScheduler(km);

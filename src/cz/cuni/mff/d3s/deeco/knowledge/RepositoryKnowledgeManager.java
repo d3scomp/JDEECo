@@ -20,9 +20,12 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import com.sun.jini.thread.NewThreadAction;
 
 import cz.cuni.mff.d3s.deeco.exceptions.KMAccessException;
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
@@ -105,8 +108,8 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 				} else {
 					if (KMHelper.isKnowledge(type)) {
 						Class structure = KMHelper.getClass(type);
-						String innerPath;
 						Field[] fields = structure.getFields();
+						String innerPath;
 						for (Field f : fields) {
 							innerPath = KPBuilder.appendToRoot(knowledgePath,
 									f.getName());
@@ -118,8 +121,14 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 								takeKnowledge(innerPath, f.getGenericType(),
 										localSession);
 						}
-						if (value == null)
+						innerPath = KPBuilder.appendToRoot(knowledgePath,
+								ConstantKeys.CLASS_ID);
+						if (value == null) {
 							putFlat(knowledgePath, null, localSession, replace);
+							getFlat(true, innerPath, localSession);
+						} else {
+							putFlat(innerPath, structure, localSession, replace);
+						}
 					} else if (KMHelper.isTraversable(type)) {
 						putTraversable(knowledgePath, value, type,
 								localSession, replace);
@@ -155,7 +164,7 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 		try {
 			Class structure = KMHelper.getClass(type);
 			while (localSession.repeat()) {
-				if (type == null) {//assuming that requested properties are flat.
+				if (type == null) {// requested properties are flat.
 					result = kr.getAll(knowledgePath, localSession);
 				} else if (KMHelper.isOutputWrapper(structure)) {
 					OutWrapper owi = (OutWrapper) KMHelper.getInstance(type);
@@ -174,13 +183,15 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 								retrieveKnowledge(withdrawal, innerPath,
 										innerStructure, localSession));
 					}
+					if (withdrawal) { // remove knowledge definition
+						getFlat(true, KPBuilder.appendToRoot(knowledgePath,
+								ConstantKeys.CLASS_ID), localSession);
+					}
 				} else if (KMHelper.isTraversable(structure)) {
-					result = getTraversable(withdrawal, knowledgePath,
+					result = getTraversable(withdrawal, knowledgePath, type,
 							localSession);
 				} else {
-					result = (withdrawal) ? kr
-							.take(knowledgePath, localSession) : kr.get(
-							knowledgePath, localSession);
+					result = getFlat(withdrawal, knowledgePath, localSession);
 				}
 				if (session == null)
 					localSession.end();
@@ -226,6 +237,13 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 		}
 	}
 
+	private Object getFlat(boolean withdrawal, String knowledgePath,
+			ISession session) throws UnavailableEntryException,
+			KnowledgeRepositoryException {
+		return (withdrawal) ? kr.take(knowledgePath, session) : kr.get(
+				knowledgePath, session);
+	}
+
 	private void putTraversable(String knowledgePath, Object value, Type type,
 			ISession session, boolean replace)
 			throws KnowledgeRepositoryException, KMException {
@@ -245,7 +263,8 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 					tElementType = eValue.getClass();
 				putKnowledge(
 						KPBuilder.appendToRoot(knowledgePath, entry.getKey()),
-						entry.getValue(), KMHelper.getClass(tElementType), session, replace);
+						entry.getValue(), KMHelper.getClass(tElementType),
+						session, replace);
 			}
 		}
 		removeRedundantTraversable(knowledgePath, keys, session);
@@ -253,9 +272,9 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 				ConstantKeys.TRAVERSABLE_KEYS_ID),
 				(keys != null) ? keys.toArray(new String[keys.size()]) : null,
 				null, session, replace);
-		putKnowledge(KPBuilder.appendToRoot(knowledgePath,
-				ConstantKeys.TRAVERSABLE_CLASS_ID), structure, null, session,
-				replace);
+		putKnowledge(
+				KPBuilder.appendToRoot(knowledgePath, ConstantKeys.CLASS_ID),
+				structure, null, session, replace);
 		tElementType = KMHelper.isGenericType(tElementType) ? value.getClass()
 				: tElementType;
 		putKnowledge(KPBuilder.appendToRoot(knowledgePath,
@@ -263,7 +282,7 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 				session, replace);
 	}
 
-	private Object getTraversable(boolean withdrawal, String knowledgePath,
+	private Object getTraversable(boolean withdrawal, String knowledgePath, Type expectedType,
 			ISession session) throws UnavailableEntryException,
 			KnowledgeRepositoryException, InstantiationException,
 			IllegalAccessException, KMException {
@@ -271,38 +290,53 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 		Class resultClass = null;
 		if (withdrawal)
 			resultClass = (Class) kr.take(KPBuilder.appendToRoot(knowledgePath,
-					ConstantKeys.TRAVERSABLE_CLASS_ID), session);
+					ConstantKeys.CLASS_ID), session);
 		else
 			resultClass = (Class) kr.get(KPBuilder.appendToRoot(knowledgePath,
-					ConstantKeys.TRAVERSABLE_CLASS_ID), session);
+					ConstantKeys.CLASS_ID), session);
 		if (resultClass != null) {
 			String[] currentKeys = null;
-			if (withdrawal)
-				currentKeys = (String[]) kr.take(KPBuilder.appendToRoot(
-						knowledgePath, ConstantKeys.TRAVERSABLE_KEYS_ID),
-						session);
-			else
-				currentKeys = (String[]) kr.get(KPBuilder.appendToRoot(
-						knowledgePath, ConstantKeys.TRAVERSABLE_KEYS_ID),
-						session);
 			Type tElementType = null;
-			if (withdrawal)
-				tElementType = (Type) kr.take(KPBuilder.appendToRoot(
-						knowledgePath,
-						ConstantKeys.TRAVERSABLE_ELEMENT_CLASS_ID), session);
-			else
-				tElementType = (Type) kr.get(KPBuilder.appendToRoot(
-						knowledgePath,
-						ConstantKeys.TRAVERSABLE_ELEMENT_CLASS_ID), session);
-			tResult = KMHelper.getInstance(resultClass);
-			if (tResult instanceof Collection)
-				Arrays.sort(currentKeys);
 			Object currentElement;
-			for (String k : currentKeys) {
-				currentElement = retrieveKnowledge(withdrawal,
-						KPBuilder.appendToRoot(knowledgePath, k), tElementType,
-						session);
-				KMHelper.addElementToTraversable(currentElement, tResult, k);
+			tElementType = KMHelper.getGenericElementType(expectedType);
+			if (KMHelper.isKnowledge(resultClass)) {
+				tResult = new HashMap<String, Object>();
+				Class expectedClass = KMHelper.getClass(tElementType);
+				for (Field f : resultClass.getFields()) {
+					currentElement = retrieveKnowledge(withdrawal,
+							KPBuilder.appendToRoot(knowledgePath, f.getName()),
+							f.getGenericType(), session);
+					if (expectedClass.isAssignableFrom(currentElement.getClass()))
+						KMHelper.addElementToTraversable(currentElement, tResult, f.getName());
+				}
+			} else {
+				tResult = KMHelper.getInstance(resultClass);
+				if (withdrawal)
+					currentKeys = (String[]) kr.take(KPBuilder.appendToRoot(
+							knowledgePath, ConstantKeys.TRAVERSABLE_KEYS_ID),
+							session);
+				else
+					currentKeys = (String[]) kr.get(KPBuilder.appendToRoot(
+							knowledgePath, ConstantKeys.TRAVERSABLE_KEYS_ID),
+							session);
+				if (withdrawal)
+					tElementType = (Type) kr
+							.take(KPBuilder.appendToRoot(knowledgePath,
+									ConstantKeys.TRAVERSABLE_ELEMENT_CLASS_ID),
+									session);
+				else
+					tElementType = (Type) kr
+							.get(KPBuilder.appendToRoot(knowledgePath,
+									ConstantKeys.TRAVERSABLE_ELEMENT_CLASS_ID),
+									session);
+				if (tResult instanceof Collection)
+					Arrays.sort(currentKeys);
+				for (String k : currentKeys) {
+					currentElement = retrieveKnowledge(withdrawal,
+							KPBuilder.appendToRoot(knowledgePath, k),
+							tElementType, session);
+					KMHelper.addElementToTraversable(currentElement, tResult, k);
+				}
 			}
 		}
 		return tResult;
@@ -324,8 +358,9 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 				if (keys != null)
 					listOfCurrentKeys.removeAll(keys);
 				for (String s : listOfCurrentKeys)
-					try { 
-						kr.take(KPBuilder.appendToRoot(knowledgePath, s), session);
+					try {
+						kr.take(KPBuilder.appendToRoot(knowledgePath, s),
+								session);
 					} catch (UnavailableEntryException e) {
 						e.printStackTrace();
 					}

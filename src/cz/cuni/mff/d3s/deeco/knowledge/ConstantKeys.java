@@ -35,13 +35,13 @@ public class ConstantKeys {
 	 */
 	public static final String TRAVERSABLE_KEYS_ID = "#colKeys";
 	/**
-	 * Defines class key name for storing and retrieving key set for map and
-	 * collections.
+	 * Defines identifier used in the knowledge repository to store knowledge class definition.
 	 */
-	public static final String TRAVERSABLE_CLASS_ID = "#colClass";
+	public static final String CLASS_ID = "#class";
 	/**
 	 * Defines element class name for storing and retrieving key set for map and
 	 * collections.
 	 */
 	public static final String TRAVERSABLE_ELEMENT_CLASS_ID = "#colElementClass";
+
 }
