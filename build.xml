@@ -122,16 +122,19 @@
 	
 	<target name="demo-ts" depends="dist-demo"
 		description="Runs the convoy demo">
-		<java classname="cz.cuni.mff.d3s.deeco.demo.convoy.TupleSpaceLauncher" fork="true">
-			<classpath>
-				<pathelement location="${dist}/demo.jar"/>
-				<pathelement location="${dist}/jdeeco.jar"/>
-				<pathelement location="lib/jsk-lib.jar"/>
-				<pathelement location="lib/jsk-platform.jar"/>
-			</classpath>
-			<jvmarg value="-Djava.security.policy=${river}-config/start.policy"/>
-			<jvmarg value="-Djava.rmi.server.RMIClassLoaderSpi=net.jini.loader.pref.PreferredClassProvider"/>
-		</java>
+		<parallel>
+			<antcall target="start-ar"/>
+			<java classname="cz.cuni.mff.d3s.deeco.demo.convoy.TupleSpaceLauncher" fork="true">
+				<classpath>
+					<pathelement location="${dist}/demo.jar"/>
+					<pathelement location="${dist}/jdeeco.jar"/>
+					<pathelement location="lib/jsk-lib.jar"/>
+					<pathelement location="lib/jsk-platform.jar"/>
+				</classpath>
+				<jvmarg value="-Djava.security.policy=${river}-config/start.policy"/>
+				<jvmarg value="-Djava.rmi.server.RMIClassLoaderSpi=net.jini.loader.pref.PreferredClassProvider"/>
+			</java>
+		</parallel>
 	</target>
 
 	<target name="all"
