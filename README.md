@@ -17,6 +17,7 @@ Additionally AppacheRiver 2.2 is downloaded, set up and all necessary scripts ar
 To run the demo application perform the following two step:
 
 * Start the Apache River by executing `ant start-ar`
-* Start the demo by executing `ant demo`
+* Start the demo (using local knowledge repository) by executing `ant demo-local`
+* Start the demo (using tuple space knowledge repository) by executing `ant demo-ts`
 
 
