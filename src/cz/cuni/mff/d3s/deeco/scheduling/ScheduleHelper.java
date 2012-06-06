@@ -16,9 +16,13 @@
 package cz.cuni.mff.d3s.deeco.scheduling;
 
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoTriggeredScheduling;
+import cz.cuni.mff.d3s.deeco.annotations.DEECoTriggered;
+import cz.cuni.mff.d3s.deeco.invokable.AnnotationHelper;
+import cz.cuni.mff.d3s.deeco.invokable.Parameter;
 
 /**
  * Helper class for handling scheduling information.
@@ -34,16 +38,36 @@ public class ScheduleHelper {
 	 *            annotation to be parsed
 	 * @return schedule information
 	 */
-	public static ProcessSchedule getSchedule(Annotation scheduleAnnotation) {
-		if (scheduleAnnotation == null) {
-			return new ProcessPeriodicSchedule();
-		} else if (scheduleAnnotation instanceof DEECoPeriodicScheduling) {
+	public static ProcessSchedule getPeriodicSchedule(
+			Annotation scheduleAnnotation) {
+		if (scheduleAnnotation instanceof DEECoPeriodicScheduling) {
 			return new ProcessPeriodicSchedule(
 					((DEECoPeriodicScheduling) scheduleAnnotation).value());
-		} else if (scheduleAnnotation instanceof DEECoTriggeredScheduling) {
-			DEECoTriggeredScheduling dtsa = (DEECoTriggeredScheduling) scheduleAnnotation;
-			return new ProcessTriggeredSchedule(dtsa.value());
 		} else
 			return null;
+	}
+
+	public static ProcessSchedule getTriggeredSchedule(
+			Annotation[][] pAnnotations, List<Parameter> in,
+			List<Parameter> inOut) {
+		List<Integer> triggeredIndecies = AnnotationHelper
+				.getAnnotationOuterIndecies(DEECoTriggered.class, pAnnotations);
+		if (triggeredIndecies.size() == 0)
+			return null;
+		else {
+			List<Parameter> resultParameters = new ArrayList<Parameter>();
+			List<Parameter> jParams = new ArrayList<Parameter>(in);
+			jParams.addAll(inOut);
+			oLoop: for (Integer index : triggeredIndecies) {
+				iLoop: for (Parameter p : jParams) {
+					if (index.equals(p.index)) {
+						jParams.remove(p);
+						resultParameters.add(p);
+						continue oLoop;
+					}
+				}
+			}
+			return new ProcessTriggeredSchedule(resultParameters);
+		}
 	}
 }

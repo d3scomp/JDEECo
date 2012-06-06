@@ -39,8 +39,7 @@ public abstract class SchedulableProcess {
 
 	public ProcessSchedule scheduling;
 
-	public SchedulableProcess(ProcessSchedule scheduling, KnowledgeManager km) {
-		this.scheduling = scheduling;
+	public SchedulableProcess(KnowledgeManager km) {
 		this.km = km;
 	}
 

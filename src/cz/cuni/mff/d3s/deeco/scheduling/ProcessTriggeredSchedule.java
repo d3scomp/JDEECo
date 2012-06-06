@@ -15,6 +15,10 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.scheduling;
 
+import java.util.List;
+
+import cz.cuni.mff.d3s.deeco.invokable.Parameter;
+
 /**
  * Class representing triggered schedule.
  * 
@@ -22,9 +26,9 @@ package cz.cuni.mff.d3s.deeco.scheduling;
  * 
  */
 public class ProcessTriggeredSchedule implements ProcessSchedule {
-	public String [] properties;
+	public List<Parameter> parameters;
 	
-	public ProcessTriggeredSchedule(String [] properties) {
-		this.properties = properties;
+	public ProcessTriggeredSchedule(List<Parameter> parameters) {
+		this.parameters = parameters;
 	}
 }

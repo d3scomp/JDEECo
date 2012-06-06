@@ -26,6 +26,7 @@ import cz.cuni.mff.d3s.deeco.exceptions.SessionException;
 import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.scheduling.ProcessPeriodicSchedule;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
 import cz.cuni.mff.d3s.deeco.scheduling.ScheduleHelper;
 
@@ -52,9 +53,8 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 	 *            instance of the knowledge manager that is used for parameter
 	 *            retrieval
 	 */
-	public SchedulableEnsembleProcess(ProcessSchedule scheduling,
-			KnowledgeManager km) {
-		super(scheduling, km);
+	public SchedulableEnsembleProcess(KnowledgeManager km) {
+		super(km);
 	}
 
 	/**
@@ -75,9 +75,8 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 	 *            retrieval
 	 */
 	public SchedulableEnsembleProcess(ParameterizedMethod membership,
-			ParameterizedMethod mapper, ProcessSchedule scheduling,
-			KnowledgeManager km) {
-		this(scheduling, km);
+			ParameterizedMethod mapper, KnowledgeManager km) {
+		this(km);
 		this.membership = membership;
 		this.mapper = mapper;
 	}
@@ -107,14 +106,16 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 						try {
 							parameters = getParameterMethodValues(
 									membership.in, membership.inOut,
-									membership.out, session, (String) oid, (String) iid);
+									membership.out, session, (String) oid,
+									(String) iid);
 							if (evaluateMembership(parameters)) {
 								parameters = getParameterMethodValues(
 										mapper.in, mapper.inOut, mapper.out,
 										session, (String) oid, (String) iid);
 								evaluateMapper(parameters);
 								putParameterMethodValues(parameters,
-										mapper.inOut, mapper.out, session, (String) oid, (String) iid);
+										mapper.inOut, mapper.out, session,
+										(String) oid, (String) iid);
 							}
 						} catch (KMAccessException kme) {
 							try {
@@ -167,16 +168,26 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 			KnowledgeManager km) {
 		SchedulableEnsembleProcess result = null;
 		if (c != null) {
-			result = new SchedulableEnsembleProcess(
-					ScheduleHelper.getSchedule(AnnotationHelper.getAnnotation(
-							DEECoPeriodicScheduling.class, c.getAnnotations())),
-					km);
+			ProcessSchedule pSchedule = ScheduleHelper
+					.getPeriodicSchedule(AnnotationHelper.getAnnotation(
+							DEECoPeriodicScheduling.class, c.getAnnotations()));
+			result = new SchedulableEnsembleProcess(km);
 			Method method = AnnotationHelper.getAnnotatedMethod(c,
 					DEECoEnsembleMembership.class);
-			if (method != null)
+			if (method != null) {
 				result.membership = ParameterizedMethod
 						.extractParametrizedMethod(method);
-			else
+				if (pSchedule == null) {// not periodic
+					pSchedule = ScheduleHelper.getTriggeredSchedule(
+							method.getParameterAnnotations(),
+							result.membership.in, result.membership.inOut);
+					if (pSchedule == null)
+						result.scheduling = new ProcessPeriodicSchedule();
+					else
+						result.scheduling = pSchedule;
+				} else
+					result.scheduling = pSchedule;
+			} else
 				return null;
 			method = AnnotationHelper.getAnnotatedMethod(c,
 					DEECoEnsembleMapper.class);

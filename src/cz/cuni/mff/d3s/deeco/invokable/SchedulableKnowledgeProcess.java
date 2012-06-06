@@ -43,9 +43,8 @@ public class SchedulableKnowledgeProcess extends SchedulableProcess {
 	private ELockingMode lockingMode;
 
 	public SchedulableKnowledgeProcess(ParameterizedMethod process,
-			ProcessSchedule scheduling, ELockingMode lockingMode,
-			KnowledgeManager km) {
-		super(scheduling, km);
+			ELockingMode lockingMode, KnowledgeManager km) {
+		super(km);
 		this.process = process;
 		this.lockingMode = lockingMode;
 	}
@@ -90,7 +89,8 @@ public class SchedulableKnowledgeProcess extends SchedulableProcess {
 		Object[] processParameters = getParameterMethodValues(process.in,
 				process.inOut, process.out, session);
 		process.invoke(processParameters);
-		putParameterMethodValues(processParameters, process.inOut, process.out, session);
+		putParameterMethodValues(processParameters, process.inOut, process.out,
+				session);
 	}
 
 	/**
@@ -116,22 +116,35 @@ public class SchedulableKnowledgeProcess extends SchedulableProcess {
 					DEECoProcess.class);
 			ParameterizedMethod currentMethod;
 			ProcessSchedule ps;
+			SchedulableKnowledgeProcess skp;
 			ELockingMode lm;
 			if (methods != null && methods.size() > 0) {
 				for (Method m : methods) {
 					currentMethod = ParameterizedMethod
 							.extractParametrizedMethod(m, root);
 					if (currentMethod != null) {
-						ps = ScheduleHelper.getSchedule(AnnotationHelper
-								.getAnnotation(DEECoPeriodicScheduling.class,
-										m.getAnnotations()));
+						ps = ScheduleHelper
+								.getPeriodicSchedule(AnnotationHelper
+										.getAnnotation(
+												DEECoPeriodicScheduling.class,
+												m.getAnnotations()));
+						if (ps == null) {// not periodic
+							ps = ScheduleHelper.getTriggeredSchedule(
+									m.getParameterAnnotations(),
+									currentMethod.in, currentMethod.inOut);
+							if (ps == null)
+								ps = new ProcessPeriodicSchedule();
+						}
 						if (AnnotationHelper.getAnnotation(
 								DEECoStrongLocking.class, m.getAnnotations()) == null)
-							lm = (ps instanceof ProcessPeriodicSchedule) ? ELockingMode.WEAK : ELockingMode.STRONG;
-						else 
+							lm = (ps instanceof ProcessPeriodicSchedule) ? ELockingMode.WEAK
+									: ELockingMode.STRONG;
+						else
 							lm = ELockingMode.STRONG;
-						result.add(new SchedulableKnowledgeProcess(
-								currentMethod, ps, lm, km));
+						skp = new SchedulableKnowledgeProcess(currentMethod,
+								lm, km);
+						skp.scheduling = ps;
+						result.add(skp);
 					}
 				}
 			}

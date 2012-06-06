@@ -6,14 +6,12 @@ import java.util.Map;
 import java.util.UUID;
 
 import cz.cuni.mff.d3s.deeco.annotations.DEECoComponent;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoProcess;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoIn;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoInOut;
+import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoOut;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoTriggeredScheduling;
-import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
+import cz.cuni.mff.d3s.deeco.annotations.DEECoProcess;
+import cz.cuni.mff.d3s.deeco.annotations.DEECoTriggered;
 import cz.cuni.mff.d3s.deeco.knowledge.RootKnowledge;
 
 @DEECoComponent
@@ -41,11 +39,10 @@ public class ParkingLot extends RootKnowledge {
 	}
 
 	@DEECoProcess
-	@DEECoTriggeredScheduling("incomingRequests[*]")
 	public static void processRequests(
 			@DEECoInOut("scheduleItem") Map<ParkingPlaceId, List<ParkingLotScheduleItem> > schedule,					
 			@DEECoIn("parkingPlaces") ParkingPlaceId[] parkingPlaces,
-			@DEECoIn("incomingRequests[*]") Request incomingRequest,
+			@DEECoIn("incomingRequests[*]") @DEECoTriggered Request incomingRequest,
 			@DEECoOut("processedResponses") Map<UUID, Response> processedResponses
 			) {
 		

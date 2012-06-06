@@ -30,9 +30,9 @@ public class Parameter {
 	
 	public KnowledgePath kPath;
 	public Type type;
-	public int index;
+	public Integer index;
 	
-	public Parameter(KnowledgePath kPath, Type type, int index) {
+	public Parameter(KnowledgePath kPath, Type type, Integer index) {
 		this.kPath = kPath;
 		this.type = type;
 		this.index = index;

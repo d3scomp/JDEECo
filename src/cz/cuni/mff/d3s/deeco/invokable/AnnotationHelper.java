@@ -54,6 +54,17 @@ public class AnnotationHelper {
 		}
 		return null;
 	}
+	
+	public static List<Integer> getAnnotationOuterIndecies(Class annotationClass, Annotation [][] annotations) {
+		List<Integer> result = new ArrayList<Integer>();
+		for (int i = 0; i < annotations.length; i++) {
+			for (int k = 0; k < annotations[i].length; k++) {
+				if (annotationClass.isInstance(annotations[i][k]))
+					result.add(i);
+			}
+		}
+		return result;
+	}
 
 	/**
 	 * Returns list of methods in the class definition which are annotated with
