@@ -38,8 +38,8 @@ import cz.cuni.mff.d3s.deeco.scheduling.ScheduleHelper;
  */
 public class SchedulableEnsembleProcess extends SchedulableProcess {
 
-	private EnsembleParametrizedMethod mapper;
-	private EnsembleParametrizedMethod membership;
+	private ParameterizedMethod mapper;
+	private ParameterizedMethod membership;
 
 	/**
 	 * Returns <code>SchedulableEnsembleProcess</code> instance for specified
@@ -74,8 +74,8 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 	 *            instance of the knowledge manager that is used for parameter
 	 *            retrieval
 	 */
-	public SchedulableEnsembleProcess(EnsembleParametrizedMethod membership,
-			EnsembleParametrizedMethod mapper, ProcessSchedule scheduling,
+	public SchedulableEnsembleProcess(ParameterizedMethod membership,
+			ParameterizedMethod mapper, ProcessSchedule scheduling,
 			KnowledgeManager km) {
 		this(scheduling, km);
 		this.membership = membership;
@@ -89,9 +89,8 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 	 */
 	@Override
 	public void invoke() {
-		ISession session = km.createSession();
-		ISession coordinatorSession = null, memberSession = null;
 		try {
+			ISession session = km.createSession();
 			Object[] ids = null;
 			session.begin();
 			while (session.repeat()) {
@@ -99,80 +98,37 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 						ConstantKeys.ROOT_KNOWLEDGE_ID_FIELD, null, session);
 				session.end();
 			}
-			if (!(session.repeat() || session.hasSucceeded())) {
-				return;
-			}
-			Object[] membershipParams = getParameterList(membership), mapperParams = getParameterList(mapper);
+			Object[] parameters;
 			cloop: for (Object oid : ids) {
-				coordinatorSession = km.createSession();
-				coordinatorSession.begin();
-				while (coordinatorSession.repeat()) {
-					try {
-						getParameterMethodValues(membership.coordinatorIn,
-								membership.coordinatorInOut,
-								membership.coordinatorOut, (String) oid,
-								membershipParams, coordinatorSession);
-						getParameterMethodValues(mapper.coordinatorIn,
-								mapper.coordinatorInOut, mapper.coordinatorOut,
-								(String) oid, mapperParams, coordinatorSession);
-					} catch (KMException kme) {
+				mloop: for (Object iid : ids) {
+					session = km.createSession();
+					session.begin();
+					while (session.repeat()) {
 						try {
-							coordinatorSession.cancel();
-						} catch (SessionException se) {
-						}
-						if (kme instanceof KMAccessException)
-							throw (KMAccessException) kme;
-						continue cloop;
-					}
-					mloop: for (Object iid : ids) {
-						memberSession = km.createSession();
-						memberSession.begin();
-						while (memberSession.repeat()) {
-							try {
-								getParameterMethodValues(membership.memberIn,
-										membership.memberInOut,
-										membership.memberOut, (String) iid,
-										membershipParams, memberSession);
-								if (evaluateMembership(membershipParams)) {
-									getParameterMethodValues(mapper.memberIn,
-											mapper.memberInOut,
-											mapper.memberOut, (String) iid,
-											mapperParams, memberSession);
-									evaluateMapper(mapperParams);
-									putParameterMethodValues(mapperParams,
-											mapper.coordinatorInOut,
-											mapper.coordinatorOut,
-											(String) oid, coordinatorSession);
-									putParameterMethodValues(mapperParams,
-											mapper.memberInOut,
-											mapper.memberOut, (String) iid,
-											memberSession);
-								}
-							} catch (KMException kme) {
-								try {
-									memberSession.cancel();
-								} catch (SessionException se) {
-								}
-								if (kme instanceof KMAccessException)
-									throw (KMAccessException) kme;
-								continue mloop;
+							parameters = getParameterMethodValues(
+									membership.in, membership.inOut,
+									membership.out, session, (String) oid, (String) iid);
+							if (evaluateMembership(parameters)) {
+								parameters = getParameterMethodValues(
+										mapper.in, mapper.inOut, mapper.out,
+										session, (String) oid, (String) iid);
+								evaluateMapper(parameters);
+								putParameterMethodValues(parameters,
+										mapper.inOut, mapper.out, session, (String) oid, (String) iid);
 							}
-							memberSession.end();
+						} catch (KMAccessException kme) {
+							try {
+								session.cancel();
+							} catch (SessionException se) {
+							}
+							continue mloop;
 						}
+						session.end();
 					}
-					coordinatorSession.end();
 				}
 			}
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			try {
-				if (coordinatorSession != null)
-					coordinatorSession.cancel();
-				if (memberSession != null)
-					memberSession.cancel();
-				session.cancel();
-			} catch (SessionException se) {
-			}
+		} catch (Exception kme) {
+			return;
 		}
 	}
 
@@ -193,23 +149,6 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 			System.out.println("Ensemble evaluation exception! - "
 					+ e.getMessage());
 		}
-	}
-
-	private Object[] getParameterList(EnsembleParametrizedMethod epm) {
-		int size = 0;
-		if (epm.coordinatorIn != null)
-			size += epm.coordinatorIn.size();
-		if (epm.coordinatorInOut != null)
-			size += epm.coordinatorInOut.size();
-		if (epm.coordinatorOut != null)
-			size += epm.coordinatorOut.size();
-		if (epm.memberIn != null)
-			size += epm.memberIn.size();
-		if (epm.memberInOut != null)
-			size += epm.memberInOut.size();
-		if (epm.memberOut != null)
-			size += epm.memberOut.size();
-		return new Object[size];
 	}
 
 	/**
@@ -235,14 +174,14 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 			Method method = AnnotationHelper.getAnnotatedMethod(c,
 					DEECoEnsembleMembership.class);
 			if (method != null)
-				result.membership = EnsembleParametrizedMethod
+				result.membership = ParameterizedMethod
 						.extractParametrizedMethod(method);
 			else
 				return null;
 			method = AnnotationHelper.getAnnotatedMethod(c,
 					DEECoEnsembleMapper.class);
 			if (method != null)
-				result.mapper = EnsembleParametrizedMethod
+				result.mapper = ParameterizedMethod
 						.extractParametrizedMethod(method);
 			else
 				return null;

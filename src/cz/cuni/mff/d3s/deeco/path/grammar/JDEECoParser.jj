@@ -25,6 +25,11 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+options {
+  STATIC = false;
+}
+
 PARSER_BEGIN(JDEECoParser)
 package cz.cuni.mff.d3s.deeco.path.grammar;
 import cz.cuni.mff.d3s.deeco.path.grammar.PNode;
@@ -52,12 +57,11 @@ TOKEN [ IGNORE_CASE ] :
 TOKEN :
 {
   < IDENTIFIER :
-    < LETTER >
     (
       < LETTER >
     | < DIGIT >
-    )* >
-| < #LETTER : [ "_", "a"-"z", "A"-"Z" ] >
+    )+ >
+| < #LETTER : [ "_", "-", "a"-"z", "A"-"Z" ] >
 | < #DIGIT : [ "0"-"9" ] >
 | < SEPARATOR : [ "." ] >
 | < OPEN : [ "[" ] >

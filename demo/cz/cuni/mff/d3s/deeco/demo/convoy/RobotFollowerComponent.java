@@ -23,8 +23,8 @@ import cz.cuni.mff.d3s.deeco.annotations.DEECoComponent;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoProcess;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoProcessIn;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoProcessInOut;
+import cz.cuni.mff.d3s.deeco.annotations.DEECoIn;
+import cz.cuni.mff.d3s.deeco.annotations.DEECoInOut;
 import cz.cuni.mff.d3s.deeco.annotations.ELockingMode;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 import cz.cuni.mff.d3s.deeco.knowledge.RootKnowledge;
@@ -53,9 +53,9 @@ public class RobotFollowerComponent extends RootKnowledge {
 
 	@DEECoProcess
 	@DEECoPeriodicScheduling(4000)
-	public static void process(@DEECoProcessInOut("path") Path path,
-			@DEECoProcessInOut("battery") OutWrapper<Integer> battery,
-			@DEECoProcessIn("convoyRobot") String convoyRobot) {
+	public static void process(@DEECoInOut("path") Path path,
+			@DEECoInOut("battery") OutWrapper<Integer> battery,
+			@DEECoIn("convoyRobot") String convoyRobot) {
 		if (convoyRobot != null && path.remainingPath.size() > 0) {
 				path.currentPosition = path.remainingPath.remove(0);
 				battery.item = new Integer(battery.item - 1);

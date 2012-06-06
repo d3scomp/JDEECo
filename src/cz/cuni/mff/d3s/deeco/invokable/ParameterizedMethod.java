@@ -16,20 +16,38 @@
 package cz.cuni.mff.d3s.deeco.invokable;
 
 import java.lang.reflect.Method;
+import java.util.List;
+
+import cz.cuni.mff.d3s.deeco.annotations.DEECoIn;
+import cz.cuni.mff.d3s.deeco.annotations.DEECoInOut;
+import cz.cuni.mff.d3s.deeco.annotations.DEECoOut;
+import cz.cuni.mff.d3s.deeco.path.grammar.ParseException;
 
 /**
- * Base class representing a parameterized method. 
+ * Base class representing a parameterized method.
  * 
  * @author Michal Kit
- *
+ * 
  */
 public class ParameterizedMethod {
 	public Method method;
-	
+	/**
+	 * Input parameters
+	 */
+	public List<Parameter> in;
+	/**
+	 * Input/Output parameters
+	 */
+	public List<Parameter> inOut;
+	/**
+	 * Output parameters
+	 */
+	public List<Parameter> out;
+
 	public ParameterizedMethod(Method method) {
 		this.method = method;
 	}
-	
+
 	/**
 	 * Invokes process method execution.
 	 * 
@@ -44,5 +62,29 @@ public class ParameterizedMethod {
 			System.out.println("Method invocation error: " + e.getMessage());
 			return null;
 		}
+	}
+	
+	public static synchronized ParameterizedMethod extractParametrizedMethod(
+			Method method) {
+		return extractParametrizedMethod(method, null);
+	}
+
+	public static synchronized ParameterizedMethod extractParametrizedMethod(
+			Method method, String root) {
+		try {
+			ParameterizedMethod result = null;
+			if (method != null) {
+				result = new ParameterizedMethod(method);
+				result.in = AnnotationHelper.getParameters(method,
+						DEECoIn.class, root);
+				result.out = AnnotationHelper.getParameters(method,
+						DEECoOut.class, root);
+				result.inOut = AnnotationHelper.getParameters(method,
+						DEECoInOut.class, root);
+			}
+			return result;
+		} catch (ParseException pe) {
+			return null;
+		} 
 	}
 }

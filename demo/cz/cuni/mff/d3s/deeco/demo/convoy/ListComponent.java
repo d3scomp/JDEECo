@@ -8,7 +8,7 @@ import java.util.Map;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoProcess;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoProcessIn;
+import cz.cuni.mff.d3s.deeco.annotations.DEECoIn;
 import cz.cuni.mff.d3s.deeco.knowledge.Knowledge;
 import cz.cuni.mff.d3s.deeco.knowledge.RootKnowledge;
 
@@ -37,7 +37,7 @@ public class ListComponent extends RootKnowledge {
 	 */
 	@DEECoPeriodicScheduling(2000)
 	@DEECoProcess
-	public static void process(@DEECoProcessIn("path") Map<String, Integer> lol) {
+	public static void process(@DEECoIn("path") Map<String, Integer> lol) {
 		System.out.println("lol retrieved");
 	}
 }

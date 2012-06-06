@@ -15,18 +15,10 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.demo.parkinglotbooking;
 
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import cz.cuni.mff.d3s.deeco.annotations.DEECoCoordinatorIn;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsemble;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsembleMapper;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsembleMembership;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoMemberIn;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoMemberOut;
+import cz.cuni.mff.d3s.deeco.annotations.DEECoIn;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
-import cz.cuni.mff.d3s.deeco.knowledge.Knowledge;
 
 /**
  * Sample car-park booking ensemble class.
@@ -49,8 +41,8 @@ public class BookingEnsemble extends RequestResponseEnsemble {
 
 	@DEECoEnsembleMembership
 	public static boolean membership(
-			@DEECoMemberIn("targetPosition") Position targetPosition,
-			@DEECoCoordinatorIn("position") Position position) {
+			@DEECoIn("member.targetPosition") Position targetPosition,
+			@DEECoIn("coord.position") Position position) {
 		return targetPosition.equals(position);
 	}
 

@@ -19,9 +19,8 @@ public class LocalLauncher {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Class[] classes = { RobotLeaderComponent.class,
-				RobotFollowerComponent.class };
-		Class[] ensembles = { ConvoyEnsemble.class };
+		Class[] classes = { RobotLeaderComponent.class, RobotFollowerComponent.class};
+		Class[] ensembles = {ConvoyEnsemble.class};
 		KnowledgeManager km = new RepositoryKnowledgeManager(
 				new LocalKnowledgeRepository());
 		Scheduler scheduler = new MultithreadedScheduler(km);

@@ -9,9 +9,9 @@ import cz.cuni.mff.d3s.deeco.annotations.DEECoComponent;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoProcess;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoProcessIn;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoProcessInOut;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoProcessOut;
+import cz.cuni.mff.d3s.deeco.annotations.DEECoIn;
+import cz.cuni.mff.d3s.deeco.annotations.DEECoInOut;
+import cz.cuni.mff.d3s.deeco.annotations.DEECoOut;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoTriggeredScheduling;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 import cz.cuni.mff.d3s.deeco.knowledge.RootKnowledge;
@@ -43,10 +43,10 @@ public class ParkingLot extends RootKnowledge {
 	@DEECoProcess
 	@DEECoTriggeredScheduling("incomingRequests[*]")
 	public static void processRequests(
-			@DEECoProcessInOut("scheduleItem") Map<ParkingPlaceId, List<ParkingLotScheduleItem> > schedule,					
-			@DEECoProcessIn("parkingPlaces") ParkingPlaceId[] parkingPlaces,
-			@DEECoProcessIn("incomingRequests[*]") Request incomingRequest,
-			@DEECoProcessOut("processedResponses") Map<UUID, Response> processedResponses
+			@DEECoInOut("scheduleItem") Map<ParkingPlaceId, List<ParkingLotScheduleItem> > schedule,					
+			@DEECoIn("parkingPlaces") ParkingPlaceId[] parkingPlaces,
+			@DEECoIn("incomingRequests[*]") Request incomingRequest,
+			@DEECoOut("processedResponses") Map<UUID, Response> processedResponses
 			) {
 		
 		System.out.printf("Processing request issued by %s on parking from %d to %d.\n",

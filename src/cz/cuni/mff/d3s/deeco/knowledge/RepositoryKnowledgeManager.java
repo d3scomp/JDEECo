@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.sun.jini.thread.NewThreadAction;
-
 import cz.cuni.mff.d3s.deeco.exceptions.KMAccessException;
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
 import cz.cuni.mff.d3s.deeco.exceptions.KMIllegalArgumentException;

@@ -109,7 +109,6 @@ public abstract class KnowledgeManager {
 	 */
 //	public abstract void listenForChange(String[] knowledgePaths,
 //			IKnowledgeChangeListener listener);
-
 	/**
 	 * Retrieves knowledge from the knowledge repository, defined by both
 	 * <code>knowledgePath</code> and <code>structure</code>.

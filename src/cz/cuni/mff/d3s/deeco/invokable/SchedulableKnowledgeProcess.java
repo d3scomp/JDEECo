@@ -39,10 +39,10 @@ import cz.cuni.mff.d3s.deeco.scheduling.ScheduleHelper;
  */
 public class SchedulableKnowledgeProcess extends SchedulableProcess {
 
-	private ProcessParametrizedMethod process;
+	private ParameterizedMethod process;
 	private ELockingMode lockingMode;
 
-	public SchedulableKnowledgeProcess(ProcessParametrizedMethod process,
+	public SchedulableKnowledgeProcess(ParameterizedMethod process,
 			ProcessSchedule scheduling, ELockingMode lockingMode,
 			KnowledgeManager km) {
 		super(scheduling, km);
@@ -88,10 +88,9 @@ public class SchedulableKnowledgeProcess extends SchedulableProcess {
 
 	private void evaluateMethod(ISession session) throws KMException {
 		Object[] processParameters = getParameterMethodValues(process.in,
-				process.inOut, process.out, process.root, null, session);
+				process.inOut, process.out, session);
 		process.invoke(processParameters);
-		putParameterMethodValues(processParameters, process.inOut, process.out,
-				process.root, session);
+		putParameterMethodValues(processParameters, process.inOut, process.out, session);
 	}
 
 	/**
@@ -115,12 +114,12 @@ public class SchedulableKnowledgeProcess extends SchedulableProcess {
 			result = new ArrayList<SchedulableKnowledgeProcess>();
 			List<Method> methods = AnnotationHelper.getAnnotatedMethods(c,
 					DEECoProcess.class);
-			ProcessParametrizedMethod currentMethod;
+			ParameterizedMethod currentMethod;
 			ProcessSchedule ps;
 			ELockingMode lm;
 			if (methods != null && methods.size() > 0) {
 				for (Method m : methods) {
-					currentMethod = ProcessParametrizedMethod
+					currentMethod = ParameterizedMethod
 							.extractParametrizedMethod(m, root);
 					if (currentMethod != null) {
 						ps = ScheduleHelper.getSchedule(AnnotationHelper

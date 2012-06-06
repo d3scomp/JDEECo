@@ -17,6 +17,8 @@ package cz.cuni.mff.d3s.deeco.invokable;
 
 import java.lang.reflect.Type;
 
+import cz.cuni.mff.d3s.deeco.path.grammar.KnowledgePath;
+
 
 /**
  * Class used to represent a method parameter.
@@ -26,12 +28,12 @@ import java.lang.reflect.Type;
  */
 public class Parameter {
 	
-	public String name;
+	public KnowledgePath kPath;
 	public Type type;
 	public int index;
 	
-	public Parameter(String name, Type type, int index) {
-		this.name = name;
+	public Parameter(KnowledgePath kPath, Type type, int index) {
+		this.kPath = kPath;
 		this.type = type;
 		this.index = index;
 	}

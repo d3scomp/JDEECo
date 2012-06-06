@@ -17,12 +17,11 @@ package cz.cuni.mff.d3s.deeco.demo.convoy;
 
 import java.util.List;
 
-import cz.cuni.mff.d3s.deeco.annotations.DEECoCoordinatorIn;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsemble;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsembleMapper;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsembleMembership;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoMemberIn;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoMemberOut;
+import cz.cuni.mff.d3s.deeco.annotations.DEECoIn;
+import cz.cuni.mff.d3s.deeco.annotations.DEECoOut;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.knowledge.Knowledge;
 
@@ -47,10 +46,10 @@ public class ConvoyEnsemble {
 	}
 
 	@DEECoEnsembleMembership
-	public static boolean membership(@DEECoMemberIn("id") String mId,
-			@DEECoMemberIn("path.remainingPath") List<Integer> mRemainingPath,
-			@DEECoCoordinatorIn("id") String cId,
-			@DEECoCoordinatorIn("path") EnsemblePath cPath) {
+	public static boolean membership(@DEECoIn("member.id") String mId,
+			@DEECoIn("member.path.remainingPath") List<Integer> mRemainingPath,
+			@DEECoIn("coord.id") String cId,
+			@DEECoIn("coord.path") EnsemblePath cPath) {
 		if (!mId.equals(cId)) {
 			return mRemainingPath.size() > 0
 					&& cPath.remainingPath.size() > 0
@@ -61,8 +60,8 @@ public class ConvoyEnsemble {
 	}
 
 	@DEECoEnsembleMapper
-	public static void map(@DEECoMemberOut ConvoyOutInterface mOutCR,
-			@DEECoCoordinatorIn("path.remainingPath") List<Integer> cRemainingPath) {
+	public static void map(@DEECoOut("member") ConvoyOutInterface mOutCR,
+			@DEECoIn("coord.path.remainingPath") List<Integer> cRemainingPath) {
 		mOutCR.convoyRobot = "1";
 	}
 

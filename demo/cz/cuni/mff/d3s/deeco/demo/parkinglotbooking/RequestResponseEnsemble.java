@@ -18,12 +18,10 @@ package cz.cuni.mff.d3s.deeco.demo.parkinglotbooking;
 import java.util.Map;
 import java.util.UUID;
 
-import cz.cuni.mff.d3s.deeco.annotations.DEECoCoordinatorIn;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoCoordinatorOut;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsemble;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsembleMapper;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoMemberIn;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoMemberOut;
+import cz.cuni.mff.d3s.deeco.annotations.DEECoIn;
+import cz.cuni.mff.d3s.deeco.annotations.DEECoOut;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.knowledge.Knowledge;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
@@ -51,10 +49,10 @@ public class RequestResponseEnsemble {
 
 	@DEECoEnsembleMapper
 	public static void map(
-			@DEECoMemberIn("member.request") Request request, 
-			@DEECoMemberOut("member.response") OutWrapper<Response> response,
-			@DEECoCoordinatorOut("coord.incomingRequests[member.request.requestId]") OutWrapper<Request> incomingRequest, 
-			@DEECoCoordinatorIn("coord.processedResponses[member.request.requestId]") Response processedResponse) {
+			@DEECoIn("member.request") Request request, 
+			@DEECoOut("member.response") OutWrapper<Response> response,
+			@DEECoOut("coord.incomingRequests[member.request.requestId]") OutWrapper<Request> incomingRequest, 
+			@DEECoIn("coord.processedResponses[member.request.requestId]") Response processedResponse) {
 		incomingRequest.item = request;
 		if (processedResponse != null)
 			response.item = processedResponse;

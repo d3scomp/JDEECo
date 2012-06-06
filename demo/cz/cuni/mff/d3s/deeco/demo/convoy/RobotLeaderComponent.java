@@ -23,7 +23,7 @@ import cz.cuni.mff.d3s.deeco.annotations.DEECoComponent;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoProcess;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoProcessInOut;
+import cz.cuni.mff.d3s.deeco.annotations.DEECoInOut;
 import cz.cuni.mff.d3s.deeco.annotations.ELockingMode;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 import cz.cuni.mff.d3s.deeco.knowledge.RootKnowledge;
@@ -55,8 +55,8 @@ public class RobotLeaderComponent extends RootKnowledge {
 	 */
 	@DEECoPeriodicScheduling(5000)
 	@DEECoProcess
-	public static void process(@DEECoProcessInOut("path") Path path,
-			@DEECoProcessInOut("battery") OutWrapper<Integer> battery) {
+	public static void process(@DEECoInOut("path") Path path,
+			@DEECoInOut("battery") OutWrapper<Integer> battery) {
 		if (path.remainingPath.size() > 0) {
 			path.currentPosition = path.remainingPath.remove(0);
 			battery.item = new Integer(battery.item - 1);

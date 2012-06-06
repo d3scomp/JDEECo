@@ -21,19 +21,20 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * DEECoCoordinatorInOut is used to mark a method parameter as both coordinator
- * input and coordinator output parameter, which is used when evaluating an
- * ensemble. Such parameter will be retrieved form the knowledge repository for
- * method computation and stored back when it finishes.
+ * Used to mark a method parameter to be both process input and process output
+ * parameter, which is later used when invoking a component process. Such
+ * parameter will be retrieved form the knowledge repository for method
+ * computation and stored back when it finishes.
  * 
- * The attribute <code>value</code> is dot separated absolute path, describing the nesting
- * in the component knowledge for which matching should be performed.
+ * The attribute <code>value</code> is dot separated absolute path, describing
+ * the nesting in the component knowledge for which matching should be
+ * performed.
  * 
  * @author Michal Kit
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
-public @interface DEECoCoordinatorInOut {
+public @interface DEECoInOut {
 	String value() default "";
 }

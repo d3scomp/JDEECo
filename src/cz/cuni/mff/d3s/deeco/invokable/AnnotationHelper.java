@@ -23,6 +23,8 @@ import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.annotations.AnnotationProxy;
 import cz.cuni.mff.d3s.deeco.annotations.IValuedAnnotation;
+import cz.cuni.mff.d3s.deeco.path.grammar.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.path.grammar.ParseException;
 
 /**
  * AnnotationHelper provides static methods which are used for annotation
@@ -112,38 +114,44 @@ public class AnnotationHelper {
 	 * @param annotationClass
 	 *            class of annotation that should be considered during the
 	 *            parsing
+	 * @param root
+	 *            process owner id
 	 * @return list of {@link Parameter} instances which fulfills search
 	 *         criteria.
+	 * @throws ParseException
 	 * 
 	 * @see Parameter
 	 */
 	public static List<Parameter> getParameters(Method method,
-			Class annotationClass) {
+			Class annotationClass, String root) throws ParseException {
 		List<Parameter> result = new ArrayList<Parameter>();
 		Annotation[][] allAnnotations = method.getParameterAnnotations();
-		Type [] parameterTypes = method.getGenericParameterTypes();
+		Type[] parameterTypes = method.getGenericParameterTypes();
 		Annotation currentAnnotation;
-		Parameter currentProperty;
+		Parameter currentParameter;
 		Annotation[] parameterAnnotations;
+
 		for (int i = 0; i < parameterTypes.length; i++) {
 			parameterAnnotations = allAnnotations[i];
 			currentAnnotation = getAnnotation(annotationClass,
 					parameterAnnotations);
 			if (currentAnnotation != null) {
-				currentProperty = parseNamedAnnotation(currentAnnotation,
-						parameterTypes[i], i);
-				if (currentProperty != null)
-					result.add(currentProperty);
+				currentParameter = parseNamedAnnotation(currentAnnotation,
+						parameterTypes[i], i, root);
+				if (currentParameter != null)
+					result.add(currentParameter);
 			}
 		}
 		return result;
 	}
 
 	private static Parameter parseNamedAnnotation(Annotation annotation,
-			Type type, int index) {
+			Type type, int index, String root) throws ParseException {
 		IValuedAnnotation namedAnnotation = (IValuedAnnotation) AnnotationProxy
 				.implement(IValuedAnnotation.class, annotation);
-		return new Parameter(namedAnnotation.value(), type, index);
+		KnowledgePath kPath = new KnowledgePath(namedAnnotation.value());
+		if (root != null && !root.equals(""))
+			kPath.prependKnowledgePath(root);
+		return new Parameter(kPath, type, index);
 	}
-
 }

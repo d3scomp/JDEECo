@@ -10,9 +10,9 @@ import cz.cuni.mff.d3s.deeco.annotations.DEECoComponent;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoProcess;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoProcessIn;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoProcessInOut;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoProcessOut;
+import cz.cuni.mff.d3s.deeco.annotations.DEECoIn;
+import cz.cuni.mff.d3s.deeco.annotations.DEECoInOut;
+import cz.cuni.mff.d3s.deeco.annotations.DEECoOut;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 import cz.cuni.mff.d3s.deeco.knowledge.RootKnowledge;
 
@@ -48,9 +48,9 @@ public class CarPlanner extends RootKnowledge {
 	@DEECoProcess
 	@DEECoPeriodicScheduling(500)
 	public static void requestParkingPlaceForCurrentTarget(
-			@DEECoProcessIn("carId") CarId carId,
-			@DEECoProcessIn("currentScheduleTarget") CarScheduleItem currentScheduleTarget,
-			@DEECoProcessInOut("request") OutWrapper<Request> request
+			@DEECoIn("carId") CarId carId,
+			@DEECoIn("currentScheduleTarget") CarScheduleItem currentScheduleTarget,
+			@DEECoInOut("request") OutWrapper<Request> request
 			) {
 		
 		boolean isRequestActual = false;
@@ -72,10 +72,10 @@ public class CarPlanner extends RootKnowledge {
 	@DEECoProcess
 	@DEECoPeriodicScheduling(500)
 	public static void moveIfParkingPlaceBooked(
-			@DEECoProcessIn("response") Response response,
-			@DEECoProcessIn("request") Request request,
-			@DEECoProcessIn("currentScheduleTarget") CarScheduleItem currentScheduleTarget,
-			@DEECoProcessInOut("position") OutWrapper<Position> position
+			@DEECoIn("response") Response response,
+			@DEECoIn("request") Request request,
+			@DEECoIn("currentScheduleTarget") CarScheduleItem currentScheduleTarget,
+			@DEECoInOut("position") OutWrapper<Position> position
 			) {
 		// if the parking lot acknowledged the parking place, move to the target
 		if ((response != null) && (response.matchesRequest(request)) 

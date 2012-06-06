@@ -45,29 +45,24 @@ public abstract class SchedulableProcess {
 	}
 
 	protected Object[] getParameterMethodValues(List<Parameter> in,
-			List<Parameter> inOut, List<Parameter> out, String root)
-			throws KMException {
-		return getParameterMethodValues(in, out, inOut, root, null);
-	}
-	
-	protected Object[] getParameterMethodValues(List<Parameter> in,
-			List<Parameter> inOut, List<Parameter> out, String root, Object [] target)
-			throws KMException {
-		return getParameterMethodValues(in, out, inOut, root, target, null);
+			List<Parameter> inOut, List<Parameter> out) throws KMException {
+		return getParameterMethodValues(in, out, inOut, null, null, null);
 	}
 
 	protected Object[] getParameterMethodValues(List<Parameter> in,
-			List<Parameter> inOut, List<Parameter> out, String root, Object [] target,
-			ISession session) throws KMException {
+			List<Parameter> inOut, List<Parameter> out, ISession session)
+			throws KMException {
+		return getParameterMethodValues(in, inOut, out, session, null, null);
+	}
+
+	protected Object[] getParameterMethodValues(List<Parameter> in,
+			List<Parameter> inOut, List<Parameter> out, ISession session,
+			String coordinator, String member) throws KMException {
 		List<Parameter> parameters = new ArrayList<Parameter>();
 		parameters.addAll(in);
 		parameters.addAll(inOut);
-		Object[] result;
-		if (target == null)
-			result = new Object[parameters.size()
+		Object[] result = new Object[parameters.size()
 				+ ((out != null) ? out.size() : 0)];
-		else 
-			result = target;
 		ISession localSession;
 		if (session == null) {
 			localSession = km.createSession();
@@ -76,11 +71,10 @@ public abstract class SchedulableProcess {
 			localSession = session;
 		try {
 			while (localSession.repeat()) {
-				for (Parameter p: parameters) {
-					result[p.index] = km.getKnowledge(
-							KPBuilder.appendToRoot(root, p.name), p.type,
+				for (Parameter p : parameters) {
+					result[p.index] = km.getKnowledge(p.kPath.getEvaluatedPath(
+							km, coordinator, member, localSession), p.type,
 							localSession);
-
 				}
 				if (session == null)
 					localSession.end();
@@ -115,8 +109,14 @@ public abstract class SchedulableProcess {
 	 *            knowledge level for which parameters should stored.
 	 */
 	protected void putParameterMethodValues(Object[] parameterValues,
-			List<Parameter> inOut, List<Parameter> out, String root) {
-		putParameterMethodValues(parameterValues, out, inOut, root, null);
+			List<Parameter> inOut, List<Parameter> out) {
+		putParameterMethodValues(parameterValues, out, inOut, null, null, null);
+	}
+
+	protected void putParameterMethodValues(Object[] parameterValues,
+			List<Parameter> inOut, List<Parameter> out, ISession session) {
+		putParameterMethodValues(parameterValues, out, inOut, session, null,
+				null);
 	}
 
 	/**
@@ -136,8 +136,8 @@ public abstract class SchedulableProcess {
 	 *            should be performed.
 	 */
 	protected void putParameterMethodValues(Object[] parameterValues,
-			List<Parameter> inOut, List<Parameter> out, String root,
-			ISession session) {
+			List<Parameter> inOut, List<Parameter> out, ISession session,
+			String coordinator, String member) {
 		if (parameterValues != null) {
 			List<Parameter> parameters = new ArrayList<Parameter>();
 			parameters.addAll(out);
@@ -154,9 +154,9 @@ public abstract class SchedulableProcess {
 				while (localSession.repeat()) {
 					for (Parameter p : parameters) {
 						value = parameterValues[p.index];
-						completeName = KPBuilder.appendToRoot(root, p.name);
-						km.putKnowledge(completeName, value, p.type,
-								localSession);
+						km.putKnowledge(p.kPath.getEvaluatedPath(km,
+								coordinator, member, localSession), value,
+								p.type, localSession);
 					}
 					if (session == null)
 						localSession.end();
@@ -168,7 +168,7 @@ public abstract class SchedulableProcess {
 			}
 		}
 	}
-	
+
 	/**
 	 * Checks if the process has periodic scheduling.
 	 * 
@@ -177,7 +177,7 @@ public abstract class SchedulableProcess {
 	public boolean isPeriodic() {
 		return scheduling instanceof ProcessPeriodicSchedule;
 	}
-	
+
 	/**
 	 * Checks if the process has triggered scheduling.
 	 * 
