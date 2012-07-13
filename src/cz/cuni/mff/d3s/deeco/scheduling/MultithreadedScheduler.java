@@ -2,15 +2,18 @@ package cz.cuni.mff.d3s.deeco.scheduling;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
+import cz.cuni.mff.d3s.deeco.invokable.TriggeredSchedulableProcess;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 
-public class MultithreadedScheduler extends Scheduler implements
-		IKnowledgeChangeListener {
+public class MultithreadedScheduler extends Scheduler {
 
 	protected KnowledgeManager km;
 	private Map<SchedulableProcess, ScheduledExecutorService> threads;
@@ -24,13 +27,12 @@ public class MultithreadedScheduler extends Scheduler implements
 	@Override
 	public void start() {
 		if (!running) {
-			for (SchedulableProcess sp : processes) {
-				if (sp.isTriggered()) {
-					// TODO register listener in km.
-				} else if (sp.isPeriodic()) {
-					startPeriodicProcess(sp,
-							((ProcessPeriodicSchedule) sp.scheduling).interval);
-				}
+			for (SchedulableProcess sp : periodicProcesses) {
+				startPeriodicProcess(sp,
+						((ProcessPeriodicSchedule) sp.scheduling).interval);
+			}
+			for (TriggeredSchedulableProcess tsp : triggeredProcesses) {
+				km.listenForChange(tsp);
 			}
 		}
 	}
@@ -38,19 +40,19 @@ public class MultithreadedScheduler extends Scheduler implements
 	@Override
 	public void stop() {
 		if (running) {
-			for (SchedulableProcess sp : processes) {
-				if (sp.isTriggered()) {
-					// TODO unregister listener from km.
-				} else if (sp.isPeriodic()) {
-					threads.get(sp).shutdown();
-				}
+			for (SchedulableProcess sp : periodicProcesses) {
+				threads.get(sp).shutdown();
+			}
+			for (TriggeredSchedulableProcess tsp : triggeredProcesses) {
+				// unregister tsp
 			}
 		}
 	}
 
 	private void startPeriodicProcess(SchedulableProcess process, long period) {
 		ScheduledExecutorService ses = Executors.newScheduledThreadPool(1);
-		ses.scheduleAtFixedRate(new PeriodicProcessThread(process) , 0, period, TimeUnit.MILLISECONDS);
+		ses.scheduleAtFixedRate(new PeriodicProcessThread(process), 0, period,
+				TimeUnit.MILLISECONDS);
 		threads.put(process, ses);
 	}
 
@@ -64,14 +66,12 @@ public class MultithreadedScheduler extends Scheduler implements
 
 		@Override
 		public void run() {
-			process.invoke();
+			try {
+				process.invoke();
+			} catch (Exception e) {
+				System.out.println("Process scheduled exception!");
+			}
 		}
-
-	}
-
-	@Override
-	public void knowledgeChanged(String knowledgePathChanged) {
-
 	}
 
 }

@@ -24,6 +24,7 @@ import cz.cuni.mff.d3s.deeco.exceptions.KnowledgeRepositoryException;
 import cz.cuni.mff.d3s.deeco.exceptions.UnavailableEntryException;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeRepository;
+import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
 
 /**
  * Implementation of the knowledge repository using a hashmap. This implementation allows only for local execution.
@@ -120,6 +121,11 @@ public class LocalKnowledgeRepository extends KnowledgeRepository {
 	@Override
 	public ISession createSession() {
 		return new LocalSession(this);
+	}
+
+	@Override
+	public boolean listenForChange(IKnowledgeChangeListener listener) {
+		return false;
 	}
 
 }

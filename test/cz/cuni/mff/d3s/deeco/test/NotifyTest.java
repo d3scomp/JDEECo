@@ -15,14 +15,16 @@ public class NotifyTest {
 		if (System.getSecurityManager() == null)
 			System.setSecurityManager(new RMISecurityManager());
 		try {
-			MyRemoteEventListener mrel = new MyRemoteEventListener();
 			JavaSpace05 space = TSUtils.getSpace();
 			space.write(TSUtils.createTuple("a.b", new Integer(333)), null,
 					Lease.FOREVER);
-			space.registerForAvailabilityEvent(Arrays.asList(TSUtils.createTemplate("a.b")), null, true,
-					mrel.getStub(), Lease.FOREVER,
+			space.registerForAvailabilityEvent(
+					Arrays.asList(TSUtils.createTemplate("a.b")), null, true,
+					TSRemoteEventListener.getRemoteEventListener(),
+					Lease.FOREVER,
 					new MarshalledObject<Integer>(new Integer(1)));
-			Tuple t = (Tuple) space.take(TSUtils.createTemplate("a.b"), null, 0);
+			Tuple t = (Tuple) space
+					.take(TSUtils.createTemplate("a.b"), null, 0);
 			System.out.println(t);
 		} catch (Exception e) {
 			System.out.println("error");

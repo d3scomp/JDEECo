@@ -28,14 +28,15 @@ public class ConstantKeys {
 	 * Defines the field name for the root knowledge unique identifier in the
 	 * RootKnowledge class.
 	 */
-	public static final String ROOT_KNOWLEDGE_ID_FIELD = "id";
+	public static final String ROOT_KNOWLEDGE_ID = "id";
 	/**
 	 * Defines key field name for storing and retrieving key set for map and
 	 * collections.
 	 */
 	public static final String TRAVERSABLE_KEYS_ID = "#colKeys";
 	/**
-	 * Defines identifier used in the knowledge repository to store knowledge class definition.
+	 * Defines identifier used in the knowledge repository to store knowledge
+	 * class definition.
 	 */
 	public static final String CLASS_ID = "#class";
 	/**
@@ -43,5 +44,11 @@ public class ConstantKeys {
 	 * collections.
 	 */
 	public static final String TRAVERSABLE_ELEMENT_CLASS_ID = "#colElementClass";
+
+	/**
+	 * Key that is prepended to the knowledge path to point out that should be
+	 * listened for.
+	 */
+	public static final String LISTEN_ID = "#listen";
 
 }

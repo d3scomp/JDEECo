@@ -20,12 +20,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.annotations.DEECoComponent;
+import cz.cuni.mff.d3s.deeco.annotations.DEECoIn;
+import cz.cuni.mff.d3s.deeco.annotations.DEECoInOut;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoProcess;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoIn;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoInOut;
-import cz.cuni.mff.d3s.deeco.annotations.ELockingMode;
+import cz.cuni.mff.d3s.deeco.annotations.DEECoTriggered;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 import cz.cuni.mff.d3s.deeco.knowledge.RootKnowledge;
 
@@ -40,26 +40,27 @@ public class RobotFollowerComponent extends RootKnowledge {
 	@DEECoInitialize
 	public static RootKnowledge getInitialKnowledge() {
 		RobotFollowerComponent k = new RobotFollowerComponent();
+		k.id = "follower";
 		k.battery = new Integer(100);
 		k.path = new Path();
 		k.path.currentPosition = new Integer(1);
-		k.path.remainingPath = new ArrayList<Integer>(Arrays.asList(new Integer[] { new Integer(2),
-				new Integer(3), new Integer(4), new Integer(5), new Integer(6),
-				new Integer(7), new Integer(8), new Integer(9)}));
+		k.path.remainingPath = new ArrayList<Integer>(
+				Arrays.asList(new Integer[] { new Integer(2), new Integer(3),
+						new Integer(4), new Integer(5), new Integer(6),
+						new Integer(7), new Integer(8), new Integer(9) }));
 		k.convoyRobot = null;
 		k.crossingRobots = null;
 		return k;
 	}
 
 	@DEECoProcess
-	@DEECoPeriodicScheduling(4000)
 	public static void process(@DEECoInOut("path") Path path,
 			@DEECoInOut("battery") OutWrapper<Integer> battery,
-			@DEECoIn("convoyRobot") String convoyRobot) {
+			@DEECoIn("convoyRobot") @DEECoTriggered String convoyRobot) {
 		if (convoyRobot != null && path.remainingPath.size() > 0) {
-				path.currentPosition = path.remainingPath.remove(0);
-				battery.item = new Integer(battery.item - 1);
-				System.out.println("Follower is moving: " + path.remainingPath);
+			path.currentPosition = path.remainingPath.remove(0);
+			battery.item = new Integer(battery.item - 1);
+			System.out.println("Follower is moving: " + path.remainingPath);
 		}
 	}
 }

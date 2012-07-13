@@ -155,12 +155,16 @@ public class AnnotationHelper {
 		}
 		return result;
 	}
+	
+	public static Object getAnnotationValue(Annotation annotation) {
+		IValuedAnnotation valuedAnnotation = (IValuedAnnotation) AnnotationProxy
+				.implement(IValuedAnnotation.class, annotation);
+		return valuedAnnotation.value();
+	}
 
 	private static Parameter parseNamedAnnotation(Annotation annotation,
 			Type type, int index, String root) throws ParseException {
-		IValuedAnnotation namedAnnotation = (IValuedAnnotation) AnnotationProxy
-				.implement(IValuedAnnotation.class, annotation);
-		KnowledgePath kPath = new KnowledgePath(namedAnnotation.value());
+		KnowledgePath kPath = new KnowledgePath((String) getAnnotationValue(annotation));
 		if (root != null && !root.equals(""))
 			kPath.prependKnowledgePath(root);
 		return new Parameter(kPath, type, index);

@@ -24,5 +24,5 @@ package cz.cuni.mff.d3s.deeco.annotations;
  * 
  */
 public interface IValuedAnnotation {
-	public String value();
+	public Object value();
 }

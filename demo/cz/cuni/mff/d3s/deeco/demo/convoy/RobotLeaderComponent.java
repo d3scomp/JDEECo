@@ -39,6 +39,7 @@ public class RobotLeaderComponent extends RootKnowledge {
 	@DEECoInitialize
 	public static RootKnowledge getInitialKnowledge() {
 		RobotLeaderComponent k = new RobotLeaderComponent();
+		k.id = "leader";
 		k.battery = new Integer(100);
 		k.path = new Path();
 		k.path.currentPosition = new Integer(0);
@@ -53,7 +54,7 @@ public class RobotLeaderComponent extends RootKnowledge {
 	/*
 	 * Input: path, crossingRobots, convoyRobot Output: path
 	 */
-	@DEECoPeriodicScheduling(5000)
+	@DEECoPeriodicScheduling(8000)
 	@DEECoProcess
 	public static void process(@DEECoInOut("path") Path path,
 			@DEECoInOut("battery") OutWrapper<Integer> battery) {

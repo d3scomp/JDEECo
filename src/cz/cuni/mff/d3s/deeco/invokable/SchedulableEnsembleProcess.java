@@ -20,8 +20,8 @@ import java.lang.reflect.Method;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsembleMapper;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsembleMembership;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
-import cz.cuni.mff.d3s.deeco.exceptions.KMAccessException;
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
+import cz.cuni.mff.d3s.deeco.exceptions.KMNotExistentException;
 import cz.cuni.mff.d3s.deeco.exceptions.SessionException;
 import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
@@ -40,7 +40,7 @@ import cz.cuni.mff.d3s.deeco.scheduling.ScheduleHelper;
 public class SchedulableEnsembleProcess extends SchedulableProcess {
 
 	private ParameterizedMethod mapper;
-	private ParameterizedMethod membership;
+	private Membership membership;
 
 	/**
 	 * Returns <code>SchedulableEnsembleProcess</code> instance for specified
@@ -74,7 +74,7 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 	 *            instance of the knowledge manager that is used for parameter
 	 *            retrieval
 	 */
-	public SchedulableEnsembleProcess(ParameterizedMethod membership,
+	public SchedulableEnsembleProcess(Membership membership,
 			ParameterizedMethod mapper, KnowledgeManager km) {
 		this(km);
 		this.membership = membership;
@@ -88,54 +88,51 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 	 */
 	@Override
 	public void invoke() {
+		Object[] parameters;
+		ISession localSession = null;
 		try {
-			ISession session = km.createSession();
-			Object[] ids = null;
-			session.begin();
-			while (session.repeat()) {
-				ids = (Object[]) km.getKnowledge(
-						ConstantKeys.ROOT_KNOWLEDGE_ID_FIELD, null, session);
-				session.end();
-			}
-			Object[] parameters;
+			//System.out.println("Ensembling starts");
+			Object[] ids = (Object[]) km.getKnowledge(
+					ConstantKeys.ROOT_KNOWLEDGE_ID, null, null);
 			cloop: for (Object oid : ids) {
 				mloop: for (Object iid : ids) {
-					session = km.createSession();
-					session.begin();
-					while (session.repeat()) {
+					localSession = km.createSession();
+					localSession.begin();
+					while (localSession.repeat()) {
 						try {
 							parameters = getParameterMethodValues(
-									membership.in, membership.inOut,
-									membership.out, session, (String) oid,
-									(String) iid);
+									membership.getIn(), membership.getInOut(),
+									membership.getOut(), localSession,
+									(String) oid, (String) iid);
 							if (evaluateMembership(parameters)) {
 								parameters = getParameterMethodValues(
 										mapper.in, mapper.inOut, mapper.out,
-										session, (String) oid, (String) iid);
+										localSession, (String) oid,
+										(String) iid);
 								evaluateMapper(parameters);
 								putParameterMethodValues(parameters,
-										mapper.inOut, mapper.out, session,
+										mapper.inOut, mapper.out, localSession,
 										(String) oid, (String) iid);
 							}
-						} catch (KMAccessException kme) {
-							try {
-								session.cancel();
-							} catch (SessionException se) {
-							}
+						} catch (KMNotExistentException kmnee) {
+							localSession.cancel();
 							continue mloop;
 						}
-						session.end();
+						localSession.end();
 					}
 				}
 			}
-		} catch (Exception kme) {
+			//System.out.println("Ensembling ends");
+		} catch (KMException kme) {
+			if (localSession != null)
+				localSession.cancel();
 			return;
 		}
 	}
 
 	private boolean evaluateMembership(Object[] params) {
 		try {
-			return (Boolean) membership.invoke(params);
+			return (Boolean) membership.membership(params);
 		} catch (Exception e) {
 			System.out.println("Ensemble membership exception! - "
 					+ e.getMessage());
@@ -175,12 +172,20 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 			Method method = AnnotationHelper.getAnnotatedMethod(c,
 					DEECoEnsembleMembership.class);
 			if (method != null) {
-				result.membership = ParameterizedMethod
+				ParameterizedMethod pm = ParameterizedMethod
 						.extractParametrizedMethod(method);
+				if (method.getReturnType().isAssignableFrom(double.class))
+					result.membership = new FuzzyMembership(
+							pm,
+							(Double) AnnotationHelper.getAnnotationValue(method
+									.getAnnotation(DEECoEnsembleMembership.class)));
+				else
+					result.membership = new BooleanMembership(pm);
 				if (pSchedule == null) {// not periodic
 					pSchedule = ScheduleHelper.getTriggeredSchedule(
 							method.getParameterAnnotations(),
-							result.membership.in, result.membership.inOut);
+							result.membership.getIn(),
+							result.membership.getInOut());
 					if (pSchedule == null)
 						result.scheduling = new ProcessPeriodicSchedule();
 					else

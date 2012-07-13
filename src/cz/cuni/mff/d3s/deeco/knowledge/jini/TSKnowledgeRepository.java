@@ -16,11 +16,15 @@
 package cz.cuni.mff.d3s.deeco.knowledge.jini;
 
 import java.rmi.RMISecurityManager;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import net.jini.core.lease.Lease;
 import net.jini.core.transaction.Transaction;
@@ -29,8 +33,11 @@ import net.jini.space.JavaSpace05;
 import net.jini.space.MatchSet;
 import cz.cuni.mff.d3s.deeco.exceptions.KnowledgeRepositoryException;
 import cz.cuni.mff.d3s.deeco.exceptions.UnavailableEntryException;
+import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
+import cz.cuni.mff.d3s.deeco.knowledge.KPBuilder;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeRepository;
+import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
 
 /**
  * Class implementing <code>KnowledgeRepository</code> with use of tuple spaces
@@ -41,9 +48,12 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeRepository;
  */
 public class TSKnowledgeRepository extends KnowledgeRepository {
 
+	private Map<String, TSRemoteEventListener> tsListeners;
+
 	public TSKnowledgeRepository() {
 		if (System.getSecurityManager() == null)
 			System.setSecurityManager(new RMISecurityManager());
+		tsListeners = new HashMap<String, TSRemoteEventListener>();
 	}
 
 	/*
@@ -70,7 +80,7 @@ public class TSKnowledgeRepository extends KnowledgeRepository {
 					"TSKnowledgeRepository error when reading property: "
 							+ entryKey + " - " + e.getMessage());
 		}
-		
+
 		if (tuple == null)
 			throw new UnavailableEntryException("Entry " + entryKey
 					+ " unavailable!");
@@ -92,6 +102,9 @@ public class TSKnowledgeRepository extends KnowledgeRepository {
 			Transaction tx = (session != null) ? ((TransactionalSession) session)
 					.getTransaction() : null;
 			space.write(TSUtils.createTuple(entryKey, value), tx, Lease.FOREVER);
+			//System.out.println("Writing entry: " + entryKey);
+			if (session != null)
+				((TransactionalSession) session).propertyChanged(entryKey, this);
 		} catch (Exception e) {
 			throw new KnowledgeRepositoryException(
 					"TSKnowledgeRepository error when writing property: "
@@ -111,7 +124,7 @@ public class TSKnowledgeRepository extends KnowledgeRepository {
 			throws KnowledgeRepositoryException, UnavailableEntryException {
 
 		Tuple tuple = null;
-		
+
 		try {
 			JavaSpace space = TSUtils.getSpace();
 			Transaction tx = (session != null) ? ((TransactionalSession) session)
@@ -205,5 +218,57 @@ public class TSKnowledgeRepository extends KnowledgeRepository {
 	@Override
 	public ISession createSession() {
 		return new TransactionalSession();
+	}
+
+	@Override
+	public boolean listenForChange(IKnowledgeChangeListener kcListener) {
+		if (kcListener != null) {
+			TSRemoteEventListener tsListener;
+			for (String kp : kcListener.getKnowledgePaths()) {
+				tsListener = tsListeners.get(kp);
+				if (tsListener == null) {
+					tsListener = TSRemoteEventListener.getRemoteEventListener(this);
+					tsListeners.put(kp, tsListener);
+					try {
+						addTSNotifier(kp, tsListener);
+					} catch (Exception e) {
+						return false;
+					}
+				}
+				tsListener.addKCListener(kcListener);
+			}
+			return true;
+		}
+		return false;
+	}
+
+	private void addTSNotifier(String kp, TSRemoteEventListener tsListener)
+			throws KnowledgeRepositoryException {
+		try {
+			JavaSpace05 space = TSUtils.getSpace();
+			String fullListenPath = KPBuilder.prependToRoot(kp,
+					ConstantKeys.LISTEN_ID);
+			Tuple t;
+			TransactionalSession ts = (TransactionalSession) createSession();
+			ts.begin();
+			while (ts.repeat()) {
+				t = (Tuple) space.readIfExists(
+						TSUtils.createTemplate(fullListenPath),
+						ts.getTransaction(), Lease.FOREVER);
+				if (t == null) {
+					space.write(TSUtils.createTuple(fullListenPath, "1"),
+							ts.getTransaction(), Lease.FOREVER);
+				}
+				ts.end();
+			}
+			space.registerForAvailabilityEvent(
+					Arrays.asList(new Tuple[] { TSUtils.createTemplate(fullListenPath) }), null, true,
+					tsListener.getStub(), Lease.FOREVER, null);
+			System.out.println("Listener added: " + fullListenPath);
+		} catch (Exception e) {
+			throw new KnowledgeRepositoryException(
+					"TSKnowledgeRepository error when adding a listener for the property: "
+							+ kp + " - " + e.getMessage());
+		}
 	}
 }

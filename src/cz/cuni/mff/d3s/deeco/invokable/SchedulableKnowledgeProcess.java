@@ -56,8 +56,8 @@ public class SchedulableKnowledgeProcess extends SchedulableProcess {
 	 */
 	@Override
 	public void invoke() {
+		//System.out.println("Component process starts - " + this.toString());
 		try {
-
 			if (lockingMode.equals(ELockingMode.STRONG)) {
 				ISession session = km.createSession();
 				session.begin();
@@ -66,19 +66,21 @@ public class SchedulableKnowledgeProcess extends SchedulableProcess {
 						evaluateMethod(session);
 						session.end();
 					}
-				} catch (Exception e) {
+				} catch (KMException e) {
 					System.out.println(e.getMessage());
-					try {
-						session.cancel();
-					} catch (SessionException se) {
-					}
+					session.cancel();
 				}
 			} else {
-				evaluateMethod();
+				try {
+					evaluateMethod();
+				} catch (KMException kme) {
+					System.out.println("SKP message - " + kme.getMessage());
+				}
 			}
-		} catch (KMException kme) {
-			System.out.println(kme.getMessage());
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
 		}
+		//System.out.println("Component process ends - " + this.toString());
 	}
 
 	private void evaluateMethod() throws KMException {

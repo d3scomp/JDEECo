@@ -41,4 +41,18 @@ public class KPBuilder {
 			return root;
 		return root + PATH_DELIMITER + tail;
 	}
+
+	public static String prependToRoot(String root, String head) {
+		if (root == null || root.equals(""))
+			return head;
+		if (head == null || head.equals(""))
+			return root;
+		return head + PATH_DELIMITER + root;
+	}
+
+	public static String[] decomposePath(String knowledgePath) {
+		if (knowledgePath == null || knowledgePath.equals(""))
+			return new String[] {};
+		return knowledgePath.split("\\"+PATH_DELIMITER);
+	}
 }

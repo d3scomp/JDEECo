@@ -1,6 +1,5 @@
 package cz.cuni.mff.d3s.deeco.knowledge.local;
 
-import cz.cuni.mff.d3s.deeco.exceptions.SessionException;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 
 class LocalSession implements ISession {
@@ -18,13 +17,13 @@ class LocalSession implements ISession {
 	}
 
 	@Override
-	public void end() throws SessionException {
+	public void end() {
 		kr.lock.unlock();
 		succeeded = true;
 	}
 
 	@Override
-	public void cancel() throws SessionException {
+	public void cancel() {
 		kr.lock.unlock();
 	}
 

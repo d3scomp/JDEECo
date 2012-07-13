@@ -15,9 +15,9 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.knowledge.jini;
 
-import cz.cuni.mff.d3s.deeco.exceptions.SessionException;
-import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import net.jini.core.transaction.Transaction;
+import cz.cuni.mff.d3s.deeco.knowledge.ISession;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeRepository;
 
 /**
  * Class implementing session functionalities, using transaction.
@@ -27,11 +27,13 @@ import net.jini.core.transaction.Transaction;
  */
 public class TransactionalSession implements ISession {
 
-	private static final int MAX_REPETITIONS = 5;
+	private static final int MAX_REPETITIONS = 3;
 
 	private Transaction tx;
 	private boolean succeeded = false;
 	private int count = MAX_REPETITIONS;
+	private ChangeNotifier cn = null;
+	
 
 	/*
 	 * (non-Javadoc)
@@ -40,12 +42,9 @@ public class TransactionalSession implements ISession {
 	 */
 	@Override
 	public void begin() {
+		//System.out.println("Session starts - " + this.toString());
 		if (tx != null) {
-			try {
-				cancel();
-			} catch (SessionException se) {
-				
-			}
+			cancel();
 		}
 		tx = TransactionUtils.createTransaction();
 	}
@@ -56,10 +55,13 @@ public class TransactionalSession implements ISession {
 	 * @see cz.cuni.mff.d3s.deeco.knowledge.ISession#end()
 	 */
 	@Override
-	public void end() throws SessionException {
+	public void end() {
+		//System.out.println("Session ends - " + this.toString());
 		if (tx != null)
 			try {
 				count--;
+				if (cn != null)
+					cn.notifyAboutChanges(this);
 				tx.commit();
 				tx = null;
 				succeeded = true;
@@ -67,8 +69,6 @@ public class TransactionalSession implements ISession {
 				if (repeat())
 					tx = TransactionUtils.createTransaction();
 			}
-		else
-			throw new SessionException("Session not started!");
 	}
 
 	/*
@@ -77,17 +77,16 @@ public class TransactionalSession implements ISession {
 	 * @see cz.cuni.mff.d3s.deeco.knowledge.ISession#cancel()
 	 */
 	@Override
-	public void cancel() throws SessionException {
-		if (tx != null)
-			if (!succeeded)
+	public void cancel() {
+		//System.out.println("Session cancel - " + this.toString());
+		if (tx != null && !succeeded)
 				try {
+					count = 0;
 					tx.abort();
 				} catch (Exception e) {
 				} finally {
 					tx = null;
 				}
-			else
-				throw new SessionException("Session has already ended!");
 	}
 
 	/*
@@ -117,6 +116,13 @@ public class TransactionalSession implements ISession {
 	@Override
 	public boolean hasSucceeded() {
 		return succeeded;
+	}
+	
+	public void propertyChanged(String knowledgePath, KnowledgeRepository kr) {
+		if (cn == null) {
+			cn = new ChangeNotifier(kr);
+		}
+		cn.knowledgeWritten(knowledgePath);
 	}
 
 }

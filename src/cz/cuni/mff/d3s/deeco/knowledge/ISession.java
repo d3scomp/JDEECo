@@ -39,7 +39,7 @@ public interface ISession {
 	 *             thrown when the session is required to be stopped before its
 	 *             start
 	 */
-	public void end() throws SessionException;
+	public void end();
 
 	/**
 	 * Cancels this session.
@@ -47,7 +47,7 @@ public interface ISession {
 	 * @throws SessionException
 	 *             thrown when the session is canceled after it was ended
 	 */
-	public void cancel() throws SessionException;
+	public void cancel();
 
 	/**
 	 * Checks if this session should be repeated due to either it has

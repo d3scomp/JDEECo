@@ -32,7 +32,15 @@ import cz.cuni.mff.d3s.deeco.exceptions.KMNotExistentException;
 import cz.cuni.mff.d3s.deeco.exceptions.KnowledgeRepositoryException;
 import cz.cuni.mff.d3s.deeco.exceptions.SessionException;
 import cz.cuni.mff.d3s.deeco.exceptions.UnavailableEntryException;
+import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
 
+
+/*
+ * Requires refactoring
+ * 
+ * @author Michal Kit
+ *
+ */
 public class RepositoryKnowledgeManager extends KnowledgeManager {
 
 	private KnowledgeRepository kr;
@@ -143,10 +151,7 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 			throw new KMAccessException(kre.getMessage());
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
-			try {
-				localSession.cancel();
-			} catch (SessionException se) {
-			}
+			localSession.cancel();
 		}
 	}
 
@@ -205,10 +210,7 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 			throw new KMAccessException(kre.getMessage());
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
-			try {
-				localSession.cancel();
-			} catch (SessionException se) {
-			}
+			localSession.cancel();
 			return null;
 		}
 	}
@@ -253,6 +255,16 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 			structure = value.getClass();
 			traversable = KMHelper.translateToMap(value);
 			keys = traversable.keySet();
+		}
+		putKnowledge(
+				KPBuilder.appendToRoot(knowledgePath, ConstantKeys.CLASS_ID),
+				structure, null, session, replace);
+		List<String> toRemove = getRedundantKeys(knowledgePath, keys, session);
+		putKnowledge(KPBuilder.appendToRoot(knowledgePath,
+				ConstantKeys.TRAVERSABLE_KEYS_ID),
+				(keys != null) ? keys.toArray(new String[keys.size()]) : null,
+				null, session, replace);
+		if (value != null) {
 			Set<Map.Entry<String, Object>> entries = traversable.entrySet();
 			Object eValue;
 			for (Map.Entry<String, Object> entry : entries) {
@@ -265,25 +277,18 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 						session, replace);
 			}
 		}
-		removeRedundantTraversable(knowledgePath, keys, session);
-		putKnowledge(KPBuilder.appendToRoot(knowledgePath,
-				ConstantKeys.TRAVERSABLE_KEYS_ID),
-				(keys != null) ? keys.toArray(new String[keys.size()]) : null,
-				null, session, replace);
-		putKnowledge(
-				KPBuilder.appendToRoot(knowledgePath, ConstantKeys.CLASS_ID),
-				structure, null, session, replace);
 		tElementType = KMHelper.isGenericType(tElementType) ? value.getClass()
 				: tElementType;
 		putKnowledge(KPBuilder.appendToRoot(knowledgePath,
 				ConstantKeys.TRAVERSABLE_ELEMENT_CLASS_ID), tElementType, null,
 				session, replace);
+		removeRedundantTraversable(knowledgePath, toRemove, session);
 	}
 
-	private Object getTraversable(boolean withdrawal, String knowledgePath, Type expectedType,
-			ISession session) throws UnavailableEntryException,
-			KnowledgeRepositoryException, InstantiationException,
-			IllegalAccessException, KMException {
+	private Object getTraversable(boolean withdrawal, String knowledgePath,
+			Type expectedType, ISession session)
+			throws UnavailableEntryException, KnowledgeRepositoryException,
+			InstantiationException, IllegalAccessException, KMException {
 		Object tResult = null;
 		Class resultClass = null;
 		if (withdrawal)
@@ -304,8 +309,10 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 					currentElement = retrieveKnowledge(withdrawal,
 							KPBuilder.appendToRoot(knowledgePath, f.getName()),
 							f.getGenericType(), session);
-					if (expectedClass.isAssignableFrom(currentElement.getClass()))
-						KMHelper.addElementToTraversable(currentElement, tResult, f.getName());
+					if (expectedClass.isAssignableFrom(currentElement
+							.getClass()))
+						KMHelper.addElementToTraversable(currentElement,
+								tResult, f.getName());
 				}
 			} else {
 				tResult = KMHelper.getInstance(resultClass);
@@ -340,29 +347,41 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 		return tResult;
 	}
 
-	private void removeRedundantTraversable(String knowledgePath,
+	private List<String> getRedundantKeys(String knowledgePath,
 			Set<String> keys, ISession session)
 			throws KnowledgeRepositoryException {
 		String[] currentKeys = null;
+		List<String> listOfCurrentKeys = null;
 		try {
 			currentKeys = (String[]) kr.get(KPBuilder.appendToRoot(
 					knowledgePath, ConstantKeys.TRAVERSABLE_KEYS_ID));
 		} catch (UnavailableEntryException uee) {
 		}
 		if (currentKeys != null) {
-			List<String> listOfCurrentKeys = new ArrayList<String>(
+			listOfCurrentKeys = new ArrayList<String>(
 					Arrays.asList(currentKeys));
 			if (listOfCurrentKeys != null) {
 				if (keys != null)
 					listOfCurrentKeys.removeAll(keys);
-				for (String s : listOfCurrentKeys)
-					try {
-						kr.take(KPBuilder.appendToRoot(knowledgePath, s),
-								session);
-					} catch (UnavailableEntryException e) {
-						e.printStackTrace();
-					}
 			}
 		}
+		return listOfCurrentKeys;
+	}
+
+	private void removeRedundantTraversable(String knowledgePath,
+			List<String> keys, ISession session)
+			throws KnowledgeRepositoryException {
+		if (keys != null)
+			for (String s : keys)
+				try {
+					kr.take(KPBuilder.appendToRoot(knowledgePath, s), session);
+				} catch (UnavailableEntryException e) {
+					e.printStackTrace();
+				}
+	}
+
+	@Override
+	public boolean listenForChange(IKnowledgeChangeListener listener) {
+		return kr.listenForChange(listener);
 	}
 }

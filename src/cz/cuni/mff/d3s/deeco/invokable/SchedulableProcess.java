@@ -21,7 +21,6 @@ import java.util.List;
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KMHelper;
-import cz.cuni.mff.d3s.deeco.knowledge.KPBuilder;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessPeriodicSchedule;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
@@ -87,6 +86,8 @@ public abstract class SchedulableProcess {
 			return result;
 		} catch (KMException kme) {
 			System.out.println("Parameter getting error!");
+			if (session == null)
+				localSession.cancel();
 			throw kme;
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -142,7 +143,6 @@ public abstract class SchedulableProcess {
 			parameters.addAll(out);
 			parameters.addAll(inOut);
 			Object value;
-			String completeName;
 			ISession localSession;
 			if (session == null) {
 				localSession = km.createSession();
@@ -188,6 +188,6 @@ public abstract class SchedulableProcess {
 
 	/**
 	 * Function invokes single process execution.
-	 */
+	 */	
 	public abstract void invoke();
 }

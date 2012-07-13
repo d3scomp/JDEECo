@@ -23,38 +23,24 @@ import net.jini.space.JavaSpace05;
 import net.jini.space.MatchSet;
 import cz.cuni.mff.d3s.deeco.knowledge.jini.TSUtils;
 import cz.cuni.mff.d3s.deeco.knowledge.jini.Tuple;
+import cz.cuni.mff.d3s.deeco.path.grammar.EEnsembleParty;
 
 public class Test {
-	
+
 	public static class A {
 		public Integer a;
 	}
-	
+
 	public static abstract class B {
 		public Integer b;
 	}
-	
+
 	public static interface I {
 		public void get();
 	}
-	
+
 	public static void main(String[] args) {
-		if (System.getSecurityManager() == null)
-			System.setSecurityManager(new RMISecurityManager());
-		try {
-			JavaSpace05 space = TSUtils.getSpace();
-			MatchSet result = space.contents(Arrays
-					.asList(new Object[] { TSUtils.createTemplate(null) }),
-					null, Lease.FOREVER, Long.MAX_VALUE);
-			Tuple t = (Tuple) result.next();
-			System.out.println("Printing Tuple Space state:");
-			while (t != null) {
-				System.out.println("   " + t.key + ": " + t.value);
-				t = (Tuple) result.next();
-			}
-		} catch (Exception e) {
-			System.out.println("sdfasdfasdf");
-		}
+		System.out.println(EEnsembleParty.MEMBER.toString());
 	}
 
 }

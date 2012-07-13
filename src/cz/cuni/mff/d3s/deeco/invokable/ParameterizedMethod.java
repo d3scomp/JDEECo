@@ -64,7 +64,7 @@ public class ParameterizedMethod {
 		}
 	}
 	
-	public static synchronized ParameterizedMethod extractParametrizedMethod(
+	public static ParameterizedMethod extractParametrizedMethod(
 			Method method) {
 		return extractParametrizedMethod(method, null);
 	}

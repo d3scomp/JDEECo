@@ -1,17 +1,20 @@
 package cz.cuni.mff.d3s.deeco.scheduling;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
+import cz.cuni.mff.d3s.deeco.invokable.TriggeredSchedulableProcess;
 
 public abstract class Scheduler {
 
-	protected List<SchedulableProcess> processes;
+	protected List<SchedulableProcess> periodicProcesses;
+	protected List<TriggeredSchedulableProcess> triggeredProcesses;
 	protected boolean running;
 
 	public Scheduler() {
-		processes = new LinkedList<SchedulableProcess>();
+		periodicProcesses = new ArrayList<SchedulableProcess>();
+		triggeredProcesses = new ArrayList<TriggeredSchedulableProcess>();
 		running = false;
 	}
 
@@ -28,7 +31,10 @@ public abstract class Scheduler {
 
 	public boolean register(SchedulableProcess process) {
 		if (!running)
-			return processes.add(process);
+			if (process.scheduling instanceof ProcessTriggeredSchedule)
+				return triggeredProcesses.add(new TriggeredSchedulableProcess(process));
+			else
+				return periodicProcesses.add(process);
 		return false;
 	}
 
@@ -41,7 +47,10 @@ public abstract class Scheduler {
 
 	public boolean unregister(SchedulableProcess process) {
 		if (!running)
-			return processes.remove(process);
+			if (process.scheduling instanceof ProcessTriggeredSchedule)
+				return triggeredProcesses.remove(new TriggeredSchedulableProcess(process));
+			else
+				return periodicProcesses.remove(process);
 		return false;
 	}
 

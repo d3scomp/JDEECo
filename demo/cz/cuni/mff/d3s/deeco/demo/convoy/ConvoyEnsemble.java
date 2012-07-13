@@ -16,6 +16,7 @@
 package cz.cuni.mff.d3s.deeco.demo.convoy;
 
 import java.util.List;
+import java.util.Random;
 
 import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsemble;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsembleMapper;
@@ -32,7 +33,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.Knowledge;
  *
  */
 @DEECoEnsemble
-@DEECoPeriodicScheduling(2000)
+@DEECoPeriodicScheduling(3500)
 public class ConvoyEnsemble {
 
 	// must be public, static and extend Knowledge
@@ -45,24 +46,25 @@ public class ConvoyEnsemble {
 		public List<Integer> remainingPath;
 	}
 
-	@DEECoEnsembleMembership
-	public static boolean membership(@DEECoIn("member.id") String mId,
+	@DEECoEnsembleMembership(.6)
+	public static double membership(@DEECoIn("member.id") String mId,
 			@DEECoIn("member.path.remainingPath") List<Integer> mRemainingPath,
 			@DEECoIn("coord.id") String cId,
 			@DEECoIn("coord.path") EnsemblePath cPath) {
 		if (!mId.equals(cId)) {
-			return mRemainingPath.size() > 0
+			if (mRemainingPath.size() > 0
 					&& cPath.remainingPath.size() > 0
 					&& cPath.currentPosition
-							.equals(getNextPosition(mRemainingPath));
+							.equals(getNextPosition(mRemainingPath)))
+							return .5;
 		}
-		return false;
+		return .7;
 	}
 
 	@DEECoEnsembleMapper
 	public static void map(@DEECoOut("member") ConvoyOutInterface mOutCR,
 			@DEECoIn("coord.path.remainingPath") List<Integer> cRemainingPath) {
-		mOutCR.convoyRobot = "1";
+		mOutCR.convoyRobot = Integer.toString(new Random().nextInt());
 	}
 
 	public static Integer getNextPosition(List<Integer> remainingPath) {

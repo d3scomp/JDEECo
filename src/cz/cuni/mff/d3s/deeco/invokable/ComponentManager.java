@@ -29,7 +29,7 @@ import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
  * Class providing component managing functionalities.
  * 
  * @author Michal Kit
- *
+ * 
  */
 public class ComponentManager extends
 		InvokableManager<SchedulableKnowledgeProcess> {
@@ -38,8 +38,12 @@ public class ComponentManager extends
 		super(km, scheduler);
 	}
 
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.deeco.invokable.InvokableManager#addInvokable(java.lang.Class)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * cz.cuni.mff.d3s.deeco.invokable.InvokableManager#addInvokable(java.lang
+	 * .Class)
 	 */
 	@Override
 	public void addInvokable(Class invokableDefinition) {
@@ -78,12 +82,10 @@ public class ComponentManager extends
 			ISession session = km.createSession();
 			try {
 				session.begin();
-				while (session.repeat()) {
-					km.putKnowledge(ConstantKeys.ROOT_KNOWLEDGE_ID_FIELD,
-							rootKnowledge.id, null, session, false);
-					km.putKnowledge(rootKnowledge.id, rootKnowledge, rootKnowledge.getClass(), session);
-					session.end();
-				}
+				km.putKnowledge(ConstantKeys.ROOT_KNOWLEDGE_ID,
+						rootKnowledge.id, null, null, false);
+				km.putKnowledge(rootKnowledge.id, rootKnowledge,
+						rootKnowledge.getClass());
 				return true;
 			} catch (Exception e) {
 				System.out.println("Error when writing root knowledge: "

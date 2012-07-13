@@ -17,6 +17,7 @@ package cz.cuni.mff.d3s.deeco.knowledge;
 
 import cz.cuni.mff.d3s.deeco.exceptions.KnowledgeRepositoryException;
 import cz.cuni.mff.d3s.deeco.exceptions.UnavailableEntryException;
+import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
 
 /**
  * An abstract class specifing and defining basic operations on the knowledge
@@ -115,6 +116,16 @@ public abstract class KnowledgeRepository {
 	 */
 	public abstract Object[] takeAll(String entryKey, ISession session)
 			throws KnowledgeRepositoryException;
+	
+	
+	/**
+	 * Register a listener that should be notified by the knowledge repository
+	 * whenever a specified properties are changing.
+	 * 
+	 * @param knowledgePaths array of properties that the listener is interested in
+	 * @param listener listening object
+	 */
+	public abstract boolean listenForChange(IKnowledgeChangeListener listener);
 
 	/**
 	 * Creates a session object, which can be used for all the operations on the
