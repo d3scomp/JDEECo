@@ -22,6 +22,7 @@ import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoOut;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoProcess;
+import cz.cuni.mff.d3s.deeco.knowledge.Knowledge;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 import cz.cuni.mff.d3s.deeco.knowledge.RootKnowledge;
 
@@ -32,7 +33,7 @@ public class NodeA extends RootKnowledge {
 	public Float maxLoadRatio;
 	public Integer networkId;
 	public String targetNode;
-
+	
 	@DEECoInitialize
 	public static RootKnowledge getInitialKnowledge() {
 		NodeA k = new NodeA();

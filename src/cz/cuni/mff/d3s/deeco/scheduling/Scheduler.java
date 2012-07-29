@@ -10,7 +10,7 @@ public abstract class Scheduler {
 
 	protected List<SchedulableProcess> periodicProcesses;
 	protected List<TriggeredSchedulableProcess> triggeredProcesses;
-	protected boolean running;
+	protected boolean running;	//TODO: is never set to true
 
 	public Scheduler() {
 		periodicProcesses = new ArrayList<SchedulableProcess>();

@@ -31,19 +31,5 @@ import cz.cuni.mff.d3s.deeco.invokable.AnnotationHelper;
 public class RootKnowledge extends Knowledge {
 	public String id;
 
-	/**
-	 * Retrieves init method from the <code>RootKnowledge</code> class.
-	 * 
-	 * @param c
-	 *            class to be parsed
-	 * @return init method or null in case no matching found
-	 */
-	public static Method getInitMethod(Class c) {
-		List<Method> result = AnnotationHelper.getAnnotatedMethods(c,
-				DEECoInitialize.class);
-		if (result.size() == 1) {
-			return result.get(0);
-		}
-		return null;
-	}
+	
 }

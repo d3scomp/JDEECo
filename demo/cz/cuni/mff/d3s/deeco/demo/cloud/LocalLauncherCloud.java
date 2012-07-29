@@ -19,11 +19,11 @@ public class LocalLauncherCloud {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Class[] classes = { NodeA.class, NodeB.class };
+		Class[] components = { NodeA.class, NodeB.class };
 		Class[] ensembles = { MigrationEnsemble.class };
 		KnowledgeManager km = new RepositoryKnowledgeManager(
 				new LocalKnowledgeRepository());
 		Scheduler scheduler = new MultithreadedScheduler(km);
-		Runtime runtime = new Runtime(classes, ensembles, km, scheduler);
+		Runtime runtime = new Runtime(components, ensembles, km, scheduler);
 	}
 }

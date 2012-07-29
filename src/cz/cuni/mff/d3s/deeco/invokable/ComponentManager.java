@@ -19,6 +19,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.UUID;
 
+import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
 import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
@@ -64,7 +65,7 @@ public class ComponentManager extends
 	private RootKnowledge getInitialKnowledge(Class invokableDefinition) {
 		RootKnowledge rk = null;
 		try {
-			Method init = RootKnowledge.getInitMethod(invokableDefinition);
+			Method init = getInitMethod(invokableDefinition);
 			if (init != null) {
 				rk = (RootKnowledge) init.invoke(null, new Object[] {});
 				if (rk != null) {
@@ -75,6 +76,22 @@ public class ComponentManager extends
 		} catch (Exception e) {
 		}
 		return rk;
+	}
+	
+	/**
+	 * Retrieves init method from the <code>RootKnowledge</code> class.
+	 * 
+	 * @param c
+	 *            class to be parsed
+	 * @return init method or null in case no matching found
+	 */
+	private Method getInitMethod(Class c) {
+		List<Method> result = AnnotationHelper.getAnnotatedMethods(c,
+				DEECoInitialize.class);
+		if (result.size() == 1) {
+			return result.get(0);
+		}
+		return null;
 	}
 
 	private boolean writeRootKnowledge(RootKnowledge rootKnowledge) {
