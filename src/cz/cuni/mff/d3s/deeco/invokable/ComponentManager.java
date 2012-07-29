@@ -23,7 +23,7 @@ import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
 import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
-import cz.cuni.mff.d3s.deeco.knowledge.RootKnowledge;
+import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
 import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
 
 /**
@@ -49,7 +49,7 @@ public class ComponentManager extends
 	@Override
 	public void addInvokable(Class invokableDefinition) {
 		if (invokableDefinition != null) {
-			RootKnowledge ik = getInitialKnowledge(invokableDefinition);
+			ComponentKnowledge ik = getInitialKnowledge(invokableDefinition);
 			if (ik != null) {
 				if (writeRootKnowledge(ik)) {
 					List<SchedulableKnowledgeProcess> invokables = SchedulableKnowledgeProcess
@@ -62,12 +62,12 @@ public class ComponentManager extends
 		}
 	}
 
-	private RootKnowledge getInitialKnowledge(Class invokableDefinition) {
-		RootKnowledge rk = null;
+	private ComponentKnowledge getInitialKnowledge(Class invokableDefinition) {
+		ComponentKnowledge rk = null;
 		try {
 			Method init = getInitMethod(invokableDefinition);
 			if (init != null) {
-				rk = (RootKnowledge) init.invoke(null, new Object[] {});
+				rk = (ComponentKnowledge) init.invoke(null, new Object[] {});
 				if (rk != null) {
 					if (rk.id == null || rk.id.equals(""))
 						rk.id = UUID.randomUUID().toString();
@@ -79,7 +79,7 @@ public class ComponentManager extends
 	}
 	
 	/**
-	 * Retrieves init method from the <code>RootKnowledge</code> class.
+	 * Retrieves init method from the <code>ComponentKnowledge</code> class.
 	 * 
 	 * @param c
 	 *            class to be parsed
@@ -94,7 +94,7 @@ public class ComponentManager extends
 		return null;
 	}
 
-	private boolean writeRootKnowledge(RootKnowledge rootKnowledge) {
+	private boolean writeRootKnowledge(ComponentKnowledge rootKnowledge) {
 		if (rootKnowledge != null) {
 			ISession session = km.createSession();
 			try {

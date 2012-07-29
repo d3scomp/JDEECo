@@ -14,10 +14,10 @@ import cz.cuni.mff.d3s.deeco.annotations.DEECoIn;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoInOut;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoOut;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
-import cz.cuni.mff.d3s.deeco.knowledge.RootKnowledge;
+import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
 
 @DEECoComponent
-public class CarPlanner extends RootKnowledge {
+public class CarPlanner extends ComponentKnowledge {
 
 	public static enum State {Idle, WaitingForResponse, DrivingToTarget}
 	
@@ -32,7 +32,7 @@ public class CarPlanner extends RootKnowledge {
 	
 
 	@DEECoInitialize
-	public static RootKnowledge getInitialKnowledge() {
+	public static ComponentKnowledge getInitialKnowledge() {
 		CarPlanner k = new CarPlanner();
 		k.carId = new CarId("C1");
 		k.request = null;

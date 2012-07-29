@@ -22,14 +22,12 @@ import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
 import cz.cuni.mff.d3s.deeco.invokable.AnnotationHelper;
 
 /**
- * RootKnowledge is the base class representing top-level component knowledge.
+ * ComponentKnowledge is the base class representing top-level component knowledge.
  * 
  * 
  * @author Michal Kit
  * 
  */
-public class RootKnowledge extends Knowledge {
+public class ComponentKnowledge extends Knowledge {
 	public String id;
-
-	
 }
