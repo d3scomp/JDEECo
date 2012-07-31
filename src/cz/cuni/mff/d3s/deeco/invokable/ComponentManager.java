@@ -33,7 +33,7 @@ import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
  * 
  */
 public class ComponentManager extends
-		InvokableManager<SchedulableKnowledgeProcess> {
+		InvokableManager<SchedulableComponentProcess> {
 
 	public ComponentManager(KnowledgeManager km, Scheduler scheduler) {
 		super(km, scheduler);
@@ -52,7 +52,7 @@ public class ComponentManager extends
 			ComponentKnowledge ik = getInitialKnowledge(invokableDefinition);
 			if (ik != null) {
 				if (writeRootKnowledge(ik)) {
-					List<SchedulableKnowledgeProcess> invokables = SchedulableKnowledgeProcess
+					List<SchedulableComponentProcess> invokables = SchedulableComponentProcess
 							.extractKnowledgeProcesses(invokableDefinition,
 									ik.id, km);
 					processes.addAll(invokables);
@@ -96,9 +96,7 @@ public class ComponentManager extends
 
 	private boolean writeRootKnowledge(ComponentKnowledge rootKnowledge) {
 		if (rootKnowledge != null) {
-			ISession session = km.createSession();
 			try {
-				session.begin();
 				km.putKnowledge(ConstantKeys.ROOT_KNOWLEDGE_ID,
 						rootKnowledge.id, null, null, false);
 				km.putKnowledge(rootKnowledge.id, rootKnowledge,
