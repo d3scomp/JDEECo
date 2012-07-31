@@ -15,6 +15,8 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.knowledge;
 
+import cz.cuni.mff.d3s.deeco.path.grammar.PathGrammar;
+
 /**
  * Class providing utility functions for dealing with knowledge paths.
  * 
@@ -22,8 +24,6 @@ package cz.cuni.mff.d3s.deeco.knowledge;
  * 
  */
 public class KPBuilder {
-	public static final String PATH_DELIMITER = ".";
-
 	/**
 	 * Static function appending a new (tail) part to the existing one (root).
 	 * New instance of String object is returned.
@@ -39,7 +39,7 @@ public class KPBuilder {
 			return tail;
 		if (tail == null || tail.equals(""))
 			return root;
-		return root + PATH_DELIMITER + tail;
+		return root + PathGrammar.PATH_SEPARATOR + tail;
 	}
 
 	public static String prependToRoot(String root, String head) {
@@ -47,12 +47,26 @@ public class KPBuilder {
 			return head;
 		if (head == null || head.equals(""))
 			return root;
-		return head + PATH_DELIMITER + root;
+		return head + PathGrammar.PATH_SEPARATOR + root;
 	}
 
 	public static String[] decomposePath(String knowledgePath) {
 		if (knowledgePath == null || knowledgePath.equals(""))
 			return new String[] {};
-		return knowledgePath.split("\\"+PATH_DELIMITER);
+		return knowledgePath.split("\\" + PathGrammar.PATH_SEPARATOR);
+	}
+
+	public static String replaceHead(String pathWithHead, String newHead) {
+		if (pathWithHead == null || pathWithHead.equals(""))
+			return newHead;
+		if (pathWithHead == null || pathWithHead.equals(""))
+			return newHead;
+		int index = pathWithHead
+				.indexOf(PathGrammar.PATH_SEPARATOR);
+		if (index < 0) 
+			return newHead;
+		 else
+		return newHead
+				+ pathWithHead.substring(index);
 	}
 }

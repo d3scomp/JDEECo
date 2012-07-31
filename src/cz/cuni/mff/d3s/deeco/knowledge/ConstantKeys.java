@@ -50,5 +50,7 @@ public class ConstantKeys {
 	 * listened for.
 	 */
 	public static final String LISTEN_ID = "#listen";
+	
+	public static final String UNDEFINED = "undefined";
 
 }

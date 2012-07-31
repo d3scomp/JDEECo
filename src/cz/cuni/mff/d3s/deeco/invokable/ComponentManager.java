@@ -79,13 +79,10 @@ public class ComponentManager extends
 
 	private boolean writeRootKnowledge(RootKnowledge rootKnowledge) {
 		if (rootKnowledge != null) {
-			ISession session = km.createSession();
 			try {
-				session.begin();
 				km.putKnowledge(ConstantKeys.ROOT_KNOWLEDGE_ID,
-						rootKnowledge.id, null, null, false);
-				km.putKnowledge(rootKnowledge.id, rootKnowledge,
-						rootKnowledge.getClass());
+						rootKnowledge.id, null);
+				km.putKnowledge(rootKnowledge.id, rootKnowledge);
 				return true;
 			} catch (Exception e) {
 				System.out.println("Error when writing root knowledge: "

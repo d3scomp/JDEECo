@@ -22,6 +22,7 @@ import cz.cuni.mff.d3s.deeco.exceptions.KMException;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KMHelper;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.scheduling.ETriggerType;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessPeriodicSchedule;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessTriggeredSchedule;
@@ -185,9 +186,13 @@ public abstract class SchedulableProcess {
 	public boolean isTriggered() {
 		return scheduling instanceof ProcessTriggeredSchedule;
 	}
-
+	
 	/**
 	 * Function invokes single process execution.
-	 */	
-	public abstract void invoke();
+	 */
+	public void invoke() {
+		invoke(null, null);
+	}
+
+	public abstract void invoke(String triggererId, ETriggerType recipientMode);
 }

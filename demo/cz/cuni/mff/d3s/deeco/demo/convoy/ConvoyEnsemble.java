@@ -24,6 +24,7 @@ import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsembleMembership;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoIn;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoOut;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
+import cz.cuni.mff.d3s.deeco.annotations.DEECoTriggered;
 import cz.cuni.mff.d3s.deeco.knowledge.Knowledge;
 
 /**
@@ -33,7 +34,6 @@ import cz.cuni.mff.d3s.deeco.knowledge.Knowledge;
  *
  */
 @DEECoEnsemble
-@DEECoPeriodicScheduling(3500)
 public class ConvoyEnsemble {
 
 	// must be public, static and extend Knowledge
@@ -50,7 +50,7 @@ public class ConvoyEnsemble {
 	public static double membership(@DEECoIn("member.id") String mId,
 			@DEECoIn("member.path.remainingPath") List<Integer> mRemainingPath,
 			@DEECoIn("coord.id") String cId,
-			@DEECoIn("coord.path") EnsemblePath cPath) {
+			@DEECoIn("coord.path") @DEECoTriggered EnsemblePath cPath) {
 		if (!mId.equals(cId)) {
 			if (mRemainingPath.size() > 0
 					&& cPath.remainingPath.size() > 0

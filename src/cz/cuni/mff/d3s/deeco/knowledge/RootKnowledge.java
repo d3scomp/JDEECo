@@ -38,7 +38,7 @@ public class RootKnowledge extends Knowledge {
 	 *            class to be parsed
 	 * @return init method or null in case no matching found
 	 */
-	public static Method getInitMethod(Class c) {
+	public static Method getInitMethod(Class<?> c) {
 		List<Method> result = AnnotationHelper.getAnnotatedMethods(c,
 				DEECoInitialize.class);
 		if (result.size() == 1) {

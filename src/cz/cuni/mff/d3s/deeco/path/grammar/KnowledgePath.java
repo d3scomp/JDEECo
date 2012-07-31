@@ -83,7 +83,7 @@ public class KnowledgePath {
 				result = member;
 		} else {// expression
 			result = evaluatePath((PNode) pathNode.value, km, coord, member, session);
-			result = (String) km.getKnowledge(result, null, session);
+			result = (String) km.getKnowledge(result, session);
 		}
 		if (pathNode.next != null)
 			result += PathGrammar.PATH_SEPARATOR

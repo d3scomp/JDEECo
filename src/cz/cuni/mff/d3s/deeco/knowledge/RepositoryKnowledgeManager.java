@@ -16,24 +16,14 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.exceptions.KMAccessException;
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
 import cz.cuni.mff.d3s.deeco.exceptions.KMIllegalArgumentException;
 import cz.cuni.mff.d3s.deeco.exceptions.KMNotExistentException;
 import cz.cuni.mff.d3s.deeco.exceptions.KnowledgeRepositoryException;
-import cz.cuni.mff.d3s.deeco.exceptions.SessionException;
 import cz.cuni.mff.d3s.deeco.exceptions.UnavailableEntryException;
 import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
-
 
 /*
  * Requires refactoring
@@ -43,10 +33,12 @@ import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
  */
 public class RepositoryKnowledgeManager extends KnowledgeManager {
 
-	private KnowledgeRepository kr;
+	private RepositoryKnowledgeManagerHelper rkmh;
+	private TraversableRKMHelper trkmh;
 
 	public RepositoryKnowledgeManager(KnowledgeRepository kr) {
-		this.kr = kr;
+		this.rkmh = new RepositoryKnowledgeManagerHelper(kr, this);
+		this.trkmh = new TraversableRKMHelper(rkmh, this);
 	}
 
 	/*
@@ -56,7 +48,7 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 	 */
 	@Override
 	public ISession createSession() {
-		return kr.createSession();
+		return rkmh.createSession();
 	}
 
 	/*
@@ -68,9 +60,9 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 	 * cz.cuni.mff.d3s.deeco.knowledge.ISession)
 	 */
 	@Override
-	public Object getKnowledge(String knowledgePath, Type type, ISession session)
+	public Object getKnowledge(String knowledgePath, ISession session)
 			throws KMException {
-		return retrieveKnowledge(false, knowledgePath, type, session);
+		return getKnowledge(false, knowledgePath, session);
 	}
 
 	/*
@@ -82,9 +74,9 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 	 * cz.cuni.mff.d3s.deeco.knowledge.ISession)
 	 */
 	@Override
-	public Object takeKnowledge(String knowledgePath, Type type,
-			ISession session) throws KMException {
-		return retrieveKnowledge(true, knowledgePath, type, session);
+	public Object takeKnowledge(String knowledgePath, ISession session)
+			throws KMException {
+		return getKnowledge(true, knowledgePath, session);
 	}
 
 	/*
@@ -96,50 +88,37 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 	 * cz.cuni.mff.d3s.deeco.knowledge.ISession, boolean)
 	 */
 	@Override
-	public void putKnowledge(String knowledgePath, Object value, Type type,
-			ISession session, boolean replace) throws KMException {
+	public void putKnowledge(String knowledgePath, Object value,
+			ISession session) throws KMException {
 		ISession localSession;
 		if (session == null) {
-			localSession = kr.createSession();
+			localSession = rkmh.createSession();
 			localSession.begin();
 		} else
 			localSession = session;
+		String tempPath;
 		try {
 			while (localSession.repeat()) {
-				if (KMHelper.isOutputWrapper(type)) {
-					putKnowledge(knowledgePath,
-							(value != null) ? ((OutWrapper) value).item : null,
-							KMHelper.getOutWrapperParamType(type),
-							localSession, replace);
+				if (value == null) {
+					rkmh.putFlat(knowledgePath, null, localSession);// put null value
 				} else {
-					if (KMHelper.isKnowledge(type)) {
-						Class structure = KMHelper.getClass(type);
+					Class<?> structure = value.getClass();
+					if (KMHelper.isOutputWrapper(structure)) {
+						putKnowledge(knowledgePath,
+								((OutWrapper<?>) value).item, localSession);
+					} else if (KMHelper.isTraversable(structure)) {
+						trkmh.putTraversable(knowledgePath, value, structure,
+								localSession);
+					} else if (KMHelper.isKnowledge(structure)) {
+						rkmh.putStructure(knowledgePath, structure, localSession);
 						Field[] fields = structure.getFields();
-						String innerPath;
 						for (Field f : fields) {
-							innerPath = KPBuilder.appendToRoot(knowledgePath,
+							tempPath = KPBuilder.appendToRoot(knowledgePath,
 									f.getName());
-							if (value != null)
-								putKnowledge(innerPath, f.get(value),
-										f.getGenericType(), localSession,
-										replace);
-							else
-								takeKnowledge(innerPath, f.getGenericType(),
-										localSession);
+							putKnowledge(tempPath, f.get(value), localSession);
 						}
-						innerPath = KPBuilder.appendToRoot(knowledgePath,
-								ConstantKeys.CLASS_ID);
-						if (value == null) {
-							putFlat(knowledgePath, null, localSession, replace);
-							getFlat(true, innerPath, localSession);
-						} else {
-							putFlat(innerPath, structure, localSession, replace);
-						}
-					} else if (KMHelper.isTraversable(type)) {
-						putTraversable(knowledgePath, value, type,
-								localSession, replace);
-					} else {// flat property
-						putFlat(knowledgePath, value, localSession, replace);
+					} else {
+						rkmh.putFlat(knowledgePath, value, localSession);
 					}
 				}
 				if (session == null)
@@ -155,46 +134,35 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 		}
 	}
 
-	private Object retrieveKnowledge(boolean withdrawal, String knowledgePath,
-			Type type, ISession session) throws KMException {
+	private Object getKnowledge(boolean withdrawal, String knowledgePath,
+			ISession session) throws KMException {
 		Object result = null;
 		ISession localSession;
 		if (session == null) {
-			localSession = kr.createSession();
+			localSession = rkmh.createSession();
 			localSession.begin();
 		} else
 			localSession = session;
 		try {
-			Class structure = KMHelper.getClass(type);
 			while (localSession.repeat()) {
-				if (type == null) {// requested properties are flat.
-					result = kr.getAll(knowledgePath, localSession);
-				} else if (KMHelper.isOutputWrapper(structure)) {
-					OutWrapper owi = (OutWrapper) KMHelper.getInstance(type);
-					owi.item = retrieveKnowledge(withdrawal, knowledgePath,
-							KMHelper.getOutWrapperParamType(type), localSession);
-					return owi;
-				} else if (KMHelper.isKnowledge(structure)) {
-					result = structure.newInstance();
-					String innerPath;
-					Class innerStructure;
-					for (Field f : structure.getFields()) {
-						innerPath = KPBuilder.appendToRoot(knowledgePath,
-								f.getName());
-						innerStructure = f.getType();
-						f.set(result,
-								retrieveKnowledge(withdrawal, innerPath,
-										innerStructure, localSession));
+				Object structure = rkmh.getStructure(withdrawal, knowledgePath, localSession);
+				if (structure == null) // flat
+					result = rkmh.getFlat(withdrawal, knowledgePath, localSession);
+				else {
+					Class<?> classStructure = (Class<?>) structure;
+					if (KMHelper.isTraversable(classStructure)) {
+						result = trkmh.getTraversable(withdrawal, knowledgePath, localSession);
+					} else {// knowledge
+						String tempPath;
+						result = classStructure.newInstance();
+						for (Field f : classStructure.getFields()) {
+							tempPath = KPBuilder.appendToRoot(knowledgePath,
+									f.getName());
+							f.set(result,
+									getKnowledge(withdrawal, tempPath,
+											localSession));
+						}
 					}
-					if (withdrawal) { // remove knowledge definition
-						getFlat(true, KPBuilder.appendToRoot(knowledgePath,
-								ConstantKeys.CLASS_ID), localSession);
-					}
-				} else if (KMHelper.isTraversable(structure)) {
-					result = getTraversable(withdrawal, knowledgePath, type,
-							localSession);
-				} else {
-					result = getFlat(withdrawal, knowledgePath, localSession);
 				}
 				if (session == null)
 					localSession.end();
@@ -215,173 +183,8 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 		}
 	}
 
-	private void putFlat(String knowledgePath, Object newValue,
-			ISession session, boolean replace)
-			throws KnowledgeRepositoryException {
-		Object currentValue = null;
-		try {
-			if (replace) {
-				currentValue = kr.get(knowledgePath, session);
-				if ((newValue != null && !newValue.equals(currentValue))
-						|| (currentValue != null && !currentValue
-								.equals(newValue))) {
-					kr.take(knowledgePath, session);
-					kr.put(knowledgePath, newValue, session);
-				}
-			} else {
-				kr.put(knowledgePath, newValue, session);
-			}
-		} catch (UnavailableEntryException uee) {
-			System.out.println("Unavailable entry: " + knowledgePath);
-			kr.put(knowledgePath, newValue, session);
-		}
-	}
-
-	private Object getFlat(boolean withdrawal, String knowledgePath,
-			ISession session) throws UnavailableEntryException,
-			KnowledgeRepositoryException {
-		return (withdrawal) ? kr.take(knowledgePath, session) : kr.get(
-				knowledgePath, session);
-	}
-
-	private void putTraversable(String knowledgePath, Object value, Type type,
-			ISession session, boolean replace)
-			throws KnowledgeRepositoryException, KMException {
-		Class structure = null;
-		Map<String, Object> traversable = null;
-		Set<String> keys = null;
-		Type tElementType = KMHelper.getGenericElementType(type);
-		if (value != null) {
-			structure = value.getClass();
-			traversable = KMHelper.translateToMap(value);
-			keys = traversable.keySet();
-		}
-		putKnowledge(
-				KPBuilder.appendToRoot(knowledgePath, ConstantKeys.CLASS_ID),
-				structure, null, session, replace);
-		List<String> toRemove = getRedundantKeys(knowledgePath, keys, session);
-		putKnowledge(KPBuilder.appendToRoot(knowledgePath,
-				ConstantKeys.TRAVERSABLE_KEYS_ID),
-				(keys != null) ? keys.toArray(new String[keys.size()]) : null,
-				null, session, replace);
-		if (value != null) {
-			Set<Map.Entry<String, Object>> entries = traversable.entrySet();
-			Object eValue;
-			for (Map.Entry<String, Object> entry : entries) {
-				eValue = entry.getValue();
-				if (tElementType == null)
-					tElementType = eValue.getClass();
-				putKnowledge(
-						KPBuilder.appendToRoot(knowledgePath, entry.getKey()),
-						entry.getValue(), KMHelper.getClass(tElementType),
-						session, replace);
-			}
-		}
-		tElementType = KMHelper.isGenericType(tElementType) ? value.getClass()
-				: tElementType;
-		putKnowledge(KPBuilder.appendToRoot(knowledgePath,
-				ConstantKeys.TRAVERSABLE_ELEMENT_CLASS_ID), tElementType, null,
-				session, replace);
-		removeRedundantTraversable(knowledgePath, toRemove, session);
-	}
-
-	private Object getTraversable(boolean withdrawal, String knowledgePath,
-			Type expectedType, ISession session)
-			throws UnavailableEntryException, KnowledgeRepositoryException,
-			InstantiationException, IllegalAccessException, KMException {
-		Object tResult = null;
-		Class resultClass = null;
-		if (withdrawal)
-			resultClass = (Class) kr.take(KPBuilder.appendToRoot(knowledgePath,
-					ConstantKeys.CLASS_ID), session);
-		else
-			resultClass = (Class) kr.get(KPBuilder.appendToRoot(knowledgePath,
-					ConstantKeys.CLASS_ID), session);
-		if (resultClass != null) {
-			String[] currentKeys = null;
-			Type tElementType = null;
-			Object currentElement;
-			tElementType = KMHelper.getGenericElementType(expectedType);
-			if (KMHelper.isKnowledge(resultClass)) {
-				tResult = new HashMap<String, Object>();
-				Class expectedClass = KMHelper.getClass(tElementType);
-				for (Field f : resultClass.getFields()) {
-					currentElement = retrieveKnowledge(withdrawal,
-							KPBuilder.appendToRoot(knowledgePath, f.getName()),
-							f.getGenericType(), session);
-					if (expectedClass.isAssignableFrom(currentElement
-							.getClass()))
-						KMHelper.addElementToTraversable(currentElement,
-								tResult, f.getName());
-				}
-			} else {
-				tResult = KMHelper.getInstance(resultClass);
-				if (withdrawal)
-					currentKeys = (String[]) kr.take(KPBuilder.appendToRoot(
-							knowledgePath, ConstantKeys.TRAVERSABLE_KEYS_ID),
-							session);
-				else
-					currentKeys = (String[]) kr.get(KPBuilder.appendToRoot(
-							knowledgePath, ConstantKeys.TRAVERSABLE_KEYS_ID),
-							session);
-				if (withdrawal)
-					tElementType = (Type) kr
-							.take(KPBuilder.appendToRoot(knowledgePath,
-									ConstantKeys.TRAVERSABLE_ELEMENT_CLASS_ID),
-									session);
-				else
-					tElementType = (Type) kr
-							.get(KPBuilder.appendToRoot(knowledgePath,
-									ConstantKeys.TRAVERSABLE_ELEMENT_CLASS_ID),
-									session);
-				if (tResult instanceof Collection)
-					Arrays.sort(currentKeys);
-				for (String k : currentKeys) {
-					currentElement = retrieveKnowledge(withdrawal,
-							KPBuilder.appendToRoot(knowledgePath, k),
-							tElementType, session);
-					KMHelper.addElementToTraversable(currentElement, tResult, k);
-				}
-			}
-		}
-		return tResult;
-	}
-
-	private List<String> getRedundantKeys(String knowledgePath,
-			Set<String> keys, ISession session)
-			throws KnowledgeRepositoryException {
-		String[] currentKeys = null;
-		List<String> listOfCurrentKeys = null;
-		try {
-			currentKeys = (String[]) kr.get(KPBuilder.appendToRoot(
-					knowledgePath, ConstantKeys.TRAVERSABLE_KEYS_ID));
-		} catch (UnavailableEntryException uee) {
-		}
-		if (currentKeys != null) {
-			listOfCurrentKeys = new ArrayList<String>(
-					Arrays.asList(currentKeys));
-			if (listOfCurrentKeys != null) {
-				if (keys != null)
-					listOfCurrentKeys.removeAll(keys);
-			}
-		}
-		return listOfCurrentKeys;
-	}
-
-	private void removeRedundantTraversable(String knowledgePath,
-			List<String> keys, ISession session)
-			throws KnowledgeRepositoryException {
-		if (keys != null)
-			for (String s : keys)
-				try {
-					kr.take(KPBuilder.appendToRoot(knowledgePath, s), session);
-				} catch (UnavailableEntryException e) {
-					e.printStackTrace();
-				}
-	}
-
 	@Override
 	public boolean listenForChange(IKnowledgeChangeListener listener) {
-		return kr.listenForChange(listener);
+		return rkmh.listenForChange(listener);
 	}
 }

@@ -22,10 +22,10 @@ import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsembleMembership;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
 import cz.cuni.mff.d3s.deeco.exceptions.KMNotExistentException;
-import cz.cuni.mff.d3s.deeco.exceptions.SessionException;
 import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.scheduling.ETriggerType;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessPeriodicSchedule;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
 import cz.cuni.mff.d3s.deeco.scheduling.ScheduleHelper;
@@ -87,46 +87,76 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 	 * @see cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess#invoke()
 	 */
 	@Override
-	public void invoke() {
+	public void invoke(String triggererId, ETriggerType recipientMode) {
+		// System.out.println("Ensembling starts");
+		try {
+			Object[] ids = (Object[]) km.getKnowledge(
+					ConstantKeys.ROOT_KNOWLEDGE_ID, null, null);
+			if (recipientMode == null)
+				periodicInvocation(ids);
+			else
+				try {
+					singleInvocation(triggererId, recipientMode, ids);
+				} catch (KMException kme) {
+				}
+			// System.out.println("Ensembling ends");
+		} catch (KMException kme) {
+			return;
+		}
+	}
+
+	private void periodicInvocation(Object[] rootIds) throws KMException {
+		for (Object oid : rootIds) {
+			singleInvocation((String) oid, ETriggerType.COORDINATOR, rootIds);
+		}
+	}
+
+	// to rewrite in order of different ETriggerType
+	private void singleInvocation(String outerId, ETriggerType recipientMode,
+			Object[] rootIds) throws KMException {
 		Object[] parameters;
 		ISession localSession = null;
 		try {
-			//System.out.println("Ensembling starts");
-			Object[] ids = (Object[]) km.getKnowledge(
-					ConstantKeys.ROOT_KNOWLEDGE_ID, null, null);
-			cloop: for (Object oid : ids) {
-				mloop: for (Object iid : ids) {
-					localSession = km.createSession();
-					localSession.begin();
-					while (localSession.repeat()) {
-						try {
-							parameters = getParameterMethodValues(
-									membership.getIn(), membership.getInOut(),
-									membership.getOut(), localSession,
-									(String) oid, (String) iid);
-							if (evaluateMembership(parameters)) {
-								parameters = getParameterMethodValues(
-										mapper.in, mapper.inOut, mapper.out,
-										localSession, (String) oid,
-										(String) iid);
-								evaluateMapper(parameters);
-								putParameterMethodValues(parameters,
-										mapper.inOut, mapper.out, localSession,
-										(String) oid, (String) iid);
-							}
-						} catch (KMNotExistentException kmnee) {
-							localSession.cancel();
-							continue mloop;
+			String cId = null, mId = null;
+			if (recipientMode.equals(ETriggerType.COORDINATOR)) {
+				cId = outerId;
+			} else {
+				mId = outerId;
+			}
+			mloop: for (Object iid : rootIds) {
+				if (recipientMode.equals(ETriggerType.COORDINATOR)) {
+					mId = (String) iid;
+				} else {
+					cId = (String) iid;
+				}
+				localSession = km.createSession();
+				localSession.begin();
+				while (localSession.repeat()) {
+					try {
+						parameters = getParameterMethodValues(
+								membership.getIn(), membership.getInOut(),
+								membership.getOut(), localSession,
+								(String) cId, (String) mId);
+						if (evaluateMembership(parameters)) {
+							parameters = getParameterMethodValues(mapper.in,
+									mapper.inOut, mapper.out, localSession,
+									(String) cId, (String) mId);
+							evaluateMapper(parameters);
+							putParameterMethodValues(parameters, mapper.inOut,
+									mapper.out, localSession, (String) cId,
+									(String) mId);
 						}
-						localSession.end();
+					} catch (KMNotExistentException kmnee) {
+						localSession.cancel();
+						continue mloop;
 					}
+					localSession.end();
 				}
 			}
-			//System.out.println("Ensembling ends");
 		} catch (KMException kme) {
 			if (localSession != null)
 				localSession.cancel();
-			return;
+			throw kme;
 		}
 	}
 
@@ -161,7 +191,8 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 	 * @return list of {@link SchedulableEnsembleProcess} instances extracted
 	 *         from the class definition
 	 */
-	public static SchedulableEnsembleProcess extractEnsembleProcesses(Class c,
+	public static SchedulableEnsembleProcess extractEnsembleProcesses(
+			Class<?> c,
 			KnowledgeManager km) {
 		SchedulableEnsembleProcess result = null;
 		if (c != null) {

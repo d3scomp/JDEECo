@@ -26,7 +26,7 @@ import net.jini.core.transaction.server.TransactionManager;
  * 
  */
 public class TransactionUtils {
-	protected final static Long DEFAULT_LEASE_TIMEOUT = 500L; // 1 sec
+	protected final static Long DEFAULT_TRANSACTION_TIMEOUT = 500L; // .5 sec
 	private volatile static TransactionManager txManager = null;
 
 	/**
@@ -41,7 +41,7 @@ public class TransactionUtils {
 				txManager = (TransactionManager) transactionLookup.getService();
 			}
 			Transaction.Created trc = TransactionFactory.create(txManager,
-					DEFAULT_LEASE_TIMEOUT);
+					DEFAULT_TRANSACTION_TIMEOUT);
 			return trc.transaction;
 		} catch (Exception e) {
 			System.out.println("ERROR - Transaction retrieval error: "

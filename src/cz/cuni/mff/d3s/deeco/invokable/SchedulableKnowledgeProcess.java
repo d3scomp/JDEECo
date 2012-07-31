@@ -24,9 +24,9 @@ import cz.cuni.mff.d3s.deeco.annotations.DEECoProcess;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoStrongLocking;
 import cz.cuni.mff.d3s.deeco.annotations.ELockingMode;
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
-import cz.cuni.mff.d3s.deeco.exceptions.SessionException;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.scheduling.ETriggerType;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessPeriodicSchedule;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
 import cz.cuni.mff.d3s.deeco.scheduling.ScheduleHelper;
@@ -55,20 +55,20 @@ public class SchedulableKnowledgeProcess extends SchedulableProcess {
 	 * @see cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess#invoke()
 	 */
 	@Override
-	public void invoke() {
+	public void invoke(String triggererId, ETriggerType recipientMode) {
 		//System.out.println("Component process starts - " + this.toString());
 		try {
 			if (lockingMode.equals(ELockingMode.STRONG)) {
-				ISession session = km.createSession();
-				session.begin();
+				ISession localSession = km.createSession();
+				localSession.begin();
 				try {
-					while (session.repeat()) {
-						evaluateMethod(session);
-						session.end();
+					while (localSession.repeat()) {
+						evaluateMethod(localSession);
+						localSession.end();
 					}
 				} catch (KMException e) {
 					System.out.println(e.getMessage());
-					session.cancel();
+					localSession.cancel();
 				}
 			} else {
 				try {

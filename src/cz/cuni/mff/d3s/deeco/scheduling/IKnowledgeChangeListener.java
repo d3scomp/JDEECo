@@ -4,6 +4,6 @@ import java.util.List;
 
 
 public interface IKnowledgeChangeListener {
-	public void knowledgeChanged();
+	public void knowledgeChanged(String triggerer, ETriggerType recMode);
 	public List<String> getKnowledgePaths();
 }

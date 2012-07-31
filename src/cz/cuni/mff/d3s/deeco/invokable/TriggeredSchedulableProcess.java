@@ -3,9 +3,9 @@ package cz.cuni.mff.d3s.deeco.invokable;
 import java.util.ArrayList;
 import java.util.List;
 
-import cz.cuni.mff.d3s.deeco.exceptions.SessionException;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.path.grammar.EEnsembleParty;
+import cz.cuni.mff.d3s.deeco.scheduling.ETriggerType;
 import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessTriggeredSchedule;
 
@@ -18,8 +18,8 @@ public class TriggeredSchedulableProcess implements IKnowledgeChangeListener {
 	}
 
 	@Override
-	public void knowledgeChanged() {
-		sp.invoke();
+	public void knowledgeChanged(String triggerer, ETriggerType recMode) {
+		sp.invoke(triggerer, recMode);
 	}
 
 	public boolean equals(Object o) {
@@ -30,11 +30,11 @@ public class TriggeredSchedulableProcess implements IKnowledgeChangeListener {
 	@Override
 	public List<String> getKnowledgePaths() {
 		if (isEnsembleTriggered()) {
-			return getEvaluatedKnowledgePaths();
-		} else {
 			return getEvaluatedKnowledgePaths(
 					EEnsembleParty.COORDINATOR.toString(),
 					EEnsembleParty.MEMBER.toString());
+		} else {
+			return getEvaluatedKnowledgePaths();
 		}
 	}
 

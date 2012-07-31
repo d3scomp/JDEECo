@@ -6,8 +6,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import com.sun.jini.thread.Executor;
+import java.util.concurrent.TimeUnit;
 
 import net.jini.core.event.RemoteEvent;
 import net.jini.core.event.RemoteEventListener;
@@ -17,8 +16,9 @@ import net.jini.jeri.BasicILFactory;
 import net.jini.jeri.BasicJeriExporter;
 import net.jini.jeri.tcp.TcpServerEndpoint;
 import net.jini.space.AvailabilityEvent;
-import cz.cuni.mff.d3s.deeco.exceptions.SessionException;
+import cz.cuni.mff.d3s.deeco.knowledge.KPBuilder;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeRepository;
+import cz.cuni.mff.d3s.deeco.scheduling.ETriggerType;
 import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
 
 public class TSRemoteEventListener implements RemoteEventListener {
@@ -47,7 +47,7 @@ public class TSRemoteEventListener implements RemoteEventListener {
 		}
 
 	}
-	
+
 	public RemoteEventListener getStub() {
 		return stub;
 	}
@@ -64,16 +64,26 @@ public class TSRemoteEventListener implements RemoteEventListener {
 		try {
 			AvailabilityEvent ae = (AvailabilityEvent) re;
 			Tuple t = (Tuple) ae.getEntry();
-			String currentVersion;
+			String stringVersionAndOwner, version, owner;
+			String[] versionOwner;
 			ExecutorService es;
 			ts = (TransactionalSession) kr.createSession();
 			ts.begin();
 			while (ts.repeat()) {
-				currentVersion = (String) kr.get(t.key, ts);
-				if (!currentVersion.equals(lastProcessed)) {
-					es = Executors.newFixedThreadPool(toNotify.size());
-					es.invokeAll(getTreadCollection());
-					lastProcessed = currentVersion;
+				stringVersionAndOwner = (String) kr.get(t.key, ts);
+				versionOwner = extractVersionOwner(stringVersionAndOwner);
+				if (versionOwner != null) {
+					version = versionOwner[0];
+					owner = versionOwner[1];
+					if (!version.equals(lastProcessed)) {
+						es = Executors.newFixedThreadPool(toNotify.size());
+						es.invokeAll(getThreadCollection(owner,
+								getTriggerRecipient(t.key)));
+						es.awaitTermination(
+								TransactionUtils.DEFAULT_TRANSACTION_TIMEOUT,
+								TimeUnit.MILLISECONDS);
+						lastProcessed = version;
+					}
 				}
 				ts.end();
 			}
@@ -84,25 +94,48 @@ public class TSRemoteEventListener implements RemoteEventListener {
 		}
 	}
 
-	private List<Callable<Object>> getTreadCollection() {
+	private List<Callable<Object>> getThreadCollection(String triggerer,
+			ETriggerType triggerRecipient) {
 		List<Callable<Object>> result = new ArrayList<Callable<Object>>();
 		for (IKnowledgeChangeListener ikcl : toNotify) {
-			result.add(Executors.callable(new TriggeredThread(ikcl)));
+			result.add(Executors.callable(new TriggeredThread(ikcl, triggerer,
+					triggerRecipient)));
 		}
 		return result;
+	}
+
+	private String[] extractVersionOwner(String string) {
+		String[] dString = KPBuilder.decomposePath(string);
+		if (dString.length == 2) { // correct format
+			return dString;
+		}
+		return null;
+	}
+
+	private ETriggerType getTriggerRecipient(String listenKey) {
+		String[] dString = KPBuilder.decomposePath(listenKey);
+		if (dString.length > 2) { // correct format
+			return ETriggerType.fromString(dString[1]);
+		}
+		return null;
 	}
 
 	class TriggeredThread implements Runnable {
 
 		private IKnowledgeChangeListener ikcl;
+		private String triggererId;
+		private ETriggerType triggerRecipient;
 
-		public TriggeredThread(IKnowledgeChangeListener ikcl) {
+		public TriggeredThread(IKnowledgeChangeListener ikcl,
+				String triggererId, ETriggerType triggerRecipient) {
 			this.ikcl = ikcl;
+			this.triggererId = triggererId;
+			this.triggerRecipient = triggerRecipient;
 		}
 
 		@Override
 		public void run() {
-			ikcl.knowledgeChanged();
+			ikcl.knowledgeChanged(triggererId, triggerRecipient);
 		}
 
 	}

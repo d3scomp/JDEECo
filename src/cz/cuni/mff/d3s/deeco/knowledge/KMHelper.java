@@ -40,24 +40,18 @@ public class KMHelper {
 	 *            type that needs to be checked
 	 * @return true or false depending on the check result
 	 */
-	public static boolean isKnowledge(Type type) {
-		Class structure = getClass(type);
-		return structure != null && Knowledge.class.isAssignableFrom(structure);
+	public static boolean isKnowledge(Class structure) {
+		return Knowledge.class.isAssignableFrom(structure);
 	}
 
 	/**
 	 * Checks whether the provided type is either <code>Collection</code> or
 	 * <code>Map</code> class.
 	 * 
-	 * @param type
-	 *            type that needs to be checked
 	 * @return true or false depending on the check result
 	 */
-	public static boolean isTraversable(Type type) {
-		Class structure = getClass(type);
-		return structure != null
-				&& (Collection.class.isAssignableFrom(structure) || Map.class
-						.isAssignableFrom(structure));
+	public static boolean isTraversable(Class structure) {
+		return Map.class.isAssignableFrom((Class) structure) || Collection.class.isAssignableFrom((Class) structure);
 	}
 
 	/**
@@ -160,10 +154,8 @@ public class KMHelper {
 	 *            type that needs to be checked
 	 * @return true or false depending on the check result
 	 */
-	public static boolean isOutputWrapper(Type type) {
-		Class structure = getClass(type);
-		return structure != null
-				&& OutWrapper.class.isAssignableFrom(structure);
+	public static boolean isOutputWrapper(Class structure) {
+		return OutWrapper.class.isAssignableFrom(structure);
 	}
 
 	/**
