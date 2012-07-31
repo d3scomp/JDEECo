@@ -35,24 +35,24 @@ public class KPBuilder {
 	 * @return full path
 	 */
 	public static String appendToRoot(String root, String tail) {
-		if (root == null || root.equals(""))
+		if (root == null || root.trim().equals(""))
 			return tail;
-		if (tail == null || tail.equals(""))
+		if (tail == null || tail.trim().equals(""))
 			return root;
 		return root + PATH_DELIMITER + tail;
 	}
 
 	public static String prependToRoot(String root, String head) {
-		if (root == null || root.equals(""))
+		if (root == null || root.trim().equals(""))
 			return head;
-		if (head == null || head.equals(""))
+		if (head == null || head.trim().equals(""))
 			return root;
 		return head + PATH_DELIMITER + root;
 	}
 
 	public static String[] decomposePath(String knowledgePath) {
-		if (knowledgePath == null || knowledgePath.equals(""))
+		if (knowledgePath == null || knowledgePath.trim().equals(""))
 			return new String[] {};
-		return knowledgePath.split("\\"+PATH_DELIMITER);
+		return knowledgePath.split("\\"+PATH_DELIMITER,-1);
 	}
 }
