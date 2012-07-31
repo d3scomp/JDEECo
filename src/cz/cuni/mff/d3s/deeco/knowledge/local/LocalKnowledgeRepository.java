@@ -27,45 +27,56 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeRepository;
 import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
 
 /**
- * Implementation of the knowledge repository using a hashmap. This implementation allows only for local execution.
+ * Implementation of the knowledge repository using a hashmap. This
+ * implementation allows only for local execution.
  * 
- * It uses a big global lock to protect a sessions. Thus it serializes all sessions working on the repository
- * (for the whole duration of the session). This means that with the current implementation, there is no benefit
- * on multicores. This repository is thus aimed to be used e.g. for JPF-based verification.  
+ * It uses a big global lock to protect a sessions. Thus it serializes all
+ * sessions working on the repository (for the whole duration of the session).
+ * This means that with the current implementation, there is no benefit on
+ * multicores. This repository is thus aimed to be used e.g. for JPF-based
+ * verification.
  * 
  * @author Tomas Bures
- *
+ * 
  */
 public class LocalKnowledgeRepository extends KnowledgeRepository {
 
 	final ReentrantLock lock = new ReentrantLock();
-	final HashMap<String, List<Object>> ts = new HashMap<String, List<Object>>(); 
-	
+	final HashMap<String, List<Object>> ts = new HashMap<String, List<Object>>();
+
 	@Override
 	public Object get(String entryKey, ISession session)
 			throws UnavailableEntryException, KnowledgeRepositoryException {
-		
+
+		// Lock here to prevent race conditions in case the method is used out of a
+		// session. Likewise done in the rest methods.
+		lock.lock();
 		List<Object> vals = ts.get(entryKey);
-		
+
 		if (vals == null) {
-			throw new UnavailableEntryException("Key " + entryKey + " is not in the local knowledge repository.");
+			throw new UnavailableEntryException("Key " + entryKey
+					+ " is not in the local knowledge repository.");
 		}
-		
-		// TODO: Here we should create a deep copy.
+
+		vals = (List<Object>) DeepCopy.copy(vals);
+		lock.unlock();
 		return vals.get(0);
 	}
 
 	@Override
 	public Object[] getAll(String entryKey, ISession session)
 			throws KnowledgeRepositoryException {
-		
+
+		lock.lock();
 		List<Object> vals = ts.get(entryKey);
-		
+
 		if (vals == null) {
+			lock.unlock();
 			return new Object[0];
 		}
-		
-		// TODO: Here we should create a deep copy.
+
+		vals = (List<Object>) DeepCopy.copy(vals);
+		lock.unlock();
 		return vals.toArray();
 	}
 
@@ -73,48 +84,55 @@ public class LocalKnowledgeRepository extends KnowledgeRepository {
 	public void put(String entryKey, Object value, ISession session)
 			throws KnowledgeRepositoryException {
 
+		lock.lock();
 		List<Object> vals = ts.get(entryKey);
-		
+
 		if (vals == null) {
 			vals = new LinkedList<Object>();
 			ts.put(entryKey, vals);
 		}
-		
-		// TODO: Here we should create a deep copy.
-		vals.add(value);		
+
+		vals.add(DeepCopy.copy(value));
+		lock.unlock();
 	}
 
 	@Override
 	public Object take(String entryKey, ISession session)
 			throws UnavailableEntryException, KnowledgeRepositoryException {
 
+		lock.lock();
 		List<Object> vals = ts.get(entryKey);
-		
+
 		if (vals == null) {
-			throw new UnavailableEntryException("Key " + entryKey + " is not in the local knowledge repository.");
+			throw new UnavailableEntryException("Key " + entryKey
+					+ " is not in the local knowledge repository.");
 		}
-		
+
 		if (vals.size() <= 1) {
 			ts.remove(entryKey);
 		}
-		
-		// TODO: Here we should create a deep copy.
+
+		vals = (List<Object>) DeepCopy.copy(vals);
+		lock.unlock();
 		return vals.remove(0);
 	}
 
 	@Override
 	public Object[] takeAll(String entryKey, ISession session)
 			throws KnowledgeRepositoryException {
-		
+
+		lock.lock();
 		List<Object> vals = ts.get(entryKey);
-		
+
 		if (vals == null) {
+			lock.unlock();
 			return new Object[0];
 		}
-		
+
 		ts.remove(entryKey);
-		
-		// TODO: Here we should create a deep copy.
+
+		vals = (List<Object>) DeepCopy.copy(vals);
+		lock.unlock();
 		return vals.toArray();
 	}
 
