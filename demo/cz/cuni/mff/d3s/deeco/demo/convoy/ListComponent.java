@@ -5,19 +5,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import cz.cuni.mff.d3s.deeco.annotations.DEECoIn;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoProcess;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoIn;
-import cz.cuni.mff.d3s.deeco.knowledge.Knowledge;
-import cz.cuni.mff.d3s.deeco.knowledge.RootKnowledge;
+import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
 
-public class ListComponent extends RootKnowledge {
+public class ListComponent extends ComponentKnowledge {
 	public List<List<Path>> listOfLists;
 	public Path path;
 
 	@DEECoInitialize
-	public static RootKnowledge getInitialKnowledge() {
+	public static ComponentKnowledge getInitialKnowledge() {
 		ListComponent k = new ListComponent();
 		k.listOfLists = new ArrayList<List<Path>>();
 		List<Path> le = new ArrayList<Path>();

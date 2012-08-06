@@ -23,14 +23,13 @@ import cz.cuni.mff.d3s.deeco.annotations.DEECoComponent;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoIn;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoInOut;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoProcess;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoTriggered;
+import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
-import cz.cuni.mff.d3s.deeco.knowledge.RootKnowledge;
 
 @DEECoComponent
-public class RobotFollowerComponent extends RootKnowledge {
+public class RobotFollowerComponent extends ComponentKnowledge {
 
 	public Integer battery;
 	public Path path;
@@ -38,7 +37,7 @@ public class RobotFollowerComponent extends RootKnowledge {
 	public List<Path> crossingRobots;
 
 	@DEECoInitialize
-	public static RootKnowledge getInitialKnowledge() {
+	public static ComponentKnowledge getInitialKnowledge() {
 		RobotFollowerComponent k = new RobotFollowerComponent();
 		k.id = "follower";
 		k.battery = new Integer(100);

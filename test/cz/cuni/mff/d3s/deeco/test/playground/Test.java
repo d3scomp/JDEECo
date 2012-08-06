@@ -13,21 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package cz.cuni.mff.d3s.deeco.exceptions;
+package cz.cuni.mff.d3s.deeco.test.playground;
 
-import cz.cuni.mff.d3s.deeco.knowledge.ISession;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
 
-/**
- * Thrown whenever there is a session related problem.
- * @see ISession
- * 
- * @author Michal Kit
- * 
- */
-public class SessionException extends Exception {
+import cz.cuni.mff.d3s.deeco.knowledge.TypeUtils;
 
-	public SessionException(String msg) {
-		super(msg);
+public class Test {
+
+	public static class A {
+		public List<String> a;
+	}
+
+	public static abstract class B {
+		public Integer b;
+	}
+
+	public static interface I {
+		public void get();
+	}
+
+	public static void main(String[] args) {
+		try {
+			Type t = A.class.getField("a").getGenericType();
+			System.out.println(TypeUtils.isGenericType(t));
+		} catch (Exception e) {
+			System.out.println("desdasdfa");
+		}
 	}
 
 }

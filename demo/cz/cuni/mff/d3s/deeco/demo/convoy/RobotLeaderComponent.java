@@ -20,16 +20,15 @@ import java.util.Arrays;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.annotations.DEECoComponent;
+import cz.cuni.mff.d3s.deeco.annotations.DEECoInOut;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoProcess;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoInOut;
-import cz.cuni.mff.d3s.deeco.annotations.ELockingMode;
+import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
-import cz.cuni.mff.d3s.deeco.knowledge.RootKnowledge;
 
 @DEECoComponent
-public class RobotLeaderComponent extends RootKnowledge {
+public class RobotLeaderComponent extends ComponentKnowledge {
 
 	public Integer battery;
 	public Path path;
@@ -37,7 +36,7 @@ public class RobotLeaderComponent extends RootKnowledge {
 	public List<Path> crossingRobots;
 
 	@DEECoInitialize
-	public static RootKnowledge getInitialKnowledge() {
+	public static ComponentKnowledge getInitialKnowledge() {
 		RobotLeaderComponent k = new RobotLeaderComponent();
 		k.id = "leader";
 		k.battery = new Integer(100);

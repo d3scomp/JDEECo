@@ -13,34 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package cz.cuni.mff.d3s.deeco.test;
+package cz.cuni.mff.d3s.deeco.exceptions;
 
-import java.rmi.RMISecurityManager;
-import java.util.Arrays;
+/**
+ * Thrown by the knowledge repository whenever the
+ * entry specified by the key is unavailable.
+ * 
+ * @author Michal Kit
+ * 
+ */
+public class KRExceptionUnavailableEntry extends Exception {
 
-import net.jini.core.lease.Lease;
-import net.jini.space.JavaSpace05;
-import net.jini.space.MatchSet;
-import cz.cuni.mff.d3s.deeco.knowledge.jini.TSUtils;
-import cz.cuni.mff.d3s.deeco.knowledge.jini.Tuple;
-import cz.cuni.mff.d3s.deeco.path.grammar.EEnsembleParty;
-
-public class Test {
-
-	public static class A {
-		public Integer a;
+	public KRExceptionUnavailableEntry(String message) {
+		super(message);
 	}
-
-	public static abstract class B {
-		public Integer b;
-	}
-
-	public static interface I {
-		public void get();
-	}
-
-	public static void main(String[] args) {
-		System.out.println(EEnsembleParty.MEMBER.toString());
-	}
-
 }

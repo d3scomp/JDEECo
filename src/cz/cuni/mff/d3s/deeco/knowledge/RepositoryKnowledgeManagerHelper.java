@@ -1,11 +1,12 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
-import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
 import cz.cuni.mff.d3s.deeco.exceptions.KMNotExistentException;
-import cz.cuni.mff.d3s.deeco.exceptions.KnowledgeRepositoryException;
-import cz.cuni.mff.d3s.deeco.exceptions.UnavailableEntryException;
+import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionAccessError;
+import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionUnavailableEntry;
 import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
 
 public class RepositoryKnowledgeManagerHelper {
@@ -23,77 +24,86 @@ public class RepositoryKnowledgeManagerHelper {
 		return kr.createSession();
 	}
 
-	public boolean putFlat(String knowledgePath, Object newValue,
-			ISession session) throws KnowledgeRepositoryException {
+	public void putFlat(String knowledgePath, Object newValue,
+			ISession session, boolean modify) throws KRExceptionAccessError {
 		Object currentValue = null;
-		putStructure(knowledgePath, null, session);
+		putStructure(knowledgePath, null, session, modify);
 		try {
-			currentValue = kr.get(knowledgePath, session);
-			if ((newValue != null && !newValue.equals(currentValue))
-					|| (currentValue != null && !currentValue.equals(newValue))) {
-				kr.take(knowledgePath, session);
+			if (modify) {
+				currentValue = kr.get(knowledgePath, session);
+				if ((newValue != null && !newValue.equals(currentValue))
+						|| (currentValue != null && !currentValue
+								.equals(newValue))) {
+					kr.take(knowledgePath, session);
+					kr.put(knowledgePath, newValue, session);
+				}
+			} else
 				kr.put(knowledgePath, newValue, session);
-				return true;
-			}
-			return false;
-		} catch (UnavailableEntryException uee) {
+		} catch (KRExceptionUnavailableEntry uee) {
 			System.out.println("Unavailable entry: " + knowledgePath);
 			kr.put(knowledgePath, newValue, session);
-			return true;
 		}
 	}
 
 	public Object getFlat(boolean withdrawal, String knowledgePath,
-			ISession session) throws UnavailableEntryException,
-			KnowledgeRepositoryException {
+			ISession session) throws KRExceptionUnavailableEntry,
+			KRExceptionAccessError {
 		return (withdrawal) ? kr.take(knowledgePath, session) : kr.get(
 				knowledgePath, session);
 	}
 
-	public Class<?> getStructure(boolean withdrawal, String knowledgePath,
-			ISession session) throws KnowledgeRepositoryException {
+	public String [] getStructure(boolean withdrawal, String knowledgePath,
+			ISession session) throws KRExceptionAccessError {
 		String tempPath = KPBuilder.appendToRoot(knowledgePath,
-				ConstantKeys.CLASS_ID);
-		Object result = null;
+				ConstantKeys.STRUCTURE_ID);
 		try {
-			result = getFlat(withdrawal, tempPath, session);
-		} catch (UnavailableEntryException uee) {
+			Object[] result = (Object[]) getFlat(withdrawal, tempPath, session);
+			if (result.length == 1)
+				return (String[]) result[0];
+			else
+				return null;
+		} catch (KRExceptionUnavailableEntry uee) {
+			return null;
 		}
-		return (result != null) ? (Class<?>) result : null;
-
 	}
 
-	public void putStructure(String knowledgePath, Class<?> newClass,
-			ISession session) throws KnowledgeRepositoryException {
-		Object oldClass;
+	public String[] putStructure(String knowledgePath, Object value,
+			ISession session, boolean modify) throws KRExceptionAccessError {
+		String[] oldStructure, newStructure = StructureHelper.getStructureFromObject(value);
+		boolean store = value != null && newStructure != null;
 		String structurePath = KPBuilder.appendToRoot(knowledgePath,
-				ConstantKeys.CLASS_ID);
+				ConstantKeys.STRUCTURE_ID);
 		try {
-			oldClass = kr.get(structurePath, session);
-			if ((newClass != null && !newClass.equals(oldClass))
-					|| (oldClass != null && !oldClass.equals(newClass))) {
-				kr.take(structurePath, session);
-
-				String tempPath;
-				for (Field f : ((Class<?>) oldClass).getFields()) {
-					tempPath = KPBuilder.appendToRoot(knowledgePath,
-							f.getName());
-					try {
-						km.takeKnowledge(tempPath, session);
-					} catch (KMNotExistentException kmnee) {
-					} catch (KMException kmae) {
-						throw new KnowledgeRepositoryException(
-								"Knowledge repository error!");
+			if (modify) {
+				Object [] tObjects = (Object[]) kr.get(structurePath, session);
+				oldStructure = (String []) tObjects[0];
+				if ((newStructure != null || oldStructure != null)
+						&& !Arrays.deepEquals(oldStructure, newStructure)) {
+					kr.take(structurePath, session);
+					String tempPath;
+					List<String> nsList = Arrays.asList(newStructure);
+					for (Object s : oldStructure) {
+						if (nsList.contains(s))
+							continue;
+						tempPath = KPBuilder.appendToRoot(knowledgePath, (String) s);
+						try {
+							km.takeKnowledge(tempPath, session);
+						} catch (KMNotExistentException kmnee) {
+						} catch (KMException kmae) {
+							throw new KRExceptionAccessError(
+									"Knowledge repository error!");
+						}
 					}
+					if (store)
+						kr.put(structurePath, newStructure, session);
 				}
-
-				if (newClass != null)
-					kr.put(structurePath, newClass, session);
-			}
-		} catch (UnavailableEntryException uee) {
-			if (newClass != null)
-				kr.put(structurePath, newClass, session);
+			} else if (store)
+				kr.put(structurePath, newStructure, session);
+		} catch (KRExceptionUnavailableEntry uee) {
+			if (store)
+				kr.put(structurePath, newStructure, session);
 		}
+		return newStructure;
 	}
 
 	public boolean listenForChange(IKnowledgeChangeListener listener) {

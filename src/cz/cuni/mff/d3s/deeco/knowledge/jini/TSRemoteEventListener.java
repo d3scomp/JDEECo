@@ -66,12 +66,15 @@ public class TSRemoteEventListener implements RemoteEventListener {
 			Tuple t = (Tuple) ae.getEntry();
 			String stringVersionAndOwner, version, owner;
 			String[] versionOwner;
+			Object [] tObjects;
 			ExecutorService es;
 			ts = (TransactionalSession) kr.createSession();
 			ts.begin();
 			while (ts.repeat()) {
-				stringVersionAndOwner = (String) kr.get(t.key, ts);
+				tObjects = kr.get(t.key, ts);
+				stringVersionAndOwner = (String) tObjects[0];
 				versionOwner = extractVersionOwner(stringVersionAndOwner);
+				//System.out.println("Triggered: " + t.key + " " + stringVersionAndOwner);
 				if (versionOwner != null) {
 					version = versionOwner[0];
 					owner = versionOwner[1];

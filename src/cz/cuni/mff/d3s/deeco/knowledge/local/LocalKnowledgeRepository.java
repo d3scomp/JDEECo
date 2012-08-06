@@ -20,8 +20,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
-import cz.cuni.mff.d3s.deeco.exceptions.KnowledgeRepositoryException;
-import cz.cuni.mff.d3s.deeco.exceptions.UnavailableEntryException;
+import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionAccessError;
+import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionUnavailableEntry;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeRepository;
 import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
@@ -42,27 +42,13 @@ public class LocalKnowledgeRepository extends KnowledgeRepository {
 	final HashMap<String, List<Object>> ts = new HashMap<String, List<Object>>(); 
 	
 	@Override
-	public Object get(String entryKey, ISession session)
-			throws UnavailableEntryException, KnowledgeRepositoryException {
+	public Object [] get(String entryKey, ISession session)
+			throws KRExceptionUnavailableEntry, KRExceptionAccessError {
 		
 		List<Object> vals = ts.get(entryKey);
 		
 		if (vals == null) {
-			throw new UnavailableEntryException("Key " + entryKey + " is not in the local knowledge repository.");
-		}
-		
-		// TODO: Here we should create a deep copy.
-		return vals.get(0);
-	}
-
-	@Override
-	public Object[] getAll(String entryKey, ISession session)
-			throws KnowledgeRepositoryException {
-		
-		List<Object> vals = ts.get(entryKey);
-		
-		if (vals == null) {
-			return new Object[0];
+			throw new KRExceptionUnavailableEntry("Key " + entryKey + " is not in the local knowledge repository.");
 		}
 		
 		// TODO: Here we should create a deep copy.
@@ -71,7 +57,7 @@ public class LocalKnowledgeRepository extends KnowledgeRepository {
 
 	@Override
 	public void put(String entryKey, Object value, ISession session)
-			throws KnowledgeRepositoryException {
+			throws KRExceptionAccessError {
 
 		List<Object> vals = ts.get(entryKey);
 		
@@ -85,34 +71,18 @@ public class LocalKnowledgeRepository extends KnowledgeRepository {
 	}
 
 	@Override
-	public Object take(String entryKey, ISession session)
-			throws UnavailableEntryException, KnowledgeRepositoryException {
+	public Object [] take(String entryKey, ISession session)
+			throws KRExceptionUnavailableEntry, KRExceptionAccessError {
 
 		List<Object> vals = ts.get(entryKey);
 		
 		if (vals == null) {
-			throw new UnavailableEntryException("Key " + entryKey + " is not in the local knowledge repository.");
+			throw new KRExceptionUnavailableEntry("Key " + entryKey + " is not in the local knowledge repository.");
 		}
 		
 		if (vals.size() <= 1) {
 			ts.remove(entryKey);
 		}
-		
-		// TODO: Here we should create a deep copy.
-		return vals.remove(0);
-	}
-
-	@Override
-	public Object[] takeAll(String entryKey, ISession session)
-			throws KnowledgeRepositoryException {
-		
-		List<Object> vals = ts.get(entryKey);
-		
-		if (vals == null) {
-			return new Object[0];
-		}
-		
-		ts.remove(entryKey);
 		
 		// TODO: Here we should create a deep copy.
 		return vals.toArray();

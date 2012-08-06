@@ -41,28 +41,9 @@ public abstract class KnowledgeManager {
 	 * @throws KMException
 	 *             thrown whenever there is a problem accessing the knowledge
 	 *             repository
-	 */
+	 */	
 	public abstract Object getKnowledge(String knowledgePath,
 			ISession session) throws KMException;
-
-	/**
-	 * Puts knowledge object to the knowledge repository. This method is session
-	 * oriented.
-	 * 
-	 * @param knowledgePath
-	 *            nesting at which the knowledge object should be stored
-	 * @param value
-	 *            knowledge to be stored
-	 * @param type
-	 *            Knowledge structure (Knowledge Interface)
-	 * @param session
-	 *            a session object within which all the put operations should be
-	 *            performed
-	 * @throws KMException
-	 *             thrown whenever there is a problem accessing the knowledge
-	 *             repository
-	 */
-	public abstract void putKnowledge(String knowledgePath, Object value, ISession session) throws KMException;
 
 	/**
 	 * Withdraws the knowledge from the knowledge repository. This method is
@@ -82,6 +63,44 @@ public abstract class KnowledgeManager {
 	 */
 	public abstract Object takeKnowledge(String knowledgePath,
 			ISession session) throws KMException;
+	
+	/**
+	 * Alters knowledge object in the knowledge repository. This method is session
+	 * oriented.
+	 * 
+	 * @param knowledgePath
+	 *            nesting at which the knowledge object should be stored
+	 * @param value
+	 *            knowledge to be stored
+	 * @param type
+	 *            Knowledge structure (Knowledge Interface)
+	 * @param session
+	 *            a session object within which all the put operations should be
+	 *            performed
+	 * @throws KMException
+	 *             thrown whenever there is a problem accessing the knowledge
+	 *             repository
+	 */
+	public abstract void alterKnowledge(String knowledgePath, Object value, ISession session) throws KMException;
+	
+	/**
+	 * Puts knowledge object to the knowledge repository. This method is session
+	 * oriented.
+	 * 
+	 * @param knowledgePath
+	 *            nesting at which the knowledge object should be stored
+	 * @param value
+	 *            knowledge to be stored
+	 * @param type
+	 *            Knowledge structure (Knowledge Interface)
+	 * @param session
+	 *            a session object within which all the put operations should be
+	 *            performed
+	 * @throws KMException
+	 *             thrown whenever there is a problem accessing the knowledge
+	 *             repository
+	 */
+	public abstract void putKnowledge(String knowledgePath, Object value, ISession session) throws KMException;
 
 	/**
 	 * Creates {@link ISession} instance used for enclosing all knowledge
@@ -116,6 +135,36 @@ public abstract class KnowledgeManager {
 	}
 
 	/**
+	 * Withdraws the knowledge from the knowledge repository.
+	 * 
+	 * @param knowledgePath
+	 *            nesting at which the knowledge structure should be rooted
+	 * @return retrieved knowledge object of type structure
+	 * @throws KMException
+	 *             thrown whenever there is a problem accessing the knowledge
+	 *             repository
+	 */
+	public Object takeKnowledge(String knowledgePath) throws KMException {
+		return takeKnowledge(knowledgePath, null);
+	}
+	
+	/**
+	 * Alters knowledge object in the knowledge repository.
+	 * 
+	 * @param knowledgePath
+	 *            nesting at which the knowledge object should be stored
+	 * @param value
+	 *            knowledge to be stored
+	 * @throws KMException
+	 *             thrown whenever there is a problem accessing the knowledge
+	 *             repository
+	 */
+	public void alterKnowledge(String knowledgePath, Object value)
+			throws KMException {
+		alterKnowledge(knowledgePath, value, null);
+	}
+	
+	/**
 	 * Puts knowledge object to the knowledge repository.
 	 * 
 	 * @param knowledgePath
@@ -129,19 +178,5 @@ public abstract class KnowledgeManager {
 	public void putKnowledge(String knowledgePath, Object value)
 			throws KMException {
 		putKnowledge(knowledgePath, value, null);
-	}
-
-	/**
-	 * Withdraws the knowledge from the knowledge repository.
-	 * 
-	 * @param knowledgePath
-	 *            nesting at which the knowledge structure should be rooted
-	 * @return retrieved knowledge object of type structure
-	 * @throws KMException
-	 *             thrown whenever there is a problem accessing the knowledge
-	 *             repository
-	 */
-	public Object takeKnowledge(String knowledgePath) throws KMException {
-		return takeKnowledge(knowledgePath, null);
 	}
 }

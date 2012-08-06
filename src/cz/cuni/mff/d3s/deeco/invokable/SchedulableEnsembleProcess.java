@@ -15,20 +15,12 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.invokable;
 
-import java.lang.reflect.Method;
-
-import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsembleMapper;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsembleMembership;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
 import cz.cuni.mff.d3s.deeco.exceptions.KMNotExistentException;
 import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.scheduling.ETriggerType;
-import cz.cuni.mff.d3s.deeco.scheduling.ProcessPeriodicSchedule;
-import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
-import cz.cuni.mff.d3s.deeco.scheduling.ScheduleHelper;
 
 /**
  * Class representing schedulable ensemble process, which is used by the system
@@ -39,8 +31,8 @@ import cz.cuni.mff.d3s.deeco.scheduling.ScheduleHelper;
  */
 public class SchedulableEnsembleProcess extends SchedulableProcess {
 
-	private ParameterizedMethod mapper;
-	private Membership membership;
+	public ParameterizedMethod mapper;
+	public Membership membership;
 
 	/**
 	 * Returns <code>SchedulableEnsembleProcess</code> instance for specified
@@ -53,8 +45,7 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 	 *            instance of the knowledge manager that is used for parameter
 	 *            retrieval
 	 */
-	public SchedulableEnsembleProcess(KnowledgeManager km) {
-		super(km);
+	public SchedulableEnsembleProcess() {
 	}
 
 	/**
@@ -76,7 +67,6 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 	 */
 	public SchedulableEnsembleProcess(Membership membership,
 			ParameterizedMethod mapper, KnowledgeManager km) {
-		this(km);
 		this.membership = membership;
 		this.mapper = mapper;
 	}
@@ -90,8 +80,8 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 	public void invoke(String triggererId, ETriggerType recipientMode) {
 		// System.out.println("Ensembling starts");
 		try {
-			Object[] ids = (Object[]) km.getKnowledge(
-					ConstantKeys.ROOT_KNOWLEDGE_ID, null, null);
+			Object[] ids = (Object[]) km
+					.getKnowledge(ConstantKeys.ROOT_KNOWLEDGE_ID);
 			if (recipientMode == null)
 				periodicInvocation(ids);
 			else
@@ -177,63 +167,5 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 			System.out.println("Ensemble evaluation exception! - "
 					+ e.getMessage());
 		}
-	}
-
-	/**
-	 * Static function used to extract {@link SchedulableEnsembleProcess}
-	 * instance from the class definition
-	 * 
-	 * @param c
-	 *            class to be parsed for extraction
-	 * @param km
-	 *            {@link KnowledgeManager} instance that is used for knowledge
-	 *            repository communication
-	 * @return list of {@link SchedulableEnsembleProcess} instances extracted
-	 *         from the class definition
-	 */
-	public static SchedulableEnsembleProcess extractEnsembleProcesses(
-			Class<?> c,
-			KnowledgeManager km) {
-		SchedulableEnsembleProcess result = null;
-		if (c != null) {
-			ProcessSchedule pSchedule = ScheduleHelper
-					.getPeriodicSchedule(AnnotationHelper.getAnnotation(
-							DEECoPeriodicScheduling.class, c.getAnnotations()));
-			result = new SchedulableEnsembleProcess(km);
-			Method method = AnnotationHelper.getAnnotatedMethod(c,
-					DEECoEnsembleMembership.class);
-			if (method != null) {
-				ParameterizedMethod pm = ParameterizedMethod
-						.extractParametrizedMethod(method);
-				if (method.getReturnType().isAssignableFrom(double.class))
-					result.membership = new FuzzyMembership(
-							pm,
-							(Double) AnnotationHelper.getAnnotationValue(method
-									.getAnnotation(DEECoEnsembleMembership.class)));
-				else
-					result.membership = new BooleanMembership(pm);
-				if (pSchedule == null) {// not periodic
-					pSchedule = ScheduleHelper.getTriggeredSchedule(
-							method.getParameterAnnotations(),
-							result.membership.getIn(),
-							result.membership.getInOut());
-					if (pSchedule == null)
-						result.scheduling = new ProcessPeriodicSchedule();
-					else
-						result.scheduling = pSchedule;
-				} else
-					result.scheduling = pSchedule;
-			} else
-				return null;
-			method = AnnotationHelper.getAnnotatedMethod(c,
-					DEECoEnsembleMapper.class);
-			if (method != null)
-				result.mapper = ParameterizedMethod
-						.extractParametrizedMethod(method);
-			else
-				return null;
-			return result;
-		}
-		return result;
 	}
 }

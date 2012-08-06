@@ -1,23 +1,19 @@
 package cz.cuni.mff.d3s.deeco.demo.parkinglotbooking;
 
-import java.util.Calendar;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import cz.cuni.mff.d3s.deeco.annotations.DEECoComponent;
+import cz.cuni.mff.d3s.deeco.annotations.DEECoIn;
+import cz.cuni.mff.d3s.deeco.annotations.DEECoInOut;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoProcess;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoIn;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoInOut;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoOut;
+import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
-import cz.cuni.mff.d3s.deeco.knowledge.RootKnowledge;
 
 @DEECoComponent
-public class CarPlanner extends RootKnowledge {
+public class CarPlanner extends ComponentKnowledge {
 
 	public static enum State {Idle, WaitingForResponse, DrivingToTarget}
 	
@@ -32,7 +28,7 @@ public class CarPlanner extends RootKnowledge {
 	
 
 	@DEECoInitialize
-	public static RootKnowledge getInitialKnowledge() {
+	public static ComponentKnowledge getInitialKnowledge() {
 		CarPlanner k = new CarPlanner();
 		k.carId = new CarId("C1");
 		k.request = null;
@@ -40,7 +36,7 @@ public class CarPlanner extends RootKnowledge {
 		k.position = new Position(0,0);
 		k.currentScheduleTarget = null;
 		k.state = State.Idle;
-		k.schedule = new LinkedList();
+		k.schedule = new LinkedList<CarScheduleItem>();
 		//TODO init schedule
 		return k;
 	}

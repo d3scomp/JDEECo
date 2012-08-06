@@ -39,7 +39,14 @@
 
 	<target name="dist-jdeeco" depends="compile-jdeeco"
         description="Generates a jar with JDEECo runtime" >
-		<jar jarfile="${dist}/jdeeco.jar" basedir="${build}/jdeeco"/>
+		<jar jarfile="${dist}/jdeeco.jar" basedir="${build}/jdeeco">
+			<manifest>
+                <attribute name="Bundle-Version" value="0.0.1.SNAPSHOT"/>
+				<attribute name="Export-Package" value="cz.cuni.mff.d3s.deeco.knowledge,cz.cuni.mff.d3s.deeco.runtime,cz.cuni.mff.d3s.deeco.scheduling"/>
+				<attribute name="Bundle-Name" value="jdeeco-runtime" />
+				<attribute name="Bundle-SymbolicName" value="cz.cuni.mff.d3s.deeco.runtime" />
+            </manifest>
+		</jar>
 	</target>
 
 	<target name="dist-demo" depends="compile-demo"

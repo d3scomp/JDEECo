@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package cz.cuni.mff.d3s.deeco.exceptions;
+package cz.cuni.mff.d3s.deeco.knowledge;
+
 
 /**
- * Thrown whenever there is a type matching related problem, while retrieving
- * knowledge the knowledge repository.
+ * ComponentKnowledge is the base class representing top-level component knowledge.
+ * 
  * 
  * @author Michal Kit
  * 
  */
-public class KMIllegalArgumentException extends KMException {
-	public KMIllegalArgumentException(String message) {
-		super(message);
-	}
+public class ComponentKnowledge extends Knowledge {
+	public String id;
 }

@@ -22,19 +22,19 @@ import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoOut;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoProcess;
+import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
-import cz.cuni.mff.d3s.deeco.knowledge.RootKnowledge;
 
 @DEECoComponent
-public class NodeA extends RootKnowledge {
+public class NodeA extends ComponentKnowledge {
 
 	public Float loadRatio;
 	public Float maxLoadRatio;
 	public Integer networkId;
 	public String targetNode;
-
+	
 	@DEECoInitialize
-	public static RootKnowledge getInitialKnowledge() {
+	public static ComponentKnowledge getInitialKnowledge() {
 		NodeA k = new NodeA();
 		k.id = "NodeA";
 		k.loadRatio = 0.0f;
@@ -48,5 +48,6 @@ public class NodeA extends RootKnowledge {
 	@DEECoPeriodicScheduling(4000)
 	public static void process(@DEECoOut("loadRatio") OutWrapper<Float> loadRatio) {
 		loadRatio.item = new Random().nextFloat();
+		System.out.println("Node A new load ratio: " + loadRatio.item);
 	}
 }

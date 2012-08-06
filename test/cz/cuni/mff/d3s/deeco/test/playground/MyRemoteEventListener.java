@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.deeco.test;
+package cz.cuni.mff.d3s.deeco.test.playground;
 
 import java.rmi.RemoteException;
 
@@ -10,28 +10,21 @@ import net.jini.jeri.BasicILFactory;
 import net.jini.jeri.BasicJeriExporter;
 import net.jini.jeri.tcp.TcpServerEndpoint;
 import net.jini.space.AvailabilityEvent;
-import cz.cuni.mff.d3s.deeco.knowledge.jini.Tuple;
 
-public class TSRemoteEventListener implements RemoteEventListener {
+public class MyRemoteEventListener implements RemoteEventListener {
 
-	private RemoteEventListener stub;
+	private RemoteEventListener theStub;
 
-	public TSRemoteEventListener() throws RemoteException {
-		Exporter exporter = new BasicJeriExporter(
+	public MyRemoteEventListener() throws RemoteException {
+		Exporter myDefaultExporter = new BasicJeriExporter(
 				TcpServerEndpoint.getInstance(0), new BasicILFactory(), false,
 				true);
 
-		stub = (RemoteEventListener) exporter.export(this);
+		theStub = (RemoteEventListener) myDefaultExporter.export(this);
 	}
 
-	public static RemoteEventListener getRemoteEventListener() {
-		try {
-			TSRemoteEventListener tsre = new TSRemoteEventListener();
-			return tsre.stub;
-		} catch (Exception e) {
-			return null;
-		}
-
+	RemoteEventListener getStub() {
+		return theStub;
 	}
 
 	@Override
@@ -41,7 +34,6 @@ public class TSRemoteEventListener implements RemoteEventListener {
 			AvailabilityEvent ae = (AvailabilityEvent) re;
 			System.out.println(ae.getRegistrationObject().get());
 			System.out.println(ae.getSequenceNumber());
-			Tuple t = (Tuple) ae.getEntry();
 			System.out.println(re);
 		} catch (Exception uee) {
 			System.out.println("uee error");

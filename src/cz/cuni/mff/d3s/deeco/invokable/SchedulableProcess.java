@@ -20,8 +20,8 @@ import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
-import cz.cuni.mff.d3s.deeco.knowledge.KMHelper;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.knowledge.local.DeepCopy;
 import cz.cuni.mff.d3s.deeco.scheduling.ETriggerType;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessPeriodicSchedule;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
@@ -35,12 +35,16 @@ import cz.cuni.mff.d3s.deeco.scheduling.ProcessTriggeredSchedule;
  */
 public abstract class SchedulableProcess {
 
+	private InputParametersHelper iph;
+	private OutputParametersHelper oph;
+
 	protected KnowledgeManager km;
 
 	public ProcessSchedule scheduling;
 
-	public SchedulableProcess(KnowledgeManager km) {
-		this.km = km;
+	public SchedulableProcess() {
+		iph = new InputParametersHelper();
+		oph = new OutputParametersHelper();
 	}
 
 	protected Object[] getParameterMethodValues(List<Parameter> in,
@@ -60,6 +64,7 @@ public abstract class SchedulableProcess {
 		List<Parameter> parameters = new ArrayList<Parameter>();
 		parameters.addAll(in);
 		parameters.addAll(inOut);
+		Object value;
 		Object[] result = new Object[parameters.size()
 				+ ((out != null) ? out.size() : 0)];
 		ISession localSession;
@@ -71,9 +76,11 @@ public abstract class SchedulableProcess {
 		try {
 			while (localSession.repeat()) {
 				for (Parameter p : parameters) {
-					result[p.index] = km.getKnowledge(p.kPath.getEvaluatedPath(
-							km, coordinator, member, localSession), p.type,
-							localSession);
+					value = km.getKnowledge(p.kPath.getEvaluatedPath(km,
+							coordinator, member, localSession), localSession);
+					value = iph.getParameterInstance(p.type, value);
+					p.originalValue = DeepCopy.copy(value);
+					result[p.index] = value;
 				}
 				if (session == null)
 					localSession.end();
@@ -82,7 +89,9 @@ public abstract class SchedulableProcess {
 			}
 			parameters = out;
 			for (Parameter p : parameters) {
-				result[p.index] = KMHelper.getInstance(p.type);
+				value = oph.getParameterInstance(p.type);
+				p.originalValue = DeepCopy.copy(value);
+				result[p.index] = value;
 			}
 			return result;
 		} catch (KMException kme) {
@@ -154,9 +163,9 @@ public abstract class SchedulableProcess {
 				while (localSession.repeat()) {
 					for (Parameter p : parameters) {
 						value = parameterValues[p.index];
-						km.putKnowledge(p.kPath.getEvaluatedPath(km,
-								coordinator, member, localSession), value,
-								p.type, localSession);
+						oph.storeOutValue(p.kPath.getEvaluatedPath(km,
+								coordinator, member, localSession),
+								p.originalValue, value, km, localSession);
 					}
 					if (session == null)
 						localSession.end();
@@ -186,12 +195,20 @@ public abstract class SchedulableProcess {
 	public boolean isTriggered() {
 		return scheduling instanceof ProcessTriggeredSchedule;
 	}
-	
+
 	/**
 	 * Function invokes single process execution.
 	 */
 	public void invoke() {
 		invoke(null, null);
+	}
+
+	public KnowledgeManager getKnowledgeManager() {
+		return km;
+	}
+
+	public void setKnowledgeManager(KnowledgeManager km) {
+		this.km = km;
 	}
 
 	public abstract void invoke(String triggererId, ETriggerType recipientMode);

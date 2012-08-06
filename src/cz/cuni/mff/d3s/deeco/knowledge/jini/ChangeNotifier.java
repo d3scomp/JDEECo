@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import cz.cuni.mff.d3s.deeco.exceptions.KnowledgeRepositoryException;
-import cz.cuni.mff.d3s.deeco.exceptions.UnavailableEntryException;
+import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionAccessError;
+import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionUnavailableEntry;
 import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
 import cz.cuni.mff.d3s.deeco.knowledge.KPBuilder;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeRepository;
@@ -66,22 +66,22 @@ public class ChangeNotifier {
 								EEnsembleParty.MEMBER.toString()),
 						ConstantKeys.LISTEN_ID);
 				updateVersion(listenPath, session, newVersion);
-
 			}
-		} catch (KnowledgeRepositoryException kre) {
+		} catch (KRExceptionAccessError kre) {
 			System.out.println("Knowledge Repository communication exception!");
 		}
 		notifying = false;
 	}
 
 	private void updateVersion(String path, TransactionalSession session,
-			String newVersion) throws KnowledgeRepositoryException {
-
+			String newVersion) throws KRExceptionAccessError {
 		try {
 			Object value = kr.take(path, session);
 			value = newVersion;
 			kr.put(path, value, session);
-		} catch (UnavailableEntryException uee) {
+			System.out.println("Updating: " + path);
+		} catch (KRExceptionUnavailableEntry uee) {
+			//System.out.println("Updating error: " + path);
 		}
 	}
 }

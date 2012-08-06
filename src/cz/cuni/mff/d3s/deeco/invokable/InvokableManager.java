@@ -28,7 +28,7 @@ import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
  * @author Michal Kit
  * 
  * @param class extending {@link SchedulableProcess} - either
- *        {@link SchedulableKnowledgeProcess} or
+ *        {@link SchedulableComponentProcess} or
  *        {@link SchedulableEnsembleProcess}
  */
 public abstract class InvokableManager<T extends SchedulableProcess> {
@@ -49,5 +49,5 @@ public abstract class InvokableManager<T extends SchedulableProcess> {
 	 * @param invokableDefinition
 	 *            class having a definitions of potential schedulable processes.
 	 */
-	public abstract void addInvokable(Class invokableDefinition);
+	public abstract void addProcess(SchedulableProcess schedulableProcess);
 }

@@ -12,10 +12,10 @@ import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoOut;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoProcess;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoTriggered;
-import cz.cuni.mff.d3s.deeco.knowledge.RootKnowledge;
+import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
 
 @DEECoComponent
-public class ParkingLot extends RootKnowledge {
+public class ParkingLot extends ComponentKnowledge {
 
 	public Map<ParkingPlaceId, List<ParkingLotScheduleItem> > schedule;
 	public Map<UUID, Request> incomingRequests;
@@ -26,7 +26,7 @@ public class ParkingLot extends RootKnowledge {
 	
 
 	@DEECoInitialize
-	public static RootKnowledge getInitialKnowledge() {
+	public static ComponentKnowledge getInitialKnowledge() {
 		ParkingLot k = new ParkingLot();
 		k.schedule = new HashMap<ParkingPlaceId, List<ParkingLotScheduleItem> >();
 		k.incomingRequests = new HashMap<UUID, Request>();

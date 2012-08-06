@@ -30,7 +30,7 @@ import java.lang.reflect.Proxy;
 public class AnnotationProxy implements InvocationHandler {
 
 	private Annotation annotation;
-	private Class annotationClass;
+	private Class<?> annotationClass;
 
 	
 	/**
@@ -40,7 +40,7 @@ public class AnnotationProxy implements InvocationHandler {
 	 * @param annotation instance that suppose to implement the <code>interfaceToImplement</code> methods
 	 * @return
 	 */
-	public static Object implement(Class interfaceToImplement,
+	public static Object implement(Class<?> interfaceToImplement,
 			Annotation annotation) {
 		return Proxy.newProxyInstance(interfaceToImplement.getClassLoader(),
 				new Class[] { interfaceToImplement }, new AnnotationProxy(

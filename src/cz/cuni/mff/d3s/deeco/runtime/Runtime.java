@@ -15,10 +15,13 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.runtime;
 
+import java.util.List;
+
 import cz.cuni.mff.d3s.deeco.invokable.ComponentManager;
 import cz.cuni.mff.d3s.deeco.invokable.EnsembleManager;
-import cz.cuni.mff.d3s.deeco.invokable.InvokableManager;
-import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
+import cz.cuni.mff.d3s.deeco.invokable.SchedulableComponentProcess;
+import cz.cuni.mff.d3s.deeco.invokable.SchedulableEnsembleProcess;
+import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
 
@@ -30,24 +33,52 @@ import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
  */
 public class Runtime {
 
-	private InvokableManager<? extends SchedulableProcess> ensembleManager;
-	private InvokableManager<? extends SchedulableProcess> componentManager;
+	private EnsembleManager ensembleManager;
+	private ComponentManager componentManager;
 	private Scheduler scheduler;
-
-	public Runtime(Class[] components, Class[] ensembles, KnowledgeManager km, Scheduler scheduler) {
+	
+	public Runtime(KnowledgeManager km, Scheduler scheduler) {
 		componentManager = new ComponentManager(km, scheduler);
 		ensembleManager = new EnsembleManager(km, scheduler);
 		this.scheduler = scheduler;
-		if (components != null)
-			for (Class c : components) {
-				componentManager.addInvokable(c);
+	}
+
+	public synchronized void addComponentProcess(
+			SchedulableComponentProcess componentProcess) {
+		if (componentProcess != null)
+			componentManager.addProcess(componentProcess);
+	}
+
+	public synchronized void addEnsembleProcess(
+			SchedulableEnsembleProcess ensembleProcess) {
+		if (ensembleProcess != null)
+			ensembleManager.addProcess(ensembleProcess);
+	}
+
+	public synchronized void addComponentPorcesses(
+			List<SchedulableComponentProcess> componentProcesses) {
+		if (componentProcesses != null)
+			for (SchedulableComponentProcess scp : componentProcesses) {
+				addComponentProcess(scp);
 			}
-		if (ensembles != null)
-			for (Class e : ensembles) {
-				ensembleManager.addInvokable(e);
+	}
+
+	public synchronized void addEnsembleProcesses(
+			List<SchedulableEnsembleProcess> ensembleProcesses) {
+		if (ensembleProcesses != null)
+			for (SchedulableEnsembleProcess sep : ensembleProcesses) {
+				addEnsembleProcess(sep);
 			}
-		
-		startRuntime();
+	}
+
+	public synchronized boolean addComponentKnowledge(ComponentKnowledge initKnowledge) {
+		if (initKnowledge != null)
+			try {
+				return componentManager.addComponentKnowledge(initKnowledge);
+			} catch (Exception e) {
+				System.out.println("Initial knowlege retrival exception");
+			}
+		return false;
 	}
 
 	/**

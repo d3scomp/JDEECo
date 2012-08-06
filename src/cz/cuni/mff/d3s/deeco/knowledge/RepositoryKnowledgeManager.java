@@ -15,14 +15,13 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.knowledge;
 
-import java.lang.reflect.Field;
+import java.util.HashMap;
 
 import cz.cuni.mff.d3s.deeco.exceptions.KMAccessException;
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
-import cz.cuni.mff.d3s.deeco.exceptions.KMIllegalArgumentException;
 import cz.cuni.mff.d3s.deeco.exceptions.KMNotExistentException;
-import cz.cuni.mff.d3s.deeco.exceptions.KnowledgeRepositoryException;
-import cz.cuni.mff.d3s.deeco.exceptions.UnavailableEntryException;
+import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionAccessError;
+import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionUnavailableEntry;
 import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
 
 /*
@@ -34,11 +33,9 @@ import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
 public class RepositoryKnowledgeManager extends KnowledgeManager {
 
 	private RepositoryKnowledgeManagerHelper rkmh;
-	private TraversableRKMHelper trkmh;
 
 	public RepositoryKnowledgeManager(KnowledgeRepository kr) {
 		this.rkmh = new RepositoryKnowledgeManagerHelper(kr, this);
-		this.trkmh = new TraversableRKMHelper(rkmh, this);
 	}
 
 	/*
@@ -69,6 +66,18 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 	 * (non-Javadoc)
 	 * 
 	 * @see
+	 * cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager#listenForChange(cz.cuni
+	 * .mff.d3s.deeco.scheduling.IKnowledgeChangeListener)
+	 */
+	@Override
+	public boolean listenForChange(IKnowledgeChangeListener listener) {
+		return rkmh.listenForChange(listener);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
 	 * cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager#takeKnowledge(java.lang
 	 * .String, java.lang.reflect.Type,
 	 * cz.cuni.mff.d3s.deeco.knowledge.ISession)
@@ -88,37 +97,49 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 	 * cz.cuni.mff.d3s.deeco.knowledge.ISession, boolean)
 	 */
 	@Override
+	public void alterKnowledge(String knowledgePath, Object value,
+			ISession session) throws KMException {
+		storeKnowledge(knowledgePath, value, session, true);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager#putKnowledge(java.lang
+	 * .String, java.lang.Object, cz.cuni.mff.d3s.deeco.knowledge.ISession)
+	 */
+	@Override
 	public void putKnowledge(String knowledgePath, Object value,
 			ISession session) throws KMException {
+		storeKnowledge(knowledgePath, value, session, false);
+
+	}
+
+	private void storeKnowledge(String knowledgePath, Object value,
+			ISession session, boolean modify) throws KMAccessException {
 		ISession localSession;
 		if (session == null) {
 			localSession = rkmh.createSession();
 			localSession.begin();
 		} else
 			localSession = session;
-		String tempPath;
+		String tPath, tString;
+		IObjectAccessor accessor;
+		Object[] structure;
 		try {
 			while (localSession.repeat()) {
-				if (value == null) {
-					rkmh.putFlat(knowledgePath, null, localSession);// put null value
-				} else {
-					Class<?> structure = value.getClass();
-					if (KMHelper.isOutputWrapper(structure)) {
-						putKnowledge(knowledgePath,
-								((OutWrapper<?>) value).item, localSession);
-					} else if (KMHelper.isTraversable(structure)) {
-						trkmh.putTraversable(knowledgePath, value, structure,
+				structure = rkmh.putStructure(knowledgePath, value,
+						localSession, modify);
+				if (structure == null)
+					rkmh.putFlat(knowledgePath, value, localSession, modify);
+				else if (structure.length > 0) {
+					accessor = KMHelper.getObjectAccessor(value);
+					for (Object s : structure) {
+						tString = (String) s;
+						tPath = KPBuilder.appendToRoot(knowledgePath, tString);
+						alterKnowledge(tPath, accessor.getValue(tString),
 								localSession);
-					} else if (KMHelper.isKnowledge(structure)) {
-						rkmh.putStructure(knowledgePath, structure, localSession);
-						Field[] fields = structure.getFields();
-						for (Field f : fields) {
-							tempPath = KPBuilder.appendToRoot(knowledgePath,
-									f.getName());
-							putKnowledge(tempPath, f.get(value), localSession);
-						}
-					} else {
-						rkmh.putFlat(knowledgePath, value, localSession);
 					}
 				}
 				if (session == null)
@@ -126,11 +147,13 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 				else
 					break;
 			}
-		} catch (KnowledgeRepositoryException kre) {
+		} catch (KRExceptionAccessError kre) {
+			if (session == null)
+				localSession.cancel();
 			throw new KMAccessException(kre.getMessage());
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
 			localSession.cancel();
+			System.out.println(e.getMessage());
 		}
 	}
 
@@ -145,24 +168,21 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 			localSession = session;
 		try {
 			while (localSession.repeat()) {
-				Object structure = rkmh.getStructure(withdrawal, knowledgePath, localSession);
+				Object[] structure = rkmh.getStructure(withdrawal,
+						knowledgePath, localSession);
 				if (structure == null) // flat
-					result = rkmh.getFlat(withdrawal, knowledgePath, localSession);
+					result = rkmh.getFlat(withdrawal, knowledgePath,
+							localSession);
 				else {
-					Class<?> classStructure = (Class<?>) structure;
-					if (KMHelper.isTraversable(classStructure)) {
-						result = trkmh.getTraversable(withdrawal, knowledgePath, localSession);
-					} else {// knowledge
-						String tempPath;
-						result = classStructure.newInstance();
-						for (Field f : classStructure.getFields()) {
-							tempPath = KPBuilder.appendToRoot(knowledgePath,
-									f.getName());
-							f.set(result,
-									getKnowledge(withdrawal, tempPath,
-											localSession));
-						}
+					String tPath, tString;
+					HashMap<String, Object> map = new HashMap<String, Object>();
+					for (Object s : structure) {
+						tString = (String) s;
+						tPath = KPBuilder.appendToRoot(knowledgePath, tString);
+						map.put(tString,
+								getKnowledge(withdrawal, tPath, localSession));
 					}
+					result = map;
 				}
 				if (session == null)
 					localSession.end();
@@ -170,21 +190,18 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 					break;
 			}
 			return result;
-		} catch (IllegalArgumentException iae) {
-			throw new KMIllegalArgumentException(iae.getMessage());
-		} catch (UnavailableEntryException uee) {
+		} catch (KRExceptionUnavailableEntry uee) {
+			if (session == null)
+				localSession.cancel();
 			throw new KMNotExistentException(uee.getMessage());
-		} catch (KnowledgeRepositoryException kre) {
+		} catch (KRExceptionAccessError kre) {
+			if (session == null)
+				localSession.cancel();
 			throw new KMAccessException(kre.getMessage());
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			localSession.cancel();
 			return null;
 		}
-	}
-
-	@Override
-	public boolean listenForChange(IKnowledgeChangeListener listener) {
-		return rkmh.listenForChange(listener);
 	}
 }

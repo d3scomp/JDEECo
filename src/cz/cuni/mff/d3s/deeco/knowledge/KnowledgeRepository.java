@@ -15,8 +15,8 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.knowledge;
 
-import cz.cuni.mff.d3s.deeco.exceptions.KnowledgeRepositoryException;
-import cz.cuni.mff.d3s.deeco.exceptions.UnavailableEntryException;
+import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionAccessError;
+import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionUnavailableEntry;
 import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
 
 /**
@@ -38,32 +38,15 @@ public abstract class KnowledgeRepository {
 	 *            a session object within which the operation should be
 	 *            performed
 	 * @return object in the knowledge repository
-	 * @throws UnavailableEntryException
+	 * @throws KRExceptionUnavailableEntry
 	 *             thrown whenever the object for the specified
 	 *             <code>entryKey</code> does not exists
-	 * @throws KnowledgeRepositoryException
+	 * @throws KRExceptionAccessError
 	 *             thrown whenever there is a knowledge repository access
 	 *             problem
 	 */
-	public abstract Object get(String entryKey, ISession session)
-			throws UnavailableEntryException, KnowledgeRepositoryException;
-
-	/**
-	 * Reads all the objects for the specified key. This method is session
-	 * oriented.
-	 * 
-	 * @param entryKey
-	 *            key of the objects in the knowledge repository
-	 * @param session
-	 *            a session object within which the operation should be
-	 *            performed
-	 * @return an array of the matched objects
-	 * @throws KnowledgeRepositoryException
-	 *             thrown whenever there is a knowledge repository access
-	 *             problem
-	 */
-	public abstract Object[] getAll(String entryKey, ISession session)
-			throws KnowledgeRepositoryException;
+	public abstract Object [] get(String entryKey, ISession session)
+			throws KRExceptionUnavailableEntry, KRExceptionAccessError;
 
 	/**
 	 * Inserts an object to the knowledge repository. This method is session
@@ -76,12 +59,12 @@ public abstract class KnowledgeRepository {
 	 * @param session
 	 *            a session object within which the operation should be
 	 *            performed
-	 * @throws KnowledgeRepositoryException
+	 * @throws KRExceptionAccessError
 	 *             thrown whenever there is a knowledge repository access
 	 *             problem
 	 */
 	public abstract void put(String entryKey, Object value, ISession session)
-			throws KnowledgeRepositoryException;
+			throws KRExceptionAccessError;
 
 	/**
 	 * Withdraws an object from the knowledge repository. This method is session
@@ -93,30 +76,12 @@ public abstract class KnowledgeRepository {
 	 *            a session object within which the operation should be
 	 *            performed
 	 * @return object from the knowledge repository
-	 * @throws KnowledgeRepositoryException
+	 * @throws KRExceptionAccessError
 	 *             thrown whenever there is a knowledge repository access
 	 *             problem
 	 */
-	public abstract Object take(String entryKey, ISession session)
-			throws UnavailableEntryException, KnowledgeRepositoryException;
-
-	/**
-	 * Withdraws all the objects (matching the specified key) from the knowledge
-	 * repository. This method is session oriented.
-	 * 
-	 * @param entryKey
-	 *            key of the objects in the knowledge repository
-	 * @param session
-	 *            a session object within which the operation should be
-	 *            performed
-	 * @return an array of objects from the knowledge repository
-	 * @throws KnowledgeRepositoryException
-	 *             thrown whenever there is a knowledge repository access
-	 *             problem
-	 */
-	public abstract Object[] takeAll(String entryKey, ISession session)
-			throws KnowledgeRepositoryException;
-	
+	public abstract Object [] take(String entryKey, ISession session)
+			throws KRExceptionUnavailableEntry, KRExceptionAccessError;
 	
 	/**
 	 * Register a listener that should be notified by the knowledge repository
@@ -141,15 +106,15 @@ public abstract class KnowledgeRepository {
 	 * @param entryKey
 	 *            key of the object in the knowledge repository
 	 * @return object in the knowledge repository
-	 * @throws UnavailableEntryException
+	 * @throws KRExceptionUnavailableEntry
 	 *             thrown whenever the object for the specified
 	 *             <code>entryKey</code> does not exists
-	 * @throws KnowledgeRepositoryException
+	 * @throws KRExceptionAccessError
 	 *             thrown whenever there is a knowledge repository access
 	 *             problem
 	 */
-	public Object get(String entryKey) throws UnavailableEntryException,
-			KnowledgeRepositoryException {
+	public Object get(String entryKey) throws KRExceptionUnavailableEntry,
+			KRExceptionAccessError {
 		return get(entryKey, null);
 	}
 
@@ -160,12 +125,12 @@ public abstract class KnowledgeRepository {
 	 *            key of the object in the knowledge repository
 	 * @param value
 	 *            inserted object
-	 * @throws KnowledgeRepositoryException
+	 * @throws KRExceptionAccessError
 	 *             thrown whenever there is a knowledge repository access
 	 *             problem
 	 */
 	public void put(String entryKey, Object value)
-			throws KnowledgeRepositoryException {
+			throws KRExceptionAccessError {
 		put(entryKey, value, null);
 	}
 
@@ -175,42 +140,11 @@ public abstract class KnowledgeRepository {
 	 * @param entryKey
 	 *            key of the object in the knowledge repository
 	 * @return object from the knowledge repository
-	 * @throws KnowledgeRepositoryException
+	 * @throws KRExceptionAccessError
 	 *             thrown whenever there is a knowledge repository access
 	 *             problem
 	 */
-	public Object take(String entryKey) throws UnavailableEntryException, KnowledgeRepositoryException {
+	public Object take(String entryKey) throws KRExceptionUnavailableEntry, KRExceptionAccessError {
 		return take(entryKey, null);
-	}
-
-	/**
-	 * Withdraws all the objects (matching the specified key) from the knowledge
-	 * repository.
-	 * 
-	 * @param entryKey
-	 *            key of the objects in the knowledge repository
-	 * @return an array of objects from the knowledge repository
-	 * @throws KnowledgeRepositoryException
-	 *             thrown whenever there is a knowledge repository access
-	 *             problem
-	 */
-	public Object[] takeAll(String entryKey)
-			throws KnowledgeRepositoryException {
-		return takeAll(entryKey, null);
-	}
-
-	/**
-	 * Reads all the objects for the specified key.
-	 * 
-	 * @param entryKey
-	 *            key of the objects in the knowledge repository
-	 * @return an array of the matched objects
-	 * @throws KnowledgeRepositoryException
-	 *             thrown whenever there is a knowledge repository access
-	 *             problem
-	 */
-	public Object[] findAll(String entryKey)
-			throws KnowledgeRepositoryException {
-		return getAll(entryKey, null);
 	}
 }

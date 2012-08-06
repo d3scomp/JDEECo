@@ -17,6 +17,7 @@ package cz.cuni.mff.d3s.deeco.invokable;
 
 import java.lang.reflect.Type;
 
+import cz.cuni.mff.d3s.deeco.exceptions.ComponentEnsembleParseException;
 import cz.cuni.mff.d3s.deeco.path.grammar.KnowledgePath;
 
 
@@ -29,12 +30,14 @@ import cz.cuni.mff.d3s.deeco.path.grammar.KnowledgePath;
 public class Parameter {
 	
 	public KnowledgePath kPath;
-	public Type type;
+	public ParameterType type;
 	public Integer index;
-	
-	public Parameter(KnowledgePath kPath, Type type, Integer index) {
+	public Object originalValue;
+
+	public Parameter(KnowledgePath kPath, Type type, Integer index) throws ComponentEnsembleParseException {
 		this.kPath = kPath;
-		this.type = type;
+		this.type = ParameterTypeParser.parse(type);
 		this.index = index;
 	}
+
 }

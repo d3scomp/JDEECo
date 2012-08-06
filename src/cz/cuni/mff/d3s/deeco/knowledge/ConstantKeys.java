@@ -26,25 +26,14 @@ package cz.cuni.mff.d3s.deeco.knowledge;
 public class ConstantKeys {
 	/**
 	 * Defines the field name for the root knowledge unique identifier in the
-	 * RootKnowledge class.
+	 * ComponentKnowledge class.
 	 */
 	public static final String ROOT_KNOWLEDGE_ID = "id";
-	/**
-	 * Defines key field name for storing and retrieving key set for map and
-	 * collections.
-	 */
-	public static final String TRAVERSABLE_KEYS_ID = "#colKeys";
 	/**
 	 * Defines identifier used in the knowledge repository to store knowledge
 	 * class definition.
 	 */
-	public static final String CLASS_ID = "#class";
-	/**
-	 * Defines element class name for storing and retrieving key set for map and
-	 * collections.
-	 */
-	public static final String TRAVERSABLE_ELEMENT_CLASS_ID = "#colElementClass";
-
+	public static final String STRUCTURE_ID = "#structure";
 	/**
 	 * Key that is prepended to the knowledge path to point out that should be
 	 * listened for.

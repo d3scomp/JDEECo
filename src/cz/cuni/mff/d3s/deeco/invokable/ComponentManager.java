@@ -15,14 +15,12 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.invokable;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.UUID;
+import java.util.Arrays;
 
+import cz.cuni.mff.d3s.deeco.exceptions.KMNotExistentException;
+import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
 import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
-import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
-import cz.cuni.mff.d3s.deeco.knowledge.RootKnowledge;
 import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
 
 /**
@@ -32,7 +30,7 @@ import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
  * 
  */
 public class ComponentManager extends
-		InvokableManager<SchedulableKnowledgeProcess> {
+		InvokableManager<SchedulableComponentProcess> {
 
 	public ComponentManager(KnowledgeManager km, Scheduler scheduler) {
 		super(km, scheduler);
@@ -46,43 +44,27 @@ public class ComponentManager extends
 	 * .Class)
 	 */
 	@Override
-	public void addInvokable(Class invokableDefinition) {
-		if (invokableDefinition != null) {
-			RootKnowledge ik = getInitialKnowledge(invokableDefinition);
-			if (ik != null) {
-				if (writeRootKnowledge(ik)) {
-					List<SchedulableKnowledgeProcess> invokables = SchedulableKnowledgeProcess
-							.extractKnowledgeProcesses(invokableDefinition,
-									ik.id, km);
-					processes.addAll(invokables);
-					scheduler.register(invokables);
-				}
-			}
+	public void addProcess(SchedulableProcess schedulableProcess) {
+		if (schedulableProcess != null) {
+			schedulableProcess.setKnowledgeManager(km);
+			processes.add((SchedulableComponentProcess) schedulableProcess);
+			scheduler.register(schedulableProcess);
 		}
 	}
 
-	private RootKnowledge getInitialKnowledge(Class invokableDefinition) {
-		RootKnowledge rk = null;
-		try {
-			Method init = RootKnowledge.getInitMethod(invokableDefinition);
-			if (init != null) {
-				rk = (RootKnowledge) init.invoke(null, new Object[] {});
-				if (rk != null) {
-					if (rk.id == null || rk.id.equals(""))
-						rk.id = UUID.randomUUID().toString();
-				}
-			}
-		} catch (Exception e) {
-		}
-		return rk;
-	}
-
-	private boolean writeRootKnowledge(RootKnowledge rootKnowledge) {
+	public boolean addComponentKnowledge(ComponentKnowledge rootKnowledge) {
 		if (rootKnowledge != null) {
 			try {
+				try {
+					Object[] currentIds = (Object []) km
+							.getKnowledge(ConstantKeys.ROOT_KNOWLEDGE_ID);
+					if (Arrays.asList(currentIds).contains(rootKnowledge.id))
+						return false;
+				} catch (KMNotExistentException kmnee) {
+				}
 				km.putKnowledge(ConstantKeys.ROOT_KNOWLEDGE_ID,
-						rootKnowledge.id, null);
-				km.putKnowledge(rootKnowledge.id, rootKnowledge);
+						rootKnowledge.id);
+				km.alterKnowledge(rootKnowledge.id, rootKnowledge);
 				return true;
 			} catch (Exception e) {
 				System.out.println("Error when writing root knowledge: "

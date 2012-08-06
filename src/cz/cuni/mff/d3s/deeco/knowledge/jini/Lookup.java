@@ -51,8 +51,8 @@ class Lookup implements DiscoveryListener {
        @param aServiceInterface the class of the type of service you are
        looking for.  Class is usually an interface class.
      */
-    Lookup(Class aServiceInterface) {
-        Class[] myServiceTypes = new Class[] {aServiceInterface};
+    Lookup(Class<?> aServiceInterface) {
+        Class<?>[] myServiceTypes = new Class[] {aServiceInterface};
         theTemplate = new ServiceTemplate(null, myServiceTypes, null);
     }
 

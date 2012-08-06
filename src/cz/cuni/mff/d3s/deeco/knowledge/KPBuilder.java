@@ -24,6 +24,8 @@ import cz.cuni.mff.d3s.deeco.path.grammar.PathGrammar;
  * 
  */
 public class KPBuilder {
+	public static final String PATH_DELIMITER = ".";
+
 	/**
 	 * Static function appending a new (tail) part to the existing one (root).
 	 * New instance of String object is returned.
@@ -35,25 +37,25 @@ public class KPBuilder {
 	 * @return full path
 	 */
 	public static String appendToRoot(String root, String tail) {
-		if (root == null || root.equals(""))
+		if (root == null || root.trim().equals(""))
 			return tail;
-		if (tail == null || tail.equals(""))
+		if (tail == null || tail.trim().equals(""))
 			return root;
 		return root + PathGrammar.PATH_SEPARATOR + tail;
 	}
 
 	public static String prependToRoot(String root, String head) {
-		if (root == null || root.equals(""))
+		if (root == null || root.trim().equals(""))
 			return head;
-		if (head == null || head.equals(""))
+		if (head == null || head.trim().equals(""))
 			return root;
 		return head + PathGrammar.PATH_SEPARATOR + root;
 	}
 
 	public static String[] decomposePath(String knowledgePath) {
-		if (knowledgePath == null || knowledgePath.equals(""))
+		if (knowledgePath == null || knowledgePath.trim().equals(""))
 			return new String[] {};
-		return knowledgePath.split("\\" + PathGrammar.PATH_SEPARATOR);
+		return knowledgePath.split("\\"+PATH_DELIMITER,-1);
 	}
 
 	public static String replaceHead(String pathWithHead, String newHead) {

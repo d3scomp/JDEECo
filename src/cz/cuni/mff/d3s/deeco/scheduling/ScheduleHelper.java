@@ -59,7 +59,7 @@ public class ScheduleHelper {
 			List<Parameter> jParams = new ArrayList<Parameter>(in);
 			jParams.addAll(inOut);
 			oLoop: for (Integer index : triggeredIndecies) {
-				iLoop: for (Parameter p : jParams) {
+				for (Parameter p : jParams) {
 					if (index.equals(p.index)) {
 						jParams.remove(p);
 						resultParameters.add(p);

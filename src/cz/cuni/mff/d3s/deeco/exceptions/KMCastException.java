@@ -16,15 +16,14 @@
 package cz.cuni.mff.d3s.deeco.exceptions;
 
 /**
- * Thrown by the knowledge repository whenever the
- * entry specified by the key is unavailable.
+ * Thrown whenever there is a type matching related problem, while retrieving
+ * knowledge the knowledge repository.
  * 
  * @author Michal Kit
  * 
  */
-public class UnavailableEntryException extends Exception {
-
-	public UnavailableEntryException(String message) {
+public class KMCastException extends KMException {
+	public KMCastException(String message) {
 		super(message);
 	}
 }

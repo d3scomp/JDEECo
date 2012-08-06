@@ -17,14 +17,11 @@ package cz.cuni.mff.d3s.deeco.invokable;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.annotations.AnnotationProxy;
 import cz.cuni.mff.d3s.deeco.annotations.IValuedAnnotation;
-import cz.cuni.mff.d3s.deeco.path.grammar.KnowledgePath;
-import cz.cuni.mff.d3s.deeco.path.grammar.ParseException;
 
 /**
  * AnnotationHelper provides static methods which are used for annotation
@@ -45,7 +42,7 @@ public class AnnotationHelper {
 	 *            array of annotation instances where the search is performed
 	 * @return found annotation instance or null if the search fails
 	 */
-	public static Annotation getAnnotation(Class annotationClass,
+	public static Annotation getAnnotation(Class<?> annotationClass,
 			Annotation[] annotations) {
 		for (Annotation a : annotations) {
 			if (annotationClass.isInstance(a)) {
@@ -55,7 +52,7 @@ public class AnnotationHelper {
 		return null;
 	}
 	
-	public static List<Integer> getAnnotationOuterIndecies(Class annotationClass, Annotation [][] annotations) {
+	public static List<Integer> getAnnotationOuterIndecies(Class<?> annotationClass, Annotation [][] annotations) {
 		List<Integer> result = new ArrayList<Integer>();
 		for (int i = 0; i < annotations.length; i++) {
 			for (int k = 0; k < annotations[i].length; k++) {
@@ -77,8 +74,8 @@ public class AnnotationHelper {
 	 *            parsing
 	 * @return list of methods
 	 */
-	public static List<Method> getAnnotatedMethods(Class c,
-			Class annotationClass) {
+	public static List<Method> getAnnotatedMethods(Class<?> c,
+			Class<? extends Annotation> annotationClass) {
 		List<Method> result = new ArrayList<Method>();
 		if (c != null) {
 			Method[] methods = c.getMethods();
@@ -101,7 +98,7 @@ public class AnnotationHelper {
 	 *            parsing
 	 * @return matching method or null in case of search failure
 	 */
-	public static Method getAnnotatedMethod(Class c, Class annotationClass) {
+	public static Method getAnnotatedMethod(Class<?> c, Class<? extends Annotation> annotationClass) {
 		if (c != null) {
 			Method result = null;
 			Method[] methods = c.getMethods();
@@ -115,58 +112,10 @@ public class AnnotationHelper {
 		}
 		return null;
 	}
-
-	/**
-	 * Returns list of method parameters, which are annotated with the given
-	 * annotation class.
-	 * 
-	 * @param method
-	 *            Method object that needs to be parsed
-	 * @param annotationClass
-	 *            class of annotation that should be considered during the
-	 *            parsing
-	 * @param root
-	 *            process owner id
-	 * @return list of {@link Parameter} instances which fulfills search
-	 *         criteria.
-	 * @throws ParseException
-	 * 
-	 * @see Parameter
-	 */
-	public static List<Parameter> getParameters(Method method,
-			Class annotationClass, String root) throws ParseException {
-		List<Parameter> result = new ArrayList<Parameter>();
-		Annotation[][] allAnnotations = method.getParameterAnnotations();
-		Type[] parameterTypes = method.getGenericParameterTypes();
-		Annotation currentAnnotation;
-		Parameter currentParameter;
-		Annotation[] parameterAnnotations;
-
-		for (int i = 0; i < parameterTypes.length; i++) {
-			parameterAnnotations = allAnnotations[i];
-			currentAnnotation = getAnnotation(annotationClass,
-					parameterAnnotations);
-			if (currentAnnotation != null) {
-				currentParameter = parseNamedAnnotation(currentAnnotation,
-						parameterTypes[i], i, root);
-				if (currentParameter != null)
-					result.add(currentParameter);
-			}
-		}
-		return result;
-	}
 	
 	public static Object getAnnotationValue(Annotation annotation) {
 		IValuedAnnotation valuedAnnotation = (IValuedAnnotation) AnnotationProxy
 				.implement(IValuedAnnotation.class, annotation);
 		return valuedAnnotation.value();
-	}
-
-	private static Parameter parseNamedAnnotation(Annotation annotation,
-			Type type, int index, String root) throws ParseException {
-		KnowledgePath kPath = new KnowledgePath((String) getAnnotationValue(annotation));
-		if (root != null && !root.equals(""))
-			kPath.prependKnowledgePath(root);
-		return new Parameter(kPath, type, index);
 	}
 }

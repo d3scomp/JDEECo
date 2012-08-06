@@ -21,7 +21,9 @@ import java.util.List;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoIn;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoInOut;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoOut;
+import cz.cuni.mff.d3s.deeco.exceptions.ComponentEnsembleParseException;
 import cz.cuni.mff.d3s.deeco.path.grammar.ParseException;
+import cz.cuni.mff.d3s.deeco.processor.ParserHelper;
 
 /**
  * Base class representing a parameterized method.
@@ -75,16 +77,17 @@ public class ParameterizedMethod {
 			ParameterizedMethod result = null;
 			if (method != null) {
 				result = new ParameterizedMethod(method);
-				result.in = AnnotationHelper.getParameters(method,
+				result.in = ParserHelper.getParameters(method,
 						DEECoIn.class, root);
-				result.out = AnnotationHelper.getParameters(method,
+				result.out = ParserHelper.getParameters(method,
 						DEECoOut.class, root);
-				result.inOut = AnnotationHelper.getParameters(method,
+				result.inOut = ParserHelper.getParameters(method,
 						DEECoInOut.class, root);
 			}
 			return result;
+		} catch (ComponentEnsembleParseException pe) {
 		} catch (ParseException pe) {
-			return null;
 		} 
+		return null;
 	}
 }

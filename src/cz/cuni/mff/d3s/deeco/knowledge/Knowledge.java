@@ -15,6 +15,8 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.knowledge;
 
+import java.io.Serializable;
+
 /**
  * Base class for representing knowledge.
  * 
@@ -25,6 +27,6 @@ package cz.cuni.mff.d3s.deeco.knowledge;
  * @author Michal Kit
  * 
  */
-public class Knowledge {
+public class Knowledge implements Serializable {
 
 }

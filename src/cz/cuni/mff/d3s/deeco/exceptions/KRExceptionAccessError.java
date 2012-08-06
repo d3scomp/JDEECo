@@ -21,9 +21,9 @@ package cz.cuni.mff.d3s.deeco.exceptions;
  * @author Michal Kit
  * 
  */
-public class KnowledgeRepositoryException extends Exception {
+public class KRExceptionAccessError extends Exception {
 
-	public KnowledgeRepositoryException(String message) {
+	public KRExceptionAccessError(String message) {
 		super(message);
 	}
 }

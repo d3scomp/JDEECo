@@ -15,6 +15,8 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.knowledge;
 
+import java.io.Serializable;
+
 /**
  * Base class used to wrap output parameters, making them mutable from the level
  * of a function.
@@ -24,7 +26,7 @@ package cz.cuni.mff.d3s.deeco.knowledge;
  * @param <T>
  *            wrapped item type
  */
-public class OutWrapper<T> {
+public class OutWrapper<T> implements Serializable {
 	/**
 	 * Wrapped item.
 	 */
