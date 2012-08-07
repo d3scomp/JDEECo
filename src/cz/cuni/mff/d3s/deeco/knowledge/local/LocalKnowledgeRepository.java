@@ -50,7 +50,6 @@ public class LocalKnowledgeRepository extends KnowledgeRepository {
 
 		// Lock here to prevent race conditions in case the method is used out of a
 		// session. Likewise done in the rest methods.
-		lock.lock();
 		List<Object> vals = ts.get(entryKey);
 
 		if (vals == null) {
@@ -58,7 +57,6 @@ public class LocalKnowledgeRepository extends KnowledgeRepository {
 		}
 
 		vals = (List<Object>) DeepCopy.copy(vals);
-		lock.unlock();
 		return vals.toArray();
 	}
 
@@ -66,7 +64,6 @@ public class LocalKnowledgeRepository extends KnowledgeRepository {
 	public void put(String entryKey, Object value, ISession session)
 			throws KRExceptionAccessError {
 
-		lock.lock();
 		List<Object> vals = ts.get(entryKey);
 
 		if (vals == null) {
@@ -75,14 +72,12 @@ public class LocalKnowledgeRepository extends KnowledgeRepository {
 		}
 
 		vals.add(DeepCopy.copy(value));
-		lock.unlock();
 	}
 
 	@Override
 	public Object [] take(String entryKey, ISession session)
 			throws KRExceptionUnavailableEntry, KRExceptionAccessError {
 
-		lock.lock();
 		List<Object> vals = ts.get(entryKey);
 
 		if (vals == null) {
@@ -94,7 +89,6 @@ public class LocalKnowledgeRepository extends KnowledgeRepository {
 		}
 
 		vals = (List<Object>) DeepCopy.copy(vals);
-		lock.unlock();
 		return vals.toArray();
 	}
 

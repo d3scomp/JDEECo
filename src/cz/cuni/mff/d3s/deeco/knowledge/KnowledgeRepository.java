@@ -113,7 +113,7 @@ public abstract class KnowledgeRepository {
 	 *             thrown whenever there is a knowledge repository access
 	 *             problem
 	 */
-	public Object get(String entryKey) throws KRExceptionUnavailableEntry,
+	public Object [] get(String entryKey) throws KRExceptionUnavailableEntry,
 			KRExceptionAccessError {
 		return get(entryKey, null);
 	}
@@ -144,7 +144,7 @@ public abstract class KnowledgeRepository {
 	 *             thrown whenever there is a knowledge repository access
 	 *             problem
 	 */
-	public Object take(String entryKey) throws KRExceptionUnavailableEntry, KRExceptionAccessError {
+	public Object [] take(String entryKey) throws KRExceptionUnavailableEntry, KRExceptionAccessError {
 		return take(entryKey, null);
 	}
 }

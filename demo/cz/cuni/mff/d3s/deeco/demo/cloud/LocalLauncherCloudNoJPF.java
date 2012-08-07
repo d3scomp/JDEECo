@@ -19,8 +19,8 @@ public class LocalLauncherCloudNoJPF {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Class<?>[] components = { NodeA.class };
-		Class<?>[] ensembles = {  };
+		Class<?>[] components = { NodeA.class, NodeB.class };
+		Class<?>[] ensembles = { MigrationEnsemble.class };
 		KnowledgeManager km = new RepositoryKnowledgeManager(
 				new LocalKnowledgeRepository());
 		Scheduler scheduler = new MultithreadedScheduler(km);

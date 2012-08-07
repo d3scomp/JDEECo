@@ -95,7 +95,7 @@ public abstract class SchedulableProcess {
 			}
 			return result;
 		} catch (KMException kme) {
-			System.out.println("Parameter getting error!");
+			//System.out.println("Parameter getting error!: " + kme.getMessage());
 			if (session == null)
 				localSession.cancel();
 			throw kme;
@@ -173,6 +173,8 @@ public abstract class SchedulableProcess {
 						break;
 				}
 			} catch (Exception e) {
+				if (session == null)
+					localSession.cancel();
 				System.out.println(e.getMessage());
 			}
 		}

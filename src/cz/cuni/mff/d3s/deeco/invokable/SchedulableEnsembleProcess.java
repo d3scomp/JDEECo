@@ -105,7 +105,7 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 	private void singleInvocation(String outerId, ETriggerType recipientMode,
 			Object[] rootIds) throws KMException {
 		Object[] parameters;
-		ISession localSession = null;
+		ISession session = null;
 		try {
 			String cId = null, mId = null;
 			if (recipientMode.equals(ETriggerType.COORDINATOR)) {
@@ -119,33 +119,33 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 				} else {
 					cId = (String) iid;
 				}
-				localSession = km.createSession();
-				localSession.begin();
-				while (localSession.repeat()) {
+				session = km.createSession();
+				session.begin();
+				while (session.repeat()) {
 					try {
 						parameters = getParameterMethodValues(
 								membership.getIn(), membership.getInOut(),
-								membership.getOut(), localSession,
+								membership.getOut(), session,
 								(String) cId, (String) mId);
 						if (evaluateMembership(parameters)) {
 							parameters = getParameterMethodValues(mapper.in,
-									mapper.inOut, mapper.out, localSession,
+									mapper.inOut, mapper.out, session,
 									(String) cId, (String) mId);
 							evaluateMapper(parameters);
 							putParameterMethodValues(parameters, mapper.inOut,
-									mapper.out, localSession, (String) cId,
+									mapper.out, session, (String) cId,
 									(String) mId);
 						}
 					} catch (KMNotExistentException kmnee) {
-						localSession.cancel();
+						session.cancel();
 						continue mloop;
 					}
-					localSession.end();
+					session.end();
 				}
 			}
 		} catch (KMException kme) {
-			if (localSession != null)
-				localSession.cancel();
+			if (session != null)
+				session.cancel();
 			throw kme;
 		}
 	}

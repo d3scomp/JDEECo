@@ -45,7 +45,7 @@ public class NodeA extends ComponentKnowledge {
 	}
 
 	@DEECoProcess
-	@DEECoPeriodicScheduling(4000)
+	@DEECoPeriodicScheduling(6000)
 	public static void process(@DEECoOut("loadRatio") OutWrapper<Float> loadRatio) {
 		loadRatio.item = new Random().nextFloat();
 		System.out.println("Node A new load ratio: " + loadRatio.item);

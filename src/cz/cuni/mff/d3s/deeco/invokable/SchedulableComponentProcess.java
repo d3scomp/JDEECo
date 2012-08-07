@@ -47,16 +47,16 @@ public class SchedulableComponentProcess extends SchedulableProcess {
 		//System.out.println("Component process starts - " + this.toString());
 		try {
 			if (lockingMode.equals(ELockingMode.STRONG)) {
-				ISession localSession = km.createSession();
-				localSession.begin();
+				ISession session = km.createSession();
+				session.begin();
 				try {
-					while (localSession.repeat()) {
-						evaluateMethod(localSession);
-						localSession.end();
+					while (session.repeat()) {
+						evaluateMethod(session);
+						session.end();
 					}
 				} catch (KMException e) {
 					System.out.println(e.getMessage());
-					localSession.cancel();
+					session.cancel();
 				}
 			} else {
 				try {

@@ -30,7 +30,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
  *
  */
 @DEECoEnsemble
-@DEECoPeriodicScheduling(2000)
+@DEECoPeriodicScheduling(3000)
 public class MigrationEnsemble {
 
 	@DEECoEnsembleMembership

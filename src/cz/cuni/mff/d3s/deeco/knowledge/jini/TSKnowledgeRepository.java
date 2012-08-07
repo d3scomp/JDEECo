@@ -69,18 +69,26 @@ public class TSKnowledgeRepository extends KnowledgeRepository {
 			JavaSpace05 space = TSUtils.getSpace();
 			Transaction tx = (session != null) ? ((TransactionalSession) session)
 					.getTransaction() : null;
-			Collection<?> tuples = space.take(Arrays
-					.asList(new Tuple[] { TSUtils.createTemplate(entryKey) }),
-					tx, 0, Long.MAX_VALUE);
-			if (tuples.size() > 0) {
-				Iterator<?> iterator = tuples.iterator();
-				for (int i = 0; i < tuples.size(); i++) {
-					resultList.add(((Tuple)iterator.next()).value);
-				}
-			}
+//			Collection<?> tuples = space.take(Arrays
+//					.asList(new Tuple[] { TSUtils.createTemplate(entryKey) }),
+//					tx, 5, Long.MAX_VALUE);
+//			if (tuples.size() > 0) {
+//				Iterator<?> iterator = tuples.iterator();
+//				for (int i = 0; i < tuples.size(); i++) {
+//					resultList.add(((Tuple)iterator.next()).value);
+//				}
+//			}			
+			Tuple tuple = null;
+			do {
+				tuple = (Tuple) space.takeIfExists(TSUtils.createTemplate(entryKey), tx, Lease.FOREVER);
+				if (tuple != null)
+					resultList.add(tuple.value);
+				else
+					break;
+			} while (true);
 		} catch (Exception e) {
 			throw new KRExceptionAccessError(
-					"TSKnowledgeRepository error when takingAll properties: "
+					"TSKnowledgeRepository error when taking properties: "
 							+ entryKey + " - " + e.getMessage());
 		}
 		if (resultList.size() == 0)
@@ -115,7 +123,7 @@ public class TSKnowledgeRepository extends KnowledgeRepository {
 			}
 		} catch (Exception e) {
 			throw new KRExceptionAccessError(
-					"TSKnowledgeRepository error when readingAll properties: "
+					"TSKnowledgeRepository error when reading properties: "
 							+ entryKey + " - " + e.getMessage());
 		}
 		if (resultList.size() == 0)
