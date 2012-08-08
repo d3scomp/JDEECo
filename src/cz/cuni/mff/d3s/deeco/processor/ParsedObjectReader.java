@@ -40,6 +40,7 @@ public class ParsedObjectReader {
 			}
 		} catch (Exception e) {
 			System.out.println("Error when reading");
+			e.printStackTrace();
 			return false;
 		}
 		return true;

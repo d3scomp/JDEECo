@@ -8,12 +8,14 @@
 	<property name="dist" location="dist"/>
 	<property name="river" location="${dist}/apache-river"/>
 
+	<!-- create main directories -->
 	<target name="init">
 		<tstamp/>
 		<mkdir dir="${build}"/>
 		<mkdir dir="${dist}"/>
 	</target>
 
+	<!-- compile subprojects -->
 	<target name="compile-jdeeco" depends="init"
         description="Compiles the JDEECo runtime sources" >
 		<mkdir dir="${build}/jdeeco"/>
@@ -21,6 +23,7 @@
 			<classpath>
 				<pathelement location="lib/jsk-lib.jar"/>
 				<pathelement location="lib/jsk-platform.jar"/>
+				<pathelement location="lib/bcel-5.2.jar"/>
 			</classpath>
 		</javac>
 	</target>
@@ -37,6 +40,7 @@
 		</javac>
 	</target>
 
+	<!-- package into jar files -->
 	<target name="dist-jdeeco" depends="compile-jdeeco"
         description="Generates a jar with JDEECo runtime" >
 		<jar jarfile="${dist}/jdeeco.jar" basedir="${build}/jdeeco">
@@ -54,6 +58,7 @@
 		<jar jarfile="${dist}/demo.jar" basedir="${build}/demo"/>
 	</target>
 
+	<!-- zip source files -->
 	<target name="zip" depends="init"
         description="Creates a zip with the source files" >
 		<zip destfile="${dist}/sources.zip">
@@ -61,7 +66,18 @@
 			<zipfileset dir="demo"/>
 		</zip>
 	</target>
+	
+	<!-- download and setup jpf - requires mercurial -->
+	<target name="get-jpf">
+		<mkdir dir="${dist}/jpf"/>
+		<exec executable="hg" dir="${dist}/jpf" searchpath="true">
+			<arg value="clone"/>
+			<arg value="http://babelfish.arc.nasa.gov/hg/jpf/jpf-core"/> 
+		</exec>
+		<ant dir="${dist}/jpf/jpf-core"/>
+	</target>
 
+	<!-- download and setup apache river -->
 	<target name="get-ar">
 		<get src="http://apache.mirror.dkm.cz/pub/apache/river/river-2.2.0/apache-river-2.2.0-bin.zip" 
 			dest="${dist}/apache-river.zip" verbose="on"/>
@@ -74,6 +90,7 @@
 		</copy>
 	</target>
 
+	<!-- start apache river -->
 	<target name="start-ar-httpd">
 		<java fork="true" jar="${river}/lib/classserver.jar" dir="${dist}">
 			<arg line="-port 8080 -dir"/>
@@ -103,6 +120,7 @@
 		</java>
 	</target>
 
+	<!-- start apache river - main task -->
 	<target name="start-ar"
 		description="Starts the Apache River">
 		<parallel>
@@ -113,9 +131,10 @@
 		</parallel>
 	</target>
 
-	<target name="demo-local" depends="dist-demo"
+	<!-- start cloud demo with local shared memory -->
+	<target name="cloud-local" depends="dist-demo"
 		description="Runs the convoy demo">
-		<java classname="cz.cuni.mff.d3s.deeco.demo.convoy.LocalLauncher" fork="true">
+		<java classname="cz.cuni.mff.d3s.deeco.demo.cloud.LocalLauncherCloudNoJPF" fork="true">
 			<classpath>
 				<pathelement location="${dist}/demo.jar"/>
 				<pathelement location="${dist}/jdeeco.jar"/>
@@ -127,11 +146,12 @@
 		</java>
 	</target>
 	
-	<target name="demo-ts" depends="dist-demo"
+	<!-- start cloud demo with tuple spaces as shared memory -->
+	<target name="cloud-ts" depends="dist-demo"
 		description="Runs the convoy demo">
 		<parallel>
 			<antcall target="start-ar"/>
-			<java classname="cz.cuni.mff.d3s.deeco.demo.convoy.TupleSpaceLauncher" fork="true">
+			<java classname="cz.cuni.mff.d3s.deeco.demo.cloud.TSLauncherCloudNoJPF" fork="true">
 				<classpath>
 					<pathelement location="${dist}/demo.jar"/>
 					<pathelement location="${dist}/jdeeco.jar"/>
@@ -143,7 +163,35 @@
 			</java>
 		</parallel>
 	</target>
-
+	
+	
+	<target name="dist-cloud-demo" depends="compile-demo"
+        description="Generates a jar with cloud demo main classes" >
+		<jar jarfile="${dist}/cloud-demo.jar" basedir="${build}/demo" includes="**/NodeA.class,**/NodeB.class,**/MigrationEnsemble.class">
+			<manifest>
+                <attribute name="Bundle-Version" value="0.0.1.SNAPSHOT"/>
+				<attribute name="Export-Package" value="cz.cuni.mff.d3s.deeco.demo.cloud"/>
+				<attribute name="Bundle-Name" value="Cloud demo package" />
+				<attribute name="Bundle-SymbolicName" value="cz.cuni.mff.d3s.deeco.demo.cloud" />
+            </manifest>
+		</jar>
+	</target>
+	
+	<target name="jpf-cloud" depends="get-jpf, dist-cloud-demo">
+		<java fork="true" classname="cz.cuni.mff.d3s.deeco.processor.ClassProcessor" dir="${dist}">
+			<arg value="cloud-demo.jar"/>
+			<classpath>
+				<pathelement location="${dist}/jdeeco.jar"/>
+				<pathelement location="lib/bcel-5.2.jar"/>
+			</classpath>
+		</java>
+		<java fork="true" jar="${dist}/jpf/jpf-core/build/RunJPF.jar" dir="${dist}">
+			<arg value="+classpath=demo.jar;jdeeco.jar"/>
+			<arg value="cz.cuni.mff.d3s.deeco.demo.cloud.LocalLauncherCloudJPF"/>
+		</java>
+	</target>
+	
+	<!-- prepare new setup -->
 	<target name="all"
 		description="Cleans the projects and creates a distribution of JDEECo, demos and sources from scratch">
 		<antcall target="clean"/>
@@ -152,6 +200,7 @@
 		<antcall target="get-ar"/>
 	</target>
 
+	<!-- clean build -->
 	<target name="clean"
         description="Cleans up the project" >
 		<!-- Delete the ${build} and ${dist} directory trees -->
