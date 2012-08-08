@@ -5,16 +5,19 @@ import cz.cuni.mff.d3s.deeco.processor.ComponentParser;
 import cz.cuni.mff.d3s.deeco.processor.EnsembleParser;
 import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
 
-public class NoJPFLauncher {
-	private KnowledgeManager km;
-	private Scheduler scheduler;
+public class NoJPFLauncher extends Launcher {
 
-	public NoJPFLauncher(KnowledgeManager km, Scheduler scheduler) {
-		this.km = km;
-		this.scheduler = scheduler;
+	private Class<?>[] components;
+	private Class<?>[] ensembles;
+
+	public NoJPFLauncher(KnowledgeManager km, Scheduler scheduler,
+			Class<?>[] components, Class<?>[] ensembles) {
+		super(km, scheduler);
+		this.components = components;
+		this.ensembles = ensembles;
 	}
 
-	public void launch(Class<?>[] components, Class<?>[] ensembles) {
+	public void launch() {
 		Runtime runtime = new Runtime(km, scheduler);
 		NoJPFLauncherHelper.parseEnsembles(ensembles, new EnsembleParser(),
 				runtime);

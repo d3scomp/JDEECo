@@ -7,5 +7,6 @@
 	<classpathentry kind="lib" path="lib/jsk-lib.jar"/>
 	<classpathentry kind="lib" path="lib/jsk-platform.jar"/>
 	<classpathentry kind="lib" path="lib/testng-6.5.1.jar"/>
+	<classpathentry kind="lib" path="lib/bcel-5.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

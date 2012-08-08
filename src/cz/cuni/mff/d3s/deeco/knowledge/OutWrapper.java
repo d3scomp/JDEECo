@@ -18,7 +18,7 @@ package cz.cuni.mff.d3s.deeco.knowledge;
 import java.io.Serializable;
 
 /**
- * Base class used to wrap output parameters, making them mutable from the level
+ * Base class used to wrap output parameterTypes, making them mutable from the level
  * of a function.
  * 
  * @author Michal Kit

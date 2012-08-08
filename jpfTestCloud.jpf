@@ -1,0 +1,3 @@
++classpath=D:/JDEECo/bin/demo;D:/JDEECo/bin/jdeeco
+
+target=cz.cuni.mff.d3s.deeco.demo.cloud.LocalLauncherCloudJPF 

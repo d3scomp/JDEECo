@@ -14,7 +14,7 @@ import cz.cuni.mff.d3s.deeco.path.grammar.ParseException;
 
 public class ParserHelper {
 	/**
-	 * Returns list of method parameters, which are annotated with the given
+	 * Returns list of method parameterTypes, which are annotated with the given
 	 * annotation class.
 	 * 
 	 * @param method

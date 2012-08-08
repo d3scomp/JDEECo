@@ -2,6 +2,7 @@ package cz.cuni.mff.d3s.deeco.processor;
 
 import java.lang.reflect.Method;
 
+import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsemble;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsembleMapper;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsembleMembership;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
@@ -74,6 +75,11 @@ public class EnsembleParser {
 				return null;
 		}
 		return result;
+	}
+	
+	public boolean isEnsembleDefinition(Class<?> clazz) {
+		return clazz != null
+				&& clazz.getAnnotation(DEECoEnsemble.class) != null;
 	}
 
 }

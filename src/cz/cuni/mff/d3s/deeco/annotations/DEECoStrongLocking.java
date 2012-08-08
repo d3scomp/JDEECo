@@ -22,7 +22,7 @@ import java.lang.annotation.Target;
 
 /**
  * Used to mark a method to use strong locking mechanism i.e. lock is acquired
- * before method parameter retrieval and released after out parameters are
+ * before method parameter retrieval and released after out parameterTypes are
  * persisted.
  * 
  * @author Michal Kit

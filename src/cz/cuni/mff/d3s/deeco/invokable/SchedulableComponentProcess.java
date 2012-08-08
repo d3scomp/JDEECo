@@ -15,6 +15,8 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.invokable;
 
+import java.lang.reflect.Method;
+
 import cz.cuni.mff.d3s.deeco.annotations.ELockingMode;
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
@@ -28,7 +30,7 @@ import cz.cuni.mff.d3s.deeco.scheduling.ETriggerType;
  */
 public class SchedulableComponentProcess extends SchedulableProcess {
 
-	private ParameterizedMethod process;
+	public ParameterizedMethod process;
 	private ELockingMode lockingMode;
 
 	public SchedulableComponentProcess(ParameterizedMethod process,
@@ -81,5 +83,16 @@ public class SchedulableComponentProcess extends SchedulableProcess {
 		process.invoke(processParameters);
 		putParameterMethodValues(processParameters, process.inOut, process.out,
 				session);
+	}
+	
+	public Method getProcessMethod() {
+		if (process == null)
+			return null;
+		return process.method;
+	}
+	
+	public void setProcessMethod(Method method) {
+		if (process != null)
+			process.method = method;
 	}
 }

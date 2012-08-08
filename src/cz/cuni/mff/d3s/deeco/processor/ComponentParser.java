@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import cz.cuni.mff.d3s.deeco.annotations.DEECoComponent;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoProcess;
@@ -35,7 +36,8 @@ public class ComponentParser {
 	 * @return list of {@link SchedulableComponentProcess} instances extracted
 	 *         from the class definition
 	 */
-	public List<SchedulableComponentProcess> extractComponentProcess(Class<?> c, String root) {
+	public List<SchedulableComponentProcess> extractComponentProcess(
+			Class<?> c, String root) {
 		List<SchedulableComponentProcess> result = null;
 		if (c != null) {
 			result = new ArrayList<SchedulableComponentProcess>();
@@ -68,8 +70,7 @@ public class ComponentParser {
 									: ELockingMode.STRONG;
 						else
 							lm = ELockingMode.STRONG;
-						skp = new SchedulableComponentProcess(currentMethod,
-								lm);
+						skp = new SchedulableComponentProcess(currentMethod, lm);
 						skp.scheduling = ps;
 						result.add(skp);
 					}
@@ -78,7 +79,7 @@ public class ComponentParser {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Retrieves init method from the <code>ComponentKnowledge</code> class.
 	 * 
@@ -91,15 +92,23 @@ public class ComponentParser {
 				DEECoInitialize.class);
 		if (initMethods.size() == 1) {
 			try {
-				ComponentKnowledge ck =  (ComponentKnowledge) initMethods.get(0).invoke(null, new Object[]{});
+				ComponentKnowledge ck = (ComponentKnowledge) initMethods.get(0)
+						.invoke(null, new Object[] {});
 				if (ck.id == null || ck.id.equals(""))
 					ck.id = UUID.randomUUID().toString();
 				return ck;
 			} catch (Exception e) {
-				System.out.println("Component Knowledge Initialization exception!");
+				System.out
+						.println("Component Knowledge Initialization exception!");
 			}
 		}
 		return null;
+	}
+
+	public boolean isComponentDefinition(Class<?> clazz) {
+		return clazz != null
+				&& ComponentKnowledge.class.isAssignableFrom(clazz)
+				&& clazz.getAnnotation(DEECoComponent.class) != null;
 	}
 
 }

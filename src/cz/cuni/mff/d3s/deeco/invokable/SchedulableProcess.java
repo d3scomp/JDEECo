@@ -15,6 +15,7 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.invokable;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +34,7 @@ import cz.cuni.mff.d3s.deeco.scheduling.ProcessTriggeredSchedule;
  * @author Michal Kit
  * 
  */
-public abstract class SchedulableProcess {
+public abstract class SchedulableProcess implements Serializable {
 
 	private InputParametersHelper iph;
 	private OutputParametersHelper oph;
@@ -110,13 +111,13 @@ public abstract class SchedulableProcess {
 	 * execution in the knowledge repository.
 	 * 
 	 * @param parameterValues
-	 *            list of method all parameters
+	 *            list of method all parameterTypes
 	 * @param out
 	 *            list of output parameter descriptions
 	 * @param inOut
 	 *            list of both output and input parameter descriptions
 	 * @param root
-	 *            knowledge level for which parameters should stored.
+	 *            knowledge level for which parameterTypes should stored.
 	 */
 	protected void putParameterMethodValues(Object[] parameterValues,
 			List<Parameter> inOut, List<Parameter> out) {
@@ -134,13 +135,13 @@ public abstract class SchedulableProcess {
 	 * execution in the knowledge repository. This version is session oriented.
 	 * 
 	 * @param parameterValues
-	 *            list of method all parameters
+	 *            list of method all parameterTypes
 	 * @param out
 	 *            list of output parameter descriptions
 	 * @param inOut
 	 *            list of both output and input parameter descriptions
 	 * @param root
-	 *            knowledge level for which parameters should stored
+	 *            knowledge level for which parameterTypes should stored
 	 * @param session
 	 *            session instance within which all the storing operations
 	 *            should be performed.

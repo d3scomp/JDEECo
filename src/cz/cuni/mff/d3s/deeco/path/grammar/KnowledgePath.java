@@ -1,10 +1,12 @@
 package cz.cuni.mff.d3s.deeco.path.grammar;
 
+import java.io.Serializable;
+
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 
-public class KnowledgePath {
+public class KnowledgePath implements Serializable {
 	private PNode pathNode;
 	private String evaluation;
 

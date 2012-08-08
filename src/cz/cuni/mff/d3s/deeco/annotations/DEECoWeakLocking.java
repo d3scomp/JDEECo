@@ -22,8 +22,8 @@ import java.lang.annotation.Target;
 
 /**
  * Used to mark a method to use weak locking mechanism i.e. one lock is acquired
- * before method parameters retrieval and then released and other one is
- * acquired just before out parameters persistance.
+ * before method parameterTypes retrieval and then released and other one is
+ * acquired just before out parameterTypes persistance.
  * 
  * @author Michal Kit
  * 

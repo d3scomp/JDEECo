@@ -18,7 +18,7 @@ public class KnowledgeAccessor implements IObjectAccessor {
 	public Object getValue(String propertyName)
 			throws KMCastException {
 		if (target == null || propertyName == null)
-			throw new KMCastException("Wrong parameters: " + propertyName);
+			throw new KMCastException("Wrong parameterTypes: " + propertyName);
 		try {
 			Field f = clazz.getField(propertyName);
 			return f.get(target);

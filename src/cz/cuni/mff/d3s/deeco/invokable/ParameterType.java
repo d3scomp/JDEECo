@@ -1,10 +1,11 @@
 package cz.cuni.mff.d3s.deeco.invokable;
 
+import java.io.Serializable;
 import java.util.Map;
 
 import cz.cuni.mff.d3s.deeco.knowledge.TypeUtils;
 
-public class ParameterType {
+public class ParameterType implements Serializable {
 	public Class<?> clazz = null;
 	public ParameterType[] parametricTypes = null;
 	public Map<String, ParameterType> knowledgeStructure = null;

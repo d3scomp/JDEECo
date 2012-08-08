@@ -15,6 +15,7 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.invokable;
 
+import java.io.Serializable;
 import java.lang.reflect.Type;
 
 import cz.cuni.mff.d3s.deeco.exceptions.ComponentEnsembleParseException;
@@ -27,7 +28,7 @@ import cz.cuni.mff.d3s.deeco.path.grammar.KnowledgePath;
  * @author Michal Kit
  *
  */
-public class Parameter {
+public class Parameter implements Serializable {
 	
 	public KnowledgePath kPath;
 	public ParameterType type;

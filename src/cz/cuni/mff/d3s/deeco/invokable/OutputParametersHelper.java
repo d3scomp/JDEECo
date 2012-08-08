@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.deeco.invokable;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,7 +16,8 @@ import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 import cz.cuni.mff.d3s.deeco.knowledge.StructureHelper;
 import cz.cuni.mff.d3s.deeco.knowledge.TypeUtils;
 
-public class OutputParametersHelper {
+public class OutputParametersHelper implements Serializable {
+	
 	public Object getParameterInstance(ParameterType expectedParamType)
 			throws KMCastException {
 		try {

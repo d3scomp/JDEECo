@@ -41,5 +41,7 @@ public class ConstantKeys {
 	public static final String LISTEN_ID = "#listen";
 	
 	public static final String UNDEFINED = "undefined";
+	
+	public static final String BIN_FILE_NAME = "deecoSerializedObjects.bin";
 
 }

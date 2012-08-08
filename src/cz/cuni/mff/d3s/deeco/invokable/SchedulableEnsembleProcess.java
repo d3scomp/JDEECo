@@ -15,6 +15,8 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.invokable;
 
+import java.lang.reflect.Method;
+
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
 import cz.cuni.mff.d3s.deeco.exceptions.KMNotExistentException;
 import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
@@ -167,5 +169,27 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 			System.out.println("Ensemble evaluation exception! - "
 					+ e.getMessage());
 		}
+	}
+	
+	public Method getMapperMethod() {
+		if (mapper == null)
+			return null;
+		return mapper.method;
+	}
+	
+	public void setMapperMethod(Method method) {
+		if (mapper != null)
+			mapper.method = method;
+	}
+	
+	public Method getMembershipMethod() {
+		if (membership == null || membership.method == null)
+			return null;
+		return membership.method.method;
+	}
+	
+	public void setMembershipMethod(Method method) {
+		if (membership != null && membership.method != null)
+			membership.method.method = method;
 	}
 }

@@ -15,6 +15,7 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.invokable;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -31,18 +32,18 @@ import cz.cuni.mff.d3s.deeco.processor.ParserHelper;
  * @author Michal Kit
  * 
  */
-public class ParameterizedMethod {
-	public Method method;
+public class ParameterizedMethod implements Serializable {
+	public transient Method method;
 	/**
-	 * Input parameters
+	 * Input parameterTypes
 	 */
 	public List<Parameter> in;
 	/**
-	 * Input/Output parameters
+	 * Input/Output parameterTypes
 	 */
 	public List<Parameter> inOut;
 	/**
-	 * Output parameters
+	 * Output parameterTypes
 	 */
 	public List<Parameter> out;
 
@@ -53,8 +54,8 @@ public class ParameterizedMethod {
 	/**
 	 * Invokes process method execution.
 	 * 
-	 * @param parameters
-	 *            list of method parameters
+	 * @param parameterTypes
+	 *            list of method parameterTypes
 	 * @return invocation result or null in case of an exception.
 	 */
 	public Object invoke(Object[] parameters) {

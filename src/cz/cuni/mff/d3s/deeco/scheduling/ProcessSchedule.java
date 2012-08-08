@@ -15,12 +15,14 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.scheduling;
 
+import java.io.Serializable;
+
 /**
  * Top level interface for describing schedulability methods.
  * 
  * @author Michal Kit
  * 
  */
-public interface ProcessSchedule {
+public interface ProcessSchedule extends Serializable {
 
 }

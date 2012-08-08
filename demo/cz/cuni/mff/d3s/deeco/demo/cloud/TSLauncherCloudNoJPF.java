@@ -13,7 +13,7 @@ import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
  * @author Michal Kit
  * 
  */
-public class TupleSpaceLauncherCloudNoJPF {
+public class TSLauncherCloudNoJPF {
 
 	/**
 	 * @param args
@@ -24,7 +24,7 @@ public class TupleSpaceLauncherCloudNoJPF {
 		KnowledgeManager km = new RepositoryKnowledgeManager(
 				new TSKnowledgeRepository());
 		Scheduler scheduler = new MultithreadedScheduler(km);
-		NoJPFLauncher launcher = new NoJPFLauncher(km, scheduler);
-		launcher.launch(components, ensembles);
+		NoJPFLauncher launcher = new NoJPFLauncher(km, scheduler, components, ensembles);
+		launcher.launch();
 	}
 }
