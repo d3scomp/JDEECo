@@ -133,7 +133,7 @@
 
 	<!-- start cloud demo with local shared memory -->
 	<target name="cloud-local" depends="dist-demo"
-		description="Runs the convoy demo">
+		description="Runs the cloud demo">
 		<java classname="cz.cuni.mff.d3s.deeco.demo.cloud.LocalLauncherCloudNoJPF" fork="true">
 			<classpath>
 				<pathelement location="${dist}/demo.jar"/>
@@ -146,12 +146,45 @@
 		</java>
 	</target>
 	
+	<!-- start convoy demo with local shared memory -->
+		<target name="convoy-local" depends="dist-demo"
+			description="Runs the convoy demo">
+			<java classname="cz.cuni.mff.d3s.deeco.demo.convoy.LocalLauncherConvoyNoJPF" fork="true">
+				<classpath>
+					<pathelement location="${dist}/demo.jar"/>
+					<pathelement location="${dist}/jdeeco.jar"/>
+					<pathelement location="lib/jsk-lib.jar"/>
+					<pathelement location="lib/jsk-platform.jar"/>
+				</classpath>
+				<jvmarg value="-Djava.security.policy=${river}-config/start.policy"/>
+				<jvmarg value="-Djava.rmi.server.RMIClassLoaderSpi=net.jini.loader.pref.PreferredClassProvider"/>
+			</java>
+		</target>
+	
 	<!-- start cloud demo with tuple spaces as shared memory -->
 	<target name="cloud-ts" depends="dist-demo"
-		description="Runs the convoy demo">
+		description="Runs the cloud demo">
 		<parallel>
 			<antcall target="start-ar"/>
 			<java classname="cz.cuni.mff.d3s.deeco.demo.cloud.TSLauncherCloudNoJPF" fork="true">
+				<classpath>
+					<pathelement location="${dist}/demo.jar"/>
+					<pathelement location="${dist}/jdeeco.jar"/>
+					<pathelement location="lib/jsk-lib.jar"/>
+					<pathelement location="lib/jsk-platform.jar"/>
+				</classpath>
+				<jvmarg value="-Djava.security.policy=${river}-config/start.policy"/>
+				<jvmarg value="-Djava.rmi.server.RMIClassLoaderSpi=net.jini.loader.pref.PreferredClassProvider"/>
+			</java>
+		</parallel>
+	</target>
+	
+	<!-- start cloud demo with tuple spaces as shared memory -->
+	<target name="convoy-ts" depends="dist-demo"
+		description="Runs the convoy demo">
+		<parallel>
+			<antcall target="start-ar"/>
+			<java classname="cz.cuni.mff.d3s.deeco.demo.convoy.TSLauncherConvoyNoJPF" fork="true">
 				<classpath>
 					<pathelement location="${dist}/demo.jar"/>
 					<pathelement location="${dist}/jdeeco.jar"/>
