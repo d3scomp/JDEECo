@@ -21,8 +21,8 @@ To run the demo application perform the following two step:
 
 * Start the Apache River by executing `ant start-ar` (starts Tuple Spaces service)
 * Start the demo (using local knowledge repository)
-  **Cloud demo: `ant cloud-local`
-  **Convoy demo: `ant convoy-local`
+**Cloud demo: `ant cloud-local`
+**Convoy demo: `ant convoy-local`
 * Start the demo (using tuple space knowledge repository) by executing `ant demo-ts`
 
 
