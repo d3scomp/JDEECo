@@ -164,7 +164,7 @@
 		</parallel>
 	</target>
 	
-	
+	<!-- package cloud demo ensembles and components into single jar file -->
 	<target name="dist-cloud-demo" depends="compile-demo"
         description="Generates a jar with cloud demo main classes" >
 		<jar jarfile="${dist}/cloud-demo.jar" basedir="${build}/demo" includes="**/NodeA.class,**/NodeB.class,**/MigrationEnsemble.class">
@@ -177,6 +177,7 @@
 		</jar>
 	</target>
 	
+	<!-- Run cloud demo under jpf -->
 	<target name="jpf-cloud" depends="get-jpf, dist-cloud-demo">
 		<java fork="true" classname="cz.cuni.mff.d3s.deeco.processor.ClassProcessor" dir="${dist}">
 			<arg value="cloud-demo.jar"/>
