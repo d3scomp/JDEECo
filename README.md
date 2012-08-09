@@ -20,9 +20,13 @@ Additionally AppacheRiver 2.2 is downloaded, set up and all necessary scripts ar
 To run the demo application perform the following two step:
 
 * Start the Apache River by executing `ant start-ar` (starts Tuple Spaces service)
-* Start the demo (using local knowledge repository)
-**Cloud demo: `ant cloud-local`
-**Convoy demo: `ant convoy-local`
-* Start the demo (using tuple space knowledge repository) by executing `ant demo-ts`
+* Start the demo (using local knowledge repository):
+ * Cloud demo: `ant cloud-local`
+ * Convoy demo: `ant convoy-local`
+* Start the demo (using tuple space knowledge repository):
+ * Cloud demo: `ant cloud-ts`
+ * Convoy demo: `ant convoy-ts`
 
+To run cloud demo (only local knowledge repository supported) make sure you have Mercurial installed on your machine 
+(Path Environment variable is setup properly) and issue following ant command: `ant jpf-cloud`
 
