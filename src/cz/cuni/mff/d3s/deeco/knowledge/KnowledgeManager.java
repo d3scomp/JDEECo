@@ -117,7 +117,9 @@ public abstract class KnowledgeManager {
 	 * @param knowledgePaths array of properties that the listener is interested in
 	 * @param listener listening object
 	 */
-	public abstract boolean listenForChange(IKnowledgeChangeListener listener);
+	public abstract boolean registerListener(IKnowledgeChangeListener listener);
+	
+	public abstract void switchListening(boolean on);
 
 	/**
 	 * Retrieves knowledge from the knowledge repository, defined by

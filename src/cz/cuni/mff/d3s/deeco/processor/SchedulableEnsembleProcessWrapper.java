@@ -26,7 +26,7 @@ public class SchedulableEnsembleProcessWrapper extends
 			sep.setMembershipMethod(classDefinition.getMethod(
 					membership.methodName, membership.parameterTypes));
 			return sep;
-		} catch (NoSuchMethodException | SecurityException e) {
+		} catch (Exception e) {
 			System.out.println("Extracting method exception");
 		}
 		return null;

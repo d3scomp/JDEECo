@@ -21,7 +21,6 @@ import cz.cuni.mff.d3s.deeco.exceptions.KMNotExistentException;
 import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
 import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
-import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
 
 /**
  * Class providing component managing functionalities.
@@ -29,30 +28,9 @@ import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
  * @author Michal Kit
  * 
  */
-public class ComponentManager extends
-		InvokableManager<SchedulableComponentProcess> {
+public class ComponentKnowledgeHelper {
 
-	public ComponentManager(KnowledgeManager km, Scheduler scheduler) {
-		super(km, scheduler);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * cz.cuni.mff.d3s.deeco.invokable.InvokableManager#addInvokable(java.lang
-	 * .Class)
-	 */
-	@Override
-	public void addProcess(SchedulableProcess schedulableProcess) {
-		if (schedulableProcess != null) {
-			schedulableProcess.setKnowledgeManager(km);
-			processes.add((SchedulableComponentProcess) schedulableProcess);
-			scheduler.register(schedulableProcess);
-		}
-	}
-
-	public boolean addComponentKnowledge(ComponentKnowledge rootKnowledge) {
+	public static boolean addComponentKnowledge(ComponentKnowledge rootKnowledge, KnowledgeManager km) {
 		if (rootKnowledge != null) {
 			try {
 				try {

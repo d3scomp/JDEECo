@@ -108,7 +108,11 @@ public class RepositoryKnowledgeManagerHelper {
 		return newStructure;
 	}
 
-	public boolean listenForChange(IKnowledgeChangeListener listener) {
-		return kr.listenForChange(listener);
+	public boolean registerListener(IKnowledgeChangeListener listener) {
+		return kr.registerListener(listener);
+	}
+	
+	public void switchListening(boolean on) {
+		kr.switchListening(on);	
 	}
 }

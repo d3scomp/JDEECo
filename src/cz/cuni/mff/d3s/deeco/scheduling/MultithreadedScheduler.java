@@ -11,13 +11,15 @@ import cz.cuni.mff.d3s.deeco.invokable.TriggeredSchedulableProcess;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 
 public class MultithreadedScheduler extends Scheduler {
-
-	protected KnowledgeManager km;
 	private Map<SchedulableProcess, ScheduledExecutorService> threads;
 
-	public MultithreadedScheduler(KnowledgeManager km) {
+	public MultithreadedScheduler() {
 		super();
-		this.km = km;
+		threads = new HashMap<SchedulableProcess, ScheduledExecutorService>();
+	}
+
+	public MultithreadedScheduler(KnowledgeManager km) {
+		super(km);
 		threads = new HashMap<SchedulableProcess, ScheduledExecutorService>();
 	}
 
@@ -29,8 +31,9 @@ public class MultithreadedScheduler extends Scheduler {
 						((ProcessPeriodicSchedule) sp.scheduling).interval);
 			}
 			for (TriggeredSchedulableProcess tsp : triggeredProcesses) {
-				km.listenForChange(tsp);
+				km.registerListener(tsp);
 			}
+			km.switchListening(true);
 		}
 	}
 
@@ -40,9 +43,7 @@ public class MultithreadedScheduler extends Scheduler {
 			for (SchedulableProcess sp : periodicProcesses) {
 				threads.get(sp).shutdown();
 			}
-			for (TriggeredSchedulableProcess tsp : triggeredProcesses) {
-				// unregister tsp
-			}
+			km.switchListening(false);
 		}
 	}
 

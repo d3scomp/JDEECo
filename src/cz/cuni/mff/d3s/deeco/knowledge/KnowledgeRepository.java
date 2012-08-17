@@ -90,7 +90,11 @@ public abstract class KnowledgeRepository {
 	 * @param knowledgePaths array of properties that the listener is interested in
 	 * @param listener listening object
 	 */
-	public abstract boolean listenForChange(IKnowledgeChangeListener listener);
+	public abstract boolean registerListener(IKnowledgeChangeListener listener);
+	
+	public abstract void switchListening(boolean on);
+	
+	public abstract boolean isTriggeringOn();
 
 	/**
 	 * Creates a session object, which can be used for all the operations on the

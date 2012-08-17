@@ -39,7 +39,7 @@ public abstract class SchedulableProcess implements Serializable {
 	private InputParametersHelper iph;
 	private OutputParametersHelper oph;
 
-	protected KnowledgeManager km;
+	public KnowledgeManager km;
 
 	public ProcessSchedule scheduling;
 
@@ -204,14 +204,6 @@ public abstract class SchedulableProcess implements Serializable {
 	 */
 	public void invoke() {
 		invoke(null, null);
-	}
-
-	public KnowledgeManager getKnowledgeManager() {
-		return km;
-	}
-
-	public void setKnowledgeManager(KnowledgeManager km) {
-		this.km = km;
 	}
 
 	public abstract void invoke(String triggererId, ETriggerType recipientMode);

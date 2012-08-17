@@ -98,7 +98,20 @@ public class LocalKnowledgeRepository extends KnowledgeRepository {
 	}
 
 	@Override
-	public boolean listenForChange(IKnowledgeChangeListener listener) {
+	public boolean registerListener(IKnowledgeChangeListener listener) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public synchronized void switchListening(boolean on) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean isTriggeringOn() {
+		// TODO Auto-generated method stub
 		return false;
 	}
 

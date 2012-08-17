@@ -17,9 +17,7 @@ package cz.cuni.mff.d3s.deeco.knowledge.jini;
 
 import java.rmi.RMISecurityManager;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -47,11 +45,13 @@ import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
 public class TSKnowledgeRepository extends KnowledgeRepository {
 
 	private Map<String, TSRemoteEventListener> tsListeners;
+	private boolean triggeringOn;
 
 	public TSKnowledgeRepository() {
 		if (System.getSecurityManager() == null)
 			System.setSecurityManager(new RMISecurityManager());
 		tsListeners = new HashMap<String, TSRemoteEventListener>();
+		triggeringOn = false;
 	}
 	
 	/*
@@ -168,9 +168,19 @@ public class TSKnowledgeRepository extends KnowledgeRepository {
 	public ISession createSession() {
 		return new TransactionalSession();
 	}
+	
+	@Override
+	public synchronized void switchListening(boolean on) {
+		triggeringOn = on;
+	}
+	
+	@Override
+	public synchronized boolean isTriggeringOn() {
+		return triggeringOn;
+	}
 
 	@Override
-	public boolean listenForChange(IKnowledgeChangeListener kcListener) {
+	public boolean registerListener(IKnowledgeChangeListener kcListener) {
 		if (kcListener != null) {
 			TSRemoteEventListener tsListener;
 			for (String kp : kcListener.getKnowledgePaths()) {

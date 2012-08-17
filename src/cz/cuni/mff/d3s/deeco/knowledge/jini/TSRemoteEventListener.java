@@ -60,40 +60,43 @@ public class TSRemoteEventListener implements RemoteEventListener {
 	@Override
 	public void notify(RemoteEvent re) throws UnknownEventException,
 			RemoteException {
-		TransactionalSession ts = null;
-		try {
-			AvailabilityEvent ae = (AvailabilityEvent) re;
-			Tuple t = (Tuple) ae.getEntry();
-			String stringVersionAndOwner, version, owner;
-			String[] versionOwner;
-			Object [] tObjects;
-			ExecutorService es;
-			ts = (TransactionalSession) kr.createSession();
-			ts.begin();
-			while (ts.repeat()) {
-				tObjects = kr.get(t.key, ts);
-				stringVersionAndOwner = (String) tObjects[0];
-				versionOwner = extractVersionOwner(stringVersionAndOwner);
-				//System.out.println("Triggered: " + t.key + " " + stringVersionAndOwner);
-				if (versionOwner != null) {
-					version = versionOwner[0];
-					owner = versionOwner[1];
-					if (!version.equals(lastProcessed)) {
-						es = Executors.newFixedThreadPool(toNotify.size());
-						es.invokeAll(getThreadCollection(owner,
-								getTriggerRecipient(t.key)));
-						es.awaitTermination(
-								TransactionUtils.DEFAULT_TRANSACTION_TIMEOUT,
-								TimeUnit.MILLISECONDS);
-						lastProcessed = version;
+		if (kr.isTriggeringOn()) {
+			TransactionalSession ts = null;
+			try {
+				AvailabilityEvent ae = (AvailabilityEvent) re;
+				Tuple t = (Tuple) ae.getEntry();
+				String stringVersionAndOwner, version, owner;
+				String[] versionOwner;
+				Object[] tObjects;
+				ExecutorService es;
+				ts = (TransactionalSession) kr.createSession();
+				ts.begin();
+				while (ts.repeat()) {
+					tObjects = kr.get(t.key, ts);
+					stringVersionAndOwner = (String) tObjects[0];
+					versionOwner = extractVersionOwner(stringVersionAndOwner);
+					// System.out.println("Triggered: " + t.key + " " +
+					// stringVersionAndOwner);
+					if (versionOwner != null) {
+						version = versionOwner[0];
+						owner = versionOwner[1];
+						if (!version.equals(lastProcessed)) {
+							es = Executors.newFixedThreadPool(toNotify.size());
+							es.invokeAll(getThreadCollection(owner,
+									getTriggerRecipient(t.key)));
+							es.awaitTermination(
+									TransactionUtils.DEFAULT_TRANSACTION_TIMEOUT,
+									TimeUnit.MILLISECONDS);
+							lastProcessed = version;
+						}
 					}
+					ts.end();
 				}
-				ts.end();
+			} catch (Exception e) {
+				if (ts != null)
+					ts.cancel();
+				System.out.println("Notification exception: " + e.getMessage());
 			}
-		} catch (Exception e) {
-			if (ts != null)
-				ts.cancel();
-			System.out.println("Notification exception: " + e.getMessage());
 		}
 	}
 

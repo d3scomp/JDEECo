@@ -23,6 +23,7 @@ import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsembleMapper;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoIn;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoOut;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
+import cz.cuni.mff.d3s.deeco.ensemble.Ensemble;
 import cz.cuni.mff.d3s.deeco.knowledge.Knowledge;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 
@@ -34,7 +35,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
  */
 @DEECoEnsemble
 @DEECoPeriodicScheduling(2000)
-public class RequestResponseEnsemble {
+public class RequestResponseEnsemble extends Ensemble {
 
 	// must be public, static and extend Knowledge
 	public static class RequesterInterface extends Knowledge {

@@ -25,7 +25,7 @@ public class SchedulableComponentProcessWrapper extends
 			scp.setProcessMethod(classDefinition.getMethod(process.methodName,
 					process.parameterTypes));
 			return scp;
-		} catch (NoSuchMethodException | SecurityException e) {
+		} catch (Exception e) {
 			System.out.println("Extracting method exception");
 		}
 		return null;

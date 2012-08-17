@@ -21,6 +21,7 @@ import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsembleMembership;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoIn;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoOut;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
+import cz.cuni.mff.d3s.deeco.ensemble.Ensemble;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 
 /**
@@ -31,7 +32,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
  */
 @DEECoEnsemble
 @DEECoPeriodicScheduling(3000)
-public class MigrationEnsemble {
+public class MigrationEnsemble extends Ensemble {
 
 	@DEECoEnsembleMembership
 	public static boolean membership(

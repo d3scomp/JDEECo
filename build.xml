@@ -45,10 +45,13 @@
         description="Generates a jar with JDEECo runtime" >
 		<jar jarfile="${dist}/jdeeco.jar" basedir="${build}/jdeeco">
 			<manifest>
+				<attribute name="Manifest-Version" value="1.0"/>
+				<attribute name="Bundle-ManifestVersion" value="2"/>
                 <attribute name="Bundle-Version" value="0.0.1.SNAPSHOT"/>
-				<attribute name="Export-Package" value="cz.cuni.mff.d3s.deeco.knowledge,cz.cuni.mff.d3s.deeco.runtime,cz.cuni.mff.d3s.deeco.scheduling"/>
-				<attribute name="Bundle-Name" value="jdeeco-runtime" />
-				<attribute name="Bundle-SymbolicName" value="cz.cuni.mff.d3s.deeco.runtime" />
+				<attribute name="Bundle-ClassPath" value="."/>
+				<attribute name="Export-Package" value="cz.cuni.mff.d3s.deeco.invokable,cz.cuni.mff.d3s.deeco.ensemble,cz.cuni.mff.d3s.deeco.knowledge,cz.cuni.mff.d3s.deeco.knowledge.local,cz.cuni.mff.d3s.deeco.knowledge.jini,cz.cuni.mff.d3s.deeco.runtime,cz.cuni.mff.d3s.deeco.scheduling,cz.cuni.mff.d3s.deeco.annotations,cz.cuni.mff.d3s.deeco.processor"/>
+				<attribute name="Bundle-Name" value="JDEECo" />
+				<attribute name="Bundle-SymbolicName" value="cz.cuni.mff.d3s.deeco.jdeeco" />
             </manifest>
 		</jar>
 	</target>

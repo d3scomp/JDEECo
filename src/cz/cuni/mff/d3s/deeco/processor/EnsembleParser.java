@@ -6,6 +6,7 @@ import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsemble;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsembleMapper;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsembleMembership;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
+import cz.cuni.mff.d3s.deeco.ensemble.Ensemble;
 import cz.cuni.mff.d3s.deeco.invokable.AnnotationHelper;
 import cz.cuni.mff.d3s.deeco.invokable.BooleanMembership;
 import cz.cuni.mff.d3s.deeco.invokable.FuzzyMembership;
@@ -79,6 +80,7 @@ public class EnsembleParser {
 	
 	public boolean isEnsembleDefinition(Class<?> clazz) {
 		return clazz != null
+				&& Ensemble.class.isAssignableFrom(clazz)
 				&& clazz.getAnnotation(DEECoEnsemble.class) != null;
 	}
 
