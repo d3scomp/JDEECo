@@ -28,5 +28,5 @@ To run the demo application perform the following two step:
  * Convoy demo: `ant convoy-ts`
 
 To run cloud demo (only local knowledge repository supported) make sure you have Mercurial installed on your machine 
-(Path Environment variable is setup properly) and issue following ant command: `ant jpf-cloud`
+(Path Environment variable is setup properly) and issue following ant command: `ant jpf-cloud` 
 
