@@ -214,7 +214,7 @@
 	</target>
 	
 	<!-- Run cloud demo under jpf -->
-	<target name="jpf-cloud" depends="get-jpf, dist-cloud-demo">
+	<target name="jpf-cloud" depends="get-jpf, dist-cloud-demo, dist-demo">
 		<java fork="true" classname="cz.cuni.mff.d3s.deeco.processor.ClassProcessor" dir="${dist}">
 			<arg value="cloud-demo.jar"/>
 			<classpath>
