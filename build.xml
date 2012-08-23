@@ -8,6 +8,8 @@
 	<property name="dist" location="dist"/>
 	<property name="river" location="${dist}/apache-river"/>
 
+	<property name="debug" value="yes"/>
+
 	<!-- create main directories -->
 	<target name="init">
 		<tstamp/>
@@ -19,7 +21,7 @@
 	<target name="compile-jdeeco" depends="init"
         description="Compiles the JDEECo runtime sources" >
 		<mkdir dir="${build}/jdeeco"/>
-		<javac srcdir="${src}" destdir="${build}/jdeeco">
+		<javac srcdir="${src}" destdir="${build}/jdeeco" debug="${debug}">
 			<classpath>
 				<pathelement location="lib/jsk-lib.jar"/>
 				<pathelement location="lib/jsk-platform.jar"/>
@@ -31,7 +33,7 @@
 	<target name="compile-demo" depends="dist-jdeeco"
         description="Compiles the demos sources" >
 		<mkdir dir="${build}/demo"/>
-		<javac srcdir="${demo}" destdir="${build}/demo">
+		<javac srcdir="${demo}" destdir="${build}/demo" debug="${debug}">
 			<classpath>
 				<pathelement location="lib/jsk-lib.jar"/>
 				<pathelement location="lib/jsk-platform.jar"/>
