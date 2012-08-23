@@ -223,8 +223,10 @@
 			</classpath>
 		</java>
 		<java fork="true" jar="${dist}/jpf/jpf-core/build/RunJPF.jar" dir="${dist}">
-			<arg value="+classpath=demo.jar;jdeeco.jar"/>
-			<arg value="cz.cuni.mff.d3s.deeco.demo.cloud.LocalLauncherCloudJPF"/>
+			<jvmarg value="-Djdeeco-dist=${dist}"/>
+			<jvmarg value="-Djdeeco-src=${src}"/>
+			<jvmarg value="-Djdeeco-src-demo=${demo}"/>
+			<arg value="${demo}/cz/cuni/mff/d3s/deeco/demo/cloud/LocalLauncherCloudJPF.jpf"/>
 		</java>
 	</target>
 	
