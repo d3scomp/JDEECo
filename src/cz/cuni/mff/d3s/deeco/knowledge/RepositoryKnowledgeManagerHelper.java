@@ -11,8 +11,8 @@ import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
 
 public class RepositoryKnowledgeManagerHelper {
 
-	private KnowledgeRepository kr;
-	private KnowledgeManager km;
+	private final KnowledgeRepository kr;
+	private final KnowledgeManager km;
 
 	public RepositoryKnowledgeManagerHelper(KnowledgeRepository kr,
 			KnowledgeManager km) {
