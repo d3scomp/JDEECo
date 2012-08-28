@@ -30,8 +30,8 @@ import cz.cuni.mff.d3s.deeco.scheduling.ETriggerType;
  */
 public class SchedulableComponentProcess extends SchedulableProcess {
 
-	public ParameterizedMethod process;
-	private ELockingMode lockingMode;
+	public final ParameterizedMethod process;
+	private final ELockingMode lockingMode;
 
 	public SchedulableComponentProcess(ParameterizedMethod process,
 			ELockingMode lockingMode) {
