@@ -7,7 +7,7 @@ import java.util.List;
 
 public abstract class Membership implements Serializable {
 	
-	public ParameterizedMethod method;
+	public final ParameterizedMethod method;
 	
 	public Membership(ParameterizedMethod method) {
 		this.method = method;
