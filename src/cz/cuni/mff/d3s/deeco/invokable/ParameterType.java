@@ -6,11 +6,22 @@ import java.util.Map;
 import cz.cuni.mff.d3s.deeco.knowledge.TypeUtils;
 
 public class ParameterType implements Serializable {
-	public Class<?> clazz = null;
-	public ParameterType[] parametricTypes = null;
-	public Map<String, ParameterType> knowledgeStructure = null;
 
-	public Object newInstance() throws InstantiationException,
+	private static final long serialVersionUID = 2947404239563071448L;
+
+	public final Class<?> clazz;
+	public final ParameterType[] parametricTypes;
+	public final Map<String, ParameterType> knowledgeStructure;
+
+	
+	
+	public ParameterType(Class<?> clazz, ParameterType[] parametricTypes, Map<String, ParameterType> knowledgeStructure) {
+		this.clazz = clazz;
+		this.parametricTypes = parametricTypes;
+		this.knowledgeStructure = knowledgeStructure;
+	}
+
+  public Object newInstance() throws InstantiationException,
 			IllegalAccessException {
 		return clazz.newInstance();
 	}
