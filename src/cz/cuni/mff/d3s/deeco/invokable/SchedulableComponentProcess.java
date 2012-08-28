@@ -21,6 +21,7 @@ import cz.cuni.mff.d3s.deeco.annotations.ELockingMode;
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.scheduling.ETriggerType;
+import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
 
 /**
  * Class representing a component process.
@@ -30,11 +31,16 @@ import cz.cuni.mff.d3s.deeco.scheduling.ETriggerType;
  */
 public class SchedulableComponentProcess extends SchedulableProcess {
 
+	private static final long serialVersionUID = -8702709624128892523L;
+
 	public final ParameterizedMethod process;
 	private final ELockingMode lockingMode;
 
-	public SchedulableComponentProcess(ParameterizedMethod process,
+	public SchedulableComponentProcess(ProcessSchedule scheduling, ParameterizedMethod process,
 			ELockingMode lockingMode) {
+		
+		super(scheduling);
+		
 		this.process = process;
 		this.lockingMode = lockingMode;
 	}

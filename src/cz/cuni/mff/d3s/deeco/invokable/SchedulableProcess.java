@@ -36,16 +36,19 @@ import cz.cuni.mff.d3s.deeco.scheduling.ProcessTriggeredSchedule;
  */
 public abstract class SchedulableProcess implements Serializable {
 
-	private InputParametersHelper iph;
-	private OutputParametersHelper oph;
+	private static final long serialVersionUID = -642546184205115045L;
+
+	private final InputParametersHelper iph;
+	private final OutputParametersHelper oph;
 
 	public KnowledgeManager km;
 
-	public ProcessSchedule scheduling;
+	public final ProcessSchedule scheduling;
 
-	public SchedulableProcess() {
-		iph = new InputParametersHelper();
-		oph = new OutputParametersHelper();
+	public SchedulableProcess(ProcessSchedule scheduling) {
+		this.iph = new InputParametersHelper();
+		this.oph = new OutputParametersHelper();
+		this.scheduling = scheduling;
 	}
 
 	protected Object[] getParameterMethodValues(List<Parameter> in,

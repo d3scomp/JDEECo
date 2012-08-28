@@ -10,6 +10,7 @@ import cz.cuni.mff.d3s.deeco.ensemble.Ensemble;
 import cz.cuni.mff.d3s.deeco.invokable.AnnotationHelper;
 import cz.cuni.mff.d3s.deeco.invokable.BooleanMembership;
 import cz.cuni.mff.d3s.deeco.invokable.FuzzyMembership;
+import cz.cuni.mff.d3s.deeco.invokable.Membership;
 import cz.cuni.mff.d3s.deeco.invokable.ParameterizedMethod;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableEnsembleProcess;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
@@ -32,50 +33,75 @@ public class EnsembleParser {
 	 *         from the class definition
 	 */
 	public SchedulableEnsembleProcess extractEnsembleProcess(Class<?> c) {
-		SchedulableEnsembleProcess result = null;
-		if (c != null) {
-			ProcessSchedule pSchedule = ScheduleHelper
-					.getPeriodicSchedule(AnnotationHelper.getAnnotation(
-							DEECoPeriodicScheduling.class, c.getAnnotations()));
-			result = new SchedulableEnsembleProcess();
-			Method method = AnnotationHelper.getAnnotatedMethod(c,
-					DEECoEnsembleMembership.class);
-			if (method != null) {
-				ParameterizedMethod pm = ParameterizedMethod
-						.extractParametrizedMethod(method);
-				if (pm == null)
-					return null;
-				if (method.getReturnType().isAssignableFrom(double.class))
-					result.membership = new FuzzyMembership(
-							pm,
-							(Double) AnnotationHelper.getAnnotationValue(method
-									.getAnnotation(DEECoEnsembleMembership.class)));
-				else
-					result.membership = new BooleanMembership(pm);
-				if (pSchedule == null) {// not periodic
-					pSchedule = ScheduleHelper.getTriggeredSchedule(
-							method.getParameterAnnotations(),
-							result.membership.getIn(),
-							result.membership.getInOut());
-					if (pSchedule == null)
-						result.scheduling = new ProcessPeriodicSchedule();
-					else
-						result.scheduling = pSchedule;
-				} else
-					result.scheduling = pSchedule;
-			} else
-				return null;
-			method = AnnotationHelper.getAnnotatedMethod(c,
-					DEECoEnsembleMapper.class);
-			if (method != null) {
-				result.mapper = ParameterizedMethod
-						.extractParametrizedMethod(method);
-				if (result.mapper == null)
-					return null;
-			} else
-				return null;
+		if (c == null) {
+			return null;
 		}
-		return result;
+
+		final Method methodEnsMembership = AnnotationHelper.getAnnotatedMethod(c,
+				DEECoEnsembleMembership.class);
+		if (methodEnsMembership == null) {
+			return null;
+		}
+
+		final ParameterizedMethod pm = ParameterizedMethod
+				.extractParametrizedMethod(methodEnsMembership);
+		if (pm == null) {
+			return null;
+		}
+
+		// Look up Membership
+		Membership membership;
+		if (methodEnsMembership.getReturnType().isAssignableFrom(double.class)) {
+					membership = new FuzzyMembership(
+							pm,
+							(Double) AnnotationHelper.getAnnotationValue(methodEnsMembership
+									.getAnnotation(DEECoEnsembleMembership.class)));
+		} else {
+					membership = new BooleanMembership(pm);
+		}
+
+		// Look up scheduling
+		ProcessSchedule scheduling = null;
+		
+		final ProcessSchedule periodicSchedule = ScheduleHelper
+				.getPeriodicSchedule(AnnotationHelper.getAnnotation(
+						DEECoPeriodicScheduling.class, c.getAnnotations()));
+		if (periodicSchedule != null) { 
+			scheduling = periodicSchedule;
+		}
+		
+		if (scheduling == null) {
+			// not periodic
+			final ProcessSchedule triggeredSchedule = ScheduleHelper.getTriggeredSchedule(
+					methodEnsMembership.getParameterAnnotations(),
+					membership.getIn(),
+					membership.getInOut());
+			
+			if (triggeredSchedule != null) {
+				scheduling = triggeredSchedule;
+			} 
+		}
+		
+		if (scheduling == null) {
+			// No scheduling specified by annotations, using defaults
+			scheduling = new ProcessPeriodicSchedule();
+		}
+		
+		
+	
+		final Method mapperMethod = AnnotationHelper.getAnnotatedMethod(c,
+					DEECoEnsembleMapper.class);
+		if (mapperMethod == null) {
+			return null;
+		}
+
+		final ParameterizedMethod mapper = ParameterizedMethod
+						.extractParametrizedMethod(mapperMethod);
+		if (mapper == null) {
+			return null;
+		} else
+
+		return new SchedulableEnsembleProcess(scheduling, membership, mapper);
 	}
 	
 	public boolean isEnsembleDefinition(Class<?> clazz) {

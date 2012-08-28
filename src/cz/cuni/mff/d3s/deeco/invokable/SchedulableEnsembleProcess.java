@@ -23,6 +23,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.scheduling.ETriggerType;
+import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
 
 /**
  * Class representing schedulable ensemble process, which is used by the system
@@ -33,22 +34,10 @@ import cz.cuni.mff.d3s.deeco.scheduling.ETriggerType;
  */
 public class SchedulableEnsembleProcess extends SchedulableProcess {
 
-	public ParameterizedMethod mapper;
-	public Membership membership;
+	private static final long serialVersionUID = -726573275082252987L;
 
-	/**
-	 * Returns <code>SchedulableEnsembleProcess</code> instance for specified
-	 * scheduling (in <code>scheduling</code>) and knowledge manager (in
-	 * <code>km</code>).
-	 * 
-	 * @param scheduling
-	 *            describes the type of the schedulability for the ensemble
-	 * @param km
-	 *            instance of the knowledge manager that is used for parameter
-	 *            retrieval
-	 */
-	public SchedulableEnsembleProcess() {
-	}
+	public final ParameterizedMethod mapper;
+	public final Membership membership;
 
 	/**
 	 * Returns <code>SchedulableEnsembleProcess</code> instance for specified
@@ -56,19 +45,21 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 	 * <code>mapper</code>), scheduling type (in <code>scheduling</code>) and
 	 * knowledge manager (<code>km</code>).
 	 * 
+	 * @param scheduling
+	 *            describes the type of the schedulability for the ensemble
 	 * @param membership
 	 *            method used to evaluate the ensemble condition
 	 * @param mapper
 	 *            method used to perform data transfer in case of positive
 	 *            membership condition evaluation
-	 * @param scheduling
-	 *            describes the type of the schedulability for the ensemble
 	 * @param km
 	 *            instance of the knowledge manager that is used for parameter
 	 *            retrieval
 	 */
-	public SchedulableEnsembleProcess(Membership membership,
-			ParameterizedMethod mapper, KnowledgeManager km) {
+	public SchedulableEnsembleProcess(ProcessSchedule scheduling, Membership membership,
+			ParameterizedMethod mapper) {
+		super(scheduling);
+		
 		this.membership = membership;
 		this.mapper = mapper;
 	}

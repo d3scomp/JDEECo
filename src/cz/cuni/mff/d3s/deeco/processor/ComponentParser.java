@@ -38,45 +38,66 @@ public class ComponentParser {
 	 */
 	public List<SchedulableComponentProcess> extractComponentProcess(
 			Class<?> c, String root) {
-		List<SchedulableComponentProcess> result = null;
-		if (c != null) {
-			result = new ArrayList<SchedulableComponentProcess>();
-			List<Method> methods = AnnotationHelper.getAnnotatedMethods(c,
+		if (c == null) {
+			return null;
+		}
+
+		List<Method> methods = AnnotationHelper.getAnnotatedMethods(c,
 					DEECoProcess.class);
-			ParameterizedMethod currentMethod;
-			ProcessSchedule ps;
-			SchedulableComponentProcess skp;
-			ELockingMode lm;
-			if (methods != null && methods.size() > 0) {
-				for (Method m : methods) {
-					currentMethod = ParameterizedMethod
-							.extractParametrizedMethod(m, root);
-					if (currentMethod != null) {
-						ps = ScheduleHelper
-								.getPeriodicSchedule(AnnotationHelper
-										.getAnnotation(
-												DEECoPeriodicScheduling.class,
-												m.getAnnotations()));
-						if (ps == null) {// not periodic
-							ps = ScheduleHelper.getTriggeredSchedule(
-									m.getParameterAnnotations(),
-									currentMethod.in, currentMethod.inOut);
-							if (ps == null)
-								ps = new ProcessPeriodicSchedule();
-						}
-						if (AnnotationHelper.getAnnotation(
-								DEECoStrongLocking.class, m.getAnnotations()) == null)
-							lm = (ps instanceof ProcessPeriodicSchedule) ? ELockingMode.WEAK
-									: ELockingMode.STRONG;
-						else
-							lm = ELockingMode.STRONG;
-						skp = new SchedulableComponentProcess(currentMethod, lm);
-						skp.scheduling = ps;
-						result.add(skp);
-					}
+
+		if (methods == null || methods.size() == 0) {
+			return null;
+		}
+		
+		final List<SchedulableComponentProcess> result = 
+				new ArrayList<SchedulableComponentProcess>();
+
+		for (Method m : methods) {
+			final ParameterizedMethod currentMethod = ParameterizedMethod
+					.extractParametrizedMethod(m, root);
+			if (currentMethod == null) {
+				// Not a process method
+				continue;
+			}
+				
+			ProcessSchedule ps = null;
+			final ProcessSchedule periodicSchedule = ScheduleHelper
+						.getPeriodicSchedule(AnnotationHelper
+								.getAnnotation(
+										DEECoPeriodicScheduling.class,
+										m.getAnnotations()));
+			if (periodicSchedule != null) {
+				ps = periodicSchedule;
+			}	
+			
+			if (ps == null) {
+				final ProcessSchedule triggeredSchedule = ScheduleHelper.getTriggeredSchedule(
+							m.getParameterAnnotations(),
+							currentMethod.in, currentMethod.inOut);
+				if (triggeredSchedule != null) {
+					ps = triggeredSchedule;
 				}
 			}
+			
+			if (ps == null) {
+				// No scheduling specified by annotations, using defaults
+				ps = new ProcessPeriodicSchedule();
+			}
+
+			ELockingMode lm;
+			if (AnnotationHelper.getAnnotation(
+						DEECoStrongLocking.class, m.getAnnotations()) == null) {
+				lm = (ps instanceof ProcessPeriodicSchedule) ? ELockingMode.WEAK
+						: ELockingMode.STRONG;
+			} else {
+				lm = ELockingMode.STRONG;
+			}
+			
+			final SchedulableComponentProcess skp = 
+					new SchedulableComponentProcess(ps, currentMethod, lm);
+				result.add(skp);
 		}
+
 		return result;
 	}
 
