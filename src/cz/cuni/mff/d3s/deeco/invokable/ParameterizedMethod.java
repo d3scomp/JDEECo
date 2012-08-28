@@ -33,62 +33,60 @@ import cz.cuni.mff.d3s.deeco.processor.ParserHelper;
  * 
  */
 public class ParameterizedMethod implements Serializable {
-	public transient Method method;
-	/**
-	 * Input parameterTypes
-	 */
-	public List<Parameter> in;
-	/**
-	 * Input/Output parameterTypes
-	 */
-	public List<Parameter> inOut;
-	/**
-	 * Output parameterTypes
-	 */
-	public List<Parameter> out;
+  
+  public transient Method method;
 
-	public ParameterizedMethod(Method method) {
-		this.method = method;
-	}
+  /**
+   * Input parameterTypes
+   */
+  public final List<Parameter> in;
+  /**
+   * Input/Output parameterTypes
+   */
+  public final List<Parameter> inOut;
+  /**
+   * Output parameterTypes
+   */
+  public final List<Parameter> out;
 
-	/**
-	 * Invokes process method execution.
-	 * 
-	 * @param parameterTypes
-	 *            list of method parameterTypes
-	 * @return invocation result or null in case of an exception.
-	 */
-	public Object invoke(Object[] parameters) {
-		try {
-			return method.invoke(null, parameters);
-		} catch (Exception e) {
-			System.out.println("Method invocation error: " + e.getMessage());
-			return null;
-		}
-	}
-	
-	public static ParameterizedMethod extractParametrizedMethod(
-			Method method) {
-		return extractParametrizedMethod(method, null);
-	}
+  protected ParameterizedMethod(Method method, List<Parameter> in, List<Parameter> inOut, List<Parameter> out) {
+    this.method = method;
+    this.in = in;
+    this.inOut = inOut;
+    this.out = out;
+  }
 
-	public static synchronized ParameterizedMethod extractParametrizedMethod(
-			Method method, String root) {
-		try {
-			ParameterizedMethod result = null;
-			if (method != null) {
-				result = new ParameterizedMethod(method);
-				result.in = ParserHelper.getParameters(method,
-						DEECoIn.class, root);
-				result.out = ParserHelper.getParameters(method,
-						DEECoOut.class, root);
-				result.inOut = ParserHelper.getParameters(method,
-						DEECoInOut.class, root);
-			}
-			return result;
-		} catch (ComponentEnsembleParseException pe) {
-		} catch (ParseException pe) {
-		} 
-		return null;
-	}
+  /**
+   * Invokes process method execution.
+   * 
+   * @param parameterTypes
+   *          list of method parameterTypes
+   * @return invocation result or null in case of an exception.
+   */
+  public Object invoke(Object[] parameters) {
+    try {
+      return method.invoke(null, parameters);
+    } catch (Exception e) {
+      System.out.println("Method invocation error: " + e.getMessage());
+      return null;
+    }
+  }
+
+  public static ParameterizedMethod extractParametrizedMethod(Method method) {
+    return extractParametrizedMethod(method, null);
+  }
+
+  public static synchronized ParameterizedMethod extractParametrizedMethod(Method method, String root) {
+    try {
+      if (method != null) {
+        List<Parameter> in = ParserHelper.getParameters(method, DEECoIn.class, root);
+        List<Parameter> out = ParserHelper.getParameters(method, DEECoOut.class, root);
+        List<Parameter> inOut = ParserHelper.getParameters(method, DEECoInOut.class, root);
+        return new ParameterizedMethod(method, in, inOut, out);
+      }
+    } catch (ComponentEnsembleParseException pe) {
+    } catch (ParseException pe) {
+    }
+    return null;
+  }
 }
