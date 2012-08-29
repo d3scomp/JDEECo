@@ -7,6 +7,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.List;
 
+import cz.cuni.mff.d3s.deeco.invokable.creators.SchedulableProcessCreator;
 import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
 import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
 
@@ -25,7 +26,7 @@ public class ParsedObjectWriter {
 			this.fileName = fileName;
 	}
 
-	public boolean write(List<SchedulableProcessWrapper> spw,
+	public boolean write(List<SchedulableProcessCreator> spw,
 			List<ComponentKnowledge> ck) {
 		try {
 			ObjectOutput oo = null;

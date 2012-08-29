@@ -25,7 +25,7 @@ public class LocalLauncherConvoyJPF {
 		KnowledgeManager km = new RepositoryKnowledgeManager(
 				new LocalKnowledgeRepository());
 		Scheduler scheduler = new MultithreadedScheduler(km);
-		Launcher launcher = new Launcher(scheduler, new FileDEECoObjectProvider());
+		Launcher launcher = new Launcher(scheduler, new FileDEECoObjectProvider(km));
 		launcher.launch(); 
 	}
 }

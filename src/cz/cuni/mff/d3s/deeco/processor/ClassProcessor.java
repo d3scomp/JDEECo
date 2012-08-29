@@ -12,6 +12,8 @@ import java.util.jar.JarFile;
 
 import org.apache.bcel.classfile.ClassParser;
 
+import cz.cuni.mff.d3s.deeco.invokable.creators.SchedulableComponentProcessCreator;
+import cz.cuni.mff.d3s.deeco.invokable.creators.SchedulableProcessCreator;
 import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
 
 public class ClassProcessor {
@@ -56,7 +58,7 @@ public class ClassProcessor {
 	private static void processClassFiles(List<String> classes,
 			List<URL> dirURLs) {
 		if (classes.size() > 0) {
-			List<SchedulableProcessWrapper> sp = new LinkedList<SchedulableProcessWrapper>();
+			List<SchedulableProcessCreator> sp = new LinkedList<SchedulableProcessCreator>();
 			List<ComponentKnowledge> ik = new LinkedList<ComponentKnowledge>();
 			ComponentKnowledge initialKnowledge;
 			//dirURLs.addAll(Arrays.asList(((URLClassLoader)ClassLoader.getSystemClassLoader()).getURLs()));
@@ -88,16 +90,14 @@ public class ClassProcessor {
 		}
 	}
 
-	private static void addComponents(List<SchedulableProcessWrapper> sp,
+	private static void addComponents(List<SchedulableProcessCreator> sp,
 			ComponentParser cp, Class<?> clazz, String componentId) {
-		sp.addAll(SchedulableComponentProcessWrapper.wrapComponentProcess(
-				clazz, cp.extractComponentProcess(clazz, componentId)));
+		sp.addAll(cp.extractComponentProcess(clazz, componentId));
 	}
 
-	private static void addEnsemble(List<SchedulableProcessWrapper> sp,
+	private static void addEnsemble(List<SchedulableProcessCreator> sp,
 			EnsembleParser ep, Class<?> clazz) {
-		sp.add(SchedulableEnsembleProcessWrapper.wrapEnsembleProcess(clazz,
-				ep.extractEnsembleProcess(clazz)));
+		sp.add(ep.extractEnsembleProcess(clazz));
 	}
 	
 	private static List<String> getClassNamesFromJar(File jar, FileExtensionFilter fef) {

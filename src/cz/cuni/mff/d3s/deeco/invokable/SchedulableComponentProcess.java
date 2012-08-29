@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import cz.cuni.mff.d3s.deeco.annotations.ELockingMode;
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.scheduling.ETriggerType;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
 
@@ -36,10 +37,10 @@ public class SchedulableComponentProcess extends SchedulableProcess {
 	public final ParameterizedMethod process;
 	private final ELockingMode lockingMode;
 
-	public SchedulableComponentProcess(ProcessSchedule scheduling, ParameterizedMethod process,
+	public SchedulableComponentProcess(KnowledgeManager km, ProcessSchedule scheduling, ParameterizedMethod process,
 			ELockingMode lockingMode) {
 		
-		super(scheduling);
+		super(km, scheduling);
 		
 		this.process = process;
 		this.lockingMode = lockingMode;
@@ -96,9 +97,5 @@ public class SchedulableComponentProcess extends SchedulableProcess {
 			return null;
 		return process.method;
 	}
-	
-	public void setProcessMethod(Method method) {
-		if (process != null)
-			process.method = method;
-	}
+
 }

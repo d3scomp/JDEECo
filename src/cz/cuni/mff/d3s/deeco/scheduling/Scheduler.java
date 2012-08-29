@@ -39,7 +39,6 @@ public abstract class Scheduler {
 
 	public boolean register(SchedulableProcess process) {
 		if (!running) {
-			process.km = this.km;
 			if (process.scheduling instanceof ProcessTriggeredSchedule)
 				return triggeredProcesses.add(new TriggeredSchedulableProcess(process));
 			else

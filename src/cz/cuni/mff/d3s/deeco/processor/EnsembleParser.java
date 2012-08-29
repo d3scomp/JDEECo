@@ -8,11 +8,12 @@ import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsembleMembership;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.ensemble.Ensemble;
 import cz.cuni.mff.d3s.deeco.invokable.AnnotationHelper;
-import cz.cuni.mff.d3s.deeco.invokable.BooleanMembership;
-import cz.cuni.mff.d3s.deeco.invokable.FuzzyMembership;
-import cz.cuni.mff.d3s.deeco.invokable.Membership;
-import cz.cuni.mff.d3s.deeco.invokable.ParameterizedMethod;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableEnsembleProcess;
+import cz.cuni.mff.d3s.deeco.invokable.creators.BooleanMembershipCreator;
+import cz.cuni.mff.d3s.deeco.invokable.creators.FuzzyMembershipCreator;
+import cz.cuni.mff.d3s.deeco.invokable.creators.MembershipCreator;
+import cz.cuni.mff.d3s.deeco.invokable.creators.ParametrizedMethodCreator;
+import cz.cuni.mff.d3s.deeco.invokable.creators.SchedulableEnsembleProcessCreator;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessPeriodicSchedule;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
@@ -32,7 +33,7 @@ public class EnsembleParser {
 	 * @return list of {@link SchedulableEnsembleProcess} instances extracted
 	 *         from the class definition
 	 */
-	public SchedulableEnsembleProcess extractEnsembleProcess(Class<?> c) {
+	public SchedulableEnsembleProcessCreator extractEnsembleProcess(Class<?> c) {
 		if (c == null) {
 			return null;
 		}
@@ -43,21 +44,21 @@ public class EnsembleParser {
 			return null;
 		}
 
-		final ParameterizedMethod pm = ParameterizedMethod
-				.extractParametrizedMethod(methodEnsMembership);
-		if (pm == null) {
+		final ParametrizedMethodCreator pmc = ParametrizedMethodCreator
+				.extractParametrizedMethodCreator(methodEnsMembership);
+		if (pmc == null) {
 			return null;
 		}
 
 		// Look up Membership
-		Membership membership;
+		MembershipCreator membershipCreator;
 		if (methodEnsMembership.getReturnType().isAssignableFrom(double.class)) {
-					membership = new FuzzyMembership(
-							pm,
+					membershipCreator = new FuzzyMembershipCreator(
+							pmc,
 							(Double) AnnotationHelper.getAnnotationValue(methodEnsMembership
 									.getAnnotation(DEECoEnsembleMembership.class)));
 		} else {
-					membership = new BooleanMembership(pm);
+					membershipCreator = new BooleanMembershipCreator(pmc);
 		}
 
 		// Look up scheduling
@@ -74,8 +75,9 @@ public class EnsembleParser {
 			// not periodic
 			final ProcessSchedule triggeredSchedule = ScheduleHelper.getTriggeredSchedule(
 					methodEnsMembership.getParameterAnnotations(),
-					membership.getIn(),
-					membership.getInOut());
+					membershipCreator.method.in,
+					membershipCreator.method.inOut
+					);
 			
 			if (triggeredSchedule != null) {
 				scheduling = triggeredSchedule;
@@ -95,13 +97,13 @@ public class EnsembleParser {
 			return null;
 		}
 
-		final ParameterizedMethod mapper = ParameterizedMethod
-						.extractParametrizedMethod(mapperMethod);
-		if (mapper == null) {
+		final ParametrizedMethodCreator mapperCreator = ParametrizedMethodCreator
+						.extractParametrizedMethodCreator(mapperMethod);
+		if (mapperCreator == null) {
 			return null;
 		} else
 
-		return new SchedulableEnsembleProcess(scheduling, membership, mapper);
+		return new SchedulableEnsembleProcessCreator(scheduling, mapperCreator, membershipCreator);
 	}
 	
 	public boolean isEnsembleDefinition(Class<?> clazz) {

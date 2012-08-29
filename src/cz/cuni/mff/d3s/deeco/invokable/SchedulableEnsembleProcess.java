@@ -56,9 +56,9 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 	 *            instance of the knowledge manager that is used for parameter
 	 *            retrieval
 	 */
-	public SchedulableEnsembleProcess(ProcessSchedule scheduling, Membership membership,
+	public SchedulableEnsembleProcess(KnowledgeManager km, ProcessSchedule scheduling, Membership membership,
 			ParameterizedMethod mapper) {
-		super(scheduling);
+		super(km, scheduling);
 		
 		this.membership = membership;
 		this.mapper = mapper;
@@ -168,19 +168,10 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 		return mapper.method;
 	}
 	
-	public void setMapperMethod(Method method) {
-		if (mapper != null)
-			mapper.method = method;
-	}
-	
 	public Method getMembershipMethod() {
 		if (membership == null || membership.method == null)
 			return null;
 		return membership.method.method;
 	}
-	
-	public void setMembershipMethod(Method method) {
-		if (membership != null && membership.method != null)
-			membership.method.method = method;
-	}
+
 }

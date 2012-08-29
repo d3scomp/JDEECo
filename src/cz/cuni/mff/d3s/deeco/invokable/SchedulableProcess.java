@@ -41,14 +41,15 @@ public abstract class SchedulableProcess implements Serializable {
 	private final InputParametersHelper iph;
 	private final OutputParametersHelper oph;
 
-	public KnowledgeManager km;
+	public final KnowledgeManager km;
 
 	public final ProcessSchedule scheduling;
 
-	public SchedulableProcess(ProcessSchedule scheduling) {
+	public SchedulableProcess(KnowledgeManager km, ProcessSchedule scheduling) {
 		this.iph = new InputParametersHelper();
 		this.oph = new OutputParametersHelper();
 		this.scheduling = scheduling;
+		this.km = km;
 	}
 
 	protected Object[] getParameterMethodValues(List<Parameter> in,
@@ -65,11 +66,11 @@ public abstract class SchedulableProcess implements Serializable {
 	protected Object[] getParameterMethodValues(List<Parameter> in,
 			List<Parameter> inOut, List<Parameter> out, ISession session,
 			String coordinator, String member) throws KMException {
-		List<Parameter> parameters = new ArrayList<Parameter>();
-		parameters.addAll(in);
-		parameters.addAll(inOut);
+		final List<Parameter> parametersIn = new ArrayList<Parameter>();
+		parametersIn.addAll(in);
+		parametersIn.addAll(inOut);
 		Object value;
-		Object[] result = new Object[parameters.size()
+		Object[] result = new Object[parametersIn.size()
 				+ ((out != null) ? out.size() : 0)];
 		ISession localSession;
 		if (session == null) {
@@ -79,7 +80,7 @@ public abstract class SchedulableProcess implements Serializable {
 			localSession = session;
 		try {
 			while (localSession.repeat()) {
-				for (Parameter p : parameters) {
+				for (Parameter p : parametersIn) {
 					value = km.getKnowledge(p.kPath.getEvaluatedPath(km,
 							coordinator, member, localSession), localSession);
 					value = iph.getParameterInstance(p.type, value);
@@ -91,8 +92,8 @@ public abstract class SchedulableProcess implements Serializable {
 				else
 					break;
 			}
-			parameters = out;
-			for (Parameter p : parameters) {
+			final List<Parameter> parametersOut = out;
+			for (Parameter p : parametersOut) {
 				value = oph.getParameterInstance(p.type);
 				p.originalValue = DeepCopy.copy(value);
 				result[p.index] = value;
@@ -153,7 +154,7 @@ public abstract class SchedulableProcess implements Serializable {
 			List<Parameter> inOut, List<Parameter> out, ISession session,
 			String coordinator, String member) {
 		if (parameterValues != null) {
-			List<Parameter> parameters = new ArrayList<Parameter>();
+			final List<Parameter> parameters = new ArrayList<Parameter>();
 			parameters.addAll(out);
 			parameters.addAll(inOut);
 			Object value;
