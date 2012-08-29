@@ -7,7 +7,10 @@ import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 
 public class KnowledgePath implements Serializable {
-	private PNode pathNode;
+	
+	private static final long serialVersionUID = -6173052910579323995L;
+	
+	private final PNode pathNode;
 	private String evaluation;
 
 	public KnowledgePath(String path) throws ParseException {
@@ -15,44 +18,6 @@ public class KnowledgePath implements Serializable {
 		this.evaluation = null;
 	}
 
-	public KnowledgePath(String path, String coord, String member)
-			throws ParseException {
-		this.pathNode = JDEECoParser.parse(path);
-		this.evaluation = null;
-	}
-	
-	
-	public void appendKnowledgePath(String postfix, boolean reevaluate) throws ParseException {
-		PNode newNode = JDEECoParser.parse(postfix);
-		PNode last = pathNode;
-		while (last.next != null)
-			last = last.next;
-		last.next = newNode;
-		if (reevaluate) {
-			evaluation = null;
-		} else if (evaluation != null) {
-			evaluation += PathGrammar.PATH_SEPARATOR + postfix;
-		} 
-	}
-	
-	public void prependKnowledgePath(String prefix) throws ParseException {
-		prependKnowledgePath(prefix, false);
-	}
-	
-	public void prependKnowledgePath(String prefix, boolean reevaluate) throws ParseException {
-		PNode newNode = JDEECoParser.parse(prefix);
-		PNode last = newNode;
-		while (last.next != null)
-			last = last.next;
-		last.next = pathNode;
-		pathNode = newNode;
-		if (reevaluate) {
-			evaluation = null;
-		} else if (evaluation != null) {
-			evaluation = prefix + PathGrammar.PATH_SEPARATOR + evaluation;
-		}
-	}
-	
 	public String getEvaluatedPath(KnowledgeManager km) {
 		return getEvaluatedPath(km, null, null, null);
 	}

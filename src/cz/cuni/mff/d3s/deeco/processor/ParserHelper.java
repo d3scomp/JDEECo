@@ -56,9 +56,17 @@ public class ParserHelper {
 	
 	private static Parameter parseNamedAnnotation(Annotation annotation,
 			Type type, int index, String root) throws ParseException, ComponentEnsembleParseException {
-		KnowledgePath kPath = new KnowledgePath((String) AnnotationHelper.getAnnotationValue(annotation));
-		if (root != null && !root.equals(""))
-			kPath.prependKnowledgePath(root);
+
+		String path = (String) AnnotationHelper.getAnnotationValue(annotation);
+		
+		// Adding prefix (the Component name which holds the "root") to path from annotations
+		if (root != null && !root.equals("")) {
+				path = root + '.' + path;
+		}
+
+		KnowledgePath kPath = new KnowledgePath(path);
+		
 		return new Parameter(kPath, type, index);
 	}
+	
 }

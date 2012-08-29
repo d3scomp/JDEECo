@@ -14,23 +14,26 @@ public class JDEECoParser implements JDEECoParserConstants {
 
   final public PNode parseExpression() throws ParseException {
   Token t;
-  PNode node = new PNode();
+  // Values needed to create a PNode
+  Object value = null; //May be String or PNode or EEnsembleParty
+  PNode next = null;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case IDENTIFIER:
       t = jj_consume_token(IDENTIFIER);
-      node.value = t.image;
+      value = t.image;
       break;
     case COORD:
       t = jj_consume_token(COORD);
-      node.value = EEnsembleParty.COORDINATOR;
+      value = EEnsembleParty.COORDINATOR;
       break;
     case MEMBER:
       t = jj_consume_token(MEMBER);
-      node.value = EEnsembleParty.MEMBER;
+      value = EEnsembleParty.MEMBER;
       break;
     case OPEN:
       jj_consume_token(OPEN);
-          node.value = parseExpression();
+          value = parseExpression();
+          next = null;
       jj_consume_token(CLOSE);
       break;
     default:
@@ -49,9 +52,9 @@ public class JDEECoParser implements JDEECoParserConstants {
         break label_1;
       }
       jj_consume_token(SEPARATOR);
-      node.next = parseExpression();
+      next = parseExpression();
     }
-    {if (true) return node;}
+    {if (true) return new PNode(value, next);}
     throw new Error("Missing return statement in function");
   }
 
