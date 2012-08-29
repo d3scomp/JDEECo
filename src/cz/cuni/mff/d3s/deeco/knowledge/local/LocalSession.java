@@ -5,7 +5,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 class LocalSession implements ISession {
 
 	private boolean succeeded = false;
-	private LocalKnowledgeRepository kr;
+	private final LocalKnowledgeRepository kr;
 	
 	LocalSession(LocalKnowledgeRepository kr) {
 		this.kr = kr;
