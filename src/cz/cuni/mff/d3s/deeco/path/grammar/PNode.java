@@ -16,6 +16,15 @@ public class PNode implements Serializable {
 		this.next = next;
 	}
 	
+	
+	
+	@Override
+	public String toString() {
+		return "PNode [value=" + value + ", next=" + next + "]";
+	}
+
+
+
 	/**
 	 * Traverses the list created by {@link PNode#next} until it reach end
 	 *    (the {@code null}) and then makes a copy of them
@@ -35,4 +44,5 @@ public class PNode implements Serializable {
 		
 		return new PNode(root.value, appendSuffix(root.next, suffix));
 	}
+	
 }
