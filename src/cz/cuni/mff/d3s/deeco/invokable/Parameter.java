@@ -30,10 +30,11 @@ import cz.cuni.mff.d3s.deeco.path.grammar.KnowledgePath;
  */
 public class Parameter implements Serializable {
 	
+	private static final long serialVersionUID = -5306187392194189194L;
+
 	public final KnowledgePath kPath;
 	public final ParameterType type;
 	public final Integer index;
-	public Object originalValue;
 
 	public Parameter(KnowledgePath kPath, Type type, Integer index) throws ComponentEnsembleParseException {
 		this.kPath = kPath;

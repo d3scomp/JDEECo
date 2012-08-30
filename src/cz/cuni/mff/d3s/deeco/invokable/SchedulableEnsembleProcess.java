@@ -97,7 +97,6 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 	// to rewrite in order of different ETriggerType
 	private void singleInvocation(String outerId, ETriggerType recipientMode,
 			Object[] rootIds) throws KMException {
-		Object[] parameters;
 		ISession session = null;
 		try {
 			String cId = null, mId = null;
@@ -116,16 +115,16 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 				session.begin();
 				while (session.repeat()) {
 					try {
-						parameters = getParameterMethodValues(
+						ParametersPair[] parametersMembership = getParameterMethodValues(
 								membership.getIn(), membership.getInOut(),
 								membership.getOut(), session,
 								(String) cId, (String) mId);
-						if (evaluateMembership(parameters)) {
-							parameters = getParameterMethodValues(mapper.in,
+						if (evaluateMembership(parametersMembership)) {
+							ParametersPair[] parametersMapper = getParameterMethodValues(mapper.in,
 									mapper.inOut, mapper.out, session,
 									(String) cId, (String) mId);
-							evaluateMapper(parameters);
-							putParameterMethodValues(parameters, mapper.inOut,
+							evaluateMapper(parametersMapper);
+							putParameterMethodValues(parametersMapper, mapper.inOut,
 									mapper.out, session, (String) cId,
 									(String) mId);
 						}
@@ -143,9 +142,10 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 		}
 	}
 
-	private boolean evaluateMembership(Object[] params) {
+	private boolean evaluateMembership(ParametersPair[] params) {
 		try {
-			return (Boolean) membership.membership(params);
+			Object[] parameterValues = ParametersPair.extractValues(params);
+			return membership.membership(parameterValues);
 		} catch (Exception e) {
 			System.out.println("Ensemble membership exception! - "
 					+ e.getMessage());
@@ -153,9 +153,10 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 		}
 	}
 
-	private void evaluateMapper(Object[] params) {
+	private void evaluateMapper(ParametersPair[] params) {
 		try {
-			mapper.invoke(params);
+			Object[] parameterValues = ParametersPair.extractValues(params);
+			mapper.invoke(parameterValues);
 		} catch (Exception e) {
 			System.out.println("Ensemble evaluation exception! - "
 					+ e.getMessage());
