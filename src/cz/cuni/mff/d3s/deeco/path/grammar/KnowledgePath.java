@@ -11,31 +11,20 @@ public class KnowledgePath implements Serializable {
 	private static final long serialVersionUID = -6173052910579323995L;
 	
 	private final PNode pathNode;
-	private String evaluation;
 
 	public KnowledgePath(String path) throws ParseException {
 		this.pathNode = JDEECoParser.parse(path);
-		this.evaluation = null;
-	}
-
-	public String getEvaluatedPath(KnowledgeManager km) {
-		return getEvaluatedPath(km, null, null, null);
-	}
-	
-	public String getEvaluatedPath(KnowledgeManager km, ISession session) {
-		return getEvaluatedPath(km, null, null, session);
 	}
 
 	public String getEvaluatedPath(KnowledgeManager km, String coord,
 			String member, ISession session) {
-		if (evaluation == null || (coord != null && member != null)) {
-			try {
-				evaluation = evaluatePath(pathNode, km, coord, member, session);
-			} catch (KMException kme) {
-				System.out.println("Knowledge path evaluation error!");
-			}
+		try {
+			return evaluatePath(pathNode, km, coord, member, session); 
+		} catch (KMException kme) {
+			System.out.println("Knowledge path evaluation error!");
+			return null;
 		}
-		return evaluation;
+
 	}
 
 	private String evaluatePath(PNode pathNode, KnowledgeManager km,
