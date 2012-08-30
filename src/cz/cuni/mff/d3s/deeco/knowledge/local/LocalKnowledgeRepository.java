@@ -104,9 +104,7 @@ public class LocalKnowledgeRepository extends KnowledgeRepository {
 	}
 
 	@Override
-	public synchronized void switchListening(boolean on) {
-		// TODO Auto-generated method stub
-		
+	public void switchListening(boolean on) {
 	}
 
 	@Override
