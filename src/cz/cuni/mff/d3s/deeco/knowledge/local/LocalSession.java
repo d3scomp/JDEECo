@@ -20,11 +20,20 @@ class LocalSession implements ISession {
 	public void end() {
 		kr.lock.unlock();
 		succeeded = true;
+		// JPF - Break transition is necessary here
+		//  if we do not brake transition when it is unlocked
+		//      kr.lock.unlock() does not break if no other threads
+		//      are blocked on it
+		// then without this transition break, we can miss some combination
+		// of sessions
+		Thread.yield();
 	}
+	
 
 	@Override
 	public void cancel() {
 		kr.lock.unlock();
+		Thread.yield();
 	}
 
 	@Override

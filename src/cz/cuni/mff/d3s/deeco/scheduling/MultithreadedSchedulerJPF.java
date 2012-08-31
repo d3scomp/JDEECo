@@ -19,7 +19,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 public class MultithreadedSchedulerJPF extends Scheduler {
 
   private Set<Thread> threads;
-
+  
   public MultithreadedSchedulerJPF(KnowledgeManager km) {
     super();
     this.km = km;
@@ -85,6 +85,11 @@ public class MultithreadedSchedulerJPF extends Scheduler {
         } catch (Exception e) {
           System.out.println("Process scheduled exception!");
         }
+        
+        
+        // JPF Optimization - it is recommended to break transition here
+        //   modeling GC
+        Thread.yield();
       }
     }
   }
