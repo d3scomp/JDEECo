@@ -32,23 +32,10 @@ import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
  */
 public class RepositoryKnowledgeManager extends KnowledgeManager {
 
-	private RepositoryKnowledgeManagerHelper rkmh;
-
-	public RepositoryKnowledgeManager() {
-		unsetKnowledgeRepository(null);
-	}
+	private final RepositoryKnowledgeManagerHelper rkmh;
 
 	public RepositoryKnowledgeManager(KnowledgeRepository kr) {
-		setKnowledgeRepository(kr);
-	}
-
-	public synchronized void setKnowledgeRepository(Object kr) {
-		this.rkmh = new RepositoryKnowledgeManagerHelper(
-				(KnowledgeRepository) kr, this);
-	}
-
-	public synchronized void unsetKnowledgeRepository(Object kr) {
-		this.rkmh = null;
+		this.rkmh = new RepositoryKnowledgeManagerHelper(kr, this);
 	}
 
 	/*
@@ -183,12 +170,14 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 			ISession session) throws KMException {
 		if (rkmh != null) {
 			Object result = null;
-			ISession localSession;
+			ISession locSession = null;
 			if (session == null) {
-				localSession = rkmh.createSession();
-				localSession.begin();
-			} else
-				localSession = session;
+				locSession = rkmh.createSession();
+				locSession.begin();
+			}
+			
+			final ISession localSession = (session == null ? locSession : session);
+			
 			try {
 				while (localSession.repeat()) {
 					Object[] structure = rkmh.getStructure(withdrawal,
