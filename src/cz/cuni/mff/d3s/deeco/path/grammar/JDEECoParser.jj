@@ -71,23 +71,26 @@ TOKEN :
 PNode parseExpression() :
 {
   Token t;
-  PNode node = new PNode();
+  // Values needed to create a PNode
+  Object value = null; //May be String or PNode or EEnsembleParty
+  PNode next = null;
+  
 }
 {
   (
     (t = < IDENTIFIER >
     {
-      node.value = t.image;
+      value = t.image;
     }
     )
   | (t = < COORD >
     {
-      node.value = EEnsembleParty.COORDINATOR;
+      value = EEnsembleParty.COORDINATOR;
     }
     )
   | (t = < MEMBER >
     {
-      node.value = EEnsembleParty.MEMBER;
+      value = EEnsembleParty.MEMBER;
     }
     )
   |
@@ -95,7 +98,8 @@ PNode parseExpression() :
       (
         < OPEN >
         {
-          node.value = parseExpression();
+          value = parseExpression();
+          next = null;
         }
       )
       < CLOSE >
@@ -104,10 +108,10 @@ PNode parseExpression() :
   (
     < SEPARATOR >
     {
-      node.next = parseExpression();
+      next = parseExpression();
     }
   )*
   {
-    return node;
+    return new PNode(value, next);
   }
 }

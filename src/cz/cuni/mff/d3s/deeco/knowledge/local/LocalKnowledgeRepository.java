@@ -18,6 +18,8 @@ package cz.cuni.mff.d3s.deeco.knowledge.local;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.LockSupport;
 import java.util.concurrent.locks.ReentrantLock;
 
 import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionAccessError;
@@ -44,6 +46,22 @@ public class LocalKnowledgeRepository extends KnowledgeRepository {
 	final ReentrantLock lock = new ReentrantLock();
 	final HashMap<String, List<Object>> ts = new HashMap<String, List<Object>>();
 
+	public LocalKnowledgeRepository() {
+		// JPF Optimization - class initialization if lock is used causes state space explosion
+		//  here we intentionally use the lock -> it will hopefully "execute all class initializer" 
+		//  here in single threaded code and reduce number of program states
+		// Problematic class java.util.concurrent.locks.AbstractQueuedSynchronizer$Node
+		// Problematic class java.util.concurrent.locks.LockSupport
+		Condition c = lock.newCondition();
+		try {
+			lock.lock();
+			c.awaitNanos(-1);  // Not sleep at all
+			lock.unlock();
+		} catch (InterruptedException e) {
+		}
+		LockSupport.unpark(null);
+	}
+	
 	@Override
 	public Object [] get(String entryKey, ISession session)
 			throws KRExceptionUnavailableEntry, KRExceptionAccessError {
@@ -104,9 +122,7 @@ public class LocalKnowledgeRepository extends KnowledgeRepository {
 	}
 
 	@Override
-	public synchronized void switchListening(boolean on) {
-		// TODO Auto-generated method stub
-		
+	public void switchListening(boolean on) {
 	}
 
 	@Override

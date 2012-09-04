@@ -41,37 +41,63 @@ public abstract class SchedulableProcess implements Serializable {
 	private final InputParametersHelper iph;
 	private final OutputParametersHelper oph;
 
-	public KnowledgeManager km;
+	public final KnowledgeManager km;
 
 	public final ProcessSchedule scheduling;
 	public final String id;
 
 	public SchedulableProcess(String id, ProcessSchedule scheduling) {
+	protected static class ParametersPair {
+		public final Object originalValue; // Original value taken from the repository
+		public final Object value;			// Newly cloned instance of the originalValue
+		
+		public ParametersPair(Object originalValue) {
+			this.originalValue = originalValue;
+			this.value = DeepCopy.copy(originalValue);
+		}
+		
+		/**
+		 * From the source array creates array of {@link ParametersPair#value}
+		 * 
+		 * @param source Array where values are taken
+		 * @return Extracted {@link ParametersPair#value} values
+		 */
+		static public Object[] extractValues(ParametersPair[] source) {
+			Object[] result = new Object[source.length];
+			for(int i = 0; i < source.length; i++) {
+				result[i] = source[i].value;
+			}
+			return result;
+		}
+	}
+	
+	public SchedulableProcess(KnowledgeManager km, ProcessSchedule scheduling) {
 		this.iph = new InputParametersHelper();
 		this.oph = new OutputParametersHelper();
 		this.scheduling = scheduling;
 		this.id = id;
+		this.km = km;
 	}
 
-	protected Object[] getParameterMethodValues(List<Parameter> in,
+	protected ParametersPair[] getParameterMethodValues(List<Parameter> in,
 			List<Parameter> inOut, List<Parameter> out) throws KMException {
 		return getParameterMethodValues(in, out, inOut, null, null, null);
 	}
 
-	protected Object[] getParameterMethodValues(List<Parameter> in,
+	protected ParametersPair[] getParameterMethodValues(List<Parameter> in,
 			List<Parameter> inOut, List<Parameter> out, ISession session)
 			throws KMException {
 		return getParameterMethodValues(in, inOut, out, session, null, null);
 	}
 
-	protected Object[] getParameterMethodValues(List<Parameter> in,
+	protected ParametersPair[] getParameterMethodValues(List<Parameter> in,
 			List<Parameter> inOut, List<Parameter> out, ISession session,
 			String coordinator, String member) throws KMException {
-		List<Parameter> parameters = new ArrayList<Parameter>();
-		parameters.addAll(in);
-		parameters.addAll(inOut);
+		final List<Parameter> parametersIn = new ArrayList<Parameter>();
+		parametersIn.addAll(in);
+		parametersIn.addAll(inOut);
 		Object value;
-		Object[] result = new Object[parameters.size()
+		ParametersPair[] result = new ParametersPair[parametersIn.size()
 				+ ((out != null) ? out.size() : 0)];
 		ISession localSession;
 		if (session == null) {
@@ -81,23 +107,22 @@ public abstract class SchedulableProcess implements Serializable {
 			localSession = session;
 		try {
 			while (localSession.repeat()) {
-				for (Parameter p : parameters) {
+				for (Parameter p : parametersIn) {
 					value = km.getKnowledge(p.kPath.getEvaluatedPath(km,
 							coordinator, member, localSession), localSession);
 					value = iph.getParameterInstance(p.type, value);
-					p.originalValue = DeepCopy.copy(value);
-					result[p.index] = value;
+
+					result[p.index] = new ParametersPair(value);
 				}
 				if (session == null)
 					localSession.end();
 				else
 					break;
 			}
-			parameters = out;
-			for (Parameter p : parameters) {
+			final List<Parameter> parametersOut = out;
+			for (Parameter p : parametersOut) {
 				value = oph.getParameterInstance(p.type);
-				p.originalValue = DeepCopy.copy(value);
-				result[p.index] = value;
+				result[p.index] = new ParametersPair(value);
 			}
 			return result;
 		} catch (KMException kme) {
@@ -124,12 +149,12 @@ public abstract class SchedulableProcess implements Serializable {
 	 * @param root
 	 *            knowledge level for which parameterTypes should stored.
 	 */
-	protected void putParameterMethodValues(Object[] parameterValues,
+	protected void putParameterMethodValues(ParametersPair[] parameterValues,
 			List<Parameter> inOut, List<Parameter> out) {
 		putParameterMethodValues(parameterValues, out, inOut, null, null, null);
 	}
 
-	protected void putParameterMethodValues(Object[] parameterValues,
+	protected void putParameterMethodValues(ParametersPair[] parameterValues,
 			List<Parameter> inOut, List<Parameter> out, ISession session) {
 		putParameterMethodValues(parameterValues, out, inOut, session, null,
 				null);
@@ -151,14 +176,13 @@ public abstract class SchedulableProcess implements Serializable {
 	 *            session instance within which all the storing operations
 	 *            should be performed.
 	 */
-	protected void putParameterMethodValues(Object[] parameterValues,
+	protected void putParameterMethodValues(ParametersPair[] parameterValues,
 			List<Parameter> inOut, List<Parameter> out, ISession session,
 			String coordinator, String member) {
 		if (parameterValues != null) {
-			List<Parameter> parameters = new ArrayList<Parameter>();
+			final List<Parameter> parameters = new ArrayList<Parameter>();
 			parameters.addAll(out);
 			parameters.addAll(inOut);
-			Object value;
 			ISession localSession;
 			if (session == null) {
 				localSession = km.createSession();
@@ -168,10 +192,10 @@ public abstract class SchedulableProcess implements Serializable {
 			try {
 				while (localSession.repeat()) {
 					for (Parameter p : parameters) {
-						value = parameterValues[p.index];
+						ParametersPair valuePair = parameterValues[p.index];
 						oph.storeOutValue(p.kPath.getEvaluatedPath(km,
 								coordinator, member, localSession),
-								p.originalValue, value, km, localSession);
+								valuePair.originalValue, valuePair.value, km, localSession);
 					}
 					if (session == null)
 						localSession.end();

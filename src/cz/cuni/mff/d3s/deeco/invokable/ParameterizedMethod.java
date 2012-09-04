@@ -15,7 +15,6 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.invokable;
 
-import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -23,7 +22,9 @@ import cz.cuni.mff.d3s.deeco.annotations.DEECoIn;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoInOut;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoOut;
 import cz.cuni.mff.d3s.deeco.exceptions.ComponentEnsembleParseException;
+import cz.cuni.mff.d3s.deeco.invokable.creators.ParametrizedMethodCreator;
 import cz.cuni.mff.d3s.deeco.path.grammar.ParseException;
+import cz.cuni.mff.d3s.deeco.processor.MethodDescription;
 import cz.cuni.mff.d3s.deeco.processor.ParserHelper;
 
 /**
@@ -32,9 +33,9 @@ import cz.cuni.mff.d3s.deeco.processor.ParserHelper;
  * @author Michal Kit
  * 
  */
-public class ParameterizedMethod implements Serializable {
+public class ParameterizedMethod {
   
-  public transient Method method;
+  public final transient Method method;
 
   /**
    * Input parameterTypes
@@ -49,13 +50,13 @@ public class ParameterizedMethod implements Serializable {
    */
   public final List<Parameter> out;
 
-  protected ParameterizedMethod(Method method, List<Parameter> in, List<Parameter> inOut, List<Parameter> out) {
-    this.method = method;
-    this.in = in;
-    this.inOut = inOut;
-    this.out = out;
+  public ParameterizedMethod(ParametrizedMethodCreator creator) {
+    this.in = creator.in;
+    this.inOut = creator.inOut;
+    this.out = creator.out;
+    this.method = creator.methodDesc.getMethod();
   }
-
+  
   /**
    * Invokes process method execution.
    * 
@@ -72,21 +73,4 @@ public class ParameterizedMethod implements Serializable {
     }
   }
 
-  public static ParameterizedMethod extractParametrizedMethod(Method method) {
-    return extractParametrizedMethod(method, null);
-  }
-
-  public static synchronized ParameterizedMethod extractParametrizedMethod(Method method, String root) {
-    try {
-      if (method != null) {
-        List<Parameter> in = ParserHelper.getParameters(method, DEECoIn.class, root);
-        List<Parameter> out = ParserHelper.getParameters(method, DEECoOut.class, root);
-        List<Parameter> inOut = ParserHelper.getParameters(method, DEECoInOut.class, root);
-        return new ParameterizedMethod(method, in, inOut, out);
-      }
-    } catch (ComponentEnsembleParseException pe) {
-    } catch (ParseException pe) {
-    }
-    return null;
-  }
 }

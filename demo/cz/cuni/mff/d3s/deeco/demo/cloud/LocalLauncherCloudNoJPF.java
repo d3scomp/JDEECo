@@ -29,7 +29,7 @@ public class LocalLauncherCloudNoJPF {
 				new LocalKnowledgeRepository());
 		Scheduler scheduler = new MultithreadedScheduler(km);
 		Launcher launcher = new Launcher(scheduler,
-				new ClassDEECoObjectProvider(components, ensembles));
+				new ClassDEECoObjectProvider(km, components, ensembles));
 		launcher.launch();
 	}
 }

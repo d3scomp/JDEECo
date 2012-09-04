@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import cz.cuni.mff.d3s.deeco.annotations.ELockingMode;
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.scheduling.ETriggerType;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
 
@@ -84,9 +85,9 @@ public class SchedulableComponentProcess extends SchedulableProcess {
 	}
 
 	private void evaluateMethod(ISession session) throws KMException {
-		Object[] processParameters = getParameterMethodValues(process.in,
+		ParametersPair[] processParameters = getParameterMethodValues(process.in,
 				process.inOut, process.out, session);
-		process.invoke(processParameters);
+		process.invoke(ParametersPair.extractValues(processParameters));
 		putParameterMethodValues(processParameters, process.inOut, process.out,
 				session);
 	}
@@ -96,9 +97,5 @@ public class SchedulableComponentProcess extends SchedulableProcess {
 			return null;
 		return process.method;
 	}
-	
-	public void setProcessMethod(Method method) {
-		if (process != null)
-			process.method = method;
-	}
+
 }
