@@ -53,17 +53,12 @@ public class EnsembleParser {
 		// Look up Membership
 		MembershipCreator membershipCreator;
 		if (methodEnsMembership.getReturnType().isAssignableFrom(double.class)) {
-			membership = new FuzzyMembership(
-					pm,
+			membershipCreator = new FuzzyMembershipCreator(
+					pmc,
 					(Double) AnnotationHelper.getAnnotationValue(methodEnsMembership
 							.getAnnotation(DEECoEnsembleMembership.class)));
-					membershipCreator = new FuzzyMembershipCreator(
-							pmc,
-							(Double) AnnotationHelper.getAnnotationValue(methodEnsMembership
-									.getAnnotation(DEECoEnsembleMembership.class)));
 		} else {
-			membership = new BooleanMembership(pm);
-					membershipCreator = new BooleanMembershipCreator(pmc);
+			membershipCreator = new BooleanMembershipCreator(pmc);
 		}
 
 		// Look up scheduling
@@ -81,14 +76,9 @@ public class EnsembleParser {
 			final ProcessSchedule triggeredSchedule = ScheduleHelper
 					.getTriggeredSchedule(
 							methodEnsMembership.getParameterAnnotations(),
-							membership.getIn(), membership.getInOut());
+							membershipCreator.method.in,
+							membershipCreator.method.inOut);
 
-			final ProcessSchedule triggeredSchedule = ScheduleHelper.getTriggeredSchedule(
-					methodEnsMembership.getParameterAnnotations(),
-					membershipCreator.method.in,
-					membershipCreator.method.inOut
-					);
-			
 			if (triggeredSchedule != null) {
 				scheduling = triggeredSchedule;
 			}
@@ -105,20 +95,13 @@ public class EnsembleParser {
 			return null;
 		}
 
-		final ParameterizedMethod mapper = ParameterizedMethod
-				.extractParametrizedMethod(mapperMethod);
-		if (mapper == null) {
 		final ParametrizedMethodCreator mapperCreator = ParametrizedMethodCreator
-						.extractParametrizedMethodCreator(mapperMethod);
+				.extractParametrizedMethodCreator(mapperMethod);
 		if (mapperCreator == null) {
 			return null;
 		} else
-			return new SchedulableEnsembleProcess(
-					SchedulableProcessUtils
-							.getProcessId(c, methodEnsMembership),
-					scheduling, membership, mapper);
-
-		return new SchedulableEnsembleProcessCreator(scheduling, mapperCreator, membershipCreator);
+			return new SchedulableEnsembleProcessCreator(scheduling,
+					mapperCreator, membershipCreator);
 	}
 
 	public boolean isEnsembleDefinition(Class<?> clazz) {

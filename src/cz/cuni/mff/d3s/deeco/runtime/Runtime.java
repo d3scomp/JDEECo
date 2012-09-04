@@ -20,6 +20,7 @@ import java.util.List;
 import cz.cuni.mff.d3s.deeco.invokable.ComponentKnowledgeHelper;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
 import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
 
 /**
@@ -68,18 +69,18 @@ public class Runtime {
 	}
 	
 	public synchronized void addKnowledges(
-			List<? extends ComponentKnowledge> knowledges) {
+			List<? extends ComponentKnowledge> knowledges, KnowledgeManager km) {
 		if (knowledges != null)
 			for (ComponentKnowledge ck : knowledges) {
-				addComponentKnowledge(ck);
+				addComponentKnowledge(ck, km);
 			}
 	}
 
-	public synchronized boolean addComponentKnowledge(ComponentKnowledge initKnowledge) {
+	public synchronized boolean addComponentKnowledge(ComponentKnowledge initKnowledge, KnowledgeManager km) {
 		if (initKnowledge != null)
 			try {
-				if (scheduler.km != null)
-					return ComponentKnowledgeHelper.addComponentKnowledge(initKnowledge, scheduler.km);
+				if (km != null)
+					return ComponentKnowledgeHelper.addComponentKnowledge(initKnowledge, km);
 			} catch (Exception e) {
 				System.out.println("Initial knowlege retrival exception");
 			}

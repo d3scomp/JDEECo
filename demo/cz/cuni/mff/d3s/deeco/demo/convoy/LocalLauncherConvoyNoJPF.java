@@ -6,6 +6,7 @@ import java.util.List;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.RepositoryKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.local.LocalKnowledgeRepository;
+import cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.provider.ClassDEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.runtime.Launcher;
 import cz.cuni.mff.d3s.deeco.scheduling.MultithreadedScheduler;
@@ -28,9 +29,10 @@ public class LocalLauncherConvoyNoJPF {
 		List<Class<?>> ensembles = Arrays.asList(new Class<?>[]{ ConvoyEnsemble.class });
 		KnowledgeManager km = new RepositoryKnowledgeManager(
 				new LocalKnowledgeRepository());
-		Scheduler scheduler = new MultithreadedScheduler(km);
-		Launcher launcher = new Launcher(scheduler,
-				new ClassDEECoObjectProvider(km, components, ensembles));
+		Scheduler scheduler = new MultithreadedScheduler();
+		AbstractDEECoObjectProvider dop = new ClassDEECoObjectProvider(components, ensembles);
+		dop.setKnowledgeManager(km);
+		Launcher launcher = new Launcher(scheduler, dop);
 		launcher.launch();
 	}
 }

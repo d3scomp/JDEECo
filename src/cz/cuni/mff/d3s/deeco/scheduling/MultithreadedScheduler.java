@@ -1,6 +1,8 @@
 package cz.cuni.mff.d3s.deeco.scheduling;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -18,11 +20,6 @@ public class MultithreadedScheduler extends Scheduler {
 		threads = new HashMap<SchedulableProcess, ScheduledExecutorService>();
 	}
 
-	public MultithreadedScheduler(KnowledgeManager km) {
-		super(km);
-		threads = new HashMap<SchedulableProcess, ScheduledExecutorService>();
-	}
-
 	@Override
 	public void start() {
 		if (!running) {
@@ -30,10 +27,16 @@ public class MultithreadedScheduler extends Scheduler {
 				startPeriodicProcess(sp,
 						((ProcessPeriodicSchedule) sp.scheduling).interval);
 			}
+			
+			List<KnowledgeManager> kms = new LinkedList<KnowledgeManager>();
 			for (TriggeredSchedulableProcess tsp : triggeredProcesses) {
-				km.registerListener(tsp);
+				tsp.registerListener();
+				if (!kms.contains(tsp.getKnowledgeManager()))
+					kms.add(tsp.getKnowledgeManager());
 			}
-			km.switchListening(true);
+			for (KnowledgeManager km : kms) {
+				km.switchListening(true);
+			}
 		}
 	}
 
@@ -43,7 +46,14 @@ public class MultithreadedScheduler extends Scheduler {
 			for (SchedulableProcess sp : periodicProcesses) {
 				threads.get(sp).shutdown();
 			}
-			km.switchListening(false);
+			List<KnowledgeManager> kms = new LinkedList<KnowledgeManager>();
+			for (TriggeredSchedulableProcess tsp : triggeredProcesses) {
+				if (!kms.contains(tsp.getKnowledgeManager()))
+					kms.add(tsp.getKnowledgeManager());
+			}
+			for (KnowledgeManager km : kms) {
+				km.switchListening(false);
+			}
 		}
 	}
 

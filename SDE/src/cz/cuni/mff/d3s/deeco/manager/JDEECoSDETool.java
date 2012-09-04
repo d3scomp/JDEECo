@@ -6,8 +6,6 @@ import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
 import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
 import cz.cuni.mff.d3s.deeco.provider.FileDEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.runtime.Runtime;
-import eu.sensoria_ist.casetool.core.services.SensoriaCoreService;
-import eu.sensoria_ist.casetool.core.shell.SensoriaShell;
 
 public class JDEECoSDETool implements IJDEECoSDETool {
 
@@ -18,7 +16,7 @@ public class JDEECoSDETool implements IJDEECoSDETool {
 		DEECoManagerService service = DEECoManagerService.getInstance();
 		Runtime rt = service.getRuntime();
 		if (rt != null) {
-			rt.addKnowledges(service.getKnowledges());
+			rt.addKnowledges(service.getKnowledges(), service.getKnowledgeManager());
 			rt.addSchedulablePorcesses(service.getSchedulableProcesses());
 			rt.startRuntime();
 		} else
@@ -42,7 +40,7 @@ public class JDEECoSDETool implements IJDEECoSDETool {
 		List<SchedulableProcess> processes = service.getSchedulableProcesses();
 		String result = "Processes: " + processes.size() + "\n";
 		for (SchedulableProcess sp : processes)
-			result += sp.id + "\n";
+			result += sp + "\n";
 		return result;
 	}
 

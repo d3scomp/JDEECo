@@ -44,9 +44,7 @@ public abstract class SchedulableProcess implements Serializable {
 	public final KnowledgeManager km;
 
 	public final ProcessSchedule scheduling;
-	public final String id;
-
-	public SchedulableProcess(String id, ProcessSchedule scheduling) {
+	
 	protected static class ParametersPair {
 		public final Object originalValue; // Original value taken from the repository
 		public final Object value;			// Newly cloned instance of the originalValue
@@ -70,12 +68,11 @@ public abstract class SchedulableProcess implements Serializable {
 			return result;
 		}
 	}
-	
+
 	public SchedulableProcess(KnowledgeManager km, ProcessSchedule scheduling) {
 		this.iph = new InputParametersHelper();
 		this.oph = new OutputParametersHelper();
 		this.scheduling = scheduling;
-		this.id = id;
 		this.km = km;
 	}
 

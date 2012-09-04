@@ -6,6 +6,7 @@ import java.util.List;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.RepositoryKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.jini.TSKnowledgeRepository;
+import cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.provider.ClassDEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.runtime.Launcher;
 import cz.cuni.mff.d3s.deeco.scheduling.MultithreadedScheduler;
@@ -23,13 +24,17 @@ public class TSParkingLotLauncherNoJPF {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		List<Class<?>> components = Arrays.asList(new Class<?>[]{ CarPlanner.class, ParkingLot.class });
-		List<Class<?>> ensembles = Arrays.asList(new Class<?>[]{ BookingEnsemble.class });
+		List<Class<?>> components = Arrays.asList(new Class<?>[] {
+				CarPlanner.class, ParkingLot.class });
+		List<Class<?>> ensembles = Arrays
+				.asList(new Class<?>[] { BookingEnsemble.class });
 		KnowledgeManager km = new RepositoryKnowledgeManager(
 				new TSKnowledgeRepository());
-		Scheduler scheduler = new MultithreadedScheduler(km);
-		Launcher launcher = new Launcher(scheduler,
-				new ClassDEECoObjectProvider(km, components, ensembles));
+		Scheduler scheduler = new MultithreadedScheduler();
+		AbstractDEECoObjectProvider dop = new ClassDEECoObjectProvider(
+				components, ensembles);
+		dop.setKnowledgeManager(km);
+		Launcher launcher = new Launcher(scheduler, dop);
 		launcher.launch();
 	}
 

@@ -5,25 +5,17 @@ import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
 import cz.cuni.mff.d3s.deeco.invokable.TriggeredSchedulableProcess;
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 
 public abstract class Scheduler {
 
 	protected List<SchedulableProcess> periodicProcesses;
 	protected List<TriggeredSchedulableProcess> triggeredProcesses;
-	public KnowledgeManager km;
 	protected boolean running;	//TODO: is never set to true
 
 	public Scheduler() {
 		periodicProcesses = new ArrayList<SchedulableProcess>();
 		triggeredProcesses = new ArrayList<TriggeredSchedulableProcess>();
 		running = false;
-		km = null;
-	}
-	
-	public Scheduler(KnowledgeManager km) {
-		this();
-		this.km = km;
 	}
 
 	public boolean isRunning() {
@@ -72,19 +64,6 @@ public abstract class Scheduler {
 		for (TriggeredSchedulableProcess tsp: triggeredProcesses) {
 			unregister(tsp.sp);
 		}
-	}
-	
-	public void setKnowledgeManager(Object km) {
-		if (this.km != null)
-			stop();
-		if (km instanceof KnowledgeManager)
-			this.km = (KnowledgeManager) km;
-	}
-	
-	public void unsetKnowledgeManager(Object km) {
-		if (this.km != null)
-			stop();
-		this.km = null;
 	}
 
 	public abstract void start();

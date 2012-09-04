@@ -3,7 +3,7 @@ package cz.cuni.mff.d3s.deeco.runtime;
 import cz.cuni.mff.d3s.deeco.processor.ClassFinder;
 import cz.cuni.mff.d3s.deeco.processor.ClassProcessor;
 import cz.cuni.mff.d3s.deeco.processor.ParsedObjectWriter;
-import cz.cuni.mff.d3s.deeco.processor.WrappedPrecessedHolder;
+import cz.cuni.mff.d3s.deeco.provider.ClassDEECoObjectProvider;
 
 public class PreLauncher {
 
@@ -18,9 +18,8 @@ public class PreLauncher {
 		
 		ClassFinder cf = new ClassFinder();
 		cf.resolve(args);
-		WrappedPrecessedHolder ph = new WrappedPrecessedHolder();
-		ClassProcessor.processClassFiles(cf.getClasses(), cf.getDirURLs(), ph);
+		ClassDEECoObjectProvider cdop = ClassProcessor.processClasses(cf.getClasses(), cf.getDirURLs());
 		ParsedObjectWriter pow = new ParsedObjectWriter();
-		pow.write(ph);
+		pow.write(cdop);
 	}	
 }

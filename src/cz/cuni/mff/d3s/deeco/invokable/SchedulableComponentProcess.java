@@ -37,10 +37,10 @@ public class SchedulableComponentProcess extends SchedulableProcess {
 	public final ParameterizedMethod process;
 	private final ELockingMode lockingMode;
 
-	public SchedulableComponentProcess(String id, ProcessSchedule scheduling, ParameterizedMethod process,
+	public SchedulableComponentProcess(KnowledgeManager km, ProcessSchedule scheduling, ParameterizedMethod process,
 			ELockingMode lockingMode) {
 		
-		super(id, scheduling);
+		super(km, scheduling);
 		
 		this.process = process;
 		this.lockingMode = lockingMode;

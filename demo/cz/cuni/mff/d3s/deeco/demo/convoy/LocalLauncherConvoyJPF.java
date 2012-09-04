@@ -3,6 +3,7 @@ package cz.cuni.mff.d3s.deeco.demo.convoy;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.RepositoryKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.local.LocalKnowledgeRepository;
+import cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.provider.PreLauncherDEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.runtime.Launcher;
 import cz.cuni.mff.d3s.deeco.runtime.PreLauncher;
@@ -24,8 +25,10 @@ public class LocalLauncherConvoyJPF {
 		PreLauncher.main(args);
 		KnowledgeManager km = new RepositoryKnowledgeManager(
 				new LocalKnowledgeRepository());
-		Scheduler scheduler = new MultithreadedScheduler(km);
-		Launcher launcher = new Launcher(scheduler, new PreLauncherDEECoObjectProvider());
-		launcher.launch(); 
+		Scheduler scheduler = new MultithreadedScheduler();
+		AbstractDEECoObjectProvider dop = new PreLauncherDEECoObjectProvider();
+		dop.setKnowledgeManager(km);
+		Launcher launcher = new Launcher(scheduler, dop);
+		launcher.launch();
 	}
 }

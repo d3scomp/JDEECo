@@ -9,6 +9,7 @@ import org.osgi.service.component.ComponentContext;
 
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
 import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.runtime.Runtime;
 
@@ -17,6 +18,7 @@ public class DEECoManagerService {
 	private List<AbstractDEECoObjectProvider> providers;
 
 	private Runtime rt;
+	private KnowledgeManager km;
 	
 	private static DEECoManagerService instance;
 	private ClassLoader thisBundleLoader;
@@ -64,6 +66,23 @@ public class DEECoManagerService {
 			this.rt = null;
 			System.out.println("Runtime unregistered");
 		}
+	}
+	
+	public synchronized void registerKnowledgeManager(Object km) {
+		unregisterKnowledgeManager();
+		this.km = (KnowledgeManager) km;
+		System.out.println("Knowledge manager registered");
+	}
+	
+	public synchronized void unregisterKnowledgeManager() {
+		if (this.km != null) {
+			this.km = null;
+			System.out.println("Knowledge manager unregistered");
+		}
+	}
+	
+	public synchronized KnowledgeManager getKnowledgeManager() {
+		return km;
 	}
 
 	public List<ComponentKnowledge> getKnowledges() {

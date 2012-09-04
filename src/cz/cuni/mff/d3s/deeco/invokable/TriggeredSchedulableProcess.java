@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.path.grammar.EEnsembleParty;
 import cz.cuni.mff.d3s.deeco.scheduling.ETriggerType;
 import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
@@ -36,6 +37,14 @@ public class TriggeredSchedulableProcess implements IKnowledgeChangeListener {
 		} else {
 			return getEvaluatedKnowledgePaths();
 		}
+	}
+	
+	public KnowledgeManager getKnowledgeManager() {
+		return sp.km;
+	}
+	
+	public void registerListener() {
+		getKnowledgeManager().registerListener(this);
 	}
 
 	private List<String> getEvaluatedKnowledgePaths() {

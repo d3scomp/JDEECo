@@ -94,8 +94,6 @@ public class ComponentParser {
 				lm = ELockingMode.STRONG;
 			}
 			
-			final SchedulableComponentProcess skp = 
-					new SchedulableComponentProcess(SchedulableProcessUtils.getProcessId(c, m), ps, currentMethod, lm);
 			final SchedulableComponentProcessCreator skp = 
 					new SchedulableComponentProcessCreator(ps, currentMethodCreator, lm);
 				result.add(skp);

@@ -6,9 +6,8 @@ import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
-import cz.cuni.mff.d3s.deeco.invokable.creators.SchedulableProcessCreator;
-import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
 import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
+import cz.cuni.mff.d3s.deeco.provider.ClassDEECoObjectProvider;
 
 public class ParsedObjectWriter {
 
@@ -25,17 +24,15 @@ public class ParsedObjectWriter {
 			this.fileName = fileName;
 	}
 
-	public boolean write(WrappedPrecessedHolder wph) {
-	public boolean write(List<SchedulableProcessCreator> spw,
-			List<ComponentKnowledge> ck) {
+	public boolean write(ClassDEECoObjectProvider cdop) {
 		try {
 			ObjectOutput oo = null;
 			try {
 				OutputStream fs = new FileOutputStream(fileName);
 				OutputStream bo = new BufferedOutputStream(fs);
 				oo = new ObjectOutputStream(bo);
-				oo.writeObject(wph.getProcesses());
-				oo.writeObject(wph.getKnowledges());
+				oo.writeObject(cdop.getProcessCreators());
+				oo.writeObject(cdop.getKnowledges());
 
 			} finally {
 				if (oo != null)

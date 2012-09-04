@@ -1,6 +1,8 @@
 package cz.cuni.mff.d3s.deeco.scheduling;
 
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
@@ -20,9 +22,8 @@ public class MultithreadedSchedulerJPF extends Scheduler {
 
   private Set<Thread> threads;
   
-  public MultithreadedSchedulerJPF(KnowledgeManager km) {
+  public MultithreadedSchedulerJPF() {
     super();
-    this.km = km;
     this.threads = new HashSet<Thread>();
     
     
@@ -39,14 +40,18 @@ public class MultithreadedSchedulerJPF extends Scheduler {
         startPeriodicProcess(sp,
             ((ProcessPeriodicSchedule) sp.scheduling).interval);
       }
+      List<KnowledgeManager> kms = new LinkedList<KnowledgeManager>();
       for (TriggeredSchedulableProcess tsp : triggeredProcesses) {
         if (true) {
           assert(false); // ALF: Unsupported now
         }
-        km.registerListener(tsp);
+        tsp.registerListener();
+        if (!kms.contains(tsp.getKnowledgeManager()))
+			kms.add(tsp.getKnowledgeManager());
       }
-      km.switchListening(true);
-
+      for (KnowledgeManager km : kms) {
+			km.switchListening(true);
+      }
     }
   }
 
@@ -56,7 +61,14 @@ public class MultithreadedSchedulerJPF extends Scheduler {
       for (Thread t : threads) {
         t.interrupt();
       }
-      km.switchListening(false);
+      List<KnowledgeManager> kms = new LinkedList<KnowledgeManager>();
+		for (TriggeredSchedulableProcess tsp : triggeredProcesses) {
+			if (!kms.contains(tsp.getKnowledgeManager()))
+				kms.add(tsp.getKnowledgeManager());
+		}
+		for (KnowledgeManager km : kms) {
+			km.switchListening(false);
+		}
     }
   }
 
@@ -88,7 +100,7 @@ public class MultithreadedSchedulerJPF extends Scheduler {
         
         
         // JPF Optimization - it is recommended to break transition here
-        //   modeling GC
+        // modeling GC
         Thread.yield();
       }
     }

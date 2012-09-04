@@ -16,7 +16,7 @@ public class Launcher {
 	public void launch() {
 		rt.addSchedulablePorcesses(provider.getProcesses());
 		for (ComponentKnowledge ck : provider.getKnowledges()) {
-			if (!rt.addComponentKnowledge(ck)) {
+			if (!rt.addComponentKnowledge(ck, provider.getKnowledgeManager())) {
 				System.out.println("Error when writng initial knowledge: " + ck.getClass());
 				return;
 			}
