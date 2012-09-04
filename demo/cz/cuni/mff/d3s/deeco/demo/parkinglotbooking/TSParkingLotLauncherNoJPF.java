@@ -1,5 +1,8 @@
 package cz.cuni.mff.d3s.deeco.demo.parkinglotbooking;
 
+import java.util.Arrays;
+import java.util.List;
+
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.RepositoryKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.jini.TSKnowledgeRepository;
@@ -20,8 +23,8 @@ public class TSParkingLotLauncherNoJPF {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Class<?>[] components = { CarPlanner.class, ParkingLot.class };
-		Class<?>[] ensembles = { BookingEnsemble.class };
+		List<Class<?>> components = Arrays.asList(new Class<?>[]{ CarPlanner.class, ParkingLot.class });
+		List<Class<?>> ensembles = Arrays.asList(new Class<?>[]{ BookingEnsemble.class });
 		KnowledgeManager km = new RepositoryKnowledgeManager(
 				new TSKnowledgeRepository());
 		Scheduler scheduler = new MultithreadedScheduler(km);

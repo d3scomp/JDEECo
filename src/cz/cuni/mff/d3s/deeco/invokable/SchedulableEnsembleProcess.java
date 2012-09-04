@@ -56,9 +56,9 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 	 *            instance of the knowledge manager that is used for parameter
 	 *            retrieval
 	 */
-	public SchedulableEnsembleProcess(ProcessSchedule scheduling, Membership membership,
+	public SchedulableEnsembleProcess(String id, ProcessSchedule scheduling, Membership membership,
 			ParameterizedMethod mapper) {
-		super(scheduling);
+		super(id, scheduling);
 		
 		this.membership = membership;
 		this.mapper = mapper;

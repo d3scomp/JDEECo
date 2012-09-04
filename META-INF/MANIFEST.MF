@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.8.4
+Created-By: 1.7.0_06-b24 (Oracle Corporation)
+Bundle-ManifestVersion: 2
+Bundle-Version: 0.0.1.SNAPSHOT
+Bundle-ClassPath: .
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: cz.cuni.mff.d3s.deeco.invokable,cz.cuni.mff.d3s.deeco.
+ ensemble,cz.cuni.mff.d3s.deeco.knowledge,cz.cuni.mff.d3s.deeco.knowle
+ dge.local,cz.cuni.mff.d3s.deeco.knowledge.jini,cz.cuni.mff.d3s.deeco.
+ runtime,cz.cuni.mff.d3s.deeco.scheduling,cz.cuni.mff.d3s.deeco.annota
+ tions,cz.cuni.mff.d3s.deeco.processor,cz.cuni.mff.d3s.deeco.provider
+Bundle-Name: cz.cuni.mff.d3s.deeco.jdeeco
+Bundle-SymbolicName: cz.cuni.mff.d3s.deeco.jdeeco
+Bundle-ActivationPolicy: lazy
+Service-Component: OSGI-INF/*.xml
+

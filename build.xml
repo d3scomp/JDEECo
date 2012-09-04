@@ -45,16 +45,8 @@
 	<!-- package into jar files -->
 	<target name="dist-jdeeco" depends="compile-jdeeco"
         description="Generates a jar with JDEECo runtime" >
-		<jar jarfile="${dist}/jdeeco.jar" basedir="${build}/jdeeco">
-			<manifest>
-				<attribute name="Manifest-Version" value="1.0"/>
-				<attribute name="Bundle-ManifestVersion" value="2"/>
-                <attribute name="Bundle-Version" value="0.0.1.SNAPSHOT"/>
-				<attribute name="Bundle-ClassPath" value="."/>
-				<attribute name="Export-Package" value="cz.cuni.mff.d3s.deeco.invokable,cz.cuni.mff.d3s.deeco.ensemble,cz.cuni.mff.d3s.deeco.knowledge,cz.cuni.mff.d3s.deeco.knowledge.local,cz.cuni.mff.d3s.deeco.knowledge.jini,cz.cuni.mff.d3s.deeco.runtime,cz.cuni.mff.d3s.deeco.scheduling,cz.cuni.mff.d3s.deeco.annotations,cz.cuni.mff.d3s.deeco.processor"/>
-				<attribute name="Bundle-Name" value="JDEECo" />
-				<attribute name="Bundle-SymbolicName" value="cz.cuni.mff.d3s.deeco.jdeeco" />
-            </manifest>
+		<jar jarfile="${dist}/jdeeco.jar" basedir="${build}/jdeeco" manifest="./META-INF/MANIFEST.MF">
+			<fileset dir="." includes="OSGI-INF/*.*"/>
 		</jar>
 	</target>
 
@@ -217,7 +209,7 @@
 	
 	<!-- Run cloud demo under jpf -->
 	<target name="jpf-cloud" depends="get-jpf, dist-cloud-demo, dist-demo">
-		<java fork="true" classname="cz.cuni.mff.d3s.deeco.processor.ClassProcessor" dir="${dist}">
+		<java fork="true" classname="cz.cuni.mff.d3s.deeco.runtime.PreLauncher" dir="${dist}">
 			<arg value="cloud-demo.jar"/>
 			<classpath>
 				<pathelement location="${dist}/jdeeco.jar"/>

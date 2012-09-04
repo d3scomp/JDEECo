@@ -20,4 +20,24 @@
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>sf.eclipse.javacc.javaccnature</nature>
 	</natures>
+	<filteredResources>
+		<filter>
+			<id>1346743757318</id>
+			<name></name>
+			<type>10</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-SDE</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1346743757321</id>
+			<name></name>
+			<type>6</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-EXAMPLE-OSGi</arguments>
+			</matcher>
+		</filter>
+	</filteredResources>
 </projectDescription>

@@ -94,7 +94,7 @@ public class ComponentParser {
 			}
 			
 			final SchedulableComponentProcess skp = 
-					new SchedulableComponentProcess(ps, currentMethod, lm);
+					new SchedulableComponentProcess(SchedulableProcessUtils.getProcessId(c, m), ps, currentMethod, lm);
 				result.add(skp);
 		}
 

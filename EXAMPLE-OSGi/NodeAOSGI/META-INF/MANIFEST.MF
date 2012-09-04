@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: NodeAOSGI
+Bundle-SymbolicName: NodeAOSGI
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Service-Component: OSGI-INF/NodeAOSGI.xml
+Bundle-ClassPath: .
+Import-Package: cz.cuni.mff.d3s.deeco.annotations,
+ cz.cuni.mff.d3s.deeco.knowledge,
+ cz.cuni.mff.d3s.deeco.provider,
+ cz.cuni.mff.d3s.deeco.provider.sde
+Bundle-ActivationPolicy: lazy

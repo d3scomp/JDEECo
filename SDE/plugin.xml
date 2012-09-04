@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+	<extension 
+		point="eu.sensoria_ist.casetool.core.tool">
+		<tool 
+			id="cz.cuni.mff.d3s.deeco.manager.IJDEECoSDETool" 
+			name="JDEECo runtime manager tool" 
+			description="The tool controls the JDEECo runtime" 
+			class="cz.cuni.mff.d3s.deeco.manager.JDEECoSDETool">
+			<category 
+				name="JDEECo">
+			</category>
+			<function 
+				name="start" 
+				returns="java.lang.String" 
+				returnsDescription="Returns confirmation message" 
+				description="Starts JDEECo runtime">
+			</function>
+			<function 
+				name="stop" 
+				returns="java.lang.String" 
+				returnsDescription="Returns confirmation message" 
+				description="Stops JDEECo runtime">
+			</function>
+			<function 
+				name="listProcesses" 
+				returns="java.lang.String" 
+				returnsDescription="Returns list of all registered DEECo processes" 
+				description="Lists all registered DEECo processes">
+			</function>
+			<function 
+				name="listKnowledges" 
+				returns="java.lang.String" 
+				returnsDescription="Returns list of all registered DEECo component knowledges" 
+				description="Lists all DEECo component knowledges currently available in the runtime">
+			</function>
+			<function 
+				name="addDefinitions" 
+				returns="void" 
+				returnsDescription="(no description)" 
+				description="Adds component and ensemble definitions">
+				<parameter 
+					name="path" 
+					description="path" 
+					type="java.lang.String">
+				</parameter>
+			</function>
+			<function 
+				name="getRuntimeInfo" 
+				returns="java.lang.String" 
+				returnsDescription="Returns Runtime information" 
+				description="Prints information about JDEECo runtime environment">
+			</function>
+		</tool>
+	</extension>
+	
+</plugin>

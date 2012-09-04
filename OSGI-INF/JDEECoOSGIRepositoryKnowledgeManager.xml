@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<component name="JDEECoOSGIRepositoryKnowledgeManager">
+	<implementation class="cz.cuni.mff.d3s.deeco.knowledge.RepositoryKnowledgeManager"/>
+	<service>
+		<provide interface="cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager"/>
+	</service>
+	<reference name="KNOWLEDGE_REPOSITORY"
+		interface="cz.cuni.mff.d3s.deeco.knowledge.KnowledgeRepository"
+		bind="setKnowledgeRepository"
+		unbind="unsetKnowledgeRepository"
+		cardinality="1..1"
+		policy="dynamic"/>
+</component>

@@ -36,10 +36,10 @@ public class SchedulableComponentProcess extends SchedulableProcess {
 	public final ParameterizedMethod process;
 	private final ELockingMode lockingMode;
 
-	public SchedulableComponentProcess(ProcessSchedule scheduling, ParameterizedMethod process,
+	public SchedulableComponentProcess(String id, ProcessSchedule scheduling, ParameterizedMethod process,
 			ELockingMode lockingMode) {
 		
-		super(scheduling);
+		super(id, scheduling);
 		
 		this.process = process;
 		this.lockingMode = lockingMode;

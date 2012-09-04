@@ -66,6 +66,14 @@ public class Runtime {
 				addSchedulableProcess(sp);
 			}
 	}
+	
+	public synchronized void addKnowledges(
+			List<? extends ComponentKnowledge> knowledges) {
+		if (knowledges != null)
+			for (ComponentKnowledge ck : knowledges) {
+				addComponentKnowledge(ck);
+			}
+	}
 
 	public synchronized boolean addComponentKnowledge(ComponentKnowledge initKnowledge) {
 		if (initKnowledge != null)

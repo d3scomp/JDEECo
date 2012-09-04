@@ -44,11 +44,13 @@ public abstract class SchedulableProcess implements Serializable {
 	public KnowledgeManager km;
 
 	public final ProcessSchedule scheduling;
+	public final String id;
 
-	public SchedulableProcess(ProcessSchedule scheduling) {
+	public SchedulableProcess(String id, ProcessSchedule scheduling) {
 		this.iph = new InputParametersHelper();
 		this.oph = new OutputParametersHelper();
 		this.scheduling = scheduling;
+		this.id = id;
 	}
 
 	protected Object[] getParameterMethodValues(List<Parameter> in,

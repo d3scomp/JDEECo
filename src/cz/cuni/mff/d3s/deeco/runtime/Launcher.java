@@ -1,14 +1,14 @@
 package cz.cuni.mff.d3s.deeco.runtime;
 
 import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
-import cz.cuni.mff.d3s.deeco.provider.IDEECoObjectProvider;
+import cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
 
 public class Launcher {
 	private Runtime rt;
-	private IDEECoObjectProvider provider;
+	private AbstractDEECoObjectProvider provider;
 
-	public Launcher(Scheduler scheduler, IDEECoObjectProvider provider) {
+	public Launcher(Scheduler scheduler, AbstractDEECoObjectProvider provider) {
 		this.rt = new Runtime(scheduler);
 		this.provider = provider;
 	}

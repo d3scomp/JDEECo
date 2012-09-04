@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<component name="JDEECoRuntimeOSGI">
+	<implementation class="cz.cuni.mff.d3s.deeco.runtime.Runtime"/>
+	<service>
+		<provide interface="cz.cuni.mff.d3s.deeco.runtime.Runtime"/>
+	</service>
+	<reference name="SCHEDULER"
+		interface="cz.cuni.mff.d3s.deeco.scheduling.Scheduler"
+		bind="setScheduler"
+		unbind="unsetScheduler"
+		cardinality="1..1"
+		policy="dynamic"/>
+</component>

@@ -1,6 +1,7 @@
 package cz.cuni.mff.d3s.deeco.provider;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
 import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
@@ -10,18 +11,20 @@ import cz.cuni.mff.d3s.deeco.processor.EnsembleParser;
 
 public class ClassDEECoObjectProvider extends AbstractDEECoObjectProvider {
 
-	private Class<?> [] rawComponents;
-	private Class<?> [] rawEnsembles;
+	protected final List<Class<?>> rawComponents = new LinkedList<Class<?>>();
+	protected final List<Class<?>> rawEnsembles = new LinkedList<Class<?>>();;
 	
-	private ComponentParser cp;
-	private EnsembleParser ep;
+	protected final ComponentParser cp = new ComponentParser();
+	protected final EnsembleParser ep = new EnsembleParser();
 	
+	public ClassDEECoObjectProvider() {}
 	
-	public ClassDEECoObjectProvider(Class<?> [] components, Class<?> [] ensembles) {
-		rawComponents = components;
-		rawEnsembles = ensembles;
-		cp = new ComponentParser();
-		ep = new EnsembleParser();
+	public ClassDEECoObjectProvider(List<Class<?>> components, List<Class<?>> ensembles) {
+		super();
+		if (components != null)
+			rawComponents.addAll(components);
+		if (ensembles != null)
+			rawEnsembles.addAll(ensembles);
 	}
 
 
@@ -37,9 +40,9 @@ public class ClassDEECoObjectProvider extends AbstractDEECoObjectProvider {
 	}
 	
 	private void processAll() {
-		knowledges = new LinkedList<ComponentKnowledge>();
-		processes = new LinkedList<SchedulableProcess>();
 		ComponentKnowledge ck;
+		processes = new LinkedList<SchedulableProcess>();
+		knowledges = new LinkedList<ComponentKnowledge>();
 		for (Class<?> c : rawComponents) {
 			ck = cp.extractInitialKnowledge(c);
 			if (ck != null) {

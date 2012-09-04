@@ -1,5 +1,8 @@
 package cz.cuni.mff.d3s.deeco.demo.convoy;
 
+import java.util.Arrays;
+import java.util.List;
+
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.RepositoryKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.jini.TSKnowledgeRepository;
@@ -20,9 +23,9 @@ public class TSLauncherConvoyNoJPF {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Class<?>[] components = { RobotLeaderComponent.class,
-				RobotFollowerComponent.class };
-		Class<?>[] ensembles = { ConvoyEnsemble.class };
+		List<Class<?>> components = Arrays.asList(new Class<?>[]{ RobotLeaderComponent.class,
+				RobotFollowerComponent.class});
+		List<Class<?>> ensembles = Arrays.asList(new Class<?>[]{ ConvoyEnsemble.class });
 		KnowledgeManager km = new RepositoryKnowledgeManager(
 				new TSKnowledgeRepository());
 		Scheduler scheduler = new MultithreadedScheduler(km);
