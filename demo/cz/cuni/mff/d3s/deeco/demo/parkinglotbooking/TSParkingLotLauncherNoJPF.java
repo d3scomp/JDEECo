@@ -28,9 +28,12 @@ public class TSParkingLotLauncherNoJPF {
 				CarPlanner.class, ParkingLot.class });
 		List<Class<?>> ensembles = Arrays
 				.asList(new Class<?>[] { BookingEnsemble.class });
+		
 		KnowledgeManager km = new RepositoryKnowledgeManager(
 				new TSKnowledgeRepository());
+		
 		Scheduler scheduler = new MultithreadedScheduler();
+		
 		AbstractDEECoObjectProvider dop = new ClassDEECoObjectProvider(
 				components, ensembles);
 		dop.setKnowledgeManager(km);
