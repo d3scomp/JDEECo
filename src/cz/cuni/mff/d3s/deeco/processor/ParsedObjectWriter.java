@@ -32,7 +32,7 @@ public class ParsedObjectWriter {
 				OutputStream bo = new BufferedOutputStream(fs);
 				oo = new ObjectOutputStream(bo);
 				oo.writeObject(cdop.getProcessCreators());
-				oo.writeObject(cdop.getKnowledges());
+				oo.writeObject(cdop.getKnowledges(null));
 
 			} finally {
 				if (oo != null)

@@ -8,7 +8,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.RepositoryKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.jini.TSKnowledgeRepository;
 import cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.provider.ClassDEECoObjectProvider;
-import cz.cuni.mff.d3s.deeco.runtime.Launcher;
+import cz.cuni.mff.d3s.deeco.runtime.Runtime;
 import cz.cuni.mff.d3s.deeco.scheduling.MultithreadedScheduler;
 import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
 
@@ -28,17 +28,17 @@ public class TSParkingLotLauncherNoJPF {
 				CarPlanner.class, ParkingLot.class });
 		List<Class<?>> ensembles = Arrays
 				.asList(new Class<?>[] { BookingEnsemble.class });
-		
+
 		KnowledgeManager km = new RepositoryKnowledgeManager(
 				new TSKnowledgeRepository());
-		
+
 		Scheduler scheduler = new MultithreadedScheduler();
-		
+
 		AbstractDEECoObjectProvider dop = new ClassDEECoObjectProvider(
 				components, ensembles);
-		dop.setKnowledgeManager(km);
-		Launcher launcher = new Launcher(scheduler, dop);
-		launcher.launch();
+		Runtime rt = new Runtime(km, scheduler);
+		rt.addDefinitions(dop);
+		rt.startRuntime();
 	}
 
 }

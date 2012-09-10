@@ -7,12 +7,6 @@
 		unbind="unregisterRuntime"
 		cardinality="0..1"
 		policy="dynamic"/>
-	<reference name="KNOWLEDGE_MANAGER"
-		interface="cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager"
-		bind="registerKnowledgeManager"
-		unbind="unregisterKnowledgeManager"
-		cardinality="0..1"
-		policy="dynamic"/>
 	<reference name="PRIMITIVES"
 		interface="cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider"
 		bind="addDEECoPrimitivesProvider"

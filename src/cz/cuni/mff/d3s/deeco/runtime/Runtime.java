@@ -33,56 +33,70 @@ import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
 public class Runtime {
 
 	private Scheduler scheduler;
-	private KnowledgeManager knowledgeManager;
-	
+	private KnowledgeManager km;
+
 	public Runtime() {
-		scheduler = null;
 	}
-	
+
+	public Runtime(KnowledgeManager km) {
+		this.km = km;
+	}
+
 	public Runtime(Scheduler scheduler) {
 		this.scheduler = scheduler;
 	}
-	
+
+	public Runtime(KnowledgeManager km, Scheduler scheduler) {
+		this.km = km;
+		this.scheduler = scheduler;
+	}
+
 	public void setScheduler(Object scheduler) {
 		unsetScheduler(scheduler);
 		if (scheduler instanceof Scheduler)
 			this.scheduler = (Scheduler) scheduler;
 	}
-	
-	
+
 	public void unsetScheduler(Object scheduler) {
-		// TODO the scheduler parameter is not used, fix or remove
 		if (this.scheduler != null)
 			this.scheduler.clearAll();
 		this.scheduler = null;
 	}
-	
-	public void setKnowledgeManager(KnowledgeManager km) {		
-			this.knowledgeManager = km;
-	}
-	
-	/**
-	 * Adds all the component and ensemble definitions given by the provider object.
-	 * @param provider provides the component/ensemble definitions to be added.
-	 * 
-	 * TODO: use local km, not the one from the provider 
-	 */
-	public void addDefinitions(AbstractDEECoObjectProvider provider) {
-		addSchedulablePorcesses(provider.getProcesses());
-		for (ComponentKnowledge ck : provider.getKnowledges()) {
-			if (!addComponentKnowledge(ck, provider.getKnowledgeManager())) {
-				System.out.println("Error when writng initial knowledge: " + ck.getClass());
-				continue;
-			}
-		}		
+
+	public void setKnowledgeManager(Object km) {
+		unsetKnowledgeManager(null);
+		this.km = (KnowledgeManager) km;
 	}
 
-	public synchronized void addSchedulableProcess(
-			SchedulableProcess process) {
+	public void unsetKnowledgeManager(Object km) {
+		stopRuntime();
+		this.km = null;
+	}
+
+	/**
+	 * Adds all the component and ensemble definitions given by the provider
+	 * object.
+	 * 
+	 * @param provider
+	 *            provides the component/ensemble definitions to be added.
+	 * 
+	 *            TODO: use local km, not the one from the provider
+	 */
+	public void addDefinitions(AbstractDEECoObjectProvider provider) {
+		addSchedulablePorcesses(provider.getProcesses(km));
+		for (ComponentKnowledge ck : provider.getKnowledges(km)) {
+			if (!addComponentKnowledge(ck, km)) {
+				System.out.println("Error when writng initial knowledge: "
+						+ ck.getClass());
+				continue;
+			}
+		}
+	}
+
+	public synchronized void addSchedulableProcess(SchedulableProcess process) {
 		if (process != null)
 			scheduler.register(process);
 	}
-
 
 	public synchronized void addSchedulablePorcesses(
 			List<? extends SchedulableProcess> processes) {
@@ -91,7 +105,7 @@ public class Runtime {
 				addSchedulableProcess(sp);
 			}
 	}
-	
+
 	public synchronized void addKnowledges(
 			List<? extends ComponentKnowledge> knowledges, KnowledgeManager km) {
 		if (knowledges != null)
@@ -100,11 +114,13 @@ public class Runtime {
 			}
 	}
 
-	public synchronized boolean addComponentKnowledge(ComponentKnowledge initKnowledge, KnowledgeManager km) {
+	public synchronized boolean addComponentKnowledge(
+			ComponentKnowledge initKnowledge, KnowledgeManager km) {
 		if (initKnowledge != null)
 			try {
 				if (km != null)
-					return ComponentKnowledgeHelper.addComponentKnowledge(initKnowledge, km);
+					return ComponentKnowledgeHelper.addComponentKnowledge(
+							initKnowledge, km);
 			} catch (Exception e) {
 				System.out.println("Initial knowlege retrival exception");
 			}
