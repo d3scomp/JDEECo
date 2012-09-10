@@ -43,8 +43,8 @@ public class FileDEECoObjectProvider extends AbstractDEECoObjectProvider {
 		cf.resolve(new String[] { fileName });
 		AbstractDEECoObjectProvider dop = ClassProcessor.processClasses(
 				cf.getClasses(), cf.getDirURLs(), parentClassLoader);
-		processes.addAll(dop.getProcesses());
-		knowledges.addAll(dop.getKnowledges());
+		processes.addAll(dop.getProcesses(null));
+		knowledges.addAll(dop.getKnowledges(null));
 	}
 
 }

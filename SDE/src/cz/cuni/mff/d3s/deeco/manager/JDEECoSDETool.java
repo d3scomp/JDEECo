@@ -4,6 +4,7 @@ import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
 import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
+import cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.provider.FileDEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.runtime.Runtime;
 
@@ -17,12 +18,11 @@ public class JDEECoSDETool implements IJDEECoSDETool {
 		service.openConsole();
 		Runtime rt = service.getRuntime();
 		if (rt != null) {
-			rt.addKnowledges(service.getKnowledges(), service.getKnowledgeManager());
-			rt.addSchedulablePorcesses(service.getSchedulableProcesses());
+			for (AbstractDEECoObjectProvider dop : service.getProviders())
+				rt.addDefinitions(dop);
 			rt.startRuntime();
 		} else
 			result = "There is no Runtime";
-		System.out.println("Starting runtime: syso");
 		return result;
 	}
 
@@ -38,20 +38,22 @@ public class JDEECoSDETool implements IJDEECoSDETool {
 	@Override
 	public String listProcesses() {
 		DEECoManagerService service = DEECoManagerService.getInstance();
-		List<SchedulableProcess> processes = service.getSchedulableProcesses();
-		String result = "Processes: " + processes.size() + "\n";
-		for (SchedulableProcess sp : processes)
-			result += sp + "\n";
+		List<AbstractDEECoObjectProvider> providers = service.getProviders();
+		String result = "Process and Ensembles:\n";
+		for (AbstractDEECoObjectProvider dop : providers)
+			for (SchedulableProcess sp : dop.getProcesses(null))
+				result += sp + "\n";
 		return result;
 	}
 
 	@Override
 	public String listKnowledges() {
 		DEECoManagerService service = DEECoManagerService.getInstance();
-		List<ComponentKnowledge> components = service.getKnowledges();
-		String result = "Component Knowledges: " + components.size() + "\n";
-		for (ComponentKnowledge ck : components)
-			result += ck.getClass().toString() + "\n";
+		List<AbstractDEECoObjectProvider> providers = service.getProviders();
+		String result = "Knowledges:\n";
+		for (AbstractDEECoObjectProvider dop : providers)
+			for (ComponentKnowledge ck : dop.getKnowledges(null))
+				result += ck + "\n";
 		return result;
 	}
 
