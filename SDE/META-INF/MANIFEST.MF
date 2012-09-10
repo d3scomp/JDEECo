@@ -1,11 +1,11 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: JDEECoManagerSDETool
-Bundle-SymbolicName: JDEECoManagerSDETool;singleton:=true
+Bundle-Name: JDEECoSDETool
+Bundle-SymbolicName: JDEECoSDETool;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ClassPath: .
-Service-Component: OSGI-INF/JDEECoManagerSDETool.xml
+Service-Component: OSGI-INF/JDEECoSDETool.xml
 Import-Package: cz.cuni.mff.d3s.deeco.annotations,
  cz.cuni.mff.d3s.deeco.ensemble,
  cz.cuni.mff.d3s.deeco.invokable,
@@ -22,6 +22,7 @@ Import-Package: cz.cuni.mff.d3s.deeco.annotations,
 Require-Bundle: eu.sensoria_ist.casetool.core;bundle-version="4.3.0",
  org.eclipse.ui.console;bundle-version="3.5.100",
  org.eclipse.jface;bundle-version="3.8.0",
- org.eclipse.ui;bundle-version="3.103.0"
+ org.eclipse.ui;bundle-version="3.103.0",
+ org.eclipse.core.runtime;bundle-version="3.8.0"
 Bundle-ActivationPolicy: lazy
 Export-Package: cz.cuni.mff.d3s.deeco.provider.sde

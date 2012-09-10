@@ -14,24 +14,24 @@ import org.eclipse.ui.console.MessageConsoleStream;
 
 public class ConsolePrinter {
 
-//	public MessageConsoleStream openNewConsoleWindow(String consoleName) {
-//		try {
-//			IConsoleManager cm = ConsolePlugin.getDefault().getConsoleManager();
-//			MessageConsole myConsole = new MessageConsole(consoleName, null);
-//		    cm.addConsoles(new IConsole[]{myConsole});
-//
-//		    IWorkbench wb = PlatformUI.getWorkbench();
-//		    IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
-//		    IWorkbenchPage page = win.getActivePage();
-//		    String id = IConsoleConstants.ID_CONSOLE_VIEW;
-//		    IConsoleView view;
-//			view = (IConsoleView) page.showView(id);
-//			view.display(myConsole);
-//		    return myConsole.newMessageStream();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			return null;
-//		} 	    
-//	}
+	public MessageConsoleStream openNewConsoleWindow(String consoleName) {
+		try {
+			IConsoleManager cm = ConsolePlugin.getDefault().getConsoleManager();
+			MessageConsole console = new MessageConsole(consoleName, null);
+		    cm.addConsoles(new IConsole[]{console});
+
+		    IWorkbench wb = PlatformUI.getWorkbench();
+		    IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
+		    IWorkbenchPage page = win.getActivePage();
+		    String id = IConsoleConstants.ID_CONSOLE_VIEW;
+		    
+		    IConsoleView view = (IConsoleView) page.showView(id);
+			view.display(console);
+		    return console.newMessageStream();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		} 	    
+	}
 	
 }

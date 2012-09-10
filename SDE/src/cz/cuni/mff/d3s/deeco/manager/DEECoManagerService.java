@@ -69,12 +69,12 @@ public class DEECoManagerService {
 	}
 	
 	public synchronized void registerKnowledgeManager(Object km) {
-		unregisterKnowledgeManager();
+		unregisterKnowledgeManager(null);
 		this.km = (KnowledgeManager) km;
 		System.out.println("Knowledge manager registered");
 	}
 	
-	public synchronized void unregisterKnowledgeManager() {
+	public synchronized void unregisterKnowledgeManager(Object km) {
 		if (this.km != null) {
 			this.km = null;
 			System.out.println("Knowledge manager unregistered");
@@ -87,15 +87,19 @@ public class DEECoManagerService {
 
 	public List<ComponentKnowledge> getKnowledges() {
 		List<ComponentKnowledge> result = new LinkedList<ComponentKnowledge>();
-		for (AbstractDEECoObjectProvider adop : providers)
+		for (AbstractDEECoObjectProvider adop : providers) {
+			adop.setKnowledgeManager(km);
 			result.addAll(adop.getKnowledges());
+		}
 		return result;
 	}
 
 	public List<SchedulableProcess> getSchedulableProcesses() {
 		List<SchedulableProcess> result = new LinkedList<SchedulableProcess>();
-		for (AbstractDEECoObjectProvider adop : providers)
+		for (AbstractDEECoObjectProvider adop : providers) {
+			adop.setKnowledgeManager(km);
 			result.addAll(adop.getProcesses());
+		}
 		return result;
 	}
 

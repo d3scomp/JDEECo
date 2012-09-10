@@ -1,10 +1,16 @@
 <?xml version="1.0"?>
-<component name="JDEECoManagerSDETool">
+<component name="JDEECoSDETool">
 	<implementation class="cz.cuni.mff.d3s.deeco.manager.DEECoManagerService"/>
 	<reference name="RUNTIME"
 		interface="cz.cuni.mff.d3s.deeco.runtime.Runtime"
 		bind="registerRuntime"
 		unbind="unregisterRuntime"
+		cardinality="0..1"
+		policy="dynamic"/>
+	<reference name="KNOWLEDGE_MANAGER"
+		interface="cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager"
+		bind="registerKnowledgeManager"
+		unbind="unregisterKnowledgeManager"
 		cardinality="0..1"
 		policy="dynamic"/>
 	<reference name="PRIMITIVES"
