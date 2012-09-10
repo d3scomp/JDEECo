@@ -1,5 +1,7 @@
 package cz.cuni.mff.d3s.deeco.manager;
 
+import java.io.PrintStream;
+
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -10,24 +12,22 @@ import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.console.MessageConsole;
-import org.eclipse.ui.console.MessageConsoleStream;
 
 public class ConsolePrinter {
+	
+	private static final String CONSOLE_ID = "JDEECo SDE Tool Console";
+	
+	private MessageConsole console;
 
-	public MessageConsoleStream openNewConsoleWindow(String consoleName) {
+	public PrintStream openConsoleWindow() {
 		try {
 			IConsoleManager cm = ConsolePlugin.getDefault().getConsoleManager();
-			MessageConsole console = new MessageConsole(consoleName, null);
-		    cm.addConsoles(new IConsole[]{console});
-
-		    IWorkbench wb = PlatformUI.getWorkbench();
-		    IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
-		    IWorkbenchPage page = win.getActivePage();
-		    String id = IConsoleConstants.ID_CONSOLE_VIEW;
-		    
-		    IConsoleView view = (IConsoleView) page.showView(id);
-			view.display(console);
-		    return console.newMessageStream();
+			if (console == null) {
+				console = new MessageConsole(CONSOLE_ID, null);
+			    cm.addConsoles(new IConsole[]{console});
+			}
+			console.activate();
+		    return new PrintStream(console.newMessageStream());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

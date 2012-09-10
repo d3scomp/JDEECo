@@ -19,6 +19,7 @@ public class DEECoManagerService {
 
 	private Runtime rt;
 	private KnowledgeManager km;
+	private ConsolePrinter cp;
 	
 	private static DEECoManagerService instance;
 	private ClassLoader thisBundleLoader;
@@ -109,5 +110,11 @@ public class DEECoManagerService {
 
 	public ClassLoader getThisBundleLoader() {
 		return thisBundleLoader;
+	}
+	
+	public void openConsole() {
+		if (cp == null)
+			cp = new ConsolePrinter();
+		System.setOut(cp.openConsoleWindow());
 	}
 }

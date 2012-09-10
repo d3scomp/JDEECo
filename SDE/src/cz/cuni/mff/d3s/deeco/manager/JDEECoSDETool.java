@@ -14,6 +14,7 @@ public class JDEECoSDETool implements IJDEECoSDETool {
 
 		String result = "Runtime started";
 		DEECoManagerService service = DEECoManagerService.getInstance();
+		service.openConsole();
 		Runtime rt = service.getRuntime();
 		if (rt != null) {
 			rt.addKnowledges(service.getKnowledges(), service.getKnowledgeManager());
@@ -21,7 +22,7 @@ public class JDEECoSDETool implements IJDEECoSDETool {
 			rt.startRuntime();
 		} else
 			result = "There is no Runtime";
-	
+		System.out.println("Starting runtime: syso");
 		return result;
 	}
 
