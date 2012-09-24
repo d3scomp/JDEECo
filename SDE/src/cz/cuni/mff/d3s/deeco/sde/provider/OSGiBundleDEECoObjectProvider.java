@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.deeco.provider.sde;
+package cz.cuni.mff.d3s.deeco.sde.provider;
 
 import java.util.Dictionary;
 import java.util.List;

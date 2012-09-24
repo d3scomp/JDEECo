@@ -87,6 +87,14 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 		return rkmh.registerListener(listener);
 	}
 	
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager#unregisterListener(cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener)
+	 */
+	@Override
+	public boolean unregisterListener(IKnowledgeChangeListener listener) {
+		return rkmh.unregisterListener(listener);
+	}
+	
 	@Override
 	public void switchListening(boolean on) {
 		rkmh.switchListening(on);	

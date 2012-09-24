@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
-<plugin>
+<plugin>			
 	<extension 
 		point="eu.sensoria_ist.casetool.core.tool">
 		<tool 
-			id="cz.cuni.mff.d3s.deeco.manager.IJDEECoSDETool" 
+			id="cz.cuni.mff.d3s.deeco.sde.manager.IJDEECoSDETool" 
 			name="JDEECo runtime manager tool" 
 			description="The tool controls the JDEECo runtime" 
-			class="cz.cuni.mff.d3s.deeco.manager.JDEECoSDETool">
+			class="cz.cuni.mff.d3s.deeco.sde.manager.JDEECoSDETool">
 			<category 
 				name="JDEECo">
 			</category>
@@ -37,14 +37,36 @@
 			</function>
 			<function 
 				name="addDefinitions" 
-				returns="void" 
-				returnsDescription="(no description)" 
+				returns="java.lang.String" 
+				returnsDescription="Returns textual feedback on execution result" 
 				description="Adds component and ensemble definitions">
 				<parameter 
 					name="path" 
-					description="path" 
+					description="Path to a JAR file or root directory with properly packeged class files" 
 					type="java.lang.String">
 				</parameter>
+			</function>
+			<function 
+				name="packageToOSGiBundle" 
+				returns="java.lang.String" 
+				returnsDescription="Returns textual feedback on execution result" 
+				description="Packages input files into JDEECo and OSGi compliant bundles">
+				<parameter 
+					name="input" 
+					description="Resources that need to be packaged" 
+					type="java.util.List">
+				</parameter>
+				<parameter 
+					name="target" 
+					description="Output localization" 
+					type="java.lang.String">
+				</parameter>
+			</function>
+			<function 
+				name="packageToOSGiBundle" 
+				returns="java.lang.String" 
+				returnsDescription="Returns textual feedback on execution result" 
+				description="Creates JDEECo and OSGi compliant bundle with use of wizard">
 			</function>
 			<function 
 				name="getRuntimeInfo" 

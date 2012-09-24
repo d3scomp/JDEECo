@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <component name="JDEECoSDETool">
-	<implementation class="cz.cuni.mff.d3s.deeco.manager.DEECoManagerService"/>
+	<implementation class="cz.cuni.mff.d3s.deeco.sde.manager.DEECoManagerService"/>
 	<reference name="RUNTIME"
 		interface="cz.cuni.mff.d3s.deeco.runtime.Runtime"
 		bind="registerRuntime"

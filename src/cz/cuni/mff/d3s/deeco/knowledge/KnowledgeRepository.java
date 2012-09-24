@@ -87,13 +87,30 @@ public abstract class KnowledgeRepository {
 	 * Register a listener that should be notified by the knowledge repository
 	 * whenever a specified properties are changing.
 	 * 
-	 * @param knowledgePaths array of properties that the listener is interested in
 	 * @param listener listening object
 	 */
 	public abstract boolean registerListener(IKnowledgeChangeListener listener);
 	
+	/**
+	 * Unregisters knowledge listener that has been registered earlier.
+	 * 
+	 * @param listener listening object
+	 */
+	public abstract boolean unregisterListener(IKnowledgeChangeListener listener);
+	
+	
+	/**
+	 * Switching listening on or off
+	 * 
+	 * @param on if true the listening is on otherwise its off.
+	 */
 	public abstract void switchListening(boolean on);
 	
+	
+	/**
+	 * Checks if current knowledge change listening is on or off.
+	 * 
+	 */
 	public abstract boolean isTriggeringOn();
 
 	/**

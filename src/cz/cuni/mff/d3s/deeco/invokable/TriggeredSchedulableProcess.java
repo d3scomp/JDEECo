@@ -46,6 +46,10 @@ public class TriggeredSchedulableProcess implements IKnowledgeChangeListener {
 	public void registerListener() {
 		getKnowledgeManager().registerListener(this);
 	}
+	
+	public void unregisterListener() {
+		getKnowledgeManager().unregisterListener(this);
+	}
 
 	private List<String> getEvaluatedKnowledgePaths() {
 		return getEvaluatedKnowledgePaths(null, null);

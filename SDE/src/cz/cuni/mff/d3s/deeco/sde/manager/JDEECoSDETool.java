@@ -1,5 +1,6 @@
-package cz.cuni.mff.d3s.deeco.manager;
+package cz.cuni.mff.d3s.deeco.sde.manager;
 
+import java.io.File;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
@@ -7,6 +8,9 @@ import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
 import cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.provider.FileDEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.runtime.Runtime;
+import cz.cuni.mff.d3s.deeco.sde.packager.JDEECoOSGiBundleNameGenerator;
+import cz.cuni.mff.d3s.deeco.sde.packager.simplepackager.JDEECoOSGiSimplePackager;
+import cz.cuni.mff.d3s.deeco.sde.packager.wizardpackager.JDEECoOSGiWizardPackager;
 
 public class JDEECoSDETool implements IJDEECoSDETool {
 
@@ -58,11 +62,12 @@ public class JDEECoSDETool implements IJDEECoSDETool {
 	}
 
 	@Override
-	public void addDefinitions(String path) {
+	public String addDefinitions(String path) {
 		DEECoManagerService service = DEECoManagerService.getInstance();
 		FileDEECoObjectProvider fdop = new FileDEECoObjectProvider(path,
 				service.getThisBundleLoader());
 		service.addDEECoPrimitivesProvider(fdop);
+		return "Definitions added";
 	}
 
 	@Override
@@ -75,6 +80,27 @@ public class JDEECoSDETool implements IJDEECoSDETool {
 		else
 			result = rt.toString();
 		return result;
+	}
+
+	@Override
+	public String packageToOSGiBundle(List<File> input, String target) {
+		openConsole();
+		JDEECoOSGiSimplePackager packager = new JDEECoOSGiSimplePackager();
+		packager.pack(input, target, JDEECoOSGiBundleNameGenerator.generateBundleName());
+		return "Packaging complete";
+	}
+
+	@Override
+	public String packageToOSGiBundle() {
+		openConsole();
+		JDEECoOSGiWizardPackager packager = new JDEECoOSGiWizardPackager();
+		packager.pack(JDEECoOSGiBundleNameGenerator.generateBundleName());
+		return "Packaging complete";
+	}
+	
+	private void openConsole() {
+		DEECoManagerService service = DEECoManagerService.getInstance();
+		service.openConsole();
 	}
 
 }

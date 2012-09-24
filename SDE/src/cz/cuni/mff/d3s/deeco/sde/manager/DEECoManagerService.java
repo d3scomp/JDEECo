@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.deeco.manager;
+package cz.cuni.mff.d3s.deeco.sde.manager;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -9,6 +9,7 @@ import org.osgi.service.component.ComponentContext;
 
 import cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.runtime.Runtime;
+import cz.cuni.mff.d3s.deeco.sde.console.ConsolePrinter;
 
 public class DEECoManagerService {
 
@@ -80,6 +81,7 @@ public class DEECoManagerService {
 	public void openConsole() {
 		if (cp == null)
 			cp = new ConsolePrinter();
+		System.setErr(cp.openConsoleWindow());
 		System.setOut(cp.openConsoleWindow());
 	}
 }

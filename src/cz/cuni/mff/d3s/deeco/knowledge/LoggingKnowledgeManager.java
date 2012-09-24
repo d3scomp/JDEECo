@@ -43,7 +43,13 @@ public class LoggingKnowledgeManager extends KnowledgeManager {
 
 	public boolean registerListener(IKnowledgeChangeListener listener) {
 		System.out.println("LoggingKnowledgeManager.registerListener(listener=" + listener + ")");
-		return decoratedKm.registerListener(listener);
+		return decoratedKm.unregisterListener(listener);
+	}
+	
+	@Override
+	public boolean unregisterListener(IKnowledgeChangeListener listener) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	public void switchListening(boolean on) {

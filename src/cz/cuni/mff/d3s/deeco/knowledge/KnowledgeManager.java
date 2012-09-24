@@ -114,10 +114,16 @@ public abstract class KnowledgeManager {
 	 * Register a listener that should be notified by the knowledge manager
 	 * whenever a specified properties are changing.
 	 * 
-	 * @param knowledgePaths array of properties that the listener is interested in
 	 * @param listener listening object
 	 */
 	public abstract boolean registerListener(IKnowledgeChangeListener listener);
+	
+	/**
+	 * Unregisters the listener that has been registered earlier.
+	 * 
+	 * @param listener listening object
+	 */
+	public abstract boolean unregisterListener(IKnowledgeChangeListener listener);
 	
 	public abstract void switchListening(boolean on);
 

@@ -21,7 +21,7 @@ public class MultithreadedScheduler extends Scheduler {
 	}
 
 	@Override
-	public void start() {
+	public synchronized void start() {
 		if (!running) {
 			for (SchedulableProcess sp : periodicProcesses) {
 				startPeriodicProcess(sp,
@@ -37,11 +37,12 @@ public class MultithreadedScheduler extends Scheduler {
 			for (KnowledgeManager km : kms) {
 				km.switchListening(true);
 			}
+			running = true;
 		}
 	}
 
 	@Override
-	public void stop() {
+	public synchronized void stop() {
 		if (running) {
 			for (SchedulableProcess sp : periodicProcesses) {
 				threads.get(sp).shutdown();
@@ -54,6 +55,7 @@ public class MultithreadedScheduler extends Scheduler {
 			for (KnowledgeManager km : kms) {
 				km.switchListening(false);
 			}
+			running = false;
 		}
 	}
 

@@ -131,4 +131,10 @@ public class LocalKnowledgeRepository extends KnowledgeRepository {
 		return false;
 	}
 
+	@Override
+	public boolean unregisterListener(IKnowledgeChangeListener listener) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

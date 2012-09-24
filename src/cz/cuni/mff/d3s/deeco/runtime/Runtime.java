@@ -73,15 +73,6 @@ public class Runtime {
 		this.km = null;
 	}
 
-	/**
-	 * Adds all the component and ensemble definitions given by the provider
-	 * object.
-	 * 
-	 * @param provider
-	 *            provides the component/ensemble definitions to be added.
-	 * 
-	 *            TODO: use local km, not the one from the provider
-	 */
 	public void addDefinitions(AbstractDEECoObjectProvider provider) {
 		addSchedulablePorcesses(provider.getProcesses(km));
 		for (ComponentKnowledge ck : provider.getKnowledges(km)) {
@@ -138,6 +129,6 @@ public class Runtime {
 	 * Stops components and ensembles operation.
 	 */
 	public synchronized void stopRuntime() {
-		scheduler.stop();
+		scheduler.clearAll();
 	}
 }

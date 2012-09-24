@@ -112,6 +112,10 @@ public class RepositoryKnowledgeManagerHelper {
 		return kr.registerListener(listener);
 	}
 	
+	public boolean unregisterListener(IKnowledgeChangeListener listener) {
+		return kr.unregisterListener(listener);
+	}
+	
 	public void switchListening(boolean on) {
 		kr.switchListening(on);	
 	}

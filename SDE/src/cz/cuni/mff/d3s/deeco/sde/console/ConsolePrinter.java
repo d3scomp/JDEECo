@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.deeco.manager;
+package cz.cuni.mff.d3s.deeco.sde.console;
 
 import java.io.PrintStream;
 

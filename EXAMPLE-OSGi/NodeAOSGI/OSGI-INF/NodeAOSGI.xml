@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <component name="NodeAOSGI">
-	<implementation class="cz.cuni.mff.d3s.deeco.provider.sde.OSGiBundleDEECoObjectProvider"/>
+	<implementation class="cz.cuni.mff.d3s.deeco.sde.provider.OSGiBundleDEECoObjectProvider"/>
 	<service>
 		<provide interface="cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider"/>
 	</service>

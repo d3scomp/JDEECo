@@ -200,6 +200,12 @@ public class TSKnowledgeRepository extends KnowledgeRepository {
 		}
 		return false;
 	}
+	
+	@Override
+	public boolean unregisterListener(IKnowledgeChangeListener listener) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 	private void addTSNotifier(String kp, TSRemoteEventListener tsListener)
 			throws KRExceptionAccessError {

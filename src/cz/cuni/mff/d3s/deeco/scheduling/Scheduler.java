@@ -10,7 +10,7 @@ public abstract class Scheduler {
 
 	protected List<SchedulableProcess> periodicProcesses;
 	protected List<TriggeredSchedulableProcess> triggeredProcesses;
-	protected boolean running;	//TODO: is never set to true
+	protected boolean running;
 
 	public Scheduler() {
 		periodicProcesses = new ArrayList<SchedulableProcess>();
@@ -50,8 +50,10 @@ public abstract class Scheduler {
 		if (!running)
 			if (process.scheduling instanceof ProcessTriggeredSchedule)
 				for (TriggeredSchedulableProcess tsp : triggeredProcesses)
-					if (tsp.sp == process)
+					if (tsp.sp == process) {
+						tsp.unregisterListener();
 						return triggeredProcesses.remove(new TriggeredSchedulableProcess(process));
+					}
 			else
 				return periodicProcesses.remove(process);
 		return false;

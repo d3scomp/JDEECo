@@ -9,5 +9,5 @@ Bundle-ClassPath: .
 Import-Package: cz.cuni.mff.d3s.deeco.annotations,
  cz.cuni.mff.d3s.deeco.knowledge,
  cz.cuni.mff.d3s.deeco.provider,
- cz.cuni.mff.d3s.deeco.provider.sde
+ cz.cuni.mff.d3s.deeco.sde.provider
 Bundle-ActivationPolicy: lazy
