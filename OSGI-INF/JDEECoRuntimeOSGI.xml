@@ -10,7 +10,11 @@
 		unbind="unsetScheduler"
 		cardinality="1..1"
 		policy="dynamic"/>
+<<<<<<< HEAD
 	<reference name="KNOWLEDGE_MANAGER"
+=======
+		<reference name="KNOWLEDGE_MANAGER"
+>>>>>>> beffb1b354d9be70dac428be11477c54981346af
 		interface="cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager"
 		bind="setKnowledgeManager"
 		unbind="unsetKnowledgeManager"
