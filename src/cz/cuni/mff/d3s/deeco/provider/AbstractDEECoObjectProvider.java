@@ -22,7 +22,7 @@ public abstract class AbstractDEECoObjectProvider {
 	}
 
 	public List<ComponentKnowledge> getKnowledges(KnowledgeManager km) {
-		if (km != this.km) {
+		if (km != this.km || km == null) {
 			this.km = km;
 			processKnowledges();
 		}

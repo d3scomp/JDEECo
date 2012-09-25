@@ -50,22 +50,6 @@
 				name="packageToOSGiBundle" 
 				returns="java.lang.String" 
 				returnsDescription="Returns textual feedback on execution result" 
-				description="Packages input files into JDEECo and OSGi compliant bundles">
-				<parameter 
-					name="input" 
-					description="Resources that need to be packaged" 
-					type="java.util.List">
-				</parameter>
-				<parameter 
-					name="target" 
-					description="Output localization" 
-					type="java.lang.String">
-				</parameter>
-			</function>
-			<function 
-				name="packageToOSGiBundle" 
-				returns="java.lang.String" 
-				returnsDescription="Returns textual feedback on execution result" 
 				description="Creates JDEECo and OSGi compliant bundle with use of wizard">
 			</function>
 			<function 

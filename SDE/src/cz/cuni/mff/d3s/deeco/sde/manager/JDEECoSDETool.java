@@ -82,13 +82,13 @@ public class JDEECoSDETool implements IJDEECoSDETool {
 		return result;
 	}
 
-	@Override
-	public String packageToOSGiBundle(List<File> input, String target) {
-		openConsole();
-		JDEECoOSGiSimplePackager packager = new JDEECoOSGiSimplePackager();
-		packager.pack(input, target, JDEECoOSGiBundleNameGenerator.generateBundleName());
-		return "Packaging complete";
-	}
+//	@Override
+//	public String packageToOSGiBundle(List<File> input, String target) {
+//		openConsole();
+//		JDEECoOSGiSimplePackager packager = new JDEECoOSGiSimplePackager();
+//		packager.pack(input, target, JDEECoOSGiBundleNameGenerator.generateBundleName());
+//		return "Packaging complete";
+//	}
 
 	@Override
 	public String packageToOSGiBundle() {

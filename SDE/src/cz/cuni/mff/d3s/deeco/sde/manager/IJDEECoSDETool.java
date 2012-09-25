@@ -33,11 +33,11 @@ public interface IJDEECoSDETool extends ISensoriaTool {
 	public String addDefinitions(
 			@SensoriaToolFunctionParameter(description = "Path to a JAR file or root directory with properly packeged class files") String path);
 
-	@SensoriaToolFunction(description = "Packages input files into JDEECo and OSGi compliant bundles")
-	@SensoriaToolFunctionReturns(description = "Returns textual feedback on execution result")
-	public String packageToOSGiBundle(
-			@SensoriaToolFunctionParameter(description = "Resources that need to be packaged") List<File> input,
-			@SensoriaToolFunctionParameter(description = "Output localization") String target);
+//	@SensoriaToolFunction(description = "Packages input files into JDEECo and OSGi compliant bundles")
+//	@SensoriaToolFunctionReturns(description = "Returns textual feedback on execution result")
+//	public String packageToOSGiBundle(
+//			@SensoriaToolFunctionParameter(description = "Resources that need to be packaged") List<File> input,
+//			@SensoriaToolFunctionParameter(description = "Output localization") String target);
 	
 	@SensoriaToolFunction(description = "Creates JDEECo and OSGi compliant bundle with use of wizard")
 	@SensoriaToolFunctionReturns(description = "Returns textual feedback on execution result")

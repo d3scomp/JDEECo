@@ -10,7 +10,7 @@ import cz.cuni.mff.d3s.deeco.provider.ClassDEECoObjectProvider;
 public class ClassProcessor {
 
 	public static ClassDEECoObjectProvider processClasses(List<String> classNames, List<URL> dirURLs) {
-		return processClasses(classNames, dirURLs, null);
+		return processClasses(classNames, dirURLs, ClassProcessor.class.getClassLoader());
 	}
 
 	/**
