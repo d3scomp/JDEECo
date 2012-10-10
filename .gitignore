@@ -1,5 +1,7 @@
 
-/bin
-/build
+/jdeeco-core/bin
+/jdeeco-example-osgi/MigrationEnsembleOSGI/bin
+/jdeeco-example-osgi/NodeAOSGI/bin
+/jdeeco-example-osgi/NodeBOSGI/bin
 /dist
-/test-output
+/jdeeco-core/test-output
