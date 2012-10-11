@@ -7,6 +7,7 @@
 	<property name="build" location="jdeeco-core/bin"/>
 	<property name="dist" location="dist"/>
 	<property name="libs" location="libs"/>
+	<property name="jpf" location="jpf"/>
 	<property name="river" location="${dist}/apache-river"/>
 
 	<property name="debug" value="yes"/>
@@ -143,7 +144,7 @@
 				<pathelement location="${libs}/bcel-5.2.jar"/>
 			</classpath>
 		</java>
-		<java fork="true" jar="${libs}/RunJPF.jar" dir="${dist}">
+		<java fork="true" jar="${jpf}/build/RunJPF.jar" dir="${dist}">
 			<jvmarg value="-Djdeeco-dist=${dist}"/>
 			<jvmarg value="-Djdeeco-src=${src}"/>
 			<jvmarg value="-Djdeeco-src-demo=${demo}"/>

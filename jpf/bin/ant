@@ -1,0 +1,83 @@
+#!/bin/bash
+#
+# run ant with jars from the JPF lib directory
+#
+
+# if JPF_TOOLS is unset or invalid (e.g. pointing to JPF root dir)
+if [ ! -d "$JPF_TOOLS" ] || [ ! -f "$JPF_TOOLS"/ant.jar ]; then
+  # check to see if we have a powerful version of readlink, so we can follow
+  # a symlink to this script in determining the JPF_TOOLS
+  if [ -x "`which readlink`" ] && readlink -f /bin/true > /dev/null 2>&1; then
+    JPF_TOOLS="$(dirname "$(readlink -f $0)" )"/../tools
+  else
+    JPF_TOOLS="`dirname $0`"/../tools
+  fi
+fi
+
+if [ ! -f "$JPF_TOOLS"/ant.jar ]; then
+  cat << EOF
+JPF_BUILD_TOOLS variable determined incorrectly.
+Likely causes:
+ - you moved this script from its original location
+ - you are accessing this script through a symlink
+Fixes:
+ - move it back to or access through bin/ant
+ - edit this script to manually set JPF_TOOLS
+EOF
+  exit 1
+fi
+
+
+# add all jars and zips we find in the tools dir
+CP=`find "$JPF_TOOLS" \( -name "*.jar" -or -name "*.zip" \) -exec echo -n {}":" \;`
+
+
+# handle the icky differences of *nix-ish Java installations
+_cygwin=false;
+_darwin=false;
+case "`uname`" in
+  CYGWIN*) 
+    if [ -z "$JAVA_HOME" ]; then
+      export JAVA_HOME="$(readlink -f "$(which javac)" 2> /dev/null | sed 's/\/bin\/javac$//' 2> /dev/null)"
+      if [ ! -r "$JAVA_HOME"/lib/tools.jar ]; then
+        echo "JAVA_HOME not set, cannot locate the compiler"
+        exit 1
+      fi
+    fi
+
+    J_HOME=`cygpath --path --unix "$JAVA_HOME"`
+    JAVAC_JAR="$J_HOME/lib/tools.jar"
+    if [ ! -f "$JAVAC_JAR" ]; then
+      echo "no bytecode compiler found: $JAVAC_JAR"
+      exit 1
+    fi
+    CP="${JAVAC_JAR}:${CP}"
+    CP="`cygpath --path --windows "$CP"`"
+    ;;
+           
+  Darwin*) 
+    # nothing to do, sun.tools.javac.Main should be in classes.jar
+    ;;
+           
+  *)
+    if [ -z "$JAVA_HOME" ]; then
+      export JAVA_HOME="$(readlink -f "$(which javac)" 2> /dev/null | sed 's/\/bin\/javac$//' 2> /dev/null)"
+      if [ ! -r "$JAVA_HOME"/lib/tools.jar ]; then
+        echo "JAVA_HOME environment var not set, cannot locate the compiler in: $JAVA_HOME"
+        exit 1
+      fi
+    fi
+           
+    JAVAC_JAR="$JAVA_HOME/lib/tools.jar"
+    if [ ! -f "$JAVAC_JAR" ]; then
+      echo "cannot locate compiler in: $JAVAC_JAR"
+      echo "check your JDK installation and JAVA_HOME environment var: $JAVA_HOME"
+      exit 1
+    fi
+    CP="${JAVAC_JAR}:${CP}"
+    ;;
+esac
+
+# now run ant with this classpath
+java $JVM_FLAGS -classpath "$CP" org.apache.tools.ant.Main "$@"
+
