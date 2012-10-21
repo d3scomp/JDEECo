@@ -2,6 +2,6 @@
 <component name="JDEECoOSGIMultithreadedScheduler">
 	<implementation class="cz.cuni.mff.d3s.deeco.scheduling.MultithreadedScheduler"/>
 	<service>
-		<provide interface="cz.cuni.mff.d3s.deeco.scheduling.Scheduler"/>
+		<provide interface="cz.cuni.mff.d3s.deeco.scheduling.IScheduler"/>
 	</service>
 </component>

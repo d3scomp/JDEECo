@@ -31,9 +31,7 @@ public class ParsedObjectWriter {
 				OutputStream fs = new FileOutputStream(fileName);
 				OutputStream bo = new BufferedOutputStream(fs);
 				oo = new ObjectOutputStream(bo);
-				oo.writeObject(cdop.getProcessCreators());
-				oo.writeObject(cdop.getKnowledges(null));
-
+				oo.writeObject(cdop);
 			} finally {
 				if (oo != null)
 					oo.close();

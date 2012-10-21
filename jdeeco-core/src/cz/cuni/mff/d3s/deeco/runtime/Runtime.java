@@ -15,81 +15,193 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.runtime;
 
+import java.util.LinkedList;
 import java.util.List;
 
+import cz.cuni.mff.d3s.deeco.exceptions.KMException;
 import cz.cuni.mff.d3s.deeco.invokable.ComponentKnowledgeHelper;
+import cz.cuni.mff.d3s.deeco.invokable.SchedulableComponentProcess;
+import cz.cuni.mff.d3s.deeco.invokable.SchedulableEnsembleProcess;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
 import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
+import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider;
-import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
+import cz.cuni.mff.d3s.deeco.provider.ParsedComponent;
+import cz.cuni.mff.d3s.deeco.provider.ProcessInstantiator;
+import cz.cuni.mff.d3s.deeco.scheduling.IScheduler;
+import cz.cuni.mff.d3s.deeco.scheduling.SchedulerUtils;
 
 /**
- * Class representing DEECo runtime
+ * Class representing jDEECo runtime
  * 
  * @author Michal Kit
  * 
  */
-public class Runtime {
 
-	private Scheduler scheduler;
+public class Runtime implements IRuntime {
+
+	private IScheduler scheduler;
 	private KnowledgeManager km;
 
-	public Runtime() {
-	}
+	public Runtime() {}
 
 	public Runtime(KnowledgeManager km) {
 		this.km = km;
 	}
 
-	public Runtime(Scheduler scheduler) {
+	public Runtime(IScheduler scheduler) {
 		this.scheduler = scheduler;
 	}
 
-	public Runtime(KnowledgeManager km, Scheduler scheduler) {
+	public Runtime(KnowledgeManager km, IScheduler scheduler) {
 		this.km = km;
 		this.scheduler = scheduler;
 	}
 
+	
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.runtime.IRuntime#setScheduler(java.lang.Object)
+	 */
+	@Override
 	public void setScheduler(Object scheduler) {
 		unsetScheduler(scheduler);
-		if (scheduler instanceof Scheduler)
-			this.scheduler = (Scheduler) scheduler;
+		if (scheduler instanceof IScheduler)
+			this.scheduler = (IScheduler) scheduler;
 	}
 
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.runtime.IRuntime#unsetScheduler(java.lang.Object)
+	 */
+	@Override
 	public void unsetScheduler(Object scheduler) {
 		if (this.scheduler != null)
 			this.scheduler.clearAll();
 		this.scheduler = null;
 	}
 
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.runtime.IRuntime#setKnowledgeManager(java.lang.Object)
+	 */
+	@Override
 	public void setKnowledgeManager(Object km) {
 		unsetKnowledgeManager(null);
 		this.km = (KnowledgeManager) km;
 	}
 
+	@Override
 	public void unsetKnowledgeManager(Object km) {
 		stopRuntime();
 		this.km = null;
 	}
 
-	public void addDefinitions(AbstractDEECoObjectProvider provider) {
-		addSchedulablePorcesses(provider.getProcesses(km));
-		for (ComponentKnowledge ck : provider.getKnowledges(km)) {
-			if (!addComponentKnowledge(ck, km)) {
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.runtime.IRuntime#registerComponentsAndEnsembles(cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider)
+	 */
+	@Override
+	public void registerComponentsAndEnsembles(AbstractDEECoObjectProvider provider) {
+		addSchedulablePorcesses(ProcessInstantiator.createProcesses(
+				provider.getEnsembles(), km));
+		for (ParsedComponent component : provider.getComponents()) {
+			if (!addComponentKnowledge(component.getInitialKnowledge(), km)) {
 				System.out.println("Error when writng initial knowledge: "
-						+ ck.getClass());
+						+ component.getInitialKnowledge().getClass());
 				continue;
 			}
+			addSchedulablePorcesses(ProcessInstantiator.createProcesses(
+					component.getProcesses(), km));
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.runtime.IEnsembleComponentInformer#getComponentsIds()
+	 */
+	@Override
+	public List<String> getComponentsIds() {
+		List<String> result = new LinkedList<String>();
+		try {
+			Object[] ids = (Object[]) km.getKnowledge(ConstantKeys.ROOT_KNOWLEDGE_ID);
+			for (Object id : ids)
+				result.add((String) id);
+		} catch (KMException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.runtime.IRuntime#getComponentKnowledge(java.lang.String)
+	 */
+	@Override
+	public Object getComponentKnowledge(String componentId) {
+		try {
+			return km.getKnowledge(componentId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.runtime.IRuntime#getComponentProcesses(java.lang.String)
+	 */
+	@Override
+	public List<SchedulableComponentProcess> getComponentProcesses(String componentId) {
+		if (scheduler != null) 
+			return SchedulerUtils.getComponentProcesses(componentId, scheduler);
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.runtime.IRuntime#getEnsembleProcesses()
+	 */
+	@Override
+	public List<SchedulableEnsembleProcess> getEnsembleProcesses() {
+		if (scheduler != null)
+			return SchedulerUtils.getEnsembleProcesses(scheduler);
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.runtime.IRuntime#isRunning()
+	 */
+	@Override
+	public synchronized boolean isRunning() {
+		return scheduler.isRunning();
+	}
+	
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.runtime.IRuntime#startRuntime()
+	 */
+	@Override
+	public synchronized void startRuntime() {
+		scheduler.start();
+	}
 
-	public synchronized void addSchedulableProcess(SchedulableProcess process) {
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.runtime.IRuntime#stopRuntime()
+	 */
+	@Override
+	public synchronized void stopRuntime() {
+		scheduler.clearAll();
+	}
+
+	/**
+	 * Registers single schedulable process within the scheduler.
+	 * 
+	 * @param process process that needs to be registered
+	 */
+	private synchronized void addSchedulableProcess(SchedulableProcess process) {
 		if (process != null)
 			scheduler.register(process);
 	}
 
-	public synchronized void addSchedulablePorcesses(
+	/**
+	 * Registers a collection of schedulable processes within the scheduler.
+	 * 
+	 * @param processes
+	 */
+	private synchronized void addSchedulablePorcesses(
 			List<? extends SchedulableProcess> processes) {
 		if (processes != null)
 			for (SchedulableProcess sp : processes) {
@@ -97,15 +209,14 @@ public class Runtime {
 			}
 	}
 
-	public synchronized void addKnowledges(
-			List<? extends ComponentKnowledge> knowledges, KnowledgeManager km) {
-		if (knowledges != null)
-			for (ComponentKnowledge ck : knowledges) {
-				addComponentKnowledge(ck, km);
-			}
-	}
-
-	public synchronized boolean addComponentKnowledge(
+	/**
+	 * Adds component knowledge into the knowledge manager.
+	 * 
+	 * @param initKnowledge component knowledge that needs to be added to the knowledge manager.
+	 * @param km reference to the knowledge manager.
+	 * @return result of the adding process. True in case of a success otherwise false.
+	 */
+	private synchronized boolean addComponentKnowledge(
 			ComponentKnowledge initKnowledge, KnowledgeManager km) {
 		if (initKnowledge != null)
 			try {
@@ -116,19 +227,5 @@ public class Runtime {
 				System.out.println("Initial knowlege retrival exception");
 			}
 		return false;
-	}
-
-	/**
-	 * Starts components and ensembles operation.
-	 */
-	public synchronized void startRuntime() {
-		scheduler.start();
-	}
-
-	/**
-	 * Stops components and ensembles operation.
-	 */
-	public synchronized void stopRuntime() {
-		scheduler.clearAll();
 	}
 }

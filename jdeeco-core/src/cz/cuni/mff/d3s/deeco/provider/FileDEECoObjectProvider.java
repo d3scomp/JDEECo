@@ -1,9 +1,5 @@
 package cz.cuni.mff.d3s.deeco.provider;
 
-import java.util.LinkedList;
-
-import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
-import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
 import cz.cuni.mff.d3s.deeco.processor.ClassFinder;
 import cz.cuni.mff.d3s.deeco.processor.ClassProcessor;
 
@@ -23,12 +19,12 @@ public class FileDEECoObjectProvider extends AbstractDEECoObjectProvider {
 	}
 
 	@Override
-	protected void processKnowledges() {
+	protected void processComponents() {
 		processAll();
 	}
 
 	@Override
-	protected void processProcesses() {
+	protected void processEnsembles() {
 		processAll();
 	}
 
@@ -37,14 +33,12 @@ public class FileDEECoObjectProvider extends AbstractDEECoObjectProvider {
 			System.out.println("Wrong path");
 			return;
 		}
-		processes = new LinkedList<SchedulableProcess>();
-		knowledges = new LinkedList<ComponentKnowledge>();
 		ClassFinder cf = new ClassFinder();
 		cf.resolve(new String[] { fileName });
 		AbstractDEECoObjectProvider dop = ClassProcessor.processClasses(
 				cf.getClasses(), cf.getDirURLs(), parentClassLoader);
-		processes.addAll(dop.getProcesses(null));
-		knowledges.addAll(dop.getKnowledges(null));
+		components = dop.getComponents();
+		ensembles = dop.getEnsembles();
 	}
 
 }

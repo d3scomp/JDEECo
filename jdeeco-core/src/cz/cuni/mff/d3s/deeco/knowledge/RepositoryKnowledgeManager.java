@@ -96,8 +96,8 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 	}
 	
 	@Override
-	public void switchListening(boolean on) {
-		rkmh.switchListening(on);	
+	public void setListenersActive(boolean on) {
+		rkmh.setListenersActive(on);	
 	}
 
 	/*

@@ -34,7 +34,7 @@ public class TSLauncherCloudNoJPF {
 		AbstractDEECoObjectProvider dop = new ClassDEECoObjectProvider(
 				components, ensembles);
 		Runtime rt = new Runtime(km, scheduler);
-		rt.addDefinitions(dop);
+		rt.registerComponentsAndEnsembles(dop);
 		rt.startRuntime();
 	}
 }

@@ -19,21 +19,23 @@ public class SchedulableComponentProcessCreator extends
 
 	protected final ParametrizedMethodCreator process;
 	protected final ELockingMode lockingMode;
+	protected final String componentId;
 	
 	
 
 	public SchedulableComponentProcessCreator(ProcessSchedule scheduling,
-			ParametrizedMethodCreator process, ELockingMode lockingMode) {
+			ParametrizedMethodCreator process, ELockingMode lockingMode, String componentId) {
 		super(scheduling);
 		this.process = process;
 		this.lockingMode = lockingMode;
+		this.componentId = componentId;
 	}
 
 
 
 	@Override
 	public SchedulableComponentProcess extract(KnowledgeManager km) {
-		return new SchedulableComponentProcess(km, scheduling, process.extract(), lockingMode);
+		return new SchedulableComponentProcess(km, scheduling, process.extract(), lockingMode, componentId);
 	}
 
 }

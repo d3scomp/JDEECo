@@ -60,7 +60,7 @@ public class TSRemoteEventListener implements RemoteEventListener {
 	@Override
 	public void notify(RemoteEvent re) throws UnknownEventException,
 			RemoteException {
-		if (kr.isTriggeringOn()) {
+		if (kr.isListenersActive()) {
 			TransactionalSession ts = null;
 			try {
 				AvailabilityEvent ae = (AvailabilityEvent) re;

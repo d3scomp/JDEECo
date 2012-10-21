@@ -47,31 +47,36 @@ public class LocalKnowledgeRepository extends KnowledgeRepository {
 	final HashMap<String, List<Object>> ts = new HashMap<String, List<Object>>();
 
 	public LocalKnowledgeRepository() {
-		// JPF Optimization - class initialization if lock is used causes state space explosion
-		//  here we intentionally use the lock -> it will hopefully "execute all class initializer" 
-		//  here in single threaded code and reduce number of program states
-		// Problematic class java.util.concurrent.locks.AbstractQueuedSynchronizer$Node
+		// JPF Optimization - class initialization if lock is used causes state
+		// space explosion
+		// here we intentionally use the lock -> it will hopefully
+		// "execute all class initializer"
+		// here in single threaded code and reduce number of program states
+		// Problematic class
+		// java.util.concurrent.locks.AbstractQueuedSynchronizer$Node
 		// Problematic class java.util.concurrent.locks.LockSupport
 		Condition c = lock.newCondition();
 		try {
 			lock.lock();
-			c.awaitNanos(-1);  // Not sleep at all
+			c.awaitNanos(-1); // Not sleep at all
 			lock.unlock();
 		} catch (InterruptedException e) {
 		}
 		LockSupport.unpark(null);
 	}
-	
+
 	@Override
-	public Object [] get(String entryKey, ISession session)
+	public Object[] get(String entryKey, ISession session)
 			throws KRExceptionUnavailableEntry, KRExceptionAccessError {
 
-		// Lock here to prevent race conditions in case the method is used out of a
+		// Lock here to prevent race conditions in case the method is used out
+		// of a
 		// session. Likewise done in the rest methods.
 		List<Object> vals = ts.get(entryKey);
 
 		if (vals == null) {
-			throw new KRExceptionUnavailableEntry("Key " + entryKey + " is not in the local knowledge repository.");
+			throw new KRExceptionUnavailableEntry("Key " + entryKey
+					+ " is not in the local knowledge repository.");
 		}
 
 		vals = (List<Object>) DeepCopy.copy(vals);
@@ -93,13 +98,14 @@ public class LocalKnowledgeRepository extends KnowledgeRepository {
 	}
 
 	@Override
-	public Object [] take(String entryKey, ISession session)
+	public Object[] take(String entryKey, ISession session)
 			throws KRExceptionUnavailableEntry, KRExceptionAccessError {
 
 		List<Object> vals = ts.get(entryKey);
 
 		if (vals == null) {
-			throw new KRExceptionUnavailableEntry("Key " + entryKey + " is not in the local knowledge repository.");
+			throw new KRExceptionUnavailableEntry("Key " + entryKey
+					+ " is not in the local knowledge repository.");
 		}
 
 		if (vals.size() <= 1) {
@@ -122,11 +128,12 @@ public class LocalKnowledgeRepository extends KnowledgeRepository {
 	}
 
 	@Override
-	public void switchListening(boolean on) {
+	public void setListenersActive(boolean on) {
+		// TODO Auto-generated method stub
 	}
 
 	@Override
-	public boolean isTriggeringOn() {
+	public boolean isListenersActive() {
 		// TODO Auto-generated method stub
 		return false;
 	}

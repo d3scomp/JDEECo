@@ -1,25 +1,15 @@
 package cz.cuni.mff.d3s.deeco.provider;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
-import cz.cuni.mff.d3s.deeco.invokable.creators.SchedulableProcessCreator;
-import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
 import cz.cuni.mff.d3s.deeco.processor.ParsedObjectReader;
 
 public class PreLauncherDEECoObjectProvider extends AbstractDEECoObjectProvider {
 
-	private ParsedObjectReader por;
-	
-	private List<SchedulableProcessCreator> rawProcesses;
+	private AbstractDEECoObjectProvider provider;
 	
 	
 	public PreLauncherDEECoObjectProvider(String fileName) {
-		por = new ParsedObjectReader(fileName);
-		rawProcesses = new LinkedList<SchedulableProcessCreator>();
-		knowledges = new LinkedList<ComponentKnowledge>();
-		por.read(rawProcesses, knowledges);
+		provider = new ParsedObjectReader(fileName).read();
+
 	}
 	
 	public PreLauncherDEECoObjectProvider() {
@@ -27,16 +17,13 @@ public class PreLauncherDEECoObjectProvider extends AbstractDEECoObjectProvider 
 	}
 
 	@Override
-	protected void processKnowledges() {}
+	protected void processComponents() {
+		components = provider.getComponents();
+	}
 
 	@Override
-	protected void processProcesses() {
-		if (processes == null) {
-			processes = new LinkedList<SchedulableProcess>();
-			for (SchedulableProcessCreator spc : rawProcesses) {
-				processes.add(spc.extract(km));
-			}
-		}
+	protected void processEnsembles() {
+		ensembles = provider.getEnsembles();
 	}
 
 }

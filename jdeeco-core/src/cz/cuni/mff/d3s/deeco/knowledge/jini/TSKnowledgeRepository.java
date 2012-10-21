@@ -170,12 +170,12 @@ public class TSKnowledgeRepository extends KnowledgeRepository {
 	}
 	
 	@Override
-	public synchronized void switchListening(boolean on) {
+	public synchronized void setListenersActive(boolean on) {
 		triggeringOn = on;
 	}
 	
 	@Override
-	public synchronized boolean isTriggeringOn() {
+	public synchronized boolean isListenersActive() {
 		return triggeringOn;
 	}
 

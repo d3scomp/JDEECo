@@ -35,7 +35,7 @@ public class MultithreadedScheduler extends Scheduler {
 					kms.add(tsp.getKnowledgeManager());
 			}
 			for (KnowledgeManager km : kms) {
-				km.switchListening(true);
+				km.setListenersActive(true);
 			}
 			running = true;
 		}
@@ -53,7 +53,7 @@ public class MultithreadedScheduler extends Scheduler {
 					kms.add(tsp.getKnowledgeManager());
 			}
 			for (KnowledgeManager km : kms) {
-				km.switchListening(false);
+				km.setListenersActive(false);
 			}
 			running = false;
 		}

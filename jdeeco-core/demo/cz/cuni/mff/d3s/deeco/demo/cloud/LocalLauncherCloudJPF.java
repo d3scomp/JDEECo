@@ -20,7 +20,7 @@ public class LocalLauncherCloudJPF {
 		Scheduler scheduler = new MultithreadedSchedulerJPF();
 		AbstractDEECoObjectProvider dop = new PreLauncherDEECoObjectProvider();
 		Runtime rt = new Runtime(km, scheduler);
-		rt.addDefinitions(dop);
+		rt.registerComponentsAndEnsembles(dop);
 		rt.startRuntime();
 	}
 }

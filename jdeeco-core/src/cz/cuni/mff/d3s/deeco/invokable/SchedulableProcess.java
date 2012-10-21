@@ -47,7 +47,7 @@ public abstract class SchedulableProcess implements Serializable {
 	
 	protected static class ParametersPair {
 		public final Object originalValue; // Original value taken from the repository
-		public final Object value;			// Newly cloned instance of the originalValue
+		public final Object value;		   // Newly cloned instance of the originalValue
 		
 		public ParametersPair(Object originalValue) {
 			this.originalValue = originalValue;

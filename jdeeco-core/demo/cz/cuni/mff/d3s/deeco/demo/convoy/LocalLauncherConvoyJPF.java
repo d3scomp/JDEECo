@@ -28,7 +28,7 @@ public class LocalLauncherConvoyJPF {
 		Scheduler scheduler = new MultithreadedScheduler();
 		AbstractDEECoObjectProvider dop = new PreLauncherDEECoObjectProvider();
 		Runtime rt = new Runtime(km, scheduler);
-		rt.addDefinitions(dop);
+		rt.registerComponentsAndEnsembles(dop);
 		rt.startRuntime();
 	}
 }

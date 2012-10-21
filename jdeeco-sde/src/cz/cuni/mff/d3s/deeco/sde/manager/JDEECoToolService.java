@@ -1,28 +1,36 @@
 package cz.cuni.mff.d3s.deeco.sde.manager;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.osgi.framework.Bundle;
 import org.osgi.framework.wiring.BundleWiring;
 import org.osgi.service.component.ComponentContext;
 
 import cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider;
-import cz.cuni.mff.d3s.deeco.runtime.Runtime;
+import cz.cuni.mff.d3s.deeco.runtime.IRuntime;
 import cz.cuni.mff.d3s.deeco.sde.console.ConsolePrinter;
+import cz.cuni.mff.d3s.deeco.sde.utils.AbstractProvidersHolder;
 
-public class DEECoManagerService {
+public class JDEECoToolService {
 
-	private List<AbstractDEECoObjectProvider> providers;
+	private AbstractProvidersHolder providersHolder;
 
-	private Runtime rt;
+	private IRuntime rt;
 	private ConsolePrinter cp;
 
-	private static DEECoManagerService instance;
+	private static JDEECoToolService instance;
 	private ClassLoader thisBundleLoader;
 
-	public static DEECoManagerService getInstance() {
+	public synchronized static JDEECoToolService getInstance() {
+		if (instance == null)
+			instance = new JDEECoToolService();
 		return instance;
+	}
+	
+	public JDEECoToolService() {
+		synchronized (JDEECoToolService.class) {
+			if (instance == null)
+				instance = this;
+			providersHolder = new AbstractProvidersHolder();
+		}
 	}
 
 	protected void activate(ComponentContext context) {
@@ -31,30 +39,27 @@ public class DEECoManagerService {
 		System.out.println("JDEECo SDE Tool activated");
 	}
 
-	public DEECoManagerService() {
-		providers = new LinkedList<AbstractDEECoObjectProvider>();
-		instance = this;
-	}
-
 	public synchronized void addDEECoPrimitivesProvider(Object dpp) {
 		if (dpp != null && dpp instanceof AbstractDEECoObjectProvider) {
-			providers.add((AbstractDEECoObjectProvider) dpp);
-			System.out.println("Provider added: " + dpp);
+			AbstractDEECoObjectProvider adop = (AbstractDEECoObjectProvider) dpp;
+			providersHolder.add(adop);
+			System.out.println("Provider added: " + adop);
 		}
 	}
 
 	public synchronized void removeDEECoPrimitivesProvider(Object dpp) {
 		if (dpp != null && dpp instanceof AbstractDEECoObjectProvider) {
-			if (providers.contains(dpp)) {
-				providers.remove(dpp);
-				System.out.println("Provider removed: " + dpp);
+			AbstractDEECoObjectProvider adop = (AbstractDEECoObjectProvider) dpp;
+			if (providersHolder.contains(adop)) {
+				providersHolder.remove(adop);
+				System.out.println("Provider removed: " + adop);
 			}
 		}
 	}
 
 	public synchronized void registerRuntime(Object rt) {
 		unregisterRuntime(null);
-		this.rt = (Runtime) rt;
+		this.rt = (IRuntime) rt;
 		System.out.println("Runtime registered");
 	}
 
@@ -66,11 +71,11 @@ public class DEECoManagerService {
 		}
 	}
 
-	public List<AbstractDEECoObjectProvider> getProviders() {
-		return providers;
+	public AbstractProvidersHolder getProvidersHolder() {
+		return providersHolder;
 	}
 
-	public Runtime getRuntime() {
+	public IRuntime getRuntime() {
 		return rt;
 	}
 

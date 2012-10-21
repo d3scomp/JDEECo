@@ -1,5 +1,8 @@
 package cz.cuni.mff.d3s.deeco.sde.manager;
 
+import java.io.File;
+import java.util.List;
+
 import eu.sensoria_ist.casetool.core.ext.ISensoriaTool;
 import eu.sensoria_ist.casetool.core.ext.SensoriaTool;
 import eu.sensoria_ist.casetool.core.ext.SensoriaToolFunction;
@@ -16,28 +19,27 @@ public interface IJDEECoSDETool extends ISensoriaTool {
 	@SensoriaToolFunction(description = "Stops JDEECo runtime")
 	@SensoriaToolFunctionReturns(description = "Returns confirmation message")
 	public String stop();
-
-	@SensoriaToolFunction(description = "Lists all registered DEECo processes")
-	@SensoriaToolFunctionReturns(description = "Returns list of all registered DEECo processes")
-	public String listProcesses();
-
 	
-	//getComponentInfo(compId)
-	//getEnsembleInfo(ensId)
-	//listAllEnsembles
-	//listAllComponents //all data
+	@SensoriaToolFunction(description = "Prints all information regarding the specified component")
+	@SensoriaToolFunctionReturns(description = "String containing the component information")
+	public String getComponentInfo(
+			@SensoriaToolFunctionParameter(description = "Component ID") String componentId);
 	
-	//rename listKnowledges to listAllKnowledge
-	//jpf function that accepts jar file
+	@SensoriaToolFunction(description = "Prints all information about components in the system")
+	@SensoriaToolFunctionReturns(description = "String containing information about all components in the system")
+	public String listAllComponents();
+	
+	@SensoriaToolFunction(description = "Prints all information about all ensembles in the system")
+	@SensoriaToolFunctionReturns(description = "String containing information about all ensembles in the system")
+	public String listAllEnsembles();
 	
 	@SensoriaToolFunction(description = "Lists all DEECo component knowledges currently available in the runtime")
 	@SensoriaToolFunctionReturns(description = "Returns list of all registered DEECo component knowledges")
-	public String listKnowledges();
-
-	@SensoriaToolFunction(description = "Adds component and ensemble definitions")
-	@SensoriaToolFunctionReturns(description = "Returns textual feedback on execution result")
-	public String addDefinitions(
-			@SensoriaToolFunctionParameter(description = "Path to a JAR file or root directory with properly packeged class files") String path);
+	public String listAllKnowledge();
+	
+	@SensoriaToolFunction(description = "Prints information about JDEECo runtime environment")
+	@SensoriaToolFunctionReturns(description = "Returns Runtime information")
+	public String getRuntimeInfo();
 
 //	@SensoriaToolFunction(description = "Packages input files into JDEECo and OSGi compliant bundles")
 //	@SensoriaToolFunctionReturns(description = "Returns textual feedback on execution result")
@@ -49,8 +51,14 @@ public interface IJDEECoSDETool extends ISensoriaTool {
 	@SensoriaToolFunctionReturns(description = "Returns textual feedback on execution result")
 	public String packageToOSGiBundle();
 
-	@SensoriaToolFunction(description = "Prints information about JDEECo runtime environment")
-	@SensoriaToolFunctionReturns(description = "Returns Runtime information")
-	public String getRuntimeInfo();
+	@SensoriaToolFunction(description = "Adds component and ensemble definitions")
+	@SensoriaToolFunctionReturns(description = "Returns textual feedback on execution result")
+	public String addDefinitions(
+			@SensoriaToolFunctionParameter(description = "Path to a JAR file or root directory with properly packeged class files") String path);
+	
+	@SensoriaToolFunction(description = "Validates specified components and ensembles under the JPF")
+	@SensoriaToolFunctionReturns(description = "String containing information about the velidation result")
+	public String validateInJPF(
+			@SensoriaToolFunctionParameter(description = "List of jar files containing component and ensemble definitions") List<File> jars);
 
 }

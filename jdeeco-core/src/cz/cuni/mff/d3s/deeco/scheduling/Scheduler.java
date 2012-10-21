@@ -6,7 +6,7 @@ import java.util.List;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
 import cz.cuni.mff.d3s.deeco.invokable.TriggeredSchedulableProcess;
 
-public abstract class Scheduler {
+public abstract class Scheduler implements IScheduler {
 
 	protected List<SchedulableProcess> periodicProcesses;
 	protected List<TriggeredSchedulableProcess> triggeredProcesses;
@@ -18,10 +18,12 @@ public abstract class Scheduler {
 		running = false;
 	}
 
+	@Override
 	public boolean isRunning() {
 		return running;
 	}
 
+	@Override
 	public void register(List<? extends SchedulableProcess> processes) {
 		if (!running)
 			for (SchedulableProcess sp : processes) {
@@ -29,16 +31,19 @@ public abstract class Scheduler {
 			}
 	}
 
+	@Override
 	public boolean register(SchedulableProcess process) {
 		if (!running) {
 			if (process.scheduling instanceof ProcessTriggeredSchedule)
-				return triggeredProcesses.add(new TriggeredSchedulableProcess(process));
+				return triggeredProcesses.add(new TriggeredSchedulableProcess(
+						process));
 			else
 				return periodicProcesses.add(process);
 		}
 		return false;
 	}
 
+	@Override
 	public void unregister(List<SchedulableProcess> processes) {
 		if (!running)
 			for (SchedulableProcess sp : processes) {
@@ -46,24 +51,36 @@ public abstract class Scheduler {
 			}
 	}
 
+	@Override
 	public boolean unregister(SchedulableProcess process) {
 		if (!running)
 			if (process.scheduling instanceof ProcessTriggeredSchedule)
 				for (TriggeredSchedulableProcess tsp : triggeredProcesses)
 					if (tsp.sp == process) {
 						tsp.unregisterListener();
-						return triggeredProcesses.remove(new TriggeredSchedulableProcess(process));
-					}
-			else
-				return periodicProcesses.remove(process);
+						return triggeredProcesses
+								.remove(new TriggeredSchedulableProcess(process));
+					} else
+						return periodicProcesses.remove(process);
 		return false;
 	}
 	
+	@Override
+	public List<SchedulableProcess> getPeriodicProcesses() {
+		return periodicProcesses;
+	}
+	
+	@Override
+	public List<TriggeredSchedulableProcess> getTriggeredProcesses() {
+		return triggeredProcesses;
+	}
+
+	@Override
 	public void clearAll() {
 		if (running)
 			stop();
 		unregister(periodicProcesses);
-		for (TriggeredSchedulableProcess tsp: triggeredProcesses) {
+		for (TriggeredSchedulableProcess tsp : triggeredProcesses) {
 			unregister(tsp.sp);
 		}
 	}

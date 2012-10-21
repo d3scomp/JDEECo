@@ -116,7 +116,7 @@ public class RepositoryKnowledgeManagerHelper {
 		return kr.unregisterListener(listener);
 	}
 	
-	public void switchListening(boolean on) {
-		kr.switchListening(on);	
+	public void setListenersActive(boolean on) {
+		kr.setListenersActive(on);	
 	}
 }

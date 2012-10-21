@@ -2,35 +2,28 @@ package cz.cuni.mff.d3s.deeco.provider;
 
 import java.util.List;
 
-import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
-import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.invokable.creators.SchedulableEnsembleProcessCreator;
 
  
 public abstract class AbstractDEECoObjectProvider {
 
-	protected List<SchedulableProcess> processes;
-	protected List<ComponentKnowledge> knowledges;
-	protected KnowledgeManager km;
+	protected List<ParsedComponent> components;
+	protected List<SchedulableEnsembleProcessCreator> ensembles;
 
-	public List<SchedulableProcess> getProcesses(KnowledgeManager km) {
-		if (km != this.km) {
-			this.km = km;
-			processProcesses();
-		}
-		return processes;
+	public List<ParsedComponent> getComponents() {
+		if (components == null)
+			processComponents();
+		return components;
 	}
 
-	public List<ComponentKnowledge> getKnowledges(KnowledgeManager km) {
-		if (km != this.km || km == null) {
-			this.km = km;
-			processKnowledges();
-		}
-		return knowledges;
+	public List<SchedulableEnsembleProcessCreator> getEnsembles() {
+		if (ensembles == null)
+			processEnsembles();
+		return ensembles;
 	}
 
-	abstract protected void processKnowledges();
+	abstract protected void processComponents();
 
-	abstract protected void processProcesses();
+	abstract protected void processEnsembles();
 
 }

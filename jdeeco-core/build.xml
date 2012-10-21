@@ -29,7 +29,7 @@
 	<target name="dist-jdeeco" depends="compile-jdeeco"
         description="Generates a jar with JDEECo runtime" >
 		<jar jarfile="${dist}/jdeeco.jar" basedir="${build}/jdeeco" manifest="${src}/../META-INF/MANIFEST.MF">
-			<fileset dir="." includes="${src}/../OSGI-INF/*.*"/>
+			<fileset dir="${src}/.." includes="OSGI-INF/*.*"/>
 		</jar>
 	</target>
 

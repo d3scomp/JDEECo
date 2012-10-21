@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
-<plugin>			
+<plugin>				
 	<extension 
 		point="eu.sensoria_ist.casetool.core.tool">
 		<tool 
@@ -24,16 +24,45 @@
 				description="Stops JDEECo runtime">
 			</function>
 			<function 
-				name="listProcesses" 
+				name="getComponentInfo" 
 				returns="java.lang.String" 
-				returnsDescription="Returns list of all registered DEECo processes" 
-				description="Lists all registered DEECo processes">
+				returnsDescription="String containing the component information" 
+				description="Prints all information regarding the specified component">
+				<parameter 
+					name="componentId" 
+					description="Component ID" 
+					type="java.lang.String">
+				</parameter>
 			</function>
 			<function 
-				name="listKnowledges" 
+				name="listAllComponents" 
+				returns="java.lang.String" 
+				returnsDescription="String containing information about all components in the system" 
+				description="Prints all information about components in the system">
+			</function>
+			<function 
+				name="listAllEnsembles" 
+				returns="java.lang.String" 
+				returnsDescription="String containing information about all ensembles in the system" 
+				description="Prints all information about all ensembles in the system">
+			</function>
+			<function 
+				name="listAllKnowledge" 
 				returns="java.lang.String" 
 				returnsDescription="Returns list of all registered DEECo component knowledges" 
 				description="Lists all DEECo component knowledges currently available in the runtime">
+			</function>
+			<function 
+				name="getRuntimeInfo" 
+				returns="java.lang.String" 
+				returnsDescription="Returns Runtime information" 
+				description="Prints information about JDEECo runtime environment">
+			</function>
+			<function 
+				name="packageToOSGiBundle" 
+				returns="java.lang.String" 
+				returnsDescription="Returns textual feedback on execution result" 
+				description="Creates JDEECo and OSGi compliant bundle with use of wizard">
 			</function>
 			<function 
 				name="addDefinitions" 
@@ -47,16 +76,15 @@
 				</parameter>
 			</function>
 			<function 
-				name="packageToOSGiBundle" 
+				name="validateInJPF" 
 				returns="java.lang.String" 
-				returnsDescription="Returns textual feedback on execution result" 
-				description="Creates JDEECo and OSGi compliant bundle with use of wizard">
-			</function>
-			<function 
-				name="getRuntimeInfo" 
-				returns="java.lang.String" 
-				returnsDescription="Returns Runtime information" 
-				description="Prints information about JDEECo runtime environment">
+				returnsDescription="String containing information about the velidation result" 
+				description="Validates specified components and ensembles under the JPF">
+				<parameter 
+					name="jars" 
+					description="List of jar files containing component and ensemble definitions" 
+					type="java.util.List">
+				</parameter>
 			</function>
 		</tool>
 	</extension>

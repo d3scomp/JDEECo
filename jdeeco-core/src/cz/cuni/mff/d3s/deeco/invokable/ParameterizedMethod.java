@@ -18,14 +18,7 @@ package cz.cuni.mff.d3s.deeco.invokable;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import cz.cuni.mff.d3s.deeco.annotations.DEECoIn;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoInOut;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoOut;
-import cz.cuni.mff.d3s.deeco.exceptions.ComponentEnsembleParseException;
 import cz.cuni.mff.d3s.deeco.invokable.creators.ParametrizedMethodCreator;
-import cz.cuni.mff.d3s.deeco.path.grammar.ParseException;
-import cz.cuni.mff.d3s.deeco.processor.MethodDescription;
-import cz.cuni.mff.d3s.deeco.processor.ParserHelper;
 
 /**
  * Base class representing a parameterized method.

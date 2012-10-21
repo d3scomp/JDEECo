@@ -44,14 +44,13 @@ public class ComponentParser {
 		}
 
 		List<Method> methods = AnnotationHelper.getAnnotatedMethods(c,
-					DEECoProcess.class);
+				DEECoProcess.class);
 
 		if (methods == null || methods.size() == 0) {
 			return null;
 		}
-		
-		final List<SchedulableComponentProcessCreator> result = 
-				new ArrayList<SchedulableComponentProcessCreator>();
+
+		final List<SchedulableComponentProcessCreator> result = new ArrayList<SchedulableComponentProcessCreator>();
 
 		for (Method m : methods) {
 			final ParametrizedMethodCreator currentMethodCreator = ParametrizedMethodCreator
@@ -60,43 +59,42 @@ public class ComponentParser {
 				// Not a process method
 				continue;
 			}
-				
+
 			ProcessSchedule ps = null;
 			final ProcessSchedule periodicSchedule = ScheduleHelper
-						.getPeriodicSchedule(AnnotationHelper
-								.getAnnotation(
-										DEECoPeriodicScheduling.class,
-										m.getAnnotations()));
+					.getPeriodicSchedule(AnnotationHelper.getAnnotation(
+							DEECoPeriodicScheduling.class, m.getAnnotations()));
 			if (periodicSchedule != null) {
 				ps = periodicSchedule;
-			}	
-			
+			}
+
 			if (ps == null) {
-				final ProcessSchedule triggeredSchedule = ScheduleHelper.getTriggeredSchedule(
-							m.getParameterAnnotations(),
-							currentMethodCreator.in, currentMethodCreator.inOut);
+				final ProcessSchedule triggeredSchedule = ScheduleHelper
+						.getTriggeredSchedule(m.getParameterAnnotations(),
+								currentMethodCreator.in,
+								currentMethodCreator.inOut);
 				if (triggeredSchedule != null) {
 					ps = triggeredSchedule;
 				}
 			}
-			
+
 			if (ps == null) {
 				// No scheduling specified by annotations, using defaults
 				ps = new ProcessPeriodicSchedule();
 			}
 
 			ELockingMode lm;
-			if (AnnotationHelper.getAnnotation(
-						DEECoStrongLocking.class, m.getAnnotations()) == null) {
+			if (AnnotationHelper.getAnnotation(DEECoStrongLocking.class,
+					m.getAnnotations()) == null) {
 				lm = (ps instanceof ProcessPeriodicSchedule) ? ELockingMode.WEAK
 						: ELockingMode.STRONG;
 			} else {
 				lm = ELockingMode.STRONG;
 			}
-			
-			final SchedulableComponentProcessCreator skp = 
-					new SchedulableComponentProcessCreator(ps, currentMethodCreator, lm);
-				result.add(skp);
+
+			final SchedulableComponentProcessCreator skp = new SchedulableComponentProcessCreator(
+					ps, currentMethodCreator, lm, root);
+			result.add(skp);
 		}
 
 		return result;

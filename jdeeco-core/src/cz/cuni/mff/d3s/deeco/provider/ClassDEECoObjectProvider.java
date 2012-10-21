@@ -3,9 +3,7 @@ package cz.cuni.mff.d3s.deeco.provider;
 import java.util.LinkedList;
 import java.util.List;
 
-import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
-import cz.cuni.mff.d3s.deeco.invokable.creators.IScheduleableProcessCreator;
-import cz.cuni.mff.d3s.deeco.invokable.creators.SchedulableProcessCreator;
+import cz.cuni.mff.d3s.deeco.invokable.creators.SchedulableEnsembleProcessCreator;
 import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
 import cz.cuni.mff.d3s.deeco.processor.ComponentParser;
 import cz.cuni.mff.d3s.deeco.processor.EnsembleParser;
@@ -14,8 +12,6 @@ public class ClassDEECoObjectProvider extends AbstractDEECoObjectProvider {
 
 	protected final List<Class<?>> rawComponents;
 	protected final List<Class<?>> rawEnsembles;
-
-	protected final List<SchedulableProcessCreator> processesCreators;
 	
 	protected final ComponentParser cp;
 	protected final EnsembleParser ep;
@@ -30,8 +26,6 @@ public class ClassDEECoObjectProvider extends AbstractDEECoObjectProvider {
 		rawEnsembles = ensembles;
 		cp = new ComponentParser();
 		ep = new EnsembleParser();
-		
-		processesCreators = new LinkedList<SchedulableProcessCreator>();
 	}
 	
 	public boolean addDEECoObjectClass(Class<?> clazz) {
@@ -43,42 +37,24 @@ public class ClassDEECoObjectProvider extends AbstractDEECoObjectProvider {
 			return false;
 		return true;
 	}
-	
-	public List<SchedulableProcessCreator> getProcessCreators() {
-		return processesCreators;
-	}
 
 	@Override
-	protected synchronized void processKnowledges() {
-		processAll();
-	}
-
-	@Override
-	protected synchronized void processProcesses() {
-		processAll();
-	}
-
-	private void processAll() {
+	protected synchronized void processComponents() {
 		ComponentKnowledge ck;
-		processes = new LinkedList<SchedulableProcess>();
-		knowledges = new LinkedList<ComponentKnowledge>();
-		processesCreators.clear();
-
+		components = new LinkedList<ParsedComponent>();
 		for (Class<?> c : rawComponents) {
 			ck = cp.extractInitialKnowledge(c);
 			if (ck != null) {
-				knowledges.add(ck);
-				processesCreators.addAll(cp.extractComponentProcess(c, ck.id));
+				components.add(new ParsedComponent(cp.extractComponentProcess(c, ck.id), ck));
 			}
 		}
-		for (Class<?> c : rawEnsembles) {
-			processesCreators.add(ep.extractEnsembleProcess(c));
-		}
+	}
 
-		// Create processes from creators and bound them with knowledge
-		// repository
-		for (IScheduleableProcessCreator spc : processesCreators) {
-			processes.add(spc.extract(km));
+	@Override
+	protected synchronized void processEnsembles() {
+		ensembles = new LinkedList<SchedulableEnsembleProcessCreator>();
+		for (Class<?> c : rawEnsembles) {
+			ensembles.add(ep.extractEnsembleProcess(c));
 		}
 	}
 

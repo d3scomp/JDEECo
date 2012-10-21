@@ -36,14 +36,16 @@ public class SchedulableComponentProcess extends SchedulableProcess {
 
 	public final ParameterizedMethod process;
 	private final ELockingMode lockingMode;
+	private final String componentId;
 
 	public SchedulableComponentProcess(KnowledgeManager km, ProcessSchedule scheduling, ParameterizedMethod process,
-			ELockingMode lockingMode) {
+			ELockingMode lockingMode, String componentId) {
 		
 		super(km, scheduling);
 		
 		this.process = process;
 		this.lockingMode = lockingMode;
+		this.componentId = componentId;
 	}
 
 	/*
@@ -96,6 +98,10 @@ public class SchedulableComponentProcess extends SchedulableProcess {
 		if (process == null)
 			return null;
 		return process.method;
+	}
+	
+	public String getComponentId() {
+		return componentId;
 	}
 
 }
