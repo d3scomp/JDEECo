@@ -16,28 +16,26 @@ public class JDEECoSDETool implements IJDEECoSDETool {
 
 	@Override
 	public synchronized String start() {
-
-		String result = "Runtime started";
 		JDEECoToolService service = JDEECoToolService.getInstance();
 		service.openConsole();
 		IRuntime rt = service.getRuntime();
-		if (rt != null) {
-			AbstractProvidersHolder aph = service.getProvidersHolder();
-			for (AbstractDEECoObjectProvider dop : aph.getProviders())
-				rt.registerComponentsAndEnsembles(dop);
-			rt.startRuntime();
-		} else
-			result = "There is no Runtime";
-		return result;
+		if (rt == null)
+			return "There is no Runtime";
+		AbstractProvidersHolder aph = service.getProvidersHolder();
+		for (AbstractDEECoObjectProvider dop : aph.getProviders())
+			rt.registerComponentsAndEnsembles(dop);
+		rt.startRuntime();
+		return "Runtime started";
 	}
 
 	@Override
 	public synchronized String stop() {
 		JDEECoToolService service = JDEECoToolService.getInstance();
 		IRuntime rt = service.getRuntime();
+		if (rt == null)
+			return "There is no Runtime";
 		rt.stopRuntime();
-		String result = "Runtime stopped";
-		return result;
+		return "Runtime stopped";
 	}
 
 	@Override
@@ -53,12 +51,9 @@ public class JDEECoSDETool implements IJDEECoSDETool {
 	public String getRuntimeInfo() {
 		JDEECoToolService service = JDEECoToolService.getInstance();
 		IRuntime rt = service.getRuntime();
-		String result;
 		if (rt == null)
-			result = "No runtime available.";
-		else
-			result = rt.toString();
-		return result;
+			return "No runtime available.";
+		return rt.toString();
 	}
 
 	// @Override
@@ -87,6 +82,8 @@ public class JDEECoSDETool implements IJDEECoSDETool {
 	public String getComponentInfo(String componentId) {
 		JDEECoToolService service = JDEECoToolService.getInstance();
 		IEnsembleComponentInformer infoProvider = service.getRuntime();
+		if (infoProvider == null)
+			return "No runtime available.";
 		Object ck = infoProvider.getComponentKnowledge(componentId);
 		if (ck != null) {
 			return "Registered:\n\n"
@@ -108,8 +105,10 @@ public class JDEECoSDETool implements IJDEECoSDETool {
 	@Override
 	public String listAllKnowledge() {
 		JDEECoToolService service = JDEECoToolService.getInstance();
-		String result = "Runtime Knowledge:\n\n";
 		IEnsembleComponentInformer infoProvider = service.getRuntime();
+		if (infoProvider == null)
+			return "No runtime available.";
+		String result = "Runtime Knowledge:\n\n";
 		List<String> rComponentsIds = infoProvider.getComponentsIds();
 		result += Printer.printKnowledgesInfo(infoProvider, rComponentsIds);
 		infoProvider = service.getProvidersHolder();
@@ -125,8 +124,10 @@ public class JDEECoSDETool implements IJDEECoSDETool {
 	@Override
 	public String listAllComponents() {
 		JDEECoToolService service = JDEECoToolService.getInstance();
-		String result = "Runtime Components:\n\n";
 		IEnsembleComponentInformer infoProvider = service.getRuntime();
+		if (infoProvider == null)
+			return "No runtime available.";
+		String result = "Runtime Components:\n\n";
 		List<String> rComponentsIds = infoProvider.getComponentsIds();
 		result += Printer.printComponentsInfo(infoProvider, rComponentsIds);
 		infoProvider = service.getProvidersHolder();
@@ -142,8 +143,10 @@ public class JDEECoSDETool implements IJDEECoSDETool {
 	@Override
 	public String listAllEnsembles() {
 		JDEECoToolService service = JDEECoToolService.getInstance();
-		String result = "Runtime Ensembles:\n\n";
 		IEnsembleComponentInformer infoProvider = service.getRuntime();
+		if (infoProvider == null)
+			return "No runtime available.";
+		String result = "Runtime Ensembles:\n\n";
 		result += Printer.printEnsembles(infoProvider.getEnsembleProcesses());
 		result += "\n\nUnregistered Ensembles:\n\n";
 		infoProvider = service.getProvidersHolder();

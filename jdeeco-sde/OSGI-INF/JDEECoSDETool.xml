@@ -5,7 +5,7 @@
 		interface="cz.cuni.mff.d3s.deeco.runtime.IRuntime"
 		bind="registerRuntime"
 		unbind="unregisterRuntime"
-		cardinality="0..1"
+		cardinality="1..1"
 		policy="dynamic"/>
 	<reference name="PRIMITIVES"
 		interface="cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider"

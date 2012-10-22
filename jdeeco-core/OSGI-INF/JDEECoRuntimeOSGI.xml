@@ -11,7 +11,7 @@
 		cardinality="1..1"
 		policy="dynamic"/>
 	<reference name="KNOWLEDGE_MANAGER"
-		interface="cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager"
+		interface="cz.cuni.mff.d3s.deeco.knowledge.IKnowledgeManager"
 		bind="setKnowledgeManager"
 		unbind="unsetKnowledgeManager"
 		cardinality="1..1"
