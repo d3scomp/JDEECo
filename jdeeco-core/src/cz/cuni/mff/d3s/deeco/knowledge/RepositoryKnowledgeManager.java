@@ -32,25 +32,13 @@ import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
  */
 public class RepositoryKnowledgeManager extends KnowledgeManager {
 
-	private RepositoryKnowledgeManagerHelper rkmh;
-
-	public RepositoryKnowledgeManager() {
-		unsetKnowledgeRepository(null);
-	}
+	private final RepositoryKnowledgeManagerHelper rkmh;
 
 	public RepositoryKnowledgeManager(KnowledgeRepository kr) {
-		setKnowledgeRepository(kr);
+    this.rkmh = new RepositoryKnowledgeManagerHelper(
+        (KnowledgeRepository) kr, this);
 	}
 	
-	public synchronized void setKnowledgeRepository(Object kr) {
-		this.rkmh = new RepositoryKnowledgeManagerHelper(
-				(KnowledgeRepository) kr, this);
-	}
-
-	public synchronized void unsetKnowledgeRepository(Object kr) {
-		this.rkmh = null;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
