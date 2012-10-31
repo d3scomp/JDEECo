@@ -53,6 +53,8 @@ public class MultithreadedSchedulerJPF extends Scheduler {
 			km.setListenersActive(true);
       }
       running = true;
+      
+      Thread.yield(); // Break the transition so that (Periodic) processes can be scheduled and executed.
     }
   }
 
