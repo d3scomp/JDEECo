@@ -38,6 +38,19 @@
 		<jar jarfile="${dist}/demo.jar" basedir="${build}/demo"/>
 	</target>
 
+    <!-- package cloud demo ensembles and components into single jar file -->
+    <target name="dist-cloud-demo" depends="compile-demo"
+        description="Generates a jar with cloud demo main classes" >
+        <jar jarfile="${dist}/cloud-demo.jar" basedir="${build}/demo" includes="**/NodeA.class,**/NodeB.class,**/MigrationEnsemble.class">
+            <manifest>
+                <attribute name="Bundle-Version" value="0.0.1.SNAPSHOT"/>
+                <attribute name="Export-Package" value="cz.cuni.mff.d3s.deeco.demo.cloud"/>
+                <attribute name="Bundle-Name" value="Cloud demo package" />
+                <attribute name="Bundle-SymbolicName" value="cz.cuni.mff.d3s.deeco.demo.cloud" />
+            </manifest>
+        </jar>
+    </target>
+
 	<!-- zip source files -->
 	<target name="zip" description="Creates a zip with the source files" >
 		<zip destfile="${dist}/sources.zip">
