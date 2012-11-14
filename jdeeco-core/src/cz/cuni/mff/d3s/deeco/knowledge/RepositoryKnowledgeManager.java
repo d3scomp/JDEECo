@@ -35,10 +35,10 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 	private final RepositoryKnowledgeManagerHelper rkmh;
 
 	public RepositoryKnowledgeManager(KnowledgeRepository kr) {
-    this.rkmh = new RepositoryKnowledgeManagerHelper(
-        (KnowledgeRepository) kr, this);
+		this.rkmh = new RepositoryKnowledgeManagerHelper(
+				(KnowledgeRepository) kr, this);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -74,18 +74,22 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 	public boolean registerListener(IKnowledgeChangeListener listener) {
 		return rkmh.registerListener(listener);
 	}
-	
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager#unregisterListener(cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager#unregisterListener(cz
+	 * .cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener)
 	 */
 	@Override
 	public boolean unregisterListener(IKnowledgeChangeListener listener) {
 		return rkmh.unregisterListener(listener);
 	}
-	
+
 	@Override
 	public void setListenersActive(boolean on) {
-		rkmh.setListenersActive(on);	
+		rkmh.setListenersActive(on);
 	}
 
 	/*
@@ -184,9 +188,10 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 				locSession = rkmh.createSession();
 				locSession.begin();
 			}
-			
-			final ISession localSession = (session == null ? locSession : session);
-			
+
+			final ISession localSession = (session == null ? locSession
+					: session);
+
 			try {
 				while (localSession.repeat()) {
 					Object[] structure = rkmh.getStructure(withdrawal,
