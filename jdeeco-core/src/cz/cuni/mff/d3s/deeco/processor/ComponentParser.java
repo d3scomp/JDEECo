@@ -2,6 +2,8 @@ package cz.cuni.mff.d3s.deeco.processor;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
@@ -10,6 +12,7 @@ import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoProcess;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoStrongLocking;
+import cz.cuni.mff.d3s.deeco.annotations.DEECoWeakLocking;
 import cz.cuni.mff.d3s.deeco.annotations.ELockingMode;
 import cz.cuni.mff.d3s.deeco.invokable.AnnotationHelper;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableComponentProcess;
@@ -86,8 +89,12 @@ public class ComponentParser {
 			ELockingMode lm;
 			if (AnnotationHelper.getAnnotation(DEECoStrongLocking.class,
 					m.getAnnotations()) == null) {
-				lm = (ps instanceof ProcessPeriodicSchedule) ? ELockingMode.WEAK
-						: ELockingMode.STRONG;
+				if (AnnotationHelper.getAnnotation(DEECoWeakLocking.class,
+						m.getAnnotations()) == null)
+					lm = (ps instanceof ProcessPeriodicSchedule) ? ELockingMode.WEAK
+							: ELockingMode.STRONG;
+				else
+					lm = ELockingMode.WEAK;
 			} else {
 				lm = ELockingMode.STRONG;
 			}
@@ -107,16 +114,33 @@ public class ComponentParser {
 	 *            class to be parsed
 	 * @return init method or null in case no matching found
 	 */
-	public ComponentKnowledge extractInitialKnowledge(Class<?> c) {
+	public List<ComponentKnowledge> extractInitialKnowledge(Class<?> c) {
 		List<Method> initMethods = AnnotationHelper.getAnnotatedMethods(c,
 				DEECoInitialize.class);
-		if (initMethods.size() == 1) {
+		if (initMethods.size() > 0) {
 			try {
-				ComponentKnowledge ck = (ComponentKnowledge) initMethods.get(0)
-						.invoke(null, new Object[] {});
-				if (ck.id == null || ck.id.equals(""))
-					ck.id = UUID.randomUUID().toString();
-				return ck;
+				Class<?> returnType;
+				ComponentKnowledge ck;
+				List<ComponentKnowledge> result = new LinkedList<ComponentKnowledge>();
+				for (Method im : initMethods) {
+					returnType = im.getReturnType();
+					if (Collection.class.isAssignableFrom(returnType)) {
+						Collection<?> ckCollection = (Collection<?>) im.invoke(
+								null, new Object[] {});
+						for (Object o : ckCollection) {
+							ck = (ComponentKnowledge) o;
+							assignUIDIfNotSet(ck);
+							result.add(ck);
+						}
+					} else if (ComponentKnowledge.class
+							.isAssignableFrom(returnType)) {
+						ck = (ComponentKnowledge) initMethods.get(0).invoke(
+								null, new Object[] {});
+						assignUIDIfNotSet(ck);
+						result.add(ck);
+					}
+				}
+				return result;
 			} catch (Exception e) {
 				System.out
 						.println("Component Knowledge Initialization exception!");
@@ -129,6 +153,11 @@ public class ComponentParser {
 		return clazz != null
 				&& ComponentKnowledge.class.isAssignableFrom(clazz)
 				&& clazz.getAnnotation(DEECoComponent.class) != null;
+	}
+
+	private void assignUIDIfNotSet(ComponentKnowledge ck) {
+		if (ck.id == null || ck.id.equals(""))
+			ck.id = UUID.randomUUID().toString();
 	}
 
 }

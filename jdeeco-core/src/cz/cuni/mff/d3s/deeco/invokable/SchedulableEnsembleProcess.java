@@ -57,8 +57,8 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 	 *            retrieval
 	 */
 	public SchedulableEnsembleProcess(KnowledgeManager km, ProcessSchedule scheduling, Membership membership,
-			ParameterizedMethod mapper) {
-		super(km, scheduling);
+			ParameterizedMethod mapper, ClassLoader contextClassLoader) {
+		super(km, scheduling, contextClassLoader);
 		
 		this.membership = membership;
 		this.mapper = mapper;

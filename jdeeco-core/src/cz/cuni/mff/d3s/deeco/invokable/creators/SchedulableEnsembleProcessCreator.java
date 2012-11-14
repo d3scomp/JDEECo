@@ -29,8 +29,8 @@ public class SchedulableEnsembleProcessCreator extends
 
 
 	@Override
-	public SchedulableEnsembleProcess extract(KnowledgeManager km) {
-		return new SchedulableEnsembleProcess(km, scheduling, membership.extract(), mapper.extract());
+	public SchedulableEnsembleProcess extract(KnowledgeManager km, ClassLoader contextClassLoader) {
+		return new SchedulableEnsembleProcess(km, scheduling, membership.extract(), mapper.extract(), contextClassLoader);
 	}
 
 }

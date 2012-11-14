@@ -12,15 +12,26 @@ import cz.cuni.mff.d3s.deeco.scheduling.ProcessTriggeredSchedule;
 
 public class TriggeredSchedulableProcess implements IKnowledgeChangeListener {
 
-	public SchedulableProcess sp;
+	public final SchedulableProcess sp;
 
 	public TriggeredSchedulableProcess(SchedulableProcess sp) {
 		this.sp = sp;
 	}
 
 	@Override
-	public void knowledgeChanged(String triggerer, ETriggerType recMode) {
-		sp.invoke(triggerer, recMode);
+	public void knowledgeChanged(final String triggerer,
+			final ETriggerType recMode) {
+		Thread t = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				if (sp.contextClassLoader != null)
+					Thread.currentThread().setContextClassLoader(
+							sp.contextClassLoader);
+				sp.invoke(triggerer, recMode);
+			}
+		});
+		t.run();
 	}
 
 	public boolean equals(Object o) {
@@ -38,15 +49,15 @@ public class TriggeredSchedulableProcess implements IKnowledgeChangeListener {
 			return getEvaluatedKnowledgePaths();
 		}
 	}
-	
+
 	public KnowledgeManager getKnowledgeManager() {
 		return sp.km;
 	}
-	
+
 	public void registerListener() {
 		getKnowledgeManager().registerListener(this);
 	}
-	
+
 	public void unregisterListener() {
 		getKnowledgeManager().unregisterListener(this);
 	}

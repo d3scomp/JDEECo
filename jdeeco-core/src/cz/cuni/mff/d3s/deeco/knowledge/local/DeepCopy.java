@@ -1,7 +1,6 @@
 package cz.cuni.mff.d3s.deeco.knowledge.local;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 
@@ -21,6 +20,8 @@ public class DeepCopy {
      * be serialized.
      */
     public static Object copy(Object orig) {
+    	if (orig == null)
+    		return null;
         Object obj = null;
         try {
             // Write the object out to a byte array
@@ -33,9 +34,10 @@ public class DeepCopy {
 
             // Retrieve an input stream from the byte array and read
             // a copy of the object back in.
-            ObjectInputStream in =
-                new ObjectInputStream(fbos.getInputStream());
+            TCCLObjectInputStream in =
+                new TCCLObjectInputStream(fbos.getInputStream());
             obj = in.readObject();
+            in.close();
         }
         catch(IOException e) {
             e.printStackTrace();            

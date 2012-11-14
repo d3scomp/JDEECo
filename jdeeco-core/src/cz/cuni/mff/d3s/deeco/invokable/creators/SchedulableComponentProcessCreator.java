@@ -34,8 +34,8 @@ public class SchedulableComponentProcessCreator extends
 
 
 	@Override
-	public SchedulableComponentProcess extract(KnowledgeManager km) {
-		return new SchedulableComponentProcess(km, scheduling, process.extract(), lockingMode, componentId);
+	public SchedulableComponentProcess extract(KnowledgeManager km, ClassLoader contextClassLoader) {
+		return new SchedulableComponentProcess(km, scheduling, process.extract(), lockingMode, componentId, contextClassLoader);
 	}
 
 }

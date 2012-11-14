@@ -6,6 +6,13 @@ import java.util.List;
 import cz.cuni.mff.d3s.deeco.invokable.creators.SchedulableComponentProcessCreator;
 import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
 
+/**
+ * jDEECo internal representation of a component, containing both initial
+ * knowledge and component process crreators.
+ * 
+ * @author Michal Kit
+ * 
+ */
 public class ParsedComponent {
 
 	private ComponentKnowledge initialKnowledge;
@@ -16,15 +23,27 @@ public class ParsedComponent {
 		processCreators = new LinkedList<SchedulableComponentProcessCreator>();
 	}
 
-	public ParsedComponent(List<SchedulableComponentProcessCreator> processCreators, ComponentKnowledge initialKnowledge) {
+	public ParsedComponent(
+			List<SchedulableComponentProcessCreator> processCreators,
+			ComponentKnowledge initialKnowledge) {
 		this.initialKnowledge = initialKnowledge;
 		this.processCreators = processCreators;
 	}
 
+	/**
+	 * Retrieves initial knowledge of the component.
+	 * 
+	 * @return Initial knowledge of the component.
+	 */
 	public ComponentKnowledge getInitialKnowledge() {
 		return initialKnowledge;
 	}
 
+	/**
+	 * Retrieves component processes.
+	 * 
+	 * @return Processes of the component.
+	 */
 	public List<SchedulableComponentProcessCreator> getProcesses() {
 		return processCreators;
 	}

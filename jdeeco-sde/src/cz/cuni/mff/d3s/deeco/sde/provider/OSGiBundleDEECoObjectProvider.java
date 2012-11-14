@@ -36,4 +36,13 @@ public class OSGiBundleDEECoObjectProvider extends ClassDEECoObjectProvider {
 			}
 		}
 	}
+	
+	@Override
+	public ClassLoader getContextClassLoader() {
+		if (!rawComponents.isEmpty())
+			return rawComponents.get(0).getClassLoader();
+		if (!rawEnsembles.isEmpty())
+			return rawEnsembles.get(0).getClassLoader();
+		return null;
+	}
 }

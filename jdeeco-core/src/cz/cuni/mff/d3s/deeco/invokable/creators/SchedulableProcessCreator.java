@@ -24,5 +24,9 @@ public abstract class SchedulableProcessCreator implements IScheduleableProcessC
 	}
 
 
-	public abstract SchedulableProcess extract(KnowledgeManager km);
+	public SchedulableProcess extract(KnowledgeManager km) {
+		return extract(km, null);
+	}
+	
+	public abstract SchedulableProcess extract(KnowledgeManager km, ClassLoader contextClassLoaader);
 }

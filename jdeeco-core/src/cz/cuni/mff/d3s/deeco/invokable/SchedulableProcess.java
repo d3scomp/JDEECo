@@ -40,40 +40,44 @@ public abstract class SchedulableProcess implements Serializable {
 
 	private final InputParametersHelper iph;
 	private final OutputParametersHelper oph;
-
+	
 	public final KnowledgeManager km;
+	public final ClassLoader contextClassLoader;
 
 	public final ProcessSchedule scheduling;
-	
+
 	protected static class ParametersPair {
-		public final Object originalValue; // Original value taken from the repository
-		public final Object value;		   // Newly cloned instance of the originalValue
-		
+		public final Object originalValue; // Original value taken from the
+											// repository
+		public final Object value; // Newly cloned instance of the originalValue
+
 		public ParametersPair(Object originalValue) {
 			this.originalValue = originalValue;
 			this.value = DeepCopy.copy(originalValue);
 		}
-		
+
 		/**
 		 * From the source array creates array of {@link ParametersPair#value}
 		 * 
-		 * @param source Array where values are taken
+		 * @param source
+		 *            Array where values are taken
 		 * @return Extracted {@link ParametersPair#value} values
 		 */
 		static public Object[] extractValues(ParametersPair[] source) {
 			Object[] result = new Object[source.length];
-			for(int i = 0; i < source.length; i++) {
+			for (int i = 0; i < source.length; i++) {
 				result[i] = source[i].value;
 			}
 			return result;
 		}
 	}
 
-	public SchedulableProcess(KnowledgeManager km, ProcessSchedule scheduling) {
+	public SchedulableProcess(KnowledgeManager km, ProcessSchedule scheduling, ClassLoader contextClassLoader) {
 		this.iph = new InputParametersHelper();
 		this.oph = new OutputParametersHelper();
 		this.scheduling = scheduling;
 		this.km = km;
+		this.contextClassLoader = contextClassLoader;
 	}
 
 	protected ParametersPair[] getParameterMethodValues(List<Parameter> in,
@@ -123,7 +127,8 @@ public abstract class SchedulableProcess implements Serializable {
 			}
 			return result;
 		} catch (KMException kme) {
-			//System.out.println("Parameter getting error!: " + kme.getMessage());
+			// System.out.println("Parameter getting error!: " +
+			// kme.getMessage());
 			if (session == null)
 				localSession.cancel();
 			throw kme;
@@ -192,7 +197,8 @@ public abstract class SchedulableProcess implements Serializable {
 						ParametersPair valuePair = parameterValues[p.index];
 						oph.storeOutValue(p.kPath.getEvaluatedPath(km,
 								coordinator, member, localSession),
-								valuePair.originalValue, valuePair.value, km, localSession);
+								valuePair.originalValue, valuePair.value, km,
+								localSession);
 					}
 					if (session == null)
 						localSession.end();

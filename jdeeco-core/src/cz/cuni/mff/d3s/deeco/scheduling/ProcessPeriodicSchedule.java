@@ -16,12 +16,14 @@
 package cz.cuni.mff.d3s.deeco.scheduling;
 
 /**
- * Class representing periodic schedule
+ * Class representing periodic scheduling.
  * 
  * @author Michal Kit
  * 
  */
 public class ProcessPeriodicSchedule implements ProcessSchedule {
+
+	private static final long serialVersionUID = -2588113311351580211L;
 	/**
 	 * Period interval in ms.
 	 */

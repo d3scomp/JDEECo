@@ -39,9 +39,9 @@ public class SchedulableComponentProcess extends SchedulableProcess {
 	private final String componentId;
 
 	public SchedulableComponentProcess(KnowledgeManager km, ProcessSchedule scheduling, ParameterizedMethod process,
-			ELockingMode lockingMode, String componentId) {
+			ELockingMode lockingMode, String componentId, ClassLoader contextClassLoader) {
 		
-		super(km, scheduling);
+		super(km, scheduling, contextClassLoader);
 		
 		this.process = process;
 		this.lockingMode = lockingMode;
@@ -73,7 +73,7 @@ public class SchedulableComponentProcess extends SchedulableProcess {
 				try {
 					evaluateMethod();
 				} catch (KMException kme) {
-					System.out.println("SKP message - " + kme.getMessage());
+					System.out.println("SCP message - " + kme.getMessage());
 				}
 			}
 		} catch (Exception e) {

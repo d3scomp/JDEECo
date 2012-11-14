@@ -18,11 +18,17 @@ public abstract class Scheduler implements IScheduler {
 		running = false;
 	}
 
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.scheduling.IScheduler#isRunning()
+	 */
 	@Override
 	public boolean isRunning() {
 		return running;
 	}
 
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.scheduling.IScheduler#register(java.util.List)
+	 */
 	@Override
 	public void register(List<? extends SchedulableProcess> processes) {
 		if (!running)
@@ -31,6 +37,9 @@ public abstract class Scheduler implements IScheduler {
 			}
 	}
 
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.scheduling.IScheduler#register(cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess)
+	 */
 	@Override
 	public boolean register(SchedulableProcess process) {
 		if (!running) {
@@ -43,6 +52,9 @@ public abstract class Scheduler implements IScheduler {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.scheduling.IScheduler#unregister(java.util.List)
+	 */
 	@Override
 	public void unregister(List<SchedulableProcess> processes) {
 		if (!running)
@@ -51,6 +63,9 @@ public abstract class Scheduler implements IScheduler {
 			}
 	}
 
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.scheduling.IScheduler#unregister(cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess)
+	 */
 	@Override
 	public boolean unregister(SchedulableProcess process) {
 		if (!running)
@@ -65,16 +80,25 @@ public abstract class Scheduler implements IScheduler {
 		return false;
 	}
 	
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.scheduling.IScheduler#getPeriodicProcesses()
+	 */
 	@Override
 	public List<SchedulableProcess> getPeriodicProcesses() {
 		return periodicProcesses;
 	}
 	
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.scheduling.IScheduler#getTriggeredProcesses()
+	 */
 	@Override
 	public List<TriggeredSchedulableProcess> getTriggeredProcesses() {
 		return triggeredProcesses;
 	}
 
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.scheduling.IScheduler#clearAll()
+	 */
 	@Override
 	public void clearAll() {
 		if (running)
@@ -84,8 +108,4 @@ public abstract class Scheduler implements IScheduler {
 			unregister(tsp.sp);
 		}
 	}
-
-	public abstract void start();
-
-	public abstract void stop();
 }

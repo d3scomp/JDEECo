@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 public class StructureHelper {
-	public static String[] getStructureFromObject(Object value) {
+	public static Object[] getStructureFromObject(Object value) {
 		if (value == null)
 			return null;
 		Class<?> structure = value.getClass();
@@ -18,18 +18,18 @@ public class StructureHelper {
 		return null;
 	}
 
-	public static String[] getStructureFromClass(Class<?> c) {
+	public static Object[] getStructureFromClass(Class<?> c) {
 		return TypeUtils.getClassFieldNamesAsString(c);
 	}
 
-	public static String[] getStructureFromList(Collection<?> value) {
-		String[] result = new String[value.size()];
+	public static Object[] getStructureFromList(Collection<?> value) {
+		Object[] result = new String[value.size()];
 		for (int i = 0; i < result.length; i++)
 			result[i] = Integer.toString(i);
 		return result;
 	}
 
-	public static String[] getStructureFromMap(Map<String, ?> value) {
-		return (String[]) value.keySet().toArray();
+	public static Object[] getStructureFromMap(Map<String, ?> value) {
+		return value.keySet().toArray();
 	}
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>cz.cuni.mff.d3s.deeco</name>
+	<name>cz.cuni.mff.d3s.jdeeco.core</name>
 	<comment>JavaCC Nature</comment>
 	<projects>
 	</projects>
@@ -15,14 +15,20 @@
 			<arguments>
 			</arguments>
 		</buildCommand>
+		<buildCommand>
+			<name>org.eclipse.m2e.core.maven2Builder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
 	</buildSpec>
 	<natures>
+		<nature>org.eclipse.m2e.core.maven2Nature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>sf.eclipse.javacc.javaccnature</nature>
 	</natures>
 	<filteredResources>
 		<filter>
-			<id>1346758131157</id>
+			<id>0</id>
 			<name></name>
 			<type>10</type>
 			<matcher>
@@ -31,7 +37,7 @@
 			</matcher>
 		</filter>
 		<filter>
-			<id>1346758131160</id>
+			<id>0</id>
 			<name></name>
 			<type>10</type>
 			<matcher>

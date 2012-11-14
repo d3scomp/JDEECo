@@ -56,14 +56,16 @@ public class OutputParametersHelper implements Serializable {
 				else
 					System.out.println("Something is wrong!");
 			} else if (!(TypeUtils.isList(nvClass) || TypeUtils.isList(ovClass))) {
-				String[] nvStructure = StructureHelper
+				Object [] nvStructure = StructureHelper
 						.getStructureFromObject(newValue), ovStructure = StructureHelper
 						.getStructureFromObject(orgValue);
 				if (ovStructure == null || nvStructure == null
 						|| !Arrays.deepEquals(nvStructure, ovStructure))
 					km.alterKnowledge(knowledgePath, newValue, session);
 				else {
-					for (String property : nvStructure) {
+					String property;
+					for (Object o : nvStructure) {
+						property = (String) o;
 						storeOutValue(
 								KPBuilder.appendToRoot(knowledgePath, property),
 								getValue(ovClass, orgValue, property),

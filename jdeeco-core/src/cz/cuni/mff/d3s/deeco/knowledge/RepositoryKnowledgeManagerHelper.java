@@ -52,14 +52,14 @@ public class RepositoryKnowledgeManagerHelper {
 				knowledgePath, session);
 	}
 
-	public String[] getStructure(boolean withdrawal, String knowledgePath,
+	public Object[] getStructure(boolean withdrawal, String knowledgePath,
 			ISession session) throws KRExceptionAccessError {
 		String tempPath = KPBuilder.appendToRoot(knowledgePath,
 				ConstantKeys.STRUCTURE_ID);
 		try {
 			Object[] result = (Object[]) getFlat(withdrawal, tempPath, session);
 			if (result.length == 1)
-				return (String[]) result[0];
+				return (Object[]) result[0];
 			else
 				return null;
 		} catch (KRExceptionUnavailableEntry uee) {
@@ -67,9 +67,9 @@ public class RepositoryKnowledgeManagerHelper {
 		}
 	}
 
-	public String[] putStructure(String knowledgePath, Object value,
+	public Object[] putStructure(String knowledgePath, Object value,
 			ISession session, boolean modify) throws KRExceptionAccessError {
-		String[] oldStructure, newStructure = StructureHelper
+		Object[] oldStructure, newStructure = StructureHelper
 				.getStructureFromObject(value);
 		boolean store = value != null && newStructure != null;
 		String structurePath = KPBuilder.appendToRoot(knowledgePath,
@@ -77,12 +77,12 @@ public class RepositoryKnowledgeManagerHelper {
 		try {
 			if (modify) {
 				Object[] tObjects = (Object[]) kr.get(structurePath, session);
-				oldStructure = (String[]) tObjects[0];
+				oldStructure = (Object[]) tObjects[0];
 				if ((newStructure != null || oldStructure != null)
 						&& !Arrays.deepEquals(oldStructure, newStructure)) {
 					kr.take(structurePath, session);
 					String tempPath;
-					List<String> nsList = Arrays.asList(newStructure);
+					List<?> nsList = Arrays.asList(newStructure);
 					for (Object s : oldStructure) {
 						if (nsList.contains(s))
 							continue;

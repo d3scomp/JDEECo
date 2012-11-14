@@ -16,7 +16,7 @@ Export-Package: cz.cuni.mff.d3s.deeco.annotations,
  cz.cuni.mff.d3s.deeco.runtime,
  cz.cuni.mff.d3s.deeco.scheduling
 Bundle-Name: cz.cuni.mff.d3s.deeco.jdeeco
-Bundle-SymbolicName: cz.cuni.mff.d3s.deeco.jdeeco
+Bundle-SymbolicName: cz.cuni.mff.d3s.jdeeco.coreservices
 Service-Component: OSGI-INF/*.xml
 Bundle-ActivationPolicy: lazy
 

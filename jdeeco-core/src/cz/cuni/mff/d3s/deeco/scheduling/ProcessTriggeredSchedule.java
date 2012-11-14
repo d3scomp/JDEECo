@@ -26,8 +26,11 @@ import cz.cuni.mff.d3s.deeco.invokable.Parameter;
  * 
  */
 public class ProcessTriggeredSchedule implements ProcessSchedule {
-	public List<Parameter> parameters;
+
+	private static final long serialVersionUID = 6761694624983409719L;
 	
+	public List<Parameter> parameters;
+
 	public ProcessTriggeredSchedule(List<Parameter> parameters) {
 		this.parameters = parameters;
 	}

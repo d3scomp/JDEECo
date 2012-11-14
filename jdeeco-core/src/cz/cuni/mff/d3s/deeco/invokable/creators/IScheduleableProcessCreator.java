@@ -15,5 +15,6 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 public interface IScheduleableProcessCreator extends Serializable {
 
 	public abstract SchedulableProcess extract(KnowledgeManager km);
+	public abstract SchedulableProcess extract(KnowledgeManager km, ClassLoader contextClasslLoader);
 
 }

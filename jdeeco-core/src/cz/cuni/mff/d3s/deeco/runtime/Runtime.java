@@ -100,8 +100,9 @@ public class Runtime implements IRuntime {
 	 */
 	@Override
 	public void registerComponentsAndEnsembles(AbstractDEECoObjectProvider provider) {
+		ClassLoader  contextClassLoader = provider.getContextClassLoader();
 		addSchedulablePorcesses(ProcessInstantiator.createProcesses(
-				provider.getEnsembles(), km));
+				provider.getEnsembles(), km, contextClassLoader));
 		for (ParsedComponent component : provider.getComponents()) {
 			if (!addComponentKnowledge(component.getInitialKnowledge(), km)) {
 				System.out.println("Error when writng initial knowledge: "
@@ -109,7 +110,7 @@ public class Runtime implements IRuntime {
 				continue;
 			}
 			addSchedulablePorcesses(ProcessInstantiator.createProcesses(
-					component.getProcesses(), km));
+					component.getProcesses(), km, contextClassLoader));
 		}
 	}
 	

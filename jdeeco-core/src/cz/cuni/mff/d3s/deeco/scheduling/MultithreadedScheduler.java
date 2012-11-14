@@ -77,6 +77,8 @@ public class MultithreadedScheduler extends Scheduler {
 		@Override
 		public void run() {
 			try {
+				if (process.contextClassLoader != null)
+					Thread.currentThread().setContextClassLoader(process.contextClassLoader);
 				process.invoke();
 			} catch (Exception e) {
 				System.out.println("Process scheduled exception!");

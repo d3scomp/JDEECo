@@ -3,6 +3,13 @@ package cz.cuni.mff.d3s.deeco.provider;
 import cz.cuni.mff.d3s.deeco.processor.ClassFinder;
 import cz.cuni.mff.d3s.deeco.processor.ClassProcessor;
 
+/**
+ * Provider class used to retrieve components and ensemble definitions after
+ * serialization.
+ * 
+ * @author Michal Kit
+ * 
+ */
 public class FileDEECoObjectProvider extends AbstractDEECoObjectProvider {
 
 	private final String fileName;
@@ -18,11 +25,25 @@ public class FileDEECoObjectProvider extends AbstractDEECoObjectProvider {
 		this.parentClassLoader = parentClassLoader;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider#processComponents
+	 * ()
+	 */
 	@Override
 	protected void processComponents() {
 		processAll();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider#processEnsembles
+	 * ()
+	 */
 	@Override
 	protected void processEnsembles() {
 		processAll();

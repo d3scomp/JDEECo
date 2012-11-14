@@ -9,14 +9,39 @@ import java.util.Map;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableComponentProcess;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableEnsembleProcess;
 import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
+import cz.cuni.mff.d3s.deeco.knowledge.Knowledge;
 import cz.cuni.mff.d3s.deeco.runtime.IEnsembleComponentInformer;
 
+/**
+ * Utility claas used to print information about ensembles and components.
+ * 
+ * @author Michal Kit
+ * 
+ */
 public class Printer {
 
+	/**
+	 * Prints information about a component process.
+	 * 
+	 * @param scp
+	 *            Component process instance.
+	 * @return Well formated string containing details about the given component
+	 *         process.
+	 */
 	public static String printComponentProcess(SchedulableComponentProcess scp) {
 		return printComponentProcess(scp, 0);
 	}
 
+	/**
+	 * Prints information about a component process. The result is indented.
+	 * 
+	 * @param scp
+	 *            Component process instance.
+	 * @param indentSize
+	 *            Indentation size in front of each of the lines.
+	 * @return Well formated string containing details about the given component
+	 *         process.
+	 */
 	public static String printComponentProcess(SchedulableComponentProcess scp,
 			int indentSize) {
 		if (scp == null)
@@ -25,10 +50,28 @@ public class Printer {
 				+ ": " + scp.getProcessMethod().getName() + "\n", indentSize);
 	}
 
+	/**
+	 * Prints information about an ensemble process.
+	 * 
+	 * @param sep
+	 *            Ensemble process instance.
+	 * @return Well formated string containing details about the given component
+	 *         process.
+	 */
 	public static String printEnsemble(SchedulableEnsembleProcess sep) {
 		return printEnsemble(sep, 0);
 	}
 
+	/**
+	 * Prints information about an ensemble process. The result is indented.
+	 * 
+	 * @param sep
+	 *            Ensemble process instance.
+	 * @param indentSize
+	 *            Indentation size in front of each of the lines.
+	 * @return Well formated string containing details about the given component
+	 *         process.
+	 */
 	public static String printEnsemble(SchedulableEnsembleProcess sep,
 			int indentSize) {
 		if (sep == null)
@@ -38,10 +81,26 @@ public class Printer {
 				+ "\n", indentSize);
 	}
 
+	/**
+	 * Prints information about a component knowledge.
+	 * 
+	 * @param ck
+	 *            Component knowledge.
+	 * @return Well formated string containing details about the given component
+	 *         knowledge.
+	 */
 	public static String printComponentKnowledge(Object ck) {
 		return printComponentKnowledge(ck, 0);
 	}
 
+	/**
+	 * Prints information about a component knowledge. The result is indented.
+	 * 
+	 * @param ck Component knowledge.
+	 * @param indentSize Indentation size in front of each of the lines.
+	 * @return Well formated string containing details about the given component
+	 *         knowledge.
+	 */
 	public static String printComponentKnowledge(Object ck, int indentSize) {
 		String result = "Knowledge: " + retrieveComponentId(ck) + "\n";
 		result += printKnowledge(ck, indentSize + 1);
@@ -63,39 +122,41 @@ public class Printer {
 		return result;
 	}
 
-	public static String printComponentsInfo(IEnsembleComponentInformer infoProvider) {
+	public static String printComponentsInfo(
+			IEnsembleComponentInformer infoProvider) {
 		return printComponentsInfo(infoProvider,
 				infoProvider.getComponentsIds());
 	}
 
-	public static String printComponentsInfo(IEnsembleComponentInformer infoProvider,
-			List<String> componentsIds) {
+	public static String printComponentsInfo(
+			IEnsembleComponentInformer infoProvider, List<String> componentsIds) {
 		String result = "";
 		if (componentsIds != null && !componentsIds.isEmpty()) {
 			for (String cId : componentsIds) {
 				result += printComponentInfo(
 						infoProvider.getComponentProcesses(cId),
 						infoProvider.getComponentKnowledge(cId));
-				result += "\n" + StringUtils.repeat("-", 40) + "\n";
+				result += "\n" + StringUtils.repeat("-", 100) + "\n\n";
 			}
 			return result;
 		}
 		return "Components not found.";
 	}
 
-	public static String printKnowledgesInfo(IEnsembleComponentInformer infoProvider) {
+	public static String printKnowledgesInfo(
+			IEnsembleComponentInformer infoProvider) {
 		return printKnowledgesInfo(infoProvider,
 				infoProvider.getComponentsIds());
 	}
 
-	public static String printKnowledgesInfo(IEnsembleComponentInformer infoProvider,
-			List<String> componentsIds) {
+	public static String printKnowledgesInfo(
+			IEnsembleComponentInformer infoProvider, List<String> componentsIds) {
 		String result = "";
 		if (componentsIds != null && !componentsIds.isEmpty()) {
 			for (String cId : componentsIds) {
 				result += printComponentKnowledge(infoProvider
 						.getComponentKnowledge(cId));
-				result += "\n" + StringUtils.repeat("-", 40) + "\n";
+				result += "\n" + StringUtils.repeat("-", 100) + "\n\n";
 			}
 			return result;
 		}
@@ -126,7 +187,7 @@ public class Printer {
 				value = mCK.get(key);
 				result += processSingleNode(key, value, indentSize) + "\n";
 			}
-		} else if (ck instanceof ComponentKnowledge) {
+		} else if (ck instanceof Knowledge) {
 			for (Field f : ck.getClass().getFields()) {
 				try {
 					value = f.get(ck);
@@ -146,7 +207,7 @@ public class Printer {
 		String result = StringUtils.padLeft(name, indentSize) + ": ";
 		if (value == null) {
 			result += "null\n";
-		} else if (value instanceof Map) {
+		} else if (value instanceof Map || value instanceof Knowledge) {
 			result += "\n" + printKnowledge(value, indentSize + 2);
 		} else {
 			result += "(" + value.getClass() + ") ";

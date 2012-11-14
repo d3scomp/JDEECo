@@ -25,18 +25,20 @@ import cz.cuni.mff.d3s.deeco.invokable.AnnotationHelper;
 import cz.cuni.mff.d3s.deeco.invokable.Parameter;
 
 /**
- * Helper class for handling scheduling information.
+ * Helper class for used for scheduling information retrieval.
  * 
  * @author Michal Kit
  * 
  */
 public class ScheduleHelper {
 	/**
-	 * Retrieves scheduling information from the provided annotation.
+	 * Retrieves periodic scheduling information (if any) from the given
+	 * annotation.
 	 * 
 	 * @param scheduleAnnotation
-	 *            annotation to be parsed
-	 * @return schedule information
+	 *            An annotation to be checked.
+	 * @return Schedule information or null in case of not matching annotation
+	 *         class.
 	 */
 	public static ProcessSchedule getPeriodicSchedule(
 			Annotation scheduleAnnotation) {
@@ -47,6 +49,15 @@ public class ScheduleHelper {
 			return null;
 	}
 
+	/**
+	 * Retrieves triggered scheduling information (if any) from given function
+	 * header constructs.
+	 * 
+	 * @param pAnnotations Parameter annotations from the function header.
+	 * @param in List of input parameters from the function header.
+	 * @param inOut List of in/out parameters from the function header.
+	 * @return
+	 */
 	public static ProcessSchedule getTriggeredSchedule(
 			Annotation[][] pAnnotations, List<Parameter> in,
 			List<Parameter> inOut) {

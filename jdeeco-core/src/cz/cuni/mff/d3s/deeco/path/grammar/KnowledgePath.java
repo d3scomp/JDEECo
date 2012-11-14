@@ -39,7 +39,11 @@ public class KnowledgePath implements Serializable {
 				result = member;
 		} else {// expression
 			result = evaluatePath((PNode) pathNode.value, km, coord, member, session);
-			result = (String) km.getKnowledge(result, session);
+			Object o = km.getKnowledge(result, session);
+			if (o instanceof Object [] && ((Object []) o).length == 1)
+				result = (String) ((Object []) o)[0];
+			else
+				result = (String) o;
 		}
 		if (pathNode.next != null)
 			result += PathGrammar.PATH_SEPARATOR

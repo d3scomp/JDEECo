@@ -3,7 +3,7 @@
 	
 	<!-- set global properties for this build -->
 	<property name="src" location="jdeeco-core/src"/>
-	<property name="demo" location="jdeeco-core/demo"/>
+	<property name="demo" location="jdeeco-demo/src"/>
 	<property name="build" location="jdeeco-core/bin"/>
 	<property name="dist" location="dist"/>
 	<property name="libs" location="libs"/>
@@ -156,11 +156,16 @@
 		<ant antfile="build.xml" dir="jdeeco-core" target="all"/>
 	</target>
 	
+	<target name="ant-jdeeco-demo">
+		<ant antfile="build.xml" dir="jdeeco-demo" target="all"/>
+	</target>
+	
 	<!-- prepare new setup -->
 	<target name="all"
 		description="Cleans the projects and creates a distribution of JDEECo, demos and sources from scratch">
 		<antcall target="clean"/>
 		<antcall target="ant-jdeeco-core"/>
+		<antcall target="ant-jdeeco-demo"/>
 		<antcall target="get-ar"/>
 	</target>
 

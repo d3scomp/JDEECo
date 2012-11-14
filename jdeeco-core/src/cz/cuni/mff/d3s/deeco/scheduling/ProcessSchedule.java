@@ -18,7 +18,7 @@ package cz.cuni.mff.d3s.deeco.scheduling;
 import java.io.Serializable;
 
 /**
- * Top level interface for describing schedulability methods.
+ * Interface serving as an ancestor for different ways of scheduling.
  * 
  * @author Michal Kit
  * 
