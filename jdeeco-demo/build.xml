@@ -1,0 +1,34 @@
+<project name="JDEECo-Core" default="all" basedir=".">
+	<description>JDEECo build file</description>
+
+	<!-- compile subprojects -->
+
+	<target name="compile-demo" description="Compiles the demos sources" >
+		<mkdir dir="${build}/demo"/>
+		<javac srcdir="${demo}" destdir="${build}/demo" debug="${debug}">
+			<classpath>
+				<pathelement location="${libs}/jsk-lib.jar"/>
+				<pathelement location="${libs}/jsk-platform.jar"/>
+				<pathelement location="${dist}/jdeeco.jar"/>
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="dist-demo" depends="compile-demo"
+        description="Generates a jar with the demos" >
+		<jar jarfile="${dist}/demo.jar" basedir="${build}/demo"/>
+	</target>
+
+	<!-- zip source files -->
+	<target name="zip-demo" description="Creates a zip with the demo source files" >
+		<zip destfile="${dist}/demo-sources.zip">
+			<zipfileset dir="${demo}"/>
+		</zip>
+	</target>
+	
+	<target name="all">
+		<antcall target="dist-demo"/>
+		<antcall target="zip-demo"/>
+	</target>
+	
+</project>

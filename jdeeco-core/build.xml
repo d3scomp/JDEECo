@@ -13,6 +13,18 @@
 		</javac>
 	</target>
 
+	<target name="compile-demo" depends="dist-jdeeco"
+        description="Compiles the demos sources" >
+		<mkdir dir="${build}/demo"/>
+		<javac srcdir="${demo}" destdir="${build}/demo" debug="${debug}">
+			<classpath>
+				<pathelement location="${libs}/jsk-lib.jar"/>
+				<pathelement location="${libs}/jsk-platform.jar"/>
+				<pathelement location="${dist}/jdeeco.jar"/>
+			</classpath>
+		</javac>
+	</target>
+
 	<!-- package into jar files -->
 	<target name="dist-jdeeco" depends="compile-jdeeco"
         description="Generates a jar with JDEECo runtime" >
@@ -21,14 +33,37 @@
 		</jar>
 	</target>
 
+	<target name="dist-demo" depends="compile-demo"
+        description="Generates a jar with the demos" >
+		<jar jarfile="${dist}/demo.jar" basedir="${build}/demo"/>
+	</target>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	<!-- zip source files -->
+	<target name="zip" description="Creates a zip with the source files" >
+		<zip destfile="${dist}/sources.zip">
 	<target name="zip-jdeeco" description="Creates a zip with the source files" >
 		<zip destfile="${dist}/sources-jdeeco.zip">
 			<zipfileset dir="${src}"/>
+			<zipfileset dir="${demo}"/>
 		</zip>
 	</target>
 	
 	<target name="all">
+		<antcall target="dist-demo"/>
+		<antcall target="zip"/>
 		<antcall target="dist-jdeeco"/>
 		<antcall target="zip-jdeeco"/>
 	</target>

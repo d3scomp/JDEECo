@@ -137,6 +137,8 @@
 	
 	<!-- Run cloud demo under jpf -->
 	<target name="jpf-cloud">
+        <antcall target="ant-jdeeco-core"/>
+        <ant antfile="build.xml" dir="jdeeco-core" target="dist-cloud-demo"/>
 		<java fork="true" classname="cz.cuni.mff.d3s.deeco.runtime.PreLauncher" dir="${dist}">
 			<arg value="cloud-demo.jar"/>
 			<classpath>

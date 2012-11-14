@@ -1,0 +1,51 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>cz.cuni.mff.d3s.jdeeco</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
+	<modules>
+		<module>jdeeco-core</module>
+		<module>jdeeco-demo</module>
+	</modules>
+	<properties>
+		<dist>${basedir}/dist</dist>
+		<river>${basedir}/${dist}/apache-river</river>
+		<config>${basedir}/config</config>
+	</properties>
+	<profiles>
+		<profile>
+			<id>apache-river</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<phase>build</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<get
+											src="http://apache.mirror.dkm.cz/pub/apache/river/river-2.2.0/apache-river-2.2.0-bin.zip"
+											dest="${dist}/apache-river.zip" verbose="on" />
+										<mkdir dir="${river}" />
+										<unzip src="${dist}/apache-river.zip" dest="${dist}" />
+										<move file="${dist}/apache-river-2.2.0" tofile="${river}" />
+										<delete file="${dist}/apache-river.zip" />
+										<copy todir="${river}-config">
+											<fileset dir="config/apache-river-config" />
+										</copy>
+									</tasks>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>
