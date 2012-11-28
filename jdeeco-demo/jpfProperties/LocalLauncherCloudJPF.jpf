@@ -1,0 +1,16 @@
+target=cz.cuni.mff.d3s.deeco.demo.cloud.LocalLauncherCloudJPF
+
+jpf-core.classpath+=;${jdeeco-dist}/demo.jar;${jdeeco-dist}/jdeeco.jar
+jpf-core.sourcepath=${jdeeco-src};${jdeeco-src-demo}
+
+report.console.property_violation=error,trace
+#listener+=gov.nasa.jpf.listener.SearchMonitor,gov.nasa.jpf.listener.CGLocations
+
+# Not to schedule in atomic blocks
+# approx 2G
+vm.max_transition_length = 2000000000
+
+
+# The only threads are created by jDeeco framework which guarantees that after all the threads are started
+# there is CG.
+cg.threads.break_start=false

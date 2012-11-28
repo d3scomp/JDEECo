@@ -10,6 +10,7 @@
 /jdeeco-example-osgi/NodeBOSGI/bin
 /jdeeco-example-osgi/NodeBOSGI/target
 /dist
+/target
 /jdeeco-core/test-output
 /bin
 doc.zip
