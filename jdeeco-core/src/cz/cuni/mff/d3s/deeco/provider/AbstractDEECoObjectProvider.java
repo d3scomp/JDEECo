@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.deeco.provider;
 
+import java.io.Serializable;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.invokable.creators.SchedulableEnsembleProcessCreator;
@@ -10,7 +11,7 @@ import cz.cuni.mff.d3s.deeco.invokable.creators.SchedulableEnsembleProcessCreato
  * @author Michal Kit
  * 
  */
-public abstract class AbstractDEECoObjectProvider {
+public abstract class AbstractDEECoObjectProvider implements Serializable {
 
 	protected List<ParsedComponent> components;
 	protected List<SchedulableEnsembleProcessCreator> ensembles;

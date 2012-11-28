@@ -1,12 +1,16 @@
 package cz.cuni.mff.d3s.deeco.provider;
 
+import static cz.cuni.mff.d3s.deeco.processor.ComponentParser.extractComponentProcess;
+import static cz.cuni.mff.d3s.deeco.processor.ComponentParser.extractInitialKnowledge;
+import static cz.cuni.mff.d3s.deeco.processor.ComponentParser.isComponentDefinition;
+import static cz.cuni.mff.d3s.deeco.processor.EnsembleParser.extractEnsembleProcess;
+import static cz.cuni.mff.d3s.deeco.processor.EnsembleParser.isEnsembleDefinition;
+
 import java.util.LinkedList;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.invokable.creators.SchedulableEnsembleProcessCreator;
 import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
-import cz.cuni.mff.d3s.deeco.processor.ComponentParser;
-import cz.cuni.mff.d3s.deeco.processor.EnsembleParser;
 
 /**
  * Provider class dealing with component and ensemble definitions retrieved from
@@ -20,9 +24,6 @@ public class ClassDEECoObjectProvider extends AbstractDEECoObjectProvider {
 	protected final List<Class<?>> rawComponents;
 	protected final List<Class<?>> rawEnsembles;
 
-	protected final ComponentParser cp;
-	protected final EnsembleParser ep;
-
 	public ClassDEECoObjectProvider() {
 		this(new LinkedList<Class<?>>(), new LinkedList<Class<?>>());
 	}
@@ -31,8 +32,6 @@ public class ClassDEECoObjectProvider extends AbstractDEECoObjectProvider {
 			List<Class<?>> ensembles) {
 		rawComponents = components;
 		rawEnsembles = ensembles;
-		cp = new ComponentParser();
-		ep = new EnsembleParser();
 	}
 
 	/**
@@ -44,9 +43,9 @@ public class ClassDEECoObjectProvider extends AbstractDEECoObjectProvider {
 	 * @return Addition result.
 	 */
 	public boolean addDEECoObjectClass(Class<?> clazz) {
-		if (cp.isComponentDefinition(clazz))
+		if (isComponentDefinition(clazz))
 			rawComponents.add(clazz);
-		else if (ep.isEnsembleDefinition(clazz))
+		else if (isEnsembleDefinition(clazz))
 			rawEnsembles.add(clazz);
 		else
 			return false;
@@ -64,10 +63,10 @@ public class ClassDEECoObjectProvider extends AbstractDEECoObjectProvider {
 	protected synchronized void processComponents() {
 		components = new LinkedList<ParsedComponent>();
 		for (Class<?> c : rawComponents) {
-			List<ComponentKnowledge> cks = cp.extractInitialKnowledge(c);
+			List<ComponentKnowledge> cks = extractInitialKnowledge(c);
 			if (cks != null) {
 				for (ComponentKnowledge ck : cks)
-					components.add(new ParsedComponent(cp.extractComponentProcess(
+					components.add(new ParsedComponent(extractComponentProcess(
 							c, ck.id), ck));
 			}
 		}
@@ -84,7 +83,7 @@ public class ClassDEECoObjectProvider extends AbstractDEECoObjectProvider {
 	protected synchronized void processEnsembles() {
 		ensembles = new LinkedList<SchedulableEnsembleProcessCreator>();
 		for (Class<?> c : rawEnsembles) {
-			ensembles.add(ep.extractEnsembleProcess(c));
+			ensembles.add(extractEnsembleProcess(c));
 		}
 	}
 

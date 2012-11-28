@@ -118,7 +118,7 @@
 		</parallel>
 	</target>
 	
-	<!-- start cloud demo with tuple spaces as shared memory -->
+	<!-- start convoy demo with tuple spaces as shared memory -->
 	<target name="convoy-ts" description="Runs the convoy demo">
 		<parallel>
 			<antcall target="start-ar"/>

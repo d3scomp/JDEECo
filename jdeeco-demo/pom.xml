@@ -23,6 +23,37 @@
 					<target>1.7</target>
 				</configuration>
 			</plugin>
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>cloud</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<phase>package</phase>
+						<configuration>
+							<classifier>cloud</classifier>
+							<includes>
+								<include>**/cloud/*</include>
+							</includes>
+						</configuration>
+					</execution>
+					<execution>
+						<id>convoy</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<phase>package</phase>
+						<configuration>
+							<classifier>convoy</classifier>
+							<includes>
+								<include>**/convoy/*</include>
+							</includes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
@@ -31,5 +62,27 @@
 			<artifactId>cz.cuni.mff.d3s.jdeeco.core</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>cz.cuni.mff.d3s.zip</groupId>
+			<artifactId>apache-river</artifactId>
+			<version>2.2.0</version>
+			<type>zip</type>
+		</dependency>
+		<dependency>
+			<groupId>cz.cuni.mff.d3s.zip</groupId>
+			<artifactId>gov.nasa.jpf</artifactId>
+			<version>6.0</version>
+			<type>zip</type>
+		</dependency>
 	</dependencies>
+	<repositories>
+		<repository>
+			<id>d3s-releases</id>
+			<url>https://github.com/d3scomp/mvn-repo/raw/master/releases/</url>
+		</repository>
+		<repository>
+			<id>d3s-snapshots</id>
+			<url>https://github.com/d3scomp/mvn-repo/raw/master/snapshots/</url>
+		</repository>
+	</repositories>
 </project>

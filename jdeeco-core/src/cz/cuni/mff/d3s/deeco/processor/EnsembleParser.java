@@ -33,7 +33,8 @@ public class EnsembleParser {
 	 * @return list of {@link SchedulableEnsembleProcess} instances extracted
 	 *         from the class definition
 	 */
-	public SchedulableEnsembleProcessCreator extractEnsembleProcess(Class<?> c) {
+	public static SchedulableEnsembleProcessCreator extractEnsembleProcess(
+			Class<?> c) {
 		if (c == null) {
 			return null;
 		}
@@ -104,7 +105,7 @@ public class EnsembleParser {
 					mapperCreator, membershipCreator);
 	}
 
-	public boolean isEnsembleDefinition(Class<?> clazz) {
+	public static boolean isEnsembleDefinition(Class<?> clazz) {
 		return clazz != null && Ensemble.class.isAssignableFrom(clazz)
 				&& clazz.getAnnotation(DEECoEnsemble.class) != null;
 	}

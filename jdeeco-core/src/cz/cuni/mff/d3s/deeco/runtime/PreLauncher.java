@@ -22,10 +22,10 @@ public class PreLauncher {
 	 */
 	public static void main(String[] args) {
 		if (args == null || args.length == 0) {
-			System.out.println("Wrong parameterTypes!");
+			System.out.println("Wrong parameter number!");
 			return;
 		}
-
+		
 		ClassFinder cf = new ClassFinder();
 		cf.resolve(args);
 		ClassDEECoObjectProvider cdop = ClassProcessor.processClasses(

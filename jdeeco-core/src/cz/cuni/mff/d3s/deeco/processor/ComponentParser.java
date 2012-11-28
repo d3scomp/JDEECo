@@ -40,7 +40,7 @@ public class ComponentParser {
 	 * @return list of {@link SchedulableComponentProcess} instances extracted
 	 *         from the class definition
 	 */
-	public List<SchedulableComponentProcessCreator> extractComponentProcess(
+	public static List<SchedulableComponentProcessCreator> extractComponentProcess(
 			Class<?> c, String root) {
 		if (c == null) {
 			return null;
@@ -114,7 +114,7 @@ public class ComponentParser {
 	 *            class to be parsed
 	 * @return init method or null in case no matching found
 	 */
-	public List<ComponentKnowledge> extractInitialKnowledge(Class<?> c) {
+	public static List<ComponentKnowledge> extractInitialKnowledge(Class<?> c) {
 		List<Method> initMethods = AnnotationHelper.getAnnotatedMethods(c,
 				DEECoInitialize.class);
 		if (initMethods.size() > 0) {
@@ -149,13 +149,15 @@ public class ComponentParser {
 		return null;
 	}
 
-	public boolean isComponentDefinition(Class<?> clazz) {
+	public static boolean isComponentDefinition(Class<?> clazz) {
 		return clazz != null
 				&& ComponentKnowledge.class.isAssignableFrom(clazz)
 				&& clazz.getAnnotation(DEECoComponent.class) != null;
 	}
 
-	private void assignUIDIfNotSet(ComponentKnowledge ck) {
+	// ------------- Private functions -------------------
+
+	private static void assignUIDIfNotSet(ComponentKnowledge ck) {
 		if (ck.id == null || ck.id.equals(""))
 			ck.id = UUID.randomUUID().toString();
 	}

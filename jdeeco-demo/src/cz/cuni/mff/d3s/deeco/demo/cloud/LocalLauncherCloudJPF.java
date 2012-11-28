@@ -14,7 +14,6 @@ public class LocalLauncherCloudJPF {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		//ClassProcessor.main(args);
 		KnowledgeManager km = new RepositoryKnowledgeManager(
 				new LocalKnowledgeRepository());
 		Scheduler scheduler = new MultithreadedSchedulerJPF();

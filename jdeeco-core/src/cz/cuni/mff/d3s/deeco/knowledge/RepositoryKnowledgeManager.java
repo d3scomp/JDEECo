@@ -32,11 +32,33 @@ import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
  */
 public class RepositoryKnowledgeManager extends KnowledgeManager {
 
-	private final RepositoryKnowledgeManagerHelper rkmh;
+	private RepositoryKnowledgeManagerHelper rkmh;
+
+	public RepositoryKnowledgeManager() {
+		unsetKnowledgeRepository(null);
+	}
 
 	public RepositoryKnowledgeManager(KnowledgeRepository kr) {
+		setKnowledgeRepository(kr);
+	}
+
+	/**
+	 * This method is required by the OSGi framework.
+	 * 
+	 * @param kr
+	 */
+	public synchronized void setKnowledgeRepository(Object kr) {
 		this.rkmh = new RepositoryKnowledgeManagerHelper(
 				(KnowledgeRepository) kr, this);
+	}
+
+	/**
+	 * This method is required by the OSGi framewrok.
+	 * 
+	 * @param kr
+	 */
+	public synchronized void unsetKnowledgeRepository(Object kr) {
+		this.rkmh = null;
 	}
 
 	/*

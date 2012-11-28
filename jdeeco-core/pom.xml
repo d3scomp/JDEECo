@@ -35,7 +35,7 @@
 				<artifactId>maven-jar-plugin</artifactId>
 				<configuration>
 					<archive>
-					 	<addMavenDescriptor>false</addMavenDescriptor>
+						<addMavenDescriptor>false</addMavenDescriptor>
 						<manifestFile>META-INF/MANIFEST.MF</manifestFile>
 					</archive>
 				</configuration>
@@ -64,4 +64,14 @@
 			<version>6.5.1</version>
 		</dependency>
 	</dependencies>
+	<distributionManagement>
+		<repository>
+			<id>release-repo</id>
+			<url>https://github.com/d3scomp/mvn-repo/raw/master/releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>snapshot-repo</id>
+			<url>https://github.com/d3scomp/mvn-repo/raw/master/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
 </project>
