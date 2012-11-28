@@ -11,3 +11,6 @@
 /jdeeco-example-osgi/NodeBOSGI/target
 /dist
 /jdeeco-core/test-output
+/bin
+doc.zip
+
