@@ -1,6 +1,0 @@
-#--- what JPF should run
-target = cz.cuni.mff.d3s.deeco.demo.convoy.LocalLauncher
-classpath = d:/documents/skola/projects/deeco/JDEECo/bin/demo;d:/documents/skola/projects/deeco/JDEECo/bin/jdeeco
-
-#--- other stuff that defines how to run JPF
-cg.enumerate_random=true

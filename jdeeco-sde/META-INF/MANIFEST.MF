@@ -4,8 +4,7 @@ Bundle-Name: JDEECoSDETool
 Bundle-SymbolicName: cz.cuni.mff.d3s.jdeeco.sde;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Bundle-ClassPath: .,
- lib/bcel-5.2.jar
+Bundle-ClassPath: .
 Service-Component: OSGI-INF/JDEECoSDETool.xml
 Import-Package: cz.cuni.mff.d3s.deeco.annotations,
  cz.cuni.mff.d3s.deeco.ensemble,
@@ -17,6 +16,7 @@ Import-Package: cz.cuni.mff.d3s.deeco.annotations,
  cz.cuni.mff.d3s.deeco.runtime,
  cz.cuni.mff.d3s.deeco.scheduling,
  eu.sensoria_ist.casetool.core.ext,
+ org.apache.bcel.classfile,
  org.eclipse.core.filesystem,
  org.eclipse.core.runtime;version="3.4.0",
  org.eclipse.jdt.core,

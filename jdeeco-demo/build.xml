@@ -1,45 +1,132 @@
 <project name="JDEECo-Core" default="all" basedir=".">
 	<description>JDEECo build file</description>
 
-	<!-- compile subprojects -->
-
-	<target name="compile-demo" description="Compiles the demos sources" >
-		<mkdir dir="${build}/demo"/>
-		<javac srcdir="${demo}" destdir="${build}/demo" debug="${debug}">
-			<classpath>
-				<pathelement location="${libs}/jsk-lib.jar"/>
-				<pathelement location="${libs}/jsk-platform.jar"/>
-				<pathelement location="${dist}/jdeeco.jar"/>
-			</classpath>
-		</javac>
+	<property name="dist" location="."/>
+	<property name="src" location="${dist}/../jdeeco-core/src"/>
+	<property name="demo" location="${dist}/../jdeeco-demo/src"/>
+	<property name="river" location="${dist}/apache-river"/>
+	
+	<!-- start apache river - individual services -->
+	<target name="start-ar-httpd">
+		<java fork="true" jar="${river}/lib/classserver.jar" dir="${dist}">
+			<arg line="-port 8080 -dir"/>
+			<arg path="${river}/lib:${river}/lib-dl"/>
+		</java>
 	</target>
 
-	<target name="dist-demo" depends="compile-demo"
-        description="Generates a jar with the demos" >
-		<jar jarfile="${dist}/demo.jar" basedir="${build}/demo"/>
+	<target name="start-ar-jrmp-reggie">
+		<java fork="true" jar="${river}/lib/start.jar" dir="${dist}">
+			<jvmarg value="-Djava.security.policy=${river}-config/start.policy"/>
+			<jvmarg value="-Djava.ext.dirs=${river}/lib-ext"/>
+			<arg path="${river}-config/start-reggie.config"/>
+		</java>
 	</target>
 
-	<!-- zip source files -->
-	<target name="zip-demo" description="Creates a zip with the demo source files" >
-		<zip destfile="${dist}/demo-sources.zip">
-			<zipfileset dir="${demo}"/>
-		</zip>
+	<target name="start-ar-jrmp-mahalo-group">
+		<java fork="true" jar="${river}/lib/start.jar" dir="${dist}">
+			<jvmarg value="-Djava.security.policy=${river}-config/start.policy"/>
+			<arg path="${river}-config/start-mahalo-group.config"/>
+		</java>
+	</target>
+
+	<target name="start-ar-jrmp-outrigger-group">
+		<java fork="true" jar="${river}/lib/start.jar" dir="${dist}">
+			<jvmarg value="-Djava.security.policy=${river}-config/start.policy"/>
+			<arg path="${river}-config/start-outrigger-group.config"/>
+		</java>
 	</target>
 	
-	<target name="all">
-		<antcall target="dist-demo"/>
-		<antcall target="zip-demo"/>
+	<!-- start apache river - main task -->
+	<target name="start-ar"
+		description="Starts the Apache River">
+		<parallel>
+			<antcall target="start-ar-httpd"/>
+			<antcall target="start-ar-jrmp-reggie"/>
+			<antcall target="start-ar-jrmp-outrigger-group"/>
+			<antcall target="start-ar-jrmp-mahalo-group"/>
+		</parallel>
 	</target>
-
-    <!-- package cloud demo ensembles and components into single jar file -->
-    <target name="dist-cloud-demo" depends="compile-demo" description="Generates a jar with cloud demo main classes" >
-        <jar jarfile="${dist}/cloud-demo.jar" basedir="${build}/demo" includes="**/NodeA.class,**/NodeB.class,**/MigrationEnsemble.class">
-            <manifest>
-                <attribute name="Bundle-Version" value="0.0.1.SNAPSHOT"/>
-                <attribute name="Export-Package" value="cz.cuni.mff.d3s.deeco.demo.cloud"/>
-                <attribute name="Bundle-Name" value="Cloud demo package" />
-                <attribute name="Bundle-SymbolicName" value="cz.cuni.mff.d3s.deeco.demo.cloud" />
-            </manifest>
-        </jar>
-    </target>	
+	
+	<!-- start cloud demo with local shared memory -->
+	<target name="cloud-local" description="Runs the cloud demo">
+		<java classname="cz.cuni.mff.d3s.deeco.demo.cloud.LocalLauncherCloudNoJPF" fork="true">
+			<classpath>
+				<pathelement location="${dist}/demo.jar"/>
+				<pathelement location="${dist}/jdeeco.jar"/>
+				<pathelement location="${river}/lib/jsk-lib.jar"/>
+				<pathelement location="${river}/lib/jsk-platform.jar"/>
+			</classpath>
+			<jvmarg value="-Djava.security.policy=${river}-config/start.policy"/>
+			<jvmarg value="-Djava.rmi.server.RMIClassLoaderSpi=net.jini.loader.pref.PreferredClassProvider"/>
+		</java>
+	</target>
+	
+	<!-- start convoy demo with local shared memory -->
+		<target name="convoy-local" description="Runs the convoy demo">
+			<java classname="cz.cuni.mff.d3s.deeco.demo.convoy.LocalLauncherConvoyNoJPF" fork="true">
+				<classpath>
+					<pathelement location="${dist}/demo.jar"/>
+					<pathelement location="${dist}/jdeeco.jar"/>
+					<pathelement location="${river}/lib/jsk-lib.jar"/>
+					<pathelement location="${river}/lib/jsk-platform.jar"/>
+				</classpath>
+				<jvmarg value="-Djava.security.policy=${river}-config/start.policy"/>
+				<jvmarg value="-Djava.rmi.server.RMIClassLoaderSpi=net.jini.loader.pref.PreferredClassProvider"/>
+			</java>
+		</target>
+	
+	<!-- start cloud demo with tuple spaces as shared memory -->
+	<target name="cloud-ts" description="Runs the cloud demo">
+		<parallel>
+			<antcall target="start-ar"/>
+			<java classname="cz.cuni.mff.d3s.deeco.demo.cloud.TSLauncherCloudNoJPF" fork="true">
+				<classpath>
+					<pathelement location="${dist}/demo.jar"/>
+					<pathelement location="${dist}/jdeeco.jar"/>
+					<pathelement location="${river}/lib/jsk-lib.jar"/>
+					<pathelement location="${river}/lib/jsk-platform.jar"/>
+				</classpath>
+				<jvmarg value="-Djava.security.policy=${river}-config/start.policy"/>
+				<jvmarg value="-Djava.rmi.server.RMIClassLoaderSpi=net.jini.loader.pref.PreferredClassProvider"/>
+			</java>
+		</parallel>
+	</target>
+	
+	<!-- start convoy demo with tuple spaces as shared memory -->
+	<target name="convoy-ts" description="Runs the convoy demo">
+		<parallel>
+			<antcall target="start-ar"/>
+			<java classname="cz.cuni.mff.d3s.deeco.demo.convoy.TSLauncherConvoyNoJPF" fork="true">
+				<classpath>
+					<pathelement location="${dist}/demo.jar"/>
+					<pathelement location="${dist}/jdeeco.jar"/>
+					<pathelement location="${river}/lib/jsk-lib.jar"/>
+					<pathelement location="${river}/lib/jsk-platform.jar"/>
+				</classpath>
+				<jvmarg value="-Djava.security.policy=${river}-config/start.policy"/>
+				<jvmarg value="-Djava.rmi.server.RMIClassLoaderSpi=net.jini.loader.pref.PreferredClassProvider"/>
+			</java>
+		</parallel>
+	</target>
+	
+	
+	<!-- Run cloud demo under jpf -->
+	<target name="jpf-cloud">
+        <antcall target="ant-jdeeco-core"/>
+        <ant antfile="build.xml" dir="jdeeco-demo" target="dist-cloud-demo"/>
+		<java fork="true" classname="cz.cuni.mff.d3s.deeco.runtime.PreLauncher" dir="${dist}">
+			<arg value="cloud-demo.jar"/>
+			<classpath>
+				<pathelement location="${dist}/jdeeco.jar"/>
+				<pathelement location="${libs}/bcel-5.2.jar"/>
+			</classpath>
+		</java>
+		<java fork="true" jar="${jpf}/build/RunJPF.jar" dir="${dist}">
+			<jvmarg value="-Djdeeco-dist=${dist}"/>
+			<jvmarg value="-Djdeeco-src=${src}"/>
+			<jvmarg value="-Djdeeco-src-demo=${demo}"/>
+			<arg value="${demo}/../jpfProperties/LocalLauncherCloudJPF.jpf"/>
+		</java>
+	</target>
+	
 </project>
