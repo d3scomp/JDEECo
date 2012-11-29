@@ -6,15 +6,14 @@
 	<packaging>pom</packaging>
 	<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
 	<properties>
-		<dist>${basedir}/dist</dist>
+		<dist>../dist</dist>
 		<coreJar>jdeeco.jar</coreJar>
 		<cloudJar>cloud.jar</cloudJar>
 		<convoyJar>convoy.jar</convoyJar>
 		<river>${dist}/apache-river</river>
-		<config>${basedir}/config</config>
 		<runJPFJar>${dist}/jpf/build/RunJPF.jar</runJPFJar>
-		<jdeecoCoreSrc>${basedir}/jdeeco-core/src</jdeecoCoreSrc>
-		<jdeecoDemoSrc>${basedir}/jdeeco-demo/src</jdeecoDemoSrc>
+		<jdeecoCoreSrc>../jdeeco-core/src</jdeecoCoreSrc>
+		<jdeecoDemoSrc>../jdeeco-demo/src</jdeecoDemoSrc>
 	</properties>
 	<build>
 		<plugins>
@@ -160,8 +159,8 @@
 		</plugins>
 	</build>
 	<modules>
-		<module>jdeeco-core</module>
-		<module>jdeeco-demo</module>
+		<module>../jdeeco-core</module>
+		<module>../jdeeco-demo</module>
 	</modules>
 	<repositories>
 		<repository>

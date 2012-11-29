@@ -5,6 +5,8 @@
 /jdeeco-demo/target
 /jdeeco-sde/bin
 /jdeeco-sde/target
+/jdeeco-parent/bin
+/jdeeco-parent/target
 /jdeeco-example-osgi/MigrationEnsembleOSGI/bin
 /jdeeco-example-osgi/MigrationEnsembleOSGI/target
 /jdeeco-example-osgi/NodeAOSGI/bin
