@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<component name="JDEECoSDETool">
+	<implementation class="cz.cuni.mff.d3s.deeco.sde.manager.JDEECoToolService"/>
+	<reference name="RUNTIME"
+		interface="cz.cuni.mff.d3s.deeco.runtime.IRuntime"
+		bind="registerRuntime"
+		unbind="unregisterRuntime"
+		cardinality="1..1"
+		policy="dynamic"/>
+	<reference name="PRIMITIVES"
+		interface="cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider"
+		bind="addDEECoPrimitivesProvider"
+		unbind="removeDEECoPrimitivesProvider"
+		cardinality="0..n"
+		policy="dynamic"/>
+</component>
