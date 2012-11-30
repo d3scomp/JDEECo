@@ -30,23 +30,23 @@ options {
   STATIC = false;
 }
 
-PARSER_BEGIN(JDEECoParser)
+PARSER_BEGIN(PathParser)
 package cz.cuni.mff.d3s.deeco.path.grammar;
 import cz.cuni.mff.d3s.deeco.path.grammar.PNode;
 import java.io.ByteArrayInputStream;
 
 /** Simple brace matcher. */
-public class JDEECoParser
+public class PathParser
 {
   /** Main entry point. */
   public static PNode parse(String expression) throws ParseException
   {
-    JDEECoParser parser = new JDEECoParser(new ByteArrayInputStream(expression.getBytes()));
+    PathParser parser = new PathParser(new ByteArrayInputStream(expression.getBytes()));
     return parser.parseExpression();
   }
 }
 
-PARSER_END(JDEECoParser)
+PARSER_END(PathParser)
 
 TOKEN [ IGNORE_CASE ] :
 {

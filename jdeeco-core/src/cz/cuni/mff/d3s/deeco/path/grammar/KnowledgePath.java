@@ -13,7 +13,7 @@ public class KnowledgePath implements Serializable {
 	private final PNode pathNode;
 
 	public KnowledgePath(String path) throws ParseException {
-		this.pathNode = JDEECoParser.parse(path);
+		this.pathNode = PathParser.parse(path);
 	}
 
 	public String getEvaluatedPath(KnowledgeManager km, String coord,
