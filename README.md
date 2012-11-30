@@ -11,7 +11,7 @@ To compile the project you will need to have Apache Maven (http://maven.apache.o
 
 Compilation is performed by simply executing `mvn clean install` command in the jdeeco-parent subfolder.
 All generated binaries together with zipped sources are placed in the `dist` folder in the root of the project. 
-Additionally AppacheRiver 2.2 is downloaded, set up and all necessary scripts are generated.
+Additionally AppacheRiver 2.2 and Java PathFinder distribution are downloaded, set up and all required scripts are generated.
 
 To simplify the execution of demo applications `ant` script is provided, that allows for single command launch.
 If there is no Apache Ant installation on the machine, please download and configure one from the following link:
