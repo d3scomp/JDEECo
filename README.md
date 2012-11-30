@@ -5,21 +5,21 @@ JDEECo is a Java implementation of the DEECo component system. For further infor
 To compile and run the JDEECo framework, the following software has to be available on your system:
 
 * Java SDK >= 1.6.0 ([http://java.com/en/](http://java.com/en/))
-* Apache River distributed tuple-space >= 2.2.0 ([http://river.apache.org](http://river.apache.org)) (downloaded and setup automatically by ant)
-
-Additionally if you want to use Java PathFinder for model check of your application, you need to have Mercurial (http://mercurial.selenic.com/)
-installed as ant run script will use it inorder to download and configure it automatically.
 
 ## Compilation and Deployment
-To compile the project you will need to have Apache Ant (http://ant.apache.org/) installed on your machine (version 1.8.3 was used when writing the script).
+To compile the project you will need to have Apache Maven (http://maven.apache.org/) installed on your machine (version 3.04 was used when writing the script).
 
-Compilation is performed by simply executing `ant` command in the JDEECo folder.
-All generated binaries together with zipped sources are placed in the `dist` folder. 
-Additionally AppacheRiver 2.2 is downloaded, set up and all necessary scripts are generated.
+Compilation is performed by simply executing `mvn clean install` command in the jdeeco-parent subfolder.
+All generated binaries together with zipped sources are placed in the `dist` folder in the root of the project. 
+Additionally AppacheRiver 2.2 and Java PathFinder distribution are downloaded, set up and all required scripts are generated.
 
-To run the demo application perform the following two step:
+To simplify the execution of demo applications `ant` script is provided, that allows for single command launch.
+If there is no Apache Ant installation on the machine, please download and configure one from the following link:
+http://ant.apache.org/
 
-* Start the Apache River by executing `ant start-ar` (starts Tuple Spaces service)
+
+To run one of demo applications perform open command window in the `dist` directory and execute one of the following commands:
+
 * Start the demo (using local knowledge repository):
  * Cloud demo: `ant cloud-local`
  * Convoy demo: `ant convoy-local`
@@ -27,6 +27,5 @@ To run the demo application perform the following two step:
  * Cloud demo: `ant cloud-ts`
  * Convoy demo: `ant convoy-ts`
 
-To run cloud demo (only local knowledge repository supported) make sure you have Mercurial installed on your machine 
-(Path Environment variable is setup properly) and issue following ant command: `ant jpf-cloud` 
+To run cloud demo under the Java PathFinder (only local knowledge repository supported) issue the following ant command: `ant jpf-cloud`.
 
