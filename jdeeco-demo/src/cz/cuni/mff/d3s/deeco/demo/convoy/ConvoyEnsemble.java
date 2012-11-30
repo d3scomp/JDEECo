@@ -23,6 +23,7 @@ import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsembleMapper;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsembleMembership;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoIn;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoOut;
+import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoTriggered;
 import cz.cuni.mff.d3s.deeco.ensemble.Ensemble;
 import cz.cuni.mff.d3s.deeco.knowledge.Knowledge;
@@ -34,6 +35,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.Knowledge;
  *
  */
 @DEECoEnsemble
+@DEECoPeriodicScheduling(1000)
 public class ConvoyEnsemble extends Ensemble {
 
 	// must be public, static and extend Knowledge

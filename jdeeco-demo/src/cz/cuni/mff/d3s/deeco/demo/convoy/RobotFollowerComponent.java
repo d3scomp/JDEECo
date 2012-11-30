@@ -23,6 +23,7 @@ import cz.cuni.mff.d3s.deeco.annotations.DEECoComponent;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoIn;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoInOut;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
+import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoProcess;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoTriggered;
 import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
@@ -53,6 +54,7 @@ public class RobotFollowerComponent extends ComponentKnowledge {
 	}
 
 	@DEECoProcess
+	@DEECoPeriodicScheduling(3000)
 	public static void process(@DEECoInOut("path") Path path,
 			@DEECoInOut("battery") OutWrapper<Integer> battery,
 			@DEECoIn("convoyRobot") @DEECoTriggered String convoyRobot) {

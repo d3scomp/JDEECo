@@ -53,7 +53,7 @@ public class RobotLeaderComponent extends ComponentKnowledge {
 	/*
 	 * Input: path, crossingRobots, convoyRobot Output: path
 	 */
-	@DEECoPeriodicScheduling(8000)
+	@DEECoPeriodicScheduling(3000)
 	@DEECoProcess
 	public static void process(@DEECoInOut("path") Path path,
 			@DEECoInOut("battery") OutWrapper<Integer> battery) {

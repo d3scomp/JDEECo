@@ -51,7 +51,7 @@
 	<target name="cloud-local" description="Runs the cloud demo">
 		<java classname="cz.cuni.mff.d3s.deeco.demo.cloud.LocalLauncherCloudNoJPF" fork="true">
 			<classpath>
-				<pathelement location="${dist}/demo.jar"/>
+				<pathelement location="${dist}/cloud.jar"/>
 				<pathelement location="${dist}/jdeeco.jar"/>
 				<pathelement location="${river}/lib/jsk-lib.jar"/>
 				<pathelement location="${river}/lib/jsk-platform.jar"/>
@@ -65,7 +65,7 @@
 		<target name="convoy-local" description="Runs the convoy demo">
 			<java classname="cz.cuni.mff.d3s.deeco.demo.convoy.LocalLauncherConvoyNoJPF" fork="true">
 				<classpath>
-					<pathelement location="${dist}/demo.jar"/>
+					<pathelement location="${dist}/convoy.jar"/>
 					<pathelement location="${dist}/jdeeco.jar"/>
 					<pathelement location="${river}/lib/jsk-lib.jar"/>
 					<pathelement location="${river}/lib/jsk-platform.jar"/>
@@ -81,7 +81,7 @@
 			<antcall target="start-ar"/>
 			<java classname="cz.cuni.mff.d3s.deeco.demo.cloud.TSLauncherCloudNoJPF" fork="true">
 				<classpath>
-					<pathelement location="${dist}/demo.jar"/>
+					<pathelement location="${dist}/cloud.jar"/>
 					<pathelement location="${dist}/jdeeco.jar"/>
 					<pathelement location="${river}/lib/jsk-lib.jar"/>
 					<pathelement location="${river}/lib/jsk-platform.jar"/>
@@ -98,7 +98,7 @@
 			<antcall target="start-ar"/>
 			<java classname="cz.cuni.mff.d3s.deeco.demo.convoy.TSLauncherConvoyNoJPF" fork="true">
 				<classpath>
-					<pathelement location="${dist}/demo.jar"/>
+					<pathelement location="${dist}/convoy.jar"/>
 					<pathelement location="${dist}/jdeeco.jar"/>
 					<pathelement location="${river}/lib/jsk-lib.jar"/>
 					<pathelement location="${river}/lib/jsk-platform.jar"/>
@@ -115,10 +115,9 @@
         <antcall target="ant-jdeeco-core"/>
         <ant antfile="build.xml" dir="jdeeco-demo" target="dist-cloud-demo"/>
 		<java fork="true" classname="cz.cuni.mff.d3s.deeco.runtime.PreLauncher" dir="${dist}">
-			<arg value="cloud-demo.jar"/>
+			<arg value="cloud.jar"/>
 			<classpath>
 				<pathelement location="${dist}/jdeeco.jar"/>
-				<pathelement location="${libs}/bcel-5.2.jar"/>
 			</classpath>
 		</java>
 		<java fork="true" jar="${jpf}/build/RunJPF.jar" dir="${dist}">

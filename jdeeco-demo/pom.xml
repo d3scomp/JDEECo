@@ -24,6 +24,7 @@
 				</configuration>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<executions>
 					<execution>
@@ -37,6 +38,10 @@
 							<includes>
 								<include>**/cloud/*</include>
 							</includes>
+							<archive>
+								<addMavenDescriptor>false</addMavenDescriptor>
+								<manifestFile>META-INF/CLOUD.MF</manifestFile>
+							</archive>
 						</configuration>
 					</execution>
 					<execution>
@@ -50,6 +55,10 @@
 							<includes>
 								<include>**/convoy/*</include>
 							</includes>
+							<archive>
+								<addMavenDescriptor>false</addMavenDescriptor>
+								<manifestFile>META-INF/CONVOY.MF</manifestFile>
+							</archive>
 						</configuration>
 					</execution>
 				</executions>
