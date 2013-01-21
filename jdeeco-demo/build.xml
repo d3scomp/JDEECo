@@ -5,6 +5,7 @@
 	<property name="src" location="${dist}/../jdeeco-core/src"/>
 	<property name="demo" location="${dist}/../jdeeco-demo/src"/>
 	<property name="river" location="${dist}/apache-river"/>
+	<property name="jpf" location="${dist}/jpf"/>
 	
 	<!-- start apache river - individual services -->
 	<target name="start-ar-httpd">
@@ -112,8 +113,6 @@
 	
 	<!-- Run cloud demo under jpf -->
 	<target name="jpf-cloud">
-        <antcall target="ant-jdeeco-core"/>
-        <ant antfile="build.xml" dir="jdeeco-demo" target="dist-cloud-demo"/>
 		<java fork="true" classname="cz.cuni.mff.d3s.deeco.runtime.PreLauncher" dir="${dist}">
 			<arg value="cloud.jar"/>
 			<classpath>
