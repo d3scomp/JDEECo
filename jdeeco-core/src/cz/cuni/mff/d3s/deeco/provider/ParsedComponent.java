@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.deeco.provider;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -13,7 +14,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
  * @author Michal Kit
  * 
  */
-public class ParsedComponent {
+public class ParsedComponent implements Serializable {
 
 	private ComponentKnowledge initialKnowledge;
 	private List<SchedulableComponentProcessCreator> processCreators;

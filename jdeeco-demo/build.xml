@@ -123,6 +123,7 @@
 			<jvmarg value="-Djdeeco-dist=${dist}"/>
 			<jvmarg value="-Djdeeco-src=${src}"/>
 			<jvmarg value="-Djdeeco-src-demo=${demo}"/>
+			<arg value="+classpath=${dist}/cloud.jar"/>   
 			<arg value="${demo}/../jpfProperties/LocalLauncherCloudJPF.jpf"/>
 		</java>
 	</target>

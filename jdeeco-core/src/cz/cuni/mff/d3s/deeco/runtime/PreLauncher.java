@@ -30,6 +30,8 @@ public class PreLauncher {
 		cf.resolve(args);
 		ClassDEECoObjectProvider cdop = ClassProcessor.processClasses(
 				cf.getClasses(), cf.getDirURLs());
+		cdop.getComponents();
+		cdop.getEnsembles();
 		ParsedObjectWriter pow = new ParsedObjectWriter();
 		pow.write(cdop);
 	}

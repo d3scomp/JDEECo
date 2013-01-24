@@ -22,7 +22,7 @@ public class LocalLauncherConvoyJPF {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		PreLauncher.main(args);
+		//PreLauncher.main(args);
 		KnowledgeManager km = new RepositoryKnowledgeManager(
 				new LocalKnowledgeRepository());
 		Scheduler scheduler = new MultithreadedScheduler();
