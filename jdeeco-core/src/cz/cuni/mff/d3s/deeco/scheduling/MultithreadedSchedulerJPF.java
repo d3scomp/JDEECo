@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
-import cz.cuni.mff.d3s.deeco.invokable.TriggeredSchedulableProcess;
+import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcessTrigger;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 
 /**
@@ -37,11 +37,10 @@ public class MultithreadedSchedulerJPF extends Scheduler {
 	public synchronized void start() {
 		if (!running) {
 			for (SchedulableProcess sp : periodicProcesses) {
-				startPeriodicProcess(sp,
-						((ProcessPeriodicSchedule) sp.scheduling).interval);
+				startPeriodicProcess(sp);
 			}
 			List<KnowledgeManager> kms = new LinkedList<KnowledgeManager>();
-			for (TriggeredSchedulableProcess tsp : triggeredProcesses) {
+			for (SchedulableProcessTrigger tsp : triggeredProcesses) {
 				if (true) {
 					assert (false); // ALF: Unsupported now
 				}
@@ -66,7 +65,7 @@ public class MultithreadedSchedulerJPF extends Scheduler {
 				t.interrupt();
 			}
 			List<KnowledgeManager> kms = new LinkedList<KnowledgeManager>();
-			for (TriggeredSchedulableProcess tsp : triggeredProcesses) {
+			for (SchedulableProcessTrigger tsp : triggeredProcesses) {
 				if (!kms.contains(tsp.getKnowledgeManager()))
 					kms.add(tsp.getKnowledgeManager());
 			}
@@ -77,7 +76,8 @@ public class MultithreadedSchedulerJPF extends Scheduler {
 		}
 	}
 
-	private void startPeriodicProcess(SchedulableProcess process, long period) {
+	@Override
+	protected synchronized void startPeriodicProcess(SchedulableProcess process) {
 		// Note Period is intentionally ignored - GC
 		// Because of the stop the world Garbage collector, which can postpone
 		// all threads and then any thread can execute its own action

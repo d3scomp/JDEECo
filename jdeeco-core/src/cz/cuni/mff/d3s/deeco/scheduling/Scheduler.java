@@ -4,21 +4,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
-import cz.cuni.mff.d3s.deeco.invokable.TriggeredSchedulableProcess;
+import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcessTrigger;
 
 public abstract class Scheduler implements IScheduler {
 
 	protected List<SchedulableProcess> periodicProcesses;
-	protected List<TriggeredSchedulableProcess> triggeredProcesses;
+	protected List<SchedulableProcessTrigger> triggeredProcesses;
 	protected boolean running;
 
 	public Scheduler() {
 		periodicProcesses = new ArrayList<SchedulableProcess>();
-		triggeredProcesses = new ArrayList<TriggeredSchedulableProcess>();
+		triggeredProcesses = new ArrayList<SchedulableProcessTrigger>();
 		running = false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see cz.cuni.mff.d3s.deeco.scheduling.IScheduler#isRunning()
 	 */
 	@Override
@@ -26,86 +28,105 @@ public abstract class Scheduler implements IScheduler {
 		return running;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see cz.cuni.mff.d3s.deeco.scheduling.IScheduler#register(java.util.List)
 	 */
 	@Override
-	public void register(List<? extends SchedulableProcess> processes) {
-		if (!running)
-			for (SchedulableProcess sp : processes) {
-				register(sp);
-			}
-	}
-
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.deeco.scheduling.IScheduler#register(cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess)
-	 */
-	@Override
-	public boolean register(SchedulableProcess process) {
-		if (!running) {
-			if (process.scheduling instanceof ProcessTriggeredSchedule)
-				return triggeredProcesses.add(new TriggeredSchedulableProcess(
-						process));
-			else
-				return periodicProcesses.add(process);
+	public synchronized void add(List<? extends SchedulableProcess> processes) {
+		for (SchedulableProcess sp : processes) {
+			add(sp);
 		}
-		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.deeco.scheduling.IScheduler#unregister(java.util.List)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * cz.cuni.mff.d3s.deeco.scheduling.IScheduler#register(cz.cuni.mff.d3s.
+	 * deeco.invokable.SchedulableProcess)
 	 */
 	@Override
-	public void unregister(List<SchedulableProcess> processes) {
+	public synchronized void add(SchedulableProcess process) {
+		if (process.scheduling instanceof ProcessTriggeredSchedule)
+			triggeredProcesses.add(new SchedulableProcessTrigger(process));
+		else {
+			periodicProcesses.add(process);
+			if (running) {
+				startPeriodicProcess(process);
+			}
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * cz.cuni.mff.d3s.deeco.scheduling.IScheduler#unregister(java.util.List)
+	 */
+	@Override
+	public synchronized void remove(List<SchedulableProcess> processes) {
 		if (!running)
 			for (SchedulableProcess sp : processes) {
-				unregister(sp);
+				remove(sp);
 			}
 	}
 
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.deeco.scheduling.IScheduler#unregister(cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * cz.cuni.mff.d3s.deeco.scheduling.IScheduler#unregister(cz.cuni.mff.d3s
+	 * .deeco.invokable.SchedulableProcess)
 	 */
 	@Override
-	public boolean unregister(SchedulableProcess process) {
+	public synchronized void remove(SchedulableProcess process) {
 		if (!running)
 			if (process.scheduling instanceof ProcessTriggeredSchedule)
-				for (TriggeredSchedulableProcess tsp : triggeredProcesses)
+				for (SchedulableProcessTrigger tsp : triggeredProcesses)
 					if (tsp.sp == process) {
 						tsp.unregisterListener();
-						return triggeredProcesses
-								.remove(new TriggeredSchedulableProcess(process));
+						triggeredProcesses
+								.remove(new SchedulableProcessTrigger(process));
 					} else
-						return periodicProcesses.remove(process);
-		return false;
+						periodicProcesses.remove(process);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see cz.cuni.mff.d3s.deeco.scheduling.IScheduler#getPeriodicProcesses()
 	 */
 	@Override
-	public List<SchedulableProcess> getPeriodicProcesses() {
+	public synchronized List<SchedulableProcess> getPeriodicProcesses() {
 		return periodicProcesses;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see cz.cuni.mff.d3s.deeco.scheduling.IScheduler#getTriggeredProcesses()
 	 */
 	@Override
-	public List<TriggeredSchedulableProcess> getTriggeredProcesses() {
+	public synchronized List<SchedulableProcessTrigger> getTriggeredProcesses() {
 		return triggeredProcesses;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see cz.cuni.mff.d3s.deeco.scheduling.IScheduler#clearAll()
 	 */
 	@Override
-	public void clearAll() {
+	public synchronized void clearAll() {
 		if (running)
 			stop();
-		unregister(periodicProcesses);
-		for (TriggeredSchedulableProcess tsp : triggeredProcesses) {
-			unregister(tsp.sp);
+		remove(periodicProcesses);
+		for (SchedulableProcessTrigger tsp : triggeredProcesses) {
+			remove(tsp.sp);
 		}
 	}
+
+	protected abstract void startPeriodicProcess(SchedulableProcess process);
 }

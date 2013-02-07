@@ -11,7 +11,7 @@ import cz.cuni.mff.d3s.deeco.annotations.DEECoInOut;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoOut;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoProcess;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoTriggered;
+import cz.cuni.mff.d3s.deeco.annotations.DEECoTrigger;
 import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
 
 @DEECoComponent
@@ -42,7 +42,7 @@ public class ParkingLot extends ComponentKnowledge {
 	public static void processRequests(
 			@DEECoInOut("scheduleItem") Map<ParkingPlaceId, List<ParkingLotScheduleItem> > schedule,					
 			@DEECoIn("parkingPlaces") ParkingPlaceId[] parkingPlaces,
-			@DEECoIn("incomingRequests[*]") @DEECoTriggered Request incomingRequest,
+			@DEECoIn("incomingRequests[*]") @DEECoTrigger Request incomingRequest,
 			@DEECoOut("processedResponses") Map<UUID, Response> processedResponses
 			) {
 		

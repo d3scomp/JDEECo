@@ -3,21 +3,21 @@ package cz.cuni.mff.d3s.deeco.scheduling;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
-import cz.cuni.mff.d3s.deeco.invokable.TriggeredSchedulableProcess;
+import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcessTrigger;
 
 public interface IScheduler {
 	
 	public boolean isRunning();
 
-	public void register(List<? extends SchedulableProcess> processes);
+	public void add(List<? extends SchedulableProcess> processes);
 
-	public boolean register(SchedulableProcess process);
+	public void add(SchedulableProcess process);
 
-	public void unregister(List<SchedulableProcess> processes);
+	public void remove(List<SchedulableProcess> processes);
 
-	public boolean unregister(SchedulableProcess process);
+	public void remove(SchedulableProcess process);
 	
-	public List<TriggeredSchedulableProcess> getTriggeredProcesses();
+	public List<SchedulableProcessTrigger> getTriggeredProcesses();
 	
 	public List<SchedulableProcess> getPeriodicProcesses();
 	

@@ -194,7 +194,7 @@ public class Runtime implements IRuntime {
 	 */
 	private synchronized void addSchedulableProcess(SchedulableProcess process) {
 		if (process != null)
-			scheduler.register(process);
+			scheduler.add(process);
 	}
 
 	/**
