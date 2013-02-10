@@ -37,7 +37,7 @@ public class JDEECoOSGiManifestProvider implements IManifestProvider {
 		attributes
 				.putValue(
 						"Import-Package",
-						"Import-Package: cz.cuni.mff.d3s.deeco.annotations, cz.cuni.mff.d3s.deeco.knowledge, cz.cuni.mff.d3s.deeco.provider, cz.cuni.mff.d3s.deeco.sde.provider");
+						"cz.cuni.mff.d3s.deeco.annotations, cz.cuni.mff.d3s.deeco.knowledge, cz.cuni.mff.d3s.deeco.ensemble, cz.cuni.mff.d3s.deeco.provider, cz.cuni.mff.d3s.deeco.sde.provider");
 		attributes.putValue("Bundle-ActivationPolicy", "lazy");
 		return m;
 	}

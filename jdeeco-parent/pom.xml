@@ -2,97 +2,41 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>cz.cuni.mff.d3s.jdeeco</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<packaging>pom</packaging>
 	<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
 	<properties>
 		<dist>../dist</dist>
-		<coreJar>jdeeco.jar</coreJar>
-		<cloudJar>cloud.jar</cloudJar>
-		<convoyJar>convoy.jar</convoyJar>
 		<river>${dist}/apache-river</river>
 		<runJPFJar>${dist}/jpf/build/RunJPF.jar</runJPFJar>
 		<jdeecoCoreSrc>../jdeeco-core/src</jdeecoCoreSrc>
 		<jdeecoDemoSrc>../jdeeco-demo/src</jdeecoDemoSrc>
+		<tycho-version>0.16.0</tycho-version>
 	</properties>
 	<build>
 		<plugins>
+
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>target-platform-configuration</artifactId>
+				<version>${tycho-version}</version>
+				<configuration>
+					<pomDependencies>consider</pomDependencies>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-maven-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<extensions>true</extensions>
+			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
 				<version>2.5.1</version>
 				<executions>
-					<execution>
-						<id>copy-core</id>
-						<phase>package</phase>
-						<goals>
-							<goal>copy</goal>
-						</goals>
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>cz.cuni.mff.d3s.jdeeco.core</groupId>
-									<artifactId>cz.cuni.mff.d3s.jdeeco.core</artifactId>
-									<version>0.0.1-SNAPSHOT</version>
-									<type>jar</type>
-									<overWrite>false</overWrite>
-									<destFileName>${coreJar}</destFileName>
-									<outputDirectory>${dist}</outputDirectory>
-								</artifactItem>
-							</artifactItems>
-							<outputDirectory>${dist}</outputDirectory>
-							<overWriteReleases>true</overWriteReleases>
-							<overWriteSnapshots>true</overWriteSnapshots>
-						</configuration>
-					</execution>
-					<execution>
-						<id>copy-demo-cloud</id>
-						<phase>package</phase>
-						<goals>
-							<goal>copy</goal>
-						</goals>
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>cz.cuni.mff.d3s.jdeeco.demo</groupId>
-									<artifactId>cz.cuni.mff.d3s.jdeeco.demo</artifactId>
-									<version>0.0.1-SNAPSHOT</version>
-									<type>jar</type>
-									<classifier>cloud</classifier>
-									<destFileName>${cloudJar}</destFileName>
-									<overWrite>false</overWrite>
-									<outputDirectory>${dist}</outputDirectory>
-								</artifactItem>
-							</artifactItems>
-							<outputDirectory>${dist}</outputDirectory>
-							<overWriteReleases>true</overWriteReleases>
-							<overWriteSnapshots>true</overWriteSnapshots>
-						</configuration>
-					</execution>
-					<execution>
-						<id>copy-demo-convoy</id>
-						<phase>package</phase>
-						<goals>
-							<goal>copy</goal>
-						</goals>
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>cz.cuni.mff.d3s.jdeeco.demo</groupId>
-									<artifactId>cz.cuni.mff.d3s.jdeeco.demo</artifactId>
-									<version>0.0.1-SNAPSHOT</version>
-									<type>jar</type>
-									<classifier>convoy</classifier>
-									<overWrite>false</overWrite>
-									<destFileName>${convoyJar}</destFileName>
-									<outputDirectory>${dist}</outputDirectory>
-								</artifactItem>
-							</artifactItems>
-							<outputDirectory>${dist}</outputDirectory>
-							<overWriteReleases>true</overWriteReleases>
-							<overWriteSnapshots>true</overWriteSnapshots>
-						</configuration>
-					</execution>
 					<execution>
 						<id>unpack</id>
 						<phase>install</phase>
@@ -161,6 +105,7 @@
 	<modules>
 		<module>../jdeeco-core</module>
 		<module>../jdeeco-demo</module>
+		<module>../jdeeco-sde</module>
 	</modules>
 	<repositories>
 		<repository>
@@ -170,6 +115,21 @@
 		<repository>
 			<id>d3s-snapshots</id>
 			<url>https://github.com/d3scomp/mvn-repo/raw/master/snapshots/</url>
+		</repository>
+		<repository>
+			<id>juno</id>
+			<layout>p2</layout>
+			<url>http://download.eclipse.org/releases/juno</url>
+		</repository>
+		<repository>
+			<id>sensoria</id>
+			<layout>p2</layout>
+			<url>http://svn.pst.ifi.lmu.de/update/sde</url>
+		</repository>
+		<repository>
+			<id>indigo</id>
+			<layout>p2</layout>
+			<url>http://download.eclipse.org/releases/indigo</url>
 		</repository>
 	</repositories>
 </project>

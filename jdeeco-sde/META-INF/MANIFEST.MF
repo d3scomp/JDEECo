@@ -2,22 +2,16 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: JDEECoSDETool
 Bundle-SymbolicName: cz.cuni.mff.d3s.jdeeco.sde;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 0.0.1
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ClassPath: .
 Service-Component: OSGI-INF/JDEECoSDETool.xml
-Import-Package: cz.cuni.mff.d3s.deeco.annotations,
- cz.cuni.mff.d3s.deeco.ensemble,
- cz.cuni.mff.d3s.deeco.invokable,
- cz.cuni.mff.d3s.deeco.knowledge,
- cz.cuni.mff.d3s.deeco.knowledge.local,
- cz.cuni.mff.d3s.deeco.processor,
- cz.cuni.mff.d3s.deeco.provider,
- cz.cuni.mff.d3s.deeco.runtime,
- cz.cuni.mff.d3s.deeco.scheduling,
- eu.sensoria_ist.casetool.core.ext,
- org.apache.bcel.classfile,
- org.eclipse.core.filesystem,
+Bundle-ActivationPolicy: lazy
+Require-Bundle: eu.sensoria_ist.casetool.core;bundle-version="4.4.0",
+ org.eclipse.jface;bundle-version="3.8.101",
+ cz.cuni.mff.d3s.jdeeco.core;bundle-version="0.0.1",
+ cz.cuni.mff.d3s.bcel;bundle-version="1.0.0"
+Import-Package: org.eclipse.core.filesystem,
  org.eclipse.core.runtime;version="3.4.0",
  org.eclipse.jdt.core,
  org.eclipse.jdt.internal.ui.jarpackager,
@@ -31,5 +25,5 @@ Import-Package: cz.cuni.mff.d3s.deeco.annotations,
  org.osgi.framework;version="1.7.0",
  org.osgi.framework.wiring;version="1.1.0",
  org.osgi.service.component
-Bundle-ActivationPolicy: lazy
 Export-Package: cz.cuni.mff.d3s.deeco.sde.provider
+

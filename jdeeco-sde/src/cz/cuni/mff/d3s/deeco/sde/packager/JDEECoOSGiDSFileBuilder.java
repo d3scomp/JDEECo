@@ -47,7 +47,7 @@ public class JDEECoOSGiDSFileBuilder {
 			}
 			if (!listOfClasses.equals(""))
 				listOfClasses = listOfClasses.substring(0, listOfClasses.length()-1);
-			property.setAttribute("name", "components");
+			property.setAttribute("name", "contents");
 			property.setAttribute("value", listOfClasses);
 			component.appendChild(property);
 			document.appendChild(component);
