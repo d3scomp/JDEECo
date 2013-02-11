@@ -56,9 +56,9 @@ public interface IJDEECoSDETool extends ISensoriaTool {
 	public String addDefinitions(
 			@SensoriaToolFunctionParameter(description = "Path to a JAR file or root directory with properly packeged class files") String path);
 	
-	@SensoriaToolFunction(description = "Validates specified components and ensembles under the JPF")
-	@SensoriaToolFunctionReturns(description = "String containing information about the velidation result")
-	public String validateInJPF(
-			@SensoriaToolFunctionParameter(description = "List of jar files containing component and ensemble definitions") List<File> jars);
+//	@SensoriaToolFunction(description = "Validates specified components and ensembles under the JPF")
+//	@SensoriaToolFunctionReturns(description = "String containing information about the velidation result")
+//	public String validateInJPF(
+//			@SensoriaToolFunctionParameter(description = "List of jar files containing component and ensemble definitions") List<File> jars);
 
 }
