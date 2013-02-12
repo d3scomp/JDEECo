@@ -74,6 +74,7 @@ public class SchedulableComponentProcess extends SchedulableProcess {
 					evaluateMethod();
 				} catch (KMException kme) {
 					System.out.println("SCP message - " + kme.getMessage());
+					kme.printStackTrace();
 				}
 			}
 		} catch (Exception e) {
