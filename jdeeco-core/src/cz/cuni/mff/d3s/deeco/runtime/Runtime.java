@@ -44,17 +44,24 @@ public class Runtime implements IRuntime {
 	private IScheduler scheduler;
 	private KnowledgeManager km;
 
-	public Runtime() {}
+	private static List<Runtime> runtimes = new LinkedList<Runtime>();
+	
+	public Runtime() {
+		runtimes.add(this);
+	}
 
 	public Runtime(KnowledgeManager km) {
+		this();
 		this.km = km;
 	}
 
 	public Runtime(IScheduler scheduler) {
+		this();
 		this.scheduler = scheduler;
 	}
 
 	public Runtime(KnowledgeManager km, IScheduler scheduler) {
+		this();
 		this.km = km;
 		this.scheduler = scheduler;
 	}
@@ -228,5 +235,19 @@ public class Runtime implements IRuntime {
 				System.out.println("Initial knowlege retrival exception");
 			}
 		return false;
+	}
+	
+	/**
+	 * Returns the Runtime singleton object. Works if only one Runtime object has been created. Otherwise
+	 * it is not supported.
+	 * @return The Runtime singleton object.
+	 * @throws UnsupportedOperationException Thrown when no Runtime or more Runtimes are instantiated.
+	 */
+	public static IRuntime getDefaultRuntime() throws UnsupportedOperationException {
+		if (runtimes.size() != 1) {
+			throw new UnsupportedOperationException();
+		} else {
+			return runtimes.get(0);
+		}
 	}
 }
