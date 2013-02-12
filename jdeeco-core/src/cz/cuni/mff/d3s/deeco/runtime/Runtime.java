@@ -101,7 +101,7 @@ public class Runtime implements IRuntime {
 	@Override
 	public void registerComponentsAndEnsembles(AbstractDEECoObjectProvider provider) {
 		ClassLoader  contextClassLoader = provider.getContextClassLoader();
-		addSchedulablePorcesses(ProcessInstantiator.createProcesses(
+		addSchedulableProcesses(ProcessInstantiator.createProcesses(
 				provider.getEnsembles(), km, contextClassLoader));
 		for (ParsedComponent component : provider.getComponents()) {
 			if (!addComponentKnowledge(component.getInitialKnowledge(), km)) {
@@ -109,7 +109,7 @@ public class Runtime implements IRuntime {
 						+ component.getInitialKnowledge().getClass());
 				continue;
 			}
-			addSchedulablePorcesses(ProcessInstantiator.createProcesses(
+			addSchedulableProcesses(ProcessInstantiator.createProcesses(
 					component.getProcesses(), km, contextClassLoader));
 		}
 	}
@@ -202,7 +202,7 @@ public class Runtime implements IRuntime {
 	 * 
 	 * @param processes
 	 */
-	private synchronized void addSchedulablePorcesses(
+	private synchronized void addSchedulableProcesses(
 			List<? extends SchedulableProcess> processes) {
 		if (processes != null)
 			for (SchedulableProcess sp : processes) {
