@@ -1,5 +1,8 @@
 package cz.cuni.mff.d3s.deeco.sde.packager;
 
+import static cz.cuni.mff.d3s.deeco.sde.utils.StringUtils.DBSLASH;
+import static cz.cuni.mff.d3s.deeco.sde.utils.StringUtils.FSLASH;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -82,15 +85,15 @@ public class JDEECoOSGiUtils {
 		try {
 			String name = "";
 			if (nestTo != null) {
-				if (!nestTo.endsWith("/"))
-					nestTo += "/";
+				if (!nestTo.endsWith(FSLASH))
+					nestTo += FSLASH;
 				name = nestTo;
 			}
 			if (toAdd.isDirectory()) {
-				name += toAdd.getName().replace("\\", "/");
+				name += toAdd.getName().replace(DBSLASH, FSLASH);
 				if (!name.isEmpty()) {
-					if (!name.endsWith("/"))
-						name += "/";
+					if (!name.endsWith(FSLASH))
+						name += FSLASH;
 					JarEntry entry = new JarEntry(name);
 					entry.setTime(toAdd.lastModified());
 					outputStream.putNextEntry(entry);
@@ -100,7 +103,7 @@ public class JDEECoOSGiUtils {
 					addJarResources(nestedFile, name, outputStream);
 				return;
 			}
-			name += toAdd.getName().replace("\\", "/");
+			name += toAdd.getName().replace(DBSLASH, FSLASH);
 			JarEntry entry = new JarEntry(name);
 			entry.setTime(toAdd.lastModified());
 			outputStream.putNextEntry(entry);
