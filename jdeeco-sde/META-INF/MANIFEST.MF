@@ -9,8 +9,7 @@ Service-Component: OSGI-INF/JDEECoSDETool.xml
 Bundle-ActivationPolicy: lazy
 Require-Bundle: eu.sensoria_ist.casetool.core;bundle-version="4.4.0",
  org.eclipse.jface;bundle-version="3.8.101",
- cz.cuni.mff.d3s.jdeeco.core;bundle-version="0.0.1",
- cz.cuni.mff.d3s.bcel;bundle-version="1.0.0"
+ cz.cuni.mff.d3s.jdeeco.core;bundle-version="0.0.1"
 Import-Package: org.eclipse.core.filesystem,
  org.eclipse.core.runtime;version="3.4.0",
  org.eclipse.jdt.core,

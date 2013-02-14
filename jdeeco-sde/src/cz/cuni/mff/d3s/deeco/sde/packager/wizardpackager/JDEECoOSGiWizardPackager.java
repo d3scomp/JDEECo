@@ -10,6 +10,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
+import cz.cuni.mff.d3s.deeco.processor.JarClassUtils;
 import cz.cuni.mff.d3s.deeco.sde.packager.JDEECoOSGiDSFileBuilder;
 import cz.cuni.mff.d3s.deeco.sde.packager.JDEECoOSGiManifestProvider;
 import cz.cuni.mff.d3s.deeco.sde.packager.JDEECoOSGiUtils;
@@ -51,7 +52,7 @@ public class JDEECoOSGiWizardPackager {
 				tmpDir = JDEECoOSGiUtils.getTempDirectory();
 				File osgiInf = JDEECoOSGiDSFileBuilder
 						.buildDeclarativeServiceXML(tmpDir,
-								JDEECoOSGiUtils.getClassNames(jarPath),
+								JarClassUtils.getClassNamesFromJar(jarPath),
 								bundleSymbolicName);
 				File originalFile = new File(jarPath);
 				File newJarFile = JDEECoOSGiUtils.updateJarFile(originalFile,

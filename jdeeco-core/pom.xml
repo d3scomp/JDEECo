@@ -71,6 +71,20 @@
 									<outputDirectory>${sde}</outputDirectory>
 								</artifactItem>
 								<artifactItem>
+									<groupId>log4j</groupId>
+									<artifactId>log4j</artifactId>
+									<version>1.2.17</version>
+									<type>jar</type>
+									<outputDirectory>${dist}</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>log4j</groupId>
+									<artifactId>log4j</artifactId>
+									<version>1.2.17</version>
+									<type>jar</type>
+									<outputDirectory>${sde}</outputDirectory>
+								</artifactItem>
+								<artifactItem>
 									<groupId>cz.cuni.mff.d3s</groupId>
 									<artifactId>cz.cuni.mff.d3s.bcel</artifactId>
 									<version>1.0.0</version>
@@ -167,6 +181,11 @@
 			<groupId>cz.cuni.mff.d3s</groupId>
 			<artifactId>cz.cuni.mff.d3s.jini</artifactId>
 			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
 		</dependency>
 	</dependencies>
 	<distributionManagement>

@@ -129,11 +129,6 @@
 			<artifactId>cz.cuni.mff.d3s.jdeeco.core</artifactId>
 			<version>0.0.1</version>
 		</dependency>
-		<dependency>
-			<groupId>cz.cuni.mff.d3s</groupId>
-			<artifactId>cz.cuni.mff.d3s.bcel</artifactId>
-			<version>1.0.0</version>
-		</dependency>
 	</dependencies>
 	<parent>
 		<relativePath>../jdeeco-parent/pom.xml</relativePath>

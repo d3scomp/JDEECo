@@ -132,6 +132,7 @@ public class Runtime implements IRuntime {
 			for (Object id : ids)
 				result.add((String) id);
 		} catch (KMException e) {
+			System.err.println("GOTCHA 1");
 			e.printStackTrace();
 		}
 		return result;
@@ -145,6 +146,7 @@ public class Runtime implements IRuntime {
 		try {
 			return km.getKnowledge(componentId);
 		} catch (Exception e) {
+			System.err.println("GOTCHA 2");
 			e.printStackTrace();
 		}
 		return null;
