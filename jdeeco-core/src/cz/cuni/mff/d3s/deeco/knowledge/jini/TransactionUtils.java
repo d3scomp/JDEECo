@@ -26,7 +26,7 @@ import net.jini.core.transaction.server.TransactionManager;
  * 
  */
 public class TransactionUtils {
-	protected final static Long DEFAULT_TRANSACTION_TIMEOUT = 150000L; // .5 sec
+	protected final static Long DEFAULT_TRANSACTION_TIMEOUT = 1500L; // .5 sec
 	private volatile static TransactionManager txManager = null;
 
 	/**

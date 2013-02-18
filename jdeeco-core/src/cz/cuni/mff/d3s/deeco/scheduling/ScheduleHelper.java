@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoTriggered;
+import cz.cuni.mff.d3s.deeco.annotations.DEECoTrigger;
 import cz.cuni.mff.d3s.deeco.invokable.AnnotationHelper;
 import cz.cuni.mff.d3s.deeco.invokable.Parameter;
 
@@ -62,7 +62,7 @@ public class ScheduleHelper {
 			Annotation[][] pAnnotations, List<Parameter> in,
 			List<Parameter> inOut) {
 		List<Integer> triggeredIndecies = AnnotationHelper
-				.getAnnotationOuterIndecies(DEECoTriggered.class, pAnnotations);
+				.getAnnotationOuterIndecies(DEECoTrigger.class, pAnnotations);
 		if (triggeredIndecies.size() == 0)
 			return null;
 		else {

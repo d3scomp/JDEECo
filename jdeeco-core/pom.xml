@@ -1,9 +1,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>cz.cuni.mff.d3s.jdeeco.core</groupId>
+	<parent>
+		<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
+		<artifactId>cz.cuni.mff.d3s.jdeeco</artifactId>
+		<version>0.0.1</version>
+		<relativePath>../jdeeco-parent/pom.xml</relativePath>
+	</parent>
 	<artifactId>cz.cuni.mff.d3s.jdeeco.core</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<packaging>eclipse-plugin</packaging>
+	<properties>
+		<dist>../dist</dist>
+		<coreJar>jdeeco.jar</coreJar>
+		<sde>${dist}/sde</sde>
+		<sdeCoreJar>${project.artifactId}.${project.version}.jar</sdeCoreJar>
+	</properties>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<!-- testSourceDirectory>test</testSourceDirectory -->
@@ -18,58 +29,164 @@
 				<directory>src/..</directory>
 				<includes>
 					<include>OSGI-INF/*.*</include>
-					<include>lib/*.*</include>
 				</includes>
 			</resource>
 		</resources>
+
 		<plugins>
 			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-				</configuration>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
 			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-					<archive>
-						<addMavenDescriptor>false</addMavenDescriptor>
-						<manifestFile>META-INF/MANIFEST.MF</manifestFile>
-					</archive>
-				</configuration>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.6</version>
+				<executions>
+					<execution>
+						<id>copy</id>
+						<phase>install</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>${project.groupId}</groupId>
+									<artifactId>${project.artifactId}</artifactId>
+									<version>${project.version}</version>
+									<type>${project.packaging}</type>
+									<overWrite>true</overWrite>
+									<destFileName>${coreJar}</destFileName>
+									<outputDirectory>${dist}</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>${project.groupId}</groupId>
+									<artifactId>${project.artifactId}</artifactId>
+									<version>${project.version}</version>
+									<type>${project.packaging}</type>
+									<overWrite>true</overWrite>
+									<destFileName>${sdeCoreJar}</destFileName>
+									<outputDirectory>${sde}</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>log4j</groupId>
+									<artifactId>log4j</artifactId>
+									<version>1.2.17</version>
+									<type>jar</type>
+									<outputDirectory>${dist}</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>log4j</groupId>
+									<artifactId>log4j</artifactId>
+									<version>1.2.17</version>
+									<type>jar</type>
+									<outputDirectory>${sde}</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>cz.cuni.mff.d3s</groupId>
+									<artifactId>cz.cuni.mff.d3s.bcel</artifactId>
+									<version>1.0.0</version>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+									<outputDirectory>${sde}</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>cz.cuni.mff.d3s</groupId>
+									<artifactId>cz.cuni.mff.d3s.jini</artifactId>
+									<version>1.0.0</version>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+									<outputDirectory>${sde}</outputDirectory>
+								</artifactItem>
+							</artifactItems>
+							<overWriteReleases>true</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!-- Ignore/Execute plugin execution -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<!-- copy-dependency plugin -->
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-dependency-plugin</artifactId>
+										<versionRange>[1.0.0,)</versionRange>
+										<goals>
+											<goal>unpack</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.eclipse.tycho</groupId>
+										<artifactId>tycho-compiler-plugin</artifactId>
+										<versionRange>[0.0.0,)</versionRange>
+										<goals>
+											<goal>compile</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.eclipse.tycho</groupId>
+										<artifactId>tycho-packaging-plugin</artifactId>
+										<versionRange>[0.0.0,)</versionRange>
+										<goals>
+											<goal>validate-id</goal>
+											<goal>validate-version</goal>
+											<goal>build-qualifier</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 	<dependencies>
+		<!-- dependency> <groupId>org.testng</groupId> <artifactId>testng</artifactId> 
+			<version>6.5.1</version> </dependency -->
 		<dependency>
-			<groupId>net.jini</groupId>
-			<artifactId>jsk-lib</artifactId>
-			<version>2.1</version>
+			<groupId>cz.cuni.mff.d3s</groupId>
+			<artifactId>cz.cuni.mff.d3s.bcel</artifactId>
+			<version>1.0.0</version>
 		</dependency>
 		<dependency>
-			<groupId>net.jini</groupId>
-			<artifactId>jsk-platform</artifactId>
-			<version>2.1</version>
+			<groupId>cz.cuni.mff.d3s</groupId>
+			<artifactId>cz.cuni.mff.d3s.jini</artifactId>
+			<version>1.0.0</version>
 		</dependency>
 		<dependency>
-			<groupId>org.testng</groupId>
-			<artifactId>testng</artifactId>
-			<version>6.5.1</version>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.bcel</groupId>
-			<artifactId>bcel</artifactId>
-			<version>5.2</version>
-		</dependency>
-		<dependency>
-			<groupId>cz.cuni.mff.d3s.zip</groupId>
-			<artifactId>gov.nasa.jpf</artifactId>
-			<version>6.0b</version>
-			<type>zip</type>
-		</dependency> 
 	</dependencies>
 	<distributionManagement>
 		<repository>

@@ -153,12 +153,12 @@ public abstract class SchedulableProcess implements Serializable {
 	 */
 	protected void putParameterMethodValues(ParametersPair[] parameterValues,
 			List<Parameter> inOut, List<Parameter> out) {
-		putParameterMethodValues(parameterValues, out, inOut, null, null, null);
+		putParameterMethodValues(parameterValues, inOut, out, null, null, null);
 	}
 
 	protected void putParameterMethodValues(ParametersPair[] parameterValues,
 			List<Parameter> inOut, List<Parameter> out, ISession session) {
-		putParameterMethodValues(parameterValues, out, inOut, session, null,
+		putParameterMethodValues(parameterValues, inOut, out, session, null,
 				null);
 	}
 

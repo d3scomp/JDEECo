@@ -6,7 +6,7 @@ import java.util.List;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableComponentProcess;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableEnsembleProcess;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
-import cz.cuni.mff.d3s.deeco.invokable.TriggeredSchedulableProcess;
+import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcessTrigger;
 
 /**
  * Utility class providing functions for component and ensemble processes
@@ -40,7 +40,7 @@ public class SchedulerUtils {
 						result.add(process);
 				}
 			}
-			for (TriggeredSchedulableProcess tsp : scheduler
+			for (SchedulableProcessTrigger tsp : scheduler
 					.getTriggeredProcesses()) {
 				if (tsp.sp instanceof SchedulableComponentProcess) {
 					process = (SchedulableComponentProcess) tsp.sp;
@@ -69,7 +69,7 @@ public class SchedulerUtils {
 				result.add((SchedulableEnsembleProcess) sp);
 			}
 		}
-		for (TriggeredSchedulableProcess tsp : scheduler
+		for (SchedulableProcessTrigger tsp : scheduler
 				.getTriggeredProcesses()) {
 			if (tsp.sp instanceof SchedulableEnsembleProcess)
 				result.add((SchedulableEnsembleProcess) tsp.sp);

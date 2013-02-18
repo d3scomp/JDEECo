@@ -25,7 +25,7 @@ import cz.cuni.mff.d3s.deeco.annotations.DEECoInOut;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoProcess;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoTriggered;
+import cz.cuni.mff.d3s.deeco.annotations.DEECoTrigger;
 import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 
@@ -57,7 +57,7 @@ public class RobotFollowerComponent extends ComponentKnowledge {
 	@DEECoPeriodicScheduling(3000)
 	public static void process(@DEECoInOut("path") Path path,
 			@DEECoInOut("battery") OutWrapper<Integer> battery,
-			@DEECoIn("convoyRobot") @DEECoTriggered String convoyRobot) {
+			@DEECoIn("convoyRobot") @DEECoTrigger String convoyRobot) {
 		//System.out.println("[RobotFollowerComponent.process] convoyRobot = " + convoyRobot + ", remainingPath = " + path.remainingPath);
 		if (path.remainingPath.size() > 0) {
 			path.currentPosition = path.remainingPath.remove(0);

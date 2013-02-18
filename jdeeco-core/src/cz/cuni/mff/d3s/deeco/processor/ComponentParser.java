@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.deeco.processor;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -117,11 +118,11 @@ public class ComponentParser {
 	public static List<ComponentKnowledge> extractInitialKnowledge(Class<?> c) {
 		List<Method> initMethods = AnnotationHelper.getAnnotatedMethods(c,
 				DEECoInitialize.class);
+		List<ComponentKnowledge> result = new LinkedList<ComponentKnowledge>();
+		ComponentKnowledge ck;
 		if (initMethods.size() > 0) {
 			try {
 				Class<?> returnType;
-				ComponentKnowledge ck;
-				List<ComponentKnowledge> result = new LinkedList<ComponentKnowledge>();
 				for (Method im : initMethods) {
 					returnType = im.getReturnType();
 					if (Collection.class.isAssignableFrom(returnType)) {
@@ -145,7 +146,20 @@ public class ComponentParser {
 				System.out
 						.println("Component Knowledge Initialization exception!");
 			}
+		} else {
+			try {
+				Constructor<?> constructor = c.getConstructor();
+				if (constructor != null) {
+					ck = (ComponentKnowledge) constructor.newInstance(new Object[]{});
+					assignUIDIfNotSet(ck);
+					result.add(ck);
+					return result;
+				} 
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
+		System.out.println("No initial state can be retrieved for the component: " + c);
 		return null;
 	}
 

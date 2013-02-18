@@ -44,17 +44,24 @@ public class Runtime implements IRuntime {
 	private IScheduler scheduler;
 	private KnowledgeManager km;
 
-	public Runtime() {}
+	private static List<Runtime> runtimes = new LinkedList<Runtime>();
+	
+	public Runtime() {
+		runtimes.add(this);
+	}
 
 	public Runtime(KnowledgeManager km) {
+		this();
 		this.km = km;
 	}
 
 	public Runtime(IScheduler scheduler) {
+		this();
 		this.scheduler = scheduler;
 	}
 
 	public Runtime(KnowledgeManager km, IScheduler scheduler) {
+		this();
 		this.km = km;
 		this.scheduler = scheduler;
 	}
@@ -101,7 +108,7 @@ public class Runtime implements IRuntime {
 	@Override
 	public void registerComponentsAndEnsembles(AbstractDEECoObjectProvider provider) {
 		ClassLoader  contextClassLoader = provider.getContextClassLoader();
-		addSchedulablePorcesses(ProcessInstantiator.createProcesses(
+		addSchedulableProcesses(ProcessInstantiator.createProcesses(
 				provider.getEnsembles(), km, contextClassLoader));
 		for (ParsedComponent component : provider.getComponents()) {
 			if (!addComponentKnowledge(component.getInitialKnowledge(), km)) {
@@ -109,7 +116,7 @@ public class Runtime implements IRuntime {
 						+ component.getInitialKnowledge().getClass());
 				continue;
 			}
-			addSchedulablePorcesses(ProcessInstantiator.createProcesses(
+			addSchedulableProcesses(ProcessInstantiator.createProcesses(
 					component.getProcesses(), km, contextClassLoader));
 		}
 	}
@@ -125,6 +132,7 @@ public class Runtime implements IRuntime {
 			for (Object id : ids)
 				result.add((String) id);
 		} catch (KMException e) {
+			System.err.println("GOTCHA 1");
 			e.printStackTrace();
 		}
 		return result;
@@ -138,6 +146,7 @@ public class Runtime implements IRuntime {
 		try {
 			return km.getKnowledge(componentId);
 		} catch (Exception e) {
+			System.err.println("GOTCHA 2");
 			e.printStackTrace();
 		}
 		return null;
@@ -194,7 +203,7 @@ public class Runtime implements IRuntime {
 	 */
 	private synchronized void addSchedulableProcess(SchedulableProcess process) {
 		if (process != null)
-			scheduler.register(process);
+			scheduler.add(process);
 	}
 
 	/**
@@ -202,7 +211,7 @@ public class Runtime implements IRuntime {
 	 * 
 	 * @param processes
 	 */
-	private synchronized void addSchedulablePorcesses(
+	private synchronized void addSchedulableProcesses(
 			List<? extends SchedulableProcess> processes) {
 		if (processes != null)
 			for (SchedulableProcess sp : processes) {
@@ -228,5 +237,19 @@ public class Runtime implements IRuntime {
 				System.out.println("Initial knowlege retrival exception");
 			}
 		return false;
+	}
+	
+	/**
+	 * Returns the Runtime singleton object. Works if only one Runtime object has been created. Otherwise
+	 * it is not supported.
+	 * @return The Runtime singleton object.
+	 * @throws UnsupportedOperationException Thrown when no Runtime or more Runtimes are instantiated.
+	 */
+	public static IRuntime getDefaultRuntime() throws UnsupportedOperationException {
+		if (runtimes.size() != 1) {
+			throw new UnsupportedOperationException();
+		} else {
+			return runtimes.get(0);
+		}
 	}
 }
