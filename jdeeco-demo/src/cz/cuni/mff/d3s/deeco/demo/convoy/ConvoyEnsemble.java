@@ -53,13 +53,18 @@ public class ConvoyEnsemble extends Ensemble {
 			@DEECoIn("member.path.remainingPath") List<Integer> mRemainingPath,
 			@DEECoIn("coord.id") String cId,
 			@DEECoIn("coord.path") @DEECoTriggered EnsemblePath cPath) {
+		//System.out.println("[ConvoyEnsemble.membership] mId = " + mId + ", mRemainingPath = " + mRemainingPath + ", cId = " + cId + ", cRemainingPath = " + cPath.remainingPath + ", cCurrentPosition = " + cPath.currentPosition);
 		if (!mId.equals(cId)) {
 			if (mRemainingPath.size() > 0
 					&& cPath.remainingPath.size() > 0
 					&& cPath.currentPosition
 							.equals(getNextPosition(mRemainingPath)))
-							return .5;
+			{
+				//System.out.println("[ConvoyEnsemble.membership] result = 0.5");
+				return .5;
+			}
 		}
+		//System.out.println("[ConvoyEnsemble.membership] result = 0.7");
 		return .7;
 	}
 
@@ -67,6 +72,7 @@ public class ConvoyEnsemble extends Ensemble {
 	public static void map(@DEECoOut("member") ConvoyOutInterface mOutCR,
 			@DEECoIn("coord.path.remainingPath") List<Integer> cRemainingPath) {
 		mOutCR.convoyRobot = Integer.toString(new Random().nextInt());
+		//System.out.println("[ConvoyEnsemble.map] convoyRobot = " + mOutCR.convoyRobot);
 	}
 
 	public static Integer getNextPosition(List<Integer> remainingPath) {

@@ -5,7 +5,7 @@
 	<property name="src" location="${dist}/../jdeeco-core/src"/>
 	<property name="demo" location="${dist}/../jdeeco-demo/src"/>
 	<property name="river" location="${dist}/apache-river"/>
-	<property name="jpf" location="${dist}/jpf"/>
+	<property name="jpf" location="${dist}/jpf-core"/>
 	
 	<!-- start apache river - individual services -->
 	<target name="start-ar-httpd">
@@ -111,7 +111,7 @@
 	</target>
 	
 	
-	<!-- Run cloud demo under jpf -->
+	<!-- run cloud demo under jpf -->
 	<target name="jpf-cloud">
 		<java fork="true" classname="cz.cuni.mff.d3s.deeco.runtime.PreLauncher" dir="${dist}">
 			<arg value="cloud.jar"/>
@@ -123,9 +123,32 @@
 			<jvmarg value="-Djdeeco-dist=${dist}"/>
 			<jvmarg value="-Djdeeco-src=${src}"/>
 			<jvmarg value="-Djdeeco-src-demo=${demo}"/>
-			<arg value="+classpath=${dist}/cloud.jar"/>   
+			<arg value="+classpath=${dist}/cloud.jar,${dist}/jdeeco.jar"/>
+			<arg value="+jpf-core.native_classpath+=;${dist}/jdeeco.jar;${dist}/jdeeco-jpf.jar"/>
+			<arg value="+listener=gov.nasa.jpf.listener.AssertionProperty"/>
 			<arg value="${demo}/../jpfProperties/LocalLauncherCloudJPF.jpf"/>
+			<jvmarg value="-Xmx2g"/>
 		</java>
 	</target>
+
+	<!-- run convoy demo under jpf -->
+	<target name="jpf-convoy">
+		<java fork="true" classname="cz.cuni.mff.d3s.deeco.runtime.PreLauncher" dir="${dist}">
+			<arg value="convoy.jar"/>
+			<classpath>
+				<pathelement location="${dist}/jdeeco.jar"/>
+			</classpath>
+		</java>
+		<java fork="true" jar="${jpf}/build/RunJPF.jar" dir="${dist}">
+			<jvmarg value="-Djdeeco-dist=${dist}"/>
+			<jvmarg value="-Djdeeco-src=${src}"/>
+			<jvmarg value="-Djdeeco-src-demo=${demo}"/>
+			<arg value="+classpath=${dist}/convoy.jar,${dist}/jdeeco.jar"/>
+			<arg value="+jpf-core.native_classpath+=;${dist}/jdeeco.jar;${dist}/jdeeco-jpf.jar"/>
+			<arg value="${demo}/../jpfProperties/LocalLauncherConvoyJPF.jpf"/>
+			<jvmarg value="-Xmx8g"/>
+		</java>
+	</target>
+
 	
 </project>

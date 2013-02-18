@@ -58,7 +58,8 @@ public class RobotFollowerComponent extends ComponentKnowledge {
 	public static void process(@DEECoInOut("path") Path path,
 			@DEECoInOut("battery") OutWrapper<Integer> battery,
 			@DEECoIn("convoyRobot") @DEECoTriggered String convoyRobot) {
-		if (convoyRobot != null && path.remainingPath.size() > 0) {
+		//System.out.println("[RobotFollowerComponent.process] convoyRobot = " + convoyRobot + ", remainingPath = " + path.remainingPath);
+		if (path.remainingPath.size() > 0) {
 			path.currentPosition = path.remainingPath.remove(0);
 			battery.item = new Integer(battery.item - 1);
 			System.out.println("Follower is moving: " + path.remainingPath);

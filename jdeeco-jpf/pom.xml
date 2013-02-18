@@ -1,25 +1,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>cz.cuni.mff.d3s.jdeeco.core</groupId>
-	<artifactId>cz.cuni.mff.d3s.jdeeco.core</artifactId>
+	<groupId>cz.cuni.mff.d3s.jdeeco.jpf</groupId>
+	<artifactId>cz.cuni.mff.d3s.jdeeco.jpf</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
-		<!-- testSourceDirectory>test</testSourceDirectory -->
 		<resources>
 			<resource>
 				<directory>src</directory>
 				<excludes>
 					<exclude>**/*.java</exclude>
 				</excludes>
-			</resource>
-			<resource>
-				<directory>src/..</directory>
-				<includes>
-					<include>OSGI-INF/*.*</include>
-					<include>lib/*.*</include>
-				</includes>
 			</resource>
 		</resources>
 		<plugins>
@@ -45,40 +37,15 @@
 	</build>
 	<dependencies>
 		<dependency>
-			<groupId>net.jini</groupId>
-			<artifactId>jsk-lib</artifactId>
-			<version>2.1</version>
-		</dependency>
-		<dependency>
-			<groupId>net.jini</groupId>
-			<artifactId>jsk-platform</artifactId>
-			<version>2.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.testng</groupId>
-			<artifactId>testng</artifactId>
-			<version>6.5.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.bcel</groupId>
-			<artifactId>bcel</artifactId>
-			<version>5.2</version>
+			<groupId>cz.cuni.mff.d3s.jdeeco.core</groupId>
+			<artifactId>cz.cuni.mff.d3s.jdeeco.core</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>cz.cuni.mff.d3s.zip</groupId>
 			<artifactId>gov.nasa.jpf</artifactId>
 			<version>6.0b</version>
 			<type>zip</type>
-		</dependency> 
+		</dependency>
 	</dependencies>
-	<distributionManagement>
-		<repository>
-			<id>release-repo</id>
-			<url>https://github.com/d3scomp/mvn-repo/raw/master/releases</url>
-		</repository>
-		<snapshotRepository>
-			<id>snapshot-repo</id>
-			<url>https://github.com/d3scomp/mvn-repo/raw/master/snapshots</url>
-		</snapshotRepository>
-	</distributionManagement>
 </project>

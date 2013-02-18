@@ -10,8 +10,9 @@
 		<coreJar>jdeeco.jar</coreJar>
 		<cloudJar>cloud.jar</cloudJar>
 		<convoyJar>convoy.jar</convoyJar>
+		<deecoJPFJar>jdeeco-jpf.jar</deecoJPFJar>
 		<river>${dist}/apache-river</river>
-		<runJPFJar>${dist}/jpf/build/RunJPF.jar</runJPFJar>
+		<runJPFJar>${dist}/jpf-core/build/RunJPF.jar</runJPFJar>
 		<jdeecoCoreSrc>../jdeeco-core/src</jdeecoCoreSrc>
 		<jdeecoDemoSrc>../jdeeco-demo/src</jdeecoDemoSrc>
 	</properties>
@@ -94,6 +95,29 @@
 						</configuration>
 					</execution>
 					<execution>
+						<id>copy-jdeeco-jpf</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>cz.cuni.mff.d3s.jdeeco.jpf</groupId>
+									<artifactId>cz.cuni.mff.d3s.jdeeco.jpf</artifactId>
+									<version>0.0.1-SNAPSHOT</version>
+									<type>jar</type>
+									<overWrite>false</overWrite>
+									<destFileName>${deecoJPFJar}</destFileName>
+									<outputDirectory>${dist}</outputDirectory>
+								</artifactItem>
+							</artifactItems>
+							<outputDirectory>${dist}</outputDirectory>
+							<overWriteReleases>true</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+						</configuration>
+					</execution>
+					<execution>
 						<id>unpack</id>
 						<phase>install</phase>
 						<goals>
@@ -104,7 +128,7 @@
 								<artifactItem>
 									<groupId>cz.cuni.mff.d3s.zip</groupId>
 									<artifactId>gov.nasa.jpf</artifactId>
-									<version>6.0</version>
+									<version>6.0b</version>
 									<type>zip</type>
 								</artifactItem>
 								<artifactItem>

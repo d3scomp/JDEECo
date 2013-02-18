@@ -42,6 +42,11 @@ public class MigrationEnsemble extends Ensemble {
 			@DEECoIn("coord.id") String cId,
 			@DEECoIn("coord.loadRatio") Float cLoadRatio,
 			@DEECoIn("coord.maxLoadRatio") Float cMaxLoadRatio) {
+		//System.out.println("[MigrationEnsemble.membership] mId = " + mId + ", mLoadRatio = " + mLoadRatio + ", mMaxLoadRatio = " + mMaxLoadRatio + ", cId = " + cId + ", cLoadRatio = " + cLoadRatio + ", cMaxLoadRatio = " + cMaxLoadRatio);
+		//if (!mId.equals(cId) && mLoadRatio > mMaxLoadRatio && cLoadRatio < cMaxLoadRatio) System.out.println("[MigrationEnsemble.membership] result = true");
+		//else System.out.println("[MigrationEnsemble.membership] result = false");
+		// INJECTED ERROR
+		//assert (Math.abs(mLoadRatio.floatValue() - cLoadRatio.floatValue()) < 0.5f) : "[ERROR] difference between loads >= 50 %";
 		return !mId.equals(cId) && mLoadRatio > mMaxLoadRatio && cLoadRatio < cMaxLoadRatio;
 	}
 

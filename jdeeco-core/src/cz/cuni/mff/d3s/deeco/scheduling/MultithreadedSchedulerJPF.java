@@ -12,11 +12,9 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 /**
  * Special scheduler for testing via JPF.
  * 
- * Each task has a separate thread and is executed in the endless cycle. Timing
- * is ignored (due to GC - see comments in code)
- * 
- * @author alf
- * 
+ * Each task has a separate thread and is executed repeatedly.
+ * Timing is ignored (due to GC - see comments in code).
+ * We limit the number of executed periods with respect to 2*P_max, where P_max is the longest period.
  */
 public class MultithreadedSchedulerJPF extends Scheduler {
 
@@ -26,25 +24,37 @@ public class MultithreadedSchedulerJPF extends Scheduler {
 		super();
 		this.threads = new HashSet<Thread>();
 
-		// JPF Optimization -> earlier class loading a clinit call (in the
-		// single threaded part)
-		// Shrinks state space
+		// JPF optimization -> earlier class loading via a clinit call (in the single threaded part)
+		// shrinks state space
 		@SuppressWarnings("unused")
 		ETriggerType e = ETriggerType.COORDINATOR;
 	}
 
 	@Override
 	public synchronized void start() {
+
+		// get the longest period (P_max)	
+		long maxPeriod = 0;
+		for (SchedulableProcess sp : periodicProcesses) {
+			long spPeriod = ((ProcessPeriodicSchedule) sp.scheduling).interval;
+			if (spPeriod > maxPeriod) maxPeriod = spPeriod;
+		}
+
+		System.out.println("[DEBUG] max period = " + maxPeriod);
+
 		if (!running) {
+			// let every process run for the number of times its period P fits into 2*P_max
 			for (SchedulableProcess sp : periodicProcesses) {
-				startPeriodicProcess(sp,
-						((ProcessPeriodicSchedule) sp.scheduling).interval);
+				long spPeriod = ((ProcessPeriodicSchedule) sp.scheduling).interval;
+				long repeatCount = (2*maxPeriod) / spPeriod + 1;
+
+				System.out.println("[DEBUG] period = " + spPeriod + ", repeat count = " + repeatCount);
+
+				startPeriodicProcess(sp, spPeriod, repeatCount);
 			}
 			List<KnowledgeManager> kms = new LinkedList<KnowledgeManager>();
 			for (TriggeredSchedulableProcess tsp : triggeredProcesses) {
-				if (true) {
-					assert (false); // ALF: Unsupported now
-				}
+				// not yet supported (we ignore them for now)
 				tsp.registerListener();
 				if (!kms.contains(tsp.getKnowledgeManager()))
 					kms.add(tsp.getKnowledgeManager());
@@ -54,8 +64,7 @@ public class MultithreadedSchedulerJPF extends Scheduler {
 			}
 			running = true;
 
-			Thread.yield(); // Break the transition so that (Periodic) processes
-							// can be scheduled and executed.
+			Thread.yield(); // break the transition so that (periodic) processes can be scheduled and executed.
 		}
 	}
 
@@ -77,11 +86,9 @@ public class MultithreadedSchedulerJPF extends Scheduler {
 		}
 	}
 
-	private void startPeriodicProcess(SchedulableProcess process, long period) {
-		// Note Period is intentionally ignored - GC
-		// Because of the stop the world Garbage collector, which can postpone
-		// all threads and then any thread can execute its own action
-		Thread t = new Thread(new PeriodicProcessRunner(process));
+	private void startPeriodicProcess(SchedulableProcess process, long period, long repeatCount) {
+		// note that period is intentionally ignored because we just need to capture relevant thread interleavings
+		Thread t = new Thread(new PeriodicProcessRunner(process, repeatCount));
 		threads.add(t);
 		t.start();
 	}
@@ -89,23 +96,24 @@ public class MultithreadedSchedulerJPF extends Scheduler {
 	class PeriodicProcessRunner implements Runnable {
 
 		final private SchedulableProcess process;
+		final private long repeatCount;
 
-		public PeriodicProcessRunner(SchedulableProcess process) {
+		public PeriodicProcessRunner(SchedulableProcess process, long rc) {
 			this.process = process;
+			this.repeatCount = rc;
 		}
 
 		@Override
 		public void run() {
-			while (!Thread.interrupted()) {
+			long count = 0;
+			while ((count < repeatCount) && (!Thread.interrupted())) {
 				try {
 					process.invoke();
 				} catch (Exception e) {
-					System.out.println("Process scheduled exception!");
+					System.out.println("Process scheduled exception: " + e.getMessage());
+					e.printStackTrace();
 				}
-
-				// JPF Optimization - it is recommended to break transition here
-				// modeling GC
-				Thread.yield();
+				count++;
 			}
 		}
 	}

@@ -32,7 +32,6 @@ public class RobotLeaderComponent extends ComponentKnowledge {
 
 	public Integer battery;
 	public Path path;
-	public String convoyRobot; // 0 if there is no robot ahead 1 otherwise
 	public List<Path> crossingRobots;
 
 	@DEECoInitialize
@@ -45,7 +44,6 @@ public class RobotLeaderComponent extends ComponentKnowledge {
 		k.path.remainingPath = new ArrayList<Integer>(Arrays.asList(new Integer[] {new Integer(1), new Integer(2),
 				new Integer(3), new Integer(4), new Integer(5), new Integer(6),
 				new Integer(7), new Integer(8), new Integer(9)}));
-		k.convoyRobot = null;
 		k.crossingRobots = null;
 		return k;
 	}
@@ -57,6 +55,7 @@ public class RobotLeaderComponent extends ComponentKnowledge {
 	@DEECoProcess
 	public static void process(@DEECoInOut("path") Path path,
 			@DEECoInOut("battery") OutWrapper<Integer> battery) {
+		//System.out.println("[RobotLeaderComponent.process] remainingPath = " + path.remainingPath);
 		if (path.remainingPath.size() > 0) {
 			path.currentPosition = path.remainingPath.remove(0);
 			battery.item = new Integer(battery.item - 1);
