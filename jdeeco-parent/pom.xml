@@ -38,7 +38,7 @@
 				<artifactId>maven-dependency-plugin</artifactId>
 				<version>2.6</version>
 				<executions>
-					<execution>
+					<!-- execution>
 						<id>copy-jdeeco-jpf</id>
 						<phase>package</phase>
 						<goals>
@@ -60,7 +60,7 @@
 							<overWriteReleases>true</overWriteReleases>
 							<overWriteSnapshots>true</overWriteSnapshots>
 						</configuration>
-					</execution>
+					</execution-->
 					<execution>
 						<id>unpack</id>
 						<phase>install</phase>
@@ -75,12 +75,12 @@
 									<version>6.0b</version>
 									<type>zip</type>
 								</artifactItem>
-								<artifactItem>
+								<!-- artifactItem>
 									<groupId>cz.cuni.mff.d3s.zip</groupId>
 									<artifactId>apache-river</artifactId>
 									<version>2.2.0</version>
 									<type>zip</type>
-								</artifactItem>
+								</artifactItem-->
 							</artifactItems>
 							<outputDirectory>${dist}</outputDirectory>
 							<overWriteReleases>true</overWriteReleases>
@@ -136,10 +136,10 @@
 			<id>d3s-releases</id>
 			<url>https://github.com/d3scomp/mvn-repo/raw/master/releases/</url>
 		</repository>
-		<repository>
+		<!-- repository>
 			<id>d3s-snapshots</id>
 			<url>https://github.com/d3scomp/mvn-repo/raw/master/snapshots/</url>
-		</repository>
+		</repository-->
 		<repository>
 			<id>juno</id>
 			<layout>p2</layout>

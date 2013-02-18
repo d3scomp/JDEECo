@@ -50,7 +50,7 @@ public class MultithreadedSchedulerJPF extends Scheduler {
 
 				System.out.println("[DEBUG] period = " + spPeriod + ", repeat count = " + repeatCount);
 
-				startPeriodicProcess(sp, spPeriod, repeatCount);
+				startPeriodicProcess(sp, repeatCount);
 			}
 			List<KnowledgeManager> kms = new LinkedList<KnowledgeManager>();
 			for (SchedulableProcessTrigger tsp : triggeredProcesses) {
@@ -85,8 +85,13 @@ public class MultithreadedSchedulerJPF extends Scheduler {
 			running = false;
 		}
 	}
+	
+	@Override
+	protected void startPeriodicProcess(SchedulableProcess process) {
+		startPeriodicProcess(process, 0);
+	}
 
-	private void startPeriodicProcess(SchedulableProcess process, long period, long repeatCount) {
+	private void startPeriodicProcess(SchedulableProcess process, long repeatCount) {
 		// note that period is intentionally ignored because we just need to capture relevant thread interleavings
 		Thread t = new Thread(new PeriodicProcessRunner(process, repeatCount));
 		threads.add(t);
@@ -106,7 +111,7 @@ public class MultithreadedSchedulerJPF extends Scheduler {
 		@Override
 		public void run() {
 			long count = 0;
-			while ((count < repeatCount) && (!Thread.interrupted())) {
+			while ( repeatCount == 0 || ((count < repeatCount) && (!Thread.interrupted()))) {
 				try {
 					process.invoke();
 				} catch (Exception e) {
