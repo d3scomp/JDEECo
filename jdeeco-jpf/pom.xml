@@ -10,7 +10,8 @@
 	</parent>
 	<properties>
 		<dist>../dist</dist>
-		<jpfCore>${dist}/jpf/jpf-core</jpfCore>
+		<jpfCore>${dist}/jpf-core</jpfCore>
+		<jpfBuild>${dist}/jpf-core/build</jpfBuild>
 	</properties>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
@@ -59,7 +60,7 @@
 							</excludeArtifactIds>
 							<stripVersion>true</stripVersion>
 							<prependGroupId>false</prependGroupId>
-							<outputDirectory>${jpfCore}</outputDirectory>
+							<outputDirectory>${jpfBuild}</outputDirectory>
 							<overWriteReleases>false</overWriteReleases>
 							<overWriteSnapshots>false</overWriteSnapshots>
 							<overWriteIfNewer>true</overWriteIfNewer>
