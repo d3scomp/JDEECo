@@ -8,6 +8,10 @@
 		<version>0.0.1</version>
 		<relativePath>../jdeeco-parent/pom.xml</relativePath>
 	</parent>
+	<properties>
+		<dist>../dist</dist>
+		<jpfCore>${dist}/jpf/jpf-core</jpfCore>
+	</properties>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<resources>
@@ -37,6 +41,55 @@
 					</archive>
 				</configuration>
 			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.6</version>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>install</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<excludeArtifactIds>
+								jpf-libs,jpf-properties
+							</excludeArtifactIds>
+							<stripVersion>true</stripVersion>
+							<prependGroupId>false</prependGroupId>
+							<outputDirectory>${jpfCore}</outputDirectory>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>false</overWriteSnapshots>
+							<overWriteIfNewer>true</overWriteIfNewer>
+						</configuration>
+					</execution>
+					<execution>
+						<id>unpack</id>
+						<phase>install</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>cz.cuni.mff.d3s.jdeeco.jpf</groupId>
+									<artifactId>
+										jpf-properties
+									</artifactId>
+									<version>0.0.1</version>
+									<type>zip</type>
+								</artifactItem>
+							</artifactItems>
+							<outputDirectory>${jpfCore}</outputDirectory>
+							<overWriteReleases>true</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
 		</plugins>
 		<pluginManagement>
 			<plugins>
@@ -56,6 +109,7 @@
 										<versionRange>[1.0.0,)</versionRange>
 										<goals>
 											<goal>unpack</goal>
+											<goal>copy-dependencies</goal>
 										</goals>
 									</pluginExecutionFilter>
 									<action>
@@ -101,9 +155,19 @@
 	</build>
 	<dependencies>
 		<dependency>
-			<groupId>cz.cuni.mff.d3s.zip</groupId>
-			<artifactId>gov.nasa.jpf</artifactId>
-			<version>6.0b</version>
+			<groupId>cz.cuni.mff.d3s.jdeeco.jpf</groupId>
+			<artifactId>
+				jpf-libs
+			</artifactId>
+			<version>0.0.1</version>
+			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>cz.cuni.mff.d3s.jdeeco.jpf</groupId>
+			<artifactId>
+				jpf-properties
+			</artifactId>
+			<version>0.0.1</version>
 			<type>zip</type>
 		</dependency>
 	</dependencies>

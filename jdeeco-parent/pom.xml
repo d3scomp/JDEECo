@@ -9,7 +9,6 @@
 		<dist>../dist</dist>
 		<deecoJPFJar>jdeeco-jpf.jar</deecoJPFJar>
 		<river>${dist}/apache-river</river>
-		<runJPFJar>${dist}/jpf-core/build/RunJPF.jar</runJPFJar>
 		<jdeecoCoreSrc>../jdeeco-core/src</jdeecoCoreSrc>
 		<jdeecoDemoSrc>../jdeeco-demo/src</jdeecoDemoSrc>
 		<tycho-version>0.16.0</tycho-version>
@@ -38,29 +37,14 @@
 				<artifactId>maven-dependency-plugin</artifactId>
 				<version>2.6</version>
 				<executions>
-					<!-- execution>
-						<id>copy-jdeeco-jpf</id>
-						<phase>package</phase>
-						<goals>
-							<goal>copy</goal>
-						</goals>
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>cz.cuni.mff.d3s.jdeeco.jpf</groupId>
-									<artifactId>cz.cuni.mff.d3s.jdeeco.jpf</artifactId>
-									<version>0.0.1-SNAPSHOT</version>
-									<type>jar</type>
-									<overWrite>false</overWrite>
-									<destFileName>${deecoJPFJar}</destFileName>
-									<outputDirectory>${dist}</outputDirectory>
-								</artifactItem>
-							</artifactItems>
-							<outputDirectory>${dist}</outputDirectory>
-							<overWriteReleases>true</overWriteReleases>
-							<overWriteSnapshots>true</overWriteSnapshots>
-						</configuration>
-					</execution-->
+					<!-- execution> <id>copy-jdeeco-jpf</id> <phase>package</phase> <goals> 
+						<goal>copy</goal> </goals> <configuration> <artifactItems> <artifactItem> 
+						<groupId>cz.cuni.mff.d3s.jdeeco.jpf</groupId> <artifactId>cz.cuni.mff.d3s.jdeeco.jpf</artifactId> 
+						<version>0.0.1-SNAPSHOT</version> <type>jar</type> <overWrite>false</overWrite> 
+						<destFileName>${deecoJPFJar}</destFileName> <outputDirectory>${dist}</outputDirectory> 
+						</artifactItem> </artifactItems> <outputDirectory>${dist}</outputDirectory> 
+						<overWriteReleases>true</overWriteReleases> <overWriteSnapshots>true</overWriteSnapshots> 
+						</configuration> </execution -->
 					<execution>
 						<id>unpack</id>
 						<phase>install</phase>
@@ -71,16 +55,10 @@
 							<artifactItems>
 								<artifactItem>
 									<groupId>cz.cuni.mff.d3s.zip</groupId>
-									<artifactId>gov.nasa.jpf</artifactId>
-									<version>6.0b</version>
-									<type>zip</type>
-								</artifactItem>
-								<!-- artifactItem>
-									<groupId>cz.cuni.mff.d3s.zip</groupId>
 									<artifactId>apache-river</artifactId>
 									<version>2.2.0</version>
 									<type>zip</type>
-								</artifactItem-->
+								</artifactItem>
 							</artifactItems>
 							<outputDirectory>${dist}</outputDirectory>
 							<overWriteReleases>true</overWriteReleases>
@@ -130,16 +108,15 @@
 		<module>../jdeeco-core</module>
 		<module>../jdeeco-demo</module>
 		<module>../jdeeco-sde</module>
+		<module>../jdeeco-jpf</module>
 	</modules>
 	<repositories>
 		<repository>
 			<id>d3s-releases</id>
 			<url>https://github.com/d3scomp/mvn-repo/raw/master/releases/</url>
 		</repository>
-		<!-- repository>
-			<id>d3s-snapshots</id>
-			<url>https://github.com/d3scomp/mvn-repo/raw/master/snapshots/</url>
-		</repository-->
+		<!-- repository> <id>d3s-snapshots</id> <url>https://github.com/d3scomp/mvn-repo/raw/master/snapshots/</url> 
+			</repository -->
 		<repository>
 			<id>juno</id>
 			<layout>p2</layout>

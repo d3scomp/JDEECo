@@ -180,12 +180,6 @@
 			<version>2.2.0</version>
 			<type>zip</type>
 		</dependency>
-		<dependency>
-			<groupId>cz.cuni.mff.d3s.zip</groupId>
-			<artifactId>gov.nasa.jpf</artifactId>
-			<version>6.0b</version>
-			<type>zip</type>
-		</dependency>
 	</dependencies>
 	<repositories>
 		<repository>
