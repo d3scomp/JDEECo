@@ -37,14 +37,6 @@
 				<artifactId>maven-dependency-plugin</artifactId>
 				<version>2.6</version>
 				<executions>
-					<!-- execution> <id>copy-jdeeco-jpf</id> <phase>package</phase> <goals> 
-						<goal>copy</goal> </goals> <configuration> <artifactItems> <artifactItem> 
-						<groupId>cz.cuni.mff.d3s.jdeeco.jpf</groupId> <artifactId>cz.cuni.mff.d3s.jdeeco.jpf</artifactId> 
-						<version>0.0.1-SNAPSHOT</version> <type>jar</type> <overWrite>false</overWrite> 
-						<destFileName>${deecoJPFJar}</destFileName> <outputDirectory>${dist}</outputDirectory> 
-						</artifactItem> </artifactItems> <outputDirectory>${dist}</outputDirectory> 
-						<overWriteReleases>true</overWriteReleases> <overWriteSnapshots>true</overWriteSnapshots> 
-						</configuration> </execution -->
 					<execution>
 						<id>unpack</id>
 						<phase>install</phase>
@@ -60,6 +52,7 @@
 									<type>zip</type>
 								</artifactItem>
 							</artifactItems>
+							<overWriteIfNewer>true</overWriteIfNewer>
 							<outputDirectory>${dist}</outputDirectory>
 							<overWriteReleases>true</overWriteReleases>
 							<overWriteSnapshots>true</overWriteSnapshots>

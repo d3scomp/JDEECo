@@ -86,8 +86,6 @@
 									<type>${project.packaging}</type>
 									<classifier>cloud</classifier>
 									<destFileName>${cloudJar}</destFileName>
-									<overWrite>true</overWrite>
-									<outputDirectory>${dist}</outputDirectory>
 								</artifactItem>
 								<artifactItem>
 									<groupId>${project.groupId}</groupId>
@@ -95,11 +93,11 @@
 									<version>${project.version}</version>
 									<type>${project.packaging}</type>
 									<classifier>convoy</classifier>
-									<overWrite>true</overWrite>
 									<destFileName>${convoyJar}</destFileName>
-									<outputDirectory>${dist}</outputDirectory>
 								</artifactItem>
 							</artifactItems>
+							<overWriteIfNewer>true</overWriteIfNewer>
+							<outputDirectory>${dist}</outputDirectory>
 						</configuration>
 					</execution>
 				</executions>

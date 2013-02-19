@@ -48,12 +48,11 @@
 									<artifactId>${project.artifactId}</artifactId>
 									<version>${project.version}</version>
 									<type>${project.packaging}</type>
-									<overWrite>true</overWrite>
 									<destFileName>${sdeJar}</destFileName>
-									<outputDirectory>${sde}</outputDirectory>
 								</artifactItem>
 							</artifactItems>
-							<outputDirectory>${dist}</outputDirectory>
+							<overWriteIfNewer>true</overWriteIfNewer>
+							<outputDirectory>${sde}</outputDirectory>
 							<overWriteReleases>true</overWriteReleases>
 							<overWriteSnapshots>true</overWriteSnapshots>
 						</configuration>

@@ -52,7 +52,6 @@
 									<artifactId>${project.artifactId}</artifactId>
 									<version>${project.version}</version>
 									<type>${project.packaging}</type>
-									<overWrite>true</overWrite>
 									<destFileName>${coreJar}</destFileName>
 									<outputDirectory>${dist}</outputDirectory>
 								</artifactItem>
@@ -61,7 +60,6 @@
 									<artifactId>${project.artifactId}</artifactId>
 									<version>${project.version}</version>
 									<type>${project.packaging}</type>
-									<overWrite>true</overWrite>
 									<destFileName>${sdeCoreJar}</destFileName>
 									<outputDirectory>${sde}</outputDirectory>
 								</artifactItem>
@@ -84,7 +82,6 @@
 									<artifactId>cz.cuni.mff.d3s.bcel</artifactId>
 									<version>1.0.0</version>
 									<type>jar</type>
-									<overWrite>true</overWrite>
 									<outputDirectory>${sde}</outputDirectory>
 								</artifactItem>
 								<artifactItem>
@@ -92,10 +89,10 @@
 									<artifactId>cz.cuni.mff.d3s.jini</artifactId>
 									<version>1.0.0</version>
 									<type>jar</type>
-									<overWrite>true</overWrite>
 									<outputDirectory>${sde}</outputDirectory>
 								</artifactItem>
 							</artifactItems>
+							<overWriteIfNewer>true</overWriteIfNewer>
 							<overWriteReleases>true</overWriteReleases>
 							<overWriteSnapshots>true</overWriteSnapshots>
 						</configuration>
