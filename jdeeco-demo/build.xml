@@ -1,4 +1,4 @@
-<project name="JDEECo-Core" default="all" basedir=".">
+<project name="JDEECo-Core" default="convoy-local" basedir=".">
 	<description>JDEECo build file</description>
 
 	<property name="dist" location="."/>
