@@ -30,5 +30,7 @@ To run one of demo applications perform open command window in the `dist` direct
 To run cloud demo under the Java PathFinder (only local knowledge repository supported) issue the following ant command: `ant jpf-cloud`.
 
 ## Eclipse integration
-In order to work with jDEECo sources in the Eclipse IDE a proper target platform needs to be configured. For that purpose both `core` and `sde` projects contain the `targetDefinition.target`, which points to the required update sites containing necessary plugins.
+All of the projects in the repository are the Eclipse projects. As such they can be easily imported to the Eclipse workspace.
+
+In order to work with jDEECo sources in the Eclipse IDE a proper target platform needs to be configured. For that purpose both `core` and `sde` projects contain the `targetDefinition.target` files, which points to the required update sites containing necessary plugins.
 To set them active, click `Set as Target Platform` link (top left corner) in the overview tab of the targetDefinition.target.
