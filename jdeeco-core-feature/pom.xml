@@ -1,14 +1,33 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <artifactId>cz.cuni.mff.d3s.jdeeco.core-feature</artifactId>
-  <packaging>eclipse-feature</packaging>
-  <parent>
-  	<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
-  	<artifactId>cz.cuni.mff.d3s.jdeeco</artifactId>
-  	<version>0.0.1</version>
-  	<relativePath>../jdeeco-parent/pom.xml</relativePath>
-  </parent>
-  	<build>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>cz.cuni.mff.d3s.jdeeco.core-feature</artifactId>
+	<packaging>eclipse-feature</packaging>
+	<parent>
+		<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
+		<artifactId>cz.cuni.mff.d3s.jdeeco</artifactId>
+		<version>0.0.1</version>
+		<relativePath>../jdeeco-parent/pom.xml</relativePath>
+	</parent>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>2.5</version>
+				<executions>
+					<execution>
+						<id>clean-dist</id>
+						<goals>
+							<goal>clean</goal>
+						</goals>
+						<phase>clean</phase>
+						<configuration>
+							<skip>true</skip>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
 		<pluginManagement>
 			<plugins>
 				<!-- Ignore/Execute plugin execution -->
@@ -69,12 +88,12 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-  	<dependencies>
-  		<dependency>
-  			<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
-  			<artifactId>cz.cuni.mff.d3s.jdeeco.core</artifactId>
-  			<version>0.0.1</version>
-  			<type>eclipse-plugin</type>
-  		</dependency>
-  	</dependencies>
+	<dependencies>
+		<dependency>
+			<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
+			<artifactId>cz.cuni.mff.d3s.jdeeco.core</artifactId>
+			<version>0.0.1</version>
+			<type>eclipse-plugin</type>
+		</dependency>
+	</dependencies>
 </project>

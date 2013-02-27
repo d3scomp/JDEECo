@@ -19,6 +19,18 @@
 /jdeeco-jpf/target
 /jdeeco-jpf/doc
 /jdeeco-jpf/.settings
+/jdeeco-core-feature/bin
+/jdeeco-core-feature/target
+/jdeeco-core-feature/doc
+/jdeeco-core-feature/.settings
+/jdeeco-libs-feature/bin
+/jdeeco-libs-feature/target
+/jdeeco-libs-feature/doc
+/jdeeco-libs-feature/.settings
+/jdeeco-p2/bin
+/jdeeco-p2/target
+/jdeeco-p2/doc
+/jdeeco-p2/.settings
 
 /dist
 /target
