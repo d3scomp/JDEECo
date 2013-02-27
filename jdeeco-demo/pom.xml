@@ -193,16 +193,6 @@
 			<type>zip</type>
 		</dependency>
 	</dependencies>
-	<repositories>
-		<repository>
-			<id>d3s-releases</id>
-			<url>https://github.com/d3scomp/mvn-repo/raw/master/releases/</url>
-		</repository>
-		<repository>
-			<id>d3s-snapshots</id>
-			<url>https://github.com/d3scomp/mvn-repo/raw/master/snapshots/</url>
-		</repository>
-	</repositories>
 	<parent>
 		<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
 		<artifactId>cz.cuni.mff.d3s.jdeeco</artifactId>

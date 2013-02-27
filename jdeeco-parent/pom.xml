@@ -111,11 +111,19 @@
 		<module>../jdeeco-demo</module>
 		<module>../jdeeco-sde</module>
 		<module>../jdeeco-jpf</module>
+		<module>../jdeeco-core-feature</module>
+		<module>../jdeeco-libs-feature</module>
+		<module>../jdeeco-p2</module>
 	</modules>
 	<repositories>
 		<repository>
 			<id>d3s-releases</id>
 			<url>https://github.com/d3scomp/mvn-repo/raw/master/releases/</url>
+		</repository>
+		<repository>
+			<id>update-p2</id>
+			<layout>p2</layout>
+			<url>http://github.com/d3scomp/p2-update/raw/master/</url>
 		</repository>
 		<!-- repository> <id>d3s-snapshots</id> <url>https://github.com/d3scomp/mvn-repo/raw/master/snapshots/</url> 
 			</repository -->

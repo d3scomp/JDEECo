@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/cz.cuni.mff.d3s.jdeeco.libs-feature_0.0.1.jar" id="cz.cuni.mff.d3s.jdeeco.libs-feature" version="0.0.1">
+      <category name="cz.cuni.mff.d3s.jdeeco"/>
+   </feature>
+   <feature url="features/cz.cuni.mff.d3s.jdeeco.core-feature_0.0.1.jar" id="cz.cuni.mff.d3s.jdeeco.core-feature" version="0.0.1">
+      <category name="cz.cuni.mff.d3s.jdeeco"/>
+   </feature>
+   <category-def name="cz.cuni.mff.d3s.jdeeco" label="cz.cuni.mff.d3s.jdeeco"/>
+</site>
