@@ -84,13 +84,15 @@ public abstract class Scheduler implements IScheduler {
 	public synchronized void remove(SchedulableProcess process) {
 		if (!running)
 			if (process.scheduling instanceof ProcessTriggeredSchedule)
-				for (SchedulableProcessTrigger tsp : triggeredProcesses)
+				for (SchedulableProcessTrigger tsp : triggeredProcesses) {
 					if (tsp.sp == process) {
 						tsp.unregisterListener();
 						triggeredProcesses
 								.remove(new SchedulableProcessTrigger(process));
-					} else
-						periodicProcesses.remove(process);
+					}
+				}
+			else
+				periodicProcesses.remove(process);
 	}
 
 	/*
