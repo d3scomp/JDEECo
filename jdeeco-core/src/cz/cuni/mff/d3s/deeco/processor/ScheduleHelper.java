@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package cz.cuni.mff.d3s.deeco.scheduling;
+package cz.cuni.mff.d3s.deeco.processor;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -21,8 +21,10 @@ import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoTrigger;
-import cz.cuni.mff.d3s.deeco.invokable.AnnotationHelper;
 import cz.cuni.mff.d3s.deeco.invokable.Parameter;
+import cz.cuni.mff.d3s.deeco.scheduling.ProcessPeriodicSchedule;
+import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
+import cz.cuni.mff.d3s.deeco.scheduling.ProcessTriggeredSchedule;
 
 /**
  * Helper class for used for scheduling information retrieval.

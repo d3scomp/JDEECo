@@ -7,7 +7,6 @@ import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsembleMapper;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsembleMembership;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.ensemble.Ensemble;
-import cz.cuni.mff.d3s.deeco.invokable.AnnotationHelper;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableEnsembleProcess;
 import cz.cuni.mff.d3s.deeco.invokable.creators.BooleanMembershipCreator;
 import cz.cuni.mff.d3s.deeco.invokable.creators.FuzzyMembershipCreator;
@@ -17,7 +16,6 @@ import cz.cuni.mff.d3s.deeco.invokable.creators.SchedulableEnsembleProcessCreato
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessPeriodicSchedule;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
-import cz.cuni.mff.d3s.deeco.scheduling.ScheduleHelper;
 
 public class EnsembleParser {
 

@@ -113,7 +113,7 @@
 	
 	<!-- run cloud demo under jpf -->
 	<target name="jpf-cloud">
-		<java fork="true" classname="cz.cuni.mff.d3s.deeco.runtime.PreLauncher" dir="${dist}">
+		<java fork="true" classname="cz.cuni.mff.d3s.deeco.runtime.PreprocessorLauncher" dir="${dist}">
 			<arg value="cloud.jar"/>
 			<classpath>
 				<pathelement location="${dist}/jdeeco.jar"/>
@@ -134,7 +134,7 @@
 
 	<!-- run convoy demo under jpf -->
 	<target name="jpf-convoy">
-		<java fork="true" classname="cz.cuni.mff.d3s.deeco.runtime.PreLauncher" dir="${dist}">
+		<java fork="true" classname="cz.cuni.mff.d3s.deeco.runtime.PreprocessorLauncher" dir="${dist}">
 			<arg value="convoy.jar"/>
 			<classpath>
 				<pathelement location="${dist}/jdeeco.jar"/>

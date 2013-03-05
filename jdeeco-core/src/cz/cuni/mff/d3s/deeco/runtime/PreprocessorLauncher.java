@@ -13,7 +13,7 @@ import cz.cuni.mff.d3s.deeco.provider.ClassDEECoObjectProvider;
  * @author Michal Kit
  * 
  */
-public class PreLauncher {
+public class PreprocessorLauncher {
 
 	/**
 	 * Parses and serializes components and ensembles into a file.

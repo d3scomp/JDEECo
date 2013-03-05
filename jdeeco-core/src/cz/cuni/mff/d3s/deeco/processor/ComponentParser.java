@@ -15,7 +15,6 @@ import cz.cuni.mff.d3s.deeco.annotations.DEECoProcess;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoStrongLocking;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoWeakLocking;
 import cz.cuni.mff.d3s.deeco.annotations.ELockingMode;
-import cz.cuni.mff.d3s.deeco.invokable.AnnotationHelper;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableComponentProcess;
 import cz.cuni.mff.d3s.deeco.invokable.creators.ParametrizedMethodCreator;
 import cz.cuni.mff.d3s.deeco.invokable.creators.SchedulableComponentProcessCreator;
@@ -23,7 +22,6 @@ import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessPeriodicSchedule;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
-import cz.cuni.mff.d3s.deeco.scheduling.ScheduleHelper;
 
 public class ComponentParser {
 
