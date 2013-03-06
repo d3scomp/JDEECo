@@ -7,13 +7,12 @@ import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsembleMapper;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsembleMembership;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.ensemble.Ensemble;
+import cz.cuni.mff.d3s.deeco.invokable.BooleanMembership;
+import cz.cuni.mff.d3s.deeco.invokable.Membership;
+import cz.cuni.mff.d3s.deeco.invokable.ParameterizedMethod;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableEnsembleProcess;
-import cz.cuni.mff.d3s.deeco.invokable.creators.BooleanMembershipCreator;
-import cz.cuni.mff.d3s.deeco.invokable.creators.FuzzyMembershipCreator;
-import cz.cuni.mff.d3s.deeco.invokable.creators.MembershipCreator;
-import cz.cuni.mff.d3s.deeco.invokable.creators.ParametrizedMethodCreator;
-import cz.cuni.mff.d3s.deeco.invokable.creators.SchedulableEnsembleProcessCreator;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.path.grammar.ParseException;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessPeriodicSchedule;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
 
@@ -28,37 +27,39 @@ public class EnsembleParser {
 	 * @param km
 	 *            {@link KnowledgeManager} instance that is used for knowledge
 	 *            repository communication
-	 * @return list of {@link SchedulableEnsembleProcess} instances extracted
+	 * @return a {@link SchedulableEnsembleProcess} instance extracted
 	 *         from the class definition
 	 */
-	public static SchedulableEnsembleProcessCreator extractEnsembleProcess(
-			Class<?> c) {
-		if (c == null) {
-			return null;
+	public static SchedulableEnsembleProcess extractEnsembleProcess(
+			Class<?> c) throws ParseException {
+		// TODO: put names into the exception strings
+		
+		if (!isEnsembleDefinition(c)) {
+			throw new ParseException("The class " + c.getName() + " is not an ensemble definition.");
 		}
-
+		
+		assert(c != null);
+		
 		final Method methodEnsMembership = AnnotationHelper.getAnnotatedMethod(
 				c, DEECoEnsembleMembership.class);
+		
 		if (methodEnsMembership == null) {
-			return null;
+			throw new ParseException("The ensemble definition does not define a membership function");
 		}
 
-		final ParametrizedMethodCreator pmc = ParametrizedMethodCreator
-				.extractParametrizedMethodCreator(methodEnsMembership);
-		if (pmc == null) {
-			return null;
+		final ParameterizedMethod pm = ParserHelper.extractParametrizedMethod(methodEnsMembership);
+		
+		if (pm == null) {
+			throw new ParseException("Malformed membership function definition.");
 		}
 
 		// Look up Membership
-		MembershipCreator membershipCreator;
-		if (methodEnsMembership.getReturnType().isAssignableFrom(double.class)) {
-			membershipCreator = new FuzzyMembershipCreator(
-					pmc,
-					(Double) AnnotationHelper.getAnnotationValue(methodEnsMembership
-							.getAnnotation(DEECoEnsembleMembership.class)));
-		} else {
-			membershipCreator = new BooleanMembershipCreator(pmc);
+		if (!methodEnsMembership.getReturnType().isAssignableFrom(boolean.class)) {
+			throw new ParseException("Membership function needs to return boolean");
 		}
+				
+		Membership membership = new BooleanMembership(pm);
+		
 
 		// Look up scheduling
 		ProcessSchedule scheduling = null;
@@ -75,8 +76,8 @@ public class EnsembleParser {
 			final ProcessSchedule triggeredSchedule = ScheduleHelper
 					.getTriggeredSchedule(
 							methodEnsMembership.getParameterAnnotations(),
-							membershipCreator.method.in,
-							membershipCreator.method.inOut);
+							membership.method.in,
+							membership.method.inOut);
 
 			if (triggeredSchedule != null) {
 				scheduling = triggeredSchedule;
@@ -88,19 +89,20 @@ public class EnsembleParser {
 			scheduling = new ProcessPeriodicSchedule();
 		}
 
-		final Method mapperMethod = AnnotationHelper.getAnnotatedMethod(c,
+		final Method knowledgeExchangeMethod = AnnotationHelper.getAnnotatedMethod(c,
 				DEECoEnsembleMapper.class);
-		if (mapperMethod == null) {
-			return null;
+		
+		if (knowledgeExchangeMethod == null) {
+			throw new ParseException("The ensemble definition does not define a knowledge exchange function");
 		}
 
-		final ParametrizedMethodCreator mapperCreator = ParametrizedMethodCreator
-				.extractParametrizedMethodCreator(mapperMethod);
-		if (mapperCreator == null) {
-			return null;
-		} else
-			return new SchedulableEnsembleProcessCreator(scheduling,
-					mapperCreator, membershipCreator);
+		final ParameterizedMethod knowledgeExchange = ParserHelper.extractParametrizedMethod(knowledgeExchangeMethod);
+		if (knowledgeExchange == null) {
+			throw new ParseException("Malformed knowledge exchange function definition.");
+		} 
+		
+		return new SchedulableEnsembleProcess(null, scheduling,
+				membership, knowledgeExchange, null);
 	}
 
 	public static boolean isEnsembleDefinition(Class<?> clazz) {

@@ -15,10 +15,11 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.invokable;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import cz.cuni.mff.d3s.deeco.invokable.creators.ParametrizedMethodCreator;
+import cz.cuni.mff.d3s.deeco.processor.MethodDescription;
 
 /**
  * Base class representing a parameterized method.
@@ -27,8 +28,54 @@ import cz.cuni.mff.d3s.deeco.invokable.creators.ParametrizedMethodCreator;
  * 
  */
 public class ParameterizedMethod {
+	
+	/**
+	 * The java method that represents the executable code.
+	 * Cannot be serialized. 
+	 */
+	 private transient Method method = null;
+	 
+	
+	/**
+	 * Class  capturing serializable information that allows recreating 
+	 * the method reference after serialization. 
+	 * 
+	 * @author Keznikl
+	 *
+	 */
+	private class MethodDescription implements Serializable {
+		private static final long serialVersionUID = -8932122303127301918L;
+
+		public final Class<?> declaringClass; // In which class the method is declared
+		public final String methodName;
+		public final Class<?> [] parameterTypes;
+		
+		public MethodDescription(Method method) {
+			this.declaringClass = method.getDeclaringClass();
+			this.methodName = method.getName();
+			this.parameterTypes = method.getParameterTypes();
+		}
+		
+		public Method getMethod() {
+			try {
+				return declaringClass.getMethod(methodName, parameterTypes);
+			} catch (SecurityException e) {
+				System.err.println("Extracting method exception.");
+				System.err.println(e);
+			} catch (NoSuchMethodException e) {
+				System.err.println("Extracting method exception.");
+				System.err.println(e);
+			}
+			
+			return null;
+		}
+	} 
   
-  public final transient Method method;
+  /**
+   *  Method class is not serializable.
+   *  Thus the necessary information is serialized within this object.
+   */
+  private final MethodDescription methodDesc;
 
   /**
    * Input parameterTypes
@@ -43,11 +90,18 @@ public class ParameterizedMethod {
    */
   public final List<Parameter> out;
 
-  public ParameterizedMethod(ParametrizedMethodCreator creator) {
-    this.in = creator.in;
-    this.inOut = creator.inOut;
-    this.out = creator.out;
-    this.method = creator.methodDesc.getMethod();
+  public ParameterizedMethod(List<Parameter> in, List<Parameter> inOut, List<Parameter> out, Method method) {
+    this.in = in;
+    this.inOut = inOut;
+    this.out = out;
+    this.methodDesc = new MethodDescription(method);
+  }
+  
+  public synchronized Method getMethod() {
+	  if (method == null) {
+		  method = methodDesc.getMethod();
+	  }
+	  return method;
   }
   
   /**

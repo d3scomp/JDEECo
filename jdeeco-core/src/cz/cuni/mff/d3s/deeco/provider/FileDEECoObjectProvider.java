@@ -12,6 +12,9 @@ import cz.cuni.mff.d3s.deeco.processor.ClassProcessor;
  */
 public class FileDEECoObjectProvider extends AbstractDEECoObjectProvider {
 
+
+	private static final long serialVersionUID = 6765016395278637455L;
+	
 	private final String fileName;
 	private final ClassLoader parentClassLoader;
 

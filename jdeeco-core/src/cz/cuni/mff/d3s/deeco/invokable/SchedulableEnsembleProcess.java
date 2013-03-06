@@ -166,13 +166,13 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 	public Method getMapperMethod() {
 		if (mapper == null)
 			return null;
-		return mapper.method;
+		return mapper.getMethod();
 	}
 	
 	public Method getMembershipMethod() {
 		if (membership == null || membership.method == null)
 			return null;
-		return membership.method.method;
+		return membership.method.getMethod();
 	}
 
 }

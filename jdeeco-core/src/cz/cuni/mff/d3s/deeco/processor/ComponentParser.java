@@ -15,9 +15,8 @@ import cz.cuni.mff.d3s.deeco.annotations.DEECoProcess;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoStrongLocking;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoWeakLocking;
 import cz.cuni.mff.d3s.deeco.annotations.ELockingMode;
+import cz.cuni.mff.d3s.deeco.invokable.ParameterizedMethod;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableComponentProcess;
-import cz.cuni.mff.d3s.deeco.invokable.creators.ParametrizedMethodCreator;
-import cz.cuni.mff.d3s.deeco.invokable.creators.SchedulableComponentProcessCreator;
 import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessPeriodicSchedule;
@@ -39,7 +38,7 @@ public class ComponentParser {
 	 * @return list of {@link SchedulableComponentProcess} instances extracted
 	 *         from the class definition
 	 */
-	public static List<SchedulableComponentProcessCreator> extractComponentProcess(
+	public static List<SchedulableComponentProcess> extractComponentProcess(
 			Class<?> c, String root) {
 		if (c == null) {
 			return null;
@@ -52,12 +51,13 @@ public class ComponentParser {
 			return null;
 		}
 
-		final List<SchedulableComponentProcessCreator> result = new ArrayList<SchedulableComponentProcessCreator>();
+		final List<SchedulableComponentProcess> result = new ArrayList<SchedulableComponentProcess>();
 
-		for (Method m : methods) {
-			final ParametrizedMethodCreator currentMethodCreator = ParametrizedMethodCreator
-					.extractParametrizedMethodCreator(m, root);
-			if (currentMethodCreator == null) {
+		for (Method m : methods) {			
+			
+			final ParameterizedMethod currentMethod = ParserHelper.extractParametrizedMethod(m, root);
+			
+			if (currentMethod == null) {
 				// Not a process method
 				continue;
 			}
@@ -73,8 +73,8 @@ public class ComponentParser {
 			if (ps == null) {
 				final ProcessSchedule triggeredSchedule = ScheduleHelper
 						.getTriggeredSchedule(m.getParameterAnnotations(),
-								currentMethodCreator.in,
-								currentMethodCreator.inOut);
+								currentMethod.in,
+								currentMethod.inOut);
 				if (triggeredSchedule != null) {
 					ps = triggeredSchedule;
 				}
@@ -98,14 +98,15 @@ public class ComponentParser {
 				lm = ELockingMode.STRONG;
 			}
 
-			final SchedulableComponentProcessCreator skp = new SchedulableComponentProcessCreator(
-					ps, currentMethodCreator, lm, root);
+			final SchedulableComponentProcess skp = new SchedulableComponentProcess(
+					null, ps, currentMethod, lm, root, null);
 			result.add(skp);
 		}
 
 		return result;
 	}
-
+	
+	
 	/**
 	 * Retrieves init method from the <code>ComponentKnowledge</code> class.
 	 * 

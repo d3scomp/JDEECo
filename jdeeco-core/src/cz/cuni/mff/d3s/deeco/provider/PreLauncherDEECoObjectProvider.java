@@ -11,6 +11,8 @@ import cz.cuni.mff.d3s.deeco.processor.ParsedObjectReader;
  */
 public class PreLauncherDEECoObjectProvider extends AbstractDEECoObjectProvider {
 
+	private static final long serialVersionUID = 548154110219388270L;
+	
 	private AbstractDEECoObjectProvider provider;
 
 	public PreLauncherDEECoObjectProvider(String fileName) {

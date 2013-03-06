@@ -98,7 +98,7 @@ public class SchedulableComponentProcess extends SchedulableProcess {
 	public Method getProcessMethod() {
 		if (process == null)
 			return null;
-		return process.method;
+		return process.getMethod();
 	}
 	
 	public String getComponentId() {

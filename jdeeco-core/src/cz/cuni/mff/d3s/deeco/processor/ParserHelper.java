@@ -6,8 +6,12 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import cz.cuni.mff.d3s.deeco.annotations.DEECoIn;
+import cz.cuni.mff.d3s.deeco.annotations.DEECoInOut;
+import cz.cuni.mff.d3s.deeco.annotations.DEECoOut;
 import cz.cuni.mff.d3s.deeco.exceptions.ComponentEnsembleParseException;
 import cz.cuni.mff.d3s.deeco.invokable.Parameter;
+import cz.cuni.mff.d3s.deeco.invokable.ParameterizedMethod;
 import cz.cuni.mff.d3s.deeco.knowledge.KPBuilder;
 import cz.cuni.mff.d3s.deeco.path.grammar.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.path.grammar.ParseException;
@@ -31,7 +35,7 @@ public class ParserHelper {
 	 * 
 	 * @see Parameter
 	 */
-	public static List<Parameter> getParameters(Method method,
+	private static List<Parameter> getParameters(Method method,
 			Class<?> annotationClass, String root) throws ParseException, ComponentEnsembleParseException {
 		List<Parameter> result = new ArrayList<Parameter>();
 		Annotation[][] allAnnotations = method.getParameterAnnotations();
@@ -66,5 +70,32 @@ public class ParserHelper {
 		
 		return new Parameter(kPath, type, index);
 	}
+	
+	/**
+	 *  Extract an instance of ParameterizedMethod from the Java method instance.
+	 *  If the method does not represent a DEECo annotated method or parsing exception occurs return null. 
+	 */
+	public static ParameterizedMethod extractParametrizedMethod(Method method) {
+		return extractParametrizedMethod(method, null);
+	}
+	
+	/**
+	 *  Extract an instance of ParameterizedMethod from the Java method instance for the given component id (root).
+	 *  If the method does not represent a DEECo annotated method or parsing exception occurs return null. 
+	 */
+	public static ParameterizedMethod extractParametrizedMethod(Method method, String root) {
+		try {
+			if (method != null) {
+				List<Parameter> in = getParameters(method, DEECoIn.class, root);
+				List<Parameter> out = getParameters(method, DEECoOut.class, root);
+				List<Parameter> inOut = getParameters(method, DEECoInOut.class, root);
+				return new ParameterizedMethod(in, inOut, out, method);
+			}
+		} catch (ComponentEnsembleParseException pe) {
+		} catch (ParseException pe) {
+		}
+		return null;
+	}
+
 	
 }

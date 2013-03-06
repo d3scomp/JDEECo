@@ -28,7 +28,6 @@ import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.provider.ParsedComponent;
-import cz.cuni.mff.d3s.deeco.provider.ProcessInstantiator;
 import cz.cuni.mff.d3s.deeco.scheduling.IScheduler;
 import cz.cuni.mff.d3s.deeco.scheduling.SchedulerUtils;
 
@@ -108,17 +107,40 @@ public class Runtime implements IRuntime {
 	@Override
 	public void registerComponentsAndEnsembles(AbstractDEECoObjectProvider provider) {
 		ClassLoader  contextClassLoader = provider.getContextClassLoader();
-		addSchedulableProcesses(ProcessInstantiator.createProcesses(
-				provider.getEnsembles(), km, contextClassLoader));
+		
+		List<? extends SchedulableProcess> ensembleProcesses = provider.getEnsembles();
+		setUpProcesses(ensembleProcesses, km, contextClassLoader);		
+		addSchedulableProcesses(ensembleProcesses);
+		
 		for (ParsedComponent component : provider.getComponents()) {
 			if (!addComponentKnowledge(component.getInitialKnowledge(), km)) {
 				System.out.println("Error when writng initial knowledge: "
 						+ component.getInitialKnowledge().getClass());
 				continue;
 			}
-			addSchedulableProcesses(ProcessInstantiator.createProcesses(
-					component.getProcesses(), km, contextClassLoader));
+			List<? extends SchedulableProcess> componentProcesses = component.getProcesses();
+			setUpProcesses(componentProcesses, km, contextClassLoader);			
+			addSchedulableProcesses(componentProcesses);
 		}
+	}
+	
+	/**
+	 * Set-up the processes for runtime execution; i.e.,
+	 * assign them knowledge manager reference and classloader reference.
+	 * @param processes 			processes to be set up
+	 * @param km					knowledge manager
+	 * @param contextClassLoader	classloader for the process
+	 */
+	private void setUpProcesses(
+			List<? extends SchedulableProcess> processes, 
+			KnowledgeManager km,
+			ClassLoader  contextClassLoader
+			) {
+		for (SchedulableProcess p: processes) {
+			p.km = km;
+			p.contextClassLoader = contextClassLoader;
+		}
+		
 	}
 	
 	/* (non-Javadoc)

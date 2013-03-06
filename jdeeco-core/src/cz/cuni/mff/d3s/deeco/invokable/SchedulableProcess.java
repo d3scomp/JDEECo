@@ -41,8 +41,9 @@ public abstract class SchedulableProcess implements Serializable {
 	private final InputParametersHelper iph;
 	private final OutputParametersHelper oph;
 	
-	public final KnowledgeManager km;
-	public final ClassLoader contextClassLoader;
+	// these are assigned after preprocessing, thus musn't be final
+	public KnowledgeManager km; 
+	public ClassLoader contextClassLoader;
 
 	public final ProcessSchedule scheduling;
 

@@ -3,7 +3,7 @@ package cz.cuni.mff.d3s.deeco.provider;
 import java.io.Serializable;
 import java.util.List;
 
-import cz.cuni.mff.d3s.deeco.invokable.creators.SchedulableEnsembleProcessCreator;
+import cz.cuni.mff.d3s.deeco.invokable.SchedulableEnsembleProcess;
 
 /**
  * Class defining main functionalities of component and ensemble provider.
@@ -13,8 +13,10 @@ import cz.cuni.mff.d3s.deeco.invokable.creators.SchedulableEnsembleProcessCreato
  */
 public abstract class AbstractDEECoObjectProvider implements Serializable {
 
+	private static final long serialVersionUID = 1945721980050303806L;
+	
 	protected List<ParsedComponent> components;
-	protected List<SchedulableEnsembleProcessCreator> ensembles;
+	protected List<SchedulableEnsembleProcess> ensembles;
 
 	/**
 	 * Retrieves all provided components.
@@ -32,7 +34,7 @@ public abstract class AbstractDEECoObjectProvider implements Serializable {
 	 * 
 	 * @return Provided ensembles.
 	 */
-	public List<SchedulableEnsembleProcessCreator> getEnsembles() {
+	public List<SchedulableEnsembleProcess> getEnsembles() {
 		if (ensembles == null)
 			processEnsembles();
 		return ensembles;

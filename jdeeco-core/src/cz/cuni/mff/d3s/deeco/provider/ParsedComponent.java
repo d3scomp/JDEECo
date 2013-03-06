@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
-import cz.cuni.mff.d3s.deeco.invokable.creators.SchedulableComponentProcessCreator;
+import cz.cuni.mff.d3s.deeco.invokable.SchedulableComponentProcess;
 import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
 
 /**
@@ -16,16 +16,18 @@ import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
  */
 public class ParsedComponent implements Serializable {
 
+	private static final long serialVersionUID = 7598262003638318904L;
+	
 	private ComponentKnowledge initialKnowledge;
-	private List<SchedulableComponentProcessCreator> processCreators;
+	private List<SchedulableComponentProcess> processCreators;
 
 	public ParsedComponent() {
 		initialKnowledge = null;
-		processCreators = new LinkedList<SchedulableComponentProcessCreator>();
+		processCreators = new LinkedList<SchedulableComponentProcess>();
 	}
 
 	public ParsedComponent(
-			List<SchedulableComponentProcessCreator> processCreators,
+			List<SchedulableComponentProcess> processCreators,
 			ComponentKnowledge initialKnowledge) {
 		this.initialKnowledge = initialKnowledge;
 		this.processCreators = processCreators;
@@ -45,7 +47,7 @@ public class ParsedComponent implements Serializable {
 	 * 
 	 * @return Processes of the component.
 	 */
-	public List<SchedulableComponentProcessCreator> getProcesses() {
+	public List<SchedulableComponentProcess> getProcesses() {
 		return processCreators;
 	}
 

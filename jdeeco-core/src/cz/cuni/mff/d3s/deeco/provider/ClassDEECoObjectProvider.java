@@ -9,8 +9,9 @@ import static cz.cuni.mff.d3s.deeco.processor.EnsembleParser.isEnsembleDefinitio
 import java.util.LinkedList;
 import java.util.List;
 
-import cz.cuni.mff.d3s.deeco.invokable.creators.SchedulableEnsembleProcessCreator;
+import cz.cuni.mff.d3s.deeco.invokable.SchedulableEnsembleProcess;
 import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
+import cz.cuni.mff.d3s.deeco.path.grammar.ParseException;
 
 /**
  * Provider class dealing with component and ensemble definitions retrieved from
@@ -21,6 +22,8 @@ import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
  */
 public class ClassDEECoObjectProvider extends AbstractDEECoObjectProvider {
 
+	private static final long serialVersionUID = -1454153558315293318L;
+	
 	protected final List<Class<?>> rawComponents;
 	protected final List<Class<?>> rawEnsembles;
 
@@ -66,8 +69,9 @@ public class ClassDEECoObjectProvider extends AbstractDEECoObjectProvider {
 			List<ComponentKnowledge> cks = extractInitialKnowledge(c);
 			if (cks != null) {
 				for (ComponentKnowledge ck : cks)
-					components.add(new ParsedComponent(extractComponentProcess(
-							c, ck.id), ck));
+					components.add(new ParsedComponent(
+							extractComponentProcess(c, ck.id),
+							ck));
 			}
 		}
 	}
@@ -81,9 +85,14 @@ public class ClassDEECoObjectProvider extends AbstractDEECoObjectProvider {
 	 */
 	@Override
 	protected synchronized void processEnsembles() {
-		ensembles = new LinkedList<SchedulableEnsembleProcessCreator>();
+		ensembles = new LinkedList<SchedulableEnsembleProcess>();
 		for (Class<?> c : rawEnsembles) {
-			ensembles.add(extractEnsembleProcess(c));
+			try {
+				ensembles.add(extractEnsembleProcess(c));
+			} catch (ParseException e) {
+				//TODO: use logging
+				System.out.println(String.format("Parsing error in class '%s': %s", c.getName(), e.getMessage()));
+			}
 		}
 	}
 
