@@ -85,7 +85,7 @@ public class TSRemoteEventListener implements RemoteEventListener {
 							es.invokeAll(getThreadCollection(owner,
 									getTriggerRecipient(t.key)));
 							es.awaitTermination(
-									TransactionUtils.DEFAULT_TRANSACTION_TIMEOUT,
+									TransactionalSession.DEFAULT_TRANSACTION_TIMEOUT,
 									TimeUnit.MILLISECONDS);
 							lastProcessed = version;
 						}

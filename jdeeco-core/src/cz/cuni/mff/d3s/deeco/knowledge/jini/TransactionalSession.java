@@ -16,6 +16,8 @@
 package cz.cuni.mff.d3s.deeco.knowledge.jini;
 
 import net.jini.core.transaction.Transaction;
+import net.jini.core.transaction.TransactionFactory;
+import net.jini.core.transaction.server.TransactionManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeRepository;
 
@@ -26,8 +28,11 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeRepository;
  * 
  */
 public class TransactionalSession implements ISession {
-
-	private static final int MAX_REPETITIONS = 3;
+	protected final static Long DEFAULT_TRANSACTION_TIMEOUT = 1500L; // .5 sec
+	protected final static int MAX_REPETITIONS = 3;
+	
+	// TODO: check that this can be non-static (since it was static before)
+	private TransactionManager txManager = null;
 
 	private Transaction tx;
 	private boolean succeeded = false;
@@ -46,7 +51,7 @@ public class TransactionalSession implements ISession {
 		if (tx != null) {
 			cancel();
 		}
-		tx = TransactionUtils.createTransaction();
+		tx = createTransaction();
 	}
 
 	/*
@@ -67,7 +72,7 @@ public class TransactionalSession implements ISession {
 				succeeded = true;
 			} catch (Exception e) {
 				if (repeat())
-					tx = TransactionUtils.createTransaction();
+					tx = createTransaction();
 			}
 	}
 
@@ -123,6 +128,27 @@ public class TransactionalSession implements ISession {
 			cn = new ChangeNotifier(kr);
 		}
 		cn.knowledgeWritten(knowledgePath);
+	}
+	
+	/**
+	 * Returns transaction instance retrieved from the transaction manager.
+	 * 
+	 * @return transaction instance
+	 */
+	private synchronized Transaction createTransaction() {
+		try {
+			if (txManager == null) {
+				Lookup transactionLookup = new Lookup(TransactionManager.class);
+				txManager = (TransactionManager) transactionLookup.getService();
+			}
+			Transaction.Created trc = TransactionFactory.create(txManager,
+					DEFAULT_TRANSACTION_TIMEOUT);
+			return trc.transaction;
+		} catch (Exception e) {
+			System.out.println("ERROR - Transaction retrieval error: "
+					+ e.getMessage());
+			return null;
+		}
 	}
 
 }
