@@ -114,8 +114,8 @@
 			<layout>p2</layout>
 			<url>http://github.com/d3scomp/p2-update/raw/master/</url>
 		</repository>
-		<!-- repository> <id>d3s-snapshots</id> <url>https://github.com/d3scomp/mvn-repo/raw/master/snapshots/</url> 
-			</repository -->
+		<repository> <id>d3s-snapshots</id> <url>https://github.com/d3scomp/mvn-repo/raw/master/snapshots/</url> 
+			</repository>
 		<repository>
 			<id>juno</id>
 			<layout>p2</layout>
