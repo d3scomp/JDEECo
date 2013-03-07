@@ -43,7 +43,6 @@ public class LocalKnowledgeRepositoryJPF  extends LocalKnowledgeRepository imple
 	public HashMap<String, Boolean> propositionToEvaluate = new HashMap<>();
 	
 	List<AtomicProposition> propositions = new ArrayList<>();
-	KnowledgeJPF kjpf;
 
 	public LocalKnowledgeRepositoryJPF(List<AtomicProposition> propositions) {
 		this.propositions = propositions;
