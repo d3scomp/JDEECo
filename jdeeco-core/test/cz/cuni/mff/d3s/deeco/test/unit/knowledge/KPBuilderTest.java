@@ -18,7 +18,7 @@ package cz.cuni.mff.d3s.deeco.test.unit.knowledge;
 import static org.testng.AssertJUnit.assertEquals;
 import org.testng.annotations.Test;
 
-import cz.cuni.mff.d3s.deeco.knowledge.KPBuilder;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgePathHelper;
 
 @Test
 public class KPBuilderTest {

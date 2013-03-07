@@ -16,7 +16,7 @@ import net.jini.jeri.BasicILFactory;
 import net.jini.jeri.BasicJeriExporter;
 import net.jini.jeri.tcp.TcpServerEndpoint;
 import net.jini.space.AvailabilityEvent;
-import cz.cuni.mff.d3s.deeco.knowledge.KPBuilder;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgePathHelper;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeRepository;
 import cz.cuni.mff.d3s.deeco.scheduling.ETriggerType;
 import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
@@ -111,7 +111,7 @@ public class TSRemoteEventListener implements RemoteEventListener {
 	}
 
 	private String[] extractVersionOwner(String string) {
-		String[] dString = KPBuilder.decomposePath(string);
+		String[] dString = KnowledgePathHelper.decomposePath(string);
 		if (dString.length == 2) { // correct format
 			return dString;
 		}
@@ -119,7 +119,7 @@ public class TSRemoteEventListener implements RemoteEventListener {
 	}
 
 	private ETriggerType getTriggerRecipient(String listenKey) {
-		String[] dString = KPBuilder.decomposePath(listenKey);
+		String[] dString = KnowledgePathHelper.decomposePath(listenKey);
 		if (dString.length > 2) { // correct format
 			return ETriggerType.fromString(dString[1]);
 		}

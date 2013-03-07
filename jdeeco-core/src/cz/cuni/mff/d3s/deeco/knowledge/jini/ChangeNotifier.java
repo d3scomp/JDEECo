@@ -7,7 +7,7 @@ import java.util.UUID;
 import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionAccessError;
 import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionUnavailableEntry;
 import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
-import cz.cuni.mff.d3s.deeco.knowledge.KPBuilder;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgePathHelper;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeRepository;
 import cz.cuni.mff.d3s.deeco.path.grammar.EEnsembleParty;
 
@@ -26,12 +26,12 @@ public class ChangeNotifier {
 
 	public void knowledgeWritten(String knowledgePath) {
 		if (!notifying) {
-			String[] dPath = KPBuilder.decomposePath(knowledgePath);
+			String[] dPath = KnowledgePathHelper.decomposePath(knowledgePath);
 			if (dPath.length > 0) {
 				String current = null;
 				int i = 0;
 				do {
-					current = KPBuilder.appendToRoot(current, dPath[i]);
+					current = KnowledgePathHelper.appendToRoot(current, dPath[i]);
 					if (!toNotify.contains(current))
 						toNotify.add(current);
 					i++;
@@ -49,20 +49,20 @@ public class ChangeNotifier {
 	public void notifyAboutChanges(TransactionalSession session) {
 		notifying = true;
 		String listenPath;
-		String newVersion = KPBuilder.appendToRoot(
+		String newVersion = KnowledgePathHelper.appendToRoot(
 				UUID.randomUUID().toString(), getOwner());
 		try {
 			for (String path : toNotify) {
-				listenPath = KPBuilder.prependToRoot(path,
+				listenPath = KnowledgePathHelper.prependToRoot(path,
 						ConstantKeys.LISTEN_ID);
 				updateVersion(listenPath, session, newVersion);
-				listenPath = KPBuilder.prependToRoot(
-						KPBuilder.replaceHead(path,
+				listenPath = KnowledgePathHelper.prependToRoot(
+						KnowledgePathHelper.replaceHead(path,
 								EEnsembleParty.COORDINATOR.toString()),
 						ConstantKeys.LISTEN_ID);
 				updateVersion(listenPath, session, newVersion);
-				listenPath = KPBuilder.prependToRoot(
-						KPBuilder.replaceHead(path,
+				listenPath = KnowledgePathHelper.prependToRoot(
+						KnowledgePathHelper.replaceHead(path,
 								EEnsembleParty.MEMBER.toString()),
 						ConstantKeys.LISTEN_ID);
 				updateVersion(listenPath, session, newVersion);

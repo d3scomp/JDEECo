@@ -31,7 +31,7 @@ import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionAccessError;
 import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionUnavailableEntry;
 import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
-import cz.cuni.mff.d3s.deeco.knowledge.KPBuilder;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgePathHelper;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeRepository;
 import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
 
@@ -211,7 +211,7 @@ public class TSKnowledgeRepository extends KnowledgeRepository {
 			throws KRExceptionAccessError {
 		try {
 			JavaSpace05 space = TSUtils.getSpace();
-			String fullListenPath = KPBuilder.prependToRoot(kp,
+			String fullListenPath = KnowledgePathHelper.prependToRoot(kp,
 					ConstantKeys.LISTEN_ID);
 			Tuple t;
 			TransactionalSession ts = (TransactionalSession) createSession();

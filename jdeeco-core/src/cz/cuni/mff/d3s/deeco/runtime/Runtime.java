@@ -15,11 +15,12 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.runtime;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
-import cz.cuni.mff.d3s.deeco.invokable.ComponentKnowledgeHelper;
+import cz.cuni.mff.d3s.deeco.exceptions.KMNotExistentException;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableComponentProcess;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableEnsembleProcess;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
@@ -113,9 +114,13 @@ public class Runtime implements IRuntime {
 		addSchedulableProcesses(ensembleProcesses);
 		
 		for (ParsedComponent component : provider.getComponents()) {
-			if (!addComponentKnowledge(component.getInitialKnowledge(), km)) {
-				System.out.println("Error when writng initial knowledge: "
-						+ component.getInitialKnowledge().getClass());
+			try { 
+				initComponentKnowledge(component.getInitialKnowledge(), km);
+			} catch (Exception e){						
+				System.out.println(String.format(
+						"Error when initializing knowledge of component %s: %s",
+						component.getInitialKnowledge().getClass(),
+						e.getMessage()));
 				continue;
 			}
 			List<? extends SchedulableProcess> componentProcesses = component.getProcesses();
@@ -246,19 +251,26 @@ public class Runtime implements IRuntime {
 	 * 
 	 * @param initKnowledge component knowledge that needs to be added to the knowledge manager.
 	 * @param km reference to the knowledge manager.
-	 * @return result of the adding process. True in case of a success otherwise false.
+	 * @throws Exception in case the knowledge couldn't be initialized, the message contains the reason.
 	 */
-	private synchronized boolean addComponentKnowledge(
-			ComponentKnowledge initKnowledge, KnowledgeManager km) {
-		if (initKnowledge != null)
-			try {
-				if (km != null)
-					return ComponentKnowledgeHelper.addComponentKnowledge(
-							initKnowledge, km);
-			} catch (Exception e) {
-				System.out.println("Initial knowlege retrival exception");
-			}
-		return false;
+	private synchronized void initComponentKnowledge(
+			ComponentKnowledge initKnowledge, KnowledgeManager km) throws Exception {
+		if ((initKnowledge == null) || (km == null))
+			throw new NullPointerException();		
+		
+		try {
+			Object[] currentIds = (Object []) km
+					.getKnowledge(ConstantKeys.ROOT_KNOWLEDGE_ID);
+			if (Arrays.asList(currentIds).contains(initKnowledge.id))
+				throw new Exception(String.format(
+						"Knowledge of a component with id '%s' already exists",
+						initKnowledge.id));
+		} catch (KMNotExistentException kmnee) {
+		}
+		
+		km.putKnowledge(ConstantKeys.ROOT_KNOWLEDGE_ID,
+				initKnowledge.id);
+		km.alterKnowledge(initKnowledge.id, initKnowledge);
 	}
 	
 	/**

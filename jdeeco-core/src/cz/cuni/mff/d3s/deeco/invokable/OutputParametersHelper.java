@@ -10,7 +10,7 @@ import java.util.Map;
 import cz.cuni.mff.d3s.deeco.exceptions.KMCastException;
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
-import cz.cuni.mff.d3s.deeco.knowledge.KPBuilder;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgePathHelper;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 import cz.cuni.mff.d3s.deeco.knowledge.StructureHelper;
@@ -67,7 +67,7 @@ public class OutputParametersHelper implements Serializable {
 					for (Object o : nvStructure) {
 						property = (String) o;
 						storeOutValue(
-								KPBuilder.appendToRoot(knowledgePath, property),
+								KnowledgePathHelper.appendToRoot(knowledgePath, property),
 								getValue(ovClass, orgValue, property),
 								getValue(nvClass, newValue, property), km,
 								session);

@@ -23,7 +23,7 @@ import cz.cuni.mff.d3s.deeco.path.grammar.PathGrammar;
  * @author Michal Kit
  * 
  */
-public class KPBuilder {
+public class KnowledgePathHelper {
 	public static final String PATH_DELIMITER = ".";
 
 	/**

@@ -15,7 +15,10 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.knowledge;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import cz.cuni.mff.d3s.deeco.exceptions.KMAccessException;
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
@@ -32,14 +35,14 @@ import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
  */
 public class RepositoryKnowledgeManager extends KnowledgeManager {
 
-	private RepositoryKnowledgeManagerHelper rkmh;
+	private KnowledgeRepository kr;
 
 	public RepositoryKnowledgeManager() {
 		unsetKnowledgeRepository(null);
 	}
 
 	public RepositoryKnowledgeManager(KnowledgeRepository kr) {
-		setKnowledgeRepository(kr);
+		this.kr = kr;
 	}
 
 	/**
@@ -48,8 +51,7 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 	 * @param kr
 	 */
 	public synchronized void setKnowledgeRepository(Object kr) {
-		this.rkmh = new RepositoryKnowledgeManagerHelper(
-				(KnowledgeRepository) kr, this);
+		this.kr = (KnowledgeRepository) kr;
 	}
 
 	/**
@@ -58,7 +60,7 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 	 * @param kr
 	 */
 	public synchronized void unsetKnowledgeRepository(Object kr) {
-		this.rkmh = null;
+		this.kr = null;
 	}
 
 	/*
@@ -68,7 +70,7 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 	 */
 	@Override
 	public ISession createSession() {
-		return rkmh.createSession();
+		return kr.createSession();
 	}
 
 	/*
@@ -94,7 +96,7 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 	 */
 	@Override
 	public boolean registerListener(IKnowledgeChangeListener listener) {
-		return rkmh.registerListener(listener);
+		return kr.registerListener(listener);
 	}
 
 	/*
@@ -106,12 +108,12 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 	 */
 	@Override
 	public boolean unregisterListener(IKnowledgeChangeListener listener) {
-		return rkmh.unregisterListener(listener);
+		return kr.unregisterListener(listener);
 	}
 
 	@Override
 	public void setListenersActive(boolean on) {
-		rkmh.setListenersActive(on);
+		kr.setListenersActive(on);
 	}
 
 	/*
@@ -158,102 +160,203 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 
 	private void storeKnowledge(String knowledgePath, Object value,
 			ISession session, boolean modify) throws KMAccessException {
-		if (rkmh != null) {
-			ISession localSession;
-			if (session == null) {
-				localSession = rkmh.createSession();
-				localSession.begin();
-			} else
-				localSession = session;
-			String tPath, tString;
-			IObjectAccessor accessor;
-			Object[] structure;
-			try {
-				while (localSession.repeat()) {
-					structure = rkmh.putStructure(knowledgePath, value,
-							localSession, modify);
-					if (structure == null)
-						rkmh.putFlat(knowledgePath, value, localSession, modify);
-					else if (structure.length > 0) {
-						accessor = KMHelper.getObjectAccessor(value);
-						for (Object s : structure) {
-							tString = (String) s;
-							tPath = KPBuilder.appendToRoot(knowledgePath,
-									tString);
-							alterKnowledge(tPath, accessor.getValue(tString),
-									localSession);
-						}
-					}
-					if (session == null)
-						localSession.end();
-					else
-						break;
-				}
-			} catch (KRExceptionAccessError kre) {
-				if (session == null)
-					localSession.cancel();
-				throw new KMAccessException(kre.getMessage());
-			} catch (Exception e) {
-				localSession.cancel();
-				System.out.println(e.getMessage());
-			}
+		if (kr == null) 
+			throw new KMAccessException("Knowledge repository unavailable");
+		
+		ISession localSession;
+		if (session == null) {
+			localSession = createSession();
+			localSession.begin();
 		} else
-			new KMAccessException("Knowledge repository unavailable");
+			localSession = session;
+		String tPath, tString;
+		IObjectAccessor accessor;
+		Object[] structure;
+		try {
+			while (localSession.repeat()) {
+				structure = putStructure(knowledgePath, value,
+						localSession, modify);
+				if (structure == null)
+					putFlat(knowledgePath, value, localSession, modify);
+				else if (structure.length > 0) {
+					accessor = getObjectAccessor(value);
+					for (Object s : structure) {
+						tString = (String) s;
+						tPath = KnowledgePathHelper.appendToRoot(knowledgePath,
+								tString);
+						alterKnowledge(tPath, accessor.getValue(tString),
+								localSession);
+					}
+				}
+				if (session == null)
+					localSession.end();
+				else
+					break;
+			}
+		} catch (KRExceptionAccessError kre) {
+			if (session == null)
+				localSession.cancel();
+			throw new KMAccessException(kre.getMessage());
+		} catch (Exception e) {
+			localSession.cancel();
+			System.out.println(e.getMessage());
+		}
+	}
+	
+	private IObjectAccessor getObjectAccessor(Object value) {
+		if (value == null)
+			return null;
+		Class<?> structure = value.getClass();
+		if (TypeUtils.isList(structure))
+			return new ListAccessor((List<?>) value);
+		else if (TypeUtils.isMap(structure))
+			return new MapAccessor((Map<String, ?>) value);
+		else if (TypeUtils.isKnowledge(structure))
+			return new KnowledgeAccessor((Knowledge) value);
+		return null;
 	}
 
 	private Object getKnowledge(boolean withdrawal, String knowledgePath,
 			ISession session) throws KMException {
-		if (rkmh != null) {
-			Object result = null;
-			ISession locSession = null;
-			if (session == null) {
-				locSession = rkmh.createSession();
-				locSession.begin();
-			}
-
-			final ISession localSession = (session == null ? locSession
-					: session);
-
-			try {
-				while (localSession.repeat()) {
-					Object[] structure = rkmh.getStructure(withdrawal,
-							knowledgePath, localSession);
-					if (structure == null) // flat
-						result = rkmh.getFlat(withdrawal, knowledgePath,
-								localSession);
-					else {
-						String tPath, tString;
-						HashMap<String, Object> map = new HashMap<String, Object>();
-						for (Object s : structure) {
-							tString = (String) s;
-							tPath = KPBuilder.appendToRoot(knowledgePath,
-									tString);
-							map.put(tString,
-									getKnowledge(withdrawal, tPath,
-											localSession));
-						}
-						result = map;
-					}
-					if (session == null)
-						localSession.end();
-					else
-						break;
-				}
-				return result;
-			} catch (KRExceptionUnavailableEntry uee) {
-				if (session == null)
-					localSession.cancel();
-				throw new KMNotExistentException(uee.getMessage());
-			} catch (KRExceptionAccessError kre) {
-				if (session == null)
-					localSession.cancel();
-				throw new KMAccessException(kre.getMessage());
-			} catch (Exception e) {
-				System.out.println(e.getMessage());
-				localSession.cancel();
-				return null;
-			}
-		} else
+		if (kr == null) 
 			throw new KMAccessException("Knowledge repository unavailable");
+		
+		Object result = null;
+		ISession locSession = null;
+		if (session == null) {
+			locSession = createSession();
+			locSession.begin();
+		}
+
+		final ISession localSession = (session == null ? locSession
+				: session);
+
+		try {
+			while (localSession.repeat()) {
+				Object[] structure = getStructure(withdrawal,
+						knowledgePath, localSession);
+				if (structure == null) // flat
+					result = getFlat(withdrawal, knowledgePath,
+							localSession);
+				else {
+					String tPath, tString;
+					HashMap<String, Object> map = new HashMap<String, Object>();
+					for (Object s : structure) {
+						tString = (String) s;
+						tPath = KnowledgePathHelper.appendToRoot(knowledgePath,
+								tString);
+						map.put(tString,
+								getKnowledge(withdrawal, tPath,
+										localSession));
+					}
+					result = map;
+				}
+				if (session == null)
+					localSession.end();
+				else
+					break;
+			}
+			return result;
+		} catch (KRExceptionUnavailableEntry uee) {
+			if (session == null)
+				localSession.cancel();
+			throw new KMNotExistentException(uee.getMessage());
+		} catch (KRExceptionAccessError kre) {
+			if (session == null)
+				localSession.cancel();
+			throw new KMAccessException(kre.getMessage());
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			localSession.cancel();
+			return null;
+		}
 	}
+	
+
+
+	private void putFlat(String knowledgePath, Object newValue,
+			ISession session, boolean modify) throws KRExceptionAccessError {
+		Object currentValue = null;
+		putStructure(knowledgePath, null, session, modify);
+		if (modify) {
+			try {
+				currentValue = kr.get(knowledgePath, session);
+				if ((newValue != null || currentValue != null)
+						&& !Arrays.deepEquals((Object[]) currentValue,
+								new Object[] { newValue })) {
+					kr.take(knowledgePath, session);
+					kr.put(knowledgePath, newValue, session);
+				}
+			} catch (KRExceptionUnavailableEntry uee) {
+				kr.put(knowledgePath, newValue, session);
+			}
+		} else {
+			kr.put(knowledgePath, newValue, session);
+		}
+	}
+
+	private Object getFlat(boolean withdrawal, String knowledgePath,
+			ISession session) throws KRExceptionUnavailableEntry,
+			KRExceptionAccessError {
+		return (withdrawal) ? kr.take(knowledgePath, session) : kr.get(
+				knowledgePath, session);
+	}
+
+	private Object[] getStructure(boolean withdrawal, String knowledgePath,
+			ISession session) throws KRExceptionAccessError {
+		String tempPath = KnowledgePathHelper.appendToRoot(knowledgePath,
+				ConstantKeys.STRUCTURE_ID);
+		try {
+			Object[] result = (Object[]) getFlat(withdrawal, tempPath, session);
+			if (result.length == 1)
+				return (Object[]) result[0];
+			else
+				return null;
+		} catch (KRExceptionUnavailableEntry uee) {
+			return null;
+		}
+	}
+
+	private Object[] putStructure(String knowledgePath, Object value,
+			ISession session, boolean modify) throws KRExceptionAccessError {
+		Object[] oldStructure, newStructure = StructureHelper
+				.getStructureFromObject(value);
+		boolean store = value != null && newStructure != null;
+		String structurePath = KnowledgePathHelper.appendToRoot(knowledgePath,
+				ConstantKeys.STRUCTURE_ID);
+		try {
+			if (modify) {
+				Object[] tObjects = (Object[]) kr.get(structurePath, session);
+				oldStructure = (Object[]) tObjects[0];
+				if ((newStructure != null || oldStructure != null)
+						&& !Arrays.deepEquals(oldStructure, newStructure)) {
+					kr.take(structurePath, session);
+					String tempPath;
+					List<?> nsList = Arrays.asList(newStructure);
+					for (Object s : oldStructure) {
+						if (nsList.contains(s))
+							continue;
+						tempPath = KnowledgePathHelper.appendToRoot(knowledgePath,
+								(String) s);
+						try {
+							takeKnowledge(tempPath, session);
+						} catch (KMNotExistentException kmnee) {
+						} catch (KMException kmae) {
+							throw new KRExceptionAccessError(
+									"Knowledge repository error!");
+						}
+					}
+					if (store)
+						kr.put(structurePath, newStructure, session);
+				}
+			} else if (store)
+				kr.put(structurePath, newStructure, session);
+		} catch (KRExceptionUnavailableEntry uee) {
+			if (store)
+				kr.put(structurePath, newStructure, session);
+		}
+		return newStructure;
+	}
+
+	
 }

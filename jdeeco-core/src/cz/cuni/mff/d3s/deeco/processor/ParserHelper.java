@@ -12,7 +12,7 @@ import cz.cuni.mff.d3s.deeco.annotations.DEECoOut;
 import cz.cuni.mff.d3s.deeco.exceptions.ComponentEnsembleParseException;
 import cz.cuni.mff.d3s.deeco.invokable.Parameter;
 import cz.cuni.mff.d3s.deeco.invokable.ParameterizedMethod;
-import cz.cuni.mff.d3s.deeco.knowledge.KPBuilder;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgePathHelper;
 import cz.cuni.mff.d3s.deeco.path.grammar.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.path.grammar.ParseException;
 
@@ -64,7 +64,7 @@ public class ParserHelper {
 		String path = (String) AnnotationHelper.getAnnotationValue(annotation);
 		
 		// Adding prefix (the Component name which holds the "root") to path from annotations
-		path = KPBuilder.prependToRoot(path, root);
+		path = KnowledgePathHelper.prependToRoot(path, root);
 
 		KnowledgePath kPath = new KnowledgePath(path);
 		
