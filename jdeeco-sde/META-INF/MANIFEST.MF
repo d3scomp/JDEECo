@@ -1,28 +1,30 @@
 Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: JDEECoSDETool
-Bundle-SymbolicName: cz.cuni.mff.d3s.jdeeco.sde;singleton:=true
-Bundle-Version: 0.0.1
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Bundle-ClassPath: .
+Export-Package: cz.cuni.mff.d3s.deeco.sde.provider;uses:="cz.cuni.mff.
+ d3s.deeco.processor,cz.cuni.mff.d3s.deeco.provider,org.osgi.framework
+ ,org.osgi.service.component";version="0.0.1"
 Service-Component: OSGI-INF/JDEECoSDETool.xml
 Bundle-ActivationPolicy: lazy
-Require-Bundle: eu.sensoria_ist.casetool.core;bundle-version="4.4.0",
- org.eclipse.jface;bundle-version="3.8.101",
- cz.cuni.mff.d3s.jdeeco.core;bundle-version="0.0.1"
+Built-By: Michal
+Tool: Bnd-0.0.238
+Bundle-Name: JDEECoSDETool
+Created-By: Apache Maven Bundle Plugin
+Build-Jdk: 1.7.0_13
+Bundle-Version: 0.0.1
+Bnd-LastModified: 1362503524425
+Bundle-ManifestVersion: 2
 Import-Package: org.eclipse.core.filesystem,
  org.eclipse.core.runtime;version="3.4.0",
  org.eclipse.jdt.core,
  org.eclipse.jdt.internal.ui.jarpackager,
  org.eclipse.jdt.ui,
  org.eclipse.jdt.ui.jarpackager,
- org.eclipse.jface.window,
- org.eclipse.osgi.framework.console;version="1.1.0",
- org.eclipse.swt.widgets,
  org.eclipse.ui,
  org.eclipse.ui.console,
- org.osgi.framework;version="1.7.0",
+ org.osgi.framework,
  org.osgi.framework.wiring;version="1.1.0",
  org.osgi.service.component
-Export-Package: cz.cuni.mff.d3s.deeco.sde.provider
+Bundle-SymbolicName: cz.cuni.mff.d3s.jdeeco.sde;singleton:=true
+Require-Bundle: org.eclipse.jface;bundle-version="3.8.101",
+ eu.sensoria_ist.casetool.core;bundle-version="4.4.3",
+ cz.cuni.mff.d3s.jdeeco.core;bundle-version="0.0.1"
 

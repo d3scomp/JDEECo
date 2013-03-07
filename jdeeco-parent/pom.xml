@@ -15,23 +15,15 @@
 	</properties>
 	<build>
 		<plugins>
-
 			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>target-platform-configuration</artifactId>
-				<version>${tycho-version}</version>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.0</version>
 				<configuration>
-					<pomDependencies>consider</pomDependencies>
+					<source>1.7</source>
+					<target>1.7</target>
 				</configuration>
 			</plugin>
-
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>tycho-maven-plugin</artifactId>
-				<version>${tycho-version}</version>
-				<extensions>true</extensions>
-			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
@@ -108,12 +100,9 @@
 	</build>
 	<modules>
 		<module>../jdeeco-core</module>
-		<module>../jdeeco-demo</module>
-		<module>../jdeeco-sde</module>
-		<module>../jdeeco-jpf</module>
-		<module>../jdeeco-core-feature</module>
-		<module>../jdeeco-libs-feature</module>
-		<module>../jdeeco-p2</module>
+		<module>../jdeeco-demo</module> 
+		<module>../jdeeco-sde</module> 
+		<module>../jdeeco-jpf</module> 
 	</modules>
 	<repositories>
 		<repository>
