@@ -24,8 +24,17 @@ To run one of demo applications perform open command window in the `dist` direct
  * Cloud demo: `ant cloud-local`
  * Convoy demo: `ant convoy-local`
 * Start the demo (using tuple space knowledge repository):
- * Cloud demo: `ant cloud-ts`
- * Convoy demo: `ant convoy-ts`
+First, run `ant start-ar` in a separate console and wait for it to start (approx 10sec). Specifically, wait until the following is printed (in arbitrary order):
+```
+[java] INFO: ClassServer started [[D:\documents\skola\projects\deeco\JDEECo\dist\apache-river\lib\, D:\documents\skola\projects\deeco\JDEECo\dist\apache-river\lib-dl\], port 8080]
+[java] INFO: Mahalo started: com.sun.jini.mahalo.TransientMahaloImpl@19ae493
+[java] INFO: started Reggie: cc519f68-6182-4b17-8578-28cae0563484, [cz.cuni.mff.d3s.deeco.lookupGroup], jini://10.10.16.127/
+[java] INFO: Outrigger server started: com.sun.jini.outrigger.OutriggerServerImpl@1267610
+
+```
+Then run the following in a separate console:
+ * *Cloud demo*: `ant cloud-ts`
+ * *Convoy demo*: `ant convoy-ts`
 
 To run cloud demo under the Java PathFinder (only local knowledge repository supported) issue the following ant command: `ant jpf-cloud`.
 
