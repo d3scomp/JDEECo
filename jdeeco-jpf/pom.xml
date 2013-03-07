@@ -169,5 +169,10 @@
 			<version>0.0.1</version>
 			<type>zip</type>
 		</dependency>
+		<dependency>
+			<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
+			<artifactId>cz.cuni.mff.d3s.jdeeco.core</artifactId>
+			<version>0.0.1</version>
+		</dependency>
 	</dependencies>
 </project>
