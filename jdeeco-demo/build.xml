@@ -78,9 +78,9 @@
 	
 	<!-- start cloud demo with tuple spaces as shared memory -->
 	<target name="cloud-ts" description="Runs the cloud demo">
-		<parallel>
+		<sequential>
 			<antcall target="start-ar"/>
-			<java classname="cz.cuni.mff.d3s.deeco.demo.cloud.TSLauncherCloudNoJPF" fork="true">
+			<java classname="cz.cuni.mff.d3s.deeco.demo.cloud.TSLauncherCloudNoJPF" >
 				<classpath>
 					<pathelement location="${dist}/cloud.jar"/>
 					<pathelement location="${dist}/jdeeco.jar"/>
@@ -90,14 +90,14 @@
 				<jvmarg value="-Djava.security.policy=${river}-config/start.policy"/>
 				<jvmarg value="-Djava.rmi.server.RMIClassLoaderSpi=net.jini.loader.pref.PreferredClassProvider"/>
 			</java>
-		</parallel>
+		</sequential>
 	</target>
 	
 	<!-- start convoy demo with tuple spaces as shared memory -->
-	<target name="convoy-ts" description="Runs the convoy demo">
-		<parallel>
-			<antcall target="start-ar"/>
-			<java classname="cz.cuni.mff.d3s.deeco.demo.convoy.TSLauncherConvoyNoJPF" fork="true">
+	<target name="convoy-ts" description="Runs the convoy demo">			
+		<sequential>
+			<antcall target="start-ar" />				
+			<java classname="cz.cuni.mff.d3s.deeco.demo.convoy.TSLauncherConvoyNoJPF" >
 				<classpath>
 					<pathelement location="${dist}/convoy.jar"/>
 					<pathelement location="${dist}/jdeeco.jar"/>
@@ -107,7 +107,7 @@
 				<jvmarg value="-Djava.security.policy=${river}-config/start.policy"/>
 				<jvmarg value="-Djava.rmi.server.RMIClassLoaderSpi=net.jini.loader.pref.PreferredClassProvider"/>
 			</java>
-		</parallel>
+		</sequential>
 	</target>
 	
 	
