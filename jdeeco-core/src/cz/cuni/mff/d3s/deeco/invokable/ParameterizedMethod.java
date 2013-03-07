@@ -113,7 +113,7 @@ public class ParameterizedMethod {
    */
   public Object invoke(Object[] parameters) {
     try {
-      return method.invoke(null, parameters);
+      return getMethod().invoke(null, parameters);
     } catch (Exception e) {
       System.out.println("Method invocation error: " + e.getMessage());
       return null;

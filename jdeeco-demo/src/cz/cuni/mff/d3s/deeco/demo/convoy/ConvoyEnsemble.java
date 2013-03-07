@@ -48,8 +48,8 @@ public class ConvoyEnsemble extends Ensemble {
 		public List<Integer> remainingPath;
 	}
 
-	@DEECoEnsembleMembership(.6)
-	public static double membership(@DEECoIn("member.id") String mId,
+	@DEECoEnsembleMembership
+	public static boolean membership(@DEECoIn("member.id") String mId,
 			@DEECoIn("member.path.remainingPath") List<Integer> mRemainingPath,
 			@DEECoIn("coord.id") String cId,
 			@DEECoIn("coord.path") @DEECoTrigger EnsemblePath cPath) {
@@ -61,11 +61,11 @@ public class ConvoyEnsemble extends Ensemble {
 							.equals(getNextPosition(mRemainingPath)))
 			{
 				//System.out.println("[ConvoyEnsemble.membership] result = 0.5");
-				return .5;
+				return false;
 			}
 		}
 		//System.out.println("[ConvoyEnsemble.membership] result = 0.7");
-		return .7;
+		return true;
 	}
 
 	@DEECoEnsembleMapper
