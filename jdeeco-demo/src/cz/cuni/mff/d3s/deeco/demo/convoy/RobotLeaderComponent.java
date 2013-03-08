@@ -24,18 +24,18 @@ import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
-import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
+import cz.cuni.mff.d3s.deeco.knowledge.Component;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 
 @DEECoComponent
-public class RobotLeaderComponent extends ComponentKnowledge {
+public class RobotLeaderComponent extends Component {
 
 	public Integer battery;
 	public Path path;
 	public List<Path> crossingRobots;
 
 	@DEECoInitialize
-	public static ComponentKnowledge getInitialKnowledge() {
+	public static Component getInitialKnowledge() {
 		RobotLeaderComponent k = new RobotLeaderComponent();
 		k.id = "leader";
 		k.battery = new Integer(100);

@@ -9,14 +9,14 @@ import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
-import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
+import cz.cuni.mff.d3s.deeco.knowledge.Component;
 
-public class ListComponent extends ComponentKnowledge {
+public class ListComponent extends Component {
 	public List<List<Path>> listOfLists;
 	public Path path;
 
 	@DEECoInitialize
-	public static ComponentKnowledge getInitialKnowledge() {
+	public static Component getInitialKnowledge() {
 		ListComponent k = new ListComponent();
 		k.listOfLists = new ArrayList<List<Path>>();
 		List<Path> le = new ArrayList<Path>();

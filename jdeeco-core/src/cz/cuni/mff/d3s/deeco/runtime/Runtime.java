@@ -24,7 +24,7 @@ import cz.cuni.mff.d3s.deeco.exceptions.KMNotExistentException;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableComponentProcess;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableEnsembleProcess;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
-import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
+import cz.cuni.mff.d3s.deeco.knowledge.Component;
 import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider;
@@ -254,7 +254,7 @@ public class Runtime implements IRuntime {
 	 * @throws Exception in case the knowledge couldn't be initialized, the message contains the reason.
 	 */
 	private synchronized void initComponentKnowledge(
-			ComponentKnowledge initKnowledge, KnowledgeManager km) throws Exception {
+			Component initKnowledge, KnowledgeManager km) throws Exception {
 		if ((initKnowledge == null) || (km == null))
 			throw new NullPointerException();		
 		

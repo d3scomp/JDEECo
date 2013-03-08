@@ -26,7 +26,7 @@ package cz.cuni.mff.d3s.deeco.knowledge;
 public class ConstantKeys {
 	/**
 	 * Defines the field name for the root knowledge unique identifier in the
-	 * ComponentKnowledge class.
+	 * Component class.
 	 */
 	public static final String ROOT_KNOWLEDGE_ID = "id";
 	/**

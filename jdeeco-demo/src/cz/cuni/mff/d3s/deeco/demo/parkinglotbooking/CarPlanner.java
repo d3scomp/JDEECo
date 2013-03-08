@@ -9,11 +9,11 @@ import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
-import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
+import cz.cuni.mff.d3s.deeco.knowledge.Component;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 
 @DEECoComponent
-public class CarPlanner extends ComponentKnowledge {
+public class CarPlanner extends Component {
 
 	public static enum State {Idle, WaitingForResponse, DrivingToTarget}
 	
@@ -28,7 +28,7 @@ public class CarPlanner extends ComponentKnowledge {
 	
 
 	@DEECoInitialize
-	public static ComponentKnowledge getInitialKnowledge() {
+	public static Component getInitialKnowledge() {
 		CarPlanner k = new CarPlanner();
 		k.carId = new CarId("C1");
 		k.request = null;

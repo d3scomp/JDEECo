@@ -10,7 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableEnsembleProcess;
-import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
+import cz.cuni.mff.d3s.deeco.knowledge.Component;
 import cz.cuni.mff.d3s.deeco.path.grammar.ParseException;
 
 /**
@@ -66,9 +66,9 @@ public class ClassDEECoObjectProvider extends AbstractDEECoObjectProvider {
 	protected synchronized void processComponents() {
 		components = new LinkedList<ParsedComponent>();
 		for (Class<?> c : rawComponents) {
-			List<ComponentKnowledge> cks = extractInitialKnowledge(c);
+			List<Component> cks = extractInitialKnowledge(c);
 			if (cks != null) {
-				for (ComponentKnowledge ck : cks)
+				for (Component ck : cks)
 					components.add(new ParsedComponent(
 							extractComponentProcess(c, ck.id),
 							ck));

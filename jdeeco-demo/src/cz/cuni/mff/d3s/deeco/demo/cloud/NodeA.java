@@ -22,11 +22,11 @@ import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
-import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
+import cz.cuni.mff.d3s.deeco.knowledge.Component;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 
 @DEECoComponent
-public class NodeA extends ComponentKnowledge {
+public class NodeA extends Component {
 
 	public Float loadRatio;
 	public Float maxLoadRatio;
@@ -34,7 +34,7 @@ public class NodeA extends ComponentKnowledge {
 	public String targetNode;
 	
 	@DEECoInitialize
-	public static ComponentKnowledge getInitialKnowledge() {
+	public static Component getInitialKnowledge() {
 		NodeA k = new NodeA();
 		k.id = "NodeA";
 		k.loadRatio = 0.0f;

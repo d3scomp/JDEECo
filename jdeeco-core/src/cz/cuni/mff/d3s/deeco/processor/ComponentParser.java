@@ -17,7 +17,7 @@ import cz.cuni.mff.d3s.deeco.annotations.WeakLocking;
 import cz.cuni.mff.d3s.deeco.annotations.ELockingMode;
 import cz.cuni.mff.d3s.deeco.invokable.ParameterizedMethod;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableComponentProcess;
-import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
+import cz.cuni.mff.d3s.deeco.knowledge.Component;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessPeriodicSchedule;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
@@ -108,17 +108,17 @@ public class ComponentParser {
 	
 	
 	/**
-	 * Retrieves init method from the <code>ComponentKnowledge</code> class.
+	 * Retrieves init method from the <code>Component</code> class.
 	 * 
 	 * @param c
 	 *            class to be parsed
 	 * @return init method or null in case no matching found
 	 */
-	public static List<ComponentKnowledge> extractInitialKnowledge(Class<?> c) {
+	public static List<Component> extractInitialKnowledge(Class<?> c) {
 		List<Method> initMethods = AnnotationHelper.getAnnotatedMethods(c,
 				DEECoInitialize.class);
-		List<ComponentKnowledge> result = new LinkedList<ComponentKnowledge>();
-		ComponentKnowledge ck;
+		List<Component> result = new LinkedList<Component>();
+		Component ck;
 		if (initMethods.size() > 0) {
 			try {
 				Class<?> returnType;
@@ -128,13 +128,13 @@ public class ComponentParser {
 						Collection<?> ckCollection = (Collection<?>) im.invoke(
 								null, new Object[] {});
 						for (Object o : ckCollection) {
-							ck = (ComponentKnowledge) o;
+							ck = (Component) o;
 							assignUIDIfNotSet(ck);
 							result.add(ck);
 						}
-					} else if (ComponentKnowledge.class
+					} else if (Component.class
 							.isAssignableFrom(returnType)) {
-						ck = (ComponentKnowledge) initMethods.get(0).invoke(
+						ck = (Component) initMethods.get(0).invoke(
 								null, new Object[] {});
 						assignUIDIfNotSet(ck);
 						result.add(ck);
@@ -149,7 +149,7 @@ public class ComponentParser {
 			try {
 				Constructor<?> constructor = c.getConstructor();
 				if (constructor != null) {
-					ck = (ComponentKnowledge) constructor.newInstance(new Object[]{});
+					ck = (Component) constructor.newInstance(new Object[]{});
 					assignUIDIfNotSet(ck);
 					result.add(ck);
 					return result;
@@ -164,13 +164,13 @@ public class ComponentParser {
 
 	public static boolean isComponentDefinition(Class<?> clazz) {
 		return clazz != null
-				&& ComponentKnowledge.class.isAssignableFrom(clazz)
+				&& Component.class.isAssignableFrom(clazz)
 				&& clazz.getAnnotation(DEECoComponent.class) != null;
 	}
 
 	// ------------- Private functions -------------------
 
-	private static void assignUIDIfNotSet(ComponentKnowledge ck) {
+	private static void assignUIDIfNotSet(Component ck) {
 		if (ck.id == null || ck.id.equals(""))
 			ck.id = UUID.randomUUID().toString();
 	}

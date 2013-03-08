@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableComponentProcess;
-import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
+import cz.cuni.mff.d3s.deeco.knowledge.Component;
 
 /**
  * jDEECo internal representation of a component, containing both initial
@@ -18,7 +18,7 @@ public class ParsedComponent implements Serializable {
 
 	private static final long serialVersionUID = 7598262003638318904L;
 	
-	private ComponentKnowledge initialKnowledge;
+	private Component initialKnowledge;
 	private List<SchedulableComponentProcess> processCreators;
 
 	public ParsedComponent() {
@@ -28,7 +28,7 @@ public class ParsedComponent implements Serializable {
 
 	public ParsedComponent(
 			List<SchedulableComponentProcess> processCreators,
-			ComponentKnowledge initialKnowledge) {
+			Component initialKnowledge) {
 		this.initialKnowledge = initialKnowledge;
 		this.processCreators = processCreators;
 	}
@@ -38,7 +38,7 @@ public class ParsedComponent implements Serializable {
 	 * 
 	 * @return Initial knowledge of the component.
 	 */
-	public ComponentKnowledge getInitialKnowledge() {
+	public Component getInitialKnowledge() {
 		return initialKnowledge;
 	}
 

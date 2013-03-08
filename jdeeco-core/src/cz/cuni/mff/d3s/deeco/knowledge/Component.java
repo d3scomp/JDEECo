@@ -17,12 +17,12 @@ package cz.cuni.mff.d3s.deeco.knowledge;
 
 
 /**
- * ComponentKnowledge is the base class representing top-level component knowledge.
+ * Component is the base class representing top-level component knowledge.
  * 
  * 
  * @author Michal Kit
  * 
  */
-public class ComponentKnowledge extends Knowledge {
+public class Component extends Knowledge {
 	public String id;
 }
