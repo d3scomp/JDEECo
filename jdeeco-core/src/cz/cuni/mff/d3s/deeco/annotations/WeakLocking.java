@@ -21,19 +21,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks a method parameter to be a process input parameter, which is used when
- * invoking a component process. Such parameter will be retrieved but never
- * stored back to the knowledge repository.
- * 
- * The attribute <code>value</code> is dot separated absolute path, describing
- * the nesting in the component knowledge for which matching should be
- * performed.
+ * Used to mark a method to use weak locking mechanism i.e. one lock is acquired
+ * before method parameterTypes retrieval and then released and other one is
+ * acquired just before out parameterTypes persistance.
  * 
  * @author Michal Kit
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.PARAMETER)
-public @interface DEECoIn {
-	String value() default "";
+@Target({ ElementType.METHOD, ElementType.TYPE })
+public @interface WeakLocking {
 }

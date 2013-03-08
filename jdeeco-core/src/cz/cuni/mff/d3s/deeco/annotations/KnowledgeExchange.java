@@ -21,14 +21,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Used to mark a method to use weak locking mechanism i.e. one lock is acquired
- * before method parameterTypes retrieval and then released and other one is
- * acquired just before out parameterTypes persistance.
+ * KnowledgeExchange is used to mark the method in the ensemble definition
+ * class as the function defining knowledge exchange.
  * 
  * @author Michal Kit
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.METHOD, ElementType.TYPE })
-public @interface DEECoWeakLocking {
+@Target(ElementType.METHOD)
+public @interface KnowledgeExchange {
+
 }

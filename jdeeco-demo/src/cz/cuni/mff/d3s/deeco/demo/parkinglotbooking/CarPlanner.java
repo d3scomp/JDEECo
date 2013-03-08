@@ -4,11 +4,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.annotations.DEECoComponent;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoIn;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoInOut;
+import cz.cuni.mff.d3s.deeco.annotations.In;
+import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoProcess;
+import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
+import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 
@@ -41,12 +41,12 @@ public class CarPlanner extends ComponentKnowledge {
 		return k;
 	}
 
-	@DEECoProcess
-	@DEECoPeriodicScheduling(500)
+	@Process
+	@PeriodicScheduling(500)
 	public static void requestParkingPlaceForCurrentTarget(
-			@DEECoIn("carId") CarId carId,
-			@DEECoIn("currentScheduleTarget") CarScheduleItem currentScheduleTarget,
-			@DEECoInOut("request") OutWrapper<Request> request
+			@In("carId") CarId carId,
+			@In("currentScheduleTarget") CarScheduleItem currentScheduleTarget,
+			@InOut("request") OutWrapper<Request> request
 			) {
 		
 		boolean isRequestActual = false;
@@ -65,13 +65,13 @@ public class CarPlanner extends ComponentKnowledge {
 		}			
 	}
 	
-	@DEECoProcess
-	@DEECoPeriodicScheduling(500)
+	@Process
+	@PeriodicScheduling(500)
 	public static void moveIfParkingPlaceBooked(
-			@DEECoIn("response") Response response,
-			@DEECoIn("request") Request request,
-			@DEECoIn("currentScheduleTarget") CarScheduleItem currentScheduleTarget,
-			@DEECoInOut("position") OutWrapper<Position> position
+			@In("response") Response response,
+			@In("request") Request request,
+			@In("currentScheduleTarget") CarScheduleItem currentScheduleTarget,
+			@InOut("position") OutWrapper<Position> position
 			) {
 		// if the parking lot acknowledged the parking place, move to the target
 		if ((response != null) && (response.matchesRequest(request)) 

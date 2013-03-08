@@ -1,6 +1,6 @@
 package cz.cuni.mff.d3s.deeco.invokable;
 
-public class BooleanMembership extends Membership {
+public class BooleanMembership extends MembershipMethod {
 
 	public BooleanMembership(ParameterizedMethod method) {
 		super(method);

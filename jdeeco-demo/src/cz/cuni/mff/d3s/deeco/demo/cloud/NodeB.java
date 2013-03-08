@@ -19,9 +19,9 @@ import java.util.Random;
 
 import cz.cuni.mff.d3s.deeco.annotations.DEECoComponent;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoOut;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoProcess;
+import cz.cuni.mff.d3s.deeco.annotations.Out;
+import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
+import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
 
@@ -44,9 +44,9 @@ public class NodeB extends ComponentKnowledge {
 		return k;
 	}
 
-	@DEECoProcess
-	@DEECoPeriodicScheduling(6000)
-	public static void process(@DEECoOut("loadRatio") OutWrapper<Float> loadRatio) {
+	@Process
+	@PeriodicScheduling(6000)
+	public static void process(@Out("loadRatio") OutWrapper<Float> loadRatio) {
 		loadRatio.item = new Random().nextFloat();
 		
 		System.out.println("Node B new load ratio: " + Math.round(loadRatio.item * 100) + "%");

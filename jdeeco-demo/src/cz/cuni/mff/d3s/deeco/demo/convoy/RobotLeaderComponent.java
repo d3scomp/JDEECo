@@ -20,10 +20,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.annotations.DEECoComponent;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoInOut;
+import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoProcess;
+import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
+import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 
@@ -51,10 +51,10 @@ public class RobotLeaderComponent extends ComponentKnowledge {
 	/*
 	 * Input: path, crossingRobots, convoyRobot Output: path
 	 */
-	@DEECoPeriodicScheduling(3000)
-	@DEECoProcess
-	public static void process(@DEECoInOut("path") Path path,
-			@DEECoInOut("battery") OutWrapper<Integer> battery) {
+	@PeriodicScheduling(3000)
+	@Process
+	public static void process(@InOut("path") Path path,
+			@InOut("battery") OutWrapper<Integer> battery) {
 		//System.out.println("[RobotLeaderComponent.process] remainingPath = " + path.remainingPath);
 		if (path.remainingPath.size() > 0) {
 			path.currentPosition = path.remainingPath.remove(0);

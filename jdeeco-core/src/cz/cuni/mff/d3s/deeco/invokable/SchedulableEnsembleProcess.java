@@ -36,32 +36,32 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 
 	private static final long serialVersionUID = -726573275082252987L;
 
-	public final ParameterizedMethod mapper;
-	public final Membership membership;
+	public final ParameterizedMethod knowledgeExchange;
+	public final MembershipMethod membership;
 
 	/**
 	 * Returns <code>SchedulableEnsembleProcess</code> instance for specified
 	 * membership function (in <code>membership</code>), mapping function (in
-	 * <code>mapper</code>), scheduling type (in <code>scheduling</code>) and
+	 * <code>knowledgeExchange</code>), scheduling type (in <code>scheduling</code>) and
 	 * knowledge manager (<code>km</code>).
 	 * 
 	 * @param scheduling
 	 *            describes the type of the schedulability for the ensemble
 	 * @param membership
 	 *            method used to evaluate the ensemble condition
-	 * @param mapper
+	 * @param knowledgeExchange
 	 *            method used to perform data transfer in case of positive
 	 *            membership condition evaluation
 	 * @param km
 	 *            instance of the knowledge manager that is used for parameter
 	 *            retrieval
 	 */
-	public SchedulableEnsembleProcess(KnowledgeManager km, ProcessSchedule scheduling, Membership membership,
-			ParameterizedMethod mapper, ClassLoader contextClassLoader) {
+	public SchedulableEnsembleProcess(KnowledgeManager km, ProcessSchedule scheduling, MembershipMethod membership,
+			ParameterizedMethod knowledgeExchange, ClassLoader contextClassLoader) {
 		super(km, scheduling, contextClassLoader);
 		
 		this.membership = membership;
-		this.mapper = mapper;
+		this.knowledgeExchange = knowledgeExchange;
 	}
 
 	/*
@@ -120,12 +120,12 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 								membership.getOut(), session,
 								(String) cId, (String) mId);
 						if (evaluateMembership(parametersMembership)) {
-							ParametersPair[] parametersMapper = getParameterMethodValues(mapper.in,
-									mapper.inOut, mapper.out, session,
+							ParametersPair[] parametersKnowledgeExchange = getParameterMethodValues(knowledgeExchange.in,
+									knowledgeExchange.inOut, knowledgeExchange.out, session,
 									(String) cId, (String) mId);
-							evaluateMapper(parametersMapper);
-							putParameterMethodValues(parametersMapper, mapper.inOut,
-									mapper.out, session, (String) cId,
+							evaluateKnowledgeExchange(parametersKnowledgeExchange);
+							putParameterMethodValues(parametersKnowledgeExchange, knowledgeExchange.inOut,
+									knowledgeExchange.out, session, (String) cId,
 									(String) mId);
 						}
 					} catch (KMNotExistentException kmnee) {
@@ -153,20 +153,20 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 		}
 	}
 
-	private void evaluateMapper(ParametersPair[] params) {
+	private void evaluateKnowledgeExchange(ParametersPair[] params) {
 		try {
 			Object[] parameterValues = ParametersPair.extractValues(params);
-			mapper.invoke(parameterValues);
+			knowledgeExchange.invoke(parameterValues);
 		} catch (Exception e) {
 			System.out.println("Ensemble evaluation exception! - "
 					+ e.getMessage());
 		}
 	}
 	
-	public Method getMapperMethod() {
-		if (mapper == null)
+	public Method getKnowledgeExchangeMethod() {
+		if (knowledgeExchange == null)
 			return null;
-		return mapper.getMethod();
+		return knowledgeExchange.getMethod();
 	}
 	
 	public Method getMembershipMethod() {

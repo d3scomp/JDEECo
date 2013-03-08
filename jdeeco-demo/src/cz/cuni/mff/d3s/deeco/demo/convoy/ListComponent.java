@@ -5,10 +5,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import cz.cuni.mff.d3s.deeco.annotations.DEECoIn;
+import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoProcess;
+import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
+import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
 
 public class ListComponent extends ComponentKnowledge {
@@ -34,9 +34,9 @@ public class ListComponent extends ComponentKnowledge {
 	/*
 	 * Input: path, crossingRobots, convoyRobot Output: path
 	 */
-	@DEECoPeriodicScheduling(2000)
-	@DEECoProcess
-	public static void process(@DEECoIn("path") Map<String, Integer> lol) {
+	@PeriodicScheduling(2000)
+	@Process
+	public static void process(@In("path") Map<String, Integer> lol) {
 		System.out.println("lol retrieved");
 	}
 }

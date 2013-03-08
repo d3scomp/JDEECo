@@ -19,8 +19,8 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 
-import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoTrigger;
+import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
+import cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange;
 import cz.cuni.mff.d3s.deeco.invokable.Parameter;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessPeriodicSchedule;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
@@ -44,9 +44,9 @@ public class ScheduleHelper {
 	 */
 	public static ProcessSchedule getPeriodicSchedule(
 			Annotation scheduleAnnotation) {
-		if (scheduleAnnotation instanceof DEECoPeriodicScheduling) {
+		if (scheduleAnnotation instanceof PeriodicScheduling) {
 			return new ProcessPeriodicSchedule(
-					((DEECoPeriodicScheduling) scheduleAnnotation).value());
+					((PeriodicScheduling) scheduleAnnotation).value());
 		} else
 			return null;
 	}
@@ -64,7 +64,7 @@ public class ScheduleHelper {
 			Annotation[][] pAnnotations, List<Parameter> in,
 			List<Parameter> inOut) {
 		List<Integer> triggeredIndecies = AnnotationHelper
-				.getAnnotationOuterIndecies(DEECoTrigger.class, pAnnotations);
+				.getAnnotationOuterIndecies(TriggerOnChange.class, pAnnotations);
 		if (triggeredIndecies.size() == 0)
 			return null;
 		else {

@@ -20,12 +20,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.annotations.DEECoComponent;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoIn;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoInOut;
+import cz.cuni.mff.d3s.deeco.annotations.In;
+import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoProcess;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoTrigger;
+import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
+import cz.cuni.mff.d3s.deeco.annotations.Process;
+import cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange;
 import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 
@@ -53,11 +53,11 @@ public class RobotFollowerComponent extends ComponentKnowledge {
 		return k;
 	}
 
-	@DEECoProcess
-	@DEECoPeriodicScheduling(3000)
-	public static void process(@DEECoInOut("path") Path path,
-			@DEECoInOut("battery") OutWrapper<Integer> battery,
-			@DEECoIn("convoyRobot") @DEECoTrigger String convoyRobot) {
+	@Process
+	@PeriodicScheduling(3000)
+	public static void process(@InOut("path") Path path,
+			@InOut("battery") OutWrapper<Integer> battery,
+			@In("convoyRobot") @TriggerOnChange String convoyRobot) {
 		//System.out.println("[RobotFollowerComponent.process] convoyRobot = " + convoyRobot + ", remainingPath = " + path.remainingPath);
 		if (path.remainingPath.size() > 0) {
 			path.currentPosition = path.remainingPath.remove(0);

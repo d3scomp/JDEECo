@@ -19,12 +19,12 @@ import java.util.List;
 import java.util.Random;
 
 import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsemble;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsembleMapper;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsembleMembership;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoIn;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoOut;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoTrigger;
+import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
+import cz.cuni.mff.d3s.deeco.annotations.Membership;
+import cz.cuni.mff.d3s.deeco.annotations.In;
+import cz.cuni.mff.d3s.deeco.annotations.Out;
+import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
+import cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange;
 import cz.cuni.mff.d3s.deeco.ensemble.Ensemble;
 import cz.cuni.mff.d3s.deeco.knowledge.Knowledge;
 
@@ -35,7 +35,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.Knowledge;
  *
  */
 @DEECoEnsemble
-@DEECoPeriodicScheduling(1000)
+@PeriodicScheduling(1000)
 public class ConvoyEnsemble extends Ensemble {
 
 	// must be public, static and extend Knowledge
@@ -48,11 +48,11 @@ public class ConvoyEnsemble extends Ensemble {
 		public List<Integer> remainingPath;
 	}
 
-	@DEECoEnsembleMembership
-	public static boolean membership(@DEECoIn("member.id") String mId,
-			@DEECoIn("member.path.remainingPath") List<Integer> mRemainingPath,
-			@DEECoIn("coord.id") String cId,
-			@DEECoIn("coord.path") @DEECoTrigger EnsemblePath cPath) {
+	@Membership
+	public static boolean membership(@In("member.id") String mId,
+			@In("member.path.remainingPath") List<Integer> mRemainingPath,
+			@In("coord.id") String cId,
+			@In("coord.path") @TriggerOnChange EnsemblePath cPath) {
 		//System.out.println("[ConvoyEnsemble.membership] mId = " + mId + ", mRemainingPath = " + mRemainingPath + ", cId = " + cId + ", cRemainingPath = " + cPath.remainingPath + ", cCurrentPosition = " + cPath.currentPosition);
 		if (!mId.equals(cId)) {
 			if (mRemainingPath.size() > 0
@@ -68,9 +68,9 @@ public class ConvoyEnsemble extends Ensemble {
 		return true;
 	}
 
-	@DEECoEnsembleMapper
-	public static void map(@DEECoOut("member") ConvoyOutInterface mOutCR,
-			@DEECoIn("coord.path.remainingPath") List<Integer> cRemainingPath) {
+	@KnowledgeExchange
+	public static void map(@Out("member") ConvoyOutInterface mOutCR,
+			@In("coord.path.remainingPath") List<Integer> cRemainingPath) {
 		mOutCR.convoyRobot = Integer.toString(new Random().nextInt());
 		//System.out.println("[ConvoyEnsemble.map] convoyRobot = " + mOutCR.convoyRobot);
 	}

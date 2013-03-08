@@ -6,9 +6,9 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import cz.cuni.mff.d3s.deeco.annotations.DEECoIn;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoInOut;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoOut;
+import cz.cuni.mff.d3s.deeco.annotations.In;
+import cz.cuni.mff.d3s.deeco.annotations.InOut;
+import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.exceptions.ComponentEnsembleParseException;
 import cz.cuni.mff.d3s.deeco.invokable.Parameter;
 import cz.cuni.mff.d3s.deeco.invokable.ParameterizedMethod;
@@ -86,9 +86,9 @@ public class ParserHelper {
 	public static ParameterizedMethod extractParametrizedMethod(Method method, String root) {
 		try {
 			if (method != null) {
-				List<Parameter> in = getParameters(method, DEECoIn.class, root);
-				List<Parameter> out = getParameters(method, DEECoOut.class, root);
-				List<Parameter> inOut = getParameters(method, DEECoInOut.class, root);
+				List<Parameter> in = getParameters(method, In.class, root);
+				List<Parameter> out = getParameters(method, Out.class, root);
+				List<Parameter> inOut = getParameters(method, InOut.class, root);
 				return new ParameterizedMethod(in, inOut, out, method);
 			}
 		} catch (ComponentEnsembleParseException pe) {

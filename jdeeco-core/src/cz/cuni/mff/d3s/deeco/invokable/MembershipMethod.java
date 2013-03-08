@@ -4,11 +4,11 @@ import java.util.List;
 
 
 
-public abstract class Membership {
+public abstract class MembershipMethod {
 	
 	public final ParameterizedMethod method;
 	
-	public Membership(ParameterizedMethod method) {
+	public MembershipMethod(ParameterizedMethod method) {
 		this.method = method;
 	}
 	

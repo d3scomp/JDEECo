@@ -16,9 +16,9 @@
 package cz.cuni.mff.d3s.deeco.demo.parkinglotbooking;
 
 import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsemble;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsembleMembership;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoIn;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
+import cz.cuni.mff.d3s.deeco.annotations.Membership;
+import cz.cuni.mff.d3s.deeco.annotations.In;
+import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 
 /**
  * Sample car-park booking ensemble class.
@@ -27,7 +27,7 @@ import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
  *
  */
 @DEECoEnsemble
-@DEECoPeriodicScheduling(2000)
+@PeriodicScheduling(2000)
 public class BookingEnsemble extends RequestResponseEnsemble {
 
 	// must be public, static and extend Knowledge
@@ -39,10 +39,10 @@ public class BookingEnsemble extends RequestResponseEnsemble {
 		public Position position;
 	}
 
-	@DEECoEnsembleMembership
+	@Membership
 	public static boolean membership(
-			@DEECoIn("member.targetPosition") Position targetPosition,
-			@DEECoIn("coord.position") Position position) {
+			@In("member.targetPosition") Position targetPosition,
+			@In("coord.position") Position position) {
 		return targetPosition.equals(position);
 	}
 

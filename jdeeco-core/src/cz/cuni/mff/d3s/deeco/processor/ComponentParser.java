@@ -10,10 +10,10 @@ import java.util.UUID;
 
 import cz.cuni.mff.d3s.deeco.annotations.DEECoComponent;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoProcess;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoStrongLocking;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoWeakLocking;
+import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
+import cz.cuni.mff.d3s.deeco.annotations.Process;
+import cz.cuni.mff.d3s.deeco.annotations.StrongLocking;
+import cz.cuni.mff.d3s.deeco.annotations.WeakLocking;
 import cz.cuni.mff.d3s.deeco.annotations.ELockingMode;
 import cz.cuni.mff.d3s.deeco.invokable.ParameterizedMethod;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableComponentProcess;
@@ -45,7 +45,7 @@ public class ComponentParser {
 		}
 
 		List<Method> methods = AnnotationHelper.getAnnotatedMethods(c,
-				DEECoProcess.class);
+				Process.class);
 
 		if (methods == null || methods.size() == 0) {
 			return null;
@@ -65,7 +65,7 @@ public class ComponentParser {
 			ProcessSchedule ps = null;
 			final ProcessSchedule periodicSchedule = ScheduleHelper
 					.getPeriodicSchedule(AnnotationHelper.getAnnotation(
-							DEECoPeriodicScheduling.class, m.getAnnotations()));
+							PeriodicScheduling.class, m.getAnnotations()));
 			if (periodicSchedule != null) {
 				ps = periodicSchedule;
 			}
@@ -86,9 +86,9 @@ public class ComponentParser {
 			}
 
 			ELockingMode lm;
-			if (AnnotationHelper.getAnnotation(DEECoStrongLocking.class,
+			if (AnnotationHelper.getAnnotation(StrongLocking.class,
 					m.getAnnotations()) == null) {
-				if (AnnotationHelper.getAnnotation(DEECoWeakLocking.class,
+				if (AnnotationHelper.getAnnotation(WeakLocking.class,
 						m.getAnnotations()) == null)
 					lm = (ps instanceof ProcessPeriodicSchedule) ? ELockingMode.WEAK
 							: ELockingMode.STRONG;

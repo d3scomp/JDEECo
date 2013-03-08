@@ -3,12 +3,12 @@ package cz.cuni.mff.d3s.deeco.processor;
 import java.lang.reflect.Method;
 
 import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsemble;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsembleMapper;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsembleMembership;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
+import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
+import cz.cuni.mff.d3s.deeco.annotations.Membership;
+import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.ensemble.Ensemble;
 import cz.cuni.mff.d3s.deeco.invokable.BooleanMembership;
-import cz.cuni.mff.d3s.deeco.invokable.Membership;
+import cz.cuni.mff.d3s.deeco.invokable.MembershipMethod;
 import cz.cuni.mff.d3s.deeco.invokable.ParameterizedMethod;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableEnsembleProcess;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
@@ -41,7 +41,7 @@ public class EnsembleParser {
 		assert(c != null);
 		
 		final Method methodEnsMembership = AnnotationHelper.getAnnotatedMethod(
-				c, DEECoEnsembleMembership.class);
+				c, Membership.class);
 		
 		if (methodEnsMembership == null) {
 			throw new ParseException("The ensemble definition does not define a membership function");
@@ -53,12 +53,12 @@ public class EnsembleParser {
 			throw new ParseException("Malformed membership function definition.");
 		}
 
-		// Look up Membership
+		// Look up MembershipMethod
 		if (!methodEnsMembership.getReturnType().isAssignableFrom(boolean.class)) {
-			throw new ParseException("Membership function needs to return boolean");
+			throw new ParseException("MembershipMethod function needs to return boolean");
 		}
 				
-		Membership membership = new BooleanMembership(pm);
+		MembershipMethod membership = new BooleanMembership(pm);
 		
 
 		// Look up scheduling
@@ -66,7 +66,7 @@ public class EnsembleParser {
 
 		final ProcessSchedule periodicSchedule = ScheduleHelper
 				.getPeriodicSchedule(AnnotationHelper.getAnnotation(
-						DEECoPeriodicScheduling.class, c.getAnnotations()));
+						PeriodicScheduling.class, c.getAnnotations()));
 		if (periodicSchedule != null) {
 			scheduling = periodicSchedule;
 		}
@@ -90,7 +90,7 @@ public class EnsembleParser {
 		}
 
 		final Method knowledgeExchangeMethod = AnnotationHelper.getAnnotatedMethod(c,
-				DEECoEnsembleMapper.class);
+				KnowledgeExchange.class);
 		
 		if (knowledgeExchangeMethod == null) {
 			throw new ParseException("The ensemble definition does not define a knowledge exchange function");

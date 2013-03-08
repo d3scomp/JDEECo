@@ -16,11 +16,11 @@
 package cz.cuni.mff.d3s.deeco.demo.cloud;
 
 import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsemble;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsembleMapper;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsembleMembership;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoIn;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoOut;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
+import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
+import cz.cuni.mff.d3s.deeco.annotations.Membership;
+import cz.cuni.mff.d3s.deeco.annotations.In;
+import cz.cuni.mff.d3s.deeco.annotations.Out;
+import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.ensemble.Ensemble;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 
@@ -31,17 +31,17 @@ import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
  *
  */
 @DEECoEnsemble
-@DEECoPeriodicScheduling(3000)
+@PeriodicScheduling(3000)
 public class MigrationEnsemble extends Ensemble {
 
-	@DEECoEnsembleMembership
+	@Membership
 	public static boolean membership(
-			@DEECoIn("member.id") String mId,
-			@DEECoIn("member.loadRatio") Float mLoadRatio,
-			@DEECoIn("member.maxLoadRatio") Float mMaxLoadRatio,
-			@DEECoIn("coord.id") String cId,
-			@DEECoIn("coord.loadRatio") Float cLoadRatio,
-			@DEECoIn("coord.maxLoadRatio") Float cMaxLoadRatio) {
+			@In("member.id") String mId,
+			@In("member.loadRatio") Float mLoadRatio,
+			@In("member.maxLoadRatio") Float mMaxLoadRatio,
+			@In("coord.id") String cId,
+			@In("coord.loadRatio") Float cLoadRatio,
+			@In("coord.maxLoadRatio") Float cMaxLoadRatio) {
 		//System.out.println("[MigrationEnsemble.membership] mId = " + mId + ", mLoadRatio = " + mLoadRatio + ", mMaxLoadRatio = " + mMaxLoadRatio + ", cId = " + cId + ", cLoadRatio = " + cLoadRatio + ", cMaxLoadRatio = " + cMaxLoadRatio);
 		//if (!mId.equals(cId) && mLoadRatio > mMaxLoadRatio && cLoadRatio < cMaxLoadRatio) System.out.println("[MigrationEnsemble.membership] result = true");
 		//else System.out.println("[MigrationEnsemble.membership] result = false");
@@ -50,9 +50,9 @@ public class MigrationEnsemble extends Ensemble {
 		return !mId.equals(cId) && mLoadRatio > mMaxLoadRatio && cLoadRatio < cMaxLoadRatio;
 	}
 
-	@DEECoEnsembleMapper
-	public static void map(@DEECoOut("member.targetNode") OutWrapper<String> mTargetNode,
-			@DEECoIn("coord.id") String cId) {
+	@KnowledgeExchange
+	public static void map(@Out("member.targetNode") OutWrapper<String> mTargetNode,
+			@In("coord.id") String cId) {
 		System.out.println("Move application to " + cId);
 		mTargetNode.item = cId;
 	}

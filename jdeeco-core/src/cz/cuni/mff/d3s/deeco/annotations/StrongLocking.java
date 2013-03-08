@@ -21,14 +21,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * DEECoEnsembleMapping is used to mark the method in the ensemble definition
- * class as the mapping function.
+ * Used to mark a method to use strong locking mechanism i.e. lock is acquired
+ * before method parameter retrieval and released after out parameterTypes are
+ * persisted.
  * 
  * @author Michal Kit
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface DEECoEnsembleMapper {
-
+@Target({ ElementType.METHOD, ElementType.TYPE })
+public @interface StrongLocking {
 }

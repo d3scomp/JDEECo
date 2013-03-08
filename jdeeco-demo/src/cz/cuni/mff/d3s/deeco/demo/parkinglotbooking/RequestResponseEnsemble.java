@@ -19,10 +19,10 @@ import java.util.Map;
 import java.util.UUID;
 
 import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsemble;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsembleMapper;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoIn;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoOut;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoPeriodicScheduling;
+import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
+import cz.cuni.mff.d3s.deeco.annotations.In;
+import cz.cuni.mff.d3s.deeco.annotations.Out;
+import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.ensemble.Ensemble;
 import cz.cuni.mff.d3s.deeco.knowledge.Knowledge;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
@@ -34,7 +34,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
  *
  */
 @DEECoEnsemble
-@DEECoPeriodicScheduling(2000)
+@PeriodicScheduling(2000)
 public class RequestResponseEnsemble extends Ensemble {
 
 	// must be public, static and extend Knowledge
@@ -48,12 +48,12 @@ public class RequestResponseEnsemble extends Ensemble {
 		public Map<UUID, Response> processedResponses;
 	}
 
-	@DEECoEnsembleMapper
+	@KnowledgeExchange
 	public static void map(
-			@DEECoIn("member.request") Request request, 
-			@DEECoOut("member.response") OutWrapper<Response> response,
-			@DEECoOut("coord.incomingRequests[member.request.requestId]") OutWrapper<Request> incomingRequest, 
-			@DEECoIn("coord.processedResponses[member.request.requestId]") Response processedResponse) {
+			@In("member.request") Request request, 
+			@Out("member.response") OutWrapper<Response> response,
+			@Out("coord.incomingRequests[member.request.requestId]") OutWrapper<Request> incomingRequest, 
+			@In("coord.processedResponses[member.request.requestId]") Response processedResponse) {
 		incomingRequest.item = request;
 		if (processedResponse != null)
 			response.item = processedResponse;

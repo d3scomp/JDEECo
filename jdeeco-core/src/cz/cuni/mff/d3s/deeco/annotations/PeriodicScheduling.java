@@ -21,14 +21,17 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * DEECoEnsembleMembership is used to mark the method in the ensemble definition
- * class as the membership function.
+ * Used to mark an ensemble class or a component process to be executed
+ * periodically.
+ * 
+ * The attribute <code>value</code> indicates time interval (in ms) of the
+ * execution.
  * 
  * @author Michal Kit
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface DEECoEnsembleMembership {
-	double value() default 0.0;
+@Target({ElementType.METHOD, ElementType.TYPE})
+public @interface PeriodicScheduling {
+	int value() default 1000;
 }
