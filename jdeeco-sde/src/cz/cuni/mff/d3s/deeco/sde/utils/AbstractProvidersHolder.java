@@ -72,9 +72,7 @@ public class AbstractProvidersHolder implements IEnsembleComponentInformer {
 			for (ParsedComponent pc : adop.getComponents()) {
 				ck = pc.getInitialKnowledge();
 				if (ck.id.equals(componentId)) {
-					List<SchedulableComponentProcess> componentProcesses = pc.getProcesses();
-					cz.cuni.mff.d3s.deeco.runtime.Runtime.setUpProcesses(componentProcesses, null, adop.getContextClassLoader());		
-					return componentProcesses;					
+					return pc.getProcesses();										
 				}
 			}
 		}
@@ -93,10 +91,7 @@ public class AbstractProvidersHolder implements IEnsembleComponentInformer {
 	public List<SchedulableEnsembleProcess> getEnsembleProcesses() {
 		List<SchedulableEnsembleProcess> result = new LinkedList<SchedulableEnsembleProcess>();
 		for (AbstractDEECoObjectProvider adop : providers) {
-			
-			List<SchedulableEnsembleProcess> ensembleProcesses = adop.getEnsembles();
-			cz.cuni.mff.d3s.deeco.runtime.Runtime.setUpProcesses(ensembleProcesses, null, adop.getContextClassLoader());		
-			result.addAll(ensembleProcesses);
+			result.addAll(adop.getEnsembles());
 		}
 		return result;
 	}
