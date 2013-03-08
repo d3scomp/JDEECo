@@ -136,7 +136,7 @@ public class Runtime implements IRuntime {
 	 * @param km					knowledge manager
 	 * @param contextClassLoader	classloader for the process
 	 */
-	private void setUpProcesses(
+	public static void setUpProcesses(
 			List<? extends SchedulableProcess> processes, 
 			KnowledgeManager km,
 			ClassLoader  contextClassLoader

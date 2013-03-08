@@ -5,10 +5,10 @@ import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableComponentProcess;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableEnsembleProcess;
+import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
 import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
 import cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.provider.ParsedComponent;
-import cz.cuni.mff.d3s.deeco.provider.ProcessInstantiator;
 import cz.cuni.mff.d3s.deeco.runtime.IEnsembleComponentInformer;
 
 /**
@@ -72,13 +72,17 @@ public class AbstractProvidersHolder implements IEnsembleComponentInformer {
 		for (AbstractDEECoObjectProvider adop : providers) {
 			for (ParsedComponent pc : adop.getComponents()) {
 				ck = pc.getInitialKnowledge();
-				if (ck.id.equals(componentId))
-					return ProcessInstantiator.createComponentProcesses(
-							pc.getProcesses(), null, adop.getContextClassLoader());
+				if (ck.id.equals(componentId)) {
+					List<SchedulableComponentProcess> componentProcesses = pc.getProcesses();
+					cz.cuni.mff.d3s.deeco.runtime.Runtime.setUpProcesses(componentProcesses, null, adop.getContextClassLoader());		
+					return componentProcesses;					
+				}
 			}
 		}
 		return null;
 	}
+	
+	
 
 	/*
 	 * (non-Javadoc)
@@ -90,8 +94,10 @@ public class AbstractProvidersHolder implements IEnsembleComponentInformer {
 	public List<SchedulableEnsembleProcess> getEnsembleProcesses() {
 		List<SchedulableEnsembleProcess> result = new LinkedList<SchedulableEnsembleProcess>();
 		for (AbstractDEECoObjectProvider adop : providers) {
-			result.addAll(ProcessInstantiator.createEnsembleProcesses(
-					adop.getEnsembles(), null, adop.getContextClassLoader()));
+			
+			List<SchedulableEnsembleProcess> ensembleProcesses = adop.getEnsembles();
+			cz.cuni.mff.d3s.deeco.runtime.Runtime.setUpProcesses(ensembleProcesses, null, adop.getContextClassLoader());		
+			result.addAll(ensembleProcesses);
 		}
 		return result;
 	}
