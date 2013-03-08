@@ -8,7 +8,7 @@ import java.util.Map;
 
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableComponentProcess;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableEnsembleProcess;
-import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
+import cz.cuni.mff.d3s.deeco.knowledge.Component;
 import cz.cuni.mff.d3s.deeco.knowledge.Knowledge;
 import cz.cuni.mff.d3s.deeco.runtime.IEnsembleComponentInformer;
 
@@ -228,8 +228,8 @@ public class Printer {
 					if (aId.length == 1)
 						return (String) aId[0];
 				}
-			} else if (ck instanceof ComponentKnowledge) {
-				return ((ComponentKnowledge) ck).id;
+			} else if (ck instanceof Component) {
+				return ((Component) ck).id;
 			}
 		}
 		return null;

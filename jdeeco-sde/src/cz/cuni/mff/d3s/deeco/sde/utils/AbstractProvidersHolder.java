@@ -5,8 +5,7 @@ import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableComponentProcess;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableEnsembleProcess;
-import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
-import cz.cuni.mff.d3s.deeco.knowledge.ComponentKnowledge;
+import cz.cuni.mff.d3s.deeco.knowledge.Component;
 import cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.provider.ParsedComponent;
 import cz.cuni.mff.d3s.deeco.runtime.IEnsembleComponentInformer;
@@ -49,7 +48,7 @@ public class AbstractProvidersHolder implements IEnsembleComponentInformer {
 	 * getComponentKnowledge(java.lang.String)
 	 */
 	public Object getComponentKnowledge(String componentId) {
-		ComponentKnowledge ck;
+		Component ck;
 		for (AbstractDEECoObjectProvider adop : providers) {
 			for (ParsedComponent pc : adop.getComponents()) {
 				ck = pc.getInitialKnowledge();
@@ -68,7 +67,7 @@ public class AbstractProvidersHolder implements IEnsembleComponentInformer {
 	 */
 	public List<SchedulableComponentProcess> getComponentProcesses(
 			String componentId) {
-		ComponentKnowledge ck;
+		Component ck;
 		for (AbstractDEECoObjectProvider adop : providers) {
 			for (ParsedComponent pc : adop.getComponents()) {
 				ck = pc.getInitialKnowledge();
