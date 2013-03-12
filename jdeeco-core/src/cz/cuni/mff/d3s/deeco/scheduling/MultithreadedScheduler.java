@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcessTrigger;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.logging.LoggerFactory;
 
 public class MultithreadedScheduler extends Scheduler {
 	private Map<SchedulableProcess, ScheduledExecutorService> threads;
@@ -83,7 +84,7 @@ public class MultithreadedScheduler extends Scheduler {
 							process.contextClassLoader);
 				process.invoke();
 			} catch (Exception e) {
-				System.out.println("Process scheduled exception!");
+				LoggerFactory.getLogger().severe("Process scheduled exception",e);
 			}
 		}
 	}

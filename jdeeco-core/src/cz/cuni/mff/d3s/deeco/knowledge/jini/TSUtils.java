@@ -15,6 +15,7 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.knowledge.jini;
 
+import cz.cuni.mff.d3s.deeco.logging.LoggerFactory;
 import net.jini.space.JavaSpace05;
 
 /**
@@ -40,8 +41,7 @@ public class TSUtils {
 			}
 			return space;
 		} catch (Exception e) {
-			System.out.println("ERROR - Space retrieval error: "
-					+ e.getMessage());
+			LoggerFactory.getLogger().severe("Space retrieval error",e);
 			return null;
 		}
 	}

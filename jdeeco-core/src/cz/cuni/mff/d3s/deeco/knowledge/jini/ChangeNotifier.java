@@ -9,6 +9,7 @@ import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionUnavailableEntry;
 import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgePathHelper;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeRepository;
+import cz.cuni.mff.d3s.deeco.logging.LoggerFactory;
 import cz.cuni.mff.d3s.deeco.path.grammar.EEnsembleParty;
 
 public class ChangeNotifier {
@@ -68,7 +69,7 @@ public class ChangeNotifier {
 				updateVersion(listenPath, session, newVersion);
 			}
 		} catch (KRExceptionAccessError kre) {
-			System.out.println("Knowledge Repository communication exception!");
+			LoggerFactory.getLogger().severe("Knowledge Repository communication exception",kre);
 		}
 		notifying = false;
 	}
@@ -79,9 +80,9 @@ public class ChangeNotifier {
 			Object value = kr.take(path, session);
 			value = newVersion;
 			kr.put(path, value, session);
-			System.out.println("Updating: " + path);
+			LoggerFactory.getLogger().info("Updating: " + path);
 		} catch (KRExceptionUnavailableEntry uee) {
-			//System.out.println("Updating error: " + path);
+			//LoggerFactory.getLogger().severe("Updating error: " + path);
 		}
 	}
 }

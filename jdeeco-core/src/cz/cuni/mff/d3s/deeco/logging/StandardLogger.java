@@ -2,6 +2,7 @@ package cz.cuni.mff.d3s.deeco.logging;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
@@ -41,16 +42,28 @@ public class StandardLogger implements ILogger {
 		return instance;
 	}
 
-	public synchronized void severe(String s) {
-		logger.severe(s);
+	public synchronized void fine(String s) {
+		logger.fine(s);
+	}
+	
+	public synchronized void fine(String s, Throwable t) {
+		logger.log(Level.FINE,s,t);
 	}
 
 	public synchronized void info(String s) {
 		logger.info(s);
 	}
-
-	public synchronized void fine(String s) {
-		logger.fine(s);
+	
+	public synchronized void info(String s, Throwable t) {
+		logger.log(Level.INFO,s,t);
+	}
+	
+	public synchronized void severe(String s) {
+		logger.severe(s);
+	}
+	
+	public synchronized void severe(String s, Throwable t) {
+		logger.log(Level.SEVERE,s,t);
 	}
 
 }

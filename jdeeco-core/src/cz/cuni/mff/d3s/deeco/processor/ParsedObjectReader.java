@@ -7,6 +7,7 @@ import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 
 import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
+import cz.cuni.mff.d3s.deeco.logging.LoggerFactory;
 import cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider;
 
 public class ParsedObjectReader {
@@ -38,8 +39,7 @@ public class ParsedObjectReader {
 					oi.close();
 			}
 		} catch (Exception e) {
-			System.out.println("Error when reading");
-			e.printStackTrace();
+			LoggerFactory.getLogger().severe("Error when reading",e);
 			return result;
 		}
 		return result;

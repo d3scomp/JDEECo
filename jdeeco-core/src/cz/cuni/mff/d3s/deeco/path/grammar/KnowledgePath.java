@@ -5,6 +5,7 @@ import java.io.Serializable;
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.logging.LoggerFactory;
 
 public class KnowledgePath implements Serializable {
 	
@@ -21,7 +22,7 @@ public class KnowledgePath implements Serializable {
 		try {
 			return evaluatePath(pathNode, km, coord, member, session); 
 		} catch (KMException kme) {
-			System.out.println("Knowledge path evaluation error!");
+			LoggerFactory.getLogger().severe("Knowledge path evaluation error",kme);
 			return null;
 		}
 

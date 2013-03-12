@@ -11,6 +11,7 @@ import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableEnsembleProcess;
 import cz.cuni.mff.d3s.deeco.knowledge.Component;
+import cz.cuni.mff.d3s.deeco.logging.LoggerFactory;
 import cz.cuni.mff.d3s.deeco.path.grammar.ParseException;
 
 /**
@@ -90,8 +91,7 @@ public class ClassDEECoObjectProvider extends AbstractDEECoObjectProvider {
 			try {
 				ensembles.add(extractEnsembleProcess(c));
 			} catch (ParseException e) {
-				//TODO: use logging
-				System.out.println(String.format("Parsing error in class '%s': %s", c.getName(), e.getMessage()));
+				LoggerFactory.getLogger().severe(String.format("Parsing error in class '%s': %s", c.getName(), e.getMessage()),e);
 			}
 		}
 	}

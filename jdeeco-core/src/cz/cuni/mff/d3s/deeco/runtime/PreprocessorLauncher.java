@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.deeco.runtime;
 
+import cz.cuni.mff.d3s.deeco.logging.LoggerFactory;
 import cz.cuni.mff.d3s.deeco.processor.ClassFinder;
 import cz.cuni.mff.d3s.deeco.processor.ClassProcessor;
 import cz.cuni.mff.d3s.deeco.processor.ParsedObjectWriter;
@@ -22,7 +23,7 @@ public class PreprocessorLauncher {
 	 */
 	public static void main(String[] args) {
 		if (args == null || args.length == 0) {
-			System.out.println("Wrong parameter number!");
+			LoggerFactory.getLogger().info("Wrong parameter number");
 			return;
 		}
 		

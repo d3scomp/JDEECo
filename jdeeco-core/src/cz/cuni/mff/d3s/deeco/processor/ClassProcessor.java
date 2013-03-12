@@ -5,6 +5,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.List;
 
+import cz.cuni.mff.d3s.deeco.logging.LoggerFactory;
 import cz.cuni.mff.d3s.deeco.provider.ClassDEECoObjectProvider;
 
 public class ClassProcessor {
@@ -31,7 +32,7 @@ public class ClassProcessor {
 					clazz = Class.forName(cs ,true, cl);
 					result.addDEECoObjectClass(clazz);
 				} catch (Exception e) {
-					System.out.println("Parsing exception:");
+					LoggerFactory.getLogger().severe("Parsing exception",e);
 					e.printStackTrace();
 				}
 			}

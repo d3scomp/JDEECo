@@ -18,6 +18,7 @@ import net.jini.jeri.tcp.TcpServerEndpoint;
 import net.jini.space.AvailabilityEvent;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgePathHelper;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeRepository;
+import cz.cuni.mff.d3s.deeco.logging.LoggerFactory;
 import cz.cuni.mff.d3s.deeco.scheduling.ETriggerType;
 import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
 
@@ -75,7 +76,7 @@ public class TSRemoteEventListener implements RemoteEventListener {
 					tObjects = kr.get(t.key, ts);
 					stringVersionAndOwner = (String) tObjects[0];
 					versionOwner = extractVersionOwner(stringVersionAndOwner);
-					// System.out.println("Triggered: " + t.key + " " +
+					// LoggerFactory.getLogger().fine("Triggered: " + t.key + " " +
 					// stringVersionAndOwner);
 					if (versionOwner != null) {
 						version = versionOwner[0];
@@ -95,7 +96,7 @@ public class TSRemoteEventListener implements RemoteEventListener {
 			} catch (Exception e) {
 				if (ts != null)
 					ts.cancel();
-				System.out.println("Notification exception: " + e.getMessage());
+				LoggerFactory.getLogger().severe("Notification exception",e);
 			}
 		}
 	}

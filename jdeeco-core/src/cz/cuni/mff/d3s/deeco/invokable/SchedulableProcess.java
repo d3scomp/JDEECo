@@ -23,6 +23,7 @@ import cz.cuni.mff.d3s.deeco.exceptions.KMException;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.local.DeepCopy;
+import cz.cuni.mff.d3s.deeco.logging.LoggerFactory;
 import cz.cuni.mff.d3s.deeco.scheduling.ETriggerType;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessPeriodicSchedule;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
@@ -128,13 +129,11 @@ public abstract class SchedulableProcess implements Serializable {
 			}
 			return result;
 		} catch (KMException kme) {
-			// System.out.println("Parameter getting error!: " +
-			// kme.getMessage());
 			if (session == null)
 				localSession.cancel();
 			throw kme;
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			LoggerFactory.getLogger().severe("",e);
 			return null;
 		}
 	}
@@ -209,7 +208,7 @@ public abstract class SchedulableProcess implements Serializable {
 			} catch (Exception e) {
 				if (session == null)
 					localSession.cancel();
-				System.out.println(e.getMessage());
+				LoggerFactory.getLogger().severe("",e);
 			}
 		}
 	}

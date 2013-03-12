@@ -20,6 +20,7 @@ import net.jini.core.transaction.TransactionFactory;
 import net.jini.core.transaction.server.TransactionManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeRepository;
+import cz.cuni.mff.d3s.deeco.logging.LoggerFactory;
 
 /**
  * Class implementing session functionalities, using transaction.
@@ -47,7 +48,7 @@ public class TransactionalSession implements ISession {
 	 */
 	@Override
 	public void begin() {
-		//System.out.println("Session starts - " + this.toString());
+		//LoggerFactory.getLogger().fine("Session starts - " + this.toString());
 		if (tx != null) {
 			cancel();
 		}
@@ -61,7 +62,7 @@ public class TransactionalSession implements ISession {
 	 */
 	@Override
 	public void end() {
-		//System.out.println("Session ends - " + this.toString());
+		//LoggerFactory.getLogger().fine("Session ends - " + this.toString());
 		if (tx != null)
 			try {
 				count--;
@@ -83,7 +84,7 @@ public class TransactionalSession implements ISession {
 	 */
 	@Override
 	public void cancel() {
-		//System.out.println("Session cancel - " + this.toString());
+		//LoggerFactory.getLogger().fine("Session cancel - " + this.toString());
 		if (tx != null && !succeeded)
 				try {
 					count = 0;
@@ -145,8 +146,7 @@ public class TransactionalSession implements ISession {
 					DEFAULT_TRANSACTION_TIMEOUT);
 			return trc.transaction;
 		} catch (Exception e) {
-			System.out.println("ERROR - Transaction retrieval error: "
-					+ e.getMessage());
+			LoggerFactory.getLogger().severe("Transaction retrieval error",e);
 			return null;
 		}
 	}

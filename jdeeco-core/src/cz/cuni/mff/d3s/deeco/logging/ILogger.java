@@ -10,12 +10,21 @@ package cz.cuni.mff.d3s.deeco.logging;
 public interface ILogger {
 
 	/**
-	 * For reporting exceptions & errors.
+	 * Mainly for debugging reasons.
 	 * 
 	 * @param msg
 	 *            the string message
 	 */
-	public void severe(String msg);
+	public void fine(String msg);
+
+	/**
+	 * Log on the FINE level with associated Throwable information (exception
+	 * message and stack trace).
+	 * 
+	 * @param msg
+	 * @param thrown
+	 */
+	public void fine(String msg, Throwable thrown);
 
 	/**
 	 * General logging method.
@@ -26,11 +35,30 @@ public interface ILogger {
 	public void info(String msg);
 
 	/**
-	 * For debugging reasons.
+	 * Log on the INFO level with associated Throwable information (exception
+	 * message and stack trace).
+	 * 
+	 * @param msg
+	 * @param thrown
+	 */
+	public void info(String msg, Throwable thrown);
+
+	/**
+	 * For reporting exceptions & errors without the stack trace.
 	 * 
 	 * @param msg
 	 *            the string message
 	 */
-	public void fine(String msg);
+	public void severe(String msg);
 
+	/**
+	 * Log on the SEVERE level with associated Throwable information (exception
+	 * message and stack trace).
+	 * 
+	 * @param msg
+	 *            the (custom) string message, if any
+	 * @param thrown
+	 *            Throwable object (e.g. an Exception)
+	 */
+	public void severe(String msg, Throwable thrown);
 }

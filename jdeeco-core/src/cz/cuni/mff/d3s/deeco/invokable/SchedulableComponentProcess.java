@@ -21,6 +21,7 @@ import cz.cuni.mff.d3s.deeco.annotations.ELockingMode;
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.logging.LoggerFactory;
 import cz.cuni.mff.d3s.deeco.scheduling.ETriggerType;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
 
@@ -55,7 +56,7 @@ public class SchedulableComponentProcess extends SchedulableProcess {
 	 */
 	@Override
 	public void invoke(String triggererId, ETriggerType recipientMode) {
-		//System.out.println("Component process starts - " + this.toString());
+		//LoggerFactory.getLogger().fine("Component process starts - " + this.toString());
 		try {
 			if (lockingMode.equals(ELockingMode.STRONG)) {
 				ISession session = km.createSession();
@@ -66,21 +67,21 @@ public class SchedulableComponentProcess extends SchedulableProcess {
 						session.end();
 					}
 				} catch (KMException e) {
-					System.out.println(e.getMessage());
+					LoggerFactory.getLogger().severe("",e);
 					session.cancel();
 				}
 			} else {
 				try {
 					evaluateMethod();
 				} catch (KMException kme) {
-					System.out.println("SCP message - " + kme.getMessage());
+					LoggerFactory.getLogger().severe("SCP message error",kme);
 					kme.printStackTrace();
 				}
 			}
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			LoggerFactory.getLogger().severe("",e);
 		}
-		//System.out.println("Component process ends - " + this.toString());
+		//LoggerFactory.getLogger().fine("Component process ends - " + this.toString());
 	}
 
 	private void evaluateMethod() throws KMException {

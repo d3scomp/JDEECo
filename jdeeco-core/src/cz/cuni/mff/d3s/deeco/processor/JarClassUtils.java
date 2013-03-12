@@ -10,6 +10,8 @@ import java.util.jar.JarFile;
 import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.JavaClass;
 
+import cz.cuni.mff.d3s.deeco.logging.LoggerFactory;
+
 public class JarClassUtils {
 	public static List<String> getClassNamesFromJar(String jarPath) {
 		try {
@@ -56,7 +58,7 @@ public class JarClassUtils {
 						try {
 							cp = new ClassParser(f.getAbsolutePath());
 							result.add(cp.parse().getClassName());
-							System.out.println("File found: " + f.getName());
+							LoggerFactory.getLogger().info("File found: " + f.getName());
 						} catch (Exception e) {	
 						}
 					}

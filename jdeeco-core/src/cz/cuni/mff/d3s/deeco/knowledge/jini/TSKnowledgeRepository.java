@@ -33,6 +33,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgePathHelper;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeRepository;
+import cz.cuni.mff.d3s.deeco.logging.LoggerFactory;
 import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
 
 /**
@@ -94,7 +95,7 @@ public class TSKnowledgeRepository extends KnowledgeRepository {
 		if (resultList.size() == 0)
 			throw new KRExceptionUnavailableEntry("Entry " + entryKey
 					+ " unavailable!");
-		//System.out.println("Taking: " + entryKey);
+		//LoggerFactory.getLogger().fine("Taking: " + entryKey);
 		return resultList.toArray();
 	}
 
@@ -148,7 +149,7 @@ public class TSKnowledgeRepository extends KnowledgeRepository {
 			Transaction tx = (session != null) ? ((TransactionalSession) session)
 					.getTransaction() : null;
 			space.write(TSUtils.createTuple(entryKey, value), tx, Lease.FOREVER);
-			//System.out.println("Writing entry: " + entryKey);
+			//LoggerFactory.getLogger().fine("Writing entry: " + entryKey);
 			if (session != null)
 				((TransactionalSession) session).propertyChanged(entryKey, this);
 		} catch (Exception e) {
@@ -156,7 +157,7 @@ public class TSKnowledgeRepository extends KnowledgeRepository {
 					"TSKnowledgeRepository error when writing property: "
 							+ entryKey + " - " + e.getMessage());
 		}
-		//System.out.println("Putting: " + entryKey);
+		//LoggerFactory.getLogger().fine("Putting: " + entryKey);
 	}
 
 	/*
@@ -229,7 +230,7 @@ public class TSKnowledgeRepository extends KnowledgeRepository {
 			space.registerForAvailabilityEvent(
 					Arrays.asList(new Tuple[] { TSUtils.createTemplate(fullListenPath) }), null, true,
 					tsListener.getStub(), Lease.FOREVER, null);
-			System.out.println("Listener added: " + fullListenPath);
+			LoggerFactory.getLogger().info("Listener added: " + fullListenPath);
 		} catch (Exception e) {
 			throw new KRExceptionAccessError(
 					"TSKnowledgeRepository error when adding a listener for the property: "

@@ -5,6 +5,8 @@ import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 
+import cz.cuni.mff.d3s.deeco.logging.LoggerFactory;
+
 import static cz.cuni.mff.d3s.deeco.processor.JarClassUtils.getClassNamesFromJar;
 import static cz.cuni.mff.d3s.deeco.processor.JarClassUtils.getClassNamesFromDir;
 
@@ -33,7 +35,7 @@ public class ClassFinder {
 					}
 				}
 			} catch (Exception e) {
-				System.out.println("Parsing exception: ");
+				LoggerFactory.getLogger().severe("Parsing exception",e);
 			}
 		}
 	}

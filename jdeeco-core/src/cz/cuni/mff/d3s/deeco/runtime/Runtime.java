@@ -27,6 +27,7 @@ import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
 import cz.cuni.mff.d3s.deeco.knowledge.Component;
 import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.logging.LoggerFactory;
 import cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.provider.ParsedComponent;
 import cz.cuni.mff.d3s.deeco.scheduling.IScheduler;
@@ -117,10 +118,9 @@ public class Runtime implements IRuntime {
 			try { 
 				initComponentKnowledge(component.getInitialKnowledge(), km);
 			} catch (Exception e){						
-				System.out.println(String.format(
-						"Error when initializing knowledge of component %s: %s",
-						component.getInitialKnowledge().getClass(),
-						e.getMessage()));
+				LoggerFactory.getLogger().severe(String.format(
+						"Error when initializing knowledge of component %s",
+						component.getInitialKnowledge().getClass()),e);
 				continue;
 			}
 			List<? extends SchedulableProcess> componentProcesses = component.getProcesses();

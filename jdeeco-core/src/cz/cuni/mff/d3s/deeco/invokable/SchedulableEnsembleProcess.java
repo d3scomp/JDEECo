@@ -22,6 +22,7 @@ import cz.cuni.mff.d3s.deeco.exceptions.KMNotExistentException;
 import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.logging.LoggerFactory;
 import cz.cuni.mff.d3s.deeco.scheduling.ETriggerType;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
 
@@ -71,7 +72,7 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 	 */
 	@Override
 	public void invoke(String triggererId, ETriggerType recipientMode) {
-		// System.out.println("Ensembling starts");
+		// LoggerFactory.getLogger().fine("Ensembling starts");
 		try {
 			Object[] ids = (Object[]) km
 					.getKnowledge(ConstantKeys.ROOT_KNOWLEDGE_ID);
@@ -82,7 +83,7 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 					singleInvocation(triggererId, recipientMode, ids);
 				} catch (KMException kme) {
 				}
-			// System.out.println("Ensembling ends");
+			// LoggerFactory.getLogger().fine("Ensembling ends");
 		} catch (KMException kme) {
 			return;
 		}
@@ -147,8 +148,7 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 			Object[] parameterValues = ParametersPair.extractValues(params);
 			return membership.membership(parameterValues);
 		} catch (Exception e) {
-			System.out.println("Ensemble membership exception! - "
-					+ e.getMessage());
+			LoggerFactory.getLogger().severe("Ensemble membership exception",e);
 			return false;
 		}
 	}
@@ -158,8 +158,7 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 			Object[] parameterValues = ParametersPair.extractValues(params);
 			knowledgeExchange.invoke(parameterValues);
 		} catch (Exception e) {
-			System.out.println("Ensemble evaluation exception! - "
-					+ e.getMessage());
+			LoggerFactory.getLogger().severe("Ensemble evaluation exception",e);
 		}
 	}
 	

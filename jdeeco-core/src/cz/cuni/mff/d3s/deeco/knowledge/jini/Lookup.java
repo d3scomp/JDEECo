@@ -19,6 +19,8 @@ import java.io.IOException;
 
 import java.rmi.RemoteException;
 
+import cz.cuni.mff.d3s.deeco.logging.LoggerFactory;
+
 import net.jini.core.lookup.ServiceRegistrar;
 import net.jini.core.lookup.ServiceTemplate;
 
@@ -167,6 +169,6 @@ class Lookup implements DiscoveryListener {
        new ServiceRegistrars, we do nothing here.
      */
     public void discarded(DiscoveryEvent anEvent) {
-    	System.out.println("Disappeared");
+    	LoggerFactory.getLogger().info("Disappeared");
     }
 }
