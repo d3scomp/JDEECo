@@ -49,3 +49,5 @@ A jDEECo tutorial featuring a simple convoy example can be found as a separate p
 
 ## Eclipse integration
 All of the projects in the repository are the Eclipse projects. As such they can be easily imported to the Eclipse workspace.
+
+To set up logging in Eclipse, you have to add the 'config' folder to the classpath (thorough Run Configurations).
