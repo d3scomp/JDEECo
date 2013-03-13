@@ -8,7 +8,7 @@ To compile and run the JDEECo framework, the following software has to be availa
 ## Compilation and Deployment
 To compile the project you will need to have Apache Maven (http://maven.apache.org/) installed on your machine (version 3.04 was used when writing the script).
 
-#### There are two profiles against which you can compile the sources:
+#### There are two maven profiles against which you can compile the sources:
  * `default` - produces simple jars for jDEECo core library, Demo applications and JPF relevant library.
  * `sde` - produces OSGi bundles for jDEECo core and jDEECo SDE Tool
 
