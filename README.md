@@ -8,7 +8,12 @@ To compile and run the JDEECo framework, the following software has to be availa
 ## Compilation and Deployment
 To compile the project you will need to have Apache Maven (http://maven.apache.org/) installed on your machine (version 3.04 was used when writing the script).
 
-Compilation is performed by simply executing `mvn clean install` command in the jdeeco-parent subfolder.
+#### There are two profiles against which you can compile the sources:
+ * `default` - produces simple jars for jDEECo core library, Demo applications and JPF relevant library.
+ * `sde` - produces OSGi bundles for jDEECo core and jDEECo SDE Tool
+
+Default compilation is performed by simply executing `mvn clean install` command in the jdeeco-parent subfolder.
+In order to compile sources in `SDE` profile issue `mvn clean install -Psde` command.
 All generated binaries together with zipped sources are placed in the `dist` folder in the root of the project. 
 Additionally AppacheRiver 2.2 and Java PathFinder distribution are downloaded, set up and all required scripts are generated.
 
@@ -44,6 +49,3 @@ A jDEECo tutorial featuring a simple convoy example can be found as a separate p
 
 ## Eclipse integration
 All of the projects in the repository are the Eclipse projects. As such they can be easily imported to the Eclipse workspace.
-
-In order to work with jDEECo sources in the Eclipse IDE a proper target platform needs to be configured. For that purpose both `core` and `sde` projects contain the `targetDefinition.target` files, which points to the required update sites containing necessary plugins.
-To set them active, click the `Set as Target Platform` link (top left corner) in the overview tab of the targetDefinition.target.
