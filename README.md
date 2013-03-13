@@ -12,8 +12,8 @@ To compile the project you will need to have Apache Maven (http://maven.apache.o
  * `default` - produces simple jars for jDEECo core library, Demo applications and JPF relevant library.
  * `sde` - produces OSGi bundles for jDEECo core and jDEECo SDE Tool
 
-Default compilation is performed by simply executing `mvn clean install` command in the jdeeco-parent subfolder.
-In order to compile sources in `SDE` profile issue `mvn clean install -Psde` command.
+The `default` compilation is performed by simply executing `mvn clean install` command in the jdeeco-parent subfolder.
+In order to compile sources against the `sde` profile issue `mvn clean install -Psde` command.
 All generated binaries together with zipped sources are placed in the `dist` folder in the root of the project. 
 Additionally AppacheRiver 2.2 and Java PathFinder distribution are downloaded, set up and all required scripts are generated.
 
