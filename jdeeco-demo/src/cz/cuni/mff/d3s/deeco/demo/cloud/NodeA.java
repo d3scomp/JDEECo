@@ -18,7 +18,6 @@ package cz.cuni.mff.d3s.deeco.demo.cloud;
 import java.util.Random;
 
 import cz.cuni.mff.d3s.deeco.annotations.DEECoComponent;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
@@ -33,15 +32,12 @@ public class NodeA extends Component {
 	public Integer networkId;
 	public String targetNode;
 	
-	@DEECoInitialize
-	public static Component getInitialKnowledge() {
-		NodeA k = new NodeA();
-		k.id = "NodeA";
-		k.loadRatio = 0.0f;
-		k.maxLoadRatio = 0.5f;
-		k.networkId = 1;
-		k.targetNode = null;
-		return k;
+	public NodeA(String id, Float maxLoadRatio, Integer networkId) {
+		this.id = id;
+		this.maxLoadRatio = maxLoadRatio;
+		this.loadRatio = 0.0f;
+		this.networkId = networkId;
+		this.targetNode = null;
 	}
 
 	@Process

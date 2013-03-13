@@ -19,18 +19,18 @@ public class ParsedComponent implements Serializable {
 	private static final long serialVersionUID = 7598262003638318904L;
 	
 	private Component initialKnowledge;
-	private List<SchedulableComponentProcess> processCreators;
+	private List<SchedulableComponentProcess> processes;
 
 	public ParsedComponent() {
 		initialKnowledge = null;
-		processCreators = new LinkedList<SchedulableComponentProcess>();
+		processes = new LinkedList<SchedulableComponentProcess>();
 	}
 
 	public ParsedComponent(
 			List<SchedulableComponentProcess> processCreators,
 			Component initialKnowledge) {
 		this.initialKnowledge = initialKnowledge;
-		this.processCreators = processCreators;
+		this.processes = processCreators;
 	}
 
 	/**
@@ -48,7 +48,7 @@ public class ParsedComponent implements Serializable {
 	 * @return Processes of the component.
 	 */
 	public List<SchedulableComponentProcess> getProcesses() {
-		return processCreators;
+		return processes;
 	}
 
 }
