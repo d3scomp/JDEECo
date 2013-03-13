@@ -4,16 +4,14 @@
 	<parent>
 		<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
 		<artifactId>cz.cuni.mff.d3s.jdeeco</artifactId>
-		<version>0.0.1</version>
+		<version>1.0.0</version>
 		<relativePath>../jdeeco-parent/pom.xml</relativePath>
 	</parent>
 	<artifactId>cz.cuni.mff.d3s.jdeeco.core</artifactId>
-	<packaging>bundle</packaging>
+	<packaging>jar</packaging>
 	<properties>
 		<dist>../dist</dist>
 		<coreJar>jdeeco.jar</coreJar>
-		<sde>${dist}/sde</sde>
-		<sdeCoreJar>${project.artifactId}.${project.version}.jar</sdeCoreJar>
 	</properties>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
@@ -32,24 +30,7 @@
 				</includes>
 			</resource>
 		</resources>
-
 		<plugins>
-			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<extensions>true</extensions>
-				<configuration>
-					<instructions>
-						<Bundle-ManifestVersion>2</Bundle-ManifestVersion>
-						<Bundle-Name>jDEECo Core</Bundle-Name>
-						<Bundle-SymbolicName>cz.cuni.mff.d3s.jdeeco.core</Bundle-SymbolicName>
-						<Service-Component>OSGI-INF/*.xml</Service-Component>
-						<Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
-						<Export-Package>cz.cuni.mff.d3s.deeco.annotations,cz.cuni.mff.d3s.deeco.ensemble,cz.cuni.mff.d3s.deeco.invokable,cz.cuni.mff.d3s.deeco.knowledge,cz.cuni.mff.d3s.deeco.knowledge.jini,cz.cuni.mff.d3s.deeco.knowledge.local,cz.cuni.mff.d3s.deeco.processor,cz.cuni.mff.d3s.deeco.provider,cz.cuni.mff.d3s.deeco.runtime,cz.cuni.mff.d3s.deeco.scheduling</Export-Package>
-					</instructions>
-				</configuration>
-			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
@@ -71,46 +52,7 @@
 									<destFileName>${coreJar}</destFileName>
 									<outputDirectory>${dist}</outputDirectory>
 								</artifactItem>
-								<artifactItem>
-									<groupId>${project.groupId}</groupId>
-									<artifactId>${project.artifactId}</artifactId>
-									<version>${project.version}</version>
-									<type>${project.packaging}</type>
-									<destFileName>${sdeCoreJar}</destFileName>
-									<outputDirectory>${sde}</outputDirectory>
-								</artifactItem>
-								<artifactItem>
-									<groupId>log4j</groupId>
-									<artifactId>log4j</artifactId>
-									<version>1.2.17</version>
-									<type>jar</type>
-									<outputDirectory>${dist}</outputDirectory>
-								</artifactItem>
-								<artifactItem>
-									<groupId>log4j</groupId>
-									<artifactId>log4j</artifactId>
-									<version>1.2.17</version>
-									<type>jar</type>
-									<outputDirectory>${sde}</outputDirectory>
-								</artifactItem>
-								<artifactItem>
-									<groupId>cz.cuni.mff.d3s</groupId>
-									<artifactId>cz.cuni.mff.d3s.bcel</artifactId>
-									<version>1.0.0</version>
-									<type>jar</type>
-									<outputDirectory>${sde}</outputDirectory>
-								</artifactItem>
-								<artifactItem>
-									<groupId>cz.cuni.mff.d3s</groupId>
-									<artifactId>cz.cuni.mff.d3s.jini</artifactId>
-									<version>1.0.0</version>
-									<type>jar</type>
-									<outputDirectory>${sde}</outputDirectory>
-								</artifactItem>
 							</artifactItems>
-							<overWriteIfNewer>true</overWriteIfNewer>
-							<overWriteReleases>true</overWriteReleases>
-							<overWriteSnapshots>true</overWriteSnapshots>
 						</configuration>
 					</execution>
 				</executions>
@@ -176,12 +118,6 @@
 			<groupId>cz.cuni.mff.d3s</groupId>
 			<artifactId>cz.cuni.mff.d3s.jini</artifactId>
 			<version>1.0.0</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.17</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>

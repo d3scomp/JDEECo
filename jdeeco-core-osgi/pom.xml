@@ -1,57 +1,52 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>cz.cuni.mff.d3s.jdeeco.sde</artifactId>
+	<parent>
+		<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
+		<artifactId>cz.cuni.mff.d3s.jdeeco</artifactId>
+		<version>1.0.0</version>
+		<relativePath>../jdeeco-parent/pom.xml</relativePath>
+	</parent>
+	<artifactId>cz.cuni.mff.d3s.jdeeco.core-osgi</artifactId>
 	<packaging>bundle</packaging>
 	<properties>
 		<dist>../dist</dist>
 		<sde>${dist}/sde</sde>
-		<sdeJar>${project.artifactId}.${project.version}.jar</sdeJar>
+		<sdeCoreJar>${project.artifactId}.${project.version}.jar</sdeCoreJar>
 	</properties>
 	<build>
-		<sourceDirectory>src</sourceDirectory>
+		<sourceDirectory>../jdeeco-core/src</sourceDirectory>
+		<!-- testSourceDirectory>test</testSourceDirectory -->
 		<resources>
 			<resource>
-				<directory>src</directory>
+				<directory>../jdeeco-core/src</directory>
 				<excludes>
 					<exclude>**/*.java</exclude>
 				</excludes>
 			</resource>
 			<resource>
-				<directory>src/..</directory>
+				<directory>../jdeeco-core/src/..</directory>
 				<includes>
 					<include>OSGI-INF/*.*</include>
-					<include>plugin.xml</include>
 				</includes>
 			</resource>
 		</resources>
 		<plugins>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-eclipse-plugin</artifactId>
-				<configuration>
-					<pde>true</pde>
-				</configuration>
-			</plugin>
-
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
 				<extensions>true</extensions>
 				<configuration>
-					<manifestLocation>META-INF</manifestLocation>
 					<instructions>
-						<Bundle-SymbolicName>cz.cuni.mff.d3s.jdeeco.sde;singleton:=true</Bundle-SymbolicName>
-						<Bundle-Version>${pom.version}</Bundle-Version>
-						<Bundle-Name>JDEECoSDETool</Bundle-Name>
-						<Export-Package>cz.cuni.mff.d3s.deeco.sde.provider;version="${pom.version}"</Export-Package>
+						<Bundle-ManifestVersion>2</Bundle-ManifestVersion>
+						<Bundle-Name>jDEECo Core</Bundle-Name>
+						<Bundle-SymbolicName>cz.cuni.mff.d3s.jdeeco.core</Bundle-SymbolicName>
+						<Service-Component>OSGI-INF/*.xml</Service-Component>
 						<Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
-						<Service-Component>OSGI-INF/JDEECoSDETool.xml</Service-Component>
+						<Export-Package>cz.cuni.mff.d3s.deeco.annotations,cz.cuni.mff.d3s.deeco.ensemble,cz.cuni.mff.d3s.deeco.invokable,cz.cuni.mff.d3s.deeco.knowledge,cz.cuni.mff.d3s.deeco.knowledge.jini,cz.cuni.mff.d3s.deeco.knowledge.local,cz.cuni.mff.d3s.deeco.processor,cz.cuni.mff.d3s.deeco.provider,cz.cuni.mff.d3s.deeco.runtime,cz.cuni.mff.d3s.deeco.scheduling</Export-Package>
 					</instructions>
 				</configuration>
 			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
@@ -70,13 +65,22 @@
 									<artifactId>${project.artifactId}</artifactId>
 									<version>${project.version}</version>
 									<type>${project.packaging}</type>
-									<destFileName>${sdeJar}</destFileName>
+									<destFileName>${sdeCoreJar}</destFileName>
+								</artifactItem>
+								<artifactItem>
+									<groupId>cz.cuni.mff.d3s</groupId>
+									<artifactId>cz.cuni.mff.d3s.bcel</artifactId>
+									<version>1.0.0</version>
+									<type>jar</type>
+								</artifactItem>
+								<artifactItem>
+									<groupId>cz.cuni.mff.d3s</groupId>
+									<artifactId>cz.cuni.mff.d3s.jini</artifactId>
+									<version>1.0.0</version>
+									<type>jar</type>
 								</artifactItem>
 							</artifactItems>
-							<overWriteIfNewer>true</overWriteIfNewer>
 							<outputDirectory>${sde}</outputDirectory>
-							<overWriteReleases>true</overWriteReleases>
-							<overWriteSnapshots>true</overWriteSnapshots>
 						</configuration>
 					</execution>
 				</executions>
@@ -97,9 +101,7 @@
 					</execution>
 				</executions>
 			</plugin>
-
 		</plugins>
-
 		<pluginManagement>
 			<plugins>
 				<!-- Ignore/Execute plugin execution -->
@@ -132,47 +134,19 @@
 		</pluginManagement>
 	</build>
 	<dependencies>
+		<!-- dependency> <groupId>org.testng</groupId> <artifactId>testng</artifactId> 
+			<version>6.5.1</version> </dependency -->
 		<dependency>
-			<groupId>org.osgi</groupId>
-			<artifactId>org.osgi.core</artifactId>
-			<version>5.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.osgi</groupId>
-			<artifactId>org.osgi.compendium</artifactId>
-			<version>4.3.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.ui</groupId>
-			<artifactId>workbench</artifactId>
-			<version>[3.3.0, 4.0.0)</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.jdt</groupId>
-			<artifactId>ui</artifactId>
-			<version>[3.3.0, 4.0.0)</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.swt.win32.win32</groupId>
-			<artifactId>x86</artifactId>
-			<version>[3.3.0, 4.0.0)</version>
-		</dependency>
-		<dependency>
-			<groupId>cz.cuni.mff.d3s.sensoria.sde</groupId>
-			<artifactId>cz.cuni.mff.d3s.sensoria.sde.core</artifactId>
+			<groupId>cz.cuni.mff.d3s</groupId>
+			<artifactId>cz.cuni.mff.d3s.bcel</artifactId>
 			<version>1.0.0</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
-			<artifactId>cz.cuni.mff.d3s.jdeeco.core-osgi</artifactId>
+			<groupId>cz.cuni.mff.d3s</groupId>
+			<artifactId>cz.cuni.mff.d3s.jini</artifactId>
 			<version>1.0.0</version>
-			<type>bundle</type>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
-	<parent>
-		<relativePath>../jdeeco-parent/pom.xml</relativePath>
-		<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
-		<artifactId>cz.cuni.mff.d3s.jdeeco</artifactId>
-		<version>1.0.0</version>
-	</parent>
 </project>

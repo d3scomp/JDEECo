@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>cz.cuni.mff.d3s.jdeeco</artifactId>
-	<version>0.0.1</version>
+	<version>1.0.0</version>
 	<packaging>pom</packaging>
 	<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
 	<properties>
@@ -11,8 +11,34 @@
 		<river>${dist}/apache-river</river>
 		<jdeecoCoreSrc>../jdeeco-core/src</jdeecoCoreSrc>
 		<jdeecoDemoSrc>../jdeeco-demo/src</jdeecoDemoSrc>
-		<tycho-version>0.16.0</tycho-version>
+		<mode>default</mode>
 	</properties>
+	<profiles>
+		<profile>
+			<id>default</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<mode>default</mode>
+			</properties>
+			<modules>
+				<module>../jdeeco-core</module>
+				<module>../jdeeco-jpf</module>
+				<module>../jdeeco-demo</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>sde</id>
+			<properties>
+				<mode>sde</mode>
+			</properties>
+			<modules>
+				<module>../jdeeco-core-osgi</module>
+				<module>../jdeeco-sde</module>
+			</modules>
+		</profile>
+	</profiles>
 	<build>
 		<plugins>
 			<plugin>
@@ -72,64 +98,16 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.6</version>
-				<executions>
-					<execution>
-						<id>copy-resources</id>
-						<phase>validate</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${dist}</outputDirectory>
-							<resources>
-								<resource>
-									<directory>${jdeecoDemoSrc}/../</directory>
-									<includes>
-										<include>build.xml</include>
-									</includes>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
-	<modules>
-		<module>../jdeeco-core</module>
-		<module>../jdeeco-demo</module> 
-		<module>../jdeeco-sde</module> 
-		<module>../jdeeco-jpf</module> 
-	</modules>
 	<repositories>
 		<repository>
 			<id>d3s-releases</id>
 			<url>https://github.com/d3scomp/mvn-repo/raw/master/releases/</url>
 		</repository>
 		<repository>
-			<id>update-p2</id>
-			<layout>p2</layout>
-			<url>http://github.com/d3scomp/p2-update/raw/master/</url>
-		</repository>
-		<repository> <id>d3s-snapshots</id> <url>https://github.com/d3scomp/mvn-repo/raw/master/snapshots/</url> 
-			</repository>
-		<repository>
-			<id>juno</id>
-			<layout>p2</layout>
-			<url>http://download.eclipse.org/releases/juno</url>
-		</repository>
-		<repository>
-			<id>sensoria</id>
-			<layout>p2</layout>
-			<url>http://svn.pst.ifi.lmu.de/update/sde</url>
-		</repository>
-		<repository>
-			<id>indigo</id>
-			<layout>p2</layout>
-			<url>http://download.eclipse.org/releases/indigo</url>
+			<id>maven-eclipse</id>
+			<url>http://maven.eclipse.org/nexus/content/repositories/testing</url>
 		</repository>
 	</repositories>
 </project>
