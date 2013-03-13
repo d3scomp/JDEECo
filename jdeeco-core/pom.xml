@@ -15,7 +15,7 @@
 	</properties>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
-		<!-- testSourceDirectory>test</testSourceDirectory -->
+		<testSourceDirectory>test</testSourceDirectory>
 		<resources>
 			<resource>
 				<directory>src</directory>
@@ -119,6 +119,12 @@
 			<artifactId>cz.cuni.mff.d3s.jini</artifactId>
 			<version>1.0.0</version>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>6.1.1</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

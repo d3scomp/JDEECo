@@ -44,7 +44,15 @@ public class LocalKnowledgeRepositoryTest {
 	public void get() throws KRExceptionUnavailableEntry,
 			KRExceptionAccessError {
 		Object val = kr.get("34", session);
+		if (val instanceof Object []) {
+			if (((Object []) val).length > 0)
+				val = ((Object []) val)[0];
+		}
 		Object val2 = kr.get("first.of.all");
+		if (val2 instanceof Object []) {
+			if (((Object []) val2).length > 0)
+				val2 = ((Object []) val2)[0];
+		}
 		assertEquals(val, 42);
 		assertEquals(val2, "test value");
 	}

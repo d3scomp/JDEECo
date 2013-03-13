@@ -24,57 +24,57 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgePathHelper;
 public class KPBuilderTest {
 
   public void appendToRoot() {
-	  String res = KPBuilder.appendToRoot("root", "tail");
+	  String res = KnowledgePathHelper.appendToRoot("root", "tail");
 	  assertEquals(res,"root.tail");
   }
 
   public void appendToRootANullTail() {
-	  String res = KPBuilder.appendToRoot("root", null);
+	  String res = KnowledgePathHelper.appendToRoot("root", null);
 	  assertEquals(res,"root");
   }
   
   public void appendToEmptyRoot() {
-	  String res = KPBuilder.appendToRoot("","tail");
+	  String res = KnowledgePathHelper.appendToRoot("","tail");
 	  assertEquals(res,"tail");
   }
 
   public void appendToBlankRoot() {
-	  String res = KPBuilder.appendToRoot("   ","tail");
+	  String res = KnowledgePathHelper.appendToRoot("   ","tail");
 	  assertEquals(res,"tail");
   }
   
   public void appendToRootBlankTail() {
-	  String res = KPBuilder.appendToRoot("root","  ");
+	  String res = KnowledgePathHelper.appendToRoot("root","  ");
 	  assertEquals(res,"root");
   }
   
   public void prependToRoot() {
-	  String res = KPBuilder.prependToRoot("another", "test");
+	  String res = KnowledgePathHelper.prependToRoot("another", "test");
 	  assertEquals(res,"test.another");
   }
 
   public void prependToRootANullTail() {
-	  String res = KPBuilder.appendToRoot("another", null);
+	  String res = KnowledgePathHelper.appendToRoot("another", null);
 	  assertEquals(res,"another");
   }
   
   public void prependToEmptyRoot() {
-	  String res = KPBuilder.appendToRoot("","test");
+	  String res = KnowledgePathHelper.appendToRoot("","test");
 	  assertEquals(res,"test");
   }
 
   public void prependToBlankRoot() {
-	  String res = KPBuilder.appendToRoot("   ","test");
+	  String res = KnowledgePathHelper.appendToRoot("   ","test");
 	  assertEquals(res,"test");
   }
   
   public void prependToRootBlankTail() {
-	  String res = KPBuilder.appendToRoot("another","  ");
+	  String res = KnowledgePathHelper.appendToRoot("another","  ");
 	  assertEquals(res,"another");
   }
 
   public void decomposePath() {
-	  String[] res = KPBuilder.decomposePath("a.decomposition.test");
+	  String[] res = KnowledgePathHelper.decomposePath("a.decomposition.test");
 	  assertEquals(res.length,3);
 	  assertEquals(res[0],"a");
 	  assertEquals(res[1],"decomposition");
@@ -82,7 +82,7 @@ public class KPBuilderTest {
   }
   
   public void decomposePathWithMiddleElementEmpty() {
-	  String[] res = KPBuilder.decomposePath("a..test");
+	  String[] res = KnowledgePathHelper.decomposePath("a..test");
 	  assertEquals(res.length,3);
 	  assertEquals(res[0],"a");
 	  assertEquals(res[1],"");
@@ -90,7 +90,7 @@ public class KPBuilderTest {
   }
   
   public void decomposePathWithMiddleElementBlank() {
-	  String[] res = KPBuilder.decomposePath("a.   .test");
+	  String[] res = KnowledgePathHelper.decomposePath("a.   .test");
 	  assertEquals(res.length,3);
 	  assertEquals(res[0],"a");
 	  assertEquals(res[1],"   ");
@@ -98,7 +98,7 @@ public class KPBuilderTest {
   }
  
   public void decomposePathWithLastElementEmpty() {
-	  String[] res = KPBuilder.decomposePath("a.decomposition.");
+	  String[] res = KnowledgePathHelper.decomposePath("a.decomposition.");
 	  assertEquals(res.length,3);
 	  assertEquals(res[0],"a");
 	  assertEquals(res[1],"decomposition");
@@ -106,7 +106,7 @@ public class KPBuilderTest {
   }
 
   public void decomposePathWithLastElementBlank() {
-	  String[] res = KPBuilder.decomposePath("a.decomposition.  ");
+	  String[] res = KnowledgePathHelper.decomposePath("a.decomposition.  ");
 	  assertEquals(res.length,3);
 	  assertEquals(res[0],"a");
 	  assertEquals(res[1],"decomposition");
@@ -114,7 +114,7 @@ public class KPBuilderTest {
   }
 
   public void decomposePathWithFirstElementEmpty() {
-	  String[] res = KPBuilder.decomposePath(".decomposition.test");
+	  String[] res = KnowledgePathHelper.decomposePath(".decomposition.test");
 	  assertEquals(res.length,3);
 	  assertEquals(res[0],"");
 	  assertEquals(res[1],"decomposition");
@@ -122,7 +122,7 @@ public class KPBuilderTest {
   }
 
   public void decomposePathWithFirstElementBlank() {
-	  String[] res = KPBuilder.decomposePath("   .decomposition.test");
+	  String[] res = KnowledgePathHelper.decomposePath("   .decomposition.test");
 	  assertEquals(res.length,3);
 	  assertEquals(res[0],"   ");
 	  assertEquals(res[1],"decomposition");
@@ -130,17 +130,17 @@ public class KPBuilderTest {
   }
   
   public void decomposeANullPath() {
-	  String[] res = KPBuilder.decomposePath(null);
+	  String[] res = KnowledgePathHelper.decomposePath(null);
 	  assertEquals(res.length,0);
   }
   
   public void decomposeAnEmptyPath() {
-	  String[] res = KPBuilder.decomposePath("");
+	  String[] res = KnowledgePathHelper.decomposePath("");
 	  assertEquals(res.length,0);
   }
 
   public void decomposeABlankPath() {
-	  String[] res = KPBuilder.decomposePath("   ");
+	  String[] res = KnowledgePathHelper.decomposePath("   ");
 	  assertEquals(res.length,0);
   }
 
