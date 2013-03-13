@@ -2,13 +2,15 @@ package cz.cuni.mff.d3s.deeco.logging;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 /**
- * Simple wrapper of java.util.logging.Logger with singleton object and
- * thread-safe methods
+ * Simple wrapper of java.util.logging.Logger with lazy-initialized singleton
+ * object and thread-safe methods
  * 
  * @author Ilias Gerostathopoulos
  * 
@@ -24,10 +26,13 @@ public class StandardLogger implements ILogger {
 				.getResourceAsStream("logging.properties");
 		try {
 			LogManager.getLogManager().readConfiguration(inputStream);
-		} catch (IOException e) {
-			Logger.getAnonymousLogger().severe(
-					"Could not load custom logging.properties file");
-			Logger.getAnonymousLogger().severe(e.getMessage());
+		} catch (Exception e) {
+			logger = Logger.getLogger("default");
+			ConsoleHandler ch = new ConsoleHandler();
+			ch.setLevel(Level.FINE);
+			logger.addHandler(ch);
+			logger.setLevel(Level.FINE);
+			logger.severe("Could not load custom logging.properties file - falling backing to console logging");
 		}
 	}
 
@@ -45,25 +50,25 @@ public class StandardLogger implements ILogger {
 	public synchronized void fine(String s) {
 		logger.fine(s);
 	}
-	
+
 	public synchronized void fine(String s, Throwable t) {
-		logger.log(Level.FINE,s,t);
+		logger.log(Level.FINE, s, t);
 	}
 
 	public synchronized void info(String s) {
 		logger.info(s);
 	}
-	
+
 	public synchronized void info(String s, Throwable t) {
-		logger.log(Level.INFO,s,t);
+		logger.log(Level.INFO, s, t);
 	}
-	
+
 	public synchronized void severe(String s) {
 		logger.severe(s);
 	}
-	
+
 	public synchronized void severe(String s, Throwable t) {
-		logger.log(Level.SEVERE,s,t);
+		logger.log(Level.SEVERE, s, t);
 	}
 
 }
