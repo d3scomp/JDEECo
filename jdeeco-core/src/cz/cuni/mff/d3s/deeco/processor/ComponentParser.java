@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoComponent;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
@@ -164,8 +163,7 @@ public class ComponentParser {
 
 	public static boolean isComponentDefinition(Class<?> clazz) {
 		return clazz != null
-				&& Component.class.isAssignableFrom(clazz)
-				&& clazz.getAnnotation(DEECoComponent.class) != null;
+				&& Component.class.isAssignableFrom(clazz);
 	}
 
 	// ------------- Private functions -------------------

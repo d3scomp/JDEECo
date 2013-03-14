@@ -52,8 +52,8 @@ public class OutputParametersHelper implements Serializable {
 					.getClass();
 			if (TypeUtils.isOutWrapper(nvClass)) {
 				if (TypeUtils.isOutWrapper(ovClass))
-					storeOutValue(knowledgePath, ((OutWrapper<?>) orgValue).item,
-							((OutWrapper<?>) newValue).item, km, session);
+					storeOutValue(knowledgePath, ((OutWrapper<?>) orgValue).value,
+							((OutWrapper<?>) newValue).value, km, session);
 				else
 					LoggerFactory.getLogger().info("Something is wrong!");
 			} else if (!(TypeUtils.isList(nvClass) || TypeUtils.isList(ovClass))) {

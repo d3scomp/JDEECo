@@ -18,7 +18,6 @@ package cz.cuni.mff.d3s.deeco.demo.parkinglotbooking;
 import java.util.Map;
 import java.util.UUID;
 
-import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsemble;
 import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
@@ -33,7 +32,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
  * @author Jaroslav Keznikl
  *
  */
-@DEECoEnsemble
+
 @PeriodicScheduling(2000)
 public class RequestResponseEnsemble extends Ensemble {
 
@@ -54,9 +53,9 @@ public class RequestResponseEnsemble extends Ensemble {
 			@Out("member.response") OutWrapper<Response> response,
 			@Out("coord.incomingRequests[member.request.requestId]") OutWrapper<Request> incomingRequest, 
 			@In("coord.processedResponses[member.request.requestId]") Response processedResponse) {
-		incomingRequest.item = request;
+		incomingRequest.value = request;
 		if (processedResponse != null)
-			response.item = processedResponse;
+			response.value = processedResponse;
 	}
 
 	

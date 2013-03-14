@@ -3,7 +3,6 @@ package cz.cuni.mff.d3s.deeco.demo.parkinglotbooking;
 import java.util.LinkedList;
 import java.util.List;
 
-import cz.cuni.mff.d3s.deeco.annotations.DEECoComponent;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
@@ -12,7 +11,7 @@ import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.knowledge.Component;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 
-@DEECoComponent
+
 public class CarPlanner extends Component {
 
 	public static enum State {Idle, WaitingForResponse, DrivingToTarget}
@@ -51,8 +50,8 @@ public class CarPlanner extends Component {
 		
 		boolean isRequestActual = false;
 		
-		if ((request.item != null) && (currentScheduleTarget != null)) {
-			isRequestActual = currentScheduleTarget.dateEquals(request.item.scheduleItem);
+		if ((request.value != null) && (currentScheduleTarget != null)) {
+			isRequestActual = currentScheduleTarget.dateEquals(request.value.scheduleItem);
 		} 
 		
 		if (!isRequestActual) {
@@ -60,7 +59,7 @@ public class CarPlanner extends Component {
 					carId, currentScheduleTarget.item.toString(), 
 					currentScheduleTarget.from.toString(), currentScheduleTarget.to.toString());
 			
-			request.item = new Request(new ParkingLotScheduleItem(
+			request.value = new Request(new ParkingLotScheduleItem(
 							carId, currentScheduleTarget.from, currentScheduleTarget.to));
 		}			
 	}
@@ -76,14 +75,14 @@ public class CarPlanner extends Component {
 		// if the parking lot acknowledged the parking place, move to the target
 		if ((response != null) && (response.matchesRequest(request)) 
 				&& (currentScheduleTarget != null) 
-				&& (!position.item.equals(currentScheduleTarget.item))) {
+				&& (!position.value.equals(currentScheduleTarget.item))) {
 			
 			System.out.printf("Moving the car %s to the target %s on place %s", 
 					request.scheduleItem.item.toString(),
 					currentScheduleTarget.item.toString(), 
 					response.assignedParkingPlace.toString());
 			
-			position.item = currentScheduleTarget.item;
+			position.value = currentScheduleTarget.item;
 		}
 	}
 	

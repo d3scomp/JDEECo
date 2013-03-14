@@ -24,20 +24,20 @@ import java.io.Serializable;
  * @author Michal Kit
  * 
  * @param <T>
- *            wrapped item type
+ *            wrapped value type
  */
 public class OutWrapper<T> implements Serializable {
 	/**
-	 * Wrapped item.
+	 * Wrapped value.
 	 */
-	public T item;
+	public T value;
 
 	public OutWrapper() {
-		item = null;
+		value = null;
 	}
 
-	public OutWrapper(T item) {
-		this.item = item;
+	public OutWrapper(T value) {
+		this.value = value;
 	}
 
 	/*
@@ -54,7 +54,7 @@ public class OutWrapper<T> implements Serializable {
 		if (!(obj instanceof OutWrapper<?>))
 			return false;
 		OutWrapper<?> other = (OutWrapper<?>) obj;
-		return item == null ? other.item == null : item.equals(other.item);
+		return value == null ? other.value == null : value.equals(other.value);
 	}
 
 	/*
@@ -64,6 +64,6 @@ public class OutWrapper<T> implements Serializable {
 	 */
 	@Override
 	public int hashCode() {
-		return item == null ? 0 : item.hashCode();
+		return value == null ? 0 : value.hashCode();
 	}
 }

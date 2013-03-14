@@ -18,7 +18,6 @@ package cz.cuni.mff.d3s.deeco.demo.convoy;
 import java.util.List;
 import java.util.Random;
 
-import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsemble;
 import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
 import cz.cuni.mff.d3s.deeco.annotations.Membership;
 import cz.cuni.mff.d3s.deeco.annotations.In;
@@ -34,7 +33,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.Knowledge;
  * @author Michal Kit
  *
  */
-@DEECoEnsemble
+
 @PeriodicScheduling(1000)
 public class ConvoyEnsemble extends Ensemble {
 

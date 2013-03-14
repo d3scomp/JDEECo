@@ -15,7 +15,6 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.demo.parkinglotbooking;
 
-import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsemble;
 import cz.cuni.mff.d3s.deeco.annotations.Membership;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
@@ -26,7 +25,7 @@ import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
  * @author Jaroslav Keznikl
  *
  */
-@DEECoEnsemble
+
 @PeriodicScheduling(2000)
 public class BookingEnsemble extends RequestResponseEnsemble {
 

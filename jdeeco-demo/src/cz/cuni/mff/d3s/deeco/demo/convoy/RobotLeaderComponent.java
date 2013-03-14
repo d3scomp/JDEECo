@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import cz.cuni.mff.d3s.deeco.annotations.DEECoComponent;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
@@ -27,7 +26,7 @@ import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.knowledge.Component;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 
-@DEECoComponent
+
 public class RobotLeaderComponent extends Component {
 
 	public Integer battery;
@@ -58,7 +57,7 @@ public class RobotLeaderComponent extends Component {
 		//System.out.println("[RobotLeaderComponent.process] remainingPath = " + path.remainingPath);
 		if (path.remainingPath.size() > 0) {
 			path.currentPosition = path.remainingPath.remove(0);
-			battery.item = new Integer(battery.item - 1);
+			battery.value = new Integer(battery.value - 1);
 			System.out.println("Leader is moving: " + path.remainingPath);
 		}
 	}

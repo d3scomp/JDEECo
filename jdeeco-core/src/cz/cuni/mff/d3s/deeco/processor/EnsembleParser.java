@@ -2,7 +2,6 @@ package cz.cuni.mff.d3s.deeco.processor;
 
 import java.lang.reflect.Method;
 
-import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsemble;
 import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
 import cz.cuni.mff.d3s.deeco.annotations.Membership;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
@@ -106,8 +105,7 @@ public class EnsembleParser {
 	}
 
 	public static boolean isEnsembleDefinition(Class<?> clazz) {
-		return clazz != null && Ensemble.class.isAssignableFrom(clazz)
-				&& clazz.getAnnotation(DEECoEnsemble.class) != null;
+		return clazz != null && Ensemble.class.isAssignableFrom(clazz);
 	}
 
 }

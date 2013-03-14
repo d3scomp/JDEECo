@@ -39,7 +39,7 @@ public class InputParametersHelper implements Serializable {
 								"Parameter Instantiation Exception: Wrong value for OutWrapper");
 					OutWrapper ow = (OutWrapper) expectedParamType
 							.newInstance();
-					ow.item = extractValue((Object[]) value);
+					ow.value = extractValue((Object[]) value);
 					return ow;
 				} else {
 					return extractValue((Object[]) value);

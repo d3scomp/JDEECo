@@ -17,14 +17,13 @@ package cz.cuni.mff.d3s.deeco.demo.cloud;
 
 import java.util.Random;
 
-import cz.cuni.mff.d3s.deeco.annotations.DEECoComponent;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.knowledge.Component;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 
-@DEECoComponent
+
 public class NodeA extends Component {
 
 	public Float loadRatio;
@@ -43,7 +42,7 @@ public class NodeA extends Component {
 	@Process
 	@PeriodicScheduling(6000)
 	public static void process(@Out("loadRatio") OutWrapper<Float> loadRatio) {
-		loadRatio.item = new Random().nextFloat();
-		System.out.println("Node A new load ratio: " + Math.round(loadRatio.item * 100) + "%");
+		loadRatio.value = new Random().nextFloat();
+		System.out.println("Node A new load ratio: " + Math.round(loadRatio.value * 100) + "%");
 	}
 }

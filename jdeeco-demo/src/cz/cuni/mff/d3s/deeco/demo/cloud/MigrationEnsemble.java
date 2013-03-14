@@ -15,7 +15,6 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.demo.cloud;
 
-import cz.cuni.mff.d3s.deeco.annotations.DEECoEnsemble;
 import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
 import cz.cuni.mff.d3s.deeco.annotations.Membership;
 import cz.cuni.mff.d3s.deeco.annotations.In;
@@ -30,7 +29,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
  * @author Michal Kit
  *
  */
-@DEECoEnsemble
+
 @PeriodicScheduling(3000)
 public class MigrationEnsemble extends Ensemble {
 
@@ -54,6 +53,6 @@ public class MigrationEnsemble extends Ensemble {
 	public static void map(@Out("member.targetNode") OutWrapper<String> mTargetNode,
 			@In("coord.id") String cId) {
 		System.out.println("Move application to " + cId);
-		mTargetNode.item = cId;
+		mTargetNode.value = cId;
 	}
 }
