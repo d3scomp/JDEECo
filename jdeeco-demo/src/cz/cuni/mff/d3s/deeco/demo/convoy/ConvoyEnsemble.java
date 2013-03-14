@@ -34,7 +34,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.Knowledge;
  *
  */
 
-@PeriodicScheduling(1000)
+
 public class ConvoyEnsemble extends Ensemble {
 
 	// must be public, static and extend Knowledge
@@ -68,6 +68,7 @@ public class ConvoyEnsemble extends Ensemble {
 	}
 
 	@KnowledgeExchange
+	@PeriodicScheduling(1000)
 	public static void map(@Out("member") ConvoyOutInterface mOutCR,
 			@In("coord.path.remainingPath") List<Integer> cRemainingPath) {
 		mOutCR.convoyRobot = Integer.toString(new Random().nextInt());

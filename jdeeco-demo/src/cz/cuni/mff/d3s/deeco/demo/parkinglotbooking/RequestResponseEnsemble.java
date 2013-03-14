@@ -33,7 +33,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
  *
  */
 
-@PeriodicScheduling(2000)
+
 public class RequestResponseEnsemble extends Ensemble {
 
 	// must be public, static and extend Knowledge
@@ -48,6 +48,7 @@ public class RequestResponseEnsemble extends Ensemble {
 	}
 
 	@KnowledgeExchange
+	@PeriodicScheduling(2000)
 	public static void map(
 			@In("member.request") Request request, 
 			@Out("member.response") OutWrapper<Response> response,

@@ -26,7 +26,7 @@ import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
  *
  */
 
-@PeriodicScheduling(2000)
+
 public class BookingEnsemble extends RequestResponseEnsemble {
 
 	// must be public, static and extend Knowledge
@@ -39,6 +39,7 @@ public class BookingEnsemble extends RequestResponseEnsemble {
 	}
 
 	@Membership
+	@PeriodicScheduling(2000)
 	public static boolean membership(
 			@In("member.targetPosition") Position targetPosition,
 			@In("coord.position") Position position) {

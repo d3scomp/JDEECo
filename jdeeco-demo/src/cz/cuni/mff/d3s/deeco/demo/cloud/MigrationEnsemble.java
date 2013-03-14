@@ -30,7 +30,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
  *
  */
 
-@PeriodicScheduling(3000)
+
 public class MigrationEnsemble extends Ensemble {
 
 	@Membership
@@ -50,6 +50,7 @@ public class MigrationEnsemble extends Ensemble {
 	}
 
 	@KnowledgeExchange
+	@PeriodicScheduling(3000)
 	public static void map(@Out("member.targetNode") OutWrapper<String> mTargetNode,
 			@In("coord.id") String cId) {
 		System.out.println("Move application to " + cId);

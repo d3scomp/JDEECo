@@ -26,46 +26,66 @@ public class EnsembleParser {
 	 * @param km
 	 *            {@link KnowledgeManager} instance that is used for knowledge
 	 *            repository communication
-	 * @return a {@link SchedulableEnsembleProcess} instance extracted
-	 *         from the class definition
+	 * @return a {@link SchedulableEnsembleProcess} instance extracted from the
+	 *         class definition
 	 */
-	public static SchedulableEnsembleProcess extractEnsembleProcess(
-			Class<?> c) throws ParseException {
+	public static SchedulableEnsembleProcess extractEnsembleProcess(Class<?> c)
+			throws ParseException {
 		// TODO: put names into the exception strings
-		
+
 		if (!isEnsembleDefinition(c)) {
-			throw new ParseException("The class " + c.getName() + " is not an ensemble definition.");
-		}
-		
-		assert(c != null);
-		
-		final Method methodEnsMembership = AnnotationHelper.getAnnotatedMethod(
-				c, Membership.class);
-		
-		if (methodEnsMembership == null) {
-			throw new ParseException("The ensemble definition does not define a membership function");
+			throw new ParseException("The class " + c.getName()
+					+ " is not an ensemble definition.");
 		}
 
-		final ParameterizedMethod pm = ParserHelper.extractParametrizedMethod(methodEnsMembership);
-		
+		assert (c != null);
+
+		final Method methodEnsMembership = AnnotationHelper.getAnnotatedMethod(
+				c, Membership.class);
+
+		if (methodEnsMembership == null) {
+			throw new ParseException(
+					"The ensemble definition does not define a membership function");
+		}
+
+		final ParameterizedMethod pm = ParserHelper
+				.extractParametrizedMethod(methodEnsMembership);
+
 		if (pm == null) {
-			throw new ParseException("Malformed membership function definition.");
+			throw new ParseException(
+					"Malformed membership function definition.");
 		}
 
 		// Look up MembershipMethod
-		if (!methodEnsMembership.getReturnType().isAssignableFrom(boolean.class)) {
-			throw new ParseException("MembershipMethod function needs to return boolean");
+		if (!methodEnsMembership.getReturnType()
+				.isAssignableFrom(boolean.class)) {
+			throw new ParseException(
+					"MembershipMethod function needs to return boolean");
 		}
-				
+
 		MembershipMethod membership = new BooleanMembership(pm);
-		
+
+		final Method knowledgeExchangeMethod = AnnotationHelper
+				.getAnnotatedMethod(c, KnowledgeExchange.class);
+
+		if (knowledgeExchangeMethod == null) {
+			throw new ParseException(
+					"The ensemble definition does not define a knowledge exchange function");
+		}
+
+		final ParameterizedMethod knowledgeExchange = ParserHelper
+				.extractParametrizedMethod(knowledgeExchangeMethod);
+		if (knowledgeExchange == null) {
+			throw new ParseException(
+					"Malformed knowledge exchange function definition.");
+		}
 
 		// Look up scheduling
 		ProcessSchedule scheduling = null;
 
 		final ProcessSchedule periodicSchedule = ScheduleHelper
 				.getPeriodicSchedule(AnnotationHelper.getAnnotation(
-						PeriodicScheduling.class, c.getAnnotations()));
+						PeriodicScheduling.class, knowledgeExchangeMethod.getAnnotations()));
 		if (periodicSchedule != null) {
 			scheduling = periodicSchedule;
 		}
@@ -75,8 +95,7 @@ public class EnsembleParser {
 			final ProcessSchedule triggeredSchedule = ScheduleHelper
 					.getTriggeredSchedule(
 							methodEnsMembership.getParameterAnnotations(),
-							membership.method.in,
-							membership.method.inOut);
+							membership.method.in, membership.method.inOut);
 
 			if (triggeredSchedule != null) {
 				scheduling = triggeredSchedule;
@@ -88,20 +107,8 @@ public class EnsembleParser {
 			scheduling = new ProcessPeriodicSchedule();
 		}
 
-		final Method knowledgeExchangeMethod = AnnotationHelper.getAnnotatedMethod(c,
-				KnowledgeExchange.class);
-		
-		if (knowledgeExchangeMethod == null) {
-			throw new ParseException("The ensemble definition does not define a knowledge exchange function");
-		}
-
-		final ParameterizedMethod knowledgeExchange = ParserHelper.extractParametrizedMethod(knowledgeExchangeMethod);
-		if (knowledgeExchange == null) {
-			throw new ParseException("Malformed knowledge exchange function definition.");
-		} 
-		
-		return new SchedulableEnsembleProcess(null, scheduling,
-				membership, knowledgeExchange, null);
+		return new SchedulableEnsembleProcess(null, scheduling, membership,
+				knowledgeExchange, null);
 	}
 
 	public static boolean isEnsembleDefinition(Class<?> clazz) {
