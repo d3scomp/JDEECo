@@ -34,10 +34,9 @@ public class LocalKnowledgeRepositoryTest {
 	@BeforeClass
 	public void put() throws KRExceptionAccessError {
 		session = null;
-		kr.put("first.of.all", "test value", session);
-		kr.put("34", new Integer(42), session);
-		kr.put("3", "aaaa");
-		kr.put("3", "bbbb");
+		kr.put("text", "test value", session);
+		kr.put("42", new Integer(42), session);
+		kr.put("34", new Integer(34));
 		// session in LocalKnowledgeRepository should be revised.
 	}
 
@@ -48,20 +47,21 @@ public class LocalKnowledgeRepositoryTest {
 			if (((Object []) val).length > 0)
 				val = ((Object []) val)[0];
 		}
-		Object val2 = kr.get("first.of.all");
+		Object val2 = kr.get("text");
 		if (val2 instanceof Object []) {
 			if (((Object []) val2).length > 0)
 				val2 = ((Object []) val2)[0];
 		}
-		assertEquals(val, 42);
+		assertEquals(val, 34);
 		assertEquals(val2, "test value");
 	}
 
 	@Test(expectedExceptions = KRExceptionUnavailableEntry.class)
 	public void take() throws KRExceptionUnavailableEntry,
 			KRExceptionAccessError {
-		Object val = kr.take("34");
-		val = kr.take("34", session);
+		Object val = kr.take("42");
+		val = kr.take("42", session);
+		assertEquals(val, null);
 	}
 
 	@Test(expectedExceptions = KRExceptionUnavailableEntry.class)
