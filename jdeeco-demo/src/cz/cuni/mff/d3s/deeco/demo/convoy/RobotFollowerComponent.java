@@ -21,7 +21,6 @@ import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange;
@@ -36,20 +35,17 @@ public class RobotFollowerComponent extends Component {
 	public String convoyRobot; // 0 if there is no robot ahead 1 otherwise
 	public List<Path> crossingRobots;
 
-	@DEECoInitialize
-	public static Component getInitialKnowledge() {
-		RobotFollowerComponent k = new RobotFollowerComponent();
-		k.id = "follower";
-		k.battery = new Integer(100);
-		k.path = new Path();
-		k.path.currentPosition = new Integer(1);
-		k.path.remainingPath = new ArrayList<Integer>(
+	public RobotFollowerComponent() {
+		this.id = "follower";
+		this.battery = new Integer(100);
+		this.path = new Path();
+		this.path.currentPosition = new Integer(1);
+		this.path.remainingPath = new ArrayList<Integer>(
 				Arrays.asList(new Integer[] { new Integer(2), new Integer(3),
 						new Integer(4), new Integer(5), new Integer(6),
 						new Integer(7), new Integer(8), new Integer(9) }));
-		k.convoyRobot = null;
-		k.crossingRobots = null;
-		return k;
+		this.convoyRobot = null;
+		this.crossingRobots = null;
 	}
 
 	@Process

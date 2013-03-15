@@ -7,7 +7,6 @@ import java.util.UUID;
 
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange;
@@ -23,18 +22,14 @@ public class ParkingLot extends Component {
 	public ParkingPlaceId[] parkingPlaces;
 	
 	
-
-	@DEECoInitialize
-	public static Component getInitialKnowledge() {
-		ParkingLot k = new ParkingLot();
-		k.schedule = new HashMap<ParkingPlaceId, List<ParkingLotScheduleItem> >();
-		k.incomingRequests = new HashMap<UUID, Request>();
-		k.processedResponses = new HashMap<UUID, Response>();
-		k.position = new Position(1,1);
-		k.parkingPlaces = new ParkingPlaceId[10];
-		for (int i = 0; i < k.parkingPlaces.length; ++i)
-			k.parkingPlaces[i] = new ParkingPlaceId(i);
-		return k;
+	public ParkingLot() {
+		this.schedule = new HashMap<ParkingPlaceId, List<ParkingLotScheduleItem> >();
+		this.incomingRequests = new HashMap<UUID, Request>();
+		this.processedResponses = new HashMap<UUID, Response>();
+		this.position = new Position(1,1);
+		this.parkingPlaces = new ParkingPlaceId[10];
+		for (int i = 0; i < this.parkingPlaces.length; ++i)
+			this.parkingPlaces[i] = new ParkingPlaceId(i);
 	}
 
 	@Process

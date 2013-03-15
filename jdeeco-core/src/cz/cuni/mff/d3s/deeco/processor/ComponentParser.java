@@ -3,16 +3,14 @@ package cz.cuni.mff.d3s.deeco.processor;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
+
+import cz.cuni.mff.d3s.deeco.annotations.ELockingMode;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.StrongLocking;
 import cz.cuni.mff.d3s.deeco.annotations.WeakLocking;
-import cz.cuni.mff.d3s.deeco.annotations.ELockingMode;
 import cz.cuni.mff.d3s.deeco.invokable.ParameterizedMethod;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableComponentProcess;
 import cz.cuni.mff.d3s.deeco.knowledge.Component;
@@ -52,10 +50,11 @@ public class ComponentParser {
 
 		final List<SchedulableComponentProcess> result = new ArrayList<SchedulableComponentProcess>();
 
-		for (Method m : methods) {			
-			
-			final ParameterizedMethod currentMethod = ParserHelper.extractParametrizedMethod(m, root);
-			
+		for (Method m : methods) {
+
+			final ParameterizedMethod currentMethod = ParserHelper
+					.extractParametrizedMethod(m, root);
+
 			if (currentMethod == null) {
 				// Not a process method
 				continue;
@@ -72,8 +71,7 @@ public class ComponentParser {
 			if (ps == null) {
 				final ProcessSchedule triggeredSchedule = ScheduleHelper
 						.getTriggeredSchedule(m.getParameterAnnotations(),
-								currentMethod.in,
-								currentMethod.inOut);
+								currentMethod.in, currentMethod.inOut);
 				if (triggeredSchedule != null) {
 					ps = triggeredSchedule;
 				}
@@ -104,8 +102,7 @@ public class ComponentParser {
 
 		return result;
 	}
-	
-	
+
 	/**
 	 * Retrieves init method from the <code>Component</code> class.
 	 * 
@@ -113,57 +110,25 @@ public class ComponentParser {
 	 *            class to be parsed
 	 * @return init method or null in case no matching found
 	 */
-	public static List<Component> extractInitialKnowledge(Class<?> c) {
-		List<Method> initMethods = AnnotationHelper.getAnnotatedMethods(c,
-				DEECoInitialize.class);
-		List<Component> result = new LinkedList<Component>();
+	public static Component extractInitialKnowledge(Class<?> c) {
 		Component ck;
-		if (initMethods.size() > 0) {
-			try {
-				Class<?> returnType;
-				for (Method im : initMethods) {
-					returnType = im.getReturnType();
-					if (Collection.class.isAssignableFrom(returnType)) {
-						Collection<?> ckCollection = (Collection<?>) im.invoke(
-								null, new Object[] {});
-						for (Object o : ckCollection) {
-							ck = (Component) o;
-							assignUIDIfNotSet(ck);
-							result.add(ck);
-						}
-					} else if (Component.class
-							.isAssignableFrom(returnType)) {
-						ck = (Component) initMethods.get(0).invoke(
-								null, new Object[] {});
-						assignUIDIfNotSet(ck);
-						result.add(ck);
-					}
-				}
-				return result;
-			} catch (Exception e) {
-				System.out
-						.println("Component Knowledge Initialization exception!");
+		try {
+			Constructor<?> constructor = c.getConstructor();
+			if (constructor != null) {
+				ck = (Component) constructor.newInstance(new Object[] {});
+				assignUIDIfNotSet(ck);
+				return ck;
 			}
-		} else {
-			try {
-				Constructor<?> constructor = c.getConstructor();
-				if (constructor != null) {
-					ck = (Component) constructor.newInstance(new Object[]{});
-					assignUIDIfNotSet(ck);
-					result.add(ck);
-					return result;
-				} 
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		LoggerFactory.getLogger().info("No initial state can be retrieved for the component: " + c);
+		LoggerFactory.getLogger().info(
+				"No initial state can be retrieved for the component: " + c);
 		return null;
 	}
 
 	public static boolean isComponentDefinition(Class<?> clazz) {
-		return clazz != null
-				&& Component.class.isAssignableFrom(clazz);
+		return clazz != null && Component.class.isAssignableFrom(clazz);
 	}
 
 	// ------------- Private functions -------------------

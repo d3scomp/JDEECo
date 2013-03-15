@@ -23,13 +23,21 @@ import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.knowledge.Component;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 
-
 public class NodeA extends Component {
 
 	public Float loadRatio;
 	public Float maxLoadRatio;
 	public Integer networkId;
 	public String targetNode;
+	
+	
+	public NodeA() {
+		this.id = "NodeA";
+		this.maxLoadRatio = .5f;
+		this.loadRatio = 0.0f;
+		this.networkId = 1;
+		this.targetNode = null;
+	}
 	
 	public NodeA(String id, Float maxLoadRatio, Integer networkId) {
 		this.id = id;
@@ -43,6 +51,7 @@ public class NodeA extends Component {
 	@PeriodicScheduling(6000)
 	public static void process(@Out("loadRatio") OutWrapper<Float> loadRatio) {
 		loadRatio.value = new Random().nextFloat();
-		System.out.println("Node A new load ratio: " + Math.round(loadRatio.value * 100) + "%");
+		System.out.println("Node A new load ratio: "
+				+ Math.round(loadRatio.value * 100) + "%");
 	}
 }

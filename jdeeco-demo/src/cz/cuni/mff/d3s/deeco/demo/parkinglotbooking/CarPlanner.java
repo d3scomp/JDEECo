@@ -5,7 +5,6 @@ import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
-import cz.cuni.mff.d3s.deeco.annotations.DEECoInitialize;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.knowledge.Component;
@@ -25,19 +24,15 @@ public class CarPlanner extends Component {
 	public CarScheduleItem currentScheduleTarget;
 	public State state;
 	
-
-	@DEECoInitialize
-	public static Component getInitialKnowledge() {
-		CarPlanner k = new CarPlanner();
-		k.carId = new CarId("C1");
-		k.request = null;
-		k.response = null;
-		k.position = new Position(0,0);
-		k.currentScheduleTarget = null;
-		k.state = State.Idle;
-		k.schedule = new LinkedList<CarScheduleItem>();
+	public CarPlanner() {
+		this.carId = new CarId("C1");
+		this.request = null;
+		this.response = null;
+		this.position = new Position(0,0);
+		this.currentScheduleTarget = null;
+		this.state = State.Idle;
+		this.schedule = new LinkedList<CarScheduleItem>();
 		//TODO init schedule
-		return k;
 	}
 
 	@Process

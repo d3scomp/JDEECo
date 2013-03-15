@@ -24,7 +24,7 @@ import cz.cuni.mff.d3s.deeco.path.grammar.ParseException;
 public class ClassDEECoObjectProvider extends AbstractDEECoObjectProvider {
 
 	private static final long serialVersionUID = -1454153558315293318L;
-	
+
 	protected final List<Class<?>> rawComponents;
 	protected final List<Class<?>> rawEnsembles;
 
@@ -67,13 +67,9 @@ public class ClassDEECoObjectProvider extends AbstractDEECoObjectProvider {
 	protected synchronized void processComponents() {
 		components = new LinkedList<ParsedComponent>();
 		for (Class<?> c : rawComponents) {
-			List<Component> cks = extractInitialKnowledge(c);
-			if (cks != null) {
-				for (Component ck : cks)
-					components.add(new ParsedComponent(
-							extractComponentProcess(c, ck.id),
-							ck));
-			}
+			Component component = extractInitialKnowledge(c);
+			components.add(new ParsedComponent(extractComponentProcess(c,
+					component.id), component));
 		}
 	}
 
@@ -91,7 +87,9 @@ public class ClassDEECoObjectProvider extends AbstractDEECoObjectProvider {
 			try {
 				ensembles.add(extractEnsembleProcess(c));
 			} catch (ParseException e) {
-				LoggerFactory.getLogger().severe(String.format("Parsing error in class '%s': %s", c.getName(), e.getMessage()),e);
+				LoggerFactory.getLogger().severe(
+						String.format("Parsing error in class '%s': %s",
+								c.getName(), e.getMessage()), e);
 			}
 		}
 	}
