@@ -103,10 +103,12 @@
 						<goals>
 							<goal>copy-resources</goal>
 						</goals>
+						<phase>install</phase>
 						<configuration>
 							<outputDirectory>${dist}</outputDirectory>
 							<resources>
 								<resource>
+									<directory>.</directory>
 									<includes>
 										<include>build.xml</include>
 									</includes>
