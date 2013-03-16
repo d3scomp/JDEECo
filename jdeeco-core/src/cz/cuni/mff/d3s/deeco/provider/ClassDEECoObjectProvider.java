@@ -87,13 +87,8 @@ public class ClassDEECoObjectProvider extends AbstractDEECoObjectProvider {
 			try {
 				ensembles.add(extractEnsembleProcess(c));
 			} catch (ParseException e) {
-<<<<<<< HEAD
-				LoggerFactory.getLogger().severe(
-						String.format("Parsing error in class '%s': %s",
-								c.getName(), e.getMessage()), e);
-=======
-				Log.e(String.format("Parsing error in class '%s': %s", c.getName(), e.getMessage()),e);
->>>>>>> changing LoggerFactory to Log and adding DEBUG,ERROR logging Levels
+				Log.e(String.format("Parsing error in class '%s': %s",
+						c.getName(), e.getMessage()), e);
 			}
 		}
 	}

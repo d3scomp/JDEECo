@@ -123,12 +123,7 @@ public class ComponentParser {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-<<<<<<< HEAD
-		LoggerFactory.getLogger().info(
-				"No initial state can be retrieved for the component: " + c);
-=======
 		Log.w("No initial state can be retrieved for the component: " + c);
->>>>>>> changing LoggerFactory to Log and adding DEBUG,ERROR logging Levels
 		return null;
 	}
 
