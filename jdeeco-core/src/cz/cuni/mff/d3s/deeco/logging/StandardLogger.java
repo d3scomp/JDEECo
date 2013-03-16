@@ -1,12 +1,9 @@
 package cz.cuni.mff.d3s.deeco.logging;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.ConsoleHandler;
-import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
-import java.util.logging.Logger;
 
 /**
  * Simple wrapper of java.util.logging.Logger with lazy-initialized singleton
@@ -18,21 +15,22 @@ import java.util.logging.Logger;
 public class StandardLogger implements ILogger {
 
 	private static ILogger instance;
-	private Logger logger;
+	private java.util.logging.Logger logger;
 
 	private StandardLogger() {
-		logger = Logger.getLogger(this.getClass().getPackage().getName());
+		CustomLevel.registerCustomLevels();
+		logger = java.util.logging.Logger.getLogger(getClass().getPackage().getName());
 		InputStream inputStream = getClass().getClassLoader()
 				.getResourceAsStream("logging.properties");
 		try {
 			LogManager.getLogManager().readConfiguration(inputStream);
 		} catch (Exception e) {
-			logger = Logger.getLogger("default");
+			logger = java.util.logging.Logger.getLogger("default");
 			ConsoleHandler ch = new ConsoleHandler();
-			ch.setLevel(Level.FINE);
+			ch.setLevel(CustomLevel.DEBUG);
 			logger.addHandler(ch);
-			logger.setLevel(Level.FINE);
-			logger.severe("Could not load custom logging.properties file - falling backing to console logging");
+			logger.setLevel(CustomLevel.DEBUG);
+			logger.severe("Could not load logging.properties file - falling backing to console logging");
 		}
 	}
 
@@ -47,28 +45,36 @@ public class StandardLogger implements ILogger {
 		return instance;
 	}
 
-	public synchronized void fine(String s) {
-		logger.fine(s);
+	public synchronized void debug(String s) {
+		logger.log(CustomLevel.DEBUG, s);
 	}
 
-	public synchronized void fine(String s, Throwable t) {
-		logger.log(Level.FINE, s, t);
+	public synchronized void debug(String s, Throwable t) {
+		logger.log(CustomLevel.DEBUG, s, t);
 	}
 
 	public synchronized void info(String s) {
-		logger.info(s);
+		logger.log(CustomLevel.INFO, s);
 	}
 
 	public synchronized void info(String s, Throwable t) {
 		logger.log(Level.INFO, s, t);
 	}
-
-	public synchronized void severe(String s) {
-		logger.severe(s);
+	
+	public synchronized void warning(String s) {
+		logger.log(CustomLevel.WARNING, s);
 	}
 
-	public synchronized void severe(String s, Throwable t) {
-		logger.log(Level.SEVERE, s, t);
+	public synchronized void warning(String s, Throwable t) {
+		logger.log(Level.WARNING, s, t);
+	}
+
+	public synchronized void error(String s) {
+		logger.log(CustomLevel.ERROR, s);
+	}
+
+	public synchronized void error(String s, Throwable t) {
+		logger.log(CustomLevel.ERROR, s, t);
 	}
 
 }

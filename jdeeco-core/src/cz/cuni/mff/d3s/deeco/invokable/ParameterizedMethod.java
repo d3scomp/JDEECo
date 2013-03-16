@@ -19,7 +19,7 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import cz.cuni.mff.d3s.deeco.logging.LoggerFactory;
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.processor.MethodDescription;
 
 /**
@@ -116,7 +116,7 @@ public class ParameterizedMethod {
     try {
       return getMethod().invoke(null, parameters);
     } catch (Exception e) {
-    	LoggerFactory.getLogger().severe("Method invocation error",e);
+    	Log.e("Method invocation error",e);
       return null;
     }
   }

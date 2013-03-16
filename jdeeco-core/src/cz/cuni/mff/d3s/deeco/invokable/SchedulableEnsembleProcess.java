@@ -22,7 +22,7 @@ import cz.cuni.mff.d3s.deeco.exceptions.KMNotExistentException;
 import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
-import cz.cuni.mff.d3s.deeco.logging.LoggerFactory;
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.scheduling.ETriggerType;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
 
@@ -148,7 +148,7 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 			Object[] parameterValues = ParametersPair.extractValues(params);
 			return membership.membership(parameterValues);
 		} catch (Exception e) {
-			LoggerFactory.getLogger().severe("Ensemble membership exception",e);
+			Log.e("Ensemble membership exception",e);
 			return false;
 		}
 	}
@@ -158,7 +158,7 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 			Object[] parameterValues = ParametersPair.extractValues(params);
 			knowledgeExchange.invoke(parameterValues);
 		} catch (Exception e) {
-			LoggerFactory.getLogger().severe("Ensemble evaluation exception",e);
+			Log.e("Ensemble evaluation exception",e);
 		}
 	}
 	

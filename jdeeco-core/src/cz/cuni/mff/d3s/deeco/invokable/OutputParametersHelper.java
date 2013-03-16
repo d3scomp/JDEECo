@@ -15,7 +15,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 import cz.cuni.mff.d3s.deeco.knowledge.StructureHelper;
 import cz.cuni.mff.d3s.deeco.knowledge.TypeUtils;
-import cz.cuni.mff.d3s.deeco.logging.LoggerFactory;
+import cz.cuni.mff.d3s.deeco.logging.Log;
 
 public class OutputParametersHelper implements Serializable {
 	
@@ -55,7 +55,7 @@ public class OutputParametersHelper implements Serializable {
 					storeOutValue(knowledgePath, ((OutWrapper<?>) orgValue).value,
 							((OutWrapper<?>) newValue).value, km, session);
 				else
-					LoggerFactory.getLogger().info("Something is wrong!");
+					Log.w("Something is wrong!");
 			} else if (!(TypeUtils.isList(nvClass) || TypeUtils.isList(ovClass))) {
 				Object [] nvStructure = StructureHelper
 						.getStructureFromObject(newValue), ovStructure = StructureHelper

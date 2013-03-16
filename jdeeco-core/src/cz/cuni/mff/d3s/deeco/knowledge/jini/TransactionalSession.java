@@ -20,7 +20,7 @@ import net.jini.core.transaction.TransactionFactory;
 import net.jini.core.transaction.server.TransactionManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeRepository;
-import cz.cuni.mff.d3s.deeco.logging.LoggerFactory;
+import cz.cuni.mff.d3s.deeco.logging.Log;
 
 /**
  * Class implementing session functionalities, using transaction.
@@ -146,7 +146,7 @@ public class TransactionalSession implements ISession {
 					DEFAULT_TRANSACTION_TIMEOUT);
 			return trc.transaction;
 		} catch (Exception e) {
-			LoggerFactory.getLogger().severe("Transaction retrieval error",e);
+			Log.e("Transaction retrieval error",e);
 			return null;
 		}
 	}

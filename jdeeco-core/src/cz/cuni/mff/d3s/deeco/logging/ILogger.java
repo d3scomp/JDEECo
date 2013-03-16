@@ -1,8 +1,9 @@
 package cz.cuni.mff.d3s.deeco.logging;
 
 /**
- * Common abstraction for OSGi-based & non OSGi-based Loggers exposing 3 logging
- * methods for 3 logging levels.
+ * Common abstraction for OSGi-based & non OSGi-based Loggers.
+ * 
+ * There are 4 logging levels: DEBUG(d) < INFO(i) < WARNING(w) < ERROR(e)
  * 
  * @author Ilias Gerostathopoulos
  * 
@@ -15,16 +16,18 @@ public interface ILogger {
 	 * @param msg
 	 *            the string message
 	 */
-	public void fine(String msg);
+	public void debug(String msg);
 
 	/**
-	 * Log on the FINE level with associated Throwable information (exception
+	 * Log on the DEBUG level with associated Throwable information (exception
 	 * message and stack trace).
 	 * 
 	 * @param msg
+	 *            the string message
 	 * @param thrown
+	 *            Throwable object (e.g. an Exception)
 	 */
-	public void fine(String msg, Throwable thrown);
+	public void debug(String msg, Throwable thrown);
 
 	/**
 	 * General logging method.
@@ -39,9 +42,30 @@ public interface ILogger {
 	 * message and stack trace).
 	 * 
 	 * @param msg
+	 *            the string message
 	 * @param thrown
+	 *            Throwable object (e.g. an Exception)
 	 */
 	public void info(String msg, Throwable thrown);
+
+	/**
+	 * For warnings (soft errors)
+	 * 
+	 * @param msg
+	 *            the string message
+	 */
+	public void warning(String msg);
+
+	/**
+	 * Log on the WARNING level with associated Throwable information (exception
+	 * message and stack trace).
+	 * 
+	 * @param msg
+	 *            the string message
+	 * @param thrown
+	 *            Throwable object (e.g. an Exception)
+	 */
+	public void warning(String msg, Throwable thrown);
 
 	/**
 	 * For reporting exceptions & errors without the stack trace.
@@ -49,16 +73,16 @@ public interface ILogger {
 	 * @param msg
 	 *            the string message
 	 */
-	public void severe(String msg);
+	public void error(String msg);
 
 	/**
-	 * Log on the SEVERE level with associated Throwable information (exception
+	 * Log on the ERROR level with associated Throwable information (exception
 	 * message and stack trace).
 	 * 
 	 * @param msg
-	 *            the (custom) string message, if any
+	 *            the string message
 	 * @param thrown
 	 *            Throwable object (e.g. an Exception)
 	 */
-	public void severe(String msg, Throwable thrown);
+	public void error(String msg, Throwable thrown);
 }
