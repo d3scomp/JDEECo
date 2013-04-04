@@ -22,8 +22,15 @@ import cz.cuni.mff.d3s.deeco.exceptions.KMException;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.performance.PeriodicProcessInfo;
+import cz.cuni.mff.d3s.deeco.performance.SchedulableProcessTimeStampsWithActionsVisitor;
+import cz.cuni.mff.d3s.deeco.performance.SchedulableProcessVisitor;
+import cz.cuni.mff.d3s.deeco.performance.TimeStamp;
+import cz.cuni.mff.d3s.deeco.performance.TriggeredProcessInfo;
 import cz.cuni.mff.d3s.deeco.scheduling.ETriggerType;
+import cz.cuni.mff.d3s.deeco.scheduling.ProcessPeriodicSchedule;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
+import cz.cuni.mff.d3s.deeco.scheduling.ProcessTriggeredSchedule;
 
 /**
  * Class representing a component process.
@@ -38,6 +45,9 @@ public class SchedulableComponentProcess extends SchedulableProcess {
 	public final ParameterizedMethod process;
 	private final ELockingMode lockingMode;
 	private final String componentId;
+	private long release=0;
+	private SchedulableProcessTimeStampsWithActionsVisitor visitor=new SchedulableProcessTimeStampsWithActionsVisitor();
+	
 
 	public SchedulableComponentProcess(KnowledgeManager km, ProcessSchedule scheduling, ParameterizedMethod process,
 			ELockingMode lockingMode, String componentId, ClassLoader contextClassLoader) {
@@ -47,6 +57,8 @@ public class SchedulableComponentProcess extends SchedulableProcess {
 		this.process = process;
 		this.lockingMode = lockingMode;
 		this.componentId = componentId;
+		pInfo=new PeriodicProcessInfo();
+		
 	}
 
 	/*
@@ -61,11 +73,13 @@ public class SchedulableComponentProcess extends SchedulableProcess {
 			if (lockingMode.equals(ELockingMode.STRONG)) {
 				ISession session = km.createSession();
 				session.begin();
+				System.out.println(" session"+session);
 				try {
 					while (session.repeat()) {
 						evaluateMethod(session);
 						session.end();
 					}
+
 				} catch (KMException e) {
 					Log.e("",e);
 					session.cancel();
@@ -89,11 +103,24 @@ public class SchedulableComponentProcess extends SchedulableProcess {
 	}
 
 	private void evaluateMethod(ISession session) throws KMException {
+		// maybe in another place
+		time=new TimeStamp();
+		release=System.nanoTime();
 		ParametersPair[] processParameters = getParameterMethodValues(process.in,
 				process.inOut, process.out, session);
+		time.start=System.nanoTime();
 		process.invoke(ParametersPair.extractValues(processParameters));
 		putParameterMethodValues(processParameters, process.inOut, process.out,
 				session);
+		time.finish=System.nanoTime();
+		time.release=release;
+		scheduling.acceptProcess(visitor, pInfo, time);
+//		if(scheduling instanceof ProcessPeriodicSchedule)
+//			((PeriodicProcessInfo)pInfo).runningPeriods.add(time);
+//		else 
+//			if(scheduling instanceof ProcessTriggeredSchedule)
+//				((TriggeredProcessInfo)pInfo).timeStamps.add(time);
+
 	}
 	
 	public Method getProcessMethod() {
@@ -105,5 +132,13 @@ public class SchedulableComponentProcess extends SchedulableProcess {
 	public String getComponentId() {
 		return componentId;
 	}
+
+	@Override
+	public void accept(SchedulableProcessVisitor visitor) {
+		// TODO Auto-generated method stub
+		visitor.visit(this);
+	}
+
+	
 
 }

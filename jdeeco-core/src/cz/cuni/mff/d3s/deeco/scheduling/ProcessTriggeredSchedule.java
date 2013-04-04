@@ -18,6 +18,9 @@ package cz.cuni.mff.d3s.deeco.scheduling;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.invokable.Parameter;
+import cz.cuni.mff.d3s.deeco.performance.IPerformanceInfo;
+import cz.cuni.mff.d3s.deeco.performance.SchedulableProcessTimeStampsWithActionsVisitor;
+import cz.cuni.mff.d3s.deeco.performance.TimeStamp;
 
 /**
  * Class representing triggered schedule.
@@ -34,4 +37,21 @@ public class ProcessTriggeredSchedule implements ProcessSchedule {
 	public ProcessTriggeredSchedule(List<Parameter> parameters) {
 		this.parameters = parameters;
 	}
+
+	@Override
+	public void acceptProcess(
+			SchedulableProcessTimeStampsWithActionsVisitor sv,
+			IPerformanceInfo pInfo, TimeStamp time) {
+		// TODO Auto-generated method stub
+		sv.visitProcess(this, pInfo, time);
+	}
+
+	@Override
+	public void acceptEnsemble(
+			SchedulableProcessTimeStampsWithActionsVisitor sv,
+			IPerformanceInfo pInfo, TimeStamp time) {
+		// TODO Auto-generated method stub
+		sv.visitEnsemble(this, pInfo, time);
+	}
+
 }

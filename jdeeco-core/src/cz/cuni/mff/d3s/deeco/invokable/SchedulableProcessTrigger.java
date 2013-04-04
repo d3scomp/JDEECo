@@ -3,11 +3,16 @@ package cz.cuni.mff.d3s.deeco.invokable;
 import java.util.ArrayList;
 import java.util.List;
 
+import cz.cuni.mff.d3s.deeco.invokable.Parameter;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.path.grammar.EEnsembleParty;
+import cz.cuni.mff.d3s.deeco.performance.PeriodicEnsembleInfo;
+import cz.cuni.mff.d3s.deeco.performance.PeriodicProcessInfo;
+import cz.cuni.mff.d3s.deeco.performance.TriggeredProcessInfo;
 import cz.cuni.mff.d3s.deeco.scheduling.ETriggerType;
 import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
+import cz.cuni.mff.d3s.deeco.scheduling.ProcessPeriodicSchedule;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessTriggeredSchedule;
 
 public class SchedulableProcessTrigger implements IKnowledgeChangeListener {
@@ -16,6 +21,7 @@ public class SchedulableProcessTrigger implements IKnowledgeChangeListener {
 
 	public SchedulableProcessTrigger(SchedulableProcess sp) {
 		this.sp = sp;
+		
 	}
 
 	@Override

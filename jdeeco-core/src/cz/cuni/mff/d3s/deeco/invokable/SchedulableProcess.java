@@ -17,6 +17,7 @@ package cz.cuni.mff.d3s.deeco.invokable;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
@@ -24,6 +25,11 @@ import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.local.DeepCopy;
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.performance.IPerformanceInfo;
+import cz.cuni.mff.d3s.deeco.performance.PeriodicEnsembleInfo;
+import cz.cuni.mff.d3s.deeco.performance.PeriodicProcessInfo;
+import cz.cuni.mff.d3s.deeco.performance.SchedulableProcessVisitor;
+import cz.cuni.mff.d3s.deeco.performance.TimeStamp;
 import cz.cuni.mff.d3s.deeco.scheduling.ETriggerType;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessPeriodicSchedule;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
@@ -41,6 +47,9 @@ public abstract class SchedulableProcess implements Serializable {
 
 	private final InputParametersHelper iph;
 	private final OutputParametersHelper oph;
+	public IPerformanceInfo pInfo;
+	public TimeStamp time=new TimeStamp();
+//	public HashMap<ISession,TimeStamp> sessionInfo;
 	
 	// these are assigned after preprocessing, thus musn't be final
 	public KnowledgeManager km; 
@@ -80,6 +89,7 @@ public abstract class SchedulableProcess implements Serializable {
 		this.scheduling = scheduling;
 		this.km = km;
 		this.contextClassLoader = contextClassLoader;
+		
 	}
 
 	protected ParametersPair[] getParameterMethodValues(List<Parameter> in,
@@ -127,6 +137,14 @@ public abstract class SchedulableProcess implements Serializable {
 				value = oph.getParameterInstance(p.type);
 				result[p.index] = new ParametersPair(value);
 			}
+//			////////////////////////////////////////////////////////////////////
+////			timestamp
+//			////////////////////////////////////////////////////////////////////
+//			time.start=System.nanoTime();
+//			sessionInfo.put(session, time);
+//			////////////////////////////////////////////////////////////////////
+//			////////////////////////////////////////////////////////////////////
+			
 			return result;
 		} catch (KMException kme) {
 			if (session == null)
@@ -205,6 +223,23 @@ public abstract class SchedulableProcess implements Serializable {
 					else
 						break;
 				}
+//				////////////////////////////////////////////////
+////				timestamp
+//				////////////////////////////////////////////////
+//				time=sessionInfo.get(session);
+//				time.finish=System.nanoTime();
+//				if ( sessionInfo.containsKey(session)){
+////					sessionInfo.remove(session);
+//					sessionInfo.put(session, time);
+//					System.out.println("time stamp: session:"+session+"  start:"+time.start+"  finish:"+time.finish);
+////					if(process instanceof SchedulableComponentProcess){
+////						
+////					}else if(process instanceof SchedulableEnsembleProcess){
+////						
+////						}
+//				}
+//				////////////////////////////////////////////////
+//				////////////////////////////////////////////////
 			} catch (Exception e) {
 				if (session == null)
 					localSession.cancel();
@@ -239,4 +274,6 @@ public abstract class SchedulableProcess implements Serializable {
 	}
 
 	public abstract void invoke(String triggererId, ETriggerType recipientMode);
+	
+	public abstract void accept(SchedulableProcessVisitor visitor);
 }

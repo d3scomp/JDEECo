@@ -17,6 +17,10 @@ package cz.cuni.mff.d3s.deeco.scheduling;
 
 import java.io.Serializable;
 
+import cz.cuni.mff.d3s.deeco.performance.IPerformanceInfo;
+import cz.cuni.mff.d3s.deeco.performance.SchedulableProcessTimeStampsWithActionsVisitor;
+import cz.cuni.mff.d3s.deeco.performance.TimeStamp;
+
 /**
  * Interface serving as an ancestor for different ways of scheduling.
  * 
@@ -25,4 +29,6 @@ import java.io.Serializable;
  */
 public interface ProcessSchedule extends Serializable {
 
+	public void acceptProcess(SchedulableProcessTimeStampsWithActionsVisitor sv, IPerformanceInfo pInfo, TimeStamp time);
+	public void acceptEnsemble(SchedulableProcessTimeStampsWithActionsVisitor sv, IPerformanceInfo pInfo, TimeStamp time);
 }
