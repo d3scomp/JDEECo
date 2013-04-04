@@ -24,5 +24,8 @@ package cz.cuni.mff.d3s.deeco.knowledge;
  * 
  */
 public class Component extends Knowledge {
+	
+	public final static long serialVersionUID = 1L;
+	
 	public String id;
 }

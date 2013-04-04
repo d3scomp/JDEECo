@@ -15,6 +15,8 @@ import cz.cuni.mff.d3s.deeco.knowledge.Component;
 
 public class ParkingLot extends Component {
 
+	public final static long serialVersionUID = 1L;
+	
 	public Map<ParkingPlaceId, List<ParkingLotScheduleItem> > schedule;
 	public Map<UUID, Request> incomingRequests;
 	public Map<UUID, Response> processedResponses;

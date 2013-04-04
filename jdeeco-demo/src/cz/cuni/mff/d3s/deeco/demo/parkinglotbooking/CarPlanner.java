@@ -12,6 +12,8 @@ import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 
 
 public class CarPlanner extends Component {
+	
+	public final static long serialVersionUID = 1L;
 
 	public static enum State {Idle, WaitingForResponse, DrivingToTarget}
 	

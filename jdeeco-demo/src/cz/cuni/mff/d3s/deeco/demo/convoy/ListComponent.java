@@ -11,6 +11,9 @@ import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.knowledge.Component;
 
 public class ListComponent extends Component {
+	
+	public final static long serialVersionUID = 1L;
+	
 	public List<List<Path>> listOfLists;
 	public Path path;
 

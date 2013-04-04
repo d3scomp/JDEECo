@@ -23,6 +23,8 @@ package cz.cuni.mff.d3s.deeco.exceptions;
  * 
  */
 public class KRExceptionUnavailableEntry extends Exception {
+	
+	public final static long serialVersionUID = 1L;
 
 	public KRExceptionUnavailableEntry(String message) {
 		super(message);

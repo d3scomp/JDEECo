@@ -1,8 +1,5 @@
 package cz.cuni.mff.d3s.deeco.sde.manager;
 
-import java.io.File;
-import java.util.List;
-
 import eu.sensoria_ist.casetool.core.ext.ISensoriaTool;
 import eu.sensoria_ist.casetool.core.ext.SensoriaTool;
 import eu.sensoria_ist.casetool.core.ext.SensoriaToolFunction;

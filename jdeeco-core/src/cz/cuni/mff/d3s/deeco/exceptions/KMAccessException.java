@@ -23,6 +23,9 @@ package cz.cuni.mff.d3s.deeco.exceptions;
  * 
  */
 public class KMAccessException extends KMException {
+	
+	public final static long serialVersionUID = 1L;
+	
 	public KMAccessException(String message) {
 		super(message);
 	}

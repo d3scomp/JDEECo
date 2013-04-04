@@ -33,6 +33,8 @@ import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 
 public class MigrationEnsemble extends Ensemble {
 
+	public final static long serialVersionUID = 1L;
+	
 	@Membership
 	public static boolean membership(
 			@In("member.id") String mId,

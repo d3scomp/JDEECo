@@ -37,12 +37,20 @@ import cz.cuni.mff.d3s.deeco.knowledge.Knowledge;
 
 public class ConvoyEnsemble extends Ensemble {
 
+	public final static long serialVersionUID = 1L;
+	
 	// must be public, static and extend Knowledge
 	public static class ConvoyOutInterface extends Knowledge {
+		
+		public final static long serialVersionUID = 1L;
+		
 		public String convoyRobot;
 	}
 
 	public static class EnsemblePath extends Knowledge {
+		
+		public final static long serialVersionUID = 1L;
+		
 		public Integer currentPosition;
 		public List<Integer> remainingPath;
 	}

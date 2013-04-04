@@ -28,6 +28,8 @@ import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 
 public class RobotLeaderComponent extends Component {
 
+	public final static long serialVersionUID = 1L;
+	
 	public Integer battery;
 	public Path path;
 	public List<Path> crossingRobots;

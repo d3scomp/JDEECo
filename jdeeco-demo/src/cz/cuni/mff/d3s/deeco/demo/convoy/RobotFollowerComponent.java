@@ -30,6 +30,8 @@ import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 
 public class RobotFollowerComponent extends Component {
 
+	public final static long serialVersionUID = 1L;
+	
 	public Integer battery;
 	public Path path;
 	public String convoyRobot; // 0 if there is no robot ahead 1 otherwise

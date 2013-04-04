@@ -35,6 +35,8 @@ import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
  *
  */
 public class RepositoryKnowledgeManager extends KnowledgeManager {
+	
+	public final static long serialVersionUID = 1L;
 
 	private KnowledgeRepository kr;
 

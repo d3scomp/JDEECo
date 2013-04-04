@@ -27,6 +27,9 @@ import java.io.Serializable;
  *            wrapped value type
  */
 public class OutWrapper<T> implements Serializable {
+	
+	public final static long serialVersionUID = 1L;
+	
 	/**
 	 * Wrapped value.
 	 */

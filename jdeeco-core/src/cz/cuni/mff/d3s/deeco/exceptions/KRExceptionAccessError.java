@@ -22,6 +22,8 @@ package cz.cuni.mff.d3s.deeco.exceptions;
  * 
  */
 public class KRExceptionAccessError extends Exception {
+	
+	public final static long serialVersionUID = 1L;
 
 	public KRExceptionAccessError(String message) {
 		super(message);

@@ -26,6 +26,8 @@ import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 
 public class NodeB extends Component {
 
+	public final static long serialVersionUID = 1L;
+	
 	public Float loadRatio;
 	public Float maxLoadRatio;
 	public Integer networkId;

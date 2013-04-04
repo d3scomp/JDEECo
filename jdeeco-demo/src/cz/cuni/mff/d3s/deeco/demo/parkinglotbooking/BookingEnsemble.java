@@ -28,13 +28,21 @@ import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 
 
 public class BookingEnsemble extends RequestResponseEnsemble {
+	
+	public final static long serialVersionUID = 1L;
 
 	// must be public, static and extend Knowledge
 	public static class CarInterface extends RequestResponseEnsemble.RequesterInterface {
+		
+		public final static long serialVersionUID = 1L;
+		
 		public Position targetPosition;
 	}
 
 	public static class CarParkInterface extends RequestResponseEnsemble.ResponderInterface {
+		
+		public final static long serialVersionUID = 1L;
+		
 		public Position position;
 	}
 

@@ -19,6 +19,8 @@ import cz.cuni.mff.d3s.deeco.logging.LoggerFactory;
 
 public class OutputParametersHelper implements Serializable {
 	
+	public final static long serialVersionUID = 1L;
+	
 	public Object getParameterInstance(ParameterType expectedParamType)
 			throws KMCastException {
 		try {

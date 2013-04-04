@@ -1,13 +1,11 @@
 package cz.cuni.mff.d3s.deeco.jpf;
 
 import gov.nasa.jpf.Config;
-import gov.nasa.jpf.jvm.JVM;
-import gov.nasa.jpf.jvm.ThreadInfo;
-import gov.nasa.jpf.jvm.ElementInfo;
-import gov.nasa.jpf.jvm.SystemState;
 import gov.nasa.jpf.jvm.ChoiceGenerator;
 import gov.nasa.jpf.jvm.DefaultSchedulerFactory;
-import gov.nasa.jpf.jvm.choice.ThreadChoiceFromSet;
+import gov.nasa.jpf.jvm.JVM;
+import gov.nasa.jpf.jvm.SystemState;
+import gov.nasa.jpf.jvm.ThreadInfo;
 
 
 // disables thread choices at park/unpark

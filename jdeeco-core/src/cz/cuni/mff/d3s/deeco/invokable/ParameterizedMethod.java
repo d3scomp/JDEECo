@@ -20,7 +20,6 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.logging.LoggerFactory;
-import cz.cuni.mff.d3s.deeco.processor.MethodDescription;
 
 /**
  * Base class representing a parameterized method.
@@ -29,6 +28,8 @@ import cz.cuni.mff.d3s.deeco.processor.MethodDescription;
  * 
  */
 public class ParameterizedMethod {
+	
+	public final static long serialVersionUID = 1L;
 	
 	/**
 	 * The java method that represents the executable code.

@@ -23,6 +23,9 @@ package cz.cuni.mff.d3s.deeco.exceptions;
  * 
  */
 public class KMNotExistentException extends KMException {
+	
+	public final static long serialVersionUID = 1L;
+	
 	public KMNotExistentException(String message) {
 		super(message);
 	}

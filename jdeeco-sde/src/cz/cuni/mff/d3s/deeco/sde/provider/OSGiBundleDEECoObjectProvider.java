@@ -11,6 +11,8 @@ import cz.cuni.mff.d3s.deeco.provider.ClassDEECoObjectProvider;
 
 public class OSGiBundleDEECoObjectProvider extends ClassDEECoObjectProvider {
 	
+	public final static long serialVersionUID = 1L;
+	
 	private Bundle thisBundle;
 	
 	public void activate(ComponentContext context) {

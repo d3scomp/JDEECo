@@ -36,13 +36,21 @@ import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 
 public class RequestResponseEnsemble extends Ensemble {
 
+	public final static long serialVersionUID = 1L;
+	
 	// must be public, static and extend Knowledge
 	public static class RequesterInterface extends Knowledge {
+		
+		public final static long serialVersionUID = 1L;
+		
 		public Request request;
 		public Response response;
 	}
 
 	public static class ResponderInterface extends Knowledge {
+		
+		public final static long serialVersionUID = 1L;
+		
 		public Map<UUID, Request> incomingRequests;
 		public Map<UUID, Response> processedResponses;
 	}

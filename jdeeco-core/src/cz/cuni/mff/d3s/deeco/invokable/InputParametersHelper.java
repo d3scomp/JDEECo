@@ -12,6 +12,8 @@ import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 import cz.cuni.mff.d3s.deeco.knowledge.TypeUtils;
 
 public class InputParametersHelper implements Serializable {
+	
+	public final static long serialVersionUID = 1L;
 
 	public Object getParameterInstance(ParameterType expectedParamType,
 			Object value) throws KMCastException {
