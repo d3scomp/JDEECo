@@ -25,7 +25,7 @@ import cz.cuni.mff.d3s.deeco.exceptions.KMException;
 import cz.cuni.mff.d3s.deeco.exceptions.KMNotExistentException;
 import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionAccessError;
 import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionUnavailableEntry;
-import cz.cuni.mff.d3s.deeco.logging.LoggerFactory;
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
 
 /*
@@ -202,7 +202,7 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 			throw new KMAccessException(kre.getMessage());
 		} catch (Exception e) {
 			localSession.cancel();
-			LoggerFactory.getLogger().severe("",e);
+			Log.e("",e);
 		}
 	}
 	
@@ -269,7 +269,7 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 				localSession.cancel();
 			throw new KMAccessException(kre.getMessage());
 		} catch (Exception e) {
-			LoggerFactory.getLogger().severe("",e);
+			Log.e("",e);
 			localSession.cancel();
 			return null;
 		}

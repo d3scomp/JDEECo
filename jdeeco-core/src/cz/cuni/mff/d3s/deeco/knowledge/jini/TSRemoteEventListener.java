@@ -18,7 +18,7 @@ import net.jini.jeri.tcp.TcpServerEndpoint;
 import net.jini.space.AvailabilityEvent;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgePathHelper;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeRepository;
-import cz.cuni.mff.d3s.deeco.logging.LoggerFactory;
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.scheduling.ETriggerType;
 import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
 
@@ -96,7 +96,7 @@ public class TSRemoteEventListener implements RemoteEventListener {
 			} catch (Exception e) {
 				if (ts != null)
 					ts.cancel();
-				LoggerFactory.getLogger().severe("Notification exception",e);
+				Log.e("Notification exception",e);
 			}
 		}
 	}

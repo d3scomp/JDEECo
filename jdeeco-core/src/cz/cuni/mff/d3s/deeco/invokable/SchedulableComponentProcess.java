@@ -21,7 +21,7 @@ import cz.cuni.mff.d3s.deeco.annotations.ELockingMode;
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
-import cz.cuni.mff.d3s.deeco.logging.LoggerFactory;
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.scheduling.ETriggerType;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
 
@@ -67,19 +67,19 @@ public class SchedulableComponentProcess extends SchedulableProcess {
 						session.end();
 					}
 				} catch (KMException e) {
-					LoggerFactory.getLogger().severe("",e);
+					Log.e("",e);
 					session.cancel();
 				}
 			} else {
 				try {
 					evaluateMethod();
 				} catch (KMException kme) {
-					LoggerFactory.getLogger().severe("SCP message error",kme);
+					Log.e("SCP message error",kme);
 					kme.printStackTrace();
 				}
 			}
 		} catch (Exception e) {
-			LoggerFactory.getLogger().severe("",e);
+			Log.e("",e);
 		}
 		//LoggerFactory.getLogger().fine("Component process ends - " + this.toString());
 	}

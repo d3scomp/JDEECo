@@ -27,7 +27,7 @@ import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
 import cz.cuni.mff.d3s.deeco.knowledge.Component;
 import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
-import cz.cuni.mff.d3s.deeco.logging.LoggerFactory;
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.provider.ParsedComponent;
 import cz.cuni.mff.d3s.deeco.scheduling.IScheduler;
@@ -46,7 +46,7 @@ public class Runtime implements IRuntime {
 	private KnowledgeManager km;
 
 	private static List<Runtime> runtimes = new LinkedList<Runtime>();
-	
+
 	public Runtime() {
 		runtimes.add(this);
 	}
@@ -67,9 +67,11 @@ public class Runtime implements IRuntime {
 		this.scheduler = scheduler;
 	}
 
-	
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.deeco.runtime.IRuntime#setScheduler(java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * cz.cuni.mff.d3s.deeco.runtime.IRuntime#setScheduler(java.lang.Object)
 	 */
 	@Override
 	public void setScheduler(Object scheduler) {
@@ -78,8 +80,11 @@ public class Runtime implements IRuntime {
 			this.scheduler = (IScheduler) scheduler;
 	}
 
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.deeco.runtime.IRuntime#unsetScheduler(java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * cz.cuni.mff.d3s.deeco.runtime.IRuntime#unsetScheduler(java.lang.Object)
 	 */
 	@Override
 	public void unsetScheduler(Object scheduler) {
@@ -88,8 +93,12 @@ public class Runtime implements IRuntime {
 		this.scheduler = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.deeco.runtime.IRuntime#setKnowledgeManager(java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * cz.cuni.mff.d3s.deeco.runtime.IRuntime#setKnowledgeManager(java.lang.
+	 * Object)
 	 */
 	@Override
 	public void setKnowledgeManager(Object km) {
@@ -103,59 +112,72 @@ public class Runtime implements IRuntime {
 		this.km = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.deeco.runtime.IRuntime#registerComponentsAndEnsembles(cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * cz.cuni.mff.d3s.deeco.runtime.IRuntime#registerComponentsAndEnsembles
+	 * (cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider)
 	 */
 	@Override
-	public void registerComponentsAndEnsembles(AbstractDEECoObjectProvider provider) {
-		ClassLoader  contextClassLoader = provider.getContextClassLoader();
-		
-		List<? extends SchedulableProcess> ensembleProcesses = provider.getEnsembles();
-		setUpProcesses(ensembleProcesses, km, contextClassLoader);		
+	public void registerComponentsAndEnsembles(
+			AbstractDEECoObjectProvider provider) {
+		ClassLoader contextClassLoader = provider.getContextClassLoader();
+
+		List<? extends SchedulableProcess> ensembleProcesses = provider
+				.getEnsembles();
+		setUpProcesses(ensembleProcesses, km, contextClassLoader);
 		addSchedulableProcesses(ensembleProcesses);
-		
+
 		for (ParsedComponent component : provider.getComponents()) {
-			try { 
+			try {
 				initComponentKnowledge(component.getInitialKnowledge(), km);
-			} catch (Exception e){						
-				LoggerFactory.getLogger().severe(String.format(
+			} catch (Exception e) {
+				Log.e(String.format(
 						"Error when initializing knowledge of component %s",
-						component.getInitialKnowledge().getClass()),e);
+						component.getInitialKnowledge().getClass()), e);
 				continue;
 			}
-			List<? extends SchedulableProcess> componentProcesses = component.getProcesses();
-			setUpProcesses(componentProcesses, km, contextClassLoader);			
+			List<? extends SchedulableProcess> componentProcesses = component
+					.getProcesses();
+			setUpProcesses(componentProcesses, km, contextClassLoader);
 			addSchedulableProcesses(componentProcesses);
 		}
 	}
-	
+
 	/**
-	 * Set-up the processes for runtime execution; i.e.,
-	 * assign them knowledge manager reference and classloader reference.
-	 * @param processes 			processes to be set up
-	 * @param km					knowledge manager
-	 * @param contextClassLoader	classloader for the process
+	 * Set-up the processes for runtime execution; i.e., assign them knowledge
+	 * manager reference and classloader reference.
+	 * 
+	 * @param processes
+	 *            processes to be set up
+	 * @param km
+	 *            knowledge manager
+	 * @param contextClassLoader
+	 *            classloader for the process
 	 */
-	private void setUpProcesses(
-			List<? extends SchedulableProcess> processes, 
-			KnowledgeManager km,
-			ClassLoader  contextClassLoader
-			) {
-		for (SchedulableProcess p: processes) {
+	private void setUpProcesses(List<? extends SchedulableProcess> processes,
+			KnowledgeManager km, ClassLoader contextClassLoader) {
+		for (SchedulableProcess p : processes) {
 			p.km = km;
 			p.contextClassLoader = contextClassLoader;
 		}
-		
+
 	}
-	
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.deeco.runtime.IEnsembleComponentInformer#getComponentsIds()
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * cz.cuni.mff.d3s.deeco.runtime.IEnsembleComponentInformer#getComponentsIds
+	 * ()
 	 */
 	@Override
 	public List<String> getComponentsIds() {
 		List<String> result = new LinkedList<String>();
 		try {
-			Object[] ids = (Object[]) km.getKnowledge(ConstantKeys.ROOT_KNOWLEDGE_ID);
+			Object[] ids = (Object[]) km
+					.getKnowledge(ConstantKeys.ROOT_KNOWLEDGE_ID);
 			for (Object id : ids)
 				result.add((String) id);
 		} catch (KMException e) {
@@ -164,9 +186,13 @@ public class Runtime implements IRuntime {
 		}
 		return result;
 	}
-	
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.deeco.runtime.IRuntime#getComponentKnowledge(java.lang.String)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * cz.cuni.mff.d3s.deeco.runtime.IRuntime#getComponentKnowledge(java.lang
+	 * .String)
 	 */
 	@Override
 	public Object getComponentKnowledge(String componentId) {
@@ -178,18 +204,25 @@ public class Runtime implements IRuntime {
 		}
 		return null;
 	}
-	
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.deeco.runtime.IRuntime#getComponentProcesses(java.lang.String)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * cz.cuni.mff.d3s.deeco.runtime.IRuntime#getComponentProcesses(java.lang
+	 * .String)
 	 */
 	@Override
-	public List<SchedulableComponentProcess> getComponentProcesses(String componentId) {
-		if (scheduler != null) 
+	public List<SchedulableComponentProcess> getComponentProcesses(
+			String componentId) {
+		if (scheduler != null)
 			return SchedulerUtils.getComponentProcesses(componentId, scheduler);
 		return null;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see cz.cuni.mff.d3s.deeco.runtime.IRuntime#getEnsembleProcesses()
 	 */
 	@Override
@@ -198,16 +231,20 @@ public class Runtime implements IRuntime {
 			return SchedulerUtils.getEnsembleProcesses(scheduler);
 		return null;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see cz.cuni.mff.d3s.deeco.runtime.IRuntime#isRunning()
 	 */
 	@Override
 	public synchronized boolean isRunning() {
 		return scheduler.isRunning();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see cz.cuni.mff.d3s.deeco.runtime.IRuntime#startRuntime()
 	 */
 	@Override
@@ -215,7 +252,9 @@ public class Runtime implements IRuntime {
 		scheduler.start();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see cz.cuni.mff.d3s.deeco.runtime.IRuntime#stopRuntime()
 	 */
 	@Override
@@ -226,7 +265,8 @@ public class Runtime implements IRuntime {
 	/**
 	 * Registers single schedulable process within the scheduler.
 	 * 
-	 * @param process process that needs to be registered
+	 * @param process
+	 *            process that needs to be registered
 	 */
 	private synchronized void addSchedulableProcess(SchedulableProcess process) {
 		if (process != null)
@@ -249,17 +289,22 @@ public class Runtime implements IRuntime {
 	/**
 	 * Adds component knowledge into the knowledge manager.
 	 * 
-	 * @param initKnowledge component knowledge that needs to be added to the knowledge manager.
-	 * @param km reference to the knowledge manager.
-	 * @throws Exception in case the knowledge couldn't be initialized, the message contains the reason.
+	 * @param initKnowledge
+	 *            component knowledge that needs to be added to the knowledge
+	 *            manager.
+	 * @param km
+	 *            reference to the knowledge manager.
+	 * @throws Exception
+	 *             in case the knowledge couldn't be initialized, the message
+	 *             contains the reason.
 	 */
-	private synchronized void initComponentKnowledge(
-			Component initKnowledge, KnowledgeManager km) throws Exception {
+	private synchronized void initComponentKnowledge(Component initKnowledge,
+			KnowledgeManager km) throws Exception {
 		if ((initKnowledge == null) || (km == null))
-			throw new NullPointerException();		
-		
+			throw new NullPointerException();
+
 		try {
-			Object[] currentIds = (Object []) km
+			Object[] currentIds = (Object[]) km
 					.getKnowledge(ConstantKeys.ROOT_KNOWLEDGE_ID);
 			if (Arrays.asList(currentIds).contains(initKnowledge.id))
 				throw new Exception(String.format(
@@ -267,19 +312,21 @@ public class Runtime implements IRuntime {
 						initKnowledge.id));
 		} catch (KMNotExistentException kmnee) {
 		}
-		
-		km.putKnowledge(ConstantKeys.ROOT_KNOWLEDGE_ID,
-				initKnowledge.id);
+
+		km.putKnowledge(ConstantKeys.ROOT_KNOWLEDGE_ID, initKnowledge.id);
 		km.alterKnowledge(initKnowledge.id, initKnowledge);
 	}
-	
+
 	/**
-	 * Returns the Runtime singleton object. Works if only one Runtime object has been created. Otherwise
-	 * it is not supported.
+	 * Returns the Runtime singleton object. Works if only one Runtime object
+	 * has been created. Otherwise it is not supported.
+	 * 
 	 * @return The Runtime singleton object.
-	 * @throws UnsupportedOperationException Thrown when no Runtime or more Runtimes are instantiated.
+	 * @throws UnsupportedOperationException
+	 *             Thrown when no Runtime or more Runtimes are instantiated.
 	 */
-	public static IRuntime getDefaultRuntime() throws UnsupportedOperationException {
+	public static IRuntime getDefaultRuntime()
+			throws UnsupportedOperationException {
 		if (runtimes.size() != 1) {
 			throw new UnsupportedOperationException();
 		} else {

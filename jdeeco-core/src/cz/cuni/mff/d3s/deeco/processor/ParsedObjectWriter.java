@@ -7,7 +7,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
 import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
-import cz.cuni.mff.d3s.deeco.logging.LoggerFactory;
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.provider.ClassDEECoObjectProvider;
 
 public class ParsedObjectWriter {
@@ -38,7 +38,7 @@ public class ParsedObjectWriter {
 					oo.close();
 			}
 		} catch (Exception e) {
-			LoggerFactory.getLogger().severe("Error when writing",e);
+			Log.e("Error when writing",e);
 			return false;
 		}
 		return true;

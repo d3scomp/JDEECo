@@ -15,7 +15,7 @@ import cz.cuni.mff.d3s.deeco.invokable.ParameterizedMethod;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableComponentProcess;
 import cz.cuni.mff.d3s.deeco.knowledge.Component;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
-import cz.cuni.mff.d3s.deeco.logging.LoggerFactory;
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessPeriodicSchedule;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
 
@@ -37,6 +37,7 @@ public class ComponentParser {
 	 */
 	public static List<SchedulableComponentProcess> extractComponentProcess(
 			Class<?> c, String root) {
+		
 		if (c == null) {
 			return null;
 		}
@@ -122,8 +123,7 @@ public class ComponentParser {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		LoggerFactory.getLogger().info(
-				"No initial state can be retrieved for the component: " + c);
+		Log.w("No initial state can be retrieved for the component: " + c);
 		return null;
 	}
 

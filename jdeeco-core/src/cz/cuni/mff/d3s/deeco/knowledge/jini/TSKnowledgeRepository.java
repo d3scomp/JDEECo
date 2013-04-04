@@ -33,7 +33,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgePathHelper;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeRepository;
-import cz.cuni.mff.d3s.deeco.logging.LoggerFactory;
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
 
 /**
@@ -230,7 +230,7 @@ public class TSKnowledgeRepository extends KnowledgeRepository {
 			space.registerForAvailabilityEvent(
 					Arrays.asList(new Tuple[] { TSUtils.createTemplate(fullListenPath) }), null, true,
 					tsListener.getStub(), Lease.FOREVER, null);
-			LoggerFactory.getLogger().info("Listener added: " + fullListenPath);
+			Log.i("Listener added: " + fullListenPath);
 		} catch (Exception e) {
 			throw new KRExceptionAccessError(
 					"TSKnowledgeRepository error when adding a listener for the property: "

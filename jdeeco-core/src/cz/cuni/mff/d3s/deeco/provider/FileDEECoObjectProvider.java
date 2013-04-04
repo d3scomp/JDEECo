@@ -1,6 +1,6 @@
 package cz.cuni.mff.d3s.deeco.provider;
 
-import cz.cuni.mff.d3s.deeco.logging.LoggerFactory;
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.processor.ClassFinder;
 import cz.cuni.mff.d3s.deeco.processor.ClassProcessor;
 
@@ -55,7 +55,7 @@ public class FileDEECoObjectProvider extends AbstractDEECoObjectProvider {
 
 	private void processAll() {
 		if (fileName == null || fileName.length() == 0) {
-			LoggerFactory.getLogger().info("Wrong path");
+			Log.w("Wrong path");
 			return;
 		}
 		ClassFinder cf = new ClassFinder();
