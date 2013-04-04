@@ -15,6 +15,10 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.scheduling;
 
+import cz.cuni.mff.d3s.deeco.performance.IPerformanceInfo;
+import cz.cuni.mff.d3s.deeco.performance.SchedulableProcessTimeStampsWithActionsVisitor;
+import cz.cuni.mff.d3s.deeco.performance.TimeStamp;
+
 /**
  * Class representing periodic scheduling.
  * 
@@ -36,4 +40,25 @@ public class ProcessPeriodicSchedule implements ProcessSchedule {
 	public ProcessPeriodicSchedule(long interval) {
 		this.interval = interval;
 	}
+
+	@Override
+	public void acceptProcess(
+			SchedulableProcessTimeStampsWithActionsVisitor sv,
+			IPerformanceInfo pInfo, TimeStamp time) {
+		// TODO Auto-generated method stub
+		sv.visitProcess(this, pInfo, time);
+	}
+
+	@Override
+	public void acceptEnsemble(
+			SchedulableProcessTimeStampsWithActionsVisitor sv,
+			IPerformanceInfo pInfo, TimeStamp time) {
+		// TODO Auto-generated method stub
+		sv.visitEnsemble(this, pInfo, time);
+	}
+
+	
+	
+
+
 }

@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.deeco.scheduling;
+ package cz.cuni.mff.d3s.deeco.scheduling;
 
 import java.util.LinkedList;
 import java.util.List;

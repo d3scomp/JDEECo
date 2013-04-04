@@ -23,8 +23,16 @@ import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.performance.PeriodicEnsembleInfo;
+import cz.cuni.mff.d3s.deeco.performance.PeriodicProcessInfo;
+import cz.cuni.mff.d3s.deeco.performance.SchedulableProcessTimeStampsVisitor;
+import cz.cuni.mff.d3s.deeco.performance.SchedulableProcessTimeStampsWithActionsVisitor;
+import cz.cuni.mff.d3s.deeco.performance.SchedulableProcessVisitor;
+import cz.cuni.mff.d3s.deeco.performance.TimeStamp;
 import cz.cuni.mff.d3s.deeco.scheduling.ETriggerType;
+import cz.cuni.mff.d3s.deeco.scheduling.ProcessPeriodicSchedule;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
+import cz.cuni.mff.d3s.deeco.scheduling.ProcessTriggeredSchedule;
 
 /**
  * Class representing schedulable ensemble process, which is used by the system
@@ -39,12 +47,14 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 
 	public final ParameterizedMethod knowledgeExchange;
 	public final MembershipMethod membership;
+	private long release = 0;
+	private SchedulableProcessTimeStampsWithActionsVisitor visitor = new SchedulableProcessTimeStampsWithActionsVisitor();
 
 	/**
 	 * Returns <code>SchedulableEnsembleProcess</code> instance for specified
 	 * membership function (in <code>membership</code>), mapping function (in
-	 * <code>knowledgeExchange</code>), scheduling type (in <code>scheduling</code>) and
-	 * knowledge manager (<code>km</code>).
+	 * <code>knowledgeExchange</code>), scheduling type (in
+	 * <code>scheduling</code>) and knowledge manager (<code>km</code>).
 	 * 
 	 * @param scheduling
 	 *            describes the type of the schedulability for the ensemble
@@ -57,12 +67,15 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 	 *            instance of the knowledge manager that is used for parameter
 	 *            retrieval
 	 */
-	public SchedulableEnsembleProcess(KnowledgeManager km, ProcessSchedule scheduling, MembershipMethod membership,
-			ParameterizedMethod knowledgeExchange, ClassLoader contextClassLoader) {
+	public SchedulableEnsembleProcess(KnowledgeManager km,
+			ProcessSchedule scheduling, MembershipMethod membership,
+			ParameterizedMethod knowledgeExchange,
+			ClassLoader contextClassLoader) {
 		super(km, scheduling, contextClassLoader);
-		
+
 		this.membership = membership;
 		this.knowledgeExchange = knowledgeExchange;
+		pInfo = new PeriodicEnsembleInfo();
 	}
 
 	/*
@@ -74,12 +87,26 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 	public void invoke(String triggererId, ETriggerType recipientMode) {
 		// LoggerFactory.getLogger().fine("Ensembling starts");
 		try {
+			// ///////////////////////////////////////////////
+			// //
+			// //////////////////////////////////////////////
+			// if(scheduling instanceof ProcessPeriodicSchedule){
+			// release=System.nanoTime();
+			// ((PeriodicEnsembleInfo)pInfo).runningPeriodsCoord.add(time);
+			// ((PeriodicEnsembleInfo)pInfo).runningPeriodsMem.add(time);
+			// }else
+			// if(scheduling instanceof ProcessTriggeredSchedule)
+			// release=System.nanoTime();
+			// System.out.println("ens.... "+release);
+			// ////////////////////////////////////////////////
+			// ////////////////////////////////////////////////
 			Object[] ids = (Object[]) km
 					.getKnowledge(ConstantKeys.ROOT_KNOWLEDGE_ID);
 			if (recipientMode == null)
 				periodicInvocation(ids);
 			else
 				try {
+
 					singleInvocation(triggererId, recipientMode, ids);
 				} catch (KMException kme) {
 				}
@@ -116,19 +143,31 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 				session.begin();
 				while (session.repeat()) {
 					try {
+						time = new TimeStamp();
+						// maybe in another place
+						release = System.nanoTime();
 						Object[] parametersMembership = getParameterMethodValues(
 								membership.getIn(), membership.getInOut(),
-								membership.getOut(), session,
-								(String) cId, (String) mId);
+								membership.getOut(), session, (String) cId,
+								(String) mId);
+						time.start = System.nanoTime();
 						if (evaluateMembership(parametersMembership)) {
-							Object[] parametersKnowledgeExchange = getParameterMethodValues(knowledgeExchange.in,
-									knowledgeExchange.inOut, knowledgeExchange.out, session,
+							Object[] parametersKnowledgeExchange = getParameterMethodValues(
+									knowledgeExchange.in,
+									knowledgeExchange.inOut,
+									knowledgeExchange.out, session,
 									(String) cId, (String) mId);
 							evaluateKnowledgeExchange(parametersKnowledgeExchange);
-							putParameterMethodValues(parametersKnowledgeExchange, knowledgeExchange.inOut,
-									knowledgeExchange.out, session, (String) cId,
-									(String) mId);
+							putParameterMethodValues(
+									parametersKnowledgeExchange,
+									knowledgeExchange.inOut,
+									knowledgeExchange.out, session,
+									(String) cId, (String) mId);
 						}
+						time.finish = System.nanoTime();
+						time.release = release;
+						scheduling.acceptEnsemble(visitor, pInfo, time);
+
 					} catch (KMNotExistentException kmnee) {
 						session.cancel();
 						continue mloop;
@@ -147,7 +186,7 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 		try {
 			return membership.membership(params);
 		} catch (Exception e) {
-			Log.e("Ensemble exception while membership evaluation",e);
+			Log.e("Ensemble exception while membership evaluation", e);
 			return false;
 		}
 	}
@@ -156,20 +195,26 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 		try {
 			knowledgeExchange.invoke(params);
 		} catch (Exception e) {
-			Log.e("Ensemble exception while knowledge exchange",e);
+			Log.e("Ensemble exception while knowledge exchange", e);
 		}
 	}
-	
+
 	public Method getKnowledgeExchangeMethod() {
 		if (knowledgeExchange == null)
 			return null;
 		return knowledgeExchange.getMethod();
 	}
-	
+
 	public Method getMembershipMethod() {
 		if (membership == null || membership.method == null)
 			return null;
 		return membership.method.getMethod();
+	}
+
+	@Override
+	public void accept(SchedulableProcessVisitor visitor) {
+		// TODO Auto-generated method stub
+		visitor.visit(this);
 	}
 
 }

@@ -22,6 +22,10 @@ import cz.cuni.mff.d3s.deeco.exceptions.KMException;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.performance.PeriodicProcessInfo;
+import cz.cuni.mff.d3s.deeco.performance.SchedulableProcessTimeStampsWithActionsVisitor;
+import cz.cuni.mff.d3s.deeco.performance.SchedulableProcessVisitor;
+import cz.cuni.mff.d3s.deeco.performance.TimeStamp;
 import cz.cuni.mff.d3s.deeco.scheduling.ETriggerType;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
 
@@ -38,15 +42,21 @@ public class SchedulableComponentProcess extends SchedulableProcess {
 	public final ParameterizedMethod process;
 	private final ELockingMode lockingMode;
 	private final String componentId;
+	private long release = 0;
+	private SchedulableProcessTimeStampsWithActionsVisitor visitor = new SchedulableProcessTimeStampsWithActionsVisitor();
 
-	public SchedulableComponentProcess(KnowledgeManager km, ProcessSchedule scheduling, ParameterizedMethod process,
-			ELockingMode lockingMode, String componentId, ClassLoader contextClassLoader) {
-		
+	public SchedulableComponentProcess(KnowledgeManager km,
+			ProcessSchedule scheduling, ParameterizedMethod process,
+			ELockingMode lockingMode, String componentId,
+			ClassLoader contextClassLoader) {
+
 		super(km, scheduling, contextClassLoader);
-		
+
 		this.process = process;
 		this.lockingMode = lockingMode;
 		this.componentId = componentId;
+		pInfo = new PeriodicProcessInfo();
+
 	}
 
 	/*
@@ -56,32 +66,36 @@ public class SchedulableComponentProcess extends SchedulableProcess {
 	 */
 	@Override
 	public void invoke(String triggererId, ETriggerType recipientMode) {
-		//LoggerFactory.getLogger().fine("Component process starts - " + this.toString());
+		// LoggerFactory.getLogger().fine("Component process starts - " +
+		// this.toString());
 		try {
 			if (lockingMode.equals(ELockingMode.STRONG)) {
 				ISession session = km.createSession();
 				session.begin();
+				System.out.println(" session" + session);
 				try {
 					while (session.repeat()) {
 						evaluateMethod(session);
 						session.end();
 					}
+
 				} catch (KMException e) {
-					Log.e("",e);
+					Log.e("", e);
 					session.cancel();
 				}
 			} else {
 				try {
 					evaluateMethod();
 				} catch (KMException kme) {
-					Log.e("SCP message error",kme);
+					Log.e("SCP message error", kme);
 					kme.printStackTrace();
 				}
 			}
 		} catch (Exception e) {
-			Log.e("",e);
+			Log.e("", e);
 		}
-		//LoggerFactory.getLogger().fine("Component process ends - " + this.toString());
+		// LoggerFactory.getLogger().fine("Component process ends - " +
+		// this.toString());
 	}
 
 	private void evaluateMethod() throws KMException {
@@ -89,21 +103,39 @@ public class SchedulableComponentProcess extends SchedulableProcess {
 	}
 
 	private void evaluateMethod(ISession session) throws KMException {
+		time = new TimeStamp();
+		release = System.nanoTime();
 		Object[] processParameters = getParameterMethodValues(process.in,
 				process.inOut, process.out, session);
+		time.start = System.nanoTime();
 		process.invoke(processParameters);
 		putParameterMethodValues(processParameters, process.inOut, process.out,
 				session);
+		time.finish = System.nanoTime();
+		time.release = release;
+		scheduling.acceptProcess(visitor, pInfo, time);
+		// if(scheduling instanceof ProcessPeriodicSchedule)
+		// ((PeriodicProcessInfo)pInfo).runningPeriods.add(time);
+		// else
+		// if(scheduling instanceof ProcessTriggeredSchedule)
+		// ((TriggeredProcessInfo)pInfo).timeStamps.add(time);
+
 	}
-	
+
 	public Method getProcessMethod() {
 		if (process == null)
 			return null;
 		return process.getMethod();
 	}
-	
+
 	public String getComponentId() {
 		return componentId;
+	}
+
+	@Override
+	public void accept(SchedulableProcessVisitor visitor) {
+		// TODO Auto-generated method stub
+		visitor.visit(this);
 	}
 
 }
