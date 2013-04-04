@@ -116,12 +116,12 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 				session.begin();
 				while (session.repeat()) {
 					try {
-						ParametersPair[] parametersMembership = getParameterMethodValues(
+						Object[] parametersMembership = getParameterMethodValues(
 								membership.getIn(), membership.getInOut(),
 								membership.getOut(), session,
 								(String) cId, (String) mId);
 						if (evaluateMembership(parametersMembership)) {
-							ParametersPair[] parametersKnowledgeExchange = getParameterMethodValues(knowledgeExchange.in,
+							Object[] parametersKnowledgeExchange = getParameterMethodValues(knowledgeExchange.in,
 									knowledgeExchange.inOut, knowledgeExchange.out, session,
 									(String) cId, (String) mId);
 							evaluateKnowledgeExchange(parametersKnowledgeExchange);
@@ -143,22 +143,20 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 		}
 	}
 
-	private boolean evaluateMembership(ParametersPair[] params) {
+	private boolean evaluateMembership(Object[] params) {
 		try {
-			Object[] parameterValues = ParametersPair.extractValues(params);
-			return membership.membership(parameterValues);
+			return membership.membership(params);
 		} catch (Exception e) {
-			Log.e("Ensemble membership exception",e);
+			Log.e("Ensemble exception while membership evaluation",e);
 			return false;
 		}
 	}
 
-	private void evaluateKnowledgeExchange(ParametersPair[] params) {
+	private void evaluateKnowledgeExchange(Object[] params) {
 		try {
-			Object[] parameterValues = ParametersPair.extractValues(params);
-			knowledgeExchange.invoke(parameterValues);
+			knowledgeExchange.invoke(params);
 		} catch (Exception e) {
-			Log.e("Ensemble evaluation exception",e);
+			Log.e("Ensemble exception while knowledge exchange",e);
 		}
 	}
 	

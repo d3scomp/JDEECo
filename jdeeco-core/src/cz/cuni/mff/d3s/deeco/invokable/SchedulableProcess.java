@@ -17,12 +17,14 @@ package cz.cuni.mff.d3s.deeco.invokable;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import cz.cuni.mff.d3s.deeco.exceptions.KMCastException;
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
-import cz.cuni.mff.d3s.deeco.knowledge.local.DeepCopy;
+import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.scheduling.ETriggerType;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessPeriodicSchedule;
@@ -39,68 +41,38 @@ public abstract class SchedulableProcess implements Serializable {
 
 	private static final long serialVersionUID = -642546184205115045L;
 
-	private final InputParametersHelper iph;
-	private final OutputParametersHelper oph;
-	
 	// these are assigned after preprocessing, thus musn't be final
-	public KnowledgeManager km; 
+	public KnowledgeManager km;
 	public ClassLoader contextClassLoader;
 
 	public final ProcessSchedule scheduling;
 
-	protected static class ParametersPair {
-		public final Object originalValue; // Original value taken from the
-											// repository
-		public final Object value; // Newly cloned instance of the originalValue
-
-		public ParametersPair(Object originalValue) {
-			this.originalValue = originalValue;
-			this.value = DeepCopy.copy(originalValue);
-		}
-
-		/**
-		 * From the source array creates array of {@link ParametersPair#value}
-		 * 
-		 * @param source
-		 *            Array where values are taken
-		 * @return Extracted {@link ParametersPair#value} values
-		 */
-		static public Object[] extractValues(ParametersPair[] source) {
-			Object[] result = new Object[source.length];
-			for (int i = 0; i < source.length; i++) {
-				result[i] = source[i].value;
-			}
-			return result;
-		}
-	}
-
-	public SchedulableProcess(KnowledgeManager km, ProcessSchedule scheduling, ClassLoader contextClassLoader) {
-		this.iph = new InputParametersHelper();
-		this.oph = new OutputParametersHelper();
+	public SchedulableProcess(KnowledgeManager km, ProcessSchedule scheduling,
+			ClassLoader contextClassLoader) {
 		this.scheduling = scheduling;
 		this.km = km;
 		this.contextClassLoader = contextClassLoader;
 	}
 
-	protected ParametersPair[] getParameterMethodValues(List<Parameter> in,
+	protected Object[] getParameterMethodValues(List<Parameter> in,
 			List<Parameter> inOut, List<Parameter> out) throws KMException {
 		return getParameterMethodValues(in, out, inOut, null, null, null);
 	}
 
-	protected ParametersPair[] getParameterMethodValues(List<Parameter> in,
+	protected Object[] getParameterMethodValues(List<Parameter> in,
 			List<Parameter> inOut, List<Parameter> out, ISession session)
 			throws KMException {
 		return getParameterMethodValues(in, inOut, out, session, null, null);
 	}
 
-	protected ParametersPair[] getParameterMethodValues(List<Parameter> in,
+	protected Object[] getParameterMethodValues(List<Parameter> in,
 			List<Parameter> inOut, List<Parameter> out, ISession session,
 			String coordinator, String member) throws KMException {
 		final List<Parameter> parametersIn = new ArrayList<Parameter>();
 		parametersIn.addAll(in);
 		parametersIn.addAll(inOut);
 		Object value;
-		ParametersPair[] result = new ParametersPair[parametersIn.size()
+		Object[] result = new Object[parametersIn.size()
 				+ ((out != null) ? out.size() : 0)];
 		ISession localSession;
 		if (session == null) {
@@ -111,11 +83,9 @@ public abstract class SchedulableProcess implements Serializable {
 		try {
 			while (localSession.repeat()) {
 				for (Parameter p : parametersIn) {
-					value = km.getKnowledge(p.kPath.getEvaluatedPath(km,
-							coordinator, member, localSession), localSession);
-					value = iph.getParameterInstance(p.type, value);
-
-					result[p.index] = new ParametersPair(value);
+					value = getParameterInstance(p, coordinator, member, km,
+							localSession);
+					result[p.index] = value;
 				}
 				if (session == null)
 					localSession.end();
@@ -123,17 +93,15 @@ public abstract class SchedulableProcess implements Serializable {
 					break;
 			}
 			final List<Parameter> parametersOut = out;
-			for (Parameter p : parametersOut) {
-				value = oph.getParameterInstance(p.type);
-				result[p.index] = new ParametersPair(value);
-			}
+			for (Parameter p : parametersOut)
+				result[p.index] = getParameterInstance(p.type);
 			return result;
 		} catch (KMException kme) {
 			if (session == null)
 				localSession.cancel();
 			throw kme;
 		} catch (Exception e) {
-			Log.e("",e);
+			Log.e("", e);
 			return null;
 		}
 	}
@@ -151,12 +119,12 @@ public abstract class SchedulableProcess implements Serializable {
 	 * @param root
 	 *            knowledge level for which parameterTypes should stored.
 	 */
-	protected void putParameterMethodValues(ParametersPair[] parameterValues,
+	protected void putParameterMethodValues(Object[] parameterValues,
 			List<Parameter> inOut, List<Parameter> out) {
 		putParameterMethodValues(parameterValues, inOut, out, null, null, null);
 	}
 
-	protected void putParameterMethodValues(ParametersPair[] parameterValues,
+	protected void putParameterMethodValues(Object[] parameterValues,
 			List<Parameter> inOut, List<Parameter> out, ISession session) {
 		putParameterMethodValues(parameterValues, inOut, out, session, null,
 				null);
@@ -178,7 +146,7 @@ public abstract class SchedulableProcess implements Serializable {
 	 *            session instance within which all the storing operations
 	 *            should be performed.
 	 */
-	protected void putParameterMethodValues(ParametersPair[] parameterValues,
+	protected void putParameterMethodValues(Object[] parameterValues,
 			List<Parameter> inOut, List<Parameter> out, ISession session,
 			String coordinator, String member) {
 		if (parameterValues != null) {
@@ -194,11 +162,12 @@ public abstract class SchedulableProcess implements Serializable {
 			try {
 				while (localSession.repeat()) {
 					for (Parameter p : parameters) {
-						ParametersPair valuePair = parameterValues[p.index];
-						oph.storeOutValue(p.kPath.getEvaluatedPath(km,
-								coordinator, member, localSession),
-								valuePair.originalValue, valuePair.value, km,
-								localSession);
+						Object parameterValue = parameterValues[p.index];
+						km.alterKnowledge(
+								p.kPath.getEvaluatedPath(km, coordinator,
+										member, session),
+								p.type.isOutWrapper() ? ((OutWrapper) parameterValue).value
+										: parameterValue, session);
 					}
 					if (session == null)
 						localSession.end();
@@ -208,7 +177,7 @@ public abstract class SchedulableProcess implements Serializable {
 			} catch (Exception e) {
 				if (session == null)
 					localSession.cancel();
-				Log.e("",e);
+				Log.e("", e);
 			}
 		}
 	}
@@ -236,6 +205,42 @@ public abstract class SchedulableProcess implements Serializable {
 	 */
 	public void invoke() {
 		invoke(null, null);
+	}
+
+	private Object getParameterInstance(TypeDescription expectedParamType)
+			throws KMCastException {
+		try {
+			if (expectedParamType.isMap()) {
+				if (expectedParamType.isInterface())
+					return new HashMap<String, Object>();
+				else
+					return expectedParamType.newInstance();
+			} else if (expectedParamType.isList()) {
+				if (expectedParamType.isInterface())
+					return new ArrayList<Object>();
+				else
+					return expectedParamType.newInstance();
+			} else
+				return expectedParamType.newInstance();
+		} catch (Exception e) {
+			throw new KMCastException("Out parameter instantiation exception");
+		}
+	}
+
+	private Object getParameterInstance(Parameter p, String coordinator,
+			String member, KnowledgeManager km, ISession session)
+			throws KMException, Exception {
+		if (p.type.isOutWrapper()) {
+			OutWrapper ow = (OutWrapper) p.type.newInstance();
+			ow.value = km.getKnowledge(
+					p.kPath.getEvaluatedPath(km, coordinator, member, session),
+					p.type.getParametricTypeAt(0), session);
+			return ow;
+		} else {
+			return km.getKnowledge(
+					p.kPath.getEvaluatedPath(km, coordinator, member, session),
+					p.type, session);
+		}
 	}
 
 	public abstract void invoke(String triggererId, ETriggerType recipientMode);

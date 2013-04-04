@@ -15,16 +15,20 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.knowledge;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import cz.cuni.mff.d3s.deeco.exceptions.KMAccessException;
+import cz.cuni.mff.d3s.deeco.exceptions.KMCastException;
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
 import cz.cuni.mff.d3s.deeco.exceptions.KMNotExistentException;
 import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionAccessError;
 import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionUnavailableEntry;
+import cz.cuni.mff.d3s.deeco.invokable.TypeDescription;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
 
@@ -35,7 +39,7 @@ import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
  *
  */
 public class RepositoryKnowledgeManager extends KnowledgeManager {
-	
+
 	public final static long serialVersionUID = 1L;
 
 	private KnowledgeRepository kr;
@@ -88,6 +92,21 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 	public Object getKnowledge(String knowledgePath, ISession session)
 			throws KMException {
 		return getKnowledge(false, knowledgePath, session);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * cz.cuni.mff.d3s.deeco.knowledge.IKnowledgeManager#getKnowledge(java.lang
+	 * .String, cz.cuni.mff.d3s.deeco.invokable.TypeDescription,
+	 * cz.cuni.mff.d3s.deeco.knowledge.ISession)
+	 */
+	@Override
+	public Object getKnowledge(String knowledgePath,
+			TypeDescription expectedType, ISession session) throws KMException {
+		Object value = getKnowledge(knowledgePath, session);
+		return getInstance(expectedType, value);
 	}
 
 	/*
@@ -163,9 +182,9 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 
 	private void storeKnowledge(String knowledgePath, Object value,
 			ISession session, boolean modify) throws KMAccessException {
-		if (kr == null) 
+		if (kr == null)
 			throw new KMAccessException("Knowledge repository unavailable");
-		
+
 		ISession localSession;
 		if (session == null) {
 			localSession = createSession();
@@ -177,8 +196,8 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 		Object[] structure;
 		try {
 			while (localSession.repeat()) {
-				structure = putStructure(knowledgePath, value,
-						localSession, modify);
+				structure = putStructure(knowledgePath, value, localSession,
+						modify);
 				if (structure == null)
 					putFlat(knowledgePath, value, localSession, modify);
 				else if (structure.length > 0) {
@@ -202,10 +221,10 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 			throw new KMAccessException(kre.getMessage());
 		} catch (Exception e) {
 			localSession.cancel();
-			Log.e("",e);
+			Log.e("", e);
 		}
 	}
-	
+
 	private IObjectAccessor getObjectAccessor(Object value) {
 		if (value == null)
 			return null;
@@ -221,9 +240,9 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 
 	private Object getKnowledge(boolean withdrawal, String knowledgePath,
 			ISession session) throws KMException {
-		if (kr == null) 
+		if (kr == null)
 			throw new KMAccessException("Knowledge repository unavailable");
-		
+
 		Object result = null;
 		ISession locSession = null;
 		if (session == null) {
@@ -231,16 +250,14 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 			locSession.begin();
 		}
 
-		final ISession localSession = (session == null ? locSession
-				: session);
+		final ISession localSession = (session == null ? locSession : session);
 
 		try {
 			while (localSession.repeat()) {
-				Object[] structure = getStructure(withdrawal,
-						knowledgePath, localSession);
+				Object[] structure = getStructure(withdrawal, knowledgePath,
+						localSession);
 				if (structure == null) // flat
-					result = getFlat(withdrawal, knowledgePath,
-							localSession);
+					result = getFlat(withdrawal, knowledgePath, localSession);
 				else {
 					String tPath, tString;
 					HashMap<String, Object> map = new HashMap<String, Object>();
@@ -249,8 +266,7 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 						tPath = KnowledgePathHelper.appendToRoot(knowledgePath,
 								tString);
 						map.put(tString,
-								getKnowledge(withdrawal, tPath,
-										localSession));
+								getKnowledge(withdrawal, tPath, localSession));
 					}
 					result = map;
 				}
@@ -269,13 +285,11 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 				localSession.cancel();
 			throw new KMAccessException(kre.getMessage());
 		} catch (Exception e) {
-			Log.e("",e);
+			Log.e("", e);
 			localSession.cancel();
 			return null;
 		}
 	}
-	
-
 
 	private void putFlat(String knowledgePath, Object newValue,
 			ISession session, boolean modify) throws KRExceptionAccessError {
@@ -339,8 +353,8 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 					for (Object s : oldStructure) {
 						if (nsList.contains(s))
 							continue;
-						tempPath = KnowledgePathHelper.appendToRoot(knowledgePath,
-								(String) s);
+						tempPath = KnowledgePathHelper.appendToRoot(
+								knowledgePath, (String) s);
 						try {
 							takeKnowledge(tempPath, session);
 						} catch (KMNotExistentException kmnee) {
@@ -360,6 +374,135 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 		}
 		return newStructure;
 	}
-
 	
+	private Object getInstance(TypeDescription expectedType,
+			Object value) throws KMCastException {
+		try {
+			if (value == null)
+				throw new KMCastException(
+						"Parameter Instantiation Exception: Incompatible types");
+			else if (TypeUtils.isMap(value.getClass())) {
+				if (expectedType.isKnowledge()) {
+					return getKnowledgeInstance(expectedType, value);
+				} else if (expectedType.isMap()) {
+					return getMapInstance(expectedType, value);
+				} else if (expectedType.isList()) {
+					return getListInstance(expectedType, value);
+				} else if (TypeUtils.isInstanceOf(expectedType.clazz,
+						value))
+					return value;
+				else
+					throw new KMCastException(
+							"Parameter Instantiation Exception: Incompatible types");
+			} else {
+				if (expectedType.isOutWrapper()) {
+					if (isMap(value)) // OutWrapper cannot take such structures
+						throw new KMCastException(
+								"Parameter Instantiation Exception: Wrong value for OutWrapper");
+					OutWrapper ow = (OutWrapper) expectedType
+							.newInstance();
+					ow.value = extractValue((Object[]) value);
+					return ow;
+				} else {
+					return extractValue((Object[]) value);
+				}
+			}
+		} catch (Exception e) {
+			throw new KMCastException("Parameter Instantiation Exception: "
+					+ e.getMessage());
+		}
+	}
+	
+	private Object getKnowledgeInstance(TypeDescription expectedParamType,
+			Object value) throws KMCastException, InstantiationException,
+			IllegalAccessException, IllegalArgumentException {
+		Map<String, ?> mValue;
+		if (!isMap(value))
+			throw new KMCastException(
+					"Parameter Instantiation Exception: Wrong value for Knowledge");
+		Field[] fields = TypeUtils.getClassFields(expectedParamType.clazz);
+		if (fields == null)
+			throw new KMCastException(
+					"Parameter Instantiation Exception: Empty structure");
+		Object result = expectedParamType.newInstance();
+		mValue = (Map<String, ?>) value;
+		String fName;
+		for (Field f : fields) {
+			fName = f.getName();
+			if (mValue.containsKey(fName)) {
+				f.set(result,
+						getInstance(
+								expectedParamType.getKnowledgeFieldType(fName),
+								mValue.get(fName)));
+			} else
+				throw new KMCastException(
+						"Parameter Instantiation Exception: Knowledge structure confilict");
+		}
+		return result;
+	}
+
+	private Object getMapInstance(TypeDescription expectedType, Object value)
+			throws KMCastException, InstantiationException,
+			IllegalAccessException {
+		Map<String, ?> mValue;
+		if (!isMap(value))
+			throw new KMCastException(
+					"Parameter Instantiation Exception: Wrong value for Map");
+		mValue = (Map<String, ?>) value;
+		Map<String, Object> mResult;
+		if (expectedType.isInterface())
+			mResult = new HashMap<String, Object>();
+		else
+			mResult = (Map<String, Object>) expectedType.newInstance();
+		TypeDescription elementType = expectedType.getParametricTypeAt(1);
+		Object element;
+		for (String s : mValue.keySet()) {
+			try {
+				element = getInstance(elementType, mValue.get(s));
+				mResult.put(s, element);
+			} catch (KMCastException kmce) {
+			}
+		}
+		return mResult;
+	}
+
+	private Object getListInstance(TypeDescription expectedType, Object value)
+			throws KMCastException, InstantiationException,
+			IllegalAccessException {
+		Map<String, ?> mValue;
+		if (!isMap(value))
+			throw new KMCastException(
+					"Parameter Instantiation Exception: Wrong value for List");
+		mValue = (Map<String, ?>) value;
+		List<Object> lResult;
+		if (expectedType.isInterface())
+			lResult = new ArrayList<Object>();
+		else
+			lResult = (List<Object>) expectedType.newInstance();
+		TypeDescription elementType = expectedType.getParametricTypeAt(0);
+		Object element;
+		String sIndex;
+		for (int i = 0; i < mValue.size(); i++) {
+			sIndex = Integer.toString(i);
+			if (!mValue.containsKey(sIndex))
+				throw new KMCastException(
+						"Parameter Instantiation Exception: Error when parsing list");
+			element = getInstance(elementType, mValue.get(sIndex));
+			lResult.add(element);
+		}
+		return lResult;
+	}
+
+	private Object extractValue(Object[] value) throws KMCastException {
+		if (value == null || value.length != 1)
+			throw new KMCastException(
+					"Parameter Instantiation Exception: Error when extracting value");
+		return value[0];
+
+	}
+
+	private boolean isMap(Object value) {
+		return TypeUtils.isMap(value.getClass());
+	}
+
 }

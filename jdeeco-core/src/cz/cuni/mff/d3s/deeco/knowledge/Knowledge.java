@@ -28,5 +28,5 @@ import java.io.Serializable;
  * 
  */
 public class Knowledge implements Serializable {
-	public final static long serialVersionUID = 1L;
+
 }

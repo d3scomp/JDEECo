@@ -1,6 +1,7 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
+import cz.cuni.mff.d3s.deeco.invokable.TypeDescription;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
 
@@ -18,6 +19,13 @@ public class LoggingKnowledgeManager extends KnowledgeManager {
 			throws KMException {
 		Log.d("LoggingKnowledgeManager.getKnowledge(knowledgePath=" + knowledgePath +", session=" + session + ")");
 		return decoratedKm.getKnowledge(knowledgePath, session);
+	}
+	
+	@Override
+	public Object getKnowledge(String knowledgePath,
+			TypeDescription expectedType, ISession session) throws KMException {
+		Log.d("LoggingKnowledgeManager.getKnowledge(knowledgePath=" + knowledgePath + ", expectedType=" + expectedType + ", session=" + session + ")");
+		return decoratedKm.getKnowledge(knowledgePath, expectedType, session);
 	}
 
 	@Override

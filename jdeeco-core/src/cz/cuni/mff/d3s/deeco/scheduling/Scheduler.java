@@ -82,17 +82,18 @@ public abstract class Scheduler implements IScheduler {
 	 */
 	@Override
 	public synchronized void remove(SchedulableProcess process) {
-		if (!running)
+		if (!running) {
 			if (process.scheduling instanceof ProcessTriggeredSchedule)
 				for (SchedulableProcessTrigger tsp : triggeredProcesses) {
 					if (tsp.sp == process) {
 						tsp.unregisterListener();
 						triggeredProcesses
-								.remove(new SchedulableProcessTrigger(process));
+								.remove(process);
 					}
 				}
 			else
 				periodicProcesses.remove(process);
+		}
 	}
 
 	/*
@@ -124,10 +125,10 @@ public abstract class Scheduler implements IScheduler {
 	public synchronized void clearAll() {
 		if (running)
 			stop();
-		remove(periodicProcesses);
-		for (SchedulableProcessTrigger tsp : triggeredProcesses) {
-			remove(tsp.sp);
-		}
+		periodicProcesses.clear();
+		for (SchedulableProcessTrigger spt : triggeredProcesses)
+			spt.unregisterListener();
+		triggeredProcesses.clear();
 	}
 
 	protected abstract void startPeriodicProcess(SchedulableProcess process);

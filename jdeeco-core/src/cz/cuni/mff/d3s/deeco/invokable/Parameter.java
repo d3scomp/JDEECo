@@ -33,7 +33,7 @@ public class Parameter implements Serializable {
 	private static final long serialVersionUID = -5306187392194189194L;
 
 	public final KnowledgePath kPath;
-	public final ParameterType type;
+	public final TypeDescription type;
 	public final Integer index;
 
 	public Parameter(KnowledgePath kPath, Type type, Integer index) throws ComponentEnsembleParseException {

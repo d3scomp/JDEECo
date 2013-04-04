@@ -1,13 +1,14 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
+import cz.cuni.mff.d3s.deeco.invokable.TypeDescription;
 import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
 
 public interface IKnowledgeManager {
-	
+
 	/**
-	 * Retrieves knowledge from the knowledge repository, defined by both
-	 * <code>knowledgePath</code> and <code>structure</code>. This method is
+	 * Retrieves knowledge from the knowledge repository, defined by
+	 * <code>knowledgePath. The result is either map or flat element(s). This method is
 	 * session oriented.
 	 * 
 	 * @param knowledgePath
@@ -22,6 +23,24 @@ public interface IKnowledgeManager {
 	 */
 	public Object getKnowledge(String knowledgePath, ISession session)
 			throws KMException;
+
+	/**
+	 * Retrieves knowledge from the knowledge repository, defined by both
+	 * <code>knowledgePath</code> and <code>expectedType</code>. This method is
+	 * session oriented.
+	 * 
+	 * @param knowledgePath
+	 *            nesting at which the knowledge structure should be rooted
+	 * @param session
+	 *            a session object within which all the retrieval should be
+	 *            performed
+	 * @return retrieved knowledge object of type structure
+	 * @throws KMException
+	 *             thrown whenever there is a problem accessing the knowledge
+	 *             repository
+	 */
+	public Object getKnowledge(String knowledgePath,
+			TypeDescription expectedType, ISession session) throws KMException;
 
 	/**
 	 * Withdraws the knowledge from the knowledge repository. This method is

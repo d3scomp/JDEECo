@@ -89,9 +89,9 @@ public class SchedulableComponentProcess extends SchedulableProcess {
 	}
 
 	private void evaluateMethod(ISession session) throws KMException {
-		ParametersPair[] processParameters = getParameterMethodValues(process.in,
+		Object[] processParameters = getParameterMethodValues(process.in,
 				process.inOut, process.out, session);
-		process.invoke(ParametersPair.extractValues(processParameters));
+		process.invoke(processParameters);
 		putParameterMethodValues(processParameters, process.inOut, process.out,
 				session);
 	}
