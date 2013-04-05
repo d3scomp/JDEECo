@@ -24,15 +24,11 @@ import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.performance.PeriodicEnsembleInfo;
-import cz.cuni.mff.d3s.deeco.performance.PeriodicProcessInfo;
-import cz.cuni.mff.d3s.deeco.performance.SchedulableProcessTimeStampsVisitor;
 import cz.cuni.mff.d3s.deeco.performance.SchedulableProcessTimeStampsWithActionsVisitor;
 import cz.cuni.mff.d3s.deeco.performance.SchedulableProcessVisitor;
 import cz.cuni.mff.d3s.deeco.performance.TimeStamp;
 import cz.cuni.mff.d3s.deeco.scheduling.ETriggerType;
-import cz.cuni.mff.d3s.deeco.scheduling.ProcessPeriodicSchedule;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
-import cz.cuni.mff.d3s.deeco.scheduling.ProcessTriggeredSchedule;
 
 /**
  * Class representing schedulable ensemble process, which is used by the system
@@ -167,7 +163,6 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 						time.finish = System.nanoTime();
 						time.release = release;
 						scheduling.acceptEnsemble(visitor, pInfo, time);
-
 					} catch (KMNotExistentException kmnee) {
 						session.cancel();
 						continue mloop;

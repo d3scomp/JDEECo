@@ -42,6 +42,7 @@ public class SchedulableComponentProcess extends SchedulableProcess {
 	public final ParameterizedMethod process;
 	private final ELockingMode lockingMode;
 	private final String componentId;
+
 	private long release = 0;
 	private SchedulableProcessTimeStampsWithActionsVisitor visitor = new SchedulableProcessTimeStampsWithActionsVisitor();
 
@@ -49,14 +50,12 @@ public class SchedulableComponentProcess extends SchedulableProcess {
 			ProcessSchedule scheduling, ParameterizedMethod process,
 			ELockingMode lockingMode, String componentId,
 			ClassLoader contextClassLoader) {
-
 		super(km, scheduling, contextClassLoader);
 
 		this.process = process;
 		this.lockingMode = lockingMode;
 		this.componentId = componentId;
 		pInfo = new PeriodicProcessInfo();
-
 	}
 
 	/*
@@ -137,5 +136,4 @@ public class SchedulableComponentProcess extends SchedulableProcess {
 		// TODO Auto-generated method stub
 		visitor.visit(this);
 	}
-
 }
