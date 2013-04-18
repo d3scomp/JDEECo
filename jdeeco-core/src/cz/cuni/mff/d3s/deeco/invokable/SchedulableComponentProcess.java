@@ -38,7 +38,7 @@ public class SchedulableComponentProcess extends SchedulableProcess {
 	public final ParameterizedMethod process;
 	private final ELockingMode lockingMode;
 	private final String componentId;
-
+        
 	public SchedulableComponentProcess(KnowledgeManager km, ProcessSchedule scheduling, ParameterizedMethod process,
 			ELockingMode lockingMode, String componentId, ClassLoader contextClassLoader) {
 		
@@ -57,6 +57,9 @@ public class SchedulableComponentProcess extends SchedulableProcess {
 	@Override
 	public void invoke(String triggererId, ETriggerType recipientMode) {
 		//LoggerFactory.getLogger().fine("Component process starts - " + this.toString());
+          
+                SchedulableProcess.runtime.set(km.getRuntime());
+          
 		try {
 			if (lockingMode.equals(ELockingMode.STRONG)) {
 				ISession session = km.createSession();

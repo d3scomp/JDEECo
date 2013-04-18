@@ -68,7 +68,7 @@ public class MultithreadedScheduler extends Scheduler {
 		threads.put(process, ses);
 	}
 
-	class PeriodicProcessThread implements Runnable {
+	static class PeriodicProcessThread implements Runnable {
 
 		private SchedulableProcess process;
 

@@ -73,6 +73,9 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 	@Override
 	public void invoke(String triggererId, ETriggerType recipientMode) {
 		// LoggerFactory.getLogger().fine("Ensembling starts");
+          
+                SchedulableProcess.runtime.set(km.getRuntime());
+                
 		try {
 			Object[] ids = (Object[]) km
 					.getKnowledge(ConstantKeys.ROOT_KNOWLEDGE_ID);

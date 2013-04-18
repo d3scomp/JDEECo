@@ -26,6 +26,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.runtime.IRuntime;
 import cz.cuni.mff.d3s.deeco.scheduling.ETriggerType;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessPeriodicSchedule;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
@@ -46,6 +47,8 @@ public abstract class SchedulableProcess implements Serializable {
 	public ClassLoader contextClassLoader;
 
 	public final ProcessSchedule scheduling;
+        
+        public static ThreadLocal<IRuntime> runtime = new ThreadLocal<>();
 
 	public SchedulableProcess(KnowledgeManager km, ProcessSchedule scheduling,
 			ClassLoader contextClassLoader) {

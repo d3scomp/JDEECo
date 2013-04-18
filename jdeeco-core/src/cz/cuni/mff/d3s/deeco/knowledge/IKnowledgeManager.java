@@ -1,7 +1,23 @@
+/*******************************************************************************
+ * Copyright 2012-2013 Charles University in Prague
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.knowledge;
 
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
 import cz.cuni.mff.d3s.deeco.invokable.TypeDescription;
+import cz.cuni.mff.d3s.deeco.runtime.IRuntime;
 import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
 
 public interface IKnowledgeManager {
@@ -180,4 +196,25 @@ public interface IKnowledgeManager {
 	 */
 	public void putKnowledge(String knowledgePath, Object value)
 			throws KMException;
+        
+        /** 
+         * Sets the runtime to the scheduler (without a runtime, the scheduler will not work).
+         * 
+         * @param rt runtime
+         */
+        public void setRuntime(IRuntime rt);
+        
+        /**
+         * Returns a runtime reference. It might be <code>null</code> if the knowledge manager has not been set to any runtime.
+         * 
+         * @return a runtime reference
+         */
+        public IRuntime getRuntime();
+        
+        /**
+         * Unsets the runtime.
+         * 
+         * @see IKnowledgeManager#setRuntime(cz.cuni.mff.d3s.deeco.runtime.IRuntime) 
+         */
+        public void unsetRuntime();
 }

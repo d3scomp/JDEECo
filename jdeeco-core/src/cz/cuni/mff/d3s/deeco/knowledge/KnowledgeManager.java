@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2012 Charles University in Prague
+ * Copyright 2012-2013 Charles University in Prague
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
+import cz.cuni.mff.d3s.deeco.runtime.IRuntime;
 
 /**
  * An abstract class providing higher level interface for accessing the
@@ -25,6 +26,8 @@ import cz.cuni.mff.d3s.deeco.exceptions.KMException;
  * 
  */
 public abstract class KnowledgeManager implements IKnowledgeManager {
+  
+        protected IRuntime runtime;
 	
 	@Override
 	public Object getKnowledge(String knowledgePath) throws KMException {
@@ -47,4 +50,19 @@ public abstract class KnowledgeManager implements IKnowledgeManager {
 			throws KMException {
 		putKnowledge(knowledgePath, value, null);
 	}
+        
+        @Override
+        public void setRuntime(IRuntime rt) {
+          runtime = rt;
+        }
+        
+        @Override
+        public void unsetRuntime() {
+          runtime = null;
+        }
+        
+        @Override
+        public IRuntime getRuntime() {
+          return runtime;
+        }
 }

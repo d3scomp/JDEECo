@@ -30,6 +30,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.provider.ParsedComponent;
+import cz.cuni.mff.d3s.deeco.runtime.jmx.RuntimeMX;
 import cz.cuni.mff.d3s.deeco.scheduling.IScheduler;
 import cz.cuni.mff.d3s.deeco.scheduling.SchedulerUtils;
 
@@ -49,11 +50,13 @@ public class Runtime implements IRuntime {
 
 	public Runtime() {
 		runtimes.add(this);
+                RuntimeMX.registerMBeanForRuntime(this);
 	}
 
 	public Runtime(KnowledgeManager km) {
 		this();
 		this.km = km;
+                this.km.setRuntime(this);
 	}
 
 	public Runtime(IScheduler scheduler) {
@@ -64,6 +67,7 @@ public class Runtime implements IRuntime {
 	public Runtime(KnowledgeManager km, IScheduler scheduler) {
 		this();
 		this.km = km;
+                this.km.setRuntime(this);
 		this.scheduler = scheduler;
 	}
 
@@ -76,8 +80,9 @@ public class Runtime implements IRuntime {
 	@Override
 	public void setScheduler(Object scheduler) {
 		unsetScheduler(scheduler);
-		if (scheduler instanceof IScheduler)
+		if (scheduler instanceof IScheduler) {
 			this.scheduler = (IScheduler) scheduler;
+                }
 	}
 
 	/*
@@ -88,9 +93,10 @@ public class Runtime implements IRuntime {
 	 */
 	@Override
 	public void unsetScheduler(Object scheduler) {
-		if (this.scheduler != null)
+		if (this.scheduler != null) {
 			this.scheduler.clearAll();
-		this.scheduler = null;
+                        this.scheduler = null;
+                }
 	}
 
 	/*
@@ -104,12 +110,14 @@ public class Runtime implements IRuntime {
 	public void setKnowledgeManager(Object km) {
 		unsetKnowledgeManager(null);
 		this.km = (KnowledgeManager) km;
+                this.km.setRuntime(this);
 	}
 
 	@Override
 	public void unsetKnowledgeManager(Object km) {
 		stopRuntime();
 		this.km = null;
+                this.km.unsetRuntime();
 	}
 
 	/*

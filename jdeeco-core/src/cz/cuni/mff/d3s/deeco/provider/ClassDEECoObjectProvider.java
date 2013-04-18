@@ -83,14 +83,16 @@ public class ClassDEECoObjectProvider extends AbstractDEECoObjectProvider {
 	@Override
 	protected synchronized void processEnsembles() {
 		ensembles = new LinkedList<SchedulableEnsembleProcess>();
-		for (Class<?> c : rawEnsembles) {
-			try {
-				ensembles.add(extractEnsembleProcess(c));
-			} catch (ParseException e) {
-				Log.e(String.format("Parsing error in class '%s': %s",
-						c.getName(), e.getMessage()), e);
-			}
-		}
+                if (rawEnsembles != null) {
+                        for (Class<?> c : rawEnsembles) {
+                                try {
+                                        ensembles.add(extractEnsembleProcess(c));
+                                } catch (ParseException e) {
+                                        Log.e(String.format("Parsing error in class '%s': %s",
+                                        		c.getName(), e.getMessage()), e);
+                                }
+                        }
+                }
 	}
 
 }

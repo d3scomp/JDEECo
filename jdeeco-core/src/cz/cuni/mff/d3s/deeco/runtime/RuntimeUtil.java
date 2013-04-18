@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2012-2013 Charles University in Prague
+ * Copyright 2012 Charles University in Prague
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,32 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package cz.cuni.mff.d3s.deeco.scheduling;
-
-import java.util.List;
+package cz.cuni.mff.d3s.deeco.runtime;
 
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
-import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcessTrigger;
 
-public interface IScheduler {
-	
-	public boolean isRunning();
+/**
+ * Runtime utility methods.
+ *
+ * @author Petr Hnetynka
+ */
+public class RuntimeUtil {
 
-	public void add(List<? extends SchedulableProcess> processes);
-
-	public void add(SchedulableProcess process);
-
-	public void remove(List<SchedulableProcess> processes);
-
-	public void remove(SchedulableProcess process);
-	
-	public List<SchedulableProcessTrigger> getTriggeredProcesses();
-	
-	public List<SchedulableProcess> getPeriodicProcesses();
-	
-	public void clearAll();
-
-	public void start();
-
-	public void stop();
+  /**
+   * <b>Should be called only component processes</b>; it returns a reference to the runtime.
+   * If it is not called from a component process, there is no guarantee that it returns a meaningful value.
+   * 
+   * @return a reference to the runtime
+   */
+  public static IRuntime getRuntime() {
+    return SchedulableProcess.runtime.get();
+  }
 }
