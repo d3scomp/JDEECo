@@ -28,8 +28,6 @@ import cz.cuni.mff.d3s.deeco.knowledge.Knowledge;
  */
 public class Path extends Knowledge {
 	
-	public final static long serialVersionUID = 1L;
-	
 	public Integer currentPosition;
 	public List<Integer> remainingPath;
 
