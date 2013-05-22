@@ -10,11 +10,11 @@ import cz.cuni.mff.d3s.deeco.scheduling.ETriggerType;
 import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessTriggeredSchedule;
 
-public class SchedulableProcessTrigger implements IKnowledgeChangeListener {
+public class TriggeredSchedulableProcess implements IKnowledgeChangeListener {
 
 	public final SchedulableProcess sp;
 
-	public SchedulableProcessTrigger(SchedulableProcess sp) {
+	public TriggeredSchedulableProcess(SchedulableProcess sp) {
 		this.sp = sp;
 	}
 
@@ -35,8 +35,8 @@ public class SchedulableProcessTrigger implements IKnowledgeChangeListener {
 	}
 
 	public boolean equals(Object o) {
-		return o != null && o instanceof SchedulableProcessTrigger
-				&& this.sp.equals(((SchedulableProcessTrigger) o).sp);
+		return o != null && o instanceof TriggeredSchedulableProcess
+				&& this.sp.equals(((TriggeredSchedulableProcess) o).sp);
 	}
 
 	@Override

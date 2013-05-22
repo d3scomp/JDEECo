@@ -25,7 +25,7 @@ import cz.cuni.mff.d3s.deeco.invokable.ParameterizedMethod;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableComponentProcess;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableEnsembleProcess;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
-import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcessTrigger;
+import cz.cuni.mff.d3s.deeco.invokable.TriggeredSchedulableProcess;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.path.grammar.EEnsembleParty;
@@ -98,7 +98,7 @@ public class DiscreteScheduler extends Scheduler {
 									.add(getKnowledgePath(sp, par));
 						}
 						for (String affected : affectedKnowledgePaths) {
-							for (SchedulableProcessTrigger spt : triggeredProcesses) {
+							for (TriggeredSchedulableProcess spt : triggeredProcesses) {
 								List<String> triggeredKnowledgePaths = spt
 										.getKnowledgePaths();
 								for (String triggered : triggeredKnowledgePaths) {

@@ -9,7 +9,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
-import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcessTrigger;
+import cz.cuni.mff.d3s.deeco.invokable.TriggeredSchedulableProcess;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 
@@ -29,7 +29,7 @@ public class MultithreadedScheduler extends Scheduler {
 			}
 
 			List<KnowledgeManager> kms = new LinkedList<KnowledgeManager>();
-			for (SchedulableProcessTrigger tsp : triggeredProcesses) {
+			for (TriggeredSchedulableProcess tsp : triggeredProcesses) {
 				tsp.registerListener();
 				if (!kms.contains(tsp.getKnowledgeManager()))
 					kms.add(tsp.getKnowledgeManager());
@@ -48,7 +48,7 @@ public class MultithreadedScheduler extends Scheduler {
 				threads.get(sp).shutdown();
 			}
 			List<KnowledgeManager> kms = new LinkedList<KnowledgeManager>();
-			for (SchedulableProcessTrigger tsp : triggeredProcesses) {
+			for (TriggeredSchedulableProcess tsp : triggeredProcesses) {
 				if (!kms.contains(tsp.getKnowledgeManager()))
 					kms.add(tsp.getKnowledgeManager());
 			}

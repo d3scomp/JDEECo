@@ -19,17 +19,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
-import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcessTrigger;
+import cz.cuni.mff.d3s.deeco.invokable.TriggeredSchedulableProcess;
 
 public abstract class Scheduler implements IScheduler {
 
 	protected List<SchedulableProcess> periodicProcesses;
-	protected List<SchedulableProcessTrigger> triggeredProcesses;
+	protected List<TriggeredSchedulableProcess> triggeredProcesses;
 	protected boolean running;
 
 	public Scheduler() {
 		periodicProcesses = new ArrayList<SchedulableProcess>();
-		triggeredProcesses = new ArrayList<SchedulableProcessTrigger>();
+		triggeredProcesses = new ArrayList<TriggeredSchedulableProcess>();
 		running = false;
 	}
 
@@ -65,7 +65,7 @@ public abstract class Scheduler implements IScheduler {
 	@Override
 	public synchronized void add(SchedulableProcess process) {
 		if (process.scheduling instanceof ProcessTriggeredSchedule)
-			triggeredProcesses.add(new SchedulableProcessTrigger(process));
+			triggeredProcesses.add(new TriggeredSchedulableProcess(process));
 		else {
 			periodicProcesses.add(process);
 			if (running) {
@@ -99,7 +99,7 @@ public abstract class Scheduler implements IScheduler {
 	public synchronized void remove(SchedulableProcess process) {
 		if (!running) {
 			if (process.scheduling instanceof ProcessTriggeredSchedule)
-				for (SchedulableProcessTrigger tsp : triggeredProcesses) {
+				for (TriggeredSchedulableProcess tsp : triggeredProcesses) {
 					if (tsp.sp == process) {
 						tsp.unregisterListener();
 						triggeredProcesses
@@ -127,7 +127,7 @@ public abstract class Scheduler implements IScheduler {
 	 * @see cz.cuni.mff.d3s.deeco.scheduling.IScheduler#getTriggeredProcesses()
 	 */
 	@Override
-	public synchronized List<SchedulableProcessTrigger> getTriggeredProcesses() {
+	public synchronized List<TriggeredSchedulableProcess> getTriggeredProcesses() {
 		return triggeredProcesses;
 	}
 
@@ -141,7 +141,7 @@ public abstract class Scheduler implements IScheduler {
 		if (running)
 			stop();
 		periodicProcesses.clear();
-		for (SchedulableProcessTrigger spt : triggeredProcesses)
+		for (TriggeredSchedulableProcess spt : triggeredProcesses)
 			spt.unregisterListener();
 		triggeredProcesses.clear();
 	}

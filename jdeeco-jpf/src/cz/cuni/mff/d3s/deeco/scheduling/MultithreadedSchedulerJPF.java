@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
-import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcessTrigger;
+import cz.cuni.mff.d3s.deeco.invokable.TriggeredSchedulableProcess;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 
 /**
@@ -53,7 +53,7 @@ public class MultithreadedSchedulerJPF extends Scheduler {
 				startPeriodicProcess(sp, repeatCount);
 			}
 			List<KnowledgeManager> kms = new LinkedList<KnowledgeManager>();
-			for (SchedulableProcessTrigger tsp : triggeredProcesses) {
+			for (TriggeredSchedulableProcess tsp : triggeredProcesses) {
 				// not yet supported (we ignore them for now)
 				tsp.registerListener();
 				if (!kms.contains(tsp.getKnowledgeManager()))
@@ -75,7 +75,7 @@ public class MultithreadedSchedulerJPF extends Scheduler {
 				t.interrupt();
 			}
 			List<KnowledgeManager> kms = new LinkedList<KnowledgeManager>();
-			for (SchedulableProcessTrigger tsp : triggeredProcesses) {
+			for (TriggeredSchedulableProcess tsp : triggeredProcesses) {
 				if (!kms.contains(tsp.getKnowledgeManager()))
 					kms.add(tsp.getKnowledgeManager());
 			}

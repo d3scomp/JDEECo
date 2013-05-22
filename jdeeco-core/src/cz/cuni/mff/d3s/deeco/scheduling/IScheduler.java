@@ -18,7 +18,7 @@ package cz.cuni.mff.d3s.deeco.scheduling;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
-import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcessTrigger;
+import cz.cuni.mff.d3s.deeco.invokable.TriggeredSchedulableProcess;
 
 public interface IScheduler {
 	
@@ -32,7 +32,7 @@ public interface IScheduler {
 
 	public void remove(SchedulableProcess process);
 	
-	public List<SchedulableProcessTrigger> getTriggeredProcesses();
+	public List<TriggeredSchedulableProcess> getTriggeredProcesses();
 	
 	public List<SchedulableProcess> getPeriodicProcesses();
 	
