@@ -25,7 +25,7 @@ public class MultithreadedScheduler extends Scheduler {
 	public synchronized void start() {
 		if (!running) {
 			for (SchedulableProcess sp : periodicProcesses) {
-				startPeriodicProcess(sp);
+				scheduleProcessForExecution(sp);
 			}
 
 			List<KnowledgeManager> kms = new LinkedList<KnowledgeManager>();
@@ -60,7 +60,7 @@ public class MultithreadedScheduler extends Scheduler {
 	}
 
 	@Override
-	protected synchronized void startPeriodicProcess(SchedulableProcess process) {
+	protected synchronized void scheduleProcessForExecution(SchedulableProcess process) {
 		ScheduledExecutorService ses = Executors.newScheduledThreadPool(1);
 		ses.scheduleAtFixedRate(new PeriodicProcessThread(process), 0,
 				((ProcessPeriodicSchedule) process.scheduling).interval,

@@ -22,12 +22,12 @@ import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 import java.util.Random;
 
 /**
- *
+ * 
  * @author Petr Hnetynka
  */
 public class NodeD extends Component {
-        public final static long serialVersionUID = 1L;
-	
+	public final static long serialVersionUID = 1L;
+
 	public Float loadRatio;
 	public Float maxLoadRatio;
 	public Integer networkId;
@@ -36,7 +36,7 @@ public class NodeD extends Component {
 	public NodeD() {
 		this.id = "NodeD";
 		this.loadRatio = 0.0f;
-		this.maxLoadRatio = 0.2f;
+		this.maxLoadRatio = 0.3f;
 		this.networkId = 1;
 		this.targetNode = null;
 	}
@@ -45,8 +45,9 @@ public class NodeD extends Component {
 	@PeriodicScheduling(6000)
 	public static void process(@Out("loadRatio") OutWrapper<Float> loadRatio) {
 		loadRatio.value = new Random().nextFloat();
-		
-		System.out.println("Node D new load ratio: " + Math.round(loadRatio.value * 100) + "%");
+
+		System.out.println("Node D new load ratio: "
+				+ Math.round(loadRatio.value * 100) + "%");
 	}
 
 }

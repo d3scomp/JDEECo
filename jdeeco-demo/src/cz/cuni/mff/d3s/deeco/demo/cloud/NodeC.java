@@ -9,12 +9,10 @@ import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.knowledge.Component;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
-import cz.cuni.mff.d3s.deeco.provider.ClassDEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.provider.InitializedDEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.runtime.IRuntime;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeUtil;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Random;
 
 /**

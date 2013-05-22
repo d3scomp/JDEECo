@@ -69,7 +69,7 @@ public abstract class Scheduler implements IScheduler {
 		else {
 			periodicProcesses.add(process);
 			if (running) {
-				startPeriodicProcess(process);
+				scheduleProcessForExecution(process);
 			}
 		}
 	}
@@ -146,5 +146,5 @@ public abstract class Scheduler implements IScheduler {
 		triggeredProcesses.clear();
 	}
 
-	protected abstract void startPeriodicProcess(SchedulableProcess process);
+	protected abstract void scheduleProcessForExecution(SchedulableProcess process);
 }

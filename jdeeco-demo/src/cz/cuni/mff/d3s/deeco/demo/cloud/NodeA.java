@@ -17,22 +17,23 @@ package cz.cuni.mff.d3s.deeco.demo.cloud;
 
 import java.util.Random;
 
+import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
+import cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange;
 import cz.cuni.mff.d3s.deeco.knowledge.Component;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 
 public class NodeA extends Component {
 
 	public final static long serialVersionUID = 1L;
-	
+
 	public Float loadRatio;
 	public Float maxLoadRatio;
 	public Integer networkId;
 	public String targetNode;
-	
-	
+
 	public NodeA() {
 		this.id = "NodeA";
 		this.maxLoadRatio = .5f;
@@ -40,7 +41,7 @@ public class NodeA extends Component {
 		this.networkId = 1;
 		this.targetNode = null;
 	}
-	
+
 	public NodeA(String id, Float maxLoadRatio, Integer networkId) {
 		this.id = id;
 		this.maxLoadRatio = maxLoadRatio;
@@ -56,4 +57,11 @@ public class NodeA extends Component {
 		System.out.println("Node A new load ratio: "
 				+ Math.round(loadRatio.value * 100) + "%");
 	}
+
+	@Process
+	public static void process2(
+			@In("targetNode") @TriggerOnChange String mTargetNode) {
+		System.out.println("New target node: " + mTargetNode);
+	}
+
 }

@@ -87,7 +87,7 @@ public class MultithreadedSchedulerJPF extends Scheduler {
 	}
 	
 	@Override
-	protected void startPeriodicProcess(SchedulableProcess process) {
+	protected void scheduleProcessForExecution(SchedulableProcess process) {
 		startPeriodicProcess(process, 0);
 	}
 
