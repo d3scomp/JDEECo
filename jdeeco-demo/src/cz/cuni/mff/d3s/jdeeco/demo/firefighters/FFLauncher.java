@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.deeco.demo.firefighters;
+package cz.cuni.mff.d3s.jdeeco.demo.firefighters;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,7 +13,6 @@ import cz.cuni.mff.d3s.deeco.provider.InitializedDEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.runtime.Runtime;
 import cz.cuni.mff.d3s.deeco.scheduling.MultithreadedScheduler;
 import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
-import cz.cuni.mff.d3s.deeco.scheduling.discrete.DiscreteScheduler;
 
 /**
  * Main class for launching the FF scenario demo.
@@ -29,7 +28,7 @@ public class FFLauncher {
 	public static void main(String[] args) {
 		List<Class<?>> components = Arrays.asList(new Class<?>[] {});
 		List<Class<?>> ensembles = Arrays.asList(new Class<?>[] {
-				SensorDataEnsemble.class });
+				SensorDataEnsemble.class, StrategicInformationEnsemble.class });
 		KnowledgeManager km = new RepositoryKnowledgeManager(
 				new LocalKnowledgeRepository());
 		Scheduler scheduler = new MultithreadedScheduler();
@@ -39,9 +38,11 @@ public class FFLauncher {
 		rt.registerComponentsAndEnsembles(dop);
 
 		dop = new InitializedDEECoObjectProvider(Arrays.asList(new Component[] {
-				new GroupMember("FF1", "T1"), new GroupMember("FF2", "T1"), new GroupMember("FF3", "T1"),
-				new GroupMember("FF4", "T2"), new GroupMember("FF5", "T2"), new GroupMember("FF6", "T2"),
-				new GroupLeader("GL1", "T1", false), new GroupLeader("GL2", "T2", true) }), null);
+				new GroupMember("FF1", "T1"), new GroupMember("FF2", "T1"),
+				new GroupMember("FF3", "T1"), new GroupMember("FF4", "T2"),
+				new GroupMember("FF5", "T2"), new GroupMember("FF6", "T2"),
+				new GroupLeader("GL1", "T1", false),
+				new GroupLeader("GL2", "T2", true) }), null);
 		rt.registerComponentsAndEnsembles(dop);
 
 		rt.startRuntime();

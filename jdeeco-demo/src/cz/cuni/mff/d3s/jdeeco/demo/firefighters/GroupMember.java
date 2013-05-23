@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package cz.cuni.mff.d3s.deeco.demo.firefighters;
+package cz.cuni.mff.d3s.jdeeco.demo.firefighters;
 
 import java.util.Random;
 
+import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
@@ -24,9 +25,9 @@ import cz.cuni.mff.d3s.deeco.knowledge.Component;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 
 /**
- * Template for firefighter - group member (GM).
+ * Template for firefighters - group members (GM).
  * 
- * These lie in the bottom of the hierarchy.
+ * These lie at the bottom of the hierarchy.
  * 
  * @author Ilias Gerostathopoulos
  * 
@@ -58,10 +59,10 @@ public class GroupMember extends Component {
 
 	@Process
 	@PeriodicScheduling(1000)
-	public static void measureTemperature(
+	public static void measureTemperature(@In("id") String id,
 			@Out("temperature") OutWrapper<Float> temperature) {
 		temperature.value = new Random().nextFloat() * 100;
-		System.out.println("FF new temperature: "
+		System.out.println(id + " new temperature: "
 				+ Math.round(temperature.value) + " degrees Celcious.");
 	}
 

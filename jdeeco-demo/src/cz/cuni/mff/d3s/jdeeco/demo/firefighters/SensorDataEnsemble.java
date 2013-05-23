@@ -13,41 +13,50 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package cz.cuni.mff.d3s.deeco.demo.firefighters;
+package cz.cuni.mff.d3s.jdeeco.demo.firefighters;
 
-import java.util.Set;
+import java.util.Map;
 
 import cz.cuni.mff.d3s.deeco.annotations.In;
+import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
 import cz.cuni.mff.d3s.deeco.annotations.Membership;
-import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.ensemble.Ensemble;
 
 /**
- * Captures the interaction between the Group Leaders and the Site Leader.
+ * Captures the interaction between the Group Members and the Group Leaders.
  * 
  * @author Ilias Gerostathopoulos
  * 
  */
-public class StrategicInformationEnsemble extends Ensemble {
+public class SensorDataEnsemble extends Ensemble {
 
-	private static final long serialVersionUID = 7576890075702914993L;
+	private static final long serialVersionUID = 5991804902054860542L;
 
 	@Membership
 	public static boolean membership(@In("member.teamId") String mteamId,
+			@In("member.temperature") Float temperature,
+			@In("coord.temperatures") Map<String, Float> temperatures,
+			@In("member.position") Position position,
+			@In("coord.positions") Map<String, Position> positions,
 			@In("coord.teamId") String cteamId) {
-		return mteamId.equals(cteamId);
+		return mteamId.equals(cteamId) && temperature != null
+				&& temperatures != null && position != null
+				&& positions != null;
 	}
 
 	@KnowledgeExchange
 	@PeriodicScheduling(2000)
 	public static void map(@In("member.id") String mId,
 			@In("coord.id") String cId,
-			@In("member.GMsInDangerInGroup") Set<String> GMsInDangerInGroup,
-			@Out("coord.GMsInDangerInSite") Set<String> GMsInDangerInSite) {
-		System.out
-				.println("Copying GMsInDanger set from " + mId + " to " + cId);
-		GMsInDangerInSite.addAll(GMsInDangerInGroup);
+			@In("member.position") Position newPosition,
+			@InOut("coord.positions") Map<String, Position> positions,
+			@In("member.temperature") Float newTemperature,
+			@InOut("coord.temperatures") Map<String, Float> temperatures) {
+		System.out.println("Copying sensor data from " + mId + " to " + cId);
+		temperatures.put(mId, newTemperature);
+		positions.put(mId, newPosition);
 	}
+
 }

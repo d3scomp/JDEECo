@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package cz.cuni.mff.d3s.deeco.demo.firefighters;
+package cz.cuni.mff.d3s.jdeeco.demo.firefighters;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,13 +22,12 @@ import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
-import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.knowledge.Component;
 
 /**
- * Template for "group leader" (GL).
+ * Template for "group leaders" (GL).
  * 
  * These lie in the middle of the hierarchy.
  * 
@@ -50,9 +49,8 @@ public class GroupLeader extends Component {
 	// list of all group members in danger,
 	// to be populated only if the GL is also a site leader:
 	public Set<String> GMsInDangerInSite;
-
-	// public Float temperatureThreshold = 50.0f;
-	public Float temperatureThreshold;
+	// constant to determine critical condition
+	public Float temperatureThreshold = 50.0f;
 
 	public GroupLeader() {
 		// id (String) field always exists; it's the root of the tree
@@ -63,7 +61,6 @@ public class GroupLeader extends Component {
 		this.positions = new HashMap<String, Position>();
 		this.GMsInDangerInTeam = new HashSet<String>();
 		this.GMsInDangerInSite = new HashSet<String>();
-		this.temperatureThreshold = 50.0f;
 	}
 
 	public GroupLeader(String id, String team_id, boolean isSiteLeader) {
@@ -75,17 +72,17 @@ public class GroupLeader extends Component {
 		this.positions = new HashMap<String, Position>();
 		this.GMsInDangerInTeam = new HashSet<String>();
 		this.GMsInDangerInSite = new HashSet<String>();
-		this.temperatureThreshold = 50.0f;
 	}
 
 	@Process
 	@PeriodicScheduling(5000)
-	public static void processSensorData(
+	public static void processSensorData(@In("id") String GLId,
 			@In("temperatures") Map<String, Float> temperatures,
-			@In("temperatures") Map<String, Float> positions,
+			@In("positions") Map<String, Position> positions,
 			@In("temperatureThreshold") Float temperatureThreshold,
 			@InOut("GMsInDangerInTeam") Set<String> GMsInDangerInTeam) {
-		System.out.println("GL: Processing sensor data...");
+		System.out.println(GLId + ": Processing sensor data...");
+		GMsInDangerInTeam.clear();
 		System.out.println("Temperatures map holds "
 				+ temperatures.keySet().size() + " items");
 		for (String id : temperatures.keySet()) {
@@ -94,23 +91,31 @@ public class GroupLeader extends Component {
 				GMsInDangerInTeam.add(id);
 			}
 		}
+		System.out.println("Positions map holds "
+				+ temperatures.keySet().size() + " items");
 		for (String id : positions.keySet()) {
-			System.out.println("Position: " + positions.get(id));
+			Position pos = positions.get(id);
+			System.out.println("[" + id + ", {" + pos.latitude + ", "
+					+ pos.longitude + "}]");
 		}
 	}
 
-	// @Process
-	// @PeriodicScheduling(10000)
-	// public static void outputGMsInDanger(
-	// @In("isSiteLeader") Boolean isSiteLeader,
-	// @In("GMsInDangerInSite") Set<String> GMsInDangerInSite) {
-	// if (isSiteLeader) {
-	// System.out.println("There are " + GMsInDangerInSite.size()
-	// + " firefighters in danger in the site.");
-	// for (String ff : GMsInDangerInSite) {
-	// System.out.println("Firefighter : " + ff);
-	// }
-	// }
-	// }
+	@Process
+	@PeriodicScheduling(10000)
+	public static void outputGMsInDanger(
+			@In("isSiteLeader") Boolean isSiteLeader,
+			@In("GMsInDangerInSite") Set<String> GMsInDangerInSite) {
+		if (isSiteLeader) {
+			int size = GMsInDangerInSite.size();
+			System.out.print("There " + ((size == 1) ? "is " : "are ") + size
+					+ " firefighter" + ((size == 1) ? "" : "s")
+					+ " in danger at the site: ");
+			System.out.print("[");
+			for (String ff : GMsInDangerInSite) {
+				System.out.print(ff + ", ");
+			}
+			System.out.println("]");
+		}
+	}
 
 }
