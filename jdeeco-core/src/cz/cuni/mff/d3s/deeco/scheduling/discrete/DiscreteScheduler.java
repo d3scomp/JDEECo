@@ -98,15 +98,15 @@ public class DiscreteScheduler extends Scheduler {
 									.add(getKnowledgePath(sp, par));
 						}
 						for (String affected : affectedKnowledgePaths) {
-							for (TriggeredSchedulableProcess spt : triggeredProcesses) {
-								List<String> triggeredKnowledgePaths = spt
+							for (TriggeredSchedulableProcess tsp : triggeredProcesses) {
+								List<String> triggeredKnowledgePaths = tsp
 										.getKnowledgePaths();
 								for (String triggered : triggeredKnowledgePaths) {
 									if (isSamePath(affected, triggered)) {
 										Log.d("Path '"
 												+ triggered
 												+ "' changed. Process will get triggered.");
-										scheduleProcessForExecution(spt.sp);
+										scheduleProcessForExecution(tsp.sp);
 									}
 								}
 							}
@@ -143,7 +143,8 @@ public class DiscreteScheduler extends Scheduler {
 
 	/*
 	 * Utility method to extract the complete knowledge path of a parameter of a
-	 * schedulable process
+	 * schedulable process <br> TODO: Fix exception thrown in case of a Map key
+	 * containing "member" or "coord" keywords
 	 */
 	private String getKnowledgePath(SchedulableProcess sp, Parameter par) {
 		String coord = null;
