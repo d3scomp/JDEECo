@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.annotations.In;
+import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
@@ -81,17 +82,20 @@ public class GroupLeader extends Component {
 	@PeriodicScheduling(5000)
 	public static void processSensorData(
 			@In("temperatures") Map<String, Float> temperatures,
-			@In("temperatureThreshold") Float temperatureThreshold
-	// @Out("GMsInDangerInTeam") Set<String> GMsInDangerInTeam
-	) {
+			@In("temperatures") Map<String, Float> positions,
+			@In("temperatureThreshold") Float temperatureThreshold,
+			@InOut("GMsInDangerInTeam") Set<String> GMsInDangerInTeam) {
 		System.out.println("GL: Processing sensor data...");
 		System.out.println("Temperatures map holds "
 				+ temperatures.keySet().size() + " items");
 		for (String id : temperatures.keySet()) {
 			System.out.println("[" + id + ", " + temperatures.get(id) + "]");
-			// if (temperatures.get(id) > temperatureThreshold) {
-			// GMsInDangerInTeam.add(id);
-			// }
+			if (temperatures.get(id) > temperatureThreshold) {
+				GMsInDangerInTeam.add(id);
+			}
+		}
+		for (String id : positions.keySet()) {
+			System.out.println("Position: " + positions.get(id));
 		}
 	}
 

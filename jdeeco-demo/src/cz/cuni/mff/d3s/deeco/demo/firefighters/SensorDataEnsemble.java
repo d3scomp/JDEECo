@@ -18,6 +18,7 @@ package cz.cuni.mff.d3s.deeco.demo.firefighters;
 import java.util.Map;
 
 import cz.cuni.mff.d3s.deeco.annotations.In;
+import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
 import cz.cuni.mff.d3s.deeco.annotations.Membership;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
@@ -39,27 +40,25 @@ public class SensorDataEnsemble extends Ensemble {
 	public static boolean membership(@In("member.teamId") String mteamId,
 			@In("member.temperature") Float temperature,
 			@In("coord.temperatures") Map<String, Float> temperatures,
-			// @In("member.position") Position position,
-			// @In("coord.positions") Map<String, Position> positions,
+			@In("member.position") Position position,
+			@In("coord.positions") Map<String, Position> positions,
 			@In("coord.teamId") String cteamId) {
 		return mteamId.equals(cteamId) && temperature != null
-				&& temperatures != null;
+				&& temperatures != null && position != null
+				&& positions != null;
 	}
 
 	@KnowledgeExchange
 	@PeriodicScheduling(2000)
-	public static void map(
-			@In("member.id") String mId,
+	public static void map(@In("member.id") String mId,
 			@In("coord.id") String cId,
-			// @In("member.position") Position newPosition,
-			// @Out("coord.positions.[member.id]") Position position,
+			@In("member.position") Position newPosition,
+			@InOut("coord.positions") Map<String, Position> positions,
 			@In("member.temperature") Float newTemperature,
-			@Out("coord.temperatures") Map<String, Float> temperatures) {
+			@InOut("coord.temperatures") Map<String, Float> temperatures) {
 		System.out.println("Copying sensor data from " + mId + " to " + cId);
 		temperatures.put(mId, newTemperature);
-		for (String id : temperatures.keySet()) {
-			System.out.println("[" + id + ", " + temperatures.get(id) + "]");
-		}
+		positions.put(mId, newPosition);
 	}
 
 }
