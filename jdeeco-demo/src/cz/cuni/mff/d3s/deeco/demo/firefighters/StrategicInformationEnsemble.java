@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package cz.cuni.mff.d3s.jdeeco.demo.firefighters;
+package cz.cuni.mff.d3s.deeco.demo.firefighters;
 
 import java.util.Set;
 

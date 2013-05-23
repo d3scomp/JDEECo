@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.jdeeco.demo.firefighters;
+package cz.cuni.mff.d3s.deeco.demo.firefighters;
 
 import java.util.Arrays;
 import java.util.List;
@@ -11,16 +11,17 @@ import cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.provider.ClassDEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.provider.InitializedDEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.runtime.Runtime;
-import cz.cuni.mff.d3s.deeco.scheduling.MultithreadedScheduler;
 import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
+import cz.cuni.mff.d3s.deeco.scheduling.discrete.DiscreteScheduler;
 
 /**
- * Main class for launching the FF scenario demo.
+ * Main class for launching the FF scenario demo - for Discrete Event
+ * Simulations
  * 
  * @author Ilias Gerostathopoulos
  * 
  */
-public class FFLauncher {
+public class FFLauncherDiscreteScheduler {
 
 	/**
 	 * @param args
@@ -31,7 +32,7 @@ public class FFLauncher {
 				SensorDataEnsemble.class, StrategicInformationEnsemble.class });
 		KnowledgeManager km = new RepositoryKnowledgeManager(
 				new LocalKnowledgeRepository());
-		Scheduler scheduler = new MultithreadedScheduler();
+		Scheduler scheduler = new DiscreteScheduler();
 		AbstractDEECoObjectProvider dop = new ClassDEECoObjectProvider(
 				components, ensembles);
 		Runtime rt = new Runtime(km, scheduler);

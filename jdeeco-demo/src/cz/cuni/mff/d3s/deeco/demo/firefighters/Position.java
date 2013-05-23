@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.jdeeco.demo.firefighters;
+package cz.cuni.mff.d3s.deeco.demo.firefighters;
 
 import cz.cuni.mff.d3s.deeco.knowledge.Knowledge;
 
