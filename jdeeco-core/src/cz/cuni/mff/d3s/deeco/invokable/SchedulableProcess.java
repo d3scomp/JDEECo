@@ -100,6 +100,8 @@ public abstract class SchedulableProcess implements Serializable {
 				result[p.index] = getParameterInstance(p.type);
 			return result;
 		} catch (KMException kme) {
+			if (kme instanceof KMCastException)
+				Log.e(kme.getMessage());
 			if (session == null)
 				localSession.cancel();
 			throw kme;
