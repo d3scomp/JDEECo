@@ -58,7 +58,7 @@ public class GroupMember extends Component {
 	}
 
 	@Process
-	@PeriodicScheduling(1000)
+	@PeriodicScheduling(500)
 	public static void measureTemperature(@In("id") String id,
 			@Out("temperature") OutWrapper<Float> temperature) {
 		temperature.value = new Random().nextFloat() * 100;

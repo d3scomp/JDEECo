@@ -29,7 +29,7 @@ public class FFLauncherDiscreteScheduler {
 	public static void main(String[] args) {
 		List<Class<?>> components = Arrays.asList(new Class<?>[] {});
 		List<Class<?>> ensembles = Arrays.asList(new Class<?>[] {
-				SensorDataEnsemble.class, StrategicInformationEnsemble.class });
+				SensorDataAggregation.class, CriticalDataAggregation.class });
 		KnowledgeManager km = new RepositoryKnowledgeManager(
 				new LocalKnowledgeRepository());
 		Scheduler scheduler = new DiscreteScheduler();
@@ -38,12 +38,17 @@ public class FFLauncherDiscreteScheduler {
 		Runtime rt = new Runtime(km, scheduler);
 		rt.registerComponentsAndEnsembles(dop);
 
-		dop = new InitializedDEECoObjectProvider(Arrays.asList(new Component[] {
-				new GroupMember("FF1", "T1"), new GroupMember("FF2", "T1"),
-				new GroupMember("FF3", "T1"), new GroupMember("FF4", "T2"),
-				new GroupMember("FF5", "T2"), new GroupMember("FF6", "T2"),
-				new GroupLeader("GL1", "T1", false),
-				new GroupLeader("GL2", "T2", true) }), null);
+		dop = new InitializedDEECoObjectProvider(
+				Arrays.asList(new Component[] {
+						new GroupMember("FF1", "T1"),
+						new GroupMember("FF2", "T1"),
+						new GroupMember("FF3", "T1"),
+						new GroupMember("FF4", "T2"),
+						new GroupMember("FF5", "T2"),
+						new GroupMember("FF6", "T2"),
+						new GroupLeader("GL1", "T1", true, new Position(0, 0)),
+						new GroupLeader("GL2", "T2", false, new Position(1000,
+								1000)) }), null);
 		rt.registerComponentsAndEnsembles(dop);
 
 		rt.startRuntime();

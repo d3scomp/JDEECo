@@ -16,6 +16,7 @@
 package cz.cuni.mff.d3s.deeco.demo.firefighters;
 
 import java.util.Map;
+import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
@@ -25,38 +26,34 @@ import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.ensemble.Ensemble;
 
 /**
- * Captures the interaction between the Group Members and the Group Leaders.
+ * Captures the interaction between the Group Leaders and the Hexacopter.
  * 
  * @author Ilias Gerostathopoulos
  * 
  */
-public class SensorDataEnsemble extends Ensemble {
+public class CriticalDataAggregationOnHexacopter extends Ensemble {
 
-	private static final long serialVersionUID = 5991804902054860542L;
+	private static final long serialVersionUID = -7835430643756278821L;
 
 	@Membership
-	public static boolean membership(@In("member.teamId") String mteamId,
-			@In("member.temperature") Float temperature,
-			@In("coord.temperatures") Map<String, Float> temperatures,
-			@In("member.position") Position position,
-			@In("coord.positions") Map<String, Position> positions,
-			@In("coord.teamId") String cteamId) {
-		return mteamId.equals(cteamId) && temperature != null
-				&& temperatures != null && position != null
-				&& positions != null;
+	public static boolean membership(@In("member.id") String mId,
+			@In("coord.id") String cId,
+			@In("member.leaderPosition") Position mLeaderPosition,
+			@In("coord.leaderPosition") Position cLeaderPosition,
+			@In("member.spectrum") float mSpectrum) {
+		return !mId.equals(cId)
+				&& Utils.isInSpectrum(mLeaderPosition, cLeaderPosition,
+						mSpectrum);
 	}
 
 	@KnowledgeExchange
-	@PeriodicScheduling(2000)
-	public static void map(@In("member.id") String mId,
-			@In("coord.id") String cId,
-			@In("member.position") Position newPosition,
-			@InOut("coord.positions") Map<String, Position> positions,
-			@In("member.temperature") Float newTemperature,
-			@InOut("coord.temperatures") Map<String, Float> temperatures) {
-		System.out.println("Copying sensor data from " + mId + " to " + cId);
-		temperatures.put(mId, newTemperature);
-		positions.put(mId, newPosition);
+	@PeriodicScheduling(4000)
+	public static void map(
+			@In("member.id") String mId,
+			@In("member.FFsInDangerInTeam") Set<String> FFsInDangerInTeam,
+			@InOut("coord.FFsInDangerInSite") Map<String, Set<String>> FFsInDangerInSite) {
+		System.out.println("Copying GMsInDanger set from " + mId
+				+ " to the hexacopter.");
+		FFsInDangerInSite.put(mId, FFsInDangerInTeam);
 	}
-
 }

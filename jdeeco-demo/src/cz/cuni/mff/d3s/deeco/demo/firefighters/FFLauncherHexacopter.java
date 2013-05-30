@@ -15,20 +15,23 @@ import cz.cuni.mff.d3s.deeco.scheduling.MultithreadedScheduler;
 import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
 
 /**
- * Main class for launching the FF scenario demo.
+ * Main class for launching the FF scenario with hexacopter.
  * 
  * @author Ilias Gerostathopoulos
  * 
  */
-public class FFLauncher {
+public class FFLauncherHexacopter {
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		List<Class<?>> components = Arrays.asList(new Class<?>[] {});
+		List<Class<?>> components = Arrays
+				.asList(new Class<?>[] { Hexacopter.class });
 		List<Class<?>> ensembles = Arrays.asList(new Class<?>[] {
-				SensorDataAggregation.class, CriticalDataAggregation.class });
+				SensorDataAggregation.class,
+				CriticalDataAggregationOnHexacopter.class,
+				CriticalDataCopyFromHexacopterToSL.class });
 		KnowledgeManager km = new RepositoryKnowledgeManager(
 				new LocalKnowledgeRepository());
 		Scheduler scheduler = new MultithreadedScheduler();

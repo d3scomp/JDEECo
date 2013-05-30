@@ -15,6 +15,7 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.demo.firefighters;
 
+import java.util.Map;
 import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.annotations.In;
@@ -25,31 +26,40 @@ import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.ensemble.Ensemble;
 
 /**
- * Captures the interaction between the Group Leaders and the Site Leader.
+ * Captures the interaction between the Hexacopter and the Site Leader.
  * 
  * @author Ilias Gerostathopoulos
  * 
  */
-public class StrategicInformationEnsemble extends Ensemble {
+public class CriticalDataCopyFromHexacopterToSL extends Ensemble {
 
-	private static final long serialVersionUID = 7576890075702914993L;
+	private static final long serialVersionUID = 409847004319943982L;
 
 	@Membership
-	public static boolean membership(
-			@In("member.isSiteLeader") Boolean isSiteLeaderMember,
-			@In("coord.isSiteLeader") Boolean isSiteLeaderCoord) {
-		return isSiteLeaderCoord;
+	public static boolean membership(@In("member.id") String mId,
+			@In("coord.id") String cId,
+			@In("member.leaderPosition") Position mLeaderPosition,
+			@In("coord.leaderPosition") Position cLeaderPosition,
+			@In("coord.spectrum") float cSpectrum,
+			@In("coord.isSiteLeader") Boolean isSiteLeader) {
+		return isSiteLeader
+				&& !mId.equals(cId)
+				&& Utils.isInSpectrum(cLeaderPosition, mLeaderPosition,
+						cSpectrum);
 	}
 
 	@KnowledgeExchange
-	@PeriodicScheduling(5000)
-	public static void map(@In("member.id") String mId,
+	@PeriodicScheduling(4000)
+	public static void map(
 			@In("coord.id") String cId,
-			@InOut("member.GMsInDangerInTeam") Set<String> GMsInDangerInTeam,
-			@InOut("coord.GMsInDangerInSite") Set<String> GMsInDangerInSite) {
-		GMsInDangerInSite.clear();
+			@In("member.FFsInDangerInSite") Map<String, Set<String>> mFFsInDangerInSite,
+			@InOut("coord.FFsInDangerInSite") Map<String, Set<String>> cFFsInDangerInSite) {
+		Set<String> set;
+		for (String GLId : mFFsInDangerInSite.keySet()) {
+			set = mFFsInDangerInSite.get(GLId);
+			cFFsInDangerInSite.put(GLId, set);
+		}
 		System.out
-				.println("Copying GMsInDanger set from " + mId + " to " + cId);
-		GMsInDangerInSite.addAll(GMsInDangerInTeam);
+				.println("Copying data from hexacopter to GroupLeader " + cId);
 	}
 }

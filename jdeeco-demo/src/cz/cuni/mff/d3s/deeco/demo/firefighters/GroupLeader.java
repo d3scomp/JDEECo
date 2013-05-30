@@ -45,12 +45,15 @@ public class GroupLeader extends Component {
 	public Map<String, Float> temperatures;
 	public Map<String, Position> positions;
 	// list of supervised group members in danger:
-	public Set<String> GMsInDangerInTeam;
+	public Set<String> FFsInDangerInTeam;
 	// list of all group members in danger,
 	// to be populated only if the GL is also a site leader:
-	public Set<String> GMsInDangerInSite;
+	public Map<String, Set<String>> FFsInDangerInSite;
 	// constant to determine critical condition
 	public Float temperatureThreshold = 50.0f;
+
+	public Position leaderPosition;
+	public Float spectrum;
 
 	public GroupLeader() {
 		// id (String) field always exists; it's the root of the tree
@@ -59,38 +62,44 @@ public class GroupLeader extends Component {
 		this.isSiteLeader = true;
 		this.temperatures = new HashMap<String, Float>();
 		this.positions = new HashMap<String, Position>();
-		this.GMsInDangerInTeam = new HashSet<String>();
-		this.GMsInDangerInSite = new HashSet<String>();
+		this.FFsInDangerInTeam = new HashSet<String>();
+		this.FFsInDangerInSite = new HashMap<String, Set<String>>();
+		this.leaderPosition = new Position(300, 300);
+		this.spectrum = 500.0f;
 	}
 
-	public GroupLeader(String id, String team_id, boolean isSiteLeader) {
+	public GroupLeader(String id, String team_id, boolean isSiteLeader,
+			Position leaderPosition) {
 		// id field always exists; it's the root of the tree
 		this.id = id;
 		this.teamId = team_id;
 		this.isSiteLeader = isSiteLeader;
 		this.temperatures = new HashMap<String, Float>();
 		this.positions = new HashMap<String, Position>();
-		this.GMsInDangerInTeam = new HashSet<String>();
-		this.GMsInDangerInSite = new HashSet<String>();
+		this.FFsInDangerInTeam = new HashSet<String>();
+		this.FFsInDangerInSite = new HashMap<String, Set<String>>();
+		this.leaderPosition = leaderPosition;
+		this.spectrum = 500.0f;
 	}
 
 	@Process
-	@PeriodicScheduling(5000)
+	@PeriodicScheduling(2000)
 	public static void processSensorData(@In("id") String GLId,
 			@In("temperatures") Map<String, Float> temperatures,
 			@In("positions") Map<String, Position> positions,
 			@In("temperatureThreshold") Float temperatureThreshold,
-			@InOut("GMsInDangerInTeam") Set<String> GMsInDangerInTeam) {
+			@InOut("FFsInDangerInTeam") Set<String> FFsInDangerInTeam) {
 		System.out.println(GLId + ": Processing sensor data...");
-		GMsInDangerInTeam.clear();
+		FFsInDangerInTeam.clear();
 		System.out.println("Temperatures map holds "
 				+ temperatures.keySet().size() + " items");
 		for (String id : temperatures.keySet()) {
 			System.out.println("[" + id + ", " + temperatures.get(id) + "]");
 			if (temperatures.get(id) > temperatureThreshold) {
-				GMsInDangerInTeam.add(id);
+				FFsInDangerInTeam.add(id);
 			}
 		}
+		/* do not output the members positions for now
 		System.out.println("Positions map holds "
 				+ temperatures.keySet().size() + " items");
 		for (String id : positions.keySet()) {
@@ -98,23 +107,31 @@ public class GroupLeader extends Component {
 			System.out.println("[" + id + ", {" + pos.latitude + ", "
 					+ pos.longitude + "}]");
 		}
+		*/
 	}
 
 	@Process
-	@PeriodicScheduling(10000)
+	@PeriodicScheduling(8000)
 	public static void outputGMsInDanger(
 			@In("isSiteLeader") Boolean isSiteLeader,
-			@In("GMsInDangerInSite") Set<String> GMsInDangerInSite) {
+			@In("FFsInDangerInSite") Map<String, Set<String>> FFsInDangerInSite) {
 		if (isSiteLeader) {
-			int size = GMsInDangerInSite.size();
-			System.out.print("There " + ((size == 1) ? "is " : "are ") + size
-					+ " firefighter" + ((size == 1) ? "" : "s")
-					+ " in danger at the site: ");
-			System.out.print("[");
-			for (String ff : GMsInDangerInSite) {
-				System.out.print(ff + ", ");
+			System.out.println("Firefighters in danger: ");
+			int count = 0;
+			for (String f : FFsInDangerInSite.keySet()) {
+				Set<String> set = FFsInDangerInSite.get(f);
+				count += set.size();
+				if (set.size() == 0)
+					break;
+				System.out.print("[" + f + ", (");
+				for (String ff : FFsInDangerInSite.get(f)) {
+					System.out.print(ff + ", ");
+				}
+				System.out.println(")]");
 			}
-			System.out.println("]");
+			if (count == 0) {
+				System.out.println("0");
+			}
 		}
 	}
 
