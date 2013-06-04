@@ -37,7 +37,7 @@ import cz.cuni.mff.d3s.deeco.ltl.AtomicProposition;
  * @author Jaroslav Keznikl
  * 
  */
-public class LocalKnowledgeRepositoryJPF  extends LocalKnowledgeRepository implements KnowledgeJPF {
+public class LocalKnowledgeRepositoryJPF extends LocalKnowledgeRepository implements KnowledgeJPF {
 	
 	public HashMap<String, Boolean> propositionValues = new HashMap<>();	
 	public HashMap<String, Boolean> propositionToEvaluate = new HashMap<>();
@@ -51,15 +51,12 @@ public class LocalKnowledgeRepositoryJPF  extends LocalKnowledgeRepository imple
 			propositionValues.put(ap.getName(), false);
 		}
 		
-		
-		// JPF Optimization - class initialization if lock is used causes state
-		// space explosion
-		// here we intentionally use the lock -> it will hopefully
-		// "execute all class initializer"
-		// here in single threaded code and reduce number of program states
-		// Problematic class
-		// java.util.concurrent.locks.AbstractQueuedSynchronizer$Node
-		// Problematic class java.util.concurrent.locks.LockSupport
+		// JPF optimization
+		// class initialization if the lock is used causes state space explosion
+		// here we intentionally use the lock -> it will hopefully execute all class 
+		// initializers in single threaded code and reduce number of program states
+		// problematic class: java.util.concurrent.locks.AbstractQueuedSynchronizer$Node
+		// problematic class java.util.concurrent.locks.LockSupport
 		Condition c = lock.newCondition();
 		try {
 			lock.lock();
@@ -71,8 +68,7 @@ public class LocalKnowledgeRepositoryJPF  extends LocalKnowledgeRepository imple
 	}
 	
 	@Override
-	public void put(String entryKey, Object value, ISession session)
-			throws KRExceptionAccessError {		
+	public void put(String entryKey, Object value, ISession session) throws KRExceptionAccessError {		
 		// make sure that when outside of a session, put + evaluation of propositions is done atomically
 		lock.lock();
 		

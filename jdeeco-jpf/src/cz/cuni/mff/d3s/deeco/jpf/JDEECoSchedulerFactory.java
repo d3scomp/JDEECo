@@ -8,7 +8,7 @@ import gov.nasa.jpf.jvm.SystemState;
 import gov.nasa.jpf.jvm.ThreadInfo;
 
 
-// disables thread choices at park/unpark
+// disables thread choices at unpark
 public class JDEECoSchedulerFactory extends DefaultSchedulerFactory 
 {
 	public JDEECoSchedulerFactory(Config config, JVM vm, SystemState ss) 

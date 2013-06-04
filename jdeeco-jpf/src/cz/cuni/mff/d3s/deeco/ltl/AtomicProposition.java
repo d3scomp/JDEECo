@@ -23,7 +23,6 @@ public abstract class AtomicProposition {
 
 	/**
 	 * Creates an object of the corresponding type out of a knowledge subtree identified by the given id.
-	 * 
 	 */
 	protected Object deserialize(KnowledgeJPF knowledge, String knowledgeId) {
 		// TODO: use InputParametersHelper and preprocessed map<Class, ParameterType>
@@ -32,7 +31,6 @@ public abstract class AtomicProposition {
 	
 	/**
 	 * Creates a list of objects of the corresponding type out of a knowledge subtree identified by the given id.
-	 * 
 	 */
 	protected Object deserializeList(KnowledgeJPF knowledge, String knowledgeId) {
 		throw new RuntimeException("Not implemented.");

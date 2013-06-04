@@ -15,17 +15,14 @@ import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
 
 /**
  * 
- * @author Jarpsav Keznikl
+ * @author Jaroslav Keznikl
  *
  */
 public class LocalLauncherExampleJPF {
-	/**
-	 * @param args
-	 */
+
 	public static void main(String[] args) {
 		List<AtomicProposition> propositions = Arrays.asList(new AtomicProposition[] {
-				new AtomicProposition() {
-					
+				new AtomicProposition() {					
 					@Override
 					public String getName() {
 						return "isFollowerAtDestination";
@@ -39,8 +36,7 @@ public class LocalLauncherExampleJPF {
 				}
 		});
 		
-		KnowledgeManager km = new RepositoryKnowledgeManager(
-				new LocalKnowledgeRepositoryJPF(propositions));
+		KnowledgeManager km = new RepositoryKnowledgeManager(new LocalKnowledgeRepositoryJPF(propositions));
 		
 		Scheduler scheduler = new MultithreadedSchedulerJPF();
 		

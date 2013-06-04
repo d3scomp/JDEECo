@@ -13,8 +13,8 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
  * Special scheduler for testing via JPF.
  * 
  * Each task has a separate thread and is executed repeatedly.
- * Timing is ignored (due to GC - see comments in code).
- * We limit the number of executed periods with respect to 2*P_max, where P_max is the longest period.
+ * Timing is ignored (due to GC - see comments in the code).
+ * We limit the number of executed periods by 2*P_max, where P_max is the longest period.
  */
 public class MultithreadedSchedulerJPF extends Scheduler {
 
@@ -25,7 +25,7 @@ public class MultithreadedSchedulerJPF extends Scheduler {
 		this.threads = new HashSet<Thread>();
 
 		// JPF optimization -> earlier class loading via a clinit call (in the single threaded part)
-		// shrinks state space
+		// reduces the state space
 		@SuppressWarnings("unused")
 		ETriggerType e = ETriggerType.COORDINATOR;
 	}
@@ -40,7 +40,7 @@ public class MultithreadedSchedulerJPF extends Scheduler {
 			if (spPeriod > maxPeriod) maxPeriod = spPeriod;
 		}
 
-		System.out.println("[DEBUG] max period = " + maxPeriod);
+		//System.out.println("[DEBUG] max period = " + maxPeriod);
 
 		if (!running) {
 			// let every process run for the number of times its period P fits into 2*P_max
@@ -48,16 +48,14 @@ public class MultithreadedSchedulerJPF extends Scheduler {
 				long spPeriod = ((ProcessPeriodicSchedule) sp.scheduling).interval;
 				long repeatCount = (2*maxPeriod) / spPeriod + 1;
 
-				System.out.println("[DEBUG] period = " + spPeriod + ", repeat count = " + repeatCount);
+				//System.out.println("[DEBUG] period = " + spPeriod + ", repeat count = " + repeatCount);
 
 				startPeriodicProcess(sp, repeatCount);
 			}
 			List<KnowledgeManager> kms = new LinkedList<KnowledgeManager>();
 			for (TriggeredSchedulableProcess tsp : triggeredProcesses) {
-				// not yet supported (we ignore them for now)
 				tsp.registerListener();
-				if (!kms.contains(tsp.getKnowledgeManager()))
-					kms.add(tsp.getKnowledgeManager());
+				if (!kms.contains(tsp.getKnowledgeManager())) kms.add(tsp.getKnowledgeManager());
 			}
 			for (KnowledgeManager km : kms) {
 				km.setListenersActive(true);
@@ -76,8 +74,7 @@ public class MultithreadedSchedulerJPF extends Scheduler {
 			}
 			List<KnowledgeManager> kms = new LinkedList<KnowledgeManager>();
 			for (TriggeredSchedulableProcess tsp : triggeredProcesses) {
-				if (!kms.contains(tsp.getKnowledgeManager()))
-					kms.add(tsp.getKnowledgeManager());
+				if (!kms.contains(tsp.getKnowledgeManager())) kms.add(tsp.getKnowledgeManager());
 			}
 			for (KnowledgeManager km : kms) {
 				km.setListenersActive(false);
@@ -122,5 +119,4 @@ public class MultithreadedSchedulerJPF extends Scheduler {
 			}
 		}
 	}
-
 }
