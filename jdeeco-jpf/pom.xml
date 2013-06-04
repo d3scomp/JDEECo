@@ -11,8 +11,11 @@
 	<properties>
 		<dist>../dist</dist>
 		<jpfCore>${dist}/jpf-core</jpfCore>
-		<jpfBuild>${dist}/jpf-core/build</jpfBuild>
+		<jpfBuild>${jpfCore}/build</jpfBuild>
 		<jpfJDEECo>jdeeco-jpf.jar</jpfJDEECo>
+		<jpfLTL>${dist}/jpf-ltl</jpfLTL>
+		<jpfLTLBuild>${jpfLTL}/build</jpfLTLBuild>
+		<jpfLTLLib>${jpfLTL}/lib</jpfLTLLib>
 	</properties>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
@@ -42,7 +45,7 @@
 				<version>2.6</version>
 				<executions>
 					<execution>
-						<id>copy-dependencies</id>
+						<id>copy-jpf-dependencies</id>
 						<phase>install</phase>
 						<goals>
 							<goal>copy-dependencies</goal>
@@ -51,9 +54,50 @@
 							<excludeArtifactIds>
 								jpf-libs,jpf-properties
 							</excludeArtifactIds>
+							<excludeGroupIds>
+								cz.cuni.mff.d3s.jdeeco.jpf-ltl
+							</excludeGroupIds>
 							<stripVersion>true</stripVersion>
 							<prependGroupId>false</prependGroupId>
 							<outputDirectory>${jpfBuild}</outputDirectory>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>false</overWriteSnapshots>
+							<overWriteIfNewer>true</overWriteIfNewer>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-jpf-ltl-dependencies</id>
+						<phase>install</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<excludeArtifactIds>
+								jpf-ltl-libs,ltl-properties,ltl2buchi
+							</excludeArtifactIds>
+							<includeGroupIds>
+								cz.cuni.mff.d3s.jdeeco.jpf-ltl
+							</includeGroupIds>
+							<stripVersion>true</stripVersion>
+							<prependGroupId>false</prependGroupId>
+							<outputDirectory>${jpfLTLBuild}</outputDirectory>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>false</overWriteSnapshots>
+							<overWriteIfNewer>true</overWriteIfNewer>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-ltl2buchi-dependencies</id>
+						<phase>install</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<groupId>cz.cuni.mff.d3s.jdeeco.jpf-ltl</groupId>
+							<artifactId>ltl2buchi</artifactId>
+							<stripVersion>true</stripVersion>
+							<prependGroupId>false</prependGroupId>
+							<outputDirectory>${jpfLTLLib}</outputDirectory>
 							<overWriteReleases>false</overWriteReleases>
 							<overWriteSnapshots>false</overWriteSnapshots>
 							<overWriteIfNewer>true</overWriteIfNewer>
@@ -94,9 +138,18 @@
 									</artifactId>
 									<version>0.0.1</version>
 									<type>zip</type>
+									<outputDirectory>${jpfCore}</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>cz.cuni.mff.d3s.jdeeco.jpf-ltl</groupId>
+									<artifactId>
+										ltl-properties
+									</artifactId>
+									<version>0.0.1</version>
+									<type>zip</type>
+									<outputDirectory>${jpfLTL}</outputDirectory>
 								</artifactItem>
 							</artifactItems>
-							<outputDirectory>${jpfCore}</outputDirectory>
 							<overWriteReleases>true</overWriteReleases>
 							<overWriteSnapshots>true</overWriteSnapshots>
 						</configuration>
@@ -162,9 +215,25 @@
 			<type>pom</type>
 		</dependency>
 		<dependency>
+			<groupId>cz.cuni.mff.d3s.jdeeco.jpf-ltl</groupId>
+			<artifactId>
+				jpf-ltl-libs
+			</artifactId>
+			<version>0.0.1</version>
+			<type>pom</type>
+		</dependency>
+		<dependency>
 			<groupId>cz.cuni.mff.d3s.jdeeco.jpf</groupId>
 			<artifactId>
 				jpf-properties
+			</artifactId>
+			<version>0.0.1</version>
+			<type>zip</type>
+		</dependency>
+		<dependency>
+			<groupId>cz.cuni.mff.d3s.jdeeco.jpf-ltl</groupId>
+			<artifactId>
+				ltl-properties
 			</artifactId>
 			<version>0.0.1</version>
 			<type>zip</type>
