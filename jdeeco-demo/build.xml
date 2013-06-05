@@ -146,5 +146,24 @@
 		</java>
 	</target>
 
+	<!-- check ltl properties for convoy demo -->
+	<target name="ltl-convoy">
+		<java fork="true" classname="cz.cuni.mff.d3s.deeco.runtime.PreprocessorLauncher" dir="${dist}">
+			<arg value="convoy.jar"/>
+			<classpath>
+				<pathelement location="${dist}/jdeeco.jar"/>
+				<pathelement location="${dist}/sde/cz.cuni.mff.d3s.bcel-1.0.0.jar"/>
+			</classpath>
+		</java>
+		<java fork="true" jar="${jpf}/build/RunJPF.jar" dir="${dist}">
+			<jvmarg value="-Djdeeco-dist=${dist}"/>
+			<jvmarg value="-Djdeeco-src=${src}"/>
+			<jvmarg value="-Djdeeco-src-demo=${demo}"/>
+			<arg value="+classpath=${dist}/convoy.jar,${dist}/jdeeco.jar"/>
+			<arg value="+jpf-core.native_classpath+=;${dist}/jdeeco.jar;${dist}/jdeeco-jpf.jar"/>
+			<arg value="${demo}/../jpfProperties/LocalLauncherConvoyLTL.jpf"/>
+			<jvmarg value="-Xmx8g"/>
+		</java>
+	</target>
 	
 </project>
