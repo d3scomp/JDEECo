@@ -152,6 +152,7 @@
 			<arg value="convoytut.jar"/>
 			<classpath>
 				<pathelement location="${dist}/jdeeco.jar"/>
+				<pathelement location="${dist}/jdeeco-jpf.jar"/>
 				<pathelement location="${dist}/lib/bcel.jar"/>
 			</classpath>
 		</java>
