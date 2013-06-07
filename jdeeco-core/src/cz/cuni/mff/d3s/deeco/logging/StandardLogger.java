@@ -13,7 +13,7 @@ import java.util.logging.LogManager;
  * @author Ilias Gerostathopoulos
  * 
  */
-public class StandardLogger implements ILogger, Serializable {
+public class StandardLogger implements ILogger {
 
 	private static ILogger instance;
 	private java.util.logging.Logger logger;

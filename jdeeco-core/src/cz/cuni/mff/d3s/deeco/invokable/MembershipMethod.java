@@ -1,10 +1,11 @@
 package cz.cuni.mff.d3s.deeco.invokable;
 
+import java.io.Serializable;
 import java.util.List;
 
 
 
-public abstract class MembershipMethod {
+public abstract class MembershipMethod implements Serializable {
 	
 	public final ParameterizedMethod method;
 	
