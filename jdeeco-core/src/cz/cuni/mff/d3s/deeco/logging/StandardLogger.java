@@ -1,6 +1,7 @@
 package cz.cuni.mff.d3s.deeco.logging;
 
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
@@ -12,7 +13,7 @@ import java.util.logging.LogManager;
  * @author Ilias Gerostathopoulos
  * 
  */
-public class StandardLogger implements ILogger {
+public class StandardLogger implements ILogger, Serializable {
 
 	private static ILogger instance;
 	private java.util.logging.Logger logger;
