@@ -152,7 +152,7 @@
 			<arg value="convoytut.jar"/>
 			<classpath>
 				<pathelement location="${dist}/jdeeco.jar"/>
-				<pathelement location="${dist}/sde/cz.cuni.mff.d3s.bcel-1.0.0.jar"/>
+				<pathelement location="${dist}/lib/bcel.jar"/>
 			</classpath>
 		</java>
 		<java fork="true" jar="${jpf}/build/RunJPF.jar" dir="${dist}">

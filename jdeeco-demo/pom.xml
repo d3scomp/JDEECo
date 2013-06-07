@@ -137,6 +137,7 @@
 									<directory>.</directory>
 									<includes>
 										<include>build.xml</include>
+										<include>site.properties</include>
 									</includes>
 								</resource>
 							</resources>
