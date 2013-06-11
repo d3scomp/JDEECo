@@ -27,7 +27,7 @@ import cz.cuni.mff.d3s.deeco.logging.Log;
  * @author Michal Kit
  * 
  */
-public class ParameterizedMethod {
+public class ParameterizedMethod implements Serializable {
 	
 	public final static long serialVersionUID = 1L;
 	

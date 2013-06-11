@@ -12,6 +12,8 @@
 	<properties>
 		<dist>../dist</dist>
 		<coreJar>jdeeco.jar</coreJar>
+		<lib>${dist}/lib</lib>
+		<bcelJar>bcel.jar</bcelJar>
 	</properties>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
@@ -51,6 +53,13 @@
 									<type>${project.packaging}</type>
 									<destFileName>${coreJar}</destFileName>
 									<outputDirectory>${dist}</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>cz.cuni.mff.d3s</groupId>
+									<artifactId>cz.cuni.mff.d3s.bcel</artifactId>
+									<version>1.0.0</version>
+									<destFileName>${bcelJar}</destFileName>
+									<outputDirectory>${lib}</outputDirectory>
 								</artifactItem>
 							</artifactItems>
 						</configuration>

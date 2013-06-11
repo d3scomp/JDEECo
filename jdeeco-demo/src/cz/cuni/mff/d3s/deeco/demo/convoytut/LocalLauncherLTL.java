@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.deeco.demo.convoy;
+package cz.cuni.mff.d3s.deeco.demo.convoytut;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,7 +15,7 @@ import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
 import cz.cuni.mff.d3s.deeco.ltl.AtomicProposition;
 
 
-public class LocalLauncherConvoyLTL 
+public class LocalLauncherLTL 
 {
 	public static void main(String[] args) 
 	{
@@ -40,8 +40,12 @@ public class LocalLauncherConvoyLTL
 					
 					@Override
 					public Boolean evaluate(KnowledgeJPF knowledge) {
-						return knowledge.getSingle("follower.position.x").equals(knowledge.getSingle("follower.destination.x"))
-								&& knowledge.getSingle("follower.position.y").equals(knowledge.getSingle("follower.destination.y"));
+						Integer lx = (Integer) knowledge.getSingle("leader.position.x");
+                        Integer ly = (Integer) knowledge.getSingle("leader.position.y");
+                        Integer fx = (Integer) knowledge.getSingle("follower.position.x");
+                        Integer fy = (Integer) knowledge.getSingle("follower.position.y");
+
+                        return (Math.abs(lx - fx) <= 1) && (Math.abs(lx - fy) <= 1); 
 					}
 				}
 

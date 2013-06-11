@@ -5,7 +5,7 @@ search.class=gov.nasa.jpf.ltl.DDFSearch
 listener=gov.nasa.jpf.ltl.OtherChoiceListener
 vm.storage.class=gov.nasa.jpf.jvm.FullStateSet
 
-target=cz.cuni.mff.d3s.deeco.demo.convoy.LocalLauncherConvoyLTL
+target=cz.cuni.mff.d3s.deeco.demo.convoytut.LocalLauncherLTL
 
 deeco.ltl=[](isFollowerNearLeader-><>isFollowerAtDestination)
 
