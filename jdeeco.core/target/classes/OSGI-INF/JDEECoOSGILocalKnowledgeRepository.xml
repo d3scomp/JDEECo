@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<component name="JDEECoOSGILocalKnowledgeRepository">
-	<implementation
-		class="cz.cuni.mff.d3s.deeco.knowledge.local.LocalKnowledgeRepository" />
-	<service>
-		<provide interface="cz.cuni.mff.d3s.deeco.knowledge.IKnowledgeRepository" />
-	</service>
-</component>
