@@ -28,7 +28,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *
  * @generated
  */
-public class MapValueTypeImpl extends KnowledgeTypeImpl implements MapValueType {
+public class MapValueTypeImpl extends ParametricKnowledgeTypeImpl implements MapValueType {
 	/**
 	 * The cached value of the '{@link #getKeyTypeParameter() <em>Key Type Parameter</em>}' containment reference.
 	 * <!-- begin-user-doc -->

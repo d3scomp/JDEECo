@@ -1159,9 +1159,7 @@ public class RuntimemodelPackageImpl extends EPackageImpl implements Runtimemode
 		processEClass.getESuperTypes().add(this.getParameterizedMethod());
 		processEClass.getESuperTypes().add(this.getSchedulable());
 		structuredKnowledgeValueTypeEClass.getESuperTypes().add(this.getKnowledgeType());
-		listValueTypeEClass.getESuperTypes().add(this.getKnowledgeType());
 		listValueTypeEClass.getESuperTypes().add(this.getParametricKnowledgeType());
-		mapValueTypeEClass.getESuperTypes().add(this.getKnowledgeType());
 		mapValueTypeEClass.getESuperTypes().add(this.getParametricKnowledgeType());
 		unstructuredValueTypeEClass.getESuperTypes().add(this.getKnowledgeType());
 		updateKnowledgeStructureCommandEClass.getESuperTypes().add(this.getModelUpdateCommand());
@@ -1177,6 +1175,7 @@ public class RuntimemodelPackageImpl extends EPackageImpl implements Runtimemode
 		membershipConditionEClass.getESuperTypes().add(this.getParameterizedMethod());
 		knowledgeExchangeEClass.getESuperTypes().add(this.getParameterizedMethod());
 		typeParameterEClass.getESuperTypes().add(this.getKnowledgeTypeOwner());
+		parametricKnowledgeTypeEClass.getESuperTypes().add(this.getKnowledgeType());
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(componentEClass, Component.class, "Component", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -1295,7 +1294,7 @@ public class RuntimemodelPackageImpl extends EPackageImpl implements Runtimemode
 		initEClass(typeParameterEClass, TypeParameter.class, "TypeParameter", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getTypeParameter_Owner(), this.getParametricKnowledgeType(), null, "owner", null, 1, 1, TypeParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(parametricKnowledgeTypeEClass, ParametricKnowledgeType.class, "ParametricKnowledgeType", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEClass(parametricKnowledgeTypeEClass, ParametricKnowledgeType.class, "ParametricKnowledgeType", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(knowledgeTypeOwnerEClass, KnowledgeTypeOwner.class, "KnowledgeTypeOwner", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getKnowledgeTypeOwner_Type(), this.getKnowledgeType(), this.getKnowledgeType_Owner(), "type", null, 1, 1, KnowledgeTypeOwner.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

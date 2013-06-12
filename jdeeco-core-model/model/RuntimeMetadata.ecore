@@ -50,11 +50,11 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="children" upperBound="-1"
         eType="#//NestedKnowledgeDefinition" containment="true" eOpposite="#//NestedKnowledgeDefinition/parent"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ListValueType" eSuperTypes="#//KnowledgeType #//ParametricKnowledgeType">
+  <eClassifiers xsi:type="ecore:EClass" name="ListValueType" eSuperTypes="#//ParametricKnowledgeType">
     <eStructuralFeatures xsi:type="ecore:EReference" name="typeParameter" lowerBound="1"
         eType="#//TypeParameter" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="MapValueType" eSuperTypes="#//KnowledgeType #//ParametricKnowledgeType">
+  <eClassifiers xsi:type="ecore:EClass" name="MapValueType" eSuperTypes="#//ParametricKnowledgeType">
     <eStructuralFeatures xsi:type="ecore:EReference" name="keyTypeParameter" lowerBound="1"
         eType="#//TypeParameter" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="valueTypeParameter" lowerBound="1"
@@ -163,7 +163,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="owner" lowerBound="1" eType="#//ParametricKnowledgeType"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ParametricKnowledgeType" abstract="true"
-      interface="true"/>
+      eSuperTypes="#//KnowledgeType"/>
   <eClassifiers xsi:type="ecore:EClass" name="KnowledgeTypeOwner">
     <eStructuralFeatures xsi:type="ecore:EReference" name="type" lowerBound="1" eType="#//KnowledgeType"
         containment="true" eOpposite="#//KnowledgeType/owner"/>

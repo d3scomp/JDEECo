@@ -138,16 +138,16 @@ public class RuntimemodelSwitch<T> extends Switch<T> {
 			case RuntimemodelPackage.LIST_VALUE_TYPE: {
 				ListValueType listValueType = (ListValueType)theEObject;
 				T result = caseListValueType(listValueType);
-				if (result == null) result = caseKnowledgeType(listValueType);
 				if (result == null) result = caseParametricKnowledgeType(listValueType);
+				if (result == null) result = caseKnowledgeType(listValueType);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
 			case RuntimemodelPackage.MAP_VALUE_TYPE: {
 				MapValueType mapValueType = (MapValueType)theEObject;
 				T result = caseMapValueType(mapValueType);
-				if (result == null) result = caseKnowledgeType(mapValueType);
 				if (result == null) result = caseParametricKnowledgeType(mapValueType);
+				if (result == null) result = caseKnowledgeType(mapValueType);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -287,6 +287,7 @@ public class RuntimemodelSwitch<T> extends Switch<T> {
 			case RuntimemodelPackage.PARAMETRIC_KNOWLEDGE_TYPE: {
 				ParametricKnowledgeType parametricKnowledgeType = (ParametricKnowledgeType)theEObject;
 				T result = caseParametricKnowledgeType(parametricKnowledgeType);
+				if (result == null) result = caseKnowledgeType(parametricKnowledgeType);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}

@@ -27,7 +27,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *
  * @generated
  */
-public class ListValueTypeImpl extends KnowledgeTypeImpl implements ListValueType {
+public class ListValueTypeImpl extends ParametricKnowledgeTypeImpl implements ListValueType {
 	/**
 	 * The cached value of the '{@link #getTypeParameter() <em>Type Parameter</em>}' containment reference.
 	 * <!-- begin-user-doc -->
