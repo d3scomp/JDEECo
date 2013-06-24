@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="runtimemodel" nsURI="http://runtimemetadata/1.0" nsPrefix="cz.cuni.mff.d3s.jdeeco.core.runtimemodel">
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="runtimemodel" nsURI="http://runtimemetadata/1.0" nsPrefix="cz.cuni.mff.d3s.deeco.core.model.runtime">
   <eClassifiers xsi:type="ecore:EClass" name="Component">
     <eOperations name="findDefinition" lowerBound="1" eType="#//KnowledgeDefinition">
       <eParameters name="path" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
