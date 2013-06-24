@@ -46,7 +46,7 @@ public interface RuntimemodelPackage extends EPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	String eNS_PREFIX = "cz.cuni.mff.d3s.jdeeco.core.runtimemodel";
+	String eNS_PREFIX = "cz.cuni.mff.d3s.deeco.core.model.runtime";
 
 	/**
 	 * The singleton instance of the package.
