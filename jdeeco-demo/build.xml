@@ -160,7 +160,7 @@
 			<jvmarg value="-Djdeeco-dist=${dist}"/>
 			<jvmarg value="-Djdeeco-src=${src}"/>
 			<jvmarg value="-Djdeeco-src-demo=${demo}"/>
-			<arg value="+classpath=${dist}/convoytut.jar,${dist}/jdeeco.jar"/>
+			<arg value="+classpath=${dist}/convoytut.jar,${dist}/jdeeco.jar,${dist}/jdeeco-jpf.jar"/>
 			<arg value="+site=site.properties"/>
 			<arg value="+jpf-core.native_classpath+=;${dist}/jdeeco.jar;${dist}/jdeeco-jpf.jar"/>
 			<arg value="${demo}/../jpfProperties/LocalLauncherConvoyLTL.jpf"/>
