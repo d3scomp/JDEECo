@@ -20,8 +20,15 @@ import cz.cuni.mff.d3s.deeco.invokable.TypeDescription;
 import cz.cuni.mff.d3s.deeco.runtime.IRuntime;
 import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
 
+/* 
+ * TODO: Comment is missing
+ * This interface is not used - only by the KnowledgeManager
+ * Either remove it or refactor the rest of DEECo to use the interface
+ */
+
 public interface IKnowledgeManager {
 
+	//TODO - What is meant by "flat element(s)"?
 	/**
 	 * Retrieves knowledge from the knowledge repository, defined by
 	 * <code>knowledgePath. The result is either map or flat element(s). This method is
@@ -39,6 +46,8 @@ public interface IKnowledgeManager {
 	 */
 	public Object getKnowledge(String knowledgePath, ISession session)
 			throws KMException;
+
+	// TODO: How does the behavior differ from the method above - extend the description
 
 	/**
 	 * Retrieves knowledge from the knowledge repository, defined by both
@@ -76,6 +85,8 @@ public interface IKnowledgeManager {
 	 */
 	public Object takeKnowledge(String knowledgePath, ISession session)
 			throws KMException;
+
+	// TODO: What is the difference between altering and putting knowledge - should be stated in the comments
 
 	/**
 	 * Alters knowledge object in the knowledge repository. This method is

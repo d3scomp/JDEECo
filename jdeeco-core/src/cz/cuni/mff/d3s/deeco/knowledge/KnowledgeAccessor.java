@@ -4,6 +4,8 @@ import java.lang.reflect.Field;
 
 import cz.cuni.mff.d3s.deeco.exceptions.KMCastException;
 
+//TODO: Comment is missing
+
 public class KnowledgeAccessor implements IObjectAccessor {
 
 	private Class<?> clazz;

@@ -4,6 +4,8 @@ import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.exceptions.KMCastException;
 
+//TODO: Comment is missing
+
 public class ListAccessor implements IObjectAccessor {
 
 	private List<?> target;

@@ -4,6 +4,8 @@ import java.util.Map;
 
 import cz.cuni.mff.d3s.deeco.exceptions.KMCastException;
 
+//TODO: Comment is missing
+
 public class MapAccessor implements IObjectAccessor {
 
 	private Map<String, ?> target;

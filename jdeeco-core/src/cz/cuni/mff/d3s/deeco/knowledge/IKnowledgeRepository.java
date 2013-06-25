@@ -4,6 +4,11 @@ import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionAccessError;
 import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionUnavailableEntry;
 import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
 
+/* 
+ * TODO: Comment is missing
+ * This interface is not used - either merge it with KnowledgeRepository or refactor the rest of DEECo to use it
+ */
+
 public interface IKnowledgeRepository {
 	/**
 	 * Reads a single entry from the knowledge repository. This method is

@@ -10,6 +10,8 @@ import cz.cuni.mff.d3s.deeco.logging.Log;
 import static cz.cuni.mff.d3s.deeco.processor.JarClassUtils.getClassNamesFromJar;
 import static cz.cuni.mff.d3s.deeco.processor.JarClassUtils.getClassNamesFromDir;
 
+// TODO: Comment is missing
+
 public class ClassFinder {
 	private final List<String> classes;
 	private final List<URL> dirURLs;

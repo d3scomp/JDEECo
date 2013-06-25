@@ -12,6 +12,12 @@ import org.apache.bcel.classfile.JavaClass;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
 
+/*
+ * TODO: Comment is missing
+ * Remove this class and make the methods part of ClassFinder (they should be private then)
+ */
+
+
 public class JarClassUtils {
 	public static List<String> getClassNamesFromJar(String jarPath) {
 		try {

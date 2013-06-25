@@ -10,6 +10,8 @@ import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.provider.ClassDEECoObjectProvider;
 
+// TODO: Comment is missing
+
 public class ParsedObjectWriter {
 
 	private String fileName;

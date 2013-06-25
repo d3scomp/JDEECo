@@ -8,6 +8,8 @@ import java.util.List;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.provider.ClassDEECoObjectProvider;
 
+// TODO: Comment is missing
+
 public class ClassProcessor {
 
 	public static ClassDEECoObjectProvider processClasses(List<String> classNames, List<URL> dirURLs) {

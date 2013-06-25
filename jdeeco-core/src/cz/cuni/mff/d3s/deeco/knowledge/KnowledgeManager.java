@@ -26,9 +26,9 @@ import cz.cuni.mff.d3s.deeco.runtime.IRuntime;
  * 
  */
 public abstract class KnowledgeManager implements IKnowledgeManager {
-  
-        protected IRuntime runtime;
-	
+
+	protected IRuntime runtime;
+
 	@Override
 	public Object getKnowledge(String knowledgePath) throws KMException {
 		return getKnowledge(knowledgePath, null);
@@ -38,31 +38,31 @@ public abstract class KnowledgeManager implements IKnowledgeManager {
 	public Object takeKnowledge(String knowledgePath) throws KMException {
 		return takeKnowledge(knowledgePath, null);
 	}
-	
+
 	@Override
 	public void alterKnowledge(String knowledgePath, Object value)
 			throws KMException {
 		alterKnowledge(knowledgePath, value, null);
 	}
-	
+
 	@Override
 	public void putKnowledge(String knowledgePath, Object value)
 			throws KMException {
 		putKnowledge(knowledgePath, value, null);
 	}
-        
-        @Override
-        public void setRuntime(IRuntime rt) {
-          runtime = rt;
-        }
-        
-        @Override
-        public void unsetRuntime() {
-          runtime = null;
-        }
-        
-        @Override
-        public IRuntime getRuntime() {
-          return runtime;
-        }
+
+	@Override
+	public void setRuntime(IRuntime rt) {
+		runtime = rt;
+	}
+
+	@Override
+	public void unsetRuntime() {
+		runtime = null;
+	}
+
+	@Override
+	public IRuntime getRuntime() {
+		return runtime;
+	}
 }

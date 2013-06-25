@@ -18,6 +18,7 @@ public abstract class AbstractDEECoObjectProvider implements Serializable {
 	protected List<ParsedComponent> components;
 	protected List<SchedulableEnsembleProcess> ensembles;
 
+	// TODO: This should return ComponentInstances
 	/**
 	 * Retrieves all provided components.
 	 * 

@@ -5,6 +5,8 @@ import cz.cuni.mff.d3s.deeco.invokable.TypeDescription;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
 
+//TODO: Comment is missing
+
 public class LoggingKnowledgeManager extends KnowledgeManager {
 
 	final KnowledgeManager decoratedKm;

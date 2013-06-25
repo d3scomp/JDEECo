@@ -19,7 +19,7 @@ import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionAccessError;
 import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionUnavailableEntry;
 
 /**
- * An abstract class specifing and defining basic operations on the knowledge
+ * An abstract class defining basic operations on the knowledge
  * repository.
  * 
  * @author Michal Kit

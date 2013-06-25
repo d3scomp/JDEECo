@@ -1,6 +1,8 @@
 package cz.cuni.mff.d3s.deeco.provider;
 
-import static cz.cuni.mff.d3s.deeco.processor.ComponentParser.extractComponentProcess;
+// TODO: Deprecate - Use the InitializedDEECo... instead
+
+import static cz.cuni.mff.d3s.deeco.processor.ComponentParser.extractComponentProcesses;
 import static cz.cuni.mff.d3s.deeco.processor.ComponentParser.extractInitialKnowledge;
 import static cz.cuni.mff.d3s.deeco.processor.ComponentParser.isComponentDefinition;
 import static cz.cuni.mff.d3s.deeco.processor.EnsembleParser.extractEnsembleProcess;
@@ -68,7 +70,7 @@ public class ClassDEECoObjectProvider extends AbstractDEECoObjectProvider {
 		components = new LinkedList<ParsedComponent>();
 		for (Class<?> c : rawComponents) {
 			Component component = extractInitialKnowledge(c);
-			components.add(new ParsedComponent(extractComponentProcess(c,
+			components.add(new ParsedComponent(extractComponentProcesses(c,
 					component.id), component));
 		}
 	}

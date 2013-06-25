@@ -15,6 +15,8 @@ import cz.cuni.mff.d3s.deeco.path.grammar.ParseException;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessPeriodicSchedule;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
 
+
+// TODO: Comment is missing
 public class EnsembleParser {
 
 	/**
@@ -111,6 +113,7 @@ public class EnsembleParser {
 				knowledgeExchange, null);
 	}
 
+	// TODO: Add comment
 	public static boolean isEnsembleDefinition(Class<?> clazz) {
 		return clazz != null && Ensemble.class.isAssignableFrom(clazz);
 	}

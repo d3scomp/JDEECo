@@ -1,6 +1,6 @@
 package cz.cuni.mff.d3s.deeco.provider;
 
-import static cz.cuni.mff.d3s.deeco.processor.ComponentParser.extractComponentProcess;
+import static cz.cuni.mff.d3s.deeco.processor.ComponentParser.extractComponentProcesses;
 import static cz.cuni.mff.d3s.deeco.processor.EnsembleParser.extractEnsembleProcess;
 
 import java.util.LinkedList;
@@ -47,7 +47,7 @@ public class InitializedDEECoObjectProvider extends AbstractDEECoObjectProvider 
 		components = new LinkedList<ParsedComponent>();
 		for (Component c : knowledges) {
 			if (c != null) {
-				components.add(new ParsedComponent(extractComponentProcess(
+				components.add(new ParsedComponent(extractComponentProcesses(
 						c.getClass(), c.id), c));
 			}
 		}

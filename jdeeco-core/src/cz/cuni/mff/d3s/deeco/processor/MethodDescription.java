@@ -3,6 +3,8 @@ package cz.cuni.mff.d3s.deeco.processor;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 
+//TODO: Comment is missing
+
 public class MethodDescription implements Serializable {
 	private static final long serialVersionUID = -8932122303127301918L;
 

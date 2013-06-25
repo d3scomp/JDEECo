@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+//TODO: Comment is missing
+
 public class StructureHelper {
 	public static Object[] getStructureFromObject(Object value) {
 		if (value == null)

@@ -16,6 +16,8 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgePathHelper;
 import cz.cuni.mff.d3s.deeco.path.grammar.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.path.grammar.ParseException;
 
+//TODO: Comment is missing
+
 public class ParserHelper {
 	/**
 	 * Returns list of method parameterTypes, which are annotated with the given

@@ -7,6 +7,13 @@ import java.util.List;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableComponentProcess;
 import cz.cuni.mff.d3s.deeco.knowledge.Component;
 
+/*
+ *  TODO: Refactor to have only ComponentInstance - Component relationship
+ *  Component should contain a list of processes
+ *  ComponentInstance should contain knowledge and link to a component
+ *  Initial knowledge should be discarded, instead only InitializedDEECo... should be used and constructors should take the role of InitialKnowledge initializers
+ */
+
 /**
  * jDEECo internal representation of a component, containing both initial
  * knowledge and component process crreators.

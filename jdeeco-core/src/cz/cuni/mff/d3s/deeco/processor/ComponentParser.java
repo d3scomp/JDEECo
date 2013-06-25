@@ -19,6 +19,9 @@ import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessPeriodicSchedule;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
 
+
+// TODO: Comment is missing
+
 public class ComponentParser {
 
 	/**
@@ -35,7 +38,7 @@ public class ComponentParser {
 	 * @return list of {@link SchedulableComponentProcess} instances extracted
 	 *         from the class definition
 	 */
-	public static List<SchedulableComponentProcess> extractComponentProcess(
+	public static List<SchedulableComponentProcess> extractComponentProcesses(
 			Class<?> c, String root) {
 		
 		if (c == null) {
@@ -104,6 +107,9 @@ public class ComponentParser {
 		return result;
 	}
 
+	
+	// TODO: Remove this method in favor of a constructor
+	
 	/**
 	 * Retrieves init method from the <code>Component</code> class.
 	 * 
@@ -127,6 +133,7 @@ public class ComponentParser {
 		return null;
 	}
 
+	// TODO: Add comment.
 	public static boolean isComponentDefinition(Class<?> clazz) {
 		return clazz != null && Component.class.isAssignableFrom(clazz);
 	}
