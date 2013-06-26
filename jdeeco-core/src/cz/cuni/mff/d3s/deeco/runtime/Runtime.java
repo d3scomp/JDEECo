@@ -28,6 +28,8 @@ import cz.cuni.mff.d3s.deeco.knowledge.Component;
 import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.performance.ComponentKnowledgeDecomposer;
+import cz.cuni.mff.d3s.deeco.performance.KnowledgeInfo;
 import cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.provider.ParsedComponent;
 import cz.cuni.mff.d3s.deeco.scheduling.IScheduler;
@@ -44,6 +46,7 @@ public class Runtime implements IRuntime {
 
 	private IScheduler scheduler;
 	public KnowledgeManager km;
+
 
 	private static List<Runtime> runtimes = new LinkedList<Runtime>();
 
@@ -143,8 +146,30 @@ public class Runtime implements IRuntime {
 			setUpProcesses(componentProcesses, km, contextClassLoader);
 			addSchedulableProcesses(componentProcesses);
 		}
+		registerAllKnowlege(provider);
+		
 	}
 
+	///////////////////////////////////////////
+	///////////////////////////////////////////
+	
+	public void registerAllKnowlege(AbstractDEECoObjectProvider provider){
+	    List<KnowledgeInfo> kList=null;
+	    List<String> ids = getComponentsIds();
+	    ComponentKnowledgeDecomposer kd2=null;
+	    List<String> result=null;
+		for (String id: ids) {
+				Object ck = getComponentKnowledge(id);
+				kd2=new ComponentKnowledgeDecomposer(id,ck, km);
+				kd2.decompose();
+				result = provider.getKnowledges();
+				kd2.filter(result);	
+	    }
+	}
+
+	///////////////////////////////////////////
+	//////////////////////////////////////////
+	
 	/**
 	 * Set-up the processes for runtime execution; i.e., assign them knowledge
 	 * manager reference and classloader reference.

@@ -15,10 +15,12 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.knowledge;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
 import cz.cuni.mff.d3s.deeco.performance.KnowledgeInfo;
+import cz.cuni.mff.d3s.deeco.performance.TimeStamp;
 
 /**
  * An abstract class providing higher level interface for accessing the
@@ -29,7 +31,9 @@ import cz.cuni.mff.d3s.deeco.performance.KnowledgeInfo;
  */
 public abstract class KnowledgeManager implements IKnowledgeManager {
 	
-	public HashMap<Object, KnowledgeInfo> arrayKnow=new HashMap<Object, KnowledgeInfo>();
+	
+	public ArrayList<KnowledgeInfo> arrayKnow=new ArrayList<KnowledgeInfo>();
+	
 	@Override
 	public Object getKnowledge(String knowledgePath) throws KMException {
 		return getKnowledge(knowledgePath, null);
@@ -51,4 +55,5 @@ public abstract class KnowledgeManager implements IKnowledgeManager {
 			throws KMException {
 		putKnowledge(knowledgePath, value, null);
 	}
+	
 }

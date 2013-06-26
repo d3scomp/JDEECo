@@ -1,13 +1,18 @@
 package cz.cuni.mff.d3s.deeco.performance;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableComponentProcess;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableEnsembleProcess;
+import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
 import cz.cuni.mff.d3s.deeco.knowledgeAnalysis.KnowledgeOldnessAnalysis;
+import cz.cuni.mff.d3s.deeco.processor.ComponentParser;
 import cz.cuni.mff.d3s.deeco.runtime.Runtime;
 
 public class CollectInfo {
@@ -43,66 +48,64 @@ public class CollectInfo {
 
 	private void printKnowledgeInfo() {
 		for (int i = 0; i < ids.size(); i++) {
+			//component
 			System.out.println("component id : "+ids.get(i));
-			List<SchedulableComponentProcess> cp = rt.getComponentProcesses(ids.get(i));
-			for (int j = 0; j < cp.size(); j++) {
-				System.out.println("        process : "+Printer.printComponentProcess(cp.get(j), 10));
-				for (int j2 = 0; j2 < cp.get(j).kInfoArr.size(); j2++) {
-						KnowledgeInfo ck = cp.get(j).kInfoArr.get(j2);
-						System.out.print("                 knowledge path : "+ck.knowPath+" , knowledge value : "+ck.value);
-						System.out.println();
-						//I have to consider the Triggered processes and ensembles
-						HashMap<SchedulableComponentProcess, TimeStamp> ite = ck.registerTimeStamp.processHistoryReader;
-						for (SchedulableComponentProcess key : ite.keySet()) {
-							System.out.println("     process reader : "+Printer.printComponentProcess(key, 10));
-							System.out.println("             time : "+ite.get(key).start);
-						}
-						HashMap<SchedulableComponentProcess, TimeStamp> itew = ck.registerTimeStamp.processHistoryWriter;
-						for (SchedulableComponentProcess key : itew.keySet()) {
-							System.out.println("     process writer : "+Printer.printComponentProcess(key, 10));
-							System.out.println("             time : "+itew.get(key).start);
-						}
-
-				}
-
+			//knowledge
+			Object ck = rt.getComponentKnowledge(ids.get(i));
+			System.out.println("knowledge :"+ck);
+		
+			ArrayList<KnowledgeInfo> kArr = ComponentKnowledgeDecomposer.getComponentKnowledgeArray(ids.get(i), rt.km);
+			Iterator<KnowledgeInfo> kIt = kArr.iterator();
+			while (kIt.hasNext()) {
+				 KnowledgeInfo kElem = kIt.next();
+				 // path + current value
+				 System.out.println(" string : "+kElem.getKnowPath()+" ,  value : "+ kElem.getCurrentValue()+"  creation :"+kElem.getValueCreationTimeStamp().finish+"  , currentTime : "+kElem.getValueCurrentTimeStamp().finish+"  ,  oldness : "+kElem.getOldness());
+				 //writer
+				 SchedulableProcess wObj = kElem.getWriter().getWriterObject();
+				 if(wObj instanceof SchedulableComponentProcess)
+					 System.out.println("              writer : "+Printer.printComponentProcess((SchedulableComponentProcess) wObj));
+				 else if(wObj instanceof SchedulableEnsembleProcess)
+					 System.out.println("              writer : "+Printer.printEnsemble((SchedulableEnsembleProcess) wObj));
+					 
+				 HashMap<TimeStamp, Object> times = kElem.getWriter().getWriterHistory();
+				 System.out.println("                      w size:"+times.size());
+				 List<TimeStamp> sortedList = Util.asSortedList(times.keySet());
+				 for (TimeStamp timeStamp : sortedList) {
+						System.out.println("                w time:   "+timeStamp.finish + " , value : "+times.get(timeStamp));
+				 }
+				
+				 //readers
+				 List<Reader> rs = kElem.getReaders();
+				 for (int j = 0; j < rs.size(); j++) {
+					 SchedulableProcess rObj = rs.get(j).getReaderObject();
+					 if(rObj instanceof SchedulableComponentProcess)
+						 System.out.println("              reader : "+Printer.printComponentProcess((SchedulableComponentProcess) rObj));
+					 else if(rObj instanceof SchedulableEnsembleProcess)
+						 System.out.println("              reader : "+Printer.printEnsemble((SchedulableEnsembleProcess) rObj));
+					 HashMap<TimeStamp, Object> times1 = rs.get(j).getReaderTimeStamps();
+					 sortedList = Util.asSortedList(times1.keySet());
+					 for (TimeStamp timeStamp : sortedList) {
+							System.out.println("              r  time:   "+timeStamp.finish+"  ,  value : "+times1.get(timeStamp));
+						 }
+				 }
+				 System.err.println("summary : "+kElem.getKnowPath()+",  value : "+kElem.getCurrentValue()+"  creation :"+kElem.getValueCreationTimeStamp().finish+"  , currentTime : "+kElem.getValueCurrentTimeStamp().finish+"  ,  oldness : "+kElem.getOldness());
+				 System.out.println("");
 			}
 		}
-		
-		List<SchedulableEnsembleProcess> ce = rt.getEnsembleProcesses();
-		for (int j = 0; j < ce.size(); j++) {
-			System.out.println("        ensemble : "+Printer.printEnsemble(ce.get(j), 10));
-			for (int j2 = 0; j2 < ce.get(j).kInfoArr.size(); j2++) {
-					KnowledgeInfo ck = ce.get(j).kInfoArr.get(j2);
-					System.out.print("                 knowledge path : "+ck.knowPath+" , knowledge value : "+ck.value);
-					System.out.println();
-					//I have to consider the Triggered processes and ensembles
-					HashMap<SchedulableEnsembleProcess, TimeStamp> ite = ck.registerTimeStamp.ensembleHistoryReader;
-					for (SchedulableEnsembleProcess key : ite.keySet()) {
-						System.out.println("     ensemble reader : "+Printer.printEnsemble(key, 10));
-						System.out.println("             time : "+ite.get(key));
-					}
-					HashMap<SchedulableEnsembleProcess, TimeStamp> itew = ck.registerTimeStamp.ensembleHistoryWriter;
-					for (SchedulableEnsembleProcess key : itew.keySet()) {
-						System.out.println("     ensemble writer : "+Printer.printEnsemble(key, 10));
-						System.out.println("             time : "+itew.get(key).start);
-					}
-
+	
+	}
+	
+	public void order(TimeStamp[] t){
+		TimeStamp min=t[0];
+		for (int i = 0; i < t.length-1; i++) {
+			for (int j = t.length-1; j > 0; j--) {
+				if(min.compareTo(t[j]) > 0){
+					TimeStamp temp = min;
+					min = t[j];
+					t[j] = temp;
+				}
 			}
-
-		}		
-
-
-		
-//		System.out.println("==============================  end  of knowledge ================================================");
-//
-//		KnowledgeOldnessAnalysis know=new KnowledgeOldnessAnalysis();
-//		know.visitAllNodes();
-
-//		HashMap<String, KnowledgeInfo> arrK=rt.km.arrayKnow;
-//		for (int j = 0; j < arrK.size(); j++) {
-//			System.out.println(" path "+arrK.get(j)+"   value Info : "+arrK.values().iterator().next());
-//		}
-		
+		}	
 	}
 
 	public void print(List<SchedulableComponentProcess> l) {

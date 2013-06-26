@@ -10,85 +10,94 @@ import cz.cuni.mff.d3s.deeco.exceptions.KMException;
 import cz.cuni.mff.d3s.deeco.invokable.ParameterizedMethod;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableComponentProcess;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.runtime.Runtime;
 
-public class ComponentKnowledgeDecomoser extends KnowledgeDecomposer{
+public class ProcessParametersDecomposer extends ProcessKnowledgeDecomposer{
 
-	public void inProcess(SchedulableComponentProcess scp, IPerformanceInfo pInfo, TimeStamp time, ParameterizedMethod process, KnowledgeManager km){
+
+	public ProcessParametersDecomposer(KnowledgeManager km, SchedulableComponentProcess scp, IPerformanceInfo pInfo){
+		this.km=km;
+		this.sp=scp;
+		this.pInfo=pInfo;
+	}
+	
+	
+	public void inProcess(TimeStamp time, ParameterizedMethod process){
+		init();
+		String st="in";
 		for (int i = 0; i < process.in.size(); i++) {
 			String ph=process.in.get(i).kPath.getEvaluatedPath(km, null, null, null);
-			String st="in";
 			try {
 				Object kph = km.getKnowledge(ph);
-				ArrayList arrPath=new ArrayList();
-				ArrayList arrValue=new ArrayList();
+				init();
 				arrPath.add(ph);
 				arrValue.add(kph);
 				boolean hm=true;
 				while (hm) {
 					hm=false;
 					for (int j = 0; j < arrValue.size(); j++) {
-						hm=checkHashMap(arrPath, arrValue, j, hm);
+						hm=checkHashMap(j, hm);
 					}
 				}
-				addKnowInfo(arrPath, arrValue, scp, pInfo,st,time);
-				
+
 			} catch (KMException e) {
 				System.err.println(e.getMessage());
 			}
-		}		
+		}
+		addKnowInfo(st, time);
+
 	}
 	
-	public void outProcess(SchedulableComponentProcess scp, IPerformanceInfo pInfo, TimeStamp time, ParameterizedMethod process, KnowledgeManager km){
+	public void outProcess(TimeStamp time, ParameterizedMethod process){
+		init();
+		String st="out";
 		for (int i = 0; i < process.out.size(); i++) {
 			String ph=process.out.get(i).kPath.getEvaluatedPath(km, null, null, null);
-			String st="out";
 			try {
 				Object kph = km.getKnowledge(ph);
-				ArrayList arrPath=new ArrayList();
-				ArrayList arrValue=new ArrayList();
 				arrPath.add(ph);
 				arrValue.add(kph);
 				boolean hm=true;
 				while (hm) {
 					hm=false;
 					for (int j = 0; j < arrValue.size(); j++) {
-						hm=checkHashMap(arrPath, arrValue, j, hm);
+						hm=checkHashMap(j, hm);
 					}
 				}
-				addKnowInfo(arrPath, arrValue, scp, pInfo,st,time);
 
 			} catch (KMException e) {
 				System.err.println(e.getMessage());
 			}
-		}		
+		}
+		addKnowInfo(st, time);
+
 	}
 	
-	public void inOutProcess(SchedulableComponentProcess scp, IPerformanceInfo pInfo, TimeStamp time, ParameterizedMethod process, KnowledgeManager km){
+	public void inOutProcess(TimeStamp time, ParameterizedMethod process){
+		init();
+		String st="inOut";
 		for (int i = 0; i < process.inOut.size(); i++) {
 			String ph=process.inOut.get(i).kPath.getEvaluatedPath(km, null, null, null);
-			String st="inOut";
 			try {
 				Object kph = km.getKnowledge(ph);
-				ArrayList arrPath=new ArrayList();
-				ArrayList arrValue=new ArrayList();
 				arrPath.add(ph);
 				arrValue.add(kph);
 				boolean hm=true;
 				while (hm) {
 					hm=false;
 					for (int j = 0; j < arrValue.size(); j++) {
-						hm=checkHashMap(arrPath, arrValue, j, hm);
+						hm=checkHashMap(j, hm);
 					}
 				}
-				addKnowInfo(arrPath, arrValue, scp, pInfo,st,time);
 
 			} catch (KMException e) {
 				System.err.println(e.getMessage());
 			}
-		}		
+		}
+		addKnowInfo(st, time);
+
 	}
 
-	
 }
 
 

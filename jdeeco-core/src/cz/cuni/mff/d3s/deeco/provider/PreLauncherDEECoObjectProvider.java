@@ -48,4 +48,10 @@ public class PreLauncherDEECoObjectProvider extends AbstractDEECoObjectProvider 
 		ensembles = provider.getEnsembles();
 	}
 
+	@Override
+	protected void processKnowledges() {
+		// TODO Auto-generated method stub
+		knowledgePaths=provider.getKnowledges();
+	}
+
 }

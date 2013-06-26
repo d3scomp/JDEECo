@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.deeco.provider;
 
+import static cz.cuni.mff.d3s.deeco.processor.ComponentParser.extractComponentFields;
 import static cz.cuni.mff.d3s.deeco.processor.ComponentParser.extractComponentProcess;
 import static cz.cuni.mff.d3s.deeco.processor.EnsembleParser.extractEnsembleProcess;
 
@@ -10,6 +11,7 @@ import cz.cuni.mff.d3s.deeco.invokable.SchedulableEnsembleProcess;
 import cz.cuni.mff.d3s.deeco.knowledge.Component;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.path.grammar.ParseException;
+import cz.cuni.mff.d3s.deeco.performance.KnowledgeInfo;
 
 /**
  * Provider class delivering parsed components and ensembles retrieved from
@@ -24,6 +26,7 @@ public class InitializedDEECoObjectProvider extends AbstractDEECoObjectProvider 
 
 	protected final List<Class<?>> rawEnsembles;
 	protected final List<Component> knowledges;
+	protected final List<String> knowledgePaths;
 
 	public InitializedDEECoObjectProvider() {
 		this(new LinkedList<Component>(), new LinkedList<Class<?>>());
@@ -33,6 +36,7 @@ public class InitializedDEECoObjectProvider extends AbstractDEECoObjectProvider 
 			List<Class<?>> ensembles) {
 		this.rawEnsembles = ensembles;
 		this.knowledges = knowledges;
+		knowledgePaths=null;
 	}
 
 	/*
@@ -42,7 +46,7 @@ public class InitializedDEECoObjectProvider extends AbstractDEECoObjectProvider 
 	 * cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider#processComponents
 	 * ()
 	 */
-	@Override
+	@Override                                                                                               
 	protected synchronized void processComponents() {
 		components = new LinkedList<ParsedComponent>();
 		for (Component c : knowledges) {
@@ -73,6 +77,20 @@ public class InitializedDEECoObjectProvider extends AbstractDEECoObjectProvider 
 				}
 			}
 		}
+	}
+
+	@Override
+	protected void processKnowledges() {
+		// TODO Auto-generated method stub
+		List<String> list=null;
+		for (Component c : knowledges) {
+			if (c != null) {
+				list=extractComponentFields(c.getClass(),c.id , km);
+				knowledgePaths.addAll(list);
+				
+			}
+		}
+		
 	}
 
 }

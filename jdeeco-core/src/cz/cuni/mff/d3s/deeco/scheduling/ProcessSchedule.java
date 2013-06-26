@@ -26,6 +26,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.performance.IPerformanceInfo;
 import cz.cuni.mff.d3s.deeco.performance.KnowledgeInfo;
 import cz.cuni.mff.d3s.deeco.performance.TimeStamp;
+import cz.cuni.mff.d3s.deeco.runtime.Runtime;
 
 /**
  * Interface serving as an ancestor for different ways of scheduling.
@@ -37,4 +38,5 @@ public interface ProcessSchedule extends Serializable {
 	
 	public void timestampProcess(SchedulableComponentProcess scp, IPerformanceInfo pInfo, TimeStamp time, ParameterizedMethod process, KnowledgeManager km);
 	public void timestampEnsemble(SchedulableEnsembleProcess sep, IPerformanceInfo pInfo, TimeStamp time, ParameterizedMethod knowledgeExchange, KnowledgeManager km, String coord, String mem);
+
 }

@@ -2,17 +2,27 @@ package cz.cuni.mff.d3s.deeco.provider;
 
 import static cz.cuni.mff.d3s.deeco.processor.ComponentParser.extractComponentProcess;
 import static cz.cuni.mff.d3s.deeco.processor.ComponentParser.extractInitialKnowledge;
+import static cz.cuni.mff.d3s.deeco.processor.ComponentParser.extractComponentFields;
 import static cz.cuni.mff.d3s.deeco.processor.ComponentParser.isComponentDefinition;
 import static cz.cuni.mff.d3s.deeco.processor.EnsembleParser.extractEnsembleProcess;
 import static cz.cuni.mff.d3s.deeco.processor.EnsembleParser.isEnsembleDefinition;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import cz.cuni.mff.d3s.deeco.exceptions.KMAccessException;
+import cz.cuni.mff.d3s.deeco.invokable.SchedulableComponentProcess;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableEnsembleProcess;
 import cz.cuni.mff.d3s.deeco.knowledge.Component;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.path.grammar.ParseException;
+import cz.cuni.mff.d3s.deeco.performance.ComponentKnowledgeDecomposer;
+import cz.cuni.mff.d3s.deeco.performance.KnowledgeDecomposer;
+import cz.cuni.mff.d3s.deeco.performance.KnowledgeInfo;
+import cz.cuni.mff.d3s.deeco.processor.ComponentParser;
+import cz.cuni.mff.d3s.deeco.runtime.Runtime;
 
 /**
  * Provider class dealing with component and ensemble definitions retrieved from
@@ -33,10 +43,17 @@ public class ClassDEECoObjectProvider extends AbstractDEECoObjectProvider {
 	}
 
 	public ClassDEECoObjectProvider(List<Class<?>> components,
-			List<Class<?>> ensembles) {
+			List<Class<?>> ensembles) { 
 		rawComponents = components;
 		rawEnsembles = ensembles;
 	}
+
+	public ClassDEECoObjectProvider(List<Class<?>> components,
+			List<Class<?>> ensembles, KnowledgeManager km) {
+		this(components, ensembles);
+		this.km=km;
+	}
+	
 
 	/**
 	 * Adds either compontent or ensemble definition class to its internal
@@ -68,8 +85,7 @@ public class ClassDEECoObjectProvider extends AbstractDEECoObjectProvider {
 		components = new LinkedList<ParsedComponent>();
 		for (Class<?> c : rawComponents) {
 			Component component = extractInitialKnowledge(c);
-			components.add(new ParsedComponent(extractComponentProcess(c,
-					component.id), component));
+			components.add(new ParsedComponent(extractComponentProcess(c,component.id), component));
 		}
 	}
 
@@ -90,6 +106,16 @@ public class ClassDEECoObjectProvider extends AbstractDEECoObjectProvider {
 				Log.e(String.format("Parsing error in class '%s': %s",
 						c.getName(), e.getMessage()), e);
 			}
+		}
+	}
+
+	@Override
+	protected void processKnowledges() {
+		// TODO Auto-generated method stub
+		knowledgePaths=new ArrayList<String>();
+		int i=0;
+		for (Class<?> c : rawComponents) {
+			knowledgePaths.addAll(extractComponentFields(c,components.get(i++).getInitialKnowledge().id ,km));
 		}
 	}
 

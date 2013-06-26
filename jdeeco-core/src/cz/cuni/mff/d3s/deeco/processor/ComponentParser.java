@@ -1,25 +1,47 @@
 package cz.cuni.mff.d3s.deeco.processor;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.bcel.generic.FieldObserver;
+
 import cz.cuni.mff.d3s.deeco.annotations.ELockingMode;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.StrongLocking;
+import cz.cuni.mff.d3s.deeco.annotations.TimeStamps;
 import cz.cuni.mff.d3s.deeco.annotations.WeakLocking;
+import cz.cuni.mff.d3s.deeco.exceptions.KMAccessException;
 import cz.cuni.mff.d3s.deeco.invokable.ParameterizedMethod;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableComponentProcess;
 import cz.cuni.mff.d3s.deeco.knowledge.Component;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgePathHelper;
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.performance.ComponentKnowledgeDecomposer;
+import cz.cuni.mff.d3s.deeco.performance.KnowledgeInfo;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessPeriodicSchedule;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
 
 public class ComponentParser {
+	
+	
+	public static List<String> extractComponentFields(Class<?> c, String root, KnowledgeManager km){
+	    Field fs[] = c.getFields();
+	    List<String> result = new ArrayList<String>();
+	    for (Field f : fs) {
+	      TimeStamps a = f.getAnnotation(TimeStamps.class);
+	      if (a != null) {
+	        String st = KnowledgePathHelper.appendToRoot(root, f.getName());
+	        result.add(st);
+	      }
+	    }
+	    return result;
+	}
 
 	/**
 	 * Static function used to extract {@link SchedulableComponentProcess}
@@ -35,6 +57,7 @@ public class ComponentParser {
 	 * @return list of {@link SchedulableComponentProcess} instances extracted
 	 *         from the class definition
 	 */
+	
 	public static List<SchedulableComponentProcess> extractComponentProcess(
 			Class<?> c, String root) {
 		
@@ -42,6 +65,7 @@ public class ComponentParser {
 			return null;
 		}
 
+		
 		List<Method> methods = AnnotationHelper.getAnnotatedMethods(c,
 				Process.class);
 

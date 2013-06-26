@@ -64,6 +64,13 @@ public class FileDEECoObjectProvider extends AbstractDEECoObjectProvider {
 				cf.getClasses(), cf.getDirURLs(), parentClassLoader);
 		components = dop.getComponents();
 		ensembles = dop.getEnsembles();
+		knowledgePaths= dop.getKnowledges();
+	}
+
+	@Override
+	protected void processKnowledges() {
+		// TODO Auto-generated method stub
+		processAll();
 	}
 
 }

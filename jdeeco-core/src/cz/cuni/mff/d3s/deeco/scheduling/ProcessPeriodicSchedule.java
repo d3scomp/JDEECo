@@ -15,16 +15,25 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.scheduling;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+
 import cz.cuni.mff.d3s.deeco.invokable.ParameterizedMethod;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableComponentProcess;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableEnsembleProcess;
+import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
-import cz.cuni.mff.d3s.deeco.performance.ComponentKnowledgeDecomoser;
+import cz.cuni.mff.d3s.deeco.performance.ComponentKnowledgeDecomposer;
+import cz.cuni.mff.d3s.deeco.performance.KnowledgeInfo;
+import cz.cuni.mff.d3s.deeco.performance.ProcessParametersDecomposer;
 import cz.cuni.mff.d3s.deeco.performance.EnsembleKnowledgeDecomposer;
 import cz.cuni.mff.d3s.deeco.performance.IPerformanceInfo;
 import cz.cuni.mff.d3s.deeco.performance.PeriodicEnsembleInfo;
 import cz.cuni.mff.d3s.deeco.performance.PeriodicProcessInfo;
 import cz.cuni.mff.d3s.deeco.performance.TimeStamp;
+import cz.cuni.mff.d3s.deeco.runtime.Runtime;
 
 /**
  * Class representing periodic scheduling.
@@ -53,11 +62,10 @@ public class ProcessPeriodicSchedule implements ProcessSchedule {
 	public void timestampProcess(SchedulableComponentProcess scp, IPerformanceInfo pInfo, TimeStamp time, ParameterizedMethod process, KnowledgeManager km) {
 		PeriodicProcessInfo v = (PeriodicProcessInfo)pInfo;
 		((PeriodicProcessInfo)pInfo).runningPeriods.add(time);
-		ComponentKnowledgeDecomoser ckd=new ComponentKnowledgeDecomoser();
-		ckd.inProcess(scp, pInfo, time, process, km);
-		ckd.outProcess(scp, pInfo, time, process, km);
-		ckd.inOutProcess(scp, pInfo, time, process, km);
-
+		ProcessParametersDecomposer ppd=new ProcessParametersDecomposer(km,scp,pInfo);
+		ppd.inProcess(time, process);
+		ppd.outProcess(time, process);
+		ppd.inOutProcess(time, process);
 	}
 
 	@Override
@@ -65,10 +73,11 @@ public class ProcessPeriodicSchedule implements ProcessSchedule {
 		PeriodicEnsembleInfo v = (PeriodicEnsembleInfo)pInfo;
 		v.runningPeriodsCoord.add(time);
 		v.runningPeriodsMem.add(time);
-		EnsembleKnowledgeDecomposer ekd=new EnsembleKnowledgeDecomposer();
-		ekd.inEnsemble(sep, pInfo, time, knowledgeExchange, km, coord, mem);
-		ekd.outEnsemble(sep, pInfo, time, knowledgeExchange, km, coord, mem);
-		ekd.inOutEnsemble(sep, pInfo, time, knowledgeExchange, km, coord, mem);
+		EnsembleKnowledgeDecomposer ekd=new EnsembleKnowledgeDecomposer(km,sep,pInfo);
+		ekd.inEnsemble(time, knowledgeExchange, coord, mem);
+		ekd.outEnsemble(time, knowledgeExchange, coord, mem);
+		ekd.inOutEnsemble(time, knowledgeExchange, coord, mem);
+		
 	}
 
 

@@ -112,7 +112,7 @@ public class SchedulableComponentProcess extends SchedulableProcess {
 				session);
 		time.finish = System.nanoTime();
 		time.release = release;
-		scheduling.timestampProcess(this, pInfo, time, process,km);
+		scheduling.timestampProcess(this, pInfo, time, process, km);
 
 	}
 
@@ -128,13 +128,10 @@ public class SchedulableComponentProcess extends SchedulableProcess {
 
 	
 	public void timestampStart() {
-		// TODO Auto-generated method stub
 		PeriodicProcessInfo v = (PeriodicProcessInfo)(pInfo);
 		ProcessPeriodicSchedule n = (ProcessPeriodicSchedule)(scheduling);
 		v.R=(((ProcessPeriodicSchedule)(scheduling)).interval)*1000000000;
 		v.startPeriods=System.nanoTime();
-//		System.out.println("process :  " + ((PeriodicProcessInfo)(pInfo)).startPeriods);
-//		System.out.println(km.getKnowledge(knowledgePath));
 	}
 
 	

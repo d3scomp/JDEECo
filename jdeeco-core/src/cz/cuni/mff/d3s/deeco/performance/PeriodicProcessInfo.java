@@ -12,7 +12,4 @@ public class PeriodicProcessInfo implements IPerformanceInfo {
 	 public long startPeriods; // o=sys-start;  // System.nanoSeconds();
 	 public long R;
 	 public ArrayList<TimeStamp> runningPeriods=new ArrayList<TimeStamp>(); // <release, start , finish >
-	
-	
-
 }

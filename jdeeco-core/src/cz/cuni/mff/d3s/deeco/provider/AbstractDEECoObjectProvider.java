@@ -1,9 +1,14 @@
 package cz.cuni.mff.d3s.deeco.provider;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableEnsembleProcess;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.performance.ComponentKnowledgeDecomposer;
+import cz.cuni.mff.d3s.deeco.performance.KnowledgeInfo;
+import cz.cuni.mff.d3s.deeco.runtime.Runtime;
 
 /**
  * Class defining main functionalities of component and ensemble provider.
@@ -17,6 +22,8 @@ public abstract class AbstractDEECoObjectProvider implements Serializable {
 	
 	protected List<ParsedComponent> components;
 	protected List<SchedulableEnsembleProcess> ensembles;
+	protected List<String> knowledgePaths;
+	KnowledgeManager km;
 
 	/**
 	 * Retrieves all provided components.
@@ -40,6 +47,12 @@ public abstract class AbstractDEECoObjectProvider implements Serializable {
 		return ensembles;
 	}
 
+	public List<String> getKnowledges(){
+		if(knowledgePaths == null)
+			processKnowledges();
+		return knowledgePaths;
+	}
+	
 	/**
 	 * Returns specific context class loader for the classes returned by this
 	 * Provider.
@@ -59,5 +72,7 @@ public abstract class AbstractDEECoObjectProvider implements Serializable {
 	 * Processes ensembles for provisioning.
 	 */
 	abstract protected void processEnsembles();
+
+	abstract protected void processKnowledges();
 
 }

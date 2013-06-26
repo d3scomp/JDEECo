@@ -23,12 +23,13 @@ import cz.cuni.mff.d3s.deeco.invokable.ParameterizedMethod;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableComponentProcess;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableEnsembleProcess;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
-import cz.cuni.mff.d3s.deeco.performance.ComponentKnowledgeDecomoser;
+import cz.cuni.mff.d3s.deeco.performance.ProcessParametersDecomposer;
 import cz.cuni.mff.d3s.deeco.performance.EnsembleKnowledgeDecomposer;
 import cz.cuni.mff.d3s.deeco.performance.IPerformanceInfo;
 import cz.cuni.mff.d3s.deeco.performance.TimeStamp;
 import cz.cuni.mff.d3s.deeco.performance.TriggeredEnsembleInfo;
 import cz.cuni.mff.d3s.deeco.performance.TriggeredProcessInfo;
+import cz.cuni.mff.d3s.deeco.runtime.Runtime;
 
 /**
  * Class representing triggered schedule.
@@ -47,15 +48,15 @@ public class ProcessTriggeredSchedule implements ProcessSchedule {
 	}
 
 	@Override
-	public void timestampProcess(SchedulableComponentProcess scp, IPerformanceInfo pInfo, TimeStamp time, ParameterizedMethod process, KnowledgeManager km) {
+	public void timestampProcess(SchedulableComponentProcess scp, IPerformanceInfo pInfo, TimeStamp time, ParameterizedMethod process,KnowledgeManager km) {
 		// TODO Auto-generated method stub
 		TriggeredProcessInfo v = (TriggeredProcessInfo)pInfo;
 		((TriggeredProcessInfo)pInfo).timeStamps.add(time);
 		System.out.println("time stamp process comId:"+this+"  release :"+time.release+" start:"+time.start+"  finish:"+time.finish);
-		ComponentKnowledgeDecomoser ckd=new ComponentKnowledgeDecomoser();
-		ckd.inProcess(scp, pInfo, time, process, km);
-		ckd.outProcess(scp, pInfo, time, process, km);
-		ckd.inOutProcess(scp, pInfo, time, process, km);
+//		ProcessParametersDecomposer ckd=new ProcessParametersDecomposer();
+//		ckd.inProcess(scp, pInfo, time, process, km);
+//		ckd.outProcess(scp, pInfo, time, process, km);
+//		ckd.inOutProcess(scp, pInfo, time, process, km);
 
 	}	
 
@@ -65,10 +66,10 @@ public class ProcessTriggeredSchedule implements ProcessSchedule {
 		TriggeredEnsembleInfo v = (TriggeredEnsembleInfo)pInfo;
 		v.timeStampsCoord.add(time);
 		v.timeStampsMem.add(time);
-		EnsembleKnowledgeDecomposer ekd=new EnsembleKnowledgeDecomposer();
-		ekd.inEnsemble(sep, pInfo, time, knowledgeExchange, km, coord, mem);
-		ekd.outEnsemble(sep, pInfo, time, knowledgeExchange, km, coord, mem);
-		ekd.inOutEnsemble(sep, pInfo, time, knowledgeExchange, km, coord, mem);
+//		EnsembleKnowledgeDecomposer ekd=new EnsembleKnowledgeDecomposer();
+//		ekd.inEnsemble(sep, pInfo, time, knowledgeExchange, km, coord, mem);
+//		ekd.outEnsemble(sep, pInfo, time, knowledgeExchange, km, coord, mem);
+//		ekd.inOutEnsemble(sep, pInfo, time, knowledgeExchange, km, coord, mem);
 
 	}
 

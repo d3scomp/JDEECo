@@ -45,7 +45,6 @@ public abstract class SchedulableProcess implements Serializable {
 	private static final long serialVersionUID = -642546184205115045L;
 	public IPerformanceInfo pInfo;
 	public TimeStamp time = new TimeStamp();
-	public ArrayList<KnowledgeInfo> kInfoArr=new ArrayList<KnowledgeInfo>();
 
 	// these are assigned after preprocessing, thus musn't be final
 	public KnowledgeManager km;

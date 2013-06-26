@@ -1,0 +1,1080 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<class-diagram version="1.1.2" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
+  associations="true" dependencies="false" nesting-relationships="true">  
+  <annotation id="1" language="java" name="cz.cuni.mff.d3s.deeco.annotations.WeakLocking" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/annotations/WeakLocking.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1321" y="-99"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </annotation>  
+  <annotation id="2" language="java" name="cz.cuni.mff.d3s.deeco.annotations.InOut" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/annotations/InOut.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1324" y="14"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </annotation>  
+  <annotation id="3" language="java" name="cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/annotations/TriggerOnChange.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1143" y="-123"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </annotation>  
+  <annotation id="4" language="java" name="cz.cuni.mff.d3s.deeco.annotations.Membership" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/annotations/Membership.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1142" y="-43"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </annotation>  
+  <annotation id="5" language="java" name="cz.cuni.mff.d3s.deeco.annotations.Process" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/annotations/Process.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1140" y="280"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </annotation>  
+  <annotation id="6" language="java" name="cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/annotations/KnowledgeExchange.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1142" y="34"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </annotation>  
+  <annotation id="7" language="java" name="cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/annotations/PeriodicScheduling.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1140" y="112"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </annotation>  
+  <annotation id="8" language="java" name="cz.cuni.mff.d3s.deeco.annotations.Out" project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/annotations/Out.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1492" y="-13"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </annotation>  
+  <interface id="9" language="java" name="cz.cuni.mff.d3s.deeco.annotations.IValuedAnnotation" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/annotations/IValuedAnnotation.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1140" y="201"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </interface>  
+  <annotation id="10" language="java" name="cz.cuni.mff.d3s.deeco.annotations.StrongLocking" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/annotations/StrongLocking.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1491" y="-101"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </annotation>  
+  <annotation id="11" language="java" name="cz.cuni.mff.d3s.deeco.annotations.In" project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/annotations/In.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1495" y="72"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </annotation>  
+  <class id="12" language="java" name="cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/invokable/SchedulableProcess.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="53" width="341" x="475" y="671"/>    
+    <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="13" language="java" name="cz.cuni.mff.d3s.deeco.invokable.ParameterizedMethod" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/invokable/ParameterizedMethod.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="723" y="1218"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="14" language="java" name="cz.cuni.mff.d3s.deeco.invokable.SchedulableEnsembleProcess" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/invokable/SchedulableEnsembleProcess.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="893" y="1045"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="15" language="java" name="cz.cuni.mff.d3s.deeco.invokable.BooleanMembership" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/invokable/BooleanMembership.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1104" y="1346"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="16" language="java" name="cz.cuni.mff.d3s.deeco.invokable.MembershipMethod" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/invokable/MembershipMethod.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1106" y="1217"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="17" language="java" name="cz.cuni.mff.d3s.deeco.invokable.SchedulableProcessTrigger" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/invokable/SchedulableProcessTrigger.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="426" y="603"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="18" language="java" name="cz.cuni.mff.d3s.deeco.invokable.SchedulableComponentProcess" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/invokable/SchedulableComponentProcess.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="543" y="1048"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="19" language="java" name="cz.cuni.mff.d3s.deeco.invokable.Parameter" project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/invokable/Parameter.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="282" y="1219"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="20" language="java" name="cz.cuni.mff.d3s.deeco.invokable.TypeDescription" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/invokable/TypeDescription.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="0" y="1220"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="21" language="java" name="cz.cuni.mff.d3s.deeco.invokable.ParameterizedMethod.MethodDescription" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/invokable/ParameterizedMethod.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="722" y="1341"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="22" language="java" name="cz.cuni.mff.d3s.deeco.knowledge.MapAccessor" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/knowledge/MapAccessor.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="278" y="1921"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="23" language="java" name="cz.cuni.mff.d3s.deeco.knowledge.KnowledgeAccessor" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/knowledge/KnowledgeAccessor.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="555" y="1927"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="24" language="java" name="cz.cuni.mff.d3s.deeco.knowledge.RepositoryKnowledgeManager" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/knowledge/RepositoryKnowledgeManager.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="-7" y="316"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <interface id="25" language="java" name="cz.cuni.mff.d3s.deeco.knowledge.ISession" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/knowledge/ISession.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="-558" y="795"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </interface>  
+  <interface id="26" language="java" name="cz.cuni.mff.d3s.deeco.knowledge.IKnowledgeManager" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/knowledge/IKnowledgeManager.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="345" y="104"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </interface>  
+  <class id="27" language="java" name="cz.cuni.mff.d3s.deeco.knowledge.LoggingKnowledgeManager" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/knowledge/LoggingKnowledgeManager.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="-12" y="210"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="28" language="java" name="cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/knowledge/KnowledgeManager.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="95" width="269" x="215" y="268"/>    
+    <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="29" language="java" name="cz.cuni.mff.d3s.deeco.knowledge.KnowledgeRepository" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/knowledge/KnowledgeRepository.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="-411" y="305"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <interface id="30" language="java" name="cz.cuni.mff.d3s.deeco.knowledge.IObjectAccessor" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/knowledge/IObjectAccessor.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="271" y="1756"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </interface>  
+  <class id="31" language="java" name="cz.cuni.mff.d3s.deeco.knowledge.Knowledge" project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/knowledge/Knowledge.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="557" y="1797"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="32" language="java" name="cz.cuni.mff.d3s.deeco.knowledge.Component" project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/knowledge/Component.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="134" width="212" x="447" y="1561"/>    
+    <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <interface id="33" language="java" name="cz.cuni.mff.d3s.deeco.knowledge.IKnowledgeRepository" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/knowledge/IKnowledgeRepository.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="-411" y="95"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </interface>  
+  <class id="34" language="java" name="cz.cuni.mff.d3s.deeco.knowledge.ListAccessor" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/knowledge/ListAccessor.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="65" y="1919"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="35" language="java" name="cz.cuni.mff.d3s.deeco.knowledge.jini.TransactionalSession" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/knowledge/jini/TransactionalSession.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="-650" y="667"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="36" language="java" name="cz.cuni.mff.d3s.deeco.knowledge.jini.ChangeNotifier" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/knowledge/jini/ChangeNotifier.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="-645" y="531"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="37" language="java" name="cz.cuni.mff.d3s.deeco.knowledge.jini.TSRemoteEventListener.TriggeredThread" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/knowledge/jini/TSRemoteEventListener.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="-62" y="604"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="38" language="java" name="cz.cuni.mff.d3s.deeco.knowledge.jini.TSKnowledgeRepository" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/knowledge/jini/TSKnowledgeRepository.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="63" width="164" x="-303" y="495"/>    
+    <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="39" language="java" name="cz.cuni.mff.d3s.deeco.knowledge.jini.TSRemoteEventListener" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/knowledge/jini/TSRemoteEventListener.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="46" y="451"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="40" language="java" name="cz.cuni.mff.d3s.deeco.knowledge.local.LocalKnowledgeRepository" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/knowledge/local/LocalKnowledgeRepository.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="-428" y="537"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="41" language="java" name="cz.cuni.mff.d3s.deeco.knowledge.local.LocalSession" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/knowledge/local/LocalSession.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="-429" y="667"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="42" language="java" name="cz.cuni.mff.d3s.deeco.path.grammar.KnowledgePath" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/path/grammar/KnowledgePath.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="284" y="1382"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="43" language="java" name="cz.cuni.mff.d3s.deeco.path.grammar.PNode" project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/path/grammar/PNode.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="5" y="1386"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="44" language="java" name="cz.cuni.mff.d3s.deeco.processor.AnnotationHelper" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/processor/AnnotationHelper.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1419" y="215"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="45" language="java" name="cz.cuni.mff.d3s.deeco.provider.InitializedDEECoObjectProvider" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/provider/InitializedDEECoObjectProvider.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="892" y="1628"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="46" language="java" name="cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/provider/AbstractDEECoObjectProvider.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="898" y="1459"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="47" language="java" name="cz.cuni.mff.d3s.deeco.provider.ParsedComponent" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/provider/ParsedComponent.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="549" y="1459"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <interface id="48" language="java" name="cz.cuni.mff.d3s.deeco.runtime.IRuntime" project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/runtime/IRuntime.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="639" y="-21"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </interface>  
+  <interface id="49" language="java" name="cz.cuni.mff.d3s.deeco.runtime.IEnsembleComponentInformer" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/runtime/IEnsembleComponentInformer.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="638" y="-135"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </interface>  
+  <class id="50" language="java" name="cz.cuni.mff.d3s.deeco.runtime.Runtime" project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/runtime/Runtime.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="636" y="83"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="51" language="java" name="cz.cuni.mff.d3s.deeco.scheduling.ProcessPeriodicSchedule" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/scheduling/ProcessPeriodicSchedule.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="4" y="1042"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="52" language="java" name="cz.cuni.mff.d3s.deeco.scheduling.MultithreadedScheduler" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/scheduling/MultithreadedScheduler.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="915" y="417"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <interface id="53" language="java" name="cz.cuni.mff.d3s.deeco.scheduling.IScheduler" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/scheduling/IScheduler.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="640" y="252"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </interface>  
+  <interface id="54" language="java" name="cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/scheduling/ProcessSchedule.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="142" y="818"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </interface>  
+  <class id="55" language="java" name="cz.cuni.mff.d3s.deeco.scheduling.MultithreadedScheduler.PeriodicProcessThread" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/scheduling/MultithreadedScheduler.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="913" y="573"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="56" language="java" name="cz.cuni.mff.d3s.deeco.scheduling.ProcessTriggeredSchedule" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/scheduling/ProcessTriggeredSchedule.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="275" y="1047"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="57" language="java" name="cz.cuni.mff.d3s.deeco.scheduling.Scheduler" project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/scheduling/Scheduler.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="642" y="416"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <interface id="58" language="java" name="cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/scheduling/IKnowledgeChangeListener.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="166" y="602"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </interface>  
+  <class id="59" language="java" name="cz.cuni.mff.d3s.deeco.ensemble.Ensemble" project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/ensemble/Ensemble.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="139" width="203" x="943" y="1795"/>    
+    <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="60" language="java" name="cz.cuni.mff.d3s.deeco.provider.ClassDEECoObjectProvider" 
+    project="cz.cuni.mff.d3s.jdeeco.core" 
+    file="/cz.cuni.mff.d3s.jdeeco.core/src/cz/cuni/mff/d3s/deeco/provider/ClassDEECoObjectProvider.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1210" y="1633"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <realization id="61">    
+    <end type="SOURCE" refId="51"/>    
+    <end type="TARGET" refId="54"/>  
+  </realization>  
+  <association id="62">    
+    <end type="SOURCE" refId="16" navigable="false">      
+      <attribute id="63" name="method"/>      
+      <multiplicity id="64" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="13" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="65">    
+    <end type="SOURCE" refId="47" navigable="false">      
+      <attribute id="66" name="initialKnowledge"/>      
+      <multiplicity id="67" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="32" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="68">    
+    <end type="SOURCE" refId="48"/>    
+    <end type="TARGET" refId="49"/>  
+  </generalization>  
+  <association id="69">    
+    <end type="SOURCE" refId="12" navigable="false">      
+      <attribute id="70" name="scheduling"/>      
+      <multiplicity id="71" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="54" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="72">    
+    <end type="SOURCE" refId="20" navigable="false">      
+      <attribute id="73" name="parametricTypes"/>      
+      <multiplicity id="74" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="20" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="75">    
+    <end type="SOURCE" refId="19" navigable="false">      
+      <attribute id="76" name="type"/>      
+      <multiplicity id="77" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="20" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <realization id="78">    
+    <end type="SOURCE" refId="56"/>    
+    <end type="TARGET" refId="54"/>  
+  </realization>  
+  <association id="79">    
+    <end type="SOURCE" refId="39" navigable="false">      
+      <attribute id="80" name="kr"/>      
+      <multiplicity id="81" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="29" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <realization id="82">    
+    <end type="SOURCE" refId="41"/>    
+    <end type="TARGET" refId="25"/>  
+  </realization>  
+  <association id="83">    
+    <end type="SOURCE" refId="27" navigable="false">      
+      <attribute id="84" name="decoratedKm"/>      
+      <multiplicity id="85" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="28" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="86">    
+    <end type="SOURCE" refId="46" navigable="false">      
+      <attribute id="87" name="ensembles"/>      
+      <multiplicity id="88" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="14" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="89">    
+    <end type="SOURCE" refId="19" navigable="false">      
+      <attribute id="90" name="kPath"/>      
+      <multiplicity id="91" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="42" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="92">    
+    <end type="SOURCE" refId="41" navigable="false">      
+      <attribute id="93" name="kr"/>      
+      <multiplicity id="94" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="40" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="95">    
+    <end type="SOURCE" refId="37" navigable="false">      
+      <attribute id="96" name="ikcl"/>      
+      <multiplicity id="97" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="58" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="98">    
+    <end type="SOURCE" refId="24"/>    
+    <end type="TARGET" refId="28"/>  
+  </generalization>  
+  <generalization id="99">    
+    <end type="SOURCE" refId="45"/>    
+    <end type="TARGET" refId="46"/>  
+  </generalization>  
+  <association id="100">    
+    <end type="SOURCE" refId="55" navigable="false">      
+      <attribute id="101" name="process"/>      
+      <multiplicity id="102" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="12" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="103">    
+    <end type="SOURCE" refId="32"/>    
+    <end type="TARGET" refId="31"/>  
+  </generalization>  
+  <realization id="104">    
+    <end type="SOURCE" refId="28"/>    
+    <end type="TARGET" refId="26"/>  
+  </realization>  
+  <generalization id="105">    
+    <end type="SOURCE" refId="38"/>    
+    <end type="TARGET" refId="29"/>  
+  </generalization>  
+  <nesting id="106">    
+    <end type="SOURCE" refId="13"/>    
+    <end type="TARGET" refId="21"/>  
+  </nesting>  
+  <generalization id="107">    
+    <end type="SOURCE" refId="18"/>    
+    <end type="TARGET" refId="12"/>  
+  </generalization>  
+  <realization id="108">    
+    <end type="SOURCE" refId="35"/>    
+    <end type="TARGET" refId="25"/>  
+  </realization>  
+  <realization id="109">    
+    <end type="SOURCE" refId="50"/>    
+    <end type="TARGET" refId="48"/>  
+  </realization>  
+  <association id="110">    
+    <end type="SOURCE" refId="17" navigable="false">      
+      <attribute id="111" name="sp"/>      
+      <multiplicity id="112" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="12" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="113">    
+    <end type="SOURCE" refId="24" navigable="false">      
+      <attribute id="114" name="kr"/>      
+      <multiplicity id="115" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="29" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="116">    
+    <end type="SOURCE" refId="40"/>    
+    <end type="TARGET" refId="29"/>  
+  </generalization>  
+  <association id="117">    
+    <end type="SOURCE" refId="20" navigable="false">      
+      <attribute id="118" name="knowledgeStructure"/>      
+      <multiplicity id="119" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="20" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="120">    
+    <end type="SOURCE" refId="43" navigable="false">      
+      <attribute id="121" name="next"/>      
+      <multiplicity id="122" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="43" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="123">    
+    <end type="SOURCE" refId="38" navigable="false">      
+      <attribute id="124" name="tsListeners"/>      
+      <multiplicity id="125" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="39" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="126">    
+    <end type="SOURCE" refId="36" navigable="false">      
+      <attribute id="127" name="kr"/>      
+      <multiplicity id="128" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="29" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="129">    
+    <end type="SOURCE" refId="35" navigable="false">      
+      <attribute id="130" name="cn"/>      
+      <multiplicity id="131" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="36" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <realization id="132">    
+    <end type="SOURCE" refId="34"/>    
+    <end type="TARGET" refId="30"/>  
+  </realization>  
+  <realization id="133">    
+    <end type="SOURCE" refId="22"/>    
+    <end type="TARGET" refId="30"/>  
+  </realization>  
+  <generalization id="134">    
+    <end type="SOURCE" refId="60"/>    
+    <end type="TARGET" refId="46"/>  
+  </generalization>  
+  <association id="135">    
+    <end type="SOURCE" refId="12" navigable="false">      
+      <attribute id="136" name="km"/>      
+      <multiplicity id="137" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="28" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="138">    
+    <end type="SOURCE" refId="50" navigable="false">      
+      <attribute id="139" name="scheduler"/>      
+      <multiplicity id="140" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="53" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="141">    
+    <end type="SOURCE" refId="46" navigable="false">      
+      <attribute id="142" name="components"/>      
+      <multiplicity id="143" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="47" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <realization id="144">    
+    <end type="SOURCE" refId="17"/>    
+    <end type="TARGET" refId="58"/>  
+  </realization>  
+  <association id="145">    
+    <end type="SOURCE" refId="13" navigable="false">      
+      <attribute id="146" name="out"/>      
+      <multiplicity id="147" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="19" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="148">    
+    <end type="SOURCE" refId="14" navigable="false">      
+      <attribute id="149" name="knowledgeExchange"/>      
+      <multiplicity id="150" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="13" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="151">    
+    <end type="SOURCE" refId="50" navigable="false">      
+      <attribute id="152" name="km"/>      
+      <multiplicity id="153" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="28" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <nesting id="154">    
+    <end type="SOURCE" refId="52"/>    
+    <end type="TARGET" refId="55"/>  
+  </nesting>  
+  <nesting id="155">    
+    <end type="SOURCE" refId="39"/>    
+    <end type="TARGET" refId="37"/>  
+  </nesting>  
+  <association id="156">    
+    <end type="SOURCE" refId="14" navigable="false">      
+      <attribute id="157" name="membership"/>      
+      <multiplicity id="158" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="16" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="159">    
+    <end type="SOURCE" refId="52"/>    
+    <end type="TARGET" refId="57"/>  
+  </generalization>  
+  <association id="160">    
+    <end type="SOURCE" refId="50" navigable="false">      
+      <attribute id="161" name="runtimes"/>      
+      <multiplicity id="162" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="50" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="163">    
+    <end type="SOURCE" refId="18" navigable="false">      
+      <attribute id="164" name="process"/>      
+      <multiplicity id="165" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="13" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="166">    
+    <end type="SOURCE" refId="45" navigable="false">      
+      <attribute id="167" name="knowledges"/>      
+      <multiplicity id="168" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="32" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="169">    
+    <end type="SOURCE" refId="13" navigable="false">      
+      <attribute id="170" name="inOut"/>      
+      <multiplicity id="171" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="19" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="172">    
+    <end type="SOURCE" refId="23" navigable="false">      
+      <attribute id="173" name="target"/>      
+      <multiplicity id="174" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="31" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="175">    
+    <end type="SOURCE" refId="27"/>    
+    <end type="TARGET" refId="28"/>  
+  </generalization>  
+  <realization id="176">    
+    <end type="SOURCE" refId="29"/>    
+    <end type="TARGET" refId="33"/>  
+  </realization>  
+  <association id="177">    
+    <end type="SOURCE" refId="13" navigable="false">      
+      <attribute id="178" name="in"/>      
+      <multiplicity id="179" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="19" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="180">    
+    <end type="SOURCE" refId="13" navigable="false">      
+      <attribute id="181" name="methodDesc"/>      
+      <multiplicity id="182" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="21" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="183">    
+    <end type="SOURCE" refId="42" navigable="false">      
+      <attribute id="184" name="pathNode"/>      
+      <multiplicity id="185" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="43" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="186">    
+    <end type="SOURCE" refId="15"/>    
+    <end type="TARGET" refId="16"/>  
+  </generalization>  
+  <realization id="187">    
+    <end type="SOURCE" refId="23"/>    
+    <end type="TARGET" refId="30"/>  
+  </realization>  
+  <realization id="188">    
+    <end type="SOURCE" refId="57"/>    
+    <end type="TARGET" refId="53"/>  
+  </realization>  
+  <association id="189">    
+    <end type="SOURCE" refId="47" navigable="false">      
+      <attribute id="190" name="processes"/>      
+      <multiplicity id="191" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="18" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="192">    
+    <end type="SOURCE" refId="57" navigable="false">      
+      <attribute id="193" name="periodicProcesses"/>      
+      <multiplicity id="194" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="12" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="195">    
+    <end type="SOURCE" refId="57" navigable="false">      
+      <attribute id="196" name="triggeredProcesses"/>      
+      <multiplicity id="197" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="17" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="198">    
+    <end type="SOURCE" refId="56" navigable="false">      
+      <attribute id="199" name="parameters"/>      
+      <multiplicity id="200" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="19" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="201">    
+    <end type="SOURCE" refId="39" navigable="false">      
+      <attribute id="202" name="toNotify"/>      
+      <multiplicity id="203" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="58" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="204">    
+    <end type="SOURCE" refId="14"/>    
+    <end type="TARGET" refId="12"/>  
+  </generalization>  
+  <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+    accessors="true" visibility="true">    
+    <attributes public="true" package="true" protected="true" private="true"/>    
+    <operations public="true" package="true" protected="true" private="true"/>  
+  </classifier-display>  
+  <association-display labels="true" multiplicity="true"/>
+</class-diagram>
