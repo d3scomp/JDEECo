@@ -48,26 +48,44 @@ public class Runtime implements IRuntime {
 
 	private static List<Runtime> runtimes = new LinkedList<Runtime>();
 
-	public Runtime() {
+	public Runtime(boolean useMXBeans) {
+		if (useMXBeans) {
+			RuntimeMX.registerMBeanForRuntime(this);
+		}
 		runtimes.add(this);
-                RuntimeMX.registerMBeanForRuntime(this);
+	}
+	
+	public Runtime() {
+		this(false);
 	}
 
 	public Runtime(KnowledgeManager km) {
-		this();
+		this(km, false);
+	}
+	
+	public Runtime(KnowledgeManager km, boolean useMXBeans) {
+		this(useMXBeans);
 		this.km = km;
-                this.km.setRuntime(this);
+        this.km.setRuntime(this);
 	}
 
 	public Runtime(IScheduler scheduler) {
-		this();
+		this(scheduler, false);
+	}
+	
+	public Runtime(IScheduler scheduler, boolean useMXBeans) {
+		this(useMXBeans);
 		this.scheduler = scheduler;
 	}
 
 	public Runtime(KnowledgeManager km, IScheduler scheduler) {
-		this();
+		this(km, scheduler, false);
+	}
+	
+	public Runtime(KnowledgeManager km, IScheduler scheduler, boolean useMXBeans) {
+		this(useMXBeans);
 		this.km = km;
-                this.km.setRuntime(this);
+        this.km.setRuntime(this);
 		this.scheduler = scheduler;
 	}
 

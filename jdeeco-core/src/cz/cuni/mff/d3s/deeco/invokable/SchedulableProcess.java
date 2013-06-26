@@ -48,7 +48,7 @@ public abstract class SchedulableProcess implements Serializable {
 
 	public final ProcessSchedule scheduling;
         
-        public static ThreadLocal<IRuntime> runtime = new ThreadLocal<>();
+    public static ThreadLocal<IRuntime> runtime = new ThreadLocal<>();
 
 	public SchedulableProcess(KnowledgeManager km, ProcessSchedule scheduling,
 			ClassLoader contextClassLoader) {

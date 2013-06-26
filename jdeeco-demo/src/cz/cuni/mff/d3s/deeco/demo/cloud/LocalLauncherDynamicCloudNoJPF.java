@@ -36,7 +36,7 @@ public class LocalLauncherDynamicCloudNoJPF {
 		KnowledgeManager km = new RepositoryKnowledgeManager(new LocalKnowledgeRepository());
 		Scheduler scheduler = new MultithreadedScheduler();
 		AbstractDEECoObjectProvider dop = new ClassDEECoObjectProvider(components, ensembles);
-		cz.cuni.mff.d3s.deeco.runtime.Runtime rt = new cz.cuni.mff.d3s.deeco.runtime.Runtime(km, scheduler);
+		cz.cuni.mff.d3s.deeco.runtime.Runtime rt = new cz.cuni.mff.d3s.deeco.runtime.Runtime(km, scheduler, true);
 		rt.registerComponentsAndEnsembles(dop);
 
 		rt.startRuntime();
