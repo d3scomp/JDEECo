@@ -41,7 +41,7 @@ public class ClassDEECoObjectProvider extends AbstractDEECoObjectProvider {
 	}
 
 	/**
-	 * Adds either compontent or ensemble definition class to its internal
+	 * Adds either component or ensemble definition class to its internal
 	 * collection.
 	 * 
 	 * @param clazz
@@ -85,16 +85,16 @@ public class ClassDEECoObjectProvider extends AbstractDEECoObjectProvider {
 	@Override
 	protected synchronized void processEnsembles() {
 		ensembles = new LinkedList<SchedulableEnsembleProcess>();
-                if (rawEnsembles != null) {
-                        for (Class<?> c : rawEnsembles) {
-                                try {
-                                        ensembles.add(extractEnsembleProcess(c));
-                                } catch (ParseException e) {
-                                        Log.e(String.format("Parsing error in class '%s': %s",
-                                        		c.getName(), e.getMessage()), e);
-                                }
-                        }
-                }
+		if (rawEnsembles != null) {
+			for (Class<?> c : rawEnsembles) {
+				try {
+					ensembles.add(extractEnsembleProcess(c));
+				} catch (ParseException e) {
+					Log.e(String.format("Parsing error in class '%s': %s",
+							c.getName(), e.getMessage()), e);
+				}
+			}
+		}
 	}
 
 }

@@ -10,8 +10,13 @@ import cz.cuni.mff.d3s.deeco.logging.Log;
 import static cz.cuni.mff.d3s.deeco.processor.JarClassUtils.getClassNamesFromJar;
 import static cz.cuni.mff.d3s.deeco.processor.JarClassUtils.getClassNamesFromDir;
 
-// TODO: Comment is missing
 
+/**
+ * Class name and location collector.
+ * 
+ * @author Michal
+ *
+ */
 public class ClassFinder {
 	private final List<String> classes;
 	private final List<URL> dirURLs;
@@ -21,6 +26,11 @@ public class ClassFinder {
 		dirURLs = new LinkedList<URL>();
 	}
 	
+	/**
+	 * Finds class definitions in the given location.
+	 * 
+	 * @param paths list of locations
+	 */
 	public void resolve(String [] paths) {
 		File tFile;
 		FileExtensionFilter jarFef = new FileExtensionFilter(".jar");
@@ -42,10 +52,20 @@ public class ClassFinder {
 		}
 	}
 
+	/**
+	 * Returns found class names.
+	 * 
+	 * @return list of the class names found.
+	 */
 	public List<String> getClasses() {
 		return classes;
 	}
 
+	/**
+	 * Returns directory urls where the class definitions can be found.
+	 * 
+	 * @return list of the directory urls.
+	 */
 	public List<URL> getDirURLs() {
 		return dirURLs;
 	}

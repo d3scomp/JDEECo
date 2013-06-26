@@ -19,9 +19,12 @@ import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessPeriodicSchedule;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
 
-
-// TODO: Comment is missing
-
+/**
+ * Parser class for component definitions.
+ * 
+ * @author Michal Kit
+ *
+ */
 public class ComponentParser {
 
 	/**
@@ -106,16 +109,13 @@ public class ComponentParser {
 
 		return result;
 	}
-
-	
-	// TODO: Remove this method in favor of a constructor
 	
 	/**
-	 * Retrieves init method from the <code>Component</code> class.
+	 * Retrieves initial knowledge of a component from the non-parametric constructor.
 	 * 
 	 * @param c
 	 *            class to be parsed
-	 * @return init method or null in case no matching found
+	 * @return component knowledge.
 	 */
 	public static Component extractInitialKnowledge(Class<?> c) {
 		Component ck;
@@ -133,7 +133,12 @@ public class ComponentParser {
 		return null;
 	}
 
-	// TODO: Add comment.
+	/**
+	 * Checks whether the given class is a component definition.
+	 * 
+	 * @param clazz class to be checked.
+	 * @return True if the class is a component definition. False otherwise.
+	 */
 	public static boolean isComponentDefinition(Class<?> clazz) {
 		return clazz != null && Component.class.isAssignableFrom(clazz);
 	}

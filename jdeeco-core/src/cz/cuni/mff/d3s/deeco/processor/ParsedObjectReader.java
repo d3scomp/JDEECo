@@ -10,8 +10,13 @@ import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider;
 
-// TODO: Comment is missing
-
+/**
+ * Serialized object provider reader. This class is used to extract
+ * {@link AbstractDEECoObjectProvider} instance from the file.
+ * 
+ * @author Michal Kit
+ * 
+ */
 public class ParsedObjectReader {
 
 	private String fileName;
@@ -27,6 +32,11 @@ public class ParsedObjectReader {
 			this.fileName = fileName;
 	}
 
+	/**
+	 * Reads the {@link AbstractDEECoObjectProvider} from the file.
+	 * 
+	 * @return retrieved {@link AbstractDEECoObjectProvider} object from the file.
+	 */
 	public AbstractDEECoObjectProvider read() {
 		AbstractDEECoObjectProvider result = null;
 		try {
@@ -41,7 +51,7 @@ public class ParsedObjectReader {
 					oi.close();
 			}
 		} catch (Exception e) {
-			Log.e("Error when reading",e);
+			Log.e("Error when reading", e);
 			return result;
 		}
 		return result;

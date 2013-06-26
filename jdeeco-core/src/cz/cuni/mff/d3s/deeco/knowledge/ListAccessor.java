@@ -4,8 +4,12 @@ import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.exceptions.KMCastException;
 
-//TODO: Comment is missing
-
+/**
+ * Accessor used to access List type of the knowledge.
+ * 
+ * @author Michal
+ * 
+ */
 public class ListAccessor implements IObjectAccessor {
 
 	private List<?> target;
@@ -14,6 +18,13 @@ public class ListAccessor implements IObjectAccessor {
 		this.target = target;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * cz.cuni.mff.d3s.deeco.knowledge.IObjectAccessor#getValue(java.lang.String
+	 * )
+	 */
 	@Override
 	public Object getValue(String propertyName) throws KMCastException {
 		try {

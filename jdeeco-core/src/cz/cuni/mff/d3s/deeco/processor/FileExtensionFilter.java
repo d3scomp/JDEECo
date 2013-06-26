@@ -3,11 +3,12 @@ package cz.cuni.mff.d3s.deeco.processor;
 import java.io.File;
 import java.io.FilenameFilter;
 
-/*
- * TODO: Comment is missing
- * This class should be an inner private class of ClassFinder
+/**
+ * Generic filter class used to filter files by their extensions.
+ * 
+ * @author Michal Kit
+ * 
  */
-
 public class FileExtensionFilter implements FilenameFilter {
 
 	private String ext = "*";
@@ -16,6 +17,9 @@ public class FileExtensionFilter implements FilenameFilter {
 		this.ext = ext;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.io.FilenameFilter#accept(java.io.File, java.lang.String)
+	 */
 	@Override
 	public boolean accept(File dir, String name) {
 		if (name.endsWith(ext))

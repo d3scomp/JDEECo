@@ -16,7 +16,12 @@ import cz.cuni.mff.d3s.deeco.scheduling.ProcessPeriodicSchedule;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
 
 
-// TODO: Comment is missing
+/**
+ * Parser class for ensemble definitions.
+ * 
+ * @author Michal Kit
+ *
+ */
 public class EnsembleParser {
 
 	/**
@@ -113,7 +118,12 @@ public class EnsembleParser {
 				knowledgeExchange, null);
 	}
 
-	// TODO: Add comment
+	/**
+	 * Checkes whether the given class is an ensemble definitions.
+	 * 
+	 * @param clazz class to be checked
+	 * @return True if the given class is an ensemble definition. False otherwise.
+	 */
 	public static boolean isEnsembleDefinition(Class<?> clazz) {
 		return clazz != null && Ensemble.class.isAssignableFrom(clazz);
 	}

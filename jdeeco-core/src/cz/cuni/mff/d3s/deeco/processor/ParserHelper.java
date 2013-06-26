@@ -16,8 +16,12 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgePathHelper;
 import cz.cuni.mff.d3s.deeco.path.grammar.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.path.grammar.ParseException;
 
-//TODO: Comment is missing
-
+/**
+ * A helper class used for parsing both component and ensemble definitions.
+ * 
+ * @author Michal Kit
+ * 
+ */
 public class ParserHelper {
 	/**
 	 * Returns list of method parameterTypes, which are annotated with the given
@@ -33,12 +37,13 @@ public class ParserHelper {
 	 * @return list of {@link Parameter} instances which fulfills search
 	 *         criteria.
 	 * @throws GrammarParserException
-	 * @throws ComponentEnsembleParseException 
+	 * @throws ComponentEnsembleParseException
 	 * 
 	 * @see Parameter
 	 */
 	private static List<Parameter> getParameters(Method method,
-			Class<?> annotationClass, String root) throws ParseException, ComponentEnsembleParseException {
+			Class<?> annotationClass, String root) throws ParseException,
+			ComponentEnsembleParseException {
 		List<Parameter> result = new ArrayList<Parameter>();
 		Annotation[][] allAnnotations = method.getParameterAnnotations();
 		Type[] parameterTypes = method.getGenericParameterTypes();
@@ -59,33 +64,38 @@ public class ParserHelper {
 		}
 		return result;
 	}
-	
+
 	private static Parameter parseNamedAnnotation(Annotation annotation,
-			Type type, int index, String root) throws ParseException, ComponentEnsembleParseException {
+			Type type, int index, String root) throws ParseException,
+			ComponentEnsembleParseException {
 
 		String path = (String) AnnotationHelper.getAnnotationValue(annotation);
-		
-		// Adding prefix (the Component name which holds the "root") to path from annotations
+
+		// Adding prefix (the Component name which holds the "root") to path
+		// from annotations
 		path = KnowledgePathHelper.prependToRoot(path, root);
 
 		KnowledgePath kPath = new KnowledgePath(path);
-		
+
 		return new Parameter(kPath, type, index);
 	}
-	
+
 	/**
-	 *  Extract an instance of ParameterizedMethod from the Java method instance.
-	 *  If the method does not represent a DEECo annotated method or parsing exception occurs return null. 
+	 * Extract an instance of ParameterizedMethod from the Java method instance.
+	 * If the method does not represent a DEECo annotated method or parsing
+	 * exception occurs return null.
 	 */
 	public static ParameterizedMethod extractParametrizedMethod(Method method) {
 		return extractParametrizedMethod(method, null);
 	}
-	
+
 	/**
-	 *  Extract an instance of ParameterizedMethod from the Java method instance for the given component id (root).
-	 *  If the method does not represent a DEECo annotated method or parsing exception occurs return null. 
+	 * Extract an instance of ParameterizedMethod from the Java method instance
+	 * for the given component id (root). If the method does not represent a
+	 * DEECo annotated method or parsing exception occurs return null.
 	 */
-	public static ParameterizedMethod extractParametrizedMethod(Method method, String root) {
+	public static ParameterizedMethod extractParametrizedMethod(Method method,
+			String root) {
 		try {
 			if (method != null) {
 				List<Parameter> in = getParameters(method, In.class, root);
@@ -99,5 +109,4 @@ public class ParserHelper {
 		return null;
 	}
 
-	
 }
