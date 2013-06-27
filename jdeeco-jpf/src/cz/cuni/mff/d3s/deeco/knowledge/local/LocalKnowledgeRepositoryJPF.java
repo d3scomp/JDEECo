@@ -44,6 +44,8 @@ public class LocalKnowledgeRepositoryJPF extends LocalKnowledgeRepository implem
 	public HashMap<String, Boolean> propositionValues = new HashMap<>();	
 	public HashMap<String, Boolean> propositionToEvaluate = new HashMap<>();
 	
+	boolean evaluatePropositions = false;
+	
 	List<AtomicProposition> propositions = new ArrayList<>();
 
 	public LocalKnowledgeRepositoryJPF(List<AtomicProposition> propositions) {
@@ -76,22 +78,23 @@ public class LocalKnowledgeRepositoryJPF extends LocalKnowledgeRepository implem
 		
 		super.put(entryKey, value, session);
 		
-		for (AtomicProposition ap : propositions) {
-			// propositionToEvaluate.get(...) might return null 
-			if (propositionToEvaluate.get(ap.getName()) == true)
-				propositionValues.put(ap.getName(), ap.evaluate(this));
+		if (evaluatePropositions) {
+			for (AtomicProposition ap : propositions) {
+				// propositionToEvaluate.get(...) might return null 
+				if (propositionToEvaluate.get(ap.getName()) == true)
+					propositionValues.put(ap.getName(), ap.evaluate(this));
+			}
+	
+			// send names of atomic propositions into JPF
+			// we consider only propositions that evaluate to "true" in the current state
+			CommlinkDEECoJPF.notifyEventProcessingStart();		
+			for (AtomicProposition ap : propositions) 
+			{
+				Boolean apVal = propositionValues.get(ap.getName());
+				if ((apVal != null) && apVal.booleanValue()) CommlinkDEECoJPF.addTrueAtomicProposition(ap.getName());
+			}
+			CommlinkDEECoJPF.notifyAtomicPropositionsComplete();		
 		}
-
-		// send names of atomic propositions into JPF
-		// we consider only propositions that evaluate to "true" in the current state
-		CommlinkDEECoJPF.notifyEventProcessingStart();		
-		for (AtomicProposition ap : propositions) 
-		{
-			Boolean apVal = propositionValues.get(ap.getName());
-			if ((apVal != null) && apVal.booleanValue()) CommlinkDEECoJPF.addTrueAtomicProposition(ap.getName());
-		}
-		CommlinkDEECoJPF.notifyAtomicPropositionsComplete();		
-		
 		lock.unlock();
 	}
 
@@ -103,9 +106,16 @@ public class LocalKnowledgeRepositoryJPF extends LocalKnowledgeRepository implem
 	@Override
 	public Object getSingle(String knowledgeId) {
 		List<Object> v = ts.get(knowledgeId);
-		if (v.isEmpty())
+		if ((v==null) || v.isEmpty())
 			return null;
 		else
 			return v.get(0);
+	}
+	
+	public void onStart() {
+		evaluatePropositions = true;
+	}
+	public void onStop() {
+		evaluatePropositions = false;
 	}
 }

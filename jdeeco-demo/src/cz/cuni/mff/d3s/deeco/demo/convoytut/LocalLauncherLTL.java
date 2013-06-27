@@ -1,5 +1,7 @@
 package cz.cuni.mff.d3s.deeco.demo.convoytut;
 
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.util.Arrays;
 import java.util.List;
 
@@ -51,7 +53,8 @@ public class LocalLauncherLTL
 
 			});
 		
-		KnowledgeManager km = new RepositoryKnowledgeManager(new LocalKnowledgeRepositoryJPF(propositions));
+		LocalKnowledgeRepositoryJPF repo = new LocalKnowledgeRepositoryJPF(propositions);
+		KnowledgeManager km = new RepositoryKnowledgeManager(repo);
 		
 		Scheduler scheduler = new MultithreadedSchedulerJPF();
 		
@@ -59,6 +62,11 @@ public class LocalLauncherLTL
 		
 		Runtime rt = new Runtime(km, scheduler);
 		rt.registerComponentsAndEnsembles(dop);
+		
+		// TODO: manage via runtime event listener mechanism (to be done) instead
+		repo.onStart();
+		
 		rt.startRuntime();
+		
 	}
 }
