@@ -78,23 +78,8 @@ public class LocalKnowledgeRepositoryJPF extends LocalKnowledgeRepository implem
 		
 		super.put(entryKey, value, session);
 		
-		if (evaluatePropositions) {
-			for (AtomicProposition ap : propositions) {
-				// propositionToEvaluate.get(...) might return null 
-				if (propositionToEvaluate.get(ap.getName()) == true)
-					propositionValues.put(ap.getName(), ap.evaluate(this));
-			}
-	
-			// send names of atomic propositions into JPF
-			// we consider only propositions that evaluate to "true" in the current state
-			CommlinkDEECoJPF.notifyEventProcessingStart();		
-			for (AtomicProposition ap : propositions) 
-			{
-				Boolean apVal = propositionValues.get(ap.getName());
-				if ((apVal != null) && apVal.booleanValue()) CommlinkDEECoJPF.addTrueAtomicProposition(ap.getName());
-			}
-			CommlinkDEECoJPF.notifyAtomicPropositionsComplete();		
-		}
+		tryEvaluatePropositions();
+		
 		lock.unlock();
 	}
 
@@ -114,8 +99,29 @@ public class LocalKnowledgeRepositoryJPF extends LocalKnowledgeRepository implem
 	
 	public void onStart() {
 		evaluatePropositions = true;
+		tryEvaluatePropositions();
 	}
 	public void onStop() {
 		evaluatePropositions = false;
+	}
+	
+	private void tryEvaluatePropositions() {
+		if (evaluatePropositions) {
+			for (AtomicProposition ap : propositions) {
+				// propositionToEvaluate.get(...) might return null 
+				if (propositionToEvaluate.get(ap.getName()) == true)
+					propositionValues.put(ap.getName(), ap.evaluate(this));
+			}
+	
+			// send names of atomic propositions into JPF
+			// we consider only propositions that evaluate to "true" in the current state
+			CommlinkDEECoJPF.notifyEventProcessingStart();		
+			for (AtomicProposition ap : propositions) 
+			{
+				Boolean apVal = propositionValues.get(ap.getName());
+				if ((apVal != null) && apVal.booleanValue()) CommlinkDEECoJPF.addTrueAtomicProposition(ap.getName());
+			}
+			CommlinkDEECoJPF.notifyAtomicPropositionsComplete();		
+		}
 	}
 }
