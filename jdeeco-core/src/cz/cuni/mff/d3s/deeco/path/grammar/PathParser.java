@@ -30,6 +30,10 @@ public class PathParser implements PathParserConstants {
       t = jj_consume_token(MEMBER);
       value = EEnsembleParty.MEMBER;
       break;
+    case CANDIDATE:
+      t = jj_consume_token(CANDIDATE);
+      value = EEnsembleParty.CANDIDATE;
+      break;
     case OPEN:
       jj_consume_token(OPEN);
           value = parseExpression();
@@ -73,7 +77,7 @@ public class PathParser implements PathParserConstants {
       jj_la1_init_0();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x8e,0x40,};
+      jj_la1_0 = new int[] {0x11e,0x80,};
    }
 
   /** Constructor with InputStream. */
@@ -190,7 +194,7 @@ public class PathParser implements PathParserConstants {
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[9];
+    boolean[] la1tokens = new boolean[10];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -204,7 +208,7 @@ public class PathParser implements PathParserConstants {
         }
       }
     }
-    for (int i = 0; i < 9; i++) {
+    for (int i = 0; i < 10; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

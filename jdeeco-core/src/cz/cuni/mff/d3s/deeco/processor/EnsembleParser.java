@@ -7,6 +7,7 @@ import cz.cuni.mff.d3s.deeco.annotations.Membership;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.ensemble.Ensemble;
 import cz.cuni.mff.d3s.deeco.invokable.BooleanMembership;
+import cz.cuni.mff.d3s.deeco.invokable.CandidateMembership;
 import cz.cuni.mff.d3s.deeco.invokable.MembershipMethod;
 import cz.cuni.mff.d3s.deeco.invokable.ParameterizedMethod;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableEnsembleProcess;
@@ -56,14 +57,22 @@ public class EnsembleParser {
 					"Malformed membership function definition.");
 		}
 
+		MembershipMethod membership = null;
 		// Look up MembershipMethod
-		if (!methodEnsMembership.getReturnType()
-				.isAssignableFrom(boolean.class)) {
+		//if (methodEnsMembership.getClass().isAssignableFrom(CandidateMembership.class)){
+		if (methodEnsMembership.getReturnType().isAssignableFrom(String.class)){
+			if (methodEnsMembership.getAnnotation(Membership.class).candidateRange() <= 1){
+				throw new ParseException(
+						"Candidate MembershipMethod annotation needs to have a set size higher or equal to 2");
+			}
+			// no other possible exception then we assign a new candidate membership
+			membership =  new CandidateMembership(pm);
+		} else if (methodEnsMembership.getReturnType().isAssignableFrom(Boolean.class)) {
+			membership =  new BooleanMembership(pm);
+		} else {
 			throw new ParseException(
-					"MembershipMethod function needs to return boolean");
+					"MembershipMethod function has an unknown membership return type");
 		}
-
-		MembershipMethod membership = new BooleanMembership(pm);
 
 		final Method knowledgeExchangeMethod = AnnotationHelper
 				.getAnnotatedMethod(c, KnowledgeExchange.class);

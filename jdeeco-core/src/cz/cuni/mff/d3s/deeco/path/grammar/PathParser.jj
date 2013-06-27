@@ -52,6 +52,7 @@ TOKEN [ IGNORE_CASE ] :
 {
   < COORD : "coord" >
 | < MEMBER : "member" >
+| < CANDIDATE : "candidate" >
 }
 
 TOKEN :
@@ -91,6 +92,11 @@ PNode parseExpression() :
   | (t = < MEMBER >
     {
       value = EEnsembleParty.MEMBER;
+    }
+    )
+  | (t = < CANDIDATE >
+    {
+      value = EEnsembleParty.CANDIDATE;
     }
     )
   |

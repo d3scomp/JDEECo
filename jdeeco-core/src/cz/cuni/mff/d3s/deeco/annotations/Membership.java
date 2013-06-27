@@ -25,10 +25,11 @@ import java.lang.annotation.Target;
  * class as the membership function.
  * 
  * @author Michal Kit
- * 
+ * @author Julien Malvot
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface Membership {
 	double value() default 0.0;
+	int candidateRange() default 1;
 }

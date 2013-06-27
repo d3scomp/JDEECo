@@ -5,7 +5,7 @@ import java.util.List;
 
 
 
-public abstract class MembershipMethod implements Serializable {
+public abstract class MembershipMethod<T> implements Serializable {
 	
 	public final ParameterizedMethod method;
 	
@@ -25,5 +25,5 @@ public abstract class MembershipMethod implements Serializable {
 		return method.inOut;
 	}
 	
-	public abstract boolean membership(Object [] parameters);
+	public abstract T membership(Object [] parameters);
 }

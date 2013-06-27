@@ -17,6 +17,7 @@ package cz.cuni.mff.d3s.deeco.invokable;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -59,13 +60,13 @@ public abstract class SchedulableProcess implements Serializable {
 
 	protected Object[] getParameterMethodValues(List<Parameter> in,
 			List<Parameter> inOut, List<Parameter> out) throws KMException {
-		return getParameterMethodValues(in, out, inOut, null, null, null);
+		return getParameterMethodValues(in, out, inOut, null, null, "");
 	}
 
 	protected Object[] getParameterMethodValues(List<Parameter> in,
 			List<Parameter> inOut, List<Parameter> out, ISession session)
 			throws KMException {
-		return getParameterMethodValues(in, inOut, out, session, null, null);
+		return getParameterMethodValues(in, inOut, out, session, null, "");
 	}
 
 	protected Object[] getParameterMethodValues(List<Parameter> in,
@@ -111,6 +112,61 @@ public abstract class SchedulableProcess implements Serializable {
 		}
 	}
 
+	/**
+	 * Concerns a list of input candidates
+	 * @param in
+	 * @param inOut
+	 * @param out
+	 * @param session
+	 * @param coordinator
+	 * @param candidates
+	 * @return
+	 * @throws KMException
+	 */
+	protected Object[] getParameterMethodValues(List<Parameter> in,
+			List<Parameter> inOut, List<Parameter> out, ISession session,
+			String coordinator, String[] candidates) throws KMException {
+		final List<Parameter> parametersIn = new ArrayList<Parameter>();
+		parametersIn.addAll(in);
+		parametersIn.addAll(inOut);
+		Object value;
+		Object[] result = new Object[parametersIn.size()
+				+ ((out != null) ? out.size() : 0)];
+		ISession localSession;
+		if (session == null) {
+			localSession = km.createSession();
+			localSession.begin();
+		} else
+			localSession = session;
+		try {
+			while (localSession.repeat()) {
+				for (Parameter p : parametersIn) {
+					// the change concerns the input array of candidates to the getParameterInstance
+					value = getParameterInstance(p, coordinator, candidates, km,
+							localSession);
+					result[p.index] = value;
+				}
+				if (session == null)
+					localSession.end();
+				else
+					break;
+			}
+			final List<Parameter> parametersOut = out;
+			for (Parameter p : parametersOut)
+				result[p.index] = getParameterInstance(p.type);
+			return result;
+		} catch (KMException kme) {
+			if (kme instanceof KMCastException)
+				Log.e(kme.getMessage());
+			if (session == null)
+				localSession.cancel();
+			throw kme;
+		} catch (Exception e) {
+			Log.e("", e);
+			return null;
+		}
+	}
+	
 	/**
 	 * Function used to store computed values during the process method
 	 * execution in the knowledge repository.
@@ -245,6 +301,61 @@ public abstract class SchedulableProcess implements Serializable {
 			return km.getKnowledge(
 					p.kPath.getEvaluatedPath(km, coordinator, member, session),
 					p.type, session);
+		}
+	}
+	
+	// TODO: CAUTION : consider the type of the structure provided by the user = USE getParameterInstance(type)
+	private Object getParameterInstance(Parameter p, String coordinator,
+			String[] candidates, KnowledgeManager km, ISession session)
+			throws KMException, Exception {
+		// TODO: can the getParameterInstance be generic for the 
+		// member/candidates for passing arguments to the evaluated path?
+		if (p.type.isOutWrapper()) {
+			OutWrapper ow = (OutWrapper) p.type.newInstance();
+			// in case of candidate paths
+			if (p.kPath.isCandidateEnsemblePath()){
+				// evaluation of each path into an array
+				String[] candidatePaths = p.kPath.getEvaluatedCandidatePaths(km, coordinator, candidates, session);
+				Object[] candidatesKnowledge = new Object[candidatePaths.length];
+				// retrieve the knowledge for each path into an array
+				for (int i = 0; i < candidatePaths.length; i++){
+					// take the first element in the knowledge retrievel !
+					candidatesKnowledge[i] = ((Object[]) km.getKnowledge(candidatePaths[i], session))[0];
+				}
+				Object objectValue = null;
+				if (p.type.isList())
+					objectValue = Arrays.asList(candidatesKnowledge);
+				else Log.e("Type for this parameter is not supported yet");
+				// array into the outwrapper value object
+				ow.value = objectValue;
+			}else{
+				// no supply of candidate information here as the path is not candidate-related
+				ow.value = km.getKnowledge(
+						p.kPath.getEvaluatedPath(km, coordinator, null, session),
+						p.type.getParametricTypeAt(0), session);
+			}
+			return ow;
+		} else {
+			// same case distinction as the outwrapper
+			if (p.kPath.isCandidateEnsemblePath()){
+				String[] candidatePaths = p.kPath.getEvaluatedCandidatePaths(km, coordinator, candidates, session);
+				Object[] candidatesKnowledge = new Object[candidatePaths.length];
+				for (int i = 0; i < candidatePaths.length; i++){
+					// take the first element in the knowledge retrievel !
+					candidatesKnowledge[i] = ((Object[]) km.getKnowledge(candidatePaths[i], session))[0];
+				}
+				// adaptive process for the input membership parameter type
+				Object objectValue = null;
+				if (p.type.isList())
+					objectValue = Arrays.asList(candidatesKnowledge);
+				else Log.e("Type for this parameter is not supported yet");
+				return objectValue;
+			}else{
+				// no supply of candidate information here as the path is not candidate-related
+				return km.getKnowledge(
+						p.kPath.getEvaluatedPath(km, coordinator, null, session),
+						p.type, session);
+			}
 		}
 	}
 

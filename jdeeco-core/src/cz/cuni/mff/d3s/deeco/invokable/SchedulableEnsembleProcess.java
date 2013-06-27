@@ -16,13 +16,20 @@
 package cz.cuni.mff.d3s.deeco.invokable;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
+import cz.cuni.mff.d3s.deeco.annotations.Membership;
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
 import cz.cuni.mff.d3s.deeco.exceptions.KMNotExistentException;
 import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.runtime.AbstractMiddlewareEntry;
+import cz.cuni.mff.d3s.deeco.runtime.RandomNetworkDistanceMiddlewareEntry;
 import cz.cuni.mff.d3s.deeco.scheduling.ETriggerType;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
 
@@ -43,8 +50,8 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 	/**
 	 * Returns <code>SchedulableEnsembleProcess</code> instance for specified
 	 * membership function (in <code>membership</code>), mapping function (in
-	 * <code>knowledgeExchange</code>), scheduling type (in <code>scheduling</code>) and
-	 * knowledge manager (<code>km</code>).
+	 * <code>knowledgeExchange</code>), scheduling type (in
+	 * <code>scheduling</code>) and knowledge manager (<code>km</code>).
 	 * 
 	 * @param scheduling
 	 *            describes the type of the schedulability for the ensemble
@@ -57,10 +64,12 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 	 *            instance of the knowledge manager that is used for parameter
 	 *            retrieval
 	 */
-	public SchedulableEnsembleProcess(KnowledgeManager km, ProcessSchedule scheduling, MembershipMethod membership,
-			ParameterizedMethod knowledgeExchange, ClassLoader contextClassLoader) {
+	public SchedulableEnsembleProcess(KnowledgeManager km,
+			ProcessSchedule scheduling, MembershipMethod membership,
+			ParameterizedMethod knowledgeExchange,
+			ClassLoader contextClassLoader) {
 		super(km, scheduling, contextClassLoader);
-		
+
 		this.membership = membership;
 		this.knowledgeExchange = knowledgeExchange;
 	}
@@ -73,9 +82,9 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 	@Override
 	public void invoke(String triggererId, ETriggerType recipientMode) {
 		// LoggerFactory.getLogger().fine("Ensembling starts");
-          
-                SchedulableProcess.runtime.set(km.getRuntime());
-                
+
+		SchedulableProcess.runtime.set(km.getRuntime());
+
 		try {
 			Object[] ids = (Object[]) km
 					.getKnowledge(ConstantKeys.ROOT_KNOWLEDGE_ID);
@@ -98,45 +107,106 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 		}
 	}
 
-	// to rewrite in order of different ETriggerType
+	// TODO : to rewrite in order of different ETriggerType
 	private void singleInvocation(String outerId, ETriggerType recipientMode,
 			Object[] rootIds) throws KMException {
 		ISession session = null;
 		try {
-			String cId = null, mId = null;
-			if (recipientMode.equals(ETriggerType.COORDINATOR)) {
-				cId = outerId;
-			} else {
-				mId = outerId;
-			}
-			mloop: for (Object iid : rootIds) {
+			/* for a boolean membership, we test on coordinator-member pairs
+			 * the validity of the association
+			 */
+			String cId = null;
+			if (membership.getClass().isAssignableFrom(BooleanMembership.class)){
+				String mId = null;
 				if (recipientMode.equals(ETriggerType.COORDINATOR)) {
-					mId = (String) iid;
+					cId = outerId;
 				} else {
-					cId = (String) iid;
+					mId = outerId;
 				}
-				session = km.createSession();
-				session.begin();
-				while (session.repeat()) {
-					try {
-						Object[] parametersMembership = getParameterMethodValues(
-								membership.getIn(), membership.getInOut(),
-								membership.getOut(), session,
-								(String) cId, (String) mId);
-						if (evaluateMembership(parametersMembership)) {
-							Object[] parametersKnowledgeExchange = getParameterMethodValues(knowledgeExchange.in,
-									knowledgeExchange.inOut, knowledgeExchange.out, session,
-									(String) cId, (String) mId);
-							evaluateKnowledgeExchange(parametersKnowledgeExchange);
-							putParameterMethodValues(parametersKnowledgeExchange, knowledgeExchange.inOut,
-									knowledgeExchange.out, session, (String) cId,
-									(String) mId);
-						}
-					} catch (KMNotExistentException kmnee) {
-						session.cancel();
-						continue mloop;
+				mloop: for (Object iid : rootIds) {
+					if (recipientMode.equals(ETriggerType.COORDINATOR)) {
+						mId = (String) iid;
+					} else {
+						cId = (String) iid;
 					}
-					session.end();
+					session = km.createSession();
+					session.begin();
+					while (session.repeat()) {
+						try {
+							Object[] parametersMembership = getParameterMethodValues(
+									membership.getIn(), membership.getInOut(),
+									membership.getOut(), session, (String) cId,
+									(String) mId);
+							if (evaluateBooleanMembership(parametersMembership)) {
+								Object[] parametersKnowledgeExchange = getParameterMethodValues(
+										knowledgeExchange.in,
+										knowledgeExchange.inOut,
+										knowledgeExchange.out, session,
+										(String) cId, (String) mId);
+								evaluateKnowledgeExchange(parametersKnowledgeExchange);
+								putParameterMethodValues(
+										parametersKnowledgeExchange,
+										knowledgeExchange.inOut,
+										knowledgeExchange.out, session,
+										(String) cId, (String) mId);
+							}
+						} catch (KMNotExistentException kmnee) {
+							session.cancel();
+							continue mloop;
+						}
+						session.end();
+					}
+				}
+			/* in case of an integer membership, we focus on the group of ids
+			 * and find a subset based on the metric set by the user
+			 */
+			}else if (membership.getClass().isAssignableFrom(CandidateMembership.class)){
+				/* the coordinator must be the only triggerer for the candidate membership
+				 */
+				if (recipientMode.equals(ETriggerType.COORDINATOR)) {
+					cId = outerId;
+					// retrieve the metric and size from the Membership annotation
+					Membership aMembership = membership.method.getMethod().getAnnotation(Membership.class);
+					int size = aMembership.candidateRange();
+					// session creation and start
+					session = km.createSession();
+					session.begin();
+					while (session.repeat()) {
+						try {
+							// the middleware entry provides us all the possible node-to-node distances from its distance matrix
+							RandomNetworkDistanceMiddlewareEntry middlewareEntry = RandomNetworkDistanceMiddlewareEntry.getMiddlewareEntry();
+							// get the sorted node distance pairs using the middleware entry (= distance provider)
+							// by definition a node is either a member or a candidate !
+							List<IntegerNodeDistancePair> sortedNodeDistancePairs = getSortedNodeDistancePairs(cId, rootIds, middlewareEntry, session);
+							Object[] candidateIds = pickCandidateIds(sortedNodeDistancePairs, rootIds, size);
+							// inject the parameters into a local object array
+							Object[] parametersMembership = getParameterMethodValues(
+									membership.getIn(), membership.getInOut(),
+									membership.getOut(), session, (String) cId,
+									(String[]) candidateIds);
+							String candidateId = evaluateCandidateMembership(parametersMembership);
+							// we handle the obtained candidateId as if it were a member id in the condition case
+							// TODO: what if the candidate id is empty ?
+							if (candidateId != null) { // && !candidateId.isEmpty()) {
+								Object[] parametersKnowledgeExchange = getParameterMethodValues(
+										knowledgeExchange.in,
+										knowledgeExchange.inOut,
+										knowledgeExchange.out, session,
+										(String) cId, (String) candidateId);
+								evaluateKnowledgeExchange(parametersKnowledgeExchange);
+								putParameterMethodValues(
+										parametersKnowledgeExchange,
+										knowledgeExchange.inOut,
+										knowledgeExchange.out, session,
+										(String) cId, (String) candidateId);
+							}
+						} catch (KMNotExistentException kmnee) {
+							session.cancel();
+						}
+						session.end();
+					}
+				}else{
+					// ignore member/candidate triggering
 				}
 			}
 		} catch (KMException kme) {
@@ -145,13 +215,71 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 			throw kme;
 		}
 	}
+	
+	/**
+	 * 
+	 * @author Julien Malvot
+	 *
+	 */
+	private class IntegerNodeDistancePair implements Comparable<IntegerNodeDistancePair> {
+		private Integer distance;
+		private Integer cIdx;
+		
+		public IntegerNodeDistancePair(Integer cIdx, Integer distance) {
+			this.cIdx = cIdx;
+			this.distance = distance;
+		}
 
-	private boolean evaluateMembership(Object[] params) {
+		public Integer getcIdx() {
+			return cIdx;
+		}
+		
+		@Override
+		public int compareTo(IntegerNodeDistancePair integerNodeDistancePair) {
+			// TODO: how about the case distance = otherdistance ? shall the node be substituted by the new one ?
+			return (distance <= integerNodeDistancePair.distance ? -1 : 1);
+		}
+	};
+	
+	private List<IntegerNodeDistancePair> getSortedNodeDistancePairs(String cId, Object[] rootIds, AbstractMiddlewareEntry<Integer> middlewareEntry, ISession session) {
+		List<IntegerNodeDistancePair> sortedNodeDistancePairs = new ArrayList<IntegerNodeDistancePair> (rootIds.length);
+		// add all rootIds with their metric value
+		int cIdIndex = Arrays.binarySearch(rootIds, (Object)cId);
+		for (int rIdIndex = 0; rIdIndex < rootIds.length; rIdIndex++){
+			if (rIdIndex != cIdIndex){
+				sortedNodeDistancePairs.add(new IntegerNodeDistancePair(rIdIndex, middlewareEntry.getDistance(cIdIndex, rIdIndex)));
+			}else{
+				sortedNodeDistancePairs.add(new IntegerNodeDistancePair(cIdIndex, Integer.MAX_VALUE));
+			}
+		}
+		// sort the list
+		Collections.sort(sortedNodeDistancePairs);
+		return sortedNodeDistancePairs;
+	}
+	
+	private Object[] pickCandidateIds(List<IntegerNodeDistancePair> sortedNodeDistancePairs, Object[] rootIds, int size) {
+		String[] cdIds = new String[size];
+		// we only retrieve the first candidates with an index lower than the size
+		for (int i = 0; i < size; i++)
+			cdIds[i] = (String) rootIds[sortedNodeDistancePairs.get(i).getcIdx()];
+		return cdIds;
+	}
+
+	private Boolean evaluateBooleanMembership(Object[] params) {
 		try {
-			return membership.membership(params);
+			return (Boolean) membership.membership(params);
 		} catch (Exception e) {
-			Log.e("Ensemble exception while membership evaluation",e);
-			return false;
+			Log.e("Ensemble exception while boolean membership evaluation", e);
+			return Boolean.FALSE;
+		}
+	}
+	
+	private String evaluateCandidateMembership(Object[] params) {
+		try {
+			return (String) membership.membership(params);
+		} catch (Exception e) {
+			Log.e("Ensemble exception while candidate membership evaluation", e);
+			return null;
 		}
 	}
 
@@ -159,16 +287,16 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 		try {
 			knowledgeExchange.invoke(params);
 		} catch (Exception e) {
-			Log.e("Ensemble exception while knowledge exchange",e);
+			Log.e("Ensemble exception while knowledge exchange", e);
 		}
 	}
-	
+
 	public Method getKnowledgeExchangeMethod() {
 		if (knowledgeExchange == null)
 			return null;
 		return knowledgeExchange.getMethod();
 	}
-	
+
 	public Method getMembershipMethod() {
 		if (membership == null || membership.method == null)
 			return null;

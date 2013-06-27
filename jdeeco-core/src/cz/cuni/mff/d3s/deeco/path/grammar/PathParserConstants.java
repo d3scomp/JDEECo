@@ -15,17 +15,19 @@ public interface PathParserConstants {
   /** RegularExpression Id. */
   int MEMBER = 2;
   /** RegularExpression Id. */
-  int IDENTIFIER = 3;
+  int CANDIDATE = 3;
   /** RegularExpression Id. */
-  int LETTER = 4;
+  int IDENTIFIER = 4;
   /** RegularExpression Id. */
-  int DIGIT = 5;
+  int LETTER = 5;
   /** RegularExpression Id. */
-  int SEPARATOR = 6;
+  int DIGIT = 6;
   /** RegularExpression Id. */
-  int OPEN = 7;
+  int SEPARATOR = 7;
   /** RegularExpression Id. */
-  int CLOSE = 8;
+  int OPEN = 8;
+  /** RegularExpression Id. */
+  int CLOSE = 9;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -35,6 +37,7 @@ public interface PathParserConstants {
     "<EOF>",
     "\"coord\"",
     "\"member\"",
+    "\"candidate\"",
     "<IDENTIFIER>",
     "<LETTER>",
     "<DIGIT>",
