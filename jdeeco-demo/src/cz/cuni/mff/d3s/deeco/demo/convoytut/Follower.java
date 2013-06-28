@@ -13,6 +13,10 @@ public class Follower extends Component {
 	public Waypoint destination = new Waypoint(7, 2);
 	public Waypoint leaderPosition;
 	
+	public Follower() {
+		id = "Follower";
+	}
+	
 	@Process
 	@PeriodicScheduling(1000)
 	public static void followProcess(

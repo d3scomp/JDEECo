@@ -32,7 +32,8 @@ public class LeaderB extends Component {
 		path.add(new Waypoint(6, 8));		
 		path.add(new Waypoint(7, 8));
 		path.add(new Waypoint(8, 8));
-		name = "L2";
+		name = "B";
+		id = "LeaderB";
 		position = new Waypoint(1,0);
 	}
 	
