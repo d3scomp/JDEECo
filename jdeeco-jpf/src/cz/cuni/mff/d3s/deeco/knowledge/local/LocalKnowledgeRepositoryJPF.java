@@ -23,6 +23,7 @@ import java.util.concurrent.locks.LockSupport;
 
 import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionAccessError;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.ltl.AtomicProposition;
 
 import cz.cuni.mff.d3s.deeco.ltl.CommlinkDEECoJPF;
@@ -97,10 +98,13 @@ public class LocalKnowledgeRepositoryJPF extends LocalKnowledgeRepository implem
 			return v.get(0);
 	}
 	
+	// TODO: manage via runtime event listener mechanism (to be done) instead
 	public void onStart() {
 		evaluatePropositions = true;
 		tryEvaluatePropositions();
 	}
+	
+	// TODO: manage via runtime event listener mechanism (to be done) instead
 	public void onStop() {
 		evaluatePropositions = false;
 	}
@@ -109,8 +113,15 @@ public class LocalKnowledgeRepositoryJPF extends LocalKnowledgeRepository implem
 		if (evaluatePropositions) {
 			for (AtomicProposition ap : propositions) {
 				// propositionToEvaluate.get(...) might return null 
-				if (propositionToEvaluate.get(ap.getName()) == true)
-					propositionValues.put(ap.getName(), ap.evaluate(this));
+				if (propositionToEvaluate.get(ap.getName()) == true) {
+					boolean value = propositionValues.get(ap.getName());
+					try {
+						value = ap.evaluate(this);
+					} catch (Exception e) {
+						Log.e("Atomic proposition evaluation failed (" + ap.getName() + ").");
+					}					
+					propositionValues.put(ap.getName(), value);
+				}
 			}
 	
 			// send names of atomic propositions into JPF

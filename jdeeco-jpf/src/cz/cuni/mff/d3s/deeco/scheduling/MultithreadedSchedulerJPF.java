@@ -19,10 +19,16 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 public class MultithreadedSchedulerJPF extends Scheduler {
 
 	private Set<Thread> threads;
-
+	int maxPeriodIterations = 0;
+	
 	public MultithreadedSchedulerJPF() {
+		this(0);
+	}
+	
+	public MultithreadedSchedulerJPF(int maxPeriodIterations) {
 		super();
 		this.threads = new HashSet<Thread>();
+		this.maxPeriodIterations = maxPeriodIterations;
 
 		// JPF optimization -> earlier class loading via a clinit call (in the single threaded part)
 		// reduces the state space
@@ -43,10 +49,10 @@ public class MultithreadedSchedulerJPF extends Scheduler {
 		//System.out.println("[DEBUG] max period = " + maxPeriod);
 
 		if (!running) {
-			// let every process run for the number of times its period P fits into 2*P_max
+			// let every process run for the number of times its period P fits into maxPeriodIterations*P_max
 			for (SchedulableProcess sp : periodicProcesses) {
 				long spPeriod = ((ProcessPeriodicSchedule) sp.scheduling).interval;
-				long repeatCount = (2*maxPeriod) / spPeriod + 1;
+				long repeatCount = (maxPeriodIterations*maxPeriod) / spPeriod + 1;
 
 				//System.out.println("[DEBUG] period = " + spPeriod + ", repeat count = " + repeatCount);
 
