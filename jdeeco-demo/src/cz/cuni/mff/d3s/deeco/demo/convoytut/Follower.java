@@ -10,7 +10,7 @@ public class Follower extends Component {
 
 	public String name = "F";
 	public Waypoint position = new Waypoint(1, 4);
-	public Waypoint destination = new Waypoint(7, 2);
+	public Waypoint destination = new Waypoint(3, 3);
 	public Waypoint leaderPosition;
 	
 	public Follower() {

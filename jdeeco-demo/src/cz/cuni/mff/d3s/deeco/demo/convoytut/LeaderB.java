@@ -17,8 +17,6 @@ public class LeaderB extends Component {
 	
 	public LeaderB() {
 		path = new LinkedList<Waypoint>();
-		path.add(new Waypoint(1, 1));		
-		path.add(new Waypoint(1, 2));
 		path.add(new Waypoint(1, 3));
 		path.add(new Waypoint(2, 3));		
 		path.add(new Waypoint(3, 3));
@@ -34,7 +32,7 @@ public class LeaderB extends Component {
 		path.add(new Waypoint(8, 8));
 		name = "B";
 		id = "LeaderB";
-		position = new Waypoint(1,0);
+		position = new Waypoint(1,2);
 	}
 	
 	@Process

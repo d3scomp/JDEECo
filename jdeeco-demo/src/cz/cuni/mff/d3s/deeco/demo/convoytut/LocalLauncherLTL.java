@@ -28,7 +28,7 @@ public class LocalLauncherLTL
 		LocalKnowledgeRepositoryJPF repo = new LocalKnowledgeRepositoryJPF(propositions);
 		KnowledgeManager km = new RepositoryKnowledgeManager(repo);
 		
-		Scheduler scheduler = new MultithreadedSchedulerJPF(30);
+		Scheduler scheduler = new MultithreadedSchedulerJPF(5,5);
 		
 		AbstractDEECoObjectProvider dop = new PreLauncherDEECoObjectProvider();
 		
