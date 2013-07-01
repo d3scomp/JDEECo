@@ -148,6 +148,9 @@ public class MultithreadedSchedulerJPF extends Scheduler {
 				}
 
 				count++;
+
+				// let other threads run after each completed session
+				Thread.yield();
 			}
 		}
 	}

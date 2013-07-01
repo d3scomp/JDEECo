@@ -16,7 +16,8 @@ class LocalSession implements ISession {
 		kr.lock.lock();
 
 		// we must break transition here because there may be no thread choices at "park/unpark"
-		Thread.yield();
+		// not necessary when we limit consecutive runs of every process
+		//Thread.yield();
 	}
 
 	@Override
