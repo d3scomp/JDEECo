@@ -7,7 +7,7 @@ vm.storage.class=gov.nasa.jpf.jvm.FullStateSet
 
 target=cz.cuni.mff.d3s.deeco.demo.convoytut.LocalLauncherLTL
 
-deeco.ltl=[](isFollowerNearLeader-><>isFollowerAtDestination)
+ltl.input=[](isFollowerNearLeader-><>isFollowerAtDestination)
 
 report.console.property_violation=error,trace
 

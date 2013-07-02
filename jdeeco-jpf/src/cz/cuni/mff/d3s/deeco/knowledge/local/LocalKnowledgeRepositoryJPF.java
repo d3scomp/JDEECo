@@ -26,7 +26,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.ltl.AtomicProposition;
 
-import cz.cuni.mff.d3s.deeco.ltl.CommlinkDEECoJPF;
+import cz.cuni.mff.d3s.ltl.CommlinkSuTJPF;
 
 
 
@@ -126,13 +126,13 @@ public class LocalKnowledgeRepositoryJPF extends LocalKnowledgeRepository implem
 	
 			// send names of atomic propositions into JPF
 			// we consider only propositions that evaluate to "true" in the current state
-			CommlinkDEECoJPF.notifyEventProcessingStart();		
+			CommlinkSuTJPF.notifyEventProcessingStart();		
 			for (AtomicProposition ap : propositions) 
 			{
 				Boolean apVal = propositionValues.get(ap.getName());
-				if ((apVal != null) && apVal.booleanValue()) CommlinkDEECoJPF.addTrueAtomicProposition(ap.getName());
+				if ((apVal != null) && apVal.booleanValue()) CommlinkSuTJPF.addTrueAtomicProposition(ap.getName());
 			}
-			CommlinkDEECoJPF.notifyAtomicPropositionsComplete();		
+			CommlinkSuTJPF.notifyAtomicPropositionsComplete();		
 		}
 	}
 }

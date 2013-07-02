@@ -164,7 +164,7 @@
 			<arg value="+site=site.properties"/>
 			<arg value="+jpf-core.native_classpath+=;${dist}/jdeeco.jar;${dist}/jdeeco-jpf.jar"/>
 			<arg value="${demo}/../jpfProperties/LocalLauncherConvoyLTL.jpf"/>
-			<jvmarg value="-Xmx2g"/>
+			<jvmarg value="-Xmx8g"/>
 		</java>
 	</target>
 	
