@@ -15,15 +15,15 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.demo.cloud;
 
+import java.util.Arrays;
+import java.util.List;
+
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.RepositoryKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.local.LocalKnowledgeRepository;
-import cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider;
-import cz.cuni.mff.d3s.deeco.provider.ClassDEECoObjectProvider;
+import cz.cuni.mff.d3s.deeco.provider.DEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.scheduling.MultithreadedScheduler;
 import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  *
@@ -35,7 +35,7 @@ public class LocalLauncherDynamicCloudNoJPF {
 		List<Class<?>> ensembles = Arrays.asList(new Class<?>[] { MigrationEnsemble.class });
 		KnowledgeManager km = new RepositoryKnowledgeManager(new LocalKnowledgeRepository());
 		Scheduler scheduler = new MultithreadedScheduler();
-		AbstractDEECoObjectProvider dop = new ClassDEECoObjectProvider(components, ensembles);
+		DEECoObjectProvider dop = new DEECoObjectProvider(components, ensembles);
 		cz.cuni.mff.d3s.deeco.runtime.Runtime rt = new cz.cuni.mff.d3s.deeco.runtime.Runtime(km, scheduler, true);
 		rt.registerComponentsAndEnsembles(dop);
 

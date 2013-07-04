@@ -1,6 +1,6 @@
 package cz.cuni.mff.d3s.deeco.runtime;
 
-import cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider;
+import cz.cuni.mff.d3s.deeco.provider.DEECoObjectProvider;
 
 /**
  * Interface declaring jDEECo runtime functionality.
@@ -55,7 +55,7 @@ public interface IRuntime extends IEnsembleComponentInformer {
 	 *            definitions.
 	 */
 	public void registerComponentsAndEnsembles(
-			AbstractDEECoObjectProvider provider);
+			DEECoObjectProvider provider);
 
 	/**
 	 * Checks whether the runtime is currently scheduling registered processes.

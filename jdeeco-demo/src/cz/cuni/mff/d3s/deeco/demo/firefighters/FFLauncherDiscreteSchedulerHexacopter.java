@@ -7,9 +7,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.Component;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.RepositoryKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.local.LocalKnowledgeRepository;
-import cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider;
-import cz.cuni.mff.d3s.deeco.provider.ClassDEECoObjectProvider;
-import cz.cuni.mff.d3s.deeco.provider.InitializedDEECoObjectProvider;
+import cz.cuni.mff.d3s.deeco.provider.DEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.runtime.Runtime;
 import cz.cuni.mff.d3s.deeco.scheduling.IScheduler;
 import cz.cuni.mff.d3s.deeco.scheduling.discrete.DiscreteScheduler;
@@ -36,13 +34,13 @@ public class FFLauncherDiscreteSchedulerHexacopter {
 		KnowledgeManager km = new RepositoryKnowledgeManager(
 				new LocalKnowledgeRepository());
 		IScheduler scheduler = new DiscreteScheduler();
-		AbstractDEECoObjectProvider dop = new ClassDEECoObjectProvider(
-				components, ensembles);
+		DEECoObjectProvider dop = new DEECoObjectProvider(components, ensembles);
+
 		Runtime rt = new Runtime(km, scheduler);
 		rt.registerComponentsAndEnsembles(dop);
 
-		dop = new InitializedDEECoObjectProvider(
-				Arrays.asList(new Component[] {
+		dop = new DEECoObjectProvider(
+				new Component[] {
 						new GroupMember("FF1", "T1"),
 						new GroupMember("FF2", "T1"),
 						new GroupMember("FF3", "T1"),
@@ -51,7 +49,7 @@ public class FFLauncherDiscreteSchedulerHexacopter {
 						new GroupMember("FF6", "T2"),
 						new GroupLeader("GL1", "T1", true, new Position(0, 0)),
 						new GroupLeader("GL2", "T2", false, new Position(1000,
-								1000)) }), null);
+								1000)) }, null);
 		rt.registerComponentsAndEnsembles(dop);
 
 		rt.startRuntime();
