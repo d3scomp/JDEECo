@@ -101,8 +101,8 @@ public class EnsembleParser {
 			// not periodic
 			final ProcessSchedule triggeredSchedule = ScheduleHelper
 					.getTriggeredSchedule(
-							methodEnsMembership.getParameterAnnotations(),
-							membership.method.in, membership.method.inOut);
+							knowledgeExchangeMethod.getParameterAnnotations(),
+							knowledgeExchange.in, knowledgeExchange.inOut);
 
 			if (triggeredSchedule != null) {
 				scheduling = triggeredSchedule;
