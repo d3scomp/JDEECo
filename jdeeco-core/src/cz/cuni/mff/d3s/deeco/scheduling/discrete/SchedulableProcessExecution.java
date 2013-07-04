@@ -15,7 +15,7 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.scheduling.discrete;
 
-import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
+import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcessWrapper;
 
 /**
  * Holds a process to be invoked (<code>SchedulableProcess</code>) together with
@@ -29,23 +29,23 @@ import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
 public class SchedulableProcessExecution implements
 		Comparable<SchedulableProcessExecution> {
 
-	private SchedulableProcess process;
+	private SchedulableProcessWrapper processWrapper;
 	private long execTime; // in usec
 	private int seed; // should be randomly generated
 
-	public SchedulableProcessExecution(SchedulableProcess process,
+	public SchedulableProcessExecution(SchedulableProcessWrapper process,
 			long execTime, int seed) {
-		this.process = process;
+		this.processWrapper = process;
 		this.execTime = execTime;
 		this.seed = seed;
 	}
 
-	public SchedulableProcess getProcess() {
-		return process;
+	public SchedulableProcessWrapper getProcessWrapper() {
+		return processWrapper;
 	}
 
-	public void setProcess(SchedulableProcess process) {
-		this.process = process;
+	public void setProcess(SchedulableProcessWrapper process) {
+		this.processWrapper = process;
 	}
 
 	public long getExecTime() {

@@ -20,29 +20,34 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Random;
 
-import cz.cuni.mff.d3s.deeco.invokable.Parameter;
-import cz.cuni.mff.d3s.deeco.invokable.ParameterizedMethod;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableComponentProcess;
-import cz.cuni.mff.d3s.deeco.invokable.SchedulableEnsembleProcess;
+import cz.cuni.mff.d3s.deeco.invokable.SchedulableComponentProcessWrapper;
+import cz.cuni.mff.d3s.deeco.invokable.SchedulableEnsembleProcessWrapper;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
+import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcessWrapper;
 import cz.cuni.mff.d3s.deeco.invokable.TriggeredSchedulableProcess;
-import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.path.grammar.EEnsembleParty;
 import cz.cuni.mff.d3s.deeco.path.grammar.PathGrammar;
+import cz.cuni.mff.d3s.deeco.scheduling.IScheduler;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessPeriodicSchedule;
-import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
+import cz.cuni.mff.d3s.deeco.scheduling.ProcessTriggeredSchedule;
 
 /**
  * Single-threaded scheduler to be used for discrete event simulations.Processes
  * are executed based on their position in a priority queue. <br>
  * Triggered processes are not implemented with listeners. Instead, after each
- * process execution, they are checked to be scheduled or not.
+ * process execution, the updated knowledge paths are collected and new
+ * processes are scheduled when appropriate.
  * 
  * @author Ilias Gerostathopoulos
  * 
  */
-public class DiscreteScheduler extends Scheduler {
+public class DiscreteScheduler implements IScheduler {
+
+	private List<SchedulableProcessWrapper> periodicProcesses = new ArrayList<SchedulableProcessWrapper>();;
+	private List<TriggeredSchedulableProcess> triggeredProcesses = new ArrayList<TriggeredSchedulableProcess>();;
+	private boolean running = false;
 
 	private long virtualTime;
 	private PriorityQueue<SchedulableProcessExecution> pQueue = new PriorityQueue<SchedulableProcessExecution>();
@@ -50,63 +55,49 @@ public class DiscreteScheduler extends Scheduler {
 
 	@Override
 	public void start() {
-
 		if (!running) {
-
 			virtualTime = 0;
-			for (SchedulableProcess sp : periodicProcesses) {
-				scheduleProcessForExecution(sp);
+			for (SchedulableProcessWrapper spw : periodicProcesses) {
+				scheduleProcessForExecution(spw);
 			}
-
 			running = true;
 			discreteSchedulerThread = new Thread(new Runnable() {
-				@Override
-				public void run() {
 
+				public void run() {
+					// list to collect the updated knowledge paths:
+					List<String> changedKnowledgePaths = new ArrayList<String>();
+					// loop forever:
 					for (;;) {
 						// get the first process execution in the queue:
 						SchedulableProcessExecution pExecution = pQueue.poll();
-						SchedulableProcess sp = pExecution.getProcess();
+						SchedulableProcessWrapper spWrapper = pExecution
+								.getProcessWrapper();
 						virtualTime = pExecution.getExecTime();
-						Log.d("Executing process " + sp
+						// execute the process through its wrapper:
+						Log.d("Executing process " + spWrapper.getProcess()
 								+ " in virtual time (with seed): "
 								+ virtualTime + pExecution.getSeed());
-						sp.invoke();
-
+						spWrapper.invoke();
+						// collect the changed paths:
+						changedKnowledgePaths = spWrapper
+								.getChangedKnowledgePaths();
 						// re-schedule only the periodic processes:
-						if (sp.isPeriodic())
-							scheduleProcessForExecution(sp);
-
-						// schedule for execution all triggered processes that
-						// are affected
-						List<String> affectedKnowledgePaths = new ArrayList<String>();
-						/*
-						 * In case of an ensemble process, only the
-						 * knowledgeExchange method is considered. This means
-						 * that triggers will get activated even if membership
-						 * returns false. TODO(?): make triggering via ensembles
-						 * membership-aware
-						 */
-						ParameterizedMethod method = (sp instanceof SchedulableEnsembleProcess) ? ((SchedulableEnsembleProcess) sp).knowledgeExchange
-								: ((SchedulableComponentProcess) sp).process;
-						for (Parameter par : method.inOut) {
-							affectedKnowledgePaths
-									.add(getKnowledgePath(sp, par));
+						if (spWrapper.getProcess().isPeriodic()) {
+							scheduleProcessForExecution(spWrapper);
 						}
-						for (Parameter par : method.out) {
-							affectedKnowledgePaths
-									.add(getKnowledgePath(sp, par));
-						}
-						for (String affected : affectedKnowledgePaths) {
-							for (TriggeredSchedulableProcess tsp : triggeredProcesses) {
-								List<String> triggeredKnowledgePaths = tsp
-										.getKnowledgePaths();
-								for (String triggered : triggeredKnowledgePaths) {
-									if (isSamePath(affected, triggered)) {
-										Log.d("Path '"
-												+ triggered
-												+ "' changed. Process will get triggered.");
-										scheduleProcessForExecution(tsp.sp);
+						// trigger the processes listening to knowledge changes:
+						if (!changedKnowledgePaths.isEmpty()) {
+							for (String changed : changedKnowledgePaths) {
+								for (TriggeredSchedulableProcess tsp : triggeredProcesses) {
+									List<String> triggers = tsp
+											.getKnowledgePaths();
+									for (String trigger : triggers) {
+										if (pathsMatch(changed, trigger)) {
+											Log.d("Path '" + trigger
+													+ "' changed. Process "
+													+ tsp.sp + " is triggered.");
+											scheduleProcessForExecution(wrapProcess(tsp.sp));
+										}
 									}
 								}
 							}
@@ -126,57 +117,130 @@ public class DiscreteScheduler extends Scheduler {
 		}
 	}
 
-	protected void scheduleProcessForExecution(SchedulableProcess process) {
-		// if periodic, calculate the next execution time: add the period
-		// to the current virtual time
-		long addedTime = (process.isPeriodic()) ? ((ProcessPeriodicSchedule) process.scheduling).interval
-				: 0;
+	@Override
+	public boolean isRunning() {
+		return running;
+	}
+
+	@Override
+	public void add(List<? extends SchedulableProcess> processes) {
+		for (SchedulableProcess sp : processes) {
+			add(sp);
+		}
+	}
+
+	@Override
+	public void add(SchedulableProcess process) {
+		if (process.scheduling instanceof ProcessTriggeredSchedule)
+			triggeredProcesses.add(new TriggeredSchedulableProcess(process));
+		else {
+			SchedulableProcessWrapper spWrapper = wrapProcess(process);
+			periodicProcesses.add(spWrapper);
+			if (running) {
+				scheduleProcessForExecution(spWrapper);
+			}
+		}
+	}
+
+	@Override
+	public void remove(List<SchedulableProcess> processes) {
+		if (!running) {
+			for (SchedulableProcess sp : processes) {
+				remove(sp);
+			}
+		}
+	}
+
+	@Override
+	public void remove(SchedulableProcess process) {
+		if (!running) {
+			if (process.scheduling instanceof ProcessTriggeredSchedule) {
+				triggeredProcesses.remove(process);
+			} else {
+				periodicProcesses.remove(process);
+			}
+		}
+	}
+
+	@Override
+	public List<TriggeredSchedulableProcess> getTriggeredProcesses() {
+		return triggeredProcesses;
+	}
+
+	@Override
+	public List<SchedulableProcess> getPeriodicProcesses() {
+		List<SchedulableProcess> schedulableProcesses = new ArrayList<SchedulableProcess>();
+		for (SchedulableProcessWrapper spWrapper : periodicProcesses) {
+			schedulableProcesses.add(spWrapper.getProcess());
+		}
+		return schedulableProcesses;
+	}
+
+	@Override
+	public void clearAll() {
+		if (running)
+			stop();
+		periodicProcesses.clear();
+		triggeredProcesses.clear();
+	}
+
+	/**
+	 * Adds a process wrapper to the queue for execution.
+	 * 
+	 * @param spWrapper
+	 *            process wrapper to be scheduled
+	 */
+	private void scheduleProcessForExecution(SchedulableProcessWrapper spWrapper) {
+		// if the wrapped process is periodic, calculate the next execution
+		// time: add the period to the current virtual time
+		long addedTime = (spWrapper.getProcess().isPeriodic()) ? ((ProcessPeriodicSchedule) spWrapper
+				.getProcess().scheduling).interval : 0;
 		// reminder: execTime in SchedulableProcessExecution in usec
 		long execTime = virtualTime + addedTime * 1000;
 		// always add random seed
 		Random rnd = new Random();
 		int seed = rnd.nextInt(10);
-		Log.d("Adding process " + process + " with virtual execution time "
-				+ execTime + " and seed " + seed);
-		pQueue.add(new SchedulableProcessExecution(process, execTime, seed));
+		Log.d("Adding process " + spWrapper.getProcess()
+				+ " with virtual execution time " + execTime + " and seed "
+				+ seed);
+		pQueue.add(new SchedulableProcessExecution(spWrapper, execTime, seed));
 	}
 
-	/*
-	 * Utility method to extract the complete knowledge path of a parameter of a
-	 * schedulable process <br> TODO: Fix exception thrown in case of a Map key
-	 * containing "member" or "coord" keywords
+	/**
+	 * Utility method to compare two knowledge paths. In case of a triggerable
+	 * ensemble (where the path starts with "member" or "ensemble" prefix) the
+	 * rest of the paths are compared.
+	 * 
+	 * @param changed
+	 *            knowledge path that has been updated
+	 * @param trigger
+	 *            knowledge path that listens to changes
+	 * @return true, if the paths match
 	 */
-	private String getKnowledgePath(SchedulableProcess sp, Parameter par) {
-		String coord = null;
-		String member = null;
-		String kPath = "";
-		if (sp instanceof SchedulableEnsembleProcess) {
-			coord = EEnsembleParty.COORDINATOR.toString();
-			member = EEnsembleParty.MEMBER.toString();
+	private boolean pathsMatch(String changed, String trigger) {
+		if ((trigger.startsWith(EEnsembleParty.COORDINATOR.toString()))
+				|| (trigger.startsWith(EEnsembleParty.MEMBER.toString()))) {
+			changed = changed.substring(changed
+					.indexOf(PathGrammar.PATH_SEPARATOR));
+			trigger = trigger.substring(trigger
+					.indexOf(PathGrammar.PATH_SEPARATOR));
 		}
-		ISession session = sp.km.createSession();
-		session.begin();
-		while (session.repeat()) {
-			kPath = par.kPath.getEvaluatedPath(sp.km, coord, member, session);
-			session.end();
-		}
-		return kPath;
+		return changed.equals(trigger);
 	}
 
-	/*
-	 * Utility method to compare two knowledge paths. If a path starts with the
-	 * "member" or "ensemble" prefix then the rest of the paths are compared.
+	/**
+	 * Creates a process wrapper out of an existing SchedulableProcess. Wrapping
+	 * serves to keep track of the knowledge updates during execution.
+	 * 
+	 * @param process
+	 *            wrapped process (adaptee)
+	 * @return wrapper (adapter)
 	 */
-	private boolean isSamePath(String triggered, String affected) {
-		if ((triggered.startsWith(EEnsembleParty.COORDINATOR.toString()))
-				|| (triggered.startsWith(EEnsembleParty.MEMBER.toString()))
-				|| (affected.startsWith(EEnsembleParty.COORDINATOR.toString()))
-				|| (affected.startsWith(EEnsembleParty.MEMBER.toString()))) {
-			triggered = triggered.substring(triggered
-					.indexOf(PathGrammar.PATH_SEPARATOR));
-			affected = affected.substring(affected
-					.indexOf(PathGrammar.PATH_SEPARATOR));
-		}
-		return triggered.equals(affected);
+	private SchedulableProcessWrapper wrapProcess(SchedulableProcess process) {
+		if (process instanceof SchedulableComponentProcess)
+			return new SchedulableComponentProcessWrapper(process);
+		else
+			return new SchedulableEnsembleProcessWrapper(process);
 	}
+
 }

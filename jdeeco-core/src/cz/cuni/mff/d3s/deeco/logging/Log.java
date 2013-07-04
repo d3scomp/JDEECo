@@ -1,7 +1,5 @@
 package cz.cuni.mff.d3s.deeco.logging;
 
-import java.io.Serializable;
-
 /**
  * API for sending log output.
  * 

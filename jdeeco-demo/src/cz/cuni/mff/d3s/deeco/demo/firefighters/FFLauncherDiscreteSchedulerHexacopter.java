@@ -11,7 +11,7 @@ import cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.provider.ClassDEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.provider.InitializedDEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.runtime.Runtime;
-import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
+import cz.cuni.mff.d3s.deeco.scheduling.IScheduler;
 import cz.cuni.mff.d3s.deeco.scheduling.discrete.DiscreteScheduler;
 
 /**
@@ -35,7 +35,7 @@ public class FFLauncherDiscreteSchedulerHexacopter {
 				CriticalDataCopyFromHexacopterToSL.class });
 		KnowledgeManager km = new RepositoryKnowledgeManager(
 				new LocalKnowledgeRepository());
-		Scheduler scheduler = new DiscreteScheduler();
+		IScheduler scheduler = new DiscreteScheduler();
 		AbstractDEECoObjectProvider dop = new ClassDEECoObjectProvider(
 				components, ensembles);
 		Runtime rt = new Runtime(km, scheduler);

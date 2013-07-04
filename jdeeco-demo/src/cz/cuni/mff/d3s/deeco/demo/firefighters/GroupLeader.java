@@ -24,6 +24,7 @@ import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
+import cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange;
 import cz.cuni.mff.d3s.deeco.knowledge.Component;
 
 /**
@@ -111,10 +112,9 @@ public class GroupLeader extends Component {
 	}
 
 	@Process
-	@PeriodicScheduling(8000)
 	public static void outputGMsInDanger(
 			@In("isSiteLeader") Boolean isSiteLeader,
-			@In("FFsInDangerInSite") Map<String, Set<String>> FFsInDangerInSite) {
+			@TriggerOnChange @In("FFsInDangerInSite")  Map<String, Set<String>> FFsInDangerInSite) {
 		if (isSiteLeader) {
 			System.out.println("Firefighters in danger: ");
 			int count = 0;

@@ -22,7 +22,7 @@ import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
 import cz.cuni.mff.d3s.deeco.annotations.Membership;
-import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
+import cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange;
 import cz.cuni.mff.d3s.deeco.ensemble.Ensemble;
 
 /**
@@ -43,11 +43,10 @@ public class CriticalDataAggregation extends Ensemble {
 	}
 
 	@KnowledgeExchange
-	@PeriodicScheduling(5000)
 	public static void map(
 			@In("member.id") String mId,
 			@In("coord.id") String cId,
-			@In("member.FFsInDangerInTeam") Set<String> FFsInDangerInTeam,
+			@TriggerOnChange @In("member.FFsInDangerInTeam") Set<String> FFsInDangerInTeam,
 			@InOut("coord.FFsInDangerInSite") Map<String, Set<String>> FFsInDangerInSite) {
 		System.out
 				.println("Copying GMsInDanger set from " + mId + " to " + cId);
