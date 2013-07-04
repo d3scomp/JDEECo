@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.deeco.demo.cloud;
+package cz.cuni.mff.d3s.deeco.demo.cloud.loadratio;
 
 import java.util.Arrays;
 import java.util.List;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package cz.cuni.mff.d3s.deeco.demo.cloud;
+package cz.cuni.mff.d3s.deeco.demo.cloud.loadratio;
 
 import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
 import cz.cuni.mff.d3s.deeco.annotations.Membership;

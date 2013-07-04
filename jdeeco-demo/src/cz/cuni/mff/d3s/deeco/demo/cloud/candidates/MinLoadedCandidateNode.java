@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package cz.cuni.mff.d3s.deeco.demo.cloud;
+package cz.cuni.mff.d3s.deeco.demo.cloud.candidates;
 
 import java.util.Random;
 
@@ -30,7 +30,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
  * @author Julien Malvot
  *
  */
-public class MinloadNode extends Component {
+public class MinLoadedCandidateNode extends Component {
 
 	public final static long serialVersionUID = 1L;
 
@@ -39,7 +39,7 @@ public class MinloadNode extends Component {
 	public Integer networkId;
 	public String minMemberId;
 
-	public MinloadNode(String id, Float loadRatio, Float maxLoadRatio) {
+	public MinLoadedCandidateNode(String id, Float loadRatio, Float maxLoadRatio) {
 		this.id = id;
 		this.maxLoadRatio = maxLoadRatio;
 		this.loadRatio = loadRatio;

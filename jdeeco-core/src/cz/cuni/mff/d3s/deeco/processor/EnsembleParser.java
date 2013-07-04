@@ -1,16 +1,17 @@
 package cz.cuni.mff.d3s.deeco.processor;
 
 import java.lang.reflect.Method;
+import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
 import cz.cuni.mff.d3s.deeco.annotations.Membership;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.ensemble.Ensemble;
-import cz.cuni.mff.d3s.deeco.invokable.BooleanMembership;
-import cz.cuni.mff.d3s.deeco.invokable.CandidateMembership;
 import cz.cuni.mff.d3s.deeco.invokable.MembershipMethod;
 import cz.cuni.mff.d3s.deeco.invokable.ParameterizedMethod;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableEnsembleProcess;
+import cz.cuni.mff.d3s.deeco.invokable.types.IdListType;
+import cz.cuni.mff.d3s.deeco.invokable.types.IdType;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.path.grammar.ParseException;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessPeriodicSchedule;
@@ -59,19 +60,38 @@ public class EnsembleParser {
 
 		MembershipMethod membership = null;
 		// Look up MembershipMethod
-		//if (methodEnsMembership.getClass().isAssignableFrom(CandidateMembership.class)){
-		if (methodEnsMembership.getReturnType().isAssignableFrom(String.class)){
+		// for object return type 
+		
+		// for string return type
+		/*} else if (methodEnsMembership.getReturnType().equals(String.class)){
 			if (methodEnsMembership.getAnnotation(Membership.class).candidateRange() <= 1){
 				throw new ParseException(
 						"Candidate MembershipMethod annotation needs to have a set size higher or equal to 2");
 			}
 			// no other possible exception then we assign a new candidate membership
 			membership =  new CandidateMembership(pm);
-		} else if (methodEnsMembership.getReturnType().isAssignableFrom(Boolean.class)) {
-			membership =  new BooleanMembership(pm);
-		} else {
+		// for boolean return type
+		} */
+		if (methodEnsMembership.getAnnotation(Membership.class).candidateRange() < 1){
 			throw new ParseException(
-					"MembershipMethod function has an unknown membership return type");
+					"MembershipMethod annotation needs to have a set size higher or equal to 1");
+		}
+		
+		Class<?> returnType = methodEnsMembership.getReturnType();
+		if (returnType.equals(String.class)){
+			throw new ParseException(
+					"String return type found in the membership, do you mean the IdType return type ?");
+		}else if (returnType.equals(List.class)) {
+			throw new ParseException(
+					"List return type found in the membership, do you mean the IdListType return type ?");
+		}else if (!returnType.equals(IdType.class) 
+				&& !returnType.equals(IdListType.class)
+				&& !returnType.equals(Boolean.class)
+				&& !returnType.equals(boolean.class)){
+			throw new ParseException(
+					"The return type of the membership function is not supported yet");
+		}else{
+			membership = new MembershipMethod(pm);
 		}
 
 		final Method knowledgeExchangeMethod = AnnotationHelper

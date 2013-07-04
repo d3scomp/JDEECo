@@ -35,11 +35,11 @@ public class KnowledgePath implements Serializable {
 	 * @param coord
 	 * @param candidates
 	 * @param session
-	 * @return
+	 * @return the set of paths with the root candidate ids
 	 * 
 	 * @author Julien Malvot
 	 */
-	public String[] getEvaluatedCandidatePaths(KnowledgeManager km, String coord,
+	/*public String[] getEvaluatedPaths(KnowledgeManager km, String coord,
 			String[] candidates, ISession session) {
 		// verification for candidate-rooted paths appliance 
 		if (!isCandidateEnsemblePath()){
@@ -56,7 +56,7 @@ public class KnowledgePath implements Serializable {
 			Log.e("Knowledge path evaluation error",kme);
 			return null;
 		}
-	}
+	}*/
 	
 	/**
 	 * provide the information if the type of path is candidate-based for the caller
@@ -92,5 +92,9 @@ public class KnowledgePath implements Serializable {
 			result += PathGrammar.PATH_SEPARATOR
 					+ evaluatePath((PNode) pathNode.next, km, coord, node, session);
 		return result;
+	}
+	
+	public String toString() {
+		return pathNode.toString();
 	}
 }

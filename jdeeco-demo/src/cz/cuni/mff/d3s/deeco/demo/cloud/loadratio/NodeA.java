@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Charles University in Prague
+ * Copyright 2012 Charles University in Prague
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,19 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package cz.cuni.mff.d3s.deeco.demo.cloud;
+package cz.cuni.mff.d3s.deeco.demo.cloud.loadratio;
 
-import cz.cuni.mff.d3s.deeco.annotations.Out;
-import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
-import cz.cuni.mff.d3s.deeco.knowledge.Component;
-import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 import java.util.Random;
 
-/**
- * 
- * @author Petr Hnetynka
- */
-public class NodeD extends Component {
+import cz.cuni.mff.d3s.deeco.annotations.In;
+import cz.cuni.mff.d3s.deeco.annotations.Out;
+import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
+import cz.cuni.mff.d3s.deeco.annotations.Process;
+import cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange;
+import cz.cuni.mff.d3s.deeco.knowledge.Component;
+import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
+
+public class NodeA extends Component {
+
 	public final static long serialVersionUID = 1L;
 
 	public Float loadRatio;
@@ -33,21 +34,34 @@ public class NodeD extends Component {
 	public Integer networkId;
 	public String targetNode;
 
-	public NodeD() {
-		this.id = "NodeD";
+	public NodeA() {
+		this.id = "NodeA";
+		this.maxLoadRatio = .5f;
 		this.loadRatio = 0.0f;
-		this.maxLoadRatio = 0.3f;
 		this.networkId = 1;
 		this.targetNode = null;
 	}
 
-	@cz.cuni.mff.d3s.deeco.annotations.Process
+	public NodeA(String id, Float maxLoadRatio, Integer networkId) {
+		this.id = id;
+		this.maxLoadRatio = maxLoadRatio;
+		this.loadRatio = 0.0f;
+		this.networkId = networkId;
+		this.targetNode = null;
+	}
+
+	@Process
 	@PeriodicScheduling(6000)
 	public static void process(@Out("loadRatio") OutWrapper<Float> loadRatio) {
 		loadRatio.value = new Random().nextFloat();
-
-		System.out.println("Node D new load ratio: "
+		System.out.println("Node A new load ratio: "
 				+ Math.round(loadRatio.value * 100) + "%");
+	}
+
+	@Process
+	public static void process2(
+			@In("targetNode") @TriggerOnChange String mTargetNode) {
+		System.out.println("New target node: " + mTargetNode);
 	}
 
 }

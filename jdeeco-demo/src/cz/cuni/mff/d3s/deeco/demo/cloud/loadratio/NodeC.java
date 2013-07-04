@@ -2,7 +2,7 @@
  * 
  */
 
-package cz.cuni.mff.d3s.deeco.demo.cloud;
+package cz.cuni.mff.d3s.deeco.demo.cloud.loadratio;
 
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.Out;

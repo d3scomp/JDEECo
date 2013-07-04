@@ -148,8 +148,11 @@ public class Runtime implements IRuntime {
 			}
 			List<? extends SchedulableProcess> componentProcesses = component
 					.getProcesses();
-			setUpProcesses(componentProcesses, km, contextClassLoader);
-			addSchedulableProcesses(componentProcesses);
+			// the component can have no processes
+			if (componentProcesses != null) {
+				setUpProcesses(componentProcesses, km, contextClassLoader);
+				addSchedulableProcesses(componentProcesses);
+			}
 		}
 	}
 

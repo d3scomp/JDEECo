@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.deeco.demo.cloud;
+package cz.cuni.mff.d3s.deeco.demo.cloud.candidates;
 
 import java.util.List;
 
@@ -8,6 +8,7 @@ import cz.cuni.mff.d3s.deeco.annotations.Membership;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.ensemble.Ensemble;
+import cz.cuni.mff.d3s.deeco.invokable.types.IdType;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 
 /**
@@ -19,12 +20,12 @@ import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
  * 
  * @author Julien Malvot
  */
-public class MinloadEnsemble extends Ensemble {
+public class MinLoadedCandidateEnsemble extends Ensemble {
 
 	private static final long serialVersionUID = 1L;
 
 	@Membership(candidateRange=2)
-	public static String membership(
+	public static IdType membership(
 			// input coordinator
 			@In("coord.id") String cId,
 			@In("candidate.id") List<String> cdIds,
@@ -48,10 +49,10 @@ public class MinloadEnsemble extends Ensemble {
 				}
 			}
 			System.out.println("");
-			return minloadId;
+			return new IdType(minloadId);
 		}
 		
-		return "";
+		return null;
 	}
 
 	@KnowledgeExchange

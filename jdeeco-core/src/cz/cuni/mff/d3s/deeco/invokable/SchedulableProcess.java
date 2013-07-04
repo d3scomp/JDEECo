@@ -26,6 +26,7 @@ import cz.cuni.mff.d3s.deeco.exceptions.KMException;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
+import cz.cuni.mff.d3s.deeco.knowledge.TypeUtils;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.runtime.IRuntime;
 import cz.cuni.mff.d3s.deeco.scheduling.ETriggerType;
@@ -72,55 +73,20 @@ public abstract class SchedulableProcess implements Serializable {
 	protected Object[] getParameterMethodValues(List<Parameter> in,
 			List<Parameter> inOut, List<Parameter> out, ISession session,
 			String coordinator, String member) throws KMException {
-		final List<Parameter> parametersIn = new ArrayList<Parameter>();
-		parametersIn.addAll(in);
-		parametersIn.addAll(inOut);
-		Object value;
-		Object[] result = new Object[parametersIn.size()
-				+ ((out != null) ? out.size() : 0)];
-		ISession localSession;
-		if (session == null) {
-			localSession = km.createSession();
-			localSession.begin();
-		} else
-			localSession = session;
-		try {
-			while (localSession.repeat()) {
-				for (Parameter p : parametersIn) {
-					value = getParameterInstance(p, coordinator, member, km,
-							localSession);
-					result[p.index] = value;
-				}
-				if (session == null)
-					localSession.end();
-				else
-					break;
-			}
-			final List<Parameter> parametersOut = out;
-			for (Parameter p : parametersOut)
-				result[p.index] = getParameterInstance(p.type);
-			return result;
-		} catch (KMException kme) {
-			if (kme instanceof KMCastException)
-				Log.e(kme.getMessage());
-			if (session == null)
-				localSession.cancel();
-			throw kme;
-		} catch (Exception e) {
-			Log.e("", e);
-			return null;
-		}
+		return getParameterMethodValues(in, inOut, out, session, coordinator, new String[] {member});
 	}
 
 	/**
-	 * Concerns a list of input candidates
+	 * Concerns a list of input candidates which has been created inside the membership function.
+	 * The parameter instances are gotten via the getParameterInstance but this time with the
+	 * input candidate ids.
 	 * @param in
 	 * @param inOut
 	 * @param out
 	 * @param session
 	 * @param coordinator
-	 * @param candidates
-	 * @return
+	 * @param candidates the input set of candidate ids to base the process on
+	 * @return the parameter values
 	 * @throws KMException
 	 */
 	protected Object[] getParameterMethodValues(List<Parameter> in,
@@ -144,6 +110,7 @@ public abstract class SchedulableProcess implements Serializable {
 					// the change concerns the input array of candidates to the getParameterInstance
 					value = getParameterInstance(p, coordinator, candidates, km,
 							localSession);
+					//Log.i(p.kPath.toString());
 					result[p.index] = value;
 				}
 				if (session == null)
@@ -182,13 +149,12 @@ public abstract class SchedulableProcess implements Serializable {
 	 */
 	protected void putParameterMethodValues(Object[] parameterValues,
 			List<Parameter> inOut, List<Parameter> out) {
-		putParameterMethodValues(parameterValues, inOut, out, null, null, null);
+		putParameterMethodValues(parameterValues, inOut, out, null, null, "");
 	}
 
 	protected void putParameterMethodValues(Object[] parameterValues,
 			List<Parameter> inOut, List<Parameter> out, ISession session) {
-		putParameterMethodValues(parameterValues, inOut, out, session, null,
-				null);
+		putParameterMethodValues(parameterValues, inOut, out, session, null, "");
 	}
 
 	/**
@@ -210,6 +176,13 @@ public abstract class SchedulableProcess implements Serializable {
 	protected void putParameterMethodValues(Object[] parameterValues,
 			List<Parameter> inOut, List<Parameter> out, ISession session,
 			String coordinator, String member) {
+		
+		putParameterMethodValues(parameterValues, inOut, out, session, coordinator, new String[]{member});
+	}
+	
+	protected void putParameterMethodValues(Object[] parameterValues,
+			List<Parameter> inOut, List<Parameter> out, ISession session,
+			String coordinator, String[] candidates) {
 		if (parameterValues != null) {
 			final List<Parameter> parameters = new ArrayList<Parameter>();
 			parameters.addAll(out);
@@ -223,12 +196,7 @@ public abstract class SchedulableProcess implements Serializable {
 			try {
 				while (localSession.repeat()) {
 					for (Parameter p : parameters) {
-						Object parameterValue = parameterValues[p.index];
-						km.alterKnowledge(
-								p.kPath.getEvaluatedPath(km, coordinator,
-										member, session),
-								p.type.isOutWrapper() ? ((OutWrapper) parameterValue).value
-										: parameterValue, session);
+						putParameterInstance(p, parameterValues, coordinator, candidates, km, localSession);
 					}
 					if (session == null)
 						localSession.end();
@@ -267,6 +235,31 @@ public abstract class SchedulableProcess implements Serializable {
 	public void invoke() {
 		invoke(null, null);
 	}
+	
+	private void putParameterInstance(Parameter p, Object[] parameterValues, String coordinator,
+			String[] candidates, KnowledgeManager km, ISession session) throws KMException, Exception {
+		Object parameterValue = parameterValues[p.index];
+		Boolean isOutWrapper = p.type.isOutWrapper();
+		// the treatment of the parameter can be different regarding the type of the output object (OutWrapper...)
+		Object iteratedValue = (isOutWrapper ? ((OutWrapper<?>) parameterValue).value : parameterValue);
+		// retrieve the knowledge for each path into an array
+		for (int i = 0; i < candidates.length; i++){
+			// select the right object value regarding the type of the output object (OutWrapper...)
+			Object value = null;
+				
+			if (p.kPath.isCandidateEnsemblePath() && TypeUtils.isList(iteratedValue.getClass())){
+				value = ((List<?>) iteratedValue).get(i);
+			}else{
+				value = iteratedValue;
+			}
+			// alter the knowledge of coordinator-candidate pairs with the given value (from the list or as a primitive)
+			// the coordinator will then collect all the related candidate knowledge in lists
+			km.alterKnowledge(
+				p.kPath.getEvaluatedPath(km, coordinator, candidates[i], session), 
+				value, session);
+		}
+	}
+	
 
 	private Object getParameterInstance(TypeDescription expectedParamType)
 			throws KMCastException {
@@ -287,76 +280,59 @@ public abstract class SchedulableProcess implements Serializable {
 			throw new KMCastException("Out parameter instantiation exception");
 		}
 	}
-
-	private Object getParameterInstance(Parameter p, String coordinator,
-			String member, KnowledgeManager km, ISession session)
-			throws KMException, Exception {
-		if (p.type.isOutWrapper()) {
-			OutWrapper ow = (OutWrapper) p.type.newInstance();
-			ow.value = km.getKnowledge(
-					p.kPath.getEvaluatedPath(km, coordinator, member, session),
-					p.type.getParametricTypeAt(0), session);
-			return ow;
-		} else {
-			return km.getKnowledge(
-					p.kPath.getEvaluatedPath(km, coordinator, member, session),
-					p.type, session);
-		}
-	}
 	
-	// TODO: CAUTION : consider the type of the structure provided by the user = USE getParameterInstance(type)
 	private Object getParameterInstance(Parameter p, String coordinator,
 			String[] candidates, KnowledgeManager km, ISession session)
 			throws KMException, Exception {
-		// TODO: can the getParameterInstance be generic for the 
-		// member/candidates for passing arguments to the evaluated path?
-		if (p.type.isOutWrapper()) {
-			OutWrapper ow = (OutWrapper) p.type.newInstance();
-			// in case of candidate paths
-			if (p.kPath.isCandidateEnsemblePath()){
-				// evaluation of each path into an array
-				String[] candidatePaths = p.kPath.getEvaluatedCandidatePaths(km, coordinator, candidates, session);
-				Object[] candidatesKnowledge = new Object[candidatePaths.length];
-				// retrieve the knowledge for each path into an array
-				for (int i = 0; i < candidatePaths.length; i++){
-					// take the first element in the knowledge retrievel !
-					candidatesKnowledge[i] = ((Object[]) km.getKnowledge(candidatePaths[i], session))[0];
-				}
-				Object objectValue = null;
-				if (p.type.isList())
-					objectValue = Arrays.asList(candidatesKnowledge);
-				else Log.e("Type for this parameter is not supported yet");
-				// array into the outwrapper value object
-				ow.value = objectValue;
-			}else{
-				// no supply of candidate information here as the path is not candidate-related
-				ow.value = km.getKnowledge(
-						p.kPath.getEvaluatedPath(km, coordinator, null, session),
-						p.type.getParametricTypeAt(0), session);
-			}
-			return ow;
-		} else {
-			// same case distinction as the outwrapper
-			if (p.kPath.isCandidateEnsemblePath()){
-				String[] candidatePaths = p.kPath.getEvaluatedCandidatePaths(km, coordinator, candidates, session);
-				Object[] candidatesKnowledge = new Object[candidatePaths.length];
-				for (int i = 0; i < candidatePaths.length; i++){
-					// take the first element in the knowledge retrievel !
-					candidatesKnowledge[i] = ((Object[]) km.getKnowledge(candidatePaths[i], session))[0];
-				}
-				// adaptive process for the input membership parameter type
-				Object objectValue = null;
-				if (p.type.isList())
-					objectValue = Arrays.asList(candidatesKnowledge);
-				else Log.e("Type for this parameter is not supported yet");
-				return objectValue;
-			}else{
-				// no supply of candidate information here as the path is not candidate-related
-				return km.getKnowledge(
-						p.kPath.getEvaluatedPath(km, coordinator, null, session),
-						p.type, session);
-			}
+		OutWrapper ow = null;
+		Object objectReturn = null;
+		Object objectValue = null;
+		TypeDescription tdUnit = null;
+		Boolean isOutWrapper = p.type.isOutWrapper();
+		// Caution: the type description is the p.type when manipulating a knowledge parameter
+		// when we manipulate an outwrapper, we must take the type description which is wrapped !
+		// that affects the process of knowledge retrieving
+		TypeDescription td = null;
+		// in case of an out wrapper
+		if (isOutWrapper){
+			ow = (OutWrapper) p.type.newInstance();
+			td = p.type.getParametricTypeAt(0);
+		}else{
+			td = p.type;
 		}
+		// define some states of the parameter
+		Boolean isCandidateEnsemblePath = p.kPath.isCandidateEnsemblePath();
+		Boolean isList = td.isList();
+		// the type description unit is the type to be retrieved for one iteration on the loop
+		// can differ regarding the input type (for instance in an OutWrapper<List<T>>)
+		// the treatment for candidates is iterative
+		if (isCandidateEnsemblePath && isList){
+			tdUnit = p.type.getParametricTypeAt(0);
+		}else{
+			tdUnit = td;
+		}
+		Object[] candidatesKnowledge = new Object[candidates.length];
+		// retrieve the knowledge for each path into an array
+		for (int i = 0; i < candidates.length; i++){
+			candidatesKnowledge[i] = km.getKnowledge(p.kPath.getEvaluatedPath(km, coordinator, candidates[i], session), tdUnit, session);
+		}
+		// different treatment for the result regarding the knowledge type
+		if (isCandidateEnsemblePath && td.isList()){
+			objectValue = Arrays.asList(candidatesKnowledge);
+		}else if (isCandidateEnsemblePath){
+			throw new Exception("getParameterInstance : Type for this parameter is not supported yet");
+		}else{
+			objectValue = candidatesKnowledge[0];
+		}
+		// assign the object value to the proper returned object
+		if (isOutWrapper){
+			ow.value = objectValue;
+			objectReturn = ow;
+		}else{
+			objectReturn = objectValue;
+		}
+		// return the OutWrapper or the object to be returned
+		return objectReturn;
 	}
 
 	public abstract void invoke(String triggererId, ETriggerType recipientMode);

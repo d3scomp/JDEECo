@@ -16,20 +16,21 @@
 package cz.cuni.mff.d3s.deeco.invokable;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.annotations.Membership;
+import cz.cuni.mff.d3s.deeco.exceptions.EnsembleProcessInvocationException;
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
 import cz.cuni.mff.d3s.deeco.exceptions.KMNotExistentException;
+import cz.cuni.mff.d3s.deeco.invokable.types.IdListType;
+import cz.cuni.mff.d3s.deeco.invokable.types.IdType;
 import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.runtime.AbstractMiddlewareEntry;
-import cz.cuni.mff.d3s.deeco.runtime.RandomNetworkDistanceMiddlewareEntry;
+import cz.cuni.mff.d3s.deeco.runtime.middleware.LinkedMiddlewareEntry;
+import cz.cuni.mff.d3s.deeco.runtime.middleware.MiddlewareLink;
 import cz.cuni.mff.d3s.deeco.scheduling.ETriggerType;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
 
@@ -98,10 +99,12 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 			// LoggerFactory.getLogger().fine("Ensembling ends");
 		} catch (KMException kme) {
 			return;
+		} catch (EnsembleProcessInvocationException e) {
+			return;
 		}
 	}
 
-	private void periodicInvocation(Object[] rootIds) throws KMException {
+	private void periodicInvocation(Object[] rootIds) throws KMException, EnsembleProcessInvocationException {
 		for (Object oid : rootIds) {
 			singleInvocation((String) oid, ETriggerType.COORDINATOR, rootIds);
 		}
@@ -109,14 +112,15 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 
 	// TODO : to rewrite in order of different ETriggerType
 	private void singleInvocation(String outerId, ETriggerType recipientMode,
-			Object[] rootIds) throws KMException {
+			Object[] rootIds) throws KMException, EnsembleProcessInvocationException {
 		ISession session = null;
 		try {
+			Class<?> membershipReturnType = membership.method.getMethod().getReturnType();
 			/* for a boolean membership, we test on coordinator-member pairs
 			 * the validity of the association
 			 */
 			String cId = null;
-			if (membership.getClass().isAssignableFrom(BooleanMembership.class)){
+			if (membershipReturnType.equals(Boolean.class) || membershipReturnType.equals(boolean.class)){
 				String mId = null;
 				if (recipientMode.equals(ETriggerType.COORDINATOR)) {
 					cId = outerId;
@@ -137,7 +141,14 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 									membership.getIn(), membership.getInOut(),
 									membership.getOut(), session, (String) cId,
 									(String) mId);
-							if (evaluateBooleanMembership(parametersMembership)) {
+							// if the membership returns a positive test
+							if ((Boolean)evaluateMembership(parametersMembership)) {
+								// in case of outputs in the parameters of the membership (flags ...)
+								putParameterMethodValues(parametersMembership,
+										membership.getInOut(),
+										membership.getOut(), session,
+										(String) cId, (String) mId);
+								// handling the knowledge exchange (get-evaluate-put)
 								Object[] parametersKnowledgeExchange = getParameterMethodValues(
 										knowledgeExchange.in,
 										knowledgeExchange.inOut,
@@ -157,48 +168,91 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 						session.end();
 					}
 				}
-			/* in case of an integer membership, we focus on the group of ids
-			 * and find a subset based on the metric set by the user
+			/* we have different cases according to the object return type
+			 * and find a subset based on the distances provided by the middleware
 			 */
-			}else if (membership.getClass().isAssignableFrom(CandidateMembership.class)){
-				/* the coordinator must be the only triggerer for the candidate membership
-				 */
+			}else if (membershipReturnType.equals(IdType.class) || membershipReturnType.equals(IdListType.class)){
+				// the coordinator must be the only triggerer for the candidate membership
+				// as the candidates are selected in its processing
 				if (recipientMode.equals(ETriggerType.COORDINATOR)) {
 					cId = outerId;
-					// retrieve the metric and size from the Membership annotation
+					// retrieve the range (from the Membership annotation) of the "neighborhood" (candidates) to be selected 
 					Membership aMembership = membership.method.getMethod().getAnnotation(Membership.class);
-					int size = aMembership.candidateRange();
+					int range = aMembership.candidateRange();
 					// session creation and start
 					session = km.createSession();
 					session.begin();
 					while (session.repeat()) {
 						try {
 							// the middleware entry provides us all the possible node-to-node distances from its distance matrix
-							RandomNetworkDistanceMiddlewareEntry middlewareEntry = RandomNetworkDistanceMiddlewareEntry.getMiddlewareEntry();
+							LinkedMiddlewareEntry middlewareEntry = LinkedMiddlewareEntry.getMiddlewareEntrySingleton();
 							// get the sorted node distance pairs using the middleware entry (= distance provider)
 							// by definition a node is either a member or a candidate !
-							List<IntegerNodeDistancePair> sortedNodeDistancePairs = getSortedNodeDistancePairs(cId, rootIds, middlewareEntry, session);
-							Object[] candidateIds = pickCandidateIds(sortedNodeDistancePairs, rootIds, size);
-							// inject the parameters into a local object array
-							Object[] parametersMembership = getParameterMethodValues(
-									membership.getIn(), membership.getInOut(),
-									membership.getOut(), session, (String) cId,
-									(String[]) candidateIds);
-							String candidateId = evaluateCandidateMembership(parametersMembership);
-							// we handle the obtained candidateId as if it were a member id in the condition case
-							// TODO: what if the candidate id is empty ?
-							if (candidateId != null) { // && !candidateId.isEmpty()) {
-								Object[] parametersKnowledgeExchange = getParameterMethodValues(
-										knowledgeExchange.in,
-										knowledgeExchange.inOut,
-										knowledgeExchange.out, session,
-										(String) cId, (String) candidateId);
-								evaluateKnowledgeExchange(parametersKnowledgeExchange);
-								putParameterMethodValues(
-										parametersKnowledgeExchange,
-										knowledgeExchange.inOut,
-										knowledgeExchange.out, session,
-										(String) cId, (String) candidateId);
+							String[] candidateIds = null;
+							List<String> candidateIdsList = null;
+							try {
+								candidateIdsList = (middlewareEntry.getBestDestinationsFromSource(cId, range));
+							} catch (Exception e) {
+								throw new EnsembleProcessInvocationException(e.getMessage());
+							}
+							if (candidateIdsList != null && !candidateIdsList.isEmpty()){
+								candidateIds = candidateIdsList.toArray(new String[candidateIdsList.size()]);
+							
+								// inject the parameters into a local object array
+								Object[] parametersMembership = getParameterMethodValues(
+										membership.getIn(), membership.getInOut(),
+										membership.getOut(), session, (String) cId,
+										(String[]) candidateIds);
+								// evaluate the membership which returns the best candidate(s)
+								Object returnObject = evaluateMembership(parametersMembership);
+								// the candidateId must be defined by the membership, otherwise no best candidate exists
+								if (returnObject != null) {
+									// if the returned object is a candidate id
+									if (membershipReturnType.equals(IdType.class)) {
+										String bestCandidateId = ((IdType) returnObject).id;
+										// in case of outputs in the parameters of the membership (flags ...)
+										putParameterMethodValues(parametersMembership,
+												membership.getInOut(),
+												membership.getOut(), session,
+												(String) cId, (String) bestCandidateId);
+										// handle the knowledge exchange
+										Object[] parametersKnowledgeExchange = getParameterMethodValues(
+												knowledgeExchange.in,
+												knowledgeExchange.inOut,
+												knowledgeExchange.out, session,
+												(String) cId, bestCandidateId);
+										evaluateKnowledgeExchange(parametersKnowledgeExchange);
+										putParameterMethodValues(
+												parametersKnowledgeExchange,
+												knowledgeExchange.inOut,
+												knowledgeExchange.out, session,
+												(String) cId, bestCandidateId);
+									// if the returned object is a list of candidate ids
+									// the knowledge is exchanged between the coordinator and all candidates
+									}else if (membershipReturnType.equals(IdListType.class)){
+										List<String> bestCandidateIdsList = ((IdListType) returnObject).idList;
+										String[] bestCandidateIds = bestCandidateIdsList.toArray(new String[bestCandidateIdsList.size()]);
+										// in case of outputs in the parameters of the membership (flags ...)
+										putParameterMethodValues(parametersMembership,
+												membership.getInOut(),
+												membership.getOut(), session,
+												(String) cId, bestCandidateIds);
+										// handle the knowledge exchange
+										Object[] parametersKnowledgeExchange = getParameterMethodValues(
+												knowledgeExchange.in,
+												knowledgeExchange.inOut,
+												knowledgeExchange.out, session,
+												(String) cId, bestCandidateIds);
+										evaluateKnowledgeExchange(parametersKnowledgeExchange);
+										putParameterMethodValues(
+												parametersKnowledgeExchange,
+												knowledgeExchange.inOut,
+												knowledgeExchange.out, session,
+												(String) cId, bestCandidateIds);
+									}else{
+										throw new EnsembleProcessInvocationException("The return type of the membership function is not supported");
+									} 						
+								}
 							}
 						} catch (KMNotExistentException kmnee) {
 							session.cancel();
@@ -208,77 +262,26 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 				}else{
 					// ignore member/candidate triggering
 				}
+			}else {
+				throw new EnsembleProcessInvocationException("The return type of the membership function is not supported");
 			}
 		} catch (KMException kme) {
 			if (session != null)
 				session.cancel();
 			throw kme;
+		} catch (EnsembleProcessInvocationException e) {
+			if (session != null)
+				session.cancel();
+			throw e;
 		}
-	}
-	
-	/**
-	 * 
-	 * @author Julien Malvot
-	 *
-	 */
-	private class IntegerNodeDistancePair implements Comparable<IntegerNodeDistancePair> {
-		private Integer distance;
-		private Integer cIdx;
-		
-		public IntegerNodeDistancePair(Integer cIdx, Integer distance) {
-			this.cIdx = cIdx;
-			this.distance = distance;
-		}
-
-		public Integer getcIdx() {
-			return cIdx;
-		}
-		
-		@Override
-		public int compareTo(IntegerNodeDistancePair integerNodeDistancePair) {
-			// TODO: how about the case distance = otherdistance ? shall the node be substituted by the new one ?
-			return (distance <= integerNodeDistancePair.distance ? -1 : 1);
-		}
-	};
-	
-	private List<IntegerNodeDistancePair> getSortedNodeDistancePairs(String cId, Object[] rootIds, AbstractMiddlewareEntry<Integer> middlewareEntry, ISession session) {
-		List<IntegerNodeDistancePair> sortedNodeDistancePairs = new ArrayList<IntegerNodeDistancePair> (rootIds.length);
-		// add all rootIds with their metric value
-		int cIdIndex = Arrays.binarySearch(rootIds, (Object)cId);
-		for (int rIdIndex = 0; rIdIndex < rootIds.length; rIdIndex++){
-			if (rIdIndex != cIdIndex){
-				sortedNodeDistancePairs.add(new IntegerNodeDistancePair(rIdIndex, middlewareEntry.getDistance(cIdIndex, rIdIndex)));
-			}else{
-				sortedNodeDistancePairs.add(new IntegerNodeDistancePair(cIdIndex, Integer.MAX_VALUE));
-			}
-		}
-		// sort the list
-		Collections.sort(sortedNodeDistancePairs);
-		return sortedNodeDistancePairs;
-	}
-	
-	private Object[] pickCandidateIds(List<IntegerNodeDistancePair> sortedNodeDistancePairs, Object[] rootIds, int size) {
-		String[] cdIds = new String[size];
-		// we only retrieve the first candidates with an index lower than the size
-		for (int i = 0; i < size; i++)
-			cdIds[i] = (String) rootIds[sortedNodeDistancePairs.get(i).getcIdx()];
-		return cdIds;
 	}
 
-	private Boolean evaluateBooleanMembership(Object[] params) {
+	// for the membership call
+	private Object evaluateMembership(Object[] params) {
 		try {
-			return (Boolean) membership.membership(params);
+			return membership.membership(params);
 		} catch (Exception e) {
-			Log.e("Ensemble exception while boolean membership evaluation", e);
-			return Boolean.FALSE;
-		}
-	}
-	
-	private String evaluateCandidateMembership(Object[] params) {
-		try {
-			return (String) membership.membership(params);
-		} catch (Exception e) {
-			Log.e("Ensemble exception while candidate membership evaluation", e);
+			Log.e("Ensemble exception while generic membership evaluation", e);
 			return null;
 		}
 	}

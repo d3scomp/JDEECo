@@ -4,8 +4,11 @@ import java.io.Serializable;
 import java.util.List;
 
 
-
-public abstract class MembershipMethod<T> implements Serializable {
+/**
+ * This class contains the abstract definition of the membership method
+ * and the ParameterizedMethod which contains the parameters of the defined method.
+ */
+public class MembershipMethod implements Serializable {
 	
 	public final ParameterizedMethod method;
 	
@@ -25,5 +28,12 @@ public abstract class MembershipMethod<T> implements Serializable {
 		return method.inOut;
 	}
 	
-	public abstract T membership(Object [] parameters);
+	/**
+	 * the object must be either part of the package invokable.types or a boolean
+	 * @param parameters the input parameter of the parameterized method
+	 * @return an object of the package invokable.types wrapping the returning variable or a boolean
+	 */
+	public Object membership(Object [] parameters) {
+		return (Object) method.invoke(parameters);
+	}
 }
