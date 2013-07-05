@@ -62,8 +62,8 @@ public class MultithreadedSchedulerJPF extends Scheduler {
 		if (!running) {
 			// let every process run for the number of times its period P fits into maxPeriodIterations*P_max
 			for (SchedulableProcess sp : periodicProcesses) {
-				long spPeriod = ((ProcessPeriodicSchedule) sp.scheduling).interval;
-				long repeatCount = (maxHyperPeriodIterations*maxPeriod) / spPeriod + 1;
+				//long spPeriod = ((ProcessPeriodicSchedule) sp.scheduling).interval;
+				long repeatCount = maxHyperPeriodIterations;//(maxHyperPeriodIterations*maxPeriod) / spPeriod + 1;
 
 				//System.out.println("[DEBUG] period = " + spPeriod + ", repeat count = " + repeatCount);
 
@@ -136,6 +136,10 @@ public class MultithreadedSchedulerJPF extends Scheduler {
 				}
 				else
 				{
+					// TODO: update it so that there is some time budget for a thread to 
+					// execute and all threads have to spent all the potential of their 
+					// budget before scheduling threads again
+					// so that we don't have situations like 1,2,1,2,1,2,1,2, where 3 does not get scheduled at all
 					lastConsecutiveRuns++;
 					if (lastConsecutiveRuns > maxConsecutiveThreadRuns) Verify.ignoreIf(true);
 				}
