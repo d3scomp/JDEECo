@@ -16,9 +16,13 @@
 package cz.cuni.mff.d3s.deeco.scheduling.discrete;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Random;
+import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableComponentProcess;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableComponentProcessWrapper;
@@ -45,10 +49,10 @@ import cz.cuni.mff.d3s.deeco.scheduling.ProcessTriggeredSchedule;
  */
 public class DiscreteScheduler implements IScheduler {
 
-	private List<SchedulableProcessWrapper> periodicProcesses = new ArrayList<SchedulableProcessWrapper>();;
-	private List<TriggeredSchedulableProcess> triggeredProcesses = new ArrayList<TriggeredSchedulableProcess>();;
+	private List<SchedulableProcessWrapper> periodicProcesses = new ArrayList<SchedulableProcessWrapper>();
+	private List<TriggeredSchedulableProcess> triggeredProcesses = new ArrayList<TriggeredSchedulableProcess>();
+	private Map<String, Set<SchedulableProcess>> pathsToTriggeredProcesses = new HashMap<String, Set<SchedulableProcess>>();
 	private boolean running = false;
-
 	private long virtualTime;
 	private PriorityQueue<SchedulableProcessExecution> pQueue = new PriorityQueue<SchedulableProcessExecution>();
 	private Thread discreteSchedulerThread;
@@ -88,18 +92,7 @@ public class DiscreteScheduler implements IScheduler {
 						// trigger the processes listening to knowledge changes:
 						if (!changedKnowledgePaths.isEmpty()) {
 							for (String changed : changedKnowledgePaths) {
-								for (TriggeredSchedulableProcess tsp : triggeredProcesses) {
-									List<String> triggers = tsp
-											.getKnowledgePaths();
-									for (String trigger : triggers) {
-										if (pathsMatch(changed, trigger)) {
-											Log.d("Path '" + trigger
-													+ "' changed. Process "
-													+ tsp.sp + " is triggered.");
-											scheduleProcessForExecution(wrapProcess(tsp.sp));
-										}
-									}
-								}
+								scheduleTriggeredProcesses(changed);
 							}
 						}
 					}
@@ -131,9 +124,23 @@ public class DiscreteScheduler implements IScheduler {
 
 	@Override
 	public void add(SchedulableProcess process) {
-		if (process.scheduling instanceof ProcessTriggeredSchedule)
-			triggeredProcesses.add(new TriggeredSchedulableProcess(process));
-		else {
+		if (process.scheduling instanceof ProcessTriggeredSchedule) {
+			TriggeredSchedulableProcess tsp = new TriggeredSchedulableProcess(
+					process);
+			triggeredProcesses.add(tsp);
+			List<String> triggeringPaths = tsp.getKnowledgePaths();
+			for (String path : triggeringPaths) {
+				Set<SchedulableProcess> processes = pathsToTriggeredProcesses
+						.get(path);
+				if (processes == null) {
+					processes = new HashSet<SchedulableProcess>();
+				}
+				if (!processes.contains(tsp.sp)) {
+					processes.add(tsp.sp);
+				}
+				pathsToTriggeredProcesses.put(path, processes);
+			}
+		} else {
 			SchedulableProcessWrapper spWrapper = wrapProcess(process);
 			periodicProcesses.add(spWrapper);
 			if (running) {
@@ -156,6 +163,20 @@ public class DiscreteScheduler implements IScheduler {
 		if (!running) {
 			if (process.scheduling instanceof ProcessTriggeredSchedule) {
 				triggeredProcesses.remove(process);
+				TriggeredSchedulableProcess tsp = new TriggeredSchedulableProcess(
+						process);
+				List<String> triggeringPaths = tsp.getKnowledgePaths();
+				for (String path : triggeringPaths) {
+					Set<SchedulableProcess> listeners = pathsToTriggeredProcesses
+							.get(path);
+					if (listeners == null) {
+						listeners = new HashSet<SchedulableProcess>();
+					}
+					if (listeners.contains(tsp.sp)) {
+						listeners.remove(tsp.sp);
+					}
+					pathsToTriggeredProcesses.put(path, listeners);
+				}
 			} else {
 				periodicProcesses.remove(process);
 			}
@@ -182,6 +203,7 @@ public class DiscreteScheduler implements IScheduler {
 			stop();
 		periodicProcesses.clear();
 		triggeredProcesses.clear();
+		pathsToTriggeredProcesses.clear();
 	}
 
 	/**
@@ -207,25 +229,37 @@ public class DiscreteScheduler implements IScheduler {
 	}
 
 	/**
-	 * Utility method to compare two knowledge paths. In case of a triggerable
-	 * ensemble (where the path starts with "member" or "ensemble" prefix) the
-	 * rest of the paths are compared.
+	 * Triggers all processes that belong to the sets hashed by the 'path' key,
+	 * and two variations of key, where the concrete component_id is substituted
+	 * by the generic "member" and "coord" keywords
 	 * 
-	 * @param changed
-	 *            knowledge path that has been updated
-	 * @param trigger
-	 *            knowledge path that listens to changes
-	 * @return true, if the paths match
+	 * @param path
 	 */
-	private boolean pathsMatch(String changed, String trigger) {
-		if ((trigger.startsWith(EEnsembleParty.COORDINATOR.toString()))
-				|| (trigger.startsWith(EEnsembleParty.MEMBER.toString()))) {
-			changed = changed.substring(changed
-					.indexOf(PathGrammar.PATH_SEPARATOR));
-			trigger = trigger.substring(trigger
-					.indexOf(PathGrammar.PATH_SEPARATOR));
+	private void scheduleTriggeredProcesses(String path) {
+		// find all triggered processes:
+		List<SchedulableProcess> processesToBeTriggered = new ArrayList<SchedulableProcess>();
+		Set<SchedulableProcess> processes = pathsToTriggeredProcesses.get(path);
+		if (processes != null)
+			processesToBeTriggered.addAll(processes);
+		processes = pathsToTriggeredProcesses.get(getGenericKey(path,
+				EEnsembleParty.COORDINATOR.toString()));
+		if (processes != null)
+			processesToBeTriggered.addAll(processes);
+		processes = pathsToTriggeredProcesses.get(getGenericKey(path,
+				EEnsembleParty.MEMBER.toString()));
+		if (processes != null)
+			processesToBeTriggered.addAll(processes);
+		// schedule them for execution:
+		for (SchedulableProcess process : processesToBeTriggered) {
+			Log.d("Path '" + path + "' changed. Process " + process
+					+ " is triggered.");
+			scheduleProcessForExecution(wrapProcess(process));
 		}
-		return changed.equals(trigger);
+	}
+
+	private String getGenericKey(String key, String prefix) {
+		key = key.substring(key.indexOf(PathGrammar.PATH_SEPARATOR));
+		return prefix + key;
 	}
 
 	/**
