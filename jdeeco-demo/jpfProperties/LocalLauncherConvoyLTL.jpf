@@ -4,10 +4,12 @@
 search.class=gov.nasa.jpf.ltl.DDFSearch
 listener=gov.nasa.jpf.ltl.OtherChoiceListener
 vm.storage.class=gov.nasa.jpf.jvm.FullStateSet
+search.multiple_errors=true
+report.console.property_violation=error,snapshot,trace
 
 target=cz.cuni.mff.d3s.deeco.demo.convoytut.LocalLauncherLTL
 
-ltl.input=[](isFollowerNearLeader-><>isFollowerAtDestination)
+ltl.input=[](isFollowerNearLeaderB-><>isFollowerAtDestination)
 
 report.console.property_violation=error,trace
 
