@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/cz.cuni.mff.d3s.jdeeco.core.model/src" modelPluginID="cz.cuni.mff.d3s.jdeeco.core.model"
+    modelName="Runtimemodel" importerID="org.eclipse.emf.importer.ecore" complianceLevel="7.0"
+    copyrightFields="false">
+  <foreignModel>RuntimeMetadata.ecore</foreignModel>
+  <genPackages prefix="Runtimemodel" basePackage="cz.cuni.mff.d3s.jdeeco.core.model"
+      disposableProviderFactory="true" ecorePackage="RuntimeMetadata.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="RuntimeMetadata.ecore#//StructuredKnowledgeType">
+      <genEnumLiterals ecoreEnumLiteral="RuntimeMetadata.ecore#//StructuredKnowledgeType/KNOWLEDGE"/>
+      <genEnumLiterals ecoreEnumLiteral="RuntimeMetadata.ecore#//StructuredKnowledgeType/LIST"/>
+      <genEnumLiterals ecoreEnumLiteral="RuntimeMetadata.ecore#//StructuredKnowledgeType/MAP"/>
+      <genEnumLiterals ecoreEnumLiteral="RuntimeMetadata.ecore#//StructuredKnowledgeType/UNSTRUCTURED"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="RuntimeMetadata.ecore#//ParameterKind">
+      <genEnumLiterals ecoreEnumLiteral="RuntimeMetadata.ecore#//ParameterKind/IN"/>
+      <genEnumLiterals ecoreEnumLiteral="RuntimeMetadata.ecore#//ParameterKind/OUT"/>
+      <genEnumLiterals ecoreEnumLiteral="RuntimeMetadata.ecore#//ParameterKind/INOUT"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="RuntimeMetadata.ecore#//SchedulingType">
+      <genEnumLiterals ecoreEnumLiteral="RuntimeMetadata.ecore#//SchedulingType/PERIODIC"/>
+      <genEnumLiterals ecoreEnumLiteral="RuntimeMetadata.ecore#//SchedulingType/TRIGGERED"/>
+    </genEnums>
+    <genClasses ecoreClass="RuntimeMetadata.ecore#//Component">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//Component/knowledge"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//Component/processes"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeMetadata.ecore#//Component/name"/>
+      <genOperations ecoreOperation="RuntimeMetadata.ecore#//Component/findDefinition">
+        <genParameters ecoreParameter="RuntimeMetadata.ecore#//Component/findDefinition/path"/>
+      </genOperations>
+    </genClasses>
+    <genClasses image="false" ecoreClass="RuntimeMetadata.ecore#//KnowledgeDefinition">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeMetadata.ecore#//KnowledgeDefinition/isLocal"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="RuntimeMetadata.ecore#//KnowledgeType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeMetadata.ecore#//KnowledgeType/isStructured"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeMetadata.ecore#//KnowledgeType/isWrapper"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeMetadata.ecore#//KnowledgeType/clazz"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//KnowledgeType/owner"/>
+      <genOperations ecoreOperation="RuntimeMetadata.ecore#//KnowledgeType/createFromRaw">
+        <genParameters ecoreParameter="RuntimeMetadata.ecore#//KnowledgeType/createFromRaw/rawValue"/>
+      </genOperations>
+      <genOperations ecoreOperation="RuntimeMetadata.ecore#//KnowledgeType/storeToRaw">
+        <genParameters ecoreParameter="RuntimeMetadata.ecore#//KnowledgeType/storeToRaw/value"/>
+      </genOperations>
+    </genClasses>
+    <genClasses ecoreClass="RuntimeMetadata.ecore#//Process">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeMetadata.ecore#//Process/name"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//Process/component"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="RuntimeMetadata.ecore#//Scheduling">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//Scheduling/owner"/>
+    </genClasses>
+    <genClasses ecoreClass="RuntimeMetadata.ecore#//StructuredKnowledgeValueType">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//StructuredKnowledgeValueType/children"/>
+    </genClasses>
+    <genClasses ecoreClass="RuntimeMetadata.ecore#//ListValueType">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//ListValueType/typeParameter"/>
+    </genClasses>
+    <genClasses ecoreClass="RuntimeMetadata.ecore#//MapValueType">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//MapValueType/keyTypeParameter"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//MapValueType/valueTypeParameter"/>
+    </genClasses>
+    <genClasses ecoreClass="RuntimeMetadata.ecore#//UnstructuredValueType"/>
+    <genClasses ecoreClass="RuntimeMetadata.ecore#//Model">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//Model/components"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//Model/ensembles"/>
+      <genOperations ecoreOperation="RuntimeMetadata.ecore#//Model/update">
+        <genParameters ecoreParameter="RuntimeMetadata.ecore#//Model/update/updateCommand"/>
+      </genOperations>
+    </genClasses>
+    <genClasses image="false" ecoreClass="RuntimeMetadata.ecore#//ModelUpdateCommand">
+      <genOperations ecoreOperation="RuntimeMetadata.ecore#//ModelUpdateCommand/do">
+        <genParameters ecoreParameter="RuntimeMetadata.ecore#//ModelUpdateCommand/do/model"/>
+      </genOperations>
+    </genClasses>
+    <genClasses ecoreClass="RuntimeMetadata.ecore#//UpdateKnowledgeStructureCommand"/>
+    <genClasses ecoreClass="RuntimeMetadata.ecore#//AddComponentCommand"/>
+    <genClasses ecoreClass="RuntimeMetadata.ecore#//MethodParameter">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeMetadata.ecore#//MethodParameter/kind"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeMetadata.ecore#//MethodParameter/knowledgePath"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeMetadata.ecore#//MethodParameter/index"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//MethodParameter/owner"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="RuntimeMetadata.ecore#//ParameterizedMethod">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeMetadata.ecore#//ParameterizedMethod/declaringClass"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeMetadata.ecore#//ParameterizedMethod/methodName"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//ParameterizedMethod/formalParameters"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//ParameterizedMethod/inParameters"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//ParameterizedMethod/outParameters"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//ParameterizedMethod/inOutParameters"/>
+      <genOperations ecoreOperation="RuntimeMetadata.ecore#//ParameterizedMethod/invoke"/>
+    </genClasses>
+    <genClasses ecoreClass="RuntimeMetadata.ecore#//PeriodicScheduling">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeMetadata.ecore#//PeriodicScheduling/period"/>
+    </genClasses>
+    <genClasses ecoreClass="RuntimeMetadata.ecore#//TriggeredScheduling">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//TriggeredScheduling/triggers"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="RuntimeMetadata.ecore#//Trigger">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//Trigger/owner"/>
+    </genClasses>
+    <genClasses ecoreClass="RuntimeMetadata.ecore#//ParameterChangedTrigger">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//ParameterChangedTrigger/parameters"/>
+    </genClasses>
+    <genClasses ecoreClass="RuntimeMetadata.ecore#//Ensemble">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//Ensemble/membership"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//Ensemble/knowledgeExchange"/>
+    </genClasses>
+    <genClasses ecoreClass="RuntimeMetadata.ecore#//TopLevelKnowledgeDefinition">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//TopLevelKnowledgeDefinition/component"/>
+    </genClasses>
+    <genClasses ecoreClass="RuntimeMetadata.ecore#//NestedKnowledgeDefinition">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//NestedKnowledgeDefinition/parent"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="RuntimeMetadata.ecore#//KnowledgeReference">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeMetadata.ecore#//KnowledgeReference/name"/>
+      <genOperations ecoreOperation="RuntimeMetadata.ecore#//KnowledgeReference/load"/>
+      <genOperations ecoreOperation="RuntimeMetadata.ecore#//KnowledgeReference/store">
+        <genParameters ecoreParameter="RuntimeMetadata.ecore#//KnowledgeReference/store/value"/>
+      </genOperations>
+    </genClasses>
+    <genClasses ecoreClass="RuntimeMetadata.ecore#//MembershipCondition">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//MembershipCondition/ensemble"/>
+    </genClasses>
+    <genClasses ecoreClass="RuntimeMetadata.ecore#//KnowledgeExchange">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//KnowledgeExchange/ensemble"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="RuntimeMetadata.ecore#//Schedulable">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//Schedulable/scheduling"/>
+    </genClasses>
+    <genClasses ecoreClass="RuntimeMetadata.ecore#//TypeParameter">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//TypeParameter/owner"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="RuntimeMetadata.ecore#//ParametricKnowledgeType"/>
+    <genClasses ecoreClass="RuntimeMetadata.ecore#//KnowledgeTypeOwner">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//KnowledgeTypeOwner/type"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>
