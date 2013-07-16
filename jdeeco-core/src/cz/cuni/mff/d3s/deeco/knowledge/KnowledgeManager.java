@@ -16,6 +16,7 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
+import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionAccessError;
 import cz.cuni.mff.d3s.deeco.runtime.IRuntime;
 
 /**
@@ -49,6 +50,26 @@ public abstract class KnowledgeManager implements IKnowledgeManager {
 	public void putKnowledge(String knowledgePath, Object value)
 			throws KMException {
 		putKnowledge(knowledgePath, value, null);
+	}
+	
+	/**
+	 * Checks if the array of knowledge entries are existing altogether in the knowledge repository
+	 * This method is session oriented.
+	 * 
+	 * @param entryKeys
+	 *            keys of the object in the knowledge repository
+	 * @param session
+	 *            a session object within which the operation should be
+	 *            performed
+	 * @return object from the knowledge repository
+	 * @throws KRExceptionAccessError
+	 *             thrown whenever there is a knowledge repository access
+	 *             problem
+	 * TODO: does it require any session as no change is done ?
+	 */
+	@Override
+	public boolean containsKnowledge(String knowledgePath) throws KMException {
+		return containsKnowledge(knowledgePath, null);
 	}
         
         @Override

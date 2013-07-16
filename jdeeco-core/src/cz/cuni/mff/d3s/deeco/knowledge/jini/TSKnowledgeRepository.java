@@ -237,4 +237,11 @@ public class TSKnowledgeRepository extends KnowledgeRepository {
 							+ kp + " - " + e.getMessage());
 		}
 	}
+
+	@Override
+	public boolean contains(String entryKey, ISession session)
+			throws KRExceptionAccessError {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

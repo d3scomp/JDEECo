@@ -34,13 +34,17 @@ public abstract class KnowledgeRepository implements IKnowledgeRepository {
 	}
 
 	@Override
-	public void put(String entryKey, Object value)
-			throws KRExceptionAccessError {
+	public void put(String entryKey, Object value) throws KRExceptionAccessError {
 		put(entryKey, value, null);
 	}
 
 	@Override
 	public Object [] take(String entryKey) throws KRExceptionUnavailableEntry, KRExceptionAccessError {
 		return take(entryKey, null);
+	}
+	
+	@Override
+	public boolean contains(String entryKey) throws KRExceptionAccessError {
+		return contains(entryKey, null);
 	}
 }

@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package cz.cuni.mff.d3s.deeco.invokable;
+package cz.cuni.mff.d3s.deeco.invokable.parameters;
 
-import java.io.Serializable;
 import java.lang.reflect.Type;
 
 import cz.cuni.mff.d3s.deeco.exceptions.ComponentEnsembleParseException;
@@ -28,18 +27,15 @@ import cz.cuni.mff.d3s.deeco.path.grammar.KnowledgePath;
  * @author Michal Kit
  *
  */
-public class Parameter implements Serializable {
+public class Parameter extends GenericParameter {
 	
 	private static final long serialVersionUID = -5306187392194189194L;
 
 	public final KnowledgePath kPath;
-	public final TypeDescription type;
-	public final Integer index;
 
 	public Parameter(KnowledgePath kPath, Type type, Integer index) throws ComponentEnsembleParseException {
+		super(type, index);
 		this.kPath = kPath;
-		this.type = ParameterTypeParser.parse(type);
-		this.index = index;
 	}
 
 }

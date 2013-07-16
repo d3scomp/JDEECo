@@ -1,5 +1,7 @@
 package cz.cuni.mff.d3s.deeco.demo.cloud.scenarios.deployment;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import cz.cuni.mff.d3s.deeco.annotations.Process;
@@ -17,21 +19,17 @@ import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 public class AppComponent extends Component {
 	
 	public final static long serialVersionUID = 1L;
-	
-	/**
-	 * 
-	 */
-	//public 
-	
+
+	public String runningOn;
 	/**
 	 * id of the SCP instance which the application component is processed by
 	 */
-	public String scpInstanceId;
+	public String scpId;
 	
 	/**
-	 * boolean for checking if the component has already been deployed
+	 * flag for deployment
 	 */
-	public boolean isDeployed;
+	public Boolean isDeployed;
 	
 	/**
 	 * constructor for the Application Component
@@ -39,7 +37,9 @@ public class AppComponent extends Component {
 	 */
 	public AppComponent(String id) {
 		this.id = id;
-		//this.isDeployed = false;
+		this.scpId = null;
+		this.runningOn = null;
+		this.isDeployed = false;
 	}
 	
 	/*@Process

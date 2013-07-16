@@ -23,5 +23,6 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="E:/Programming/EclipseProjects/JDEECo/jdeeco-core-osgi/target/cz.cuni.mff.d3s.jdeeco.core-osgi-1.0.0.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

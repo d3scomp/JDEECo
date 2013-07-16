@@ -15,7 +15,7 @@ public interface PathParserConstants {
   /** RegularExpression Id. */
   int MEMBER = 2;
   /** RegularExpression Id. */
-  int CANDIDATE = 3;
+  int MEMBERS = 3;
   /** RegularExpression Id. */
   int IDENTIFIER = 4;
   /** RegularExpression Id. */
@@ -37,7 +37,7 @@ public interface PathParserConstants {
     "<EOF>",
     "\"coord\"",
     "\"member\"",
-    "\"candidate\"",
+    "\"members\"",
     "<IDENTIFIER>",
     "<LETTER>",
     "<DIGIT>",

@@ -15,6 +15,8 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.demo.cloud.candidates;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import cz.cuni.mff.d3s.deeco.annotations.In;
@@ -38,12 +40,15 @@ public class MinLoadedCandidateNode extends Component {
 	public Float maxLoadRatio;
 	public Integer networkId;
 	public String minMemberId;
+	
+	public Map<String,Long> latencies; 
 
 	public MinLoadedCandidateNode(String id, Float loadRatio, Float maxLoadRatio) {
 		this.id = id;
 		this.maxLoadRatio = maxLoadRatio;
 		this.loadRatio = loadRatio;
 		this.networkId = 1;
+		this.latencies = new HashMap<String,Long>();
 	}
 
 	@Process

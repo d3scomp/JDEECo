@@ -13,7 +13,6 @@ import cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.provider.ClassDEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.provider.InitializedDEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.runtime.Runtime;
-import cz.cuni.mff.d3s.deeco.runtime.middleware.LinkedMiddlewareEntry;
 import cz.cuni.mff.d3s.deeco.scheduling.MultithreadedScheduler;
 import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
 
@@ -44,18 +43,30 @@ public class MinLoadedCandidateCloudNoJPFLauncher {
 
 		// networkDistance and loadRatio randomization based on a maxLoadRatio of 0.5f for all
 		Random rand = new Random();
-		List<Component> minloadNodes = new ArrayList<Component>(4);
+		List<Component> minloadNodes = new ArrayList<Component>();
 		for (int i = 0; i < 4; i++){
 			minloadNodes.add(new MinLoadedCandidateNode("MinloadNode" + i, rand.nextFloat(), 1.0f));
 		}
-		// initialize the singleton of the RandomIntegerDistanceMiddlewareEntry to generate the network distances
-		// these will be dynamically provided by the communication middleware if jDEECo gets connected to it
-		LinkedMiddlewareEntry middlewareEntry = (LinkedMiddlewareEntry) LinkedMiddlewareEntry.getMiddlewareEntrySingleton();
-		middlewareEntry.updateDistanceTopology(minloadNodes, 2);	
-		// print the matrix
-		String[] matrix = middlewareEntry.distanceLinksToString();
-		for (int i = 0; i < matrix.length; i++)
-			System.out.println(matrix[i]);
+		for (int i = 0; i < minloadNodes.size(); i++) {
+			MinLoadedCandidateNode c1 = (MinLoadedCandidateNode) minloadNodes.get(i);
+			// generate the list of distances from one component to the others
+			for (int j = 0; j < i; j++){
+				// no loop on same index, symetric between source and destination
+				if (i != j){
+					Long val = null;
+					MinLoadedCandidateNode c2 = (MinLoadedCandidateNode) minloadNodes.get(j);
+					// different treatment for NetworkComponents
+					if (!c1.networkId.equals(c2.networkId)){
+						val = 150L;
+					}else{
+						val = ((Integer) rand.nextInt(80)).longValue();
+					}
+					c1.latencies.put(c2.id, val);
+					System.out.println(c1.id + " - " + c2.id + " - " + val);
+					c2.latencies.put(c1.id, val);
+				}
+			}
+		}
 		
 		dop = new InitializedDEECoObjectProvider(minloadNodes, null);
 		rt.registerComponentsAndEnsembles(dop);

@@ -1,39 +1,33 @@
 package cz.cuni.mff.d3s.deeco.demo.cloud.scenarios.deployment;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import cz.cuni.mff.d3s.deeco.runtime.middleware.network.ENetworkId;
-import cz.cuni.mff.d3s.deeco.runtime.middleware.network.NetworkComponent;
+import cz.cuni.mff.d3s.deeco.knowledge.Component;
 
 /**
  * 
  * @author Julien Malvot
  *
  */
-public class ScpComponent extends NetworkComponent {
+public class ScpComponent extends Component {
 	
 	public final static long serialVersionUID = 1L;
-
+	
 	/**
-	 * the networkId which the SCP component belongs to.
-	 * @see EScenarioNetworkId
+	 * 
 	 */
-	//public ENetworkId networkId;
+	public ENetworkId networkId;
 	/**
-	 * the SCP components which the SCP component are all linked to.
+	 * 
 	 */
-	public List<String> linkedScpInstanceIds;
+	public Map<String,Long> latencies; 
 	/**
-	 * this boolean is used during the Application Assignment process
-	 * to assign a AppComponent to a ScpComponent w.r.t. the preceding assignments
+	 * id of the application node which is linked
 	 */
-	public Boolean isAssigned;
-	/**
-	 * this boolean is used during the SCP instances interconnection process
-	 * to link a ScpComponent to a ScpComponent, once it's linked, it can not be linked to new SCP instances anymore
-	 */
-	public Boolean isLinked;	
+	public List<String> appIds;
 	/**
 	 * constructor with input network id parameter
 	 * @param networkId the network id of the Scp component among the cloud including different networks
@@ -42,9 +36,8 @@ public class ScpComponent extends NetworkComponent {
 	public ScpComponent(String id, ENetworkId networkId) {
 		this.id = id;
 		this.networkId = networkId;
-		this.linkedScpInstanceIds = new ArrayList<String>();
-		this.isAssigned = false;
-		this.isLinked = false;
+		this.latencies = new HashMap<String,Long>();
+		this.appIds = new ArrayList<String>();
 	}
 	
 	/*@Process

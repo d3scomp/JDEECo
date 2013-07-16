@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import cz.cuni.mff.d3s.deeco.invokable.parameters.Parameter;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 
 /**

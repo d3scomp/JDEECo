@@ -3,8 +3,8 @@ package cz.cuni.mff.d3s.deeco.demo.cloud.scenarios.deployment;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
-import cz.cuni.mff.d3s.deeco.demo.cloud.candidates.MinLoadedCandidateEnsemble;
 import cz.cuni.mff.d3s.deeco.knowledge.Component;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.RepositoryKnowledgeManager;
@@ -13,11 +13,8 @@ import cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.provider.ClassDEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.provider.InitializedDEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.runtime.Runtime;
-import cz.cuni.mff.d3s.deeco.runtime.middleware.LinkedMiddlewareEntry;
-import cz.cuni.mff.d3s.deeco.runtime.middleware.network.ENetworkId;
 import cz.cuni.mff.d3s.deeco.scheduling.MultithreadedScheduler;
 import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
-import cz.cuni.mff.d3s.deeco.scheduling.discrete.DiscreteScheduler;
 
 /**
  * The scenario
@@ -37,7 +34,7 @@ public class ScenarioDeployerNoJPF {
 		List<Class<?>> components = Arrays
 				.asList(new Class<?>[] {});
 		List<Class<?>> ensembles = Arrays
-				.asList(new Class<?>[] { LinkEnsemble.class, AssignEnsemble.class });
+				.asList(new Class<?>[] { LinkEnsemble.class });
 		KnowledgeManager km = new RepositoryKnowledgeManager(
 				new LocalKnowledgeRepository());
 		Scheduler scheduler = new MultithreadedScheduler();
@@ -66,17 +63,27 @@ public class ScenarioDeployerNoJPF {
 		
 		// initialize the singleton of the RandomIntegerDistanceMiddlewareEntry to generate the latency distances
 		// these will be dynamically provided by the communication middleware if jDEECo gets connected to it
-		LinkedMiddlewareEntry middlewareEntry = LinkedMiddlewareEntry.getMiddlewareEntrySingleton();
-		middlewareEntry.getSla().maxLinkLatency = 50;
-		middlewareEntry.updateDistanceTopology(scpComponents, 80);
-		// print the matrix
-		String[] matrix = middlewareEntry.distanceLinksToString();
-		for (int i = 0; i < matrix.length; i++)
-			System.out.println(matrix[i]);
-		
-		matrix = middlewareEntry.distanceLinksToStringWithSLA();
-		for (int i = 0; i < matrix.length; i++)
-			System.out.println(matrix[i]);
+		Random rand = new Random();
+		for (int i = 0; i < scpComponents.size(); i++) {
+			ScpComponent c1 = (ScpComponent) scpComponents.get(i);
+			// generate the list of distances from one component to the others
+			for (int j = 0; j < i; j++){
+				// no loop on same index, symetric between source and destination
+				if (i != j){
+					Long val = null;
+					ScpComponent c2 = (ScpComponent) scpComponents.get(j);
+					// different treatment for NetworkComponents
+					if (!c1.networkId.equals(c2.networkId)){
+						val = 150L;
+					}else{
+						val = ((Integer) rand.nextInt(80)).longValue();
+					}
+					c1.latencies.put(c2.id, val);
+					System.out.println(c1.id + " - " + c2.id + " - " + val);
+					c2.latencies.put(c1.id, val);
+				}
+			}
+		}
 				
 		// initialize the DEECo with input initialized components
 		dop = new InitializedDEECoObjectProvider(cloudComponents, null);

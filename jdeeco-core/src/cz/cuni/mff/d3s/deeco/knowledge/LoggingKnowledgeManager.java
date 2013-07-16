@@ -48,6 +48,12 @@ public class LoggingKnowledgeManager extends KnowledgeManager {
 		Log.d("LoggingKnowledgeManager.putKnowledge(knowledgePath=" + knowledgePath +", value=" + value + ", session=" + session + ")");
 		decoratedKm.putKnowledge(knowledgePath, value, session);
 	}
+	
+	@Override
+	public boolean containsKnowledge(String knowledgePath, ISession session) throws KMException {
+		Log.d("LoggingKnowledgeManager.isKnowledge(knowledgePath=" + knowledgePath +", session=" + session + ")");
+		return decoratedKm.containsKnowledge(knowledgePath, session);
+	}
 
 	@Override
 	public ISession createSession() {
@@ -97,6 +103,13 @@ public class LoggingKnowledgeManager extends KnowledgeManager {
 			throws KMException {
 		Log.d("LoggingKnowledgeManager.putKnowledge(knowledgePath=" + knowledgePath +", value=" + value + ")");
 		decoratedKm.putKnowledge(knowledgePath, value);
+	}
+	
+	@Override
+	public boolean containsKnowledge(String knowledgePath)
+			throws KMException {
+		Log.d("LoggingKnowledgeManager.isKnowledge(knowledgePath=" + knowledgePath + ")");
+		return decoratedKm.containsKnowledge(knowledgePath);
 	}
 
 }

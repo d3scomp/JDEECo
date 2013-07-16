@@ -115,6 +115,12 @@ public class LocalKnowledgeRepository extends KnowledgeRepository {
 		vals = (List<Object>) DeepCopy.copy(vals);
 		return vals.toArray();
 	}
+	
+	@Override
+	public boolean contains(String entryKey, ISession session)
+			throws KRExceptionAccessError {
+		return ts.containsKey(entryKey);
+	}
 
 	@Override
 	public ISession createSession() {

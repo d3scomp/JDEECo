@@ -3,6 +3,7 @@ package cz.cuni.mff.d3s.deeco.invokable;
 import java.util.ArrayList;
 import java.util.List;
 
+import cz.cuni.mff.d3s.deeco.invokable.parameters.Parameter;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.path.grammar.EEnsembleParty;

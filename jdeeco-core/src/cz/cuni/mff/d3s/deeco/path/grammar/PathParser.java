@@ -30,9 +30,9 @@ public class PathParser implements PathParserConstants {
       t = jj_consume_token(MEMBER);
       value = EEnsembleParty.MEMBER;
       break;
-    case CANDIDATE:
-      t = jj_consume_token(CANDIDATE);
-      value = EEnsembleParty.CANDIDATE;
+    case MEMBERS:
+      t = jj_consume_token(MEMBERS);
+      value = EEnsembleParty.MEMBERS;
       break;
     case OPEN:
       jj_consume_token(OPEN);

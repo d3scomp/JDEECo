@@ -16,6 +16,7 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
+import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionAccessError;
 import cz.cuni.mff.d3s.deeco.invokable.TypeDescription;
 import cz.cuni.mff.d3s.deeco.runtime.IRuntime;
 import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
@@ -116,6 +117,24 @@ public interface IKnowledgeManager {
 	 */
 	public void putKnowledge(String knowledgePath, Object value,
 			ISession session) throws KMException;
+	
+	/**
+	 * Checks if the array of knowledge paths can exist altogether in the knowledge repository.
+	 * e.g. in order to check the pattern of an input object.
+	 * This method is session oriented.
+	 * 
+	 * @param entryKey
+	 *            key of the object in the knowledge repository
+	 * @param session
+	 *            a session object within which the operation should be
+	 *            performed
+	 * @return object from the knowledge repository
+	 * @throws KRExceptionAccessError
+	 *             thrown whenever there is a knowledge repository access
+	 *             problem
+	 * TODO: does it require any session as no change is done ?
+	 */
+	public boolean containsKnowledge(String knowledgePath, ISession session) throws KMException;
 
 	/**
 	 * Creates {@link ISession} instance used for enclosing all knowledge
@@ -196,6 +215,19 @@ public interface IKnowledgeManager {
 	 */
 	public void putKnowledge(String knowledgePath, Object value)
 			throws KMException;
+	
+	/**
+	 * Checks if the array of knowledge paths can exist altogether in the knowledge repository.
+	 * e.g. in order to check the pattern of an input object.
+	 * This method is session oriented.
+	 * 
+	 * @param knowledgePaths
+	 *            nesting set at which the knowledge object should be stored
+	 * @throws KMException
+	 *             thrown whenever there is a problem accessing the knowledge
+	 *             repository
+	 */
+	public boolean containsKnowledge(String knowledgePath) throws KMException;
         
         /** 
          * Sets the runtime to the scheduler (without a runtime, the scheduler will not work).
