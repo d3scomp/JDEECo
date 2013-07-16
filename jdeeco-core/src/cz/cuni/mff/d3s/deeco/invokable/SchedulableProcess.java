@@ -400,17 +400,13 @@ public abstract class SchedulableProcess implements Serializable {
 	
 	private void putNodeParameterInstance(Parameter p, Object[] parameterValues, String coordinator,
 			String member, KnowledgeManager km, ISession session) throws KMException, Exception {
+		
 		Object parameterValue = parameterValues[p.index];
-		Boolean isOutWrapper = p.type.isOutWrapper();
-		// the treatment of the parameter can be different regarding the type of the output object (OutWrapper...)
-		Object iteratedValue = (isOutWrapper ? ((OutWrapper<?>) parameterValue).value : parameterValue);
-		// select the right object value regarding the type of the output object (OutWrapper...)
-		Object value = iteratedValue;
-		// alter the knowledge of coordinator-candidate pairs with the given value (from the list or as a primitive)
-		// the coordinator will then collect all the related candidate knowledge in lists
 		km.alterKnowledge(
-			p.kPath.getEvaluatedPath(km, coordinator, member, session), 
-			value, session);
+				p.kPath.getEvaluatedPath(km, coordinator,
+						member, session),
+				p.type.isOutWrapper() ? ((OutWrapper) parameterValue).value
+						: parameterValue, session);
 	}
 	
 	private void putMemberGroupParameterInstance(Parameter p, Object[] parameterValues, List<String> groupMembers, KnowledgeManager km, ISession session) throws KMException, Exception {

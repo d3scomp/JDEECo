@@ -78,7 +78,7 @@ public class MinLoadedCandidateEnsemble extends Ensemble {
 			for (int i = 0; i < bestCdIds.size(); i++){
 				System.out.print(bestCdIds.get(i) + (i < bestCdIds.size() - 1 ? " - " : ""));
 				String cdId = bestCdIds.get(i);
-				Float cdLoadRatio = cdLoadRatios.get(i);
+				Float cdLoadRatio = cdLoadRatios.get(cdIds.indexOf(cdId));
 				if (minloadId.isEmpty() || (!minloadId.isEmpty() && loadRatio.compareTo(cdLoadRatio) > 0)) {
 					loadRatio = cdLoadRatio;
 					minloadId = cdId;
