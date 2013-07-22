@@ -50,7 +50,7 @@
 
 	<!-- start cloud demo with local shared memory -->
 	<target name="cloud-local" description="Runs the cloud demo">
-		<java classname="cz.cuni.mff.d3s.deeco.demo.cloud.LocalLauncherCloudNoJPF" fork="true">
+		<java classname="cz.cuni.mff.d3s.deeco.demo.cloud.loadratio.LocalLauncherCloudNoJPF" fork="true">
 			<classpath>
 				<pathelement location="${dist}/cloud.jar"/>
 				<pathelement location="${dist}/jdeeco.jar"/>
@@ -62,9 +62,37 @@
 		</java>
 	</target>
 	
-	<!-- start metric cloud demo with local shared memory -->
-	<target name="minload-cloud-local" description="Runs the cloud demo">
-		<java classname="cz.cuni.mff.d3s.deeco.demo.cloud.LocalLauncherMinloadCloudNoJPF" fork="true">
+	<!-- start min load cloud demo with local shared memory -->
+	<target name="cloud-local-minload" description="Runs the cloud demo">
+		<java classname="cz.cuni.mff.d3s.deeco.demo.cloud.candidates.LocalLauncherCandidateNoJPF" fork="true">
+			<classpath>
+				<pathelement location="${dist}/cloud.jar"/>
+				<pathelement location="${dist}/jdeeco.jar"/>
+				<pathelement location="${river}/lib/jsk-lib.jar"/>
+				<pathelement location="${river}/lib/jsk-platform.jar"/>
+			</classpath>
+			<jvmarg value="-Djava.security.policy=${river}-config/start.policy"/>
+			<jvmarg value="-Djava.rmi.server.RMIClassLoaderSpi=net.jini.loader.pref.PreferredClassProvider"/>
+		</java>
+	</target>
+	
+	<!-- start deployment cloud scenario demo with local shared memory -->
+	<target name="cloud-local-scenario-deployment" description="Runs the deployment cloud scenario demo">
+		<java classname="cz.cuni.mff.d3s.deeco.demo.cloud.scenarios.deployment.LocalLauncherDSNoJPF" fork="true">
+			<classpath>
+				<pathelement location="${dist}/cloud.jar"/>
+				<pathelement location="${dist}/jdeeco.jar"/>
+				<pathelement location="${river}/lib/jsk-lib.jar"/>
+				<pathelement location="${river}/lib/jsk-platform.jar"/>
+			</classpath>
+			<jvmarg value="-Djava.security.policy=${river}-config/start.policy"/>
+			<jvmarg value="-Djava.rmi.server.RMIClassLoaderSpi=net.jini.loader.pref.PreferredClassProvider"/>
+		</java>
+	</target>
+	
+	<!-- start shutdown cloud scenario demo with local shared memory -->
+	<target name="cloud-local-scenario-shutdown" description="Runs the shutdown cloud scenario demo">
+		<java classname="cz.cuni.mff.d3s.deeco.demo.cloud.scenarios.shutdown.LocalLauncherSSNoJPF" fork="true">
 			<classpath>
 				<pathelement location="${dist}/cloud.jar"/>
 				<pathelement location="${dist}/jdeeco.jar"/>
@@ -77,18 +105,18 @@
 	</target>
 
 	<!-- start convoy demo with local shared memory -->
-		<target name="convoy-local" description="Runs the convoy demo">
-			<java classname="cz.cuni.mff.d3s.deeco.demo.convoy.LocalLauncherConvoyNoJPF" fork="true">
-				<classpath>
-					<pathelement location="${dist}/convoy.jar"/>
-					<pathelement location="${dist}/jdeeco.jar"/>
-					<pathelement location="${river}/lib/jsk-lib.jar"/>
-					<pathelement location="${river}/lib/jsk-platform.jar"/>
-				</classpath>
-				<jvmarg value="-Djava.security.policy=${river}-config/start.policy"/>
-				<jvmarg value="-Djava.rmi.server.RMIClassLoaderSpi=net.jini.loader.pref.PreferredClassProvider"/>
-			</java>
-		</target>
+	<target name="convoy-local" description="Runs the convoy demo">
+		<java classname="cz.cuni.mff.d3s.deeco.demo.convoy.LocalLauncherConvoyNoJPF" fork="true">
+			<classpath>
+				<pathelement location="${dist}/convoy.jar"/>
+				<pathelement location="${dist}/jdeeco.jar"/>
+				<pathelement location="${river}/lib/jsk-lib.jar"/>
+				<pathelement location="${river}/lib/jsk-platform.jar"/>
+			</classpath>
+			<jvmarg value="-Djava.security.policy=${river}-config/start.policy"/>
+			<jvmarg value="-Djava.rmi.server.RMIClassLoaderSpi=net.jini.loader.pref.PreferredClassProvider"/>
+		</java>
+	</target>
 
 	<!-- start cloud demo with tuple spaces as shared memory -->
 	<target name="cloud-ts" description="Runs the cloud demo">		

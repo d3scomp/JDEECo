@@ -27,7 +27,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
  * 
  * @author Julien Malvot
  */
-public class MinLoadedCandidateEnsemble extends Ensemble {
+public class CandidateEnsemble extends Ensemble {
 
 	private static final long serialVersionUID = 1L;
 	

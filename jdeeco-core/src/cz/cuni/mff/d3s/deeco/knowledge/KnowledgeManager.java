@@ -41,6 +41,11 @@ public abstract class KnowledgeManager implements IKnowledgeManager {
 	}
 	
 	@Override
+	public Object[] takeAllKnowledge(String knowledgeId) throws KMException {
+		return takeAllKnowledge(knowledgeId, null);
+	}
+	
+	@Override
 	public void alterKnowledge(String knowledgePath, Object value)
 			throws KMException {
 		alterKnowledge(knowledgePath, value, null);

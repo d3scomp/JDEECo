@@ -50,5 +50,13 @@ public class ParsedComponent implements Serializable {
 	public List<SchedulableComponentProcess> getProcesses() {
 		return processes;
 	}
-
+	
+	/*@Override
+	public boolean equals(Object obj) {
+		// if a comparison is made on a string, this means comparison by component id
+		if(obj instanceof String){
+			return (this.initialKnowledge.id.equals(obj));
+		}
+		return super.equals(obj);
+	}*/
 }

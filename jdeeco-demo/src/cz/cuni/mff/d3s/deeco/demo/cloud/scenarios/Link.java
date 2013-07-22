@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.deeco.demo.cloud.scenarios.deployment;
+package cz.cuni.mff.d3s.deeco.demo.cloud.scenarios;
 
 public class Link {
 	

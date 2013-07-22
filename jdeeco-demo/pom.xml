@@ -33,6 +33,12 @@
 							<classifier>cloud</classifier>
 							<includes>
 								<include>**/cloud/*</include>
+								<include>**/cloud/candidates/*</include>
+								<include>**/cloud/loadratio/*</include>
+								<include>**/cloud/scenarios/*</include>
+								<include>**/cloud/scenarios/deployment/*</include>
+								<include>**/cloud/scenarios/highload/*</include>
+								<include>**/cloud/scenarios/shutdown/*</include>
 							</includes>
 							<archive>
 								<addMavenDescriptor>false</addMavenDescriptor>

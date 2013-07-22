@@ -34,6 +34,13 @@ public class LoggingKnowledgeManager extends KnowledgeManager {
 		Log.d("LoggingKnowledgeManager.takeKnowledge(knowledgePath=" + knowledgePath +", session=" + session + ")");
 		return decoratedKm.takeKnowledge(knowledgePath, session);
 	}
+	
+	@Override
+	public Object[] takeAllKnowledge(String knowledgeId, ISession session)
+			throws KMException {
+		Log.d("LoggingKnowledgeManager.takeKnowledge(knowledgeId=" + knowledgeId +", session=" + session + ")");
+		return decoratedKm.takeAllKnowledge(knowledgeId, session);
+	}
 
 	@Override
 	public void alterKnowledge(String knowledgePath, Object value,
@@ -89,6 +96,12 @@ public class LoggingKnowledgeManager extends KnowledgeManager {
 	public Object takeKnowledge(String knowledgePath) throws KMException {
 		Log.d("LoggingKnowledgeManager.takeKnowledge(knowledgePath=" + knowledgePath + ")");
 		return decoratedKm.takeKnowledge(knowledgePath);
+	}
+	
+	@Override
+	public Object[] takeAllKnowledge(String knowledgeId) throws KMException {
+		Log.d("LoggingKnowledgeManager.takeKnowledge(knowledgeId=" + knowledgeId + ")");
+		return decoratedKm.takeAllKnowledge(knowledgeId);
 	}
 
 	@Override

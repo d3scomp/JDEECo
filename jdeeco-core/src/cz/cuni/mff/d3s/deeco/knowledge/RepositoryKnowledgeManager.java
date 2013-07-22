@@ -151,6 +151,46 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 			throws KMException {
 		return getKnowledge(true, knowledgePath, session);
 	}
+	
+	@Override
+	public Object[] takeAllKnowledge(String knowledgeId, ISession session)
+			throws KMException {
+		if (kr == null)
+			throw new KMAccessException("Knowledge repository unavailable");
+
+		Object[] result = null;
+		ISession locSession = null;
+		if (session == null) {
+			locSession = createSession();
+			locSession.begin();
+		}
+
+		final ISession localSession = (session == null ? locSession : session);
+
+		try {
+			while (localSession.repeat()) {
+				// get any entry starting by knowledgeId
+				result = kr.takeAll(knowledgeId, localSession);
+				if (session == null)
+					localSession.end();
+				else
+					break;
+			}
+			return result;
+		} catch (KRExceptionUnavailableEntry uee) {
+			if (session == null)
+				localSession.cancel();
+			throw new KMNotExistentException(uee.getMessage());
+		} catch (KRExceptionAccessError kre) {
+			if (session == null)
+				localSession.cancel();
+			throw new KMAccessException(kre.getMessage());
+		} catch (Exception e) {
+			Log.e("", e);
+			localSession.cancel();
+			return null;
+		}
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -543,5 +583,4 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 	private boolean isMap(Object value) {
 		return TypeUtils.isMap(value.getClass());
 	}
-
 }

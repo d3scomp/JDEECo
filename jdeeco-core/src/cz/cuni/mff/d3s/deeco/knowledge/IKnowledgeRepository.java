@@ -61,6 +61,23 @@ public interface IKnowledgeRepository {
 			throws KRExceptionUnavailableEntry, KRExceptionAccessError;
 	
 	/**
+	 * Withdraws an object from the knowledge repository. This method is session
+	 * oriented.
+	 * 
+	 * @param entryKey
+	 *            key of the object in the knowledge repository
+	 * @param session
+	 *            a session object within which the operation should be
+	 *            performed
+	 * @return object from the knowledge repository
+	 * @throws KRExceptionAccessError
+	 *             thrown whenever there is a knowledge repository access
+	 *             problem
+	 */
+	public Object[] takeAll(String entryIdKey, ISession session)
+			throws KRExceptionUnavailableEntry, KRExceptionAccessError;
+	
+	/**
 	 * Checks if the array of key entries altogether are contained in the knowledge repository.
 	 * e.g. in order to check the pattern of an input object.
 	 * This method is session oriented.
@@ -160,6 +177,18 @@ public interface IKnowledgeRepository {
 	 *             problem
 	 */
 	public Object [] take(String entryKey) throws KRExceptionUnavailableEntry, KRExceptionAccessError;
+	
+	/**
+	 * Withdraws an object from the knowledge repository.
+	 * 
+	 * @param entryKey
+	 *            key of the object in the knowledge repository
+	 * @return object from the knowledge repository
+	 * @throws KRExceptionAccessError
+	 *             thrown whenever there is a knowledge repository access
+	 *             problem
+	 */
+	public Object[] takeAll(String entryIdKey) throws KRExceptionUnavailableEntry, KRExceptionAccessError;
 	
 	/**
 	 * Checks if the array of key entries altogether are contained in the knowledge repository.

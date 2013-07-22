@@ -32,7 +32,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
  * @author Julien Malvot
  *
  */
-public class MinLoadedCandidateNode extends Component {
+public class CandidateComponent extends Component {
 
 	public final static long serialVersionUID = 1L;
 
@@ -43,7 +43,7 @@ public class MinLoadedCandidateNode extends Component {
 	
 	public Map<String,Long> latencies; 
 
-	public MinLoadedCandidateNode(String id, Float loadRatio, Float maxLoadRatio) {
+	public CandidateComponent(String id, Float loadRatio, Float maxLoadRatio) {
 		this.id = id;
 		this.maxLoadRatio = maxLoadRatio;
 		this.loadRatio = loadRatio;

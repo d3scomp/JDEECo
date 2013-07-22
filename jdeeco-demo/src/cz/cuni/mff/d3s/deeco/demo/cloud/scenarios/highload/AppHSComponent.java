@@ -1,26 +1,16 @@
-package cz.cuni.mff.d3s.deeco.demo.cloud.scenarios.deployment;
+package cz.cuni.mff.d3s.deeco.demo.cloud.scenarios.highload;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
-import cz.cuni.mff.d3s.deeco.annotations.Process;
-import cz.cuni.mff.d3s.deeco.annotations.In;
-import cz.cuni.mff.d3s.deeco.annotations.Out;
-import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.knowledge.Component;
-import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 
 /**
  * 
  * @author Julien Malvot
  *
  */
-public class AppComponent extends Component {
+public class AppHSComponent extends Component {
 	
 	public final static long serialVersionUID = 1L;
 
-	public String runningOn;
 	/**
 	 * id of the SCP instance which the application component is processed by
 	 */
@@ -35,11 +25,10 @@ public class AppComponent extends Component {
 	 * constructor for the Application Component
 	 * @param id
 	 */
-	public AppComponent(String id) {
+	public AppHSComponent(String id, String scpId, Boolean isDeployed) {
 		this.id = id;
-		this.scpId = null;
-		this.runningOn = null;
-		this.isDeployed = false;
+		this.scpId = scpId;
+		this.isDeployed = isDeployed;
 	}
 	
 	/*@Process

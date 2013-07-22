@@ -44,6 +44,11 @@ public abstract class KnowledgeRepository implements IKnowledgeRepository {
 	}
 	
 	@Override
+	public Object [] takeAll(String entryIdKey) throws KRExceptionUnavailableEntry, KRExceptionAccessError {
+		return takeAll(entryIdKey, null);
+	}
+	
+	@Override
 	public boolean contains(String entryKey) throws KRExceptionAccessError {
 		return contains(entryKey, null);
 	}

@@ -23,7 +23,7 @@ import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
  * @author Julien Malvot
  *
  */
-public class MinLoadedCandidateCloudNoJPFLauncher {
+public class LocalLauncherCandidateNoJPF {
 
 	/**
 	 * @param args
@@ -32,7 +32,7 @@ public class MinLoadedCandidateCloudNoJPFLauncher {
 		List<Class<?>> components = Arrays
 				.asList(new Class<?>[] {});
 		List<Class<?>> ensembles = Arrays
-				.asList(new Class<?>[] { MinLoadedCandidateEnsemble.class });
+				.asList(new Class<?>[] { CandidateEnsemble.class });
 		KnowledgeManager km = new RepositoryKnowledgeManager(
 				new LocalKnowledgeRepository());
 		Scheduler scheduler = new MultithreadedScheduler();
@@ -45,16 +45,16 @@ public class MinLoadedCandidateCloudNoJPFLauncher {
 		Random rand = new Random();
 		List<Component> minloadNodes = new ArrayList<Component>();
 		for (int i = 0; i < 4; i++){
-			minloadNodes.add(new MinLoadedCandidateNode("MinloadNode" + i, rand.nextFloat(), 1.0f));
+			minloadNodes.add(new CandidateComponent("MinloadNode" + i, rand.nextFloat(), 1.0f));
 		}
 		for (int i = 0; i < minloadNodes.size(); i++) {
-			MinLoadedCandidateNode c1 = (MinLoadedCandidateNode) minloadNodes.get(i);
+			CandidateComponent c1 = (CandidateComponent) minloadNodes.get(i);
 			// generate the list of distances from one component to the others
 			for (int j = 0; j < i; j++){
 				// no loop on same index, symetric between source and destination
 				if (i != j){
 					Long val = null;
-					MinLoadedCandidateNode c2 = (MinLoadedCandidateNode) minloadNodes.get(j);
+					CandidateComponent c2 = (CandidateComponent) minloadNodes.get(j);
 					// different treatment for NetworkComponents
 					if (!c1.networkId.equals(c2.networkId)){
 						val = 150L;

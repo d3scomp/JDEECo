@@ -77,6 +77,25 @@ public interface IKnowledgeManager {
 	 */
 	public Object takeKnowledge(String knowledgePath, ISession session)
 			throws KMException;
+	
+	/**
+	 * Withdraws the knowledge from the knowledge repository. This method is
+	 * session oriented.
+	 * 
+	 * @param knowledgePath
+	 *            nesting at which the knowledge structure should be rooted
+	 * @param type
+	 *            Knowledge structure (Knowledge Interface)
+	 * @param session
+	 *            a session object within which all the withdrawals should be
+	 *            performed
+	 * @return retrieved knowledge object of type structure
+	 * @throws KMException
+	 *             thrown whenever there is a problem accessing the knowledge
+	 *             repository
+	 */
+	public Object[] takeAllKnowledge(String knowledgeId, ISession session)
+			throws KMException;
 
 	/**
 	 * Alters knowledge object in the knowledge repository. This method is
@@ -187,6 +206,18 @@ public interface IKnowledgeManager {
 	 *             repository
 	 */
 	public Object takeKnowledge(String knowledgePath) throws KMException;
+	
+	/**
+	 * Withdraws the knowledge from the knowledge repository.
+	 * 
+	 * @param knowledgePath
+	 *            nesting at which the knowledge structure should be rooted
+	 * @return retrieved knowledge object of type structure
+	 * @throws KMException
+	 *             thrown whenever there is a problem accessing the knowledge
+	 *             repository
+	 */
+	public Object[] takeAllKnowledge(String knowledgeId) throws KMException;
 
 	/**
 	 * Alters knowledge object in the knowledge repository.

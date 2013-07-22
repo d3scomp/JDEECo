@@ -244,4 +244,11 @@ public class TSKnowledgeRepository extends KnowledgeRepository {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+	@Override
+	public Object[][] takeAll(String entryIdKey, ISession session)
+			throws KRExceptionUnavailableEntry, KRExceptionAccessError {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

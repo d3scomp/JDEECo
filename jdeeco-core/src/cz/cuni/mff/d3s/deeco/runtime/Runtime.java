@@ -43,10 +43,10 @@ import cz.cuni.mff.d3s.deeco.scheduling.SchedulerUtils;
 
 public class Runtime implements IRuntime {
 
-	private IScheduler scheduler;
-	private KnowledgeManager km;
+	protected IScheduler scheduler;
+	protected KnowledgeManager km;
 
-	private static List<Runtime> runtimes = new LinkedList<Runtime>();
+	protected static List<Runtime> runtimes = new LinkedList<Runtime>();
 
 	public Runtime() {
 		runtimes.add(this);
