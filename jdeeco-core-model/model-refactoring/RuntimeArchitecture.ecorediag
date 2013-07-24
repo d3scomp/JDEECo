@@ -141,7 +141,7 @@
         <layoutConstraint xmi:type="notation:Location" xmi:id="_tLDyEfQ3EeKr4aqw5khucg"/>
       </children>
       <children xmi:type="notation:Node" xmi:id="_5nKtcPQ3EeKr4aqw5khucg" type="2002">
-        <element xmi:type="ecore:EOperation" href="RuntimeArchitecture.ecore#//KnowledgeManager/setListenerActive"/>
+        <element xmi:type="ecore:EOperation" href="RuntimeArchitecture.ecore#//KnowledgeManager/setListenersActive"/>
         <layoutConstraint xmi:type="notation:Location" xmi:id="_5nKtcfQ3EeKr4aqw5khucg"/>
       </children>
       <children xmi:type="notation:Node" xmi:id="_VTpbkPQ4EeKr4aqw5khucg" type="2002">
@@ -336,6 +336,142 @@
     <element xmi:type="ecore:EClass" href="RuntimeArchitecture.ecore#//IKnowledgeChangeListener"/>
     <layoutConstraint xmi:type="notation:Bounds" xmi:id="_gczWwvQ3EeKr4aqw5khucg" x="1120" y="85" width="203"/>
   </children>
+  <children xmi:type="notation:Node" xmi:id="__cOGMPRAEeKlL_JkGveLaw" type="1001">
+    <children xmi:type="notation:Node" xmi:id="__cX3MPRAEeKlL_JkGveLaw" type="4001"/>
+    <children xmi:type="notation:Node" xmi:id="__cX3MfRAEeKlL_JkGveLaw" type="5001">
+      <styles xmi:type="notation:DrawerStyle" xmi:id="__cX3MvRAEeKlL_JkGveLaw"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="__cX3M_RAEeKlL_JkGveLaw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="__cX3NPRAEeKlL_JkGveLaw"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="__cX3NfRAEeKlL_JkGveLaw" type="5002">
+      <styles xmi:type="notation:DrawerStyle" xmi:id="__cX3NvRAEeKlL_JkGveLaw"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="__cX3N_RAEeKlL_JkGveLaw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="__cX3OPRAEeKlL_JkGveLaw"/>
+    </children>
+    <styles xmi:type="notation:ShapeStyle" xmi:id="__cOGMfRAEeKlL_JkGveLaw" fontColor="4210752" fontName="Segoe UI" fontHeight="10" fillColor="13761016" lineColor="8421504"/>
+    <element xmi:type="ecore:EClass" href="RuntimeArchitecture.ecore#//RepositoryKnowledgeManager"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="__cOGMvRAEeKlL_JkGveLaw" x="1040" y="535" width="265" height="48"/>
+  </children>
+  <children xmi:type="notation:Node" xmi:id="_KPRZEPRBEeKlL_JkGveLaw" type="1001">
+    <children xmi:type="notation:Node" xmi:id="_KPRZE_RBEeKlL_JkGveLaw" type="4001"/>
+    <children xmi:type="notation:Node" xmi:id="_KPRZFPRBEeKlL_JkGveLaw" type="5001">
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_KPRZFfRBEeKlL_JkGveLaw"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_KPRZFvRBEeKlL_JkGveLaw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_KPRZF_RBEeKlL_JkGveLaw"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_KPRZGPRBEeKlL_JkGveLaw" type="5002">
+      <children xmi:type="notation:Node" xmi:id="_rWtUAPRBEeKlL_JkGveLaw" type="2002">
+        <element xmi:type="ecore:EOperation" href="RuntimeArchitecture.ecore#//KnowledgeRepository/get"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_rWtUAfRBEeKlL_JkGveLaw"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_ut3noPRCEeKlL_JkGveLaw" type="2002">
+        <element xmi:type="ecore:EOperation" href="RuntimeArchitecture.ecore#//KnowledgeRepository/get.1"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_ut3nofRCEeKlL_JkGveLaw"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="__uMxkPRBEeKlL_JkGveLaw" type="2002">
+        <element xmi:type="ecore:EOperation" href="RuntimeArchitecture.ecore#//KnowledgeRepository/put"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="__uMxkfRBEeKlL_JkGveLaw"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_1Z4zsPRCEeKlL_JkGveLaw" type="2002">
+        <element xmi:type="ecore:EOperation" href="RuntimeArchitecture.ecore#//KnowledgeRepository/put.1"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_1Z4zsfRCEeKlL_JkGveLaw"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_K7RuAPRCEeKlL_JkGveLaw" type="2002">
+        <element xmi:type="ecore:EOperation" href="RuntimeArchitecture.ecore#//KnowledgeRepository/take"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_K7RuAfRCEeKlL_JkGveLaw"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_QIjOsPRDEeKlL_JkGveLaw" type="2002">
+        <element xmi:type="ecore:EOperation" href="RuntimeArchitecture.ecore#//KnowledgeRepository/take.1"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_QIjOsfRDEeKlL_JkGveLaw"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_WcqGgPRCEeKlL_JkGveLaw" type="2002">
+        <element xmi:type="ecore:EOperation" href="RuntimeArchitecture.ecore#//KnowledgeRepository/registerListener"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_WcqGgfRCEeKlL_JkGveLaw"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_aX2JsPRCEeKlL_JkGveLaw" type="2002">
+        <element xmi:type="ecore:EOperation" href="RuntimeArchitecture.ecore#//KnowledgeRepository/unregisterListener"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_aX2JsfRCEeKlL_JkGveLaw"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_fobSgPRCEeKlL_JkGveLaw" type="2002">
+        <element xmi:type="ecore:EOperation" href="RuntimeArchitecture.ecore#//KnowledgeRepository/setListenersActive"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_fobSgfRCEeKlL_JkGveLaw"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_qfqh0PRCEeKlL_JkGveLaw" type="2002">
+        <element xmi:type="ecore:EOperation" href="RuntimeArchitecture.ecore#//KnowledgeRepository/isListenerActive"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_qfqh0fRCEeKlL_JkGveLaw"/>
+      </children>
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_KPRZGfRBEeKlL_JkGveLaw"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_KPRZGvRBEeKlL_JkGveLaw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_KPRZG_RBEeKlL_JkGveLaw"/>
+    </children>
+    <styles xmi:type="notation:ShapeStyle" xmi:id="_KPRZEfRBEeKlL_JkGveLaw" fontColor="4210752" fontName="Segoe UI" fontHeight="10" fillColor="13761016" lineColor="8421504"/>
+    <element xmi:type="ecore:EClass" href="RuntimeArchitecture.ecore#//KnowledgeRepository"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_KPRZEvRBEeKlL_JkGveLaw" x="1485" y="535"/>
+  </children>
+  <children xmi:type="notation:Node" xmi:id="_efLn8PRBEeKlL_JkGveLaw" type="1001">
+    <children xmi:type="notation:Node" xmi:id="_efLn8_RBEeKlL_JkGveLaw" type="4001"/>
+    <children xmi:type="notation:Node" xmi:id="_efLn9PRBEeKlL_JkGveLaw" type="5001">
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_efLn9fRBEeKlL_JkGveLaw"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_efLn9vRBEeKlL_JkGveLaw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_efLn9_RBEeKlL_JkGveLaw"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_efLn-PRBEeKlL_JkGveLaw" type="5002">
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_efLn-fRBEeKlL_JkGveLaw"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_efLn-vRBEeKlL_JkGveLaw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_efLn-_RBEeKlL_JkGveLaw"/>
+    </children>
+    <styles xmi:type="notation:ShapeStyle" xmi:id="_efLn8fRBEeKlL_JkGveLaw" fontColor="4210752" fontName="Segoe UI" fontHeight="10" fillColor="13761016" lineColor="8421504"/>
+    <element xmi:type="ecore:EClass" href="RuntimeArchitecture.ecore#//KRExceptionUnavailableEntry"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_efLn8vRBEeKlL_JkGveLaw" x="1850" y="480" width="227"/>
+  </children>
+  <children xmi:type="notation:Node" xmi:id="_hQGQYPRBEeKlL_JkGveLaw" type="1001">
+    <children xmi:type="notation:Node" xmi:id="_hQGQY_RBEeKlL_JkGveLaw" type="4001"/>
+    <children xmi:type="notation:Node" xmi:id="_hQGQZPRBEeKlL_JkGveLaw" type="5001">
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_hQGQZfRBEeKlL_JkGveLaw"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_hQGQZvRBEeKlL_JkGveLaw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_hQGQZ_RBEeKlL_JkGveLaw"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_hQGQaPRBEeKlL_JkGveLaw" type="5002">
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_hQGQafRBEeKlL_JkGveLaw"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_hQGQavRBEeKlL_JkGveLaw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_hQGQa_RBEeKlL_JkGveLaw"/>
+    </children>
+    <styles xmi:type="notation:ShapeStyle" xmi:id="_hQGQYfRBEeKlL_JkGveLaw" fontColor="4210752" fontName="Segoe UI" fontHeight="10" fillColor="13761016" lineColor="8421504"/>
+    <element xmi:type="ecore:EClass" href="RuntimeArchitecture.ecore#//KRExceptionAccessError"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_hQGQYvRBEeKlL_JkGveLaw" x="1650" y="480" width="191"/>
+  </children>
+  <children xmi:type="notation:Node" xmi:id="_arr2QPRDEeKlL_JkGveLaw" type="1001">
+    <children xmi:type="notation:Node" xmi:id="_arr2Q_RDEeKlL_JkGveLaw" type="4001"/>
+    <children xmi:type="notation:Node" xmi:id="_arr2RPRDEeKlL_JkGveLaw" type="5001">
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_arr2RfRDEeKlL_JkGveLaw"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_arr2RvRDEeKlL_JkGveLaw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_arr2R_RDEeKlL_JkGveLaw"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_arr2SPRDEeKlL_JkGveLaw" type="5002">
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_arr2SfRDEeKlL_JkGveLaw"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_arr2SvRDEeKlL_JkGveLaw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_arr2S_RDEeKlL_JkGveLaw"/>
+    </children>
+    <styles xmi:type="notation:ShapeStyle" xmi:id="_arr2QfRDEeKlL_JkGveLaw" fontColor="4210752" fontName="Segoe UI" fontHeight="10" fillColor="13761016" lineColor="8421504"/>
+    <element xmi:type="ecore:EClass" href="RuntimeArchitecture.ecore#//LocalKnowledgeRepository"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_arr2QvRDEeKlL_JkGveLaw" x="1530" y="820"/>
+  </children>
+  <children xmi:type="notation:Node" xmi:id="_eg-FwPRDEeKlL_JkGveLaw" type="1001">
+    <children xmi:type="notation:Node" xmi:id="_eg-Fw_RDEeKlL_JkGveLaw" type="4001"/>
+    <children xmi:type="notation:Node" xmi:id="_eg-FxPRDEeKlL_JkGveLaw" type="5001">
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_eg-FxfRDEeKlL_JkGveLaw"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_eg-FxvRDEeKlL_JkGveLaw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_eg-Fx_RDEeKlL_JkGveLaw"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_eg-FyPRDEeKlL_JkGveLaw" type="5002">
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_eg-FyfRDEeKlL_JkGveLaw"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_eg-FyvRDEeKlL_JkGveLaw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_eg-Fy_RDEeKlL_JkGveLaw"/>
+    </children>
+    <styles xmi:type="notation:ShapeStyle" xmi:id="_eg-FwfRDEeKlL_JkGveLaw" fontColor="4210752" fontName="Segoe UI" fontHeight="10" fillColor="13761016" lineColor="8421504"/>
+    <element xmi:type="ecore:EClass" href="RuntimeArchitecture.ecore#//TSKnowledgeRepository"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_eg-FwvRDEeKlL_JkGveLaw" x="1845" y="820"/>
+  </children>
   <styles xmi:type="notation:DiagramStyle" xmi:id="_JjGr8fNXEeKGfIUqTb093w"/>
   <element xmi:type="ecore:EPackage" href="RuntimeArchitecture.ecore#/"/>
   <edges xmi:type="notation:Edge" xmi:id="_GRAFMPNbEeKGfIUqTb093w" type="3002" source="_sDCY8PNZEeKGfIUqTb093w" target="_9LxmEPNaEeKGfIUqTb093w">
@@ -454,5 +590,40 @@
     <styles xmi:type="notation:LineTypeStyle" xmi:id="_NDHFkvQ0EeKr4aqw5khucg"/>
     <element xsi:nil="true"/>
     <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_NDHFk_Q0EeKr4aqw5khucg" points="[0, 0, -759, -558]$[721, 530, -38, -28]"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_GR_EIPRBEeKlL_JkGveLaw" type="3003" source="__cOGMPRAEeKlL_JkGveLaw" target="_pV1ZkPNeEeKGfIUqTb093w">
+    <styles xmi:type="notation:ConnectorStyle" xmi:id="_GR_EIfRBEeKlL_JkGveLaw" routing="Rectilinear" lineColor="4210752"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_GR_EIvRBEeKlL_JkGveLaw" fontName="Segoe UI"/>
+    <element xsi:nil="true"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_GR_EI_RBEeKlL_JkGveLaw" points="[1, -23, 1, 116]$[1, -102, 1, 37]"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_GR_EJPRBEeKlL_JkGveLaw" id="(0.25239005736137665,0.8565891472868217)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_QjGuoPRBEeKlL_JkGveLaw" type="3002" source="__cOGMPRAEeKlL_JkGveLaw" target="_KPRZEPRBEeKlL_JkGveLaw">
+    <children xmi:type="notation:Node" xmi:id="_QjGupPRBEeKlL_JkGveLaw" type="4011">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_QjGupfRBEeKlL_JkGveLaw" x="-50" y="-12"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_QjGupvRBEeKlL_JkGveLaw" type="4012">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_QjGup_RBEeKlL_JkGveLaw" x="6" y="13"/>
+    </children>
+    <styles xmi:type="notation:ConnectorStyle" xmi:id="_QjGuofRBEeKlL_JkGveLaw" lineColor="4210752"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_QjGuovRBEeKlL_JkGveLaw" fontColor="4210752" fontName="Segoe UI" fontHeight="10"/>
+    <element xmi:type="ecore:EReference" href="RuntimeArchitecture.ecore#//RepositoryKnowledgeManager/knowledgeRepository"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_QjGuo_RBEeKlL_JkGveLaw" points="[23, 3, -205, -12]$[158, 23, -70, 8]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_QjGuqPRBEeKlL_JkGveLaw" id="(0.9132075471698113,0.5416666666666666)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_MUd5EPRDEeKlL_JkGveLaw" id="(0.0016863406408094434,0.13368983957219252)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_jqCRUPRDEeKlL_JkGveLaw" type="3003" source="_arr2QPRDEeKlL_JkGveLaw" target="_KPRZEPRBEeKlL_JkGveLaw">
+    <styles xmi:type="notation:ConnectorStyle" xmi:id="_jqCRUfRDEeKlL_JkGveLaw" routing="Rectilinear" lineColor="4210752"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_jqCRUvRDEeKlL_JkGveLaw" fontName="Segoe UI"/>
+    <element xsi:nil="true"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_jqCRU_RDEeKlL_JkGveLaw" points="[-6, -20, 1, 118]$[-6, -103, 1, 35]"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_jqCRVPRDEeKlL_JkGveLaw" id="(0.21585160202360876,0.8284313725490197)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_kbT9QPRDEeKlL_JkGveLaw" type="3003" source="_eg-FwPRDEeKlL_JkGveLaw" target="_KPRZEPRBEeKlL_JkGveLaw">
+    <styles xmi:type="notation:ConnectorStyle" xmi:id="_kbT9QfRDEeKlL_JkGveLaw" routing="Rectilinear" lineColor="4210752"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_kbT9QvRDEeKlL_JkGveLaw" fontName="Segoe UI"/>
+    <element xsi:nil="true"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_kbT9Q_RDEeKlL_JkGveLaw" points="[-2, -20, 2, 128]$[-2, -103, 2, 45]"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_kbT9RPRDEeKlL_JkGveLaw" id="(0.7403035413153457,0.7794117647058824)"/>
   </edges>
 </notation:Diagram>

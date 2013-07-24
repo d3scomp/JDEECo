@@ -108,7 +108,7 @@
     <eOperations name="unregisterListener">
       <eParameters name="listener" eType="#//IKnowledgeChangeListener"/>
     </eOperations>
-    <eOperations name="setListenerActive">
+    <eOperations name="setListenersActive">
       <eParameters name="on" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
     </eOperations>
     <eOperations name="alterKnowledge" eExceptions="#//KMException">
@@ -142,4 +142,50 @@
   <eClassifiers xsi:type="ecore:EClass" name="KMException"/>
   <eClassifiers xsi:type="ecore:EClass" name="KnowledgeType" abstract="true"/>
   <eClassifiers xsi:type="ecore:EClass" name="IKnowledgeChangeListener" interface="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="RepositoryKnowledgeManager" eSuperTypes="#//KnowledgeManager">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="knowledgeRepository" lowerBound="1"
+        eType="#//KnowledgeRepository"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="KnowledgeRepository" abstract="true">
+    <eOperations name="get" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
+        eExceptions="#//KRExceptionUnavailableEntry #//KRExceptionAccessError">
+      <eParameters name="entryKey" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eParameters name="session" eType="#//ISession"/>
+    </eOperations>
+    <eOperations name="get" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
+        eExceptions="#//KRExceptionUnavailableEntry #//KRExceptionAccessError">
+      <eParameters name="entryKey" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eOperations>
+    <eOperations name="put" eExceptions="#//KRExceptionAccessError">
+      <eParameters name="entryKey" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eParameters name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
+      <eParameters name="session" eType="#//ISession"/>
+    </eOperations>
+    <eOperations name="put" eExceptions="#//KRExceptionAccessError">
+      <eParameters name="entryKey" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eParameters name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
+    </eOperations>
+    <eOperations name="take" eExceptions="#//KRExceptionAccessError #//KRExceptionUnavailableEntry">
+      <eParameters name="entryKey" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eParameters name="session" eType="#//ISession"/>
+    </eOperations>
+    <eOperations name="take" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
+        eExceptions="#//KRExceptionAccessError #//KRExceptionUnavailableEntry">
+      <eParameters name="entryKey" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eOperations>
+    <eOperations name="registerListener">
+      <eParameters name="listener" eType="#//IKnowledgeChangeListener"/>
+    </eOperations>
+    <eOperations name="unregisterListener">
+      <eParameters name="listener" eType="#//IKnowledgeChangeListener"/>
+    </eOperations>
+    <eOperations name="setListenersActive">
+      <eParameters name="on" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    </eOperations>
+    <eOperations name="isListenerActive"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="KRExceptionUnavailableEntry"/>
+  <eClassifiers xsi:type="ecore:EClass" name="KRExceptionAccessError"/>
+  <eClassifiers xsi:type="ecore:EClass" name="LocalKnowledgeRepository" eSuperTypes="#//KnowledgeRepository"/>
+  <eClassifiers xsi:type="ecore:EClass" name="TSKnowledgeRepository" eSuperTypes="#//KnowledgeRepository"/>
 </ecore:EPackage>
