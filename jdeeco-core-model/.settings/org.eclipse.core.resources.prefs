@@ -1,4 +1,6 @@
 eclipse.preferences.version=1
+encoding//model-refactoring/RuntimeArchitecture.ecore=UTF-8
+encoding//model-refactoring/RuntimeArchitecture.ecorediag=UTF-8
 encoding//model/ParsedMetadata.ecorediag=UTF-8
 encoding//model/RuntimeMetadata.ecore=UTF-8
 encoding//model/RuntimeMetadata.ecorediag=UTF-8
