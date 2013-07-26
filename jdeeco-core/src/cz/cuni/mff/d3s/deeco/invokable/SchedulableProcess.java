@@ -549,21 +549,16 @@ public abstract class SchedulableProcess implements Serializable {
 	}
 	
 	private Object getSelectorParameterInstance(SelectorParameter p, Integer groupSize) throws KMException, Exception{
-		Boolean isOutWrapper = p.type.isOutWrapper();
-		if (!isOutWrapper){
-			throw new Exception("The selector should be wrapped in a OutWrapper<> object.");
+		if (!p.type.isList() && !p.type.getParametricTypeAt(0).getClass().equals(Boolean.class)){
+			throw new Exception("The selector should be a list of booleans.");
 		}
-		if (!p.type.getParametricTypeAt(0).isList() && !p.type.getParametricTypeAt(1).getClass().equals(Boolean.class)){
-			throw new Exception("The selector should wrap a list structure : OutWrapper<List<Boolean>>.");
-		}
-		OutWrapper ow = (OutWrapper) p.type.newInstance();
+		//OutWrapper ow = (OutWrapper) p.type.newInstance();
 		// set all booleans to true for initialization
 		Boolean[] selectorList = new Boolean[groupSize];
 		Arrays.fill(selectorList, true);
 		// put the group selection of the selector in the out wrapper
 		p.groupSelection = Arrays.asList(selectorList);
-		ow.value = p.groupSelection;
-		return ow;
+		return p.groupSelection;
 	}
 	
 	protected List<List<String>> getMemberGroups(List<SelectorParameter> selectors, Object[] members, ISession session) throws KMException {

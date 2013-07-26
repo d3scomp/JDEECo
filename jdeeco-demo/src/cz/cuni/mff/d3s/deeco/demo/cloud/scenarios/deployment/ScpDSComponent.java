@@ -19,8 +19,8 @@ public class ScpDSComponent extends Component {
 	
 	/** network id where the component is running */
 	public ENetworkId networkId;
-	/** list of latencies between the component and other components with latencies */
-	public Map<String, Long> latencies;
+	/** os latency data with cached list of latencies between the component and other components */
+	public Map<String, ScpDSComponentOSLatencyData> latencies;
 	/** ids of the application nodes processed by the component */
 	public List<String> onAppIds;
 	
@@ -32,7 +32,7 @@ public class ScpDSComponent extends Component {
 	public ScpDSComponent(String id, ENetworkId networkId) {
 		this.id = id;
 		this.networkId = networkId;
-		this.latencies = new HashMap<String,Long>();
+		this.latencies = new HashMap<String, ScpDSComponentOSLatencyData>();
 		this.onAppIds = new ArrayList<String>();
 	}
 	

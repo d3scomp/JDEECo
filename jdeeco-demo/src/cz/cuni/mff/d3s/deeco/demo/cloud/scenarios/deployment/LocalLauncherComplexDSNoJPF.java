@@ -3,7 +3,6 @@ package cz.cuni.mff.d3s.deeco.demo.cloud.scenarios.deployment;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 import cz.cuni.mff.d3s.deeco.demo.cloud.scenarios.ENetworkId;
 import cz.cuni.mff.d3s.deeco.demo.cloud.scenarios.LatencyGenerator;
@@ -69,7 +68,7 @@ public class LocalLauncherComplexDSNoJPF {
 		cloudComponents.add(new AppDSComponent("APP3"));
 		cloudComponents.add(new AppDSComponent("APP4"));
 		// generate the latencies on the scp components
-		LatencyGenerator.generate(scpComponents, 80, true);
+		LatencyGenerator.generate(scpComponents, true);
 		// initialize the DEECo with input initialized components
 		dop = new InitializedDEECoObjectProvider(cloudComponents, null);
 		rt.registerComponentsAndEnsembles(dop);

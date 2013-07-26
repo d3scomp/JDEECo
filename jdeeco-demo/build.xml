@@ -4,8 +4,10 @@
 	<property name="dist" location="."/>
 	<property name="src" location="${dist}/../jdeeco-core/src"/>
 	<property name="demo" location="${dist}/../jdeeco-demo/src"/>
+	<property name="demo-libs" location="${dist}/../jdeeco-demo/libs"/>
 	<property name="river" location="${dist}/apache-river"/>
 	<property name="jpf" location="${dist}/jpf-core"/>
+	<property name="spl" location="${dist}/spl"/>
 
 	<!-- start apache river - individual services -->
 	<target name="start-ar-httpd">
@@ -84,6 +86,22 @@
 				<pathelement location="${dist}/jdeeco.jar"/>
 				<pathelement location="${river}/lib/jsk-lib.jar"/>
 				<pathelement location="${river}/lib/jsk-platform.jar"/>
+				<pathelement location="${spl}/cz.cuni.mff.d3s.spl-1.1.0.jar"/>
+			</classpath>
+			<jvmarg value="-Djava.security.policy=${river}-config/start.policy"/>
+			<jvmarg value="-Djava.rmi.server.RMIClassLoaderSpi=net.jini.loader.pref.PreferredClassProvider"/>
+		</java>
+	</target>
+	
+	<!-- start highload cloud scenario demo with local shared memory -->
+	<target name="cloud-local-scenario-highload" description="Runs the highload cloud scenario demo">
+		<java classname="cz.cuni.mff.d3s.deeco.demo.cloud.scenarios.highload.LocalLauncherHSNoJPF" fork="true">
+			<classpath>
+				<pathelement location="${dist}/cloud.jar"/>
+				<pathelement location="${dist}/jdeeco.jar"/>
+				<pathelement location="${river}/lib/jsk-lib.jar"/>
+				<pathelement location="${river}/lib/jsk-platform.jar"/>
+				<pathelement location="${spl}/cz.cuni.mff.d3s.spl-1.1.0.jar"/>
 			</classpath>
 			<jvmarg value="-Djava.security.policy=${river}-config/start.policy"/>
 			<jvmarg value="-Djava.rmi.server.RMIClassLoaderSpi=net.jini.loader.pref.PreferredClassProvider"/>
@@ -98,6 +116,7 @@
 				<pathelement location="${dist}/jdeeco.jar"/>
 				<pathelement location="${river}/lib/jsk-lib.jar"/>
 				<pathelement location="${river}/lib/jsk-platform.jar"/>
+				<pathelement location="${spl}/cz.cuni.mff.d3s.spl-1.1.0.jar"/>
 			</classpath>
 			<jvmarg value="-Djava.security.policy=${river}-config/start.policy"/>
 			<jvmarg value="-Djava.rmi.server.RMIClassLoaderSpi=net.jini.loader.pref.PreferredClassProvider"/>

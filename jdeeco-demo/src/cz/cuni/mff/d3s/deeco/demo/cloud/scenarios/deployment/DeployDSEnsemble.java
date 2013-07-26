@@ -12,8 +12,7 @@ import cz.cuni.mff.d3s.deeco.annotations.Membership;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Selector;
-import cz.cuni.mff.d3s.deeco.demo.cloud.scenarios.Link;
-import cz.cuni.mff.d3s.deeco.demo.cloud.scenarios.LinkComparator;
+import cz.cuni.mff.d3s.deeco.demo.cloud.scenarios.shutdown.DeploySSEnsemble;
 import cz.cuni.mff.d3s.deeco.ensemble.Ensemble;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 
@@ -26,57 +25,68 @@ public class DeployDSEnsemble extends Ensemble {
 	
 	private static final long serialVersionUID = 1L;
 
-	// can be hidden from the framework and safe as being private
 	private static Boolean appSelection(String cId, String cMachineId, String mId, String mMachineId){
 		return (!mId.equals(cId) && ((cMachineId == null && mMachineId == null) || cMachineId.equals(mMachineId)));
 	}
 	
-	// can be hidden from the framework and safe as being private
-	private static void scpSelection(List<Boolean> selectors, List<String> scpIds, List<Map<String, Long>> scpLatencies, int range){
-		List<String> mLinkedIds = new ArrayList<String> ();
+	private static List<ScpDSComponentOSLatencyData> scpSelectLatenciesFromSLA(List<Map<String, ScpDSComponentOSLatencyData>> scpLatencies){
 		// transforming the List<Map> data structure into a List data structure
-		List<Link> mLinks = new ArrayList<Link> ();
+		List<ScpDSComponentOSLatencyData> mLatencies = new ArrayList<ScpDSComponentOSLatencyData> ();
 		for (int i = 0; i < scpLatencies.size(); i++){
-			// set all selectors to false
-			selectors.set(i, false);
 			// get the ids which the scp is linked to
-			Map<String,Long> map = scpLatencies.get(i);
+			Map<String,ScpDSComponentOSLatencyData> map = scpLatencies.get(i);
 			Object[] toIdSet = scpLatencies.get(i).keySet().toArray();
 			// iterate over all the link destinations
 			for (int j = 0; j < toIdSet.length; j++){
 				// get the latency
-				Long latency = map.get((Object)toIdSet[j]);
+				ScpDSComponentOSLatencyData latencyData = map.get((Object)toIdSet[j]);
 				// if the latency respects the Service Level Agreement max latency of the source
-				if (latency <= 50){
-					// add the link to the data structure
-					Link link = new Link(scpIds.get(i), (String)toIdSet[j], latency);
-					mLinks.add(link);
+				// do not add a latency data which is already existing in the list
+				if (latencyData.cache <= 50 && !mLatencies.contains(latencyData)){
+					// add to the data structure
+					mLatencies.add(latencyData);
 				}
 			}
 		}
+		return mLatencies;
+	}
+	
+	/**
+	 * function reused for selecting the scp in the DeploySSEnsemble
+	 * @see DeploySSEnsemble
+	 * @param selectors
+	 * @param scpIds
+	 * @param scpSLASelectedLatencies the input list of ScpDSComponentOSLatencyData based on the SLA contract
+	 * @param range
+	 */
+	public static void scpSelection(List<Boolean> selectors, List<String> scpIds, List<ScpDSComponentOSLatencyData> scpSLASelectedLatencies, int range){
+		List<String> mLinkedIds = new ArrayList<String> ();
+		// set all selectors to false
+		for (int i = 0; i < selectors.size(); i++)
+			selectors.set(i, false);
 		// sort all the list of links by order of latency
-		Collections.sort(mLinks, new LinkComparator());
+		Collections.sort(scpSLASelectedLatencies, new ScpDSComponentOSLatencyDataComparator());
 		// reuse the initial implemented algorithm
 		Integer indexer = -1; // the first required id to be explored for starting the exploration
 		// while the linkedIds set is not well-sized or the algorithm runs out of possibilities
-		while (mLinkedIds.size() < range && (range+indexer) <= mLinks.size()){
+		while (mLinkedIds.size() < range && (range+indexer) <= scpSLASelectedLatencies.size()){
 			mLinkedIds.clear();
 			Integer firstAddIndex = 0;
-			for (int i = 0; i < mLinks.size(); i++){
-				Link link = mLinks.get(i);
-				// if the link respects the maximum sla latency
+			for (int i = 0; i < scpSLASelectedLatencies.size(); i++){
+				ScpDSComponentOSLatencyData latencyData = (ScpDSComponentOSLatencyData) scpSLASelectedLatencies.get(i);
+				// if the latencyData respects the maximum sla latency
 				if (i > indexer){
 					// first add into the linkage group
 					if (mLinkedIds.size() == 0){
 						// the starting index of the add is remembered as a bottom limit to be reached for a new search
 						firstAddIndex = i;
-						// add the two ids of the link
-						mLinkedIds.add(link.getFromId());
-						mLinkedIds.add(link.getToId());
+						// add the two ids of the latencyData
+						mLinkedIds.add(latencyData.id1);
+						mLinkedIds.add(latencyData.id2);
 					}else if (mLinkedIds.size() < range){
-						String fId = link.getFromId();
-						String tId = link.getToId();
-						// if exclusively one or the other ids is part of the covered link
+						String fId = latencyData.id1;
+						String tId = latencyData.id2;
+						// if exclusively one or the other ids is part of the covered latencyData
 						if ((mLinkedIds.contains(fId) && !mLinkedIds.contains(tId))
 								|| (!mLinkedIds.contains(fId) && mLinkedIds.contains(tId))){
 							// we add the uncovered to the linkage group
@@ -100,7 +110,6 @@ public class DeployDSEnsemble extends Ensemble {
 			int index = scpIds.indexOf(mLinkedIds.get(i));
 			selectors.set(index, true);
 		}
-		//return selectors;
 	}
 	
 	@Membership
@@ -110,22 +119,23 @@ public class DeployDSEnsemble extends Ensemble {
 			@In("coord.machineId") String cAppMachineId,
 			@In("coord.isDeployed") Boolean cAppIsDeployed,
 			// AppComponent members
-			@Selector("App") OutWrapper<List<Boolean>> msAppSelectors, // huge freedom on the size as only booleans rule it
+			@Selector("App") List<Boolean> msAppSelectors, // huge freedom on the size as only booleans rule it
 			@In("members.App.id") List<String> msAppIds,
 			@In("members.App.machineId") List<String> msAppMachineIds,
 			@In("members.App.isDeployed") List<Boolean> msAppIsDeployed,
 			// ScpComponent members
-			@Selector("Scp") OutWrapper<List<Boolean>> msScpSelectors,
+			@Selector("Scp") List<Boolean> msScpSelectors,
 			@In("members.Scp.id") List<String> msScpIds,
-			@In("members.Scp.latencies") List<Map<String, Long>> scpLatencies
+			@In("members.Scp.latencies") List<Map<String, ScpDSComponentOSLatencyData>> scpLatencies
 			) {
 		if (!cAppIsDeployed && !msAppIsDeployed.contains(true)){
-			// only after some preconditions, we can come to the selector computations
+			// select the latencies based on the SLA
+			List<ScpDSComponentOSLatencyData> slaSelectedLatencies = scpSelectLatenciesFromSLA(scpLatencies);
 			// scp selection
-			scpSelection(msScpSelectors.value, msScpIds, scpLatencies, msAppIds.size());
+			scpSelection(msScpSelectors, msScpIds, slaSelectedLatencies, msAppIds.size());
 			// app selection
 			for (int i = 0; i < msAppIds.size(); i++){
-				msAppSelectors.value.set(i, appSelection(cAppId, cAppMachineId, msAppIds.get(i), msAppMachineIds.get(i))); 
+				msAppSelectors.set(i, appSelection(cAppId, cAppMachineId, msAppIds.get(i), msAppMachineIds.get(i))); 
 			}
 			// here we go
 			return true;

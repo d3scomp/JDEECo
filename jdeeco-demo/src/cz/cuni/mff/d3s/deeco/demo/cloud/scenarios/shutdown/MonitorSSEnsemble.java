@@ -119,33 +119,33 @@ public class MonitorSSEnsemble extends Ensemble {
 			@In("coord.moScpIds") List<String> cMoScpIds,
 			
 			// AppComponent members (n)
-			@Selector("app") OutWrapper<List<Boolean>> appSelectors,
+			@Selector("app") List<Boolean> appSelectors,
 			@In("members.app.id") List<String> appIds,
 				// need this for the duck typing and state checking
 			@In("members.app.isDeployed") List<Boolean> appIsDeployed,
 			
 			// ScpComponent members (n)
-			@Selector("scp") OutWrapper<List<Boolean>> scpSelectors,
+			@Selector("scp") List<Boolean> scpSelectors,
 			@In("members.scp.id") List<String> scpIds,
 			@In("members.scp.isDown") List<Boolean> scpIsDown,
 				// need this for the duck typing
 			@In("members.scp.onAppIds") List<List<String>> scpOnAppIds,	
 			
 			// ScpComponent backup members (n)
-			@Selector("bu") OutWrapper<List<Boolean>> buSelectors,
+			@Selector("bu") List<Boolean> buSelectors,
 			@In("members.bu.id") List<String> buIds,
 			@In("members.bu.isDown") List<Boolean> buIsDown,
 				// need this for the duck typing
 			@In("members.bu.cores") List<List<Integer>> buCores,			
 			
 			// ScpComponent shutdown members
-			@Selector("sd") OutWrapper<List<Boolean>> sdSelectors,
+			@Selector("sd") List<Boolean> sdSelectors,
 			@In("members.sd.id") List<String> sdIds,
 			@In("members.sd.isDown") List<Boolean> sdIsDown
 			) {
 		String allSdComponentIds = "";
 		// check if all monitored scp ids of the backup component are still existing
-		List<String> sdMoScpIds = sdSelection(sdSelectors.value, sdIds, sdIsDown, cMoScpIds);
+		List<String> sdMoScpIds = sdSelection(sdSelectors, sdIds, sdIsDown, cMoScpIds);
 		// display all shutdown nodes
 		Integer downCount = 0;
 		for (int i = 0; i < scpIsDown.size(); i++){
@@ -163,17 +163,17 @@ public class MonitorSSEnsemble extends Ensemble {
 				sdScpComponentIds += " " + sdMoScpIds.get(i);
 			System.out.println(cId+": ShutdownScps="+sdScpComponentIds);
 			// app selection
-			appSelection(appSelectors.value, appIds, appIsDeployed, scpIds, scpOnAppIds, sdMoScpIds);
+			appSelection(appSelectors, appIds, appIsDeployed, scpIds, scpOnAppIds, sdMoScpIds);
 			// scp selection
-			scpSelection(scpSelectors.value, cId, cMoScpIds, scpIds);
+			scpSelection(scpSelectors, cId, cMoScpIds, scpIds);
 			// count app selections
 			Integer appSelectionCount = 0;
-			for (int i = 0; i < appSelectors.value.size(); i++){
-				if (appSelectors.value.get(i))
+			for (int i = 0; i < appSelectors.size(); i++){
+				if (appSelectors.get(i))
 					appSelectionCount++;
 			}
 			// bu selection
-			Integer buSelectCount = buSelection(buSelectors.value, buIds, buCores, scpSelectors.value, scpIds, scpIsDown, buIsDown, appSelectionCount);
+			Integer buSelectCount = buSelection(buSelectors, buIds, buCores, scpSelectors, scpIds, scpIsDown, buIsDown, appSelectionCount);
 			// accept the membership from the selections
 			if (buSelectCount >= 1)
 				return true;

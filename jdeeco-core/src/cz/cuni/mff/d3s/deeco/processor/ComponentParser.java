@@ -119,6 +119,8 @@ public class ComponentParser {
 				ck = (Component) constructor.newInstance(new Object[] {});
 				assignUIDIfNotSet(ck);
 				return ck;
+			}else{
+				throw new Exception("The default constructor of the knowledge is missing");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

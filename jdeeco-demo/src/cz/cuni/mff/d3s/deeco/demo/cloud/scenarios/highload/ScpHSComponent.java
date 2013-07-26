@@ -1,33 +1,24 @@
 package cz.cuni.mff.d3s.deeco.demo.cloud.scenarios.highload;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import cz.cuni.mff.d3s.deeco.demo.cloud.scenarios.ENetworkId;
-import cz.cuni.mff.d3s.deeco.knowledge.Component;
+import cz.cuni.mff.d3s.deeco.demo.cloud.scenarios.deployment.ScpDSComponent;
 
 /**
  * 
  * @author Julien Malvot
  * 
  */
-public class ScpHSComponent extends Component {
+public class ScpHSComponent extends ScpDSComponent {
 
 	public final static long serialVersionUID = 1L;
 
-	/** the network which the application is running within */
-	public ENetworkId networkId;
 	/** the machine which the application is running on */
 	public String machineId;
-	/** */
-	//public Map<String, Long> latencies;
-	/** id of the application nodes which are linked to the scp component */
-	public List<String> appIds;
 	/** load of the scp component provided by the underlying OS 
 	 * and based on the number of ready threads at some period of time */
-	public Long load;
+	public ScpHSComponentOSLoadData osLoadData;
 	/**
 	 * constructor with input network id parameter
 	 * 
@@ -37,10 +28,16 @@ public class ScpHSComponent extends Component {
 	 * @see EScenarioNetworkId
 	 */
 	public ScpHSComponent(String id, ENetworkId networkId) {
-		this.id = id;
-		this.networkId = networkId;
-		//this.latencies = new HashMap<String, Long>();
-		this.appIds = new ArrayList<String>();
+		super(id, networkId);
+		this.machineId = null;
+		this.osLoadData = new ScpHSComponentOSLoadData(1.0);
+	}
+	
+	public ScpHSComponent(String id, ENetworkId networkId, List<String> onAppIds) {
+		super(id, networkId);
+		this.machineId = null;
+		this.osLoadData = new ScpHSComponentOSLoadData(1.0);
+		this.onAppIds = onAppIds;
 	}
 
 	/*

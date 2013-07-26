@@ -15,6 +15,8 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.runtime;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,6 +28,7 @@ import cz.cuni.mff.d3s.deeco.invokable.SchedulableEnsembleProcess;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
 import cz.cuni.mff.d3s.deeco.knowledge.Component;
 import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
+import cz.cuni.mff.d3s.deeco.knowledge.Knowledge;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider;
@@ -167,7 +170,7 @@ public class Runtime implements IRuntime {
 	 * @param contextClassLoader
 	 *            classloader for the process
 	 */
-	private void setUpProcesses(List<? extends SchedulableProcess> processes,
+	protected void setUpProcesses(List<? extends SchedulableProcess> processes,
 			KnowledgeManager km, ClassLoader contextClassLoader) {
 		for (SchedulableProcess p : processes) {
 			p.km = km;
@@ -289,7 +292,7 @@ public class Runtime implements IRuntime {
 	 * 
 	 * @param processes
 	 */
-	private synchronized void addSchedulableProcesses(
+	protected synchronized void addSchedulableProcesses(
 			List<? extends SchedulableProcess> processes) {
 		if (processes != null)
 			for (SchedulableProcess sp : processes) {
@@ -309,11 +312,11 @@ public class Runtime implements IRuntime {
 	 *             in case the knowledge couldn't be initialized, the message
 	 *             contains the reason.
 	 */
-	private synchronized void initComponentKnowledge(Component initKnowledge,
+	protected synchronized void initComponentKnowledge(Component initKnowledge,
 			KnowledgeManager km) throws Exception {
 		if ((initKnowledge == null) || (km == null))
 			throw new NullPointerException();
-
+		// check if the component is already in the knowledge manager
 		try {
 			Object[] currentIds = (Object[]) km
 					.getKnowledge(ConstantKeys.ROOT_KNOWLEDGE_ID);
@@ -322,6 +325,16 @@ public class Runtime implements IRuntime {
 						"Knowledge of a component with id '%s' already exists",
 						initKnowledge.id));
 		} catch (KMNotExistentException kmnee) {
+		}
+		// a default constructor should exist in any knowledge structure
+		for (Field f : initKnowledge.getClass().getFields()){
+			if (Knowledge.class.isAssignableFrom(f.getType())){
+				try{
+					f.getType().getConstructor();
+				}catch(Exception e){
+					throw new Exception("The knowledge structure " + f.getType().getName() + " shall have a default constructor");
+				}
+			}	
 		}
 
 		km.putKnowledge(ConstantKeys.ROOT_KNOWLEDGE_ID, initKnowledge.id);

@@ -7,6 +7,7 @@
 		<cloudJar>cloud.jar</cloudJar>
 		<convoyJar>convoy.jar</convoyJar>
 		<convoytutJar>convoytut.jar</convoytutJar>
+		<splJar>cz.cuni.mff.d3s.spl-1.1.0.jar</splJar>
 	</properties>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
@@ -16,6 +17,9 @@
 				<excludes>
 					<exclude>**/*.java</exclude>
 				</excludes>
+			</resource>
+			<resource>
+				<directory>libs</directory>
 			</resource>
 		</resources>
 		<plugins>
@@ -32,13 +36,7 @@
 						<configuration>
 							<classifier>cloud</classifier>
 							<includes>
-								<include>**/cloud/*</include>
-								<include>**/cloud/candidates/*</include>
-								<include>**/cloud/loadratio/*</include>
-								<include>**/cloud/scenarios/*</include>
-								<include>**/cloud/scenarios/deployment/*</include>
-								<include>**/cloud/scenarios/highload/*</include>
-								<include>**/cloud/scenarios/shutdown/*</include>
+								<include>**/cloud/**</include>
 							</includes>
 							<archive>
 								<addMavenDescriptor>false</addMavenDescriptor>
@@ -122,6 +120,30 @@
 							</artifactItems>
 							<overWriteIfNewer>true</overWriteIfNewer>
 							<outputDirectory>${dist}</outputDirectory>
+						</configuration>
+					</execution>
+					<!--  FOR SPL  -->
+					<execution>
+						<id>copySpl</id>
+						<phase>install</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>${project.groupId}</groupId>
+									<artifactId>${project.artifactId}</artifactId>
+									<version>${project.version}</version>
+									<type>${project.packaging}</type>
+									<classifier>spl</classifier>
+									<destFileName>${splJar}</destFileName>
+								</artifactItem>
+							</artifactItems>
+							<overWriteIfNewer>true</overWriteIfNewer>
+							<outputDirectory>${dist}/spl</outputDirectory>
+							<overWriteReleases>true</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
 						</configuration>
 					</execution>
 				</executions>
@@ -221,6 +243,14 @@
 			<artifactId>apache-river</artifactId>
 			<version>2.2.0</version>
 			<type>zip</type>
+		</dependency>
+		<dependency>
+			<groupId>cz.cuni.mff.d3s.spl</groupId>
+			<artifactId>spl</artifactId>
+			<scope>system</scope>
+			<systemPath>${project.basedir}\libs\cz.cuni.mff.d3s.spl-1.1.0.jar</systemPath>
+			<classifier>spl</classifier>
+			<version>1.1.0</version>
 		</dependency>
 	</dependencies>
 	<parent>

@@ -11,6 +11,7 @@
 		<river>${dist}/apache-river</river>
 		<jdeecoCoreSrc>../jdeeco-core/src</jdeecoCoreSrc>
 		<jdeecoDemoSrc>../jdeeco-demo/src</jdeecoDemoSrc>
+		<jdeecoDemoLibs>../jdeeco-demo/libs</jdeecoDemoLibs>
 		<mode>default</mode>
 	</properties>
 	<profiles>

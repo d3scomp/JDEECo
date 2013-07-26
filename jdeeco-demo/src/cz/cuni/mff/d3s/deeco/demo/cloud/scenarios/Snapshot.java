@@ -4,6 +4,8 @@ import cz.cuni.mff.d3s.deeco.knowledge.Knowledge;
 
 public class Snapshot extends Knowledge {
 	
+	private static final long serialVersionUID = 1L;
+
 	// TODO: the initial type was Instant (see 
 	// http://svn.pst.ifi.lmu.de/svn/scp/tags/SCPi_v_1.0.0/eu.ascens_ist.cloud.knowledge/src/eu/ascens_ist/cloud/knowledge/model/Snapshot.java
 	// shall it be adapted to it?

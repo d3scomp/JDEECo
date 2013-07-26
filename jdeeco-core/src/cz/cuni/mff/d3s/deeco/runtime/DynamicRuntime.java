@@ -1,9 +1,10 @@
 package cz.cuni.mff.d3s.deeco.runtime;
 
+import static cz.cuni.mff.d3s.deeco.processor.ComponentParser.extractComponentProcess;
+
 import java.util.Arrays;
 import java.util.List;
 
-import cz.cuni.mff.d3s.deeco.exceptions.KMNotExistentException;
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
 import cz.cuni.mff.d3s.deeco.knowledge.Component;
 import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
@@ -35,6 +36,35 @@ public class DynamicRuntime extends Runtime implements IRuntime {
 	}
 	
 	/**
+	 * register a component dynamically from the runtime
+	 * @param component
+	 */
+	public void registerComponent(Component component) throws Exception{
+		ClassLoader contextClassLoader = provider.getContextClassLoader();
+		if (component != null){
+			ParsedComponent parsedComponent = new ParsedComponent(extractComponentProcess(
+					component.getClass(), component.id), component);
+			// add the component into the provider
+			provider.getComponents().add(parsedComponent);
+			// process the component from the provider (which has prior parsed the component)
+			try {
+				initComponentKnowledge(parsedComponent.getInitialKnowledge(), km);
+			} catch (Exception e) {
+				Log.e(String.format(
+						"Error when initializing knowledge of component %s",
+						parsedComponent.getInitialKnowledge().getClass()), e);
+				throw e;
+			}
+			List<? extends SchedulableProcess> componentProcesses = parsedComponent.getProcesses();
+			// the component can have no processes
+			if (componentProcesses != null) {
+				setUpProcesses(componentProcesses, km, contextClassLoader);
+				addSchedulableProcesses(componentProcesses);
+			}
+		}
+	}
+	
+	/**
 	 * 
 	 * @param id id of the component to remove
 	 */
@@ -55,6 +85,10 @@ public class DynamicRuntime extends Runtime implements IRuntime {
 		}
 		// remove the knowledge
 		try {
+			// FIXME : must lock or excluse the node to be called in the ensemble to avoid unconsistency or unexpected behaviors !!!
+			// on simulating, some knowledge removed implies some knowledge existing, 
+			// and can affect the loading of parameters of the methods using the knowledge manager
+			// how to remove a set of knowledge in the knowledge manager?
 			removeComponentKnowledge(component.getInitialKnowledge(), km);
 		} catch (Exception e) {
 			Log.e(String.format(
@@ -80,5 +114,4 @@ public class DynamicRuntime extends Runtime implements IRuntime {
 		// TODO: this is not working perfectly yet
 		km.takeAllKnowledge(knowledge.id);
 	}
-	
 }

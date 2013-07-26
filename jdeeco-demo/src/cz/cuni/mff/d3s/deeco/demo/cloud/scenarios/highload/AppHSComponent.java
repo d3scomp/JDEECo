@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.deeco.demo.cloud.scenarios.highload;
 
+import cz.cuni.mff.d3s.deeco.demo.cloud.scenarios.deployment.AppDSComponent;
 import cz.cuni.mff.d3s.deeco.knowledge.Component;
 
 /**
@@ -7,27 +8,18 @@ import cz.cuni.mff.d3s.deeco.knowledge.Component;
  * @author Julien Malvot
  *
  */
-public class AppHSComponent extends Component {
+public class AppHSComponent extends AppDSComponent {
 	
 	public final static long serialVersionUID = 1L;
-
-	/**
-	 * id of the SCP instance which the application component is processed by
-	 */
-	public String scpId;
-	
-	/**
-	 * flag for deployment
-	 */
-	public Boolean isDeployed;
 	
 	/**
 	 * constructor for the Application Component
 	 * @param id
 	 */
-	public AppHSComponent(String id, String scpId, Boolean isDeployed) {
-		this.id = id;
-		this.scpId = scpId;
+	public AppHSComponent(String id, String machineId, String scpId, Boolean isDeployed) {
+		super(id);
+		this.machineId = machineId;
+		this.onScpId = scpId;
 		this.isDeployed = isDeployed;
 	}
 	

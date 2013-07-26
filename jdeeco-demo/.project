@@ -3,6 +3,7 @@
 	<name>cz.cuni.mff.d3s.jdeeco.demo</name>
 	<comment></comment>
 	<projects>
+		<project>spl-java</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

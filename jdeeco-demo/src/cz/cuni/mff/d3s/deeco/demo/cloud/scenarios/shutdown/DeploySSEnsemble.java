@@ -1,7 +1,6 @@
 package cz.cuni.mff.d3s.deeco.demo.cloud.scenarios.shutdown;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -12,8 +11,8 @@ import cz.cuni.mff.d3s.deeco.annotations.Membership;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Selector;
-import cz.cuni.mff.d3s.deeco.demo.cloud.scenarios.Link;
-import cz.cuni.mff.d3s.deeco.demo.cloud.scenarios.LinkComparator;
+import cz.cuni.mff.d3s.deeco.demo.cloud.scenarios.deployment.DeployDSEnsemble;
+import cz.cuni.mff.d3s.deeco.demo.cloud.scenarios.deployment.ScpDSComponentOSLatencyData;
 import cz.cuni.mff.d3s.deeco.ensemble.Ensemble;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 
@@ -41,79 +40,32 @@ public class DeploySSEnsemble extends Ensemble {
 		return (!mId.equals(cId) && ((cMachineId == null && mMachineId == null) || cMachineId.equals(mMachineId)));
 	}
 	
-	private static void scpSelection(List<Boolean> selectors, List<String> scpIds, List<Map<String, Long>> scpLatencies, List<List<Integer>> scpCores, int range){
-		List<String> mLinkedIds = new ArrayList<String> ();
+	private static List<ScpDSComponentOSLatencyData> scpSelectLatenciesFromSLA(List<Map<String, ScpDSComponentOSLatencyData>> scpLatencies, List<List<Integer>> scpCores){
 		// transforming the List<Map> data structure into a List data structure
-		List<Link> mLinks = new ArrayList<Link> ();
+		List<ScpDSComponentOSLatencyData> mLatencies = new ArrayList<ScpDSComponentOSLatencyData> ();
 		for (int i = 0; i < scpLatencies.size(); i++){
-			// set all selectors to false
-			selectors.set(i, false);
-			// get the ids which the scp is linked to
-			Map<String,Long> map = scpLatencies.get(i);
-			Object[] toIdSet = scpLatencies.get(i).keySet().toArray();
 			List<Integer> cores = scpCores.get(i);
 			// if at least two-gigahertz frequency cores
 			if (respectSLAScpCores(cores)){
+				// get the ids which the scp is linked to
+				Map<String,ScpDSComponentOSLatencyData> map = scpLatencies.get(i);
+				Object[] toIdSet = scpLatencies.get(i).keySet().toArray();
 				// iterate over all the link destinations
 				for (int j = 0; j < toIdSet.length; j++){
 					// get the latency
-					Long latency = map.get((Object)toIdSet[j]);
+					ScpDSComponentOSLatencyData latencyData = map.get((Object)toIdSet[j]);
 					// if the latency respects the Service Level Agreement max latency of the source
-					if (latency <= 50){
-						// add the link to the data structure
-						Link link = new Link(scpIds.get(i), (String)toIdSet[j], latency);
-						mLinks.add(link);
+					// do not add a latency data which is already existing in the list
+					if (latencyData.cache <= 50 && !mLatencies.contains(latencyData)){
+						// add to the data structure
+						mLatencies.add(latencyData);
 					}
 				}
 			}
 		}
-		// sort all the list of links by order of latency
-		Collections.sort(mLinks, new LinkComparator());
-		// reuse the initial implemented algorithm
-		Integer indexer = -1; // the first required id to be explored for starting the exploration
-		// while the linkedIds set is not well-sized or the algorithm runs out of possibilities
-		while (mLinkedIds.size() < range && (range+indexer) <= mLinks.size()){
-			mLinkedIds.clear();
-			Integer firstAddIndex = 0;
-			for (int i = 0; i < mLinks.size(); i++){
-				Link link = mLinks.get(i);
-				// if the link respects the maximum sla latency
-				if (i > indexer){
-					// first add into the linkage group
-					if (mLinkedIds.size() == 0){
-						// the starting index of the add is remembered as a bottom limit to be reached for a new search
-						firstAddIndex = i;
-						// add the two ids of the link
-						mLinkedIds.add(link.getFromId());
-						mLinkedIds.add(link.getToId());
-					}else if (mLinkedIds.size() < range){
-						String fId = link.getFromId();
-						String tId = link.getToId();
-						// if exclusively one or the other ids is part of the covered link
-						if ((mLinkedIds.contains(fId) && !mLinkedIds.contains(tId))
-								|| (!mLinkedIds.contains(fId) && mLinkedIds.contains(tId))){
-							// we add the uncovered to the linkage group
-							if (!mLinkedIds.contains(fId))
-								mLinkedIds.add(fId);
-							else
-								mLinkedIds.add(tId);
-						}
-					}else{
-						break;
-					}
-				}
-			}
-			// if we did not get enough ids into the interconnection, 
-			// then we start the new iteration from the first found index
-			if (mLinkedIds.size() < range)
-				indexer = firstAddIndex;
-		}
-		// setting up the list of booleans
-		for (int i = 0; i < mLinkedIds.size(); i++){
-			int index = scpIds.indexOf(mLinkedIds.get(i));
-			selectors.set(index, true);
-		}
+		return mLatencies;
 	}
+
 	
 	private static void buSelection(List<Boolean> buSelectors, List<String> buIds, List<List<Integer>> cores, List<Boolean> scpSelectors, List<String> scpIds, int range){
 		// set all selections to false
@@ -141,20 +93,20 @@ public class DeploySSEnsemble extends Ensemble {
 			@In("coord.machineId") String appMachineId,
 			
 			// AppComponent members
-			@Selector("app") OutWrapper<List<Boolean>> appsSelectors,
+			@Selector("app") List<Boolean> appsSelectors,
 			@In("members.app.id") List<String> appsIds,
 			@In("members.app.isDeployed") List<Boolean> appsIsDeployed,
 			@In("members.app.machineId") List<String> appsMachineIds,
 			
 			// ScpComponent members
-			@Selector("scp") OutWrapper<List<Boolean>> scpSelectors,
+			@Selector("scp") List<Boolean> scpSelectors,
 			@In("members.scp.id") List<String> scpIds,
-			@In("members.scp.latencies") List<Map<String, Long>> scpLatencies,
+			@In("members.scp.latencies") List<Map<String, ScpDSComponentOSLatencyData>> scpLatencies,
 			@In("members.scp.isDown") List<Boolean> IsDown,
 			@In("members.scp.cores") List<List<Integer>> scpCores,
 			
 			// ScpComponent backup members
-			@Selector("bu") OutWrapper<List<Boolean>> buSelectors,
+			@Selector("bu") List<Boolean> buSelectors,
 			@In("members.bu.id") List<String> buIds,
 			@In("members.bu.isDown") List<Boolean> buIsDown,
 			@In("members.bu.cores") List<List<Integer>> buCores
@@ -164,12 +116,14 @@ public class DeploySSEnsemble extends Ensemble {
 		if (!appIsDeployed && !appsIsDeployed.contains(true) && (2*appsIds.size()) <= (scpIds.size() + buIds.size())){
 			// app selection
 			for (int i = 0; i < appsIds.size(); i++){
-				appsSelectors.value.set(i, appSelection(appId, appMachineId, appsIds.get(i), appsMachineIds.get(i))); 
+				appsSelectors.set(i, appSelection(appId, appMachineId, appsIds.get(i), appsMachineIds.get(i))); 
 			}
+			// select the latencies based on the SLA
+			List<ScpDSComponentOSLatencyData> slaSelectedLatencies = scpSelectLatenciesFromSLA(scpLatencies, scpCores);
 			// scp selection
-			scpSelection(scpSelectors.value, scpIds, scpLatencies, scpCores, appsIds.size());
+			DeployDSEnsemble.scpSelection(scpSelectors, scpIds, slaSelectedLatencies, appsIds.size());
 			// bu selection (backup components)
-			buSelection(buSelectors.value, buIds, buCores, scpSelectors.value, scpIds, appsIds.size());
+			buSelection(buSelectors, buIds, buCores, scpSelectors, scpIds, appsIds.size());
 			// accept the deployment with the selected ids
 			return true;
 		}

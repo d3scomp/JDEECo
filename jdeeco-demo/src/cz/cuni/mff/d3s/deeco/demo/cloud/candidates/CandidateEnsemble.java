@@ -50,7 +50,7 @@ public class CandidateEnsemble extends Ensemble {
 			@In("coord.id") String cId, // just used for the console output here !
 			@In("coord.latencies") Map<String, Long> cLatencies,
 			// candidates
-			@Selector("candidate") OutWrapper<List<Boolean>> cdSelector,
+			@Selector("candidate") List<Boolean> cdSelector, //OutWrapper<
 			@In("members.candidate.id") List<String> cdIds,
 			@In("members.candidate.loadRatio") List<Float> cdLoadRatios) {
 		/* if the array has at least one element
@@ -87,9 +87,9 @@ public class CandidateEnsemble extends Ensemble {
 			System.out.println("");
 			Integer minloadIndex = cdIds.indexOf(minloadId);
 			// unselect all nodes except the min loaded
-			for (int i = 0; i < cdSelector.value.size(); i++){
+			for (int i = 0; i < cdSelector.size(); i++){
 				if (i != minloadIndex)
-					cdSelector.value.set(i, false);
+					cdSelector.set(i, false);
 				else
 					System.out.println(cId + " selects " + minloadId);
 			}
