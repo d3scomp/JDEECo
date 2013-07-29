@@ -18,7 +18,7 @@ import cz.cuni.mff.d3s.deeco.scheduling.MultithreadedScheduler;
 import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
 
 /**
- * The scenario Science Cloud Platform Instances SCPis
+ * The Science Cloud Platform (Scp) local launcher for the Shutdown Scenario (SS).
  * 
  * @author Julien Malvot
  * 
@@ -33,7 +33,7 @@ public class LocalLauncherSSNoJPF {
 		// no non-initialized components
 		List<Class<?>> components = Arrays.asList(new Class<?>[] {});
 		List<Class<?>> ensembles = Arrays
-				.asList(new Class<?>[] { DeploySSEnsemble.class, BackupEnsemble.class, MonitorSSEnsemble.class });
+				.asList(new Class<?>[] { DeploySSEnsemble.class, BackupSSEnsemble.class, MonitorSSEnsemble.class });
 		KnowledgeManager km = new RepositoryKnowledgeManager(
 				new LocalKnowledgeRepository());
 		Scheduler scheduler = new MultithreadedScheduler();

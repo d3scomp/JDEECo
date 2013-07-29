@@ -7,11 +7,13 @@ import cz.cuni.mff.d3s.deeco.exceptions.ComponentEnsembleParseException;
 import cz.cuni.mff.d3s.deeco.invokable.ParameterTypeParser;
 import cz.cuni.mff.d3s.deeco.invokable.TypeDescription;
 
+/**
+ * identifies a process method parameter by its type and index within the parameters list.
+ * @author Julien Malvot
+ *
+ */
 public class GenericParameter implements Serializable {
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 25138716843224106L;
 	
 	public final TypeDescription type;

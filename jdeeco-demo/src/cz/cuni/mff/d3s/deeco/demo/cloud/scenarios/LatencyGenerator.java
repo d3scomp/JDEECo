@@ -6,6 +6,17 @@ import java.util.Random;
 import cz.cuni.mff.d3s.deeco.demo.cloud.scenarios.deployment.ScpDSComponent;
 import cz.cuni.mff.d3s.deeco.demo.cloud.scenarios.deployment.ScpDSComponentOSLatencyData;
 
+/**
+ * Generates statically the Operating System latency data of each component
+ * extending the ScpDSComponent class.
+ * The generationg is based on the network ownership constraint
+ * as well as latency interval regarding the context.
+ * The generation is symetric between two scp components.
+ * 
+ * @author Julien Malvot
+ *
+ * @param <T> the scp component class whom the latency must be generated
+ */
 public class LatencyGenerator<T extends ScpDSComponent> {
 	
 	private static Random rand = new Random();

@@ -11,8 +11,16 @@ import cz.cuni.mff.d3s.deeco.demo.cloud.scenarios.Snapshot;
 import cz.cuni.mff.d3s.deeco.ensemble.Ensemble;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 
-/** backup ensemble for all the application components to be backed-up by the backup scp components */
-public class BackupEnsemble extends Ensemble {
+/** 
+ * The Backup Ensemble for the Shutdown Scenario (SS).
+ * 
+ * Applies to the application singleton. 
+ * The snapshot of the singleton is saved into the scp components in charge of the backup.
+ * The ensemble starts its process after the DeploySSEnsemble deployment.
+ * 
+ * @author Julien Malvot
+ */
+public class BackupSSEnsemble extends Ensemble {
 
 	private static final long serialVersionUID = 1L;
 	

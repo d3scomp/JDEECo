@@ -18,11 +18,10 @@ import cz.cuni.mff.d3s.deeco.scheduling.MultithreadedScheduler;
 import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
 
 /**
- * The scenario
- * Science Cloud Platform Instances SCPis
+ * The Science Cloud Platform (Scp) local launcher for the Deployment Scenario (DS).
  * 
  * @author Julien Malvot
- *
+ * 
  */
 public class LocalLauncherDSNoJPF {
 	

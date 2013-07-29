@@ -12,14 +12,21 @@ import cz.cuni.mff.d3s.deeco.annotations.Membership;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Selector;
+import cz.cuni.mff.d3s.deeco.demo.cloud.scenarios.highload.ScpHSComponentOSLoadData;
 import cz.cuni.mff.d3s.deeco.demo.cloud.scenarios.shutdown.DeploySSEnsemble;
 import cz.cuni.mff.d3s.deeco.ensemble.Ensemble;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 
 /**
+ * The Deployment Ensemble for the Deployment Scenario (DS).
+ * 
+ * For a given number of application instances, the ensemble
+ * takes all possible scp components which are available for these instances and requires scp components
+ * to be forming a graph of lowest latencies among all the possible combinations.
+ * It then attributes appcomponent-scpcomponent pairs such that each app component gets deployed.
  * 
  * @author Julien Malvot
- *
+ * 
  */
 public class DeployDSEnsemble extends Ensemble {
 	

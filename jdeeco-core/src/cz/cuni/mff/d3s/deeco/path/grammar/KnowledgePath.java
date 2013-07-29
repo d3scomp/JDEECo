@@ -44,6 +44,11 @@ public class KnowledgePath implements Serializable {
 		}
 	}
 	
+	/**
+	 * used in case of a selector which has just an identifier naively defined,
+	 * and does not need be evaluated.
+	 * @return a naive evaluation of the knowledge path
+	 */
 	public String getNaiveEvaluatedPath() {
 		try {
 			return evaluateNaivePath(pathNode); 
@@ -51,17 +56,6 @@ public class KnowledgePath implements Serializable {
 			Log.e("Isolated Knowledge path evaluation error",kme);
 			return null;
 		}
-	}
-	
-	/**
-	 * provide the information if the type of path is candidate-based for the caller
-	 * it will mean the caller will have to deal with an array of paths as multiple candidates
-	 * are processed as input
-	 * @param pathNode
-	 * @return
-	 */
-	public Boolean isCandidateEnsemblePath() {
-		return (pathNode.value instanceof EEnsembleParty && EEnsembleParty.CANDIDATES.equals(pathNode.value));
 	}
 	
 	/**
@@ -74,6 +68,12 @@ public class KnowledgePath implements Serializable {
 		return (EEnsembleParty.MEMBERS.equals(pathNode.value) && groupId.equals(pathNode.next.value));
 	}
 	
+	/**
+	 * Returns the selector identifier of a path in context of group members.
+	 * This is used for distinguishing/identifying the parameters in the methods as
+	 * long as the membership is members-based via selectors.
+	 * @return the selector identifier of a knowledge path
+	 */
 	public String getGroupIdentifier(){
 		if (EEnsembleParty.MEMBERS.equals(pathNode.value) && pathNode.next.value instanceof String)
 			return (String) pathNode.next.value;

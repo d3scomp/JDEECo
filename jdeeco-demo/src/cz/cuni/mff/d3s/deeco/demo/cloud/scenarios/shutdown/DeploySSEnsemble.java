@@ -17,9 +17,14 @@ import cz.cuni.mff.d3s.deeco.ensemble.Ensemble;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 
 /**
+ * The Deployment Ensemble for the Shutdown Scenario (SS).
+ * 
+ * This is called initially to deploy the application singleton onto a scp machine.
+ * Similar to the deployment scenario with a single application instance.
+ * The backup scp component can copy the snapshot of the app component only after this step.
  * 
  * @author Julien Malvot
- *
+ * 
  */
 public class DeploySSEnsemble extends Ensemble {
 	

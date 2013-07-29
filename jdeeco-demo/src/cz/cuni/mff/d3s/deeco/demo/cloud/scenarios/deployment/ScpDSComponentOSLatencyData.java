@@ -6,6 +6,15 @@ import cz.cuni.mff.d3s.deeco.knowledge.Knowledge;
 import cz.cuni.mff.d3s.spl.core.Data;
 import cz.cuni.mff.d3s.spl.core.StatisticSnapshot;
 
+/**
+ * The Science Cloud Platform (Scp) Component Operating System Latency Data for the Deployment Scenario (DS).
+ * 
+ * The LatencyData object performs the latency generation between a scp component and another one.
+ * The graph search for the lowest-latencies interconnection of scp components uses the latency data structures.
+ * 
+ * @author Julien Malvot
+ * 
+ */
 public class ScpDSComponentOSLatencyData extends Knowledge implements Data {
 	
 	/** id of one extremity of the latency link */	
@@ -29,19 +38,9 @@ public class ScpDSComponentOSLatencyData extends Knowledge implements Data {
 		this.max = max;
 	}
 	
-	long nextLong(Random rng, long n) {
-		   // error checking and 2^x checking removed for simplicity.
-	   long bits, val;
-	   do {
-	      bits = (rng.nextLong() << 1) >>> 1;
-	      val = bits % n;
-	   } while (bits-val+(n-1) < 0L);
-	   return val;
-	}
-	
 	public Long generate() {
 		Random rand = new Random();
-		cache = min+nextLong(rand, max-min);
+		cache = (long) (min+(rand.nextDouble()*(max-min)));
 		System.out.println(id1 + " - " + id2 + " - new value = " + cache);
 		return cache;
 	}

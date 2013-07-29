@@ -7,7 +7,7 @@
 	<property name="demo-libs" location="${dist}/../jdeeco-demo/libs"/>
 	<property name="river" location="${dist}/apache-river"/>
 	<property name="jpf" location="${dist}/jpf-core"/>
-	<property name="spl" location="${dist}/spl"/>
+	<property name="spl" location="${dist}/../jdeeco-demo/libs/cz.cuni.mff.d3s.spl-1.1.0.jar"/>
 
 	<!-- start apache river - individual services -->
 	<target name="start-ar-httpd">
@@ -65,7 +65,7 @@
 	</target>
 	
 	<!-- start min load cloud demo with local shared memory -->
-	<target name="cloud-local-minload" description="Runs the cloud demo">
+	<target name="cloud-local-minload" description="Runs the minload cloud demo">
 		<java classname="cz.cuni.mff.d3s.deeco.demo.cloud.candidates.LocalLauncherCandidateNoJPF" fork="true">
 			<classpath>
 				<pathelement location="${dist}/cloud.jar"/>
@@ -86,7 +86,7 @@
 				<pathelement location="${dist}/jdeeco.jar"/>
 				<pathelement location="${river}/lib/jsk-lib.jar"/>
 				<pathelement location="${river}/lib/jsk-platform.jar"/>
-				<pathelement location="${spl}/cz.cuni.mff.d3s.spl-1.1.0.jar"/>
+				<pathelement location="${spl}"/>
 			</classpath>
 			<jvmarg value="-Djava.security.policy=${river}-config/start.policy"/>
 			<jvmarg value="-Djava.rmi.server.RMIClassLoaderSpi=net.jini.loader.pref.PreferredClassProvider"/>
@@ -101,7 +101,7 @@
 				<pathelement location="${dist}/jdeeco.jar"/>
 				<pathelement location="${river}/lib/jsk-lib.jar"/>
 				<pathelement location="${river}/lib/jsk-platform.jar"/>
-				<pathelement location="${spl}/cz.cuni.mff.d3s.spl-1.1.0.jar"/>
+				<pathelement location="${spl}"/>
 			</classpath>
 			<jvmarg value="-Djava.security.policy=${river}-config/start.policy"/>
 			<jvmarg value="-Djava.rmi.server.RMIClassLoaderSpi=net.jini.loader.pref.PreferredClassProvider"/>
@@ -116,7 +116,7 @@
 				<pathelement location="${dist}/jdeeco.jar"/>
 				<pathelement location="${river}/lib/jsk-lib.jar"/>
 				<pathelement location="${river}/lib/jsk-platform.jar"/>
-				<pathelement location="${spl}/cz.cuni.mff.d3s.spl-1.1.0.jar"/>
+				<pathelement location="${spl}"/>
 			</classpath>
 			<jvmarg value="-Djava.security.policy=${river}-config/start.policy"/>
 			<jvmarg value="-Djava.rmi.server.RMIClassLoaderSpi=net.jini.loader.pref.PreferredClassProvider"/>

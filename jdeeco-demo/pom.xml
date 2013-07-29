@@ -7,7 +7,7 @@
 		<cloudJar>cloud.jar</cloudJar>
 		<convoyJar>convoy.jar</convoyJar>
 		<convoytutJar>convoytut.jar</convoytutJar>
-		<splJar>cz.cuni.mff.d3s.spl-1.1.0.jar</splJar>
+		<splJar>${project.basedir}\libs\cz.cuni.mff.d3s.spl-1.1.0.jar</splJar>
 	</properties>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
@@ -122,30 +122,6 @@
 							<outputDirectory>${dist}</outputDirectory>
 						</configuration>
 					</execution>
-					<!--  FOR SPL  -->
-					<execution>
-						<id>copySpl</id>
-						<phase>install</phase>
-						<goals>
-							<goal>copy</goal>
-						</goals>
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>${project.groupId}</groupId>
-									<artifactId>${project.artifactId}</artifactId>
-									<version>${project.version}</version>
-									<type>${project.packaging}</type>
-									<classifier>spl</classifier>
-									<destFileName>${splJar}</destFileName>
-								</artifactItem>
-							</artifactItems>
-							<overWriteIfNewer>true</overWriteIfNewer>
-							<outputDirectory>${dist}/spl</outputDirectory>
-							<overWriteReleases>true</overWriteReleases>
-							<overWriteSnapshots>true</overWriteSnapshots>
-						</configuration>
-					</execution>
 				</executions>
 			</plugin>
 			<plugin>
@@ -189,6 +165,34 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!--the jar shall be inserted into the maven repository 
+			<plugin>
+				<artifactId>fake</artifactId>
+				<version>1.1.0</version>
+				<executions>
+					<execution>
+						<id>copySpl</id>
+						<phase>install</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>cz.cuni.mff.d3s.spl</groupId>
+									<artifactId>spl</artifactId>
+									<version>1.1.0</version>
+									<destFileName>${splJar}</destFileName>
+								</artifactItem>
+							</artifactItems>
+							<overWriteIfNewer>true</overWriteIfNewer>
+							<outputDirectory>${dist}/spl</outputDirectory>
+							<overWriteReleases>true</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>  -->
 		</plugins>
 		<pluginManagement>
 			<plugins>
@@ -248,9 +252,8 @@
 			<groupId>cz.cuni.mff.d3s.spl</groupId>
 			<artifactId>spl</artifactId>
 			<scope>system</scope>
-			<systemPath>${project.basedir}\libs\cz.cuni.mff.d3s.spl-1.1.0.jar</systemPath>
-			<classifier>spl</classifier>
 			<version>1.1.0</version>
+			<systemPath>${splJar}</systemPath>
 		</dependency>
 	</dependencies>
 	<parent>

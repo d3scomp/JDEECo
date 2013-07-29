@@ -23,8 +23,11 @@ import cz.cuni.mff.d3s.deeco.path.grammar.KnowledgePath;
 
 /**
  * Class used to represent a method parameter.
+ * This standard parameter has an additional field kPath to define the absolute knowledge path
+ * describing where the knowledge is to be retrieved from the knowledge repository. 
  * 
  * @author Michal Kit
+ * @author Julien Malvot
  *
  */
 public class Parameter extends GenericParameter {

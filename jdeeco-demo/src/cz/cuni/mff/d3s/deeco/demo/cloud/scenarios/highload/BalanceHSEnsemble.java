@@ -16,9 +16,16 @@ import cz.cuni.mff.d3s.spl.core.Result;
 import cz.cuni.mff.d3s.spl.core.impl.SimpleFormulas;
 
 /**
+ * The Balance Ensemble for the Highload Scenario (HS).
+ * 
+ * Whenever the application singleton gets deployed, and the scp component running it
+ * gets overloaded, the ensemble balances the load by spawning a new scp component.
+ * It detaches the overloaded node and attaches the singleton to the spawned one.
+ * The load gets compared via the SPL API inside the ScpHSComponentOSLoadData object
+ * from the scp component knowledge being evaluated.
  * 
  * @author Julien Malvot
- *
+ * 
  */
 public class BalanceHSEnsemble extends Ensemble {
 	

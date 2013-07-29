@@ -15,8 +15,8 @@ import cz.cuni.mff.d3s.deeco.provider.ParsedComponent;
 import cz.cuni.mff.d3s.deeco.scheduling.IScheduler;
 
 /**
- * the dynamic runtime makes it feasible for the developer to be intentionally capable of dynamically
- * removing a node at runtime for a demo purpose
+ * the dynamic runtime makes it feasible for the developer to be intentionally capable of
+ * removing a node at runtime for demo purposes (e.g. high load)
  * @author Julien
  *
  */
@@ -36,7 +36,7 @@ public class DynamicRuntime extends Runtime implements IRuntime {
 	}
 	
 	/**
-	 * register a component dynamically from the runtime
+	 * Registers a component dynamically from the runtime.
 	 * @param component
 	 */
 	public void registerComponent(Component component) throws Exception{
@@ -65,9 +65,11 @@ public class DynamicRuntime extends Runtime implements IRuntime {
 	}
 	
 	/**
+	 * Remove the component from the repository.
 	 * 
 	 * @param id id of the component to remove
 	 */
+	// FIXME: needs be debugged at runtime for consistency reasons
 	public boolean unregisterComponent(String id) {
 		List<ParsedComponent> parsedComponents = provider.getComponents();
 		// get the component

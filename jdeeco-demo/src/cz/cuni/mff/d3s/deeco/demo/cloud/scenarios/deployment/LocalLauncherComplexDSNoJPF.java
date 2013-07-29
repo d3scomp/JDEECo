@@ -17,6 +17,15 @@ import cz.cuni.mff.d3s.deeco.runtime.Runtime;
 import cz.cuni.mff.d3s.deeco.scheduling.MultithreadedScheduler;
 import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
 
+/**
+ * The Science Cloud Platform (Scp) local launcher for the complex Deployment Scenario (DS).
+ * 
+ * The launcher is the same as the non-complex deployment scenario local launcher,
+ * but with more scp nodes and app nodes to test the robustness of the ensemble.
+ * 
+ * @author Julien Malvot
+ * 
+ */
 public class LocalLauncherComplexDSNoJPF {
 
 	/**

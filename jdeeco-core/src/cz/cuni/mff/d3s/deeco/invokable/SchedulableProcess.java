@@ -122,7 +122,21 @@ public abstract class SchedulableProcess implements Serializable {
 		}
 	}
 	
-	// check if the coordinator fits for the call
+	/** 
+	 * Check if the coordinator fits the provided method parameters prior to the full processing of the ensemble.
+	 * This uses duck-typing by checking if the knowledge is contained in the knowledge repository
+	 * 
+	 * @param in 
+	 * 			input parameters
+	 * @param inOut 
+	 * 			input/output parameters
+	 * @param session 
+	 * 			current session
+	 * @param coordinator 
+	 * 			the coordinator id to be checked
+	 * @return true 
+	 * 			if the coordinator respects the provided method parameters
+	 */
 	protected Boolean isMembershipCoordinator(List<Parameter> in, List<Parameter> inOut, ISession session, String coordinator){
 		Boolean result = false;
 		final List<Parameter> coordinatorParameters = new ArrayList<Parameter>();
@@ -239,8 +253,6 @@ public abstract class SchedulableProcess implements Serializable {
 			// selectors
 			for (int i = 0; i < selectors.size(); i++){
 				SelectorParameter sp = selectors.get(i);
-				// fill in the array only if not initialized
-				// TODO: what if the array is empty and the knowledge exchange calls the method?
 				// if the selector is explicitly defined in the method definition (not the case for the knowledge)
 				if (sp.index > -1)
 					result[sp.index] = getSelectorParameterInstance(sp, groups.get(i).size());
@@ -398,6 +410,19 @@ public abstract class SchedulableProcess implements Serializable {
 		invoke(null, null);
 	}
 	
+	/**
+	 * put the modified node knowledge into the knowledge repository using the alterKnowledge method of the knowledge manager
+	 * @param p 
+	 * 			the parameter instance
+	 * @param parameterValues
+	 * 			the values to be altered
+	 * @param coordinator
+	 * @param member
+	 * @param km
+	 * @param session
+	 * @throws KMException
+	 * @throws Exception
+	 */
 	private void putNodeParameterInstance(Parameter p, Object[] parameterValues, String coordinator,
 			String member, KnowledgeManager km, ISession session) throws KMException, Exception {
 		
@@ -409,6 +434,16 @@ public abstract class SchedulableProcess implements Serializable {
 						: parameterValue, session);
 	}
 	
+	/**
+	 * 
+	 * @param p
+	 * @param parameterValues
+	 * @param groupMembers
+	 * @param km
+	 * @param session
+	 * @throws KMException
+	 * @throws Exception
+	 */
 	private void putMemberGroupParameterInstance(Parameter p, Object[] parameterValues, List<String> groupMembers, KnowledgeManager km, ISession session) throws KMException, Exception {
 		Object parameterValue = parameterValues[p.index];
 		Boolean isOutWrapper = p.type.isOutWrapper();
@@ -433,13 +468,6 @@ public abstract class SchedulableProcess implements Serializable {
 				value, session);
 		}
 	}
-	
-	/*private void putSelectorParameterInstances(List<Parameter> selectors, Object[] parameterValues) throws Exception{
-		for (int i = 0; i < selectors.size(); i++){
-			
-		}
-	}*/
-	
 
 	private Object getParameterInstance(TypeDescription expectedParamType)
 			throws KMCastException {
@@ -548,6 +576,16 @@ public abstract class SchedulableProcess implements Serializable {
 		return objectReturn;
 	}
 	
+	/**
+	 * Initializes the selector group selection field from a given input size.
+	 * @param p
+	 * @param groupSize
+	 * 			the size of the selection list 
+	 * 			typically retrieved from the number of potential members fitting the parameters
+	 * @return the group selection field of the selector parameter
+	 * @throws KMException
+	 * @throws Exception
+	 */
 	private Object getSelectorParameterInstance(SelectorParameter p, Integer groupSize) throws KMException, Exception{
 		if (!p.type.isList() && !p.type.getParametricTypeAt(0).getClass().equals(Boolean.class)){
 			throw new Exception("The selector should be a list of booleans.");
@@ -561,6 +599,15 @@ public abstract class SchedulableProcess implements Serializable {
 		return p.groupSelection;
 	}
 	
+	/**
+	 * Defines the member groups according to the selectors and the identified parameters using the getGroupMembers
+	 * into lists of ids per group.
+	 * @param selectors
+	 * @param members
+	 * @param session
+	 * @return
+	 * @throws KMException
+	 */
 	protected List<List<String>> getMemberGroups(List<SelectorParameter> selectors, Object[] members, ISession session) throws KMException {
 		// get all member groups by identifier
 		List<List<String>> groups = new ArrayList<List<String>>();
@@ -571,28 +618,13 @@ public abstract class SchedulableProcess implements Serializable {
 		return groups;
 	}
 	
-	protected List<List<String>> getSelectedMemberGroups(List<SelectorParameter> selectors, Object[] members, List<List<String>> memberGroups) throws KMException {
-		// get all member groups by identifier
-		List<List<String>> selectedGroups = new ArrayList<List<String>>();
-		for (int i = 0; i < selectors.size(); i++){
-			SelectorParameter selector = selectors.get(i);
-			List<String> group = new ArrayList<String> ();
-			List<Boolean> groupSelection = selector.groupSelection;
-			// for each member of the group 
-			for (int j = 0; j < memberGroups.get(i).size(); j++){
-				// check if selection from the groupSelection array
-				if (groupSelection.get(j)){
-					// then retain the id in the selected groups
-					group.add(memberGroups.get(i).get(j));
-				}
-			}
-			selectedGroups.add(group);
-		}
-		return selectedGroups;
-	}
 	/**
-	 * @throws KMException 
-	 * 
+	 * retrieves all the ids of the nodes respecting the selector-identified parameters using duck-typing
+	 * @param selector
+	 * @param members
+	 * @param session
+	 * @return
+	 * @throws KMException
 	 */
 	private List<String> getGroupMembers(SelectorParameter selector, Object[] members, ISession session) throws KMException{
 		List<String> groupMembers = new ArrayList<String> ();
@@ -614,8 +646,8 @@ public abstract class SchedulableProcess implements Serializable {
 					// pack all paths from the id perspective into an array
 					Integer index = 0;
 					while (index < parameters.size()){
+						// this part deals with the duck-typing by checking the presence of the knowledge in the knowledge repository via the knowledge manager
 						String knowledgePath = parameters.get(index).kPath.getEvaluatedPath(km, (String)member, localSession);
-						// check in the knowledge repository if the set of knowledge paths is applicable to the given member id
 						try{
 							if (!km.containsKnowledge(knowledgePath)){
 								break;
@@ -639,6 +671,35 @@ public abstract class SchedulableProcess implements Serializable {
 			Log.e("", e);
 			return null;
 		}
+	}
+	
+	/**
+	 * from the member id groups, take only the member ids which have been preselected by the user
+	 * via the membership function.
+	 * @param selectors
+	 * @param members
+	 * @param memberGroups
+	 * @return
+	 * @throws KMException
+	 */
+	protected List<List<String>> getSelectedMemberGroups(List<SelectorParameter> selectors, Object[] members, List<List<String>> memberGroups) throws KMException {
+		// get all member groups by identifier
+		List<List<String>> selectedGroups = new ArrayList<List<String>>();
+		for (int i = 0; i < selectors.size(); i++){
+			SelectorParameter selector = selectors.get(i);
+			List<String> group = new ArrayList<String> ();
+			List<Boolean> groupSelection = selector.groupSelection;
+			// for each member of the group 
+			for (int j = 0; j < memberGroups.get(i).size(); j++){
+				// check if selection from the groupSelection array
+				if (groupSelection.get(j)){
+					// then retain the id in the selected groups
+					group.add(memberGroups.get(i).get(j));
+				}
+			}
+			selectedGroups.add(group);
+		}
+		return selectedGroups;
 	}
 
 	public abstract void invoke(String triggererId, ETriggerType recipientMode);

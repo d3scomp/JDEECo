@@ -1,7 +1,7 @@
 package cz.cuni.mff.d3s.deeco.path.grammar;
 
 public enum EEnsembleParty {
-	COORDINATOR, MEMBER, MEMBERS, CANDIDATES;
+	COORDINATOR, MEMBER, MEMBERS;
 	
 	public String toString() {
 		if (this.equals(MEMBER))

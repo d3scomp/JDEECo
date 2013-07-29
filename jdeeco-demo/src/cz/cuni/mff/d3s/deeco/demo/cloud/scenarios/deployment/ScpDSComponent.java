@@ -9,9 +9,17 @@ import cz.cuni.mff.d3s.deeco.demo.cloud.scenarios.ENetworkId;
 import cz.cuni.mff.d3s.deeco.knowledge.Component;
 
 /**
+ * The Science Cloud Platform (Scp) Component for the Deployment Scenario (DS).
+ * 
+ * The latencies are getting compared to obtain the lowest-latencies graph interconnecting
+ * the scp components. The scp components can deploy several application instances from
+ * different machines.
+ * 
+ * From the specification, if two scp components from two different networks have a 150ms average
+ * latency. They will less likely be connected.
  * 
  * @author Julien Malvot
- *
+ * 
  */
 public class ScpDSComponent extends Component {
 	
@@ -35,17 +43,4 @@ public class ScpDSComponent extends Component {
 		this.latencies = new HashMap<String, ScpDSComponentOSLatencyData>();
 		this.onAppIds = new ArrayList<String>();
 	}
-	
-	/*@Process
-	@PeriodicScheduling(6000)
-	public static void process(@In("id") String id, @In("linkedScpInstanceIds") List<String> scpIds) {
-		//loadRatio.value = (new Random()).nextFloat();
-		
-		System.out.print(id + " linked with");
-		for (String str : scpIds){
-			System.out.println(" " + str);
-		}
-		System.out.println();
-				//+ Math.round(loadRatio.value * 100) + "%");
-	}*/
 }

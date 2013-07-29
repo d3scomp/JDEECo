@@ -11,14 +11,21 @@ import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Selector;
 import cz.cuni.mff.d3s.deeco.ensemble.Ensemble;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
-
-/**
- * 
+/*
  * abbreviations in the ensemble
  * app:application, scp:ScienceCloudPlatform, sd:shutdown, onX:running the component X,
+ */
+
+/**
+ * The Monitor Ensemble for the Shutdown Scenario (SS).
+ * 
+ * After the deployment, the backup scp component retrieves periodically snapshots of the app component.
+ * It also monitors the scp component processing the app component in case of any shutdown.
+ * If the scp component shutdowns, then the backup scp component takes its role and delegates his former one (backup-ing)
+ * to another scp component which is not shutdown.
  * 
  * @author Julien Malvot
- *
+ * 
  */
 public class MonitorSSEnsemble extends Ensemble {
 	

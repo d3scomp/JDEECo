@@ -6,6 +6,15 @@ import cz.cuni.mff.d3s.deeco.knowledge.Knowledge;
 import cz.cuni.mff.d3s.spl.core.Data;
 import cz.cuni.mff.d3s.spl.core.StatisticSnapshot;
 
+/**
+ * The Science Cloud Platform (Scp) Component Operating System Load Data for the Highload Scenario (HS).
+ * 
+ * The LoadData object performs the load generation for a scp component. evaluates
+ * In the membership, the loads are compared with a condition involving a max upper bound via the SPL API.
+ * 
+ * @author Julien Malvot
+ * 
+ */
 public class ScpHSComponentOSLoadData extends Knowledge implements Data {
 	
 	public Double max;
@@ -16,16 +25,6 @@ public class ScpHSComponentOSLoadData extends Knowledge implements Data {
 	public ScpHSComponentOSLoadData(Double max) {
 		this.max = max;
 	}
-	
-	/*long nextLong(Random rng, long n) {
-		   // error checking and 2^x checking removed for simplicity.
-		   long bits, val;
-		   do {
-		      bits = (rng.nextLong() << 1) >>> 1;
-		      val = bits % n;
-		   } while (bits-val+(n-1) < 0L);
-		   return val;
-		}*/
 	
 	public Double generate() {
 		Random rand = new Random();

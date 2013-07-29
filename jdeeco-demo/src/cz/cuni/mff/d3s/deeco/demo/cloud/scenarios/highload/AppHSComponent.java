@@ -4,9 +4,15 @@ import cz.cuni.mff.d3s.deeco.demo.cloud.scenarios.deployment.AppDSComponent;
 import cz.cuni.mff.d3s.deeco.knowledge.Component;
 
 /**
+ * The User Application (App) Component for the Highload Scenario (HS).
+ * 
+ * The component needs be deployed onto a Scp component via the DeploySSEnsemble.
+ * It takes periodically snapshots of its state into a Snapshot object.
+ * When the Scp component which has deployed the App component shutdowns,
+ * the App component gets deployed onto a new Scp component, created at runtime.
  * 
  * @author Julien Malvot
- *
+ * 
  */
 public class AppHSComponent extends AppDSComponent {
 	

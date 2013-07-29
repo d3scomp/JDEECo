@@ -19,7 +19,10 @@ import cz.cuni.mff.d3s.deeco.scheduling.MultithreadedScheduler;
 import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
 
 /**
- * The Highload Scenario for Science Cloud Platform
+ * The Science Cloud Platform (Scp) local launcher for the Highload Scenario (HS).
+ * 
+ * The launcher retains a static instance of the dynamic runtime enabling the developer
+ * to spawn a new scp component if the one in charge of the singleton gets overloaded.
  * 
  * @author Julien Malvot
  * 

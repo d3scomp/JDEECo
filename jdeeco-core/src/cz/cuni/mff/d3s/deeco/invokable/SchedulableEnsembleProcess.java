@@ -169,14 +169,16 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 					while (session.repeat()) {
 						try {
 							MembersMembershipMethod mms = (MembersMembershipMethod) membership;
-							// if the coordinator is acceptable for the membership
+							// if the coordinator is acceptable for the membership by prior duck-typing
 							if (isMembershipCoordinator(mms.method.in, mms.method.inOut, session, cId)){
+								// retrieved the different member groups by ids from the selectors and rootIds within the session
 								List<List<String>> memberGroups = getMemberGroups(mms.method.selectors, rootIds, session);
-								// inject the parameters into a local object array
+								// retrieve the method parameters into a local object array
 								Object[] parametersMembership = getParameterMethodValues(mms.method.in, mms.method.inOut, mms.method.out, mms.method.selectors, 
 										session, cId, memberGroups);
 								// evaluate the membership
 								if ((Boolean) evaluateMembership(parametersMembership)) {
+									// get only the selected members from the user-modified selectors
 									memberGroups = getSelectedMemberGroups(mms.method.selectors, rootIds, memberGroups);
 									// knowledge exchange
 									ParameterizedSelectorMethod psm = (ParameterizedSelectorMethod) knowledgeExchange;
@@ -185,7 +187,7 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 									Object[] parametersKnowledgeExchange = getParameterMethodValues(
 											psm.in, psm.inOut, psm.out, psm.selectors, session, cId, memberGroups);
 									evaluateKnowledgeExchange(parametersKnowledgeExchange);
-									// the selectors must be cleared after this ?
+									// put the method values from the knowledge exchange into the knowledge repository
 									putParameterMethodValues(parametersKnowledgeExchange,
 											psm.inOut, psm.out, psm.selectors, session,
 											cId, memberGroups);

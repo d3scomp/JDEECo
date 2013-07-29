@@ -6,6 +6,14 @@ import java.util.List;
 import cz.cuni.mff.d3s.deeco.invokable.ParameterizedMethod;
 import cz.cuni.mff.d3s.deeco.invokable.parameters.Parameter;
 
+/**
+ * This abstract class contains a method with parameters.
+ * It is a superclass to types of membership methods which can be extended to other types of parameters (e.g. selectors for {@link MembersMembershipMethod} )
+ * 
+ * @author Julien Malvot
+ *
+ * @param <T> type of parameterized method according to the pattern used (coordinator/member or coordinator/groups of members)
+ */
 public abstract class AbstractMembershipMethod<T extends ParameterizedMethod> implements Serializable {
 	/**
 	 * 

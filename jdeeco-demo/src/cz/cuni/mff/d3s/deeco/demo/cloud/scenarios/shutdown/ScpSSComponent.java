@@ -15,6 +15,17 @@ import cz.cuni.mff.d3s.deeco.demo.cloud.scenarios.deployment.ScpDSComponent;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 
 /**
+ * The Science Cloud Platform (Scp) Component for the Shutdown Scenario (SS)
+ * 
+ * A scp ss component can play different roles here :
+ * <ul>
+ * <li>It can monitor other scp components listed in the moScpIds list.</li>
+ * <li>It can backup app components listed in the buAppIds and taking their respective snapshot into the buSnapshots list.</li>
+ * <li>It can process app components listed in the superclass ScpDSComponent from the deployment scenario.</li>
+ * </ul>
+ * 
+ * The specification stipulates a SLA on the cores with a minimum number of two, and frequencies high or equal to 2 Ghz.
+ * This is interpreted into the cores list.
  * 
  * @author Julien Malvot
  * 
@@ -60,7 +71,6 @@ public class ScpSSComponent extends ScpDSComponent {
 		if (onAppIds.size() > 0){
 			isDown.value = true;
 		}
-			//LocalLauncherSSNoJPF.demoRuntime.unregisterComponent(id);
 	}
 	
 }
