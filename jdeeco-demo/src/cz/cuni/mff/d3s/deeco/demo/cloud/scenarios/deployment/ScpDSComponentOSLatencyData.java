@@ -75,7 +75,7 @@ public class ScpDSComponentOSLatencyData extends Knowledge implements Data {
 
 		@Override
 		public long getSampleCount() {
-			return 1;
+			return 1000; // FIXME
 		}
 
 		@Override
