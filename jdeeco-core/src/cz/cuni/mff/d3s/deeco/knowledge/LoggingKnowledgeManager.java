@@ -28,6 +28,15 @@ public class LoggingKnowledgeManager extends KnowledgeManager {
 				+ knowledgePath + ", session=" + session + ")");
 		return decoratedKm.getKnowledge(knowledgePath, session);
 	}
+	
+	@Override
+	public Object getKnowledge(String knowledgePath,
+			TypeDescription expectedType, ISession session) throws KMException {
+		Log.d("LoggingKnowledgeManager.getKnowledge(knowledgePath="
+				+ knowledgePath + ", expectedType=" + expectedType
+				+ ", session=" + session + ")");
+		return decoratedKm.getKnowledge(knowledgePath, expectedType, session);
+	}
 
 	@Override
 	public Object takeKnowledge(String knowledgePath, ISession session)

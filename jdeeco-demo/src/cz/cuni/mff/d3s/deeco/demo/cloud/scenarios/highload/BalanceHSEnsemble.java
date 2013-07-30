@@ -59,7 +59,7 @@ public class BalanceHSEnsemble extends Ensemble {
 	}
 	
 	@KnowledgeExchange
-	@PeriodicScheduling(3000)
+	@PeriodicScheduling(1000)
 	public static void map(
 			// AppComponent coordinator
 			@In("coord.id") String cId,

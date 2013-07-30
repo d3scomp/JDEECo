@@ -492,22 +492,28 @@ public abstract class SchedulableProcess implements Serializable {
 	private Object getNodeParameterInstance(Parameter p, String coordinator,
 			String member, KnowledgeManager km, ISession session)
 			throws KMException, Exception {
+		OutWrapper ow = null;
 		Object objectReturn = null;
 		Object objectValue = null;
 		Boolean isOutWrapper = p.type.isOutWrapper();
+		// Caution: the type description is the p.type when manipulating a knowledge parameter
+		// when we manipulate an outwrapper, we must take the type description which is wrapped !
+		// that affects the process of knowledge retrieving
+		TypeDescription td = null;
+		// in case of an out wrapper
+		if (isOutWrapper){
+			ow = (OutWrapper) p.type.newInstance();
+			td = p.type.getParametricTypeAt(0);
+		}else{
+			td = p.type;
+		}
 		// retrieve the knowledge for each path into an array
-		objectValue = km.getKnowledge(p.kPath.getEvaluatedPath(km, coordinator, member, session), session);
+		objectValue = km.getKnowledge(p.kPath.getEvaluatedPath(km, coordinator, member, session), td, session);
 		// assign the object value to the proper returned object
 		if (isOutWrapper){
-			OutWrapper ow = (OutWrapper) p.type.newInstance();
 			ow.value = objectValue;
 			objectReturn = ow;
 		}else{
-			if (p.type.knowledgeStructure == null)
-				objectValue = ((Object[])objectValue)[0];
-			else{
-				throw new Exception("Check this case");
-			}
 			objectReturn = objectValue;
 		}
 		// return the OutWrapper or the object to be returned
@@ -534,22 +540,22 @@ public abstract class SchedulableProcess implements Serializable {
 			td = p.type;
 		}
 		// define some states of the parameter
-		//Boolean isList = td.isList();
+		Boolean isList = td.isList();
 		// the type description unit is the type to be retrieved for one iteration on the loop
 		// can differ regarding the input type (for instance in an OutWrapper<List<T>>)
 		// the treatment for candidates is iterative
-		/*if (isList){
+		if (isList){
 			tdUnit = p.type.getParametricTypeAt(0);
 		}else if (td.isMap()){
 			// TODO: check out this case from the input data structure
 			throw new Exception("No behavior handled for a Map, this part has to be developed");
 		}else{
 			tdUnit = td;
-		}*/
+		}
 		Object[] groupKnowledge = new Object[groupMembers.size()];
 		// retrieve the knowledge for each path into an array
 		for (int i = 0; i < groupMembers.size(); i++){
-			groupKnowledge[i] = km.getKnowledge(p.kPath.getEvaluatedPath(km, groupMembers.get(i), session), session);
+			groupKnowledge[i] = km.getKnowledge(p.kPath.getEvaluatedPath(km, groupMembers.get(i), session), tdUnit, session);
 		}
 		// different treatment for the result regarding the knowledge type
 		if (td.isList()){

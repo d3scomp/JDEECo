@@ -94,6 +94,21 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 			throws KMException {
 		return getKnowledge(false, knowledgePath, session);
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * cz.cuni.mff.d3s.deeco.knowledge.IKnowledgeManager#getKnowledge(java.lang
+	 * .String, cz.cuni.mff.d3s.deeco.invokable.TypeDescription,
+	 * cz.cuni.mff.d3s.deeco.knowledge.ISession)
+	 */
+	@Override
+	public Object getKnowledge(String knowledgePath,
+			TypeDescription expectedType, ISession session) throws KMException {
+		Object value = getKnowledge(knowledgePath, session);
+		return getInstance(expectedType, value);
+	}
 
 	/*
 	 * (non-Javadoc)

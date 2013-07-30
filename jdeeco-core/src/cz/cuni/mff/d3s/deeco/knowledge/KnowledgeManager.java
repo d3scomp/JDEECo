@@ -17,6 +17,7 @@ package cz.cuni.mff.d3s.deeco.knowledge;
 
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
 import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionAccessError;
+import cz.cuni.mff.d3s.deeco.invokable.TypeDescription;
 import cz.cuni.mff.d3s.deeco.runtime.IRuntime;
 import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
 
@@ -48,7 +49,26 @@ public abstract class KnowledgeManager {
 	 */
 	public abstract Object getKnowledge(String knowledgePath, ISession session)
 			throws KMException;
-
+	/**
+	 * Retrieves knowledge from the knowledge repository, defined by both
+	 * <code>knowledgePath</code> and <code>expectedType</code>. Comparing to
+	 * the single parameter version of this method, it additionally tries to
+	 * return the instance, which is of the type provided. This method is
+	 * session oriented.
+	 * 
+	 * @param knowledgePath
+	 *            nesting at which the knowledge structure should be rooted
+	 * @param session
+	 *            a session object within which all the retrieval should be
+	 *            performed
+	 * @return retrieved knowledge object of type structure
+	 * @throws KMException
+	 *             thrown whenever there is a problem accessing the knowledge
+	 *             repository
+	 */
+	public abstract Object getKnowledge(String knowledgePath,
+			TypeDescription expectedType, ISession session) throws KMException;
+	
 	/**
 	 * Withdraws the knowledge from the knowledge repository. This method is
 	 * session oriented.
