@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." name="jdeeco-core" default="compile-parser">
+
+	<property name="local" value="${ant.file}/.." />
+	<property name="parser.dir" value="tools" />
+	<property name="javacc.args" value="" />
+	<property name="parser.out.dir" value="src/cz/cuni/mff/d3s/deeco/path/grammar" />
+	
+	<condition property="uptodate.mainparser">
+		<and>
+			<uptodate
+				targetfile="${parser.out.dir}/PathParser.java"
+				srcfile="${parser.out.dir}/PathParser.jj" />
+			<available file="${parser.out.dir}/PathParser.java" />
+		</and>
+	</condition>
+				
+	<target name="compile-parser" unless="uptodate.mainparser" >
+		<java classpath="${local}/${parser.dir}/javacc.jar" classname="javacc" failonerror="true">
+			<arg line="${javacc.args}" />
+			<arg value="-OUTPUT_DIRECTORY:${local}/${parser.out.dir}" />
+			<arg value="${local}/${parser.out.dir}/PathParser.jj" />
+		</java>
+	</target>
+	
+</project>
