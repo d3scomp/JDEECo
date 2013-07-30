@@ -85,9 +85,13 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"
         eType="#//Parameter" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="method" lowerBound="1"
-        eType="#//Method"/>
+        eType="#//Method" transient="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="outParams" upperBound="-1"
         eType="#//Parameter" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="declaringClass" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="nameWithSignature" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="ParameterAccessType">
     <eLiterals name="IN"/>
@@ -182,8 +186,8 @@
   <eClassifiers xsi:type="ecore:EClass" name="InstanceModelProvider" eSuperTypes="#//ModelProvider"/>
   <eClassifiers xsi:type="ecore:EClass" name="BundleModelProvider" eSuperTypes="#//ModelProvider"/>
   <eClassifiers xsi:type="ecore:EClass" name="KnowledgePath">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="pathNode" lowerBound="1"
-        eType="#//PNode" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="nodes" lowerBound="1" upperBound="-1"
+        eType="#//PathNode" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ComponentInstance">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -197,10 +201,9 @@
     <eLiterals name="INOUT" value="1"/>
     <eLiterals name="OUT" value="2"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="PNode">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="next" lowerBound="1" eType="#//PNode"
+  <eClassifiers xsi:type="ecore:EClass" name="PathNode" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="next" lowerBound="1" eType="#//PathNode"
         containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="DeploymentPlanManager">
     <eOperations name="updateDeploymentPlan">
@@ -210,4 +213,11 @@
         upperBound="-1" eType="#//RuntimeMetadata"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="Method" instanceClassName="java.lang.reflect.Method"/>
+  <eClassifiers xsi:type="ecore:EClass" name="PathNodeField" eSuperTypes="#//PathNode">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="PathNodeMapKey" eSuperTypes="#//PathNode">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="keyPath" lowerBound="1"
+        eType="#//KnowledgePath" containment="true"/>
+  </eClassifiers>
 </ecore:EPackage>
