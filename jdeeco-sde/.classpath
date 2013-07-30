@@ -7,6 +7,7 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="E:/Programming/EclipseProjects/JDEECo/jdeeco-core-osgi/target/cz.cuni.mff.d3s.jdeeco.core-osgi-1.0.0.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
@@ -17,6 +18,5 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="E:/Programming/EclipseProjects/JDEECo/jdeeco-core-osgi/target/cz.cuni.mff.d3s.jdeeco.core-osgi-1.0.0.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
