@@ -24,5 +24,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="E:/Programming/EclipseProjects/JDEECo/jdeeco-core-osgi/target/cz.cuni.mff.d3s.jdeeco.core-osgi-1.0.0.jar"/>
+	<classpathentry kind="lib" path="/cz.cuni.mff.d3s.jdeeco.jpf/target/cz.cuni.mff.d3s.jdeeco.jpf-1.0.0.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

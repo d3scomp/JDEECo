@@ -32,11 +32,12 @@ import cz.cuni.mff.d3s.deeco.invokable.TypeDescription;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
 
-/*
- * Requires refactoring
+/**
+ * KnowledgeManager version using the JavaSpaces implementation for the
+ * knowledge storage.
  * 
  * @author Michal Kit
- *
+ * 
  */
 public class RepositoryKnowledgeManager extends KnowledgeManager {
 
@@ -92,21 +93,6 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 	public Object getKnowledge(String knowledgePath, ISession session)
 			throws KMException {
 		return getKnowledge(false, knowledgePath, session);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * cz.cuni.mff.d3s.deeco.knowledge.IKnowledgeManager#getKnowledge(java.lang
-	 * .String, cz.cuni.mff.d3s.deeco.invokable.TypeDescription,
-	 * cz.cuni.mff.d3s.deeco.knowledge.ISession)
-	 */
-	@Override
-	public Object getKnowledge(String knowledgePath,
-			TypeDescription expectedType, ISession session) throws KMException {
-		Object value = getKnowledge(knowledgePath, session);
-		return getInstance(expectedType, value);
 	}
 
 	/*
@@ -453,9 +439,9 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 		}
 		return newStructure;
 	}
-	
-	private Object getInstance(TypeDescription expectedType,
-			Object value) throws KMCastException {
+
+	private Object getInstance(TypeDescription expectedType, Object value)
+			throws KMCastException {
 		try {
 			if (value == null)
 				throw new KMCastException(
@@ -467,8 +453,7 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 					return getMapInstance(expectedType, value);
 				} else if (expectedType.isList()) {
 					return getListInstance(expectedType, value);
-				} else if (TypeUtils.isInstanceOf(expectedType.clazz,
-						value))
+				} else if (TypeUtils.isInstanceOf(expectedType.clazz, value))
 					return value;
 				else
 					throw new KMCastException(
@@ -478,8 +463,7 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 					if (isMap(value)) // OutWrapper cannot take such structures
 						throw new KMCastException(
 								"Parameter Instantiation Exception: Wrong value for OutWrapper");
-					OutWrapper ow = (OutWrapper) expectedType
-							.newInstance();
+					OutWrapper ow = (OutWrapper) expectedType.newInstance();
 					ow.value = extractValue((Object[]) value);
 					return ow;
 				} else {
@@ -491,7 +475,7 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 					+ e.getMessage());
 		}
 	}
-	
+
 	private Object getKnowledgeInstance(TypeDescription expectedParamType,
 			Object value) throws KMCastException, InstantiationException,
 			IllegalAccessException, IllegalArgumentException {

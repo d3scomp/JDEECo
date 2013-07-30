@@ -19,7 +19,7 @@ package cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel;
  * @model
  * @generated
  */
-public interface ListValueType extends KnowledgeType, ParametricKnowledgeType {
+public interface ListValueType extends ParametricKnowledgeType {
 	/**
 	 * Returns the value of the '<em><b>Type Parameter</b></em>' containment reference.
 	 * <!-- begin-user-doc -->

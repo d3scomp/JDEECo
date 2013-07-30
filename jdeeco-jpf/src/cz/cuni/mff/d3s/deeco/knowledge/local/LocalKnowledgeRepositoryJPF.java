@@ -23,9 +23,8 @@ import java.util.concurrent.locks.LockSupport;
 
 import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionAccessError;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.ltl.AtomicProposition;
-
-import cz.cuni.mff.d3s.deeco.ltl.CommlinkDEECoJPF;
 
 
 
@@ -43,6 +42,8 @@ public class LocalKnowledgeRepositoryJPF extends LocalKnowledgeRepository implem
 	
 	public HashMap<String, Boolean> propositionValues = new HashMap<>();	
 	public HashMap<String, Boolean> propositionToEvaluate = new HashMap<>();
+	
+	boolean evaluatePropositions = false;
 	
 	List<AtomicProposition> propositions = new ArrayList<>();
 
@@ -76,21 +77,7 @@ public class LocalKnowledgeRepositoryJPF extends LocalKnowledgeRepository implem
 		
 		super.put(entryKey, value, session);
 		
-		for (AtomicProposition ap : propositions) {
-			// propositionToEvaluate.get(...) might return null 
-			if (propositionToEvaluate.get(ap.getName()) == true)
-				propositionValues.put(ap.getName(), ap.evaluate(this));
-		}
-
-		// send names of atomic propositions into JPF
-		// we consider only propositions that evaluate to "true" in the current state
-		CommlinkDEECoJPF.notifyEventProcessingStart();		
-		for (AtomicProposition ap : propositions) 
-		{
-			Boolean apVal = propositionValues.get(ap.getName());
-			if ((apVal != null) && apVal.booleanValue()) CommlinkDEECoJPF.addTrueAtomicProposition(ap.getName());
-		}
-		CommlinkDEECoJPF.notifyAtomicPropositionsComplete();		
+		tryEvaluatePropositions();
 		
 		lock.unlock();
 	}
@@ -103,9 +90,47 @@ public class LocalKnowledgeRepositoryJPF extends LocalKnowledgeRepository implem
 	@Override
 	public Object getSingle(String knowledgeId) {
 		List<Object> v = ts.get(knowledgeId);
-		if (v.isEmpty())
+		if ((v==null) || v.isEmpty())
 			return null;
 		else
 			return v.get(0);
+	}
+	
+	// TODO: manage via runtime event listener mechanism (to be done) instead
+	public void onStart() {
+		evaluatePropositions = true;
+		tryEvaluatePropositions();
+	}
+	
+	// TODO: manage via runtime event listener mechanism (to be done) instead
+	public void onStop() {
+		evaluatePropositions = false;
+	}
+	
+	private void tryEvaluatePropositions() {
+		if (evaluatePropositions) {
+			for (AtomicProposition ap : propositions) {
+				// propositionToEvaluate.get(...) might return null 
+				if (propositionToEvaluate.get(ap.getName()) == true) {
+					boolean value = propositionValues.get(ap.getName());
+					try {
+						value = ap.evaluate(this);
+					} catch (Exception e) {
+						Log.e("Atomic proposition evaluation failed (" + ap.getName() + ").");
+					}					
+					propositionValues.put(ap.getName(), value);
+				}
+			}
+	
+			// send names of atomic propositions into JPF
+			// we consider only propositions that evaluate to "true" in the current state
+			CommlinkSuTJPF.notifyEventProcessingStart();		
+			for (AtomicProposition ap : propositions) 
+			{
+				Boolean apVal = propositionValues.get(ap.getName());
+				if ((apVal != null) && apVal.booleanValue()) CommlinkSuTJPF.addTrueAtomicProposition(ap.getName());
+			}
+			CommlinkSuTJPF.notifyAtomicPropositionsComplete();		
+		}
 	}
 }

@@ -11,8 +11,8 @@ import org.eclipse.emf.ecore.EObject;
  *
  *
  * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.RuntimemodelPackage#getParametricKnowledgeType()
- * @model interface="true" abstract="true"
+ * @model abstract="true"
  * @generated
  */
-public interface ParametricKnowledgeType extends EObject {
+public interface ParametricKnowledgeType extends KnowledgeType {
 } // ParametricKnowledgeType

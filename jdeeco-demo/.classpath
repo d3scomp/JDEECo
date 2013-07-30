@@ -17,5 +17,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="libs/cz.cuni.mff.d3s.spl-1.1.0.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/cz.cuni.mff.d3s.jdeeco.core"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

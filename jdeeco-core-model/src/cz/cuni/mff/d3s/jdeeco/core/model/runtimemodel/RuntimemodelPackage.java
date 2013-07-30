@@ -46,7 +46,7 @@ public interface RuntimemodelPackage extends EPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	String eNS_PREFIX = "cz.cuni.mff.d3s.jdeeco.core.runtimemodel";
+	String eNS_PREFIX = "cz.cuni.mff.d3s.deeco.core.model.runtime";
 
 	/**
 	 * The singleton instance of the package.
@@ -544,60 +544,6 @@ public interface RuntimemodelPackage extends EPackage {
 	int LIST_VALUE_TYPE = 6;
 
 	/**
-	 * The feature id for the '<em><b>Is Structured</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int LIST_VALUE_TYPE__IS_STRUCTURED = KNOWLEDGE_TYPE__IS_STRUCTURED;
-
-	/**
-	 * The feature id for the '<em><b>Is Wrapper</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int LIST_VALUE_TYPE__IS_WRAPPER = KNOWLEDGE_TYPE__IS_WRAPPER;
-
-	/**
-	 * The feature id for the '<em><b>Clazz</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int LIST_VALUE_TYPE__CLAZZ = KNOWLEDGE_TYPE__CLAZZ;
-
-	/**
-	 * The feature id for the '<em><b>Owner</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int LIST_VALUE_TYPE__OWNER = KNOWLEDGE_TYPE__OWNER;
-
-	/**
-	 * The feature id for the '<em><b>Type Parameter</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int LIST_VALUE_TYPE__TYPE_PARAMETER = KNOWLEDGE_TYPE_FEATURE_COUNT + 0;
-
-	/**
-	 * The number of structural features of the '<em>List Value Type</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int LIST_VALUE_TYPE_FEATURE_COUNT = KNOWLEDGE_TYPE_FEATURE_COUNT + 1;
-
-	/**
 	 * The meta object id for the '{@link cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.MapValueTypeImpl <em>Map Value Type</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -608,69 +554,6 @@ public interface RuntimemodelPackage extends EPackage {
 	int MAP_VALUE_TYPE = 7;
 
 	/**
-	 * The feature id for the '<em><b>Is Structured</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MAP_VALUE_TYPE__IS_STRUCTURED = KNOWLEDGE_TYPE__IS_STRUCTURED;
-
-	/**
-	 * The feature id for the '<em><b>Is Wrapper</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MAP_VALUE_TYPE__IS_WRAPPER = KNOWLEDGE_TYPE__IS_WRAPPER;
-
-	/**
-	 * The feature id for the '<em><b>Clazz</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MAP_VALUE_TYPE__CLAZZ = KNOWLEDGE_TYPE__CLAZZ;
-
-	/**
-	 * The feature id for the '<em><b>Owner</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MAP_VALUE_TYPE__OWNER = KNOWLEDGE_TYPE__OWNER;
-
-	/**
-	 * The feature id for the '<em><b>Key Type Parameter</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MAP_VALUE_TYPE__KEY_TYPE_PARAMETER = KNOWLEDGE_TYPE_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Value Type Parameter</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MAP_VALUE_TYPE__VALUE_TYPE_PARAMETER = KNOWLEDGE_TYPE_FEATURE_COUNT + 1;
-
-	/**
-	 * The number of structural features of the '<em>Map Value Type</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MAP_VALUE_TYPE_FEATURE_COUNT = KNOWLEDGE_TYPE_FEATURE_COUNT + 2;
-
-	/**
 	 * The meta object id for the '{@link cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.UnstructuredValueTypeImpl <em>Unstructured Value Type</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -679,6 +562,338 @@ public interface RuntimemodelPackage extends EPackage {
 	 * @generated
 	 */
 	int UNSTRUCTURED_VALUE_TYPE = 8;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.ModelImpl <em>Model</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.ModelImpl
+	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.RuntimemodelPackageImpl#getModel()
+	 * @generated
+	 */
+	int MODEL = 9;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.ModelUpdateCommandImpl <em>Model Update Command</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.ModelUpdateCommandImpl
+	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.RuntimemodelPackageImpl#getModelUpdateCommand()
+	 * @generated
+	 */
+	int MODEL_UPDATE_COMMAND = 10;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.UpdateKnowledgeStructureCommandImpl <em>Update Knowledge Structure Command</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.UpdateKnowledgeStructureCommandImpl
+	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.RuntimemodelPackageImpl#getUpdateKnowledgeStructureCommand()
+	 * @generated
+	 */
+	int UPDATE_KNOWLEDGE_STRUCTURE_COMMAND = 11;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.AddComponentCommandImpl <em>Add Component Command</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.AddComponentCommandImpl
+	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.RuntimemodelPackageImpl#getAddComponentCommand()
+	 * @generated
+	 */
+	int ADD_COMPONENT_COMMAND = 12;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.MethodParameterImpl <em>Method Parameter</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.MethodParameterImpl
+	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.RuntimemodelPackageImpl#getMethodParameter()
+	 * @generated
+	 */
+	int METHOD_PARAMETER = 13;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.PeriodicSchedulingImpl <em>Periodic Scheduling</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.PeriodicSchedulingImpl
+	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.RuntimemodelPackageImpl#getPeriodicScheduling()
+	 * @generated
+	 */
+	int PERIODIC_SCHEDULING = 15;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.TriggeredSchedulingImpl <em>Triggered Scheduling</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.TriggeredSchedulingImpl
+	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.RuntimemodelPackageImpl#getTriggeredScheduling()
+	 * @generated
+	 */
+	int TRIGGERED_SCHEDULING = 16;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.TriggerImpl <em>Trigger</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.TriggerImpl
+	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.RuntimemodelPackageImpl#getTrigger()
+	 * @generated
+	 */
+	int TRIGGER = 17;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.ParameterChangedTriggerImpl <em>Parameter Changed Trigger</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.ParameterChangedTriggerImpl
+	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.RuntimemodelPackageImpl#getParameterChangedTrigger()
+	 * @generated
+	 */
+	int PARAMETER_CHANGED_TRIGGER = 18;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.Schedulable <em>Schedulable</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.Schedulable
+	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.RuntimemodelPackageImpl#getSchedulable()
+	 * @generated
+	 */
+	int SCHEDULABLE = 25;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.EnsembleImpl <em>Ensemble</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.EnsembleImpl
+	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.RuntimemodelPackageImpl#getEnsemble()
+	 * @generated
+	 */
+	int ENSEMBLE = 19;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.TopLevelKnowledgeDefinitionImpl <em>Top Level Knowledge Definition</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.TopLevelKnowledgeDefinitionImpl
+	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.RuntimemodelPackageImpl#getTopLevelKnowledgeDefinition()
+	 * @generated
+	 */
+	int TOP_LEVEL_KNOWLEDGE_DEFINITION = 20;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.NestedKnowledgeDefinitionImpl <em>Nested Knowledge Definition</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.NestedKnowledgeDefinitionImpl
+	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.RuntimemodelPackageImpl#getNestedKnowledgeDefinition()
+	 * @generated
+	 */
+	int NESTED_KNOWLEDGE_DEFINITION = 21;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.MembershipConditionImpl <em>Membership Condition</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.MembershipConditionImpl
+	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.RuntimemodelPackageImpl#getMembershipCondition()
+	 * @generated
+	 */
+	int MEMBERSHIP_CONDITION = 23;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.KnowledgeExchangeImpl <em>Knowledge Exchange</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.KnowledgeExchangeImpl
+	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.RuntimemodelPackageImpl#getKnowledgeExchange()
+	 * @generated
+	 */
+	int KNOWLEDGE_EXCHANGE = 24;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.TypeParameterImpl <em>Type Parameter</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.TypeParameterImpl
+	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.RuntimemodelPackageImpl#getTypeParameter()
+	 * @generated
+	 */
+	int TYPE_PARAMETER = 26;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.ParametricKnowledgeTypeImpl <em>Parametric Knowledge Type</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.ParametricKnowledgeTypeImpl
+	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.RuntimemodelPackageImpl#getParametricKnowledgeType()
+	 * @generated
+	 */
+	int PARAMETRIC_KNOWLEDGE_TYPE = 27;
+
+	/**
+	 * The feature id for the '<em><b>Is Structured</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PARAMETRIC_KNOWLEDGE_TYPE__IS_STRUCTURED = KNOWLEDGE_TYPE__IS_STRUCTURED;
+
+	/**
+	 * The feature id for the '<em><b>Is Wrapper</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PARAMETRIC_KNOWLEDGE_TYPE__IS_WRAPPER = KNOWLEDGE_TYPE__IS_WRAPPER;
+
+	/**
+	 * The feature id for the '<em><b>Clazz</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PARAMETRIC_KNOWLEDGE_TYPE__CLAZZ = KNOWLEDGE_TYPE__CLAZZ;
+
+	/**
+	 * The feature id for the '<em><b>Owner</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PARAMETRIC_KNOWLEDGE_TYPE__OWNER = KNOWLEDGE_TYPE__OWNER;
+
+	/**
+	 * The number of structural features of the '<em>Parametric Knowledge Type</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PARAMETRIC_KNOWLEDGE_TYPE_FEATURE_COUNT = KNOWLEDGE_TYPE_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Is Structured</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LIST_VALUE_TYPE__IS_STRUCTURED = PARAMETRIC_KNOWLEDGE_TYPE__IS_STRUCTURED;
+
+	/**
+	 * The feature id for the '<em><b>Is Wrapper</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LIST_VALUE_TYPE__IS_WRAPPER = PARAMETRIC_KNOWLEDGE_TYPE__IS_WRAPPER;
+
+	/**
+	 * The feature id for the '<em><b>Clazz</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LIST_VALUE_TYPE__CLAZZ = PARAMETRIC_KNOWLEDGE_TYPE__CLAZZ;
+
+	/**
+	 * The feature id for the '<em><b>Owner</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LIST_VALUE_TYPE__OWNER = PARAMETRIC_KNOWLEDGE_TYPE__OWNER;
+
+	/**
+	 * The feature id for the '<em><b>Type Parameter</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LIST_VALUE_TYPE__TYPE_PARAMETER = PARAMETRIC_KNOWLEDGE_TYPE_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>List Value Type</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LIST_VALUE_TYPE_FEATURE_COUNT = PARAMETRIC_KNOWLEDGE_TYPE_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Is Structured</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MAP_VALUE_TYPE__IS_STRUCTURED = PARAMETRIC_KNOWLEDGE_TYPE__IS_STRUCTURED;
+
+	/**
+	 * The feature id for the '<em><b>Is Wrapper</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MAP_VALUE_TYPE__IS_WRAPPER = PARAMETRIC_KNOWLEDGE_TYPE__IS_WRAPPER;
+
+	/**
+	 * The feature id for the '<em><b>Clazz</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MAP_VALUE_TYPE__CLAZZ = PARAMETRIC_KNOWLEDGE_TYPE__CLAZZ;
+
+	/**
+	 * The feature id for the '<em><b>Owner</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MAP_VALUE_TYPE__OWNER = PARAMETRIC_KNOWLEDGE_TYPE__OWNER;
+
+	/**
+	 * The feature id for the '<em><b>Key Type Parameter</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MAP_VALUE_TYPE__KEY_TYPE_PARAMETER = PARAMETRIC_KNOWLEDGE_TYPE_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Value Type Parameter</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MAP_VALUE_TYPE__VALUE_TYPE_PARAMETER = PARAMETRIC_KNOWLEDGE_TYPE_FEATURE_COUNT + 1;
+
+	/**
+	 * The number of structural features of the '<em>Map Value Type</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MAP_VALUE_TYPE_FEATURE_COUNT = PARAMETRIC_KNOWLEDGE_TYPE_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Is Structured</b></em>' attribute.
@@ -726,16 +941,6 @@ public interface RuntimemodelPackage extends EPackage {
 	int UNSTRUCTURED_VALUE_TYPE_FEATURE_COUNT = KNOWLEDGE_TYPE_FEATURE_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.ModelImpl <em>Model</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.ModelImpl
-	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.RuntimemodelPackageImpl#getModel()
-	 * @generated
-	 */
-	int MODEL = 9;
-
-	/**
 	 * The feature id for the '<em><b>Components</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -763,16 +968,6 @@ public interface RuntimemodelPackage extends EPackage {
 	int MODEL_FEATURE_COUNT = 2;
 
 	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.ModelUpdateCommandImpl <em>Model Update Command</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.ModelUpdateCommandImpl
-	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.RuntimemodelPackageImpl#getModelUpdateCommand()
-	 * @generated
-	 */
-	int MODEL_UPDATE_COMMAND = 10;
-
-	/**
 	 * The number of structural features of the '<em>Model Update Command</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -780,16 +975,6 @@ public interface RuntimemodelPackage extends EPackage {
 	 * @ordered
 	 */
 	int MODEL_UPDATE_COMMAND_FEATURE_COUNT = 0;
-
-	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.UpdateKnowledgeStructureCommandImpl <em>Update Knowledge Structure Command</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.UpdateKnowledgeStructureCommandImpl
-	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.RuntimemodelPackageImpl#getUpdateKnowledgeStructureCommand()
-	 * @generated
-	 */
-	int UPDATE_KNOWLEDGE_STRUCTURE_COMMAND = 11;
 
 	/**
 	 * The number of structural features of the '<em>Update Knowledge Structure Command</em>' class.
@@ -801,16 +986,6 @@ public interface RuntimemodelPackage extends EPackage {
 	int UPDATE_KNOWLEDGE_STRUCTURE_COMMAND_FEATURE_COUNT = MODEL_UPDATE_COMMAND_FEATURE_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.AddComponentCommandImpl <em>Add Component Command</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.AddComponentCommandImpl
-	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.RuntimemodelPackageImpl#getAddComponentCommand()
-	 * @generated
-	 */
-	int ADD_COMPONENT_COMMAND = 12;
-
-	/**
 	 * The number of structural features of the '<em>Add Component Command</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -818,16 +993,6 @@ public interface RuntimemodelPackage extends EPackage {
 	 * @ordered
 	 */
 	int ADD_COMPONENT_COMMAND_FEATURE_COUNT = MODEL_UPDATE_COMMAND_FEATURE_COUNT + 0;
-
-	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.MethodParameterImpl <em>Method Parameter</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.MethodParameterImpl
-	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.RuntimemodelPackageImpl#getMethodParameter()
-	 * @generated
-	 */
-	int METHOD_PARAMETER = 13;
 
 	/**
 	 * The feature id for the '<em><b>Type</b></em>' containment reference.
@@ -893,16 +1058,6 @@ public interface RuntimemodelPackage extends EPackage {
 	int METHOD_PARAMETER_FEATURE_COUNT = KNOWLEDGE_REFERENCE_FEATURE_COUNT + 4;
 
 	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.PeriodicSchedulingImpl <em>Periodic Scheduling</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.PeriodicSchedulingImpl
-	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.RuntimemodelPackageImpl#getPeriodicScheduling()
-	 * @generated
-	 */
-	int PERIODIC_SCHEDULING = 15;
-
-	/**
 	 * The feature id for the '<em><b>Owner</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -928,16 +1083,6 @@ public interface RuntimemodelPackage extends EPackage {
 	 * @ordered
 	 */
 	int PERIODIC_SCHEDULING_FEATURE_COUNT = SCHEDULING_FEATURE_COUNT + 1;
-
-	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.TriggeredSchedulingImpl <em>Triggered Scheduling</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.TriggeredSchedulingImpl
-	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.RuntimemodelPackageImpl#getTriggeredScheduling()
-	 * @generated
-	 */
-	int TRIGGERED_SCHEDULING = 16;
 
 	/**
 	 * The feature id for the '<em><b>Owner</b></em>' container reference.
@@ -967,16 +1112,6 @@ public interface RuntimemodelPackage extends EPackage {
 	int TRIGGERED_SCHEDULING_FEATURE_COUNT = SCHEDULING_FEATURE_COUNT + 1;
 
 	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.TriggerImpl <em>Trigger</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.TriggerImpl
-	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.RuntimemodelPackageImpl#getTrigger()
-	 * @generated
-	 */
-	int TRIGGER = 17;
-
-	/**
 	 * The feature id for the '<em><b>Owner</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -993,16 +1128,6 @@ public interface RuntimemodelPackage extends EPackage {
 	 * @ordered
 	 */
 	int TRIGGER_FEATURE_COUNT = 1;
-
-	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.ParameterChangedTriggerImpl <em>Parameter Changed Trigger</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.ParameterChangedTriggerImpl
-	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.RuntimemodelPackageImpl#getParameterChangedTrigger()
-	 * @generated
-	 */
-	int PARAMETER_CHANGED_TRIGGER = 18;
 
 	/**
 	 * The feature id for the '<em><b>Owner</b></em>' container reference.
@@ -1032,16 +1157,6 @@ public interface RuntimemodelPackage extends EPackage {
 	int PARAMETER_CHANGED_TRIGGER_FEATURE_COUNT = TRIGGER_FEATURE_COUNT + 1;
 
 	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.Schedulable <em>Schedulable</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.Schedulable
-	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.RuntimemodelPackageImpl#getSchedulable()
-	 * @generated
-	 */
-	int SCHEDULABLE = 25;
-
-	/**
 	 * The feature id for the '<em><b>Scheduling</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1058,16 +1173,6 @@ public interface RuntimemodelPackage extends EPackage {
 	 * @ordered
 	 */
 	int SCHEDULABLE_FEATURE_COUNT = 1;
-
-	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.EnsembleImpl <em>Ensemble</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.EnsembleImpl
-	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.RuntimemodelPackageImpl#getEnsemble()
-	 * @generated
-	 */
-	int ENSEMBLE = 19;
 
 	/**
 	 * The feature id for the '<em><b>Scheduling</b></em>' containment reference.
@@ -1104,16 +1209,6 @@ public interface RuntimemodelPackage extends EPackage {
 	 * @ordered
 	 */
 	int ENSEMBLE_FEATURE_COUNT = SCHEDULABLE_FEATURE_COUNT + 2;
-
-	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.TopLevelKnowledgeDefinitionImpl <em>Top Level Knowledge Definition</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.TopLevelKnowledgeDefinitionImpl
-	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.RuntimemodelPackageImpl#getTopLevelKnowledgeDefinition()
-	 * @generated
-	 */
-	int TOP_LEVEL_KNOWLEDGE_DEFINITION = 20;
 
 	/**
 	 * The feature id for the '<em><b>Type</b></em>' containment reference.
@@ -1161,16 +1256,6 @@ public interface RuntimemodelPackage extends EPackage {
 	int TOP_LEVEL_KNOWLEDGE_DEFINITION_FEATURE_COUNT = KNOWLEDGE_DEFINITION_FEATURE_COUNT + 1;
 
 	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.NestedKnowledgeDefinitionImpl <em>Nested Knowledge Definition</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.NestedKnowledgeDefinitionImpl
-	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.RuntimemodelPackageImpl#getNestedKnowledgeDefinition()
-	 * @generated
-	 */
-	int NESTED_KNOWLEDGE_DEFINITION = 21;
-
-	/**
 	 * The feature id for the '<em><b>Type</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1214,16 +1299,6 @@ public interface RuntimemodelPackage extends EPackage {
 	 * @ordered
 	 */
 	int NESTED_KNOWLEDGE_DEFINITION_FEATURE_COUNT = KNOWLEDGE_DEFINITION_FEATURE_COUNT + 1;
-
-	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.MembershipConditionImpl <em>Membership Condition</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.MembershipConditionImpl
-	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.RuntimemodelPackageImpl#getMembershipCondition()
-	 * @generated
-	 */
-	int MEMBERSHIP_CONDITION = 23;
 
 	/**
 	 * The feature id for the '<em><b>Declaring Class</b></em>' attribute.
@@ -1298,16 +1373,6 @@ public interface RuntimemodelPackage extends EPackage {
 	int MEMBERSHIP_CONDITION_FEATURE_COUNT = PARAMETERIZED_METHOD_FEATURE_COUNT + 1;
 
 	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.KnowledgeExchangeImpl <em>Knowledge Exchange</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.KnowledgeExchangeImpl
-	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.RuntimemodelPackageImpl#getKnowledgeExchange()
-	 * @generated
-	 */
-	int KNOWLEDGE_EXCHANGE = 24;
-
-	/**
 	 * The feature id for the '<em><b>Declaring Class</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1380,16 +1445,6 @@ public interface RuntimemodelPackage extends EPackage {
 	int KNOWLEDGE_EXCHANGE_FEATURE_COUNT = PARAMETERIZED_METHOD_FEATURE_COUNT + 1;
 
 	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.TypeParameterImpl <em>Type Parameter</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.TypeParameterImpl
-	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.RuntimemodelPackageImpl#getTypeParameter()
-	 * @generated
-	 */
-	int TYPE_PARAMETER = 26;
-
-	/**
 	 * The feature id for the '<em><b>Type</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1415,25 +1470,6 @@ public interface RuntimemodelPackage extends EPackage {
 	 * @ordered
 	 */
 	int TYPE_PARAMETER_FEATURE_COUNT = KNOWLEDGE_TYPE_OWNER_FEATURE_COUNT + 1;
-
-	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.ParametricKnowledgeType <em>Parametric Knowledge Type</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.ParametricKnowledgeType
-	 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.RuntimemodelPackageImpl#getParametricKnowledgeType()
-	 * @generated
-	 */
-	int PARAMETRIC_KNOWLEDGE_TYPE = 27;
-
-	/**
-	 * The number of structural features of the '<em>Parametric Knowledge Type</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PARAMETRIC_KNOWLEDGE_TYPE_FEATURE_COUNT = 0;
 
 	/**
 	 * The meta object id for the '{@link cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.StructuredKnowledgeType <em>Structured Knowledge Type</em>}' enum.
@@ -2850,10 +2886,10 @@ public interface RuntimemodelPackage extends EPackage {
 		EReference TYPE_PARAMETER__OWNER = eINSTANCE.getTypeParameter_Owner();
 
 		/**
-		 * The meta object literal for the '{@link cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.ParametricKnowledgeType <em>Parametric Knowledge Type</em>}' class.
+		 * The meta object literal for the '{@link cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.ParametricKnowledgeTypeImpl <em>Parametric Knowledge Type</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.ParametricKnowledgeType
+		 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.ParametricKnowledgeTypeImpl
 		 * @see cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl.RuntimemodelPackageImpl#getParametricKnowledgeType()
 		 * @generated
 		 */

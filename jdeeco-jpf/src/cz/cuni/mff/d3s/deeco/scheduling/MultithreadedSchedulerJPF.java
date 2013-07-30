@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import gov.nasa.jpf.jvm.Verify;
+
 import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
 import cz.cuni.mff.d3s.deeco.invokable.TriggeredSchedulableProcess;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
@@ -20,9 +22,24 @@ public class MultithreadedSchedulerJPF extends Scheduler {
 
 	private Set<Thread> threads;
 
+	int maxHyperPeriodIterations = 0;
+
+	int maxConsecutiveThreadRuns = 0;
+
+	long lastThreadID = -1;
+	int lastConsecutiveRuns = 0;
+
+
+	
 	public MultithreadedSchedulerJPF() {
+		this(0,0);
+	}
+	
+	public MultithreadedSchedulerJPF(int maxHyperPeriodIterations, int maxConsecutiveThreadRuns) {
 		super();
 		this.threads = new HashSet<Thread>();
+		this.maxHyperPeriodIterations = maxHyperPeriodIterations;
+		this.maxConsecutiveThreadRuns = maxConsecutiveThreadRuns;
 
 		// JPF optimization -> earlier class loading via a clinit call (in the single threaded part)
 		// reduces the state space
@@ -43,10 +60,10 @@ public class MultithreadedSchedulerJPF extends Scheduler {
 		//System.out.println("[DEBUG] max period = " + maxPeriod);
 
 		if (!running) {
-			// let every process run for the number of times its period P fits into 2*P_max
+			// let every process run for the number of times its period P fits into maxPeriodIterations*P_max
 			for (SchedulableProcess sp : periodicProcesses) {
 				long spPeriod = ((ProcessPeriodicSchedule) sp.scheduling).interval;
-				long repeatCount = (2*maxPeriod) / spPeriod + 1;
+				long repeatCount = (maxHyperPeriodIterations*maxPeriod) / spPeriod + 1;
 
 				//System.out.println("[DEBUG] period = " + spPeriod + ", repeat count = " + repeatCount);
 
@@ -109,13 +126,31 @@ public class MultithreadedSchedulerJPF extends Scheduler {
 		public void run() {
 			long count = 0;
 			while ( repeatCount == 0 || ((count < repeatCount) && (!Thread.interrupted()))) {
+
+				long curThID = Thread.currentThread().getId();
+
+				if (curThID != lastThreadID)
+				{
+					lastThreadID = curThID;
+					lastConsecutiveRuns = 1;
+				}
+				else
+				{
+					lastConsecutiveRuns++;
+					if (lastConsecutiveRuns > maxConsecutiveThreadRuns) Verify.ignoreIf(true);
+				}
+
 				try {
 					process.invoke();
 				} catch (Exception e) {
 					System.out.println("Process scheduled exception: " + e.getMessage());
 					e.printStackTrace();
 				}
+
 				count++;
+
+				// let other threads run after each completed session
+				Thread.yield();
 			}
 		}
 	}

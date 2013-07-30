@@ -3,18 +3,14 @@ package cz.cuni.mff.d3s.deeco.demo.cloud.scenarios.highload;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 import cz.cuni.mff.d3s.deeco.demo.cloud.scenarios.ENetworkId;
 import cz.cuni.mff.d3s.deeco.knowledge.Component;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.RepositoryKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.local.LocalKnowledgeRepository;
-import cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider;
-import cz.cuni.mff.d3s.deeco.provider.ClassDEECoObjectProvider;
-import cz.cuni.mff.d3s.deeco.provider.InitializedDEECoObjectProvider;
+import cz.cuni.mff.d3s.deeco.provider.DEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.runtime.DynamicRuntime;
-import cz.cuni.mff.d3s.deeco.runtime.Runtime;
 import cz.cuni.mff.d3s.deeco.scheduling.MultithreadedScheduler;
 import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
 
@@ -35,18 +31,12 @@ public class LocalLauncherHSNoJPF {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// no non-initialized components
-		List<Class<?>> components = Arrays.asList(new Class<?>[] {});
-		List<Class<?>> ensembles = Arrays
-				.asList(new Class<?>[] { BalanceHSEnsemble.class });
 		KnowledgeManager km = new RepositoryKnowledgeManager(
 				new LocalKnowledgeRepository());
 		Scheduler scheduler = new MultithreadedScheduler();
-		AbstractDEECoObjectProvider dop = new ClassDEECoObjectProvider(
-				components, ensembles);
+		
 		// the dynamic runtime enables the developper to register/unregister components at runtime
 		dynamicRuntime = new DynamicRuntime(km, scheduler);
-		dynamicRuntime.registerComponentsAndEnsembles(dop);
 
 		AppHSComponent appComponent = new AppHSComponent("APP", "machine", "IMT1", true);
 		ArrayList<ScpHSComponent> scpComponents = new ArrayList<ScpHSComponent>(Arrays.asList(
@@ -67,7 +57,10 @@ public class LocalLauncherHSNoJPF {
 		cloudComponents.add(appComponent);
 
 		// initialize the DEECo with input initialized components
-		dop = new InitializedDEECoObjectProvider(cloudComponents, null);
+		DEECoObjectProvider dop = new DEECoObjectProvider();
+		dop.addEnsemble(BalanceHSEnsemble.class);
+		dop.addInitialKnowledge(cloudComponents);
+		
 		dynamicRuntime.registerComponentsAndEnsembles(dop);
 		dynamicRuntime.startRuntime();
 	}

@@ -31,8 +31,8 @@ import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
 import cz.cuni.mff.d3s.deeco.knowledge.Knowledge;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider;
-import cz.cuni.mff.d3s.deeco.provider.ParsedComponent;
+import cz.cuni.mff.d3s.deeco.provider.ComponentInstance;
+import cz.cuni.mff.d3s.deeco.provider.DEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.runtime.jmx.RuntimeMX;
 import cz.cuni.mff.d3s.deeco.scheduling.IScheduler;
 import cz.cuni.mff.d3s.deeco.scheduling.SchedulerUtils;
@@ -49,28 +49,46 @@ public class Runtime implements IRuntime {
 	protected IScheduler scheduler;
 	protected KnowledgeManager km;
 
-	protected static List<Runtime> runtimes = new LinkedList<Runtime>();
+	private static List<Runtime> runtimes = new LinkedList<Runtime>();
 
-	public Runtime() {
+	public Runtime(boolean useMXBeans) {
+		if (useMXBeans) {
+			RuntimeMX.registerMBeanForRuntime(this);
+		}
 		runtimes.add(this);
-                RuntimeMX.registerMBeanForRuntime(this);
+	}
+	
+	public Runtime() {
+		this(false);
 	}
 
 	public Runtime(KnowledgeManager km) {
-		this();
+		this(km, false);
+	}
+	
+	public Runtime(KnowledgeManager km, boolean useMXBeans) {
+		this(useMXBeans);
 		this.km = km;
-                this.km.setRuntime(this);
+        this.km.setRuntime(this);
 	}
 
 	public Runtime(IScheduler scheduler) {
-		this();
+		this(scheduler, false);
+	}
+	
+	public Runtime(IScheduler scheduler, boolean useMXBeans) {
+		this(useMXBeans);
 		this.scheduler = scheduler;
 	}
 
 	public Runtime(KnowledgeManager km, IScheduler scheduler) {
-		this();
+		this(km, scheduler, false);
+	}
+	
+	public Runtime(KnowledgeManager km, IScheduler scheduler, boolean useMXBeans) {
+		this(useMXBeans);
 		this.km = km;
-                this.km.setRuntime(this);
+        this.km.setRuntime(this);
 		this.scheduler = scheduler;
 	}
 
@@ -132,25 +150,25 @@ public class Runtime implements IRuntime {
 	 */
 	@Override
 	public void registerComponentsAndEnsembles(
-			AbstractDEECoObjectProvider provider) {
+			DEECoObjectProvider provider) {
 		ClassLoader contextClassLoader = provider.getContextClassLoader();
 
-		List<? extends SchedulableProcess> ensembleProcesses = provider
+		List<? extends SchedulableProcess> sp = provider
 				.getEnsembles();
-		setUpProcesses(ensembleProcesses, km, contextClassLoader);
-		addSchedulableProcesses(ensembleProcesses);
-
-		for (ParsedComponent component : provider.getComponents()) {
+		setUpProcesses(sp, km, contextClassLoader);
+		addSchedulableProcesses(sp);
+		Component initialKnowledge = null;
+		for (ComponentInstance ci : provider.getComponentInstances()) {
 			try {
-				initComponentKnowledge(component.getInitialKnowledge(), km);
+				initialKnowledge = provider.getInitialKnowledgeForComponentInstance(ci);
+				initComponentKnowledge(initialKnowledge, km);
 			} catch (Exception e) {
 				Log.e(String.format(
 						"Error when initializing knowledge of component %s",
-						component.getInitialKnowledge().getClass()), e);
+						initialKnowledge.getClass()), e);
 				continue;
 			}
-			List<? extends SchedulableProcess> componentProcesses = component
-					.getProcesses();
+			List<? extends SchedulableProcess> componentProcesses = ci.getProcesses();
 			// the component can have no processes
 			if (componentProcesses != null) {
 				setUpProcesses(componentProcesses, km, contextClassLoader);

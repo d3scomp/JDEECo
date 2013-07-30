@@ -15,18 +15,20 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.runtime.jmx;
 
-import cz.cuni.mff.d3s.deeco.knowledge.Component;
-import cz.cuni.mff.d3s.deeco.provider.ClassDEECoObjectProvider;
-import cz.cuni.mff.d3s.deeco.runtime.IRuntime;
+import static cz.cuni.mff.d3s.deeco.processor.ComponentParser.extractInitialKnowledge;
+
 import java.lang.management.ManagementFactory;
-import java.util.Arrays;
-import java.util.List;
+
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.MBeanRegistrationException;
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectName;
+
+import cz.cuni.mff.d3s.deeco.knowledge.Component;
+import cz.cuni.mff.d3s.deeco.provider.DEECoObjectProvider;
+import cz.cuni.mff.d3s.deeco.runtime.IRuntime;
 
 /**
  * Runtime MXBean implementation.
@@ -52,8 +54,9 @@ public class RuntimeMX implements RuntimeMXBean {
     if (!Component.class.isAssignableFrom(clazz)) {
       throw new RuntimeException("The \"" + className + "\" does not represent a DEECo component");
     }
-    List<Class<?>> components = Arrays.asList(new Class<?>[] { clazz });
-    rt.registerComponentsAndEnsembles(new ClassDEECoObjectProvider(components, null));
+    DEECoObjectProvider dop = new DEECoObjectProvider();
+    dop.addInitialKnowledge(extractInitialKnowledge(clazz));
+    rt.registerComponentsAndEnsembles(dop);
   }
   
   /**

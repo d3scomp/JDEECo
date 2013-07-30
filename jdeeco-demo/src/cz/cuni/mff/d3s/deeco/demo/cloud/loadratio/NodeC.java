@@ -4,16 +4,16 @@
 
 package cz.cuni.mff.d3s.deeco.demo.cloud.loadratio;
 
+import java.util.Random;
+
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.knowledge.Component;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
-import cz.cuni.mff.d3s.deeco.provider.InitializedDEECoObjectProvider;
+import cz.cuni.mff.d3s.deeco.provider.DEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.runtime.IRuntime;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeUtil;
-import java.util.Arrays;
-import java.util.Random;
 
 /**
  *
@@ -53,7 +53,9 @@ public class NodeC extends Component {
           } else if (counter.value.intValue() == 1) {
             IRuntime rt = RuntimeUtil.getRuntime();
             System.out.println("Introducing new component...");
-            rt.registerComponentsAndEnsembles(new InitializedDEECoObjectProvider(Arrays.asList(new Component[] { new NodeD() }), null));
+            DEECoObjectProvider dop = new DEECoObjectProvider();
+            dop.addInitialKnowledge(new NodeD());
+            rt.registerComponentsAndEnsembles(dop);
             System.out.println("New component successfully introduced ;-)");
             counter.value = new Integer(2);
           }

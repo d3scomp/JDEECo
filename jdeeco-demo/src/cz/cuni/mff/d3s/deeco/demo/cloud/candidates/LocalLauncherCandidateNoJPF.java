@@ -9,9 +9,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.Component;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.RepositoryKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.local.LocalKnowledgeRepository;
-import cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider;
-import cz.cuni.mff.d3s.deeco.provider.ClassDEECoObjectProvider;
-import cz.cuni.mff.d3s.deeco.provider.InitializedDEECoObjectProvider;
+import cz.cuni.mff.d3s.deeco.provider.DEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.runtime.Runtime;
 import cz.cuni.mff.d3s.deeco.scheduling.MultithreadedScheduler;
 import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
@@ -29,17 +27,10 @@ public class LocalLauncherCandidateNoJPF {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		List<Class<?>> components = Arrays
-				.asList(new Class<?>[] {});
-		List<Class<?>> ensembles = Arrays
-				.asList(new Class<?>[] { CandidateEnsemble.class });
 		KnowledgeManager km = new RepositoryKnowledgeManager(
 				new LocalKnowledgeRepository());
 		Scheduler scheduler = new MultithreadedScheduler();
-		AbstractDEECoObjectProvider dop = new ClassDEECoObjectProvider(
-				components, ensembles);
 		Runtime rt = new Runtime(km, scheduler);
-		rt.registerComponentsAndEnsembles(dop);
 
 		// networkDistance and loadRatio randomization based on a maxLoadRatio of 0.5f for all
 		Random rand = new Random();
@@ -68,7 +59,9 @@ public class LocalLauncherCandidateNoJPF {
 			}
 		}
 		
-		dop = new InitializedDEECoObjectProvider(minloadNodes, null);
+		DEECoObjectProvider dop = new DEECoObjectProvider();
+		dop.addEnsemble(CandidateEnsemble.class);
+		dop.addInitialKnowledge(minloadNodes);
 		rt.registerComponentsAndEnsembles(dop);
 		
 		/*Membership m = null;

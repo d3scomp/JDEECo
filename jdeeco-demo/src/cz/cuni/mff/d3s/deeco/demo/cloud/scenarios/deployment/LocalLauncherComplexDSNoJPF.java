@@ -10,9 +10,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.Component;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.RepositoryKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.local.LocalKnowledgeRepository;
-import cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider;
-import cz.cuni.mff.d3s.deeco.provider.ClassDEECoObjectProvider;
-import cz.cuni.mff.d3s.deeco.provider.InitializedDEECoObjectProvider;
+import cz.cuni.mff.d3s.deeco.provider.DEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.runtime.Runtime;
 import cz.cuni.mff.d3s.deeco.scheduling.MultithreadedScheduler;
 import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
@@ -33,18 +31,10 @@ public class LocalLauncherComplexDSNoJPF {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// no non-initialized components
-		List<Class<?>> components = Arrays
-				.asList(new Class<?>[] {});
-		List<Class<?>> ensembles = Arrays
-				.asList(new Class<?>[] { DeployDSEnsemble.class });
 		KnowledgeManager km = new RepositoryKnowledgeManager(
 				new LocalKnowledgeRepository());
 		Scheduler scheduler = new MultithreadedScheduler();
-		AbstractDEECoObjectProvider dop = new ClassDEECoObjectProvider(
-				components, ensembles);
 		Runtime rt = new Runtime(km, scheduler);
-		rt.registerComponentsAndEnsembles(dop);
 	
 		List<Component> scpComponents = new ArrayList<Component>( 
 			Arrays.asList(
@@ -79,7 +69,9 @@ public class LocalLauncherComplexDSNoJPF {
 		// generate the latencies on the scp components
 		LatencyGenerator.generate(scpComponents, true);
 		// initialize the DEECo with input initialized components
-		dop = new InitializedDEECoObjectProvider(cloudComponents, null);
+		DEECoObjectProvider dop = new DEECoObjectProvider();
+		dop.addEnsemble(DeployDSEnsemble.class);
+		dop.addInitialKnowledge(cloudComponents);
 		rt.registerComponentsAndEnsembles(dop);
 	
 		rt.startRuntime();

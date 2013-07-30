@@ -21,6 +21,13 @@ import cz.cuni.mff.d3s.deeco.path.grammar.PathGrammar;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessPeriodicSchedule;
 import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
 
+
+/**
+ * Parser class for ensemble definitions.
+ * 
+ * @author Michal Kit
+ *
+ */
 public class EnsembleParser {
 
 	/**
@@ -144,8 +151,8 @@ public class EnsembleParser {
 			// not periodic
 			final ProcessSchedule triggeredSchedule = ScheduleHelper
 					.getTriggeredSchedule(
-							methodEnsMembership.getParameterAnnotations(),
-							membership.method.in, membership.method.inOut);
+							knowledgeExchangeMethod.getParameterAnnotations(),
+							knowledgeExchange.in, knowledgeExchange.inOut);
 
 			if (triggeredSchedule != null) {
 				scheduling = triggeredSchedule;
@@ -161,6 +168,12 @@ public class EnsembleParser {
 					knowledgeExchange, null);
 	}
 
+	/**
+	 * Checkes whether the given class is an ensemble definitions.
+	 * 
+	 * @param clazz class to be checked
+	 * @return True if the given class is an ensemble definition. False otherwise.
+	 */
 	public static boolean isEnsembleDefinition(Class<?> clazz) {
 		return clazz != null && Ensemble.class.isAssignableFrom(clazz);
 	}

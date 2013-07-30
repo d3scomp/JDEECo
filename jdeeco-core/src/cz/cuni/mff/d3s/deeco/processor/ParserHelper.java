@@ -20,6 +20,12 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgePathHelper;
 import cz.cuni.mff.d3s.deeco.path.grammar.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.path.grammar.ParseException;
 
+/**
+ * A helper class used for parsing both component and ensemble definitions.
+ * 
+ * @author Michal Kit
+ * 
+ */
 public class ParserHelper {
 	/**
 	 * Returns list of method parameterTypes, which are annotated with the given
@@ -35,7 +41,7 @@ public class ParserHelper {
 	 * @return list of {@link Parameter} instances which fulfills search
 	 *         criteria.
 	 * @throws GrammarParserException
-	 * @throws ComponentEnsembleParseException 
+	 * @throws ComponentEnsembleParseException
 	 * 
 	 * @see Parameter
 	 */
@@ -157,7 +163,7 @@ public class ParserHelper {
 	public static ParameterizedMethod extractParametrizedMethod(Method method) {
 		return extractParametrizedMethod(method, null);
 	}
-	
+
 	/**
 	 *  Extract an instance of ParameterizedMethod from the Java method instance for the given component id (root).
 	 *  If the method does not represent a DEECo annotated method or parsing exception occurs return null. 

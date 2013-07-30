@@ -8,8 +8,15 @@ import java.io.ObjectInputStream;
 
 import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider;
+import cz.cuni.mff.d3s.deeco.provider.DEECoObjectProvider;
 
+/**
+ * Serialized object provider reader. This class is used to extract
+ * {@link DEECoObjectProvider} instance from the file.
+ * 
+ * @author Michal Kit
+ * 
+ */
 public class ParsedObjectReader {
 
 	private String fileName;
@@ -25,21 +32,26 @@ public class ParsedObjectReader {
 			this.fileName = fileName;
 	}
 
-	public AbstractDEECoObjectProvider read() {
-		AbstractDEECoObjectProvider result = null;
+	/**
+	 * Reads the {@link DEECoObjectProvider} from the file.
+	 * 
+	 * @return retrieved {@link DEECoObjectProvider} object from the file.
+	 */
+	public DEECoObjectProvider read() {
+		DEECoObjectProvider result = null;
 		try {
 			ObjectInput oi = null;
 			try {
 				InputStream fi = new FileInputStream(fileName);
 				InputStream bi = new BufferedInputStream(fi);
 				oi = new ObjectInputStream(bi);
-				result = (AbstractDEECoObjectProvider) oi.readObject();
+				result = (DEECoObjectProvider) oi.readObject();
 			} finally {
 				if (oi != null)
 					oi.close();
 			}
 		} catch (Exception e) {
-			Log.e("Error when reading",e);
+			Log.e("Error when reading", e);
 			return result;
 		}
 		return result;

@@ -3,6 +3,6 @@
 	<implementation
 		class="cz.cuni.mff.d3s.deeco.knowledge.local.LocalKnowledgeRepository" />
 	<service>
-		<provide interface="cz.cuni.mff.d3s.deeco.knowledge.IKnowledgeRepository" />
+		<provide interface="cz.cuni.mff.d3s.deeco.knowledge.KnowledgeRepository" />
 	</service>
 </component>

@@ -1,7 +1,5 @@
 package cz.cuni.mff.d3s.deeco.runtime;
 
-import static cz.cuni.mff.d3s.deeco.processor.ComponentParser.extractComponentProcess;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -10,8 +8,8 @@ import cz.cuni.mff.d3s.deeco.knowledge.Component;
 import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider;
-import cz.cuni.mff.d3s.deeco.provider.ParsedComponent;
+import cz.cuni.mff.d3s.deeco.provider.ComponentInstance;
+import cz.cuni.mff.d3s.deeco.provider.DEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.scheduling.IScheduler;
 
 /**
@@ -22,7 +20,7 @@ import cz.cuni.mff.d3s.deeco.scheduling.IScheduler;
  */
 public class DynamicRuntime extends Runtime implements IRuntime {
 
-	private AbstractDEECoObjectProvider provider = null;
+	private DEECoObjectProvider provider = null;
 	
 	public DynamicRuntime(KnowledgeManager km, IScheduler scheduler) {
 		super(km, scheduler);
@@ -30,7 +28,7 @@ public class DynamicRuntime extends Runtime implements IRuntime {
 
 	@Override
 	public void registerComponentsAndEnsembles(
-			AbstractDEECoObjectProvider provider) {
+			DEECoObjectProvider provider) {
 		super.registerComponentsAndEnsembles(provider);
 		this.provider = provider;
 	}
@@ -42,20 +40,17 @@ public class DynamicRuntime extends Runtime implements IRuntime {
 	public void registerComponent(Component component) throws Exception{
 		ClassLoader contextClassLoader = provider.getContextClassLoader();
 		if (component != null){
-			ParsedComponent parsedComponent = new ParsedComponent(extractComponentProcess(
-					component.getClass(), component.id), component);
 			// add the component into the provider
-			provider.getComponents().add(parsedComponent);
+			provider.addInitialKnowledge(component);
 			// process the component from the provider (which has prior parsed the component)
 			try {
-				initComponentKnowledge(parsedComponent.getInitialKnowledge(), km);
+				initComponentKnowledge(component, km);
 			} catch (Exception e) {
 				Log.e(String.format(
 						"Error when initializing knowledge of component %s",
-						parsedComponent.getInitialKnowledge().getClass()), e);
-				throw e;
+						component.getClass()), e);
 			}
-			List<? extends SchedulableProcess> componentProcesses = parsedComponent.getProcesses();
+			List<? extends SchedulableProcess> componentProcesses = provider.getComponentInstances().get(provider.getComponentInstances().size()-1).getProcesses();
 			// the component can have no processes
 			if (componentProcesses != null) {
 				setUpProcesses(componentProcesses, km, contextClassLoader);
@@ -70,35 +65,36 @@ public class DynamicRuntime extends Runtime implements IRuntime {
 	 * @param id id of the component to remove
 	 */
 	// FIXME: needs be debugged at runtime for consistency reasons
-	public boolean unregisterComponent(String id) {
-		List<ParsedComponent> parsedComponents = provider.getComponents();
+	public boolean removeComponent(String id) {
+		List<ComponentInstance> cis = provider.getComponentInstances();
 		// get the component
-		ParsedComponent component = null;
+		ComponentInstance ci = null;
 		Integer i = 0;
-		while (component == null){
-			if (parsedComponents.get(i).getInitialKnowledge().id.equals(id))
-				component = provider.getComponents().get(i);
+		while (ci == null){
+			if (provider.getInitialKnowledgeForComponentInstance(cis.get(i)).id.equals(id))
+				ci = cis.get(i);
 			i++;
 		}
 		// remove the processes
-		List<? extends SchedulableProcess> componentProcesses = component.getProcesses();
+		List<? extends SchedulableProcess> componentProcesses = ci.getProcesses();
 		if (componentProcesses != null) {
 			scheduler.remove((List<SchedulableProcess>) componentProcesses);
 		}
 		// remove the knowledge
+		Component c = provider.getInitialKnowledgeForComponentInstance(ci);
 		try {
 			// FIXME : must lock or excluse the node to be called in the ensemble to avoid unconsistency or unexpected behaviors !!!
 			// on simulating, some knowledge removed implies some knowledge existing, 
 			// and can affect the loading of parameters of the methods using the knowledge manager
 			// how to remove a set of knowledge in the knowledge manager?
-			removeComponentKnowledge(component.getInitialKnowledge(), km);
+			removeComponentKnowledge(c, km);
 		} catch (Exception e) {
 			Log.e(String.format(
 					"Error when removing knowledge of component %s",
-					component.getInitialKnowledge().getClass()), e);
+					c.getClass()), e);
 		}
 		// remove the component
-		return provider.getComponents().remove(id);
+		return provider.getComponentInstances().remove(ci);
 	}
 	
 	private synchronized void removeComponentKnowledge(Component knowledge,
