@@ -41,11 +41,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"
         eType="#//Parameter" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="method" lowerBound="1"
-        eType="#//Method" transient="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="declaringClass" lowerBound="1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="nameWithSignature" lowerBound="1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        eType="#//Method"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PeriodicSchedule" eSuperTypes="#//Schedule">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="period" lowerBound="1"

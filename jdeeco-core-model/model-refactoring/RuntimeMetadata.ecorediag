@@ -167,14 +167,6 @@
   <children xmi:type="notation:Node" xmi:id="_d8h9gNJ5EeK5vfh7vJCPkA" type="1001">
     <children xmi:type="notation:Node" xmi:id="_d8h9g9J5EeK5vfh7vJCPkA" type="4001"/>
     <children xmi:type="notation:Node" xmi:id="_d8h9hNJ5EeK5vfh7vJCPkA" type="5001">
-      <children xmi:type="notation:Node" xmi:id="_pqUogPkUEeKAScggIIlt-Q" type="2001">
-        <element xmi:type="ecore:EAttribute" href="RuntimeMetadata.ecore#//Invocable/declaringClass"/>
-        <layoutConstraint xmi:type="notation:Location" xmi:id="_pqUogfkUEeKAScggIIlt-Q"/>
-      </children>
-      <children xmi:type="notation:Node" xmi:id="_pWhtUPkVEeKAScggIIlt-Q" type="2001">
-        <element xmi:type="ecore:EAttribute" href="RuntimeMetadata.ecore#//Invocable/nameWithSignature"/>
-        <layoutConstraint xmi:type="notation:Location" xmi:id="_pWhtUfkVEeKAScggIIlt-Q"/>
-      </children>
       <children xmi:type="notation:Node" xmi:id="_thZcQPN4EeKGfIUqTb093w" type="2001">
         <element xmi:type="ecore:EAttribute" href="RuntimeMetadata.ecore#//Invocable/method"/>
         <layoutConstraint xmi:type="notation:Location" xmi:id="_thZcQfN4EeKGfIUqTb093w"/>
@@ -190,7 +182,7 @@
     </children>
     <styles xmi:type="notation:ShapeStyle" xmi:id="_d8h9gdJ5EeK5vfh7vJCPkA" fontColor="4210752" fontName="Segoe UI" fontHeight="10" fillColor="13761016" lineColor="8421504"/>
     <element xmi:type="ecore:EClass" href="RuntimeMetadata.ecore#//Invocable"/>
-    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_d8h9gtJ5EeK5vfh7vJCPkA" x="185" y="20"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_d8h9gtJ5EeK5vfh7vJCPkA" x="185" y="20" width="154"/>
   </children>
   <children xmi:type="notation:Node" xmi:id="_H74ncNKSEeK5vfh7vJCPkA" type="1001">
     <children xmi:type="notation:Node" xmi:id="_H74nc9KSEeK5vfh7vJCPkA" type="4001"/>
@@ -527,7 +519,7 @@
     <styles xmi:type="notation:FontStyle" xmi:id="_lRdjstJ5EeK5vfh7vJCPkA" fontColor="4210752" fontName="Segoe UI" fontHeight="10"/>
     <element xmi:type="ecore:EReference" href="RuntimeMetadata.ecore#//Invocable/parameters"/>
     <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_lRdjs9J5EeK5vfh7vJCPkA" points="[3, 7, -108, -238]$[96, 212, -15, -33]"/>
-    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_lRdjuNJ5EeK5vfh7vJCPkA" id="(0.30612244897959184,0.7529411764705882)"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_lRdjuNJ5EeK5vfh7vJCPkA" id="(0.44360902255639095,0.9411764705882353)"/>
     <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_PK1E8NKTEeK5vfh7vJCPkA" id="(0.35436893203883496,0.21568627450980393)"/>
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_PsL7ANKSEeK5vfh7vJCPkA" type="3003" source="_H74ncNKSEeK5vfh7vJCPkA" target="_ZoOzkNJ1EeK5vfh7vJCPkA">

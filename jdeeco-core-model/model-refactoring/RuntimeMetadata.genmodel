@@ -48,8 +48,6 @@
     <genClasses image="false" ecoreClass="RuntimeMetadata.ecore#//Invocable">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//Invocable/parameters"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeMetadata.ecore#//Invocable/method"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeMetadata.ecore#//Invocable/declaringClass"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeMetadata.ecore#//Invocable/nameWithSignature"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeMetadata.ecore#//PeriodicSchedule">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeMetadata.ecore#//PeriodicSchedule/period"/>
