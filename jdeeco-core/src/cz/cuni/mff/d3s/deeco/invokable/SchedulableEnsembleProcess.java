@@ -146,7 +146,7 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 		}
 	}
 
-	private boolean evaluateMembership(Object[] params) {
+	protected boolean evaluateMembership(Object[] params) {
 		try {
 			return membership.membership(params);
 		} catch (Exception e) {
@@ -155,7 +155,7 @@ public class SchedulableEnsembleProcess extends SchedulableProcess {
 		}
 	}
 
-	private void evaluateKnowledgeExchange(Object[] params) {
+	protected void evaluateKnowledgeExchange(Object[] params) {
 		try {
 			knowledgeExchange.invoke(params);
 		} catch (Exception e) {

@@ -28,8 +28,8 @@ import cz.cuni.mff.d3s.deeco.knowledge.Component;
 import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.provider.AbstractDEECoObjectProvider;
-import cz.cuni.mff.d3s.deeco.provider.ParsedComponent;
+import cz.cuni.mff.d3s.deeco.provider.ComponentInstance;
+import cz.cuni.mff.d3s.deeco.provider.DEECoObjectProvider;
 import cz.cuni.mff.d3s.deeco.runtime.jmx.RuntimeMX;
 import cz.cuni.mff.d3s.deeco.scheduling.IScheduler;
 import cz.cuni.mff.d3s.deeco.scheduling.SchedulerUtils;
@@ -147,27 +147,27 @@ public class Runtime implements IRuntime {
 	 */
 	@Override
 	public void registerComponentsAndEnsembles(
-			AbstractDEECoObjectProvider provider) {
+			DEECoObjectProvider provider) {
 		ClassLoader contextClassLoader = provider.getContextClassLoader();
 
-		List<? extends SchedulableProcess> ensembleProcesses = provider
+		List<? extends SchedulableProcess> sp = provider
 				.getEnsembles();
-		setUpProcesses(ensembleProcesses, km, contextClassLoader);
-		addSchedulableProcesses(ensembleProcesses);
-
-		for (ParsedComponent component : provider.getComponents()) {
+		setUpProcesses(sp, km, contextClassLoader);
+		addSchedulableProcesses(sp);
+		Component initialKnowledge = null;
+		for (ComponentInstance ci : provider.getComponentInstances()) {
 			try {
-				initComponentKnowledge(component.getInitialKnowledge(), km);
+				initialKnowledge = provider.getInitialKnowledgeForComponentInstance(ci);
+				initComponentKnowledge(initialKnowledge, km);
 			} catch (Exception e) {
 				Log.e(String.format(
 						"Error when initializing knowledge of component %s",
-						component.getInitialKnowledge().getClass()), e);
+						initialKnowledge.getClass()), e);
 				continue;
 			}
-			List<? extends SchedulableProcess> componentProcesses = component
-					.getProcesses();
-			setUpProcesses(componentProcesses, km, contextClassLoader);
-			addSchedulableProcesses(componentProcesses);
+			sp = ci.getProcesses();
+			setUpProcesses(sp, km, contextClassLoader);
+			addSchedulableProcesses(sp);
 		}
 	}
 

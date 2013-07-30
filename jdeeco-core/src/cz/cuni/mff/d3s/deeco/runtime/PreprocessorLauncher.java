@@ -4,7 +4,7 @@ import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.processor.ClassFinder;
 import cz.cuni.mff.d3s.deeco.processor.ClassProcessor;
 import cz.cuni.mff.d3s.deeco.processor.ParsedObjectWriter;
-import cz.cuni.mff.d3s.deeco.provider.ClassDEECoObjectProvider;
+import cz.cuni.mff.d3s.deeco.provider.DEECoObjectProvider;
 
 /**
  * Class responsible for parsing and serializing both component and ensemble
@@ -29,11 +29,9 @@ public class PreprocessorLauncher {
 		
 		ClassFinder cf = new ClassFinder();
 		cf.resolve(args);
-		ClassDEECoObjectProvider cdop = ClassProcessor.processClasses(
+		DEECoObjectProvider dop = ClassProcessor.processClasses(
 				cf.getClasses(), cf.getDirURLs());
-		cdop.getComponents();
-		cdop.getEnsembles();
 		ParsedObjectWriter pow = new ParsedObjectWriter();
-		pow.write(cdop);
+		pow.write(dop);
 	}
 }
