@@ -41,7 +41,7 @@ public class ParserHelper {
 	 * @return list of {@link Parameter} instances which fulfills search
 	 *         criteria.
 	 * @throws GrammarParserException
-	 * @throws ComponentEnsembleParseException
+	 * @throws ComponentEnsembleParseException 
 	 * 
 	 * @see Parameter
 	 */
@@ -163,7 +163,7 @@ public class ParserHelper {
 	public static ParameterizedMethod extractParametrizedMethod(Method method) {
 		return extractParametrizedMethod(method, null);
 	}
-
+	
 	/**
 	 *  Extract an instance of ParameterizedMethod from the Java method instance for the given component id (root).
 	 *  If the method does not represent a DEECo annotated method or parsing exception occurs return null. 

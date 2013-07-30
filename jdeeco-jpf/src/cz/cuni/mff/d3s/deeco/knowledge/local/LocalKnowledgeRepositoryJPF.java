@@ -26,6 +26,8 @@ import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.ltl.AtomicProposition;
 
+import cz.cuni.mff.d3s.ltl.CommlinkSuTJPF;
+
 
 
 /**

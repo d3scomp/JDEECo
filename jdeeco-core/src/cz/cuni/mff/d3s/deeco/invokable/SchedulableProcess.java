@@ -503,6 +503,11 @@ public abstract class SchedulableProcess implements Serializable {
 			ow.value = objectValue;
 			objectReturn = ow;
 		}else{
+			if (p.type.knowledgeStructure == null)
+				objectValue = ((Object[])objectValue)[0];
+			else{
+				throw new Exception("Check this case");
+			}
 			objectReturn = objectValue;
 		}
 		// return the OutWrapper or the object to be returned

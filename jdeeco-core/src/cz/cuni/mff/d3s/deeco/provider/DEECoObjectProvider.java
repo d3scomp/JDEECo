@@ -34,6 +34,7 @@ public class DEECoObjectProvider implements Serializable {
 		this.ensembles = new LinkedList<>();
 	}
 
+
 	public DEECoObjectProvider(List<Class<?>> components,
 			List<Class<?>> ensembles) {
 		this();

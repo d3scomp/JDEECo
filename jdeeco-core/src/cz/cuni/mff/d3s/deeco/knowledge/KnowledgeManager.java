@@ -16,6 +16,7 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
+import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionAccessError;
 import cz.cuni.mff.d3s.deeco.runtime.IRuntime;
 import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
 
@@ -76,15 +77,13 @@ public abstract class KnowledgeManager {
 	 * @param type
 	 *            Knowledge structure (Knowledge Interface)
 	 * @param session
-	 *            a session object within which all the withdrawals should be
 	 *            performed
 	 * @return retrieved knowledge object of type structure
 	 * @throws KMException
 	 *             thrown whenever there is a problem accessing the knowledge
 	 *             repository
 	 */
-	public abstract Object[] takeAllKnowledge(String knowledgeId, ISession session)
-			throws KMException;
+	public abstract Object[] takeAllKnowledge(String knowledgeId, ISession session) throws KMException;
 
 	/**
 	 * Alters knowledge object in the knowledge repository. Altering in this

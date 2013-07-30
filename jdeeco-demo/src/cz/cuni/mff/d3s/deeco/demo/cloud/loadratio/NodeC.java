@@ -6,6 +6,8 @@ package cz.cuni.mff.d3s.deeco.demo.cloud.loadratio;
 
 import java.util.Random;
 
+import java.util.Random;
+
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;

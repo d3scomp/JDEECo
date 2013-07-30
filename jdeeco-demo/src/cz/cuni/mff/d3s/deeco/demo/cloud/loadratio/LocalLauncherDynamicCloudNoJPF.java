@@ -18,6 +18,9 @@ package cz.cuni.mff.d3s.deeco.demo.cloud.loadratio;
 import java.util.Arrays;
 import java.util.List;
 
+import java.util.Arrays;
+import java.util.List;
+
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.RepositoryKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.local.LocalKnowledgeRepository;
