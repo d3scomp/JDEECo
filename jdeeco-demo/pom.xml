@@ -7,7 +7,7 @@
 		<cloudJar>cloud.jar</cloudJar>
 		<convoyJar>convoy.jar</convoyJar>
 		<convoytutJar>convoytut.jar</convoytutJar>
-		<splJar>${project.basedir}\libs\cz.cuni.mff.d3s.spl-1.1.0.jar</splJar>
+		<splJar>${project.basedir}/libs/cz.cuni.mff.d3s.spl-1.1.0.jar</splJar>
 	</properties>
 	<build>
 		<sourceDirectory>src</sourceDirectory>

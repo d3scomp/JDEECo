@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project basedir="." name="jdeeco-core" default="compile-parser">
 
-	<property name="local" value="${ant.file}/.." />
+	<dirname property="local" file="${ant.file}"/>
 	<property name="parser.dir" value="tools" />
 	<property name="javacc.args" value="" />
 	<property name="parser.out.dir" value="src/cz/cuni/mff/d3s/deeco/path/grammar" />
