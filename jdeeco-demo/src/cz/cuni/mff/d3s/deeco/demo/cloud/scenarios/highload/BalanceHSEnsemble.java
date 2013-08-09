@@ -13,7 +13,7 @@ import cz.cuni.mff.d3s.deeco.ensemble.Ensemble;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 import cz.cuni.mff.d3s.spl.core.Formula;
 import cz.cuni.mff.d3s.spl.core.Result;
-import cz.cuni.mff.d3s.spl.core.impl.SimpleFormulas;
+import cz.cuni.mff.d3s.spl.core.impl.FormulaFactory;
 
 /**
  * The Balance Ensemble for the Highload Scenario (HS).
@@ -43,7 +43,7 @@ public class BalanceHSEnsemble extends Ensemble {
 			) { 
 		if (cIsDeployed && cOnScpId.equals(mId)){
 			// high load for higher than 50%
-			Formula belowHighLoad = SimpleFormulas.createSmallerThanConst("load", 0.5);
+			Formula<Result> belowHighLoad = FormulaFactory.createLessThanConstFormula("load", 0.5);
 			// bind the scp data source with the load variable
 			belowHighLoad.bind("load", osLoadData);
 			boolean isBelowHighload = (belowHighLoad.evaluate() == Result.TRUE);

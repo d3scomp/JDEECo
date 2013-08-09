@@ -1,7 +1,6 @@
 package cz.cuni.mff.d3s.deeco.demo.cloud.scenarios;
 
 import java.util.List;
-import java.util.Random;
 
 import cz.cuni.mff.d3s.deeco.demo.cloud.scenarios.deployment.ScpDSComponent;
 import cz.cuni.mff.d3s.deeco.demo.cloud.scenarios.deployment.ScpDSComponentOSLatencyData;
@@ -18,8 +17,6 @@ import cz.cuni.mff.d3s.deeco.demo.cloud.scenarios.deployment.ScpDSComponentOSLat
  * @param <T> the scp component class whom the latency must be generated
  */
 public class LatencyGenerator<T extends ScpDSComponent> {
-	
-	private static Random rand = new Random();
 
 	public static <T> void generate(List<T> scpComponents, boolean verbose) {
 		

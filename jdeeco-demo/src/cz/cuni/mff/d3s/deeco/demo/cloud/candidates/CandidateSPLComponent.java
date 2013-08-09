@@ -15,21 +15,22 @@ public class CandidateSPLComponent extends CandidateComponentBase {
 
 	public final static long serialVersionUID = 1L;
 	
-	public Map<String,Long> latencies; 
+	public Map<String, CandidateSPLComponentOSLatencyData> latencies; 
 
 	public CandidateSPLComponent(String id, Float loadRatio, Float maxLoadRatio) {
-		super(id, loadRatio, maxLoadRatio);
-		this.latencies = new HashMap<String,Long>();
+		super(id,maxLoadRatio,loadRatio);
+		
+		this.latencies = new HashMap<String, CandidateSPLComponentOSLatencyData>();
 	}
 
-	@Process
+	/*@Process
 	@PeriodicScheduling(6000)
-	public static void process(@In("id") String id, @Out("loadRatio") OutWrapper<Float> loadRatio) {
+	public static void process(@In("id") String id, @Out("osLoadData") OutWrapper<Float> loadRatio) {
 		loadRatio.value = (new Random()).nextFloat();
 		
 		System.out.println(id + " new load ratio: "
 				+ Math.round(loadRatio.value * 100) + "%");
-	}
+	}*/
 
 	@Process
 	public static void process2(@In("id") @TriggerOnChange String id, @In("minMemberId") @TriggerOnChange String minMemberId) {

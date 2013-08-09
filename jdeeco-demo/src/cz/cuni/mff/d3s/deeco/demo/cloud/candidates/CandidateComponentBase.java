@@ -16,16 +16,15 @@ public class CandidateComponentBase extends Component {
 
 	public final static long serialVersionUID = 1L;
 
-	public Float loadRatio;
-	public Float maxLoadRatio;
 	public Integer networkId;
 	public String minMemberId;
-	
+	public Float loadRatio;
+	public Float maxLoadRatio;
 
 	public CandidateComponentBase(String id, Float loadRatio, Float maxLoadRatio) {
 		this.id = id;
-		this.maxLoadRatio = maxLoadRatio;
 		this.loadRatio = loadRatio;
+		this.maxLoadRatio = maxLoadRatio;
 		this.networkId = 1;
 	}
 

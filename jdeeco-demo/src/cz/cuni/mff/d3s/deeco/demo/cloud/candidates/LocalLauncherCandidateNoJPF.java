@@ -64,15 +64,6 @@ public class LocalLauncherCandidateNoJPF {
 		dop.addInitialKnowledge(minloadNodes);
 		rt.registerComponentsAndEnsembles(dop);
 		
-		/*Membership m = null;
-		try {
-			m = MinLoadedCandidateEnsemble.class.getDeclaredMethods()[0].getAnnotation(Membership.class);
-			System.out.println("range = " + m.candidateRange() + " for defining the size of the candidates set\n");
-		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-
 		rt.startRuntime();
 	}
 }

@@ -6,7 +6,6 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="libs/cz.cuni.mff.d3s.spl-1.1.0.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/cz.cuni.mff.d3s.jdeeco.core"/>
 	<classpathentry excluding="**" kind="src" output="target/classes" path="libs">
 		<attributes>

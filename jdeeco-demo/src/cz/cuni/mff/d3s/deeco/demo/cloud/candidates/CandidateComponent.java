@@ -26,11 +26,11 @@ import java.util.Map;
 public class CandidateComponent extends CandidateComponentBase {
 
 	public final static long serialVersionUID = 1L;
-
+	
 	public Map<String,Long> latencies; 
 
 	public CandidateComponent(String id, Float loadRatio, Float maxLoadRatio) {
-		super(id, loadRatio, maxLoadRatio);
+		super(id,maxLoadRatio,loadRatio);
 		this.latencies = new HashMap<String,Long>();
 	}
 }

@@ -7,7 +7,7 @@
 	<property name="demo-libs" location="${dist}/../jdeeco-demo/libs"/>
 	<property name="river" location="${dist}/apache-river"/>
 	<property name="jpf" location="${dist}/jpf-core"/>
-	<property name="spl" location="${dist}/../jdeeco-demo/libs/cz.cuni.mff.d3s.spl-1.1.0.jar"/>
+	<property name="spl" location="${dist}/../jdeeco-demo/libs/spl-agent.jar"/>
 
 	<!-- start apache river - individual services -->
 	<target name="start-ar-httpd">
@@ -72,6 +72,21 @@
 				<pathelement location="${dist}/jdeeco.jar"/>
 				<pathelement location="${river}/lib/jsk-lib.jar"/>
 				<pathelement location="${river}/lib/jsk-platform.jar"/>
+			</classpath>
+			<jvmarg value="-Djava.security.policy=${river}-config/start.policy"/>
+			<jvmarg value="-Djava.rmi.server.RMIClassLoaderSpi=net.jini.loader.pref.PreferredClassProvider"/>
+		</java>
+	</target>
+	
+	<!-- start min load cloud demo using SPL with local shared memory -->
+	<target name="cloud-local-minload-spl" description="Runs the minload spl cloud demo">
+		<java classname="cz.cuni.mff.d3s.deeco.demo.cloud.candidates.LocalLauncherCandidateSPLNoJPF" fork="true">
+			<classpath>
+				<pathelement location="${dist}/cloud.jar"/>
+				<pathelement location="${dist}/jdeeco.jar"/>
+				<pathelement location="${river}/lib/jsk-lib.jar"/>
+				<pathelement location="${river}/lib/jsk-platform.jar"/>
+				<pathelement location="${spl}"/>
 			</classpath>
 			<jvmarg value="-Djava.security.policy=${river}-config/start.policy"/>
 			<jvmarg value="-Djava.rmi.server.RMIClassLoaderSpi=net.jini.loader.pref.PreferredClassProvider"/>

@@ -44,24 +44,42 @@ public class CandidateEnsemble extends Ensemble {
 		return sortedByValues;
 	}
 	
+	public static void cdSelection(List<Boolean> cdSelector, String cId, List<String> cdIds, List<String> bestCdIds, List<Float> cdLoadRatios){
+		Float loadRatio = -1.0f;
+		String minloadId = "";
+		System.out.print(cId + " - Candidate Ids : ");
+		// find the minimum loaded node
+		for (int i = 0; i < bestCdIds.size(); i++){
+			System.out.print(bestCdIds.get(i) + (i < bestCdIds.size() - 1 ? " - " : ""));
+			String cdId = bestCdIds.get(i);
+			Float cdLoadRatio = cdLoadRatios.get(cdIds.indexOf(cdId));
+			if (minloadId.isEmpty() || (!minloadId.isEmpty() && loadRatio.compareTo(cdLoadRatio) > 0)) {
+				loadRatio = cdLoadRatio;
+				minloadId = cdId;
+			}
+		}
+		System.out.println("");
+		Integer minloadIndex = cdIds.indexOf(minloadId);
+		// unselect all nodes except the min loaded
+		for (int i = 0; i < cdSelector.size(); i++){
+			if (i != minloadIndex)
+				cdSelector.set(i, false);
+			else
+				System.out.println(cId + " selects " + minloadId);
+		}
+	}
+	
 	@Membership
 	public static Boolean membership(
 			// input coordinator
 			@In("coord.id") String cId, // just used for the console output here !
 			@In("coord.latencies") Map<String, Long> cLatencies,
 			// candidates
-			@Selector("candidate") List<Boolean> cdSelector, //OutWrapper<
+			@Selector("candidate") List<Boolean> cdSelector, 
 			@In("members.candidate.id") List<String> cdIds,
 			@In("members.candidate.loadRatio") List<Float> cdLoadRatios) {
-		/* if the array has at least one element
-		 * can be omitted?
-		 */
 		if (cdIds.size() >= 1) {
-			Float loadRatio = -1.0f;
-			String minloadId = "";
 			int range = 2;
-			
-			System.out.print(cId + " - Candidate Ids : ");
 
 			cLatencies = sortByValues(cLatencies);
 			List<String> bestCdIds = new ArrayList<String>();
@@ -70,29 +88,11 @@ public class CandidateEnsemble extends Ensemble {
 				int i = 0;
 				for (Iterator<Entry<String, Long>> iterator = latencySet.iterator(); iterator.hasNext() && i < range; i++) {
 			        Entry<String, Long> entry = iterator.next();
-			        //if (!entry.getKey().equals(cId))
-			        	bestCdIds.add(entry.getKey());
+			        bestCdIds.add(entry.getKey());
 			    }
 			}
-			// find the minimum loaded node
-			for (int i = 0; i < bestCdIds.size(); i++){
-				System.out.print(bestCdIds.get(i) + (i < bestCdIds.size() - 1 ? " - " : ""));
-				String cdId = bestCdIds.get(i);
-				Float cdLoadRatio = cdLoadRatios.get(cdIds.indexOf(cdId));
-				if (minloadId.isEmpty() || (!minloadId.isEmpty() && loadRatio.compareTo(cdLoadRatio) > 0)) {
-					loadRatio = cdLoadRatio;
-					minloadId = cdId;
-				}
-			}
-			System.out.println("");
-			Integer minloadIndex = cdIds.indexOf(minloadId);
-			// unselect all nodes except the min loaded
-			for (int i = 0; i < cdSelector.size(); i++){
-				if (i != minloadIndex)
-					cdSelector.set(i, false);
-				else
-					System.out.println(cId + " selects " + minloadId);
-			}
+			
+			cdSelection(cdSelector, cId, cdIds, bestCdIds, cdLoadRatios);
 			return true;
 		}
 		
