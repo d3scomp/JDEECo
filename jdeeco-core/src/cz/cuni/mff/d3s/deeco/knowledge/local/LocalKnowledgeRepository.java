@@ -15,9 +15,17 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.knowledge.local;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.LockSupport;
 import java.util.concurrent.locks.ReentrantLock;
@@ -115,6 +123,32 @@ public class LocalKnowledgeRepository extends KnowledgeRepository {
 		vals = (List<Object>) DeepCopy.copy(vals);
 		return vals.toArray();
 	}
+	
+	@Override
+	public Object[] takeAll(String entryIdKey, ISession session)
+			throws KRExceptionUnavailableEntry, KRExceptionAccessError {
+		TreeMap<String, List<Object>> treeMap = new TreeMap<String, List<Object>>(); 
+		treeMap.putAll(ts);
+		// startsWith with the map
+		SortedMap<String, List<Object>> tailMap = treeMap.tailMap(entryIdKey);
+		boolean result = (!tailMap.isEmpty() && tailMap.firstKey().startsWith(entryIdKey));
+		List<Object> results = new ArrayList<Object> ();
+		if (result){
+			Set<Entry<String, List<Object>>> values = tailMap.entrySet();
+			Iterator<Entry<String, List<Object>>> iter = values.iterator();
+			for (Entry<String, List<Object>> it = iter.next(); iter.hasNext() && it.getKey().startsWith(entryIdKey);){
+				results.add(take(it.getKey(), session));
+			}
+			return results.toArray();
+		}
+		return null;
+	}
+	
+	@Override
+	public boolean contains(String entryKey, ISession session)
+			throws KRExceptionAccessError {
+		return ts.containsKey(entryKey);
+	}
 
 	@Override
 	public ISession createSession() {
@@ -143,5 +177,4 @@ public class LocalKnowledgeRepository extends KnowledgeRepository {
 		// TODO Auto-generated method stub
 		return false;
 	}
-
 }

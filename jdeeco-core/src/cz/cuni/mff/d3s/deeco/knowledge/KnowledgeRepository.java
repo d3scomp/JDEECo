@@ -84,6 +84,50 @@ public abstract class KnowledgeRepository {
 			throws KRExceptionUnavailableEntry, KRExceptionAccessError;
 	
 	/**
+	 * Withdraws all objects related to the given id from the knowledge repository. 
+	 * 
+	 * The method is mainly used when there is a need to withdraw a full node from the repository.
+	 * TODO: this has to be debugged mainly for consistency reasons. Not used in the demos yet.
+	 * 
+	 * This method is session oriented.
+	 *  
+	 * @param entryIdKey
+	 * 			  key of the object in the knowledge repository
+	 * @param session
+	 *            a session object within which the operation should be
+	 *            performed
+	 * @return list of objects belonging to the provided id from the knowledge repository
+	 * @throws KRExceptionAccessError
+	 *			   thrown whenever there is a knowledge repository access
+	 *             problem
+	 */
+	public abstract Object [] takeAll(String entryIdKey, ISession session) 
+			throws KRExceptionUnavailableEntry, KRExceptionAccessError;
+	
+	/**
+	 * Evaluates if the key is existing in the knowledge repository or not.
+	 * 
+	 * This is a faster alternative as it does only check the presence of the key
+	 * without withdrawing/altering/... the repository.
+	 * 
+	 * Main use during the duck-typing when manipulating groups of members
+	 * for the purpose of matching their identities to the given identified parameters.
+	 * 
+	 * This method is session oriented. 
+	 * 
+	 * @param entryIdKey
+	 * 			  key of the object id in the knowledge repository
+	 * @param session
+	 *            a session object within which the operation should be
+	 *            performed
+	 * @return true if the key is existing in the knowledge repository
+	 * @throws KRExceptionAccessError
+	 *			   thrown whenever there is a knowledge repository access
+	 *             problem
+	 */
+	public abstract boolean contains(String entryKey, ISession session) throws KRExceptionAccessError;
+	
+	/**
 	 * Register a listener that should be notified by the knowledge repository
 	 * whenever a specified properties are changing.
 	 * 
@@ -163,12 +207,45 @@ public abstract class KnowledgeRepository {
 	 * 
 	 * @param entryKey
 	 *            key of the object in the knowledge repository
-	 * @return object from the knowledge repository
+	 * @return object in the knowledge repository
+	 * @throws KRExceptionUnavailableEntry
+	 *             thrown whenever the object for the specified
+	 *             <code>entryKey</code> does not exists
 	 * @throws KRExceptionAccessError
 	 *             thrown whenever there is a knowledge repository access
 	 *             problem
 	 */
 	public Object [] take(String entryKey) throws KRExceptionUnavailableEntry, KRExceptionAccessError {
 		return take(entryKey, null);
+	}
+	
+	/**
+	 * Withdraws all objects related to the given id from the knowledge repository. 
+	 * 
+	 * @param entryKey
+	 *            key of the object id in the knowledge repository
+	 * @return list of objects belonging to the provided id from the knowledge repository
+	 * @throws KRExceptionUnavailableEntry
+	 *             thrown whenever the object for the specified
+	 *             <code>entryKey</code> does not exists
+	 * @throws KRExceptionAccessError
+	 *             thrown whenever there is a knowledge repository access
+	 *             problem
+	 */
+	public Object [] takeAll(String entryIdKey) throws KRExceptionUnavailableEntry, KRExceptionAccessError {
+		return takeAll(entryIdKey, null);
+	}
+	
+	/**
+	 * Evaluates if the key is existing in the knowledge repository or not.
+	 * 
+	 * @param entryKey
+	 * 			key of the object id in the knowledge repository
+	 * @return true 
+	 * 			if the key is existing in the knowledge repository
+	 * @throws KRExceptionAccessError
+	 */
+	public boolean contains(String entryKey) throws KRExceptionAccessError {
+		return contains(entryKey, null);
 	}
 }

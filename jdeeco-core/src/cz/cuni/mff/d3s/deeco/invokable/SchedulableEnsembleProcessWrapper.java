@@ -8,6 +8,7 @@ import cz.cuni.mff.d3s.deeco.exceptions.KMNotExistentException;
 import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.scheduling.ETriggerType;
+import cz.cuni.mff.d3s.deeco.invokable.parameters.Parameter;
 
 /**
  * To be used instead of the
@@ -81,6 +82,7 @@ public class SchedulableEnsembleProcessWrapper extends
 											sep.knowledgeExchange.inOut,
 											sep.knowledgeExchange.out, session,
 											(String) cId, (String) mId);
+							
 							for (Parameter p : sep.knowledgeExchange.inOut) {
 								String changedPath = p.kPath.getEvaluatedPath(
 										sep.km, cId, mId, session);

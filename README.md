@@ -25,8 +25,13 @@ http://ant.apache.org/
 To run one of demo applications perform open command window in the `dist` directory and execute one of the following commands:
 
 #### Start the demo using local knowledge repository:
- * Cloud demo: `ant cloud-local`
- * Convoy demo: `ant convoy-local`
+ * Cloud demo:                       `ant cloud-local`
+ * Convoy demo:                      `ant convoy-local`
+ * Candidate Scenario demo:          `ant cloud-local-minload`
+ * Candidate Scenario demo with SPL: `ant cloud-local-minload-spl`
+ * Deployment Scenario demo:         `ant cloud-local-scenario-deployment`
+ * Highload Scenario demo:           `ant cloud-local-scenario-highload`
+ * Shutdown Scenario demo:           `ant cloud-local-scenario-shutdown`
 
 #### Start the demo using tuple space knowledge repository:
 First, run `ant start-ar` in a separate console and wait for it to start (approx 10sec). Specifically, wait until the following is printed (in arbitrary order):

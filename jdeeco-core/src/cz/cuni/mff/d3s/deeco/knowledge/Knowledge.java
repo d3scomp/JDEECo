@@ -28,5 +28,4 @@ import java.io.Serializable;
  * 
  */
 public class Knowledge implements Serializable {
-
 }

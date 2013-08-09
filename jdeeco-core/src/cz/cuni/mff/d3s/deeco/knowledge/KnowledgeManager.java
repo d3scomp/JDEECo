@@ -16,6 +16,7 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
+import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionAccessError;
 import cz.cuni.mff.d3s.deeco.invokable.TypeDescription;
 import cz.cuni.mff.d3s.deeco.runtime.IRuntime;
 import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
@@ -48,7 +49,6 @@ public abstract class KnowledgeManager {
 	 */
 	public abstract Object getKnowledge(String knowledgePath, ISession session)
 			throws KMException;
-
 	/**
 	 * Retrieves knowledge from the knowledge repository, defined by both
 	 * <code>knowledgePath</code> and <code>expectedType</code>. Comparing to
@@ -68,7 +68,7 @@ public abstract class KnowledgeManager {
 	 */
 	public abstract Object getKnowledge(String knowledgePath,
 			TypeDescription expectedType, ISession session) throws KMException;
-
+	
 	/**
 	 * Withdraws the knowledge from the knowledge repository. This method is
 	 * session oriented.
@@ -87,6 +87,23 @@ public abstract class KnowledgeManager {
 	 */
 	public abstract Object takeKnowledge(String knowledgePath, ISession session)
 			throws KMException;
+	
+	/**
+	 * Withdraws all the knowledge from the knowledge repository and the given id. This method is
+	 * session oriented.
+	 * 
+	 * @param knowledgePath
+	 *            nesting at which the knowledge structure should be rooted
+	 * @param type
+	 *            Knowledge structure (Knowledge Interface)
+	 * @param session
+	 *            performed
+	 * @return retrieved knowledge object of type structure
+	 * @throws KMException
+	 *             thrown whenever there is a problem accessing the knowledge
+	 *             repository
+	 */
+	public abstract Object[] takeAllKnowledge(String knowledgeId, ISession session) throws KMException;
 
 	/**
 	 * Alters knowledge object in the knowledge repository. Altering in this
@@ -129,6 +146,23 @@ public abstract class KnowledgeManager {
 	 */
 	public abstract void putKnowledge(String knowledgePath, Object value,
 			ISession session) throws KMException;
+	
+	/**
+	 * Checks if the array of knowledge entries are existing altogether in the knowledge repository
+	 * This method is session oriented.
+	 * 
+	 * @param entryKeys
+	 *            keys of the object in the knowledge repository
+	 * @param session
+	 *            a session object within which the operation should be
+	 *            performed
+	 * @return object from the knowledge repository
+	 * @throws KRExceptionAccessError
+	 *             thrown whenever there is a knowledge repository access
+	 *             problem
+	 * TODO: does it require any session as no change is done ?
+	 */
+	public abstract boolean containsKnowledge(String knowledgePath, ISession session) throws KMException;
 
 	/**
 	 * Creates {@link ISession} instance used for enclosing all knowledge
@@ -190,10 +224,14 @@ public abstract class KnowledgeManager {
 	public Object takeKnowledge(String knowledgePath) throws KMException {
 		return takeKnowledge(knowledgePath, null);
 	}
-
+	
+	public Object[] takeAllKnowledge(String knowledgeId) throws KMException {
+		return takeAllKnowledge(knowledgeId, null);
+	}
+	
 	/**
 	 * Alters knowledge object in the knowledge repository.
-	 * 
+	 *
 	 * @param knowledgePath
 	 *            nesting at which the knowledge object should be stored
 	 * @param value
@@ -221,6 +259,24 @@ public abstract class KnowledgeManager {
 	public void putKnowledge(String knowledgePath, Object value)
 			throws KMException {
 		putKnowledge(knowledgePath, value, null);
+	}
+	
+	/**
+	 * Checks if the array of knowledge entries are existing altogether in the knowledge repository.
+	 * 
+	 * @param entryKeys
+	 *            keys of the object in the knowledge repository
+	 * @param session
+	 *            a session object within which the operation should be
+	 *            performed
+	 * @return object from the knowledge repository
+	 * @throws KRExceptionAccessError
+	 *             thrown whenever there is a knowledge repository access
+	 *             problem
+	 * TODO: does it require any session as no change is done ?
+	 */
+	public boolean containsKnowledge(String knowledgePath) throws KMException {
+		return containsKnowledge(knowledgePath, null);
 	}
 
 	/**

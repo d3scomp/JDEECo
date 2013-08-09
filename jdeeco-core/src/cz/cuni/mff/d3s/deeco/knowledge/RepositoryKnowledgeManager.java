@@ -94,7 +94,7 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 			throws KMException {
 		return getKnowledge(false, knowledgePath, session);
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -152,6 +152,46 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 			throws KMException {
 		return getKnowledge(true, knowledgePath, session);
 	}
+	
+	@Override
+	public Object[] takeAllKnowledge(String knowledgeId, ISession session)
+			throws KMException {
+		if (kr == null)
+			throw new KMAccessException("Knowledge repository unavailable");
+
+		Object[] result = null;
+		ISession locSession = null;
+		if (session == null) {
+			locSession = createSession();
+			locSession.begin();
+		}
+
+		final ISession localSession = (session == null ? locSession : session);
+
+		try {
+			while (localSession.repeat()) {
+				// get any entry starting by knowledgeId
+				result = kr.takeAll(knowledgeId, localSession);
+				if (session == null)
+					localSession.end();
+				else
+					break;
+			}
+			return result;
+		} catch (KRExceptionUnavailableEntry uee) {
+			if (session == null)
+				localSession.cancel();
+			throw new KMNotExistentException(uee.getMessage());
+		} catch (KRExceptionAccessError kre) {
+			if (session == null)
+				localSession.cancel();
+			throw new KMAccessException(kre.getMessage());
+		} catch (Exception e) {
+			Log.e("", e);
+			localSession.cancel();
+			return null;
+		}
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -179,6 +219,45 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 			ISession session) throws KMException {
 		storeKnowledge(knowledgePath, value, session, false);
 
+	}
+	
+	@Override
+	public boolean containsKnowledge(String knowledgePath, ISession session) throws KMException {
+		if (kr == null)
+			throw new KMAccessException("Knowledge repository unavailable");
+		
+		boolean result = false;
+		ISession locSession = null;
+		if (session == null) {
+			locSession = createSession();
+			locSession.begin();
+		}
+		final ISession localSession = (session == null ? locSession : session);
+		try {
+			while (localSession.repeat()) {
+				// we try the default path with no additional keys
+				result = kr.contains(knowledgePath, localSession);
+				// if the knowledge is not found in the knowledge repository,
+				// we try to append the structure key to the knowledge and try to check again with this
+				if (!result){
+					String structuredKnowledgePath = KnowledgePathHelper.appendToRoot(knowledgePath, ConstantKeys.STRUCTURE_ID); 
+					result = kr.contains(structuredKnowledgePath, localSession);
+				}
+				if (session == null)
+					localSession.end();
+				else
+					break;
+			}
+			return result;
+		} catch (KRExceptionAccessError kre) {
+			if (session == null)
+				localSession.cancel();
+			throw new KMAccessException(kre.getMessage());
+		} catch (Exception e) {
+			Log.e("", e);
+			localSession.cancel();
+			return false;
+		}
 	}
 
 	private void storeKnowledge(String knowledgePath, Object value,
@@ -503,5 +582,4 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 	private boolean isMap(Object value) {
 		return TypeUtils.isMap(value.getClass());
 	}
-
 }

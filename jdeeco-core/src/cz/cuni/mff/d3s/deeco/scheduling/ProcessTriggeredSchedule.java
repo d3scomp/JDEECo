@@ -17,7 +17,7 @@ package cz.cuni.mff.d3s.deeco.scheduling;
 
 import java.util.List;
 
-import cz.cuni.mff.d3s.deeco.invokable.Parameter;
+import cz.cuni.mff.d3s.deeco.invokable.parameters.Parameter;
 
 /**
  * Class representing triggered schedule.

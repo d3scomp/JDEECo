@@ -3,6 +3,7 @@ package cz.cuni.mff.d3s.deeco.invokable;
 import java.util.ArrayList;
 
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
+import cz.cuni.mff.d3s.deeco.invokable.parameters.Parameter;
 
 /**
  * To be used instead of the

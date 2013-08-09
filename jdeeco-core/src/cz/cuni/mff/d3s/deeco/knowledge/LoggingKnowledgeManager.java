@@ -28,7 +28,7 @@ public class LoggingKnowledgeManager extends KnowledgeManager {
 				+ knowledgePath + ", session=" + session + ")");
 		return decoratedKm.getKnowledge(knowledgePath, session);
 	}
-
+	
 	@Override
 	public Object getKnowledge(String knowledgePath,
 			TypeDescription expectedType, ISession session) throws KMException {
@@ -45,6 +45,13 @@ public class LoggingKnowledgeManager extends KnowledgeManager {
 				+ knowledgePath + ", session=" + session + ")");
 		return decoratedKm.takeKnowledge(knowledgePath, session);
 	}
+	
+	@Override
+	public Object[] takeAllKnowledge(String knowledgeId, ISession session)
+			throws KMException {
+		Log.d("LoggingKnowledgeManager.takeKnowledge(knowledgeId=" + knowledgeId +", session=" + session + ")");
+		return decoratedKm.takeAllKnowledge(knowledgeId, session);
+	}
 
 	@Override
 	public void alterKnowledge(String knowledgePath, Object value,
@@ -58,10 +65,14 @@ public class LoggingKnowledgeManager extends KnowledgeManager {
 	@Override
 	public void putKnowledge(String knowledgePath, Object value,
 			ISession session) throws KMException {
-		Log.d("LoggingKnowledgeManager.putKnowledge(knowledgePath="
-				+ knowledgePath + ", value=" + value + ", session=" + session
-				+ ")");
+		Log.d("LoggingKnowledgeManager.putKnowledge(knowledgePath=" + knowledgePath +", value=" + value + ", session=" + session + ")");
 		decoratedKm.putKnowledge(knowledgePath, value, session);
+	}
+	
+	@Override
+	public boolean containsKnowledge(String knowledgePath, ISession session) throws KMException {
+		Log.d("LoggingKnowledgeManager.isKnowledge(knowledgePath=" + knowledgePath +", session=" + session + ")");
+		return decoratedKm.containsKnowledge(knowledgePath, session);
 	}
 
 	@Override
@@ -102,6 +113,12 @@ public class LoggingKnowledgeManager extends KnowledgeManager {
 				+ knowledgePath + ")");
 		return decoratedKm.takeKnowledge(knowledgePath);
 	}
+	
+	@Override
+	public Object[] takeAllKnowledge(String knowledgeId) throws KMException {
+		Log.d("LoggingKnowledgeManager.takeKnowledge(knowledgeId=" + knowledgeId + ")");
+		return decoratedKm.takeAllKnowledge(knowledgeId);
+	}
 
 	@Override
 	public void alterKnowledge(String knowledgePath, Object value)
@@ -117,6 +134,13 @@ public class LoggingKnowledgeManager extends KnowledgeManager {
 		Log.d("LoggingKnowledgeManager.putKnowledge(knowledgePath="
 				+ knowledgePath + ", value=" + value + ")");
 		decoratedKm.putKnowledge(knowledgePath, value);
+	}
+	
+	@Override
+	public boolean containsKnowledge(String knowledgePath)
+			throws KMException {
+		Log.d("LoggingKnowledgeManager.isKnowledge(knowledgePath=" + knowledgePath + ")");
+		return decoratedKm.containsKnowledge(knowledgePath);
 	}
 
 }
