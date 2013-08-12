@@ -13,6 +13,7 @@ import cz.cuni.mff.d3s.deeco.exceptions.ComponentEnsembleParseException;
 import cz.cuni.mff.d3s.deeco.invokable.Parameter;
 import cz.cuni.mff.d3s.deeco.invokable.ParameterizedMethod;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgePathHelper;
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.path.grammar.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.path.grammar.ParseException;
 
@@ -104,7 +105,9 @@ public class ParserHelper {
 				return new ParameterizedMethod(in, inOut, out, method);
 			}
 		} catch (ComponentEnsembleParseException pe) {
+			Log.e("Ensemble Parsing: ", pe);
 		} catch (ParseException pe) {
+			Log.e("Ensemble Parsing: ", pe);
 		}
 		return null;
 	}

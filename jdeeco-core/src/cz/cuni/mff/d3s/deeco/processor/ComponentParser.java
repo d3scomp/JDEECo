@@ -106,7 +106,6 @@ public class ComponentParser {
 					null, ps, currentMethod, lm, root, null);
 			result.add(skp);
 		}
-
 		return result;
 	}
 	

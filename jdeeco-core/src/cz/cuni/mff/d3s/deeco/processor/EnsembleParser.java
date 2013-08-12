@@ -60,7 +60,7 @@ public class EnsembleParser {
 
 		if (pm == null) {
 			throw new ParseException(
-					"Malformed membership function definition.");
+					"Malformed membership function definition. " + c);
 		}
 
 		// Look up MembershipMethod
@@ -84,7 +84,7 @@ public class EnsembleParser {
 				.extractParametrizedMethod(knowledgeExchangeMethod);
 		if (knowledgeExchange == null) {
 			throw new ParseException(
-					"Malformed knowledge exchange function definition.");
+					"Malformed knowledge exchange function definition. " + c);
 		}
 
 		// Look up scheduling

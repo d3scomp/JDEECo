@@ -31,6 +31,7 @@ import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionAccessError;
 import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionUnavailableEntry;
 import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeChangeCollector;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgePathHelper;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeRepository;
 import cz.cuni.mff.d3s.deeco.logging.Log;
@@ -150,8 +151,12 @@ public class TSKnowledgeRepository extends KnowledgeRepository {
 					.getTransaction() : null;
 			space.write(TSUtils.createTuple(entryKey, value), tx, Lease.FOREVER);
 			//LoggerFactory.getLogger().fine("Writing entry: " + entryKey);
-			if (session != null)
-				((TransactionalSession) session).propertyChanged(entryKey, this);
+			if (session != null) {
+				KnowledgeChangeCollector kcc = (KnowledgeChangeCollector) session;
+				if (!kcc.isKnowledgeRepositoryRegistered())
+					kcc.registerKnowledgeRepository(this);
+				kcc.knowledgeChanges(entryKey);
+			}	
 		} catch (Exception e) {
 			throw new KRExceptionAccessError(
 					"TSKnowledgeRepository error when writing property: "

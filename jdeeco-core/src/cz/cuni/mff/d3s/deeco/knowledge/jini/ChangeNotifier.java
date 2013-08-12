@@ -7,6 +7,7 @@ import java.util.UUID;
 import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionAccessError;
 import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionUnavailableEntry;
 import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
+import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgePathHelper;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeRepository;
 import cz.cuni.mff.d3s.deeco.logging.Log;
@@ -47,7 +48,7 @@ public class ChangeNotifier {
 		return (roots.size() == 1) ? roots.get(0) : ConstantKeys.UNDEFINED;
 	}
 
-	public void notifyAboutChanges(TransactionalSession session) {
+	public void notifyAboutChanges(ISession session) {
 		notifying = true;
 		String listenPath;
 		String newVersion = KnowledgePathHelper.appendToRoot(
@@ -74,7 +75,7 @@ public class ChangeNotifier {
 		notifying = false;
 	}
 
-	private void updateVersion(String path, TransactionalSession session,
+	private void updateVersion(String path, ISession session,
 			String newVersion) throws KRExceptionAccessError {
 		try {
 			Object value = kr.take(path, session);

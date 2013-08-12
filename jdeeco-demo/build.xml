@@ -2,6 +2,7 @@
 	<description>JDEECo build file</description>
 
 	<property name="dist" location="."/>
+	<property name="lib" location="${dist}/lib"/>
 	<property name="src" location="${dist}/../jdeeco-core/src"/>
 	<property name="demo" location="${dist}/../jdeeco-demo/src"/>
 	<property name="river" location="${dist}/apache-river"/>
@@ -54,6 +55,7 @@
 			<classpath>
 				<pathelement location="${dist}/cloud.jar"/>
 				<pathelement location="${dist}/jdeeco.jar"/>
+				<pathelement location="${lib}/cloner.jar"/>
 				<pathelement location="${river}/lib/jsk-lib.jar"/>
 				<pathelement location="${river}/lib/jsk-platform.jar"/>
 			</classpath>
@@ -68,6 +70,7 @@
 				<classpath>
 					<pathelement location="${dist}/convoy.jar"/>
 					<pathelement location="${dist}/jdeeco.jar"/>
+					<pathelement location="${lib}/cloner.jar"/>
 					<pathelement location="${river}/lib/jsk-lib.jar"/>
 					<pathelement location="${river}/lib/jsk-platform.jar"/>
 				</classpath>

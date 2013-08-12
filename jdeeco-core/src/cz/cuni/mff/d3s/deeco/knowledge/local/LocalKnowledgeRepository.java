@@ -22,6 +22,8 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.LockSupport;
 import java.util.concurrent.locks.ReentrantLock;
 
+import com.rits.cloning.Cloner;
+
 import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionAccessError;
 import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionUnavailableEntry;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
@@ -43,8 +45,10 @@ import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
  */
 public class LocalKnowledgeRepository extends KnowledgeRepository {
 
-	final ReentrantLock lock = new ReentrantLock();
-	final HashMap<String, List<Object>> ts = new HashMap<String, List<Object>>();
+	protected final ReentrantLock lock = new ReentrantLock();
+	protected final HashMap<String, List<Object>> ts = new HashMap<String, List<Object>>();
+	
+	private final Cloner cloner = new Cloner();
 
 	public LocalKnowledgeRepository() {
 		// JPF Optimization - class initialization if lock is used causes state
@@ -79,7 +83,7 @@ public class LocalKnowledgeRepository extends KnowledgeRepository {
 					+ " is not in the local knowledge repository.");
 		}
 
-		vals = (List<Object>) DeepCopy.copy(vals);
+		vals = cloner.deepClone(vals);
 		return vals.toArray();
 	}
 
@@ -94,7 +98,7 @@ public class LocalKnowledgeRepository extends KnowledgeRepository {
 			ts.put(entryKey, vals);
 		}
 
-		vals.add(DeepCopy.copy(value));
+		vals.add(cloner.deepClone(value));
 	}
 
 	@Override
@@ -112,7 +116,7 @@ public class LocalKnowledgeRepository extends KnowledgeRepository {
 			ts.remove(entryKey);
 		}
 
-		vals = (List<Object>) DeepCopy.copy(vals);
+		vals = cloner.deepClone(vals);
 		return vals.toArray();
 	}
 

@@ -14,16 +14,19 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 
 public class MultithreadedScheduler extends Scheduler {
-	private Map<SchedulableProcess, ScheduledExecutorService> threads;
+	
+	public static final int THREAD_NUMBER = 10;
+	
+	private ScheduledExecutorService threads;
 
 	public MultithreadedScheduler() {
 		super();
-		threads = new HashMap<SchedulableProcess, ScheduledExecutorService>();
 	}
 
 	@Override
 	public synchronized void start() {
 		if (!running) {
+			threads = Executors.newScheduledThreadPool(THREAD_NUMBER);
 			for (SchedulableProcess sp : periodicProcesses) {
 				scheduleProcessForExecution(sp);
 			}
@@ -44,9 +47,7 @@ public class MultithreadedScheduler extends Scheduler {
 	@Override
 	public synchronized void stop() {
 		if (running) {
-			for (SchedulableProcess sp : periodicProcesses) {
-				threads.get(sp).shutdown();
-			}
+			threads.shutdown();
 			List<KnowledgeManager> kms = new LinkedList<KnowledgeManager>();
 			for (TriggeredSchedulableProcess tsp : triggeredProcesses) {
 				if (!kms.contains(tsp.getKnowledgeManager()))
@@ -55,17 +56,16 @@ public class MultithreadedScheduler extends Scheduler {
 			for (KnowledgeManager km : kms) {
 				km.setListenersActive(false);
 			}
+			threads = null;
 			running = false;
 		}
 	}
 
 	@Override
 	protected synchronized void scheduleProcessForExecution(SchedulableProcess process) {
-		ScheduledExecutorService ses = Executors.newScheduledThreadPool(1);
-		ses.scheduleAtFixedRate(new PeriodicProcessThread(process), 0,
+		threads.scheduleAtFixedRate(new PeriodicProcessThread(process), 0,
 				((ProcessPeriodicSchedule) process.scheduling).interval,
 				TimeUnit.MILLISECONDS);
-		threads.put(process, ses);
 	}
 
 	static class PeriodicProcessThread implements Runnable {

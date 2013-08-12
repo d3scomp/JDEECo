@@ -109,5 +109,9 @@
 			<id>maven-eclipse</id>
 			<url>http://maven.eclipse.org/nexus/content/repositories/testing</url>
 		</repository>
+		<repository>
+                <id>sonatype.releases</id>
+                <url>http://oss.sonatype.org/content/repositories/releases/</url>
+        </repository>
 	</repositories>
 </project>

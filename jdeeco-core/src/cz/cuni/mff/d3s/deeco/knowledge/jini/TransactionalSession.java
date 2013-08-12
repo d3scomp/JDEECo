@@ -19,6 +19,7 @@ import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionFactory;
 import net.jini.core.transaction.server.TransactionManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeChangeCollector;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeRepository;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 
@@ -28,7 +29,7 @@ import cz.cuni.mff.d3s.deeco.logging.Log;
  * @author Michal Kit
  * 
  */
-public class TransactionalSession implements ISession {
+public class TransactionalSession extends KnowledgeChangeCollector {
 	protected final static Long DEFAULT_TRANSACTION_TIMEOUT = 1500L; // .5 sec
 	protected final static int MAX_REPETITIONS = 3;
 	
@@ -38,7 +39,6 @@ public class TransactionalSession implements ISession {
 	private Transaction tx;
 	private boolean succeeded = false;
 	private int count = MAX_REPETITIONS;
-	private ChangeNotifier cn = null;
 	
 
 	/*
@@ -66,8 +66,7 @@ public class TransactionalSession implements ISession {
 		if (tx != null)
 			try {
 				count--;
-				if (cn != null)
-					cn.notifyAboutChanges(this);
+				notifyAboutKnowledgeChange();
 				tx.commit();
 				tx = null;
 				succeeded = true;
@@ -123,13 +122,7 @@ public class TransactionalSession implements ISession {
 	public boolean hasSucceeded() {
 		return succeeded;
 	}
-	
-	public void propertyChanged(String knowledgePath, KnowledgeRepository kr) {
-		if (cn == null) {
-			cn = new ChangeNotifier(kr);
-		}
-		cn.knowledgeWritten(knowledgePath);
-	}
+
 	
 	/**
 	 * Returns transaction instance retrieved from the transaction manager.
