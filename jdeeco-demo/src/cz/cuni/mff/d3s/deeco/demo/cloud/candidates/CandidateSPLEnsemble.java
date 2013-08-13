@@ -13,8 +13,8 @@ import cz.cuni.mff.d3s.deeco.annotations.Selector;
 import cz.cuni.mff.d3s.deeco.ensemble.Ensemble;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 import cz.cuni.mff.d3s.spl.core.Data;
-import cz.cuni.mff.d3s.spl.core.Formula;
-import cz.cuni.mff.d3s.spl.core.impl.FormulaFactory;
+import cz.cuni.mff.d3s.spl.core.StatisticSnapshot;
+import cz.cuni.mff.d3s.spl.stat.MeanSorter;
 
 public class CandidateSPLEnsemble extends Ensemble {
 	private static final long serialVersionUID = 1L;
@@ -34,13 +34,13 @@ public class CandidateSPLEnsemble extends Ensemble {
 			List<String> bestCdIds = new ArrayList<String>();
 			List<String> ids = new ArrayList<>(cLatencies.keySet());
 			List<? extends Data> data = new ArrayList<>(cLatencies.values());
-			Formula<List<Integer>> sortedIndexesFormula = FormulaFactory.createIndexSortFormula(ids);
-			// binds each latency data source to the component id variable
-			for (int i = 0; i < ids.size(); i++){
-				sortedIndexesFormula.bind(ids.get(i), data.get(i));
+			// retrieves all snapshots
+			List<StatisticSnapshot> snapshots = new ArrayList<StatisticSnapshot> ();
+			for (Data d : data){
+				snapshots.add(d.getStatisticSnapshot());
 			}
 			// retrieves the indexes of the component ids from the sorting of latency data sources
-			List<Integer> sortedIndexes = sortedIndexesFormula.evaluate();	
+			List<Integer> sortedIndexes = MeanSorter.sort(snapshots);	
 			// if the null hypothesis has been checked successfully
 			if (sortedIndexes != null){
 				// gets the component ids from the indexes
