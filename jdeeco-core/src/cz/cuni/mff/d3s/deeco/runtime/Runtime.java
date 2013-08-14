@@ -88,6 +88,11 @@ public class Runtime implements IRuntime {
         this.km.setRuntime(this);
 		this.scheduler = scheduler;
 	}
+	
+	@Override
+	public long getTime() {
+		return scheduler.getTime();
+	}
 
 	/*
 	 * (non-Javadoc)

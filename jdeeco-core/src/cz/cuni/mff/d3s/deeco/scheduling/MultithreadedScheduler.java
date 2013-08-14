@@ -22,6 +22,11 @@ public class MultithreadedScheduler extends Scheduler {
 	public MultithreadedScheduler() {
 		super();
 	}
+	
+	@Override
+	public long getTime() {
+		return System.currentTimeMillis();
+	}
 
 	@Override
 	public synchronized void start() {

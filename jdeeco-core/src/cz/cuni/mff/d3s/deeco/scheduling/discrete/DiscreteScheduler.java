@@ -101,6 +101,11 @@ public class DiscreteScheduler implements IScheduler {
 			discreteSchedulerThread.start();
 		}
 	}
+	
+	@Override
+	public long getTime() {
+		return virtualTime;
+	}
 
 	@Override
 	public void stop() {

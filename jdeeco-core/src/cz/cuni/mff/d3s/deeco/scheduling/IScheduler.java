@@ -36,6 +36,8 @@ public interface IScheduler {
 	
 	public List<SchedulableProcess> getPeriodicProcesses();
 	
+	public long getTime();
+	
 	public void clearAll();
 
 	public void start();

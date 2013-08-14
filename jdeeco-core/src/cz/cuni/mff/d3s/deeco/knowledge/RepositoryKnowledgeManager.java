@@ -286,7 +286,7 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 				localSession.cancel();
 			throw new KMAccessException(kre.getMessage());
 		} catch (Exception e) {
-			Log.e("", e);
+			Log.e(knowledgePath, e);
 			localSession.cancel();
 			return null;
 		}
@@ -350,9 +350,11 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 						&& !Arrays.deepEquals(oldStructure, newStructure)) {
 					kr.take(structurePath, session);
 					String tempPath;
-					List<?> nsList = Arrays.asList(newStructure);
+					List<?> nsList = null;
+					if (newStructure != null)
+						nsList = Arrays.asList(newStructure);
 					for (Object s : oldStructure) {
-						if (nsList.contains(s))
+						if (nsList != null && nsList.contains(s))
 							continue;
 						tempPath = KnowledgePathHelper.appendToRoot(
 								knowledgePath, (String) s);
@@ -364,13 +366,13 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 									"Knowledge repository error!");
 						}
 					}
-					if (store)
+					if (store && newStructure != null)
 						kr.put(structurePath, newStructure, session);
 				}
-			} else if (store)
+			} else if (store && newStructure != null)
 				kr.put(structurePath, newStructure, session);
 		} catch (KRExceptionUnavailableEntry uee) {
-			if (store)
+			if (store && newStructure != null)
 				kr.put(structurePath, newStructure, session);
 		}
 		return newStructure;

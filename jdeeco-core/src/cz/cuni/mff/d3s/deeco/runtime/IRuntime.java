@@ -56,6 +56,13 @@ public interface IRuntime extends IEnsembleComponentInformer {
 	 */
 	public void registerComponentsAndEnsembles(
 			DEECoObjectProvider provider);
+	
+	/**
+	 * Returns current time.
+	 * 
+	 * @return
+	 */
+	public long getTime();
 
 	/**
 	 * Checks whether the runtime is currently scheduling registered processes.

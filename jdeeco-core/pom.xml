@@ -15,6 +15,7 @@
 		<lib>${dist}/lib</lib>
 		<bcelJar>bcel.jar</bcelJar>
 		<clonerJar>cloner.jar</clonerJar>
+		<objenesisJar>objenesis.jar</objenesisJar>
 	</properties>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
@@ -67,6 +68,13 @@
 									<artifactId>cloning</artifactId>
 									<version>1.9.0</version>
 									<destFileName>${clonerJar}</destFileName>
+									<outputDirectory>${lib}</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.objenesis</groupId>
+									<artifactId>objenesis</artifactId>
+									<version>1.2</version>
+									<destFileName>${objenesisJar}</destFileName>
 									<outputDirectory>${lib}</outputDirectory>
 								</artifactItem>
 							</artifactItems>
@@ -135,6 +143,12 @@
 			<groupId>uk.com.robust-it</groupId>
 			<artifactId>cloning</artifactId>
 			<version>1.9.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.objenesis</groupId>
+			<artifactId>objenesis</artifactId>
+			<version>1.2</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

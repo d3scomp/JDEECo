@@ -14,9 +14,9 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 /**
  * Special scheduler for testing via JPF.
  * 
- * Each task has a separate thread and is executed repeatedly.
- * Timing is ignored (due to GC - see comments in the code).
- * We limit the number of executed periods by 2*P_max, where P_max is the longest period.
+ * Each task has a separate thread and is executed repeatedly. Timing is ignored
+ * (due to GC - see comments in the code). We limit the number of executed
+ * periods by 2*P_max, where P_max is the longest period.
  */
 public class MultithreadedSchedulerJPF extends Scheduler {
 
@@ -29,19 +29,24 @@ public class MultithreadedSchedulerJPF extends Scheduler {
 	long lastThreadID = -1;
 	int lastConsecutiveRuns = 0;
 
-
-	
-	public MultithreadedSchedulerJPF() {
-		this(0,0);
+	@Override
+	public long getTime() {
+		return System.currentTimeMillis();
 	}
-	
-	public MultithreadedSchedulerJPF(int maxHyperPeriodIterations, int maxConsecutiveThreadRuns) {
+
+	public MultithreadedSchedulerJPF() {
+		this(0, 0);
+	}
+
+	public MultithreadedSchedulerJPF(int maxHyperPeriodIterations,
+			int maxConsecutiveThreadRuns) {
 		super();
 		this.threads = new HashSet<Thread>();
 		this.maxHyperPeriodIterations = maxHyperPeriodIterations;
 		this.maxConsecutiveThreadRuns = maxConsecutiveThreadRuns;
 
-		// JPF optimization -> earlier class loading via a clinit call (in the single threaded part)
+		// JPF optimization -> earlier class loading via a clinit call (in the
+		// single threaded part)
 		// reduces the state space
 		@SuppressWarnings("unused")
 		ETriggerType e = ETriggerType.COORDINATOR;
@@ -50,36 +55,43 @@ public class MultithreadedSchedulerJPF extends Scheduler {
 	@Override
 	public synchronized void start() {
 
-		// get the longest period (P_max)	
+		// get the longest period (P_max)
 		long maxPeriod = 0;
 		for (SchedulableProcess sp : periodicProcesses) {
 			long spPeriod = ((ProcessPeriodicSchedule) sp.scheduling).interval;
-			if (spPeriod > maxPeriod) maxPeriod = spPeriod;
+			if (spPeriod > maxPeriod)
+				maxPeriod = spPeriod;
 		}
 
-		//System.out.println("[DEBUG] max period = " + maxPeriod);
+		// System.out.println("[DEBUG] max period = " + maxPeriod);
 
 		if (!running) {
-			// let every process run for the number of times its period P fits into maxPeriodIterations*P_max
+			// let every process run for the number of times its period P fits
+			// into maxPeriodIterations*P_max
 			for (SchedulableProcess sp : periodicProcesses) {
-				//long spPeriod = ((ProcessPeriodicSchedule) sp.scheduling).interval;
-				long repeatCount = maxHyperPeriodIterations;//(maxHyperPeriodIterations*maxPeriod) / spPeriod + 1;
+				// long spPeriod = ((ProcessPeriodicSchedule)
+				// sp.scheduling).interval;
+				long repeatCount = maxHyperPeriodIterations;// (maxHyperPeriodIterations*maxPeriod)
+															// / spPeriod + 1;
 
-				//System.out.println("[DEBUG] period = " + spPeriod + ", repeat count = " + repeatCount);
+				// System.out.println("[DEBUG] period = " + spPeriod +
+				// ", repeat count = " + repeatCount);
 
 				startPeriodicProcess(sp, repeatCount);
 			}
 			List<KnowledgeManager> kms = new LinkedList<KnowledgeManager>();
 			for (TriggeredSchedulableProcess tsp : triggeredProcesses) {
 				tsp.registerListener();
-				if (!kms.contains(tsp.getKnowledgeManager())) kms.add(tsp.getKnowledgeManager());
+				if (!kms.contains(tsp.getKnowledgeManager()))
+					kms.add(tsp.getKnowledgeManager());
 			}
 			for (KnowledgeManager km : kms) {
 				km.setListenersActive(true);
 			}
 			running = true;
 
-			Thread.yield(); // break the transition so that (periodic) processes can be scheduled and executed.
+			Thread.yield(); // break the transition so that (periodic) processes
+							// can be scheduled and executed.
 		}
 	}
 
@@ -91,7 +103,8 @@ public class MultithreadedSchedulerJPF extends Scheduler {
 			}
 			List<KnowledgeManager> kms = new LinkedList<KnowledgeManager>();
 			for (TriggeredSchedulableProcess tsp : triggeredProcesses) {
-				if (!kms.contains(tsp.getKnowledgeManager())) kms.add(tsp.getKnowledgeManager());
+				if (!kms.contains(tsp.getKnowledgeManager()))
+					kms.add(tsp.getKnowledgeManager());
 			}
 			for (KnowledgeManager km : kms) {
 				km.setListenersActive(false);
@@ -99,14 +112,16 @@ public class MultithreadedSchedulerJPF extends Scheduler {
 			running = false;
 		}
 	}
-	
+
 	@Override
 	protected void scheduleProcessForExecution(SchedulableProcess process) {
 		startPeriodicProcess(process, 0);
 	}
 
-	private void startPeriodicProcess(SchedulableProcess process, long repeatCount) {
-		// note that period is intentionally ignored because we just need to capture relevant thread interleavings
+	private void startPeriodicProcess(SchedulableProcess process,
+			long repeatCount) {
+		// note that period is intentionally ignored because we just need to
+		// capture relevant thread interleavings
 		Thread t = new Thread(new PeriodicProcessRunner(process, repeatCount));
 		threads.add(t);
 		t.start();
@@ -125,29 +140,32 @@ public class MultithreadedSchedulerJPF extends Scheduler {
 		@Override
 		public void run() {
 			long count = 0;
-			while ( repeatCount == 0 || ((count < repeatCount) && (!Thread.interrupted()))) {
+			while (repeatCount == 0
+					|| ((count < repeatCount) && (!Thread.interrupted()))) {
 
 				long curThID = Thread.currentThread().getId();
 
-				if (curThID != lastThreadID)
-				{
+				if (curThID != lastThreadID) {
 					lastThreadID = curThID;
 					lastConsecutiveRuns = 1;
-				}
-				else
-				{
-					// TODO: update it so that there is some time budget for a thread to 
-					// execute and all threads have to spent all the potential of their 
+				} else {
+					// TODO: update it so that there is some time budget for a
+					// thread to
+					// execute and all threads have to spent all the potential
+					// of their
 					// budget before scheduling threads again
-					// so that we don't have situations like 1,2,1,2,1,2,1,2, where 3 does not get scheduled at all
+					// so that we don't have situations like 1,2,1,2,1,2,1,2,
+					// where 3 does not get scheduled at all
 					lastConsecutiveRuns++;
-					if (lastConsecutiveRuns > maxConsecutiveThreadRuns) Verify.ignoreIf(true);
+					if (lastConsecutiveRuns > maxConsecutiveThreadRuns)
+						Verify.ignoreIf(true);
 				}
 
 				try {
 					process.invoke();
 				} catch (Exception e) {
-					System.out.println("Process scheduled exception: " + e.getMessage());
+					System.out.println("Process scheduled exception: "
+							+ e.getMessage());
 					e.printStackTrace();
 				}
 
