@@ -3,12 +3,12 @@
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="runtimemodel" nsURI="http://runtimemetadata/1.0" nsPrefix="cz.cuni.mff.d3s.deeco.core.model.runtime">
   <eClassifiers xsi:type="ecore:EClass" name="Component">
     <eStructuralFeatures xsi:type="ecore:EReference" name="processes" upperBound="-1"
-        eType="#//Process" containment="true" eOpposite="#//Process/component"/>
+        eType="#//ComponentProcess" containment="true" eOpposite="#//ComponentProcess/component"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="KnowledgeType" abstract="true"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Process" eSuperTypes="#//Invocable">
+  <eClassifiers xsi:type="ecore:EClass" name="ComponentProcess" eSuperTypes="#//Invocable">
     <eStructuralFeatures xsi:type="ecore:EReference" name="component" lowerBound="1"
         eType="#//Component" eOpposite="#//Component/processes"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="schedule" lowerBound="1"
@@ -62,19 +62,19 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Ensemble">
     <eStructuralFeatures xsi:type="ecore:EReference" name="membership" lowerBound="1"
-        eType="#//MembershipCondition" containment="true" eOpposite="#//MembershipCondition/ensemble"/>
+        eType="#//Condition" containment="true" eOpposite="#//Condition/ensemble"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="knowledgeExchange" lowerBound="1"
-        eType="#//KnowledgeExchange" containment="true" eOpposite="#//KnowledgeExchange/ensemble"/>
+        eType="#//Exchange" containment="true" eOpposite="#//Exchange/ensemble"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="schedule" lowerBound="1"
         eType="#//Schedule" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="MembershipCondition" eSuperTypes="#//Invocable">
+  <eClassifiers xsi:type="ecore:EClass" name="Condition" eSuperTypes="#//Invocable">
     <eStructuralFeatures xsi:type="ecore:EReference" name="ensemble" lowerBound="1"
         eType="#//Ensemble" eOpposite="#//Ensemble/membership"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="KnowledgeExchange" eSuperTypes="#//Invocable">
+  <eClassifiers xsi:type="ecore:EClass" name="Exchange" eSuperTypes="#//Invocable">
     <eStructuralFeatures xsi:type="ecore:EReference" name="ensemble" lowerBound="1"
         eType="#//Ensemble" eOpposite="#//Ensemble/knowledgeExchange"/>
   </eClassifiers>
@@ -98,6 +98,8 @@
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="component" lowerBound="1"
         eType="#//Component"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lockingMode" lowerBound="1"
+        eType="#//LockingMode"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="ParameterDirection">
     <eLiterals name="IN"/>
@@ -117,5 +119,13 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="isLocal" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="type" lowerBound="1" eType="#//KnowledgeType"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="LockingMode">
+    <eLiterals name="WEAK"/>
+    <eLiterals name="STRONG" value="1"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="OutWrapperValueType" eSuperTypes="#//KnowledgeType">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="wrappedType" lowerBound="1"
+        eType="#//KnowledgeType"/>
   </eClassifiers>
 </ecore:EPackage>
