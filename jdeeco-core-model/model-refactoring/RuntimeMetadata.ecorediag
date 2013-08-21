@@ -27,6 +27,10 @@
   <children xmi:type="notation:Node" xmi:id="_Gw-2MNJ0EeK5vfh7vJCPkA" type="1001">
     <children xmi:type="notation:Node" xmi:id="_GxIAINJ0EeK5vfh7vJCPkA" type="4001"/>
     <children xmi:type="notation:Node" xmi:id="_GxIAIdJ0EeK5vfh7vJCPkA" type="5001">
+      <children xmi:type="notation:Node" xmi:id="_m8f44ApCEeOa5-Oe2daTNw" type="2001">
+        <element xmi:type="ecore:EAttribute" href="RuntimeMetadata.ecore#//KnowledgeType/clazz"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_m8f44QpCEeOa5-Oe2daTNw"/>
+      </children>
       <styles xmi:type="notation:DrawerStyle" xmi:id="_GxIAItJ0EeK5vfh7vJCPkA"/>
       <styles xmi:type="notation:SortingStyle" xmi:id="_GxIAI9J0EeK5vfh7vJCPkA"/>
       <styles xmi:type="notation:FilteringStyle" xmi:id="_GxIAJNJ0EeK5vfh7vJCPkA"/>
@@ -75,10 +79,6 @@
   <children xmi:type="notation:Node" xmi:id="_-0PhwNJ2EeK5vfh7vJCPkA" type="1001">
     <children xmi:type="notation:Node" xmi:id="_-0Phw9J2EeK5vfh7vJCPkA" type="4001"/>
     <children xmi:type="notation:Node" xmi:id="_-0PhxNJ2EeK5vfh7vJCPkA" type="5001">
-      <children xmi:type="notation:Node" xmi:id="_iscNMPkQEeKAScggIIlt-Q" type="2001">
-        <element xmi:type="ecore:EAttribute" href="RuntimeMetadata.ecore#//StructuredKnowledgeValueType/clazz"/>
-        <layoutConstraint xmi:type="notation:Location" xmi:id="_iscNMfkQEeKAScggIIlt-Q"/>
-      </children>
       <styles xmi:type="notation:DrawerStyle" xmi:id="_-0PhxdJ2EeK5vfh7vJCPkA"/>
       <styles xmi:type="notation:SortingStyle" xmi:id="_-0PhxtJ2EeK5vfh7vJCPkA"/>
       <styles xmi:type="notation:FilteringStyle" xmi:id="_-0Phx9J2EeK5vfh7vJCPkA"/>
@@ -127,10 +127,6 @@
   <children xmi:type="notation:Node" xmi:id="_sgC8MNJ3EeK5vfh7vJCPkA" type="1001">
     <children xmi:type="notation:Node" xmi:id="_sgC8M9J3EeK5vfh7vJCPkA" type="4001"/>
     <children xmi:type="notation:Node" xmi:id="_sgC8NNJ3EeK5vfh7vJCPkA" type="5001">
-      <children xmi:type="notation:Node" xmi:id="_4xfnENJ0EeK5vfh7vJCPkA" type="2001">
-        <element xmi:type="ecore:EAttribute" href="RuntimeMetadata.ecore#//UnstructuredValueType/clazz"/>
-        <layoutConstraint xmi:type="notation:Location" xmi:id="_4xfnEdJ0EeK5vfh7vJCPkA"/>
-      </children>
       <styles xmi:type="notation:DrawerStyle" xmi:id="_sgC8NdJ3EeK5vfh7vJCPkA"/>
       <styles xmi:type="notation:SortingStyle" xmi:id="_sgC8NtJ3EeK5vfh7vJCPkA"/>
       <styles xmi:type="notation:FilteringStyle" xmi:id="_sgC8N9J3EeK5vfh7vJCPkA"/>
@@ -857,15 +853,16 @@
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_60JMAPkbEeKAScggIIlt-Q" type="3002" source="_-0PhwNJ2EeK5vfh7vJCPkA" target="_z5siYPkbEeKAScggIIlt-Q">
     <children xmi:type="notation:Node" xmi:id="_60JzEPkbEeKAScggIIlt-Q" type="4011">
-      <layoutConstraint xmi:type="notation:Location" xmi:id="_60JzEfkbEeKAScggIIlt-Q" x="-10" y="-10"/>
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_60JzEfkbEeKAScggIIlt-Q" x="-15" y="-29"/>
     </children>
     <children xmi:type="notation:Node" xmi:id="_60JzEvkbEeKAScggIIlt-Q" type="4012">
-      <layoutConstraint xmi:type="notation:Location" xmi:id="_60JzE_kbEeKAScggIIlt-Q" x="10" y="10"/>
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_60JzE_kbEeKAScggIIlt-Q" x="-5" y="17"/>
     </children>
     <styles xmi:type="notation:ConnectorStyle" xmi:id="_60JMAfkbEeKAScggIIlt-Q" lineColor="4210752"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_60JMAvkbEeKAScggIIlt-Q" fontColor="4210752" fontName="Segoe UI" fontHeight="10"/>
     <element xmi:type="ecore:EReference" href="RuntimeMetadata.ecore#//StructuredKnowledgeValueType/children"/>
     <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_60JMA_kbEeKAScggIIlt-Q" points="[-3, -18, -13, 84]$[-58, -102, -68, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_vZViUApCEeOa5-Oe2daTNw" id="(0.41228070175438597,0.0)"/>
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_BOziUPkcEeKAScggIIlt-Q" type="3002" source="_z5siYPkbEeKAScggIIlt-Q" target="_Gw-2MNJ0EeK5vfh7vJCPkA">
     <children xmi:type="notation:Node" xmi:id="_BO0JYvkcEeKAScggIIlt-Q" type="4011">
