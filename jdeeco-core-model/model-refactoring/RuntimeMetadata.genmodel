@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
     xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/cz.cuni.mff.d3s.jdeeco.core.model/src" modelPluginID="cz.cuni.mff.d3s.jdeeco.core.model"
-    modelName="Runtimemodel" suppressInterfaces="true" importerID="org.eclipse.emf.importer.ecore"
-    complianceLevel="7.0" copyrightFields="false">
+    modelName="RuntimeMetadata" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="7.0" copyrightFields="false"
+    operationReflection="true" importOrganizing="true">
   <foreignModel>RuntimeMetadata.ecore</foreignModel>
-  <genPackages prefix="Runtimemodel" basePackage="cz.cuni.mff.d3s.jdeeco.core.model"
-      disposableProviderFactory="true" ecorePackage="RuntimeMetadata.ecore#/">
+  <genPackages prefix="Runtimemodel" disposableProviderFactory="true" ecorePackage="RuntimeMetadata.ecore#/">
     <genEnums typeSafeEnumCompatible="false" ecoreEnum="RuntimeMetadata.ecore#//SchedulingType">
       <genEnumLiterals ecoreEnumLiteral="RuntimeMetadata.ecore#//SchedulingType/PERIODIC"/>
       <genEnumLiterals ecoreEnumLiteral="RuntimeMetadata.ecore#//SchedulingType/TRIGGERED"/>
@@ -15,20 +15,25 @@
       <genEnumLiterals ecoreEnumLiteral="RuntimeMetadata.ecore#//ParameterDirection/INOUT"/>
       <genEnumLiterals ecoreEnumLiteral="RuntimeMetadata.ecore#//ParameterDirection/OUT"/>
     </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="RuntimeMetadata.ecore#//LockingMode">
+      <genEnumLiterals ecoreEnumLiteral="RuntimeMetadata.ecore#//LockingMode/WEAK"/>
+      <genEnumLiterals ecoreEnumLiteral="RuntimeMetadata.ecore#//LockingMode/STRONG"/>
+    </genEnums>
     <genDataTypes ecoreDataType="RuntimeMetadata.ecore#//Method"/>
     <genClasses ecoreClass="RuntimeMetadata.ecore#//Component">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//Component/processes"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeMetadata.ecore#//Component/id"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeMetadata.ecore#//Component/name"/>
     </genClasses>
-    <genClasses image="false" ecoreClass="RuntimeMetadata.ecore#//KnowledgeType"/>
-    <genClasses ecoreClass="RuntimeMetadata.ecore#//Process">
-      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//Process/component"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//Process/schedule"/>
+    <genClasses image="false" ecoreClass="RuntimeMetadata.ecore#//KnowledgeType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeMetadata.ecore#//KnowledgeType/clazz"/>
+    </genClasses>
+    <genClasses ecoreClass="RuntimeMetadata.ecore#//ComponentProcess">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//ComponentProcess/component"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//ComponentProcess/schedule"/>
     </genClasses>
     <genClasses image="false" ecoreClass="RuntimeMetadata.ecore#//Schedule"/>
     <genClasses ecoreClass="RuntimeMetadata.ecore#//StructuredKnowledgeValueType">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeMetadata.ecore#//StructuredKnowledgeValueType/clazz"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//StructuredKnowledgeValueType/children"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeMetadata.ecore#//ListValueType">
@@ -37,9 +42,7 @@
     <genClasses ecoreClass="RuntimeMetadata.ecore#//MapValueType">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//MapValueType/valueType"/>
     </genClasses>
-    <genClasses ecoreClass="RuntimeMetadata.ecore#//UnstructuredValueType">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeMetadata.ecore#//UnstructuredValueType/clazz"/>
-    </genClasses>
+    <genClasses ecoreClass="RuntimeMetadata.ecore#//UnstructuredValueType"/>
     <genClasses ecoreClass="RuntimeMetadata.ecore#//Parameter">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//Parameter/type"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeMetadata.ecore#//Parameter/direction"/>
@@ -66,11 +69,11 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//Ensemble/schedule"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeMetadata.ecore#//Ensemble/id"/>
     </genClasses>
-    <genClasses ecoreClass="RuntimeMetadata.ecore#//MembershipCondition">
-      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//MembershipCondition/ensemble"/>
+    <genClasses ecoreClass="RuntimeMetadata.ecore#//Condition">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//Condition/ensemble"/>
     </genClasses>
-    <genClasses ecoreClass="RuntimeMetadata.ecore#//KnowledgeExchange">
-      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//KnowledgeExchange/ensemble"/>
+    <genClasses ecoreClass="RuntimeMetadata.ecore#//Exchange">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//Exchange/ensemble"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeMetadata.ecore#//RuntimeMetadata">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//RuntimeMetadata/ensembles"/>
@@ -85,6 +88,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeMetadata.ecore#//ComponentInstance/id"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeMetadata.ecore#//ComponentInstance/initialKnowledge"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//ComponentInstance/component"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeMetadata.ecore#//ComponentInstance/lockingMode"/>
     </genClasses>
     <genClasses image="false" ecoreClass="RuntimeMetadata.ecore#//PathNode"/>
     <genClasses ecoreClass="RuntimeMetadata.ecore#//PathNodeField">
@@ -97,6 +101,9 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeMetadata.ecore#//NestedKnowledgeDefinition/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeMetadata.ecore#//NestedKnowledgeDefinition/isLocal"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//NestedKnowledgeDefinition/type"/>
+    </genClasses>
+    <genClasses ecoreClass="RuntimeMetadata.ecore#//OutWrapperValueType">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeMetadata.ecore#//OutWrapperValueType/wrappedType"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

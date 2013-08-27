@@ -648,7 +648,7 @@
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_7oxfQPN7EeKGfIUqTb093w" type="3003" source="_GriOINJ3EeK5vfh7vJCPkA" target="_Gw-2MNJ0EeK5vfh7vJCPkA">
     <styles xmi:type="notation:ConnectorStyle" xmi:id="_7oxfQfN7EeKGfIUqTb093w" routing="Rectilinear" lineColor="4210752"/>
-    <styles xmi:type="notation:FontStyle" xmi:id="_7oxfQvN7EeKGfIUqTb093w" fontName="Segoe UI"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_7oxfQvN7EeKGfIUqTb093w" fontName="Segoe UI Light"/>
     <element xsi:nil="true"/>
     <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_7oxfQ_N7EeKGfIUqTb093w" points="[13, -4, -1, 246]$[13, -225, -1, 25]"/>
     <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_7oytYPN7EeKGfIUqTb093w" id="(0.8529411764705882,0.627906976744186)"/>
