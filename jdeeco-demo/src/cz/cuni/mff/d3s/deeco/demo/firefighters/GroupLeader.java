@@ -25,7 +25,7 @@ import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange;
-import cz.cuni.mff.d3s.deeco.knowledge.Component;
+import cz.cuni.mff.d3s.deeco.definitions.ComponentDefinition;
 
 /**
  * Template for "group leaders" (GL).
@@ -37,7 +37,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.Component;
  * @author Ilias Gerostathopoulos
  * 
  */
-public class GroupLeader extends Component {
+public class GroupLeader extends ComponentDefinition {
 
 	private static final long serialVersionUID = -1949643385305038287L;
 
@@ -100,21 +100,20 @@ public class GroupLeader extends Component {
 				FFsInDangerInTeam.add(id);
 			}
 		}
-		/* do not output the members positions for now
-		System.out.println("Positions map holds "
-				+ temperatures.keySet().size() + " items");
-		for (String id : positions.keySet()) {
-			Position pos = positions.get(id);
-			System.out.println("[" + id + ", {" + pos.latitude + ", "
-					+ pos.longitude + "}]");
-		}
-		*/
+		/*
+		 * do not output the members positions for now
+		 * System.out.println("Positions map holds " +
+		 * temperatures.keySet().size() + " items"); for (String id :
+		 * positions.keySet()) { Position pos = positions.get(id);
+		 * System.out.println("[" + id + ", {" + pos.latitude + ", " +
+		 * pos.longitude + "}]"); }
+		 */
 	}
 
 	@Process
 	public static void outputGMsInDanger(
 			@In("isSiteLeader") Boolean isSiteLeader,
-			@TriggerOnChange @In("FFsInDangerInSite")  Map<String, Set<String>> FFsInDangerInSite) {
+			@TriggerOnChange @In("FFsInDangerInSite") Map<String, Set<String>> FFsInDangerInSite) {
 		if (isSiteLeader) {
 			System.out.println("Firefighters in danger: ");
 			int count = 0;

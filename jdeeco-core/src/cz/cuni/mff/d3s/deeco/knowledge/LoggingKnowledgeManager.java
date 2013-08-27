@@ -1,9 +1,8 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
-import cz.cuni.mff.d3s.deeco.invokable.TypeDescription;
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
+import cz.cuni.mff.d3s.deeco.runtime.model.KnowledgeType;
 
 /**
  * Logging version of the KnowledgeManager. Logs each operation executed on the
@@ -31,7 +30,7 @@ public class LoggingKnowledgeManager extends KnowledgeManager {
 
 	@Override
 	public Object getKnowledge(String knowledgePath,
-			TypeDescription expectedType, ISession session) throws KMException {
+			KnowledgeType expectedType, ISession session) throws KMException {
 		Log.d("LoggingKnowledgeManager.getKnowledge(knowledgePath="
 				+ knowledgePath + ", expectedType=" + expectedType
 				+ ", session=" + session + ")");

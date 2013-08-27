@@ -15,18 +15,96 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.knowledge;
 
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionAccessError;
 import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionUnavailableEntry;
-import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
+import cz.cuni.mff.d3s.deeco.logging.Log;
 
 /**
- * An abstract class defining basic operations on the knowledge
- * repository.
+ * An abstract class defining basic operations on the knowledge repository.
  * 
  * @author Michal Kit
  * 
  */
 public abstract class KnowledgeRepository {
+
+	public static final int THREAD_POOL_SIZE = 10;
+
+	private boolean triggeringActive = false;
+	private ExecutorService executor;
+
+	public KnowledgeRepository() {
+		this.executor = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
+	}
+
+	public boolean isTriggeringActive() {
+		return triggeringActive;
+	}
+
+	public void setTriggeringActive(boolean triggeringActive) {
+		this.triggeringActive = triggeringActive;
+	}
+
+	public String notify(String knowledgePath, String lastProcessed,
+			List<IKnowledgeChangeListener> listeners) {
+		String result = null;
+		ISession session = null;
+		try {
+			String stringVersionAndOwner;
+			String[] versionOwner;
+			Object[] tObjects;
+			session = createSession();
+			session.begin();
+			while (session.repeat()) {
+				tObjects = get(knowledgePath, session);
+				stringVersionAndOwner = (String) tObjects[0];
+				versionOwner = extractVersionOwner(stringVersionAndOwner);
+				if (versionOwner != null) {
+					final String version = versionOwner[0];
+					final String owner = versionOwner[1];
+					if (!version.equals(lastProcessed)) {
+						final TriggerType triggerType = getTriggerRecipient(knowledgePath);
+						for (final IKnowledgeChangeListener listener : listeners)
+							executor.submit(new Runnable() {
+								@Override
+								public void run() {
+									listener.knowledgeChanged(owner,
+											triggerType);
+								}
+							});
+						result = version;
+					}
+				}
+				session.end();
+			}
+			return result;
+		} catch (Exception e) {
+			if (session != null)
+				session.cancel();
+			Log.e("Notification exception", e);
+		}
+		return null;
+
+	}
+
+	public static String[] extractVersionOwner(String string) {
+		String[] dString = KnowledgePathHelper.decomposePath(string);
+		if (dString.length == 2) { // correct format
+			return dString;
+		}
+		return null;
+	}
+
+	public static TriggerType getTriggerRecipient(String listenKey) {
+		String[] dString = KnowledgePathHelper.decomposePath(listenKey);
+		if (dString.length > 2) { // correct format
+			return TriggerType.fromString(dString[1]);
+		}
+		return null;
+	}
 
 	/**
 	 * Reads a single entry from the knowledge repository. This method is
@@ -45,7 +123,7 @@ public abstract class KnowledgeRepository {
 	 *             thrown whenever there is a knowledge repository access
 	 *             problem
 	 */
-	public abstract Object [] get(String entryKey, ISession session)
+	public abstract Object[] get(String entryKey, ISession session)
 			throws KRExceptionUnavailableEntry, KRExceptionAccessError;
 
 	/**
@@ -80,40 +158,8 @@ public abstract class KnowledgeRepository {
 	 *             thrown whenever there is a knowledge repository access
 	 *             problem
 	 */
-	public abstract Object [] take(String entryKey, ISession session)
+	public abstract Object[] take(String entryKey, ISession session)
 			throws KRExceptionUnavailableEntry, KRExceptionAccessError;
-	
-	/**
-	 * Register a listener that should be notified by the knowledge repository
-	 * whenever a specified properties are changing.
-	 * 
-	 * @param listener listening object
-	 */
-	public abstract boolean registerListener(IKnowledgeChangeListener listener);
-	
-	/**
-	 * Unregisters knowledge listener that has been registered earlier.
-	 * 
-	 * @param listener listening object
-	 */
-	public abstract boolean unregisterListener(IKnowledgeChangeListener listener);
-	
-	
-	/**
-	 * Switching listening on or off
-	 * Sets wether 
-	 * 
-	 * @param on if true the listening is on otherwise its off.
-	 * 
-	 */
-	public abstract void setListenersActive(boolean on);
-	
-	
-	/**
-	 * Checks if current knowledge change listening is on or off.
-	 * 
-	 */
-	public abstract boolean isListenersActive();
 
 	/**
 	 * Creates a session object, which can be used for all the operations on the
@@ -122,8 +168,7 @@ public abstract class KnowledgeRepository {
 	 * @return session object
 	 */
 	public abstract ISession createSession();
-	
-	
+
 	/**
 	 * Reads a single entry from the knowledge repository.
 	 * 
@@ -137,7 +182,7 @@ public abstract class KnowledgeRepository {
 	 *             thrown whenever there is a knowledge repository access
 	 *             problem
 	 */
-	public Object [] get(String entryKey) throws KRExceptionUnavailableEntry,
+	public Object[] get(String entryKey) throws KRExceptionUnavailableEntry,
 			KRExceptionAccessError {
 		return get(entryKey, null);
 	}
@@ -168,7 +213,11 @@ public abstract class KnowledgeRepository {
 	 *             thrown whenever there is a knowledge repository access
 	 *             problem
 	 */
-	public Object [] take(String entryKey) throws KRExceptionUnavailableEntry, KRExceptionAccessError {
+	public Object[] take(String entryKey) throws KRExceptionUnavailableEntry,
+			KRExceptionAccessError {
 		return take(entryKey, null);
 	}
+
+	public abstract RepositoryChangeNotifier listenForChange(String entryKey)
+			throws KRExceptionAccessError;
 }

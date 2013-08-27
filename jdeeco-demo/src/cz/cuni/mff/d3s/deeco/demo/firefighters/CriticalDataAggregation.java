@@ -23,7 +23,7 @@ import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
 import cz.cuni.mff.d3s.deeco.annotations.Membership;
 import cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange;
-import cz.cuni.mff.d3s.deeco.ensemble.Ensemble;
+import cz.cuni.mff.d3s.deeco.definitions.EnsembleDefinition;
 
 /**
  * Captures the interaction between the Group Leaders and the Site Leader.
@@ -31,7 +31,7 @@ import cz.cuni.mff.d3s.deeco.ensemble.Ensemble;
  * @author Ilias Gerostathopoulos
  * 
  */
-public class CriticalDataAggregation extends Ensemble {
+public class CriticalDataAggregation extends EnsembleDefinition {
 
 	private static final long serialVersionUID = 7576890075702914993L;
 

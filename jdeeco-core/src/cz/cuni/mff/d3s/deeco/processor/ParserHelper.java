@@ -1,21 +1,24 @@
 package cz.cuni.mff.d3s.deeco.processor;
 
+import static cz.cuni.mff.d3s.deeco.processor.AnnotationHelper.getAnnotation;
+import static cz.cuni.mff.d3s.deeco.processor.AnnotationHelper.getAnnotationValue;
+import static cz.cuni.mff.d3s.deeco.processor.ParameterKnowledgeTypeParser.extractKnowledgeType;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.exceptions.ComponentEnsembleParseException;
-import cz.cuni.mff.d3s.deeco.invokable.Parameter;
-import cz.cuni.mff.d3s.deeco.invokable.ParameterizedMethod;
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgePathHelper;
-import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.path.grammar.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.path.grammar.ParseException;
+import cz.cuni.mff.d3s.deeco.path.grammar.PathParser;
+import cz.cuni.mff.d3s.deeco.runtime.model.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.runtime.model.Parameter;
+import cz.cuni.mff.d3s.deeco.runtime.model.ParameterDirection;
 
 /**
  * A helper class used for parsing both component and ensemble definitions.
@@ -42,74 +45,37 @@ public class ParserHelper {
 	 * 
 	 * @see Parameter
 	 */
-	private static List<Parameter> getParameters(Method method,
-			Class<?> annotationClass, String root) throws ParseException,
+	public static List<Parameter> getParameterList(Method method) throws ParseException,
 			ComponentEnsembleParseException {
-		List<Parameter> result = new ArrayList<Parameter>();
+
+		List<Parameter> result = new LinkedList<Parameter>();		
 		Annotation[][] allAnnotations = method.getParameterAnnotations();
 		Type[] parameterTypes = method.getGenericParameterTypes();
-		Annotation currentAnnotation;
-		Parameter currentParameter;
+		KnowledgePath knowledgePath;
+		Annotation annotation;
+		ParameterDirection pDirection;
 		Annotation[] parameterAnnotations;
 
 		for (int i = 0; i < parameterTypes.length; i++) {
 			parameterAnnotations = allAnnotations[i];
-			currentAnnotation = AnnotationHelper.getAnnotation(annotationClass,
-					parameterAnnotations);
-			if (currentAnnotation != null) {
-				currentParameter = parseNamedAnnotation(currentAnnotation,
-						parameterTypes[i], i, root);
-				if (currentParameter != null)
-					result.add(currentParameter);
+			annotation = getAnnotation(In.class, parameterAnnotations);
+			if (annotation == null) {
+				annotation = getAnnotation(Out.class, parameterAnnotations);
+				if (annotation == null) {
+					annotation = getAnnotation(InOut.class, parameterAnnotations);
+					if (annotation == null)
+						return null;
+					else
+						pDirection = ParameterDirection.INOUT;
+				} else {
+					pDirection = ParameterDirection.OUT;
+				}
+			} else {
+				pDirection = ParameterDirection.IN;
 			}
+			knowledgePath = PathParser.parse((String) getAnnotationValue(annotation));
+			result.add(new Parameter(pDirection, knowledgePath, extractKnowledgeType(parameterTypes[i])));
 		}
 		return result;
 	}
-
-	private static Parameter parseNamedAnnotation(Annotation annotation,
-			Type type, int index, String root) throws ParseException,
-			ComponentEnsembleParseException {
-
-		String path = (String) AnnotationHelper.getAnnotationValue(annotation);
-
-		// Adding prefix (the Component name which holds the "root") to path
-		// from annotations
-		path = KnowledgePathHelper.prependToRoot(path, root);
-
-		KnowledgePath kPath = new KnowledgePath(path);
-
-		return new Parameter(kPath, type, index);
-	}
-
-	/**
-	 * Extract an instance of ParameterizedMethod from the Java method instance.
-	 * If the method does not represent a DEECo annotated method or parsing
-	 * exception occurs return null.
-	 */
-	public static ParameterizedMethod extractParametrizedMethod(Method method) {
-		return extractParametrizedMethod(method, null);
-	}
-
-	/**
-	 * Extract an instance of ParameterizedMethod from the Java method instance
-	 * for the given component id (root). If the method does not represent a
-	 * DEECo annotated method or parsing exception occurs return null.
-	 */
-	public static ParameterizedMethod extractParametrizedMethod(Method method,
-			String root) {
-		try {
-			if (method != null) {
-				List<Parameter> in = getParameters(method, In.class, root);
-				List<Parameter> out = getParameters(method, Out.class, root);
-				List<Parameter> inOut = getParameters(method, InOut.class, root);
-				return new ParameterizedMethod(in, inOut, out, method);
-			}
-		} catch (ComponentEnsembleParseException pe) {
-			Log.e("Ensemble Parsing: ", pe);
-		} catch (ParseException pe) {
-			Log.e("Ensemble Parsing: ", pe);
-		}
-		return null;
-	}
-
 }

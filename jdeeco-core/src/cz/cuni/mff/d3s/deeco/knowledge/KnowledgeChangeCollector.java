@@ -1,6 +1,5 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
-import cz.cuni.mff.d3s.deeco.knowledge.jini.ChangeNotifier;
 
 public abstract class KnowledgeChangeCollector implements ISession {
 	

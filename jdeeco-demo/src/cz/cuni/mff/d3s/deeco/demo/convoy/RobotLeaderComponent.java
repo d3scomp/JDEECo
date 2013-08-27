@@ -22,11 +22,11 @@ import java.util.List;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
-import cz.cuni.mff.d3s.deeco.knowledge.Component;
+import cz.cuni.mff.d3s.deeco.definitions.ComponentDefinition;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 
 
-public class RobotLeaderComponent extends Component {
+public class RobotLeaderComponent extends ComponentDefinition {
 
 	public final static long serialVersionUID = 1L;
 	

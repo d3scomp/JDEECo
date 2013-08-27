@@ -22,7 +22,7 @@ import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
 import cz.cuni.mff.d3s.deeco.annotations.Membership;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
-import cz.cuni.mff.d3s.deeco.ensemble.Ensemble;
+import cz.cuni.mff.d3s.deeco.definitions.EnsembleDefinition;
 
 /**
  * Captures the interaction between the Group Members and the Group Leaders.
@@ -30,7 +30,7 @@ import cz.cuni.mff.d3s.deeco.ensemble.Ensemble;
  * @author Ilias Gerostathopoulos
  * 
  */
-public class SensorDataAggregation extends Ensemble {
+public class SensorDataAggregation extends EnsembleDefinition {
 
 	private static final long serialVersionUID = 5991804902054860542L;
 

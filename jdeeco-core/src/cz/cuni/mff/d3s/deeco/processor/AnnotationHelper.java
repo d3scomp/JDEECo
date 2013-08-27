@@ -45,24 +45,12 @@ public class AnnotationHelper {
 	public static Annotation getAnnotation(Class<?> annotationClass,
 			Annotation[] annotations) {
 		for (Annotation a : annotations) {
-			if (annotationClass.isInstance(a)) {
+			if (annotationClass.isInstance(a))
 				return a;
-			}
 		}
 		return null;
 	}
 	
-	public static List<Integer> getAnnotationOuterIndecies(Class<?> annotationClass, Annotation [][] annotations) {
-		List<Integer> result = new ArrayList<Integer>();
-		for (int i = 0; i < annotations.length; i++) {
-			for (int k = 0; k < annotations[i].length; k++) {
-				if (annotationClass.isInstance(annotations[i][k]))
-					result.add(i);
-			}
-		}
-		return result;
-	}
-
 	/**
 	 * Returns list of methods in the class definition which are annotated with
 	 * the given annotation class.
@@ -86,7 +74,7 @@ public class AnnotationHelper {
 		}
 		return result;
 	}
-
+	
 	/**
 	 * Returns a method in the class definition which is annotated with the
 	 * given annotation class.
@@ -117,5 +105,16 @@ public class AnnotationHelper {
 		IValuedAnnotation valuedAnnotation = (IValuedAnnotation) AnnotationProxy
 				.implement(IValuedAnnotation.class, annotation);
 		return valuedAnnotation.value();
+	}
+	
+	public static List<Integer> getAnnotationIndecies(Class<?> annotationClass, Annotation [][] annotations) {
+		List<Integer> result = new ArrayList<Integer>();
+		for (int i = 0; i < annotations.length; i++) {
+			for (int k = 0; k < annotations[i].length; k++) {
+				if (annotationClass.isInstance(annotations[i][k]))
+					result.add(i);
+			}
+		}
+		return result;
 	}
 }

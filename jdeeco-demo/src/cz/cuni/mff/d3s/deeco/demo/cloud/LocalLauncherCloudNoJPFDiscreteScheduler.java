@@ -1,15 +1,12 @@
 package cz.cuni.mff.d3s.deeco.demo.cloud;
 
-import java.util.Arrays;
-import java.util.List;
-
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.RepositoryKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.local.LocalKnowledgeRepository;
-import cz.cuni.mff.d3s.deeco.provider.DEECoObjectProvider;
+import cz.cuni.mff.d3s.deeco.provider.InstanceRuntimeMetadataProvider;
 import cz.cuni.mff.d3s.deeco.runtime.Runtime;
-import cz.cuni.mff.d3s.deeco.scheduling.IScheduler;
-import cz.cuni.mff.d3s.deeco.scheduling.discrete.DiscreteScheduler;
+import cz.cuni.mff.d3s.deeco.scheduling.DiscreteScheduler;
+import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
 
 /**
  * Main class for launching the application.
@@ -23,22 +20,17 @@ public class LocalLauncherCloudNoJPFDiscreteScheduler {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		List<Class<?>> components = Arrays
-				.asList(new Class<?>[] { NodeB.class, NodeD.class });
-		List<Class<?>> ensembles = Arrays
-				.asList(new Class<?>[] { MigrationEnsemble.class });
 		KnowledgeManager km = new RepositoryKnowledgeManager(
 				new LocalKnowledgeRepository());
-		IScheduler scheduler = new DiscreteScheduler();
-		DEECoObjectProvider dop = new DEECoObjectProvider(
-				components, ensembles);
-		Runtime rt = new Runtime(km, scheduler);
-		rt.registerComponentsAndEnsembles(dop);
+		Scheduler scheduler = new DiscreteScheduler();
+		InstanceRuntimeMetadataProvider provider = new InstanceRuntimeMetadataProvider();
+		provider.fromComponentInstance(new NodeB());
+		provider.fromComponentInstance(new NodeD());
+		provider.fromComponentInstance(new NodeA("NodeA", .5f, 1));
+		provider.fromEnsembleDefinition(MigrationEnsemble.class);
+		Runtime rt = new Runtime(scheduler, km);
+		rt.deploy(provider.getRuntimeMetadata());
 
-		dop = new DEECoObjectProvider();
-		dop.addInitialKnowledge(new NodeA("NodeA", .5f, 1));
-		rt.registerComponentsAndEnsembles(dop);
-
-		rt.startRuntime();
+		rt.run();
 	}
 }

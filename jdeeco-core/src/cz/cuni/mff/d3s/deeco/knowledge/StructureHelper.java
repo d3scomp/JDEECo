@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import cz.cuni.mff.d3s.deeco.processor.TypeUtils;
+
 /**
  * Helper clas used by the knowledge manager for getting the knowledge structure
  * description. Description of the knowledge structure is represented by the

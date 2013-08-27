@@ -8,9 +8,9 @@ import java.util.Map;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
-import cz.cuni.mff.d3s.deeco.knowledge.Component;
+import cz.cuni.mff.d3s.deeco.definitions.ComponentDefinition;
 
-public class ListComponent extends Component {
+public class ListComponent extends ComponentDefinition {
 	
 	public final static long serialVersionUID = 1L;
 	

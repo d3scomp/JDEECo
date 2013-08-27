@@ -28,9 +28,13 @@ import cz.cuni.mff.d3s.deeco.exceptions.KMException;
 import cz.cuni.mff.d3s.deeco.exceptions.KMNotExistentException;
 import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionAccessError;
 import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionUnavailableEntry;
-import cz.cuni.mff.d3s.deeco.invokable.TypeDescription;
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
+import cz.cuni.mff.d3s.deeco.processor.TypeUtils;
+import cz.cuni.mff.d3s.deeco.runtime.model.KnowledgeType;
+import cz.cuni.mff.d3s.deeco.runtime.model.ListValueType;
+import cz.cuni.mff.d3s.deeco.runtime.model.MapValueType;
+import cz.cuni.mff.d3s.deeco.runtime.model.OutWrapperValueType;
+import cz.cuni.mff.d3s.deeco.runtime.model.StructuredKnowledgeValueType;
 
 /**
  * KnowledgeManager version using the JavaSpaces implementation for the
@@ -44,6 +48,7 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 	public final static long serialVersionUID = 1L;
 
 	private KnowledgeRepository kr;
+	private Map<String, RepositoryChangeNotifier> repositoryNotifiers;
 
 	public RepositoryKnowledgeManager() {
 		unsetKnowledgeRepository(null);
@@ -51,6 +56,7 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 
 	public RepositoryKnowledgeManager(KnowledgeRepository kr) {
 		this.kr = kr;
+		this.repositoryNotifiers = new HashMap<>();
 	}
 
 	/**
@@ -99,27 +105,28 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * cz.cuni.mff.d3s.deeco.knowledge.IKnowledgeManager#getKnowledge(java.lang
-	 * .String, cz.cuni.mff.d3s.deeco.invokable.TypeDescription,
-	 * cz.cuni.mff.d3s.deeco.knowledge.ISession)
-	 */
-	@Override
-	public Object getKnowledge(String knowledgePath,
-			TypeDescription expectedType, ISession session) throws KMException {
-		Object value = getKnowledge(knowledgePath, session);
-		return getInstance(expectedType, value);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
 	 * cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager#listenForChange(cz.cuni
 	 * .mff.d3s.deeco.scheduling.IKnowledgeChangeListener)
 	 */
 	@Override
 	public boolean registerListener(IKnowledgeChangeListener listener) {
-		return kr.registerListener(listener);
+		if (listener != null) {
+			RepositoryChangeNotifier notifier;
+			for (String kp : listener.getKnowledgePaths()) {
+				notifier = repositoryNotifiers.get(kp);
+				if (notifier == null) {
+					try {
+						notifier = kr.listenForChange(kp);
+					} catch (Exception e) {
+						return false;
+					}
+					repositoryNotifiers.put(kp, notifier);
+				}
+				notifier.addKnowledgeChangeListener(listener);
+			}
+			return true;
+		}
+		return false;
 	}
 
 	/*
@@ -131,12 +138,28 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 	 */
 	@Override
 	public boolean unregisterListener(IKnowledgeChangeListener listener) {
-		return kr.unregisterListener(listener);
+		//TODO
+		return false;
 	}
-
+	
 	@Override
 	public void setListenersActive(boolean on) {
-		kr.setListenersActive(on);
+		kr.setTriggeringActive(on);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * cz.cuni.mff.d3s.deeco.knowledge.IKnowledgeManager#getKnowledge(java.lang
+	 * .String, cz.cuni.mff.d3s.deeco.invokable.TypeDescription,
+	 * cz.cuni.mff.d3s.deeco.knowledge.ISession)
+	 */
+	@Override
+	public Object getKnowledge(String knowledgePath,
+			KnowledgeType expectedType, ISession session) throws KMException {
+		Object value = getKnowledge(knowledgePath, session);
+		return getInstance(expectedType, value);
 	}
 
 	/*
@@ -378,35 +401,32 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 		return newStructure;
 	}
 
-	private Object getInstance(TypeDescription expectedType, Object value)
+	private Object getInstance(KnowledgeType expectedType, Object value)
 			throws KMCastException {
 		try {
 			if (value == null)
 				throw new KMCastException(
 						"Parameter Instantiation Exception: Incompatible types");
-			else if (TypeUtils.isMap(value.getClass())) {
-				if (expectedType.isKnowledge()) {
-					return getKnowledgeInstance(expectedType, value);
-				} else if (expectedType.isMap()) {
-					return getMapInstance(expectedType, value);
-				} else if (expectedType.isList()) {
-					return getListInstance(expectedType, value);
-				} else if (TypeUtils.isInstanceOf(expectedType.clazz, value))
-					return value;
-				else
+			else if (expectedType instanceof OutWrapperValueType) {
+				OutWrapper result = (OutWrapper) ((OutWrapperValueType) expectedType)
+						.getClazz().newInstance();
+				result.value = getInstance(
+						((OutWrapperValueType) expectedType).getWrappedType(),
+						value);
+				return result;
+			} else if (TypeUtils.isMap(value.getClass())) {
+				if (expectedType instanceof StructuredKnowledgeValueType) {
+					return getKnowledgeInstance(
+							(StructuredKnowledgeValueType) expectedType, value);
+				} else if (expectedType instanceof MapValueType) {
+					return getMapInstance((MapValueType) expectedType, value);
+				} else if (expectedType instanceof ListValueType) {
+					return getListInstance((ListValueType) expectedType, value);
+				} else
 					throw new KMCastException(
 							"Parameter Instantiation Exception: Incompatible types");
 			} else {
-				if (expectedType.isOutWrapper()) {
-					if (isMap(value)) // OutWrapper cannot take such structures
-						throw new KMCastException(
-								"Parameter Instantiation Exception: Wrong value for OutWrapper");
-					OutWrapper ow = (OutWrapper) expectedType.newInstance();
-					ow.value = extractValue((Object[]) value);
-					return ow;
-				} else {
-					return extractValue((Object[]) value);
-				}
+				return extractValue((Object[]) value);
 			}
 		} catch (Exception e) {
 			throw new KMCastException("Parameter Instantiation Exception: "
@@ -414,18 +434,19 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 		}
 	}
 
-	private Object getKnowledgeInstance(TypeDescription expectedParamType,
-			Object value) throws KMCastException, InstantiationException,
+	private Object getKnowledgeInstance(
+			StructuredKnowledgeValueType expectedParamType, Object value)
+			throws KMCastException, InstantiationException,
 			IllegalAccessException, IllegalArgumentException {
 		Map<String, ?> mValue;
 		if (!isMap(value))
 			throw new KMCastException(
 					"Parameter Instantiation Exception: Wrong value for Knowledge");
-		Field[] fields = TypeUtils.getClassFields(expectedParamType.clazz);
+		Field[] fields = TypeUtils.getClassFields(expectedParamType.getClazz());
 		if (fields == null)
 			throw new KMCastException(
 					"Parameter Instantiation Exception: Empty structure");
-		Object result = expectedParamType.newInstance();
+		Object result = expectedParamType.getClazz().newInstance();
 		mValue = (Map<String, ?>) value;
 		String fName;
 		for (Field f : fields) {
@@ -433,7 +454,7 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 			if (mValue.containsKey(fName)) {
 				f.set(result,
 						getInstance(
-								expectedParamType.getKnowledgeFieldType(fName),
+								expectedParamType.getChild(fName).getType(),
 								mValue.get(fName)));
 			} else
 				throw new KMCastException(
@@ -442,7 +463,7 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 		return result;
 	}
 
-	private Object getMapInstance(TypeDescription expectedType, Object value)
+	private Object getMapInstance(MapValueType expectedType, Object value)
 			throws KMCastException, InstantiationException,
 			IllegalAccessException {
 		Map<String, ?> mValue;
@@ -451,11 +472,11 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 					"Parameter Instantiation Exception: Wrong value for Map");
 		mValue = (Map<String, ?>) value;
 		Map<String, Object> mResult;
-		if (expectedType.isInterface())
+		if (expectedType.getClazz().isInterface())
 			mResult = new HashMap<String, Object>();
 		else
 			mResult = (Map<String, Object>) expectedType.newInstance();
-		TypeDescription elementType = expectedType.getParametricTypeAt(1);
+		KnowledgeType elementType = expectedType.getValueType();
 		Object element;
 		for (String s : mValue.keySet()) {
 			try {
@@ -467,7 +488,7 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 		return mResult;
 	}
 
-	private Object getListInstance(TypeDescription expectedType, Object value)
+	private Object getListInstance(ListValueType expectedType, Object value)
 			throws KMCastException, InstantiationException,
 			IllegalAccessException {
 		Map<String, ?> mValue;
@@ -476,11 +497,11 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 					"Parameter Instantiation Exception: Wrong value for List");
 		mValue = (Map<String, ?>) value;
 		List<Object> lResult;
-		if (expectedType.isInterface())
+		if (expectedType.getClazz().isInterface())
 			lResult = new ArrayList<Object>();
 		else
 			lResult = (List<Object>) expectedType.newInstance();
-		TypeDescription elementType = expectedType.getParametricTypeAt(0);
+		KnowledgeType elementType = expectedType.getElementType();
 		Object element;
 		String sIndex;
 		for (int i = 0; i < mValue.size(); i++) {

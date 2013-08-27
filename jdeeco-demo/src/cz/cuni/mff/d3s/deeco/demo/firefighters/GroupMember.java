@@ -21,7 +21,7 @@ import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
-import cz.cuni.mff.d3s.deeco.knowledge.Component;
+import cz.cuni.mff.d3s.deeco.definitions.ComponentDefinition;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 
 /**
@@ -32,7 +32,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
  * @author Ilias Gerostathopoulos
  * 
  */
-public class GroupMember extends Component {
+public class GroupMember extends ComponentDefinition {
 
 	private static final long serialVersionUID = 5243757300436836781L;
 

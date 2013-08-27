@@ -15,12 +15,8 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.test.playground;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
-import java.util.Map;
-
-import cz.cuni.mff.d3s.deeco.knowledge.TypeUtils;
 
 public class Test {
 
@@ -39,7 +35,6 @@ public class Test {
 	public static void main(String[] args) {
 		try {
 			Type t = A.class.getField("a").getGenericType();
-			System.out.println(TypeUtils.isGenericType(t));
 		} catch (Exception e) {
 			System.out.println("desdasdfa");
 		}

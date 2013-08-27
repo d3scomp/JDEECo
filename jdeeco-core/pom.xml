@@ -13,7 +13,6 @@
 		<dist>../dist</dist>
 		<coreJar>jdeeco.jar</coreJar>
 		<lib>${dist}/lib</lib>
-		<bcelJar>bcel.jar</bcelJar>
 		<clonerJar>cloner.jar</clonerJar>
 		<objenesisJar>objenesis.jar</objenesisJar>
 	</properties>
@@ -56,13 +55,7 @@
 									<destFileName>${coreJar}</destFileName>
 									<outputDirectory>${dist}</outputDirectory>
 								</artifactItem>
-								<artifactItem>
-									<groupId>cz.cuni.mff.d3s</groupId>
-									<artifactId>cz.cuni.mff.d3s.bcel</artifactId>
-									<version>1.0.0</version>
-									<destFileName>${bcelJar}</destFileName>
-									<outputDirectory>${lib}</outputDirectory>
-								</artifactItem>
+								
 								<artifactItem>
 									<groupId>uk.com.robust-it</groupId>
 									<artifactId>cloning</artifactId>
@@ -133,12 +126,6 @@
 	<dependencies>
 		<!-- dependency> <groupId>org.testng</groupId> <artifactId>testng</artifactId> 
 			<version>6.5.1</version> </dependency -->
-		<dependency>
-			<groupId>cz.cuni.mff.d3s</groupId>
-			<artifactId>cz.cuni.mff.d3s.bcel</artifactId>
-			<version>1.0.0</version>
-			<scope>provided</scope>
-		</dependency>
 		<dependency>
 			<groupId>uk.com.robust-it</groupId>
 			<artifactId>cloning</artifactId>

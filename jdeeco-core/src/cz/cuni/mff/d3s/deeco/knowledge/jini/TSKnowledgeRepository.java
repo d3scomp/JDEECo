@@ -17,10 +17,8 @@ package cz.cuni.mff.d3s.deeco.knowledge.jini;
 
 import java.rmi.RMISecurityManager;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import net.jini.core.lease.Lease;
 import net.jini.core.transaction.Transaction;
@@ -34,8 +32,8 @@ import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeChangeCollector;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgePathHelper;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeRepository;
+import cz.cuni.mff.d3s.deeco.knowledge.RepositoryChangeNotifier;
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
 
 /**
  * Class implementing <code>KnowledgeRepository</code> with use of tuple spaces
@@ -45,17 +43,12 @@ import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
  * 
  */
 public class TSKnowledgeRepository extends KnowledgeRepository {
-
-	private Map<String, TSRemoteEventListener> tsListeners;
-	private boolean triggeringOn;
-
+	
 	public TSKnowledgeRepository() {
 		if (System.getSecurityManager() == null)
 			System.setSecurityManager(new RMISecurityManager());
-		tsListeners = new HashMap<String, TSRemoteEventListener>();
-		triggeringOn = false;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -71,18 +64,10 @@ public class TSKnowledgeRepository extends KnowledgeRepository {
 			JavaSpace05 space = TSUtils.getSpace();
 			Transaction tx = (session != null) ? ((TransactionalSession) session)
 					.getTransaction() : null;
-//			Collection<?> tuples = space.take(Arrays
-//					.asList(new Tuple[] { TSUtils.createTemplate(entryKey) }),
-//					tx, 5, Long.MAX_VALUE);
-//			if (tuples.size() > 0) {
-//				Iterator<?> iterator = tuples.iterator();
-//				for (int i = 0; i < tuples.size(); i++) {
-//					resultList.add(((Tuple)iterator.next()).value);
-//				}
-//			}			
 			Tuple tuple = null;
 			do {
-				tuple = (Tuple) space.takeIfExists(TSUtils.createTemplate(entryKey), tx, Lease.FOREVER);
+				tuple = (Tuple) space.takeIfExists(
+						TSUtils.createTemplate(entryKey), tx, Lease.FOREVER);
 				if (tuple != null)
 					resultList.add(tuple.value);
 				else
@@ -96,7 +81,7 @@ public class TSKnowledgeRepository extends KnowledgeRepository {
 		if (resultList.size() == 0)
 			throw new KRExceptionUnavailableEntry("Entry " + entryKey
 					+ " unavailable!");
-		//LoggerFactory.getLogger().fine("Taking: " + entryKey);
+		// LoggerFactory.getLogger().fine("Taking: " + entryKey);
 		return resultList.toArray();
 	}
 
@@ -131,10 +116,10 @@ public class TSKnowledgeRepository extends KnowledgeRepository {
 		if (resultList.size() == 0)
 			throw new KRExceptionUnavailableEntry("Entry " + entryKey
 					+ " unavailable!");
-		
+
 		return resultList.toArray();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -150,19 +135,19 @@ public class TSKnowledgeRepository extends KnowledgeRepository {
 			Transaction tx = (session != null) ? ((TransactionalSession) session)
 					.getTransaction() : null;
 			space.write(TSUtils.createTuple(entryKey, value), tx, Lease.FOREVER);
-			//LoggerFactory.getLogger().fine("Writing entry: " + entryKey);
+			// LoggerFactory.getLogger().fine("Writing entry: " + entryKey);
 			if (session != null) {
 				KnowledgeChangeCollector kcc = (KnowledgeChangeCollector) session;
 				if (!kcc.isKnowledgeRepositoryRegistered())
 					kcc.registerKnowledgeRepository(this);
 				kcc.knowledgeChanges(entryKey);
-			}	
+			}
 		} catch (Exception e) {
 			throw new KRExceptionAccessError(
 					"TSKnowledgeRepository error when writing property: "
 							+ entryKey + " - " + e.getMessage());
 		}
-		//LoggerFactory.getLogger().fine("Putting: " + entryKey);
+		// LoggerFactory.getLogger().fine("Putting: " + entryKey);
 	}
 
 	/*
@@ -174,50 +159,14 @@ public class TSKnowledgeRepository extends KnowledgeRepository {
 	public ISession createSession() {
 		return new TransactionalSession();
 	}
-	
-	@Override
-	public synchronized void setListenersActive(boolean on) {
-		triggeringOn = on;
-	}
-	
-	@Override
-	public synchronized boolean isListenersActive() {
-		return triggeringOn;
-	}
 
 	@Override
-	public boolean registerListener(IKnowledgeChangeListener kcListener) {
-		if (kcListener != null) {
-			TSRemoteEventListener tsListener;
-			for (String kp : kcListener.getKnowledgePaths()) {
-				tsListener = tsListeners.get(kp);
-				if (tsListener == null) {
-					tsListener = TSRemoteEventListener.getRemoteEventListener(this);
-					tsListeners.put(kp, tsListener);
-					try {
-						addTSNotifier(kp, tsListener);
-					} catch (Exception e) {
-						return false;
-					}
-				}
-				tsListener.addKCListener(kcListener);
-			}
-			return true;
-		}
-		return false;
-	}
-	
-	@Override
-	public boolean unregisterListener(IKnowledgeChangeListener listener) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	private void addTSNotifier(String kp, TSRemoteEventListener tsListener)
+	public RepositoryChangeNotifier listenForChange(String entryKey)
 			throws KRExceptionAccessError {
 		try {
+			TSRepositoryChangeNotifier tsListener = TSRepositoryChangeNotifier.getRemoteEventListener(this);
 			JavaSpace05 space = TSUtils.getSpace();
-			String fullListenPath = KnowledgePathHelper.prependToRoot(kp,
+			String fullListenPath = KnowledgePathHelper.prependToRoot(entryKey,
 					ConstantKeys.LISTEN_ID);
 			Tuple t;
 			TransactionalSession ts = (TransactionalSession) createSession();
@@ -232,14 +181,16 @@ public class TSKnowledgeRepository extends KnowledgeRepository {
 				}
 				ts.end();
 			}
-			space.registerForAvailabilityEvent(
-					Arrays.asList(new Tuple[] { TSUtils.createTemplate(fullListenPath) }), null, true,
+			space.registerForAvailabilityEvent(Arrays
+					.asList(new Tuple[] { TSUtils
+							.createTemplate(fullListenPath) }), null, true,
 					tsListener.getStub(), Lease.FOREVER, null);
 			Log.i("Listener added: " + fullListenPath);
+			return tsListener;
 		} catch (Exception e) {
 			throw new KRExceptionAccessError(
 					"TSKnowledgeRepository error when adding a listener for the property: "
-							+ kp + " - " + e.getMessage());
+							+ entryKey + " - " + e.getMessage());
 		}
 	}
 }

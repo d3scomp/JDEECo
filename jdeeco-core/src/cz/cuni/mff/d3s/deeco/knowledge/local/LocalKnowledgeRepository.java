@@ -18,6 +18,7 @@ package cz.cuni.mff.d3s.deeco.knowledge.local;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.LockSupport;
 import java.util.concurrent.locks.ReentrantLock;
@@ -26,9 +27,12 @@ import com.rits.cloning.Cloner;
 
 import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionAccessError;
 import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionUnavailableEntry;
+import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeChangeCollector;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgePathHelper;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeRepository;
-import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
+import cz.cuni.mff.d3s.deeco.knowledge.RepositoryChangeNotifier;
 
 /**
  * Implementation of the knowledge repository using a hashmap. This
@@ -47,7 +51,8 @@ public class LocalKnowledgeRepository extends KnowledgeRepository {
 
 	protected final ReentrantLock lock = new ReentrantLock();
 	protected final HashMap<String, List<Object>> ts = new HashMap<String, List<Object>>();
-	
+
+	private final Map<String, LocalRepositoryChangeNotifier> internalNotifiers = new HashMap<>();
 	private final Cloner cloner = new Cloner();
 
 	public LocalKnowledgeRepository() {
@@ -73,9 +78,8 @@ public class LocalKnowledgeRepository extends KnowledgeRepository {
 	public Object[] get(String entryKey, ISession session)
 			throws KRExceptionUnavailableEntry, KRExceptionAccessError {
 
-		// Lock here to prevent race conditions in case the method is used out
-		// of a
-		// session. Likewise done in the rest methods.
+		if (session == null)
+			lock.lock();
 		List<Object> vals = ts.get(entryKey);
 
 		if (vals == null) {
@@ -84,26 +88,33 @@ public class LocalKnowledgeRepository extends KnowledgeRepository {
 		}
 
 		vals = cloner.deepClone(vals);
+		if (session == null)
+			lock.unlock();
 		return vals.toArray();
 	}
 
 	@Override
 	public void put(String entryKey, Object value, ISession session)
 			throws KRExceptionAccessError {
-
-		List<Object> vals = ts.get(entryKey);
-
-		if (vals == null) {
-			vals = new LinkedList<Object>();
-			ts.put(entryKey, vals);
+		insert(entryKey, value, session);
+		if (session != null) {
+			KnowledgeChangeCollector kcc = (KnowledgeChangeCollector) session;
+			if (!kcc.isKnowledgeRepositoryRegistered())
+				kcc.registerKnowledgeRepository(this);
+			kcc.knowledgeChanges(entryKey);
 		}
-
-		vals.add(cloner.deepClone(value));
+		LocalRepositoryChangeNotifier notifier = internalNotifiers
+				.get(entryKey);
+		if (notifier != null)
+			notifier.notify(entryKey);
 	}
 
 	@Override
 	public Object[] take(String entryKey, ISession session)
 			throws KRExceptionUnavailableEntry, KRExceptionAccessError {
+
+		if (session == null)
+			lock.lock();
 
 		List<Object> vals = ts.get(entryKey);
 
@@ -117,6 +128,10 @@ public class LocalKnowledgeRepository extends KnowledgeRepository {
 		}
 
 		vals = cloner.deepClone(vals);
+
+		if (session == null)
+			lock.unlock();
+
 		return vals.toArray();
 	}
 
@@ -126,26 +141,32 @@ public class LocalKnowledgeRepository extends KnowledgeRepository {
 	}
 
 	@Override
-	public boolean registerListener(IKnowledgeChangeListener listener) {
-		// TODO Auto-generated method stub
-		return false;
+	public RepositoryChangeNotifier listenForChange(String entryKey)
+			throws KRExceptionAccessError {
+		String fullListenPath = KnowledgePathHelper.prependToRoot(entryKey,
+				ConstantKeys.LISTEN_ID);
+		LocalRepositoryChangeNotifier localNotifier = new LocalRepositoryChangeNotifier(
+				this);
+		lock.lock();
+		insert(fullListenPath, "1", null);
+		internalNotifiers.put(fullListenPath, localNotifier);
+		lock.unlock();
+		return localNotifier;
 	}
 
-	@Override
-	public void setListenersActive(boolean on) {
-		// TODO Auto-generated method stub
-	}
+	private void insert(String entryKey, Object value, ISession session)
+			throws KRExceptionAccessError {
+		if (session == null)
+			lock.lock();
+		List<Object> vals = ts.get(entryKey);
 
-	@Override
-	public boolean isListenersActive() {
-		// TODO Auto-generated method stub
-		return false;
+		if (vals == null) {
+			vals = new LinkedList<Object>();
+			ts.put(entryKey, vals);
+		}
+		Object newValue = cloner.deepClone(value);
+		vals.add(newValue);
+		if (session == null)
+			lock.unlock();
 	}
-
-	@Override
-	public boolean unregisterListener(IKnowledgeChangeListener listener) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 }

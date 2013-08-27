@@ -18,11 +18,11 @@ package cz.cuni.mff.d3s.deeco.demo.parkinglotbooking;
 import java.util.Map;
 import java.util.UUID;
 
-import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
 import cz.cuni.mff.d3s.deeco.annotations.In;
+import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
-import cz.cuni.mff.d3s.deeco.ensemble.Ensemble;
+import cz.cuni.mff.d3s.deeco.definitions.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.knowledge.Knowledge;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 
@@ -34,7 +34,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
  */
 
 
-public class RequestResponseEnsemble extends Ensemble {
+public class RequestResponseEnsemble extends EnsembleDefinition {
 
 	public final static long serialVersionUID = 1L;
 	

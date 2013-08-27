@@ -7,9 +7,9 @@ import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
-import cz.cuni.mff.d3s.deeco.knowledge.Component;
+import cz.cuni.mff.d3s.deeco.definitions.ComponentDefinition;
 
-public class LeaderA extends Component {
+public class LeaderA extends ComponentDefinition {
 	
 	public String name;
 	public List<Waypoint> path;

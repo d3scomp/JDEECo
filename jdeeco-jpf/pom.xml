@@ -16,6 +16,8 @@
 		<jpfLTL>${dist}/jpf-ltl</jpfLTL>
 		<jpfLTLBuild>${jpfLTL}/build</jpfLTLBuild>
 		<jpfLTLLib>${jpfLTL}/lib</jpfLTLLib>
+		<lib>${dist}/lib</lib>
+		<bcelJar>bcel.jar</bcelJar>
 	</properties>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
@@ -105,6 +107,28 @@
 							<overWriteIfNewer>true</overWriteIfNewer>
 						</configuration>
 					</execution>
+					<execution>
+						<id>copy-dependency</id>
+						<phase>install</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>cz.cuni.mff.d3s</groupId>
+									<artifactId>cz.cuni.mff.d3s.bcel</artifactId>
+									<version>1.0.0</version>
+									<destFileName>${bcelJar}</destFileName>
+									<outputDirectory>${lib}</outputDirectory>
+								</artifactItem>
+							</artifactItems>
+							<overWriteIfNewer>true</overWriteIfNewer>
+						</configuration>
+					</execution>
+					
+					
+					
 					<execution>
 						<id>copy</id>
 						<phase>install</phase>
@@ -208,6 +232,12 @@
 		</pluginManagement>
 	</build>
 	<dependencies>
+		<dependency>
+			<groupId>cz.cuni.mff.d3s</groupId>
+			<artifactId>cz.cuni.mff.d3s.bcel</artifactId>
+			<version>1.0.0</version>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>cz.cuni.mff.d3s.jdeeco.jpf</groupId>
 			<artifactId>

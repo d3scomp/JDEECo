@@ -1,29 +1,37 @@
 package cz.cuni.mff.d3s.deeco.processor;
 
+import static cz.cuni.mff.d3s.deeco.processor.AnnotationHelper.getAnnotatedMethods;
+import static cz.cuni.mff.d3s.deeco.processor.AnnotationHelper.getAnnotation;
+import static cz.cuni.mff.d3s.deeco.processor.ScheduleHelper.getPeriodicSchedule;
+import static cz.cuni.mff.d3s.deeco.processor.ScheduleHelper.getTriggeredSchedule;
+import static cz.cuni.mff.d3s.deeco.processor.ParserHelper.getParameterList;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
-import cz.cuni.mff.d3s.deeco.annotations.ELockingMode;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.StrongLocking;
 import cz.cuni.mff.d3s.deeco.annotations.WeakLocking;
-import cz.cuni.mff.d3s.deeco.invokable.ParameterizedMethod;
-import cz.cuni.mff.d3s.deeco.invokable.SchedulableComponentProcess;
-import cz.cuni.mff.d3s.deeco.knowledge.Component;
+import cz.cuni.mff.d3s.deeco.definitions.ComponentDefinition;
+import cz.cuni.mff.d3s.deeco.exceptions.ComponentEnsembleParseException;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.scheduling.ProcessPeriodicSchedule;
-import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
+import cz.cuni.mff.d3s.deeco.path.grammar.ParseException;
+import cz.cuni.mff.d3s.deeco.runtime.model.ComponentProcess;
+import cz.cuni.mff.d3s.deeco.runtime.model.LockingMode;
+import cz.cuni.mff.d3s.deeco.runtime.model.Parameter;
+import cz.cuni.mff.d3s.deeco.runtime.model.PeriodicSchedule;
+import cz.cuni.mff.d3s.deeco.runtime.model.Schedule;
 
 /**
  * Parser class for component definitions.
  * 
  * @author Michal Kit
- *
+ * 
  */
 public class ComponentParser {
 
@@ -41,87 +49,72 @@ public class ComponentParser {
 	 * @return list of {@link SchedulableComponentProcess} instances extracted
 	 *         from the class definition
 	 */
-	public static List<SchedulableComponentProcess> extractComponentProcesses(
-			Class<?> c, String root) {
-		
-		if (c == null) {
-			return null;
+	public static List<ComponentProcess> extractComponentProcesses(Class<?> c) throws ParseException {
+
+		assert (c != null);
+
+		if (!isComponentDefinition(c)) {
+			throw new ParseException("The class " + c.getName()
+					+ " is not a component definition.");
 		}
 
-		List<Method> methods = AnnotationHelper.getAnnotatedMethods(c,
-				Process.class);
+		List<Method> methods = getAnnotatedMethods(c, Process.class);
 
 		if (methods == null || methods.size() == 0) {
-			return null;
+			throw new ParseException("The class " + c.getName()
+					+ " has no process defined.");
 		}
 
-		final List<SchedulableComponentProcess> result = new ArrayList<SchedulableComponentProcess>();
+		final List<ComponentProcess> result = new LinkedList<ComponentProcess>();
 
+		Schedule schedule;
+		LockingMode lockingMode;
+		List<Parameter> parameters;
 		for (Method m : methods) {
-
-			final ParameterizedMethod currentMethod = ParserHelper
-					.extractParametrizedMethod(m, root);
-
-			if (currentMethod == null) {
-				// Not a process method
-				continue;
+			try {
+				parameters = getParameterList(m);
+			} catch (ComponentEnsembleParseException cepe) {
+				throw new ParseException(c.getName()
+						+ ": Parameters for the method " + m.getName()
+						+ " cannot be parsed.");
 			}
+			schedule = getPeriodicSchedule(getAnnotation(
+					PeriodicScheduling.class, m.getAnnotations()));
+			if (schedule == null)
+				schedule = getTriggeredSchedule(m.getParameterAnnotations(),
+						parameters);
 
-			ProcessSchedule ps = null;
-			final ProcessSchedule periodicSchedule = ScheduleHelper
-					.getPeriodicSchedule(AnnotationHelper.getAnnotation(
-							PeriodicScheduling.class, m.getAnnotations()));
-			if (periodicSchedule != null) {
-				ps = periodicSchedule;
-			}
-
-			if (ps == null) {
-				final ProcessSchedule triggeredSchedule = ScheduleHelper
-						.getTriggeredSchedule(m.getParameterAnnotations(),
-								currentMethod.in, currentMethod.inOut);
-				if (triggeredSchedule != null) {
-					ps = triggeredSchedule;
-				}
-			}
-
-			if (ps == null) {
-				// No scheduling specified by annotations, using defaults
-				ps = new ProcessPeriodicSchedule();
-			}
-
-			ELockingMode lm;
-			if (AnnotationHelper.getAnnotation(StrongLocking.class,
-					m.getAnnotations()) == null) {
-				if (AnnotationHelper.getAnnotation(WeakLocking.class,
-						m.getAnnotations()) == null)
-					lm = (ps instanceof ProcessPeriodicSchedule) ? ELockingMode.WEAK
-							: ELockingMode.STRONG;
+			if (getAnnotation(StrongLocking.class, m.getAnnotations()) == null) {
+				if (getAnnotation(WeakLocking.class, m.getAnnotations()) == null)
+					lockingMode = (schedule instanceof PeriodicSchedule) ? LockingMode.WEAK
+							: LockingMode.STRONG;
 				else
-					lm = ELockingMode.WEAK;
+					lockingMode = LockingMode.WEAK;
 			} else {
-				lm = ELockingMode.STRONG;
+				lockingMode = LockingMode.STRONG;
 			}
 
-			final SchedulableComponentProcess skp = new SchedulableComponentProcess(
-					null, ps, currentMethod, lm, root, null);
-			result.add(skp);
+			result.add(new ComponentProcess(parameters, m, schedule,
+					lockingMode));
 		}
 		return result;
 	}
-	
+
 	/**
-	 * Retrieves initial knowledge of a component from the non-parametric constructor.
+	 * Retrieves initial knowledge of a component from the non-parametric
+	 * constructor.
 	 * 
 	 * @param c
 	 *            class to be parsed
 	 * @return component knowledge.
 	 */
-	public static Component extractInitialKnowledge(Class<?> c) {
-		Component ck;
+	public static ComponentDefinition extractInitialKnowledge(Class<?> c) {
+		ComponentDefinition ck;
 		try {
 			Constructor<?> constructor = c.getConstructor();
 			if (constructor != null) {
-				ck = (Component) constructor.newInstance(new Object[] {});
+				ck = (ComponentDefinition) constructor
+						.newInstance(new Object[] {});
 				assignUIDIfNotSet(ck);
 				return ck;
 			}
@@ -135,18 +128,20 @@ public class ComponentParser {
 	/**
 	 * Checks whether the given class is a component definition.
 	 * 
-	 * @param clazz class to be checked.
+	 * @param clazz
+	 *            class to be checked.
 	 * @return True if the class is a component definition. False otherwise.
 	 */
 	public static boolean isComponentDefinition(Class<?> clazz) {
-		return clazz != null && Component.class.isAssignableFrom(clazz);
+		return clazz != null
+				&& ComponentDefinition.class.isAssignableFrom(clazz);
 	}
 
 	// ------------- Private functions -------------------
 
-	private static void assignUIDIfNotSet(Component ck) {
-		if (ck.id == null || ck.id.equals(""))
-			ck.id = UUID.randomUUID().toString();
+	private static void assignUIDIfNotSet(ComponentDefinition cd) {
+		if (cd.id == null || cd.id.equals(""))
+			cd.id = UUID.randomUUID().toString();
 	}
 
 }

@@ -1,8 +1,8 @@
 package cz.cuni.mff.d3s.deeco.knowledge.local;
 
-import cz.cuni.mff.d3s.deeco.knowledge.ISession;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeChangeCollector;
 
-class LocalSession implements ISession {
+class LocalSession extends KnowledgeChangeCollector {
 
 	private boolean succeeded = false;
 	private final LocalKnowledgeRepository kr;
@@ -23,6 +23,7 @@ class LocalSession implements ISession {
 	@Override
 	public void end() {
 		kr.lock.unlock();
+		notifyAboutKnowledgeChange();
 		succeeded = true;
 	}
 	

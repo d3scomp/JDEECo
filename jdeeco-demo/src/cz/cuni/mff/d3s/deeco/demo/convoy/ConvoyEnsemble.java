@@ -18,13 +18,13 @@ package cz.cuni.mff.d3s.deeco.demo.convoy;
 import java.util.List;
 import java.util.Random;
 
+import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
 import cz.cuni.mff.d3s.deeco.annotations.Membership;
-import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange;
-import cz.cuni.mff.d3s.deeco.ensemble.Ensemble;
+import cz.cuni.mff.d3s.deeco.definitions.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.knowledge.Knowledge;
 
 /**
@@ -35,7 +35,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.Knowledge;
  */
 
 
-public class ConvoyEnsemble extends Ensemble {
+public class ConvoyEnsemble extends EnsembleDefinition {
 
 	public final static long serialVersionUID = 1L;
 	

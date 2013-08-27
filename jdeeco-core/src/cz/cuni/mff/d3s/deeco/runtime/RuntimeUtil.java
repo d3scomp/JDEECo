@@ -15,7 +15,8 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.runtime;
 
-import cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess;
+import cz.cuni.mff.d3s.deeco.scheduling.Job;
+
 
 /**
  * Runtime utility methods.
@@ -30,7 +31,7 @@ public class RuntimeUtil {
    * 
    * @return a reference to the runtime
    */
-  public static IRuntime getRuntime() {
-    return SchedulableProcess.runtime.get();
+  public static Runtime getRuntime() {
+    return Job.getRuntime();
   }
 }

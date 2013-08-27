@@ -26,9 +26,9 @@ import javax.management.MalformedObjectNameException;
 import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectName;
 
-import cz.cuni.mff.d3s.deeco.knowledge.Component;
-import cz.cuni.mff.d3s.deeco.provider.DEECoObjectProvider;
-import cz.cuni.mff.d3s.deeco.runtime.IRuntime;
+import cz.cuni.mff.d3s.deeco.definitions.ComponentDefinition;
+import cz.cuni.mff.d3s.deeco.provider.InstanceRuntimeMetadataProvider;
+import cz.cuni.mff.d3s.deeco.runtime.Runtime;
 
 /**
  * Runtime MXBean implementation.
@@ -37,66 +37,72 @@ import cz.cuni.mff.d3s.deeco.runtime.IRuntime;
  * @author Petr Hnetynka
  */
 public class RuntimeMX implements RuntimeMXBean {
-  private final IRuntime rt;
-  
-  private RuntimeMX(IRuntime rt) {
-    this.rt = rt;
-  }
+	private final Runtime rt;
 
-  @Override
-  public void registerNewComponent(String className) {
-    Class<?> clazz;
-    try {
-      clazz = Class.forName(className);
-    } catch (ClassNotFoundException ex) {
-      throw new RuntimeException("Component's class not found.");
-    }
-    if (!Component.class.isAssignableFrom(clazz)) {
-      throw new RuntimeException("The \"" + className + "\" does not represent a DEECo component");
-    }
-    DEECoObjectProvider dop = new DEECoObjectProvider();
-    dop.addInitialKnowledge(extractInitialKnowledge(clazz));
-    rt.registerComponentsAndEnsembles(dop);
-  }
-  
-  /**
-   * Registers the runtime as a MXBean.
-   * 
-   * @param rt runtime
-   */
-  public static void registerMBeanForRuntime(IRuntime rt) {
-    try {
-      RuntimeMX rmx = new RuntimeMX(rt);
-      ObjectName on = new ObjectName("cz.cuni.mff.d3s.deeco:type=Runtime,name=" + rt.hashCode());
-      MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
-      mbs.registerMBean(rmx, on);
-    } catch (MalformedObjectNameException ex) {
-      // This should not happen
-      throw new RuntimeException("Runtime MX bean could ne be registered", ex);
-    } catch (InstanceAlreadyExistsException ex) {
-      throw new RuntimeException("Runtime MX bean already registered", ex);
-    } catch (MBeanRegistrationException ex) {
-      throw new RuntimeException("Runtime MX bean could ne be registered", ex);
-    } catch (NotCompliantMBeanException ex) {
-      // this should not happen
-      throw new RuntimeException("Runtime MX bean could ne be registered", ex);
-    }
-    
-  }
+	private RuntimeMX(Runtime rt) {
+		this.rt = rt;
+	}
 
-  @Override
-  public boolean isRunning() {
-    return rt.isRunning();
-  }
+	@Override
+	public void registerNewComponent(String className) {
+		Class<?> clazz;
+		try {
+			clazz = Class.forName(className);
+		} catch (ClassNotFoundException ex) {
+			throw new RuntimeException("Component's class not found.");
+		}
+		if (!ComponentDefinition.class.isAssignableFrom(clazz)) {
+			throw new RuntimeException("The \"" + className
+					+ "\" does not represent a DEECo component");
+		}
+		InstanceRuntimeMetadataProvider provider = new InstanceRuntimeMetadataProvider();
+		provider.fromComponentInstance(extractInitialKnowledge(clazz));
+		rt.deploy(provider.getRuntimeMetadata());
+	}
 
-  @Override
-  public void startRuntime() {
-    rt.startRuntime();
-  }
+	/**
+	 * Registers the runtime as a MXBean.
+	 * 
+	 * @param rt
+	 *            runtime
+	 */
+	public static void registerMBeanForRuntime(Runtime rt) {
+		try {
+			RuntimeMX rmx = new RuntimeMX(rt);
+			ObjectName on = new ObjectName(
+					"cz.cuni.mff.d3s.deeco:type=Runtime,name=" + rt.hashCode());
+			MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+			mbs.registerMBean(rmx, on);
+		} catch (MalformedObjectNameException ex) {
+			// This should not happen
+			throw new RuntimeException(
+					"Runtime MX bean could ne be registered", ex);
+		} catch (InstanceAlreadyExistsException ex) {
+			throw new RuntimeException("Runtime MX bean already registered", ex);
+		} catch (MBeanRegistrationException ex) {
+			throw new RuntimeException(
+					"Runtime MX bean could ne be registered", ex);
+		} catch (NotCompliantMBeanException ex) {
+			// this should not happen
+			throw new RuntimeException(
+					"Runtime MX bean could ne be registered", ex);
+		}
 
-  @Override
-  public void stopRuntime() {
-    rt.stopRuntime();
-  }
+	}
+
+	@Override
+	public boolean isRunning() {
+		return rt.isRunning();
+	}
+
+	@Override
+	public void startRuntime() {
+		rt.run();
+	}
+
+	@Override
+	public void stopRuntime() {
+		rt.shutdown();
+	}
 
 }

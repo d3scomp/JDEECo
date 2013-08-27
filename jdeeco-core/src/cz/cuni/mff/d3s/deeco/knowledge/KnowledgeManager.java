@@ -16,9 +16,7 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
-import cz.cuni.mff.d3s.deeco.invokable.TypeDescription;
-import cz.cuni.mff.d3s.deeco.runtime.IRuntime;
-import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
+import cz.cuni.mff.d3s.deeco.runtime.model.KnowledgeType;
 
 /**
  * An abstract class providing higher level interface for accessing the
@@ -28,8 +26,6 @@ import cz.cuni.mff.d3s.deeco.scheduling.IKnowledgeChangeListener;
  * 
  */
 public abstract class KnowledgeManager {
-
-	protected IRuntime runtime;
 
 	/**
 	 * Retrieves knowledge from the knowledge repository, defined by
@@ -67,7 +63,7 @@ public abstract class KnowledgeManager {
 	 *             repository
 	 */
 	public abstract Object getKnowledge(String knowledgePath,
-			TypeDescription expectedType, ISession session) throws KMException;
+			KnowledgeType expectedType, ISession session) throws KMException;
 
 	/**
 	 * Withdraws the knowledge from the knowledge repository. This method is
@@ -223,33 +219,4 @@ public abstract class KnowledgeManager {
 		putKnowledge(knowledgePath, value, null);
 	}
 
-	/**
-	 * Sets the runtime to the scheduler (without a runtime, the scheduler will
-	 * not work).
-	 * 
-	 * @param rt
-	 *            runtime
-	 */
-	public void setRuntime(IRuntime rt) {
-		runtime = rt;
-	}
-
-	/**
-	 * Unsets the runtime.
-	 * 
-	 * @see IKnowledgeManager#setRuntime(cz.cuni.mff.d3s.deeco.runtime.IRuntime)
-	 */
-	public void unsetRuntime() {
-		runtime = null;
-	}
-
-	/**
-	 * Returns a runtime reference. It might be <code>null</code> if the
-	 * knowledge manager has not been set to any runtime.
-	 * 
-	 * @return a runtime reference
-	 */
-	public IRuntime getRuntime() {
-		return runtime;
-	}
 }

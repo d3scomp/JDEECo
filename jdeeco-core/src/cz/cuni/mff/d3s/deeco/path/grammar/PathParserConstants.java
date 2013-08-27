@@ -11,21 +11,17 @@ public interface PathParserConstants {
   /** End of File. */
   int EOF = 0;
   /** RegularExpression Id. */
-  int COORD = 1;
+  int IDENTIFIER = 1;
   /** RegularExpression Id. */
-  int MEMBER = 2;
+  int LETTER = 2;
   /** RegularExpression Id. */
-  int IDENTIFIER = 3;
+  int DIGIT = 3;
   /** RegularExpression Id. */
-  int LETTER = 4;
+  int SEPARATOR = 4;
   /** RegularExpression Id. */
-  int DIGIT = 5;
+  int OPEN = 5;
   /** RegularExpression Id. */
-  int SEPARATOR = 6;
-  /** RegularExpression Id. */
-  int OPEN = 7;
-  /** RegularExpression Id. */
-  int CLOSE = 8;
+  int CLOSE = 6;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -33,8 +29,6 @@ public interface PathParserConstants {
   /** Literal token values. */
   String[] tokenImage = {
     "<EOF>",
-    "\"coord\"",
-    "\"member\"",
     "<IDENTIFIER>",
     "<LETTER>",
     "<DIGIT>",

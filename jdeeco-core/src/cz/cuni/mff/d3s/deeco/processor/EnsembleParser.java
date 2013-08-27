@@ -1,26 +1,32 @@
 package cz.cuni.mff.d3s.deeco.processor;
 
+import static cz.cuni.mff.d3s.deeco.processor.ParserHelper.getParameterList;
+import static cz.cuni.mff.d3s.deeco.processor.AnnotationHelper.getAnnotatedMethod;
+import static cz.cuni.mff.d3s.deeco.processor.ScheduleHelper.getPeriodicSchedule;
+import static cz.cuni.mff.d3s.deeco.processor.ScheduleHelper.getTriggeredSchedule;
+
 import java.lang.reflect.Method;
+import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
 import cz.cuni.mff.d3s.deeco.annotations.Membership;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
-import cz.cuni.mff.d3s.deeco.ensemble.Ensemble;
-import cz.cuni.mff.d3s.deeco.invokable.BooleanMembership;
-import cz.cuni.mff.d3s.deeco.invokable.MembershipMethod;
-import cz.cuni.mff.d3s.deeco.invokable.ParameterizedMethod;
-import cz.cuni.mff.d3s.deeco.invokable.SchedulableEnsembleProcess;
+import cz.cuni.mff.d3s.deeco.definitions.EnsembleDefinition;
+import cz.cuni.mff.d3s.deeco.exceptions.ComponentEnsembleParseException;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.path.grammar.ParseException;
-import cz.cuni.mff.d3s.deeco.scheduling.ProcessPeriodicSchedule;
-import cz.cuni.mff.d3s.deeco.scheduling.ProcessSchedule;
-
+import cz.cuni.mff.d3s.deeco.runtime.model.Ensemble;
+import cz.cuni.mff.d3s.deeco.runtime.model.Condition;
+import cz.cuni.mff.d3s.deeco.runtime.model.Exchange;
+import cz.cuni.mff.d3s.deeco.runtime.model.Parameter;
+import cz.cuni.mff.d3s.deeco.runtime.model.PeriodicSchedule;
+import cz.cuni.mff.d3s.deeco.runtime.model.Schedule;
 
 /**
  * Parser class for ensemble definitions.
  * 
  * @author Michal Kit
- *
+ * 
  */
 public class EnsembleParser {
 
@@ -36,96 +42,68 @@ public class EnsembleParser {
 	 * @return a {@link SchedulableEnsembleProcess} instance extracted from the
 	 *         class definition
 	 */
-	public static SchedulableEnsembleProcess extractEnsembleProcess(Class<?> c)
+	public static Ensemble extractEnsembleProcess(Class<?> c)
 			throws ParseException {
-		// TODO: put names into the exception strings
-
+		assert (c != null);
 		if (!isEnsembleDefinition(c)) {
 			throw new ParseException("The class " + c.getName()
 					+ " is not an ensemble definition.");
 		}
-
-		assert (c != null);
-
-		final Method methodEnsMembership = AnnotationHelper.getAnnotatedMethod(
-				c, Membership.class);
-
-		if (methodEnsMembership == null) {
-			throw new ParseException(
-					"The ensemble definition does not define a membership function");
+		Method m = getAnnotatedMethod(c, Membership.class);
+		if (m == null) {
+			throw new ParseException("The ensemble " + c.getName()
+					+ " definition does not define a membership function");
 		}
-
-		final ParameterizedMethod pm = ParserHelper
-				.extractParametrizedMethod(methodEnsMembership);
-
-		if (pm == null) {
-			throw new ParseException(
-					"Malformed membership function definition. " + c);
+		if (!m.getReturnType().isAssignableFrom(boolean.class)) {
+			throw new ParseException(c.getName()
+					+ ": MembershipMethod function needs to return boolean");
 		}
-
-		// Look up MembershipMethod
-		if (!methodEnsMembership.getReturnType()
-				.isAssignableFrom(boolean.class)) {
-			throw new ParseException(
-					"MembershipMethod function needs to return boolean");
+		List<Parameter> parameters;
+		try {
+			parameters = getParameterList(m);
+		} catch (ComponentEnsembleParseException cepe) {
+			throw new ParseException(c.getName()
+					+ ": Parameters for the method " + m.getName()
+					+ " cannot be parsed.");
 		}
-
-		MembershipMethod membership = new BooleanMembership(pm);
-
-		final Method knowledgeExchangeMethod = AnnotationHelper
-				.getAnnotatedMethod(c, KnowledgeExchange.class);
-
-		if (knowledgeExchangeMethod == null) {
+		Condition mc = new Condition(parameters, m);
+		m = getAnnotatedMethod(c, KnowledgeExchange.class);
+		if (m == null) {
 			throw new ParseException(
 					"The ensemble definition does not define a knowledge exchange function");
 		}
-
-		final ParameterizedMethod knowledgeExchange = ParserHelper
-				.extractParametrizedMethod(knowledgeExchangeMethod);
-		if (knowledgeExchange == null) {
-			throw new ParseException(
-					"Malformed knowledge exchange function definition. " + c);
+		try {
+			parameters = getParameterList(m);
+		} catch (ComponentEnsembleParseException cepe) {
+			throw new ParseException(c.getName()
+					+ ": Parameters for the method " + m.getName()
+					+ " cannot be parsed.");
 		}
+		Exchange ke = new Exchange(parameters, m);
+		Schedule schedule = getPeriodicSchedule(AnnotationHelper
+				.getAnnotation(PeriodicScheduling.class, m.getAnnotations()));
+		if (schedule == null) {
+			schedule = getTriggeredSchedule(
+					m.getParameterAnnotations(), parameters);
 
-		// Look up scheduling
-		ProcessSchedule scheduling = null;
-
-		final ProcessSchedule periodicSchedule = ScheduleHelper
-				.getPeriodicSchedule(AnnotationHelper.getAnnotation(
-						PeriodicScheduling.class, knowledgeExchangeMethod.getAnnotations()));
-		if (periodicSchedule != null) {
-			scheduling = periodicSchedule;
-		}
-
-		if (scheduling == null) {
-			// not periodic
-			final ProcessSchedule triggeredSchedule = ScheduleHelper
-					.getTriggeredSchedule(
-							knowledgeExchangeMethod.getParameterAnnotations(),
-							knowledgeExchange.in, knowledgeExchange.inOut);
-
-			if (triggeredSchedule != null) {
-				scheduling = triggeredSchedule;
+			if (schedule == null) {
+				schedule = new PeriodicSchedule();
 			}
 		}
-
-		if (scheduling == null) {
-			// No scheduling specified by annotations, using defaults
-			scheduling = new ProcessPeriodicSchedule();
-		}
-
-		return new SchedulableEnsembleProcess(null, scheduling, membership,
-				knowledgeExchange, null);
+		return new Ensemble(c.getName(), mc, ke, schedule);
 	}
 
 	/**
 	 * Checkes whether the given class is an ensemble definitions.
 	 * 
-	 * @param clazz class to be checked
-	 * @return True if the given class is an ensemble definition. False otherwise.
+	 * @param clazz
+	 *            class to be checked
+	 * @return True if the given class is an ensemble definition. False
+	 *         otherwise.
 	 */
 	public static boolean isEnsembleDefinition(Class<?> clazz) {
-		return clazz != null && Ensemble.class.isAssignableFrom(clazz);
+		return clazz != null
+				&& EnsembleDefinition.class.isAssignableFrom(clazz);
 	}
 
 }

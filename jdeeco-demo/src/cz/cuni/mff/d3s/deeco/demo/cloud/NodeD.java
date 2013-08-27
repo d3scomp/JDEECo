@@ -15,17 +15,18 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.demo.cloud;
 
+import java.util.Random;
+
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
-import cz.cuni.mff.d3s.deeco.knowledge.Component;
+import cz.cuni.mff.d3s.deeco.definitions.ComponentDefinition;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
-import java.util.Random;
 
 /**
  * 
  * @author Petr Hnetynka
  */
-public class NodeD extends Component {
+public class NodeD extends ComponentDefinition {
 	public final static long serialVersionUID = 1L;
 
 	public Float loadRatio;

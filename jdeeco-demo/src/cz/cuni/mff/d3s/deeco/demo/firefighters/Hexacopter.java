@@ -23,7 +23,7 @@ import java.util.Set;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
-import cz.cuni.mff.d3s.deeco.knowledge.Component;
+import cz.cuni.mff.d3s.deeco.definitions.ComponentDefinition;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 
 /**
@@ -39,7 +39,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
  * @author Ilias Gerostathopoulos
  * 
  */
-public class Hexacopter extends Component {
+public class Hexacopter extends ComponentDefinition {
 
 	private static final long serialVersionUID = 4635712337733218714L;
 

@@ -32,14 +32,16 @@ options {
 
 PARSER_BEGIN(PathParser)
 package cz.cuni.mff.d3s.deeco.path.grammar;
-import cz.cuni.mff.d3s.deeco.path.grammar.PNode;
+import cz.cuni.mff.d3s.deeco.runtime.model.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.runtime.model.PathNodeMapKey;
+import cz.cuni.mff.d3s.deeco.runtime.model.PathNodeField;
 import java.io.ByteArrayInputStream;
 
 /** Simple brace matcher. */
 public class PathParser
 {
   /** Main entry point. */
-  public static PNode parse(String expression) throws ParseException
+  public static KnowledgePath parse(String expression) throws ParseException
   {
     PathParser parser = new PathParser(new ByteArrayInputStream(expression.getBytes()));
     return parser.parseExpression();
@@ -47,12 +49,6 @@ public class PathParser
 }
 
 PARSER_END(PathParser)
-
-TOKEN [ IGNORE_CASE ] :
-{
-  < COORD : "coord" >
-| < MEMBER : "member" >
-}
 
 TOKEN :
 {
@@ -68,29 +64,18 @@ TOKEN :
 | < CLOSE : [ "]" ] >
 }
 
-PNode parseExpression() :
+KnowledgePath parseExpression() :
 {
   Token t;
-  // Values needed to create a PNode
-  Object value = null; //May be String or PNode or EEnsembleParty
-  PNode next = null;
+  // Values needed to create a PathNode
+  KnowledgePath value = new KnowledgePath();
   
 }
 {
   (
     (t = < IDENTIFIER >
     {
-      value = t.image;
-    }
-    )
-  | (t = < COORD >
-    {
-      value = EEnsembleParty.COORDINATOR;
-    }
-    )
-  | (t = < MEMBER >
-    {
-      value = EEnsembleParty.MEMBER;
+      value.addNode(new PathNodeField(t.image));
     }
     )
   |
@@ -98,8 +83,7 @@ PNode parseExpression() :
       (
         < OPEN >
         {
-          value = parseExpression();
-          next = null;
+          value.addNode(new PathNodeMapKey(parseExpression()));
         }
       )
       < CLOSE >
@@ -108,10 +92,10 @@ PNode parseExpression() :
   (
     < SEPARATOR >
     {
-      next = parseExpression();
+      value.join(parseExpression());
     }
   )*
   {
-    return new PNode(value, next);
+    return value;
   }
 }

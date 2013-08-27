@@ -15,12 +15,12 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.demo.cloud;
 
+import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
 import cz.cuni.mff.d3s.deeco.annotations.Membership;
-import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
-import cz.cuni.mff.d3s.deeco.ensemble.Ensemble;
+import cz.cuni.mff.d3s.deeco.definitions.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 
 /**
@@ -31,7 +31,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
  */
 
 
-public class MigrationEnsemble extends Ensemble {
+public class MigrationEnsemble extends EnsembleDefinition {
 
 	public final static long serialVersionUID = 1L;
 	
