@@ -31,7 +31,7 @@ public class LocalLauncherLTL {
 		RuntimeMetadataProvider provider = new ParsedObjectReader().read();
 
 		Runtime rt = new Runtime(scheduler, km);
-		rt.deploy(provider.getRuntimeMetadata());
+		rt.deployRuntimeMetadata(provider.getRuntimeMetadata());
 
 		// TODO: manage via runtime event listener mechanism (to be done)
 		// instead

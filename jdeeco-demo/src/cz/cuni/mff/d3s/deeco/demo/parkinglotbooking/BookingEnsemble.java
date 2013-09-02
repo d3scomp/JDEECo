@@ -15,7 +15,7 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.demo.parkinglotbooking;
 
-import cz.cuni.mff.d3s.deeco.annotations.Membership;
+import cz.cuni.mff.d3s.deeco.annotations.Condition;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 
@@ -46,7 +46,7 @@ public class BookingEnsemble extends RequestResponseEnsemble {
 		public Position position;
 	}
 
-	@Membership
+	@Condition
 	@PeriodicScheduling(2000)
 	public static boolean membership(
 			@In("member.targetPosition") Position targetPosition,

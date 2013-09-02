@@ -4,7 +4,7 @@ import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
-import cz.cuni.mff.d3s.deeco.annotations.Membership;
+import cz.cuni.mff.d3s.deeco.annotations.Condition;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.definitions.EnsembleDefinition;
@@ -14,7 +14,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 
 public class ConvoyEnsemble extends EnsembleDefinition {
 
-	@Membership
+	@Condition
 	public static boolean membership(
 			@In("member.position") Waypoint fPosition,
 			@In("member.destination") Waypoint fDestination,

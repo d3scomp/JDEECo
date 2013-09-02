@@ -21,7 +21,7 @@ import java.util.Set;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
-import cz.cuni.mff.d3s.deeco.annotations.Membership;
+import cz.cuni.mff.d3s.deeco.annotations.Condition;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.definitions.EnsembleDefinition;
 
@@ -35,7 +35,7 @@ public class CriticalDataAggregationOnHexacopter extends EnsembleDefinition {
 
 	private static final long serialVersionUID = -7835430643756278821L;
 
-	@Membership
+	@Condition
 	public static boolean membership(@In("member.id") String mId,
 			@In("coord.id") String cId,
 			@In("member.leaderPosition") Position mLeaderPosition,

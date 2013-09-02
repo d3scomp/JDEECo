@@ -5,7 +5,7 @@ import java.lang.reflect.Method;
 import cz.cuni.mff.d3s.deeco.executor.JobExecutionListener;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.runtime.model.Condition;
+import cz.cuni.mff.d3s.deeco.runtime.model.BooleanCondition;
 import cz.cuni.mff.d3s.deeco.runtime.model.Ensemble;
 import cz.cuni.mff.d3s.deeco.runtime.model.Exchange;
 import cz.cuni.mff.d3s.deeco.runtime.model.Parameter;
@@ -14,7 +14,7 @@ import cz.cuni.mff.d3s.deeco.runtime.Runtime;
 
 public class EnsembleJob extends Job {
 
-	private Condition membership;
+	private BooleanCondition membership;
 	private Exchange knowledgeExchange;
 	private String coordinator;
 	private String member;

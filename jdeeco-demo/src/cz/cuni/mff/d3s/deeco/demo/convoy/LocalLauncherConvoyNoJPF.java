@@ -28,7 +28,7 @@ public class LocalLauncherConvoyNoJPF {
 		provider.fromComponentInstance(new RobotFollowerComponent());
 		provider.fromEnsembleDefinition(ConvoyEnsemble.class);
 		Runtime rt = new Runtime(scheduler, km);
-		rt.deploy(provider.getRuntimeMetadata());
+		rt.deployRuntimeMetadata(provider.getRuntimeMetadata());
 		rt.run();
 	}
 }

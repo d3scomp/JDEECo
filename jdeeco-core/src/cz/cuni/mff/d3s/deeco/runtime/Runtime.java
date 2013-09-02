@@ -25,26 +25,24 @@ import cz.cuni.mff.d3s.deeco.scheduling.TriggeredJobProducer;
 public class Runtime {
 
 	private RuntimeMetadata runtimeMetadata;
-	private KnowledgeManager km;
-	private Scheduler scheduler;
-	private List<TriggeredJobProducer> triggeredJobProducers;
-
-	private Runtime(boolean useMXBeans) {
-		if (useMXBeans)
-			RuntimeMX.registerMBeanForRuntime(this);
-	}
+	private final KnowledgeManager km;
+	private final Scheduler scheduler;
+	private final List<TriggeredJobProducer> triggeredJobProducers;
+	//private final Oracle oracle;
 
 	public Runtime(Scheduler scheduler, KnowledgeManager km) {
 		this(scheduler, km, false);
 	}
 
 	public Runtime(Scheduler scheduler, KnowledgeManager km, boolean useMXBeans) {
-		this(useMXBeans);
 		assert (km != null);
 		assert (scheduler != null);
+		if (useMXBeans)
+			RuntimeMX.registerMBeanForRuntime(this);
 		this.scheduler = scheduler;
 		this.km = km;
 		this.triggeredJobProducers = new LinkedList<>();
+		//this.oracle = new Oracle(new SAT4JSolver());
 	}
 
 	public boolean isRunning() {
@@ -69,10 +67,16 @@ public class Runtime {
 	}
 
 	//TODO add hot deployment - merge metadata
-	public synchronized void deploy(RuntimeMetadata runtimeMetadata) {
+	public synchronized void deployRuntimeMetadata(RuntimeMetadata runtimeMetadata) {
 		assert (runtimeMetadata != null);
 		this.runtimeMetadata = runtimeMetadata;
 	}
+	
+//	public synchronized void deployIRMInvariant(Invariant invariant) {
+//		assert (invariant != null);
+//		//oracle.addIRMInvariant(invariant);
+//	}
+	
 
 	private void deployComponentInstances() {
 		for (ComponentInstance ci : runtimeMetadata.getComponentInstances()) {

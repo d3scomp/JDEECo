@@ -1,7 +1,8 @@
 package cz.cuni.mff.d3s.deeco.processor;
 
-import static cz.cuni.mff.d3s.deeco.processor.ParserHelper.getParameterList;
 import static cz.cuni.mff.d3s.deeco.processor.AnnotationHelper.getAnnotatedMethod;
+import static cz.cuni.mff.d3s.deeco.processor.ConditionParser.parseBooleanConditions;
+import static cz.cuni.mff.d3s.deeco.processor.ParserHelper.getParameterList;
 import static cz.cuni.mff.d3s.deeco.processor.ScheduleHelper.getPeriodicSchedule;
 import static cz.cuni.mff.d3s.deeco.processor.ScheduleHelper.getTriggeredSchedule;
 
@@ -9,14 +10,13 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
-import cz.cuni.mff.d3s.deeco.annotations.Membership;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.definitions.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.exceptions.ComponentEnsembleParseException;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.path.grammar.ParseException;
+import cz.cuni.mff.d3s.deeco.runtime.model.BooleanCondition;
 import cz.cuni.mff.d3s.deeco.runtime.model.Ensemble;
-import cz.cuni.mff.d3s.deeco.runtime.model.Condition;
 import cz.cuni.mff.d3s.deeco.runtime.model.Exchange;
 import cz.cuni.mff.d3s.deeco.runtime.model.Parameter;
 import cz.cuni.mff.d3s.deeco.runtime.model.PeriodicSchedule;
@@ -49,25 +49,14 @@ public class EnsembleParser {
 			throw new ParseException("The class " + c.getName()
 					+ " is not an ensemble definition.");
 		}
-		Method m = getAnnotatedMethod(c, Membership.class);
-		if (m == null) {
-			throw new ParseException("The ensemble " + c.getName()
-					+ " definition does not define a membership function");
+		List<BooleanCondition> conditions = parseBooleanConditions(c);
+		if (conditions.size() != 1) {
+			throw new ParseException("The class " + c.getName()
+					+ " should contain exactly one membership condition.");
 		}
-		if (!m.getReturnType().isAssignableFrom(boolean.class)) {
-			throw new ParseException(c.getName()
-					+ ": MembershipMethod function needs to return boolean");
-		}
+		BooleanCondition mc = conditions.get(0);
 		List<Parameter> parameters;
-		try {
-			parameters = getParameterList(m);
-		} catch (ComponentEnsembleParseException cepe) {
-			throw new ParseException(c.getName()
-					+ ": Parameters for the method " + m.getName()
-					+ " cannot be parsed.");
-		}
-		Condition mc = new Condition(parameters, m);
-		m = getAnnotatedMethod(c, KnowledgeExchange.class);
+		Method m = getAnnotatedMethod(c, KnowledgeExchange.class);
 		if (m == null) {
 			throw new ParseException(
 					"The ensemble definition does not define a knowledge exchange function");

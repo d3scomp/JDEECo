@@ -40,7 +40,7 @@ public class FFLauncherDiscreteSchedulerHexacopter {
 		provider.fromComponentInstance(new GroupLeader("GL2", "T2", false,
 				new Position(1000, 1000)));
 		Runtime rt = new Runtime(scheduler, km);
-		rt.deploy(provider.getRuntimeMetadata());
+		rt.deployRuntimeMetadata(provider.getRuntimeMetadata());
 
 		rt.run();
 	}

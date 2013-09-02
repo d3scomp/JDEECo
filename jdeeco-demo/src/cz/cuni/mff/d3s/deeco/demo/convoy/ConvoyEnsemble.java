@@ -20,7 +20,7 @@ import java.util.Random;
 
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
-import cz.cuni.mff.d3s.deeco.annotations.Membership;
+import cz.cuni.mff.d3s.deeco.annotations.Condition;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange;
@@ -55,7 +55,7 @@ public class ConvoyEnsemble extends EnsembleDefinition {
 		public List<Integer> remainingPath;
 	}
 
-	@Membership
+	@Condition
 	public static boolean membership(@In("member.id") String mId,
 			@In("member.path.remainingPath") List<Integer> mRemainingPath,
 			@In("coord.id") String cId,

@@ -195,6 +195,18 @@
 	</build>
 	<dependencies>
 		<dependency>
+			<groupId>uk.com.robust-it</groupId>
+			<artifactId>cloning</artifactId>
+			<version>1.9.0</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.objenesis</groupId>
+			<artifactId>objenesis</artifactId>
+			<version>1.2</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
 			<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
 			<artifactId>cz.cuni.mff.d3s.jdeeco.core</artifactId>
 			<version>1.0.0</version>

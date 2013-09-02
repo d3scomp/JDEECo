@@ -56,7 +56,7 @@ public class NodeC extends ComponentDefinition {
 			System.out.println("Introducing new component...");
 			InstanceRuntimeMetadataProvider provider = new InstanceRuntimeMetadataProvider();
 			provider.fromComponentInstance(new NodeD());
-			rt.deploy(provider.getRuntimeMetadata());
+			rt.deployRuntimeMetadata(provider.getRuntimeMetadata());
 			System.out.println("New component successfully introduced ;-)");
 			counter.value = new Integer(2);
 		}

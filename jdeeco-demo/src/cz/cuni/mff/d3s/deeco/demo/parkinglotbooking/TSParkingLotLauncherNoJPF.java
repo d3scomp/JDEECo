@@ -29,7 +29,7 @@ public class TSParkingLotLauncherNoJPF {
 		provider.fromComponentInstance(new ParkingLot());
 
 		Runtime rt = new Runtime(scheduler, km);
-		rt.deploy(provider.getRuntimeMetadata());
+		rt.deployRuntimeMetadata(provider.getRuntimeMetadata());
 		rt.run();
 	}
 

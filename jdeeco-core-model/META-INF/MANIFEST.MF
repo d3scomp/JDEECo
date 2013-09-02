@@ -7,9 +7,6 @@ Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Export-Package: cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel,
- cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.impl,
- cz.cuni.mff.d3s.jdeeco.core.model.runtimemodel.util
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecore;visibility:=reexport
 Bundle-ActivationPolicy: lazy

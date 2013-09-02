@@ -20,7 +20,7 @@ import java.util.Map;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
-import cz.cuni.mff.d3s.deeco.annotations.Membership;
+import cz.cuni.mff.d3s.deeco.annotations.Condition;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.definitions.EnsembleDefinition;
 
@@ -34,7 +34,7 @@ public class SensorDataAggregation extends EnsembleDefinition {
 
 	private static final long serialVersionUID = 5991804902054860542L;
 
-	@Membership
+	@Condition
 	public static boolean membership(@In("member.teamId") String mteamId,
 			@In("member.temperature") Float temperature,
 			@In("coord.temperatures") Map<String, Float> temperatures,

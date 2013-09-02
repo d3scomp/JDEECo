@@ -17,7 +17,7 @@ package cz.cuni.mff.d3s.deeco.demo.cloud;
 
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
-import cz.cuni.mff.d3s.deeco.annotations.Membership;
+import cz.cuni.mff.d3s.deeco.annotations.Condition;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.definitions.EnsembleDefinition;
@@ -35,7 +35,7 @@ public class MigrationEnsemble extends EnsembleDefinition {
 
 	public final static long serialVersionUID = 1L;
 	
-	@Membership
+	@Condition
 	public static boolean membership(
 			@In("member.id") String mId,
 			@In("member.loadRatio") Float mLoadRatio,

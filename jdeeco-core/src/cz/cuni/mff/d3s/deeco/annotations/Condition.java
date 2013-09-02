@@ -21,7 +21,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Membership is used to mark the method in the ensemble definition
+ * Condition is used to mark the method in the ensemble definition
  * class as the membership function.
  * 
  * @author Michal Kit
@@ -29,6 +29,6 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface Membership {
+public @interface Condition {
 	double value() default 0.0;
 }

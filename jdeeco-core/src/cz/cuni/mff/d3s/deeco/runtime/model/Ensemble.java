@@ -2,11 +2,11 @@ package cz.cuni.mff.d3s.deeco.runtime.model;
 
 public class Ensemble {
 	private String id;
-	private Condition membership;
+	private BooleanCondition membership;
 	private Exchange knowledgeExchange;
 	private Schedule schedule;
 	
-	public Ensemble(String id, Condition membership,
+	public Ensemble(String id, BooleanCondition membership,
 			Exchange knowledgeExchange, Schedule schedule) {
 		super();
 		this.id = id;
@@ -19,7 +19,7 @@ public class Ensemble {
 		return id;
 	}
 
-	public Condition getMembership() {
+	public BooleanCondition getMembership() {
 		return membership;
 	}
 

@@ -57,7 +57,7 @@ public class RuntimeMX implements RuntimeMXBean {
 		}
 		InstanceRuntimeMetadataProvider provider = new InstanceRuntimeMetadataProvider();
 		provider.fromComponentInstance(extractInitialKnowledge(clazz));
-		rt.deploy(provider.getRuntimeMetadata());
+		rt.deployRuntimeMetadata(provider.getRuntimeMetadata());
 	}
 
 	/**

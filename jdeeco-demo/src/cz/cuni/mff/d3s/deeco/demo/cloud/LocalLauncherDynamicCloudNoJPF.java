@@ -38,7 +38,7 @@ public class LocalLauncherDynamicCloudNoJPF {
 		provider.fromComponentInstance(new NodeC());
 		provider.fromEnsembleDefinition(MigrationEnsemble.class);
 		Runtime rt = new Runtime(scheduler, km, true);
-		rt.deploy(provider.getRuntimeMetadata());
+		rt.deployRuntimeMetadata(provider.getRuntimeMetadata());
 		rt.run();
 	}
 }

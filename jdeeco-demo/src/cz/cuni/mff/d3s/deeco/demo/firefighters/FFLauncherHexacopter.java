@@ -39,7 +39,7 @@ public class FFLauncherHexacopter {
 		provider.fromComponentInstance(new GroupLeader("GL2", "T2", true,
 				new Position(0, 0)));
 		Runtime rt = new Runtime(scheduler, km);
-		rt.deploy(provider.getRuntimeMetadata());
+		rt.deployRuntimeMetadata(provider.getRuntimeMetadata());
 		rt.run();
 	}
 }

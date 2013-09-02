@@ -19,7 +19,7 @@ public class LocalLauncherCloudJPF {
 		Scheduler scheduler = new RealTimeSchedulerJPF();
 		RuntimeMetadataProvider provider = new ParsedObjectReader().read();
 		Runtime rt = new Runtime(scheduler, km);
-		rt.deploy(provider.getRuntimeMetadata());
+		rt.deployRuntimeMetadata(provider.getRuntimeMetadata());
 		rt.run();
 	}
 }

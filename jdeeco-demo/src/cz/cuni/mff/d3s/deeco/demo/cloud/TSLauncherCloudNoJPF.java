@@ -28,7 +28,7 @@ public class TSLauncherCloudNoJPF {
 		provider.fromComponentInstance(new NodeB());
 		provider.fromEnsembleDefinition(MigrationEnsemble.class);
 		Runtime rt = new Runtime(scheduler, km);
-		rt.deploy(provider.getRuntimeMetadata());
+		rt.deployRuntimeMetadata(provider.getRuntimeMetadata());
 		rt.run();
 	}
 }

@@ -28,7 +28,7 @@ public class LocalLauncherCloudNoJPF {
 		provider.fromComponentInstance(new NodeA("NodeA", .5f, 1));
 		provider.fromEnsembleDefinition(MigrationEnsemble.class);
 		Runtime rt = new Runtime(scheduler, km);
-		rt.deploy(provider.getRuntimeMetadata());
+		rt.deployRuntimeMetadata(provider.getRuntimeMetadata());
 
 		rt.run();
 	}

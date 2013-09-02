@@ -21,7 +21,7 @@ import java.util.Set;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
-import cz.cuni.mff.d3s.deeco.annotations.Membership;
+import cz.cuni.mff.d3s.deeco.annotations.Condition;
 import cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange;
 import cz.cuni.mff.d3s.deeco.definitions.EnsembleDefinition;
 
@@ -35,7 +35,7 @@ public class CriticalDataAggregation extends EnsembleDefinition {
 
 	private static final long serialVersionUID = 7576890075702914993L;
 
-	@Membership
+	@Condition
 	public static boolean membership(
 			@In("member.isSiteLeader") Boolean isSiteLeaderMember,
 			@In("coord.isSiteLeader") Boolean isSiteLeaderCoord) {
