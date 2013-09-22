@@ -133,6 +133,14 @@ public abstract class KnowledgeManager {
 	 * @return {@link ISession} object instance.
 	 */
 	public abstract ISession createSession();
+	
+	/**
+	 * Returns the most recent time stamp for this knowledge part.
+	 * 
+	 * @param knowledgePath - part of the knowledge path
+	 * @return Time stamp of the last update.
+	 */
+	public abstract Long getKnowledgeTimeStamp(String knowledgePath, ISession session);
 
 	/**
 	 * Register a listener that should be notified by the knowledge manager
@@ -217,6 +225,10 @@ public abstract class KnowledgeManager {
 	public void putKnowledge(String knowledgePath, Object value)
 			throws KMException {
 		putKnowledge(knowledgePath, value, null);
+	}
+	
+	public Long getKnowledgeTimeStamp(String knowledgePath) {
+		return getKnowledgeTimeStamp(knowledgePath, null);
 	}
 
 }

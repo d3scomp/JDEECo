@@ -33,6 +33,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeChangeCollector;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgePathHelper;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeRepository;
 import cz.cuni.mff.d3s.deeco.knowledge.RepositoryChangeNotifier;
+import cz.cuni.mff.d3s.deeco.knowledge.TimeProvider;
 
 /**
  * Implementation of the knowledge repository using a hashmap. This
@@ -51,11 +52,25 @@ public class LocalKnowledgeRepository extends KnowledgeRepository {
 
 	protected final ReentrantLock lock = new ReentrantLock();
 	protected final HashMap<String, List<Object>> ts = new HashMap<String, List<Object>>();
-
+	
+	protected final Map<String, Long> timestamps = new HashMap<>();
 	private final Map<String, LocalRepositoryChangeNotifier> internalNotifiers = new HashMap<>();
 	private final Cloner cloner = new Cloner();
+	
+	@Override
+	public Long getKnowledgeTimeStamp(String entryKey, ISession session) {
+		if (session == null)
+			lock.lock();
+		Long result = timestamps.get(entryKey);
+		if (result == null)
+			result = -1L;
+		if (session == null)
+			lock.unlock();
+		return result;
+	}
 
-	public LocalKnowledgeRepository() {
+	public LocalKnowledgeRepository(TimeProvider tp) {
+		super(tp);
 		// JPF Optimization - class initialization if lock is used causes state
 		// space explosion
 		// here we intentionally use the lock -> it will hopefully
@@ -166,6 +181,7 @@ public class LocalKnowledgeRepository extends KnowledgeRepository {
 		}
 		Object newValue = cloner.deepClone(value);
 		vals.add(newValue);
+		timestamps.put(entryKey, tp.getCurrentTime());
 		if (session == null)
 			lock.unlock();
 	}

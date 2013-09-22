@@ -23,12 +23,19 @@ import org.testng.annotations.Test;
 import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionAccessError;
 import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionUnavailableEntry;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
+import cz.cuni.mff.d3s.deeco.knowledge.TimeProvider;
 import cz.cuni.mff.d3s.deeco.knowledge.local.LocalKnowledgeRepository;
 
 @Test
 public class LocalKnowledgeRepositoryTest {
 
-	private LocalKnowledgeRepository kr = new LocalKnowledgeRepository();
+	private LocalKnowledgeRepository kr = new LocalKnowledgeRepository(new TimeProvider() {
+		@Override
+		public long getCurrentTime() {
+			return System.currentTimeMillis();
+		}
+	});
+	
 	private ISession session = kr.createSession();
 
 	@BeforeClass

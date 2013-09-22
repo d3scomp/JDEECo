@@ -16,6 +16,8 @@
         eType="#//Component" eOpposite="#//Component/processes"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="schedule" lowerBound="1"
         eType="#//Schedule" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="monitors" upperBound="2"
+        eType="#//Monitor"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Schedule" abstract="true"/>
   <eClassifiers xsi:type="ecore:EClass" name="StructuredKnowledgeValueType" eSuperTypes="#//KnowledgeType">
@@ -77,6 +79,8 @@
   <eClassifiers xsi:type="ecore:EClass" name="Exchange" eSuperTypes="#//Invocable">
     <eStructuralFeatures xsi:type="ecore:EReference" name="ensemble" lowerBound="1"
         eType="#//Ensemble" eOpposite="#//Ensemble/knowledgeExchange"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="monitors" upperBound="2"
+        eType="#//Monitor"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="RuntimeMetadata">
     <eStructuralFeatures xsi:type="ecore:EReference" name="ensembles" upperBound="-1"
@@ -131,4 +135,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="wrappedType" lowerBound="1"
         eType="#//KnowledgeType"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Monitor" abstract="true" eSuperTypes="#//Invocable"/>
+  <eClassifiers xsi:type="ecore:EClass" name="PredictiveMonitor" eSuperTypes="#//Monitor"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ActiveMonitor" eSuperTypes="#//Monitor"/>
 </ecore:EPackage>

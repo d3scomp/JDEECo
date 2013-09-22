@@ -33,6 +33,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeChangeCollector;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgePathHelper;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeRepository;
 import cz.cuni.mff.d3s.deeco.knowledge.RepositoryChangeNotifier;
+import cz.cuni.mff.d3s.deeco.knowledge.TimeProvider;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 
 /**
@@ -44,7 +45,8 @@ import cz.cuni.mff.d3s.deeco.logging.Log;
  */
 public class TSKnowledgeRepository extends KnowledgeRepository {
 	
-	public TSKnowledgeRepository() {
+	public TSKnowledgeRepository(TimeProvider tp) {
+		super(tp);
 		if (System.getSecurityManager() == null)
 			System.setSecurityManager(new RMISecurityManager());
 	}
@@ -119,6 +121,25 @@ public class TSKnowledgeRepository extends KnowledgeRepository {
 
 		return resultList.toArray();
 	}
+	
+	@Override
+	public Long getKnowledgeTimeStamp(String entryKey, ISession session) {
+		Long result = -1L;
+		try {
+			JavaSpace05 space = TSUtils.getSpace();
+			Transaction tx = (session != null) ? ((TransactionalSession) session)
+					.getTransaction() : null;
+			MatchSet tuples = space.contents(Arrays
+					.asList(new Tuple[] { TSUtils.createTemplate(entryKey) }),
+					tx, Lease.FOREVER, Long.MAX_VALUE);
+			Tuple tuple = (Tuple) tuples.next();
+			while (tuple != null) {
+				result = Math.max(result, tuple.timestamp);
+				tuple = (Tuple) tuples.next();
+			}
+		} catch (Exception e) {}
+		return result;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -134,7 +155,7 @@ public class TSKnowledgeRepository extends KnowledgeRepository {
 			JavaSpace space = TSUtils.getSpace();
 			Transaction tx = (session != null) ? ((TransactionalSession) session)
 					.getTransaction() : null;
-			space.write(TSUtils.createTuple(entryKey, value), tx, Lease.FOREVER);
+			space.write(TSUtils.createTuple(entryKey, value, tp), tx, Lease.FOREVER);
 			// LoggerFactory.getLogger().fine("Writing entry: " + entryKey);
 			if (session != null) {
 				KnowledgeChangeCollector kcc = (KnowledgeChangeCollector) session;
@@ -176,7 +197,7 @@ public class TSKnowledgeRepository extends KnowledgeRepository {
 						TSUtils.createTemplate(fullListenPath),
 						ts.getTransaction(), Lease.FOREVER);
 				if (t == null) {
-					space.write(TSUtils.createTuple(fullListenPath, "1"),
+					space.write(TSUtils.createTuple(fullListenPath, "1", tp),
 							ts.getTransaction(), Lease.FOREVER);
 				}
 				ts.end();

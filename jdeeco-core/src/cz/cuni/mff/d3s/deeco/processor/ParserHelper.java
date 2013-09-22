@@ -13,7 +13,7 @@ import java.util.List;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
-import cz.cuni.mff.d3s.deeco.exceptions.ComponentEnsembleParseException;
+import cz.cuni.mff.d3s.deeco.exceptions.ParametersParseException;
 import cz.cuni.mff.d3s.deeco.path.grammar.ParseException;
 import cz.cuni.mff.d3s.deeco.path.grammar.PathParser;
 import cz.cuni.mff.d3s.deeco.runtime.model.KnowledgePath;
@@ -41,12 +41,12 @@ public class ParserHelper {
 	 * @return list of {@link Parameter} instances which fulfills search
 	 *         criteria.
 	 * @throws GrammarParserException
-	 * @throws ComponentEnsembleParseException
+	 * @throws ParametersParseException
 	 * 
 	 * @see Parameter
 	 */
 	public static List<Parameter> getParameterList(Method method) throws ParseException,
-			ComponentEnsembleParseException {
+			ParametersParseException {
 
 		List<Parameter> result = new LinkedList<Parameter>();		
 		Annotation[][] allAnnotations = method.getParameterAnnotations();

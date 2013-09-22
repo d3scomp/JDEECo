@@ -35,11 +35,8 @@ public class LocalLauncherExampleJPF {
 					}
 				}
 		});
-		
-		KnowledgeManager km = new RepositoryKnowledgeManager(new LocalKnowledgeRepositoryJPF(propositions));
-		
 		Scheduler scheduler = new RealTimeSchedulerJPF();
-		
+		KnowledgeManager km = new RepositoryKnowledgeManager(new LocalKnowledgeRepositoryJPF(scheduler, propositions));
 		RuntimeMetadataProvider provider = new ParsedObjectReader().read();
 		
 		Runtime rt = new Runtime(scheduler, km);

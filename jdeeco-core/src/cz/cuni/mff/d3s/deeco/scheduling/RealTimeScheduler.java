@@ -10,7 +10,7 @@ public class RealTimeScheduler extends Scheduler {
 
 	public final static int THREAD_POOL_SIZE = 10;
 
-	private ScheduledThreadPoolExecutor executor;
+	protected ScheduledThreadPoolExecutor executor;
 
 	@Override
 	public void jobExecutionFinished(Job job) {
@@ -49,6 +49,17 @@ public class RealTimeScheduler extends Scheduler {
 	@Override
 	public synchronized boolean isStarted() {
 		return executor != null;
+	}
+
+	@Override
+	public void jobExecutionException(Job job, Throwable t) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public long getCurrentTime() {
+		return System.currentTimeMillis();
 	}
 
 }

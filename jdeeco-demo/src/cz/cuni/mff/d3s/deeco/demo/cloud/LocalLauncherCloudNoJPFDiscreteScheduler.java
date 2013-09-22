@@ -20,9 +20,9 @@ public class LocalLauncherCloudNoJPFDiscreteScheduler {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		KnowledgeManager km = new RepositoryKnowledgeManager(
-				new LocalKnowledgeRepository());
 		Scheduler scheduler = new DiscreteScheduler();
+		KnowledgeManager km = new RepositoryKnowledgeManager(
+				new LocalKnowledgeRepository(scheduler));
 		InstanceRuntimeMetadataProvider provider = new InstanceRuntimeMetadataProvider();
 		provider.fromComponentInstance(new NodeB());
 		provider.fromComponentInstance(new NodeD());

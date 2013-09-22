@@ -20,14 +20,13 @@ public class TSParkingLotLauncherNoJPF {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		KnowledgeManager km = new RepositoryKnowledgeManager(
-				new TSKnowledgeRepository());
 		Scheduler scheduler = new RealTimeScheduler();
+		KnowledgeManager km = new RepositoryKnowledgeManager(
+				new TSKnowledgeRepository(scheduler));
 		InstanceRuntimeMetadataProvider provider = new InstanceRuntimeMetadataProvider();
 		provider.fromEnsembleDefinition(BookingEnsemble.class);
 		provider.fromComponentInstance(new CarPlanner());
 		provider.fromComponentInstance(new ParkingLot());
-
 		Runtime rt = new Runtime(scheduler, km);
 		rt.deployRuntimeMetadata(provider.getRuntimeMetadata());
 		rt.run();

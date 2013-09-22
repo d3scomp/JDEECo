@@ -17,7 +17,7 @@ import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.StrongLocking;
 import cz.cuni.mff.d3s.deeco.annotations.WeakLocking;
 import cz.cuni.mff.d3s.deeco.definitions.ComponentDefinition;
-import cz.cuni.mff.d3s.deeco.exceptions.ComponentEnsembleParseException;
+import cz.cuni.mff.d3s.deeco.exceptions.ParametersParseException;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.path.grammar.ParseException;
@@ -73,7 +73,7 @@ public class ComponentParser {
 		for (Method m : methods) {
 			try {
 				parameters = getParameterList(m);
-			} catch (ComponentEnsembleParseException cepe) {
+			} catch (ParametersParseException cepe) {
 				throw new ParseException(c.getName()
 						+ ": Parameters for the method " + m.getName()
 						+ " cannot be parsed.");
@@ -93,8 +93,10 @@ public class ComponentParser {
 			} else {
 				lockingMode = LockingMode.STRONG;
 			}
-
-			result.add(new ComponentProcess(parameters, m, schedule,
+			String id = m.getAnnotation(Process.class).value();
+			if (id == null || id.equals(""))
+				id = m.toString();
+			result.add(new ComponentProcess(id, parameters, m, schedule,
 					lockingMode));
 		}
 		return result;

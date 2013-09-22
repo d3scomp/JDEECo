@@ -28,6 +28,6 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface Process {
-	String value() default "";
+public @interface Assumption {
+	String value();
 }

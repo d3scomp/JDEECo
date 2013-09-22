@@ -12,7 +12,7 @@ import java.lang.reflect.Type;
 import java.util.LinkedList;
 import java.util.List;
 
-import cz.cuni.mff.d3s.deeco.exceptions.ComponentEnsembleParseException;
+import cz.cuni.mff.d3s.deeco.exceptions.ParametersParseException;
 import cz.cuni.mff.d3s.deeco.runtime.model.KnowledgeType;
 import cz.cuni.mff.d3s.deeco.runtime.model.ListValueType;
 import cz.cuni.mff.d3s.deeco.runtime.model.MapValueType;
@@ -23,9 +23,9 @@ import cz.cuni.mff.d3s.deeco.runtime.model.StructuredKnowledgeValueType;
 public class ParameterKnowledgeTypeParser {
 
 	public static KnowledgeType extractKnowledgeType(Type type)
-			throws ComponentEnsembleParseException {
+			throws ParametersParseException {
 		if (type == null) {
-			throw new ComponentEnsembleParseException(
+			throw new ParametersParseException(
 					"Parsing Exception: Type is null");
 		}
 		final Class<?> clazz = TypeUtils.getClass(type);

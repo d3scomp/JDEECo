@@ -4,22 +4,29 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 public class ComponentProcess extends Invocable {
-	private Schedule schedule;
+	private final Schedule schedule;
+	private final String id;
 
-	public ComponentProcess(List<Parameter> parameters, Method method,
+	public ComponentProcess(String id, List<Parameter> parameters, Method method,
 			Schedule schedule, LockingMode lockingMode) {
 		super(parameters, method, lockingMode);
 		this.schedule = schedule;
+		this.id = id;
 	}
 
-	public ComponentProcess(Method method, Schedule schedule,
+	public ComponentProcess(String id, Method method, Schedule schedule,
 			LockingMode lockingMode) {
 		super(method, lockingMode);
 		this.schedule = schedule;
+		this.id = id;
 	}
 
 	public Schedule getSchedule() {
 		return schedule;
+	}
+	
+	public String getId() {
+		return id;
 	}
 
 }

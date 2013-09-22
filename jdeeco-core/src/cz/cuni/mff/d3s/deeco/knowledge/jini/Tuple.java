@@ -29,6 +29,7 @@ public class Tuple implements Entry {
 
 	public String key;
 	public Object value;
+	public Long timestamp;
 
 	public Tuple() {
 	}

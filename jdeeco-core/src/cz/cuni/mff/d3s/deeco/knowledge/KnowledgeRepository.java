@@ -35,9 +35,16 @@ public abstract class KnowledgeRepository {
 
 	private boolean triggeringActive = false;
 	private ExecutorService executor;
+	
+	protected final TimeProvider tp;
 
-	public KnowledgeRepository() {
-		this.executor = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
+	public KnowledgeRepository(TimeProvider tp, int threadPoolSize) {
+		this.executor = Executors.newFixedThreadPool(threadPoolSize);
+		this.tp = tp;
+	}
+	
+	public KnowledgeRepository(TimeProvider tp) {
+		this(tp, THREAD_POOL_SIZE);
 	}
 
 	public boolean isTriggeringActive() {
@@ -160,6 +167,14 @@ public abstract class KnowledgeRepository {
 	 */
 	public abstract Object[] take(String entryKey, ISession session)
 			throws KRExceptionUnavailableEntry, KRExceptionAccessError;
+	
+	/**
+	 * Returns the most recent time stamp for this tuple.
+	 * 
+	 * @param entryKey - tuple key
+	 * @return Time stamp of the last update.
+	 */
+	public abstract Long getKnowledgeTimeStamp(String entryKey, ISession session);
 
 	/**
 	 * Creates a session object, which can be used for all the operations on the
@@ -217,6 +232,8 @@ public abstract class KnowledgeRepository {
 			KRExceptionAccessError {
 		return take(entryKey, null);
 	}
+	
+	
 
 	public abstract RepositoryChangeNotifier listenForChange(String entryKey)
 			throws KRExceptionAccessError;

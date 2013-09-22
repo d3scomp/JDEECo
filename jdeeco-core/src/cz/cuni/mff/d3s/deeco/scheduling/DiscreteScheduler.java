@@ -37,5 +37,17 @@ public class DiscreteScheduler extends Scheduler {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+	@Override
+	public void jobExecutionException(Job job, Throwable t) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public long getCurrentTime() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 	
 }

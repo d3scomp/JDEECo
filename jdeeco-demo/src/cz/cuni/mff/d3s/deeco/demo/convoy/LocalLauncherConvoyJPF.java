@@ -22,9 +22,9 @@ public class LocalLauncherConvoyJPF {
 	 */
 	public static void main(String[] args) {
 		// PreprocessorLauncher.main(args);
-		KnowledgeManager km = new RepositoryKnowledgeManager(
-				new LocalKnowledgeRepository());
 		Scheduler scheduler = new RealTimeSchedulerJPF();
+		KnowledgeManager km = new RepositoryKnowledgeManager(
+				new LocalKnowledgeRepository(scheduler));
 		RuntimeMetadataProvider provider = new ParsedObjectReader().read();
 		Runtime rt = new Runtime(scheduler, km);
 		rt.deployRuntimeMetadata(provider.getRuntimeMetadata());

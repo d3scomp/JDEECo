@@ -20,9 +20,9 @@ public class FFLauncherHexacopter {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		KnowledgeManager km = new RepositoryKnowledgeManager(
-				new LocalKnowledgeRepository());
 		Scheduler scheduler = new RealTimeScheduler();
+		KnowledgeManager km = new RepositoryKnowledgeManager(
+				new LocalKnowledgeRepository(scheduler));
 		InstanceRuntimeMetadataProvider provider = new InstanceRuntimeMetadataProvider();
 		provider.fromEnsembleDefinition(SensorDataAggregation.class);
 		provider.fromEnsembleDefinition(CriticalDataAggregationOnHexacopter.class);

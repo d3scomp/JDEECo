@@ -8,6 +8,7 @@ import cz.cuni.mff.d3s.deeco.definitions.ComponentDefinition;
 import cz.cuni.mff.d3s.deeco.exceptions.KMNotExistentException;
 import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.knowledge.TimeProvider;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.runtime.jmx.RuntimeMX;
 import cz.cuni.mff.d3s.deeco.runtime.model.ComponentInstance;
@@ -22,13 +23,14 @@ import cz.cuni.mff.d3s.deeco.scheduling.EnsembleJobProducer;
 import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
 import cz.cuni.mff.d3s.deeco.scheduling.TriggeredJobProducer;
 
-public class Runtime {
+public class Runtime implements TimeProvider {
 
 	private RuntimeMetadata runtimeMetadata;
 	private final KnowledgeManager km;
 	private final Scheduler scheduler;
 	private final List<TriggeredJobProducer> triggeredJobProducers;
-	//private final Oracle oracle;
+
+	// private final Oracle oracle;
 
 	public Runtime(Scheduler scheduler, KnowledgeManager km) {
 		this(scheduler, km, false);
@@ -42,7 +44,16 @@ public class Runtime {
 		this.scheduler = scheduler;
 		this.km = km;
 		this.triggeredJobProducers = new LinkedList<>();
-		//this.oracle = new Oracle(new SAT4JSolver());
+		// this.oracle = new Oracle(new SAT4JSolver());
+	}
+	
+	@Override
+	public long getCurrentTime() {
+		return scheduler.getCurrentTime();
+	}
+	
+	public long getKnowledgeTimeStamp(String knowledgePath) {
+		return km.getKnowledgeTimeStamp(knowledgePath);
 	}
 
 	public boolean isRunning() {
@@ -66,17 +77,17 @@ public class Runtime {
 		scheduler.stop();
 	}
 
-	//TODO add hot deployment - merge metadata
-	public synchronized void deployRuntimeMetadata(RuntimeMetadata runtimeMetadata) {
+	// TODO add hot deployment - merge metadata
+	public synchronized void deployRuntimeMetadata(
+			RuntimeMetadata runtimeMetadata) {
 		assert (runtimeMetadata != null);
 		this.runtimeMetadata = runtimeMetadata;
 	}
-	
-//	public synchronized void deployIRMInvariant(Invariant invariant) {
-//		assert (invariant != null);
-//		//oracle.addIRMInvariant(invariant);
-//	}
-	
+
+	// public synchronized void deployIRMInvariant(Invariant invariant) {
+	// assert (invariant != null);
+	// //oracle.addIRMInvariant(invariant);
+	// }
 
 	private void deployComponentInstances() {
 		for (ComponentInstance ci : runtimeMetadata.getComponentInstances()) {

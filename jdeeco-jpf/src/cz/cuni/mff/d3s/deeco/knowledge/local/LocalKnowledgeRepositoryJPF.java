@@ -23,9 +23,9 @@ import java.util.concurrent.locks.LockSupport;
 
 import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionAccessError;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
+import cz.cuni.mff.d3s.deeco.knowledge.TimeProvider;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.ltl.AtomicProposition;
-
 import cz.cuni.mff.d3s.ltl.CommlinkSuTJPF;
 
 
@@ -49,7 +49,8 @@ public class LocalKnowledgeRepositoryJPF extends LocalKnowledgeRepository implem
 	
 	List<AtomicProposition> propositions = new ArrayList<>();
 
-	public LocalKnowledgeRepositoryJPF(List<AtomicProposition> propositions) {
+	public LocalKnowledgeRepositoryJPF(TimeProvider tp, List<AtomicProposition> propositions) {
+		super(tp);
 		this.propositions = propositions;
 		for (AtomicProposition ap : propositions) {
 			propositionToEvaluate.put(ap.getName(), true);

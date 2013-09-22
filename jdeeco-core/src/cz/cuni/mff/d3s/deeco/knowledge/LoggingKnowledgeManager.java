@@ -29,6 +29,13 @@ public class LoggingKnowledgeManager extends KnowledgeManager {
 	}
 
 	@Override
+	public Long getKnowledgeTimeStamp(String knowledgePath, ISession session) {
+		Log.d("LoggingKnowledgeManager.getKnowledgeTimeStamp(knowledgePath="
+				+ knowledgePath + ", session=" + session + ")");
+		return decoratedKm.getKnowledgeTimeStamp(knowledgePath, session);
+	}
+
+	@Override
 	public Object getKnowledge(String knowledgePath,
 			KnowledgeType expectedType, ISession session) throws KMException {
 		Log.d("LoggingKnowledgeManager.getKnowledge(knowledgePath="

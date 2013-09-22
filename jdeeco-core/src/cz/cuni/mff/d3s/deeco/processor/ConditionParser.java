@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.annotations.Condition;
-import cz.cuni.mff.d3s.deeco.exceptions.ComponentEnsembleParseException;
+import cz.cuni.mff.d3s.deeco.exceptions.ParametersParseException;
 import cz.cuni.mff.d3s.deeco.path.grammar.ParseException;
 import cz.cuni.mff.d3s.deeco.runtime.model.BooleanCondition;
 import cz.cuni.mff.d3s.deeco.runtime.model.Parameter;
@@ -30,7 +30,7 @@ public class ConditionParser {
 				parameters = getParameterList(m);
 			} catch (ParseException pe) {
 				continue;
-			} catch (ComponentEnsembleParseException cepe) {
+			} catch (ParametersParseException cepe) {
 				continue;
 			}
 			result.add(new BooleanCondition(parameters, m));

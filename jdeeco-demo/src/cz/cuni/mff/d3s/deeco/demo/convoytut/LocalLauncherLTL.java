@@ -21,13 +21,10 @@ public class LocalLauncherLTL {
 						new IsFollowerAtDestination(),
 						new IsFollowerNearLeader("LeaderA"),
 						new IsFollowerNearLeader("LeaderB") });
-
-		LocalKnowledgeRepositoryJPF repo = new LocalKnowledgeRepositoryJPF(
-				propositions);
-		KnowledgeManager km = new RepositoryKnowledgeManager(repo);
-
 		Scheduler scheduler = new RealTimeSchedulerJPF();
-
+		LocalKnowledgeRepositoryJPF repo = new LocalKnowledgeRepositoryJPF(
+				scheduler, propositions);
+		KnowledgeManager km = new RepositoryKnowledgeManager(repo);
 		RuntimeMetadataProvider provider = new ParsedObjectReader().read();
 
 		Runtime rt = new Runtime(scheduler, km);

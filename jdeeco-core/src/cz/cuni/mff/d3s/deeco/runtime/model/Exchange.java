@@ -5,12 +5,16 @@ import java.util.List;
 
 public class Exchange extends Invocable {
 
-	public Exchange(List<Parameter> parameters, Method method) {
+	private final String id;
+	
+	public Exchange(String id, List<Parameter> parameters, Method method) {
 		super(parameters, method, LockingMode.STRONG);
+		this.id = id;
 	}
 	
-	public Exchange(Method method) {
+	public Exchange(String id, Method method) {
 		super(method, LockingMode.STRONG);
+		this.id = id;
 	}
 	
 }

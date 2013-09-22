@@ -203,6 +203,47 @@ public class RepositoryKnowledgeManager extends KnowledgeManager {
 		storeKnowledge(knowledgePath, value, session, false);
 
 	}
+	
+	@Override
+	public Long getKnowledgeTimeStamp(String knowledgePath, ISession session) {
+		Long result = -1L;
+		if (kr == null)
+			return result;
+		ISession locSession = null;
+		if (session == null) {
+			locSession = createSession();
+			locSession.begin();
+		}
+
+		final ISession localSession = (session == null ? locSession : session);
+
+		try {
+			while (localSession.repeat()) {
+				Object[] structure = getStructure(false, knowledgePath,
+						localSession);
+				if (structure == null) // flat
+					result = kr.getKnowledgeTimeStamp(knowledgePath, localSession);
+				else {
+					String tPath, tString;
+					for (Object s : structure) {
+						tString = (String) s;
+						tPath = KnowledgePathHelper.appendToRoot(knowledgePath,
+								tString);
+						result = Math.max(result, getKnowledgeTimeStamp(tPath, localSession));
+					}
+				}
+				if (session == null)
+					localSession.end();
+				else
+					break;
+			}
+			return result;
+		} catch (Exception e) {
+			Log.e(knowledgePath, e);
+			localSession.cancel();
+			return null;
+		}
+	}
 
 	private void storeKnowledge(String knowledgePath, Object value,
 			ISession session, boolean modify) throws KMAccessException {

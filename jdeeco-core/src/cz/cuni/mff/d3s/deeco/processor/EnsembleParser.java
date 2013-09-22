@@ -12,7 +12,7 @@ import java.util.List;
 import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.definitions.EnsembleDefinition;
-import cz.cuni.mff.d3s.deeco.exceptions.ComponentEnsembleParseException;
+import cz.cuni.mff.d3s.deeco.exceptions.ParametersParseException;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.path.grammar.ParseException;
 import cz.cuni.mff.d3s.deeco.runtime.model.BooleanCondition;
@@ -63,12 +63,15 @@ public class EnsembleParser {
 		}
 		try {
 			parameters = getParameterList(m);
-		} catch (ComponentEnsembleParseException cepe) {
+		} catch (ParametersParseException cepe) {
 			throw new ParseException(c.getName()
 					+ ": Parameters for the method " + m.getName()
 					+ " cannot be parsed.");
 		}
-		Exchange ke = new Exchange(parameters, m);
+		
+		String id = c.toString();
+		
+		Exchange ke = new Exchange(id, parameters, m);
 		Schedule schedule = getPeriodicSchedule(AnnotationHelper
 				.getAnnotation(PeriodicScheduling.class, m.getAnnotations()));
 		if (schedule == null) {

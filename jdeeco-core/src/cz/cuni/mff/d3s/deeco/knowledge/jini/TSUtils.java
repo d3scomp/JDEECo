@@ -15,6 +15,7 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.knowledge.jini;
 
+import cz.cuni.mff.d3s.deeco.knowledge.TimeProvider;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import net.jini.space.JavaSpace05;
 
@@ -56,10 +57,11 @@ public class TSUtils {
 	 *            tuple value
 	 * @return tuple instance
 	 */
-	public static Tuple createTuple(String key, Object value) {
+	public static Tuple createTuple(String key, Object value, TimeProvider tp) {
 		Tuple result = new Tuple();
 		result.key = key;
 		result.value = value;
+		result.timestamp = tp.getCurrentTime();
 		return result;
 	}
 

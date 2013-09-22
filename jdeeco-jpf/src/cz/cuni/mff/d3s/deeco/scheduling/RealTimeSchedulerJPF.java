@@ -51,4 +51,15 @@ public class RealTimeSchedulerJPF extends Scheduler {
 		return executor != null;
 	}
 
+	@Override
+	public void jobExecutionException(Job job, Throwable t) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public long getCurrentTime() {
+		return System.currentTimeMillis();
+	}
+
 }
