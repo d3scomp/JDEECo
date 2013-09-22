@@ -19,6 +19,7 @@ public class ConditionParser {
 		assert (c != null);
 		List<BooleanCondition> result = new LinkedList<>();
 		List<Parameter> parameters;
+		String id;
 		for (Method m : getAnnotatedMethods(c, Condition.class)) {
 			if (m == null) {
 				continue;
@@ -33,7 +34,8 @@ public class ConditionParser {
 			} catch (ParametersParseException cepe) {
 				continue;
 			}
-			result.add(new BooleanCondition(parameters, m));
+			id = m.getAnnotation(Condition.class).value();
+			result.add(new BooleanCondition(id, parameters, m));
 		}
 		return result;
 	}

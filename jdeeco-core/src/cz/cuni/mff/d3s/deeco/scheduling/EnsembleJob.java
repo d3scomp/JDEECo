@@ -26,7 +26,7 @@ public class EnsembleJob extends Job {
 		this.coordinator = coordinator;
 		this.member = member;
 		this.schedule = ensemble.getSchedule();
-		this.id = ensemble.getId();
+		this.id = coordinator + member + ensemble.getId();
 	}
 	
 	@Override

@@ -5,11 +5,20 @@ import java.util.List;
 
 public class BooleanCondition extends Invocable {
 
-	public BooleanCondition(List<Parameter> parameters, Method method) {
+	private final String id;
+	
+	public BooleanCondition(String id, List<Parameter> parameters, Method method) {
 		super(parameters, method, LockingMode.STRONG);
+		this.id = id;
 	}
 
-	public BooleanCondition(Method method) {
+	public BooleanCondition(String id, Method method) {
 		super(method, LockingMode.STRONG);
+		this.id = id;
 	}
+
+	public String getId() {
+		return id;
+	}
+	
 }
