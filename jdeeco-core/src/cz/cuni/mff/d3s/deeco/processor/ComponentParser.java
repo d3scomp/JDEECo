@@ -83,6 +83,8 @@ public class ComponentParser {
 			if (schedule == null)
 				schedule = getTriggeredSchedule(m.getParameterAnnotations(),
 						parameters);
+			if (schedule == null)
+				schedule = new PeriodicSchedule();
 
 			if (getAnnotation(StrongLocking.class, m.getAnnotations()) == null) {
 				if (getAnnotation(WeakLocking.class, m.getAnnotations()) == null)

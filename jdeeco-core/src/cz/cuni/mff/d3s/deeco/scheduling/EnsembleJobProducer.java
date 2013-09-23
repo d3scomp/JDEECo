@@ -5,6 +5,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.TriggerType;
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.monitoring.MonitorProvider;
 import cz.cuni.mff.d3s.deeco.runtime.Runtime;
 import cz.cuni.mff.d3s.deeco.runtime.model.Ensemble;
 import cz.cuni.mff.d3s.deeco.runtime.model.TriggeredSchedule;
@@ -14,8 +15,9 @@ public class EnsembleJobProducer extends TriggeredJobProducer {
 	private Ensemble ensemble;
 
 	public EnsembleJobProducer(Ensemble ensemble, Scheduler scheduler,
-			Runtime runtime) {
-		super((TriggeredSchedule) ensemble.getSchedule(), scheduler, runtime);
+			Runtime runtime, MonitorProvider monitorProvider) {
+		super((TriggeredSchedule) ensemble.getSchedule(), scheduler, runtime,
+				monitorProvider);
 		this.ensemble = ensemble;
 	}
 
@@ -28,11 +30,13 @@ public class EnsembleJobProducer extends TriggeredJobProducer {
 			if (recMode.equals(TriggerType.COORDINATOR)) {
 				for (Object id : ids)
 					scheduleJob(new EnsembleJob(ensemble, triggerer,
-							(String) id, null, runtime));
+							(String) id, monitorProvider.getMonitor(ensemble
+									.getId()), null, runtime));
 			} else {
 				for (Object id : ids)
 					scheduleJob(new EnsembleJob(ensemble, (String) id,
-							triggerer, null, runtime));
+							triggerer, monitorProvider.getMonitor(ensemble
+									.getId()), null, runtime));
 			}
 		} catch (KMException kme) {
 			Log.e("Knowledge Manager access exception", kme);

@@ -2,9 +2,11 @@ package cz.cuni.mff.d3s.deeco.scheduling;
 
 import java.lang.reflect.Method;
 
+import cz.cuni.mff.d3s.deeco.exceptions.KMNotExistentException;
 import cz.cuni.mff.d3s.deeco.executor.JobExecutionListener;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.monitoring.Monitor;
 import cz.cuni.mff.d3s.deeco.runtime.Runtime;
 import cz.cuni.mff.d3s.deeco.runtime.model.BooleanCondition;
 import cz.cuni.mff.d3s.deeco.runtime.model.Ensemble;
@@ -20,15 +22,16 @@ public class EnsembleJob extends Job {
 	private final String id;
 
 	public EnsembleJob(Ensemble ensemble, String coordinator, String member,
-			JobExecutionListener listener, Runtime runtime) {
-		super(runtime, listener);
+			Monitor monitor, JobExecutionListener listener,
+			Runtime runtime) {
+		super(runtime, monitor, listener);
 		this.ensemble = ensemble;
 		this.coordinator = coordinator;
 		this.member = member;
 		this.schedule = ensemble.getSchedule();
 		this.id = coordinator + member + ensemble.getId();
 	}
-	
+
 	@Override
 	public String getInstanceId() {
 		return id;
@@ -84,6 +87,8 @@ public class EnsembleJob extends Job {
 			Object[] parameters = getParameterMethodValues(membership, session);
 			Method m = membership.getMethod();
 			return (boolean) m.invoke(null, parameters);
+		} catch (KMNotExistentException kmne){
+			return false;
 		} catch (Exception e) {
 			Log.e("Ensemble exception while membership evaluation", e);
 			return false;

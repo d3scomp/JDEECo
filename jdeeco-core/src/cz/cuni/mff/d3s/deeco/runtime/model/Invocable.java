@@ -23,6 +23,22 @@ public abstract class Invocable {
 	public List<Parameter> getParameters() {
 		return parameters;
 	}
+	
+	public List<Parameter> getInputParameters() {
+		List<Parameter> result = new LinkedList<Parameter>();
+		for (Parameter p : parameters)
+			if (p.getDirection().equals(ParameterDirection.IN))
+				result.add(p);
+		return result;
+	}
+	
+	public List<Parameter> getOutputParameters() {
+		List<Parameter> result = new LinkedList<Parameter>();
+		for (Parameter p : parameters)
+			if (p.getDirection().equals(ParameterDirection.OUT))
+				result.add(p);
+		return result;
+	}
 
 	public Method getMethod() {
 		return method;

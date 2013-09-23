@@ -10,6 +10,8 @@ import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.TimeProvider;
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.monitoring.MonitorProvider;
+import cz.cuni.mff.d3s.deeco.monitoring.StubMonitorProvider;
 import cz.cuni.mff.d3s.deeco.runtime.jmx.RuntimeMX;
 import cz.cuni.mff.d3s.deeco.runtime.model.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.runtime.model.ComponentProcess;
@@ -28,15 +30,17 @@ public class Runtime implements TimeProvider {
 	private RuntimeMetadata runtimeMetadata;
 	private final KnowledgeManager km;
 	private final Scheduler scheduler;
+	private final MonitorProvider monitorProvider;
 	private final List<TriggeredJobProducer> triggeredJobProducers;
 
 	// private final Oracle oracle;
 
 	public Runtime(Scheduler scheduler, KnowledgeManager km) {
-		this(scheduler, km, false);
+		this(scheduler, km, new StubMonitorProvider(), false);
 	}
 
-	public Runtime(Scheduler scheduler, KnowledgeManager km, boolean useMXBeans) {
+	public Runtime(Scheduler scheduler, KnowledgeManager km,
+			MonitorProvider monitorProvider, boolean useMXBeans) {
 		assert (km != null);
 		assert (scheduler != null);
 		if (useMXBeans)
@@ -44,14 +48,14 @@ public class Runtime implements TimeProvider {
 		this.scheduler = scheduler;
 		this.km = km;
 		this.triggeredJobProducers = new LinkedList<>();
-		// this.oracle = new Oracle(new SAT4JSolver());
+		this.monitorProvider = monitorProvider;
 	}
-	
+
 	@Override
 	public long getCurrentTime() {
 		return scheduler.getCurrentTime();
 	}
-	
+
 	public long getKnowledgeTimeStamp(String knowledgePath) {
 		return km.getKnowledgeTimeStamp(knowledgePath);
 	}
@@ -108,9 +112,11 @@ public class Runtime implements TimeProvider {
 			for (ComponentProcess cp : ci.getComponent().getProcesses()) {
 				if (cp.getSchedule() instanceof PeriodicSchedule)
 					scheduler.schedule(new ComponentProcessJob(cp, ci.getId(),
-							scheduler, this));
+							monitorProvider.getMonitor(cp.getId()), scheduler,
+							this));
 				else {
-					cpjp = new ComponentProcessJobProducer(cp, scheduler, this);
+					cpjp = new ComponentProcessJobProducer(cp, scheduler, this,
+							monitorProvider);
 					triggeredJobProducers.add(cpjp);
 					km.registerListener(cpjp);
 				}
@@ -126,12 +132,13 @@ public class Runtime implements TimeProvider {
 					for (ComponentInstance member : runtimeMetadata
 							.getComponentInstances())
 						scheduler.schedule(new EnsembleJob(e, coord.getId(),
-								member.getId(), scheduler, this));
-
+								member.getId(), monitorProvider.getMonitor(e
+										.getId()), scheduler, this));
 				}
 			} else {
 				System.out.println("Triggered ensemble");
-				ejp = new EnsembleJobProducer(e, scheduler, this);
+				ejp = new EnsembleJobProducer(e, scheduler, this,
+						monitorProvider);
 				triggeredJobProducers.add(ejp);
 				km.registerListener(ejp);
 			}

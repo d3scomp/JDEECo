@@ -3,6 +3,7 @@ package cz.cuni.mff.d3s.deeco.scheduling;
 import cz.cuni.mff.d3s.deeco.executor.JobExecutionListener;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.monitoring.Monitor;
 import cz.cuni.mff.d3s.deeco.runtime.Runtime;
 import cz.cuni.mff.d3s.deeco.runtime.model.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.runtime.model.LockingMode;
@@ -16,9 +17,9 @@ public class ComponentProcessJob extends Job {
 	private final String id;
 
 	public ComponentProcessJob(ComponentProcess componentProcess,
-			String componentId, JobExecutionListener listener,
+			String componentId, Monitor monitor, JobExecutionListener listener,
 			Runtime runtime) {
-		super(runtime, listener);
+		super(runtime, monitor, listener);
 		this.componentId = componentId;
 		this.componentProcess = componentProcess;
 		this.id = componentId + componentProcess.getId();
