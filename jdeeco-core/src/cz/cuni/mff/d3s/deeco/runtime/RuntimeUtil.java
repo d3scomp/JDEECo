@@ -15,23 +15,12 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.runtime;
 
-import cz.cuni.mff.d3s.deeco.scheduling.Job;
 
-
-/**
- * Runtime utility methods.
- *
- * @author Petr Hnetynka
- */
 public class RuntimeUtil {
 
-  /**
-   * <b>Should be called only component processes</b>; it returns a reference to the runtime.
-   * If it is not called from a component process, there is no guarantee that it returns a meaningful value.
-   * 
-   * @return a reference to the runtime
-   */
+  public static Runtime RUNTIME;
+
   public static Runtime getRuntime() {
-    return Job.getRuntime();
+    return RUNTIME;
   }
 }

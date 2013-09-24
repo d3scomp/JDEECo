@@ -52,7 +52,8 @@ public class KnowledgePath {
 	public String getEvaluatedPath(KnowledgeManager km,
 			Map<String, String> replaceFromTo, ISession session) {
 		try {
-			return evaluate(this, km, replaceFromTo, session);
+			String evaluation = evaluate(this, km, replaceFromTo, session);
+			return evaluation;
 		} catch (KMException kme) {
 			Log.e("Knowledge path evaluation error", kme);
 			return null;

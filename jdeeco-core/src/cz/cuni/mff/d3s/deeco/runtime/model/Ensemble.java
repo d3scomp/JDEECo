@@ -31,4 +31,8 @@ public class Ensemble {
 		return schedule;
 	}
 	
+	public String getExchangeId() {
+		return knowledgeExchange.getId();
+	}
+	
 }

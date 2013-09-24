@@ -69,7 +69,9 @@ public class EnsembleParser {
 					+ " cannot be parsed.");
 		}
 		
-		String id = c.toString();
+		String id = m.getAnnotation(KnowledgeExchange.class).value();
+		if (id == null || id.equals(""))
+			c.toString();
 		
 		Exchange ke = new Exchange(id, parameters, m);
 		Schedule schedule = getPeriodicSchedule(AnnotationHelper

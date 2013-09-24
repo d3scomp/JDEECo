@@ -49,6 +49,7 @@ public class Runtime implements TimeProvider {
 		this.km = km;
 		this.triggeredJobProducers = new LinkedList<>();
 		this.monitorProvider = monitorProvider;
+		RuntimeUtil.RUNTIME = this;
 	}
 
 	@Override
@@ -108,14 +109,15 @@ public class Runtime implements TimeProvider {
 
 	private void deployComponentProcesses() {
 		ComponentProcessJobProducer cpjp;
+		ComponentProcessJob job;
 		for (ComponentInstance ci : runtimeMetadata.getComponentInstances())
 			for (ComponentProcess cp : ci.getComponent().getProcesses()) {
-				if (cp.getSchedule() instanceof PeriodicSchedule)
-					scheduler.schedule(new ComponentProcessJob(cp, ci.getId(),
-							monitorProvider.getMonitor(cp.getId()), scheduler,
-							this));
-				else {
-					cpjp = new ComponentProcessJobProducer(cp, scheduler, this,
+				if (cp.getSchedule() instanceof PeriodicSchedule) {
+					job = new ComponentProcessJob(cp, ci.getId(), scheduler, km);
+					job.setMonitor(monitorProvider.getProcessMonitor(job));
+					scheduler.schedule(job);
+				} else {
+					cpjp = new ComponentProcessJobProducer(cp, scheduler, km,
 							monitorProvider);
 					triggeredJobProducers.add(cpjp);
 					km.registerListener(cpjp);
@@ -125,20 +127,22 @@ public class Runtime implements TimeProvider {
 
 	private void deployEnsembles() {
 		EnsembleJobProducer ejp;
+		EnsembleJob job;
 		for (Ensemble e : runtimeMetadata.getEnsembles()) {
 			if (e.getSchedule() instanceof PeriodicSchedule) {
 				for (ComponentInstance coord : runtimeMetadata
 						.getComponentInstances()) {
 					for (ComponentInstance member : runtimeMetadata
-							.getComponentInstances())
-						scheduler.schedule(new EnsembleJob(e, coord.getId(),
-								member.getId(), monitorProvider.getMonitor(e
-										.getId()), scheduler, this));
+							.getComponentInstances()) {
+						job = new EnsembleJob(e, coord.getId(), member.getId(),
+								scheduler, km);
+						job.setMonitor(monitorProvider.getExchangeMonitor(job));
+						scheduler.schedule(job);
+					}
 				}
 			} else {
 				System.out.println("Triggered ensemble");
-				ejp = new EnsembleJobProducer(e, scheduler, this,
-						monitorProvider);
+				ejp = new EnsembleJobProducer(e, scheduler, km, monitorProvider);
 				triggeredJobProducers.add(ejp);
 				km.registerListener(ejp);
 			}

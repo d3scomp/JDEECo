@@ -5,9 +5,8 @@ import java.lang.reflect.Method;
 import cz.cuni.mff.d3s.deeco.exceptions.KMNotExistentException;
 import cz.cuni.mff.d3s.deeco.executor.JobExecutionListener;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.monitoring.Monitor;
-import cz.cuni.mff.d3s.deeco.runtime.Runtime;
 import cz.cuni.mff.d3s.deeco.runtime.model.BooleanCondition;
 import cz.cuni.mff.d3s.deeco.runtime.model.Ensemble;
 import cz.cuni.mff.d3s.deeco.runtime.model.Parameter;
@@ -22,9 +21,8 @@ public class EnsembleJob extends Job {
 	private final String id;
 
 	public EnsembleJob(Ensemble ensemble, String coordinator, String member,
-			Monitor monitor, JobExecutionListener listener,
-			Runtime runtime) {
-		super(runtime, monitor, listener);
+			JobExecutionListener listener, KnowledgeManager km) {
+		super(listener, km);
 		this.ensemble = ensemble;
 		this.coordinator = coordinator;
 		this.member = member;
@@ -52,19 +50,21 @@ public class EnsembleJob extends Job {
 	@Override
 	public void run() {
 		jobExecutionStarted();
-		ISession session = km.createSession();
-		session.begin();
-		while (session.repeat()) {
-			try {
-				if (evaluateMembership(session))
-					evaluateMethod(ensemble.getKnowledgeExchange(), session);
-			} catch (Exception e) {
-				Log.e("EnsembleJob exception", e);
-				session.cancel();
-				jobExecutionException(e);
-				return;
+		if (!cancel) {
+			ISession session = km.createSession();
+			session.begin();
+			while (session.repeat()) {
+				try {
+					if (evaluateMembership(session))
+						evaluateMethod(ensemble.getKnowledgeExchange(), session);
+				} catch (Exception e) {
+					Log.e("EnsembleJob exception", e);
+					session.cancel();
+					jobExecutionException(e);
+					return;
+				}
+				session.end();
 			}
-			session.end();
 		}
 		jobExecutionFinished();
 	}
@@ -87,7 +87,7 @@ public class EnsembleJob extends Job {
 			Object[] parameters = getParameterMethodValues(membership, session);
 			Method m = membership.getMethod();
 			return (boolean) m.invoke(null, parameters);
-		} catch (KMNotExistentException kmne){
+		} catch (KMNotExistentException kmne) {
 			return false;
 		} catch (Exception e) {
 			Log.e("Ensemble exception while membership evaluation", e);

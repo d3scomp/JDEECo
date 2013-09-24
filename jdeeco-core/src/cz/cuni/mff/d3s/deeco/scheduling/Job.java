@@ -4,32 +4,33 @@ import java.lang.reflect.Method;
 
 import cz.cuni.mff.d3s.deeco.executor.JobExecutionListener;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.monitoring.Monitor;
-import cz.cuni.mff.d3s.deeco.runtime.Runtime;
 import cz.cuni.mff.d3s.deeco.runtime.model.Invocable;
 import cz.cuni.mff.d3s.deeco.runtime.model.Schedule;
 
 public abstract class Job extends ParametrizedInstance implements Runnable {
 
-	private static ThreadLocal<Runtime> runtime = new ThreadLocal<>();
-
-	private final Monitor monitor;
 	private final JobExecutionListener listener;
-	private final Runtime actualRuntime;
+	private Monitor monitor;
+	protected boolean cancel;
 
-	public Job(Runtime runtime, Monitor monitor, JobExecutionListener listener) {
-		super(runtime.getKnowledgeManager());
-		this.monitor = monitor;
+	public Job(JobExecutionListener listener, KnowledgeManager km) {
+		super(km);
 		this.listener = listener;
-		this.actualRuntime = runtime;
+		this.cancel = false;
+	}
+	
+	public void setCancelExecution(boolean cancel) {
+		this.cancel = cancel;
 	}
 	
 	public Monitor getMonitor() {
 		return monitor;
 	}
-
-	public static Runtime getRuntime() {
-		return runtime.get();
+	
+	public void setMonitor(Monitor monitor) {
+		this.monitor = monitor;
 	}
 
 	public abstract Schedule getSchedule();
@@ -38,7 +39,6 @@ public abstract class Job extends ParametrizedInstance implements Runnable {
 
 	protected void evaluateMethod(Invocable invocable, ISession session)
 			throws Exception {
-		Job.runtime.set(actualRuntime);
 		Object[] processParameters = getParameterMethodValues(invocable,
 				session);
 		Method m = invocable.getMethod();

@@ -2,9 +2,8 @@ package cz.cuni.mff.d3s.deeco.scheduling;
 
 import cz.cuni.mff.d3s.deeco.executor.JobExecutionListener;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.monitoring.Monitor;
-import cz.cuni.mff.d3s.deeco.runtime.Runtime;
 import cz.cuni.mff.d3s.deeco.runtime.model.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.runtime.model.LockingMode;
 import cz.cuni.mff.d3s.deeco.runtime.model.Parameter;
@@ -17,9 +16,9 @@ public class ComponentProcessJob extends Job {
 	private final String id;
 
 	public ComponentProcessJob(ComponentProcess componentProcess,
-			String componentId, Monitor monitor, JobExecutionListener listener,
-			Runtime runtime) {
-		super(runtime, monitor, listener);
+			String componentId, JobExecutionListener listener,
+			KnowledgeManager km) {
+		super(listener, km);
 		this.componentId = componentId;
 		this.componentProcess = componentProcess;
 		this.id = componentId + componentProcess.getId();
@@ -32,7 +31,7 @@ public class ComponentProcessJob extends Job {
 	public ComponentProcess getComponentProcess() {
 		return componentProcess;
 	}
-	
+
 	@Override
 	public String getInstanceId() {
 		return id;
@@ -53,26 +52,28 @@ public class ComponentProcessJob extends Job {
 	@Override
 	public void run() {
 		jobExecutionStarted();
-		LockingMode lm = componentProcess.getLockingMode();
-		if (lm.equals(LockingMode.STRONG)) {
-			ISession session = km.createSession();
-			session.begin();
-			try {
-				while (session.repeat()) {
-					evaluateMethod(componentProcess, session);
-					session.end();
+		if (!cancel) {
+			LockingMode lm = componentProcess.getLockingMode();
+			if (lm.equals(LockingMode.STRONG)) {
+				ISession session = km.createSession();
+				session.begin();
+				try {
+					while (session.repeat()) {
+						evaluateMethod(componentProcess, session);
+						session.end();
+					}
+				} catch (Exception e) {
+					Log.e("", e);
+					session.cancel();
+					jobExecutionException(e);
 				}
-			} catch (Exception e) {
-				Log.e("", e);
-				session.cancel();
-				jobExecutionException(e);
-			}
-		} else {
-			try {
-				evaluateMethod(componentProcess, null);
-			} catch (Exception e) {
-				Log.e("Job message error", e);
-				jobExecutionException(e);
+			} else {
+				try {
+					evaluateMethod(componentProcess, null);
+				} catch (Exception e) {
+					Log.e("Job message error", e);
+					jobExecutionException(e);
+				}
 			}
 		}
 		jobExecutionFinished();
