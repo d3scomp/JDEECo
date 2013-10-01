@@ -2,6 +2,7 @@ package cz.cuni.mff.d3s.deeco.demo.convoy;
 
 import cz.cuni.mff.d3s.deeco.jpf.ParsedObjectReader;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeRepository;
 import cz.cuni.mff.d3s.deeco.knowledge.RepositoryKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.local.LocalKnowledgeRepository;
 import cz.cuni.mff.d3s.deeco.provider.RuntimeMetadataProvider;
@@ -22,9 +23,10 @@ public class LocalLauncherConvoyJPF {
 	 */
 	public static void main(String[] args) {
 		// PreprocessorLauncher.main(args);
-		Scheduler scheduler = new RealTimeSchedulerJPF();
-		KnowledgeManager km = new RepositoryKnowledgeManager(
-				new LocalKnowledgeRepository(scheduler));
+		KnowledgeRepository kr = new LocalKnowledgeRepository();
+		KnowledgeManager km = new RepositoryKnowledgeManager(kr);
+		Scheduler scheduler = new RealTimeSchedulerJPF(km);
+		kr.setTimeProvider(scheduler);
 		RuntimeMetadataProvider provider = new ParsedObjectReader().read();
 		Runtime rt = new Runtime(scheduler, km);
 		rt.deployRuntimeMetadata(provider.getRuntimeMetadata());

@@ -4,9 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import cz.cuni.mff.d3s.deeco.runtime.model.BooleanCondition;
-import cz.cuni.mff.d3s.deeco.runtime.model.Ensemble;
-import cz.cuni.mff.d3s.deeco.scheduling.ComponentProcessJob;
-import cz.cuni.mff.d3s.deeco.scheduling.EnsembleJob;
+import cz.cuni.mff.d3s.deeco.scheduling.ComponentProcessTask;
+import cz.cuni.mff.d3s.deeco.scheduling.EnsembleTask;
 
 public class StubMonitorProvider implements MonitorProvider {
 
@@ -62,13 +61,13 @@ public class StubMonitorProvider implements MonitorProvider {
 	}
 
 	@Override
-	public ProcessMonitor getProcessMonitor(ComponentProcessJob job) {
+	public ProcessMonitor getProcessMonitor(ComponentProcessTask Task) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public ExchangeMonitor getExchangeMonitor(EnsembleJob job) {
+	public ExchangeMonitor getExchangeMonitor(EnsembleTask job) {
 		// TODO Auto-generated method stub
 		return null;
 	}

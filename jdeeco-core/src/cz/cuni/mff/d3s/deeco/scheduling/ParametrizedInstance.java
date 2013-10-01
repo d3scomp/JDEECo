@@ -8,7 +8,6 @@ import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.runtime.model.Invocable;
 import cz.cuni.mff.d3s.deeco.runtime.model.KnowledgeType;
 import cz.cuni.mff.d3s.deeco.runtime.model.OutWrapperValueType;
 import cz.cuni.mff.d3s.deeco.runtime.model.Parameter;
@@ -16,7 +15,7 @@ import cz.cuni.mff.d3s.deeco.runtime.model.ParameterDirection;
 
 public abstract class ParametrizedInstance {
 
-	protected final KnowledgeManager km;
+	protected KnowledgeManager km;
 
 	public ParametrizedInstance(KnowledgeManager km) {
 		this.km = km;
@@ -25,16 +24,19 @@ public abstract class ParametrizedInstance {
 	public abstract String getEvaluatedKnowledgePath(Parameter parameter,
 			ISession session);
 
+	protected void putParameterMethodValues(List<Parameter> parameters,
+			Object[] parameterValues) {
+		putParameterMethodValues(parameters, parameterValues, null);
+	}
+
 	/**
 	 * Function used to store computed values during the process method
 	 * execution in the knowledge repository. This version is session oriented.
 	 * 
 	 */
-	protected void putParameterMethodValues(Invocable invocable,
+	protected void putParameterMethodValues(List<Parameter> parameters,
 			Object[] parameterValues, ISession session) {
 		assert (parameterValues != null);
-
-		List<Parameter> parameters = invocable.getParameters();
 		ISession localSession;
 		if (session == null) {
 			localSession = km.createSession();
@@ -65,9 +67,13 @@ public abstract class ParametrizedInstance {
 		}
 	}
 
-	protected Object[] getParameterMethodValues(Invocable invocable,
+	protected Object[] getParameterMethodValues(List<Parameter> parameters)
+			throws KMException {
+		return getParameterMethodValues(parameters, null);
+	}
+
+	protected Object[] getParameterMethodValues(List<Parameter> parameters,
 			ISession session) throws KMException {
-		List<Parameter> parameters = invocable.getParameters();
 		Object[] result = new Object[parameters.size()];
 		ISession localSession;
 		if (session == null) {

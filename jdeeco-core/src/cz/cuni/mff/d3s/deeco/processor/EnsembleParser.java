@@ -1,10 +1,11 @@
 package cz.cuni.mff.d3s.deeco.processor;
 
 import static cz.cuni.mff.d3s.deeco.processor.AnnotationHelper.getAnnotatedMethod;
+import static cz.cuni.mff.d3s.deeco.processor.AnnotationHelper.getAnnotation;
 import static cz.cuni.mff.d3s.deeco.processor.ConditionParser.parseBooleanConditions;
 import static cz.cuni.mff.d3s.deeco.processor.ParserHelper.getParameterList;
-import static cz.cuni.mff.d3s.deeco.processor.ScheduleHelper.getPeriodicSchedule;
-import static cz.cuni.mff.d3s.deeco.processor.ScheduleHelper.getTriggeredSchedule;
+import static cz.cuni.mff.d3s.deeco.processor.ScheduleHelper.getPeriod;
+import static cz.cuni.mff.d3s.deeco.processor.ScheduleHelper.getTriggers;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -19,8 +20,8 @@ import cz.cuni.mff.d3s.deeco.runtime.model.BooleanCondition;
 import cz.cuni.mff.d3s.deeco.runtime.model.Ensemble;
 import cz.cuni.mff.d3s.deeco.runtime.model.Exchange;
 import cz.cuni.mff.d3s.deeco.runtime.model.Parameter;
-import cz.cuni.mff.d3s.deeco.runtime.model.PeriodicSchedule;
 import cz.cuni.mff.d3s.deeco.runtime.model.Schedule;
+import cz.cuni.mff.d3s.deeco.runtime.model.Trigger;
 
 /**
  * Parser class for ensemble definitions.
@@ -68,22 +69,21 @@ public class EnsembleParser {
 					+ ": Parameters for the method " + m.getName()
 					+ " cannot be parsed.");
 		}
-		
+
 		String id = m.getAnnotation(KnowledgeExchange.class).value();
 		if (id == null || id.equals(""))
 			c.toString();
-		
-		Exchange ke = new Exchange(id, parameters, m);
-		Schedule schedule = getPeriodicSchedule(AnnotationHelper
-				.getAnnotation(PeriodicScheduling.class, m.getAnnotations()));
-		if (schedule == null) {
-			schedule = getTriggeredSchedule(
-					m.getParameterAnnotations(), parameters);
 
-			if (schedule == null) {
-				schedule = new PeriodicSchedule();
-			}
-		}
+		Exchange ke = new Exchange(id, parameters, m);
+		List<Trigger> triggers = getTriggers(m.getParameterAnnotations(),
+				parameters);
+		long period = getPeriod(getAnnotation(PeriodicScheduling.class,
+				m.getAnnotations()));
+		Schedule schedule;
+		if (triggers.isEmpty() && period == Schedule.NO_PERIOD)
+			schedule = new Schedule();
+		else
+			schedule = new Schedule(period, triggers);
 		return new Ensemble(c.getName(), mc, ke, schedule);
 	}
 

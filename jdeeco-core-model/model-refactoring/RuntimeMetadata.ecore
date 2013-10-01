@@ -19,7 +19,13 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="monitors" upperBound="2"
         eType="#//Monitor"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Schedule" abstract="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Schedule">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="triggeredSchedule" eType="#//TriggeredSchedule"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="triggers" upperBound="-1"
+        eType="#//Trigger" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="period" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="StructuredKnowledgeValueType" eSuperTypes="#//KnowledgeType">
     <eStructuralFeatures xsi:type="ecore:EReference" name="children" upperBound="-1"
         eType="#//NestedKnowledgeDefinition" containment="true"/>
@@ -57,7 +63,9 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="triggers" lowerBound="1"
         upperBound="-1" eType="#//Trigger" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Trigger" abstract="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Trigger" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="EReference0" eType="#//Schedule"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="KnowledgeChangedTrigger" eSuperTypes="#//Trigger">
     <eStructuralFeatures xsi:type="ecore:EReference" name="knowledgePath" lowerBound="1"
         eType="#//KnowledgePath" containment="true"/>

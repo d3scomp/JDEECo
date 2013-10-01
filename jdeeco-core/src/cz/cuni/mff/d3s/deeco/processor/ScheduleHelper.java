@@ -25,9 +25,8 @@ import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange;
 import cz.cuni.mff.d3s.deeco.runtime.model.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.runtime.model.Parameter;
-import cz.cuni.mff.d3s.deeco.runtime.model.PeriodicSchedule;
+import cz.cuni.mff.d3s.deeco.runtime.model.Schedule;
 import cz.cuni.mff.d3s.deeco.runtime.model.Trigger;
-import cz.cuni.mff.d3s.deeco.runtime.model.TriggeredSchedule;
 
 /**
  * Helper class for used for scheduling information retrieval.
@@ -45,13 +44,11 @@ public class ScheduleHelper {
 	 * @return Schedule information or null in case of not matching annotation
 	 *         class.
 	 */
-	public static PeriodicSchedule getPeriodicSchedule(
-			Annotation scheduleAnnotation) {
+	public static long getPeriod(Annotation scheduleAnnotation) {
 		if (scheduleAnnotation instanceof PeriodicScheduling) {
-			return new PeriodicSchedule(
-					((PeriodicScheduling) scheduleAnnotation).value());
+			return ((PeriodicScheduling) scheduleAnnotation).value();
 		} else
-			return null;
+			return Schedule.NO_PERIOD;
 	}
 
 	/**
@@ -66,18 +63,17 @@ public class ScheduleHelper {
 	 *            List of in/out parameters from the function header.
 	 * @return
 	 */
-	public static TriggeredSchedule getTriggeredSchedule(
-			Annotation[][] pAnnotations, List<Parameter> parameters) {
+	public static List<Trigger> getTriggers(Annotation[][] pAnnotations,
+			List<Parameter> parameters) {
 		List<Integer> triggeredIndecies = getAnnotationIndecies(
 				TriggerOnChange.class, pAnnotations);
-		if (triggeredIndecies.size() == 0)
-			return null;
-		else {
-			List<Trigger> triggers = new LinkedList<>();
+		List<Trigger> triggers = new LinkedList<>();
+		if (triggeredIndecies.size() != 0) {
 			for (Integer index : triggeredIndecies)
 				triggers.add(new KnowledgeChangeTrigger(parameters.get(index)
 						.getKnowledgePath()));
-			return new TriggeredSchedule(triggers);
+
 		}
+		return triggers;
 	}
 }

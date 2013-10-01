@@ -2,9 +2,9 @@ package cz.cuni.mff.d3s.deeco.processor;
 
 import static cz.cuni.mff.d3s.deeco.processor.AnnotationHelper.getAnnotatedMethods;
 import static cz.cuni.mff.d3s.deeco.processor.AnnotationHelper.getAnnotation;
-import static cz.cuni.mff.d3s.deeco.processor.ScheduleHelper.getPeriodicSchedule;
-import static cz.cuni.mff.d3s.deeco.processor.ScheduleHelper.getTriggeredSchedule;
 import static cz.cuni.mff.d3s.deeco.processor.ParserHelper.getParameterList;
+import static cz.cuni.mff.d3s.deeco.processor.ScheduleHelper.getPeriod;
+import static cz.cuni.mff.d3s.deeco.processor.ScheduleHelper.getTriggers;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -24,8 +24,8 @@ import cz.cuni.mff.d3s.deeco.path.grammar.ParseException;
 import cz.cuni.mff.d3s.deeco.runtime.model.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.runtime.model.LockingMode;
 import cz.cuni.mff.d3s.deeco.runtime.model.Parameter;
-import cz.cuni.mff.d3s.deeco.runtime.model.PeriodicSchedule;
 import cz.cuni.mff.d3s.deeco.runtime.model.Schedule;
+import cz.cuni.mff.d3s.deeco.runtime.model.Trigger;
 
 /**
  * Parser class for component definitions.
@@ -68,6 +68,8 @@ public class ComponentParser {
 		final List<ComponentProcess> result = new LinkedList<ComponentProcess>();
 
 		Schedule schedule;
+		long period;
+		List<Trigger> triggers;
 		LockingMode lockingMode;
 		List<Parameter> parameters;
 		for (Method m : methods) {
@@ -78,17 +80,19 @@ public class ComponentParser {
 						+ ": Parameters for the method " + m.getName()
 						+ " cannot be parsed.");
 			}
-			schedule = getPeriodicSchedule(getAnnotation(
+			
+			triggers = getTriggers(m.getParameterAnnotations(),
+					parameters);
+			period = getPeriod(getAnnotation(
 					PeriodicScheduling.class, m.getAnnotations()));
-			if (schedule == null)
-				schedule = getTriggeredSchedule(m.getParameterAnnotations(),
-						parameters);
-			if (schedule == null)
-				schedule = new PeriodicSchedule();
+			if (triggers.isEmpty() && period == Schedule.NO_PERIOD)
+				schedule = new Schedule();
+			else
+				schedule = new Schedule(period, triggers);
 
 			if (getAnnotation(StrongLocking.class, m.getAnnotations()) == null) {
 				if (getAnnotation(WeakLocking.class, m.getAnnotations()) == null)
-					lockingMode = (schedule instanceof PeriodicSchedule) ? LockingMode.WEAK
+					lockingMode = (!schedule.isTriggered()) ? LockingMode.WEAK
 							: LockingMode.STRONG;
 				else
 					lockingMode = LockingMode.WEAK;

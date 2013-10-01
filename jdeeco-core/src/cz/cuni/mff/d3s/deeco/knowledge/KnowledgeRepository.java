@@ -36,15 +36,26 @@ public abstract class KnowledgeRepository {
 	private boolean triggeringActive = false;
 	private ExecutorService executor;
 	
-	protected final TimeProvider tp;
+	private TimeProvider tp;
 
 	public KnowledgeRepository(TimeProvider tp, int threadPoolSize) {
 		this.executor = Executors.newFixedThreadPool(threadPoolSize);
 		this.tp = tp;
 	}
 	
+	public void setTimeProvider(TimeProvider tp) {
+		this.tp = tp;
+	}
+	
 	public KnowledgeRepository(TimeProvider tp) {
 		this(tp, THREAD_POOL_SIZE);
+	}
+	
+	protected long getCurrentTime() {
+		if (tp == null)
+			return 0L;
+		else
+			return tp.getCurrentTime();
 	}
 
 	public boolean isTriggeringActive() {

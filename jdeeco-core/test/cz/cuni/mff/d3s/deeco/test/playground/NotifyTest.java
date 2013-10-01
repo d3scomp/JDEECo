@@ -6,7 +6,6 @@ import java.util.Arrays;
 
 import net.jini.core.lease.Lease;
 import net.jini.space.JavaSpace05;
-import cz.cuni.mff.d3s.deeco.knowledge.TimeProvider;
 import cz.cuni.mff.d3s.deeco.knowledge.jini.TSUtils;
 import cz.cuni.mff.d3s.deeco.knowledge.jini.Tuple;
 
@@ -18,13 +17,7 @@ public class NotifyTest {
 		try {
 			MyRemoteEventListener mrel = new MyRemoteEventListener();
 			JavaSpace05 space = TSUtils.getSpace();
-			space.write(TSUtils.createTuple("a.b", new Integer(333),
-					new TimeProvider() {
-						@Override
-						public long getCurrentTime() {
-							return System.currentTimeMillis();
-						}
-					}), null, Lease.FOREVER);
+			space.write(TSUtils.createTuple("a.b", new Integer(333), System.currentTimeMillis()), null, Lease.FOREVER);
 			space.registerForAvailabilityEvent(
 					Arrays.asList(TSUtils.createTemplate("a.b")), null, true,
 					mrel.getStub(), Lease.FOREVER,

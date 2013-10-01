@@ -1,8 +1,6 @@
 package cz.cuni.mff.d3s.deeco.runtime;
 
 import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.definitions.ComponentDefinition;
 import cz.cuni.mff.d3s.deeco.exceptions.KMNotExistentException;
@@ -16,22 +14,19 @@ import cz.cuni.mff.d3s.deeco.runtime.jmx.RuntimeMX;
 import cz.cuni.mff.d3s.deeco.runtime.model.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.runtime.model.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.runtime.model.Ensemble;
-import cz.cuni.mff.d3s.deeco.runtime.model.PeriodicSchedule;
 import cz.cuni.mff.d3s.deeco.runtime.model.RuntimeMetadata;
-import cz.cuni.mff.d3s.deeco.scheduling.ComponentProcessJob;
-import cz.cuni.mff.d3s.deeco.scheduling.ComponentProcessJobProducer;
-import cz.cuni.mff.d3s.deeco.scheduling.EnsembleJob;
-import cz.cuni.mff.d3s.deeco.scheduling.EnsembleJobProducer;
+import cz.cuni.mff.d3s.deeco.scheduling.MonitorProviderHolder;
+import cz.cuni.mff.d3s.deeco.scheduling.PeriodicComponentProcessTaskProvider;
+import cz.cuni.mff.d3s.deeco.scheduling.PeriodicEnsembleTaskProvider;
 import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
-import cz.cuni.mff.d3s.deeco.scheduling.TriggeredJobProducer;
+import cz.cuni.mff.d3s.deeco.scheduling.TriggeredComponentProcessTaskProvider;
+import cz.cuni.mff.d3s.deeco.scheduling.TriggeredEnsembleTaskProvider;
 
-public class Runtime implements TimeProvider {
+public class Runtime extends MonitorProviderHolder implements TimeProvider {
 
 	private RuntimeMetadata runtimeMetadata;
 	private final KnowledgeManager km;
 	private final Scheduler scheduler;
-	private final MonitorProvider monitorProvider;
-	private final List<TriggeredJobProducer> triggeredJobProducers;
 
 	// private final Oracle oracle;
 
@@ -41,14 +36,13 @@ public class Runtime implements TimeProvider {
 
 	public Runtime(Scheduler scheduler, KnowledgeManager km,
 			MonitorProvider monitorProvider, boolean useMXBeans) {
+		super(monitorProvider);
 		assert (km != null);
 		assert (scheduler != null);
 		if (useMXBeans)
 			RuntimeMX.registerMBeanForRuntime(this);
 		this.scheduler = scheduler;
 		this.km = km;
-		this.triggeredJobProducers = new LinkedList<>();
-		this.monitorProvider = monitorProvider;
 		RuntimeUtil.RUNTIME = this;
 	}
 
@@ -89,11 +83,6 @@ public class Runtime implements TimeProvider {
 		this.runtimeMetadata = runtimeMetadata;
 	}
 
-	// public synchronized void deployIRMInvariant(Invariant invariant) {
-	// assert (invariant != null);
-	// //oracle.addIRMInvariant(invariant);
-	// }
-
 	private void deployComponentInstances() {
 		for (ComponentInstance ci : runtimeMetadata.getComponentInstances()) {
 			try {
@@ -108,44 +97,31 @@ public class Runtime implements TimeProvider {
 	}
 
 	private void deployComponentProcesses() {
-		ComponentProcessJobProducer cpjp;
-		ComponentProcessJob job;
 		for (ComponentInstance ci : runtimeMetadata.getComponentInstances())
 			for (ComponentProcess cp : ci.getComponent().getProcesses()) {
-				if (cp.getSchedule() instanceof PeriodicSchedule) {
-					job = new ComponentProcessJob(cp, ci.getId(), scheduler, km);
-					job.setMonitor(monitorProvider.getProcessMonitor(job));
-					scheduler.schedule(job);
-				} else {
-					cpjp = new ComponentProcessJobProducer(cp, scheduler, km,
-							monitorProvider);
-					triggeredJobProducers.add(cpjp);
-					km.registerListener(cpjp);
-				}
+				if (cp.getSchedule().isPeriodic())
+					scheduler.add(new PeriodicComponentProcessTaskProvider(cp,
+							ci.getId(), monitorProvider));
+				if (cp.getSchedule().isTriggered())
+					scheduler.add(new TriggeredComponentProcessTaskProvider(cp,
+							monitorProvider));
 			}
 	}
 
 	private void deployEnsembles() {
-		EnsembleJobProducer ejp;
-		EnsembleJob job;
 		for (Ensemble e : runtimeMetadata.getEnsembles()) {
-			if (e.getSchedule() instanceof PeriodicSchedule) {
+			if (e.getSchedule().isPeriodic()) {
 				for (ComponentInstance coord : runtimeMetadata
 						.getComponentInstances()) {
 					for (ComponentInstance member : runtimeMetadata
-							.getComponentInstances()) {
-						job = new EnsembleJob(e, coord.getId(), member.getId(),
-								scheduler, km);
-						job.setMonitor(monitorProvider.getExchangeMonitor(job));
-						scheduler.schedule(job);
-					}
+							.getComponentInstances())
+						scheduler.add(new PeriodicEnsembleTaskProvider(e, coord
+								.getId(), member.getId(), monitorProvider));
 				}
-			} else {
-				System.out.println("Triggered ensemble");
-				ejp = new EnsembleJobProducer(e, scheduler, km, monitorProvider);
-				triggeredJobProducers.add(ejp);
-				km.registerListener(ejp);
 			}
+			if (e.getSchedule().isTriggered())
+				scheduler.add(new TriggeredEnsembleTaskProvider(e,
+						monitorProvider));
 		}
 	}
 

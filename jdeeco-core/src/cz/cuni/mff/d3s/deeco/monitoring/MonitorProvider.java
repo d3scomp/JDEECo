@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import cz.cuni.mff.d3s.deeco.runtime.model.BooleanCondition;
-import cz.cuni.mff.d3s.deeco.scheduling.ComponentProcessJob;
-import cz.cuni.mff.d3s.deeco.scheduling.EnsembleJob;
+import cz.cuni.mff.d3s.deeco.scheduling.ComponentProcessTask;
+import cz.cuni.mff.d3s.deeco.scheduling.EnsembleTask;
 
 public interface MonitorProvider {
 	boolean getExchangeMonitorEvaluation(String eInvariantId,
@@ -26,7 +26,7 @@ public interface MonitorProvider {
 
 	void monitorExchangeInvariant(String eInvariantId);
 
-	ProcessMonitor getProcessMonitor(ComponentProcessJob job);
+	ProcessMonitor getProcessMonitor(ComponentProcessTask task);
 
-	ExchangeMonitor getExchangeMonitor(EnsembleJob job);
+	ExchangeMonitor getExchangeMonitor(EnsembleTask task);
 }

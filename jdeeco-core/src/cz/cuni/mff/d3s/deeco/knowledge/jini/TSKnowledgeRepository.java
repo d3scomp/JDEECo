@@ -45,6 +45,10 @@ import cz.cuni.mff.d3s.deeco.logging.Log;
  */
 public class TSKnowledgeRepository extends KnowledgeRepository {
 	
+	public TSKnowledgeRepository() {
+		this(null);
+	}
+	
 	public TSKnowledgeRepository(TimeProvider tp) {
 		super(tp);
 		if (System.getSecurityManager() == null)
@@ -155,7 +159,7 @@ public class TSKnowledgeRepository extends KnowledgeRepository {
 			JavaSpace space = TSUtils.getSpace();
 			Transaction tx = (session != null) ? ((TransactionalSession) session)
 					.getTransaction() : null;
-			space.write(TSUtils.createTuple(entryKey, value, tp), tx, Lease.FOREVER);
+			space.write(TSUtils.createTuple(entryKey, value, getCurrentTime()), tx, Lease.FOREVER);
 			// LoggerFactory.getLogger().fine("Writing entry: " + entryKey);
 			if (session != null) {
 				KnowledgeChangeCollector kcc = (KnowledgeChangeCollector) session;
@@ -197,7 +201,7 @@ public class TSKnowledgeRepository extends KnowledgeRepository {
 						TSUtils.createTemplate(fullListenPath),
 						ts.getTransaction(), Lease.FOREVER);
 				if (t == null) {
-					space.write(TSUtils.createTuple(fullListenPath, "1", tp),
+					space.write(TSUtils.createTuple(fullListenPath, "1", getCurrentTime()),
 							ts.getTransaction(), Lease.FOREVER);
 				}
 				ts.end();

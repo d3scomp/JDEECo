@@ -1,6 +1,7 @@
 package cz.cuni.mff.d3s.deeco.demo.cloud;
 
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeRepository;
 import cz.cuni.mff.d3s.deeco.knowledge.RepositoryKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.local.LocalKnowledgeRepository;
 import cz.cuni.mff.d3s.deeco.provider.InstanceRuntimeMetadataProvider;
@@ -20,9 +21,10 @@ public class LocalLauncherCloudNoJPFDiscreteScheduler {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		KnowledgeRepository kr = new LocalKnowledgeRepository();
+		KnowledgeManager km = new RepositoryKnowledgeManager(kr);
 		Scheduler scheduler = new DiscreteScheduler();
-		KnowledgeManager km = new RepositoryKnowledgeManager(
-				new LocalKnowledgeRepository(scheduler));
+		kr.setTimeProvider(scheduler);
 		InstanceRuntimeMetadataProvider provider = new InstanceRuntimeMetadataProvider();
 		provider.fromComponentInstance(new NodeB());
 		provider.fromComponentInstance(new NodeD());

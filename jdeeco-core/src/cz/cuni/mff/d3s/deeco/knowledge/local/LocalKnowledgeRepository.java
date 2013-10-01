@@ -68,6 +68,10 @@ public class LocalKnowledgeRepository extends KnowledgeRepository {
 			lock.unlock();
 		return result;
 	}
+	
+	public LocalKnowledgeRepository() {
+		this(null);
+	}
 
 	public LocalKnowledgeRepository(TimeProvider tp) {
 		super(tp);
@@ -181,7 +185,7 @@ public class LocalKnowledgeRepository extends KnowledgeRepository {
 		}
 		Object newValue = cloner.deepClone(value);
 		vals.add(newValue);
-		timestamps.put(entryKey, tp.getCurrentTime());
+		timestamps.put(entryKey, getCurrentTime());
 		if (session == null)
 			lock.unlock();
 	}

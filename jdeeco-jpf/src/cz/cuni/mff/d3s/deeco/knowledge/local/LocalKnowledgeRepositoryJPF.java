@@ -23,45 +23,45 @@ import java.util.concurrent.locks.LockSupport;
 
 import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionAccessError;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
-import cz.cuni.mff.d3s.deeco.knowledge.TimeProvider;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.ltl.AtomicProposition;
 import cz.cuni.mff.d3s.ltl.CommlinkSuTJPF;
 
-
-
 /**
  * Implementation of the knowledge repository using a hashmap optimized for JPF
  * 
- * This implementation allows only for local execution.
- * It is based on the {@link LocalKnowledgeRepository}.
- * It allows for evaluating atomic propositions over the component knowledge after each change.
+ * This implementation allows only for local execution. It is based on the
+ * {@link LocalKnowledgeRepository}. It allows for evaluating atomic
+ * propositions over the component knowledge after each change.
  * 
  * @author Jaroslav Keznikl
  * 
  */
-public class LocalKnowledgeRepositoryJPF extends LocalKnowledgeRepository implements KnowledgeJPF {
-	
-	public HashMap<String, Boolean> propositionValues = new HashMap<>();	
+public class LocalKnowledgeRepositoryJPF extends LocalKnowledgeRepository
+		implements KnowledgeJPF {
+
+	public HashMap<String, Boolean> propositionValues = new HashMap<>();
 	public HashMap<String, Boolean> propositionToEvaluate = new HashMap<>();
-	
+
 	boolean evaluatePropositions = false;
-	
+
 	List<AtomicProposition> propositions = new ArrayList<>();
 
-	public LocalKnowledgeRepositoryJPF(TimeProvider tp, List<AtomicProposition> propositions) {
-		super(tp);
+	public LocalKnowledgeRepositoryJPF(List<AtomicProposition> propositions) {
 		this.propositions = propositions;
 		for (AtomicProposition ap : propositions) {
 			propositionToEvaluate.put(ap.getName(), true);
 			propositionValues.put(ap.getName(), false);
 		}
-		
+
 		// JPF optimization
 		// class initialization if the lock is used causes state space explosion
-		// here we intentionally use the lock -> it will hopefully execute all class 
-		// initializers in single threaded code and reduce number of program states
-		// problematic class: java.util.concurrent.locks.AbstractQueuedSynchronizer$Node
+		// here we intentionally use the lock -> it will hopefully execute all
+		// class
+		// initializers in single threaded code and reduce number of program
+		// states
+		// problematic class:
+		// java.util.concurrent.locks.AbstractQueuedSynchronizer$Node
 		// problematic class java.util.concurrent.locks.LockSupport
 		Condition c = lock.newCondition();
 		try {
@@ -72,68 +72,72 @@ public class LocalKnowledgeRepositoryJPF extends LocalKnowledgeRepository implem
 		}
 		LockSupport.unpark(null);
 	}
-	
+
 	@Override
-	public void put(String entryKey, Object value, ISession session) throws KRExceptionAccessError {		
-		// make sure that when outside of a session, put + evaluation of propositions is done atomically
+	public void put(String entryKey, Object value, ISession session)
+			throws KRExceptionAccessError {
+		// make sure that when outside of a session, put + evaluation of
+		// propositions is done atomically
 		lock.lock();
-		
+
 		super.put(entryKey, value, session);
-		
+
 		tryEvaluatePropositions();
-		
+
 		lock.unlock();
 	}
 
 	@Override
-	public Object [] get(String knowledgeId) {
+	public Object[] get(String knowledgeId) {
 		return ts.get(knowledgeId).toArray();
 	}
-	
+
 	@Override
 	public Object getSingle(String knowledgeId) {
 		List<Object> v = ts.get(knowledgeId);
-		if ((v==null) || v.isEmpty())
+		if ((v == null) || v.isEmpty())
 			return null;
 		else
 			return v.get(0);
 	}
-	
+
 	// TODO: manage via runtime event listener mechanism (to be done) instead
 	public void onStart() {
 		evaluatePropositions = true;
 		tryEvaluatePropositions();
 	}
-	
+
 	// TODO: manage via runtime event listener mechanism (to be done) instead
 	public void onStop() {
 		evaluatePropositions = false;
 	}
-	
+
 	private void tryEvaluatePropositions() {
 		if (evaluatePropositions) {
 			for (AtomicProposition ap : propositions) {
-				// propositionToEvaluate.get(...) might return null 
+				// propositionToEvaluate.get(...) might return null
 				if (propositionToEvaluate.get(ap.getName()) == true) {
 					boolean value = propositionValues.get(ap.getName());
 					try {
 						value = ap.evaluate(this);
 					} catch (Exception e) {
-						Log.e("Atomic proposition evaluation failed (" + ap.getName() + ").");
-					}					
+						Log.e("Atomic proposition evaluation failed ("
+								+ ap.getName() + ").");
+					}
 					propositionValues.put(ap.getName(), value);
 				}
 			}
-	
+
 			// send names of atomic propositions into JPF
-			// we consider only propositions that evaluate to "true" in the current state
-			CommlinkSuTJPF.notifyEventProcessingStart();		
-			for (AtomicProposition ap : propositions) 
-			{
+			// we consider only propositions that evaluate to "true" in the
+			// current state
+			CommlinkSuTJPF.notifyEventProcessingStart();
+			for (AtomicProposition ap : propositions) {
 				Boolean apVal = propositionValues.get(ap.getName());
-				if ((apVal != null) && apVal.booleanValue()) CommlinkSuTJPF.addTrueAtomicProposition(ap.getName());
+				if ((apVal != null) && apVal.booleanValue())
+					CommlinkSuTJPF.addTrueAtomicProposition(ap.getName());
 			}
-			CommlinkSuTJPF.notifyAtomicPropositionsComplete();		
+			CommlinkSuTJPF.notifyAtomicPropositionsComplete();
 		}
 	}
 }
