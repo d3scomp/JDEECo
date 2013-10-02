@@ -8,19 +8,19 @@ import cz.cuni.mff.d3s.deeco.knowledge.ConstantKeys;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.TimeProvider;
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.model.ComponentInstance;
+import cz.cuni.mff.d3s.deeco.model.ComponentProcess;
+import cz.cuni.mff.d3s.deeco.model.Ensemble;
+import cz.cuni.mff.d3s.deeco.model.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.monitoring.MonitorProvider;
+import cz.cuni.mff.d3s.deeco.monitoring.MonitorProviderHolder;
 import cz.cuni.mff.d3s.deeco.monitoring.StubMonitorProvider;
 import cz.cuni.mff.d3s.deeco.runtime.jmx.RuntimeMX;
-import cz.cuni.mff.d3s.deeco.runtime.model.ComponentInstance;
-import cz.cuni.mff.d3s.deeco.runtime.model.ComponentProcess;
-import cz.cuni.mff.d3s.deeco.runtime.model.Ensemble;
-import cz.cuni.mff.d3s.deeco.runtime.model.RuntimeMetadata;
-import cz.cuni.mff.d3s.deeco.scheduling.MonitorProviderHolder;
-import cz.cuni.mff.d3s.deeco.scheduling.PeriodicComponentProcessTaskProvider;
-import cz.cuni.mff.d3s.deeco.scheduling.PeriodicEnsembleTaskProvider;
 import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
-import cz.cuni.mff.d3s.deeco.scheduling.TriggeredComponentProcessTaskProvider;
-import cz.cuni.mff.d3s.deeco.scheduling.TriggeredEnsembleTaskProvider;
+import cz.cuni.mff.d3s.deeco.task.provider.PeriodicComponentProcessTaskProvider;
+import cz.cuni.mff.d3s.deeco.task.provider.PeriodicEnsembleTaskProvider;
+import cz.cuni.mff.d3s.deeco.task.provider.TriggeredComponentProcessTaskProvider;
+import cz.cuni.mff.d3s.deeco.task.provider.TriggeredEnsembleTaskProvider;
 
 public class Runtime extends MonitorProviderHolder implements TimeProvider {
 

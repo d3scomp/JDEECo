@@ -15,9 +15,14 @@ import cz.cuni.mff.d3s.deeco.knowledge.IKnowledgeChangeListener;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.TriggerType;
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.model.KnowledgeChangeTrigger;
+import cz.cuni.mff.d3s.deeco.model.Trigger;
 import cz.cuni.mff.d3s.deeco.path.grammar.PathGrammar;
-import cz.cuni.mff.d3s.deeco.runtime.model.KnowledgeChangeTrigger;
-import cz.cuni.mff.d3s.deeco.runtime.model.Trigger;
+import cz.cuni.mff.d3s.deeco.task.Task;
+import cz.cuni.mff.d3s.deeco.task.provider.PeriodicTaskProvider;
+import cz.cuni.mff.d3s.deeco.task.provider.TriggeredComponentProcessTaskProvider;
+import cz.cuni.mff.d3s.deeco.task.provider.TriggeredEnsembleTaskProvider;
+import cz.cuni.mff.d3s.deeco.task.provider.TriggeredTaskProvider;
 
 public class RealTimeScheduler extends Scheduler {
 

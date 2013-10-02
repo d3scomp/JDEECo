@@ -16,8 +16,6 @@
         eType="#//KnowledgeManager" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="instances" upperBound="-1"
         eType="#//Instance" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="triggeredJobProducers"
-        upperBound="-1" eType="#//TriggeredJobProducer" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="scheduler" lowerBound="1"
         eType="#//Scheduler"/>
   </eClassifiers>
@@ -83,12 +81,6 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="modelReference" lowerBound="1"
         eType="#//RuntimeModel"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="PeriodicJob">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="period" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="TriggeredJob">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="path" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="DiscreteTimeScheduler" eSuperTypes="#//Scheduler"/>
   <eClassifiers xsi:type="ecore:EClass" name="RepositoryKnowledgeManager" eSuperTypes="#//KnowledgeManager">
     <eStructuralFeatures xsi:type="ecore:EReference" name="knowledgeRepository" lowerBound="1"
@@ -114,7 +106,11 @@
   <eClassifiers xsi:type="ecore:EClass" name="TSKnowledgeRepository" eSuperTypes="#//KnowledgeRepository"/>
   <eClassifiers xsi:type="ecore:EClass" name="Invocable"/>
   <eClassifiers xsi:type="ecore:EDataType" name="TimeUnit" instanceClassName="java.util.concurrent.TimeUnit"/>
-  <eClassifiers xsi:type="ecore:EClass" name="ComponentProcessJob" eSuperTypes="#//Job">
+  <eClassifiers xsi:type="ecore:EClass" name="ComponentProcessTask" eSuperTypes="#//Task.1">
+    <eOperations name="getParameters" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EEList"/>
+    <eOperations name="execute" lowerBound="1">
+      <eParameters name="parameterValues" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EEList"/>
+    </eOperations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="componentId" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="componentProcess" lowerBound="1"
@@ -130,70 +126,81 @@
   <eClassifiers xsi:type="ecore:EDataType" name="Exchange" instanceClassName="cz.cuni.mff.d3s.deeco.runtime.model.Exchange"/>
   <eClassifiers xsi:type="ecore:EDataType" name="Schedule" instanceClassName="cz.cuni.mff.d3s.deeco.runtime.model.Schedule"/>
   <eClassifiers xsi:type="ecore:EDataType" name="ScheduledThreadPoolExecutor" instanceClassName="java.util.concurrent.ScheduledThreadPoolExecutor"/>
-  <eClassifiers xsi:type="ecore:EClass" name="TriggeredJobProducer" eSuperTypes="#//IKnowledgeChangeListener">
-    <eOperations name="scheduleJob">
-      <eParameters name="job" eType="#//Job"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Runnable" instanceClassName="java.lang.Runnable"
+      abstract="true" interface="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Scheduler" abstract="true" eSuperTypes="#//ExecutionListener">
+    <eOperations name="start" lowerBound="1"/>
+    <eOperations name="stop" lowerBound="1"/>
+    <eOperations name="isStarted" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eOperations name="add" lowerBound="1">
+      <eParameters name="taskProvider" eType="#//PeriodicTaskProvider"/>
+    </eOperations>
+    <eOperations name="add" lowerBound="1">
+      <eParameters name="taskProvider" eType="#//TriggeredTaskProvider"/>
+    </eOperations>
+    <eOperations name="remove" lowerBound="1">
+      <eParameters name="taskProvider" eType="#//PeriodicTaskProvider"/>
+    </eOperations>
+    <eOperations name="remove" lowerBound="1">
+      <eParameters name="taskProvider" eType="#//TriggeredTaskProvider"/>
     </eOperations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="knowledgeManager" lowerBound="1"
         eType="#//KnowledgeManager"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="scheduler" lowerBound="1"
-        eType="#//Scheduler"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="schedule" lowerBound="1"
-        eType="#//TriggeredSchedule"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="EnsembleJobProducer" eSuperTypes="#//TriggeredJobProducer">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ensemble" lowerBound="1"
-        eType="#//Ensemble.1"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="CompoentProcessJobProducer" eSuperTypes="#//TriggeredJobProducer">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="componentProcess" lowerBound="1"
-        eType="#//ComponentProcess"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Runnable" instanceClassName="java.lang.Runnable"
-      abstract="true" interface="true"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Scheduler" abstract="true" eSuperTypes="#//JobExecutionListener">
-    <eOperations name="start" lowerBound="1"/>
-    <eOperations name="stop" lowerBound="1"/>
-    <eOperations name="schedule" lowerBound="1">
-      <eParameters name="job" eType="#//Job"/>
-    </eOperations>
-    <eOperations name="isStarted" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Runnable" instanceClassName="java.lang.Runnable"
       interface="true"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Job" abstract="true" eSuperTypes="#//Runnable.1">
+  <eClassifiers xsi:type="ecore:EClass" name="Task" abstract="true" eSuperTypes="#//Runnable.1">
     <eOperations name="getSchedule" lowerBound="1" eType="#//Schedule"/>
-    <eOperations name="getEvaluatedKnowledgePath" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
-      <eParameters name="parameter" eType="#//Parameter"/>
+    <eOperations name="executionStarted" lowerBound="1"/>
+    <eOperations name="executionFinished" lowerBound="1"/>
+    <eOperations name="executionException" lowerBound="1">
+      <eParameters name="t" eType="#//Throwable"/>
     </eOperations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="knowledgeManager" lowerBound="1"
         eType="#//KnowledgeManager"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="listener" eType="#//JobExecutionListener"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="listener" eType="#//ExecutionListener"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="RealTimeScheduler" eSuperTypes="#//Scheduler">
     <eStructuralFeatures xsi:type="ecore:EReference" name="executor" lowerBound="1"
-        eType="#//ScheduledThreadPoolExecutor.1"/>
+        eType="#//TaskExecutor"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="periodicTaskProducers"
+        upperBound="-1" eType="#//PeriodicTaskProvider"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="triggeredTaskProducers"
+        upperBound="-1" eType="#//TriggeredTaskProvider"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ScheduledThreadPoolExecutor" instanceClassName="java.util.concurrent.ScheduledThreadPoolExecutor"/>
-  <eClassifiers xsi:type="ecore:EClass" name="JobExecutionListener">
-    <eOperations name="jobExecutionStarted">
-      <eParameters name="job" eType="#//Job"/>
-    </eOperations>
-    <eOperations name="jobExecutionFinished">
-      <eParameters name="job" eType="#//Job"/>
+  <eClassifiers xsi:type="ecore:EClass" name="TaskExecutor" instanceClassName="java.util.concurrent.ScheduledThreadPoolExecutor"
+      interface="true">
+    <eOperations name="submitTask" lowerBound="1">
+      <eParameters name="task" eType="#//Task"/>
     </eOperations>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="EnsembleJob" eSuperTypes="#//Job">
+  <eClassifiers xsi:type="ecore:EClass" name="ExecutionListener">
+    <eOperations name="executionStarted">
+      <eParameters name="job" eType="#//Task.1"/>
+    </eOperations>
+    <eOperations name="executionFinished">
+      <eParameters name="job" eType="#//Task.1"/>
+    </eOperations>
+    <eOperations name="executionException" lowerBound="1">
+      <eParameters name="task" eType="#//Task"/>
+      <eParameters name="t" eType="#//Throwable"/>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EnsembleTask" eSuperTypes="#//Task.1">
+    <eOperations name="getMembershipParameters" lowerBound="1"/>
+    <eOperations name="getKnowledgeExchangeParameters" lowerBound="1"/>
+    <eOperations name="executeMembership" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
+      <eParameters name="parameterValues" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EEList"/>
+    </eOperations>
+    <eOperations name="executeKnowledgeExchange" lowerBound="1">
+      <eParameters name="prameterValues" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EEList"/>
+    </eOperations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="coordinator" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="member" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="schedule" lowerBound="1"
-        eType="#//Schedule"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="knowledgeExchange" lowerBound="1"
-        eType="#//Exchange"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="membership" lowerBound="1"
-        eType="#//Condition"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ensemble" lowerBound="1"
+        eType="#//Ensemble.1"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="TriggeredSchedule" instanceClassName="cz.cuni.mff.d3s.deeco.runtime.model.TriggeredSchedule"/>
   <eClassifiers xsi:type="ecore:EDataType" name="Ensemble" instanceClassName="cz.cuni.mff.d3s.deeco.runtime.model.Ensemble"/>
@@ -207,4 +214,20 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="TriggerType" instanceClassName="cz.cuni.mff.d3s.deeco.knowledge.TriggerType"/>
   <eClassifiers xsi:type="ecore:EDataType" name="Parameter" instanceClassName="cz.cuni.mff.d3s.deeco.runtime.model.Parameter"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="Throwable" instanceClassName="java.lang.Throwable"/>
+  <eClassifiers xsi:type="ecore:EClass" name="PeriodicTaskProvider" abstract="true">
+    <eOperations name="getTask" lowerBound="1" eType="#//Task"/>
+    <eOperations name="getPeriod" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TriggeredTaskProvider" abstract="true"
+      eSuperTypes="#//IKnowledgeChangeListener">
+    <eOperations name="getTriggers" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EEList"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="PeriodicComponentProcessTaskProvider"
+      eSuperTypes="#//PeriodicTaskProvider"/>
+  <eClassifiers xsi:type="ecore:EClass" name="PeriodicEnsembleTaskProvider" eSuperTypes="#//PeriodicTaskProvider"/>
+  <eClassifiers xsi:type="ecore:EClass" name="TriggeredComponentProcessTaskProvider"
+      eSuperTypes="#//TriggeredTaskProvider"/>
+  <eClassifiers xsi:type="ecore:EClass" name="TriggeredEnsembleTaskProvider" eSuperTypes="#//TriggeredTaskProvider"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ThreadPoolTaskExecutor" eSuperTypes="#//TaskExecutor"/>
 </ecore:EPackage>

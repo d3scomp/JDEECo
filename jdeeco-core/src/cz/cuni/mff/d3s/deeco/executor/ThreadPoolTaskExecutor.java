@@ -6,13 +6,13 @@ import java.util.concurrent.ThreadPoolExecutor;
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
 import cz.cuni.mff.d3s.deeco.knowledge.ISession;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.knowledge.ParameterAccessor;
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.runtime.model.LockingMode;
-import cz.cuni.mff.d3s.deeco.runtime.model.Parameter;
-import cz.cuni.mff.d3s.deeco.scheduling.ComponentProcessTask;
-import cz.cuni.mff.d3s.deeco.scheduling.EnsembleTask;
-import cz.cuni.mff.d3s.deeco.scheduling.ParametrizedInstance;
-import cz.cuni.mff.d3s.deeco.scheduling.Task;
+import cz.cuni.mff.d3s.deeco.model.LockingMode;
+import cz.cuni.mff.d3s.deeco.model.Parameter;
+import cz.cuni.mff.d3s.deeco.task.ComponentProcessTask;
+import cz.cuni.mff.d3s.deeco.task.EnsembleTask;
+import cz.cuni.mff.d3s.deeco.task.Task;
 
 public class ThreadPoolTaskExecutor implements TaskExecutor {
 
@@ -41,7 +41,7 @@ public class ThreadPoolTaskExecutor implements TaskExecutor {
 
 	// ------Private classes-------
 
-	private class ComponentProcessTaskExecution extends ParametrizedInstance
+	private class ComponentProcessTaskExecution extends ParameterAccessor
 			implements Runnable {
 
 		private final ComponentProcessTask task;
@@ -107,7 +107,7 @@ public class ThreadPoolTaskExecutor implements TaskExecutor {
 		}
 	}
 
-	private class EnsembleTaskExecution extends ParametrizedInstance implements
+	private class EnsembleTaskExecution extends ParameterAccessor implements
 			Runnable {
 
 		private final EnsembleTask task;

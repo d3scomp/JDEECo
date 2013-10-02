@@ -7,7 +7,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.provider.RuntimeMetadataProvider;
+import cz.cuni.mff.d3s.deeco.model.provider.RuntimeMetadataProvider;
 
 /**
  * Serialized object provider writer. This class is used to write an

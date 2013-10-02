@@ -14,11 +14,11 @@ import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.exceptions.ParametersParseException;
+import cz.cuni.mff.d3s.deeco.model.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.Parameter;
+import cz.cuni.mff.d3s.deeco.model.ParameterDirection;
 import cz.cuni.mff.d3s.deeco.path.grammar.ParseException;
 import cz.cuni.mff.d3s.deeco.path.grammar.PathParser;
-import cz.cuni.mff.d3s.deeco.runtime.model.KnowledgePath;
-import cz.cuni.mff.d3s.deeco.runtime.model.Parameter;
-import cz.cuni.mff.d3s.deeco.runtime.model.ParameterDirection;
 
 /**
  * A helper class used for parsing both component and ensemble definitions.

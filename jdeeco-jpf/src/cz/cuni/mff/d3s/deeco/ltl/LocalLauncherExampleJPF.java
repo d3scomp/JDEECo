@@ -9,7 +9,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeRepository;
 import cz.cuni.mff.d3s.deeco.knowledge.RepositoryKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.local.KnowledgeJPF;
 import cz.cuni.mff.d3s.deeco.knowledge.local.LocalKnowledgeRepositoryJPF;
-import cz.cuni.mff.d3s.deeco.provider.RuntimeMetadataProvider;
+import cz.cuni.mff.d3s.deeco.model.provider.RuntimeMetadataProvider;
 import cz.cuni.mff.d3s.deeco.runtime.Runtime;
 import cz.cuni.mff.d3s.deeco.scheduling.RealTimeSchedulerJPF;
 import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;

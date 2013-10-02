@@ -27,7 +27,7 @@ import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectName;
 
 import cz.cuni.mff.d3s.deeco.definitions.ComponentDefinition;
-import cz.cuni.mff.d3s.deeco.provider.InstanceRuntimeMetadataProvider;
+import cz.cuni.mff.d3s.deeco.model.provider.InstanceRuntimeMetadataProvider;
 import cz.cuni.mff.d3s.deeco.runtime.Runtime;
 
 /**

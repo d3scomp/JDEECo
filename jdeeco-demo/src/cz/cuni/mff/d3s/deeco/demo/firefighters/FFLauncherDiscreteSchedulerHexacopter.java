@@ -3,7 +3,7 @@ package cz.cuni.mff.d3s.deeco.demo.firefighters;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.RepositoryKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.local.LocalKnowledgeRepository;
-import cz.cuni.mff.d3s.deeco.provider.InstanceRuntimeMetadataProvider;
+import cz.cuni.mff.d3s.deeco.model.provider.InstanceRuntimeMetadataProvider;
 import cz.cuni.mff.d3s.deeco.runtime.Runtime;
 import cz.cuni.mff.d3s.deeco.scheduling.DiscreteScheduler;
 import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;

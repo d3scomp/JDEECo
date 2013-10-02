@@ -29,12 +29,12 @@ import cz.cuni.mff.d3s.deeco.exceptions.KMNotExistentException;
 import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionAccessError;
 import cz.cuni.mff.d3s.deeco.exceptions.KRExceptionUnavailableEntry;
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.model.KnowledgeType;
+import cz.cuni.mff.d3s.deeco.model.ListValueType;
+import cz.cuni.mff.d3s.deeco.model.MapValueType;
+import cz.cuni.mff.d3s.deeco.model.OutWrapperValueType;
+import cz.cuni.mff.d3s.deeco.model.StructuredKnowledgeValueType;
 import cz.cuni.mff.d3s.deeco.processor.TypeUtils;
-import cz.cuni.mff.d3s.deeco.runtime.model.KnowledgeType;
-import cz.cuni.mff.d3s.deeco.runtime.model.ListValueType;
-import cz.cuni.mff.d3s.deeco.runtime.model.MapValueType;
-import cz.cuni.mff.d3s.deeco.runtime.model.OutWrapperValueType;
-import cz.cuni.mff.d3s.deeco.runtime.model.StructuredKnowledgeValueType;
 
 /**
  * KnowledgeManager version using the JavaSpaces implementation for the

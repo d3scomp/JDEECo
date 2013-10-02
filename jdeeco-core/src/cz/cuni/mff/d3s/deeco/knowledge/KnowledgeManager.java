@@ -16,7 +16,7 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
-import cz.cuni.mff.d3s.deeco.runtime.model.KnowledgeType;
+import cz.cuni.mff.d3s.deeco.model.KnowledgeType;
 
 /**
  * An abstract class providing higher level interface for accessing the

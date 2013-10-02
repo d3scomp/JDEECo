@@ -11,7 +11,7 @@ import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.definitions.ComponentDefinition;
 import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
-import cz.cuni.mff.d3s.deeco.provider.InstanceRuntimeMetadataProvider;
+import cz.cuni.mff.d3s.deeco.model.provider.InstanceRuntimeMetadataProvider;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeUtil;
 import cz.cuni.mff.d3s.deeco.runtime.Runtime;
 

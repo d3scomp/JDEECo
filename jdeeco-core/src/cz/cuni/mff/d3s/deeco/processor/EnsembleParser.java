@@ -15,13 +15,13 @@ import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.definitions.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.exceptions.ParametersParseException;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.model.BooleanCondition;
+import cz.cuni.mff.d3s.deeco.model.Ensemble;
+import cz.cuni.mff.d3s.deeco.model.Exchange;
+import cz.cuni.mff.d3s.deeco.model.Parameter;
+import cz.cuni.mff.d3s.deeco.model.Schedule;
+import cz.cuni.mff.d3s.deeco.model.Trigger;
 import cz.cuni.mff.d3s.deeco.path.grammar.ParseException;
-import cz.cuni.mff.d3s.deeco.runtime.model.BooleanCondition;
-import cz.cuni.mff.d3s.deeco.runtime.model.Ensemble;
-import cz.cuni.mff.d3s.deeco.runtime.model.Exchange;
-import cz.cuni.mff.d3s.deeco.runtime.model.Parameter;
-import cz.cuni.mff.d3s.deeco.runtime.model.Schedule;
-import cz.cuni.mff.d3s.deeco.runtime.model.Trigger;
 
 /**
  * Parser class for ensemble definitions.

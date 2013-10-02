@@ -1,5 +1,8 @@
 package cz.cuni.mff.d3s.deeco.scheduling;
 
+import cz.cuni.mff.d3s.deeco.task.provider.PeriodicTaskProvider;
+import cz.cuni.mff.d3s.deeco.task.provider.TriggeredTaskProvider;
+
 public class DiscreteScheduler extends Scheduler {
 
 	@Override

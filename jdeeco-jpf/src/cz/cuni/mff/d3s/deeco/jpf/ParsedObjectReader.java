@@ -5,8 +5,9 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
+
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.provider.RuntimeMetadataProvider;
+import cz.cuni.mff.d3s.deeco.model.provider.RuntimeMetadataProvider;
 
 /**
  * Serialized object provider reader. This class is used to extract

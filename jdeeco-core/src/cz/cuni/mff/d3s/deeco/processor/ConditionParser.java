@@ -9,9 +9,9 @@ import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.annotations.Condition;
 import cz.cuni.mff.d3s.deeco.exceptions.ParametersParseException;
+import cz.cuni.mff.d3s.deeco.model.BooleanCondition;
+import cz.cuni.mff.d3s.deeco.model.Parameter;
 import cz.cuni.mff.d3s.deeco.path.grammar.ParseException;
-import cz.cuni.mff.d3s.deeco.runtime.model.BooleanCondition;
-import cz.cuni.mff.d3s.deeco.runtime.model.Parameter;
 
 public class ConditionParser {
 

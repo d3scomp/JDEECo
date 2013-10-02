@@ -1,9 +1,9 @@
 package cz.cuni.mff.d3s.deeco.jpf;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.model.provider.RuntimeMetadataProvider;
 import cz.cuni.mff.d3s.deeco.processor.ClassFinder;
 import cz.cuni.mff.d3s.deeco.processor.ClassProcessor;
-import cz.cuni.mff.d3s.deeco.provider.RuntimeMetadataProvider;
 
 /**
  * Class responsible for parsing and serializing both component and ensemble

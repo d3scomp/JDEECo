@@ -1,6 +1,8 @@
 package cz.cuni.mff.d3s.deeco.scheduling;
 
 import cz.cuni.mff.d3s.deeco.knowledge.TimeProvider;
+import cz.cuni.mff.d3s.deeco.task.provider.PeriodicTaskProvider;
+import cz.cuni.mff.d3s.deeco.task.provider.TriggeredTaskProvider;
 
 public abstract class Scheduler implements TimeProvider {
 

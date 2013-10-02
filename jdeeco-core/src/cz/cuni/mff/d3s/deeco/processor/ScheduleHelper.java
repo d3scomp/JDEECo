@@ -23,10 +23,10 @@ import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange;
-import cz.cuni.mff.d3s.deeco.runtime.model.KnowledgeChangeTrigger;
-import cz.cuni.mff.d3s.deeco.runtime.model.Parameter;
-import cz.cuni.mff.d3s.deeco.runtime.model.Schedule;
-import cz.cuni.mff.d3s.deeco.runtime.model.Trigger;
+import cz.cuni.mff.d3s.deeco.model.KnowledgeChangeTrigger;
+import cz.cuni.mff.d3s.deeco.model.Parameter;
+import cz.cuni.mff.d3s.deeco.model.Schedule;
+import cz.cuni.mff.d3s.deeco.model.Trigger;
 
 /**
  * Helper class for used for scheduling information retrieval.

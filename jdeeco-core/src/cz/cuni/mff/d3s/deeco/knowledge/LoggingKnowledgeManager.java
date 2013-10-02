@@ -2,7 +2,7 @@ package cz.cuni.mff.d3s.deeco.knowledge;
 
 import cz.cuni.mff.d3s.deeco.exceptions.KMException;
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.runtime.model.KnowledgeType;
+import cz.cuni.mff.d3s.deeco.model.KnowledgeType;
 
 /**
  * Logging version of the KnowledgeManager. Logs each operation executed on the

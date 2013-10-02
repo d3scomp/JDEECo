@@ -10,8 +10,8 @@ import java.net.URLClassLoader;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.provider.InstanceRuntimeMetadataProvider;
-import cz.cuni.mff.d3s.deeco.provider.RuntimeMetadataProvider;
+import cz.cuni.mff.d3s.deeco.model.provider.InstanceRuntimeMetadataProvider;
+import cz.cuni.mff.d3s.deeco.model.provider.RuntimeMetadataProvider;
 
 /**
  * A utility class for obtaining {@link ClassDEECoObjectProvider}.

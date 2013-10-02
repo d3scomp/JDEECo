@@ -13,12 +13,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.exceptions.ParametersParseException;
-import cz.cuni.mff.d3s.deeco.runtime.model.KnowledgeType;
-import cz.cuni.mff.d3s.deeco.runtime.model.ListValueType;
-import cz.cuni.mff.d3s.deeco.runtime.model.MapValueType;
-import cz.cuni.mff.d3s.deeco.runtime.model.NestedKnowledgeDefinition;
-import cz.cuni.mff.d3s.deeco.runtime.model.OutWrapperValueType;
-import cz.cuni.mff.d3s.deeco.runtime.model.StructuredKnowledgeValueType;
+import cz.cuni.mff.d3s.deeco.model.KnowledgeType;
+import cz.cuni.mff.d3s.deeco.model.ListValueType;
+import cz.cuni.mff.d3s.deeco.model.MapValueType;
+import cz.cuni.mff.d3s.deeco.model.NestedKnowledgeDefinition;
+import cz.cuni.mff.d3s.deeco.model.OutWrapperValueType;
+import cz.cuni.mff.d3s.deeco.model.StructuredKnowledgeValueType;
 
 public class ParameterKnowledgeTypeParser {
 

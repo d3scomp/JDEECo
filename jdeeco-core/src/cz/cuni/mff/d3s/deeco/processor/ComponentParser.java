@@ -20,12 +20,12 @@ import cz.cuni.mff.d3s.deeco.definitions.ComponentDefinition;
 import cz.cuni.mff.d3s.deeco.exceptions.ParametersParseException;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.model.ComponentProcess;
+import cz.cuni.mff.d3s.deeco.model.LockingMode;
+import cz.cuni.mff.d3s.deeco.model.Parameter;
+import cz.cuni.mff.d3s.deeco.model.Schedule;
+import cz.cuni.mff.d3s.deeco.model.Trigger;
 import cz.cuni.mff.d3s.deeco.path.grammar.ParseException;
-import cz.cuni.mff.d3s.deeco.runtime.model.ComponentProcess;
-import cz.cuni.mff.d3s.deeco.runtime.model.LockingMode;
-import cz.cuni.mff.d3s.deeco.runtime.model.Parameter;
-import cz.cuni.mff.d3s.deeco.runtime.model.Schedule;
-import cz.cuni.mff.d3s.deeco.runtime.model.Trigger;
 
 /**
  * Parser class for component definitions.

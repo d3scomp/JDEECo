@@ -32,9 +32,9 @@ options {
 
 PARSER_BEGIN(PathParser)
 package cz.cuni.mff.d3s.deeco.path.grammar;
-import cz.cuni.mff.d3s.deeco.runtime.model.KnowledgePath;
-import cz.cuni.mff.d3s.deeco.runtime.model.PathNodeMapKey;
-import cz.cuni.mff.d3s.deeco.runtime.model.PathNodeField;
+import cz.cuni.mff.d3s.deeco.model.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.PathNodeMapKey;
+import cz.cuni.mff.d3s.deeco.model.PathNodeField;
 import java.io.ByteArrayInputStream;
 
 /** Simple brace matcher. */

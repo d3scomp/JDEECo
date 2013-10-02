@@ -3,9 +3,9 @@ package cz.cuni.mff.d3s.deeco.monitoring;
 import java.util.List;
 import java.util.Map;
 
-import cz.cuni.mff.d3s.deeco.runtime.model.BooleanCondition;
-import cz.cuni.mff.d3s.deeco.scheduling.ComponentProcessTask;
-import cz.cuni.mff.d3s.deeco.scheduling.EnsembleTask;
+import cz.cuni.mff.d3s.deeco.model.BooleanCondition;
+import cz.cuni.mff.d3s.deeco.task.ComponentProcessTask;
+import cz.cuni.mff.d3s.deeco.task.EnsembleTask;
 
 public interface MonitorProvider {
 	boolean getExchangeMonitorEvaluation(String eInvariantId,
