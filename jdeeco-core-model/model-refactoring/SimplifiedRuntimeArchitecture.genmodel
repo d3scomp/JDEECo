@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/cz.cuni.mff.d3s.jdeeco.core.model/src" creationCommands="false"
+    modelPluginID="cz.cuni.mff.d3s.jdeeco.core.model" modelName="SimplifiedRuntimeArchitecture"
+    rootExtendsInterface="" rootExtendsClass="" suppressEMFTypes="true" suppressEMFMetaData="true"
+    suppressEMFModelTags="true" importerID="org.eclipse.emf.importer.ecore" minimalReflectiveMethods="false"
+    complianceLevel="7.0" copyrightFields="false" publicConstructors="true">
+  <foreignModel>SimplifiedRuntimeArchitecture.ecore</foreignModel>
+  <genPackages prefix="architecture" basePackage="cz.cuni.mff.d3s.jdeeco.core" adapterFactory="false"
+      metaDataPackageSuffix="meta" generateExampleClass="false" ecorePackage="SimplifiedRuntimeArchitecture.ecore#/">
+    <genClasses ecoreClass="SimplifiedRuntimeArchitecture.ecore#//Runtime">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SimplifiedRuntimeArchitecture.ecore#//Runtime/scheduler"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SimplifiedRuntimeArchitecture.ecore#//Runtime/executor"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SimplifiedRuntimeArchitecture.ecore#//Runtime/knowledgeManager"/>
+      <genOperations ecoreOperation="SimplifiedRuntimeArchitecture.ecore#//Runtime/run"/>
+      <genOperations ecoreOperation="SimplifiedRuntimeArchitecture.ecore#//Runtime/shutdown"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="SimplifiedRuntimeArchitecture.ecore#//KnowledgeManager">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SimplifiedRuntimeArchitecture.ecore#//KnowledgeManager/listeners"/>
+      <genOperations ecoreOperation="SimplifiedRuntimeArchitecture.ecore#//KnowledgeManager/put">
+        <genParameters ecoreParameter="SimplifiedRuntimeArchitecture.ecore#//KnowledgeManager/put/changeset"/>
+      </genOperations>
+      <genOperations ecoreOperation="SimplifiedRuntimeArchitecture.ecore#//KnowledgeManager/get">
+        <genParameters ecoreParameter="SimplifiedRuntimeArchitecture.ecore#//KnowledgeManager/get/KnowledgeReference"/>
+      </genOperations>
+      <genOperations ecoreOperation="SimplifiedRuntimeArchitecture.ecore#//KnowledgeManager/registerTrigger">
+        <genParameters ecoreParameter="SimplifiedRuntimeArchitecture.ecore#//KnowledgeManager/registerTrigger/listener"/>
+        <genParameters ecoreParameter="SimplifiedRuntimeArchitecture.ecore#//KnowledgeManager/registerTrigger/trigger"/>
+      </genOperations>
+      <genOperations ecoreOperation="SimplifiedRuntimeArchitecture.ecore#//KnowledgeManager/unregisterTrigger">
+        <genParameters ecoreParameter="SimplifiedRuntimeArchitecture.ecore#//KnowledgeManager/unregisterTrigger/trigger"/>
+      </genOperations>
+    </genClasses>
+    <genClasses image="false" ecoreClass="SimplifiedRuntimeArchitecture.ecore#//Scheduler">
+      <genOperations ecoreOperation="SimplifiedRuntimeArchitecture.ecore#//Scheduler/add">
+        <genParameters ecoreParameter="SimplifiedRuntimeArchitecture.ecore#//Scheduler/add/task"/>
+      </genOperations>
+      <genOperations ecoreOperation="SimplifiedRuntimeArchitecture.ecore#//Scheduler/remove">
+        <genParameters ecoreParameter="SimplifiedRuntimeArchitecture.ecore#//Scheduler/remove/task"/>
+      </genOperations>
+      <genOperations ecoreOperation="SimplifiedRuntimeArchitecture.ecore#//Scheduler/start"/>
+      <genOperations ecoreOperation="SimplifiedRuntimeArchitecture.ecore#//Scheduler/stop"/>
+    </genClasses>
+    <genClasses ecoreClass="SimplifiedRuntimeArchitecture.ecore#//Task"/>
+    <genClasses image="false" ecoreClass="SimplifiedRuntimeArchitecture.ecore#//Executor">
+      <genOperations ecoreOperation="SimplifiedRuntimeArchitecture.ecore#//Executor/execute">
+        <genParameters ecoreParameter="SimplifiedRuntimeArchitecture.ecore#//Executor/execute/task"/>
+      </genOperations>
+    </genClasses>
+    <genClasses image="false" ecoreClass="SimplifiedRuntimeArchitecture.ecore#//TaskExecutionListener">
+      <genOperations ecoreOperation="SimplifiedRuntimeArchitecture.ecore#//TaskExecutionListener/executionStarted">
+        <genParameters ecoreParameter="SimplifiedRuntimeArchitecture.ecore#//TaskExecutionListener/executionStarted/task"/>
+      </genOperations>
+      <genOperations ecoreOperation="SimplifiedRuntimeArchitecture.ecore#//TaskExecutionListener/executionFinished">
+        <genParameters ecoreParameter="SimplifiedRuntimeArchitecture.ecore#//TaskExecutionListener/executionFinished/task"/>
+      </genOperations>
+      <genOperations ecoreOperation="SimplifiedRuntimeArchitecture.ecore#//TaskExecutionListener/executionException">
+        <genParameters ecoreParameter="SimplifiedRuntimeArchitecture.ecore#//TaskExecutionListener/executionException/task"/>
+      </genOperations>
+    </genClasses>
+    <genClasses ecoreClass="SimplifiedRuntimeArchitecture.ecore#//SchedulerService">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SimplifiedRuntimeArchitecture.ecore#//SchedulerService/executor"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SimplifiedRuntimeArchitecture.ecore#//SchedulerService/tasks"/>
+    </genClasses>
+    <genClasses ecoreClass="SimplifiedRuntimeArchitecture.ecore#//ExecutorService">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SimplifiedRuntimeArchitecture.ecore#//ExecutorService/listeners"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SimplifiedRuntimeArchitecture.ecore#//ExecutorService/knowledgeManager"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SimplifiedRuntimeArchitecture.ecore#//ExecutorService/executables"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="SimplifiedRuntimeArchitecture.ecore#//Schedulable">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SimplifiedRuntimeArchitecture.ecore#//Schedulable/period"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SimplifiedRuntimeArchitecture.ecore#//Schedulable/triggers"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="SimplifiedRuntimeArchitecture.ecore#//Executable">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference SimplifiedRuntimeArchitecture.ecore#//Executable/input"/>
+      <genOperations ecoreOperation="SimplifiedRuntimeArchitecture.ecore#//Executable/execute">
+        <genParameters ecoreParameter="SimplifiedRuntimeArchitecture.ecore#//Executable/execute/input"/>
+      </genOperations>
+    </genClasses>
+    <genClasses image="false" ecoreClass="SimplifiedRuntimeArchitecture.ecore#//ExecutionResult"/>
+    <genClasses ecoreClass="SimplifiedRuntimeArchitecture.ecore#//ExecutionException"/>
+    <genClasses ecoreClass="SimplifiedRuntimeArchitecture.ecore#//KnowledgeChangeset"/>
+    <genClasses image="false" ecoreClass="SimplifiedRuntimeArchitecture.ecore#//KnowledgeTriggerListener">
+      <genOperations ecoreOperation="SimplifiedRuntimeArchitecture.ecore#//KnowledgeTriggerListener/triggered">
+        <genParameters ecoreParameter="SimplifiedRuntimeArchitecture.ecore#//KnowledgeTriggerListener/triggered/trigger"/>
+      </genOperations>
+    </genClasses>
+    <genClasses image="false" ecoreClass="SimplifiedRuntimeArchitecture.ecore#//KnowledgeRef"/>
+    <genClasses image="false" ecoreClass="SimplifiedRuntimeArchitecture.ecore#//Knowledge"/>
+    <genClasses image="false" ecoreClass="SimplifiedRuntimeArchitecture.ecore#//KnowledgeTrigger"/>
+  </genPackages>
+</genmodel:GenModel>
