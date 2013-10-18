@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="runtimearchitecture" nsURI="http://runtimearchitecture/1.0"
+    nsPrefix="runtimearchitecture">
+  <eClassifiers xsi:type="ecore:EClass" name="Runtime">
+    <eOperations name="run"/>
+    <eOperations name="shutdown"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="scheduler" lowerBound="1"
+        eType="#//Scheduler"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="executor" lowerBound="1"
+        eType="#//Executor.1"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="knowledgeManager" lowerBound="1"
+        eType="#//KnowledgeManager"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="KnowledgeManager" interface="true">
+    <eOperations name="put">
+      <eParameters name="changeset" eType="#//KnowledgeChangeset"/>
+    </eOperations>
+    <eOperations name="get()" eType="#//Knowledge">
+      <eParameters name="KnowledgeReference" eType="#//KnowledgeRef"/>
+    </eOperations>
+    <eOperations name="registerTrigger">
+      <eParameters name="trigger" eType="#//KnowledgeTrigger"/>
+      <eParameters name="listener" eType="#//KnowledgeTriggerListener"/>
+    </eOperations>
+    <eOperations name="unregisterTrigger">
+      <eParameters name="trigger" eType="#//KnowledgeTrigger"/>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="listeners" upperBound="-1"
+        eType="#//KnowledgeTriggerListener"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Scheduler" interface="true" eSuperTypes="#//TaskExecutionListener">
+    <eOperations name="add">
+      <eParameters name="task" eType="#//Task"/>
+    </eOperations>
+    <eOperations name="remove">
+      <eParameters name="task" eType="#//Task"/>
+    </eOperations>
+    <eOperations name="start"/>
+    <eOperations name="stop"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Task" eSuperTypes="#//Schedulable #//Executable"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Executor" eSuperTypes="#//Executor.1"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="KnowledgeRef"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="Knowledge"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Executor" interface="true">
+    <eOperations name="execute">
+      <eParameters name="task" eType="#//Executable"/>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TaskExecutionListener" interface="true">
+    <eOperations name="executionStarted">
+      <eParameters name="task" eType="#//Executable"/>
+    </eOperations>
+    <eOperations name="executionFinished">
+      <eParameters name="task" eType="#//Executable"/>
+    </eOperations>
+    <eOperations name="executionException">
+      <eParameters name="task" eType="#//Executable"/>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EClass0"/>
+  <eClassifiers xsi:type="ecore:EClass" name="SchedulerService" eSuperTypes="#//Scheduler #//TaskExecutionListener #//KnowledgeTriggerListener">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="executor" lowerBound="1"
+        eType="#//Executor.1"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="tasks" upperBound="-1"
+        eType="#//Task"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ExecutorService" eSuperTypes="#//Executor.1">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="listeners" upperBound="-1"
+        eType="#//TaskExecutionListener"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="knowledgeManager" lowerBound="1"
+        eType="#//KnowledgeManager"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="executables" upperBound="-1"
+        eType="#//Executable"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="Scheduling"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Schedulable" interface="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="period" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="triggers" upperBound="-1"
+        eType="#//KnowledgeTrigger"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="KnowledgeTrigger"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Executable" interface="true">
+    <eOperations name="execute" lowerBound="1" eType="#//ExecutionResult">
+      <eParameters name="input" eType="#//Knowledge"/>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="input" lowerBound="1" eType="#//KnowledgeRef"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ExecutionResult" abstract="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ExecutionException" eSuperTypes="#//ExecutionResult"/>
+  <eClassifiers xsi:type="ecore:EClass" name="KnowledgeChangeset" eSuperTypes="#//ExecutionResult"/>
+  <eClassifiers xsi:type="ecore:EClass" name="KnowledgeTriggerListener" interface="true">
+    <eOperations name="triggered" lowerBound="1">
+      <eParameters name="trigger" eType="#//KnowledgeTrigger"/>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="EDataType0"/>
+</ecore:EPackage>
