@@ -7,10 +7,8 @@
 	<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
 	<properties>
 		<dist>../dist</dist>
-		<deecoJPFJar>jdeeco-jpf.jar</deecoJPFJar>
 		<river>${dist}/apache-river</river>
 		<jdeecoCoreSrc>../jdeeco-core/src</jdeecoCoreSrc>
-		<jdeecoDemoSrc>../jdeeco-demo/src</jdeecoDemoSrc>
 		<mode>default</mode>
 	</properties>
 	<profiles>
@@ -24,18 +22,6 @@
 			</properties>
 			<modules>
 				<module>../jdeeco-core</module>
-				<module>../jdeeco-jpf</module>
-				<module>../jdeeco-demo</module>
-			</modules>
-		</profile>
-		<profile>
-			<id>sde</id>
-			<properties>
-				<mode>sde</mode>
-			</properties>
-			<modules>
-				<module>../jdeeco-core-osgi</module>
-				<module>../jdeeco-sde</module>
 			</modules>
 		</profile>
 	</profiles>
