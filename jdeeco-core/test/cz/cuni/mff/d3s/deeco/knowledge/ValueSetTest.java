@@ -35,6 +35,8 @@ public class ValueSetTest {
 		when(ks.getEmptyReferences()).thenReturn(emptyValues);
 		
 		assertEquals(emptyValues, vs.getNotFoundReferences());
+		verify(ks, times(3)).getEmptyReferences();
+		verifyNoMoreInteractions(ks);
 	}	
 	
 	@Test
@@ -45,7 +47,9 @@ public class ValueSetTest {
 		Collection<KnowledgeReference> foundValues = new LinkedList<>();
 		when(ks.getNonEmptyReferences()).thenReturn(foundValues);
 		
-		assertEquals(foundValues, vs.getNotFoundReferences());
+		assertEquals(foundValues, vs.getFoundReferences());
+		verify(ks, times(3)).getNonEmptyReferences();
+		verifyNoMoreInteractions(ks);
 	}
 
 	@Test
@@ -62,6 +66,11 @@ public class ValueSetTest {
 		assertNull(vs.getValue(nullRef));
 		assertNull(vs.getValue(notFoundRef));
 		assertEquals(value, vs.getValue(normalRef));		
+		
+		verify(ks).getValue(nullRef);
+		verify(ks).getValue(notFoundRef);
+		verify(ks).getValue(normalRef);
+		verifyNoMoreInteractions(ks);
 	}
 	
 	@Test
