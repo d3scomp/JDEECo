@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<invariant>
-    <description>Emergency measures are taken</description>
-    <operation>OR</operation>
-</invariant>
