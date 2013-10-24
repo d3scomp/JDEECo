@@ -1,5 +1,0 @@
-Manifest-Version: 1.0
-Export-Package: cz.cuni.mff.d3s.deeco.jpf,
- cz.cuni.mff.d3s.deeco.scheduling,
- cz.cuni.mff.d3s.deeco.knowledge.local,
- cz.cuni.mff.d3s.deeco.ltl
