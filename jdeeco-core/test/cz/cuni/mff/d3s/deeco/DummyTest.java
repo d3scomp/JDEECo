@@ -21,7 +21,7 @@ public class DummyTest {
 
 	@Test
 	public void test() {
-		assertEquals("helloo", dummy.hello());
+		assertEquals("hello", dummy.hello());
 	}
 
 }
