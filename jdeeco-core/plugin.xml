@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+-->
+
+<plugin>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated RuntimeModel -->
+      <package
+            uri="http://runtimemodel/1.0"
+            class="cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimePackage"
+            genModel="model/RuntimeModel.genmodel"/>
+   </extension>
+
+</plugin>

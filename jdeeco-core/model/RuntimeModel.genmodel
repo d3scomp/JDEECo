@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/cz.cuni.mff.d3s.jdeeco.core/src" modelPluginID="cz.cuni.mff.d3s.jdeeco.core"
+    modelName="RuntimeModel" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="7.0" copyrightFields="false"
+    operationReflection="true" importOrganizing="true">
+  <foreignModel>RuntimeModel.ecore</foreignModel>
+  <genPackages prefix="runtime" basePackage="cz.cuni.mff.d3s.deeco.model" disposableProviderFactory="true"
+      adapterFactory="false" interfacePackageSuffix="api" metaDataPackageSuffix="meta"
+      ecorePackage="RuntimeModel.ecore#/">
+    <genDataTypes ecoreDataType="RuntimeModel.ecore#//Method"/>
+    <genClasses ecoreClass="RuntimeModel.ecore#//Schedule">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//Schedule/triggers"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//Schedule/period"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="RuntimeModel.ecore#//Trigger"/>
+    <genClasses ecoreClass="RuntimeModel.ecore#//KnowledgeChangeTrigger">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//KnowledgeChangeTrigger/knowledgePath"/>
+    </genClasses>
+    <genClasses ecoreClass="RuntimeModel.ecore#//KnowledgePath">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//KnowledgePath/nodes"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="RuntimeModel.ecore#//PathNode"/>
+    <genClasses ecoreClass="RuntimeModel.ecore#//PathNodeField">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//PathNodeField/name"/>
+    </genClasses>
+    <genClasses ecoreClass="RuntimeModel.ecore#//PathNodeMapKey">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//PathNodeMapKey/keyPath"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>
