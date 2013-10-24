@@ -142,7 +142,7 @@ public interface runtimePackage extends EPackage {
 	int KNOWLEDGE_CHANGE_TRIGGER = 2;
 
 	/**
-	 * The feature id for the '<em><b>Knowledge Path</b></em>' containment reference list.
+	 * The feature id for the '<em><b>Knowledge Path</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -371,10 +371,10 @@ public interface runtimePackage extends EPackage {
 	EClass getKnowledgeChangeTrigger();
 
 	/**
-	 * Returns the meta object for the containment reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger#getKnowledgePath <em>Knowledge Path</em>}'.
+	 * Returns the meta object for the containment reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger#getKnowledgePath <em>Knowledge Path</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Knowledge Path</em>'.
+	 * @return the meta object for the containment reference '<em>Knowledge Path</em>'.
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger#getKnowledgePath()
 	 * @see #getKnowledgeChangeTrigger()
 	 * @generated
@@ -535,7 +535,7 @@ public interface runtimePackage extends EPackage {
 		EClass KNOWLEDGE_CHANGE_TRIGGER = eINSTANCE.getKnowledgeChangeTrigger();
 
 		/**
-		 * The meta object literal for the '<em><b>Knowledge Path</b></em>' containment reference list feature.
+		 * The meta object literal for the '<em><b>Knowledge Path</b></em>' containment reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated

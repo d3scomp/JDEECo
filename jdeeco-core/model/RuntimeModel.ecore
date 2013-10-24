@@ -9,7 +9,7 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Trigger" abstract="true"/>
   <eClassifiers xsi:type="ecore:EClass" name="KnowledgeChangeTrigger" eSuperTypes="#//Trigger">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="knowledgePath" upperBound="-1"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="knowledgePath" lowerBound="1"
         eType="#//KnowledgePath" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="KnowledgePath">
