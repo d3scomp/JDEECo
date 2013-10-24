@@ -2,7 +2,6 @@
  */
 package cz.cuni.mff.d3s.deeco.model.runtime.api;
 
-import org.eclipse.emf.common.util.EList;
 
 /**
  * <!-- begin-user-doc -->
@@ -22,19 +21,29 @@ import org.eclipse.emf.common.util.EList;
  */
 public interface KnowledgeChangeTrigger extends Trigger {
 	/**
-	 * Returns the value of the '<em><b>Knowledge Path</b></em>' containment reference list.
-	 * The list contents are of type {@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath}.
+	 * Returns the value of the '<em><b>Knowledge Path</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Knowledge Path</em>' containment reference list isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Knowledge Path</em>' containment reference list.
+	 * @return the value of the '<em>Knowledge Path</em>' containment reference.
+	 * @see #setKnowledgePath(KnowledgePath)
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimePackage#getKnowledgeChangeTrigger_KnowledgePath()
-	 * @model containment="true"
+	 * @model containment="true" required="true"
 	 * @generated
 	 */
-	EList<KnowledgePath> getKnowledgePath();
+	KnowledgePath getKnowledgePath();
+
+	/**
+	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger#getKnowledgePath <em>Knowledge Path</em>}' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Knowledge Path</em>' containment reference.
+	 * @see #getKnowledgePath()
+	 * @generated
+	 */
+	void setKnowledgePath(KnowledgePath value);
 
 } // KnowledgeChangeTrigger

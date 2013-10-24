@@ -2,7 +2,7 @@
  */
 package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Schedule;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimePackage;
@@ -25,19 +25,19 @@ import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Schedule</b></em>'.
+ * An implementation of the model object '<em><b>Scheduling Specification</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ScheduleImpl#getTriggers <em>Triggers</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ScheduleImpl#getPeriod <em>Period</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.SchedulingSpecificationImpl#getTriggers <em>Triggers</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.SchedulingSpecificationImpl#getPeriod <em>Period</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class ScheduleImpl extends MinimalEObjectImpl.Container implements Schedule {
+public class SchedulingSpecificationImpl extends MinimalEObjectImpl.Container implements SchedulingSpecification {
 	/**
 	 * The cached value of the '{@link #getTriggers() <em>Triggers</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
@@ -73,7 +73,7 @@ public class ScheduleImpl extends MinimalEObjectImpl.Container implements Schedu
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected ScheduleImpl() {
+	protected SchedulingSpecificationImpl() {
 		super();
 	}
 
@@ -84,7 +84,7 @@ public class ScheduleImpl extends MinimalEObjectImpl.Container implements Schedu
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return runtimePackage.Literals.SCHEDULE;
+		return runtimePackage.Literals.SCHEDULING_SPECIFICATION;
 	}
 
 	/**
@@ -94,7 +94,7 @@ public class ScheduleImpl extends MinimalEObjectImpl.Container implements Schedu
 	 */
 	public EList<Trigger> getTriggers() {
 		if (triggers == null) {
-			triggers = new EObjectContainmentEList<Trigger>(Trigger.class, this, runtimePackage.SCHEDULE__TRIGGERS);
+			triggers = new EObjectContainmentEList<Trigger>(Trigger.class, this, runtimePackage.SCHEDULING_SPECIFICATION__TRIGGERS);
 		}
 		return triggers;
 	}
@@ -117,7 +117,7 @@ public class ScheduleImpl extends MinimalEObjectImpl.Container implements Schedu
 		long oldPeriod = period;
 		period = newPeriod;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, runtimePackage.SCHEDULE__PERIOD, oldPeriod, period));
+			eNotify(new ENotificationImpl(this, Notification.SET, runtimePackage.SCHEDULING_SPECIFICATION__PERIOD, oldPeriod, period));
 	}
 
 	/**
@@ -128,7 +128,7 @@ public class ScheduleImpl extends MinimalEObjectImpl.Container implements Schedu
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case runtimePackage.SCHEDULE__TRIGGERS:
+			case runtimePackage.SCHEDULING_SPECIFICATION__TRIGGERS:
 				return ((InternalEList<?>)getTriggers()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -142,9 +142,9 @@ public class ScheduleImpl extends MinimalEObjectImpl.Container implements Schedu
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case runtimePackage.SCHEDULE__TRIGGERS:
+			case runtimePackage.SCHEDULING_SPECIFICATION__TRIGGERS:
 				return getTriggers();
-			case runtimePackage.SCHEDULE__PERIOD:
+			case runtimePackage.SCHEDULING_SPECIFICATION__PERIOD:
 				return getPeriod();
 		}
 		return super.eGet(featureID, resolve, coreType);
@@ -159,11 +159,11 @@ public class ScheduleImpl extends MinimalEObjectImpl.Container implements Schedu
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case runtimePackage.SCHEDULE__TRIGGERS:
+			case runtimePackage.SCHEDULING_SPECIFICATION__TRIGGERS:
 				getTriggers().clear();
 				getTriggers().addAll((Collection<? extends Trigger>)newValue);
 				return;
-			case runtimePackage.SCHEDULE__PERIOD:
+			case runtimePackage.SCHEDULING_SPECIFICATION__PERIOD:
 				setPeriod((Long)newValue);
 				return;
 		}
@@ -178,10 +178,10 @@ public class ScheduleImpl extends MinimalEObjectImpl.Container implements Schedu
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case runtimePackage.SCHEDULE__TRIGGERS:
+			case runtimePackage.SCHEDULING_SPECIFICATION__TRIGGERS:
 				getTriggers().clear();
 				return;
-			case runtimePackage.SCHEDULE__PERIOD:
+			case runtimePackage.SCHEDULING_SPECIFICATION__PERIOD:
 				setPeriod(PERIOD_EDEFAULT);
 				return;
 		}
@@ -196,9 +196,9 @@ public class ScheduleImpl extends MinimalEObjectImpl.Container implements Schedu
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case runtimePackage.SCHEDULE__TRIGGERS:
+			case runtimePackage.SCHEDULING_SPECIFICATION__TRIGGERS:
 				return triggers != null && !triggers.isEmpty();
-			case runtimePackage.SCHEDULE__PERIOD:
+			case runtimePackage.SCHEDULING_SPECIFICATION__PERIOD:
 				return period != PERIOD_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
@@ -220,4 +220,4 @@ public class ScheduleImpl extends MinimalEObjectImpl.Container implements Schedu
 		return result.toString();
 	}
 
-} //ScheduleImpl
+} //SchedulingSpecificationImpl
