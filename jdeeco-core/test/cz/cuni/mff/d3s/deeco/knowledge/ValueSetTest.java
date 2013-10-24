@@ -12,17 +12,21 @@ import org.junit.Test;
 
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeSet.KnowledgeValue;
 
+/**
+ * Example of white-box testing with mock objects.
+ * 
+ * @author Keznikl
+ *
+ */
 public class ValueSetTest {
 
 	ValueSet vs;
 	KnowledgeSet ks;
-	ValueSet blackbox;
 	
 	@Before
 	public void setUp() throws Exception {
 		ks = mock(KnowledgeSet.class);
 		vs = new ValueSet(ks);
-		blackbox = new ValueSet();
 	}
 
 
@@ -57,6 +61,7 @@ public class ValueSetTest {
 		KnowledgeReference nullRef = mock(KnowledgeReference.class);
 		KnowledgeReference notFoundRef = mock(KnowledgeReference.class);
 		KnowledgeReference normalRef = mock(KnowledgeReference.class);
+		KnowledgeReference nonexistingRef = mock(KnowledgeReference.class);
 		Object value = new Object();
 		
 		when(ks.getValue(nullRef)).thenReturn(null);
@@ -65,11 +70,13 @@ public class ValueSetTest {
 		
 		assertNull(vs.getValue(nullRef));
 		assertNull(vs.getValue(notFoundRef));
-		assertEquals(value, vs.getValue(normalRef));		
+		assertEquals(value, vs.getValue(normalRef));	
+		assertNull(vs.getValue(nonexistingRef));
 		
 		verify(ks).getValue(nullRef);
 		verify(ks).getValue(notFoundRef);
 		verify(ks).getValue(normalRef);
+		verify(ks).getValue(nonexistingRef);
 		verifyNoMoreInteractions(ks);
 	}
 	
