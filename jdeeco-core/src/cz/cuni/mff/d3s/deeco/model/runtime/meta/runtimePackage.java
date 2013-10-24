@@ -58,14 +58,14 @@ public interface runtimePackage extends EPackage {
 	runtimePackage eINSTANCE = cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl.init();
 
 	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ScheduleImpl <em>Schedule</em>}' class.
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.SchedulingSpecificationImpl <em>Scheduling Specification</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.ScheduleImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getSchedule()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.SchedulingSpecificationImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getSchedulingSpecification()
 	 * @generated
 	 */
-	int SCHEDULE = 0;
+	int SCHEDULING_SPECIFICATION = 0;
 
 	/**
 	 * The feature id for the '<em><b>Triggers</b></em>' containment reference list.
@@ -74,7 +74,7 @@ public interface runtimePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SCHEDULE__TRIGGERS = 0;
+	int SCHEDULING_SPECIFICATION__TRIGGERS = 0;
 
 	/**
 	 * The feature id for the '<em><b>Period</b></em>' attribute.
@@ -83,25 +83,25 @@ public interface runtimePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SCHEDULE__PERIOD = 1;
+	int SCHEDULING_SPECIFICATION__PERIOD = 1;
 
 	/**
-	 * The number of structural features of the '<em>Schedule</em>' class.
+	 * The number of structural features of the '<em>Scheduling Specification</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int SCHEDULE_FEATURE_COUNT = 2;
+	int SCHEDULING_SPECIFICATION_FEATURE_COUNT = 2;
 
 	/**
-	 * The number of operations of the '<em>Schedule</em>' class.
+	 * The number of operations of the '<em>Scheduling Specification</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int SCHEDULE_OPERATION_COUNT = 0;
+	int SCHEDULING_SPECIFICATION_OPERATION_COUNT = 0;
 
 	/**
 	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.TriggerImpl <em>Trigger</em>}' class.
@@ -319,36 +319,36 @@ public interface runtimePackage extends EPackage {
 
 
 	/**
-	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Schedule <em>Schedule</em>}'.
+	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification <em>Scheduling Specification</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Schedule</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.Schedule
+	 * @return the meta object for class '<em>Scheduling Specification</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification
 	 * @generated
 	 */
-	EClass getSchedule();
+	EClass getSchedulingSpecification();
 
 	/**
-	 * Returns the meta object for the containment reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Schedule#getTriggers <em>Triggers</em>}'.
+	 * Returns the meta object for the containment reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification#getTriggers <em>Triggers</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the containment reference list '<em>Triggers</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.Schedule#getTriggers()
-	 * @see #getSchedule()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification#getTriggers()
+	 * @see #getSchedulingSpecification()
 	 * @generated
 	 */
-	EReference getSchedule_Triggers();
+	EReference getSchedulingSpecification_Triggers();
 
 	/**
-	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Schedule#getPeriod <em>Period</em>}'.
+	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification#getPeriod <em>Period</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Period</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.Schedule#getPeriod()
-	 * @see #getSchedule()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification#getPeriod()
+	 * @see #getSchedulingSpecification()
 	 * @generated
 	 */
-	EAttribute getSchedule_Period();
+	EAttribute getSchedulingSpecification_Period();
 
 	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger <em>Trigger</em>}'.
@@ -489,14 +489,14 @@ public interface runtimePackage extends EPackage {
 	 */
 	interface Literals {
 		/**
-		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ScheduleImpl <em>Schedule</em>}' class.
+		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.SchedulingSpecificationImpl <em>Scheduling Specification</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.ScheduleImpl
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getSchedule()
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.SchedulingSpecificationImpl
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getSchedulingSpecification()
 		 * @generated
 		 */
-		EClass SCHEDULE = eINSTANCE.getSchedule();
+		EClass SCHEDULING_SPECIFICATION = eINSTANCE.getSchedulingSpecification();
 
 		/**
 		 * The meta object literal for the '<em><b>Triggers</b></em>' containment reference list feature.
@@ -504,7 +504,7 @@ public interface runtimePackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference SCHEDULE__TRIGGERS = eINSTANCE.getSchedule_Triggers();
+		EReference SCHEDULING_SPECIFICATION__TRIGGERS = eINSTANCE.getSchedulingSpecification_Triggers();
 
 		/**
 		 * The meta object literal for the '<em><b>Period</b></em>' attribute feature.
@@ -512,7 +512,7 @@ public interface runtimePackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute SCHEDULE__PERIOD = eINSTANCE.getSchedule_Period();
+		EAttribute SCHEDULING_SPECIFICATION__PERIOD = eINSTANCE.getSchedulingSpecification_Period();
 
 		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.TriggerImpl <em>Trigger</em>}' class.

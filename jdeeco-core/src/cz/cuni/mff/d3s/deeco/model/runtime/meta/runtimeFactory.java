@@ -6,8 +6,8 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Schedule;
 
+import cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification;
 import org.eclipse.emf.ecore.EFactory;
 
 /**
@@ -28,13 +28,13 @@ public interface runtimeFactory extends EFactory {
 	runtimeFactory eINSTANCE = cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimeFactoryImpl.init();
 
 	/**
-	 * Returns a new object of class '<em>Schedule</em>'.
+	 * Returns a new object of class '<em>Scheduling Specification</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Schedule</em>'.
+	 * @return a new object of class '<em>Scheduling Specification</em>'.
 	 * @generated
 	 */
-	Schedule createSchedule();
+	SchedulingSpecification createSchedulingSpecification();
 
 	/**
 	 * Returns a new object of class '<em>Knowledge Change Trigger</em>'.

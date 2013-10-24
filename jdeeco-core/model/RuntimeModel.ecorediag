@@ -4,7 +4,7 @@
     <children xmi:type="notation:Node" xmi:id="_n6RFYzyaEeOBILfoZuXX_w" type="4001"/>
     <children xmi:type="notation:Node" xmi:id="_n6RFZDyaEeOBILfoZuXX_w" type="5001">
       <children xmi:type="notation:Node" xmi:id="_n6RscDyaEeOBILfoZuXX_w" type="2001">
-        <element xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//Schedule/period"/>
+        <element xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//SchedulingSpecification/period"/>
         <layoutConstraint xmi:type="notation:Location" xmi:id="_n6RscTyaEeOBILfoZuXX_w"/>
       </children>
       <styles xmi:type="notation:DrawerStyle" xmi:id="_n6RFZTyaEeOBILfoZuXX_w"/>
@@ -17,7 +17,7 @@
       <styles xmi:type="notation:FilteringStyle" xmi:id="_n6RFazyaEeOBILfoZuXX_w"/>
     </children>
     <styles xmi:type="notation:ShapeStyle" xmi:id="_n6RFYTyaEeOBILfoZuXX_w" fontColor="4210752" fontName="Segoe UI" fontHeight="10" fillColor="13761016" lineColor="8421504"/>
-    <element xmi:type="ecore:EClass" href="RuntimeModel.ecore#//Schedule"/>
+    <element xmi:type="ecore:EClass" href="RuntimeModel.ecore#//SchedulingSpecification"/>
     <layoutConstraint xmi:type="notation:Bounds" xmi:id="_n6RFYjyaEeOBILfoZuXX_w" x="12" y="336"/>
   </children>
   <children xmi:type="notation:Node" xmi:id="_n6XzGTyaEeOBILfoZuXX_w" type="1001">
@@ -138,7 +138,7 @@
     </children>
     <styles xmi:type="notation:ConnectorStyle" xmi:id="_n6nDpTyaEeOBILfoZuXX_w" lineColor="4210752"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_n6nDpjyaEeOBILfoZuXX_w" fontColor="4210752" fontName="Segoe UI" fontHeight="10"/>
-    <element xmi:type="ecore:EReference" href="RuntimeModel.ecore#//Schedule/triggers"/>
+    <element xmi:type="ecore:EReference" href="RuntimeModel.ecore#//SchedulingSpecification/triggers"/>
     <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_n6nDpzyaEeOBILfoZuXX_w" points="[0, 0, 0, 68]$[0, -68, 0, 0]"/>
     <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_n9Pg4zyaEeOBILfoZuXX_w" id="(0.49572649572649574,0.0)"/>
     <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_n9Pg5DyaEeOBILfoZuXX_w" id="(0.5,1.0)"/>

@@ -62,7 +62,7 @@ public class runtimeFactoryImpl extends EFactoryImpl implements runtimeFactory {
 	@Override
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
-			case runtimePackage.SCHEDULE: return createSchedule();
+			case runtimePackage.SCHEDULING_SPECIFICATION: return createSchedulingSpecification();
 			case runtimePackage.KNOWLEDGE_CHANGE_TRIGGER: return createKnowledgeChangeTrigger();
 			case runtimePackage.KNOWLEDGE_PATH: return createKnowledgePath();
 			case runtimePackage.PATH_NODE_FIELD: return createPathNodeField();
@@ -107,9 +107,9 @@ public class runtimeFactoryImpl extends EFactoryImpl implements runtimeFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Schedule createSchedule() {
-		ScheduleImpl schedule = new ScheduleImpl();
-		return schedule;
+	public SchedulingSpecification createSchedulingSpecification() {
+		SchedulingSpecificationImpl schedulingSpecification = new SchedulingSpecificationImpl();
+		return schedulingSpecification;
 	}
 
 	/**

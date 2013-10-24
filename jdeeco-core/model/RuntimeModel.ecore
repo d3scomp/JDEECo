@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="runtime" nsURI="http://runtimemodel/1.0" nsPrefix="cz.cuni.mff.d3s.deeco.model.runtime">
-  <eClassifiers xsi:type="ecore:EClass" name="Schedule">
+  <eClassifiers xsi:type="ecore:EClass" name="SchedulingSpecification">
     <eStructuralFeatures xsi:type="ecore:EReference" name="triggers" upperBound="-1"
         eType="#//Trigger" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="period" lowerBound="1"

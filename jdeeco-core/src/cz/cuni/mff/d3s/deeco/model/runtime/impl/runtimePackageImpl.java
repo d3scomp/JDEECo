@@ -7,7 +7,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Schedule;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimeFactory;
@@ -35,7 +35,7 @@ public class runtimePackageImpl extends EPackageImpl implements runtimePackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass scheduleEClass = null;
+	private EClass schedulingSpecificationEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -152,8 +152,8 @@ public class runtimePackageImpl extends EPackageImpl implements runtimePackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getSchedule() {
-		return scheduleEClass;
+	public EClass getSchedulingSpecification() {
+		return schedulingSpecificationEClass;
 	}
 
 	/**
@@ -161,8 +161,8 @@ public class runtimePackageImpl extends EPackageImpl implements runtimePackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getSchedule_Triggers() {
-		return (EReference)scheduleEClass.getEStructuralFeatures().get(0);
+	public EReference getSchedulingSpecification_Triggers() {
+		return (EReference)schedulingSpecificationEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -170,8 +170,8 @@ public class runtimePackageImpl extends EPackageImpl implements runtimePackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getSchedule_Period() {
-		return (EAttribute)scheduleEClass.getEStructuralFeatures().get(1);
+	public EAttribute getSchedulingSpecification_Period() {
+		return (EAttribute)schedulingSpecificationEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -301,9 +301,9 @@ public class runtimePackageImpl extends EPackageImpl implements runtimePackage {
 		isCreated = true;
 
 		// Create classes and their features
-		scheduleEClass = createEClass(SCHEDULE);
-		createEReference(scheduleEClass, SCHEDULE__TRIGGERS);
-		createEAttribute(scheduleEClass, SCHEDULE__PERIOD);
+		schedulingSpecificationEClass = createEClass(SCHEDULING_SPECIFICATION);
+		createEReference(schedulingSpecificationEClass, SCHEDULING_SPECIFICATION__TRIGGERS);
+		createEAttribute(schedulingSpecificationEClass, SCHEDULING_SPECIFICATION__PERIOD);
 
 		triggerEClass = createEClass(TRIGGER);
 
@@ -358,9 +358,9 @@ public class runtimePackageImpl extends EPackageImpl implements runtimePackage {
 		pathNodeMapKeyEClass.getESuperTypes().add(this.getPathNode());
 
 		// Initialize classes, features, and operations; add parameters
-		initEClass(scheduleEClass, Schedule.class, "Schedule", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getSchedule_Triggers(), this.getTrigger(), null, "triggers", null, 0, -1, Schedule.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getSchedule_Period(), ecorePackage.getELong(), "period", null, 1, 1, Schedule.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEClass(schedulingSpecificationEClass, SchedulingSpecification.class, "SchedulingSpecification", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getSchedulingSpecification_Triggers(), this.getTrigger(), null, "triggers", null, 0, -1, SchedulingSpecification.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getSchedulingSpecification_Period(), ecorePackage.getELong(), "period", null, 1, 1, SchedulingSpecification.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(triggerEClass, Trigger.class, "Trigger", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
