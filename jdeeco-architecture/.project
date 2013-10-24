@@ -3,6 +3,7 @@
 	<name>jdeeco-architecture</name>
 	<comment></comment>
 	<projects>
+		<project>cz.cuni.mff.d3s.jdeeco.core</project>
 	</projects>
 	<buildSpec>
 	</buildSpec>
