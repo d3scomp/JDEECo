@@ -3,26 +3,10 @@
 /jdeeco-core/target
 /jdeeco-core/doc
 /jdeeco-core/.settings
-/jdeeco-demo/bin
-/jdeeco-demo/target
-/jdeeco-demo/doc
-/jdeeco-demo/.settings
-/jdeeco-sde/bin
-/jdeeco-sde/target
-/jdeeco-sde/doc
-/jdeeco-sde/.settings
 /jdeeco-parent/bin
 /jdeeco-parent/target
 /jdeeco-parent/doc
 /jdeeco-parent/.settings
-/jdeeco-jpf/bin
-/jdeeco-jpf/target
-/jdeeco-jpf/doc
-/jdeeco-jpf/.settings
-/jdeeco-core-osgi/bin
-/jdeeco-core-osgi/target
-/jdeeco-core-osgi/doc
-/jdeeco-core-osgi/.settings
 
 /dist
 /target
