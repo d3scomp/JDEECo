@@ -24,18 +24,5 @@ public class LocalTimeSchedulerTest {
 		//dowhen(executor.execute).then();
 	}
 	
-	@Test
-	public void testAddTask( Task task ){
-		// No tasks in queue
-	}
 	
-	@Test
-	public void testRemoveTask( Task task ){
-		
-	}	
-	
-	@Test
-	public void testAddTasks( List<Task> tasks ){
-		// 
-	}
 }
