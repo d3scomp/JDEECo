@@ -7,10 +7,8 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimePackage;
 
-
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
-
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
@@ -136,7 +134,6 @@ public class KnowledgeChangeTriggerImpl extends TriggerImpl implements Knowledge
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {

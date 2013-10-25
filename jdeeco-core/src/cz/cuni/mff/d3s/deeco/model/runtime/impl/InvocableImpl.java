@@ -2,10 +2,12 @@
  */
 package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.Invocable;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimePackage;
+
+import java.lang.reflect.Method;
 
 import java.util.Collection;
 
@@ -25,55 +27,55 @@ import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Scheduling Specification</b></em>'.
+ * An implementation of the model object '<em><b>Invocable</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.SchedulingSpecificationImpl#getTriggers <em>Triggers</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.SchedulingSpecificationImpl#getPeriod <em>Period</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.InvocableImpl#getParameters <em>Parameters</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.InvocableImpl#getMethod <em>Method</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class SchedulingSpecificationImpl extends MinimalEObjectImpl.Container implements SchedulingSpecification {
+public class InvocableImpl extends MinimalEObjectImpl.Container implements Invocable {
 	/**
-	 * The cached value of the '{@link #getTriggers() <em>Triggers</em>}' containment reference list.
+	 * The cached value of the '{@link #getParameters() <em>Parameters</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getTriggers()
+	 * @see #getParameters()
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<Trigger> triggers;
+	protected EList<Parameter> parameters;
 
 	/**
-	 * The default value of the '{@link #getPeriod() <em>Period</em>}' attribute.
+	 * The default value of the '{@link #getMethod() <em>Method</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getPeriod()
+	 * @see #getMethod()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final long PERIOD_EDEFAULT = 0L;
+	protected static final Method METHOD_EDEFAULT = null;
 
 	/**
-	 * The cached value of the '{@link #getPeriod() <em>Period</em>}' attribute.
+	 * The cached value of the '{@link #getMethod() <em>Method</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getPeriod()
+	 * @see #getMethod()
 	 * @generated
 	 * @ordered
 	 */
-	protected long period = PERIOD_EDEFAULT;
+	protected Method method = METHOD_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected SchedulingSpecificationImpl() {
+	protected InvocableImpl() {
 		super();
 	}
 
@@ -84,7 +86,7 @@ public class SchedulingSpecificationImpl extends MinimalEObjectImpl.Container im
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return runtimePackage.Literals.SCHEDULING_SPECIFICATION;
+		return runtimePackage.Literals.INVOCABLE;
 	}
 
 	/**
@@ -92,11 +94,11 @@ public class SchedulingSpecificationImpl extends MinimalEObjectImpl.Container im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<Trigger> getTriggers() {
-		if (triggers == null) {
-			triggers = new EObjectContainmentEList<Trigger>(Trigger.class, this, runtimePackage.SCHEDULING_SPECIFICATION__TRIGGERS);
+	public EList<Parameter> getParameters() {
+		if (parameters == null) {
+			parameters = new EObjectContainmentEList<Parameter>(Parameter.class, this, runtimePackage.INVOCABLE__PARAMETERS);
 		}
-		return triggers;
+		return parameters;
 	}
 
 	/**
@@ -104,8 +106,8 @@ public class SchedulingSpecificationImpl extends MinimalEObjectImpl.Container im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public long getPeriod() {
-		return period;
+	public Method getMethod() {
+		return method;
 	}
 
 	/**
@@ -113,11 +115,11 @@ public class SchedulingSpecificationImpl extends MinimalEObjectImpl.Container im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setPeriod(long newPeriod) {
-		long oldPeriod = period;
-		period = newPeriod;
+	public void setMethod(Method newMethod) {
+		Method oldMethod = method;
+		method = newMethod;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, runtimePackage.SCHEDULING_SPECIFICATION__PERIOD, oldPeriod, period));
+			eNotify(new ENotificationImpl(this, Notification.SET, runtimePackage.INVOCABLE__METHOD, oldMethod, method));
 	}
 
 	/**
@@ -128,8 +130,8 @@ public class SchedulingSpecificationImpl extends MinimalEObjectImpl.Container im
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case runtimePackage.SCHEDULING_SPECIFICATION__TRIGGERS:
-				return ((InternalEList<?>)getTriggers()).basicRemove(otherEnd, msgs);
+			case runtimePackage.INVOCABLE__PARAMETERS:
+				return ((InternalEList<?>)getParameters()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -142,10 +144,10 @@ public class SchedulingSpecificationImpl extends MinimalEObjectImpl.Container im
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case runtimePackage.SCHEDULING_SPECIFICATION__TRIGGERS:
-				return getTriggers();
-			case runtimePackage.SCHEDULING_SPECIFICATION__PERIOD:
-				return getPeriod();
+			case runtimePackage.INVOCABLE__PARAMETERS:
+				return getParameters();
+			case runtimePackage.INVOCABLE__METHOD:
+				return getMethod();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -159,12 +161,12 @@ public class SchedulingSpecificationImpl extends MinimalEObjectImpl.Container im
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case runtimePackage.SCHEDULING_SPECIFICATION__TRIGGERS:
-				getTriggers().clear();
-				getTriggers().addAll((Collection<? extends Trigger>)newValue);
+			case runtimePackage.INVOCABLE__PARAMETERS:
+				getParameters().clear();
+				getParameters().addAll((Collection<? extends Parameter>)newValue);
 				return;
-			case runtimePackage.SCHEDULING_SPECIFICATION__PERIOD:
-				setPeriod((Long)newValue);
+			case runtimePackage.INVOCABLE__METHOD:
+				setMethod((Method)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -178,11 +180,11 @@ public class SchedulingSpecificationImpl extends MinimalEObjectImpl.Container im
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case runtimePackage.SCHEDULING_SPECIFICATION__TRIGGERS:
-				getTriggers().clear();
+			case runtimePackage.INVOCABLE__PARAMETERS:
+				getParameters().clear();
 				return;
-			case runtimePackage.SCHEDULING_SPECIFICATION__PERIOD:
-				setPeriod(PERIOD_EDEFAULT);
+			case runtimePackage.INVOCABLE__METHOD:
+				setMethod(METHOD_EDEFAULT);
 				return;
 		}
 		super.eUnset(featureID);
@@ -196,10 +198,10 @@ public class SchedulingSpecificationImpl extends MinimalEObjectImpl.Container im
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case runtimePackage.SCHEDULING_SPECIFICATION__TRIGGERS:
-				return triggers != null && !triggers.isEmpty();
-			case runtimePackage.SCHEDULING_SPECIFICATION__PERIOD:
-				return period != PERIOD_EDEFAULT;
+			case runtimePackage.INVOCABLE__PARAMETERS:
+				return parameters != null && !parameters.isEmpty();
+			case runtimePackage.INVOCABLE__METHOD:
+				return METHOD_EDEFAULT == null ? method != null : !METHOD_EDEFAULT.equals(method);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -214,10 +216,10 @@ public class SchedulingSpecificationImpl extends MinimalEObjectImpl.Container im
 		if (eIsProxy()) return super.toString();
 
 		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (period: ");
-		result.append(period);
+		result.append(" (method: ");
+		result.append(method);
 		result.append(')');
 		return result.toString();
 	}
 
-} //SchedulingSpecificationImpl
+} //InvocableImpl

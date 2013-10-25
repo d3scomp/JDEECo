@@ -3,15 +3,21 @@
     xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/cz.cuni.mff.d3s.jdeeco.core/src" modelPluginID="cz.cuni.mff.d3s.jdeeco.core"
     modelName="RuntimeModel" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
     importerID="org.eclipse.emf.importer.ecore" complianceLevel="7.0" copyrightFields="false"
-    operationReflection="true" importOrganizing="true">
+    operationReflection="true">
   <foreignModel>RuntimeModel.ecore</foreignModel>
   <genPackages prefix="runtime" basePackage="cz.cuni.mff.d3s.deeco.model" disposableProviderFactory="true"
       adapterFactory="false" interfacePackageSuffix="api" metaDataPackageSuffix="meta"
       ecorePackage="RuntimeModel.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="RuntimeModel.ecore#//ParameterDirection">
+      <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//ParameterDirection/IN"/>
+      <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//ParameterDirection/OUT"/>
+      <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//ParameterDirection/INOUT"/>
+    </genEnums>
     <genDataTypes ecoreDataType="RuntimeModel.ecore#//Method"/>
-    <genClasses ecoreClass="RuntimeModel.ecore#//Schedule">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//Schedule/triggers"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//Schedule/period"/>
+    <genDataTypes ecoreDataType="RuntimeModel.ecore#//KnowledgeManager"/>
+    <genClasses ecoreClass="RuntimeModel.ecore#//SchedulingSpecification">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//SchedulingSpecification/triggers"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//SchedulingSpecification/period"/>
     </genClasses>
     <genClasses image="false" ecoreClass="RuntimeModel.ecore#//Trigger"/>
     <genClasses ecoreClass="RuntimeModel.ecore#//KnowledgeChangeTrigger">
@@ -26,6 +32,38 @@
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//PathNodeMapKey">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//PathNodeMapKey/keyPath"/>
+    </genClasses>
+    <genClasses ecoreClass="RuntimeModel.ecore#//RuntimeMetadata">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//RuntimeMetadata/instances"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//RuntimeMetadata/ensembles"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//RuntimeMetadata/components"/>
+    </genClasses>
+    <genClasses ecoreClass="RuntimeModel.ecore#//ComponentInstance">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentInstance/id"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentInstance/component"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentInstance/knowledgeManager"/>
+    </genClasses>
+    <genClasses ecoreClass="RuntimeModel.ecore#//Component">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//Component/schedule"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//Component/process"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//Component/name"/>
+    </genClasses>
+    <genClasses ecoreClass="RuntimeModel.ecore#//Ensemble">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//Ensemble/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//Ensemble/schedule"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//Ensemble/membership"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//Ensemble/knowledgeExchange"/>
+    </genClasses>
+    <genClasses ecoreClass="RuntimeModel.ecore#//Condition"/>
+    <genClasses ecoreClass="RuntimeModel.ecore#//Exchange"/>
+    <genClasses ecoreClass="RuntimeModel.ecore#//Process"/>
+    <genClasses ecoreClass="RuntimeModel.ecore#//Parameter">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//Parameter/direction"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//Parameter/knowledgePath"/>
+    </genClasses>
+    <genClasses ecoreClass="RuntimeModel.ecore#//Invocable">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//Invocable/parameters"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//Invocable/method"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>
