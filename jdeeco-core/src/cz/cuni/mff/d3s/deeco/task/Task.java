@@ -7,8 +7,8 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeReference;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification;
 
-public interface Task {
-	ChangeSet invoke(ValueSet values);
-	List<KnowledgeReference> getInputReferences();
-	SchedulingSpecification getSchedulingSpecification();
+public abstract class Task {	
+	public abstract ChangeSet invoke(ValueSet values);
+	public abstract List<KnowledgeReference> getInputReferences();
+	public abstract SchedulingSpecification getSchedulingSpecification();
 }
