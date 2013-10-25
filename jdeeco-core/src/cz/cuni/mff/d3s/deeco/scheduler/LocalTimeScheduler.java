@@ -13,7 +13,9 @@ import java.util.TimerTask;
 
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.task.Task;
+import cz.cuni.mff.d3s.deeco.task.TriggerListener;
 
 public class LocalTimeScheduler implements Scheduler{
 	Map<Task, TaskInfo> tasks;
@@ -100,10 +102,15 @@ public class LocalTimeScheduler implements Scheduler{
 	
 	private void startTask(final Task task) {
 		TaskInfo ti = tasks.get(task);
-		// task.registerTriggers({
-		// ...}
-		// )
-		ti.timer. scheduleAtFixedRate(new TimerTask() {
+		task.registerTriggers(new TriggerListener() {
+			
+			@Override
+			public void triggered(Trigger trigger) {
+				taskTriggerFired(task);
+			}
+		});
+		
+		ti.timer.scheduleAtFixedRate(new TimerTask() {
 			
 			@Override
 			public void run() {
@@ -118,6 +125,34 @@ public class LocalTimeScheduler implements Scheduler{
 		ti.timer.cancel();
 		ti.timer = new Timer();
 		ti.state = States.STOPPED;
+	}
+	
+	/**
+	 * Restarts the timer and executes the task.
+	 * NOT thread safe!!!<br/>
+	 * @throws NullPointerException when {@code task} is not in the {@link #tasks}. 
+	 * @param task
+	 */
+	protected void taskTriggerFired(final Task task) {
+		if( tasks.get(task).state == States.RUNNING ){
+			// TODO : Implement error reporting
+			return;
+		}
+
+		TaskInfo ti = tasks.get(task);
+		ti.timer.cancel();
+		ti.timer = new Timer();
+
+		ti.timer.scheduleAtFixedRate(new TimerTask() {
+			
+			@Override
+			public void run() {
+				taskTimerFired(task);				
+			}
+		}, 0, task.getSchedulingSpecification().getPeriod());
+		
+		ti.state = States.RUNNING;
+		executor.execute(task);
 	}
 	
 	protected void taskTimerFired(Task task) {

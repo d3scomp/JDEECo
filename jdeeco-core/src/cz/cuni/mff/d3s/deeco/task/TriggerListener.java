@@ -10,5 +10,5 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
  */
 public interface TriggerListener {
 
-	public boolean triggered(Trigger trigger);
+	public void triggered(Trigger trigger);
 }
