@@ -16,6 +16,7 @@
 		<lib>${dist}/lib</lib>
 		<clonerJar>cloner.jar</clonerJar>
 		<objenesisJar>objenesis.jar</objenesisJar>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
