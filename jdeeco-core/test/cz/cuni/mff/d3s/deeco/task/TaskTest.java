@@ -32,8 +32,8 @@ public class TaskTest {
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
-		this.processTask = new ProcessTask();
-		this.ensembleTask = new EnsembleTask();
+		this.processTask = new ProcessTask(schedulingSpecification);
+		this.ensembleTask = new EnsembleTask(schedulingSpecification);
 	}
 	
 	@Test

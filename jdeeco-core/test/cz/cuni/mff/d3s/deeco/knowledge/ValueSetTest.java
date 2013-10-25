@@ -32,9 +32,10 @@ public class ValueSetTest {
 
 	@Test
 	public void testGetNotFoundReferences() {
+
 		assertNotNull(vs.getNotFoundReferences());
 		assertEquals(0, vs.getNotFoundReferences().size());
-		
+				
 		Collection<KnowledgeReference> emptyValues = new LinkedList<>();
 		when(ks.getEmptyReferences()).thenReturn(emptyValues);
 		
