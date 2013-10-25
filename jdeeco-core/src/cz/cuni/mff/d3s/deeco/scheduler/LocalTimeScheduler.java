@@ -3,11 +3,11 @@
 package cz.cuni.mff.d3s.deeco.scheduler;
 
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -46,48 +46,78 @@ public class LocalTimeScheduler implements Scheduler{
 	}
 
 	@Override
-	public void start() {
+	public synchronized void start () {
 		if( state == States.RUNNING )
 			return;
 		
+		Iterator<Entry<Task, TaskInfo>> it = tasks.entrySet().iterator();
 		
+		for(Task task: tasks.keySet()){			
+			startTask(task);
+		}
+		
+		state = States.RUNNING;
 	}
 
 	@Override
-	public void stop() {
+	public synchronized void stop() {
 		if( state == States.STOPPED )
-			return;		
-	}
-	
-	@Override
-	public void removeTasks( List<Task> tasks ){
-//		tasks.removeAll(tasks);
-	}
-	
-	@Override
-	public void addTasks( List<Task> tasks ){
+			return;
 		
+		state = States.STOPPED;
 	}
 	
 	@Override
-	public void addTask(Task task) {
-		tasks.put(task, new TaskInfo());
+	public synchronized void removeTasks( List<Task> tasks ){
+		for (Task task : tasks) {
+			removeTask(task);
+		}
+	}
+	
+	@Override
+	public synchronized void addTasks( List<Task> tasks ){
+		for (Task task : tasks) {
+			startTask(task);
+		}
+	}
+	
+	@Override
+	public synchronized void addTask(Task task) {
+		if( !tasks.containsKey(task) )
+			tasks.put(task, new TaskInfo());
+		
+		if( state == States.RUNNING )
+			startTask(task);
 	}
 
 	@Override
-	public void removeTask(Task task) {
-		tasks.remove(task);
+	public synchronized void removeTask(Task task) {
+		if( tasks.containsKey(task) ){
+			stopTask(task);
+			tasks.remove(task);
+		}
 	}
 	
 	private void startTask(final Task task) {
 		TaskInfo ti = tasks.get(task);
-		ti.timer.scheduleAtFixedRate(new TimerTask() {
+		// task.registerTriggers({
+		// ...}
+		// )
+		ti.timer. scheduleAtFixedRate(new TimerTask() {
 			
 			@Override
 			public void run() {
 				taskTimerFired(task);				
 			}
 		}, 0, task.getSchedulingSpecification().getPeriod());
+		
+	}
+	
+	private void stopTask(final Task task) {
+		TaskInfo ti = tasks.get(task);
+		ti.timer.cancel();
+		ti.timer = new Timer();
+		ti.state = States.STOPPED;
 	}
 	
 	protected void taskTimerFired(Task task) {
