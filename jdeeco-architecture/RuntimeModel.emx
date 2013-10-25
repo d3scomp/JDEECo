@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--xtools2_universal_type_manager-->
+<?com.ibm.xtools.emf.core.signature <signature id="com.ibm.xtools.mmi.ui.signatures.diagram" version="7.0.0"><feature description="" name="Rational Modeling Platform (com.ibm.xtools.rmp)" url="" version="7.0.0"/></signature>?>
+<?com.ibm.xtools.emf.core.signature <signature id="com.ibm.xtools.uml.msl.model" version="7.0.0"><feature description="" name="com.ibm.xtools.ruml.feature" url="" version="7.0.0"/></signature>?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Ecore="http://www.eclipse.org/uml2/schemas/Ecore/5" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/3.0.0/UML" xsi:schemaLocation="http://www.eclipse.org/uml2/schemas/Ecore/5 pathmap://UML_PROFILES/Ecore.profile.uml#_z1OFcHjqEdy8S4Cr8Rc_NA">
+  <uml:Model xmi:id="_Gzh48DzlEeOLjuEt6SNAsw" name="runtime">
+    <packagedElement xmi:type="uml:Class" xmi:id="_Gzh48TzlEeOLjuEt6SNAsw" name="SchedulingSpecification">
+      <ownedAttribute xmi:id="_Gzh48jzlEeOLjuEt6SNAsw" name="triggers" type="_Gzh49jzlEeOLjuEt6SNAsw" isOrdered="true" aggregation="composite" association="_Gzh49zzlEeOLjuEt6SNAsw">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_Gzh48zzlEeOLjuEt6SNAsw" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_Gzh49DzlEeOLjuEt6SNAsw"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:id="_Gzh49TzlEeOLjuEt6SNAsw" name="period" visibility="public" isOrdered="true">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/EcorePrimitiveTypes.library.uml#ELong"/>
+      </ownedAttribute>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_Gzh49jzlEeOLjuEt6SNAsw" name="Trigger" isAbstract="true"/>
+    <packagedElement xmi:type="uml:Association" xmi:id="_Gzh49zzlEeOLjuEt6SNAsw" memberEnd="_Gzh48jzlEeOLjuEt6SNAsw _Gzh4-DzlEeOLjuEt6SNAsw">
+      <ownedEnd xmi:id="_Gzh4-DzlEeOLjuEt6SNAsw" type="_Gzh48TzlEeOLjuEt6SNAsw" association="_Gzh49zzlEeOLjuEt6SNAsw"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_Gzh4-TzlEeOLjuEt6SNAsw" name="KnowledgeChangeTrigger">
+      <generalization xmi:id="_Gzh4-jzlEeOLjuEt6SNAsw" general="_Gzh49jzlEeOLjuEt6SNAsw"/>
+      <ownedAttribute xmi:id="_Gzh4-zzlEeOLjuEt6SNAsw" name="knowledgePath" type="_Gzh4_DzlEeOLjuEt6SNAsw" isOrdered="true" aggregation="composite" association="_Gzh5AjzlEeOLjuEt6SNAsw"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_Gzh4_DzlEeOLjuEt6SNAsw" name="KnowledgePath">
+      <ownedAttribute xmi:id="_Gzh4_TzlEeOLjuEt6SNAsw" name="nodes" type="_Gzh4_zzlEeOLjuEt6SNAsw" isOrdered="true" aggregation="composite" association="_Gzh5ADzlEeOLjuEt6SNAsw">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_Gzh4_jzlEeOLjuEt6SNAsw" value="*"/>
+      </ownedAttribute>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_Gzh4_zzlEeOLjuEt6SNAsw" name="PathNode" isAbstract="true"/>
+    <packagedElement xmi:type="uml:Association" xmi:id="_Gzh5ADzlEeOLjuEt6SNAsw" memberEnd="_Gzh4_TzlEeOLjuEt6SNAsw _Gzh5ATzlEeOLjuEt6SNAsw">
+      <ownedEnd xmi:id="_Gzh5ATzlEeOLjuEt6SNAsw" type="_Gzh4_DzlEeOLjuEt6SNAsw" association="_Gzh5ADzlEeOLjuEt6SNAsw"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="_Gzh5AjzlEeOLjuEt6SNAsw" memberEnd="_Gzh4-zzlEeOLjuEt6SNAsw _Gzh5AzzlEeOLjuEt6SNAsw">
+      <ownedEnd xmi:id="_Gzh5AzzlEeOLjuEt6SNAsw" type="_Gzh4-TzlEeOLjuEt6SNAsw" association="_Gzh5AjzlEeOLjuEt6SNAsw"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_Gzh5BDzlEeOLjuEt6SNAsw" name="Method"/>
+    <packagedElement xmi:type="uml:Class" xmi:id="_Gzh5BTzlEeOLjuEt6SNAsw" name="PathNodeField">
+      <generalization xmi:id="_Gzh5BjzlEeOLjuEt6SNAsw" general="_Gzh4_zzlEeOLjuEt6SNAsw"/>
+      <ownedAttribute xmi:id="_Gzh5BzzlEeOLjuEt6SNAsw" name="name" visibility="public" isOrdered="true">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/EcorePrimitiveTypes.library.uml#EString"/>
+      </ownedAttribute>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_Gzh5CDzlEeOLjuEt6SNAsw" name="PathNodeMapKey">
+      <generalization xmi:id="_Gzh5CTzlEeOLjuEt6SNAsw" general="_Gzh4_zzlEeOLjuEt6SNAsw"/>
+      <ownedAttribute xmi:id="_Gzh5CjzlEeOLjuEt6SNAsw" name="keyPath" type="_Gzh4_DzlEeOLjuEt6SNAsw" isOrdered="true" aggregation="composite" association="_Gzh5CzzlEeOLjuEt6SNAsw"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="_Gzh5CzzlEeOLjuEt6SNAsw" memberEnd="_Gzh5CjzlEeOLjuEt6SNAsw _Gzh5DDzlEeOLjuEt6SNAsw">
+      <ownedEnd xmi:id="_Gzh5DDzlEeOLjuEt6SNAsw" type="_Gzh5CDzlEeOLjuEt6SNAsw" association="_Gzh5CzzlEeOLjuEt6SNAsw"/>
+    </packagedElement>
+    <profileApplication xmi:id="_Gzh5DTzlEeOLjuEt6SNAsw">
+      <eAnnotations xmi:id="_Gzh5DjzlEeOLjuEt6SNAsw" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <references xmi:type="ecore:EPackage" href="pathmap://UML_PROFILES/Ecore.profile.uml#_z1OFcHjqEdy8S4Cr8Rc_NA"/>
+      </eAnnotations>
+      <appliedProfile href="pathmap://UML_PROFILES/Ecore.profile.uml#_0"/>
+    </profileApplication>
+    <profileApplication xmi:id="_G1N7ADzlEeOLjuEt6SNAsw">
+      <eAnnotations xmi:id="_G1N7ATzlEeOLjuEt6SNAsw" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <references xmi:type="ecore:EPackage" href="pathmap://UML_PROFILES/Standard.profile.uml#_yzU58YinEdqtvbnfB2L_5w"/>
+      </eAnnotations>
+      <appliedProfile href="pathmap://UML_PROFILES/Standard.profile.uml#_0"/>
+    </profileApplication>
+    <profileApplication xmi:id="_G14CUDzlEeOLjuEt6SNAsw">
+      <eAnnotations xmi:id="_G14pYDzlEeOLjuEt6SNAsw" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <references xmi:type="ecore:EPackage" href="pathmap://UML2_MSL_PROFILES/Default.epx#_fNwoAAqoEd6-N_NOT9vsCA?Default/Default?"/>
+      </eAnnotations>
+      <appliedProfile href="pathmap://UML2_MSL_PROFILES/Default.epx#_a_S3wNWLEdiy4IqP8whjFA?Default?"/>
+    </profileApplication>
+    <profileApplication xmi:id="_G2peYDzlEeOLjuEt6SNAsw">
+      <eAnnotations xmi:id="_G2peYTzlEeOLjuEt6SNAsw" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <references xmi:type="ecore:EPackage" href="pathmap://UML2_MSL_PROFILES/Deployment.epx#_4OVBUD0TEeKt-L0gyEptgQ?Deployment/Deployment?"/>
+      </eAnnotations>
+      <appliedProfile href="pathmap://UML2_MSL_PROFILES/Deployment.epx#_vjbuwOvHEdiDX5bji0iVSA?Deployment?"/>
+    </profileApplication>
+  </uml:Model>
+  <Ecore:EPackage xmi:id="_GzigADzlEeOLjuEt6SNAsw" base_Package="_Gzh48DzlEeOLjuEt6SNAsw" nsPrefix="cz.cuni.mff.d3s.deeco.model.runtime" nsURI="http://runtimemodel/1.0"/>
+  <Ecore:EClass xmi:id="_GzigATzlEeOLjuEt6SNAsw" base_Class="_Gzh48TzlEeOLjuEt6SNAsw"/>
+  <Ecore:EReference xmi:id="_GzjHEDzlEeOLjuEt6SNAsw" base_Property="_Gzh48jzlEeOLjuEt6SNAsw"/>
+  <Ecore:EAttribute xmi:id="_GzjHETzlEeOLjuEt6SNAsw" base_Property="_Gzh49TzlEeOLjuEt6SNAsw"/>
+  <Ecore:EClass xmi:id="_GzjHEjzlEeOLjuEt6SNAsw" base_Class="_Gzh49jzlEeOLjuEt6SNAsw"/>
+  <Ecore:EClass xmi:id="_GzjHEzzlEeOLjuEt6SNAsw" base_Class="_Gzh4-TzlEeOLjuEt6SNAsw"/>
+  <Ecore:EReference xmi:id="_GzjHFDzlEeOLjuEt6SNAsw" base_Property="_Gzh4-zzlEeOLjuEt6SNAsw"/>
+  <Ecore:EClass xmi:id="_GzjHFTzlEeOLjuEt6SNAsw" base_Class="_Gzh4_DzlEeOLjuEt6SNAsw"/>
+  <Ecore:EReference xmi:id="_GzjHFjzlEeOLjuEt6SNAsw" base_Property="_Gzh4_TzlEeOLjuEt6SNAsw"/>
+  <Ecore:EClass xmi:id="_GzjuIDzlEeOLjuEt6SNAsw" base_Class="_Gzh4_zzlEeOLjuEt6SNAsw"/>
+  <Ecore:EDataType xmi:id="_GzjuITzlEeOLjuEt6SNAsw" instanceClassName="java.lang.reflect.Method" base_PrimitiveType="_Gzh5BDzlEeOLjuEt6SNAsw"/>
+  <Ecore:EClass xmi:id="_GzjuIjzlEeOLjuEt6SNAsw" base_Class="_Gzh5BTzlEeOLjuEt6SNAsw"/>
+  <Ecore:EAttribute xmi:id="_GzjuIzzlEeOLjuEt6SNAsw" base_Property="_Gzh5BzzlEeOLjuEt6SNAsw"/>
+  <Ecore:EClass xmi:id="_GzjuJDzlEeOLjuEt6SNAsw" base_Class="_Gzh5CDzlEeOLjuEt6SNAsw"/>
+  <Ecore:EReference xmi:id="_GzjuJTzlEeOLjuEt6SNAsw" base_Property="_Gzh5CjzlEeOLjuEt6SNAsw"/>
+</xmi:XMI>

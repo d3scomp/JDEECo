@@ -8,6 +8,20 @@
 /jdeeco-parent/doc
 /jdeeco-parent/.settings
 
+/jdeeco-demo/bin
+/jdeeco-demo/target
+/jdeeco-demo/doc
+/jdeeco-demo/.settings
+/jdeeco-jpf/bin
+/jdeeco-jpf/target
+/jdeeco-jpf/doc
+/jdeeco-jpf/.settings
+/jdeeco-sde/bin
+/jdeeco-sde/target
+/jdeeco-sde/doc
+/jdeeco-sde/.settings
+/jdeeco-core-model/target
+
 /dist
 /target
 /jdeeco-core/test-output
