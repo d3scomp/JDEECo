@@ -65,7 +65,6 @@ public class KnowledgeManagerTest {
 	public void testGet() {
 		
 		knowledgeReferenceList.add(knowledgeReferenceObj);
-		Object value = new Object();
 		
 		changeSet.setValue(knowledgeReferenceObj, "1");
 		knowledgeManager.update(changeSet);

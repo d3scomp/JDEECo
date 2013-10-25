@@ -23,8 +23,6 @@ public class ExecutorTest {
 
 	private SingleThreadedExecutor singleThreadedExecutorUnderTest;
 
-	private Executor singleThreadedExecutor = new SingleThreadedExecutor();
-
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);

@@ -2,15 +2,11 @@
  */
 package cz.cuni.mff.d3s.deeco.scheduler;
 
-import java.util.List;
+import static org.mockito.Mockito.mock;
 
 import org.junit.Before;
-import org.junit.Test;
-import static org.mockito.Mockito.*;
-
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
-import cz.cuni.mff.d3s.deeco.task.Task;
 
 public class LocalTimeSchedulerTest {
 	LocalTimeScheduler sched;

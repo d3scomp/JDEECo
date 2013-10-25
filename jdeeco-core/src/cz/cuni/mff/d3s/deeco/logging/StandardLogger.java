@@ -1,7 +1,6 @@
 package cz.cuni.mff.d3s.deeco.logging;
 
 import java.io.InputStream;
-import java.io.Serializable;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
