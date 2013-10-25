@@ -1,4 +1,3 @@
-
 /jdeeco-core/bin
 /jdeeco-core/target
 /jdeeco-core/doc
@@ -28,3 +27,4 @@
 /bin
 doc.zip
 *.ispace
+
