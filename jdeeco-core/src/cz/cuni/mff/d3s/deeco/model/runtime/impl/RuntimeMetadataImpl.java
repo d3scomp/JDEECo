@@ -30,7 +30,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataImpl#getInstances <em>Instances</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataImpl#getComponentInstances <em>Component Instances</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataImpl#getEnsembles <em>Ensembles</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataImpl#getComponents <em>Components</em>}</li>
  * </ul>
@@ -40,14 +40,14 @@ import org.eclipse.emf.ecore.util.InternalEList;
  */
 public class RuntimeMetadataImpl extends MinimalEObjectImpl.Container implements RuntimeMetadata {
 	/**
-	 * The cached value of the '{@link #getInstances() <em>Instances</em>}' containment reference list.
+	 * The cached value of the '{@link #getComponentInstances() <em>Component Instances</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getInstances()
+	 * @see #getComponentInstances()
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<ComponentInstance> instances;
+	protected EList<ComponentInstance> componentInstances;
 
 	/**
 	 * The cached value of the '{@link #getEnsembles() <em>Ensembles</em>}' containment reference list.
@@ -93,11 +93,11 @@ public class RuntimeMetadataImpl extends MinimalEObjectImpl.Container implements
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<ComponentInstance> getInstances() {
-		if (instances == null) {
-			instances = new EObjectContainmentEList<ComponentInstance>(ComponentInstance.class, this, RuntimeMetadataPackage.RUNTIME_METADATA__INSTANCES);
+	public EList<ComponentInstance> getComponentInstances() {
+		if (componentInstances == null) {
+			componentInstances = new EObjectContainmentEList<ComponentInstance>(ComponentInstance.class, this, RuntimeMetadataPackage.RUNTIME_METADATA__COMPONENT_INSTANCES);
 		}
-		return instances;
+		return componentInstances;
 	}
 
 	/**
@@ -132,8 +132,8 @@ public class RuntimeMetadataImpl extends MinimalEObjectImpl.Container implements
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.RUNTIME_METADATA__INSTANCES:
-				return ((InternalEList<?>)getInstances()).basicRemove(otherEnd, msgs);
+			case RuntimeMetadataPackage.RUNTIME_METADATA__COMPONENT_INSTANCES:
+				return ((InternalEList<?>)getComponentInstances()).basicRemove(otherEnd, msgs);
 			case RuntimeMetadataPackage.RUNTIME_METADATA__ENSEMBLES:
 				return ((InternalEList<?>)getEnsembles()).basicRemove(otherEnd, msgs);
 			case RuntimeMetadataPackage.RUNTIME_METADATA__COMPONENTS:
@@ -150,8 +150,8 @@ public class RuntimeMetadataImpl extends MinimalEObjectImpl.Container implements
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.RUNTIME_METADATA__INSTANCES:
-				return getInstances();
+			case RuntimeMetadataPackage.RUNTIME_METADATA__COMPONENT_INSTANCES:
+				return getComponentInstances();
 			case RuntimeMetadataPackage.RUNTIME_METADATA__ENSEMBLES:
 				return getEnsembles();
 			case RuntimeMetadataPackage.RUNTIME_METADATA__COMPONENTS:
@@ -169,9 +169,9 @@ public class RuntimeMetadataImpl extends MinimalEObjectImpl.Container implements
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.RUNTIME_METADATA__INSTANCES:
-				getInstances().clear();
-				getInstances().addAll((Collection<? extends ComponentInstance>)newValue);
+			case RuntimeMetadataPackage.RUNTIME_METADATA__COMPONENT_INSTANCES:
+				getComponentInstances().clear();
+				getComponentInstances().addAll((Collection<? extends ComponentInstance>)newValue);
 				return;
 			case RuntimeMetadataPackage.RUNTIME_METADATA__ENSEMBLES:
 				getEnsembles().clear();
@@ -193,8 +193,8 @@ public class RuntimeMetadataImpl extends MinimalEObjectImpl.Container implements
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.RUNTIME_METADATA__INSTANCES:
-				getInstances().clear();
+			case RuntimeMetadataPackage.RUNTIME_METADATA__COMPONENT_INSTANCES:
+				getComponentInstances().clear();
 				return;
 			case RuntimeMetadataPackage.RUNTIME_METADATA__ENSEMBLES:
 				getEnsembles().clear();
@@ -214,8 +214,8 @@ public class RuntimeMetadataImpl extends MinimalEObjectImpl.Container implements
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.RUNTIME_METADATA__INSTANCES:
-				return instances != null && !instances.isEmpty();
+			case RuntimeMetadataPackage.RUNTIME_METADATA__COMPONENT_INSTANCES:
+				return componentInstances != null && !componentInstances.isEmpty();
 			case RuntimeMetadataPackage.RUNTIME_METADATA__ENSEMBLES:
 				return ensembles != null && !ensembles.isEmpty();
 			case RuntimeMetadataPackage.RUNTIME_METADATA__COMPONENTS:

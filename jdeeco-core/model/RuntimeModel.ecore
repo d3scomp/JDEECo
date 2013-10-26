@@ -27,7 +27,7 @@
         eType="#//KnowledgePath" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="RuntimeMetadata">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="instances" upperBound="-1"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="componentInstances" upperBound="-1"
         eType="#//ComponentInstance" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="ensembles" upperBound="-1"
         eType="#//Ensemble" containment="true"/>
@@ -43,7 +43,7 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="KnowledgeManager" instanceClassName="cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager"/>
   <eClassifiers xsi:type="ecore:EClass" name="Component">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="process" lowerBound="1"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="processes" upperBound="-1"
         eType="#//Process" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
@@ -61,6 +61,7 @@
   <eClassifiers xsi:type="ecore:EClass" name="Process" eSuperTypes="#//Invocable">
     <eStructuralFeatures xsi:type="ecore:EReference" name="schedule" lowerBound="1"
         eType="#//SchedulingSpecification" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="ParameterDirection">
     <eLiterals name="IN"/>

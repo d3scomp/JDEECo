@@ -367,7 +367,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getRuntimeMetadata_Instances() {
+	public EReference getRuntimeMetadata_ComponentInstances() {
 		return (EReference)runtimeMetadataEClass.getEStructuralFeatures().get(0);
 	}
 
@@ -439,7 +439,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getComponent_Process() {
+	public EReference getComponent_Processes() {
 		return (EReference)componentEClass.getEStructuralFeatures().get(0);
 	}
 
@@ -531,6 +531,15 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 */
 	public EReference getProcess_Schedule() {
 		return (EReference)processEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getProcess_Name() {
+		return (EAttribute)processEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -663,7 +672,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		createEReference(pathNodeMapKeyEClass, PATH_NODE_MAP_KEY__KEY_PATH);
 
 		runtimeMetadataEClass = createEClass(RUNTIME_METADATA);
-		createEReference(runtimeMetadataEClass, RUNTIME_METADATA__INSTANCES);
+		createEReference(runtimeMetadataEClass, RUNTIME_METADATA__COMPONENT_INSTANCES);
 		createEReference(runtimeMetadataEClass, RUNTIME_METADATA__ENSEMBLES);
 		createEReference(runtimeMetadataEClass, RUNTIME_METADATA__COMPONENTS);
 
@@ -673,7 +682,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		createEAttribute(componentInstanceEClass, COMPONENT_INSTANCE__KNOWLEDGE_MANAGER);
 
 		componentEClass = createEClass(COMPONENT);
-		createEReference(componentEClass, COMPONENT__PROCESS);
+		createEReference(componentEClass, COMPONENT__PROCESSES);
 		createEAttribute(componentEClass, COMPONENT__NAME);
 
 		ensembleEClass = createEClass(ENSEMBLE);
@@ -688,6 +697,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 
 		processEClass = createEClass(PROCESS);
 		createEReference(processEClass, PROCESS__SCHEDULE);
+		createEAttribute(processEClass, PROCESS__NAME);
 
 		parameterEClass = createEClass(PARAMETER);
 		createEAttribute(parameterEClass, PARAMETER__DIRECTION);
@@ -762,7 +772,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		initEReference(getPathNodeMapKey_KeyPath(), this.getKnowledgePath(), null, "keyPath", null, 1, 1, PathNodeMapKey.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(runtimeMetadataEClass, RuntimeMetadata.class, "RuntimeMetadata", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getRuntimeMetadata_Instances(), this.getComponentInstance(), null, "instances", null, 0, -1, RuntimeMetadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getRuntimeMetadata_ComponentInstances(), this.getComponentInstance(), null, "componentInstances", null, 0, -1, RuntimeMetadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getRuntimeMetadata_Ensembles(), this.getEnsemble(), null, "ensembles", null, 0, -1, RuntimeMetadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getRuntimeMetadata_Components(), this.getComponent(), null, "components", null, 0, -1, RuntimeMetadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
@@ -772,7 +782,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		initEAttribute(getComponentInstance_KnowledgeManager(), this.getKnowledgeManager(), "knowledgeManager", null, 1, 1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(componentEClass, Component.class, "Component", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getComponent_Process(), this.getProcess(), null, "process", null, 1, 1, Component.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getComponent_Processes(), this.getProcess(), null, "processes", null, 0, -1, Component.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getComponent_Name(), ecorePackage.getEString(), "name", null, 1, 1, Component.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(ensembleEClass, Ensemble.class, "Ensemble", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -787,6 +797,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 
 		initEClass(processEClass, cz.cuni.mff.d3s.deeco.model.runtime.api.Process.class, "Process", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getProcess_Schedule(), this.getSchedulingSpecification(), null, "schedule", null, 1, 1, cz.cuni.mff.d3s.deeco.model.runtime.api.Process.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getProcess_Name(), ecorePackage.getEString(), "name", null, 1, 1, cz.cuni.mff.d3s.deeco.model.runtime.api.Process.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(parameterEClass, Parameter.class, "Parameter", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getParameter_Direction(), this.getParameterDirection(), "direction", null, 1, 1, Parameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

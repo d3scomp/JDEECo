@@ -249,6 +249,10 @@
   <children xmi:type="notation:Node" xmi:id="_c_NWQD28EeO2QcBZHbiySQ" type="1001">
     <children xmi:type="notation:Node" xmi:id="_c_N9UD28EeO2QcBZHbiySQ" type="4001"/>
     <children xmi:type="notation:Node" xmi:id="_c_N9UT28EeO2QcBZHbiySQ" type="5001">
+      <children xmi:type="notation:Node" xmi:id="_FjXv8D5WEeO2QcBZHbiySQ" type="2001">
+        <element xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//Process/name"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_FjXv8T5WEeO2QcBZHbiySQ"/>
+      </children>
       <styles xmi:type="notation:DrawerStyle" xmi:id="_c_N9Uj28EeO2QcBZHbiySQ"/>
       <styles xmi:type="notation:SortingStyle" xmi:id="_c_N9Uz28EeO2QcBZHbiySQ"/>
       <styles xmi:type="notation:FilteringStyle" xmi:id="_c_N9VD28EeO2QcBZHbiySQ"/>
@@ -524,7 +528,7 @@
     </children>
     <styles xmi:type="notation:ConnectorStyle" xmi:id="_PKFkET29EeO2QcBZHbiySQ" lineColor="4210752"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_PKFkEj29EeO2QcBZHbiySQ" fontColor="4210752" fontName="Segoe UI" fontHeight="10"/>
-    <element xmi:type="ecore:EReference" href="RuntimeModel.ecore#//Component/process"/>
+    <element xmi:type="ecore:EReference" href="RuntimeModel.ecore#//Component/processes"/>
     <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_PKFkEz29EeO2QcBZHbiySQ" points="[0, 0, 0, 68]$[0, -68, 0, 0]"/>
     <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_PKIAUD29EeO2QcBZHbiySQ" id="(0.6608695652173913,0.0)"/>
     <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Q1q8ID29EeO2QcBZHbiySQ" id="(0.5,1.0)"/>
@@ -552,7 +556,7 @@
     </children>
     <styles xmi:type="notation:ConnectorStyle" xmi:id="_WBJigT29EeO2QcBZHbiySQ" lineColor="4210752"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_WBJigj29EeO2QcBZHbiySQ" fontColor="4210752" fontName="Segoe UI" fontHeight="10"/>
-    <element xmi:type="ecore:EReference" href="RuntimeModel.ecore#//RuntimeMetadata/instances"/>
+    <element xmi:type="ecore:EReference" href="RuntimeModel.ecore#//RuntimeMetadata/componentInstances"/>
     <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WBJigz29EeO2QcBZHbiySQ" points="[0, 0, 157, 60]$[-157, -60, 0, 0]"/>
     <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_bOH9sD29EeO2QcBZHbiySQ" id="(0.25,0.0)"/>
     <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_bOH9sT29EeO2QcBZHbiySQ" id="(0.5,1.0)"/>

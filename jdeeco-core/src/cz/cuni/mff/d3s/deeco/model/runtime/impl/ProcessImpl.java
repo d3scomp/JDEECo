@@ -22,6 +22,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * The following features are implemented:
  * <ul>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ProcessImpl#getSchedule <em>Schedule</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ProcessImpl#getName <em>Name</em>}</li>
  * </ul>
  * </p>
  *
@@ -37,6 +38,25 @@ public class ProcessImpl extends InvocableImpl implements cz.cuni.mff.d3s.deeco.
 	 * @ordered
 	 */
 	protected SchedulingSpecification schedule;
+
+	/**
+	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getName()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String NAME_EDEFAULT = null;
+	/**
+	 * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getName()
+	 * @generated
+	 * @ordered
+	 */
+	protected String name = NAME_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -105,6 +125,27 @@ public class ProcessImpl extends InvocableImpl implements cz.cuni.mff.d3s.deeco.
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setName(String newName) {
+		String oldName = name;
+		name = newName;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.PROCESS__NAME, oldName, name));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -124,6 +165,8 @@ public class ProcessImpl extends InvocableImpl implements cz.cuni.mff.d3s.deeco.
 		switch (featureID) {
 			case RuntimeMetadataPackage.PROCESS__SCHEDULE:
 				return getSchedule();
+			case RuntimeMetadataPackage.PROCESS__NAME:
+				return getName();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -138,6 +181,9 @@ public class ProcessImpl extends InvocableImpl implements cz.cuni.mff.d3s.deeco.
 		switch (featureID) {
 			case RuntimeMetadataPackage.PROCESS__SCHEDULE:
 				setSchedule((SchedulingSpecification)newValue);
+				return;
+			case RuntimeMetadataPackage.PROCESS__NAME:
+				setName((String)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -154,6 +200,9 @@ public class ProcessImpl extends InvocableImpl implements cz.cuni.mff.d3s.deeco.
 			case RuntimeMetadataPackage.PROCESS__SCHEDULE:
 				setSchedule((SchedulingSpecification)null);
 				return;
+			case RuntimeMetadataPackage.PROCESS__NAME:
+				setName(NAME_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -168,8 +217,26 @@ public class ProcessImpl extends InvocableImpl implements cz.cuni.mff.d3s.deeco.
 		switch (featureID) {
 			case RuntimeMetadataPackage.PROCESS__SCHEDULE:
 				return schedule != null;
+			case RuntimeMetadataPackage.PROCESS__NAME:
+				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
 		}
 		return super.eIsSet(featureID);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String toString() {
+		if (eIsProxy()) return super.toString();
+
+		StringBuffer result = new StringBuffer(super.toString());
+		result.append(" (name: ");
+		result.append(name);
+		result.append(')');
+		return result.toString();
 	}
 
 } //ProcessImpl

@@ -3,20 +3,27 @@
  */
 package cz.cuni.mff.d3s.deeco.model.runtime;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import java.io.File;
+import java.util.Collections;
+
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Component;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Invocable;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Process;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
-import cz.cuni.mff.d3s.deeco.model.runtime.custom.InvocableExt;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 
@@ -37,42 +44,67 @@ public class RuntimeModelTest {
 	public void testExtensions() {
 		// THEN RuntimeMetadataFactory is an instance of RuntimeMetadataFactoryExt (i.e. our custom class)
 		assertTrue(factory instanceof RuntimeMetadataFactoryExt);
-		
-		// WHEN an Invocable is created by the RuntimeMetadataFactory
-		Invocable invocable = factory.createInvocable();
-		// THEN it is an instance of InvocableExt
-		assertTrue(invocable instanceof InvocableExt);
 	}
 	
+	public static void dummyMethodThatStandsForAProcess() {
+	}
+
 	@Test
 	@Ignore
-	public void testSaveAndLoad() {
-		// WHEN a RuntimeMetadata instance contains a knowledge manager (with some knowledge inside)
-		// THEN the RuntimeMetadata instance can be saved
+	public void testSaveAndLoad() throws Exception {
+		// WHEN a RuntimeMetadata instance exists
+		// AND it contains a method (within an Invocable)
+		// AND it contains a a knowledge manager with some knowledge
 		RuntimeMetadata model = factory.createRuntimeMetadata();
 		
 		ComponentInstance instA = factory.createComponentInstance();
-		instA.setId("an instance of component A");
-
-		KnowledgeManager instAKM = null; // TODO: creat a new knowledge manager here
-		instA.setKnowledgeManager(instAKM);
+		model.getComponentInstances().add(instA);
+		instA.setId("an instance of component A");		
+		instA.setKnowledgeManager(null); // TODO: add a knowledge manager with some knowledge
 		
 		Component compA = factory.createComponent();
+		model.getComponents().add(compA);
+		instA.setComponent(compA);
 		compA.setName("component A");
 		
 		Process procA1 = factory.createProcess();
-//		procA1.setMethod(value)
-	
-		// TODO: Complete the test...
-
+		compA.getProcesses().add(procA1);
+		procA1.setName("process #1 of component A");
+		procA1.setMethod(this.getClass().getMethod("dummyMethodThatStandsForAProcess"));
 		
-		// WHEN a RuntimeMetadata instance with some knowledge is saved 
-		// THEN the RuntimeMetadata instance can be loaded
-		// AND it will contain the same values
+		SchedulingSpecification procA1Sched = factory.createSchedulingSpecification();
+		procA1Sched.setPeriod(42);
+		procA1.setSchedule(procA1Sched);
+	
+		// THEN the RuntimeMetadata instance can be saved
+		ResourceSet resourceSet = new ResourceSetImpl();
+		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(Resource.Factory.Registry.DEFAULT_EXTENSION, new XMIResourceFactoryImpl());
+		File testXMIFile = new File("test-temp/test.xmi");
+		URI fileURI = URI.createFileURI(testXMIFile.getAbsolutePath());
+		Resource resource = resourceSet.createResource(fileURI);
+		resource.getContents().add(model);
+		resource.save(Collections.EMPTY_MAP);
+		assertTrue(testXMIFile.exists());
 
-		// TODO: Complete the test...
-
-		fail("Not yet implemented");
+		// WHEN a RuntimeMetadata instance with a method is loaded
+		resourceSet = new ResourceSetImpl();
+		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(Resource.Factory.Registry.DEFAULT_EXTENSION, new XMIResourceFactoryImpl());
+		RuntimeMetadata loadedModel = (RuntimeMetadata)resourceSet.getResource(fileURI, true).getContents().get(0);
+		
+		// THEN it has the same values
+		// AND refers to the same method within the same class as before
+		// AND contains the same knowledge as before
+		ComponentInstance loadedInstA = loadedModel.getComponentInstances().get(0);
+		Component loadedCompA = loadedModel.getComponents().get(0);
+		Process loadedProcA1 = loadedCompA.getProcesses().get(0);
+		SchedulingSpecification loadedProcA1Sched = loadedProcA1.getSchedule(); 
+		assertEquals(instA.getId(), loadedInstA.getId());
+		assertEquals(instA.getKnowledgeManager(), loadedInstA.getKnowledgeManager());
+		assertEquals(loadedCompA, instA.getComponent());
+		assertEquals(compA.getName(), loadedCompA.getName());
+		assertEquals(procA1.getName(), loadedProcA1.getName());
+		assertEquals(procA1.getMethod(), loadedProcA1.getMethod());
+		assertEquals(procA1Sched.getPeriod(), loadedProcA1Sched.getPeriod());
+		// TODO: Check the knowledge manager
 	}
-
 }
