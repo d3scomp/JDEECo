@@ -14,7 +14,6 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -78,7 +77,10 @@ public class RuntimeModelTest {
 	
 		// THEN the RuntimeMetadata instance can be saved
 		ResourceSet resourceSet = new ResourceSetImpl();
-		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(Resource.Factory.Registry.DEFAULT_EXTENSION, new XMIResourceFactoryImpl());
+
+		// This needs to be uncommented, but for that it needs a dependency on XMI
+		// resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(Resource.Factory.Registry.DEFAULT_EXTENSION, new XMIResourceFactoryImpl());
+		
 		File testXMIFile = new File("test-temp/test.xmi");
 		URI fileURI = URI.createFileURI(testXMIFile.getAbsolutePath());
 		Resource resource = resourceSet.createResource(fileURI);
@@ -88,7 +90,10 @@ public class RuntimeModelTest {
 
 		// WHEN a RuntimeMetadata instance with a method is loaded
 		resourceSet = new ResourceSetImpl();
-		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(Resource.Factory.Registry.DEFAULT_EXTENSION, new XMIResourceFactoryImpl());
+		
+		// This needs to be uncommented, but for that it needs a dependency on XMI
+		// resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(Resource.Factory.Registry.DEFAULT_EXTENSION, new XMIResourceFactoryImpl());
+		
 		RuntimeMetadata loadedModel = (RuntimeMetadata)resourceSet.getResource(fileURI, true).getContents().get(0);
 		
 		// THEN it has the same values
