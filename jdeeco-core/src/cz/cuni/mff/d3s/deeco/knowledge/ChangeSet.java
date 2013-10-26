@@ -4,6 +4,8 @@ import java.util.Collection;
 
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeSet.KnowledgeValue;
 
+// TODO: maybe the class would need a separate of references to be added (i.e., to be added, to be updated, and to be deleted)
+// so that we can enforce some knowledge update rules (i.e., update is possible only at some places)
 public class ChangeSet {
 	
 	private KnowledgeSet ks;
