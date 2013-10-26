@@ -19,8 +19,8 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimeFactory;
-import cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimePackage;
+import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
+import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 
 import java.lang.reflect.Method;
 
@@ -39,24 +39,24 @@ import org.eclipse.emf.ecore.plugin.EcorePlugin;
  * <!-- end-user-doc -->
  * @generated
  */
-public class runtimeFactoryImpl extends EFactoryImpl implements runtimeFactory {
+public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeMetadataFactory {
 	/**
 	 * Creates the default factory implementation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public static runtimeFactory init() {
+	public static RuntimeMetadataFactory init() {
 		try {
-			runtimeFactory theruntimeFactory = (runtimeFactory)EPackage.Registry.INSTANCE.getEFactory("http://runtimemodel/1.0"); 
-			if (theruntimeFactory != null) {
-				return theruntimeFactory;
+			RuntimeMetadataFactory theRuntimeMetadataFactory = (RuntimeMetadataFactory)EPackage.Registry.INSTANCE.getEFactory("http://cz.cuni.mff.d3s.deeco.model.runtime/1.0"); 
+			if (theRuntimeMetadataFactory != null) {
+				return theRuntimeMetadataFactory;
 			}
 		}
 		catch (Exception exception) {
 			EcorePlugin.INSTANCE.log(exception);
 		}
-		return new runtimeFactoryImpl();
+		return new RuntimeMetadataFactoryImpl();
 	}
 
 	/**
@@ -65,7 +65,7 @@ public class runtimeFactoryImpl extends EFactoryImpl implements runtimeFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public runtimeFactoryImpl() {
+	public RuntimeMetadataFactoryImpl() {
 		super();
 	}
 
@@ -77,20 +77,20 @@ public class runtimeFactoryImpl extends EFactoryImpl implements runtimeFactory {
 	@Override
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
-			case runtimePackage.SCHEDULING_SPECIFICATION: return createSchedulingSpecification();
-			case runtimePackage.KNOWLEDGE_CHANGE_TRIGGER: return createKnowledgeChangeTrigger();
-			case runtimePackage.KNOWLEDGE_PATH: return createKnowledgePath();
-			case runtimePackage.PATH_NODE_FIELD: return createPathNodeField();
-			case runtimePackage.PATH_NODE_MAP_KEY: return createPathNodeMapKey();
-			case runtimePackage.RUNTIME_METADATA: return createRuntimeMetadata();
-			case runtimePackage.COMPONENT_INSTANCE: return createComponentInstance();
-			case runtimePackage.COMPONENT: return createComponent();
-			case runtimePackage.ENSEMBLE: return createEnsemble();
-			case runtimePackage.CONDITION: return createCondition();
-			case runtimePackage.EXCHANGE: return createExchange();
-			case runtimePackage.PROCESS: return createProcess();
-			case runtimePackage.PARAMETER: return createParameter();
-			case runtimePackage.INVOCABLE: return createInvocable();
+			case RuntimeMetadataPackage.SCHEDULING_SPECIFICATION: return createSchedulingSpecification();
+			case RuntimeMetadataPackage.KNOWLEDGE_CHANGE_TRIGGER: return createKnowledgeChangeTrigger();
+			case RuntimeMetadataPackage.KNOWLEDGE_PATH: return createKnowledgePath();
+			case RuntimeMetadataPackage.PATH_NODE_FIELD: return createPathNodeField();
+			case RuntimeMetadataPackage.PATH_NODE_MAP_KEY: return createPathNodeMapKey();
+			case RuntimeMetadataPackage.RUNTIME_METADATA: return createRuntimeMetadata();
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE: return createComponentInstance();
+			case RuntimeMetadataPackage.COMPONENT: return createComponent();
+			case RuntimeMetadataPackage.ENSEMBLE: return createEnsemble();
+			case RuntimeMetadataPackage.CONDITION: return createCondition();
+			case RuntimeMetadataPackage.EXCHANGE: return createExchange();
+			case RuntimeMetadataPackage.PROCESS: return createProcess();
+			case RuntimeMetadataPackage.PARAMETER: return createParameter();
+			case RuntimeMetadataPackage.INVOCABLE: return createInvocable();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -104,11 +104,11 @@ public class runtimeFactoryImpl extends EFactoryImpl implements runtimeFactory {
 	@Override
 	public Object createFromString(EDataType eDataType, String initialValue) {
 		switch (eDataType.getClassifierID()) {
-			case runtimePackage.PARAMETER_DIRECTION:
+			case RuntimeMetadataPackage.PARAMETER_DIRECTION:
 				return createParameterDirectionFromString(eDataType, initialValue);
-			case runtimePackage.METHOD:
+			case RuntimeMetadataPackage.METHOD:
 				return createMethodFromString(eDataType, initialValue);
-			case runtimePackage.KNOWLEDGE_MANAGER:
+			case RuntimeMetadataPackage.KNOWLEDGE_MANAGER:
 				return createKnowledgeManagerFromString(eDataType, initialValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
@@ -123,11 +123,11 @@ public class runtimeFactoryImpl extends EFactoryImpl implements runtimeFactory {
 	@Override
 	public String convertToString(EDataType eDataType, Object instanceValue) {
 		switch (eDataType.getClassifierID()) {
-			case runtimePackage.PARAMETER_DIRECTION:
+			case RuntimeMetadataPackage.PARAMETER_DIRECTION:
 				return convertParameterDirectionToString(eDataType, instanceValue);
-			case runtimePackage.METHOD:
+			case RuntimeMetadataPackage.METHOD:
 				return convertMethodToString(eDataType, instanceValue);
-			case runtimePackage.KNOWLEDGE_MANAGER:
+			case RuntimeMetadataPackage.KNOWLEDGE_MANAGER:
 				return convertKnowledgeManagerToString(eDataType, instanceValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
@@ -335,8 +335,8 @@ public class runtimeFactoryImpl extends EFactoryImpl implements runtimeFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public runtimePackage getruntimePackage() {
-		return (runtimePackage)getEPackage();
+	public RuntimeMetadataPackage getRuntimeMetadataPackage() {
+		return (RuntimeMetadataPackage)getEPackage();
 	}
 
 	/**
@@ -346,8 +346,8 @@ public class runtimeFactoryImpl extends EFactoryImpl implements runtimeFactory {
 	 * @generated
 	 */
 	@Deprecated
-	public static runtimePackage getPackage() {
-		return runtimePackage.eINSTANCE;
+	public static RuntimeMetadataPackage getPackage() {
+		return RuntimeMetadataPackage.eINSTANCE;
 	}
 
-} //runtimeFactoryImpl
+} //RuntimeMetadataFactoryImpl

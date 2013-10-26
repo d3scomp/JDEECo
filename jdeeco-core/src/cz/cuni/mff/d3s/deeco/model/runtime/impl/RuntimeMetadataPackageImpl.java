@@ -21,8 +21,8 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimeFactory;
-import cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimePackage;
+import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
+import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 
 import java.lang.reflect.Method;
 
@@ -41,7 +41,7 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
  * <!-- end-user-doc -->
  * @generated
  */
-public class runtimePackageImpl extends EPackageImpl implements runtimePackage {
+public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeMetadataPackage {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -186,12 +186,12 @@ public class runtimePackageImpl extends EPackageImpl implements runtimePackage {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.emf.ecore.EPackage.Registry
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimePackage#eNS_URI
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#eNS_URI
 	 * @see #init()
 	 * @generated
 	 */
-	private runtimePackageImpl() {
-		super(eNS_URI, runtimeFactory.eINSTANCE);
+	private RuntimeMetadataPackageImpl() {
+		super(eNS_URI, RuntimeMetadataFactory.eINSTANCE);
 	}
 
 	/**
@@ -204,7 +204,7 @@ public class runtimePackageImpl extends EPackageImpl implements runtimePackage {
 	/**
 	 * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
 	 * 
-	 * <p>This method is used to initialize {@link runtimePackage#eINSTANCE} when that field is accessed.
+	 * <p>This method is used to initialize {@link RuntimeMetadataPackage#eINSTANCE} when that field is accessed.
 	 * Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -213,27 +213,27 @@ public class runtimePackageImpl extends EPackageImpl implements runtimePackage {
 	 * @see #initializePackageContents()
 	 * @generated
 	 */
-	public static runtimePackage init() {
-		if (isInited) return (runtimePackage)EPackage.Registry.INSTANCE.getEPackage(runtimePackage.eNS_URI);
+	public static RuntimeMetadataPackage init() {
+		if (isInited) return (RuntimeMetadataPackage)EPackage.Registry.INSTANCE.getEPackage(RuntimeMetadataPackage.eNS_URI);
 
 		// Obtain or create and register package
-		runtimePackageImpl theruntimePackage = (runtimePackageImpl)(EPackage.Registry.INSTANCE.get(eNS_URI) instanceof runtimePackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI) : new runtimePackageImpl());
+		RuntimeMetadataPackageImpl theRuntimeMetadataPackage = (RuntimeMetadataPackageImpl)(EPackage.Registry.INSTANCE.get(eNS_URI) instanceof RuntimeMetadataPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI) : new RuntimeMetadataPackageImpl());
 
 		isInited = true;
 
 		// Create package meta-data objects
-		theruntimePackage.createPackageContents();
+		theRuntimeMetadataPackage.createPackageContents();
 
 		// Initialize created meta-data
-		theruntimePackage.initializePackageContents();
+		theRuntimeMetadataPackage.initializePackageContents();
 
 		// Mark meta-data to indicate it can't be changed
-		theruntimePackage.freeze();
+		theRuntimeMetadataPackage.freeze();
 
   
 		// Update the registry and return the package
-		EPackage.Registry.INSTANCE.put(runtimePackage.eNS_URI, theruntimePackage);
-		return theruntimePackage;
+		EPackage.Registry.INSTANCE.put(RuntimeMetadataPackage.eNS_URI, theRuntimeMetadataPackage);
+		return theRuntimeMetadataPackage;
 	}
 
 	/**
@@ -619,8 +619,8 @@ public class runtimePackageImpl extends EPackageImpl implements runtimePackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public runtimeFactory getruntimeFactory() {
-		return (runtimeFactory)getEFactoryInstance();
+	public RuntimeMetadataFactory getRuntimeMetadataFactory() {
+		return (RuntimeMetadataFactory)getEFactoryInstance();
 	}
 
 	/**
@@ -810,4 +810,4 @@ public class runtimePackageImpl extends EPackageImpl implements runtimePackage {
 		createResource(eNS_URI);
 	}
 
-} //runtimePackageImpl
+} //RuntimeMetadataPackageImpl

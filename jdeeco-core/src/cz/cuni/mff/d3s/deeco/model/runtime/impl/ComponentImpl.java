@@ -5,7 +5,7 @@ package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Component;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimePackage;
+import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -88,7 +88,7 @@ public class ComponentImpl extends MinimalEObjectImpl.Container implements Compo
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return runtimePackage.Literals.COMPONENT;
+		return RuntimeMetadataPackage.Literals.COMPONENT;
 	}
 
 	/**
@@ -109,7 +109,7 @@ public class ComponentImpl extends MinimalEObjectImpl.Container implements Compo
 		SchedulingSpecification oldSchedule = schedule;
 		schedule = newSchedule;
 		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, runtimePackage.COMPONENT__SCHEDULE, oldSchedule, newSchedule);
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT__SCHEDULE, oldSchedule, newSchedule);
 			if (msgs == null) msgs = notification; else msgs.add(notification);
 		}
 		return msgs;
@@ -124,14 +124,14 @@ public class ComponentImpl extends MinimalEObjectImpl.Container implements Compo
 		if (newSchedule != schedule) {
 			NotificationChain msgs = null;
 			if (schedule != null)
-				msgs = ((InternalEObject)schedule).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - runtimePackage.COMPONENT__SCHEDULE, null, msgs);
+				msgs = ((InternalEObject)schedule).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - RuntimeMetadataPackage.COMPONENT__SCHEDULE, null, msgs);
 			if (newSchedule != null)
-				msgs = ((InternalEObject)newSchedule).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - runtimePackage.COMPONENT__SCHEDULE, null, msgs);
+				msgs = ((InternalEObject)newSchedule).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - RuntimeMetadataPackage.COMPONENT__SCHEDULE, null, msgs);
 			msgs = basicSetSchedule(newSchedule, msgs);
 			if (msgs != null) msgs.dispatch();
 		}
 		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, runtimePackage.COMPONENT__SCHEDULE, newSchedule, newSchedule));
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT__SCHEDULE, newSchedule, newSchedule));
 	}
 
 	/**
@@ -152,7 +152,7 @@ public class ComponentImpl extends MinimalEObjectImpl.Container implements Compo
 		cz.cuni.mff.d3s.deeco.model.runtime.api.Process oldProcess = process;
 		process = newProcess;
 		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, runtimePackage.COMPONENT__PROCESS, oldProcess, newProcess);
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT__PROCESS, oldProcess, newProcess);
 			if (msgs == null) msgs = notification; else msgs.add(notification);
 		}
 		return msgs;
@@ -167,14 +167,14 @@ public class ComponentImpl extends MinimalEObjectImpl.Container implements Compo
 		if (newProcess != process) {
 			NotificationChain msgs = null;
 			if (process != null)
-				msgs = ((InternalEObject)process).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - runtimePackage.COMPONENT__PROCESS, null, msgs);
+				msgs = ((InternalEObject)process).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - RuntimeMetadataPackage.COMPONENT__PROCESS, null, msgs);
 			if (newProcess != null)
-				msgs = ((InternalEObject)newProcess).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - runtimePackage.COMPONENT__PROCESS, null, msgs);
+				msgs = ((InternalEObject)newProcess).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - RuntimeMetadataPackage.COMPONENT__PROCESS, null, msgs);
 			msgs = basicSetProcess(newProcess, msgs);
 			if (msgs != null) msgs.dispatch();
 		}
 		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, runtimePackage.COMPONENT__PROCESS, newProcess, newProcess));
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT__PROCESS, newProcess, newProcess));
 	}
 
 	/**
@@ -195,7 +195,7 @@ public class ComponentImpl extends MinimalEObjectImpl.Container implements Compo
 		String oldName = name;
 		name = newName;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, runtimePackage.COMPONENT__NAME, oldName, name));
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT__NAME, oldName, name));
 	}
 
 	/**
@@ -206,9 +206,9 @@ public class ComponentImpl extends MinimalEObjectImpl.Container implements Compo
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case runtimePackage.COMPONENT__SCHEDULE:
+			case RuntimeMetadataPackage.COMPONENT__SCHEDULE:
 				return basicSetSchedule(null, msgs);
-			case runtimePackage.COMPONENT__PROCESS:
+			case RuntimeMetadataPackage.COMPONENT__PROCESS:
 				return basicSetProcess(null, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -222,11 +222,11 @@ public class ComponentImpl extends MinimalEObjectImpl.Container implements Compo
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case runtimePackage.COMPONENT__SCHEDULE:
+			case RuntimeMetadataPackage.COMPONENT__SCHEDULE:
 				return getSchedule();
-			case runtimePackage.COMPONENT__PROCESS:
+			case RuntimeMetadataPackage.COMPONENT__PROCESS:
 				return getProcess();
-			case runtimePackage.COMPONENT__NAME:
+			case RuntimeMetadataPackage.COMPONENT__NAME:
 				return getName();
 		}
 		return super.eGet(featureID, resolve, coreType);
@@ -240,13 +240,13 @@ public class ComponentImpl extends MinimalEObjectImpl.Container implements Compo
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case runtimePackage.COMPONENT__SCHEDULE:
+			case RuntimeMetadataPackage.COMPONENT__SCHEDULE:
 				setSchedule((SchedulingSpecification)newValue);
 				return;
-			case runtimePackage.COMPONENT__PROCESS:
+			case RuntimeMetadataPackage.COMPONENT__PROCESS:
 				setProcess((cz.cuni.mff.d3s.deeco.model.runtime.api.Process)newValue);
 				return;
-			case runtimePackage.COMPONENT__NAME:
+			case RuntimeMetadataPackage.COMPONENT__NAME:
 				setName((String)newValue);
 				return;
 		}
@@ -261,13 +261,13 @@ public class ComponentImpl extends MinimalEObjectImpl.Container implements Compo
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case runtimePackage.COMPONENT__SCHEDULE:
+			case RuntimeMetadataPackage.COMPONENT__SCHEDULE:
 				setSchedule((SchedulingSpecification)null);
 				return;
-			case runtimePackage.COMPONENT__PROCESS:
+			case RuntimeMetadataPackage.COMPONENT__PROCESS:
 				setProcess((cz.cuni.mff.d3s.deeco.model.runtime.api.Process)null);
 				return;
-			case runtimePackage.COMPONENT__NAME:
+			case RuntimeMetadataPackage.COMPONENT__NAME:
 				setName(NAME_EDEFAULT);
 				return;
 		}
@@ -282,11 +282,11 @@ public class ComponentImpl extends MinimalEObjectImpl.Container implements Compo
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case runtimePackage.COMPONENT__SCHEDULE:
+			case RuntimeMetadataPackage.COMPONENT__SCHEDULE:
 				return schedule != null;
-			case runtimePackage.COMPONENT__PROCESS:
+			case RuntimeMetadataPackage.COMPONENT__PROCESS:
 				return process != null;
-			case runtimePackage.COMPONENT__NAME:
+			case RuntimeMetadataPackage.COMPONENT__NAME:
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
 		}
 		return super.eIsSet(featureID);

@@ -5,9 +5,9 @@
     importerID="org.eclipse.emf.importer.ecore" complianceLevel="7.0" copyrightFields="false"
     operationReflection="true">
   <foreignModel>RuntimeModel.ecore</foreignModel>
-  <genPackages prefix="runtime" basePackage="cz.cuni.mff.d3s.deeco.model" disposableProviderFactory="true"
-      adapterFactory="false" interfacePackageSuffix="api" metaDataPackageSuffix="meta"
-      ecorePackage="RuntimeModel.ecore#/">
+  <genPackages prefix="RuntimeMetadata" basePackage="cz.cuni.mff.d3s.deeco.model"
+      disposableProviderFactory="true" adapterFactory="false" interfacePackageSuffix="api"
+      metaDataPackageSuffix="meta" ecorePackage="RuntimeModel.ecore#/">
     <genEnums typeSafeEnumCompatible="false" ecoreEnum="RuntimeModel.ecore#//ParameterDirection">
       <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//ParameterDirection/IN"/>
       <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//ParameterDirection/OUT"/>

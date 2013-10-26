@@ -18,7 +18,7 @@ import org.eclipse.emf.ecore.EObject;
  * </ul>
  * </p>
  *
- * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimePackage#getComponent()
+ * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponent()
  * @model
  * @generated
  */
@@ -33,7 +33,7 @@ public interface Component extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Schedule</em>' containment reference.
 	 * @see #setSchedule(SchedulingSpecification)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimePackage#getComponent_Schedule()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponent_Schedule()
 	 * @model containment="true" required="true"
 	 * @generated
 	 */
@@ -59,7 +59,7 @@ public interface Component extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Process</em>' containment reference.
 	 * @see #setProcess(cz.cuni.mff.d3s.deeco.model.runtime.api.Process)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimePackage#getComponent_Process()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponent_Process()
 	 * @model containment="true" required="true"
 	 * @generated
 	 */
@@ -85,7 +85,7 @@ public interface Component extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Name</em>' attribute.
 	 * @see #setName(String)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimePackage#getComponent_Name()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponent_Name()
 	 * @model required="true"
 	 * @generated
 	 */

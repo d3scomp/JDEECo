@@ -3,7 +3,7 @@
 <?com.ibm.xtools.emf.core.signature <signature id="com.ibm.xtools.mmi.ui.signatures.diagram" version="7.0.0"><feature description="" name="Rational Modeling Platform (com.ibm.xtools.rmp)" url="" version="7.0.0"/></signature>?>
 <?com.ibm.xtools.emf.core.signature <signature id="com.ibm.xtools.uml.msl.model" version="7.0.0"><feature description="" name="com.ibm.xtools.ruml.feature" url="" version="7.0.0"/></signature>?>
 <xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Default="http:///schemas/Default/_fNm3AAqoEd6-N_NOT9vsCA/2" xmlns:JavaTransformation50="http:///schemas/JavaTransformation50/_znHmkE3YEd-tPpJR7OP4Bg/34" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmlns:uml="http://www.eclipse.org/uml2/3.0.0/UML" xmlns:umlnotation="http://www.ibm.com/xtools/1.5.3/Umlnotation" xsi:schemaLocation="http:///schemas/Default/_fNm3AAqoEd6-N_NOT9vsCA/2 pathmap://UML2_MSL_PROFILES/Default.epx#_fNwoAAqoEd6-N_NOT9vsCA?Default/Default? http:///schemas/JavaTransformation50/_znHmkE3YEd-tPpJR7OP4Bg/34 pathmap://TRANSFORM_JAVA5_PROFILES/JavaTransformProfile.epx#_znahgE3YEd-tPpJR7OP4Bg?JavaTransformation5.0/JavaTransformation50?">
-  <uml:Model xmi:id="_alSeIDzjEeOLjuEt6SNAsw" name="architecture-re">
+  <uml:Model xmi:id="_alSeIDzjEeOLjuEt6SNAsw" name="architecture-25.10.2013">
     <eAnnotations xmi:id="_alSeITzjEeOLjuEt6SNAsw" source="uml2.diagrams">
       <contents xmi:type="umlnotation:UMLDiagram" xmi:id="_U7Uc8D07EeOkD8KGS9b1aA" type="Class" name="Overview">
         <children xmi:type="umlnotation:UMLShape" xmi:id="_9Lf8MD07EeOkD8KGS9b1aA" element="_53iRET07EeOkD8KGS9b1aA" fontName="Segoe UI" fontHeight="8" showListSignature="true" transparency="0" lineColor="14263149" lineWidth="1" showStereotype="Label">
@@ -2826,8 +2826,8 @@
         <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_W_DLED1CEeOkD8KGS9b1aA" covered="_sg_4UD08EeOkD8KGS9b1aA" message="_W_DLET1CEeOkD8KGS9b1aA"/>
         <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_W_DyID1CEeOkD8KGS9b1aA" covered="_ueGeMD08EeOkD8KGS9b1aA" message="_W_DLET1CEeOkD8KGS9b1aA"/>
         <fragment xmi:type="uml:ExecutionOccurrenceSpecification" xmi:id="_eWnOgT1CEeOkD8KGS9b1aA" covered="_ueGeMD08EeOkD8KGS9b1aA" event="_xTtckD1AEeOkD8KGS9b1aA" execution="_eWnOgD1CEeOkD8KGS9b1aA"/>
-        <message xmi:id="_vqsNID08EeOkD8KGS9b1aA" name="execute" receiveEvent="_vqs0MD08EeOkD8KGS9b1aA" sendEvent="_vqsNIT08EeOkD8KGS9b1aA"/>
-        <message xmi:id="_vqtbQj08EeOkD8KGS9b1aA" name="execute" messageSort="reply" receiveEvent="_vquCUD08EeOkD8KGS9b1aA" sendEvent="_vqtbQT08EeOkD8KGS9b1aA"/>
+        <message xmi:id="_vqsNID08EeOkD8KGS9b1aA" name="\Unspecified\" receiveEvent="_vqs0MD08EeOkD8KGS9b1aA" sendEvent="_vqsNIT08EeOkD8KGS9b1aA"/>
+        <message xmi:id="_vqtbQj08EeOkD8KGS9b1aA" name="\Unspecified\" messageSort="reply" receiveEvent="_vquCUD08EeOkD8KGS9b1aA" sendEvent="_vqtbQT08EeOkD8KGS9b1aA"/>
         <message xmi:id="_x4rx4D1AEeOkD8KGS9b1aA" name="invoke" messageSort="asynchCall" receiveEvent="_x4sY8T1AEeOkD8KGS9b1aA" sendEvent="_x4sY8D1AEeOkD8KGS9b1aA" connector="_x4tAAT1AEeOkD8KGS9b1aA"/>
         <message xmi:id="_1O11YD1AEeOkD8KGS9b1aA" name="invoke" receiveEvent="_1O11Yj1AEeOkD8KGS9b1aA" sendEvent="_1O11YT1AEeOkD8KGS9b1aA" connector="_1O3DgT1AEeOkD8KGS9b1aA"/>
         <message xmi:id="_1O2ccj1AEeOkD8KGS9b1aA" name="" messageSort="reply" receiveEvent="_1O3DgD1AEeOkD8KGS9b1aA" sendEvent="_1O2ccT1AEeOkD8KGS9b1aA" connector="_1O3DgT1AEeOkD8KGS9b1aA"/>
@@ -2843,8 +2843,8 @@
         <message xmi:id="_KYTtAT1CEeOkD8KGS9b1aA" name="update" receiveEvent="_KYLKID1CEeOkD8KGS9b1aA" sendEvent="_KYKjED1CEeOkD8KGS9b1aA" connector="__cFsgT1AEeOkD8KGS9b1aA"/>
         <message xmi:id="_KYUUED1CEeOkD8KGS9b1aA" name="update" messageSort="reply" receiveEvent="_KYTF8D1CEeOkD8KGS9b1aA" sendEvent="_KYSe4D1CEeOkD8KGS9b1aA" connector="__cFsgT1AEeOkD8KGS9b1aA"/>
         <message xmi:id="_KYUUET1CEeOkD8KGS9b1aA" name="updateCompleted" messageSort="asynchCall" receiveEvent="_KYQpsD1CEeOkD8KGS9b1aA" sendEvent="_KYQCoT1CEeOkD8KGS9b1aA" connector="_4pndsj1BEeOkD8KGS9b1aA"/>
-        <message xmi:id="_KYUUEj1CEeOkD8KGS9b1aA" name="update" messageSort="reply" receiveEvent="_KYQCoD1CEeOkD8KGS9b1aA" sendEvent="_KYPbkD1CEeOkD8KGS9b1aA" connector="_7pHUsj1BEeOkD8KGS9b1aA"/>
-        <message xmi:id="_KYU7ID1CEeOkD8KGS9b1aA" name="update" receiveEvent="_KYONcD1CEeOkD8KGS9b1aA" sendEvent="_KYNmYD1CEeOkD8KGS9b1aA" connector="_7pHUsj1BEeOkD8KGS9b1aA"/>
+        <message xmi:id="_KYUUEj1CEeOkD8KGS9b1aA" name="\Unspecified\" messageSort="reply" receiveEvent="_KYQCoD1CEeOkD8KGS9b1aA" sendEvent="_KYPbkD1CEeOkD8KGS9b1aA" connector="_7pHUsj1BEeOkD8KGS9b1aA"/>
+        <message xmi:id="_KYU7ID1CEeOkD8KGS9b1aA" name="\Unspecified\" receiveEvent="_KYONcD1CEeOkD8KGS9b1aA" sendEvent="_KYNmYD1CEeOkD8KGS9b1aA" connector="_7pHUsj1BEeOkD8KGS9b1aA"/>
         <message xmi:id="_W_B88D1CEeOkD8KGS9b1aA" name="executionCompleted" receiveEvent="_W_CkAT1CEeOkD8KGS9b1aA" sendEvent="_W_CkAD1CEeOkD8KGS9b1aA"/>
         <message xmi:id="_W_DLET1CEeOkD8KGS9b1aA" name="" messageSort="reply" receiveEvent="_W_DyID1CEeOkD8KGS9b1aA" sendEvent="_W_DLED1CEeOkD8KGS9b1aA"/>
         <message xmi:id="_eWmAYD1CEeOkD8KGS9b1aA" name="invokeCompleted" messageSort="asynchCall" receiveEvent="_eWmncT1CEeOkD8KGS9b1aA" sendEvent="_eWmncD1CEeOkD8KGS9b1aA" connector="_x4tAAT1AEeOkD8KGS9b1aA"/>
@@ -2996,13 +2996,13 @@
         <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_tu5mIj1NEeOkD8KGS9b1aA" covered="_j13EcD1NEeOkD8KGS9b1aA" event="_uJbmAD1NEeOkD8KGS9b1aA" message="_tu6NMD1NEeOkD8KGS9b1aA"/>
         <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_tu6NMT1NEeOkD8KGS9b1aA" covered="_faMKYD1NEeOkD8KGS9b1aA" event="_uJbmAT1NEeOkD8KGS9b1aA" message="_tu6NMD1NEeOkD8KGS9b1aA"/>
         <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_uvMlgj1NEeOkD8KGS9b1aA" covered="_faMKYD1NEeOkD8KGS9b1aA" event="_u7ackD1NEeOkD8KGS9b1aA"/>
-        <message xmi:id="_tu4_ED1NEeOkD8KGS9b1aA" name="registerTriggers" receiveEvent="_tu5mID1NEeOkD8KGS9b1aA" sendEvent="_tu4_ET1NEeOkD8KGS9b1aA" connector="_tu6NMj1NEeOkD8KGS9b1aA"/>
-        <message xmi:id="_tu6NMD1NEeOkD8KGS9b1aA" name="registerTriggers" messageSort="reply" receiveEvent="_tu6NMT1NEeOkD8KGS9b1aA" sendEvent="_tu5mIj1NEeOkD8KGS9b1aA" connector="_tu6NMj1NEeOkD8KGS9b1aA"/>
-        <message xmi:id="_uvL-cD1NEeOkD8KGS9b1aA" name="addTask" receiveEvent="_uvMlgD1NEeOkD8KGS9b1aA"/>
-        <message xmi:id="_zBeTAD1NEeOkD8KGS9b1aA" name="register" receiveEvent="_zBe6ET1NEeOkD8KGS9b1aA" sendEvent="_zBe6ED1NEeOkD8KGS9b1aA" connector="_zBfhIj1NEeOkD8KGS9b1aA"/>
-        <message xmi:id="_zBfhID1NEeOkD8KGS9b1aA" name="register" messageSort="reply" receiveEvent="_zBfhIT1NEeOkD8KGS9b1aA" sendEvent="_zBe6Ez1NEeOkD8KGS9b1aA" connector="_zBfhIj1NEeOkD8KGS9b1aA"/>
-        <message xmi:id="_0zaxwD1NEeOkD8KGS9b1aA" name="register" receiveEvent="_0zbY0T1NEeOkD8KGS9b1aA" sendEvent="_0zbY0D1NEeOkD8KGS9b1aA" connector="_0zcm8T1NEeOkD8KGS9b1aA"/>
-        <message xmi:id="_0zb_4j1NEeOkD8KGS9b1aA" name="register" messageSort="reply" receiveEvent="_0zcm8D1NEeOkD8KGS9b1aA" sendEvent="_0zb_4T1NEeOkD8KGS9b1aA" connector="_0zcm8T1NEeOkD8KGS9b1aA"/>
+        <message xmi:id="_tu4_ED1NEeOkD8KGS9b1aA" name="\Unspecified\" receiveEvent="_tu5mID1NEeOkD8KGS9b1aA" sendEvent="_tu4_ET1NEeOkD8KGS9b1aA" connector="_tu6NMj1NEeOkD8KGS9b1aA"/>
+        <message xmi:id="_tu6NMD1NEeOkD8KGS9b1aA" name="\Unspecified\" messageSort="reply" receiveEvent="_tu6NMT1NEeOkD8KGS9b1aA" sendEvent="_tu5mIj1NEeOkD8KGS9b1aA" connector="_tu6NMj1NEeOkD8KGS9b1aA"/>
+        <message xmi:id="_uvL-cD1NEeOkD8KGS9b1aA" name="\Unspecified\" receiveEvent="_uvMlgD1NEeOkD8KGS9b1aA"/>
+        <message xmi:id="_zBeTAD1NEeOkD8KGS9b1aA" name="\Unspecified\" receiveEvent="_zBe6ET1NEeOkD8KGS9b1aA" sendEvent="_zBe6ED1NEeOkD8KGS9b1aA" connector="_zBfhIj1NEeOkD8KGS9b1aA"/>
+        <message xmi:id="_zBfhID1NEeOkD8KGS9b1aA" name="\Unspecified\" messageSort="reply" receiveEvent="_zBfhIT1NEeOkD8KGS9b1aA" sendEvent="_zBe6Ez1NEeOkD8KGS9b1aA" connector="_zBfhIj1NEeOkD8KGS9b1aA"/>
+        <message xmi:id="_0zaxwD1NEeOkD8KGS9b1aA" name="\Unspecified\" receiveEvent="_0zbY0T1NEeOkD8KGS9b1aA" sendEvent="_0zbY0D1NEeOkD8KGS9b1aA" connector="_0zcm8T1NEeOkD8KGS9b1aA"/>
+        <message xmi:id="_0zb_4j1NEeOkD8KGS9b1aA" name="\Unspecified\" messageSort="reply" receiveEvent="_0zcm8D1NEeOkD8KGS9b1aA" sendEvent="_0zb_4T1NEeOkD8KGS9b1aA" connector="_0zcm8T1NEeOkD8KGS9b1aA"/>
       </ownedBehavior>
       <ownedAttribute xmi:id="_ueGeMT08EeOkD8KGS9b1aA" name="executor" type="_53iRFT07EeOkD8KGS9b1aA"/>
       <ownedAttribute xmi:id="_yJFiMT08EeOkD8KGS9b1aA" name="task" type="_53kGQT07EeOkD8KGS9b1aA"/>

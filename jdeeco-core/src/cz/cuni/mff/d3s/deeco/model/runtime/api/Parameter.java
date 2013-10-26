@@ -17,7 +17,7 @@ import org.eclipse.emf.ecore.EObject;
  * </ul>
  * </p>
  *
- * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimePackage#getParameter()
+ * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getParameter()
  * @model
  * @generated
  */
@@ -34,7 +34,7 @@ public interface Parameter extends EObject {
 	 * @return the value of the '<em>Direction</em>' attribute.
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection
 	 * @see #setDirection(ParameterDirection)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimePackage#getParameter_Direction()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getParameter_Direction()
 	 * @model required="true"
 	 * @generated
 	 */
@@ -61,7 +61,7 @@ public interface Parameter extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Knowledge Path</em>' reference.
 	 * @see #setKnowledgePath(KnowledgePath)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimePackage#getParameter_KnowledgePath()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getParameter_KnowledgePath()
 	 * @model
 	 * @generated
 	 */

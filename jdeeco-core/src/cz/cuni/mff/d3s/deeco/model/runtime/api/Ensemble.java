@@ -19,7 +19,7 @@ import org.eclipse.emf.ecore.EObject;
  * </ul>
  * </p>
  *
- * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimePackage#getEnsemble()
+ * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getEnsemble()
  * @model
  * @generated
  */
@@ -34,7 +34,7 @@ public interface Ensemble extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Name</em>' attribute.
 	 * @see #setName(String)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimePackage#getEnsemble_Name()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getEnsemble_Name()
 	 * @model required="true"
 	 * @generated
 	 */
@@ -60,7 +60,7 @@ public interface Ensemble extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Schedule</em>' containment reference.
 	 * @see #setSchedule(SchedulingSpecification)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimePackage#getEnsemble_Schedule()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getEnsemble_Schedule()
 	 * @model containment="true" required="true"
 	 * @generated
 	 */
@@ -86,7 +86,7 @@ public interface Ensemble extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Membership</em>' containment reference.
 	 * @see #setMembership(Condition)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimePackage#getEnsemble_Membership()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getEnsemble_Membership()
 	 * @model containment="true" required="true"
 	 * @generated
 	 */
@@ -112,7 +112,7 @@ public interface Ensemble extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Knowledge Exchange</em>' containment reference.
 	 * @see #setKnowledgeExchange(Exchange)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimePackage#getEnsemble_KnowledgeExchange()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getEnsemble_KnowledgeExchange()
 	 * @model containment="true" required="true"
 	 * @generated
 	 */

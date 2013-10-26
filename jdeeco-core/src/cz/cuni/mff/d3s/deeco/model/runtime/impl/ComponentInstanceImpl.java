@@ -7,7 +7,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Component;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimePackage;
+import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 
 import org.eclipse.emf.common.notify.Notification;
 
@@ -99,7 +99,7 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return runtimePackage.Literals.COMPONENT_INSTANCE;
+		return RuntimeMetadataPackage.Literals.COMPONENT_INSTANCE;
 	}
 
 	/**
@@ -120,7 +120,7 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 		String oldId = id;
 		id = newId;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, runtimePackage.COMPONENT_INSTANCE__ID, oldId, id));
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT_INSTANCE__ID, oldId, id));
 	}
 
 	/**
@@ -134,7 +134,7 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 			component = (Component)eResolveProxy(oldComponent);
 			if (component != oldComponent) {
 				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, runtimePackage.COMPONENT_INSTANCE__COMPONENT, oldComponent, component));
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, RuntimeMetadataPackage.COMPONENT_INSTANCE__COMPONENT, oldComponent, component));
 			}
 		}
 		return component;
@@ -158,7 +158,7 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 		Component oldComponent = component;
 		component = newComponent;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, runtimePackage.COMPONENT_INSTANCE__COMPONENT, oldComponent, component));
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT_INSTANCE__COMPONENT, oldComponent, component));
 	}
 
 	/**
@@ -179,7 +179,7 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 		KnowledgeManager oldKnowledgeManager = knowledgeManager;
 		knowledgeManager = newKnowledgeManager;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, runtimePackage.COMPONENT_INSTANCE__KNOWLEDGE_MANAGER, oldKnowledgeManager, knowledgeManager));
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT_INSTANCE__KNOWLEDGE_MANAGER, oldKnowledgeManager, knowledgeManager));
 	}
 
 	/**
@@ -190,12 +190,12 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case runtimePackage.COMPONENT_INSTANCE__ID:
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ID:
 				return getId();
-			case runtimePackage.COMPONENT_INSTANCE__COMPONENT:
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__COMPONENT:
 				if (resolve) return getComponent();
 				return basicGetComponent();
-			case runtimePackage.COMPONENT_INSTANCE__KNOWLEDGE_MANAGER:
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__KNOWLEDGE_MANAGER:
 				return getKnowledgeManager();
 		}
 		return super.eGet(featureID, resolve, coreType);
@@ -209,13 +209,13 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case runtimePackage.COMPONENT_INSTANCE__ID:
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ID:
 				setId((String)newValue);
 				return;
-			case runtimePackage.COMPONENT_INSTANCE__COMPONENT:
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__COMPONENT:
 				setComponent((Component)newValue);
 				return;
-			case runtimePackage.COMPONENT_INSTANCE__KNOWLEDGE_MANAGER:
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__KNOWLEDGE_MANAGER:
 				setKnowledgeManager((KnowledgeManager)newValue);
 				return;
 		}
@@ -230,13 +230,13 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case runtimePackage.COMPONENT_INSTANCE__ID:
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ID:
 				setId(ID_EDEFAULT);
 				return;
-			case runtimePackage.COMPONENT_INSTANCE__COMPONENT:
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__COMPONENT:
 				setComponent((Component)null);
 				return;
-			case runtimePackage.COMPONENT_INSTANCE__KNOWLEDGE_MANAGER:
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__KNOWLEDGE_MANAGER:
 				setKnowledgeManager(KNOWLEDGE_MANAGER_EDEFAULT);
 				return;
 		}
@@ -251,11 +251,11 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case runtimePackage.COMPONENT_INSTANCE__ID:
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ID:
 				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
-			case runtimePackage.COMPONENT_INSTANCE__COMPONENT:
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__COMPONENT:
 				return component != null;
-			case runtimePackage.COMPONENT_INSTANCE__KNOWLEDGE_MANAGER:
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__KNOWLEDGE_MANAGER:
 				return KNOWLEDGE_MANAGER_EDEFAULT == null ? knowledgeManager != null : !KNOWLEDGE_MANAGER_EDEFAULT.equals(knowledgeManager);
 		}
 		return super.eIsSet(featureID);

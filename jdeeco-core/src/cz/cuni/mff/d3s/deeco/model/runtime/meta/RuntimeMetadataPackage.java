@@ -21,11 +21,11 @@ import org.eclipse.emf.ecore.EReference;
  *   <li>and each data type</li>
  * </ul>
  * <!-- end-user-doc -->
- * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimeFactory
+ * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory
  * @model kind="package"
  * @generated
  */
-public interface runtimePackage extends EPackage {
+public interface RuntimeMetadataPackage extends EPackage {
 	/**
 	 * The package name.
 	 * <!-- begin-user-doc -->
@@ -40,7 +40,7 @@ public interface runtimePackage extends EPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	String eNS_URI = "http://runtimemodel/1.0";
+	String eNS_URI = "http://cz.cuni.mff.d3s.deeco.model.runtime/1.0";
 
 	/**
 	 * The package namespace name.
@@ -56,14 +56,14 @@ public interface runtimePackage extends EPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	runtimePackage eINSTANCE = cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl.init();
+	RuntimeMetadataPackage eINSTANCE = cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl.init();
 
 	/**
 	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.SchedulingSpecificationImpl <em>Scheduling Specification</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.SchedulingSpecificationImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getSchedulingSpecification()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getSchedulingSpecification()
 	 * @generated
 	 */
 	int SCHEDULING_SPECIFICATION = 0;
@@ -109,7 +109,7 @@ public interface runtimePackage extends EPackage {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.TriggerImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getTrigger()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getTrigger()
 	 * @generated
 	 */
 	int TRIGGER = 1;
@@ -137,7 +137,7 @@ public interface runtimePackage extends EPackage {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.KnowledgeChangeTriggerImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getKnowledgeChangeTrigger()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getKnowledgeChangeTrigger()
 	 * @generated
 	 */
 	int KNOWLEDGE_CHANGE_TRIGGER = 2;
@@ -174,7 +174,7 @@ public interface runtimePackage extends EPackage {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.KnowledgePathImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getKnowledgePath()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getKnowledgePath()
 	 * @generated
 	 */
 	int KNOWLEDGE_PATH = 3;
@@ -211,7 +211,7 @@ public interface runtimePackage extends EPackage {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getPathNode()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getPathNode()
 	 * @generated
 	 */
 	int PATH_NODE = 4;
@@ -239,7 +239,7 @@ public interface runtimePackage extends EPackage {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeFieldImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getPathNodeField()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getPathNodeField()
 	 * @generated
 	 */
 	int PATH_NODE_FIELD = 5;
@@ -276,7 +276,7 @@ public interface runtimePackage extends EPackage {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeMapKeyImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getPathNodeMapKey()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getPathNodeMapKey()
 	 * @generated
 	 */
 	int PATH_NODE_MAP_KEY = 6;
@@ -313,7 +313,7 @@ public interface runtimePackage extends EPackage {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getRuntimeMetadata()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getRuntimeMetadata()
 	 * @generated
 	 */
 	int RUNTIME_METADATA = 7;
@@ -368,7 +368,7 @@ public interface runtimePackage extends EPackage {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getComponentInstance()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getComponentInstance()
 	 * @generated
 	 */
 	int COMPONENT_INSTANCE = 8;
@@ -423,7 +423,7 @@ public interface runtimePackage extends EPackage {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getComponent()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getComponent()
 	 * @generated
 	 */
 	int COMPONENT = 9;
@@ -478,7 +478,7 @@ public interface runtimePackage extends EPackage {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getEnsemble()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getEnsemble()
 	 * @generated
 	 */
 	int ENSEMBLE = 10;
@@ -542,7 +542,7 @@ public interface runtimePackage extends EPackage {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.InvocableImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getInvocable()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getInvocable()
 	 * @generated
 	 */
 	int INVOCABLE = 15;
@@ -588,7 +588,7 @@ public interface runtimePackage extends EPackage {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.ConditionImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getCondition()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getCondition()
 	 * @generated
 	 */
 	int CONDITION = 11;
@@ -634,7 +634,7 @@ public interface runtimePackage extends EPackage {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.ExchangeImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getExchange()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getExchange()
 	 * @generated
 	 */
 	int EXCHANGE = 12;
@@ -680,7 +680,7 @@ public interface runtimePackage extends EPackage {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.ProcessImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getProcess()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getProcess()
 	 * @generated
 	 */
 	int PROCESS = 13;
@@ -726,7 +726,7 @@ public interface runtimePackage extends EPackage {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.ParameterImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getParameter()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getParameter()
 	 * @generated
 	 */
 	int PARAMETER = 14;
@@ -772,7 +772,7 @@ public interface runtimePackage extends EPackage {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getParameterDirection()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getParameterDirection()
 	 * @generated
 	 */
 	int PARAMETER_DIRECTION = 16;
@@ -782,7 +782,7 @@ public interface runtimePackage extends EPackage {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see java.lang.reflect.Method
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getMethod()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getMethod()
 	 * @generated
 	 */
 	int METHOD = 17;
@@ -792,7 +792,7 @@ public interface runtimePackage extends EPackage {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getKnowledgeManager()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getKnowledgeManager()
 	 * @generated
 	 */
 	int KNOWLEDGE_MANAGER = 18;
@@ -1250,7 +1250,7 @@ public interface runtimePackage extends EPackage {
 	 * @return the factory that creates the instances of the model.
 	 * @generated
 	 */
-	runtimeFactory getruntimeFactory();
+	RuntimeMetadataFactory getRuntimeMetadataFactory();
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -1271,7 +1271,7 @@ public interface runtimePackage extends EPackage {
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.SchedulingSpecificationImpl
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getSchedulingSpecification()
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getSchedulingSpecification()
 		 * @generated
 		 */
 		EClass SCHEDULING_SPECIFICATION = eINSTANCE.getSchedulingSpecification();
@@ -1297,7 +1297,7 @@ public interface runtimePackage extends EPackage {
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.TriggerImpl
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getTrigger()
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getTrigger()
 		 * @generated
 		 */
 		EClass TRIGGER = eINSTANCE.getTrigger();
@@ -1307,7 +1307,7 @@ public interface runtimePackage extends EPackage {
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.KnowledgeChangeTriggerImpl
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getKnowledgeChangeTrigger()
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getKnowledgeChangeTrigger()
 		 * @generated
 		 */
 		EClass KNOWLEDGE_CHANGE_TRIGGER = eINSTANCE.getKnowledgeChangeTrigger();
@@ -1325,7 +1325,7 @@ public interface runtimePackage extends EPackage {
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.KnowledgePathImpl
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getKnowledgePath()
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getKnowledgePath()
 		 * @generated
 		 */
 		EClass KNOWLEDGE_PATH = eINSTANCE.getKnowledgePath();
@@ -1343,7 +1343,7 @@ public interface runtimePackage extends EPackage {
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeImpl
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getPathNode()
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getPathNode()
 		 * @generated
 		 */
 		EClass PATH_NODE = eINSTANCE.getPathNode();
@@ -1353,7 +1353,7 @@ public interface runtimePackage extends EPackage {
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeFieldImpl
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getPathNodeField()
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getPathNodeField()
 		 * @generated
 		 */
 		EClass PATH_NODE_FIELD = eINSTANCE.getPathNodeField();
@@ -1371,7 +1371,7 @@ public interface runtimePackage extends EPackage {
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeMapKeyImpl
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getPathNodeMapKey()
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getPathNodeMapKey()
 		 * @generated
 		 */
 		EClass PATH_NODE_MAP_KEY = eINSTANCE.getPathNodeMapKey();
@@ -1389,7 +1389,7 @@ public interface runtimePackage extends EPackage {
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataImpl
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getRuntimeMetadata()
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getRuntimeMetadata()
 		 * @generated
 		 */
 		EClass RUNTIME_METADATA = eINSTANCE.getRuntimeMetadata();
@@ -1423,7 +1423,7 @@ public interface runtimePackage extends EPackage {
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getComponentInstance()
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getComponentInstance()
 		 * @generated
 		 */
 		EClass COMPONENT_INSTANCE = eINSTANCE.getComponentInstance();
@@ -1457,7 +1457,7 @@ public interface runtimePackage extends EPackage {
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentImpl
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getComponent()
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getComponent()
 		 * @generated
 		 */
 		EClass COMPONENT = eINSTANCE.getComponent();
@@ -1491,7 +1491,7 @@ public interface runtimePackage extends EPackage {
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleImpl
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getEnsemble()
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getEnsemble()
 		 * @generated
 		 */
 		EClass ENSEMBLE = eINSTANCE.getEnsemble();
@@ -1533,7 +1533,7 @@ public interface runtimePackage extends EPackage {
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.ConditionImpl
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getCondition()
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getCondition()
 		 * @generated
 		 */
 		EClass CONDITION = eINSTANCE.getCondition();
@@ -1543,7 +1543,7 @@ public interface runtimePackage extends EPackage {
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.ExchangeImpl
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getExchange()
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getExchange()
 		 * @generated
 		 */
 		EClass EXCHANGE = eINSTANCE.getExchange();
@@ -1553,7 +1553,7 @@ public interface runtimePackage extends EPackage {
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.ProcessImpl
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getProcess()
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getProcess()
 		 * @generated
 		 */
 		EClass PROCESS = eINSTANCE.getProcess();
@@ -1563,7 +1563,7 @@ public interface runtimePackage extends EPackage {
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.ParameterImpl
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getParameter()
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getParameter()
 		 * @generated
 		 */
 		EClass PARAMETER = eINSTANCE.getParameter();
@@ -1589,7 +1589,7 @@ public interface runtimePackage extends EPackage {
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.InvocableImpl
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getInvocable()
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getInvocable()
 		 * @generated
 		 */
 		EClass INVOCABLE = eINSTANCE.getInvocable();
@@ -1615,7 +1615,7 @@ public interface runtimePackage extends EPackage {
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getParameterDirection()
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getParameterDirection()
 		 * @generated
 		 */
 		EEnum PARAMETER_DIRECTION = eINSTANCE.getParameterDirection();
@@ -1625,7 +1625,7 @@ public interface runtimePackage extends EPackage {
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @see java.lang.reflect.Method
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getMethod()
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getMethod()
 		 * @generated
 		 */
 		EDataType METHOD = eINSTANCE.getMethod();
@@ -1635,11 +1635,11 @@ public interface runtimePackage extends EPackage {
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @see cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimePackageImpl#getKnowledgeManager()
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getKnowledgeManager()
 		 * @generated
 		 */
 		EDataType KNOWLEDGE_MANAGER = eINSTANCE.getKnowledgeManager();
 
 	}
 
-} //runtimePackage
+} //RuntimeMetadataPackage

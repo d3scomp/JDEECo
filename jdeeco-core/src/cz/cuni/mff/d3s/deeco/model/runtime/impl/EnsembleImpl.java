@@ -7,7 +7,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Ensemble;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Exchange;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimePackage;
+import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -101,7 +101,7 @@ public class EnsembleImpl extends MinimalEObjectImpl.Container implements Ensemb
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return runtimePackage.Literals.ENSEMBLE;
+		return RuntimeMetadataPackage.Literals.ENSEMBLE;
 	}
 
 	/**
@@ -122,7 +122,7 @@ public class EnsembleImpl extends MinimalEObjectImpl.Container implements Ensemb
 		String oldName = name;
 		name = newName;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, runtimePackage.ENSEMBLE__NAME, oldName, name));
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.ENSEMBLE__NAME, oldName, name));
 	}
 
 	/**
@@ -143,7 +143,7 @@ public class EnsembleImpl extends MinimalEObjectImpl.Container implements Ensemb
 		SchedulingSpecification oldSchedule = schedule;
 		schedule = newSchedule;
 		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, runtimePackage.ENSEMBLE__SCHEDULE, oldSchedule, newSchedule);
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.ENSEMBLE__SCHEDULE, oldSchedule, newSchedule);
 			if (msgs == null) msgs = notification; else msgs.add(notification);
 		}
 		return msgs;
@@ -158,14 +158,14 @@ public class EnsembleImpl extends MinimalEObjectImpl.Container implements Ensemb
 		if (newSchedule != schedule) {
 			NotificationChain msgs = null;
 			if (schedule != null)
-				msgs = ((InternalEObject)schedule).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - runtimePackage.ENSEMBLE__SCHEDULE, null, msgs);
+				msgs = ((InternalEObject)schedule).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - RuntimeMetadataPackage.ENSEMBLE__SCHEDULE, null, msgs);
 			if (newSchedule != null)
-				msgs = ((InternalEObject)newSchedule).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - runtimePackage.ENSEMBLE__SCHEDULE, null, msgs);
+				msgs = ((InternalEObject)newSchedule).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - RuntimeMetadataPackage.ENSEMBLE__SCHEDULE, null, msgs);
 			msgs = basicSetSchedule(newSchedule, msgs);
 			if (msgs != null) msgs.dispatch();
 		}
 		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, runtimePackage.ENSEMBLE__SCHEDULE, newSchedule, newSchedule));
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.ENSEMBLE__SCHEDULE, newSchedule, newSchedule));
 	}
 
 	/**
@@ -186,7 +186,7 @@ public class EnsembleImpl extends MinimalEObjectImpl.Container implements Ensemb
 		Condition oldMembership = membership;
 		membership = newMembership;
 		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, runtimePackage.ENSEMBLE__MEMBERSHIP, oldMembership, newMembership);
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.ENSEMBLE__MEMBERSHIP, oldMembership, newMembership);
 			if (msgs == null) msgs = notification; else msgs.add(notification);
 		}
 		return msgs;
@@ -201,14 +201,14 @@ public class EnsembleImpl extends MinimalEObjectImpl.Container implements Ensemb
 		if (newMembership != membership) {
 			NotificationChain msgs = null;
 			if (membership != null)
-				msgs = ((InternalEObject)membership).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - runtimePackage.ENSEMBLE__MEMBERSHIP, null, msgs);
+				msgs = ((InternalEObject)membership).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - RuntimeMetadataPackage.ENSEMBLE__MEMBERSHIP, null, msgs);
 			if (newMembership != null)
-				msgs = ((InternalEObject)newMembership).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - runtimePackage.ENSEMBLE__MEMBERSHIP, null, msgs);
+				msgs = ((InternalEObject)newMembership).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - RuntimeMetadataPackage.ENSEMBLE__MEMBERSHIP, null, msgs);
 			msgs = basicSetMembership(newMembership, msgs);
 			if (msgs != null) msgs.dispatch();
 		}
 		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, runtimePackage.ENSEMBLE__MEMBERSHIP, newMembership, newMembership));
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.ENSEMBLE__MEMBERSHIP, newMembership, newMembership));
 	}
 
 	/**
@@ -229,7 +229,7 @@ public class EnsembleImpl extends MinimalEObjectImpl.Container implements Ensemb
 		Exchange oldKnowledgeExchange = knowledgeExchange;
 		knowledgeExchange = newKnowledgeExchange;
 		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, runtimePackage.ENSEMBLE__KNOWLEDGE_EXCHANGE, oldKnowledgeExchange, newKnowledgeExchange);
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.ENSEMBLE__KNOWLEDGE_EXCHANGE, oldKnowledgeExchange, newKnowledgeExchange);
 			if (msgs == null) msgs = notification; else msgs.add(notification);
 		}
 		return msgs;
@@ -244,14 +244,14 @@ public class EnsembleImpl extends MinimalEObjectImpl.Container implements Ensemb
 		if (newKnowledgeExchange != knowledgeExchange) {
 			NotificationChain msgs = null;
 			if (knowledgeExchange != null)
-				msgs = ((InternalEObject)knowledgeExchange).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - runtimePackage.ENSEMBLE__KNOWLEDGE_EXCHANGE, null, msgs);
+				msgs = ((InternalEObject)knowledgeExchange).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - RuntimeMetadataPackage.ENSEMBLE__KNOWLEDGE_EXCHANGE, null, msgs);
 			if (newKnowledgeExchange != null)
-				msgs = ((InternalEObject)newKnowledgeExchange).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - runtimePackage.ENSEMBLE__KNOWLEDGE_EXCHANGE, null, msgs);
+				msgs = ((InternalEObject)newKnowledgeExchange).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - RuntimeMetadataPackage.ENSEMBLE__KNOWLEDGE_EXCHANGE, null, msgs);
 			msgs = basicSetKnowledgeExchange(newKnowledgeExchange, msgs);
 			if (msgs != null) msgs.dispatch();
 		}
 		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, runtimePackage.ENSEMBLE__KNOWLEDGE_EXCHANGE, newKnowledgeExchange, newKnowledgeExchange));
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.ENSEMBLE__KNOWLEDGE_EXCHANGE, newKnowledgeExchange, newKnowledgeExchange));
 	}
 
 	/**
@@ -262,11 +262,11 @@ public class EnsembleImpl extends MinimalEObjectImpl.Container implements Ensemb
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case runtimePackage.ENSEMBLE__SCHEDULE:
+			case RuntimeMetadataPackage.ENSEMBLE__SCHEDULE:
 				return basicSetSchedule(null, msgs);
-			case runtimePackage.ENSEMBLE__MEMBERSHIP:
+			case RuntimeMetadataPackage.ENSEMBLE__MEMBERSHIP:
 				return basicSetMembership(null, msgs);
-			case runtimePackage.ENSEMBLE__KNOWLEDGE_EXCHANGE:
+			case RuntimeMetadataPackage.ENSEMBLE__KNOWLEDGE_EXCHANGE:
 				return basicSetKnowledgeExchange(null, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -280,13 +280,13 @@ public class EnsembleImpl extends MinimalEObjectImpl.Container implements Ensemb
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case runtimePackage.ENSEMBLE__NAME:
+			case RuntimeMetadataPackage.ENSEMBLE__NAME:
 				return getName();
-			case runtimePackage.ENSEMBLE__SCHEDULE:
+			case RuntimeMetadataPackage.ENSEMBLE__SCHEDULE:
 				return getSchedule();
-			case runtimePackage.ENSEMBLE__MEMBERSHIP:
+			case RuntimeMetadataPackage.ENSEMBLE__MEMBERSHIP:
 				return getMembership();
-			case runtimePackage.ENSEMBLE__KNOWLEDGE_EXCHANGE:
+			case RuntimeMetadataPackage.ENSEMBLE__KNOWLEDGE_EXCHANGE:
 				return getKnowledgeExchange();
 		}
 		return super.eGet(featureID, resolve, coreType);
@@ -300,16 +300,16 @@ public class EnsembleImpl extends MinimalEObjectImpl.Container implements Ensemb
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case runtimePackage.ENSEMBLE__NAME:
+			case RuntimeMetadataPackage.ENSEMBLE__NAME:
 				setName((String)newValue);
 				return;
-			case runtimePackage.ENSEMBLE__SCHEDULE:
+			case RuntimeMetadataPackage.ENSEMBLE__SCHEDULE:
 				setSchedule((SchedulingSpecification)newValue);
 				return;
-			case runtimePackage.ENSEMBLE__MEMBERSHIP:
+			case RuntimeMetadataPackage.ENSEMBLE__MEMBERSHIP:
 				setMembership((Condition)newValue);
 				return;
-			case runtimePackage.ENSEMBLE__KNOWLEDGE_EXCHANGE:
+			case RuntimeMetadataPackage.ENSEMBLE__KNOWLEDGE_EXCHANGE:
 				setKnowledgeExchange((Exchange)newValue);
 				return;
 		}
@@ -324,16 +324,16 @@ public class EnsembleImpl extends MinimalEObjectImpl.Container implements Ensemb
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case runtimePackage.ENSEMBLE__NAME:
+			case RuntimeMetadataPackage.ENSEMBLE__NAME:
 				setName(NAME_EDEFAULT);
 				return;
-			case runtimePackage.ENSEMBLE__SCHEDULE:
+			case RuntimeMetadataPackage.ENSEMBLE__SCHEDULE:
 				setSchedule((SchedulingSpecification)null);
 				return;
-			case runtimePackage.ENSEMBLE__MEMBERSHIP:
+			case RuntimeMetadataPackage.ENSEMBLE__MEMBERSHIP:
 				setMembership((Condition)null);
 				return;
-			case runtimePackage.ENSEMBLE__KNOWLEDGE_EXCHANGE:
+			case RuntimeMetadataPackage.ENSEMBLE__KNOWLEDGE_EXCHANGE:
 				setKnowledgeExchange((Exchange)null);
 				return;
 		}
@@ -348,13 +348,13 @@ public class EnsembleImpl extends MinimalEObjectImpl.Container implements Ensemb
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case runtimePackage.ENSEMBLE__NAME:
+			case RuntimeMetadataPackage.ENSEMBLE__NAME:
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-			case runtimePackage.ENSEMBLE__SCHEDULE:
+			case RuntimeMetadataPackage.ENSEMBLE__SCHEDULE:
 				return schedule != null;
-			case runtimePackage.ENSEMBLE__MEMBERSHIP:
+			case RuntimeMetadataPackage.ENSEMBLE__MEMBERSHIP:
 				return membership != null;
-			case runtimePackage.ENSEMBLE__KNOWLEDGE_EXCHANGE:
+			case RuntimeMetadataPackage.ENSEMBLE__KNOWLEDGE_EXCHANGE:
 				return knowledgeExchange != null;
 		}
 		return super.eIsSet(featureID);

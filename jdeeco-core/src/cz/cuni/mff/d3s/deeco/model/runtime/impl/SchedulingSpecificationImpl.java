@@ -5,7 +5,7 @@ package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimePackage;
+import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 
 import java.util.Collection;
 
@@ -84,7 +84,7 @@ public class SchedulingSpecificationImpl extends MinimalEObjectImpl.Container im
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return runtimePackage.Literals.SCHEDULING_SPECIFICATION;
+		return RuntimeMetadataPackage.Literals.SCHEDULING_SPECIFICATION;
 	}
 
 	/**
@@ -94,7 +94,7 @@ public class SchedulingSpecificationImpl extends MinimalEObjectImpl.Container im
 	 */
 	public EList<Trigger> getTriggers() {
 		if (triggers == null) {
-			triggers = new EObjectContainmentEList<Trigger>(Trigger.class, this, runtimePackage.SCHEDULING_SPECIFICATION__TRIGGERS);
+			triggers = new EObjectContainmentEList<Trigger>(Trigger.class, this, RuntimeMetadataPackage.SCHEDULING_SPECIFICATION__TRIGGERS);
 		}
 		return triggers;
 	}
@@ -117,7 +117,7 @@ public class SchedulingSpecificationImpl extends MinimalEObjectImpl.Container im
 		long oldPeriod = period;
 		period = newPeriod;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, runtimePackage.SCHEDULING_SPECIFICATION__PERIOD, oldPeriod, period));
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.SCHEDULING_SPECIFICATION__PERIOD, oldPeriod, period));
 	}
 
 	/**
@@ -128,7 +128,7 @@ public class SchedulingSpecificationImpl extends MinimalEObjectImpl.Container im
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case runtimePackage.SCHEDULING_SPECIFICATION__TRIGGERS:
+			case RuntimeMetadataPackage.SCHEDULING_SPECIFICATION__TRIGGERS:
 				return ((InternalEList<?>)getTriggers()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -142,9 +142,9 @@ public class SchedulingSpecificationImpl extends MinimalEObjectImpl.Container im
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case runtimePackage.SCHEDULING_SPECIFICATION__TRIGGERS:
+			case RuntimeMetadataPackage.SCHEDULING_SPECIFICATION__TRIGGERS:
 				return getTriggers();
-			case runtimePackage.SCHEDULING_SPECIFICATION__PERIOD:
+			case RuntimeMetadataPackage.SCHEDULING_SPECIFICATION__PERIOD:
 				return getPeriod();
 		}
 		return super.eGet(featureID, resolve, coreType);
@@ -159,11 +159,11 @@ public class SchedulingSpecificationImpl extends MinimalEObjectImpl.Container im
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case runtimePackage.SCHEDULING_SPECIFICATION__TRIGGERS:
+			case RuntimeMetadataPackage.SCHEDULING_SPECIFICATION__TRIGGERS:
 				getTriggers().clear();
 				getTriggers().addAll((Collection<? extends Trigger>)newValue);
 				return;
-			case runtimePackage.SCHEDULING_SPECIFICATION__PERIOD:
+			case RuntimeMetadataPackage.SCHEDULING_SPECIFICATION__PERIOD:
 				setPeriod((Long)newValue);
 				return;
 		}
@@ -178,10 +178,10 @@ public class SchedulingSpecificationImpl extends MinimalEObjectImpl.Container im
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case runtimePackage.SCHEDULING_SPECIFICATION__TRIGGERS:
+			case RuntimeMetadataPackage.SCHEDULING_SPECIFICATION__TRIGGERS:
 				getTriggers().clear();
 				return;
-			case runtimePackage.SCHEDULING_SPECIFICATION__PERIOD:
+			case RuntimeMetadataPackage.SCHEDULING_SPECIFICATION__PERIOD:
 				setPeriod(PERIOD_EDEFAULT);
 				return;
 		}
@@ -196,9 +196,9 @@ public class SchedulingSpecificationImpl extends MinimalEObjectImpl.Container im
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case runtimePackage.SCHEDULING_SPECIFICATION__TRIGGERS:
+			case RuntimeMetadataPackage.SCHEDULING_SPECIFICATION__TRIGGERS:
 				return triggers != null && !triggers.isEmpty();
-			case runtimePackage.SCHEDULING_SPECIFICATION__PERIOD:
+			case RuntimeMetadataPackage.SCHEDULING_SPECIFICATION__PERIOD:
 				return period != PERIOD_EDEFAULT;
 		}
 		return super.eIsSet(featureID);

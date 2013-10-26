@@ -5,7 +5,7 @@ package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Invocable;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimePackage;
+import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 
 import java.lang.reflect.Method;
 
@@ -86,7 +86,7 @@ public class InvocableImpl extends MinimalEObjectImpl.Container implements Invoc
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return runtimePackage.Literals.INVOCABLE;
+		return RuntimeMetadataPackage.Literals.INVOCABLE;
 	}
 
 	/**
@@ -96,7 +96,7 @@ public class InvocableImpl extends MinimalEObjectImpl.Container implements Invoc
 	 */
 	public EList<Parameter> getParameters() {
 		if (parameters == null) {
-			parameters = new EObjectContainmentEList<Parameter>(Parameter.class, this, runtimePackage.INVOCABLE__PARAMETERS);
+			parameters = new EObjectContainmentEList<Parameter>(Parameter.class, this, RuntimeMetadataPackage.INVOCABLE__PARAMETERS);
 		}
 		return parameters;
 	}
@@ -119,7 +119,7 @@ public class InvocableImpl extends MinimalEObjectImpl.Container implements Invoc
 		Method oldMethod = method;
 		method = newMethod;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, runtimePackage.INVOCABLE__METHOD, oldMethod, method));
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.INVOCABLE__METHOD, oldMethod, method));
 	}
 
 	/**
@@ -130,7 +130,7 @@ public class InvocableImpl extends MinimalEObjectImpl.Container implements Invoc
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case runtimePackage.INVOCABLE__PARAMETERS:
+			case RuntimeMetadataPackage.INVOCABLE__PARAMETERS:
 				return ((InternalEList<?>)getParameters()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -144,9 +144,9 @@ public class InvocableImpl extends MinimalEObjectImpl.Container implements Invoc
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case runtimePackage.INVOCABLE__PARAMETERS:
+			case RuntimeMetadataPackage.INVOCABLE__PARAMETERS:
 				return getParameters();
-			case runtimePackage.INVOCABLE__METHOD:
+			case RuntimeMetadataPackage.INVOCABLE__METHOD:
 				return getMethod();
 		}
 		return super.eGet(featureID, resolve, coreType);
@@ -161,11 +161,11 @@ public class InvocableImpl extends MinimalEObjectImpl.Container implements Invoc
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case runtimePackage.INVOCABLE__PARAMETERS:
+			case RuntimeMetadataPackage.INVOCABLE__PARAMETERS:
 				getParameters().clear();
 				getParameters().addAll((Collection<? extends Parameter>)newValue);
 				return;
-			case runtimePackage.INVOCABLE__METHOD:
+			case RuntimeMetadataPackage.INVOCABLE__METHOD:
 				setMethod((Method)newValue);
 				return;
 		}
@@ -180,10 +180,10 @@ public class InvocableImpl extends MinimalEObjectImpl.Container implements Invoc
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case runtimePackage.INVOCABLE__PARAMETERS:
+			case RuntimeMetadataPackage.INVOCABLE__PARAMETERS:
 				getParameters().clear();
 				return;
-			case runtimePackage.INVOCABLE__METHOD:
+			case RuntimeMetadataPackage.INVOCABLE__METHOD:
 				setMethod(METHOD_EDEFAULT);
 				return;
 		}
@@ -198,9 +198,9 @@ public class InvocableImpl extends MinimalEObjectImpl.Container implements Invoc
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case runtimePackage.INVOCABLE__PARAMETERS:
+			case RuntimeMetadataPackage.INVOCABLE__PARAMETERS:
 				return parameters != null && !parameters.isEmpty();
-			case runtimePackage.INVOCABLE__METHOD:
+			case RuntimeMetadataPackage.INVOCABLE__METHOD:
 				return METHOD_EDEFAULT == null ? method != null : !METHOD_EDEFAULT.equals(method);
 		}
 		return super.eIsSet(featureID);

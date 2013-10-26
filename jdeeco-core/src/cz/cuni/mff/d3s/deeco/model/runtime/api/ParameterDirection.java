@@ -13,7 +13,7 @@ import org.eclipse.emf.common.util.Enumerator;
  * A representation of the literals of the enumeration '<em><b>Parameter Direction</b></em>',
  * and utility methods for working with them.
  * <!-- end-user-doc -->
- * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimePackage#getParameterDirection()
+ * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getParameterDirection()
  * @model
  * @generated
  */

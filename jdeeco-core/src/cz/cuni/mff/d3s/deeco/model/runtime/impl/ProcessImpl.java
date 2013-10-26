@@ -2,7 +2,7 @@
  */
 package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimePackage;
+import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 
 import org.eclipse.emf.ecore.EClass;
 
@@ -32,7 +32,7 @@ public class ProcessImpl extends InvocableImpl implements cz.cuni.mff.d3s.deeco.
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return runtimePackage.Literals.PROCESS;
+		return RuntimeMetadataPackage.Literals.PROCESS;
 	}
 
 } //ProcessImpl

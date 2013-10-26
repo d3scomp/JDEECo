@@ -23,17 +23,17 @@ import org.eclipse.emf.ecore.EFactory;
  * The <b>Factory</b> for the model.
  * It provides a create method for each non-abstract class of the model.
  * <!-- end-user-doc -->
- * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimePackage
+ * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage
  * @generated
  */
-public interface runtimeFactory extends EFactory {
+public interface RuntimeMetadataFactory extends EFactory {
 	/**
 	 * The singleton instance of the factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	runtimeFactory eINSTANCE = cz.cuni.mff.d3s.deeco.model.runtime.impl.runtimeFactoryImpl.init();
+	RuntimeMetadataFactory eINSTANCE = cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataFactoryImpl.init();
 
 	/**
 	 * Returns a new object of class '<em>Scheduling Specification</em>'.
@@ -168,6 +168,6 @@ public interface runtimeFactory extends EFactory {
 	 * @return the package supported by this factory.
 	 * @generated
 	 */
-	runtimePackage getruntimePackage();
+	RuntimeMetadataPackage getRuntimeMetadataPackage();
 
-} //runtimeFactory
+} //RuntimeMetadataFactory

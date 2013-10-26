@@ -20,7 +20,7 @@ import org.eclipse.emf.ecore.EObject;
  * </ul>
  * </p>
  *
- * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimePackage#getComponentInstance()
+ * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance()
  * @model
  * @generated
  */
@@ -35,7 +35,7 @@ public interface ComponentInstance extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Id</em>' attribute.
 	 * @see #setId(String)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimePackage#getComponentInstance_Id()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance_Id()
 	 * @model required="true"
 	 * @generated
 	 */
@@ -61,7 +61,7 @@ public interface ComponentInstance extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Component</em>' reference.
 	 * @see #setComponent(Component)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimePackage#getComponentInstance_Component()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance_Component()
 	 * @model required="true"
 	 * @generated
 	 */
@@ -87,7 +87,7 @@ public interface ComponentInstance extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Knowledge Manager</em>' attribute.
 	 * @see #setKnowledgeManager(KnowledgeManager)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimePackage#getComponentInstance_KnowledgeManager()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance_KnowledgeManager()
 	 * @model dataType="cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeManager" required="true"
 	 * @generated
 	 */

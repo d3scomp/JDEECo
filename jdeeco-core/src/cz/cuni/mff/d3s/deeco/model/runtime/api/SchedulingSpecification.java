@@ -19,7 +19,7 @@ import org.eclipse.emf.ecore.EObject;
  * </ul>
  * </p>
  *
- * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimePackage#getSchedulingSpecification()
+ * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getSchedulingSpecification()
  * @model
  * @generated
  */
@@ -34,7 +34,7 @@ public interface SchedulingSpecification extends EObject {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Triggers</em>' containment reference list.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimePackage#getSchedulingSpecification_Triggers()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getSchedulingSpecification_Triggers()
 	 * @model containment="true"
 	 * @generated
 	 */
@@ -50,7 +50,7 @@ public interface SchedulingSpecification extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Period</em>' attribute.
 	 * @see #setPeriod(long)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimePackage#getSchedulingSpecification_Period()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getSchedulingSpecification_Period()
 	 * @model required="true"
 	 * @generated
 	 */
