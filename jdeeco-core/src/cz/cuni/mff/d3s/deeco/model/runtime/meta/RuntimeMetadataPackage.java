@@ -429,22 +429,13 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int COMPONENT = 9;
 
 	/**
-	 * The feature id for the '<em><b>Schedule</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMPONENT__SCHEDULE = 0;
-
-	/**
 	 * The feature id for the '<em><b>Process</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT__PROCESS = 1;
+	int COMPONENT__PROCESS = 0;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -453,7 +444,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT__NAME = 2;
+	int COMPONENT__NAME = 1;
 
 	/**
 	 * The number of structural features of the '<em>Component</em>' class.
@@ -462,7 +453,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_FEATURE_COUNT = 3;
+	int COMPONENT_FEATURE_COUNT = 2;
 
 	/**
 	 * The number of operations of the '<em>Component</em>' class.
@@ -704,13 +695,22 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int PROCESS__METHOD = INVOCABLE__METHOD;
 
 	/**
+	 * The feature id for the '<em><b>Schedule</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROCESS__SCHEDULE = INVOCABLE_FEATURE_COUNT + 0;
+
+	/**
 	 * The number of structural features of the '<em>Process</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PROCESS_FEATURE_COUNT = INVOCABLE_FEATURE_COUNT + 0;
+	int PROCESS_FEATURE_COUNT = INVOCABLE_FEATURE_COUNT + 1;
 
 	/**
 	 * The number of operations of the '<em>Process</em>' class.
@@ -1031,17 +1031,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EClass getComponent();
 
 	/**
-	 * Returns the meta object for the containment reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Component#getSchedule <em>Schedule</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference '<em>Schedule</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.Component#getSchedule()
-	 * @see #getComponent()
-	 * @generated
-	 */
-	EReference getComponent_Schedule();
-
-	/**
 	 * Returns the meta object for the containment reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Component#getProcess <em>Process</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1146,6 +1135,17 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getProcess();
+
+	/**
+	 * Returns the meta object for the containment reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Process#getSchedule <em>Schedule</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference '<em>Schedule</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.Process#getSchedule()
+	 * @see #getProcess()
+	 * @generated
+	 */
+	EReference getProcess_Schedule();
 
 	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter <em>Parameter</em>}'.
@@ -1463,14 +1463,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EClass COMPONENT = eINSTANCE.getComponent();
 
 		/**
-		 * The meta object literal for the '<em><b>Schedule</b></em>' containment reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference COMPONENT__SCHEDULE = eINSTANCE.getComponent_Schedule();
-
-		/**
 		 * The meta object literal for the '<em><b>Process</b></em>' containment reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1557,6 +1549,14 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * @generated
 		 */
 		EClass PROCESS = eINSTANCE.getProcess();
+
+		/**
+		 * The meta object literal for the '<em><b>Schedule</b></em>' containment reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference PROCESS__SCHEDULE = eINSTANCE.getProcess_Schedule();
 
 		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ParameterImpl <em>Parameter</em>}' class.

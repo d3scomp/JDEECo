@@ -43,8 +43,6 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="KnowledgeManager" instanceClassName="cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager"/>
   <eClassifiers xsi:type="ecore:EClass" name="Component">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="schedule" lowerBound="1"
-        eType="#//SchedulingSpecification" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="process" lowerBound="1"
         eType="#//Process" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -60,7 +58,10 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Condition" eSuperTypes="#//Invocable"/>
   <eClassifiers xsi:type="ecore:EClass" name="Exchange" eSuperTypes="#//Invocable"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Process" eSuperTypes="#//Invocable"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Process" eSuperTypes="#//Invocable">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="schedule" lowerBound="1"
+        eType="#//SchedulingSpecification" containment="true"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="ParameterDirection">
     <eLiterals name="IN"/>
     <eLiterals name="OUT" value="1"/>

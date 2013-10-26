@@ -56,7 +56,7 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 		catch (Exception exception) {
 			EcorePlugin.INSTANCE.log(exception);
 		}
-		return new RuntimeMetadataFactoryImpl();
+		return new cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt();
 	}
 
 	/**

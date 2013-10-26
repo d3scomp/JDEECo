@@ -421,7 +421,7 @@
     <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Q1of4D29EeO2QcBZHbiySQ" id="(0.24347826086956523,0.0)"/>
     <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_kmc0cD28EeO2QcBZHbiySQ" id="(0.6645569620253164,1.0)"/>
   </edges>
-  <edges xmi:type="notation:Edge" xmi:id="_oVw-0D28EeO2QcBZHbiySQ" type="3002" source="_S0hq8D28EeO2QcBZHbiySQ" target="_n6RFYDyaEeOBILfoZuXX_w">
+  <edges xmi:type="notation:Edge" xmi:id="_oVw-0D28EeO2QcBZHbiySQ" type="3002" source="_c_NWQD28EeO2QcBZHbiySQ" target="_n6RFYDyaEeOBILfoZuXX_w">
     <children xmi:type="notation:Node" xmi:id="_oVxl4D28EeO2QcBZHbiySQ" type="4011">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_oVxl4T28EeO2QcBZHbiySQ" x="-10" y="-10"/>
     </children>
@@ -430,9 +430,9 @@
     </children>
     <styles xmi:type="notation:ConnectorStyle" xmi:id="_oVw-0T28EeO2QcBZHbiySQ" lineColor="4210752"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_oVw-0j28EeO2QcBZHbiySQ" fontColor="4210752" fontName="Segoe UI" fontHeight="10"/>
-    <element xmi:type="ecore:EReference" href="RuntimeModel.ecore#//Component/schedule"/>
+    <element xmi:type="ecore:EReference" href="RuntimeModel.ecore#//Process/schedule"/>
     <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_oVw-0z28EeO2QcBZHbiySQ" points="[0, 0, 179, 60]$[-179, -60, 0, 0]"/>
-    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Q1qVED29EeO2QcBZHbiySQ" id="(0.33043478260869563,0.0)"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Q1qVED29EeO2QcBZHbiySQ" id="(0.19607843137254902,0.6046511627906976)"/>
     <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_oV0CID28EeO2QcBZHbiySQ" id="(0.3291139240506329,1.0)"/>
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_7efjMD28EeO2QcBZHbiySQ" type="3002" source="_0sUEwD28EeO2QcBZHbiySQ" target="_n6cEgDyaEeOBILfoZuXX_w">

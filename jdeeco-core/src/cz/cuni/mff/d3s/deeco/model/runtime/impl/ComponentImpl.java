@@ -3,7 +3,6 @@
 package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Component;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 
@@ -23,7 +22,6 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentImpl#getSchedule <em>Schedule</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentImpl#getProcess <em>Process</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentImpl#getName <em>Name</em>}</li>
  * </ul>
@@ -32,16 +30,6 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * @generated
  */
 public class ComponentImpl extends MinimalEObjectImpl.Container implements Component {
-	/**
-	 * The cached value of the '{@link #getSchedule() <em>Schedule</em>}' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getSchedule()
-	 * @generated
-	 * @ordered
-	 */
-	protected SchedulingSpecification schedule;
-
 	/**
 	 * The cached value of the '{@link #getProcess() <em>Process</em>}' containment reference.
 	 * <!-- begin-user-doc -->
@@ -89,49 +77,6 @@ public class ComponentImpl extends MinimalEObjectImpl.Container implements Compo
 	@Override
 	protected EClass eStaticClass() {
 		return RuntimeMetadataPackage.Literals.COMPONENT;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public SchedulingSpecification getSchedule() {
-		return schedule;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public NotificationChain basicSetSchedule(SchedulingSpecification newSchedule, NotificationChain msgs) {
-		SchedulingSpecification oldSchedule = schedule;
-		schedule = newSchedule;
-		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT__SCHEDULE, oldSchedule, newSchedule);
-			if (msgs == null) msgs = notification; else msgs.add(notification);
-		}
-		return msgs;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setSchedule(SchedulingSpecification newSchedule) {
-		if (newSchedule != schedule) {
-			NotificationChain msgs = null;
-			if (schedule != null)
-				msgs = ((InternalEObject)schedule).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - RuntimeMetadataPackage.COMPONENT__SCHEDULE, null, msgs);
-			if (newSchedule != null)
-				msgs = ((InternalEObject)newSchedule).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - RuntimeMetadataPackage.COMPONENT__SCHEDULE, null, msgs);
-			msgs = basicSetSchedule(newSchedule, msgs);
-			if (msgs != null) msgs.dispatch();
-		}
-		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT__SCHEDULE, newSchedule, newSchedule));
 	}
 
 	/**
@@ -206,8 +151,6 @@ public class ComponentImpl extends MinimalEObjectImpl.Container implements Compo
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.COMPONENT__SCHEDULE:
-				return basicSetSchedule(null, msgs);
 			case RuntimeMetadataPackage.COMPONENT__PROCESS:
 				return basicSetProcess(null, msgs);
 		}
@@ -222,8 +165,6 @@ public class ComponentImpl extends MinimalEObjectImpl.Container implements Compo
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.COMPONENT__SCHEDULE:
-				return getSchedule();
 			case RuntimeMetadataPackage.COMPONENT__PROCESS:
 				return getProcess();
 			case RuntimeMetadataPackage.COMPONENT__NAME:
@@ -240,9 +181,6 @@ public class ComponentImpl extends MinimalEObjectImpl.Container implements Compo
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.COMPONENT__SCHEDULE:
-				setSchedule((SchedulingSpecification)newValue);
-				return;
 			case RuntimeMetadataPackage.COMPONENT__PROCESS:
 				setProcess((cz.cuni.mff.d3s.deeco.model.runtime.api.Process)newValue);
 				return;
@@ -261,9 +199,6 @@ public class ComponentImpl extends MinimalEObjectImpl.Container implements Compo
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.COMPONENT__SCHEDULE:
-				setSchedule((SchedulingSpecification)null);
-				return;
 			case RuntimeMetadataPackage.COMPONENT__PROCESS:
 				setProcess((cz.cuni.mff.d3s.deeco.model.runtime.api.Process)null);
 				return;
@@ -282,8 +217,6 @@ public class ComponentImpl extends MinimalEObjectImpl.Container implements Compo
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.COMPONENT__SCHEDULE:
-				return schedule != null;
 			case RuntimeMetadataPackage.COMPONENT__PROCESS:
 				return process != null;
 			case RuntimeMetadataPackage.COMPONENT__NAME:
