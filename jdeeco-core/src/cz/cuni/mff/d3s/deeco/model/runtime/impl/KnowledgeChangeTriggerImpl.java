@@ -5,12 +5,10 @@ package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimePackage;
-
+import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
-
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
@@ -57,7 +55,7 @@ public class KnowledgeChangeTriggerImpl extends TriggerImpl implements Knowledge
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return runtimePackage.Literals.KNOWLEDGE_CHANGE_TRIGGER;
+		return RuntimeMetadataPackage.Literals.KNOWLEDGE_CHANGE_TRIGGER;
 	}
 
 	/**
@@ -78,7 +76,7 @@ public class KnowledgeChangeTriggerImpl extends TriggerImpl implements Knowledge
 		KnowledgePath oldKnowledgePath = knowledgePath;
 		knowledgePath = newKnowledgePath;
 		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, runtimePackage.KNOWLEDGE_CHANGE_TRIGGER__KNOWLEDGE_PATH, oldKnowledgePath, newKnowledgePath);
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.KNOWLEDGE_CHANGE_TRIGGER__KNOWLEDGE_PATH, oldKnowledgePath, newKnowledgePath);
 			if (msgs == null) msgs = notification; else msgs.add(notification);
 		}
 		return msgs;
@@ -93,14 +91,14 @@ public class KnowledgeChangeTriggerImpl extends TriggerImpl implements Knowledge
 		if (newKnowledgePath != knowledgePath) {
 			NotificationChain msgs = null;
 			if (knowledgePath != null)
-				msgs = ((InternalEObject)knowledgePath).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - runtimePackage.KNOWLEDGE_CHANGE_TRIGGER__KNOWLEDGE_PATH, null, msgs);
+				msgs = ((InternalEObject)knowledgePath).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - RuntimeMetadataPackage.KNOWLEDGE_CHANGE_TRIGGER__KNOWLEDGE_PATH, null, msgs);
 			if (newKnowledgePath != null)
-				msgs = ((InternalEObject)newKnowledgePath).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - runtimePackage.KNOWLEDGE_CHANGE_TRIGGER__KNOWLEDGE_PATH, null, msgs);
+				msgs = ((InternalEObject)newKnowledgePath).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - RuntimeMetadataPackage.KNOWLEDGE_CHANGE_TRIGGER__KNOWLEDGE_PATH, null, msgs);
 			msgs = basicSetKnowledgePath(newKnowledgePath, msgs);
 			if (msgs != null) msgs.dispatch();
 		}
 		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, runtimePackage.KNOWLEDGE_CHANGE_TRIGGER__KNOWLEDGE_PATH, newKnowledgePath, newKnowledgePath));
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.KNOWLEDGE_CHANGE_TRIGGER__KNOWLEDGE_PATH, newKnowledgePath, newKnowledgePath));
 	}
 
 	/**
@@ -111,7 +109,7 @@ public class KnowledgeChangeTriggerImpl extends TriggerImpl implements Knowledge
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case runtimePackage.KNOWLEDGE_CHANGE_TRIGGER__KNOWLEDGE_PATH:
+			case RuntimeMetadataPackage.KNOWLEDGE_CHANGE_TRIGGER__KNOWLEDGE_PATH:
 				return basicSetKnowledgePath(null, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -125,7 +123,7 @@ public class KnowledgeChangeTriggerImpl extends TriggerImpl implements Knowledge
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case runtimePackage.KNOWLEDGE_CHANGE_TRIGGER__KNOWLEDGE_PATH:
+			case RuntimeMetadataPackage.KNOWLEDGE_CHANGE_TRIGGER__KNOWLEDGE_PATH:
 				return getKnowledgePath();
 		}
 		return super.eGet(featureID, resolve, coreType);
@@ -136,11 +134,10 @@ public class KnowledgeChangeTriggerImpl extends TriggerImpl implements Knowledge
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case runtimePackage.KNOWLEDGE_CHANGE_TRIGGER__KNOWLEDGE_PATH:
+			case RuntimeMetadataPackage.KNOWLEDGE_CHANGE_TRIGGER__KNOWLEDGE_PATH:
 				setKnowledgePath((KnowledgePath)newValue);
 				return;
 		}
@@ -155,7 +152,7 @@ public class KnowledgeChangeTriggerImpl extends TriggerImpl implements Knowledge
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case runtimePackage.KNOWLEDGE_CHANGE_TRIGGER__KNOWLEDGE_PATH:
+			case RuntimeMetadataPackage.KNOWLEDGE_CHANGE_TRIGGER__KNOWLEDGE_PATH:
 				setKnowledgePath((KnowledgePath)null);
 				return;
 		}
@@ -170,7 +167,7 @@ public class KnowledgeChangeTriggerImpl extends TriggerImpl implements Knowledge
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case runtimePackage.KNOWLEDGE_CHANGE_TRIGGER__KNOWLEDGE_PATH:
+			case RuntimeMetadataPackage.KNOWLEDGE_CHANGE_TRIGGER__KNOWLEDGE_PATH:
 				return knowledgePath != null;
 		}
 		return super.eIsSet(featureID);

@@ -15,7 +15,7 @@ package cz.cuni.mff.d3s.deeco.model.runtime.api;
  * </ul>
  * </p>
  *
- * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimePackage#getKnowledgeChangeTrigger()
+ * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getKnowledgeChangeTrigger()
  * @model
  * @generated
  */
@@ -24,13 +24,13 @@ public interface KnowledgeChangeTrigger extends Trigger {
 	 * Returns the value of the '<em><b>Knowledge Path</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Knowledge Path</em>' containment reference list isn't clear,
+	 * If the meaning of the '<em>Knowledge Path</em>' containment reference isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Knowledge Path</em>' containment reference.
 	 * @see #setKnowledgePath(KnowledgePath)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimePackage#getKnowledgeChangeTrigger_KnowledgePath()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getKnowledgeChangeTrigger_KnowledgePath()
 	 * @model containment="true" required="true"
 	 * @generated
 	 */

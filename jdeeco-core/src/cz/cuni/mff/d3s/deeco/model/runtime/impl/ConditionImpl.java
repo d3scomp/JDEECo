@@ -2,30 +2,28 @@
  */
 package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.Condition;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 
 import org.eclipse.emf.ecore.EClass;
 
-import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
-
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Trigger</b></em>'.
+ * An implementation of the model object '<em><b>Condition</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * </p>
  *
  * @generated
  */
-public abstract class TriggerImpl extends MinimalEObjectImpl.Container implements Trigger {
+public class ConditionImpl extends InvocableImpl implements Condition {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected TriggerImpl() {
+	protected ConditionImpl() {
 		super();
 	}
 
@@ -36,7 +34,7 @@ public abstract class TriggerImpl extends MinimalEObjectImpl.Container implement
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return RuntimeMetadataPackage.Literals.TRIGGER;
+		return RuntimeMetadataPackage.Literals.CONDITION;
 	}
 
-} //TriggerImpl
+} //ConditionImpl
