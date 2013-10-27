@@ -1,32 +1,36 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
+/**
+ * KnowledgeManager testing.
+ * The test check the correctness of adding a new value or changing the value of existing
+ * KnowledgeReference. Also, it checks if the values are deleted in correct way.    
+ * 
+ * @author Rima Al Ali <alali@d3s.mff.cuni.cz>
+ *
+ */
+
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeSet.KnowledgeValue;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 
 public class KnowledgeManagerTest {
 	
 	@Mock
 	private List<KnowledgeReference> knowledgeReferenceList;
 	@Mock
-	private Trigger trigger;
-	@Mock
-	private KnowledgeReference knowledgeReferenceObj;
-
 	private ChangeSet changeSet;
+	
 	private KnowledgeManager knowledgeManager;
 
 	
@@ -39,58 +43,30 @@ public class KnowledgeManagerTest {
 
 
 	@Test
-	@Ignore
 	public void testUpdate() {
-		// Specify behavior for mock objects
-		// Can we define something more specific than just Object for this return type, it seems to broad.
+		// Define a Collection of the new/updated values 
+		KnowledgeReference knowledgeReferenceUpdate = mock(KnowledgeReference.class);
+		Collection<KnowledgeReference> colUpdate= new LinkedList<KnowledgeReference>();
+		colUpdate.add(knowledgeReferenceUpdate);
+		// Define the Collection of the deleted values 
+		KnowledgeReference knowledgeReferenceDelete = mock(KnowledgeReference.class);
+		Collection<KnowledgeReference> colDelete= new LinkedList<KnowledgeReference>();
+		colDelete.add(knowledgeReferenceDelete);
 		
+		// Define the behavior of the "changeSet"
+		// which has inside it a KnowledgeSet that saves both previous collections.
+		when(changeSet.getUpdatedReferences()).thenReturn(colUpdate);
+		when(changeSet.getDeletedReferences()).thenReturn(colDelete);
+		when(changeSet.getValue(knowledgeReferenceUpdate)).thenReturn("1");
+		when(changeSet.getValue(knowledgeReferenceDelete)).thenReturn(KnowledgeValue.EMPTY);
+		
+		// execute the update method in KnowledgeManager
 		knowledgeManager.update(changeSet);
 
-		Object obj=new Object();
-		assertEquals(0, changeSet.getUpdatedReferences().size());
-		changeSet.setValue(knowledgeReferenceObj, obj);
-		assertNotNull(changeSet.getUpdatedReferences());
-		assertEquals(1, changeSet.getUpdatedReferences().size());
-		assertEquals(true, changeSet.getUpdatedReferences().contains(knowledgeReferenceObj));
-
-		assertEquals(0, changeSet.getDeletedReferences().size());
-		changeSet.setDeleted(knowledgeReferenceObj);
-		assertNotNull(changeSet.getDeletedReferences());
-		assertEquals(1, changeSet.getDeletedReferences().size());
-		assertEquals(true, changeSet.getDeletedReferences().contains(knowledgeReferenceObj));
-	
-		verifyNoMoreInteractions(knowledgeReferenceObj);
+		// Check if the KnowledgeSet in the changeSet is updated with the new changes (add/update/delete) 
+		assertEquals(true, changeSet.getUpdatedReferences().contains(knowledgeReferenceUpdate));
+		assertEquals(true, changeSet.getDeletedReferences().contains(knowledgeReferenceDelete));
+		
 	}
 	
-	
-	@Test
-	@Ignore
-	public void testGet() {
-		
-		knowledgeReferenceList.add(knowledgeReferenceObj);
-		
-		changeSet.setValue(knowledgeReferenceObj, "1");
-		knowledgeManager.update(changeSet);
-		assertNotNull(knowledgeManager.get(knowledgeReferenceList));
-		assertEquals("1", knowledgeManager.get(knowledgeReferenceList).getValue(knowledgeReferenceObj));
-			
-		changeSet.setValue(knowledgeReferenceObj, KnowledgeValue.EMPTY);
-		knowledgeManager.update(changeSet);
-		assertEquals(KnowledgeValue.EMPTY, knowledgeManager.get(knowledgeReferenceList).getValue(knowledgeReferenceObj));
-		
-		changeSet.setDeleted(knowledgeReferenceObj);
-		assertNull(knowledgeManager.get(knowledgeReferenceList).getValue(knowledgeReferenceObj));
-		
-		verifyNoMoreInteractions(knowledgeReferenceObj);
-		verifyNoMoreInteractions(knowledgeReferenceList);
-}
-	
-	@Test
-	@Ignore
-	public void testRegister() {
-		
-		knowledgeManager.register(trigger);
-		verifyNoMoreInteractions(trigger);
-	}
-
 }

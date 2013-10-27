@@ -1,14 +1,15 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
+/**
+ * This class allows the user to deal with KnowledgeSet from three perspectives:
+ * 1- reading the values from the KnowledgeSet. ( from ReadOnlyKnowledgeManager )
+ * 2- associating the registers with their tirggerListeners. ( from ReadOnlyKnowledgeManager )
+ * 3- adding new value or updating the existing ones.
+ * 
+ * @author Rima Al Ali <alali@d3s.mff.cuni.cz>
+ *
+ */
 
-import java.util.List;
+public interface KnowledgeManager extends ReadOnlyKnowledgeManager {
 
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
-
-public interface KnowledgeManager {
-	//XXX: MK: I changed the list to single KnowledgeReference for clarity
-	//FIXME: TB: This is not a good idea, the list of references was there on purpose - because of being able to atomically retrieve a valueset
-	//FIXED: MK: I understand now.
-	ValueSet get(List<KnowledgeReference> knowledgeReference);
-	void update(ChangeSet changeSet);
- 	void register(Trigger trigger);
+	void update( ChangeSet changeSet);  
 }
