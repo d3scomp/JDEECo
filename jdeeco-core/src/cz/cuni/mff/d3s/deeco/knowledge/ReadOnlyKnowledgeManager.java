@@ -14,5 +14,5 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 public interface ReadOnlyKnowledgeManager {
 
 	public ValueSet get(Collection<KnowledgeReference> knowledgeReferenceList);
-	public void register(Trigger trigger, TriggerListenerTest triggerListener);
+	public void register(Trigger trigger, TriggerListener triggerListener);
 }

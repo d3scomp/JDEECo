@@ -12,7 +12,7 @@ public class ReadOnlyKnowledgeManagerImpl implements ReadOnlyKnowledgeManager{
 	}
 
 	@Override
-	public void register(Trigger trigger, TriggerListenerTest triggerListener) {
+	public void register(Trigger trigger, TriggerListener triggerListener) {
 	}
 
 }

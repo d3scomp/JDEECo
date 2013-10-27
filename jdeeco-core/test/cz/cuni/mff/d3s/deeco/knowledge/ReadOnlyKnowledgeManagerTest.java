@@ -31,7 +31,7 @@ public class ReadOnlyKnowledgeManagerTest {
 	@Mock
 	private Trigger trigger;
 	@Mock
-	private TriggerListenerTest triggerListener;
+	private TriggerListener triggerListener;
 	@Mock
 	private ValueSet valueSet;
 	@Mock
