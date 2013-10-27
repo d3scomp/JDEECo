@@ -1,6 +1,6 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 /**
- * KnowledgeManager testing.
+ * ReadOnlyKnowledgeManager testing.
  * 
  * @author Rima Al Ali <alali@d3s.mff.cuni.cz>
  *
