@@ -7,6 +7,7 @@ package cz.cuni.mff.d3s.deeco.knowledge;
  *
  */
 import java.util.Collection;
+import java.util.LinkedList;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.task.TriggerListener;

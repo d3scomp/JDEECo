@@ -11,10 +11,8 @@ import java.util.LinkedList;
 
 public interface KnowledgeManagerRegistry {
 
-	Collection<ReadOnlyKnowledgeManager> knowledgeManagers= new LinkedList<ReadOnlyKnowledgeManager>();
-	
-	public void createLocal(KnowledgeManager km); 
-	public void createShadow(KnowledgeManager km);
+	public void createLocal(); 
+	public void createShadow();
 	public void removeLocal(KnowledgeManager km);
 	public void removeShadow(KnowledgeManager km);
 	public Collection<KnowledgeManager> getLocals();
