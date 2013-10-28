@@ -29,7 +29,6 @@ import org.mockito.MockitoAnnotations;
 
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeSet.KnowledgeValue;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
-import cz.cuni.mff.d3s.deeco.task.TriggerListener;
 
 
 public class ReadOnlyKnowledgeManagerTest {
