@@ -9,6 +9,8 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Condition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Ensemble;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Exchange;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceEnsemblingController;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Invocable;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
@@ -91,6 +93,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 			case RuntimeMetadataPackage.PROCESS: return createProcess();
 			case RuntimeMetadataPackage.PARAMETER: return createParameter();
 			case RuntimeMetadataPackage.INVOCABLE: return createInvocable();
+			case RuntimeMetadataPackage.INSTANCE_PROCESS: return createInstanceProcess();
+			case RuntimeMetadataPackage.INSTANCE_ENSEMBLING_CONTROLLER: return createInstanceEnsemblingController();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -110,6 +114,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 				return createMethodFromString(eDataType, initialValue);
 			case RuntimeMetadataPackage.KNOWLEDGE_MANAGER:
 				return createKnowledgeManagerFromString(eDataType, initialValue);
+			case RuntimeMetadataPackage.OTHER_KNOWLEDGE_MANAGERS_ACCESS:
+				return createOtherKnowledgeManagersAccessFromString(eDataType, initialValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -129,6 +135,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 				return convertMethodToString(eDataType, instanceValue);
 			case RuntimeMetadataPackage.KNOWLEDGE_MANAGER:
 				return convertKnowledgeManagerToString(eDataType, instanceValue);
+			case RuntimeMetadataPackage.OTHER_KNOWLEDGE_MANAGERS_ACCESS:
+				return convertOtherKnowledgeManagersAccessToString(eDataType, instanceValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -279,6 +287,26 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public InstanceProcess createInstanceProcess() {
+		InstanceProcessImpl instanceProcess = new InstanceProcessImpl();
+		return instanceProcess;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public InstanceEnsemblingController createInstanceEnsemblingController() {
+		InstanceEnsemblingControllerImpl instanceEnsemblingController = new InstanceEnsemblingControllerImpl();
+		return instanceEnsemblingController;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public ParameterDirection createParameterDirectionFromString(EDataType eDataType, String initialValue) {
 		ParameterDirection result = ParameterDirection.get(initialValue);
 		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
@@ -327,6 +355,24 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * @generated
 	 */
 	public String convertKnowledgeManagerToString(EDataType eDataType, Object instanceValue) {
+		return super.convertToString(eDataType, instanceValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Object createOtherKnowledgeManagersAccessFromString(EDataType eDataType, String initialValue) {
+		return super.createFromString(eDataType, initialValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertOtherKnowledgeManagersAccessToString(EDataType eDataType, Object instanceValue) {
 		return super.convertToString(eDataType, instanceValue);
 	}
 

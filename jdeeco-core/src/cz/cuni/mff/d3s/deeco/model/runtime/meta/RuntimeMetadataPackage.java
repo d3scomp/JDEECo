@@ -401,13 +401,40 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int COMPONENT_INSTANCE__KNOWLEDGE_MANAGER = 2;
 
 	/**
+	 * The feature id for the '<em><b>Other Knowledge Managers Access</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPONENT_INSTANCE__OTHER_KNOWLEDGE_MANAGERS_ACCESS = 3;
+
+	/**
+	 * The feature id for the '<em><b>Processes</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPONENT_INSTANCE__PROCESSES = 4;
+
+	/**
+	 * The feature id for the '<em><b>Ensembling Controllers</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPONENT_INSTANCE__ENSEMBLING_CONTROLLERS = 5;
+
+	/**
 	 * The number of structural features of the '<em>Component Instance</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_INSTANCE_FEATURE_COUNT = 3;
+	int COMPONENT_INSTANCE_FEATURE_COUNT = 6;
 
 	/**
 	 * The number of operations of the '<em>Component Instance</em>' class.
@@ -777,6 +804,98 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int PARAMETER_OPERATION_COUNT = 0;
 
 	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.InstanceProcessImpl <em>Instance Process</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.InstanceProcessImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getInstanceProcess()
+	 * @generated
+	 */
+	int INSTANCE_PROCESS = 16;
+
+	/**
+	 * The feature id for the '<em><b>Component Instance</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INSTANCE_PROCESS__COMPONENT_INSTANCE = 0;
+
+	/**
+	 * The feature id for the '<em><b>Process</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INSTANCE_PROCESS__PROCESS = 1;
+
+	/**
+	 * The number of structural features of the '<em>Instance Process</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INSTANCE_PROCESS_FEATURE_COUNT = 2;
+
+	/**
+	 * The number of operations of the '<em>Instance Process</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INSTANCE_PROCESS_OPERATION_COUNT = 0;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.InstanceEnsemblingControllerImpl <em>Instance Ensembling Controller</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.InstanceEnsemblingControllerImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getInstanceEnsemblingController()
+	 * @generated
+	 */
+	int INSTANCE_ENSEMBLING_CONTROLLER = 17;
+
+	/**
+	 * The feature id for the '<em><b>Component Instance</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INSTANCE_ENSEMBLING_CONTROLLER__COMPONENT_INSTANCE = 0;
+
+	/**
+	 * The feature id for the '<em><b>Ensemble</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INSTANCE_ENSEMBLING_CONTROLLER__ENSEMBLE = 1;
+
+	/**
+	 * The number of structural features of the '<em>Instance Ensembling Controller</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INSTANCE_ENSEMBLING_CONTROLLER_FEATURE_COUNT = 2;
+
+	/**
+	 * The number of operations of the '<em>Instance Ensembling Controller</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INSTANCE_ENSEMBLING_CONTROLLER_OPERATION_COUNT = 0;
+
+	/**
 	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection <em>Parameter Direction</em>}' enum.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -784,7 +903,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getParameterDirection()
 	 * @generated
 	 */
-	int PARAMETER_DIRECTION = 16;
+	int PARAMETER_DIRECTION = 18;
 
 	/**
 	 * The meta object id for the '<em>Method</em>' data type.
@@ -794,7 +913,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getMethod()
 	 * @generated
 	 */
-	int METHOD = 17;
+	int METHOD = 19;
 
 	/**
 	 * The meta object id for the '<em>Knowledge Manager</em>' data type.
@@ -804,7 +923,18 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getKnowledgeManager()
 	 * @generated
 	 */
-	int KNOWLEDGE_MANAGER = 18;
+	int KNOWLEDGE_MANAGER = 20;
+
+
+	/**
+	 * The meta object id for the '<em>Other Knowledge Managers Access</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see java.lang.Object
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getOtherKnowledgeManagersAccess()
+	 * @generated
+	 */
+	int OTHER_KNOWLEDGE_MANAGERS_ACCESS = 21;
 
 
 	/**
@@ -1030,6 +1160,39 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EAttribute getComponentInstance_KnowledgeManager();
 
 	/**
+	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getOtherKnowledgeManagersAccess <em>Other Knowledge Managers Access</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Other Knowledge Managers Access</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getOtherKnowledgeManagersAccess()
+	 * @see #getComponentInstance()
+	 * @generated
+	 */
+	EAttribute getComponentInstance_OtherKnowledgeManagersAccess();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getProcesses <em>Processes</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Processes</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getProcesses()
+	 * @see #getComponentInstance()
+	 * @generated
+	 */
+	EReference getComponentInstance_Processes();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getEnsemblingControllers <em>Ensembling Controllers</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Ensembling Controllers</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getEnsemblingControllers()
+	 * @see #getComponentInstance()
+	 * @generated
+	 */
+	EReference getComponentInstance_EnsemblingControllers();
+
+	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Component <em>Component</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1232,6 +1395,70 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EAttribute getInvocable_Method();
 
 	/**
+	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceProcess <em>Instance Process</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Instance Process</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceProcess
+	 * @generated
+	 */
+	EClass getInstanceProcess();
+
+	/**
+	 * Returns the meta object for the container reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceProcess#getComponentInstance <em>Component Instance</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the container reference '<em>Component Instance</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceProcess#getComponentInstance()
+	 * @see #getInstanceProcess()
+	 * @generated
+	 */
+	EReference getInstanceProcess_ComponentInstance();
+
+	/**
+	 * Returns the meta object for the reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceProcess#getProcess <em>Process</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Process</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceProcess#getProcess()
+	 * @see #getInstanceProcess()
+	 * @generated
+	 */
+	EReference getInstanceProcess_Process();
+
+	/**
+	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceEnsemblingController <em>Instance Ensembling Controller</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Instance Ensembling Controller</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceEnsemblingController
+	 * @generated
+	 */
+	EClass getInstanceEnsemblingController();
+
+	/**
+	 * Returns the meta object for the container reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceEnsemblingController#getComponentInstance <em>Component Instance</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the container reference '<em>Component Instance</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceEnsemblingController#getComponentInstance()
+	 * @see #getInstanceEnsemblingController()
+	 * @generated
+	 */
+	EReference getInstanceEnsemblingController_ComponentInstance();
+
+	/**
+	 * Returns the meta object for the reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceEnsemblingController#getEnsemble <em>Ensemble</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Ensemble</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceEnsemblingController#getEnsemble()
+	 * @see #getInstanceEnsemblingController()
+	 * @generated
+	 */
+	EReference getInstanceEnsemblingController_Ensemble();
+
+	/**
 	 * Returns the meta object for enum '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection <em>Parameter Direction</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1262,6 +1489,17 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 */
 	EDataType getKnowledgeManager();
+
+	/**
+	 * Returns the meta object for data type '{@link java.lang.Object <em>Other Knowledge Managers Access</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>Other Knowledge Managers Access</em>'.
+	 * @see java.lang.Object
+	 * @model instanceClass="java.lang.Object"
+	 * @generated
+	 */
+	EDataType getOtherKnowledgeManagersAccess();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -1473,6 +1711,30 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EAttribute COMPONENT_INSTANCE__KNOWLEDGE_MANAGER = eINSTANCE.getComponentInstance_KnowledgeManager();
 
 		/**
+		 * The meta object literal for the '<em><b>Other Knowledge Managers Access</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute COMPONENT_INSTANCE__OTHER_KNOWLEDGE_MANAGERS_ACCESS = eINSTANCE.getComponentInstance_OtherKnowledgeManagersAccess();
+
+		/**
+		 * The meta object literal for the '<em><b>Processes</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference COMPONENT_INSTANCE__PROCESSES = eINSTANCE.getComponentInstance_Processes();
+
+		/**
+		 * The meta object literal for the '<em><b>Ensembling Controllers</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference COMPONENT_INSTANCE__ENSEMBLING_CONTROLLERS = eINSTANCE.getComponentInstance_EnsemblingControllers();
+
+		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentImpl <em>Component</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1639,6 +1901,58 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EAttribute INVOCABLE__METHOD = eINSTANCE.getInvocable_Method();
 
 		/**
+		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.InstanceProcessImpl <em>Instance Process</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.InstanceProcessImpl
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getInstanceProcess()
+		 * @generated
+		 */
+		EClass INSTANCE_PROCESS = eINSTANCE.getInstanceProcess();
+
+		/**
+		 * The meta object literal for the '<em><b>Component Instance</b></em>' container reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference INSTANCE_PROCESS__COMPONENT_INSTANCE = eINSTANCE.getInstanceProcess_ComponentInstance();
+
+		/**
+		 * The meta object literal for the '<em><b>Process</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference INSTANCE_PROCESS__PROCESS = eINSTANCE.getInstanceProcess_Process();
+
+		/**
+		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.InstanceEnsemblingControllerImpl <em>Instance Ensembling Controller</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.InstanceEnsemblingControllerImpl
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getInstanceEnsemblingController()
+		 * @generated
+		 */
+		EClass INSTANCE_ENSEMBLING_CONTROLLER = eINSTANCE.getInstanceEnsemblingController();
+
+		/**
+		 * The meta object literal for the '<em><b>Component Instance</b></em>' container reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference INSTANCE_ENSEMBLING_CONTROLLER__COMPONENT_INSTANCE = eINSTANCE.getInstanceEnsemblingController_ComponentInstance();
+
+		/**
+		 * The meta object literal for the '<em><b>Ensemble</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference INSTANCE_ENSEMBLING_CONTROLLER__ENSEMBLE = eINSTANCE.getInstanceEnsemblingController_Ensemble();
+
+		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection <em>Parameter Direction</em>}' enum.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1667,6 +1981,16 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * @generated
 		 */
 		EDataType KNOWLEDGE_MANAGER = eINSTANCE.getKnowledgeManager();
+
+		/**
+		 * The meta object literal for the '<em>Other Knowledge Managers Access</em>' data type.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see java.lang.Object
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getOtherKnowledgeManagersAccess()
+		 * @generated
+		 */
+		EDataType OTHER_KNOWLEDGE_MANAGERS_ACCESS = eINSTANCE.getOtherKnowledgeManagersAccess();
 
 	}
 

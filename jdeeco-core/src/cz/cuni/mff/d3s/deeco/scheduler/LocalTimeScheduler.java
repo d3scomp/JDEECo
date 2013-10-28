@@ -15,7 +15,7 @@ import java.util.TimerTask;
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.task.Task;
-import cz.cuni.mff.d3s.deeco.task.TriggerListener;
+import cz.cuni.mff.d3s.deeco.task.NotificationsForScheduler;
 
 public class LocalTimeScheduler implements Scheduler{
 	Map<Task, TaskInfo> tasks;
@@ -102,10 +102,9 @@ public class LocalTimeScheduler implements Scheduler{
 	
 	private void startTask(final Task task) {
 		TaskInfo ti = tasks.get(task);
-		task.registerTriggers(new TriggerListener() {
-			
+		task.setSchedulingNotificationTarget(new NotificationsForScheduler() { // FIXME: TB: It is an overkill to instantiate this for each task since the task now passes itself as a parameter.
 			@Override
-			public void triggered(Trigger trigger) {
+			public void triggered(Task task) {
 				taskTriggerFired(task);
 			}
 		});
@@ -116,7 +115,7 @@ public class LocalTimeScheduler implements Scheduler{
 			public void run() {
 				taskTimerFired(task);				
 			}
-		}, 0, task.getSchedulingSpecification().getPeriod());
+		}, 0, task.getSchedulingPeriod()); // FIXME: TB: What about if scheduling period == 0, which probably means that we do not schedule periodically?
 		
 	}
 	
@@ -149,7 +148,7 @@ public class LocalTimeScheduler implements Scheduler{
 			public void run() {
 				taskTimerFired(task);				
 			}
-		}, 0, task.getSchedulingSpecification().getPeriod());
+		}, 0, task.getSchedulingPeriod()); // FIXME: What about if scheduling period == 0, which probably means that we do not schedule periodically?
 		
 		ti.state = States.RUNNING;
 		executor.execute(task);

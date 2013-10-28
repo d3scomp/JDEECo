@@ -4,6 +4,7 @@ package cz.cuni.mff.d3s.deeco.model.runtime.api;
 
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -17,6 +18,9 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getId <em>Id</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getComponent <em>Component</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getKnowledgeManager <em>Knowledge Manager</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getOtherKnowledgeManagersAccess <em>Other Knowledge Managers Access</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getProcesses <em>Processes</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getEnsemblingControllers <em>Ensembling Controllers</em>}</li>
  * </ul>
  * </p>
  *
@@ -102,5 +106,67 @@ public interface ComponentInstance extends EObject {
 	 * @generated
 	 */
 	void setKnowledgeManager(KnowledgeManager value);
+
+	/**
+	 * Returns the value of the '<em><b>Other Knowledge Managers Access</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Other Knowledge Managers Access</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Other Knowledge Managers Access</em>' attribute.
+	 * @see #setOtherKnowledgeManagersAccess(Object)
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance_OtherKnowledgeManagersAccess()
+	 * @model dataType="cz.cuni.mff.d3s.deeco.model.runtime.api.OtherKnowledgeManagersAccess" required="true"
+	 * @generated
+	 */
+	Object getOtherKnowledgeManagersAccess();
+
+	/**
+	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getOtherKnowledgeManagersAccess <em>Other Knowledge Managers Access</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Other Knowledge Managers Access</em>' attribute.
+	 * @see #getOtherKnowledgeManagersAccess()
+	 * @generated
+	 */
+	void setOtherKnowledgeManagersAccess(Object value);
+
+	/**
+	 * Returns the value of the '<em><b>Processes</b></em>' containment reference list.
+	 * The list contents are of type {@link cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceProcess}.
+	 * It is bidirectional and its opposite is '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceProcess#getComponentInstance <em>Component Instance</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Processes</em>' containment reference list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Processes</em>' containment reference list.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance_Processes()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceProcess#getComponentInstance
+	 * @model opposite="componentInstance" containment="true"
+	 * @generated
+	 */
+	EList<InstanceProcess> getProcesses();
+
+	/**
+	 * Returns the value of the '<em><b>Ensembling Controllers</b></em>' containment reference list.
+	 * The list contents are of type {@link cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceEnsemblingController}.
+	 * It is bidirectional and its opposite is '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceEnsemblingController#getComponentInstance <em>Component Instance</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Ensembling Controllers</em>' containment reference list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Ensembling Controllers</em>' containment reference list.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance_EnsemblingControllers()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceEnsemblingController#getComponentInstance
+	 * @model opposite="componentInstance" containment="true"
+	 * @generated
+	 */
+	EList<InstanceEnsemblingController> getEnsemblingControllers();
 
 } // ComponentInstance

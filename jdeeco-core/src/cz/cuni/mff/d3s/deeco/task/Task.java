@@ -1,32 +1,29 @@
 package cz.cuni.mff.d3s.deeco.task;
 
-import java.util.List;
-
-import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeReference;
-import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification;
 
 /**
  * 
  * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
+ * @author Tomas Bures <bures@d3s.mff.cuni.cz>
  * 
  */
 public abstract class Task {
 	
 	SchedulingSpecification schedulingSpecification;
+	NotificationsForScheduler listener;
 
-	public Task(SchedulingSpecification schedulingSpecification){
+	public Task(SchedulingSpecification schedulingSpecification) {
 		this.schedulingSpecification = schedulingSpecification;
 	}
 		
-	public abstract ChangeSet invoke(ValueSet values);
+	public abstract void invoke();
 
-	public abstract List<KnowledgeReference> getInputReferences();
-
-	public SchedulingSpecification getSchedulingSpecification(){
-		return schedulingSpecification;
+	public void setSchedulingNotificationTarget(NotificationsForScheduler listener) {
+		this.listener = listener;
 	}
-
-	public abstract void registerTriggers(TriggerListener triggerListener);
+	
+	public long getSchedulingPeriod() {
+		return schedulingSpecification.getPeriod();
+	}
 }

@@ -1,33 +1,21 @@
 package cz.cuni.mff.d3s.deeco.task;
 
-import java.util.List;
-
-import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeReference;
-import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceProcess;
 
 public class ProcessTask extends Task {
-
-	public ProcessTask(SchedulingSpecification schedulingSpecification) {
-		super(schedulingSpecification);
+	
+	InstanceProcess process;
+	
+	public ProcessTask(InstanceProcess process) {
+		super(process.getProcess().getSchedule());
 	}
 
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.task.Task#invoke()
+	 */
 	@Override
-	public ChangeSet invoke(ValueSet values) {
+	public void invoke() {
 		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<KnowledgeReference> getInputReferences() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void registerTriggers(TriggerListener triggerListener) {
-		// TODO Auto-generated method stub
-
+		
 	}
 }

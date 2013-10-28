@@ -40,6 +40,13 @@
         eType="#//Component"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="knowledgeManager" lowerBound="1"
         eType="#//KnowledgeManager"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="otherKnowledgeManagersAccess"
+        lowerBound="1" eType="#//OtherKnowledgeManagersAccess"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="processes" upperBound="-1"
+        eType="#//InstanceProcess" containment="true" eOpposite="#//InstanceProcess/componentInstance"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ensemblingControllers"
+        upperBound="-1" eType="#//InstanceEnsemblingController" containment="true"
+        eOpposite="#//InstanceEnsemblingController/componentInstance"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="KnowledgeManager" instanceClassName="cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager"/>
   <eClassifiers xsi:type="ecore:EClass" name="Component">
@@ -78,5 +85,18 @@
         eType="#//Parameter" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="method" lowerBound="1"
         eType="#//Method"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="OtherKnowledgeManagersAccess" instanceClassName="java.lang.Object"/>
+  <eClassifiers xsi:type="ecore:EClass" name="InstanceProcess">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="componentInstance" lowerBound="1"
+        eType="#//ComponentInstance" eOpposite="#//ComponentInstance/processes"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="process" lowerBound="1"
+        eType="#//Process"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="InstanceEnsemblingController">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="componentInstance" lowerBound="1"
+        eType="#//ComponentInstance" eOpposite="#//ComponentInstance/ensemblingControllers"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ensemble" lowerBound="1"
+        eType="#//Ensemble"/>
   </eClassifiers>
 </ecore:EPackage>

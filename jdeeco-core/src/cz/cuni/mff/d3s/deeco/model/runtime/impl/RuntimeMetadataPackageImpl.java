@@ -9,6 +9,8 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Condition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Ensemble;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Exchange;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceEnsemblingController;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Invocable;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
@@ -159,6 +161,20 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	private EClass instanceProcessEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass instanceEnsemblingControllerEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	private EEnum parameterDirectionEEnum = null;
 
 	/**
@@ -174,6 +190,13 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * @generated
 	 */
 	private EDataType knowledgeManagerEDataType = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType otherKnowledgeManagersAccessEDataType = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -430,6 +453,33 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getComponentInstance_OtherKnowledgeManagersAccess() {
+		return (EAttribute)componentInstanceEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getComponentInstance_Processes() {
+		return (EReference)componentInstanceEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getComponentInstance_EnsemblingControllers() {
+		return (EReference)componentInstanceEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getComponent() {
 		return componentEClass;
 	}
@@ -601,6 +651,60 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getInstanceProcess() {
+		return instanceProcessEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getInstanceProcess_ComponentInstance() {
+		return (EReference)instanceProcessEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getInstanceProcess_Process() {
+		return (EReference)instanceProcessEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getInstanceEnsemblingController() {
+		return instanceEnsemblingControllerEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getInstanceEnsemblingController_ComponentInstance() {
+		return (EReference)instanceEnsemblingControllerEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getInstanceEnsemblingController_Ensemble() {
+		return (EReference)instanceEnsemblingControllerEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EEnum getParameterDirection() {
 		return parameterDirectionEEnum;
 	}
@@ -621,6 +725,15 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 */
 	public EDataType getKnowledgeManager() {
 		return knowledgeManagerEDataType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EDataType getOtherKnowledgeManagersAccess() {
+		return otherKnowledgeManagersAccessEDataType;
 	}
 
 	/**
@@ -680,6 +793,9 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		createEAttribute(componentInstanceEClass, COMPONENT_INSTANCE__ID);
 		createEReference(componentInstanceEClass, COMPONENT_INSTANCE__COMPONENT);
 		createEAttribute(componentInstanceEClass, COMPONENT_INSTANCE__KNOWLEDGE_MANAGER);
+		createEAttribute(componentInstanceEClass, COMPONENT_INSTANCE__OTHER_KNOWLEDGE_MANAGERS_ACCESS);
+		createEReference(componentInstanceEClass, COMPONENT_INSTANCE__PROCESSES);
+		createEReference(componentInstanceEClass, COMPONENT_INSTANCE__ENSEMBLING_CONTROLLERS);
 
 		componentEClass = createEClass(COMPONENT);
 		createEReference(componentEClass, COMPONENT__PROCESSES);
@@ -707,12 +823,21 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		createEReference(invocableEClass, INVOCABLE__PARAMETERS);
 		createEAttribute(invocableEClass, INVOCABLE__METHOD);
 
+		instanceProcessEClass = createEClass(INSTANCE_PROCESS);
+		createEReference(instanceProcessEClass, INSTANCE_PROCESS__COMPONENT_INSTANCE);
+		createEReference(instanceProcessEClass, INSTANCE_PROCESS__PROCESS);
+
+		instanceEnsemblingControllerEClass = createEClass(INSTANCE_ENSEMBLING_CONTROLLER);
+		createEReference(instanceEnsemblingControllerEClass, INSTANCE_ENSEMBLING_CONTROLLER__COMPONENT_INSTANCE);
+		createEReference(instanceEnsemblingControllerEClass, INSTANCE_ENSEMBLING_CONTROLLER__ENSEMBLE);
+
 		// Create enums
 		parameterDirectionEEnum = createEEnum(PARAMETER_DIRECTION);
 
 		// Create data types
 		methodEDataType = createEDataType(METHOD);
 		knowledgeManagerEDataType = createEDataType(KNOWLEDGE_MANAGER);
+		otherKnowledgeManagersAccessEDataType = createEDataType(OTHER_KNOWLEDGE_MANAGERS_ACCESS);
 	}
 
 	/**
@@ -780,6 +905,9 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		initEAttribute(getComponentInstance_Id(), ecorePackage.getEString(), "id", null, 1, 1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getComponentInstance_Component(), this.getComponent(), null, "component", null, 1, 1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getComponentInstance_KnowledgeManager(), this.getKnowledgeManager(), "knowledgeManager", null, 1, 1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getComponentInstance_OtherKnowledgeManagersAccess(), this.getOtherKnowledgeManagersAccess(), "otherKnowledgeManagersAccess", null, 1, 1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getComponentInstance_Processes(), this.getInstanceProcess(), this.getInstanceProcess_ComponentInstance(), "processes", null, 0, -1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getComponentInstance_EnsemblingControllers(), this.getInstanceEnsemblingController(), this.getInstanceEnsemblingController_ComponentInstance(), "ensemblingControllers", null, 0, -1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(componentEClass, Component.class, "Component", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getComponent_Processes(), this.getProcess(), null, "processes", null, 0, -1, Component.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -807,6 +935,14 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		initEReference(getInvocable_Parameters(), this.getParameter(), null, "parameters", null, 0, -1, Invocable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getInvocable_Method(), this.getMethod(), "method", null, 1, 1, Invocable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
+		initEClass(instanceProcessEClass, InstanceProcess.class, "InstanceProcess", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getInstanceProcess_ComponentInstance(), this.getComponentInstance(), this.getComponentInstance_Processes(), "componentInstance", null, 1, 1, InstanceProcess.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getInstanceProcess_Process(), this.getProcess(), null, "process", null, 1, 1, InstanceProcess.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(instanceEnsemblingControllerEClass, InstanceEnsemblingController.class, "InstanceEnsemblingController", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getInstanceEnsemblingController_ComponentInstance(), this.getComponentInstance(), this.getComponentInstance_EnsemblingControllers(), "componentInstance", null, 1, 1, InstanceEnsemblingController.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getInstanceEnsemblingController_Ensemble(), this.getEnsemble(), null, "ensemble", null, 1, 1, InstanceEnsemblingController.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
 		// Initialize enums and add enum literals
 		initEEnum(parameterDirectionEEnum, ParameterDirection.class, "ParameterDirection");
 		addEEnumLiteral(parameterDirectionEEnum, ParameterDirection.IN);
@@ -816,6 +952,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		// Initialize data types
 		initEDataType(methodEDataType, Method.class, "Method", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(knowledgeManagerEDataType, KnowledgeManager.class, "KnowledgeManager", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(otherKnowledgeManagersAccessEDataType, Object.class, "OtherKnowledgeManagersAccess", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
 		createResource(eNS_URI);

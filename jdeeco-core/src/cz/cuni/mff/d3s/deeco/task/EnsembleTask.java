@@ -1,33 +1,23 @@
 package cz.cuni.mff.d3s.deeco.task;
 
-import java.util.List;
-
-import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeReference;
-import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceEnsemblingController;
 
 public class EnsembleTask extends Task {
 
-	public EnsembleTask(SchedulingSpecification schedulingSpecification) {
-		super(schedulingSpecification);
+	InstanceEnsemblingController ensemblingController;
+	
+	public EnsembleTask(InstanceEnsemblingController ensemblingController) {
+		super(ensemblingController.getEnsemble().getSchedule());
+		
+		this.ensemblingController = ensemblingController;
 	}
 
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.task.Task#invoke()
+	 */
 	@Override
-	public ChangeSet invoke(ValueSet values) {
+	public void invoke() {
 		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<KnowledgeReference> getInputReferences() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void registerTriggers(TriggerListener triggerListener) {
-		// TODO Auto-generated method stub
-
+		
 	}
 }

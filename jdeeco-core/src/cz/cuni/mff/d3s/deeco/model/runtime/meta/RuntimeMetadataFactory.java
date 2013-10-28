@@ -7,6 +7,8 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Condition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Ensemble;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Exchange;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceEnsemblingController;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Invocable;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
@@ -160,6 +162,24 @@ public interface RuntimeMetadataFactory extends EFactory {
 	 * @generated
 	 */
 	Invocable createInvocable();
+
+	/**
+	 * Returns a new object of class '<em>Instance Process</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Instance Process</em>'.
+	 * @generated
+	 */
+	InstanceProcess createInstanceProcess();
+
+	/**
+	 * Returns a new object of class '<em>Instance Ensembling Controller</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Instance Ensembling Controller</em>'.
+	 * @generated
+	 */
+	InstanceEnsemblingController createInstanceEnsemblingController();
 
 	/**
 	 * Returns the package supported by this factory.
