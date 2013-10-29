@@ -4,8 +4,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeSet.KnowledgeValue;
-
 public class ValueSet {
 	
 	
@@ -17,8 +15,11 @@ public class ValueSet {
 	}
 	
 	
-	public Object getValue(KnowledgeReference reference) {		
-		return values.get(reference);
+	public Object getValue(KnowledgeReference reference) {	
+		if (values.containsKey(reference))
+			return values.get(reference);
+		else
+			return null;
 	}
 	
 	public void setValue(KnowledgeReference reference, Object value) {		

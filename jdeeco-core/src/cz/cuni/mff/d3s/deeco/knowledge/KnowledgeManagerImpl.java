@@ -15,16 +15,14 @@ import cz.cuni.mff.d3s.deeco.task.TriggerListener;
 
 public class KnowledgeManagerImpl implements KnowledgeManager {
 
-	protected KnowledgeSet ks;
+	
 	
 	public KnowledgeManagerImpl(){
 		
-		ks = new KnowledgeSet();
+		
 	}
 	
-	public KnowledgeManagerImpl(KnowledgeSet ks){
-		this.ks = ks;
-	}
+
 
 	@Override
 	public ValueSet get(Collection<KnowledgeReference> knowledgeReferenceList) {

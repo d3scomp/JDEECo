@@ -1,33 +1,49 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
 
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeSet.KnowledgeValue;
+/**
+ * 
+ * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
+ * 
+ *         TODO: maybe the class would need a separate list of references to be
+ *         added (i.e., to be added, to be updated, and to be deleted) so that
+ *         we can enforce some knowledge update rules (i.e., update is possible
+ *         only at some places)
+ * 
+ */
 
-// TODO: maybe the class would need a separate of references to be added (i.e., to be added, to be updated, and to be deleted)
-// so that we can enforce some knowledge update rules (i.e., update is possible only at some places)
 public class ChangeSet {
 	
-	private KnowledgeSet ks;
+	private enum KnowledgeValue { EMPTY } 
 	
-	public ChangeSet() {
-		ks = new KnowledgeSet();
-	}
+	private Map<KnowledgeReference, Object> values = new HashMap<>();
 	
-	ChangeSet(KnowledgeSet ks) {
-		this.ks = ks;
-	}
-			
+				
 	public Collection<KnowledgeReference> getUpdatedReferences() {
-		return ks.getNonEmptyReferences();
+		Collection<KnowledgeReference> ret = new HashSet<>();
+		for (Entry<KnowledgeReference, Object> e: values.entrySet()) {
+			if (e.getValue() != KnowledgeValue.EMPTY)
+				ret.add(e.getKey());
+		}
+		return ret;	
 	}
 	
 	public Collection<KnowledgeReference> getDeletedReferences() {
-		return ks.getEmptyReferences();
+		Collection<KnowledgeReference> ret = new HashSet<>();
+		for (Entry<KnowledgeReference, Object> e: values.entrySet()) {
+			if (e.getValue() == KnowledgeValue.EMPTY)
+				ret.add(e.getKey());
+		}
+		return ret;
 	}
 	
 	public Object getValue(KnowledgeReference reference) {
-		Object ret = ks.getValue(reference);
+		Object ret = values.get(reference);
 		if (ret == KnowledgeValue.EMPTY)
 			return null;
 		else 
@@ -35,10 +51,10 @@ public class ChangeSet {
 	}
 	
 	public void setValue(KnowledgeReference reference, Object value) {
-		ks.setValue(reference, value);		
+		values.put(reference, value);		
 	}
 	
 	public void setDeleted(KnowledgeReference reference) {
-		ks.setValue(reference, KnowledgeValue.EMPTY);		
+		values.put(reference, KnowledgeValue.EMPTY);		
 	}
 }
