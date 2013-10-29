@@ -15,9 +15,15 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
+
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -26,69 +32,54 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 
 
 public class ReadOnlyKnowledgeManagerTest {
-	
-	@Mock
-	private Trigger trigger;
-	@Mock
+		
+	private Trigger trigger;	
 	private TriggerListener triggerListener;
-	@Mock
-	private ValueSet valueSet;
+	private ReadOnlyKnowledgeManager tested;
 
-
-	private ReadOnlyKnowledgeManager readOnlyKM;
-
+	
+	private ReadOnlyKnowledgeManager createKM(Map<KnowledgeReference, Object> initialKnowledge) {
+		return new KnowledgeManagerImpl(initialKnowledge);
+	}
 	
 	@Before
 	public void setUp() throws Exception {
-		MockitoAnnotations.initMocks(this);
-		this.trigger = mock(Trigger.class);
-		this.triggerListener = mock(TriggerListener.class);
-		this.readOnlyKM = new KnowledgeManagerImpl();
+		trigger = mock(Trigger.class);
+		triggerListener = mock(TriggerListener.class);
+		tested = createKM(new HashMap<KnowledgeReference, Object>());
 	}
 
 	@Test
+	@Ignore
 	public void testGet() {
-		// WHEN define an element(s) of the new/updated values  
-		KnowledgeReference knowledgeReferenceUpdate = mock(KnowledgeReference.class);
-		// THEN add the element(s) to the Update Reference Collection
-		Collection<KnowledgeReference> colUpdate= new LinkedList<KnowledgeReference>();
-		colUpdate.add(knowledgeReferenceUpdate);
-
-		// WHEN define an element(s) of the deleted values
-		KnowledgeReference knowledgeReferenceDelete = mock(KnowledgeReference.class);
-		// THEN add the element(s) to the Delete Reference Collection
-		Collection<KnowledgeReference> colDelete= new LinkedList<KnowledgeReference>();
-		colDelete.add(knowledgeReferenceDelete);
-
-				
-		// WHEN define a Mock of ValueSet  
-		valueSet = mock(ValueSet.class);
-		// THEN define the behavior of the ValueSet:
-		//     1- the value "1" returned by getValue(knowledgeReferenceUpdate)
-		//	   2- the value colUpdate returned by getUpdatedReferences()
-		//     3- the value KnowledgeValue.EMPTY returned by getValue(knowledgeReferenceDelete)
-		//     4- the value colDelete returned by getDeletedReferences()
-		when(valueSet.getValue(knowledgeReferenceUpdate)).thenReturn("1");
-		when(valueSet.getReferences()).thenReturn(colUpdate);
-		when(valueSet.getValue(knowledgeReferenceDelete)).thenReturn(null);
-		//when(valueSet.getNotFoundReferences()).thenReturn(colDelete);
-
-		// WHEN define a new KnowledgeManager and returned the ValueSet of Updated References
-		readOnlyKM = new KnowledgeManagerImpl();
-		valueSet = readOnlyKM.get(colUpdate);
-		// THEN check if the returned ValueSet has knowledgeReferenceUpdate
-		// FIXME: this has to be implemented
-		//assertEquals(true, valueSet.getReferences().contains(knowledgeReferenceUpdate));
+		final KnowledgeReference r = mock(KnowledgeReference.class);
 		
-		// WHEN define a new KnowledgeManager returned the ValueSet of Deleted References
-		valueSet = readOnlyKM.get(colDelete);
-		// THEN check if the returned ValueSet has knowledgeReferenceDelete
-		assertEquals(false, valueSet.getReferences().contains(knowledgeReferenceDelete));
+		// WHEN the ReadOnlyKnowledgeManager is empty
+		// THEN it returns a non-null, empty ValueSet for every KnowledgeRef list.
+		ValueSet valueSet = tested.get(Arrays.asList(r));
+		assertNotNull(valueSet);
+		assertTrue(valueSet.getReferences().isEmpty());
+				
+		// WHEN the KM contains a value for r only
+		final Object v = new Object();
+		tested = createKM(new HashMap<KnowledgeReference, Object>() {{ 
+	        put(r, v);	        
+	    }});
+		// THEN get({r, r2}) returns v as value for r (and no other ref. value)
+		final KnowledgeReference r2 = mock(KnowledgeReference.class);
+		valueSet = tested.get(Arrays.asList(r, r2));
+		assertNotNull(valueSet);
+		assertEquals(1, valueSet.getReferences().size());
+		assertTrue(valueSet.getReferences().contains(r));
+		assertFalse(valueSet.getReferences().contains(r2));	
 	}	
 	
 	
  	@Test
 	public void testRegister() {
+		// TODO: has to include testing that the trigger listener is actually
+		// notified on trigger
+
 		// WHEN define a new for trigger   
 		this.trigger = mock(Trigger.class);
 		// THEN add the trigger(s) to a Collection
@@ -103,15 +94,21 @@ public class ReadOnlyKnowledgeManagerTest {
 		
 		
 		// WHEN registering a trigger to triggerListener
-		readOnlyKM.register(trigger,triggerListener);
+		tested.register(trigger,triggerListener);
 		// THEN the triggerListener adds this trigger
 		// assertEquals(true,triggerListener.getTriggers().contain(trigger));
 		
+
 		verifyNoMoreInteractions(trigger);
 	}
 	
  	@Test
 	public void testUnregister() {
+
+		// TODO: has to include testing that the trigger listener is no longer
+		// notified on trigger (set up the KM so that listener was notified
+		// at the beginning)
+
 		// WHEN define a new for trigger   
 		this.trigger = mock(Trigger.class);
 		// THEN define a Collection of Triggers without the currentTrigger
@@ -125,7 +122,7 @@ public class ReadOnlyKnowledgeManagerTest {
 		
 		
 		// WHEN registering a trigger to triggerListener
-		readOnlyKM.unregister(trigger,triggerListener);
+		tested.unregister(trigger,triggerListener);
 		// THEN the triggerListener removes this trigger
 		// assertEquals(false,triggerListener.getTriggers().contain(trigger));
 
