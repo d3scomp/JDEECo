@@ -7,7 +7,6 @@ package cz.cuni.mff.d3s.deeco.knowledge;
  *
  */
 import java.util.Collection;
-import java.util.LinkedList;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.task.TriggerListener;
@@ -15,7 +14,7 @@ import cz.cuni.mff.d3s.deeco.task.TriggerListener;
 
 public interface KnowledgeManagersView {
 	
-	public Collection<KnowledgeManager> getOthersLocalManagers();
+	public Collection<ReadOnlyKnowledgeManager> getOthersKnowledgeManagers();
 	// Rima : It is a little bit confusing to have the same name 
 	//        register/unregister as in KnowledgeManager. 
 	public void register(Trigger trigger, TriggerListener triggerListener);
