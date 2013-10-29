@@ -12,7 +12,7 @@ import java.util.Collection;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 
-public class KnowledgeManagerImpl implements KnowledgeManager {
+public class KnowledgeManagerImpl implements KnowledgeManager, KnowledgeManagersView {
 
 	
 	
@@ -42,6 +42,13 @@ public class KnowledgeManagerImpl implements KnowledgeManager {
 	@Override
 	public void update(ChangeSet changeSet) {
 		
+	}
+
+
+
+	@Override
+	public Collection<ReadOnlyKnowledgeManager> getOthersKnowledgeManagers() {
+ 		return null;
 	}
 
 }
