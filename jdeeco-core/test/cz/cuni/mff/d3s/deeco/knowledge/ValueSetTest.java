@@ -3,10 +3,6 @@ package cz.cuni.mff.d3s.deeco.knowledge;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-import java.util.Collection;
-import java.util.LinkedList;
-
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -57,7 +53,7 @@ public class ValueSetTest {
 		// WHEN we insert another value for a previous reference
 		tested.setValue(r2, v);
 		// THEN there are still two references returned by
-		// getUpdatedReferences(), only the value of one reference changed
+		// getReferences(), only the value of one reference changed
 		assertEquals(2, tested.getReferences().size());
 		assertEquals(true, tested.getReferences().contains(r));
 		assertEquals(true, tested.getReferences().contains(r2));
@@ -69,8 +65,10 @@ public class ValueSetTest {
 	public void testGettersSetters() {
 		KnowledgeReference r = mock(KnowledgeReference.class);
 		// WHEN the ref. is not set
-		// THEN getValue() returns null
+		// THEN getValue() returns null and the reference is not among the getReferences()
 		assertNull(tested.getValue(r));
+		assertFalse(tested.getReferences().contains(r));
+
 				
 		// WHEN the value for a ref. is set
 		Object v = new Object();
@@ -80,8 +78,10 @@ public class ValueSetTest {
 		
 		// WHEN the value for a ref. is set to null
 		tested.setValue(r, null);
-		// THEN getValue() returns null
+		// THEN getValue() returns null and the ref. is among the getReferences()
 		assertNull(tested.getValue(r));		
+		assertTrue(tested.getReferences().contains(r));
+		
 	}
 	
 
