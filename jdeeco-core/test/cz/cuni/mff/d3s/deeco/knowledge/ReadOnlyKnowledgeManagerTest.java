@@ -76,20 +76,57 @@ public class ReadOnlyKnowledgeManagerTest {
 	}	
 	
 	
-	@Test
+ 	@Test
 	public void testRegister() {
 		// TODO: has to include testing that the trigger listener is actually
 		// notified on trigger
+
+		// WHEN define a new for trigger   
+		this.trigger = mock(Trigger.class);
+		// THEN add the trigger(s) to a Collection
+		Collection<Trigger> colTriggers= new LinkedList<Trigger>();
+		colTriggers.add(trigger);
+		
+		// WHEN mock new TriggerListener
+		this.triggerListener = mock(TriggerListener.class);
+		// THEN define the behavior of the TriggerListener:
+		//	 the value "colTriggers" returned by getTriggers()
+		//when(triggerListener.getTriggers()).thenReturn(colTriggers);
+		
+		
+		// WHEN registering a trigger to triggerListener
 		tested.register(trigger,triggerListener);
+		// THEN the triggerListener adds this trigger
+		// assertEquals(true,triggerListener.getTriggers().contain(trigger));
+		
+
 		verifyNoMoreInteractions(trigger);
 	}
 	
-	@Test
+ 	@Test
 	public void testUnregister() {
+
 		// TODO: has to include testing that the trigger listener is no longer
 		// notified on trigger (set up the KM so that listener was notified
 		// at the beginning)
-		tested.unregister(trigger, triggerListener);
+
+		// WHEN define a new for trigger   
+		this.trigger = mock(Trigger.class);
+		// THEN define a Collection of Triggers without the currentTrigger
+		Collection<Trigger> colTriggers= new LinkedList<Trigger>();
+		
+		// WHEN mock new TriggerListener
+		this.triggerListener = mock(TriggerListener.class);
+		// THEN define the behavior of the TriggerListener:
+		//	 the value "colTriggers" returned by getTriggers()
+		//when(triggerListener.getTriggers()).thenReturn(colTriggers);
+		
+		
+		// WHEN registering a trigger to triggerListener
+		tested.unregister(trigger,triggerListener);
+		// THEN the triggerListener removes this trigger
+		// assertEquals(false,triggerListener.getTriggers().contain(trigger));
+
 		verifyNoMoreInteractions(trigger);
 
 	}

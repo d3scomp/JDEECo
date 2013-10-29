@@ -1,21 +1,40 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 /**
- * This interface allows to create/remove or get the KnowledgeManagers of the local 
+ * This class allows to create/remove or get the KnowledgeManagers of the local 
  * or remote components
  * 
  * @author Rima Al Ali <alali@d3s.mff.cuni.cz>
  *
  */
 import java.util.Collection;
-import java.util.LinkedList;
 
-public interface KnowledgeManagerRegistry {
+import cz.cuni.mff.d3s.deeco.task.Task;
 
-	public KnowledgeManager createLocal(); 
-	public KnowledgeManager createShadow();
-	public void removeLocal(KnowledgeManager km);
-	public void removeShadow(KnowledgeManager km);
-	public Collection<KnowledgeManager> getLocals();
-	public Collection<KnowledgeManager> getShadows();
+public class KnowledgeManagerRegistry {
+
+ 	
+	public KnowledgeManager createLocal(){
+ 		return null;
+	}
+	
+	public KnowledgeManager createShadow(){
+		return null;
+	}
+	
+	public void removeLocal(KnowledgeManager km){
+		
+	}
+	
+	public void removeShadow(KnowledgeManager km){
+		
+	}
+	
+	public Collection<KnowledgeManager> getLocals(){
+		return null;
+	}
+	
+	public Collection<KnowledgeManager> getShadows(){
+		return null;
+	}
 	
 }
