@@ -6,7 +6,10 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
+
+import java.util.Collection;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -15,9 +18,14 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeReference;
 import cz.cuni.mff.d3s.deeco.knowledge.TriggerListener;
+import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.model.runtime.SampleRuntimeModel;
 
 /**
@@ -44,13 +52,20 @@ public class ProcessTaskTest {
 		initMocks(this);
 
 		model = new SampleRuntimeModel();
-	/*
-		when(instanceProcess.getProcess()).thenReturn(process);
-		when(process.getSchedule()).thenReturn(schedule);
-		when(schedule.getPeriod()).thenReturn(42L);
-	*/
 		
 		doNothing().when(knowledgeManager).register(eq(model.trigger), taskTriggerListenerCaptor.capture());
+		when(knowledgeManager.get(Mockito.anyCollectionOf(KnowledgeReference.class))).then(new Answer<ValueSet>() {
+			public ValueSet answer(InvocationOnMock invocation) {
+				ValueSet result = new ValueSet();
+				for (KnowledgeReference kr : ((Collection<KnowledgeReference>)invocation.getArguments()[0])) {
+// TODO: we need the knowledge reference to be completed or removed					if (kr.equals(model.paramIn.getKnowledgePath()))
+				}
+				
+				return result;
+			}
+		});
+
+		model.setKnowledgeManager(knowledgeManager);
 		
 		this.task = new ProcessTask(model.instanceProcess);
 	}
@@ -94,6 +109,7 @@ public class ProcessTaskTest {
 		// WHEN invoke on the task is called
 		task.invoke();
 		// THEN it gets the knowledge needed for execution of the task
+		
 		// AND it executes the process method
 		// AND it updates knowledge with outputs of the process method
 

@@ -3,6 +3,7 @@
  */
 package cz.cuni.mff.d3s.deeco.model.runtime;
 
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Component;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceProcess;
@@ -42,6 +43,10 @@ public class SampleRuntimeModel {
 	public static void processMethod(ProcessParameterType in, ProcessParameterType out, ProcessParameterType inOut) {
 		out.value = in.value + 1;
 		inOut.value = inOut.value + out.value;
+	}
+	
+	public void setKnowledgeManager(KnowledgeManager knowledgeManager) {
+		componentInstance.setKnowledgeManager(knowledgeManager);
 	}
 	
 	public SampleRuntimeModel() throws Exception {
