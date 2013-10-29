@@ -3,100 +3,85 @@ package cz.cuni.mff.d3s.deeco.knowledge;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-import java.util.Collection;
-import java.util.LinkedList;
-
-
 import org.junit.Before;
 import org.junit.Test;
 
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeSet.KnowledgeValue;
 
 /**
- * Example of white-box testing with mock objects.
- * 
+ *  
  * @author Keznikl
  *
  */
 public class ValueSetTest {
 
-	ValueSet vs;
-	KnowledgeSet ks;
+	ValueSet tested;
+	
 	
 	@Before
-	public void setUp() throws Exception {
-		ks = mock(KnowledgeSet.class);
-		vs = new ValueSet(ks);
+	public void setUp() throws Exception {	
+		tested = new ValueSet();
 	}
 
 
-	@Test
-	public void testGetNotFoundReferences() {
-
-		assertNotNull(vs.getNotFoundReferences());
-		assertEquals(0, vs.getNotFoundReferences().size());
-				
-		Collection<KnowledgeReference> emptyValues = new LinkedList<>();
-		when(ks.getEmptyReferences()).thenReturn(emptyValues);
-		
-		assertEquals(emptyValues, vs.getNotFoundReferences());
-		verify(ks, times(3)).getEmptyReferences();
-		verifyNoMoreInteractions(ks);
-	}	
-	
-	@Test
-	public void testGetFoundReferences() {
-		assertNotNull(vs.getFoundReferences());
-		assertEquals(0, vs.getFoundReferences().size());
-		
-		Collection<KnowledgeReference> foundValues = new LinkedList<>();
-		when(ks.getNonEmptyReferences()).thenReturn(foundValues);
-		
-		assertEquals(foundValues, vs.getFoundReferences());
-		verify(ks, times(3)).getNonEmptyReferences();
-		verifyNoMoreInteractions(ks);
-	}
 
 	@Test
-	public void testGetValue() {
-		KnowledgeReference nullRef = mock(KnowledgeReference.class);
-		KnowledgeReference notFoundRef = mock(KnowledgeReference.class);
-		KnowledgeReference normalRef = mock(KnowledgeReference.class);
-		KnowledgeReference nonexistingRef = mock(KnowledgeReference.class);
-		Object value = new Object();
+	public void testGetReferences() {
+		// WHEN a ValueSet is empty
+		// THEN there are no references
+		assertNotNull(tested.getReferences());
+		assertEquals(0, tested.getReferences().size());
 		
-		when(ks.getValue(nullRef)).thenReturn(null);
-		when(ks.getValue(notFoundRef)).thenReturn(KnowledgeValue.EMPTY);
-		when(ks.getValue(normalRef)).thenReturn(value);
-		
-		assertNull(vs.getValue(nullRef));
-		assertNull(vs.getValue(notFoundRef));
-		assertEquals(value, vs.getValue(normalRef));	
-		assertNull(vs.getValue(nonexistingRef));
-		
-		verify(ks).getValue(nullRef);
-		verify(ks).getValue(notFoundRef);
-		verify(ks).getValue(normalRef);
-		verify(ks).getValue(nonexistingRef);
-		verifyNoMoreInteractions(ks);
-	}
-	
-	@Test
-	public void testSetNotFound() {
-		KnowledgeReference r = mock(KnowledgeReference.class);
-		vs.setNotFound(r);
-		verify(ks).setValue(r, KnowledgeValue.EMPTY);
-		verifyNoMoreInteractions(ks);
-	}
-	
-	@Test
-	public void testSetValue() {
+		// WHEN we insert the first value for a reference
 		KnowledgeReference r = mock(KnowledgeReference.class);
 		Object v = new Object();
+		tested.setValue(r, v);		
+		// THEN it is the sole reference returned by getReferences()
+		assertEquals(1, tested.getReferences().size());
+		assertEquals(true, tested.getReferences().contains(r));
+		assertEquals(v, tested.getValue(r));
 		
-		vs.setValue(r, v);
-		verify(ks).setValue(r, v);
-		verifyNoMoreInteractions(ks);
+		// WHEN we insert a value for another reference
+		KnowledgeReference r2 = mock(KnowledgeReference.class);
+		Object v2 = new Object();
+		tested.setValue(r2, v2);
+		// THEN the getReferences() includes both references
+		assertEquals(2, tested.getReferences().size());
+		assertEquals(true, tested.getReferences().contains(r));
+		assertEquals(true, tested.getReferences().contains(r2));
+		assertEquals(v2, tested.getValue(r2));
+		
+		// WHEN we insert another value for a previous reference
+		tested.setValue(r2, v);
+		// THEN there are still two references returned by
+		// getReferences(), only the value of one reference changed
+		assertEquals(2, tested.getReferences().size());
+		assertEquals(true, tested.getReferences().contains(r));
+		assertEquals(true, tested.getReferences().contains(r2));
+		assertEquals(v, tested.getValue(r));
+		assertEquals(v, tested.getValue(r2));		
+	}
+	
+	@Test
+	public void testGettersSetters() {
+		KnowledgeReference r = mock(KnowledgeReference.class);
+		// WHEN the ref. is not set
+		// THEN getValue() returns null and the reference is not among the getReferences()
+		assertNull(tested.getValue(r));
+		assertFalse(tested.getReferences().contains(r));
+
+				
+		// WHEN the value for a ref. is set
+		Object v = new Object();
+		tested.setValue(r, v);
+		// THEN getValue() returns the value
+		assertEquals(v, tested.getValue(r));
+		
+		// WHEN the value for a ref. is set to null
+		tested.setValue(r, null);
+		// THEN getValue() returns null and the ref. is among the getReferences()
+		assertNull(tested.getValue(r));		
+		assertTrue(tested.getReferences().contains(r));
+		
 	}
 	
 

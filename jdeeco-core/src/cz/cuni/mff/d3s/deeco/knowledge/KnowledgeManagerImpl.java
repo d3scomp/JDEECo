@@ -14,20 +14,18 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 
 public class KnowledgeManagerImpl implements KnowledgeManager {
 
-	protected KnowledgeSet ks;
+	
 	
 	public KnowledgeManagerImpl(){
 		
-		ks = new KnowledgeSet();
+		
 	}
 	
-	public KnowledgeManagerImpl(KnowledgeSet ks){
-		this.ks = ks;
-	}
+
 
 	@Override
 	public ValueSet get(Collection<KnowledgeReference> knowledgeReferenceList) {
-		ValueSet vs = new ValueSet(ks);
+		ValueSet vs = new ValueSet();
 		return vs;
 	}
 
