@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+
 /**
  * Container for a set of changes to a component's knowledge.
  * 
@@ -38,19 +40,19 @@ public class ChangeSet {
 	/**
 	 * The reference->value map.
 	 */
-	private Map<KnowledgeReference, Object> values = new HashMap<>();
+	private Map<KnowledgePath, Object> values = new HashMap<>();
 	
 	
 	/**
 	 * Returns all added/updated references.
 	 */
-	public Collection<KnowledgeReference> getUpdatedReferences() {
+	public Collection<KnowledgePath> getUpdatedReferences() {
 		/*
 		 * The added/updated references are those not being assigned the value
 		 * KnowledgeValue.EMPTY
 		 */
-		Collection<KnowledgeReference> ret = new HashSet<>();
-		for (Entry<KnowledgeReference, Object> e: values.entrySet()) {
+		Collection<KnowledgePath> ret = new HashSet<>();
+		for (Entry<KnowledgePath, Object> e: values.entrySet()) {
 			if (e.getValue() != KnowledgeValue.EMPTY)
 				ret.add(e.getKey());
 		}
@@ -60,13 +62,13 @@ public class ChangeSet {
 	/**
 	 * Returns all deleted references.
 	 */
-	public Collection<KnowledgeReference> getDeletedReferences() {
+	public Collection<KnowledgePath> getDeletedReferences() {
 		/*
 		 * The deleted references are those that are assigned the value
 		 * KnowledgeValue.EMPTY
 		 */
-		Collection<KnowledgeReference> ret = new HashSet<>();
-		for (Entry<KnowledgeReference, Object> e: values.entrySet()) {
+		Collection<KnowledgePath> ret = new HashSet<>();
+		for (Entry<KnowledgePath, Object> e: values.entrySet()) {
 			if (e.getValue() == KnowledgeValue.EMPTY)
 				ret.add(e.getKey());
 		}
@@ -80,7 +82,7 @@ public class ChangeSet {
 	 * if the reference is deleted. Otherwise returns the added/updated value.
 	 * </p>
 	 */
-	public Object getValue(KnowledgeReference reference) {
+	public Object getValue(KnowledgePath reference) {
 		if (!values.containsKey(reference))
 			return null;
 		
@@ -97,7 +99,7 @@ public class ChangeSet {
 	 * Overrides previous calls of {@link #setDeleted(KnowledgeReference)} and
 	 * {@link #setValue(KnowledgeReference, Object)}.
 	 */
-	public void setValue(KnowledgeReference reference, Object value) {
+	public void setValue(KnowledgePath reference, Object value) {
 		values.put(reference, value);		
 	}
 	
@@ -107,7 +109,7 @@ public class ChangeSet {
 	 * Overrides previous calls of {@link #setDeleted(KnowledgeReference)} and
 	 * {@link #setValue(KnowledgeReference, Object)}.
 	 */
-	public void setDeleted(KnowledgeReference reference) {
+	public void setDeleted(KnowledgePath reference) {
 		values.put(reference, KnowledgeValue.EMPTY);		
 	}
 }

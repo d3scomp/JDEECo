@@ -23,10 +23,11 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeReference;
 import cz.cuni.mff.d3s.deeco.knowledge.TriggerListener;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
+import cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelTest;
 import cz.cuni.mff.d3s.deeco.model.runtime.SampleRuntimeModel;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 
 /**
  * @author Tomas Bures <bures@d3s.mff.cuni.cz>
@@ -45,6 +46,10 @@ public class ProcessTaskTest {
 
 	private Task task;
 	
+	private SampleRuntimeModel.ProcessParameterType inValue;
+	private SampleRuntimeModel.ProcessParameterType outValue;
+	private SampleRuntimeModel.ProcessParameterType inOutValue;
+	
 	
 	
 	@Before
@@ -53,12 +58,22 @@ public class ProcessTaskTest {
 
 		model = new SampleRuntimeModel();
 		
+		inValue = new SampleRuntimeModel.ProcessParameterType(21);
+		inOutValue = new SampleRuntimeModel.ProcessParameterType(108);
+		
 		doNothing().when(knowledgeManager).register(eq(model.trigger), taskTriggerListenerCaptor.capture());
-		when(knowledgeManager.get(Mockito.anyCollectionOf(KnowledgeReference.class))).then(new Answer<ValueSet>() {
+		
+		when(knowledgeManager.get(Mockito.anyCollectionOf(KnowledgePath.class))).then(new Answer<ValueSet>() {
 			public ValueSet answer(InvocationOnMock invocation) {
 				ValueSet result = new ValueSet();
-				for (KnowledgeReference kr : ((Collection<KnowledgeReference>)invocation.getArguments()[0])) {
-// TODO: we need the knowledge reference to be completed or removed					if (kr.equals(model.paramIn.getKnowledgePath()))
+				
+				// Use inValue and inOutValue as the responses of the knowledge manager
+				for (KnowledgePath kp : ((Collection<KnowledgePath>)invocation.getArguments()[0])) {
+					if (kp.equals(model.paramIn.getKnowledgePath())) {
+						result.setValue(kp, inValue);
+					} else if (kp.equals(model.paramInOut.getKnowledgePath())) {
+						result.setValue(kp, inOutValue);
+					}
 				}
 				
 				return result;
@@ -109,7 +124,6 @@ public class ProcessTaskTest {
 		// WHEN invoke on the task is called
 		task.invoke();
 		// THEN it gets the knowledge needed for execution of the task
-		
 		// AND it executes the process method
 		// AND it updates knowledge with outputs of the process method
 

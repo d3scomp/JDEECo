@@ -1,8 +1,8 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 /**
  * KnowledgeManager testing.
- * The test checks the correctness of adding a new KnowledgeReference with its value or 
- * changing the value of existing KnowledgeReference. Also, it checks if the values are 
+ * The test checks the correctness of adding a new KnowledgePath with its value or 
+ * changing the value of existing KnowledgePath. Also, it checks if the values are 
  * deleted in correct way.    
  * 
  * @author Rima Al Ali <alali@d3s.mff.cuni.cz>
@@ -23,11 +23,13 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+
 
 public class KnowledgeManagerTest {
 	
 	@Mock
-	private List<KnowledgeReference> knowledgeReferenceList;
+	private List<KnowledgePath> knowledgeReferenceList;
 	@Mock
 	private ChangeSet changeSet;
 	
@@ -44,15 +46,15 @@ public class KnowledgeManagerTest {
 	@Test
 	public void testUpdate() {
 		// WHEN define an element(s) of the new/updated values  
-		KnowledgeReference knowledgeReferenceUpdate = mock(KnowledgeReference.class);
+		KnowledgePath knowledgeReferenceUpdate = mock(KnowledgePath.class);
 		// THEN add the element(s) to the Update Reference Collection
-		Collection<KnowledgeReference> colUpdate= new LinkedList<KnowledgeReference>();
+		Collection<KnowledgePath> colUpdate= new LinkedList<KnowledgePath>();
 		colUpdate.add(knowledgeReferenceUpdate);
 		
 		// WHEN define an element(s) of the deleted values
-		KnowledgeReference knowledgeReferenceDelete = mock(KnowledgeReference.class);
+		KnowledgePath knowledgeReferenceDelete = mock(KnowledgePath.class);
 		// THEN add the element(s) to the Delete Reference Collection
-		Collection<KnowledgeReference> colDelete= new LinkedList<KnowledgeReference>();
+		Collection<KnowledgePath> colDelete= new LinkedList<KnowledgePath>();
 		colDelete.add(knowledgeReferenceDelete);
 		
 		// WHEN define a Mock of ChangeSet  

@@ -4,10 +4,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+
 /**
  * Container for knowledge values corresponding to a set of {@link KnowledgeReference}s.
  * 
- * Allows storing {@code null} references.
+ * Allows storing {@code null} values.
  *  
  * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
  *
@@ -15,12 +17,12 @@ import java.util.Map;
 public class ValueSet {
 	
 	
-	private Map<KnowledgeReference, Object> values = new HashMap<>();
+	private Map<KnowledgePath, Object> values = new HashMap<>();
 	
 	/**
 	 * Returns the list of {@link KnowledgeReference}s for which the container contains a value.
 	 */
-	public Collection<KnowledgeReference> getReferences() {
+	public Collection<KnowledgePath> getKnowledgePaths() {
 		return values.keySet();
 	}
 	
@@ -29,12 +31,12 @@ public class ValueSet {
 	 * 
 	 * If there is no value for the reference, returns {@code null}. Note that
 	 * the value for a reference can also be {@code null}, thus it is necessary
-	 * to check {@link #getReferences()} to distinguish between references
+	 * to check {@link #getKnowledgePaths()} to distinguish between references
 	 * with/without a value.
 	 */
-	public Object getValue(KnowledgeReference reference) {	
-		if (values.containsKey(reference))
-			return values.get(reference);
+	public Object getValue(KnowledgePath path) {	
+		if (values.containsKey(path))
+			return values.get(path);
 		else
 			return null;
 	}
@@ -42,7 +44,7 @@ public class ValueSet {
 	/**
 	 * Sets the {@code value} for the {@code reference}.
 	 */
-	public void setValue(KnowledgeReference reference, Object value) {		
-		values.put(reference, value);		
+	public void setValue(KnowledgePath path, Object value) {		
+		values.put(path, value);		
 	}	
 }

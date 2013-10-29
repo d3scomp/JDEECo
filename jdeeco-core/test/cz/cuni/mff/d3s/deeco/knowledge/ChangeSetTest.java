@@ -7,6 +7,8 @@ import static org.mockito.Mockito.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+
 /**
  * Example of black-box testing.
  * 
@@ -31,7 +33,7 @@ public class ChangeSetTest {
 		assertEquals(0, tested.getUpdatedReferences().size());
 		
 		// WHEN we insert the first value for a reference
-		KnowledgeReference r = mock(KnowledgeReference.class);
+		KnowledgePath r = mock(KnowledgePath.class);
 		Object v = new Object();
 		tested.setValue(r, v);
 		// THEN it is the sole reference returned by getUpdatedReferences()
@@ -40,7 +42,7 @@ public class ChangeSetTest {
 		assertEquals(v, tested.getValue(r));
 		
 		// WHEN we insert a value for another reference
-		KnowledgeReference r2 = mock(KnowledgeReference.class);
+		KnowledgePath r2 = mock(KnowledgePath.class);
 		Object v2 = new Object();
 		tested.setValue(r2, v2);
 		// THEN the getUpdatedReferences() includes both references
@@ -72,7 +74,7 @@ public class ChangeSetTest {
 		assertEquals(0, tested.getDeletedReferences().size());
 		
 		// WHEN we set the first reference as deleted
-		KnowledgeReference r = mock(KnowledgeReference.class);		
+		KnowledgePath r = mock(KnowledgePath.class);		
 		tested.setDeleted(r);
 		// THEN it is the sole reference returned by getDeletedReferences()
 		assertEquals(1, tested.getDeletedReferences().size());
@@ -81,7 +83,7 @@ public class ChangeSetTest {
 		assertNull(tested.getValue(r));
 		
 		// WHEN we set another reference as deleted
-		KnowledgeReference r2 = mock(KnowledgeReference.class);		
+		KnowledgePath r2 = mock(KnowledgePath.class);		
 		tested.setDeleted(r2);
 		// THEN the getDeletedReferences() includes both references
 		assertEquals(2, tested.getDeletedReferences().size());
@@ -110,7 +112,7 @@ public class ChangeSetTest {
 	
 	@Test
 	public void testGettersSetters() {
-		KnowledgeReference r = mock(KnowledgeReference.class);
+		KnowledgePath r = mock(KnowledgePath.class);
 		// WHEN the ref. is not set
 		// THEN getValue() returns null and the reference is not among the
 		// getDeletedReferences() nor getUpdatedReferences()

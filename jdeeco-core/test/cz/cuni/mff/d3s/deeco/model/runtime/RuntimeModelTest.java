@@ -20,6 +20,9 @@ import org.junit.Test;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Component;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Process;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification;
@@ -36,6 +39,33 @@ public class RuntimeModelTest {
 	public void setUp() throws Exception {
 	}
 
+	private KnowledgePath createSamplePathInstance() {
+		RuntimeMetadataFactory factory = RuntimeMetadataFactory.eINSTANCE;
+
+		PathNodeField pn;
+		KnowledgePath p = factory.createKnowledgePath();
+		
+		pn = factory.createPathNodeField();
+		pn.setName(new String("level1"));
+		p.getNodes().add(pn);
+		
+		pn = factory.createPathNodeField();
+		pn.setName(new String("level2"));
+		p.getNodes().add(pn);
+		
+		return p;
+	}
+	
+	@Test
+	public void testEqualsWorkWithKnowledgePath() {
+		
+		// WHEN two instance of KnowledgePath designate the same path
+		KnowledgePath p1 = createSamplePathInstance();
+		KnowledgePath p2 = createSamplePathInstance();
+		// THEN they should be equal using equals method
+		assertEquals(p1, p2);
+	}
+	
 	@Test
 	public void testExtensions() {
 		// WHEN a RuntimeMetadataFactory is obtained

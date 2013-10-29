@@ -38,6 +38,10 @@ public class SampleRuntimeModel {
 	
 	public static class ProcessParameterType {
 		int value;
+
+		public ProcessParameterType(int value) {
+			this.value = value;
+		}
 	}
 
 	public static void processMethod(ProcessParameterType in, ProcessParameterType out, ProcessParameterType inOut) {

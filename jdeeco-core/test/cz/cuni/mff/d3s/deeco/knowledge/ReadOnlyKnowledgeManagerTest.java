@@ -1,8 +1,8 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 /**
  * ReadOnlyKnowledgeManager testing.
- * The test check the correctness of adding a new KnowledgeReference with its value or 
- * changing the value of existing KnowledgeReference. Also, it checks if the values are 
+ * The test check the correctness of adding a new KnowledgePath with its value or 
+ * changing the value of existing KnowledgePath. Also, it checks if the values are 
  * deleted in correct way. 
  * It checks also the bind and unbind for the trigger with triggerListner.   
  * 
@@ -28,6 +28,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 
 
@@ -38,7 +39,7 @@ public class ReadOnlyKnowledgeManagerTest {
 	private ReadOnlyKnowledgeManager tested;
 
 	
-	private ReadOnlyKnowledgeManager createKM(Map<KnowledgeReference, Object> initialKnowledge) {
+	private ReadOnlyKnowledgeManager createKM(Map<KnowledgePath, Object> initialKnowledge) {
 		return new KnowledgeManagerImpl(initialKnowledge);
 	}
 	
@@ -46,32 +47,32 @@ public class ReadOnlyKnowledgeManagerTest {
 	public void setUp() throws Exception {
 		trigger = mock(Trigger.class);
 		triggerListener = mock(TriggerListener.class);
-		tested = createKM(new HashMap<KnowledgeReference, Object>());
+		tested = createKM(new HashMap<KnowledgePath, Object>());
 	}
 
 	@Test
 	@Ignore
 	public void testGet() {
-		final KnowledgeReference r = mock(KnowledgeReference.class);
+		final KnowledgePath r = mock(KnowledgePath.class);
 		
 		// WHEN the ReadOnlyKnowledgeManager is empty
 		// THEN it returns a non-null, empty ValueSet for every KnowledgeRef list.
 		ValueSet valueSet = tested.get(Arrays.asList(r));
 		assertNotNull(valueSet);
-		assertTrue(valueSet.getReferences().isEmpty());
+		assertTrue(valueSet.getKnowledgePaths().isEmpty());
 				
 		// WHEN the KM contains a value for r only
 		final Object v = new Object();
-		tested = createKM(new HashMap<KnowledgeReference, Object>() {{ 
+		tested = createKM(new HashMap<KnowledgePath, Object>() {{ 
 	        put(r, v);	        
 	    }});
 		// THEN get({r, r2}) returns v as value for r (and no other ref. value)
-		final KnowledgeReference r2 = mock(KnowledgeReference.class);
+		final KnowledgePath r2 = mock(KnowledgePath.class);
 		valueSet = tested.get(Arrays.asList(r, r2));
 		assertNotNull(valueSet);
-		assertEquals(1, valueSet.getReferences().size());
-		assertTrue(valueSet.getReferences().contains(r));
-		assertFalse(valueSet.getReferences().contains(r2));	
+		assertEquals(1, valueSet.getKnowledgePaths().size());
+		assertTrue(valueSet.getKnowledgePaths().contains(r));
+		assertFalse(valueSet.getKnowledgePaths().contains(r2));	
 	}	
 	
 	

@@ -11,6 +11,7 @@ package cz.cuni.mff.d3s.deeco.knowledge;
 import java.util.Collection;
 import java.util.Map;
 
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 
 public class KnowledgeManagerImpl implements KnowledgeManager, KnowledgeManagersView {
@@ -21,13 +22,13 @@ public class KnowledgeManagerImpl implements KnowledgeManager, KnowledgeManagers
 		
 	}
 	
-	public KnowledgeManagerImpl(Map<KnowledgeReference, Object> initial){	
+	public KnowledgeManagerImpl(Map<KnowledgePath, Object> initial){	
 		
 	}
 
 
 	@Override
-	public ValueSet get(Collection<KnowledgeReference> knowledgeReferenceList) {
+	public ValueSet get(Collection<KnowledgePath> knowledgeReferenceList) {
 		ValueSet vs = new ValueSet();
 		return vs;
 	}

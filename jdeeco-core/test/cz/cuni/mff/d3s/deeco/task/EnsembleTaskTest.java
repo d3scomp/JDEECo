@@ -1,23 +1,14 @@
 package cz.cuni.mff.d3s.deeco.task;
 
-import static org.mockito.Mockito.atMost;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import static org.junit.Assert.fail;
-
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeReference;
-import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceEnsemblingController;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceProcess;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification;
 
 /**
  * @author Tomas Bures <bures@d3s.mff.cuni.cz>
