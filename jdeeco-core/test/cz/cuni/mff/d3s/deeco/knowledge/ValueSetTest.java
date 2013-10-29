@@ -10,7 +10,6 @@ import java.util.LinkedList;
 import org.junit.Before;
 import org.junit.Test;
 
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeSet.KnowledgeValue;
 
 /**
  *  

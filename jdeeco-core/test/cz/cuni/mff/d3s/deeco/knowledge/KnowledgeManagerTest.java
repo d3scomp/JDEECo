@@ -23,7 +23,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeSet.KnowledgeValue;
 
 public class KnowledgeManagerTest {
 	
@@ -64,8 +63,7 @@ public class KnowledgeManagerTest {
 		//     3- the value KnowledgeValue.EMPTY returned by getValue(knowledgeReferenceDelete)
 		//     4- the value colDelete returned by getDeletedReferences()
 		when(changeSet.getValue(knowledgeReferenceUpdate)).thenReturn("1");
-		when(changeSet.getUpdatedReferences()).thenReturn(colUpdate);
-		when(changeSet.getValue(knowledgeReferenceDelete)).thenReturn(KnowledgeValue.EMPTY);
+		when(changeSet.getUpdatedReferences()).thenReturn(colUpdate);		
 		when(changeSet.getDeletedReferences()).thenReturn(colDelete);
 		
 		// WHEN execute the update method in KnowledgeManager
