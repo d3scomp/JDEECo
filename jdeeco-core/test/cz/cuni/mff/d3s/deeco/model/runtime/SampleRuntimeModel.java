@@ -36,8 +36,10 @@ public class SampleRuntimeModel {
 	public ComponentInstance componentInstance;
 	public InstanceProcess instanceProcess;
 	
+	private static int processMethodCallCounter;
+	
 	public static class ProcessParameterType {
-		int value;
+		public int value;
 
 		public ProcessParameterType(int value) {
 			this.value = value;
@@ -45,8 +47,18 @@ public class SampleRuntimeModel {
 	}
 
 	public static void processMethod(ProcessParameterType in, ProcessParameterType out, ProcessParameterType inOut) {
+		processMethodCallCounter++;
+		
 		out.value = in.value + 1;
 		inOut.value = inOut.value + out.value;
+	}
+	
+	public static void resetProcessMethodCallCounter() {
+		processMethodCallCounter = 0;
+	}
+	
+	public static int getProcessMethodCallCounter() {
+		return processMethodCallCounter;
 	}
 	
 	public void setKnowledgeManager(KnowledgeManager knowledgeManager) {

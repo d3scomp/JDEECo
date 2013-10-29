@@ -1,13 +1,16 @@
 package cz.cuni.mff.d3s.deeco.task;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.mockito.Mockito.anyCollectionOf;
 
 import java.util.Collection;
 
@@ -22,6 +25,7 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.TriggerListener;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
@@ -47,11 +51,11 @@ public class ProcessTaskTest {
 	private Task task;
 	
 	private SampleRuntimeModel.ProcessParameterType inValue;
-	private SampleRuntimeModel.ProcessParameterType outValue;
 	private SampleRuntimeModel.ProcessParameterType inOutValue;
-	
-	
-	
+
+	private SampleRuntimeModel.ProcessParameterType expectedInOutValue;
+	private SampleRuntimeModel.ProcessParameterType expectedOutValue;
+
 	@Before
 	public void setUp() throws Exception {
 		initMocks(this);
@@ -60,10 +64,13 @@ public class ProcessTaskTest {
 		
 		inValue = new SampleRuntimeModel.ProcessParameterType(21);
 		inOutValue = new SampleRuntimeModel.ProcessParameterType(108);
+		expectedInOutValue = new SampleRuntimeModel.ProcessParameterType(108);
+		expectedOutValue = new SampleRuntimeModel.ProcessParameterType(0);		
+		SampleRuntimeModel.processMethod(inValue, expectedInOutValue, expectedOutValue);
 		
 		doNothing().when(knowledgeManager).register(eq(model.trigger), taskTriggerListenerCaptor.capture());
 		
-		when(knowledgeManager.get(Mockito.anyCollectionOf(KnowledgePath.class))).then(new Answer<ValueSet>() {
+		when(knowledgeManager.get(anyCollectionOf(KnowledgePath.class))).then(new Answer<ValueSet>() {
 			public ValueSet answer(InvocationOnMock invocation) {
 				ValueSet result = new ValueSet();
 				
@@ -79,7 +86,7 @@ public class ProcessTaskTest {
 				return result;
 			}
 		});
-
+		
 		model.setKnowledgeManager(knowledgeManager);
 		
 		this.task = new ProcessTask(model.instanceProcess);
@@ -121,12 +128,24 @@ public class ProcessTaskTest {
 	@Ignore
 	public void testProcessTaskInvoke() {
 		// GIVEN a ProcessTask initialized with an InstanceProcess
+		model.resetProcessMethodCallCounter();
+		
 		// WHEN invoke on the task is called
 		task.invoke();
+		
 		// THEN it gets the knowledge needed for execution of the task
-		// AND it executes the process method
-		// AND it updates knowledge with outputs of the process method
-
-		fail("Not implemented!");
+		verify(knowledgeManager).get(anyCollectionOf(KnowledgePath.class));
+		
+		// AND it executes the process method once
+		assertTrue(model.getProcessMethodCallCounter() == 1);
+		
+		// AND it updates knowledge with only the outputs of the process method
+		ArgumentCaptor<ChangeSet> changeSetCaptor = ArgumentCaptor.forClass(ChangeSet.class);
+		verify(knowledgeManager).update(changeSetCaptor.capture());
+		ChangeSet cs = changeSetCaptor.getValue();
+		assertEquals(cs.getValue(model.paramInOut.getKnowledgePath()), expectedInOutValue.value);
+		assertEquals(cs.getValue(model.paramOut.getKnowledgePath()), expectedOutValue);
+		assertTrue(cs.getDeletedReferences().isEmpty());
+		assertTrue(cs.getUpdatedReferences().size() == 2);
 	}	
 }
