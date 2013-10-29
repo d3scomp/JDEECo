@@ -28,7 +28,7 @@ public class KnowledgeManagerImpl implements KnowledgeManager {
 
 	@Override
 	public ValueSet get(Collection<KnowledgeReference> knowledgeReferenceList) {
-		ValueSet vs = new ValueSet(ks);
+		ValueSet vs = new ValueSet();
 		return vs;
 	}
 
