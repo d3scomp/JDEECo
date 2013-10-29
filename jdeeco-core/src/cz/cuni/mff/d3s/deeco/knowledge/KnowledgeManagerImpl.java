@@ -9,6 +9,7 @@ package cz.cuni.mff.d3s.deeco.knowledge;
  */
 
 import java.util.Collection;
+import java.util.Map;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.task.TriggerListener;
@@ -17,11 +18,13 @@ public class KnowledgeManagerImpl implements KnowledgeManager {
 
 	
 	
-	public KnowledgeManagerImpl(){
-		
+	public KnowledgeManagerImpl(){	
 		
 	}
 	
+	public KnowledgeManagerImpl(Map<KnowledgeReference, Object> initial){	
+		
+	}
 
 
 	@Override
