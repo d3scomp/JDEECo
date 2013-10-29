@@ -5,7 +5,6 @@ package cz.cuni.mff.d3s.deeco.model.runtime;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.util.Collections;
@@ -14,6 +13,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -32,15 +32,14 @@ import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
  */
 public class RuntimeModelTest {
 
-	RuntimeMetadataFactory factory;
-	
 	@Before
 	public void setUp() throws Exception {
-		factory = RuntimeMetadataFactory.eINSTANCE; 
 	}
 
 	@Test
 	public void testExtensions() {
+		// WHEN a RuntimeMetadataFactory is obtained
+		RuntimeMetadataFactory factory = RuntimeMetadataFactory.eINSTANCE; 
 		// THEN RuntimeMetadataFactory is an instance of RuntimeMetadataFactoryExt (i.e. our custom class)
 		assertTrue(factory instanceof RuntimeMetadataFactoryExt);
 	}
@@ -51,40 +50,19 @@ public class RuntimeModelTest {
 	@Test
 	@Ignore
 	public void testSaveAndLoad() throws Exception {
-		// WHEN a RuntimeMetadata instance exists
-		// AND it contains a method (within an Invocable)
-		// AND it contains a a knowledge manager with some knowledge
-		RuntimeMetadata model = factory.createRuntimeMetadata();
+		// WHEN a RuntimeMetadata instance, which contains a method (within an Invocable)
+		// and contains a knowledge manager with some knowledge is created
+		SampleRuntimeModel oModel = new SampleRuntimeModel();
 		
-		ComponentInstance instA = factory.createComponentInstance();
-		model.getComponentInstances().add(instA);
-		instA.setId("an instance of component A");		
-		instA.setKnowledgeManager(null); // TODO: add a knowledge manager with some knowledge
-		
-		Component compA = factory.createComponent();
-		model.getComponents().add(compA);
-		instA.setComponent(compA);
-		compA.setName("component A");
-		
-		Process procA1 = factory.createProcess();
-		compA.getProcesses().add(procA1);
-		procA1.setName("process #1 of component A");
-		procA1.setMethod(this.getClass().getMethod("dummyMethodThatStandsForAProcess"));
-		
-		SchedulingSpecification procA1Sched = factory.createSchedulingSpecification();
-		procA1Sched.setPeriod(42);
-		procA1.setSchedule(procA1Sched);
-	
-		// THEN the RuntimeMetadata instance can be saved
+		// THEN the instance can be saved
 		ResourceSet resourceSet = new ResourceSetImpl();
 
-		// This needs to be uncommented, but for that it needs a dependency on XMI
-		// resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(Resource.Factory.Registry.DEFAULT_EXTENSION, new XMIResourceFactoryImpl());
+		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(Resource.Factory.Registry.DEFAULT_EXTENSION, new XMIResourceFactoryImpl());
 		
 		File testXMIFile = new File("test-temp/test.xmi");
 		URI fileURI = URI.createFileURI(testXMIFile.getAbsolutePath());
 		Resource resource = resourceSet.createResource(fileURI);
-		resource.getContents().add(model);
+		resource.getContents().add(oModel.model);
 		resource.save(Collections.EMPTY_MAP);
 		assertTrue(testXMIFile.exists());
 
@@ -94,22 +72,23 @@ public class RuntimeModelTest {
 		// This needs to be uncommented, but for that it needs a dependency on XMI
 		// resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(Resource.Factory.Registry.DEFAULT_EXTENSION, new XMIResourceFactoryImpl());
 		
-		RuntimeMetadata loadedModel = (RuntimeMetadata)resourceSet.getResource(fileURI, true).getContents().get(0);
+		RuntimeMetadata nModel = (RuntimeMetadata)resourceSet.getResource(fileURI, true).getContents().get(0);
 		
 		// THEN it has the same values
 		// AND refers to the same method within the same class as before
 		// AND contains the same knowledge as before
-		ComponentInstance loadedInstA = loadedModel.getComponentInstances().get(0);
-		Component loadedCompA = loadedModel.getComponents().get(0);
-		Process loadedProcA1 = loadedCompA.getProcesses().get(0);
-		SchedulingSpecification loadedProcA1Sched = loadedProcA1.getSchedule(); 
-		assertEquals(instA.getId(), loadedInstA.getId());
-		assertEquals(instA.getKnowledgeManager(), loadedInstA.getKnowledgeManager());
-		assertEquals(loadedCompA, instA.getComponent());
-		assertEquals(compA.getName(), loadedCompA.getName());
-		assertEquals(procA1.getName(), loadedProcA1.getName());
-		assertEquals(procA1.getMethod(), loadedProcA1.getMethod());
-		assertEquals(procA1Sched.getPeriod(), loadedProcA1Sched.getPeriod());
-		// TODO: Check the knowledge manager
+		ComponentInstance nComponentInstance = nModel.getComponentInstances().get(0);
+		Component nComponent = nModel.getComponents().get(0);
+		Process nProcess = nComponent.getProcesses().get(0);
+		SchedulingSpecification nProcA1Sched = nProcess.getSchedule(); 
+
+		assertEquals(oModel.componentInstance.getId(), nComponentInstance.getId());
+		assertEquals(nComponent, nComponentInstance.getComponent());
+		assertEquals(oModel.component.getName(), nComponent.getName());
+		assertEquals(oModel.process.getName(), nProcess.getName());
+		assertEquals(oModel.process.getMethod(), nProcess.getMethod());
+		assertEquals(oModel.schedulingSpecification.getPeriod(), nProcA1Sched.getPeriod());
+		// TODO: Compare the triggers and process params
+		// TODO: Compare the data stored in the knowledge manager
 	}
 }

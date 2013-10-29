@@ -14,5 +14,6 @@ Export-Package: cz.cuni.mff.d3s.deeco.model.runtimemodel,
  cz.cuni.mff.d3s.deeco.model.runtime.impl,
  cz.cuni.mff.d3s.deeco.model.runtime.meta
 Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.emf.ecore;visibility:=reexport
+ org.eclipse.emf.ecore;visibility:=reexport,
+ org.eclipse.emf.ecore.xmi
 Bundle-ActivationPolicy: lazy
