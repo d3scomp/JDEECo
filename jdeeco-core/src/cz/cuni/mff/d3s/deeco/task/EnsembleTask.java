@@ -1,13 +1,14 @@
 package cz.cuni.mff.d3s.deeco.task;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceEnsemblingController;
+import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
 public class EnsembleTask extends Task {
 
 	InstanceEnsemblingController ensemblingController;
 	
-	public EnsembleTask(InstanceEnsemblingController ensemblingController) {
-		super(ensemblingController.getEnsemble().getSchedule());
+	public EnsembleTask(InstanceEnsemblingController ensemblingController, Scheduler scheduler) {
+		super(ensemblingController.getEnsemble().getSchedule(), scheduler);
 		
 		this.ensemblingController = ensemblingController;
 	}
@@ -16,7 +17,7 @@ public class EnsembleTask extends Task {
 	 * @see cz.cuni.mff.d3s.deeco.task.Task#registerTriggers()
 	 */
 	@Override
-	public void registerTriggers() {
+	protected void registerTriggers() {
 		// TODO Auto-generated method stub
 		
 	}
@@ -25,7 +26,7 @@ public class EnsembleTask extends Task {
 	 * @see cz.cuni.mff.d3s.deeco.task.Task#unregisterTriggers()
 	 */
 	@Override
-	public void unregisterTriggers() {
+	protected void unregisterTriggers() {
 		// TODO Auto-generated method stub
 		
 	}

@@ -33,6 +33,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelTest;
 import cz.cuni.mff.d3s.deeco.model.runtime.SampleRuntimeModel;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
 /**
  * @author Tomas Bures <bures@d3s.mff.cuni.cz>
@@ -45,9 +46,11 @@ public class ProcessTaskTest {
 	@Mock
 	private KnowledgeManager knowledgeManager;
 	@Mock
-	private NotificationsForScheduler schedulingNotificationTarget;
+	private TriggerListener triggerListener;
 	@Captor
 	private ArgumentCaptor<TriggerListener> taskTriggerListenerCaptor;
+	@Mock
+	private Scheduler scheduler;
 
 	private Task task;
 	
@@ -90,7 +93,7 @@ public class ProcessTaskTest {
 		
 		model.setKnowledgeManager(knowledgeManager);
 		
-		this.task = new ProcessTask(model.instanceProcess);
+		this.task = new ProcessTask(model.instanceProcess, scheduler);
 	}
 	
 	@Test
@@ -109,25 +112,24 @@ public class ProcessTaskTest {
 		
 		// GIVEN a ProcessTask initialized with an InstanceProcess
 		// WHEN a listener (i.e. scheduler) is registered at the task
-		task.setSchedulingNotificationTarget(schedulingNotificationTarget);
+		task.setTriggerListener(triggerListener);
 		// THEN the task registers a trigger listener on the knowledge manager
 		verify(knowledgeManager).register(eq(model.trigger), any(TriggerListener.class));
 		
 		// WHEN a trigger comes from the knowledge manager
 		taskTriggerListenerCaptor.getValue().triggered(model.trigger);
 		// THEN the task calls the registered listener (i.e. the scheduler)
-		inOrder.verify(schedulingNotificationTarget).triggered(task);
+		inOrder.verify(triggerListener).triggered(model.trigger);
 		
 		// WHEN the listener (i.e. the scheduler) is unregistered
-		task.setSchedulingNotificationTarget(null);
+		task.unsetTriggerListener();
 		// THEN the trigger is unregistered at the knowledge manager
 		inOrder.verify(knowledgeManager).unregister(model.trigger, taskTriggerListenerCaptor.getValue());
 		
 		// WHEN another trigger (possibly spurious) comes from the knowledge manager
 		taskTriggerListenerCaptor.getValue().triggered(model.trigger);		
 		// THEN nothing is called on the unregistered listener (i.e. scheduler)
-		
-		verifyNoMoreInteractions(schedulingNotificationTarget);
+		verifyNoMoreInteractions(triggerListener);
 	}
 	
 	@Test
