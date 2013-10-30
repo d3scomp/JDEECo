@@ -30,7 +30,6 @@ public class ExecutorTest {
 
 		singleThreadedExecutorUnderTest.execute(task);
 
-		// testing code review
 		verify(task).invoke();
 		verifyNoMoreInteractions(task);
 	}
