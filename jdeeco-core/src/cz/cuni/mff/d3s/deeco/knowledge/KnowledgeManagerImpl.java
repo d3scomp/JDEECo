@@ -1,4 +1,11 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
+
+import java.util.Collection;
+import java.util.Map;
+
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
+
 /**
  * This class implements the KnowledgeManager interface. It allows the user to 
  * add, update and read the values from KnowledgeSet. Also, the class allows to 
@@ -7,13 +14,6 @@ package cz.cuni.mff.d3s.deeco.knowledge;
  * @author Rima Al Ali <alali@d3s.mff.cuni.cz>
  *
  */
-
-import java.util.Collection;
-import java.util.Map;
-
-import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
-
 public class KnowledgeManagerImpl implements KnowledgeManager, KnowledgeManagersView {
 
 	

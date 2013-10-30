@@ -1,4 +1,6 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
+
+import java.util.Collection;
 /**
  * This class allows to create/remove or get the KnowledgeManagers of the local 
  * or remote components
@@ -6,9 +8,6 @@ package cz.cuni.mff.d3s.deeco.knowledge;
  * @author Rima Al Ali <alali@d3s.mff.cuni.cz>
  *
  */
-import java.util.Collection;
-
-import cz.cuni.mff.d3s.deeco.task.Task;
 
 public class KnowledgeManagerRegistry {
 
