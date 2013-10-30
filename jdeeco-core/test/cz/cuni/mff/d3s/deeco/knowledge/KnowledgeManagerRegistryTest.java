@@ -1,11 +1,5 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
-/**
- * KnowledgeManagerRegistry testing.
- * The test checks the correctness of adding/removing/getting the KnowledgeManagers of locals and shadows.
- * 
- * @author Rima Al Ali <alali@d3s.mff.cuni.cz>
- *
- */
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
@@ -21,6 +15,13 @@ import org.mockito.MockitoAnnotations;
 
 import cz.cuni.mff.d3s.deeco.task.Task;
 
+/**
+ * KnowledgeManagerRegistry testing.
+ * The test checks the correctness of adding/removing/getting the KnowledgeManagers of locals and shadows.
+ * 
+ * @author Rima Al Ali <alali@d3s.mff.cuni.cz>
+ *
+ */
 public class KnowledgeManagerRegistryTest {
 	
 	@Mock

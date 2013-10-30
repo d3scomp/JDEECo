@@ -1,4 +1,9 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
+
+import java.util.Collection;
+
+import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
+
 /**
  * This interface allows the user to get the KnowledgeManagers and register/unregister 
  * the triggers of the others.
@@ -6,11 +11,6 @@ package cz.cuni.mff.d3s.deeco.knowledge;
  * @author Rima Al Ali <alali@d3s.mff.cuni.cz>
  *
  */
-import java.util.Collection;
-
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
-
-
 public interface KnowledgeManagersView {
 	
 	public Collection<ReadOnlyKnowledgeManager> getOthersKnowledgeManagers();
