@@ -8,10 +8,9 @@ import org.junit.Test;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 
-
 /**
- *  
- * @author Keznikl
+ * 
+ * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
  *
  */
 public class ValueSetTest {
