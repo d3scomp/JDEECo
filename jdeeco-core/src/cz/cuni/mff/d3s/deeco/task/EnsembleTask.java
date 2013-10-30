@@ -13,6 +13,24 @@ public class EnsembleTask extends Task {
 	}
 
 	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.task.Task#registerTriggers()
+	 */
+	@Override
+	public void registerTriggers() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.task.Task#unregisterTriggers()
+	 */
+	@Override
+	public void unregisterTriggers() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
 	 * @see cz.cuni.mff.d3s.deeco.task.Task#invoke()
 	 */
 	@Override

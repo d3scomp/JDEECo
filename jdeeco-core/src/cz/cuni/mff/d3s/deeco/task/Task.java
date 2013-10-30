@@ -19,8 +19,21 @@ public abstract class Task {
 		
 	public abstract void invoke();
 
+	public abstract void registerTriggers();
+	public abstract void unregisterTriggers();
+	
 	public void setSchedulingNotificationTarget(NotificationsForScheduler listener) {
-		this.listener = listener;
+		if (this.listener != null && listener == null) {
+			unregisterTriggers();			
+			this.listener = null;
+
+		} else if (this.listener == null && listener != null) {
+			this.listener = listener;
+			registerTriggers();
+		
+		} else {
+			this.listener = listener;
+		}
 	}
 	
 	public long getSchedulingPeriod() {

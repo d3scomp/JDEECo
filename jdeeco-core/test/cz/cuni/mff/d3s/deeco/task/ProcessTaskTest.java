@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.verify;
@@ -103,25 +104,30 @@ public class ProcessTaskTest {
 	
 	@Test
 	@Ignore
-	public void testTrigger() {
+	public void testTriggerIsDeliveredOnlyWhenListenerIsRegistered() {
 		InOrder inOrder = inOrder(knowledgeManager);
 		
 		// GIVEN a ProcessTask initialized with an InstanceProcess
-		// WHEN a trigger listener is registered
+		// WHEN a listener (i.e. scheduler) is registered at the task
 		task.setSchedulingNotificationTarget(schedulingNotificationTarget);
-		// AND a trigger comes from the knowledge manager
+		// THEN the task registers a trigger listener on the knowledge manager
+		verify(knowledgeManager).register(eq(model.trigger), any(TriggerListener.class));
+		
+		// WHEN a trigger comes from the knowledge manager
 		taskTriggerListenerCaptor.getValue().triggered(model.trigger);
-		// THEN the task calls the registered listener
+		// THEN the task calls the registered listener (i.e. the scheduler)
 		inOrder.verify(schedulingNotificationTarget).triggered(task);
 		
-		// WHEN the listener is unregistered
+		// WHEN the listener (i.e. the scheduler) is unregistered
 		task.setSchedulingNotificationTarget(null);
-		// THEN the trigger is unregistered with the knowledge manager
+		// THEN the trigger is unregistered at the knowledge manager
 		inOrder.verify(knowledgeManager).unregister(model.trigger, taskTriggerListenerCaptor.getValue());
-
+		
+		// WHEN another trigger (possibly spurious) comes from the knowledge manager
+		taskTriggerListenerCaptor.getValue().triggered(model.trigger);		
+		// THEN nothing is called on the unregistered listener (i.e. scheduler)
+		
 		verifyNoMoreInteractions(schedulingNotificationTarget);
-
-		// TODO: TB@JK: Could you please check whether the above is correct?
 	}
 	
 	@Test
