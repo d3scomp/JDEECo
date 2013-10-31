@@ -7,6 +7,8 @@ import java.util.List;
 import cz.cuni.mff.d3s.deeco.executor.ExecutionListener;
 import cz.cuni.mff.d3s.deeco.task.Task;
 
+
+// test text
 public interface Scheduler extends ExecutionListener {
 	public void start();
 	public void stop();
