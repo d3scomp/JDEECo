@@ -26,6 +26,7 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import cz.cuni.mff.d3s.deeco.exceptions.KnowledgeNotExistentException;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.TriggerListener;
@@ -134,7 +135,7 @@ public class ProcessTaskTest {
 	
 	@Test
 	@Ignore
-	public void testProcessTaskInvoke() {
+	public void testProcessTaskInvoke() throws Exception {
 		// GIVEN a ProcessTask initialized with an InstanceProcess
 		model.resetProcessMethodCallCounter();
 		
