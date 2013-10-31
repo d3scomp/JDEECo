@@ -44,6 +44,7 @@ public class LocalTimeScheduler implements Scheduler{
 	
 	@Override
 	public void executionCompleted(Task task) {
+		// comment test
 		tasks.get(task).state = States.STOPPED; 
 	}
 
