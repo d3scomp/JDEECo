@@ -11,11 +11,10 @@ import java.util.Map.Entry;
 import java.util.Timer;
 import java.util.TimerTask;
 
-
 import cz.cuni.mff.d3s.deeco.executor.Executor;
+import cz.cuni.mff.d3s.deeco.knowledge.TriggerListener;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.task.Task;
-import cz.cuni.mff.d3s.deeco.task.NotificationsForScheduler;
 
 public class LocalTimeScheduler implements Scheduler{
 	Map<Task, TaskInfo> tasks;
@@ -44,6 +43,7 @@ public class LocalTimeScheduler implements Scheduler{
 	
 	@Override
 	public void executionCompleted(Task task) {
+		// comment test
 		tasks.get(task).state = States.STOPPED; 
 	}
 
@@ -70,20 +70,6 @@ public class LocalTimeScheduler implements Scheduler{
 	}
 	
 	@Override
-	public synchronized void removeTasks( List<Task> tasks ){
-		for (Task task : tasks) {
-			removeTask(task);
-		}
-	}
-	
-	@Override
-	public synchronized void addTasks( List<Task> tasks ){
-		for (Task task : tasks) {
-			startTask(task);
-		}
-	}
-	
-	@Override
 	public synchronized void addTask(Task task) {
 		if( !tasks.containsKey(task) )
 			tasks.put(task, new TaskInfo());
@@ -102,9 +88,9 @@ public class LocalTimeScheduler implements Scheduler{
 	
 	private void startTask(final Task task) {
 		TaskInfo ti = tasks.get(task);
-		task.setSchedulingNotificationTarget(new NotificationsForScheduler() { // FIXME: TB: It is an overkill to instantiate this for each task since the task now passes itself as a parameter.
+		task.setTriggerListener(new TriggerListener() {
 			@Override
-			public void triggered(Task task) {
+			public void triggered(Trigger trigger) {
 				taskTriggerFired(task);
 			}
 		});

@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceEnsemblingController;
+import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
 /**
  * @author Tomas Bures <bures@d3s.mff.cuni.cz>
@@ -18,6 +19,8 @@ public class EnsembleTaskTest {
 	
 	@Mock
 	private InstanceEnsemblingController instanceEnsemblingController;
+	@Mock
+	private Scheduler scheduler;
 	
 	private Task ensembleTask;
 	
@@ -25,7 +28,7 @@ public class EnsembleTaskTest {
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
-		this.ensembleTask = new EnsembleTask(instanceEnsemblingController);
+		this.ensembleTask = new EnsembleTask(instanceEnsemblingController, scheduler);
 	}
 	
 	@Test

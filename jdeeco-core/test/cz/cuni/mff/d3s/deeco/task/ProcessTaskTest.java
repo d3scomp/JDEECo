@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.verify;
@@ -32,6 +33,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelTest;
 import cz.cuni.mff.d3s.deeco.model.runtime.SampleRuntimeModel;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
 /**
  * @author Tomas Bures <bures@d3s.mff.cuni.cz>
@@ -44,9 +46,11 @@ public class ProcessTaskTest {
 	@Mock
 	private KnowledgeManager knowledgeManager;
 	@Mock
-	private NotificationsForScheduler schedulingNotificationTarget;
+	private TriggerListener triggerListener;
 	@Captor
 	private ArgumentCaptor<TriggerListener> taskTriggerListenerCaptor;
+	@Mock
+	private Scheduler scheduler;
 
 	private Task task;
 	
@@ -89,7 +93,7 @@ public class ProcessTaskTest {
 		
 		model.setKnowledgeManager(knowledgeManager);
 		
-		this.task = new ProcessTask(model.instanceProcess);
+		this.task = new ProcessTask(model.instanceProcess, scheduler);
 	}
 	
 	@Test
@@ -103,25 +107,29 @@ public class ProcessTaskTest {
 	
 	@Test
 	@Ignore
-	public void testTrigger() {
+	public void testTriggerIsDeliveredOnlyWhenListenerIsRegistered() {
 		InOrder inOrder = inOrder(knowledgeManager);
 		
 		// GIVEN a ProcessTask initialized with an InstanceProcess
-		// WHEN a trigger listener is registered
-		task.setSchedulingNotificationTarget(schedulingNotificationTarget);
-		// AND a trigger comes from the knowledge manager
-		taskTriggerListenerCaptor.getValue().triggered(model.trigger);
-		// THEN the task calls the registered listener
-		inOrder.verify(schedulingNotificationTarget).triggered(task);
+		// WHEN a listener (i.e. scheduler) is registered at the task
+		task.setTriggerListener(triggerListener);
+		// THEN the task registers a trigger listener on the knowledge manager
+		verify(knowledgeManager).register(eq(model.trigger), any(TriggerListener.class));
 		
-		// WHEN the listener is unregistered
-		task.setSchedulingNotificationTarget(null);
-		// THEN the trigger is unregistered with the knowledge manager
+		// WHEN a trigger comes from the knowledge manager
+		taskTriggerListenerCaptor.getValue().triggered(model.trigger);
+		// THEN the task calls the registered listener (i.e. the scheduler)
+		inOrder.verify(triggerListener).triggered(model.trigger);
+		
+		// WHEN the listener (i.e. the scheduler) is unregistered
+		task.unsetTriggerListener();
+		// THEN the trigger is unregistered at the knowledge manager
 		inOrder.verify(knowledgeManager).unregister(model.trigger, taskTriggerListenerCaptor.getValue());
-
-		verifyNoMoreInteractions(schedulingNotificationTarget);
-
-		// TODO: TB@JK: Could you please check whether the above is correct?
+		
+		// WHEN another trigger (possibly spurious) comes from the knowledge manager
+		taskTriggerListenerCaptor.getValue().triggered(model.trigger);		
+		// THEN nothing is called on the unregistered listener (i.e. scheduler)
+		verifyNoMoreInteractions(triggerListener);
 	}
 	
 	@Test
