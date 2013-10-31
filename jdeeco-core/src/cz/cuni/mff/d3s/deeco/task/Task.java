@@ -1,6 +1,8 @@
 package cz.cuni.mff.d3s.deeco.task;
 
+import cz.cuni.mff.d3s.deeco.knowledge.TriggerListener;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification;
+import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
 /**
  * 
@@ -9,18 +11,36 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification;
  * 
  */
 public abstract class Task {
+	protected SchedulingSpecification schedulingSpecification;
+	protected TriggerListener listener;
+	protected Scheduler scheduler;
 	
-	SchedulingSpecification schedulingSpecification;
-	NotificationsForScheduler listener;
-
-	public Task(SchedulingSpecification schedulingSpecification) {
+	public Task(SchedulingSpecification schedulingSpecification, Scheduler scheduler) {
 		this.schedulingSpecification = schedulingSpecification;
+		this.scheduler = scheduler;
 	}
-		
+	
 	public abstract void invoke();
 
-	public void setSchedulingNotificationTarget(NotificationsForScheduler listener) {
+	protected abstract void registerTriggers();
+	protected abstract void unregisterTriggers();
+	
+	public void setTriggerListener(TriggerListener listener) {
+		assert(listener != null);
+		
+		if (this.listener != null) {
+			unsetTriggerListener();
+		}
+		
 		this.listener = listener;
+		registerTriggers();
+	}
+	
+	public void unsetTriggerListener() {
+		if (this.listener != null) {
+			unregisterTriggers();			
+			this.listener = null;
+		}
 	}
 	
 	public long getSchedulingPeriod() {

@@ -57,7 +57,7 @@ public class RuntimeModelTest {
 	}
 	
 	@Test
-	public void testEqualsWorkWithKnowledgePath() {
+	public void testEqualsWorksWithKnowledgePath() {
 		
 		// WHEN two instance of KnowledgePath designate the same path
 		KnowledgePath p1 = createSamplePathInstance();
