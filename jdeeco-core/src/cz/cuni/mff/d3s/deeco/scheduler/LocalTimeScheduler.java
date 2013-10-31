@@ -70,20 +70,6 @@ public class LocalTimeScheduler implements Scheduler{
 	}
 	
 	@Override
-	public synchronized void removeTasks( List<Task> tasks ){
-		for (Task task : tasks) {
-			removeTask(task);
-		}
-	}
-	
-	@Override
-	public synchronized void addTasks( List<Task> tasks ){
-		for (Task task : tasks) {
-			startTask(task);
-		}
-	}
-	
-	@Override
 	public synchronized void addTask(Task task) {
 		if( !tasks.containsKey(task) )
 			tasks.put(task, new TaskInfo());
