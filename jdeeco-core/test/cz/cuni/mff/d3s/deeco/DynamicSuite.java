@@ -2,6 +2,7 @@ package cz.cuni.mff.d3s.deeco;
 
 import java.io.File;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -103,6 +104,12 @@ public class DynamicSuite extends Suite {
                     packageDirPath = packageDirPath.substring(packageDirPath.indexOf("classes"));
                     String pkg = packageDirPath.replace(File.separatorChar, '.').substring(8).replace("." + file.getName(), "");
                     Class<?> cls = Class.forName(pkg + '.' + className);
+                    
+                    // skip abstract classes (usually base classes for tests)
+                    if (Modifier.isAbstract(cls.getModifiers())) {
+                    	continue;
+                    }
+                    
                     if (cls.isAnnotationPresent(RunWith.class)) {
                         RunWith ann = (RunWith) cls.getAnnotation(RunWith.class);
  
