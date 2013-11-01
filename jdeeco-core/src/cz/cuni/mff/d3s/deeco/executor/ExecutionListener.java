@@ -4,4 +4,5 @@ import cz.cuni.mff.d3s.deeco.task.Task;
 
 public interface ExecutionListener {
 	public void executionCompleted( Task task );
+	public void executionFailed( Task task, Exception e );
 }
