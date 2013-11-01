@@ -3,6 +3,7 @@
 package cz.cuni.mff.d3s.deeco.model.runtime.meta;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Condition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
@@ -126,13 +127,13 @@ public interface RuntimeMetadataFactory extends EFactory {
 	Exchange createExchange();
 
 	/**
-	 * Returns a new object of class '<em>Process</em>'.
+	 * Returns a new object of class '<em>Component Process</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Process</em>'.
+	 * @return a new object of class '<em>Component Process</em>'.
 	 * @generated
 	 */
-	cz.cuni.mff.d3s.deeco.model.runtime.api.Process createProcess();
+	ComponentProcess createComponentProcess();
 
 	/**
 	 * Returns a new object of class '<em>Parameter</em>'.

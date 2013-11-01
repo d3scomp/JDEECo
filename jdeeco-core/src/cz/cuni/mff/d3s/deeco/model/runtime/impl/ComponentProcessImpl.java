@@ -3,6 +3,7 @@
 package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
@@ -19,20 +20,20 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Process</b></em>'.
+ * An implementation of the model object '<em><b>Component Process</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ProcessImpl#getName <em>Name</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ProcessImpl#getSchedulingSpecification <em>Scheduling Specification</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ProcessImpl#getComponentInstance <em>Component Instance</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getName <em>Name</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getSchedulingSpecification <em>Scheduling Specification</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getComponentInstance <em>Component Instance</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class ProcessImpl extends InvocableImpl implements cz.cuni.mff.d3s.deeco.model.runtime.api.Process {
+public class ComponentProcessImpl extends InvocableImpl implements ComponentProcess {
 	/**
 	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -68,7 +69,7 @@ public class ProcessImpl extends InvocableImpl implements cz.cuni.mff.d3s.deeco.
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected ProcessImpl() {
+	protected ComponentProcessImpl() {
 		super();
 	}
 
@@ -79,7 +80,7 @@ public class ProcessImpl extends InvocableImpl implements cz.cuni.mff.d3s.deeco.
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return RuntimeMetadataPackage.Literals.PROCESS;
+		return RuntimeMetadataPackage.Literals.COMPONENT_PROCESS;
 	}
 
 	/**
@@ -100,7 +101,7 @@ public class ProcessImpl extends InvocableImpl implements cz.cuni.mff.d3s.deeco.
 		String oldName = name;
 		name = newName;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.PROCESS__NAME, oldName, name));
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT_PROCESS__NAME, oldName, name));
 	}
 
 	/**
@@ -121,7 +122,7 @@ public class ProcessImpl extends InvocableImpl implements cz.cuni.mff.d3s.deeco.
 		SchedulingSpecification oldSchedulingSpecification = schedulingSpecification;
 		schedulingSpecification = newSchedulingSpecification;
 		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.PROCESS__SCHEDULING_SPECIFICATION, oldSchedulingSpecification, newSchedulingSpecification);
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT_PROCESS__SCHEDULING_SPECIFICATION, oldSchedulingSpecification, newSchedulingSpecification);
 			if (msgs == null) msgs = notification; else msgs.add(notification);
 		}
 		return msgs;
@@ -136,14 +137,14 @@ public class ProcessImpl extends InvocableImpl implements cz.cuni.mff.d3s.deeco.
 		if (newSchedulingSpecification != schedulingSpecification) {
 			NotificationChain msgs = null;
 			if (schedulingSpecification != null)
-				msgs = ((InternalEObject)schedulingSpecification).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - RuntimeMetadataPackage.PROCESS__SCHEDULING_SPECIFICATION, null, msgs);
+				msgs = ((InternalEObject)schedulingSpecification).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - RuntimeMetadataPackage.COMPONENT_PROCESS__SCHEDULING_SPECIFICATION, null, msgs);
 			if (newSchedulingSpecification != null)
-				msgs = ((InternalEObject)newSchedulingSpecification).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - RuntimeMetadataPackage.PROCESS__SCHEDULING_SPECIFICATION, null, msgs);
+				msgs = ((InternalEObject)newSchedulingSpecification).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - RuntimeMetadataPackage.COMPONENT_PROCESS__SCHEDULING_SPECIFICATION, null, msgs);
 			msgs = basicSetSchedulingSpecification(newSchedulingSpecification, msgs);
 			if (msgs != null) msgs.dispatch();
 		}
 		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.PROCESS__SCHEDULING_SPECIFICATION, newSchedulingSpecification, newSchedulingSpecification));
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT_PROCESS__SCHEDULING_SPECIFICATION, newSchedulingSpecification, newSchedulingSpecification));
 	}
 
 	/**
@@ -152,7 +153,7 @@ public class ProcessImpl extends InvocableImpl implements cz.cuni.mff.d3s.deeco.
 	 * @generated
 	 */
 	public ComponentInstance getComponentInstance() {
-		if (eContainerFeatureID() != RuntimeMetadataPackage.PROCESS__COMPONENT_INSTANCE) return null;
+		if (eContainerFeatureID() != RuntimeMetadataPackage.COMPONENT_PROCESS__COMPONENT_INSTANCE) return null;
 		return (ComponentInstance)eContainer();
 	}
 
@@ -162,7 +163,7 @@ public class ProcessImpl extends InvocableImpl implements cz.cuni.mff.d3s.deeco.
 	 * @generated
 	 */
 	public NotificationChain basicSetComponentInstance(ComponentInstance newComponentInstance, NotificationChain msgs) {
-		msgs = eBasicSetContainer((InternalEObject)newComponentInstance, RuntimeMetadataPackage.PROCESS__COMPONENT_INSTANCE, msgs);
+		msgs = eBasicSetContainer((InternalEObject)newComponentInstance, RuntimeMetadataPackage.COMPONENT_PROCESS__COMPONENT_INSTANCE, msgs);
 		return msgs;
 	}
 
@@ -172,19 +173,19 @@ public class ProcessImpl extends InvocableImpl implements cz.cuni.mff.d3s.deeco.
 	 * @generated
 	 */
 	public void setComponentInstance(ComponentInstance newComponentInstance) {
-		if (newComponentInstance != eInternalContainer() || (eContainerFeatureID() != RuntimeMetadataPackage.PROCESS__COMPONENT_INSTANCE && newComponentInstance != null)) {
+		if (newComponentInstance != eInternalContainer() || (eContainerFeatureID() != RuntimeMetadataPackage.COMPONENT_PROCESS__COMPONENT_INSTANCE && newComponentInstance != null)) {
 			if (EcoreUtil.isAncestor(this, newComponentInstance))
 				throw new IllegalArgumentException("Recursive containment not allowed for " + toString());
 			NotificationChain msgs = null;
 			if (eInternalContainer() != null)
 				msgs = eBasicRemoveFromContainer(msgs);
 			if (newComponentInstance != null)
-				msgs = ((InternalEObject)newComponentInstance).eInverseAdd(this, RuntimeMetadataPackage.COMPONENT_INSTANCE__PROCESSES, ComponentInstance.class, msgs);
+				msgs = ((InternalEObject)newComponentInstance).eInverseAdd(this, RuntimeMetadataPackage.COMPONENT_INSTANCE__COMPONENT_PROCESSES, ComponentInstance.class, msgs);
 			msgs = basicSetComponentInstance(newComponentInstance, msgs);
 			if (msgs != null) msgs.dispatch();
 		}
 		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.PROCESS__COMPONENT_INSTANCE, newComponentInstance, newComponentInstance));
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT_PROCESS__COMPONENT_INSTANCE, newComponentInstance, newComponentInstance));
 	}
 
 	/**
@@ -195,7 +196,7 @@ public class ProcessImpl extends InvocableImpl implements cz.cuni.mff.d3s.deeco.
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.PROCESS__COMPONENT_INSTANCE:
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__COMPONENT_INSTANCE:
 				if (eInternalContainer() != null)
 					msgs = eBasicRemoveFromContainer(msgs);
 				return basicSetComponentInstance((ComponentInstance)otherEnd, msgs);
@@ -211,9 +212,9 @@ public class ProcessImpl extends InvocableImpl implements cz.cuni.mff.d3s.deeco.
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.PROCESS__SCHEDULING_SPECIFICATION:
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__SCHEDULING_SPECIFICATION:
 				return basicSetSchedulingSpecification(null, msgs);
-			case RuntimeMetadataPackage.PROCESS__COMPONENT_INSTANCE:
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__COMPONENT_INSTANCE:
 				return basicSetComponentInstance(null, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -227,8 +228,8 @@ public class ProcessImpl extends InvocableImpl implements cz.cuni.mff.d3s.deeco.
 	@Override
 	public NotificationChain eBasicRemoveFromContainerFeature(NotificationChain msgs) {
 		switch (eContainerFeatureID()) {
-			case RuntimeMetadataPackage.PROCESS__COMPONENT_INSTANCE:
-				return eInternalContainer().eInverseRemove(this, RuntimeMetadataPackage.COMPONENT_INSTANCE__PROCESSES, ComponentInstance.class, msgs);
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__COMPONENT_INSTANCE:
+				return eInternalContainer().eInverseRemove(this, RuntimeMetadataPackage.COMPONENT_INSTANCE__COMPONENT_PROCESSES, ComponentInstance.class, msgs);
 		}
 		return super.eBasicRemoveFromContainerFeature(msgs);
 	}
@@ -241,11 +242,11 @@ public class ProcessImpl extends InvocableImpl implements cz.cuni.mff.d3s.deeco.
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.PROCESS__NAME:
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__NAME:
 				return getName();
-			case RuntimeMetadataPackage.PROCESS__SCHEDULING_SPECIFICATION:
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__SCHEDULING_SPECIFICATION:
 				return getSchedulingSpecification();
-			case RuntimeMetadataPackage.PROCESS__COMPONENT_INSTANCE:
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__COMPONENT_INSTANCE:
 				return getComponentInstance();
 		}
 		return super.eGet(featureID, resolve, coreType);
@@ -259,13 +260,13 @@ public class ProcessImpl extends InvocableImpl implements cz.cuni.mff.d3s.deeco.
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.PROCESS__NAME:
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__NAME:
 				setName((String)newValue);
 				return;
-			case RuntimeMetadataPackage.PROCESS__SCHEDULING_SPECIFICATION:
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__SCHEDULING_SPECIFICATION:
 				setSchedulingSpecification((SchedulingSpecification)newValue);
 				return;
-			case RuntimeMetadataPackage.PROCESS__COMPONENT_INSTANCE:
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__COMPONENT_INSTANCE:
 				setComponentInstance((ComponentInstance)newValue);
 				return;
 		}
@@ -280,13 +281,13 @@ public class ProcessImpl extends InvocableImpl implements cz.cuni.mff.d3s.deeco.
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.PROCESS__NAME:
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__NAME:
 				setName(NAME_EDEFAULT);
 				return;
-			case RuntimeMetadataPackage.PROCESS__SCHEDULING_SPECIFICATION:
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__SCHEDULING_SPECIFICATION:
 				setSchedulingSpecification((SchedulingSpecification)null);
 				return;
-			case RuntimeMetadataPackage.PROCESS__COMPONENT_INSTANCE:
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__COMPONENT_INSTANCE:
 				setComponentInstance((ComponentInstance)null);
 				return;
 		}
@@ -301,11 +302,11 @@ public class ProcessImpl extends InvocableImpl implements cz.cuni.mff.d3s.deeco.
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.PROCESS__NAME:
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__NAME:
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-			case RuntimeMetadataPackage.PROCESS__SCHEDULING_SPECIFICATION:
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__SCHEDULING_SPECIFICATION:
 				return schedulingSpecification != null;
-			case RuntimeMetadataPackage.PROCESS__COMPONENT_INSTANCE:
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__COMPONENT_INSTANCE:
 				return getComponentInstance() != null;
 		}
 		return super.eIsSet(featureID);
@@ -327,4 +328,4 @@ public class ProcessImpl extends InvocableImpl implements cz.cuni.mff.d3s.deeco.
 		return result.toString();
 	}
 
-} //ProcessImpl
+} //ComponentProcessImpl

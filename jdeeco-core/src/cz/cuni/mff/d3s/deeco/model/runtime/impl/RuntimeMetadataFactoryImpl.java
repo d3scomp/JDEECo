@@ -4,20 +4,7 @@ package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Condition;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Exchange;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Invocable;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.*;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
@@ -87,7 +74,7 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION: return createEnsembleDefinition();
 			case RuntimeMetadataPackage.CONDITION: return createCondition();
 			case RuntimeMetadataPackage.EXCHANGE: return createExchange();
-			case RuntimeMetadataPackage.PROCESS: return createProcess();
+			case RuntimeMetadataPackage.COMPONENT_PROCESS: return createComponentProcess();
 			case RuntimeMetadataPackage.PARAMETER: return createParameter();
 			case RuntimeMetadataPackage.INVOCABLE: return createInvocable();
 			case RuntimeMetadataPackage.ENSEMBLE_CONTROLLER: return createEnsembleController();
@@ -243,9 +230,9 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public cz.cuni.mff.d3s.deeco.model.runtime.api.Process createProcess() {
-		ProcessImpl process = new ProcessImpl();
-		return process;
+	public ComponentProcess createComponentProcess() {
+		ComponentProcessImpl componentProcess = new ComponentProcessImpl();
+		return componentProcess;
 	}
 
 	/**

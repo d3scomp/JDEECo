@@ -96,7 +96,7 @@ public class EnsembleControllerImpl extends MinimalEObjectImpl.Container impleme
 			if (eInternalContainer() != null)
 				msgs = eBasicRemoveFromContainer(msgs);
 			if (newComponentInstance != null)
-				msgs = ((InternalEObject)newComponentInstance).eInverseAdd(this, RuntimeMetadataPackage.COMPONENT_INSTANCE__ENSEMBLING_CONTROLLERS, ComponentInstance.class, msgs);
+				msgs = ((InternalEObject)newComponentInstance).eInverseAdd(this, RuntimeMetadataPackage.COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS, ComponentInstance.class, msgs);
 			msgs = basicSetComponentInstance(newComponentInstance, msgs);
 			if (msgs != null) msgs.dispatch();
 		}
@@ -181,7 +181,7 @@ public class EnsembleControllerImpl extends MinimalEObjectImpl.Container impleme
 	public NotificationChain eBasicRemoveFromContainerFeature(NotificationChain msgs) {
 		switch (eContainerFeatureID()) {
 			case RuntimeMetadataPackage.ENSEMBLE_CONTROLLER__COMPONENT_INSTANCE:
-				return eInternalContainer().eInverseRemove(this, RuntimeMetadataPackage.COMPONENT_INSTANCE__ENSEMBLING_CONTROLLERS, ComponentInstance.class, msgs);
+				return eInternalContainer().eInverseRemove(this, RuntimeMetadataPackage.COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS, ComponentInstance.class, msgs);
 		}
 		return super.eBasicRemoveFromContainerFeature(msgs);
 	}

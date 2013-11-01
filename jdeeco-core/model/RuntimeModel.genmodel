@@ -40,12 +40,12 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//RuntimeMetadata/componentInstances"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//ComponentInstance">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentInstance/processes"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentInstance/componentProcesses"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentInstance/id"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentInstance/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentInstance/knowledgeManager"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentInstance/otherKnowledgeManagersAccess"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentInstance/ensemblingControllers"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentInstance/ensembleControllers"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//EnsembleDefinition">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//EnsembleDefinition/name"/>
@@ -55,10 +55,10 @@
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//Condition"/>
     <genClasses ecoreClass="RuntimeModel.ecore#//Exchange"/>
-    <genClasses ecoreClass="RuntimeModel.ecore#//Process">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//Process/name"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//Process/schedulingSpecification"/>
-      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference RuntimeModel.ecore#//Process/componentInstance"/>
+    <genClasses ecoreClass="RuntimeModel.ecore#//ComponentProcess">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentProcess/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentProcess/schedulingSpecification"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentProcess/componentInstance"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//Parameter">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//Parameter/direction"/>
