@@ -4,13 +4,11 @@ package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Component;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Condition;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Ensemble;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Exchange;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceEnsemblingController;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Invocable;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
@@ -86,15 +84,13 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 			case RuntimeMetadataPackage.PATH_NODE_MAP_KEY: return createPathNodeMapKey();
 			case RuntimeMetadataPackage.RUNTIME_METADATA: return createRuntimeMetadata();
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE: return createComponentInstance();
-			case RuntimeMetadataPackage.COMPONENT: return createComponent();
-			case RuntimeMetadataPackage.ENSEMBLE: return createEnsemble();
+			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION: return createEnsembleDefinition();
 			case RuntimeMetadataPackage.CONDITION: return createCondition();
 			case RuntimeMetadataPackage.EXCHANGE: return createExchange();
 			case RuntimeMetadataPackage.PROCESS: return createProcess();
 			case RuntimeMetadataPackage.PARAMETER: return createParameter();
 			case RuntimeMetadataPackage.INVOCABLE: return createInvocable();
-			case RuntimeMetadataPackage.INSTANCE_PROCESS: return createInstanceProcess();
-			case RuntimeMetadataPackage.INSTANCE_ENSEMBLING_CONTROLLER: return createInstanceEnsemblingController();
+			case RuntimeMetadataPackage.ENSEMBLE_CONTROLLER: return createEnsembleController();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -217,19 +213,9 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Component createComponent() {
-		ComponentImpl component = new ComponentImpl();
-		return component;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public Ensemble createEnsemble() {
-		EnsembleImpl ensemble = new EnsembleImpl();
-		return ensemble;
+	public EnsembleDefinition createEnsembleDefinition() {
+		EnsembleDefinitionImpl ensembleDefinition = new EnsembleDefinitionImpl();
+		return ensembleDefinition;
 	}
 
 	/**
@@ -287,19 +273,9 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public InstanceProcess createInstanceProcess() {
-		InstanceProcessImpl instanceProcess = new InstanceProcessImpl();
-		return instanceProcess;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public InstanceEnsemblingController createInstanceEnsemblingController() {
-		InstanceEnsemblingControllerImpl instanceEnsemblingController = new InstanceEnsemblingControllerImpl();
-		return instanceEnsemblingController;
+	public EnsembleController createEnsembleController() {
+		EnsembleControllerImpl ensembleController = new EnsembleControllerImpl();
+		return ensembleController;
 	}
 
 	/**

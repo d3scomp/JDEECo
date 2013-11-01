@@ -1,18 +1,13 @@
-/**
- * 
- */
 package cz.cuni.mff.d3s.deeco.model.runtime;
 
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Component;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceProcess;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.Process;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Process;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
@@ -23,18 +18,17 @@ import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
  * with the component instance. They have to be supplied from outside.
  * 
  * @author Tomas Bures <bures@d3s.mff.cuni.cz>
+ * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
  *
  */
 public class SampleRuntimeModel {
 
 	public RuntimeMetadata model;
-	public Component component;
+	public ComponentInstance componentInstance;
 	public Process process;
 	public SchedulingSpecification schedulingSpecification;
 	public KnowledgeChangeTrigger trigger;
 	public Parameter paramIn, paramOut, paramInOut;
-	public ComponentInstance componentInstance;
-	public InstanceProcess instanceProcess;
 	
 	private static int processMethodCallCounter;
 	
@@ -70,17 +64,19 @@ public class SampleRuntimeModel {
 
 		// Construct the top-level container
 		model = factory.createRuntimeMetadata();
-
-		// Construct a component
-		component = factory.createComponent();
-		model.getComponents().add(component);
-		component.setName("aComponent");
+		
+		// Construct a component instance
+		componentInstance = factory.createComponentInstance();
+		model.getComponentInstances().add(componentInstance);
+		componentInstance.setId("sample component instance");		
+		componentInstance.setKnowledgeManager(null); // TODO: add a knowledge manager with some knowledge
 		
 		// Construct a process
 		process = factory.createProcess();
-		component.getProcesses().add(process);
+		componentInstance.getProcesses().add(process);
 		process.setName("aProcess");
 		process.setMethod(SampleRuntimeModel.class.getMethod("processMethod", ProcessParameterType.class, ProcessParameterType.class, ProcessParameterType.class));
+		process.setComponentInstance(componentInstance);
 		
 		// Construct the process parameters (3 in total .. IN - "level1.in", OUT - "level1.out", INOUT - "level1.inout")
 		PathNodeField pathNode;
@@ -118,7 +114,7 @@ public class SampleRuntimeModel {
 		// Construct scheduling specification for the process
 		schedulingSpecification = factory.createSchedulingSpecification();
 		schedulingSpecification.setPeriod(10); // FIXME, what does this number mean?
-		process.setSchedule(schedulingSpecification);
+		process.setSchedulingSpecification(schedulingSpecification);
 		
 		// Construct a trigger for the process
 		trigger = factory.createKnowledgeChangeTrigger();
@@ -134,19 +130,5 @@ public class SampleRuntimeModel {
 		triggerKnowledgePath.getNodes().add(pathNode);
 		
 		trigger.setKnowledgePath(triggerKnowledgePath);
-
-
-		// Construct a component instance
-		componentInstance = factory.createComponentInstance();
-		model.getComponentInstances().add(componentInstance);
-		componentInstance.setId("sample component instance");		
-		componentInstance.setKnowledgeManager(null); // TODO: add a knowledge manager with some knowledge
-		componentInstance.setComponent(component);
-
-		// Construct the process instance
-		instanceProcess = factory.createInstanceProcess();
-		componentInstance.getProcesses().add(instanceProcess);
-		instanceProcess.setComponentInstance(componentInstance);
-		instanceProcess.setProcess(process);
 	}
 }
