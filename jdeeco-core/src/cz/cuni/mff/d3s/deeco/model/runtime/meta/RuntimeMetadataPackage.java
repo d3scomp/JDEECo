@@ -365,13 +365,13 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int COMPONENT_INSTANCE = 8;
 
 	/**
-	 * The feature id for the '<em><b>Processes</b></em>' containment reference list.
+	 * The feature id for the '<em><b>Component Processes</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_INSTANCE__PROCESSES = 0;
+	int COMPONENT_INSTANCE__COMPONENT_PROCESSES = 0;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -410,13 +410,13 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int COMPONENT_INSTANCE__OTHER_KNOWLEDGE_MANAGERS_ACCESS = 4;
 
 	/**
-	 * The feature id for the '<em><b>Ensembling Controllers</b></em>' containment reference list.
+	 * The feature id for the '<em><b>Ensemble Controllers</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_INSTANCE__ENSEMBLING_CONTROLLERS = 5;
+	int COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS = 5;
 
 	/**
 	 * The number of structural features of the '<em>Component Instance</em>' class.
@@ -639,14 +639,14 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int EXCHANGE_OPERATION_COUNT = INVOCABLE_OPERATION_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ProcessImpl <em>Process</em>}' class.
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl <em>Component Process</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.ProcessImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getProcess()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getComponentProcess()
 	 * @generated
 	 */
-	int PROCESS = 12;
+	int COMPONENT_PROCESS = 12;
 
 	/**
 	 * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
@@ -655,7 +655,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PROCESS__PARAMETERS = INVOCABLE__PARAMETERS;
+	int COMPONENT_PROCESS__PARAMETERS = INVOCABLE__PARAMETERS;
 
 	/**
 	 * The feature id for the '<em><b>Method</b></em>' attribute.
@@ -664,7 +664,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PROCESS__METHOD = INVOCABLE__METHOD;
+	int COMPONENT_PROCESS__METHOD = INVOCABLE__METHOD;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -673,7 +673,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PROCESS__NAME = INVOCABLE_FEATURE_COUNT + 0;
+	int COMPONENT_PROCESS__NAME = INVOCABLE_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Scheduling Specification</b></em>' containment reference.
@@ -682,7 +682,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PROCESS__SCHEDULING_SPECIFICATION = INVOCABLE_FEATURE_COUNT + 1;
+	int COMPONENT_PROCESS__SCHEDULING_SPECIFICATION = INVOCABLE_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Component Instance</b></em>' container reference.
@@ -691,25 +691,25 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PROCESS__COMPONENT_INSTANCE = INVOCABLE_FEATURE_COUNT + 2;
+	int COMPONENT_PROCESS__COMPONENT_INSTANCE = INVOCABLE_FEATURE_COUNT + 2;
 
 	/**
-	 * The number of structural features of the '<em>Process</em>' class.
+	 * The number of structural features of the '<em>Component Process</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PROCESS_FEATURE_COUNT = INVOCABLE_FEATURE_COUNT + 3;
+	int COMPONENT_PROCESS_FEATURE_COUNT = INVOCABLE_FEATURE_COUNT + 3;
 
 	/**
-	 * The number of operations of the '<em>Process</em>' class.
+	 * The number of operations of the '<em>Component Process</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PROCESS_OPERATION_COUNT = INVOCABLE_OPERATION_COUNT + 0;
+	int COMPONENT_PROCESS_OPERATION_COUNT = INVOCABLE_OPERATION_COUNT + 0;
 
 	/**
 	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ParameterImpl <em>Parameter</em>}' class.
@@ -1023,15 +1023,15 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EClass getComponentInstance();
 
 	/**
-	 * Returns the meta object for the containment reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getProcesses <em>Processes</em>}'.
+	 * Returns the meta object for the containment reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getComponentProcesses <em>Component Processes</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Processes</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getProcesses()
+	 * @return the meta object for the containment reference list '<em>Component Processes</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getComponentProcesses()
 	 * @see #getComponentInstance()
 	 * @generated
 	 */
-	EReference getComponentInstance_Processes();
+	EReference getComponentInstance_ComponentProcesses();
 
 	/**
 	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getId <em>Id</em>}'.
@@ -1078,15 +1078,15 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EAttribute getComponentInstance_OtherKnowledgeManagersAccess();
 
 	/**
-	 * Returns the meta object for the containment reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getEnsemblingControllers <em>Ensembling Controllers</em>}'.
+	 * Returns the meta object for the containment reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getEnsembleControllers <em>Ensemble Controllers</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Ensembling Controllers</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getEnsemblingControllers()
+	 * @return the meta object for the containment reference list '<em>Ensemble Controllers</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getEnsembleControllers()
 	 * @see #getComponentInstance()
 	 * @generated
 	 */
-	EReference getComponentInstance_EnsemblingControllers();
+	EReference getComponentInstance_EnsembleControllers();
 
 	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition <em>Ensemble Definition</em>}'.
@@ -1163,47 +1163,47 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EClass getExchange();
 
 	/**
-	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Process <em>Process</em>}'.
+	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess <em>Component Process</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Process</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.Process
+	 * @return the meta object for class '<em>Component Process</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess
 	 * @generated
 	 */
-	EClass getProcess();
+	EClass getComponentProcess();
 
 	/**
-	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Process#getName <em>Name</em>}'.
+	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getName <em>Name</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Name</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.Process#getName()
-	 * @see #getProcess()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getName()
+	 * @see #getComponentProcess()
 	 * @generated
 	 */
-	EAttribute getProcess_Name();
+	EAttribute getComponentProcess_Name();
 
 	/**
-	 * Returns the meta object for the containment reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Process#getSchedulingSpecification <em>Scheduling Specification</em>}'.
+	 * Returns the meta object for the containment reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getSchedulingSpecification <em>Scheduling Specification</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the containment reference '<em>Scheduling Specification</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.Process#getSchedulingSpecification()
-	 * @see #getProcess()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getSchedulingSpecification()
+	 * @see #getComponentProcess()
 	 * @generated
 	 */
-	EReference getProcess_SchedulingSpecification();
+	EReference getComponentProcess_SchedulingSpecification();
 
 	/**
-	 * Returns the meta object for the container reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Process#getComponentInstance <em>Component Instance</em>}'.
+	 * Returns the meta object for the container reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getComponentInstance <em>Component Instance</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the container reference '<em>Component Instance</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.Process#getComponentInstance()
-	 * @see #getProcess()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getComponentInstance()
+	 * @see #getComponentProcess()
 	 * @generated
 	 */
-	EReference getProcess_ComponentInstance();
+	EReference getComponentProcess_ComponentInstance();
 
 	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter <em>Parameter</em>}'.
@@ -1522,12 +1522,12 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EClass COMPONENT_INSTANCE = eINSTANCE.getComponentInstance();
 
 		/**
-		 * The meta object literal for the '<em><b>Processes</b></em>' containment reference list feature.
+		 * The meta object literal for the '<em><b>Component Processes</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference COMPONENT_INSTANCE__PROCESSES = eINSTANCE.getComponentInstance_Processes();
+		EReference COMPONENT_INSTANCE__COMPONENT_PROCESSES = eINSTANCE.getComponentInstance_ComponentProcesses();
 
 		/**
 		 * The meta object literal for the '<em><b>Id</b></em>' attribute feature.
@@ -1562,12 +1562,12 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EAttribute COMPONENT_INSTANCE__OTHER_KNOWLEDGE_MANAGERS_ACCESS = eINSTANCE.getComponentInstance_OtherKnowledgeManagersAccess();
 
 		/**
-		 * The meta object literal for the '<em><b>Ensembling Controllers</b></em>' containment reference list feature.
+		 * The meta object literal for the '<em><b>Ensemble Controllers</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference COMPONENT_INSTANCE__ENSEMBLING_CONTROLLERS = eINSTANCE.getComponentInstance_EnsemblingControllers();
+		EReference COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS = eINSTANCE.getComponentInstance_EnsembleControllers();
 
 		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl <em>Ensemble Definition</em>}' class.
@@ -1632,14 +1632,14 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EClass EXCHANGE = eINSTANCE.getExchange();
 
 		/**
-		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ProcessImpl <em>Process</em>}' class.
+		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl <em>Component Process</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.ProcessImpl
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getProcess()
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getComponentProcess()
 		 * @generated
 		 */
-		EClass PROCESS = eINSTANCE.getProcess();
+		EClass COMPONENT_PROCESS = eINSTANCE.getComponentProcess();
 
 		/**
 		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
@@ -1647,7 +1647,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute PROCESS__NAME = eINSTANCE.getProcess_Name();
+		EAttribute COMPONENT_PROCESS__NAME = eINSTANCE.getComponentProcess_Name();
 
 		/**
 		 * The meta object literal for the '<em><b>Scheduling Specification</b></em>' containment reference feature.
@@ -1655,7 +1655,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference PROCESS__SCHEDULING_SPECIFICATION = eINSTANCE.getProcess_SchedulingSpecification();
+		EReference COMPONENT_PROCESS__SCHEDULING_SPECIFICATION = eINSTANCE.getComponentProcess_SchedulingSpecification();
 
 		/**
 		 * The meta object literal for the '<em><b>Component Instance</b></em>' container reference feature.
@@ -1663,7 +1663,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference PROCESS__COMPONENT_INSTANCE = eINSTANCE.getProcess_ComponentInstance();
+		EReference COMPONENT_PROCESS__COMPONENT_INSTANCE = eINSTANCE.getComponentProcess_ComponentInstance();
 
 		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ParameterImpl <em>Parameter</em>}' class.

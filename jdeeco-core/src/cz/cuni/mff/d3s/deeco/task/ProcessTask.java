@@ -1,6 +1,6 @@
 package cz.cuni.mff.d3s.deeco.task;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Process;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
 /**
@@ -9,10 +9,10 @@ import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
  */
 public class ProcessTask extends Task {
 	
-	Process process;
+	ComponentProcess componentProcess;
 	
-	public ProcessTask(Process process, Scheduler scheduler) {
-		super(process.getSchedulingSpecification(), scheduler);
+	public ProcessTask(ComponentProcess componentProcess, Scheduler scheduler) {
+		super(componentProcess.getSchedulingSpecification(), scheduler);
 	}
 
 	/* (non-Javadoc)

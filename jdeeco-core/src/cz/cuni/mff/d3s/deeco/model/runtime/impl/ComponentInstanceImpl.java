@@ -5,6 +5,7 @@ package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
@@ -32,12 +33,12 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getProcesses <em>Processes</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getComponentProcesses <em>Component Processes</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getId <em>Id</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getName <em>Name</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getKnowledgeManager <em>Knowledge Manager</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getOtherKnowledgeManagersAccess <em>Other Knowledge Managers Access</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getEnsemblingControllers <em>Ensembling Controllers</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getEnsembleControllers <em>Ensemble Controllers</em>}</li>
  * </ul>
  * </p>
  *
@@ -45,14 +46,14 @@ import org.eclipse.emf.ecore.util.InternalEList;
  */
 public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implements ComponentInstance {
 	/**
-	 * The cached value of the '{@link #getProcesses() <em>Processes</em>}' containment reference list.
+	 * The cached value of the '{@link #getComponentProcesses() <em>Component Processes</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getProcesses()
+	 * @see #getComponentProcesses()
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<cz.cuni.mff.d3s.deeco.model.runtime.api.Process> processes;
+	protected EList<ComponentProcess> componentProcesses;
 
 	/**
 	 * The default value of the '{@link #getId() <em>Id</em>}' attribute.
@@ -135,14 +136,14 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	protected Object otherKnowledgeManagersAccess = OTHER_KNOWLEDGE_MANAGERS_ACCESS_EDEFAULT;
 
 	/**
-	 * The cached value of the '{@link #getEnsemblingControllers() <em>Ensembling Controllers</em>}' containment reference list.
+	 * The cached value of the '{@link #getEnsembleControllers() <em>Ensemble Controllers</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getEnsemblingControllers()
+	 * @see #getEnsembleControllers()
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<EnsembleController> ensemblingControllers;
+	protected EList<EnsembleController> ensembleControllers;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -168,11 +169,11 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<cz.cuni.mff.d3s.deeco.model.runtime.api.Process> getProcesses() {
-		if (processes == null) {
-			processes = new EObjectContainmentWithInverseEList<cz.cuni.mff.d3s.deeco.model.runtime.api.Process>(cz.cuni.mff.d3s.deeco.model.runtime.api.Process.class, this, RuntimeMetadataPackage.COMPONENT_INSTANCE__PROCESSES, RuntimeMetadataPackage.PROCESS__COMPONENT_INSTANCE);
+	public EList<ComponentProcess> getComponentProcesses() {
+		if (componentProcesses == null) {
+			componentProcesses = new EObjectContainmentWithInverseEList<ComponentProcess>(ComponentProcess.class, this, RuntimeMetadataPackage.COMPONENT_INSTANCE__COMPONENT_PROCESSES, RuntimeMetadataPackage.COMPONENT_PROCESS__COMPONENT_INSTANCE);
 		}
-		return processes;
+		return componentProcesses;
 	}
 
 	/**
@@ -264,11 +265,11 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<EnsembleController> getEnsemblingControllers() {
-		if (ensemblingControllers == null) {
-			ensemblingControllers = new EObjectContainmentWithInverseEList<EnsembleController>(EnsembleController.class, this, RuntimeMetadataPackage.COMPONENT_INSTANCE__ENSEMBLING_CONTROLLERS, RuntimeMetadataPackage.ENSEMBLE_CONTROLLER__COMPONENT_INSTANCE);
+	public EList<EnsembleController> getEnsembleControllers() {
+		if (ensembleControllers == null) {
+			ensembleControllers = new EObjectContainmentWithInverseEList<EnsembleController>(EnsembleController.class, this, RuntimeMetadataPackage.COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS, RuntimeMetadataPackage.ENSEMBLE_CONTROLLER__COMPONENT_INSTANCE);
 		}
-		return ensemblingControllers;
+		return ensembleControllers;
 	}
 
 	/**
@@ -280,10 +281,10 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__PROCESSES:
-				return ((InternalEList<InternalEObject>)(InternalEList<?>)getProcesses()).basicAdd(otherEnd, msgs);
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ENSEMBLING_CONTROLLERS:
-				return ((InternalEList<InternalEObject>)(InternalEList<?>)getEnsemblingControllers()).basicAdd(otherEnd, msgs);
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__COMPONENT_PROCESSES:
+				return ((InternalEList<InternalEObject>)(InternalEList<?>)getComponentProcesses()).basicAdd(otherEnd, msgs);
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS:
+				return ((InternalEList<InternalEObject>)(InternalEList<?>)getEnsembleControllers()).basicAdd(otherEnd, msgs);
 		}
 		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}
@@ -296,10 +297,10 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__PROCESSES:
-				return ((InternalEList<?>)getProcesses()).basicRemove(otherEnd, msgs);
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ENSEMBLING_CONTROLLERS:
-				return ((InternalEList<?>)getEnsemblingControllers()).basicRemove(otherEnd, msgs);
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__COMPONENT_PROCESSES:
+				return ((InternalEList<?>)getComponentProcesses()).basicRemove(otherEnd, msgs);
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS:
+				return ((InternalEList<?>)getEnsembleControllers()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -312,8 +313,8 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__PROCESSES:
-				return getProcesses();
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__COMPONENT_PROCESSES:
+				return getComponentProcesses();
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ID:
 				return getId();
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__NAME:
@@ -322,8 +323,8 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 				return getKnowledgeManager();
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__OTHER_KNOWLEDGE_MANAGERS_ACCESS:
 				return getOtherKnowledgeManagersAccess();
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ENSEMBLING_CONTROLLERS:
-				return getEnsemblingControllers();
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS:
+				return getEnsembleControllers();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -337,9 +338,9 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__PROCESSES:
-				getProcesses().clear();
-				getProcesses().addAll((Collection<? extends cz.cuni.mff.d3s.deeco.model.runtime.api.Process>)newValue);
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__COMPONENT_PROCESSES:
+				getComponentProcesses().clear();
+				getComponentProcesses().addAll((Collection<? extends ComponentProcess>)newValue);
 				return;
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ID:
 				setId((String)newValue);
@@ -353,9 +354,9 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__OTHER_KNOWLEDGE_MANAGERS_ACCESS:
 				setOtherKnowledgeManagersAccess(newValue);
 				return;
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ENSEMBLING_CONTROLLERS:
-				getEnsemblingControllers().clear();
-				getEnsemblingControllers().addAll((Collection<? extends EnsembleController>)newValue);
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS:
+				getEnsembleControllers().clear();
+				getEnsembleControllers().addAll((Collection<? extends EnsembleController>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -369,8 +370,8 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__PROCESSES:
-				getProcesses().clear();
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__COMPONENT_PROCESSES:
+				getComponentProcesses().clear();
 				return;
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ID:
 				setId(ID_EDEFAULT);
@@ -384,8 +385,8 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__OTHER_KNOWLEDGE_MANAGERS_ACCESS:
 				setOtherKnowledgeManagersAccess(OTHER_KNOWLEDGE_MANAGERS_ACCESS_EDEFAULT);
 				return;
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ENSEMBLING_CONTROLLERS:
-				getEnsemblingControllers().clear();
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS:
+				getEnsembleControllers().clear();
 				return;
 		}
 		super.eUnset(featureID);
@@ -399,8 +400,8 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__PROCESSES:
-				return processes != null && !processes.isEmpty();
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__COMPONENT_PROCESSES:
+				return componentProcesses != null && !componentProcesses.isEmpty();
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ID:
 				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__NAME:
@@ -409,8 +410,8 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 				return KNOWLEDGE_MANAGER_EDEFAULT == null ? knowledgeManager != null : !KNOWLEDGE_MANAGER_EDEFAULT.equals(knowledgeManager);
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__OTHER_KNOWLEDGE_MANAGERS_ACCESS:
 				return OTHER_KNOWLEDGE_MANAGERS_ACCESS_EDEFAULT == null ? otherKnowledgeManagersAccess != null : !OTHER_KNOWLEDGE_MANAGERS_ACCESS_EDEFAULT.equals(otherKnowledgeManagersAccess);
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ENSEMBLING_CONTROLLERS:
-				return ensemblingControllers != null && !ensemblingControllers.isEmpty();
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS:
+				return ensembleControllers != null && !ensembleControllers.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

@@ -90,12 +90,12 @@ public class ProcessTaskTest {
 		
 		model.setKnowledgeManager(knowledgeManager);
 		
-		this.task = new ProcessTask(model.process, scheduler);
+		this.task = new ProcessTask(model.componentInstance.getComponentProcesses().get(0), scheduler);
 	}
 	
 	@Test
 	public void testSchedulingPeriod() {
-		// GIVEN a ProcessTask initialized with an InstanceProcess
+		// GIVEN a ProcessTask initialized with an ComponentProcess
 		// WHEN getSchedulingPeriod is called
 		long period = task.getSchedulingPeriod();
 		// THEN it returns the period specified in the model
@@ -107,7 +107,7 @@ public class ProcessTaskTest {
 	public void testTriggerIsDeliveredOnlyWhenListenerIsRegistered() {
 		InOrder inOrder = inOrder(knowledgeManager);
 		
-		// GIVEN a ProcessTask initialized with an InstanceProcess
+		// GIVEN a ProcessTask initialized with an ComponentProcess
 		// WHEN a listener (i.e. scheduler) is registered at the task
 		task.setTriggerListener(triggerListener);
 		// THEN the task registers a trigger listener on the knowledge manager
@@ -132,7 +132,7 @@ public class ProcessTaskTest {
 	@Test
 	@Ignore
 	public void testProcessTaskInvoke() throws Exception {
-		// GIVEN a ProcessTask initialized with an InstanceProcess
+		// GIVEN a ProcessTask initialized with an ComponentProcess
 		model.resetProcessMethodCallCounter();
 		
 		// WHEN invoke on the task is called

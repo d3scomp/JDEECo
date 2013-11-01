@@ -2,7 +2,7 @@ package cz.cuni.mff.d3s.deeco.model.runtime;
 
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Process;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
@@ -25,7 +25,7 @@ public class SampleRuntimeModel {
 
 	public RuntimeMetadata model;
 	public ComponentInstance componentInstance;
-	public Process process;
+	public ComponentProcess componentProcess;
 	public SchedulingSpecification schedulingSpecification;
 	public KnowledgeChangeTrigger trigger;
 	public Parameter paramIn, paramOut, paramInOut;
@@ -72,11 +72,11 @@ public class SampleRuntimeModel {
 		componentInstance.setKnowledgeManager(null); // TODO: add a knowledge manager with some knowledge
 		
 		// Construct a process
-		process = factory.createProcess();
-		componentInstance.getProcesses().add(process);
-		process.setName("aProcess");
-		process.setMethod(SampleRuntimeModel.class.getMethod("processMethod", ProcessParameterType.class, ProcessParameterType.class, ProcessParameterType.class));
-		process.setComponentInstance(componentInstance);
+		componentProcess = factory.createComponentProcess();
+		componentInstance.getComponentProcesses().add(componentProcess);
+		componentProcess.setName("aProcess");
+		componentProcess.setMethod(SampleRuntimeModel.class.getMethod("processMethod", ProcessParameterType.class, ProcessParameterType.class, ProcessParameterType.class));
+		componentProcess.setComponentInstance(componentInstance);
 		
 		// Construct the process parameters (3 in total .. IN - "level1.in", OUT - "level1.out", INOUT - "level1.inout")
 		PathNodeField pathNode;
@@ -91,21 +91,21 @@ public class SampleRuntimeModel {
 		inOutKnowledgePath.getNodes().add(pathNode);
 
 		paramIn = factory.createParameter();
-		process.getParameters().add(paramIn);
+		componentProcess.getParameters().add(paramIn);
 		paramIn.setDirection(ParameterDirection.IN);
 		pathNode.setName("in");
 		inKnowledgePath.getNodes().add(pathNode);
 		paramIn.setKnowledgePath(inKnowledgePath);
 		
 		paramOut = factory.createParameter();
-		process.getParameters().add(paramOut);
+		componentProcess.getParameters().add(paramOut);
 		paramOut.setDirection(ParameterDirection.OUT);
 		pathNode.setName("out");
 		outKnowledgePath.getNodes().add(pathNode);
 		paramOut.setKnowledgePath(inKnowledgePath);
 		
 		paramInOut = factory.createParameter();
-		process.getParameters().add(paramInOut);
+		componentProcess.getParameters().add(paramInOut);
 		paramInOut.setDirection(ParameterDirection.INOUT);
 		pathNode.setName("inout");
 		inOutKnowledgePath.getNodes().add(pathNode);
@@ -114,7 +114,7 @@ public class SampleRuntimeModel {
 		// Construct scheduling specification for the process
 		schedulingSpecification = factory.createSchedulingSpecification();
 		schedulingSpecification.setPeriod(10); // FIXME, what does this number mean?
-		process.setSchedulingSpecification(schedulingSpecification);
+		componentProcess.setSchedulingSpecification(schedulingSpecification);
 		
 		// Construct a trigger for the process
 		trigger = factory.createKnowledgeChangeTrigger();

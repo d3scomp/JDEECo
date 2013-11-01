@@ -5,23 +5,23 @@ package cz.cuni.mff.d3s.deeco.model.runtime.api;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Process</b></em>'.
+ * A representation of the model object '<em><b>Component Process</b></em>'.
  * <!-- end-user-doc -->
  *
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Process#getName <em>Name</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Process#getSchedulingSpecification <em>Scheduling Specification</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Process#getComponentInstance <em>Component Instance</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getName <em>Name</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getSchedulingSpecification <em>Scheduling Specification</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getComponentInstance <em>Component Instance</em>}</li>
  * </ul>
  * </p>
  *
- * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getProcess()
+ * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentProcess()
  * @model
  * @generated
  */
-public interface Process extends Invocable {
+public interface ComponentProcess extends Invocable {
 	/**
 	 * Returns the value of the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -32,14 +32,14 @@ public interface Process extends Invocable {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Name</em>' attribute.
 	 * @see #setName(String)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getProcess_Name()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentProcess_Name()
 	 * @model required="true"
 	 * @generated
 	 */
 	String getName();
 
 	/**
-	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Process#getName <em>Name</em>}' attribute.
+	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getName <em>Name</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Name</em>' attribute.
@@ -58,14 +58,14 @@ public interface Process extends Invocable {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Scheduling Specification</em>' containment reference.
 	 * @see #setSchedulingSpecification(SchedulingSpecification)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getProcess_SchedulingSpecification()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentProcess_SchedulingSpecification()
 	 * @model containment="true" required="true"
 	 * @generated
 	 */
 	SchedulingSpecification getSchedulingSpecification();
 
 	/**
-	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Process#getSchedulingSpecification <em>Scheduling Specification</em>}' containment reference.
+	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getSchedulingSpecification <em>Scheduling Specification</em>}' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Scheduling Specification</em>' containment reference.
@@ -76,7 +76,7 @@ public interface Process extends Invocable {
 
 	/**
 	 * Returns the value of the '<em><b>Component Instance</b></em>' container reference.
-	 * It is bidirectional and its opposite is '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getProcesses <em>Processes</em>}'.
+	 * It is bidirectional and its opposite is '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getComponentProcesses <em>Component Processes</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Component Instance</em>' container reference isn't clear,
@@ -85,15 +85,15 @@ public interface Process extends Invocable {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Component Instance</em>' container reference.
 	 * @see #setComponentInstance(ComponentInstance)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getProcess_ComponentInstance()
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getProcesses
-	 * @model opposite="processes" required="true" transient="false"
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentProcess_ComponentInstance()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getComponentProcesses
+	 * @model opposite="componentProcesses" required="true" transient="false"
 	 * @generated
 	 */
 	ComponentInstance getComponentInstance();
 
 	/**
-	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Process#getComponentInstance <em>Component Instance</em>}' container reference.
+	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getComponentInstance <em>Component Instance</em>}' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Component Instance</em>' container reference.
@@ -102,4 +102,4 @@ public interface Process extends Invocable {
 	 */
 	void setComponentInstance(ComponentInstance value);
 
-} // Process
+} // ComponentProcess

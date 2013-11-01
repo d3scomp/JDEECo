@@ -24,7 +24,7 @@ import org.eclipse.emf.ecore.EObject;
 public interface EnsembleController extends EObject {
 	/**
 	 * Returns the value of the '<em><b>Component Instance</b></em>' container reference.
-	 * It is bidirectional and its opposite is '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getEnsemblingControllers <em>Ensembling Controllers</em>}'.
+	 * It is bidirectional and its opposite is '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getEnsembleControllers <em>Ensemble Controllers</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Component Instance</em>' container reference isn't clear,
@@ -34,8 +34,8 @@ public interface EnsembleController extends EObject {
 	 * @return the value of the '<em>Component Instance</em>' container reference.
 	 * @see #setComponentInstance(ComponentInstance)
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getEnsembleController_ComponentInstance()
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getEnsemblingControllers
-	 * @model opposite="ensemblingControllers" required="true" transient="false"
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getEnsembleControllers
+	 * @model opposite="ensembleControllers" required="true" transient="false"
 	 * @generated
 	 */
 	ComponentInstance getComponentInstance();

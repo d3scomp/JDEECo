@@ -16,12 +16,12 @@ import org.eclipse.emf.ecore.EObject;
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getProcesses <em>Processes</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getComponentProcesses <em>Component Processes</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getId <em>Id</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getName <em>Name</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getKnowledgeManager <em>Knowledge Manager</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getOtherKnowledgeManagersAccess <em>Other Knowledge Managers Access</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getEnsemblingControllers <em>Ensembling Controllers</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getEnsembleControllers <em>Ensemble Controllers</em>}</li>
  * </ul>
  * </p>
  *
@@ -31,22 +31,22 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface ComponentInstance extends EObject {
 	/**
-	 * Returns the value of the '<em><b>Processes</b></em>' containment reference list.
-	 * The list contents are of type {@link cz.cuni.mff.d3s.deeco.model.runtime.api.Process}.
-	 * It is bidirectional and its opposite is '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Process#getComponentInstance <em>Component Instance</em>}'.
+	 * Returns the value of the '<em><b>Component Processes</b></em>' containment reference list.
+	 * The list contents are of type {@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess}.
+	 * It is bidirectional and its opposite is '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getComponentInstance <em>Component Instance</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Processes</em>' containment reference list isn't clear,
+	 * If the meaning of the '<em>Component Processes</em>' containment reference list isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Processes</em>' containment reference list.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance_Processes()
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.Process#getComponentInstance
+	 * @return the value of the '<em>Component Processes</em>' containment reference list.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance_ComponentProcesses()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getComponentInstance
 	 * @model opposite="componentInstance" containment="true"
 	 * @generated
 	 */
-	EList<cz.cuni.mff.d3s.deeco.model.runtime.api.Process> getProcesses();
+	EList<ComponentProcess> getComponentProcesses();
 
 	/**
 	 * Returns the value of the '<em><b>Id</b></em>' attribute.
@@ -153,21 +153,21 @@ public interface ComponentInstance extends EObject {
 	void setOtherKnowledgeManagersAccess(Object value);
 
 	/**
-	 * Returns the value of the '<em><b>Ensembling Controllers</b></em>' containment reference list.
+	 * Returns the value of the '<em><b>Ensemble Controllers</b></em>' containment reference list.
 	 * The list contents are of type {@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController}.
 	 * It is bidirectional and its opposite is '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController#getComponentInstance <em>Component Instance</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Ensembling Controllers</em>' containment reference list isn't clear,
+	 * If the meaning of the '<em>Ensemble Controllers</em>' containment reference list isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Ensembling Controllers</em>' containment reference list.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance_EnsemblingControllers()
+	 * @return the value of the '<em>Ensemble Controllers</em>' containment reference list.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance_EnsembleControllers()
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController#getComponentInstance
 	 * @model opposite="componentInstance" containment="true"
 	 * @generated
 	 */
-	EList<EnsembleController> getEnsemblingControllers();
+	EList<EnsembleController> getEnsembleControllers();
 
 } // ComponentInstance
