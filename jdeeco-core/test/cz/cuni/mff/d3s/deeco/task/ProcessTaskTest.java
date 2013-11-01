@@ -90,7 +90,7 @@ public class ProcessTaskTest {
 		
 		model.setKnowledgeManager(knowledgeManager);
 		
-		this.task = new ProcessTask(model.instanceProcess, scheduler);
+		this.task = new ProcessTask(model.process, scheduler);
 	}
 	
 	@Test

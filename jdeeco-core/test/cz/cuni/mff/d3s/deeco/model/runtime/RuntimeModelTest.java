@@ -1,6 +1,3 @@
-/**
- * 
- */
 package cz.cuni.mff.d3s.deeco.model.runtime;
 
 import static org.junit.Assert.assertEquals;
@@ -18,10 +15,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Component;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Process;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
@@ -108,13 +103,11 @@ public class RuntimeModelTest {
 		// AND refers to the same method within the same class as before
 		// AND contains the same knowledge as before
 		ComponentInstance nComponentInstance = nModel.getComponentInstances().get(0);
-		Component nComponent = nModel.getComponents().get(0);
-		Process nProcess = nComponent.getProcesses().get(0);
-		SchedulingSpecification nProcA1Sched = nProcess.getSchedule(); 
+		Process nProcess = nComponentInstance.getProcesses().get(0);
+		SchedulingSpecification nProcA1Sched = nProcess.getSchedulingSpecification(); 
 
 		assertEquals(oModel.componentInstance.getId(), nComponentInstance.getId());
-		assertEquals(nComponent, nComponentInstance.getComponent());
-		assertEquals(oModel.component.getName(), nComponent.getName());
+		assertEquals(oModel.componentInstance.getName(), nComponentInstance.getName());
 		assertEquals(oModel.process.getName(), nProcess.getName());
 		assertEquals(oModel.process.getMethod(), nProcess.getMethod());
 		assertEquals(oModel.schedulingSpecification.getPeriod(), nProcA1Sched.getPeriod());

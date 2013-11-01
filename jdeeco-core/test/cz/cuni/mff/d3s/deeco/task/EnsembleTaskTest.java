@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceEnsemblingController;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
 /**
@@ -18,7 +18,7 @@ import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 public class EnsembleTaskTest {
 	
 	@Mock
-	private InstanceEnsemblingController instanceEnsemblingController;
+	private EnsembleController instanceEnsemblingController;
 	@Mock
 	private Scheduler scheduler;
 	
