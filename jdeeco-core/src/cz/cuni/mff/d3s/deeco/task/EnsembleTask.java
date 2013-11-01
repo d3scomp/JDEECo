@@ -13,7 +13,7 @@ public class EnsembleTask extends Task {
 	EnsembleController ensembleController;
 	
 	public EnsembleTask(EnsembleController ensembleController, Scheduler scheduler) {
-		super(ensembleController.getEnsembleDefinition().getSchedulingSpecification(), scheduler);
+		super(scheduler);
 		
 		this.ensembleController = ensembleController;
 	}
@@ -43,5 +43,9 @@ public class EnsembleTask extends Task {
 	public void invoke() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public long getSchedulingPeriod() {
+		return ensembleController.getEnsembleDefinition().getSchedulingSpecification().getPeriod();
 	}
 }

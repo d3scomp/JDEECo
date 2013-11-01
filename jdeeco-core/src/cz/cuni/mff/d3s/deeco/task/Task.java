@@ -11,12 +11,10 @@ import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
  * 
  */
 public abstract class Task {
-	protected SchedulingSpecification schedulingSpecification;
 	protected TriggerListener listener;
 	protected Scheduler scheduler;
 	
-	public Task(SchedulingSpecification schedulingSpecification, Scheduler scheduler) {
-		this.schedulingSpecification = schedulingSpecification;
+	public Task(Scheduler scheduler) {
 		this.scheduler = scheduler;
 	}
 	
@@ -42,8 +40,6 @@ public abstract class Task {
 			this.listener = null;
 		}
 	}
-	
-	public long getSchedulingPeriod() {
-		return schedulingSpecification.getPeriod();
-	}
+
+	abstract public long getSchedulingPeriod();
 }

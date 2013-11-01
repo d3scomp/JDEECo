@@ -1,6 +1,9 @@
 package cz.cuni.mff.d3s.deeco.task;
 
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.knowledge.TriggerListener;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
 /**
@@ -12,7 +15,8 @@ public class ProcessTask extends Task {
 	ComponentProcess componentProcess;
 	
 	public ProcessTask(ComponentProcess componentProcess, Scheduler scheduler) {
-		super(componentProcess.getSchedulingSpecification(), scheduler);
+		super(scheduler);
+		this.componentProcess = componentProcess;
 	}
 
 	/* (non-Javadoc)
@@ -27,10 +31,18 @@ public class ProcessTask extends Task {
 	/* (non-Javadoc)
 	 * @see cz.cuni.mff.d3s.deeco.task.Task#registerTriggers()
 	 */
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.knowledge.TriggerListener#triggered(cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger)
+	 */
 	@Override
 	protected void registerTriggers() {
-		// TODO Auto-generated method stub
+		assert(listener != null);
 		
+		KnowledgeManager km = componentProcess.getComponentInstance().getKnowledgeManager();
+		
+		for (Trigger trigger : componentProcess.getSchedulingSpecification().getTriggers()) {
+			km.register(trigger, listener);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -38,6 +50,14 @@ public class ProcessTask extends Task {
 	 */
 	@Override
 	protected void unregisterTriggers() {
-		// TODO Auto-generated method stub	
+		KnowledgeManager km = componentProcess.getComponentInstance().getKnowledgeManager();
+		
+		for (Trigger trigger : componentProcess.getSchedulingSpecification().getTriggers()) {
+			km.unregister(trigger, listener);
+		}		
+	}
+
+	public long getSchedulingPeriod() {
+		return componentProcess.getSchedulingSpecification().getPeriod();
 	}
 }

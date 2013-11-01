@@ -206,11 +206,11 @@ public abstract class SchedulerTest  {
 	 */
 	private Task createTriggeredTask(Trigger trigger) {
 		
-		SchedulingSpecification sspec = mock(SchedulingSpecification.class);
-		when(sspec.getPeriod()).thenReturn(0l);
-		when(sspec.getTriggers()).thenReturn(new BasicEList<>(Arrays.asList(trigger)));
-		
-		Task t = new Task(sspec, tested) {		
+		Task t = new Task(tested) {	
+			@Override
+			public long getSchedulingPeriod() {
+				return 0L;
+			}
 			
 			@Override
 			protected void unregisterTriggers() {}			
