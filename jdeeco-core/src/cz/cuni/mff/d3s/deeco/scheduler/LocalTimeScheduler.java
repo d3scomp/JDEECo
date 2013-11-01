@@ -42,9 +42,13 @@ public class LocalTimeScheduler implements Scheduler{
 	}
 	
 	@Override
-	public void executionCompleted(Task task) {
-		// comment test
+	public synchronized void executionCompleted(Task task) {
 		tasks.get(task).state = States.STOPPED; 
+	}
+	
+	@Override
+	public synchronized void executionFailed(Task task, Exception e) {
+		tasks.get(task).state = States.STOPPED; 		
 	}
 
 	@Override
@@ -149,4 +153,6 @@ public class LocalTimeScheduler implements Scheduler{
 		tasks.get(task).state = States.RUNNING;
 		executor.execute(task);
 	}
+
+	
 }
