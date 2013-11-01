@@ -1,14 +1,5 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
-/**
- * This class implements the KnowledgeManager interface. It allows the user to 
- * add, update and read the values from KnowledgeSet. Also, the class allows to 
- * bind a trigger to tirggerListener or unbind it.
- * 
- * @author Rima Al Ali <alali@d3s.mff.cuni.cz>
- *
- */
-
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Collections;

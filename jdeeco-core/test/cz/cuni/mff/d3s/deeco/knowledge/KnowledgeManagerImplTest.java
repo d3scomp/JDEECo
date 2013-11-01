@@ -1,13 +1,5 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
-/**
- * KnowledgeManagerImpl testing. 
- * 
- * @author Rima Al Ali <alali@d3s.mff.cuni.cz>
- * @author Michal Kit <kit@d3s.mff.cuni.cz>
- *
- */
-
 import static org.junit.Assert.assertEquals;
 
 import java.util.HashMap;
@@ -23,6 +15,13 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 
+/**
+ * KnowledgeManagerImpl testing. 
+ * 
+ * @author Rima Al Ali <alali@d3s.mff.cuni.cz>
+ * @author Michal Kit <kit@d3s.mff.cuni.cz>
+ *
+ */
 public class KnowledgeManagerImplTest {
 
 	private KnowledgeManagerImpl toBeTested;
