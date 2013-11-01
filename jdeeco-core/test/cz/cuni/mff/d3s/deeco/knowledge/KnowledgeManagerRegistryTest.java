@@ -40,71 +40,61 @@ public class KnowledgeManagerRegistryTest {
 	}
 
 	@Test 
-	public void testCreateLocal(){
+	public void testCreateNewLocalKnowledgeManager(){
 
- 		// WHEN create a new local knowledge manager
-		// THEN define the behavior of the KnowledgeManagerRegistry:
-		//	 the value "newKM" returned by createLocal(Task localTask)
+		// WHEN create a new Local Knowledge Manager by calling createLocal() 
 		when(kmRegistry.createLocal()).thenReturn(km);
-
-		// WHEN call the createLocal
 		km = kmRegistry.createLocal();
-		// THEN a new knowledge manager is added to the locals and returned
+
+		// THEN a new local instance of knowledge manager is added to the locals and returned
 		assertNotNull(km);
 		assertEquals(true, km instanceof KnowledgeManager);
 	}
 	
  	@Test 
-	public void testCreateShadow(){
- 		// WHEN create a new remote knowledge manager
-		// THEN define the behavior of the KnowledgeManagerRegistry:
-		//	 the value "newKM" returned by createShadow(Task remoteTask)
-		when(kmRegistry.createShadow()).thenReturn(km);
-
-		// WHEN call the createShadow
+	public void testCreateNewShadowKnowledgeManager(){
+		
+ 		// WHEN create a new shadow Knowledge Manager by calling createShadow()
+ 		when(kmRegistry.createShadow()).thenReturn(km);
 		km = kmRegistry.createShadow();
- 		// THEN check if a new knowledge manager is returned and not null
+
+		// THEN a new shadow instance of knowledge manager is added to the shadows and returned
 		assertNotNull(km);
 		assertEquals(true, km instanceof KnowledgeManager);
 		
 	}
 	
 	@Test 
-	public void testRemoveLocal(){
-		// WHEN define a Collection of local knowledge managers that do not have km
-		Collection<KnowledgeManager> colLocalKM = new LinkedList<KnowledgeManager>();
-		// THEN define the behavior of the KnowledgeManagerRegistry:
-		//    1- return "colLocalKM" by calling getLocals() 
-		when(kmRegistry.getLocals()).thenReturn(colLocalKM);
-		
+	public void testLocalKnowledgeManagerIsRemoved(){
+
 		// WHEN call removeLocal(KnowledgeManager km)
+		Collection<KnowledgeManager> colLocalKM = new LinkedList<KnowledgeManager>();
+		when(kmRegistry.getLocals()).thenReturn(colLocalKM);
 		kmRegistry.removeLocal(km);
-		// THEN check current locals collection does not have the km 
+
+		// THEN check that current locals collection does not have the removed local knowledge manager 
 		assertEquals(false, kmRegistry.getLocals().contains(km));
+	
 	}
 	
 	@Test 
-	public void testRemoveShadow(){
-		// WHEN define a Collection of shadow knowledge managers that do not have km
-		Collection<KnowledgeManager> colShadowKM = new LinkedList<KnowledgeManager>();
-		// THEN define the behavior of the KnowledgeManagerRegistry:
-		//    1- return "colShadowKM" by calling getShadows() 
-		when(kmRegistry.getShadows()).thenReturn(colShadowKM);
+	public void testShadowKnowledgeManagerIsRemoved(){
 		
 		// WHEN call removeShadow(KnowledgeManager km)
+		Collection<KnowledgeManager> colShadowKM = new LinkedList<KnowledgeManager>();
+		when(kmRegistry.getShadows()).thenReturn(colShadowKM);
 		kmRegistry.removeShadow(km);
-		// THEN check current shadows collection does not have the km 
+
+		// THEN check that current shadows collection does not have the removed shadow knowledge manager 
 		assertEquals(false, kmRegistry.getShadows().contains(km));
+	
 	}
 	
 	@Test 
 	public void testGetLocals(){
-		// WHEN define a collection of locals
 		Collection<KnowledgeManager> colLocals = new LinkedList<KnowledgeManager>();
-		// THEN define the behavior of the KnowledgeManagerRegistry:
-		//   1- return "colLocals" by calling getLocals()
 		when(kmRegistry.getLocals()).thenReturn(colLocals);
-		
+
 		// WHEN call the getLocals()
 		// THEN a collection of all registered local knowledgeManagers is returned
 		assertEquals(colLocals , kmRegistry.getLocals());
@@ -112,10 +102,7 @@ public class KnowledgeManagerRegistryTest {
 	
 	@Test 
 	public void testGetShadows(){
-		// WHEN define a collection of shadows
 		Collection<KnowledgeManager> colShadows = new LinkedList<KnowledgeManager>();
-		// THEN define the behavior of the KnowledgeManagerRegistry:
-		//   1- return "colShadows" by calling getShadows()
 		when(kmRegistry.getShadows()).thenReturn(colShadows);
 		
 		// WHEN call the getShadows()

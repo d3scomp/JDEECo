@@ -1,13 +1,5 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
-/**
- * KnowledgeManagersView testing.
- * The test checks the correctness of getting the KnowledgeManagers and register/unregister 
- * the triggers of the others.
- * 
- * @author Rima Al Ali <alali@d3s.mff.cuni.cz>
- *
- */
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -25,7 +17,14 @@ import org.mockito.MockitoAnnotations;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 
-
+/**
+ * KnowledgeManagersView testing.
+ * The test checks the correctness of getting the KnowledgeManagers and register/unregister 
+ * the triggers of the others.
+ * 
+ * @author Rima Al Ali <alali@d3s.mff.cuni.cz>
+ *
+ */
 public class KnowledgeManagersViewTest {
 	
 	@Mock
@@ -44,67 +43,42 @@ public class KnowledgeManagersViewTest {
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		this.kmView =mock(KnowledgeManagersView.class);
+ 		this.km = mock(ReadOnlyKnowledgeManager.class);
+		this.trigger = mock(Trigger.class);
+		this.triggerListener = mock(TriggerListener.class);
 	}
 
  	@Test 
-	public void testGetOtherKnowledgeManager(){
-		// WHEN km mocks KnowledgeManager and define a Collection of ReadOnlyKnowledgeManagers that do not have km
-		this.km = mock(ReadOnlyKnowledgeManager.class);
+	public void testGetOtherKnowledgeManagerExcludingSelf(){
+		
  		Collection<ReadOnlyKnowledgeManager> colKM = new LinkedList<ReadOnlyKnowledgeManager>();
- 		// THEN define the behavior of KnowledgeManagerView :
-		//  1- return "colKM" by calling getOthersKnowledgeManagers()
 		when(kmView.getOthersKnowledgeManagers()).thenReturn(colKM);
 		
 		// WHEN call getOthersKnowledgeManagers()
-		// THEN check the returned collection do not have km 
+		// THEN check the returned collection do not have the current knowledge manager 
 		assertEquals(false, kmView.getOthersKnowledgeManagers().contains(km));
 		
 	}
 	
 	@Ignore
  	@Test
-	public void testRegisterOthers() {
-		// WHEN define a new for trigger   
-		this.trigger = mock(Trigger.class);
-		// THEN add the trigger(s) to a Collection
-		Collection<Trigger> colTriggers= new LinkedList<Trigger>();
-		colTriggers.add(trigger);
-		
-		// WHEN mock new TriggerListener
-		this.triggerListener = mock(TriggerListener.class);
-		// THEN define the behavior of the TriggerListener:
-		//	 the value "colTriggers" returned by getTriggers()
-		//when(triggerListener.getTriggers()).thenReturn(colTriggers);
-		
+	public void testRegisterOthersTriggerAndTriggerListener() {
 		
 		// WHEN registering a trigger to triggerListener
 		kmView.register(trigger,triggerListener);
-		// THEN the triggerListener adds this trigger
-		// assertEquals(true,triggerListener.getTriggers().contain(trigger));
-		
+		// THEN ...
+		// TODO : ...
 		verifyNoMoreInteractions(trigger);
 	}
 	
 	@Ignore
  	@Test
-	public void testUnregisterOthers() {
-		// WHEN define a new for trigger   
-		this.trigger = mock(Trigger.class);
-		// THEN define a Collection of Triggers without the currentTrigger
-		Collection<Trigger> colTriggers= new LinkedList<Trigger>();
-		
-		// WHEN mock new TriggerListener
-		this.triggerListener = mock(TriggerListener.class);
-		// THEN define the behavior of the TriggerListener:
-		//	 the value "colTriggers" returned by getTriggers()
-		//when(triggerListener.getTriggers()).thenReturn(colTriggers);
-		
-		
+	public void testUnregisterOthersTriggerAndTriggerListener() {
+
 		// WHEN registering a trigger to triggerListener
 		kmView.unregister(trigger,triggerListener);
-		// THEN the triggerListener removes this trigger
-		// assertEquals(false,triggerListener.getTriggers().contain(trigger));
-
+		// THEN ...
+		// TODO : ...
 		verifyNoMoreInteractions(trigger);
 
 	}
