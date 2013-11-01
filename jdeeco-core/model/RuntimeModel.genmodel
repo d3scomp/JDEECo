@@ -16,6 +16,7 @@
     </genEnums>
     <genDataTypes ecoreDataType="RuntimeModel.ecore#//Method"/>
     <genDataTypes ecoreDataType="RuntimeModel.ecore#//KnowledgeManager"/>
+    <genDataTypes ecoreDataType="RuntimeModel.ecore#//OtherKnowledgeManagersAccess"/>
     <genClasses ecoreClass="RuntimeModel.ecore#//SchedulingSpecification">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//SchedulingSpecification/triggers"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//SchedulingSpecification/period"/>
@@ -35,29 +36,29 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//PathNodeMapKey/keyPath"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//RuntimeMetadata">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//RuntimeMetadata/instances"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//RuntimeMetadata/ensembles"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//RuntimeMetadata/components"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//RuntimeMetadata/ensembleDefinitions"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//RuntimeMetadata/componentInstances"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//ComponentInstance">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentInstance/processes"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentInstance/id"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentInstance/component"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentInstance/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentInstance/knowledgeManager"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentInstance/otherKnowledgeManagersAccess"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentInstance/ensemblingControllers"/>
     </genClasses>
-    <genClasses ecoreClass="RuntimeModel.ecore#//Component">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//Component/process"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//Component/name"/>
-    </genClasses>
-    <genClasses ecoreClass="RuntimeModel.ecore#//Ensemble">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//Ensemble/name"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//Ensemble/schedule"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//Ensemble/membership"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//Ensemble/knowledgeExchange"/>
+    <genClasses ecoreClass="RuntimeModel.ecore#//EnsembleDefinition">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//EnsembleDefinition/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//EnsembleDefinition/membership"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//EnsembleDefinition/knowledgeExchange"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//EnsembleDefinition/schedulingSpecification"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//Condition"/>
     <genClasses ecoreClass="RuntimeModel.ecore#//Exchange"/>
     <genClasses ecoreClass="RuntimeModel.ecore#//Process">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//Process/schedule"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//Process/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//Process/schedulingSpecification"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference RuntimeModel.ecore#//Process/componentInstance"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//Parameter">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//Parameter/direction"/>
@@ -66,6 +67,10 @@
     <genClasses ecoreClass="RuntimeModel.ecore#//Invocable">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//Invocable/parameters"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//Invocable/method"/>
+    </genClasses>
+    <genClasses ecoreClass="RuntimeModel.ecore#//EnsembleController">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference RuntimeModel.ecore#//EnsembleController/componentInstance"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//EnsembleController/ensembleDefinition"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

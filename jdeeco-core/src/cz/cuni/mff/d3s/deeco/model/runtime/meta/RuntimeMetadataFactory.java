@@ -2,13 +2,11 @@
  */
 package cz.cuni.mff.d3s.deeco.model.runtime.meta;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Component;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Condition;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Ensemble;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Exchange;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceEnsemblingController;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Invocable;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
@@ -101,22 +99,13 @@ public interface RuntimeMetadataFactory extends EFactory {
 	ComponentInstance createComponentInstance();
 
 	/**
-	 * Returns a new object of class '<em>Component</em>'.
+	 * Returns a new object of class '<em>Ensemble Definition</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Component</em>'.
+	 * @return a new object of class '<em>Ensemble Definition</em>'.
 	 * @generated
 	 */
-	Component createComponent();
-
-	/**
-	 * Returns a new object of class '<em>Ensemble</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Ensemble</em>'.
-	 * @generated
-	 */
-	Ensemble createEnsemble();
+	EnsembleDefinition createEnsembleDefinition();
 
 	/**
 	 * Returns a new object of class '<em>Condition</em>'.
@@ -164,22 +153,13 @@ public interface RuntimeMetadataFactory extends EFactory {
 	Invocable createInvocable();
 
 	/**
-	 * Returns a new object of class '<em>Instance Process</em>'.
+	 * Returns a new object of class '<em>Ensemble Controller</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Instance Process</em>'.
+	 * @return a new object of class '<em>Ensemble Controller</em>'.
 	 * @generated
 	 */
-	InstanceProcess createInstanceProcess();
-
-	/**
-	 * Returns a new object of class '<em>Instance Ensembling Controller</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Instance Ensembling Controller</em>'.
-	 * @generated
-	 */
-	InstanceEnsemblingController createInstanceEnsemblingController();
+	EnsembleController createEnsembleController();
 
 	/**
 	 * Returns the package supported by this factory.
