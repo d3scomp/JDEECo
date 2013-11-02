@@ -1,14 +1,5 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
-/**
- * This class implements the KnowledgeManager interface. It allows the user to 
- * add, update and read the values from KnowledgeSet. Also, the class allows to 
- * bind a trigger to tirggerListener or unbind it.
- * 
- * @author Rima Al Ali <alali@d3s.mff.cuni.cz>
- *
- */
-
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Collections;
@@ -17,30 +8,40 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.rits.cloning.Cloner;
-
-import cz.cuni.mff.d3s.deeco.exceptions.KnowledgeManagerNotExistentException;
+import cz.cuni.mff.d3s.deeco.exceptions.KnowledgeNotExistentException;
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 
 /**
+ * This class implements the KnowledgeManager interface. It allows the user to 
+ * add, update and read the values from KnowledgeSet. Also, the class allows to 
+ * bind a trigger to tirggerListener or unbind it.
+ * 
+ * @author Rima Al Ali <alali@d3s.mff.cuni.cz>
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
  * 
  */
-public class KnowledgeManagerImpl implements KnowledgeManager,
+public class BaseKnowledgeManager implements KnowledgeManager,
 		KnowledgeManagersView {
 
-	private final Object knowledge;
-	private final Cloner cloner;
-	private final Map<KnowledgePath, TriggerListener> knowledgeChangeListeners;
+	private final Map<KnowledgePath, Object> knowledge;
+	private final Map<KnowledgeChangeTrigger, List<TriggerListener>> knowledgeChangeListeners;
+	private final KnowledgePath baseReference;
 
-	public KnowledgeManagerImpl(Object knowledge) {
-		this.cloner = new Cloner();
-		this.knowledge = cloner.deepClone(knowledge);
-		this.knowledgeChangeListeners = new HashMap<KnowledgePath, TriggerListener>();
+	public BaseKnowledgeManager() {
+		this.knowledge = new HashMap<>();
+		this.knowledgeChangeListeners = new HashMap<>();
+		this.baseReference = KnowledgePathUtils.createKnowledgePath();
+	}
+
+	public BaseKnowledgeManager(Object baseKnowledge) {
+		this();
+		if (baseKnowledge != null)
+			knowledge.put(baseReference, baseKnowledge);
 	}
 
 	/*
@@ -51,12 +52,11 @@ public class KnowledgeManagerImpl implements KnowledgeManager,
 	 * .Collection)
 	 */
 	@Override
-	public ValueSet get(Collection<KnowledgePath> knowledgePathList)
-			throws KnowledgeManagerNotExistentException {
+	public synchronized ValueSet get(Collection<KnowledgePath> knowledgePaths)
+			throws KnowledgeNotExistentException {
 		ValueSet result = new ValueSet();
-		for (KnowledgePath kp : knowledgePathList)
-				result.setValue(kp,
-						cloner.deepClone(getKnowledge(kp.getNodes())));
+		for (KnowledgePath kp : knowledgePaths)
+			result.setValue(kp, getKnowledge(kp.getNodes()));
 		return result;
 	}
 
@@ -69,8 +69,19 @@ public class KnowledgeManagerImpl implements KnowledgeManager,
 	 * cz.cuni.mff.d3s.deeco.knowledge.TriggerListener)
 	 */
 	@Override
-	public void register(Trigger trigger, TriggerListener triggerListener) {
-
+	public synchronized void register(Trigger trigger,
+			TriggerListener triggerListener) {
+		if (trigger instanceof KnowledgeChangeTrigger) {
+			KnowledgeChangeTrigger kct = (KnowledgeChangeTrigger) trigger;
+			List<TriggerListener> listeners;
+			if (knowledgeChangeListeners.containsKey(kct)) {
+				listeners = knowledgeChangeListeners.get(kct);
+			} else {
+				listeners = new LinkedList<>();
+				knowledgeChangeListeners.put(kct, listeners);
+			}
+			listeners.add(triggerListener);
+		}
 	}
 
 	/*
@@ -82,8 +93,15 @@ public class KnowledgeManagerImpl implements KnowledgeManager,
 	 * cz.cuni.mff.d3s.deeco.knowledge.TriggerListener)
 	 */
 	@Override
-	public void unregister(Trigger trigger, TriggerListener triggerListener) {
-
+	public synchronized void unregister(Trigger trigger,
+			TriggerListener triggerListener) {
+		if (trigger instanceof KnowledgeChangeTrigger) {
+			KnowledgePath kp = ((KnowledgeChangeTrigger) trigger)
+					.getKnowledgePath();
+			if (knowledgeChangeListeners.containsKey(kp)) {
+				knowledgeChangeListeners.get(kp).remove(triggerListener);
+			}
+		}
 	}
 
 	/*
@@ -94,18 +112,18 @@ public class KnowledgeManagerImpl implements KnowledgeManager,
 	 * .deeco.knowledge.ChangeSet)
 	 */
 	@Override
-	public void update(ChangeSet changeSet) {
+	public synchronized void update(ChangeSet changeSet) {
 		// Update
 		try {
 			for (KnowledgePath kp : changeSet.getUpdatedReferences()) {
-				updateKnowledge(kp, cloner.deepClone(changeSet.getValue(kp)));
+				updateKnowledge(kp, changeSet.getValue(kp));
+				notifyKnowledgeChangeListeners(kp);
 			}
 		} catch (Exception e) {
 			Log.e("Knowledge update error", e);
 		}
 		// Delete list or map items
 		deleteKnowledge(changeSet.getDeletedReferences());
-
 	}
 
 	/*
@@ -115,14 +133,19 @@ public class KnowledgeManagerImpl implements KnowledgeManager,
 	 * getOthersKnowledgeManagers()
 	 */
 	@Override
-	public Collection<ReadOnlyKnowledgeManager> getOthersKnowledgeManagers() {
-		return null;
+	public synchronized Collection<ReadOnlyKnowledgeManager> getOthersKnowledgeManagers() {
+		KnowledgeManagerRegistry kmRegistry = KnowledgeManagerRegistry
+				.getInstance();
+		List<ReadOnlyKnowledgeManager> result = new LinkedList<>();
+		result.addAll(kmRegistry.getLocals());
+		result.addAll(kmRegistry.getShadows());
+		result.remove(this);
+		return result;
 	}
 
-	private Object getKnowledge(List<PathNode> knowledgePath)
-			throws KnowledgeManagerNotExistentException {
+	protected Object getKnowledge(List<PathNode> knowledgePath)
+			throws KnowledgeNotExistentException {
 		Object currentObject = knowledge;
-		Object parent = null;
 		Field currentField;
 		String fieldName = null;
 		try {
@@ -147,28 +170,32 @@ public class KnowledgeManagerImpl implements KnowledgeManager,
 								currentObject = currentObjectAsMap
 										.get(fieldName);
 							else
-								throw new KnowledgeManagerNotExistentException();
+								throw new KnowledgeNotExistentException();
 						} else {
-							throw new KnowledgeManagerNotExistentException();
+							throw new KnowledgeNotExistentException();
 						}
 					} catch (Exception e) {
-						throw new KnowledgeManagerNotExistentException();
+						throw new KnowledgeNotExistentException();
 					}
 				}
 			}
 		} catch (IllegalAccessException e) {
-			throw new KnowledgeManagerNotExistentException();
+			throw new KnowledgeNotExistentException();
 		}
 		return currentObject;
 	}
 
-	private void updateKnowledge(KnowledgePath knowledgePath, Object value)
-			throws Exception {
+	protected void updateKnowledge(KnowledgePath knowledgePath, Object value) {
 		List<PathNode> pathNodesToParent = new LinkedList<>(
 				knowledgePath.getNodes());
 		String fieldName = ((PathNodeField) pathNodesToParent
 				.remove(pathNodesToParent.size() - 1)).getName();
-		Object parent = getKnowledge(pathNodesToParent);
+		Object parent = null;
+		try {
+			parent = getKnowledge(pathNodesToParent);
+		} catch (KnowledgeNotExistentException e) {
+			//TODO add new entry to the base map
+		}
 		try {
 			Field field = parent.getClass().getField(fieldName);
 			field.set(parent, value);
@@ -179,7 +206,7 @@ public class KnowledgeManagerImpl implements KnowledgeManager,
 			} else if (parent instanceof Map<?, ?>) {
 				((Map<String, Object>) parent).put(fieldName, value);
 			} else {
-				throw new KnowledgeManagerNotExistentException();
+				//TODO add new entry to the base map
 			}
 		}
 	}
@@ -210,7 +237,7 @@ public class KnowledgeManagerImpl implements KnowledgeManager,
 		for (Object p : parentsToDeleteKeys.keySet()) {
 			keysToDelete = parentsToDeleteKeys.get(p);
 			// We need to sort the keys in order to start deleting from the end.
-			// This is important for lists.
+			// This is important for list consitency.
 			Collections.sort(keysToDelete);
 			for (int i = keysToDelete.size() - 1; i >= 0; i--) {
 				fieldName = keysToDelete.get(i);
@@ -221,6 +248,21 @@ public class KnowledgeManagerImpl implements KnowledgeManager,
 				}
 			}
 		}
+	}
 
+	private void notifyKnowledgeChangeListeners(KnowledgePath kp) {
+		KnowledgeChangeTrigger foundKCT = null;
+		for (KnowledgeChangeTrigger kct : knowledgeChangeListeners.keySet()) {
+			if (kct.getKnowledgePath().equals(kp)) {
+				foundKCT = kct;
+				break;
+			}
+		}
+		if (foundKCT != null) {
+			for (TriggerListener listener : knowledgeChangeListeners
+					.get(foundKCT)) {
+				listener.triggered(foundKCT);
+			}
+		}
 	}
 }

@@ -18,37 +18,26 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
-import cz.cuni.mff.d3s.deeco.exceptions.KnowledgeManagerNotExistentException;
+import cz.cuni.mff.d3s.deeco.exceptions.KnowledgeNotExistentException;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
-import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 
-public class KnowledgeManagerImplTest {
+public class BaseKnowledgeManagerTest {
 
-	private KnowledgeManagerImpl toBeTested;
-
-	private PathNodeField createPathNodeField() {
-		RuntimeMetadataFactory factory = RuntimeMetadataFactory.eINSTANCE;
-		return factory.createPathNodeField();
-	}
-
-	private KnowledgePath createKnowledgePath() {
-		RuntimeMetadataFactory factory = RuntimeMetadataFactory.eINSTANCE;
-		return factory.createKnowledgePath();
-	}
+	private BaseKnowledgeManager toBeTested;
 
 	@Before
 	public void setUp() {
-		toBeTested = new KnowledgeManagerImpl(new Knowledge());
+		toBeTested = new BaseKnowledgeManager(new Knowledge());
 	}
 
 	@Test
 	public void testUpdateIntegerField() throws Exception {
 		// WHEN the update method is called on the KnowledgeManager
 		// and as a ChangeSet, the update for the 'number' field is passed
-		PathNodeField pnf = createPathNodeField();
+		PathNodeField pnf = KnowledgePathUtils.createPathNodeField();
 		pnf.setName("number");
-		KnowledgePath kp = createKnowledgePath();
+		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath();
 		kp.getNodes().add(pnf);
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
 		knowledgePaths.add(kp);
@@ -67,11 +56,11 @@ public class KnowledgeManagerImplTest {
 	public void testUpdateListField() throws Exception {
 		// WHEN the update method is called on the KnowledgeManager
 		// and as a ChangeSet, the update for one of the 'list' items is passed
-		PathNodeField pnf = createPathNodeField();
+		PathNodeField pnf = KnowledgePathUtils.createPathNodeField();
 		pnf.setName("list");
-		KnowledgePath kp = createKnowledgePath();
+		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath();
 		kp.getNodes().add(pnf);
-		pnf = createPathNodeField();
+		pnf = KnowledgePathUtils.createPathNodeField();
 		pnf.setName("2");
 		kp.getNodes().add(pnf);
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
@@ -91,11 +80,11 @@ public class KnowledgeManagerImplTest {
 	public void testUpdateMapField() throws Exception {
 		// WHEN the update method is called on the KnowledgeManager
 		// and as a ChangeSet, the update for one of the 'map' items is passed
-		PathNodeField pnf = createPathNodeField();
+		PathNodeField pnf = KnowledgePathUtils.createPathNodeField();
 		pnf.setName("map");
-		KnowledgePath kp = createKnowledgePath();
+		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath();
 		kp.getNodes().add(pnf);
-		pnf = createPathNodeField();
+		pnf = KnowledgePathUtils.createPathNodeField();
 		pnf.setName("a");
 		kp.getNodes().add(pnf);
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
@@ -115,11 +104,11 @@ public class KnowledgeManagerImplTest {
 	public void testRemovalFromList() throws Exception {
 		// WHEN the update method is called on the KnowledgeManager
 		// and as a ChangeSet, the removal of one of the 'list' items is passed
-		PathNodeField pnf = createPathNodeField();
+		PathNodeField pnf = KnowledgePathUtils.createPathNodeField();
 		pnf.setName("list");
-		KnowledgePath kp = createKnowledgePath();
+		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath();
 		kp.getNodes().add(pnf);
-		pnf = createPathNodeField();
+		pnf = KnowledgePathUtils.createPathNodeField();
 		pnf.setName("2");
 		kp.getNodes().add(pnf);
 
@@ -139,16 +128,16 @@ public class KnowledgeManagerImplTest {
 		assertEquals(nextItemValue, toBeTested.get(knowledgePaths).getValue(kp));
 	}
 
-	@Test(expected = KnowledgeManagerNotExistentException.class)
+	@Test(expected = KnowledgeNotExistentException.class)
 	public void testDeleteFromMap() throws Exception {
 		// WHEN the update method is called on the KnowledgeManager
 		// and as a ChangeSet, the removal of one of the 'map' elements is
 		// passed
-		PathNodeField pnf = createPathNodeField();
+		PathNodeField pnf = KnowledgePathUtils.createPathNodeField();
 		pnf.setName("map");
-		KnowledgePath kp = createKnowledgePath();
+		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath();
 		kp.getNodes().add(pnf);
-		pnf = createPathNodeField();
+		pnf = KnowledgePathUtils.createPathNodeField();
 		pnf.setName("a");
 		kp.getNodes().add(pnf);
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
@@ -166,9 +155,9 @@ public class KnowledgeManagerImplTest {
 	@Test
 	public void testGetIntegerField() throws Exception {
 		// WHEN a field is accessed from the ReadOnlyKnowledgeManager
-		PathNodeField pnf = createPathNodeField();
+		PathNodeField pnf = KnowledgePathUtils.createPathNodeField();
 		pnf.setName("number");
-		KnowledgePath kp = createKnowledgePath();
+		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath();
 		kp.getNodes().add(pnf);
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
 		knowledgePaths.add(kp);
@@ -181,11 +170,11 @@ public class KnowledgeManagerImplTest {
 	@Test
 	public void testGetListField() throws Exception {
 		// WHEN an item of a list is accessed from the ReadOnlyKnowledgeManager
-		PathNodeField pnf = createPathNodeField();
+		PathNodeField pnf = KnowledgePathUtils.createPathNodeField();
 		pnf.setName("list");
-		KnowledgePath kp = createKnowledgePath();
+		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath();
 		kp.getNodes().add(pnf);
-		pnf = createPathNodeField();
+		pnf = KnowledgePathUtils.createPathNodeField();
 		pnf.setName("2");
 		kp.getNodes().add(pnf);
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
@@ -200,11 +189,11 @@ public class KnowledgeManagerImplTest {
 	public void testGetMapField() throws Exception {
 		// WHEN an element of a map is accessed from the
 		// ReadOnlyKnowledgeManager
-		PathNodeField pnf = createPathNodeField();
+		PathNodeField pnf = KnowledgePathUtils.createPathNodeField();
 		pnf.setName("map");
-		KnowledgePath kp = createKnowledgePath();
+		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath();
 		kp.getNodes().add(pnf);
-		pnf = createPathNodeField();
+		pnf = KnowledgePathUtils.createPathNodeField();
 		pnf.setName("a");
 		kp.getNodes().add(pnf);
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
@@ -215,13 +204,13 @@ public class KnowledgeManagerImplTest {
 		assertEquals(1, result.getValue(kp));
 	}
 
-	@Test(expected = KnowledgeManagerNotExistentException.class)
+	@Test(expected = KnowledgeNotExistentException.class)
 	public void testNotExsistentAccess() throws Exception {
 		// WHEN a not existent entry is accessed from the
 		// ReadOnlyKnowledgeManager
-		PathNodeField pnf = createPathNodeField();
+		PathNodeField pnf = KnowledgePathUtils.createPathNodeField();
 		pnf.setName("dummy");
-		KnowledgePath kp = createKnowledgePath();
+		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath();
 		kp.getNodes().add(pnf);
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
 		knowledgePaths.add(kp);
