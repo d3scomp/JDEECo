@@ -90,7 +90,7 @@ public class ProcessTaskTest {
 		
 		model.setKnowledgeManager(knowledgeManager);
 		
-		this.task = new ProcessTask(model.componentInstance.getComponentProcesses().get(0), scheduler);
+		this.task = new ProcessTask(model.componentProcess, scheduler);
 	}
 	
 	@Test
@@ -103,9 +103,8 @@ public class ProcessTaskTest {
 	}
 	
 	@Test
-	@Ignore
 	public void testTriggerIsDeliveredOnlyWhenListenerIsRegistered() {
-		InOrder inOrder = inOrder(knowledgeManager);
+		InOrder inOrder = inOrder(knowledgeManager, triggerListener);
 		
 		// GIVEN a ProcessTask initialized with an ComponentProcess
 		// WHEN a listener (i.e. scheduler) is registered at the task
@@ -123,10 +122,11 @@ public class ProcessTaskTest {
 		// THEN the trigger is unregistered at the knowledge manager
 		inOrder.verify(knowledgeManager).unregister(model.trigger, taskTriggerListenerCaptor.getValue());
 		
-		// WHEN another trigger (possibly spurious) comes from the knowledge manager
-		taskTriggerListenerCaptor.getValue().triggered(model.trigger);		
-		// THEN nothing is called on the unregistered listener (i.e. scheduler)
 		verifyNoMoreInteractions(triggerListener);
+		
+		// NOTE that we don't test here the case the trigger is not delivered to the scheduler when spurious trigger from the knowledge manager comes.
+		// This is because the task does the registration by directly passing the triggerListener to the knowledge manager and thus it has no control
+		// over the delivery (from the knowledge manager to the scheduler).
 	}
 	
 	@Test

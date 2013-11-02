@@ -10,6 +10,8 @@ import org.junit.rules.ExpectedException;
 
 import cz.cuni.mff.d3s.deeco.task.Task;
 
+//FIXME: The class is missing a header which states the author
+
 public abstract class ExecutorTest {
 	
 	protected Executor tested;
@@ -107,6 +109,6 @@ public abstract class ExecutorTest {
 	public void testExecuteNullTask() {
 		// WHEN a null task is scheduled for execution
 		tested.execute(null);
-		// THEN nothing bat happens
+		// THEN nothing bad happens
 	}
 }
