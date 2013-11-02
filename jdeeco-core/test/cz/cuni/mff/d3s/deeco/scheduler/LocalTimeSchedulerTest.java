@@ -17,7 +17,8 @@ public class LocalTimeSchedulerTest {
 	@Before
 	public void setUp() throws Exception{		
 		executor = mock(Executor.class);
-		sched = new LocalTimeScheduler(executor);
+		sched = new LocalTimeScheduler();
+		sched.setExecutor(executor);
 	}
 	
 	

@@ -38,9 +38,14 @@ public class LocalTimeScheduler implements Scheduler {
 		STOPPED
 	}
 	
-	public LocalTimeScheduler( Executor executor ){
-		this.executor = executor;
+	public LocalTimeScheduler(){
 		tasks = new HashMap<>();
+	}
+	
+	@Override
+	public void setExecutor(Executor executor) {
+		this.executor = executor;
+		
 	}
 	
 	@Override
@@ -155,6 +160,8 @@ public class LocalTimeScheduler implements Scheduler {
 		tasks.get(task).state = States.RUNNING;
 		executor.execute(task);
 	}
+
+	
 
 	
 }
