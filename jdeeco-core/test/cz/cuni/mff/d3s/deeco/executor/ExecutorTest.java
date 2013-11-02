@@ -98,7 +98,7 @@ public abstract class ExecutorTest {
 	}
 
 	@Test
-	public void testExecuteNonNullTask() {
+	public void testExecuteNonNullTask() throws Exception {
 		// WHEN a non-null task is scheduled for execution
 		tested.execute(taskSuccess);
 		// THEN the task.invoke() is called

@@ -19,7 +19,6 @@ import java.util.Map;
 
 import com.rits.cloning.Cloner;
 
-import cz.cuni.mff.d3s.deeco.exceptions.KnowledgeManagerNotExistentException;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
@@ -52,7 +51,7 @@ public class KnowledgeManagerImpl implements KnowledgeManager,
 	 */
 	@Override
 	public ValueSet get(Collection<KnowledgePath> knowledgePathList)
-			throws KnowledgeManagerNotExistentException {
+			throws KnowledgeNotFoundException {
 		ValueSet result = new ValueSet();
 		for (KnowledgePath kp : knowledgePathList)
 				result.setValue(kp,
@@ -120,7 +119,7 @@ public class KnowledgeManagerImpl implements KnowledgeManager,
 	}
 
 	private Object getKnowledge(List<PathNode> knowledgePath)
-			throws KnowledgeManagerNotExistentException {
+			throws KnowledgeNotFoundException {
 		Object currentObject = knowledge;
 		Object parent = null;
 		Field currentField;
@@ -147,17 +146,17 @@ public class KnowledgeManagerImpl implements KnowledgeManager,
 								currentObject = currentObjectAsMap
 										.get(fieldName);
 							else
-								throw new KnowledgeManagerNotExistentException();
+								throw new KnowledgeNotFoundException();
 						} else {
-							throw new KnowledgeManagerNotExistentException();
+							throw new KnowledgeNotFoundException();
 						}
 					} catch (Exception e) {
-						throw new KnowledgeManagerNotExistentException();
+						throw new KnowledgeNotFoundException();
 					}
 				}
 			}
 		} catch (IllegalAccessException e) {
-			throw new KnowledgeManagerNotExistentException();
+			throw new KnowledgeNotFoundException();
 		}
 		return currentObject;
 	}
@@ -179,7 +178,7 @@ public class KnowledgeManagerImpl implements KnowledgeManager,
 			} else if (parent instanceof Map<?, ?>) {
 				((Map<String, Object>) parent).put(fieldName, value);
 			} else {
-				throw new KnowledgeManagerNotExistentException();
+				throw new KnowledgeNotFoundException();
 			}
 		}
 	}

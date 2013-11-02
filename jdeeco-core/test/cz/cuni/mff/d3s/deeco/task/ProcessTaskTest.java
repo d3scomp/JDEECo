@@ -51,11 +51,11 @@ public class ProcessTaskTest {
 
 	private Task task;
 	
-	private SampleRuntimeModel.ProcessParameterType inValue;
-	private SampleRuntimeModel.ProcessParameterType inOutValue;
+	private Integer inValue;
+	private Integer inOutValue;
 
-	private SampleRuntimeModel.ProcessParameterType expectedInOutValue;
-	private SampleRuntimeModel.ProcessParameterType expectedOutValue;
+	private ParamHolder<Integer> expectedInOutValue;
+	private ParamHolder<Integer> expectedOutValue;
 
 	@Before
 	public void setUp() throws Exception {
@@ -63,11 +63,11 @@ public class ProcessTaskTest {
 
 		model = new SampleRuntimeModel();
 		
-		inValue = new SampleRuntimeModel.ProcessParameterType(21);
-		inOutValue = new SampleRuntimeModel.ProcessParameterType(108);
-		expectedInOutValue = new SampleRuntimeModel.ProcessParameterType(108);
-		expectedOutValue = new SampleRuntimeModel.ProcessParameterType(0);		
-		SampleRuntimeModel.processMethod(inValue, expectedInOutValue, expectedOutValue);
+		inValue = 21;
+		inOutValue = 108;
+		expectedInOutValue = new ParamHolder<Integer>(108);
+		expectedOutValue = new ParamHolder<Integer>(0);		
+		SampleRuntimeModel.processMethod(inValue, expectedOutValue, expectedInOutValue);
 		
 		doNothing().when(knowledgeManager).register(eq(model.trigger), taskTriggerListenerCaptor.capture());
 		
@@ -130,7 +130,6 @@ public class ProcessTaskTest {
 	}
 	
 	@Test
-	@Ignore
 	public void testProcessTaskInvoke() throws Exception {
 		// GIVEN a ProcessTask initialized with an ComponentProcess
 		model.resetProcessMethodCallCounter();
@@ -149,7 +148,7 @@ public class ProcessTaskTest {
 		verify(knowledgeManager).update(changeSetCaptor.capture());
 		ChangeSet cs = changeSetCaptor.getValue();
 		assertEquals(cs.getValue(model.paramInOut.getKnowledgePath()), expectedInOutValue.value);
-		assertEquals(cs.getValue(model.paramOut.getKnowledgePath()), expectedOutValue);
+		assertEquals(cs.getValue(model.paramOut.getKnowledgePath()), expectedOutValue.value);
 		assertTrue(cs.getDeletedReferences().isEmpty());
 		assertTrue(cs.getUpdatedReferences().size() == 2);
 	}	
