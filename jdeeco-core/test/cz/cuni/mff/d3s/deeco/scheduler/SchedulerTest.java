@@ -15,6 +15,8 @@ import cz.cuni.mff.d3s.deeco.task.Task;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+// FIXME: The class is missing a header which states the author
+
 public abstract class SchedulerTest  {
 
 	protected Scheduler tested;
@@ -37,6 +39,9 @@ public abstract class SchedulerTest  {
 			tested.stop();
 	}
 
+	// TODO TB: Shouldn't we have also a test that tests repeated execution? For instnce to start the scheduler, let it run for 2 secs and see that a periodic
+	// task with a period of 100 ms got scheduled approx. 200 times?
+	
 	@Test
 	public void testPeriodicTaskScheduledWhenSchedulerStarted() throws InterruptedException {
 		Task t = mock(Task.class);
@@ -57,7 +62,7 @@ public abstract class SchedulerTest  {
 		
 		reset(executor);
 		
-		// WHEN the running scheduler is stopped a bit longer
+		// WHEN the running scheduler is stopped a bit longer (FIXME TB: not sure what it means) 
 		// THEN the task is no longer scheduled		
 		verify(executor, timeout(10).never()).execute(t);		
 		

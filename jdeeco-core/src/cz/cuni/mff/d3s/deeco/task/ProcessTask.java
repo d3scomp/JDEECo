@@ -24,8 +24,19 @@ public class ProcessTask extends Task {
 	 */
 	@Override
 	public void invoke() {
-		// TODO Auto-generated method stub
+		// Obtain parameters from the knowledge
 		
+		// Create holders for the *OUT parameters
+		// TODO: We could have an option of not creating the wrapper. That would make it easier to work with mutable out types.
+		// TODO: We need some way of handling insertions/deletions in a hashmap.
+
+		// Construct the parameters for the process method
+		
+		// Call the process method
+		
+		// Create a changeset
+		
+		// Write the changeset back to the knowledge
 	}
 
 	/* (non-Javadoc)

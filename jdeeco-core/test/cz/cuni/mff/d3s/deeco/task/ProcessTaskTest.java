@@ -123,6 +123,10 @@ public class ProcessTaskTest {
 		inOrder.verify(knowledgeManager).unregister(model.trigger, taskTriggerListenerCaptor.getValue());
 		
 		verifyNoMoreInteractions(triggerListener);
+		
+		// NOTE that we don't test here the case the trigger is not delivered to the scheduler when spurious trigger from the knowledge manager comes.
+		// This is because the task does the registration by directly passing the triggerListener to the knowledge manager and thus it has no control
+		// over the delivery (from the knowledge manager to the scheduler).
 	}
 	
 	@Test
