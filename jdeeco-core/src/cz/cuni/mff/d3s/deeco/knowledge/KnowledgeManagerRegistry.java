@@ -9,7 +9,6 @@ import java.util.Collection;
  * @author Rima Al Ali <alali@d3s.mff.cuni.cz>
  * 
  */
-
 public class KnowledgeManagerRegistry {
 
 	private static volatile KnowledgeManagerRegistry instance;

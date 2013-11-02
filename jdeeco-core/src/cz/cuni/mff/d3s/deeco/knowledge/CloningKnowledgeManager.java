@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.rits.cloning.Cloner;
 
-import cz.cuni.mff.d3s.deeco.exceptions.KnowledgeNotExistentException;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 
@@ -26,7 +25,7 @@ public class CloningKnowledgeManager extends BaseKnowledgeManager {
 	
 	@Override
 	protected Object getKnowledge(List<PathNode> knowledgePath)
-			throws KnowledgeNotExistentException {
+			throws KnowledgeNotFoundException {
 		return cloner.deepClone(super.getKnowledge(knowledgePath));
 	}
 

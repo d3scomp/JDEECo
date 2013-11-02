@@ -27,37 +27,23 @@
         eType="#//KnowledgePath" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="RuntimeMetadata">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="componentInstances" upperBound="-1"
-        eType="#//ComponentInstance" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="componentInstances" upperBound="-1"
-        eType="#//Component" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="componentPrototypes" upperBound="-1"
-        eType="#//Component" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="ensembleDefinitions" upperBound="-1"
         eType="#//EnsembleDefinition" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="ensembleDefinitionInstances"
-        eType="#//EnsembleDefinition" containment="true"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ComponentInstance">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="component" lowerBound="1"
-        eType="#//Component"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="processes" upperBound="-1"
-        eType="#//InstanceProcess" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="componentInstances" upperBound="-1"
+        eType="#//ComponentInstance" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="KnowledgeManager" instanceClassName="cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Component" eSuperTypes="#//Prototybable">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="processes" upperBound="-1"
-        eType="#//Process" containment="true" eOpposite="#//Process/componentInstance"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ComponentInstance">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="componentProcesses" upperBound="-1"
+        eType="#//ComponentProcess" containment="true" eOpposite="#//ComponentProcess/componentInstance"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="knowledgeManager" lowerBound="1"
         eType="#//KnowledgeManager"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="otherKnowledgeManagersAccess"
         lowerBound="1" eType="#//OtherKnowledgeManagersAccess"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="ensemblingControllers"
-        upperBound="-1" eType="#//EnsemblingController" containment="true" eOpposite="#//EnsemblingController/componentInstance"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="instances" upperBound="-1"
-        eType="#//Component"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ensembleControllers" upperBound="-1"
+        eType="#//EnsembleController" containment="true" eOpposite="#//EnsembleController/componentInstance"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EnsembleDefinition">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -65,17 +51,17 @@
         eType="#//Condition" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="knowledgeExchange" lowerBound="1"
         eType="#//Exchange" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="schedule" lowerBound="1"
-        eType="#//SchedulingSpecification" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="schedulingSpecification"
+        lowerBound="1" eType="#//SchedulingSpecification" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Condition" eSuperTypes="#//Invocable"/>
   <eClassifiers xsi:type="ecore:EClass" name="Exchange" eSuperTypes="#//Invocable"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Process" eSuperTypes="#//Invocable">
+  <eClassifiers xsi:type="ecore:EClass" name="ComponentProcess" eSuperTypes="#//Invocable">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="schedule" lowerBound="1"
-        eType="#//SchedulingSpecification" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="schedulingSpecification"
+        lowerBound="1" eType="#//SchedulingSpecification" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="componentInstance" lowerBound="1"
-        eType="#//Component" eOpposite="#//Component/processes"/>
+        eType="#//ComponentInstance" eOpposite="#//ComponentInstance/componentProcesses"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="ParameterDirection">
     <eLiterals name="IN"/>
@@ -94,25 +80,10 @@
         eType="#//Method"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="OtherKnowledgeManagersAccess" instanceClassName="java.lang.Object"/>
-  <eClassifiers xsi:type="ecore:EClass" name="InstanceProcess">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="process" lowerBound="1"
-        eType="#//Process"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="privateSchedule" eType="#//SchedulingSpecification"
-        containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="EReference0" eType="#//SchedulingSpecification"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="EnsemblingController">
+  <eClassifiers xsi:type="ecore:EClass" name="EnsembleController">
     <eStructuralFeatures xsi:type="ecore:EReference" name="componentInstance" lowerBound="1"
-        eType="#//Component" eOpposite="#//Component/ensemblingControllers"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="ensemble" lowerBound="1"
+        eType="#//ComponentInstance" eOpposite="#//ComponentInstance/ensembleControllers"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ensembleDefinition" lowerBound="1"
         eType="#//EnsembleDefinition"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="privateSchedule" eType="#//SchedulingSpecification"
-        containment="true"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Prototybable" abstract="true" interface="true">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="EReference0" eType="#//Component"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Prototypeable" abstract="true" interface="true">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="instances" eType="#//Prototypeable"/>
   </eClassifiers>
 </ecore:EPackage>

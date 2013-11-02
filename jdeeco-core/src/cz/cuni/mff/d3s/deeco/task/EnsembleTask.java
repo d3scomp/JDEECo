@@ -1,16 +1,21 @@
 package cz.cuni.mff.d3s.deeco.task;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceEnsemblingController;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
+/**
+ * 
+ * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
+ *
+ */
 public class EnsembleTask extends Task {
 
-	InstanceEnsemblingController ensemblingController;
+	EnsembleController ensembleController;
 	
-	public EnsembleTask(InstanceEnsemblingController ensemblingController, Scheduler scheduler) {
-		super(ensemblingController.getEnsemble().getSchedule(), scheduler);
+	public EnsembleTask(EnsembleController ensembleController, Scheduler scheduler) {
+		super(scheduler);
 		
-		this.ensemblingController = ensemblingController;
+		this.ensembleController = ensembleController;
 	}
 
 	/* (non-Javadoc)
@@ -38,5 +43,9 @@ public class EnsembleTask extends Task {
 	public void invoke() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public long getSchedulingPeriod() {
+		return ensembleController.getEnsembleDefinition().getSchedulingSpecification().getPeriod();
 	}
 }

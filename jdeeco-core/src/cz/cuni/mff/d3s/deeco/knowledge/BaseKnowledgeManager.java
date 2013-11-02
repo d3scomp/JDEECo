@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import cz.cuni.mff.d3s.deeco.exceptions.KnowledgeNotExistentException;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
@@ -52,8 +51,8 @@ public class BaseKnowledgeManager implements KnowledgeManager,
 	 * .Collection)
 	 */
 	@Override
-	public synchronized ValueSet get(Collection<KnowledgePath> knowledgePaths)
-			throws KnowledgeNotExistentException {
+	public ValueSet get(Collection<KnowledgePath> knowledgePaths)
+			throws KnowledgeNotFoundException {
 		ValueSet result = new ValueSet();
 		for (KnowledgePath kp : knowledgePaths)
 			result.setValue(kp, getKnowledge(kp.getNodes()));
@@ -144,7 +143,7 @@ public class BaseKnowledgeManager implements KnowledgeManager,
 	}
 
 	protected Object getKnowledge(List<PathNode> knowledgePath)
-			throws KnowledgeNotExistentException {
+			throws KnowledgeNotFoundException {
 		Object currentObject = knowledge;
 		Field currentField;
 		String fieldName = null;
@@ -170,17 +169,17 @@ public class BaseKnowledgeManager implements KnowledgeManager,
 								currentObject = currentObjectAsMap
 										.get(fieldName);
 							else
-								throw new KnowledgeNotExistentException();
+								throw new KnowledgeNotFoundException();
 						} else {
-							throw new KnowledgeNotExistentException();
+							throw new KnowledgeNotFoundException();
 						}
 					} catch (Exception e) {
-						throw new KnowledgeNotExistentException();
+						throw new KnowledgeNotFoundException();
 					}
 				}
 			}
 		} catch (IllegalAccessException e) {
-			throw new KnowledgeNotExistentException();
+			throw new KnowledgeNotFoundException();
 		}
 		return currentObject;
 	}
@@ -193,7 +192,7 @@ public class BaseKnowledgeManager implements KnowledgeManager,
 		Object parent = null;
 		try {
 			parent = getKnowledge(pathNodesToParent);
-		} catch (KnowledgeNotExistentException e) {
+		} catch (KnowledgeNotFoundException e) {
 			//TODO add new entry to the base map
 		}
 		try {

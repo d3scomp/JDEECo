@@ -16,7 +16,9 @@ import cz.cuni.mff.d3s.deeco.knowledge.TriggerListener;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.task.Task;
 
-public class LocalTimeScheduler implements Scheduler{
+//FIXME: The class does not have the header stating the author
+
+public class LocalTimeScheduler implements Scheduler {
 	Map<Task, TaskInfo> tasks;
 	Executor executor;
 	private States state;

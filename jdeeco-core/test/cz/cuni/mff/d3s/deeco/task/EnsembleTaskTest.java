@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceEnsemblingController;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
 /**
@@ -18,7 +18,7 @@ import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 public class EnsembleTaskTest {
 	
 	@Mock
-	private InstanceEnsemblingController instanceEnsemblingController;
+	private EnsembleController instanceEnsemblingController;
 	@Mock
 	private Scheduler scheduler;
 	
@@ -43,13 +43,18 @@ public class EnsembleTaskTest {
 	@Ignore
 	public void testTrigger() {
 		// GIVEN an EnsembleTask initialized with an InstanceEnsemblingController
-		// WHEN a trigger listener is registered
-		// AND a trigger comes from the knowledge manager
+		// WHEN a trigger listener (i.e. scheduler) is registered at the task
+		// THEN the task registers a trigger listener on the knowledge manager
+
+		// WHEN a trigger comes from the knowledge manager
 		// THEN the task calls the registered listener
 		
-		// WHEN the listener is unregistered
-		// AND a trigger comes from the knowledge manager
-		// THEN the task does not call the registered listener
+		// WHEN the listener (i.e. the scheduler) is unregistered
+		// THEN the trigger is unregistered at the knowledge manager
+
+		// NOTE that we don't test here the case the trigger is not delivered to the scheduler when spurious trigger from the knowledge manager comes.
+		// This is because the task does the registration by directly passing the triggerListener to the knowledge manager and thus it has no control
+		// over the delivery (from the knowledge manager to the scheduler).
 	}
 	
 	@Test

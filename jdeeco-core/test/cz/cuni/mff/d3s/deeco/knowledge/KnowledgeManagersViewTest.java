@@ -1,14 +1,5 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
-/**
- * KnowledgeManagersView testing.
- * The test checks the correctness of getting the KnowledgeManagers and register/unregister 
- * the triggers of the others.
- * 
- * @author Rima Al Ali <alali@d3s.mff.cuni.cz>
- *
- */
-
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -25,7 +16,14 @@ import org.mockito.MockitoAnnotations;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 
-
+/**
+ * KnowledgeManagersView testing.
+ * The test checks the correctness of getting the KnowledgeManagers and register/unregister 
+ * the triggers of the others.
+ * 
+ * @author Rima Al Ali <alali@d3s.mff.cuni.cz>
+ *
+ */
 public class KnowledgeManagersViewTest {
 	
 	@Mock
@@ -46,6 +44,8 @@ public class KnowledgeManagersViewTest {
 		this.kmView =mock(KnowledgeManagersView.class);
 	}
 
+	// FIXME TB: The tests below need to be fixed to comply to BDD.
+	
  	@Test 
 	public void testGetOtherKnowledgeManager(){
 		// WHEN km mocks KnowledgeManager and define a Collection of ReadOnlyKnowledgeManagers that do not have km

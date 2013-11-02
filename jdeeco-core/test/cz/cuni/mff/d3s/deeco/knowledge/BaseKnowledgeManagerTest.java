@@ -1,13 +1,5 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
-/**
- * KnowledgeManagerImpl testing. 
- * 
- * @author Rima Al Ali <alali@d3s.mff.cuni.cz>
- * @author Michal Kit <kit@d3s.mff.cuni.cz>
- *
- */
-
 import static org.junit.Assert.assertEquals;
 
 import java.util.HashMap;
@@ -18,10 +10,16 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
-import cz.cuni.mff.d3s.deeco.exceptions.KnowledgeNotExistentException;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 
+/**
+ * KnowledgeManagerImpl testing.
+ * 
+ * @author Rima Al Ali <alali@d3s.mff.cuni.cz>
+ * @author Michal Kit <kit@d3s.mff.cuni.cz>
+ * 
+ */
 public class BaseKnowledgeManagerTest {
 
 	private BaseKnowledgeManager toBeTested;
@@ -30,6 +28,8 @@ public class BaseKnowledgeManagerTest {
 	public void setUp() {
 		toBeTested = new BaseKnowledgeManager(new Knowledge());
 	}
+
+	// TODO TB: Shouldn't we test at least two-level structure for numbers?
 
 	@Test
 	public void testUpdateIntegerField() throws Exception {
@@ -128,7 +128,7 @@ public class BaseKnowledgeManagerTest {
 		assertEquals(nextItemValue, toBeTested.get(knowledgePaths).getValue(kp));
 	}
 
-	@Test(expected = KnowledgeNotExistentException.class)
+	@Test(expected = KnowledgeNotFoundException.class)
 	public void testDeleteFromMap() throws Exception {
 		// WHEN the update method is called on the KnowledgeManager
 		// and as a ChangeSet, the removal of one of the 'map' elements is
@@ -204,7 +204,7 @@ public class BaseKnowledgeManagerTest {
 		assertEquals(1, result.getValue(kp));
 	}
 
-	@Test(expected = KnowledgeNotExistentException.class)
+	@Test(expected = KnowledgeNotFoundException.class)
 	public void testNotExsistentAccess() throws Exception {
 		// WHEN a not existent entry is accessed from the
 		// ReadOnlyKnowledgeManager
