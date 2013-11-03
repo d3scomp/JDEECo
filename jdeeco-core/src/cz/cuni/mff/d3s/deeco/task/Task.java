@@ -22,6 +22,10 @@ public abstract class Task {
 	protected abstract void registerTriggers();
 	protected abstract void unregisterTriggers();
 	
+	// FIXME TB: The trigger listener between task and scheduler should not be the same as the one for the knowledge manager
+	// The reasons are two:
+	//   1) The KnowledgeManagersView should use listeners that identify in which shadowKM the trigger occured
+	//   2) The scheduler should not be interested in the particular trigger
 	public void setTriggerListener(TriggerListener listener) {
 		assert(listener != null);
 		

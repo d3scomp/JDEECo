@@ -25,6 +25,9 @@ public interface KnowledgeManagersView {
 	// Rima : It is a little bit confusing to have the same name 
 	//        register/unregister as in KnowledgeManager. 
 	// TB@RA: Good point. However, I can't come up with any better name. Any suggestions?
+	
+	// FIXME TB: It would make more sense to have a separate listener for triggers on shadows since that listener
+	// should additionally provide the information, in which shadow KM the trigger occured.
 	public void register(Trigger trigger, TriggerListener triggerListener);
 	public void unregister(Trigger trigger, TriggerListener triggerListener);
 	

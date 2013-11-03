@@ -463,7 +463,7 @@
     </children>
     <styles xmi:type="notation:ConnectorStyle" xmi:id="_kmYjAT28EeO2QcBZHbiySQ" lineColor="4210752"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_kmYjAj28EeO2QcBZHbiySQ" fontColor="4210752" fontName="Segoe UI" fontHeight="10"/>
-    <element xmi:type="ecore:EReference" href="RuntimeModel.ecore#//EnsembleDefinition/coordinatorSchedulingSpecification"/>
+    <element xmi:type="ecore:EReference" href="RuntimeModel.ecore#//EnsembleDefinition/schedulingSpecification"/>
     <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_kmYjAz28EeO2QcBZHbiySQ" points="[0, 0, 212, 60]$[-212, -60, 0, 0]"/>
     <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Q1of4D29EeO2QcBZHbiySQ" id="(0.0784313725490196,0.4489795918367347)"/>
     <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_kmc0cD28EeO2QcBZHbiySQ" id="(0.7468354430379747,1.0)"/>
@@ -670,19 +670,5 @@
     <element xsi:nil="true"/>
     <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_MTv_c0RoEeObn7g1FMSRDg" points="[-16, -20, 145, 181]$[-159, -183, 2, 18]"/>
     <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_MTv_dERoEeObn7g1FMSRDg" id="(0.8235294117647058,0.5813953488372093)"/>
-  </edges>
-  <edges xmi:type="notation:Edge" xmi:id="_lWQlMERpEeObn7g1FMSRDg" type="3002" source="_V0KE0D28EeO2QcBZHbiySQ" target="_n6RFYDyaEeOBILfoZuXX_w">
-    <children xmi:type="notation:Node" xmi:id="_lWQlNERpEeObn7g1FMSRDg" type="4011">
-      <layoutConstraint xmi:type="notation:Location" xmi:id="_lWQlNURpEeObn7g1FMSRDg" x="-10" y="-10"/>
-    </children>
-    <children xmi:type="notation:Node" xmi:id="_lWQlNkRpEeObn7g1FMSRDg" type="4012">
-      <layoutConstraint xmi:type="notation:Location" xmi:id="_lWQlN0RpEeObn7g1FMSRDg" x="10" y="10"/>
-    </children>
-    <styles xmi:type="notation:ConnectorStyle" xmi:id="_lWQlMURpEeObn7g1FMSRDg" lineColor="4210752"/>
-    <styles xmi:type="notation:FontStyle" xmi:id="_lWQlMkRpEeObn7g1FMSRDg" fontColor="4210752" fontName="Segoe UI" fontHeight="10"/>
-    <element xmi:type="ecore:EReference" href="RuntimeModel.ecore#//EnsembleDefinition/memberSchedulingSpecification"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_lWQlM0RpEeObn7g1FMSRDg" points="[-17, -7, 285, 112]$[-300, -134, 2, -15]"/>
-    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_lWQlOERpEeObn7g1FMSRDg" id="(0.13533834586466165,0.23529411764705882)"/>
-    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_lWQlOURpEeObn7g1FMSRDg" id="(0.810126582278481,0.3137254901960784)"/>
   </edges>
 </notation:Diagram>
