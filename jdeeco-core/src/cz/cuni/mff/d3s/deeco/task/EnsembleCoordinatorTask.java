@@ -6,13 +6,14 @@ import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 /**
  * 
  * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
+ * @author Tomas Bures <bures@d3s.mff.cuni.cz>
  *
  */
-public class EnsembleTask extends Task {
+public class EnsembleCoordinatorTask extends Task {
 
 	EnsembleController ensembleController;
 	
-	public EnsembleTask(EnsembleController ensembleController, Scheduler scheduler) {
+	public EnsembleCoordinatorTask(EnsembleController ensembleController, Scheduler scheduler) {
 		super(scheduler);
 		
 		this.ensembleController = ensembleController;
@@ -46,6 +47,6 @@ public class EnsembleTask extends Task {
 	}
 
 	public long getSchedulingPeriod() {
-		return ensembleController.getEnsembleDefinition().getSchedulingSpecification().getPeriod();
+		return ensembleController.getEnsembleDefinition().getCoordinatorSchedulingSpecification().getPeriod();
 	}
 }

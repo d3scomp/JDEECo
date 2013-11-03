@@ -106,7 +106,6 @@ public class RuntimeModelTest {
 		ComponentProcess nComponentProcess = nComponentInstance.getComponentProcesses().get(0);
 		SchedulingSpecification nProcA1Sched = nComponentProcess.getSchedulingSpecification(); 
 
-		assertEquals(oModel.componentInstance.getId(), nComponentInstance.getId());
 		assertEquals(oModel.componentInstance.getName(), nComponentInstance.getName());
 		assertEquals(oModel.process.getName(), nComponentProcess.getName());
 		assertEquals(oModel.process.getMethod(), nComponentProcess.getMethod());

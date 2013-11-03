@@ -43,7 +43,7 @@ public class SampleRuntimeModel {
 	public EnsembleDefinition ensembleDefinition;
 	public Condition membershipCondition;
 	public Exchange knowledgeExchange;
-	public SchedulingSpecification ensembleSchedulingSpec;
+	public SchedulingSpecification ensembleSchedulingSpecCoord, ensembleSchedulingSpecMember;
 	public KnowledgeChangeTrigger ensembleTriggerCoord, ensembleTriggerMember;
 	public Parameter membershipParamCoord, membershipParamMember;
 	public Parameter exchangeParamCoordIn, exchangeParamCoordOut, exchangeParamCoordInOut;
@@ -141,11 +141,6 @@ public class SampleRuntimeModel {
 		return trigger;
 	}
 	
-	// TODO: Changes in the meta-model
-	// - remove ComponentInstance.id
-	// - fix OtherKnowledgeManagersAccess
-	// - have separate scheduling specifications for the member and the coordinator (the main reason is to have separate triggers)
-	
 	public SampleRuntimeModel() throws Exception {
 		factory = RuntimeMetadataFactory.eINSTANCE; 
 
@@ -183,13 +178,17 @@ public class SampleRuntimeModel {
 		ensembleDefinition.setName("sample ensemble definition");
 		
 		// Construct a scheduling specification for the ensemble
-		ensembleSchedulingSpec = factory.createSchedulingSpecification();   // FIXME, this should be split to member and coordinator after changes are done in the meta-model
-		ensembleSchedulingSpec.setPeriod(10); // FIXME, what does this number mean?
+		ensembleSchedulingSpecCoord = factory.createSchedulingSpecification();
+		ensembleSchedulingSpecCoord.setPeriod(10); // FIXME, what does this number mean?
 		ensembleTriggerCoord = createTrigger("level1", "out");
+		ensembleSchedulingSpecCoord.getTriggers().add(ensembleTriggerCoord);
+		ensembleDefinition.setCoordinatorSchedulingSpecification(ensembleSchedulingSpecCoord);
+
+		ensembleSchedulingSpecMember = factory.createSchedulingSpecification();
+		ensembleSchedulingSpecMember.setPeriod(10); // FIXME, what does this number mean?
 		ensembleTriggerMember = createTrigger("level1", "out");
-		ensembleSchedulingSpec.getTriggers().add(ensembleTriggerCoord);
-		ensembleSchedulingSpec.getTriggers().add(ensembleTriggerMember);
-		ensembleDefinition.setSchedulingSpecification(ensembleSchedulingSpec);
+		ensembleSchedulingSpecMember.getTriggers().add(ensembleTriggerMember);
+		ensembleDefinition.setCoordinatorSchedulingSpecification(ensembleSchedulingSpecMember);
 
 		// Construct a membership condition
 		membershipCondition = factory.createCondition();
