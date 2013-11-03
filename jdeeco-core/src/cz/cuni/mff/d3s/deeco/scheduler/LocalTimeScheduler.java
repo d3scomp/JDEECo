@@ -16,7 +16,9 @@ import cz.cuni.mff.d3s.deeco.knowledge.TriggerListener;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.task.Task;
 
-public class LocalTimeScheduler implements Scheduler{
+//FIXME: The class does not have the header stating the author
+
+public class LocalTimeScheduler implements Scheduler {
 	Map<Task, TaskInfo> tasks;
 	Executor executor;
 	private States state;
@@ -36,9 +38,14 @@ public class LocalTimeScheduler implements Scheduler{
 		STOPPED
 	}
 	
-	public LocalTimeScheduler( Executor executor ){
-		this.executor = executor;
+	public LocalTimeScheduler(){
 		tasks = new HashMap<>();
+	}
+	
+	@Override
+	public void setExecutor(Executor executor) {
+		this.executor = executor;
+		
 	}
 	
 	@Override
@@ -153,6 +160,8 @@ public class LocalTimeScheduler implements Scheduler{
 		tasks.get(task).state = States.RUNNING;
 		executor.execute(task);
 	}
+
+	
 
 	
 }

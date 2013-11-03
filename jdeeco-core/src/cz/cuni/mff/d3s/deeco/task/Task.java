@@ -1,7 +1,6 @@
 package cz.cuni.mff.d3s.deeco.task;
 
 import cz.cuni.mff.d3s.deeco.knowledge.TriggerListener;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
 /**
@@ -11,16 +10,14 @@ import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
  * 
  */
 public abstract class Task {
-	protected SchedulingSpecification schedulingSpecification;
 	protected TriggerListener listener;
 	protected Scheduler scheduler;
 	
-	public Task(SchedulingSpecification schedulingSpecification, Scheduler scheduler) {
-		this.schedulingSpecification = schedulingSpecification;
+	public Task(Scheduler scheduler) {
 		this.scheduler = scheduler;
 	}
 	
-	public abstract void invoke();
+	public abstract void invoke() throws TaskInvocationException;
 
 	protected abstract void registerTriggers();
 	protected abstract void unregisterTriggers();
@@ -42,8 +39,6 @@ public abstract class Task {
 			this.listener = null;
 		}
 	}
-	
-	public long getSchedulingPeriod() {
-		return schedulingSpecification.getPeriod();
-	}
+
+	abstract public long getSchedulingPeriod();
 }

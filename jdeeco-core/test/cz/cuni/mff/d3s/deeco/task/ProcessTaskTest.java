@@ -51,11 +51,11 @@ public class ProcessTaskTest {
 
 	private Task task;
 	
-	private SampleRuntimeModel.ProcessParameterType inValue;
-	private SampleRuntimeModel.ProcessParameterType inOutValue;
+	private Integer inValue;
+	private Integer inOutValue;
 
-	private SampleRuntimeModel.ProcessParameterType expectedInOutValue;
-	private SampleRuntimeModel.ProcessParameterType expectedOutValue;
+	private ParamHolder<Integer> expectedInOutValue;
+	private ParamHolder<Integer> expectedOutValue;
 
 	@Before
 	public void setUp() throws Exception {
@@ -63,11 +63,11 @@ public class ProcessTaskTest {
 
 		model = new SampleRuntimeModel();
 		
-		inValue = new SampleRuntimeModel.ProcessParameterType(21);
-		inOutValue = new SampleRuntimeModel.ProcessParameterType(108);
-		expectedInOutValue = new SampleRuntimeModel.ProcessParameterType(108);
-		expectedOutValue = new SampleRuntimeModel.ProcessParameterType(0);		
-		SampleRuntimeModel.processMethod(inValue, expectedInOutValue, expectedOutValue);
+		inValue = 21;
+		inOutValue = 108;
+		expectedInOutValue = new ParamHolder<Integer>(108);
+		expectedOutValue = new ParamHolder<Integer>(0);		
+		SampleRuntimeModel.processMethod(inValue, expectedOutValue, expectedInOutValue);
 		
 		doNothing().when(knowledgeManager).register(eq(model.trigger), taskTriggerListenerCaptor.capture());
 		
@@ -90,7 +90,7 @@ public class ProcessTaskTest {
 		
 		model.setKnowledgeManager(knowledgeManager);
 		
-		this.task = new ProcessTask(model.componentInstance.getComponentProcesses().get(0), scheduler);
+		this.task = new ProcessTask(model.componentProcess, scheduler);
 	}
 	
 	@Test
@@ -103,9 +103,8 @@ public class ProcessTaskTest {
 	}
 	
 	@Test
-	@Ignore
 	public void testTriggerIsDeliveredOnlyWhenListenerIsRegistered() {
-		InOrder inOrder = inOrder(knowledgeManager);
+		InOrder inOrder = inOrder(knowledgeManager, triggerListener);
 		
 		// GIVEN a ProcessTask initialized with an ComponentProcess
 		// WHEN a listener (i.e. scheduler) is registered at the task
@@ -123,14 +122,14 @@ public class ProcessTaskTest {
 		// THEN the trigger is unregistered at the knowledge manager
 		inOrder.verify(knowledgeManager).unregister(model.trigger, taskTriggerListenerCaptor.getValue());
 		
-		// WHEN another trigger (possibly spurious) comes from the knowledge manager
-		taskTriggerListenerCaptor.getValue().triggered(model.trigger);		
-		// THEN nothing is called on the unregistered listener (i.e. scheduler)
 		verifyNoMoreInteractions(triggerListener);
+		
+		// NOTE that we don't test here the case the trigger is not delivered to the scheduler when spurious trigger from the knowledge manager comes.
+		// This is because the task does the registration by directly passing the triggerListener to the knowledge manager and thus it has no control
+		// over the delivery (from the knowledge manager to the scheduler).
 	}
 	
 	@Test
-	@Ignore
 	public void testProcessTaskInvoke() throws Exception {
 		// GIVEN a ProcessTask initialized with an ComponentProcess
 		model.resetProcessMethodCallCounter();
@@ -149,7 +148,7 @@ public class ProcessTaskTest {
 		verify(knowledgeManager).update(changeSetCaptor.capture());
 		ChangeSet cs = changeSetCaptor.getValue();
 		assertEquals(cs.getValue(model.paramInOut.getKnowledgePath()), expectedInOutValue.value);
-		assertEquals(cs.getValue(model.paramOut.getKnowledgePath()), expectedOutValue);
+		assertEquals(cs.getValue(model.paramOut.getKnowledgePath()), expectedOutValue.value);
 		assertTrue(cs.getDeletedReferences().isEmpty());
 		assertTrue(cs.getUpdatedReferences().size() == 2);
 	}	

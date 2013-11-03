@@ -39,6 +39,8 @@ public class KnowledgeManagerRegistryTest {
 		this.kmRegistry = mock(KnowledgeManagerRegistry.class);
 	}
 
+	// FIXME TB: The tests below need to be fixed to comply to BDD.
+	
 	@Test 
 	public void testCreateLocal(){
 

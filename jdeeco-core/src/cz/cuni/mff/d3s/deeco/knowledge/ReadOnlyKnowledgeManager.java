@@ -2,7 +2,6 @@ package cz.cuni.mff.d3s.deeco.knowledge;
 
 import java.util.Collection;
 
-import cz.cuni.mff.d3s.deeco.exceptions.KnowledgeManagerNotExistentException;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 
@@ -28,7 +27,7 @@ public interface ReadOnlyKnowledgeManager {
 	 *             when there is no value for at least one knowledge path
 	 */
 	public ValueSet get(Collection<KnowledgePath> knowledgeReferenceList)
-			throws KnowledgeManagerNotExistentException;
+			throws KnowledgeNotFoundException;
 
 	/**
 	 * Registers the specified trigger and its listener within this knowledge
