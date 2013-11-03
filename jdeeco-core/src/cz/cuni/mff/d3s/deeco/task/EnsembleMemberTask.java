@@ -8,11 +8,11 @@ import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
  * @author Tomas Bures <bures@d3s.mff.cuni.cz>
  *
  */
-public class EnsembleMembersTask extends Task {
+public class EnsembleMemberTask extends Task {
 
 	EnsembleController ensembleController;
 	
-	public EnsembleMembersTask(EnsembleController ensembleController, Scheduler scheduler) {
+	public EnsembleMemberTask(EnsembleController ensembleController, Scheduler scheduler) {
 		super(scheduler);
 		
 		this.ensembleController = ensembleController;
