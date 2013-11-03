@@ -1,7 +1,6 @@
 package cz.cuni.mff.d3s.deeco.task;
 
 import cz.cuni.mff.d3s.deeco.knowledge.TriggerListener;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
 /**
@@ -18,7 +17,7 @@ public abstract class Task {
 		this.scheduler = scheduler;
 	}
 	
-	public abstract void invoke();
+	public abstract void invoke() throws TaskInvocationException;
 
 	protected abstract void registerTriggers();
 	protected abstract void unregisterTriggers();

@@ -10,7 +10,6 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
-import cz.cuni.mff.d3s.deeco.exceptions.KnowledgeManagerNotExistentException;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
@@ -140,7 +139,7 @@ public class KnowledgeManagerImplTest {
 		assertEquals(nextItemValue, toBeTested.get(knowledgePaths).getValue(kp));
 	}
 
-	@Test(expected = KnowledgeManagerNotExistentException.class)
+	@Test(expected = KnowledgeNotFoundException.class)
 	public void testDeleteFromMap() throws Exception {
 		// WHEN the update method is called on the KnowledgeManager
 		// and as a ChangeSet, the removal of one of the 'map' elements is
@@ -216,7 +215,7 @@ public class KnowledgeManagerImplTest {
 		assertEquals(1, result.getValue(kp));
 	}
 
-	@Test(expected = KnowledgeManagerNotExistentException.class)
+	@Test(expected = KnowledgeNotFoundException.class)
 	public void testNotExsistentAccess() throws Exception {
 		// WHEN a not existent entry is accessed from the
 		// ReadOnlyKnowledgeManager

@@ -374,22 +374,13 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int COMPONENT_INSTANCE__COMPONENT_PROCESSES = 0;
 
 	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMPONENT_INSTANCE__ID = 1;
-
-	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_INSTANCE__NAME = 2;
+	int COMPONENT_INSTANCE__NAME = 1;
 
 	/**
 	 * The feature id for the '<em><b>Knowledge Manager</b></em>' attribute.
@@ -398,7 +389,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_INSTANCE__KNOWLEDGE_MANAGER = 3;
+	int COMPONENT_INSTANCE__KNOWLEDGE_MANAGER = 2;
 
 	/**
 	 * The feature id for the '<em><b>Other Knowledge Managers Access</b></em>' attribute.
@@ -407,7 +398,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_INSTANCE__OTHER_KNOWLEDGE_MANAGERS_ACCESS = 4;
+	int COMPONENT_INSTANCE__OTHER_KNOWLEDGE_MANAGERS_ACCESS = 3;
 
 	/**
 	 * The feature id for the '<em><b>Ensemble Controllers</b></em>' containment reference list.
@@ -416,7 +407,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS = 5;
+	int COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS = 4;
 
 	/**
 	 * The number of structural features of the '<em>Component Instance</em>' class.
@@ -425,7 +416,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_INSTANCE_FEATURE_COUNT = 6;
+	int COMPONENT_INSTANCE_FEATURE_COUNT = 5;
 
 	/**
 	 * The number of operations of the '<em>Component Instance</em>' class.
@@ -474,13 +465,22 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int ENSEMBLE_DEFINITION__KNOWLEDGE_EXCHANGE = 2;
 
 	/**
-	 * The feature id for the '<em><b>Scheduling Specification</b></em>' containment reference.
+	 * The feature id for the '<em><b>Coordinator Scheduling Specification</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ENSEMBLE_DEFINITION__SCHEDULING_SPECIFICATION = 3;
+	int ENSEMBLE_DEFINITION__COORDINATOR_SCHEDULING_SPECIFICATION = 3;
+
+	/**
+	 * The feature id for the '<em><b>Member Scheduling Specification</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ENSEMBLE_DEFINITION__MEMBER_SCHEDULING_SPECIFICATION = 4;
 
 	/**
 	 * The number of structural features of the '<em>Ensemble Definition</em>' class.
@@ -489,7 +489,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ENSEMBLE_DEFINITION_FEATURE_COUNT = 4;
+	int ENSEMBLE_DEFINITION_FEATURE_COUNT = 5;
 
 	/**
 	 * The number of operations of the '<em>Ensemble Definition</em>' class.
@@ -694,13 +694,22 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int COMPONENT_PROCESS__COMPONENT_INSTANCE = INVOCABLE_FEATURE_COUNT + 2;
 
 	/**
+	 * The feature id for the '<em><b>Is Active</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPONENT_PROCESS__IS_ACTIVE = INVOCABLE_FEATURE_COUNT + 3;
+
+	/**
 	 * The number of structural features of the '<em>Component Process</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_PROCESS_FEATURE_COUNT = INVOCABLE_FEATURE_COUNT + 3;
+	int COMPONENT_PROCESS_FEATURE_COUNT = INVOCABLE_FEATURE_COUNT + 4;
 
 	/**
 	 * The number of operations of the '<em>Component Process</em>' class.
@@ -804,6 +813,62 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int ENSEMBLE_CONTROLLER_OPERATION_COUNT = 0;
 
 	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeCoordinatorImpl <em>Path Node Coordinator</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeCoordinatorImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getPathNodeCoordinator()
+	 * @generated
+	 */
+	int PATH_NODE_COORDINATOR = 16;
+
+	/**
+	 * The number of structural features of the '<em>Path Node Coordinator</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PATH_NODE_COORDINATOR_FEATURE_COUNT = PATH_NODE_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of operations of the '<em>Path Node Coordinator</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PATH_NODE_COORDINATOR_OPERATION_COUNT = PATH_NODE_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeMemberImpl <em>Path Node Member</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeMemberImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getPathNodeMember()
+	 * @generated
+	 */
+	int PATH_NODE_MEMBER = 17;
+
+	/**
+	 * The number of structural features of the '<em>Path Node Member</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PATH_NODE_MEMBER_FEATURE_COUNT = PATH_NODE_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of operations of the '<em>Path Node Member</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PATH_NODE_MEMBER_OPERATION_COUNT = PATH_NODE_OPERATION_COUNT + 0;
+
+	/**
 	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection <em>Parameter Direction</em>}' enum.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -811,7 +876,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getParameterDirection()
 	 * @generated
 	 */
-	int PARAMETER_DIRECTION = 16;
+	int PARAMETER_DIRECTION = 18;
 
 	/**
 	 * The meta object id for the '<em>Method</em>' data type.
@@ -821,7 +886,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getMethod()
 	 * @generated
 	 */
-	int METHOD = 17;
+	int METHOD = 19;
 
 	/**
 	 * The meta object id for the '<em>Knowledge Manager</em>' data type.
@@ -831,18 +896,17 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getKnowledgeManager()
 	 * @generated
 	 */
-	int KNOWLEDGE_MANAGER = 18;
+	int KNOWLEDGE_MANAGER = 20;
 
 	/**
-	 * The meta object id for the '<em>Other Knowledge Managers Access</em>' data type.
+	 * The meta object id for the '<em>Knowledge Managers View</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see java.lang.Object
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getOtherKnowledgeManagersAccess()
+	 * @see cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getKnowledgeManagersView()
 	 * @generated
 	 */
-	int OTHER_KNOWLEDGE_MANAGERS_ACCESS = 19;
-
+	int KNOWLEDGE_MANAGERS_VIEW = 21;
 
 	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification <em>Scheduling Specification</em>}'.
@@ -1034,17 +1098,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EReference getComponentInstance_ComponentProcesses();
 
 	/**
-	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getId <em>Id</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Id</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getId()
-	 * @see #getComponentInstance()
-	 * @generated
-	 */
-	EAttribute getComponentInstance_Id();
-
-	/**
 	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getName <em>Name</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1132,15 +1185,26 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EReference getEnsembleDefinition_KnowledgeExchange();
 
 	/**
-	 * Returns the meta object for the containment reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getSchedulingSpecification <em>Scheduling Specification</em>}'.
+	 * Returns the meta object for the containment reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getCoordinatorSchedulingSpecification <em>Coordinator Scheduling Specification</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference '<em>Scheduling Specification</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getSchedulingSpecification()
+	 * @return the meta object for the containment reference '<em>Coordinator Scheduling Specification</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getCoordinatorSchedulingSpecification()
 	 * @see #getEnsembleDefinition()
 	 * @generated
 	 */
-	EReference getEnsembleDefinition_SchedulingSpecification();
+	EReference getEnsembleDefinition_CoordinatorSchedulingSpecification();
+
+	/**
+	 * Returns the meta object for the containment reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getMemberSchedulingSpecification <em>Member Scheduling Specification</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference '<em>Member Scheduling Specification</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getMemberSchedulingSpecification()
+	 * @see #getEnsembleDefinition()
+	 * @generated
+	 */
+	EReference getEnsembleDefinition_MemberSchedulingSpecification();
 
 	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Condition <em>Condition</em>}'.
@@ -1204,6 +1268,17 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getComponentProcess_ComponentInstance();
+
+	/**
+	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#isIsActive <em>Is Active</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Is Active</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#isIsActive()
+	 * @see #getComponentProcess()
+	 * @generated
+	 */
+	EAttribute getComponentProcess_IsActive();
 
 	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter <em>Parameter</em>}'.
@@ -1302,6 +1377,26 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EReference getEnsembleController_EnsembleDefinition();
 
 	/**
+	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator <em>Path Node Coordinator</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Path Node Coordinator</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator
+	 * @generated
+	 */
+	EClass getPathNodeCoordinator();
+
+	/**
+	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember <em>Path Node Member</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Path Node Member</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember
+	 * @generated
+	 */
+	EClass getPathNodeMember();
+
+	/**
 	 * Returns the meta object for enum '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection <em>Parameter Direction</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1334,15 +1429,15 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EDataType getKnowledgeManager();
 
 	/**
-	 * Returns the meta object for data type '{@link java.lang.Object <em>Other Knowledge Managers Access</em>}'.
+	 * Returns the meta object for data type '{@link cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView <em>Knowledge Managers View</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>Other Knowledge Managers Access</em>'.
-	 * @see java.lang.Object
-	 * @model instanceClass="java.lang.Object"
+	 * @return the meta object for data type '<em>Knowledge Managers View</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView
+	 * @model instanceClass="cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView"
 	 * @generated
 	 */
-	EDataType getOtherKnowledgeManagersAccess();
+	EDataType getKnowledgeManagersView();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -1530,14 +1625,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EReference COMPONENT_INSTANCE__COMPONENT_PROCESSES = eINSTANCE.getComponentInstance_ComponentProcesses();
 
 		/**
-		 * The meta object literal for the '<em><b>Id</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute COMPONENT_INSTANCE__ID = eINSTANCE.getComponentInstance_Id();
-
-		/**
 		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1604,12 +1691,20 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EReference ENSEMBLE_DEFINITION__KNOWLEDGE_EXCHANGE = eINSTANCE.getEnsembleDefinition_KnowledgeExchange();
 
 		/**
-		 * The meta object literal for the '<em><b>Scheduling Specification</b></em>' containment reference feature.
+		 * The meta object literal for the '<em><b>Coordinator Scheduling Specification</b></em>' containment reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference ENSEMBLE_DEFINITION__SCHEDULING_SPECIFICATION = eINSTANCE.getEnsembleDefinition_SchedulingSpecification();
+		EReference ENSEMBLE_DEFINITION__COORDINATOR_SCHEDULING_SPECIFICATION = eINSTANCE.getEnsembleDefinition_CoordinatorSchedulingSpecification();
+
+		/**
+		 * The meta object literal for the '<em><b>Member Scheduling Specification</b></em>' containment reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference ENSEMBLE_DEFINITION__MEMBER_SCHEDULING_SPECIFICATION = eINSTANCE.getEnsembleDefinition_MemberSchedulingSpecification();
 
 		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ConditionImpl <em>Condition</em>}' class.
@@ -1664,6 +1759,14 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * @generated
 		 */
 		EReference COMPONENT_PROCESS__COMPONENT_INSTANCE = eINSTANCE.getComponentProcess_ComponentInstance();
+
+		/**
+		 * The meta object literal for the '<em><b>Is Active</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute COMPONENT_PROCESS__IS_ACTIVE = eINSTANCE.getComponentProcess_IsActive();
 
 		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ParameterImpl <em>Parameter</em>}' class.
@@ -1744,6 +1847,26 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EReference ENSEMBLE_CONTROLLER__ENSEMBLE_DEFINITION = eINSTANCE.getEnsembleController_EnsembleDefinition();
 
 		/**
+		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeCoordinatorImpl <em>Path Node Coordinator</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeCoordinatorImpl
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getPathNodeCoordinator()
+		 * @generated
+		 */
+		EClass PATH_NODE_COORDINATOR = eINSTANCE.getPathNodeCoordinator();
+
+		/**
+		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeMemberImpl <em>Path Node Member</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeMemberImpl
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getPathNodeMember()
+		 * @generated
+		 */
+		EClass PATH_NODE_MEMBER = eINSTANCE.getPathNodeMember();
+
+		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection <em>Parameter Direction</em>}' enum.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1774,14 +1897,14 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EDataType KNOWLEDGE_MANAGER = eINSTANCE.getKnowledgeManager();
 
 		/**
-		 * The meta object literal for the '<em>Other Knowledge Managers Access</em>' data type.
+		 * The meta object literal for the '<em>Knowledge Managers View</em>' data type.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see java.lang.Object
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getOtherKnowledgeManagersAccess()
+		 * @see cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getKnowledgeManagersView()
 		 * @generated
 		 */
-		EDataType OTHER_KNOWLEDGE_MANAGERS_ACCESS = eINSTANCE.getOtherKnowledgeManagersAccess();
+		EDataType KNOWLEDGE_MANAGERS_VIEW = eINSTANCE.getKnowledgeManagersView();
 
 	}
 

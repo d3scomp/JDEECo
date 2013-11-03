@@ -15,7 +15,8 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getName <em>Name</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getMembership <em>Membership</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getKnowledgeExchange <em>Knowledge Exchange</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getSchedulingSpecification <em>Scheduling Specification</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getCoordinatorSchedulingSpecification <em>Coordinator Scheduling Specification</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getMemberSchedulingSpecification <em>Member Scheduling Specification</em>}</li>
  * </ul>
  * </p>
  *
@@ -103,29 +104,55 @@ public interface EnsembleDefinition extends EObject {
 	void setKnowledgeExchange(Exchange value);
 
 	/**
-	 * Returns the value of the '<em><b>Scheduling Specification</b></em>' containment reference.
+	 * Returns the value of the '<em><b>Coordinator Scheduling Specification</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Scheduling Specification</em>' containment reference isn't clear,
+	 * If the meaning of the '<em>Coordinator Scheduling Specification</em>' containment reference isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Scheduling Specification</em>' containment reference.
-	 * @see #setSchedulingSpecification(SchedulingSpecification)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getEnsembleDefinition_SchedulingSpecification()
+	 * @return the value of the '<em>Coordinator Scheduling Specification</em>' containment reference.
+	 * @see #setCoordinatorSchedulingSpecification(SchedulingSpecification)
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getEnsembleDefinition_CoordinatorSchedulingSpecification()
 	 * @model containment="true" required="true"
 	 * @generated
 	 */
-	SchedulingSpecification getSchedulingSpecification();
+	SchedulingSpecification getCoordinatorSchedulingSpecification();
 
 	/**
-	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getSchedulingSpecification <em>Scheduling Specification</em>}' containment reference.
+	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getCoordinatorSchedulingSpecification <em>Coordinator Scheduling Specification</em>}' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Scheduling Specification</em>' containment reference.
-	 * @see #getSchedulingSpecification()
+	 * @param value the new value of the '<em>Coordinator Scheduling Specification</em>' containment reference.
+	 * @see #getCoordinatorSchedulingSpecification()
 	 * @generated
 	 */
-	void setSchedulingSpecification(SchedulingSpecification value);
+	void setCoordinatorSchedulingSpecification(SchedulingSpecification value);
+
+	/**
+	 * Returns the value of the '<em><b>Member Scheduling Specification</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Member Scheduling Specification</em>' containment reference isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Member Scheduling Specification</em>' containment reference.
+	 * @see #setMemberSchedulingSpecification(SchedulingSpecification)
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getEnsembleDefinition_MemberSchedulingSpecification()
+	 * @model containment="true" required="true"
+	 * @generated
+	 */
+	SchedulingSpecification getMemberSchedulingSpecification();
+
+	/**
+	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getMemberSchedulingSpecification <em>Member Scheduling Specification</em>}' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Member Scheduling Specification</em>' containment reference.
+	 * @see #getMemberSchedulingSpecification()
+	 * @generated
+	 */
+	void setMemberSchedulingSpecification(SchedulingSpecification value);
 
 } // EnsembleDefinition

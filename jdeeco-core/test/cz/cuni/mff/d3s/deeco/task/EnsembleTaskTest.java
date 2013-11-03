@@ -28,7 +28,7 @@ public class EnsembleTaskTest {
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
-		this.ensembleTask = new EnsembleTask(instanceEnsemblingController, scheduler);
+		this.ensembleTask = new EnsembleCoordinatorTask(instanceEnsemblingController, scheduler);
 	}
 	
 	@Test
