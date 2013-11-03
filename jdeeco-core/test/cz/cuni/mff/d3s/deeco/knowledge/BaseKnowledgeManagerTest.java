@@ -1,7 +1,11 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.MockitoAnnotations.initMocks;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,12 +13,14 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 
 /**
- * KnowledgeManagerImpl testing.
+ * BaseKnowledgeManager testing.
  * 
  * @author Rima Al Ali <alali@d3s.mff.cuni.cz>
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
@@ -24,12 +30,15 @@ public class BaseKnowledgeManagerTest {
 
 	private BaseKnowledgeManager toBeTested;
 
+	@Mock
+	private TriggerListener triggerListener;
+
 	@Before
 	public void setUp() {
 		toBeTested = new BaseKnowledgeManager(new Knowledge());
+		initMocks(this);
 	}
 
-	// TODO TB: Shouldn't we test at least two-level structure for numbers?
 
 	@Test
 	public void testUpdateIntegerField() throws Exception {
@@ -50,6 +59,31 @@ public class BaseKnowledgeManagerTest {
 		// return updated value
 		ValueSet result = toBeTested.get(knowledgePaths);
 		assertEquals(17, result.getValue(kp));
+	}
+	
+	@Test
+	public void testInnerKnowledgeUpdate() throws Exception {
+		// WHEN the update method is called on the KnowledgeManager
+		// and as a ChangeSet, the update for some nested inner field is passed
+		PathNodeField pnf = KnowledgePathUtils.createPathNodeField();
+		pnf.setName("innerKnowledge");
+		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath();
+		kp.getNodes().add(pnf);
+		pnf = KnowledgePathUtils.createPathNodeField();
+		pnf.setName("a");
+		kp.getNodes().add(pnf);
+		
+		List<KnowledgePath> knowledgePaths = new LinkedList<>();
+		knowledgePaths.add(kp);
+
+		ChangeSet toUpdate = new ChangeSet();
+		toUpdate.setValue(kp, "innerAModified");
+
+		toBeTested.update(toUpdate);
+		// THEN when accessed the inner knowledge the KnowledgeManager should
+		// return updated value
+		ValueSet result = toBeTested.get(knowledgePaths);
+		assertEquals("innerAModified", result.getValue(kp));
 	}
 
 	@Test
@@ -166,6 +200,40 @@ public class BaseKnowledgeManagerTest {
 		// THEN the correct value is returned
 		assertEquals(10, result.getValue(kp));
 	}
+	
+	@Test
+	public void testInnerKnowledgeGet() throws Exception {
+		// WHEN inner knowledge is accessed from the ReadOnlyKnowledgeManager
+		PathNodeField pnf = KnowledgePathUtils.createPathNodeField();
+		pnf.setName("innerKnowledge");
+		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath();
+		kp.getNodes().add(pnf);
+		pnf = KnowledgePathUtils.createPathNodeField();
+		pnf.setName("a");
+		kp.getNodes().add(pnf);
+		
+		List<KnowledgePath> knowledgePaths = new LinkedList<>();
+		knowledgePaths.add(kp);
+
+		ValueSet result = toBeTested.get(knowledgePaths);
+		// THEN the correct value is returned
+		assertEquals("innerA", result.getValue(kp));
+	}
+	
+	@Test(expected = KnowledgeNotFoundException.class)
+	public void testNullBaseKnowledgeAccess() throws Exception {
+		toBeTested = new BaseKnowledgeManager();
+		// WHEN a field is accessed from the knowledge manager initialized with
+		// null base knowledge
+		PathNodeField pnf = KnowledgePathUtils.createPathNodeField();
+		pnf.setName("number");
+		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath();
+		kp.getNodes().add(pnf);
+		List<KnowledgePath> knowledgePaths = new LinkedList<>();
+		knowledgePaths.add(kp);
+		//THEN exception is thrown.
+		toBeTested.get(knowledgePaths);
+	}
 
 	@Test
 	public void testGetListField() throws Exception {
@@ -220,11 +288,61 @@ public class BaseKnowledgeManagerTest {
 		toBeTested.get(knowledgePaths);
 	}
 
-	public class Knowledge {
+	@Test
+	public void testBaseKnowledgeAccess() throws Exception {
+		// WHEN the base knowledge is accessed with the empty KnowledgePath
+		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath();
+		List<KnowledgePath> knowledgePaths = new LinkedList<>();
+		knowledgePaths.add(kp);
+		ValueSet result = toBeTested.get(knowledgePaths);
+		// THEN the base knowledge is returned
+		assert (result.getValue(kp) instanceof Knowledge);
+	}
+
+	@Test
+	public void testRegisterListener() {
+		// WHEN a listener is registered at the KnowledgeManager
+		PathNodeField pnf = KnowledgePathUtils.createPathNodeField();
+		pnf.setName("number");
+		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath();
+		kp.getNodes().add(pnf);
+		KnowledgeChangeTrigger trigger = KnowledgePathUtils
+				.createKnowledgeChangeTrigger();
+		trigger.setKnowledgePath(kp);
+		toBeTested.register(trigger, triggerListener);
+		// and WHEN listener's releavant knowledge is updated
+		ChangeSet toUpdate = new ChangeSet();
+		toUpdate.setValue(kp, 17);
+		toBeTested.update(toUpdate);
+		// THEN the listener is notify once.
+		verify(triggerListener).triggered(trigger);
+		verifyNoMoreInteractions(triggerListener);
+	}
+
+	@Test
+	public void testUnregisterListener() {
+		// WHEN a previously registered listener
+		PathNodeField pnf = KnowledgePathUtils.createPathNodeField();
+		pnf.setName("number");
+		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath();
+		kp.getNodes().add(pnf);
+		KnowledgeChangeTrigger trigger = KnowledgePathUtils
+				.createKnowledgeChangeTrigger();
+		trigger.setKnowledgePath(kp);
+		toBeTested.register(trigger, triggerListener);
+		// is unregistered from the KnowledgeManager
+		toBeTested.register(trigger, triggerListener);
+		// THEN it is not notified about knowledge changes any more
+		verifyNoMoreInteractions(triggerListener);
+	}
+
+	public static class Knowledge {
 		public String id;
 		public Integer number;
 		public List<Integer> list;
+		public Date date;
 		public Map<String, Integer> map;
+		public InnerKnowledge innerKnowledge;
 
 		public Knowledge() {
 			this.id = "Test";
@@ -237,6 +355,18 @@ public class BaseKnowledgeManagerTest {
 			this.map.put("a", 1);
 			this.map.put("b", 2);
 			this.map.put("c", 3);
+			this.innerKnowledge = new InnerKnowledge("innerA", "innerB");
+		}
+	}
+	
+	public static class InnerKnowledge {
+		public String a;
+		public String b;
+		
+		public InnerKnowledge(String a, String b) {
+			super();
+			this.a = a;
+			this.b = b;
 		}
 	}
 

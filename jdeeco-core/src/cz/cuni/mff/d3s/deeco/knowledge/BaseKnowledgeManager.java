@@ -16,8 +16,8 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 
 /**
- * This class implements the KnowledgeManager interface. It allows the user to 
- * add, update and read the values from KnowledgeSet. Also, the class allows to 
+ * This class implements the KnowledgeManager interface. It allows the user to
+ * add, update and read the values from KnowledgeSet. Also, the class allows to
  * bind a trigger to tirggerListener or unbind it.
  * 
  * @author Rima Al Ali <alali@d3s.mff.cuni.cz>
@@ -144,7 +144,46 @@ public class BaseKnowledgeManager implements KnowledgeManager,
 
 	protected Object getKnowledge(List<PathNode> knowledgePath)
 			throws KnowledgeNotFoundException {
-		Object currentObject = knowledge;
+		for (KnowledgePath kp : knowledge.keySet()) {
+			try {
+				if (KnowledgePathUtils.contains(knowledgePath, kp.getNodes()))
+					return getKnowledgeFromNode(knowledgePath,
+							knowledge.get(kp));
+			} catch (KnowledgeNotFoundException knfe) {
+				continue;
+			}
+		}
+		throw new KnowledgeNotFoundException();
+	}
+
+	protected void updateKnowledge(KnowledgePath knowledgePath, Object value) {
+		List<PathNode> pathNodesToParent = new LinkedList<>(
+				knowledgePath.getNodes());
+		String fieldName = ((PathNodeField) pathNodesToParent
+				.remove(pathNodesToParent.size() - 1)).getName();
+		Object parent = null;
+		try {
+			parent = getKnowledge(pathNodesToParent);
+		} catch (KnowledgeNotFoundException e) {
+			knowledge.put(knowledgePath, value);
+		}
+		try {
+			Field field = parent.getClass().getField(fieldName);
+			field.set(parent, value);
+		} catch (Exception e) {
+			if (parent instanceof List<?>) {
+				((List<Object>) parent).set(Integer.parseInt(fieldName), value);
+			} else if (parent instanceof Map<?, ?>) {
+				((Map<String, Object>) parent).put(fieldName, value);
+			} else {
+				knowledge.put(knowledgePath, value);
+			}
+		}
+	}
+
+	private Object getKnowledgeFromNode(List<PathNode> knowledgePath,
+			Object node) throws KnowledgeNotFoundException {
+		Object currentObject = node;
 		Field currentField;
 		String fieldName = null;
 		try {
@@ -184,39 +223,24 @@ public class BaseKnowledgeManager implements KnowledgeManager,
 		return currentObject;
 	}
 
-	protected void updateKnowledge(KnowledgePath knowledgePath, Object value) {
-		List<PathNode> pathNodesToParent = new LinkedList<>(
-				knowledgePath.getNodes());
-		String fieldName = ((PathNodeField) pathNodesToParent
-				.remove(pathNodesToParent.size() - 1)).getName();
-		Object parent = null;
-		try {
-			parent = getKnowledge(pathNodesToParent);
-		} catch (KnowledgeNotFoundException e) {
-			//TODO add new entry to the base map
-		}
-		try {
-			Field field = parent.getClass().getField(fieldName);
-			field.set(parent, value);
-		} catch (Exception e) {
-			// Consider maps and lists indexed by the key
-			if (parent instanceof List<?>) {
-				((List<Object>) parent).set(Integer.parseInt(fieldName), value);
-			} else if (parent instanceof Map<?, ?>) {
-				((Map<String, Object>) parent).put(fieldName, value);
-			} else {
-				//TODO add new entry to the base map
+	private void deleteKnowledge(Collection<KnowledgePath> knowledgePaths) {
+		// First lets delete free (root) nodes
+		List<KnowledgePath> reducedKnowledgePaths = new LinkedList<>(
+				knowledgePaths);
+		for (KnowledgePath kp : knowledgePaths) {
+			if (knowledge.containsKey(kp)) {
+				knowledge.remove(kp);
+				reducedKnowledgePaths.remove(kp);
 			}
 		}
-	}
-
-	private void deleteKnowledge(Collection<KnowledgePath> knowledgePaths) {
+		// As roots has been removed, lets go and check inner knowledge. In that
+		// case we consider only lists and maps.
 		List<PathNode> pathNodesToParent;
 		String fieldName;
 		Object parent;
 		Map<Object, List<String>> parentsToDeleteKeys = new HashMap<>();
 		List<String> keysToDelete;
-		for (KnowledgePath kp : knowledgePaths) {
+		for (KnowledgePath kp : reducedKnowledgePaths) {
 			try {
 				pathNodesToParent = new LinkedList<>(kp.getNodes());
 				fieldName = ((PathNodeField) pathNodesToParent
