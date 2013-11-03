@@ -8,7 +8,7 @@ import org.junit.Before;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 
-//FIXME: The class is missing a header which states the author
+//FIXME TB: The class is missing a header which states the author
 
 public class LocalTimeSchedulerTest {
 	LocalTimeScheduler sched;

@@ -9,7 +9,7 @@ import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.task.Task;
 
 
-//FIXME: The class does not have the header stating the author
+//FIXME TB: The class does not have the header stating the author
 // test text
 
 public interface Scheduler extends ExecutionListener {

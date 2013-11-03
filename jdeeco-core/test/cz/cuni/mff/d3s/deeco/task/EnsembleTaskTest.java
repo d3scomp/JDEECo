@@ -84,7 +84,7 @@ public class EnsembleTaskTest {
 		// WHEN a trigger listener (i.e. scheduler) is registered at the task
 		task.setTriggerListener(triggerListener);
 		// THEN the task registers a trigger listener (regardless whether it is a trigger on coordinator's or member's knowledge) on the knowledge manager
-		verify(knowledgeManager).register(eq(model.ensembleTrigger), any(TriggerListener.class)); // FIXME: This is wrong, because the task is supposed to register a trigger without its root (member/coord). The same applies below.
+		verify(knowledgeManager).register(eq(model.ensembleTrigger), any(TriggerListener.class)); // FIXME TB: This is wrong, because the task is supposed to register a trigger without its root (member/coord). The same applies below.
 		// AND the task register a trigger listener (regardless whether it is a trigger on coordinator's or member's knowledge) on the shadow replicas
 		verify(shadowReplicasAccess).register(eq(model.ensembleTrigger), any(TriggerListener.class));		
 

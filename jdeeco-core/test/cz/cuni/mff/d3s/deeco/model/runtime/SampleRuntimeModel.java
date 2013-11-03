@@ -178,7 +178,7 @@ public class SampleRuntimeModel {
 		
 		// Construct a scheduling specification for the process
 		processSchedulingSpec = factory.createSchedulingSpecification();
-		processSchedulingSpec.setPeriod(10); // FIXME, what does this number mean?
+		processSchedulingSpec.setPeriod(10); // FIXME TB: what does this number mean?
 		processTrigger = createTrigger("level1", "trigger");
 		processSchedulingSpec.getTriggers().add(processTrigger);
 		process.setSchedulingSpecification(processSchedulingSpec);
@@ -190,7 +190,7 @@ public class SampleRuntimeModel {
 		
 		// Construct a scheduling specification for the ensemble
 		ensembleSchedulingSpec = factory.createSchedulingSpecification();
-		ensembleSchedulingSpec.setPeriod(10); // FIXME, what does this number mean?
+		ensembleSchedulingSpec.setPeriod(10); // FIXME TB: what does this number mean?
 		ensembleTrigger = createTrigger("<C>", "level1", "out");
 		ensembleSchedulingSpec.getTriggers().add(ensembleTrigger);
 		ensembleDefinition.setSchedulingSpecification(ensembleSchedulingSpec);
