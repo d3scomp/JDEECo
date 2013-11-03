@@ -69,7 +69,7 @@ public class ProcessTaskTest {
 		expectedOutValue = new ParamHolder<Integer>(0);		
 		SampleRuntimeModel.processMethod(inValue, expectedOutValue, expectedInOutValue);
 		
-		doNothing().when(knowledgeManager).register(eq(model.trigger), taskTriggerListenerCaptor.capture());
+		doNothing().when(knowledgeManager).register(eq(model.processTrigger), taskTriggerListenerCaptor.capture());
 		
 		when(knowledgeManager.get(anyCollectionOf(KnowledgePath.class))).then(new Answer<ValueSet>() {
 			public ValueSet answer(InvocationOnMock invocation) {
@@ -77,9 +77,9 @@ public class ProcessTaskTest {
 				
 				// Use inValue and inOutValue as the responses of the knowledge manager
 				for (KnowledgePath kp : ((Collection<KnowledgePath>)invocation.getArguments()[0])) {
-					if (kp.equals(model.paramIn.getKnowledgePath())) {
+					if (kp.equals(model.processParamIn.getKnowledgePath())) {
 						result.setValue(kp, inValue);
-					} else if (kp.equals(model.paramInOut.getKnowledgePath())) {
+					} else if (kp.equals(model.processParamInOut.getKnowledgePath())) {
 						result.setValue(kp, inOutValue);
 					}
 				}
@@ -90,7 +90,7 @@ public class ProcessTaskTest {
 		
 		model.setKnowledgeManager(knowledgeManager);
 		
-		this.task = new ProcessTask(model.componentProcess, scheduler);
+		this.task = new ProcessTask(model.process, scheduler);
 	}
 	
 	@Test
@@ -99,7 +99,7 @@ public class ProcessTaskTest {
 		// WHEN getSchedulingPeriod is called
 		long period = task.getSchedulingPeriod();
 		// THEN it returns the period specified in the model
-		assertEquals(model.schedulingSpecification.getPeriod(), period);
+		assertEquals(model.processSchedulingSpec.getPeriod(), period);
 	}
 	
 	@Test
@@ -110,17 +110,17 @@ public class ProcessTaskTest {
 		// WHEN a listener (i.e. scheduler) is registered at the task
 		task.setTriggerListener(triggerListener);
 		// THEN the task registers a trigger listener on the knowledge manager
-		verify(knowledgeManager).register(eq(model.trigger), any(TriggerListener.class));
+		verify(knowledgeManager).register(eq(model.processTrigger), any(TriggerListener.class));
 		
 		// WHEN a trigger comes from the knowledge manager
-		taskTriggerListenerCaptor.getValue().triggered(model.trigger);
+		taskTriggerListenerCaptor.getValue().triggered(model.processTrigger);
 		// THEN the task calls the registered listener (i.e. the scheduler)
-		inOrder.verify(triggerListener).triggered(model.trigger);
+		inOrder.verify(triggerListener).triggered(model.processTrigger);
 		
 		// WHEN the listener (i.e. the scheduler) is unregistered
 		task.unsetTriggerListener();
 		// THEN the trigger is unregistered at the knowledge manager
-		inOrder.verify(knowledgeManager).unregister(model.trigger, taskTriggerListenerCaptor.getValue());
+		inOrder.verify(knowledgeManager).unregister(model.processTrigger, taskTriggerListenerCaptor.getValue());
 		
 		verifyNoMoreInteractions(triggerListener);
 		
@@ -147,8 +147,8 @@ public class ProcessTaskTest {
 		ArgumentCaptor<ChangeSet> changeSetCaptor = ArgumentCaptor.forClass(ChangeSet.class);
 		verify(knowledgeManager).update(changeSetCaptor.capture());
 		ChangeSet cs = changeSetCaptor.getValue();
-		assertEquals(cs.getValue(model.paramInOut.getKnowledgePath()), expectedInOutValue.value);
-		assertEquals(cs.getValue(model.paramOut.getKnowledgePath()), expectedOutValue.value);
+		assertEquals(cs.getValue(model.processParamInOut.getKnowledgePath()), expectedInOutValue.value);
+		assertEquals(cs.getValue(model.processParamOut.getKnowledgePath()), expectedOutValue.value);
 		assertTrue(cs.getDeletedReferences().isEmpty());
 		assertTrue(cs.getUpdatedReferences().size() == 2);
 	}	
