@@ -694,13 +694,22 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int COMPONENT_PROCESS__COMPONENT_INSTANCE = INVOCABLE_FEATURE_COUNT + 2;
 
 	/**
+	 * The feature id for the '<em><b>Is Active</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPONENT_PROCESS__IS_ACTIVE = INVOCABLE_FEATURE_COUNT + 3;
+
+	/**
 	 * The number of structural features of the '<em>Component Process</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_PROCESS_FEATURE_COUNT = INVOCABLE_FEATURE_COUNT + 3;
+	int COMPONENT_PROCESS_FEATURE_COUNT = INVOCABLE_FEATURE_COUNT + 4;
 
 	/**
 	 * The number of operations of the '<em>Component Process</em>' class.
@@ -1261,6 +1270,17 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EReference getComponentProcess_ComponentInstance();
 
 	/**
+	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#isIsActive <em>Is Active</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Is Active</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#isIsActive()
+	 * @see #getComponentProcess()
+	 * @generated
+	 */
+	EAttribute getComponentProcess_IsActive();
+
+	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter <em>Parameter</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1739,6 +1759,14 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * @generated
 		 */
 		EReference COMPONENT_PROCESS__COMPONENT_INSTANCE = eINSTANCE.getComponentProcess_ComponentInstance();
+
+		/**
+		 * The meta object literal for the '<em><b>Is Active</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute COMPONENT_PROCESS__IS_ACTIVE = eINSTANCE.getComponentProcess_IsActive();
 
 		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ParameterImpl <em>Parameter</em>}' class.

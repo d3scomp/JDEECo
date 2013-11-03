@@ -209,6 +209,10 @@
         <element xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//ComponentProcess/name"/>
         <layoutConstraint xmi:type="notation:Location" xmi:id="_FjXv8T5WEeO2QcBZHbiySQ"/>
       </children>
+      <children xmi:type="notation:Node" xmi:id="_4YRSAERzEeObn7g1FMSRDg" type="2001">
+        <element xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//ComponentProcess/isActive"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_4YRSAURzEeObn7g1FMSRDg"/>
+      </children>
       <styles xmi:type="notation:DrawerStyle" xmi:id="_c_N9Uj28EeO2QcBZHbiySQ"/>
       <styles xmi:type="notation:SortingStyle" xmi:id="_c_N9Uz28EeO2QcBZHbiySQ"/>
       <styles xmi:type="notation:FilteringStyle" xmi:id="_c_N9VD28EeO2QcBZHbiySQ"/>

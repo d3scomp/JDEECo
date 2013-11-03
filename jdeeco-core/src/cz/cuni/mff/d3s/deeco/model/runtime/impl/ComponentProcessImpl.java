@@ -28,6 +28,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getName <em>Name</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getSchedulingSpecification <em>Scheduling Specification</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getComponentInstance <em>Component Instance</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#isIsActive <em>Is Active</em>}</li>
  * </ul>
  * </p>
  *
@@ -63,6 +64,26 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 	 * @ordered
 	 */
 	protected SchedulingSpecification schedulingSpecification;
+
+	/**
+	 * The default value of the '{@link #isIsActive() <em>Is Active</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isIsActive()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean IS_ACTIVE_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isIsActive() <em>Is Active</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isIsActive()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean isActive = IS_ACTIVE_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -193,6 +214,27 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public boolean isIsActive() {
+		return isActive;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setIsActive(boolean newIsActive) {
+		boolean oldIsActive = isActive;
+		isActive = newIsActive;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT_PROCESS__IS_ACTIVE, oldIsActive, isActive));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -248,6 +290,8 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 				return getSchedulingSpecification();
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__COMPONENT_INSTANCE:
 				return getComponentInstance();
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__IS_ACTIVE:
+				return isIsActive();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -268,6 +312,9 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 				return;
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__COMPONENT_INSTANCE:
 				setComponentInstance((ComponentInstance)newValue);
+				return;
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__IS_ACTIVE:
+				setIsActive((Boolean)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -290,6 +337,9 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__COMPONENT_INSTANCE:
 				setComponentInstance((ComponentInstance)null);
 				return;
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__IS_ACTIVE:
+				setIsActive(IS_ACTIVE_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -308,6 +358,8 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 				return schedulingSpecification != null;
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__COMPONENT_INSTANCE:
 				return getComponentInstance() != null;
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__IS_ACTIVE:
+				return isActive != IS_ACTIVE_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -324,6 +376,8 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (name: ");
 		result.append(name);
+		result.append(", isActive: ");
+		result.append(isActive);
 		result.append(')');
 		return result.toString();
 	}
