@@ -1,24 +1,20 @@
 package cz.cuni.mff.d3s.deeco.runtime;
 
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
-
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
-import org.eclipse.emf.ecore.util.EContentAdapter;
-
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerRegistry;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
+import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
-import cz.cuni.mff.d3s.deeco.task.EnsembleTask;
+import cz.cuni.mff.d3s.deeco.task.EnsembleCoordinatorTask;
+import cz.cuni.mff.d3s.deeco.task.EnsembleMemberTask;
 import cz.cuni.mff.d3s.deeco.task.ProcessTask;
 import cz.cuni.mff.d3s.deeco.task.Task;
 
@@ -36,6 +32,9 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 	
 	protected Map<ComponentInstance, ComponentInstanceRecord> componentRecords = new HashMap<>();
 		
+	protected Map<ComponentInstance, Adapter> componentInstanceAdapters = new HashMap<>();
+	protected Map<ComponentProcess, Adapter> componentProcessAdapters = new HashMap<>();
+
 	
 	/**
 	 * Creates and initializes all the internal runtime objects.
@@ -118,9 +117,13 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 		// for now, we do not assume that the EnsembleControllers will change,
 		// thus they are scheduled from the beginning and have no adapters
 		for (EnsembleController ec: instance.getEnsembleControllers()) {
-			Task t = new EnsembleTask(ec, scheduler);
-			ciRecord.getEnsembleControllerTasks().put(ec, t);
-			scheduler.addTask(t);
+			Task tCoordinator = new EnsembleCoordinatorTask(ec, scheduler);
+			ciRecord.getEnsembleCoordinatorTasks().put(ec, tCoordinator);
+			scheduler.addTask(tCoordinator);
+			
+			Task tMember = new EnsembleMemberTask(ec, scheduler);
+			ciRecord.getEnsembleMemberTasks().put(ec, tMember);			
+			scheduler.addTask(tMember);
 		}
 				
 		// register adapters to listen for model changes
@@ -140,41 +143,39 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 			}
 		};
 		instance.eAdapters().add(componentInstanceAdapter);	
-
+		componentInstanceAdapters.put(instance, componentInstanceAdapter);
 	}
 	
 	void componentProcessAdded(final ComponentInstance instance,
 			final ComponentProcess process) {
 		ComponentInstanceRecord ciRecord = componentRecords.get(instance);
-		Task newTask = new ProcessTask(process, scheduler);
+		final Task newTask = new ProcessTask(process, scheduler);
 		ciRecord.getProcessTasks().put(process, newTask);
 		
-		componentProcessActiveChanged(process, true);
+		componentProcessActiveChanged(process, newTask, true);
 		
 		// register adapters to listen for model changes
 		// listen to change in ComponentProcess.isActive
 		Adapter componentProcessAdapter = new AdapterImpl() {
 			public void notifyChanged(Notification notification) {
 				super.notifyChanged(notification);
-				if (notification.getFeature() == process.getComponentProcesses()) {
-					componentProcessActiveChanged(process, notification.getNewBooleanValue());
+				if ((notification.getFeatureID(ComponentProcess.class) == RuntimeMetadataPackage.COMPONENT_PROCESS__IS_ACTIVE)
+						&& (notification.getEventType() == Notification.SET)){
+					componentProcessActiveChanged(process, newTask, notification.getNewBooleanValue());
 				}
 			}
 		};
 		process.eAdapters().add(componentProcessAdapter);	
+		componentProcessAdapters.put(process, componentProcessAdapter);
 	}
 	
-	void componentProcessActiveChanged(ComponentProcess process, boolean active) {
-		ComponentInstanceRecord ciRecord = componentRecords.get(process.getComponentInstance());
-		Task task = ciRecord.getProcessTasks().get(process);
+	void componentProcessActiveChanged(ComponentProcess process, Task processTask, boolean active) {
 		if (active) {
-			scheduler.addTask(task);
+			scheduler.addTask(processTask);
 		} else {
-			scheduler.removeTask(task);
+			scheduler.removeTask(processTask);
 		}
 	}
-	
-
 
 
 	/**
@@ -192,20 +193,31 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 			componentProcessRemoved(instance, p);
 		}	
 		
-		for (Task t: ciRecord.getEnsembleControllerTasks().values()) {
+		for (Task t: ciRecord.getAllEnsembleTasks()) {
 			scheduler.removeTask(t);
 		}
 		
 		componentRecords.remove(instance);
+		
+		if (componentInstanceAdapters.containsKey(instance)) { 
+			instance.eAdapters().remove(componentInstanceAdapters.get(instance));
+			componentInstanceAdapters.remove(instance);
+		}		
 	}
 	
 	void componentProcessRemoved(ComponentInstance instance,
 			ComponentProcess process) {
 		
 		ComponentInstanceRecord ciRecord = componentRecords.get(instance);
-		Task task = ciRecord.getProcessTasks().get(process);		
-		scheduler.removeTask(task);		
+		
+		componentProcessActiveChanged(process, ciRecord.getProcessTasks().get(process), false);
+		
 		ciRecord.getProcessTasks().remove(process);
+		
+		if (componentProcessAdapters.containsKey(process)) { 
+			process.eAdapters().remove(componentProcessAdapters.get(process));
+			componentProcessAdapters.remove(process);
+		}	
 	}
 	
 	
