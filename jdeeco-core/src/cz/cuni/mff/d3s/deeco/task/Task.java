@@ -10,7 +10,7 @@ import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
  * 
  */
 public abstract class Task {
-	protected TriggerListener listener;
+	protected TaskTriggerListener listener;
 	protected Scheduler scheduler;
 	
 	public Task(Scheduler scheduler) {
@@ -26,7 +26,7 @@ public abstract class Task {
 	// The reasons are two:
 	//   1) The KnowledgeManagersView should use listeners that identify in which shadowKM the trigger occured
 	//   2) The scheduler should not be interested in the particular trigger
-	public void setTriggerListener(TriggerListener listener) {
+	public void setTriggerListener(TaskTriggerListener listener) {
 		assert(listener != null);
 		
 		if (this.listener != null) {

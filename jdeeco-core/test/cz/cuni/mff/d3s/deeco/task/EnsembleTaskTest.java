@@ -23,6 +23,8 @@ import org.mockito.MockitoAnnotations;
 
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView;
+import cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager;
+import cz.cuni.mff.d3s.deeco.knowledge.ShadowsTriggerListener;
 import cz.cuni.mff.d3s.deeco.knowledge.TriggerListener;
 import cz.cuni.mff.d3s.deeco.model.runtime.SampleRuntimeModel;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
@@ -41,11 +43,13 @@ public class EnsembleTaskTest {
 	@Mock
 	private KnowledgeManagersView shadowReplicasAccess;
 	@Mock
-	private TriggerListener triggerListener;
+	private ReadOnlyKnowledgeManager shadowKnowledgeManager;
+	@Mock
+	private TaskTriggerListener taskTriggerListener;
 	@Captor
 	private ArgumentCaptor<TriggerListener> taskTriggerListenerInKnowledgeManagerCaptor;
 	@Captor
-	private ArgumentCaptor<TriggerListener> taskTriggerListenerInShadowReplicasCaptor;
+	private ArgumentCaptor<ShadowsTriggerListener> taskTriggerListenerInShadowReplicasCaptor;
 	@Mock
 	private Scheduler scheduler;
 	
@@ -82,24 +86,24 @@ public class EnsembleTaskTest {
 	public void testTrigger() {
 		// GIVEN an EnsembleTask initialized with an InstanceEnsemblingController
 		// WHEN a trigger listener (i.e. scheduler) is registered at the task
-		task.setTriggerListener(triggerListener);
+		task.setTriggerListener(taskTriggerListener);
 		// THEN the task registers a trigger listener (regardless whether it is a trigger on coordinator's or member's knowledge) on the knowledge manager
 		verify(knowledgeManager).register(eq(model.ensembleTrigger), any(TriggerListener.class)); // FIXME TB: This is wrong, because the task is supposed to register a trigger without its root (member/coord). The same applies below.
 		// AND the task register a trigger listener (regardless whether it is a trigger on coordinator's or member's knowledge) on the shadow replicas
-		verify(shadowReplicasAccess).register(eq(model.ensembleTrigger), any(TriggerListener.class));		
+		verify(shadowReplicasAccess).register(eq(model.ensembleTrigger), any(ShadowsTriggerListener.class));		
 
 		// WHEN a trigger comes from the knowledge manager
 		taskTriggerListenerInKnowledgeManagerCaptor.getValue().triggered(model.ensembleTrigger);
 		// THEN the task calls the registered listener
-		verify(triggerListener).triggered(model.ensembleTrigger);
+		verify(taskTriggerListener).triggered(task);
 				
 		// WHEN a trigger comes from the shadow replica
 		// TODO, it would make more sense, if the trigger notification from the shadow replicas would carry a reference to the particular read-only knowledge
 		// manager
-		reset(triggerListener); // Without this, we would have to say that the verify below verifies two invocations -- because one already occurred above.
-		taskTriggerListenerInShadowReplicasCaptor.getValue().triggered(model.ensembleTrigger);
+		reset(taskTriggerListener); // Without this, we would have to say that the verify below verifies two invocations -- because one already occurred above.
+		taskTriggerListenerInShadowReplicasCaptor.getValue().triggered(shadowKnowledgeManager, model.ensembleTrigger);
 		// THEN the task calls the registered listener
-		verify(triggerListener).triggered(model.ensembleTrigger);
+		verify(taskTriggerListener).triggered(task);
 		
 		// WHEN the listener (i.e. the scheduler) is unregistered
 		task.unsetTriggerListener();

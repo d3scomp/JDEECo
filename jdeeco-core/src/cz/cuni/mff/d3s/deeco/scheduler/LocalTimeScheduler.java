@@ -121,6 +121,9 @@ public class LocalTimeScheduler implements Scheduler {
 		ti.timer.cancel();
 		ti.timer = new Timer();
 		ti.state = States.STOPPED;
+		
+		// FIXME TB: Necessary to unset the trigger listener
+		// task.unsetTriggerListener()
 	}
 	
 	/**

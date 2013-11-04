@@ -28,7 +28,7 @@ public interface KnowledgeManagersView {
 	
 	// FIXME TB: It would make more sense to have a separate listener for triggers on shadows since that listener
 	// should additionally provide the information, in which shadow KM the trigger occured.
-	public void register(Trigger trigger, TriggerListener triggerListener);
-	public void unregister(Trigger trigger, TriggerListener triggerListener);
+	public void register(Trigger trigger, ShadowsTriggerListener triggerListener);
+	public void unregister(Trigger trigger, ShadowsTriggerListener triggerListener);
 	
 }

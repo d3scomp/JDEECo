@@ -1,14 +1,13 @@
 package cz.cuni.mff.d3s.deeco.task;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.xerces.impl.xpath.XPath.NodeTest;
-import org.mockito.internal.matchers.InstanceOf;
-
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView;
+import cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager;
+import cz.cuni.mff.d3s.deeco.knowledge.ShadowsTriggerListener;
+import cz.cuni.mff.d3s.deeco.knowledge.TriggerListener;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
@@ -30,7 +29,47 @@ import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 public class EnsembleTask extends Task {
 
 	EnsembleController ensembleController;
-	
+
+	private class KnowledgeManagerTriggerListenerImpl implements TriggerListener {
+
+		/* (non-Javadoc)
+		 * @see cz.cuni.mff.d3s.deeco.knowledge.TriggerListener#triggered(cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger)
+		 */
+		@Override
+		public void triggered(Trigger trigger) {
+			if (isForCoordinatorKM(trigger)) {
+				// TODO: Schedule execution of the ensemble (i.e. membership and possibly knowledge exchange) as the coordinator
+			} else if (isForMemberKM(trigger)) {
+				// TODO: Schedule execution of the ensemble (i.e. membership and possibly knowledge exchange) as the member
+			} else {
+				assert(false); 
+			}
+
+			// XXX listener.triggered(EnsembleTask.this);
+		}
+	}
+	KnowledgeManagerTriggerListenerImpl knowledgeManagerTriggerListener = new KnowledgeManagerTriggerListenerImpl();
+
+	private class ShadowsTriggerListenerImpl implements ShadowsTriggerListener {
+
+		/* (non-Javadoc)
+		 * @see cz.cuni.mff.d3s.deeco.knowledge.ShadowsTriggerListener#triggered(cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager, cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger)
+		 */
+		@Override
+		public void triggered(ReadOnlyKnowledgeManager knowledgeManager, Trigger trigger) {
+			if (isForCoordinatorKM(trigger)) {
+				// TODO: Schedule execution of the ensemble (i.e. membership and possibly knowledge exchange) as the member
+			} else if (isForMemberKM(trigger)) {
+				// TODO: Schedule execution of the ensemble (i.e. membership and possibly knowledge exchange) as the coordinator
+			} else {
+				assert(false); 
+			}
+
+			// XXX listener.triggered(EnsembleTask.this);
+		}
+	}
+	ShadowsTriggerListenerImpl shadowsTriggerListener = new ShadowsTriggerListenerImpl();
+
 	public EnsembleTask(EnsembleController ensembleController, Scheduler scheduler) {
 		super(scheduler);
 		
@@ -130,11 +169,9 @@ public class EnsembleTask extends Task {
 		for (Trigger trigger : ensembleController.getEnsembleDefinition().getSchedulingSpecification().getTriggers()) {
 			
 			// TODO: Here should come something which strips the change trigger knowledge path of the coord/member root
-			// TODO: Register triggers in such a way that we know whether it occured in the role of coordinator or member. This of course needs
-			// the new interfaces for listeners.
 			
-			localKM.register(trigger, listener);
-			shadowsKM.register(trigger, listener);
+			localKM.register(trigger, knowledgeManagerTriggerListener);
+			shadowsKM.register(trigger, shadowsTriggerListener);
 		}
 	}
 
@@ -151,8 +188,8 @@ public class EnsembleTask extends Task {
 			
 			// TODO: Here should come something which strips the change trigger knowledge path of the coord/member root
 			
-			localKM.unregister(trigger, listener);
-			shadowsKM.unregister(trigger, listener);
+			localKM.unregister(trigger, knowledgeManagerTriggerListener);
+			shadowsKM.unregister(trigger, shadowsTriggerListener);
 		}
 	}
 
