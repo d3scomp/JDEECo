@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.javatuples.Pair;
 
 import cz.cuni.mff.d3s.deeco.annotations.AnnotationProxy;
@@ -21,9 +22,11 @@ import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
+import cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange;
 import cz.cuni.mff.d3s.deeco.exceptions.AnnotationParsingException;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
@@ -35,17 +38,30 @@ import cz.cuni.mff.d3s.deeco.path.grammar.PNode;
 import cz.cuni.mff.d3s.deeco.path.grammar.ParseException;
 import cz.cuni.mff.d3s.deeco.path.grammar.PathParser;
 
+/**
+ * Common gateway for processing of Java source code classes with DEECo
+ * annotations.
+ * 
+ * "Processing" means parsing the file, creating an eCore subgraph out of it,
+ * attaching the subgraph to the top-level container, the "runtimeMetadata"
+ * model of the application (which is provided through the constructor).
+ * 
+ * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
+ * 
+ */
 public class AnnotationProcessor {
 
-	private static final RuntimeMetadataFactory factory = RuntimeMetadataFactory.eINSTANCE;
 	private static final Map<Class<? extends Annotation>, ParameterDirection> parameterAnnotationsToParameterDirections = Collections
 			.unmodifiableMap(new HashMap<Class<? extends Annotation>, ParameterDirection>() {
+				private static final long serialVersionUID = 1L;
 				{
 					put(InOut.class, ParameterDirection.INOUT);
 					put(In.class, ParameterDirection.IN);
 					put(Out.class, ParameterDirection.OUT);
 				}
 			});
+	private static final RuntimeMetadataFactory factory = RuntimeMetadataFactory.eINSTANCE;
+
 	private RuntimeMetadata model;
 
 	public AnnotationProcessor(RuntimeMetadata model) {
@@ -70,52 +86,49 @@ public class AnnotationProcessor {
 	private void parseComponentClassAndUpdateRuntimeModel(Class<?> clazz) {
 		ComponentInstance componentInstance = factory.createComponentInstance();
 		componentInstance.setName(clazz.getCanonicalName());
-		componentInstance.setKnowledgeManager(null);
-		componentInstance.setOtherKnowledgeManagersAccess(null);
+		componentInstance.setKnowledgeManager(null); // FIXME
+		componentInstance.setOtherKnowledgeManagersAccess(null); // FIXME
 
 		List<Method> methods = getMethodsMarkedAsProcesses(clazz);
+		ComponentProcess componentProcess;
+		SchedulingSpecification schedulingSpecification;
+		KnowledgeChangeTrigger trigger;
+		Parameter param;
+		Boolean hasTriggeredAnnotation;
 		try {
 			for (Method m : methods) {
-				ComponentProcess componentProcess = factory
-						.createComponentProcess();
+				componentProcess = factory.createComponentProcess();
 				componentInstance.getComponentProcesses().add(componentProcess);
 				componentProcess.setComponentInstance(componentInstance);
 				componentProcess.setMethod(m);
 				componentProcess.setName(m.getName());
 
-				for (Parameter p : getParameters(m)) {
-					componentProcess.getParameters().add(p);
-				}
-
-				SchedulingSpecification schedulingSpecification = factory
+				schedulingSpecification = factory
 						.createSchedulingSpecification();
 				componentProcess
 						.setSchedulingSpecification(schedulingSpecification);
 				schedulingSpecification.setPeriod(getPeriodInMilliSeconds(m));
 
-				/*
-				 * if (true) { KnowledgeChangeTrigger trigger = factory
-				 * .createKnowledgeChangeTrigger();
-				 * schedulingSpecification.getTriggers().add(trigger); //
-				 * trigger.setKnowledgePath(value); }
-				 */
-			} // end: for every Method
+				for (Pair<Parameter, Boolean> p : getParameters(m)) {
+					param = p.getValue0();
+					hasTriggeredAnnotation = p.getValue1();
+					componentProcess.getParameters().add(param);
+					if (hasTriggeredAnnotation) {
+						trigger = factory.createKnowledgeChangeTrigger();
+						trigger.setKnowledgePath(EcoreUtil.copy(param
+								.getKnowledgePath()));
+						schedulingSpecification.getTriggers().add(trigger);
+					}
+				}
+			}
 			model.getComponentInstances().add(componentInstance);
 		} catch (AnnotationParsingException | ParseException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void parseEnsembleClassAndUpdateRuntimeModel(Class clazz) {
-		// TODO(IG)
-	}
-
-	private boolean isComponentDefinition(Class<?> clazz) {
-		return clazz != null && clazz.isAnnotationPresent(Component.class);
-	}
-
-	private boolean isEnsembleDefinition(Class<?> clazz) {
-		return clazz != null && clazz.isAnnotationPresent(Ensemble.class);
+	private void parseEnsembleClassAndUpdateRuntimeModel(Class<?> clazz) {
+		// TODO:IG
 	}
 
 	/**
@@ -139,7 +152,12 @@ public class AnnotationProcessor {
 	}
 
 	/**
-	 * TODO(IG)
+	 * Extracts the period from a method. If no {@link PeriodicScheduling}
+	 * annotation is found, returns the default period (1000 msec).
+	 * 
+	 * @param m
+	 *            method to be processed
+	 * @return period in msec
 	 */
 	private long getPeriodInMilliSeconds(Method m) {
 		for (Annotation a : m.getAnnotations()) {
@@ -147,15 +165,22 @@ public class AnnotationProcessor {
 				return ((PeriodicScheduling) a).value();
 			}
 		}
-		return 1000; // default period
+		return 1000;
 	}
 
-	/*
-	 * Constructs and returns a list of Parameters (eObjects)
+	/**
+	 * Extracts the Parameters from a method, paired with a flag signaling
+	 * whether they have any triggered annotation associated.
+	 * 
+	 * @param method
+	 *            method to be processed
+	 * @return list of Tuples of <eObject:Parameter, flag:Boolean>
+	 * @throws AnnotationParsingException
+	 * @throws ParseException
 	 */
-	private List<Parameter> getParameters(Method method)
+	private List<Pair<Parameter, Boolean>> getParameters(Method method)
 			throws AnnotationParsingException, ParseException {
-		List<Parameter> parameters = new ArrayList<Parameter>();
+		List<Pair<Parameter, Boolean>> parameters = new ArrayList<Pair<Parameter, Boolean>>();
 		Type[] parameterTypes = method.getParameterTypes();
 		Annotation[][] allAnnotations = method.getParameterAnnotations();
 		Pair<Annotation, Class<?>> annotationPair;
@@ -183,8 +208,9 @@ public class AnnotationProcessor {
 				knowledgePath.getNodes().add(pathNodeField);
 				pNode = pNode.next;
 			} while (!(pNode == null));
-
-			parameters.add(param);
+			parameters.add(new Pair<Parameter, Boolean>(param,
+					hasTriggeredAnnotation(allAnnotations[i],
+							TriggerOnChange.class)));
 		}
 		return parameters;
 	}
@@ -200,7 +226,8 @@ public class AnnotationProcessor {
 	 */
 	private Pair<Annotation, Class<?>> getFirstDirectionAnnotationFromParameter(
 			Annotation[] annotations) throws AnnotationParsingException {
-		Set<Class<? extends Annotation>> directionAnnotationClasses = parameterAnnotationsToParameterDirections.keySet();
+		Set<Class<? extends Annotation>> directionAnnotationClasses = parameterAnnotationsToParameterDirections
+				.keySet();
 		for (Class<?> directionAnnotationClass : directionAnnotationClasses) {
 			for (Annotation a : annotations) {
 				if (directionAnnotationClass.isInstance(a)) {
@@ -216,6 +243,24 @@ public class AnnotationProcessor {
 		IValuedAnnotation valuedAnnotation = (IValuedAnnotation) AnnotationProxy
 				.implement(IValuedAnnotation.class, annotation);
 		return valuedAnnotation.value();
+	}
+	
+	private boolean hasTriggeredAnnotation(Annotation[] annotations,
+			Class<?> triggeringAnnotationClass) {
+		for (Annotation a : annotations) {
+			if (triggeringAnnotationClass.isInstance(a)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private boolean isComponentDefinition(Class<?> clazz) {
+		return clazz != null && clazz.isAnnotationPresent(Component.class);
+	}
+
+	private boolean isEnsembleDefinition(Class<?> clazz) {
+		return clazz != null && clazz.isAnnotationPresent(Ensemble.class);
 	}
 
 }

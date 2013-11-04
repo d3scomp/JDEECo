@@ -35,7 +35,7 @@ public class RobotFollowerComponent {
 	
 	public Integer battery;
 	public Path path;
-	public String convoyRobot; // 0 if there is no robot ahead 1 otherwise
+	public String convoyRobot; 
 	public List<Path> crossingRobots;
 
 	public RobotFollowerComponent() {
@@ -56,7 +56,6 @@ public class RobotFollowerComponent {
 	public static void move(@Out("path.level2") Path path,
 			@InOut("battery") OutWrapper<Integer> battery,
 			@In("convoyRobot") @TriggerOnChange String convoyRobot) {
-		//System.out.println("[RobotFollowerComponent.process] convoyRobot = " + convoyRobot + ", remainingPath = " + path.remainingPath);
 		if (path.remainingPath.size() > 0) {
 			path.currentPosition = path.remainingPath.remove(0);
 			battery.value = new Integer(battery.value - 1);
@@ -67,8 +66,9 @@ public class RobotFollowerComponent {
 	@Process
 	@PeriodicScheduling(5000)
 	public static void follow(@In("path") Path path,
-			@InOut("battery.level2.level3") OutWrapper<Integer> battery,
-			@In("convoyRobot") @TriggerOnChange String convoyRobot) {
+			@InOut("battery.level2.level3") @TriggerOnChange OutWrapper<Integer> battery,
+			@In("convoyRobot") String convoyRobot) {
+		
 	}
 	
 }
