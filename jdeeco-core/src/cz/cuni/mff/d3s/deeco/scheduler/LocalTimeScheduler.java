@@ -4,10 +4,7 @@ package cz.cuni.mff.d3s.deeco.scheduler;
 
 
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -43,7 +40,6 @@ public class LocalTimeScheduler implements Scheduler{
 	
 	@Override
 	public void executionCompleted(Task task) {
-		// comment test
 		tasks.get(task).state = States.STOPPED; 
 	}
 
@@ -51,8 +47,6 @@ public class LocalTimeScheduler implements Scheduler{
 	public synchronized void start () {
 		if( state == States.RUNNING )
 			return;
-		
-		Iterator<Entry<Task, TaskInfo>> it = tasks.entrySet().iterator();
 		
 		for(Task task: tasks.keySet()){			
 			startTask(task);
@@ -66,13 +60,20 @@ public class LocalTimeScheduler implements Scheduler{
 		if( state == States.STOPPED )
 			return;
 		
+		if(tasks != null && tasks.size() > 0)
+			for (Task t : tasks.keySet()) {
+				stopTask(t);
+			}
+		
 		state = States.STOPPED;
 	}
 	
 	@Override
 	public synchronized void addTask(Task task) {
-		if( !tasks.containsKey(task) )
-			tasks.put(task, new TaskInfo());
+		if( task == null || tasks.containsKey(task) )
+			return;
+		
+		tasks.put(task, new TaskInfo());
 		
 		if( state == States.RUNNING )
 			startTask(task);
@@ -87,29 +88,55 @@ public class LocalTimeScheduler implements Scheduler{
 	}
 	
 	private void startTask(final Task task) {
+		if( task == null )
+			return;
+				
 		TaskInfo ti = tasks.get(task);
-		task.setTriggerListener(new TriggerListener() {
-			@Override
-			public void triggered(Trigger trigger) {
-				taskTriggerFired(task);
-			}
-		});
 		
-		ti.timer.scheduleAtFixedRate(new TimerTask() {
+		if( ti != null && ti.state != States.RUNNING ){
+			task.setTriggerListener(new TriggerListener() {
+				@Override
+				public void triggered(Trigger trigger) {
+					taskTriggerFired(task);
+				}
+			});
 			
-			@Override
-			public void run() {
-				taskTimerFired(task);				
+			if( task.getSchedulingPeriod() > 0){
+				ti.timer.scheduleAtFixedRate(new TimerTask() {
+					
+					@Override
+					public void run() {
+						if( task != null )
+							taskTimerFired(task);				
+					}
+				}, 0, task.getSchedulingPeriod()); // FIXME: TB: What about if scheduling period == 0, which probably means that we do not schedule periodically?
 			}
-		}, 0, task.getSchedulingPeriod()); // FIXME: TB: What about if scheduling period == 0, which probably means that we do not schedule periodically?
-		
+		}
 	}
 	
 	private void stopTask(final Task task) {
+		if( task == null )
+			return;
+		
 		TaskInfo ti = tasks.get(task);
-		ti.timer.cancel();
-		ti.timer = new Timer();
-		ti.state = States.STOPPED;
+		
+		if( ti != null && ti.state != States.RUNNING ){
+			task.setTriggerListener(null);
+			
+			if( task.getSchedulingPeriod() > 0){
+				ti.timer.scheduleAtFixedRate(new TimerTask() {
+					
+					@Override
+					public void run() {
+						taskTimerFired(task);				
+					}
+				}, 0, task.getSchedulingPeriod()); // FIXME: TB: What about if scheduling period == 0, which probably means that we do not schedule periodically?
+			}
+			
+			ti.timer.cancel();
+			ti.timer = new Timer();
+			ti.state = States.STOPPED;
+		}
 	}
 	
 	/**
@@ -119,28 +146,35 @@ public class LocalTimeScheduler implements Scheduler{
 	 * @param task
 	 */
 	protected void taskTriggerFired(final Task task) {
-		if( tasks.get(task).state == States.RUNNING ){
-			// TODO : Implement error reporting
-			return;
-		}
-
-		TaskInfo ti = tasks.get(task);
-		ti.timer.cancel();
-		ti.timer = new Timer();
-
-		ti.timer.scheduleAtFixedRate(new TimerTask() {
-			
-			@Override
-			public void run() {
-				taskTimerFired(task);				
+		if( state == States.RUNNING && task != null && tasks.containsKey(task)){
+			if( tasks.get(task).state == States.RUNNING ){
+				// TODO : Implement error reporting
+				return;
 			}
-		}, 0, task.getSchedulingPeriod()); // FIXME: What about if scheduling period == 0, which probably means that we do not schedule periodically?
-		
-		ti.state = States.RUNNING;
-		executor.execute(task);
+
+			TaskInfo ti = tasks.get(task);
+			ti.timer.cancel();
+			ti.timer = new Timer();
+
+			if( task.getSchedulingPeriod() > 0){			
+				ti.timer.scheduleAtFixedRate(new TimerTask() {
+					
+					@Override
+					public void run() {
+						taskTimerFired(task);				
+					}
+				}, 0, task.getSchedulingPeriod()); // FIXME: What about if scheduling period == 0, which probably means that we do not schedule periodically?
+			}
+			
+			ti.state = States.RUNNING;
+			executor.execute(task);			
+		}
 	}
 	
 	protected void taskTimerFired(Task task) {
+		if( task == null )
+			return;
+		
 		if( tasks.get(task).state == States.RUNNING ){
 			// TODO : Implement error reporting
 			return;

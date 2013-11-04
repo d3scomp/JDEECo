@@ -1,3 +1,12 @@
+/**
+ * Scheduler test suite
+ * 
+ * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
+ * @author Andranik Muradyan <muradian@d3s.mff.cuni.cz>
+ *
+ * */
+
+
 package cz.cuni.mff.d3s.deeco.scheduler;
 
 import java.util.Arrays;
@@ -7,12 +16,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.knowledge.TriggerListener;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.task.Task;
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public abstract class SchedulerTest  {
@@ -72,7 +81,7 @@ public abstract class SchedulerTest  {
 		// WHEN a task is added to a running scheduler
 		tested.addTask(t);
 		// THEN it gets eventually scheduled	
-		verify(executor, timeout(10).atLeastOnce()).execute(t);
+		verify(executor, timeout(10000).atLeastOnce()).execute(t);
 	}
 	
 	@Test
@@ -91,7 +100,7 @@ public abstract class SchedulerTest  {
 	}
 	
 	@Test
-	public void testTriggeredTaskScheduledOnlyWhenTriggered() throws InterruptedException {
+	public void testTriggeredTaskScheduledOnlyWhenTriggeredAndSchedulerRunning() throws InterruptedException {
 		Trigger trigger = mock(Trigger.class);
 		Task t = createTriggeredTask(trigger);
 		
@@ -110,19 +119,25 @@ public abstract class SchedulerTest  {
 		testListener.triggered(trigger);
 		// THEN the process is scheduled (exactly once)
 		verify(executor, times(1)).execute(t);
+	}
+	
+	@Test
+	public void testTriggeredTaskScheduledWhenSchedulerRunningOrInTaskList() throws InterruptedException{
+		Trigger trigger = mock(Trigger.class);
+		Task t = createTriggeredTask(trigger);
 		
 		// WHEN the scheduler is stopped and the trigger is triggered
 		tested.stop();
 		testListener.triggered(trigger);
 		// THEN the process in not scheduled anymore
-		verify(executor, never()).execute(t);		
+		verify(executor, never()).execute(t);
 		
 		// WHEN the task is removed from a running scheduler and the trigger is triggered
 		tested.start();
 		tested.removeTask(t);		
 		testListener.triggered(trigger);
 		// THEN the process in not scheduled		
-		verify(executor, never()).execute(t);		
+		verify(executor, never()).execute(t);
 	}
 	
 	@Test
@@ -135,7 +150,7 @@ public abstract class SchedulerTest  {
 		tested.addTask(t);
 		// THEN the scheduler registers a trigger listener for the task
 		verify(t, times(1)).setTriggerListener(any(TriggerListener.class));
-		
+
 		// WHEN repeating the action
 		reset(t);
 		tested.addTask(t);
@@ -197,7 +212,6 @@ public abstract class SchedulerTest  {
 		// THEN nothing happens anymore
 		verify(t, never()).setTriggerListener(null);
 	}
-	
 	
 	
 	/**
