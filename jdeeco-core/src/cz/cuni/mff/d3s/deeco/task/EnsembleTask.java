@@ -1,10 +1,24 @@
 package cz.cuni.mff.d3s.deeco.task;
 
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.xerces.impl.xpath.XPath.NodeTest;
+import org.mockito.internal.matchers.InstanceOf;
+
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
 /**
@@ -23,6 +37,85 @@ public class EnsembleTask extends Task {
 		this.ensembleController = ensembleController;
 	}
 
+	// FIXME TB: The following four methods should probably go somewhere else, as the EnsembleTask is not really supposed 
+	// to understand internals of triggers. Maybe it would make sense to put it either to the meta-model or to knowledge package.
+	
+	/**
+	 * Helper method for methods isForCoordinatorKM and isForMemberKM.
+	 * @param trigger Trigger to be checked. Currently only {@link KnowledgeChangeTrigger} is accepted.
+	 * @param nodeType {@link PathNodeCoordinator}.class or {@link PathNodeMember}.class 
+	 * @return True if the trigger is to be registered in coordinator's or member's knowledge manager respectively. 
+	 */
+	private boolean isForKM(Trigger trigger, Class<? extends PathNode> nodeType) {
+		KnowledgeChangeTrigger knowledgeChangeTrigger = (KnowledgeChangeTrigger)trigger;
+		
+		List<PathNode> pathNodes = knowledgeChangeTrigger.getKnowledgePath().getNodes();
+		
+		return !pathNodes.isEmpty() && (nodeType.isInstance(pathNodes.get(0)));		
+	}
+	
+	/**
+	 * Returns true if the trigger is to be registered in the coordinator's knowledge manager.
+	 * @param trigger
+	 */
+	private boolean isForCoordinatorKM(Trigger trigger) {
+		return isForKM(trigger, PathNodeCoordinator.class);
+	}
+	
+	/**
+	 * Returns true if the trigger is to be registered in the member's knowledge manager.
+	 * @param trigger
+	 */
+	private boolean isForMemberKM(Trigger trigger) {
+		return isForKM(trigger, PathNodeMember.class);
+	}
+	
+	/**
+	 * Returns a trigger which can be understood by a knowledge manager. In particular this means that the knowledge path of the trigger (in case of
+	 * the {@link KnowledgeChangeTrigger}) is striped of the coordinator/memeber prefix.
+	 * 
+	 * @param trigger The trigger to be adapted. Currently only {@link KnowledgeChangeTrigger} is supported.
+	 * @return The adapted trigger or <code>null</code> if the trigger is invalid or can't be adapted.
+	 */
+	private Trigger adaptTriggerForKM(Trigger trigger) {
+		KnowledgeChangeTrigger knowledgeChangeTrigger = (KnowledgeChangeTrigger)trigger;
+		List<PathNode> origPathNodes = knowledgeChangeTrigger.getKnowledgePath().getNodes();
+		
+		if (origPathNodes.isEmpty()) {
+			return null;
+		}
+		
+		Iterator<PathNode> pathNodeIter = origPathNodes.iterator();
+		PathNode firstPathNode = pathNodeIter.next();
+
+		if ((firstPathNode instanceof PathNodeCoordinator) || (firstPathNode instanceof PathNodeMember)) {
+			RuntimeMetadataFactory factory = RuntimeMetadataFactory.eINSTANCE;
+			
+			KnowledgePath knowledgePath = factory.createKnowledgePath();
+			List<PathNode> newPathNodes = knowledgePath.getNodes();
+						
+			while (pathNodeIter.hasNext()) {
+				PathNode origNode = pathNodeIter.next();
+				
+				if (origNode instanceof PathNodeField) {
+					PathNodeField newNode = factory.createPathNodeField();
+					newNode.setName(((PathNodeField) origNode).getName());
+					
+					newPathNodes.add(newNode);
+				} else {
+					return null;
+				}
+			}
+
+			KnowledgeChangeTrigger result = factory.createKnowledgeChangeTrigger();
+			result.setKnowledgePath(knowledgePath);
+			
+			return result;
+		}
+		
+		return null;
+	}
+
 	/* (non-Javadoc)
 	 * @see cz.cuni.mff.d3s.deeco.task.Task#registerTriggers()
 	 */
@@ -37,6 +130,8 @@ public class EnsembleTask extends Task {
 		for (Trigger trigger : ensembleController.getEnsembleDefinition().getSchedulingSpecification().getTriggers()) {
 			
 			// TODO: Here should come something which strips the change trigger knowledge path of the coord/member root
+			// TODO: Register triggers in such a way that we know whether it occured in the role of coordinator or member. This of course needs
+			// the new interfaces for listeners.
 			
 			localKM.register(trigger, listener);
 			shadowsKM.register(trigger, listener);
