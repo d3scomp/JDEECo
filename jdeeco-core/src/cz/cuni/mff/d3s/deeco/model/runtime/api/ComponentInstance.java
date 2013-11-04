@@ -1,9 +1,8 @@
-/**
- */
 package cz.cuni.mff.d3s.deeco.model.runtime.api;
 
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EObject;
@@ -17,7 +16,6 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * <ul>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getComponentProcesses <em>Component Processes</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getId <em>Id</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getName <em>Name</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getKnowledgeManager <em>Knowledge Manager</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getOtherKnowledgeManagersAccess <em>Other Knowledge Managers Access</em>}</li>
@@ -47,32 +45,6 @@ public interface ComponentInstance extends EObject {
 	 * @generated
 	 */
 	EList<ComponentProcess> getComponentProcesses();
-
-	/**
-	 * Returns the value of the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Id</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Id</em>' attribute.
-	 * @see #setId(String)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance_Id()
-	 * @model required="true"
-	 * @generated
-	 */
-	String getId();
-
-	/**
-	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getId <em>Id</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Id</em>' attribute.
-	 * @see #getId()
-	 * @generated
-	 */
-	void setId(String value);
 
 	/**
 	 * Returns the value of the '<em><b>Name</b></em>' attribute.
@@ -135,12 +107,12 @@ public interface ComponentInstance extends EObject {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Other Knowledge Managers Access</em>' attribute.
-	 * @see #setOtherKnowledgeManagersAccess(Object)
+	 * @see #setOtherKnowledgeManagersAccess(KnowledgeManagersView)
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance_OtherKnowledgeManagersAccess()
-	 * @model dataType="cz.cuni.mff.d3s.deeco.model.runtime.api.OtherKnowledgeManagersAccess" required="true"
+	 * @model dataType="cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeManagersView" required="true"
 	 * @generated
 	 */
-	Object getOtherKnowledgeManagersAccess();
+	KnowledgeManagersView getOtherKnowledgeManagersAccess();
 
 	/**
 	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getOtherKnowledgeManagersAccess <em>Other Knowledge Managers Access</em>}' attribute.
@@ -150,7 +122,7 @@ public interface ComponentInstance extends EObject {
 	 * @see #getOtherKnowledgeManagersAccess()
 	 * @generated
 	 */
-	void setOtherKnowledgeManagersAccess(Object value);
+	void setOtherKnowledgeManagersAccess(KnowledgeManagersView value);
 
 	/**
 	 * Returns the value of the '<em><b>Ensemble Controllers</b></em>' containment reference list.

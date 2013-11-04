@@ -1,11 +1,17 @@
+
 package cz.cuni.mff.d3s.deeco.task;
 
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
 /**
  * 
  * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
+ * @author Tomas Bures <bures@d3s.mff.cuni.cz>
  *
  */
 public class EnsembleTask extends Task {
@@ -23,8 +29,19 @@ public class EnsembleTask extends Task {
 	 */
 	@Override
 	protected void registerTriggers() {
-		// TODO Auto-generated method stub
+		assert(listener != null);
 		
+		ComponentInstance componentInstance = ensembleController.getComponentInstance(); 
+		KnowledgeManager localKM = componentInstance.getKnowledgeManager();
+		KnowledgeManagersView shadowsKM = componentInstance.getOtherKnowledgeManagersAccess();
+		
+		for (Trigger trigger : ensembleController.getEnsembleDefinition().getSchedulingSpecification().getTriggers()) {
+			
+			// TODO: Here should come something which strips the change trigger knowledge path of the coord/member root
+			
+			localKM.register(trigger, listener);
+			shadowsKM.register(trigger, listener);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -32,8 +49,17 @@ public class EnsembleTask extends Task {
 	 */
 	@Override
 	protected void unregisterTriggers() {
-		// TODO Auto-generated method stub
+		ComponentInstance componentInstance = ensembleController.getComponentInstance(); 
+		KnowledgeManager localKM = componentInstance.getKnowledgeManager();
+		KnowledgeManagersView shadowsKM = componentInstance.getOtherKnowledgeManagersAccess();
 		
+		for (Trigger trigger : ensembleController.getEnsembleDefinition().getSchedulingSpecification().getTriggers()) {
+			
+			// TODO: Here should come something which strips the change trigger knowledge path of the coord/member root
+			
+			localKM.unregister(trigger, listener);
+			shadowsKM.unregister(trigger, listener);
+		}
 	}
 
 	/* (non-Javadoc)

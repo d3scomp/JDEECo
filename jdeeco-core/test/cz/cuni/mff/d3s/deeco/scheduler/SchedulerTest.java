@@ -1,3 +1,4 @@
+
 package cz.cuni.mff.d3s.deeco.scheduler;
 
 import java.util.Arrays;
@@ -15,7 +16,7 @@ import cz.cuni.mff.d3s.deeco.task.Task;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-// FIXME: The class is missing a header which states the author
+// FIXME TB: The class is missing a header which states the author
 
 public abstract class SchedulerTest  {
 

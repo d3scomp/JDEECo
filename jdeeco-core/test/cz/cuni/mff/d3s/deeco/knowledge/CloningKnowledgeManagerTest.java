@@ -12,6 +12,10 @@ import cz.cuni.mff.d3s.deeco.knowledge.BaseKnowledgeManagerTest.Knowledge;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 
+/**
+ * @author Michal Kit <kit@d3s.mff.cuni.cz>
+ *
+ */
 public class CloningKnowledgeManagerTest {
 
 	private CloningKnowledgeManager toBeTested;

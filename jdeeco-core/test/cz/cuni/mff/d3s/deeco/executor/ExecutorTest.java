@@ -1,3 +1,4 @@
+
 package cz.cuni.mff.d3s.deeco.executor;
 
 import static org.mockito.Mockito.*;
@@ -10,7 +11,7 @@ import org.junit.rules.ExpectedException;
 
 import cz.cuni.mff.d3s.deeco.task.Task;
 
-//FIXME: The class is missing a header which states the author
+//FIXME TB: The class is missing a header which states the author
 
 public abstract class ExecutorTest {
 	

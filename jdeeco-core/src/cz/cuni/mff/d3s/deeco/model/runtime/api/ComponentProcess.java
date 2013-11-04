@@ -14,6 +14,7 @@ package cz.cuni.mff.d3s.deeco.model.runtime.api;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getName <em>Name</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getSchedulingSpecification <em>Scheduling Specification</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getComponentInstance <em>Component Instance</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#isIsActive <em>Is Active</em>}</li>
  * </ul>
  * </p>
  *
@@ -101,5 +102,31 @@ public interface ComponentProcess extends Invocable {
 	 * @generated
 	 */
 	void setComponentInstance(ComponentInstance value);
+
+	/**
+	 * Returns the value of the '<em><b>Is Active</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Is Active</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Is Active</em>' attribute.
+	 * @see #setIsActive(boolean)
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentProcess_IsActive()
+	 * @model required="true"
+	 * @generated
+	 */
+	boolean isIsActive();
+
+	/**
+	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#isIsActive <em>Is Active</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Is Active</em>' attribute.
+	 * @see #isIsActive()
+	 * @generated
+	 */
+	void setIsActive(boolean value);
 
 } // ComponentProcess

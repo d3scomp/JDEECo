@@ -38,118 +38,118 @@ import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
  */
 public class ProcessTaskTest {
 
-	private SampleRuntimeModel model;
-	
-	@Mock
-	private KnowledgeManager knowledgeManager;
-	@Mock
-	private TriggerListener triggerListener;
-	@Captor
-	private ArgumentCaptor<TriggerListener> taskTriggerListenerCaptor;
-	@Mock
-	private Scheduler scheduler;
+        private SampleRuntimeModel model;
+        
+        @Mock
+        private KnowledgeManager knowledgeManager;
+        @Mock
+        private TriggerListener triggerListener;
+        @Captor
+        private ArgumentCaptor<TriggerListener> taskTriggerListenerCaptor;
+        @Mock
+        private Scheduler scheduler;
 
-	private Task task;
-	
-	private Integer inValue;
-	private Integer inOutValue;
+        private Task task;
+        
+        private Integer inValue;
+        private Integer inOutValue;
 
-	private ParamHolder<Integer> expectedInOutValue;
-	private ParamHolder<Integer> expectedOutValue;
+        private ParamHolder<Integer> expectedInOutValue;
+        private ParamHolder<Integer> expectedOutValue;
 
-	@Before
-	public void setUp() throws Exception {
-		initMocks(this);
+        @Before
+        public void setUp() throws Exception {
+                initMocks(this);
 
-		model = new SampleRuntimeModel();
-		
-		inValue = 21;
-		inOutValue = 108;
-		expectedInOutValue = new ParamHolder<Integer>(108);
-		expectedOutValue = new ParamHolder<Integer>(0);		
-		SampleRuntimeModel.processMethod(inValue, expectedOutValue, expectedInOutValue);
-		
-		doNothing().when(knowledgeManager).register(eq(model.trigger), taskTriggerListenerCaptor.capture());
-		
-		when(knowledgeManager.get(anyCollectionOf(KnowledgePath.class))).then(new Answer<ValueSet>() {
-			public ValueSet answer(InvocationOnMock invocation) {
-				ValueSet result = new ValueSet();
-				
-				// Use inValue and inOutValue as the responses of the knowledge manager
-				for (KnowledgePath kp : ((Collection<KnowledgePath>)invocation.getArguments()[0])) {
-					if (kp.equals(model.paramIn.getKnowledgePath())) {
-						result.setValue(kp, inValue);
-					} else if (kp.equals(model.paramInOut.getKnowledgePath())) {
-						result.setValue(kp, inOutValue);
-					}
-				}
-				
-				return result;
-			}
-		});
-		
-		model.setKnowledgeManager(knowledgeManager);
-		
-		this.task = new ProcessTask(model.componentProcess, scheduler);
-	}
-	
-	@Test
-	public void testSchedulingPeriod() {
-		// GIVEN a ProcessTask initialized with an ComponentProcess
-		// WHEN getSchedulingPeriod is called
-		long period = task.getSchedulingPeriod();
-		// THEN it returns the period specified in the model
-		assertEquals(model.schedulingSpecification.getPeriod(), period);
-	}
-	
-	@Test
-	public void testTriggerIsDeliveredOnlyWhenListenerIsRegistered() {
-		InOrder inOrder = inOrder(knowledgeManager, triggerListener);
-		
-		// GIVEN a ProcessTask initialized with an ComponentProcess
-		// WHEN a listener (i.e. scheduler) is registered at the task
-		task.setTriggerListener(triggerListener);
-		// THEN the task registers a trigger listener on the knowledge manager
-		verify(knowledgeManager).register(eq(model.trigger), any(TriggerListener.class));
-		
-		// WHEN a trigger comes from the knowledge manager
-		taskTriggerListenerCaptor.getValue().triggered(model.trigger);
-		// THEN the task calls the registered listener (i.e. the scheduler)
-		inOrder.verify(triggerListener).triggered(model.trigger);
-		
-		// WHEN the listener (i.e. the scheduler) is unregistered
-		task.unsetTriggerListener();
-		// THEN the trigger is unregistered at the knowledge manager
-		inOrder.verify(knowledgeManager).unregister(model.trigger, taskTriggerListenerCaptor.getValue());
-		
-		verifyNoMoreInteractions(triggerListener);
-		
-		// NOTE that we don't test here the case the trigger is not delivered to the scheduler when spurious trigger from the knowledge manager comes.
-		// This is because the task does the registration by directly passing the triggerListener to the knowledge manager and thus it has no control
-		// over the delivery (from the knowledge manager to the scheduler).
-	}
-	
-	@Test
-	public void testProcessTaskInvoke() throws Exception {
-		// GIVEN a ProcessTask initialized with an ComponentProcess
-		model.resetProcessMethodCallCounter();
-		
-		// WHEN invoke on the task is called
-		task.invoke();
-		
-		// THEN it gets the knowledge needed for execution of the task
-		verify(knowledgeManager).get(anyCollectionOf(KnowledgePath.class));
-		
-		// AND it executes the process method once
-		assertTrue(model.getProcessMethodCallCounter() == 1);
-		
-		// AND it updates knowledge with only the outputs of the process method
-		ArgumentCaptor<ChangeSet> changeSetCaptor = ArgumentCaptor.forClass(ChangeSet.class);
-		verify(knowledgeManager).update(changeSetCaptor.capture());
-		ChangeSet cs = changeSetCaptor.getValue();
-		assertEquals(cs.getValue(model.paramInOut.getKnowledgePath()), expectedInOutValue.value);
-		assertEquals(cs.getValue(model.paramOut.getKnowledgePath()), expectedOutValue.value);
-		assertTrue(cs.getDeletedReferences().isEmpty());
-		assertTrue(cs.getUpdatedReferences().size() == 2);
-	}	
+                model = new SampleRuntimeModel();
+                
+                inValue = 21;
+                inOutValue = 108;
+                expectedInOutValue = new ParamHolder<Integer>(108);
+                expectedOutValue = new ParamHolder<Integer>(0);                
+                SampleRuntimeModel.processMethod(inValue, expectedOutValue, expectedInOutValue);
+                
+                doNothing().when(knowledgeManager).register(eq(model.processTrigger), taskTriggerListenerCaptor.capture());
+                
+                when(knowledgeManager.get(anyCollectionOf(KnowledgePath.class))).then(new Answer<ValueSet>() {
+                        public ValueSet answer(InvocationOnMock invocation) {
+                                ValueSet result = new ValueSet();
+                                
+                                // Use inValue and inOutValue as the responses of the knowledge manager
+                                for (KnowledgePath kp : ((Collection<KnowledgePath>)invocation.getArguments()[0])) {
+                                        if (kp.equals(model.processParamIn.getKnowledgePath())) {
+                                                result.setValue(kp, inValue);
+                                        } else if (kp.equals(model.processParamInOut.getKnowledgePath())) {
+                                                result.setValue(kp, inOutValue);
+                                        }
+                                }
+                                
+                                return result;
+                        }
+                });
+                
+                model.setKnowledgeManager(knowledgeManager);
+                
+                this.task = new ProcessTask(model.process, scheduler);
+        }
+        
+        @Test
+        public void testSchedulingPeriod() {
+                // GIVEN a ProcessTask initialized with an ComponentProcess
+                // WHEN getSchedulingPeriod is called
+                long period = task.getSchedulingPeriod();
+                // THEN it returns the period specified in the model
+                assertEquals(model.processSchedulingSpec.getPeriod(), period);
+        }
+        
+        @Test
+        public void testTriggerIsDeliveredOnlyWhenListenerIsRegistered() {
+                // GIVEN a ProcessTask initialized with an ComponentProcess
+                // WHEN a listener (i.e. scheduler) is registered at the task
+                task.setTriggerListener(triggerListener);
+                // THEN the task registers a trigger listener on the knowledge manager
+                verify(knowledgeManager).register(eq(model.processTrigger), any(TriggerListener.class));
+                
+                // WHEN a trigger comes from the knowledge manager
+                taskTriggerListenerCaptor.getValue().triggered(model.processTrigger);
+                // THEN the task calls the registered listener (i.e. the scheduler)
+                verify(triggerListener).triggered(model.processTrigger);
+                
+                // WHEN the listener (i.e. the scheduler) is unregistered
+                task.unsetTriggerListener();
+                // THEN the trigger is unregistered at the knowledge manager
+                verify(knowledgeManager).unregister(model.processTrigger, taskTriggerListenerCaptor.getValue());
+                
+                verifyNoMoreInteractions(triggerListener);
+                
+                // TODO - test spurious invocation from the KM (and remove the comment below) once we distinguish trigger listeners for KM and the scheduler 
+
+                // NOTE that we don't test here the case the trigger is not delivered to the scheduler when spurious trigger from the knowledge manager comes.
+                // This is because the task does the registration by directly passing the triggerListener to the knowledge manager and thus it has no control
+                // over the delivery (from the knowledge manager to the scheduler).
+        }
+        
+        @Test
+        public void testProcessTaskInvoke() throws Exception {
+                // GIVEN a ProcessTask initialized with an ComponentProcess
+                model.resetProcessMethodCallCounter();
+                
+                // WHEN invoke on the task is called
+                task.invoke();
+                
+                // THEN it gets the knowledge needed for execution of the task
+                verify(knowledgeManager).get(anyCollectionOf(KnowledgePath.class));
+                
+                // AND it executes the process method once
+                assertTrue(model.getProcessMethodCallCounter() == 1);
+                
+                // AND it updates knowledge with only the outputs of the process method
+                ArgumentCaptor<ChangeSet> changeSetCaptor = ArgumentCaptor.forClass(ChangeSet.class);
+                verify(knowledgeManager).update(changeSetCaptor.capture());
+                ChangeSet cs = changeSetCaptor.getValue();
+                assertEquals(cs.getValue(model.processParamInOut.getKnowledgePath()), expectedInOutValue.value);
+                assertEquals(cs.getValue(model.processParamOut.getKnowledgePath()), expectedOutValue.value);
+                assertTrue(cs.getDeletedReferences().isEmpty());
+                assertTrue(cs.getUpdatedReferences().size() == 2);
+        }        
 }

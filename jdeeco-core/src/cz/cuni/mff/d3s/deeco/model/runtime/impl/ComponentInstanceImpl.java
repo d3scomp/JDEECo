@@ -1,9 +1,11 @@
+
 /**
  */
 package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
@@ -34,7 +36,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * The following features are implemented:
  * <ul>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getComponentProcesses <em>Component Processes</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getId <em>Id</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getName <em>Name</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getKnowledgeManager <em>Knowledge Manager</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getOtherKnowledgeManagersAccess <em>Other Knowledge Managers Access</em>}</li>
@@ -54,26 +55,6 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	 * @ordered
 	 */
 	protected EList<ComponentProcess> componentProcesses;
-
-	/**
-	 * The default value of the '{@link #getId() <em>Id</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getId()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String ID_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getId() <em>Id</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getId()
-	 * @generated
-	 * @ordered
-	 */
-	protected String id = ID_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
@@ -123,7 +104,7 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	 * @generated
 	 * @ordered
 	 */
-	protected static final Object OTHER_KNOWLEDGE_MANAGERS_ACCESS_EDEFAULT = null;
+	protected static final KnowledgeManagersView OTHER_KNOWLEDGE_MANAGERS_ACCESS_EDEFAULT = null;
 
 	/**
 	 * The cached value of the '{@link #getOtherKnowledgeManagersAccess() <em>Other Knowledge Managers Access</em>}' attribute.
@@ -133,7 +114,7 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	 * @generated
 	 * @ordered
 	 */
-	protected Object otherKnowledgeManagersAccess = OTHER_KNOWLEDGE_MANAGERS_ACCESS_EDEFAULT;
+	protected KnowledgeManagersView otherKnowledgeManagersAccess = OTHER_KNOWLEDGE_MANAGERS_ACCESS_EDEFAULT;
 
 	/**
 	 * The cached value of the '{@link #getEnsembleControllers() <em>Ensemble Controllers</em>}' containment reference list.
@@ -174,27 +155,6 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 			componentProcesses = new EObjectContainmentWithInverseEList<ComponentProcess>(ComponentProcess.class, this, RuntimeMetadataPackage.COMPONENT_INSTANCE__COMPONENT_PROCESSES, RuntimeMetadataPackage.COMPONENT_PROCESS__COMPONENT_INSTANCE);
 		}
 		return componentProcesses;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String getId() {
-		return id;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setId(String newId) {
-		String oldId = id;
-		id = newId;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT_INSTANCE__ID, oldId, id));
 	}
 
 	/**
@@ -244,7 +204,7 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Object getOtherKnowledgeManagersAccess() {
+	public KnowledgeManagersView getOtherKnowledgeManagersAccess() {
 		return otherKnowledgeManagersAccess;
 	}
 
@@ -253,8 +213,8 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setOtherKnowledgeManagersAccess(Object newOtherKnowledgeManagersAccess) {
-		Object oldOtherKnowledgeManagersAccess = otherKnowledgeManagersAccess;
+	public void setOtherKnowledgeManagersAccess(KnowledgeManagersView newOtherKnowledgeManagersAccess) {
+		KnowledgeManagersView oldOtherKnowledgeManagersAccess = otherKnowledgeManagersAccess;
 		otherKnowledgeManagersAccess = newOtherKnowledgeManagersAccess;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT_INSTANCE__OTHER_KNOWLEDGE_MANAGERS_ACCESS, oldOtherKnowledgeManagersAccess, otherKnowledgeManagersAccess));
@@ -315,8 +275,6 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 		switch (featureID) {
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__COMPONENT_PROCESSES:
 				return getComponentProcesses();
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ID:
-				return getId();
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__NAME:
 				return getName();
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__KNOWLEDGE_MANAGER:
@@ -342,9 +300,6 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 				getComponentProcesses().clear();
 				getComponentProcesses().addAll((Collection<? extends ComponentProcess>)newValue);
 				return;
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ID:
-				setId((String)newValue);
-				return;
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__NAME:
 				setName((String)newValue);
 				return;
@@ -352,7 +307,7 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 				setKnowledgeManager((KnowledgeManager)newValue);
 				return;
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__OTHER_KNOWLEDGE_MANAGERS_ACCESS:
-				setOtherKnowledgeManagersAccess(newValue);
+				setOtherKnowledgeManagersAccess((KnowledgeManagersView)newValue);
 				return;
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS:
 				getEnsembleControllers().clear();
@@ -372,9 +327,6 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 		switch (featureID) {
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__COMPONENT_PROCESSES:
 				getComponentProcesses().clear();
-				return;
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ID:
-				setId(ID_EDEFAULT);
 				return;
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__NAME:
 				setName(NAME_EDEFAULT);
@@ -402,8 +354,6 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 		switch (featureID) {
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__COMPONENT_PROCESSES:
 				return componentProcesses != null && !componentProcesses.isEmpty();
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ID:
-				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__NAME:
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__KNOWLEDGE_MANAGER:
@@ -426,9 +376,7 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 		if (eIsProxy()) return super.toString();
 
 		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (id: ");
-		result.append(id);
-		result.append(", name: ");
+		result.append(" (name: ");
 		result.append(name);
 		result.append(", knowledgeManager: ");
 		result.append(knowledgeManager);
