@@ -31,6 +31,10 @@ class ComponentInstanceRecord {
 	public ComponentInstanceRecord(ComponentInstance componentInstance) {
 		this.componentInstance = componentInstance;
 	}
+	
+	public ComponentInstance getInstance() {
+		return componentInstance;
+	}
 
 	/**
 	 * Returns tasks associated with the processes of the corresponding
@@ -41,7 +45,7 @@ class ComponentInstanceRecord {
 	}		
 	
 	
-	Map<EnsembleController, Task> getEnsembleTasks() {
+	public Map<EnsembleController, Task> getEnsembleTasks() {
 		return ensembleTasks;
 	}
 
