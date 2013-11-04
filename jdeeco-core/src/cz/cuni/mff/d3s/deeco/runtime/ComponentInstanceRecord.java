@@ -25,8 +25,7 @@ class ComponentInstanceRecord {
 	ComponentInstance componentInstance;
 	
 	Map<ComponentProcess , Task> processTasks = new HashMap<>();
-	Map<EnsembleController, Task> ensembleCoordinatorTasks = new HashMap<>();
-	Map<EnsembleController, Task> ensembleMemberTasks = new HashMap<>();
+	Map<EnsembleController, Task> ensembleTasks = new HashMap<>();	
 
 	
 	public ComponentInstanceRecord(ComponentInstance componentInstance) {
@@ -42,13 +41,10 @@ class ComponentInstanceRecord {
 	}		
 	
 	
-	Map<EnsembleController, Task> getEnsembleCoordinatorTasks() {
-		return ensembleCoordinatorTasks;
+	Map<EnsembleController, Task> getEnsembleTasks() {
+		return ensembleTasks;
 	}
 
-	Map<EnsembleController, Task> getEnsembleMemberTasks() {
-		return ensembleMemberTasks;
-	}
 
 	/**
 	 * Returns all tasks associated with the corresponding component
@@ -57,22 +53,10 @@ class ComponentInstanceRecord {
 	public Collection<Task> getAllTasks() {
 		Set<Task> all = new HashSet<>();
 		all.addAll(processTasks.values());
-		all.addAll(ensembleCoordinatorTasks.values());
-		all.addAll(ensembleMemberTasks.values());
+		all.addAll(ensembleTasks.values());		
 		return all;
 	}
 	
-	
-	/**
-	 * Returns all tasks associated with the ensemble controllers of the
-	 * corresponding component instance.
-	 */
-	public Collection<Task> getAllEnsembleTasks() {
-		Set<Task> all = new HashSet<>();
-		all.addAll(ensembleCoordinatorTasks.values());
-		all.addAll(ensembleMemberTasks.values());
-		return all;
-	}
-	
+		
 	
 }

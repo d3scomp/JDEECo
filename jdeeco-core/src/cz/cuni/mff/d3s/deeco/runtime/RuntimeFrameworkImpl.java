@@ -13,8 +13,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
-import cz.cuni.mff.d3s.deeco.task.EnsembleCoordinatorTask;
-import cz.cuni.mff.d3s.deeco.task.EnsembleMemberTask;
+import cz.cuni.mff.d3s.deeco.task.EnsembleTask;
 import cz.cuni.mff.d3s.deeco.task.ProcessTask;
 import cz.cuni.mff.d3s.deeco.task.Task;
 
@@ -117,13 +116,9 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 		// for now, we do not assume that the EnsembleControllers will change,
 		// thus they are scheduled from the beginning and have no adapters
 		for (EnsembleController ec: instance.getEnsembleControllers()) {
-			Task tCoordinator = new EnsembleCoordinatorTask(ec, scheduler);
-			ciRecord.getEnsembleCoordinatorTasks().put(ec, tCoordinator);
-			scheduler.addTask(tCoordinator);
-			
-			Task tMember = new EnsembleMemberTask(ec, scheduler);
-			ciRecord.getEnsembleMemberTasks().put(ec, tMember);			
-			scheduler.addTask(tMember);
+			Task task = new EnsembleTask(ec, scheduler);
+			ciRecord.getEnsembleTasks().put(ec, task);
+			scheduler.addTask(task);						
 		}
 				
 		// register adapters to listen for model changes
@@ -193,7 +188,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 			componentProcessRemoved(instance, p);
 		}	
 		
-		for (Task t: ciRecord.getAllEnsembleTasks()) {
+		for (Task t: ciRecord.getEnsembleTasks().values()) {
 			scheduler.removeTask(t);
 		}
 		
