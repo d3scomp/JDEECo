@@ -34,7 +34,7 @@ public class AnnotationProcessorTest {
 		// Component with 2 processes, 3 parameters and 1 trigger per process:
 		RuntimeMetadata model = factory.createRuntimeMetadata();
 		processor = new AnnotationProcessor(model);
-		processor.process(RobotFollowerComponent.class);
+		processor.process(new RobotFollowerComponent());
 		saveToXMI(model, "test-temp/annotations-test1.xmi");
 	}
 	
@@ -42,10 +42,10 @@ public class AnnotationProcessorTest {
 	public void testParsingOfMultipleClassesToSame () {
 		// Component with 2 processes, 3 parameters and 1 trigger per process:
 		processor = new AnnotationProcessor(globalModel);
-		processor.process(RobotFollowerComponent.class);
+		processor.process(new RobotFollowerComponent());
 		// Component with 2 processes, 3 parameters and 1 trigger per process:
 		processor = new AnnotationProcessor(globalModel);
-		processor.process(RobotLeaderComponent.class);
+		processor.process(new RobotLeaderComponent());
 		
 		saveToXMI(globalModel, "test-temp/annotations-test2.xmi");
 	}

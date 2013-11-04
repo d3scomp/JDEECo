@@ -68,7 +68,8 @@ public class AnnotationProcessor {
 		this.model = model;
 	}
 
-	public void process(Class<?> clazz) {
+	public void process(Object obj) {
+		Class<?> clazz = obj.getClass();
 		if (isComponentDefinition(clazz)) {
 			parseComponentClassAndUpdateRuntimeModel(clazz);
 		} else if (isEnsembleDefinition(clazz)) {
