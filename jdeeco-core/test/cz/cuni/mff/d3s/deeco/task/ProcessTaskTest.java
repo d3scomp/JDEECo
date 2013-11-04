@@ -43,7 +43,7 @@ public class ProcessTaskTest {
 	@Mock
 	private KnowledgeManager knowledgeManager;
 	@Mock
-	private TriggerListener triggerListener;
+	private TaskTriggerListener taskTriggerListener;
 	@Captor
 	private ArgumentCaptor<TriggerListener> taskTriggerListenerCaptor;
 	@Mock
@@ -106,21 +106,21 @@ public class ProcessTaskTest {
 	public void testTriggerIsDeliveredOnlyWhenListenerIsRegistered() {
 		// GIVEN a ProcessTask initialized with an ComponentProcess
 		// WHEN a listener (i.e. scheduler) is registered at the task
-		task.setTriggerListener(triggerListener);
+		task.setTriggerListener(taskTriggerListener);
 		// THEN the task registers a trigger listener on the knowledge manager
 		verify(knowledgeManager).register(eq(model.processTrigger), any(TriggerListener.class));
 		
 		// WHEN a trigger comes from the knowledge manager
 		taskTriggerListenerCaptor.getValue().triggered(model.processTrigger);
 		// THEN the task calls the registered listener (i.e. the scheduler)
-		verify(triggerListener).triggered(model.processTrigger);
+		verify(taskTriggerListener).triggered(task);
 		
 		// WHEN the listener (i.e. the scheduler) is unregistered
 		task.unsetTriggerListener();
 		// THEN the trigger is unregistered at the knowledge manager
 		verify(knowledgeManager).unregister(model.processTrigger, taskTriggerListenerCaptor.getValue());
 		
-		verifyNoMoreInteractions(triggerListener);
+		verifyNoMoreInteractions(taskTriggerListener);
 		
 		// TODO - test spurious invocation from the KM (and remove the comment below) once we distinguish trigger listeners for KM and the scheduler 
 

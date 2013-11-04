@@ -14,7 +14,7 @@
 <Property id="com.ibm.xtools.transform.java.uml.GenerateVizAssociations" value="@45,=@com.ibm.xtools.transform.core.metatype.stringtrue"/>
 <Property id="com.ibm.xtools.transform.uml2.java5.FileDeleteChoice" value="@45,=@com.ibm.xtools.transform.core.metatype.string0"/>
 <Property id="com.ibm.xtools.transform.uml2.java5.internal.Bag" value="@45,=@com.ibm.xtools.transform.core.metatype.stringjava.util.Collection"/>
-<Property id="com.ibm.xtools.transform.uml2.java5.internal.GenerateAccessors" value="@45,=@com.ibm.xtools.transform.core.metatype.stringtrue"/>
+<Property id="com.ibm.xtools.transform.uml2.java5.internal.GenerateAccessors" value="@45,=@com.ibm.xtools.transform.core.metatype.stringfalse"/>
 <Property id="com.ibm.xtools.transform.uml2.java5.internal.GenerateFlatPackages" value="@45,=@com.ibm.xtools.transform.core.metatype.stringtrue"/>
 <Property id="com.ibm.xtools.transform.uml2.java5.internal.OrderedSet" value="@45,=@com.ibm.xtools.transform.core.metatype.stringjava.util.SortedSet"/>
 <Property id="com.ibm.xtools.transform.uml2.java5.internal.Sequence" value="@45,=@com.ibm.xtools.transform.core.metatype.stringjava.util.List"/>
