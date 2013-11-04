@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.deeco.path.grammar;
+package cz.cuni.mff.d3s.deeco.annotations.pathparser;
 
 import java.io.Serializable;
 
