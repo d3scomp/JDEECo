@@ -49,6 +49,12 @@ public class RuntimeConfiguration {
 		if (scheduler != null)
 			return scheduler;
 		
+		if (scheduling == null) {
+			String msg = "No Executor available for " + toString();
+			Log.w(msg);
+			throw new UnsupportedOperationException(msg);
+		}
+		
 		switch (scheduling) {
 		case WALL_TIME:
 			scheduler = new LocalTimeScheduler();
@@ -62,7 +68,13 @@ public class RuntimeConfiguration {
 	
 	Executor getExecutor() {
 		if (executor != null)
-			return executor;
+			return executor;				
+		
+		if (execution == null) {
+			String msg = "No Executor available for " + toString();
+			Log.w(msg);
+			throw new UnsupportedOperationException(msg);
+		}
 		
 		switch (execution) {
 		case SINGLE_THREADED:

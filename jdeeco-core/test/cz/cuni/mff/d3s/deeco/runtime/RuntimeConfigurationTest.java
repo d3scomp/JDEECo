@@ -3,7 +3,9 @@ package cz.cuni.mff.d3s.deeco.runtime;
 import static org.junit.Assert.*;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.executor.SingleThreadedExecutor;
@@ -20,17 +22,26 @@ import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
  */
 public class RuntimeConfigurationTest {
 
-	@Before
-	public void setUp() throws Exception {
-	}
+	@Rule
+	public ExpectedException thrown = ExpectedException.none();
 
 	@Test
 	public void testGetWallTimeScheduler() {
-		// WHEN a configuration with WALL_TIME scheduling is created
+		// GIVEN a configuration with WALL_TIME scheduling
 		RuntimeConfiguration cnf = new RuntimeConfiguration(Scheduling.WALL_TIME, null, null);
 		// THEN an instance of LocalTimeScheduler is returned by getScheduler()
 		Scheduler s = cnf.getScheduler();
 		assertTrue(s instanceof LocalTimeScheduler);		
+	}
+	
+
+	@Test
+	public void testGetUnsupportedScheduler() {
+		// GIVEN a configuration with null scheduling
+		RuntimeConfiguration cnf = new RuntimeConfiguration(null, null, null);
+		// THEN getScheduler() throws an UnsupportedOperationException
+		thrown.expect(UnsupportedOperationException.class);
+		Scheduler s = cnf.getScheduler();
 	}
 	
 	@Test
@@ -45,11 +56,20 @@ public class RuntimeConfigurationTest {
 	
 	@Test
 	public void testGetSingleThreadedExecutor() {
-		// WHEN a configuration with SINGLE_THREADED execution is created
+		// GIVEN a configuration with SINGLE_THREADED execution
 		RuntimeConfiguration cnf = new RuntimeConfiguration(null, null, Execution.SINGLE_THREADED);
 		// THEN an instance of SingleThreadedExecutor is returned by getExecutor()
 		Executor e = cnf.getExecutor();
 		assertTrue(e instanceof SingleThreadedExecutor);		
+	}
+	
+	@Test
+	public void testGetUnsupportedExecutor() {
+		// GIVEN a configuration with null execution
+		RuntimeConfiguration cnf = new RuntimeConfiguration(null, null, null);
+		// THEN getExecutor() throws an UnsupportedOperationException
+		thrown.expect(UnsupportedOperationException.class);
+		Executor e = cnf.getExecutor();				
 	}
 	
 	@Test
