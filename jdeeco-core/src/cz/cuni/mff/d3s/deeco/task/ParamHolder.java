@@ -10,7 +10,7 @@ package cz.cuni.mff.d3s.deeco.task;
  *
  */
 public class ParamHolder<T> {
-	// FIXME: The class should be rather is some other package, which would contain the API 
+	// FIXME TB: The class should be rather is some other package, which would contain the API 
 	// for the component/ensemble developer.
 	
 	public T value;

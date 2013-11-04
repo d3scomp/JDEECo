@@ -4,6 +4,7 @@ package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.*;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
@@ -78,6 +79,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 			case RuntimeMetadataPackage.PARAMETER: return createParameter();
 			case RuntimeMetadataPackage.INVOCABLE: return createInvocable();
 			case RuntimeMetadataPackage.ENSEMBLE_CONTROLLER: return createEnsembleController();
+			case RuntimeMetadataPackage.PATH_NODE_COORDINATOR: return createPathNodeCoordinator();
+			case RuntimeMetadataPackage.PATH_NODE_MEMBER: return createPathNodeMember();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -97,8 +100,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 				return createMethodFromString(eDataType, initialValue);
 			case RuntimeMetadataPackage.KNOWLEDGE_MANAGER:
 				return createKnowledgeManagerFromString(eDataType, initialValue);
-			case RuntimeMetadataPackage.OTHER_KNOWLEDGE_MANAGERS_ACCESS:
-				return createOtherKnowledgeManagersAccessFromString(eDataType, initialValue);
+			case RuntimeMetadataPackage.KNOWLEDGE_MANAGERS_VIEW:
+				return createKnowledgeManagersViewFromString(eDataType, initialValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -118,8 +121,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 				return convertMethodToString(eDataType, instanceValue);
 			case RuntimeMetadataPackage.KNOWLEDGE_MANAGER:
 				return convertKnowledgeManagerToString(eDataType, instanceValue);
-			case RuntimeMetadataPackage.OTHER_KNOWLEDGE_MANAGERS_ACCESS:
-				return convertOtherKnowledgeManagersAccessToString(eDataType, instanceValue);
+			case RuntimeMetadataPackage.KNOWLEDGE_MANAGERS_VIEW:
+				return convertKnowledgeManagersViewToString(eDataType, instanceValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -270,6 +273,26 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public PathNodeCoordinator createPathNodeCoordinator() {
+		PathNodeCoordinatorImpl pathNodeCoordinator = new PathNodeCoordinatorImpl();
+		return pathNodeCoordinator;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public PathNodeMember createPathNodeMember() {
+		PathNodeMemberImpl pathNodeMember = new PathNodeMemberImpl();
+		return pathNodeMember;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public ParameterDirection createParameterDirectionFromString(EDataType eDataType, String initialValue) {
 		ParameterDirection result = ParameterDirection.get(initialValue);
 		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
@@ -326,8 +349,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Object createOtherKnowledgeManagersAccessFromString(EDataType eDataType, String initialValue) {
-		return super.createFromString(eDataType, initialValue);
+	public KnowledgeManagersView createKnowledgeManagersViewFromString(EDataType eDataType, String initialValue) {
+		return (KnowledgeManagersView)super.createFromString(eDataType, initialValue);
 	}
 
 	/**
@@ -335,7 +358,7 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String convertOtherKnowledgeManagersAccessToString(EDataType eDataType, Object instanceValue) {
+	public String convertKnowledgeManagersViewToString(EDataType eDataType, Object instanceValue) {
 		return super.convertToString(eDataType, instanceValue);
 	}
 

@@ -106,11 +106,10 @@ public class RuntimeModelTest {
 		ComponentProcess nComponentProcess = nComponentInstance.getComponentProcesses().get(0);
 		SchedulingSpecification nProcA1Sched = nComponentProcess.getSchedulingSpecification(); 
 
-		assertEquals(oModel.componentInstance.getId(), nComponentInstance.getId());
 		assertEquals(oModel.componentInstance.getName(), nComponentInstance.getName());
-		assertEquals(oModel.componentProcess.getName(), nComponentProcess.getName());
-		assertEquals(oModel.componentProcess.getMethod(), nComponentProcess.getMethod());
-		assertEquals(oModel.schedulingSpecification.getPeriod(), nProcA1Sched.getPeriod());
+		assertEquals(oModel.process.getName(), nComponentProcess.getName());
+		assertEquals(oModel.process.getMethod(), nComponentProcess.getMethod());
+		assertEquals(oModel.processSchedulingSpec.getPeriod(), nProcA1Sched.getPeriod());
 		// TODO: Compare the triggers and process params
 		// TODO: Compare the data stored in the knowledge manager
 	}
