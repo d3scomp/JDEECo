@@ -38,14 +38,16 @@ public class EnsembleTask extends Task {
 		@Override
 		public void triggered(Trigger trigger) {
 			if (isForCoordinatorKM(trigger)) {
-				// TODO: Schedule execution of the ensemble (i.e. membership and possibly knowledge exchange) as the coordinator
+				// TODO: Schedule the execution of the ensemble (i.e. membership and possibly knowledge exchange) as the coordinator
+				// This means that we have to know what to do once the scheduler calls us in the next round.
 			} else if (isForMemberKM(trigger)) {
-				// TODO: Schedule execution of the ensemble (i.e. membership and possibly knowledge exchange) as the member
+				// TODO: Schedule the execution of the ensemble (i.e. membership and possibly knowledge exchange) as the member
+				// This means that we have to know what to do once the scheduler calls us in the next round.
 			} else {
 				assert(false); 
 			}
 
-			// XXX listener.triggered(EnsembleTask.this);
+			listener.triggered(EnsembleTask.this);
 		}
 	}
 	KnowledgeManagerTriggerListenerImpl knowledgeManagerTriggerListener = new KnowledgeManagerTriggerListenerImpl();
@@ -59,13 +61,15 @@ public class EnsembleTask extends Task {
 		public void triggered(ReadOnlyKnowledgeManager knowledgeManager, Trigger trigger) {
 			if (isForCoordinatorKM(trigger)) {
 				// TODO: Schedule execution of the ensemble (i.e. membership and possibly knowledge exchange) as the member
+				// This means that we have to know what to do once the scheduler calls us in the next round.
 			} else if (isForMemberKM(trigger)) {
 				// TODO: Schedule execution of the ensemble (i.e. membership and possibly knowledge exchange) as the coordinator
+				// This means that we have to know what to do once the scheduler calls us in the next round.
 			} else {
 				assert(false); 
 			}
 
-			// XXX listener.triggered(EnsembleTask.this);
+			listener.triggered(EnsembleTask.this);
 		}
 	}
 	ShadowsTriggerListenerImpl shadowsTriggerListener = new ShadowsTriggerListenerImpl();

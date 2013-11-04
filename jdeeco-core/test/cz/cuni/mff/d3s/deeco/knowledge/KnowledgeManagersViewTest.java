@@ -29,7 +29,7 @@ public class KnowledgeManagersViewTest {
 	@Mock
 	private Trigger trigger;
 	@Mock
-	private TriggerListener triggerListener;
+	private ShadowsTriggerListener shadowsTriggerListener;
 	@Mock
 	private ValueSet valueSet;
 	@Mock
@@ -41,6 +41,9 @@ public class KnowledgeManagersViewTest {
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
+		
+		// FIXME TB: Why do you have the "this." here?
+		// FIXME TB: Why don't you instantiate this mock using the annotation as the other mocks above?
 		this.kmView =mock(KnowledgeManagersView.class);
 	}
 
@@ -64,21 +67,23 @@ public class KnowledgeManagersViewTest {
 	@Ignore
  	@Test
 	public void testRegisterOthers() {
-		// WHEN define a new for trigger   
+		// WHEN define a new for trigger
+		// FIXME TB: Why do you call the mock here when the mock has been already created because of the annotation above and the call to initMocks?
 		this.trigger = mock(Trigger.class);
 		// THEN add the trigger(s) to a Collection
 		Collection<Trigger> colTriggers= new LinkedList<Trigger>();
 		colTriggers.add(trigger);
 		
 		// WHEN mock new TriggerListener
-		this.triggerListener = mock(TriggerListener.class);
+		// FIXME TB: Why do you call the mock here when the mock has been already created because of the annotation above and the call to initMocks?
+		this.shadowsTriggerListener = mock(ShadowsTriggerListener.class);
 		// THEN define the behavior of the TriggerListener:
 		//	 the value "colTriggers" returned by getTriggers()
 		//when(triggerListener.getTriggers()).thenReturn(colTriggers);
 		
 		
 		// WHEN registering a trigger to triggerListener
-		kmView.register(trigger,triggerListener);
+		kmView.register(trigger,shadowsTriggerListener);
 		// THEN the triggerListener adds this trigger
 		// assertEquals(true,triggerListener.getTriggers().contain(trigger));
 		
@@ -89,19 +94,21 @@ public class KnowledgeManagersViewTest {
  	@Test
 	public void testUnregisterOthers() {
 		// WHEN define a new for trigger   
+		// FIXME TB: Why do you call the mock here when the mock has been already created because of the annotation above and the call to initMocks?
 		this.trigger = mock(Trigger.class);
 		// THEN define a Collection of Triggers without the currentTrigger
 		Collection<Trigger> colTriggers= new LinkedList<Trigger>();
 		
 		// WHEN mock new TriggerListener
-		this.triggerListener = mock(TriggerListener.class);
+		// FIXME TB: Why do you call the mock here when the mock has been already created because of the annotation above and the call to initMocks?
+		this.shadowsTriggerListener = mock(ShadowsTriggerListener.class);
 		// THEN define the behavior of the TriggerListener:
 		//	 the value "colTriggers" returned by getTriggers()
 		//when(triggerListener.getTriggers()).thenReturn(colTriggers);
 		
 		
 		// WHEN registering a trigger to triggerListener
-		kmView.unregister(trigger,triggerListener);
+		kmView.unregister(trigger,shadowsTriggerListener);
 		// THEN the triggerListener removes this trigger
 		// assertEquals(false,triggerListener.getTriggers().contain(trigger));
 

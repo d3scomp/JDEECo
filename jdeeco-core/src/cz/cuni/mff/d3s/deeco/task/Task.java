@@ -16,16 +16,15 @@ public abstract class Task {
 	public Task(Scheduler scheduler) {
 		this.scheduler = scheduler;
 	}
-	
+
+	// FIXME TB: Could we somehow know whether the scheduler is calling us because of the trigger or because of the period?
+	// In case of ensembles, we could take an advantage of this and when called because of a trigger, we wouldn't have to evaluate all potential pairs as we know
+	// which knowledge manager caused the trigger.
 	public abstract void invoke() throws TaskInvocationException;
 
 	protected abstract void registerTriggers();
 	protected abstract void unregisterTriggers();
 	
-	// FIXME TB: The trigger listener between task and scheduler should not be the same as the one for the knowledge manager
-	// The reasons are two:
-	//   1) The KnowledgeManagersView should use listeners that identify in which shadowKM the trigger occured
-	//   2) The scheduler should not be interested in the particular trigger
 	public void setTriggerListener(TaskTriggerListener listener) {
 		assert(listener != null);
 		

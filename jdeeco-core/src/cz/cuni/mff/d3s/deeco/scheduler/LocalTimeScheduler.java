@@ -15,6 +15,7 @@ import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.knowledge.TriggerListener;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.task.Task;
+import cz.cuni.mff.d3s.deeco.task.TaskTriggerListener;
 
 //FIXME TB: The class does not have the header stating the author
 
@@ -99,9 +100,12 @@ public class LocalTimeScheduler implements Scheduler {
 	
 	private void startTask(final Task task) {
 		TaskInfo ti = tasks.get(task);
-		task.setTriggerListener(new TriggerListener() {
+		task.setTriggerListener(new TaskTriggerListener() { 
+			// FIXME TB: Since we can get the task from the triggered method, we don't need the instance of this anonymous class. However, I'm relatively indifferent
+			// whether to keep instantiation of the anonymous class and remove the task parameter or whether to have one handler per scheduler (well, I would
+			// vote for one handler per scheduler, but it's just a matter of taste).
 			@Override
-			public void triggered(Trigger trigger) {
+			public void triggered(Task task) {
 				taskTriggerFired(task);
 			}
 		});

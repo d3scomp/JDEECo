@@ -222,4 +222,23 @@ public class KnowledgeManagerImpl implements KnowledgeManager,
 		}
 
 	}
+
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView#register(cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger, cz.cuni.mff.d3s.deeco.knowledge.ShadowsTriggerListener)
+	 */
+	@Override
+	public void register(Trigger trigger, ShadowsTriggerListener triggerListener) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView#unregister(cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger, cz.cuni.mff.d3s.deeco.knowledge.ShadowsTriggerListener)
+	 */
+	@Override
+	public void unregister(Trigger trigger,
+			ShadowsTriggerListener triggerListener) {
+		// TODO Auto-generated method stub
+		
+	}
 }
