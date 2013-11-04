@@ -13,6 +13,11 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 import cz.cuni.mff.d3s.deeco.task.Task;
 
+/**
+ * 
+ * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
+ *
+ */
 public class ComponentInstanceRecordTest {
 
 	ComponentInstance instance;
@@ -24,6 +29,7 @@ public class ComponentInstanceRecordTest {
 		tested = new ComponentInstanceRecord(instance);
 	}
 
+	@SuppressWarnings("serial")
 	@Test
 	public void testGetAllTasks() {
 		// WHEN the record is empty
