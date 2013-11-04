@@ -28,8 +28,7 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl#getName <em>Name</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl#getMembership <em>Membership</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl#getKnowledgeExchange <em>Knowledge Exchange</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl#getCoordinatorSchedulingSpecification <em>Coordinator Scheduling Specification</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl#getMemberSchedulingSpecification <em>Member Scheduling Specification</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl#getSchedulingSpecification <em>Scheduling Specification</em>}</li>
  * </ul>
  * </p>
  *
@@ -77,24 +76,14 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 	protected Exchange knowledgeExchange;
 
 	/**
-	 * The cached value of the '{@link #getCoordinatorSchedulingSpecification() <em>Coordinator Scheduling Specification</em>}' containment reference.
+	 * The cached value of the '{@link #getSchedulingSpecification() <em>Scheduling Specification</em>}' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getCoordinatorSchedulingSpecification()
+	 * @see #getSchedulingSpecification()
 	 * @generated
 	 * @ordered
 	 */
-	protected SchedulingSpecification coordinatorSchedulingSpecification;
-
-	/**
-	 * The cached value of the '{@link #getMemberSchedulingSpecification() <em>Member Scheduling Specification</em>}' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getMemberSchedulingSpecification()
-	 * @generated
-	 * @ordered
-	 */
-	protected SchedulingSpecification memberSchedulingSpecification;
+	protected SchedulingSpecification schedulingSpecification;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -227,8 +216,8 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public SchedulingSpecification getCoordinatorSchedulingSpecification() {
-		return coordinatorSchedulingSpecification;
+	public SchedulingSpecification getSchedulingSpecification() {
+		return schedulingSpecification;
 	}
 
 	/**
@@ -236,11 +225,11 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public NotificationChain basicSetCoordinatorSchedulingSpecification(SchedulingSpecification newCoordinatorSchedulingSpecification, NotificationChain msgs) {
-		SchedulingSpecification oldCoordinatorSchedulingSpecification = coordinatorSchedulingSpecification;
-		coordinatorSchedulingSpecification = newCoordinatorSchedulingSpecification;
+	public NotificationChain basicSetSchedulingSpecification(SchedulingSpecification newSchedulingSpecification, NotificationChain msgs) {
+		SchedulingSpecification oldSchedulingSpecification = schedulingSpecification;
+		schedulingSpecification = newSchedulingSpecification;
 		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.ENSEMBLE_DEFINITION__COORDINATOR_SCHEDULING_SPECIFICATION, oldCoordinatorSchedulingSpecification, newCoordinatorSchedulingSpecification);
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.ENSEMBLE_DEFINITION__SCHEDULING_SPECIFICATION, oldSchedulingSpecification, newSchedulingSpecification);
 			if (msgs == null) msgs = notification; else msgs.add(notification);
 		}
 		return msgs;
@@ -251,61 +240,18 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setCoordinatorSchedulingSpecification(SchedulingSpecification newCoordinatorSchedulingSpecification) {
-		if (newCoordinatorSchedulingSpecification != coordinatorSchedulingSpecification) {
+	public void setSchedulingSpecification(SchedulingSpecification newSchedulingSpecification) {
+		if (newSchedulingSpecification != schedulingSpecification) {
 			NotificationChain msgs = null;
-			if (coordinatorSchedulingSpecification != null)
-				msgs = ((InternalEObject)coordinatorSchedulingSpecification).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - RuntimeMetadataPackage.ENSEMBLE_DEFINITION__COORDINATOR_SCHEDULING_SPECIFICATION, null, msgs);
-			if (newCoordinatorSchedulingSpecification != null)
-				msgs = ((InternalEObject)newCoordinatorSchedulingSpecification).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - RuntimeMetadataPackage.ENSEMBLE_DEFINITION__COORDINATOR_SCHEDULING_SPECIFICATION, null, msgs);
-			msgs = basicSetCoordinatorSchedulingSpecification(newCoordinatorSchedulingSpecification, msgs);
+			if (schedulingSpecification != null)
+				msgs = ((InternalEObject)schedulingSpecification).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - RuntimeMetadataPackage.ENSEMBLE_DEFINITION__SCHEDULING_SPECIFICATION, null, msgs);
+			if (newSchedulingSpecification != null)
+				msgs = ((InternalEObject)newSchedulingSpecification).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - RuntimeMetadataPackage.ENSEMBLE_DEFINITION__SCHEDULING_SPECIFICATION, null, msgs);
+			msgs = basicSetSchedulingSpecification(newSchedulingSpecification, msgs);
 			if (msgs != null) msgs.dispatch();
 		}
 		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.ENSEMBLE_DEFINITION__COORDINATOR_SCHEDULING_SPECIFICATION, newCoordinatorSchedulingSpecification, newCoordinatorSchedulingSpecification));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public SchedulingSpecification getMemberSchedulingSpecification() {
-		return memberSchedulingSpecification;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public NotificationChain basicSetMemberSchedulingSpecification(SchedulingSpecification newMemberSchedulingSpecification, NotificationChain msgs) {
-		SchedulingSpecification oldMemberSchedulingSpecification = memberSchedulingSpecification;
-		memberSchedulingSpecification = newMemberSchedulingSpecification;
-		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.ENSEMBLE_DEFINITION__MEMBER_SCHEDULING_SPECIFICATION, oldMemberSchedulingSpecification, newMemberSchedulingSpecification);
-			if (msgs == null) msgs = notification; else msgs.add(notification);
-		}
-		return msgs;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setMemberSchedulingSpecification(SchedulingSpecification newMemberSchedulingSpecification) {
-		if (newMemberSchedulingSpecification != memberSchedulingSpecification) {
-			NotificationChain msgs = null;
-			if (memberSchedulingSpecification != null)
-				msgs = ((InternalEObject)memberSchedulingSpecification).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - RuntimeMetadataPackage.ENSEMBLE_DEFINITION__MEMBER_SCHEDULING_SPECIFICATION, null, msgs);
-			if (newMemberSchedulingSpecification != null)
-				msgs = ((InternalEObject)newMemberSchedulingSpecification).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - RuntimeMetadataPackage.ENSEMBLE_DEFINITION__MEMBER_SCHEDULING_SPECIFICATION, null, msgs);
-			msgs = basicSetMemberSchedulingSpecification(newMemberSchedulingSpecification, msgs);
-			if (msgs != null) msgs.dispatch();
-		}
-		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.ENSEMBLE_DEFINITION__MEMBER_SCHEDULING_SPECIFICATION, newMemberSchedulingSpecification, newMemberSchedulingSpecification));
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.ENSEMBLE_DEFINITION__SCHEDULING_SPECIFICATION, newSchedulingSpecification, newSchedulingSpecification));
 	}
 
 	/**
@@ -320,10 +266,8 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 				return basicSetMembership(null, msgs);
 			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__KNOWLEDGE_EXCHANGE:
 				return basicSetKnowledgeExchange(null, msgs);
-			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__COORDINATOR_SCHEDULING_SPECIFICATION:
-				return basicSetCoordinatorSchedulingSpecification(null, msgs);
-			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__MEMBER_SCHEDULING_SPECIFICATION:
-				return basicSetMemberSchedulingSpecification(null, msgs);
+			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__SCHEDULING_SPECIFICATION:
+				return basicSetSchedulingSpecification(null, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -342,10 +286,8 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 				return getMembership();
 			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__KNOWLEDGE_EXCHANGE:
 				return getKnowledgeExchange();
-			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__COORDINATOR_SCHEDULING_SPECIFICATION:
-				return getCoordinatorSchedulingSpecification();
-			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__MEMBER_SCHEDULING_SPECIFICATION:
-				return getMemberSchedulingSpecification();
+			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__SCHEDULING_SPECIFICATION:
+				return getSchedulingSpecification();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -367,11 +309,8 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__KNOWLEDGE_EXCHANGE:
 				setKnowledgeExchange((Exchange)newValue);
 				return;
-			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__COORDINATOR_SCHEDULING_SPECIFICATION:
-				setCoordinatorSchedulingSpecification((SchedulingSpecification)newValue);
-				return;
-			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__MEMBER_SCHEDULING_SPECIFICATION:
-				setMemberSchedulingSpecification((SchedulingSpecification)newValue);
+			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__SCHEDULING_SPECIFICATION:
+				setSchedulingSpecification((SchedulingSpecification)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -394,11 +333,8 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__KNOWLEDGE_EXCHANGE:
 				setKnowledgeExchange((Exchange)null);
 				return;
-			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__COORDINATOR_SCHEDULING_SPECIFICATION:
-				setCoordinatorSchedulingSpecification((SchedulingSpecification)null);
-				return;
-			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__MEMBER_SCHEDULING_SPECIFICATION:
-				setMemberSchedulingSpecification((SchedulingSpecification)null);
+			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__SCHEDULING_SPECIFICATION:
+				setSchedulingSpecification((SchedulingSpecification)null);
 				return;
 		}
 		super.eUnset(featureID);
@@ -418,10 +354,8 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 				return membership != null;
 			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__KNOWLEDGE_EXCHANGE:
 				return knowledgeExchange != null;
-			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__COORDINATOR_SCHEDULING_SPECIFICATION:
-				return coordinatorSchedulingSpecification != null;
-			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__MEMBER_SCHEDULING_SPECIFICATION:
-				return memberSchedulingSpecification != null;
+			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__SCHEDULING_SPECIFICATION:
+				return schedulingSpecification != null;
 		}
 		return super.eIsSet(featureID);
 	}

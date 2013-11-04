@@ -14,6 +14,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification;
@@ -43,8 +44,8 @@ public class SampleRuntimeModel {
 	public EnsembleDefinition ensembleDefinition;
 	public Condition membershipCondition;
 	public Exchange knowledgeExchange;
-	public SchedulingSpecification ensembleSchedulingSpecCoord, ensembleSchedulingSpecMember;
-	public KnowledgeChangeTrigger ensembleTriggerCoord, ensembleTriggerMember;
+	public SchedulingSpecification ensembleSchedulingSpec;
+	public KnowledgeChangeTrigger ensembleTrigger;
 	public Parameter membershipParamCoord, membershipParamMember;
 	public Parameter exchangeParamCoordIn, exchangeParamCoordOut, exchangeParamCoordInOut;
 	public Parameter exchangeParamMemberIn, exchangeParamMemberOut, exchangeParamMemberInOut;	
@@ -116,8 +117,18 @@ public class SampleRuntimeModel {
 		KnowledgePath knowledgePath = factory.createKnowledgePath();
 				
 		for (String nodeName : knowledgePathNodes) {
-			PathNodeField pathNode = factory.createPathNodeField();		
-			pathNode.setName(nodeName);
+			PathNode pathNode;
+			
+			if ("<C>".equals(nodeName)) {
+				pathNode = factory.createPathNodeCoordinator();
+			} else if ("<M>".equals(nodeName)) {
+				pathNode = factory.createPathNodeMember();
+			} else {
+				PathNodeField pathNodeField = factory.createPathNodeField();		
+				pathNodeField.setName(nodeName);
+				pathNode = pathNodeField;
+			}
+			
 			knowledgePath.getNodes().add(pathNode);
 		}
 		
@@ -167,7 +178,7 @@ public class SampleRuntimeModel {
 		
 		// Construct a scheduling specification for the process
 		processSchedulingSpec = factory.createSchedulingSpecification();
-		processSchedulingSpec.setPeriod(10); // FIXME, what does this number mean?
+		processSchedulingSpec.setPeriod(10); // FIXME TB: what does this number mean?
 		processTrigger = createTrigger("level1", "trigger");
 		processSchedulingSpec.getTriggers().add(processTrigger);
 		process.setSchedulingSpecification(processSchedulingSpec);
@@ -178,17 +189,11 @@ public class SampleRuntimeModel {
 		ensembleDefinition.setName("sample ensemble definition");
 		
 		// Construct a scheduling specification for the ensemble
-		ensembleSchedulingSpecCoord = factory.createSchedulingSpecification();
-		ensembleSchedulingSpecCoord.setPeriod(10); // FIXME, what does this number mean?
-		ensembleTriggerCoord = createTrigger("level1", "out");
-		ensembleSchedulingSpecCoord.getTriggers().add(ensembleTriggerCoord);
-		ensembleDefinition.setCoordinatorSchedulingSpecification(ensembleSchedulingSpecCoord);
-
-		ensembleSchedulingSpecMember = factory.createSchedulingSpecification();
-		ensembleSchedulingSpecMember.setPeriod(10); // FIXME, what does this number mean?
-		ensembleTriggerMember = createTrigger("level1", "out");
-		ensembleSchedulingSpecMember.getTriggers().add(ensembleTriggerMember);
-		ensembleDefinition.setCoordinatorSchedulingSpecification(ensembleSchedulingSpecMember);
+		ensembleSchedulingSpec = factory.createSchedulingSpecification();
+		ensembleSchedulingSpec.setPeriod(10); // FIXME TB: what does this number mean?
+		ensembleTrigger = createTrigger("<C>", "level1", "out");
+		ensembleSchedulingSpec.getTriggers().add(ensembleTrigger);
+		ensembleDefinition.setSchedulingSpecification(ensembleSchedulingSpec);
 
 		// Construct a membership condition
 		membershipCondition = factory.createCondition();

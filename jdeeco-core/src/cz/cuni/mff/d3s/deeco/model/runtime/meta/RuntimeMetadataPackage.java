@@ -465,22 +465,13 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int ENSEMBLE_DEFINITION__KNOWLEDGE_EXCHANGE = 2;
 
 	/**
-	 * The feature id for the '<em><b>Coordinator Scheduling Specification</b></em>' containment reference.
+	 * The feature id for the '<em><b>Scheduling Specification</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ENSEMBLE_DEFINITION__COORDINATOR_SCHEDULING_SPECIFICATION = 3;
-
-	/**
-	 * The feature id for the '<em><b>Member Scheduling Specification</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ENSEMBLE_DEFINITION__MEMBER_SCHEDULING_SPECIFICATION = 4;
+	int ENSEMBLE_DEFINITION__SCHEDULING_SPECIFICATION = 3;
 
 	/**
 	 * The number of structural features of the '<em>Ensemble Definition</em>' class.
@@ -489,7 +480,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ENSEMBLE_DEFINITION_FEATURE_COUNT = 5;
+	int ENSEMBLE_DEFINITION_FEATURE_COUNT = 4;
 
 	/**
 	 * The number of operations of the '<em>Ensemble Definition</em>' class.
@@ -1185,26 +1176,15 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EReference getEnsembleDefinition_KnowledgeExchange();
 
 	/**
-	 * Returns the meta object for the containment reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getCoordinatorSchedulingSpecification <em>Coordinator Scheduling Specification</em>}'.
+	 * Returns the meta object for the containment reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getSchedulingSpecification <em>Scheduling Specification</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference '<em>Coordinator Scheduling Specification</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getCoordinatorSchedulingSpecification()
+	 * @return the meta object for the containment reference '<em>Scheduling Specification</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getSchedulingSpecification()
 	 * @see #getEnsembleDefinition()
 	 * @generated
 	 */
-	EReference getEnsembleDefinition_CoordinatorSchedulingSpecification();
-
-	/**
-	 * Returns the meta object for the containment reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getMemberSchedulingSpecification <em>Member Scheduling Specification</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference '<em>Member Scheduling Specification</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getMemberSchedulingSpecification()
-	 * @see #getEnsembleDefinition()
-	 * @generated
-	 */
-	EReference getEnsembleDefinition_MemberSchedulingSpecification();
+	EReference getEnsembleDefinition_SchedulingSpecification();
 
 	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Condition <em>Condition</em>}'.
@@ -1691,20 +1671,12 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EReference ENSEMBLE_DEFINITION__KNOWLEDGE_EXCHANGE = eINSTANCE.getEnsembleDefinition_KnowledgeExchange();
 
 		/**
-		 * The meta object literal for the '<em><b>Coordinator Scheduling Specification</b></em>' containment reference feature.
+		 * The meta object literal for the '<em><b>Scheduling Specification</b></em>' containment reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference ENSEMBLE_DEFINITION__COORDINATOR_SCHEDULING_SPECIFICATION = eINSTANCE.getEnsembleDefinition_CoordinatorSchedulingSpecification();
-
-		/**
-		 * The meta object literal for the '<em><b>Member Scheduling Specification</b></em>' containment reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference ENSEMBLE_DEFINITION__MEMBER_SCHEDULING_SPECIFICATION = eINSTANCE.getEnsembleDefinition_MemberSchedulingSpecification();
+		EReference ENSEMBLE_DEFINITION__SCHEDULING_SPECIFICATION = eINSTANCE.getEnsembleDefinition_SchedulingSpecification();
 
 		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ConditionImpl <em>Condition</em>}' class.

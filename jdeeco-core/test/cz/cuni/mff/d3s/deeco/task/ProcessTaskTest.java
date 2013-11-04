@@ -104,8 +104,6 @@ public class ProcessTaskTest {
 	
 	@Test
 	public void testTriggerIsDeliveredOnlyWhenListenerIsRegistered() {
-		InOrder inOrder = inOrder(knowledgeManager, triggerListener);
-		
 		// GIVEN a ProcessTask initialized with an ComponentProcess
 		// WHEN a listener (i.e. scheduler) is registered at the task
 		task.setTriggerListener(triggerListener);
@@ -115,15 +113,17 @@ public class ProcessTaskTest {
 		// WHEN a trigger comes from the knowledge manager
 		taskTriggerListenerCaptor.getValue().triggered(model.processTrigger);
 		// THEN the task calls the registered listener (i.e. the scheduler)
-		inOrder.verify(triggerListener).triggered(model.processTrigger);
+		verify(triggerListener).triggered(model.processTrigger);
 		
 		// WHEN the listener (i.e. the scheduler) is unregistered
 		task.unsetTriggerListener();
 		// THEN the trigger is unregistered at the knowledge manager
-		inOrder.verify(knowledgeManager).unregister(model.processTrigger, taskTriggerListenerCaptor.getValue());
+		verify(knowledgeManager).unregister(model.processTrigger, taskTriggerListenerCaptor.getValue());
 		
 		verifyNoMoreInteractions(triggerListener);
 		
+		// TODO - test spurious invocation from the KM (and remove the comment below) once we distinguish trigger listeners for KM and the scheduler 
+
 		// NOTE that we don't test here the case the trigger is not delivered to the scheduler when spurious trigger from the knowledge manager comes.
 		// This is because the task does the registration by directly passing the triggerListener to the knowledge manager and thus it has no control
 		// over the delivery (from the knowledge manager to the scheduler).

@@ -50,9 +50,7 @@
         eType="#//Condition" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="knowledgeExchange" lowerBound="1"
         eType="#//Exchange" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="coordinatorSchedulingSpecification"
-        lowerBound="1" eType="#//SchedulingSpecification" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="memberSchedulingSpecification"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="schedulingSpecification"
         lowerBound="1" eType="#//SchedulingSpecification" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Condition" eSuperTypes="#//Invocable"/>

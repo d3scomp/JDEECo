@@ -16,7 +16,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.TriggerListener;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.task.Task;
 
-//FIXME: The class does not have the header stating the author
+//FIXME TB: The class does not have the header stating the author
 
 public class LocalTimeScheduler implements Scheduler {
 	Map<Task, TaskInfo> tasks;
@@ -112,7 +112,7 @@ public class LocalTimeScheduler implements Scheduler {
 			public void run() {
 				taskTimerFired(task);				
 			}
-		}, 0, task.getSchedulingPeriod()); // FIXME: TB: What about if scheduling period == 0, which probably means that we do not schedule periodically?
+		}, 0, task.getSchedulingPeriod()); // FIXME TB: What about if scheduling period == 0, which probably means that we do not schedule periodically?
 		
 	}
 	
@@ -145,7 +145,7 @@ public class LocalTimeScheduler implements Scheduler {
 			public void run() {
 				taskTimerFired(task);				
 			}
-		}, 0, task.getSchedulingPeriod()); // FIXME: What about if scheduling period == 0, which probably means that we do not schedule periodically?
+		}, 0, task.getSchedulingPeriod()); // FIXME TB: What about if scheduling period == 0, which probably means that we do not schedule periodically?
 		
 		ti.state = States.RUNNING;
 		executor.execute(task);
