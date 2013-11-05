@@ -122,7 +122,7 @@ public abstract class SchedulerTest  {
 	
 	@Test
 	public void testTriggeredTaskScheduledWhenSchedulerRunningOrInTaskList() throws InterruptedException{
-		Task t = createTriggeredTask();
+		Task t = createTriggeredTask( );
 		
 		// WHEN the scheduler is stopped and the trigger is triggered
 		tested.stop();

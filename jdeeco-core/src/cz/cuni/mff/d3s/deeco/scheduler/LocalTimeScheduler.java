@@ -1,5 +1,3 @@
-/**
- */
 package cz.cuni.mff.d3s.deeco.scheduler;
 
 
@@ -9,11 +7,16 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
-import cz.cuni.mff.d3s.deeco.knowledge.TriggerListener;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.task.Task;
 import cz.cuni.mff.d3s.deeco.task.TaskTriggerListener;
 
+/**
+ * Implementation of the Scheduler as LocalTimeScheduler
+ * 
+ * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
+ * @author Andranik Muradyan <muradian@d3s.mff.cuni.cz>
+ *
+ */
 public class LocalTimeScheduler implements Scheduler{
 	Map<Task, TaskInfo> tasks;
 	Executor executor;
@@ -193,8 +196,7 @@ public class LocalTimeScheduler implements Scheduler{
 
 	@Override
 	public void setExecutor(Executor executor) {
-		// TODO Auto-generated method stub
-		
+		this.executor = executor;		
 	}
 }
 
