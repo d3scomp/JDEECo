@@ -81,7 +81,7 @@ public abstract class SchedulerTest  {
 		// WHEN a task is added to a running scheduler
 		tested.addTask(t);
 		// THEN it gets eventually scheduled	
-		verify(executor, timeout(10000).atLeastOnce()).execute(t);
+		verify(executor, timeout(100).atLeastOnce()).execute(t);
 	}
 	
 	@Test

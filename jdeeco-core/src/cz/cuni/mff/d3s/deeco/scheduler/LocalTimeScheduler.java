@@ -17,7 +17,7 @@ import cz.cuni.mff.d3s.deeco.task.TaskTriggerListener;
  * @author Andranik Muradyan <muradian@d3s.mff.cuni.cz>
  *
  */
-public class LocalTimeScheduler implements Scheduler{
+public class LocalTimeScheduler implements Scheduler, TaskTriggerListener {
 	Map<Task, TaskInfo> tasks;
 	Executor executor;
 	private States state;
@@ -34,6 +34,7 @@ public class LocalTimeScheduler implements Scheduler{
 	
 	private enum States{
 		RUNNING,
+		FAILED,
 		STOPPED
 	}
 	
@@ -98,23 +99,9 @@ public class LocalTimeScheduler implements Scheduler{
 		TaskInfo ti = tasks.get(task);
 		
 		if( ti != null && ti.state != States.RUNNING ){
-			task.setTriggerListener(new TaskTriggerListener() {
-				@Override
-				public void triggered(Task task) {
-					taskTriggerFired(task);
-				}
-			});
+			task.setTriggerListener(this);
 			
-			if( task.getSchedulingPeriod() > 0){
-				ti.timer.scheduleAtFixedRate(new TimerTask() {
-					
-					@Override
-					public void run() {
-						if( task != null )
-							taskTimerFired(task);				
-					}
-				}, 0, task.getSchedulingPeriod()); // FIXME: TB: What about if scheduling period == 0, which probably means that we do not schedule periodically?
-			}
+			taskTimerReset(task, ti);
 		}
 	}
 	
@@ -127,15 +114,6 @@ public class LocalTimeScheduler implements Scheduler{
 		if( ti != null && ti.state != States.RUNNING ){
 			task.setTriggerListener(null);
 			
-			if( task.getSchedulingPeriod() > 0){
-				ti.timer.scheduleAtFixedRate(new TimerTask() {
-					
-					@Override
-					public void run() {
-						taskTimerFired(task);				
-					}
-				}, 0, task.getSchedulingPeriod()); // FIXME: TB: What about if scheduling period == 0, which probably means that we do not schedule periodically?
-			}
 			
 			ti.timer.cancel();
 			ti.timer = new Timer();
@@ -160,18 +138,22 @@ public class LocalTimeScheduler implements Scheduler{
 			ti.timer.cancel();
 			ti.timer = new Timer();
 
-			if( task.getSchedulingPeriod() > 0){			
-				ti.timer.scheduleAtFixedRate(new TimerTask() {
-					
-					@Override
-					public void run() {
-						taskTimerFired(task);				
-					}
-				}, 0, task.getSchedulingPeriod()); // FIXME: What about if scheduling period == 0, which probably means that we do not schedule periodically?
-			}
+			taskTimerReset(task, ti);
 			
 			ti.state = States.RUNNING;
 			executor.execute(task);			
+		}
+	}
+
+	private void taskTimerReset(final Task task, TaskInfo ti) {
+		if( task.getSchedulingPeriod() > 0){			
+			ti.timer.scheduleAtFixedRate(new TimerTask() {
+				
+				@Override
+				public void run() {
+					taskTimerFired(task);				
+				}
+			}, 0, task.getSchedulingPeriod()); 
 		}
 	}
 	
@@ -180,7 +162,6 @@ public class LocalTimeScheduler implements Scheduler{
 			return;
 		
 		if( tasks.get(task).state == States.RUNNING ){
-			// TODO : Implement error reporting
 			return;
 		}
 		
@@ -190,13 +171,17 @@ public class LocalTimeScheduler implements Scheduler{
 
 	@Override
 	public void executionFailed(Task task, Exception e) {
-		// TODO Auto-generated method stub
-		
+		executionCompleted(task);
 	}
 
 	@Override
 	public void setExecutor(Executor executor) {
 		this.executor = executor;		
+	}
+
+	@Override
+	public void triggered(Task task) {
+		taskTimerFired(task);		
 	}
 }
 
