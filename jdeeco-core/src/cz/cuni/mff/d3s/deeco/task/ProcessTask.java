@@ -25,6 +25,18 @@ public class ProcessTask extends Task {
 	
 	ComponentProcess componentProcess;
 	
+	private class KnowledgeManagerTriggerListenerImpl implements TriggerListener {
+
+		/* (non-Javadoc)
+		 * @see cz.cuni.mff.d3s.deeco.knowledge.TriggerListener#triggered(cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger)
+		 */
+		@Override
+		public void triggered(Trigger trigger) {
+			listener.triggered(ProcessTask.this);
+		}
+	}
+	KnowledgeManagerTriggerListenerImpl knowledgeManagerTriggerListener = new KnowledgeManagerTriggerListenerImpl();
+	
 	public ProcessTask(ComponentProcess componentProcess, Scheduler scheduler) {
 		super(scheduler);
 		this.componentProcess = componentProcess;
@@ -120,7 +132,7 @@ public class ProcessTask extends Task {
 		KnowledgeManager km = componentProcess.getComponentInstance().getKnowledgeManager();
 		
 		for (Trigger trigger : componentProcess.getSchedulingSpecification().getTriggers()) {
-			km.register(trigger, listener);
+			km.register(trigger, knowledgeManagerTriggerListener);
 		}
 	}
 
@@ -132,7 +144,7 @@ public class ProcessTask extends Task {
 		KnowledgeManager km = componentProcess.getComponentInstance().getKnowledgeManager();
 		
 		for (Trigger trigger : componentProcess.getSchedulingSpecification().getTriggers()) {
-			km.unregister(trigger, listener);
+			km.unregister(trigger, knowledgeManagerTriggerListener);
 		}		
 	}
 
