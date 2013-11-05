@@ -23,7 +23,7 @@ import cz.cuni.mff.d3s.deeco.task.Task;
  *
  */
 public class RuntimeFrameworkImpl implements RuntimeFramework {
-	protected RuntimeConfiguration configuration;
+	
 	protected Scheduler scheduler;
 	protected RuntimeMetadata model;
 	protected Executor executor;
@@ -47,8 +47,33 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 		}
 		
 		this.model = model;
-		this.configuration = configuration;
-				
+		
+		init();
+	}
+
+	/**
+	 * Initializes the runtime with the given runtime services and prepares the
+	 * model for execution.
+	 * 
+	 * It also registers adaptors for reacting to changes in the model.
+	 * 
+	 * @param model
+	 *            model of the application to be executed.
+	 * @param scheduler
+	 * 			  the scheduler to be used for scheduling the tasks
+	 * @param executor
+	 * 			  the scheduler to be used for executing the tasks
+	 * @param kmRegistry
+	 *            the KM registry to be used for management of knowledge repositories.
+	 * 
+	 */
+	public RuntimeFrameworkImpl(RuntimeMetadata model, Scheduler scheduler,
+			Executor executor, KnowledgeManagerRegistry kmRegistry) {
+		this.scheduler = scheduler;
+		this.model = model;
+		this.executor = executor;
+		this.kmRegistry = kmRegistry;
+		
 		init();
 	}
 
@@ -57,14 +82,6 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 	 * {@link #model} and {@link #configuration}.
 	 */
 	void init() {		
-		// wire things together
-		scheduler = configuration.getScheduler();
-		executor = configuration.getExecutor();
-		scheduler.setExecutor(executor);
-		executor.setExecutionListener(scheduler);
-		
-		kmRegistry = configuration.getKnowledgeManagerRegistry();
-		
 		// initialize the components
 		for (ComponentInstance ci: model.getComponentInstances()) {
 			componentInstanceAdded(ci);
@@ -89,12 +106,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 		model.eAdapters().add(componentInstancesAdapter);	
 	}
 	
-	
-	void registerModelAdapters() {
-		
-		
-	
-	}
+
 
 	/**
 	 * Implementation of a notification indicating that a new component instance
@@ -162,7 +174,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 		};
 		process.eAdapters().add(componentProcessAdapter);	
 		componentProcessAdapters.put(process, componentProcessAdapter);
-	}
+	} 
 	
 	void componentProcessActiveChanged(ComponentProcess process, Task processTask, boolean active) {
 		if (active) {

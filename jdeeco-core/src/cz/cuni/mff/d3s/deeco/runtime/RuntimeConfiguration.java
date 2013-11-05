@@ -20,10 +20,7 @@ public class RuntimeConfiguration {
 	Scheduling scheduling;
 	Distribution distribution;
 	Execution execution;
-	
-	Scheduler scheduler;
-	Executor executor;
-	KnowledgeManagerRegistry kmRegistry;
+
 	
 	public RuntimeConfiguration(Scheduling scheduling,
 			Distribution distribution, Execution execution) {
@@ -45,55 +42,7 @@ public class RuntimeConfiguration {
 		return execution;
 	}
 	
-	Scheduler getScheduler() {
-		if (scheduler != null)
-			return scheduler;
-		
-		if (scheduling == null) {
-			String msg = "No Executor available for " + toString();
-			Log.w(msg);
-			throw new UnsupportedOperationException(msg);
-		}
-		
-		switch (scheduling) {
-		case WALL_TIME:
-			scheduler = new LocalTimeScheduler();
-			return scheduler;
-		default:
-			String msg = "No Scheduler available for " + toString();
-			Log.w(msg);
-			throw new UnsupportedOperationException(msg);
-		}
-	}
 	
-	Executor getExecutor() {
-		if (executor != null)
-			return executor;				
-		
-		if (execution == null) {
-			String msg = "No Executor available for " + toString();
-			Log.w(msg);
-			throw new UnsupportedOperationException(msg);
-		}
-		
-		switch (execution) {
-		case SINGLE_THREADED:
-			executor = new SingleThreadedExecutor();
-			return executor;
-		default:
-			String msg = "No Executor available for " + toString();
-			Log.w(msg);
-			throw new UnsupportedOperationException(msg);
-		}
-	}
-	
-	KnowledgeManagerRegistry getKnowledgeManagerRegistry() {
-		if (kmRegistry != null)
-			return kmRegistry;
-		
-		kmRegistry = new KnowledgeManagerRegistry();
-		return kmRegistry;		
-	}
 
 	@Override
 	public String toString() {
