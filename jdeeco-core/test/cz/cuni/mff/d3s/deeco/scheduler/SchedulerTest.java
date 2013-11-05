@@ -9,15 +9,7 @@
 
 package cz.cuni.mff.d3s.deeco.scheduler;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import org.junit.After;
 import org.junit.Before;
@@ -26,13 +18,8 @@ import org.junit.Test;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.task.Task;
-<<<<<<< HEAD
-import static org.mockito.Mockito.*;
-=======
-import cz.cuni.mff.d3s.deeco.task.TaskTriggerListener;
 
-// FIXME TB: The class is missing a header which states the author
->>>>>>> origin/newgen
+import cz.cuni.mff.d3s.deeco.task.TaskTriggerListener;
 
 public abstract class SchedulerTest  {
 
@@ -113,14 +100,8 @@ public abstract class SchedulerTest  {
 	}
 	
 	@Test
-<<<<<<< HEAD
-	public void testTriggeredTaskScheduledOnlyWhenTriggeredAndSchedulerRunning() throws InterruptedException {
-		Trigger trigger = mock(Trigger.class);
-		Task t = createTriggeredTask(trigger);
-=======
 	public void testTriggeredTaskScheduledOnlyWhenTriggered() throws InterruptedException {
 		Task t = createTriggeredTask();
->>>>>>> origin/newgen
 		
 		// WHEN a triggered task is added to a stopped scheduler and the trigger is triggered
 		tested.addTask(t);
@@ -141,8 +122,7 @@ public abstract class SchedulerTest  {
 	
 	@Test
 	public void testTriggeredTaskScheduledWhenSchedulerRunningOrInTaskList() throws InterruptedException{
-		Trigger trigger = mock(Trigger.class);
-		Task t = createTriggeredTask(trigger);
+		Task t = createTriggeredTask();
 		
 		// WHEN the scheduler is stopped and the trigger is triggered
 		tested.stop();
@@ -167,13 +147,8 @@ public abstract class SchedulerTest  {
 		// WHEN a task is added to a running scheduler
 		tested.addTask(t);
 		// THEN the scheduler registers a trigger listener for the task
-<<<<<<< HEAD
-		verify(t, times(1)).setTriggerListener(any(TriggerListener.class));
-
-=======
 		verify(t, times(1)).setTriggerListener(any(TaskTriggerListener.class));
 		
->>>>>>> origin/newgen
 		// WHEN repeating the action
 		reset(t);
 		tested.addTask(t);
