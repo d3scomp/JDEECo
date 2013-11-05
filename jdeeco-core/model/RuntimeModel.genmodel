@@ -50,8 +50,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//EnsembleDefinition/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//EnsembleDefinition/membership"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//EnsembleDefinition/knowledgeExchange"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//EnsembleDefinition/coordinatorSchedulingSpecification"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//EnsembleDefinition/memberSchedulingSpecification"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//EnsembleDefinition/schedulingSpecification"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//Condition"/>
     <genClasses ecoreClass="RuntimeModel.ecore#//Exchange"/>
@@ -59,6 +58,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentProcess/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentProcess/schedulingSpecification"/>
       <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentProcess/componentInstance"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentProcess/isActive"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//Parameter">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//Parameter/direction"/>

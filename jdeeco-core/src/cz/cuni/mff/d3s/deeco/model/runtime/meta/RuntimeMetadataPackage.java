@@ -731,7 +731,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int PARAMETER__DIRECTION = 0;
 
 	/**
-	 * The feature id for the '<em><b>Knowledge Path</b></em>' reference.
+	 * The feature id for the '<em><b>Knowledge Path</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -898,6 +898,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 */
 	int KNOWLEDGE_MANAGERS_VIEW = 21;
+
 
 	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification <em>Scheduling Specification</em>}'.
@@ -1282,10 +1283,10 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EAttribute getParameter_Direction();
 
 	/**
-	 * Returns the meta object for the reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter#getKnowledgePath <em>Knowledge Path</em>}'.
+	 * Returns the meta object for the containment reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter#getKnowledgePath <em>Knowledge Path</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Knowledge Path</em>'.
+	 * @return the meta object for the containment reference '<em>Knowledge Path</em>'.
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter#getKnowledgePath()
 	 * @see #getParameter()
 	 * @generated
@@ -1759,7 +1760,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EAttribute PARAMETER__DIRECTION = eINSTANCE.getParameter_Direction();
 
 		/**
-		 * The meta object literal for the '<em><b>Knowledge Path</b></em>' reference feature.
+		 * The meta object literal for the '<em><b>Knowledge Path</b></em>' containment reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
