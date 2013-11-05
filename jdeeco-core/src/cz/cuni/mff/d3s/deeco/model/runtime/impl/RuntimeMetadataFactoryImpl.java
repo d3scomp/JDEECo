@@ -3,23 +3,9 @@
 package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Component;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Condition;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Ensemble;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Exchange;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceEnsemblingController;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceProcess;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Invocable;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.*;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
@@ -86,15 +72,15 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 			case RuntimeMetadataPackage.PATH_NODE_MAP_KEY: return createPathNodeMapKey();
 			case RuntimeMetadataPackage.RUNTIME_METADATA: return createRuntimeMetadata();
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE: return createComponentInstance();
-			case RuntimeMetadataPackage.COMPONENT: return createComponent();
-			case RuntimeMetadataPackage.ENSEMBLE: return createEnsemble();
+			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION: return createEnsembleDefinition();
 			case RuntimeMetadataPackage.CONDITION: return createCondition();
 			case RuntimeMetadataPackage.EXCHANGE: return createExchange();
-			case RuntimeMetadataPackage.PROCESS: return createProcess();
+			case RuntimeMetadataPackage.COMPONENT_PROCESS: return createComponentProcess();
 			case RuntimeMetadataPackage.PARAMETER: return createParameter();
 			case RuntimeMetadataPackage.INVOCABLE: return createInvocable();
-			case RuntimeMetadataPackage.INSTANCE_PROCESS: return createInstanceProcess();
-			case RuntimeMetadataPackage.INSTANCE_ENSEMBLING_CONTROLLER: return createInstanceEnsemblingController();
+			case RuntimeMetadataPackage.ENSEMBLE_CONTROLLER: return createEnsembleController();
+			case RuntimeMetadataPackage.PATH_NODE_COORDINATOR: return createPathNodeCoordinator();
+			case RuntimeMetadataPackage.PATH_NODE_MEMBER: return createPathNodeMember();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -114,8 +100,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 				return createMethodFromString(eDataType, initialValue);
 			case RuntimeMetadataPackage.KNOWLEDGE_MANAGER:
 				return createKnowledgeManagerFromString(eDataType, initialValue);
-			case RuntimeMetadataPackage.OTHER_KNOWLEDGE_MANAGERS_ACCESS:
-				return createOtherKnowledgeManagersAccessFromString(eDataType, initialValue);
+			case RuntimeMetadataPackage.KNOWLEDGE_MANAGERS_VIEW:
+				return createKnowledgeManagersViewFromString(eDataType, initialValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -135,8 +121,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 				return convertMethodToString(eDataType, instanceValue);
 			case RuntimeMetadataPackage.KNOWLEDGE_MANAGER:
 				return convertKnowledgeManagerToString(eDataType, instanceValue);
-			case RuntimeMetadataPackage.OTHER_KNOWLEDGE_MANAGERS_ACCESS:
-				return convertOtherKnowledgeManagersAccessToString(eDataType, instanceValue);
+			case RuntimeMetadataPackage.KNOWLEDGE_MANAGERS_VIEW:
+				return convertKnowledgeManagersViewToString(eDataType, instanceValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -217,19 +203,9 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Component createComponent() {
-		ComponentImpl component = new ComponentImpl();
-		return component;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public Ensemble createEnsemble() {
-		EnsembleImpl ensemble = new EnsembleImpl();
-		return ensemble;
+	public EnsembleDefinition createEnsembleDefinition() {
+		EnsembleDefinitionImpl ensembleDefinition = new EnsembleDefinitionImpl();
+		return ensembleDefinition;
 	}
 
 	/**
@@ -257,9 +233,9 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public cz.cuni.mff.d3s.deeco.model.runtime.api.Process createProcess() {
-		ProcessImpl process = new ProcessImpl();
-		return process;
+	public ComponentProcess createComponentProcess() {
+		ComponentProcessImpl componentProcess = new ComponentProcessImpl();
+		return componentProcess;
 	}
 
 	/**
@@ -287,9 +263,9 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public InstanceProcess createInstanceProcess() {
-		InstanceProcessImpl instanceProcess = new InstanceProcessImpl();
-		return instanceProcess;
+	public EnsembleController createEnsembleController() {
+		EnsembleControllerImpl ensembleController = new EnsembleControllerImpl();
+		return ensembleController;
 	}
 
 	/**
@@ -297,9 +273,19 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public InstanceEnsemblingController createInstanceEnsemblingController() {
-		InstanceEnsemblingControllerImpl instanceEnsemblingController = new InstanceEnsemblingControllerImpl();
-		return instanceEnsemblingController;
+	public PathNodeCoordinator createPathNodeCoordinator() {
+		PathNodeCoordinatorImpl pathNodeCoordinator = new PathNodeCoordinatorImpl();
+		return pathNodeCoordinator;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public PathNodeMember createPathNodeMember() {
+		PathNodeMemberImpl pathNodeMember = new PathNodeMemberImpl();
+		return pathNodeMember;
 	}
 
 	/**
@@ -363,8 +349,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Object createOtherKnowledgeManagersAccessFromString(EDataType eDataType, String initialValue) {
-		return super.createFromString(eDataType, initialValue);
+	public KnowledgeManagersView createKnowledgeManagersViewFromString(EDataType eDataType, String initialValue) {
+		return (KnowledgeManagersView)super.createFromString(eDataType, initialValue);
 	}
 
 	/**
@@ -372,7 +358,7 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String convertOtherKnowledgeManagersAccessToString(EDataType eDataType, Object instanceValue) {
+	public String convertKnowledgeManagersViewToString(EDataType eDataType, Object instanceValue) {
 		return super.convertToString(eDataType, instanceValue);
 	}
 

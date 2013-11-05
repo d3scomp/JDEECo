@@ -23,8 +23,6 @@ public class ValueSetTest {
 		tested = new ValueSet();
 	}
 
-
-
 	@Test
 	public void testGetReferences() {
 		// WHEN a ValueSet is empty

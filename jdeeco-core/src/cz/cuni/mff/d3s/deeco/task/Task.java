@@ -1,7 +1,6 @@
 package cz.cuni.mff.d3s.deeco.task;
 
 import cz.cuni.mff.d3s.deeco.knowledge.TriggerListener;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
 /**
@@ -11,21 +10,22 @@ import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
  * 
  */
 public abstract class Task {
-	protected SchedulingSpecification schedulingSpecification;
-	protected TriggerListener listener;
+	protected TaskTriggerListener listener;
 	protected Scheduler scheduler;
 	
-	public Task(SchedulingSpecification schedulingSpecification, Scheduler scheduler) {
-		this.schedulingSpecification = schedulingSpecification;
+	public Task(Scheduler scheduler) {
 		this.scheduler = scheduler;
 	}
-	
-	public abstract void invoke();
+
+	// FIXME TB: Could we somehow know whether the scheduler is calling us because of the trigger or because of the period?
+	// In case of ensembles, we could take an advantage of this and when called because of a trigger, we wouldn't have to evaluate all potential pairs as we know
+	// which knowledge manager caused the trigger.
+	public abstract void invoke() throws TaskInvocationException;
 
 	protected abstract void registerTriggers();
 	protected abstract void unregisterTriggers();
 	
-	public void setTriggerListener(TriggerListener listener) {
+	public void setTriggerListener(TaskTriggerListener listener) {
 		assert(listener != null);
 		
 		if (this.listener != null) {
@@ -42,8 +42,6 @@ public abstract class Task {
 			this.listener = null;
 		}
 	}
-	
-	public long getSchedulingPeriod() {
-		return schedulingSpecification.getPeriod();
-	}
+
+	abstract public long getSchedulingPeriod();
 }

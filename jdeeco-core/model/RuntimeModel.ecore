@@ -27,48 +27,42 @@
         eType="#//KnowledgePath" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="RuntimeMetadata">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ensembleDefinitions" upperBound="-1"
+        eType="#//EnsembleDefinition" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="componentInstances" upperBound="-1"
         eType="#//ComponentInstance" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="ensembles" upperBound="-1"
-        eType="#//Ensemble" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="components" upperBound="-1"
-        eType="#//Component" containment="true"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="KnowledgeManager" instanceClassName="cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager"/>
   <eClassifiers xsi:type="ecore:EClass" name="ComponentInstance">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="component" lowerBound="1"
-        eType="#//Component"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="componentProcesses" upperBound="-1"
+        eType="#//ComponentProcess" containment="true" eOpposite="#//ComponentProcess/componentInstance"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="knowledgeManager" lowerBound="1"
         eType="#//KnowledgeManager"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="otherKnowledgeManagersAccess"
-        lowerBound="1" eType="#//OtherKnowledgeManagersAccess"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="processes" upperBound="-1"
-        eType="#//InstanceProcess" containment="true" eOpposite="#//InstanceProcess/componentInstance"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="ensemblingControllers"
-        upperBound="-1" eType="#//InstanceEnsemblingController" containment="true"
-        eOpposite="#//InstanceEnsemblingController/componentInstance"/>
+        lowerBound="1" eType="#//KnowledgeManagersView"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ensembleControllers" upperBound="-1"
+        eType="#//EnsembleController" containment="true" eOpposite="#//EnsembleController/componentInstance"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EDataType" name="KnowledgeManager" instanceClassName="cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Component">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="processes" upperBound="-1"
-        eType="#//Process" containment="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="EnsembleDefinition">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Ensemble">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="schedule" lowerBound="1"
-        eType="#//SchedulingSpecification" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="membership" lowerBound="1"
         eType="#//Condition" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="knowledgeExchange" lowerBound="1"
         eType="#//Exchange" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="schedulingSpecification"
+        lowerBound="1" eType="#//SchedulingSpecification" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Condition" eSuperTypes="#//Invocable"/>
   <eClassifiers xsi:type="ecore:EClass" name="Exchange" eSuperTypes="#//Invocable"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Process" eSuperTypes="#//Invocable">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="schedule" lowerBound="1"
-        eType="#//SchedulingSpecification" containment="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ComponentProcess" eSuperTypes="#//Invocable">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="schedulingSpecification"
+        lowerBound="1" eType="#//SchedulingSpecification" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="componentInstance" lowerBound="1"
+        eType="#//ComponentInstance" eOpposite="#//ComponentInstance/componentProcesses"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isActive" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="ParameterDirection">
     <eLiterals name="IN"/>
@@ -77,8 +71,9 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Parameter">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="direction" lowerBound="1"
-        eType="#//ParameterDirection"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="knowledgePath" eType="#//KnowledgePath"/>
+        eType="#//ParameterDirection" defaultValueLiteral="" unsettable="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="knowledgePath" eType="#//KnowledgePath"
+        containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Invocable">
     <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"
@@ -86,17 +81,13 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="method" lowerBound="1"
         eType="#//Method"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EDataType" name="OtherKnowledgeManagersAccess" instanceClassName="java.lang.Object"/>
-  <eClassifiers xsi:type="ecore:EClass" name="InstanceProcess">
+  <eClassifiers xsi:type="ecore:EDataType" name="KnowledgeManagersView" instanceClassName="cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView"/>
+  <eClassifiers xsi:type="ecore:EClass" name="EnsembleController">
     <eStructuralFeatures xsi:type="ecore:EReference" name="componentInstance" lowerBound="1"
-        eType="#//ComponentInstance" eOpposite="#//ComponentInstance/processes"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="process" lowerBound="1"
-        eType="#//Process"/>
+        eType="#//ComponentInstance" eOpposite="#//ComponentInstance/ensembleControllers"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ensembleDefinition" lowerBound="1"
+        eType="#//EnsembleDefinition"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="InstanceEnsemblingController">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="componentInstance" lowerBound="1"
-        eType="#//ComponentInstance" eOpposite="#//ComponentInstance/ensemblingControllers"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="ensemble" lowerBound="1"
-        eType="#//Ensemble"/>
-  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="PathNodeCoordinator" eSuperTypes="#//PathNode"/>
+  <eClassifiers xsi:type="ecore:EClass" name="PathNodeMember" eSuperTypes="#//PathNode"/>
 </ecore:EPackage>

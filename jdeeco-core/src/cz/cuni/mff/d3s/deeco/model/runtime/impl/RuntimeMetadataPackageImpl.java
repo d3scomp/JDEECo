@@ -3,22 +3,24 @@
 package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Component;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Condition;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Ensemble;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Exchange;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceEnsemblingController;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Invocable;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
@@ -112,14 +114,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass componentEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EClass ensembleEClass = null;
+	private EClass ensembleDefinitionEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -140,7 +135,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass processEClass = null;
+	private EClass componentProcessEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -161,14 +156,21 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass instanceProcessEClass = null;
+	private EClass ensembleControllerEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass instanceEnsemblingControllerEClass = null;
+	private EClass pathNodeCoordinatorEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass pathNodeMemberEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -196,7 +198,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EDataType otherKnowledgeManagersAccessEDataType = null;
+	private EDataType knowledgeManagersViewEDataType = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -390,7 +392,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getRuntimeMetadata_ComponentInstances() {
+	public EReference getRuntimeMetadata_EnsembleDefinitions() {
 		return (EReference)runtimeMetadataEClass.getEStructuralFeatures().get(0);
 	}
 
@@ -399,17 +401,8 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getRuntimeMetadata_Ensembles() {
+	public EReference getRuntimeMetadata_ComponentInstances() {
 		return (EReference)runtimeMetadataEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EReference getRuntimeMetadata_Components() {
-		return (EReference)runtimeMetadataEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -426,8 +419,8 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getComponentInstance_Id() {
-		return (EAttribute)componentInstanceEClass.getEStructuralFeatures().get(0);
+	public EReference getComponentInstance_ComponentProcesses() {
+		return (EReference)componentInstanceEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -435,8 +428,8 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getComponentInstance_Component() {
-		return (EReference)componentInstanceEClass.getEStructuralFeatures().get(1);
+	public EAttribute getComponentInstance_Name() {
+		return (EAttribute)componentInstanceEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -462,7 +455,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getComponentInstance_Processes() {
+	public EReference getComponentInstance_EnsembleControllers() {
 		return (EReference)componentInstanceEClass.getEStructuralFeatures().get(4);
 	}
 
@@ -471,8 +464,8 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getComponentInstance_EnsemblingControllers() {
-		return (EReference)componentInstanceEClass.getEStructuralFeatures().get(5);
+	public EClass getEnsembleDefinition() {
+		return ensembleDefinitionEClass;
 	}
 
 	/**
@@ -480,8 +473,8 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getComponent() {
-		return componentEClass;
+	public EAttribute getEnsembleDefinition_Name() {
+		return (EAttribute)ensembleDefinitionEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -489,8 +482,8 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getComponent_Processes() {
-		return (EReference)componentEClass.getEStructuralFeatures().get(0);
+	public EReference getEnsembleDefinition_Membership() {
+		return (EReference)ensembleDefinitionEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -498,8 +491,8 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getComponent_Name() {
-		return (EAttribute)componentEClass.getEStructuralFeatures().get(1);
+	public EReference getEnsembleDefinition_KnowledgeExchange() {
+		return (EReference)ensembleDefinitionEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -507,44 +500,8 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getEnsemble() {
-		return ensembleEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getEnsemble_Name() {
-		return (EAttribute)ensembleEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EReference getEnsemble_Schedule() {
-		return (EReference)ensembleEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EReference getEnsemble_Membership() {
-		return (EReference)ensembleEClass.getEStructuralFeatures().get(2);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EReference getEnsemble_KnowledgeExchange() {
-		return (EReference)ensembleEClass.getEStructuralFeatures().get(3);
+	public EReference getEnsembleDefinition_SchedulingSpecification() {
+		return (EReference)ensembleDefinitionEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -570,8 +527,8 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getProcess() {
-		return processEClass;
+	public EClass getComponentProcess() {
+		return componentProcessEClass;
 	}
 
 	/**
@@ -579,8 +536,8 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getProcess_Schedule() {
-		return (EReference)processEClass.getEStructuralFeatures().get(0);
+	public EAttribute getComponentProcess_Name() {
+		return (EAttribute)componentProcessEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -588,8 +545,26 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getProcess_Name() {
-		return (EAttribute)processEClass.getEStructuralFeatures().get(1);
+	public EReference getComponentProcess_SchedulingSpecification() {
+		return (EReference)componentProcessEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getComponentProcess_ComponentInstance() {
+		return (EReference)componentProcessEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getComponentProcess_IsActive() {
+		return (EAttribute)componentProcessEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -651,8 +626,8 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getInstanceProcess() {
-		return instanceProcessEClass;
+	public EClass getEnsembleController() {
+		return ensembleControllerEClass;
 	}
 
 	/**
@@ -660,8 +635,8 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getInstanceProcess_ComponentInstance() {
-		return (EReference)instanceProcessEClass.getEStructuralFeatures().get(0);
+	public EReference getEnsembleController_ComponentInstance() {
+		return (EReference)ensembleControllerEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -669,8 +644,8 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getInstanceProcess_Process() {
-		return (EReference)instanceProcessEClass.getEStructuralFeatures().get(1);
+	public EReference getEnsembleController_EnsembleDefinition() {
+		return (EReference)ensembleControllerEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -678,8 +653,8 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getInstanceEnsemblingController() {
-		return instanceEnsemblingControllerEClass;
+	public EClass getPathNodeCoordinator() {
+		return pathNodeCoordinatorEClass;
 	}
 
 	/**
@@ -687,17 +662,8 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getInstanceEnsemblingController_ComponentInstance() {
-		return (EReference)instanceEnsemblingControllerEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EReference getInstanceEnsemblingController_Ensemble() {
-		return (EReference)instanceEnsemblingControllerEClass.getEStructuralFeatures().get(1);
+	public EClass getPathNodeMember() {
+		return pathNodeMemberEClass;
 	}
 
 	/**
@@ -732,8 +698,8 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EDataType getOtherKnowledgeManagersAccess() {
-		return otherKnowledgeManagersAccessEDataType;
+	public EDataType getKnowledgeManagersView() {
+		return knowledgeManagersViewEDataType;
 	}
 
 	/**
@@ -785,35 +751,31 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		createEReference(pathNodeMapKeyEClass, PATH_NODE_MAP_KEY__KEY_PATH);
 
 		runtimeMetadataEClass = createEClass(RUNTIME_METADATA);
+		createEReference(runtimeMetadataEClass, RUNTIME_METADATA__ENSEMBLE_DEFINITIONS);
 		createEReference(runtimeMetadataEClass, RUNTIME_METADATA__COMPONENT_INSTANCES);
-		createEReference(runtimeMetadataEClass, RUNTIME_METADATA__ENSEMBLES);
-		createEReference(runtimeMetadataEClass, RUNTIME_METADATA__COMPONENTS);
 
 		componentInstanceEClass = createEClass(COMPONENT_INSTANCE);
-		createEAttribute(componentInstanceEClass, COMPONENT_INSTANCE__ID);
-		createEReference(componentInstanceEClass, COMPONENT_INSTANCE__COMPONENT);
+		createEReference(componentInstanceEClass, COMPONENT_INSTANCE__COMPONENT_PROCESSES);
+		createEAttribute(componentInstanceEClass, COMPONENT_INSTANCE__NAME);
 		createEAttribute(componentInstanceEClass, COMPONENT_INSTANCE__KNOWLEDGE_MANAGER);
 		createEAttribute(componentInstanceEClass, COMPONENT_INSTANCE__OTHER_KNOWLEDGE_MANAGERS_ACCESS);
-		createEReference(componentInstanceEClass, COMPONENT_INSTANCE__PROCESSES);
-		createEReference(componentInstanceEClass, COMPONENT_INSTANCE__ENSEMBLING_CONTROLLERS);
+		createEReference(componentInstanceEClass, COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS);
 
-		componentEClass = createEClass(COMPONENT);
-		createEReference(componentEClass, COMPONENT__PROCESSES);
-		createEAttribute(componentEClass, COMPONENT__NAME);
-
-		ensembleEClass = createEClass(ENSEMBLE);
-		createEAttribute(ensembleEClass, ENSEMBLE__NAME);
-		createEReference(ensembleEClass, ENSEMBLE__SCHEDULE);
-		createEReference(ensembleEClass, ENSEMBLE__MEMBERSHIP);
-		createEReference(ensembleEClass, ENSEMBLE__KNOWLEDGE_EXCHANGE);
+		ensembleDefinitionEClass = createEClass(ENSEMBLE_DEFINITION);
+		createEAttribute(ensembleDefinitionEClass, ENSEMBLE_DEFINITION__NAME);
+		createEReference(ensembleDefinitionEClass, ENSEMBLE_DEFINITION__MEMBERSHIP);
+		createEReference(ensembleDefinitionEClass, ENSEMBLE_DEFINITION__KNOWLEDGE_EXCHANGE);
+		createEReference(ensembleDefinitionEClass, ENSEMBLE_DEFINITION__SCHEDULING_SPECIFICATION);
 
 		conditionEClass = createEClass(CONDITION);
 
 		exchangeEClass = createEClass(EXCHANGE);
 
-		processEClass = createEClass(PROCESS);
-		createEReference(processEClass, PROCESS__SCHEDULE);
-		createEAttribute(processEClass, PROCESS__NAME);
+		componentProcessEClass = createEClass(COMPONENT_PROCESS);
+		createEAttribute(componentProcessEClass, COMPONENT_PROCESS__NAME);
+		createEReference(componentProcessEClass, COMPONENT_PROCESS__SCHEDULING_SPECIFICATION);
+		createEReference(componentProcessEClass, COMPONENT_PROCESS__COMPONENT_INSTANCE);
+		createEAttribute(componentProcessEClass, COMPONENT_PROCESS__IS_ACTIVE);
 
 		parameterEClass = createEClass(PARAMETER);
 		createEAttribute(parameterEClass, PARAMETER__DIRECTION);
@@ -823,13 +785,13 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		createEReference(invocableEClass, INVOCABLE__PARAMETERS);
 		createEAttribute(invocableEClass, INVOCABLE__METHOD);
 
-		instanceProcessEClass = createEClass(INSTANCE_PROCESS);
-		createEReference(instanceProcessEClass, INSTANCE_PROCESS__COMPONENT_INSTANCE);
-		createEReference(instanceProcessEClass, INSTANCE_PROCESS__PROCESS);
+		ensembleControllerEClass = createEClass(ENSEMBLE_CONTROLLER);
+		createEReference(ensembleControllerEClass, ENSEMBLE_CONTROLLER__COMPONENT_INSTANCE);
+		createEReference(ensembleControllerEClass, ENSEMBLE_CONTROLLER__ENSEMBLE_DEFINITION);
 
-		instanceEnsemblingControllerEClass = createEClass(INSTANCE_ENSEMBLING_CONTROLLER);
-		createEReference(instanceEnsemblingControllerEClass, INSTANCE_ENSEMBLING_CONTROLLER__COMPONENT_INSTANCE);
-		createEReference(instanceEnsemblingControllerEClass, INSTANCE_ENSEMBLING_CONTROLLER__ENSEMBLE);
+		pathNodeCoordinatorEClass = createEClass(PATH_NODE_COORDINATOR);
+
+		pathNodeMemberEClass = createEClass(PATH_NODE_MEMBER);
 
 		// Create enums
 		parameterDirectionEEnum = createEEnum(PARAMETER_DIRECTION);
@@ -837,7 +799,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		// Create data types
 		methodEDataType = createEDataType(METHOD);
 		knowledgeManagerEDataType = createEDataType(KNOWLEDGE_MANAGER);
-		otherKnowledgeManagersAccessEDataType = createEDataType(OTHER_KNOWLEDGE_MANAGERS_ACCESS);
+		knowledgeManagersViewEDataType = createEDataType(KNOWLEDGE_MANAGERS_VIEW);
 	}
 
 	/**
@@ -873,7 +835,9 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		pathNodeMapKeyEClass.getESuperTypes().add(this.getPathNode());
 		conditionEClass.getESuperTypes().add(this.getInvocable());
 		exchangeEClass.getESuperTypes().add(this.getInvocable());
-		processEClass.getESuperTypes().add(this.getInvocable());
+		componentProcessEClass.getESuperTypes().add(this.getInvocable());
+		pathNodeCoordinatorEClass.getESuperTypes().add(this.getPathNode());
+		pathNodeMemberEClass.getESuperTypes().add(this.getPathNode());
 
 		// Initialize classes, features, and operations; add parameters
 		initEClass(schedulingSpecificationEClass, SchedulingSpecification.class, "SchedulingSpecification", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -897,51 +861,47 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		initEReference(getPathNodeMapKey_KeyPath(), this.getKnowledgePath(), null, "keyPath", null, 1, 1, PathNodeMapKey.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(runtimeMetadataEClass, RuntimeMetadata.class, "RuntimeMetadata", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getRuntimeMetadata_EnsembleDefinitions(), this.getEnsembleDefinition(), null, "ensembleDefinitions", null, 0, -1, RuntimeMetadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getRuntimeMetadata_ComponentInstances(), this.getComponentInstance(), null, "componentInstances", null, 0, -1, RuntimeMetadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getRuntimeMetadata_Ensembles(), this.getEnsemble(), null, "ensembles", null, 0, -1, RuntimeMetadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getRuntimeMetadata_Components(), this.getComponent(), null, "components", null, 0, -1, RuntimeMetadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(componentInstanceEClass, ComponentInstance.class, "ComponentInstance", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getComponentInstance_Id(), ecorePackage.getEString(), "id", null, 1, 1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getComponentInstance_Component(), this.getComponent(), null, "component", null, 1, 1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getComponentInstance_ComponentProcesses(), this.getComponentProcess(), this.getComponentProcess_ComponentInstance(), "componentProcesses", null, 0, -1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getComponentInstance_Name(), ecorePackage.getEString(), "name", null, 1, 1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getComponentInstance_KnowledgeManager(), this.getKnowledgeManager(), "knowledgeManager", null, 1, 1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getComponentInstance_OtherKnowledgeManagersAccess(), this.getOtherKnowledgeManagersAccess(), "otherKnowledgeManagersAccess", null, 1, 1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getComponentInstance_Processes(), this.getInstanceProcess(), this.getInstanceProcess_ComponentInstance(), "processes", null, 0, -1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getComponentInstance_EnsemblingControllers(), this.getInstanceEnsemblingController(), this.getInstanceEnsemblingController_ComponentInstance(), "ensemblingControllers", null, 0, -1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getComponentInstance_OtherKnowledgeManagersAccess(), this.getKnowledgeManagersView(), "otherKnowledgeManagersAccess", null, 1, 1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getComponentInstance_EnsembleControllers(), this.getEnsembleController(), this.getEnsembleController_ComponentInstance(), "ensembleControllers", null, 0, -1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(componentEClass, Component.class, "Component", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getComponent_Processes(), this.getProcess(), null, "processes", null, 0, -1, Component.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getComponent_Name(), ecorePackage.getEString(), "name", null, 1, 1, Component.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		initEClass(ensembleEClass, Ensemble.class, "Ensemble", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getEnsemble_Name(), ecorePackage.getEString(), "name", null, 1, 1, Ensemble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getEnsemble_Schedule(), this.getSchedulingSpecification(), null, "schedule", null, 1, 1, Ensemble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getEnsemble_Membership(), this.getCondition(), null, "membership", null, 1, 1, Ensemble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getEnsemble_KnowledgeExchange(), this.getExchange(), null, "knowledgeExchange", null, 1, 1, Ensemble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEClass(ensembleDefinitionEClass, EnsembleDefinition.class, "EnsembleDefinition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getEnsembleDefinition_Name(), ecorePackage.getEString(), "name", null, 1, 1, EnsembleDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getEnsembleDefinition_Membership(), this.getCondition(), null, "membership", null, 1, 1, EnsembleDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getEnsembleDefinition_KnowledgeExchange(), this.getExchange(), null, "knowledgeExchange", null, 1, 1, EnsembleDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getEnsembleDefinition_SchedulingSpecification(), this.getSchedulingSpecification(), null, "schedulingSpecification", null, 1, 1, EnsembleDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(conditionEClass, Condition.class, "Condition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(exchangeEClass, Exchange.class, "Exchange", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
-		initEClass(processEClass, cz.cuni.mff.d3s.deeco.model.runtime.api.Process.class, "Process", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getProcess_Schedule(), this.getSchedulingSpecification(), null, "schedule", null, 1, 1, cz.cuni.mff.d3s.deeco.model.runtime.api.Process.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getProcess_Name(), ecorePackage.getEString(), "name", null, 1, 1, cz.cuni.mff.d3s.deeco.model.runtime.api.Process.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEClass(componentProcessEClass, ComponentProcess.class, "ComponentProcess", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getComponentProcess_Name(), ecorePackage.getEString(), "name", null, 1, 1, ComponentProcess.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getComponentProcess_SchedulingSpecification(), this.getSchedulingSpecification(), null, "schedulingSpecification", null, 1, 1, ComponentProcess.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getComponentProcess_ComponentInstance(), this.getComponentInstance(), this.getComponentInstance_ComponentProcesses(), "componentInstance", null, 1, 1, ComponentProcess.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getComponentProcess_IsActive(), ecorePackage.getEBoolean(), "isActive", null, 1, 1, ComponentProcess.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(parameterEClass, Parameter.class, "Parameter", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getParameter_Direction(), this.getParameterDirection(), "direction", null, 1, 1, Parameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getParameter_KnowledgePath(), this.getKnowledgePath(), null, "knowledgePath", null, 0, 1, Parameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getParameter_Direction(), this.getParameterDirection(), "direction", "", 1, 1, Parameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getParameter_KnowledgePath(), this.getKnowledgePath(), null, "knowledgePath", null, 0, 1, Parameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(invocableEClass, Invocable.class, "Invocable", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getInvocable_Parameters(), this.getParameter(), null, "parameters", null, 0, -1, Invocable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getInvocable_Method(), this.getMethod(), "method", null, 1, 1, Invocable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(instanceProcessEClass, InstanceProcess.class, "InstanceProcess", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getInstanceProcess_ComponentInstance(), this.getComponentInstance(), this.getComponentInstance_Processes(), "componentInstance", null, 1, 1, InstanceProcess.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getInstanceProcess_Process(), this.getProcess(), null, "process", null, 1, 1, InstanceProcess.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEClass(ensembleControllerEClass, EnsembleController.class, "EnsembleController", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getEnsembleController_ComponentInstance(), this.getComponentInstance(), this.getComponentInstance_EnsembleControllers(), "componentInstance", null, 1, 1, EnsembleController.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getEnsembleController_EnsembleDefinition(), this.getEnsembleDefinition(), null, "ensembleDefinition", null, 1, 1, EnsembleController.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(instanceEnsemblingControllerEClass, InstanceEnsemblingController.class, "InstanceEnsemblingController", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getInstanceEnsemblingController_ComponentInstance(), this.getComponentInstance(), this.getComponentInstance_EnsemblingControllers(), "componentInstance", null, 1, 1, InstanceEnsemblingController.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getInstanceEnsemblingController_Ensemble(), this.getEnsemble(), null, "ensemble", null, 1, 1, InstanceEnsemblingController.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEClass(pathNodeCoordinatorEClass, PathNodeCoordinator.class, "PathNodeCoordinator", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+		initEClass(pathNodeMemberEClass, PathNodeMember.class, "PathNodeMember", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		// Initialize enums and add enum literals
 		initEEnum(parameterDirectionEEnum, ParameterDirection.class, "ParameterDirection");
@@ -952,7 +912,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		// Initialize data types
 		initEDataType(methodEDataType, Method.class, "Method", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(knowledgeManagerEDataType, KnowledgeManager.class, "KnowledgeManager", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-		initEDataType(otherKnowledgeManagersAccessEDataType, Object.class, "OtherKnowledgeManagersAccess", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(knowledgeManagersViewEDataType, KnowledgeManagersView.class, "KnowledgeManagersView", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
 		createResource(eNS_URI);

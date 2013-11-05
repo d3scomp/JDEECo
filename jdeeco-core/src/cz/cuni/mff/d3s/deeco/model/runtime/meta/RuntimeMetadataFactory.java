@@ -2,19 +2,20 @@
  */
 package cz.cuni.mff.d3s.deeco.model.runtime.meta;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Component;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Condition;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Ensemble;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Exchange;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceEnsemblingController;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.InstanceProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Invocable;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification;
 
@@ -101,22 +102,13 @@ public interface RuntimeMetadataFactory extends EFactory {
 	ComponentInstance createComponentInstance();
 
 	/**
-	 * Returns a new object of class '<em>Component</em>'.
+	 * Returns a new object of class '<em>Ensemble Definition</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Component</em>'.
+	 * @return a new object of class '<em>Ensemble Definition</em>'.
 	 * @generated
 	 */
-	Component createComponent();
-
-	/**
-	 * Returns a new object of class '<em>Ensemble</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Ensemble</em>'.
-	 * @generated
-	 */
-	Ensemble createEnsemble();
+	EnsembleDefinition createEnsembleDefinition();
 
 	/**
 	 * Returns a new object of class '<em>Condition</em>'.
@@ -137,13 +129,13 @@ public interface RuntimeMetadataFactory extends EFactory {
 	Exchange createExchange();
 
 	/**
-	 * Returns a new object of class '<em>Process</em>'.
+	 * Returns a new object of class '<em>Component Process</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Process</em>'.
+	 * @return a new object of class '<em>Component Process</em>'.
 	 * @generated
 	 */
-	cz.cuni.mff.d3s.deeco.model.runtime.api.Process createProcess();
+	ComponentProcess createComponentProcess();
 
 	/**
 	 * Returns a new object of class '<em>Parameter</em>'.
@@ -164,22 +156,31 @@ public interface RuntimeMetadataFactory extends EFactory {
 	Invocable createInvocable();
 
 	/**
-	 * Returns a new object of class '<em>Instance Process</em>'.
+	 * Returns a new object of class '<em>Ensemble Controller</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Instance Process</em>'.
+	 * @return a new object of class '<em>Ensemble Controller</em>'.
 	 * @generated
 	 */
-	InstanceProcess createInstanceProcess();
+	EnsembleController createEnsembleController();
 
 	/**
-	 * Returns a new object of class '<em>Instance Ensembling Controller</em>'.
+	 * Returns a new object of class '<em>Path Node Coordinator</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Instance Ensembling Controller</em>'.
+	 * @return a new object of class '<em>Path Node Coordinator</em>'.
 	 * @generated
 	 */
-	InstanceEnsemblingController createInstanceEnsemblingController();
+	PathNodeCoordinator createPathNodeCoordinator();
+
+	/**
+	 * Returns a new object of class '<em>Path Node Member</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Path Node Member</em>'.
+	 * @generated
+	 */
+	PathNodeMember createPathNodeMember();
 
 	/**
 	 * Returns the package supported by this factory.

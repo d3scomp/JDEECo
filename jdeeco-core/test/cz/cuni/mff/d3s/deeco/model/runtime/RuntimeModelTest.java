@@ -1,6 +1,3 @@
-/**
- * 
- */
 package cz.cuni.mff.d3s.deeco.model.runtime;
 
 import static org.junit.Assert.assertEquals;
@@ -18,12 +15,10 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Component;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Process;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
@@ -74,7 +69,7 @@ public class RuntimeModelTest {
 		assertTrue(factory instanceof RuntimeMetadataFactoryExt);
 	}
 	
-	public static void dummyMethodThatStandsForAProcess() {
+	public static void dummyMethodThatStandsForAComponentProcess() {
 	}
 
 	@Test
@@ -108,16 +103,13 @@ public class RuntimeModelTest {
 		// AND refers to the same method within the same class as before
 		// AND contains the same knowledge as before
 		ComponentInstance nComponentInstance = nModel.getComponentInstances().get(0);
-		Component nComponent = nModel.getComponents().get(0);
-		Process nProcess = nComponent.getProcesses().get(0);
-		SchedulingSpecification nProcA1Sched = nProcess.getSchedule(); 
+		ComponentProcess nComponentProcess = nComponentInstance.getComponentProcesses().get(0);
+		SchedulingSpecification nProcA1Sched = nComponentProcess.getSchedulingSpecification(); 
 
-		assertEquals(oModel.componentInstance.getId(), nComponentInstance.getId());
-		assertEquals(nComponent, nComponentInstance.getComponent());
-		assertEquals(oModel.component.getName(), nComponent.getName());
-		assertEquals(oModel.process.getName(), nProcess.getName());
-		assertEquals(oModel.process.getMethod(), nProcess.getMethod());
-		assertEquals(oModel.schedulingSpecification.getPeriod(), nProcA1Sched.getPeriod());
+		assertEquals(oModel.componentInstance.getName(), nComponentInstance.getName());
+		assertEquals(oModel.process.getName(), nComponentProcess.getName());
+		assertEquals(oModel.process.getMethod(), nComponentProcess.getMethod());
+		assertEquals(oModel.processSchedulingSpec.getPeriod(), nProcA1Sched.getPeriod());
 		// TODO: Compare the triggers and process params
 		// TODO: Compare the data stored in the knowledge manager
 	}
