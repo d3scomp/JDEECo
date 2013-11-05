@@ -8,6 +8,11 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.scheduler.LocalTimeScheduler;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
+/**
+ * 
+ * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
+ *
+ */
 public class RuntimeFrameworkBuilder {
 	
 	
@@ -17,6 +22,7 @@ public class RuntimeFrameworkBuilder {
 	RuntimeConfiguration configuration;	
 	RuntimeFramework runtime;
 	
+
 	public RuntimeFrameworkBuilder(RuntimeConfiguration configuration) {
 		if (configuration == null) {
 			throw new IllegalArgumentException("Configuration must not be null");

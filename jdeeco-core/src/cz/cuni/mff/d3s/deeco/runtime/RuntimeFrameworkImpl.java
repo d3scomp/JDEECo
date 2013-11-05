@@ -35,21 +35,6 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 	protected Map<ComponentProcess, Adapter> componentProcessAdapters = new HashMap<>();
 
 	
-	/**
-	 * Creates and initializes all the internal runtime objects.
-	 * 
-	 * @param model	model of the application to be deployed. 
-	 * @param configuration technical configuration of the runtime framework
-	 */
-	public RuntimeFrameworkImpl(RuntimeMetadata model, RuntimeConfiguration configuration) {
-		if ((model == null) || (configuration == null)) {
-			throw new IllegalArgumentException("model and configuration must not be null");
-		}
-		
-		this.model = model;
-		
-		init();
-	}
 
 	/**
 	 * Initializes the runtime with the given runtime services and prepares the
@@ -66,6 +51,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 	 * @param kmRegistry
 	 *            the KM registry to be used for management of knowledge repositories.
 	 * 
+	 * FIXME: add synchronizer/network container in the constructor
 	 */
 	public RuntimeFrameworkImpl(RuntimeMetadata model, Scheduler scheduler,
 			Executor executor, KnowledgeManagerRegistry kmRegistry) {
