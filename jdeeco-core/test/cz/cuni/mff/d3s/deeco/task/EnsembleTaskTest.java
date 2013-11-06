@@ -114,20 +114,21 @@ public class EnsembleTaskTest {
 		task.setTriggerListener(taskTriggerListener);
 		// THEN the task registers a trigger listener (regardless whether it is a trigger on coordinator's or member's knowledge) on the knowledge manager
 		verify(knowledgeManager).register(triggerCaptor.capture(), any(TriggerListener.class));
+		// AND the trigger has a knowledge path which omits the member/coordinator prefix
 		assert(equalToStrippedPath(model.ensembleKnowledgeChangeTrigger.getKnowledgePath(), ((KnowledgeChangeTrigger)triggerCaptor.getValue()).getKnowledgePath()));
-		// AND the task register a trigger listener (regardless whether it is a trigger on coordinator's or member's knowledge) on the shadow replicas
+		// AND the task registers a trigger listener (regardless whether it is a trigger on coordinator's or member's knowledge) on the shadow replicas
 		verify(shadowReplicasAccess).register(eq(triggerCaptor.getValue()), any(ShadowsTriggerListener.class));		
 
 		// WHEN a trigger comes from the knowledge manager
 		knowledgeManagerTriggerListenerCaptor.getValue().triggered(triggerCaptor.getValue());
 		// THEN the task calls the registered listener
-		verify(taskTriggerListener).triggered(task, triggerCaptor.getValue());
+		verify(taskTriggerListener).triggered(eq(task), any(Trigger.class));
 				
 		// WHEN a trigger comes from the shadow replica
 		reset(taskTriggerListener); // Without this, we would have to say that the verify below verifies two invocations -- because one already occurred above.
 		shadowReplicasTriggerListenerCaptor.getValue().triggered(shadowKnowledgeManager, triggerCaptor.getValue());
 		// THEN the task calls the registered listener
-		verify(taskTriggerListener).triggered(task, triggerCaptor.getValue());
+		verify(taskTriggerListener).triggered(eq(task), any(Trigger.class));
 		
 		// WHEN the listener (i.e. the scheduler) is unregistered
 		task.unsetTriggerListener();
