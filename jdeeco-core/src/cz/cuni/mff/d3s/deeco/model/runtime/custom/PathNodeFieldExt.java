@@ -21,18 +21,18 @@ public class PathNodeFieldExt extends PathNodeFieldImpl {
 	@Override
 	public boolean equals(Object that) {
 		if (that != null && that instanceof PathNodeField) {
-			return ((PathNodeField) that).getName().equals(this.name);
+			return ((PathNodeField) that).getName().equals(getName());
 		}
 		return false;
 	}
 	
 	@Override
 	public int hashCode() {
-		return name.hashCode();
+		return getName().hashCode();
 	}
 	
 	@Override
 	public String toString() {
-		return name;
+		return getName();
 	}
 }

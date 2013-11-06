@@ -3,7 +3,6 @@
  */
 package cz.cuni.mff.d3s.deeco.model.runtime.custom;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -39,6 +38,10 @@ public class KnowledgePathExt extends KnowledgePathImpl {
 	
 	@Override
 	public int hashCode() {
-		return nodes.toString().hashCode();
+		int code = 0;
+		for (PathNode node : getNodes()) {
+			code ^= node.hashCode();
+		}
+		return code;
 	}
 }
