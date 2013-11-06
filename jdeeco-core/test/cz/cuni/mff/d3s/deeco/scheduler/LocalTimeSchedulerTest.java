@@ -10,10 +10,10 @@ import cz.cuni.mff.d3s.deeco.executor.Executor;
  */
 public class LocalTimeSchedulerTest extends SchedulerTest {
 
-	@Override
-	protected Scheduler setUpTested(Executor executor) {
-		Scheduler s = new LocalTimeScheduler();
-		s.setExecutor(executor);
-		return s;
-	}
+        @Override
+        protected Scheduler setUpTested(Executor executor) {
+                Scheduler s = new LocalTimeScheduler();
+                s.setExecutor(executor);
+                return s;
+        }
 }

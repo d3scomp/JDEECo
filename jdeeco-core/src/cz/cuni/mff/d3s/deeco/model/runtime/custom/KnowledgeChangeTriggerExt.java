@@ -9,25 +9,25 @@ import cz.cuni.mff.d3s.deeco.model.runtime.impl.KnowledgeChangeTriggerImpl;
  */
 public class KnowledgeChangeTriggerExt extends KnowledgeChangeTriggerImpl {
 
-	public KnowledgeChangeTriggerExt() {
-		super();
-	}
+        public KnowledgeChangeTriggerExt() {
+                super();
+        }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object that) {
-		if (that != null && that instanceof KnowledgeChangeTrigger) {
-			return getKnowledgePath().equals(((KnowledgeChangeTrigger)that).getKnowledgePath());
-		}
-		return false;
-	}
-	
-	@Override
-	public int hashCode() {
-		return getKnowledgePath().hashCode();
-	}
+        /*
+         * (non-Javadoc)
+         * 
+         * @see java.lang.Object#equals(java.lang.Object)
+         */
+        @Override
+        public boolean equals(Object that) {
+                if (that != null && that instanceof KnowledgeChangeTrigger) {
+                        return getKnowledgePath().equals(((KnowledgeChangeTrigger)that).getKnowledgePath());
+                }
+                return false;
+        }
+        
+        @Override
+        public int hashCode() {
+                return getKnowledgePath().hashCode();
+        }
 }

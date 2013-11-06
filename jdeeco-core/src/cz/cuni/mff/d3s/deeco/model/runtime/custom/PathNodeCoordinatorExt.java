@@ -9,23 +9,23 @@ import cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeCoordinatorImpl;
  */
 public class PathNodeCoordinatorExt extends PathNodeCoordinatorImpl {
 
-	public PathNodeCoordinatorExt() {
-		super();
-	}
-	
-	@Override
-	public boolean equals(Object that) {
-		return that != null && that instanceof PathNodeCoordinator;
-	}
-	
-	@Override
-	public int hashCode() {
-		return 3872467;
-	}
-	
-	@Override
-	public String toString() {
-		return "<COORDINATOR>";
-	}	
+        public PathNodeCoordinatorExt() {
+                super();
+        }
+        
+        @Override
+        public boolean equals(Object that) {
+                return that != null && that instanceof PathNodeCoordinator;
+        }
+        
+        @Override
+        public int hashCode() {
+                return 3872467;
+        }
+        
+        @Override
+        public String toString() {
+                return "<COORDINATOR>";
+        }        
 
 }

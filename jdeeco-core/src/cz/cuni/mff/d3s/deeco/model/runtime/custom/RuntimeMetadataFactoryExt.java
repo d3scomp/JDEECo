@@ -22,52 +22,52 @@ import cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataFactoryImpl;
  */
 public class RuntimeMetadataFactoryExt extends RuntimeMetadataFactoryImpl {
 
-	/**
-	 * 
-	 */
-	public RuntimeMetadataFactoryExt() {
-		super();
-	}
+        /**
+         * 
+         */
+        public RuntimeMetadataFactoryExt() {
+                super();
+        }
 
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataFactoryImpl#createPeriodicTrigger()
-	 */
-	@Override
-	public PeriodicTrigger createPeriodicTrigger() {
-		return new PeriodicTriggerExt();
-	}
+        /* (non-Javadoc)
+         * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataFactoryImpl#createPeriodicTrigger()
+         */
+        @Override
+        public PeriodicTrigger createPeriodicTrigger() {
+                return new PeriodicTriggerExt();
+        }
 
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataFactoryImpl#createKnowledgeChangeTrigger()
-	 */
-	@Override
-	public KnowledgeChangeTrigger createKnowledgeChangeTrigger() {
-		return new KnowledgeChangeTriggerExt();
-	}
+        /* (non-Javadoc)
+         * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataFactoryImpl#createKnowledgeChangeTrigger()
+         */
+        @Override
+        public KnowledgeChangeTrigger createKnowledgeChangeTrigger() {
+                return new KnowledgeChangeTriggerExt();
+        }
 
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataFactoryImpl#createKnowledgePath()
-	 */
-	@Override
-	public KnowledgePath createKnowledgePath() {
-		return new KnowledgePathExt();
-	}
-	
-	@Override
-	public PathNodeField createPathNodeField() {
-		return new PathNodeFieldExt();
-	}
+        /* (non-Javadoc)
+         * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataFactoryImpl#createKnowledgePath()
+         */
+        @Override
+        public KnowledgePath createKnowledgePath() {
+                return new KnowledgePathExt();
+        }
+        
+        @Override
+        public PathNodeField createPathNodeField() {
+                return new PathNodeFieldExt();
+        }
 
-	@Override
-	public PathNodeCoordinator createPathNodeCoordinator() {
-		return new PathNodeCoordinatorExt();
-	}
-	
-	@Override
-	public PathNodeMember createPathNodeMember() {
-		return new PathNodeMemberExt();
-	}
-	
+        @Override
+        public PathNodeCoordinator createPathNodeCoordinator() {
+                return new PathNodeCoordinatorExt();
+        }
+        
+        @Override
+        public PathNodeMember createPathNodeMember() {
+                return new PathNodeMemberExt();
+        }
+        
 
-	// TODO: We might have also toString() method implemented for the KnowledgePath
+        // TODO: We might have also toString() method implemented for the KnowledgePath
 }
