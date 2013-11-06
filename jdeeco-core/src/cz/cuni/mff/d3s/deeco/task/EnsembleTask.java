@@ -48,7 +48,9 @@ public class EnsembleTask extends Task {
 				assert(false); 
 			}
 
-			listener.triggered(EnsembleTask.this, trigger);
+			if (listener != null) {
+				listener.triggered(EnsembleTask.this, trigger);
+			}
 		}
 	}
 	KnowledgeManagerTriggerListenerImpl knowledgeManagerTriggerListener = new KnowledgeManagerTriggerListenerImpl();
@@ -70,7 +72,9 @@ public class EnsembleTask extends Task {
 				assert(false); 
 			}
 
-			listener.triggered(EnsembleTask.this, trigger);
+			if (listener != null) {
+				listener.triggered(EnsembleTask.this, trigger);
+			}
 		}
 	}
 	ShadowsTriggerListenerImpl shadowsTriggerListener = new ShadowsTriggerListenerImpl();
