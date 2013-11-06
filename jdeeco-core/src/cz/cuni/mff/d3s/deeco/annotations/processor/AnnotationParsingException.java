@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.deeco.exceptions;
+package cz.cuni.mff.d3s.deeco.annotations.processor;
 
 public class AnnotationParsingException extends Exception {
 

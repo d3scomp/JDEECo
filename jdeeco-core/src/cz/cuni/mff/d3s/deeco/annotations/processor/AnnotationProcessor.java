@@ -26,7 +26,6 @@ import cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.PNode;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.ParseException;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.PathParser;
-import cz.cuni.mff.d3s.deeco.exceptions.AnnotationParsingException;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
