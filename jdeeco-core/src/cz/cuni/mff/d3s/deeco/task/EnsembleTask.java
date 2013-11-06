@@ -176,11 +176,12 @@ public class EnsembleTask extends Task {
 		KnowledgeManagersView shadowsKM = componentInstance.getOtherKnowledgeManagersAccess();
 		
 		for (Trigger trigger : ensembleController.getEnsembleDefinition().getTriggers()) {
-			
-			// TODO: Here should come something which strips the change trigger knowledge path of the coord/member root
-			
-			localKM.register(trigger, knowledgeManagerTriggerListener);
-			shadowsKM.register(trigger, shadowsTriggerListener);
+			if (trigger instanceof KnowledgeChangeTrigger) {
+				Trigger strippedTrigger = adaptTriggerForKM(trigger);
+
+				localKM.register(strippedTrigger, knowledgeManagerTriggerListener);
+				shadowsKM.register(strippedTrigger, shadowsTriggerListener);
+			}
 		}
 	}
 
@@ -195,10 +196,12 @@ public class EnsembleTask extends Task {
 		
 		for (Trigger trigger : ensembleController.getEnsembleDefinition().getTriggers()) {
 			
-			// TODO: Here should come something which strips the change trigger knowledge path of the coord/member root
+			if (trigger instanceof KnowledgeChangeTrigger) {
+				Trigger strippedTrigger = adaptTriggerForKM(trigger);
 			
-			localKM.unregister(trigger, knowledgeManagerTriggerListener);
-			shadowsKM.unregister(trigger, shadowsTriggerListener);
+				localKM.unregister(strippedTrigger, knowledgeManagerTriggerListener);
+				shadowsKM.unregister(strippedTrigger, shadowsTriggerListener);
+			}
 		}
 	}
 

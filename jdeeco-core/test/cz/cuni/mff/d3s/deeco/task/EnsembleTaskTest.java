@@ -10,6 +10,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.MockitoAnnotations.initMocks;
+import java.util.Iterator;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -28,6 +29,10 @@ import cz.cuni.mff.d3s.deeco.knowledge.ShadowsTriggerListener;
 import cz.cuni.mff.d3s.deeco.knowledge.TriggerListener;
 import cz.cuni.mff.d3s.deeco.model.runtime.SampleRuntimeModel;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
 /**
@@ -50,6 +55,8 @@ public class EnsembleTaskTest {
 	private ArgumentCaptor<TriggerListener> knowledgeManagerTriggerListenerCaptor;
 	@Captor
 	private ArgumentCaptor<ShadowsTriggerListener> shadowReplicasTriggerListenerCaptor;
+	@Captor
+	private ArgumentCaptor<Trigger> triggerCaptor;
 	@Mock
 	private Scheduler scheduler;
 	
@@ -61,7 +68,7 @@ public class EnsembleTaskTest {
 		initMocks(this);
 		
 		model = new SampleRuntimeModel();
-
+		
 		doNothing().when(knowledgeManager).register(eq(model.ensembleKnowledgeChangeTrigger), knowledgeManagerTriggerListenerCaptor.capture());
 		doNothing().when(shadowReplicasAccess).register(eq(model.ensembleKnowledgeChangeTrigger), shadowReplicasTriggerListenerCaptor.capture());
 		
@@ -79,7 +86,25 @@ public class EnsembleTaskTest {
 		// THEN it returns the period specified in the model
 		// THEN it returns the period specified in the model
 		assertEquals(model.ensemblePeriodicTrigger.getPeriod(), period);
+	}
 
+	private boolean equalToStrippedPath(KnowledgePath fullPath, KnowledgePath strippedPath) {
+		if (fullPath.getNodes().size() != strippedPath.getNodes().size() + 1) {
+			return false;
+		}
+
+		Iterator<PathNode> fullPathIter = fullPath.getNodes().iterator();
+		Iterator<PathNode> strippedPathIter = strippedPath.getNodes().iterator();
+		
+		fullPathIter.next();
+		
+		while (fullPathIter.hasNext()) {
+			if (!fullPathIter.next().equals(strippedPathIter.next())) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 	
 	@Test
@@ -88,35 +113,36 @@ public class EnsembleTaskTest {
 		// WHEN a trigger listener (i.e. scheduler) is registered at the task
 		task.setTriggerListener(taskTriggerListener);
 		// THEN the task registers a trigger listener (regardless whether it is a trigger on coordinator's or member's knowledge) on the knowledge manager
-		verify(knowledgeManager).register(eq(model.ensembleKnowledgeChangeTrigger), any(TriggerListener.class)); // FIXME TB: This is wrong, because the task is supposed to register a trigger without its root (member/coord). The same applies below.
+		verify(knowledgeManager).register(triggerCaptor.capture(), any(TriggerListener.class));
+		assert(equalToStrippedPath(model.ensembleKnowledgeChangeTrigger.getKnowledgePath(), ((KnowledgeChangeTrigger)triggerCaptor.getValue()).getKnowledgePath()));
 		// AND the task register a trigger listener (regardless whether it is a trigger on coordinator's or member's knowledge) on the shadow replicas
-		verify(shadowReplicasAccess).register(eq(model.ensembleKnowledgeChangeTrigger), any(ShadowsTriggerListener.class));		
+		verify(shadowReplicasAccess).register(eq(triggerCaptor.getValue()), any(ShadowsTriggerListener.class));		
 
 		// WHEN a trigger comes from the knowledge manager
-		knowledgeManagerTriggerListenerCaptor.getValue().triggered(model.ensembleKnowledgeChangeTrigger);
+		knowledgeManagerTriggerListenerCaptor.getValue().triggered(triggerCaptor.getValue());
 		// THEN the task calls the registered listener
-		verify(taskTriggerListener).triggered(task, model.ensembleKnowledgeChangeTrigger);
+		verify(taskTriggerListener).triggered(task, triggerCaptor.getValue());
 				
 		// WHEN a trigger comes from the shadow replica
 		reset(taskTriggerListener); // Without this, we would have to say that the verify below verifies two invocations -- because one already occurred above.
-		shadowReplicasTriggerListenerCaptor.getValue().triggered(shadowKnowledgeManager, model.ensembleKnowledgeChangeTrigger);
+		shadowReplicasTriggerListenerCaptor.getValue().triggered(shadowKnowledgeManager, triggerCaptor.getValue());
 		// THEN the task calls the registered listener
-		verify(taskTriggerListener).triggered(task, model.ensembleKnowledgeChangeTrigger);
+		verify(taskTriggerListener).triggered(task, triggerCaptor.getValue());
 		
 		// WHEN the listener (i.e. the scheduler) is unregistered
 		task.unsetTriggerListener();
 		// THEN the trigger is unregistered at the knowledge manager
-		verify(knowledgeManager).unregister(model.ensembleKnowledgeChangeTrigger, knowledgeManagerTriggerListenerCaptor.getValue());
+		verify(knowledgeManager).unregister(triggerCaptor.getValue(), knowledgeManagerTriggerListenerCaptor.getValue());
 		// AND the trigger is unregistered at the shadow replicas
-		verify(knowledgeManager).unregister(model.ensembleKnowledgeChangeTrigger, knowledgeManagerTriggerListenerCaptor.getValue());
+		verify(knowledgeManager).unregister(triggerCaptor.getValue(), knowledgeManagerTriggerListenerCaptor.getValue());
 
 		// WHEN a spurious trigger comes from the knowledge manager
-		knowledgeManagerTriggerListenerCaptor.getValue().triggered(model.ensembleKnowledgeChangeTrigger);
+		knowledgeManagerTriggerListenerCaptor.getValue().triggered(triggerCaptor.getValue());
 		// THEN it is not propagated to the listener (i.e. the scheduler)
 		verifyNoMoreInteractions(taskTriggerListener);
 
 		// WHEN a spurious trigger comes from a shadow replica
-		shadowReplicasTriggerListenerCaptor.getValue().triggered(shadowKnowledgeManager, model.ensembleKnowledgeChangeTrigger);
+		shadowReplicasTriggerListenerCaptor.getValue().triggered(shadowKnowledgeManager, triggerCaptor.getValue());
 		// THEN it is not propagated to the listener (i.e. the scheduler)
 		verifyNoMoreInteractions(taskTriggerListener);
 	}
