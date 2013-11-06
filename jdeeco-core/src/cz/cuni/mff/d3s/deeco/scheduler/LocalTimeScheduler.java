@@ -38,8 +38,7 @@ public class LocalTimeScheduler implements Scheduler, TaskTriggerListener {
 		STOPPED
 	}
 	
-	public LocalTimeScheduler( Executor executor ){
-		this.executor = executor;
+	public LocalTimeScheduler( ){		
 		tasks = new HashMap<>();
 	}
 	

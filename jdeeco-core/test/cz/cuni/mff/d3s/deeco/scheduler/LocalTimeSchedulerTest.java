@@ -12,6 +12,8 @@ public class LocalTimeSchedulerTest extends SchedulerTest {
 
 	@Override
 	protected Scheduler setUpTested(Executor executor) {
-		return new LocalTimeScheduler(executor);
+		Scheduler s = new LocalTimeScheduler();
+		s.setExecutor(executor);
+		return s;
 	}
 }
