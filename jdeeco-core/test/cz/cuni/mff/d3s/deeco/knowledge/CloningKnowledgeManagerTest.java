@@ -1,6 +1,6 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -26,25 +26,49 @@ public class CloningKnowledgeManagerTest {
 	}
 
 	@Test
-	public void testImmutabilityOfGetAndUpdate() throws Exception {
-		// WHEN the update method is called on the CloningKnowledgeManager
-		// and as a ChangeSet, the update for the 'number' field is passed
+	public void testImmutabilityOfGet() throws Exception {
+		// WHEN a list is accessed from the ClonningKnowledgeManager
 		PathNodeField pnf = KnowledgePathUtils.createPathNodeField();
-		pnf.setName("number");
+		pnf.setName("list");
 		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath();
 		kp.getNodes().add(pnf);
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
 		knowledgePaths.add(kp);
-		
-		ChangeSet toUpdate = new ChangeSet();
-		Integer originalSeventeen = new Integer(17);
-		toUpdate.setValue(kp, originalSeventeen);
 
-		toBeTested.update(toUpdate);
-		// THEN when accessed the number field the KnowledgeManager should
-		// return updated value
 		ValueSet result = toBeTested.get(knowledgePaths);
-		Integer retrievedSeventeen = (Integer) result.getValue(kp);
-		assertFalse(originalSeventeen == retrievedSeventeen);
+		List<Integer> firstList = (List<Integer>) result.getValue(kp);
+		//AND WHEN it is modified
+		firstList.clear();
+		
+		//THEN the list stored in the knowledge manager is not affected.
+		result = toBeTested.get(knowledgePaths);
+		List<Integer> secondList = (List<Integer>) result.getValue(kp);
+		
+		assertTrue(firstList.size() != secondList.size());
+	}
+	
+	@Test
+	public void testImmutabilityOfUpdate() throws Exception {
+		// WHEN a list is inserted into the ClonningKnowledgeManager
+		PathNodeField pnf = KnowledgePathUtils.createPathNodeField();
+		pnf.setName("list");
+		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath();
+		kp.getNodes().add(pnf);
+		List<KnowledgePath> knowledgePaths = new LinkedList<>();
+		knowledgePaths.add(kp);
+
+		List<Integer> firstList = new LinkedList<>();
+		firstList.add(10);
+		
+		ChangeSet changeSet = new ChangeSet();
+		changeSet.setValue(kp, firstList);
+		//AND WHEN the list is modified
+		firstList.clear();
+		
+		//THEN the list stored in the knowledge manager is not affected.
+		ValueSet result = toBeTested.get(knowledgePaths);
+		List<Integer> secondList = (List<Integer>) result.getValue(kp);
+		
+		assertTrue(firstList.size() != secondList.size());
 	}
 }
