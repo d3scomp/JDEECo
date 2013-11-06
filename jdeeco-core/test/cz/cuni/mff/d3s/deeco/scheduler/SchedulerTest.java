@@ -1,24 +1,25 @@
+/**
+ * Scheduler test suite
+ * 
+ * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
+ * @author Andranik Muradyan <muradian@d3s.mff.cuni.cz>
+ *
+ * */
+
+
 package cz.cuni.mff.d3s.deeco.scheduler;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.task.Task;
-import cz.cuni.mff.d3s.deeco.task.TaskTriggerListener;
 
-// FIXME TB: The class is missing a header which states the author
+import cz.cuni.mff.d3s.deeco.task.TaskTriggerListener;
 
 public abstract class SchedulerTest  {
 
@@ -80,7 +81,7 @@ public abstract class SchedulerTest  {
 		// WHEN a task is added to a running scheduler
 		tested.addTask(t);
 		// THEN it gets eventually scheduled	
-		verify(executor, timeout(10).atLeastOnce()).execute(t);
+		verify(executor, timeout(100).atLeastOnce()).execute(t);
 	}
 	
 	@Test
@@ -117,19 +118,24 @@ public abstract class SchedulerTest  {
 		testListener.triggered(t);
 		// THEN the process is scheduled (exactly once)
 		verify(executor, times(1)).execute(t);
+	}
+	
+	@Test
+	public void testTriggeredTaskScheduledWhenSchedulerRunningOrInTaskList() throws InterruptedException{
+		Task t = createTriggeredTask( );
 		
 		// WHEN the scheduler is stopped and the trigger is triggered
 		tested.stop();
 		testListener.triggered(t);
 		// THEN the process in not scheduled anymore
-		verify(executor, never()).execute(t);		
+		verify(executor, never()).execute(t);
 		
 		// WHEN the task is removed from a running scheduler and the trigger is triggered
 		tested.start();
 		tested.removeTask(t);		
 		testListener.triggered(t);
 		// THEN the process in not scheduled		
-		verify(executor, never()).execute(t);		
+		verify(executor, never()).execute(t);
 	}
 	
 	@Test
@@ -204,7 +210,6 @@ public abstract class SchedulerTest  {
 		// THEN nothing happens anymore
 		verify(t, never()).setTriggerListener(null);
 	}
-	
 	
 	
 	/**
