@@ -9,30 +9,30 @@ import cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeFieldImpl;
  */
 public class PathNodeFieldExt extends PathNodeFieldImpl {
 
-	public PathNodeFieldExt() {
-		super();
-	}
+        public PathNodeFieldExt() {
+                super();
+        }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object that) {
-		if (that != null && that instanceof PathNodeField) {
-			return ((PathNodeField) that).getName().equals(this.name);
-		}
-		return false;
-	}
-	
-	@Override
-	public int hashCode() {
-		return name.hashCode();
-	}
-	
-	@Override
-	public String toString() {
-		return name;
-	}
+        /*
+         * (non-Javadoc)
+         * 
+         * @see java.lang.Object#equals(java.lang.Object)
+         */
+        @Override
+        public boolean equals(Object that) {
+                if (that != null && that instanceof PathNodeField) {
+                        return ((PathNodeField) that).getName().equals(getName());
+                }
+                return false;
+        }
+        
+        @Override
+        public int hashCode() {
+                return getName().hashCode();
+        }
+        
+        @Override
+        public String toString() {
+                return getName();
+        }
 }

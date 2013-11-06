@@ -20,7 +20,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
  *
  */
-public interface KnowledgeManagersView extends LocalListener, ReplicaListener {
+public interface KnowledgeManagersView {
 	
 	public Collection<ReadOnlyKnowledgeManager> getOthersKnowledgeManagers();
 	// Rima : It is a little bit confusing to have the same name 

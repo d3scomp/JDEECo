@@ -14,6 +14,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 
 /**
  * This class implements the KnowledgeManager interface. It allows the user to
@@ -137,8 +138,8 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		int containmentEndIndex;
 		for (KnowledgePath kp : knowledge.keySet()) {
 			try {
-				containmentEndIndex = KnowledgePathUtils.containmentEndIndex(
-						knowledgePath, kp.getNodes());
+				containmentEndIndex = containmentEndIndex(knowledgePath,
+						kp.getNodes());
 				if (containmentEndIndex > -1)
 					return getKnowledgeFromNode(knowledgePath.subList(
 							containmentEndIndex + 1, knowledgePath.size()),
@@ -286,12 +287,13 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	}
 
 	private ValueSet processInitialKnowledge(Object knowledge) {
+		RuntimeMetadataFactory factory = RuntimeMetadataFactory.eINSTANCE;
 		ValueSet result = new ValueSet();
 		KnowledgePath kp;
 		PathNodeField pnf;
 		for (Field f : knowledge.getClass().getFields()) {
-			kp = KnowledgePathUtils.createKnowledgePath();
-			pnf = KnowledgePathUtils.createPathNodeField();
+			kp = factory.createKnowledgePath();
+			pnf = factory.createPathNodeField();
 			pnf.setName(new String(f.getName()));
 			kp.getNodes().add(pnf);
 			try {
@@ -301,5 +303,39 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * Checks whether the shorter list is contained in the longer one, keeping
+	 * the order. It returns the containment end index. FIXME: This method
+	 * should be somewhere else.
+	 * 
+	 * @param longer
+	 * @param shorter
+	 * @return
+	 */
+	public int containmentEndIndex(List<?> longer, List<?> shorter) {
+		assert (longer != null && shorter != null);
+		// We need this as EList has differs in implementation of List
+		// specification
+		// See indexOf method.
+		List<Object> longerList = new LinkedList<>();
+		List<Object> shorterList = new LinkedList<>();
+		longerList.addAll(longer);
+		shorterList.addAll(shorter);
+		if (shorterList.isEmpty())
+			return 0;
+		if (longerList.isEmpty())
+			return -1;
+		int index = longerList.indexOf(shorterList.get(0));
+		if (index < 0)
+			return -1;
+		index++;
+		for (int i = 1; i < shorterList.size(); i++, index++) {
+			if (index != longerList.indexOf(shorterList.get(i)))
+				return -1;
+		}
+		index--;
+		return index;
 	}
 }
