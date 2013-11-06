@@ -45,7 +45,7 @@ public class BaseKnowledgeManagerTest {
 		// WHEN the update method is called on the KnowledgeManager
 		// and as a ChangeSet, the update for the 'number' field is passed
 		PathNodeField pnf = KnowledgePathUtils.createPathNodeField();
-		pnf.setName("number");
+		pnf.setName(new String("number"));
 		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath();
 		kp.getNodes().add(pnf);
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
@@ -286,17 +286,6 @@ public class BaseKnowledgeManagerTest {
 		// THEN the ReadOnlyKnowledgeManager should throw the
 		// KnowledgeNotExistentException
 		toBeTested.get(knowledgePaths);
-	}
-
-	@Test
-	public void testBaseKnowledgeAccess() throws Exception {
-		// WHEN the base knowledge is accessed with the empty KnowledgePath
-		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath();
-		List<KnowledgePath> knowledgePaths = new LinkedList<>();
-		knowledgePaths.add(kp);
-		ValueSet result = toBeTested.get(knowledgePaths);
-		// THEN the base knowledge is returned
-		assert (result.getValue(kp) instanceof Knowledge);
 	}
 
 	@Test

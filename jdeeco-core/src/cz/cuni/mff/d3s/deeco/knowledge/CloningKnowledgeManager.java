@@ -18,11 +18,10 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 public class CloningKnowledgeManager extends BaseKnowledgeManager {
 
 	private final Cloner cloner;
-	private final BaseKnowledgeManager bkm;
-
+	
 	public CloningKnowledgeManager(Object knowledge) {
 		cloner = new Cloner();
-		bkm = new BaseKnowledgeManager(cloner.deepClone(knowledge));
+		setBaseKnowledge(cloner.deepClone(knowledge));
 	}
 
 	/*
@@ -35,7 +34,7 @@ public class CloningKnowledgeManager extends BaseKnowledgeManager {
 	@Override
 	public ValueSet get(Collection<KnowledgePath> knowledgePaths)
 			throws KnowledgeNotFoundException {
-		return cloner.deepClone(bkm.get(knowledgePaths));
+		return cloner.deepClone(super.get(knowledgePaths));
 	}
 
 	/*
@@ -49,7 +48,7 @@ public class CloningKnowledgeManager extends BaseKnowledgeManager {
 	@Override
 	public synchronized void register(Trigger trigger,
 			TriggerListener triggerListener) {
-		bkm.register(trigger, triggerListener);
+		super.register(trigger, triggerListener);
 	}
 
 	/*
@@ -63,7 +62,7 @@ public class CloningKnowledgeManager extends BaseKnowledgeManager {
 	@Override
 	public synchronized void unregister(Trigger trigger,
 			TriggerListener triggerListener) {
-		bkm.unregister(trigger, triggerListener);
+		super.unregister(trigger, triggerListener);
 	}
 
 	/*
@@ -75,17 +74,6 @@ public class CloningKnowledgeManager extends BaseKnowledgeManager {
 	 */
 	@Override
 	public synchronized void update(ChangeSet changeSet) {
-		bkm.update(cloner.deepClone(changeSet));
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see cz.cuni.mff.d3s.deeco.knowledge.BaseKnowledgeManager#
-	 * getOthersKnowledgeManagers()
-	 */
-	@Override
-	public synchronized Collection<ReadOnlyKnowledgeManager> getOthersKnowledgeManagers() {
-		return bkm.getOthersKnowledgeManagers();
+		super.update(cloner.deepClone(changeSet));
 	}
 }

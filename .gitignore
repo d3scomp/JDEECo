@@ -24,7 +24,7 @@
 /dist
 /target
 /jdeeco-core/test-output
+/jdeeco-core/test-temp
 /bin
 doc.zip
 *.ispace
-

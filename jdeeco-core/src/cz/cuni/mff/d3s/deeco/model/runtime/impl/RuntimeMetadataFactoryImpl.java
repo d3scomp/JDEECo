@@ -3,8 +3,8 @@
 package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
-
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView;
+
 import cz.cuni.mff.d3s.deeco.model.runtime.api.*;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;

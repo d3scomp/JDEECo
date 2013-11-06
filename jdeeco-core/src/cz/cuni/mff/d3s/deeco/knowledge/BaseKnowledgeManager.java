@@ -24,23 +24,27 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
  * 
  */
-public class BaseKnowledgeManager implements KnowledgeManager,
-		KnowledgeManagersView {
+public class BaseKnowledgeManager implements KnowledgeManager {
 
 	private final Map<KnowledgePath, Object> knowledge;
 	private final Map<KnowledgeChangeTrigger, List<TriggerListener>> knowledgeChangeListeners;
-	private final KnowledgePath baseReference;
 
 	public BaseKnowledgeManager() {
 		this.knowledge = new HashMap<>();
 		this.knowledgeChangeListeners = new HashMap<>();
-		this.baseReference = KnowledgePathUtils.createKnowledgePath();
 	}
 
 	public BaseKnowledgeManager(Object baseKnowledge) {
 		this();
-		if (baseKnowledge != null)
-			knowledge.put(baseReference, baseKnowledge);
+		setBaseKnowledge(baseKnowledge);
+	}
+
+	protected void setBaseKnowledge(Object baseKnowledge) {
+		if (baseKnowledge != null) {
+			ValueSet nodes = processInitialKnowledge(baseKnowledge);
+			for (KnowledgePath kp : nodes.getKnowledgePaths())
+				updateKnowledge(kp, nodes.getValue(kp));
+		}
 	}
 
 	/*
@@ -125,29 +129,19 @@ public class BaseKnowledgeManager implements KnowledgeManager,
 		deleteKnowledge(changeSet.getDeletedReferences());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView#
-	 * getOthersKnowledgeManagers()
-	 */
-	@Override
-	public synchronized Collection<ReadOnlyKnowledgeManager> getOthersKnowledgeManagers() {
-		KnowledgeManagerRegistry kmRegistry = KnowledgeManagerRegistry
-				.getInstance();
-		List<ReadOnlyKnowledgeManager> result = new LinkedList<>();
-		result.addAll(kmRegistry.getLocals());
-		result.addAll(kmRegistry.getShadows());
-		result.remove(this);
-		return result;
-	}
-
 	protected Object getKnowledge(List<PathNode> knowledgePath)
 			throws KnowledgeNotFoundException {
+		assert (knowledgePath != null);
+		if (knowledgePath.isEmpty())
+			return knowledge;
+		int containmentEndIndex;
 		for (KnowledgePath kp : knowledge.keySet()) {
 			try {
-				if (KnowledgePathUtils.contains(knowledgePath, kp.getNodes()))
-					return getKnowledgeFromNode(knowledgePath,
+				containmentEndIndex = KnowledgePathUtils.containmentEndIndex(
+						knowledgePath, kp.getNodes());
+				if (containmentEndIndex > -1)
+					return getKnowledgeFromNode(knowledgePath.subList(
+							containmentEndIndex + 1, knowledgePath.size()),
 							knowledge.get(kp));
 			} catch (KnowledgeNotFoundException knfe) {
 				continue;
@@ -166,6 +160,7 @@ public class BaseKnowledgeManager implements KnowledgeManager,
 			parent = getKnowledge(pathNodesToParent);
 		} catch (KnowledgeNotFoundException e) {
 			knowledge.put(knowledgePath, value);
+			return;
 		}
 		try {
 			Field field = parent.getClass().getField(fieldName);
@@ -174,9 +169,10 @@ public class BaseKnowledgeManager implements KnowledgeManager,
 			if (parent instanceof List<?>) {
 				((List<Object>) parent).set(Integer.parseInt(fieldName), value);
 			} else if (parent instanceof Map<?, ?>) {
-				((Map<String, Object>) parent).put(fieldName, value);
-			} else {
-				knowledge.put(knowledgePath, value);
+				if (parent.equals(knowledge))
+					knowledge.put(knowledgePath, value);
+				else
+					((Map<String, Object>) parent).put(fieldName, value);
 			}
 		}
 	}
@@ -287,5 +283,23 @@ public class BaseKnowledgeManager implements KnowledgeManager,
 				listener.triggered(foundKCT);
 			}
 		}
+	}
+
+	private ValueSet processInitialKnowledge(Object knowledge) {
+		ValueSet result = new ValueSet();
+		KnowledgePath kp;
+		PathNodeField pnf;
+		for (Field f : knowledge.getClass().getFields()) {
+			kp = KnowledgePathUtils.createKnowledgePath();
+			pnf = KnowledgePathUtils.createPathNodeField();
+			pnf.setName(new String(f.getName()));
+			kp.getNodes().add(pnf);
+			try {
+				result.setValue(kp, f.get(knowledge));
+			} catch (IllegalAccessException e) {
+				continue;
+			}
+		}
+		return result;
 	}
 }
