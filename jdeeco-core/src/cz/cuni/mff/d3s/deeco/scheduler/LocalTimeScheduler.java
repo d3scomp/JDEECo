@@ -13,6 +13,7 @@ import java.util.TimerTask;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.knowledge.TriggerListener;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.task.Task;
 import cz.cuni.mff.d3s.deeco.task.TaskTriggerListener;
@@ -27,6 +28,7 @@ public class LocalTimeScheduler implements Scheduler {
 	private class TaskInfo{
 		Timer timer;
 		States state;
+		PeriodicTrigger periodicTrigger;
 		
 		public TaskInfo(){
 			timer = new Timer();
@@ -105,19 +107,22 @@ public class LocalTimeScheduler implements Scheduler {
 			// whether to keep instantiation of the anonymous class and remove the task parameter or whether to have one handler per scheduler (well, I would
 			// vote for one handler per scheduler, but it's just a matter of taste).
 			@Override
-			public void triggered(Task task) {
-				taskTriggerFired(task);
+			public void triggered(Task task, Trigger trigger) {
+				taskTriggerFired(task, trigger);
 			}
 		});
 		
-		ti.timer.scheduleAtFixedRate(new TimerTask() {
-			
-			@Override
-			public void run() {
-				taskTimerFired(task);				
-			}
-		}, 0, task.getSchedulingPeriod()); // FIXME TB: What about if scheduling period == 0, which probably means that we do not schedule periodically?
+		ti.periodicTrigger = task.getPeriodicTrigger();
 		
+		if (ti.periodicTrigger != null) {
+			ti.timer.scheduleAtFixedRate(new TimerTask() {
+				
+				@Override
+				public void run() {
+					taskTimerFired(task);				
+				}
+			}, 0, ti.periodicTrigger.getPeriod());
+		}
 	}
 	
 	private void stopTask(final Task task) {
@@ -136,7 +141,7 @@ public class LocalTimeScheduler implements Scheduler {
 	 * @throws NullPointerException when {@code task} is not in the {@link #tasks}. 
 	 * @param task
 	 */
-	protected void taskTriggerFired(final Task task) {
+	protected void taskTriggerFired(final Task task, final Trigger trigger) {
 		if( tasks.get(task).state == States.RUNNING ){
 			// TODO : Implement error reporting
 			return;
@@ -146,26 +151,30 @@ public class LocalTimeScheduler implements Scheduler {
 		ti.timer.cancel();
 		ti.timer = new Timer();
 
-		ti.timer.scheduleAtFixedRate(new TimerTask() {
-			
-			@Override
-			public void run() {
-				taskTimerFired(task);				
-			}
-		}, 0, task.getSchedulingPeriod()); // FIXME TB: What about if scheduling period == 0, which probably means that we do not schedule periodically?
+		if (ti.periodicTrigger != null) {
+			ti.timer.scheduleAtFixedRate(new TimerTask() {
+				
+				@Override
+				public void run() {
+					taskTimerFired(task);				
+				}
+			}, 0, ti.periodicTrigger.getPeriod());
+		}
 		
 		ti.state = States.RUNNING;
-		executor.execute(task);
+		executor.execute(task, trigger);
 	}
 	
 	protected void taskTimerFired(Task task) {
-		if( tasks.get(task).state == States.RUNNING ){
+		TaskInfo ti = tasks.get(task);
+
+		if( ti.state == States.RUNNING ){
 			// TODO : Implement error reporting
 			return;
 		}
 		
 		tasks.get(task).state = States.RUNNING;
-		executor.execute(task);
+		executor.execute(task, ti.periodicTrigger);
 	}
 
 	

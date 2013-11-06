@@ -104,9 +104,7 @@ public class AnnotationProcessor {
 				componentProcess.setMethod(m);
 				componentProcess.setName(m.getName());
 
-				periodicTrigger = factory.createPeriodicTrigger();
-				periodicTrigger.setPeriod(getPeriodInMilliSeconds(m));
-				componentProcess.getTriggers().add(periodicTrigger);
+				componentProcess.getTriggers().add(getPeriodicTrigger(m));
 
 				for (Pair<Parameter, Boolean> p : getParameters(m)) {
 					param = p.getValue0();
@@ -151,20 +149,23 @@ public class AnnotationProcessor {
 	}
 
 	/**
-	 * Extracts the period from a method. If no {@link PeriodicScheduling}
-	 * annotation is found, returns -1.
+	 * Extracts the period from a method and returns it as an instance of {@link PeriodicTrigger}. If no {@link PeriodicScheduling}
+	 * annotation is found, returns <code>null</code>.
 	 * 
 	 * @param m
 	 *            method to be processed
-	 * @return period in msec or -1 when no period is associated with the method.
+	 * @return periodic trigger or <code>null</code> if no period is associated with the method.
 	 */
-	private long getPeriodInMilliSeconds(Method m) {
+	private PeriodicTrigger getPeriodicTrigger(Method m) {
 		for (Annotation a : m.getAnnotations()) {
 			if (a instanceof PeriodicScheduling) {
-				return ((PeriodicScheduling) a).value();
+				PeriodicTrigger periodicTrigger = factory.createPeriodicTrigger();
+				periodicTrigger.setPeriod(((PeriodicScheduling) a).value());
+
+				return periodicTrigger;
 			}
 		}
-		return -1;
+		return null;
 	}
 
 	/**

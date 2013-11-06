@@ -47,9 +47,9 @@ public class EnsembleTaskTest {
 	@Mock
 	private TaskTriggerListener taskTriggerListener;
 	@Captor
-	private ArgumentCaptor<TriggerListener> taskTriggerListenerInKnowledgeManagerCaptor;
+	private ArgumentCaptor<TriggerListener> knowledgeManagerTriggerListenerCaptor;
 	@Captor
-	private ArgumentCaptor<ShadowsTriggerListener> taskTriggerListenerInShadowReplicasCaptor;
+	private ArgumentCaptor<ShadowsTriggerListener> shadowReplicasTriggerListenerCaptor;
 	@Mock
 	private Scheduler scheduler;
 	
@@ -62,8 +62,8 @@ public class EnsembleTaskTest {
 		
 		model = new SampleRuntimeModel();
 
-		doNothing().when(knowledgeManager).register(eq(model.ensembleKnowledgeChangeTrigger), taskTriggerListenerInKnowledgeManagerCaptor.capture());
-		doNothing().when(shadowReplicasAccess).register(eq(model.ensembleKnowledgeChangeTrigger), taskTriggerListenerInShadowReplicasCaptor.capture());
+		doNothing().when(knowledgeManager).register(eq(model.ensembleKnowledgeChangeTrigger), knowledgeManagerTriggerListenerCaptor.capture());
+		doNothing().when(shadowReplicasAccess).register(eq(model.ensembleKnowledgeChangeTrigger), shadowReplicasTriggerListenerCaptor.capture());
 		
 		model.setKnowledgeManager(knowledgeManager);
 		model.setOtherKnowledgeManagersAccess(shadowReplicasAccess);
@@ -75,7 +75,7 @@ public class EnsembleTaskTest {
 	public void testSchedulingPeriod() {
 		// GIVEN an EnsembleTask initialized with an InstanceEnsemblingController
 		// WHEN getSchedulingPeriod is called
-		long period = task.getSchedulingPeriod();
+		long period = task.getPeriodicTrigger().getPeriod();
 		// THEN it returns the period specified in the model
 		// THEN it returns the period specified in the model
 		assertEquals(model.ensemblePeriodicTrigger.getPeriod(), period);
@@ -93,26 +93,34 @@ public class EnsembleTaskTest {
 		verify(shadowReplicasAccess).register(eq(model.ensembleKnowledgeChangeTrigger), any(ShadowsTriggerListener.class));		
 
 		// WHEN a trigger comes from the knowledge manager
-		taskTriggerListenerInKnowledgeManagerCaptor.getValue().triggered(model.ensembleKnowledgeChangeTrigger);
+		knowledgeManagerTriggerListenerCaptor.getValue().triggered(model.ensembleKnowledgeChangeTrigger);
 		// THEN the task calls the registered listener
-		verify(taskTriggerListener).triggered(task);
+		verify(taskTriggerListener).triggered(task, model.ensembleKnowledgeChangeTrigger);
 				
 		// WHEN a trigger comes from the shadow replica
 		// TODO, it would make more sense, if the trigger notification from the shadow replicas would carry a reference to the particular read-only knowledge
 		// manager
 		reset(taskTriggerListener); // Without this, we would have to say that the verify below verifies two invocations -- because one already occurred above.
-		taskTriggerListenerInShadowReplicasCaptor.getValue().triggered(shadowKnowledgeManager, model.ensembleKnowledgeChangeTrigger);
+		shadowReplicasTriggerListenerCaptor.getValue().triggered(shadowKnowledgeManager, model.ensembleKnowledgeChangeTrigger);
 		// THEN the task calls the registered listener
-		verify(taskTriggerListener).triggered(task);
+		verify(taskTriggerListener).triggered(task, model.ensembleKnowledgeChangeTrigger);
 		
 		// WHEN the listener (i.e. the scheduler) is unregistered
 		task.unsetTriggerListener();
 		// THEN the trigger is unregistered at the knowledge manager
-		verify(knowledgeManager).unregister(model.ensembleKnowledgeChangeTrigger, taskTriggerListenerInKnowledgeManagerCaptor.getValue());
+		verify(knowledgeManager).unregister(model.ensembleKnowledgeChangeTrigger, knowledgeManagerTriggerListenerCaptor.getValue());
 		// AND the trigger is unregistered at the shadow replicas
-		verify(knowledgeManager).unregister(model.ensembleKnowledgeChangeTrigger, taskTriggerListenerInKnowledgeManagerCaptor.getValue());
+		verify(knowledgeManager).unregister(model.ensembleKnowledgeChangeTrigger, knowledgeManagerTriggerListenerCaptor.getValue());
 
-		// TODO - test spurious invocation from the 
+		// WHEN a spurious trigger comes from the knowledge manager
+		// TODO
+		// THEN it is not propagated to the listener (i.e. the scheduler)
+		verifyNoMoreInteractions(taskTriggerListener);
+
+		// WHEN a spurious trigger comes from a shadow replica
+		// TODO
+		// THEN it is not propagated to the listener (i.e. the scheduler)
+		verifyNoMoreInteractions(taskTriggerListener);
 	}
 	
 	@Test

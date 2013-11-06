@@ -48,7 +48,7 @@ public class EnsembleTask extends Task {
 				assert(false); 
 			}
 
-			listener.triggered(EnsembleTask.this);
+			listener.triggered(EnsembleTask.this, trigger);
 		}
 	}
 	KnowledgeManagerTriggerListenerImpl knowledgeManagerTriggerListener = new KnowledgeManagerTriggerListenerImpl();
@@ -70,7 +70,7 @@ public class EnsembleTask extends Task {
 				assert(false); 
 			}
 
-			listener.triggered(EnsembleTask.this);
+			listener.triggered(EnsembleTask.this, trigger);
 		}
 	}
 	ShadowsTriggerListenerImpl shadowsTriggerListener = new ShadowsTriggerListenerImpl();
@@ -202,7 +202,7 @@ public class EnsembleTask extends Task {
 	 * @see cz.cuni.mff.d3s.deeco.task.Task#invoke()
 	 */
 	@Override
-	public void invoke() {
+	public void invoke(Trigger trigger) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -211,16 +211,16 @@ public class EnsembleTask extends Task {
 	 * Returns the period associated with the ensemble in the in the meta-model as the {@link PeriodicTrigger}. Note that the {@link EnsembleTask} assumes that there is at most
 	 * one instance of {@link PeriodicTrigger} associated with the ensemble in the meta-model.
 	 * 
-	 * @return Period in miliseconds or -1 if no period is associated with the task.
+	 * @return Periodic trigger or null no period is associated with the task.
 	 */
 	@Override
-	public long getSchedulingPeriod() {
+	public PeriodicTrigger getPeriodicTrigger() {
 		for (Trigger trigger : ensembleController.getEnsembleDefinition().getTriggers()) {
 			if (trigger instanceof PeriodicTrigger) {
-				return ((PeriodicTrigger) trigger).getPeriod();
+				return ((PeriodicTrigger) trigger);
 			}
 		}
 		
-		return -1;
+		return null;
 	}
 }

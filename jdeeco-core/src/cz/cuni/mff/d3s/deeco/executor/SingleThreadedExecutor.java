@@ -1,6 +1,7 @@
 package cz.cuni.mff.d3s.deeco.executor;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.task.Task;
 
 /**
@@ -15,10 +16,10 @@ public class SingleThreadedExecutor implements Executor {
 	
 	
 	@Override
-	public synchronized void execute(Task task) {
+	public synchronized void execute(Task task, Trigger trigger) {
 		if (task != null) {
 			try {
-				task.invoke();				
+				task.invoke(trigger);				
 			} catch (Exception e) {				
 				if (listener != null) {
 					Log.w("Task.invoke() failed", e);

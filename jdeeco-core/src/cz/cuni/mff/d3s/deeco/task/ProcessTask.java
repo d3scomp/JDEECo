@@ -33,7 +33,9 @@ public class ProcessTask extends Task {
 		 */
 		@Override
 		public void triggered(Trigger trigger) {
-			listener.triggered(ProcessTask.this);
+			if (listener != null) {
+				listener.triggered(ProcessTask.this, trigger);
+			}
 		}
 	}
 	KnowledgeManagerTriggerListenerImpl knowledgeManagerTriggerListener = new KnowledgeManagerTriggerListenerImpl();
@@ -47,7 +49,7 @@ public class ProcessTask extends Task {
 	 * @see cz.cuni.mff.d3s.deeco.task.Task#invoke()
 	 */
 	@Override
-	public void invoke() throws TaskInvocationException {
+	public void invoke(Trigger trigger) throws TaskInvocationException {
 		// Obtain parameters from the knowledge
 		KnowledgeManager knowledgeManager = componentProcess.getComponentInstance().getKnowledgeManager();
 		Collection<Parameter> formalParams = componentProcess.getParameters();
@@ -153,16 +155,16 @@ public class ProcessTask extends Task {
 	 * Returns the period associated with the process in the in the meta-model as the {@link PeriodicTrigger}. Note that the {@link ProcessTask} assumes that there is at most
 	 * one instance of {@link PeriodicTrigger} associated with the process in the meta-model.
 	 * 
-	 * @return Period in miliseconds or -1 if no period is associated with the task.
+	 * @return Periodic trigger or null no period is associated with the task.
 	 */
 	@Override
-	public long getSchedulingPeriod() {
+	public PeriodicTrigger getPeriodicTrigger() {
 		for (Trigger trigger : componentProcess.getTriggers()) {
 			if (trigger instanceof PeriodicTrigger) {
-				return ((PeriodicTrigger) trigger).getPeriod();
+				return ((PeriodicTrigger) trigger);
 			}
 		}
 		
-		return -1;
+		return null;
 	}
 }
