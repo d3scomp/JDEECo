@@ -69,8 +69,8 @@ public class EnsembleTaskTest {
 		
 		model = new SampleRuntimeModel();
 		
-		doNothing().when(knowledgeManager).register(eq(model.ensembleKnowledgeChangeTrigger), knowledgeManagerTriggerListenerCaptor.capture());
-		doNothing().when(shadowReplicasAccess).register(eq(model.ensembleKnowledgeChangeTrigger), shadowReplicasTriggerListenerCaptor.capture());
+		doNothing().when(knowledgeManager).register(any(Trigger.class), knowledgeManagerTriggerListenerCaptor.capture());
+		doNothing().when(shadowReplicasAccess).register(any(Trigger.class), shadowReplicasTriggerListenerCaptor.capture());
 		
 		model.setKnowledgeManager(knowledgeManager);
 		model.setOtherKnowledgeManagersAccess(shadowReplicasAccess);
