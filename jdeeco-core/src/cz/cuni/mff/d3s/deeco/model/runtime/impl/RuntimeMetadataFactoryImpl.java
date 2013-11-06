@@ -65,7 +65,7 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	@Override
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
-			case RuntimeMetadataPackage.SCHEDULING_SPECIFICATION: return createSchedulingSpecification();
+			case RuntimeMetadataPackage.PERIODIC_TRIGGER: return createPeriodicTrigger();
 			case RuntimeMetadataPackage.KNOWLEDGE_CHANGE_TRIGGER: return createKnowledgeChangeTrigger();
 			case RuntimeMetadataPackage.KNOWLEDGE_PATH: return createKnowledgePath();
 			case RuntimeMetadataPackage.PATH_NODE_FIELD: return createPathNodeField();
@@ -133,9 +133,9 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public SchedulingSpecification createSchedulingSpecification() {
-		SchedulingSpecificationImpl schedulingSpecification = new SchedulingSpecificationImpl();
-		return schedulingSpecification;
+	public PeriodicTrigger createPeriodicTrigger() {
+		PeriodicTriggerImpl periodicTrigger = new PeriodicTriggerImpl();
+		return periodicTrigger;
 	}
 
 	/**

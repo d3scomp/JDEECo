@@ -17,6 +17,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
@@ -48,7 +49,9 @@ public class EnsembleTask extends Task {
 				assert(false); 
 			}
 
-			listener.triggered(EnsembleTask.this);
+			if (listener != null) {
+				listener.triggered(EnsembleTask.this, trigger);
+			}
 		}
 	}
 	KnowledgeManagerTriggerListenerImpl knowledgeManagerTriggerListener = new KnowledgeManagerTriggerListenerImpl();
@@ -70,7 +73,9 @@ public class EnsembleTask extends Task {
 				assert(false); 
 			}
 
-			listener.triggered(EnsembleTask.this);
+			if (listener != null) {
+				listener.triggered(EnsembleTask.this, trigger);
+			}
 		}
 	}
 	ShadowsTriggerListenerImpl shadowsTriggerListener = new ShadowsTriggerListenerImpl();
@@ -171,7 +176,7 @@ public class EnsembleTask extends Task {
 		KnowledgeManager localKM = componentInstance.getKnowledgeManager();
 		KnowledgeManagersView shadowsKM = componentInstance.getOtherKnowledgeManagersAccess();
 		
-		for (Trigger trigger : ensembleController.getEnsembleDefinition().getSchedulingSpecification().getTriggers()) {
+		for (Trigger trigger : ensembleController.getEnsembleDefinition().getTriggers()) {
 			
 			// TODO: Here should come something which strips the change trigger knowledge path of the coord/member root
 			
@@ -189,7 +194,7 @@ public class EnsembleTask extends Task {
 		KnowledgeManager localKM = componentInstance.getKnowledgeManager();
 		KnowledgeManagersView shadowsKM = componentInstance.getOtherKnowledgeManagersAccess();
 		
-		for (Trigger trigger : ensembleController.getEnsembleDefinition().getSchedulingSpecification().getTriggers()) {
+		for (Trigger trigger : ensembleController.getEnsembleDefinition().getTriggers()) {
 			
 			// TODO: Here should come something which strips the change trigger knowledge path of the coord/member root
 			
@@ -202,12 +207,25 @@ public class EnsembleTask extends Task {
 	 * @see cz.cuni.mff.d3s.deeco.task.Task#invoke()
 	 */
 	@Override
-	public void invoke() {
+	public void invoke(Trigger trigger) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	public long getSchedulingPeriod() {
-		return ensembleController.getEnsembleDefinition().getSchedulingSpecification().getPeriod();
+	/**
+	 * Returns the period associated with the ensemble in the in the meta-model as the {@link PeriodicTrigger}. Note that the {@link EnsembleTask} assumes that there is at most
+	 * one instance of {@link PeriodicTrigger} associated with the ensemble in the meta-model.
+	 * 
+	 * @return Periodic trigger or null no period is associated with the task.
+	 */
+	@Override
+	public PeriodicTrigger getPeriodicTrigger() {
+		for (Trigger trigger : ensembleController.getEnsembleDefinition().getTriggers()) {
+			if (trigger instanceof PeriodicTrigger) {
+				return ((PeriodicTrigger) trigger);
+			}
+		}
+		
+		return null;
 	}
 }
