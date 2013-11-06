@@ -17,7 +17,6 @@ import org.mockito.Mock;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 
 /**
  * BaseKnowledgeManager testing.
@@ -39,15 +38,11 @@ public class BaseKnowledgeManagerTest {
 		initMocks(this);
 	}
 
-
 	@Test
 	public void testUpdateIntegerField() throws Exception {
 		// WHEN the update method is called on the KnowledgeManager
 		// and as a ChangeSet, the update for the 'number' field is passed
-		PathNodeField pnf = KnowledgePathUtils.createPathNodeField();
-		pnf.setName(new String("number"));
-		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath();
-		kp.getNodes().add(pnf);
+		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath("number");
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
 		knowledgePaths.add(kp);
 
@@ -60,19 +55,13 @@ public class BaseKnowledgeManagerTest {
 		ValueSet result = toBeTested.get(knowledgePaths);
 		assertEquals(17, result.getValue(kp));
 	}
-	
+
 	@Test
 	public void testInnerKnowledgeUpdate() throws Exception {
 		// WHEN the update method is called on the KnowledgeManager
 		// and as a ChangeSet, the update for some nested inner field is passed
-		PathNodeField pnf = KnowledgePathUtils.createPathNodeField();
-		pnf.setName("innerKnowledge");
-		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath();
-		kp.getNodes().add(pnf);
-		pnf = KnowledgePathUtils.createPathNodeField();
-		pnf.setName("a");
-		kp.getNodes().add(pnf);
-		
+		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath(
+				"innerKnowledge", "a");
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
 		knowledgePaths.add(kp);
 
@@ -90,13 +79,7 @@ public class BaseKnowledgeManagerTest {
 	public void testUpdateListField() throws Exception {
 		// WHEN the update method is called on the KnowledgeManager
 		// and as a ChangeSet, the update for one of the 'list' items is passed
-		PathNodeField pnf = KnowledgePathUtils.createPathNodeField();
-		pnf.setName("list");
-		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath();
-		kp.getNodes().add(pnf);
-		pnf = KnowledgePathUtils.createPathNodeField();
-		pnf.setName("2");
-		kp.getNodes().add(pnf);
+		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath("list", "2");
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
 		knowledgePaths.add(kp);
 
@@ -114,13 +97,7 @@ public class BaseKnowledgeManagerTest {
 	public void testUpdateMapField() throws Exception {
 		// WHEN the update method is called on the KnowledgeManager
 		// and as a ChangeSet, the update for one of the 'map' items is passed
-		PathNodeField pnf = KnowledgePathUtils.createPathNodeField();
-		pnf.setName("map");
-		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath();
-		kp.getNodes().add(pnf);
-		pnf = KnowledgePathUtils.createPathNodeField();
-		pnf.setName("a");
-		kp.getNodes().add(pnf);
+		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath("map", "a");
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
 		knowledgePaths.add(kp);
 
@@ -138,20 +115,14 @@ public class BaseKnowledgeManagerTest {
 	public void testRemovalFromList() throws Exception {
 		// WHEN the update method is called on the KnowledgeManager
 		// and as a ChangeSet, the removal of one of the 'list' items is passed
-		PathNodeField pnf = KnowledgePathUtils.createPathNodeField();
-		pnf.setName("list");
-		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath();
-		kp.getNodes().add(pnf);
-		pnf = KnowledgePathUtils.createPathNodeField();
-		pnf.setName("2");
-		kp.getNodes().add(pnf);
-
+		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath("list", "2");
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
 		knowledgePaths.add(kp);
-
 		Object nextItemValue = toBeTested.get(knowledgePaths).getValue(kp);
-		pnf.setName("1");
-
+		kp = KnowledgePathUtils.createKnowledgePath("list", "1");
+		knowledgePaths.clear();
+		knowledgePaths.add(kp);
+		
 		ChangeSet toDelete = new ChangeSet();
 		toDelete.setDeleted(kp);
 		toBeTested.update(toDelete);
@@ -167,13 +138,7 @@ public class BaseKnowledgeManagerTest {
 		// WHEN the update method is called on the KnowledgeManager
 		// and as a ChangeSet, the removal of one of the 'map' elements is
 		// passed
-		PathNodeField pnf = KnowledgePathUtils.createPathNodeField();
-		pnf.setName("map");
-		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath();
-		kp.getNodes().add(pnf);
-		pnf = KnowledgePathUtils.createPathNodeField();
-		pnf.setName("a");
-		kp.getNodes().add(pnf);
+		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath("map", "a");
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
 		knowledgePaths.add(kp);
 
@@ -189,10 +154,7 @@ public class BaseKnowledgeManagerTest {
 	@Test
 	public void testGetIntegerField() throws Exception {
 		// WHEN a field is accessed from the ReadOnlyKnowledgeManager
-		PathNodeField pnf = KnowledgePathUtils.createPathNodeField();
-		pnf.setName("number");
-		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath();
-		kp.getNodes().add(pnf);
+		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath("number");
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
 		knowledgePaths.add(kp);
 
@@ -200,18 +162,13 @@ public class BaseKnowledgeManagerTest {
 		// THEN the correct value is returned
 		assertEquals(10, result.getValue(kp));
 	}
-	
+
 	@Test
 	public void testInnerKnowledgeGet() throws Exception {
 		// WHEN inner knowledge is accessed from the ReadOnlyKnowledgeManager
-		PathNodeField pnf = KnowledgePathUtils.createPathNodeField();
-		pnf.setName("innerKnowledge");
-		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath();
-		kp.getNodes().add(pnf);
-		pnf = KnowledgePathUtils.createPathNodeField();
-		pnf.setName("a");
-		kp.getNodes().add(pnf);
-		
+		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath(
+				"innerKnowledge", "a");
+
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
 		knowledgePaths.add(kp);
 
@@ -219,32 +176,23 @@ public class BaseKnowledgeManagerTest {
 		// THEN the correct value is returned
 		assertEquals("innerA", result.getValue(kp));
 	}
-	
+
 	@Test(expected = KnowledgeNotFoundException.class)
 	public void testNullBaseKnowledgeAccess() throws Exception {
 		toBeTested = new BaseKnowledgeManager();
 		// WHEN a field is accessed from the knowledge manager initialized with
 		// null base knowledge
-		PathNodeField pnf = KnowledgePathUtils.createPathNodeField();
-		pnf.setName("number");
-		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath();
-		kp.getNodes().add(pnf);
+		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath("number");
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
 		knowledgePaths.add(kp);
-		//THEN exception is thrown.
+		// THEN exception is thrown.
 		toBeTested.get(knowledgePaths);
 	}
 
 	@Test
 	public void testGetListField() throws Exception {
 		// WHEN an item of a list is accessed from the ReadOnlyKnowledgeManager
-		PathNodeField pnf = KnowledgePathUtils.createPathNodeField();
-		pnf.setName("list");
-		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath();
-		kp.getNodes().add(pnf);
-		pnf = KnowledgePathUtils.createPathNodeField();
-		pnf.setName("2");
-		kp.getNodes().add(pnf);
+		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath("list", "2");
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
 		knowledgePaths.add(kp);
 
@@ -257,13 +205,7 @@ public class BaseKnowledgeManagerTest {
 	public void testGetMapField() throws Exception {
 		// WHEN an element of a map is accessed from the
 		// ReadOnlyKnowledgeManager
-		PathNodeField pnf = KnowledgePathUtils.createPathNodeField();
-		pnf.setName("map");
-		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath();
-		kp.getNodes().add(pnf);
-		pnf = KnowledgePathUtils.createPathNodeField();
-		pnf.setName("a");
-		kp.getNodes().add(pnf);
+		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath("map", "a");
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
 		knowledgePaths.add(kp);
 
@@ -276,10 +218,7 @@ public class BaseKnowledgeManagerTest {
 	public void testNotExsistentAccess() throws Exception {
 		// WHEN a not existent entry is accessed from the
 		// ReadOnlyKnowledgeManager
-		PathNodeField pnf = KnowledgePathUtils.createPathNodeField();
-		pnf.setName("dummy");
-		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath();
-		kp.getNodes().add(pnf);
+		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath("dummy");
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
 		knowledgePaths.add(kp);
 
@@ -291,10 +230,7 @@ public class BaseKnowledgeManagerTest {
 	@Test
 	public void testRegisterListener() {
 		// WHEN a listener is registered at the KnowledgeManager
-		PathNodeField pnf = KnowledgePathUtils.createPathNodeField();
-		pnf.setName("number");
-		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath();
-		kp.getNodes().add(pnf);
+		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath("number");
 		KnowledgeChangeTrigger trigger = KnowledgePathUtils
 				.createKnowledgeChangeTrigger();
 		trigger.setKnowledgePath(kp);
@@ -311,10 +247,7 @@ public class BaseKnowledgeManagerTest {
 	@Test
 	public void testUnregisterListener() {
 		// WHEN a previously registered listener
-		PathNodeField pnf = KnowledgePathUtils.createPathNodeField();
-		pnf.setName("number");
-		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath();
-		kp.getNodes().add(pnf);
+		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath("number");
 		KnowledgeChangeTrigger trigger = KnowledgePathUtils
 				.createKnowledgeChangeTrigger();
 		trigger.setKnowledgePath(kp);
@@ -347,11 +280,11 @@ public class BaseKnowledgeManagerTest {
 			this.innerKnowledge = new InnerKnowledge("innerA", "innerB");
 		}
 	}
-	
+
 	public static class InnerKnowledge {
 		public String a;
 		public String b;
-		
+
 		public InnerKnowledge(String a, String b) {
 			super();
 			this.a = a;

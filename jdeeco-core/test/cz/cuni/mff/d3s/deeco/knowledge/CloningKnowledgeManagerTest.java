@@ -14,7 +14,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 
 /**
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
- *
+ * 
  */
 public class CloningKnowledgeManagerTest {
 
@@ -28,47 +28,40 @@ public class CloningKnowledgeManagerTest {
 	@Test
 	public void testImmutabilityOfGet() throws Exception {
 		// WHEN a list is accessed from the ClonningKnowledgeManager
-		PathNodeField pnf = KnowledgePathUtils.createPathNodeField();
-		pnf.setName("list");
-		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath();
-		kp.getNodes().add(pnf);
+		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath("list");
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
 		knowledgePaths.add(kp);
-
 		ValueSet result = toBeTested.get(knowledgePaths);
 		List<Integer> firstList = (List<Integer>) result.getValue(kp);
-		//AND WHEN it is modified
+		// AND WHEN it is modified
 		firstList.clear();
-		
-		//THEN the list stored in the knowledge manager is not affected.
+
+		// THEN the list stored in the knowledge manager is not affected.
 		result = toBeTested.get(knowledgePaths);
 		List<Integer> secondList = (List<Integer>) result.getValue(kp);
-		
+
 		assertTrue(firstList.size() != secondList.size());
 	}
-	
+
 	@Test
 	public void testImmutabilityOfUpdate() throws Exception {
 		// WHEN a list is inserted into the ClonningKnowledgeManager
-		PathNodeField pnf = KnowledgePathUtils.createPathNodeField();
-		pnf.setName("list");
-		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath();
-		kp.getNodes().add(pnf);
+		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath("list");
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
 		knowledgePaths.add(kp);
 
 		List<Integer> firstList = new LinkedList<>();
 		firstList.add(10);
-		
+
 		ChangeSet changeSet = new ChangeSet();
 		changeSet.setValue(kp, firstList);
-		//AND WHEN the list is modified
+		// AND WHEN the list is modified
 		firstList.clear();
-		
-		//THEN the list stored in the knowledge manager is not affected.
+
+		// THEN the list stored in the knowledge manager is not affected.
 		ValueSet result = toBeTested.get(knowledgePaths);
 		List<Integer> secondList = (List<Integer>) result.getValue(kp);
-		
+
 		assertTrue(firstList.size() != secondList.size());
 	}
 }

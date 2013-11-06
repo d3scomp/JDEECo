@@ -5,6 +5,7 @@ import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 
@@ -13,11 +14,6 @@ import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
  * 
  */
 public class KnowledgePathUtils {
-
-	public static KnowledgePath createKnowledgePath() {
-		RuntimeMetadataFactory factory = RuntimeMetadataFactory.eINSTANCE;
-		return factory.createKnowledgePath();
-	}
 
 	public static PathNodeField createPathNodeField() {
 		RuntimeMetadataFactory factory = RuntimeMetadataFactory.eINSTANCE;
@@ -28,6 +24,30 @@ public class KnowledgePathUtils {
 		RuntimeMetadataFactory factory = RuntimeMetadataFactory.eINSTANCE;
 		return factory.createKnowledgeChangeTrigger();
 	}
+	
+	public static KnowledgePath createKnowledgePath(String... knowledgePathNodes) {
+		RuntimeMetadataFactory factory = RuntimeMetadataFactory.eINSTANCE;
+        KnowledgePath knowledgePath = factory.createKnowledgePath();
+                        
+        for (String nodeName : knowledgePathNodes) {
+                PathNode pathNode;
+                
+                if ("<C>".equals(nodeName)) {
+                        pathNode = factory.createPathNodeCoordinator();
+                } else if ("<M>".equals(nodeName)) {
+                        pathNode = factory.createPathNodeMember();
+                } else {
+                        PathNodeField pathNodeField = factory.createPathNodeField();                
+                        pathNodeField.setName(nodeName);
+                        pathNode = pathNodeField;
+                }
+                
+                knowledgePath.getNodes().add(pathNode);
+        }
+        
+        return knowledgePath;
+}
+	
 
 	/**
 	 * Checks whether the shorter list is contained in the longer one, keeping the order.
