@@ -9,7 +9,12 @@ import cz.cuni.mff.d3s.deeco.task.Task;
 import cz.cuni.mff.d3s.deeco.task.TaskTriggerListener;
 
 public class SingleThreadedScheduler implements Scheduler {
-	Map<Task, SchedulerTask> periodicTasks;
+	/**
+	 * Map capturing the SchedulerTaskWrappers for periodic Tasks. These are
+	 * mostly important for postponing the Tasks' execution when the previous
+	 * execution took longer than the period.
+	 */
+	Map<Task, SchedulerTaskWrapper> periodicTasks;
 	
 	 /**
      * The scheduler task queue.  This data structure is shared with the scheduler
@@ -40,18 +45,24 @@ public class SingleThreadedScheduler implements Scheduler {
         }
     };
 
+    /**
+     * If the completed task is periodic and the completion time is greater than the intended start of the next period,
+     * then the next period is moved. 
+     */
 	@Override
 	public void executionCompleted(Task task) {
 
 		synchronized (queue) {
-			SchedulerTask sTask = periodicTasks.get(task);
+			SchedulerTaskWrapper sTask = periodicTasks.get(task);
 			// continue only for periodic tasks
 			if (sTask == null)
 				return;
 			
-			// if the periodic task execution took more than it remained till the next period 
-			if (sTask.nextExecutionTime < System.currentTimeMillis()) {				
-				queue.rescheduleTask(sTask, System.currentTimeMillis() + sTask.period);
+			synchronized (sTask.lock) {
+				// if the periodic task execution took more than it remained till the next period 
+				if (sTask.nextExecutionTime < System.currentTimeMillis()) {				
+					queue.rescheduleTask(sTask, System.currentTimeMillis() + sTask.period);
+				}
 			}
 		}
 		
@@ -98,7 +109,7 @@ public class SingleThreadedScheduler implements Scheduler {
 						"Scheduler already terminated.");
 			
 			if (task.getSchedulingPeriod() > 0) {
-				SchedulerTask sTask = new SchedulerTask(task);
+				SchedulerTaskWrapper sTask = new SchedulerTaskWrapper(task);
 				scheduleNow(sTask, task.getSchedulingPeriod());
 				periodicTasks.put(task, sTask);
 			}
@@ -110,7 +121,7 @@ public class SingleThreadedScheduler implements Scheduler {
 					if (!thread.newTasksMayBeScheduled || !thread.tasksMayBeExecuted)
 						return;
 
-					scheduleNow(new SchedulerTask(task), 0);
+					scheduleNow(new SchedulerTaskWrapper(task), 0);
 				}
 			}
 		});
@@ -119,10 +130,10 @@ public class SingleThreadedScheduler implements Scheduler {
 	/**
 	 * Note that this method has to be explicitly protected by queue's monitor!
 	 */
-	private void scheduleNow(SchedulerTask sTask, long period) {			
+	private void scheduleNow(SchedulerTaskWrapper sTask, long period) {			
 			sTask.nextExecutionTime = System.currentTimeMillis(); // start immediately
 			sTask.period = period;
-			sTask.state = SchedulerTask.SCHEDULED;
+			sTask.state = SchedulerTaskWrapper.SCHEDULED;
 
 			queue.add(sTask);
 			if (queue.getMin() == sTask)
@@ -136,8 +147,8 @@ public class SingleThreadedScheduler implements Scheduler {
 	public void removeTask(Task task) {
 		task.unsetTriggerListener();
 		 synchronized(queue) {
-			 // remove all the periodic/triggered schedules of the task
-			 queue.removeAll(task);			
+			 // cancel all the periodic/triggered schedules of the task
+			 queue.cancelAll(task);			
 			 periodicTasks.remove(task);
 		 }				 
 	}
@@ -210,36 +221,50 @@ class SchedulerThread extends Thread {
     private void mainLoop() {
         while (true) {
             try {
-                SchedulerTask task;
+                SchedulerTaskWrapper task;
                 boolean taskFired;
                 synchronized(queue) {
                     // Wait for queue to become non-empty
                     while (queue.isEmpty() && newTasksMayBeScheduled)
                         queue.wait();
-                    if (queue.isEmpty())
+                    if (queue.isEmpty() && !newTasksMayBeScheduled)
                         break; // Queue is empty and will forever remain; die
 
                     // Queue nonempty; look at first evt and do the right thing
                     long currentTime, executionTime;
                     task = queue.getMin();
+                    
                     synchronized(task.lock) {
-                        if (task.state == SchedulerTask.CANCELLED) {
+                        if (task.state == SchedulerTaskWrapper.CANCELLED) {
                             queue.removeMin();
                             continue;  // No action required, poll queue again
-                        }
+                        }                        
+                        
                         currentTime = System.currentTimeMillis();
                         executionTime = task.nextExecutionTime;
-                        if (taskFired = (executionTime<=currentTime)) {
-                            if (task.period == 0) { // Non-repeating, remove
-                                queue.removeMin();
-                                task.state = SchedulerTask.EXECUTED;
-                            } else { // Repeating task, reschedule
-                                queue.rescheduleMin(executionTime + task.period);
-                            }
+                        taskFired = (executionTime<=currentTime);
+
+                        if (!taskFired) { // Task hasn't yet fired; wait 
+                            queue.wait(executionTime - currentTime);
+							
+							// restart, since the current task might have been
+							// deleted, or some other task that has to be
+							// scheduled earlier might have been added, or all
+							// tasks might have been deleted
+                            if (queue.getMin() != task)
+                            	continue;                          
                         }
+                                             
+                        assert taskFired;                        
+                        
+                        if (task.period == 0) { // Non-repeating, remove
+                            queue.removeMin();
+                            task.state = SchedulerTaskWrapper.EXECUTED;
+                        } else { // Repeating task, reschedule
+                            queue.rescheduleMin(executionTime + task.period);
+                        }                        
                     }
-                    if (!taskFired) // Task hasn't yet fired; wait
-                        queue.wait(executionTime - currentTime);
+                   
                     
                     // make sure the fire task can be executed
                     taskFired = taskFired && tasksMayBeExecuted;
@@ -268,12 +293,12 @@ class TaskQueue {
     /**
      * Priority queue represented as a balanced binary heap: the two children
      * of queue[n] are queue[2*n] and queue[2*n+1].  The priority queue is
-     * ordered on the nextExecutionTime field: The SchedulerTask with the lowest
+     * ordered on the nextExecutionTime field: The SchedulerTaskWrapper with the lowest
      * nextExecutionTime is in queue[1] (assuming the queue is nonempty).  For
      * each node n in the heap, and each descendant of n, d,
      * n.nextExecutionTime <= d.nextExecutionTime.
      */
-    private SchedulerTask[] queue = new SchedulerTask[128];
+    private SchedulerTaskWrapper[] queue = new SchedulerTaskWrapper[128];
 
     /**
      * The number of tasks in the priority queue.  (The tasks are stored in
@@ -292,7 +317,7 @@ class TaskQueue {
 	/**
      * Adds a new task to the priority queue.
      */
-    void add(SchedulerTask task) {
+    void add(SchedulerTaskWrapper task) {
         // Grow backing store if necessary
         if (size + 1 == queue.length)
             queue = Arrays.copyOf(queue, 2*queue.length);
@@ -305,8 +330,11 @@ class TaskQueue {
      * Return the "head task" of the priority queue.  (The head task is an
      * task with the lowest nextExecutionTime.)
      */
-    SchedulerTask getMin() {
-        return queue[1];
+    SchedulerTaskWrapper getMin() {
+    	if (size > 0)
+    		return queue[1];
+    	else
+    		return null;
     }
 
     /**
@@ -314,7 +342,7 @@ class TaskQueue {
      * head task, which is returned by getMin) to the number of tasks on the
      * queue, inclusive.
      */
-    SchedulerTask get(int i) {
+    SchedulerTaskWrapper get(int i) {
         return queue[i];
     }
 
@@ -328,31 +356,19 @@ class TaskQueue {
     }
 
     /**
-	 * Removes all the scheduler tasks holding the given executable task from
+	 * Cancels all the scheduler tasks holding the given executable task from
 	 * queue. There can be many of them due to multiple triggers firing at a
-	 * rapid succession. Recall that queue is one-based, so 1 <= i <= size.
+	 * rapid succession. The cancelled tasks will be removed automatically by
+	 * the SchedulerThreat. 
 	 */
-    void removeAll(Task executable) {
-    	int i = 1;
-    	while (i <= size) {
-	        for (;i <= size; ++i) {
-	        	if (queue[i].executable.equals(executable))
-	        		break;
-	        }
-	        
-	        // no more occurences found
-	        if (i > size)
-	        	return;
-	
-	        queue[i] = queue[size];
-	        queue[size--] = null;  // Drop extra ref to prevent memory leak
-	        
-	        // if it wasn't the last element
-	        if (i <= size) {        	
-	        	fixDown(i);
-	        	fixUp(i);
-	        }
-    	}
+    void cancelAll(Task executable) {    	    	
+        for (int i=1; i <= size; ++i) {
+        	synchronized(queue[i].lock) {
+	        	if (queue[i].executable.equals(executable)) {
+	        		queue[i].state = SchedulerTaskWrapper.CANCELLED;
+	        	}
+        	}
+        }	      
     }
 
     /**
@@ -368,7 +384,7 @@ class TaskQueue {
 	 * Sets the nextExecutionTime associated with the given scheduler task to
 	 * the specified value, and adjusts priority queue accordingly.
 	 */
-    public void rescheduleTask(SchedulerTask task, long newTime) {
+	public void rescheduleTask(SchedulerTaskWrapper task, long newTime) {
     	int i = 1;    	
         for (;i <= size; ++i) {
         	if (queue[i].equals(task))
@@ -416,7 +432,7 @@ class TaskQueue {
             int j = k >> 1;
             if (queue[j].nextExecutionTime <= queue[k].nextExecutionTime)
                 break;
-            SchedulerTask tmp = queue[j];  queue[j] = queue[k]; queue[k] = tmp;
+            SchedulerTaskWrapper tmp = queue[j];  queue[j] = queue[k]; queue[k] = tmp;
             k = j;
         }
     }
@@ -439,7 +455,7 @@ class TaskQueue {
                 j++; // j indexes smallest kid
             if (queue[k].nextExecutionTime <= queue[j].nextExecutionTime)
                 break;
-            SchedulerTask tmp = queue[j];  queue[j] = queue[k]; queue[k] = tmp;
+            SchedulerTaskWrapper tmp = queue[j];  queue[j] = queue[k]; queue[k] = tmp;
             k = j;
         }
     }
@@ -455,9 +471,9 @@ class TaskQueue {
 }
 
 
-class SchedulerTask  {
+class SchedulerTaskWrapper  {
     /**
-     * This object is used to control access to the SchedulerTask internals.
+     * This object is used to control access to the SchedulerTaskWrapper internals.
      */
 	final Object lock = new Object();
 
@@ -484,7 +500,7 @@ class SchedulerTask  {
     static final int EXECUTED    = 2;
 
     /**
-     * This task has been cancelled (with a call to SchedulerTask.cancel).
+     * This task has been cancelled (with a call to SchedulerTaskWrapper.cancel).
      */
     static final int CANCELLED   = 3;
 
@@ -510,7 +526,7 @@ class SchedulerTask  {
     /**
      * Creates a new scheduler task.
      */
-    protected SchedulerTask(Task task) {
+    protected SchedulerTaskWrapper(Task task) {
     	this.executable = task;
     }
 
