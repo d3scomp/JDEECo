@@ -20,8 +20,13 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.task.Task;
 import cz.cuni.mff.d3s.deeco.task.TaskTriggerListener;
 
-// FIXME TB: The class is missing a header which states the author
-
+/**
+ * Scheduler test suite
+ * 
+ * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
+ * @author Andranik Muradyan <muradian@d3s.mff.cuni.cz>
+ *
+ * */
 public abstract class SchedulerTest  {
 
 	protected Scheduler tested;
@@ -128,6 +133,7 @@ public abstract class SchedulerTest  {
 		verify(executor, times(1)).execute(t, tr);
 		
 		// WHEN the scheduler is stopped and the trigger is triggered
+		reset(executor);
 		tested.stop();
 		testListener.triggered(t, tr);
 		// THEN the process in not scheduled anymore
@@ -213,8 +219,6 @@ public abstract class SchedulerTest  {
 		// THEN nothing happens anymore
 		verify(t, never()).setTriggerListener(null);
 	}
-	
-	
 	
 	/**
 	 * Creates a purely triggered task which stores the given trigger listener
