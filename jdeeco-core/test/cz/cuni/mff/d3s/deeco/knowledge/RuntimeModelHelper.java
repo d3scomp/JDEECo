@@ -13,7 +13,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
  * 
  */
-public class KnowledgePathUtils {
+public class RuntimeModelHelper {
 
 	public static KnowledgePath createKnowledgePath(
 			String... knowledgePathNodes) {
@@ -44,7 +44,7 @@ public class KnowledgePathUtils {
 		RuntimeMetadataFactory factory = RuntimeMetadataFactory.eINSTANCE;
 		KnowledgeChangeTrigger trigger = factory.createKnowledgeChangeTrigger();
 
-		trigger.setKnowledgePath(KnowledgePathUtils
+		trigger.setKnowledgePath(RuntimeModelHelper
 				.createKnowledgePath(knowledgePathNodes));
 
 		return trigger;
@@ -56,7 +56,7 @@ public class KnowledgePathUtils {
 		Parameter param = factory.createParameter();
 
 		param.setDirection(direction);
-		param.setKnowledgePath(KnowledgePathUtils
+		param.setKnowledgePath(RuntimeModelHelper
 				.createKnowledgePath(knowledgePathNodes));
 
 		return param;

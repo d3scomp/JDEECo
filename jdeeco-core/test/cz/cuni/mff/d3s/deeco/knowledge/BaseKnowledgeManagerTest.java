@@ -42,7 +42,7 @@ public class BaseKnowledgeManagerTest {
 	public void testUpdateIntegerField() throws Exception {
 		// WHEN the update method is called on the KnowledgeManager
 		// and as a ChangeSet, the update for the 'number' field is passed
-		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath("number");
+		KnowledgePath kp = RuntimeModelHelper.createKnowledgePath("number");
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
 		knowledgePaths.add(kp);
 
@@ -60,7 +60,7 @@ public class BaseKnowledgeManagerTest {
 	public void testInnerKnowledgeUpdate() throws Exception {
 		// WHEN the update method is called on the KnowledgeManager
 		// and as a ChangeSet, the update for some nested inner field is passed
-		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath(
+		KnowledgePath kp = RuntimeModelHelper.createKnowledgePath(
 				"innerKnowledge", "a");
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
 		knowledgePaths.add(kp);
@@ -79,7 +79,7 @@ public class BaseKnowledgeManagerTest {
 	public void testUpdateListField() throws Exception {
 		// WHEN the update method is called on the KnowledgeManager
 		// and as a ChangeSet, the update for one of the 'list' items is passed
-		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath("list", "2");
+		KnowledgePath kp = RuntimeModelHelper.createKnowledgePath("list", "2");
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
 		knowledgePaths.add(kp);
 
@@ -97,7 +97,7 @@ public class BaseKnowledgeManagerTest {
 	public void testUpdateMapField() throws Exception {
 		// WHEN the update method is called on the KnowledgeManager
 		// and as a ChangeSet, the update for one of the 'map' items is passed
-		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath("map", "a");
+		KnowledgePath kp = RuntimeModelHelper.createKnowledgePath("map", "a");
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
 		knowledgePaths.add(kp);
 
@@ -115,11 +115,11 @@ public class BaseKnowledgeManagerTest {
 	public void testRemovalFromList() throws Exception {
 		// WHEN the update method is called on the KnowledgeManager
 		// and as a ChangeSet, the removal of one of the 'list' items is passed
-		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath("list", "2");
+		KnowledgePath kp = RuntimeModelHelper.createKnowledgePath("list", "2");
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
 		knowledgePaths.add(kp);
 		Object nextItemValue = toBeTested.get(knowledgePaths).getValue(kp);
-		kp = KnowledgePathUtils.createKnowledgePath("list", "1");
+		kp = RuntimeModelHelper.createKnowledgePath("list", "1");
 		knowledgePaths.clear();
 		knowledgePaths.add(kp);
 		
@@ -138,7 +138,7 @@ public class BaseKnowledgeManagerTest {
 		// WHEN the update method is called on the KnowledgeManager
 		// and as a ChangeSet, the removal of one of the 'map' elements is
 		// passed
-		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath("map", "a");
+		KnowledgePath kp = RuntimeModelHelper.createKnowledgePath("map", "a");
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
 		knowledgePaths.add(kp);
 
@@ -154,7 +154,7 @@ public class BaseKnowledgeManagerTest {
 	@Test
 	public void testGetIntegerField() throws Exception {
 		// WHEN a field is accessed from the ReadOnlyKnowledgeManager
-		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath("number");
+		KnowledgePath kp = RuntimeModelHelper.createKnowledgePath("number");
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
 		knowledgePaths.add(kp);
 
@@ -166,7 +166,7 @@ public class BaseKnowledgeManagerTest {
 	@Test
 	public void testInnerKnowledgeGet() throws Exception {
 		// WHEN inner knowledge is accessed from the ReadOnlyKnowledgeManager
-		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath(
+		KnowledgePath kp = RuntimeModelHelper.createKnowledgePath(
 				"innerKnowledge", "a");
 
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
@@ -182,7 +182,7 @@ public class BaseKnowledgeManagerTest {
 		toBeTested = new BaseKnowledgeManager();
 		// WHEN a field is accessed from the knowledge manager initialized with
 		// null base knowledge
-		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath("number");
+		KnowledgePath kp = RuntimeModelHelper.createKnowledgePath("number");
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
 		knowledgePaths.add(kp);
 		// THEN exception is thrown.
@@ -192,7 +192,7 @@ public class BaseKnowledgeManagerTest {
 	@Test
 	public void testGetListField() throws Exception {
 		// WHEN an item of a list is accessed from the ReadOnlyKnowledgeManager
-		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath("list", "2");
+		KnowledgePath kp = RuntimeModelHelper.createKnowledgePath("list", "2");
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
 		knowledgePaths.add(kp);
 
@@ -205,7 +205,7 @@ public class BaseKnowledgeManagerTest {
 	public void testGetMapField() throws Exception {
 		// WHEN an element of a map is accessed from the
 		// ReadOnlyKnowledgeManager
-		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath("map", "a");
+		KnowledgePath kp = RuntimeModelHelper.createKnowledgePath("map", "a");
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
 		knowledgePaths.add(kp);
 
@@ -218,7 +218,7 @@ public class BaseKnowledgeManagerTest {
 	public void testNotExsistentAccess() throws Exception {
 		// WHEN a not existent entry is accessed from the
 		// ReadOnlyKnowledgeManager
-		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath("dummy");
+		KnowledgePath kp = RuntimeModelHelper.createKnowledgePath("dummy");
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
 		knowledgePaths.add(kp);
 
@@ -230,8 +230,8 @@ public class BaseKnowledgeManagerTest {
 	@Test
 	public void testRegisterListener() {
 		// WHEN a listener is registered at the KnowledgeManager
-		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath("number");
-		KnowledgeChangeTrigger trigger = KnowledgePathUtils
+		KnowledgePath kp = RuntimeModelHelper.createKnowledgePath("number");
+		KnowledgeChangeTrigger trigger = RuntimeModelHelper
 				.createKnowledgeChangeTrigger();
 		trigger.setKnowledgePath(kp);
 		toBeTested.register(trigger, triggerListener);
@@ -247,8 +247,8 @@ public class BaseKnowledgeManagerTest {
 	@Test
 	public void testUnregisterListener() {
 		// WHEN a previously registered listener
-		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath("number");
-		KnowledgeChangeTrigger trigger = KnowledgePathUtils
+		KnowledgePath kp = RuntimeModelHelper.createKnowledgePath("number");
+		KnowledgeChangeTrigger trigger = RuntimeModelHelper
 				.createKnowledgeChangeTrigger();
 		trigger.setKnowledgePath(kp);
 		toBeTested.register(trigger, triggerListener);

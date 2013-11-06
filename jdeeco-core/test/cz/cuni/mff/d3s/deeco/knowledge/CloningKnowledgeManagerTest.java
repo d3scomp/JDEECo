@@ -28,7 +28,7 @@ public class CloningKnowledgeManagerTest {
 	@Test
 	public void testImmutabilityOfGet() throws Exception {
 		// WHEN a list is accessed from the ClonningKnowledgeManager
-		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath("list");
+		KnowledgePath kp = RuntimeModelHelper.createKnowledgePath("list");
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
 		knowledgePaths.add(kp);
 		ValueSet result = toBeTested.get(knowledgePaths);
@@ -46,7 +46,7 @@ public class CloningKnowledgeManagerTest {
 	@Test
 	public void testImmutabilityOfUpdate() throws Exception {
 		// WHEN a list is inserted into the ClonningKnowledgeManager
-		KnowledgePath kp = KnowledgePathUtils.createKnowledgePath("list");
+		KnowledgePath kp = RuntimeModelHelper.createKnowledgePath("list");
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
 		knowledgePaths.add(kp);
 
