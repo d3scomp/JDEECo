@@ -4,6 +4,7 @@
 package cz.cuni.mff.d3s.deeco.model.runtime.custom;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataFactoryImpl;
 
 /**
@@ -30,6 +31,11 @@ public class RuntimeMetadataFactoryExt extends RuntimeMetadataFactoryImpl {
 	@Override
 	public KnowledgePath createKnowledgePath() {
 		return new KnowledgePathExt();
+	}
+	
+	@Override
+	public PathNodeField createPathNodeField() {
+		return new PathNodeFieldExt();
 	}
 	
 	// TODO: We might have also toString() method implemented for the KnowledgePath
