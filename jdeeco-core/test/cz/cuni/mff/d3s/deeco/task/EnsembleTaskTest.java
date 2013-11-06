@@ -98,8 +98,6 @@ public class EnsembleTaskTest {
 		verify(taskTriggerListener).triggered(task, model.ensembleKnowledgeChangeTrigger);
 				
 		// WHEN a trigger comes from the shadow replica
-		// TODO, it would make more sense, if the trigger notification from the shadow replicas would carry a reference to the particular read-only knowledge
-		// manager
 		reset(taskTriggerListener); // Without this, we would have to say that the verify below verifies two invocations -- because one already occurred above.
 		shadowReplicasTriggerListenerCaptor.getValue().triggered(shadowKnowledgeManager, model.ensembleKnowledgeChangeTrigger);
 		// THEN the task calls the registered listener
@@ -113,12 +111,12 @@ public class EnsembleTaskTest {
 		verify(knowledgeManager).unregister(model.ensembleKnowledgeChangeTrigger, knowledgeManagerTriggerListenerCaptor.getValue());
 
 		// WHEN a spurious trigger comes from the knowledge manager
-		// TODO
+		knowledgeManagerTriggerListenerCaptor.getValue().triggered(model.ensembleKnowledgeChangeTrigger);
 		// THEN it is not propagated to the listener (i.e. the scheduler)
 		verifyNoMoreInteractions(taskTriggerListener);
 
 		// WHEN a spurious trigger comes from a shadow replica
-		// TODO
+		shadowReplicasTriggerListenerCaptor.getValue().triggered(shadowKnowledgeManager, model.ensembleKnowledgeChangeTrigger);
 		// THEN it is not propagated to the listener (i.e. the scheduler)
 		verifyNoMoreInteractions(taskTriggerListener);
 	}
