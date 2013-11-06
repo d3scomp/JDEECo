@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
-import cz.cuni.mff.d3s.deeco.executor.SingleThreadedExecutor;
+import cz.cuni.mff.d3s.deeco.executor.SameThreadedExecutor;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerRegistry;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
@@ -123,10 +123,10 @@ public class RuntimeFrameworkBuilderTest {
 		// GIVEN a configuration with SINGLE_THREADED execution
 		RuntimeConfiguration cnf = new RuntimeConfiguration(null, null, Execution.SINGLE_THREADED);
 		RuntimeFrameworkBuilder tested = new RuntimeFrameworkBuilder(cnf);
-		// THEN the builder creates an instance of SingleThreadedExecutor
+		// THEN the builder creates an instance of SameThreadedExecutor
 		tested.buildExecutor();
 		assertNotNull(tested.executor);
-		assertTrue(tested.executor instanceof SingleThreadedExecutor);		
+		assertTrue(tested.executor instanceof SameThreadedExecutor);		
 	}
 	
 	@Test

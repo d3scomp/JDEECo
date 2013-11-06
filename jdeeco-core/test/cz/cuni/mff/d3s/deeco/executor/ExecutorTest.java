@@ -10,8 +10,12 @@ import org.junit.rules.ExpectedException;
 
 import cz.cuni.mff.d3s.deeco.task.Task;
 
-//FIXME TB: The class is missing a header which states the author
-
+/**
+ * Base for testing all Executor implementations.
+ * 
+ * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
+ *
+ */
 public abstract class ExecutorTest {
 	
 	protected Executor tested;

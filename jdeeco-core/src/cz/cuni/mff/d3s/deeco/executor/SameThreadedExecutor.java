@@ -4,12 +4,12 @@ import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.task.Task;
 
 /**
- * Base for testing all Executor implementations.
+ * Executor that reuses the thread context in which the {@link #execute(Task)} was called. 
  * 
  * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
  *
  */
-public class SingleThreadedExecutor implements Executor {
+public class SameThreadedExecutor implements Executor {
 
 	protected ExecutionListener listener = null;
 	
