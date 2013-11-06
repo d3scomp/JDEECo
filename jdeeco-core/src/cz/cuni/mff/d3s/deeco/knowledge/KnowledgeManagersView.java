@@ -17,9 +17,10 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
  * the triggers of the others.
  * 
  * @author Rima Al Ali <alali@d3s.mff.cuni.cz>
+ * @author Michal Kit <kit@d3s.mff.cuni.cz>
  *
  */
-public interface KnowledgeManagersView {
+public interface KnowledgeManagersView extends LocalListener, ReplicaListener {
 	
 	public Collection<ReadOnlyKnowledgeManager> getOthersKnowledgeManagers();
 	// Rima : It is a little bit confusing to have the same name 
