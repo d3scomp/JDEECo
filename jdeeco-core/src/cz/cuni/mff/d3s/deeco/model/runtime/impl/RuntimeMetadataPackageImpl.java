@@ -21,8 +21,8 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
@@ -51,7 +51,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass schedulingSpecificationEClass = null;
+	private EClass periodicTriggerEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -266,8 +266,8 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getSchedulingSpecification() {
-		return schedulingSpecificationEClass;
+	public EClass getPeriodicTrigger() {
+		return periodicTriggerEClass;
 	}
 
 	/**
@@ -275,17 +275,8 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getSchedulingSpecification_Triggers() {
-		return (EReference)schedulingSpecificationEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getSchedulingSpecification_Period() {
-		return (EAttribute)schedulingSpecificationEClass.getEStructuralFeatures().get(1);
+	public EAttribute getPeriodicTrigger_Period() {
+		return (EAttribute)periodicTriggerEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -500,7 +491,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getEnsembleDefinition_SchedulingSpecification() {
+	public EReference getEnsembleDefinition_Triggers() {
 		return (EReference)ensembleDefinitionEClass.getEStructuralFeatures().get(3);
 	}
 
@@ -545,7 +536,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getComponentProcess_SchedulingSpecification() {
+	public EReference getComponentProcess_ComponentInstance() {
 		return (EReference)componentProcessEClass.getEStructuralFeatures().get(1);
 	}
 
@@ -554,8 +545,8 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getComponentProcess_ComponentInstance() {
-		return (EReference)componentProcessEClass.getEStructuralFeatures().get(2);
+	public EAttribute getComponentProcess_IsActive() {
+		return (EAttribute)componentProcessEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -563,8 +554,8 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getComponentProcess_IsActive() {
-		return (EAttribute)componentProcessEClass.getEStructuralFeatures().get(3);
+	public EReference getComponentProcess_Triggers() {
+		return (EReference)componentProcessEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -730,9 +721,8 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		isCreated = true;
 
 		// Create classes and their features
-		schedulingSpecificationEClass = createEClass(SCHEDULING_SPECIFICATION);
-		createEReference(schedulingSpecificationEClass, SCHEDULING_SPECIFICATION__TRIGGERS);
-		createEAttribute(schedulingSpecificationEClass, SCHEDULING_SPECIFICATION__PERIOD);
+		periodicTriggerEClass = createEClass(PERIODIC_TRIGGER);
+		createEAttribute(periodicTriggerEClass, PERIODIC_TRIGGER__PERIOD);
 
 		triggerEClass = createEClass(TRIGGER);
 
@@ -765,7 +755,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		createEAttribute(ensembleDefinitionEClass, ENSEMBLE_DEFINITION__NAME);
 		createEReference(ensembleDefinitionEClass, ENSEMBLE_DEFINITION__MEMBERSHIP);
 		createEReference(ensembleDefinitionEClass, ENSEMBLE_DEFINITION__KNOWLEDGE_EXCHANGE);
-		createEReference(ensembleDefinitionEClass, ENSEMBLE_DEFINITION__SCHEDULING_SPECIFICATION);
+		createEReference(ensembleDefinitionEClass, ENSEMBLE_DEFINITION__TRIGGERS);
 
 		conditionEClass = createEClass(CONDITION);
 
@@ -773,9 +763,9 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 
 		componentProcessEClass = createEClass(COMPONENT_PROCESS);
 		createEAttribute(componentProcessEClass, COMPONENT_PROCESS__NAME);
-		createEReference(componentProcessEClass, COMPONENT_PROCESS__SCHEDULING_SPECIFICATION);
 		createEReference(componentProcessEClass, COMPONENT_PROCESS__COMPONENT_INSTANCE);
 		createEAttribute(componentProcessEClass, COMPONENT_PROCESS__IS_ACTIVE);
+		createEReference(componentProcessEClass, COMPONENT_PROCESS__TRIGGERS);
 
 		parameterEClass = createEClass(PARAMETER);
 		createEAttribute(parameterEClass, PARAMETER__DIRECTION);
@@ -830,6 +820,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		// Set bounds for type parameters
 
 		// Add supertypes to classes
+		periodicTriggerEClass.getESuperTypes().add(this.getTrigger());
 		knowledgeChangeTriggerEClass.getESuperTypes().add(this.getTrigger());
 		pathNodeFieldEClass.getESuperTypes().add(this.getPathNode());
 		pathNodeMapKeyEClass.getESuperTypes().add(this.getPathNode());
@@ -840,9 +831,8 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		pathNodeMemberEClass.getESuperTypes().add(this.getPathNode());
 
 		// Initialize classes, features, and operations; add parameters
-		initEClass(schedulingSpecificationEClass, SchedulingSpecification.class, "SchedulingSpecification", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getSchedulingSpecification_Triggers(), this.getTrigger(), null, "triggers", null, 0, -1, SchedulingSpecification.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getSchedulingSpecification_Period(), ecorePackage.getELong(), "period", null, 1, 1, SchedulingSpecification.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEClass(periodicTriggerEClass, PeriodicTrigger.class, "PeriodicTrigger", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getPeriodicTrigger_Period(), ecorePackage.getELong(), "period", null, 1, 1, PeriodicTrigger.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(triggerEClass, Trigger.class, "Trigger", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
@@ -875,7 +865,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		initEAttribute(getEnsembleDefinition_Name(), ecorePackage.getEString(), "name", null, 1, 1, EnsembleDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getEnsembleDefinition_Membership(), this.getCondition(), null, "membership", null, 1, 1, EnsembleDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getEnsembleDefinition_KnowledgeExchange(), this.getExchange(), null, "knowledgeExchange", null, 1, 1, EnsembleDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getEnsembleDefinition_SchedulingSpecification(), this.getSchedulingSpecification(), null, "schedulingSpecification", null, 1, 1, EnsembleDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getEnsembleDefinition_Triggers(), this.getTrigger(), null, "triggers", null, 0, -1, EnsembleDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(conditionEClass, Condition.class, "Condition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
@@ -883,9 +873,9 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 
 		initEClass(componentProcessEClass, ComponentProcess.class, "ComponentProcess", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getComponentProcess_Name(), ecorePackage.getEString(), "name", null, 1, 1, ComponentProcess.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getComponentProcess_SchedulingSpecification(), this.getSchedulingSpecification(), null, "schedulingSpecification", null, 1, 1, ComponentProcess.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getComponentProcess_ComponentInstance(), this.getComponentInstance(), this.getComponentInstance_ComponentProcesses(), "componentInstance", null, 1, 1, ComponentProcess.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getComponentProcess_IsActive(), ecorePackage.getEBoolean(), "isActive", null, 1, 1, ComponentProcess.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getComponentProcess_Triggers(), this.getTrigger(), null, "triggers", null, 0, -1, ComponentProcess.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(parameterEClass, Parameter.class, "Parameter", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getParameter_Direction(), this.getParameterDirection(), "direction", "", 1, 1, Parameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

@@ -45,7 +45,7 @@ public class ProcessTaskTest {
 	@Mock
 	private TaskTriggerListener taskTriggerListener;
 	@Captor
-	private ArgumentCaptor<TriggerListener> taskTriggerListenerCaptor;
+	private ArgumentCaptor<TriggerListener> knowledgeManagerTriggerListenerCaptor;
 	@Mock
 	private Scheduler scheduler;
 
@@ -69,7 +69,7 @@ public class ProcessTaskTest {
 		expectedOutValue = new ParamHolder<Integer>(0);		
 		SampleRuntimeModel.processMethod(inValue, expectedOutValue, expectedInOutValue);
 		
-		doNothing().when(knowledgeManager).register(eq(model.processTrigger), taskTriggerListenerCaptor.capture());
+		doNothing().when(knowledgeManager).register(eq(model.processKnowledgeChangeTrigger), knowledgeManagerTriggerListenerCaptor.capture());
 		
 		when(knowledgeManager.get(anyCollectionOf(KnowledgePath.class))).then(new Answer<ValueSet>() {
 			public ValueSet answer(InvocationOnMock invocation) {
@@ -97,9 +97,9 @@ public class ProcessTaskTest {
 	public void testSchedulingPeriod() {
 		// GIVEN a ProcessTask initialized with an ComponentProcess
 		// WHEN getSchedulingPeriod is called
-		long period = task.getSchedulingPeriod();
+		long period = task.getPeriodicTrigger().getPeriod();
 		// THEN it returns the period specified in the model
-		assertEquals(model.processSchedulingSpec.getPeriod(), period);
+		assertEquals(model.processPeriodicTrigger.getPeriod(), period);
 	}
 	
 	@Test
@@ -108,25 +108,22 @@ public class ProcessTaskTest {
 		// WHEN a listener (i.e. scheduler) is registered at the task
 		task.setTriggerListener(taskTriggerListener);
 		// THEN the task registers a trigger listener on the knowledge manager
-		verify(knowledgeManager).register(eq(model.processTrigger), any(TriggerListener.class));
+		verify(knowledgeManager).register(eq(model.processKnowledgeChangeTrigger), any(TriggerListener.class));
 		
 		// WHEN a trigger comes from the knowledge manager
-		taskTriggerListenerCaptor.getValue().triggered(model.processTrigger);
+		knowledgeManagerTriggerListenerCaptor.getValue().triggered(model.processKnowledgeChangeTrigger);
 		// THEN the task calls the registered listener (i.e. the scheduler)
-		verify(taskTriggerListener).triggered(task);
+		verify(taskTriggerListener).triggered(task, model.processKnowledgeChangeTrigger);
 		
 		// WHEN the listener (i.e. the scheduler) is unregistered
 		task.unsetTriggerListener();
 		// THEN the trigger is unregistered at the knowledge manager
-		verify(knowledgeManager).unregister(model.processTrigger, taskTriggerListenerCaptor.getValue());
+		verify(knowledgeManager).unregister(model.processKnowledgeChangeTrigger, knowledgeManagerTriggerListenerCaptor.getValue());
 		
+		// WHEN a spurious trigger comes from the knowledge manager
+		knowledgeManagerTriggerListenerCaptor.getValue().triggered(model.processKnowledgeChangeTrigger);		
+		// THEN it is not propagated to the listener (i.e. the scheduler)
 		verifyNoMoreInteractions(taskTriggerListener);
-		
-		// TODO - test spurious invocation from the KM (and remove the comment below) once we distinguish trigger listeners for KM and the scheduler 
-
-		// NOTE that we don't test here the case the trigger is not delivered to the scheduler when spurious trigger from the knowledge manager comes.
-		// This is because the task does the registration by directly passing the triggerListener to the knowledge manager and thus it has no control
-		// over the delivery (from the knowledge manager to the scheduler).
 	}
 	
 	@Test
@@ -135,7 +132,7 @@ public class ProcessTaskTest {
 		model.resetProcessMethodCallCounter();
 		
 		// WHEN invoke on the task is called
-		task.invoke();
+		task.invoke(null);
 		
 		// THEN it gets the knowledge needed for execution of the task
 		verify(knowledgeManager).get(anyCollectionOf(KnowledgePath.class));

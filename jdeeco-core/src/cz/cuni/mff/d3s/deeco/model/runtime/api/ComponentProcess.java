@@ -2,6 +2,7 @@
  */
 package cz.cuni.mff.d3s.deeco.model.runtime.api;
 
+import org.eclipse.emf.common.util.EList;
 
 /**
  * <!-- begin-user-doc -->
@@ -12,9 +13,9 @@ package cz.cuni.mff.d3s.deeco.model.runtime.api;
  * The following features are supported:
  * <ul>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getName <em>Name</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getSchedulingSpecification <em>Scheduling Specification</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getComponentInstance <em>Component Instance</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#isIsActive <em>Is Active</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getTriggers <em>Triggers</em>}</li>
  * </ul>
  * </p>
  *
@@ -48,32 +49,6 @@ public interface ComponentProcess extends Invocable {
 	 * @generated
 	 */
 	void setName(String value);
-
-	/**
-	 * Returns the value of the '<em><b>Scheduling Specification</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Scheduling Specification</em>' containment reference isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Scheduling Specification</em>' containment reference.
-	 * @see #setSchedulingSpecification(SchedulingSpecification)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentProcess_SchedulingSpecification()
-	 * @model containment="true" required="true"
-	 * @generated
-	 */
-	SchedulingSpecification getSchedulingSpecification();
-
-	/**
-	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getSchedulingSpecification <em>Scheduling Specification</em>}' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Scheduling Specification</em>' containment reference.
-	 * @see #getSchedulingSpecification()
-	 * @generated
-	 */
-	void setSchedulingSpecification(SchedulingSpecification value);
 
 	/**
 	 * Returns the value of the '<em><b>Component Instance</b></em>' container reference.
@@ -128,5 +103,21 @@ public interface ComponentProcess extends Invocable {
 	 * @generated
 	 */
 	void setIsActive(boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Triggers</b></em>' containment reference list.
+	 * The list contents are of type {@link cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Triggers</em>' containment reference list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Triggers</em>' containment reference list.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentProcess_Triggers()
+	 * @model containment="true"
+	 * @generated
+	 */
+	EList<Trigger> getTriggers();
 
 } // ComponentProcess

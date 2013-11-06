@@ -10,8 +10,12 @@ import org.junit.rules.ExpectedException;
 
 import cz.cuni.mff.d3s.deeco.task.Task;
 
-//FIXME TB: The class is missing a header which states the author
-
+/**
+ * Base for testing all Executor implementations.
+ * 
+ * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
+ *
+ */
 public abstract class ExecutorTest {
 	
 	protected Executor tested;
@@ -35,7 +39,7 @@ public abstract class ExecutorTest {
 		
 		taskException = new RuntimeException("Failed invoke");
 		taskFail = mock(Task.class);
-		doThrow(taskException).when(taskFail).invoke();
+		doThrow(taskException).when(taskFail).invoke(null);
 	}
 	
 	@Test
@@ -43,7 +47,7 @@ public abstract class ExecutorTest {
 		// WHEN there is no execution listener and a task that succeeds is
 		// scheduled for execution
 		tested.setExecutionListener(null);
-		tested.execute(taskSuccess);
+		tested.execute(taskSuccess, null);
 		// THEN no error occurs
 	}
 	
@@ -52,7 +56,7 @@ public abstract class ExecutorTest {
 		// WHEN there is no execution listener and a task that fails is
 		// scheduled for execution
 		tested.setExecutionListener(null);
-		tested.execute(taskFail);
+		tested.execute(taskFail, null);
 		// THEN no error occurs
 	}
 	
@@ -61,7 +65,7 @@ public abstract class ExecutorTest {
 		// GIVEN an executor with a registered listener
 		tested.setExecutionListener(listener);
 		// WHEN a task that succeeds is scheduled for execution		
-		tested.execute(taskSuccess);
+		tested.execute(taskSuccess, null);
 		// THEN the listener is notified that the task completed
 		verify(listener).executionCompleted(taskSuccess);
 		verify(listener, never()).executionFailed(eq(taskSuccess), any(Exception.class));
@@ -71,7 +75,7 @@ public abstract class ExecutorTest {
 		
 		// WHEN the listener is unset and the task is scheduled for execution
 		tested.setExecutionListener(null);
-		tested.execute(taskSuccess);
+		tested.execute(taskSuccess, null);
 		// THEN it is no longer notified when execute is called
 		verify(listener, never()).executionCompleted(taskSuccess);
 		verify(listener, never()).executionFailed(eq(taskSuccess), any(Exception.class));
@@ -82,7 +86,7 @@ public abstract class ExecutorTest {
 		// GIVEN an executor with a registered listener
 		tested.setExecutionListener(listener);
 		// WHEN a task that fails is scheduled for execution		
-		tested.execute(taskFail);
+		tested.execute(taskFail, null);
 		// THEN the listener is notified that the task completed
 		verify(listener).executionFailed(taskFail, taskException);
 		verify(listener, never()).executionCompleted(taskSuccess);
@@ -91,7 +95,7 @@ public abstract class ExecutorTest {
 		
 		// WHEN the listener is unset and the task is scheduled for execution
 		tested.setExecutionListener(null);
-		tested.execute(taskFail);
+		tested.execute(taskFail, null);
 		// THEN it is no longer notified when execute is called
 		verify(listener, never()).executionFailed(taskFail, taskException);
 		verify(listener, never()).executionCompleted(taskSuccess);
@@ -100,15 +104,15 @@ public abstract class ExecutorTest {
 	@Test
 	public void testExecuteNonNullTask() throws Exception {
 		// WHEN a non-null task is scheduled for execution
-		tested.execute(taskSuccess);
+		tested.execute(taskSuccess, null);
 		// THEN the task.invoke() is called
-		verify(taskSuccess).invoke();
+		verify(taskSuccess).invoke(null);
 	}
 	
 	@Test
 	public void testExecuteNullTask() {
 		// WHEN a null task is scheduled for execution
-		tested.execute(null);
+		tested.execute(null, null);
 		// THEN nothing bad happens
 	}
 }

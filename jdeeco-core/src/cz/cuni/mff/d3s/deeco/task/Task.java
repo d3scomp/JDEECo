@@ -1,6 +1,8 @@
 package cz.cuni.mff.d3s.deeco.task;
 
 import cz.cuni.mff.d3s.deeco.knowledge.TriggerListener;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
 /**
@@ -20,7 +22,7 @@ public abstract class Task {
 	// FIXME TB: Could we somehow know whether the scheduler is calling us because of the trigger or because of the period?
 	// In case of ensembles, we could take an advantage of this and when called because of a trigger, we wouldn't have to evaluate all potential pairs as we know
 	// which knowledge manager caused the trigger.
-	public abstract void invoke() throws TaskInvocationException;
+	public abstract void invoke(Trigger trigger) throws TaskInvocationException;
 
 	protected abstract void registerTriggers();
 	protected abstract void unregisterTriggers();
@@ -43,5 +45,9 @@ public abstract class Task {
 		}
 	}
 
-	abstract public long getSchedulingPeriod();
+	/**
+	 * Returns the period associated with the task. 
+	 * @return Period in miliseconds or -1 when there is no period associated with the task.
+	 */
+	abstract public PeriodicTrigger getPeriodicTrigger();
 }

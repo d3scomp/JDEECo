@@ -1,7 +1,5 @@
 package cz.cuni.mff.d3s.deeco.model.runtime;
 
-import javax.print.attribute.standard.MediaSize.Other;
-
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
@@ -16,9 +14,8 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 
@@ -37,15 +34,15 @@ public class SampleRuntimeModel {
 	public ComponentInstance componentInstance;
 	public EnsembleController ensembleController;
 	public ComponentProcess process;
-	public SchedulingSpecification processSchedulingSpec;
-	public KnowledgeChangeTrigger processTrigger;
+	public PeriodicTrigger processPeriodicTrigger;
+	public KnowledgeChangeTrigger processKnowledgeChangeTrigger;
 	public Parameter processParamIn, processParamOut, processParamInOut;
 	
 	public EnsembleDefinition ensembleDefinition;
 	public Condition membershipCondition;
 	public Exchange knowledgeExchange;
-	public SchedulingSpecification ensembleSchedulingSpec;
-	public KnowledgeChangeTrigger ensembleTrigger;
+	public PeriodicTrigger ensemblePeriodicTrigger;
+	public KnowledgeChangeTrigger ensembleKnowledgeChangeTrigger;
 	public Parameter membershipParamCoord, membershipParamMember;
 	public Parameter exchangeParamCoordIn, exchangeParamCoordOut, exchangeParamCoordInOut;
 	public Parameter exchangeParamMemberIn, exchangeParamMemberOut, exchangeParamMemberInOut;	
@@ -144,7 +141,15 @@ public class SampleRuntimeModel {
 		return param;
 	}
 	
-	private KnowledgeChangeTrigger createTrigger(String... knowledgePathNodes) {
+	private PeriodicTrigger createPeriodicTrigger(long period) {
+		PeriodicTrigger trigger = factory.createPeriodicTrigger();
+		
+		trigger.setPeriod(period);
+
+		return trigger;
+	}
+	
+	private KnowledgeChangeTrigger createKnowledgeChangeTrigger(String... knowledgePathNodes) {
 		KnowledgeChangeTrigger trigger = factory.createKnowledgeChangeTrigger();
 		
 		trigger.setKnowledgePath(createKnowledgePath(knowledgePathNodes));
@@ -177,11 +182,10 @@ public class SampleRuntimeModel {
 		process.getParameters().add(processParamInOut);
 		
 		// Construct a scheduling specification for the process
-		processSchedulingSpec = factory.createSchedulingSpecification();
-		processSchedulingSpec.setPeriod(10); // FIXME TB: what does this number mean?
-		processTrigger = createTrigger("level1", "trigger");
-		processSchedulingSpec.getTriggers().add(processTrigger);
-		process.setSchedulingSpecification(processSchedulingSpec);
+		processPeriodicTrigger = createPeriodicTrigger(10);
+		processKnowledgeChangeTrigger = createKnowledgeChangeTrigger("level1", "trigger");
+		process.getTriggers().add(processPeriodicTrigger);
+		process.getTriggers().add(processKnowledgeChangeTrigger);
 		
 		// Construct an ensemble definition
 		ensembleDefinition = factory.createEnsembleDefinition();
@@ -189,11 +193,10 @@ public class SampleRuntimeModel {
 		ensembleDefinition.setName("sample ensemble definition");
 		
 		// Construct a scheduling specification for the ensemble
-		ensembleSchedulingSpec = factory.createSchedulingSpecification();
-		ensembleSchedulingSpec.setPeriod(10); // FIXME TB: what does this number mean?
-		ensembleTrigger = createTrigger("<C>", "level1", "out");
-		ensembleSchedulingSpec.getTriggers().add(ensembleTrigger);
-		ensembleDefinition.setSchedulingSpecification(ensembleSchedulingSpec);
+		ensemblePeriodicTrigger = createPeriodicTrigger(10);
+		ensembleKnowledgeChangeTrigger = createKnowledgeChangeTrigger("<C>", "level1", "out");
+		ensembleDefinition.getTriggers().add(ensemblePeriodicTrigger);
+		ensembleDefinition.getTriggers().add(ensembleKnowledgeChangeTrigger);
 
 		// Construct a membership condition
 		membershipCondition = factory.createCondition();
