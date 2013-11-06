@@ -9,7 +9,7 @@ import cz.cuni.mff.d3s.deeco.task.Task;
  * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
  *
  */
-public class SameThreadedExecutor implements Executor {
+public class SameThreadExecutor implements Executor {
 
 	protected ExecutionListener listener = null;
 	

@@ -5,11 +5,11 @@ package cz.cuni.mff.d3s.deeco.executor;
  * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
  *
  */
-public class SameThreadedExecutorTest extends ExecutorTest {
+public class SameThreadExecutorTest extends ExecutorTest {
 
 	@Override
 	protected Executor setUpTested() {
-		return new SameThreadedExecutor();
+		return new SameThreadExecutor();
 	}
 
 }

@@ -1,7 +1,7 @@
 package cz.cuni.mff.d3s.deeco.runtime;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
-import cz.cuni.mff.d3s.deeco.executor.SameThreadedExecutor;
+import cz.cuni.mff.d3s.deeco.executor.SameThreadExecutor;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerRegistry;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
@@ -58,7 +58,7 @@ public class RuntimeFrameworkBuilder {
 		
 		switch (configuration.execution) {
 		case SINGLE_THREADED:
-			executor = new SameThreadedExecutor();
+			executor = new SameThreadExecutor();
 			break;
 		default:
 			String msg = "No Executor available for " + configuration.toString();
