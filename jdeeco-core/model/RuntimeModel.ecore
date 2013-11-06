@@ -2,9 +2,7 @@
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="runtime" nsURI="http://cz.cuni.mff.d3s.deeco.model.runtime/1.0"
     nsPrefix="cz.cuni.mff.d3s.deeco.model.runtime">
-  <eClassifiers xsi:type="ecore:EClass" name="SchedulingSpecification">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="triggers" upperBound="-1"
-        eType="#//Trigger" containment="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="PeriodicTrigger" eSuperTypes="#//Trigger">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="period" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
   </eClassifiers>
@@ -50,19 +48,19 @@
         eType="#//Condition" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="knowledgeExchange" lowerBound="1"
         eType="#//Exchange" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="schedulingSpecification"
-        lowerBound="1" eType="#//SchedulingSpecification" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="triggers" upperBound="-1"
+        eType="#//Trigger" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Condition" eSuperTypes="#//Invocable"/>
   <eClassifiers xsi:type="ecore:EClass" name="Exchange" eSuperTypes="#//Invocable"/>
   <eClassifiers xsi:type="ecore:EClass" name="ComponentProcess" eSuperTypes="#//Invocable">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="schedulingSpecification"
-        lowerBound="1" eType="#//SchedulingSpecification" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="componentInstance" lowerBound="1"
         eType="#//ComponentInstance" eOpposite="#//ComponentInstance/componentProcesses"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="isActive" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="triggers" upperBound="-1"
+        eType="#//Trigger" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="ParameterDirection">
     <eLiterals name="IN"/>

@@ -1,5 +1,7 @@
 package cz.cuni.mff.d3s.deeco.task;
 
+import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
+
 
 /**
  * Gets called when a trigger of the task occurs.
@@ -8,5 +10,5 @@ package cz.cuni.mff.d3s.deeco.task;
  * 
  */
 public interface TaskTriggerListener {
-	public void triggered(Task task);
+	public void triggered(Task task, Trigger trigger);
 }
