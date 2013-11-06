@@ -62,8 +62,8 @@ public class EnsembleTaskTest {
 		
 		model = new SampleRuntimeModel();
 
-		doNothing().when(knowledgeManager).register(eq(model.ensembleTrigger), taskTriggerListenerInKnowledgeManagerCaptor.capture());
-		doNothing().when(shadowReplicasAccess).register(eq(model.ensembleTrigger), taskTriggerListenerInShadowReplicasCaptor.capture());
+		doNothing().when(knowledgeManager).register(eq(model.ensembleKnowledgeChangeTrigger), taskTriggerListenerInKnowledgeManagerCaptor.capture());
+		doNothing().when(shadowReplicasAccess).register(eq(model.ensembleKnowledgeChangeTrigger), taskTriggerListenerInShadowReplicasCaptor.capture());
 		
 		model.setKnowledgeManager(knowledgeManager);
 		model.setOtherKnowledgeManagersAccess(shadowReplicasAccess);
@@ -78,7 +78,7 @@ public class EnsembleTaskTest {
 		long period = task.getSchedulingPeriod();
 		// THEN it returns the period specified in the model
 		// THEN it returns the period specified in the model
-		assertEquals(model.ensembleSchedulingSpec.getPeriod(), period);
+		assertEquals(model.ensemblePeriodicTrigger.getPeriod(), period);
 
 	}
 	
@@ -88,12 +88,12 @@ public class EnsembleTaskTest {
 		// WHEN a trigger listener (i.e. scheduler) is registered at the task
 		task.setTriggerListener(taskTriggerListener);
 		// THEN the task registers a trigger listener (regardless whether it is a trigger on coordinator's or member's knowledge) on the knowledge manager
-		verify(knowledgeManager).register(eq(model.ensembleTrigger), any(TriggerListener.class)); // FIXME TB: This is wrong, because the task is supposed to register a trigger without its root (member/coord). The same applies below.
+		verify(knowledgeManager).register(eq(model.ensembleKnowledgeChangeTrigger), any(TriggerListener.class)); // FIXME TB: This is wrong, because the task is supposed to register a trigger without its root (member/coord). The same applies below.
 		// AND the task register a trigger listener (regardless whether it is a trigger on coordinator's or member's knowledge) on the shadow replicas
-		verify(shadowReplicasAccess).register(eq(model.ensembleTrigger), any(ShadowsTriggerListener.class));		
+		verify(shadowReplicasAccess).register(eq(model.ensembleKnowledgeChangeTrigger), any(ShadowsTriggerListener.class));		
 
 		// WHEN a trigger comes from the knowledge manager
-		taskTriggerListenerInKnowledgeManagerCaptor.getValue().triggered(model.ensembleTrigger);
+		taskTriggerListenerInKnowledgeManagerCaptor.getValue().triggered(model.ensembleKnowledgeChangeTrigger);
 		// THEN the task calls the registered listener
 		verify(taskTriggerListener).triggered(task);
 				
@@ -101,16 +101,16 @@ public class EnsembleTaskTest {
 		// TODO, it would make more sense, if the trigger notification from the shadow replicas would carry a reference to the particular read-only knowledge
 		// manager
 		reset(taskTriggerListener); // Without this, we would have to say that the verify below verifies two invocations -- because one already occurred above.
-		taskTriggerListenerInShadowReplicasCaptor.getValue().triggered(shadowKnowledgeManager, model.ensembleTrigger);
+		taskTriggerListenerInShadowReplicasCaptor.getValue().triggered(shadowKnowledgeManager, model.ensembleKnowledgeChangeTrigger);
 		// THEN the task calls the registered listener
 		verify(taskTriggerListener).triggered(task);
 		
 		// WHEN the listener (i.e. the scheduler) is unregistered
 		task.unsetTriggerListener();
 		// THEN the trigger is unregistered at the knowledge manager
-		verify(knowledgeManager).unregister(model.ensembleTrigger, taskTriggerListenerInKnowledgeManagerCaptor.getValue());
+		verify(knowledgeManager).unregister(model.ensembleKnowledgeChangeTrigger, taskTriggerListenerInKnowledgeManagerCaptor.getValue());
 		// AND the trigger is unregistered at the shadow replicas
-		verify(knowledgeManager).unregister(model.ensembleTrigger, taskTriggerListenerInKnowledgeManagerCaptor.getValue());
+		verify(knowledgeManager).unregister(model.ensembleKnowledgeChangeTrigger, taskTriggerListenerInKnowledgeManagerCaptor.getValue());
 
 		// TODO - test spurious invocation from the 
 	}

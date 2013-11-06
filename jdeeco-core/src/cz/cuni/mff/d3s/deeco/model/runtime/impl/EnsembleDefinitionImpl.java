@@ -5,18 +5,25 @@ package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Condition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Exchange;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 
+import java.util.Collection;
+
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
+
+import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
+
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -28,7 +35,7 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl#getName <em>Name</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl#getMembership <em>Membership</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl#getKnowledgeExchange <em>Knowledge Exchange</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl#getSchedulingSpecification <em>Scheduling Specification</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl#getTriggers <em>Triggers</em>}</li>
  * </ul>
  * </p>
  *
@@ -76,14 +83,14 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 	protected Exchange knowledgeExchange;
 
 	/**
-	 * The cached value of the '{@link #getSchedulingSpecification() <em>Scheduling Specification</em>}' containment reference.
+	 * The cached value of the '{@link #getTriggers() <em>Triggers</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getSchedulingSpecification()
+	 * @see #getTriggers()
 	 * @generated
 	 * @ordered
 	 */
-	protected SchedulingSpecification schedulingSpecification;
+	protected EList<Trigger> triggers;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -216,42 +223,11 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public SchedulingSpecification getSchedulingSpecification() {
-		return schedulingSpecification;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public NotificationChain basicSetSchedulingSpecification(SchedulingSpecification newSchedulingSpecification, NotificationChain msgs) {
-		SchedulingSpecification oldSchedulingSpecification = schedulingSpecification;
-		schedulingSpecification = newSchedulingSpecification;
-		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.ENSEMBLE_DEFINITION__SCHEDULING_SPECIFICATION, oldSchedulingSpecification, newSchedulingSpecification);
-			if (msgs == null) msgs = notification; else msgs.add(notification);
+	public EList<Trigger> getTriggers() {
+		if (triggers == null) {
+			triggers = new EObjectContainmentEList<Trigger>(Trigger.class, this, RuntimeMetadataPackage.ENSEMBLE_DEFINITION__TRIGGERS);
 		}
-		return msgs;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setSchedulingSpecification(SchedulingSpecification newSchedulingSpecification) {
-		if (newSchedulingSpecification != schedulingSpecification) {
-			NotificationChain msgs = null;
-			if (schedulingSpecification != null)
-				msgs = ((InternalEObject)schedulingSpecification).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - RuntimeMetadataPackage.ENSEMBLE_DEFINITION__SCHEDULING_SPECIFICATION, null, msgs);
-			if (newSchedulingSpecification != null)
-				msgs = ((InternalEObject)newSchedulingSpecification).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - RuntimeMetadataPackage.ENSEMBLE_DEFINITION__SCHEDULING_SPECIFICATION, null, msgs);
-			msgs = basicSetSchedulingSpecification(newSchedulingSpecification, msgs);
-			if (msgs != null) msgs.dispatch();
-		}
-		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.ENSEMBLE_DEFINITION__SCHEDULING_SPECIFICATION, newSchedulingSpecification, newSchedulingSpecification));
+		return triggers;
 	}
 
 	/**
@@ -266,8 +242,8 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 				return basicSetMembership(null, msgs);
 			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__KNOWLEDGE_EXCHANGE:
 				return basicSetKnowledgeExchange(null, msgs);
-			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__SCHEDULING_SPECIFICATION:
-				return basicSetSchedulingSpecification(null, msgs);
+			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__TRIGGERS:
+				return ((InternalEList<?>)getTriggers()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -286,8 +262,8 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 				return getMembership();
 			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__KNOWLEDGE_EXCHANGE:
 				return getKnowledgeExchange();
-			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__SCHEDULING_SPECIFICATION:
-				return getSchedulingSpecification();
+			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__TRIGGERS:
+				return getTriggers();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -297,6 +273,7 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
@@ -309,8 +286,9 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__KNOWLEDGE_EXCHANGE:
 				setKnowledgeExchange((Exchange)newValue);
 				return;
-			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__SCHEDULING_SPECIFICATION:
-				setSchedulingSpecification((SchedulingSpecification)newValue);
+			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__TRIGGERS:
+				getTriggers().clear();
+				getTriggers().addAll((Collection<? extends Trigger>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -333,8 +311,8 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__KNOWLEDGE_EXCHANGE:
 				setKnowledgeExchange((Exchange)null);
 				return;
-			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__SCHEDULING_SPECIFICATION:
-				setSchedulingSpecification((SchedulingSpecification)null);
+			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__TRIGGERS:
+				getTriggers().clear();
 				return;
 		}
 		super.eUnset(featureID);
@@ -354,8 +332,8 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 				return membership != null;
 			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__KNOWLEDGE_EXCHANGE:
 				return knowledgeExchange != null;
-			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__SCHEDULING_SPECIFICATION:
-				return schedulingSpecification != null;
+			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__TRIGGERS:
+				return triggers != null && !triggers.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

@@ -16,8 +16,8 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification;
 
 import org.eclipse.emf.ecore.EFactory;
 
@@ -39,13 +39,13 @@ public interface RuntimeMetadataFactory extends EFactory {
 	RuntimeMetadataFactory eINSTANCE = cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataFactoryImpl.init();
 
 	/**
-	 * Returns a new object of class '<em>Scheduling Specification</em>'.
+	 * Returns a new object of class '<em>Periodic Trigger</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Scheduling Specification</em>'.
+	 * @return a new object of class '<em>Periodic Trigger</em>'.
 	 * @generated
 	 */
-	SchedulingSpecification createSchedulingSpecification();
+	PeriodicTrigger createPeriodicTrigger();
 
 	/**
 	 * Returns a new object of class '<em>Knowledge Change Trigger</em>'.

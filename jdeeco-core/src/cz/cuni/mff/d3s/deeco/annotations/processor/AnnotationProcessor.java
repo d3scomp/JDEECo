@@ -34,8 +34,8 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 
 /**
@@ -92,8 +92,8 @@ public class AnnotationProcessor {
 
 		List<Method> methods = getMethodsMarkedAsProcesses(clazz);
 		ComponentProcess componentProcess;
-		SchedulingSpecification schedulingSpecification;
-		KnowledgeChangeTrigger trigger;
+		KnowledgeChangeTrigger knowledgeChangeTrigger;
+		PeriodicTrigger periodicTrigger;
 		Parameter param;
 		Boolean hasTriggeredAnnotation;
 		try {
@@ -104,21 +104,19 @@ public class AnnotationProcessor {
 				componentProcess.setMethod(m);
 				componentProcess.setName(m.getName());
 
-				schedulingSpecification = factory
-						.createSchedulingSpecification();
-				componentProcess
-						.setSchedulingSpecification(schedulingSpecification);
-				schedulingSpecification.setPeriod(getPeriodInMilliSeconds(m));
+				periodicTrigger = factory.createPeriodicTrigger();
+				periodicTrigger.setPeriod(getPeriodInMilliSeconds(m));
+				componentProcess.getTriggers().add(periodicTrigger);
 
 				for (Pair<Parameter, Boolean> p : getParameters(m)) {
 					param = p.getValue0();
 					hasTriggeredAnnotation = p.getValue1();
 					componentProcess.getParameters().add(param);
 					if (hasTriggeredAnnotation) {
-						trigger = factory.createKnowledgeChangeTrigger();
-						trigger.setKnowledgePath(EcoreUtil.copy(param
+						knowledgeChangeTrigger = factory.createKnowledgeChangeTrigger();
+						knowledgeChangeTrigger.setKnowledgePath(EcoreUtil.copy(param
 								.getKnowledgePath()));
-						schedulingSpecification.getTriggers().add(trigger);
+						componentProcess.getTriggers().add(knowledgeChangeTrigger);
 					}
 				}
 			}
@@ -154,11 +152,11 @@ public class AnnotationProcessor {
 
 	/**
 	 * Extracts the period from a method. If no {@link PeriodicScheduling}
-	 * annotation is found, returns the default period (1000 msec).
+	 * annotation is found, returns -1.
 	 * 
 	 * @param m
 	 *            method to be processed
-	 * @return period in msec
+	 * @return period in msec or -1 when no period is associated with the method.
 	 */
 	private long getPeriodInMilliSeconds(Method m) {
 		for (Annotation a : m.getAnnotations()) {
@@ -166,7 +164,7 @@ public class AnnotationProcessor {
 				return ((PeriodicScheduling) a).value();
 			}
 		}
-		return 1000;
+		return -1;
 	}
 
 	/**

@@ -16,11 +16,10 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 
@@ -104,12 +103,10 @@ public class RuntimeModelTest {
 		// AND contains the same knowledge as before
 		ComponentInstance nComponentInstance = nModel.getComponentInstances().get(0);
 		ComponentProcess nComponentProcess = nComponentInstance.getComponentProcesses().get(0);
-		SchedulingSpecification nProcA1Sched = nComponentProcess.getSchedulingSpecification(); 
 
 		assertEquals(oModel.componentInstance.getName(), nComponentInstance.getName());
 		assertEquals(oModel.process.getName(), nComponentProcess.getName());
 		assertEquals(oModel.process.getMethod(), nComponentProcess.getMethod());
-		assertEquals(oModel.processSchedulingSpec.getPeriod(), nProcA1Sched.getPeriod());
 		// TODO: Compare the triggers and process params
 		// TODO: Compare the data stored in the knowledge manager
 	}

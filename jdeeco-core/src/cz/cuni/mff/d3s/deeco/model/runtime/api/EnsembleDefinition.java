@@ -2,6 +2,8 @@
  */
 package cz.cuni.mff.d3s.deeco.model.runtime.api;
 
+import org.eclipse.emf.common.util.EList;
+
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -15,7 +17,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getName <em>Name</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getMembership <em>Membership</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getKnowledgeExchange <em>Knowledge Exchange</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getSchedulingSpecification <em>Scheduling Specification</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getTriggers <em>Triggers</em>}</li>
  * </ul>
  * </p>
  *
@@ -103,29 +105,19 @@ public interface EnsembleDefinition extends EObject {
 	void setKnowledgeExchange(Exchange value);
 
 	/**
-	 * Returns the value of the '<em><b>Scheduling Specification</b></em>' containment reference.
+	 * Returns the value of the '<em><b>Triggers</b></em>' containment reference list.
+	 * The list contents are of type {@link cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger}.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Scheduling Specification</em>' containment reference isn't clear,
+	 * If the meaning of the '<em>Triggers</em>' containment reference list isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Scheduling Specification</em>' containment reference.
-	 * @see #setSchedulingSpecification(SchedulingSpecification)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getEnsembleDefinition_SchedulingSpecification()
-	 * @model containment="true" required="true"
+	 * @return the value of the '<em>Triggers</em>' containment reference list.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getEnsembleDefinition_Triggers()
+	 * @model containment="true"
 	 * @generated
 	 */
-	SchedulingSpecification getSchedulingSpecification();
-
-	/**
-	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getSchedulingSpecification <em>Scheduling Specification</em>}' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Scheduling Specification</em>' containment reference.
-	 * @see #getSchedulingSpecification()
-	 * @generated
-	 */
-	void setSchedulingSpecification(SchedulingSpecification value);
+	EList<Trigger> getTriggers();
 
 } // EnsembleDefinition

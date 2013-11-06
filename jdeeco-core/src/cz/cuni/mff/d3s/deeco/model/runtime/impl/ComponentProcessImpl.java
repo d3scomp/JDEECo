@@ -4,19 +4,25 @@ package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 
+import java.util.Collection;
+
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
+
+import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -26,9 +32,9 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  * The following features are implemented:
  * <ul>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getName <em>Name</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getSchedulingSpecification <em>Scheduling Specification</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getComponentInstance <em>Component Instance</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#isIsActive <em>Is Active</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getTriggers <em>Triggers</em>}</li>
  * </ul>
  * </p>
  *
@@ -56,16 +62,6 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 	protected String name = NAME_EDEFAULT;
 
 	/**
-	 * The cached value of the '{@link #getSchedulingSpecification() <em>Scheduling Specification</em>}' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getSchedulingSpecification()
-	 * @generated
-	 * @ordered
-	 */
-	protected SchedulingSpecification schedulingSpecification;
-
-	/**
 	 * The default value of the '{@link #isIsActive() <em>Is Active</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -84,6 +80,16 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 	 * @ordered
 	 */
 	protected boolean isActive = IS_ACTIVE_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getTriggers() <em>Triggers</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getTriggers()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<Trigger> triggers;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -123,49 +129,6 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 		name = newName;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT_PROCESS__NAME, oldName, name));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public SchedulingSpecification getSchedulingSpecification() {
-		return schedulingSpecification;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public NotificationChain basicSetSchedulingSpecification(SchedulingSpecification newSchedulingSpecification, NotificationChain msgs) {
-		SchedulingSpecification oldSchedulingSpecification = schedulingSpecification;
-		schedulingSpecification = newSchedulingSpecification;
-		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT_PROCESS__SCHEDULING_SPECIFICATION, oldSchedulingSpecification, newSchedulingSpecification);
-			if (msgs == null) msgs = notification; else msgs.add(notification);
-		}
-		return msgs;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setSchedulingSpecification(SchedulingSpecification newSchedulingSpecification) {
-		if (newSchedulingSpecification != schedulingSpecification) {
-			NotificationChain msgs = null;
-			if (schedulingSpecification != null)
-				msgs = ((InternalEObject)schedulingSpecification).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - RuntimeMetadataPackage.COMPONENT_PROCESS__SCHEDULING_SPECIFICATION, null, msgs);
-			if (newSchedulingSpecification != null)
-				msgs = ((InternalEObject)newSchedulingSpecification).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - RuntimeMetadataPackage.COMPONENT_PROCESS__SCHEDULING_SPECIFICATION, null, msgs);
-			msgs = basicSetSchedulingSpecification(newSchedulingSpecification, msgs);
-			if (msgs != null) msgs.dispatch();
-		}
-		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT_PROCESS__SCHEDULING_SPECIFICATION, newSchedulingSpecification, newSchedulingSpecification));
 	}
 
 	/**
@@ -235,6 +198,18 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EList<Trigger> getTriggers() {
+		if (triggers == null) {
+			triggers = new EObjectContainmentEList<Trigger>(Trigger.class, this, RuntimeMetadataPackage.COMPONENT_PROCESS__TRIGGERS);
+		}
+		return triggers;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -254,10 +229,10 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.COMPONENT_PROCESS__SCHEDULING_SPECIFICATION:
-				return basicSetSchedulingSpecification(null, msgs);
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__COMPONENT_INSTANCE:
 				return basicSetComponentInstance(null, msgs);
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__TRIGGERS:
+				return ((InternalEList<?>)getTriggers()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -286,12 +261,12 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 		switch (featureID) {
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__NAME:
 				return getName();
-			case RuntimeMetadataPackage.COMPONENT_PROCESS__SCHEDULING_SPECIFICATION:
-				return getSchedulingSpecification();
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__COMPONENT_INSTANCE:
 				return getComponentInstance();
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__IS_ACTIVE:
 				return isIsActive();
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__TRIGGERS:
+				return getTriggers();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -301,20 +276,22 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__NAME:
 				setName((String)newValue);
 				return;
-			case RuntimeMetadataPackage.COMPONENT_PROCESS__SCHEDULING_SPECIFICATION:
-				setSchedulingSpecification((SchedulingSpecification)newValue);
-				return;
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__COMPONENT_INSTANCE:
 				setComponentInstance((ComponentInstance)newValue);
 				return;
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__IS_ACTIVE:
 				setIsActive((Boolean)newValue);
+				return;
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__TRIGGERS:
+				getTriggers().clear();
+				getTriggers().addAll((Collection<? extends Trigger>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -331,14 +308,14 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__NAME:
 				setName(NAME_EDEFAULT);
 				return;
-			case RuntimeMetadataPackage.COMPONENT_PROCESS__SCHEDULING_SPECIFICATION:
-				setSchedulingSpecification((SchedulingSpecification)null);
-				return;
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__COMPONENT_INSTANCE:
 				setComponentInstance((ComponentInstance)null);
 				return;
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__IS_ACTIVE:
 				setIsActive(IS_ACTIVE_EDEFAULT);
+				return;
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__TRIGGERS:
+				getTriggers().clear();
 				return;
 		}
 		super.eUnset(featureID);
@@ -354,12 +331,12 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 		switch (featureID) {
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__NAME:
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-			case RuntimeMetadataPackage.COMPONENT_PROCESS__SCHEDULING_SPECIFICATION:
-				return schedulingSpecification != null;
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__COMPONENT_INSTANCE:
 				return getComponentInstance() != null;
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__IS_ACTIVE:
 				return isActive != IS_ACTIVE_EDEFAULT;
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__TRIGGERS:
+				return triggers != null && !triggers.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

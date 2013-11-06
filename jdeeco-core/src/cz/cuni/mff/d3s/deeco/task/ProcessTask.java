@@ -14,6 +14,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
@@ -131,7 +132,7 @@ public class ProcessTask extends Task {
 		
 		KnowledgeManager km = componentProcess.getComponentInstance().getKnowledgeManager();
 		
-		for (Trigger trigger : componentProcess.getSchedulingSpecification().getTriggers()) {
+		for (Trigger trigger : componentProcess.getTriggers()) {
 			km.register(trigger, knowledgeManagerTriggerListener);
 		}
 	}
@@ -143,12 +144,25 @@ public class ProcessTask extends Task {
 	protected void unregisterTriggers() {
 		KnowledgeManager km = componentProcess.getComponentInstance().getKnowledgeManager();
 		
-		for (Trigger trigger : componentProcess.getSchedulingSpecification().getTriggers()) {
+		for (Trigger trigger : componentProcess.getTriggers()) {
 			km.unregister(trigger, knowledgeManagerTriggerListener);
 		}		
 	}
 
+	/**
+	 * Returns the period associated with the process in the in the meta-model as the {@link PeriodicTrigger}. Note that the {@link ProcessTask} assumes that there is at most
+	 * one instance of {@link PeriodicTrigger} associated with the process in the meta-model.
+	 * 
+	 * @return Period in miliseconds or -1 if no period is associated with the task.
+	 */
+	@Override
 	public long getSchedulingPeriod() {
-		return componentProcess.getSchedulingSpecification().getPeriod();
+		for (Trigger trigger : componentProcess.getTriggers()) {
+			if (trigger instanceof PeriodicTrigger) {
+				return ((PeriodicTrigger) trigger).getPeriod();
+			}
+		}
+		
+		return -1;
 	}
 }

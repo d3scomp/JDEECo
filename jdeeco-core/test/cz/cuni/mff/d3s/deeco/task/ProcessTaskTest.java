@@ -69,7 +69,7 @@ public class ProcessTaskTest {
 		expectedOutValue = new ParamHolder<Integer>(0);		
 		SampleRuntimeModel.processMethod(inValue, expectedOutValue, expectedInOutValue);
 		
-		doNothing().when(knowledgeManager).register(eq(model.processTrigger), taskTriggerListenerCaptor.capture());
+		doNothing().when(knowledgeManager).register(eq(model.processKnowledgeChangeTrigger), taskTriggerListenerCaptor.capture());
 		
 		when(knowledgeManager.get(anyCollectionOf(KnowledgePath.class))).then(new Answer<ValueSet>() {
 			public ValueSet answer(InvocationOnMock invocation) {
@@ -99,7 +99,7 @@ public class ProcessTaskTest {
 		// WHEN getSchedulingPeriod is called
 		long period = task.getSchedulingPeriod();
 		// THEN it returns the period specified in the model
-		assertEquals(model.processSchedulingSpec.getPeriod(), period);
+		assertEquals(model.processPeriodicTrigger.getPeriod(), period);
 	}
 	
 	@Test
@@ -108,17 +108,17 @@ public class ProcessTaskTest {
 		// WHEN a listener (i.e. scheduler) is registered at the task
 		task.setTriggerListener(taskTriggerListener);
 		// THEN the task registers a trigger listener on the knowledge manager
-		verify(knowledgeManager).register(eq(model.processTrigger), any(TriggerListener.class));
+		verify(knowledgeManager).register(eq(model.processKnowledgeChangeTrigger), any(TriggerListener.class));
 		
 		// WHEN a trigger comes from the knowledge manager
-		taskTriggerListenerCaptor.getValue().triggered(model.processTrigger);
+		taskTriggerListenerCaptor.getValue().triggered(model.processKnowledgeChangeTrigger);
 		// THEN the task calls the registered listener (i.e. the scheduler)
 		verify(taskTriggerListener).triggered(task);
 		
 		// WHEN the listener (i.e. the scheduler) is unregistered
 		task.unsetTriggerListener();
 		// THEN the trigger is unregistered at the knowledge manager
-		verify(knowledgeManager).unregister(model.processTrigger, taskTriggerListenerCaptor.getValue());
+		verify(knowledgeManager).unregister(model.processKnowledgeChangeTrigger, taskTriggerListenerCaptor.getValue());
 		
 		verifyNoMoreInteractions(taskTriggerListener);
 		

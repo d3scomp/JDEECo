@@ -16,6 +16,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
@@ -170,7 +171,7 @@ public class EnsembleTask extends Task {
 		KnowledgeManager localKM = componentInstance.getKnowledgeManager();
 		KnowledgeManagersView shadowsKM = componentInstance.getOtherKnowledgeManagersAccess();
 		
-		for (Trigger trigger : ensembleController.getEnsembleDefinition().getSchedulingSpecification().getTriggers()) {
+		for (Trigger trigger : ensembleController.getEnsembleDefinition().getTriggers()) {
 			
 			// TODO: Here should come something which strips the change trigger knowledge path of the coord/member root
 			
@@ -188,7 +189,7 @@ public class EnsembleTask extends Task {
 		KnowledgeManager localKM = componentInstance.getKnowledgeManager();
 		KnowledgeManagersView shadowsKM = componentInstance.getOtherKnowledgeManagersAccess();
 		
-		for (Trigger trigger : ensembleController.getEnsembleDefinition().getSchedulingSpecification().getTriggers()) {
+		for (Trigger trigger : ensembleController.getEnsembleDefinition().getTriggers()) {
 			
 			// TODO: Here should come something which strips the change trigger knowledge path of the coord/member root
 			
@@ -206,7 +207,20 @@ public class EnsembleTask extends Task {
 		
 	}
 
+	/**
+	 * Returns the period associated with the ensemble in the in the meta-model as the {@link PeriodicTrigger}. Note that the {@link EnsembleTask} assumes that there is at most
+	 * one instance of {@link PeriodicTrigger} associated with the ensemble in the meta-model.
+	 * 
+	 * @return Period in miliseconds or -1 if no period is associated with the task.
+	 */
+	@Override
 	public long getSchedulingPeriod() {
-		return ensembleController.getEnsembleDefinition().getSchedulingSpecification().getPeriod();
+		for (Trigger trigger : ensembleController.getEnsembleDefinition().getTriggers()) {
+			if (trigger instanceof PeriodicTrigger) {
+				return ((PeriodicTrigger) trigger).getPeriod();
+			}
+		}
+		
+		return -1;
 	}
 }
