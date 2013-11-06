@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.deeco.knowledge;
+package cz.cuni.mff.d3s.deeco.model.runtime;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;

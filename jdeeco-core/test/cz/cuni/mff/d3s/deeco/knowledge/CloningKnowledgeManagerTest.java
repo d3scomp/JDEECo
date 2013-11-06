@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import cz.cuni.mff.d3s.deeco.knowledge.BaseKnowledgeManagerTest.Knowledge;
+import cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 

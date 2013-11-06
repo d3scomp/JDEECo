@@ -1,8 +1,8 @@
 package cz.cuni.mff.d3s.deeco.model.runtime;
 
-import static cz.cuni.mff.d3s.deeco.knowledge.RuntimeModelHelper.createKnowledgeChangeTrigger;
-import static cz.cuni.mff.d3s.deeco.knowledge.RuntimeModelHelper.createParameter;
-import static cz.cuni.mff.d3s.deeco.knowledge.RuntimeModelHelper.createPeriodicTrigger;
+import static cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper.createKnowledgeChangeTrigger;
+import static cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper.createParameter;
+import static cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper.createPeriodicTrigger;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
