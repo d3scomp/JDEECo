@@ -114,7 +114,7 @@ public class LocalTimeScheduler implements Scheduler, TaskTriggerListener {
 		TaskInfo ti = tasks.get(task);
 		
 		if( ti != null && ti.state != States.RUNNING ){
-			task.setTriggerListener(null);
+			task.unsetTriggerListener();
 			
 			
 			ti.timer.cancel();

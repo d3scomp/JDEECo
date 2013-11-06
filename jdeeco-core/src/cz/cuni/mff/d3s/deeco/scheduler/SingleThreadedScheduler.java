@@ -1,10 +1,36 @@
+/*
+ * parts taken from java.util.Timer
+ *  
+ * Copyright 1999-2007 Sun Microsystems, Inc.  All Rights Reserved.
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * This code is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 only, as
+ * published by the Free Software Foundation.  Sun designates this
+ * particular file as subject to the "Classpath" exception as provided
+ * by Sun in the LICENSE file that accompanied this code.
+ *
+ * This code is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * version 2 for more details (a copy is included in the LICENSE file that
+ * accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version
+ * 2 along with this work; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * Please contact Sun Microsystems, Inc., 4150 Network Circle, Santa Clara,
+ * CA 95054 USA or visit www.sun.com if you need additional information or
+ * have any questions.
+ */
 package cz.cuni.mff.d3s.deeco.scheduler;
 
 import java.util.Arrays;
-import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
-
-import org.junit.internal.runners.statements.RunAfters;
+import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
@@ -19,7 +45,9 @@ public class SingleThreadedScheduler implements Scheduler {
 	 * mostly important for postponing the Tasks' execution when the previous
 	 * execution took longer than the period.
 	 */
-	Map<Task, SchedulerEvent> periodicEvents;
+	Map<Task, SchedulerEvent> periodicEvents = new HashMap<>();
+	
+	Set<Task> allTasks = new HashSet<>();
 	
 	 /**
      * The scheduler task queue.  This data structure is shared with the scheduler
@@ -56,23 +84,24 @@ public class SingleThreadedScheduler implements Scheduler {
      */
 	@Override
 	public void executionCompleted(Task task) {
-
+		if (task instanceof InvokeAndWaitTask)
+			task.notify();
+		
 		synchronized (queue) {
-			SchedulerEvent sTask = periodicEvents.get(task);
+			SchedulerEvent event = periodicEvents.get(task);
 			// continue only for periodic tasks
-			if (sTask == null)
+			if (event == null)
 				return;
 			
-			synchronized (sTask.lock) {
+			synchronized (event.lock) {
 				// if the periodic task execution took more than it remained till the next period 
-				if (sTask.nextExecutionTime < System.currentTimeMillis()) {				
-					queue.rescheduleTask(sTask, System.currentTimeMillis() + sTask.period);
+				if (event.nextExecutionTime < System.currentTimeMillis()) {				
+					queue.rescheduleTask(event, System.currentTimeMillis() + event.period);
 				}
 			}
 		}
 		
-		if (task instanceof InvokeAndWaitTask)
-			task.notify();
+		
 	}
 
 	@Override
@@ -107,31 +136,45 @@ public class SingleThreadedScheduler implements Scheduler {
 	 * @throws IllegalArgumentException of a null task is passed as an argument.
 	 */
 	@Override
-	public void addTask(Task task) {
+	public void addTask(Task task) {		
 		if (task == null)
 			throw new IllegalArgumentException("The task cannot be null");
-		synchronized (queue) {
-			if (!thread.newTasksMayBeScheduled)
-				throw new IllegalStateException(
-						"Scheduler already terminated.");
+		
+		synchronized (allTasks) {		
+			if (allTasks.contains(task))
+				return;
 			
-			if (task.getPeriodicTrigger() != null) {
-				SchedulerEvent sTask = new SchedulerEvent(task, task.getPeriodicTrigger());
-				scheduleNow(sTask, task.getPeriodicTrigger().getPeriod());
-				periodicEvents.put(task, sTask);
-			}
-		}
-		task.setTriggerListener(new TaskTriggerListener() {	
-			@Override
-			public void triggered(Task task, Trigger trigger) {
-				synchronized (queue) {
-					if (!thread.newTasksMayBeScheduled || !thread.tasksMayBeExecuted)
-						return;
-
-					scheduleNow(new SchedulerEvent(task, trigger), 0);
+			synchronized (queue) {
+				if (!thread.newTasksMayBeScheduled)
+					throw new IllegalStateException(
+							"Scheduler already terminated.");
+				
+				if (task.getPeriodicTrigger() != null) {
+					SchedulerEvent sTask = new SchedulerEvent(task, task.getPeriodicTrigger());
+					scheduleNow(sTask, task.getPeriodicTrigger().getPeriod());
+					periodicEvents.put(task, sTask);
 				}
 			}
-		});
+			task.setTriggerListener(new TaskTriggerListener() {	
+				@Override
+				public void triggered(Task task, Trigger trigger) {
+					synchronized (queue) {
+						if (!thread.newTasksMayBeScheduled || !thread.tasksMayBeExecuted)
+							return;
+						
+						boolean isScheduled;
+						synchronized (allTasks) {
+							isScheduled = allTasks.contains(task);
+						}
+						if (isScheduled) {
+							scheduleNow(new SchedulerEvent(task, trigger), 0);
+						}
+					}
+				}
+			});
+			
+			allTasks.add(task);
+		}
 	}
 	
 	/**
@@ -152,12 +195,18 @@ public class SingleThreadedScheduler implements Scheduler {
 	 */
 	@Override
 	public void removeTask(Task task) {
-		task.unsetTriggerListener();
-		 synchronized(queue) {
-			 // cancel all the periodic/triggered schedules of the task
-			 queue.cancelAll(task);			
-			 periodicEvents.remove(task);
-		 }				 
+		synchronized (allTasks) {		
+			if (!allTasks.contains(task))
+				return;
+			
+			task.unsetTriggerListener();
+			synchronized(queue) {
+				 // cancel all the periodic/triggered schedules of the task
+				 queue.cancelAll(task);			
+				 periodicEvents.remove(task);
+			}				 
+			allTasks.remove(task);
+		}
 	}
 
 	@Override
@@ -199,7 +248,7 @@ class SchedulerThread extends Thread {
 	 * temporarily stopped and all the scheduled tasks have to bee ignored. Note
 	 * that this field is protected by queue's monitor!
 	 */
-    boolean tasksMayBeExecuted = true;
+    boolean tasksMayBeExecuted = false;
 
     /**
      * Our Scheduler's queue.  We store this reference in preference to
