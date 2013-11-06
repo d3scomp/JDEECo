@@ -7,6 +7,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.task.Task;
 import cz.cuni.mff.d3s.deeco.task.TaskTriggerListener;
 
@@ -25,10 +27,12 @@ public class LocalTimeScheduler implements Scheduler, TaskTriggerListener {
 	private class TaskInfo{
 		Timer timer;
 		States state;
+		PeriodicTrigger periodicTrigger;
 		
-		public TaskInfo(){
+		public TaskInfo(PeriodicTrigger periodicTrigger){
 			timer = new Timer();
 			state = States.STOPPED;
+			this.periodicTrigger = periodicTrigger;
 		}		
 	}
 	
@@ -77,7 +81,7 @@ public class LocalTimeScheduler implements Scheduler, TaskTriggerListener {
 		if( task == null || tasks.containsKey(task) )
 			return;
 		
-		tasks.put(task, new TaskInfo());
+		tasks.put(task, new TaskInfo(task.getPeriodicTrigger()));
 		
 		if( state == States.RUNNING )
 			startTask(task);
@@ -96,7 +100,6 @@ public class LocalTimeScheduler implements Scheduler, TaskTriggerListener {
 			return;
 				
 		TaskInfo ti = tasks.get(task);
-		
 		if( ti != null && ti.state != States.RUNNING ){
 			task.setTriggerListener(this);
 			
@@ -126,46 +129,51 @@ public class LocalTimeScheduler implements Scheduler, TaskTriggerListener {
 	 * @throws NullPointerException when {@code task} is not in the {@link #tasks}. 
 	 * @param task
 	 */
-	protected void taskTriggerFired(final Task task) {
-		if( state == States.RUNNING && task != null && tasks.containsKey(task)){
-			if( tasks.get(task).state == States.RUNNING ){
-				// TODO : Implement error reporting
-				return;
-			}
+	protected void taskTriggerFired(final Task task, Trigger trigger) {
+		if( state == States.STOPPED )
+			return;
 
-			TaskInfo ti = tasks.get(task);
-			ti.timer.cancel();
-			ti.timer = new Timer();
+		if( task == null )
+			return;
 
-			taskTimerReset(task, ti);
-			
-			ti.state = States.RUNNING;
-			executor.execute(task);			
+		TaskInfo ti = tasks.get(task);
+		if( ti == null || ti.state == States.RUNNING ){
+			return;
 		}
+
+		ti.timer.cancel();
+		ti.timer = new Timer();
+
+		taskTimerReset(task, ti);
+
+		ti.state = States.RUNNING;
+		executor.execute(task, trigger);			
 	}
 
 	private void taskTimerReset(final Task task, TaskInfo ti) {
-		if( task.getSchedulingPeriod() > 0){			
+		if( ti.periodicTrigger != null ){			
 			ti.timer.scheduleAtFixedRate(new TimerTask() {
 				
 				@Override
 				public void run() {
 					taskTimerFired(task);				
 				}
-			}, 0, task.getSchedulingPeriod()); 
+			}, 0, ti.periodicTrigger.getPeriod()); 
 		}
 	}
 	
 	protected void taskTimerFired(Task task) {
 		if( task == null )
 			return;
-		
-		if( tasks.get(task).state == States.RUNNING ){
+
+		TaskInfo ti = tasks.get(task);
+
+		if( ti.state == States.RUNNING ){
 			return;
 		}
 		
-		tasks.get(task).state = States.RUNNING;
-		executor.execute(task);
+		ti.state = States.RUNNING;
+		executor.execute(task, ti.periodicTrigger);
 	}
 
 	@Override
@@ -179,8 +187,8 @@ public class LocalTimeScheduler implements Scheduler, TaskTriggerListener {
 	}
 
 	@Override
-	public void triggered(Task task) {
-		taskTimerFired(task);		
+	public void triggered(Task task, Trigger trigger) {
+		taskTriggerFired(task, trigger);
 	}
 }
 

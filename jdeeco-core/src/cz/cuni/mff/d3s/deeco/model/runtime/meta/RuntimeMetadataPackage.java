@@ -59,52 +59,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 	RuntimeMetadataPackage eINSTANCE = cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl.init();
 
 	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.SchedulingSpecificationImpl <em>Scheduling Specification</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.SchedulingSpecificationImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getSchedulingSpecification()
-	 * @generated
-	 */
-	int SCHEDULING_SPECIFICATION = 0;
-
-	/**
-	 * The feature id for the '<em><b>Triggers</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SCHEDULING_SPECIFICATION__TRIGGERS = 0;
-
-	/**
-	 * The feature id for the '<em><b>Period</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SCHEDULING_SPECIFICATION__PERIOD = 1;
-
-	/**
-	 * The number of structural features of the '<em>Scheduling Specification</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SCHEDULING_SPECIFICATION_FEATURE_COUNT = 2;
-
-	/**
-	 * The number of operations of the '<em>Scheduling Specification</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SCHEDULING_SPECIFICATION_OPERATION_COUNT = 0;
-
-	/**
 	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.TriggerImpl <em>Trigger</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -131,6 +85,43 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @ordered
 	 */
 	int TRIGGER_OPERATION_COUNT = 0;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.PeriodicTriggerImpl <em>Periodic Trigger</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.PeriodicTriggerImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getPeriodicTrigger()
+	 * @generated
+	 */
+	int PERIODIC_TRIGGER = 0;
+
+	/**
+	 * The feature id for the '<em><b>Period</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERIODIC_TRIGGER__PERIOD = TRIGGER_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>Periodic Trigger</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERIODIC_TRIGGER_FEATURE_COUNT = TRIGGER_FEATURE_COUNT + 1;
+
+	/**
+	 * The number of operations of the '<em>Periodic Trigger</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERIODIC_TRIGGER_OPERATION_COUNT = TRIGGER_OPERATION_COUNT + 0;
 
 	/**
 	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.KnowledgeChangeTriggerImpl <em>Knowledge Change Trigger</em>}' class.
@@ -465,13 +456,13 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int ENSEMBLE_DEFINITION__KNOWLEDGE_EXCHANGE = 2;
 
 	/**
-	 * The feature id for the '<em><b>Scheduling Specification</b></em>' containment reference.
+	 * The feature id for the '<em><b>Triggers</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ENSEMBLE_DEFINITION__SCHEDULING_SPECIFICATION = 3;
+	int ENSEMBLE_DEFINITION__TRIGGERS = 3;
 
 	/**
 	 * The number of structural features of the '<em>Ensemble Definition</em>' class.
@@ -667,22 +658,13 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int COMPONENT_PROCESS__NAME = INVOCABLE_FEATURE_COUNT + 0;
 
 	/**
-	 * The feature id for the '<em><b>Scheduling Specification</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMPONENT_PROCESS__SCHEDULING_SPECIFICATION = INVOCABLE_FEATURE_COUNT + 1;
-
-	/**
 	 * The feature id for the '<em><b>Component Instance</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_PROCESS__COMPONENT_INSTANCE = INVOCABLE_FEATURE_COUNT + 2;
+	int COMPONENT_PROCESS__COMPONENT_INSTANCE = INVOCABLE_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Is Active</b></em>' attribute.
@@ -691,7 +673,16 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_PROCESS__IS_ACTIVE = INVOCABLE_FEATURE_COUNT + 3;
+	int COMPONENT_PROCESS__IS_ACTIVE = INVOCABLE_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Triggers</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPONENT_PROCESS__TRIGGERS = INVOCABLE_FEATURE_COUNT + 3;
 
 	/**
 	 * The number of structural features of the '<em>Component Process</em>' class.
@@ -901,36 +892,25 @@ public interface RuntimeMetadataPackage extends EPackage {
 
 
 	/**
-	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification <em>Scheduling Specification</em>}'.
+	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger <em>Periodic Trigger</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Scheduling Specification</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification
+	 * @return the meta object for class '<em>Periodic Trigger</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger
 	 * @generated
 	 */
-	EClass getSchedulingSpecification();
+	EClass getPeriodicTrigger();
 
 	/**
-	 * Returns the meta object for the containment reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification#getTriggers <em>Triggers</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Triggers</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification#getTriggers()
-	 * @see #getSchedulingSpecification()
-	 * @generated
-	 */
-	EReference getSchedulingSpecification_Triggers();
-
-	/**
-	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification#getPeriod <em>Period</em>}'.
+	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger#getPeriod <em>Period</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Period</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.SchedulingSpecification#getPeriod()
-	 * @see #getSchedulingSpecification()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger#getPeriod()
+	 * @see #getPeriodicTrigger()
 	 * @generated
 	 */
-	EAttribute getSchedulingSpecification_Period();
+	EAttribute getPeriodicTrigger_Period();
 
 	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger <em>Trigger</em>}'.
@@ -1177,15 +1157,15 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EReference getEnsembleDefinition_KnowledgeExchange();
 
 	/**
-	 * Returns the meta object for the containment reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getSchedulingSpecification <em>Scheduling Specification</em>}'.
+	 * Returns the meta object for the containment reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getTriggers <em>Triggers</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference '<em>Scheduling Specification</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getSchedulingSpecification()
+	 * @return the meta object for the containment reference list '<em>Triggers</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getTriggers()
 	 * @see #getEnsembleDefinition()
 	 * @generated
 	 */
-	EReference getEnsembleDefinition_SchedulingSpecification();
+	EReference getEnsembleDefinition_Triggers();
 
 	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Condition <em>Condition</em>}'.
@@ -1229,17 +1209,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EAttribute getComponentProcess_Name();
 
 	/**
-	 * Returns the meta object for the containment reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getSchedulingSpecification <em>Scheduling Specification</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference '<em>Scheduling Specification</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getSchedulingSpecification()
-	 * @see #getComponentProcess()
-	 * @generated
-	 */
-	EReference getComponentProcess_SchedulingSpecification();
-
-	/**
 	 * Returns the meta object for the container reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getComponentInstance <em>Component Instance</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1260,6 +1229,17 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getComponentProcess_IsActive();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getTriggers <em>Triggers</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Triggers</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getTriggers()
+	 * @see #getComponentProcess()
+	 * @generated
+	 */
+	EReference getComponentProcess_Triggers();
 
 	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter <em>Parameter</em>}'.
@@ -1444,22 +1424,14 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 */
 	interface Literals {
 		/**
-		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.SchedulingSpecificationImpl <em>Scheduling Specification</em>}' class.
+		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.PeriodicTriggerImpl <em>Periodic Trigger</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.SchedulingSpecificationImpl
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getSchedulingSpecification()
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.PeriodicTriggerImpl
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getPeriodicTrigger()
 		 * @generated
 		 */
-		EClass SCHEDULING_SPECIFICATION = eINSTANCE.getSchedulingSpecification();
-
-		/**
-		 * The meta object literal for the '<em><b>Triggers</b></em>' containment reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference SCHEDULING_SPECIFICATION__TRIGGERS = eINSTANCE.getSchedulingSpecification_Triggers();
+		EClass PERIODIC_TRIGGER = eINSTANCE.getPeriodicTrigger();
 
 		/**
 		 * The meta object literal for the '<em><b>Period</b></em>' attribute feature.
@@ -1467,7 +1439,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute SCHEDULING_SPECIFICATION__PERIOD = eINSTANCE.getSchedulingSpecification_Period();
+		EAttribute PERIODIC_TRIGGER__PERIOD = eINSTANCE.getPeriodicTrigger_Period();
 
 		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.TriggerImpl <em>Trigger</em>}' class.
@@ -1672,12 +1644,12 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EReference ENSEMBLE_DEFINITION__KNOWLEDGE_EXCHANGE = eINSTANCE.getEnsembleDefinition_KnowledgeExchange();
 
 		/**
-		 * The meta object literal for the '<em><b>Scheduling Specification</b></em>' containment reference feature.
+		 * The meta object literal for the '<em><b>Triggers</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference ENSEMBLE_DEFINITION__SCHEDULING_SPECIFICATION = eINSTANCE.getEnsembleDefinition_SchedulingSpecification();
+		EReference ENSEMBLE_DEFINITION__TRIGGERS = eINSTANCE.getEnsembleDefinition_Triggers();
 
 		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ConditionImpl <em>Condition</em>}' class.
@@ -1718,14 +1690,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EAttribute COMPONENT_PROCESS__NAME = eINSTANCE.getComponentProcess_Name();
 
 		/**
-		 * The meta object literal for the '<em><b>Scheduling Specification</b></em>' containment reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference COMPONENT_PROCESS__SCHEDULING_SPECIFICATION = eINSTANCE.getComponentProcess_SchedulingSpecification();
-
-		/**
 		 * The meta object literal for the '<em><b>Component Instance</b></em>' container reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1740,6 +1704,14 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute COMPONENT_PROCESS__IS_ACTIVE = eINSTANCE.getComponentProcess_IsActive();
+
+		/**
+		 * The meta object literal for the '<em><b>Triggers</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference COMPONENT_PROCESS__TRIGGERS = eINSTANCE.getComponentProcess_Triggers();
 
 		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ParameterImpl <em>Parameter</em>}' class.

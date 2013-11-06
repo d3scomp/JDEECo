@@ -1,3 +1,25 @@
+package cz.cuni.mff.d3s.deeco.scheduler;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import cz.cuni.mff.d3s.deeco.executor.Executor;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
+import cz.cuni.mff.d3s.deeco.task.Task;
+import cz.cuni.mff.d3s.deeco.task.TaskTriggerListener;
+
 /**
  * Scheduler test suite
  * 
@@ -5,22 +27,6 @@
  * @author Andranik Muradyan <muradian@d3s.mff.cuni.cz>
  *
  * */
-
-
-package cz.cuni.mff.d3s.deeco.scheduler;
-
-import static org.mockito.Mockito.*;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-
-import cz.cuni.mff.d3s.deeco.executor.Executor;
-import cz.cuni.mff.d3s.deeco.task.Task;
-
-import cz.cuni.mff.d3s.deeco.task.TaskTriggerListener;
-
 public abstract class SchedulerTest  {
 
 	protected Scheduler tested;
@@ -49,12 +55,14 @@ public abstract class SchedulerTest  {
 	@Test
 	public void testPeriodicTaskScheduledWhenSchedulerStarted() throws InterruptedException {
 		Task t = mock(Task.class);
-		when(t.getSchedulingPeriod()).thenReturn(1l);
+		PeriodicTrigger p = mock(PeriodicTrigger.class);
+		when(p.getPeriod()).thenReturn(11L);
+		when(t.getPeriodicTrigger()).thenReturn(p);
 		
 		// WHEN a periodic task is added to a new (stopped) scheduler
 		tested.addTask(t);		
 		// THEN the task is not scheduled				
-		verify(executor, timeout(10).never()).execute(t);
+		verify(executor, timeout(10).never()).execute(t, p);
 		
 		// WHEN the scheduler is started, runs for a while (longer than the
 		// period) and then stopped
@@ -62,32 +70,36 @@ public abstract class SchedulerTest  {
 		Thread.sleep(10);
 		tested.stop();
 		// THEN the task gets eventually scheduled
-		verify(executor, atLeastOnce()).execute(t);
+		verify(executor, atLeastOnce()).execute(t, p);
 		
 		reset(executor);
 		
 		// WHEN the running scheduler is stopped a bit longer (FIXME TB: not sure what it means) 
 		// THEN the task is no longer scheduled		
-		verify(executor, timeout(10).never()).execute(t);		
+		verify(executor, timeout(10).never()).execute(t, p);		
 		
 	}
 	
 	@Test
 	public void testPeriodicTaskAutomaticallyScheduledWhenAddedToRunningScheduler() throws InterruptedException {
 		Task t = mock(Task.class);
-		when(t.getSchedulingPeriod()).thenReturn(1l);
+		PeriodicTrigger p = mock(PeriodicTrigger.class);
+		when(p.getPeriod()).thenReturn(11L);
+		when(t.getPeriodicTrigger()).thenReturn(p);
 		tested.start();
 
 		// WHEN a task is added to a running scheduler
 		tested.addTask(t);
 		// THEN it gets eventually scheduled	
-		verify(executor, timeout(100).atLeastOnce()).execute(t);
+		verify(executor, timeout(10).atLeastOnce()).execute(t, p);
 	}
 	
 	@Test
 	public void testPeriodicTaskNotScheduledWhenRemovedRunningScheduler() throws InterruptedException {
 		Task t = mock(Task.class);
-		when(t.getSchedulingPeriod()).thenReturn(1l);		
+		PeriodicTrigger p = mock(PeriodicTrigger.class);
+		when(p.getPeriod()).thenReturn(11L);
+		when(t.getPeriodicTrigger()).thenReturn(p);
 		
 		tested.addTask(t);
 		tested.start();
@@ -96,46 +108,43 @@ public abstract class SchedulerTest  {
 		tested.removeTask(t);				
 		// THEN it gets eventually un-scheduled
 		reset(executor);
-		verify(executor, timeout(10).never()).execute(t);		
+		verify(executor, timeout(10).never()).execute(t, p);		
 	}
 	
 	@Test
 	public void testTriggeredTaskScheduledOnlyWhenTriggered() throws InterruptedException {
 		Task t = createTriggeredTask();
+		Trigger tr = mock(Trigger.class); 
 		
 		// WHEN a triggered task is added to a stopped scheduler and the trigger is triggered
 		tested.addTask(t);
-		testListener.triggered(t);
+		testListener.triggered(t, tr);
 		// THEN the process in not scheduled		
-		verify(executor, never()).execute(t);		
+		verify(executor, never()).execute(t, tr);		
 		
 		// WHEN the scheduler is started with a registered triggered task
 		tested.start();
 		// THEN it is not scheduled if no trigger is triggered			
-		verify(executor, timeout(10).never()).execute(t);
+		verify(executor, timeout(10).never()).execute(t, tr);
 		
 		// WHEN the corresponding trigger is triggered
-		testListener.triggered(t);
+		testListener.triggered(t, tr);
 		// THEN the process is scheduled (exactly once)
-		verify(executor, times(1)).execute(t);
-	}
-	
-	@Test
-	public void testTriggeredTaskScheduledWhenSchedulerRunningOrInTaskList() throws InterruptedException{
-		Task t = createTriggeredTask( );
+		verify(executor, times(1)).execute(t, tr);
 		
 		// WHEN the scheduler is stopped and the trigger is triggered
+		reset(executor);
 		tested.stop();
-		testListener.triggered(t);
+		testListener.triggered(t, tr);
 		// THEN the process in not scheduled anymore
-		verify(executor, never()).execute(t);
+		verify(executor, never()).execute(t, tr);		
 		
 		// WHEN the task is removed from a running scheduler and the trigger is triggered
 		tested.start();
 		tested.removeTask(t);		
-		testListener.triggered(t);
+		testListener.triggered(t, tr);
 		// THEN the process in not scheduled		
-		verify(executor, never()).execute(t);
+		verify(executor, never()).execute(t, tr);		
 	}
 	
 	@Test
@@ -211,7 +220,6 @@ public abstract class SchedulerTest  {
 		verify(t, never()).setTriggerListener(null);
 	}
 	
-	
 	/**
 	 * Creates a purely triggered task which stores the given trigger listener
 	 * into {@link #testListener}.
@@ -220,8 +228,8 @@ public abstract class SchedulerTest  {
 		
 		Task t = new Task(tested) {	
 			@Override
-			public long getSchedulingPeriod() {
-				return 0L;
+			public PeriodicTrigger getPeriodicTrigger() {
+				return null;
 			}
 			
 			@Override
@@ -229,7 +237,7 @@ public abstract class SchedulerTest  {
 			@Override
 			protected void registerTriggers() {}			
 			@Override
-			public void invoke() {}
+			public void invoke(Trigger trigger) {}
 			
 			@Override
 			public void setTriggerListener(TaskTriggerListener listener) {				

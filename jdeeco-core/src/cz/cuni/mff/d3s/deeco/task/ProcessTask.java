@@ -14,6 +14,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
@@ -32,7 +33,9 @@ public class ProcessTask extends Task {
 		 */
 		@Override
 		public void triggered(Trigger trigger) {
-			listener.triggered(ProcessTask.this);
+			if (listener != null) {
+				listener.triggered(ProcessTask.this, trigger);
+			}
 		}
 	}
 	KnowledgeManagerTriggerListenerImpl knowledgeManagerTriggerListener = new KnowledgeManagerTriggerListenerImpl();
@@ -46,7 +49,7 @@ public class ProcessTask extends Task {
 	 * @see cz.cuni.mff.d3s.deeco.task.Task#invoke()
 	 */
 	@Override
-	public void invoke() throws TaskInvocationException {
+	public void invoke(Trigger trigger) throws TaskInvocationException {
 		// Obtain parameters from the knowledge
 		KnowledgeManager knowledgeManager = componentProcess.getComponentInstance().getKnowledgeManager();
 		Collection<Parameter> formalParams = componentProcess.getParameters();
@@ -131,7 +134,7 @@ public class ProcessTask extends Task {
 		
 		KnowledgeManager km = componentProcess.getComponentInstance().getKnowledgeManager();
 		
-		for (Trigger trigger : componentProcess.getSchedulingSpecification().getTriggers()) {
+		for (Trigger trigger : componentProcess.getTriggers()) {
 			km.register(trigger, knowledgeManagerTriggerListener);
 		}
 	}
@@ -143,12 +146,25 @@ public class ProcessTask extends Task {
 	protected void unregisterTriggers() {
 		KnowledgeManager km = componentProcess.getComponentInstance().getKnowledgeManager();
 		
-		for (Trigger trigger : componentProcess.getSchedulingSpecification().getTriggers()) {
+		for (Trigger trigger : componentProcess.getTriggers()) {
 			km.unregister(trigger, knowledgeManagerTriggerListener);
 		}		
 	}
 
-	public long getSchedulingPeriod() {
-		return componentProcess.getSchedulingSpecification().getPeriod();
+	/**
+	 * Returns the period associated with the process in the in the meta-model as the {@link PeriodicTrigger}. Note that the {@link ProcessTask} assumes that there is at most
+	 * one instance of {@link PeriodicTrigger} associated with the process in the meta-model.
+	 * 
+	 * @return Periodic trigger or null no period is associated with the task.
+	 */
+	@Override
+	public PeriodicTrigger getPeriodicTrigger() {
+		for (Trigger trigger : componentProcess.getTriggers()) {
+			if (trigger instanceof PeriodicTrigger) {
+				return ((PeriodicTrigger) trigger);
+			}
+		}
+		
+		return null;
 	}
 }
