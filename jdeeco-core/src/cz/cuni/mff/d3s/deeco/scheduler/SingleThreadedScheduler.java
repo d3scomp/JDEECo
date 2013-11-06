@@ -4,9 +4,13 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 
+import org.junit.internal.runners.statements.RunAfters;
+
 import cz.cuni.mff.d3s.deeco.executor.Executor;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.task.Task;
+import cz.cuni.mff.d3s.deeco.task.TaskInvocationException;
 import cz.cuni.mff.d3s.deeco.task.TaskTriggerListener;
 
 public class SingleThreadedScheduler implements Scheduler {
@@ -67,6 +71,8 @@ public class SingleThreadedScheduler implements Scheduler {
 			}
 		}
 		
+		if (task instanceof InvokeAndWaitTask)
+			task.notify();
 	}
 
 	@Override
@@ -160,7 +166,15 @@ public class SingleThreadedScheduler implements Scheduler {
 			thread.executor = executor;
 		}		
 	}
+	
+	public void invokeAndWait(Runnable doRun) throws InterruptedException {
+		InvokeAndWaitTask task = new InvokeAndWaitTask(this, doRun);
+		addTask(task);
+		task.wait();
+	}
 }
+
+
 
 
 /**
@@ -560,4 +574,39 @@ class SchedulerEvent  {
 
 }
 
+/**
+ * Ad-hoc tasks for one-time execution of a runnable within the context of the scheduler thread.
+ * 
+ * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
+ *
+ */
+class InvokeAndWaitTask extends Task {
 
+	Runnable runnable;
+	
+	public InvokeAndWaitTask(Scheduler scheduler, Runnable runnable) {
+		super(scheduler);
+		this.runnable = runnable;
+	}
+
+	@Override
+	public void invoke(Trigger trigger) throws TaskInvocationException {
+		if (runnable != null) {
+			runnable.run();
+		}
+	}
+
+	@Override
+	protected void registerTriggers() {				
+	}
+
+	@Override
+	protected void unregisterTriggers() {		
+	}
+
+	@Override
+	public PeriodicTrigger getPeriodicTrigger() {		
+		return null;
+	}
+	
+}
