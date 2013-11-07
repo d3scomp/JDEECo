@@ -21,7 +21,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
  */
 public interface KnowledgeManagersView {
 	
-	public Collection<ReadOnlyKnowledgeManager> getOthersKnowledgeManagers();
+	public Collection<ReadOnlyKnowledgeManager> getOtherKnowledgeManagers();
 	// Rima : It is a little bit confusing to have the same name 
 	//        register/unregister as in KnowledgeManager. 
 	// TB@RA: Good point. However, I can't come up with any better name. Any suggestions?
