@@ -7,5 +7,9 @@ public class AnnotationParsingException extends Exception {
 	public AnnotationParsingException(String msg) {
 		super(msg);
 	}
-
+	
+	public AnnotationParsingException(String msg, Throwable t) {
+		super(msg, t);
+	}
+	
 }
