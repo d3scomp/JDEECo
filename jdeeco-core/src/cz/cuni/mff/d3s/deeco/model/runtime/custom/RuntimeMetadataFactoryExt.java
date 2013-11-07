@@ -3,7 +3,12 @@
  */
 package cz.cuni.mff.d3s.deeco.model.runtime.custom;
 
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataFactoryImpl;
 
 /**
@@ -17,20 +22,52 @@ import cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataFactoryImpl;
  */
 public class RuntimeMetadataFactoryExt extends RuntimeMetadataFactoryImpl {
 
-	/**
-	 * 
-	 */
-	public RuntimeMetadataFactoryExt() {
-		super();
-	}
+        /**
+         * 
+         */
+        public RuntimeMetadataFactoryExt() {
+                super();
+        }
 
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataFactoryImpl#createKnowledgePath()
-	 */
-	@Override
-	public KnowledgePath createKnowledgePath() {
-		return new KnowledgePathExt();
-	}
-	
-	// TODO: We might have also toString() method implemented for the KnowledgePath
+        /* (non-Javadoc)
+         * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataFactoryImpl#createPeriodicTrigger()
+         */
+        @Override
+        public PeriodicTrigger createPeriodicTrigger() {
+                return new PeriodicTriggerExt();
+        }
+
+        /* (non-Javadoc)
+         * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataFactoryImpl#createKnowledgeChangeTrigger()
+         */
+        @Override
+        public KnowledgeChangeTrigger createKnowledgeChangeTrigger() {
+                return new KnowledgeChangeTriggerExt();
+        }
+
+        /* (non-Javadoc)
+         * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataFactoryImpl#createKnowledgePath()
+         */
+        @Override
+        public KnowledgePath createKnowledgePath() {
+                return new KnowledgePathExt();
+        }
+        
+        @Override
+        public PathNodeField createPathNodeField() {
+                return new PathNodeFieldExt();
+        }
+
+        @Override
+        public PathNodeCoordinator createPathNodeCoordinator() {
+                return new PathNodeCoordinatorExt();
+        }
+        
+        @Override
+        public PathNodeMember createPathNodeMember() {
+                return new PathNodeMemberExt();
+        }
+        
+
+        // TODO: We might have also toString() method implemented for the KnowledgePath
 }
