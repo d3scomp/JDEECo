@@ -1,5 +1,7 @@
 package cz.cuni.mff.d3s.deeco.model.runtime;
 
+import static cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper.*;
+
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
@@ -9,11 +11,8 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Exchange;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
@@ -108,53 +107,6 @@ public class SampleRuntimeModel {
 	
 	public void setOtherKnowledgeManagersAccess(KnowledgeManagersView knowledgeManagersView) {
 		componentInstance.setOtherKnowledgeManagersAccess(knowledgeManagersView);
-	}
-	
-	private KnowledgePath createKnowledgePath(String... knowledgePathNodes) {
-		KnowledgePath knowledgePath = factory.createKnowledgePath();
-				
-		for (String nodeName : knowledgePathNodes) {
-			PathNode pathNode;
-			
-			if ("<C>".equals(nodeName)) {
-				pathNode = factory.createPathNodeCoordinator();
-			} else if ("<M>".equals(nodeName)) {
-				pathNode = factory.createPathNodeMember();
-			} else {
-				PathNodeField pathNodeField = factory.createPathNodeField();		
-				pathNodeField.setName(nodeName);
-				pathNode = pathNodeField;
-			}
-			
-			knowledgePath.getNodes().add(pathNode);
-		}
-		
-		return knowledgePath;
-	}
-	
-	private Parameter createParameter(ParameterDirection direction, String... knowledgePathNodes) {
-		Parameter param = factory.createParameter();
-		
-		param.setDirection(direction);
-		param.setKnowledgePath(createKnowledgePath(knowledgePathNodes));
-		
-		return param;
-	}
-	
-	private PeriodicTrigger createPeriodicTrigger(long period) {
-		PeriodicTrigger trigger = factory.createPeriodicTrigger();
-		
-		trigger.setPeriod(period);
-
-		return trigger;
-	}
-	
-	private KnowledgeChangeTrigger createKnowledgeChangeTrigger(String... knowledgePathNodes) {
-		KnowledgeChangeTrigger trigger = factory.createKnowledgeChangeTrigger();
-		
-		trigger.setKnowledgePath(createKnowledgePath(knowledgePathNodes));
-
-		return trigger;
 	}
 	
 	public SampleRuntimeModel() throws Exception {

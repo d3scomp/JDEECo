@@ -1,7 +1,9 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
-//FIXME TB: The class does not have the header stating the author
-
+/**
+ * @author Michal Kit <kit@d3s.mff.cuni.cz>
+ *
+ */
 public class KnowledgeNotFoundException extends Exception {
 
 }
