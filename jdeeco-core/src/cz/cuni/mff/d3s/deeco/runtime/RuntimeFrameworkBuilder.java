@@ -2,7 +2,7 @@ package cz.cuni.mff.d3s.deeco.runtime;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.executor.SameThreadExecutor;
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerRegistry;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.scheduler.LocalTimeScheduler;
@@ -18,7 +18,7 @@ public class RuntimeFrameworkBuilder {
 	
 	Scheduler scheduler;
 	Executor executor;
-	KnowledgeManagerRegistry kmRegistry;	
+	KnowledgeManagerContainer kmContainer;	
 	RuntimeConfiguration configuration;	
 	RuntimeFramework runtime;
 	
@@ -68,7 +68,7 @@ public class RuntimeFrameworkBuilder {
 	}
 	
 	protected void buildKnowledgeManagerRegistry() {		
-		kmRegistry = new KnowledgeManagerRegistry();
+		kmContainer = new KnowledgeManagerContainer();
 	}
 	
 	protected void connect() {
@@ -81,7 +81,7 @@ public class RuntimeFrameworkBuilder {
 		// FIXME if we add support for sharing scheduler/synchronizer among
 		// multiple runtimes (for simulation), we will probably override/extend
 		// this method 
-		runtime = new RuntimeFrameworkImpl(model, scheduler, executor, kmRegistry);
+		runtime = new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer);
 	}
 	
 	

@@ -3,7 +3,7 @@ package cz.cuni.mff.d3s.deeco.knowledge;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 
 /**
- * Gets called by a knowledge manager when an event in the knowledge (typically change in the knowledge) matches the registered trigger.
+ * Gets called when the trigger is triggered.
  * 
  * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
  * 

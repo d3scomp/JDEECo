@@ -2,11 +2,13 @@ package cz.cuni.mff.d3s.deeco.runtime;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
+
 import cz.cuni.mff.d3s.deeco.executor.Executor;
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerRegistry;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
@@ -27,7 +29,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 	protected Scheduler scheduler;
 	protected RuntimeMetadata model;
 	protected Executor executor;
-	protected KnowledgeManagerRegistry kmRegistry;
+	protected KnowledgeManagerContainer kmContainer;
 	
 	protected Map<ComponentInstance, ComponentInstanceRecord> componentRecords = new HashMap<>();
 		
@@ -54,11 +56,11 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 	 * FIXME: add synchronizer/network container in the constructor
 	 */
 	public RuntimeFrameworkImpl(RuntimeMetadata model, Scheduler scheduler,
-			Executor executor, KnowledgeManagerRegistry kmRegistry) {
+			Executor executor, KnowledgeManagerContainer kmContainer) {
 		this.scheduler = scheduler;
 		this.model = model;
 		this.executor = executor;
-		this.kmRegistry = kmRegistry;
+		this.kmContainer = kmContainer;
 		
 		init();
 	}

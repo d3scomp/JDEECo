@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerRegistry;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
@@ -29,7 +29,7 @@ public class RuntimeFrameworkImplTest {
 	
 	Scheduler scheduler;
 	Executor executor;
-	KnowledgeManagerRegistry registry;
+	KnowledgeManagerContainer kmContainer;
 	
 	RuntimeMetadata model;	
 	
@@ -41,7 +41,7 @@ public class RuntimeFrameworkImplTest {
 	public void setUp() throws Exception {
 		scheduler = mock(Scheduler.class);
 		executor = mock(Executor.class);
-		registry = mock(KnowledgeManagerRegistry.class);
+		kmContainer = mock(KnowledgeManagerContainer.class);
 				
 		RuntimeMetadataFactory factory = RuntimeMetadataFactoryExt.eINSTANCE;
 		process = factory.createComponentProcess();
@@ -59,7 +59,7 @@ public class RuntimeFrameworkImplTest {
 	@Test
 	public void testInitComponentInstanceAdapter() {
 		// WHEN a runtime with proper configuration and model is created
-		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, registry));
+		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer));
 		// THEN the runtime sets up an adaptor to observe changes of the list of
 		// component instances
 		assertEquals(1, model.eAdapters().size());		
