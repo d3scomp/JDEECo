@@ -3,6 +3,7 @@ package cz.cuni.mff.d3s.deeco.runtime;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.junit.Before;
@@ -24,6 +25,7 @@ import cz.cuni.mff.d3s.deeco.runtime.RuntimeConfiguration.Execution;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeConfiguration.Scheduling;
 import cz.cuni.mff.d3s.deeco.scheduler.LocalTimeScheduler;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
+import cz.cuni.mff.d3s.deeco.task.Task;
 
 public class RuntimeFrameworkImplTest {
 
@@ -139,7 +141,7 @@ public class RuntimeFrameworkImplTest {
 	
 	
 	@Test
-	public void testInitComponentInstanceAddedEmpty() {
+	public void testInit0ComponentInstanceAdded() {
 		// GIVEN a model with no component instance 
 		// 
 		model.getComponentInstances().clear();		
@@ -153,7 +155,7 @@ public class RuntimeFrameworkImplTest {
 	}
 	
 	@Test
-	public void testInitComponentInstanceAddedOne() {
+	public void testInit1ComponentInstanceAdded() {
 		// GIVEN a model with one component instance
 		model.getComponentInstances().clear();
 		model.getComponentInstances().add(component);
@@ -168,26 +170,135 @@ public class RuntimeFrameworkImplTest {
 	}
 	
 	@Test
-	public void testInitComponentInstanceAddedThree() {
+	public void testInit2ComponentInstanceAdded() {
 		// GIVEN a model with three component instances
-		model.getComponentInstances().clear();		
 		ComponentInstance component2 = EcoreUtil.copy(component);
-		ComponentInstance component3 = EcoreUtil.copy(component);
-		model.getComponentInstances().add(component);
 		model.getComponentInstances().add(component2);
-		model.getComponentInstances().add(component3);
 	
 		// WHEN when init is called() on a properly-constructed runtime
 		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, false));
 		tested.init();		
 		
 		// THEN the components are all added via the callback componentInstanceAdded 
-		verify(tested, times(3)).componentInstanceAdded(any(ComponentInstance.class));
+		verify(tested, times(2)).componentInstanceAdded(any(ComponentInstance.class));
 		verify(tested).componentInstanceAdded(component);
 		verify(tested).componentInstanceAdded(component2);
-		verify(tested).componentInstanceAdded(component3);
 	}
 	
+	/*
+	 * componentInstanceAdded
+	 */	
 	
+	@Test
+	public void testComponentInstanceAddedNull() {
+		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, false));
+		
+		// WHEN adding a null component instance
+		tested.componentInstanceAdded(null);
+		
+		// THEN nothing happens 
+		verify(tested, times(1)).componentInstanceAdded(any(ComponentInstance.class));
+		verifyNoMoreInteractions(tested);
+	}
+	
+	@Test
+	public void testComponentInstanceAddedExisting() {
+		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, false));
+		tested.componentInstanceAdded(component);
+		reset(tested);
+		// WHEN adding an already added component instance
+		tested.componentInstanceAdded(component);		
+		// THEN nothing happens 
+		verify(tested, times(1)).componentInstanceAdded(any(ComponentInstance.class));
+		verifyNoMoreInteractions(tested);
+	}	
+	
+	
+	
+	@Test
+	public void testComponentInstanceAddedCreatesNewComponentRecord() {
+		RuntimeFrameworkImpl tested = new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, false);
+		// WHEN a valid component instance is added
+		tested.componentInstanceAdded(component);		
+		// THEN a new record will be created in componentRecords collection
+		assertNotNull(tested.componentRecords.get(component));		
+	}
+	
+	@Test
+	public void testComponentInstanceAdded0ProcessesAdded() {
+		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, false));
+		
+		// WHEN adding a component instance with zero processes
+		component.getComponentProcesses().clear();
+		tested.componentInstanceAdded(component);
+		
+		// THEN the componentProcessAdded is not called
+		verify(tested, never()).componentProcessAdded(any(ComponentInstance.class), any(ComponentProcess.class));
+	}
+	
+	@Test
+	public void testComponentInstanceAdded2ProcessesAdded() {
+		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, false));
+		
+		// WHEN adding a component instance with three processes
+		ComponentProcess process2 = EcoreUtil.copy(process);
+		component.getComponentProcesses().add(process2);
+		tested.componentInstanceAdded(component);
+		
+		// THEN the componentProcessAdded is called for each of the processes
+		verify(tested, times(2)).componentProcessAdded(any(ComponentInstance.class), any(ComponentProcess.class));;
+		verify(tested).componentProcessAdded(component, process);
+		verify(tested).componentProcessAdded(component, process2);
+	}
+	
+	@Test
+	public void testComponentInstanceAdded0ControllersAdded() {
+		RuntimeFrameworkImpl tested = new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, false);
+		
+		// WHEN adding a component instance with zero ensemble controllers and zero processes
+		component.getComponentProcesses().clear();
+		component.getEnsembleControllers().clear();
+		tested.componentInstanceAdded(component);
+		
+		// THEN no ensembling tasks are created/scheduled
+		ComponentInstanceRecord cir = tested.componentRecords.get(component);
+		assertEquals(0, cir.getEnsembleTasks().size());		
+		verify(scheduler, never()).addTask(any(Task.class));
+	}
+	
+	@Test
+	public void testComponentInstanceAdded2ControllersAdded() {
+		RuntimeFrameworkImpl tested = new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, false);
+		
+		// WHEN adding a component instance with three ensemble controllers and zero processes
+		component.getComponentProcesses().clear();
+		EnsembleController econtroller2 = EcoreUtil.copy(econtroller);
+		component.getEnsembleControllers().add(econtroller2);
+		tested.componentInstanceAdded(component);
+		
+		// THEN a task is created and scheduled for each of the controllers
+		ComponentInstanceRecord cir = tested.componentRecords.get(component);
+		assertEquals(2, cir.getEnsembleTasks().size());	
+		Task t = cir.getEnsembleTasks().get(econtroller);
+		Task t2 = cir.getEnsembleTasks().get(econtroller2);
+		assertNotNull(t);
+		assertNotNull(t2);
+		verify(scheduler, times(2)).addTask(any(Task.class));
+		verify(scheduler).addTask(t);
+		verify(scheduler).addTask(t2);
+	}
+	
+	@Test
+	public void testComponentInstanceAddedAdapterPresent() {
+		RuntimeFrameworkImpl tested = new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, false);		
+		
+		// WHEN adding a component instance		
+		tested.componentInstanceAdded(component);
+		
+		// THEN the runtime registers an adapter observing changes of the instance
+		Adapter a = tested.componentInstanceAdapters.get(component);
+		assertNotNull(a);
+		assertTrue(component.eAdapters().contains(a));
+	}
 	
 }
