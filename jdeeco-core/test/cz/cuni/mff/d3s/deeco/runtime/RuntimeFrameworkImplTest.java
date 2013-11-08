@@ -41,6 +41,7 @@ public class RuntimeFrameworkImplTest {
 	EnsembleController econtroller;
 	
 	RuntimeFrameworkImpl spy;
+
 	
 	@Before
 	public void setUp() throws Exception {
@@ -60,6 +61,7 @@ public class RuntimeFrameworkImplTest {
 		model.getComponentInstances().add(component);
 		
 		spy = mock(RuntimeFrameworkImpl.class);
+		
 	}
 
 	
@@ -109,43 +111,45 @@ public class RuntimeFrameworkImplTest {
 	}
 	
 	@Test
+	public void testRuntimeFrameworkImplInitCalled() {
+		// GIVEN valid model, scheduler, and executor	
+		// WHEN a new RuntimeFrameworkImpl is created via the public constructor 
+		RuntimeFrameworkImpl result = new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer) {
+			@Override
+			void init() {
+				spy.init();
+			}
+		};
+		// THEN the init() gets called
+		verify(spy).init();
+	}
+	
+	@Test
 	public void testInitComponentInstancesAdapterPresent() {
-		// GIVEN a model with no adapters
-		assertEquals(0, model.eAdapters().size());
-		// WHEN a runtime with proper configuration and model is created		
-		RuntimeFrameworkImpl tested = new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer);
+		// GIVEN a model with no adapters 
+		assertEquals(0, model.eAdapters().size());			
+		// WHEN init() is called on a properly-constructed runtime
+		RuntimeFrameworkImpl tested = new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, false);
+		tested.init();
 		// THEN the runtime sets up an adapter to observe changes of the list of
 		// component instances
 		assertEquals(1, model.eAdapters().size());				
 	}
 	
-	/**
-	 * Creates an instance of the tested class that allows spying the calls of
-	 * {@link RuntimeFrameworkImpl#componentInstanceAdded(ComponentInstance)}
-	 * and
-	 * {@link RuntimeFrameworkImpl#componentInstanceRemoved(ComponentInstance)
-	 * via {@link #spy}.
-	 */
-	private RuntimeFrameworkImpl createAndSpyComponentInstanceAddedAndRemoved(
-			RuntimeMetadata model, Scheduler scheduler, Executor executor,
-			KnowledgeManagerContainer kmContainer) {
-		return new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer) {
-			@Override
-			void componentInstanceAdded(ComponentInstance instance) {
-				spy.componentInstanceAdded(instance);
-			}
-		};
-	}
+	
 	
 	@Test
 	public void testInitComponentInstanceAddedEmpty() {
-		// GIVEN a model with no component instance
-		model.getComponentInstances().clear();
+		// GIVEN a model with no component instance 
+		// 
+		model.getComponentInstances().clear();		
 		
-		// WHEN a runtime with proper dependencies, including the model, is created
-		RuntimeFrameworkImpl tested = createAndSpyComponentInstanceAddedAndRemoved(model, scheduler, executor, kmContainer);
+		// WHEN when init is called() on a properly-constructed runtime
+		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, false));
+		tested.init();
+		
 		// THEN the callback componentInstanceAdded is not called 
-		verify(spy, never()).componentInstanceAdded(any(ComponentInstance.class));		
+		verify(tested, never()).componentInstanceAdded(any(ComponentInstance.class));		
 	}
 	
 	@Test
@@ -154,10 +158,13 @@ public class RuntimeFrameworkImplTest {
 		model.getComponentInstances().clear();
 		model.getComponentInstances().add(component);
 		
-		// WHEN a runtime with proper dependencies, including the model, is created
-		RuntimeFrameworkImpl tested = createAndSpyComponentInstanceAddedAndRemoved(model, scheduler, executor, kmContainer);
+		// WHEN when init is called() on a properly-constructed runtime
+		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, false));
+		tested.init();
+		
 		// THEN the component is added via the callback componentInstanceAdded 
-		verify(spy).componentInstanceAdded(component);
+		verify(tested, times(1)).componentInstanceAdded(any(ComponentInstance.class));
+		verify(tested).componentInstanceAdded(component);
 	}
 	
 	@Test
@@ -169,14 +176,18 @@ public class RuntimeFrameworkImplTest {
 		model.getComponentInstances().add(component);
 		model.getComponentInstances().add(component2);
 		model.getComponentInstances().add(component3);
+	
+		// WHEN when init is called() on a properly-constructed runtime
+		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, false));
+		tested.init();		
 		
-		// WHEN a runtime with proper dependencies, including the model, is created
-		RuntimeFrameworkImpl tested = createAndSpyComponentInstanceAddedAndRemoved(model, scheduler, executor, kmContainer);
 		// THEN the components are all added via the callback componentInstanceAdded 
-		verify(spy).componentInstanceAdded(component);
-		verify(spy).componentInstanceAdded(component2);
-		verify(spy).componentInstanceAdded(component3);
+		verify(tested, times(3)).componentInstanceAdded(any(ComponentInstance.class));
+		verify(tested).componentInstanceAdded(component);
+		verify(tested).componentInstanceAdded(component2);
+		verify(tested).componentInstanceAdded(component3);
 	}
 	
-
+	
+	
 }
