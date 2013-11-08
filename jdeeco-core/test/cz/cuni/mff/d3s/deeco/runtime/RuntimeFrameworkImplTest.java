@@ -27,6 +27,11 @@ import cz.cuni.mff.d3s.deeco.scheduler.LocalTimeScheduler;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.task.Task;
 
+/**
+ * 
+ * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
+ *
+ */
 public class RuntimeFrameworkImplTest {
 
 	@Rule
