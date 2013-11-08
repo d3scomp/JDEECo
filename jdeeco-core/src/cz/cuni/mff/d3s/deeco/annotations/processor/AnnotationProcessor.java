@@ -1,10 +1,12 @@
 package cz.cuni.mff.d3s.deeco.annotations.processor;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -20,17 +22,32 @@ import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange;
+import cz.cuni.mff.d3s.deeco.annotations.pathparser.EEnsembleParty;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.PNode;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.ParseException;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.PathParser;
+import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
+import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManager;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerViewImpl;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
+import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.Invocable;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
@@ -71,7 +88,7 @@ public class AnnotationProcessor {
 			if (isComponentDefinition(clazz)) {
 				model.getComponentInstances().add(createComponentInstance(obj));
 			} else if (isEnsembleDefinition(clazz)) {
-				createEnsembleDefinition(obj);
+				model.getEnsembleDefinitions().add(createEnsembleDefinition(obj));
 			} else {
 				throw new AnnotationParsingException("No @Component or @Ensemble annotation found.");
 			}
@@ -85,22 +102,31 @@ public class AnnotationProcessor {
 		Class<?> clazz = obj.getClass();
 		ComponentInstance componentInstance = factory.createComponentInstance();
 		componentInstance.setName(clazz.getCanonicalName());
-//		CloningComponentManager km = new CloningComponentManager(obj);
-//		componentInstance.setKnowledgeManager(km);
-//		componentInstance.setOtherKnowledgeManagersAccess(null); // FIXME
+//		KnowledgeManagerContainer container = new CloningKnowledgeManagerView();
+//		KnowledgeManager km = container.createLocal();
+//		km.update(processInitialKnowledge(obj));
+//		componentInstance.setKnowledgeManager(km);	
+//		KnowledgeManagersView view = new KnowledgeManagerViewImpl(km, container);
+//		componentInstance.setOtherKnowledgeManagersAccess(view);
 		List<Method> methods = getMethodsMarkedAsProcesses(clazz);
 		try {
 			for (Method m : methods) {
 				int modifier = m.getModifiers();
 				if (Modifier.isPublic(modifier) && Modifier.isStatic(modifier)) {
-					componentInstance.getComponentProcesses().add(createComponentProcess(componentInstance, m));
+					componentInstance.getComponentProcesses().add(
+							createComponentProcess(componentInstance, m));
 				}
 			}
 		} catch (AnnotationParsingException e) {
-			String msg = "Component: "+componentInstance.getName()+"/"+e.getMessage();
+			String msg = "Component: "+componentInstance.getName()+"->"+e.getMessage();
 			throw new AnnotationParsingException(msg, e);
 		}
 		return componentInstance;
+	}
+	
+	EnsembleDefinition createEnsembleDefinition(Object obj) {
+		// TODO:IG
+		return null;
 	}
 
 	ComponentProcess createComponentProcess(
@@ -111,18 +137,17 @@ public class AnnotationProcessor {
 			componentProcess.setComponentInstance(componentInstance);
 			componentProcess.setMethod(m);
 			componentProcess.setName(m.getName());
-			componentProcess.getTriggers().add(createPeriodicTrigger(m));
+			PeriodicTrigger periodicTrigger = createPeriodicTrigger(m);
+			if (periodicTrigger!=null) {
+				componentProcess.getTriggers().add(periodicTrigger);	
+			}
 			componentProcess.getTriggers().addAll(createKnowledgeChangeTriggers(m));
-			componentProcess.getParameters().addAll(createParameters(m));
+			componentProcess.getParameters().addAll(createParameters(m));			
 		} catch (AnnotationParsingException | ParseException e) {
-			String msg = "Process: "+componentProcess.getName()+"/"+e.getMessage();
+			String msg = "Process: "+componentProcess.getName()+"->"+e.getMessage();
 			throw new AnnotationParsingException(msg, e);
 		}
 		return componentProcess;
-	}
-
-	void createEnsembleDefinition(Object obj) {
-		// TODO:IG
 	}
 
 	/**
@@ -172,8 +197,7 @@ public class AnnotationProcessor {
 		Type[] parameterTypes = method.getParameterTypes();
 		Annotation[][] allAnnotations = method.getParameterAnnotations();
 		for (int i = 0; i < parameterTypes.length; i++) {
-			parameters.add(createParameter(i,
-					parameterTypes[i], allAnnotations[i]));
+			parameters.add(createParameter(i,parameterTypes[i], allAnnotations[i]));
 		}
 		return parameters;
 	}
@@ -193,26 +217,55 @@ public class AnnotationProcessor {
 			throws AnnotationParsingException, ParseException {
 		Annotation directionAnnotation = getDirectionAnnotation(
 				parameterIndex, parameterAnnotations);
-		Parameter param = factory.createParameter();
-		param.setDirection(parameterAnnotationsToParameterDirections
+		Parameter parameter = factory.createParameter();
+		parameter.setDirection(parameterAnnotationsToParameterDirections
 				.get(directionAnnotation.annotationType()));
 		String path = (String) getAnnotationValue(directionAnnotation);
-		param.setKnowledgePath(createKnowledgePath(path));
-		return param;
+		parameter.setKnowledgePath(createKnowledgePath(path));
+		return parameter;
 	}
 	
-	KnowledgePath createKnowledgePath(String path) throws ParseException {
-		KnowledgePath knowledgePath = factory.createKnowledgePath();
+	KnowledgePath createKnowledgePath(String path) throws ParseException, AnnotationParsingException {
 		PNode pNode = PathParser.parse(path);
-		do {
-			PathNodeField pathNodeField = factory.createPathNodeField();
-			pathNodeField.setName((String) pNode.value);
-			knowledgePath.getNodes().add(pathNodeField);
+		return createKnowledgePath(pNode);
+	}
+	
+	KnowledgePath createKnowledgePath(PNode pNode) throws AnnotationParsingException {
+		KnowledgePath knowledgePath = factory.createKnowledgePath();
+		do {			
+			Object nValue = pNode.value;
+			if (nValue instanceof String) {
+				PathNodeField pathNodeField = factory.createPathNodeField();
+				pathNodeField.setName((String) nValue);
+				knowledgePath.getNodes().add(pathNodeField);
+			}
+			if (nValue instanceof EEnsembleParty) {
+				EEnsembleParty ensembleKeyword = (EEnsembleParty) nValue;				
+				knowledgePath.getNodes().add(createMemberOrCoordinatorPathNode(ensembleKeyword));
+			}
+			if (nValue instanceof PNode) {
+				PathNodeMapKey pathNodeMapKey = factory.createPathNodeMapKey();
+				pathNodeMapKey.setKeyPath(createKnowledgePath((PNode) nValue));
+				knowledgePath.getNodes().add(pathNodeMapKey);
+			}
 			pNode = pNode.next;
 		} while (!(pNode == null));
 		return knowledgePath;
 	}
-	
+
+	PathNode createMemberOrCoordinatorPathNode(EEnsembleParty keyword)
+			throws AnnotationParsingException {
+		switch (keyword) {
+			case COORDINATOR:
+				return factory.createPathNodeCoordinator();
+			case MEMBER:
+				return factory.createPathNodeMember();
+			default:
+				throw new AnnotationParsingException(
+						"Invalid identifier: 'coord' or 'member' keyword expected.");
+		}
+	}
+
 	/**
 	 * Returns list of methods in the class definition which are annotated as
 	 * DEECo processes.
@@ -275,6 +328,22 @@ public class AnnotationProcessor {
 			}
 		}
 		return null;
+	}
+	
+	ChangeSet processInitialKnowledge(Object knowledge) {
+		ChangeSet changeSet = new ChangeSet();
+		for (Field f : knowledge.getClass().getFields()) {
+			KnowledgePath knowledgePath = factory.createKnowledgePath();
+			PathNodeField pathNodeField = factory.createPathNodeField();
+			pathNodeField.setName(new String(f.getName()));
+			knowledgePath.getNodes().add(pathNodeField);
+			try {
+				changeSet.setValue(knowledgePath, f.get(knowledge));
+			} catch (IllegalAccessException e) {
+				continue;
+			}
+		}
+		return changeSet;
 	}
 
 	boolean isComponentDefinition(Class<?> clazz) {

@@ -23,6 +23,14 @@ public class PathParser implements PathParserConstants {
       t = jj_consume_token(IDENTIFIER);
       value = t.image;
       break;
+    case COORD:
+        t = jj_consume_token(COORD);
+        value = EEnsembleParty.COORDINATOR;
+        break;
+    case MEMBER:
+        t = jj_consume_token(MEMBER);
+        value = EEnsembleParty.MEMBER;
+        break;
     case OPEN:
       jj_consume_token(OPEN);
           value = parseExpression();
