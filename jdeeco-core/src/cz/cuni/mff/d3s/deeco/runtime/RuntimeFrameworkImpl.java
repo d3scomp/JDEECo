@@ -57,6 +57,16 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 	 */
 	public RuntimeFrameworkImpl(RuntimeMetadata model, Scheduler scheduler,
 			Executor executor, KnowledgeManagerContainer kmContainer) {
+		
+		if (model == null)
+			throw new IllegalArgumentException("Model cannot be null");
+		if (scheduler == null)
+			throw new IllegalArgumentException("Scheduler cannot be null");
+		if (executor == null)
+			throw new IllegalArgumentException("Executor cannot be null");
+		if (kmContainer == null)
+			throw new IllegalArgumentException("KnowledgeManagerContainer cannot be null");
+		
 		this.scheduler = scheduler;
 		this.model = model;
 		this.executor = executor;
