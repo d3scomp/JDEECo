@@ -199,8 +199,9 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 		
 		ComponentInstanceRecord ciRecord = componentRecords.get(instance);
 		
-		for (ComponentProcess p: ciRecord.getProcessTasks().keySet()) {
-			componentProcessRemoved(instance, p);
+		while (!ciRecord.getProcessTasks().isEmpty()) {
+			ComponentProcess p = ciRecord.getProcessTasks().keySet().iterator().next();
+			componentProcessRemoved(instance, p);			
 		}	
 		
 		for (Task t: ciRecord.getEnsembleTasks().values()) {

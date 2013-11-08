@@ -301,4 +301,136 @@ public class RuntimeFrameworkImplTest {
 		assertTrue(component.eAdapters().contains(a));
 	}
 	
+	/*
+	 * componentInstanceRemoved
+	 */	
+	
+	@Test
+	public void testComponentInstanceRemovedNull() {
+		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, false));
+		
+		// WHEN removing a null component instance
+		tested.componentInstanceRemoved(null);
+		
+		// THEN nothing happens 
+		verify(tested, times(1)).componentInstanceRemoved(any(ComponentInstance.class));
+		verifyNoMoreInteractions(tested);
+	}
+	
+	@Test
+	public void testComponentInstanceRemovedNonexisting() {
+		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, false));
+		// WHEN removing a non-existing component instance
+		tested.componentInstanceRemoved(component);		
+		// THEN nothing happens 
+		verify(tested, times(1)).componentInstanceRemoved(any(ComponentInstance.class));
+		verifyNoMoreInteractions(tested);
+	}	
+	
+	@Test
+	public void testComponentInstanceRemovedExisting() {
+		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, false));
+		tested.componentInstanceAdded(component);		
+		reset(tested);
+		// WHEN removing an existing component instance
+		tested.componentInstanceRemoved(component);		
+		// THEN nothing happens 
+		verify(tested, times(1)).componentInstanceRemoved(any(ComponentInstance.class));
+	}	
+	
+	@Test
+	public void testComponentInstanceRemovedDeletesComponentRecord() {
+		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, false));
+		tested.componentInstanceAdded(component);
+		assertNotNull(tested.componentRecords.get(component));		
+		reset(tested);
+		
+		// WHEN removing an existing component instance
+		tested.componentInstanceRemoved(component);		
+		// THEN its record will be removed from componentRecords collection
+		assertNull(tested.componentRecords.get(component));				
+	}
+	
+	@Test
+	public void testComponentInstanceRemoved0ProcessesRemoved() {
+		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, false));
+		component.getComponentProcesses().clear();
+		tested.componentInstanceAdded(component);		
+		reset(tested);
+
+		// WHEN removing a component with zero processes
+		tested.componentInstanceRemoved(component);
+		
+		// THEN the componentProcessRemoved is not called
+		verify(tested, never()).componentProcessRemoved(any(ComponentInstance.class), any(ComponentProcess.class));
+	}
+	
+	@Test
+	public void testComponentInstanceRemoved2ProcessesRemoved() {
+		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, false));
+		ComponentProcess process2 = EcoreUtil.copy(process);
+		component.getComponentProcesses().add(process2);
+		tested.componentInstanceAdded(component);
+		reset(tested);
+				
+		// WHEN removing a component instance with two processes		
+		tested.componentInstanceRemoved(component);
+		
+		// THEN the componentProcessRemoved is called for each of the processes
+		verify(tested, times(2)).componentProcessRemoved(any(ComponentInstance.class), any(ComponentProcess.class));;
+		verify(tested).componentProcessRemoved(component, process);
+		verify(tested).componentProcessRemoved(component, process2);
+	}
+	
+	@Test
+	public void testComponentInstanceRemoved0ControllersRemoved() {
+		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, false));
+		component.getComponentProcesses().clear();
+		component.getEnsembleControllers().clear();
+		reset(tested);		
+		
+		// WHEN removing a component instance with zero ensemble controllers and zero processes		
+		tested.componentInstanceRemoved(component);
+		
+		// THEN no ensembling tasks are removed from scheduler
+		verify(scheduler, never()).removeTask(any(Task.class));
+	}
+	
+	@Test
+	public void testComponentInstanceRemoved2ControllersRemoved() {
+		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, false));
+		EnsembleController econtroller2 = EcoreUtil.copy(econtroller);
+		component.getComponentProcesses().clear();
+		component.getEnsembleControllers().add(econtroller2);
+		tested.componentInstanceAdded(component);
+		reset(tested);
+		
+		ComponentInstanceRecord cir = tested.componentRecords.get(component);
+		
+		// WHEN removing a component instance with two ensemble controllers and zero processes
+		tested.componentInstanceRemoved(component);
+		
+		// THEN the tasks of all controllers are removed from scheduler
+		Task t = cir.getEnsembleTasks().get(econtroller);
+		Task t2 = cir.getEnsembleTasks().get(econtroller2);
+		verify(scheduler, times(2)).removeTask(any(Task.class));
+		verify(scheduler).addTask(t);
+		verify(scheduler).addTask(t2);
+	}
+	
+	@Test
+	public void testComponentInstanceRemovedAdapterRemoved() {
+		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, false));
+		tested.componentInstanceAdded(component);
+		Adapter a = tested.componentInstanceAdapters.get(component);
+		reset(tested);		
+		
+		// WHEN removing a component instance		
+		tested.componentInstanceRemoved(component);
+		
+		// THEN the runtime unregisters its adapter observing changes of the instance
+		assertFalse(component.eAdapters().contains(a));
+		assertNull(tested.componentInstanceAdapters.get(component));
+	}
+	
 }
