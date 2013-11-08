@@ -27,6 +27,9 @@ public class KnowledgeManagerViewImpl implements KnowledgeManagersView,
 		this.container = container;
 		this.triggerListeners = new HashMap<>();
 		listenerToTriggerListeners = new HashMap<>();
+		
+		this.container.registerLocalListener(this);
+		this.container.registerReplicaListener(this);
 	}
 
 	/*

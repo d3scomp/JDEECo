@@ -1,60 +1,78 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
  *
  */
-public class KnowledgeManagerContainer implements
+public abstract class KnowledgeManagerContainer implements
 		ReplicaKnowledgeManagerContainer, LocalKnowledgeManagerContainer {
 
+	protected final List<KnowledgeManager> locals;
+	protected final List<KnowledgeManager> replicas;
+	protected final List<LocalListener> localListeners;
+	protected final List<ReplicaListener> replicaListeners;
+	
+	public KnowledgeManagerContainer() {
+		this.locals = new LinkedList<>();
+		this.replicas = new LinkedList<>();
+		this.localListeners = new LinkedList<>();
+		this.replicaListeners = new LinkedList<>();
+	}
+	
 	@Override
-	public KnowledgeManager createLocal() {
-		// TODO Auto-generated method stub
+	public synchronized KnowledgeManager createLocal() {
+		KnowledgeManager result = new CloningKnowledgeManager();
+		locals.add(result);
+		for (LocalListener listener : localListeners)
+			listener.localCreated(result);
+		return result;
+	}
+
+	@Override
+	public synchronized KnowledgeManager removeLocal(KnowledgeManager km) {
+		if (locals.contains(km)) {
+			locals.remove(km);
+			for (LocalListener listener : localListeners)
+				listener.localRemoved(km);
+			return km;
+		}
 		return null;
 	}
 
 	@Override
-	public KnowledgeManager removeLocal(KnowledgeManager km) {
-		// TODO Auto-generated method stub
+	public synchronized List<KnowledgeManager> getLocals() {
+		return new LinkedList<>(locals);
+	}
+
+	@Override
+	public synchronized void registerLocalListener(LocalListener listener) {
+		if (!localListeners.contains(listener))
+			localListeners.add(listener);
+	}
+
+	@Override
+	public synchronized KnowledgeManager removeReplica(KnowledgeManager km) {
+		if (replicas.contains(km)) {
+			replicas.remove(km);
+			for (ReplicaListener listener : replicaListeners)
+				listener.replicaRemoved(km);
+			return km;
+		}
 		return null;
 	}
 
 	@Override
-	public List<KnowledgeManager> getLocals() {
-		// TODO Auto-generated method stub
-		return null;
+	public synchronized List<KnowledgeManager> getReplicas() {
+		return new LinkedList<>(replicas);
 	}
 
 	@Override
-	public void registerListener(LocalListener listener) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public KnowledgeManager createReplicaFor(KnowledgeManager km) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public KnowledgeManager removeReplicaFor(KnowledgeManager km) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<KnowledgeManager> getReplicas() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void registerListener(ReplicaListener listener) {
-		// TODO Auto-generated method stub
-
+	public synchronized void registerReplicaListener(ReplicaListener listener) {
+		if (!replicaListeners.contains(listener))
+			replicaListeners.add(listener);
 	}
 
 }
