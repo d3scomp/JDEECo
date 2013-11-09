@@ -15,7 +15,7 @@ public class CloningKnowledgeManagerContainer extends KnowledgeManagerContainer 
 	}
 
 	@Override
-	public KnowledgeManager createReplicaFor(KnowledgeManager km) {
+	public synchronized KnowledgeManager createReplicaFor(KnowledgeManager km) {
 		if (!replicas.contains(km)) {
 			KnowledgeManager result = cloner.deepClone(km);
 			replicas.add(result);

@@ -1,17 +1,21 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-import static org.mockito.Matchers.any;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
 /**
+ * @author Rima Al Ali <alali@d3s.mff.cuni.cz>
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
  * 
  */
@@ -81,11 +85,45 @@ public class CloningKnowledgeManagerContainerTest {
 		tested.registerReplicaListener(replicaListener);
 		tested.registerLocalListener(localListener);
 		// and WHEN a replica of a knowledge manager has been removed
-		KnowledgeManager replica = tested.createReplicaFor(any(KnowledgeManager.class));
+		KnowledgeManager replica = tested
+				.createReplicaFor(any(KnowledgeManager.class));
 		tested.removeReplica(replica);
 		// THEN the listener is notified about this fact
 		verify(replicaListener).replicaRemoved(replica);
 		// and none of the local listeners is notified
 		verifyZeroInteractions(localListener);
+	}
+
+	@Test
+	public void getLocalsTest() {
+		// WHEN a set of local knowledge managers has been created within the
+		// container instance
+		List<KnowledgeManager> locals = new LinkedList<>();
+		locals.add(tested.createLocal());
+		locals.add(tested.createLocal());
+		locals.add(tested.createLocal());
+		// WHEN the container is accessed for all local knowledge managers
+		List<KnowledgeManager> containerLocals = tested.getLocals();
+		// THEN the container returns all local knowledge managers created
+		// before
+		assertEquals(locals, containerLocals);
+	}
+
+	@Test
+	public void getReplicasTest() {
+		// WHEN a set of replica knowledge managers has been created within the
+		// container instance
+		List<KnowledgeManager> replicas = new LinkedList<>();
+		KnowledgeManager km = mock(KnowledgeManager.class);
+		replicas.add(tested.createReplicaFor(km));
+		km = mock(KnowledgeManager.class);
+		replicas.add(tested.createReplicaFor(km));
+		km = mock(KnowledgeManager.class);
+		replicas.add(tested.createReplicaFor(km));
+		// WHEN the container is accessed for all replica knowledge managers
+		List<KnowledgeManager> containerReplicas = tested.getReplicas();
+		// THEN the container returns all replica knowledge managers created
+		// before
+		assertEquals(replicas, containerReplicas);
 	}
 }

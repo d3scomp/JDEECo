@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -19,6 +20,7 @@ import org.mockito.Mock;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 
 /**
+ * @author Rima Al Ali <alali@d3s.mff.cuni.cz>
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
  * 
  */
@@ -75,7 +77,11 @@ public class KnowledgeManagerViewImplTest {
 		// KnowledgeManagerView instance
 		
 		assertTrue(result.size() == 2);
-		assertTrue(!result.contains(knowledgeManager));
+		List<KnowledgeManager> expectedResult = new LinkedList<>();
+		expectedResult.addAll(locals);
+		expectedResult.addAll(replicas);
+		expectedResult.remove(knowledgeManager);
+		assertEquals(expectedResult, result);
 		
 	}
 

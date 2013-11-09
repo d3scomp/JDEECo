@@ -36,7 +36,7 @@ public class CloningKnowledgeManager extends BaseKnowledgeManager {
 	 * )
 	 */
 	@Override
-	public ValueSet get(Collection<KnowledgePath> knowledgePaths)
+	public synchronized ValueSet get(Collection<KnowledgePath> knowledgePaths)
 			throws KnowledgeNotFoundException {
 		return cloner.deepClone(super.get(knowledgePaths));
 	}
