@@ -8,7 +8,7 @@ import java.util.List;
  */
 public interface ReplicaKnowledgeManagerContainer {
 	public KnowledgeManager createReplicaFor(KnowledgeManager km);
-	public KnowledgeManager removeReplicaFor(KnowledgeManager km);
+	public KnowledgeManager removeReplica(KnowledgeManager km);
 	public List<KnowledgeManager> getReplicas();
-	public void registerListener(ReplicaListener listener);
+	public void registerReplicaListener(ReplicaListener listener);
 }

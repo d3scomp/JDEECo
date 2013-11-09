@@ -19,8 +19,12 @@ public class CloningKnowledgeManager extends BaseKnowledgeManager {
 
 	private final Cloner cloner;
 	
-	public CloningKnowledgeManager(Object knowledge) {
+	public CloningKnowledgeManager() {
 		cloner = new Cloner();
+	}
+	
+	public CloningKnowledgeManager(Object knowledge) {
+		this();
 		setBaseKnowledge(cloner.deepClone(knowledge));
 	}
 
@@ -32,7 +36,7 @@ public class CloningKnowledgeManager extends BaseKnowledgeManager {
 	 * )
 	 */
 	@Override
-	public ValueSet get(Collection<KnowledgePath> knowledgePaths)
+	public synchronized ValueSet get(Collection<KnowledgePath> knowledgePaths)
 			throws KnowledgeNotFoundException {
 		return cloner.deepClone(super.get(knowledgePaths));
 	}

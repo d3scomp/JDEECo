@@ -10,5 +10,5 @@ public interface LocalKnowledgeManagerContainer {
 	public KnowledgeManager createLocal();
 	public KnowledgeManager removeLocal(KnowledgeManager km);
 	public List<KnowledgeManager> getLocals();
-	public void registerListener(LocalListener listener);
+	public void registerLocalListener(LocalListener listener);
 }
