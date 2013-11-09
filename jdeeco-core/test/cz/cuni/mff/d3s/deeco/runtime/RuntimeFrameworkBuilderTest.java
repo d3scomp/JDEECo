@@ -3,7 +3,6 @@ package cz.cuni.mff.d3s.deeco.runtime;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -11,7 +10,7 @@ import org.junit.rules.ExpectedException;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.executor.SameThreadExecutor;
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerRegistry;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
@@ -32,6 +31,17 @@ public class RuntimeFrameworkBuilderTest {
 	public ExpectedException thrown = ExpectedException.none();
 	
 	
+	@Test
+	public void testRuntimeFrameworkBuilderValidConfiguration()
+		throws Exception {
+		RuntimeConfiguration configuration = new RuntimeConfiguration(RuntimeConfiguration.Scheduling.WALL_TIME, RuntimeConfiguration.Distribution.LOCAL, RuntimeConfiguration.Execution.SINGLE_THREADED);
+
+		RuntimeFrameworkBuilder result = new RuntimeFrameworkBuilder(configuration);
+
+		// add additional test code here
+		assertNotNull(result);
+	}
+
 	
 	@Test
 	public void testInitNullConfiguration() {
@@ -61,7 +71,7 @@ public class RuntimeFrameworkBuilderTest {
 		RuntimeFrameworkBuilder tested = new RuntimeFrameworkBuilder(configuration);
 		tested.scheduler = mock(Scheduler.class);
 		tested.executor = mock(Executor.class);
-		tested.kmRegistry = mock(KnowledgeManagerRegistry.class);		
+		tested.kmContainer = mock(KnowledgeManagerContainer.class);		
 		
 		// THEN the connect() interconnects the scheduler and executor properly
 		tested.connect();
@@ -76,7 +86,7 @@ public class RuntimeFrameworkBuilderTest {
 		RuntimeFrameworkBuilder tested = new RuntimeFrameworkBuilder(configuration);
 		tested.scheduler = mock(Scheduler.class);
 		tested.executor = mock(Executor.class);
-		tested.kmRegistry = mock(KnowledgeManagerRegistry.class);		
+		tested.kmContainer = mock(KnowledgeManagerContainer.class);		
 		
 		RuntimeMetadata model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
 		
@@ -89,7 +99,7 @@ public class RuntimeFrameworkBuilderTest {
 		RuntimeFrameworkImpl runtime = (RuntimeFrameworkImpl) tested.runtime;
 		assertSame(tested.scheduler, runtime.scheduler);
 		assertSame(tested.executor, runtime.executor);
-		assertSame(tested.kmRegistry, runtime.kmRegistry);
+		assertSame(tested.kmContainer, runtime.kmContainer);
 		assertSame(model, runtime.model);
 	}
 	

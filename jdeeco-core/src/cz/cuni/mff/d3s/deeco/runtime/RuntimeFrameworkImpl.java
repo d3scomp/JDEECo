@@ -2,11 +2,13 @@ package cz.cuni.mff.d3s.deeco.runtime;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
+
 import cz.cuni.mff.d3s.deeco.executor.Executor;
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerRegistry;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
@@ -27,7 +29,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 	protected Scheduler scheduler;
 	protected RuntimeMetadata model;
 	protected Executor executor;
-	protected KnowledgeManagerRegistry kmRegistry;
+	protected KnowledgeManagerContainer kmContainer;
 	
 	protected Map<ComponentInstance, ComponentInstanceRecord> componentRecords = new HashMap<>();
 		
@@ -54,13 +56,28 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 	 * FIXME: add synchronizer/network container in the constructor
 	 */
 	public RuntimeFrameworkImpl(RuntimeMetadata model, Scheduler scheduler,
-			Executor executor, KnowledgeManagerRegistry kmRegistry) {
+			Executor executor, KnowledgeManagerContainer kmContainer) {
+		this(model, scheduler, executor, kmContainer, true);
+	}
+	
+	RuntimeFrameworkImpl(RuntimeMetadata model, Scheduler scheduler,
+			Executor executor, KnowledgeManagerContainer kmContainer, boolean autoInit) {
+		if (model == null)
+			throw new IllegalArgumentException("Model cannot be null");
+		if (scheduler == null)
+			throw new IllegalArgumentException("Scheduler cannot be null");
+		if (executor == null)
+			throw new IllegalArgumentException("Executor cannot be null");
+		if (kmContainer == null)
+			throw new IllegalArgumentException("KnowledgeManagerContainer cannot be null");
+		
 		this.scheduler = scheduler;
 		this.model = model;
 		this.executor = executor;
-		this.kmRegistry = kmRegistry;
+		this.kmContainer = kmContainer;
 		
-		init();
+		if (autoInit)
+			init();
 	}
 
 	/**
@@ -182,8 +199,9 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 		
 		ComponentInstanceRecord ciRecord = componentRecords.get(instance);
 		
-		for (ComponentProcess p: ciRecord.getProcessTasks().keySet()) {
-			componentProcessRemoved(instance, p);
+		while (!ciRecord.getProcessTasks().isEmpty()) {
+			ComponentProcess p = ciRecord.getProcessTasks().keySet().iterator().next();
+			componentProcessRemoved(instance, p);			
 		}	
 		
 		for (Task t: ciRecord.getEnsembleTasks().values()) {

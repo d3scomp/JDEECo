@@ -56,11 +56,11 @@ public class KnowledgeManagersViewTest {
  		Collection<ReadOnlyKnowledgeManager> colKM = new LinkedList<ReadOnlyKnowledgeManager>();
  		// THEN define the behavior of KnowledgeManagerView :
 		//  1- return "colKM" by calling getOthersKnowledgeManagers()
-		when(kmView.getOthersKnowledgeManagers()).thenReturn(colKM);
+		when(kmView.getOtherKnowledgeManagers()).thenReturn(colKM);
 		
 		// WHEN call getOthersKnowledgeManagers()
 		// THEN check the returned collection do not have km 
-		assertEquals(false, kmView.getOthersKnowledgeManagers().contains(km));
+		assertEquals(false, kmView.getOtherKnowledgeManagers().contains(km));
 		
 	}
 	
