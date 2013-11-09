@@ -1,16 +1,22 @@
 package cz.cuni.mff.d3s.deeco.task;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyCollectionOf;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
+
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -48,7 +54,9 @@ public class EnsembleTaskTest {
 	@Mock
 	private KnowledgeManagersView shadowReplicasAccess;
 	@Mock
-	private ReadOnlyKnowledgeManager shadowKnowledgeManager;
+	private ReadOnlyKnowledgeManager shadowKnowledgeManager1;
+	@Mock
+	private ReadOnlyKnowledgeManager shadowKnowledgeManager2;
 	@Mock
 	private TaskTriggerListener taskTriggerListener;
 	@Captor
@@ -71,6 +79,11 @@ public class EnsembleTaskTest {
 		
 		doNothing().when(knowledgeManager).register(any(Trigger.class), knowledgeManagerTriggerListenerCaptor.capture());
 		doNothing().when(shadowReplicasAccess).register(any(Trigger.class), shadowReplicasTriggerListenerCaptor.capture());
+
+		Collection<ReadOnlyKnowledgeManager> shadowKnowledgeManagersCollection = new LinkedList<ReadOnlyKnowledgeManager>();
+		shadowKnowledgeManagersCollection.add(shadowKnowledgeManager1);
+		shadowKnowledgeManagersCollection.add(shadowKnowledgeManager2);
+		when(shadowReplicasAccess.getOthersKnowledgeManagers()).thenReturn(shadowKnowledgeManagersCollection);
 		
 		model.setKnowledgeManager(knowledgeManager);
 		model.setOtherKnowledgeManagersAccess(shadowReplicasAccess);
@@ -126,7 +139,7 @@ public class EnsembleTaskTest {
 				
 		// WHEN a trigger comes from the shadow replica
 		reset(taskTriggerListener); // Without this, we would have to say that the verify below verifies two invocations -- because one already occurred above.
-		shadowReplicasTriggerListenerCaptor.getValue().triggered(shadowKnowledgeManager, triggerCaptor.getValue());
+		shadowReplicasTriggerListenerCaptor.getValue().triggered(shadowKnowledgeManager1, triggerCaptor.getValue());
 		// THEN the task calls the registered listener
 		verify(taskTriggerListener).triggered(eq(task), any(Trigger.class));
 		
@@ -143,20 +156,30 @@ public class EnsembleTaskTest {
 		verifyNoMoreInteractions(taskTriggerListener);
 
 		// WHEN a spurious trigger comes from a shadow replica
-		shadowReplicasTriggerListenerCaptor.getValue().triggered(shadowKnowledgeManager, triggerCaptor.getValue());
+		shadowReplicasTriggerListenerCaptor.getValue().triggered(shadowKnowledgeManager1, triggerCaptor.getValue());
 		// THEN it is not propagated to the listener (i.e. the scheduler)
 		verifyNoMoreInteractions(taskTriggerListener);
 	}
 	
 	@Test
 	@Ignore
-	public void testEnsembleTaskInvoke() {
+	public void testEnsembleTaskInvoke() throws Exception {
 		// GIVEN an EnsembleTask initialized with an InstanceEnsemblingController
-		// WHEN invoke on the task is called
+		model.resetMembershipMethodCallCounter();
+		model.resetExchangeMethodCallCounter();
+		
+		// WHEN invoke (with periodic trigger) is called on the task
+		task.invoke(model.ensemblePeriodicTrigger);
 		// THEN it gets the needed local knowledge
+		verify(knowledgeManager).get(anyCollectionOf(KnowledgePath.class));
 		// AND it retrieves the other knowledge managers
+		verify(shadowReplicasAccess).getOthersKnowledgeManagers();
 		// AND it gets knowledge from them
+		verify(shadowKnowledgeManager1).get(anyCollectionOf(KnowledgePath.class));
+		verify(shadowKnowledgeManager2).get(anyCollectionOf(KnowledgePath.class));		
 		// AND it executes the membership
+		assertTrue(model.getMembershipMethodCallCounter() == 2);
+		assertTrue(model.getExchangeMethodCallCounter() == 1);
 		// AND it executes knowledge exchange for those for which the membership was satisfied 
 		// AND it updates the instance knowledge with outputs of the knowledge exchange
 		
