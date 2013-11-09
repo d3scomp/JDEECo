@@ -27,6 +27,9 @@ public class KnowledgeManagerViewImpl implements KnowledgeManagersView,
 		this.container = container;
 		this.triggerListeners = new HashMap<>();
 		listenerToTriggerListeners = new HashMap<>();
+		
+		this.container.registerLocalListener(this);
+		this.container.registerReplicaListener(this);
 	}
 
 	/*
@@ -82,8 +85,10 @@ public class KnowledgeManagerViewImpl implements KnowledgeManagersView,
 				.values()) {
 			toRemove.clear();
 			for (KnowledgeManagerTriggerListener tListener : tListeners)
-				if (tListener.getKnowledgeManager().equals(km))
+				if (tListener.getKnowledgeManager().equals(km)) {
+					km.unregister(tListener.getTrigger(), tListener);
 					toRemove.add(tListener);
+				}
 			tListeners.removeAll(toRemove);
 		}
 	}
@@ -161,7 +166,7 @@ public class KnowledgeManagerViewImpl implements KnowledgeManagersView,
 			Trigger trigger, ShadowsTriggerListener triggerListener) {
 		List<KnowledgeManagerTriggerListener> tListeners;
 		KnowledgeManagerTriggerListener tListener = new KnowledgeManagerTriggerListener(
-				km, triggerListener);
+				km, triggerListener, trigger);
 		// Update map of listenerToTriggerListeners
 		if (listenerToTriggerListeners.containsKey(triggerListener))
 			tListeners = listenerToTriggerListeners.get(triggerListener);
@@ -179,12 +184,14 @@ public class KnowledgeManagerViewImpl implements KnowledgeManagersView,
 
 		private final KnowledgeManager knowledgeManager;
 		private final ShadowsTriggerListener listener;
+		private final Trigger trigger;
 
 		public KnowledgeManagerTriggerListener(
 				KnowledgeManager knowledgeManager,
-				ShadowsTriggerListener listener) {
+				ShadowsTriggerListener listener, Trigger trigger) {
 			this.knowledgeManager = knowledgeManager;
 			this.listener = listener;
+			this.trigger = trigger;
 		}
 
 		@Override
@@ -194,6 +201,10 @@ public class KnowledgeManagerViewImpl implements KnowledgeManagersView,
 
 		public KnowledgeManager getKnowledgeManager() {
 			return knowledgeManager;
+		}
+		
+		public Trigger getTrigger() {
+			return trigger;
 		}
 	}
 
