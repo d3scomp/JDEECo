@@ -83,7 +83,7 @@ public class EnsembleTaskTest {
 		Collection<ReadOnlyKnowledgeManager> shadowKnowledgeManagersCollection = new LinkedList<ReadOnlyKnowledgeManager>();
 		shadowKnowledgeManagersCollection.add(shadowKnowledgeManager1);
 		shadowKnowledgeManagersCollection.add(shadowKnowledgeManager2);
-		when(shadowReplicasAccess.getOthersKnowledgeManagers()).thenReturn(shadowKnowledgeManagersCollection);
+		when(shadowReplicasAccess.getOtherKnowledgeManagers()).thenReturn(shadowKnowledgeManagersCollection);
 		
 		model.setKnowledgeManager(knowledgeManager);
 		model.setOtherKnowledgeManagersAccess(shadowReplicasAccess);
@@ -173,7 +173,7 @@ public class EnsembleTaskTest {
 		// THEN it gets the needed local knowledge
 		verify(knowledgeManager).get(anyCollectionOf(KnowledgePath.class));
 		// AND it retrieves the other knowledge managers
-		verify(shadowReplicasAccess).getOthersKnowledgeManagers();
+		verify(shadowReplicasAccess).getOtherKnowledgeManagers();
 		// AND it gets knowledge from them
 		verify(shadowKnowledgeManager1).get(anyCollectionOf(KnowledgePath.class));
 		verify(shadowKnowledgeManager2).get(anyCollectionOf(KnowledgePath.class));		
