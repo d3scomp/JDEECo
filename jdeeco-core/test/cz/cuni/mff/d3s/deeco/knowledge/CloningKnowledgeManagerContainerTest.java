@@ -2,6 +2,7 @@ package cz.cuni.mff.d3s.deeco.knowledge;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -43,8 +44,7 @@ public class CloningKnowledgeManagerContainerTest {
 		// and WHEN new local knowledge manager has been created
 		KnowledgeManager local = tested.createLocal();
 		// THEN the listener is notified about this fact
-		verify(localListener).localCreated(local,
-				any(LocalKnowledgeManagerContainer.class));
+		verify(localListener).localCreated(local, tested);
 		// and none of the replica listeners is notified
 		verifyZeroInteractions(replicaListener);
 	}
@@ -59,8 +59,7 @@ public class CloningKnowledgeManagerContainerTest {
 		KnowledgeManager local = mock(KnowledgeManager.class);
 		KnowledgeManager replica = tested.createReplicaFor(local);
 		// THEN the listener is notified about this fact
-		verify(replicaListener).replicaCreated(replica,
-				any(ReplicaKnowledgeManagerContainer.class));
+		verify(replicaListener).replicaCreated(replica, tested);
 		// and none of the local listeners is notified
 		verifyZeroInteractions(localListener);
 	}
@@ -75,8 +74,7 @@ public class CloningKnowledgeManagerContainerTest {
 		KnowledgeManager local = tested.createLocal();
 		tested.removeLocal(local);
 		// THEN the listener is notified about this fact
-		verify(localListener).localRemoved(local,
-				any(LocalKnowledgeManagerContainer.class));
+		verify(localListener).localRemoved(local, tested);
 		// and none of the replica listeners is notified
 		verifyZeroInteractions(replicaListener);
 	}
@@ -89,11 +87,10 @@ public class CloningKnowledgeManagerContainerTest {
 		tested.registerLocalListener(localListener);
 		// and WHEN a replica of a knowledge manager has been removed
 		KnowledgeManager replica = tested
-				.createReplicaFor(any(KnowledgeManager.class));
+				.createReplicaFor(mock(KnowledgeManager.class));
 		tested.removeReplica(replica);
 		// THEN the listener is notified about this fact
-		verify(replicaListener).replicaRemoved(replica,
-				any(ReplicaKnowledgeManagerContainer.class));
+		verify(replicaListener).replicaRemoved(replica, tested);
 		// and none of the local listeners is notified
 		verifyZeroInteractions(localListener);
 	}
