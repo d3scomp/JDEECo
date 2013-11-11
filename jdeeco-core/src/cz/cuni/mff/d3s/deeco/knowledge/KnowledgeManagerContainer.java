@@ -23,8 +23,8 @@ public abstract class KnowledgeManagerContainer implements
 	}
 	
 	@Override
-	public synchronized KnowledgeManager createLocal() {
-		KnowledgeManager result = new CloningKnowledgeManager();
+	public synchronized KnowledgeManager createLocal(String id) {
+		KnowledgeManager result = new CloningKnowledgeManager(id);
 		locals.add(result);
 		for (LocalListener listener : localListeners)
 			listener.localCreated(result, this);

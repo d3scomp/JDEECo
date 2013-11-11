@@ -30,13 +30,17 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	private final Map<KnowledgePath, Object> knowledge;
 	private final Map<KnowledgeChangeTrigger, List<TriggerListener>> knowledgeChangeListeners;
 
-	public BaseKnowledgeManager() {
+	private final String id;
+	
+	
+	public BaseKnowledgeManager(String id) {
+		this.id = id;
 		this.knowledge = new HashMap<>();
 		this.knowledgeChangeListeners = new HashMap<>();
 	}
 
-	public BaseKnowledgeManager(Object baseKnowledge) {
-		this();
+	public BaseKnowledgeManager(String id, Object baseKnowledge) {
+		this(id);
 		setBaseKnowledge(baseKnowledge);
 	}
 
@@ -136,9 +140,13 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		// Delete list or map items
 		deleteKnowledge(changeSet.getDeletedReferences());
 	}
-
-	// TODO add equals function that compares this knowledge manager id given at
-	// the construction time.
+	
+	@Override
+	public boolean equals(Object that) {
+		if (that != null && that instanceof BaseKnowledgeManager)
+			return ((BaseKnowledgeManager) that).id.equals(id);
+		return false;
+	}
 
 	protected Object getKnowledge(List<PathNode> knowledgePath)
 			throws KnowledgeNotFoundException {

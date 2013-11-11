@@ -36,7 +36,7 @@ public class BaseKnowledgeManagerTest {
 
 	@Before
 	public void setUp() {
-		tested = new BaseKnowledgeManager(new Knowledge());
+		tested = new BaseKnowledgeManager("TEST", new Knowledge());
 		initMocks(this);
 	}
 
@@ -181,7 +181,7 @@ public class BaseKnowledgeManagerTest {
 
 	@Test(expected = KnowledgeNotFoundException.class)
 	public void testNullBaseKnowledgeAccess() throws Exception {
-		tested = new BaseKnowledgeManager();
+		tested = new BaseKnowledgeManager("TEST");
 		// WHEN a field is accessed from the knowledge manager initialized with
 		// null base knowledge
 		KnowledgePath kp = RuntimeModelHelper.createKnowledgePath("number");

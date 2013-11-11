@@ -11,7 +11,6 @@ import org.junit.Test;
 import cz.cuni.mff.d3s.deeco.knowledge.BaseKnowledgeManagerTest.Knowledge;
 import cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 
 /**
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
@@ -23,7 +22,7 @@ public class CloningKnowledgeManagerTest {
 
 	@Before
 	public void setUp() {
-		toBeTested = new CloningKnowledgeManager(new Knowledge());
+		toBeTested = new CloningKnowledgeManager("TEST", new Knowledge());
 	}
 
 	@Test

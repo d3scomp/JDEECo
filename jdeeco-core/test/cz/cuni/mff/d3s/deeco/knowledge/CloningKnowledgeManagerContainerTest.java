@@ -1,8 +1,6 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -42,7 +40,7 @@ public class CloningKnowledgeManagerContainerTest {
 		tested.registerLocalListener(localListener);
 		tested.registerReplicaListener(replicaListener);
 		// and WHEN new local knowledge manager has been created
-		KnowledgeManager local = tested.createLocal();
+		KnowledgeManager local = tested.createLocal("L");
 		// THEN the listener is notified about this fact
 		verify(localListener).localCreated(local, tested);
 		// and none of the replica listeners is notified
@@ -71,7 +69,7 @@ public class CloningKnowledgeManagerContainerTest {
 		tested.registerLocalListener(localListener);
 		tested.registerReplicaListener(replicaListener);
 		// and WHEN a local knowledge manager has been removed
-		KnowledgeManager local = tested.createLocal();
+		KnowledgeManager local = tested.createLocal("L");
 		tested.removeLocal(local);
 		// THEN the listener is notified about this fact
 		verify(localListener).localRemoved(local, tested);
@@ -100,9 +98,9 @@ public class CloningKnowledgeManagerContainerTest {
 		// WHEN a set of local knowledge managers has been created within the
 		// container instance
 		List<KnowledgeManager> locals = new LinkedList<>();
-		locals.add(tested.createLocal());
-		locals.add(tested.createLocal());
-		locals.add(tested.createLocal());
+		locals.add(tested.createLocal("L1"));
+		locals.add(tested.createLocal("L2"));
+		locals.add(tested.createLocal("L3"));
 		// WHEN the container is accessed for all local knowledge managers
 		List<KnowledgeManager> containerLocals = tested.getLocals();
 		// THEN the container returns all local knowledge managers created
