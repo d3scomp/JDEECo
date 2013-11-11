@@ -48,6 +48,8 @@ public class PathParser implements PathParserConstants {
       case SEPARATOR:
         ;
         break;
+      case OPEN:
+        throw new ParseException("The structure 'data1[data2]' is not allowed in a path, use the dot separator: 'data1.[data2]'");
       default:
         jj_la1[1] = jj_gen;
         break label_1;
