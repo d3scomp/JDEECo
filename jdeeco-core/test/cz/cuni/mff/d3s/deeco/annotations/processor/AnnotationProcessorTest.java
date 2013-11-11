@@ -93,12 +93,8 @@ public class AnnotationProcessorTest {
 		processor.process(model,input);
 		removeKnowledgeManagersFromComponents(model);
 		File expected = getExpectedFile(input);
-		if (!expected.exists()) {
-			saveInXMI(model, expected);
-		} else {
-			saveInXMI(model, tempFile);
-			FileAssert.assertEquals(expected, tempFile);
-		}
+		saveInXMI(model, tempFile);
+		FileAssert.assertEquals(expected, tempFile);
 	}
 	
 	@Test 
@@ -107,12 +103,8 @@ public class AnnotationProcessorTest {
 		CorrectE1 input = new CorrectE1();
 		processor.process(model,input);
 		File expected = getExpectedFile(input);
-		if (!expected.exists()) {
-			saveInXMI(model, expected);
-		} else {
-			saveInXMI(model, tempFile);
-			FileAssert.assertEquals(expected, tempFile);
-		}
+		saveInXMI(model, tempFile);
+		FileAssert.assertEquals(expected, tempFile);
 	}
 	
 	@Test
@@ -132,12 +124,8 @@ public class AnnotationProcessorTest {
 		processor.process(model,input);
 		removeKnowledgeManagersFromComponents(model);
 		File expected = getExpectedFile(new C1C2C3E1E2E3());
-		if (!expected.exists()) {
-			saveInXMI(model, expected);
-		} else {
-			saveInXMI(model, tempFile);
-			FileAssert.assertEquals(expected, tempFile);
-		}
+		saveInXMI(model, tempFile);
+		FileAssert.assertEquals(expected, tempFile);
 	}	
 	
 	@Test
@@ -152,12 +140,8 @@ public class AnnotationProcessorTest {
 		processor.process(model,input1, input2, input3, input4, input5, input6);
 		removeKnowledgeManagersFromComponents(model);		
 		File expected = getExpectedFile(new C1C2C3E1E2E3());
-		if (!expected.exists()) {
-			saveInXMI(model, expected);
-		} else {
-			saveInXMI(model, tempFile);
-			FileAssert.assertEquals(expected, tempFile);
-		}		
+		saveInXMI(model, tempFile);
+		FileAssert.assertEquals(expected, tempFile);
 	}
 
 	@Test 
@@ -173,12 +157,8 @@ public class AnnotationProcessorTest {
 		processor.process(model,inputs);
 		removeKnowledgeManagersFromComponents(model);		
 		File expected = getExpectedFile(new C1C2C3E1E2E3());
-		if (!expected.exists()) {
-			saveInXMI(model, expected);
-		} else {
-			saveInXMI(model, tempFile);
-			FileAssert.assertEquals(expected, tempFile);
-		}		
+		saveInXMI(model, tempFile);
+		FileAssert.assertEquals(expected, tempFile);
 	}
 		
 	@Test 
@@ -189,12 +169,8 @@ public class AnnotationProcessorTest {
 		processor.process(model,input);
 		removeKnowledgeManagersFromComponents(model);
 		File expected = getExpectedFile(input);
-		if (!expected.exists()) {
-			saveInXMI(model, expected);
-		} else {
-			saveInXMI(model, tempFile);
-			FileAssert.assertEquals(expected, tempFile);
-		}
+		saveInXMI(model, tempFile);
+		FileAssert.assertEquals(expected, tempFile);
 	}
 	
 	@Test 
@@ -205,12 +181,8 @@ public class AnnotationProcessorTest {
 		processor.process(model,input);
 		removeKnowledgeManagersFromComponents(model);
 		File expected = getExpectedFile(input);
-		if (!expected.exists()) {
-			saveInXMI(model, expected);
-		} else {
-			saveInXMI(model, tempFile);
-			FileAssert.assertEquals(expected, tempFile);
-		}
+		saveInXMI(model, tempFile);
+		FileAssert.assertEquals(expected, tempFile);
 	}
 	
 	@Test 
@@ -220,12 +192,8 @@ public class AnnotationProcessorTest {
 		processor.process(model,input);
 		removeKnowledgeManagersFromComponents(model);
 		File expected = getExpectedFile(input);
-		if (!expected.exists()) {
-			saveInXMI(model, expected);
-		} else {
-			saveInXMI(model, tempFile);
-			FileAssert.assertEquals(expected, tempFile);
-		}	
+		saveInXMI(model, tempFile);
+		FileAssert.assertEquals(expected, tempFile);
 	}
 
 	@Test 
@@ -235,12 +203,8 @@ public class AnnotationProcessorTest {
 		processor.process(model,input);
 		removeKnowledgeManagersFromComponents(model);
 		File expected = getExpectedFile(input);
-		if (!expected.exists()) {
-			saveInXMI(model, expected);
-		} else {
-			saveInXMI(model, tempFile);
-			FileAssert.assertEquals(expected, tempFile);
-		}	
+		saveInXMI(model, tempFile);
+		FileAssert.assertEquals(expected, tempFile);
 	}
 	
 	@Test 
