@@ -31,6 +31,17 @@ public class RuntimeFrameworkBuilderTest {
 	public ExpectedException thrown = ExpectedException.none();
 	
 	
+	@Test
+	public void testRuntimeFrameworkBuilderValidConfiguration()
+		throws Exception {
+		RuntimeConfiguration configuration = new RuntimeConfiguration(RuntimeConfiguration.Scheduling.WALL_TIME, RuntimeConfiguration.Distribution.LOCAL, RuntimeConfiguration.Execution.SINGLE_THREADED);
+
+		RuntimeFrameworkBuilder result = new RuntimeFrameworkBuilder(configuration);
+
+		// add additional test code here
+		assertNotNull(result);
+	}
+
 	
 	@Test
 	public void testInitNullConfiguration() {
