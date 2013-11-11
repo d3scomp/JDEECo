@@ -43,7 +43,8 @@ public class CloningKnowledgeManagerContainerTest {
 		// and WHEN new local knowledge manager has been created
 		KnowledgeManager local = tested.createLocal();
 		// THEN the listener is notified about this fact
-		verify(localListener).localCreated(local);
+		verify(localListener).localCreated(local,
+				any(LocalKnowledgeManagerContainer.class));
 		// and none of the replica listeners is notified
 		verifyZeroInteractions(replicaListener);
 	}
@@ -58,7 +59,8 @@ public class CloningKnowledgeManagerContainerTest {
 		KnowledgeManager local = mock(KnowledgeManager.class);
 		KnowledgeManager replica = tested.createReplicaFor(local);
 		// THEN the listener is notified about this fact
-		verify(replicaListener).replicaCreated(replica);
+		verify(replicaListener).replicaCreated(replica,
+				any(ReplicaKnowledgeManagerContainer.class));
 		// and none of the local listeners is notified
 		verifyZeroInteractions(localListener);
 	}
@@ -73,7 +75,8 @@ public class CloningKnowledgeManagerContainerTest {
 		KnowledgeManager local = tested.createLocal();
 		tested.removeLocal(local);
 		// THEN the listener is notified about this fact
-		verify(localListener).localRemoved(local);
+		verify(localListener).localRemoved(local,
+				any(LocalKnowledgeManagerContainer.class));
 		// and none of the replica listeners is notified
 		verifyZeroInteractions(replicaListener);
 	}
@@ -89,7 +92,8 @@ public class CloningKnowledgeManagerContainerTest {
 				.createReplicaFor(any(KnowledgeManager.class));
 		tested.removeReplica(replica);
 		// THEN the listener is notified about this fact
-		verify(replicaListener).replicaRemoved(replica);
+		verify(replicaListener).replicaRemoved(replica,
+				any(ReplicaKnowledgeManagerContainer.class));
 		// and none of the local listeners is notified
 		verifyZeroInteractions(localListener);
 	}

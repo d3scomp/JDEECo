@@ -27,7 +27,7 @@ public abstract class KnowledgeManagerContainer implements
 		KnowledgeManager result = new CloningKnowledgeManager();
 		locals.add(result);
 		for (LocalListener listener : localListeners)
-			listener.localCreated(result);
+			listener.localCreated(result, this);
 		return result;
 	}
 
@@ -36,7 +36,7 @@ public abstract class KnowledgeManagerContainer implements
 		if (locals.contains(km)) {
 			locals.remove(km);
 			for (LocalListener listener : localListeners)
-				listener.localRemoved(km);
+				listener.localRemoved(km, this);
 			return km;
 		}
 		return null;
@@ -44,7 +44,7 @@ public abstract class KnowledgeManagerContainer implements
 
 	@Override
 	public synchronized List<KnowledgeManager> getLocals() {
-		return new LinkedList<>(locals);
+		return locals;
 	}
 
 	@Override
@@ -58,7 +58,7 @@ public abstract class KnowledgeManagerContainer implements
 		if (replicas.contains(km)) {
 			replicas.remove(km);
 			for (ReplicaListener listener : replicaListeners)
-				listener.replicaRemoved(km);
+				listener.replicaRemoved(km, this);
 			return km;
 		}
 		return null;
@@ -66,7 +66,7 @@ public abstract class KnowledgeManagerContainer implements
 
 	@Override
 	public synchronized List<KnowledgeManager> getReplicas() {
-		return new LinkedList<>(replicas);
+		return replicas;
 	}
 
 	@Override

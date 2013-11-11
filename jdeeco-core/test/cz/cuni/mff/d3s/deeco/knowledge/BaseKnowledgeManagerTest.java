@@ -1,6 +1,7 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -28,14 +29,14 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
  */
 public class BaseKnowledgeManagerTest {
 
-	private BaseKnowledgeManager toBeTested;
+	private BaseKnowledgeManager tested;
 
 	@Mock
 	private TriggerListener triggerListener;
 
 	@Before
 	public void setUp() {
-		toBeTested = new BaseKnowledgeManager(new Knowledge());
+		tested = new BaseKnowledgeManager(new Knowledge());
 		initMocks(this);
 	}
 
@@ -50,10 +51,10 @@ public class BaseKnowledgeManagerTest {
 		ChangeSet toUpdate = new ChangeSet();
 		toUpdate.setValue(kp, 17);
 
-		toBeTested.update(toUpdate);
+		tested.update(toUpdate);
 		// THEN when accessed the number field the KnowledgeManager should
 		// return updated value
-		ValueSet result = toBeTested.get(knowledgePaths);
+		ValueSet result = tested.get(knowledgePaths);
 		assertEquals(17, result.getValue(kp));
 	}
 
@@ -69,10 +70,10 @@ public class BaseKnowledgeManagerTest {
 		ChangeSet toUpdate = new ChangeSet();
 		toUpdate.setValue(kp, "innerAModified");
 
-		toBeTested.update(toUpdate);
+		tested.update(toUpdate);
 		// THEN when accessed the inner knowledge the KnowledgeManager should
 		// return updated value
-		ValueSet result = toBeTested.get(knowledgePaths);
+		ValueSet result = tested.get(knowledgePaths);
 		assertEquals("innerAModified", result.getValue(kp));
 	}
 
@@ -86,11 +87,11 @@ public class BaseKnowledgeManagerTest {
 
 		ChangeSet toUpdate = new ChangeSet();
 		toUpdate.setValue(kp, 4);
-		toBeTested.update(toUpdate);
+		tested.update(toUpdate);
 
 		// THEN when accessed the item value the KnowledgeManager should return
 		// updated value
-		ValueSet result = toBeTested.get(knowledgePaths);
+		ValueSet result = tested.get(knowledgePaths);
 		assertEquals(4, result.getValue(kp));
 	}
 
@@ -104,11 +105,11 @@ public class BaseKnowledgeManagerTest {
 
 		ChangeSet toUpdate = new ChangeSet();
 		toUpdate.setValue(kp, 16);
-		toBeTested.update(toUpdate);
+		tested.update(toUpdate);
 
 		// THEN when accessed the item value the KnowledgeManager should return
 		// updated value
-		ValueSet result = toBeTested.get(knowledgePaths);
+		ValueSet result = tested.get(knowledgePaths);
 		assertEquals(16, result.getValue(kp));
 	}
 
@@ -119,19 +120,19 @@ public class BaseKnowledgeManagerTest {
 		KnowledgePath kp = RuntimeModelHelper.createKnowledgePath("list", "2");
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
 		knowledgePaths.add(kp);
-		Object nextItemValue = toBeTested.get(knowledgePaths).getValue(kp);
+		Object nextItemValue = tested.get(knowledgePaths).getValue(kp);
 		kp = RuntimeModelHelper.createKnowledgePath("list", "1");
 		knowledgePaths.clear();
 		knowledgePaths.add(kp);
-		
+
 		ChangeSet toDelete = new ChangeSet();
 		toDelete.setDeleted(kp);
-		toBeTested.update(toDelete);
+		tested.update(toDelete);
 
 		// THEN when accessed the deleted item index, the KnowledgeManager
 		// should return
 		// the value of the next item
-		assertEquals(nextItemValue, toBeTested.get(knowledgePaths).getValue(kp));
+		assertEquals(nextItemValue, tested.get(knowledgePaths).getValue(kp));
 	}
 
 	@Test(expected = KnowledgeNotFoundException.class)
@@ -145,11 +146,11 @@ public class BaseKnowledgeManagerTest {
 
 		ChangeSet toDelete = new ChangeSet();
 		toDelete.setDeleted(kp);
-		toBeTested.update(toDelete);
+		tested.update(toDelete);
 
 		// THEN when accessed the removed element value the KnowledgeManager
 		// should throw the KnowledgeNotExistentException
-		toBeTested.get(knowledgePaths);
+		tested.get(knowledgePaths);
 	}
 
 	@Test
@@ -159,7 +160,7 @@ public class BaseKnowledgeManagerTest {
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
 		knowledgePaths.add(kp);
 
-		ValueSet result = toBeTested.get(knowledgePaths);
+		ValueSet result = tested.get(knowledgePaths);
 		// THEN the correct value is returned
 		assertEquals(10, result.getValue(kp));
 	}
@@ -173,21 +174,21 @@ public class BaseKnowledgeManagerTest {
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
 		knowledgePaths.add(kp);
 
-		ValueSet result = toBeTested.get(knowledgePaths);
+		ValueSet result = tested.get(knowledgePaths);
 		// THEN the correct value is returned
 		assertEquals("innerA", result.getValue(kp));
 	}
 
 	@Test(expected = KnowledgeNotFoundException.class)
 	public void testNullBaseKnowledgeAccess() throws Exception {
-		toBeTested = new BaseKnowledgeManager();
+		tested = new BaseKnowledgeManager();
 		// WHEN a field is accessed from the knowledge manager initialized with
 		// null base knowledge
 		KnowledgePath kp = RuntimeModelHelper.createKnowledgePath("number");
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
 		knowledgePaths.add(kp);
 		// THEN exception is thrown.
-		toBeTested.get(knowledgePaths);
+		tested.get(knowledgePaths);
 	}
 
 	@Test
@@ -197,7 +198,7 @@ public class BaseKnowledgeManagerTest {
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
 		knowledgePaths.add(kp);
 
-		ValueSet result = toBeTested.get(knowledgePaths);
+		ValueSet result = tested.get(knowledgePaths);
 		// THEN the correct value is returned
 		assertEquals(3, result.getValue(kp));
 	}
@@ -210,7 +211,7 @@ public class BaseKnowledgeManagerTest {
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
 		knowledgePaths.add(kp);
 
-		ValueSet result = toBeTested.get(knowledgePaths);
+		ValueSet result = tested.get(knowledgePaths);
 		// THEN the correct value is returned
 		assertEquals(1, result.getValue(kp));
 	}
@@ -225,38 +226,54 @@ public class BaseKnowledgeManagerTest {
 
 		// THEN the ReadOnlyKnowledgeManager should throw the
 		// KnowledgeNotExistentException
-		toBeTested.get(knowledgePaths);
+		tested.get(knowledgePaths);
 	}
 
 	@Test
-	public void testRegisterListener() {
+	public void testRegisterListener() throws Exception {
 		// WHEN a listener is registered at the KnowledgeManager
 		KnowledgePath kp = RuntimeModelHelper.createKnowledgePath("number");
 		KnowledgeChangeTrigger trigger = RuntimeModelHelper
 				.createKnowledgeChangeTrigger();
 		trigger.setKnowledgePath(kp);
-		toBeTested.register(trigger, triggerListener);
+		tested.register(trigger, triggerListener);
 		// and WHEN listener's releavant knowledge is updated
 		ChangeSet toUpdate = new ChangeSet();
 		toUpdate.setValue(kp, 17);
-		toBeTested.update(toUpdate);
+		tested.update(toUpdate);
 		// THEN the listener is notify once.
 		verify(triggerListener).triggered(trigger);
 		verifyNoMoreInteractions(triggerListener);
 	}
 
 	@Test
-	public void testUnregisterListener() {
+	public void testUnregisterListener() throws Exception {
 		// WHEN a previously registered listener
 		KnowledgePath kp = RuntimeModelHelper.createKnowledgePath("number");
 		KnowledgeChangeTrigger trigger = RuntimeModelHelper
 				.createKnowledgeChangeTrigger();
 		trigger.setKnowledgePath(kp);
-		toBeTested.register(trigger, triggerListener);
+		tested.register(trigger, triggerListener);
 		// is unregistered from the KnowledgeManager
-		toBeTested.register(trigger, triggerListener);
+		tested.register(trigger, triggerListener);
 		// THEN it is not notified about knowledge changes any more
 		verifyNoMoreInteractions(triggerListener);
+	}
+
+	@Test
+	public void testGetRootKnowledge() throws Exception {
+		// WHEN empty knowledge path is created
+		KnowledgePath emptyKP = RuntimeModelHelper.createKnowledgePath();
+		List<KnowledgePath> knowledgePaths = new LinkedList<>();
+		knowledgePaths.add(emptyKP);
+		// and WHEN it is used to access knowledge manager data
+		ValueSet result = tested.get(knowledgePaths);
+		// THEN as a result the knowledge manager should return its root
+		// knowledge
+		KnowledgePath kp = RuntimeModelHelper.createKnowledgePath("id");
+		assertTrue(result.getKnowledgePaths().contains(kp));
+		kp = RuntimeModelHelper.createKnowledgePath("date");
+		assertTrue(result.getKnowledgePaths().contains(kp));
 	}
 
 	public static class Knowledge {

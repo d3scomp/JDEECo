@@ -59,8 +59,15 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	public ValueSet get(Collection<KnowledgePath> knowledgePaths)
 			throws KnowledgeNotFoundException {
 		ValueSet result = new ValueSet();
-		for (KnowledgePath kp : knowledgePaths)
-			result.setValue(kp, getKnowledge(kp.getNodes()));
+		Object value;
+		for (KnowledgePath kp : knowledgePaths) {
+			value = getKnowledge(kp.getNodes());
+			if (knowledge.equals(value))
+				for (KnowledgePath rootKP : knowledge.keySet())
+					result.setValue(rootKP, knowledge.get(rootKP));
+			else
+				result.setValue(kp, value);
+		}
 		return result;
 	}
 
@@ -129,6 +136,9 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		// Delete list or map items
 		deleteKnowledge(changeSet.getDeletedReferences());
 	}
+
+	// TODO add equals function that compares this knowledge manager id given at
+	// the construction time.
 
 	protected Object getKnowledge(List<PathNode> knowledgePath)
 			throws KnowledgeNotFoundException {
@@ -271,17 +281,24 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	}
 
 	private void notifyKnowledgeChangeListeners(KnowledgePath kp) {
-		KnowledgeChangeTrigger foundKCT = null;
+		List<KnowledgeChangeTrigger> foundKCTs = new LinkedList<>();
+		List<PathNode> kctNodes;
+		List<PathNode> kpNodes = kp.getNodes();
 		for (KnowledgeChangeTrigger kct : knowledgeChangeListeners.keySet()) {
-			if (kct.getKnowledgePath().equals(kp)) {
-				foundKCT = kct;
-				break;
+			kctNodes = kct.getKnowledgePath().getNodes();
+			// kp: a.b.c, kct: a.b
+			// kp : a.b, kct: a.b.c
+			if (containmentEndIndex(kpNodes, kctNodes) > -1
+					|| containmentEndIndex(kctNodes, kpNodes) > -1) {
+				foundKCTs.add(kct);
 			}
 		}
-		if (foundKCT != null) {
-			for (TriggerListener listener : knowledgeChangeListeners
-					.get(foundKCT)) {
-				listener.triggered(foundKCT);
+		if (!foundKCTs.isEmpty()) {
+			for (KnowledgeChangeTrigger kct : foundKCTs) {
+				for (TriggerListener listener : knowledgeChangeListeners
+						.get(kct)) {
+					listener.triggered(kct);
+				}
 			}
 		}
 	}
