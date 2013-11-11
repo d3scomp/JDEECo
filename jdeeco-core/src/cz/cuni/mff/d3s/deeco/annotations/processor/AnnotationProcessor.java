@@ -173,7 +173,7 @@ public class AnnotationProcessor {
 		componentInstance.setName(clazz.getCanonicalName());
 		KnowledgeManagerContainer container = new CloningKnowledgeManagerContainer();
 		KnowledgeManager km = container.createLocal();
-		km.update(processInitialKnowledge(obj));
+		km.update(extractInitialKnowledge(obj));
 		componentInstance.setKnowledgeManager(km);	
 		KnowledgeManagersView view = new KnowledgeManagerViewImpl(km, container);
 		componentInstance.setOtherKnowledgeManagersAccess(view);
@@ -453,7 +453,7 @@ public class AnnotationProcessor {
 	/**
 	 * Retrieves the first instance of a direction annotation, i.e. one of
 	 * {Inout, In, Out}. If more than one / none direction annotation is found,
-	 * it throws an excpetion.
+	 * it throws an exception.
 	 * 
 	 * @param parameterIndex
 	 *            order of the parameter in the method declaration - just for
@@ -498,7 +498,7 @@ public class AnnotationProcessor {
 		return null;
 	}
 	
-	ChangeSet processInitialKnowledge(Object knowledge) {
+	ChangeSet extractInitialKnowledge(Object knowledge) {
 		ChangeSet changeSet = new ChangeSet();
 		for (Field f : knowledge.getClass().getFields()) {
 			KnowledgePath knowledgePath = factory.createKnowledgePath();

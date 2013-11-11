@@ -1,5 +1,7 @@
 package cz.cuni.mff.d3s.deeco.annotations.processor.input.samples;
 
+import java.util.Date;
+
 import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
@@ -18,6 +20,10 @@ import cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange;
 @Component
 public class CorrectC1 {
 
+	public String name;
+	public Integer capacity;
+	public Date time;
+	
 	@Process
 	@PeriodicScheduling(1000)
 	public static void process1(

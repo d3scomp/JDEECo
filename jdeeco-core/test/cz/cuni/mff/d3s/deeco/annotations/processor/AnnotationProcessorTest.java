@@ -1,5 +1,9 @@
 package cz.cuni.mff.d3s.deeco.annotations.processor;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -20,6 +24,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import cz.cuni.mff.d3s.deeco.annotations.pathparser.ParseException;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.TokenMgrError;
 import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.C1C2C3E1E2E3;
 import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC1;
@@ -38,9 +43,13 @@ import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.WrongE1;
 import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.WrongE2;
 import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.WrongE3;
 import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.WrongE4;
-import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.WrongKP1;
-import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.WrongKP2;
+import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 
@@ -365,32 +374,124 @@ public class AnnotationProcessorTest {
 		processor.process(model,input);
 	}
 	
-	@Test 
-	public void testExceptionsInKnowledgePath1()
-			throws AnnotationParsingException {
-		RuntimeMetadata model = factory.createRuntimeMetadata();
-		WrongKP1 input = new WrongKP1();
-		exception.expect(AnnotationParsingException.class);
-		exception.expectMessage(
-				"Component: "+input.getClass().getCanonicalName()+"->" +
-				"The structure 'data1[data2]' is not allowed in a path, use the dot separator: 'data1.[data2]'");
-		processor.process(model,input);
-	}
-	
-	@Test 
-	public void testExceptionsInKnowledgePath2()
-			throws AnnotationParsingException {
-		RuntimeMetadata model = factory.createRuntimeMetadata();
-		WrongKP2 input = new WrongKP2();
-		exception.expect(TokenMgrError.class);
-		processor.process(model,input);
-	}
-	
 	/*
 	 * Unit tests. 
 	 */
 	
-	//TODO: IG
+	@Test 
+	public void testCreateKnowledgePath() throws ParseException, AnnotationParsingException {
+		String pathStr = "level1.level2.level3";
+		KnowledgePath kp = processor.createKnowledgePath(pathStr);
+		assertEquals(kp.getNodes().size(),3);
+		assertEquals(((PathNodeField) kp.getNodes().get(0)).getName(),"level1");
+		assertEquals(((PathNodeField) kp.getNodes().get(1)).getName(),"level2");
+		assertEquals(((PathNodeField) kp.getNodes().get(2)).getName(),"level3");
+		
+		pathStr = "level1.[level21.level22.level23]";
+		kp = processor.createKnowledgePath(pathStr);
+		assertEquals(kp.getNodes().size(),2);
+		assertEquals(((PathNodeField) kp.getNodes().get(0)).getName(),"level1");
+		assert kp.getNodes().get(1) instanceof PathNodeMapKey;
+		kp = ((PathNodeMapKey) kp.getNodes().get(1)).getKeyPath();
+		assertEquals(kp.getNodes().size(),3);
+		assertEquals(((PathNodeField) kp.getNodes().get(0)).getName(),"level21");
+		assertEquals(((PathNodeField) kp.getNodes().get(1)).getName(),"level22");
+		assertEquals(((PathNodeField) kp.getNodes().get(2)).getName(),"level23");
+		
+		pathStr = "level1.[level21.[level221.level222].level23]";
+		kp = processor.createKnowledgePath(pathStr);
+		assertEquals(kp.getNodes().size(),2);
+		assertEquals(((PathNodeField) kp.getNodes().get(0)).getName(),"level1");
+		assertTrue(kp.getNodes().get(1) instanceof PathNodeMapKey);
+		kp = ((PathNodeMapKey) kp.getNodes().get(1)).getKeyPath();
+		assertEquals(kp.getNodes().size(),3);
+		assertEquals(((PathNodeField) kp.getNodes().get(0)).getName(),"level21");
+		assertTrue(kp.getNodes().get(1) instanceof PathNodeMapKey);
+		kp = ((PathNodeMapKey) kp.getNodes().get(1)).getKeyPath();
+		assertEquals(kp.getNodes().size(),2);
+		assertEquals(((PathNodeField) kp.getNodes().get(0)).getName(),"level221");
+		assertEquals(((PathNodeField) kp.getNodes().get(1)).getName(),"level222");
+
+		pathStr = "coordinates.[member.id]";
+		kp = processor.createKnowledgePath(pathStr);
+		assertEquals(kp.getNodes().size(),2);
+		assertEquals(((PathNodeField) kp.getNodes().get(0)).getName(),"coordinates");
+		assertTrue(kp.getNodes().get(1) instanceof PathNodeMapKey);
+		kp = ((PathNodeMapKey) kp.getNodes().get(1)).getKeyPath();
+		assertTrue(kp.getNodes().get(0) instanceof PathNodeMember);
+		assertEquals(((PathNodeField) kp.getNodes().get(1)).getName(),"id");
+		
+		pathStr = "[coord.names]";
+		kp = processor.createKnowledgePath(pathStr);
+		assertEquals(kp.getNodes().size(),1);
+		assertTrue(kp.getNodes().get(0) instanceof PathNodeMapKey);
+		kp = ((PathNodeMapKey) kp.getNodes().get(0)).getKeyPath();
+		assertTrue(kp.getNodes().get(0) instanceof PathNodeCoordinator);
+		assertEquals(((PathNodeField) kp.getNodes().get(1)).getName(),"names");
+	}
+	
+	@Test 
+	public void testExceptionsInCreateKnowledgePath1() throws ParseException, AnnotationParsingException {
+		String pathStr = "namesToAddresses[member.name]";
+		exception.expect(ParseException.class);
+		exception.expectMessage(
+				"The structure 'data1[data2]' is not allowed in a path, " +
+				"use the dot separator: 'data1.[data2]'");
+		processor.createKnowledgePath(pathStr);		
+	}
+	
+	@Test
+	public void testExceptionsInCreateKnowledgePath2() throws ParseException, AnnotationParsingException {
+		String pathStr = "namesToAddresses.[member.name";
+		exception.expect(ParseException.class);
+		processor.createKnowledgePath(pathStr);		
+	}
+	
+	@Test
+	public void testExceptionsInCreateKnowledgePath3() throws ParseException, AnnotationParsingException {
+		String pathStr = "level1..level2";
+		exception.expect(ParseException.class);
+		processor.createKnowledgePath(pathStr);		
+	}
+	
+	@Test
+	public void testExceptionsInCreateKnowledgePath4() throws ParseException, AnnotationParsingException {
+		String pathStr = "level1.  .level2";
+		exception.expect(TokenMgrError.class);
+		processor.createKnowledgePath(pathStr);		
+	}
+	
+	@Test
+	public void testExceptionsInCreateKnowledgePath5() throws ParseException, AnnotationParsingException {
+		String pathStr = "";
+		exception.expect(ParseException.class);
+		processor.createKnowledgePath(pathStr);		
+	}
+	
+	@Test
+	public void testProcessInitialKnowledge(){
+		Object o = new CorrectC1();
+		/*  "CorrectC1" fields are:
+		 * 
+		 * 	public String name;
+		 *	public Integer capacity;
+		 *	public Date time;
+		 */
+		ChangeSet cs = processor.extractInitialKnowledge(o);
+		assertEquals(cs.getUpdatedReferences().size(),3);
+		assertEquals(cs.getDeletedReferences().size(),0);
+		KnowledgePath kp = factory.createKnowledgePath();
+		PathNodeField f = factory.createPathNodeField();
+		kp.getNodes().add(f);
+		f.setName("time");
+		assertTrue(cs.getUpdatedReferences().contains(kp));
+		f.setName("capacity");
+		assertTrue(cs.getUpdatedReferences().contains(kp));
+		f.setName("name");
+		assertTrue(cs.getUpdatedReferences().contains(kp));
+		f.setName("anotherName");
+		assertFalse(cs.getUpdatedReferences().contains(kp));		
+	}
 	
 	/*
 	 * Helpers.
