@@ -10,7 +10,6 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import junitx.framework.FileAssert;
 
 import org.eclipse.emf.common.util.URI;
@@ -26,23 +25,7 @@ import org.junit.rules.ExpectedException;
 
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.ParseException;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.TokenMgrError;
-import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.C1C2C3E1E2E3;
-import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC1;
-import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC2;
-import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC3;
-import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectE1;
-import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectE2;
-import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectE3;
-import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.WrongC1;
-import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.WrongC2;
-import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.WrongC3;
-import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.WrongC4;
-import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.WrongCE1;
-import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.WrongCE2;
-import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.WrongE1;
-import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.WrongE2;
-import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.WrongE3;
-import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.WrongE4;
+import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.*;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
@@ -481,8 +464,8 @@ public class AnnotationProcessorTest {
 	private File getExpectedFile(Object o) {
 		String outF = "test"
 				+ File.separator
-				+ getClass().getPackage().getName()
-						.replaceAll("[.]", File.separator) + File.separator
+				+ this.getClass().getPackage().getName().replace('.', File.separatorChar)
+				+ File.separator
 				+ "output" + File.separator;
 		String path = outF + o.getClass().getSimpleName() + ".xmi";
 		return new File(path);
