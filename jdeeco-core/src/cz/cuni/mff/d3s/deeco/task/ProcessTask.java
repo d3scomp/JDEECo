@@ -59,8 +59,7 @@ public class ProcessTask extends Task {
 			ParameterDirection paramDir = formalParam.getDirection();
 			
 			if (paramDir == ParameterDirection.IN || paramDir == ParameterDirection.INOUT) {
-				// TODO: Expand the path here. At this point, this works only for absolute paths
-				inPaths.add(formalParam.getKnowledgePath());
+				inPaths.add(KnowledgePathHelper.getAbsolutePath(formalParam.getKnowledgePath(), knowledgeManager));
 			}
 		}
 		

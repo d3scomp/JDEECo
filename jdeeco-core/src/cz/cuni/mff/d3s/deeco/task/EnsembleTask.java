@@ -1,17 +1,26 @@
 package cz.cuni.mff.d3s.deeco.task;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
+import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ShadowsTriggerListener;
 import cz.cuni.mff.d3s.deeco.knowledge.TriggerListener;
+import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
@@ -21,6 +30,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.impl.TriggerImpl;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
+import static cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.*;
 
 /**
  * 
@@ -88,50 +98,28 @@ public class EnsembleTask extends Task {
 
 	/**
 	 * Returns a trigger which can be understood by a knowledge manager. In particular this means that the knowledge path of the trigger (in case of
-	 * the {@link KnowledgeChangeTrigger}) is striped of the coordinator/memeber prefix.
+	 * the {@link KnowledgeChangeTrigger}) is stripped of the coordinator/memeber prefix.
 	 * 
 	 * @param trigger The trigger to be adapted. Currently only {@link KnowledgeChangeTrigger} is supported.
 	 * @return The adapted trigger or <code>null</code> if the trigger is invalid or can't be adapted.
 	 */
 	private Trigger adaptTriggerForKM(Trigger trigger) {
 		KnowledgeChangeTrigger knowledgeChangeTrigger = (KnowledgeChangeTrigger)trigger;
-		List<PathNode> origPathNodes = knowledgeChangeTrigger.getKnowledgePath().getNodes();
-		
-		if (origPathNodes.isEmpty()) {
-			return null;
-		}
-		
-		Iterator<PathNode> pathNodeIter = origPathNodes.iterator();
-		PathNode firstPathNode = pathNodeIter.next();
 
-		if ((firstPathNode instanceof PathNodeCoordinator) || (firstPathNode instanceof PathNodeMember)) {
+		KnowledgePathAndRoot strippedKnowledgePathAndRoot = KnowledgePathHelper.getStrippedPath(knowledgeChangeTrigger.getKnowledgePath());
+		
+		if (strippedKnowledgePathAndRoot != null) {
 			RuntimeMetadataFactory factory = RuntimeMetadataFactory.eINSTANCE;
-			
-			KnowledgePath knowledgePath = factory.createKnowledgePath();
-			List<PathNode> newPathNodes = knowledgePath.getNodes();
-						
-			while (pathNodeIter.hasNext()) {
-				PathNode origNode = pathNodeIter.next();
-				
-				if (origNode instanceof PathNodeField) {
-					PathNodeField newNode = factory.createPathNodeField();
-					newNode.setName(((PathNodeField) origNode).getName());
-					
-					newPathNodes.add(newNode);
-				} else {
-					return null;
-				}
-			}
 
 			KnowledgeChangeTrigger result = factory.createKnowledgeChangeTrigger();
-			result.setKnowledgePath(knowledgePath);
+			result.setKnowledgePath(strippedKnowledgePathAndRoot.knowledgePath);
 			
 			return result;
-		}
-		
-		return null;
+		} else {
+			return null;
+		}		
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see cz.cuni.mff.d3s.deeco.task.Task#registerTriggers()
 	 */
@@ -173,13 +161,92 @@ public class EnsembleTask extends Task {
 		}
 	}
 
+	private boolean checkMembership(PathRoot localRole, ReadOnlyKnowledgeManager shadowKnowledgeManager) throws TaskInvocationException {
+		// Obtain parameters from the local knowledge to evaluate the membership
+		KnowledgeManager localKnowledgeManager = ensembleController.getComponentInstance().getKnowledgeManager();
+		Collection<Parameter> formalParams = ensembleController.getEnsembleDefinition().getMembership().getParameters();
+
+		Collection<KnowledgePath> localPaths = new LinkedList<KnowledgePath>();
+		Collection<KnowledgePath> shadowPaths = new LinkedList<KnowledgePath>();
+		
+		for (Parameter formalParam : formalParams) {
+			ParameterDirection paramDir = formalParam.getDirection();
+			
+			if (paramDir != ParameterDirection.IN) {
+				throw new TaskInvocationException("Only IN params allowed in membership condition.");
+			}
+			
+			KnowledgePathAndRoot absoluteKnowledgePathAndRoot;
+			if (localRole == PathRoot.COORDINATOR) {
+				absoluteKnowledgePathAndRoot = getAbsoluteStrippedPath(formalParam.getKnowledgePath(), localKnowledgeManager, shadowKnowledgeManager);
+			} else {
+				absoluteKnowledgePathAndRoot = getAbsoluteStrippedPath(formalParam.getKnowledgePath(), shadowKnowledgeManager, localKnowledgeManager);				
+			}
+			
+			if (absoluteKnowledgePathAndRoot == null) {
+				throw new TaskInvocationException("Member/Coordinator prefix required for membership paths.");
+			} if (absoluteKnowledgePathAndRoot.root == localRole) {
+				localPaths.add(absoluteKnowledgePathAndRoot.knowledgePath);
+			} else {
+				shadowPaths.add(absoluteKnowledgePathAndRoot.knowledgePath);
+			}
+		}
+		
+		ValueSet localKnowledge;
+		ValueSet shadowKnowledge;
+		
+		try {
+			localKnowledge = localKnowledgeManager.get(localPaths);
+			shadowKnowledge = shadowKnowledgeManager.get(shadowPaths);
+		} catch (KnowledgeNotFoundException e) {
+			// We were not able to find the knowledge, which means that the membership is false.
+			return false;
+		}
+
+		// Construct the parameters for the process method invocation
+		Object[] actualParams = new Object[formalParams.size()];
+		
+		int paramIdx = 0;
+		for (Parameter formalParam : formalParams) {
+			PathRoot root = getRoot(formalParam.getKnowledgePath());
+			
+			if (root == localRole) {
+				actualParams[paramIdx] = localKnowledge.getValue(formalParam.getKnowledgePath());	
+			} else {
+				actualParams[paramIdx] = shadowKnowledge.getValue(formalParam.getKnowledgePath());	
+			}
+			
+			paramIdx++;
+		}
+		
+		try {
+			// Call the membership condition
+			return (Boolean)ensembleController.getEnsembleDefinition().getMembership().getMethod().invoke(null, actualParams);
+			
+		} catch (IllegalAccessException | IllegalArgumentException e) {
+			throw new TaskInvocationException("Error when invoking a membership condition.", e);
+		} catch (ClassCastException e) {
+			throw new TaskInvocationException("Membership condition does not return a boolean.", e);			
+		} catch (InvocationTargetException e) {
+			Log.i("Membership condition returned an exception.", e.getTargetException());
+			return false;
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see cz.cuni.mff.d3s.deeco.task.Task#invoke()
 	 */
 	@Override
 	public void invoke(Trigger trigger) {
-		// TODO Auto-generated method stub
+		// TODO
 		
+		// If the trigger is periodic trigger or pertains to a local knowledge manager, iterate over all shadow knowledge managers
+		// Invoke the membership condition
+		// If the membership condition returned true, invoke the knowledge exchange
+
+		// Otherwise select the shadow knowledge manager to which the trigger pertained
+		// Invoke the membership condition
+		// If the membership condition returned true, invoke the knowledge exchange		
 	}
 
 	/**
