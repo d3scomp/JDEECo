@@ -30,5 +30,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface Membership {
-	double value() default 0.0;
+
 }

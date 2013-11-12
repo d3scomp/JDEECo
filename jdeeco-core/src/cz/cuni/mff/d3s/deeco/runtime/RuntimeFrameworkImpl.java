@@ -9,6 +9,7 @@ import org.eclipse.emf.common.notify.impl.AdapterImpl;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
@@ -116,10 +117,15 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 	 * has been added to the model.
 	 */
 	void componentInstanceAdded(final ComponentInstance instance) {
-		if ((instance == null) || (componentRecords.containsKey(instance))) {
+		if (instance == null) {
+			Log.w("Attempting to add null ComponentInstance");
 			return;
 		}
-		
+	
+		if (componentRecords.containsKey(instance)) {
+			Log.w(String.format("Attempting to add an already-registered ComponentInstance (%s)", instance));		
+			return;
+		}		
 				
 		ComponentInstanceRecord ciRecord = new ComponentInstanceRecord(instance);
 		componentRecords.put(instance, ciRecord);
@@ -158,11 +164,26 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 	
 	void componentProcessAdded(final ComponentInstance instance,
 			final ComponentProcess process) {
-		ComponentInstanceRecord ciRecord = componentRecords.get(instance);
-		final Task newTask = new ProcessTask(process, scheduler);
-		ciRecord.getProcessTasks().put(process, newTask);
+		if ((instance == null) || (process == null)) {
+			Log.w(String.format("Attempting to add an invalid process (%s) to an invalid component instance (%s)", process, instance));
+			return;
+		}
 		
-		componentProcessActiveChanged(process, newTask, true);
+		ComponentInstanceRecord cir = componentRecords.get(instance);		
+		if (cir == null) {
+			Log.w(String.format("Attempting to add a process (%s) to an unregistered instance (%s)", process, instance));
+			return;
+		}
+		
+		if (cir.getProcessTasks().containsKey(process)) {
+			Log.w(String.format("Attempting to add an already existing process (%s) to instance (%s)", process, instance));
+			return;
+		}
+		
+		final Task newTask = new ProcessTask(process, scheduler);
+		cir.getProcessTasks().put(process, newTask);
+		
+		componentProcessActiveChanged(process, process.isIsActive());
 		
 		// register adapters to listen for model changes
 		// listen to change in ComponentProcess.isActive
@@ -171,7 +192,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 				super.notifyChanged(notification);
 				if ((notification.getFeatureID(ComponentProcess.class) == RuntimeMetadataPackage.COMPONENT_PROCESS__IS_ACTIVE)
 						&& (notification.getEventType() == Notification.SET)){
-					componentProcessActiveChanged(process, newTask, notification.getNewBooleanValue());
+					componentProcessActiveChanged(process, notification.getNewBooleanValue());
 				}
 			}
 		};
@@ -179,11 +200,27 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 		componentProcessAdapters.put(process, componentProcessAdapter);
 	} 
 	
-	void componentProcessActiveChanged(ComponentProcess process, Task processTask, boolean active) {
+	void componentProcessActiveChanged(ComponentProcess process, boolean active) {		
+		if (process == null) {
+			Log.w(String.format("Attempting to to change the activity of an invalid process (%s).", process));
+			return;
+		}
+		// the instance is not registered 
+		if ((!componentRecords.containsKey(process.getComponentInstance()) 
+			// OR the process is not registered
+			|| (!componentRecords.get(process.getComponentInstance()).getProcessTasks().containsKey(process)))) {
+			Log.w(String.format("Attempting to change the activity of an unregistered process (%s).", process));
+			return;
+		}
+		
+		Task t = componentRecords.get(process.getComponentInstance()).getProcessTasks().get(process);
+		
+		Log.i(String.format("Changing the activity of task %s corresponding to process %s to %s.", t, process, active));
+		
 		if (active) {
-			scheduler.addTask(processTask);
+			scheduler.addTask(t);
 		} else {
-			scheduler.removeTask(processTask);
+			scheduler.removeTask(t);
 		}
 	}
 
@@ -193,10 +230,16 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 	 * instance has been removed from the model.
 	 */
 	void componentInstanceRemoved(ComponentInstance instance) {
-		if ((instance == null) || (!componentRecords.containsKey(instance))) {
+		if (instance == null) {
+			Log.w("Attempting to remove a null ComponentInstance");
 			return;
-		} 
-		
+		}
+	
+		if (!componentRecords.containsKey(instance)) {
+			Log.w(String.format("Attempting to remove a non-registered ComponentInstance (%s)", instance));		
+			return;
+		}	
+						
 		ComponentInstanceRecord ciRecord = componentRecords.get(instance);
 		
 		while (!ciRecord.getProcessTasks().isEmpty()) {
@@ -218,12 +261,25 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 	
 	void componentProcessRemoved(ComponentInstance instance,
 			ComponentProcess process) {
+		if ((instance == null) || (process == null)) {
+			Log.w(String.format("Attempting to remove an invalid process (%s) from an invalid component instance (%s)", process, instance));
+			return;
+		}
 		
-		ComponentInstanceRecord ciRecord = componentRecords.get(instance);
+		ComponentInstanceRecord cir = componentRecords.get(instance);		
+		if (cir == null) {
+			Log.w(String.format("Attempting to remove a process (%s) from an unregistered instance (%s)", process, instance));
+			return;
+		}
 		
-		componentProcessActiveChanged(process, ciRecord.getProcessTasks().get(process), false);
+		if (!cir.getProcessTasks().containsKey(process)) {
+			Log.w(String.format("Attempting to remove an unregistered process (%s) from instance (%s)", process, instance));
+			return;
+		}
 		
-		ciRecord.getProcessTasks().remove(process);
+		componentProcessActiveChanged(process, false);
+		
+		cir.getProcessTasks().remove(process);
 		
 		if (componentProcessAdapters.containsKey(process)) { 
 			process.eAdapters().remove(componentProcessAdapters.get(process));
