@@ -19,9 +19,6 @@ public abstract class Task {
 		this.scheduler = scheduler;
 	}
 
-	// FIXME TB: Could we somehow know whether the scheduler is calling us because of the trigger or because of the period?
-	// In case of ensembles, we could take an advantage of this and when called because of a trigger, we wouldn't have to evaluate all potential pairs as we know
-	// which knowledge manager caused the trigger.
 	public abstract void invoke(Trigger trigger) throws TaskInvocationException;
 
 	protected abstract void registerTriggers();
