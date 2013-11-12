@@ -271,3 +271,4 @@ public class EnsembleTaskTest {
 		assertTrue(cs.getUpdatedReferences().size() == 2);
 	}	
 }
+
