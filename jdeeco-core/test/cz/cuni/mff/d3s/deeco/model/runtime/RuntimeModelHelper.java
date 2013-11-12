@@ -28,9 +28,7 @@ public class RuntimeModelHelper {
 			} else if ("<M>".equals(nodeName)) {
 				pathNode = factory.createPathNodeMember();
 			} else {
-				PathNodeField pathNodeField = factory.createPathNodeField();
-				pathNodeField.setName(nodeName);
-				pathNode = pathNodeField;
+				pathNode = createPathNodeField(nodeName);
 			}
 
 			knowledgePath.getNodes().add(pathNode);
@@ -70,5 +68,11 @@ public class RuntimeModelHelper {
 
 		return trigger;
 	}
-
+	
+	public static PathNodeField createPathNodeField(String name) {
+		RuntimeMetadataFactory factory = RuntimeMetadataFactory.eINSTANCE;
+		PathNodeField pn = factory.createPathNodeField();
+		pn.setName(new String(name));
+		return pn;
+	}
 }
