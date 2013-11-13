@@ -6,7 +6,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,8 +35,28 @@ public class BaseKnowledgeManagerTest {
 
 	@Before
 	public void setUp() {
-		tested = new BaseKnowledgeManager("TEST", new Knowledge());
+		tested = new BaseKnowledgeManager("TEST");
+		tested.update(createKnowledge());
 		initMocks(this);
+	}
+	
+	public static ChangeSet createKnowledge() {
+		ChangeSet result = new ChangeSet();
+		result.setValue(RuntimeModelHelper.createKnowledgePath("id"), "Test");
+		result.setValue(RuntimeModelHelper.createKnowledgePath("number"), 10);
+		result.setValue(RuntimeModelHelper.createKnowledgePath("date"), null);
+		List<Integer> list = new LinkedList<>();
+		list.add(1);
+		list.add(2);
+		list.add(3);
+		result.setValue(RuntimeModelHelper.createKnowledgePath("list"), list);
+		Map<String, Integer> map = new HashMap<String, Integer>();
+		map.put("a", 1);
+		map.put("b", 2);
+		map.put("c", 3);
+		result.setValue(RuntimeModelHelper.createKnowledgePath("map"), map);
+		result.setValue(RuntimeModelHelper.createKnowledgePath("innerKnowledge"), new InnerKnowledge("innerA", "innerB"));
+		return result;
 	}
 
 	@Test
@@ -274,29 +293,6 @@ public class BaseKnowledgeManagerTest {
 		assertTrue(result.getKnowledgePaths().contains(kp));
 		kp = RuntimeModelHelper.createKnowledgePath("date");
 		assertTrue(result.getKnowledgePaths().contains(kp));
-	}
-
-	public static class Knowledge {
-		public String id;
-		public Integer number;
-		public List<Integer> list;
-		public Date date;
-		public Map<String, Integer> map;
-		public InnerKnowledge innerKnowledge;
-
-		public Knowledge() {
-			this.id = "Test";
-			this.number = 10;
-			this.list = new LinkedList<>();
-			this.list.add(1);
-			this.list.add(2);
-			this.list.add(3);
-			this.map = new HashMap<String, Integer>();
-			this.map.put("a", 1);
-			this.map.put("b", 2);
-			this.map.put("c", 3);
-			this.innerKnowledge = new InnerKnowledge("innerA", "innerB");
-		}
 	}
 
 	public static class InnerKnowledge {

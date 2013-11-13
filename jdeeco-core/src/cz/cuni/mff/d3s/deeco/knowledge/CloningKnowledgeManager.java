@@ -24,11 +24,6 @@ public class CloningKnowledgeManager extends BaseKnowledgeManager {
 		cloner = new Cloner();
 	}
 	
-	public CloningKnowledgeManager(String id, Object knowledge) {
-		this(id);
-		setBaseKnowledge(cloner.deepClone(knowledge));
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 

@@ -38,18 +38,10 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		this.knowledge = new HashMap<>();
 		this.knowledgeChangeListeners = new HashMap<>();
 	}
-
-	public BaseKnowledgeManager(String id, Object baseKnowledge) {
-		this(id);
-		setBaseKnowledge(baseKnowledge);
-	}
-
-	protected void setBaseKnowledge(Object baseKnowledge) {
-		if (baseKnowledge != null) {
-			ValueSet nodes = processInitialKnowledge(baseKnowledge);
-			for (KnowledgePath kp : nodes.getKnowledgePaths())
-				updateKnowledge(kp, nodes.getValue(kp));
-		}
+	
+	@Override
+	public String getId() {
+		return this.id;
 	}
 
 	/*

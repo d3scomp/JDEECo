@@ -172,7 +172,8 @@ public class AnnotationProcessor {
 		ComponentInstance componentInstance = factory.createComponentInstance();
 		componentInstance.setName(clazz.getCanonicalName());
 		KnowledgeManagerContainer container = new CloningKnowledgeManagerContainer();
-		KnowledgeManager km = container.createLocal();
+		//TODO Below should be the id of the component passed instead of "String"
+		KnowledgeManager km = container.createLocal("String");
 		km.update(extractInitialKnowledge(obj));
 		componentInstance.setKnowledgeManager(km);	
 		KnowledgeManagersView view = new KnowledgeManagerViewImpl(km, container);
