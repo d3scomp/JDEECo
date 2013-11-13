@@ -1,10 +1,13 @@
 package cz.cuni.mff.d3s.deeco.task;
 
+import static cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.getAbsoluteStrippedPath;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
+
+import com.sun.corba.se.spi.legacy.connection.GetEndPointInfoAgainException;
 
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
@@ -21,16 +24,13 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.impl.TriggerImpl;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
-import static cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.*;
+import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.KnowledgePathAndRoot;
+import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.PathRoot;
 
 /**
  * 
@@ -166,17 +166,22 @@ public class EnsembleTask extends Task {
 		KnowledgeManager localKnowledgeManager = ensembleController.getComponentInstance().getKnowledgeManager();
 		Collection<Parameter> formalParams = ensembleController.getEnsembleDefinition().getMembership().getParameters();
 
+		Collection<KnowledgePathAndRoot> allPathsWithRoots = new LinkedList<KnowledgePathAndRoot>();
 		Collection<KnowledgePath> localPaths = new LinkedList<KnowledgePath>();
 		Collection<KnowledgePath> shadowPaths = new LinkedList<KnowledgePath>();
 		
 		for (Parameter formalParam : formalParams) {
 			ParameterDirection paramDir = formalParam.getDirection();
-			
+
 			if (paramDir != ParameterDirection.IN) {
 				throw new TaskInvocationException("Only IN params allowed in membership condition.");
 			}
 			
 			KnowledgePathAndRoot absoluteKnowledgePathAndRoot;
+			// FIXME: The call to getAbsoluteStrippedPath is in theory wrong, because this way we are not obtaining the
+			// knowledge within one transaction. But fortunately this is not a problem with the single 
+			// threaded scheduler we have at the moment, because once the invoke method starts there is no other
+			// activity whatsoever in the system.
 			if (localRole == PathRoot.COORDINATOR) {
 				absoluteKnowledgePathAndRoot = getAbsoluteStrippedPath(formalParam.getKnowledgePath(), localKnowledgeManager, shadowKnowledgeManager);
 			} else {
@@ -190,6 +195,8 @@ public class EnsembleTask extends Task {
 			} else {
 				shadowPaths.add(absoluteKnowledgePathAndRoot.knowledgePath);
 			}
+			
+			allPathsWithRoots.add(absoluteKnowledgePathAndRoot);
 		}
 		
 		ValueSet localKnowledge;
@@ -207,13 +214,12 @@ public class EnsembleTask extends Task {
 		Object[] actualParams = new Object[formalParams.size()];
 		
 		int paramIdx = 0;
-		for (Parameter formalParam : formalParams) {
-			PathRoot root = getRoot(formalParam.getKnowledgePath());
+		for (KnowledgePathAndRoot absoluKnowledgePathAndRoot : allPathsWithRoots) {
 			
-			if (root == localRole) {
-				actualParams[paramIdx] = localKnowledge.getValue(formalParam.getKnowledgePath());	
+			if (absoluKnowledgePathAndRoot.root == localRole) {
+				actualParams[paramIdx] = localKnowledge.getValue(absoluKnowledgePathAndRoot.knowledgePath);	
 			} else {
-				actualParams[paramIdx] = shadowKnowledge.getValue(formalParam.getKnowledgePath());	
+				actualParams[paramIdx] = shadowKnowledge.getValue(absoluKnowledgePathAndRoot.knowledgePath);	
 			}
 			
 			paramIdx++;
@@ -233,20 +239,154 @@ public class EnsembleTask extends Task {
 		}
 	}
 	
+	private void performExchange(PathRoot localRole, ReadOnlyKnowledgeManager shadowKnowledgeManager) throws TaskInvocationException {
+		// Obtain parameters from the local knowledge to perform the exchange
+		KnowledgeManager localKnowledgeManager = ensembleController.getComponentInstance().getKnowledgeManager();
+		Collection<Parameter> formalParams = ensembleController.getEnsembleDefinition().getKnowledgeExchange().getParameters();
+
+		Collection<KnowledgePathAndRoot> allPathsWithRoots = new LinkedList<KnowledgePathAndRoot>();
+		Collection<KnowledgePath> localPaths = new LinkedList<KnowledgePath>();
+		Collection<KnowledgePath> shadowPaths = new LinkedList<KnowledgePath>();
+		
+		for (Parameter formalParam : formalParams) {
+			ParameterDirection paramDir = formalParam.getDirection();
+			
+			KnowledgePathAndRoot absoluteKnowledgePathAndRoot;
+
+			// FIXME: The call to getAbsoluteStrippedPath is in theory wrong, because this way we are not obtaining the
+			// knowledge within one transaction. But fortunately this is not a problem with the single 
+			// threaded scheduler we have at the moment, because once the invoke method starts there is no other
+			// activity whatsoever in the system.			
+			if (localRole == PathRoot.COORDINATOR) {
+				absoluteKnowledgePathAndRoot = getAbsoluteStrippedPath(formalParam.getKnowledgePath(), localKnowledgeManager, shadowKnowledgeManager);
+			} else {
+				absoluteKnowledgePathAndRoot = getAbsoluteStrippedPath(formalParam.getKnowledgePath(), shadowKnowledgeManager, localKnowledgeManager);				
+			}
+
+			allPathsWithRoots.add(absoluteKnowledgePathAndRoot);
+
+			if (paramDir == ParameterDirection.IN || paramDir == ParameterDirection.INOUT) {
+				if (absoluteKnowledgePathAndRoot == null) {
+					throw new TaskInvocationException("Member/Coordinator prefix required for knowledge exchange paths.");
+				} if (absoluteKnowledgePathAndRoot.root == localRole) {
+					localPaths.add(absoluteKnowledgePathAndRoot.knowledgePath);
+				} else {
+					shadowPaths.add(absoluteKnowledgePathAndRoot.knowledgePath);
+				}				
+			}
+		}
+		
+		ValueSet localKnowledge;
+		ValueSet shadowKnowledge;
+		
+		try {
+			localKnowledge = localKnowledgeManager.get(localPaths);
+			shadowKnowledge = shadowKnowledgeManager.get(shadowPaths);
+		} catch (KnowledgeNotFoundException e) {
+			throw new TaskInvocationException("Input knowledge of a knowledge exchange not found in the knowledge manager.", e);
+		}
+
+		// Construct the parameters for the process method invocation
+		Object[] actualParams = new Object[formalParams.size()];
+		
+		int paramIdx = 0;
+		Iterator<KnowledgePathAndRoot> allPathsWithRootsIter = allPathsWithRoots.iterator(); 
+		for (Parameter formalParam : formalParams) {
+			ParameterDirection paramDir = formalParam.getDirection();
+			KnowledgePathAndRoot absoluteKnowledgePathAndRoot = allPathsWithRootsIter.next();
+
+			Object paramValue = null;
+			
+			if (paramDir == ParameterDirection.IN || paramDir == ParameterDirection.INOUT) {				
+				if (absoluteKnowledgePathAndRoot.root == localRole) {
+					paramValue = localKnowledge.getValue(absoluteKnowledgePathAndRoot.knowledgePath);	
+				} else {
+					paramValue = shadowKnowledge.getValue(absoluteKnowledgePathAndRoot.knowledgePath);	
+				}
+			}
+			
+			if (paramDir == ParameterDirection.IN) {
+				actualParams[paramIdx] = paramValue;
+				
+			} else if (paramDir == ParameterDirection.OUT) {
+				actualParams[paramIdx] = new ParamHolder<Object>();
+
+			} else if (paramDir == ParameterDirection.INOUT) {
+				actualParams[paramIdx] = new ParamHolder<Object>(paramValue);
+			}
+			// TODO: We could have an option of not creating the wrapper. That would make it easier to work with mutable out types.
+			// TODO: We need some way of handling insertions/deletions in a hashmap.
+			
+			paramIdx++;
+		}
+		
+		try {
+			// Call the process method
+			ensembleController.getEnsembleDefinition().getKnowledgeExchange().getMethod().invoke(null, actualParams);
+			
+			// Create a changeset
+			ChangeSet localChangeSet = new ChangeSet();
+			
+			paramIdx = 0;
+			allPathsWithRootsIter = allPathsWithRoots.iterator(); 
+			for (Parameter formalParam : formalParams) {
+				ParameterDirection paramDir = formalParam.getDirection();
+				KnowledgePathAndRoot absoluteKnowledgePathAndRoot = allPathsWithRootsIter.next();
+
+				if (absoluteKnowledgePathAndRoot.root == localRole) {
+					if (paramDir == ParameterDirection.OUT || paramDir == ParameterDirection.INOUT) {
+						localChangeSet.setValue(absoluteKnowledgePathAndRoot.knowledgePath, ((ParamHolder<Object>)actualParams[paramIdx]).value);
+					}
+				}
+				
+				paramIdx++;
+			}
+			
+			// Write the changeset back to the knowledge
+			localKnowledgeManager.update(localChangeSet);
+			
+		} catch (IllegalAccessException | IllegalArgumentException e) {
+			throw new TaskInvocationException("Error when invoking a knowledge exchange.", e);
+		} catch (InvocationTargetException e) {
+			Log.i("Knowledge exchange returned an exception.", e.getTargetException());
+		}		
+	}
+	
 	/* (non-Javadoc)
 	 * @see cz.cuni.mff.d3s.deeco.task.Task#invoke()
 	 */
 	@Override
-	public void invoke(Trigger trigger) {
-		// TODO
-		
-		// If the trigger is periodic trigger or pertains to a local knowledge manager, iterate over all shadow knowledge managers
-		// Invoke the membership condition
-		// If the membership condition returned true, invoke the knowledge exchange
+	public void invoke(Trigger trigger) throws TaskInvocationException {
+		if (trigger instanceof ShadowKMChangeTrigger) {
+			// If the trigger pertains to a shadow knowledge manager
+			ReadOnlyKnowledgeManager shadowKnowledgeManager = ((ShadowKMChangeTrigger)trigger).shadowKnowledgeManager;
 
-		// Otherwise select the shadow knowledge manager to which the trigger pertained
-		// Invoke the membership condition
-		// If the membership condition returned true, invoke the knowledge exchange		
+			// Invoke the membership condition and if the membership condition returned true, invoke the knowledge exchange
+			if (checkMembership(PathRoot.COORDINATOR, shadowKnowledgeManager)) {
+				performExchange(PathRoot.COORDINATOR, shadowKnowledgeManager);
+			}
+
+			// Do the same with the roles exchanged
+			if (checkMembership(PathRoot.MEMBER, shadowKnowledgeManager)) {
+				performExchange(PathRoot.MEMBER, shadowKnowledgeManager);
+			}
+			
+		} else {
+			// If the trigger is periodic trigger or pertains to the local knowledge manager, iterate over all shadow knowledge managers
+			KnowledgeManagersView shadows = ensembleController.getComponentInstance().getOtherKnowledgeManagersAccess();
+
+			for (ReadOnlyKnowledgeManager shadowKnowledgeManager : shadows.getOtherKnowledgeManagers()) {
+				// Invoke the membership condition and if the membership condition returned true, invoke the knowledge exchange
+				if (checkMembership(PathRoot.COORDINATOR, shadowKnowledgeManager)) {
+					performExchange(PathRoot.COORDINATOR, shadowKnowledgeManager);
+				}
+
+				// Do the same with the roles exchanged
+				if (checkMembership(PathRoot.MEMBER, shadowKnowledgeManager)) {
+					performExchange(PathRoot.MEMBER, shadowKnowledgeManager);
+				}
+			}			
+		}
 	}
 
 	/**

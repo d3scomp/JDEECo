@@ -49,7 +49,7 @@ public class SampleRuntimeModel {
 	// It is assumed that xxxParamCoord and xxxParamMember are equal and that membershipParamXXX and exchangeParamXXXIn are equal
 	public Parameter membershipParamCoord, membershipParamMember;
 	public Parameter exchangeParamCoordIn, exchangeParamCoordOut, exchangeParamCoordInOut;
-	public Parameter exchangeParamMemberIn, exchangeParamMemberOut, exchangeParamMemberInOut;	
+	public Parameter exchangeParamMemberIn, exchangeParamMemberOut, exchangeParamMemberInOut;
 	
 	private static int processMethodCallCounter;
 	private static int membershipMethodCallCounter;
@@ -107,7 +107,7 @@ public class SampleRuntimeModel {
 	}
 	
 	public static void resetExchangeMethodCallCounter() {
-		processMethodCallCounter = 0;
+		exchangeMethodCallCounter = 0;
 	}
 	
 	public static int getExchangeMethodCallCounter() {

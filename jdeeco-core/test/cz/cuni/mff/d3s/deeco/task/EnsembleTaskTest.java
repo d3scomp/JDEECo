@@ -2,32 +2,25 @@ package cz.cuni.mff.d3s.deeco.task;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyCollectionOf;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.mockito.InOrder;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -39,10 +32,8 @@ import cz.cuni.mff.d3s.deeco.knowledge.ShadowsTriggerListener;
 import cz.cuni.mff.d3s.deeco.knowledge.TriggerListener;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.model.runtime.SampleRuntimeModel;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
@@ -84,6 +75,10 @@ public class EnsembleTaskTest {
 
 	private ParamHolder<Integer> expectedLocalInOutValue;
 	private ParamHolder<Integer> expectedLocalOutValue;
+
+	private KnowledgePath getStrippedPath(KnowledgePath path) {
+		return KnowledgePathHelper.getStrippedPath(path).knowledgePath;
+	}
 	
 	@Before
 	public void setUp() throws Exception {
@@ -95,8 +90,8 @@ public class EnsembleTaskTest {
 		localInOutValue = 4;
 		shadow1InValue = 15;
 		shadow1InOutValue = -2;
-		shadow1InValue = 12;
-		shadow1InOutValue = 3;
+		shadow2InValue = 12;
+		shadow2InOutValue = 3;
 		expectedLocalInOutValue = new ParamHolder<Integer>(localInOutValue);
 		expectedLocalOutValue = new ParamHolder<Integer>(0);		
 		ParamHolder<Integer> dummyShadowInOutValue = new ParamHolder<Integer>(localInOutValue);
@@ -119,9 +114,9 @@ public class EnsembleTaskTest {
 				
 				// Use inValue and inOutValue as the responses of the knowledge manager
 				for (KnowledgePath kp : ((Collection<KnowledgePath>)invocation.getArguments()[0])) {
-					if (kp.equals(model.exchangeParamCoordIn.getKnowledgePath())) {
+					if (getStrippedPath(model.exchangeParamCoordIn.getKnowledgePath()).equals(kp)) {
 						result.setValue(kp, localInValue);
-					} else if (kp.equals(model.processParamInOut.getKnowledgePath())) {
+					} else if (getStrippedPath(model.exchangeParamCoordInOut.getKnowledgePath()).equals(kp)) {
 						result.setValue(kp, localInOutValue);
 					}
 				}
@@ -136,9 +131,9 @@ public class EnsembleTaskTest {
 				
 				// Use inValue and inOutValue as the responses of the knowledge manager
 				for (KnowledgePath kp : ((Collection<KnowledgePath>)invocation.getArguments()[0])) {
-					if (kp.equals(model.exchangeParamCoordIn.getKnowledgePath())) {
+					if (getStrippedPath(model.exchangeParamCoordIn.getKnowledgePath()).equals(kp)) {
 						result.setValue(kp, shadow1InValue);
-					} else if (kp.equals(model.processParamInOut.getKnowledgePath())) {
+					} else if (getStrippedPath(model.exchangeParamCoordInOut.getKnowledgePath()).equals(kp)) {
 						result.setValue(kp, shadow1InOutValue);
 					}
 				}
@@ -153,9 +148,9 @@ public class EnsembleTaskTest {
 				
 				// Use inValue and inOutValue as the responses of the knowledge manager
 				for (KnowledgePath kp : ((Collection<KnowledgePath>)invocation.getArguments()[0])) {
-					if (kp.equals(model.exchangeParamCoordIn.getKnowledgePath())) {
+					if (getStrippedPath(model.exchangeParamCoordIn.getKnowledgePath()).equals(kp)) {
 						result.setValue(kp, shadow2InValue);
-					} else if (kp.equals(model.processParamInOut.getKnowledgePath())) {
+					} else if (getStrippedPath(model.exchangeParamCoordInOut.getKnowledgePath()).equals(kp)) {
 						result.setValue(kp, shadow2InOutValue);
 					}
 				}
@@ -180,25 +175,6 @@ public class EnsembleTaskTest {
 		assertEquals(model.ensemblePeriodicTrigger.getPeriod(), period);
 	}
 
-	private boolean equalToStrippedPath(KnowledgePath fullPath, KnowledgePath strippedPath) {
-		if (fullPath.getNodes().size() != strippedPath.getNodes().size() + 1) {
-			return false;
-		}
-
-		Iterator<PathNode> fullPathIter = fullPath.getNodes().iterator();
-		Iterator<PathNode> strippedPathIter = strippedPath.getNodes().iterator();
-		
-		fullPathIter.next();
-		
-		while (fullPathIter.hasNext()) {
-			if (!fullPathIter.next().equals(strippedPathIter.next())) {
-				return false;
-			}
-		}
-		
-		return true;
-	}
-	
 	@Test
 	public void testTrigger() {
 		// GIVEN an EnsembleTask initialized with an InstanceEnsemblingController
@@ -207,7 +183,7 @@ public class EnsembleTaskTest {
 		// THEN the task registers a trigger listener (regardless whether it is a trigger on coordinator's or member's knowledge) on the knowledge manager
 		verify(knowledgeManager).register(triggerCaptor.capture(), any(TriggerListener.class));
 		// AND the trigger has a knowledge path which omits the member/coordinator prefix
-		assertTrue(equalToStrippedPath(model.ensembleKnowledgeChangeTrigger.getKnowledgePath(), ((KnowledgeChangeTrigger)triggerCaptor.getValue()).getKnowledgePath()));
+		assertEquals(getStrippedPath(model.ensembleKnowledgeChangeTrigger.getKnowledgePath()), ((KnowledgeChangeTrigger)triggerCaptor.getValue()).getKnowledgePath());
 		// AND the task registers a trigger listener (regardless whether it is a trigger on coordinator's or member's knowledge) on the shadow replicas
 		verify(shadowReplicasAccess).register(eq(triggerCaptor.getValue()), any(ShadowsTriggerListener.class));		
 
@@ -241,7 +217,6 @@ public class EnsembleTaskTest {
 	}
 	
 	@Test
-	@Ignore
 	public void testEnsembleTaskInvoke() throws Exception {
 		// GIVEN an EnsembleTask initialized with an InstanceEnsemblingController
 		model.resetMembershipMethodCallCounter();
@@ -250,12 +225,13 @@ public class EnsembleTaskTest {
 		// WHEN invoke (with periodic trigger) is called on the task
 		task.invoke(model.ensemblePeriodicTrigger);
 		// THEN it gets the needed local knowledge
-		verify(knowledgeManager).get(anyCollectionOf(KnowledgePath.class));
+		// 6x = 2x membership (COORD), 2x membership (MEMBER), 1x exchange (COORD), 1x exchange (MEMBER)
+		verify(knowledgeManager, times(6)).get(anyCollectionOf(KnowledgePath.class));
 		// AND it retrieves the other knowledge managers
 		verify(shadowReplicasAccess).getOtherKnowledgeManagers();
 		// AND it gets knowledge from them
-		verify(shadowKnowledgeManager1).get(anyCollectionOf(KnowledgePath.class));
-		verify(shadowKnowledgeManager2).get(anyCollectionOf(KnowledgePath.class));		
+		verify(shadowKnowledgeManager1, times(4)).get(anyCollectionOf(KnowledgePath.class));
+		verify(shadowKnowledgeManager2, times(2)).get(anyCollectionOf(KnowledgePath.class));		
 		// AND it executes the membership (there are four different combinations for an ensemble with the local component acting as coordinator or as a member)
 		assertTrue(model.getMembershipMethodCallCounter() == 4);
 		// AND it executes knowledge exchange for those for which the membership was satisfied (there are two ensembles - one in which the local component acts as a coordinator
@@ -263,12 +239,12 @@ public class EnsembleTaskTest {
 		assertTrue(model.getExchangeMethodCallCounter() == 2);
 		// AND it updates the instance knowledge with outputs of the knowledge exchange
 		ArgumentCaptor<ChangeSet> changeSetCaptor = ArgumentCaptor.forClass(ChangeSet.class);
-		verify(knowledgeManager).update(changeSetCaptor.capture());
+		verify(knowledgeManager, times(2)).update(changeSetCaptor.capture());
 		ChangeSet cs = changeSetCaptor.getValue();
-		assertEquals(cs.getValue(model.exchangeParamCoordInOut.getKnowledgePath()), expectedLocalInOutValue.value);
-		assertEquals(cs.getValue(model.exchangeParamCoordOut.getKnowledgePath()), expectedLocalOutValue.value);
+		assertEquals(cs.getValue(getStrippedPath(model.exchangeParamCoordInOut.getKnowledgePath())), expectedLocalInOutValue.value);
+		assertEquals(cs.getValue(getStrippedPath(model.exchangeParamCoordOut.getKnowledgePath())), expectedLocalOutValue.value);
 		assertTrue(cs.getDeletedReferences().isEmpty());
 		assertTrue(cs.getUpdatedReferences().size() == 2);
-	}	
+	}
 }
 

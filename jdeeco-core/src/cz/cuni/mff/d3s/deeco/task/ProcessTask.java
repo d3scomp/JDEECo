@@ -2,6 +2,7 @@ package cz.cuni.mff.d3s.deeco.task;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
@@ -55,12 +56,21 @@ public class ProcessTask extends Task {
 		Collection<Parameter> formalParams = componentProcess.getParameters();
 
 		Collection<KnowledgePath> inPaths = new LinkedList<KnowledgePath>();
+		Collection<KnowledgePath> allPaths = new LinkedList<KnowledgePath>();
 		for (Parameter formalParam : formalParams) {
 			ParameterDirection paramDir = formalParam.getDirection();
+
+			// FIXME: The call to getAbsolutePath is in theory wrong, because this way we are not obtaining the
+			// knowledge within one transaction. But fortunately this is not a problem with the single 
+			// threaded scheduler we have at the moment, because once the invoke method starts there is no other
+			// activity whatsoever in the system.
+			KnowledgePath absoluteKnowledgePath = KnowledgePathHelper.getAbsolutePath(formalParam.getKnowledgePath(), knowledgeManager);
 			
 			if (paramDir == ParameterDirection.IN || paramDir == ParameterDirection.INOUT) {
-				inPaths.add(KnowledgePathHelper.getAbsolutePath(formalParam.getKnowledgePath(), knowledgeManager));
+				inPaths.add(absoluteKnowledgePath);
 			}
+			
+			allPaths.add(absoluteKnowledgePath);
 		}
 		
 		ValueSet inKnowledge;
@@ -75,17 +85,19 @@ public class ProcessTask extends Task {
 		Object[] actualParams = new Object[formalParams.size()];
 		
 		int paramIdx = 0;
+		Iterator<KnowledgePath> allPathsIter = allPaths.iterator();
 		for (Parameter formalParam : formalParams) {
 			ParameterDirection paramDir = formalParam.getDirection();
+			KnowledgePath absoluteKnowledgePath = allPathsIter.next();
 
 			if (paramDir == ParameterDirection.IN) {
-				actualParams[paramIdx] = inKnowledge.getValue(formalParam.getKnowledgePath());
+				actualParams[paramIdx] = inKnowledge.getValue(absoluteKnowledgePath);
 				
 			} else if (paramDir == ParameterDirection.OUT) {
 				actualParams[paramIdx] = new ParamHolder<Object>();
 
 			} else if (paramDir == ParameterDirection.INOUT) {
-				actualParams[paramIdx] = new ParamHolder<Object>(inKnowledge.getValue(formalParam.getKnowledgePath()));
+				actualParams[paramIdx] = new ParamHolder<Object>(inKnowledge.getValue(absoluteKnowledgePath));
 			}
 			// TODO: We could have an option of not creating the wrapper. That would make it easier to work with mutable out types.
 			// TODO: We need some way of handling insertions/deletions in a hashmap.
@@ -101,11 +113,13 @@ public class ProcessTask extends Task {
 			ChangeSet changeSet = new ChangeSet();
 			
 			paramIdx = 0;
+			allPathsIter = allPaths.iterator();
 			for (Parameter formalParam : formalParams) {
 				ParameterDirection paramDir = formalParam.getDirection();
+				KnowledgePath absoluteKnowledgePath = allPathsIter.next();
 
 				if (paramDir == ParameterDirection.OUT || paramDir == ParameterDirection.INOUT) {
-					changeSet.setValue(formalParam.getKnowledgePath(), ((ParamHolder<Object>)actualParams[paramIdx]).value);
+					changeSet.setValue(absoluteKnowledgePath, ((ParamHolder<Object>)actualParams[paramIdx]).value);
 				}
 
 				paramIdx++;

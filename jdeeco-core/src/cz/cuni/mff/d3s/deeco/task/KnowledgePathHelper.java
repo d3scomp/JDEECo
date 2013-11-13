@@ -78,9 +78,10 @@ public class KnowledgePathHelper {
 	 * @return structure containing the absolute path with the member/coordinator prefix stripped and the root prefix. <code>null</code> if there is not member/coordinator prefix in the input path.
 	 */
 	public static KnowledgePathAndRoot getAbsoluteStrippedPath(KnowledgePath path, ReadOnlyKnowledgeManager coordKnowledgeManager, ReadOnlyKnowledgeManager memberKnowledgeManager) {
+
 		// TODO
 		
-		return null;
+		return getStrippedPath(path);
 	}
 
 	/**
@@ -94,6 +95,7 @@ public class KnowledgePathHelper {
 	public static KnowledgePath getAbsolutePath(KnowledgePath path, ReadOnlyKnowledgeManager knowledgeManager) {
 		
 		// TODO
+		
 		return path;
 	}
 
@@ -145,11 +147,4 @@ public class KnowledgePathHelper {
 		return result; 
 	}
 	
-	/**
-	 * Returns the root of the path (i.e. member/coordinator) or <code>null</code> if the root is neither of those.
-	 */
-	public static PathRoot getRoot(KnowledgePath knowledgePath) {
-		// TODO
-		return null;
-	}
 }
