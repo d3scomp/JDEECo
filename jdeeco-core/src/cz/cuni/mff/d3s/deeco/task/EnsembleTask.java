@@ -7,6 +7,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import com.sun.corba.se.spi.legacy.connection.GetEndPointInfoAgainException;
+
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView;
@@ -170,7 +172,7 @@ public class EnsembleTask extends Task {
 		
 		for (Parameter formalParam : formalParams) {
 			ParameterDirection paramDir = formalParam.getDirection();
-			
+
 			if (paramDir != ParameterDirection.IN) {
 				throw new TaskInvocationException("Only IN params allowed in membership condition.");
 			}
@@ -354,16 +356,37 @@ public class EnsembleTask extends Task {
 	 * @see cz.cuni.mff.d3s.deeco.task.Task#invoke()
 	 */
 	@Override
-	public void invoke(Trigger trigger) {
-		// TODO
-		
-		// If the trigger is periodic trigger or pertains to a local knowledge manager, iterate over all shadow knowledge managers
-		// Invoke the membership condition
-		// If the membership condition returned true, invoke the knowledge exchange
+	public void invoke(Trigger trigger) throws TaskInvocationException {
+		if (trigger instanceof ShadowKMChangeTrigger) {
+			// If the trigger pertains to a shadow knowledge manager
+			ReadOnlyKnowledgeManager shadowKnowledgeManager = ((ShadowKMChangeTrigger)trigger).shadowKnowledgeManager;
 
-		// Otherwise select the shadow knowledge manager to which the trigger pertained
-		// Invoke the membership condition
-		// If the membership condition returned true, invoke the knowledge exchange		
+			// Invoke the membership condition and if the membership condition returned true, invoke the knowledge exchange
+			if (checkMembership(PathRoot.COORDINATOR, shadowKnowledgeManager)) {
+				performExchange(PathRoot.COORDINATOR, shadowKnowledgeManager);
+			}
+
+			// Do the same with the roles exchanged
+			if (checkMembership(PathRoot.MEMBER, shadowKnowledgeManager)) {
+				performExchange(PathRoot.MEMBER, shadowKnowledgeManager);
+			}
+			
+		} else {
+			// If the trigger is periodic trigger or pertains to the local knowledge manager, iterate over all shadow knowledge managers
+			KnowledgeManagersView shadows = ensembleController.getComponentInstance().getOtherKnowledgeManagersAccess();
+
+			for (ReadOnlyKnowledgeManager shadowKnowledgeManager : shadows.getOtherKnowledgeManagers()) {
+				// Invoke the membership condition and if the membership condition returned true, invoke the knowledge exchange
+				if (checkMembership(PathRoot.COORDINATOR, shadowKnowledgeManager)) {
+					performExchange(PathRoot.COORDINATOR, shadowKnowledgeManager);
+				}
+
+				// Do the same with the roles exchanged
+				if (checkMembership(PathRoot.MEMBER, shadowKnowledgeManager)) {
+					performExchange(PathRoot.MEMBER, shadowKnowledgeManager);
+				}
+			}			
+		}
 	}
 
 	/**
