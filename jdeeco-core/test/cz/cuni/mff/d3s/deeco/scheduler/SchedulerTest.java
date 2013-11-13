@@ -30,9 +30,9 @@ import cz.cuni.mff.d3s.deeco.task.TaskTriggerListener;
  * */
 public abstract class SchedulerTest  {
 
-	protected Scheduler tested;
-	protected Executor executor;
-	protected TaskTriggerListener testListener;
+	private Scheduler tested;
+	private Executor executor;
+	private TaskTriggerListener testListener;
 	
 	protected abstract Scheduler setUpTested(Executor executor2);
 
@@ -49,9 +49,39 @@ public abstract class SchedulerTest  {
 		if (tested!=null)
 			tested.stop();
 	}
-
-	// TODO TB: Shouldn't we have also a test that tests repeated execution? For instnce to start the scheduler, let it run for 2 secs and see that a periodic
-	// task with a period of 100 ms got scheduled approx. 200 times?
+	
+	@Test
+	public void testRepeatedExecution() throws InterruptedException{
+		Task t = mock(Task.class);
+		PeriodicTrigger p = mock(PeriodicTrigger.class);
+		// Stubbing mocks.
+		// The period is chosen to be 300 ms because the SingleThreadedScheduler 
+		// may not able to spawn a thread and execute it properly in a shorter 
+		// period of time causing a test failure 
+		when(p.getPeriod()).thenReturn(300L);
+		when(t.getPeriodicTrigger()).thenReturn(p);
+		
+		// WHEN a periodic task is added to a stopped scheduler
+		tested.addTask(t);
+		// THEN it is added to the task list but not started
+		verify(executor, timeout(20).never()).execute(t, p);
+		
+		// WHEN the scheduler is started, it runs for 10 iterations of the preiodic task period
+		tested.start();
+		
+		Thread.sleep(150);
+		
+		// Since the period is quite big(300 ms) we will test the 
+		// periodic scheduling only for 5 iterations to save time
+		for( int i = 0; i < 5; i++ ){			
+			// THEN the task is executed exactly once per iteration
+			verify(executor, times(i+1)).execute(t, p);
+			Thread.sleep(300);
+		}
+		
+		// And after the scheduler is stopped
+		tested.stop();
+	}
 	
 	@Test
 	public void testPeriodicTaskScheduledWhenSchedulerStarted() throws InterruptedException {
@@ -75,7 +105,7 @@ public abstract class SchedulerTest  {
 		
 		reset(executor);
 		
-		// WHEN the running scheduler is stopped a bit longer (FIXME TB: not sure what it means) 
+		// WHEN the running scheduler is stopped for a longer time than the execution period
 		// THEN the task is no longer scheduled		
 		verify(executor, timeout(10).never()).execute(t, p);		
 		

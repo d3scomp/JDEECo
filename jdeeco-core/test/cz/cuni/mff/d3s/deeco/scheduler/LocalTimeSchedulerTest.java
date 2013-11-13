@@ -1,6 +1,7 @@
 package cz.cuni.mff.d3s.deeco.scheduler;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
+import cz.cuni.mff.d3s.deeco.task.TaskTriggerListener;
 
 /**
  * 
@@ -10,10 +11,14 @@ import cz.cuni.mff.d3s.deeco.executor.Executor;
  */
 public class LocalTimeSchedulerTest extends SchedulerTest {
 
+	private Scheduler tested;
+	private Executor executor;
+	private TaskTriggerListener testListener;
+	
 	@Override
-	protected Scheduler setUpTested(Executor executor) {
-		Scheduler s = new LocalTimeScheduler();
+	protected LocalTimeScheduler setUpTested(Executor executor) {
+		LocalTimeScheduler s = new LocalTimeScheduler();
 		s.setExecutor(executor);
 		return s;
-	}
+	}	
 }

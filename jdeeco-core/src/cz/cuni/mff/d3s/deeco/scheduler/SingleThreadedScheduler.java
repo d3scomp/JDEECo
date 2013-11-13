@@ -31,6 +31,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
@@ -39,6 +41,10 @@ import cz.cuni.mff.d3s.deeco.task.Task;
 import cz.cuni.mff.d3s.deeco.task.TaskInvocationException;
 import cz.cuni.mff.d3s.deeco.task.TaskTriggerListener;
 
+/**
+ * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
+ *
+ */
 public class SingleThreadedScheduler implements Scheduler {
 	/**
 	 * Map capturing the SchedulerTaskWrappers for periodic Tasks. These are
@@ -55,13 +61,26 @@ public class SingleThreadedScheduler implements Scheduler {
      * and the scheduler thread consumes, executing scheduler tasks as appropriate,
      * and removing them from the queue when they're obsolete.
      */
-    private TaskQueue queue = new TaskQueue();
+    TaskQueue queue;
 
     /**
      * The scheduler thread.
      */
-    private SchedulerThread thread = new SchedulerThread(queue);
-
+    SchedulerThread thread;
+    
+    public SingleThreadedScheduler(){
+    	 queue = new TaskQueue();
+    	 thread = new SchedulerThread(queue);
+    }
+    
+    /**
+     * Intended for testing
+     */
+    SingleThreadedScheduler(TaskQueue queue, SchedulerThread thread ) {
+    	this.queue = queue;
+    	this.thread = thread;
+    }
+    
     /**
      * This object causes the scheduler's task execution thread to exit
      * gracefully when there are no live references to the Scheduler object and no
@@ -77,15 +96,20 @@ public class SingleThreadedScheduler implements Scheduler {
             }
         }
     };
-
+    
     /**
      * If the completed task is periodic and the completion time is greater than the intended start of the next period,
-     * then the next period is moved. 
+     * then the next period is moved.
+     * Or it's the first time it is invoked
      */
 	@Override
 	public void executionCompleted(Task task) {
-		if (task instanceof InvokeAndWaitTask)
-			task.notify();
+		if (task instanceof InvokeAndWaitTask) {
+			synchronized (task) {
+				task.notify();	
+			}			
+			return;
+		}
 		
 		synchronized (queue) {
 			SchedulerEvent event = periodicEvents.get(task);
@@ -93,20 +117,17 @@ public class SingleThreadedScheduler implements Scheduler {
 			if (event == null)
 				return;
 			
-			synchronized (event.lock) {
 				// if the periodic task execution took more than it remained till the next period 
 				if (event.nextExecutionTime < System.currentTimeMillis()) {				
 					queue.rescheduleTask(event, System.currentTimeMillis() + event.period);
 				}
-			}
-		}
-		
-		
+			
+		}		
 	}
 
 	@Override
 	public void executionFailed(Task task, Exception e) {
-		executionCompleted(task);		
+		executionCompleted(task);
 	}
 
 	@Override
@@ -133,7 +154,7 @@ public class SingleThreadedScheduler implements Scheduler {
 	
 	/**
 	 * @throws IllegalStateException if scheduler thread already terminated.
-	 * @throws IllegalArgumentException of a null task is passed as an argument.
+	 * @throws IllegalArgumentException if a null task is passed as an argument.
 	 */
 	@Override
 	public void addTask(Task task) {		
@@ -150,9 +171,9 @@ public class SingleThreadedScheduler implements Scheduler {
 							"Scheduler already terminated.");
 				
 				if (task.getPeriodicTrigger() != null) {
-					SchedulerEvent sTask = new SchedulerEvent(task, task.getPeriodicTrigger());
-					scheduleNow(sTask, task.getPeriodicTrigger().getPeriod());
-					periodicEvents.put(task, sTask);
+					SchedulerEvent event = new SchedulerEvent(task, task.getPeriodicTrigger());
+					scheduleNow(event, task.getPeriodicTrigger().getPeriod());
+					periodicEvents.put(task, event);
 				}
 			}
 			task.setTriggerListener(new TaskTriggerListener() {	
@@ -180,13 +201,13 @@ public class SingleThreadedScheduler implements Scheduler {
 	/**
 	 * Note that this method has to be explicitly protected by queue's monitor!
 	 */
-	private void scheduleNow(SchedulerEvent sTask, long period) {			
-			sTask.nextExecutionTime = System.currentTimeMillis(); // start immediately
-			sTask.period = period;
-			sTask.state = SchedulerEvent.SCHEDULED;
+	void scheduleNow(SchedulerEvent event, long period) {			
+			event.nextExecutionTime = System.currentTimeMillis(); // start immediately
+			event.period = period;
+			event.state = SchedulerEvent.SCHEDULED;
 
-			queue.add(sTask);
-			if (queue.getMin() == sTask)
+			queue.add(event);
+			if (queue.getMin() == event)
 				queue.notify();		
 	}
 
@@ -203,7 +224,7 @@ public class SingleThreadedScheduler implements Scheduler {
 			synchronized(queue) {
 				 // cancel all the periodic/triggered schedules of the task
 				 queue.cancelAll(task);			
-				 periodicEvents.remove(task);
+				 periodicEvents.remove(task);				 
 			}				 
 			allTasks.remove(task);
 		}
@@ -218,8 +239,10 @@ public class SingleThreadedScheduler implements Scheduler {
 	
 	public void invokeAndWait(Runnable doRun) throws InterruptedException {
 		InvokeAndWaitTask task = new InvokeAndWaitTask(this, doRun);
-		addTask(task);
-		task.wait();
+		synchronized (task) {
+			addTask(task);
+			task.wait();
+		}
 	}
 }
 
@@ -228,7 +251,7 @@ public class SingleThreadedScheduler implements Scheduler {
 
 /**
  * This "helper class" implements the scheduler's task execution thread, which
- * waits for tasks on the scheduler queue, executions them when they fire,
+ * waits for tasks on the scheduler queue, executes them when they fire,
  * reschedules repeating tasks, and removes cancelled tasks and spent
  * non-repeating tasks from the queue.
  */
@@ -241,7 +264,6 @@ class SchedulerThread extends Thread {
      * this field is protected by queue's monitor!
      */
     boolean newTasksMayBeScheduled = true;
-    
     
     /**
 	 * This flag is set to false by scheduler to inform us that the scheduler is
@@ -258,7 +280,6 @@ class SchedulerThread extends Thread {
      */
     private TaskQueue queue;
     
-    
     Object executorLock = new Object();
     
     Executor executor;
@@ -266,6 +287,11 @@ class SchedulerThread extends Thread {
     SchedulerThread(TaskQueue queue) {
         this.queue = queue;
     }
+
+    SchedulerThread(TaskQueue queue, ExecutorService execSer) {
+        this.queue = queue;
+    }
+
 
     public void run() {
         try {
@@ -300,7 +326,8 @@ class SchedulerThread extends Thread {
 				// deleted, or some other event that has to be
 				// scheduled earlier might have been added, or all
 				// tasks might have been deleted
-                if (queue.getMin() != event)
+                // or the event was cancelled
+                if ((queue.getMin() != event) || (event.state == SchedulerEvent.CANCELLED))
                 	return false;                 
                 
 				// check taskFired again, i.e., that we were
@@ -317,10 +344,13 @@ class SchedulerThread extends Thread {
      * The main scheduler loop.  (See class comment.)
      */
     private void mainLoop() {
+
         while (true) {        	
             try {
                 SchedulerEvent event;
                 boolean canExecute;
+                Task task;
+                Trigger trigger;
                 synchronized(queue) {
                     // Wait for queue to become non-empty
                     while (queue.isEmpty() && newTasksMayBeScheduled)
@@ -331,33 +361,36 @@ class SchedulerThread extends Thread {
                     // Queue nonempty; look at first event and do the right thing                   
                     event = queue.getMin();
                     
-                    synchronized(event.lock) {
-                        if (event.state == SchedulerEvent.CANCELLED) {
-                            queue.removeMin();
-                            continue;  // No action required, poll queue again
-                        }                        
-                                               
-                        canExecute = waitTaskFired(event);
-                        
-                        if (!canExecute)
-                        	continue; // The event cannot continue with execution, poll queue again
-                        
-                        if (event.period == 0) { // Non-repeating, remove
-                            queue.removeMin();
-                            event.state = SchedulerEvent.EXECUTED;
-                        } else { // Repeating task, reschedule
-                            queue.rescheduleMin(event.nextExecutionTime + event.period);
-                        }                        
-                    }
+                
+                    if (event.state == SchedulerEvent.CANCELLED) {
+                        queue.removeMin();
+                        continue;  // No action required, poll queue again
+                    }                        
+                                           
+                    canExecute = waitTaskFired(event);
+                    
+                    if (!canExecute)
+                    	continue; // The event cannot continue with execution, poll queue again
+                    
+                    if (event.period == 0) { // Non-repeating, remove
+                        queue.removeMin();
+                        event.state = SchedulerEvent.EXECUTED;
+                    } else { // Repeating task, reschedule
+                        queue.rescheduleMin(event.nextExecutionTime + event.period);
+                    }              
+                    
+                    task = event.executable;
+                    trigger = event.trigger;
+                    
                     
                     // make sure the fire task can be executed
                     canExecute = canExecute && tasksMayBeExecuted;
                 }                
                
-                if (canExecute)  { // Task fired and can execute; run it
+                if (canExecute)  { // Task fired and can be executed; run it
                 	synchronized (executorLock) {
-                		executor.execute(event.executable, event.trigger);
-                	}
+                		executor.execute(task, trigger);
+                	}                	
             	}
             } catch(InterruptedException e) {
             }
@@ -446,11 +479,9 @@ class TaskQueue {
 	 */
     void cancelAll(Task executable) {    	    	
         for (int i=1; i <= size; ++i) {
-        	synchronized(queue[i].lock) {
-	        	if (queue[i].executable.equals(executable)) {
-	        		queue[i].state = SchedulerEvent.CANCELLED;
-	        	}
-        	}
+        	if (queue[i].executable.equals(executable)) {
+        		queue[i].state = SchedulerEvent.CANCELLED;
+        	}        	
         }	      
     }
 
@@ -467,7 +498,7 @@ class TaskQueue {
 	 * Sets the nextExecutionTime associated with the given scheduler task to
 	 * the specified value, and adjusts priority queue accordingly.
 	 */
-	public void rescheduleTask(SchedulerEvent task, long newTime) {
+	void rescheduleTask(SchedulerEvent task, long newTime) {
     	int i = 1;    	
         for (;i <= size; ++i) {
         	if (queue[i].equals(task))
@@ -555,10 +586,7 @@ class TaskQueue {
 
 
 class SchedulerEvent  {
-    /**
-     * This object is used to control access to the SchedulerEvent internals.
-     */
-	final Object lock = new Object();
+
 
     /**
      * The state of this task, chosen from the constants below.

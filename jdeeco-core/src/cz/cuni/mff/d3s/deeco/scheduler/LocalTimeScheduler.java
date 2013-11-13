@@ -50,7 +50,12 @@ public class LocalTimeScheduler implements Scheduler, TaskTriggerListener {
 	public void executionCompleted(Task task) {
 		tasks.get(task).state = States.STOPPED; 
 	}
-
+	
+	@Override
+	public void executionFailed(Task task, Exception e) {
+		executionCompleted(task);
+	}
+	
 	@Override
 	public synchronized void start () {
 		if( state == States.RUNNING )
@@ -129,7 +134,7 @@ public class LocalTimeScheduler implements Scheduler, TaskTriggerListener {
 	 * @throws NullPointerException when {@code task} is not in the {@link #tasks}. 
 	 * @param task
 	 */
-	protected void taskTriggerFired(final Task task, Trigger trigger) {
+	void taskTriggerFired(final Task task, Trigger trigger) {
 		if( state == States.STOPPED )
 			return;
 
@@ -174,11 +179,6 @@ public class LocalTimeScheduler implements Scheduler, TaskTriggerListener {
 		
 		ti.state = States.RUNNING;
 		executor.execute(task, ti.periodicTrigger);
-	}
-
-	@Override
-	public void executionFailed(Task task, Exception e) {
-		executionCompleted(task);
 	}
 
 	@Override
