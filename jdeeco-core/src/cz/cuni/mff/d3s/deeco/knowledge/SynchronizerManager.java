@@ -105,7 +105,7 @@ public class SynchronizerManager implements LocalListener {
 			List<ReplicaKnowledgeManagerContainer> toReplicateIn) {
 		KnowledgeManager replica;
 		for (ReplicaKnowledgeManagerContainer rContainer : toReplicateIn) {
-			replica = rContainer.createReplicaFor(local);
+			replica = rContainer.createReplica(local.getId());
 			if (replica != null)
 				synchronizers.add(new Synchronizer(local, replica));
 		}

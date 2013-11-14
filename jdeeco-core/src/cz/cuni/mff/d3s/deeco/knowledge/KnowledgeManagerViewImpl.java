@@ -16,13 +16,13 @@ public class KnowledgeManagerViewImpl implements KnowledgeManagersView,
 		ReplicaListener, LocalListener {
 
 	private final KnowledgeManager knowledgeManager;
-	private final KnowledgeManagerContainer container;
+	private final CloningKnowledgeManagerContainer container;
 	private final Map<Trigger, List<ShadowsTriggerListener>> triggerListeners;
 
 	private final Map<ShadowsTriggerListener, List<KnowledgeManagerTriggerListener>> listenerToTriggerListeners;
 
 	public KnowledgeManagerViewImpl(KnowledgeManager knowledgeManager,
-			KnowledgeManagerContainer container) {
+			CloningKnowledgeManagerContainer container) {
 		this.knowledgeManager = knowledgeManager;
 		this.container = container;
 		this.triggerListeners = new HashMap<>();

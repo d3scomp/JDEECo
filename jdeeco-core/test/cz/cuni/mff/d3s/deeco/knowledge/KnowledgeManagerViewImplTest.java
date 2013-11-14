@@ -27,7 +27,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 public class KnowledgeManagerViewImplTest {
 	
 	@Mock
-	private KnowledgeManagerContainer container;
+	private CloningKnowledgeManagerContainer container;
 	@Mock
 	private KnowledgeManager knowledgeManager;
 	@Mock

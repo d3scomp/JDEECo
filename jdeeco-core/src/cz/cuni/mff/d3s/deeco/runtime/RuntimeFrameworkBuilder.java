@@ -3,7 +3,7 @@ package cz.cuni.mff.d3s.deeco.runtime;
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.executor.SameThreadExecutor;
 import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerContainer;
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
+import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.scheduler.LocalTimeScheduler;
@@ -19,7 +19,7 @@ public class RuntimeFrameworkBuilder {
 	
 	Scheduler scheduler;
 	Executor executor;
-	KnowledgeManagerContainer kmContainer;	
+	CloningKnowledgeManagerContainer kmContainer;	
 	RuntimeConfiguration configuration;	
 	RuntimeFramework runtime;
 	

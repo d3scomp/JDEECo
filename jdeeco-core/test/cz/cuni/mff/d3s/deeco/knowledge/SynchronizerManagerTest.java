@@ -43,6 +43,7 @@ public class SynchronizerManagerTest {
 		List<KnowledgeManager> replicas = new LinkedList<>();
 		replicas.add(replica);
 
+		when(local.getId()).thenReturn("TEST");
 		when(localsContainer.getLocals()).thenReturn(locals);
 		when(replicasContainer.getReplicas()).thenReturn(replicas);
 	}
@@ -54,11 +55,11 @@ public class SynchronizerManagerTest {
 		tested.registerReplicasContainer(replicasContainer);
 		// and WHEN a LocalKnowledgeManagerContainer is being registered with
 		// the synchroniser manager
-		when(replicasContainer.createReplicaFor(local)).thenReturn(replica);
+		when(replicasContainer.createReplica(local.getId())).thenReturn(replica);
 		tested.registerLocalsContainer(localsContainer);
 		// THEN all local knowledge managers (provided by the
 		// LocalKnowledgeManagerContainer instances) are replicated
-		verify(replicasContainer).createReplicaFor(local);
+		verify(replicasContainer).createReplica(local.getId());
 		// and THEN a Synchronizer instance is registered with the local
 		// knowledge manager
 		verify(local).register(any(KnowledgeChangeTrigger.class),
@@ -72,12 +73,12 @@ public class SynchronizerManagerTest {
 		tested.registerLocalsContainer(localsContainer);
 		// and WHEN a ReplicaKnowledgeManagerContainer is being registered with
 		// the synchroniser manager
-		when(replicasContainer.createReplicaFor(local)).thenReturn(replica);
+		when(replicasContainer.createReplica(local.getId())).thenReturn(replica);
 		tested.registerReplicasContainer(replicasContainer);
 		// THEN all local knowledge managers (provided by all
 		// LocalKnowledgeManagerContainer instances registered with the
 		// synchroniser manager) are replicated
-		verify(replicasContainer).createReplicaFor(local);
+		verify(replicasContainer).createReplica(local.getId());
 		// and THEN a Synchronizer instance is registered with local
 		// knowledge managers
 		verify(local).register(any(KnowledgeChangeTrigger.class),
@@ -91,7 +92,7 @@ public class SynchronizerManagerTest {
 		tested.registerReplicasContainer(replicasContainer);
 		// and WHEN a LocalKnowledgeManagerContainer has also been registered
 		// with the synchroniser manager
-		when(replicasContainer.createReplicaFor(local)).thenReturn(replica);
+		when(replicasContainer.createReplica(local.getId())).thenReturn(replica);
 		tested.registerLocalsContainer(localsContainer);
 		// and WHEN the LocalKnowledgeManagerContainer is being unregistered
 		// from the synchroniser manager after a while
@@ -112,7 +113,7 @@ public class SynchronizerManagerTest {
 		tested.registerReplicasContainer(replicasContainer);
 		// and WHEN a LocalKnowledgeManagerContainer has also been registered
 		// with the synchroniser manager
-		when(replicasContainer.createReplicaFor(local)).thenReturn(replica);
+		when(replicasContainer.createReplica(local.getId())).thenReturn(replica);
 		tested.registerLocalsContainer(localsContainer);
 		// and WHEN the ReplicaKnowledgeManagerContainer is being unregistered
 		// from the synchroniser manager after a while

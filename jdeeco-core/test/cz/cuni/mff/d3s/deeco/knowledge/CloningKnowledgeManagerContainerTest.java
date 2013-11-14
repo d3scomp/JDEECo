@@ -1,7 +1,6 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -54,8 +53,7 @@ public class CloningKnowledgeManagerContainerTest {
 		tested.registerReplicaListener(replicaListener);
 		tested.registerLocalListener(localListener);
 		// and WHEN new replica knowledge manager has been created
-		KnowledgeManager local = mock(KnowledgeManager.class);
-		KnowledgeManager replica = tested.createReplicaFor(local);
+		KnowledgeManager replica = tested.createReplica("TEST");
 		// THEN the listener is notified about this fact
 		verify(replicaListener).replicaCreated(replica, tested);
 		// and none of the local listeners is notified
@@ -85,7 +83,7 @@ public class CloningKnowledgeManagerContainerTest {
 		tested.registerLocalListener(localListener);
 		// and WHEN a replica of a knowledge manager has been removed
 		KnowledgeManager replica = tested
-				.createReplicaFor(mock(KnowledgeManager.class));
+				.createReplica("TEST");
 		tested.removeReplica(replica);
 		// THEN the listener is notified about this fact
 		verify(replicaListener).replicaRemoved(replica, tested);
@@ -113,12 +111,9 @@ public class CloningKnowledgeManagerContainerTest {
 		// WHEN a set of replica knowledge managers has been created within the
 		// container instance
 		List<KnowledgeManager> replicas = new LinkedList<>();
-		KnowledgeManager km = mock(KnowledgeManager.class);
-		replicas.add(tested.createReplicaFor(km));
-		km = mock(KnowledgeManager.class);
-		replicas.add(tested.createReplicaFor(km));
-		km = mock(KnowledgeManager.class);
-		replicas.add(tested.createReplicaFor(km));
+		replicas.add(tested.createReplica("T1"));
+		replicas.add(tested.createReplica("T2"));
+		replicas.add(tested.createReplica("T3"));
 		// WHEN the container is accessed for all replica knowledge managers
 		List<KnowledgeManager> containerReplicas = tested.getReplicas();
 		// THEN the container returns all replica knowledge managers created

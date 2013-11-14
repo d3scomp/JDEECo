@@ -8,7 +8,7 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
+import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
@@ -30,7 +30,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 	protected Scheduler scheduler;
 	protected RuntimeMetadata model;
 	protected Executor executor;
-	protected KnowledgeManagerContainer kmContainer;
+	protected CloningKnowledgeManagerContainer kmContainer;
 	
 	protected Map<ComponentInstance, ComponentInstanceRecord> componentRecords = new HashMap<>();
 		
@@ -57,12 +57,12 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 	 * FIXME: add synchronizer/network container in the constructor
 	 */
 	public RuntimeFrameworkImpl(RuntimeMetadata model, Scheduler scheduler,
-			Executor executor, KnowledgeManagerContainer kmContainer) {
+			Executor executor, CloningKnowledgeManagerContainer kmContainer) {
 		this(model, scheduler, executor, kmContainer, true);
 	}
 	
 	RuntimeFrameworkImpl(RuntimeMetadata model, Scheduler scheduler,
-			Executor executor, KnowledgeManagerContainer kmContainer, boolean autoInit) {
+			Executor executor, CloningKnowledgeManagerContainer kmContainer, boolean autoInit) {
 		if (model == null)
 			throw new IllegalArgumentException("Model cannot be null");
 		if (scheduler == null)
