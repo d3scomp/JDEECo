@@ -50,4 +50,11 @@ public interface ReadOnlyKnowledgeManager {
 	 *            listener to be unregistered.
 	 */
 	public void unregister(Trigger trigger, TriggerListener triggerListener);
+	
+	/**
+	 * Retrieves the id of this instance.
+	 * 
+	 * @return id
+	 */
+	public String getId();
 }

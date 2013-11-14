@@ -5,6 +5,6 @@ package cz.cuni.mff.d3s.deeco.knowledge;
  *
  */
 public interface ReplicaListener {
-	public void replicaCreated(KnowledgeManager km);
-	public void replicaRemoved(KnowledgeManager km);
+	public void replicaCreated(KnowledgeManager km, ReplicaKnowledgeManagerContainer container);
+	public void replicaRemoved(KnowledgeManager km, ReplicaKnowledgeManagerContainer container);
 }

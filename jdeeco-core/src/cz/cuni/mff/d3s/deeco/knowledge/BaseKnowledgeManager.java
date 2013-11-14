@@ -14,7 +14,6 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
-import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 
 /**
  * This class implements the KnowledgeManager interface. It allows the user to
@@ -25,27 +24,23 @@ import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
  * 
  */
+@SuppressWarnings("unchecked")
 public class BaseKnowledgeManager implements KnowledgeManager {
 
 	private final Map<KnowledgePath, Object> knowledge;
 	private final Map<KnowledgeChangeTrigger, List<TriggerListener>> knowledgeChangeListeners;
 
-	public BaseKnowledgeManager() {
+	private final String id;
+
+	public BaseKnowledgeManager(String id) {
+		this.id = id;
 		this.knowledge = new HashMap<>();
 		this.knowledgeChangeListeners = new HashMap<>();
 	}
 
-	public BaseKnowledgeManager(Object baseKnowledge) {
-		this();
-		setBaseKnowledge(baseKnowledge);
-	}
-
-	protected void setBaseKnowledge(Object baseKnowledge) {
-		if (baseKnowledge != null) {
-			ValueSet nodes = processInitialKnowledge(baseKnowledge);
-			for (KnowledgePath kp : nodes.getKnowledgePaths())
-				updateKnowledge(kp, nodes.getValue(kp));
-		}
+	@Override
+	public String getId() {
+		return this.id;
 	}
 
 	/*
@@ -59,8 +54,15 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	public ValueSet get(Collection<KnowledgePath> knowledgePaths)
 			throws KnowledgeNotFoundException {
 		ValueSet result = new ValueSet();
-		for (KnowledgePath kp : knowledgePaths)
-			result.setValue(kp, getKnowledge(kp.getNodes()));
+		Object value;
+		for (KnowledgePath kp : knowledgePaths) {
+			value = getKnowledge(kp.getNodes());
+			if (knowledge.equals(value))
+				for (KnowledgePath rootKP : knowledge.keySet())
+					result.setValue(rootKP, knowledge.get(rootKP));
+			else
+				result.setValue(kp, value);
+		}
 		return result;
 	}
 
@@ -130,6 +132,13 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		deleteKnowledge(changeSet.getDeletedReferences());
 	}
 
+	@Override
+	public boolean equals(Object that) {
+		if (that != null && that instanceof BaseKnowledgeManager)
+			return ((BaseKnowledgeManager) that).id.equals(id);
+		return false;
+	}
+
 	protected Object getKnowledge(List<PathNode> knowledgePath)
 			throws KnowledgeNotFoundException {
 		assert (knowledgePath != null);
@@ -152,30 +161,46 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	}
 
 	protected void updateKnowledge(KnowledgePath knowledgePath, Object value) {
-		List<PathNode> pathNodesToParent = new LinkedList<>(
-				knowledgePath.getNodes());
-		String fieldName = ((PathNodeField) pathNodesToParent
-				.remove(pathNodesToParent.size() - 1)).getName();
-		Object parent = null;
-		try {
-			parent = getKnowledge(pathNodesToParent);
-		} catch (KnowledgeNotFoundException e) {
+		if (uniqueKnowledgePath(knowledgePath, knowledge.keySet())) {
 			knowledge.put(knowledgePath, value);
 			return;
-		}
-		try {
-			Field field = parent.getClass().getField(fieldName);
-			field.set(parent, value);
-		} catch (Exception e) {
+		} else {
+			List<PathNode> pathNodesToParent = new LinkedList<>(
+					knowledgePath.getNodes());
+			String fieldName = ((PathNodeField) pathNodesToParent
+					.remove(pathNodesToParent.size() - 1)).getName();
+			Object parent = null;
+			try {
+				parent = getKnowledge(pathNodesToParent);
+			} catch (KnowledgeNotFoundException e) {
+				return;
+			}
 			if (parent instanceof List<?>) {
 				((List<Object>) parent).set(Integer.parseInt(fieldName), value);
 			} else if (parent instanceof Map<?, ?>) {
-				if (parent.equals(knowledge))
-					knowledge.put(knowledgePath, value);
-				else
+				if (parent.equals(knowledge)) {
+					if (knowledge.containsKey(knowledgePath))
+						knowledge.put(knowledgePath, value);
+				} else
 					((Map<String, Object>) parent).put(fieldName, value);
+			} else {
+				try {
+					Field field = parent.getClass().getField(fieldName);
+					field.set(parent, value);
+				} catch (Exception e) {
+				}
 			}
 		}
+	}
+
+	private boolean uniqueKnowledgePath(KnowledgePath path,
+			Collection<KnowledgePath> paths) {
+		for (KnowledgePath p : paths) {
+			if (containmentEndIndex(p.getNodes(), path.getNodes()) > -1
+					|| containmentEndIndex(path.getNodes(), p.getNodes()) > -1)
+				return false;
+		}
+		return true;
 	}
 
 	private Object getKnowledgeFromNode(List<PathNode> knowledgePath,
@@ -271,44 +296,31 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	}
 
 	private void notifyKnowledgeChangeListeners(KnowledgePath kp) {
-		KnowledgeChangeTrigger foundKCT = null;
+		List<KnowledgeChangeTrigger> foundKCTs = new LinkedList<>();
+		List<PathNode> kctNodes;
+		List<PathNode> kpNodes = kp.getNodes();
 		for (KnowledgeChangeTrigger kct : knowledgeChangeListeners.keySet()) {
-			if (kct.getKnowledgePath().equals(kp)) {
-				foundKCT = kct;
-				break;
+			kctNodes = kct.getKnowledgePath().getNodes();
+			// kp: a.b.c, kct: a.b
+			// kp : a.b, kct: a.b.c
+			if (containmentEndIndex(kpNodes, kctNodes) > -1
+					|| containmentEndIndex(kctNodes, kpNodes) > -1) {
+				foundKCTs.add(kct);
 			}
 		}
-		if (foundKCT != null) {
-			for (TriggerListener listener : knowledgeChangeListeners
-					.get(foundKCT)) {
-				listener.triggered(foundKCT);
+		if (!foundKCTs.isEmpty()) {
+			for (KnowledgeChangeTrigger kct : foundKCTs) {
+				for (TriggerListener listener : knowledgeChangeListeners
+						.get(kct)) {
+					listener.triggered(kct);
+				}
 			}
 		}
-	}
-
-	private ValueSet processInitialKnowledge(Object knowledge) {
-		RuntimeMetadataFactory factory = RuntimeMetadataFactory.eINSTANCE;
-		ValueSet result = new ValueSet();
-		KnowledgePath kp;
-		PathNodeField pnf;
-		for (Field f : knowledge.getClass().getFields()) {
-			kp = factory.createKnowledgePath();
-			pnf = factory.createPathNodeField();
-			pnf.setName(new String(f.getName()));
-			kp.getNodes().add(pnf);
-			try {
-				result.setValue(kp, f.get(knowledge));
-			} catch (IllegalAccessException e) {
-				continue;
-			}
-		}
-		return result;
 	}
 
 	/**
 	 * Checks whether the shorter list is contained in the longer one, keeping
-	 * the order. It returns the containment end index. FIXME: This method
-	 * should be somewhere else.
+	 * the order. It returns the containment end index.
 	 * 
 	 * @param longer
 	 * @param shorter

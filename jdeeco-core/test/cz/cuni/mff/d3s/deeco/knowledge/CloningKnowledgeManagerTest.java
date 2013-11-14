@@ -8,10 +8,8 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import cz.cuni.mff.d3s.deeco.knowledge.BaseKnowledgeManagerTest.Knowledge;
 import cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 
 /**
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
@@ -19,11 +17,12 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
  */
 public class CloningKnowledgeManagerTest {
 
-	private CloningKnowledgeManager toBeTested;
+	private CloningKnowledgeManager tested;
 
 	@Before
 	public void setUp() {
-		toBeTested = new CloningKnowledgeManager(new Knowledge());
+		tested = new CloningKnowledgeManager("TEST");
+		tested.update(BaseKnowledgeManagerTest.createKnowledge());
 	}
 
 	@Test
@@ -32,13 +31,13 @@ public class CloningKnowledgeManagerTest {
 		KnowledgePath kp = RuntimeModelHelper.createKnowledgePath("list");
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
 		knowledgePaths.add(kp);
-		ValueSet result = toBeTested.get(knowledgePaths);
+		ValueSet result = tested.get(knowledgePaths);
 		List<Integer> firstList = (List<Integer>) result.getValue(kp);
 		// AND WHEN it is modified
 		firstList.clear();
 
 		// THEN the list stored in the knowledge manager is not affected.
-		result = toBeTested.get(knowledgePaths);
+		result = tested.get(knowledgePaths);
 		List<Integer> secondList = (List<Integer>) result.getValue(kp);
 
 		assertTrue(firstList.size() != secondList.size());
@@ -60,7 +59,7 @@ public class CloningKnowledgeManagerTest {
 		firstList.clear();
 
 		// THEN the list stored in the knowledge manager is not affected.
-		ValueSet result = toBeTested.get(knowledgePaths);
+		ValueSet result = tested.get(knowledgePaths);
 		List<Integer> secondList = (List<Integer>) result.getValue(kp);
 
 		assertTrue(firstList.size() != secondList.size());
