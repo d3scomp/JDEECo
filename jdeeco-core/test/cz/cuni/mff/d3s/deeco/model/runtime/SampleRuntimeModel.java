@@ -45,9 +45,11 @@ public class SampleRuntimeModel {
 	public Exchange knowledgeExchange;
 	public PeriodicTrigger ensemblePeriodicTrigger;
 	public KnowledgeChangeTrigger ensembleKnowledgeChangeTrigger;
+	
+	// It is assumed that xxxParamCoord and xxxParamMember are equal and that membershipParamXXX and exchangeParamXXXIn are equal
 	public Parameter membershipParamCoord, membershipParamMember;
 	public Parameter exchangeParamCoordIn, exchangeParamCoordOut, exchangeParamCoordInOut;
-	public Parameter exchangeParamMemberIn, exchangeParamMemberOut, exchangeParamMemberInOut;	
+	public Parameter exchangeParamMemberIn, exchangeParamMemberOut, exchangeParamMemberInOut;
 	
 	private static int processMethodCallCounter;
 	private static int membershipMethodCallCounter;
@@ -90,14 +92,22 @@ public class SampleRuntimeModel {
 		
 		coordOut.value = memberIn;
 		memberOut.value = coordIn;
-		
-		Integer xchng = coordInOut.value;
-		coordInOut.value = memberInOut.value;
-		memberInOut.value = xchng;
+
+		if (coordInOut.value > 0) {
+			coordInOut.value = 1;
+		} else {
+			coordInOut.value = 0;
+		}
+
+		if (memberInOut.value > 0) {
+			memberInOut.value = 1;
+		} else {
+			memberInOut.value = 0;
+		}
 	}
 	
 	public static void resetExchangeMethodCallCounter() {
-		processMethodCallCounter = 0;
+		exchangeMethodCallCounter = 0;
 	}
 	
 	public static int getExchangeMethodCallCounter() {

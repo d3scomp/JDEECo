@@ -3,6 +3,7 @@
  */
 package cz.cuni.mff.d3s.deeco.model.runtime.custom;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -43,5 +44,29 @@ public class KnowledgePathExt extends KnowledgePathImpl {
 			code ^= node.hashCode();
 		}
 		return code;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder out = new StringBuilder();
+
+		Iterator<PathNode> nodesIter = getNodes().iterator();
+		
+		PathNode node;
+		if (nodesIter.hasNext()) {
+			node = nodesIter.next();
+			out.append(node.toString());
+		}
+		
+		while (nodesIter.hasNext()) {
+			node = nodesIter.next();
+			out.append('.');
+			out.append(node.toString());
+		}
+		
+		return out.toString();
 	}
 }
