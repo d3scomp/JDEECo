@@ -5,6 +5,6 @@ package cz.cuni.mff.d3s.deeco.knowledge;
  *
  */
 public interface LocalListener {
-	public void localCreated(KnowledgeManager km);
-	public void localRemoved(KnowledgeManager km);
+	public void localCreated(KnowledgeManager km, LocalKnowledgeManagerContainer container);
+	public void localRemoved(KnowledgeManager km, LocalKnowledgeManagerContainer container);
 }

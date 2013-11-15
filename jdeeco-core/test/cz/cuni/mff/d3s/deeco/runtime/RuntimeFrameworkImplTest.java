@@ -11,7 +11,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
+import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
@@ -33,7 +33,7 @@ public class RuntimeFrameworkImplTest {
 	
 	Scheduler scheduler;
 	Executor executor;
-	KnowledgeManagerContainer kmContainer;
+	CloningKnowledgeManagerContainer kmContainer;
 	
 	RuntimeMetadata model;	
 	
@@ -48,7 +48,7 @@ public class RuntimeFrameworkImplTest {
 	public void setUp() throws Exception {
 		scheduler = mock(Scheduler.class);
 		executor = mock(Executor.class);
-		kmContainer = mock(KnowledgeManagerContainer.class);
+		kmContainer = mock(CloningKnowledgeManagerContainer.class);
 				
 		RuntimeMetadataFactory factory = RuntimeMetadataFactoryExt.eINSTANCE;
 		process = factory.createComponentProcess();

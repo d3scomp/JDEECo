@@ -27,15 +27,13 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 public class KnowledgeManagerViewImplTest {
 	
 	@Mock
-	private KnowledgeManagerContainer container;
-	
+	private CloningKnowledgeManagerContainer container;
 	@Mock
 	private KnowledgeManager knowledgeManager;
 	@Mock
 	private KnowledgeManager local;
 	@Mock
 	private KnowledgeManager replica;
-	
 	@Mock
 	private ShadowsTriggerListener listener;
 	@Mock
@@ -139,7 +137,7 @@ public class KnowledgeManagerViewImplTest {
 		// and any other knowledge manager added later is not registered with
 		// the trigger
 		
-		tested.localCreated(local);
+		tested.localCreated(local, container);
 		verify(local, never()).register(eq(trigger), any(TriggerListener.class));
 
 	}
@@ -150,7 +148,7 @@ public class KnowledgeManagerViewImplTest {
 		// and WHEN the KnowledgeManagerView instance is notified about this
 		
 		tested.register(trigger, listener);
-		tested.localCreated(local);
+		tested.localCreated(local, container);
 
 		// THEN all memorised triggers are registered with the new knowledge
 		// manager
@@ -164,7 +162,7 @@ public class KnowledgeManagerViewImplTest {
 		// and WHEN the KnowledgeManagerView instance is notified about this
 
 		tested.register(trigger, listener);
-		tested.replicaCreated(replica);
+		tested.replicaCreated(replica, container);
 		
 		// and all memorised triggers are registered with the new knowledge
 		// manager
@@ -182,7 +180,7 @@ public class KnowledgeManagerViewImplTest {
 		when(container.getLocals()).thenReturn(locals);
 		
 		tested.register(trigger, listener);
-		tested.localRemoved(local);
+		tested.localRemoved(local, container);
 		
 		// THEN all triggers registered by the KnowledgeManagerView instance are
 		// removed from the knowledge manager being removed
@@ -200,7 +198,7 @@ public class KnowledgeManagerViewImplTest {
 		
 		
 		tested.register(trigger, listener);
-		tested.localRemoved(replica);
+		tested.localRemoved(replica, container);
 		
 		// THEN all triggers registered by the KnowledgeManagerView instance are
 		// removed from the knowledge manager being removed

@@ -7,7 +7,7 @@ import java.util.List;
  *
  */
 public interface LocalKnowledgeManagerContainer {
-	public KnowledgeManager createLocal();
+	public KnowledgeManager createLocal(String id);
 	public KnowledgeManager removeLocal(KnowledgeManager km);
 	public List<KnowledgeManager> getLocals();
 	public void registerLocalListener(LocalListener listener);

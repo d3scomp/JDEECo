@@ -31,7 +31,7 @@ import cz.cuni.mff.d3s.deeco.annotations.pathparser.PathParser;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
+import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerViewImpl;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
@@ -175,8 +175,9 @@ public class AnnotationProcessor {
 		Class<?> clazz = obj.getClass();
 		ComponentInstance componentInstance = factory.createComponentInstance();
 		componentInstance.setName(clazz.getCanonicalName());
-		KnowledgeManagerContainer container = new CloningKnowledgeManagerContainer();
-		KnowledgeManager km = container.createLocal();
+		CloningKnowledgeManagerContainer container = new CloningKnowledgeManagerContainer();
+		//TODO Below should be the id of the component passed instead of "String"
+		KnowledgeManager km = container.createLocal("String");
 		km.update(extractInitialKnowledge(obj));
 		componentInstance.setKnowledgeManager(km);	
 		KnowledgeManagersView view = new KnowledgeManagerViewImpl(km, container);

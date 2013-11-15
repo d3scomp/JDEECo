@@ -16,18 +16,18 @@ public class KnowledgeManagerViewImpl implements KnowledgeManagersView,
 		ReplicaListener, LocalListener {
 
 	private final KnowledgeManager knowledgeManager;
-	private final KnowledgeManagerContainer container;
+	private final CloningKnowledgeManagerContainer container;
 	private final Map<Trigger, List<ShadowsTriggerListener>> triggerListeners;
 
 	private final Map<ShadowsTriggerListener, List<KnowledgeManagerTriggerListener>> listenerToTriggerListeners;
 
 	public KnowledgeManagerViewImpl(KnowledgeManager knowledgeManager,
-			KnowledgeManagerContainer container) {
+			CloningKnowledgeManagerContainer container) {
 		this.knowledgeManager = knowledgeManager;
 		this.container = container;
 		this.triggerListeners = new HashMap<>();
 		listenerToTriggerListeners = new HashMap<>();
-		
+
 		this.container.registerLocalListener(this);
 		this.container.registerReplicaListener(this);
 	}
@@ -40,8 +40,9 @@ public class KnowledgeManagerViewImpl implements KnowledgeManagersView,
 	 * .d3s.deeco.knowledge.KnowledgeManager)
 	 */
 	@Override
-	public synchronized void localCreated(KnowledgeManager km) {
-		replicaCreated(km);
+	public synchronized void localCreated(KnowledgeManager km,
+			LocalKnowledgeManagerContainer container) {
+		replicaCreated(km, null);
 	}
 
 	/*
@@ -52,8 +53,9 @@ public class KnowledgeManagerViewImpl implements KnowledgeManagersView,
 	 * .d3s.deeco.knowledge.KnowledgeManager)
 	 */
 	@Override
-	public synchronized void localRemoved(KnowledgeManager km) {
-		replicaRemoved(km);
+	public synchronized void localRemoved(KnowledgeManager km,
+			LocalKnowledgeManagerContainer container) {
+		replicaRemoved(km, null);
 	}
 
 	/*
@@ -64,7 +66,8 @@ public class KnowledgeManagerViewImpl implements KnowledgeManagersView,
 	 * .mff.d3s.deeco.knowledge.KnowledgeManager)
 	 */
 	@Override
-	public synchronized void replicaCreated(KnowledgeManager km) {
+	public synchronized void replicaCreated(KnowledgeManager km,
+			ReplicaKnowledgeManagerContainer container) {
 		for (Trigger trigger : triggerListeners.keySet())
 			for (ShadowsTriggerListener listener : triggerListeners
 					.get(trigger))
@@ -79,7 +82,8 @@ public class KnowledgeManagerViewImpl implements KnowledgeManagersView,
 	 * .mff.d3s.deeco.knowledge.KnowledgeManager)
 	 */
 	@Override
-	public synchronized void replicaRemoved(KnowledgeManager km) {
+	public synchronized void replicaRemoved(KnowledgeManager km,
+			ReplicaKnowledgeManagerContainer container) {
 		List<KnowledgeManagerTriggerListener> toRemove = new LinkedList<>();
 		for (List<KnowledgeManagerTriggerListener> tListeners : listenerToTriggerListeners
 				.values()) {
@@ -202,7 +206,7 @@ public class KnowledgeManagerViewImpl implements KnowledgeManagersView,
 		public KnowledgeManager getKnowledgeManager() {
 			return knowledgeManager;
 		}
-		
+
 		public Trigger getTrigger() {
 			return trigger;
 		}
