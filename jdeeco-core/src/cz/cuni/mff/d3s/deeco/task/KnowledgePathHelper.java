@@ -3,21 +3,27 @@
  */
 package cz.cuni.mff.d3s.deeco.task;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager;
+import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 
 
 /**
  * @author Tomas Bures <bures@d3s.mff.cuni.cz>
+ * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
  *
  */
 public class KnowledgePathHelper {
@@ -91,10 +97,31 @@ public class KnowledgePathHelper {
 	 * @param path input knowledge path.
 	 * @param knowledgeManager knowledge manager to be used for resolving.
 	 * @return absolute knowledge path.
+	 * @throws KnowledgeNotFoundException 
 	 */
-	public static KnowledgePath getAbsolutePath(KnowledgePath path, ReadOnlyKnowledgeManager knowledgeManager) {
+	protected static KnowledgePath getAbsolutePath(KnowledgePath path, ReadOnlyKnowledgeManager knowledgeManager) {
 		
-		// TODO
+		for (int i=0; i<path.getNodes().size();i++) {
+			PathNode pn = path.getNodes().get(i);
+			if ((pn instanceof PathNodeCoordinator) || (pn instanceof PathNodeMember)) {
+				;
+			}
+			if (pn instanceof PathNodeMapKey) {
+				KnowledgePath innerPath = ((PathNodeMapKey) pn).getKeyPath();
+				innerPath = getAbsolutePath(innerPath, knowledgeManager);
+				ValueSet vs = null;
+				try {
+					vs = knowledgeManager.get(Arrays.asList(innerPath));
+				} catch (KnowledgeNotFoundException e) {
+					e.printStackTrace();
+				}
+				String value = vs.getValue(innerPath).toString();
+				RuntimeMetadataFactory factory = RuntimeMetadataFactory.eINSTANCE;
+				PathNodeField field = factory.createPathNodeField();
+				field.setName(value);
+				pn = field;
+			}
+		}
 		
 		return path;
 	}
@@ -105,7 +132,7 @@ public class KnowledgePathHelper {
 	 * @param absolutePath input knowledge path.
 	 * @return structure containing the path with the member/coordinator prefix stripped and the root prefix. <code>null</code> if there is not member/coordinator prefix in the input path or if the input path is not absolute.
 	 */
-	public static KnowledgePathAndRoot getStrippedPath(KnowledgePath absolutePath) {
+	protected static KnowledgePathAndRoot getStrippedPath(KnowledgePath absolutePath) {
 		Collection<PathNode> origPathNodes = absolutePath.getNodes();
 		
 		if (origPathNodes.isEmpty()) {

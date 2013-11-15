@@ -58,7 +58,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="componentInstance" lowerBound="1"
         eType="#//ComponentInstance" eOpposite="#//ComponentInstance/componentProcesses"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="isActive" lowerBound="1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean" defaultValueLiteral="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="triggers" upperBound="-1"
         eType="#//Trigger" containment="true"/>
   </eClassifiers>
@@ -88,4 +88,5 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PathNodeCoordinator" eSuperTypes="#//PathNode"/>
   <eClassifiers xsi:type="ecore:EClass" name="PathNodeMember" eSuperTypes="#//PathNode"/>
+  <eClassifiers xsi:type="ecore:EClass" name="PathNodeComponentId" eSuperTypes="#//PathNode"/>
 </ecore:EPackage>
