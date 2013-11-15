@@ -19,6 +19,7 @@ import cz.cuni.mff.d3s.deeco.runtime.RuntimeConfiguration.Execution;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeConfiguration.Scheduling;
 import cz.cuni.mff.d3s.deeco.scheduler.LocalTimeScheduler;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
+import cz.cuni.mff.d3s.deeco.scheduler.SingleThreadedScheduler;
 
 /**
  * 
@@ -113,7 +114,7 @@ public class RuntimeFrameworkBuilderTest {
 		// THEN the builder creates an instance of LocalTimeScheduler
 		tested.buildScheduler();
 		assertNotNull(tested.scheduler);
-		assertTrue(tested.scheduler instanceof LocalTimeScheduler);		
+		assertTrue(tested.scheduler instanceof SingleThreadedScheduler);		
 	}
 	
 

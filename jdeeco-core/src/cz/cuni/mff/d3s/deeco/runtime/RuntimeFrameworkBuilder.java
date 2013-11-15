@@ -1,15 +1,25 @@
 package cz.cuni.mff.d3s.deeco.runtime;
 
+import java.util.Arrays;
+
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.executor.SameThreadExecutor;
+import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerContainer;
-import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerContainer;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerViewImpl;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
+import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
-import cz.cuni.mff.d3s.deeco.scheduler.LocalTimeScheduler;
+import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
+import cz.cuni.mff.d3s.deeco.scheduler.SingleThreadedScheduler;
 
 /**
+ * A builder for assembling a {@link RuntimeFramework} based on a {@link RuntimeConfiguration}.
  * 
  * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
  *
@@ -41,7 +51,7 @@ public class RuntimeFrameworkBuilder {
 			
 		switch (configuration.scheduling) {
 		case WALL_TIME:
-			scheduler = new LocalTimeScheduler();
+			scheduler = new SingleThreadedScheduler();
 			break;
 		default:
 			String msg = "No Scheduler available for " + configuration.toString();
@@ -68,7 +78,7 @@ public class RuntimeFrameworkBuilder {
 		}
 	}
 	
-	protected void buildKnowledgeManagerRegistry() {		
+	protected void buildKnowledgeManagerContainer() {		
 		kmContainer = new CloningKnowledgeManagerContainer();
 	}
 	
@@ -94,12 +104,44 @@ public class RuntimeFrameworkBuilder {
 		
 		buildScheduler();
 		buildExecutor();
-		buildKnowledgeManagerRegistry();
-		//buildNetworkContainer() - by default does nothing = no network is used
-		//buildSynchronizer() - by default does nothing = only one runtime in only one JVM
+		buildKnowledgeManagerContainer();				
+		
+		bindKnowledgeManagerContainer(model);
+		
+		//TODO: buildNetworkContainer() - by default does nothing = no network is used
+		//TODO: buildSynchronizer() - by default does nothing = only one runtime in only one JVM
+		
 		connect();
 		buildRuntime(model);
 		return runtime;
+	}
+
+	/**
+	 * Replace the KMs in the model with KMs created via {@link #kmContainer}. 
+	 */
+	protected void bindKnowledgeManagerContainer(RuntimeMetadata model) {
+		for (ComponentInstance ci: model.getComponentInstances()) {
+			KnowledgeManager km = kmContainer.createLocal(ci.getKnowledgeManager().getId());
+			
+			ValueSet initialKnowledge;
+			try {
+				// get all the knowledge (corresponding to an empty knowledge path)
+				initialKnowledge = ci.getKnowledgeManager().get(
+						Arrays.asList(RuntimeMetadataFactoryExt.eINSTANCE.createKnowledgePath()));
+			} catch (KnowledgeNotFoundException e) {
+				continue;
+			}
+			
+			// copy all the values into a ChangeSet
+			ChangeSet cs = new ChangeSet();
+			for (KnowledgePath p: initialKnowledge.getKnowledgePaths()) {
+				cs.setValue(p, initialKnowledge.getValue(p));
+			}
+			
+			km.update(cs);
+			ci.setKnowledgeManager(km);	
+			ci.setOtherKnowledgeManagersAccess(new KnowledgeManagerViewImpl(km, kmContainer));
+		}		
 	}
 	
 }
