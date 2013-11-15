@@ -80,6 +80,7 @@ public interface ComponentProcess extends Invocable {
 
 	/**
 	 * Returns the value of the '<em><b>Is Active</b></em>' attribute.
+	 * The default value is <code>"true"</code>.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Is Active</em>' attribute isn't clear,
@@ -89,7 +90,7 @@ public interface ComponentProcess extends Invocable {
 	 * @return the value of the '<em>Is Active</em>' attribute.
 	 * @see #setIsActive(boolean)
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentProcess_IsActive()
-	 * @model required="true"
+	 * @model default="true" required="true"
 	 * @generated
 	 */
 	boolean isIsActive();

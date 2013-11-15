@@ -81,6 +81,7 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 			case RuntimeMetadataPackage.ENSEMBLE_CONTROLLER: return createEnsembleController();
 			case RuntimeMetadataPackage.PATH_NODE_COORDINATOR: return createPathNodeCoordinator();
 			case RuntimeMetadataPackage.PATH_NODE_MEMBER: return createPathNodeMember();
+			case RuntimeMetadataPackage.PATH_NODE_COMPONENT_ID: return createPathNodeComponentId();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -286,6 +287,16 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	public PathNodeMember createPathNodeMember() {
 		PathNodeMemberImpl pathNodeMember = new PathNodeMemberImpl();
 		return pathNodeMember;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public PathNodeComponentId createPathNodeComponentId() {
+		PathNodeComponentIdImpl pathNodeComponentId = new PathNodeComponentIdImpl();
+		return pathNodeComponentId;
 	}
 
 	/**
