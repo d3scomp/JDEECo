@@ -69,7 +69,7 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 	 * @generated
 	 * @ordered
 	 */
-	protected static final boolean IS_ACTIVE_EDEFAULT = false;
+	protected static final boolean IS_ACTIVE_EDEFAULT = true;
 
 	/**
 	 * The cached value of the '{@link #isIsActive() <em>Is Active</em>}' attribute.
