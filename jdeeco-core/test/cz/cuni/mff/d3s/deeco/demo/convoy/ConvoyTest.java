@@ -3,6 +3,7 @@ package cz.cuni.mff.d3s.deeco.demo.convoy;
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.containsString;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.StandardOutputStreamLog;
@@ -30,6 +31,7 @@ public class ConvoyTest {
 	public final StandardOutputStreamLog  log = new StandardOutputStreamLog ();
 	
 	@Test
+	@Ignore
 	public void testConvoy() throws AnnotationParsingException, InterruptedException {
 		
 		AnnotationProcessor processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE);
