@@ -26,6 +26,8 @@ public interface PathParserConstants {
   int OPEN = 7;
   /** RegularExpression Id. */
   int CLOSE = 8;
+  /** RegularExpression Id. */
+  int ID = 9;
 
   /** Lexical state. */
   int DEFAULT = 0;

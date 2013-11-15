@@ -328,14 +328,14 @@ public class AnnotationProcessorTest {
 	@Test 
 	public void testCreateKnowledgePath() throws ParseException, AnnotationParsingException {
 		String pathStr = "level1.level2.level3";
-		KnowledgePath kp = processor.createKnowledgePath(pathStr);
+		KnowledgePath kp = processor.createKnowledgePath(pathStr, true);
 		assertEquals(kp.getNodes().size(),3);
 		assertEquals(((PathNodeField) kp.getNodes().get(0)).getName(),"level1");
 		assertEquals(((PathNodeField) kp.getNodes().get(1)).getName(),"level2");
 		assertEquals(((PathNodeField) kp.getNodes().get(2)).getName(),"level3");
 		
 		pathStr = "level1.[level21.level22.level23]";
-		kp = processor.createKnowledgePath(pathStr);
+		kp = processor.createKnowledgePath(pathStr, true);
 		assertEquals(kp.getNodes().size(),2);
 		assertEquals(((PathNodeField) kp.getNodes().get(0)).getName(),"level1");
 		assert kp.getNodes().get(1) instanceof PathNodeMapKey;
@@ -346,7 +346,7 @@ public class AnnotationProcessorTest {
 		assertEquals(((PathNodeField) kp.getNodes().get(2)).getName(),"level23");
 		
 		pathStr = "level1.[level21.[level221.level222].level23]";
-		kp = processor.createKnowledgePath(pathStr);
+		kp = processor.createKnowledgePath(pathStr, true);
 		assertEquals(kp.getNodes().size(),2);
 		assertEquals(((PathNodeField) kp.getNodes().get(0)).getName(),"level1");
 		assertTrue(kp.getNodes().get(1) instanceof PathNodeMapKey);
@@ -360,7 +360,7 @@ public class AnnotationProcessorTest {
 		assertEquals(((PathNodeField) kp.getNodes().get(1)).getName(),"level222");
 
 		pathStr = "coordinates.[member.id]";
-		kp = processor.createKnowledgePath(pathStr);
+		kp = processor.createKnowledgePath(pathStr, true);
 		assertEquals(kp.getNodes().size(),2);
 		assertEquals(((PathNodeField) kp.getNodes().get(0)).getName(),"coordinates");
 		assertTrue(kp.getNodes().get(1) instanceof PathNodeMapKey);
@@ -369,7 +369,7 @@ public class AnnotationProcessorTest {
 		assertEquals(((PathNodeField) kp.getNodes().get(1)).getName(),"id");
 		
 		pathStr = "[coord.names]";
-		kp = processor.createKnowledgePath(pathStr);
+		kp = processor.createKnowledgePath(pathStr, true);
 		assertEquals(kp.getNodes().size(),1);
 		assertTrue(kp.getNodes().get(0) instanceof PathNodeMapKey);
 		kp = ((PathNodeMapKey) kp.getNodes().get(0)).getKeyPath();
@@ -384,35 +384,35 @@ public class AnnotationProcessorTest {
 		exception.expectMessage(
 				"The structure 'data1[data2]' is not allowed in a path, " +
 				"use the dot separator: 'data1.[data2]'");
-		processor.createKnowledgePath(pathStr);		
+		processor.createKnowledgePath(pathStr, true);		
 	}
 	
 	@Test
 	public void testExceptionsInCreateKnowledgePath2() throws ParseException, AnnotationParsingException {
 		String pathStr = "namesToAddresses.[member.name";
 		exception.expect(ParseException.class);
-		processor.createKnowledgePath(pathStr);		
+		processor.createKnowledgePath(pathStr, true);		
 	}
 	
 	@Test
 	public void testExceptionsInCreateKnowledgePath3() throws ParseException, AnnotationParsingException {
 		String pathStr = "level1..level2";
 		exception.expect(ParseException.class);
-		processor.createKnowledgePath(pathStr);		
+		processor.createKnowledgePath(pathStr, true);		
 	}
 	
 	@Test
 	public void testExceptionsInCreateKnowledgePath4() throws ParseException, AnnotationParsingException {
 		String pathStr = "level1.  .level2";
 		exception.expect(TokenMgrError.class);
-		processor.createKnowledgePath(pathStr);		
+		processor.createKnowledgePath(pathStr, true);		
 	}
 	
 	@Test
 	public void testExceptionsInCreateKnowledgePath5() throws ParseException, AnnotationParsingException {
 		String pathStr = "";
 		exception.expect(ParseException.class);
-		processor.createKnowledgePath(pathStr);		
+		processor.createKnowledgePath(pathStr, true);		
 	}
 	
 	@Test

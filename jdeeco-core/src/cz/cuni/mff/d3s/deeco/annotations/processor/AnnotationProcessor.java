@@ -23,6 +23,7 @@ import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange;
+import cz.cuni.mff.d3s.deeco.annotations.pathparser.ComponentIdentifier;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.EEnsembleParty;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.PNode;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.ParseException;
@@ -43,8 +44,11 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
@@ -206,8 +210,8 @@ public class AnnotationProcessor {
 			Exchange exchange = createExchange(clazz);
 			ensembleDefinition.setKnowledgeExchange(exchange);
 			PeriodicTrigger periodicEnsembleTrigger = createPeriodicTrigger(clazz);
-			List<KnowledgeChangeTrigger> exchangeKChangeTriggers = createKnowledgeChangeTriggers(exchange.getMethod());
-			List<KnowledgeChangeTrigger> conditionKChangeTriggers = createKnowledgeChangeTriggers(condition.getMethod());
+			List<KnowledgeChangeTrigger> exchangeKChangeTriggers = createKnowledgeChangeTriggers(exchange.getMethod(), false);
+			List<KnowledgeChangeTrigger> conditionKChangeTriggers = createKnowledgeChangeTriggers(condition.getMethod(), false);
 			if (periodicEnsembleTrigger == null) {
 				if (exchangeKChangeTriggers.isEmpty() && conditionKChangeTriggers.isEmpty()) {
 					throw new AnnotationParsingException("No triggers were found.");
@@ -228,7 +232,7 @@ public class AnnotationProcessor {
 		Method m = getAnnotatedMethodInEnsemble(clazz, Membership.class);
 		Condition condition = factory.createCondition();
 		condition.setMethod(m);
-		condition.getParameters().addAll(createParameters(m));
+		condition.getParameters().addAll(createParameters(m, false));
 		return condition;
 	}
 	
@@ -236,20 +240,18 @@ public class AnnotationProcessor {
 		Method m = getAnnotatedMethodInEnsemble(clazz, KnowledgeExchange.class);
 		Exchange exchange = factory.createExchange();
 		exchange.setMethod(m);
-		exchange.getParameters().addAll(createParameters(m));
+		exchange.getParameters().addAll(createParameters(m, false));
 		return exchange;
 	}
 
-	ComponentProcess createComponentProcess(
-			ComponentInstance componentInstance, Method m) throws AnnotationParsingException, ParseException {
-		ComponentProcess componentProcess;
-		componentProcess = factory.createComponentProcess();
+	ComponentProcess createComponentProcess(ComponentInstance componentInstance, Method m) throws AnnotationParsingException, ParseException {
+		ComponentProcess componentProcess = factory.createComponentProcess();
 		try {
 			componentProcess.setComponentInstance(componentInstance);
 			componentProcess.setMethod(m);
 			componentProcess.setName(m.getName());
 			PeriodicTrigger periodicTrigger = createPeriodicTrigger(m);
-			List<KnowledgeChangeTrigger> knowledgeChangeTriggers = createKnowledgeChangeTriggers(m);
+			List<KnowledgeChangeTrigger> knowledgeChangeTriggers = createKnowledgeChangeTriggers(m, true);
 			if (periodicTrigger == null) {
 				if (knowledgeChangeTriggers.isEmpty()) {
 					throw new AnnotationParsingException("No triggers were found.");
@@ -258,7 +260,7 @@ public class AnnotationProcessor {
 				componentProcess.getTriggers().add(periodicTrigger);
 			}
 			componentProcess.getTriggers().addAll(knowledgeChangeTriggers);
-			componentProcess.getParameters().addAll(createParameters(m));			
+			componentProcess.getParameters().addAll(createParameters(m, true));			
 		} catch (AnnotationParsingException e) {
 			String msg = "Process: "+componentProcess.getName()+"->"+e.getMessage();
 			throw new AnnotationParsingException(msg, e);
@@ -299,7 +301,8 @@ public class AnnotationProcessor {
 		return null;
 	}
 
-	List<KnowledgeChangeTrigger> createKnowledgeChangeTriggers(Method method) throws AnnotationParsingException, ParseException {
+	List<KnowledgeChangeTrigger> createKnowledgeChangeTriggers(Method method, boolean inComponentProcess) 
+			throws AnnotationParsingException, ParseException {
 		List<KnowledgeChangeTrigger> knowledgeChangeTriggers = new ArrayList<>();
 		Type[] parameterTypes = method.getParameterTypes();
 		Annotation[][] allAnnotations = method.getParameterAnnotations();
@@ -309,20 +312,20 @@ public class AnnotationProcessor {
 				Annotation directionAnnotation = getDirectionAnnotation(i, allAnnotations[i]);
 				String path = (String) getAnnotationValue(directionAnnotation);
 				KnowledgeChangeTrigger trigger = factory.createKnowledgeChangeTrigger();
-				trigger.setKnowledgePath(createKnowledgePath(path));
+				trigger.setKnowledgePath(createKnowledgePath(path, inComponentProcess));
 				knowledgeChangeTriggers.add(trigger);
 			}
 		}
 		return knowledgeChangeTriggers;
 	}
 
-	List<Parameter> createParameters(Method method)
+	List<Parameter> createParameters(Method method, boolean inComponentProcess)
 			throws AnnotationParsingException, ParseException {
 		List<Parameter> parameters = new ArrayList<>();
 		Type[] parameterTypes = method.getParameterTypes();
 		Annotation[][] allAnnotations = method.getParameterAnnotations();
 		for (int i = 0; i < parameterTypes.length; i++) {
-			parameters.add(createParameter(i, allAnnotations[i]));
+			parameters.add(createParameter(i, allAnnotations[i], inComponentProcess));
 		}
 		return parameters;
 	}
@@ -339,25 +342,22 @@ public class AnnotationProcessor {
 	 * @throws AnnotationParsingException
 	 * @throws ParseException
 	 */
-	Parameter createParameter(int parameterIndex,
-			Annotation[] parameterAnnotations)
+	Parameter createParameter(int parameterIndex, Annotation[] parameterAnnotations, boolean inComponentProcess)
 			throws AnnotationParsingException, ParseException {
-		Annotation directionAnnotation = getDirectionAnnotation(
-				parameterIndex, parameterAnnotations);
+		Annotation directionAnnotation = getDirectionAnnotation(parameterIndex, parameterAnnotations);
 		Parameter parameter = factory.createParameter();
-		parameter.setDirection(parameterAnnotationsToParameterDirections
-				.get(directionAnnotation.annotationType()));
+		parameter.setDirection(parameterAnnotationsToParameterDirections.get(directionAnnotation.annotationType()));
 		String path = (String) getAnnotationValue(directionAnnotation);
-		parameter.setKnowledgePath(createKnowledgePath(path));
+		parameter.setKnowledgePath(createKnowledgePath(path,inComponentProcess));
 		return parameter;
 	}
 	
-	KnowledgePath createKnowledgePath(String path) throws ParseException, AnnotationParsingException {
+	KnowledgePath createKnowledgePath(String path, boolean inComponentProcess) throws ParseException, AnnotationParsingException {
 		PNode pNode = PathParser.parse(path);
-		return createKnowledgePath(pNode);
+		return createKnowledgePath(pNode, inComponentProcess);
 	}
 	
-	KnowledgePath createKnowledgePath(PNode pNode) throws AnnotationParsingException {
+	KnowledgePath createKnowledgePath(PNode pNode, boolean inComponentProcess) throws AnnotationParsingException {
 		KnowledgePath knowledgePath = factory.createKnowledgePath();
 		do {			
 			Object nValue = pNode.value;
@@ -366,13 +366,52 @@ public class AnnotationProcessor {
 				pathNodeField.setName((String) nValue);
 				knowledgePath.getNodes().add(pathNodeField);
 			}
+			if (nValue instanceof ComponentIdentifier) {
+				if (inComponentProcess) {
+					if (knowledgePath.getNodes().isEmpty()) {
+						PathNodeComponentId idField = factory.createPathNodeComponentId();
+						knowledgePath.getNodes().add(idField);
+					} else {
+						PathNodeField pathNodeField = factory.createPathNodeField();
+						pathNodeField.setName(ComponentIdentifier.ID.toString());
+						knowledgePath.getNodes().add(pathNodeField);	
+					}
+				} else {
+					if (knowledgePath.getNodes().isEmpty()) {
+						throw new AnnotationParsingException(
+								"'"+ComponentIdentifier.ID.toString()+"' cannot be used in the beginning of a path in an ensemble definition.");
+					} else {
+						PathNode first = knowledgePath.getNodes().get(0);
+						if (!((first instanceof PathNodeMember) || (first instanceof PathNodeCoordinator))) {
+							PathNodeComponentId idField = factory.createPathNodeComponentId();
+							knowledgePath.getNodes().add(idField);
+						} else {
+							PathNodeField pathNodeField = factory.createPathNodeField();
+							pathNodeField.setName(ComponentIdentifier.ID.toString());
+							knowledgePath.getNodes().add(pathNodeField);
+						}
+					}
+					
+				}
+			}
 			if (nValue instanceof EEnsembleParty) {
-				EEnsembleParty ensembleKeyword = (EEnsembleParty) nValue;				
-				knowledgePath.getNodes().add(createMemberOrCoordinatorPathNode(ensembleKeyword));
+				EEnsembleParty ensembleKeyword = (EEnsembleParty) nValue;
+				if (inComponentProcess) {
+					throw new AnnotationParsingException(
+							"Cannot use the '" + ensembleKeyword + "' in a component process.");
+				} else {
+					if (knowledgePath.getNodes().isEmpty()) {
+						knowledgePath.getNodes().add(createMemberOrCoordinatorPathNode(ensembleKeyword));						
+					} else { // not in the beginning, add it as PathNodeField
+						PathNodeField pathNodeField = factory.createPathNodeField();
+						pathNodeField.setName(ensembleKeyword.toString());
+						knowledgePath.getNodes().add(pathNodeField);
+					}
+				}
 			}
 			if (nValue instanceof PNode) {
 				PathNodeMapKey pathNodeMapKey = factory.createPathNodeMapKey();
-				pathNodeMapKey.setKeyPath(createKnowledgePath((PNode) nValue));
+				pathNodeMapKey.setKeyPath(createKnowledgePath((PNode) nValue, inComponentProcess));
 				knowledgePath.getNodes().add(pathNodeMapKey);
 			}
 			pNode = pNode.next;
