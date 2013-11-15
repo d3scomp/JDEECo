@@ -1,19 +1,13 @@
 package cz.cuni.mff.d3s.deeco.scheduler;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import static org.mockito.Mockito.*;
+
+import static org.junit.Assert.*;
+import org.junit.*;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
@@ -34,7 +28,7 @@ public abstract class SchedulerTest  {
 	private Executor executor;
 	private TaskTriggerListener testListener;
 	
-	protected abstract Scheduler setUpTested(Executor executor2);
+	protected abstract Scheduler setUpTested(Executor executor);
 
 	
 	@Before
@@ -52,7 +46,7 @@ public abstract class SchedulerTest  {
 	
 	@Test
 	public void testRepeatedExecution() throws InterruptedException{
-		Task t = mock(Task.class);
+		final Task t = mock(Task.class);
 		PeriodicTrigger p = mock(PeriodicTrigger.class);
 		// Stubbing mocks.
 		// The period is chosen to be 300 ms because the SingleThreadedScheduler 
@@ -60,25 +54,33 @@ public abstract class SchedulerTest  {
 		// period of time causing a test failure 
 		when(p.getPeriod()).thenReturn(300L);
 		when(t.getPeriodicTrigger()).thenReturn(p);
+		doAnswer(new Answer() {
+			    public Object answer(InvocationOnMock invocation) {
+			        Object[] args = invocation.getArguments();
+			        tested.executionCompleted((Task)args[0]);
+			        return null;
+			    }})
+			.when(executor).execute(t, p);
+
 		
 		// WHEN a periodic task is added to a stopped scheduler
 		tested.addTask(t);
 		// THEN it is added to the task list but not started
 		verify(executor, timeout(20).never()).execute(t, p);
 		
-		// WHEN the scheduler is started, it runs for 10 iterations of the preiodic task period
+		// WHEN the scheduler is started, it runs for  iterations of the preiodic task period
 		tested.start();
 		
+		// WHEN the scheduler runs for a while
 		Thread.sleep(150);
 		
 		// Since the period is quite big(300 ms) we will test the 
 		// periodic scheduling only for 5 iterations to save time
 		for( int i = 0; i < 5; i++ ){			
-			// THEN the task is executed exactly once per iteration
-			verify(executor, times(i+1)).execute(t, p);
+			verify(executor, times(i + 1)).execute(t, p);
 			Thread.sleep(300);
 		}
-		
+
 		// And after the scheduler is stopped
 		tested.stop();
 	}

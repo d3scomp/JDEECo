@@ -34,6 +34,8 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.sun.corba.se.spi.orbutil.fsm.State;
+
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
@@ -372,6 +374,9 @@ class SchedulerThread extends Thread {
                     if (!canExecute)
                     	continue; // The event cannot continue with execution, poll queue again
                     
+                    if( event.state == SchedulerEvent.RUNNING )
+                    	continue;
+                    
                     if (event.period == 0) { // Non-repeating, remove
                         queue.removeMin();
                         event.state = SchedulerEvent.EXECUTED;
@@ -434,12 +439,17 @@ class TaskQueue {
      * Adds a new task to the priority queue.
      */
     void add(SchedulerEvent task) {
-        // Grow backing store if necessary
-        if (size + 1 == queue.length)
-            queue = Arrays.copyOf(queue, 2*queue.length);
-
-        queue[++size] = task;
-        fixUp(size);
+    	if( task == null )
+    		throw new NullPointerException();
+    	
+        int i = size;
+    	if (i >= queue.length)
+    	    grow(i + 1);
+    	size = i + 1;
+    	if (i == 0)
+    	    queue[0] = task;
+    	else
+    		siftUp(i, task);
     }
 
     /**
@@ -447,10 +457,30 @@ class TaskQueue {
      * task with the lowest nextExecutionTime.)
      */
     SchedulerEvent getMin() {
-    	if (size > 0)
-    		return queue[1];
+    	if (size != 0)
+    		return queue[0];
     	else
     		return null;
+    }
+    
+    private void grow(int minCapacity){
+    	if (minCapacity < 0) // overflow
+    	    throw new OutOfMemoryError();
+    	
+    	int oldCapacity = queue.length;
+    	
+    	// Double size if small; else grow by 50%
+    	int newCapacity = ((oldCapacity < 64)?
+    	                   ((oldCapacity + 1) * 2):
+    	                   ((oldCapacity / 2) * 3));
+    	
+    	if (newCapacity < 0) // overflow
+    	    newCapacity = Integer.MAX_VALUE;
+    	
+    	if (newCapacity < minCapacity)
+    	    newCapacity = minCapacity;
+    	
+    	queue = Arrays.copyOf(queue, newCapacity);
     }
 
     /**
@@ -466,9 +496,19 @@ class TaskQueue {
      * Remove the head task from the priority queue.
      */
     void removeMin() {
-        queue[1] = queue[size];
-        queue[size--] = null;  // Drop extra reference to prevent memory leak
-        fixDown(1);
+    	int s = --size;
+    	if (s == 0) // removed last element
+    	    queue[0] = null;
+    	else {
+    	    SchedulerEvent moved = queue[s];
+    	    
+    	    queue[s] = null;
+    	    
+    	    siftDown(0, moved);
+    	    
+    	    if (queue[0] == moved)
+    	        siftUp(0, moved);
+    	}
     }
 
     /**
@@ -478,7 +518,7 @@ class TaskQueue {
 	 * the SchedulerThreat. 
 	 */
     void cancelAll(Task executable) {    	    	
-        for (int i=1; i <= size; ++i) {
+        for (int i=0; i < size; ++i) {
         	if (queue[i].executable.equals(executable)) {
         		queue[i].state = SchedulerEvent.CANCELLED;
         	}        	
@@ -490,8 +530,8 @@ class TaskQueue {
      * specified value, and adjusts priority queue accordingly.
      */
     void rescheduleMin(long newTime) {
-        queue[1].nextExecutionTime = newTime;
-        fixDown(1);
+        queue[0].nextExecutionTime = newTime;
+        siftDown(0, queue[0]);
     }
     
     /**
@@ -499,7 +539,7 @@ class TaskQueue {
 	 * the specified value, and adjusts priority queue accordingly.
 	 */
 	void rescheduleTask(SchedulerEvent task, long newTime) {
-    	int i = 1;    	
+    	int i = 0;    	
         for (;i <= size; ++i) {
         	if (queue[i].equals(task))
         		break;
@@ -511,7 +551,7 @@ class TaskQueue {
         assert queue[i].nextExecutionTime <= newTime;
         
         queue[i].nextExecutionTime = newTime;
-        fixDown(i);
+        siftDown(i, task);
 	}
 
     /**
@@ -526,7 +566,7 @@ class TaskQueue {
      */
     void clear() {
         // Null out task references to prevent memory leak
-        for (int i=1; i<=size; i++)
+        for (int i=0; i<=size; i++)
             queue[i] = null;
 
         size = 0;
@@ -541,14 +581,17 @@ class TaskQueue {
      * (by swapping it with its parent) repeatedly until queue[k]'s
      * nextExecutionTime is greater than or equal to that of its parent.
      */
-    private void fixUp(int k) {
-        while (k > 1) {
-            int j = k >> 1;
-            if (queue[j].nextExecutionTime <= queue[k].nextExecutionTime)
+    private void siftUp(int k, SchedulerEvent event) {
+        Comparable<? super SchedulerEvent> key = (Comparable<? super SchedulerEvent>) event;
+        while (k > 0) {
+            int parent = (k - 1) >>> 1;
+        	SchedulerEvent e = queue[parent];
+            if (key.compareTo((SchedulerEvent) e) >= 0)
                 break;
-            SchedulerEvent tmp = queue[j];  queue[j] = queue[k]; queue[k] = tmp;
-            k = j;
+            queue[k] = e;
+            k = parent;
         }
+        queue[k] = (SchedulerEvent) key;
     }
 
     /**
@@ -561,17 +604,22 @@ class TaskQueue {
      * (by swapping it with its smaller child) repeatedly until queue[k]'s
      * nextExecutionTime is less than or equal to those of its children.
      */
-    private void fixDown(int k) {
-        int j;
-        while ((j = k << 1) <= size && j > 0) {
-            if (j < size &&
-                queue[j].nextExecutionTime > queue[j+1].nextExecutionTime)
-                j++; // j indexes smallest kid
-            if (queue[k].nextExecutionTime <= queue[j].nextExecutionTime)
-                break;
-            SchedulerEvent tmp = queue[j];  queue[j] = queue[k]; queue[k] = tmp;
-            k = j;
-        }
+    private void siftDown(int k, SchedulerEvent event) {
+    	Comparable<? super SchedulerEvent> key = (Comparable<? super SchedulerEvent>)event;
+    	int half = size >>> 1;        // loop while a non-leaf
+    	while (k < half) {
+    	    int child = (k << 1) + 1; // assume left child is least
+    	    SchedulerEvent c = queue[child];
+    	    int right = child + 1;
+    	    if (right < size &&
+    	        ((Comparable<? super SchedulerEvent>) c).compareTo((SchedulerEvent) queue[right]) > 0)
+    	        c = queue[child = right];
+    	    if (key.compareTo((SchedulerEvent) c) <= 0)
+    	        break;
+    	    queue[k] = c;
+    	    k = child;
+    	}
+    	queue[k] = (SchedulerEvent)key;
     }
 
     /**
@@ -579,42 +627,25 @@ class TaskQueue {
      * assuming nothing about the order of the elements prior to the call.
      */
     void heapify() {
-        for (int i = size/2; i >= 1; i--)
-            fixDown(i);
-    }
+	    for (int i = (size >>> 1) - 1; i >= 0; i--)
+	    	siftDown(i, queue[i]);
+	    }
 }
 
 
-class SchedulerEvent  {
-
-
+class SchedulerEvent implements Comparable<SchedulerEvent> {
     /**
      * The state of this task, chosen from the constants below.
      */
     int state = VIRGIN;
 
-    /**
-     * This task has not yet been scheduled.
-     */
     static final int VIRGIN = 0;
-
-    /**
-     * This task is scheduled for execution.  If it is a non-repeating task,
-     * it has not yet been executed.
-     */
-    static final int SCHEDULED   = 1;
-
-    /**
-     * This non-repeating task has already executed (or is currently
-     * executing) and has not been cancelled.
-     */
-    static final int EXECUTED    = 2;
-
-    /**
-     * This task has been cancelled (with a call to SchedulerEvent.cancel).
-     */
-    static final int CANCELLED   = 3;
-
+    static final int SCHEDULED = 1;
+    static final int CANCELLED = 2;
+    static final int EXECUTED = 3;
+    static final int RUNNING = 4;    
+    static final int FAILED = 5;    
+    
     /**
      * Next execution time for this task in the format returned by
      * System.currentTimeMillis, assuming this task is scheduled for execution.
@@ -646,6 +677,14 @@ class SchedulerEvent  {
     	this.executable = task;
     	this.trigger = trigger;
     }
+
+
+	@Override
+	public int compareTo(SchedulerEvent o) {
+		if( this.nextExecutionTime < o.nextExecutionTime ) return -1;
+		else if( this.nextExecutionTime > o.nextExecutionTime ) return 1;
+		else return 0;
+	}
 
    
 

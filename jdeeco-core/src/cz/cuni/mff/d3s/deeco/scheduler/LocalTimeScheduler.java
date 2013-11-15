@@ -24,7 +24,7 @@ public class LocalTimeScheduler implements Scheduler, TaskTriggerListener {
 	Executor executor;
 	private States state;
 	
-	private class TaskInfo{
+	class TaskInfo{
 		Timer timer;
 		States state;
 		PeriodicTrigger periodicTrigger;
@@ -36,7 +36,7 @@ public class LocalTimeScheduler implements Scheduler, TaskTriggerListener {
 		}		
 	}
 	
-	private enum States{
+	enum States{
 		RUNNING,
 		FAILED,
 		STOPPED
