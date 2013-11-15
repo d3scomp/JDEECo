@@ -8,7 +8,7 @@ import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
 import cz.cuni.mff.d3s.deeco.annotations.Membership;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
-import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
+import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 
 
 /**
@@ -35,7 +35,7 @@ public class ConvoyEnsemble {
 
 	@KnowledgeExchange
 	public static void map(
-			@Out("member.leaderPosition") OutWrapper<Waypoint> fLeaderPosition,
+			@Out("member.leaderPosition") ParamHolder<Waypoint> fLeaderPosition,
 			@In("coord.position") Waypoint lPosition) {
 		
 		fLeaderPosition.value = lPosition;
