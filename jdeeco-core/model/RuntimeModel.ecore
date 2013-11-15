@@ -88,4 +88,5 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PathNodeCoordinator" eSuperTypes="#//PathNode"/>
   <eClassifiers xsi:type="ecore:EClass" name="PathNodeMember" eSuperTypes="#//PathNode"/>
+  <eClassifiers xsi:type="ecore:EClass" name="PathNodeComponentId" eSuperTypes="#//PathNode"/>
 </ecore:EPackage>

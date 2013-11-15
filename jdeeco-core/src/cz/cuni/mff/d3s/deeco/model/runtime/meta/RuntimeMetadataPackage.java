@@ -851,6 +851,34 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int PATH_NODE_MEMBER_OPERATION_COUNT = PATH_NODE_OPERATION_COUNT + 0;
 
 	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeComponentIdImpl <em>Path Node Component Id</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeComponentIdImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getPathNodeComponentId()
+	 * @generated
+	 */
+	int PATH_NODE_COMPONENT_ID = 18;
+
+	/**
+	 * The number of structural features of the '<em>Path Node Component Id</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PATH_NODE_COMPONENT_ID_FEATURE_COUNT = PATH_NODE_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of operations of the '<em>Path Node Component Id</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PATH_NODE_COMPONENT_ID_OPERATION_COUNT = PATH_NODE_OPERATION_COUNT + 0;
+
+	/**
 	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection <em>Parameter Direction</em>}' enum.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -858,7 +886,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getParameterDirection()
 	 * @generated
 	 */
-	int PARAMETER_DIRECTION = 18;
+	int PARAMETER_DIRECTION = 19;
 
 	/**
 	 * The meta object id for the '<em>Method</em>' data type.
@@ -868,7 +896,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getMethod()
 	 * @generated
 	 */
-	int METHOD = 19;
+	int METHOD = 20;
 
 	/**
 	 * The meta object id for the '<em>Knowledge Manager</em>' data type.
@@ -878,7 +906,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getKnowledgeManager()
 	 * @generated
 	 */
-	int KNOWLEDGE_MANAGER = 20;
+	int KNOWLEDGE_MANAGER = 21;
 
 	/**
 	 * The meta object id for the '<em>Knowledge Managers View</em>' data type.
@@ -888,7 +916,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getKnowledgeManagersView()
 	 * @generated
 	 */
-	int KNOWLEDGE_MANAGERS_VIEW = 21;
+	int KNOWLEDGE_MANAGERS_VIEW = 22;
 
 
 	/**
@@ -1358,6 +1386,16 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EClass getPathNodeMember();
 
 	/**
+	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId <em>Path Node Component Id</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Path Node Component Id</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId
+	 * @generated
+	 */
+	EClass getPathNodeComponentId();
+
+	/**
 	 * Returns the meta object for enum '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection <em>Parameter Direction</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1810,6 +1848,16 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * @generated
 		 */
 		EClass PATH_NODE_MEMBER = eINSTANCE.getPathNodeMember();
+
+		/**
+		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeComponentIdImpl <em>Path Node Component Id</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeComponentIdImpl
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getPathNodeComponentId()
+		 * @generated
+		 */
+		EClass PATH_NODE_COMPONENT_ID = eINSTANCE.getPathNodeComponentId();
 
 		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection <em>Parameter Direction</em>}' enum.
