@@ -17,7 +17,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
  *
  */
 @Ensemble
-@PeriodicScheduling(200)
+@PeriodicScheduling(100)
 public class ConvoyEnsemble {
 
 	@Membership
