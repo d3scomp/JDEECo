@@ -360,7 +360,7 @@ public class AnnotationProcessorTest {
 		assertEquals(((PathNodeField) kp.getNodes().get(1)).getName(),"level222");
 
 		pathStr = "coordinates.[member.id]";
-		kp = processor.createKnowledgePath(pathStr, true);
+		kp = processor.createKnowledgePath(pathStr, false);
 		assertEquals(kp.getNodes().size(),2);
 		assertEquals(((PathNodeField) kp.getNodes().get(0)).getName(),"coordinates");
 		assertTrue(kp.getNodes().get(1) instanceof PathNodeMapKey);
@@ -369,7 +369,7 @@ public class AnnotationProcessorTest {
 		assertEquals(((PathNodeField) kp.getNodes().get(1)).getName(),"id");
 		
 		pathStr = "[coord.names]";
-		kp = processor.createKnowledgePath(pathStr, true);
+		kp = processor.createKnowledgePath(pathStr, false);
 		assertEquals(kp.getNodes().size(),1);
 		assertTrue(kp.getNodes().get(0) instanceof PathNodeMapKey);
 		kp = ((PathNodeMapKey) kp.getNodes().get(0)).getKeyPath();
