@@ -36,6 +36,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Condition;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Exchange;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
@@ -156,11 +157,26 @@ public class AnnotationProcessor {
 					"->Both @Component or @Ensemble annotation found.");
 		}
 		if (isComponentDefinition(clazz)) {
-			model.getComponentInstances().add(createComponentInstance(obj));
+			ComponentInstance ci = createComponentInstance(obj);
+			model.getComponentInstances().add(ci);
+			// Create ensemble controllers for all the already-processed ensemble definitions
+			for (EnsembleDefinition ed: model.getEnsembleDefinitions()) {
+				EnsembleController ec = factory.createEnsembleController();
+				ec.setComponentInstance(ci);
+				ec.setEnsembleDefinition(ed);
+				ci.getEnsembleControllers().add(ec);
+			}
 			return;
-		}
-		if (isEnsembleDefinition(clazz)) {
-			model.getEnsembleDefinitions().add(createEnsembleDefinition(obj));
+		} if (isEnsembleDefinition(clazz)) {
+			EnsembleDefinition ed = createEnsembleDefinition(obj);
+			model.getEnsembleDefinitions().add(ed);
+			// Create ensemble controllers for all the already-processed component instance definitions
+			for (ComponentInstance ci: model.getComponentInstances()) {
+				EnsembleController ec = factory.createEnsembleController();
+				ec.setComponentInstance(ci);
+				ec.setEnsembleDefinition(ed);
+				ci.getEnsembleControllers().add(ec);
+			}
 			return;
 		} 
 		throw new AnnotationParsingException(
@@ -174,7 +190,7 @@ public class AnnotationProcessor {
 		componentInstance.setName(clazz.getCanonicalName());
 		CloningKnowledgeManagerContainer container = new CloningKnowledgeManagerContainer();
 		//TODO Below should be the id of the component passed instead of "String"
-		KnowledgeManager km = container.createLocal("String");
+		KnowledgeManager km = container.createLocal(clazz.getSimpleName());
 		km.update(extractInitialKnowledge(obj));
 		componentInstance.setKnowledgeManager(km);	
 		KnowledgeManagersView view = new KnowledgeManagerViewImpl(km, container);

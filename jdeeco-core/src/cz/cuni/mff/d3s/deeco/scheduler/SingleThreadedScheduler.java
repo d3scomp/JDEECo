@@ -31,11 +31,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import com.sun.corba.se.spi.orbutil.fsm.State;
-
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
@@ -289,12 +284,7 @@ class SchedulerThread extends Thread {
     SchedulerThread(TaskQueue queue) {
         this.queue = queue;
     }
-
-    SchedulerThread(TaskQueue queue, ExecutorService execSer) {
-        this.queue = queue;
-    }
-
-
+   
     public void run() {
         try {
             mainLoop();

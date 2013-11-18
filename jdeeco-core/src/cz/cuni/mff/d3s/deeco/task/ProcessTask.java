@@ -136,7 +136,7 @@ public class ProcessTask extends Task {
 		} catch (IllegalAccessException | IllegalArgumentException e) {
 			throw new TaskInvocationException("Error when invoking a process method.", e);
 		} catch (InvocationTargetException e) {
-			Log.i("Process method returned an exception.", e.getTargetException());
+			Log.w("Process method returned an exception.", e.getTargetException());
 		}		
 	}
 

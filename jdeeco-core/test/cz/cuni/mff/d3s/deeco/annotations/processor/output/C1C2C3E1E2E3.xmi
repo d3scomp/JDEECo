@@ -168,6 +168,9 @@
         </knowledgePath>
       </triggers>
     </componentProcesses>
+    <ensembleControllers ensembleDefinition="//@ensembleDefinitions.0"/>
+    <ensembleControllers ensembleDefinition="//@ensembleDefinitions.1"/>
+    <ensembleControllers ensembleDefinition="//@ensembleDefinitions.2"/>
   </componentInstances>
   <componentInstances name="cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC2">
     <componentProcesses method="public static void cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC2.process1(java.lang.Integer,java.lang.String,java.lang.Boolean)" name="process1">
@@ -194,6 +197,9 @@
         </knowledgePath>
       </triggers>
     </componentProcesses>
+    <ensembleControllers ensembleDefinition="//@ensembleDefinitions.0"/>
+    <ensembleControllers ensembleDefinition="//@ensembleDefinitions.1"/>
+    <ensembleControllers ensembleDefinition="//@ensembleDefinitions.2"/>
   </componentInstances>
   <componentInstances name="cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC3">
     <componentProcesses method="public static void cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC3.process1(java.lang.String)" name="process1">
@@ -211,5 +217,8 @@
       </parameters>
       <triggers xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PeriodicTrigger" period="2000"/>
     </componentProcesses>
+    <ensembleControllers ensembleDefinition="//@ensembleDefinitions.0"/>
+    <ensembleControllers ensembleDefinition="//@ensembleDefinitions.1"/>
+    <ensembleControllers ensembleDefinition="//@ensembleDefinitions.2"/>
   </componentInstances>
 </cz.cuni.mff.d3s.deeco.model.runtime:RuntimeMetadata>

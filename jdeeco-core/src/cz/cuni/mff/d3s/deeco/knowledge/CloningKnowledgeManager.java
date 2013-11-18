@@ -34,7 +34,14 @@ public class CloningKnowledgeManager extends BaseKnowledgeManager {
 	@Override
 	public synchronized ValueSet get(Collection<KnowledgePath> knowledgePaths)
 			throws KnowledgeNotFoundException {
-		return cloner.deepClone(super.get(knowledgePaths));
+		ValueSet values = super.get(knowledgePaths);
+		ValueSet copy = new ValueSet();
+		// only values need to be cloned (cloning KnowledgePaths in a full model
+		// causes a loopback in the cloner)
+		for (KnowledgePath p: values.getKnowledgePaths()) {
+			copy.setValue(p, cloner.deepClone(values.getValue(p)));
+		}
+		return copy;
 	}
 
 	/*
@@ -74,6 +81,15 @@ public class CloningKnowledgeManager extends BaseKnowledgeManager {
 	 */
 	@Override
 	public synchronized void update(ChangeSet changeSet) {
-		super.update(cloner.deepClone(changeSet));
+		ChangeSet copy = new ChangeSet();
+		// only values need to be cloned (cloning KnowledgePaths in a full model
+		// causes a loopback in the cloner)
+		for (KnowledgePath p: changeSet.getUpdatedReferences()) {
+			copy.setValue(p, cloner.deepClone(changeSet.getValue(p)));
+		}
+		for (KnowledgePath p: changeSet.getDeletedReferences()) {
+			copy.setDeleted(p);
+		}
+		super.update(copy);
 	}
 }
