@@ -7,8 +7,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import com.sun.corba.se.spi.legacy.connection.GetEndPointInfoAgainException;
-
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView;
@@ -182,10 +180,15 @@ public class EnsembleTask extends Task {
 			// knowledge within one transaction. But fortunately this is not a problem with the single 
 			// threaded scheduler we have at the moment, because once the invoke method starts there is no other
 			// activity whatsoever in the system.
-			if (localRole == PathRoot.COORDINATOR) {
-				absoluteKnowledgePathAndRoot = getAbsoluteStrippedPath(formalParam.getKnowledgePath(), localKnowledgeManager, shadowKnowledgeManager);
-			} else {
-				absoluteKnowledgePathAndRoot = getAbsoluteStrippedPath(formalParam.getKnowledgePath(), shadowKnowledgeManager, localKnowledgeManager);				
+			try {
+				if (localRole == PathRoot.COORDINATOR) {
+					absoluteKnowledgePathAndRoot = getAbsoluteStrippedPath(formalParam.getKnowledgePath(), localKnowledgeManager, shadowKnowledgeManager);
+				} else {
+					absoluteKnowledgePathAndRoot = getAbsoluteStrippedPath(formalParam.getKnowledgePath(), shadowKnowledgeManager, localKnowledgeManager);				
+				}
+			} catch (KnowledgeNotFoundException e) {
+				// We were not able to resolve the knowledge path, which means that the membership is false.
+				return false;
 			}
 			
 			if (absoluteKnowledgePathAndRoot == null) {
@@ -256,11 +259,15 @@ public class EnsembleTask extends Task {
 			// FIXME: The call to getAbsoluteStrippedPath is in theory wrong, because this way we are not obtaining the
 			// knowledge within one transaction. But fortunately this is not a problem with the single 
 			// threaded scheduler we have at the moment, because once the invoke method starts there is no other
-			// activity whatsoever in the system.			
-			if (localRole == PathRoot.COORDINATOR) {
-				absoluteKnowledgePathAndRoot = getAbsoluteStrippedPath(formalParam.getKnowledgePath(), localKnowledgeManager, shadowKnowledgeManager);
-			} else {
-				absoluteKnowledgePathAndRoot = getAbsoluteStrippedPath(formalParam.getKnowledgePath(), shadowKnowledgeManager, localKnowledgeManager);				
+			// activity whatsoever in the system.	
+			try {
+				if (localRole == PathRoot.COORDINATOR) {
+					absoluteKnowledgePathAndRoot = getAbsoluteStrippedPath(formalParam.getKnowledgePath(), localKnowledgeManager, shadowKnowledgeManager);
+				} else {
+					absoluteKnowledgePathAndRoot = getAbsoluteStrippedPath(formalParam.getKnowledgePath(), shadowKnowledgeManager, localKnowledgeManager);				
+				}
+			} catch (KnowledgeNotFoundException e) {
+				throw new TaskInvocationException("Knowledge path in knowledge exchange could not be resolved.", e);
 			}
 
 			allPathsWithRoots.add(absoluteKnowledgePathAndRoot);

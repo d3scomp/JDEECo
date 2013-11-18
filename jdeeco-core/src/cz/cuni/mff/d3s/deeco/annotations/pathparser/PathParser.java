@@ -31,10 +31,6 @@ public class PathParser implements PathParserConstants {
         t = jj_consume_token(MEMBER);
         value = EEnsembleParty.MEMBER;
         break;
-    case ID:
-        t = jj_consume_token(ID);
-        value = ComponentIdentifier.ID;
-        break;
     case OPEN:
       jj_consume_token(OPEN);
           value = parseExpression();

@@ -29,10 +29,10 @@ import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.*;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 
@@ -247,7 +247,8 @@ public class AnnotationProcessorTest {
 		exception.expectMessage(
 				"Component: "+input.getClass().getCanonicalName()+"->" +
 				"Process: process1->" +
-				"Parameter: 2. No direction annotation was found.");
+				"Parameter: 2->" +
+				"No direction annotation was found.");
 		processor.process(model,input);
 	}
 
@@ -259,7 +260,8 @@ public class AnnotationProcessorTest {
 		exception.expectMessage(
 				"Component: "+input.getClass().getCanonicalName()+"->" +
 				"Process: process1->" +
-				"Parameter: 3. More than one direction annotation was found.");
+				"Parameter: 3->" +
+				"More than one direction annotation was found.");
 		processor.process(model,input);
 	}
 	
@@ -282,7 +284,7 @@ public class AnnotationProcessorTest {
 		WrongE1 input = new WrongE1();
 		exception.expect(AnnotationParsingException.class);
 		exception.expectMessage(
-				"EnsembleDefinition: "+input.getClass().getCanonicalName()+"->" +
+				"Ensemble: "+input.getClass().getCanonicalName()+"->" +
 				"Method knowledgeExchange annotated as @KnowledgeExchange should be public and static.");
 		processor.process(model,input);	
 	}
@@ -293,7 +295,7 @@ public class AnnotationProcessorTest {
 		WrongE2 input = new WrongE2();
 		exception.expect(AnnotationParsingException.class);
 		exception.expectMessage(
-				"EnsembleDefinition: "+input.getClass().getCanonicalName()+"->" +
+				"Ensemble: "+input.getClass().getCanonicalName()+"->" +
 				"No @Membership annotation was found");
 		processor.process(model,input);	
 	}
@@ -304,7 +306,7 @@ public class AnnotationProcessorTest {
 		WrongE3 input = new WrongE3();
 		exception.expect(AnnotationParsingException.class);
 		exception.expectMessage(
-				"EnsembleDefinition: "+input.getClass().getCanonicalName()+"->" +
+				"Ensemble: "+input.getClass().getCanonicalName()+"->" +
 				"More than one instance of @KnowledgeExchange annotation was found");
 		processor.process(model,input);	
 	}
@@ -316,8 +318,22 @@ public class AnnotationProcessorTest {
 		WrongE4 input = new WrongE4();
 		exception.expect(AnnotationParsingException.class);
 		exception.expectMessage(
-				"EnsembleDefinition: "+input.getClass().getCanonicalName()+"->" +
+				"Ensemble: "+input.getClass().getCanonicalName()+"->" +
 				"No triggers were found.");
+		processor.process(model,input);
+	}
+	
+	@Test 
+	public void testExceptionsInEnsembleParsing5()
+			throws AnnotationParsingException {
+		RuntimeMetadata model = factory.createRuntimeMetadata();
+		WrongE5 input = new WrongE5();
+		exception.expect(AnnotationParsingException.class);
+		exception.expectMessage(
+				"Ensemble: "+input.getClass().getCanonicalName()+"->" +
+				"KnowledgeExchange->" +
+				"Parameter: 1->" +
+				"The path does not start with one of the 'coord' or 'member' keywords.");
 		processor.process(model,input);
 	}
 	
@@ -358,15 +374,29 @@ public class AnnotationProcessorTest {
 		assertEquals(kp.getNodes().size(),2);
 		assertEquals(((PathNodeField) kp.getNodes().get(0)).getName(),"level221");
 		assertEquals(((PathNodeField) kp.getNodes().get(1)).getName(),"level222");
-
-		pathStr = "coordinates.[member.id]";
-		kp = processor.createKnowledgePath(pathStr, false);
+		
+		pathStr = "details.[id]";
+		kp = processor.createKnowledgePath(pathStr, true);
 		assertEquals(kp.getNodes().size(),2);
-		assertEquals(((PathNodeField) kp.getNodes().get(0)).getName(),"coordinates");
+		assertEquals(((PathNodeField) kp.getNodes().get(0)).getName(),"details");
 		assertTrue(kp.getNodes().get(1) instanceof PathNodeMapKey);
 		kp = ((PathNodeMapKey) kp.getNodes().get(1)).getKeyPath();
-		assertTrue(kp.getNodes().get(0) instanceof PathNodeMember);
+		assertTrue(kp.getNodes().get(0) instanceof PathNodeComponentId);
+
+		pathStr = "level1.id.level2";
+		kp = processor.createKnowledgePath(pathStr, true);
+		assertEquals(kp.getNodes().size(),3);
+		assertEquals(((PathNodeField) kp.getNodes().get(0)).getName(),"level1");
 		assertEquals(((PathNodeField) kp.getNodes().get(1)).getName(),"id");
+		assertEquals(((PathNodeField) kp.getNodes().get(2)).getName(),"level2");
+		
+		pathStr = "[coord.names]";
+		kp = processor.createKnowledgePath(pathStr, true);
+		assertEquals(kp.getNodes().size(),1);
+		assertTrue(kp.getNodes().get(0) instanceof PathNodeMapKey);
+		kp = ((PathNodeMapKey) kp.getNodes().get(0)).getKeyPath();
+		assertEquals(((PathNodeField) kp.getNodes().get(0)).getName(),"coord");
+		assertEquals(((PathNodeField) kp.getNodes().get(1)).getName(),"names");
 		
 		pathStr = "[coord.names]";
 		kp = processor.createKnowledgePath(pathStr, false);
@@ -414,6 +444,35 @@ public class AnnotationProcessorTest {
 		exception.expect(ParseException.class);
 		processor.createKnowledgePath(pathStr, true);		
 	}
+
+	@Test 
+	public void testExceptionsInCreateKnowledgePath6() throws ParseException, AnnotationParsingException {
+		String pathStr = "id.level2";
+		exception.expect(AnnotationParsingException.class);
+		exception.expectMessage(
+				"A component identifier cannot be followed by any other fields in a path.");
+		processor.createKnowledgePath(pathStr, true);		
+	}
+	
+	@Test 
+	public void testExceptionsInCreateKnowledgePath7() throws ParseException, AnnotationParsingException {
+		String pathStr = "details.[id.x]";
+		exception.expect(AnnotationParsingException.class);
+		exception.expectMessage(
+				"A component identifier cannot be followed by any other fields in a path.");
+		processor.createKnowledgePath(pathStr, true);		
+	}
+	
+	@Test 
+	public void testExceptionsInCreateKnowledgePath8() throws ParseException, AnnotationParsingException {
+		String pathStr = "whatever.level2";
+		exception.expect(AnnotationParsingException.class);
+		exception.expectMessage(
+				"The path does not start with one of the 'coord' or 'member' keywords.");
+		// false means that the knowledge path is found in an ensemble definition:
+		processor.createKnowledgePath(pathStr, false);		
+	}
+
 	
 	@Test
 	public void testProcessInitialKnowledge(){

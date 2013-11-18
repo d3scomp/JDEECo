@@ -5,7 +5,6 @@ package cz.cuni.mff.d3s.deeco.task;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -14,6 +13,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
@@ -82,11 +82,32 @@ public class KnowledgePathHelper {
 	 * @param coordKnowledgeManager knowledge manager to be used when coord prefix is used in the map index
 	 * @param memberKnowledgeManager knowledge manager to be used when member prefix is used in the map index
 	 * @return structure containing the absolute path with the member/coordinator prefix stripped and the root prefix. <code>null</code> if there is not member/coordinator prefix in the input path.
+	 * @throws KnowledgeNotFoundException 
 	 */
-	public static KnowledgePathAndRoot getAbsoluteStrippedPath(KnowledgePath path, ReadOnlyKnowledgeManager coordKnowledgeManager, ReadOnlyKnowledgeManager memberKnowledgeManager) {
-
-		// TODO
-		
+	public static KnowledgePathAndRoot getAbsoluteStrippedPath(KnowledgePath path, ReadOnlyKnowledgeManager coordKnowledgeManager, ReadOnlyKnowledgeManager memberKnowledgeManager)
+			throws KnowledgeNotFoundException {
+		RuntimeMetadataFactory factory = RuntimeMetadataFactory.eINSTANCE;
+		for (int i=0; i<path.getNodes().size();i++) {
+			PathNode pn = path.getNodes().get(i);
+			if (pn instanceof PathNodeMapKey) {
+				KnowledgePath innerPath = ((PathNodeMapKey) pn).getKeyPath();
+				KnowledgePathAndRoot innerPathAndRoot = getAbsoluteStrippedPath(innerPath, coordKnowledgeManager,memberKnowledgeManager);
+				PathNode first = innerPathAndRoot.knowledgePath.getNodes().get(0);
+				String value;
+				ReadOnlyKnowledgeManager km = (innerPathAndRoot.root.equals(PathRoot.COORDINATOR)) ? coordKnowledgeManager: memberKnowledgeManager;
+				if (first instanceof PathNodeComponentId) {
+					value = km.getId();
+				}
+				else {
+					ValueSet vs = km.get(Arrays.asList(innerPath));
+					value = vs.getValue(innerPath).toString();
+				}
+				PathNodeField resField = factory.createPathNodeField();
+				resField.setName(value);
+				path.getNodes().remove(i);
+				path.getNodes().add(i,resField);
+			}
+		}
 		return getStrippedPath(path);
 	}
 
@@ -99,30 +120,28 @@ public class KnowledgePathHelper {
 	 * @return absolute knowledge path.
 	 * @throws KnowledgeNotFoundException 
 	 */
-	protected static KnowledgePath getAbsolutePath(KnowledgePath path, ReadOnlyKnowledgeManager knowledgeManager) {
-		
+	protected static KnowledgePath getAbsolutePath(KnowledgePath path, ReadOnlyKnowledgeManager knowledgeManager) 
+			throws KnowledgeNotFoundException {
+		RuntimeMetadataFactory factory = RuntimeMetadataFactory.eINSTANCE;
 		for (int i=0; i<path.getNodes().size();i++) {
 			PathNode pn = path.getNodes().get(i);
-			if ((pn instanceof PathNodeCoordinator) || (pn instanceof PathNodeMember)) {
-				;
-			}
 			if (pn instanceof PathNodeMapKey) {
 				KnowledgePath innerPath = ((PathNodeMapKey) pn).getKeyPath();
 				innerPath = getAbsolutePath(innerPath, knowledgeManager);
-				ValueSet vs = null;
-				try {
-					vs = knowledgeManager.get(Arrays.asList(innerPath));
-				} catch (KnowledgeNotFoundException e) {
-					e.printStackTrace();
+				PathNode first = innerPath.getNodes().get(0);
+				String value;
+				if (first instanceof PathNodeComponentId) {
+					value = knowledgeManager.getId();
+				} else {
+					ValueSet vs = knowledgeManager.get(Arrays.asList(innerPath));
+					value = vs.getValue(innerPath).toString();
 				}
-				String value = vs.getValue(innerPath).toString();
-				RuntimeMetadataFactory factory = RuntimeMetadataFactory.eINSTANCE;
-				PathNodeField field = factory.createPathNodeField();
-				field.setName(value);
-				pn = field;
+				PathNodeField resField = factory.createPathNodeField();
+				resField.setName(value);
+				path.getNodes().remove(i);
+				path.getNodes().add(i,resField);
 			}
 		}
-		
 		return path;
 	}
 
@@ -166,6 +185,9 @@ public class KnowledgePathHelper {
 				newNode.setName(((PathNodeField) origNode).getName());
 
 				newPathNodes.add(newNode);
+			} else if (origNode instanceof PathNodeComponentId) {
+				PathNodeComponentId newComponentId = factory.createPathNodeComponentId();
+				newPathNodes.add(newComponentId);
 			} else {
 				return null;
 			}
