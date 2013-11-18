@@ -19,14 +19,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange;
-import cz.cuni.mff.d3s.deeco.annotations.Component;
-import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
+import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 
 @Component
 public class RobotFollowerComponent {
@@ -54,7 +54,7 @@ public class RobotFollowerComponent {
 	@Process
 	@PeriodicScheduling(6000)
 	public static void move(@Out("path.level2") Path path,
-			@InOut("battery") OutWrapper<Integer> battery,
+			@InOut("battery") ParamHolder<Integer> battery,
 			@In("convoyRobot") @TriggerOnChange String convoyRobot) {
 		if (path.remainingPath.size() > 0) {
 			path.currentPosition = path.remainingPath.remove(0);
@@ -66,7 +66,7 @@ public class RobotFollowerComponent {
 	@Process
 	@PeriodicScheduling(5000)
 	public static void follow(@In("path") Path path,
-			@InOut("battery.level2.level3") @TriggerOnChange OutWrapper<Integer> battery,
+			@InOut("battery.level2.level3") @TriggerOnChange ParamHolder<Integer> battery,
 			@In("convoyRobot") String convoyRobot) {
 		
 	}
