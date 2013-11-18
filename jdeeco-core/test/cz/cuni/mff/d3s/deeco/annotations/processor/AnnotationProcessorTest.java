@@ -474,7 +474,7 @@ public class AnnotationProcessorTest {
 	private void removeKnowledgeManagersFromComponents(RuntimeMetadata model) {
 		for (ComponentInstance c: model.getComponentInstances()) {
 			c.setKnowledgeManager(null);
-			c.setOtherKnowledgeManagersAccess(null);
+			c.setShadowKnowledgeManagerRegistry(null);
 		}
 	}
 }

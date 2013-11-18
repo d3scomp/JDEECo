@@ -3,7 +3,7 @@ package cz.cuni.mff.d3s.deeco.model.runtime;
 import static cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper.*;
 
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView;
+import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Condition;
@@ -118,8 +118,8 @@ public class SampleRuntimeModel {
 		componentInstance.setKnowledgeManager(knowledgeManager);
 	}
 	
-	public void setOtherKnowledgeManagersAccess(KnowledgeManagersView knowledgeManagersView) {
-		componentInstance.setOtherKnowledgeManagersAccess(knowledgeManagersView);
+	public void setOtherKnowledgeManagersAccess(ShadowKnowledgeManagerRegistry shadowKnowledgeManagerRegistry) {
+		componentInstance.setShadowKnowledgeManagerRegistry(shadowKnowledgeManagerRegistry);
 	}
 	
 	public SampleRuntimeModel() throws Exception {

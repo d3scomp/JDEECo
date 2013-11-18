@@ -39,12 +39,12 @@ public class KnowledgeManagerViewImplTest {
 	@Mock
 	private KnowledgeChangeTrigger trigger;
 	
-	private KnowledgeManagerViewImpl tested;
+	private ShadowKnowledgeManagerRegistryImpl tested;
 	
 	@Before
 	public void setUp() {
 		initMocks(this);
-		tested = new KnowledgeManagerViewImpl(knowledgeManager, container);
+		tested = new ShadowKnowledgeManagerRegistryImpl(knowledgeManager, container);
 	}
 	
 	@Test
@@ -62,7 +62,7 @@ public class KnowledgeManagerViewImplTest {
 		// and WHEN the 'getOtherKnowledgeManagers' is called on the
 		// KnowledgeManagerView instance
 
-		Collection<ReadOnlyKnowledgeManager> result = tested.getOtherKnowledgeManagers();
+		Collection<ReadOnlyKnowledgeManager> result = tested.getShadowKnowledgeManagers();
 		
 		// THEN the container is accessed for local and replica knowledge
 		// managers

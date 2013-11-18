@@ -75,7 +75,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	 * cz.cuni.mff.d3s.deeco.knowledge.TriggerListener)
 	 */
 	@Override
-	public synchronized void register(Trigger trigger,
+	public void register(Trigger trigger,
 			TriggerListener triggerListener) {
 		if (trigger instanceof KnowledgeChangeTrigger) {
 			KnowledgeChangeTrigger kct = (KnowledgeChangeTrigger) trigger;
@@ -99,7 +99,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	 * cz.cuni.mff.d3s.deeco.knowledge.TriggerListener)
 	 */
 	@Override
-	public synchronized void unregister(Trigger trigger,
+	public void unregister(Trigger trigger,
 			TriggerListener triggerListener) {
 		if (trigger instanceof KnowledgeChangeTrigger) {
 			KnowledgePath kp = ((KnowledgeChangeTrigger) trigger)
@@ -110,6 +110,10 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		}
 	}
 
+	// FIXME TB: The code here desperately needs comments - in this case even inside the functions
+	// BTW, is the check implemented whether a path forming a prefix is already contained?
+	// BTW, why do you decompose the initial object on the first level of nesting? Why can't you just store the initial object as such?
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -118,7 +122,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	 * .deeco.knowledge.ChangeSet)
 	 */
 	@Override
-	public synchronized void update(ChangeSet changeSet) {
+	public void update(ChangeSet changeSet) {
 		// Update
 		try {
 			for (KnowledgePath kp : changeSet.getUpdatedReferences()) {

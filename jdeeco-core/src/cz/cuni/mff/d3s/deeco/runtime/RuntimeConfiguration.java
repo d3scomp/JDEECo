@@ -1,10 +1,5 @@
 package cz.cuni.mff.d3s.deeco.runtime;
 
-import cz.cuni.mff.d3s.deeco.executor.Executor;
-import cz.cuni.mff.d3s.deeco.executor.SameThreadExecutor;
-import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.scheduler.LocalTimeScheduler;
-import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
 /**
  * 

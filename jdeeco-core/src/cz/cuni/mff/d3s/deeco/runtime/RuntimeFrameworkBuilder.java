@@ -7,7 +7,7 @@ import cz.cuni.mff.d3s.deeco.executor.SameThreadExecutor;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerViewImpl;
+import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistryImpl;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.logging.Log;
@@ -132,6 +132,7 @@ public class RuntimeFrameworkBuilder {
 				continue;
 			}
 			
+			// FIXME TB: Why can't you just set the root initial knowledge (as opposed to decomposing it on the first level of nesting)?
 			// copy all the values into a ChangeSet
 			ChangeSet cs = new ChangeSet();
 			for (KnowledgePath p: initialKnowledge.getKnowledgePaths()) {
@@ -140,7 +141,7 @@ public class RuntimeFrameworkBuilder {
 			
 			km.update(cs);
 			ci.setKnowledgeManager(km);	
-			ci.setOtherKnowledgeManagersAccess(new KnowledgeManagerViewImpl(km, kmContainer));
+			ci.setShadowKnowledgeManagerRegistry(new ShadowKnowledgeManagerRegistryImpl(km, kmContainer));
 		}		
 	}
 	

@@ -12,7 +12,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
  * 
  */
-public class KnowledgeManagerViewImpl implements KnowledgeManagersView,
+public class ShadowKnowledgeManagerRegistryImpl implements ShadowKnowledgeManagerRegistry,
 		ReplicaListener, LocalListener {
 
 	private final KnowledgeManager knowledgeManager;
@@ -21,7 +21,7 @@ public class KnowledgeManagerViewImpl implements KnowledgeManagersView,
 
 	private final Map<ShadowsTriggerListener, List<KnowledgeManagerTriggerListener>> listenerToTriggerListeners;
 
-	public KnowledgeManagerViewImpl(KnowledgeManager knowledgeManager,
+	public ShadowKnowledgeManagerRegistryImpl(KnowledgeManager knowledgeManager,
 			CloningKnowledgeManagerContainer container) {
 		this.knowledgeManager = knowledgeManager;
 		this.container = container;
@@ -40,7 +40,7 @@ public class KnowledgeManagerViewImpl implements KnowledgeManagersView,
 	 * .d3s.deeco.knowledge.KnowledgeManager)
 	 */
 	@Override
-	public synchronized void localCreated(KnowledgeManager km,
+	public void localCreated(KnowledgeManager km,
 			LocalKnowledgeManagerContainer container) {
 		replicaCreated(km, null);
 	}
@@ -53,7 +53,7 @@ public class KnowledgeManagerViewImpl implements KnowledgeManagersView,
 	 * .d3s.deeco.knowledge.KnowledgeManager)
 	 */
 	@Override
-	public synchronized void localRemoved(KnowledgeManager km,
+	public void localRemoved(KnowledgeManager km,
 			LocalKnowledgeManagerContainer container) {
 		replicaRemoved(km, null);
 	}
@@ -66,7 +66,7 @@ public class KnowledgeManagerViewImpl implements KnowledgeManagersView,
 	 * .mff.d3s.deeco.knowledge.KnowledgeManager)
 	 */
 	@Override
-	public synchronized void replicaCreated(KnowledgeManager km,
+	public void replicaCreated(KnowledgeManager km,
 			ReplicaKnowledgeManagerContainer container) {
 		for (Trigger trigger : triggerListeners.keySet())
 			for (ShadowsTriggerListener listener : triggerListeners
@@ -82,7 +82,7 @@ public class KnowledgeManagerViewImpl implements KnowledgeManagersView,
 	 * .mff.d3s.deeco.knowledge.KnowledgeManager)
 	 */
 	@Override
-	public synchronized void replicaRemoved(KnowledgeManager km,
+	public void replicaRemoved(KnowledgeManager km,
 			ReplicaKnowledgeManagerContainer container) {
 		List<KnowledgeManagerTriggerListener> toRemove = new LinkedList<>();
 		for (List<KnowledgeManagerTriggerListener> tListeners : listenerToTriggerListeners
@@ -100,11 +100,11 @@ public class KnowledgeManagerViewImpl implements KnowledgeManagersView,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView#
+	 * @see cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry#
 	 * getOthersKnowledgeManagers()
 	 */
 	@Override
-	public synchronized Collection<ReadOnlyKnowledgeManager> getOtherKnowledgeManagers() {
+	public Collection<ReadOnlyKnowledgeManager> getShadowKnowledgeManagers() {
 		List<ReadOnlyKnowledgeManager> result = new LinkedList<>();
 		result.addAll(container.getLocals());
 		result.addAll(container.getReplicas());
@@ -116,12 +116,12 @@ public class KnowledgeManagerViewImpl implements KnowledgeManagersView,
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView#register(cz.cuni
+	 * cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry#register(cz.cuni
 	 * .mff.d3s.deeco.model.runtime.api.Trigger,
 	 * cz.cuni.mff.d3s.deeco.knowledge.ShadowsTriggerListener)
 	 */
 	@Override
-	public synchronized void register(Trigger trigger,
+	public void register(Trigger trigger,
 			ShadowsTriggerListener triggerListener) {
 		// Memorize trigger and its listener
 		List<ShadowsTriggerListener> listeners;
@@ -147,12 +147,12 @@ public class KnowledgeManagerViewImpl implements KnowledgeManagersView,
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView#unregister(cz.cuni
+	 * cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry#unregister(cz.cuni
 	 * .mff.d3s.deeco.model.runtime.api.Trigger,
 	 * cz.cuni.mff.d3s.deeco.knowledge.ShadowsTriggerListener)
 	 */
 	@Override
-	public synchronized void unregister(Trigger trigger,
+	public void unregister(Trigger trigger,
 			ShadowsTriggerListener triggerListener) {
 		// Remove from memory
 		if (triggerListeners.containsKey(trigger)) {

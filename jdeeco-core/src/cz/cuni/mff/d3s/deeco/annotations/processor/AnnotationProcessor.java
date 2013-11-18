@@ -29,11 +29,12 @@ import cz.cuni.mff.d3s.deeco.annotations.pathparser.PNode;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.ParseException;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.PathParser;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
+import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerContainer;
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerViewImpl;
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView;
+import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistryImpl;
+import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Condition;
@@ -191,13 +192,11 @@ public class AnnotationProcessor {
 		Class<?> clazz = obj.getClass();
 		ComponentInstance componentInstance = factory.createComponentInstance();
 		componentInstance.setName(clazz.getCanonicalName());
-		CloningKnowledgeManagerContainer container = new CloningKnowledgeManagerContainer();
+		
 		//TODO Below should be the id of the component passed instead of "String"
-		KnowledgeManager km = container.createLocal(clazz.getSimpleName());
+		KnowledgeManager km = new CloningKnowledgeManager(clazz.getSimpleName());
 		km.update(extractInitialKnowledge(obj));
 		componentInstance.setKnowledgeManager(km);	
-		KnowledgeManagersView view = new KnowledgeManagerViewImpl(km, container);
-		componentInstance.setOtherKnowledgeManagersAccess(view);
 		List<Method> methods = getMethodsMarkedAsProcesses(clazz);
 		try {
 			for (Method m : methods) {
