@@ -32,7 +32,7 @@ public class CloningKnowledgeManager extends BaseKnowledgeManager {
 	 * )
 	 */
 	@Override
-	public synchronized ValueSet get(Collection<KnowledgePath> knowledgePaths)
+	public ValueSet get(Collection<KnowledgePath> knowledgePaths)
 			throws KnowledgeNotFoundException {
 		ValueSet values = super.get(knowledgePaths);
 		ValueSet copy = new ValueSet();
@@ -44,6 +44,7 @@ public class CloningKnowledgeManager extends BaseKnowledgeManager {
 		return copy;
 	}
 
+	// FIXME TB: Why are these methods overriden?
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -53,7 +54,7 @@ public class CloningKnowledgeManager extends BaseKnowledgeManager {
 	 * cz.cuni.mff.d3s.deeco.knowledge.TriggerListener)
 	 */
 	@Override
-	public synchronized void register(Trigger trigger,
+	public void register(Trigger trigger,
 			TriggerListener triggerListener) {
 		super.register(trigger, triggerListener);
 	}
@@ -67,7 +68,7 @@ public class CloningKnowledgeManager extends BaseKnowledgeManager {
 	 * cz.cuni.mff.d3s.deeco.knowledge.TriggerListener)
 	 */
 	@Override
-	public synchronized void unregister(Trigger trigger,
+	public void unregister(Trigger trigger,
 			TriggerListener triggerListener) {
 		super.unregister(trigger, triggerListener);
 	}
@@ -80,7 +81,7 @@ public class CloningKnowledgeManager extends BaseKnowledgeManager {
 	 * .d3s.deeco.knowledge.ChangeSet)
 	 */
 	@Override
-	public synchronized void update(ChangeSet changeSet) {
+	public void update(ChangeSet changeSet) {
 		ChangeSet copy = new ChangeSet();
 		// only values need to be cloned (cloning KnowledgePaths in a full model
 		// causes a loopback in the cloner)

@@ -26,7 +26,7 @@ import org.mockito.stubbing.Answer;
 
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView;
+import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry;
 import cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ShadowsTriggerListener;
 import cz.cuni.mff.d3s.deeco.knowledge.TriggerListener;
@@ -48,7 +48,7 @@ public class EnsembleTaskTest {
 	@Mock
 	private KnowledgeManager knowledgeManager;
 	@Mock
-	private KnowledgeManagersView shadowReplicasAccess;
+	private ShadowKnowledgeManagerRegistry shadowReplicasAccess;
 	@Mock
 	private ReadOnlyKnowledgeManager shadowKnowledgeManager1;
 	@Mock
@@ -106,7 +106,7 @@ public class EnsembleTaskTest {
 		Collection<ReadOnlyKnowledgeManager> shadowKnowledgeManagersCollection = new LinkedList<ReadOnlyKnowledgeManager>();
 		shadowKnowledgeManagersCollection.add(shadowKnowledgeManager1);
 		shadowKnowledgeManagersCollection.add(shadowKnowledgeManager2);
-		when(shadowReplicasAccess.getOtherKnowledgeManagers()).thenReturn(shadowKnowledgeManagersCollection);
+		when(shadowReplicasAccess.getShadowKnowledgeManagers()).thenReturn(shadowKnowledgeManagersCollection);
 		
 		when(knowledgeManager.get(anyCollectionOf(KnowledgePath.class))).then(new Answer<ValueSet>() {
 			public ValueSet answer(InvocationOnMock invocation) {
@@ -228,7 +228,7 @@ public class EnsembleTaskTest {
 		// 6x = 2x membership (COORD), 2x membership (MEMBER), 1x exchange (COORD), 1x exchange (MEMBER)
 		verify(knowledgeManager, times(6)).get(anyCollectionOf(KnowledgePath.class));
 		// AND it retrieves the other knowledge managers
-		verify(shadowReplicasAccess).getOtherKnowledgeManagers();
+		verify(shadowReplicasAccess).getShadowKnowledgeManagers();
 		// AND it gets knowledge from them
 		verify(shadowKnowledgeManager1, times(4)).get(anyCollectionOf(KnowledgePath.class));
 		verify(shadowKnowledgeManager2, times(2)).get(anyCollectionOf(KnowledgePath.class));		

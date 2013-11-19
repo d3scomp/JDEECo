@@ -4,8 +4,6 @@ import java.util.Collection;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 
-// FIXME TB: Any idea of some better name of the class? I would say this name is rather misleading.
-
 // FIXME TB: Rewrite the Javadoc comment to the class. At this point it's a bit misleading. In particular:
 // - "user" ???
 // - "triggers of the others" ???
@@ -19,15 +17,10 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
  * @author Rima Al Ali <alali@d3s.mff.cuni.cz>
  *
  */
-public interface KnowledgeManagersView {
+public interface ShadowKnowledgeManagerRegistry {
 	
-	public Collection<ReadOnlyKnowledgeManager> getOtherKnowledgeManagers();
-	// Rima : It is a little bit confusing to have the same name 
-	//        register/unregister as in KnowledgeManager. 
-	// TB@RA: Good point. However, I can't come up with any better name. Any suggestions?
-	
-	// FIXME TB: It would make more sense to have a separate listener for triggers on shadows since that listener
-	// should additionally provide the information, in which shadow KM the trigger occured.
+	public Collection<ReadOnlyKnowledgeManager> getShadowKnowledgeManagers();
+
 	public void register(Trigger trigger, ShadowsTriggerListener triggerListener);
 	public void unregister(Trigger trigger, ShadowsTriggerListener triggerListener);
 	

@@ -16,7 +16,7 @@ public class SameThreadExecutor implements Executor {
 	
 	
 	@Override
-	public synchronized void execute(Task task, Trigger trigger) {
+	public void execute(Task task, Trigger trigger) {
 		if (task != null) {
 			try {
 				task.invoke(trigger);				
@@ -36,7 +36,7 @@ public class SameThreadExecutor implements Executor {
 	}
 
 	@Override
-	public synchronized void setExecutionListener(ExecutionListener listener) {
+	public void setExecutionListener(ExecutionListener listener) {
 		this.listener = listener;  
 	}
 

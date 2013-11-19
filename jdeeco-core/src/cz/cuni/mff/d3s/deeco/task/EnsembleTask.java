@@ -9,7 +9,7 @@ import java.util.LinkedList;
 
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView;
+import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ShadowsTriggerListener;
@@ -127,7 +127,7 @@ public class EnsembleTask extends Task {
 		
 		ComponentInstance componentInstance = ensembleController.getComponentInstance(); 
 		KnowledgeManager localKM = componentInstance.getKnowledgeManager();
-		KnowledgeManagersView shadowsKM = componentInstance.getOtherKnowledgeManagersAccess();
+		ShadowKnowledgeManagerRegistry shadowsKM = componentInstance.getShadowKnowledgeManagerRegistry();
 		
 		for (Trigger trigger : ensembleController.getEnsembleDefinition().getTriggers()) {
 			if (trigger instanceof KnowledgeChangeTrigger) {
@@ -146,7 +146,7 @@ public class EnsembleTask extends Task {
 	protected void unregisterTriggers() {
 		ComponentInstance componentInstance = ensembleController.getComponentInstance(); 
 		KnowledgeManager localKM = componentInstance.getKnowledgeManager();
-		KnowledgeManagersView shadowsKM = componentInstance.getOtherKnowledgeManagersAccess();
+		ShadowKnowledgeManagerRegistry shadowsKM = componentInstance.getShadowKnowledgeManagerRegistry();
 		
 		for (Trigger trigger : ensembleController.getEnsembleDefinition().getTriggers()) {
 			
@@ -380,9 +380,9 @@ public class EnsembleTask extends Task {
 			
 		} else {
 			// If the trigger is periodic trigger or pertains to the local knowledge manager, iterate over all shadow knowledge managers
-			KnowledgeManagersView shadows = ensembleController.getComponentInstance().getOtherKnowledgeManagersAccess();
+			ShadowKnowledgeManagerRegistry shadows = ensembleController.getComponentInstance().getShadowKnowledgeManagerRegistry();
 
-			for (ReadOnlyKnowledgeManager shadowKnowledgeManager : shadows.getOtherKnowledgeManagers()) {
+			for (ReadOnlyKnowledgeManager shadowKnowledgeManager : shadows.getShadowKnowledgeManagers()) {
 				// Invoke the membership condition and if the membership condition returned true, invoke the knowledge exchange
 				if (checkMembership(PathRoot.COORDINATOR, shadowKnowledgeManager)) {
 					performExchange(PathRoot.COORDINATOR, shadowKnowledgeManager);
