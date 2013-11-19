@@ -73,7 +73,8 @@ public class ProcessTask extends Task {
 	 * @param trigger the trigger that caused the task invocation. It is either a {@link PeriodicTrigger} in case this triggering
 	 * is because of new period or a trigger given by task to the scheduler when invoking the trigger listener.
 	 *  
-	 * @throws TaskInvocationException signifies a problem in executing the task.
+	 * @throws TaskInvocationException signifies a problem in executing the task including the case when parameters cannot be retrieved from / updated in
+	 * the knowledge manager.
 	 */
 	@Override
 	public void invoke(Trigger trigger) throws TaskInvocationException {

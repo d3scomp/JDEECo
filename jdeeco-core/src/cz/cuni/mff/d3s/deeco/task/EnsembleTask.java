@@ -297,6 +297,27 @@ public class EnsembleTask extends Task {
 		}
 	}
 	
+	/**
+	 * Performs the knowledge exchange between the local knowledge manager and a particular shadow knowledge manager. Afterwards, it writes new values to 
+	 * the local knowledge manager. Similarly to {@link #checkMembership(PathRoot, ReadOnlyKnowledgeManager)}, it uses the <code>localRole</code>
+	 * parameter to specify, whether the local component instance is assumed to be in member or coordinator role.
+	 * 
+	 * The method essentially works in the following steps:
+	 * <ol>
+	 *   <li>It resolves the IN/INOUT paths of the membership condition and retrieves the knowledge from the local knowledge manager and 
+	 *   the shadow knowledge manager with the member/coordinator roles fixed according to the <code>localRole</code> parameter.
+	 *   <li>It invokes the membership condition with the values obtained in the previous step.</li>
+	 *   <li>It updates the local knowledge manager with the INOUT/OUT data that pertain to the local component.</li>
+	 * </ol>
+	 * 
+	 * Similar to the {@link ProcessTask#invoke(Trigger)}, the INOUT/OUT parameters are wrapped by {@link ParamHolder}. 
+	 * 
+	 * @param localRole specifies whether the knowledge exchange is to be evaluated with assuming the local component as a coordinator or member.
+	 * @param shadowKnowledgeManager specifies the shadow knowledge manager which contains data of the opposite component instance. 
+	 * @throws TaskInvocationException thrown when the knowledge exchange can't be executed (e.g. it does not exist, has another parameters, has INOUT/OUT parameters, etc.).
+	 * The exception is thrown also in the case when parameters cannot be retrieved from the local/shadow knowledge manager or when the output
+	 * parameters can't be updated in the knowledge manager.
+	 */
 	private void performExchange(PathRoot localRole, ReadOnlyKnowledgeManager shadowKnowledgeManager) throws TaskInvocationException {
 		// Obtain parameters from the local knowledge to perform the exchange
 		KnowledgeManager localKnowledgeManager = ensembleController.getComponentInstance().getKnowledgeManager();
@@ -409,9 +430,17 @@ public class EnsembleTask extends Task {
 			Log.i("Knowledge exchange returned an exception.", e.getTargetException());
 		}		
 	}
-	
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.deeco.task.Task#invoke()
+
+	/**
+	 * Invokes the membership + knowledge exchange on each relevant pair in which the local component instance plays the role of member/coordinator.
+	 * It optimizes the case when the trigger comes from the shadow knowledge manager. In such a case, it evaluates the membership + knowledge exchange only
+	 * w.r.t. the particular shadow knowledge manager. 
+	 * 
+	 * Note that for each pair, it evaluates the membership + knowledge exchange twice. This is because assumes the local component instance
+	 * to be a coordinator and then it assumes the local component instance to be a member.
+	 * 
+	 * @param trigger the trigger that caused the task invocation. It is either a {@link PeriodicTrigger} in case this triggering
+	 * is because of new period or a trigger given by task to the scheduler when invoking the trigger listener.
 	 */
 	@Override
 	public void invoke(Trigger trigger) throws TaskInvocationException {
