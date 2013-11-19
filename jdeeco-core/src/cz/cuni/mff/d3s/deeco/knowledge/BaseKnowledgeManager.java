@@ -130,6 +130,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 				notifyKnowledgeChangeListeners(kp);
 			}
 		} catch (Exception e) {
+			// FIXME TB: I would vote for throwing an exception. Then I could report a failed update in the task invoke.
 			Log.e("Knowledge update error", e);
 		}
 		// Delete list or map items

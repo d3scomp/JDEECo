@@ -4,7 +4,7 @@
 package cz.cuni.mff.d3s.deeco.task;
 
 /**
- * Thrown when a task cannot be executed.
+ * Thrown when a task (i.e. process method, membership condition, or knowledge exchange) cannot be executed.
  * 
  * @author Tomas Bures <bures@d3s.mff.cuni.cz>
  *
