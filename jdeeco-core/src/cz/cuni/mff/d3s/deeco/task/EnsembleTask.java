@@ -17,6 +17,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.TriggerListener;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
@@ -31,6 +32,9 @@ import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.KnowledgePathAndRoot;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.PathRoot;
 
 /**
+ * The implementation of {@link Task} that corresponds to a ensemble controller at a component. This class is responsible for 
+ * (a) registering triggers with the local knowledge of the component instance and the shadow knowledge manager registry, and 
+ * (b) to execute the membership/knowledge exchange when invoked by the scheduler/executor.
  * 
  * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
  * @author Tomas Bures <bures@d3s.mff.cuni.cz>
@@ -38,8 +42,18 @@ import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.PathRoot;
  */
 public class EnsembleTask extends Task {
 
+	/**
+	 * Reference to the corresponding {@link EnsembleController} in the runtime metadata 
+	 */
 	EnsembleController ensembleController;
 
+	/**
+	 * A wrapper around a trigger obtained from the local knowledge manager. The sole purpose of this class is to be able to distinguish
+	 * when invoked back by the scheduler/executor whether the trigger came originally from a local knowledge manager or a 
+	 * shadow knowledge manager.
+	 * @author Tomas Bures <bures@d3s.mff.cuni.cz>
+	 *
+	 */
 	private static class LocalKMChangeTrigger extends TriggerImpl {
 		public LocalKMChangeTrigger(KnowledgeChangeTrigger knowledgeChangeTrigger) {
 			super();
@@ -49,6 +63,13 @@ public class EnsembleTask extends Task {
 		KnowledgeChangeTrigger knowledgeChangeTrigger;
 	}
 	
+	/**
+	 * A wrapper around a trigger obtained from a shadow knowledge manager. The sole purpose of this class is to be able to distinguish
+	 * when invoked back by the scheduler/executor whether the trigger came originally from a local knowledge manager or a 
+	 * shadow knowledge manager.
+	 * @author Tomas Bures <bures@d3s.mff.cuni.cz>
+	 *
+	 */
 	private static class ShadowKMChangeTrigger extends TriggerImpl {
 		public ShadowKMChangeTrigger(ReadOnlyKnowledgeManager shadowKnowledgeManager, KnowledgeChangeTrigger knowledgeChangeTrigger) {
 			super();
@@ -60,6 +81,15 @@ public class EnsembleTask extends Task {
 		ReadOnlyKnowledgeManager shadowKnowledgeManager;
 	}
 	
+	/**
+	 * Implementation of the trigger listener, which is registered in the local knowledge manager. When called, it calls the listener registered by
+	 * {@link Task#setTriggerListener(TaskTriggerListener)}. As a parameter, it passes to the listener a new {@link LocalKMChangeTrigger} which
+	 * wraps the trigger obtained from the local knowledge manager. This way, when the scheduler/executor call the ensemble task back with the trigger,
+	 * it is possible to distinguish whether the trigger was originally from a local knowledge manager or a shadow knowledge manager.
+	 * 
+	 * @author Tomas Bures <bures@d3s.mff.cuni.cz>
+	 *
+	 */
 	private class LocalKMTriggerListenerImpl implements TriggerListener {
 
 		/* (non-Javadoc)
@@ -74,6 +104,15 @@ public class EnsembleTask extends Task {
 	}
 	LocalKMTriggerListenerImpl knowledgeManagerTriggerListener = new LocalKMTriggerListenerImpl();
 
+	/**
+	 * Implementation of the trigger listener, which is registered in the shadow knowledge manager registry. When called, it calls the listener registered by
+	 * {@link Task#setTriggerListener(TaskTriggerListener)}. As a parameter, it passes to the listener a new {@link ShadowKMChangeTrigger} which
+	 * wraps the trigger obtained from the particular shadow knowledge manager. The reason is that same is in the case of the
+	 * {@link LocalKMTriggerListenerImpl}.
+	 * 
+	 * @author Tomas Bures <bures@d3s.mff.cuni.cz>
+	 *
+	 */
 	private class ShadowsTriggerListenerImpl implements ShadowsTriggerListener {
 
 		/* (non-Javadoc)
@@ -98,8 +137,8 @@ public class EnsembleTask extends Task {
 	 * Returns a trigger which can be understood by a knowledge manager. In particular this means that the knowledge path of the trigger (in case of
 	 * the {@link KnowledgeChangeTrigger}) is stripped of the coordinator/memeber prefix.
 	 * 
-	 * @param trigger The trigger to be adapted. Currently only {@link KnowledgeChangeTrigger} is supported.
-	 * @return The adapted trigger or <code>null</code> if the trigger is invalid or can't be adapted.
+	 * @param trigger the trigger to be adapted. Currently only {@link KnowledgeChangeTrigger} is supported.
+	 * @return the adapted trigger or <code>null</code> if the trigger is invalid or can't be adapted.
 	 */
 	private Trigger adaptTriggerForKM(Trigger trigger) {
 		KnowledgeChangeTrigger knowledgeChangeTrigger = (KnowledgeChangeTrigger)trigger;
@@ -159,6 +198,27 @@ public class EnsembleTask extends Task {
 		}
 	}
 
+	/**
+	 * Checks membership condition on parameters of the local knowledge manager and parameters from a particular shadow knowledge manager.
+	 * It fixes the coordinator/member roles based on the <code>localRole</code> parameter. If <code>localRole</code> is equal to {@link KnowledgePathHelper.PathRoot#COORDINATOR} it
+	 * takes the coordinators parameters from the local knowledge manager and the member parameters from the shadow knowledge manager.
+	 * If <code>localRole</code> is equal to {@link KnowledgePathHelper.PathRoot#MEMBER}, it does it vice-versa.
+	 * 
+	 * It essentially works in the following steps:
+	 * <ol>
+	 *   <li>It resolves the IN paths of the membership condition and retrieves the knowledge from the local knowledge manager and 
+	 *   the shadow knowledge manager with the member/coordinator roles fixed according to the <code>localRole</code> parameter.
+	 *   (Note that INOUT and OUT paths are not allowed. If they are present a {@link TaskInvocationException} is thrown.)</li>
+	 *   <li>If the IN parameters were not found in the knowledge, <code>false</code> is returned.</li>
+	 *   <li>Otherwise, it invokes the membership condition with the values obtained in the previous step and returns its return value.</li>
+	 * </ol>
+	 * 
+	 * @param localRole specifies whether the membership condition is to be evaluated with assuming the local component as a coordinator or member.
+	 * @param shadowKnowledgeManager specifies the shadow knowledge manager which contains data of the opposite component instance. 
+	 * @return <code>true</code> if the membership condition was satisfied. <code>false</code> if it was not satisfied or if the
+	 * IN parameters were not found in the knowledge.
+	 * @throws TaskInvocationException thrown when the membership condition can't be executed (e.g. it does not exist, has another parameters, has INOUT/OUT parameters, etc.)
+	 */
 	private boolean checkMembership(PathRoot localRole, ReadOnlyKnowledgeManager shadowKnowledgeManager) throws TaskInvocationException {
 		// Obtain parameters from the local knowledge to evaluate the membership
 		KnowledgeManager localKnowledgeManager = ensembleController.getComponentInstance().getKnowledgeManager();
