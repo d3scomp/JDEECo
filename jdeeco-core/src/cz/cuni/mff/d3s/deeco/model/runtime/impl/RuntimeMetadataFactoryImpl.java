@@ -3,7 +3,7 @@
 package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView;
+import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.*;
 
@@ -101,8 +101,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 				return createMethodFromString(eDataType, initialValue);
 			case RuntimeMetadataPackage.KNOWLEDGE_MANAGER:
 				return createKnowledgeManagerFromString(eDataType, initialValue);
-			case RuntimeMetadataPackage.KNOWLEDGE_MANAGERS_VIEW:
-				return createKnowledgeManagersViewFromString(eDataType, initialValue);
+			case RuntimeMetadataPackage.SHADOW_KNOWLEDGE_MANAGER_REGISTRY:
+				return createShadowKnowledgeManagerRegistryFromString(eDataType, initialValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -122,8 +122,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 				return convertMethodToString(eDataType, instanceValue);
 			case RuntimeMetadataPackage.KNOWLEDGE_MANAGER:
 				return convertKnowledgeManagerToString(eDataType, instanceValue);
-			case RuntimeMetadataPackage.KNOWLEDGE_MANAGERS_VIEW:
-				return convertKnowledgeManagersViewToString(eDataType, instanceValue);
+			case RuntimeMetadataPackage.SHADOW_KNOWLEDGE_MANAGER_REGISTRY:
+				return convertShadowKnowledgeManagerRegistryToString(eDataType, instanceValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -360,8 +360,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public KnowledgeManagersView createKnowledgeManagersViewFromString(EDataType eDataType, String initialValue) {
-		return (KnowledgeManagersView)super.createFromString(eDataType, initialValue);
+	public ShadowKnowledgeManagerRegistry createShadowKnowledgeManagerRegistryFromString(EDataType eDataType, String initialValue) {
+		return (ShadowKnowledgeManagerRegistry)super.createFromString(eDataType, initialValue);
 	}
 
 	/**
@@ -369,7 +369,7 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String convertKnowledgeManagersViewToString(EDataType eDataType, Object instanceValue) {
+	public String convertShadowKnowledgeManagerRegistryToString(EDataType eDataType, Object instanceValue) {
 		return super.convertToString(eDataType, instanceValue);
 	}
 

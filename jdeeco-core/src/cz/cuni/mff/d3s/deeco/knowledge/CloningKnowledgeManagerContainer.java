@@ -23,7 +23,7 @@ public class CloningKnowledgeManagerContainer implements
 	}
 
 	@Override
-	public synchronized KnowledgeManager createLocal(String id) {
+	public KnowledgeManager createLocal(String id) {
 		KnowledgeManager result = new CloningKnowledgeManager(id);
 		locals.add(result);
 		for (LocalListener listener : localListeners)
@@ -32,7 +32,7 @@ public class CloningKnowledgeManagerContainer implements
 	}
 
 	@Override
-	public synchronized KnowledgeManager removeLocal(KnowledgeManager km) {
+	public KnowledgeManager removeLocal(KnowledgeManager km) {
 		if (locals.contains(km)) {
 			locals.remove(km);
 			for (LocalListener listener : localListeners)
@@ -43,18 +43,18 @@ public class CloningKnowledgeManagerContainer implements
 	}
 
 	@Override
-	public synchronized List<KnowledgeManager> getLocals() {
+	public List<KnowledgeManager> getLocals() {
 		return locals;
 	}
 
 	@Override
-	public synchronized void registerLocalListener(LocalListener listener) {
+	public void registerLocalListener(LocalListener listener) {
 		if (!localListeners.contains(listener))
 			localListeners.add(listener);
 	}
 
 	@Override
-	public synchronized KnowledgeManager removeReplica(KnowledgeManager km) {
+	public KnowledgeManager removeReplica(KnowledgeManager km) {
 		if (replicas.contains(km)) {
 			replicas.remove(km);
 			for (ReplicaListener listener : replicaListeners)
@@ -65,18 +65,18 @@ public class CloningKnowledgeManagerContainer implements
 	}
 
 	@Override
-	public synchronized List<KnowledgeManager> getReplicas() {
+	public List<KnowledgeManager> getReplicas() {
 		return replicas;
 	}
 
 	@Override
-	public synchronized void registerReplicaListener(ReplicaListener listener) {
+	public void registerReplicaListener(ReplicaListener listener) {
 		if (!replicaListeners.contains(listener))
 			replicaListeners.add(listener);
 	}
 
 	@Override
-	public synchronized KnowledgeManager createReplica(String id) {
+	public KnowledgeManager createReplica(String id) {
 		KnowledgeManager result = new CloningKnowledgeManager(id);
 		if (!(locals.contains(result) || replicas.contains(result))) {
 			replicas.add(result);

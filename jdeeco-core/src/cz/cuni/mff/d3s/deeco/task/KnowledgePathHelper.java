@@ -85,6 +85,7 @@ public class KnowledgePathHelper {
 	 */
 	public static KnowledgePathAndRoot getAbsoluteStrippedPath(KnowledgePath path, ReadOnlyKnowledgeManager coordKnowledgeManager, ReadOnlyKnowledgeManager memberKnowledgeManager) {
 
+		// FIXME TB: This is not completed.
 		// TODO
 		
 		return getStrippedPath(path);

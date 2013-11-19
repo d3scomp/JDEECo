@@ -158,6 +158,9 @@ public class SingleThreadedScheduler implements Scheduler {
 		if (task == null)
 			throw new IllegalArgumentException("The task cannot be null");
 		
+		// FIXME TB: The whole class seems a bit oversynchronized. I would keep ty locking to absolute minimum. Essentially
+		// only invokeAndWait and related queue operations should use locking. addTask and similar should not. 
+		// BTW, there is a deadlock below.
 		synchronized (allTasks) {		
 			if (allTasks.contains(task))
 				return;
