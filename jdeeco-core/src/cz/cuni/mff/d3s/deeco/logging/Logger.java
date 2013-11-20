@@ -16,7 +16,7 @@ interface Logger {
 	 * @param msg
 	 *            the string message
 	 */
-	public void debug(String msg);
+	void debug(String msg);
 
 	/**
 	 * Log on the DEBUG level with associated Throwable information (exception
@@ -27,7 +27,7 @@ interface Logger {
 	 * @param thrown
 	 *            Throwable object (e.g. an Exception)
 	 */
-	public void debug(String msg, Throwable thrown);
+	void debug(String msg, Throwable thrown);
 
 	/**
 	 * General logging method.
@@ -35,7 +35,7 @@ interface Logger {
 	 * @param msg
 	 *            the string message
 	 */
-	public void info(String msg);
+	void info(String msg);
 
 	/**
 	 * Log on the INFO level with associated Throwable information (exception
@@ -46,7 +46,7 @@ interface Logger {
 	 * @param thrown
 	 *            Throwable object (e.g. an Exception)
 	 */
-	public void info(String msg, Throwable thrown);
+	void info(String msg, Throwable thrown);
 
 	/**
 	 * For warnings (soft errors)
@@ -54,7 +54,7 @@ interface Logger {
 	 * @param msg
 	 *            the string message
 	 */
-	public void warning(String msg);
+	void warning(String msg);
 
 	/**
 	 * Log on the WARNING level with associated Throwable information (exception
@@ -65,7 +65,7 @@ interface Logger {
 	 * @param thrown
 	 *            Throwable object (e.g. an Exception)
 	 */
-	public void warning(String msg, Throwable thrown);
+	void warning(String msg, Throwable thrown);
 
 	/**
 	 * For reporting exceptions & errors without the stack trace.
@@ -73,7 +73,7 @@ interface Logger {
 	 * @param msg
 	 *            the string message
 	 */
-	public void error(String msg);
+	void error(String msg);
 
 	/**
 	 * Log on the ERROR level with associated Throwable information (exception
@@ -84,5 +84,5 @@ interface Logger {
 	 * @param thrown
 	 *            Throwable object (e.g. an Exception)
 	 */
-	public void error(String msg, Throwable thrown);
+	void error(String msg, Throwable thrown);
 }
