@@ -29,6 +29,11 @@ public class Waypoint {
 	}
 	
 	@Override
+	public int hashCode() {
+		return x & y;
+	}
+	
+	@Override
 	public String toString() {
 		return "(" + x + "," + y + ")";
 	}
