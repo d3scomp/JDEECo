@@ -114,8 +114,8 @@ public class RuntimeFrameworkImplTest {
 	@Test
 	public void testRuntimeFrameworkImplInitCalled() {
 		// GIVEN valid model, scheduler, and executor	
-		// WHEN a new RuntimeFrameworkImpl is created via the public constructor 
-		RuntimeFrameworkImpl result = new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer) {
+		// WHEN a new RuntimeFrameworkImpl is created via the public constructor 		
+		new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer) {
 			@Override
 			void init() {
 				spy.init();
@@ -252,7 +252,7 @@ public class RuntimeFrameworkImplTest {
 		tested.componentInstanceAdded(component);
 		
 		// THEN the componentProcessAdded is called for each of the processes
-		verify(tested, times(2)).componentProcessAdded(any(ComponentInstance.class), any(ComponentProcess.class));;
+		verify(tested, times(2)).componentProcessAdded(any(ComponentInstance.class), any(ComponentProcess.class));
 		verify(tested).componentProcessAdded(component, process);
 		verify(tested).componentProcessAdded(component, process2);
 	}
@@ -391,7 +391,7 @@ public class RuntimeFrameworkImplTest {
 		tested.componentInstanceRemoved(component);
 		
 		// THEN the componentProcessRemoved is called for each of the processes
-		verify(tested, times(2)).componentProcessRemoved(any(ComponentInstance.class), any(ComponentProcess.class));;
+		verify(tested, times(2)).componentProcessRemoved(any(ComponentInstance.class), any(ComponentProcess.class));
 		verify(tested).componentProcessRemoved(component, process);
 		verify(tested).componentProcessRemoved(component, process2);
 	}
@@ -538,7 +538,8 @@ public class RuntimeFrameworkImplTest {
 		process.setIsActive(true);
 		tested.init();		
 
-		ComponentInstanceRecord cir = tested.componentRecords.get(component);
+		@SuppressWarnings("unused")
+		ComponentInstanceRecord unused = tested.componentRecords.get(component);
 		
 		// THEN componentProcessActiveChanged is called with the right arguments
 		verify(tested).componentProcessActiveChanged(process, true);
