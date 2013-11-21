@@ -17,8 +17,6 @@ package cz.cuni.mff.d3s.deeco.annotations.processor.input;
 
 import java.util.List;
 
-import cz.cuni.mff.d3s.deeco.annotations.Knowledge;
-
 
 /**
  * Class describing a robot path.
@@ -26,7 +24,6 @@ import cz.cuni.mff.d3s.deeco.annotations.Knowledge;
  * @author Michal Kit
  *
  */
-@Knowledge
 public class Path {
 	
 	public Integer currentPosition;

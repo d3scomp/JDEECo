@@ -39,7 +39,6 @@ public class RobotFollowerComponent {
 	public List<Path> crossingRobots;
 
 	public RobotFollowerComponent() {
-//		this.id = "follower"; FIXME(IG): what should be done for this?
 		this.battery = new Integer(100);
 		this.path = new Path();
 		this.path.currentPosition = new Integer(1);

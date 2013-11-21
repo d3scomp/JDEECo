@@ -23,9 +23,10 @@ import java.lang.annotation.Target;
 /**
  * Used to mark an ensemble class or a component process to be executed
  * periodically.
- * 
- * The attribute <code>value</code> indicates time interval (in ms) of the
+ * <p>
+ * The attribute <code>value</code> indicates time period (in milliseconds) of the
  * execution.
+ * </p>
  * 
  * @author Michal Kit
  * 

@@ -7,7 +7,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.StandardOutputStreamLog;
 
-import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationParsingException;
+import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
@@ -29,12 +29,12 @@ public class ConvoyTest {
 	@Rule
 	public final StandardOutputStreamLog  log = new StandardOutputStreamLog ();
 	
-	public static void main(String[] args) throws AnnotationParsingException, InterruptedException {
+	public static void main(String[] args) throws AnnotationProcessorException, InterruptedException {
 		new ConvoyTest().testConvoy();
 	}
 	
 	@Test
-	public void testConvoy() throws AnnotationParsingException, InterruptedException {
+	public void testConvoy() throws AnnotationProcessorException, InterruptedException {
 		
 		AnnotationProcessor processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE);
 		RuntimeMetadata model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
