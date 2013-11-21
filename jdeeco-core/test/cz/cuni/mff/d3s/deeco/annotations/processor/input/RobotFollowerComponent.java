@@ -31,6 +31,7 @@ import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 @Component
 public class RobotFollowerComponent {
 
+	// TODO(IG): enforce DEECo component to be serializable 
 	public final static long serialVersionUID = 1L;
 	
 	public Integer battery;
@@ -39,7 +40,6 @@ public class RobotFollowerComponent {
 	public List<Path> crossingRobots;
 
 	public RobotFollowerComponent() {
-//		this.id = "follower"; FIXME(IG): what should be done for this?
 		this.battery = new Integer(100);
 		this.path = new Path();
 		this.path.currentPosition = new Integer(1);

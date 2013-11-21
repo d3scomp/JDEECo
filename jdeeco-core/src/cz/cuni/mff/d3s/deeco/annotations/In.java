@@ -24,10 +24,10 @@ import java.lang.annotation.Target;
  * Marks a method parameter to be a process input parameter, which is used when
  * invoking a component process. Such parameter will be retrieved but never
  * stored back to the knowledge repository.
- * 
- * The attribute <code>value</code> is dot separated absolute path, describing
- * the nesting in the component knowledge for which matching should be
- * performed.
+ * <p>
+ * The attribute <code>value</code> is dot-separated absolute path, describing
+ * the path pointing to an object in the component knowledge.
+ * </p>
  * 
  * @author Michal Kit
  * 

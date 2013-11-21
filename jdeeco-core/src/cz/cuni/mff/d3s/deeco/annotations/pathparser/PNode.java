@@ -9,7 +9,7 @@ public class PNode implements Serializable {
 	public final Object value; // May be String or PNode
 	public final PNode next;
 
-	public PNode(Object value, PNode next) {
+	public PNode(final Object value, final PNode next) {
 		this.value = value;
 		this.next = next;
 	}

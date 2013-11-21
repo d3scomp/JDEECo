@@ -20,7 +20,6 @@ public class RobotLeaderComponent {
 	public List<Path> crossingRobots;
 
 	public RobotLeaderComponent() {
-//		this.id = "leader"; FIXME(IG)
 		this.battery = new Integer(100);
 		this.path = new Path();
 		this.path.currentPosition = new Integer(0);
