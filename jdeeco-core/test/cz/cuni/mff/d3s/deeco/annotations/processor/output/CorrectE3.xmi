@@ -4,11 +4,11 @@
     <membership method="public static boolean cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectE3.process1(java.lang.String,java.lang.String)">
       <parameters direction="IN">
         <knowledgePath>
-          <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="names"/>
+          <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeMember"/>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeMapKey">
             <keyPath>
               <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeCoordinator"/>
-              <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="id"/>
+              <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeComponentId"/>
             </keyPath>
           </nodes>
         </knowledgePath>
@@ -31,8 +31,8 @@
               <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="data"/>
               <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeMapKey">
                 <keyPath>
-                  <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="meta"/>
-                  <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="id"/>
+                  <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeMember"/>
+                  <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeComponentId"/>
                 </keyPath>
               </nodes>
             </keyPath>
@@ -43,14 +43,14 @@
       <parameters direction="IN">
         <knowledgePath>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeMember"/>
-          <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="id"/>
+          <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeComponentId"/>
         </knowledgePath>
       </parameters>
     </knowledgeExchange>
     <triggers xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:KnowledgeChangeTrigger">
       <knowledgePath>
         <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeMember"/>
-        <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="id"/>
+        <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeComponentId"/>
       </knowledgePath>
     </triggers>
     <triggers xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:KnowledgeChangeTrigger">

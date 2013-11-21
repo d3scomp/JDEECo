@@ -5,28 +5,29 @@ import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
 import cz.cuni.mff.d3s.deeco.annotations.Membership;
-import cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange;
+import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 
 /**
- * Tests parsing of nested Map entries in knowledge paths.
+ * 
  * 
  * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
- * 
+ *
  */
 @Ensemble
-public class CorrectE3 {
+@PeriodicScheduling(200)
+public class WrongE5 {
 
 	@Membership
 	public static boolean process1(
-			@In("member.[coord.id]") String id,
-			@In("member.name") @TriggerOnChange String name) {
+			@In("member.id") String id,
+			@In("member.name") String name) {
 		return true;
 	}
 
 	@KnowledgeExchange
 	public static void process2(
-			@InOut("coord.details.[member.data.[member.id]].date") String date,
-			@In("member.id") @TriggerOnChange Integer plcsId) {
+			@InOut("whatever.coord.details.date") String date,
+			@In("member.id") Integer plcsId) {
 		// knowledge exchange logic
 	}
 

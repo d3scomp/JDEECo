@@ -87,11 +87,16 @@ public class ProcessTask extends Task {
 		for (Parameter formalParam : formalParams) {
 			ParameterDirection paramDir = formalParam.getDirection();
 
+			KnowledgePath absoluteKnowledgePath;
 			// FIXME: The call to getAbsolutePath is in theory wrong, because this way we are not obtaining the
 			// knowledge within one transaction. But fortunately this is not a problem with the single 
 			// threaded scheduler we have at the moment, because once the invoke method starts there is no other
 			// activity whatsoever in the system.
-			KnowledgePath absoluteKnowledgePath = KnowledgePathHelper.getAbsolutePath(formalParam.getKnowledgePath(), knowledgeManager);
+			try {  
+				absoluteKnowledgePath = KnowledgePathHelper.getAbsolutePath(formalParam.getKnowledgePath(), knowledgeManager);
+			} catch (KnowledgeNotFoundException e) {
+				throw new TaskInvocationException("Knowledge path could not be resolved.", e);
+			}
 			
 			if (paramDir == ParameterDirection.IN || paramDir == ParameterDirection.INOUT) {
 				inPaths.add(absoluteKnowledgePath);

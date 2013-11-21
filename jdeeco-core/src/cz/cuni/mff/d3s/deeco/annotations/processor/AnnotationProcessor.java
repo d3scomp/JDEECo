@@ -32,9 +32,6 @@ import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
-import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerContainer;
-import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistryImpl;
-import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Condition;
@@ -47,10 +44,8 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
@@ -156,9 +151,9 @@ public class AnnotationProcessor {
 		boolean isC = isComponentDefinition(clazz);
 		boolean isE = isEnsembleDefinition(clazz);
 		if (isC && isE) {
-			throw new AnnotationParsingException("Class: "
-					+ clazz.getCanonicalName()
-					+ "->Both @Component or @Ensemble annotation found.");
+			throw new AnnotationParsingException(
+					"Class: " + clazz.getCanonicalName() +
+					"->Both @Component or @Ensemble annotation found.");
 		}
 		if (isComponentDefinition(clazz)) {
 			ComponentInstance ci = createComponentInstance(obj);
@@ -183,20 +178,21 @@ public class AnnotationProcessor {
 			}
 			return;
 		} 
-		throw new AnnotationParsingException("Class: "
-				+ clazz.getCanonicalName()
-				+ "->No @Component or @Ensemble annotation found.");
+		throw new AnnotationParsingException(
+				"Class: " + clazz.getCanonicalName() +
+				"->No @Component or @Ensemble annotation found.");
 	}
 
 	ComponentInstance createComponentInstance(Object obj) throws AnnotationParsingException {
 		Class<?> clazz = obj.getClass();
 		ComponentInstance componentInstance = factory.createComponentInstance();
 		componentInstance.setName(clazz.getCanonicalName());
+		CloningKnowledgeManagerContainer container = new CloningKnowledgeManagerContainer();
 		
-		//TODO Below should be the id of the component passed instead of "String"
-		KnowledgeManager km = new CloningKnowledgeManager(clazz.getSimpleName());
-		km.update(extractInitialKnowledge(obj));
-		componentInstance.setKnowledgeManager(km);	
+        //TODO Below should be the id of the component passed instead of "String"
+        KnowledgeManager km = new CloningKnowledgeManager(clazz.getSimpleName());
+        km.update(extractInitialKnowledge(obj));
+        componentInstance.setKnowledgeManager(km); 
 		List<Method> methods = getMethodsMarkedAsProcesses(clazz);
 		try {
 			for (Method m : methods) {
@@ -238,7 +234,7 @@ public class AnnotationProcessor {
 			ensembleDefinition.getTriggers().addAll(exchangeKChangeTriggers);
 			ensembleDefinition.getTriggers().addAll(conditionKChangeTriggers);
 		} catch (AnnotationParsingException | ParseException e) {
-			String msg = "EnsembleDefinition: " + ensembleDefinition.getName() + "->" + e.getMessage();
+			String msg = "Ensemble: " + ensembleDefinition.getName() + "->" + e.getMessage();
 			throw new AnnotationParsingException(msg, e);
 		}
 		return ensembleDefinition;
@@ -248,7 +244,12 @@ public class AnnotationProcessor {
 		Method m = getAnnotatedMethodInEnsemble(clazz, Membership.class);
 		Condition condition = factory.createCondition();
 		condition.setMethod(m);
-		condition.getParameters().addAll(createParameters(m, false));
+		try {
+			condition.getParameters().addAll(createParameters(m, false));
+		} catch (AnnotationParsingException e) {
+			String msg = Membership.class.getSimpleName()+"->"+e.getMessage();
+			throw new AnnotationParsingException(msg, e);
+		}
 		return condition;
 	}
 	
@@ -256,7 +257,12 @@ public class AnnotationProcessor {
 		Method m = getAnnotatedMethodInEnsemble(clazz, KnowledgeExchange.class);
 		Exchange exchange = factory.createExchange();
 		exchange.setMethod(m);
-		exchange.getParameters().addAll(createParameters(m, false));
+		try{
+			exchange.getParameters().addAll(createParameters(m, false));
+		} catch (AnnotationParsingException e) {
+			String msg = KnowledgeExchange.class.getSimpleName()+"->"+e.getMessage();
+			throw new AnnotationParsingException(msg, e);
+		}
 		return exchange;
 	}
 
@@ -266,6 +272,7 @@ public class AnnotationProcessor {
 			componentProcess.setComponentInstance(componentInstance);
 			componentProcess.setMethod(m);
 			componentProcess.setName(m.getName());
+			componentProcess.getParameters().addAll(createParameters(m, true));
 			PeriodicTrigger periodicTrigger = createPeriodicTrigger(m);
 			List<KnowledgeChangeTrigger> knowledgeChangeTriggers = createKnowledgeChangeTriggers(m, true);
 			if (periodicTrigger == null) {
@@ -276,7 +283,6 @@ public class AnnotationProcessor {
 				componentProcess.getTriggers().add(periodicTrigger);
 			}
 			componentProcess.getTriggers().addAll(knowledgeChangeTriggers);
-			componentProcess.getParameters().addAll(createParameters(m, true));			
 		} catch (AnnotationParsingException e) {
 			String msg = "Process: "+componentProcess.getName()+"->"+e.getMessage();
 			throw new AnnotationParsingException(msg, e);
@@ -325,7 +331,7 @@ public class AnnotationProcessor {
 		for (int i = 0; i < parameterTypes.length; i++) {
 			TriggerOnChange t = getAnnotation(allAnnotations[i], TriggerOnChange.class);
 			if (t != null) {
-				Annotation directionAnnotation = getDirectionAnnotation(i, allAnnotations[i]);
+				Annotation directionAnnotation = getDirectionAnnotation(allAnnotations[i]);
 				String path = (String) getAnnotationValue(directionAnnotation);
 				KnowledgeChangeTrigger trigger = factory.createKnowledgeChangeTrigger();
 				trigger.setKnowledgePath(createKnowledgePath(path, inComponentProcess));
@@ -360,11 +366,16 @@ public class AnnotationProcessor {
 	 */
 	Parameter createParameter(int parameterIndex, Annotation[] parameterAnnotations, boolean inComponentProcess)
 			throws AnnotationParsingException, ParseException {
-		Annotation directionAnnotation = getDirectionAnnotation(parameterIndex, parameterAnnotations);
 		Parameter parameter = factory.createParameter();
-		parameter.setDirection(parameterAnnotationsToParameterDirections.get(directionAnnotation.annotationType()));
-		String path = (String) getAnnotationValue(directionAnnotation);
-		parameter.setKnowledgePath(createKnowledgePath(path,inComponentProcess));
+		try {
+			Annotation directionAnnotation = getDirectionAnnotation(parameterAnnotations);
+			parameter.setDirection(parameterAnnotationsToParameterDirections.get(directionAnnotation.annotationType()));
+			String path = (String) getAnnotationValue(directionAnnotation);
+			parameter.setKnowledgePath(createKnowledgePath(path,inComponentProcess));
+		} catch (Exception e) {
+			String msg = "Parameter: "+(parameterIndex+1)+"->"+e.getMessage();
+			throw new AnnotationParsingException(msg, e);
+		}
 		return parameter;
 	}
 	
@@ -375,54 +386,41 @@ public class AnnotationProcessor {
 	
 	KnowledgePath createKnowledgePath(PNode pNode, boolean inComponentProcess) throws AnnotationParsingException {
 		KnowledgePath knowledgePath = factory.createKnowledgePath();
-		do {			
+		do {	
 			Object nValue = pNode.value;
 			if (nValue instanceof String) {
+				// check if the first node in an ensemble path is not 'coord' or 'member':
+				if (!inComponentProcess && knowledgePath.getNodes().isEmpty()) {
+					throw new AnnotationParsingException(
+						"The path does not start with one of the '"
+						+ EEnsembleParty.COORDINATOR.toString() + "' or '"
+						+ EEnsembleParty.MEMBER.toString() + "' keywords."); 
+				}
+				// Check if this is a component identifier ("id") node.
+				// In such case, this has to be the final node in the path:
+				if ((nValue.equals(ComponentIdentifier.ID.toString()))
+					&& ((inComponentProcess && knowledgePath.getNodes().isEmpty()) 
+					|| (!inComponentProcess && (knowledgePath.getNodes().size() == 1)))) {
+						PathNodeComponentId idField = factory.createPathNodeComponentId();
+						knowledgePath.getNodes().add(idField); 
+						if (pNode.next!=null) {
+							throw new AnnotationParsingException(
+									"A component identifier cannot be followed by any other fields in a path.");
+						} 
+						return knowledgePath;
+				} 
 				PathNodeField pathNodeField = factory.createPathNodeField();
 				pathNodeField.setName((String) nValue);
 				knowledgePath.getNodes().add(pathNodeField);
 			}
-			if (nValue instanceof ComponentIdentifier) {
-				if (inComponentProcess) {
-					if (knowledgePath.getNodes().isEmpty()) {
-						PathNodeComponentId idField = factory.createPathNodeComponentId();
-						knowledgePath.getNodes().add(idField);
-					} else {
-						PathNodeField pathNodeField = factory.createPathNodeField();
-						pathNodeField.setName(ComponentIdentifier.ID.toString());
-						knowledgePath.getNodes().add(pathNodeField);	
-					}
-				} else {
-					if (knowledgePath.getNodes().isEmpty()) {
-						throw new AnnotationParsingException(
-								"'"+ComponentIdentifier.ID.toString()+"' cannot be used in the beginning of a path in an ensemble definition.");
-					} else {
-						PathNode first = knowledgePath.getNodes().get(0);
-						if (!((first instanceof PathNodeMember) || (first instanceof PathNodeCoordinator))) {
-							PathNodeComponentId idField = factory.createPathNodeComponentId();
-							knowledgePath.getNodes().add(idField);
-						} else {
-							PathNodeField pathNodeField = factory.createPathNodeField();
-							pathNodeField.setName(ComponentIdentifier.ID.toString());
-							knowledgePath.getNodes().add(pathNodeField);
-						}
-					}
-					
-				}
-			}
 			if (nValue instanceof EEnsembleParty) {
 				EEnsembleParty ensembleKeyword = (EEnsembleParty) nValue;
-				if (inComponentProcess) {
-					throw new AnnotationParsingException(
-							"Cannot use the '" + ensembleKeyword + "' in a component process.");
+				if (!inComponentProcess && knowledgePath.getNodes().isEmpty())  {
+					knowledgePath.getNodes().add(createMemberOrCoordinatorPathNode(ensembleKeyword));
 				} else {
-					if (knowledgePath.getNodes().isEmpty()) {
-						knowledgePath.getNodes().add(createMemberOrCoordinatorPathNode(ensembleKeyword));						
-					} else { // not in the beginning, add it as PathNodeField
-						PathNodeField pathNodeField = factory.createPathNodeField();
-						pathNodeField.setName(ensembleKeyword.toString());
-						knowledgePath.getNodes().add(pathNodeField);
-					}
+					PathNodeField pathNodeField = factory.createPathNodeField();
+					pathNodeField.setName(ensembleKeyword.toString());
+					knowledgePath.getNodes().add(pathNodeField);
 				}
 			}
 			if (nValue instanceof PNode) {
@@ -518,20 +516,19 @@ public class AnnotationProcessor {
 	 * @return found annotation instance
 	 * @throws AnnotationParsingException
 	 */
-	Annotation getDirectionAnnotation(int parameterIndex,
-			Annotation[] annotations) throws AnnotationParsingException {
+	Annotation getDirectionAnnotation(Annotation[] annotations) throws AnnotationParsingException {
 		Annotation foundAnnotation = null;
 		for (Annotation a : annotations) {
 			if (parameterAnnotationsToParameterDirections.containsKey(a.annotationType())) {
 				if (foundAnnotation == null) {
 					foundAnnotation = a;
 				} else {
-					throw new AnnotationParsingException("Parameter: "+ (parameterIndex+1) +". More than one direction annotation was found.");
+					throw new AnnotationParsingException("More than one direction annotation was found.");
 				}
 			}
 		}
 		if (foundAnnotation == null) {
-			throw new AnnotationParsingException("Parameter: "+ (parameterIndex+1) +". No direction annotation was found.");
+			throw new AnnotationParsingException("No direction annotation was found.");
 		}
 		return foundAnnotation;
 	}
