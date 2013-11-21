@@ -31,6 +31,7 @@ import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 @Component
 public class RobotFollowerComponent {
 
+	// TODO(IG): enforce DEECo component to be serializable 
 	public final static long serialVersionUID = 1L;
 	
 	public Integer battery;

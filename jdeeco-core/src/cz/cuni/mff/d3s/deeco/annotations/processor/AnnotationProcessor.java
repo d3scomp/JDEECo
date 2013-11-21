@@ -609,7 +609,7 @@ public class AnnotationProcessor {
 	}
 	
 	/**
-	 * Helper method to get the value of an annotation. 
+	 * Helper method to get the value of a direction annotation. 
 	 */
 	String getDirectionAnnotationValue(Annotation a) {
 		if (a instanceof In) {
@@ -621,11 +621,8 @@ public class AnnotationProcessor {
 		if (a instanceof InOut) {
 			return ((InOut) a).value();
 		}
-		Log.w("Invalid argument ");
+		Log.w("Invalid argument in getDirectionAnnotation()");
 		return null;
-//		IValuedAnnotation valuedAnnotation = (IValuedAnnotation) AnnotationProxy
-//				.implement(IValuedAnnotation.class, annotation);
-//		return valuedAnnotation.value();
 	}
 
 	/**
