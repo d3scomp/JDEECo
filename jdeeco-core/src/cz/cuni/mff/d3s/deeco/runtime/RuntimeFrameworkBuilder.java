@@ -1,20 +1,10 @@
 package cz.cuni.mff.d3s.deeco.runtime;
 
-import java.util.Arrays;
-
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.executor.SameThreadExecutor;
-import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerContainer;
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
-import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistryImpl;
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
-import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
-import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeConfiguration.Execution;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeConfiguration.Scheduling;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
@@ -195,10 +185,7 @@ public class RuntimeFrameworkBuilder {
 		buildScheduler();
 		buildExecutor();
 		buildKnowledgeManagerContainer();				
-		
-		// bind the container to the given model
-		bindKnowledgeManagerContainer(model);
-		
+				
 		//in the future: buildNetworkContainer() 
 		//in the future: buildSynchronizer()
 		
@@ -210,39 +197,6 @@ public class RuntimeFrameworkBuilder {
 		return runtime;
 	}
 
-	/** 
-	 * Replaces the KMs in the model with KMs created via {@link #kmContainer}.
-	 * 
-	 * TODO: what to do with newly created component instances in the model? 
-	 */
-	protected void bindKnowledgeManagerContainer(RuntimeMetadata model) {
-		for (ComponentInstance ci: model.getComponentInstances()) {
-			
-			
-			ValueSet initialKnowledge;
-			try {
-				KnowledgePath empty = RuntimeMetadataFactoryExt.eINSTANCE.createKnowledgePath();
-				// get all the knowledge (corresponding to an empty knowledge path)
-				initialKnowledge = ci.getKnowledgeManager().get(Arrays.asList(empty));
-			} catch (KnowledgeNotFoundException e) {
-				Log.w("No initial knowledge value cor component " + ci.getKnowledgeManager().getId());
-				continue;
-			}
-			
-			// copy all the knowledge values into a ChangeSet
-			ChangeSet cs = new ChangeSet();
-			for (KnowledgePath p: initialKnowledge.getKnowledgePaths()) {
-				cs.setValue(p, initialKnowledge.getValue(p));
-			}			
-			
-			// create a new KM with the same id and knowledge values
-			KnowledgeManager km = kmContainer.createLocal(ci.getKnowledgeManager().getId());
-			km.update(cs);
-			
-			// replace the KM and the KMView references
-			ci.setKnowledgeManager(km);	
-			ci.setShadowKnowledgeManagerRegistry(new ShadowKnowledgeManagerRegistryImpl(km, kmContainer));
-		}		
-	}
+	
 	
 }

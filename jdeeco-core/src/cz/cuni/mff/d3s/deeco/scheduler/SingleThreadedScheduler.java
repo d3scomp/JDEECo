@@ -237,6 +237,7 @@ public class SingleThreadedScheduler implements Scheduler {
 		}		
 	}
 	
+	@Override
 	public void invokeAndWait(Runnable doRun) throws InterruptedException {
 		InvokeAndWaitTask task = new InvokeAndWaitTask(this, doRun);
 		synchronized (task) {

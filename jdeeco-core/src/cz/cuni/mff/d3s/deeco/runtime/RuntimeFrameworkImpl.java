@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.deeco.runtime;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,12 +9,19 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
+import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerContainer;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
+import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistryImpl;
+import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
+import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.task.EnsembleTask;
@@ -207,6 +215,9 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 		ComponentInstanceRecord ciRecord = new ComponentInstanceRecord(instance);
 		componentRecords.put(instance, ciRecord);
 		
+		// replace the KM with one created via kmContainer
+		replaceKnowledgeManager(instance);
+		
 		for (ComponentProcess p: instance.getComponentProcesses()) {			
 			componentProcessAdded(instance, p);
 		}
@@ -218,7 +229,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 			ciRecord.getEnsembleTasks().put(ec, task);
 			scheduler.addTask(task);						
 		}
-				
+						
 		// register adapters to listen for model changes
 		// listen to ADD/REMOVE in ComponentInstance.getComponentProcesses()
 		Adapter componentInstanceAdapter = new AdapterImpl() {
@@ -237,6 +248,36 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 		};
 		instance.eAdapters().add(componentInstanceAdapter);	
 		componentInstanceAdapters.put(instance, componentInstanceAdapter);
+	}
+	
+	/** 
+	 * Replaces the KM in the component instance with a KM created via {@link #kmContainer}.
+	 */
+	void replaceKnowledgeManager(ComponentInstance ci) {			
+		ValueSet initialKnowledge = null;
+		try {
+			KnowledgePath empty = RuntimeMetadataFactoryExt.eINSTANCE.createKnowledgePath();
+			// get all the knowledge (corresponding to an empty knowledge path)
+			initialKnowledge = ci.getKnowledgeManager().get(Arrays.asList(empty));
+		} catch (KnowledgeNotFoundException e) {
+			Log.w("No initial knowledge value cor component " + ci.getKnowledgeManager().getId());
+		}
+		
+		// copy all the knowledge values into a ChangeSet
+		ChangeSet cs = new ChangeSet();
+		if (initialKnowledge != null) {
+			for (KnowledgePath p: initialKnowledge.getKnowledgePaths()) {
+				cs.setValue(p, initialKnowledge.getValue(p));
+			}			
+		}
+		
+		// create a new KM with the same id and knowledge values
+		KnowledgeManager km = kmContainer.createLocal(ci.getKnowledgeManager().getId());
+		km.update(cs);
+		
+		// replace the KM and the KMView references
+		ci.setKnowledgeManager(km);	
+		ci.setShadowKnowledgeManagerRegistry(new ShadowKnowledgeManagerRegistryImpl(km, kmContainer));			
 	}
 	
 	/**
@@ -308,7 +349,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 	 */
 	void componentProcessActiveChanged(ComponentProcess process, boolean active) {		
 		if (process == null) {
-			Log.w(String.format("Attempting to to change the activity of an invalid process (%s).", process));
+			Log.w("Attempting to to change the activity of a null process.");
 			return;
 		}
 		// the instance is not registered 
@@ -438,6 +479,14 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 		scheduler.stop();
 	}
 	
+	
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework#invokeAndWait(java.lang.Runnable)
+	 */
+	@Override
+	public void invokeAndWait(Runnable r) throws InterruptedException {
+		scheduler.invokeAndWait(r);		
+	}
 	
 
 }

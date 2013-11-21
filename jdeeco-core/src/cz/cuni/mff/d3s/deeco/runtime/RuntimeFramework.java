@@ -17,5 +17,14 @@ public interface RuntimeFramework {
 	 * Stops the execution of the runtime framework
 	 */
 	void stop();
+	
+	/**
+	 * Invokes the runnable according to the execution policy of the runtime and
+	 * waits for it to finish.
+	 * 
+	 * @param r	the runnable to invoke.
+	 * @throws InterruptedException if the invocation was interrupted.
+	 */
+	void invokeAndWait(Runnable r) throws InterruptedException;
 
 }
