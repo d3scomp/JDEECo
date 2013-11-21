@@ -23,8 +23,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.*;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 
 /**
- * Common gateway for processing of Java source code classes with DEECo
- * annotations.
+ * Common gateway for processing of Java objects/classes with DEECo annotations.
  * <p>
  * "Processing" means parsing the file, creating an Ecore subgraph out of it,
  * attaching the subgraph to the top-level container, the "runtimeMetadata"
