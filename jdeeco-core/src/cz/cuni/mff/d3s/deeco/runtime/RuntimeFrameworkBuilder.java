@@ -7,6 +7,7 @@ import cz.cuni.mff.d3s.deeco.executor.SameThreadExecutor;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistryImpl;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
@@ -138,8 +139,11 @@ public class RuntimeFrameworkBuilder {
 			for (KnowledgePath p: initialKnowledge.getKnowledgePaths()) {
 				cs.setValue(p, initialKnowledge.getValue(p));
 			}
-			
-			km.update(cs);
+			try {
+				km.update(cs);
+			} catch (KnowledgeUpdateException e) {
+				Log.e("bindKnowledgeManagerContainer: exception when updating the knowledge manager", e);
+			}
 			ci.setKnowledgeManager(km);	
 			ci.setShadowKnowledgeManagerRegistry(new ShadowKnowledgeManagerRegistryImpl(km, kmContainer));
 		}		

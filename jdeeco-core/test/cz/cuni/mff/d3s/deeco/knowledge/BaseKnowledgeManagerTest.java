@@ -34,12 +34,12 @@ public class BaseKnowledgeManagerTest {
 	private TriggerListener triggerListener;
 
 	@Before
-	public void setUp() {
+	public void setUp() throws Exception {
 		tested = new BaseKnowledgeManager("TEST");
 		tested.update(createKnowledge());
 		initMocks(this);
 	}
-	
+
 	public static ChangeSet createKnowledge() {
 		ChangeSet result = new ChangeSet();
 		result.setValue(RuntimeModelHelper.createKnowledgePath("id"), "Test");
@@ -55,7 +55,9 @@ public class BaseKnowledgeManagerTest {
 		map.put("b", 2);
 		map.put("c", 3);
 		result.setValue(RuntimeModelHelper.createKnowledgePath("map"), map);
-		result.setValue(RuntimeModelHelper.createKnowledgePath("innerKnowledge"), new InnerKnowledge("innerA", "innerB"));
+		result.setValue(
+				RuntimeModelHelper.createKnowledgePath("innerKnowledge"),
+				new InnerKnowledge("innerA", "innerB"));
 		return result;
 	}
 
@@ -293,6 +295,46 @@ public class BaseKnowledgeManagerTest {
 		assertTrue(result.getKnowledgePaths().contains(kp));
 		kp = RuntimeModelHelper.createKnowledgePath("date");
 		assertTrue(result.getKnowledgePaths().contains(kp));
+	}
+
+	public void testForbiddenUpdate() throws Exception {
+		// WHEN the knowledge manager update is required, with one list element
+		// removal and number field update and incorrect inner knowledge change
+		KnowledgePath numberPath = RuntimeModelHelper
+				.createKnowledgePath("number");
+		KnowledgePath listElementPath = RuntimeModelHelper
+				.createKnowledgePath("list", "1");
+		KnowledgePath innerPath = RuntimeModelHelper.createKnowledgePath(
+				"innerKnowledge", "a");
+		ChangeSet toChange = new ChangeSet();
+		toChange.setValue(numberPath, 100);
+		toChange.setValue(innerPath, 66);
+		toChange.setDeleted(listElementPath);
+
+		boolean exceptionThrown = false;
+
+		try {
+			tested.update(toChange);
+		} catch (KnowledgeUpdateException e) {
+			exceptionThrown = true;
+		}
+		// THEN the KnowledgeUpdateException is thrown
+		assertTrue(exceptionThrown);
+
+		KnowledgePath listPath = RuntimeModelHelper.createKnowledgePath("list");
+		List<KnowledgePath> listOfPaths = new LinkedList<>();
+		// and THEN list remains unchanged
+		listOfPaths.add(listPath);
+		assertEquals(3,
+				((List<?>) tested.get(listOfPaths).getValue(listPath)).size());
+		listOfPaths.clear();
+		// and THEN inner knowledge has its original value
+		listOfPaths.add(innerPath);
+		assertEquals("innerA", tested.get(listOfPaths).getValue(innerPath));
+		listOfPaths.clear();
+		// and THEN number field has its original value
+		listOfPaths.add(numberPath);
+		assertEquals(10, tested.get(listOfPaths).getValue(numberPath));
 	}
 
 	public static class InnerKnowledge {

@@ -9,6 +9,7 @@ import java.util.LinkedList;
 
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager;
@@ -424,7 +425,7 @@ public class EnsembleTask extends Task {
 			// Write the changeset back to the knowledge
 			localKnowledgeManager.update(localChangeSet);
 			
-		} catch (IllegalAccessException | IllegalArgumentException e) {
+		} catch (KnowledgeUpdateException | IllegalAccessException | IllegalArgumentException e) {
 			throw new TaskInvocationException("Error when invoking a knowledge exchange.", e);
 		} catch (InvocationTargetException e) {
 			Log.i("Knowledge exchange returned an exception.", e.getTargetException());

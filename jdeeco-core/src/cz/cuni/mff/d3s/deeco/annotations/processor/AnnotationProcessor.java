@@ -33,6 +33,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerContainer;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistryImpl;
 import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
@@ -195,10 +196,10 @@ public class AnnotationProcessor {
 		
 		//TODO Below should be the id of the component passed instead of "String"
 		KnowledgeManager km = new CloningKnowledgeManager(clazz.getSimpleName());
+		try {
 		km.update(extractInitialKnowledge(obj));
 		componentInstance.setKnowledgeManager(km);	
 		List<Method> methods = getMethodsMarkedAsProcesses(clazz);
-		try {
 			for (Method m : methods) {
 				int modifier = m.getModifiers();
 				if (Modifier.isPublic(modifier) && Modifier.isStatic(modifier)) {
@@ -209,8 +210,10 @@ public class AnnotationProcessor {
 							"Method "+ m.getName()+ " annotated as @Process should be public and static.");
 				}
 			}
-		} catch (AnnotationParsingException | ParseException e) {
-			String msg = "Component: "+componentInstance.getName()+"->"+e.getMessage();
+		} catch (KnowledgeUpdateException | AnnotationParsingException
+				| ParseException e) {
+			String msg = "Component: " + componentInstance.getName() + "->"
+					+ e.getMessage();
 			throw new AnnotationParsingException(msg, e);
 		}
 		return componentInstance;

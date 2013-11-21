@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
@@ -27,20 +26,20 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 @SuppressWarnings("unchecked")
 public class BaseKnowledgeManager implements KnowledgeManager {
 
-	private final Map<KnowledgePath, Object> knowledge;
-	private final Map<KnowledgeChangeTrigger, List<TriggerListener>> knowledgeChangeListeners;
+	private transient Map<KnowledgePath, Object> knowledge;
+	private transient final Map<KnowledgeChangeTrigger, List<TriggerListener>> kcListeners;
 
-	private final String id;
+	private transient final String identifier;
 
-	public BaseKnowledgeManager(String id) {
-		this.id = id;
+	public BaseKnowledgeManager(String identifier) {
+		this.identifier = identifier;
 		this.knowledge = new HashMap<>();
-		this.knowledgeChangeListeners = new HashMap<>();
+		this.kcListeners = new HashMap<>();
 	}
 
 	@Override
 	public String getId() {
-		return this.id;
+		return this.identifier;
 	}
 
 	/*
@@ -53,15 +52,17 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	@Override
 	public ValueSet get(Collection<KnowledgePath> knowledgePaths)
 			throws KnowledgeNotFoundException {
-		ValueSet result = new ValueSet();
+		final ValueSet result = new ValueSet();
 		Object value;
-		for (KnowledgePath kp : knowledgePaths) {
-			value = getKnowledge(kp.getNodes());
-			if (knowledge.equals(value))
-				for (KnowledgePath rootKP : knowledge.keySet())
+		for (final KnowledgePath knowledgePath : knowledgePaths) {
+			value = getKnowledge(knowledgePath.getNodes());
+			if (knowledge.equals(value)) {
+				for (final KnowledgePath rootKP : knowledge.keySet()) {
 					result.setValue(rootKP, knowledge.get(rootKP));
-			else
-				result.setValue(kp, value);
+				}
+			} else {
+				result.setValue(knowledgePath, value);
+			}
 		}
 		return result;
 	}
@@ -75,16 +76,15 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	 * cz.cuni.mff.d3s.deeco.knowledge.TriggerListener)
 	 */
 	@Override
-	public void register(Trigger trigger,
-			TriggerListener triggerListener) {
+	public void register(Trigger trigger, TriggerListener triggerListener) {
 		if (trigger instanceof KnowledgeChangeTrigger) {
-			KnowledgeChangeTrigger kct = (KnowledgeChangeTrigger) trigger;
+			final KnowledgeChangeTrigger kct = (KnowledgeChangeTrigger) trigger;
 			List<TriggerListener> listeners;
-			if (knowledgeChangeListeners.containsKey(kct)) {
-				listeners = knowledgeChangeListeners.get(kct);
+			if (kcListeners.containsKey(kct)) {
+				listeners = kcListeners.get(kct);
 			} else {
 				listeners = new LinkedList<>();
-				knowledgeChangeListeners.put(kct, listeners);
+				kcListeners.put(kct, listeners);
 			}
 			listeners.add(triggerListener);
 		}
@@ -99,21 +99,22 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	 * cz.cuni.mff.d3s.deeco.knowledge.TriggerListener)
 	 */
 	@Override
-	public void unregister(Trigger trigger,
-			TriggerListener triggerListener) {
+	public void unregister(Trigger trigger, TriggerListener triggerListener) {
 		if (trigger instanceof KnowledgeChangeTrigger) {
-			KnowledgePath kp = ((KnowledgeChangeTrigger) trigger)
-					.getKnowledgePath();
-			if (knowledgeChangeListeners.containsKey(kp)) {
-				knowledgeChangeListeners.get(kp).remove(triggerListener);
+			final KnowledgeChangeTrigger kct = (KnowledgeChangeTrigger) trigger;
+			if (kcListeners.containsKey(kct)) {
+				kcListeners.get(kct).remove(triggerListener);
 			}
 		}
 	}
 
-	// FIXME TB: The code here desperately needs comments - in this case even inside the functions
-	// BTW, is the check implemented whether a path forming a prefix is already contained?
-	// BTW, why do you decompose the initial object on the first level of nesting? Why can't you just store the initial object as such?
-	
+	// FIXME TB: The code here desperately needs comments - in this case even
+	// inside the functions
+	// BTW, is the check implemented whether a path forming a prefix is already
+	// contained?
+	// BTW, why do you decompose the initial object on the first level of
+	// nesting? Why can't you just store the initial object as such?
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -122,53 +123,107 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	 * .deeco.knowledge.ChangeSet)
 	 */
 	@Override
-	public void update(ChangeSet changeSet) {
-		// Update
+	public void update(ChangeSet changeSet) throws KnowledgeUpdateException {
+		Map<KnowledgePath, Object> updated = new HashMap<>();
+		List<KnowledgePath> added = new LinkedList<>();
+		Object original = null;
 		try {
-			for (KnowledgePath kp : changeSet.getUpdatedReferences()) {
-				updateKnowledge(kp, changeSet.getValue(kp));
-				notifyKnowledgeChangeListeners(kp);
+			boolean exists;
+			for (final KnowledgePath updateKP : changeSet
+					.getUpdatedReferences()) {
+				// We need to preserve the state of the knowledge, in order to
+				// revert it
+				// back in case of problems
+				exists = true;
+				try {
+					original = getKnowledge(updateKP.getNodes());
+				} catch (KnowledgeNotFoundException e) {
+					exists = false;
+				}
+				updateKnowledge(updateKP, changeSet.getValue(updateKP));
+				if (exists) {
+					updated.put(updateKP, original);
+				} else {
+					added.add(updateKP);
+				}
 			}
-		} catch (Exception e) {
-			// FIXME TB: I would vote for throwing an exception. Then I could report a failed update in the task invoke.
-			Log.e("Knowledge update error", e);
+		} catch (KnowledgeUpdateException e) {
+			// Revert changes;
+			for (KnowledgePath revertKP : updated.keySet()) {
+				updateKnowledge(revertKP, updated.get(revertKP));
+			}
+			// Revert adding new nodes
+			deleteKnowledge(added);
+			// Throw the exception
+			throw e;
 		}
-		// Delete list or map items
-		deleteKnowledge(changeSet.getDeletedReferences());
+		// Delete
+		KnowledgePath invalidDelete = null;
+		for (KnowledgePath deleteKP : changeSet.getDeletedReferences()) {
+			if (!isValidDeletePath(deleteKP)) {
+				invalidDelete = deleteKP;
+				break;
+			}
+		}
+		if (invalidDelete == null) {
+			deleteKnowledge(changeSet.getDeletedReferences());
+		} else {
+			throw new KnowledgeUpdateException(
+					"Update exception - Failed to delete " + invalidDelete);
+		}
+		// Now afeter doing the update and delete - if no exception has been
+		// thrown, we need to notify the listeners about updates done.
+		for (final KnowledgePath knowledgePath : changeSet
+				.getUpdatedReferences()) {
+			notifyKnowledgeChangeListeners(knowledgePath);
+		}
 	}
 
 	@Override
 	public boolean equals(Object that) {
 		if (that != null && that instanceof BaseKnowledgeManager)
-			return ((BaseKnowledgeManager) that).id.equals(id);
+			return ((BaseKnowledgeManager) that).identifier.equals(identifier);
 		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return identifier.hashCode();
 	}
 
 	protected Object getKnowledge(List<PathNode> knowledgePath)
 			throws KnowledgeNotFoundException {
-		assert (knowledgePath != null);
-		if (knowledgePath.isEmpty())
-			return knowledge;
-		int containmentEndIndex;
-		for (KnowledgePath kp : knowledge.keySet()) {
-			try {
-				containmentEndIndex = containmentEndIndex(knowledgePath,
-						kp.getNodes());
-				if (containmentEndIndex > -1)
-					return getKnowledgeFromNode(knowledgePath.subList(
-							containmentEndIndex + 1, knowledgePath.size()),
-							knowledge.get(kp));
-			} catch (KnowledgeNotFoundException knfe) {
-				continue;
+		assert knowledgePath != null;
+		Object result = null;
+		if (knowledgePath.isEmpty()) {
+			result = knowledge;
+		} else {
+			int endIndex = -1;
+			for (final KnowledgePath kPath : knowledge.keySet()) {
+				try {
+					endIndex = containmentEndIndex(knowledgePath,
+							kPath.getNodes());
+					if (endIndex > -1) {
+						result = getKnowledgeFromNode(knowledgePath.subList(
+								endIndex + 1, knowledgePath.size()),
+								knowledge.get(kPath));
+						break;
+					}
+				} catch (KnowledgeNotFoundException knfe) {
+					continue;
+				}
+			}
+			if (endIndex < 0) {
+				throw new KnowledgeNotFoundException();
 			}
 		}
-		throw new KnowledgeNotFoundException();
+		return result;
 	}
 
-	protected void updateKnowledge(KnowledgePath knowledgePath, Object value) {
-		if (uniqueKnowledgePath(knowledgePath, knowledge.keySet())) {
+	protected void updateKnowledge(KnowledgePath knowledgePath, Object value)
+			throws KnowledgeUpdateException {
+		if (noPathOverlapWithAny(knowledgePath, knowledge.keySet())) {
 			knowledge.put(knowledgePath, value);
-			return;
 		} else {
 			List<PathNode> pathNodesToParent = new LinkedList<>(
 					knowledgePath.getNodes());
@@ -178,14 +233,21 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 			try {
 				parent = getKnowledge(pathNodesToParent);
 			} catch (KnowledgeNotFoundException e) {
-				return;
+				throw new KnowledgeUpdateException(
+						"Forbidden update: knowledge does not exist - "
+								+ knowledgePath);
 			}
 			if (parent instanceof List<?>) {
 				((List<Object>) parent).set(Integer.parseInt(fieldName), value);
 			} else if (parent instanceof Map<?, ?>) {
 				if (parent.equals(knowledge)) {
-					if (knowledge.containsKey(knowledgePath))
+					if (knowledge.containsKey(knowledgePath)) {
 						knowledge.put(knowledgePath, value);
+					} else {
+						throw new KnowledgeUpdateException(
+								"Forbidden update: path overlaps - "
+										+ knowledgePath);
+					}
 				} else
 					((Map<String, Object>) parent).put(fieldName, value);
 			} else {
@@ -193,12 +255,14 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 					Field field = parent.getClass().getField(fieldName);
 					field.set(parent, value);
 				} catch (Exception e) {
+					throw new KnowledgeUpdateException("Forbidden update: "
+							+ e.getMessage() + " - " + knowledgePath);
 				}
 			}
 		}
 	}
 
-	private boolean uniqueKnowledgePath(KnowledgePath path,
+	private boolean noPathOverlapWithAny(KnowledgePath path,
 			Collection<KnowledgePath> paths) {
 		for (KnowledgePath p : paths) {
 			if (containmentEndIndex(p.getNodes(), path.getNodes()) > -1
@@ -206,6 +270,31 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 				return false;
 		}
 		return true;
+	}
+
+	private boolean isValidDeletePath(KnowledgePath knowledgePath) {
+		boolean result = false;
+		if (knowledge.containsKey(knowledgePath)) {
+			result = true;
+		} else {
+			List<PathNode> pathNodesToParent = new LinkedList<>(
+					knowledgePath.getNodes());
+			String fieldName = ((PathNodeField) pathNodesToParent
+					.remove(pathNodesToParent.size() - 1)).getName();
+			Object parent = null;
+			try {
+				parent = getKnowledge(pathNodesToParent);
+				if (parent instanceof Map) {
+					result = ((Map<String, ?>) parent).containsKey(fieldName);
+				} else if (parent instanceof List<?>) {
+					result = ((List<?>) parent).size() > Integer
+							.parseInt(fieldName);
+				}
+			} catch (KnowledgeNotFoundException e) {
+				result = false;
+			}
+		}
+		return result;
 	}
 
 	private Object getKnowledgeFromNode(List<PathNode> knowledgePath,
@@ -250,12 +339,15 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		return currentObject;
 	}
 
-	private void deleteKnowledge(Collection<KnowledgePath> knowledgePaths) {
+	private Map<KnowledgePath, Object> deleteKnowledge(
+			Collection<KnowledgePath> knowledgePaths) {
+		Map<KnowledgePath, Object> deleted = new HashMap<>();
 		// First lets delete free (root) nodes
 		List<KnowledgePath> reducedKnowledgePaths = new LinkedList<>(
 				knowledgePaths);
 		for (KnowledgePath kp : knowledgePaths) {
 			if (knowledge.containsKey(kp)) {
+				deleted.put(kp, knowledge.get(kp));
 				knowledge.remove(kp);
 				reducedKnowledgePaths.remove(kp);
 			}
@@ -298,13 +390,14 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 				}
 			}
 		}
+		return deleted;
 	}
 
 	private void notifyKnowledgeChangeListeners(KnowledgePath kp) {
 		List<KnowledgeChangeTrigger> foundKCTs = new LinkedList<>();
 		List<PathNode> kctNodes;
 		List<PathNode> kpNodes = kp.getNodes();
-		for (KnowledgeChangeTrigger kct : knowledgeChangeListeners.keySet()) {
+		for (KnowledgeChangeTrigger kct : kcListeners.keySet()) {
 			kctNodes = kct.getKnowledgePath().getNodes();
 			// kp: a.b.c, kct: a.b
 			// kp : a.b, kct: a.b.c
@@ -315,8 +408,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		}
 		if (!foundKCTs.isEmpty()) {
 			for (KnowledgeChangeTrigger kct : foundKCTs) {
-				for (TriggerListener listener : knowledgeChangeListeners
-						.get(kct)) {
+				for (TriggerListener listener : kcListeners.get(kct)) {
 					listener.triggered(kct);
 				}
 			}
