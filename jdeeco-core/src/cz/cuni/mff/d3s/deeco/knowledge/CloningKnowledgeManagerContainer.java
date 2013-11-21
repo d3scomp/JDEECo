@@ -4,6 +4,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
+ * 
+ * This container allows to deal with both local and replica knowledge managers by implementing both interfaces of {@link LocalKnowledgeManagerContainer} 
+ * and  {@link ReplicaKnowledgeManagerContainer}. 
+ * It acts as a factory for locals and replicas and gives the ability to register a local listener and a replica listener for the knowledge manager. Also, 
+ * it retrieves the available locals and replicas in a container.   
+ * 
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
  * 
  */
