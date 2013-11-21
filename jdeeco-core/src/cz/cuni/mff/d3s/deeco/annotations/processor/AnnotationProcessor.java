@@ -12,43 +12,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import cz.cuni.mff.d3s.deeco.annotations.Component;
-import cz.cuni.mff.d3s.deeco.annotations.Ensemble;
-import cz.cuni.mff.d3s.deeco.annotations.In;
-import cz.cuni.mff.d3s.deeco.annotations.InOut;
-import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
-import cz.cuni.mff.d3s.deeco.annotations.Membership;
-import cz.cuni.mff.d3s.deeco.annotations.Out;
-import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
+import cz.cuni.mff.d3s.deeco.annotations.*;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
-import cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange;
-import cz.cuni.mff.d3s.deeco.annotations.pathparser.ComponentIdentifier;
-import cz.cuni.mff.d3s.deeco.annotations.pathparser.EEnsembleParty;
-import cz.cuni.mff.d3s.deeco.annotations.pathparser.PNode;
-import cz.cuni.mff.d3s.deeco.annotations.pathparser.ParseException;
-import cz.cuni.mff.d3s.deeco.annotations.pathparser.PathParser;
+import cz.cuni.mff.d3s.deeco.annotations.pathparser.*;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Condition;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Exchange;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.*;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 
 /**
@@ -159,7 +130,8 @@ public class AnnotationProcessor {
 		if (obj == null) {
 			throw new AnnotationProcessorException("Provided object(s) cannot be null.");
 		}
-		Class<?> clazz = obj.getClass();
+		boolean isClass = (obj instanceof Class<?>);
+		Class<?> clazz = (isClass) ? (Class<?>) obj : obj.getClass();
 		boolean isC = isComponentDefinition(clazz);
 		boolean isE = isEnsembleDefinition(clazz);
 		if (isC && isE) {
@@ -168,6 +140,11 @@ public class AnnotationProcessor {
 					"->Both @" + Component.class.getSimpleName() + " or @" + Ensemble.class.getSimpleName() + " annotation found.");
 		}
 		if (isC) {
+			if (isClass) {
+				throw new AnnotationProcessorException(
+						"For a component to be parsed, it has to be an INSTANCE of a class annotated with @"
+								+ Component.class.getSimpleName() + ".");
+			}
 			ComponentInstance ci = createComponentInstance(obj);
 			model.getComponentInstances().add(ci);
 			// Create ensemble controllers for all the already-processed ensemble definitions
@@ -180,7 +157,7 @@ public class AnnotationProcessor {
 			return;
 		} 
 		if (isE) {
-			EnsembleDefinition ed = createEnsembleDefinition(obj);
+			EnsembleDefinition ed = createEnsembleDefinition(clazz);
 			model.getEnsembleDefinitions().add(ed);
 			// Create ensemble controllers for all the already-processed component instance definitions
 			for (ComponentInstance ci: model.getComponentInstances()) {
@@ -254,13 +231,7 @@ public class AnnotationProcessor {
 	 *            instance of a class annotated as @{@link EnsembleDefinition}
 	 *            <b>or</b> the annotated class object itself
 	 */
-	EnsembleDefinition createEnsembleDefinition(Object obj) throws AnnotationProcessorException {
-		Class<?> clazz;
-		if (obj instanceof Class<?>) {
-			clazz = (Class<?>) obj;	
-		} else {
-			clazz = obj.getClass();
-		}
+	EnsembleDefinition createEnsembleDefinition(Class<?> clazz) throws AnnotationProcessorException {
 		EnsembleDefinition ensembleDefinition = factory.createEnsembleDefinition();
 		ensembleDefinition.setName(clazz.getCanonicalName());
 		try {

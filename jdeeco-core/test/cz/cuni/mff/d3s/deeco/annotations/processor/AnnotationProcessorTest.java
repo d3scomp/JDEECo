@@ -90,6 +90,16 @@ public class AnnotationProcessorTest {
 		FileAssert.assertEquals(expected, tempFile);
 	}
 	
+	@Test 
+	public void testModelDirectlyFromEnsembleClassDefinition() throws AnnotationProcessorException {
+		RuntimeMetadata model = factory.createRuntimeMetadata();
+		processor.process(model, CorrectE1.class);
+		CorrectE1 input = new CorrectE1();
+		File expected = getExpectedFile(input);
+		saveInXMI(model, tempFile);
+		FileAssert.assertEquals(expected, tempFile);
+	}
+	
 	@Test
 	public void testSequencialUpdateOfTheSameModel() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
@@ -207,6 +217,14 @@ public class AnnotationProcessorTest {
 	}	
 	
 	@Test 
+	public void testExceptionsNonInitializedComponent() throws AnnotationProcessorException {
+		RuntimeMetadata model = factory.createRuntimeMetadata();
+		exception.expect(AnnotationProcessorException.class);
+		exception.expectMessage("For a component to be parsed, it has to be an INSTANCE of a class annotated with @Component.");
+		processor.process(model,CorrectC1.class);	
+	}
+	
+	@Test 
 	public void testExceptionsInClassAnnotations1() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
 		WrongCE1 input = new WrongCE1();
@@ -266,15 +284,26 @@ public class AnnotationProcessorTest {
 	}
 	
 	@Test 
-	public void testExceptionsInComponentParsing4()
-			throws AnnotationProcessorException {
+	public void testExceptionsInComponentParsing4() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
 		WrongC4 input = new WrongC4();
 		exception.expect(AnnotationProcessorException.class);
-		exception.expectMessage("" +
+		exception.expectMessage(
 				"Component: "+input.getClass().getCanonicalName()+"->" +
 				"Process: process1->" +
 				"No triggers were found.");
+		processor.process(model,input);
+	}
+	
+	@Test 
+	public void testExceptionsInComponentParsing5() throws AnnotationProcessorException {
+		RuntimeMetadata model = factory.createRuntimeMetadata();
+		WrongC5 input = new WrongC5();
+		exception.expect(AnnotationProcessorException.class);
+		exception.expectMessage(
+				"Component: "+input.getClass().getCanonicalName()+"->" +
+				"Process: process1->" +
+				"The component process cannot have zero parameters.");
 		processor.process(model,input);
 	}
 	
