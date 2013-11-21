@@ -14,7 +14,13 @@ public class SameThreadExecutor implements Executor {
 
 	protected ExecutionListener listener = null;
 	
-	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * <p>
+	 * The call is blocking, executes the task in the thread, which the method was called in.
+	 * </p>
+	 */
 	@Override
 	public void execute(Task task, Trigger trigger) {
 		if (task != null) {
@@ -35,6 +41,10 @@ public class SameThreadExecutor implements Executor {
 		}
 	}
 
+	
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.executor.Executor#setExecutionListener(cz.cuni.mff.d3s.deeco.executor.ExecutionListener)
+	 */
 	@Override
 	public void setExecutionListener(ExecutionListener listener) {
 		this.listener = listener;  

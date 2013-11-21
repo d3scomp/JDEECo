@@ -1,11 +1,7 @@
 package cz.cuni.mff.d3s.deeco.runtime;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -15,6 +11,7 @@ import cz.cuni.mff.d3s.deeco.executor.SameThreadExecutor;
 import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
+import cz.cuni.mff.d3s.deeco.runtime.RuntimeConfiguration.Distribution;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeConfiguration.Execution;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeConfiguration.Scheduling;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
@@ -34,7 +31,7 @@ public class RuntimeFrameworkBuilderTest {
 	@Test
 	public void testRuntimeFrameworkBuilderValidConfiguration()
 		throws Exception {
-		RuntimeConfiguration configuration = new RuntimeConfiguration(RuntimeConfiguration.Scheduling.WALL_TIME, RuntimeConfiguration.Distribution.LOCAL, RuntimeConfiguration.Execution.SINGLE_THREADED);
+		RuntimeConfiguration configuration = new RuntimeConfiguration(Scheduling.WALL_TIME, Distribution.LOCAL, Execution.SINGLE_THREADED);
 
 		RuntimeFrameworkBuilder result = new RuntimeFrameworkBuilder(configuration);
 

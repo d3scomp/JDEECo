@@ -20,5 +20,5 @@ public interface Scheduler extends ExecutionListener {
 	public void executionFailed(Task task, Exception e);
 	public void executionCompleted( Task task );
 	public void setExecutor(Executor executor);
-
-}
+	
+	void invokeAndWait(Runnable doRun) throws InterruptedException;}

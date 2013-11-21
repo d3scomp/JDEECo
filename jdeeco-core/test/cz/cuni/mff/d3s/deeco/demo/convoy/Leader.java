@@ -2,7 +2,6 @@ package cz.cuni.mff.d3s.deeco.demo.convoy;
 
 
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.annotations.Component;
