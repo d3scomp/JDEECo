@@ -3,18 +3,22 @@ package cz.cuni.mff.d3s.deeco.runtime;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import java.util.Arrays;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
 import cz.cuni.mff.d3s.deeco.executor.Executor;
+import cz.cuni.mff.d3s.deeco.knowledge.BaseKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerContainer;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
+import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
@@ -28,8 +32,7 @@ import cz.cuni.mff.d3s.deeco.task.Task;
  */
 public class RuntimeFrameworkImplTest {
 
-	@Rule
-	public ExpectedException thrown = ExpectedException.none();
+	
 	
 	Scheduler scheduler;
 	Executor executor;
@@ -37,26 +40,37 @@ public class RuntimeFrameworkImplTest {
 	
 	RuntimeMetadata model;	
 	
-	ComponentInstance component;
+	ComponentInstance component;	
 	ComponentProcess process;
 	EnsembleController econtroller;
 	
+	KnowledgeManager km;
+	KnowledgeManager kmReplacement;
+	
 	RuntimeFrameworkImpl spy;
-
+	
+	RuntimeMetadataFactory factory = RuntimeMetadataFactoryExt.eINSTANCE;
 	
 	@Before
 	public void setUp() throws Exception {
 		scheduler = mock(Scheduler.class);
 		executor = mock(Executor.class);
 		kmContainer = mock(CloningKnowledgeManagerContainer.class);
+		
 				
-		RuntimeMetadataFactory factory = RuntimeMetadataFactoryExt.eINSTANCE;
+
 		process = factory.createComponentProcess();
 		econtroller = factory.createEnsembleController();
+		km = mock(KnowledgeManager.class);
+		when(km.getId()).thenReturn("component");
 		
+		kmReplacement = new BaseKnowledgeManager("component");
+		when(kmContainer.createLocal(anyString())).thenReturn(kmReplacement);
+						
 		component = factory.createComponentInstance();
 		component.getComponentProcesses().add(process);
 		component.getEnsembleControllers().add(econtroller);
+		component.setKnowledgeManager(km);
 		
 		model = factory.createRuntimeMetadata();
 		model.getComponentInstances().add(component);
@@ -308,6 +322,18 @@ public class RuntimeFrameworkImplTest {
 		Adapter a = tested.componentInstanceAdapters.get(component);
 		assertNotNull(a);
 		assertTrue(component.eAdapters().contains(a));
+	}
+	
+	@Test
+	public void KMReplacedWhenComponentInstanceAdded() {
+		// GIVEN a non-initialized runtime 
+		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, false));		
+		
+		// WHEN adding a component instance		
+		tested.componentInstanceAdded(component);
+		
+		// THEN the runtime replaces the KM in the model by a new one
+		verify(tested).replaceKnowledgeManager(component);
 	}
 	
 	/* ************************************************************************
@@ -693,5 +719,44 @@ public class RuntimeFrameworkImplTest {
 		
 		// THEN the task associated with process is removed from the scheduler
 		verify(scheduler).removeTask(processTask);		
+	}
+	
+	/* ************************************************************************
+	 * replaceKnowledgeManager
+	 * ***********************************************************************/	
+	
+	@Test
+	public void replaceKnowledgeManagerReplacesTheKM() {		
+		// GIVEN a non-initialized runtime
+		RuntimeFrameworkImpl tested = new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, false);	
+		
+		// WHEN the replaceKnowledgeManager is called on an instance
+		tested.replaceKnowledgeManager(component);
+		
+		// THEN the KM of the instance is replaced by a new one created by kmContainer for the instance
+		verify(kmContainer).createLocal(km.getId());
+		assertEquals(kmReplacement, component.getKnowledgeManager());		
+	}
+	
+	@Test
+	public void replaceKnowledgeManagerCopiesTheContentsOfTheKM() throws KnowledgeNotFoundException {		
+		KnowledgePath kp = factory.createKnowledgePath();
+		PathNodeField pn = factory.createPathNodeField();
+		pn.setName("field");
+		kp.getNodes().add(pn);
+		Object knowledgeValue = new Object();
+		ValueSet vs = new ValueSet();
+		vs.setValue(kp, knowledgeValue);		
+		
+		when(km.get(anyCollectionOf(KnowledgePath.class))).thenReturn(vs);		
+		
+		// GIVEN a non-initialized runtime
+		RuntimeFrameworkImpl tested = new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, false);	
+		
+		// WHEN the replaceKnowledgeManager is called on an instance
+		tested.replaceKnowledgeManager(component);
+		
+		// THEN the new KM of the instance is initialized with the values from the previous one		
+		assertEquals(knowledgeValue, component.getKnowledgeManager().get(Arrays.asList(kp)).getValue(kp));
 	}
 }
