@@ -6,45 +6,57 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.emf.common.notify.Adapter;
-import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.impl.AdapterImpl;
-
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 import cz.cuni.mff.d3s.deeco.task.Task;
 
 /**
- * Container holding {@link Task}s corresponding to a single {@link ComponentInstance}.
+ * Container holding {@link Task}s corresponding to a single
+ * {@link ComponentInstance} within {@link RuntimeFramework}.
  * 
  * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
- *
+ * 
  */
 class ComponentInstanceRecord {
+	/**
+	 * @see ComponentInstanceRecord#getInstance()
+	 */
 	ComponentInstance componentInstance;
 	
+	/**
+	 * @see ComponentInstanceRecord#getProcessTasks()
+	 */
 	Map<ComponentProcess , Task> processTasks = new HashMap<>();
+
+	/**
+	 * @see ComponentInstanceRecord#getEnsembleTasks()
+	 */
 	Map<EnsembleController, Task> ensembleTasks = new HashMap<>();	
 
-	
+		
 	public ComponentInstanceRecord(ComponentInstance componentInstance) {
 		this.componentInstance = componentInstance;
 	}
 	
+	/**
+	 * The corresponding component instance.
+	 */
 	public ComponentInstance getInstance() {
 		return componentInstance;
 	}
 
 	/**
-	 * Returns tasks associated with the processes of the corresponding
-	 * component instance.
+	 * The tasks corresponding to processes of the instance.
 	 */
 	public Map<ComponentProcess , Task> getProcessTasks() {
 		return processTasks;
 	}		
 	
 	
+	/**
+	 * The tasks corresponding to ensemble controllers of the instance.
+	 */
 	public Map<EnsembleController, Task> getEnsembleTasks() {
 		return ensembleTasks;
 	}

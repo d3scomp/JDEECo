@@ -22,13 +22,14 @@ import java.lang.annotation.Target;
 
 /**
  * Used to mark a method parameter to be a process output parameter for a
- * component process evaluation. Such parameter will be instantiated by the
- * system and passed to the method for invocation. After the method execution it
- * will be stored in the knowledge repository.
- * 
- * The attribute <code>value</code> is dot separated absolute path, describing
- * the nesting in the component knowledge for which matching should be
- * performed.
+ * component process evaluation. Such parameter will <i>not</i> be retrieved
+ * form the knowledge repository, but will be instantiated by the system and
+ * passed to the method for invocation. After the method execution it will be
+ * stored in the knowledge repository.
+ * <p>
+ * The attribute <code>value</code> is dot-separated absolute path, describing
+ * the path pointing to an object in the component knowledge.
+ * </p>
  * 
  * @author Michal Kit
  * 

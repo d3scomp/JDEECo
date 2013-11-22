@@ -4,9 +4,10 @@ public enum EEnsembleParty {
 	COORDINATOR, MEMBER;
 	
 	public String toString() {
-		if (this.equals(MEMBER))
+		if (this.equals(MEMBER)) {
 			return PathGrammar.MEMBER;
-		else
+		} else {
 			return PathGrammar.COORD;
+		}
 	}
 }

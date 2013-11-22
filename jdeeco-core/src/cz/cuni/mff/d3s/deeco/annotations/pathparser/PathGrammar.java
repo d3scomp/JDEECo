@@ -13,9 +13,5 @@ public class PathGrammar {
 	 * Identifier used to describe an ensemble member
 	 */
 	public static final String MEMBER = "member";
-	
-	/**
-	 * Identifier for a component instance
-	 */
-	public static final String ID = "id";
+
 }

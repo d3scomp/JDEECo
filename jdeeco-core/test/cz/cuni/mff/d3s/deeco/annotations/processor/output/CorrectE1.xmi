@@ -5,7 +5,7 @@
       <parameters direction="IN">
         <knowledgePath>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeMember"/>
-          <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="id"/>
+          <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeComponentId"/>
         </knowledgePath>
       </parameters>
       <parameters direction="IN">
@@ -26,7 +26,7 @@
       <parameters direction="IN">
         <knowledgePath>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeMember"/>
-          <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="id"/>
+          <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeComponentId"/>
         </knowledgePath>
       </parameters>
     </knowledgeExchange>

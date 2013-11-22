@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.deeco.runtime;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,12 +9,20 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
+import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerContainer;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
+import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistryImpl;
+import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
+import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.task.EnsembleTask;
@@ -21,29 +30,80 @@ import cz.cuni.mff.d3s.deeco.task.ProcessTask;
 import cz.cuni.mff.d3s.deeco.task.Task;
 
 /**
+ * JDEECo runtime framework implementation.
+ * 
+ * <p>
+ * The class acts as a management container over the internal jDEECo services (
+ * {@link Scheduler}, {@link Executor}, {@link CloningKnowledgeManagerContainer}
+ * ) and the {@link RuntimeMetadata} model.
+ * </p> 
+ * 
+ * <p>
+ * The main purpose is to observe the changes in the model and control the
+ * {@link Scheduler} and {@link Executor} accordingly. In particular, the
+ * runtime framework observes the following:
+ * - whether a component instance was added/removed</br>
+ * - whether a process/ensemble controller was added/removed from an existing instance</br>
+ * - whether {@link ComponentProcess#isIsActive()} for an existing process changed</br> 
+ * </p>
+ * 
+ * <p>
+ * All the internal services are passed to the runtime explicitly, which allows
+ * for sharing of these services among multiple runtime framework instances.
+ * </p>
+ * 
+ * <p>
+ * The class is not thread safe (modifying the model from multiple threads can 
+ * result in race conditions in model change listeners of the runtime framework).
+ * </p>
  * 
  * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
- *
+ * 
  */
 public class RuntimeFrameworkImpl implements RuntimeFramework {
 	
-	protected Scheduler scheduler;
+	/**
+	 * The model corresponding to the running application.
+	 */
 	protected RuntimeMetadata model;
-	protected Executor executor;
+	
+	
+	/** 
+	 * The scheduler used by the runtime.
+	 */
+	protected Scheduler scheduler;	
+	
+	/**
+	 * The executor used by the runtime.
+	 */
+	protected Executor executor;	
+	/**
+	 * The KM container used by the runtime.
+	 */
 	protected CloningKnowledgeManagerContainer kmContainer;
 	
+	/**
+	 * Keeps track of each instance's tasks.
+	 */
 	protected Map<ComponentInstance, ComponentInstanceRecord> componentRecords = new HashMap<>();
 		
-	protected Map<ComponentInstance, Adapter> componentInstanceAdapters = new HashMap<>();
+	
+	/**
+	 * Keeps track of ecore adapters for component instances.
+	 */
+	protected Map<ComponentInstance, Adapter> componentInstanceAdapters = new HashMap<>();	
+	/**
+	 * Keeps track of ecore adapters for component processes.
+	 */
 	protected Map<ComponentProcess, Adapter> componentProcessAdapters = new HashMap<>();
 
 	
 
 	/**
-	 * Initializes the runtime with the given runtime services and prepares the
+	 * Initializes the runtime with the given internal services and prepares the
 	 * model for execution.
 	 * 
-	 * It also registers adaptors for reacting to changes in the model.
+	 * It also registers adaptors for observing the changes in the model.
 	 * 
 	 * @param model
 	 *            model of the application to be executed.
@@ -54,13 +114,22 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 	 * @param kmRegistry
 	 *            the KM registry to be used for management of knowledge repositories.
 	 * 
-	 * FIXME: add synchronizer/network container in the constructor
+	 * TODO: add synchronizer/network container in the constructor
+	 * 
+	 * @throws IllegalArgumentException if either of the arguments is null.
 	 */
 	public RuntimeFrameworkImpl(RuntimeMetadata model, Scheduler scheduler,
 			Executor executor, CloningKnowledgeManagerContainer kmContainer) {
 		this(model, scheduler, executor, kmContainer, true);
 	}
 	
+	/**
+	 * Convenience constructor to make the initialization of the runtime upon
+	 * creation optional. The public constructor has it always mandatory.
+	 * 
+	 * @see RuntimeFrameworkImpl#RuntimeFrameworkImpl(RuntimeMetadata, Scheduler, Executor, CloningKnowledgeManagerContainer)
+	 * @see RuntimeFrameworkImpl#init()
+	 */
 	RuntimeFrameworkImpl(RuntimeMetadata model, Scheduler scheduler,
 			Executor executor, CloningKnowledgeManagerContainer kmContainer, boolean autoInit) {
 		if (model == null)
@@ -82,8 +151,11 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 	}
 
 	/**
-	 * Creates and initializes all the internal runtime objects based on the
-	 * {@link #model} and {@link #configuration}.
+	 * Initializes the internal services based on the {@link #model}. It also
+	 * registers adaptors for listening to changes in the model.
+	 * <p>
+	 * Logs errors but does no throw any exceptions.
+	 * </p>
 	 */
 	void init() {		
 		// initialize the components
@@ -115,6 +187,20 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 	/**
 	 * Implementation of a notification indicating that a new component instance
 	 * has been added to the model.
+	 * 
+	 * <p>
+	 * Creates and schedules new tasks for existing component processes and ensemble controllers.
+	 * Registers adaptors for listening to changes in the {@code instance}. 
+	 * </p>
+	 * 
+	 * <p>
+	 * Logs errors but does not throw any exceptions.
+	 * TODO: throw exceptions and catch them in the callbacks (if this method is
+	 * used from init() the exceptions will propagate to the caller)
+	 * </p>
+	 * 
+	 * @see RuntimeFrameworkImpl#componentProcessAdded(ComponentInstance, ComponentProcess)
+	 * 
 	 */
 	void componentInstanceAdded(final ComponentInstance instance) {
 		if (instance == null) {
@@ -130,6 +216,9 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 		ComponentInstanceRecord ciRecord = new ComponentInstanceRecord(instance);
 		componentRecords.put(instance, ciRecord);
 		
+		// replace the KM with one created via kmContainer
+		replaceKnowledgeManager(instance);
+		
 		for (ComponentProcess p: instance.getComponentProcesses()) {			
 			componentProcessAdded(instance, p);
 		}
@@ -141,7 +230,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 			ciRecord.getEnsembleTasks().put(ec, task);
 			scheduler.addTask(task);						
 		}
-				
+						
 		// register adapters to listen for model changes
 		// listen to ADD/REMOVE in ComponentInstance.getComponentProcesses()
 		Adapter componentInstanceAdapter = new AdapterImpl() {
@@ -162,6 +251,54 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 		componentInstanceAdapters.put(instance, componentInstanceAdapter);
 	}
 	
+	/** 
+	 * Replaces the KM in the component instance with a KM created via {@link #kmContainer}.
+	 */
+	void replaceKnowledgeManager(ComponentInstance ci) {			
+		ValueSet initialKnowledge = null;
+		try {
+			KnowledgePath empty = RuntimeMetadataFactoryExt.eINSTANCE.createKnowledgePath();
+			// get all the knowledge (corresponding to an empty knowledge path)
+			initialKnowledge = ci.getKnowledgeManager().get(Arrays.asList(empty));
+		} catch (KnowledgeNotFoundException e) {
+			Log.w("No initial knowledge value cor component " + ci.getKnowledgeManager().getId());
+		}
+		
+		// copy all the knowledge values into a ChangeSet
+		ChangeSet cs = new ChangeSet();
+		if (initialKnowledge != null) {
+			for (KnowledgePath p: initialKnowledge.getKnowledgePaths()) {
+				cs.setValue(p, initialKnowledge.getValue(p));
+			}			
+		}
+		
+		// create a new KM with the same id and knowledge values
+		KnowledgeManager km = kmContainer.createLocal(ci.getKnowledgeManager().getId());
+		try {
+			km.update(cs);
+		} catch (KnowledgeUpdateException e) {
+			Log.e("bindKnowledgeManagerContainer: exception when updating the knowledge manager", e);
+		}
+		// replace the KM and the KMView references
+		ci.setKnowledgeManager(km);	
+		ci.setShadowKnowledgeManagerRegistry(new ShadowKnowledgeManagerRegistryImpl(km, kmContainer));			
+	}
+	
+	/**
+	 * Implementation of a notification indicating that a new component process
+	 * has been added to the model. 
+	 * 
+	 * <p>
+	 * Creates a new task for the process and schedules it if the process is active.
+	 * Registers an adaptor for listening to changes in the {@code process}. 
+	 * </p> 
+	 * <p>
+	 * Logs errors but does not throw any exceptions.
+	 * </p>
+	 * 
+	 * @see RuntimeFrameworkImpl#componentProcessActiveChanged(ComponentProcess, boolean) 
+	 * 
+	 */
 	void componentProcessAdded(final ComponentInstance instance,
 			final ComponentProcess process) {
 		if ((instance == null) || (process == null)) {
@@ -200,9 +337,23 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 		componentProcessAdapters.put(process, componentProcessAdapter);
 	} 
 	
+	/**
+	 * Implementation of a notification indicating that a process became (in)active.
+	 * 
+	 * <p>
+	 * Schedules the corresponding task accordingly.   
+	 * </p> 
+	 * <p>
+	 * Logs errors but does not throw any exceptions.
+	 * </p>
+	 * 
+	 * @see Scheduler#addTask(Task)
+	 * @see Scheduler#removeTask(Task) 
+	 * 
+	 */
 	void componentProcessActiveChanged(ComponentProcess process, boolean active) {		
 		if (process == null) {
-			Log.w(String.format("Attempting to to change the activity of an invalid process (%s).", process));
+			Log.w("Attempting to to change the activity of a null process.");
 			return;
 		}
 		// the instance is not registered 
@@ -228,6 +379,17 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 	/**
 	 * Implementation of a notification indicating that an existing component
 	 * instance has been removed from the model.
+	 * 
+	 * <p>
+	 * Removes and de-schedules the corresponding tasks for the removed instance.
+	 * Unregisters the ecore adaptors from the instance. 
+	 * </p>
+	 * 
+	 * <p>
+	 * Logs errors but does not throw any exceptions.	
+	 * </p>
+	 * 
+	 * @see RuntimeFrameworkImpl#componentProcessRemoved(ComponentInstance, ComponentProcess)
 	 */
 	void componentInstanceRemoved(ComponentInstance instance) {
 		if (instance == null) {
@@ -259,6 +421,21 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 		}		
 	}
 	
+	/**
+	 * Implementation of a notification indicating that an existing component
+	 * process has been removed from the model.
+	 * 
+	 * <p>
+	 * De-schedules and discards the task corresponding to the removed process.
+	 * Unregisters the ecore adaptors from the process. 
+	 * </p>
+	 * 
+	 * <p>
+	 * Logs errors but does not throw any exceptions.	
+	 * </p>
+	 * 
+	 * @see RuntimeFrameworkImpl#componentProcessActiveChanged(ComponentProcess, boolean)
+	 */
 	void componentProcessRemoved(ComponentInstance instance,
 			ComponentProcess process) {
 		if ((instance == null) || (process == null)) {
@@ -277,14 +454,15 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 			return;
 		}
 		
-		componentProcessActiveChanged(process, false);
-		
-		cir.getProcessTasks().remove(process);
-		
+		// unregister the adapter before the task is discarded 
 		if (componentProcessAdapters.containsKey(process)) { 
 			process.eAdapters().remove(componentProcessAdapters.get(process));
 			componentProcessAdapters.remove(process);
 		}	
+		
+		componentProcessActiveChanged(process, false);
+		
+		cir.getProcessTasks().remove(process);		
 	}
 	
 	
@@ -305,6 +483,14 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 		scheduler.stop();
 	}
 	
+	
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework#invokeAndWait(java.lang.Runnable)
+	 */
+	@Override
+	public void invokeAndWait(Runnable r) throws InterruptedException {
+		scheduler.invokeAndWait(r);		
+	}
 	
 
 }

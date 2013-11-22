@@ -4,6 +4,6 @@ public enum ComponentIdentifier {
 	ID;
 	
 	public String toString() {
-			return PathGrammar.ID;
+			return "id";
 	}
 }
