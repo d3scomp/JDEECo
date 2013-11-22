@@ -24,12 +24,12 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 @SuppressWarnings("unchecked")
 public class BaseKnowledgeManager implements KnowledgeManager {
 
-	private transient Map<KnowledgePath, Object> knowledge;
+	private transient final Map<KnowledgePath, Object> knowledge;
 	private transient final Map<KnowledgeChangeTrigger, List<TriggerListener>> kcListeners;
 
 	private transient final String identifier;
 
-	public BaseKnowledgeManager(String identifier) {
+	public BaseKnowledgeManager(final String identifier) {
 		this.identifier = identifier;
 		this.knowledge = new HashMap<>();
 		this.kcListeners = new HashMap<>();
@@ -48,7 +48,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	 * .Collection)
 	 */
 	@Override
-	public ValueSet get(Collection<KnowledgePath> knowledgePaths)
+	public ValueSet get(final Collection<KnowledgePath> knowledgePaths)
 			throws KnowledgeNotFoundException {
 		final ValueSet result = new ValueSet();
 		Object value;
@@ -78,7 +78,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	 * cz.cuni.mff.d3s.deeco.knowledge.TriggerListener)
 	 */
 	@Override
-	public void register(Trigger trigger, TriggerListener triggerListener) {
+	public void register(final Trigger trigger, final TriggerListener triggerListener) {
 		// At the moment we consider only KnowledgeChangeListener as a
 		// TriggerListener
 		if (trigger instanceof KnowledgeChangeTrigger) {
@@ -103,7 +103,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	 * cz.cuni.mff.d3s.deeco.knowledge.TriggerListener)
 	 */
 	@Override
-	public void unregister(Trigger trigger, TriggerListener triggerListener) {
+	public void unregister(final Trigger trigger, final TriggerListener triggerListener) {
 		// At the moment we consider only KnowledgeChangeListener as a
 		// TriggerListener
 		if (trigger instanceof KnowledgeChangeTrigger) {
@@ -129,7 +129,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	 * .deeco.knowledge.ChangeSet)
 	 */
 	@Override
-	public void update(ChangeSet changeSet) throws KnowledgeUpdateException {
+	public void update(final ChangeSet changeSet) throws KnowledgeUpdateException {
 		final Map<KnowledgePath, Object> updated = new HashMap<>();
 		final List<KnowledgePath> added = new LinkedList<>();
 		Object original = null;
@@ -195,9 +195,9 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
-	public boolean equals(Object that) {
+	public boolean equals(final Object that) {
 		boolean result = false;
-		if (that != null && that instanceof BaseKnowledgeManager) {
+		if (that instanceof BaseKnowledgeManager) {
 			result = ((BaseKnowledgeManager) that).identifier
 					.equals(identifier);
 		}
@@ -223,7 +223,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	 * @throws KnowledgeNotFoundException
 	 *             thrown when the requested data cannot be found
 	 */
-	protected Object getKnowledge(List<PathNode> knowledgePath)
+	protected Object getKnowledge(final List<PathNode> knowledgePath)
 			throws KnowledgeNotFoundException {
 		assert knowledgePath != null;
 		Object result = null;
@@ -272,8 +272,8 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	 * @throws KnowledgeUpdateException
 	 *             thrown when the update failed.
 	 */
-	protected void updateKnowledge(KnowledgePath knowledgePath, Object value)
-			throws KnowledgeUpdateException {
+	protected void updateKnowledge(final KnowledgePath knowledgePath,
+			final Object value) throws KnowledgeUpdateException {
 		if (noPathOverlapWithAny(knowledgePath, knowledge.keySet())) {
 			knowledge.put(knowledgePath, value);
 		} else {
@@ -300,13 +300,14 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 								"Forbidden update: path overlaps - "
 										+ knowledgePath);
 					}
-				} else
+				} else {
 					((Map<String, Object>) parent).put(fieldName, value);
+				}
 			} else {
 				try {
 					final Field field = parent.getClass().getField(fieldName);
 					field.set(parent, value);
-				} catch (Exception e) {
+				} catch (final NoSuchFieldException | IllegalAccessException e) {
 					throw new KnowledgeUpdateException("Forbidden update: "
 							+ e.getMessage() + " - " + knowledgePath);
 				}
@@ -353,9 +354,9 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		} else {
 			// Otherwise, get the path to the parent (owner) of the object being
 			// deleted.
-			List<PathNode> pathNodesToParent = new LinkedList<>(
+			final List<PathNode> pathNodesToParent = new LinkedList<>(
 					knowledgePath.getNodes());
-			String fieldName = ((PathNodeField) pathNodesToParent
+			final String fieldName = ((PathNodeField) pathNodesToParent
 					.remove(pathNodesToParent.size() - 1)).getName();
 			Object parent = null;
 			try {
@@ -387,44 +388,37 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	 * @throws KnowledgeNotFoundException
 	 *             thrown when the requested data does not exist
 	 */
-	private Object getKnowledgeFromNode(List<PathNode> knowledgePath,
-			Object node) throws KnowledgeNotFoundException {
+	private Object getKnowledgeFromNode(final List<PathNode> knowledgePath,
+			final Object node) throws KnowledgeNotFoundException {
 		Object currentObject = node;
 		Field currentField;
 		String fieldName = null;
 		try {
 			// For each path node in the knowledge path, we need to go deeper
 			// into object structure using reflection
-			for (PathNode pn : knowledgePath) {
+			for (final PathNode pn : knowledgePath) {
 				try {
 					fieldName = ((PathNodeField) pn).getName();
 					currentField = currentObject.getClass().getField(fieldName);
 					currentObject = currentField.get(currentObject);
 				} catch (NoSuchFieldException nfe) {
-					// Object does not have such a field.
-					// We need to consider maps and lists indexed by the current
-					// path node
-					currentField = null;
-					try {
-						if (currentObject instanceof List<?>) {
-							currentObject = ((List<?>) currentObject)
-									.get(Integer.parseInt(fieldName));
-						} else if (currentObject instanceof Map<?, ?>) {
-							Map<String, Object> currentObjectAsMap = (Map<String, Object>) currentObject;
-							if (currentObjectAsMap.containsKey(fieldName))
-								currentObject = currentObjectAsMap
-										.get(fieldName);
-							else
-								throw new KnowledgeNotFoundException();
-						} else {
+					// Object does not have such a field. We need to consider
+					// maps and lists indexed by the current path node.
+					if (currentObject instanceof List<?>) {
+						currentObject = ((List<?>) currentObject).get(Integer
+								.parseInt(fieldName));
+					} else if (currentObject instanceof Map<?, ?>) {
+						final Map<String, Object> currentObjectAsMap = (Map<String, Object>) currentObject;
+						if (currentObjectAsMap.containsKey(fieldName))
+							currentObject = currentObjectAsMap.get(fieldName);
+						else
 							throw new KnowledgeNotFoundException();
-						}
-					} catch (Exception e) {
+					} else {
 						throw new KnowledgeNotFoundException();
 					}
 				}
 			}
-		} catch (IllegalAccessException e) {
+		} catch (final IllegalAccessException e) {
 			throw new KnowledgeNotFoundException();
 		}
 		return currentObject;
@@ -439,12 +433,12 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	 * @return
 	 */
 	private Map<KnowledgePath, Object> deleteKnowledge(
-			Collection<KnowledgePath> knowledgePaths) {
-		Map<KnowledgePath, Object> deleted = new HashMap<>();
+			final Collection<KnowledgePath> knowledgePaths) {
+		final Map<KnowledgePath, Object> deleted = new HashMap<>();
 		// First lets delete free (root) nodes
-		List<KnowledgePath> reducedKnowledgePaths = new LinkedList<>(
+		final List<KnowledgePath> reducedKnowledgePaths = new LinkedList<>(
 				knowledgePaths);
-		for (KnowledgePath kp : knowledgePaths) {
+		for (final KnowledgePath kp : knowledgePaths) {
 			if (knowledge.containsKey(kp)) {
 				deleted.put(kp, knowledge.get(kp));
 				knowledge.remove(kp);
@@ -456,7 +450,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		List<PathNode> pathNodesToParent;
 		String fieldName;
 		Object parent;
-		final Map<Object, List<String>> parentsToDeleteKeys = new HashMap<>();
+		final Map<Object, List<String>> parentsToPaths = new HashMap<>();
 		List<String> keysToDelete;
 		// We need to go through the remaining paths and collect paths to
 		// the owners of the objects being deleted.
@@ -468,21 +462,21 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 				fieldName = ((PathNodeField) pathNodesToParent
 						.remove(pathNodesToParent.size() - 1)).getName();
 				parent = getKnowledge(pathNodesToParent);
-				if (parentsToDeleteKeys.containsKey(parent)) {
-					keysToDelete = parentsToDeleteKeys.get(parent);
+				if (parentsToPaths.containsKey(parent)) {
+					keysToDelete = parentsToPaths.get(parent);
 				} else {
 					keysToDelete = new LinkedList<>();
-					parentsToDeleteKeys.put(parent, keysToDelete);
+					parentsToPaths.put(parent, keysToDelete);
 				}
 				keysToDelete.add(fieldName);
-			} catch (Exception e) {
+			} catch (final KnowledgeNotFoundException e) {
 				continue;
 			}
 		}
 		// Now we need to go through collected parents and try to remove the
 		// the objects from them.
-		for (final Object p : parentsToDeleteKeys.keySet()) {
-			keysToDelete = parentsToDeleteKeys.get(p);
+		for (final Object p : parentsToPaths.keySet()) {
+			keysToDelete = parentsToPaths.get(p);
 			// We need to sort the keys in order to start deleting from the end.
 			// This is important for list consitency.
 			Collections.sort(keysToDelete);
@@ -507,7 +501,8 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	 * @param knowledgePath
 	 *            knowledge path for which knowledge value has changed.
 	 */
-	private void notifyKnowledgeChangeListeners(KnowledgePath knowledgePath) {
+	private void notifyKnowledgeChangeListeners(
+			final KnowledgePath knowledgePath) {
 		List<PathNode> kctNodes;
 		final List<PathNode> kpNodes = knowledgePath.getNodes();
 		// Go through each knowledge change trigger
@@ -538,7 +533,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	 * @param shorter
 	 * @return
 	 */
-	private int containmentEndIndex(List<?> longer, List<?> shorter) {
+	private int containmentEndIndex(final List<?> longer, final List<?> shorter) {
 		assert (longer != null && shorter != null);
 		// We need this as EList has differs in implementation of List
 		// specification, See indexOf method.
