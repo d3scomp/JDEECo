@@ -20,9 +20,9 @@ public interface ShadowKnowledgeManagerRegistry {
 	 * Registers the specified trigger and its listener within this shadow knowledge
 	 * manager registry.
 	 * 
-	 * @param {@link trigger}
+	 * @param {@link Trigger}
 	 *            trigger to be listen for.
-	 * @param {@link triggerListener}
+	 * @param {@link ShadowsTriggerListener}
 	 *            listener to be notified in case of triggering event.
 	 */
 	public void register(Trigger trigger, ShadowsTriggerListener triggerListener);
@@ -31,9 +31,9 @@ public interface ShadowKnowledgeManagerRegistry {
 	 * Unregisters the specified trigger and its listener from this shadow knowledge
 	 * manager registry.
 	 * 
-	 * @param {@link trigger}
+	 * @param {@link Trigger}
 	 *            trigger to be unregistered.
-	 * @param {@link triggerListener}
+	 * @param {@link ShadowsTriggerListener}
 	 *            listener to be unregistered.
 	 */
 	public void unregister(Trigger trigger, ShadowsTriggerListener triggerListener);
