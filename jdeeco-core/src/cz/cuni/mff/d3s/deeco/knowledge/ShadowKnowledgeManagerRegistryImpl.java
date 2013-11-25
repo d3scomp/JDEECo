@@ -136,6 +136,7 @@ public class ShadowKnowledgeManagerRegistryImpl implements ShadowKnowledgeManage
 
 		listeners.add(triggerListener);
 		List<KnowledgeManager> kms = new LinkedList<>();
+		// FIXME : Rima : I think it should remove the self knowledge manager since it is concerning the shadows only?????
 		kms.addAll(container.getLocals());
 		kms.addAll(container.getReplicas());
 
