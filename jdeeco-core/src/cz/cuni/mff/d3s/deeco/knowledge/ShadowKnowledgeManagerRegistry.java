@@ -16,7 +16,26 @@ public interface ShadowKnowledgeManagerRegistry {
 	
 	public Collection<ReadOnlyKnowledgeManager> getShadowKnowledgeManagers();
 
+	/**
+	 * Registers the specified trigger and its listener within this shadow knowledge
+	 * manager registry.
+	 * 
+	 * @param {@link Trigger}
+	 *            trigger to be listen for.
+	 * @param {@link ShadowsTriggerListener}
+	 *            listener to be notified in case of triggering event.
+	 */
 	public void register(Trigger trigger, ShadowsTriggerListener triggerListener);
+
+	/**
+	 * Unregisters the specified trigger and its listener from this shadow knowledge
+	 * manager registry.
+	 * 
+	 * @param {@link Trigger}
+	 *            trigger to be unregistered.
+	 * @param {@link ShadowsTriggerListener}
+	 *            listener to be unregistered.
+	 */
 	public void unregister(Trigger trigger, ShadowsTriggerListener triggerListener);
 	
 }

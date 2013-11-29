@@ -32,20 +32,23 @@ public class CloningKnowledgeManagerContainer implements
 	public KnowledgeManager createLocal(String id) {
 		KnowledgeManager result = new CloningKnowledgeManager(id);
 		locals.add(result);
-		for (LocalListener listener : localListeners)
+		for (LocalListener listener : localListeners){
 			listener.localCreated(result, this);
+		}
 		return result;
 	}
 
 	@Override
 	public KnowledgeManager removeLocal(KnowledgeManager km) {
+		KnowledgeManager kmVar = null;
 		if (locals.contains(km)) {
 			locals.remove(km);
-			for (LocalListener listener : localListeners)
+			for (LocalListener listener : localListeners){
 				listener.localRemoved(km, this);
-			return km;
+			}
+			kmVar = km;
 		}
-		return null;
+		return kmVar;
 	}
 
 	@Override
@@ -55,19 +58,22 @@ public class CloningKnowledgeManagerContainer implements
 
 	@Override
 	public void registerLocalListener(LocalListener listener) {
-		if (!localListeners.contains(listener))
+		if (!localListeners.contains(listener)){
 			localListeners.add(listener);
+		}
 	}
 
 	@Override
 	public KnowledgeManager removeReplica(KnowledgeManager km) {
+		KnowledgeManager kmVar = null;
 		if (replicas.contains(km)) {
 			replicas.remove(km);
-			for (ReplicaListener listener : replicaListeners)
+			for (ReplicaListener listener : replicaListeners){
 				listener.replicaRemoved(km, this);
-			return km;
+			}
+			kmVar = km;
 		}
-		return null;
+		return kmVar;
 	}
 
 	@Override
@@ -77,20 +83,23 @@ public class CloningKnowledgeManagerContainer implements
 
 	@Override
 	public void registerReplicaListener(ReplicaListener listener) {
-		if (!replicaListeners.contains(listener))
+		if (!replicaListeners.contains(listener)){
 			replicaListeners.add(listener);
+		}
 	}
 
 	@Override
 	public KnowledgeManager createReplica(String id) {
+		KnowledgeManager kmVar = null;
 		KnowledgeManager result = new CloningKnowledgeManager(id);
 		if (!(locals.contains(result) || replicas.contains(result))) {
 			replicas.add(result);
-			for (ReplicaListener listener : replicaListeners)
+			for (ReplicaListener listener : replicaListeners){
 				listener.replicaCreated(result, this);
-			return result;
-		} else
-			return null;
+			}
+			kmVar = result;
+		}
+		return kmVar;
 	}
 
 }
