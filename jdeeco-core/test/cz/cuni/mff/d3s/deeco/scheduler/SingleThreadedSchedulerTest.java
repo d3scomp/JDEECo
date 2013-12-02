@@ -34,8 +34,6 @@ public class SingleThreadedSchedulerTest extends SchedulerTest {
 	
 	@Override
 	protected Scheduler setUpTested(Executor executor) {
-		TaskQueue queue = mock(TaskQueue.class);
-		//SingleThreadedScheduler s = new SingleThreadedScheduler(queue);
 		Scheduler s = new SingleThreadedScheduler();
 		s.setExecutor(executor);		
 		return s;
@@ -58,7 +56,7 @@ public class SingleThreadedSchedulerTest extends SchedulerTest {
 		// Locking on tested.queue to modify the thread value
 		// This flag set to false means that the scheduler thread
 		// is terminated for good and no new tasks will be scheduled
-		// WHEN flag triggeres that the queue is empty
+		// WHEN flag triggers that the queue is empty
 		synchronized (tested.queue) {
 			tested.thread.newTasksMayBeScheduled = false;
 		}
@@ -79,9 +77,9 @@ public class SingleThreadedSchedulerTest extends SchedulerTest {
 		Task t= mock(Task.class);
 		PeriodicTrigger trigger = mock(PeriodicTrigger.class);
 
-		// And stubbing their behaviour
-		// Task period has to be big. We donr need to run
-		// the task too often since we dont need it
+		// And stubbing their behavior
+		// Task period has to be big. We don't need to run
+		// the task too often since we don't need it
 		when(trigger.getPeriod()).thenReturn(20000L);  
 		when(t.getPeriodicTrigger()).thenReturn(trigger);
 		
@@ -97,7 +95,7 @@ public class SingleThreadedSchedulerTest extends SchedulerTest {
 			assertEquals(1, tested.queue.size());
 			// Remove it
 			tested.removeTask(t);
-			// And wake up the thread waiting for the next period (which is comming in 20sec)
+			// And wake up the thread waiting for the next period (which is coming in 20sec)
 			tested.queue.notify();
 		}
 		

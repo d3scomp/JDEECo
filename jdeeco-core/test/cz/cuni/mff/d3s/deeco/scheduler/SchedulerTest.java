@@ -1,10 +1,7 @@
 package cz.cuni.mff.d3s.deeco.scheduler;
 
-import static org.mockito.Matchers.any;
-
 import static org.mockito.Mockito.*;
 
-import static org.junit.Assert.*;
 import org.junit.*;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -24,7 +21,7 @@ import cz.cuni.mff.d3s.deeco.task.TaskTriggerListener;
  * */
 public abstract class SchedulerTest  {
 
-	private Scheduler tested;
+	protected Scheduler tested;
 	private Executor executor;
 	private TaskTriggerListener testListener;
 	
@@ -49,12 +46,12 @@ public abstract class SchedulerTest  {
 		final Task t = mock(Task.class);
 		PeriodicTrigger p = mock(PeriodicTrigger.class);
 		// Stubbing mocks.
-		// The period is chosen to be 300 ms because the SingleThreadedScheduler 
+		// The period is chosen to be 300 millis because the SingleThreadedScheduler 
 		// may not able to spawn a thread and execute it properly in a shorter 
 		// period of time causing a test failure 
 		when(p.getPeriod()).thenReturn(300L);
 		when(t.getPeriodicTrigger()).thenReturn(p);
-		doAnswer(new Answer() {
+		doAnswer(new Answer<Object>() {
 			    public Object answer(InvocationOnMock invocation) {
 			        Object[] args = invocation.getArguments();
 			        tested.executionCompleted((Task)args[0]);
@@ -234,27 +231,6 @@ public abstract class SchedulerTest  {
 		tested.start();
 		// THEN nothing happens anymore
 		verify(t, never()).setTriggerListener(any(TaskTriggerListener.class));
-	}
-	
-	// TODO: decide whether this is really needed
-	@Test
-	@Ignore
-	public void testTriggerListenerUnregisteredAfterStopWhenAdded() {
-		Task t = mock(Task.class);
-		tested.start();
-		tested.addTask(t);
-		
-		// WHEN a scheduler with a single added task is stopped
-		tested.stop();
-		
-		// THEN the scheduler unregisters its trigger listener for the task
-		verify(t, times(1)).unsetTriggerListener();
-		
-		// WHEN repeating the action
-		reset(t);
-		tested.stop();
-		// THEN nothing happens anymore
-		verify(t, never()).unsetTriggerListener();
 	}
 	
 	/**
