@@ -8,7 +8,7 @@ import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
-import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
+import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 
 @Component
 public class RobotLeaderComponent {
@@ -20,7 +20,6 @@ public class RobotLeaderComponent {
 	public List<Path> crossingRobots;
 
 	public RobotLeaderComponent() {
-//		this.id = "leader"; FIXME(IG)
 		this.battery = new Integer(100);
 		this.path = new Path();
 		this.path.currentPosition = new Integer(0);
@@ -36,7 +35,7 @@ public class RobotLeaderComponent {
 	@PeriodicScheduling(3000)
 	@Process
 	public static void process(@InOut("path") Path path,
-			@InOut("battery") OutWrapper<Integer> battery) {
+			@InOut("battery") ParamHolder<Integer> battery) {
 		if (path.remainingPath.size() > 0) {
 			path.currentPosition = path.remainingPath.remove(0);
 			battery.value = new Integer(battery.value - 1);

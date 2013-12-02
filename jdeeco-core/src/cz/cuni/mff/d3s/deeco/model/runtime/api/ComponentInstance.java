@@ -3,7 +3,7 @@
 package cz.cuni.mff.d3s.deeco.model.runtime.api;
 
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView;
+import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry;
 
 import org.eclipse.emf.common.util.EList;
 
@@ -20,7 +20,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getComponentProcesses <em>Component Processes</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getName <em>Name</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getKnowledgeManager <em>Knowledge Manager</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getOtherKnowledgeManagersAccess <em>Other Knowledge Managers Access</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getShadowKnowledgeManagerRegistry <em>Shadow Knowledge Manager Registry</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getEnsembleControllers <em>Ensemble Controllers</em>}</li>
  * </ul>
  * </p>
@@ -101,30 +101,30 @@ public interface ComponentInstance extends EObject {
 	void setKnowledgeManager(KnowledgeManager value);
 
 	/**
-	 * Returns the value of the '<em><b>Other Knowledge Managers Access</b></em>' attribute.
+	 * Returns the value of the '<em><b>Shadow Knowledge Manager Registry</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Other Knowledge Managers Access</em>' attribute isn't clear,
+	 * If the meaning of the '<em>Shadow Knowledge Manager Registry</em>' attribute isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Other Knowledge Managers Access</em>' attribute.
-	 * @see #setOtherKnowledgeManagersAccess(KnowledgeManagersView)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance_OtherKnowledgeManagersAccess()
-	 * @model dataType="cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeManagersView" required="true"
+	 * @return the value of the '<em>Shadow Knowledge Manager Registry</em>' attribute.
+	 * @see #setShadowKnowledgeManagerRegistry(ShadowKnowledgeManagerRegistry)
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance_ShadowKnowledgeManagerRegistry()
+	 * @model dataType="cz.cuni.mff.d3s.deeco.model.runtime.api.ShadowKnowledgeManagerRegistry" required="true"
 	 * @generated
 	 */
-	KnowledgeManagersView getOtherKnowledgeManagersAccess();
+	ShadowKnowledgeManagerRegistry getShadowKnowledgeManagerRegistry();
 
 	/**
-	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getOtherKnowledgeManagersAccess <em>Other Knowledge Managers Access</em>}' attribute.
+	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getShadowKnowledgeManagerRegistry <em>Shadow Knowledge Manager Registry</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Other Knowledge Managers Access</em>' attribute.
-	 * @see #getOtherKnowledgeManagersAccess()
+	 * @param value the new value of the '<em>Shadow Knowledge Manager Registry</em>' attribute.
+	 * @see #getShadowKnowledgeManagerRegistry()
 	 * @generated
 	 */
-	void setOtherKnowledgeManagersAccess(KnowledgeManagersView value);
+	void setShadowKnowledgeManagerRegistry(ShadowKnowledgeManagerRegistry value);
 
 	/**
 	 * Returns the value of the '<em><b>Ensemble Controllers</b></em>' containment reference list.

@@ -2,24 +2,20 @@ package cz.cuni.mff.d3s.deeco.runtime;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
-
-
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.executor.SameThreadExecutor;
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerRegistry;
+import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
-import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeConfiguration.Distribution;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeConfiguration.Execution;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeConfiguration.Scheduling;
-import cz.cuni.mff.d3s.deeco.scheduler.LocalTimeScheduler;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
+import cz.cuni.mff.d3s.deeco.scheduler.SingleThreadedScheduler;
 
 /**
  * 
@@ -32,6 +28,17 @@ public class RuntimeFrameworkBuilderTest {
 	public ExpectedException thrown = ExpectedException.none();
 	
 	
+	@Test
+	public void testRuntimeFrameworkBuilderValidConfiguration()
+		throws Exception {
+		RuntimeConfiguration configuration = new RuntimeConfiguration(Scheduling.WALL_TIME, Distribution.LOCAL, Execution.SINGLE_THREADED);
+
+		RuntimeFrameworkBuilder result = new RuntimeFrameworkBuilder(configuration);
+
+		// add additional test code here
+		assertNotNull(result);
+	}
+
 	
 	@Test
 	public void testInitNullConfiguration() {
@@ -61,7 +68,7 @@ public class RuntimeFrameworkBuilderTest {
 		RuntimeFrameworkBuilder tested = new RuntimeFrameworkBuilder(configuration);
 		tested.scheduler = mock(Scheduler.class);
 		tested.executor = mock(Executor.class);
-		tested.kmRegistry = mock(KnowledgeManagerRegistry.class);		
+		tested.kmContainer = mock(CloningKnowledgeManagerContainer.class);		
 		
 		// THEN the connect() interconnects the scheduler and executor properly
 		tested.connect();
@@ -76,7 +83,7 @@ public class RuntimeFrameworkBuilderTest {
 		RuntimeFrameworkBuilder tested = new RuntimeFrameworkBuilder(configuration);
 		tested.scheduler = mock(Scheduler.class);
 		tested.executor = mock(Executor.class);
-		tested.kmRegistry = mock(KnowledgeManagerRegistry.class);		
+		tested.kmContainer = mock(CloningKnowledgeManagerContainer.class);		
 		
 		RuntimeMetadata model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
 		
@@ -89,7 +96,7 @@ public class RuntimeFrameworkBuilderTest {
 		RuntimeFrameworkImpl runtime = (RuntimeFrameworkImpl) tested.runtime;
 		assertSame(tested.scheduler, runtime.scheduler);
 		assertSame(tested.executor, runtime.executor);
-		assertSame(tested.kmRegistry, runtime.kmRegistry);
+		assertSame(tested.kmContainer, runtime.kmContainer);
 		assertSame(model, runtime.model);
 	}
 	
@@ -103,7 +110,7 @@ public class RuntimeFrameworkBuilderTest {
 		// THEN the builder creates an instance of LocalTimeScheduler
 		tested.buildScheduler();
 		assertNotNull(tested.scheduler);
-		assertTrue(tested.scheduler instanceof LocalTimeScheduler);		
+		assertTrue(tested.scheduler instanceof SingleThreadedScheduler);		
 	}
 	
 

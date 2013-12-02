@@ -19,18 +19,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange;
-import cz.cuni.mff.d3s.deeco.annotations.Component;
-import cz.cuni.mff.d3s.deeco.knowledge.OutWrapper;
+import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 
 @Component
 public class RobotFollowerComponent {
 
+	// TODO(IG): enforce DEECo component to be serializable 
 	public final static long serialVersionUID = 1L;
 	
 	public Integer battery;
@@ -39,7 +40,6 @@ public class RobotFollowerComponent {
 	public List<Path> crossingRobots;
 
 	public RobotFollowerComponent() {
-//		this.id = "follower"; FIXME(IG): what should be done for this?
 		this.battery = new Integer(100);
 		this.path = new Path();
 		this.path.currentPosition = new Integer(1);
@@ -54,7 +54,7 @@ public class RobotFollowerComponent {
 	@Process
 	@PeriodicScheduling(6000)
 	public static void move(@Out("path.level2") Path path,
-			@InOut("battery") OutWrapper<Integer> battery,
+			@InOut("battery") ParamHolder<Integer> battery,
 			@In("convoyRobot") @TriggerOnChange String convoyRobot) {
 		if (path.remainingPath.size() > 0) {
 			path.currentPosition = path.remainingPath.remove(0);
@@ -66,7 +66,7 @@ public class RobotFollowerComponent {
 	@Process
 	@PeriodicScheduling(5000)
 	public static void follow(@In("path") Path path,
-			@InOut("battery.level2.level3") @TriggerOnChange OutWrapper<Integer> battery,
+			@InOut("battery.level2.level3") @TriggerOnChange ParamHolder<Integer> battery,
 			@In("convoyRobot") String convoyRobot) {
 		
 	}

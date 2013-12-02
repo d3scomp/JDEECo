@@ -23,9 +23,10 @@ import java.lang.annotation.Target;
 /**
  * Used to mark an ensemble class or a component process to be executed
  * periodically.
- * 
- * The attribute <code>value</code> indicates time interval (in ms) of the
+ * <p>
+ * The attribute <code>value</code> indicates time period (in milliseconds) of the
  * execution.
+ * </p>
  * 
  * @author Michal Kit
  * 
@@ -33,5 +34,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.TYPE})
 public @interface PeriodicScheduling {
-	long value() default 1000;
+	long value();
 }

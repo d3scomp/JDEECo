@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="ASCII"?>
+<cz.cuni.mff.d3s.deeco.model.runtime:RuntimeMetadata xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:cz.cuni.mff.d3s.deeco.model.runtime="http://cz.cuni.mff.d3s.deeco.model.runtime/1.0">
+  <componentInstances name="cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC2">
+    <componentProcesses method="public static void cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC2.process1(java.lang.Integer,java.lang.String,java.lang.Boolean)" name="process1">
+      <parameters direction="IN">
+        <knowledgePath>
+          <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="level1"/>
+        </knowledgePath>
+      </parameters>
+      <parameters direction="INOUT">
+        <knowledgePath>
+          <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="level1"/>
+          <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="level2"/>
+          <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="level3"/>
+        </knowledgePath>
+      </parameters>
+      <parameters direction="OUT">
+        <knowledgePath>
+          <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="level1"/>
+        </knowledgePath>
+      </parameters>
+      <triggers xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:KnowledgeChangeTrigger">
+        <knowledgePath>
+          <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="level1"/>
+        </knowledgePath>
+      </triggers>
+    </componentProcesses>
+  </componentInstances>
+</cz.cuni.mff.d3s.deeco.model.runtime:RuntimeMetadata>

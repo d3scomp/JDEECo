@@ -383,13 +383,13 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int COMPONENT_INSTANCE__KNOWLEDGE_MANAGER = 2;
 
 	/**
-	 * The feature id for the '<em><b>Other Knowledge Managers Access</b></em>' attribute.
+	 * The feature id for the '<em><b>Shadow Knowledge Manager Registry</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_INSTANCE__OTHER_KNOWLEDGE_MANAGERS_ACCESS = 3;
+	int COMPONENT_INSTANCE__SHADOW_KNOWLEDGE_MANAGER_REGISTRY = 3;
 
 	/**
 	 * The feature id for the '<em><b>Ensemble Controllers</b></em>' containment reference list.
@@ -851,6 +851,34 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int PATH_NODE_MEMBER_OPERATION_COUNT = PATH_NODE_OPERATION_COUNT + 0;
 
 	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeComponentIdImpl <em>Path Node Component Id</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeComponentIdImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getPathNodeComponentId()
+	 * @generated
+	 */
+	int PATH_NODE_COMPONENT_ID = 18;
+
+	/**
+	 * The number of structural features of the '<em>Path Node Component Id</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PATH_NODE_COMPONENT_ID_FEATURE_COUNT = PATH_NODE_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of operations of the '<em>Path Node Component Id</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PATH_NODE_COMPONENT_ID_OPERATION_COUNT = PATH_NODE_OPERATION_COUNT + 0;
+
+	/**
 	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection <em>Parameter Direction</em>}' enum.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -858,7 +886,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getParameterDirection()
 	 * @generated
 	 */
-	int PARAMETER_DIRECTION = 18;
+	int PARAMETER_DIRECTION = 19;
 
 	/**
 	 * The meta object id for the '<em>Method</em>' data type.
@@ -868,7 +896,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getMethod()
 	 * @generated
 	 */
-	int METHOD = 19;
+	int METHOD = 20;
 
 	/**
 	 * The meta object id for the '<em>Knowledge Manager</em>' data type.
@@ -878,18 +906,17 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getKnowledgeManager()
 	 * @generated
 	 */
-	int KNOWLEDGE_MANAGER = 20;
+	int KNOWLEDGE_MANAGER = 21;
 
 	/**
-	 * The meta object id for the '<em>Knowledge Managers View</em>' data type.
+	 * The meta object id for the '<em>Shadow Knowledge Manager Registry</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getKnowledgeManagersView()
+	 * @see cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getShadowKnowledgeManagerRegistry()
 	 * @generated
 	 */
-	int KNOWLEDGE_MANAGERS_VIEW = 21;
-
+	int SHADOW_KNOWLEDGE_MANAGER_REGISTRY = 22;
 
 	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger <em>Periodic Trigger</em>}'.
@@ -1092,15 +1119,15 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EAttribute getComponentInstance_KnowledgeManager();
 
 	/**
-	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getOtherKnowledgeManagersAccess <em>Other Knowledge Managers Access</em>}'.
+	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getShadowKnowledgeManagerRegistry <em>Shadow Knowledge Manager Registry</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Other Knowledge Managers Access</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getOtherKnowledgeManagersAccess()
+	 * @return the meta object for the attribute '<em>Shadow Knowledge Manager Registry</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getShadowKnowledgeManagerRegistry()
 	 * @see #getComponentInstance()
 	 * @generated
 	 */
-	EAttribute getComponentInstance_OtherKnowledgeManagersAccess();
+	EAttribute getComponentInstance_ShadowKnowledgeManagerRegistry();
 
 	/**
 	 * Returns the meta object for the containment reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getEnsembleControllers <em>Ensemble Controllers</em>}'.
@@ -1358,6 +1385,16 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EClass getPathNodeMember();
 
 	/**
+	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId <em>Path Node Component Id</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Path Node Component Id</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId
+	 * @generated
+	 */
+	EClass getPathNodeComponentId();
+
+	/**
 	 * Returns the meta object for enum '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection <em>Parameter Direction</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1390,15 +1427,15 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EDataType getKnowledgeManager();
 
 	/**
-	 * Returns the meta object for data type '{@link cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView <em>Knowledge Managers View</em>}'.
+	 * Returns the meta object for data type '{@link cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry <em>Shadow Knowledge Manager Registry</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>Knowledge Managers View</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView
-	 * @model instanceClass="cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView"
+	 * @return the meta object for data type '<em>Shadow Knowledge Manager Registry</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry
+	 * @model instanceClass="cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry"
 	 * @generated
 	 */
-	EDataType getKnowledgeManagersView();
+	EDataType getShadowKnowledgeManagerRegistry();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -1594,12 +1631,12 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EAttribute COMPONENT_INSTANCE__KNOWLEDGE_MANAGER = eINSTANCE.getComponentInstance_KnowledgeManager();
 
 		/**
-		 * The meta object literal for the '<em><b>Other Knowledge Managers Access</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Shadow Knowledge Manager Registry</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute COMPONENT_INSTANCE__OTHER_KNOWLEDGE_MANAGERS_ACCESS = eINSTANCE.getComponentInstance_OtherKnowledgeManagersAccess();
+		EAttribute COMPONENT_INSTANCE__SHADOW_KNOWLEDGE_MANAGER_REGISTRY = eINSTANCE.getComponentInstance_ShadowKnowledgeManagerRegistry();
 
 		/**
 		 * The meta object literal for the '<em><b>Ensemble Controllers</b></em>' containment reference list feature.
@@ -1812,6 +1849,16 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EClass PATH_NODE_MEMBER = eINSTANCE.getPathNodeMember();
 
 		/**
+		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeComponentIdImpl <em>Path Node Component Id</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeComponentIdImpl
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getPathNodeComponentId()
+		 * @generated
+		 */
+		EClass PATH_NODE_COMPONENT_ID = eINSTANCE.getPathNodeComponentId();
+
+		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection <em>Parameter Direction</em>}' enum.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1842,14 +1889,14 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EDataType KNOWLEDGE_MANAGER = eINSTANCE.getKnowledgeManager();
 
 		/**
-		 * The meta object literal for the '<em>Knowledge Managers View</em>' data type.
+		 * The meta object literal for the '<em>Shadow Knowledge Manager Registry</em>' data type.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getKnowledgeManagersView()
+		 * @see cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getShadowKnowledgeManagerRegistry()
 		 * @generated
 		 */
-		EDataType KNOWLEDGE_MANAGERS_VIEW = eINSTANCE.getKnowledgeManagersView();
+		EDataType SHADOW_KNOWLEDGE_MANAGER_REGISTRY = eINSTANCE.getShadowKnowledgeManagerRegistry();
 
 	}
 

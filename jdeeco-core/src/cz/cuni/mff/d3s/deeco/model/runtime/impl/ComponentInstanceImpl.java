@@ -3,7 +3,7 @@
 package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView;
+import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
@@ -37,7 +37,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getComponentProcesses <em>Component Processes</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getName <em>Name</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getKnowledgeManager <em>Knowledge Manager</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getOtherKnowledgeManagersAccess <em>Other Knowledge Managers Access</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getShadowKnowledgeManagerRegistry <em>Shadow Knowledge Manager Registry</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getEnsembleControllers <em>Ensemble Controllers</em>}</li>
  * </ul>
  * </p>
@@ -96,24 +96,24 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	protected KnowledgeManager knowledgeManager = KNOWLEDGE_MANAGER_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #getOtherKnowledgeManagersAccess() <em>Other Knowledge Managers Access</em>}' attribute.
+	 * The default value of the '{@link #getShadowKnowledgeManagerRegistry() <em>Shadow Knowledge Manager Registry</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getOtherKnowledgeManagersAccess()
+	 * @see #getShadowKnowledgeManagerRegistry()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final KnowledgeManagersView OTHER_KNOWLEDGE_MANAGERS_ACCESS_EDEFAULT = null;
+	protected static final ShadowKnowledgeManagerRegistry SHADOW_KNOWLEDGE_MANAGER_REGISTRY_EDEFAULT = null;
 
 	/**
-	 * The cached value of the '{@link #getOtherKnowledgeManagersAccess() <em>Other Knowledge Managers Access</em>}' attribute.
+	 * The cached value of the '{@link #getShadowKnowledgeManagerRegistry() <em>Shadow Knowledge Manager Registry</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getOtherKnowledgeManagersAccess()
+	 * @see #getShadowKnowledgeManagerRegistry()
 	 * @generated
 	 * @ordered
 	 */
-	protected KnowledgeManagersView otherKnowledgeManagersAccess = OTHER_KNOWLEDGE_MANAGERS_ACCESS_EDEFAULT;
+	protected ShadowKnowledgeManagerRegistry shadowKnowledgeManagerRegistry = SHADOW_KNOWLEDGE_MANAGER_REGISTRY_EDEFAULT;
 
 	/**
 	 * The cached value of the '{@link #getEnsembleControllers() <em>Ensemble Controllers</em>}' containment reference list.
@@ -203,8 +203,8 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public KnowledgeManagersView getOtherKnowledgeManagersAccess() {
-		return otherKnowledgeManagersAccess;
+	public ShadowKnowledgeManagerRegistry getShadowKnowledgeManagerRegistry() {
+		return shadowKnowledgeManagerRegistry;
 	}
 
 	/**
@@ -212,11 +212,11 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setOtherKnowledgeManagersAccess(KnowledgeManagersView newOtherKnowledgeManagersAccess) {
-		KnowledgeManagersView oldOtherKnowledgeManagersAccess = otherKnowledgeManagersAccess;
-		otherKnowledgeManagersAccess = newOtherKnowledgeManagersAccess;
+	public void setShadowKnowledgeManagerRegistry(ShadowKnowledgeManagerRegistry newShadowKnowledgeManagerRegistry) {
+		ShadowKnowledgeManagerRegistry oldShadowKnowledgeManagerRegistry = shadowKnowledgeManagerRegistry;
+		shadowKnowledgeManagerRegistry = newShadowKnowledgeManagerRegistry;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT_INSTANCE__OTHER_KNOWLEDGE_MANAGERS_ACCESS, oldOtherKnowledgeManagersAccess, otherKnowledgeManagersAccess));
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT_INSTANCE__SHADOW_KNOWLEDGE_MANAGER_REGISTRY, oldShadowKnowledgeManagerRegistry, shadowKnowledgeManagerRegistry));
 	}
 
 	/**
@@ -278,8 +278,8 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 				return getName();
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__KNOWLEDGE_MANAGER:
 				return getKnowledgeManager();
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__OTHER_KNOWLEDGE_MANAGERS_ACCESS:
-				return getOtherKnowledgeManagersAccess();
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__SHADOW_KNOWLEDGE_MANAGER_REGISTRY:
+				return getShadowKnowledgeManagerRegistry();
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS:
 				return getEnsembleControllers();
 		}
@@ -305,8 +305,8 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__KNOWLEDGE_MANAGER:
 				setKnowledgeManager((KnowledgeManager)newValue);
 				return;
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__OTHER_KNOWLEDGE_MANAGERS_ACCESS:
-				setOtherKnowledgeManagersAccess((KnowledgeManagersView)newValue);
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__SHADOW_KNOWLEDGE_MANAGER_REGISTRY:
+				setShadowKnowledgeManagerRegistry((ShadowKnowledgeManagerRegistry)newValue);
 				return;
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS:
 				getEnsembleControllers().clear();
@@ -333,8 +333,8 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__KNOWLEDGE_MANAGER:
 				setKnowledgeManager(KNOWLEDGE_MANAGER_EDEFAULT);
 				return;
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__OTHER_KNOWLEDGE_MANAGERS_ACCESS:
-				setOtherKnowledgeManagersAccess(OTHER_KNOWLEDGE_MANAGERS_ACCESS_EDEFAULT);
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__SHADOW_KNOWLEDGE_MANAGER_REGISTRY:
+				setShadowKnowledgeManagerRegistry(SHADOW_KNOWLEDGE_MANAGER_REGISTRY_EDEFAULT);
 				return;
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS:
 				getEnsembleControllers().clear();
@@ -357,8 +357,8 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__KNOWLEDGE_MANAGER:
 				return KNOWLEDGE_MANAGER_EDEFAULT == null ? knowledgeManager != null : !KNOWLEDGE_MANAGER_EDEFAULT.equals(knowledgeManager);
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__OTHER_KNOWLEDGE_MANAGERS_ACCESS:
-				return OTHER_KNOWLEDGE_MANAGERS_ACCESS_EDEFAULT == null ? otherKnowledgeManagersAccess != null : !OTHER_KNOWLEDGE_MANAGERS_ACCESS_EDEFAULT.equals(otherKnowledgeManagersAccess);
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__SHADOW_KNOWLEDGE_MANAGER_REGISTRY:
+				return SHADOW_KNOWLEDGE_MANAGER_REGISTRY_EDEFAULT == null ? shadowKnowledgeManagerRegistry != null : !SHADOW_KNOWLEDGE_MANAGER_REGISTRY_EDEFAULT.equals(shadowKnowledgeManagerRegistry);
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS:
 				return ensembleControllers != null && !ensembleControllers.isEmpty();
 		}
@@ -379,8 +379,8 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 		result.append(name);
 		result.append(", knowledgeManager: ");
 		result.append(knowledgeManager);
-		result.append(", otherKnowledgeManagersAccess: ");
-		result.append(otherKnowledgeManagersAccess);
+		result.append(", shadowKnowledgeManagerRegistry: ");
+		result.append(shadowKnowledgeManagerRegistry);
 		result.append(')');
 		return result.toString();
 	}

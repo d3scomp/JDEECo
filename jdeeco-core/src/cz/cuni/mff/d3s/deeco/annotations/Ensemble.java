@@ -21,10 +21,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Membership is used to mark the method in the ensemble definition
- * class as the membership function.
+ * Used to mark a class to be a DEECo ensemble.
  * 
- * @author Michal Kit
+ * @author Ilias Gerostathopoulos
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)

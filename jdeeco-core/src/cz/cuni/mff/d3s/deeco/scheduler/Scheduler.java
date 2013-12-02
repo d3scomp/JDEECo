@@ -108,5 +108,5 @@ public interface Scheduler extends ExecutionListener {
 	 * 
 	 */
 	public void setExecutor(Executor executor);
-
-}
+	
+	void invokeAndWait(Runnable doRun) throws InterruptedException;}

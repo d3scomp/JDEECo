@@ -2,6 +2,7 @@ package cz.cuni.mff.d3s.deeco.task;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
@@ -19,13 +20,26 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
 /**
+ * The implementation of {@link Task} that corresponds to a component process. This class is responsible for (a) registering triggers with the
+ * local knowledge of the component instance, and (b) to execute the process method when invoked by the scheduler/executor.
+ * 
  * @author Tomas Bures <bures@d3s.mff.cuni.cz>
  *
  */
 public class ProcessTask extends Task {
 	
+	/**
+	 * Reference to the corresponding {@link ComponentProcess} in the runtime metadata 
+	 */
 	ComponentProcess componentProcess;
 	
+	/**
+	 * Implementation of the trigger listener, which is registered in the local knowledge manager. When called, it calls the listener registered by
+	 * {@link Task#setTriggerListener(TaskTriggerListener)}.
+	 * 
+	 * @author Tomas Bures <bures@d3s.mff.cuni.cz>
+	 *
+	 */
 	private class KnowledgeManagerTriggerListenerImpl implements TriggerListener {
 
 		/* (non-Javadoc)
@@ -45,8 +59,22 @@ public class ProcessTask extends Task {
 		this.componentProcess = componentProcess;
 	}
 
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.deeco.task.Task#invoke()
+	/**
+	 * Invokes the component process. Essentially it works in these steps:
+	 * <ol>
+	 *   <li>It resolves the IN and INOUT paths of the process parameters and retrieves the knowledge from the local knowledge manager.</li>
+	 *   <li>It invokes the process method with the values obtained in the previous step.</li>
+	 *   <li>It updates the local knowledge manager with INOUT and OUT values gotten from the process.</li>
+	 * </ol>
+	 * 
+	 * The INOUT and OUT values are wrapped in {@link ParamHolder}. OUT parameters are initialized with empty {@link ParamHolder}, 
+	 * i.e. {@link ParamHolder#value} is set to <code>null</code>.
+	 * 
+	 * @param trigger the trigger that caused the task invocation. It is either a {@link PeriodicTrigger} in case this triggering
+	 * is because of new period or a trigger given by task to the scheduler when invoking the trigger listener.
+	 *  
+	 * @throws TaskInvocationException signifies a problem in executing the task including the case when parameters cannot be retrieved from / updated in
+	 * the knowledge manager.
 	 */
 	@Override
 	public void invoke(Trigger trigger) throws TaskInvocationException {
@@ -55,13 +83,26 @@ public class ProcessTask extends Task {
 		Collection<Parameter> formalParams = componentProcess.getParameters();
 
 		Collection<KnowledgePath> inPaths = new LinkedList<KnowledgePath>();
+		Collection<KnowledgePath> allPaths = new LinkedList<KnowledgePath>();
 		for (Parameter formalParam : formalParams) {
 			ParameterDirection paramDir = formalParam.getDirection();
+
+			KnowledgePath absoluteKnowledgePath;
+			// FIXME: The call to getAbsolutePath is in theory wrong, because this way we are not obtaining the
+			// knowledge within one transaction. But fortunately this is not a problem with the single 
+			// threaded scheduler we have at the moment, because once the invoke method starts there is no other
+			// activity whatsoever in the system.
+			try {  
+				absoluteKnowledgePath = KnowledgePathHelper.getAbsolutePath(formalParam.getKnowledgePath(), knowledgeManager);
+			} catch (KnowledgeNotFoundException e) {
+				throw new TaskInvocationException("Knowledge path could not be resolved.", e);
+			}
 			
 			if (paramDir == ParameterDirection.IN || paramDir == ParameterDirection.INOUT) {
-				// TODO: Expand the path here. At this point, this works only for absolute paths
-				inPaths.add(formalParam.getKnowledgePath());
+				inPaths.add(absoluteKnowledgePath);
 			}
+			
+			allPaths.add(absoluteKnowledgePath);
 		}
 		
 		ValueSet inKnowledge;
@@ -76,17 +117,19 @@ public class ProcessTask extends Task {
 		Object[] actualParams = new Object[formalParams.size()];
 		
 		int paramIdx = 0;
+		Iterator<KnowledgePath> allPathsIter = allPaths.iterator();
 		for (Parameter formalParam : formalParams) {
 			ParameterDirection paramDir = formalParam.getDirection();
+			KnowledgePath absoluteKnowledgePath = allPathsIter.next();
 
 			if (paramDir == ParameterDirection.IN) {
-				actualParams[paramIdx] = inKnowledge.getValue(formalParam.getKnowledgePath());
+				actualParams[paramIdx] = inKnowledge.getValue(absoluteKnowledgePath);
 				
 			} else if (paramDir == ParameterDirection.OUT) {
 				actualParams[paramIdx] = new ParamHolder<Object>();
 
 			} else if (paramDir == ParameterDirection.INOUT) {
-				actualParams[paramIdx] = new ParamHolder<Object>(inKnowledge.getValue(formalParam.getKnowledgePath()));
+				actualParams[paramIdx] = new ParamHolder<Object>(inKnowledge.getValue(absoluteKnowledgePath));
 			}
 			// TODO: We could have an option of not creating the wrapper. That would make it easier to work with mutable out types.
 			// TODO: We need some way of handling insertions/deletions in a hashmap.
@@ -102,11 +145,13 @@ public class ProcessTask extends Task {
 			ChangeSet changeSet = new ChangeSet();
 			
 			paramIdx = 0;
+			allPathsIter = allPaths.iterator();
 			for (Parameter formalParam : formalParams) {
 				ParameterDirection paramDir = formalParam.getDirection();
+				KnowledgePath absoluteKnowledgePath = allPathsIter.next();
 
 				if (paramDir == ParameterDirection.OUT || paramDir == ParameterDirection.INOUT) {
-					changeSet.setValue(formalParam.getKnowledgePath(), ((ParamHolder<Object>)actualParams[paramIdx]).value);
+					changeSet.setValue(absoluteKnowledgePath, ((ParamHolder<Object>)actualParams[paramIdx]).value);
 				}
 
 				paramIdx++;
@@ -118,15 +163,12 @@ public class ProcessTask extends Task {
 		} catch (IllegalAccessException | IllegalArgumentException e) {
 			throw new TaskInvocationException("Error when invoking a process method.", e);
 		} catch (InvocationTargetException e) {
-			Log.i("Process method returned an exception.", e.getTargetException());
+			Log.w("Process method returned an exception.", e.getTargetException());
 		}		
 	}
 
 	/* (non-Javadoc)
 	 * @see cz.cuni.mff.d3s.deeco.task.Task#registerTriggers()
-	 */
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.deeco.knowledge.TriggerListener#triggered(cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger)
 	 */
 	@Override
 	protected void registerTriggers() {

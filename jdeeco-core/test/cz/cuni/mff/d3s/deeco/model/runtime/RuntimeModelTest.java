@@ -19,8 +19,8 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 
@@ -30,70 +30,79 @@ import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
  */
 public class RuntimeModelTest {
 
+	RuntimeMetadataFactory factory;
+	
 	@Before
 	public void setUp() throws Exception {
-	}
-
-	private KnowledgePath createSamplePathInstance() {
-		RuntimeMetadataFactory factory = RuntimeMetadataFactory.eINSTANCE;
-
-		PathNodeField pn;
-		KnowledgePath p = factory.createKnowledgePath();
-
-		pn = factory.createPathNodeField();
-		pn.setName(new String("level1"));
-		p.getNodes().add(pn);
-
-		pn = factory.createPathNodeField();
-		pn.setName(new String("level2"));
-		p.getNodes().add(pn);
-
-		return p;
-	}
-
-	private PathNode createPathNodeInstance(String name) {
-		RuntimeMetadataFactory factory = RuntimeMetadataFactory.eINSTANCE;
-		PathNodeField pn = factory.createPathNodeField();
-		pn.setName(new String(name));
-		return pn;
+		factory = RuntimeMetadataFactory.eINSTANCE;
 	}
 
 	@Test
-	public void testEqualsWorksWithPathNodes() {
-		// WHEN two instance of PathNode designate the same path node
-		PathNode pn1 = createPathNodeInstance("test");
-		PathNode pn2 = createPathNodeInstance("test");
-		// THEN the two instances of PathNode are equal w.r.t equals method
+	public void testEqualsAndHashCodeWorkWithPathNodeField() {
+		// WHEN two instance of PathNodeField designate the same path node
+		PathNode pn1 = RuntimeModelHelper.createPathNodeField("test");
+		PathNode pn2 = RuntimeModelHelper.createPathNodeField("test");
+		// THEN the two instances are equal w.r.t equals method
 		assertEquals(pn1, pn2);
-	}
-
-	@Test
-	public void testHashCodeWorksWithPathNodes() {
-		// WHEN two instance of PathNode designate the same path node
-		PathNode pn1 = createPathNodeInstance("test");
-		PathNode pn2 = createPathNodeInstance("test");
-		// THEN the two instances of PathNode are equal w.r.t hashCode method
+		// AND the two instances are equal w.r.t hashCode method
 		assertEquals(pn1.hashCode(), pn2.hashCode());
 	}
 
 	@Test
-	public void testEqualsWorksWithKnowledgePath() {
-		// WHEN two instance of KnowledgePath designate the same path
-		KnowledgePath p1 = createSamplePathInstance();
-		KnowledgePath p2 = createSamplePathInstance();
-		 // THEN they should be equal using equals method
-		assertEquals(p1, p2);
-	}
-	
-	@Test
-	public void testHashCodeWorksWithKnowledgePath() {
-		// WHEN two instance of KnowledgePath designate the same path
-		KnowledgePath p1 = createSamplePathInstance();
-		KnowledgePath p2 = createSamplePathInstance();
-		// WHEN the two instance of KnowledgePath are equal w.r.t hashCode methods
-		assertEquals(p1.hashCode(), p2.hashCode());
+	public void testEqualsAndHashCodeWorkWithPathNodeCoordinator() {
+		// WHEN two instance of PathNodeCoordinator designate the same path node
+		PathNode pn1 = factory.createPathNodeCoordinator();
+		PathNode pn2 = factory.createPathNodeCoordinator();
+		// THEN the two instances are equal w.r.t equals method
+		assertEquals(pn1, pn2);
+		// AND the two instances are equal w.r.t hashCode method
+		assertEquals(pn1.hashCode(), pn2.hashCode());
 	}
 
+	@Test
+	public void testEqualsAndHashCodeWorkWithPathNodeMember() {
+		// WHEN two instance of PathNodeMember designate the same path node
+		PathNode pn1 = factory.createPathNodeMember();
+		PathNode pn2 = factory.createPathNodeMember();
+		// THEN the two instances are equal w.r.t equals method
+		assertEquals(pn1, pn2);
+		// AND the two instances are equal w.r.t hashCode method
+		assertEquals(pn1.hashCode(), pn2.hashCode());
+	}
+
+	@Test
+	public void testEqualsAndHashCodeWorkWithKnowledgeChangeTrigger() {
+		// WHEN two instance of KnowledgeChangeTrigger designate the same path node
+		Trigger t1 = RuntimeModelHelper.createKnowledgeChangeTrigger("level1", "level2");
+		Trigger t2 = RuntimeModelHelper.createKnowledgeChangeTrigger("level1", "level2");
+		// THEN the two instances are equal w.r.t equals method
+		assertEquals(t1, t2);
+		// AND the two instances are equal w.r.t hashCode method
+		assertEquals(t1.hashCode(), t2.hashCode());
+	}
+
+	@Test
+	public void testEqualsAndHashCodeWorkWithPeriodicTrigger() {
+		// WHEN two instance of PeriodicTrigger designate the same path node
+		Trigger t1 = RuntimeModelHelper.createPeriodicTrigger(20);
+		Trigger t2 = RuntimeModelHelper.createPeriodicTrigger(20);
+		// THEN the two instances are equal w.r.t equals method
+		assertEquals(t1, t2);
+		// AND the two instances are equal w.r.t hashCode method
+		assertEquals(t1.hashCode(), t2.hashCode());
+	}
+
+	@Test
+	public void testEqualsAndHashCodeWorkWithKnowledgePath() {
+		// WHEN two instance of KnowledgePath designate the same path
+		KnowledgePath p1 = RuntimeModelHelper.createKnowledgePath("level1", "level2");
+		KnowledgePath p2 = RuntimeModelHelper.createKnowledgePath("level1", "level2");
+		 // THEN they should be equal using equals method
+		assertEquals(p1, p2);
+		// AND the two instances are equal w.r.t hashCode method
+		assertEquals(p1.hashCode(), p2.hashCode());
+	}
+	
 	@Test
 	public void testExtensions() {
 		// WHEN a RuntimeMetadataFactory is obtained

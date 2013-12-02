@@ -7,7 +7,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 
 /**
  * This interface allows the user to read the values from KnowledgeSet. Also,
- * the interface allows to bind a trigger to tirggerListener or unbind it. 
+ * the interface allows to bind a trigger to triggerListener or unbind it. 
  * 
  * It is assumed that {@link KnowledgePath} instances used with this instance are
  * absolute, meaning that they are fully evaluated.
@@ -50,4 +50,11 @@ public interface ReadOnlyKnowledgeManager {
 	 *            listener to be unregistered.
 	 */
 	public void unregister(Trigger trigger, TriggerListener triggerListener);
+	
+	/**
+	 * Retrieves the id of this instance.
+	 * 
+	 * @return id
+	 */
+	public String getId();
 }

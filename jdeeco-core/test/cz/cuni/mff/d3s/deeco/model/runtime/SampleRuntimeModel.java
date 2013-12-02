@@ -1,7 +1,9 @@
 package cz.cuni.mff.d3s.deeco.model.runtime;
 
+import static cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper.*;
+
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagersView;
+import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Condition;
@@ -43,9 +45,11 @@ public class SampleRuntimeModel {
 	public Exchange knowledgeExchange;
 	public PeriodicTrigger ensemblePeriodicTrigger;
 	public KnowledgeChangeTrigger ensembleKnowledgeChangeTrigger;
+	
+	// It is assumed that xxxParamCoord and xxxParamMember are equal and that membershipParamXXX and exchangeParamXXXIn are equal
 	public Parameter membershipParamCoord, membershipParamMember;
 	public Parameter exchangeParamCoordIn, exchangeParamCoordOut, exchangeParamCoordInOut;
-	public Parameter exchangeParamMemberIn, exchangeParamMemberOut, exchangeParamMemberInOut;	
+	public Parameter exchangeParamMemberIn, exchangeParamMemberOut, exchangeParamMemberInOut;
 	
 	private static int processMethodCallCounter;
 	private static int membershipMethodCallCounter;
@@ -88,14 +92,22 @@ public class SampleRuntimeModel {
 		
 		coordOut.value = memberIn;
 		memberOut.value = coordIn;
-		
-		Integer xchng = coordInOut.value;
-		coordInOut.value = memberInOut.value;
-		memberInOut.value = xchng;
+
+		if (coordInOut.value > 0) {
+			coordInOut.value = 1;
+		} else {
+			coordInOut.value = 0;
+		}
+
+		if (memberInOut.value > 0) {
+			memberInOut.value = 1;
+		} else {
+			memberInOut.value = 0;
+		}
 	}
 	
 	public static void resetExchangeMethodCallCounter() {
-		processMethodCallCounter = 0;
+		exchangeMethodCallCounter = 0;
 	}
 	
 	public static int getExchangeMethodCallCounter() {
@@ -106,55 +118,8 @@ public class SampleRuntimeModel {
 		componentInstance.setKnowledgeManager(knowledgeManager);
 	}
 	
-	public void setOtherKnowledgeManagersAccess(KnowledgeManagersView knowledgeManagersView) {
-		componentInstance.setOtherKnowledgeManagersAccess(knowledgeManagersView);
-	}
-	
-	private KnowledgePath createKnowledgePath(String... knowledgePathNodes) {
-		KnowledgePath knowledgePath = factory.createKnowledgePath();
-				
-		for (String nodeName : knowledgePathNodes) {
-			PathNode pathNode;
-			
-			if ("<C>".equals(nodeName)) {
-				pathNode = factory.createPathNodeCoordinator();
-			} else if ("<M>".equals(nodeName)) {
-				pathNode = factory.createPathNodeMember();
-			} else {
-				PathNodeField pathNodeField = factory.createPathNodeField();		
-				pathNodeField.setName(nodeName);
-				pathNode = pathNodeField;
-			}
-			
-			knowledgePath.getNodes().add(pathNode);
-		}
-		
-		return knowledgePath;
-	}
-	
-	private Parameter createParameter(ParameterDirection direction, String... knowledgePathNodes) {
-		Parameter param = factory.createParameter();
-		
-		param.setDirection(direction);
-		param.setKnowledgePath(createKnowledgePath(knowledgePathNodes));
-		
-		return param;
-	}
-	
-	private PeriodicTrigger createPeriodicTrigger(long period) {
-		PeriodicTrigger trigger = factory.createPeriodicTrigger();
-		
-		trigger.setPeriod(period);
-
-		return trigger;
-	}
-	
-	private KnowledgeChangeTrigger createKnowledgeChangeTrigger(String... knowledgePathNodes) {
-		KnowledgeChangeTrigger trigger = factory.createKnowledgeChangeTrigger();
-		
-		trigger.setKnowledgePath(createKnowledgePath(knowledgePathNodes));
-
-		return trigger;
+	public void setOtherKnowledgeManagersAccess(ShadowKnowledgeManagerRegistry shadowKnowledgeManagerRegistry) {
+		componentInstance.setShadowKnowledgeManagerRegistry(shadowKnowledgeManagerRegistry);
 	}
 	
 	public SampleRuntimeModel() throws Exception {
