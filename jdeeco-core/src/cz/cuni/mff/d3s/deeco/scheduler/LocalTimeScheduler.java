@@ -7,6 +7,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.task.Task;
@@ -14,17 +15,27 @@ import cz.cuni.mff.d3s.deeco.task.TaskTriggerListener;
 
 /**
  * Implementation of the Scheduler as LocalTimeScheduler
+ * <p>
+ * This class holds one of the implementations of scheduler called LocalTimeScheduler.
+ * It can be though of as the simplest of schedulers that simply contains a set of 
+ * tasks mapped to a data structure containing information about them. As a timing mechanism
+ * java {@link Timer} class was used and tasks are being scheduled periodically by means of 
+ * java {@link TimerTask} class.
  * 
- * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
- * @author Andranik Muradyan <muradian@d3s.mff.cuni.cz>
+ * @author Jaroslav Keznikl 	<keznikl@d3s.mff.cuni.cz>
+ * @author Andranik Muradyan 	<muradian@d3s.mff.cuni.cz>
  *
  */
 public class LocalTimeScheduler implements Scheduler, TaskTriggerListener {
-	Map<Task, TaskInfo> tasks;
-	Executor executor;
+	private Map<Task, TaskInfo> tasks = new HashMap<>();
+	private Executor executor;
 	private States state;
 	
-	class TaskInfo{
+	/**
+	 * A helper class that carries all valuable information 
+	 * about a task and their scheduling.
+	 */
+	private class TaskInfo{
 		Timer timer;
 		States state;
 		PeriodicTrigger periodicTrigger;
@@ -33,19 +44,17 @@ public class LocalTimeScheduler implements Scheduler, TaskTriggerListener {
 			timer = new Timer();
 			state = States.STOPPED;
 			this.periodicTrigger = periodicTrigger;
-		}		
+		}
 	}
 	
-	enum States{
+	// Possible state enumeration used both by the scheduler and the task
+	private enum States{
 		RUNNING,
 		FAILED,
 		STOPPED
 	}
 	
-	public LocalTimeScheduler( ){		
-		tasks = new HashMap<>();
-	}
-	
+
 	@Override
 	public void executionCompleted(Task task) {
 		tasks.get(task).state = States.STOPPED; 
@@ -53,6 +62,7 @@ public class LocalTimeScheduler implements Scheduler, TaskTriggerListener {
 	
 	@Override
 	public void executionFailed(Task task, Exception e) {
+		Log.e(e.getMessage());
 		executionCompleted(task);
 	}
 	
@@ -131,8 +141,10 @@ public class LocalTimeScheduler implements Scheduler, TaskTriggerListener {
 	/**
 	 * Restarts the timer and executes the task.
 	 * NOT thread safe!!!<br/>
-	 * @throws NullPointerException when {@code task} is not in the {@link #tasks}. 
-	 * @param task
+	 * 
+	 * @throws 	NullPointerException when {@code task} is not in the {@link #tasks}
+	 * @param task		the task whose trigger fired
+	 * @param trigger	the trigger that fired
 	 */
 	void taskTriggerFired(final Task task, Trigger trigger) {
 		if( state == States.STOPPED )
@@ -155,6 +167,14 @@ public class LocalTimeScheduler implements Scheduler, TaskTriggerListener {
 		executor.execute(task, trigger);			
 	}
 
+	/**
+	 * This function is used for reseting the scheduling plan for the task.
+	 * Method does it by scheduling the task once again with the same period
+	 * starting from now.
+	 * 
+	 * @param task	that may be rescheduled 
+	 * @param ti	contains information about the task
+	 */
 	private void taskTimerReset(final Task task, TaskInfo ti) {
 		if( ti.periodicTrigger != null ){			
 			ti.timer.scheduleAtFixedRate(new TimerTask() {
@@ -167,6 +187,11 @@ public class LocalTimeScheduler implements Scheduler, TaskTriggerListener {
 		}
 	}
 	
+	/**
+	 * Method executes the task when the timer for that task is fired.
+	 * 
+	 * @param task the task to be executed
+	 */
 	protected void taskTimerFired(Task task) {
 		if( task == null )
 			return;

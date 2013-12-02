@@ -5,7 +5,6 @@ import static org.mockito.Mockito.mock;
 import org.junit.Before;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
-import cz.cuni.mff.d3s.deeco.task.TaskTriggerListener;
 
 /**
  * 
@@ -15,7 +14,6 @@ import cz.cuni.mff.d3s.deeco.task.TaskTriggerListener;
  */
 public class LocalTimeSchedulerTest extends SchedulerTest {
 
-	private LocalTimeScheduler tested;
 	private Executor executor;
 	
 	@Before
