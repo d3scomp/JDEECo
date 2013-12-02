@@ -31,7 +31,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+
 import cz.cuni.mff.d3s.deeco.executor.Executor;
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.task.Task;
@@ -39,7 +42,23 @@ import cz.cuni.mff.d3s.deeco.task.TaskInvocationException;
 import cz.cuni.mff.d3s.deeco.task.TaskTriggerListener;
 
 /**
- * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
+ * Implementation of the Scheduler as SingleThreadedScheduler 
+ * <p>
+ * Current class implements yet another type of a scheduler - SingleThreadedScheduler.
+ * This scheduler has a single execution thread and a special task queue which
+ * is shared with the scheduler. Also it distinguishes between periodic and non-periodic
+ * events and keeps a separate list for periodic tasks.<br>
+ * This file contains not only the implementations of SingleThreadedScheduler but also 
+ * all helper classes listed below:
+ * <ul>
+ * 	<li>{@link cz.cuni.mff.d3s.deeco.scheduler.SchedulerThread SchedulerThread}</li>
+ * 	<li>{@link cz.cuni.mff.d3s.deeco.scheduler.TaskQueue TaskQueue}</li>
+ * 	<li>{@link cz.cuni.mff.d3s.deeco.scheduler.SchedulerEvent SchedulerEvent}</li>
+ * 	<li>{@link cz.cuni.mff.d3s.deeco.scheduler.InvokeAndWaitTask InvokeAndWaitTask}</li>
+ * </ul>
+ * 
+ * @author 	Andranik Muradyan 	<muradian@d3s.mff.cuni.cz>
+ * @author 	Jaroslav Keznikl 	<keznikl@d3s.mff.cuni.cz>
  *
  */
 public class SingleThreadedScheduler implements Scheduler {
@@ -69,15 +88,7 @@ public class SingleThreadedScheduler implements Scheduler {
     	 queue = new TaskQueue();
     	 thread = new SchedulerThread(queue);
     }
-    
-    /**
-     * Intended for testing
-     */
-    SingleThreadedScheduler(TaskQueue queue, SchedulerThread thread ) {
-    	this.queue = queue;
-    	this.thread = thread;
-    }
-    
+        
     /**
      * This object causes the scheduler's task execution thread to exit
      * gracefully when there are no live references to the Scheduler object and no
@@ -124,6 +135,8 @@ public class SingleThreadedScheduler implements Scheduler {
 
 	@Override
 	public void executionFailed(Task task, Exception e) {
+		Log.e(e.getMessage());
+		
 		executionCompleted(task);
 	}
 
@@ -139,9 +152,6 @@ public class SingleThreadedScheduler implements Scheduler {
          }
 	}
 
-	/**
-	 * Temporarily stop the scheduler.
-	 */
 	@Override
 	public void stop() {
 		 synchronized(queue) {
@@ -150,7 +160,17 @@ public class SingleThreadedScheduler implements Scheduler {
 	}
 	
 	/**
-	 * @throws IllegalStateException if scheduler thread already terminated.
+	 * Adds the task to the scheduler
+	 * <p>
+	 * This method adds the task to the scheduler task list. However except just 
+	 * adding the task to allTasks first it wraps them with {@link cz.cuni.mff.d3s.deeco.scheduler.SchedulerEvent SchedulerEvent}
+	 * class. In both(periodic and non-periodic) cases the task is being scheduled for immediate execution
+	 * but non-periodic tasks are scheduled with zero period which makes them execute just once. Periodic 
+	 * tasks on the other hand with some non-zero period and added not only to allTasks but also to 
+	 * {@link cz.cuni.mff.d3s.deeco.scheduler.SingleThreadedScheduler#periodicEvents periodicEvents}.
+	 *  
+	 * @param task the task to be added 
+	 * @throws IllegalStateException 	if scheduler thread already terminated.
 	 * @throws IllegalArgumentException if a null task is passed as an argument.
 	 */
 	@Override
@@ -158,9 +178,6 @@ public class SingleThreadedScheduler implements Scheduler {
 		if (task == null)
 			throw new IllegalArgumentException("The task cannot be null");
 		
-		// FIXME TB: The whole class seems a bit oversynchronized. I would keep ty locking to absolute minimum. Essentially
-		// only invokeAndWait and related queue operations should use locking. addTask and similar should not. 
-		// BTW, there is a deadlock below.
 		synchronized (allTasks) {		
 			if (allTasks.contains(task))
 				return;
@@ -211,9 +228,7 @@ public class SingleThreadedScheduler implements Scheduler {
 				queue.notify();		
 	}
 
-	/**
-	 * 
-	 */
+
 	@Override
 	public void removeTask(Task task) {
 		synchronized (allTasks) {		
@@ -230,6 +245,7 @@ public class SingleThreadedScheduler implements Scheduler {
 		}
 	}
 
+
 	@Override
 	public void setExecutor(Executor executor) {
 		synchronized (thread.executorLock) {
@@ -237,7 +253,17 @@ public class SingleThreadedScheduler implements Scheduler {
 		}		
 	}
 	
-	@Override
+
+	/**
+	 * This method instantiates a special kind of task of type 
+	 * {@link cz.cuni.mff.d3s.deeco.scheduler.InvokeAndWaitTask InvokeAndWaitTask}
+	 * attaching a runnable and a scheduler, in whose context the runnable will run, to it.
+	 * After executing the task(which will invoke the runnable) and adding it to the list of the tasks
+	 * it waits, until awaken by someone's notification sharing a monitor with that task. 
+	 * 
+	 * @param 	doRun the runnable instance
+	 * @throws 	InterruptedException when the invocation is interrupted
+	 */
 	public void invokeAndWait(Runnable doRun) throws InterruptedException {
 		InvokeAndWaitTask task = new InvokeAndWaitTask(this, doRun);
 		synchronized (task) {
@@ -246,8 +272,6 @@ public class SingleThreadedScheduler implements Scheduler {
 		}
 	}
 }
-
-
 
 
 /**
@@ -288,7 +312,12 @@ class SchedulerThread extends Thread {
     SchedulerThread(TaskQueue queue) {
         this.queue = queue;
     }
-   
+
+    SchedulerThread(TaskQueue queue, ExecutorService execSer) {
+        this.queue = queue;
+    }
+
+
     public void run() {
         try {
             mainLoop();
@@ -306,7 +335,10 @@ class SchedulerThread extends Thread {
 	 * the event is removed from the top of the queue (either by some new event
 	 * that has to be executed sooner, or by removing the current event).
 	 * 
-	 * @throws InterruptedException
+	 *
+     * @param event
+     * @return
+  	 * @throws InterruptedException
 	 *             if the thread gets interrupted during waiting
 	 */
     private boolean waitTaskFired(SchedulerEvent event) throws InterruptedException {
@@ -399,8 +431,8 @@ class SchedulerThread extends Thread {
 
 /**
  * This class represents a scheduler task queue: a priority queue of SchedulerTasks,
- * ordered on nextExecutionTime.  Each Scheduler object has one of these, which it
- * shares with its SchedulerThread.  Internally this class uses a heap, which
+ * ordered on next ExecutionTime. Each Scheduler object has one of these, which it
+ * shares with its SchedulerThread. Internally this class uses a heap, which
  * offers log(n) performance for the add, removeMin and rescheduleMin
  * operations, and constant time performance for the getMin operation.
  */
@@ -627,6 +659,11 @@ class TaskQueue {
 }
 
 
+/**
+ * Wrapper class for all periodic events
+ * <p>
+ * 
+ */
 class SchedulerEvent implements Comparable<SchedulerEvent> {
     /**
      * The state of this task, chosen from the constants below.
