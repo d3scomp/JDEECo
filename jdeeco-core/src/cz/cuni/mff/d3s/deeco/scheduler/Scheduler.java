@@ -109,4 +109,14 @@ public interface Scheduler extends ExecutionListener {
 	 */
 	public void setExecutor(Executor executor);
 	
-	void invokeAndWait(Runnable doRun) throws InterruptedException;}
+	/**
+	 * Invokes the runnable and waits for it to finish.
+	 * <p>
+	 * <b>Note:</b> This method is strongly implementation-based so it is advised to check with the documentation
+	 * specific for each Scheduler implementation. 
+	 * 
+	 * @param 	doRun	the runnable to invoke.
+	 * @throws 	InterruptedException if the invocation was interrupted.
+	 */
+	void invokeAndWait(Runnable doRun) throws InterruptedException;	
+}

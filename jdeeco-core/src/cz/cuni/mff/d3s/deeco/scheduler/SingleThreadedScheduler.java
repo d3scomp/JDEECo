@@ -255,13 +255,14 @@ public class SingleThreadedScheduler implements Scheduler {
 	
 
 	/**
-	 * This function is an updated addTask for one-time execution tasks.
-	 * Not only it adds the task to the task list but also attaches a runnable
-	 * instance to it and calling wait() on the task, which sets it to sleep
-	 * until woken up by anyone calling notify() on same monitor.  
+	 * This method instantiates a special kind of task of type 
+	 * {@link cz.cuni.mff.d3s.deeco.scheduler.InvokeAndWaitTask InvokeAndWaitTask}
+	 * attaching a runnable and a scheduler, in whose context the runnable will run, to it.
+	 * After executing the task(which will invoke the runnable) and adding it to the list of the tasks
+	 * it waits, until awaken by someone's notification sharing a monitor with that task. 
 	 * 
-	 * @param doRun the runnable instance
-	 * @throws InterruptedException
+	 * @param 	doRun the runnable instance
+	 * @throws 	InterruptedException when the invocation is interrupted
 	 */
 	public void invokeAndWait(Runnable doRun) throws InterruptedException {
 		InvokeAndWaitTask task = new InvokeAndWaitTask(this, doRun);
