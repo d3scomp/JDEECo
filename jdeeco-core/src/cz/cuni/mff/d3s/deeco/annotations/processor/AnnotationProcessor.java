@@ -653,6 +653,7 @@ public class AnnotationProcessor {
 	 */
 	ChangeSet extractInitialKnowledge(Object knowledge) {
 		ChangeSet changeSet = new ChangeSet();
+		Log.w("Non-public fields are ignored during the extraction of initial knowledge.");
 		for (Field f : knowledge.getClass().getFields()) {
 			KnowledgePath knowledgePath = factory.createKnowledgePath();
 			PathNodeField pathNodeField = factory.createPathNodeField();
