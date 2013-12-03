@@ -4,8 +4,9 @@ import java.util.List;
 
 /**
  * 
- * Allows adding/removing replica knowledge manager to a container with ability to register a listener for each new replica knowledge manager. Also, it allows to 
- * return all the available replicas in the container. 
+ * This container interface allows to keep replica knowledge managers. It gives the ability to implement the creation of new replica knowledge manager 
+ * and add it to the container, and to define how to retrieve all available replica knowledge managers in this container.  
+ * In addition, it specify a method to register a new replica listener to listen for events caused by replica knowledge managers changes (i.e. add/remove replica knowledge manager). .
  * 
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
  *
@@ -13,20 +14,22 @@ import java.util.List;
 public interface ReplicaKnowledgeManagerContainer {
 	
 	/**
-	 * A factory for a replica knowledge manager.
+	 * Creates a new instance of replica knowledge manager with the specified id, add it to the container and register all existing replica listener to it.
 	 * 
 	 * @param String
+	 * 			the identifier of the knowledge manager
 	 * @return {@link KnowledgeManager} 
-	 * 				object containing values for the specified knowledge paths.
+	 * 			the newly created object containing values for the specified knowledge paths.
 	 */
 	public KnowledgeManager createReplica(String id);
 	
 	/**
-	 * Removes a replica knowledge manager from the container and return it.
+	 * Removes a replica knowledge manager from the container and return it. This implies also informing the replica listener about removing this knowledge manager. 
 	 * 
 	 * @param {@link KnowledgeManager}
+	 * 				replica knowledge manager to be removed 
 	 * @return {@link KnowledgeManager} 
-	 * 				object containing values for the specified knowledge paths
+	 * 				the removed replica knowledge manager object containing values for the specified knowledge paths
 	 */
 	public KnowledgeManager removeReplica(KnowledgeManager km);
 	
@@ -39,10 +42,10 @@ public interface ReplicaKnowledgeManagerContainer {
 	public List<KnowledgeManager> getReplicas();
 	
 	/**
-	 * Retrieves values for the collection of the {@link KnowledgePath} objects.
+	 * Adds the replica listener to the container
 	 * 
 	 * @param {@link ReplicaListener}
-	 * 				listens for adding replicas to the container or removing them from it.
+	 * 				listens for adding replica knowledge managers to the container or removing them.
 	 */
 	public void registerReplicaListener(ReplicaListener listener);
 }

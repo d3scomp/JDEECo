@@ -5,10 +5,12 @@ import java.util.List;
 
 /**
  * 
- * This container allows to deal with both local and replica knowledge managers by implementing both interfaces of {@link LocalKnowledgeManagerContainer} 
- * and  {@link ReplicaKnowledgeManagerContainer}. 
- * It acts as a factory for locals and replicas and gives the ability to register a local listener and a replica listener for the knowledge manager. Also, 
- * it retrieves the available locals and replicas in a container.   
+ * This container allows to deal with both local and replica knowledge managers by implementing both interfaces: {@link LocalKnowledgeManagerContainer} 
+ * and  {@link ReplicaKnowledgeManagerContainer}. It retrieves all available locals and replicas knowledge managers in the container. 
+ * In addition, it gives the ability to register a new local listeners to listen for events caused by local knowledge managers changes, and 
+ * register a new replica listener to listen for events caused by replica knowledge managers changes.
+ * By registered listeners, the container have the ability to listen to events related to adding or removing both kinds of knowledge managers (local and replica).
+ * Also, the container acts as a factory for locals/replicas Knowledge managers and register to them all the existing local/replica listeners in the container.
  * 
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
  * 
