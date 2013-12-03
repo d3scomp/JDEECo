@@ -348,7 +348,11 @@ public class EnsembleTask extends Task {
 					absoluteKnowledgePathAndRoot = getAbsoluteStrippedPath(formalParam.getKnowledgePath(), shadowKnowledgeManager, localKnowledgeManager);				
 				}
 			} catch (KnowledgeNotFoundException e) {
-				throw new TaskInvocationException("Knowledge path in knowledge exchange could not be resolved.", e);
+				//throw new TaskInvocationException("Knowledge path in knowledge exchange could not be resolved.", e);
+				Log.i(String.format(
+						"Knowledge exchange of %s could not be performed: missing knowledge path (%s)", 
+						ensembleController.getEnsembleDefinition().getName(), e.getNotFoundPath()));
+				return;
 			}
 
 			allPathsWithRoots.add(absoluteKnowledgePathAndRoot);
@@ -371,7 +375,13 @@ public class EnsembleTask extends Task {
 			localKnowledge = localKnowledgeManager.get(localPaths);
 			shadowKnowledge = shadowKnowledgeManager.get(shadowPaths);
 		} catch (KnowledgeNotFoundException e) {
-			throw new TaskInvocationException("Input knowledge of a knowledge exchange not found in the knowledge manager.", e);
+//			throw new TaskInvocationException(
+//					String.format("Input knowledge (%s) of a knowledge exchange in %s not found in the knowledge manager.", 
+//							e.getNotFoundPath(), ensembleController.getEnsembleDefinition().getName())
+//					, e);
+			Log.i(String.format("Input knowledge (%s) of a knowledge exchange in %s not found in the knowledge manager.", 
+					e.getNotFoundPath(), ensembleController.getEnsembleDefinition().getName()));
+			return;
 		}
 
 		// Construct the parameters for the process method invocation

@@ -56,7 +56,11 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		ValueSet result = new ValueSet();
 		Object value;
 		for (KnowledgePath kp : knowledgePaths) {
+			try {
 			value = getKnowledge(kp.getNodes());
+			} catch (KnowledgeNotFoundException knfe) {
+				throw new KnowledgeNotFoundException(kp);
+			}
 			if (knowledge.equals(value))
 				for (KnowledgePath rootKP : knowledge.keySet())
 					result.setValue(rootKP, knowledge.get(rootKP));
