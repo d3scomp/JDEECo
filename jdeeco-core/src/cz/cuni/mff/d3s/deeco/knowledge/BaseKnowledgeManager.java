@@ -57,7 +57,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		Object value;
 		for (KnowledgePath kp : knowledgePaths) {
 			try {
-			value = getKnowledge(kp.getNodes());
+				value = getKnowledge(kp.getNodes());
 			} catch (KnowledgeNotFoundException knfe) {
 				throw new KnowledgeNotFoundException(kp);
 			}
