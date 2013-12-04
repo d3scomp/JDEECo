@@ -17,7 +17,6 @@ import cz.cuni.mff.d3s.deeco.knowledge.TriggerListener;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
@@ -262,14 +261,21 @@ public class EnsembleTask extends Task {
 			allPathsWithRoots.add(absoluteKnowledgePathAndRoot);
 		}
 		
-		ValueSet localKnowledge;
-		ValueSet shadowKnowledge;
+		ValueSet localKnowledge = null;
+		ValueSet shadowKnowledge = null;
 		
 		try {
 			localKnowledge = localKnowledgeManager.get(localPaths);
 			shadowKnowledge = shadowKnowledgeManager.get(shadowPaths);
 		} catch (KnowledgeNotFoundException e) {
+			
 			// We were not able to find the knowledge, which means that the membership is false.
+			ReadOnlyKnowledgeManager where = localKnowledge == null ? localKnowledgeManager : shadowKnowledgeManager;
+			Log.i(String.format("Input knowledge (%s) of a membership in %s was not found in the knowledge manager %s.", 
+					e.getNotFoundPath(), 
+					ensembleController.getEnsembleDefinition().getName(),
+					where.getId()
+					));
 			return false;
 		}
 
@@ -367,15 +373,20 @@ public class EnsembleTask extends Task {
 			}
 		}
 		
-		ValueSet localKnowledge;
-		ValueSet shadowKnowledge;
+		ValueSet localKnowledge = null;
+		ValueSet shadowKnowledge = null;
 		
 		try {
-			localKnowledge = localKnowledgeManager.get(localPaths);
-			shadowKnowledge = shadowKnowledgeManager.get(shadowPaths);
+			localKnowledge = localKnowledgeManager.get(localPaths);	
+			shadowKnowledge = shadowKnowledgeManager.get(shadowPaths);	
 		} catch (KnowledgeNotFoundException e) {
-			Log.i(String.format("Input knowledge (%s) of a knowledge exchange in %s not found in the knowledge manager.", 
-					e.getNotFoundPath(), ensembleController.getEnsembleDefinition().getName()));
+			// We were not able to find the knowledge, which means that the membership is false.
+			ReadOnlyKnowledgeManager where = localKnowledge == null ? localKnowledgeManager : shadowKnowledgeManager;
+			Log.i(String.format("Input knowledge (%s) of a knowledge exchange in %s not found in the knowledge manager %s.", 
+					e.getNotFoundPath(), 
+					ensembleController.getEnsembleDefinition().getName(),
+					where.getId()
+					));
 			return;
 		}
 
@@ -441,7 +452,7 @@ public class EnsembleTask extends Task {
 		} catch (IllegalAccessException | IllegalArgumentException e) {
 			throw new TaskInvocationException("Error when invoking a knowledge exchange.", e);
 		} catch (InvocationTargetException e) {
-			Log.i("Knowledge exchange returned an exception.", e.getTargetException());
+			Log.e("Knowledge exchange returned an exception.", e.getTargetException());
 		}		
 	}
 

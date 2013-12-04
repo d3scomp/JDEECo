@@ -110,10 +110,13 @@ public class ProcessTask extends Task {
 		
 		try {
 			inKnowledge = knowledgeManager.get(inPaths);
-		} catch (KnowledgeNotFoundException e) {
+		} catch (KnowledgeNotFoundException e) {		
 			throw new TaskInvocationException(
-					String.format("Input knowledge (%s) of a component process (%s) not found in the knowledge manager.", 
-							e.getNotFoundPath(), componentProcess.getName()), e);
+					String.format("Input knowledge (%s) of a component process (%s) not found in the knowledge manager %s.", 
+							e.getNotFoundPath(), 
+							componentProcess.getName(),
+							knowledgeManager.getId()
+					), e);
 		}
 
 		// Construct the parameters for the process method invocation
@@ -141,6 +144,9 @@ public class ProcessTask extends Task {
 		}
 		
 		try {
+			// Set the current process's context
+			ProcessContext.addContext(componentProcess);
+			
 			// Call the process method
 			componentProcess.getMethod().invoke(null, actualParams);
 			

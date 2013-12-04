@@ -46,19 +46,18 @@ public class AnnotationProcessor {
 					put(Out.class, ParameterDirection.OUT);
 				}
 			});
-	private RuntimeMetadataFactory factory;
-	private RuntimeMetadata model;
+	protected RuntimeMetadataFactory factory;
 	
+	
+	/**
+	 * Initializes the processor with the given model factory.
+	 * All the model elements produced by the processor will be created via this factory.
+	 */
 	public AnnotationProcessor(RuntimeMetadataFactory factory) {
 		this.factory = factory;
 	}
 		
-	private void setModel(RuntimeMetadata model) throws AnnotationProcessorException {
-		if (model == null) {
-			throw new AnnotationProcessorException("Provided model cannot be null.");
-		}
-		this.model = model;
-	}
+	
 
 	/**
 	 * Processing of a single file.
@@ -70,8 +69,7 @@ public class AnnotationProcessor {
 	 * @throws AnnotationProcessorException
 	 */
 	public void process(RuntimeMetadata model, Object obj) throws AnnotationProcessorException {
-		setModel(model);
-		processObject(obj); 
+		processObject(model, obj); 
 	}
 	
 	/**
@@ -86,10 +84,9 @@ public class AnnotationProcessor {
 	 * @throws AnnotationProcessorException
 	 */
 	public void process(RuntimeMetadata model, Object obj, Object... objs) throws AnnotationProcessorException {
-		setModel(model);
-		processObject(obj); 
+		processObject(model, obj); 
 		for (Object o: objs) {
-			processObject(o);
+			processObject(model, o);
 		}
 	}
 	
@@ -103,7 +100,6 @@ public class AnnotationProcessor {
 	 * @throws AnnotationProcessorException
 	 */
 	public void process(RuntimeMetadata model, List<Object> objs) throws AnnotationProcessorException {
-		setModel(model);
 		if (objs == null) {
 			throw new AnnotationProcessorException("Provide an initialized object or a non-empty list of objects.");
 		}
@@ -111,7 +107,7 @@ public class AnnotationProcessor {
 			throw new AnnotationProcessorException("Cannot process an empty list.");
 		}
 		for (Object o: objs) {
-			processObject(o);
+			processObject(model, o);
 		}
 	}
 
@@ -125,10 +121,14 @@ public class AnnotationProcessor {
 	 * @param obj
 	 *            object to be processed
 	 */
-	void processObject(Object obj) throws AnnotationProcessorException {
+	void processObject(RuntimeMetadata model, Object obj) throws AnnotationProcessorException {
+		if (model == null) {
+			throw new AnnotationProcessorException("Provided model cannot be null.");
+		}
 		if (obj == null) {
 			throw new AnnotationProcessorException("Provided object(s) cannot be null.");
 		}
+		
 		boolean isClass = (obj instanceof Class<?>);
 		Class<?> clazz = (isClass) ? (Class<?>) obj : obj.getClass();
 		boolean isC = isComponentDefinition(clazz);
@@ -138,26 +138,12 @@ public class AnnotationProcessor {
 					"Class: " + clazz.getCanonicalName() +
 					"->Both @" + Component.class.getSimpleName() + " or @" + Ensemble.class.getSimpleName() + " annotation found.");
 		}
-		if (isC) {
-			if (isClass) {
-				throw new AnnotationProcessorException(
-						"For a component to be parsed, it has to be an INSTANCE of a class annotated with @"
-								+ Component.class.getSimpleName() + ".");
-			}
-			ComponentInstance ci = createComponentInstance(obj);
-			model.getComponentInstances().add(ci);
-			// Create ensemble controllers for all the already-processed ensemble definitions
-			for (EnsembleDefinition ed: model.getEnsembleDefinitions()) {
-				EnsembleController ec = factory.createEnsembleController();
-				ec.setComponentInstance(ci);
-				ec.setEnsembleDefinition(ed);
-				ci.getEnsembleControllers().add(ec);
-			}
+		if (isC) {			
+			processComponentInstance(model, obj);
 			return;
 		} 
 		if (isE) {
 			EnsembleDefinition ed = createEnsembleDefinition(clazz);
-			model.getEnsembleDefinitions().add(ed);
 			// Create ensemble controllers for all the already-processed component instance definitions
 			for (ComponentInstance ci: model.getComponentInstances()) {
 				EnsembleController ec = factory.createEnsembleController();
@@ -165,11 +151,57 @@ public class AnnotationProcessor {
 				ec.setEnsembleDefinition(ed);
 				ci.getEnsembleControllers().add(ec);
 			}
+			
+			model.getEnsembleDefinitions().add(ed);
+
 			return;
 		} 
 		throw new AnnotationProcessorException(
 				"Class: " + clazz.getCanonicalName() +
 				"->No @" + Component.class.getSimpleName() + " or @" + Ensemble.class.getSimpleName() + " annotation found.");
+	}
+	
+	/**
+	 * Checks if the object is annotated as @{@link Component} and calls the respective creator. 
+	 * It also creates the appropriate {@link EnsembleController}s for the {@link EnsembleDefinition}s in the model.
+	 * The parsed {@link ComponentInstance} is automatically added to the model.
+	 * 	
+	 * @param model the model to which the instance is to be added
+	 * @param obj instance definition to be processed
+	 * @return	the parsed {@link ComponentInstance}
+	 * @throws AnnotationProcessorException	if the instance definition object is invalid
+	 */
+	public ComponentInstance processComponentInstance(RuntimeMetadata model, Object obj) throws AnnotationProcessorException {
+		if (model == null) {
+			throw new AnnotationProcessorException("Provided model cannot be null.");
+		}
+		if (obj == null) {
+			throw new AnnotationProcessorException("Provided object(s) cannot be null.");
+		}
+		
+		boolean isClass = (obj instanceof Class<?>);
+		Class<?> clazz = (isClass) ? (Class<?>) obj : obj.getClass();
+		boolean isC = isComponentDefinition(clazz);
+		
+		// TODO: unify the checks (in processObject the presence of multiple annotations is checked)
+		if (!isC || isClass) {
+			throw new AnnotationProcessorException(
+					"For a component to be parsed, it has to be an INSTANCE of a class annotated with @"
+							+ Component.class.getSimpleName() + ".");	
+		}
+		
+		ComponentInstance ci = createComponentInstance(obj);
+		// Create ensemble controllers for all the already-processed ensemble definitions
+		for (EnsembleDefinition ed: model.getEnsembleDefinitions()) {
+			EnsembleController ec = factory.createEnsembleController();
+			ec.setComponentInstance(ci);
+			ec.setEnsembleDefinition(ed);
+			ci.getEnsembleControllers().add(ec);
+		}
+		
+		model.getComponentInstances().add(ci);
+
+		return ci;
 	}
 
 	/**
