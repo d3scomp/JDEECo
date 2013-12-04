@@ -95,7 +95,8 @@ public class ProcessTask extends Task {
 			try {  
 				absoluteKnowledgePath = KnowledgePathHelper.getAbsolutePath(formalParam.getKnowledgePath(), knowledgeManager);
 			} catch (KnowledgeNotFoundException e) {
-				throw new TaskInvocationException("Knowledge path could not be resolved.", e);
+				throw new TaskInvocationException(
+						String.format("Knowledge path (%s) could not be resolved.", e.getNotFoundPath()), e);
 			}
 			
 			if (paramDir == ParameterDirection.IN || paramDir == ParameterDirection.INOUT) {
@@ -109,8 +110,13 @@ public class ProcessTask extends Task {
 		
 		try {
 			inKnowledge = knowledgeManager.get(inPaths);
-		} catch (KnowledgeNotFoundException e) {
-			throw new TaskInvocationException("Input knowledge of a component process not found in the knowledge manager.", e);
+		} catch (KnowledgeNotFoundException e) {		
+			throw new TaskInvocationException(
+					String.format("Input knowledge (%s) of a component process (%s) not found in the knowledge manager %s.", 
+							e.getNotFoundPath(), 
+							componentProcess.getName(),
+							knowledgeManager.getId()
+					), e);
 		}
 
 		// Construct the parameters for the process method invocation
@@ -138,6 +144,9 @@ public class ProcessTask extends Task {
 		}
 		
 		try {
+			// Set the current process's context
+			ProcessContext.addContext(componentProcess);
+			
 			// Call the process method
 			componentProcess.getMethod().invoke(null, actualParams);
 			

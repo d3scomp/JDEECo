@@ -7,11 +7,13 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 
@@ -56,7 +58,11 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		ValueSet result = new ValueSet();
 		Object value;
 		for (KnowledgePath kp : knowledgePaths) {
-			value = getKnowledge(kp.getNodes());
+			try {				
+				value = getKnowledge(kp.getNodes());
+			} catch (KnowledgeNotFoundException knfe) {
+				throw new KnowledgeNotFoundException(kp);
+			}
 			if (knowledge.equals(value))
 				for (KnowledgePath rootKP : knowledge.keySet())
 					result.setValue(rootKP, knowledge.get(rootKP));
@@ -102,10 +108,9 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	public void unregister(Trigger trigger,
 			TriggerListener triggerListener) {
 		if (trigger instanceof KnowledgeChangeTrigger) {
-			KnowledgePath kp = ((KnowledgeChangeTrigger) trigger)
-					.getKnowledgePath();
-			if (knowledgeChangeListeners.containsKey(kp)) {
-				knowledgeChangeListeners.get(kp).remove(triggerListener);
+			KnowledgeChangeTrigger kt = ((KnowledgeChangeTrigger) trigger);
+			if (knowledgeChangeListeners.containsKey(kt)) {
+				knowledgeChangeListeners.get(kt).remove(triggerListener);
 			}
 		}
 	}
@@ -143,12 +148,22 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 			return ((BaseKnowledgeManager) that).id.equals(id);
 		return false;
 	}
+	
+	@Override
+	public int hashCode() {		
+		return id.hashCode();
+	}
 
 	protected Object getKnowledge(List<PathNode> knowledgePath)
 			throws KnowledgeNotFoundException {
 		assert (knowledgePath != null);
 		if (knowledgePath.isEmpty())
 			return knowledge;
+		
+		// handle ID separately
+		if ((knowledgePath.size() == 1) && (knowledgePath.get(0) instanceof PathNodeComponentId))
+			return id;
+		
 		int containmentEndIndex;
 		for (KnowledgePath kp : knowledge.keySet()) {
 			try {
@@ -284,10 +299,11 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 				continue;
 			}
 		}
-		for (Object p : parentsToDeleteKeys.keySet()) {
-			keysToDelete = parentsToDeleteKeys.get(p);
+		for (Entry<Object, List<String>> entry : parentsToDeleteKeys.entrySet()) {
+			Object p = entry.getKey();
+			keysToDelete = entry.getValue();
 			// We need to sort the keys in order to start deleting from the end.
-			// This is important for list consitency.
+			// This is important for list consistency.
 			Collections.sort(keysToDelete);
 			for (int i = keysToDelete.size() - 1; i >= 0; i--) {
 				fieldName = keysToDelete.get(i);

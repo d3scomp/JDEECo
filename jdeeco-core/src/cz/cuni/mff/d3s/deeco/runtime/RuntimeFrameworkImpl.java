@@ -162,12 +162,13 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 			componentInstanceAdded(ci);
 		}
 		
+
 		// register adapters to listen for model changes
 		// listen to ADD/REMOVE in RuntimeMetadata.getComponentInstances()
 		Adapter componentInstancesAdapter = new AdapterImpl() {
 			public void notifyChanged(Notification notification) {
 				super.notifyChanged(notification);
-				if (notification.getFeature() == model.getComponentInstances()) {
+				if (notification.getFeature() == model.eClass().getEStructuralFeature(RuntimeMetadataPackage.RUNTIME_METADATA__COMPONENT_INSTANCES)) {
 					// new component instance added
 					if (notification.getEventType() == Notification.ADD) {
 						componentInstanceAdded((ComponentInstance) notification.getNewValue());
@@ -235,7 +236,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 		Adapter componentInstanceAdapter = new AdapterImpl() {
 			public void notifyChanged(Notification notification) {
 				super.notifyChanged(notification);
-				if (notification.getFeature() == instance.getComponentProcesses()) {
+				if (notification.getFeature() == instance.eClass().getEStructuralFeature(RuntimeMetadataPackage.COMPONENT_INSTANCE__COMPONENT_PROCESSES)) {
 					// if new task added
 					if (notification.getEventType() == Notification.ADD) {
 						componentProcessAdded(instance, (ComponentProcess) notification.getNewValue());
@@ -316,7 +317,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 		final Task newTask = new ProcessTask(process, scheduler);
 		cir.getProcessTasks().put(process, newTask);
 		
-		componentProcessActiveChanged(process, process.isIsActive());
+		componentProcessActiveChanged(instance, process, process.isIsActive());
 		
 		// register adapters to listen for model changes
 		// listen to change in ComponentProcess.isActive
@@ -325,7 +326,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 				super.notifyChanged(notification);
 				if ((notification.getFeatureID(ComponentProcess.class) == RuntimeMetadataPackage.COMPONENT_PROCESS__IS_ACTIVE)
 						&& (notification.getEventType() == Notification.SET)){
-					componentProcessActiveChanged(process, notification.getNewBooleanValue());
+					componentProcessActiveChanged(instance, process, notification.getNewBooleanValue());
 				}
 			}
 		};
@@ -347,20 +348,20 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 	 * @see Scheduler#removeTask(Task) 
 	 * 
 	 */
-	void componentProcessActiveChanged(ComponentProcess process, boolean active) {		
+	void componentProcessActiveChanged(ComponentInstance instance, ComponentProcess process, boolean active) {		
 		if (process == null) {
 			Log.w("Attempting to to change the activity of a null process.");
 			return;
 		}
 		// the instance is not registered 
-		if ((!componentRecords.containsKey(process.getComponentInstance()) 
+		if ((!componentRecords.containsKey(instance) 
 			// OR the process is not registered
-			|| (!componentRecords.get(process.getComponentInstance()).getProcessTasks().containsKey(process)))) {
+			|| (!componentRecords.get(instance).getProcessTasks().containsKey(process)))) {
 			Log.w(String.format("Attempting to change the activity of an unregistered process (%s).", process));
 			return;
 		}
 		
-		Task t = componentRecords.get(process.getComponentInstance()).getProcessTasks().get(process);
+		Task t = componentRecords.get(instance).getProcessTasks().get(process);
 		
 		Log.i(String.format("Changing the activity of task %s corresponding to process %s to %s.", t, process, active));
 		
@@ -456,7 +457,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 			componentProcessAdapters.remove(process);
 		}	
 		
-		componentProcessActiveChanged(process, false);
+		componentProcessActiveChanged(instance, process, false);
 		
 		cir.getProcessTasks().remove(process);		
 	}

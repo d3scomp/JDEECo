@@ -7,7 +7,10 @@ import java.util.Arrays;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.contrib.java.lang.system.StandardErrorStreamLog;
+
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.knowledge.BaseKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerContainer;
@@ -33,7 +36,9 @@ import cz.cuni.mff.d3s.deeco.task.Task;
 public class RuntimeFrameworkImplTest {
 
 	
-	
+	@Rule
+	public final StandardErrorStreamLog log = new StandardErrorStreamLog();
+
 	Scheduler scheduler;
 	Executor executor;
 	CloningKnowledgeManagerContainer kmContainer;
@@ -336,6 +341,28 @@ public class RuntimeFrameworkImplTest {
 		verify(tested).replaceKnowledgeManager(component);
 	}
 	
+	@Test
+	public void callbackCalledWhenComponentAddedToModel() {
+		// GIVEN an initialized runtime, where a dedicated spy listens to calls to componentInstanceAdded
+		RuntimeFrameworkImpl tested = new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer) {
+			@Override
+			void componentInstanceAdded(ComponentInstance instance) {			
+				super.componentInstanceAdded(instance);
+				spy.componentInstanceAdded(instance);
+			}
+		};		
+		reset(spy);
+			
+		// WHEN a new component is added to the model
+		ComponentInstance ci2 = EcoreUtil.copy(component);
+		model.getComponentInstances().add(ci2);
+		
+		// THEN the componentInstanceAdded is called on the runtime
+		verify(spy).componentInstanceAdded(ci2);
+		// AND no errors were printed
+		assertTrue(log.getLog().isEmpty());
+	}
+	
 	/* ************************************************************************
 	 * componentInstanceRemoved
 	 * ***********************************************************************/	
@@ -474,6 +501,28 @@ public class RuntimeFrameworkImplTest {
 		assertNull(tested.componentInstanceAdapters.get(component));
 	}
 	
+	@Test
+	public void callbackCalledWhenComponentRemovedFromModel() {
+		// GIVEN an initialized runtime, where a dedicated spy listens to calls to componentInstanceRemoved
+		RuntimeFrameworkImpl tested = new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer) {
+			@Override
+			void componentInstanceRemoved(ComponentInstance instance) {			
+				super.componentInstanceRemoved(instance);
+				spy.componentInstanceRemoved(instance);
+			}
+		};		
+		reset(spy);
+			
+		// WHEN an existing component is removed from the model		
+		model.getComponentInstances().remove(component);
+		
+		// THEN the componentInstanceRemoved is called on the runtime
+		verify(spy).componentInstanceRemoved(component);
+		// AND no errors were printed
+		assertTrue(log.getLog().isEmpty());
+	}
+	
+	
 	/* ************************************************************************
 	 * componentProcessAdded
 	 * ***********************************************************************/
@@ -548,7 +597,7 @@ public class RuntimeFrameworkImplTest {
 		assertNotNull(tested.componentProcessAdapters.get(process2));
 		assertTrue(process2.eAdapters().contains(tested.componentProcessAdapters.get(process2)));
 		// AND componentProcessActiveChanged was called on the process
-		verify(tested).componentProcessActiveChanged(process2, process.isIsActive());
+		verify(tested).componentProcessActiveChanged(component, process2, process.isIsActive());
 	}	
 	
 	@Test
@@ -568,8 +617,31 @@ public class RuntimeFrameworkImplTest {
 		ComponentInstanceRecord unused = tested.componentRecords.get(component);
 		
 		// THEN componentProcessActiveChanged is called with the right arguments
-		verify(tested).componentProcessActiveChanged(process, true);
-		verify(tested).componentProcessActiveChanged(process2, false);
+		verify(tested).componentProcessActiveChanged(component, process, true);
+		verify(tested).componentProcessActiveChanged(component, process2, false);
+	}
+	
+	@Test
+	public void callbackCalledWhenProcessAddedToModel() {
+		// GIVEN an initialized runtime, where a dedicated spy listens to calls to componentProcessAdded
+		RuntimeFrameworkImpl tested = new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer) {
+			@Override
+			void componentProcessAdded(ComponentInstance instance, ComponentProcess process) {
+				super.componentProcessAdded(instance, process);
+				spy.componentProcessAdded(instance, process);
+			};
+			
+		};		
+		reset(spy);
+			
+		// WHEN a new process is added to the model
+		ComponentProcess cp2 = EcoreUtil.copy(process);
+		component.getComponentProcesses().add(cp2);
+		
+		// THEN the componentProcessAdded is called on the runtime
+		verify(spy).componentProcessAdded(component, cp2);
+		// AND no errors were printed
+		assertTrue(log.getLog().isEmpty());
 	}
 	
 	/* ************************************************************************
@@ -639,13 +711,37 @@ public class RuntimeFrameworkImplTest {
 		tested.componentProcessRemoved(component, process);		
 		
 		// THEN the process is deactivated 
-		verify(tested).componentProcessActiveChanged(process, false); 
+		verify(tested).componentProcessActiveChanged(component, process, false); 
 		// AND the associated task is removed from the ComponentInstanceRecord
 		assertFalse(cir.getProcessTasks().containsKey(process));
 		// AND a the ecore adapter is removed to the process
 		assertEquals(numAdapters-1, process.eAdapters().size());
 		assertFalse(tested.componentProcessAdapters.containsKey(process));
 	}	
+	
+	
+	@Test
+	public void callbackCalledWhenProcessRemovedFromModel() {
+		// GIVEN an initialized runtime, where a dedicated spy listens to calls to componentProcessRemoved
+		RuntimeFrameworkImpl tested = new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer) {
+			@Override
+			void componentProcessRemoved(ComponentInstance instance, ComponentProcess process) {
+				spy.componentProcessRemoved(instance, process);
+				super.componentProcessRemoved(instance, process);
+			};
+			
+		};		
+		reset(spy);
+			
+		// WHEN a process is removed from the model
+		component.getComponentProcesses().remove(process);
+		
+		// THEN the componentProcessRemoved is called on the runtime
+		verify(spy).componentProcessRemoved(component, process);
+		// AND no errors were printed
+		assertTrue(log.getLog().isEmpty());
+	}
+	
 	
 	/* ************************************************************************
 	 * componentProcessActiveChanged
@@ -658,7 +754,7 @@ public class RuntimeFrameworkImplTest {
 		reset(scheduler);
 		
 		// WHEN changing the activity of a null process 
-		tested.componentProcessActiveChanged(null, false);
+		tested.componentProcessActiveChanged(component, null, false);
 		
 		// THEN nothing happens
 		verifyZeroInteractions(scheduler);		
@@ -672,7 +768,7 @@ public class RuntimeFrameworkImplTest {
 		reset(scheduler);
 		
 		// WHEN changing the activity of a process whose instance is not registered
-		tested.componentProcessActiveChanged(process, false);
+		tested.componentProcessActiveChanged(component, process, false);
 		
 		// THEN nothing happens
 		verifyZeroInteractions(scheduler);		
@@ -686,7 +782,7 @@ public class RuntimeFrameworkImplTest {
 		
 		// WHEN changing the activity of an unregistered process
 		tested.componentRecords.get(process.getComponentInstance()).getProcessTasks().remove(process);
-		tested.componentProcessActiveChanged(process, false);
+		tested.componentProcessActiveChanged(component, process, false);
 		
 		// THEN nothing happens
 		verifyZeroInteractions(scheduler);		
@@ -700,7 +796,7 @@ public class RuntimeFrameworkImplTest {
 		Task processTask = tested.componentRecords.get(component).getProcessTasks().get(process);
 		
 		// WHEN changing the activity of a registered process to true		
-		tested.componentProcessActiveChanged(process, true);
+		tested.componentProcessActiveChanged(component, process, true);
 		
 		// THEN the task associated with process gets scheduled
 		verify(scheduler).addTask(processTask);		
@@ -715,11 +811,42 @@ public class RuntimeFrameworkImplTest {
 		Task processTask = tested.componentRecords.get(component).getProcessTasks().get(process);
 		
 		// WHEN changing the activity of a registered process to false		
-		tested.componentProcessActiveChanged(process, false);
+		tested.componentProcessActiveChanged(component, process, false);
 		
 		// THEN the task associated with process is removed from the scheduler
 		verify(scheduler).removeTask(processTask);		
 	}
+	
+	@Test
+	public void callbackCalledWhenProcessActiveChanged() {
+		// GIVEN an initialized runtime, where a dedicated spy listens to calls to componentProcessActiveChanged
+		RuntimeFrameworkImpl tested = new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer) {
+			@Override
+			void componentProcessActiveChanged(ComponentInstance instance,
+					ComponentProcess process, boolean active) {				
+				super.componentProcessActiveChanged(instance, process, active);
+				spy.componentProcessActiveChanged(instance, process, active);
+			}			
+		};		
+		reset(spy);
+			
+		// WHEN a process is set to active
+		process.setIsActive(true);
+		
+		// THEN the componentProcessActiveChanged is called on the runtime
+		verify(spy).componentProcessActiveChanged(component, process, true);
+		// AND no errors were printed
+		assertTrue(log.getLog().isEmpty());
+		
+		// WHEN a process is set to inactive
+		process.setIsActive(false);
+		
+		// THEN the componentProcessActiveChanged is called on the runtime
+		verify(spy).componentProcessActiveChanged(component, process, false);
+		// AND no errors were printed
+		assertTrue(log.getLog().isEmpty());
+	}
+	
 	
 	/* ************************************************************************
 	 * replaceKnowledgeManager
