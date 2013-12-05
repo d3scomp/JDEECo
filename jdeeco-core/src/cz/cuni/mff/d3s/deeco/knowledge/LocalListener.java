@@ -2,8 +2,8 @@ package cz.cuni.mff.d3s.deeco.knowledge;
 
 /**
  * 
- * Gets called by a {@link ShadowKnowledgeManagerRegistry} when an event on a {@link LocalKnowledgeManagerContainer} (i.e. adding/removing local knowledge manager) 
- * matches the registered trigger.
+ * Gets called by a {@link ShadowKnowledgeManagerRegistry} when an event on a {@link LocalKnowledgeManagerContainer} matches the registered trigger.
+ * The events can be creating a new local knowledge manager or removing a specific local knowledge manager from the local knowledge manager container.  
  * 
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
  *
