@@ -11,11 +11,14 @@ import java.util.Map;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 
 /**
- * Base knowledge manager implementation providing data storing functionalities.
+ * This class implements the KnowledgeManager interface. It allows the user to
+ * add, update and read the values from KnowledgeSet. Also, the class allows to
+ * bind a trigger to tirggerListener or unbind it.
  * 
  * @author Rima Al Ali <alali@d3s.mff.cuni.cz>
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
@@ -24,20 +27,20 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 @SuppressWarnings("unchecked")
 public class BaseKnowledgeManager implements KnowledgeManager {
 
-	private transient final Map<KnowledgePath, Object> knowledge;
-	private transient final Map<KnowledgeChangeTrigger, List<TriggerListener>> kcListeners;
+	private final Map<KnowledgePath, Object> knowledge;
+	private final Map<KnowledgeChangeTrigger, List<TriggerListener>> knowledgeChangeListeners;
 
-	private transient final String identifier;
+	private final String id;
 
-	public BaseKnowledgeManager(final String identifier) {
-		this.identifier = identifier;
+	public BaseKnowledgeManager(String id) {
+		this.id = id;
 		this.knowledge = new HashMap<>();
-		this.kcListeners = new HashMap<>();
+		this.knowledgeChangeListeners = new HashMap<>();
 	}
 
 	@Override
 	public String getId() {
-		return this.identifier;
+		return this.id;
 	}
 
 	/*
@@ -52,19 +55,17 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 			throws KnowledgeNotFoundException {
 		final ValueSet result = new ValueSet();
 		Object value;
-		// Go through all knowledge paths and retrive data for each path
-		for (final KnowledgePath knowledgePath : knowledgePaths) {
-			// Retrieve data for the knowledge path
-			value = getKnowledge(knowledgePath.getNodes());
-			// In case when the root knowledge is referenced, then return
-			// entries for the first level of nesting.
-			if (knowledge.equals(value)) {
-				for (final KnowledgePath rootKP : knowledge.keySet()) {
-					result.setValue(rootKP, knowledge.get(rootKP));
-				}
-			} else {
-				result.setValue(knowledgePath, value);
+		for (KnowledgePath kp : knowledgePaths) {
+			try {				
+				value = getKnowledge(kp.getNodes());
+			} catch (KnowledgeNotFoundException knfe) {
+				throw new KnowledgeNotFoundException(kp);
 			}
+			if (knowledge.equals(value))
+				for (KnowledgePath rootKP : knowledge.keySet())
+					result.setValue(rootKP, knowledge.get(rootKP));
+			else
+				result.setValue(kp, value);
 		}
 		return result;
 	}
@@ -78,17 +79,16 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	 * cz.cuni.mff.d3s.deeco.knowledge.TriggerListener)
 	 */
 	@Override
-	public void register(final Trigger trigger, final TriggerListener triggerListener) {
-		// At the moment we consider only KnowledgeChangeListener as a
-		// TriggerListener
+	public void register(Trigger trigger,
+			TriggerListener triggerListener) {
 		if (trigger instanceof KnowledgeChangeTrigger) {
 			final KnowledgeChangeTrigger kct = (KnowledgeChangeTrigger) trigger;
 			List<TriggerListener> listeners;
-			if (kcListeners.containsKey(kct)) {
-				listeners = kcListeners.get(kct);
+			if (knowledgeChangeListeners.containsKey(kct)) {
+				listeners = knowledgeChangeListeners.get(kct);
 			} else {
 				listeners = new LinkedList<>();
-				kcListeners.put(kct, listeners);
+				knowledgeChangeListeners.put(kct, listeners);
 			}
 			listeners.add(triggerListener);
 		}
@@ -103,13 +103,12 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	 * cz.cuni.mff.d3s.deeco.knowledge.TriggerListener)
 	 */
 	@Override
-	public void unregister(final Trigger trigger, final TriggerListener triggerListener) {
-		// At the moment we consider only KnowledgeChangeListener as a
-		// TriggerListener
+	public void unregister(Trigger trigger,
+			TriggerListener triggerListener) {
 		if (trigger instanceof KnowledgeChangeTrigger) {
 			final KnowledgeChangeTrigger kct = (KnowledgeChangeTrigger) trigger;
-			if (kcListeners.containsKey(kct)) {
-				kcListeners.get(kct).remove(triggerListener);
+			if (knowledgeChangeListeners.containsKey(kct)) {
+				knowledgeChangeListeners.get(kct).remove(triggerListener);
 			}
 		}
 	}
@@ -198,8 +197,8 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	public boolean equals(final Object that) {
 		boolean result = false;
 		if (that instanceof BaseKnowledgeManager) {
-			result = ((BaseKnowledgeManager) that).identifier
-					.equals(identifier);
+			result = ((BaseKnowledgeManager) that).id
+					.equals(id);
 		}
 		return result;
 	}
@@ -208,10 +207,10 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	 * (non-Javadoc)
 	 * 
 	 * @see java.lang.Object#hashCode()
-	 */
+	 */	
 	@Override
-	public int hashCode() {
-		return identifier.hashCode();
+	public int hashCode() {		
+		return id.hashCode();
 	}
 
 	/**
@@ -232,6 +231,9 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		if (knowledgePath.isEmpty()) {
 			result = knowledge;
 		} else {
+		// handle ID separately
+		if ((knowledgePath.size() == 1) && (knowledgePath.get(0) instanceof PathNodeComponentId))
+			return id;
 			// Otherwise we should go through each knowledge entry, find the
 			// partial path matching and try to retrieve the data from the
 			// matched node in the knowledge
@@ -478,7 +480,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		for (final Object p : parentsToPaths.keySet()) {
 			keysToDelete = parentsToPaths.get(p);
 			// We need to sort the keys in order to start deleting from the end.
-			// This is important for list consitency.
+			// This is important for list consistency.
 			Collections.sort(keysToDelete);
 			// And then we need to start deleting entries from the end.
 			// This way we will preserve right referencing in case of lists.
@@ -506,7 +508,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		List<PathNode> kctNodes;
 		final List<PathNode> kpNodes = knowledgePath.getNodes();
 		// Go through each knowledge change trigger
-		for (final KnowledgeChangeTrigger kct : kcListeners.keySet()) {
+		for (final KnowledgeChangeTrigger kct : knowledgeChangeListeners.keySet()) {
 			kctNodes = kct.getKnowledgePath().getNodes();
 			// Now we need to check if the knowledge change trigger matches
 			// the knowledge path that has changed.
@@ -518,7 +520,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 					|| containmentEndIndex(kctNodes, kpNodes) > -1) {
 				// If the knowledge change trigger matches then we need to
 				// notify its listeners about the change
-				for (final TriggerListener listener : kcListeners.get(kct)) {
+				for (final TriggerListener listener : knowledgeChangeListeners.get(kct)) {
 					listener.triggered(kct);
 				}
 			}

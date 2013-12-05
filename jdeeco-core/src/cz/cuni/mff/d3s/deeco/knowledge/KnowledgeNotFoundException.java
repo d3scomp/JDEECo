@@ -1,5 +1,7 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+
 /**
  * Thrown by the {@link ReadOnlyKnowledgeManager} when the referenced knowledge does not exist.
  * 
@@ -7,7 +9,17 @@ package cz.cuni.mff.d3s.deeco.knowledge;
  * 
  */
 public class KnowledgeNotFoundException extends Exception {
+	private static final long serialVersionUID = -999702030030889941L;
+	
+	KnowledgePath notFoundPath;
+	
+	KnowledgeNotFoundException() {}
+	
+	public KnowledgeNotFoundException(KnowledgePath notFoundPath) {
+		this.notFoundPath = notFoundPath;
+	}
 
-	private static final long serialVersionUID = 1L;
-
+	public KnowledgePath getNotFoundPath() {
+		return notFoundPath;
+	}
 }
