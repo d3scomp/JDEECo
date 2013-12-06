@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.emf.ecore.EObject;
+
 import cz.cuni.mff.d3s.deeco.annotations.processor.ModelValidationError.Severity;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
@@ -66,7 +68,7 @@ public class ModelValidator {
 	 * 
 	 * @return the errors found during the previous validaiton.
 	 */
-	public Collection<ModelValidationError> getErrors() {
+	public List<ModelValidationError> getErrors() {
 		return errors;
 	}
 	
@@ -122,70 +124,104 @@ public class ModelValidator {
 	protected void validateProcessParameters(ComponentProcess cp) {
 		if (cp.getParameters().isEmpty()) {
 			reportError(
-					"Process %s.%s has no parameter.",
+					cp,
+					"Process %s.%s has no parameters.",
 					cp.getComponentInstance().getName(),
 					cp.getName());		
+			return;
 		}
 		
 		boolean hasInputs = false;
 		boolean hasOutputs = false;
 		
+		int idx = 1;
 		for (Parameter pp: cp.getParameters()) {
 			if ((pp.getDirection() == ParameterDirection.IN) || (pp.getDirection() == ParameterDirection.INOUT))
 				hasInputs = true;
 			if ((pp.getDirection() == ParameterDirection.OUT) || (pp.getDirection() == ParameterDirection.INOUT))
 				hasOutputs = true;
 			
-			// The IN/INOUT parameters need to exist in the initial component knowledge (with the correct types)
-			if (
-					((pp.getDirection() == ParameterDirection.IN) || (pp.getDirection() == ParameterDirection.INOUT))
-					&& !hasKnowledgePath(pp.getKnowledgePath(), cp.getComponentInstance().getKnowledgeManager(), pp.getType())					
-			) {				
-				reportError(
-						"Process %s.%s has a non-existing knowledge field %s as its %s parameter.",
+			// The IN/INOUT parameters need to exist in the initial component knowledge with the correct type
+			if ((pp.getDirection() == ParameterDirection.IN) || (pp.getDirection() == ParameterDirection.INOUT)) {				
+				if (!hasKnowledgePath(pp.getKnowledgePath(), cp.getComponentInstance().getKnowledgeManager())) {
+					reportError(				
+						cp,
+						"%s parameter \"%s\" (%d) of process %s.%s refers to non-existent knowledge field.\n" 
+						+ "Check that all the corresponding knowledge fields are declared as public class fields.",
+						pp.getDirection(),
+						pp.getKnowledgePath(),
+						idx,
 						cp.getComponentInstance().getName(),
-						cp.getName(),
-						pp.getKnowledgePath(), 
-						pp.getDirection());		
+						cp.getName());
+				}				
+				else if (!typeMatches(pp.getKnowledgePath(), cp.getComponentInstance().getKnowledgeManager(), pp.getType())) {
+					reportError(				
+							cp,
+							"%s parameter \"%s\" (%d) of process %s.%s does not match the type of the corresponding knowledge field.",
+							pp.getDirection(),
+							pp.getKnowledgePath(),
+							idx,
+							cp.getComponentInstance().getName(),
+							cp.getName());
+				}				
 			}
+			
+			// TODO: store the type information of knowledge (recursively) so
+			// that we can check type match of both IN and OUT parameters
+			
+			idx++;			
 		}
 		
 		if (!hasInputs) {
 			reportWarning(
-					"Process %s.%s has no input parameters", 
+					cp,
+					"Process %s.%s has no input parameters.", 
 					cp.getComponentInstance().getName(),
 					cp.getName());
 		}
 		if (!hasOutputs) {
 			reportWarning(
-					"Process %s.%s has no output parameters", 
+					cp,
+					"Process %s.%s has no output parameters.", 
 					cp.getComponentInstance().getName(),
 					cp.getName());
 		}
 	}
 	
 	
-	protected boolean hasKnowledgePath(KnowledgePath kp, KnowledgeManager km, Class<?> type) {
-		ValueSet vs;
+	protected boolean hasKnowledgePath(KnowledgePath kp, KnowledgeManager km) {
+		
 		// check whether the initial knowledge contains the parameter
 		try {
-			vs = km.get(Arrays.asList(kp));
+			km.get(Arrays.asList(kp));
 		} catch (KnowledgeNotFoundException e) {
 			return false;
 		}
-		// if yes, check whether the initial value is of the correct type
-		return type.isAssignableFrom(vs.getValue(kp).getClass());
+		return true;
+	}
+	
+	protected boolean typeMatches(KnowledgePath kp, KnowledgeManager km, Class<?> type) {
+		ValueSet vs = null;
+		try {
+			vs = km.get(Arrays.asList(kp));
+			// check whether the initial value is of the correct type
+			return type.isAssignableFrom(vs.getValue(kp).getClass());
+		} catch (KnowledgeNotFoundException e) {
+			return true;
+		}
 	}
 	
 	
-	protected final void reportWarning(String formatStr, Object... parameters) {
+	protected final void reportWarning(EObject where, String formatStr, Object... parameters) {
 		errors.add(new ModelValidationError(
+				where, 
 				Severity.WARNING,
 				String.format(formatStr, parameters)));	
 	}
 	
-	protected final void reportError(String formatStr, Object... parameters) {
+	protected final void reportError(EObject where, String formatStr, Object... parameters) {
 		errors.add(new ModelValidationError(
+				where,
 				Severity.ERROR,
 				String.format(formatStr, parameters)));	
 	}
