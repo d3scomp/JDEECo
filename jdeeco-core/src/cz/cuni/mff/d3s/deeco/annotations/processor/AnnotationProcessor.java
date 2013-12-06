@@ -18,6 +18,7 @@ import cz.cuni.mff.d3s.deeco.annotations.pathparser.*;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.*;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
@@ -225,10 +226,10 @@ public class AnnotationProcessor {
 		
 		String uniqueID = UUID.randomUUID().toString();
         KnowledgeManager km = new CloningKnowledgeManager(clazz.getSimpleName()+uniqueID);
-        km.update(extractInitialKnowledge(obj));
-        componentInstance.setKnowledgeManager(km); 
 		List<Method> methods = getMethodsMarkedAsProcesses(clazz);
 		try {
+			km.update(extractInitialKnowledge(obj));
+	        componentInstance.setKnowledgeManager(km); 
 			for (Method m : methods) {
 				int modifier = m.getModifiers();
 				if (Modifier.isPublic(modifier) && Modifier.isStatic(modifier)) {
@@ -240,8 +241,10 @@ public class AnnotationProcessor {
 							" should be public and static.");
 				}
 			}
-		} catch (AnnotationProcessorException | ParseException e) {
-			String msg = Component.class.getSimpleName() + ": "+componentInstance.getName()+"->"+e.getMessage();
+		} catch (KnowledgeUpdateException | AnnotationProcessorException
+				| ParseException e) {
+			String msg = Component.class.getSimpleName() + ": "
+					+ componentInstance.getName() + "->" + e.getMessage();
 			throw new AnnotationProcessorException(msg, e);
 		}
 		return componentInstance;
@@ -687,6 +690,7 @@ public class AnnotationProcessor {
 	 */
 	ChangeSet extractInitialKnowledge(Object knowledge) {
 		ChangeSet changeSet = new ChangeSet();
+		Log.w("Non-public fields are ignored during the extraction of initial knowledge.");
 		for (Field f : knowledge.getClass().getFields()) {
 			KnowledgePath knowledgePath = factory.createKnowledgePath();
 			PathNodeField pathNodeField = factory.createPathNodeField();

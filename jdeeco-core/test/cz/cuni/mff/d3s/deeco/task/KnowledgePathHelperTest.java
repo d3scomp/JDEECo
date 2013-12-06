@@ -15,6 +15,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId;
@@ -84,7 +85,7 @@ public class KnowledgePathHelperTest {
 	}
 	
 	@Test
-	public void testGetAbsoluteStrippedPath1() throws KnowledgeNotFoundException {
+	public void testGetAbsoluteStrippedPath1() throws KnowledgeNotFoundException, KnowledgeUpdateException {
 		// WHEN component's path is 'member.[coord.positions.[member.id]].x'
 		KnowledgePath path = factory.createKnowledgePath();
 
@@ -144,7 +145,7 @@ public class KnowledgePathHelperTest {
 
 	
 	@Test
-	public void testGetAbsolutePath0() throws KnowledgeNotFoundException {
+	public void testGetAbsolutePath0() throws KnowledgeNotFoundException, KnowledgeUpdateException {
 		// WHEN component's path is 'level1.[level21.level22]'
 		KnowledgePath path = factory.createKnowledgePath();
 		
@@ -168,7 +169,7 @@ public class KnowledgePathHelperTest {
 	}
 	
 	@Test
-	public void testGetAbsolutePath1() throws KnowledgeNotFoundException {
+	public void testGetAbsolutePath1() throws KnowledgeNotFoundException, KnowledgeUpdateException {
 		// WHEN component's path is 'level1.[level21.level22.[level31]]'
 		KnowledgePath path = factory.createKnowledgePath();
 		

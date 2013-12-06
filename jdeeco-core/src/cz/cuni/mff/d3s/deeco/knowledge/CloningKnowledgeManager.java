@@ -5,7 +5,6 @@ import java.util.Collection;
 import com.rits.cloning.Cloner;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 
 /**
  * 
@@ -44,35 +43,6 @@ public class CloningKnowledgeManager extends BaseKnowledgeManager {
 		return copy;
 	}
 
-	// FIXME TB: Why are these methods overriden?
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * cz.cuni.mff.d3s.deeco.knowledge.BaseKnowledgeManager#register(cz.cuni
-	 * .mff.d3s.deeco.model.runtime.api.Trigger,
-	 * cz.cuni.mff.d3s.deeco.knowledge.TriggerListener)
-	 */
-	@Override
-	public void register(Trigger trigger,
-			TriggerListener triggerListener) {
-		super.register(trigger, triggerListener);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * cz.cuni.mff.d3s.deeco.knowledge.BaseKnowledgeManager#unregister(cz.cuni
-	 * .mff.d3s.deeco.model.runtime.api.Trigger,
-	 * cz.cuni.mff.d3s.deeco.knowledge.TriggerListener)
-	 */
-	@Override
-	public void unregister(Trigger trigger,
-			TriggerListener triggerListener) {
-		super.unregister(trigger, triggerListener);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -81,7 +51,7 @@ public class CloningKnowledgeManager extends BaseKnowledgeManager {
 	 * .d3s.deeco.knowledge.ChangeSet)
 	 */
 	@Override
-	public void update(ChangeSet changeSet) {
+	public void update(ChangeSet changeSet) throws KnowledgeUpdateException {
 		ChangeSet copy = new ChangeSet();
 		// only values need to be cloned (cloning KnowledgePaths in a full model
 		// causes a loopback in the cloner)
