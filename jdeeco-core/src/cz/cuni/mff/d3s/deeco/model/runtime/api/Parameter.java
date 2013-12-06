@@ -14,6 +14,7 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter#getDirection <em>Direction</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter#getKnowledgePath <em>Knowledge Path</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter#getType <em>Type</em>}</li>
  * </ul>
  * </p>
  *
@@ -24,7 +25,7 @@ import org.eclipse.emf.ecore.EObject;
 public interface Parameter extends EObject {
 	/**
 	 * Returns the value of the '<em><b>Direction</b></em>' attribute.
-	 * The default value is <code>""</code>.
+	 * The default value is <code>"INOUT"</code>.
 	 * The literals are from the enumeration {@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection}.
 	 * <!-- begin-user-doc -->
 	 * <p>
@@ -38,7 +39,7 @@ public interface Parameter extends EObject {
 	 * @see #unsetDirection()
 	 * @see #setDirection(ParameterDirection)
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getParameter_Direction()
-	 * @model default="" unsettable="true" required="true"
+	 * @model default="INOUT" unsettable="true" required="true"
 	 * @generated
 	 */
 	ParameterDirection getDirection();
@@ -104,5 +105,31 @@ public interface Parameter extends EObject {
 	 * @generated
 	 */
 	void setKnowledgePath(KnowledgePath value);
+
+	/**
+	 * Returns the value of the '<em><b>Type</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Type</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Type</em>' attribute.
+	 * @see #setType(Class)
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getParameter_Type()
+	 * @model
+	 * @generated
+	 */
+	Class getType();
+
+	/**
+	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter#getType <em>Type</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Type</em>' attribute.
+	 * @see #getType()
+	 * @generated
+	 */
+	void setType(Class value);
 
 } // Parameter

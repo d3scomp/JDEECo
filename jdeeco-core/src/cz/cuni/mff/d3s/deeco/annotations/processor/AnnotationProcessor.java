@@ -436,10 +436,10 @@ public class AnnotationProcessor {
 	List<Parameter> createParameters(Method method, boolean inComponentProcess)
 			throws AnnotationProcessorException, ParseException {
 		List<Parameter> parameters = new ArrayList<>();
-		Type[] parameterTypes = method.getParameterTypes();
+		Class<?>[] parameterTypes = method.getParameterTypes();
 		Annotation[][] allAnnotations = method.getParameterAnnotations();
 		for (int i = 0; i < parameterTypes.length; i++) {
-			parameters.add(createParameter(i, allAnnotations[i], inComponentProcess));
+			parameters.add(createParameter(parameterTypes[i], i, allAnnotations[i], inComponentProcess));
 		}
 		if (parameters.isEmpty()) {
  			throw new AnnotationProcessorException(
@@ -455,11 +455,12 @@ public class AnnotationProcessor {
 	 * the prefix <code>"Parameter: '(parameter_index+1)'->"</code> is prepended to the exception message.  
 	 * </p>
 	 * 
-	 * @param parameterIndex order of the parameter in the method declaration - just for exception pretty-printing.
+	 * @param type	the type of the parameter
+	 * @param parameterIndex order of the parameter in the method declaration
 	 * @param parameterAnnotations list of annotations extracted from method signature
 	 * @param inComponentProcess indicates whether it is being called within the context of {@link #createComponentProcess createComponentProcess()} or {@link #createEnsembleDefinition createEnsembleDefinition()}.
 	 */
-	Parameter createParameter(int parameterIndex, Annotation[] parameterAnnotations, boolean inComponentProcess)
+	Parameter createParameter(Class<?> type, int parameterIndex, Annotation[] parameterAnnotations, boolean inComponentProcess)
 			throws AnnotationProcessorException, ParseException {
 		Parameter parameter = factory.createParameter();
 		try {
@@ -467,6 +468,7 @@ public class AnnotationProcessor {
 			parameter.setDirection(parameterAnnotationsToParameterDirections.get(directionAnnotation.annotationType()));
 			String path = getDirectionAnnotationValue(directionAnnotation);
 			parameter.setKnowledgePath(createKnowledgePath(path,inComponentProcess));
+			parameter.setType(type);
 		} catch (Exception e) {
 			String msg = "Parameter: "+(parameterIndex+1)+"->"+e.getMessage();
 			throw new AnnotationProcessorException(msg, e);

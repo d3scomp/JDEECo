@@ -70,7 +70,7 @@ public class EnsembleControllerImpl extends MinimalEObjectImpl.Container impleme
 	 */
 	public ComponentInstance getComponentInstance() {
 		if (eContainerFeatureID() != RuntimeMetadataPackage.ENSEMBLE_CONTROLLER__COMPONENT_INSTANCE) return null;
-		return (ComponentInstance)eContainer();
+		return (ComponentInstance)eInternalContainer();
 	}
 
 	/**

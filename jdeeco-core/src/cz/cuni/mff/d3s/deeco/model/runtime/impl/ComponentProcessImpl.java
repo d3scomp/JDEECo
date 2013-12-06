@@ -138,7 +138,7 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 	 */
 	public ComponentInstance getComponentInstance() {
 		if (eContainerFeatureID() != RuntimeMetadataPackage.COMPONENT_PROCESS__COMPONENT_INSTANCE) return null;
-		return (ComponentInstance)eContainer();
+		return (ComponentInstance)eInternalContainer();
 	}
 
 	/**
