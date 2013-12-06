@@ -11,7 +11,7 @@ import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 
 /**
- * An input parameter of the process (p2) is not in the initial knowledge.
+ * Valid component definition.
  * 
  * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
  *
