@@ -34,11 +34,13 @@ public class ValueSet {
 	 * to check {@link #getKnowledgePaths()} to distinguish between references
 	 * with/without a value.
 	 */
-	public Object getValue(KnowledgePath path) {	
-		if (values.containsKey(path))
-			return values.get(path);
-		else
-			return null;
+	public Object getValue(KnowledgePath path) {
+		Object result = null;
+		if (values.containsKey(path)){
+			result = values.get(path);
+		}
+
+		return result;
 	}
 	
 	/**
