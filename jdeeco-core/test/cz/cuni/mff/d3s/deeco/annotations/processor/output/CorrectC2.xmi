@@ -2,19 +2,19 @@
 <cz.cuni.mff.d3s.deeco.model.runtime:RuntimeMetadata xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:cz.cuni.mff.d3s.deeco.model.runtime="http://cz.cuni.mff.d3s.deeco.model.runtime/1.0">
   <componentInstances name="cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC2">
     <componentProcesses method="public static void cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC2.process1(java.lang.Integer,java.lang.String,java.lang.Boolean)" name="process1">
-      <parameters direction="IN">
+      <parameters direction="IN" type="java.lang.Integer">
         <knowledgePath>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="level1"/>
         </knowledgePath>
       </parameters>
-      <parameters direction="INOUT">
+      <parameters direction="INOUT" type="java.lang.String">
         <knowledgePath>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="level1"/>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="level2"/>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="level3"/>
         </knowledgePath>
       </parameters>
-      <parameters direction="OUT">
+      <parameters direction="OUT" type="java.lang.Boolean">
         <knowledgePath>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="level1"/>
         </knowledgePath>
