@@ -36,10 +36,8 @@ public class ValueSet {
 	 */
 	public Object getValue(KnowledgePath path) {
 		Object result = null;
-		if (values.containsKey(path)){
+		if (values.containsKey(path))
 			result = values.get(path);
-		}
-
 		return result;
 	}
 	
