@@ -13,6 +13,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistryImpl;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.logging.Log;
@@ -274,8 +275,11 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 		
 		// create a new KM with the same id and knowledge values
 		KnowledgeManager km = kmContainer.createLocal(ci.getKnowledgeManager().getId());
-		km.update(cs);
-		
+		try {
+			km.update(cs);
+		} catch (KnowledgeUpdateException e) {
+			Log.e("bindKnowledgeManagerContainer: exception when updating the knowledge manager", e);
+		}
 		// replace the KM and the KMView references
 		ci.setKnowledgeManager(km);	
 		ci.setShadowKnowledgeManagerRegistry(new ShadowKnowledgeManagerRegistryImpl(km, kmContainer));			

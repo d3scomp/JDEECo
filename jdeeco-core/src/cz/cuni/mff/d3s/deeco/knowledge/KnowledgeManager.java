@@ -7,8 +7,8 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
  * KnowledgeSet. Also, it allows to bind a trigger to triggerListener or unbind
  * it.
  * 
- * It is assumed that {@link KnowledgePath} instances used with this instance are
- * absolute, meaning that they are fully evaluated.
+ * It is assumed that {@link KnowledgePath} instances used with this instance
+ * are absolute, meaning that they are fully evaluated.
  * 
  * @author Rima Al Ali <alali@d3s.mff.cuni.cz>
  * 
@@ -21,6 +21,8 @@ public interface KnowledgeManager extends ReadOnlyKnowledgeManager {
 	 * 
 	 * @param changeSet
 	 *            update changes.
+	 * @throws KnowledgeUpdateException
+	 *             thrown when knowledge could not have been updated
 	 */
-	void update(ChangeSet changeSet);
+	void update(ChangeSet changeSet) throws KnowledgeUpdateException;
 }

@@ -20,7 +20,7 @@ public class CloningKnowledgeManagerTest {
 	private CloningKnowledgeManager tested;
 
 	@Before
-	public void setUp() {
+	public void setUp() throws Exception {
 		tested = new CloningKnowledgeManager("TEST");
 		tested.update(BaseKnowledgeManagerTest.createKnowledge());
 	}

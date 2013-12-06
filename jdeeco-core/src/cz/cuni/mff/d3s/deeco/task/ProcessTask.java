@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.knowledge.TriggerListener;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.logging.Log;
@@ -169,7 +170,7 @@ public class ProcessTask extends Task {
 			// Write the changeset back to the knowledge
 			knowledgeManager.update(changeSet);
 			
-		} catch (IllegalAccessException | IllegalArgumentException e) {
+		} catch (KnowledgeUpdateException | IllegalAccessException | IllegalArgumentException e) {
 			throw new TaskInvocationException("Error when invoking a process method.", e);
 		} catch (InvocationTargetException e) {
 			Log.w("Process method returned an exception.", e.getTargetException());
