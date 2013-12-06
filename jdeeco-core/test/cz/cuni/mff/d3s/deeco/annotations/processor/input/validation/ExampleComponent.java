@@ -17,6 +17,9 @@ import cz.cuni.mff.d3s.deeco.annotations.Process;
  *
  */
 @Component
+// TODO: add explicit (declaration of) roles
+//@HasRole(EnsembleDef1.class, Role.COORDINATOR)
+//@HasRole(EnsembleDef2.class, Role.MEMBER)
 public class ExampleComponent {
 
 	public Integer in = 0;
