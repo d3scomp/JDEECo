@@ -256,6 +256,10 @@
         <element xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//Parameter/direction"/>
         <layoutConstraint xmi:type="notation:Location" xmi:id="_1262sT28EeO2QcBZHbiySQ"/>
       </children>
+      <children xmi:type="notation:Node" xmi:id="_HcRPQF3nEeOmda3Cg1maxQ" type="2001">
+        <element xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//Parameter/type"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_HcRPQV3nEeOmda3Cg1maxQ"/>
+      </children>
       <styles xmi:type="notation:DrawerStyle" xmi:id="_0sUr0D28EeO2QcBZHbiySQ"/>
       <styles xmi:type="notation:SortingStyle" xmi:id="_0sUr0T28EeO2QcBZHbiySQ"/>
       <styles xmi:type="notation:FilteringStyle" xmi:id="_0sUr0j28EeO2QcBZHbiySQ"/>

@@ -26,6 +26,7 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * <ul>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ParameterImpl#getDirection <em>Direction</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ParameterImpl#getKnowledgePath <em>Knowledge Path</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ParameterImpl#getType <em>Type</em>}</li>
  * </ul>
  * </p>
  *
@@ -40,7 +41,7 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 	 * @generated
 	 * @ordered
 	 */
-	protected static final ParameterDirection DIRECTION_EDEFAULT = ParameterDirection.IN;
+	protected static final ParameterDirection DIRECTION_EDEFAULT = ParameterDirection.INOUT;
 
 	/**
 	 * The cached value of the '{@link #getDirection() <em>Direction</em>}' attribute.
@@ -70,6 +71,16 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 	 * @ordered
 	 */
 	protected KnowledgePath knowledgePath;
+
+	/**
+	 * The cached value of the '{@link #getType() <em>Type</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getType()
+	 * @generated
+	 * @ordered
+	 */
+	protected Class type;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -184,6 +195,27 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public Class getType() {
+		return type;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setType(Class newType) {
+		Class oldType = type;
+		type = newType;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.PARAMETER__TYPE, oldType, type));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -205,6 +237,8 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 				return getDirection();
 			case RuntimeMetadataPackage.PARAMETER__KNOWLEDGE_PATH:
 				return getKnowledgePath();
+			case RuntimeMetadataPackage.PARAMETER__TYPE:
+				return getType();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -222,6 +256,9 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 				return;
 			case RuntimeMetadataPackage.PARAMETER__KNOWLEDGE_PATH:
 				setKnowledgePath((KnowledgePath)newValue);
+				return;
+			case RuntimeMetadataPackage.PARAMETER__TYPE:
+				setType((Class)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -241,6 +278,9 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 			case RuntimeMetadataPackage.PARAMETER__KNOWLEDGE_PATH:
 				setKnowledgePath((KnowledgePath)null);
 				return;
+			case RuntimeMetadataPackage.PARAMETER__TYPE:
+				setType((Class)null);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -257,6 +297,8 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 				return isSetDirection();
 			case RuntimeMetadataPackage.PARAMETER__KNOWLEDGE_PATH:
 				return knowledgePath != null;
+			case RuntimeMetadataPackage.PARAMETER__TYPE:
+				return type != null;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -273,6 +315,8 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (direction: ");
 		if (directionESet) result.append(direction); else result.append("<unset>");
+		result.append(", type: ");
+		result.append(type);
 		result.append(')');
 		return result.toString();
 	}
