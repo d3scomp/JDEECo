@@ -2993,6 +2993,9 @@
           <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_FHB_LGJ8EeOChNxYxFs34Q" value="*"/>
           <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_FHB_LWJ8EeOChNxYxFs34Q"/>
         </ownedAttribute>
+        <ownedAttribute xmi:id="_xK-j0GKOEeOChNxYxFs34Q" name="wcet" visibility="public">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/JavaPrimitiveTypes.library.uml#long"/>
+        </ownedAttribute>
       </packagedElement>
       <packagedElement xmi:type="uml:Class" xmi:id="_FHB_LmJ8EeOChNxYxFs34Q" name="Condition">
         <generalization xmi:id="_FHB_L2J8EeOChNxYxFs34Q" general="_FHB_MGJ8EeOChNxYxFs34Q"/>
