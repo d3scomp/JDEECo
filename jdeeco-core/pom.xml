@@ -60,6 +60,16 @@
 							</artifactItems>
 						</configuration>
 					</execution>
+					<execution>
+	                                    <phase>install</phase>
+        	                            <goals>
+                	                        <goal>copy-dependencies</goal>
+	                                    </goals>
+	                                    <configuration>
+						    <outputDirectory>${dist}</outputDirectory>
+						    <includeScope>runtime</includeScope>
+	                                    </configuration>
+	                                </execution>			
 				</executions>
 			</plugin>
 			<plugin>
@@ -115,48 +125,55 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.11</version>
+			<scope>test</scope>			
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
 			<version>1.9.5</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.github.stefanbirkner</groupId>
 			<artifactId>system-rules</artifactId>
 			<version>1.4.0</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit-addons</groupId>
 			<artifactId>junit-addons</artifactId>
 			<version>1.4</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.emf</groupId>
 			<artifactId>org.eclipse.emf.ecore</artifactId>
 			<version>2.9.0-v20130528-0742</version>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.emf</groupId>
 			<artifactId>org.eclipse.emf.common</artifactId>
 			<version>2.9.0-v20130528-0742</version>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.emf</groupId>
 			<artifactId>org.eclipse.emf.ecore.xmi</artifactId>
 			<version>2.9.0-v20130528-0742</version>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>uk.com.robust-it</groupId>
 			<artifactId>cloning</artifactId>
 			<version>1.9.0</version>
-			<scope>provided</scope>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.objenesis</groupId>
 			<artifactId>objenesis</artifactId>
 			<version>1.2</version>
-			<scope>provided</scope>
+			<scope>runtime</scope>
 		</dependency>
 	</dependencies>
 </project>
