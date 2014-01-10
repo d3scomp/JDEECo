@@ -9,11 +9,6 @@
         </parent>
         <artifactId>cz.cuni.mff.d3s.jdeeco.core-osgi</artifactId>
         <packaging>bundle</packaging>
-        <properties>
-                <dist>../dist</dist>
-                <sde>${dist}/sde</sde>
-                <sdeCoreJar>${project.artifactId}.${project.version}.jar</sdeCoreJar>
-        </properties>
         <build>
                 <sourceDirectory>../jdeeco-core/src</sourceDirectory>
                 <!-- testSourceDirectory>test</testSourceDirectory -->
@@ -65,22 +60,9 @@
                                                                         <artifactId>${project.artifactId}</artifactId>
                                                                         <version>${project.version}</version>
                                                                         <type>${project.packaging}</type>
-                                                                        <destFileName>${sdeCoreJar}</destFileName>
-                                                                </artifactItem>
-                                                                <artifactItem>
-                                                                        <groupId>cz.cuni.mff.d3s</groupId>
-                                                                        <artifactId>cz.cuni.mff.d3s.bcel</artifactId>
-                                                                        <version>1.0.0</version>
-                                                                        <type>jar</type>
-                                                                </artifactItem>
-                                                                <artifactItem>
-                                                                        <groupId>cz.cuni.mff.d3s</groupId>
-                                                                        <artifactId>cz.cuni.mff.d3s.jini</artifactId>
-                                                                        <version>1.0.0</version>
-                                                                        <type>jar</type>
                                                                 </artifactItem>
                                                         </artifactItems>
-                                                        <outputDirectory>${sde}</outputDirectory>
+                                                        <outputDirectory>../dist</outputDirectory>
                                                 </configuration>
                                         </execution>
                                 </executions>
