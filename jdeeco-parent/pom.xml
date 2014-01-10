@@ -2,15 +2,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>cz.cuni.mff.d3s.jdeeco</artifactId>
-	<version>1.0.0</version>
+	<version>2.0.0</version>
 	<packaging>pom</packaging>
 	<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
 	<properties>
 		<dist>../dist</dist>
-		<deecoJPFJar>jdeeco-jpf.jar</deecoJPFJar>
-		<river>${dist}/apache-river</river>
 		<jdeecoCoreSrc>../jdeeco-core/src</jdeecoCoreSrc>
-		<jdeecoDemoSrc>../jdeeco-demo/src</jdeecoDemoSrc>
 		<mode>default</mode>
 	</properties>
 	<profiles>
@@ -24,18 +21,6 @@
 			</properties>
 			<modules>
 				<module>../jdeeco-core</module>
-				<module>../jdeeco-jpf</module>
-				<module>../jdeeco-demo</module>
-			</modules>
-		</profile>
-		<profile>
-			<id>sde</id>
-			<properties>
-				<mode>sde</mode>
-			</properties>
-			<modules>
-				<module>../jdeeco-core-osgi</module>
-				<module>../jdeeco-sde</module>
 			</modules>
 		</profile>
 	</profiles>
@@ -49,35 +34,7 @@
 					<source>1.7</source>
 					<target>1.7</target>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.6</version>
-				<executions>
-					<execution>
-						<id>unpack</id>
-						<phase>install</phase>
-						<goals>
-							<goal>unpack</goal>
-						</goals>
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>cz.cuni.mff.d3s.zip</groupId>
-									<artifactId>apache-river</artifactId>
-									<version>2.2.1</version>
-									<type>zip</type>
-								</artifactItem>
-							</artifactItems>
-							<overWriteIfNewer>true</overWriteIfNewer>
-							<outputDirectory>${dist}</outputDirectory>
-							<overWriteReleases>true</overWriteReleases>
-							<overWriteSnapshots>true</overWriteSnapshots>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+			</plugin>			
 			<plugin>
 				<artifactId>maven-clean-plugin</artifactId>
 				<version>2.5</version>
@@ -104,14 +61,10 @@
 		<repository>
 			<id>d3s-releases</id>
 			<url>https://github.com/d3scomp/mvn-repo/raw/master/releases/</url>
-		</repository>
+		</repository>	
 		<repository>
-			<id>maven-eclipse</id>
-			<url>http://maven.eclipse.org/nexus/content/repositories/testing</url>
-		</repository>
-		<repository>
-                <id>sonatype.releases</id>
-                <url>http://oss.sonatype.org/content/repositories/releases/</url>
-        </repository>
+              		<id>sonatype.releases</id>
+	                <url>http://oss.sonatype.org/content/repositories/releases/</url>
+	        </repository>
 	</repositories>
 </project>
