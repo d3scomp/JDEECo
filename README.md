@@ -13,7 +13,7 @@ To compile the project you will need to have Apache Maven (http://maven.apache.o
  * `OSGi` - produces OSGi bundles for jDEECo core
 
 The `default` compilation is performed by simply executing `mvn clean install` command in the jdeeco-parent subfolder.
-In order to compile sources to have OSGi bundle of jDEECo on outcome `mvn clean install` command in the jdeeco-coreosgi.
+In order to compile sources to have OSGi bundle of jDEECo on outcome `mvn clean install` command in the jdeeco-core-osgi subfolder. A new folder named `target` will be created in jdeeco-core-osgi containing all the binaries needed.
 All generated binaries together with zipped sources are placed in the `dist` folder in the root of the project. 
 Additionally AppacheRiver 2.2 and Java PathFinder distribution are downloaded, set up and all required scripts are generated.
 
