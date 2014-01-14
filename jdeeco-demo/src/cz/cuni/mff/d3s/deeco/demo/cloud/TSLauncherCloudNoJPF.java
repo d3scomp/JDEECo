@@ -1,11 +1,7 @@
 package cz.cuni.mff.d3s.deeco.demo.cloud;
 
-import java.util.Arrays;
-import java.util.List;
-
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeConfiguration;
