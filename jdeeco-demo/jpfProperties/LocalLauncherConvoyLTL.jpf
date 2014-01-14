@@ -1,0 +1,28 @@
+@using jpf-ltl
+
+# configure jpf-ltl
+search.class=gov.nasa.jpf.ltl.DDFSearch
+listener=gov.nasa.jpf.ltl.OtherChoiceListener
+vm.storage.class=gov.nasa.jpf.jvm.FullStateSet
+search.multiple_errors=true
+report.console.property_violation=error,snapshot,trace
+
+target=cz.cuni.mff.d3s.deeco.demo.convoytut.LocalLauncherLTL
+
+ltl.input=[](isFollowerNearLeaderB-><>isFollowerAtDestination)
+
+report.console.property_violation=error,trace
+
+# not to schedule in atomic blocks
+vm.max_transition_length = MAX
+
+# the only threads are created by jDeeco framework which guarantees that after all the threads are started there is a thread choice
+cg.threads.break_start=false
+
+vm.por.field_boundaries.never = java.*,javax.*,sun.*,cz.cuni.mff.d3s.deeco.knowledge.RepositoryKnowledgeManager.kr,cz.cuni.mff.d3s.deeco.invokable.SchedulableProcess.runtime,cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager.runtime,cz.cuni.mff.d3s.deeco.scheduling.MultithreadedSchedulerJPF.*,cz.cuni.mff.d3s.deeco.knowledge.local.LocalKnowledgeRepositoryJPF.*
+
+vm.scheduler_factory.class=cz.cuni.mff.d3s.deeco.jpf.JDEECoSchedulerFactory
+
+cg.enumerate_random=true
+vm.random_ints=0,1
+
