@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.deeco.demo.parkinglotbooking;
+package cz.cuni.mff.d3s.deeco.concepts.parkinglotbooking;
 
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;

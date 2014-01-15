@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.deeco.demo.parkinglotbooking;
+package cz.cuni.mff.d3s.deeco.concepts.parkinglotbooking;
 
 public class CarId extends ObjectId<String> {
 

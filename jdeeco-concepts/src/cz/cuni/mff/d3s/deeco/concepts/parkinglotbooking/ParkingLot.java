@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.deeco.demo.parkinglotbooking;
+package cz.cuni.mff.d3s.deeco.concepts.parkinglotbooking;
 
 import java.util.HashMap;
 import java.util.List;

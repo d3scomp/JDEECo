@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package cz.cuni.mff.d3s.deeco.demo.parkinglotbooking;
+package cz.cuni.mff.d3s.deeco.concepts.parkinglotbooking;
 
 import cz.cuni.mff.d3s.deeco.annotations.Ensemble;
 import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
@@ -48,8 +48,8 @@ public class BookingEnsemble {
 	public static void map(
 			@In("member.request") Request request, 
 			@Out("member.response") ParamHolder<Response> response,
-			@Out("coord.incomingRequests[member.request.requestId]") ParamHolder<Request> incomingRequest, 
-			@In("coord.processedResponses[member.request.requestId]") Response processedResponse) {
+			@Out("coord.incomingRequests.[member.request.requestId]") ParamHolder<Request> incomingRequest, 
+			@In("coord.processedResponses.[member.request.requestId]") Response processedResponse) {
 		incomingRequest.value = request;
 		if (processedResponse != null)
 			response.value = processedResponse;
