@@ -10,10 +10,11 @@ import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange;
-import cz.cuni.mff.d3s.deeco.knowledge.Component;
+import cz.cuni.mff.d3s.deeco.annotations.Component;
+import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 
-
-public class ParkingLot extends Component {
+@Component
+public class ParkingLot {
 
 	public final static long serialVersionUID = 1L;
 	
@@ -36,10 +37,10 @@ public class ParkingLot extends Component {
 
 	@Process
 	public static void processRequests(
-			@InOut("scheduleItem") Map<ParkingPlaceId, List<ParkingLotScheduleItem> > schedule,					
+			@InOut("scheduleItem") ParamHolder<Map<ParkingPlaceId, List<ParkingLotScheduleItem> >> schedule,					
 			@In("parkingPlaces") ParkingPlaceId[] parkingPlaces,
 			@In("incomingRequests[*]") @TriggerOnChange Request incomingRequest,
-			@Out("processedResponses") Map<UUID, Response> processedResponses
+			@Out("processedResponses") ParamHolder<Map<UUID, Response>> processedResponses
 			) {
 		
 		System.out.printf("Processing request issued by %s on parking from %d to %d.\n",
@@ -48,8 +49,8 @@ public class ParkingLot extends Component {
 				incomingRequest.scheduleItem.to.toString());
 		
 		for (ParkingPlaceId place: parkingPlaces) {
-			List<ParkingLotScheduleItem> placeSchedule = schedule.get(place);
-			// if the current request is alread scheduled, then finish
+			List<ParkingLotScheduleItem> placeSchedule = schedule.value.get(place);
+			// if the current request is already scheduled, then finish
 			if (placeSchedule.contains(incomingRequest.scheduleItem))
 				break;
 			
@@ -60,8 +61,8 @@ public class ParkingLot extends Component {
 				placeSchedule.add(incomingRequest.scheduleItem);
 				
 				// produce the response
-				processedResponses.put(incomingRequest.requestId, new Response(incomingRequest));
-				processedResponses.get(incomingRequest.requestId).assignedParkingPlace = place;
+				processedResponses.value.put(incomingRequest.requestId, new Response(incomingRequest));
+				processedResponses.value.get(incomingRequest.requestId).assignedParkingPlace = place;
 								
 				break;
 			}

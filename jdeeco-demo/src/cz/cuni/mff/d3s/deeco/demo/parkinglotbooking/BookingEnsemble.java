@@ -15,9 +15,13 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.deeco.demo.parkinglotbooking;
 
+import cz.cuni.mff.d3s.deeco.annotations.Ensemble;
+import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
 import cz.cuni.mff.d3s.deeco.annotations.Membership;
 import cz.cuni.mff.d3s.deeco.annotations.In;
+import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
+import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 
 /**
  * Sample car-park booking ensemble class.
@@ -26,25 +30,11 @@ import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
  *
  */
 
-
-public class BookingEnsemble extends RequestResponseEnsemble {
+@Ensemble
+@PeriodicScheduling(2000)
+public class BookingEnsemble {
 	
 	public final static long serialVersionUID = 1L;
-
-	// must be public, static and extend Knowledge
-	public static class CarInterface extends RequestResponseEnsemble.RequesterInterface {
-		
-		public final static long serialVersionUID = 1L;
-		
-		public Position targetPosition;
-	}
-
-	public static class CarParkInterface extends RequestResponseEnsemble.ResponderInterface {
-		
-		public final static long serialVersionUID = 1L;
-		
-		public Position position;
-	}
 
 	@Membership
 	@PeriodicScheduling(2000)
@@ -54,5 +44,14 @@ public class BookingEnsemble extends RequestResponseEnsemble {
 		return targetPosition.equals(position);
 	}
 
-	
+	@KnowledgeExchange
+	public static void map(
+			@In("member.request") Request request, 
+			@Out("member.response") ParamHolder<Response> response,
+			@Out("coord.incomingRequests[member.request.requestId]") ParamHolder<Request> incomingRequest, 
+			@In("coord.processedResponses[member.request.requestId]") Response processedResponse) {
+		incomingRequest.value = request;
+		if (processedResponse != null)
+			response.value = processedResponse;
+	}
 }

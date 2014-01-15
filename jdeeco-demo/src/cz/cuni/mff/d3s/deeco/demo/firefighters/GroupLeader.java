@@ -25,7 +25,8 @@ import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange;
-import cz.cuni.mff.d3s.deeco.annotations.Component;;
+import cz.cuni.mff.d3s.deeco.annotations.Component;
+import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 
 
 /**
@@ -94,15 +95,15 @@ public class GroupLeader {
 			@In("temperatures") Map<String, Float> temperatures,
 			@In("positions") Map<String, Position> positions,
 			@In("temperatureThreshold") Float temperatureThreshold,
-			@InOut("FFsInDangerInTeam") Set<String> FFsInDangerInTeam) {
+			@InOut("FFsInDangerInTeam") ParamHolder<Set<String>> FFsInDangerInTeam) {
 		System.out.println(GLId + ": Processing sensor data...");
-		FFsInDangerInTeam.clear();
+		FFsInDangerInTeam.value.clear();
 		System.out.println("Temperatures map holds "
 				+ temperatures.keySet().size() + " items");
 		for (String id : temperatures.keySet()) {
 			System.out.println("[" + id + ", " + temperatures.get(id) + "]");
 			if (temperatures.get(id) > temperatureThreshold) {
-				FFsInDangerInTeam.add(id);
+				FFsInDangerInTeam.value.add(id);
 			}
 		}
 		/* do not output the members positions for now

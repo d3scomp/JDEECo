@@ -1,16 +1,15 @@
 package cz.cuni.mff.d3s.deeco.demo.parkinglotbooking;
 
-import java.util.Arrays;
-import java.util.List;
-
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
-import cz.cuni.mff.d3s.deeco.knowledge.RepositoryKnowledgeManager;
-import cz.cuni.mff.d3s.deeco.knowledge.jini.TSKnowledgeRepository;
-import cz.cuni.mff.d3s.deeco.provider.DEECoObjectProvider;
-import cz.cuni.mff.d3s.deeco.runtime.Runtime;
-import cz.cuni.mff.d3s.deeco.scheduling.MultithreadedScheduler;
-import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
-
+import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
+import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
+import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
+import cz.cuni.mff.d3s.deeco.runtime.RuntimeConfiguration;
+import cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework;
+import cz.cuni.mff.d3s.deeco.runtime.RuntimeFrameworkBuilder;
+import cz.cuni.mff.d3s.deeco.runtime.RuntimeConfiguration.Distribution;
+import cz.cuni.mff.d3s.deeco.runtime.RuntimeConfiguration.Execution;
+import cz.cuni.mff.d3s.deeco.runtime.RuntimeConfiguration.Scheduling;
 /**
  * Main class for launching the parking lot booking demo.
  * 
@@ -19,25 +18,22 @@ import cz.cuni.mff.d3s.deeco.scheduling.Scheduler;
  */
 public class TSParkingLotLauncherNoJPF {
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		List<Class<?>> components = Arrays.asList(new Class<?>[] {
-				CarPlanner.class, ParkingLot.class });
-		List<Class<?>> ensembles = Arrays
-				.asList(new Class<?>[] { BookingEnsemble.class });
-
-		KnowledgeManager km = new RepositoryKnowledgeManager(
-				new TSKnowledgeRepository());
-
-		Scheduler scheduler = new MultithreadedScheduler();
-
-		DEECoObjectProvider dop = new DEECoObjectProvider(
-				components, ensembles);
-		Runtime rt = new Runtime(km, scheduler);
-		rt.registerComponentsAndEnsembles(dop);
-		rt.startRuntime();
+	public static void main(String[] args) throws AnnotationProcessorException {
+		AnnotationProcessor processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE);
+		RuntimeMetadata model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
+		
+		processor.process(model, 
+							new CarPlanner(), new ParkingLot(), // Components 
+							BookingEnsemble.class // Ensembles
+							);
+		
+		RuntimeFrameworkBuilder builder = new RuntimeFrameworkBuilder(
+				new RuntimeConfiguration(
+						Scheduling.WALL_TIME, 
+						Distribution.LOCAL, 
+						Execution.SINGLE_THREADED));
+		RuntimeFramework runtime = builder.build(model); 
+		runtime.start();
 	}
 
 }
