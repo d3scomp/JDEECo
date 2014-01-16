@@ -5099,3 +5099,13 @@ java.lang.NullPointerException
 	at cz.cuni.mff.d3s.deeco.scheduler.SchedulerThread.mainLoop(SingleThreadedScheduler.java:423)
 	at cz.cuni.mff.d3s.deeco.scheduler.SchedulerThread.run(SingleThreadedScheduler.java:323)
 
+Jan 15, 2014 4:14:58 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger warning
+WARNING: Non-public fields are ignored during the extraction of initial knowledge.
+Jan 15, 2014 4:14:58 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger warning
+WARNING: Non-public fields are ignored during the extraction of initial knowledge.
+Jan 15, 2014 4:14:58 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Changing the activity of task cz.cuni.mff.d3s.deeco.task.ProcessTask@1c057a1e corresponding to process cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl@4f5bec86 (method: public static void cz.cuni.mff.d3s.deeco.demo.cloud.NodeA.process(cz.cuni.mff.d3s.deeco.task.ParamHolder)) (name: process, isActive: true) to true.
+Jan 15, 2014 4:14:58 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Changing the activity of task cz.cuni.mff.d3s.deeco.task.ProcessTask@608069b9 corresponding to process cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl@7362e07d (method: public static void cz.cuni.mff.d3s.deeco.demo.cloud.NodeA.process2(java.lang.String)) (name: process2, isActive: true) to true.
+Jan 15, 2014 4:14:58 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Changing the activity of task cz.cuni.mff.d3s.deeco.task.ProcessTask@3d2656d3 corresponding to process cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl@2eeccf6e (method: public static void cz.cuni.mff.d3s.deeco.demo.cloud.NodeB.process(cz.cuni.mff.d3s.deeco.task.ParamHolder)) (name: process, isActive: true) to true.

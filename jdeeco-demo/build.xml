@@ -1,180 +1,109 @@
-<project name="JDEECo-Core" default="convoy-local" basedir=".">
-	<description>JDEECo build file</description>
-
-	<property name="dist" location="." />
-	<property name="lib" location="${dist}/lib" />
-	<property name="src" location="${dist}/../jdeeco-core/src" />
-	<property name="demo" location="${dist}/../jdeeco-demo/src" />
-	<property name="river" location="${dist}/apache-river" />
-	<property name="jpf" location="${dist}/jpf-core" />
-
-	<!-- start apache river - individual services -->
-	<target name="start-ar-httpd">
-		<java fork="true" jar="${river}/lib/classserver.jar" dir="${dist}">
-			<arg line="-port 8080 -dir" />
-			<arg path="${river}/lib:${river}/lib-dl" />
-		</java>
-	</target>
-
-	<target name="start-ar-jrmp-reggie">
-		<java fork="true" jar="${river}/lib/start.jar" dir="${dist}">
-			<jvmarg value="-Djava.security.policy=${river}-config/start.policy" />
-			<jvmarg value="-Djava.ext.dirs=${river}/lib-ext" />
-			<arg path="${river}-config/start-reggie.config" />
-		</java>
-	</target>
-
-	<target name="start-ar-jrmp-mahalo-group">
-		<java fork="true" jar="${river}/lib/start.jar" dir="${dist}">
-			<jvmarg value="-Djava.security.policy=${river}-config/start.policy" />
-			<arg path="${river}-config/start-mahalo-group.config" />
-		</java>
-	</target>
-
-	<target name="start-ar-jrmp-outrigger-group">
-		<java fork="true" jar="${river}/lib/start.jar" dir="${dist}">
-			<jvmarg value="-Djava.security.policy=${river}-config/start.policy" />
-			<arg path="${river}-config/start-outrigger-group.config" />
-		</java>
-	</target>
-
-	<!-- start apache river - main task -->
-	<target name="start-ar" description="Starts the Apache River">
-		<parallel>
-			<antcall target="start-ar-httpd" />
-			<antcall target="start-ar-jrmp-reggie" />
-			<antcall target="start-ar-jrmp-outrigger-group" />
-			<antcall target="start-ar-jrmp-mahalo-group" />
-		</parallel>
-	</target>
-
-	<!-- start cloud demo with local shared memory -->
-	<target name="cloud-local" description="Runs the cloud demo">
-		<java classname="cz.cuni.mff.d3s.deeco.demo.cloud.LocalLauncherCloudNoJPF" fork="true">
-			<classpath>
-				<pathelement location="${dist}/cloud.jar" />
-				<pathelement location="${dist}/jdeeco.jar" />
-				<pathelement location="${lib}/cloner.jar" />
-				<pathelement location="${river}/lib/jsk-lib.jar" />
-				<pathelement location="${river}/lib/jsk-platform.jar" />
-			</classpath>
-			<jvmarg value="-Djava.security.policy=${river}-config/start.policy" />
-			<jvmarg value="-Djava.rmi.server.RMIClassLoaderSpi=net.jini.loader.pref.PreferredClassProvider" />
-		</java>
-	</target>
-
-	<!-- start convoy demo with local shared memory -->
-	<target name="convoy-local" description="Runs the convoy demo">
-		<java classname="cz.cuni.mff.d3s.deeco.demo.convoy.LocalLauncherConvoyNoJPF" fork="true">
-			<classpath>
-				<pathelement location="${dist}/convoy.jar" />
-				<pathelement location="${dist}/jdeeco.jar" />
-				<pathelement location="${lib}/cloner.jar" />
-				<pathelement location="${river}/lib/jsk-lib.jar" />
-				<pathelement location="${river}/lib/jsk-platform.jar" />
-			</classpath>
-			<jvmarg value="-Djava.security.policy=${river}-config/start.policy" />
-			<jvmarg value="-Djava.rmi.server.RMIClassLoaderSpi=net.jini.loader.pref.PreferredClassProvider" />
-		</java>
-	</target>
-
-	<!-- start cloud demo with tuple spaces as shared memory -->
-	<target name="cloud-ts" description="Runs the cloud demo">
-		<java classname="cz.cuni.mff.d3s.deeco.demo.cloud.TSLauncherCloudNoJPF" fork="true">
-			<classpath>
-				<pathelement location="${dist}/cloud.jar" />
-				<pathelement location="${dist}/jdeeco.jar" />
-				<pathelement location="${river}/lib/jsk-lib.jar" />
-				<pathelement location="${river}/lib/jsk-platform.jar" />
-			</classpath>
-			<jvmarg value="-Djava.security.policy=${river}-config/start.policy" />
-			<jvmarg value="-Djava.rmi.server.RMIClassLoaderSpi=net.jini.loader.pref.PreferredClassProvider" />
-		</java>
-	</target>
-
-	<!-- start convoy demo with tuple spaces as shared memory -->
-	<target name="convoy-ts" description="Runs the convoy demo">
-		<java classname="cz.cuni.mff.d3s.deeco.demo.convoy.TSLauncherConvoyNoJPF" fork="true">
-			<classpath>
-				<pathelement location="${dist}/convoy.jar" />
-				<pathelement location="${dist}/jdeeco.jar" />
-				<pathelement location="${river}/lib/jsk-lib.jar" />
-				<pathelement location="${river}/lib/jsk-platform.jar" />
-			</classpath>
-			<jvmarg value="-Djava.security.policy=${river}-config/start.policy" />
-			<jvmarg value="-Djava.rmi.server.RMIClassLoaderSpi=net.jini.loader.pref.PreferredClassProvider" />
-		</java>
-	</target>
-
-
-	<!-- run cloud demo under jpf -->
-	<target name="jpf-cloud">
-		<java fork="true" classname="cz.cuni.mff.d3s.deeco.runtime.PreprocessorLauncher" dir="${dist}">
-			<arg value="cloud.jar" />
-			<classpath>
-				<pathelement location="${dist}/jdeeco.jar" />
-				<pathelement location="${lib}/bcel.jar" />
-				<pathelement location="${lib}/cloner.jar" />
-				<pathelement location="${lib}/objenesis.jar" />
-			</classpath>
-		</java>
-		<java fork="true" jar="${jpf}/build/RunJPF.jar" dir="${dist}">
-			<jvmarg value="-Djdeeco-dist=${dist}" />
-			<jvmarg value="-Djdeeco-src=${src}" />
-			<jvmarg value="-Djdeeco-src-demo=${demo}" />
-			<arg value="+classpath=${dist}/cloud.jar,${dist}/jdeeco.jar,${lib}/cloner.jar,${lib}/objenesis.jar" />
-			<arg value="+jpf-core.native_classpath+=;${dist}/jdeeco.jar;${dist}/jdeeco-jpf.jar" />
-			<arg value="+listener=gov.nasa.jpf.listener.AssertionProperty" />
-			<arg value="${demo}/../jpfProperties/LocalLauncherCloudJPF.jpf" />
-			<jvmarg value="-Xmx2g" />
-		</java>
-	</target>
-
-	<!-- run convoy demo under jpf -->
-	<target name="jpf-convoy">
-		<java fork="true" classname="cz.cuni.mff.d3s.deeco.runtime.PreprocessorLauncher" dir="${dist}">
-			<arg value="convoy.jar" />
-			<classpath>
-				<pathelement location="${dist}/jdeeco.jar" />
-				<pathelement location="${lib}/bcel.jar" />
-				<pathelement location="${lib}/cloner.jar" />
-				<pathelement location="${lib}/objenesis.jar" />
-			</classpath>
-		</java>
-		<java fork="true" jar="${jpf}/build/RunJPF.jar" dir="${dist}">
-			<jvmarg value="-Djdeeco-dist=${dist}" />
-			<jvmarg value="-Djdeeco-src=${src}" />
-			<jvmarg value="-Djdeeco-src-demo=${demo}" />
-			<arg value="+classpath=${dist}/convoy.jar,${dist}/jdeeco.jar,${lib}/cloner.jar,${lib}/objenesis.jar" />
-			<arg value="+jpf-core.native_classpath+=;${dist}/jdeeco.jar;${dist}/jdeeco-jpf.jar" />
-			<arg value="${demo}/../jpfProperties/LocalLauncherConvoyJPF.jpf" />
-			<jvmarg value="-Xmx8g" />
-		</java>
-	</target>
-
-	<!-- check ltl properties for convoy demo -->
-	<target name="ltl-convoytut">
-		<java fork="true" classname="cz.cuni.mff.d3s.deeco.runtime.PreprocessorLauncher" dir="${dist}">
-			<arg value="convoytut.jar" />
-			<classpath>
-				<pathelement location="${dist}/jdeeco.jar" />
-				<pathelement location="${dist}/jdeeco-jpf.jar" />
-				<pathelement location="${lib}/bcel.jar" />
-				<pathelement location="${lib}/cloner.jar" />
-				<pathelement location="${lib}/objenesis.jar" />
-			</classpath>
-		</java>
-		<java fork="true" jar="${jpf}/build/RunJPF.jar" dir="${dist}">
-			<jvmarg value="-Djdeeco-dist=${dist}" />
-			<jvmarg value="-Djdeeco-src=${src}" />
-			<jvmarg value="-Djdeeco-src-demo=${demo}" />
-			<arg value="+classpath=${dist}/convoytut.jar,${dist}/jdeeco.jar,${dist}/jdeeco-jpf.jar,${lib}/cloner.jar,${lib}/objenesis.jar" />
-			<arg value="+site=site.properties" />
-			<arg value="+jpf-core.native_classpath+=;${dist}/jdeeco.jar;${dist}/jdeeco-jpf.jar" />
-			<arg value="+jpf-ltl.sourcepath=${demo};{src}" />
-			<arg value="${demo}/../jpfProperties/LocalLauncherConvoyLTL.jpf" />
-			<jvmarg value="-Xmx8g" />
-		</java>
-	</target>
-
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. --><project basedir="." default="build" name="cz.cuni.mff.d3s.jdeeco.demo">
+    <property environment="env"/>
+    <property name="ECLIPSE_HOME" value="C:/eclipse"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.7"/>
+    <property name="source" value="1.7"/>
+    <path id="Maven Dependencies.libraryclasspath">
+        <pathelement location="../../../cz.cuni.mff.d3s.jdeeco.core"/>
+        <pathelement location="C:/Users/Spectrum/.m2/repository/org/eclipse/emf/org.eclipse.emf.ecore/2.9.0-v20130528-0742/org.eclipse.emf.ecore-2.9.0-v20130528-0742.jar"/>
+        <pathelement location="C:/Users/Spectrum/.m2/repository/org/eclipse/emf/org.eclipse.emf.common/2.9.0-v20130528-0742/org.eclipse.emf.common-2.9.0-v20130528-0742.jar"/>
+        <pathelement location="C:/Users/Spectrum/.m2/repository/org/eclipse/emf/org.eclipse.emf.ecore.xmi/2.9.0-v20130528-0742/org.eclipse.emf.ecore.xmi-2.9.0-v20130528-0742.jar"/>
+        <pathelement location="C:/Users/Spectrum/.m2/repository/uk/com/robust-it/cloning/1.9.0/cloning-1.9.0.jar"/>
+        <pathelement location="C:/Users/Spectrum/.m2/repository/org/objenesis/objenesis/1.2/objenesis-1.2.jar"/>
+        <pathelement location="C:/Users/Spectrum/.m2/repository/cz/cuni/mff/d3s/cz.cuni.mff.d3s.jini/1.0.0/cz.cuni.mff.d3s.jini-1.0.0.jar"/>
+    </path>
+    <path id="cz.cuni.mff.d3s.jdeeco.demo.classpath">
+        <pathelement location="target/classes"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+        <pathelement location="libs/jdeeco.jar"/>
+    </path>
+    <path id="run.FFLauncher.classpath">
+        <path refid="cz.cuni.mff.d3s.jdeeco.demo.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.LocalLauncherCloudNoJPF.classpath">
+        <path refid="cz.cuni.mff.d3s.jdeeco.demo.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.LocalLauncherDynamicCloudNoJPF.classpath">
+        <path refid="cz.cuni.mff.d3s.jdeeco.demo.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.TSLauncherCloudNoJPF.classpath">
+        <path refid="cz.cuni.mff.d3s.jdeeco.demo.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.FFHexacopterLauncher.classpath">
+        <path refid="cz.cuni.mff.d3s.jdeeco.demo.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <target name="init">
+        <mkdir dir="target/classes"/>
+        <copy includeemptydirs="false" todir="target/classes">
+            <fileset dir="src">
+                <include name="**/*.java"/>
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="clean">
+        <delete dir="target/classes"/>
+    </target>
+    <target depends="clean" name="cleanall"/>
+    <target depends="build-subprojects,build-project" name="build"/>
+    <target name="build-subprojects"/>
+    <target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="target/classes" includeantruntime="false" source="${source}" target="${target}">
+            <src path="src"/>
+            <include name="**/*.java"/>
+            <classpath refid="cz.cuni.mff.d3s.jdeeco.demo.classpath"/>
+        </javac>
+    </target>
+    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
+    <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
+        <copy todir="${ant.library.dir}">
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </copy>
+        <unzip dest="${ant.library.dir}">
+            <patternset includes="jdtCompilerAdapter.jar"/>
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </unzip>
+    </target>
+    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
+        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+        <antcall target="build"/>
+    </target>
+    <target name="FFLauncher">
+        <java classname="cz.cuni.mff.d3s.deeco.demo.firefighters.FFLauncher" failonerror="true" fork="yes">
+            <classpath refid="run.FFLauncher.classpath"/>
+        </java>
+    </target>
+    <target name="LocalLauncherCloudNoJPF">
+        <java classname="cz.cuni.mff.d3s.deeco.demo.cloud.LocalLauncherCloudNoJPF" failonerror="true" fork="yes">
+            <classpath refid="run.LocalLauncherCloudNoJPF.classpath"/>
+        </java>
+    </target>
+    <target name="LocalLauncherDynamicCloudNoJPF">
+        <java classname="cz.cuni.mff.d3s.deeco.demo.cloud.LocalLauncherDynamicCloudNoJPF" failonerror="true" fork="yes">
+            <classpath refid="run.LocalLauncherDynamicCloudNoJPF.classpath"/>
+        </java>
+    </target>
+    <target name="TSLauncherCloudNoJPF">
+        <java classname="cz.cuni.mff.d3s.deeco.demo.cloud.TSLauncherCloudNoJPF" failonerror="true" fork="yes">
+            <classpath refid="run.TSLauncherCloudNoJPF.classpath"/>
+        </java>
+    </target>
+    <target name="FFHexacopterLauncher">
+        <java classname="cz.cuni.mff.d3s.deeco.demo.firefighters.FFHexacopterLauncher" failonerror="true" fork="yes">
+            <classpath refid="run.FFHexacopterLauncher.classpath"/>
+        </java>
+    </target>
 </project>

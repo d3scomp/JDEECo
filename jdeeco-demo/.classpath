@@ -16,7 +16,6 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/cz.cuni.mff.d3s.jdeeco.core"/>
-	<classpathentry kind="lib" path="/cz.cuni.mff.d3s.jdeeco.core/target/cz.cuni.mff.d3s.jdeeco.core-2.0.0.jar"/>
+	<classpathentry kind="lib" path="libs/jdeeco.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

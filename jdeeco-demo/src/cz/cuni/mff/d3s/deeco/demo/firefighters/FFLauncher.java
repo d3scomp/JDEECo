@@ -25,13 +25,13 @@ public class FFLauncher {
 		RuntimeMetadata model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
 		
 		processor.process(model, 
-							new GroupMember("FF1", "T1"), new GroupMember("FF2", "T1"),
-							new GroupMember("FF3", "T1"), new GroupMember("FF4", "T2"),
-							new GroupMember("FF5", "T2"), new GroupMember("FF6", "T2"),
-							new GroupLeader("GL1", "T1", false, new Position(1000, 1000)),
-							new GroupLeader("GL2", "T2", true, new Position(0, 0)), // Components 
-							SensorDataAggregation.class, CriticalDataAggregation.class // Ensembles
-							);
+						new GroupMember("FF1", "T1"), new GroupMember("FF2", "T1"),
+						new GroupMember("FF3", "T1"), new GroupMember("FF4", "T2"),
+						new GroupMember("FF5", "T2"), new GroupMember("FF6", "T2"),
+						new GroupLeader("GL1", "T1", false, new Position(1000, 1000)),
+						new GroupLeader("GL2", "T2", true, new Position(0, 0)), // Components 
+						SensorDataAggregation.class, CriticalDataAggregation.class // Ensembles
+						);
 		
 		RuntimeFrameworkBuilder builder = new RuntimeFrameworkBuilder(
 				new RuntimeConfiguration(
