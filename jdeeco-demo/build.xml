@@ -27,7 +27,7 @@
             </classpath>
         </java>
     </target>
-    <target name="LocalLauncherCloudNoJPF">
+    <target name="LocalLauncherCloud">
         <java classname="cz.cuni.mff.d3s.deeco.demo.cloud.LocalLauncherCloudNoJPF" failonerror="true" fork="yes">
             <classpath>
 				<pathelement location="cloud.jar"/>
@@ -40,7 +40,7 @@
             </classpath>
         </java>
     </target>
-    <target name="LocalLauncherDynamicCloudNoJPF">
+    <target name="LocalLauncherDynamicCloud">
         <java classname="cz.cuni.mff.d3s.deeco.demo.cloud.LocalLauncherDynamicCloudNoJPF" failonerror="true" fork="yes">
             <classpath>
 				<pathelement location="cloud.jar"/>
@@ -53,7 +53,7 @@
             </classpath>
         </java>
     </target>
-    <target name="TSLauncherCloudNoJPF">
+    <target name="TSLauncherCloud">
         <java classname="cz.cuni.mff.d3s.deeco.demo.cloud.TSLauncherCloudNoJPF" failonerror="true" fork="yes">
             <classpath>
 				<pathelement location="cloud.jar"/>
