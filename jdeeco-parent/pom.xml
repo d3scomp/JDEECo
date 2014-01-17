@@ -21,6 +21,8 @@
 			</properties>
 			<modules>
 				<module>../jdeeco-core</module>
+				<module>../jdeeco-demo</module>
+				<module>../jdeeco-core-osgi</module>
 			</modules>
 		</profile>
 	</profiles>

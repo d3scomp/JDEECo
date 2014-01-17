@@ -1,109 +1,67 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- WARNING: Eclipse auto-generated file.
-              Any modifications will be overwritten.
-              To include a user specific buildfile here, simply create one in the same
-              directory with the processing instruction <?eclipse.ant.import?>
-              as the first entry and export the buildfile again. --><project basedir="." default="build" name="cz.cuni.mff.d3s.jdeeco.demo">
-    <property environment="env"/>
-    <property name="ECLIPSE_HOME" value="C:/eclipse"/>
-    <property name="debuglevel" value="source,lines,vars"/>
-    <property name="target" value="1.7"/>
-    <property name="source" value="1.7"/>
-    <path id="Maven Dependencies.libraryclasspath">
-        <pathelement location="../../../cz.cuni.mff.d3s.jdeeco.core"/>
-        <pathelement location="C:/Users/Spectrum/.m2/repository/org/eclipse/emf/org.eclipse.emf.ecore/2.9.0-v20130528-0742/org.eclipse.emf.ecore-2.9.0-v20130528-0742.jar"/>
-        <pathelement location="C:/Users/Spectrum/.m2/repository/org/eclipse/emf/org.eclipse.emf.common/2.9.0-v20130528-0742/org.eclipse.emf.common-2.9.0-v20130528-0742.jar"/>
-        <pathelement location="C:/Users/Spectrum/.m2/repository/org/eclipse/emf/org.eclipse.emf.ecore.xmi/2.9.0-v20130528-0742/org.eclipse.emf.ecore.xmi-2.9.0-v20130528-0742.jar"/>
-        <pathelement location="C:/Users/Spectrum/.m2/repository/uk/com/robust-it/cloning/1.9.0/cloning-1.9.0.jar"/>
-        <pathelement location="C:/Users/Spectrum/.m2/repository/org/objenesis/objenesis/1.2/objenesis-1.2.jar"/>
-        <pathelement location="C:/Users/Spectrum/.m2/repository/cz/cuni/mff/d3s/cz.cuni.mff.d3s.jini/1.0.0/cz.cuni.mff.d3s.jini-1.0.0.jar"/>
-    </path>
-    <path id="cz.cuni.mff.d3s.jdeeco.demo.classpath">
-        <pathelement location="target/classes"/>
-        <path refid="Maven Dependencies.libraryclasspath"/>
-        <pathelement location="libs/jdeeco.jar"/>
-    </path>
-    <path id="run.FFLauncher.classpath">
-        <path refid="cz.cuni.mff.d3s.jdeeco.demo.classpath"/>
-        <path refid="Maven Dependencies.libraryclasspath"/>
-    </path>
-    <path id="run.LocalLauncherCloudNoJPF.classpath">
-        <path refid="cz.cuni.mff.d3s.jdeeco.demo.classpath"/>
-        <path refid="Maven Dependencies.libraryclasspath"/>
-    </path>
-    <path id="run.LocalLauncherDynamicCloudNoJPF.classpath">
-        <path refid="cz.cuni.mff.d3s.jdeeco.demo.classpath"/>
-        <path refid="Maven Dependencies.libraryclasspath"/>
-    </path>
-    <path id="run.TSLauncherCloudNoJPF.classpath">
-        <path refid="cz.cuni.mff.d3s.jdeeco.demo.classpath"/>
-        <path refid="Maven Dependencies.libraryclasspath"/>
-    </path>
-    <path id="run.FFHexacopterLauncher.classpath">
-        <path refid="cz.cuni.mff.d3s.jdeeco.demo.classpath"/>
-        <path refid="Maven Dependencies.libraryclasspath"/>
-    </path>
-    <target name="init">
-        <mkdir dir="target/classes"/>
-        <copy includeemptydirs="false" todir="target/classes">
-            <fileset dir="src">
-                <include name="**/*.java"/>
-                <exclude name="**/*.launch"/>
-                <exclude name="**/*.java"/>
-            </fileset>
-        </copy>
-    </target>
-    <target name="clean">
-        <delete dir="target/classes"/>
-    </target>
-    <target depends="clean" name="cleanall"/>
-    <target depends="build-subprojects,build-project" name="build"/>
-    <target name="build-subprojects"/>
-    <target depends="init" name="build-project">
-        <echo message="${ant.project.name}: ${ant.file}"/>
-        <javac debug="true" debuglevel="${debuglevel}" destdir="target/classes" includeantruntime="false" source="${source}" target="${target}">
-            <src path="src"/>
-            <include name="**/*.java"/>
-            <classpath refid="cz.cuni.mff.d3s.jdeeco.demo.classpath"/>
-        </javac>
-    </target>
-    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
-    <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
-        <copy todir="${ant.library.dir}">
-            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
-        </copy>
-        <unzip dest="${ant.library.dir}">
-            <patternset includes="jdtCompilerAdapter.jar"/>
-            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
-        </unzip>
-    </target>
-    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
-        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
-        <antcall target="build"/>
-    </target>
     <target name="FFLauncher">
         <java classname="cz.cuni.mff.d3s.deeco.demo.firefighters.FFLauncher" failonerror="true" fork="yes">
-            <classpath refid="run.FFLauncher.classpath"/>
-        </java>
-    </target>
-    <target name="LocalLauncherCloudNoJPF">
-        <java classname="cz.cuni.mff.d3s.deeco.demo.cloud.LocalLauncherCloudNoJPF" failonerror="true" fork="yes">
-            <classpath refid="run.LocalLauncherCloudNoJPF.classpath"/>
-        </java>
-    </target>
-    <target name="LocalLauncherDynamicCloudNoJPF">
-        <java classname="cz.cuni.mff.d3s.deeco.demo.cloud.LocalLauncherDynamicCloudNoJPF" failonerror="true" fork="yes">
-            <classpath refid="run.LocalLauncherDynamicCloudNoJPF.classpath"/>
-        </java>
-    </target>
-    <target name="TSLauncherCloudNoJPF">
-        <java classname="cz.cuni.mff.d3s.deeco.demo.cloud.TSLauncherCloudNoJPF" failonerror="true" fork="yes">
-            <classpath refid="run.TSLauncherCloudNoJPF.classpath"/>
+            <classpath>
+				<pathelement location="firefighters.jar"/>
+				<pathelement location="jdeeco.jar"/>
+				<pathelement location="cloning-1.9.0.jar"/>
+				<pathelement location="objenesis-1.2.jar"/>
+				<pathelement location="org.eclipse.emf.ecore.xmi-2.9.0-v20130528-0742.jar"/>
+				<pathelement location="org.eclipse.emf.ecore-2.9.0-v20130528-0742.jar"/>
+				<pathelement location="org.eclipse.emf.common-2.9.0-v20130528-0742.jar"/>
+            </classpath>
         </java>
     </target>
     <target name="FFHexacopterLauncher">
         <java classname="cz.cuni.mff.d3s.deeco.demo.firefighters.FFHexacopterLauncher" failonerror="true" fork="yes">
-            <classpath refid="run.FFHexacopterLauncher.classpath"/>
+            <classpath>
+				<pathelement location="firefighters.jar"/>
+				<pathelement location="jdeeco.jar"/>
+				<pathelement location="cloning-1.9.0.jar"/>
+				<pathelement location="objenesis-1.2.jar"/>
+				<pathelement location="org.eclipse.emf.ecore.xmi-2.9.0-v20130528-0742.jar"/>
+				<pathelement location="org.eclipse.emf.ecore-2.9.0-v20130528-0742.jar"/>
+				<pathelement location="org.eclipse.emf.common-2.9.0-v20130528-0742.jar"/>
+            </classpath>
+        </java>
+    </target>
+    <target name="LocalLauncherCloudNoJPF">
+        <java classname="cz.cuni.mff.d3s.deeco.demo.cloud.LocalLauncherCloudNoJPF" failonerror="true" fork="yes">
+            <classpath>
+				<pathelement location="cloud.jar"/>
+				<pathelement location="jdeeco.jar"/>
+				<pathelement location="cloning-1.9.0.jar"/>
+				<pathelement location="objenesis-1.2.jar"/>
+				<pathelement location="org.eclipse.emf.ecore.xmi-2.9.0-v20130528-0742.jar"/>
+				<pathelement location="org.eclipse.emf.ecore-2.9.0-v20130528-0742.jar"/>
+				<pathelement location="org.eclipse.emf.common-2.9.0-v20130528-0742.jar"/>
+            </classpath>
+        </java>
+    </target>
+    <target name="LocalLauncherDynamicCloudNoJPF">
+        <java classname="cz.cuni.mff.d3s.deeco.demo.cloud.LocalLauncherDynamicCloudNoJPF" failonerror="true" fork="yes">
+            <classpath>
+				<pathelement location="cloud.jar"/>
+				<pathelement location="jdeeco.jar"/>
+				<pathelement location="cloning-1.9.0.jar"/>
+				<pathelement location="objenesis-1.2.jar"/>
+				<pathelement location="org.eclipse.emf.ecore.xmi-2.9.0-v20130528-0742.jar"/>
+				<pathelement location="org.eclipse.emf.ecore-2.9.0-v20130528-0742.jar"/>
+				<pathelement location="org.eclipse.emf.common-2.9.0-v20130528-0742.jar"/>
+            </classpath>
+        </java>
+    </target>
+    <target name="TSLauncherCloudNoJPF">
+        <java classname="cz.cuni.mff.d3s.deeco.demo.cloud.TSLauncherCloudNoJPF" failonerror="true" fork="yes">
+            <classpath>
+				<pathelement location="cloud.jar"/>
+				<pathelement location="jdeeco.jar"/>
+				<pathelement location="cloning-1.9.0.jar"/>
+				<pathelement location="objenesis-1.2.jar"/>
+				<pathelement location="org.eclipse.emf.ecore.xmi-2.9.0-v20130528-0742.jar"/>
+				<pathelement location="org.eclipse.emf.ecore-2.9.0-v20130528-0742.jar"/>
+				<pathelement location="org.eclipse.emf.common-2.9.0-v20130528-0742.jar"/>
+            </classpath>
         </java>
     </target>
 </project>
