@@ -155,4 +155,8 @@
 					<scope>compile</scope>
 				</dependency>
         </dependencies>
+<<<<<<< HEAD
 </project>
+=======
+</project>
+>>>>>>> origin/master

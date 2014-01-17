@@ -17,7 +17,7 @@ import cz.cuni.mff.d3s.deeco.runtime.RuntimeFrameworkBuilder;
  * @author Michal Kit
  * 
  */
-public class LocalLauncherCloudNoJPF {
+public class LocalLauncherCloud {
 
 	public static void main(String[] args) throws AnnotationProcessorException {
 		AnnotationProcessor processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE);

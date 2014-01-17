@@ -17,7 +17,7 @@ import cz.cuni.mff.d3s.deeco.runtime.RuntimeConfiguration.Scheduling;
  * @author Michal Kit
  * 
  */
-public class TSLauncherCloudNoJPF {
+public class TSLauncherCloud {
 
 	public static void main(String[] args) throws AnnotationProcessorException {
 		AnnotationProcessor processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE);

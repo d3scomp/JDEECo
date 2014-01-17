@@ -32,7 +32,7 @@ import cz.cuni.mff.d3s.deeco.runtime.RuntimeConfiguration.Scheduling;
  *
  * @author Petr Hnetynka
  */
-public class LocalLauncherDynamicCloudNoJPF {
+public class LocalLauncherDynamicCloud {
         public static void main(String[] args) throws AnnotationProcessorException {
         	AnnotationProcessor processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE);
         	RuntimeMetadata model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
