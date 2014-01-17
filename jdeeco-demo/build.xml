@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project name="JDEECo-Demos" >
+    <description>JDEECo demos build file</description>
     <target name="FFLauncher">
         <java classname="cz.cuni.mff.d3s.deeco.demo.firefighters.FFLauncher" failonerror="true" fork="yes">
             <classpath>
