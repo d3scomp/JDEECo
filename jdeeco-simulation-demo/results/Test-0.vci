@@ -1,0 +1,317 @@
+                                                                
+version 2
+run Test-0-20140122-12:53:32-908
+attr configname Test
+attr datetime 20140122-12:53:32
+attr experiment Test
+attr inifile omnetpp.ini
+attr iterationvars ""
+attr iterationvars2 $repetition=0
+attr measurement ""
+attr network backbone.Network
+attr processid 908
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 0
+attr seedset 0
+
+vector 8  Network.ICS.queue  queueLength:vector  ETV
+attr interpolationmode  sample-hold
+attr title  "queue length, vector"
+vector 130  Network.v[0].queue  queueLength:vector  ETV
+attr interpolationmode  sample-hold
+attr title  "queue length, vector"
+vector 3  Network.ICS.encap  encapPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  encapPk
+attr title  "packets encapsulated, vector(packetBytes)"
+vector 125  Network.v[0].encap  encapPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  encapPk
+attr title  "packets encapsulated, vector(packetBytes)"
+vector 5  Network.ICS.queue  rcvdPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr title  "received packets, vector(packetBytes)"
+vector 7  Network.ICS.queue  queueingTime:vector  ETV
+attr interpolationmode  none
+attr title  "queueing time, vector"
+vector 127  Network.v[0].queue  rcvdPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr title  "received packets, vector(packetBytes)"
+vector 129  Network.v[0].queue  queueingTime:vector  ETV
+attr interpolationmode  none
+attr title  "queueing time, vector"
+vector 14  Network.ICS.mac  rxPkFromHL:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  rxPkFromHL
+attr title  "packet bytes from higher layer, vector(packetBytes)"
+vector 9  Network.ICS.mac  txPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  txPk
+attr title  "packets transmitted, vector(packetBytes)"
+vector 24  Network.switch.mac[0]  rxPkOk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  rxPkOk
+attr title  "packets received OK, vector(packetBytes)"
+vector 25  Network.switch.mac[0]  passedUpPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  packetSentToUpper
+attr title  "packets passed to higher layer, vector(packetBytes)"
+vector 142  Network.switch.relayUnit  "buffer level"  ETV
+vector 37  Network.switch.mac[1]  rxPkFromHL:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  rxPkFromHL
+attr title  "packet bytes from higher layer, vector(packetBytes)"
+vector 46  Network.switch.mac[2]  rxPkFromHL:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  rxPkFromHL
+attr title  "packet bytes from higher layer, vector(packetBytes)"
+vector 55  Network.switch.mac[3]  rxPkFromHL:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  rxPkFromHL
+attr title  "packet bytes from higher layer, vector(packetBytes)"
+vector 32  Network.switch.mac[1]  txPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  txPk
+attr title  "packets transmitted, vector(packetBytes)"
+vector 41  Network.switch.mac[2]  txPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  txPk
+attr title  "packets transmitted, vector(packetBytes)"
+vector 50  Network.switch.mac[3]  txPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  txPk
+attr title  "packets transmitted, vector(packetBytes)"
+vector 63  Network.ap[0].mac[0]  rxPkOk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  rxPkOk
+attr title  "packets received OK, vector(packetBytes)"
+vector 64  Network.ap[0].mac[0]  passedUpPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  packetSentToUpper
+attr title  "packets passed to higher layer, vector(packetBytes)"
+vector 84  Network.ap[1].mac[0]  rxPkOk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  rxPkOk
+attr title  "packets received OK, vector(packetBytes)"
+vector 85  Network.ap[1].mac[0]  passedUpPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  packetSentToUpper
+attr title  "packets passed to higher layer, vector(packetBytes)"
+vector 105  Network.ap[2].mac[0]  rxPkOk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  rxPkOk
+attr title  "packets received OK, vector(packetBytes)"
+vector 106  Network.ap[2].mac[0]  passedUpPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  packetSentToUpper
+attr title  "packets passed to higher layer, vector(packetBytes)"
+vector 143  Network.ap[0].relayUnit  "buffer level"  ETV
+vector 144  Network.ap[1].relayUnit  "buffer level"  ETV
+vector 145  Network.ap[2].relayUnit  "buffer level"  ETV
+vector 136  Network.v[0].mac  rxPkFromHL:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  rxPkFromHL
+attr title  "packet bytes from higher layer, vector(packetBytes)"
+vector 76  Network.ap[0].mac[1]  rxPkFromHL:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  rxPkFromHL
+attr title  "packet bytes from higher layer, vector(packetBytes)"
+vector 131  Network.v[0].mac  txPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  txPk
+attr title  "packets transmitted, vector(packetBytes)"
+vector 71  Network.ap[0].mac[1]  txPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  txPk
+attr title  "packets transmitted, vector(packetBytes)"
+vector 72  Network.ap[0].mac[1]  rxPkOk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  rxPkOk
+attr title  "packets received OK, vector(packetBytes)"
+vector 73  Network.ap[0].mac[1]  passedUpPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  packetSentToUpper
+attr title  "packets passed to higher layer, vector(packetBytes)"
+vector 67  Network.ap[0].mac[0]  rxPkFromHL:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  rxPkFromHL
+attr title  "packet bytes from higher layer, vector(packetBytes)"
+vector 62  Network.ap[0].mac[0]  txPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  txPk
+attr title  "packets transmitted, vector(packetBytes)"
+vector 33  Network.switch.mac[1]  rxPkOk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  rxPkOk
+attr title  "packets received OK, vector(packetBytes)"
+vector 34  Network.switch.mac[1]  passedUpPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  packetSentToUpper
+attr title  "packets passed to higher layer, vector(packetBytes)"
+vector 28  Network.switch.mac[0]  rxPkFromHL:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  rxPkFromHL
+attr title  "packet bytes from higher layer, vector(packetBytes)"
+vector 23  Network.switch.mac[0]  txPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  txPk
+attr title  "packets transmitted, vector(packetBytes)"
+vector 132  Network.v[0].mac  rxPkOk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  rxPkOk
+attr title  "packets received OK, vector(packetBytes)"
+vector 133  Network.v[0].mac  passedUpPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  packetSentToUpper
+attr title  "packets passed to higher layer, vector(packetBytes)"
+vector 10  Network.ICS.mac  rxPkOk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  rxPkOk
+attr title  "packets received OK, vector(packetBytes)"
+vector 11  Network.ICS.mac  passedUpPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  packetSentToUpper
+attr title  "packets passed to higher layer, vector(packetBytes)"
+vector 126  Network.v[0].encap  decapPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  decapPk
+attr title  "packets decapsulated, vector(packetBytes)"
+vector 4  Network.ICS.encap  decapPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  decapPk
+attr title  "packets decapsulated, vector(packetBytes)"
+vector 150  Network.ICS.app  responseTimes[4]  ETV
+vector 97  Network.ap[1].mac[1]  rxPkFromHL:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  rxPkFromHL
+attr title  "packet bytes from higher layer, vector(packetBytes)"
+vector 92  Network.ap[1].mac[1]  txPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  txPk
+attr title  "packets transmitted, vector(packetBytes)"
+vector 93  Network.ap[1].mac[1]  rxPkOk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  rxPkOk
+attr title  "packets received OK, vector(packetBytes)"
+vector 94  Network.ap[1].mac[1]  passedUpPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  packetSentToUpper
+attr title  "packets passed to higher layer, vector(packetBytes)"
+vector 88  Network.ap[1].mac[0]  rxPkFromHL:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  rxPkFromHL
+attr title  "packet bytes from higher layer, vector(packetBytes)"
+vector 83  Network.ap[1].mac[0]  txPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  txPk
+attr title  "packets transmitted, vector(packetBytes)"
+vector 42  Network.switch.mac[2]  rxPkOk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  rxPkOk
+attr title  "packets received OK, vector(packetBytes)"
+vector 43  Network.switch.mac[2]  passedUpPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  packetSentToUpper
+attr title  "packets passed to higher layer, vector(packetBytes)"
+vector 153  Network.v[0].app  responseTimes[0]  ETV
+vector 114  Network.ap[2].mac[1]  rxPkOk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  rxPkOk
+attr title  "packets received OK, vector(packetBytes)"
+vector 115  Network.ap[2].mac[1]  passedUpPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  packetSentToUpper
+attr title  "packets passed to higher layer, vector(packetBytes)"
+vector 109  Network.ap[2].mac[0]  rxPkFromHL:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  rxPkFromHL
+attr title  "packet bytes from higher layer, vector(packetBytes)"
+vector 104  Network.ap[2].mac[0]  txPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  txPk
+attr title  "packets transmitted, vector(packetBytes)"
+vector 51  Network.switch.mac[3]  rxPkOk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  rxPkOk
+attr title  "packets received OK, vector(packetBytes)"
+vector 52  Network.switch.mac[3]  passedUpPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  packetSentToUpper
+attr title  "packets passed to higher layer, vector(packetBytes)"
+vector 151  Network.ICS.app  responseTimes[5]  ETV
+vector 149  Network.ICS.app  responseTimes[3]  ETV
+vector 147  Network.ICS.app  responseTimes[1]  ETV
+vector 152  Network.ICS.app  responseTimes[6]  ETV
+vector 155  Network.v[0].app  responseTimes[2]  ETV
+vector 118  Network.ap[2].mac[1]  rxPkFromHL:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  rxPkFromHL
+attr title  "packet bytes from higher layer, vector(packetBytes)"
+vector 113  Network.ap[2].mac[1]  txPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  txPk
+attr title  "packets transmitted, vector(packetBytes)"
+vector 146  Network.ICS.app  responseTimes[0]  ETV
+vector 157  Network.v[0].app  responseTimes[4]  ETV
+vector 148  Network.ICS.app  responseTimes[2]  ETV
+3	11412 363338 3 771140 0.007 59.213048031999 14835 128 128 1898880 243056640
+4	374750 329640 90 771030 0.014028031999 59.199028031999 11103 128 128 1421184 181911552
+5	704390 363338 5 771141 0.007 59.213048031999 14835 147 147 2180745 320569515
+7	1067728 333668 5 771141 0.007 59.213048031999 14835 0 0 0 0
+8	1401396 9 0 0 0 0 1 0 0 0 0
+9	1401405 415011 10 771114 0.007001336 59.213001336 14834 147 147 2180598 320547906
+10	1816416 340743 88 771028 0.014028031999 59.199028031999 11103 147 147 1632141 239924727
+11	2157159 340743 88 771028 0.014028031999 59.199028031999 11103 147 147 1632141 239924727
+14	2497902 378173 7 771142 0.007 59.213048031999 14835 147 147 2180745 320569515
+23	2876075 340743 86 771026 0.014027031999 59.199027031999 11103 147 147 1632141 239924727
+24	3216818 429845 11 771115 0.007002336 59.213002336 14834 147 147 2180598 320547906
+25	3646663 429845 11 771115 0.007002336 59.213002336 14834 147 147 2180598 320547906
+28	4076508 340743 83 771023 0.014025695999 59.199025695999 11103 147 147 1632141 239924727
+32	4417251 429845 20 771124 0.007003672 59.213003672 14834 147 147 2180598 320547906
+33	4847096 111168 80 770639 0.014025695999 59.171403727998 3623 147 147 532581 78289407
+34	4958264 111168 80 770639 0.014025695999 59.171403727998 3623 147 147 532581 78289407
+37	5069432 429845 14 771118 0.007002336 59.213002336 14834 147 147 2180598 320547906
+41	5499277 429846 21 771125 0.007003672 59.213003672 14834 147 147 2180598 320547906
+42	5929123 116486 334 770871 0.042025695999 59.185403727998 3797 147 147 558159 82049373
+43	6045609 116486 334 770871 0.042025695999 59.185403727998 3797 147 147 558159 82049373
+46	6162095 429845 15 771119 0.007002336 59.213002336 14834 147 147 2180598 320547906
+50	6591940 429846 22 771126 0.007003672 59.213003672 14834 147 147 2180598 320547906
+51	7021786 113089 395 771020 0.042403727998 59.199025695999 3683 147 147 541401 79585947
+52	7134875 113089 395 771020 0.042403727998 59.199025695999 3683 147 147 541401 79585947
+55	7247964 429845 16 771120 0.007002336 59.213002336 14834 147 147 2180598 320547906
+62	7677809 111168 79 770638 0.014024695999 59.171402727998 3623 147 147 532581 78289407
+63	7788977 429846 23 771127 0.007004672 59.213004672 14834 147 147 2180598 320547906
+64	8218823 429846 23 771127 0.007004672 59.213004672 14834 147 147 2180598 320547906
+67	8648669 111168 77 770636 0.014023359999 59.171401391998 3623 147 147 532581 78289407
+71	8759837 111271 73 770357 0.014018031999 59.150066063998 3626 147 147 533022 78354234
+72	8871108 111168 74 770633 0.014023359999 59.171401391998 3623 147 147 532581 78289407
+73	8982276 111168 74 770633 0.014023359999 59.171401391998 3623 147 147 532581 78289407
+76	9093444 105139 67 770352 0.014004672 59.150052703999 3626 147 147 533022 78354234
+83	9198583 116486 333 770870 0.042024695999 59.185402727998 3797 147 147 558159 82049373
+84	9315069 429846 24 771128 0.007004672 59.213004672 14834 147 147 2180598 320547906
+85	9744915 429846 24 771128 0.007004672 59.213004672 14834 147 147 2180598 320547906
+88	10174761 116486 331 770868 0.042023359999 59.185401391998 3797 147 147 558159 82049373
+92	10291247 116847 327 770855 0.042018031999 59.185066063998 3809 147 147 559923 82308681
+93	10408094 116486 328 770865 0.042023359999 59.185401391998 3797 147 147 558159 82049373
+94	10524580 116486 328 770865 0.042023359999 59.185401391998 3797 147 147 558159 82049373
+97	10641066 110346 322 770851 0.042004672 59.185052703999 3809 147 147 559923 82308681
+104	10751412 116772 394 771019 0.042402727998 59.199024695999 3683 147 147 541401 79585947
+105	10868184 444680 25 771129 0.007004672 59.213004672 14834 147 147 2180598 320547906
+106	11312864 444680 25 771129 0.007004672 59.213004672 14834 147 147 2180598 320547906
+109	11757544 116772 392 771017 0.042401391998 59.199023359999 3683 147 147 541401 79585947
+113	11874316 117951 1357 771013 0.119018031999 59.199018031999 3719 147 147 546693 80363871
+114	11992267 116772 389 771014 0.042401391998 59.199023359999 3683 147 147 541401 79585947
+115	12109039 116772 389 771014 0.042401391998 59.199023359999 3683 147 147 541401 79585947
+118	12225811 111450 1353 771009 0.119004672 59.199004672 3719 147 147 546693 80363871
+125	12337261 393006 4 771108 0.007 59.213 14835 128 128 1898880 243056640
+126	12730267 353504 89 771029 0.014028031999 59.199028031999 11154 128 128 1427712 182747136
+127	13083771 393006 6 771110 0.007 59.213 14835 147 147 2180745 320569515
+129	13476777 363336 6 771110 0.007 59.213 14835 0 0 0 0
+130	13840113 11 0 0 0 0 1 0 0 0 0
+131	13840124 351846 71 771011 0.014013359999 59.199013359999 11103 147 147 1632141 239924727
+132	14191970 353504 87 771027 0.014028031999 59.199028031999 11154 147 147 1639638 241026786
+133	14545474 353504 87 771027 0.014028031999 59.199028031999 11154 147 147 1639638 241026786
+136	14898978 293724 42 770982 0.014 59.199 11103 147 147 1632141 239924727
+142	15192702 1541176 12 771117 0.007002336 59.213002336 51874 0 147 3812739 560472633
