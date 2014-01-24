@@ -1,5 +1,3 @@
-# THIS README IS OUTDATED
-
 JDEECo is a Java implementation of the DEECo component system. For further information, please visit [http://d3s.mff.cuni.cz/projects/components_and_services/deeco/](http://d3s.mff.cuni.cz/projects/components_and_services/deeco/).
 
 ##Requirements
@@ -8,48 +6,34 @@ To compile and run the JDEECo framework, the following software has to be availa
 * Java SDK >= 1.7.0 ([http://java.com/en/](http://java.com/en/))
 
 ## Compilation and Deployment
-To compile the project you will need to have Apache Maven (http://maven.apache.org/) installed on your machine (version 3.04 was used when writing the script).
+To compile the project you will need to have Apache Maven (http://maven.apache.org/) installed on your machine (version 3.1.1 was used when writing the script).
 
-#### There are two maven profiles against which you can compile the sources:
- * `default` - produces simple jars for jDEECo core library, Demo applications and JPF relevant library.
- * `sde` - produces OSGi bundles for jDEECo core and jDEECo SDE Tool
+#### There are two ways you can compile the sources using maven:
+ * `default` - produces both simple jar and the OSGi bundle for jDEECo core library and demos
+ * `OSGi` - produces OSGi bundle for jDEECo core
+ * `core` - produces the simple jar for jDEECo
 
-The `default` compilation is performed by simply executing `mvn clean install` command in the jdeeco-parent subfolder.
-In order to compile sources against the `sde` profile issue `mvn clean install -Psde` command.
-All generated binaries together with zipped sources are placed in the `dist` folder in the root of the project. 
-Additionally AppacheRiver 2.2 and Java PathFinder distribution are downloaded, set up and all required scripts are generated.
+The `default` compilation is performed by simply executing `mvn clean install` command in the `jdeeco-parent` subfolder.
+In order to compile sources to have OSGi bundle of jDEECo on outcome `mvn clean install` command in the `jdeeco-core-osgi` subfolder. To get just the simple jar one needs to run `mvn clean install` in the `jdeeco-core`.
+All generated binaries along with dependencies needed to run jdeeco are placed in the `dist` folder.
 
-To simplify the execution of demo applications `ant` script is provided, that allows for single command launch.
-If there is no Apache Ant installation on the machine, please download and configure one from the following link:
-http://ant.apache.org/
+## Concepts
+A new node called `jdeeco-concepts` is available now. It contains projects that currently cannot be run or implemented(in terms of containig syntax sugar cutrrenly not supported by jdeeco) in jdeeco. Those projects are for experimenting and coining ideas that would be nice to have in future releases only.
 
+## Demos
+Demo projects for jdeeco can be found in `jdeeco-demos` folder. They can be built either by running `mvn clean install` in jdeeco-demos or via running the same command from `jdeeco-parent` (this will eventually generate all the binaries). In both cases binaries `cloud.jar` and `firefighters.jar` will appear in `dist` folder along with an ant script to run them. There are 5 different demos out of those two demo binaries
 
-To run one of demo applications perform open command window in the `dist` directory and execute one of the following commands:
+#### Cloud demos
+* ant LocalLauncherCloudNoJPF
+* ant LocalLauncherDynamicCloudNoJPF
+* ant TSLauncherCloudNoJPF
 
-#### Start the demo using local knowledge repository:
- * Cloud demo: `ant cloud-local`
- * Convoy demo: `ant convoy-local`
-
-#### Start the demo using tuple space knowledge repository:
-First, run `ant start-ar` in a separate console and wait for it to start (approx 10sec). Specifically, wait until the following is printed (in arbitrary order):
-
-```
-[java] INFO: ClassServer started [[...\dist\apache-river\lib\, ...\dist\apache-river\lib-dl\], port 8080]
-[java] INFO: Mahalo started: com.sun.jini.mahalo.TransientMahaloImpl@19ae493
-[java] INFO: started Reggie: cc519f68-6182-4b17-8578-28cae0563484, [cz.cuni.mff.d3s.deeco.lookupGroup], jini://10.10.16.127/
-[java] INFO: Outrigger server started: com.sun.jini.outrigger.OutriggerServerImpl@1267610
-```
-Then run the following in a separate console:
- * *Cloud demo*: `ant cloud-ts`
- * *Convoy demo*: `ant convoy-ts`
-
-#### Start the demo using the Java PathFinder:
-To run cloud demo under the Java PathFinder (only local knowledge repository supported) issue the following ant command: `ant jpf-cloud`.
+#### Firefighters demos
+* ant FFLauncher
+* ant FFHexacopterLauncher
 
 ## Tutorial
 A jDEECo tutorial featuring a simple convoy example can be found as a separate project at https://github.com/d3scomp/JDEECo-Convoy-Tutorial. 
 
 ## Eclipse integration
 All of the projects in the repository are the Eclipse projects. As such they can be easily imported to the Eclipse workspace.
-
-To set up logging in Eclipse, you have to add the 'config' folder to the classpath (through Run Configurations).
