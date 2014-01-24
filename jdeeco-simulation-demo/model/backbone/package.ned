@@ -1,0 +1,3 @@
+package backbone;
+
+@license(LGPL);
