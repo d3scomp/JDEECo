@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +15,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
  * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
  *
  */
-public class ValueSet {
+public class ValueSet implements Serializable {
 	
 	
 	private Map<KnowledgePath, Object> values = new HashMap<>();
