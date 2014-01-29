@@ -1,8 +1,11 @@
+package cz.cuni.mff.d3s.jdeeco.simulation.demo;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeData;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
-import cz.cuni.mff.d3s.deeco.publisher.KnowledgeData;
-import cz.cuni.mff.d3s.deeco.publisher.PacketReceiver;
+import cz.cuni.mff.d3s.deeco.publish.PacketReceiver;
 import cz.cuni.mff.d3s.deeco.simulation.Host;
 import cz.cuni.mff.d3s.deeco.simulation.Simulation;
 
@@ -23,7 +26,9 @@ public class TestHost extends Host {
 	@Override
 	public void at(double absoluteTime) {
 		KnowledgeData kd = new KnowledgeData(getId(), new ValueSet());
-		sendData(kd, "");
+		List<KnowledgeData> list = new LinkedList<>();
+		list.add(kd);
+		sendData(list, "");
 	}
 	
 	@Override

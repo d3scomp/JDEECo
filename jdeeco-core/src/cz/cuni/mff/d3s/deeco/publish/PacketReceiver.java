@@ -1,26 +1,37 @@
-package cz.cuni.mff.d3s.deeco.publisher;
+package cz.cuni.mff.d3s.deeco.publish;
 
-import static cz.cuni.mff.d3s.deeco.publisher.Serializer.deserialize;
+import static cz.cuni.mff.d3s.deeco.publish.Serializer.deserialize;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeData;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeDataReceiver;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 
 public class PacketReceiver {
 
 	private final int packetSize;
 	private final Map<Integer, Message> messages;
-	private final IncomingKnowledgeListener incomingKnowledgeListener;
+	
+	private KnowledgeDataReceiver knowledgeDataReceiver;
 
-	public PacketReceiver(int packetSize, IncomingKnowledgeListener incomingKnowledgeListener) {
+	public PacketReceiver(int packetSize) {
 		this.packetSize = packetSize;
 		this.messages = new HashMap<Integer, Message>();
-		this.incomingKnowledgeListener = incomingKnowledgeListener;
 	}
+	
+	
+
+	public void setKnowledgeDataReceiver(KnowledgeDataReceiver knowledgeDataReceiver) {
+		this.knowledgeDataReceiver = knowledgeDataReceiver;
+	}
+
+
 
 	public void packetReceived(byte[] packet) {
 		int messageId;
@@ -46,8 +57,8 @@ public class PacketReceiver {
 				messages.put(messageId, msg);
 			}
 		}
-		if (msg.isComplete()) {
-			incomingKnowledgeListener.knowledgeReceived(msg.getKnowledgeData());
+		if (msg.isComplete() && knowledgeDataReceiver != null) {
+			knowledgeDataReceiver.receive(msg.getKnowledgeDataList());
 		}
 	}
 	
@@ -119,10 +130,10 @@ public class PacketReceiver {
 			return messageSize == 0;
 		}
 
-		public KnowledgeData getKnowledgeData() {
+		public List<KnowledgeData> getKnowledgeDataList() {
 			try {
 				if (isComplete()) {
-					return (KnowledgeData) deserialize(data);
+					return (List<KnowledgeData>) deserialize(data);
 				}
 			} catch (IOException | ClassNotFoundException e) {
 				Log.e("Error while deserializing data");
