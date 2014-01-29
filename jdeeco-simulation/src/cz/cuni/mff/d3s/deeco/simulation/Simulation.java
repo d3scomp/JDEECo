@@ -1,6 +1,6 @@
 package cz.cuni.mff.d3s.deeco.simulation;
 
-import cz.cuni.mff.d3s.deeco.publisher.PacketReceiver;
+import cz.cuni.mff.d3s.deeco.publish.PacketReceiver;
 
 /**
  * Class representing the entry point for a simulation. It is responsible for

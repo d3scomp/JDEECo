@@ -1,3 +1,4 @@
+package cz.cuni.mff.d3s.jdeeco.simulation.demo;
 import cz.cuni.mff.d3s.deeco.simulation.Host;
 
 
@@ -9,8 +10,9 @@ public class JNITest {
 		
 		sim.initialize(); //loads Library
 		
-		TestIncomingKnowledgeListener ikl = new TestIncomingKnowledgeListener();
-		TestPacketReceiver pr = new TestPacketReceiver(1000, ikl);
+		TestKnowledgeDataReceiver kr = new TestKnowledgeDataReceiver();
+		TestPacketReceiver pr = new TestPacketReceiver(1000);
+		pr.setKnowledgeDataReceiver(kr);
 		Host h0 = sim.getHost("0", 1000, pr);
 		Host h1 = sim.getHost("1", 1000, pr);
 		Host h2 = sim.getHost("2", 1000, pr);

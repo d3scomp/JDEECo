@@ -1,4 +1,5 @@
-import cz.cuni.mff.d3s.deeco.publisher.PacketReceiver;
+package cz.cuni.mff.d3s.jdeeco.simulation.demo;
+import cz.cuni.mff.d3s.deeco.publish.PacketReceiver;
 import cz.cuni.mff.d3s.deeco.simulation.Host;
 import cz.cuni.mff.d3s.deeco.simulation.Simulation;
 

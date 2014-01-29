@@ -24,12 +24,12 @@ public class CloningKnowledgeManagerContainerTest {
 	@Mock
 	private ReplicaListener replicaListener;
 
-	private CloningKnowledgeManagerContainer tested;
+	private KnowledgeManagerContainer tested;
 
 	@Before
 	public void setUp() {
 		initMocks(this);
-		this.tested = new CloningKnowledgeManagerContainer();
+		this.tested = new KnowledgeManagerContainer();
 	}
 
 	@Test
@@ -53,9 +53,9 @@ public class CloningKnowledgeManagerContainerTest {
 		tested.registerReplicaListener(replicaListener);
 		tested.registerLocalListener(localListener);
 		// and WHEN new replica knowledge manager has been created
-		KnowledgeManager replica = tested.createReplica("TEST");
+		KnowledgeManager replica = tested.createReplica("T1");
 		// THEN the listener is notified about this fact
-		verify(replicaListener).replicaCreated(replica, tested);
+		verify(replicaListener).replicaRegistered(replica, tested);
 		// and none of the local listeners is notified
 		verifyZeroInteractions(localListener);
 	}
@@ -82,11 +82,10 @@ public class CloningKnowledgeManagerContainerTest {
 		tested.registerReplicaListener(replicaListener);
 		tested.registerLocalListener(localListener);
 		// and WHEN a replica of a knowledge manager has been removed
-		KnowledgeManager replica = tested
-				.createReplica("TEST");
+		KnowledgeManager replica = tested.createReplica("T1");
 		tested.removeReplica(replica);
 		// THEN the listener is notified about this fact
-		verify(replicaListener).replicaRemoved(replica, tested);
+		verify(replicaListener).replicaUnregistered(replica, tested);
 		// and none of the local listeners is notified
 		verifyZeroInteractions(localListener);
 	}
@@ -111,9 +110,12 @@ public class CloningKnowledgeManagerContainerTest {
 		// WHEN a set of replica knowledge managers has been created within the
 		// container instance
 		List<KnowledgeManager> replicas = new LinkedList<>();
-		replicas.add(tested.createReplica("T1"));
-		replicas.add(tested.createReplica("T2"));
-		replicas.add(tested.createReplica("T3"));
+		KnowledgeManager replica = tested.createReplica("T1");
+		replicas.add(replica);
+		replica = tested.createReplica("T2");
+		replicas.add(replica);
+		replica = tested.createReplica("T3");
+		replicas.add(replica);
 		// WHEN the container is accessed for all replica knowledge managers
 		List<KnowledgeManager> containerReplicas = tested.getReplicas();
 		// THEN the container returns all replica knowledge managers created

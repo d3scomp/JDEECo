@@ -1,8 +1,10 @@
 /**
  * 
  */
-package cz.cuni.mff.d3s.deeco.publisher;
+package cz.cuni.mff.d3s.deeco.publish;
 
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeDataProvider;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeDataSender;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
@@ -15,13 +17,15 @@ import cz.cuni.mff.d3s.deeco.task.TaskInvocationException;
  */
 public class PublisherTask extends Task {
 
-	private final Publisher publisher;
-	private final PublisherKnowledgeSource knowledgeSource;
+	private final KnowledgeDataSender knowledgeDataSender;
+	private final PeriodicTrigger trigger;
+	private final KnowledgeDataProvider knowledgeDataProvider;
 	
-	public PublisherTask(Scheduler scheduler, Publisher publisher, PublisherKnowledgeSource knowledgeSource) {
+	public PublisherTask(Scheduler scheduler, KnowledgeDataSender knowledgeDataSender, KnowledgeDataProvider knowledgeDataProvider, PeriodicTrigger trigger) {
 		super(scheduler);
-		this.publisher = publisher;
-		this.knowledgeSource = knowledgeSource;
+		this.knowledgeDataSender = knowledgeDataSender;
+		this.trigger = trigger;
+		this.knowledgeDataProvider = knowledgeDataProvider;
 	}
 
 	/* (non-Javadoc)
@@ -29,7 +33,8 @@ public class PublisherTask extends Task {
 	 */
 	@Override
 	public void invoke(Trigger trigger) throws TaskInvocationException {
-		publisher.publish(knowledgeSource.getOwnerId(), knowledgeSource.getKnowledge());
+		//TODO
+		knowledgeDataSender.broadcastKnowledgeData(knowledgeDataProvider.getKnowledgeData());
 	}
 
 	/* (non-Javadoc)
@@ -57,11 +62,7 @@ public class PublisherTask extends Task {
 	 */
 	@Override
 	public PeriodicTrigger getPeriodicTrigger() {
-		return publisher.getPeriodicTrigger();
-	}
-	
-	public PublisherKnowledgeSource getPublisherKnowledgeSource() {
-		return knowledgeSource;
+		return trigger;
 	}
 
 }

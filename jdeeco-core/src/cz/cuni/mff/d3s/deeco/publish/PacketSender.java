@@ -1,18 +1,21 @@
-package cz.cuni.mff.d3s.deeco.publisher;
+package cz.cuni.mff.d3s.deeco.publish;
 
-import static cz.cuni.mff.d3s.deeco.publisher.Serializer.serialize;
+import static cz.cuni.mff.d3s.deeco.publish.Serializer.serialize;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.List;
 
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeData;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeDataSender;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 
 /**
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
  * 
  */
-public abstract class PacketSender {
+public abstract class PacketSender implements KnowledgeDataSender {
 
 	// We reserver Integer.MIN_VALUE for distinguishing initial packets.
 	private static int CURRENT_MESSAGE_ID = Integer.MIN_VALUE;
@@ -33,6 +36,11 @@ public abstract class PacketSender {
 		// for message id and 4 bytes for packet count.
 		assert packetSize >= 12;
 		this.packetSize = packetSize;
+	}
+	
+	@Override
+	public void broadcastKnowledgeData(List<KnowledgeData> knowledgeData) {
+		sendData(knowledgeData);
 	}
 	
 	public void sendData(Object data) {

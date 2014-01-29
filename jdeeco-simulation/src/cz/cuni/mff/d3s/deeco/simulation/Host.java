@@ -1,8 +1,8 @@
 package cz.cuni.mff.d3s.deeco.simulation;
 
-import cz.cuni.mff.d3s.deeco.publisher.PacketReceiver;
+import cz.cuni.mff.d3s.deeco.publish.PacketReceiver;
+import cz.cuni.mff.d3s.deeco.publish.PacketSender;
 import static cz.cuni.mff.d3s.deeco.simulation.Simulation.timeDoubleToLong;
-import cz.cuni.mff.d3s.deeco.publisher.PacketSender;
 
 /**
  * 
@@ -26,6 +26,10 @@ public class Host extends PacketSender {
 		this.id = id;
 		this.packetReceiver = packetReceiver;
 		simulation.register(this, id);
+	}
+
+	public PacketReceiver getPacketReceiver() {
+		return packetReceiver;
 	}
 
 	public String getId() {

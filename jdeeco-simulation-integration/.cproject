@@ -162,7 +162,7 @@
 							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.linker.1056795723" name="Cross G++ Linker" superClass="cdt.managedbuild.tool.gnu.cross.cpp.linker">
 								<option defaultValue="true" id="gnu.cpp.link.option.shared.434728203" name="Shared (-shared)" superClass="gnu.cpp.link.option.shared" valueType="boolean"/>
 								<option id="gnu.cpp.link.option.paths.277372605" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
-									<listOptionValue builtIn="false" value="&quot;D:\Programs\OMNeT++\bin&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/cz.cuni.mff.d3s.jdeeco.simulation.integration}&quot;"/>
 								</option>
 								<option id="gnu.cpp.link.option.libs.2096699743" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="oppenvir"/>
