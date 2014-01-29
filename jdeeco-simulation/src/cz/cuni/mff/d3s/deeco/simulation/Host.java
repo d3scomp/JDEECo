@@ -19,12 +19,11 @@ public class Host extends PacketSender {
 	private final Simulation simulation;
 	private final String id;
 	
-	protected Host(Simulation simulation, String id, int packetSize,
-			PacketReceiver packetReceiver) {
+	protected Host(Simulation simulation, String id, int packetSize) {
 		super(packetSize);
 		this.simulation = simulation;
 		this.id = id;
-		this.packetReceiver = packetReceiver;
+		this.packetReceiver = new PacketReceiver(packetSize);
 		simulation.register(this, id);
 	}
 
@@ -64,5 +63,15 @@ public class Host extends PacketSender {
 	@Override
 	protected void sendPacket(byte[] packet, String recipient) {
 		simulation.sendPacket(id, packet, recipient);
+	}
+
+	public double getPositionX() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public double getPositionY() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }
