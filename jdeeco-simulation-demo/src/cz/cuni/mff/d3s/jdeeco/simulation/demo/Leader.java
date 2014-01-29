@@ -37,7 +37,7 @@ import cz.cuni.mff.d3s.deeco.task.ParamHolder;
  *
  */
 @Component
-public class Leader {
+public class Leader extends PositionAwareComponent {
 
 	private static final long serialVersionUID = -1949643385305038287L;
 
@@ -52,17 +52,12 @@ public class Leader {
 	// constant to determine critical condition
 	public Float temperatureThreshold = 50.0f;
 	
-	public Position leaderPosition;
-
-	public String id;
-
 	
-	public Leader(String id, String team_id, Position leaderPosition) {
-		this.id = id;
+	public Leader(String id, String team_id, Position position)  {
+		super(id, position);
 		this.teamId = team_id;
 		this.memberPositions = new HashMap<>();
 		this.memberAggregateData = new HashMap<>();
-		this.leaderPosition = leaderPosition;
 		this.membersInDanger = new HashSet<>();
 	}
 

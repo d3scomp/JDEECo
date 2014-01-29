@@ -3,13 +3,13 @@ package cz.cuni.mff.d3s.jdeeco.simulation.demo;
 @SuppressWarnings("serial")
 public class Position {
 
-	public int latitude;
-	public int longitude;
+	public double latitude;
+	public double longitude;
 
 	public Position() {
 	}
 
-	public Position(int latitude, int longitude) {
+	public Position(double latitude, double longitude) {
 		this.latitude = latitude;
 		this.longitude = longitude;
 	}
@@ -28,7 +28,7 @@ public class Position {
 
 	@Override
 	public int hashCode() {
-		return latitude * 1024 + longitude;
+		return (int) (latitude * 1024 + longitude);
 	}
 
 	@Override

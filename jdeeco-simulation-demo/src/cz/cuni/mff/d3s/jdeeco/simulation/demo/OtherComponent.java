@@ -15,14 +15,7 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.jdeeco.simulation.demo;
 
-import java.util.Random;
-
-import cz.cuni.mff.d3s.deeco.annotations.In;
-import cz.cuni.mff.d3s.deeco.annotations.Out;
-import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
-import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.Component;
-import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 
 /**
  * A component that represents another kind of component; will only relay
@@ -32,15 +25,12 @@ import cz.cuni.mff.d3s.deeco.task.ParamHolder;
  * 
  */
 @Component 
-public class OtherComponent {
+public class OtherComponent extends PositionAwareComponent {
 
 	private static final long serialVersionUID = 5243757300436836781L;
 	
-	public String id;
-	public Position position;
 
 	public OtherComponent(String id, Position position) {
-		this.id = id;		
-		this.position = position;
+		super(id, position);
 	}
 }
