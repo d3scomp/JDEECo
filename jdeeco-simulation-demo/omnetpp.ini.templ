@@ -1,0 +1,59 @@
+[General]
+cmdenv-express-mode = true
+network = manet.MANET
+
+load-libs = model oppcmdenv
+ned-path = model;D:/Workspaces/OMNeT++/Workspace/MiXiM/examples;D:/Workspaces/OMNeT++/Workspace/MiXiM/src/base;D:/Workspaces/OMNeT++/Workspace/MiXiM/src/inet_stub;D:/Workspaces/OMNeT++/Workspace/MiXiM/src/modules 
+
+**.drawMaxIntfDist = true
+##########################################################
+#	 Simulation parameters                        #
+##########################################################
+**.**.coreDebug = false
+**.playgroundSizeX = 300m
+**.playgroundSizeY = 300m
+**.playgroundSizeZ = 300m
+
+##########################################################
+#	 WorldUtility parameters                      #
+##########################################################
+**.world.useTorus = false
+
+##########################################################
+#       Parameters for the ConnectionManager             #
+##########################################################
+**.connectionManager.carrierFrequency = 2.412e9Hz  # [Hz]
+
+# max transmission power [mW]
+**.connectionManager.pMax = 110.11mW  # [mW]
+# signal attenuation threshold [dBm]
+**.connectionManager.sat = -100dBm  # [dBm]
+# path loss coefficient alpha
+**.connectionManager.alpha = 3.0
+**.connectionManager.sendDirect = false
+
+##########################################################
+#       Parameters for the Host                          #
+##########################################################
+**.node[*].nicType = "Nic80211"
+############# Phy parameters #############################
+**.phy.usePropagationDelay = false
+**.phy.thermalNoise = -110dBm  # [dBm]
+**.phy.useThermalNoise = true
+**.phy.analogueModels = xmldoc("config.xml")
+**.phy.decider = xmldoc("config.xml")
+**.phy.maxTXPower = 110.11mW
+################ Application layer parameters ############
+**.node[*].applicationType = "manet.jDEECoApplication"
+################ NETW layer parameters ###################
+**.node[*].netwl.headerLength = 32bit
+################ Mobility parameters #####################
+**.node[*].mobilityType = "StationaryMobility"
+**.node[*].mobility.initFromDisplayString = false
+
+# the following is to be generated
+#**.numNodes = 5
+
+#**.node[0].mobility.initialX = 150m
+#**.node[0].mobility.initialY = 200m
+#**.node[0].mobility.initialZ = 250m

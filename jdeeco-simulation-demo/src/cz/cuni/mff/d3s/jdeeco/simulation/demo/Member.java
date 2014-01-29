@@ -31,20 +31,17 @@ import cz.cuni.mff.d3s.deeco.task.ParamHolder;
  *
  */
 @Component 
-public class Member {
+public class Member extends PositionAwareComponent {
 
 	private static final long serialVersionUID = 5243757300436836781L;
 
-	public String id;
 	
 	public MemberData memberData;
-	public Position position;
 	public String teamId;
 
 	public Member(String id, String team_id, Position position) {
-		this.id = id;
+		super(id, position);		
 		this.teamId = team_id;
-		this.position = position;
 		this.memberData = new MemberData(25.0f);
 	}
 
