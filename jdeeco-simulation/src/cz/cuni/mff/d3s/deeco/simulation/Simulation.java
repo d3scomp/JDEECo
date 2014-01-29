@@ -47,8 +47,8 @@ public class Simulation {
 	 * 
 	 * @return new host instance
 	 */
-	public Host getHost(String id, int packetSize, PacketReceiver packetReceiver) {
-		return new Host(this, id, packetSize, packetReceiver);
+	public Host getHost(String id, int packetSize) {
+		return new Host(this, id, packetSize);
 	}
 
 	// Wrapper methods we may need them.
