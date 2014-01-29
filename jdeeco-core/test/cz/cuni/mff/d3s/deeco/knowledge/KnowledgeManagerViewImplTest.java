@@ -27,7 +27,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 public class KnowledgeManagerViewImplTest {
 	
 	@Mock
-	private CloningKnowledgeManagerContainer container;
+	private KnowledgeManagerContainer container;
 	@Mock
 	private KnowledgeManager knowledgeManager;
 	@Mock
@@ -162,7 +162,7 @@ public class KnowledgeManagerViewImplTest {
 		// and WHEN the KnowledgeManagerView instance is notified about this
 
 		tested.register(trigger, listener);
-		tested.replicaCreated(replica, container);
+		tested.replicaRegistered(replica, container);
 		
 		// and all memorised triggers are registered with the new knowledge
 		// manager

@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.deeco.publisher;
+package cz.cuni.mff.d3s.deeco.publish;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

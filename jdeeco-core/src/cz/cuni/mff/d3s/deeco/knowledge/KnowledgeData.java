@@ -1,8 +1,6 @@
-package cz.cuni.mff.d3s.deeco.publisher;
+package cz.cuni.mff.d3s.deeco.knowledge;
 
 import java.io.Serializable;
-
-import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 
 public class KnowledgeData implements Serializable {
 	private final ValueSet knowledge;
