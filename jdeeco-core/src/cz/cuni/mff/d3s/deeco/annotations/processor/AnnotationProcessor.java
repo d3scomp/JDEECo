@@ -690,7 +690,15 @@ public class AnnotationProcessor {
 	 */
 	ChangeSet extractInitialKnowledge(Object knowledge) {
 		ChangeSet changeSet = new ChangeSet();
-		Log.w("Non-public fields are ignored during the extraction of initial knowledge.");
+		
+		// print a warning if the component definition contains non-public fields
+		for (Field f : knowledge.getClass().getDeclaredFields()) {
+			if (! Modifier.isPublic(f.getModifiers())) {
+				Log.w("Non-public fields are ignored during the extraction of initial knowledge ("
+						+ knowledge.getClass().getCanonicalName());
+				break;
+			}
+		}
 		for (Field f : knowledge.getClass().getFields()) {
 			KnowledgePath knowledgePath = factory.createKnowledgePath();
 			PathNodeField pathNodeField = factory.createPathNodeField();
