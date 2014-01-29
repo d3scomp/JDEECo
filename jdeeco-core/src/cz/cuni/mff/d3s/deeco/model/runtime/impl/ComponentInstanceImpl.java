@@ -18,13 +18,16 @@ import org.eclipse.emf.common.notify.NotificationChain;
 
 import org.eclipse.emf.common.util.EList;
 
+import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
+import org.eclipse.emf.ecore.util.EcoreEMap;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
@@ -39,6 +42,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getKnowledgeManager <em>Knowledge Manager</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getShadowKnowledgeManagerRegistry <em>Shadow Knowledge Manager Registry</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getEnsembleControllers <em>Ensemble Controllers</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getInternalData <em>Internal Data</em>}</li>
  * </ul>
  * </p>
  *
@@ -124,6 +128,16 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	 * @ordered
 	 */
 	protected EList<EnsembleController> ensembleControllers;
+
+	/**
+	 * The cached value of the '{@link #getInternalData() <em>Internal Data</em>}' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getInternalData()
+	 * @generated
+	 * @ordered
+	 */
+	protected EMap<String, Object> internalData;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -236,6 +250,18 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EMap<String, Object> getInternalData() {
+		if (internalData == null) {
+			internalData = new EcoreEMap<String,Object>(RuntimeMetadataPackage.Literals.STRING_TO_OBJECT_MAP, StringToObjectMapImpl.class, this, RuntimeMetadataPackage.COMPONENT_INSTANCE__INTERNAL_DATA);
+		}
+		return internalData;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
@@ -260,6 +286,8 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 				return ((InternalEList<?>)getComponentProcesses()).basicRemove(otherEnd, msgs);
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS:
 				return ((InternalEList<?>)getEnsembleControllers()).basicRemove(otherEnd, msgs);
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__INTERNAL_DATA:
+				return ((InternalEList<?>)getInternalData()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -282,6 +310,9 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 				return getShadowKnowledgeManagerRegistry();
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS:
 				return getEnsembleControllers();
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__INTERNAL_DATA:
+				if (coreType) return getInternalData();
+				else return getInternalData().map();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -312,6 +343,9 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 				getEnsembleControllers().clear();
 				getEnsembleControllers().addAll((Collection<? extends EnsembleController>)newValue);
 				return;
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__INTERNAL_DATA:
+				((EStructuralFeature.Setting)getInternalData()).set(newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -339,6 +373,9 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS:
 				getEnsembleControllers().clear();
 				return;
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__INTERNAL_DATA:
+				getInternalData().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -361,6 +398,8 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 				return SHADOW_KNOWLEDGE_MANAGER_REGISTRY_EDEFAULT == null ? shadowKnowledgeManagerRegistry != null : !SHADOW_KNOWLEDGE_MANAGER_REGISTRY_EDEFAULT.equals(shadowKnowledgeManagerRegistry);
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS:
 				return ensembleControllers != null && !ensembleControllers.isEmpty();
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__INTERNAL_DATA:
+				return internalData != null && !internalData.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
