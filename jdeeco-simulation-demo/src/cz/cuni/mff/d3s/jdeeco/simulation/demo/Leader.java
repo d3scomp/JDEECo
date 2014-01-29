@@ -39,8 +39,6 @@ import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 @Component
 public class Leader extends PositionAwareComponent {
 
-	private static final long serialVersionUID = -1949643385305038287L;
-
 	public String teamId;
 	public Map<String, MemberData> memberAggregateData;
 	public Map<String, Position> memberPositions;
