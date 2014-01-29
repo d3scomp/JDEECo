@@ -80,6 +80,18 @@ public class AnnotationProcessorTest {
 		FileAssert.assertEquals(expected, tempFile);
 	}
 	
+	@Test
+	public void testComponentModelInheritance() throws AnnotationProcessorException {
+		RuntimeMetadata model = factory.createRuntimeMetadata(); 
+		CorrectC1 input = new ChildOfCorrectC1();
+		processor.process(model,input);
+		removeKnowledgeManagersFromComponents(model);
+		File expected = getExpectedFile(input);
+//		saveInXMI(model, expected);
+		saveInXMI(model, tempFile);
+		FileAssert.assertEquals(expected, tempFile);
+	}
+	
 	@Test 
 	public void testAllEnsembleAnnotations() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();

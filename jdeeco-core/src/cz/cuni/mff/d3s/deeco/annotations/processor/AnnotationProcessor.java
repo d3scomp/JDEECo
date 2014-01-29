@@ -575,7 +575,7 @@ public class AnnotationProcessor {
 	List<Method> getMethodsMarkedAsProcesses(Class<?> c) {
 		List<Method> result = new ArrayList<Method>();
 		if (c != null) {
-			Method[] methods = c.getDeclaredMethods();
+			Method[] methods = c.getMethods();
 			for (Method m : methods) {
 				if (m.getAnnotation(Process.class) != null)
 					result.add(m);
