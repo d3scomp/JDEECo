@@ -27,9 +27,6 @@ import cz.cuni.mff.d3s.deeco.annotations.Component;
 @Component 
 public class OtherComponent extends PositionAwareComponent {
 
-	private static final long serialVersionUID = 5243757300436836781L;
-	
-
 	public OtherComponent(String id, Position position) {
 		super(id, position);
 	}
