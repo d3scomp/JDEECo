@@ -1,7 +1,9 @@
 package cz.cuni.mff.d3s.jdeeco.simulation.demo;
 
+import java.io.Serializable;
+
 @SuppressWarnings("serial")
-public class MemberData {
+public class MemberData implements Serializable {
 
 	public Float temperature;
 

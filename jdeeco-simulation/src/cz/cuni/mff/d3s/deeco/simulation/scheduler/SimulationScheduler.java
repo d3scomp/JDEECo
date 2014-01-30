@@ -81,7 +81,7 @@ public class SimulationScheduler implements Scheduler,
 				}
 			}
 		});
-
+		
 		allTasks.add(task);
 
 	}
@@ -116,6 +116,8 @@ public class SimulationScheduler implements Scheduler,
 	@Override
 	public void setExecutor(Executor executor) {
 		this.executor = executor;
+		if (this.executor != null)
+			this.executor.setExecutionListener(this);
 	}
 
 	@Override

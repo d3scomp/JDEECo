@@ -309,6 +309,9 @@ JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeC
 		for (std::vector<jDEECoRuntime *>::iterator it = jDEECoRuntimes.begin(); it != jDEECoRuntimes.end(); ++it) {
 			if (opp_strcmp((*it)->id, cstring) == 0) {
 				(*it)->firstCallAt = absoluteTime;
+				//callbacks at 0 time are not allowed
+				if ((*it)->firstCallAt == 0.0)
+					(*it)->firstCallAt = (*it)->firstCallAt + 0.0000000001;
 				//::printf("Will be called first at %f\n", absoluteTime);
 				break;
 			}
