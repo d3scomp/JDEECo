@@ -1,6 +1,5 @@
 package cz.cuni.mff.d3s.deeco.simulation;
 
-import cz.cuni.mff.d3s.deeco.publish.PacketReceiver;
 
 /**
  * Class representing the entry point for a simulation. It is responsible for
@@ -16,26 +15,42 @@ public class Simulation {
 	/**
 	 * Retrieves current time of the simulation.
 	 * 
-	 * @return current time in seconds.
+	 * @return current time in seconds. Do not change this method without changing its C counterpart.
 	 */
 	public native double nativeGetCurrentTime();
 
 	/**
 	 * Binds the java site host with the simulation one. It registers callbacks
-	 * on time and data events.
+	 * on time and data events. Do not change this method without changing its C counterpart.
 	 * 
 	 * @param host
 	 *            java site host
 	 */
 	private native void nativeRegister(Object host, String id);
 
+	/**
+	 * Sends given array of bytes to the specified recipient.
+	 * Do not change this method without changing its C counterpart.
+	 * 
+	 * @param id Sender id
+	 * @param data data being send
+	 * @param recipient recipient id
+	 */
 	private native void nativeSendPacket(String id, byte[] data, String recipient);
 
 	/**
 	 * Starts the simulation and blocks until its finished.
+	 * Do not change this method without changing its C counterpart.
 	 */
 	private native void nativeRun(String environment);
 
+	/**
+	 * Registers a callback within the simulation resulting in method "at" execution at the absoluteTime.
+	 * Do not change this method without changing its C counterpart.
+	 * 
+	 * @param absoluteTime
+	 * @param nodeId
+	 */
 	private native void nativeCallAt(double absoluteTime, String nodeId);
 
 	public void initialize() {
@@ -70,7 +85,11 @@ public class Simulation {
 	}
 
 	public long getSimulationTime() {
-		return timeDoubleToLong(nativeGetCurrentTime());
+		double nativeTime = nativeGetCurrentTime();
+		if (nativeTime < 0)
+			return 0;
+		else
+			return timeDoubleToLong(nativeTime);
 	}
 	
 	public static double timeLongToDouble(long time) {

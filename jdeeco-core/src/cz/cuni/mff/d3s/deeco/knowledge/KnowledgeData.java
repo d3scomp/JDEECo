@@ -4,10 +4,10 @@ import java.io.Serializable;
 
 public class KnowledgeData implements Serializable {
 	private final ValueSet knowledge;
-	private final String ownerId;
+	private final String componentId;
 	
-	public KnowledgeData(String ownerId, ValueSet knowledge) {
-		this.ownerId= ownerId;
+	public KnowledgeData(String componentId, ValueSet knowledge) {
+		this.componentId= componentId;
 		this.knowledge = knowledge;
 	}
 
@@ -15,7 +15,7 @@ public class KnowledgeData implements Serializable {
 		return knowledge;
 	}
 
-	public String getOwnerId() {
-		return ownerId;
+	public String getComponentId() {
+		return componentId;
 	}
 }

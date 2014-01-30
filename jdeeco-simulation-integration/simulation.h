@@ -15,7 +15,7 @@ JNIEXPORT jint JNICALL _JNI_OnLoad(JavaVM *, void *);
  * Method:    getCurrentTime
  * Signature: ()D
  */
-JNIEXPORT jdouble JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeGetSimulationTime
+JNIEXPORT jdouble JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeGetCurrentTime
   (JNIEnv *, jobject);
 
 /*

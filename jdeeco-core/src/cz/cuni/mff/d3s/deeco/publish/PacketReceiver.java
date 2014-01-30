@@ -58,7 +58,9 @@ public class PacketReceiver {
 			}
 		}
 		if (msg.isComplete() && knowledgeDataReceiver != null) {
-			knowledgeDataReceiver.receive(msg.getKnowledgeDataList());
+			List<? extends KnowledgeData> kd = msg.getKnowledgeDataList();
+			if (kd != null)
+				knowledgeDataReceiver.receive(kd);
 		}
 	}
 	
@@ -130,13 +132,13 @@ public class PacketReceiver {
 			return messageSize == 0;
 		}
 
-		public List<KnowledgeData> getKnowledgeDataList() {
+		public List<? extends KnowledgeData> getKnowledgeDataList() {
 			try {
 				if (isComplete()) {
-					return (List<KnowledgeData>) deserialize(data);
+					return (List<? extends KnowledgeData>) deserialize(data);
 				}
 			} catch (IOException | ClassNotFoundException e) {
-				Log.e("Error while deserializing data");
+				Log.i("Error while deserializing data - Corrupted message.");
 			}
 			return null;
 		}

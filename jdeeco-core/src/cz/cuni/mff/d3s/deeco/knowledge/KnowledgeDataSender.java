@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface KnowledgeDataSender {
 	
-	public void broadcastKnowledgeData(List<KnowledgeData> knowledgeData);
+	public void broadcastKnowledgeData(List<? extends KnowledgeData> knowledgeData);
 	
 	//TODO We don't need it now
 	//public void sendKnowledgeData(KnowledgeData knowledgeData, String recipient);

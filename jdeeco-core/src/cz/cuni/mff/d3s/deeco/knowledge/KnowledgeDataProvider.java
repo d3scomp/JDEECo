@@ -8,5 +8,5 @@ import java.util.List;
  */
 public interface KnowledgeDataProvider {
 	//TODO will change in the future
-	public List<KnowledgeData> getKnowledgeData();
+	public List<? extends KnowledgeData> getKnowledgeData();
 }

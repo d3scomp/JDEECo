@@ -242,7 +242,7 @@ JNIEXPORT jint JNICALL _JNI_OnLoad(JavaVM *vm, void *reserved) {
 	return JNI_VERSION_1_6;
 }
 
-JNIEXPORT jdouble JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeGetSimulationTime(JNIEnv *env, jobject jsimulation) {
+JNIEXPORT jdouble JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeGetCurrentTime(JNIEnv *env, jobject jsimulation) {
 	if (cSimulation::getActiveSimulation() == NULL)
 		return -1;
 	else
@@ -295,12 +295,12 @@ JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeR
 }
 
 JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeCallAt (JNIEnv *env, jobject jsimulation, jdouble absoluteTime, jstring id) {
-	printf("Before callback registration\n");
+	//printf("Before callback registration\n");
 	const char * cstring = env->GetStringUTFChars(id,0);
 	if (cSimulation::getActiveSimulation() != NULL) {
 		for (std::vector<jDEECoModule *>::iterator it = jDEECoModules.begin(); it != jDEECoModules.end(); ++it) {
 			if (opp_strcmp((*it)->jDEECoGetModuleId(), cstring) == 0) {
-				::printf("Will be called at %f\n", absoluteTime);
+				//::printf("Will be called at %f\n", absoluteTime);
 				(*it)->jDEECoCallAt(absoluteTime);
 				break;
 			 }
@@ -309,7 +309,7 @@ JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeC
 		for (std::vector<jDEECoRuntime *>::iterator it = jDEECoRuntimes.begin(); it != jDEECoRuntimes.end(); ++it) {
 			if (opp_strcmp((*it)->id, cstring) == 0) {
 				(*it)->firstCallAt = absoluteTime;
-				::printf("Will be called first at %f\n", absoluteTime);
+				//::printf("Will be called first at %f\n", absoluteTime);
 				break;
 			}
 		}
@@ -318,14 +318,11 @@ JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeC
 }
 
 DLLEXPORT_OR_IMPORT void jDEECoModule::jDEECoCallAt(double absoluteTime) {
-	if (currentCallAtTime != absoluteTime && simTime() < absoluteTime) {
-		if (currentCallAtMessage != NULL) {
-			((cSimpleModule *) this)->cancelAndDelete((cMessage *) currentCallAtMessage);
-		}
+	if (currentCallAtTime != absoluteTime && simTime().dbl() < absoluteTime) {
 		currentCallAtTime = absoluteTime;
-		currentCallAtMessage = new cMessage(JDEECO_TIMER_MESSAGE);
-		cSimpleModule * module = dynamic_cast<cSimpleModule *> (this);
-		module->scheduleAt(absoluteTime, (cMessage *) currentCallAtMessage);
+		cMessage *msg = new cMessage(JDEECO_TIMER_MESSAGE);
+		currentCallAtMessage = msg;
+		jDEECoScheduleAt(absoluteTime, msg);
 	}
 }
 
@@ -342,13 +339,15 @@ DLLEXPORT_OR_IMPORT void jDEECoModule::jDEECoOnHandleMessage(cMessage *msg) {
 				if (mid == 0)
 					return;
 				env->CallVoidMethod((jobject) host, mid, currentCallAtTime);
+			} else {
+				//Ignore the message as it is not valid any longer.
 			}
 		} else if (opp_strcmp(msg->getName(), JDEECO_DATA_MESSAGE) == 0)  {
 			mid = env->GetMethodID(cls, "packetReceived", "([B)V");
 			if (mid == 0)
 				return;
-			printf("Data message\n");
-			JDEECoPacket *jPacket = dynamic_cast<JDEECoPacket *>(msg);
+			//::printf("Data message\n");
+			JDEECoPacket *jPacket = check_and_cast<JDEECoPacket *>(msg);
 			signed char* buffer = new signed char[jPacket->getDataArraySize()];
 			for (unsigned int i = 0; i < jPacket->getDataArraySize(); i++)
 				buffer[i] = jPacket->getData(i);
@@ -360,17 +359,17 @@ DLLEXPORT_OR_IMPORT void jDEECoModule::jDEECoOnHandleMessage(cMessage *msg) {
 }
 
 DLLEXPORT_OR_IMPORT void jDEECoModule::jDEECoInitialize() {
-	printf("Initializing jDEECo module: %s\n", jDEECoGetModuleId());
+	::printf("Initializing jDEECo module: %s\n", jDEECoGetModuleId());
 	if(std::find(jDEECoModules.begin(), jDEECoModules.end(), this) == jDEECoModules.end()) {
 		for (std::vector<jDEECoRuntime *>::iterator it = jDEECoRuntimes.begin(); it != jDEECoRuntimes.end(); ++it) {
 			if (opp_strcmp((*it)->id, jDEECoGetModuleId()) == 0) {
 				host = (*it)->host;
 				jvm = (*it)->jvm;
-				printf("First callAt time: %f\n", (*it)->firstCallAt);
+				//::printf("First callAt time: %f\n", (*it)->firstCallAt);
 				if ((*it)->firstCallAt >= 0)
 					jDEECoCallAt((*it)->firstCallAt);
 				jDEECoModules.push_back(this);
-				printf("Module registered\n");
+				::printf("Module registered\n");
 				break;
 			}
 		}
