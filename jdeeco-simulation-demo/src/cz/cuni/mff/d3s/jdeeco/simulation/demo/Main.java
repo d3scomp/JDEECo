@@ -1,13 +1,10 @@
 package cz.cuni.mff.d3s.jdeeco.simulation.demo;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -57,6 +54,9 @@ public class Main {
 		
 		StringBuilder omnetConfig = new StringBuilder();
 		int i = 0;
+		
+		// for each component config crate a separate model including only the component and all ensemble definitions,
+		// a separate host, and a separate runtime framework
 		while ((component = parser.parseComponent()) != null) {
 			RuntimeMetadata model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
 			processor.process(model, component, MemberDataAggregation.class); 
@@ -81,7 +81,6 @@ public class Main {
 			RuntimeFramework runtime = builder.build(host, model, PUBLISHING_PERIOD); 
 			runtimes.add(runtime);
 			runtime.start();
-			//runtimes.add(null);
 			i++;
 		}	
 		
