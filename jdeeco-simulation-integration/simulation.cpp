@@ -87,7 +87,7 @@ static void verifyIntTypes() {
 #undef LL
 }
 
-void simulate(const char * envName) {
+void simulate(const char * envName, const char * confFile) {
 	cStaticFlag dummy;
 	//
 	// SETUP
@@ -107,11 +107,10 @@ void simulate(const char * envName) {
 		// First, load the ini file. It might contain the name of the user interface
 		// to instantiate.
 		//
-		const char *fname = "omnetpp.ini"; //default filename
 
 		InifileReader *inifile = new InifileReader();
-		if (fileExists(fname))
-			inifile->readFile(fname);
+		if (fileExists(confFile))
+			inifile->readFile(confFile);
 
 		// activate [General] section so that we can read global settings from it
 		bootconfig = new SectionBasedConfiguration();
@@ -293,12 +292,14 @@ JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeS
 }
 
 JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeRun(
-		JNIEnv *env, jobject jsimulation, jstring environment) {
+		JNIEnv *env, jobject jsimulation, jstring environment, jstring confFile) {
 	const char * cEnv = env->GetStringUTFChars(environment, 0);
-	simulate(cEnv);
+	const char * cConfFile = env->GetStringUTFChars(confFile, 0);
+	simulate(cEnv, cConfFile);
 	jDEECoModules.clear();
 	jDEECoRuntimes.clear();
 	env->ReleaseStringUTFChars(environment, cEnv);
+	env->ReleaseStringUTFChars(environment, cConfFile);
 }
 
 JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeCallAt(
