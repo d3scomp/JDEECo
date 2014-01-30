@@ -3,15 +3,15 @@ package cz.cuni.mff.d3s.jdeeco.simulation.demo;
 @SuppressWarnings("serial")
 public class Position {
 
-	public double latitude;
-	public double longitude;
+	public double y;
+	public double x;
 
 	public Position() {
 	}
 
 	public Position(double latitude, double longitude) {
-		this.latitude = latitude;
-		this.longitude = longitude;
+		this.y = latitude;
+		this.x = longitude;
 	}
 
 	@Override
@@ -23,16 +23,16 @@ public class Position {
 		if (!(obj instanceof Position))
 			return false;
 		Position other = (Position) obj;
-		return (latitude == other.latitude) && (longitude == other.longitude);
+		return (y == other.y) && (x == other.x);
 	}
 
 	@Override
 	public int hashCode() {
-		return (int) (latitude * 1024 + longitude);
+		return (int) (y * 1024 + x);
 	}
 
 	@Override
 	public String toString() {
-		return String.format("[%d,%d]", latitude, longitude);
+		return String.format("[%d,%d]", y, x);
 	}
 }

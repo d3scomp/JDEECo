@@ -1,12 +1,17 @@
 package cz.cuni.mff.d3s.jdeeco.simulation.demo;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,9 +25,9 @@ import cz.cuni.mff.d3s.deeco.simulation.Simulation;
 import cz.cuni.mff.d3s.deeco.simulation.SimulationRuntimeBuilder;
 
 /**
- * Main class for launching the FF scenario demo.
+ * Main class for launching the CBSE evaluation demo.
  * 
- * @author Ilias Gerostathopoulos
+ * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
  * 
  */
 public class Main {
@@ -56,25 +61,34 @@ public class Main {
 			processor.process(model, component, MemberDataAggregation.class); 
 						
 			omnetConfig.append(String.format(
-					"#**.node[%s].mobility.initialX = %dm\n", 
-					component.id, component.position.longitude * POSITION_FACTOR));
+					"**.node[%s].mobility.initialX = %dm\n", 
+					component.id, (int) (component.position.x * POSITION_FACTOR)));
 			omnetConfig.append(String.format(
-					"#**.node[%s].mobility.initialY = %dm\n", 
-					component.id, component.position.latitude * POSITION_FACTOR));
+					"**.node[%s].mobility.initialY = %dm\n", 
+					component.id, (int) (component.position.y * POSITION_FACTOR)));
 			omnetConfig.append(String.format(
-					"#**.node[%s].mobility.initialZ = 0m\n", component.id));
+					"**.node[%s].mobility.initialZ = 0m\n\n", component.id));
 			
-			Host host = sim.getHost(component.id, PACKET_SIZE);			
+			Host host = null;//sim.getHost(component.id, PACKET_SIZE);			
 			hosts.add(host);
 			
 			// there is only one component instance
 			model.getComponentInstances().get(0).getInternalData().put(PositionAwareComponent.HOST_REFERENCE, host);
 			
-			RuntimeFramework runtime = builder.build(host, model, PUBLISHING_PERIOD); 
-			runtimes.add(runtime);			
+			//RuntimeFramework runtime = builder.build(host, model, PUBLISHING_PERIOD); 
+			//runtimes.add(runtime);			
+			runtimes.add(null);
 		}	
 		
 		Files.copy(Paths.get(CONFIG_TEMPLATE), Paths.get(CONFIG_PATH), StandardCopyOption.REPLACE_EXISTING);
+		
+		PrintWriter out = new PrintWriter(Files.newOutputStream(Paths.get(CONFIG_PATH), StandardOpenOption.APPEND));
+		out.println();
+		out.println(String.format("**.numNodes = %d", hosts.size()));
+		out.println();
+		out.println(omnetConfig.toString());		
+		
+		out.close();
 		
 		//sim.initialize(); //loads Library
 		
