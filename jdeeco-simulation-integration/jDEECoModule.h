@@ -42,6 +42,9 @@ protected:
 	//Needs to be called from the handleMessage method
 	void jDEECoOnHandleMessage(cMessage *msg);
 
+	//Needs to be implemented by the module
+	virtual void jDEECoScheduleAt(double absoluteTime, cMessage *msg) {};
+
 };
 
 #endif /* JDEECOMODULE_H_ */

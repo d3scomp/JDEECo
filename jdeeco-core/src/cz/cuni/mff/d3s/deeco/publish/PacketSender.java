@@ -39,7 +39,7 @@ public abstract class PacketSender implements KnowledgeDataSender {
 	}
 	
 	@Override
-	public void broadcastKnowledgeData(List<KnowledgeData> knowledgeData) {
+	public void broadcastKnowledgeData(List<? extends KnowledgeData> knowledgeData) {
 		sendData(knowledgeData);
 	}
 	

@@ -171,11 +171,11 @@ public class KnowledgeManagerContainer implements KnowledgeDataReceiver,
 	}
 
 	@Override
-	public void receive(List<KnowledgeData> knowledgeData) {
+	public void receive(List<? extends KnowledgeData> knowledgeData) {
 		if (knowledgeData != null) {
 			KnowledgeManager km;
 			for (KnowledgeData kd : knowledgeData) {
-				km = createReplica(kd.getOwnerId());
+				km = createReplica(kd.getComponentId());
 				try {
 					km.update(toChangeSet(kd.getKnowledge()));
 				} catch (KnowledgeUpdateException e) {
@@ -186,7 +186,7 @@ public class KnowledgeManagerContainer implements KnowledgeDataReceiver,
 	}
 
 	@Override
-	public List<KnowledgeData> getKnowledgeData() {
+	public List<? extends KnowledgeData> getKnowledgeData() {
 		List<KnowledgeData> result = new LinkedList<>();
 		for (KnowledgeManager km : getLocals())
 			try {
