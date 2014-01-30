@@ -37,6 +37,7 @@
 /jdeeco-simulation-demo/target
 /jdeeco-simulation-demo/doc
 /jdeeco-simulation-demo/.settings
+/jdeeco-simulation-demo/results
 
 /jdeeco-jpf/bin
 /jdeeco-jpf/target
