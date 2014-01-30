@@ -3,6 +3,7 @@
  */
 package cz.cuni.mff.d3s.deeco.model.runtime.custom;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,7 +16,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.impl.KnowledgePathImpl;
  * @author Tomas Bures <bures@d3s.mff.cuni.cz>
  *
  */
-public class KnowledgePathExt extends KnowledgePathImpl {
+public class KnowledgePathExt extends KnowledgePathImpl implements Serializable {
 
 	/**
 	 * 
