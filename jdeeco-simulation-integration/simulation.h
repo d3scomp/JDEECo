@@ -50,6 +50,38 @@ JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeR
 JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeCallAt
   (JNIEnv *, jobject, jdouble, jstring);
 
+/*
+ * Class:     cz_cuni_mff_d3s_deeco_simulation_Simulation
+ * Method:    broadcastPacket
+ * Signature: (Ljava/lang/String)Z
+ */
+JNIEXPORT jboolean JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeIsGPSAvailable
+  (JNIEnv *, jobject, jstring);
+
+/*
+ * Class:     cz_cuni_mff_d3s_deeco_simulation_Simulation
+ * Method:    broadcastPacket
+ * Signature: (Ljava/lang/String)Z
+ */
+JNIEXPORT jdouble JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeGetPositionX
+  (JNIEnv *, jobject, jstring);
+
+/*
+ * Class:     cz_cuni_mff_d3s_deeco_simulation_Simulation
+ * Method:    broadcastPacket
+ * Signature: (Ljava/lang/String)Z
+ */
+JNIEXPORT jdouble JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeGetPositionY
+  (JNIEnv *, jobject, jstring);
+
+/*
+ * Class:     cz_cuni_mff_d3s_deeco_simulation_Simulation
+ * Method:    broadcastPacket
+ * Signature: (Ljava/lang/String)Z
+ */
+JNIEXPORT jdouble JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeGetPositionZ
+  (JNIEnv *, jobject, jstring);
+
 #ifdef __cplusplus
 }
 #endif
