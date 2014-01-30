@@ -1,6 +1,7 @@
 [General]
 cmdenv-express-mode = true
 network = manet.MANET
+sim-time-limit = 72000s
 
 load-libs = model oppcmdenv
 ned-path = model;D:/Workspaces/OMNeT++/Workspace/MiXiM/examples;D:/Workspaces/OMNeT++/Workspace/MiXiM/src/base;D:/Workspaces/OMNeT++/Workspace/MiXiM/src/inet_stub;D:/Workspaces/OMNeT++/Workspace/MiXiM/src/modules 
@@ -10,9 +11,9 @@ ned-path = model;D:/Workspaces/OMNeT++/Workspace/MiXiM/examples;D:/Workspaces/OM
 #	 Simulation parameters                        #
 ##########################################################
 **.**.coreDebug = false
-**.playgroundSizeX = 300m
-**.playgroundSizeY = 300m
-**.playgroundSizeZ = 300m
+**.playgroundSizeX = 1000m
+**.playgroundSizeY = 1000m
+**.playgroundSizeZ = 1000m
 
 ##########################################################
 #	 WorldUtility parameters                      #
@@ -22,29 +23,41 @@ ned-path = model;D:/Workspaces/OMNeT++/Workspace/MiXiM/examples;D:/Workspaces/OM
 ##########################################################
 #       Parameters for the ConnectionManager             #
 ##########################################################
-**.connectionManager.carrierFrequency = 2.412e9Hz  # [Hz]
+**.connectionManager.carrierFrequency = 2.4e9Hz  # [Hz]
 
 # max transmission power [mW]
-**.connectionManager.pMax = 110.11mW  # [mW]
+**.connectionManager.pMax = 1.1mW  # [mW]
 # signal attenuation threshold [dBm]
 **.connectionManager.sat = -100dBm  # [dBm]
 # path loss coefficient alpha
-**.connectionManager.alpha = 3.0
+**.connectionManager.alpha = 2.5
 **.connectionManager.sendDirect = false
 
 ##########################################################
 #       Parameters for the Host                          #
 ##########################################################
-**.node[*].nicType = "Nic80211"
+**.node[*].nicType = "Nic802154_TI_CC2420" # max range around 250m
 ############# Phy parameters #############################
 **.phy.usePropagationDelay = false
-**.phy.thermalNoise = -110dBm  # [dBm]
 **.phy.useThermalNoise = true
 **.phy.analogueModels = xmldoc("config.xml")
-**.phy.decider = xmldoc("config.xml")
-**.phy.maxTXPower = 110.11mW
+**.phy.maxTXPower = 1.1mW
+**.phy.sensitivity = -100dBm
+############# Battery statistic parameters ###############
+**.batteryStats.debug = false
+**.batteryStats.detail = false
+**.batteryStats.timeSeries = false
+############# Battery parameters #########################
+**.battery.debug = false
+**.battery.nominal = 99999mAh
+**.battery.capacity = 99999mAh
+**.battery.voltage = 3.3V
+**.battery.resolution = 10s
+**.battery.publishDelta = 0.1
+**.battery.publishTime = 0
+**.battery.numDevices = 1
 ################ Application layer parameters ############
-**.node[*].applicationType = "manet.jDEECoApplication"
+**.node[*].applicationType = "JDEECoApplication"
 ################ NETW layer parameters ###################
 **.node[*].netwl.headerLength = 32bit
 ################ Mobility parameters #####################

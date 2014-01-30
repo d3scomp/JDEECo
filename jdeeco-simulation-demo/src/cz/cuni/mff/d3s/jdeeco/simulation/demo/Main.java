@@ -43,6 +43,7 @@ public class Main {
 	public static void main(String[] args) throws AnnotationProcessorException, IOException {
 		
 		Simulation sim = new Simulation();
+		sim.initialize(); //loads Library
 		
 		AnnotationProcessor processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE);
 		SimulationRuntimeBuilder builder = new SimulationRuntimeBuilder();
@@ -55,29 +56,33 @@ public class Main {
 
 		
 		StringBuilder omnetConfig = new StringBuilder();
-				
+		int i = 0;
 		while ((component = parser.parseComponent()) != null) {
 			RuntimeMetadata model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
 			processor.process(model, component, MemberDataAggregation.class); 
 						
 			omnetConfig.append(String.format(
 					"**.node[%s].mobility.initialX = %dm\n", 
-					component.id, (int) (component.position.x * POSITION_FACTOR)));
+					i, (int) (component.position.x * POSITION_FACTOR)));
 			omnetConfig.append(String.format(
 					"**.node[%s].mobility.initialY = %dm\n", 
-					component.id, (int) (component.position.y * POSITION_FACTOR)));
+					i, (int) (component.position.y * POSITION_FACTOR)));
 			omnetConfig.append(String.format(
-					"**.node[%s].mobility.initialZ = 0m\n\n", component.id));
+					"**.node[%s].mobility.initialZ = 0m\n", i));
+			omnetConfig.append(String.format(
+					"**.node[%s].appl.id = \"%s\"\n\n", i, component.id));
 			
-			Host host = null;//sim.getHost(component.id, PACKET_SIZE);			
+			Host host = sim.getHost(component.id, PACKET_SIZE);			
 			hosts.add(host);
 			
 			// there is only one component instance
 			model.getComponentInstances().get(0).getInternalData().put(PositionAwareComponent.HOST_REFERENCE, host);
 			
-			//RuntimeFramework runtime = builder.build(host, model, PUBLISHING_PERIOD); 
-			//runtimes.add(runtime);			
-			runtimes.add(null);
+			RuntimeFramework runtime = builder.build(host, model, PUBLISHING_PERIOD); 
+			runtimes.add(runtime);
+			runtime.start();
+			//runtimes.add(null);
+			i++;
 		}	
 		
 		Files.copy(Paths.get(CONFIG_TEMPLATE), Paths.get(CONFIG_PATH), StandardCopyOption.REPLACE_EXISTING);
@@ -87,12 +92,9 @@ public class Main {
 		out.println(String.format("**.numNodes = %d", hosts.size()));
 		out.println();
 		out.println(omnetConfig.toString());		
-		
 		out.close();
 		
-		//sim.initialize(); //loads Library
-		
-		//sim.run("Cmdenv");
+		sim.run("Cmdenv");
 		
 		System.gc();
 		System.out.println("Simulation finished.");
