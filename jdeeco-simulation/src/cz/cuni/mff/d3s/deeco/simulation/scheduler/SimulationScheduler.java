@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.deeco.simulation.scheduler;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -127,6 +128,7 @@ public class SimulationScheduler implements Scheduler,
 
 	@Override
 	public void at(long time) {
+		Log.i("At called with queue: " + Arrays.toString(queue.toArray()));
 		SchedulerEvent event = pop();
 		if (event != null) {
 			// The time is right to execute the next task
@@ -177,7 +179,11 @@ public class SimulationScheduler implements Scheduler,
 	}
 
 	private void push(SchedulerEvent event) {
+		Log.i("Adding: " + event);
+
 		queue.add(event);
+		Log.i("Queue: " + Arrays.toString(queue.toArray()));
+
 		// TODO take into account different scheduling policies and WCET of
 		// tasks. According to those the tasks need to be rescheduled.
 	}

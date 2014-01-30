@@ -61,7 +61,17 @@ public class SchedulerEvent implements Comparable<SchedulerEvent> {
 	public int compareTo(SchedulerEvent o) {
 		if( this.nextExecutionTime < o.nextExecutionTime ) return -1;
 		else if( this.nextExecutionTime > o.nextExecutionTime ) return 1;
-		else return 0;
+		else if (this == o) return 0;
+		else return this.hashCode() < o.hashCode() ? 1 : -1;
 	}
+
+
+	@Override
+	public String toString() {
+		return "SchedulerEvent [nextExecutionTime=" + nextExecutionTime
+				+ ", executable=" + executable + ", trigger=" + trigger + "]";
+	}
+	
+	
 	
 }

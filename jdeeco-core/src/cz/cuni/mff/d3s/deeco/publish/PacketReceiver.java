@@ -53,7 +53,7 @@ public class PacketReceiver {
 			msg.setData(seqNumber, getPacketData(packet));
 		}
 		if (msg.isComplete() && knowledgeDataReceiver != null) {
-			//System.out.println("R: " + "(" + messageId + ")" + Arrays.toString(msg.data));
+			Log.i(String.format("R: " + "(" + messageId + ")" + Arrays.toString(msg.data)));
 			
 			messages.remove(messageId);
 			List<? extends KnowledgeData> kd = msg.getKnowledgeDataList();
@@ -107,12 +107,13 @@ public class PacketReceiver {
 
 		public void setData(int seqNumber, byte[] data) {
 			if (isInitialized) {
-				for (int i = seqNumber * packetSize; i < data.length; i++)
-					this.data[i] = data[i];
+				int cnt = Math.min(Math.max(remainingBytes, 0), data.length);
 				remainingBytes -= data.length;
 				if (remainingBytes < 0) {
 					Log.e(String.format("Message %d received more data than expected (by %d bytes).", messageId, -remainingBytes));
 				}
+				
+				System.arraycopy(data, 0, this.data, seqNumber * packetSize, cnt);			
 			} else {
 				cache.put(seqNumber, data);
 			}
@@ -128,7 +129,7 @@ public class PacketReceiver {
 					return (List<? extends KnowledgeData>) deserialize(data);
 				}
 			} catch (IOException | ClassNotFoundException e) {
-				Log.e("Error while deserializing data - Corrupted message.");
+				Log.e("Error while deserializing data - Corrupted message.", e);
 			}
 			return null;
 		}
