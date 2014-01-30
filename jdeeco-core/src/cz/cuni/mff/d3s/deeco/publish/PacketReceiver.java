@@ -124,11 +124,11 @@ public class PacketReceiver {
 
 		public List<? extends KnowledgeData> getKnowledgeDataList() {
 			try {
-				if (isComplete()) {			
+				if (isComplete()) {					
 					return (List<? extends KnowledgeData>) deserialize(data);
 				}
 			} catch (IOException | ClassNotFoundException e) {
-				Log.i("Error while deserializing data - Corrupted message.");
+				Log.e("Error while deserializing data - Corrupted message.");
 			}
 			return null;
 		}
