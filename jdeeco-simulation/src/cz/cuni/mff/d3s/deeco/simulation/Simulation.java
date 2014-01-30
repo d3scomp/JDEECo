@@ -42,7 +42,7 @@ public class Simulation {
 	 * Starts the simulation and blocks until its finished.
 	 * Do not change this method without changing its C counterpart.
 	 */
-	private native void nativeRun(String environment);
+	private native void nativeRun(String environment, String configFile);
 
 	/**
 	 * Registers a callback within the simulation resulting in method "at" execution at the absoluteTime.
@@ -81,8 +81,8 @@ public class Simulation {
 		nativeSendPacket(id, data, recipient);
 	}
 
-	public void run(String environment) {
-		nativeRun(environment);
+	public void run(String environment, String configFile) {
+		nativeRun(environment, configFile);
 	}
 
 	public void callAt(long absoluteTime, String nodeId) {
