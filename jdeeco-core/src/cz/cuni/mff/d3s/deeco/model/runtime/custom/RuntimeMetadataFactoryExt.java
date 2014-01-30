@@ -5,8 +5,10 @@ package cz.cuni.mff.d3s.deeco.model.runtime.custom;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataFactoryImpl;
@@ -68,6 +70,15 @@ public class RuntimeMetadataFactoryExt extends RuntimeMetadataFactoryImpl {
 		return new PathNodeMemberExt();
 	}
 	
+	@Override
+	public PathNodeComponentId createPathNodeComponentId() {
+		return new PathNodeComponentIdExt();
+	}
+	
+	@Override
+	public PathNodeMapKey createPathNodeMapKey() {
+		return new PathNodeMapKeyExt();
+	}
 
 	// TODO: We might have also toString() method implemented for the KnowledgePath
 }
