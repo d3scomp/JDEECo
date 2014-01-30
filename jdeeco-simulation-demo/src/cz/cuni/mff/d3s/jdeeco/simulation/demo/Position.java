@@ -1,7 +1,9 @@
 package cz.cuni.mff.d3s.jdeeco.simulation.demo;
 
+import java.io.Serializable;
+
 @SuppressWarnings("serial")
-public class Position {
+public class Position implements Serializable {
 
 	public double y;
 	public double x;
