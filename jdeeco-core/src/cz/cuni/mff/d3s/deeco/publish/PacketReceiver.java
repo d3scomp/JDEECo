@@ -34,30 +34,28 @@ public class PacketReceiver {
 
 
 	public void packetReceived(byte[] packet) {
-		int messageId;
+		
 		Message msg;
-		if (isInitialMessage(packet)) {
-			messageId = getInitialMessageId(packet);
-			int messageSize = getMessageSize(packet);
-			if (!messages.containsKey(messageId)) {
-				msg = new Message(messageSize);
-				messages.put(messageId, msg);
-			} else {
-				msg = messages.get(messageId);
-				msg.setPacketCount(messageSize);
-			}
+		int messageId = getMessageId(packet);		
+		
+		if (messages.containsKey(messageId)) {
+			msg = messages.get(messageId);
 		} else {
-			messageId = getMessageId(packet);
-			int seqNumber = getMessageSeqNumber(packet);
-			if (messages.containsKey(messageId)) {
-				msg = messages.get(messageId);
-				msg.setData(seqNumber, getData(packet));
-			} else {
-				msg = new Message(seqNumber, getData(packet));
-				messages.put(messageId, msg);
-			}
+			msg = new Message(messageId);
+			messages.put(messageId, msg);
+		}
+		
+		if (isInitialPacket(packet)) {			
+			int messageSize = getMessageSize(packet);			
+			msg.initialize(messageSize);
+		} else {
+			int seqNumber = getPacketSeqNumber(packet);			
+			msg.setData(seqNumber, getPacketData(packet));
 		}
 		if (msg.isComplete() && knowledgeDataReceiver != null) {
+			//System.out.println("R: " + "(" + messageId + ")" + Arrays.toString(msg.data));
+			
+			messages.remove(messageId);
 			List<? extends KnowledgeData> kd = msg.getKnowledgeDataList();
 			if (kd != null)
 				knowledgeDataReceiver.receive(kd);
@@ -66,27 +64,26 @@ public class PacketReceiver {
 	
 	//-----------Helper methods-----------
 	
-	private int getMessageId(byte [] packet) {
-		return ByteBuffer.wrap(Arrays.copyOfRange(packet, 0, 4)).getInt();
+	private int getMessageId(byte [] packet) {			
+		return ByteBuffer.wrap(Arrays.copyOfRange(packet, 0, 4)).getInt();	
+	}	
+	
+	private int getMessageSize(byte [] packet) {
+		if (isInitialPacket(packet))
+			return ByteBuffer.wrap(Arrays.copyOfRange(packet, 8, 12)).getInt();
+		else
+			return -1;
 	}
 	
-	private int getInitialMessageId(byte [] packet) {
+	private int getPacketSeqNumber(byte [] packet) {
 		return ByteBuffer.wrap(Arrays.copyOfRange(packet, 4, 8)).getInt();
 	}
 	
-	private int getMessageSize(byte [] packet) {
-		return ByteBuffer.wrap(Arrays.copyOfRange(packet, 8, 12)).getInt();
+	private boolean isInitialPacket(byte [] packet) {
+		return getPacketSeqNumber(packet) == Integer.MIN_VALUE;
 	}
 	
-	private int getMessageSeqNumber(byte [] packet) {
-		return getInitialMessageId(packet);
-	}
-	
-	private boolean isInitialMessage(byte [] packet) {
-		return getMessageId(packet) == Integer.MIN_VALUE;
-	}
-	
-	private byte [] getData(byte [] packet) {
+	private byte [] getPacketData(byte [] packet) {
 		return Arrays.copyOfRange(packet, 8, packet.length);
 	}
 
@@ -95,46 +92,39 @@ public class PacketReceiver {
 	
 	private class Message {
 
-		private Map<Integer, Object> cache;
+		private Map<Integer, Object> cache = new HashMap<>();
 
 		private byte[] data;
-		private int messageSize;
+		private int remainingBytes = 0;
+		private boolean isInitialized = false;
 
-		public Message(int messageSize) {
-			initialize(messageSize);
-		}
+		private int messageSize = 0;
+		private int messageId= 0;	
 
-		public Message(int seqNumber, byte [] data) {
-			this.messageSize = -1;
-			this.cache = new HashMap<>();
-			setData(seqNumber, data);
-		}
-
-		public void setPacketCount(int packetCount) {
-			if (this.messageSize == -1) {
-				initialize(packetCount);
-				for (Integer key : cache.keySet())
-					setData(key, (byte[]) cache.get(key));
-			}
+		public Message(int messageId) {
+			this.messageId = messageId;
 		}
 
 		public void setData(int seqNumber, byte[] data) {
-			if (messageSize != -1) {
+			if (isInitialized) {
 				for (int i = seqNumber * packetSize; i < data.length; i++)
 					this.data[i] = data[i];
-				this.messageSize -= data.length;
+				remainingBytes -= data.length;
+				if (remainingBytes < 0) {
+					Log.e(String.format("Message %d received more data than expected (by %d bytes).", messageId, -remainingBytes));
+				}
 			} else {
 				cache.put(seqNumber, data);
 			}
 		}
 
 		public boolean isComplete() {
-			return messageSize == 0;
+			return isInitialized && (remainingBytes == 0);
 		}
 
 		public List<? extends KnowledgeData> getKnowledgeDataList() {
 			try {
-				if (isComplete()) {
+				if (isComplete()) {			
 					return (List<? extends KnowledgeData>) deserialize(data);
 				}
 			} catch (IOException | ClassNotFoundException e) {
@@ -144,8 +134,18 @@ public class PacketReceiver {
 		}
 
 		private void initialize(int messageSize) {
-			this.messageSize = messageSize;
-			this.data = new byte[messageSize];
+			if (!isInitialized) {
+				this.remainingBytes = messageSize;
+				this.data = new byte[messageSize];
+				this.messageSize= messageSize; 
+				for (Integer key : cache.keySet()) {
+					setData(key, (byte[]) cache.get(key));
+				}
+				cache.clear();
+			} else {
+				throw new RuntimeException("Cannot call initialize twice.");
+			}
+			isInitialized = true;		
 		}
 
 	}
