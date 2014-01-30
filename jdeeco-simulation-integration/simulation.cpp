@@ -329,7 +329,7 @@ JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeC
 }
 
 DLLEXPORT_OR_IMPORT void jDEECoModule::jDEECoCallAt(double absoluteTime) {
-	::printf("Adding callback at: %f for %f\n", simTime().dbl(), absoluteTime);
+	//::printf("Adding callback at: %f for %f\n", simTime().dbl(), absoluteTime);
 	if (currentCallAtTime != absoluteTime && simTime().dbl() < absoluteTime) {
 		currentCallAtTime = absoluteTime;
 		cMessage *msg = new cMessage(JDEECO_TIMER_MESSAGE);
@@ -346,14 +346,14 @@ DLLEXPORT_OR_IMPORT void jDEECoModule::jDEECoOnHandleMessage(cMessage *msg) {
 		jclass cls = env->GetObjectClass((jobject) host);
 		jmethodID mid;
 		if (opp_strcmp(msg->getName(), JDEECO_TIMER_MESSAGE) == 0) {
-			::printf("1: At callback at: %.17g for %.17g\n", simTime().dbl(), currentCallAtTime);
+			//::printf("1: At callback at: %.17g for %.17g\n", simTime().dbl(), currentCallAtTime);
 			// compare in nanos
 			if (((long) round(simTime().dbl() * 1000000)) == ((long) round(currentCallAtTime * 1000000))) {
-				::printf("2: At callback at: %.17g for %.17g\n", simTime().dbl(), currentCallAtTime);
+				//::printf("2: At callback at: %.17g for %.17g\n", simTime().dbl(), currentCallAtTime);
 				mid = env->GetMethodID(cls, "at", "(D)V");
 				if (mid == 0)
 					return;
-				::printf("3: At callback at: %.17g for %.17g\n", simTime().dbl(), currentCallAtTime);
+				//::printf("3: At callback at: %.17g for %.17g\n", simTime().dbl(), currentCallAtTime);
 				env->CallVoidMethod((jobject) host, mid, currentCallAtTime);
 			} else {
 				//Ignore the message as it is not valid any longer.
