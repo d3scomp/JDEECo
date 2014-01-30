@@ -3,7 +3,11 @@ package cz.cuni.mff.d3s.deeco.publish;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
+
+import junitx.framework.ListAssert;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -14,6 +18,15 @@ import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
+import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeData;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
+import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
+import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
@@ -42,21 +55,55 @@ public class TestSerializer {
 	RuntimeMetadata model;
 	AnnotationProcessor processor;
 	KnowledgePath kp;
+	ComponentInstance component;
+	
+	
 	@Before
 	public void setUp() throws Exception {
 		processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE);
 		model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
 		
 		processor.process(model, new TestComponent("M1"));
-		kp = model.getComponentInstances().get(0).getComponentProcesses().get(0).getParameters().get(0).getKnowledgePath();
+		component = model.getComponentInstances().get(0); 
+		kp = component.getComponentProcesses().get(0).getParameters().get(0).getKnowledgePath();
 	}
 
 	@Test
-	public void testSerialization() throws IOException, ClassNotFoundException {
+	public void testKnowledgePathSerialization() throws IOException, ClassNotFoundException {
 		byte[] data = Serializer.serialize(kp);
 		KnowledgePath nkp = (KnowledgePath) Serializer.deserialize(data);
 		
 		assertEquals(kp, nkp);
+	}
+	
+	@Test
+	public void testKnowledgeDataSerialization() throws IOException, ClassNotFoundException, KnowledgeUpdateException, KnowledgeNotFoundException {
+		KnowledgeManagerContainer container = new KnowledgeManagerContainer();
+		
+		
+		ValueSet initialKnowledge = null;
+		
+		KnowledgePath empty = RuntimeMetadataFactoryExt.eINSTANCE.createKnowledgePath();
+		// get all the knowledge (corresponding to an empty knowledge path)
+		initialKnowledge = component.getKnowledgeManager().get(Arrays.asList(empty));
+		
+		// copy all the knowledge values into a ChangeSet
+		ChangeSet cs = new ChangeSet();
+		if (initialKnowledge != null) {
+			for (KnowledgePath p: initialKnowledge.getKnowledgePaths()) {
+				cs.setValue(p, initialKnowledge.getValue(p));
+			}			
+		}
+		
+		// create a new KM with the same id and knowledge values
+		KnowledgeManager km = container.createLocal(component.getKnowledgeManager().getId());
+		km.update(cs);
+				
+		List<? extends KnowledgeData> kd = container.getKnowledgeData();		
+		byte[] data = Serializer.serialize(kd);
+		List<? extends KnowledgeData> nkd = (List<? extends KnowledgeData>) Serializer.deserialize(data);
+		
+		ListAssert.assertEquals(kd, nkd);
 	}
 
 }
