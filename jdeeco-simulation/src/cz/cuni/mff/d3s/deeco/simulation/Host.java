@@ -66,12 +66,10 @@ public class Host extends PacketSender {
 	}
 
 	public double getPositionX() {
-		// TODO Auto-generated method stub
-		return 0;
+		return simulation.getPositionX(id);
 	}
 
 	public double getPositionY() {
-		// TODO Auto-generated method stub
-		return 0;
+		return simulation.getPositionY(id);
 	}
 }

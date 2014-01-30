@@ -35,15 +35,22 @@ public:
 	virtual const char * jDEECoGetModuleId() {return NULL;};
 	//Needs to be implemented by the module
 	virtual void jDEECoSendPacket(JDEECoPacket *packet, const char *recipient) {};
+	//Needs to be implemented by the module
+	virtual void jDEECoScheduleAt(double absoluteTime, cMessage *msg) {};
+	//Needs to be implemented by the module
+	virtual bool jDEECoIsGPSAvailable() {return false;};
+	//Needs to be implemented by the module
+	virtual double jDEECoGetPositionX() {return 0;};
+	//Needs to be implemented by the module
+	virtual double jDEECoGetPositionY() {return 0;};
+	//Needs to be implemented by the module
+	virtual double jDEECoGetPositionZ() {return 0;};
 
 protected:
 	//Needs to be called at the module initialisation
 	void jDEECoInitialize();
 	//Needs to be called from the handleMessage method
 	void jDEECoOnHandleMessage(cMessage *msg);
-
-	//Needs to be implemented by the module
-	virtual void jDEECoScheduleAt(double absoluteTime, cMessage *msg) {};
 
 };
 

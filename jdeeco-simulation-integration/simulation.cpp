@@ -328,6 +328,66 @@ JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeC
 	env->ReleaseStringUTFChars(id, cstring);
 }
 
+JNIEXPORT jboolean JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeIsGPSAvailable
+  (JNIEnv *env, jobject jsimulation, jstring id) {
+	const char * cstring = env->GetStringUTFChars(id, 0);
+	jboolean result = 0;
+	for (std::vector<jDEECoModule *>::iterator it = jDEECoModules.begin();
+		it != jDEECoModules.end(); ++it) {
+		if (opp_strcmp((*it)->jDEECoGetModuleId(), cstring) == 0) {
+			result = (*it)->jDEECoIsGPSAvailable();
+			break;
+		}
+	}
+	env->ReleaseStringUTFChars(id, cstring);
+	return result;
+}
+
+JNIEXPORT jdouble JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeGetPositionX
+  (JNIEnv *env, jobject jsimulation, jstring id) {
+	const char * cstring = env->GetStringUTFChars(id, 0);
+	jdouble result = 0;
+	for (std::vector<jDEECoModule *>::iterator it = jDEECoModules.begin();
+		it != jDEECoModules.end(); ++it) {
+		if (opp_strcmp((*it)->jDEECoGetModuleId(), cstring) == 0) {
+			result = (*it)->jDEECoGetPositionX();
+			break;
+		}
+	}
+	env->ReleaseStringUTFChars(id, cstring);
+	return result;
+}
+
+JNIEXPORT jdouble JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeGetPositionY
+  (JNIEnv *env, jobject jsimulation, jstring id) {
+	const char * cstring = env->GetStringUTFChars(id, 0);
+	jdouble result = 0;
+	for (std::vector<jDEECoModule *>::iterator it = jDEECoModules.begin();
+		it != jDEECoModules.end(); ++it) {
+		if (opp_strcmp((*it)->jDEECoGetModuleId(), cstring) == 0) {
+			result = (*it)->jDEECoGetPositionY();
+			break;
+		}
+	}
+	env->ReleaseStringUTFChars(id, cstring);
+	return result;
+}
+
+JNIEXPORT jdouble JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeGetPositionZ
+(JNIEnv *env, jobject jsimulation, jstring id) {
+	const char * cstring = env->GetStringUTFChars(id, 0);
+	jdouble result = 0;
+	for (std::vector<jDEECoModule *>::iterator it = jDEECoModules.begin();
+		it != jDEECoModules.end(); ++it) {
+		if (opp_strcmp((*it)->jDEECoGetModuleId(), cstring) == 0) {
+			result = (*it)->jDEECoGetPositionZ();
+			break;
+		}
+	}
+	env->ReleaseStringUTFChars(id, cstring);
+	return result;
+}
+
 DLLEXPORT_OR_IMPORT void jDEECoModule::jDEECoCallAt(double absoluteTime) {
 	//::printf("Adding callback at: %f for %f\n", simTime().dbl(), absoluteTime);
 	if (currentCallAtTime != absoluteTime && simTime().dbl() < absoluteTime) {

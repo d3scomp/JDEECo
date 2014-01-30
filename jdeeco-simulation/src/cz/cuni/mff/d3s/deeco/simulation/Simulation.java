@@ -52,6 +52,11 @@ public class Simulation {
 	 * @param nodeId
 	 */
 	private native void nativeCallAt(double absoluteTime, String nodeId);
+	
+	private native boolean nativeIsGPSAvailable(String nodeId);
+	private native double nativeGetPositionX(String nodeId);
+	private native double nativeGetPositionY(String nodeId);
+	private native double nativeGetPositionZ(String nodeId);
 
 	public void initialize() {
 		System.loadLibrary("libintegration");
@@ -82,6 +87,22 @@ public class Simulation {
 
 	public void callAt(long absoluteTime, String nodeId) {
 		nativeCallAt(timeLongToDouble(absoluteTime), nodeId);
+	}
+	
+	public boolean isGPSAvailable(String id) {
+		return nativeIsGPSAvailable(id);
+	}
+	
+	public double getPositionX(String id) {
+		return nativeGetPositionX(id);
+	}
+	
+	public double getPositionY(String id) {
+		return nativeGetPositionY(id);
+	}
+	
+	public double getPositionZ(String id) {
+		return nativeGetPositionZ(id);
 	}
 
 	public long getSimulationTime() {
