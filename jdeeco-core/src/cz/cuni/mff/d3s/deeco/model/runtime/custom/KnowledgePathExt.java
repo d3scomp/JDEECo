@@ -25,8 +25,10 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMLResourceImpl;
+import org.xml.sax.SAXParseException;
 
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 import cz.cuni.mff.d3s.deeco.model.runtime.impl.KnowledgePathImpl;
@@ -96,15 +98,23 @@ public class KnowledgePathExt extends KnowledgePathImpl implements Serializable 
 		res.getContents().add(this);
 		StringWriter sw = new StringWriter();
 		res.save(sw, null);
-		out.writeUTF(sw.toString());
+		
+		String encoded = sw.toString();
+		out.writeUTF(encoded);
 	}
 	
-	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-		XMLResource res = new XMLResourceImpl();
-		InputStream stream = new ByteArrayInputStream(in.readUTF().getBytes());
-		res.load(stream, null);
-		KnowledgePath kp = (KnowledgePath) res.getContents().get(0);
+	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {		
+		XMLResource res = new XMLResourceImpl();			
+		String encoded = in.readUTF();
 		
-		getNodes().addAll(kp.getNodes());	
+		try {
+			InputStream stream = new ByteArrayInputStream(encoded.getBytes());
+			res.load(stream, null);
+			KnowledgePath kp = (KnowledgePath) res.getContents().get(0);
+			
+			getNodes().addAll(kp.getNodes());	
+		} catch (Exception e) {
+			throw e;
+		}
 	}
 }

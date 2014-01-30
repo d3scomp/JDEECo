@@ -53,8 +53,8 @@ public abstract class PacketSender implements KnowledgeDataSender {
 
 			int messageId = getNextMessageId();
 			
-			//System.out.println("S: " + "(" + messageId + ")" + Arrays.deepToString(fragments));
-
+			Log.i(String.format("S: " + "(" + messageId + ")" + Arrays.deepToString(fragments)));
+			
 			// We need to send the message containing id and the number of
 			// packets.that will be sent.
 			sendPacket(buildInitialPacket(messageId, getDataLength(fragments)), recipient);
