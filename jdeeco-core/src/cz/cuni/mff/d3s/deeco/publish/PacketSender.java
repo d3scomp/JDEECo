@@ -50,7 +50,11 @@ public abstract class PacketSender implements KnowledgeDataSender {
 	public void sendData(Object data, String recipient) {
 		try {
 			byte[][] fragments = fragment(data);
+
 			int messageId = getNextMessageId();
+			
+			//System.out.println("S: " + "(" + messageId + ")" + Arrays.deepToString(fragments));
+
 			// We need to send the message containing id and the number of
 			// packets.that will be sent.
 			sendPacket(buildInitialPacket(messageId, getDataLength(fragments)), recipient);
@@ -79,19 +83,9 @@ public abstract class PacketSender implements KnowledgeDataSender {
 		return result;
 	}
 
-	private byte[] buildInitialPacket(int id, int packetCount) {
-		byte[] bType = ByteBuffer.allocate(4).putInt(Integer.MIN_VALUE).array();
-		byte[] bId = ByteBuffer.allocate(4).putInt(id).array();
-		byte[] bPacketCount = ByteBuffer.allocate(4).putInt(packetCount)
-				.array();
-		byte[] result = new byte[12];
-		for (int i = 0; i < bType.length; i++)
-			result[i] = bType[i];
-		for (int i = 0; i < bId.length; i++)
-			result[i + 4] = bId[i];
-		for (int i = 0; i < bPacketCount.length; i++)
-			result[i + 8] = bPacketCount[i];
-		return result;
+	private byte[] buildInitialPacket(int id, int messageSize) {
+		byte[] size = ByteBuffer.allocate(4).putInt(messageSize).array();
+		return  buildPacket(id, Integer.MIN_VALUE, size);	
 	}
 
 	private byte[] buildPacket(int id, int seqNumber, byte[] packetData) {
