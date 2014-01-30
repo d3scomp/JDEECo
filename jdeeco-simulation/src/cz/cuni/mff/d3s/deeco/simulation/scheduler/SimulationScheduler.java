@@ -35,6 +35,9 @@ public class SimulationScheduler implements Scheduler,
 	private final SortedSet<SchedulerEvent> queue;
 	private final Set<Task> allTasks;
 	private final Map<Task, SchedulerEvent> periodicEvents;
+	
+	private long lastProcessStartTime = -1;
+	private long lastProcessExecutionTime = 1;
 
 	private Executor executor;
 
@@ -78,6 +81,7 @@ public class SimulationScheduler implements Scheduler,
 					isScheduled = allTasks.contains(task);
 				}
 				if (isScheduled) {
+					measureExecutionTime();
 					scheduleNow(new SchedulerEvent(task, trigger), 0);
 				}
 			}
@@ -111,6 +115,10 @@ public class SimulationScheduler implements Scheduler,
 
 	@Override
 	public void executionCompleted(Task task) {
+		measureExecutionTime();
+		if (task.getPeriodicTrigger() != null && lastProcessExecutionTime > task.getPeriodicTrigger().getPeriod()) {
+			Log.e("Task " + task.toString() + " has greater actual execution time than its period (" + task.getPeriodicTrigger().getPeriod() + ")");
+		}
 		registerNextExecution();
 	}
 
@@ -128,44 +136,47 @@ public class SimulationScheduler implements Scheduler,
 
 	@Override
 	public void at(long time) {
-		Log.i("At called with queue: " + Arrays.toString(queue.toArray()));
-		SchedulerEvent event = pop();
-		if (event != null) {
-			// The time is right to execute the next task
-			if (event.nextExecutionTime == time) {
-				if (event.period != 0) {
-					event.nextExecutionTime = event.nextExecutionTime
-							+ event.period;
-					push(event);
-				}
-				if (executor != null) {
-					executor.execute(event.executable, event.trigger);
-				} else {
-					Log.e("The simulation scheduler is associated with no excecutor!");
-				}
+		System.out.println("Scheduler " +host.getId()+" at: "+time+" called with queue: " + Arrays.toString(queue.toArray()));
+		SchedulerEvent event;
+		while ((event = queue.first()) != null)  {
+			// if notified too early
+			if (event.nextExecutionTime > time)
+				break;
+			
+			// The time is right to execute the next task			
+			pop();
+			if (event.period != 0) {
+				event.nextExecutionTime = event.nextExecutionTime
+						+ event.period;
+				push(event);
 			}
+			if (executor != null) {
+				lastProcessStartTime = System.currentTimeMillis();
+				executor.execute(event.executable, event.trigger);
+			} else {
+				Log.e("The simulation scheduler is associated with no excecutor!");
+			}		
+			
 		}
 	}
 
 	// ------Private methods--------
 
-	private long getCurrentTime() {
-		long result = host.getSimulationTime();
-		if (result == -1)
-			return 0;
-		else
-			return result;
-	}
-
 	private void scheduleNow(SchedulerEvent event, long period) {
 		event.period = period;
-		event.nextExecutionTime = getCurrentTime();
+		event.nextExecutionTime = host.getSimulationTime() + lastProcessExecutionTime;
 		push(event);
 	}
 
 	private void registerNextExecution() {
-		if (!queue.isEmpty())
-			host.callAt(queue.first().nextExecutionTime);
+		if (!queue.isEmpty()) {
+			long nextExecutionTime = queue.first().nextExecutionTime;
+			if (nextExecutionTime <= host.getSimulationTime()) {
+				return; //nextExecutionTime = host.getSimulationTime() + 1;
+			}
+			host.callAt(nextExecutionTime);
+			System.out.println("Scheduler " + host.getId() + " registering callback at " + nextExecutionTime);
+		}
 	}
 
 	private SchedulerEvent pop() {
@@ -186,5 +197,9 @@ public class SimulationScheduler implements Scheduler,
 
 		// TODO take into account different scheduling policies and WCET of
 		// tasks. According to those the tasks need to be rescheduled.
+	}
+	
+	private void measureExecutionTime() {
+		lastProcessExecutionTime = Math.max(System.currentTimeMillis() - lastProcessStartTime, lastProcessExecutionTime);
 	}
 }
