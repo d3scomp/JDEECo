@@ -42,7 +42,7 @@ public class Simulation {
 	 * Starts the simulation and blocks until its finished.
 	 * Do not change this method without changing its C counterpart.
 	 */
-	private native void nativeRun(String environment);
+	private native void nativeRun(String environment, String configFile);
 
 	/**
 	 * Registers a callback within the simulation resulting in method "at" execution at the absoluteTime.
@@ -52,6 +52,11 @@ public class Simulation {
 	 * @param nodeId
 	 */
 	private native void nativeCallAt(double absoluteTime, String nodeId);
+	
+	private native boolean nativeIsPositionInfoAvailable(String nodeId);
+	private native double nativeGetPositionX(String nodeId);
+	private native double nativeGetPositionY(String nodeId);
+	private native double nativeGetPositionZ(String nodeId);
 
 	public void initialize() {
 		System.loadLibrary("libintegration");
@@ -76,12 +81,28 @@ public class Simulation {
 		nativeSendPacket(id, data, recipient);
 	}
 
-	public void run(String environment) {
-		nativeRun(environment);
+	public void run(String environment, String configFile) {
+		nativeRun(environment, configFile);
 	}
 
 	public void callAt(long absoluteTime, String nodeId) {
 		nativeCallAt(timeLongToDouble(absoluteTime), nodeId);
+	}
+	
+	public boolean isGPSAvailable(String id) {
+		return nativeIsPositionInfoAvailable(id);
+	}
+	
+	public double getPositionX(String id) {
+		return nativeGetPositionX(id);
+	}
+	
+	public double getPositionY(String id) {
+		return nativeGetPositionY(id);
+	}
+	
+	public double getPositionZ(String id) {
+		return nativeGetPositionZ(id);
 	}
 
 	public long getSimulationTime() {

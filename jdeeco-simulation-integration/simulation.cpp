@@ -26,6 +26,9 @@
 #include "intxtypes.h"
 #include "startup.h"
 
+#include <iostream>
+#include <fstream>
+
 USING_NAMESPACE;
 
 Register_GlobalConfigOption(CFGID_LOAD_LIBS, "load-libs", CFG_FILENAMES, "",
@@ -54,6 +57,7 @@ public:
 
 std::vector<jDEECoRuntime *> jDEECoRuntimes;
 std::vector<jDEECoModule *> jDEECoModules;
+std::ofstream logger;
 
 // helper macro
 #define CREATE_BY_CLASSNAME(var,classname,baseclass,description) \
@@ -87,7 +91,7 @@ static void verifyIntTypes() {
 #undef LL
 }
 
-void simulate(const char * envName) {
+void simulate(const char * envName, const char * confFile) {
 	cStaticFlag dummy;
 	//
 	// SETUP
@@ -107,11 +111,10 @@ void simulate(const char * envName) {
 		// First, load the ini file. It might contain the name of the user interface
 		// to instantiate.
 		//
-		const char *fname = "omnetpp.ini"; //default filename
 
 		InifileReader *inifile = new InifileReader();
-		if (fileExists(fname))
-			inifile->readFile(fname);
+		if (fileExists(confFile))
+			inifile->readFile(confFile);
 
 		// activate [General] section so that we can read global settings from it
 		bootconfig = new SectionBasedConfiguration();
@@ -293,12 +296,16 @@ JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeS
 }
 
 JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeRun(
-		JNIEnv *env, jobject jsimulation, jstring environment) {
+		JNIEnv *env, jobject jsimulation, jstring environment, jstring confFile) {
+	logger.open ("c-log.txt");
 	const char * cEnv = env->GetStringUTFChars(environment, 0);
-	simulate(cEnv);
+	const char * cConfFile = env->GetStringUTFChars(confFile, 0);
+	simulate(cEnv, cConfFile);
 	jDEECoModules.clear();
 	jDEECoRuntimes.clear();
 	env->ReleaseStringUTFChars(environment, cEnv);
+	env->ReleaseStringUTFChars(environment, cConfFile);
+	logger.close();
 }
 
 JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeCallAt(
@@ -328,6 +335,66 @@ JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeC
 	env->ReleaseStringUTFChars(id, cstring);
 }
 
+JNIEXPORT jboolean JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeIsPositionInfoAvailable
+  (JNIEnv *env, jobject jsimulation, jstring id) {
+	const char * cstring = env->GetStringUTFChars(id, 0);
+	jboolean result = 0;
+	for (std::vector<jDEECoModule *>::iterator it = jDEECoModules.begin();
+		it != jDEECoModules.end(); ++it) {
+		if (opp_strcmp((*it)->jDEECoGetModuleId(), cstring) == 0) {
+			result = (*it)->jDEECoIsPositionInfoAvailable();
+			break;
+		}
+	}
+	env->ReleaseStringUTFChars(id, cstring);
+	return result;
+}
+
+JNIEXPORT jdouble JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeGetPositionX
+  (JNIEnv *env, jobject jsimulation, jstring id) {
+	const char * cstring = env->GetStringUTFChars(id, 0);
+	jdouble result = 0;
+	for (std::vector<jDEECoModule *>::iterator it = jDEECoModules.begin();
+		it != jDEECoModules.end(); ++it) {
+		if (opp_strcmp((*it)->jDEECoGetModuleId(), cstring) == 0) {
+			result = (*it)->jDEECoGetPositionX();
+			break;
+		}
+	}
+	env->ReleaseStringUTFChars(id, cstring);
+	return result;
+}
+
+JNIEXPORT jdouble JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeGetPositionY
+  (JNIEnv *env, jobject jsimulation, jstring id) {
+	const char * cstring = env->GetStringUTFChars(id, 0);
+	jdouble result = 0;
+	for (std::vector<jDEECoModule *>::iterator it = jDEECoModules.begin();
+		it != jDEECoModules.end(); ++it) {
+		if (opp_strcmp((*it)->jDEECoGetModuleId(), cstring) == 0) {
+			result = (*it)->jDEECoGetPositionY();
+			break;
+		}
+	}
+	env->ReleaseStringUTFChars(id, cstring);
+	return result;
+}
+
+JNIEXPORT jdouble JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeGetPositionZ
+(JNIEnv *env, jobject jsimulation, jstring id) {
+	const char * cstring = env->GetStringUTFChars(id, 0);
+	jdouble result = 0;
+	for (std::vector<jDEECoModule *>::iterator it = jDEECoModules.begin();
+		it != jDEECoModules.end(); ++it) {
+		if (opp_strcmp((*it)->jDEECoGetModuleId(), cstring) == 0) {
+			result = (*it)->jDEECoGetPositionZ();
+			break;
+		}
+	}
+	env->ReleaseStringUTFChars(id, cstring);
+	return result;
+}
+
 DLLEXPORT_OR_IMPORT void jDEECoModule::jDEECoCallAt(double absoluteTime) {
 	//::printf("Adding callback at: %f for %f\n", simTime().dbl(), absoluteTime);
 	if (currentCallAtTime != absoluteTime && simTime().dbl() < absoluteTime) {
@@ -346,14 +413,14 @@ DLLEXPORT_OR_IMPORT void jDEECoModule::jDEECoOnHandleMessage(cMessage *msg) {
 		jclass cls = env->GetObjectClass((jobject) host);
 		jmethodID mid;
 		if (opp_strcmp(msg->getName(), JDEECO_TIMER_MESSAGE) == 0) {
-			//::printf("1: At callback at: %.17g for %.17g\n", simTime().dbl(), currentCallAtTime);
+			logger << "1: At callback at: " << simTime().dbl() << " for " << currentCallAtTime << "\n";
 			// compare in nanos
 			if (((long) round(simTime().dbl() * 1000000)) == ((long) round(currentCallAtTime * 1000000))) {
-				//::printf("2: At callback at: %.17g for %.17g\n", simTime().dbl(), currentCallAtTime);
+				logger << "2: At callback at: " << simTime().dbl() << " for " << currentCallAtTime << "\n";
 				mid = env->GetMethodID(cls, "at", "(D)V");
 				if (mid == 0)
 					return;
-				//::printf("3: At callback at: %.17g for %.17g\n", simTime().dbl(), currentCallAtTime);
+				logger << "3: At callback at: " << simTime().dbl() << " for " << currentCallAtTime << "\n";
 				env->CallVoidMethod((jobject) host, mid, currentCallAtTime);
 			} else {
 				//Ignore the message as it is not valid any longer.
