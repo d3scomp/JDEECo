@@ -25,7 +25,7 @@ public class JNITest {
 		Host h3 = simulation.getHost("3", 1000);
 		kr = new KnowledgeDataManager(h3);
 
-		simulation.run("Cmdenv", "omnetpp-jni.ini");
+		simulation.run("Tkenv", "omnetpp-jni.ini");
 		
 		System.gc();
 		System.out.println("Simulation finished.");
