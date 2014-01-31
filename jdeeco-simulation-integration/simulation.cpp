@@ -26,6 +26,9 @@
 #include "intxtypes.h"
 #include "startup.h"
 
+#include <iostream>
+#include <fstream>
+
 USING_NAMESPACE;
 
 Register_GlobalConfigOption(CFGID_LOAD_LIBS, "load-libs", CFG_FILENAMES, "",
@@ -54,6 +57,7 @@ public:
 
 std::vector<jDEECoRuntime *> jDEECoRuntimes;
 std::vector<jDEECoModule *> jDEECoModules;
+std::ofstream logger;
 
 // helper macro
 #define CREATE_BY_CLASSNAME(var,classname,baseclass,description) \
@@ -293,6 +297,7 @@ JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeS
 
 JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeRun(
 		JNIEnv *env, jobject jsimulation, jstring environment, jstring confFile) {
+	logger.open ("c-log.txt");
 	const char * cEnv = env->GetStringUTFChars(environment, 0);
 	const char * cConfFile = env->GetStringUTFChars(confFile, 0);
 	simulate(cEnv, cConfFile);
@@ -300,6 +305,7 @@ JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeR
 	jDEECoRuntimes.clear();
 	env->ReleaseStringUTFChars(environment, cEnv);
 	env->ReleaseStringUTFChars(environment, cConfFile);
+	logger.close();
 }
 
 JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeCallAt(
@@ -407,14 +413,14 @@ DLLEXPORT_OR_IMPORT void jDEECoModule::jDEECoOnHandleMessage(cMessage *msg) {
 		jclass cls = env->GetObjectClass((jobject) host);
 		jmethodID mid;
 		if (opp_strcmp(msg->getName(), JDEECO_TIMER_MESSAGE) == 0) {
-			//::printf("1: At callback at: %.17g for %.17g\n", simTime().dbl(), currentCallAtTime);
+			logger << "1: At callback at: " << simTime().dbl() << " for " << currentCallAtTime << "\n";
 			// compare in nanos
 			if (((long) round(simTime().dbl() * 1000000)) == ((long) round(currentCallAtTime * 1000000))) {
-				//::printf("2: At callback at: %.17g for %.17g\n", simTime().dbl(), currentCallAtTime);
+				logger << "2: At callback at: " << simTime().dbl() << " for " << currentCallAtTime << "\n";
 				mid = env->GetMethodID(cls, "at", "(D)V");
 				if (mid == 0)
 					return;
-				//::printf("3: At callback at: %.17g for %.17g\n", simTime().dbl(), currentCallAtTime);
+				logger << "3: At callback at: " << simTime().dbl() << " for " << currentCallAtTime << "\n";
 				env->CallVoidMethod((jobject) host, mid, currentCallAtTime);
 			} else {
 				//Ignore the message as it is not valid any longer.
