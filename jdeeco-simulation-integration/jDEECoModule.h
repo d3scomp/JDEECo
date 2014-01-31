@@ -38,7 +38,7 @@ public:
 	//Needs to be implemented by the module
 	virtual void jDEECoScheduleAt(double absoluteTime, cMessage *msg) {};
 	//Needs to be implemented by the module
-	virtual bool jDEECoIsGPSAvailable() {return false;};
+	virtual bool jDEECoIsPositionInfoAvailable() {return false;};
 	//Needs to be implemented by the module
 	virtual double jDEECoGetPositionX() {return 0;};
 	//Needs to be implemented by the module

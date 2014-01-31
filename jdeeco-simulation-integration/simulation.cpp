@@ -329,14 +329,14 @@ JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeC
 	env->ReleaseStringUTFChars(id, cstring);
 }
 
-JNIEXPORT jboolean JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeIsGPSAvailable
+JNIEXPORT jboolean JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeIsPositionInfoAvailable
   (JNIEnv *env, jobject jsimulation, jstring id) {
 	const char * cstring = env->GetStringUTFChars(id, 0);
 	jboolean result = 0;
 	for (std::vector<jDEECoModule *>::iterator it = jDEECoModules.begin();
 		it != jDEECoModules.end(); ++it) {
 		if (opp_strcmp((*it)->jDEECoGetModuleId(), cstring) == 0) {
-			result = (*it)->jDEECoIsGPSAvailable();
+			result = (*it)->jDEECoIsPositionInfoAvailable();
 			break;
 		}
 	}

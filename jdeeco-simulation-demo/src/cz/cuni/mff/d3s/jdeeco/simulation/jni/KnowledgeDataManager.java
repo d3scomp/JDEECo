@@ -54,6 +54,7 @@ public class KnowledgeDataManager implements KnowledgeDataReceiver,
 		}
 		host.sendData(toSend);
 		toSend.clear();
+		System.out.println("Node " + host.getId() + " is located at: (" + host.getPositionX() + ", " + host.getPositionY() + ")");
 	}
 
 	public void sendDummyData() {
