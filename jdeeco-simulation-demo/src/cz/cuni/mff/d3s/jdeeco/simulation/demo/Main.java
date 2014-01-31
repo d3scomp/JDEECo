@@ -29,7 +29,7 @@ import cz.cuni.mff.d3s.deeco.simulation.SimulationRuntimeBuilder;
  */
 public class Main {
 
-	static double POSITION_FACTOR = 100;
+	static double POSITION_FACTOR = 1;
 	static int PACKET_SIZE = 1000;
 	static int PUBLISHING_PERIOD = 500;
 	
