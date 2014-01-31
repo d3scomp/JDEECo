@@ -21,6 +21,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.*;
+import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 
 /**
@@ -224,12 +225,18 @@ public class AnnotationProcessor {
 		ComponentInstance componentInstance = factory.createComponentInstance();
 		componentInstance.setName(clazz.getCanonicalName());
 		
-		String uniqueID = UUID.randomUUID().toString();
-        KnowledgeManager km = new CloningKnowledgeManager(clazz.getSimpleName()+uniqueID);
-		List<Method> methods = getMethodsMarkedAsProcesses(clazz);
 		try {
-			km.update(extractInitialKnowledge(obj));
+			ChangeSet initialK = extractInitialKnowledge(obj);
+			String id = getComponentId(initialK);
+			if (id == null) {
+				id = clazz.getSimpleName() + UUID.randomUUID().toString();
+			}
+	        KnowledgeManager km = new CloningKnowledgeManager(id);		
+			km.update(initialK);
 	        componentInstance.setKnowledgeManager(km); 
+	        
+			List<Method> methods = getMethodsMarkedAsProcesses(clazz);
+	        
 			for (Method m : methods) {
 				int modifier = m.getModifiers();
 				if (Modifier.isPublic(modifier) && Modifier.isStatic(modifier)) {
@@ -249,6 +256,10 @@ public class AnnotationProcessor {
 		}
 		return componentInstance;
 	}
+
+
+
+
 
 	/**
 	 * Creator of a single correctly-initialized {@link EnsembleDefinition} object. 
@@ -693,13 +704,15 @@ public class AnnotationProcessor {
 		
 		// print a warning if the component definition contains non-public fields
 		for (Field f : knowledge.getClass().getDeclaredFields()) {
-			if (! Modifier.isPublic(f.getModifiers())) {
-				Log.w("Non-public fields are ignored during the extraction of initial knowledge ("
+			if (!Modifier.isPublic(f.getModifiers()) || Modifier.isStatic(f.getModifiers())) {
+				Log.w("Non-public or static fields are ignored during the extraction of initial knowledge ("
 						+ knowledge.getClass().getCanonicalName());
 				break;
 			}
 		}
 		for (Field f : knowledge.getClass().getFields()) {
+			if (Modifier.isStatic(f.getModifiers()))
+				continue;
 			KnowledgePath knowledgePath = factory.createKnowledgePath();
 			PathNodeField pathNodeField = factory.createPathNodeField();
 			pathNodeField.setName(new String(f.getName()));
@@ -713,4 +726,16 @@ public class AnnotationProcessor {
 		return changeSet;
 	}
 
+	/**
+	 * Returns component ID given the initial knowledge. Returns null if ID is
+	 * not specified as a public non-static String field.
+	 */
+	String getComponentId(ChangeSet initialK) {
+		KnowledgePath idPath = factory.createKnowledgePath();
+		PathNodeField pnf = factory.createPathNodeField();
+		pnf.setName("id");
+		idPath.getNodes().add(pnf);
+		String id = (String) initialK.getValue(idPath);
+		return id;
+	}
 }
