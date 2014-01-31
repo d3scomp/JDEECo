@@ -53,7 +53,7 @@ public class Simulation {
 	 */
 	private native void nativeCallAt(double absoluteTime, String nodeId);
 	
-	private native boolean nativeIsGPSAvailable(String nodeId);
+	private native boolean nativeIsPositionInfoAvailable(String nodeId);
 	private native double nativeGetPositionX(String nodeId);
 	private native double nativeGetPositionY(String nodeId);
 	private native double nativeGetPositionZ(String nodeId);
@@ -90,7 +90,7 @@ public class Simulation {
 	}
 	
 	public boolean isGPSAvailable(String id) {
-		return nativeIsGPSAvailable(id);
+		return nativeIsPositionInfoAvailable(id);
 	}
 	
 	public double getPositionX(String id) {

@@ -55,7 +55,7 @@ JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeC
  * Method:    broadcastPacket
  * Signature: (Ljava/lang/String)Z
  */
-JNIEXPORT jboolean JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeIsGPSAvailable
+JNIEXPORT jboolean JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeIsPositionInfoAvailable
   (JNIEnv *, jobject, jstring);
 
 /*
