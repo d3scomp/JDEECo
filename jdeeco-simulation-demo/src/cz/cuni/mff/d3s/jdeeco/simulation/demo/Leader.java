@@ -60,7 +60,7 @@ public class Leader extends PositionAwareComponent {
 	}
 
 	@Process
-	@PeriodicScheduling(2000)
+	@PeriodicScheduling(500)
 	public static void processMemberData(@In("id") String id,
 			@In("memberAggregateData") Map<String, MemberData> memberAggregateData,
 			@In("memberPositions") Map<String, Position> memberPositions,
@@ -83,11 +83,12 @@ public class Leader extends PositionAwareComponent {
 	}
 
 	@Process
-	public static void outputGMsInDanger(			
+	public static void outputGMsInDanger(		
+			@In("id") String id,
 			@TriggerOnChange @In("membersInDanger")  Set<String> membersInDanger) {
 		
 		StringBuilder sb = new StringBuilder();
-		sb.append("Firefighters in danger: ");
+		sb.append(id + ": Firefighters in danger: ");
 		for (String ff: membersInDanger) {
 			sb.append(ff + ", ");
 		}
@@ -95,7 +96,7 @@ public class Leader extends PositionAwareComponent {
 			sb.append("0");
 		}
 		
-		System.out.println(sb.toString());
+		System.err.println(sb.toString());
 		
 	}
 
