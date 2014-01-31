@@ -2,3 +2,5 @@
 /log/*
 /.classpath
 /logs
+/omnetpp.ini
+/c-log.txt
