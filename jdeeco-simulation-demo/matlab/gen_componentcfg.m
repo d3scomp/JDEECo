@@ -19,9 +19,9 @@ rc=500;
 plot(x(1,:)+x1,y(1,:)+y1,':k')
 
 teamcnt = 5;
-membercnt = 1000;
-leadercnt = 50;
-othercnt = 300;
+membercnt = 500;
+leadercnt = 25;
+othercnt = 150;
 
 %configlines = repmat('%s\t',1,membercnt+leadercnt+othercnt);
 offset = 0;
