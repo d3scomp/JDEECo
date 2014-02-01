@@ -136,7 +136,7 @@ public class SimulationScheduler implements Scheduler,
 
 	@Override
 	public void at(long time) {
-		System.out.println("Scheduler " +host.getId()+" at: "+time+" called with queue: " + Arrays.toString(queue.toArray()));
+		//System.out.println("Scheduler " +host.getId()+" at: "+time+" called with queue: " + Arrays.toString(queue.toArray()));
 		SchedulerEvent event;
 		while ((event = queue.first()) != null)  {
 			// if notified too early
@@ -175,7 +175,7 @@ public class SimulationScheduler implements Scheduler,
 				return; //nextExecutionTime = host.getSimulationTime() + 1;
 			}
 			host.callAt(nextExecutionTime);
-			System.out.println("Scheduler " + host.getId() + " registering callback at " + nextExecutionTime);
+			//System.out.println("Scheduler " + host.getId() + " registering callback at " + nextExecutionTime);
 		}
 	}
 
