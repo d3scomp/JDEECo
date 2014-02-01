@@ -26,9 +26,6 @@
 #include "intxtypes.h"
 #include "startup.h"
 
-#include <iostream>
-#include <fstream>
-
 USING_NAMESPACE;
 
 Register_GlobalConfigOption(CFGID_LOAD_LIBS, "load-libs", CFG_FILENAMES, "",
@@ -57,7 +54,6 @@ public:
 
 std::vector<jDEECoRuntime *> jDEECoRuntimes;
 std::vector<jDEECoModule *> jDEECoModules;
-std::ofstream logger;
 
 // helper macro
 #define CREATE_BY_CLASSNAME(var,classname,baseclass,description) \
@@ -245,14 +241,18 @@ JNIEXPORT jint JNICALL _JNI_OnLoad(JavaVM *vm, void *reserved) {
 
 JNIEXPORT jdouble JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeGetCurrentTime(
 		JNIEnv *env, jobject jsimulation) {
-	if (cSimulation::getActiveSimulation() == NULL)
-		return -1;
-	else
-		return cSimulation::getActiveSimulation()->getSimTime().dbl();
+	//std::cout << "nativeGetCurrentTime: Begin" << std::endl;
+	jdouble result = -1.0;
+	if (cSimulation::getActiveSimulation() != NULL)
+		result = cSimulation::getActiveSimulation()->getSimTime().dbl();
+	//std::cout << "nativeGetCurrentTime: Time is " << result << std::endl;
+	//std::cout << "nativeGetCurrentTime: End" << std::endl;
+	return result;
 }
 
 JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeRegister(
 		JNIEnv *env, jobject jsimulation, jobject object, jstring id) {
+	//std::cout << "nativeRegister: Begin" << std::endl;
 	const char * cstring = env->GetStringUTFChars(id, 0);
 	for (std::vector<jDEECoRuntime *>::iterator it = jDEECoRuntimes.begin();
 			it != jDEECoRuntimes.end(); ++it) {
@@ -265,15 +265,17 @@ JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeR
 	if (JNI_OK == status) {
 		jDEECoRuntimes.push_back(
 				new jDEECoRuntime(env->NewGlobalRef(object), jvm, cstring));
-		//::printf("JVM successfully retrieved\n");
+		//std::cout << "nativeRegister: jDEECo runtime created for " << cstring << std::endl;
 	} else {
-		::printf("JVM could not be retrieved!\n");
+		//std::cout << "nativeRegister: JVM could not be retrieved" << std::endl;
 	}
+	//std::cout << "nativeRegister: End" << std::endl;
 }
 
 JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeSendPacket(
 		JNIEnv *env, jobject jsimulation, jstring id, jbyteArray packet,
 		jstring recipient) {
+	//std::cout << "nativeSendPacket: Begin" << std::endl;
 	const char * cstring = env->GetStringUTFChars(id, 0);
 	for (std::vector<jDEECoModule *>::iterator it = jDEECoModules.begin();
 			it != jDEECoModules.end(); ++it) {
@@ -293,11 +295,12 @@ JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeS
 		}
 	}
 	env->ReleaseStringUTFChars(id, cstring);
+	//std::cout << "nativeSendPacket: End" << std::endl;
 }
 
 JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeRun(
 		JNIEnv *env, jobject jsimulation, jstring environment, jstring confFile) {
-	logger.open ("c-log.txt");
+	//std::cout << "nativeRun: Begin" << std::endl;
 	const char * cEnv = env->GetStringUTFChars(environment, 0);
 	const char * cConfFile = env->GetStringUTFChars(confFile, 0);
 	simulate(cEnv, cConfFile);
@@ -305,18 +308,18 @@ JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeR
 	jDEECoRuntimes.clear();
 	env->ReleaseStringUTFChars(environment, cEnv);
 	env->ReleaseStringUTFChars(environment, cConfFile);
-	logger.close();
+	//std::cout << "nativeRun: End" << std::endl;
 }
 
 JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeCallAt(
 		JNIEnv *env, jobject jsimulation, jdouble absoluteTime, jstring id) {
-	//printf("Before callback registration\n");
+	//std::cout << "nativeCallAt: Begin" << std::endl;
 	const char * cstring = env->GetStringUTFChars(id, 0);
 	if (cSimulation::getActiveSimulation() != NULL) {
 		for (std::vector<jDEECoModule *>::iterator it = jDEECoModules.begin();
 				it != jDEECoModules.end(); ++it) {
 			if (opp_strcmp((*it)->jDEECoGetModuleId(), cstring) == 0) {
-				//::printf("Will be called at %f\n", absoluteTime);
+				//std::cout << "nativeCallAt: " << (*it)->jDEECoGetModuleId() << " will be called at " << absoluteTime << std::endl;
 				(*it)->jDEECoCallAt(absoluteTime);
 				break;
 			}
@@ -325,18 +328,19 @@ JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeC
 		for (std::vector<jDEECoRuntime *>::iterator it = jDEECoRuntimes.begin();
 				it != jDEECoRuntimes.end(); ++it) {
 			if (opp_strcmp((*it)->id, cstring) == 0) {
+				//std::cout << "nativeCallAt: " << (*it)->id << " will be first called at " << absoluteTime << std::endl;
 				(*it)->firstCallAt = absoluteTime;
-				//callbacks at 0 time are not allowed
-				//::printf("Will be called first at %f\n", absoluteTime);
 				break;
 			}
 		}
 	}
 	env->ReleaseStringUTFChars(id, cstring);
+	//std::cout << "nativeCallAt: End" << std::endl;
 }
 
 JNIEXPORT jboolean JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeIsPositionInfoAvailable
   (JNIEnv *env, jobject jsimulation, jstring id) {
+	//std::cout << "nativeIsPositionInfoAvailable: Begin" << std::endl;
 	const char * cstring = env->GetStringUTFChars(id, 0);
 	jboolean result = 0;
 	for (std::vector<jDEECoModule *>::iterator it = jDEECoModules.begin();
@@ -347,11 +351,13 @@ JNIEXPORT jboolean JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nat
 		}
 	}
 	env->ReleaseStringUTFChars(id, cstring);
+	//std::cout << "nativeIsPositionInfoAvailable: End" << std::endl;
 	return result;
 }
 
 JNIEXPORT jdouble JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeGetPositionX
   (JNIEnv *env, jobject jsimulation, jstring id) {
+	//std::cout << "nativeGetPositionX: Begin" << std::endl;
 	const char * cstring = env->GetStringUTFChars(id, 0);
 	jdouble result = 0;
 	for (std::vector<jDEECoModule *>::iterator it = jDEECoModules.begin();
@@ -362,11 +368,13 @@ JNIEXPORT jdouble JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nati
 		}
 	}
 	env->ReleaseStringUTFChars(id, cstring);
+	//std::cout << "nativeGetPositionX: End" << std::endl;
 	return result;
 }
 
 JNIEXPORT jdouble JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeGetPositionY
   (JNIEnv *env, jobject jsimulation, jstring id) {
+	//std::cout << "nativeGetPositionY: Begin" << std::endl;
 	const char * cstring = env->GetStringUTFChars(id, 0);
 	jdouble result = 0;
 	for (std::vector<jDEECoModule *>::iterator it = jDEECoModules.begin();
@@ -377,11 +385,13 @@ JNIEXPORT jdouble JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nati
 		}
 	}
 	env->ReleaseStringUTFChars(id, cstring);
+	//std::cout << "nativeGetPositionY: End" << std::endl;
 	return result;
 }
 
 JNIEXPORT jdouble JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeGetPositionZ
 (JNIEnv *env, jobject jsimulation, jstring id) {
+	//std::cout << "nativeGetPositionZ: Begin" << std::endl;
 	const char * cstring = env->GetStringUTFChars(id, 0);
 	jdouble result = 0;
 	for (std::vector<jDEECoModule *>::iterator it = jDEECoModules.begin();
@@ -392,72 +402,92 @@ JNIEXPORT jdouble JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nati
 		}
 	}
 	env->ReleaseStringUTFChars(id, cstring);
+	//std::cout << "nativeGetPositionZ: End" << std::endl;
 	return result;
 }
 
 DLLEXPORT_OR_IMPORT void jDEECoModule::jDEECoCallAt(double absoluteTime) {
-	//::printf("Adding callback at: %f for %f\n", simTime().dbl(), absoluteTime);
+	//std::cout << "jDEECoCallAt: " << this->jDEECoGetModuleId() << " Begin" << std::endl;
 	if (currentCallAtTime != absoluteTime && simTime().dbl() < absoluteTime) {
 		currentCallAtTime = absoluteTime;
 		cMessage *msg = new cMessage(JDEECO_TIMER_MESSAGE);
 		currentCallAtMessage = msg;
 		jDEECoScheduleAt(absoluteTime, msg);
+		//std::cout << "jDEECoCallAt: " << this->jDEECoGetModuleId() << " Callback added: " << this->jDEECoGetModuleId() << " for " << absoluteTime << std::endl;
 	}
+	//std::cout << "jDEECoCallAt: " << this->jDEECoGetModuleId() << " End" << std::endl;
 }
 
 DLLEXPORT_OR_IMPORT void jDEECoModule::jDEECoOnHandleMessage(cMessage *msg) {
-	if (jvm != NULL && host != NULL) {
-		JavaVM *cJvm = (JavaVM *) jvm;
+	//std::cout << "jDEECoOnHandleMessage: " << this->jDEECoGetModuleId() << " Begin" << std::endl;
+	jDEECoRuntime *runtime = NULL;
+	for (std::vector<jDEECoRuntime *>::iterator it = jDEECoRuntimes.begin(); it != jDEECoRuntimes.end(); ++it) {
+		if (opp_strcmp((*it)->id, this->jDEECoGetModuleId()) == 0) {
+			runtime = *it;
+			break;
+		}
+	}
+	if (runtime != NULL) {
 		JNIEnv *env;
-		cJvm->AttachCurrentThread((void **) &env, NULL);
-		jclass cls = env->GetObjectClass((jobject) host);
+		//std::cout << "jDEECoOnHandleMessage: " << this->jDEECoGetModuleId() << " Before getting the environment" << std::endl;
+		runtime->jvm->AttachCurrentThread((void **) &env, NULL);
+		//std::cout << "jDEECoOnHandleMessage: " << this->jDEECoGetModuleId() << " Before getting jobject class" << std::endl;
+		jclass cls = env->GetObjectClass(runtime->host);
 		jmethodID mid;
 		if (opp_strcmp(msg->getName(), JDEECO_TIMER_MESSAGE) == 0) {
-			logger << "1: At callback at: " << simTime().dbl() << " for " << currentCallAtTime << "\n";
 			// compare in nanos
 			if (((long) round(simTime().dbl() * 1000000)) == ((long) round(currentCallAtTime * 1000000))) {
-				logger << "2: At callback at: " << simTime().dbl() << " for " << currentCallAtTime << "\n";
+				//std::cout << "jDEECoOnHandleMessage: " << this->jDEECoGetModuleId() << " Before getting the \"at\" method reference" << std::endl;
 				mid = env->GetMethodID(cls, "at", "(D)V");
 				if (mid == 0)
 					return;
-				logger << "3: At callback at: " << simTime().dbl() << " for " << currentCallAtTime << "\n";
-				env->CallVoidMethod((jobject) host, mid, currentCallAtTime);
+				//std::cout << "jDEECoOnHandleMessage: " << this->jDEECoGetModuleId() << " Before calling the \"at\" method" << std::endl;
+				env->CallVoidMethod(runtime->host, mid, currentCallAtTime);
 			} else {
 				//Ignore the message as it is not valid any longer.
 			}
 		} else if (opp_strcmp(msg->getName(), JDEECO_DATA_MESSAGE) == 0) {
+			//std::cout << "jDEECoOnHandleMessage: " << this->jDEECoGetModuleId() << " Before getting the \"packetRecived\" method reference" << std::endl;
 			mid = env->GetMethodID(cls, "packetReceived", "([B)V");
 			if (mid == 0)
 				return;
-			//::printf("Data message\n");
 			JDEECoPacket *jPacket = check_and_cast<JDEECoPacket *>(msg);
-			signed char* buffer = new signed char[jPacket->getDataArraySize()];
+			jbyte *buffer = new jbyte[jPacket->getDataArraySize()];
 			for (unsigned int i = 0; i < jPacket->getDataArraySize(); i++)
 				buffer[i] = jPacket->getData(i);
 			jbyteArray jArray = env->NewByteArray(jPacket->getDataArraySize());
+			if (jArray == NULL) {
+				std::cout << "jDEECoOnHandleMessage: " << this->jDEECoGetModuleId() << " Cannot create new ByteArray object! Out of memory problem?" << std::endl;
+				return;
+			}
 			env->SetByteArrayRegion(jArray, 0, jPacket->getDataArraySize(),
-					(jbyte *) buffer);
-			env->CallVoidMethod((jobject) host, mid, jArray);
+					buffer);
+			//std::cout << "jDEECoOnHandleMessage: " << this->jDEECoGetModuleId() << " Before calling the \"packetRecived\" method" << std::endl;
+			env->CallVoidMethod(runtime->host, mid, jArray);
+			//std::cout << "jDEECoOnHandleMessage: " << this->jDEECoGetModuleId() << " After calling the \"packetRecived\" method" << std::endl;
+			env->DeleteLocalRef(jArray);
+			//std::cout << "jDEECoOnHandleMessage: " << this->jDEECoGetModuleId() << " After deleting the array reference" << std::endl;
+			delete [] buffer;
 		}
+		//std::cout << "jDEECoOnHandleMessage: " << this->jDEECoGetModuleId() << " End" << std::endl;
 	}
 }
 
 DLLEXPORT_OR_IMPORT void jDEECoModule::jDEECoInitialize() {
-	::printf("Initializing jDEECo module: %s\n", jDEECoGetModuleId());
+	//std::cout << "jDEECoInitialize: " << this->jDEECoGetModuleId() << " Begin" << std::endl;
+	//std::cout << "jDEECoInitialize: " << this->jDEECoGetModuleId() << " Initializing jDEECo module: " << this->jDEECoGetModuleId() << std::endl;
 	if (std::find(jDEECoModules.begin(), jDEECoModules.end(), this)
 			== jDEECoModules.end()) {
 		for (std::vector<jDEECoRuntime *>::iterator it = jDEECoRuntimes.begin();
 				it != jDEECoRuntimes.end(); ++it) {
 			if (opp_strcmp((*it)->id, jDEECoGetModuleId()) == 0) {
-				host = (*it)->host;
-				jvm = (*it)->jvm;
-				//::printf("First callAt time: %f\n", (*it)->firstCallAt);
 				if ((*it)->firstCallAt >= 0)
 					jDEECoCallAt((*it)->firstCallAt);
 				jDEECoModules.push_back(this);
-				::printf("Module registered\n");
+				//std::cout << "jDEECoInitialize: " << this->jDEECoGetModuleId() << " Module registered: " << jDEECoGetModuleId() << std::endl;
 				break;
 			}
 		}
 	}
+	//std::cout << "jDEECoInitialize: " << this->jDEECoGetModuleId() << " End" << std::endl;
 }
