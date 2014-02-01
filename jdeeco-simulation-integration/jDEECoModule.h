@@ -21,13 +21,8 @@ class DLLEXPORT_OR_IMPORT jDEECoModule {
 	void *currentCallAtMessage;
 
 public:
-	//Java host reference
-	void *host;
-	//JavaVM reference
-	void *jvm;
-
-	jDEECoModule() {host = NULL; jvm = NULL; currentCallAtTime = -1.0; currentCallAtMessage = NULL;}
-	virtual ~jDEECoModule() {};
+	jDEECoModule() {currentCallAtTime = -1.0; currentCallAtMessage = NULL;}
+	virtual ~jDEECoModule() {}
 
 	void jDEECoCallAt(double absoluteTime);
 

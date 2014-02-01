@@ -1,5 +1,7 @@
 package cz.cuni.mff.d3s.deeco.simulation;
 
+import java.util.Arrays;
+
 import cz.cuni.mff.d3s.deeco.publish.PacketReceiver;
 import cz.cuni.mff.d3s.deeco.publish.PacketSender;
 import static cz.cuni.mff.d3s.deeco.simulation.Simulation.timeDoubleToLong;
@@ -51,7 +53,8 @@ public class Host extends PacketSender {
 	// Method used by the simulation
 
 	public void packetReceived(byte[] packet) {
-		packetReceiver.packetReceived(packet);
+		byte [] copyPackety = Arrays.copyOf(packet, packet.length);
+		packetReceiver.packetReceived(copyPackety);
 	}
 
 	public void at(double absoluteTime) {
