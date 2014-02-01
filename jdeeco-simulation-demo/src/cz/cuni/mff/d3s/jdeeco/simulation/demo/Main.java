@@ -95,7 +95,7 @@ public class Main {
 		
 		sim.run("Cmdenv", CONFIG_PATH);
 		
-		System.gc();
+		//System.gc();
 		System.out.println("Simulation finished.");
 	}
 	
