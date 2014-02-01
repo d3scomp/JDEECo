@@ -93,7 +93,7 @@ public class Main {
 		out.println(omnetConfig.toString());		
 		out.close();
 		
-		sim.run("Tkenv", CONFIG_PATH);
+		sim.run("Cmdenv", CONFIG_PATH);
 		
 		System.gc();
 		System.out.println("Simulation finished.");
