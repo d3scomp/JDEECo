@@ -235,10 +235,6 @@ void simulate(const char * envName, const char * confFile) {
 	cSimulation::clearLoadedNedFiles();
 }
 
-JNIEXPORT jint JNICALL _JNI_OnLoad(JavaVM *vm, void *reserved) {
-	return JNI_VERSION_1_6;
-}
-
 JNIEXPORT jdouble JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeGetCurrentTime(
 		JNIEnv *env, jobject jsimulation) {
 	//std::cout << "nativeGetCurrentTime: Begin" << std::endl;
@@ -281,9 +277,7 @@ JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeS
 			it != jDEECoModules.end(); ++it) {
 		if (opp_strcmp((*it)->jDEECoGetModuleId(), cstring) == 0) {
 			int length = env->GetArrayLength(packet);
-			signed char* buffer = new signed char[length];
-			env->GetByteArrayRegion(packet, 0, length,
-					reinterpret_cast<jbyte*>(buffer));
+			jbyte *buffer = env->GetByteArrayElements(packet, 0);
 			JDEECoPacket *jPacket = new JDEECoPacket(JDEECO_DATA_MESSAGE);
 			//Setting data
 			jPacket->setDataArraySize(length);
@@ -291,6 +285,9 @@ JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeS
 				jPacket->setData(i, buffer[i]);
 			const char * cRecipient = env->GetStringUTFChars(recipient, 0);
 			(*it)->jDEECoSendPacket(jPacket, cRecipient);
+			env->ReleaseByteArrayElements(packet, buffer, JNI_ABORT);
+			env->ReleaseStringUTFChars(recipient, cRecipient);
+			env->DeleteLocalRef(packet);
 			break;
 		}
 	}
@@ -307,7 +304,7 @@ JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeR
 	jDEECoModules.clear();
 	jDEECoRuntimes.clear();
 	env->ReleaseStringUTFChars(environment, cEnv);
-	env->ReleaseStringUTFChars(environment, cConfFile);
+	env->ReleaseStringUTFChars(confFile, cConfFile);
 	//std::cout << "nativeRun: End" << std::endl;
 }
 
@@ -469,8 +466,9 @@ DLLEXPORT_OR_IMPORT void jDEECoModule::jDEECoOnHandleMessage(cMessage *msg) {
 			//std::cout << "jDEECoOnHandleMessage: " << this->jDEECoGetModuleId() << " After deleting the array reference" << std::endl;
 			delete [] buffer;
 		}
-		//std::cout << "jDEECoOnHandleMessage: " << this->jDEECoGetModuleId() << " End" << std::endl;
+		env->DeleteLocalRef(cls);
 	}
+	//std::cout << "jDEECoOnHandleMessage: " << this->jDEECoGetModuleId() << " End" << std::endl;
 }
 
 DLLEXPORT_OR_IMPORT void jDEECoModule::jDEECoInitialize() {

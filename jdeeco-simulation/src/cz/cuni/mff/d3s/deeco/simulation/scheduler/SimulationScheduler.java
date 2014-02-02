@@ -164,14 +164,14 @@ public class SimulationScheduler implements Scheduler,
 
 	private void scheduleNow(SchedulerEvent event, long period) {
 		event.period = period;
-		event.nextExecutionTime = host.getSimulationTime() + lastProcessExecutionTime;
+		event.nextExecutionTime = host.getCurrentTime() + lastProcessExecutionTime;
 		push(event);
 	}
 
 	private void registerNextExecution() {
 		if (!queue.isEmpty()) {
 			long nextExecutionTime = queue.first().nextExecutionTime;
-			if (nextExecutionTime <= host.getSimulationTime()) {
+			if (nextExecutionTime <= host.getCurrentTime()) {
 				return; //nextExecutionTime = host.getSimulationTime() + 1;
 			}
 			host.callAt(nextExecutionTime);

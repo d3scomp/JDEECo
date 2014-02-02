@@ -8,8 +8,6 @@
 extern "C" {
 #endif
 
-JNIEXPORT jint JNICALL _JNI_OnLoad(JavaVM *, void *);
-
 /*
  * Class:     cz_cuni_mff_d3s_deeco_simulation_Simulation
  * Method:    getCurrentTime
