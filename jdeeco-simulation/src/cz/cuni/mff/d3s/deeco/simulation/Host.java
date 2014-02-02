@@ -1,10 +1,9 @@
 package cz.cuni.mff.d3s.deeco.simulation;
 
-import java.util.Arrays;
-
+import static cz.cuni.mff.d3s.deeco.simulation.Simulation.timeDoubleToLong;
+import cz.cuni.mff.d3s.deeco.publish.CurrentTimeProvider;
 import cz.cuni.mff.d3s.deeco.publish.PacketReceiver;
 import cz.cuni.mff.d3s.deeco.publish.PacketSender;
-import static cz.cuni.mff.d3s.deeco.simulation.Simulation.timeDoubleToLong;
 
 /**
  * 
@@ -13,7 +12,7 @@ import static cz.cuni.mff.d3s.deeco.simulation.Simulation.timeDoubleToLong;
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
  * 
  */
-public class Host extends PacketSender {
+public class Host extends PacketSender implements CurrentTimeProvider {
 
 	private SimulationTimeEventListener timeEventListener = null;
 
@@ -26,6 +25,7 @@ public class Host extends PacketSender {
 		this.simulation = simulation;
 		this.id = id;
 		this.packetReceiver = new PacketReceiver(packetSize);
+		this.packetReceiver.setCurrentTimeProvider(this);
 		simulation.register(this, id);
 	}
 
@@ -42,10 +42,6 @@ public class Host extends PacketSender {
 		this.timeEventListener = timeEventListener;
 	}
 
-	public long getSimulationTime() {
-		return simulation.getSimulationTime();
-	}
-
 	public void callAt(long absoluteTime) {
 		simulation.callAt(absoluteTime, id);
 	}
@@ -53,8 +49,7 @@ public class Host extends PacketSender {
 	// Method used by the simulation
 
 	public void packetReceived(byte[] packet) {
-		byte [] copyPackety = Arrays.copyOf(packet, packet.length);
-		packetReceiver.packetReceived(copyPackety);
+		packetReceiver.packetReceived(packet);
 	}
 
 	public void at(double absoluteTime) {
@@ -74,5 +69,10 @@ public class Host extends PacketSender {
 
 	public double getPositionY() {
 		return simulation.getPositionY(id);
+	}
+
+	@Override
+	public long getCurrentTime() {
+		return simulation.getSimulationTime();
 	}
 }

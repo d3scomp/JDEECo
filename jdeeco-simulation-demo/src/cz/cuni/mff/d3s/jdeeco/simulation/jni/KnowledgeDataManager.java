@@ -27,7 +27,7 @@ public class KnowledgeDataManager implements KnowledgeDataReceiver,
 	public void receive(List<? extends KnowledgeData> knowledgeData) {
 		if (knowledgeData != null) {
 			for (KnowledgeData kd : knowledgeData) {
-				System.out.print(host.getSimulationTime() + " Node "
+				System.out.print(host.getCurrentTime() + " Node "
 						+ host.getId() + " has received knowledge from "
 						+ kd.getComponentId() + ".");
 				if (kd instanceof DemoKnowledgeData) {
@@ -41,7 +41,7 @@ public class KnowledgeDataManager implements KnowledgeDataReceiver,
 				}
 			}
 			if (!toSend.isEmpty())
-				host.callAt(host.getSimulationTime()
+				host.callAt(host.getCurrentTime()
 						+ new Random().nextInt(2000));
 		}
 	}
@@ -61,7 +61,7 @@ public class KnowledgeDataManager implements KnowledgeDataReceiver,
 		DemoKnowledgeData dkd = new DemoKnowledgeData(host.getId(),
 				new ValueSet());
 		toSend.add(dkd);
-		host.callAt(host.getSimulationTime() + 2000);
+		host.callAt(host.getCurrentTime() + 2000);
 	}
 
 }
