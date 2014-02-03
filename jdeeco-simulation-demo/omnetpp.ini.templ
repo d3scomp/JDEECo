@@ -1,15 +1,26 @@
 [General]
-cmdenv-express-mode = true
 network = manet.MANET
 sim-time-limit = 10s
-cmdenv-express-mode = true
-record-eventlog=false
-**.vector-recording=false
 
 load-libs = model oppcmdenv
 ned-path = model;mixim/examples;mixim/src/base;mixim/src/inet_stub;mixim/src/modules 
 
-**.drawMaxIntfDist = true
+##########################################################
+#	 Visualization parameters                        #
+##########################################################
+**.playgroundLatitude = -25.39
+**.playgroundLongitude = 131.05
+**.playgroundWidth = 2km
+**.playgroundHeight = 2km
+**.node[*].appl.modelURL = "http://omnetpp.org/download/demo/car.kmz/models/skpfile.dae"
+**.node[*].appl.txRange = 250m
+**.node[*].appl.modelScale = 5
+
+**.visualize = true
+cmdenv-express-mode = false
+scheduler-class = "cSocketSequentialScheduler"
+cmdenv-event-banners = false
+
 ##########################################################
 #	 Simulation parameters                        #
 ##########################################################
@@ -24,7 +35,7 @@ ned-path = model;mixim/examples;mixim/src/base;mixim/src/inet_stub;mixim/src/mod
 **.world.useTorus = false
 
 ##########################################################
-#       Parameters for the ConnectionManager             #
+#       Parameters for the ConnectionManager      #
 ##########################################################
 **.connectionManager.carrierFrequency = 2.4e9Hz  # [Hz]
 

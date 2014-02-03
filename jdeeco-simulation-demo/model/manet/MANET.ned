@@ -21,9 +21,23 @@ network MANET extends BaseNetwork
 {
     parameters:
         int numNodes; // total number of hosts in the network
+        
+        bool visualize = default(false);
+        double playgroundLatitude = default(0.0); // geographic position of the playground's north-west corner
+        double playgroundLongitude = default(0.0); // geographic position of the playground's north-west corner
+        
+        
+        @display("bgb=2000,2000;bgi=background/terrain,s");
 
     submodules:
         node[numNodes]: Node {}
+        
+        channelController: ChannelController if (visualize) {
+            @display("p=90,250");
+        }
+        kmlHttpServer: KmlHttpServer if (visualize) {
+            @display("p=320,250;t=Run the simulation in Fast mode\\, then\npoint your browser to localhost:4242\nor open the provided KML file");
+        }
     connections allowunconnected:
     // all connections and gates are to be generated dynamically
 }
