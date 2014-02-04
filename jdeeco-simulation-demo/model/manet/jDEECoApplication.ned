@@ -22,8 +22,15 @@ import org.mixim.base.modules.IBaseApplLayer;
 simple JDEECoApplication like IBaseApplLayer
 {
     parameters:
-        int headerLength @unit("bit") = 0;
+        int headerLength = 0;
         string id = default("not-assigned");
+        
+        //Google-Earth relevant paramters
+        string color = default(""); // the color of the trail and range indicator in hex BBGGRR format or "" for random color
+        string modelURL = default(""); // the URL of the 3D model (COLLADA file format) to be used for the node
+        double modelScale = default(1.0); // allows scaling of the used model
+        bool showTxRange = default(true);  // whether to show the transmission range around the nodes
+        double txRange @unit("m") = default(250m);  // the transmission range of the mobile node's radio
     gates:
         input lowerLayerIn; // from network layer
         output lowerLayerOut; // to network layer
