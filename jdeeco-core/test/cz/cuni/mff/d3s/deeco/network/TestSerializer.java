@@ -5,6 +5,7 @@ import static org.mockito.Mockito.*;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import junitx.framework.ListAssert;
@@ -24,6 +25,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
@@ -76,7 +78,8 @@ public class TestSerializer {
 	@Test
 	public void testKnowledgeDataSerialization() throws IOException, ClassNotFoundException, KnowledgeUpdateException, KnowledgeNotFoundException {
 		KnowledgeManagerContainer container = new KnowledgeManagerContainer();
-		KnowledgeDataManager kdManager = new KnowledgeDataManager(container, null, "", mock(CurrentTimeProvider.class));
+		List<EnsembleDefinition> ens = Collections.emptyList();
+		KnowledgeDataManager kdManager = new KnowledgeDataManager(container, null, ens, "", mock(CurrentTimeProvider.class));
 		
 		ValueSet initialKnowledge = null;
 		

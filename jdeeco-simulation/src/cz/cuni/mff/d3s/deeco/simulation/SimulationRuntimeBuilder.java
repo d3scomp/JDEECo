@@ -31,7 +31,7 @@ public class SimulationRuntimeBuilder {
 		// Set up the host container
 		KnowledgeManagerContainer container = new KnowledgeManagerContainer();
 
-		KnowledgeDataManager kdManager = new KnowledgeDataManager(container, host, host.getId(), scheduler);
+		KnowledgeDataManager kdManager = new KnowledgeDataManager(container, host, model.getEnsembleDefinitions(), host.getId(), scheduler);
 		
 		// Bind KnowledgeDataReceiver with PacketDataReceiver
 		host.getPacketReceiver().setKnowledgeDataReceiver(kdManager);

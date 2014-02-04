@@ -52,6 +52,8 @@
         eType="#//Exchange" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="triggers" upperBound="-1"
         eType="#//Trigger" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="communicationBoundary"
+        eType="#//CommunicationBoundary"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Condition" eSuperTypes="#//Invocable"/>
   <eClassifiers xsi:type="ecore:EClass" name="Exchange" eSuperTypes="#//Invocable"/>
@@ -96,4 +98,5 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="CommunicationBoundary" instanceClassName="cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate"/>
 </ecore:EPackage>

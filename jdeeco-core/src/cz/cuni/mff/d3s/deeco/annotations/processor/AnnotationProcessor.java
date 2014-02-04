@@ -23,6 +23,8 @@ import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.*;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
+import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
+import cz.cuni.mff.d3s.deeco.network.GenericCommunicationBoundaryPredicate;
 
 /**
  * Common gateway for processing of Java objects/classes with DEECo annotations.
@@ -284,6 +286,9 @@ public class AnnotationProcessor {
 			ensembleDefinition.setMembership(condition);
 			Exchange exchange = createExchange(clazz);
 			ensembleDefinition.setKnowledgeExchange(exchange);
+			CommunicationBoundaryPredicate cBoundary = createCommunicationBoundary(clazz);			
+			ensembleDefinition.setCommunicationBoundary(cBoundary);
+			
 			PeriodicTrigger periodicEnsembleTrigger = createPeriodicTrigger(clazz);
 			List<KnowledgeChangeTrigger> exchangeKChangeTriggers = createKnowledgeChangeTriggers(exchange.getMethod(), false);
 			List<KnowledgeChangeTrigger> conditionKChangeTriggers = createKnowledgeChangeTriggers(condition.getMethod(), false);
@@ -343,6 +348,25 @@ public class AnnotationProcessor {
 			throw new AnnotationProcessorException(msg, e);
 		}
 		return exchange;
+	}
+	
+	/**
+	 * Creator of a single correctly-initialized {@link CommunicationBoundaryPredicate} object. 	
+	 */
+	CommunicationBoundaryPredicate createCommunicationBoundary(Class<?> clazz) throws AnnotationProcessorException,ParseException {
+		try {
+			Method m = getAnnotatedMethodInEnsemble(clazz, CommunicationBoundary.class);
+			return new GenericCommunicationBoundaryPredicate(m);
+		} catch (AnnotationProcessorException e) {
+			// if the exception was caused by not finding the boundary, then
+			// return null (it is correct not to define the boundary).
+			if (e.getMessage().startsWith("No") && e.getMessage().endsWith("annotation was found")) {
+				return null;
+			} else {
+				String msg = KnowledgeExchange.class.getSimpleName()+"->"+e.getMessage();
+				throw new AnnotationProcessorException(msg, e);
+			}
+		}		
 	}
 
 	/**

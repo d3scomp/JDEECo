@@ -29,6 +29,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 
+import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
 import java.lang.reflect.Method;
 
 import java.util.Map;
@@ -215,6 +216,13 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * @generated
 	 */
 	private EDataType shadowKnowledgeManagerRegistryEDataType = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType communicationBoundaryEDataType = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -525,6 +533,15 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getEnsembleDefinition_CommunicationBoundary() {
+		return (EAttribute)ensembleDefinitionEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getCondition() {
 		return conditionEClass;
 	}
@@ -768,6 +785,15 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EDataType getCommunicationBoundary() {
+		return communicationBoundaryEDataType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public RuntimeMetadataFactory getRuntimeMetadataFactory() {
 		return (RuntimeMetadataFactory)getEFactoryInstance();
 	}
@@ -827,6 +853,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		createEReference(ensembleDefinitionEClass, ENSEMBLE_DEFINITION__MEMBERSHIP);
 		createEReference(ensembleDefinitionEClass, ENSEMBLE_DEFINITION__KNOWLEDGE_EXCHANGE);
 		createEReference(ensembleDefinitionEClass, ENSEMBLE_DEFINITION__TRIGGERS);
+		createEAttribute(ensembleDefinitionEClass, ENSEMBLE_DEFINITION__COMMUNICATION_BOUNDARY);
 
 		conditionEClass = createEClass(CONDITION);
 
@@ -868,6 +895,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		methodEDataType = createEDataType(METHOD);
 		knowledgeManagerEDataType = createEDataType(KNOWLEDGE_MANAGER);
 		shadowKnowledgeManagerRegistryEDataType = createEDataType(SHADOW_KNOWLEDGE_MANAGER_REGISTRY);
+		communicationBoundaryEDataType = createEDataType(COMMUNICATION_BOUNDARY);
 	}
 
 	/**
@@ -946,6 +974,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		initEReference(getEnsembleDefinition_Membership(), this.getCondition(), null, "membership", null, 1, 1, EnsembleDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getEnsembleDefinition_KnowledgeExchange(), this.getExchange(), null, "knowledgeExchange", null, 1, 1, EnsembleDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getEnsembleDefinition_Triggers(), this.getTrigger(), null, "triggers", null, 0, -1, EnsembleDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEnsembleDefinition_CommunicationBoundary(), this.getCommunicationBoundary(), "communicationBoundary", null, 0, 1, EnsembleDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(conditionEClass, Condition.class, "Condition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
@@ -990,6 +1019,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		initEDataType(methodEDataType, Method.class, "Method", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(knowledgeManagerEDataType, KnowledgeManager.class, "KnowledgeManager", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(shadowKnowledgeManagerRegistryEDataType, ShadowKnowledgeManagerRegistry.class, "ShadowKnowledgeManagerRegistry", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(communicationBoundaryEDataType, CommunicationBoundaryPredicate.class, "CommunicationBoundary", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
 		createResource(eNS_URI);

@@ -12,6 +12,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
@@ -60,6 +61,8 @@ KnowledgeDataPublisher {
 	protected final Map<KnowledgeManager, KnowledgeData> replicaMetadata;
 	/** Empty knowledge path enabling convenient query for all knowledge */  
 	private final List<KnowledgePath> emptyPath;
+	/** List of ensemble definitions whose boundary conditions should be considered. */
+	private final List<EnsembleDefinition> ensembleDefinitions;
 
 	
 	/**
@@ -73,12 +76,14 @@ KnowledgeDataPublisher {
 	public KnowledgeDataManager(
 			KnowledgeManagerContainer kmContainer,
 			KnowledgeDataSender knowledgeDataSender,
+			List<EnsembleDefinition> ensembleDefinitions,
 			String host,
 			CurrentTimeProvider timeProvider) {
 		this.host = host;		
 		this.timeProvider = timeProvider;
 		this.kmContainer = kmContainer;
 		this.knowledgeDataSender = knowledgeDataSender;
+		this.ensembleDefinitions = ensembleDefinitions;
 		this.localVersion = 0;
 		this.replicaMetadata = new HashMap<>();
 		
@@ -143,14 +148,37 @@ KnowledgeDataPublisher {
 		
 		for (KnowledgeManager km : kmContainer.getReplicas()) {
 			try {
-				result.add(new KnowledgeData(replicaMetadata.get(km).getComponentId(), 
-						km.get(emptyPath), replicaMetadata.get(km).getVersionId(), host));
+				
+				KnowledgeData kd = new KnowledgeData(replicaMetadata.get(km).getComponentId(), 
+						km.get(emptyPath), replicaMetadata.get(km).getVersionId(), host);
+				KnowledgeManager nodeKm = getNodeKnowledge();
+				
+				boolean isInSomeBoundary = false;
+				for (EnsembleDefinition ens: ensembleDefinitions) {
+					// null boundary condition counts as a satisfied one
+					if (ens.getCommunicationBoundary() == null 
+							|| ens.getCommunicationBoundary().eval(kd, nodeKm)) {
+						isInSomeBoundary = true;
+						break;
+					}
+				}
+				if (isInSomeBoundary) {
+					result.add(kd);
+				} else {
+					Log.d(String.format("Boundary failed (%d) at %s for %sv%d\n", 
+							timeProvider.getCurrentTime(), host, kd.getComponentId(), kd.getVersionId()));
+				}
 			} catch (KnowledgeNotFoundException e) {
 				Log.e("prepareKnowledgeData error", e);
 			}
 		}
 		
 		return result;
+	}
+
+	private KnowledgeManager getNodeKnowledge() {
+		// FIXME: in the future, we need to unify the knowledge of all the local KMs.
+		return kmContainer.getLocals().iterator().next();
 	}
 
 	private ChangeSet toChangeSet(ValueSet valueSet) {
