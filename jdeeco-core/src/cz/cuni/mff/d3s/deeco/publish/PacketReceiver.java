@@ -6,8 +6,11 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeData;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeDataReceiver;
@@ -71,10 +74,12 @@ public class PacketReceiver {
 	private void clearCachedMessagesIfNecessary() {
 		if (timeProvider.getCurrentTime() - lastMessagesWipe >= MESSAGE_WIPE_PERIOD) {
 			Message message;
-			for (Integer messageId : messages.keySet()) {
-				message = messages.get(messageId);
+			Iterator<Entry<Integer, Message>> it = messages.entrySet().iterator();
+			while (it.hasNext()) {
+				Entry<Integer, Message> entry = it.next();				
+				message = entry.getValue();
 				if (message != null && message.isStale()) {
-					messages.remove(messageId);
+					it.remove();
 				}
 			}
 			lastMessagesWipe = timeProvider.getCurrentTime();
