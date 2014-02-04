@@ -1,9 +1,9 @@
 package cz.cuni.mff.d3s.deeco.simulation;
 
 import static cz.cuni.mff.d3s.deeco.simulation.Simulation.timeDoubleToLong;
-import cz.cuni.mff.d3s.deeco.publish.CurrentTimeProvider;
 import cz.cuni.mff.d3s.deeco.publish.PacketReceiver;
 import cz.cuni.mff.d3s.deeco.publish.PacketSender;
+import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
 
 /**
  * 

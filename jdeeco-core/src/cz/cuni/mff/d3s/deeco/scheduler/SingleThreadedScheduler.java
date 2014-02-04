@@ -271,6 +271,15 @@ public class SingleThreadedScheduler implements Scheduler {
 			task.wait();
 		}
 	}
+
+	
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider#getCurrentTime()
+	 */
+	@Override
+	public long getCurrentTime() {
+		return System.currentTimeMillis();
+	}
 }
 
 
