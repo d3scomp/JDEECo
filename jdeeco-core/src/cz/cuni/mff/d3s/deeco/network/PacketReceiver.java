@@ -161,6 +161,7 @@ public class PacketReceiver {
 			return isInitialized && (remainingBytes == 0);
 		}
 
+		@SuppressWarnings("unchecked")
 		public List<? extends KnowledgeData> getKnowledgeDataList() {
 			try {
 				if (isComplete()) {
