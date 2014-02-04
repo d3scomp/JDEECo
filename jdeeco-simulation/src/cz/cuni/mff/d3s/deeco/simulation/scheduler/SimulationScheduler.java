@@ -155,9 +155,16 @@ public class SimulationScheduler implements Scheduler,
 				executor.execute(event.executable, event.trigger);
 			} else {
 				Log.e("The simulation scheduler is associated with no excecutor!");
-			}		
-			
+			}			
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider#getCurrentTime()
+	 */
+	@Override
+	public long getCurrentTime() {
+		return host.getCurrentTime();
 	}
 
 	// ------Private methods--------
