@@ -10,11 +10,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeData;
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeDataReceiver;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
 
+/**
+ * This class enables receiving {@link KnowledgeData} that comes from the
+ * network as a byte array fragmented into multiple packets.
+ * 
+ * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
+ * @author Michal Kit <kit@d3s.mff.cuni.cz>
+ * 
+ * @see Serializer
+ * @see PacketSender
+ */
 public class PacketReceiver {
 
 	private final static int MESSAGE_WIPE_PERIOD = 1500;
@@ -59,8 +67,8 @@ public class PacketReceiver {
 			msg.setData(seqNumber, getPacketData(packet));
 		}
 		if (msg.isComplete() && knowledgeDataReceiver != null) {
-			Log.i(String.format("R: " + "(" + messageId + ")"
-					+ Arrays.toString(msg.data)));
+			//Log.i(String.format("R: " + "(" + messageId + ")"
+			//		+ Arrays.toString(msg.data)));
 			messages.remove(messageId);
 			List<? extends KnowledgeData> kd = msg.getKnowledgeDataList();
 			if (kd != null)

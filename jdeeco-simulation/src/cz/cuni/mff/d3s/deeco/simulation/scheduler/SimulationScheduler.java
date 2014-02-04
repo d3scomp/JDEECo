@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -40,12 +41,14 @@ public class SimulationScheduler implements Scheduler,
 	private long lastProcessExecutionTime = 1;
 
 	private Executor executor;
+	
+	private static Random rnd = new Random(0);
 
 	public SimulationScheduler(Host host) {
 		this.host = host;
 		queue = new TreeSet<SchedulerEvent>();
 		allTasks = new HashSet<>();
-		periodicEvents = new HashMap<>();
+		periodicEvents = new HashMap<>();	
 
 		host.setSimulationTimeEventListener(this);
 	}
@@ -69,7 +72,13 @@ public class SimulationScheduler implements Scheduler,
 		if (task.getPeriodicTrigger() != null) {
 			SchedulerEvent event = new SchedulerEvent(task,
 					task.getPeriodicTrigger());
+			
+			// TODO: for experiments, every periodic task has a random start delay up to its period
+			long lastProcessExecutionTimeBackup = lastProcessExecutionTime;
+			lastProcessExecutionTime = rnd.nextInt((int) task.getPeriodicTrigger().getPeriod());
 			scheduleNow(event, task.getPeriodicTrigger().getPeriod());
+			lastProcessExecutionTime = lastProcessExecutionTimeBackup;
+			
 			periodicEvents.put(task, event);
 		}
 		task.setTriggerListener(new TaskTriggerListener() {
@@ -197,10 +206,10 @@ public class SimulationScheduler implements Scheduler,
 	}
 
 	private void push(SchedulerEvent event) {
-		Log.i("Adding: " + event);
+		//Log.i("Adding: " + event);
 
 		queue.add(event);
-		Log.i("Queue: " + Arrays.toString(queue.toArray()));
+		//Log.i("Queue: " + Arrays.toString(queue.toArray()));
 
 		// TODO take into account different scheduling policies and WCET of
 		// tasks. According to those the tasks need to be rescheduled.

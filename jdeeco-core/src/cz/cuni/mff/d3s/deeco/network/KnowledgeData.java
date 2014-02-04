@@ -1,14 +1,28 @@
-package cz.cuni.mff.d3s.deeco.knowledge;
+package cz.cuni.mff.d3s.deeco.network;
 
 import java.io.Serializable;
 
+import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
+
+/**
+ * Class representing a container for sending knowledge values and related
+ * metadata over the network.
+ * 
+ * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
+ * @author Michal Kit <kit@d3s.mff.cuni.cz>
+ */
+@SuppressWarnings("serial")
 public class KnowledgeData implements Serializable {
 	private final ValueSet knowledge;
 	private final String componentId;
+	private final long versionId;
+	private final String sender;
 	
-	public KnowledgeData(String componentId, ValueSet knowledge) {
+	public KnowledgeData(String componentId, ValueSet knowledge, long versionId, String sender) {
 		this.componentId= componentId;
 		this.knowledge = knowledge;
+		this.versionId = versionId;
+		this.sender = sender;
 	}
 
 	public ValueSet getKnowledge() {
@@ -19,6 +33,14 @@ public class KnowledgeData implements Serializable {
 		return componentId;
 	}
 
+	public long getVersionId() {
+		return versionId;
+	}
+
+	public String getSender() {
+		return sender;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -27,6 +49,8 @@ public class KnowledgeData implements Serializable {
 				+ ((componentId == null) ? 0 : componentId.hashCode());
 		result = prime * result
 				+ ((knowledge == null) ? 0 : knowledge.hashCode());
+		result = prime * result + ((sender == null) ? 0 : sender.hashCode());
+		result = prime * result + (int) (versionId ^ (versionId >>> 32));
 		return result;
 	}
 
@@ -49,8 +73,16 @@ public class KnowledgeData implements Serializable {
 				return false;
 		} else if (!knowledge.equals(other.knowledge))
 			return false;
+		if (sender == null) {
+			if (other.sender != null)
+				return false;
+		} else if (!sender.equals(other.sender))
+			return false;
+		if (versionId != other.versionId)
+			return false;
 		return true;
 	}
-	
+
+		
 	
 }

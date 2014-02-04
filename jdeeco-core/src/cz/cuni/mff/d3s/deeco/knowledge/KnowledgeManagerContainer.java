@@ -1,11 +1,19 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.osgi.service.application.ApplicationException;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
+import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
 
 /**
  * 
@@ -23,28 +31,23 @@ import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
  * container.
  * 
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
+ * @author Jaroslav Keznikl <kezenikl@d3s.mff.cuni.cz>
  * 
  */
-public class KnowledgeManagerContainer implements KnowledgeDataReceiver,
-		KnowledgeDataProvider {
+public class KnowledgeManagerContainer  {
 
-	protected final List<KnowledgeManager> replicas;
-	protected final List<ReplicaListener> replicaListeners;
-	protected final List<KnowledgeManager> locals;
-	protected final List<LocalListener> localListeners;
+	protected final Map<String, KnowledgeManager> replicas;
+	protected final Set<ReplicaListener> replicaListeners;
+	protected final Map<String, KnowledgeManager> locals;
+	protected final Set<LocalListener> localListeners;
 
-	private final List<KnowledgePath> emptyPath;
+
 
 	public KnowledgeManagerContainer() {
-		this.replicas = new LinkedList<>();
-		this.replicaListeners = new LinkedList<>();
-		this.locals = new LinkedList<>();
-		this.localListeners = new LinkedList<>();
-
-		RuntimeMetadataFactory factory = RuntimeMetadataFactory.eINSTANCE;
-		KnowledgePath empty = factory.createKnowledgePath();
-		emptyPath = new LinkedList<>();
-		emptyPath.add(empty);
+		this.replicas = new HashMap<>();
+		this.replicaListeners = new HashSet<>();
+		this.locals = new HashMap<>();
+		this.localListeners = new HashSet<>();
 	}
 
 	/**
@@ -57,11 +60,15 @@ public class KnowledgeManagerContainer implements KnowledgeDataReceiver,
 	 *         values for the specified knowledge paths.
 	 */
 	public KnowledgeManager createLocal(String id) {
+		if (locals.containsKey(id))
+			return locals.get(id);
+		
 		KnowledgeManager result = new CloningKnowledgeManager(id);
-		locals.add(result);
+		locals.put(id, result);
+		
 		for (LocalListener listener : localListeners) {
 			listener.localCreated(result, this);
-		}
+		}		
 		return result;
 	}
 
@@ -76,8 +83,9 @@ public class KnowledgeManagerContainer implements KnowledgeDataReceiver,
 	 */
 	public KnowledgeManager removeLocal(KnowledgeManager km) {
 		KnowledgeManager kmVar = null;
-		if (locals.contains(km)) {
+		if (locals.containsValue(km)) {
 			locals.remove(km);
+			
 			for (LocalListener listener : localListeners) {
 				listener.localRemoved(km, this);
 			}
@@ -92,8 +100,15 @@ public class KnowledgeManagerContainer implements KnowledgeDataReceiver,
 	 * @return List<{@link KnowledgeManager}> object containing values for the
 	 *         specified knowledge paths
 	 */
-	public List<KnowledgeManager> getLocals() {
-		return locals;
+	public Collection<KnowledgeManager> getLocals() {
+		return locals.values();
+	}
+	
+	/**
+	 * Returns true if the container contains a local KM for the given component id.
+	 */
+	public boolean hasLocal(String id) {
+		return locals.containsKey(id);
 	}
 
 	/**
@@ -104,7 +119,7 @@ public class KnowledgeManagerContainer implements KnowledgeDataReceiver,
 	 */
 	public void registerLocalListener(LocalListener listener) {
 		if (!localListeners.contains(listener)) {
-			localListeners.add(listener);
+			localListeners.add(listener);			
 		}
 	}
 
@@ -119,7 +134,7 @@ public class KnowledgeManagerContainer implements KnowledgeDataReceiver,
 	 */
 	public KnowledgeManager removeReplica(KnowledgeManager km) {
 		KnowledgeManager kmVar = null;
-		if (replicas.contains(km)) {
+		if (replicas.containsValue(km)) {
 			replicas.remove(km);
 			for (ReplicaListener listener : replicaListeners) {
 				listener.replicaUnregistered(km, this);
@@ -135,8 +150,15 @@ public class KnowledgeManagerContainer implements KnowledgeDataReceiver,
 	 * @return List<{@link KnowledgeManager}> object containing values for the
 	 *         specified knowledge paths
 	 */
-	public List<KnowledgeManager> getReplicas() {
-		return replicas;
+	public Collection<KnowledgeManager> getReplicas() {
+		return replicas.values();
+	}
+	
+	/**
+	 * Returns true if the container contains a replica for the given component id.
+	 */
+	public boolean hasReplica(String id) {
+		return replicas.containsKey(id);
 	}
 
 	/**
@@ -158,60 +180,18 @@ public class KnowledgeManagerContainer implements KnowledgeDataReceiver,
 	 * @param id
 	 *            of the replica being registered
 	 */
-	protected KnowledgeManager createReplica(String id) {
-		KnowledgeManager result = new CloningKnowledgeManager(id);
-		if (!replicas.contains(result)) {
-			replicas.add(result);
+	public KnowledgeManager createReplica(String id) {
+		if (locals.containsKey(id)) {
+			throw new RuntimeException("Cannot create replica for a local knowledge manager (id: " + id + ").");
+		} else if (replicas.containsKey(id)) {
+			return replicas.get(id);
+		} else {
+			KnowledgeManager result = new CloningKnowledgeManager(id);
+			replicas.put(id, result);
 			for (ReplicaListener listener : replicaListeners) {
 				listener.replicaRegistered(result, this);
 			}
 			return result;
-		} else
-			return replicas.get(replicas.indexOf(result));
+		} 
 	}
-
-	@Override
-	public void receive(List<? extends KnowledgeData> knowledgeData) {
-		if (knowledgeData != null) {
-			KnowledgeManager km;
-			for (KnowledgeData kd : knowledgeData) {
-				km = createReplica(kd.getComponentId());
-				try {
-					km.update(toChangeSet(kd.getKnowledge()));
-				} catch (KnowledgeUpdateException e) {
-					Log.e("KnowledgeManagerContainer error", e);
-				}
-			}
-		}
-	}
-
-	@Override
-	public List<? extends KnowledgeData> getKnowledgeData() {
-		List<KnowledgeData> result = new LinkedList<>();
-		for (KnowledgeManager km : getLocals())
-			try {
-				result.add(new KnowledgeData(km.getId(), km.get(emptyPath)));
-			} catch (KnowledgeNotFoundException e) {
-				Log.e("KnowledgeManagerContainer error", e);
-			}
-		for (KnowledgeManager km : getReplicas())
-			try {
-				result.add(new KnowledgeData(km.getId(), km.get(emptyPath)));
-			} catch (KnowledgeNotFoundException e) {
-				Log.e("KnowledgeManagerContainer error", e);
-			}
-		return result;
-	}
-
-	private ChangeSet toChangeSet(ValueSet valueSet) {
-		if (valueSet != null) {
-			ChangeSet result = new ChangeSet();
-			for (KnowledgePath kp : valueSet.getKnowledgePaths())
-				result.setValue(kp, valueSet.getValue(kp));
-			return result;
-		} else {
-			return null;
-		}
-	}
-
 }

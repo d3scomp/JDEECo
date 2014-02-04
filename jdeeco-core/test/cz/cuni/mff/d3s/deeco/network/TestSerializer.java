@@ -1,6 +1,7 @@
 package cz.cuni.mff.d3s.deeco.network;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -17,7 +18,6 @@ import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeData;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
@@ -28,6 +28,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.network.Serializer;
+import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
 
 
 public class TestSerializer {
@@ -75,7 +76,7 @@ public class TestSerializer {
 	@Test
 	public void testKnowledgeDataSerialization() throws IOException, ClassNotFoundException, KnowledgeUpdateException, KnowledgeNotFoundException {
 		KnowledgeManagerContainer container = new KnowledgeManagerContainer();
-		
+		KnowledgeDataManager kdManager = new KnowledgeDataManager(container, null, "", mock(CurrentTimeProvider.class));
 		
 		ValueSet initialKnowledge = null;
 		
@@ -95,7 +96,7 @@ public class TestSerializer {
 		KnowledgeManager km = container.createLocal(component.getKnowledgeManager().getId());
 		km.update(cs);
 				
-		List<? extends KnowledgeData> kd = container.getKnowledgeData();		
+		List<? extends KnowledgeData> kd = kdManager.prepareKnowledgeData();		
 		byte[] data = Serializer.serialize(kd);
 		List<? extends KnowledgeData> nkd = (List<? extends KnowledgeData>) Serializer.deserialize(data);
 		
