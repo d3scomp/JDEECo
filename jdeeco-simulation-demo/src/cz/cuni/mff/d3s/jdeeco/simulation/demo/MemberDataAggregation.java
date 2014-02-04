@@ -15,14 +15,20 @@
  ******************************************************************************/
 package cz.cuni.mff.d3s.jdeeco.simulation.demo;
 
+import java.util.Arrays;
 import java.util.Map;
 
+import cz.cuni.mff.d3s.deeco.annotations.CommunicationBoundary;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
 import cz.cuni.mff.d3s.deeco.annotations.Membership;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Ensemble;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
+import cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.network.KnowledgeData;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 
 /**
@@ -60,6 +66,18 @@ public class MemberDataAggregation {
 		
 		memberAggregateData.value.put(mId, newMemberData);
 		memberPositions.value.put(mId, newPosition);
+	}
+	
+	@CommunicationBoundary
+	public static boolean boundary(KnowledgeData data, ReadOnlyKnowledgeManager sender) throws KnowledgeNotFoundException {
+		KnowledgePath kpPosition = KnowledgePathBuilder.buildSimplePath("position");
+		Position ownerPos = (Position) data.getKnowledge().getValue(kpPosition);
+		Position senderPos = (Position) sender.get(Arrays.asList(kpPosition)).getValue(kpPosition);
+		return distance(ownerPos, senderPos) < 550;		
+	}
+	
+	private static double distance(Position a, Position b) {
+		return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
 	}
 
 }

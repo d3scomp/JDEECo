@@ -10,6 +10,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.*;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 
+import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
 import java.lang.reflect.Method;
 
 import java.util.Map;
@@ -105,6 +106,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 				return createKnowledgeManagerFromString(eDataType, initialValue);
 			case RuntimeMetadataPackage.SHADOW_KNOWLEDGE_MANAGER_REGISTRY:
 				return createShadowKnowledgeManagerRegistryFromString(eDataType, initialValue);
+			case RuntimeMetadataPackage.COMMUNICATION_BOUNDARY:
+				return createCommunicationBoundaryFromString(eDataType, initialValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -126,6 +129,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 				return convertKnowledgeManagerToString(eDataType, instanceValue);
 			case RuntimeMetadataPackage.SHADOW_KNOWLEDGE_MANAGER_REGISTRY:
 				return convertShadowKnowledgeManagerRegistryToString(eDataType, instanceValue);
+			case RuntimeMetadataPackage.COMMUNICATION_BOUNDARY:
+				return convertCommunicationBoundaryToString(eDataType, instanceValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -382,6 +387,24 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * @generated
 	 */
 	public String convertShadowKnowledgeManagerRegistryToString(EDataType eDataType, Object instanceValue) {
+		return super.convertToString(eDataType, instanceValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public CommunicationBoundaryPredicate createCommunicationBoundaryFromString(EDataType eDataType, String initialValue) {
+		return (CommunicationBoundaryPredicate)super.createFromString(eDataType, initialValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertCommunicationBoundaryToString(EDataType eDataType, Object instanceValue) {
 		return super.convertToString(eDataType, instanceValue);
 	}
 

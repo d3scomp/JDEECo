@@ -474,13 +474,22 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int ENSEMBLE_DEFINITION__TRIGGERS = 3;
 
 	/**
+	 * The feature id for the '<em><b>Communication Boundary</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ENSEMBLE_DEFINITION__COMMUNICATION_BOUNDARY = 4;
+
+	/**
 	 * The number of structural features of the '<em>Ensemble Definition</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ENSEMBLE_DEFINITION_FEATURE_COUNT = 4;
+	int ENSEMBLE_DEFINITION_FEATURE_COUNT = 5;
 
 	/**
 	 * The number of operations of the '<em>Ensemble Definition</em>' class.
@@ -983,6 +992,16 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int SHADOW_KNOWLEDGE_MANAGER_REGISTRY = 23;
 
 	/**
+	 * The meta object id for the '<em>Communication Boundary</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getCommunicationBoundary()
+	 * @generated
+	 */
+	int COMMUNICATION_BOUNDARY = 24;
+
+	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger <em>Periodic Trigger</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1268,6 +1287,17 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getEnsembleDefinition_Triggers();
+
+	/**
+	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getCommunicationBoundary <em>Communication Boundary</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Communication Boundary</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getCommunicationBoundary()
+	 * @see #getEnsembleDefinition()
+	 * @generated
+	 */
+	EAttribute getEnsembleDefinition_CommunicationBoundary();
 
 	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Condition <em>Condition</em>}'.
@@ -1558,6 +1588,17 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EDataType getShadowKnowledgeManagerRegistry();
 
 	/**
+	 * Returns the meta object for data type '{@link cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate <em>Communication Boundary</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>Communication Boundary</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate
+	 * @model instanceClass="cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate"
+	 * @generated
+	 */
+	EDataType getCommunicationBoundary();
+
+	/**
 	 * Returns the factory that creates the instances of the model.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1817,6 +1858,14 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EReference ENSEMBLE_DEFINITION__TRIGGERS = eINSTANCE.getEnsembleDefinition_Triggers();
 
 		/**
+		 * The meta object literal for the '<em><b>Communication Boundary</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ENSEMBLE_DEFINITION__COMMUNICATION_BOUNDARY = eINSTANCE.getEnsembleDefinition_CommunicationBoundary();
+
+		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ConditionImpl <em>Condition</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2059,6 +2108,16 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * @generated
 		 */
 		EDataType SHADOW_KNOWLEDGE_MANAGER_REGISTRY = eINSTANCE.getShadowKnowledgeManagerRegistry();
+
+		/**
+		 * The meta object literal for the '<em>Communication Boundary</em>' data type.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getCommunicationBoundary()
+		 * @generated
+		 */
+		EDataType COMMUNICATION_BOUNDARY = eINSTANCE.getCommunicationBoundary();
 
 	}
 

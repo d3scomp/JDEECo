@@ -9,6 +9,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 
+import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
 import java.util.Collection;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -36,6 +37,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl#getMembership <em>Membership</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl#getKnowledgeExchange <em>Knowledge Exchange</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl#getTriggers <em>Triggers</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl#getCommunicationBoundary <em>Communication Boundary</em>}</li>
  * </ul>
  * </p>
  *
@@ -91,6 +93,26 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 	 * @ordered
 	 */
 	protected EList<Trigger> triggers;
+
+	/**
+	 * The default value of the '{@link #getCommunicationBoundary() <em>Communication Boundary</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getCommunicationBoundary()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final CommunicationBoundaryPredicate COMMUNICATION_BOUNDARY_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getCommunicationBoundary() <em>Communication Boundary</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getCommunicationBoundary()
+	 * @generated
+	 * @ordered
+	 */
+	protected CommunicationBoundaryPredicate communicationBoundary = COMMUNICATION_BOUNDARY_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -235,6 +257,27 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public CommunicationBoundaryPredicate getCommunicationBoundary() {
+		return communicationBoundary;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setCommunicationBoundary(CommunicationBoundaryPredicate newCommunicationBoundary) {
+		CommunicationBoundaryPredicate oldCommunicationBoundary = communicationBoundary;
+		communicationBoundary = newCommunicationBoundary;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.ENSEMBLE_DEFINITION__COMMUNICATION_BOUNDARY, oldCommunicationBoundary, communicationBoundary));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -264,6 +307,8 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 				return getKnowledgeExchange();
 			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__TRIGGERS:
 				return getTriggers();
+			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__COMMUNICATION_BOUNDARY:
+				return getCommunicationBoundary();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -290,6 +335,9 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 				getTriggers().clear();
 				getTriggers().addAll((Collection<? extends Trigger>)newValue);
 				return;
+			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__COMMUNICATION_BOUNDARY:
+				setCommunicationBoundary((CommunicationBoundaryPredicate)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -314,6 +362,9 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__TRIGGERS:
 				getTriggers().clear();
 				return;
+			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__COMMUNICATION_BOUNDARY:
+				setCommunicationBoundary(COMMUNICATION_BOUNDARY_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -334,6 +385,8 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 				return knowledgeExchange != null;
 			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__TRIGGERS:
 				return triggers != null && !triggers.isEmpty();
+			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__COMMUNICATION_BOUNDARY:
+				return COMMUNICATION_BOUNDARY_EDEFAULT == null ? communicationBoundary != null : !COMMUNICATION_BOUNDARY_EDEFAULT.equals(communicationBoundary);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -350,6 +403,8 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (name: ");
 		result.append(name);
+		result.append(", communicationBoundary: ");
+		result.append(communicationBoundary);
 		result.append(')');
 		return result.toString();
 	}
