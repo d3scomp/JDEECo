@@ -1,12 +1,10 @@
-package cz.cuni.mff.d3s.deeco.publish;
+package cz.cuni.mff.d3s.deeco.network;
 
-import static cz.cuni.mff.d3s.deeco.publish.Serializer.deserialize;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -158,7 +156,7 @@ public class PacketReceiver {
 		public List<? extends KnowledgeData> getKnowledgeDataList() {
 			try {
 				if (isComplete()) {
-					List<? extends KnowledgeData> result = (List<? extends KnowledgeData>) deserialize(data);
+					List<? extends KnowledgeData> result = (List<? extends KnowledgeData>) Serializer.deserialize(data);
 					return result;
 				}
 			} catch (IOException | ClassNotFoundException e) {

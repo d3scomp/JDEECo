@@ -6,7 +6,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
-import cz.cuni.mff.d3s.deeco.publish.PublisherTask;
+import cz.cuni.mff.d3s.deeco.network.PublisherTask;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeFrameworkImpl;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;

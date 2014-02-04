@@ -1,6 +1,4 @@
-package cz.cuni.mff.d3s.deeco.publish;
-
-import static cz.cuni.mff.d3s.deeco.publish.Serializer.serialize;
+package cz.cuni.mff.d3s.deeco.network;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -71,7 +69,7 @@ public abstract class PacketSender implements KnowledgeDataSender {
 	protected abstract void sendPacket(byte[] packet, String recipient);
 
 	private byte[][] fragment(Object data) throws IOException {
-		byte[] serialized = serialize(data);
+		byte[] serialized = Serializer.serialize(data);
 		byte[][] result = new byte[(int) Math.ceil(serialized.length
 				/ (double) packetSize)][packetSize];
 		int start = 0;
