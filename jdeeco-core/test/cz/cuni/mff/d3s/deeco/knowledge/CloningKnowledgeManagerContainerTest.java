@@ -1,12 +1,13 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.MockitoAnnotations.initMocks;
 
+import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -94,32 +95,39 @@ public class CloningKnowledgeManagerContainerTest {
 	public void getLocalsTest() {
 		// WHEN a set of local knowledge managers has been created within the
 		// container instance
-		List<KnowledgeManager> locals = new LinkedList<>();
-		locals.add(tested.createLocal("L1"));
-		locals.add(tested.createLocal("L2"));
-		locals.add(tested.createLocal("L3"));
+		Collection<KnowledgeManager> locals = new LinkedList<>();
+		KnowledgeManager l1, l2, l3;
+		locals.add(l1 = tested.createLocal("L1"));
+		locals.add(l2 = tested.createLocal("L2"));
+		locals.add(l3 = tested.createLocal("L3"));
 		// WHEN the container is accessed for all local knowledge managers
-		List<KnowledgeManager> containerLocals = tested.getLocals();
+		Collection<KnowledgeManager> containerLocals = tested.getLocals();
 		// THEN the container returns all local knowledge managers created
 		// before
-		assertEquals(locals, containerLocals);
+		assertEquals(3, containerLocals.size());
+		assertThat(containerLocals, hasItem(l1));
+		assertThat(containerLocals, hasItem(l2));
+		assertThat(containerLocals, hasItem(l3));
 	}
 
 	@Test
 	public void getReplicasTest() {
 		// WHEN a set of replica knowledge managers has been created within the
 		// container instance
-		List<KnowledgeManager> replicas = new LinkedList<>();
-		KnowledgeManager replica = tested.createReplica("T1");
-		replicas.add(replica);
-		replica = tested.createReplica("T2");
-		replicas.add(replica);
-		replica = tested.createReplica("T3");
-		replicas.add(replica);
+		Collection<KnowledgeManager> replicas = new LinkedList<>();
+		KnowledgeManager r1, r2, r3;
+
+		replicas.add(r1 = tested.createReplica("R1"));
+		replicas.add(r2 = tested.createReplica("R2"));
+		replicas.add(r3 = tested.createReplica("R3"));
+				
 		// WHEN the container is accessed for all replica knowledge managers
-		List<KnowledgeManager> containerReplicas = tested.getReplicas();
+		Collection<KnowledgeManager> containerReplicas = tested.getReplicas();
+		
 		// THEN the container returns all replica knowledge managers created
 		// before
-		assertEquals(replicas, containerReplicas);
-	}
+		assertEquals(3, containerReplicas.size());
+		assertThat(containerReplicas, hasItem(r1));
+		assertThat(containerReplicas, hasItem(r2));
+		assertThat(containerReplicas, hasItem(r3));	}
 }

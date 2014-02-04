@@ -32,9 +32,8 @@ public class SameThreadExecutor implements Executor {
 					listener.executionFailed(task, e);
 				}
 				return;
-			}		
+			}			
 			
-			Log.d("Task.invoke() completed");
 			if (listener != null) {
 				listener.executionCompleted(task);
 			}

@@ -4,9 +4,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeData;
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeDataReceiver;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
+import cz.cuni.mff.d3s.deeco.network.KnowledgeData;
+import cz.cuni.mff.d3s.deeco.network.KnowledgeDataReceiver;
 import cz.cuni.mff.d3s.deeco.simulation.Host;
 import cz.cuni.mff.d3s.deeco.simulation.SimulationTimeEventListener;
 
@@ -59,7 +59,7 @@ public class KnowledgeDataManager implements KnowledgeDataReceiver,
 
 	public void sendDummyData() {
 		DemoKnowledgeData dkd = new DemoKnowledgeData(host.getId(),
-				new ValueSet());
+				new ValueSet(), 0, "X");
 		toSend.add(dkd);
 		host.callAt(host.getCurrentTime() + 2000);
 	}

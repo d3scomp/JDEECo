@@ -6,6 +6,15 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+/**
+ * Class that enables easy serialization and deserialization of objects
+ * (primarily {@link KnowledgeData}) into a byte array via the standard Java
+ * serialization mechanism.
+ * 
+ * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
+ * @author Michal Kit <kit@d3s.mff.cuni.cz>
+ * 
+ */
 public class Serializer {
     public static byte[] serialize(Object obj) throws IOException {
         ByteArrayOutputStream b = new ByteArrayOutputStream();

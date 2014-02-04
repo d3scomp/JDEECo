@@ -3,8 +3,6 @@
  */
 package cz.cuni.mff.d3s.deeco.network;
 
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeDataProvider;
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeDataSender;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
@@ -12,20 +10,24 @@ import cz.cuni.mff.d3s.deeco.task.Task;
 import cz.cuni.mff.d3s.deeco.task.TaskInvocationException;
 
 /**
+ * Task that periodically triggers publishing of knowledge on the network via
+ * the given {@link KnowledgeDataPublisher}.
+ * 
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
- *
+ * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
+ * 
  */
 public class PublisherTask extends Task {
 
-	private final KnowledgeDataSender knowledgeDataSender;
-	private final PeriodicTrigger trigger;
-	private final KnowledgeDataProvider knowledgeDataProvider;
 	
-	public PublisherTask(Scheduler scheduler, KnowledgeDataSender knowledgeDataSender, KnowledgeDataProvider knowledgeDataProvider, PeriodicTrigger trigger) {
-		super(scheduler);
-		this.knowledgeDataSender = knowledgeDataSender;
+	private final KnowledgeDataPublisher publisher;
+	private final PeriodicTrigger trigger;
+	
+	
+	public PublisherTask(Scheduler scheduler, PeriodicTrigger trigger, KnowledgeDataPublisher publisher) {
+		super(scheduler);		
 		this.trigger = trigger;
-		this.knowledgeDataProvider = knowledgeDataProvider;
+		this.publisher = publisher;
 	}
 
 	/* (non-Javadoc)
@@ -33,8 +35,7 @@ public class PublisherTask extends Task {
 	 */
 	@Override
 	public void invoke(Trigger trigger) throws TaskInvocationException {
-		//TODO
-		knowledgeDataSender.broadcastKnowledgeData(knowledgeDataProvider.getKnowledgeData());
+		publisher.publish();
 	}
 
 	/* (non-Javadoc)

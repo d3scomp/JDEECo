@@ -5,12 +5,16 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
 
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeData;
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeDataSender;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 
 /**
+ * This class enables sending {@link KnowledgeData} as a byte array
+ * fragmented into multiple packets.
+ * 
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
+ * 
+ * @see Serializer
+ * @see PacketReceiver
  * 
  */
 public abstract class PacketSender implements KnowledgeDataSender {
@@ -51,7 +55,7 @@ public abstract class PacketSender implements KnowledgeDataSender {
 
 			int messageId = getNextMessageId();
 			
-			Log.i(String.format("S: " + "(" + messageId + ")" + Arrays.deepToString(fragments)));
+			//Log.i(String.format("S: " + "(" + messageId + ")" + Arrays.deepToString(fragments)));
 			
 			// We need to send the message containing id and the number of
 			// packets.that will be sent.
