@@ -1,7 +1,7 @@
 /**
  * 
  */
-package cz.cuni.mff.d3s.deeco.publish;
+package cz.cuni.mff.d3s.deeco.network;
 
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeDataProvider;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeDataSender;
