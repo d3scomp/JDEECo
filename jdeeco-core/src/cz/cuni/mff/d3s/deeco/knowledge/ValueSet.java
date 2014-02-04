@@ -15,6 +15,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
  * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
  *
  */
+@SuppressWarnings("serial")
 public class ValueSet implements Serializable {
 	
 	
