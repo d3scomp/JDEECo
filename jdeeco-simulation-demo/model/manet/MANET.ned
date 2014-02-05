@@ -16,6 +16,7 @@
 package manet;
 
 import org.mixim.base.modules.BaseNetwork;
+import org.mixim.base.connectionManager.ConnectionManager;
 
 network MANET extends BaseNetwork
 {
@@ -30,8 +31,9 @@ network MANET extends BaseNetwork
         @display("bgb=2000,2000;bgi=background/terrain,s");
 
     submodules:
+    	IPCM : ConnectionManager {}       
+        MANETCM : ConnectionManager {}
         node[numNodes]: Node {}
-        
         channelController: ChannelController if (visualize) {
             @display("p=90,250");
         }

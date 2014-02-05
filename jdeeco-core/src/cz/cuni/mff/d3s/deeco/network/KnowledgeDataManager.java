@@ -57,8 +57,8 @@ KnowledgeDataPublisher {
 	protected final KnowledgeManagerContainer kmContainer;	
 	/** Object used for sending {@link KnowledgeData} over the network. */
 	protected final KnowledgeDataSender knowledgeDataSender;	
-	/** Stores received KnowledgeData for replicas (received ValueSet is deleted) */
-	protected final Map<KnowledgeManager, KnowledgeData> replicaMetadata;
+	/** Stores received KnowledgeMetaData for replicas (received ValueSet is deleted) */
+	protected final Map<KnowledgeManager, KnowledgeMetaData> replicaMetadata;
 	/** Empty knowledge path enabling convenient query for all knowledge */  
 	private final List<KnowledgePath> emptyPath;
 	/** List of ensemble definitions whose boundary conditions should be considered. */
@@ -110,27 +110,28 @@ KnowledgeDataPublisher {
 			Log.w("KnowledgeDataManager.receive: Received null KnowledgeData.");
 		
 		logReceive(knowledgeData);
-	
+		KnowledgeMetaData md;
 		for (KnowledgeData kd : knowledgeData) {
-			if (kmContainer.hasLocal(kd.getComponentId())) {
-				Log.i("KnowledgeDataManager.receive: Dropping KnowledgeData for local component " + kd.getComponentId());
+			md = kd.getMetaData();
+			if (kmContainer.hasLocal(md.componentId)) {
+				Log.i("KnowledgeDataManager.receive: Dropping KnowledgeData for local component " + md.componentId);
 				continue;
 			} 
-			KnowledgeManager km = kmContainer.createReplica(kd.getComponentId());						
+			KnowledgeManager km = kmContainer.createReplica(md.componentId);						
 			
 			try {
-				KnowledgeData metadata = replicaMetadata.get(km);
+				KnowledgeMetaData currentMD = replicaMetadata.get(km);
 				// accept only fresh knowledge data (drop if we have already newer value)
-				boolean haveOlder = (metadata == null) || (metadata.getVersionId() < kd.getVersionId()); 
+				boolean haveOlder = (currentMD == null) || (currentMD.versionId < md.versionId); 
 				if (haveOlder) {					
 					km.update(toChangeSet(kd.getKnowledge()));
 					//	store the metadata without the knowledge values
-					replicaMetadata.put(km, new KnowledgeData(kd.getComponentId(), null, kd.getVersionId(), null));
+					replicaMetadata.put(km, md);
 				} 
 			} catch (KnowledgeUpdateException e) {
 				Log.w(String
 						.format("KnowledgeDataManager.receive: Could not update replica of %s.",
-								kd.getComponentId()), e);
+								md.componentId), e);
 			}
 		}
 		
@@ -140,7 +141,7 @@ KnowledgeDataPublisher {
 		List<KnowledgeData> result = new LinkedList<>();
 		for (KnowledgeManager km : kmContainer.getLocals()) {
 			try {
-				result.add(new KnowledgeData(km.getId(), km.get(emptyPath), localVersion, host));
+				result.add(new KnowledgeData(km.get(emptyPath), new KnowledgeMetaData(km.getId(), localVersion, host)));
 			} catch (KnowledgeNotFoundException e) {
 				Log.e("prepareKnowledgeData error", e);
 			}
@@ -149,8 +150,7 @@ KnowledgeDataPublisher {
 		for (KnowledgeManager km : kmContainer.getReplicas()) {
 			try {
 				
-				KnowledgeData kd = new KnowledgeData(replicaMetadata.get(km).getComponentId(), 
-						km.get(emptyPath), replicaMetadata.get(km).getVersionId(), host);
+				KnowledgeData kd = new KnowledgeData(km.get(emptyPath), replicaMetadata.get(km));
 				KnowledgeManager nodeKm = getNodeKnowledge();
 				
 				boolean isInSomeBoundary = false;
@@ -166,7 +166,7 @@ KnowledgeDataPublisher {
 					result.add(kd);
 				} else {
 					Log.d(String.format("Boundary failed (%d) at %s for %sv%d\n", 
-							timeProvider.getCurrentTime(), host, kd.getComponentId(), kd.getVersionId()));
+							timeProvider.getCurrentTime(), host, kd.getMetaData().componentId, kd.getMetaData().versionId));
 				}
 			} catch (KnowledgeNotFoundException e) {
 				Log.e("prepareKnowledgeData error", e);
@@ -195,7 +195,7 @@ KnowledgeDataPublisher {
 	private void logPublish(List<? extends KnowledgeData> data) {
 		StringBuilder sb = new StringBuilder();
 		for (KnowledgeData kd: data) {
-			sb.append(kd.getComponentId() + "v" + kd.getVersionId());
+			sb.append(kd.getMetaData().componentId + "v" + kd.getMetaData().versionId);
 			sb.append(", ");			
 		}		
 		Log.d(String.format("Publish (%d) at %s, sending [%s]\n", 
@@ -205,7 +205,7 @@ KnowledgeDataPublisher {
 	private void logReceive(List<? extends KnowledgeData> knowledgeData) {
 		StringBuilder sb = new StringBuilder();
 		for (KnowledgeData kd: knowledgeData) {
-			sb.append(kd.getComponentId() + "v" + kd.getVersionId() + "<-" + kd.getSender());
+			sb.append(kd.getMetaData().componentId + "v" + kd.getMetaData().versionId + "<-" + kd.getMetaData().sender);
 			sb.append(", ");			
 		}
 		
