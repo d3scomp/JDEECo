@@ -13,12 +13,16 @@ public class KnowledgeMetaData implements Serializable {
 	public String sender;
 	//if -1.0 then it was received from the IP interface
 	public transient double rssi;
+	public long createdAt; 
+	public int hopCount;
 	
-	public KnowledgeMetaData(String componentId, long versionId, String sender) {
+	public KnowledgeMetaData(String componentId, long versionId, String sender, long createdAt, int hopCount) {
 		super();
 		this.componentId = componentId;
 		this.versionId = versionId;
 		this.sender = sender;
+		this.createdAt = createdAt;
+		this.hopCount = hopCount;
 	}
 	
 	

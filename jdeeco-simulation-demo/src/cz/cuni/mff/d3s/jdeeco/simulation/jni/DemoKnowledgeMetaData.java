@@ -7,8 +7,8 @@ public class DemoKnowledgeMetaData extends KnowledgeMetaData {
 	public int rebroadcastCount = 0;
 	
 	public DemoKnowledgeMetaData(String componentId, long versionId,
-			String sender) {
-		super(componentId, versionId, sender);
+			String sender, long createdAt, int hopCount) {
+		super(componentId, versionId, sender, createdAt, hopCount);
 		// TODO Auto-generated constructor stub
 	}
 	
