@@ -123,10 +123,19 @@ KnowledgeDataPublisher {
 				KnowledgeMetaData currentMD = replicaMetadata.get(km);
 				// accept only fresh knowledge data (drop if we have already newer value)
 				boolean haveOlder = (currentMD == null) || (currentMD.versionId < md.versionId); 
-				if (haveOlder) {					
+				if (haveOlder) {							
 					km.update(toChangeSet(kd.getKnowledge()));
+					md.hopCount++;
 					//	store the metadata without the knowledge values
 					replicaMetadata.put(km, md);
+					
+					Log.d(String.format("Receive (%d) at %s got %sv%d after %dms and %d hops\n", 
+							timeProvider.getCurrentTime(), 
+							host, 
+							md.componentId, 
+							md.versionId,
+							timeProvider.getCurrentTime() - md.createdAt,
+							md.hopCount));
 				} 
 			} catch (KnowledgeUpdateException e) {
 				Log.w(String
@@ -141,7 +150,10 @@ KnowledgeDataPublisher {
 		List<KnowledgeData> result = new LinkedList<>();
 		for (KnowledgeManager km : kmContainer.getLocals()) {
 			try {
-				result.add(new KnowledgeData(km.get(emptyPath), new KnowledgeMetaData(km.getId(), localVersion, host)));
+				result.add(new KnowledgeData(
+						km.get(emptyPath), 
+						new KnowledgeMetaData(km.getId(), localVersion, host, timeProvider.getCurrentTime(), 0)));
+				
 			} catch (KnowledgeNotFoundException e) {
 				Log.e("prepareKnowledgeData error", e);
 			}

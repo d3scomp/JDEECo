@@ -56,7 +56,7 @@ public class KnowledgeDataManager implements KnowledgeDataReceiver,
 	}
 
 	public void sendDummyData() {
-		KnowledgeData kd = new KnowledgeData(new ValueSet(), new DemoKnowledgeMetaData(host.getId(), 0, host.getId()));
+		KnowledgeData kd = new KnowledgeData(new ValueSet(), new DemoKnowledgeMetaData(host.getId(), 0, host.getId(), 0, 0));
 		toSend.add(kd);
 		host.callAt(host.getCurrentTime() + 2000);
 	}
