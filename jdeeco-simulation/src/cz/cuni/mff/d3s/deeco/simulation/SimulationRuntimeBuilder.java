@@ -37,7 +37,7 @@ public class SimulationRuntimeBuilder {
 		host.getPacketReceiver().setKnowledgeDataReceiver(kdManager);
 
 		// Set up the publisher task
-		PublisherTask publisherTask = new PublisherTask(scheduler, createPeriodicTrigger(publishingPeriod), kdManager);
+		PublisherTask publisherTask = new PublisherTask(scheduler, kdManager, publishingPeriod, host.getId());
 		// Add publisher task to the scheduler
 		scheduler.addTask(publisherTask);
 
@@ -45,11 +45,6 @@ public class SimulationRuntimeBuilder {
 				container);
 	}
 
-	private PeriodicTrigger createPeriodicTrigger(long pieriod) {
-		RuntimeMetadataFactory factory = RuntimeMetadataFactory.eINSTANCE;
-		PeriodicTrigger result = factory.createPeriodicTrigger();
-		result.setPeriod(pieriod);
-		return result;
-	}
+	
 
 }
