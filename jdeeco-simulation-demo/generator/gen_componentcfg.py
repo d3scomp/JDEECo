@@ -193,7 +193,7 @@ others.extend(aSite3Extended.generateOthers(20))
 for cmp in leaders + members + others:
     cmp.plot(area)
    
-f = open('../component.cfg', 'w') 
+f = open('../configurations/component.cfg', 'w') 
 
 for idx in range(size(leaders)):
     print>>f, leaders[idx].toString(idx)
@@ -203,12 +203,14 @@ for idx in range(size(others)):
     print>>f, others[idx].toString(idx)
 f.close()
 
-f = open('../site.cfg', 'w') 
+f = open('../configurations/site.cfg', 'w') 
 for area in [aHQ, aSite, aSite2, aSite3]:
     print>>f, area.toString();
 f.close()
 
+savefig("../configurations/cfg.png")
 show()
+
 
 
 

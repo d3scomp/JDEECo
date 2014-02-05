@@ -32,11 +32,21 @@ public class Main {
 	static int PACKET_SIZE = 1000;
 	static int PUBLISHING_PERIOD = 500;
 	
-	static String CONFIG_TEMPLATE = "omnetpp.ini.templ";
-	static String CONFIG_PATH = "omnetpp.ini";
+	static String OMNET_CONFIG_TEMPLATE = "omnetpp.ini.templ";
+	static String OMNET_CONFIG_PATH = "omnetpp.ini";
+	
+	static String DEFAULT_COMPONENT_CFG = "component.cfg";
+	static String DEFAULT_SITE_CFG = "site.cfg";
 
 	
 	public static void main(String[] args) throws AnnotationProcessorException, IOException {
+		String componentCfg = DEFAULT_COMPONENT_CFG;
+		String siteCfg = DEFAULT_SITE_CFG;
+		
+		if (args.length == 2) {
+			componentCfg = args[0];
+			siteCfg = args[1];
+		}
 		
 		Simulation sim = new Simulation();
 		sim.initialize(); //loads Library
@@ -44,7 +54,7 @@ public class Main {
 		AnnotationProcessor processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE);
 		SimulationRuntimeBuilder builder = new SimulationRuntimeBuilder();
 		
-		SiteConfigParser siteParser = new SiteConfigParser("site.cfg");
+		SiteConfigParser siteParser = new SiteConfigParser(siteCfg);
 		Area area = null;
 		Set<Area> areas = new HashSet<>();
 		while ((area = siteParser.parseArea()) != null) {
@@ -52,7 +62,7 @@ public class Main {
 		}
 		TeamLocationService.INSTANCE.init(areas);
 		
-		ComponentConfigParser parser = new ComponentConfigParser("component.cfg");
+		ComponentConfigParser parser = new ComponentConfigParser(componentCfg);
 		
 		PositionAwareComponent component = null;
 		List<RuntimeFramework> runtimes = new ArrayList<>();
@@ -91,16 +101,16 @@ public class Main {
 			i++;
 		}	
 		
-		Files.copy(Paths.get(CONFIG_TEMPLATE), Paths.get(CONFIG_PATH), StandardCopyOption.REPLACE_EXISTING);
+		Files.copy(Paths.get(OMNET_CONFIG_TEMPLATE), Paths.get(OMNET_CONFIG_PATH), StandardCopyOption.REPLACE_EXISTING);
 		
-		PrintWriter out = new PrintWriter(Files.newOutputStream(Paths.get(CONFIG_PATH), StandardOpenOption.APPEND));
+		PrintWriter out = new PrintWriter(Files.newOutputStream(Paths.get(OMNET_CONFIG_PATH), StandardOpenOption.APPEND));
 		out.println();
 		out.println(String.format("**.numNodes = %d", hosts.size()));
 		out.println();
 		out.println(omnetConfig.toString());		
 		out.close();
 		
-		sim.run("Cmdenv", CONFIG_PATH);
+		sim.run("Cmdenv", OMNET_CONFIG_PATH);
 		
 		//System.gc();
 		System.out.println("Simulation finished.");
