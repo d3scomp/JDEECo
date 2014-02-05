@@ -28,7 +28,7 @@ import cz.cuni.mff.d3s.deeco.task.Task;
  *
  */
 
-public interface Scheduler extends ExecutionListener {
+public interface Scheduler extends ExecutionListener, CurrentTimeProvider {
 	/**
 	 * Starts the scheduler thus triggering a sequence of operations on serving tasks in queue(if any). 
 	 * <p>

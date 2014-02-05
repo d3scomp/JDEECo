@@ -29,8 +29,10 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 
+import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
 import java.lang.reflect.Method;
 
+import java.util.Map;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
@@ -185,6 +187,13 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	private EClass stringToObjectMapEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	private EEnum parameterDirectionEEnum = null;
 
 	/**
@@ -207,6 +216,13 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * @generated
 	 */
 	private EDataType shadowKnowledgeManagerRegistryEDataType = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType communicationBoundaryEDataType = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -463,6 +479,15 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EReference getComponentInstance_InternalData() {
+		return (EReference)componentInstanceEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getEnsembleDefinition() {
 		return ensembleDefinitionEClass;
 	}
@@ -501,6 +526,15 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 */
 	public EReference getEnsembleDefinition_Triggers() {
 		return (EReference)ensembleDefinitionEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getEnsembleDefinition_CommunicationBoundary() {
+		return (EAttribute)ensembleDefinitionEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -688,6 +722,33 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getStringToObjectMap() {
+		return stringToObjectMapEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getStringToObjectMap_Key() {
+		return (EAttribute)stringToObjectMapEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getStringToObjectMap_Value() {
+		return (EAttribute)stringToObjectMapEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EEnum getParameterDirection() {
 		return parameterDirectionEEnum;
 	}
@@ -717,6 +778,15 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 */
 	public EDataType getShadowKnowledgeManagerRegistry() {
 		return shadowKnowledgeManagerRegistryEDataType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EDataType getCommunicationBoundary() {
+		return communicationBoundaryEDataType;
 	}
 
 	/**
@@ -776,12 +846,14 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		createEAttribute(componentInstanceEClass, COMPONENT_INSTANCE__KNOWLEDGE_MANAGER);
 		createEAttribute(componentInstanceEClass, COMPONENT_INSTANCE__SHADOW_KNOWLEDGE_MANAGER_REGISTRY);
 		createEReference(componentInstanceEClass, COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS);
+		createEReference(componentInstanceEClass, COMPONENT_INSTANCE__INTERNAL_DATA);
 
 		ensembleDefinitionEClass = createEClass(ENSEMBLE_DEFINITION);
 		createEAttribute(ensembleDefinitionEClass, ENSEMBLE_DEFINITION__NAME);
 		createEReference(ensembleDefinitionEClass, ENSEMBLE_DEFINITION__MEMBERSHIP);
 		createEReference(ensembleDefinitionEClass, ENSEMBLE_DEFINITION__KNOWLEDGE_EXCHANGE);
 		createEReference(ensembleDefinitionEClass, ENSEMBLE_DEFINITION__TRIGGERS);
+		createEAttribute(ensembleDefinitionEClass, ENSEMBLE_DEFINITION__COMMUNICATION_BOUNDARY);
 
 		conditionEClass = createEClass(CONDITION);
 
@@ -812,6 +884,10 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 
 		pathNodeComponentIdEClass = createEClass(PATH_NODE_COMPONENT_ID);
 
+		stringToObjectMapEClass = createEClass(STRING_TO_OBJECT_MAP);
+		createEAttribute(stringToObjectMapEClass, STRING_TO_OBJECT_MAP__KEY);
+		createEAttribute(stringToObjectMapEClass, STRING_TO_OBJECT_MAP__VALUE);
+
 		// Create enums
 		parameterDirectionEEnum = createEEnum(PARAMETER_DIRECTION);
 
@@ -819,6 +895,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		methodEDataType = createEDataType(METHOD);
 		knowledgeManagerEDataType = createEDataType(KNOWLEDGE_MANAGER);
 		shadowKnowledgeManagerRegistryEDataType = createEDataType(SHADOW_KNOWLEDGE_MANAGER_REGISTRY);
+		communicationBoundaryEDataType = createEDataType(COMMUNICATION_BOUNDARY);
 	}
 
 	/**
@@ -890,12 +967,14 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		initEAttribute(getComponentInstance_KnowledgeManager(), this.getKnowledgeManager(), "knowledgeManager", null, 1, 1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getComponentInstance_ShadowKnowledgeManagerRegistry(), this.getShadowKnowledgeManagerRegistry(), "shadowKnowledgeManagerRegistry", null, 1, 1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getComponentInstance_EnsembleControllers(), this.getEnsembleController(), this.getEnsembleController_ComponentInstance(), "ensembleControllers", null, 0, -1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getComponentInstance_InternalData(), this.getStringToObjectMap(), null, "internalData", null, 0, -1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(ensembleDefinitionEClass, EnsembleDefinition.class, "EnsembleDefinition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getEnsembleDefinition_Name(), ecorePackage.getEString(), "name", null, 1, 1, EnsembleDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getEnsembleDefinition_Membership(), this.getCondition(), null, "membership", null, 1, 1, EnsembleDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getEnsembleDefinition_KnowledgeExchange(), this.getExchange(), null, "knowledgeExchange", null, 1, 1, EnsembleDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getEnsembleDefinition_Triggers(), this.getTrigger(), null, "triggers", null, 0, -1, EnsembleDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEnsembleDefinition_CommunicationBoundary(), this.getCommunicationBoundary(), "communicationBoundary", null, 0, 1, EnsembleDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(conditionEClass, Condition.class, "Condition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
@@ -926,6 +1005,10 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 
 		initEClass(pathNodeComponentIdEClass, PathNodeComponentId.class, "PathNodeComponentId", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
+		initEClass(stringToObjectMapEClass, Map.Entry.class, "StringToObjectMap", !IS_ABSTRACT, !IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getStringToObjectMap_Key(), ecorePackage.getEString(), "key", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getStringToObjectMap_Value(), ecorePackage.getEJavaObject(), "value", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
 		// Initialize enums and add enum literals
 		initEEnum(parameterDirectionEEnum, ParameterDirection.class, "ParameterDirection");
 		addEEnumLiteral(parameterDirectionEEnum, ParameterDirection.IN);
@@ -936,6 +1019,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		initEDataType(methodEDataType, Method.class, "Method", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(knowledgeManagerEDataType, KnowledgeManager.class, "KnowledgeManager", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(shadowKnowledgeManagerRegistryEDataType, ShadowKnowledgeManagerRegistry.class, "ShadowKnowledgeManagerRegistry", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(communicationBoundaryEDataType, CommunicationBoundaryPredicate.class, "CommunicationBoundary", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
 		createResource(eNS_URI);

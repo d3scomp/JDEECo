@@ -16,13 +16,13 @@ public class ShadowKnowledgeManagerRegistryImpl implements ShadowKnowledgeManage
 		ReplicaListener, LocalListener {
 
 	private final KnowledgeManager knowledgeManager;
-	private final CloningKnowledgeManagerContainer container;
+	private final KnowledgeManagerContainer container;
 	private final Map<Trigger, List<ShadowsTriggerListener>> triggerListeners;
 
 	private final Map<ShadowsTriggerListener, List<KnowledgeManagerTriggerListener>> listenerToTriggerListeners;
 
 	public ShadowKnowledgeManagerRegistryImpl(KnowledgeManager knowledgeManager,
-			CloningKnowledgeManagerContainer container) {
+			KnowledgeManagerContainer container) {
 		this.knowledgeManager = knowledgeManager;
 		this.container = container;
 		this.triggerListeners = new HashMap<>();
@@ -41,8 +41,8 @@ public class ShadowKnowledgeManagerRegistryImpl implements ShadowKnowledgeManage
 	 */
 	@Override
 	public void localCreated(KnowledgeManager km,
-			LocalKnowledgeManagerContainer container) {
-		replicaCreated(km, null);
+			KnowledgeManagerContainer container) {
+		replicaRegistered(km, null);
 	}
 
 	/*
@@ -54,8 +54,8 @@ public class ShadowKnowledgeManagerRegistryImpl implements ShadowKnowledgeManage
 	 */
 	@Override
 	public void localRemoved(KnowledgeManager km,
-			LocalKnowledgeManagerContainer container) {
-		replicaRemoved(km, null);
+			KnowledgeManagerContainer container) {
+		replicaUnregistered(km, null);
 	}
 
 	/*
@@ -66,8 +66,8 @@ public class ShadowKnowledgeManagerRegistryImpl implements ShadowKnowledgeManage
 	 * .mff.d3s.deeco.knowledge.KnowledgeManager)
 	 */
 	@Override
-	public void replicaCreated(KnowledgeManager km,
-			ReplicaKnowledgeManagerContainer container) {
+	public void replicaRegistered(KnowledgeManager km,
+			KnowledgeManagerContainer container) {
 		for (Trigger trigger : triggerListeners.keySet())
 			for (ShadowsTriggerListener listener : triggerListeners
 					.get(trigger))
@@ -82,8 +82,8 @@ public class ShadowKnowledgeManagerRegistryImpl implements ShadowKnowledgeManage
 	 * .mff.d3s.deeco.knowledge.KnowledgeManager)
 	 */
 	@Override
-	public void replicaRemoved(KnowledgeManager km,
-			ReplicaKnowledgeManagerContainer container) {
+	public void replicaUnregistered(KnowledgeManager km,
+			KnowledgeManagerContainer container) {
 		List<KnowledgeManagerTriggerListener> toRemove = new LinkedList<>();
 		for (List<KnowledgeManagerTriggerListener> tListeners : listenerToTriggerListeners
 				.values()) {

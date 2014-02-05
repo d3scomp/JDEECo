@@ -146,7 +146,7 @@ public class ProcessTask extends Task {
 		
 		try {
 			// Set the current process's context
-			ProcessContext.addContext(componentProcess);
+			ProcessContext.addContext(componentProcess, scheduler);
 			
 			// Call the process method
 			componentProcess.getMethod().invoke(null, actualParams);

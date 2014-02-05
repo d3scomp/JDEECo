@@ -10,8 +10,10 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.*;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 
+import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
 import java.lang.reflect.Method;
 
+import java.util.Map;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
@@ -82,6 +84,7 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 			case RuntimeMetadataPackage.PATH_NODE_COORDINATOR: return createPathNodeCoordinator();
 			case RuntimeMetadataPackage.PATH_NODE_MEMBER: return createPathNodeMember();
 			case RuntimeMetadataPackage.PATH_NODE_COMPONENT_ID: return createPathNodeComponentId();
+			case RuntimeMetadataPackage.STRING_TO_OBJECT_MAP: return (EObject)createStringToObjectMap();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -103,6 +106,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 				return createKnowledgeManagerFromString(eDataType, initialValue);
 			case RuntimeMetadataPackage.SHADOW_KNOWLEDGE_MANAGER_REGISTRY:
 				return createShadowKnowledgeManagerRegistryFromString(eDataType, initialValue);
+			case RuntimeMetadataPackage.COMMUNICATION_BOUNDARY:
+				return createCommunicationBoundaryFromString(eDataType, initialValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -124,6 +129,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 				return convertKnowledgeManagerToString(eDataType, instanceValue);
 			case RuntimeMetadataPackage.SHADOW_KNOWLEDGE_MANAGER_REGISTRY:
 				return convertShadowKnowledgeManagerRegistryToString(eDataType, instanceValue);
+			case RuntimeMetadataPackage.COMMUNICATION_BOUNDARY:
+				return convertCommunicationBoundaryToString(eDataType, instanceValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -304,6 +311,16 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public Map.Entry<String, Object> createStringToObjectMap() {
+		StringToObjectMapImpl stringToObjectMap = new StringToObjectMapImpl();
+		return stringToObjectMap;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public ParameterDirection createParameterDirectionFromString(EDataType eDataType, String initialValue) {
 		ParameterDirection result = ParameterDirection.get(initialValue);
 		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
@@ -370,6 +387,24 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * @generated
 	 */
 	public String convertShadowKnowledgeManagerRegistryToString(EDataType eDataType, Object instanceValue) {
+		return super.convertToString(eDataType, instanceValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public CommunicationBoundaryPredicate createCommunicationBoundaryFromString(EDataType eDataType, String initialValue) {
+		return (CommunicationBoundaryPredicate)super.createFromString(eDataType, initialValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertCommunicationBoundaryToString(EDataType eDataType, Object instanceValue) {
 		return super.convertToString(eDataType, instanceValue);
 	}
 

@@ -195,6 +195,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	 */
 	@Override
 	public boolean equals(final Object that) {
+		//FIXME: this does not seem right (equals does not consider the contents)
 		boolean result = false;
 		if (that instanceof BaseKnowledgeManager) {
 			result = ((BaseKnowledgeManager) that).id

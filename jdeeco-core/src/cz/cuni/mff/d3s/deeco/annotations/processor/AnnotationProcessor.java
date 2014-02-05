@@ -21,7 +21,10 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.*;
+import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
+import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
+import cz.cuni.mff.d3s.deeco.network.GenericCommunicationBoundaryPredicate;
 
 /**
  * Common gateway for processing of Java objects/classes with DEECo annotations.
@@ -224,12 +227,18 @@ public class AnnotationProcessor {
 		ComponentInstance componentInstance = factory.createComponentInstance();
 		componentInstance.setName(clazz.getCanonicalName());
 		
-		String uniqueID = UUID.randomUUID().toString();
-        KnowledgeManager km = new CloningKnowledgeManager(clazz.getSimpleName()+uniqueID);
-		List<Method> methods = getMethodsMarkedAsProcesses(clazz);
 		try {
-			km.update(extractInitialKnowledge(obj));
+			ChangeSet initialK = extractInitialKnowledge(obj);
+			String id = getComponentId(initialK);
+			if (id == null) {
+				id = clazz.getSimpleName() + UUID.randomUUID().toString();
+			}
+	        KnowledgeManager km = new CloningKnowledgeManager(id);		
+			km.update(initialK);
 	        componentInstance.setKnowledgeManager(km); 
+	        
+			List<Method> methods = getMethodsMarkedAsProcesses(clazz);
+	        
 			for (Method m : methods) {
 				int modifier = m.getModifiers();
 				if (Modifier.isPublic(modifier) && Modifier.isStatic(modifier)) {
@@ -249,6 +258,10 @@ public class AnnotationProcessor {
 		}
 		return componentInstance;
 	}
+
+
+
+
 
 	/**
 	 * Creator of a single correctly-initialized {@link EnsembleDefinition} object. 
@@ -273,6 +286,9 @@ public class AnnotationProcessor {
 			ensembleDefinition.setMembership(condition);
 			Exchange exchange = createExchange(clazz);
 			ensembleDefinition.setKnowledgeExchange(exchange);
+			CommunicationBoundaryPredicate cBoundary = createCommunicationBoundary(clazz);			
+			ensembleDefinition.setCommunicationBoundary(cBoundary);
+			
 			PeriodicTrigger periodicEnsembleTrigger = createPeriodicTrigger(clazz);
 			List<KnowledgeChangeTrigger> exchangeKChangeTriggers = createKnowledgeChangeTriggers(exchange.getMethod(), false);
 			List<KnowledgeChangeTrigger> conditionKChangeTriggers = createKnowledgeChangeTriggers(condition.getMethod(), false);
@@ -332,6 +348,25 @@ public class AnnotationProcessor {
 			throw new AnnotationProcessorException(msg, e);
 		}
 		return exchange;
+	}
+	
+	/**
+	 * Creator of a single correctly-initialized {@link CommunicationBoundaryPredicate} object. 	
+	 */
+	CommunicationBoundaryPredicate createCommunicationBoundary(Class<?> clazz) throws AnnotationProcessorException,ParseException {
+		try {
+			Method m = getAnnotatedMethodInEnsemble(clazz, CommunicationBoundary.class);
+			return new GenericCommunicationBoundaryPredicate(m);
+		} catch (AnnotationProcessorException e) {
+			// if the exception was caused by not finding the boundary, then
+			// return null (it is correct not to define the boundary).
+			if (e.getMessage().startsWith("No") && e.getMessage().endsWith("annotation was found")) {
+				return null;
+			} else {
+				String msg = KnowledgeExchange.class.getSimpleName()+"->"+e.getMessage();
+				throw new AnnotationProcessorException(msg, e);
+			}
+		}		
 	}
 
 	/**
@@ -690,8 +725,18 @@ public class AnnotationProcessor {
 	 */
 	ChangeSet extractInitialKnowledge(Object knowledge) {
 		ChangeSet changeSet = new ChangeSet();
-		Log.w("Non-public fields are ignored during the extraction of initial knowledge.");
+		
+		// print a warning if the component definition contains non-public fields
+		for (Field f : knowledge.getClass().getDeclaredFields()) {
+			if (!Modifier.isPublic(f.getModifiers()) || Modifier.isStatic(f.getModifiers())) {
+				Log.w("Non-public or static fields are ignored during the extraction of initial knowledge ("
+						+ knowledge.getClass().getCanonicalName());
+				break;
+			}
+		}
 		for (Field f : knowledge.getClass().getFields()) {
+			if (Modifier.isStatic(f.getModifiers()))
+				continue;
 			KnowledgePath knowledgePath = factory.createKnowledgePath();
 			PathNodeField pathNodeField = factory.createPathNodeField();
 			pathNodeField.setName(new String(f.getName()));
@@ -705,4 +750,16 @@ public class AnnotationProcessor {
 		return changeSet;
 	}
 
+	/**
+	 * Returns component ID given the initial knowledge. Returns null if ID is
+	 * not specified as a public non-static String field.
+	 */
+	String getComponentId(ChangeSet initialK) {
+		KnowledgePath idPath = factory.createKnowledgePath();
+		PathNodeField pnf = factory.createPathNodeField();
+		pnf.setName("id");
+		idPath.getNodes().add(pnf);
+		String id = (String) initialK.getValue(idPath);
+		return id;
+	}
 }
