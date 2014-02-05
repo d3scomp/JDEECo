@@ -31,26 +31,26 @@ module Node
         string networkType = default("BaseNetwLayer");       //type of the network layer
         string arpType = default("BaseArp");                 //type of address resolution module
         string mobilityType = default("StationaryMobility"); //type of the mobility module
-        string manetNicType;
-        string ipNicType;
-        
+        string manetNicType = default("");
+        string ipNicType = default("");
+
         @display("bgb=158,152,white;i=device/palm;b=40,40,rect");
         @node();
 
-	    submodules:
-	    appl: JDEECoApplication {
+    submodules:
+        appl: JDEECoApplication {
             parameters:
                 @display("p=70,30;i=app");
-        }    
-	            
-        arp: <arpType> like IBaseArp {
-                @display("p=140,100;i=block/network2");
         }
-        manetNic: <manetNicType> like IWirelessNicUpperCtrl {
+
+        arp: <arpType> like IBaseArp {
+            @display("p=140,100;i=block/network2");
+        }
+        manetNic: <manetNicType> like IWirelessNicUpperCtrl if manetNicType != "" {
             parameters:
                 @display("p=70,380;i=block/wrxtx,#008000");
         }
-        ipNic: <ipNicType> like IWirelessNicUpperCtrl {
+        ipNic: <ipNicType> like IWirelessNicUpperCtrl if ipNicType != "" {
             parameters:
                 @display("p=70,440;i=block/wrxtx,#008000");
         }
@@ -75,37 +75,39 @@ module Node
                 @display("p=140,30;i=block/cogwheel");
         }
     connections allowunconnected:
-        
+
         //# Connect IP branch
-        
-        ipNic.upperLayerOut --> netwl.lowerLayerIn;
-        ipNic.upperLayerIn <-- netwl.lowerLayerOut;
-        ipNic.upperControlOut --> { @display("ls=red;m=m,70,0,70,0"); } --> netwl.lowerControlIn;
-        ipNic.upperControlIn <-- { @display("ls=red;m=m,70,0,70,0"); } <-- netwl.lowerControlOut;
-   
-        if (transportType != "") {
+        if (ipNicType != "") {
+            ipNic.upperLayerOut --> netwl.lowerLayerIn;
+            ipNic.upperLayerIn <-- netwl.lowerLayerOut;
+            ipNic.upperControlOut --> { @display("ls=red;m=m,70,0,70,0"); } --> netwl.lowerControlIn;
+            ipNic.upperControlIn <-- { @display("ls=red;m=m,70,0,70,0"); } <-- netwl.lowerControlOut;
+        }
+
+        if (ipNicType != "" && transportType != "") {
             //# transport layer exists, so we can connect netwl <--> tranl
             netwl.upperLayerOut --> tranl.lowerLayerIn;
             netwl.upperLayerIn <-- tranl.lowerLayerOut;
             netwl.upperControlOut --> tranl.lowerControlIn;
             netwl.upperControlIn <-- tranl.lowerControlOut;
-            
+
             tranl.upperLayerOut --> appl.lowerIPLayerIn;
             tranl.upperLayerIn <-- appl.lowerIPLayerOut;
             tranl.upperControlOut --> { @display("ls=red;m=m,70,0,70,0"); } --> appl.lowerIPControlIn;
             tranl.upperControlIn <-- { @display("ls=red;m=m,70,0,70,0"); } <-- appl.lowerIPControlOut;
-        } 
-		if (transportType == "") {
+        }
+        if (ipNicType != "" && transportType == "") {
             netwl.upperLayerOut --> appl.lowerIPLayerIn;
             netwl.upperLayerIn <-- appl.lowerIPLayerOut;
             netwl.upperControlOut --> { @display("ls=red;m=m,70,0,70,0"); } --> appl.lowerIPControlIn;
             netwl.upperControlIn <-- { @display("ls=red;m=m,70,0,70,0"); } <-- appl.lowerIPControlOut;
         }
-        
         //# Connect MANET branch
-        
-        manetNic.upperLayerOut --> appl.lowerMANETLayerIn;
-        manetNic.upperLayerIn <-- appl.lowerMANETLayerOut;
-        manetNic.upperControlOut --> appl.lowerMANETControlIn;
-        manetNic.upperControlIn <-- appl.lowerMANETControlOut;
+
+        if (manetNicType != "") {
+            manetNic.upperLayerOut --> appl.lowerMANETLayerIn;
+            manetNic.upperLayerIn <-- appl.lowerMANETLayerOut;
+            manetNic.upperControlOut --> appl.lowerMANETControlIn;
+            manetNic.upperControlIn <-- appl.lowerMANETControlOut;
+        }
 }
