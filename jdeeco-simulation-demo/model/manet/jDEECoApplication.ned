@@ -14,12 +14,10 @@
 // 
 
 package manet;
-
-import org.mixim.base.modules.IBaseApplLayer;
 //
 // TODO auto-generated module
 //
-simple JDEECoApplication like IBaseApplLayer
+simple JDEECoApplication
 {
     parameters:
         int headerLength = 0;
@@ -32,8 +30,13 @@ simple JDEECoApplication like IBaseApplLayer
         bool showTxRange = default(true);  // whether to show the transmission range around the nodes
         double txRange @unit("m") = default(250m);  // the transmission range of the mobile node's radio
     gates:
-        input lowerLayerIn; // from network layer
-        output lowerLayerOut; // to network layer
-        input lowerControlIn; // control from network layer
-        output lowerControlOut; // control to network layer
+        input lowerIPLayerIn; // from network layer
+        output lowerIPLayerOut; // to network layer
+        input lowerIPControlIn; // control from network layer
+        output lowerIPControlOut; // control to network layer
+        
+        input lowerMANETLayerIn; // from manet layer
+        output lowerMANETLayerOut; // to manet layer
+        input lowerMANETControlIn; // control from manet layer
+        output lowerMANETControlOut; // control to manet layer
 }

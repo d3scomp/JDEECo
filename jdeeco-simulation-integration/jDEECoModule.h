@@ -45,7 +45,7 @@ protected:
 	//Needs to be called at the module initialisation
 	void jDEECoInitialize();
 	//Needs to be called from the handleMessage method
-	void jDEECoOnHandleMessage(cMessage *msg);
+	void jDEECoOnHandleMessage(cMessage *msg, double rssi);
 
 };
 
