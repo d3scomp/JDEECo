@@ -47,6 +47,11 @@ import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
 public class KnowledgeDataManager implements KnowledgeDataReceiver,
 KnowledgeDataPublisher {
 	
+	// this rssi corresponds to roughly 20m distance
+	public static final double RSSI_20m = 5.52e-8; 
+	// this rssi corresponds to roughly 10m distance
+	public static final double RSSI_10m = 3.12e-7;
+	
 	/** Global version counter for all outgoing local knowledge. */
 	protected long localVersion;	
 	/** Service for convenient time retrieval. */
@@ -100,8 +105,10 @@ KnowledgeDataPublisher {
 		logPublish(data);
 		
 		//TODO
-		knowledgeDataSender.broadcastKnowledgeData(data);		
-		localVersion++;
+		if (!data.isEmpty()) {
+			knowledgeDataSender.broadcastKnowledgeData(data);		
+			localVersion++;
+		}
 	}
 
 	@Override
@@ -162,30 +169,56 @@ KnowledgeDataPublisher {
 		for (KnowledgeManager km : kmContainer.getReplicas()) {
 			try {
 				
-				KnowledgeData kd = new KnowledgeData(km.get(emptyPath), replicaMetadata.get(km));
+				KnowledgeMetaData kmd = replicaMetadata.get(km);
 				KnowledgeManager nodeKm = getNodeKnowledge();
+								
+				if (!satisfiesGossipCondition(kmd)) { 
+					Log.d(String.format("Gossip condition failed (%d) at %s for %sv%d from %s with rssi %g\n", 
+							timeProvider.getCurrentTime(), host, kmd.componentId, kmd.versionId, kmd.sender, kmd.rssi));
+					continue;
+				}
 				
-				boolean isInSomeBoundary = false;
-				for (EnsembleDefinition ens: ensembleDefinitions) {
-					// null boundary condition counts as a satisfied one
-					if (ens.getCommunicationBoundary() == null 
-							|| ens.getCommunicationBoundary().eval(kd, nodeKm)) {
-						isInSomeBoundary = true;
-						break;
-					}
-				}
-				if (isInSomeBoundary) {
-					result.add(kd);
-				} else {
+				Log.d(String.format("Gossip condition succeeded (%d) at %s for %sv%d from %s with rssi %g\n", 
+						timeProvider.getCurrentTime(), host, kmd.componentId, kmd.versionId, kmd.sender, kmd.rssi));
+				
+				KnowledgeMetaData kmdCopy = kmd.clone();
+				kmdCopy.sender = host;
+				KnowledgeData kd = new KnowledgeData(km.get(emptyPath), kmdCopy);
+
+				if (!isInSomeBoundary(kd, nodeKm)) {
 					Log.d(String.format("Boundary failed (%d) at %s for %sv%d\n", 
-							timeProvider.getCurrentTime(), host, kd.getMetaData().componentId, kd.getMetaData().versionId));
-				}
+							timeProvider.getCurrentTime(), host, kmd.componentId, kmd.versionId));
+					continue;
+				} 
+					
+				result.add(kd);
+					
+				
 			} catch (KnowledgeNotFoundException e) {
 				Log.e("prepareKnowledgeData error", e);
 			}
 		}
 		
 		return result;
+	}
+
+	private boolean satisfiesGossipCondition(KnowledgeMetaData kmd) {
+		// rssi < 0 means received from IP
+		// the signal came from more than 10m
+		return kmd.rssi < 0 || kmd.rssi <= RSSI_10m;		
+	}
+
+	private boolean isInSomeBoundary(KnowledgeData data, KnowledgeManager sender) {
+		boolean isInSomeBoundary = false;
+		for (EnsembleDefinition ens: ensembleDefinitions) {
+			// null boundary condition counts as a satisfied one
+			if (ens.getCommunicationBoundary() == null 
+					|| ens.getCommunicationBoundary().eval(data, sender)) {
+				isInSomeBoundary = true;
+				break;
+			}
+		}
+		return isInSomeBoundary;
 	}
 
 	private KnowledgeManager getNodeKnowledge() {

@@ -25,7 +25,7 @@ import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
  */
 public class PacketReceiver {
 
-	private final static int MESSAGE_WIPE_PERIOD = 1500;
+	private final static int MESSAGE_WIPE_PERIOD = 500;
 
 	private final int packetSize;
 	private final Map<Integer, Message> messages;
@@ -80,17 +80,22 @@ public class PacketReceiver {
 	//TODO Possibly this should be scheduled as a task in the Scheduler.
 	private void clearCachedMessagesIfNecessary() {
 		if (timeProvider.getCurrentTime() - lastMessagesWipe >= MESSAGE_WIPE_PERIOD) {
+			int origCnt = messages.size();
+
 			Message message;
 			Iterator<Entry<Integer, Message>> it = messages.entrySet().iterator();
 			while (it.hasNext()) {
 				Entry<Integer, Message> entry = it.next();				
 				message = entry.getValue();
 				if (message != null && message.isStale()) {
-					it.remove();
+					it.remove();					
 				}
 			}
 			lastMessagesWipe = timeProvider.getCurrentTime();
+			int currentCnt = messages.size();
+			Log.i(String.format("Message wipe removed %d cached packets", origCnt - currentCnt));
 		}
+		
 	}
 
 	// -----------Helper methods-----------
@@ -122,7 +127,7 @@ public class PacketReceiver {
 
 	private class Message {
 
-		private final static int MAX_MESSAGE_TIME = 2000;
+		private final static int MAX_MESSAGE_TIME = 1000;
 
 		private Map<Integer, Object> cache = new HashMap<>();
 
