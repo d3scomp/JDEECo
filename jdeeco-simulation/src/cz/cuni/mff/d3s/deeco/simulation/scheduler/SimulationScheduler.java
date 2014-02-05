@@ -42,14 +42,19 @@ public class SimulationScheduler implements Scheduler,
 
 	private Executor executor;
 	
-	private static Random rnd = new Random(0);
+	private Random rnd;
 
 	public SimulationScheduler(Host host) {
 		this.host = host;
 		queue = new TreeSet<SchedulerEvent>();
 		allTasks = new HashSet<>();
 		periodicEvents = new HashMap<>();	
-
+		
+		long seed = 0;
+		for (char c: host.getId().toCharArray())
+			seed += c;
+		rnd = new Random(seed);
+		
 		host.setSimulationTimeEventListener(this);
 	}
 
@@ -155,8 +160,10 @@ public class SimulationScheduler implements Scheduler,
 			// The time is right to execute the next task			
 			pop();
 			if (event.period != 0) {
+				// schedule for the next period (the period might be variable,
+				// that's we query the trigger)
 				event.nextExecutionTime = event.nextExecutionTime
-						+ event.period;
+						+ event.executable.getPeriodicTrigger().getPeriod();
 				push(event);
 			}
 			if (executor != null) {
