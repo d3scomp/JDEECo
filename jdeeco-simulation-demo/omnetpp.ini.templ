@@ -1,6 +1,6 @@
 [General]
 network = manet.MANET
-sim-time-limit = 100s
+sim-time-limit = 10s
 
 load-libs = model oppcmdenv
 ned-path = model;mixim/examples;mixim/src/base;mixim/src/inet_stub;mixim/src/modules 
@@ -17,17 +17,17 @@ ned-path = model;mixim/examples;mixim/src/base;mixim/src/inet_stub;mixim/src/mod
 **.node[*].appl.modelScale = 5
 
 **.visualize = true
-cmdenv-express-mode = false
+cmdenv-express-mode = true
 scheduler-class = "cSocketSequentialScheduler"
-cmdenv-event-banners = false
+cmdenv-event-banners = true
 cmdenv-module-messages = false
 
 ##########################################################
 #	 Simulation parameters                        #
 ##########################################################
 **.**.coreDebug = false
-**.playgroundSizeX = 1300m
-**.playgroundSizeY = 1300m
+**.playgroundSizeX = 1500m
+**.playgroundSizeY = 1500m
 **.playgroundSizeZ = 10m
 
 ##########################################################
@@ -39,7 +39,7 @@ cmdenv-module-messages = false
 #      				 NIC cards        	     	  #
 ##########################################################
 **.node[*].manetNicType = "Nic802154_TI_CC2420" # max range around 250m
-**.node[*].ipNicType = "Nic80211" # max range around 250m
+#**.node[*].ipNicType = "Nic80211" # max range around 250m
 
 ##########################################################
 #       Parameters for the ConnectionManager             #

@@ -24,7 +24,11 @@ public class KnowledgeMetaData implements Serializable {
 		this.createdAt = createdAt;
 		this.hopCount = hopCount;
 	}
+
 	
+	public KnowledgeMetaData clone() {
+		return new KnowledgeMetaData(componentId, versionId, sender, createdAt, hopCount);
+	}
 	
 	@Override
 	public int hashCode() {
