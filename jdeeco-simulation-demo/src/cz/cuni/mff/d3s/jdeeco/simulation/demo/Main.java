@@ -1,8 +1,5 @@
 package cz.cuni.mff.d3s.jdeeco.simulation.demo;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
@@ -10,7 +7,9 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
@@ -45,7 +44,15 @@ public class Main {
 		AnnotationProcessor processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE);
 		SimulationRuntimeBuilder builder = new SimulationRuntimeBuilder();
 		
-		ConfigParser parser = new ConfigParser("component.cfg");
+		SiteConfigParser siteParser = new SiteConfigParser("site.cfg");
+		Area area = null;
+		Set<Area> areas = new HashSet<>();
+		while ((area = siteParser.parseArea()) != null) {
+			areas.add(area);
+		}
+		TeamLocationService.INSTANCE.init(areas);
+		
+		ComponentConfigParser parser = new ComponentConfigParser("component.cfg");
 		
 		PositionAwareComponent component = null;
 		List<RuntimeFramework> runtimes = new ArrayList<>();
@@ -97,48 +104,5 @@ public class Main {
 		
 		//System.gc();
 		System.out.println("Simulation finished.");
-	}
-	
-	private static class ConfigParser {
-		BufferedReader in;
-		ConfigParser(String filename) throws FileNotFoundException {
-			in = new BufferedReader(new FileReader(filename));
-		}
-		public PositionAwareComponent parseComponent() {
-			if (in == null)
-				return null;
-			String line;
-			try {
-				line = in.readLine();
-			} catch (IOException e) {				
-				e.printStackTrace();
-				return null;
-			}
-			if (line == null)
-				return null;
-			
-			String[] parts = line.split(" ");
-			if (parts.length < 4)
-				return null;
-			
-			
-			switch (parts[0]) {
-			case "M":
-				if (parts.length < 5)
-					return null;
-				return new Member(parts[1], parts[2], 
-						new Position(Integer.parseInt(parts[3]), Integer.parseInt(parts[4])));
-			case "L":
-				if (parts.length < 5)
-					return null;
-				return new Leader(parts[1], parts[2], 
-						new Position(Integer.parseInt(parts[3]), Integer.parseInt(parts[4])));
-			case "O":				
-				return new OtherComponent(parts[1], 
-						new Position(Integer.parseInt(parts[2]), Integer.parseInt(parts[3])));
-			default:
-				return null;
-			}			
-		}
 	}
 }

@@ -11,9 +11,9 @@ public class Position implements Serializable {
 	public Position() {
 	}
 
-	public Position(double latitude, double longitude) {
-		this.y = latitude;
-		this.x = longitude;
+	public Position(double x, double y) {
+		this.y = y;
+		this.x = x;
 	}
 
 	@Override
