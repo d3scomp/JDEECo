@@ -22,6 +22,8 @@ public abstract class PacketSender implements KnowledgeDataSender {
 	// We reserver Integer.MIN_VALUE for distinguishing initial packets.
 	private static int CURRENT_MESSAGE_ID = Integer.MIN_VALUE;
 
+	private final String host;
+	
 	public synchronized static int getNextMessageId() {
 		CURRENT_MESSAGE_ID++;
 		return CURRENT_MESSAGE_ID;
@@ -33,11 +35,12 @@ public abstract class PacketSender implements KnowledgeDataSender {
 	 * Minimum fragment size is at least 12 bytes.
 	 * 
 	 */
-	public PacketSender(int packetSize) {
+	public PacketSender(String host, int packetSize) {
 		// At least 12 because: 4 bytes for the initial frame marker, 4 bytes
 		// for message id and 4 bytes for packet count.
 		assert packetSize >= 12;
 		this.packetSize = packetSize;
+		this.host = host;
 	}
 	
 	@Override
@@ -55,11 +58,13 @@ public abstract class PacketSender implements KnowledgeDataSender {
 
 			int messageId = getNextMessageId();
 			
-			//Log.i(String.format("S: " + "(" + messageId + ")" + Arrays.deepToString(fragments)));
+			
+			Log.d(String.format("PacketSender: Sending MSG at %s with messageid %d", host, messageId));
 			
 			// We need to send the message containing id and the number of
 			// packets.that will be sent.
 			sendPacket(buildInitialPacket(messageId, getDataLength(fragments)), recipient);
+						
 			// Now we can send packets
 			for (int i = 0; i < fragments.length; i++) {
 				sendPacket(buildPacket(messageId, i, fragments[i]), recipient);

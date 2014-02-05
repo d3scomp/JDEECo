@@ -29,8 +29,8 @@ import cz.cuni.mff.d3s.deeco.simulation.SimulationRuntimeBuilder;
 public class Main {
 
 	static double POSITION_FACTOR = 1;
-	static int PACKET_SIZE = 1000;
-	static int PUBLISHING_PERIOD = 500;
+	static int PACKET_SIZE = 2000;
+	static int PUBLISHING_PERIOD = 1000;
 	
 	static String OMNET_CONFIG_TEMPLATE = "omnetpp.ini.templ";
 	static String OMNET_CONFIG_PATH = "omnetpp.ini";

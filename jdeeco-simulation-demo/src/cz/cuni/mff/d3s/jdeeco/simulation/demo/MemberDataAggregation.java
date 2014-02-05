@@ -70,21 +70,19 @@ public class MemberDataAggregation {
 	
 	@CommunicationBoundary
 	public static boolean boundary(KnowledgeData data, ReadOnlyKnowledgeManager sender) throws KnowledgeNotFoundException {
-		return true;
-//		KnowledgePath kpPosition = KnowledgePathBuilder.buildSimplePath("position");
-//		KnowledgePath kpTeam = KnowledgePathBuilder.buildSimplePath("teamId");
-//		//Position ownerPos = (Position) data.getKnowledge().getValue(kpPosition);
-//		Position senderPos = (Position) sender.get(Arrays.asList(kpPosition)).getValue(kpPosition);
-//		String ownerTeam = (String) data.getKnowledge().getValue(kpTeam);
-//		
-////		return distance(ownerPos, senderPos) < 550;
-//		
-//		// if the current component does not hawe a position or the owner does
-//		// not belong to a team then we do not propagate the knowledge (includes
-//		// all O*)
-//		if (senderPos == null || ownerTeam == null)
-//			return false;
-//		return TeamLocationService.INSTANCE.isAtTheTeamsSite(ownerTeam, senderPos);
+//		return true;
+		KnowledgePath kpPosition = KnowledgePathBuilder.buildSimplePath("position");
+		KnowledgePath kpTeam = KnowledgePathBuilder.buildSimplePath("teamId");
+		//Position ownerPos = (Position) data.getKnowledge().getValue(kpPosition);
+		Position senderPos = (Position) sender.get(Arrays.asList(kpPosition)).getValue(kpPosition);
+		String ownerTeam = (String) data.getKnowledge().getValue(kpTeam);
+	
+		// if the current component does not hawe a position or the owner does
+		// not belong to a team then we do not propagate the knowledge (includes
+		// all O*)
+		if (senderPos == null || ownerTeam == null)
+			return false;
+		return TeamLocationService.INSTANCE.isAtTheTeamsSite(ownerTeam, senderPos);
 	}
 	
 	private static double distance(Position a, Position b) {

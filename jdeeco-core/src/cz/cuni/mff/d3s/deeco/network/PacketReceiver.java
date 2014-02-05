@@ -5,10 +5,12 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
@@ -27,6 +29,8 @@ public class PacketReceiver {
 
 	private final static int MESSAGE_WIPE_PERIOD = 500;
 
+	private final String host;
+	
 	private final int packetSize;
 	private final Map<Integer, Message> messages;
 
@@ -34,9 +38,10 @@ public class PacketReceiver {
 	private CurrentTimeProvider timeProvider;
 	private long lastMessagesWipe = 0;
 
-	public PacketReceiver(int packetSize) {
+	public PacketReceiver(String host, int packetSize) {
 		this.packetSize = packetSize;
 		this.messages = new HashMap<Integer, Message>();
+		this.host = host;
 	}
 
 	public void setKnowledgeDataReceiver(
@@ -69,6 +74,8 @@ public class PacketReceiver {
 		if (msg.isComplete() && knowledgeDataReceiver != null) {
 			//Log.i(String.format("R: " + "(" + messageId + ")"
 			//		+ Arrays.toString(msg.data)));
+			Log.d(String.format("PacketReceiver: Message completed at %s with messageid %d", host, messageId));
+			
 			messages.remove(messageId);
 			List<? extends KnowledgeData> kd = msg.getKnowledgeDataList();
 			if (kd != null)
@@ -82,18 +89,22 @@ public class PacketReceiver {
 		if (timeProvider.getCurrentTime() - lastMessagesWipe >= MESSAGE_WIPE_PERIOD) {
 			int origCnt = messages.size();
 
+			Set<Integer> droppedIds = new HashSet<>();
+			
 			Message message;
 			Iterator<Entry<Integer, Message>> it = messages.entrySet().iterator();
 			while (it.hasNext()) {
 				Entry<Integer, Message> entry = it.next();				
 				message = entry.getValue();
 				if (message != null && message.isStale()) {
+					droppedIds.add(entry.getKey());
 					it.remove();					
 				}
 			}
 			lastMessagesWipe = timeProvider.getCurrentTime();
 			int currentCnt = messages.size();
-			Log.i(String.format("Message wipe removed %d cached packets", origCnt - currentCnt));
+			Log.i(String.format("Message wipe at %s removed %d cached packets", host, origCnt - currentCnt));
+			Log.d(String.format("PacketReceiver: Message wipe %s dropped messageids %s", host, Arrays.deepToString(droppedIds.toArray())));
 		}
 		
 	}

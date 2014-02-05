@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.deeco.network;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -106,7 +107,12 @@ KnowledgeDataPublisher {
 		
 		//TODO
 		if (!data.isEmpty()) {
-			knowledgeDataSender.broadcastKnowledgeData(data);		
+			
+//			// broadcast each kd individually to minimize the message size and
+//			// thus reduce network collisions.
+//			for (KnowledgeData kd: data)
+//				knowledgeDataSender.broadcastKnowledgeData(Arrays.asList(kd));
+			knowledgeDataSender.broadcastKnowledgeData(data);
 			localVersion++;
 		}
 	}
@@ -204,8 +210,8 @@ KnowledgeDataPublisher {
 
 	private boolean satisfiesGossipCondition(KnowledgeMetaData kmd) {
 		// rssi < 0 means received from IP
-		// the signal came from more than 10m
-		return kmd.rssi < 0 || kmd.rssi <= RSSI_10m;		
+		// the signal came from more than 20m
+		return kmd.rssi < 0 || kmd.rssi <= RSSI_20m;		
 	}
 
 	private boolean isInSomeBoundary(KnowledgeData data, KnowledgeManager sender) {
