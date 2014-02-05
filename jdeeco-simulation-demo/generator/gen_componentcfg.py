@@ -62,8 +62,9 @@ class Other(Component):
                 
 
 class Area:
-    def __init__(self, teams):
+    def __init__(self, id, teams):
         self.teams = teams
+        self.id = id
     def generatePositions(self, cnt):
         raise NotImplementedError()
     def getPlotObject(self, **plotargs):
@@ -88,11 +89,13 @@ class Area:
         for (x, y) in zip(lx, ly):
             ret.append(Other(x, y))
         return ret
+    def toString(self, idx):
+        raise NotImplementedError()
         
     
 class RectanguralArea(Area):
-    def __init__(self, x, y, width, height, teams):
-        Area.__init__(self, teams)
+    def __init__(self, id, x, y, width, height, teams):
+        Area.__init__(self, id, teams)
         self.x = x
         self.y = y
         self.width = width
@@ -108,10 +111,13 @@ class RectanguralArea(Area):
     
     def getPlotObject(self, **kwargs):
         return plt.Rectangle((self.x, self.y), self.width, self.height, fill=False, **kwargs)
+    
+    def toString(self):
+        return "R %s %d %d %d %d %s" % (self.id, self.x, self.y, self.width, self.height, ' '.join('T'+str(x) for x in self.teams)) 
 
 class CircularArea(Area):
-    def __init__(self, x, y, r, teams):
-        Area.__init__(self, teams)
+    def __init__(self, id, x, y, r, teams):
+        Area.__init__(self, id, teams)
         self.x = x
         self.y = y
         self.r = r        
@@ -128,15 +134,19 @@ class CircularArea(Area):
     
     def getPlotObject(self, **kwargs):
         return plt.Circle((self.x, self.y), self.r, fill=False, **kwargs)
+    
+    def toString(self):
+        return "C %s %d %d %d %s" % (self.id, self.x, self.y, self.r, ' '.join('T'+str(x) for x in self.teams))
 
-aHQ = RectanguralArea(100,100,300,200,range(7))
-aSite = CircularArea(1200,1000,150,range(0,4))
-aSite2 = CircularArea(300,1000,150,range(0,4))
-aSite3 = CircularArea(1200,450,150,range(4,7))
-aHQExtended = RectanguralArea(0,0,500,400,[])
-aSiteExtended = CircularArea(1200,1000,300,[])
-aSite2Extended = CircularArea(300,1000,300,[])
-aSite3Extended = CircularArea(1200,450,300,[])
+
+aHQ = RectanguralArea('HQ',100,100,300,200,range(7))
+aSite = CircularArea('Site1',1200,1000,150,range(0,4))
+aSite2 = CircularArea('Site2',300,1000,150,range(0,4))
+aSite3 = CircularArea('Site3',1200,450,150,range(4,7))
+aHQExtended = RectanguralArea('HQExt', 0,0,500,400,[])
+aSiteExtended = CircularArea('Site1Ext', 1200,1000,300,[])
+aSite2Extended = CircularArea('Site2Ext', 300,1000,300,[])
+aSite3Extended = CircularArea('Site3Ext', 1200,450,300,[])
 
 
 
@@ -192,6 +202,12 @@ for idx in range(size(members)):
 for idx in range(size(others)):
     print>>f, others[idx].toString(idx)
 f.close()
+
+f = open('../site.cfg', 'w') 
+for area in [aHQ, aSite, aSite2, aSite3]:
+    print>>f, area.toString();
+f.close()
+
 show()
 
 
