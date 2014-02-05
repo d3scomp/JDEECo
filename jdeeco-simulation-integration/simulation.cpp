@@ -415,7 +415,7 @@ DLLEXPORT_OR_IMPORT void jDEECoModule::jDEECoCallAt(double absoluteTime) {
 	//std::cout << "jDEECoCallAt: " << this->jDEECoGetModuleId() << " End" << std::endl;
 }
 
-DLLEXPORT_OR_IMPORT void jDEECoModule::jDEECoOnHandleMessage(cMessage *msg) {
+DLLEXPORT_OR_IMPORT void jDEECoModule::jDEECoOnHandleMessage(cMessage *msg, double rssi) {
 	//std::cout << "jDEECoOnHandleMessage: " << this->jDEECoGetModuleId() << " Begin" << std::endl;
 	jDEECoRuntime *runtime = NULL;
 	for (std::vector<jDEECoRuntime *>::iterator it = jDEECoRuntimes.begin(); it != jDEECoRuntimes.end(); ++it) {
@@ -445,7 +445,7 @@ DLLEXPORT_OR_IMPORT void jDEECoModule::jDEECoOnHandleMessage(cMessage *msg) {
 			}
 		} else if (opp_strcmp(msg->getName(), JDEECO_DATA_MESSAGE) == 0) {
 			//std::cout << "jDEECoOnHandleMessage: " << this->jDEECoGetModuleId() << " Before getting the \"packetRecived\" method reference" << std::endl;
-			mid = env->GetMethodID(cls, "packetReceived", "([B)V");
+			mid = env->GetMethodID(cls, "packetReceived", "([BD)V");
 			if (mid == 0)
 				return;
 			JDEECoPacket *jPacket = check_and_cast<JDEECoPacket *>(msg);
@@ -460,7 +460,7 @@ DLLEXPORT_OR_IMPORT void jDEECoModule::jDEECoOnHandleMessage(cMessage *msg) {
 			env->SetByteArrayRegion(jArray, 0, jPacket->getDataArraySize(),
 					buffer);
 			//std::cout << "jDEECoOnHandleMessage: " << this->jDEECoGetModuleId() << " Before calling the \"packetRecived\" method" << std::endl;
-			env->CallVoidMethod(runtime->host, mid, jArray);
+			env->CallVoidMethod(runtime->host, mid, jArray, rssi);
 			//std::cout << "jDEECoOnHandleMessage: " << this->jDEECoGetModuleId() << " After calling the \"packetRecived\" method" << std::endl;
 			env->DeleteLocalRef(jArray);
 			//std::cout << "jDEECoOnHandleMessage: " << this->jDEECoGetModuleId() << " After deleting the array reference" << std::endl;

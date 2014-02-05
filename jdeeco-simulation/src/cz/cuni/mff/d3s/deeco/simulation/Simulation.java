@@ -70,7 +70,6 @@ public class Simulation {
 	public Host getHost(String id, int packetSize) {
 		return new Host(this, id, packetSize);
 	}
-
 	// Wrapper methods we may need them.
 
 	public void register(Object host, String id) {

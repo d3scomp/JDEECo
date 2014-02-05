@@ -48,8 +48,8 @@ public class Host extends PacketSender implements CurrentTimeProvider {
 
 	// Method used by the simulation
 
-	public void packetReceived(byte[] packet) {
-		packetReceiver.packetReceived(packet);
+	public void packetReceived(byte[] packet, double rssi) {
+		packetReceiver.packetReceived(packet, rssi);
 	}
 
 	public void at(double absoluteTime) {

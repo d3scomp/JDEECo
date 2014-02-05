@@ -48,7 +48,7 @@ public class PacketReceiver {
 		this.timeProvider = timeProvider;
 	}
 
-	public void packetReceived(byte[] packet) {
+	public void packetReceived(byte[] packet, double rssi) {
 		Message msg;
 		int messageId = getMessageId(packet);
 
@@ -58,7 +58,6 @@ public class PacketReceiver {
 			msg = new Message(messageId);
 			messages.put(messageId, msg);
 		}
-
 		if (isInitialPacket(packet)) {
 			int messageSize = getMessageSize(packet);
 			msg.initialize(messageSize);
@@ -66,6 +65,7 @@ public class PacketReceiver {
 			int seqNumber = getPacketSeqNumber(packet);
 			msg.setData(seqNumber, getPacketData(packet));
 		}
+		msg.setLastRSSI(rssi);
 		if (msg.isComplete() && knowledgeDataReceiver != null) {
 			//Log.i(String.format("R: " + "(" + messageId + ")"
 			//		+ Arrays.toString(msg.data)));
@@ -130,7 +130,8 @@ public class PacketReceiver {
 		private int remainingBytes = 0;
 		private boolean isInitialized = false;
 		private long creationTime;
-
+		
+		private double lastRSSI;
 		private int messageId = 0;
 
 		public Message(int messageId) {
@@ -140,6 +141,10 @@ public class PacketReceiver {
 
 		public boolean isStale() {
 			return timeProvider.getCurrentTime() - creationTime > MAX_MESSAGE_TIME;
+		}
+		
+		public void setLastRSSI(double rssi) {
+			lastRSSI = rssi;
 		}
 
 		public void setData(int seqNumber, byte[] data) {
@@ -166,6 +171,8 @@ public class PacketReceiver {
 			try {
 				if (isComplete()) {
 					List<? extends KnowledgeData> result = (List<? extends KnowledgeData>) Serializer.deserialize(data);
+					for (KnowledgeData kd : result)
+						kd.getMetaData().rssi = lastRSSI;
 					return result;
 				}
 			} catch (IOException | ClassNotFoundException e) {
