@@ -1,5 +1,5 @@
 from math import pi, cos, sin, sqrt
-from random import random
+from random import random, choice
 from pylab import *
 import matplotlib.pyplot as plt
 
@@ -19,7 +19,7 @@ def points_in_circle(x, y, r, cnt):
         ry.append(y1)
     return rx, ry
 
-teamColors = ['b','r','g','y','c'];
+teamColors = ['b','r','g','y','c','m','k'];
 teamcnt = 4
 
 class Component:
@@ -31,7 +31,8 @@ class Component:
     def plotType(self):
         raise NotImplementedError()
     def plot(self, area):
-        area.plot(self.x, self.y, self.plotType())
+        area.plot(self.x, self.y, self.plotType(), zorder=1)
+        area.add_artist(plt.Circle((self.x, self.y), 250, fill=False, color='#eeeeee', zorder=0))
         
 class Leader(Component):
     def __init__(self, team, x, y):
@@ -61,6 +62,8 @@ class Other(Component):
                 
 
 class Area:
+    def __init__(self, teams):
+        self.teams = teams
     def generatePositions(self, cnt):
         raise NotImplementedError()
     def getPlotObject(self, **plotargs):
@@ -69,14 +72,14 @@ class Area:
         ret = []
         lx, ly = self.generatePositions(cnt)
         for (x, y) in zip(lx, ly):
-            team = randint(1, teamcnt)
+            team = choice(self.teams)
             ret.append(Leader(team, x, y))
         return ret
     def generateMembers(self, cnt):
         ret = []
         lx, ly = self.generatePositions(cnt)
         for (x, y) in zip(lx, ly):
-            team = randint(1, teamcnt)
+            team = choice(self.teams)
             ret.append(Member(team, x, y))
         return ret
     def generateOthers(self, cnt):
@@ -88,7 +91,8 @@ class Area:
         
     
 class RectanguralArea(Area):
-    def __init__(self, x, y, width, height):
+    def __init__(self, x, y, width, height, teams):
+        Area.__init__(self, teams)
         self.x = x
         self.y = y
         self.width = width
@@ -106,7 +110,8 @@ class RectanguralArea(Area):
         return plt.Rectangle((self.x, self.y), self.width, self.height, fill=False, **kwargs)
 
 class CircularArea(Area):
-    def __init__(self, x, y, r):
+    def __init__(self, x, y, r, teams):
+        Area.__init__(self, teams)
         self.x = x
         self.y = y
         self.r = r        
@@ -124,36 +129,55 @@ class CircularArea(Area):
     def getPlotObject(self, **kwargs):
         return plt.Circle((self.x, self.y), self.r, fill=False, **kwargs)
 
-aHQ = RectanguralArea(50,50,300,200)
-aSite = CircularArea(700,700,200)
-aHQExtended = RectanguralArea(0,0,400,300)
-aSiteExtended = CircularArea(700,700,300)
+aHQ = RectanguralArea(100,100,300,200,range(7))
+aSite = CircularArea(1200,1000,150,range(0,4))
+aSite2 = CircularArea(300,1000,150,range(0,4))
+aSite3 = CircularArea(1200,450,150,range(4,7))
+aHQExtended = RectanguralArea(0,0,500,400,[])
+aSiteExtended = CircularArea(1200,1000,300,[])
+aSite2Extended = CircularArea(300,1000,300,[])
+aSite3Extended = CircularArea(1200,450,300,[])
+
 
 
 fig = figure()
 area = fig.add_subplot(111, aspect='equal')
-area.set_xlim(0, 1000)
-area.set_ylim(0, 1000)
+area.set_xlim(0, 1500)
+area.set_ylim(0, 1500)
 
 
 area.add_artist(aHQ.getPlotObject(color='k'))
 area.add_artist(aSite.getPlotObject(color='r'))
+area.add_artist(aSite2.getPlotObject(color='r'))
+area.add_artist(aSite3.getPlotObject(color='r'))
 area.add_artist(aHQExtended.getPlotObject(color='k', linestyle='dashed'))
 area.add_artist(aSiteExtended.getPlotObject(color='r', linestyle='dashed'))
+area.add_artist(aSite2Extended.getPlotObject(color='r', linestyle='dashed'))
+area.add_artist(aSite3Extended.getPlotObject(color='r', linestyle='dashed'))
 
 
 leaders = []
-leaders.extend(aHQ.generateLeaders(10))
-leaders.extend(aSite.generateLeaders(20))
+leaders.extend(aHQ.generateLeaders(10)) 
+leaders.extend(aSite.generateLeaders(5))
+leaders.extend(aSite2.generateLeaders(5))
+leaders.extend(aSite3.generateLeaders(5))
+
 
 
 members = []
-members.extend(aHQ.generateMembers(50))
-members.extend(aSite.generateMembers(100))
+members.extend(aHQ.generateMembers(25))
+members.extend(aSite.generateMembers(30))
+members.extend(aSite2.generateMembers(30))
+members.extend(aSite3.generateMembers(30))
+
+
 
 others = []
 others.extend(aHQExtended.generateOthers(20))
-others.extend(aSiteExtended.generateOthers(50))
+others.extend(aSiteExtended.generateOthers(20))
+others.extend(aSite2Extended.generateOthers(20))
+others.extend(aSite3Extended.generateOthers(20))
+
 
 
 for cmp in leaders + members + others:
