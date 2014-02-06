@@ -10,8 +10,7 @@ ned-path = model;mixim/examples;mixim/src/base;mixim/src/inet_stub;mixim/src/mod
 ##########################################################
 **.playgroundLatitude = -25.39
 **.playgroundLongitude = 131.05
-**.playgroundWidth = 2km
-**.playgroundHeight = 2km
+
 **.node[*].appl.modelURL = "http://omnetpp.org/download/demo/car.kmz/models/skpfile.dae"
 **.node[*].appl.txRange = 250m
 **.node[*].appl.modelScale = 5
@@ -26,8 +25,7 @@ cmdenv-module-messages = false
 #	 Simulation parameters                        #
 ##########################################################
 **.**.coreDebug = false
-**.playgroundSizeX = 1500m
-**.playgroundSizeY = 1500m
+# see below
 **.playgroundSizeZ = 10m
 
 ##########################################################
@@ -110,7 +108,19 @@ cmdenv-module-messages = false
 **.node[*].mobilityType = "StationaryMobility"
 **.node[*].mobility.initFromDisplayString = false
 
+
+
+##########################################################
+#       Generated                                        #
+##########################################################
 # the following is to be generated
+
+#**.playgroundWidth = 2km
+#**.playgroundHeight = 2km
+
+#**.playgroundSizeX = 1500m
+#**.playgroundSizeY = 1500m
+
 #**.numNodes = 5
 
 #**.node[0].mobility.initialX = 150m

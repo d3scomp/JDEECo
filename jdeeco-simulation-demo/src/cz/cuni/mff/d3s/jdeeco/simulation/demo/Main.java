@@ -51,6 +51,8 @@ public class Main {
 		SimulationRuntimeBuilder builder = new SimulationRuntimeBuilder();
 		
 		SiteConfigParser siteParser = new SiteConfigParser(siteCfg);
+		Position topRight = siteParser.parseTopRightCorner();
+		
 		Area area = null;
 		Set<Area> areas = new HashSet<>();
 		while ((area = siteParser.parseArea()) != null) {
@@ -63,10 +65,9 @@ public class Main {
 		PositionAwareComponent component = null;
 		List<RuntimeFramework> runtimes = new ArrayList<>();
 		List<Host> hosts = new ArrayList<>();
-
 		
 		StringBuilder omnetConfig = new StringBuilder();
-		int i = 0;
+		int i = 0;		
 		
 		// for each component config crate a separate model including only the component and all ensemble definitions,
 		// a separate host, and a separate runtime framework
@@ -100,6 +101,11 @@ public class Main {
 		Files.copy(Paths.get(OMNET_CONFIG_TEMPLATE), Paths.get(OMNET_CONFIG_PATH), StandardCopyOption.REPLACE_EXISTING);
 		
 		PrintWriter out = new PrintWriter(Files.newOutputStream(Paths.get(OMNET_CONFIG_PATH), StandardOpenOption.APPEND));
+		out.println();
+		out.println(String.format("**.playgroundWidth = %dm", (int) topRight.x));
+		out.println(String.format("**.playgroundHeight = %dm",(int) topRight.y));
+		out.println(String.format("**.playgroundSizeX = %dm", (int) topRight.x));
+		out.println(String.format("**.playgroundSizeY = %dm", (int) topRight.y));
 		out.println();
 		out.println(String.format("**.numNodes = %d", hosts.size()));
 		out.println();

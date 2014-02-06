@@ -11,6 +11,29 @@ class SiteConfigParser {
 	SiteConfigParser(String filename) throws FileNotFoundException {
 		in = new BufferedReader(new FileReader(filename));
 	}
+	
+	public Position parseTopRightCorner() {
+		if (in == null)
+			return null;
+		String line;
+		try {
+			line = in.readLine();
+		} catch (IOException e) {				
+			e.printStackTrace();
+			return null;
+		}
+		if (line == null)
+			return null;
+		
+		String[] parts = line.split(" ");
+		Position p = new Position();
+		try {
+			p.x = Integer.parseInt(parts[0]);
+			p.y = Integer.parseInt(parts[1]);
+		} finally {}
+		return p;
+	}
+	
 	public Area parseArea() {
 		if (in == null)
 			return null;
