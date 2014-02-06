@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
 
+import cz.cuni.mff.d3s.deeco.DeecoProperties;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 
 /**
@@ -19,17 +20,21 @@ import cz.cuni.mff.d3s.deeco.logging.Log;
  */
 public abstract class PacketSender implements KnowledgeDataSender {
 
+	static int DEFAULT_PACKET_SIZE = 1000;
+
 	// We reserver Integer.MIN_VALUE for distinguishing initial packets.
 	private static int CURRENT_MESSAGE_ID = Integer.MIN_VALUE;
 
 	private final String host;
 	
+	private final int packetSize;
+
+	//FIXME: this would not work if distributed on multiple JVMs
 	public synchronized static int getNextMessageId() {
 		CURRENT_MESSAGE_ID++;
 		return CURRENT_MESSAGE_ID;
 	}
 
-	private final int packetSize;
 
 	/**
 	 * Minimum fragment size is at least 12 bytes.
@@ -41,6 +46,12 @@ public abstract class PacketSender implements KnowledgeDataSender {
 		assert packetSize >= 12;
 		this.packetSize = packetSize;
 		this.host = host;
+		
+		Log.d(String.format("PacketSender at %s uses packetSize = %d", host, packetSize));
+	}
+	
+	public PacketSender(String host) {
+		this(host, Integer.getInteger(DeecoProperties.PACKET_SIZE, DEFAULT_PACKET_SIZE));
 	}
 	
 	@Override

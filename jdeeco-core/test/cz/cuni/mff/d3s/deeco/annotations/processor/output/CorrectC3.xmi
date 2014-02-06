@@ -14,7 +14,7 @@
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="level3"/>
         </knowledgePath>
       </parameters>
-      <triggers xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PeriodicTrigger" period="2000"/>
+      <triggers xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:TimeTrigger" period="2000"/>
     </componentProcesses>
   </componentInstances>
 </cz.cuni.mff.d3s.deeco.model.runtime:RuntimeMetadata>

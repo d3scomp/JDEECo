@@ -169,7 +169,7 @@ public class EnsembleTaskTest {
 	public void testSchedulingPeriod() {
 		// GIVEN an EnsembleTask initialized with an InstanceEnsemblingController
 		// WHEN getSchedulingPeriod is called
-		long period = task.getPeriodicTrigger().getPeriod();
+		long period = task.getTimeTrigger().getPeriod();
 		// THEN it returns the period specified in the model
 		// THEN it returns the period specified in the model
 		assertEquals(model.ensemblePeriodicTrigger.getPeriod(), period);

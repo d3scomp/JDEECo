@@ -30,7 +30,7 @@
         </knowledgePath>
       </parameters>
     </knowledgeExchange>
-    <triggers xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PeriodicTrigger" period="3000"/>
+    <triggers xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:TimeTrigger" period="3000"/>
     <triggers xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:KnowledgeChangeTrigger">
       <knowledgePath>
         <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeCoordinator"/>

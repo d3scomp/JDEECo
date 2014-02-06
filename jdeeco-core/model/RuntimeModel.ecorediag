@@ -4,8 +4,12 @@
     <children xmi:type="notation:Node" xmi:id="_n6RFYzyaEeOBILfoZuXX_w" type="4001"/>
     <children xmi:type="notation:Node" xmi:id="_n6RFZDyaEeOBILfoZuXX_w" type="5001">
       <children xmi:type="notation:Node" xmi:id="_n6RscDyaEeOBILfoZuXX_w" type="2001">
-        <element xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//PeriodicTrigger/period"/>
+        <element xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//TimeTrigger/period"/>
         <layoutConstraint xmi:type="notation:Location" xmi:id="_n6RscTyaEeOBILfoZuXX_w"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_1r-MEI8rEeOwu4UaHkjubw" type="2001">
+        <element xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//TimeTrigger/offset"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_1r-MEY8rEeOwu4UaHkjubw"/>
       </children>
       <styles xmi:type="notation:DrawerStyle" xmi:id="_n6RFZTyaEeOBILfoZuXX_w"/>
       <styles xmi:type="notation:SortingStyle" xmi:id="_n6RFZjyaEeOBILfoZuXX_w"/>
@@ -17,7 +21,7 @@
       <styles xmi:type="notation:FilteringStyle" xmi:id="_n6RFazyaEeOBILfoZuXX_w"/>
     </children>
     <styles xmi:type="notation:ShapeStyle" xmi:id="_n6RFYTyaEeOBILfoZuXX_w" fontColor="4210752" fontName="Segoe UI" fontHeight="10" fillColor="13761016" lineColor="8421504"/>
-    <element xmi:type="ecore:EClass" href="RuntimeModel.ecore#//PeriodicTrigger"/>
+    <element xmi:type="ecore:EClass" href="RuntimeModel.ecore#//TimeTrigger"/>
     <layoutConstraint xmi:type="notation:Bounds" xmi:id="_n6RFYjyaEeOBILfoZuXX_w" x="48" y="384"/>
   </children>
   <children xmi:type="notation:Node" xmi:id="_n6XzGTyaEeOBILfoZuXX_w" type="1001">

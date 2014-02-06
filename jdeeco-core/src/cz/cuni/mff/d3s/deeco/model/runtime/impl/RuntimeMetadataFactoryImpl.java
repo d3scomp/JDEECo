@@ -67,7 +67,7 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	@Override
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
-			case RuntimeMetadataPackage.PERIODIC_TRIGGER: return createPeriodicTrigger();
+			case RuntimeMetadataPackage.TIME_TRIGGER: return createTimeTrigger();
 			case RuntimeMetadataPackage.KNOWLEDGE_CHANGE_TRIGGER: return createKnowledgeChangeTrigger();
 			case RuntimeMetadataPackage.KNOWLEDGE_PATH: return createKnowledgePath();
 			case RuntimeMetadataPackage.PATH_NODE_FIELD: return createPathNodeField();
@@ -134,16 +134,6 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public PeriodicTrigger createPeriodicTrigger() {
-		PeriodicTriggerImpl periodicTrigger = new PeriodicTriggerImpl();
-		return periodicTrigger;
 	}
 
 	/**
@@ -314,6 +304,16 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	public Map.Entry<String, Object> createStringToObjectMap() {
 		StringToObjectMapImpl stringToObjectMap = new StringToObjectMapImpl();
 		return stringToObjectMap;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public TimeTrigger createTimeTrigger() {
+		TimeTriggerImpl timeTrigger = new TimeTriggerImpl();
+		return timeTrigger;
 	}
 
 	/**

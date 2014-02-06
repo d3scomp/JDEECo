@@ -7,7 +7,7 @@
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="x"/>
         </knowledgePath>
       </parameters>
-      <triggers xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PeriodicTrigger" period="2000"/>
+      <triggers xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:TimeTrigger" period="2000"/>
     </componentProcesses>
     <componentProcesses method="public static void cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC1.process1(java.lang.Integer,java.lang.String,java.lang.Boolean)" name="process1">
       <parameters direction="IN" type="java.lang.Integer">
@@ -27,7 +27,7 @@
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="level1"/>
         </knowledgePath>
       </parameters>
-      <triggers xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PeriodicTrigger" period="1000"/>
+      <triggers xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:TimeTrigger" period="1000"/>
       <triggers xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:KnowledgeChangeTrigger">
         <knowledgePath>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="level1"/>

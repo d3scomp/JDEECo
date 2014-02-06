@@ -10,7 +10,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataFactoryImpl;
 
 /**
@@ -35,8 +35,8 @@ public class RuntimeMetadataFactoryExt extends RuntimeMetadataFactoryImpl {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataFactoryImpl#createPeriodicTrigger()
 	 */
 	@Override
-	public PeriodicTrigger createPeriodicTrigger() {
-		return new PeriodicTriggerExt();
+	public TimeTrigger createTimeTrigger() {
+		return new TimeTriggerExt();
 	}
 
 	/* (non-Javadoc)

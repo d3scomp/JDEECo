@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import cz.cuni.mff.d3s.deeco.DeecoProperties;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
 
@@ -27,7 +28,10 @@ import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
  */
 public class PacketReceiver {
 
-	private final static int MESSAGE_WIPE_PERIOD = 500;
+	private final static int DEFAULT_MESSAGE_WIPE_PERIOD = 500;
+	
+	private final static int DEFAULT_MAX_MESSAGE_TIME = 2000;
+
 
 	private final String host;
 	
@@ -37,11 +41,25 @@ public class PacketReceiver {
 	private KnowledgeDataReceiver knowledgeDataReceiver;
 	private CurrentTimeProvider timeProvider;
 	private long lastMessagesWipe = 0;
+	
+	private final int maxMessageTime;
+	private final int messageWipePeriod;
 
 	public PacketReceiver(String host, int packetSize) {
 		this.packetSize = packetSize;
 		this.messages = new HashMap<Integer, Message>();
 		this.host = host;
+		
+		maxMessageTime = Integer.getInteger(DeecoProperties.MESSAGE_CACHE_DEADLINE, DEFAULT_MAX_MESSAGE_TIME);
+		messageWipePeriod = Integer.getInteger(DeecoProperties.MESSAGE_CACHE_WIPE_PERIOD, DEFAULT_MESSAGE_WIPE_PERIOD);
+		
+		Log.d(String.format("PacketReceiver at %s uses packetSize=%d, maxMessageTime=%d, messageWipePeriod=%d", 
+				host, packetSize, maxMessageTime, messageWipePeriod));
+		
+	}
+	
+	public PacketReceiver(String host) {
+		this(host, Integer.getInteger(DeecoProperties.PACKET_SIZE, PacketSender.DEFAULT_PACKET_SIZE));
 	}
 
 	public void setKnowledgeDataReceiver(
@@ -86,7 +104,7 @@ public class PacketReceiver {
 
 	//TODO Possibly this should be scheduled as a task in the Scheduler.
 	private void clearCachedMessagesIfNecessary() {
-		if (timeProvider.getCurrentTime() - lastMessagesWipe >= MESSAGE_WIPE_PERIOD) {
+		if (timeProvider.getCurrentTime() - lastMessagesWipe >= messageWipePeriod) {
 			int origCnt = messages.size();
 
 			Set<Integer> droppedIds = new HashSet<>();
@@ -138,7 +156,6 @@ public class PacketReceiver {
 
 	private class Message {
 
-		private final static int MAX_MESSAGE_TIME = 1000;
 
 		private Map<Integer, Object> cache = new HashMap<>();
 
@@ -156,7 +173,7 @@ public class PacketReceiver {
 		}
 
 		public boolean isStale() {
-			return timeProvider.getCurrentTime() - creationTime > MAX_MESSAGE_TIME;
+			return timeProvider.getCurrentTime() - creationTime > maxMessageTime;
 		}
 		
 		public void setLastRSSI(double rssi) {

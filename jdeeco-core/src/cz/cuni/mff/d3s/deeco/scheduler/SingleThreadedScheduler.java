@@ -35,8 +35,9 @@ import java.util.concurrent.ExecutorService;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.custom.TimeTriggerExt;
 import cz.cuni.mff.d3s.deeco.task.Task;
 import cz.cuni.mff.d3s.deeco.task.TaskInvocationException;
 import cz.cuni.mff.d3s.deeco.task.TaskTriggerListener;
@@ -125,10 +126,10 @@ public class SingleThreadedScheduler implements Scheduler {
 			if (event == null)
 				return;
 			
-				// if the periodic task execution took more than it remained till the next period 
-				if (event.nextExecutionTime < System.currentTimeMillis()) {				
-					queue.rescheduleTask(event, System.currentTimeMillis() + event.period);
-				}
+			// if the periodic task execution took more than it remained till the next period 
+			if (event.nextExecutionTime < System.currentTimeMillis()) {				
+				queue.rescheduleTask(event, System.currentTimeMillis() + event.executable.getTimeTrigger().getPeriod());
+			}
 			
 		}		
 	}
@@ -187,10 +188,15 @@ public class SingleThreadedScheduler implements Scheduler {
 					throw new IllegalStateException(
 							"Scheduler already terminated.");
 				
-				if (task.getPeriodicTrigger() != null) {
-					SchedulerEvent event = new SchedulerEvent(task, task.getPeriodicTrigger());
-					scheduleNow(event, task.getPeriodicTrigger().getPeriod());
-					periodicEvents.put(task, event);
+				if (task.getTimeTrigger() != null) {
+					SchedulerEvent event = new SchedulerEvent(task, task.getTimeTrigger());
+					
+					// schedule periodic tasks immediately
+					if (event.periodic) {
+						periodicEvents.put(task, event);
+					}
+					
+					scheduleAfter(event, task.getTimeTrigger().getOffset());					
 				}
 			}
 			task.setTriggerListener(new TaskTriggerListener() {	
@@ -205,7 +211,7 @@ public class SingleThreadedScheduler implements Scheduler {
 							isScheduled = allTasks.contains(task);
 						}
 						if (isScheduled) {
-							scheduleNow(new SchedulerEvent(task, trigger), 0);
+							scheduleAfter(new SchedulerEvent(task, trigger), 0);
 						}
 					}
 				}
@@ -218,15 +224,28 @@ public class SingleThreadedScheduler implements Scheduler {
 	/**
 	 * Note that this method has to be explicitly protected by queue's monitor!
 	 */
-	void scheduleNow(SchedulerEvent event, long period) {			
-			event.nextExecutionTime = System.currentTimeMillis(); // start immediately
-			event.period = period;
+	void scheduleAfter(SchedulerEvent event, long delay) {			
+			event.nextExecutionTime = System.currentTimeMillis() + delay;			
 			event.state = SchedulerEvent.SCHEDULED;
 
 			queue.add(event);
 			if (queue.getMin() == event)
 				queue.notify();		
 	}
+
+//	
+//	/**
+//	 * Note that this method has to be explicitly protected by queue's monitor!
+//	 */
+//	void scheduleNow(SchedulerEvent event, long period) {			
+//			event.nextExecutionTime = System.currentTimeMillis(); // start immediately
+//			event.period = period;
+//			event.state = SchedulerEvent.SCHEDULED;
+//
+//			queue.add(event);
+//			if (queue.getMin() == event)
+//				queue.notify();		
+//	}
 
 
 	@Override
@@ -412,11 +431,11 @@ class SchedulerThread extends Thread {
                     if( event.state == SchedulerEvent.RUNNING )
                     	continue;
                     
-                    if (event.period == 0) { // Non-repeating, remove
-                        queue.removeMin();
+                    if (event.periodic) { // Repeating task, reschedule
+                    	queue.rescheduleMin(event.nextExecutionTime + event.executable.getTimeTrigger().getPeriod());                       
+                    } else { // Non-repeating, remove
+                    	queue.removeMin();
                         event.state = SchedulerEvent.EXECUTED;
-                    } else { // Repeating task, reschedule
-                        queue.rescheduleMin(event.nextExecutionTime + event.period);
                     }              
                     
                     task = event.executable;
@@ -676,6 +695,14 @@ class TaskQueue {
 class InvokeAndWaitTask extends Task {
 
 	Runnable runnable;
+	TimeTrigger trigger;
+	
+	public InvokeAndWaitTask() {
+		super(null);
+		trigger = new TimeTriggerExt();
+		trigger.setPeriod(0);
+		trigger.setOffset(0);
+	}
 	
 	public InvokeAndWaitTask(Scheduler scheduler, Runnable runnable) {
 		super(scheduler);
@@ -698,8 +725,8 @@ class InvokeAndWaitTask extends Task {
 	}
 
 	@Override
-	public PeriodicTrigger getPeriodicTrigger() {		
-		return null;
+	public TimeTrigger getTimeTrigger() {		
+		return trigger;
 	}
 	
 }
