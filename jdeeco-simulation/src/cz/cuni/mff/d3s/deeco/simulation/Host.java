@@ -13,6 +13,7 @@ import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
  * 
  */
 public class Host extends PacketSender implements CurrentTimeProvider {
+	
 
 	private SimulationTimeEventListener timeEventListener = null;
 
@@ -20,14 +21,16 @@ public class Host extends PacketSender implements CurrentTimeProvider {
 	private final Simulation simulation;
 	private final String id;
 	
-	protected Host(Simulation simulation, String id, int packetSize) {
-		super(id, packetSize);
+	protected Host(Simulation simulation, String id) {
+		super(id);
 		this.simulation = simulation;
 		this.id = id;
-		this.packetReceiver = new PacketReceiver(id, packetSize);
+		this.packetReceiver = new PacketReceiver(id);
 		this.packetReceiver.setCurrentTimeProvider(this);
 		simulation.register(this, id);
 	}
+	
+
 
 	public PacketReceiver getPacketReceiver() {
 		return packetReceiver;

@@ -43,8 +43,10 @@ public class PublisherTask extends Task {
 		public PublisherTrigger(long period, long seed) {
 			super();
 			setPeriod(period);
-			setOffset(0);
 			random = new Random(seed);
+			// for experiments, publisher task has a random start offset up to its period
+			setOffset(random.nextInt((int) period));
+			
 		}
 		
 		@Override

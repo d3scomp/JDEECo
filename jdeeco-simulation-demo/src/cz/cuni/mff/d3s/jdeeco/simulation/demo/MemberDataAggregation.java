@@ -41,8 +41,6 @@ import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 @PeriodicScheduling(1000)
 public class MemberDataAggregation {
 
-	private static final long serialVersionUID = 5991804902054860542L;
-
 	@Membership
 	public static boolean membership(
 			@In("member.teamId") String mteamId,
@@ -70,7 +68,6 @@ public class MemberDataAggregation {
 	
 	@CommunicationBoundary
 	public static boolean boundary(KnowledgeData data, ReadOnlyKnowledgeManager sender) throws KnowledgeNotFoundException {
-//		return true;
 		KnowledgePath kpPosition = KnowledgePathBuilder.buildSimplePath("position");
 		KnowledgePath kpTeam = KnowledgePathBuilder.buildSimplePath("teamId");
 		//Position ownerPos = (Position) data.getKnowledge().getValue(kpPosition);

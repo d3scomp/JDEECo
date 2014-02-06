@@ -28,10 +28,6 @@ import cz.cuni.mff.d3s.deeco.simulation.SimulationRuntimeBuilder;
  */
 public class Main {
 
-	static double POSITION_FACTOR = 1;
-	static int PACKET_SIZE = 2000;
-	static int PUBLISHING_PERIOD = 1000;
-	
 	static String OMNET_CONFIG_TEMPLATE = "omnetpp.ini.templ";
 	static String OMNET_CONFIG_PATH = "omnetpp.ini";
 	
@@ -80,22 +76,22 @@ public class Main {
 						
 			omnetConfig.append(String.format(
 					"**.node[%s].mobility.initialX = %dm\n", 
-					i, (int) (component.position.x * POSITION_FACTOR)));
+					i, (int) (component.position.x)));
 			omnetConfig.append(String.format(
 					"**.node[%s].mobility.initialY = %dm\n", 
-					i, (int) (component.position.y * POSITION_FACTOR)));
+					i, (int) (component.position.y)));
 			omnetConfig.append(String.format(
 					"**.node[%s].mobility.initialZ = 0m\n", i));
 			omnetConfig.append(String.format(
 					"**.node[%s].appl.id = \"%s\"\n\n", i, component.id));
 			
-			Host host = sim.getHost(component.id, PACKET_SIZE);			
+			Host host = sim.getHost(component.id);			
 			hosts.add(host);
 			
 			// there is only one component instance
 			model.getComponentInstances().get(0).getInternalData().put(PositionAwareComponent.HOST_REFERENCE, host);
 			
-			RuntimeFramework runtime = builder.build(host, model, PUBLISHING_PERIOD); 
+			RuntimeFramework runtime = builder.build(host, model); 
 			runtimes.add(runtime);
 			runtime.start();
 			i++;

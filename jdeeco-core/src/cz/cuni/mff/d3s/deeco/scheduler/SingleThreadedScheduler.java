@@ -233,20 +233,6 @@ public class SingleThreadedScheduler implements Scheduler {
 				queue.notify();		
 	}
 
-//	
-//	/**
-//	 * Note that this method has to be explicitly protected by queue's monitor!
-//	 */
-//	void scheduleNow(SchedulerEvent event, long period) {			
-//			event.nextExecutionTime = System.currentTimeMillis(); // start immediately
-//			event.period = period;
-//			event.state = SchedulerEvent.SCHEDULED;
-//
-//			queue.add(event);
-//			if (queue.getMin() == event)
-//				queue.notify();		
-//	}
-
 
 	@Override
 	public void removeTask(Task task) {
