@@ -3,9 +3,7 @@ package cz.cuni.mff.d3s.deeco.simulation;
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.executor.SameThreadExecutor;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
-import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeDataManager;
 import cz.cuni.mff.d3s.deeco.network.PublisherTask;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework;
@@ -15,8 +13,7 @@ import cz.cuni.mff.d3s.deeco.simulation.scheduler.SimulationScheduler;
 
 public class SimulationRuntimeBuilder {
 
-	public RuntimeFramework build(Host host, RuntimeMetadata model,
-			long publishingPeriod) {
+	public RuntimeFramework build(Host host, RuntimeMetadata model) {
 		if (model == null) {
 			throw new IllegalArgumentException("Model must not be null");
 		}
@@ -31,13 +28,22 @@ public class SimulationRuntimeBuilder {
 		// Set up the host container
 		KnowledgeManagerContainer container = new KnowledgeManagerContainer();
 
-		KnowledgeDataManager kdManager = new KnowledgeDataManager(container, host, model.getEnsembleDefinitions(), host.getId(), scheduler);
+		KnowledgeDataManager kdManager = new KnowledgeDataManager(
+				container, 
+				host, 
+				model.getEnsembleDefinitions(), 
+				host.getId(), 
+				scheduler);
 		
 		// Bind KnowledgeDataReceiver with PacketDataReceiver
 		host.getPacketReceiver().setKnowledgeDataReceiver(kdManager);
 
 		// Set up the publisher task
-		PublisherTask publisherTask = new PublisherTask(scheduler, kdManager, publishingPeriod, host.getId());
+		PublisherTask publisherTask = new PublisherTask(
+				scheduler, 
+				kdManager,				
+				host.getId());
+		
 		// Add publisher task to the scheduler
 		scheduler.addTask(publisherTask);
 

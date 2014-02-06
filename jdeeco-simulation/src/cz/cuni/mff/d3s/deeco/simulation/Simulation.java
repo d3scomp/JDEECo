@@ -62,13 +62,15 @@ public class Simulation {
 		System.loadLibrary("libintegration");
 	}
 
+
+	
 	/**
 	 * Creates new instance of the {@link Host}.
 	 * 
 	 * @return new host instance
 	 */
-	public Host getHost(String id, int packetSize) {
-		return new Host(this, id, packetSize);
+	public Host getHost(String id) {
+		return new Host(this, id);
 	}
 	// Wrapper methods we may need them.
 

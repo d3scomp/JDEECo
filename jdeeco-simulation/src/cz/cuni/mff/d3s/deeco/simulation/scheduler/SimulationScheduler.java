@@ -74,16 +74,12 @@ public class SimulationScheduler implements Scheduler,
 			throw new IllegalArgumentException("The task cannot be null");
 		if (allTasks.contains(task))
 			return;
-		if (task.getPeriodicTrigger() != null) {
+		if (task.getTimeTrigger() != null) {
 			SchedulerEvent event = new SchedulerEvent(task,
-					task.getPeriodicTrigger());
+					task.getTimeTrigger());
 			
-			// TODO: for experiments, every periodic task has a random start delay up to its period
-			long lastProcessExecutionTimeBackup = lastProcessExecutionTime;
-			lastProcessExecutionTime = rnd.nextInt((int) task.getPeriodicTrigger().getPeriod());
-			scheduleNow(event, task.getPeriodicTrigger().getPeriod());
-			lastProcessExecutionTime = lastProcessExecutionTimeBackup;
-			
+			scheduleAfter(event, task.getTimeTrigger().getOffset());
+
 			periodicEvents.put(task, event);
 		}
 		task.setTriggerListener(new TaskTriggerListener() {
@@ -96,7 +92,9 @@ public class SimulationScheduler implements Scheduler,
 				}
 				if (isScheduled) {
 					measureExecutionTime();
-					scheduleNow(new SchedulerEvent(task, trigger), 0);
+					// schedule immediately, regardless the actual runtime of
+					// the process that triggered this trigger
+					scheduleAfter(new SchedulerEvent(task, trigger), 0);
 				}
 			}
 		});
@@ -130,8 +128,12 @@ public class SimulationScheduler implements Scheduler,
 	@Override
 	public void executionCompleted(Task task) {
 		measureExecutionTime();
-		if (task.getPeriodicTrigger() != null && lastProcessExecutionTime > task.getPeriodicTrigger().getPeriod()) {
-			Log.e("Task " + task.toString() + " has greater actual execution time than its period (" + task.getPeriodicTrigger().getPeriod() + ")");
+		if ((task.getTimeTrigger() != null) 
+				&& (task.getTimeTrigger().getPeriod() > 0)
+				&& (lastProcessExecutionTime > task.getTimeTrigger().getPeriod())) {
+			Log.e("Periodic task " + task.toString()
+					+ " has greater actual execution time than its period ("
+					+ task.getTimeTrigger().getPeriod() + ")");
 		}
 		registerNextExecution();
 	}
@@ -153,17 +155,18 @@ public class SimulationScheduler implements Scheduler,
 		//System.out.println("Scheduler " +host.getId()+" at: "+time+" called with queue: " + Arrays.toString(queue.toArray()));
 		SchedulerEvent event;
 		while ((event = queue.first()) != null)  {
-			// if notified too early
+			// if notified too early (or already processed all events scheduled
+			// for the current time)
 			if (event.nextExecutionTime > time)
 				break;
 			
 			// The time is right to execute the next task			
 			pop();
-			if (event.period != 0) {
+			if (event.periodic) {
 				// schedule for the next period (the period might be variable,
 				// that's we query the trigger)
 				event.nextExecutionTime = event.nextExecutionTime
-						+ event.executable.getPeriodicTrigger().getPeriod();
+						+ event.executable.getTimeTrigger().getPeriod();
 				push(event);
 			}
 			if (executor != null) {
@@ -185,10 +188,19 @@ public class SimulationScheduler implements Scheduler,
 
 	// ------Private methods--------
 
-	private void scheduleNow(SchedulerEvent event, long period) {
-		event.period = period;
-		event.nextExecutionTime = host.getCurrentTime() + lastProcessExecutionTime;
+//	private void scheduleNow(SchedulerEvent event, long period) {
+//		event.period = period;
+//		event.nextExecutionTime = host.getCurrentTime() + lastProcessExecutionTime;
+//		push(event);
+//	}
+	
+	/**
+	 * Note that this method has to be explicitly protected by queue's monitor!
+	 */
+	void scheduleAfter(SchedulerEvent event, long delay) {			
+		event.nextExecutionTime = host.getCurrentTime() + delay;			
 		push(event);
+					
 	}
 
 	private void registerNextExecution() {
