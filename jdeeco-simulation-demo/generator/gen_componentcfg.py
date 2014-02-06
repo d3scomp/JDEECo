@@ -91,6 +91,8 @@ class Area:
         return ret
     def toString(self, idx):
         raise NotImplementedError()
+    def scale(self, factor):
+        raise NotImplementedError()
         
     
 class RectanguralArea(Area):
@@ -113,7 +115,12 @@ class RectanguralArea(Area):
         return plt.Rectangle((self.x, self.y), self.width, self.height, fill=False, **kwargs)
     
     def toString(self):
-        return "R %s %d %d %d %d %s" % (self.id, self.x, self.y, self.width, self.height, ' '.join('T'+str(x) for x in self.teams)) 
+        return "R %s %d %d %d %d %s" % (self.id, self.x, self.y, self.width, self.height, ' '.join('T'+str(x) for x in self.teams))
+    def scale(self, factor):
+        self.x *= factor
+        self.y *= factor
+        self.width *= factor
+        self.height *= factor
 
 class CircularArea(Area):
     def __init__(self, id, x, y, r, teams):
@@ -137,6 +144,11 @@ class CircularArea(Area):
     
     def toString(self):
         return "C %s %d %d %d %s" % (self.id, self.x, self.y, self.r, ' '.join('T'+str(x) for x in self.teams))
+    
+    def scale(self, factor):
+        self.x *= factor
+        self.y *= factor
+        self.r *= factor
 
 
 aHQ = RectanguralArea('HQ',100,100,300,200,range(7))
@@ -148,13 +160,19 @@ aSiteExtended = CircularArea('Site1Ext', 1200,1000,300,[])
 aSite2Extended = CircularArea('Site2Ext', 300,1000,300,[])
 aSite3Extended = CircularArea('Site3Ext', 1200,450,300,[])
 
+areas = [aHQ, aSite, aSite2, aSite3, aHQExtended, aSiteExtended, aSite2Extended, aSite3Extended]
 
+SCALE_FACTOR = 2
 
 fig = figure()
 area = fig.add_subplot(111, aspect='equal')
-area.set_xlim(0, 1500)
-area.set_ylim(0, 1500)
+xSize = 1500 * SCALE_FACTOR
+ySize = 1500 * SCALE_FACTOR
+area.set_xlim(0, xSize)
+area.set_ylim(0, ySize)
 
+for a in areas:
+    a.scale(SCALE_FACTOR)
 
 area.add_artist(aHQ.getPlotObject(color='k'))
 area.add_artist(aSite.getPlotObject(color='r'))
@@ -204,6 +222,7 @@ for idx in range(size(others)):
 f.close()
 
 f = open('../configurations/site.cfg', 'w') 
+print>>f, xSize, ySize
 for area in [aHQ, aSite, aSite2, aSite3]:
     print>>f, area.toString();
 f.close()
