@@ -19,7 +19,7 @@
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="level1"/>
         </knowledgePath>
       </parameters>
-      <triggers xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PeriodicTrigger" period="1000"/>
+      <triggers xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:TimeTrigger" period="1000"/>
       <triggers xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:KnowledgeChangeTrigger">
         <knowledgePath>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="level1"/>

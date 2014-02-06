@@ -1,10 +1,11 @@
 package cz.cuni.mff.d3s.deeco.scheduler;
 
+import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.task.Task;
 
 /**
- * Wrapper class for all periodic events
+ * Wrapper class for all scheduler events
  * <p>
  * 
  * @author 	Andranik Muradyan 	<muradian@d3s.mff.cuni.cz>
@@ -32,20 +33,20 @@ public class SchedulerEvent implements Comparable<SchedulerEvent> {
     public long nextExecutionTime;
 
     /**
-     * Period in milliseconds for repeating tasks.  A positive value indicates
-     * fixed-rate execution.  A value of 0 indicates a non-repeating task.
+     * Indicator, whether the event is periodic (i.e., fixed-rate execution). 
+     * It is set to true only if the trigger is a TimeTrigger with period > 0.
      */
-    public long period = 0;
+    public final boolean periodic;
     
     /**
      * The actual task to be executed.
      */
-    public Task executable;
+    public final Task executable;
     
     /** 
      * The trigger associated with this event.
      */
-    public Trigger trigger;
+    public final Trigger trigger;
     
 
     /**
@@ -53,7 +54,12 @@ public class SchedulerEvent implements Comparable<SchedulerEvent> {
      */
     public SchedulerEvent(Task task, Trigger trigger) {
     	this.executable = task;
-    	this.trigger = trigger;
+    	this.trigger = trigger;    	
+    	if ((trigger != null) && (trigger instanceof TimeTrigger) && (((TimeTrigger) trigger).getPeriod() > 0)) {
+    		periodic = true;
+    	} else {
+    		periodic = false;
+    	}
     }
 
 

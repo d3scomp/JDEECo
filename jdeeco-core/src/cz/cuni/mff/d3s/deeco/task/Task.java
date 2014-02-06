@@ -1,6 +1,6 @@
 package cz.cuni.mff.d3s.deeco.task;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
@@ -67,8 +67,7 @@ public abstract class Task {
 	}
 
 	/**
-	 * Returns the period associated with the task. 
-	 * @return Period in miliseconds or -1 when there is no period associated with the task.
+	 * Returns the time trigger associated with the task. 
 	 */
-	abstract public PeriodicTrigger getPeriodicTrigger();
+	abstract public TimeTrigger getTimeTrigger();
 }

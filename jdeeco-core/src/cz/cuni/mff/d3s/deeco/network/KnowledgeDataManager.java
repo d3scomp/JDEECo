@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import cz.cuni.mff.d3s.deeco.DeecoProperties;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
@@ -52,6 +53,8 @@ KnowledgeDataPublisher {
 	public static final double RSSI_20m = 5.52e-8; 
 	// this rssi corresponds to roughly 10m distance
 	public static final double RSSI_10m = 3.12e-7;
+	// this rssi corresponds to roughly 50m distance
+	public static final double RSSI_50m = 5.59e-9;
 	
 	/** Global version counter for all outgoing local knowledge. */
 	protected long localVersion;	
@@ -69,6 +72,12 @@ KnowledgeDataPublisher {
 	private final List<KnowledgePath> emptyPath;
 	/** List of ensemble definitions whose boundary conditions should be considered. */
 	private final List<EnsembleDefinition> ensembleDefinitions;
+	
+	private final boolean useIndividualPublishing;
+	private final boolean checkGossipCondition;
+	private final boolean checkBoundaryCondition;
+	private final double rssiLimit;
+
 
 	
 	/**
@@ -97,6 +106,24 @@ KnowledgeDataPublisher {
 		KnowledgePath empty = factory.createKnowledgePath();
 		emptyPath = new LinkedList<>();
 		emptyPath.add(empty);
+		
+		useIndividualPublishing = Boolean.getBoolean(DeecoProperties.USE_INDIVIDUAL_KNOWLEDGE_PUBLISHING);
+		Log.d(String.format("KnowledgeDataManager at %s uses %s publishing", host, useIndividualPublishing ? "individual" : "list"));
+		
+		checkGossipCondition = !Boolean.getBoolean(DeecoProperties.DISABLE_GOSSIP_CONDITION);
+		Log.d(String.format("KnowledgeDataManager at %s uses checkGossipCondition = %b", host, checkGossipCondition));
+		
+		checkBoundaryCondition = !Boolean.getBoolean(DeecoProperties.DISABLE_BOUNDARY_CONDITIONS);
+		Log.d(String.format("KnowledgeDataManager at %s uses checkBoundaryCondition = %b", host, checkBoundaryCondition));
+
+		double rssi = 0;
+		try {
+			rssi = Double.parseDouble(System.getProperty(DeecoProperties.GOSSIP_CONDITION_RSSI));
+		} catch (Exception e) {
+			rssi = RSSI_50m;
+		}
+		rssiLimit = rssi;
+		Log.d(String.format("KnowledgeDataManager at %s uses rssiLimit = %g", host, rssiLimit));
 	}
 	
 	@Override
@@ -108,11 +135,15 @@ KnowledgeDataPublisher {
 		//TODO
 		if (!data.isEmpty()) {
 			
-//			// broadcast each kd individually to minimize the message size and
-//			// thus reduce network collisions.
-//			for (KnowledgeData kd: data)
-//				knowledgeDataSender.broadcastKnowledgeData(Arrays.asList(kd));
-			knowledgeDataSender.broadcastKnowledgeData(data);
+			if (useIndividualPublishing) {
+				// broadcast each kd individually to minimize the message size and
+				// thus reduce network collisions.
+				for (KnowledgeData kd: data) {
+					knowledgeDataSender.broadcastKnowledgeData(Arrays.asList(kd));
+				}
+			} else {
+				knowledgeDataSender.broadcastKnowledgeData(data);
+			}
 			localVersion++;
 		}
 	}
@@ -178,7 +209,7 @@ KnowledgeDataPublisher {
 				KnowledgeMetaData kmd = replicaMetadata.get(km);
 				KnowledgeManager nodeKm = getNodeKnowledge();
 								
-				if (!satisfiesGossipCondition(kmd)) { 
+				if (checkGossipCondition && !satisfiesGossipCondition(kmd)) { 
 					Log.d(String.format("Gossip condition failed (%d) at %s for %sv%d from %s with rssi %g\n", 
 							timeProvider.getCurrentTime(), host, kmd.componentId, kmd.versionId, kmd.sender, kmd.rssi));
 					continue;
@@ -191,7 +222,7 @@ KnowledgeDataPublisher {
 				kmdCopy.sender = host;
 				KnowledgeData kd = new KnowledgeData(km.get(emptyPath), kmdCopy);
 
-				if (!isInSomeBoundary(kd, nodeKm)) {
+				if (checkBoundaryCondition && !isInSomeBoundary(kd, nodeKm)) {
 					Log.d(String.format("Boundary failed (%d) at %s for %sv%d\n", 
 							timeProvider.getCurrentTime(), host, kmd.componentId, kmd.versionId));
 					continue;
@@ -210,8 +241,7 @@ KnowledgeDataPublisher {
 
 	private boolean satisfiesGossipCondition(KnowledgeMetaData kmd) {
 		// rssi < 0 means received from IP
-		// the signal came from more than 20m
-		return kmd.rssi < 0 || kmd.rssi <= RSSI_20m;		
+		return kmd.rssi < 0 || kmd.rssi <= rssiLimit;		
 	}
 
 	private boolean isInSomeBoundary(KnowledgeData data, KnowledgeManager sender) {

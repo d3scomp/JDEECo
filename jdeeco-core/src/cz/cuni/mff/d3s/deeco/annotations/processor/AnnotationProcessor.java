@@ -289,7 +289,7 @@ public class AnnotationProcessor {
 			CommunicationBoundaryPredicate cBoundary = createCommunicationBoundary(clazz);			
 			ensembleDefinition.setCommunicationBoundary(cBoundary);
 			
-			PeriodicTrigger periodicEnsembleTrigger = createPeriodicTrigger(clazz);
+			TimeTrigger periodicEnsembleTrigger = createPeriodicTrigger(clazz);
 			List<KnowledgeChangeTrigger> exchangeKChangeTriggers = createKnowledgeChangeTriggers(exchange.getMethod(), false);
 			List<KnowledgeChangeTrigger> conditionKChangeTriggers = createKnowledgeChangeTriggers(condition.getMethod(), false);
 			if (periodicEnsembleTrigger == null) {
@@ -390,7 +390,7 @@ public class AnnotationProcessor {
 			componentProcess.setMethod(m);
 			componentProcess.setName(m.getName());
 			componentProcess.getParameters().addAll(createParameters(m, true));
-			PeriodicTrigger periodicTrigger = createPeriodicTrigger(m);
+			TimeTrigger periodicTrigger = createPeriodicTrigger(m);
 			List<KnowledgeChangeTrigger> knowledgeChangeTriggers = createKnowledgeChangeTriggers(m, true);
 			if (periodicTrigger == null) {
 				if (knowledgeChangeTriggers.isEmpty()) {
@@ -413,7 +413,7 @@ public class AnnotationProcessor {
 	 * If no @{@link PeriodicScheduling} annotation is found, returns <code>null</code>.
 	 * </p>
 	 */
-	PeriodicTrigger createPeriodicTrigger(Object o)
+	TimeTrigger createPeriodicTrigger(Object o)
 			throws AnnotationProcessorException {
 		Annotation[] annotations = null;
 		if (o instanceof Method) {
@@ -426,8 +426,9 @@ public class AnnotationProcessor {
 		}
 		for (Annotation a : annotations) {
 			if (a instanceof PeriodicScheduling) {
-				PeriodicTrigger periodicTrigger = factory.createPeriodicTrigger();
+				TimeTrigger periodicTrigger = factory.createTimeTrigger();
 				periodicTrigger.setPeriod(((PeriodicScheduling) a).value());
+				periodicTrigger.setOffset(0);
 				return periodicTrigger;
 			}
 		}
