@@ -78,6 +78,11 @@ public class SimulationScheduler implements Scheduler,
 			SchedulerEvent event = new SchedulerEvent(task,
 					task.getTimeTrigger());
 			
+			// for experiments, publisher task has a random start offset up to its period
+			if (event.periodic) {
+				 task.getTimeTrigger().setOffset(rnd.nextInt((int) (task.getTimeTrigger().getPeriod() + 1)));
+			}
+				
 			scheduleAfter(event, task.getTimeTrigger().getOffset());
 
 			periodicEvents.put(task, event);
