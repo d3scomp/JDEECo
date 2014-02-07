@@ -20,7 +20,7 @@ import cz.cuni.mff.d3s.deeco.logging.Log;
  */
 public abstract class PacketSender implements KnowledgeDataSender {
 
-	static int DEFAULT_PACKET_SIZE = 1000;
+	public static int DEFAULT_PACKET_SIZE = 1000;
 
 	// We reserver Integer.MIN_VALUE for distinguishing initial packets.
 	private static int CURRENT_MESSAGE_ID = Integer.MIN_VALUE;
@@ -70,7 +70,7 @@ public abstract class PacketSender implements KnowledgeDataSender {
 			int messageId = getNextMessageId();
 			
 			
-			Log.d(String.format("PacketSender: Sending MSG at %s with messageid %d", host, messageId));
+			Log.d(String.format("PacketSender: Sending MSG at %s with messageid %d and size %d", host, messageId, getDataLength(fragments)));
 			
 			// We need to send the message containing id and the number of
 			// packets.that will be sent.

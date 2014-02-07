@@ -99,7 +99,7 @@ public class TestSerializer {
 		KnowledgeManager km = container.createLocal(component.getKnowledgeManager().getId());
 		km.update(cs);
 				
-		List<? extends KnowledgeData> kd = kdManager.prepareKnowledgeData();		
+		List<? extends KnowledgeData> kd = kdManager.prepareLocalKnowledgeData();		
 		byte[] data = Serializer.serialize(kd);
 		List<? extends KnowledgeData> nkd = (List<? extends KnowledgeData>) Serializer.deserialize(data);
 		
