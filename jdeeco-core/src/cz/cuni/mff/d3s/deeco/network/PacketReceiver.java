@@ -28,9 +28,9 @@ import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
  */
 public class PacketReceiver {
 
-	private final static int DEFAULT_MESSAGE_WIPE_PERIOD = 500;
+	public final static int DEFAULT_MESSAGE_WIPE_PERIOD = 500;
 	
-	private final static int DEFAULT_MAX_MESSAGE_TIME = 2000;
+	public final static int DEFAULT_MAX_MESSAGE_TIME = 2000;
 
 
 	private final String host;

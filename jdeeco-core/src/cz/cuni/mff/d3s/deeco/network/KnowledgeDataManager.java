@@ -1,10 +1,14 @@
 package cz.cuni.mff.d3s.deeco.network;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import cz.cuni.mff.d3s.deeco.DeecoProperties;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
@@ -16,6 +20,8 @@ import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
@@ -56,6 +62,9 @@ KnowledgeDataPublisher {
 	// this rssi corresponds to roughly 50m distance
 	public static final double RSSI_50m = 5.59e-9;
 	
+	// this rssi corresponds to max (roughly 250m) distance
+		public static final double RSSI_MAX = 1.11e-10;
+	
 	/** Global version counter for all outgoing local knowledge. */
 	protected long localVersion;	
 	/** Service for convenient time retrieval. */
@@ -73,10 +82,13 @@ KnowledgeDataPublisher {
 	/** List of ensemble definitions whose boundary conditions should be considered. */
 	private final List<EnsembleDefinition> ensembleDefinitions;
 	
+	private final Collection<KnowledgeData> dataToRebroadcast;
+	
 	private final boolean useIndividualPublishing;
 	private final boolean checkGossipCondition;
 	private final boolean checkBoundaryCondition;
 	private final double rssiLimit;
+	private final Random random;
 
 
 	
@@ -102,6 +114,8 @@ KnowledgeDataPublisher {
 		this.localVersion = 0;
 		this.replicaMetadata = new HashMap<>();
 		
+		dataToRebroadcast = new ArrayList<>();
+		
 		RuntimeMetadataFactory factory = RuntimeMetadataFactoryExt.eINSTANCE;
 		KnowledgePath empty = factory.createKnowledgePath();
 		emptyPath = new LinkedList<>();
@@ -124,11 +138,28 @@ KnowledgeDataPublisher {
 		}
 		rssiLimit = rssi;
 		Log.d(String.format("KnowledgeDataManager at %s uses rssiLimit = %g", host, rssiLimit));
+		
+		long seed = 0;
+		for (char c: host.toCharArray())
+			seed += c;
+		random = new Random(seed);
 	}
 	
 	@Override
 	public void publish() {
-		List<? extends KnowledgeData> data = prepareKnowledgeData();
+		// we re-publish periodically only local data
+		List<KnowledgeData> data = prepareLocalKnowledgeData();
+		
+		int origCnt = dataToRebroadcast.size();
+		filterBasedOnBoundaryCondition(dataToRebroadcast, getNodeKnowledge());
+		filterBasedOnGossipCondition(dataToRebroadcast);
+		
+		Log.d(String.format("Rebroadcasting %d out of %d received messages", dataToRebroadcast.size(), origCnt));
+		
+		for (KnowledgeData kd: dataToRebroadcast) {
+			data.add(prepareForRebroadcast(kd));
+		}
+		dataToRebroadcast.clear();
 		
 		logPublish(data);
 		
@@ -168,10 +199,10 @@ KnowledgeDataPublisher {
 				// accept only fresh knowledge data (drop if we have already newer value)
 				boolean haveOlder = (currentMD == null) || (currentMD.versionId < md.versionId); 
 				if (haveOlder) {							
-					km.update(toChangeSet(kd.getKnowledge()));
-					md.hopCount++;
+					km.update(toChangeSet(kd.getKnowledge()));					
 					//	store the metadata without the knowledge values
 					replicaMetadata.put(km, md);
+					queueForRebroadcast(kd);
 					
 					Log.d(String.format("Receive (%d) at %s got %sv%d after %dms and %d hops\n", 
 							timeProvider.getCurrentTime(), 
@@ -189,59 +220,148 @@ KnowledgeDataPublisher {
 		}
 		
 	}
+	
+	void queueForRebroadcast(KnowledgeData kd) {
+		dataToRebroadcast.add(kd);
+	}
+	
+	
+	
+	KnowledgeData prepareForRebroadcast(KnowledgeData receivedData) {		
+		KnowledgeMetaData kmdCopy = receivedData.getMetaData().clone();
+		kmdCopy.sender = host;
+		kmdCopy.hopCount++;
+		return new KnowledgeData(receivedData.getKnowledge(), kmdCopy);
+	}
+	
+	void filterBasedOnGossipCondition(Collection<? extends KnowledgeData> data) {		
+		if (!checkGossipCondition)
+			return;
+		
+		Iterator<? extends KnowledgeData> iterator = data.iterator();
+		while(iterator.hasNext()) {
+			KnowledgeMetaData kmd = iterator.next().getMetaData();
+			if (!satisfiesGossipCondition(kmd)) { 
+				Log.d(String.format("Gossip condition failed (%d) at %s for %sv%d from %s with rssi %g\n", 
+						timeProvider.getCurrentTime(), host, kmd.componentId, kmd.versionId, kmd.sender, kmd.rssi));
+				iterator.remove();
+			} else {
+				Log.d(String.format("Gossip condition succeeded (%d) at %s for %sv%d from %s with rssi %g\n", 
+						timeProvider.getCurrentTime(), host, kmd.componentId, kmd.versionId, kmd.sender, kmd.rssi));
+			}
+		}
+	}
+	
+	void filterBasedOnBoundaryCondition(Collection<? extends KnowledgeData> data, KnowledgeManager nodeKnowledge) {
+		if (!checkBoundaryCondition)
+			return;
+		
+		Iterator<? extends KnowledgeData> iterator = data.iterator();
+		while(iterator.hasNext()) {
+			KnowledgeData kd = iterator.next();
+			if (!isInSomeBoundary(kd, nodeKnowledge)) {
+				Log.d(String.format("Boundary failed (%d) at %s for %sv%d\n", 
+						timeProvider.getCurrentTime(), host, kd.getMetaData().componentId, kd.getMetaData().versionId));
+				iterator.remove();
+			} 
+		}
+	}
+		
+		
+		
+	
 
-	List<? extends KnowledgeData> prepareKnowledgeData() {
+//	List<? extends KnowledgeData> prepareKnowledgeDataaaa() {
+//		List<KnowledgeData> result = prepareLocalKnowledgeData();
+//		
+//		for (KnowledgeManager km : kmContainer.getReplicas()) {
+//			try {
+//				
+//				KnowledgeMetaData kmd = replicaMetadata.get(km);
+//				KnowledgeManager nodeKm = getNodeKnowledge();
+//								
+//				if (checkGossipCondition && !satisfiesGossipCondition(kmd)) { 
+//					Log.d(String.format("Gossip condition failed (%d) at %s for %sv%d from %s with rssi %g\n", 
+//							timeProvider.getCurrentTime(), host, kmd.componentId, kmd.versionId, kmd.sender, kmd.rssi));
+//					continue;
+//				}
+//				
+//				Log.d(String.format("Gossip condition succeeded (%d) at %s for %sv%d from %s with rssi %g\n", 
+//						timeProvider.getCurrentTime(), host, kmd.componentId, kmd.versionId, kmd.sender, kmd.rssi));
+//				
+//				KnowledgeMetaData kmdCopy = kmd.clone();
+//				kmdCopy.sender = host;
+//				KnowledgeData kd = new KnowledgeData(km.get(emptyPath), kmdCopy);
+//
+//				if (checkBoundaryCondition && !isInSomeBoundary(kd, nodeKm)) {
+//					Log.d(String.format("Boundary failed (%d) at %s for %sv%d\n", 
+//							timeProvider.getCurrentTime(), host, kmd.componentId, kmd.versionId));
+//					continue;
+//				} 
+//					
+//				result.add(kd);
+//					
+//				
+//			} catch (KnowledgeNotFoundException e) {
+//				Log.e("prepareKnowledgeData error", e);
+//			}
+//		}
+//		
+//		return result;
+//	}
+
+	List<KnowledgeData> prepareLocalKnowledgeData() {
 		List<KnowledgeData> result = new LinkedList<>();
 		for (KnowledgeManager km : kmContainer.getLocals()) {
 			try {
-				result.add(new KnowledgeData(
-						km.get(emptyPath), 
-						new KnowledgeMetaData(km.getId(), localVersion, host, timeProvider.getCurrentTime(), 0)));
-				
-			} catch (KnowledgeNotFoundException e) {
+				KnowledgeData kd = prepareLocalKnowledgeData(km);				
+				result.add(filterValueSetForKnownEnsembles(kd));				
+			} catch (Exception e) {
 				Log.e("prepareKnowledgeData error", e);
 			}
 		}
-		
-		for (KnowledgeManager km : kmContainer.getReplicas()) {
-			try {
-				
-				KnowledgeMetaData kmd = replicaMetadata.get(km);
-				KnowledgeManager nodeKm = getNodeKnowledge();
-								
-				if (checkGossipCondition && !satisfiesGossipCondition(kmd)) { 
-					Log.d(String.format("Gossip condition failed (%d) at %s for %sv%d from %s with rssi %g\n", 
-							timeProvider.getCurrentTime(), host, kmd.componentId, kmd.versionId, kmd.sender, kmd.rssi));
-					continue;
-				}
-				
-				Log.d(String.format("Gossip condition succeeded (%d) at %s for %sv%d from %s with rssi %g\n", 
-						timeProvider.getCurrentTime(), host, kmd.componentId, kmd.versionId, kmd.sender, kmd.rssi));
-				
-				KnowledgeMetaData kmdCopy = kmd.clone();
-				kmdCopy.sender = host;
-				KnowledgeData kd = new KnowledgeData(km.get(emptyPath), kmdCopy);
-
-				if (checkBoundaryCondition && !isInSomeBoundary(kd, nodeKm)) {
-					Log.d(String.format("Boundary failed (%d) at %s for %sv%d\n", 
-							timeProvider.getCurrentTime(), host, kmd.componentId, kmd.versionId));
-					continue;
-				} 
-					
-				result.add(kd);
-					
-				
-			} catch (KnowledgeNotFoundException e) {
-				Log.e("prepareKnowledgeData error", e);
-			}
-		}
-		
 		return result;
+	}
+	
+
+	KnowledgeData prepareLocalKnowledgeData(KnowledgeManager km)
+			throws KnowledgeNotFoundException {
+		return new KnowledgeData(
+				km.get(emptyPath), 
+				new KnowledgeMetaData(km.getId(), localVersion, host, timeProvider.getCurrentTime(), 1));
+	}
+	
+	KnowledgeData filterValueSetForKnownEnsembles(KnowledgeData kd) {
+		//FIXME: make this generic
+		// now we hardcode our demo (we filter the Leader knowledge to only
+		// publish id, team, and position.
+		if (kd.getMetaData().componentId.startsWith("L")) {
+			ValueSet values = kd.getKnowledge();
+			ValueSet newValues = new ValueSet();
+			for (KnowledgePath kp: values.getKnowledgePaths()) {
+				String name = ((PathNodeField) kp.getNodes().get(0)).getName();
+				if (name.equals("id") || name.equals("teamId") || name.equals("position")) {
+					newValues.setValue(kp, values.getValue(kp));
+				}
+			}
+			return new KnowledgeData(newValues, kd.getMetaData());
+		} else {
+			return kd;
+		}
 	}
 
 	private boolean satisfiesGossipCondition(KnowledgeMetaData kmd) {
 		// rssi < 0 means received from IP
-		return kmd.rssi < 0 || kmd.rssi <= rssiLimit;		
+		if (kmd.rssi < 0) {
+			Log.d("Got data from IP. Gossip condition does not apply.");
+			return true;
+		}
+		
+		// the further further from the source (i.e. smaller rssi) the bigger
+		// probability to satisfy the condition
+		double rssi = Math.log(Math.max(RSSI_MAX, kmd.rssi));
+		double ratio = rssi / Math.log(RSSI_MAX) ;	
+		return random.nextDouble() < ratio;		
 	}
 
 	private boolean isInSomeBoundary(KnowledgeData data, KnowledgeManager sender) {
