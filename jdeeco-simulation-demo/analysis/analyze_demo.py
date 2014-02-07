@@ -1,6 +1,23 @@
 import re
 from numpy import average, median, inf, sqrt
+from collections import namedtuple
+from __builtin__ import range
 
+class InDanger:
+    def __init__(self, dangertime, publishtime, version):
+        self.dangertime = dangertime
+        self.publishtime = publishtime
+        self.version = version
+    def __str__(self):
+        return 'dangertime: ' + str(self.dangertime) + ', publishtime: ' + str(self.publishtime) + ', version: ' + str(self.version)
+class Discovery:
+    def __init__(self, discoverytime, receivetime, hops, version):
+        self.discoverytime = discoverytime
+        self.receivetime = receivetime
+        self.hops = hops
+        self.version = version
+    def __str__(self):
+        return 'discoverytime: ' + str(self.discoverytime) + ', receivetime: ' + str(self.receivetime) + ', version: ' +  str(self.version) + ', hops: ' + str(self.hops)  
 
 lines = []
 with open('../logs/jdeeco.log.0', 'r') as f:
@@ -55,51 +72,128 @@ for line in components:
     if type == 'M':
         teamMembers[team].add(id)
         memberTeam[id] = team
-        memberInDanger[id] = inf
+        memberInDanger[id] = InDanger(dangertime=inf, publishtime=inf, version=-1)
         members.add(id)
 
 dangerDiscovered = {}
 for leader in leaders:
     dangerDiscovered[leader] = {}
     for member in members:
-        dangerDiscovered[leader][member] = inf
+        dangerDiscovered[leader][member] = Discovery(discoverytime=inf, receivetime=inf, hops=-1, version=-1)
 
-gotInDangerLines = filter(lambda x: 'Member' in x and 'got in danger at' in x, lines)
-pattern = re.compile('Member (.+) got in danger at (\d+)')
+pInDanger = re.compile('Member (.+) got in danger at (\d+)')
+pSendVersionTempl = '%sv(\d+),'
+pPublish = re.compile('Publish \((\d+)\) at (M\d+), sending \[(.+)\]')
+pReceive = re.compile('Receive \((\d+)\) at (L\d+) got (M\d+)v(\d+) after (\d+)ms and (\d+)')
+pDiscover = re.compile('Leader (.\d+) discovered at (\d+) that (.\d+) got in danger')
 
-for line in gotInDangerLines:
-    m = pattern.search(line)
-    memberInDanger[m.group(1)] = int(m.group(2))
+for line in lines:
+    inDanger = pInDanger.search(line)
+    if inDanger is not None:
+        mid = inDanger.group(1)
+        dangertime = inDanger.group(2)
+        memberInDanger[mid].dangertime = int(dangertime)
+        continue
+    publish = pPublish.search(line)
+    if publish is not None:
+        mid = publish.group(2)      
+        # get the version of the sender data
+        version = re.search(pSendVersionTempl % mid, publish.group(3))
+        # is this publishing of local data?
+        if version is None:
+            continue
+          
+        # is this publish following the danger situation?
+        if  memberInDanger[mid].dangertime == inf:
+            continue;       
+        # is this the first publish following the danger situation?
+        if  memberInDanger[mid].publishtime != inf:
+            continue;     
+         
+        memberInDanger[mid].publishtime = int(publish.group(1))  
+        memberInDanger[mid].version = int(version.group(1));
+        continue
+    discovery = pDiscover.search(line)
+    if discovery is not None:
+        lid = discovery.group(1)
+        time = int(discovery.group(2))
+        mid = discovery.group(3)
+        dangerDiscovered[lid][mid].discoverytime = time
+        continue
+    receive = pReceive.search(line)
+    if receive is not None:
+        lid = receive.group(2)
+        mid = receive.group(3)
+        #is this the receive immediately preceding the discovery of this member's danger?
+        if dangerDiscovered[lid][mid].discoverytime != inf:
+            continue #already discovered (i.e., this receive follows the discovery)
+        time = int(receive.group(1))
+        version = int(receive.group(4))
+        duration = int(receive.group(5))
+        hops = int(receive.group(6))
+        dangerDiscovered[lid][mid].version = version
+        dangerDiscovered[lid][mid].hops = hops
+        dangerDiscovered[lid][mid].receivetime = time
+        continue
+   
     
-discoveredDangerLines = filter(lambda x: 'Leader' in x and 'discovered at' in x, lines)
-pattern = re.compile('Leader (.+) discovered at (\d+) that (.+) got in danger')
-for line in discoveredDangerLines:
-    m = pattern.search(line)
-    leader = m.group(1)
-    time = m.group(2)
-    member = m.group(3)   
-    dangerDiscovered[leader][member] = int(time)
+#gotInDangerLines = filter(lambda x: 'Member' in x and 'got in danger at' in x, lines)
+
+#for line in gotInDangerLines:
+#    m = pInDanger.search(line)
+#    memberInDanger[m.group(1)].time = int(m.group(2))
+    
+    
+#discoveredDangerLines = filter(lambda x: 'Leader' in x and 'discovered at' in x, lines)
+#pattern = re.compile('Leader (.+) discovered at (\d+) that (.+) got in danger')
+#for line in discoveredDangerLines:
+#    m = pattern.search(line)
+#    leader = m.group(1)
+#    time = m.group(2)
+#    member = m.group(3)   
+#    dangerDiscovered[leader][member].time = int(time)
 
 def in_range(id1, id2):
     return sqrt((posx[id1] - posx[id2])**2 - (posy[id1] - posy[id2])**2) <= 250
 
 resTimes = []
+resTimesNetwork = []
+hops = []
+versionDifs = []
 shouldDiscover = 0;
 reallyDiscovered = 0
 for team in teamLeaders.keys():
     for leader in teamLeaders[team]:
         for member in teamMembers[team]:
             inDanger = memberInDanger[member]
-            if inDanger is not inf:
+            if inDanger.dangertime is not inf:
                 shouldDiscover+=1
-                discovered = dangerDiscovered[leader][member]
-                if discovered is not inf:
-                    resTimes.append(discovered - inDanger);
+                discovery = dangerDiscovered[leader][member]
+                if discovery.discoverytime is not inf:
+                    resTimes.append(discovery.discoverytime - inDanger.dangertime);
+                    resTimesNetwork.append(discovery.receivetime - inDanger.publishtime)
+                    versionDifs.append(discovery.version - inDanger.version)
+                    hops.append(discovery.hops) 
                     reallyDiscovered += 1
-                print 'leader %s of team %s discovered at %f that %s is in danger (after %f)' % (leader, team, discovered, member, discovered - inDanger)
-            
-print 'Avg res time:', average(resTimes)  
-print 'Median res time:', median(resTimes)  
+                    
+                    print 'Discovery', discovery
+                    print 'Danger', inDanger
+                    print 'leader %s of team %s discovered at %f that %s is in danger (after %dms proces-to-process, %dms node-to-node, %dhops, %dversions)' % \
+                        (leader, team, discovery.discoverytime, member, resTimes[-1], resTimesNetwork[-1], hops[-1], versionDifs[-1])
+                else:
+                    print 'leader %s of team %s never discovered that %s is in danger from %d.' % (leader, team, member, inDanger.dangertime)
+                    
+def printStats(description, values):
+    print description, 'avg=%f, min=%f, max=%f, median=%f' %(average(values), min(values), max(values), median(values))
+
+print '\nResults: \n-----------------------------'
+printStats('Process-2-process response time:', resTimes)
+printStats('Node-2-node response time:', resTimesNetwork)
+printStats('Hops:', hops)
+printStats('Process-2-process response time / 1 hop:', map(lambda time, hop: time/hop, resTimes, hops))
+printStats('Node-2-node response time / 1 hop:', map(lambda time, hop: time/hop, resTimesNetwork, hops))
+printStats('Version difference:', versionDifs)
+ 
 print 'Ratio of discovered: %d of %d (%f%%)' %(reallyDiscovered, shouldDiscover, reallyDiscovered*100.0/shouldDiscover)
             
             
