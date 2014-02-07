@@ -10,13 +10,13 @@ import cz.cuni.mff.d3s.deeco.network.KnowledgeDataReceiver;
 import cz.cuni.mff.d3s.deeco.simulation.Host;
 import cz.cuni.mff.d3s.deeco.simulation.SimulationTimeEventListener;
 
-public class KnowledgeDataManager implements KnowledgeDataReceiver,
+public class DemoJNIKnowledgeDataManager implements KnowledgeDataReceiver,
 		SimulationTimeEventListener {
 
 	private final Host host;
 	private final List<KnowledgeData> toSend;
 
-	public KnowledgeDataManager(Host host) {
+	public DemoJNIKnowledgeDataManager(Host host) {
 		this.host = host;
 		this.host.getPacketReceiver().setKnowledgeDataReceiver(this);
 		toSend = new LinkedList<KnowledgeData>();
