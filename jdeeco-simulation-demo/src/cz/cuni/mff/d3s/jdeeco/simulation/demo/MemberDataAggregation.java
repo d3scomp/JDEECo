@@ -25,6 +25,7 @@ import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
 import cz.cuni.mff.d3s.deeco.annotations.Membership;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Ensemble;
+import cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
@@ -38,7 +39,6 @@ import cz.cuni.mff.d3s.deeco.task.ParamHolder;
  * 
  */
 @Ensemble
-@PeriodicScheduling(1000)
 public class MemberDataAggregation {
 
 	@Membership
@@ -59,7 +59,7 @@ public class MemberDataAggregation {
 			@In("coord.id") String cId,
 			@In("member.position") Position newPosition,
 			@InOut("coord.memberPositions") ParamHolder<Map<String, Position>> memberPositions,
-			@In("member.memberData") MemberData newMemberData,
+			@TriggerOnChange @In("member.memberData") MemberData newMemberData,
 			@InOut("coord.memberAggregateData") ParamHolder<Map<String, MemberData>> memberAggregateData) {
 		
 		memberAggregateData.value.put(mId, newMemberData);

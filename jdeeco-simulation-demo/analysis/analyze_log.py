@@ -104,25 +104,31 @@ def extract_sent_length(line):
 sentSizes = map(extract_sent_length, sentMsgLines);
 printStats('Message size:', sentSizes)
 
+rebroadcastsPlanned = len(filter(lambda x: 'Gossip rebroadcast' in x, lines))
+print 'Rebroadcasts planned: ', rebroadcastsPlanned  
+rebroadcastsAborted = len(filter(lambda x: 'Rebroadcast aborted' in x, lines));
+print 'Rebroadcasts aborted: ', rebroadcastsAborted
+print 'Rebroadcasts finished: ', len(filter(lambda x: 'Rebroadcast finished' in x, lines))
+print 'Average abort ratio: ', rebroadcastsAborted*1.0/rebroadcastsPlanned
 
-rebroadcastLines = filter(lambda x: 'Rebroadcasting' in x, lines)
-def extract_rebroadcast_cnt(line):
-    p = re.compile('Rebroadcasting (\d+)')
-    m = p.search(line)
-    return int(m.group(1))
-def extract_rebroadcast_ratio(line):
-    p = re.compile('Rebroadcasting (\d+) out of (\d+)')
-    m = p.search(line)
-    sent = float(m.group(1))
-    total = float(m.group(2))
-    if total == 0:
-        return -1
-    else:
-        return  sent*1.0/total 
-rebroadcastCounts = map(extract_rebroadcast_cnt, rebroadcastLines);
-printStats('Rebroadcast count:', rebroadcastCounts)
-rebroadcastRatios = filter(lambda x: x >= 0, map(extract_rebroadcast_ratio, rebroadcastLines));
-printStats('Rebroadcast ratio:', rebroadcastRatios)
+#rebroadcastLines = filter(lambda x: 'Rebroadcasting' in x, lines)
+#def extract_rebroadcast_cnt(line):
+    #p = re.compile('Rebroadcasting (\d+)')
+    #m = p.search(line)
+    #return int(m.group(1))
+#def extract_rebroadcast_ratio(line):
+    #p = re.compile('Rebroadcasting (\d+) out of (\d+)')
+    #m = p.search(line)
+    #sent = float(m.group(1))
+    #total = float(m.group(2))
+    #if total == 0:
+        #return -1
+    #else:
+        #return  sent*1.0/total 
+#rebroadcastCounts = map(extract_rebroadcast_cnt, rebroadcastLines);
+#printStats('Rebroadcast count:', rebroadcastCounts)
+#rebroadcastRatios = filter(lambda x: x >= 0, map(extract_rebroadcast_ratio, rebroadcastLines));
+#printStats('Rebroadcast ratio:', rebroadcastRatios)
 
 
 csvLine = [config, 

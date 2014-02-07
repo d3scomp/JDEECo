@@ -19,8 +19,7 @@ def points_in_circle(x, y, r, cnt):
         ry.append(y1)
     return rx, ry
 
-teamColors = ['b','r','g','y','c','m','k'];
-teamcnt = 4
+teamColors = ['b','r','g','y','c','m','k','b','r','g','y','c','m','k', 'b','r','g','y','c','m','k'];
 
 class Component:
     def __init__(self, x, y):
@@ -151,10 +150,10 @@ class CircularArea(Area):
         self.r *= factor
 
 
-aHQ = RectanguralArea('HQ',100,100,300,200,range(7))
-aSite = CircularArea('Site1',1200,1000,150,range(0,4))
-aSite2 = CircularArea('Site2',300,1000,150,range(0,4))
-aSite3 = CircularArea('Site3',1200,450,150,range(4,7))
+aHQ = RectanguralArea('HQ',100,100,300,200,range(0,4))
+aSite = CircularArea('Site1',1200,1000,150,range(4,7))
+aSite2 = CircularArea('Site2',300,1000,150,range(7,10))
+aSite3 = CircularArea('Site3',1200,450,150,range(10,13))
 aHQExtended = RectanguralArea('HQExt', 0,0,500,400,[])
 aSiteExtended = CircularArea('Site1Ext', 1200,1000,300,[])
 aSite2Extended = CircularArea('Site2Ext', 300,1000,300,[])
