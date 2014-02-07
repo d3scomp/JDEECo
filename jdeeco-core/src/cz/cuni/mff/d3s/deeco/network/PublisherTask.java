@@ -36,7 +36,7 @@ public class PublisherTask extends Task {
 	 * 
 	 */
 	private static class PublisherTrigger extends TimeTriggerExt {
-		public static final double PERIOD_VARIABILITY = 0.2;
+		public static final double PERIOD_VARIABILITY = 0.01;
 
 		Random random;
 

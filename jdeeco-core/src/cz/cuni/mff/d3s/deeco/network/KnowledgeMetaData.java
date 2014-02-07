@@ -30,12 +30,16 @@ public class KnowledgeMetaData implements Serializable {
 		return new KnowledgeMetaData(componentId, versionId, sender, createdAt, hopCount);
 	}
 	
+	
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
 				+ ((componentId == null) ? 0 : componentId.hashCode());
+		result = prime * result + (int) (createdAt ^ (createdAt >>> 32));
+		result = prime * result + hopCount;
 		long temp;
 		temp = Double.doubleToLongBits(rssi);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
@@ -43,6 +47,8 @@ public class KnowledgeMetaData implements Serializable {
 		result = prime * result + (int) (versionId ^ (versionId >>> 32));
 		return result;
 	}
+
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -57,6 +63,10 @@ public class KnowledgeMetaData implements Serializable {
 				return false;
 		} else if (!componentId.equals(other.componentId))
 			return false;
+		if (createdAt != other.createdAt)
+			return false;
+		if (hopCount != other.hopCount)
+			return false;
 		if (Double.doubleToLongBits(rssi) != Double
 				.doubleToLongBits(other.rssi))
 			return false;
@@ -68,5 +78,10 @@ public class KnowledgeMetaData implements Serializable {
 		if (versionId != other.versionId)
 			return false;
 		return true;
+	}
+
+
+	public String getSignature() {
+		return String.format("%sv%d", componentId, versionId);
 	}
 }

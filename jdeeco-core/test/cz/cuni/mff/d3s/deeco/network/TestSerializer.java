@@ -31,6 +31,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.network.Serializer;
 import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
+import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
 
 public class TestSerializer {
@@ -79,7 +80,7 @@ public class TestSerializer {
 	public void testKnowledgeDataSerialization() throws IOException, ClassNotFoundException, KnowledgeUpdateException, KnowledgeNotFoundException {
 		KnowledgeManagerContainer container = new KnowledgeManagerContainer();
 		List<EnsembleDefinition> ens = Collections.emptyList();
-		KnowledgeDataManager kdManager = new KnowledgeDataManager(container, null, ens, "", mock(CurrentTimeProvider.class));
+		KnowledgeDataManager kdManager = new KnowledgeDataManager(container, null, ens, "", mock(Scheduler.class));
 		
 		ValueSet initialKnowledge = null;
 		

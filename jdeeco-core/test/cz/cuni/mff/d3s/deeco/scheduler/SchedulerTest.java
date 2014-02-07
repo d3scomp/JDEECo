@@ -55,7 +55,7 @@ public abstract class SchedulerTest  {
 		doAnswer(new Answer<Object>() {
 			    public Object answer(InvocationOnMock invocation) {
 			        Object[] args = invocation.getArguments();
-			        tested.executionCompleted((Task)args[0]);
+			        tested.executionCompleted((Task)args[0], (Trigger)args[1]);
 			        return null;
 			    }})
 			.when(executor).execute(t, p);

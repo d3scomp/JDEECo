@@ -13,6 +13,7 @@ import java.util.TreeSet;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.scheduler.SchedulerEvent;
@@ -39,6 +40,8 @@ public class SimulationScheduler implements Scheduler,
 	
 	private long lastProcessStartTime = -1;
 	private long lastProcessExecutionTime = 1;
+	
+	private final Set<Trigger> onTriggerSchedules;
 
 	private Executor executor;
 	
@@ -49,6 +52,7 @@ public class SimulationScheduler implements Scheduler,
 		queue = new TreeSet<SchedulerEvent>();
 		allTasks = new HashSet<>();
 		periodicEvents = new HashMap<>();	
+		onTriggerSchedules = new HashSet<>();
 		
 		long seed = 0;
 		for (char c: host.getId().toCharArray())
@@ -89,16 +93,17 @@ public class SimulationScheduler implements Scheduler,
 		}
 		task.setTriggerListener(new TaskTriggerListener() {
 			@Override
-			public void triggered(Task task, Trigger trigger) {
-
-				boolean isScheduled;
-				synchronized (allTasks) {
-					isScheduled = allTasks.contains(task);
-				}
-				if (isScheduled) {
+			public void triggered(Task task, Trigger trigger) {				
+				if (allTasks.contains(task)) {
+					// if the trigger has been already scheduled (i.e., there have
+					// been many consecutive invocations of that trigger in a row),
+					// then skip this event
+					if (onTriggerSchedules.contains(trigger))
+						return;
+					onTriggerSchedules.add(trigger);
 					measureExecutionTime();
 					// schedule immediately, regardless the actual runtime of
-					// the process that triggered this trigger
+					// the process that triggered this trigger					
 					scheduleAfter(new SchedulerEvent(task, trigger), 0);
 				}
 			}
@@ -125,17 +130,22 @@ public class SimulationScheduler implements Scheduler,
 	}
 
 	@Override
-	public void executionFailed(Task task, Exception e) {
+	public void executionFailed(Task task, Trigger trigger, Exception e) {
 		Log.e(e.getMessage());
-		executionCompleted(task);
+		executionCompleted(task, trigger);
 	}
 
 	@Override
-	public void executionCompleted(Task task) {
+	public void executionCompleted(Task task, Trigger trigger) {
 		measureExecutionTime();
-		if ((task.getTimeTrigger() != null) 
-				&& (task.getTimeTrigger().getPeriod() > 0)
-				&& (lastProcessExecutionTime > task.getTimeTrigger().getPeriod())) {
+		
+		boolean executedBecauseOfPeriodic = 
+				(trigger instanceof TimeTrigger)
+				&& (((TimeTrigger) trigger).getPeriod() > 0);
+
+		onTriggerSchedules.remove(trigger);
+
+		if (executedBecauseOfPeriodic && lastProcessExecutionTime > ((TimeTrigger) trigger).getPeriod()) {
 			Log.e("Periodic task " + task.toString()
 					+ " has greater actual execution time than its period ("
 					+ task.getTimeTrigger().getPeriod() + ")");
@@ -203,7 +213,7 @@ public class SimulationScheduler implements Scheduler,
 	 * Note that this method has to be explicitly protected by queue's monitor!
 	 */
 	void scheduleAfter(SchedulerEvent event, long delay) {			
-		event.nextExecutionTime = host.getCurrentTime() + delay;			
+		event.nextExecutionTime = host.getCurrentTime() + delay;		
 		push(event);
 					
 	}
@@ -240,6 +250,6 @@ public class SimulationScheduler implements Scheduler,
 	}
 	
 	private void measureExecutionTime() {
-		lastProcessExecutionTime = Math.max(System.currentTimeMillis() - lastProcessStartTime, lastProcessExecutionTime);
+		lastProcessExecutionTime = Math.max(System.currentTimeMillis() - lastProcessStartTime, 1);
 	}
 }

@@ -37,6 +37,12 @@ public class ProcessContext {
 			return null;
 	}	
 	
+	public static CurrentTimeProvider getTimeProvider() {
+		if (context.get() != null)
+			return context.get().currentTimeProvider;
+		else 
+			return null;
+	}
 	
 	private static RuntimeMetadata getModel() {
 		ComponentProcess p = getCurrentProcess();

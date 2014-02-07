@@ -70,6 +70,13 @@ public class SingleThreadedScheduler implements Scheduler {
 	 */
 	Map<Task, SchedulerEvent> periodicEvents = new HashMap<>();
 	
+	/**
+	 * Prevents scheduling a task more than once because of the same trigger
+	 * (i.e., multiple KnowledgeChangeTrigger hits in a row, such as after knowledge exchange)
+	 */
+	Set<Trigger> onTriggerSchedules = new HashSet<>();
+
+	
 	Set<Task> allTasks = new HashSet<>();
 	
 	 /**
@@ -112,7 +119,7 @@ public class SingleThreadedScheduler implements Scheduler {
      * Or it's the first time it is invoked
      */
 	@Override
-	public void executionCompleted(Task task) {
+	public void executionCompleted(Task task, Trigger trigger) {
 		if (task instanceof InvokeAndWaitTask) {
 			synchronized (task) {
 				task.notify();	
@@ -121,10 +128,19 @@ public class SingleThreadedScheduler implements Scheduler {
 		}
 		
 		synchronized (queue) {
-			SchedulerEvent event = periodicEvents.get(task);
-			// continue only for periodic tasks
-			if (event == null)
+			
+			boolean executedBecauseOfPeriodic = 
+					(trigger instanceof TimeTrigger)
+					&& (((TimeTrigger) trigger).getPeriod() > 0);
+			
+			onTriggerSchedules.remove(trigger);
+			
+			// continue only for periodic execution
+			if (!executedBecauseOfPeriodic) {
 				return;
+			}
+			
+			SchedulerEvent event = periodicEvents.get(task);
 			
 			// if the periodic task execution took more than it remained till the next period 
 			if (event.nextExecutionTime < System.currentTimeMillis()) {				
@@ -135,10 +151,10 @@ public class SingleThreadedScheduler implements Scheduler {
 	}
 
 	@Override
-	public void executionFailed(Task task, Exception e) {
+	public void executionFailed(Task task, Trigger trigger, Exception e) {
 		Log.e(e.getMessage());
 		
-		executionCompleted(task);
+		executionCompleted(task, trigger);
 	}
 
 	@Override
@@ -211,6 +227,13 @@ public class SingleThreadedScheduler implements Scheduler {
 							isScheduled = allTasks.contains(task);
 						}
 						if (isScheduled) {
+							// if the trigger has been already scheduled (i.e., there have
+							// been many consecutive invocations of that trigger in a row),
+							// then skip this event
+							if (onTriggerSchedules.contains(trigger))
+								return;
+							onTriggerSchedules.add(trigger);
+
 							scheduleAfter(new SchedulerEvent(task, trigger), 0);
 						}
 					}
