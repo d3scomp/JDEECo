@@ -11,10 +11,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import cz.cuni.mff.d3s.deeco.DeecoProperties;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
+import cz.cuni.mff.d3s.deeco.network.PacketReceiver;
+import cz.cuni.mff.d3s.deeco.network.PacketSender;
+import cz.cuni.mff.d3s.deeco.network.PublisherTask;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework;
 import cz.cuni.mff.d3s.deeco.simulation.Host;
 import cz.cuni.mff.d3s.deeco.simulation.Simulation;
@@ -112,9 +117,25 @@ public class Main {
 		out.println(omnetConfig.toString());		
 		out.close();
 		
+
+		logSimulationParameters(i);
+		
 		sim.run("Cmdenv", OMNET_CONFIG_PATH);
 		
 		//System.gc();
 		System.out.println("Simulation finished.");
+	}
+
+
+	private static void logSimulationParameters(int componentCnt) {
+		Log.d(String.format("Simulation parameters: %d components, packet size %d, publish period %d,"
+				+ " %s publishing, boundary %s, cache deadline %d, cache wipe period %d ",
+				componentCnt, 
+				Integer.getInteger(DeecoProperties.PACKET_SIZE, PacketSender.DEFAULT_PACKET_SIZE), 
+				Integer.getInteger(DeecoProperties.PUBLISHING_PERIOD, PublisherTask.DEFAULT_PUBLISHING_PERIOD), 
+				Boolean.getBoolean(DeecoProperties.USE_INDIVIDUAL_KNOWLEDGE_PUBLISHING) ?  "individual" : "list",
+				Boolean.getBoolean(DeecoProperties.DISABLE_BOUNDARY_CONDITIONS) ?  "disabled" : "enabled",
+				Integer.getInteger(DeecoProperties.MESSAGE_CACHE_DEADLINE, PacketReceiver.DEFAULT_MAX_MESSAGE_TIME),
+				Integer.getInteger(DeecoProperties.MESSAGE_CACHE_WIPE_PERIOD, PacketReceiver.DEFAULT_MESSAGE_WIPE_PERIOD)));
 	}
 }
