@@ -31,7 +31,7 @@ for line in lines:
         config = m.group(1)               
         break
     
-print config                
+print 'Config:', config                
 print '--------------------------------------------'
 
 
@@ -175,9 +175,6 @@ for team in teamLeaders.keys():
                     versionDifs.append(discovery.version - inDanger.version)
                     hops.append(discovery.hops) 
                     reallyDiscovered += 1
-                    
-                    print 'Discovery', discovery
-                    print 'Danger', inDanger
                     print 'leader %s of team %s discovered at %f that %s is in danger (after %dms proces-to-process, %dms node-to-node, %dhops, %dversions)' % \
                         (leader, team, discovery.discoverytime, member, resTimes[-1], resTimesNetwork[-1], hops[-1], versionDifs[-1])
                 else:
