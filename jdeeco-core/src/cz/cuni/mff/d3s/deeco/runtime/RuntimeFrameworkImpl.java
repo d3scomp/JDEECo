@@ -10,7 +10,7 @@ import org.eclipse.emf.common.notify.impl.AdapterImpl;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
-import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerContainer;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
@@ -34,7 +34,7 @@ import cz.cuni.mff.d3s.deeco.task.Task;
  * 
  * <p>
  * The class acts as a management container over the internal jDEECo services (
- * {@link Scheduler}, {@link Executor}, {@link CloningKnowledgeManagerContainer}
+ * {@link Scheduler}, {@link Executor}, {@link KnowledgeManagerContainer}
  * ) and the {@link RuntimeMetadata} model.
  * </p> 
  * 
@@ -80,7 +80,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 	/**
 	 * The KM container used by the runtime.
 	 */
-	protected CloningKnowledgeManagerContainer kmContainer;
+	protected KnowledgeManagerContainer kmContainer;
 	
 	/**
 	 * Keeps track of each instance's tasks.
@@ -119,7 +119,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 	 * @throws IllegalArgumentException if either of the arguments is null.
 	 */
 	public RuntimeFrameworkImpl(RuntimeMetadata model, Scheduler scheduler,
-			Executor executor, CloningKnowledgeManagerContainer kmContainer) {
+			Executor executor, KnowledgeManagerContainer kmContainer) {
 		this(model, scheduler, executor, kmContainer, true);
 	}
 	
@@ -127,11 +127,11 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 	 * Convenience constructor to make the initialization of the runtime upon
 	 * creation optional. The public constructor has it always mandatory.
 	 * 
-	 * @see RuntimeFrameworkImpl#RuntimeFrameworkImpl(RuntimeMetadata, Scheduler, Executor, CloningKnowledgeManagerContainer)
+	 * @see RuntimeFrameworkImpl#RuntimeFrameworkImpl(RuntimeMetadata, Scheduler, Executor, KnowledgeManagerContainer)
 	 * @see RuntimeFrameworkImpl#init()
 	 */
 	RuntimeFrameworkImpl(RuntimeMetadata model, Scheduler scheduler,
-			Executor executor, CloningKnowledgeManagerContainer kmContainer, boolean autoInit) {
+			Executor executor, KnowledgeManagerContainer kmContainer, boolean autoInit) {
 		if (model == null)
 			throw new IllegalArgumentException("Model cannot be null");
 		if (scheduler == null)

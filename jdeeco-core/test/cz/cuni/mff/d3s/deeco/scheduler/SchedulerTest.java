@@ -7,7 +7,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.task.Task;
 import cz.cuni.mff.d3s.deeco.task.TaskTriggerListener;
@@ -44,17 +44,18 @@ public abstract class SchedulerTest  {
 	@Test
 	public void testRepeatedExecution() throws InterruptedException{
 		final Task t = mock(Task.class);
-		PeriodicTrigger p = mock(PeriodicTrigger.class);
+		TimeTrigger p = mock(TimeTrigger.class);
 		// Stubbing mocks.
 		// The period is chosen to be 300 millis because the SingleThreadedScheduler 
 		// may not able to spawn a thread and execute it properly in a shorter 
 		// period of time causing a test failure 
 		when(p.getPeriod()).thenReturn(300L);
-		when(t.getPeriodicTrigger()).thenReturn(p);
+		when(p.getOffset()).thenReturn(0L);
+		when(t.getTimeTrigger()).thenReturn(p);
 		doAnswer(new Answer<Object>() {
 			    public Object answer(InvocationOnMock invocation) {
 			        Object[] args = invocation.getArguments();
-			        tested.executionCompleted((Task)args[0]);
+			        tested.executionCompleted((Task)args[0], (Trigger)args[1]);
 			        return null;
 			    }})
 			.when(executor).execute(t, p);
@@ -85,9 +86,10 @@ public abstract class SchedulerTest  {
 	@Test
 	public void testPeriodicTaskScheduledWhenSchedulerStarted() throws InterruptedException {
 		Task t = mock(Task.class);
-		PeriodicTrigger p = mock(PeriodicTrigger.class);
+		TimeTrigger p = mock(TimeTrigger.class);
 		when(p.getPeriod()).thenReturn(11L);
-		when(t.getPeriodicTrigger()).thenReturn(p);
+		when(p.getOffset()).thenReturn(0L);
+		when(t.getTimeTrigger()).thenReturn(p);
 		
 		// WHEN a periodic task is added to a new (stopped) scheduler
 		tested.addTask(t);		
@@ -113,9 +115,11 @@ public abstract class SchedulerTest  {
 	@Test
 	public void testPeriodicTaskAutomaticallyScheduledWhenAddedToRunningScheduler() throws InterruptedException {
 		Task t = mock(Task.class);
-		PeriodicTrigger p = mock(PeriodicTrigger.class);
+		TimeTrigger p = mock(TimeTrigger.class);
 		when(p.getPeriod()).thenReturn(11L);
-		when(t.getPeriodicTrigger()).thenReturn(p);
+		when(p.getOffset()).thenReturn(0L);
+		when(t.getTimeTrigger()).thenReturn(p);
+	
 		tested.start();
 
 		// WHEN a task is added to a running scheduler
@@ -127,9 +131,10 @@ public abstract class SchedulerTest  {
 	@Test
 	public void testPeriodicTaskNotScheduledWhenRemovedRunningScheduler() throws InterruptedException {
 		Task t = mock(Task.class);
-		PeriodicTrigger p = mock(PeriodicTrigger.class);
+		TimeTrigger p = mock(TimeTrigger.class);
 		when(p.getPeriod()).thenReturn(11L);
-		when(t.getPeriodicTrigger()).thenReturn(p);
+		when(p.getOffset()).thenReturn(0L);
+		when(t.getTimeTrigger()).thenReturn(p);
 		
 		tested.addTask(t);
 		tested.start();
@@ -241,7 +246,7 @@ public abstract class SchedulerTest  {
 		
 		Task t = new Task(tested) {	
 			@Override
-			public PeriodicTrigger getPeriodicTrigger() {
+			public TimeTrigger getTimeTrigger() {
 				return null;
 			}
 			

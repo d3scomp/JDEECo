@@ -6,7 +6,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 
 /**
@@ -60,11 +60,12 @@ public class RuntimeModelHelper {
 		return param;
 	}
 
-	public static PeriodicTrigger createPeriodicTrigger(long period) {
+	public static TimeTrigger createPeriodicTrigger(long period) {
 		RuntimeMetadataFactory factory = RuntimeMetadataFactory.eINSTANCE;
-		PeriodicTrigger trigger = factory.createPeriodicTrigger();
+		TimeTrigger trigger = factory.createTimeTrigger();
 
 		trigger.setPeriod(period);
+		trigger.setOffset(0);
 
 		return trigger;
 	}

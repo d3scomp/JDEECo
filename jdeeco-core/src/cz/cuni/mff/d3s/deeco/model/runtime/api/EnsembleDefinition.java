@@ -2,6 +2,7 @@
  */
 package cz.cuni.mff.d3s.deeco.model.runtime.api;
 
+import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EObject;
@@ -18,6 +19,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getMembership <em>Membership</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getKnowledgeExchange <em>Knowledge Exchange</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getTriggers <em>Triggers</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getCommunicationBoundary <em>Communication Boundary</em>}</li>
  * </ul>
  * </p>
  *
@@ -119,5 +121,31 @@ public interface EnsembleDefinition extends EObject {
 	 * @generated
 	 */
 	EList<Trigger> getTriggers();
+
+	/**
+	 * Returns the value of the '<em><b>Communication Boundary</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Communication Boundary</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Communication Boundary</em>' attribute.
+	 * @see #setCommunicationBoundary(CommunicationBoundaryPredicate)
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getEnsembleDefinition_CommunicationBoundary()
+	 * @model dataType="cz.cuni.mff.d3s.deeco.model.runtime.api.CommunicationBoundary"
+	 * @generated
+	 */
+	CommunicationBoundaryPredicate getCommunicationBoundary();
+
+	/**
+	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getCommunicationBoundary <em>Communication Boundary</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Communication Boundary</em>' attribute.
+	 * @see #getCommunicationBoundary()
+	 * @generated
+	 */
+	void setCommunicationBoundary(CommunicationBoundaryPredicate value);
 
 } // EnsembleDefinition

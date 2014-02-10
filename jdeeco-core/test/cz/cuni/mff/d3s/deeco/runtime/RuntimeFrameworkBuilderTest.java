@@ -8,7 +8,7 @@ import org.junit.rules.ExpectedException;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.executor.SameThreadExecutor;
-import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerContainer;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeConfiguration.Distribution;
@@ -68,7 +68,7 @@ public class RuntimeFrameworkBuilderTest {
 		RuntimeFrameworkBuilder tested = new RuntimeFrameworkBuilder(configuration);
 		tested.scheduler = mock(Scheduler.class);
 		tested.executor = mock(Executor.class);
-		tested.kmContainer = mock(CloningKnowledgeManagerContainer.class);		
+		tested.kmContainer = mock(KnowledgeManagerContainer.class);		
 		
 		// THEN the connect() interconnects the scheduler and executor properly
 		tested.connect();
@@ -83,7 +83,7 @@ public class RuntimeFrameworkBuilderTest {
 		RuntimeFrameworkBuilder tested = new RuntimeFrameworkBuilder(configuration);
 		tested.scheduler = mock(Scheduler.class);
 		tested.executor = mock(Executor.class);
-		tested.kmContainer = mock(CloningKnowledgeManagerContainer.class);		
+		tested.kmContainer = mock(KnowledgeManagerContainer.class);		
 		
 		RuntimeMetadata model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
 		

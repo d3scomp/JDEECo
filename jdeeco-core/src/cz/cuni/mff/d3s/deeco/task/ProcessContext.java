@@ -7,6 +7,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
+import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
 
 /**
  * A class providing reflective capabilities to a component process. 
@@ -18,13 +19,15 @@ public class ProcessContext {
 	private static ThreadLocal<ProcessContext> context = new ThreadLocal<>();
 	
 	private ComponentProcess process;
+	private CurrentTimeProvider currentTimeProvider;
 	
-	private ProcessContext(ComponentProcess process) {
+	private ProcessContext(ComponentProcess process, CurrentTimeProvider currentTimeProvider) {
 		this.process = process;		
+		this.currentTimeProvider = currentTimeProvider;
 	}
 	
-	static void addContext(ComponentProcess process) {
-		context.set(new ProcessContext(process));
+	static void addContext(ComponentProcess process, CurrentTimeProvider currentTimeProvider) {
+		context.set(new ProcessContext(process, currentTimeProvider));		
 	}	
 	
 	public static ComponentProcess getCurrentProcess() {
@@ -34,6 +37,12 @@ public class ProcessContext {
 			return null;
 	}	
 	
+	public static CurrentTimeProvider getTimeProvider() {
+		if (context.get() != null)
+			return context.get().currentTimeProvider;
+		else 
+			return null;
+	}
 	
 	private static RuntimeMetadata getModel() {
 		ComponentProcess p = getCurrentProcess();

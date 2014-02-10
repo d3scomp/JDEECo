@@ -2,7 +2,7 @@ package cz.cuni.mff.d3s.deeco.runtime;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.executor.SameThreadExecutor;
-import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerContainer;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeConfiguration.Execution;
@@ -54,7 +54,7 @@ public class RuntimeFrameworkBuilder {
 	/**
 	 * The knowledge manager container corresponding to the {@link #configuration}.
 	 */
-	CloningKnowledgeManagerContainer kmContainer;	
+	KnowledgeManagerContainer kmContainer;	
 	
 	/**
 	 * The configuration for which a new runtime framework has to be created and set up.
@@ -138,11 +138,11 @@ public class RuntimeFrameworkBuilder {
 	}
 	
 	/**
-	 * Creates an instance of {@link CloningKnowledgeManagerContainer} based on
+	 * Creates an instance of {@link KnowledgeManagerContainer} based on
 	 * the {@link #configuration}.
 	 */
 	protected void buildKnowledgeManagerContainer() {		
-		kmContainer = new CloningKnowledgeManagerContainer();
+		kmContainer = new KnowledgeManagerContainer();
 	}
 	
 	/**

@@ -35,8 +35,9 @@ import java.util.concurrent.ExecutorService;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.custom.TimeTriggerExt;
 import cz.cuni.mff.d3s.deeco.task.Task;
 import cz.cuni.mff.d3s.deeco.task.TaskInvocationException;
 import cz.cuni.mff.d3s.deeco.task.TaskTriggerListener;
@@ -68,6 +69,13 @@ public class SingleThreadedScheduler implements Scheduler {
 	 * execution took longer than the period.
 	 */
 	Map<Task, SchedulerEvent> periodicEvents = new HashMap<>();
+	
+	/**
+	 * Prevents scheduling a task more than once because of the same trigger
+	 * (i.e., multiple KnowledgeChangeTrigger hits in a row, such as after knowledge exchange)
+	 */
+	Set<Trigger> onTriggerSchedules = new HashSet<>();
+
 	
 	Set<Task> allTasks = new HashSet<>();
 	
@@ -111,7 +119,7 @@ public class SingleThreadedScheduler implements Scheduler {
      * Or it's the first time it is invoked
      */
 	@Override
-	public void executionCompleted(Task task) {
+	public void executionCompleted(Task task, Trigger trigger) {
 		if (task instanceof InvokeAndWaitTask) {
 			synchronized (task) {
 				task.notify();	
@@ -120,24 +128,33 @@ public class SingleThreadedScheduler implements Scheduler {
 		}
 		
 		synchronized (queue) {
-			SchedulerEvent event = periodicEvents.get(task);
-			// continue only for periodic tasks
-			if (event == null)
-				return;
 			
-				// if the periodic task execution took more than it remained till the next period 
-				if (event.nextExecutionTime < System.currentTimeMillis()) {				
-					queue.rescheduleTask(event, System.currentTimeMillis() + event.period);
-				}
+			boolean executedBecauseOfPeriodic = 
+					(trigger instanceof TimeTrigger)
+					&& (((TimeTrigger) trigger).getPeriod() > 0);
+			
+			onTriggerSchedules.remove(trigger);
+			
+			// continue only for periodic execution
+			if (!executedBecauseOfPeriodic) {
+				return;
+			}
+			
+			SchedulerEvent event = periodicEvents.get(task);
+			
+			// if the periodic task execution took more than it remained till the next period 
+			if (event.nextExecutionTime < System.currentTimeMillis()) {				
+				queue.rescheduleTask(event, System.currentTimeMillis() + event.executable.getTimeTrigger().getPeriod());
+			}
 			
 		}		
 	}
 
 	@Override
-	public void executionFailed(Task task, Exception e) {
+	public void executionFailed(Task task, Trigger trigger, Exception e) {
 		Log.e(e.getMessage());
 		
-		executionCompleted(task);
+		executionCompleted(task, trigger);
 	}
 
 	@Override
@@ -187,10 +204,15 @@ public class SingleThreadedScheduler implements Scheduler {
 					throw new IllegalStateException(
 							"Scheduler already terminated.");
 				
-				if (task.getPeriodicTrigger() != null) {
-					SchedulerEvent event = new SchedulerEvent(task, task.getPeriodicTrigger());
-					scheduleNow(event, task.getPeriodicTrigger().getPeriod());
-					periodicEvents.put(task, event);
+				if (task.getTimeTrigger() != null) {
+					SchedulerEvent event = new SchedulerEvent(task, task.getTimeTrigger());
+					
+					// schedule periodic tasks immediately
+					if (event.periodic) {
+						periodicEvents.put(task, event);
+					}
+					
+					scheduleAfter(event, task.getTimeTrigger().getOffset());					
 				}
 			}
 			task.setTriggerListener(new TaskTriggerListener() {	
@@ -205,7 +227,14 @@ public class SingleThreadedScheduler implements Scheduler {
 							isScheduled = allTasks.contains(task);
 						}
 						if (isScheduled) {
-							scheduleNow(new SchedulerEvent(task, trigger), 0);
+							// if the trigger has been already scheduled (i.e., there have
+							// been many consecutive invocations of that trigger in a row),
+							// then skip this event
+							if (onTriggerSchedules.contains(trigger))
+								return;
+							onTriggerSchedules.add(trigger);
+
+							scheduleAfter(new SchedulerEvent(task, trigger), 0);
 						}
 					}
 				}
@@ -218,9 +247,8 @@ public class SingleThreadedScheduler implements Scheduler {
 	/**
 	 * Note that this method has to be explicitly protected by queue's monitor!
 	 */
-	void scheduleNow(SchedulerEvent event, long period) {			
-			event.nextExecutionTime = System.currentTimeMillis(); // start immediately
-			event.period = period;
+	void scheduleAfter(SchedulerEvent event, long delay) {			
+			event.nextExecutionTime = System.currentTimeMillis() + delay;			
 			event.state = SchedulerEvent.SCHEDULED;
 
 			queue.add(event);
@@ -270,6 +298,15 @@ public class SingleThreadedScheduler implements Scheduler {
 			addTask(task);
 			task.wait();
 		}
+	}
+
+	
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider#getCurrentTime()
+	 */
+	@Override
+	public long getCurrentTime() {
+		return System.currentTimeMillis();
 	}
 }
 
@@ -403,11 +440,11 @@ class SchedulerThread extends Thread {
                     if( event.state == SchedulerEvent.RUNNING )
                     	continue;
                     
-                    if (event.period == 0) { // Non-repeating, remove
-                        queue.removeMin();
+                    if (event.periodic) { // Repeating task, reschedule
+                    	queue.rescheduleMin(event.nextExecutionTime + event.executable.getTimeTrigger().getPeriod());                       
+                    } else { // Non-repeating, remove
+                    	queue.removeMin();
                         event.state = SchedulerEvent.EXECUTED;
-                    } else { // Repeating task, reschedule
-                        queue.rescheduleMin(event.nextExecutionTime + event.period);
                     }              
                     
                     task = event.executable;
@@ -658,69 +695,6 @@ class TaskQueue {
 	    }
 }
 
-
-/**
- * Wrapper class for all periodic events
- * <p>
- * 
- */
-class SchedulerEvent implements Comparable<SchedulerEvent> {
-    /**
-     * The state of this task, chosen from the constants below.
-     */
-    int state = VIRGIN;
-
-    static final int VIRGIN = 0;
-    static final int SCHEDULED = 1;
-    static final int CANCELLED = 2;
-    static final int EXECUTED = 3;
-    static final int RUNNING = 4;    
-    static final int FAILED = 5;    
-    
-    /**
-     * Next execution time for this task in the format returned by
-     * System.currentTimeMillis, assuming this task is scheduled for execution.
-     * For repeating tasks, this field is updated prior to each task execution.
-     */
-    long nextExecutionTime;
-
-    /**
-     * Period in milliseconds for repeating tasks.  A positive value indicates
-     * fixed-rate execution.  A value of 0 indicates a non-repeating task.
-     */
-    long period = 0;
-    
-    /**
-     * The actual task to be executed.
-     */
-    Task executable;
-    
-    /** 
-     * The trigger associated with this event.
-     */
-    Trigger trigger;
-    
-
-    /**
-     * Creates a new scheduler task.
-     */
-    protected SchedulerEvent(Task task, Trigger trigger) {
-    	this.executable = task;
-    	this.trigger = trigger;
-    }
-
-
-	@Override
-	public int compareTo(SchedulerEvent o) {
-		if( this.nextExecutionTime < o.nextExecutionTime ) return -1;
-		else if( this.nextExecutionTime > o.nextExecutionTime ) return 1;
-		else return 0;
-	}
-
-   
-
-}
-
 /**
  * Ad-hoc tasks for one-time execution of a runnable within the context of the scheduler thread.
  * 
@@ -730,6 +704,14 @@ class SchedulerEvent implements Comparable<SchedulerEvent> {
 class InvokeAndWaitTask extends Task {
 
 	Runnable runnable;
+	TimeTrigger trigger;
+	
+	public InvokeAndWaitTask() {
+		super(null);
+		trigger = new TimeTriggerExt();
+		trigger.setPeriod(0);
+		trigger.setOffset(0);
+	}
 	
 	public InvokeAndWaitTask(Scheduler scheduler, Runnable runnable) {
 		super(scheduler);
@@ -752,8 +734,8 @@ class InvokeAndWaitTask extends Task {
 	}
 
 	@Override
-	public PeriodicTrigger getPeriodicTrigger() {		
-		return null;
+	public TimeTrigger getTimeTrigger() {		
+		return trigger;
 	}
 	
 }

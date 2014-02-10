@@ -16,7 +16,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
@@ -146,7 +146,7 @@ public class ProcessTask extends Task {
 		
 		try {
 			// Set the current process's context
-			ProcessContext.addContext(componentProcess);
+			ProcessContext.addContext(componentProcess, scheduler);
 			
 			// Call the process method
 			componentProcess.getMethod().invoke(null, actualParams);
@@ -204,16 +204,16 @@ public class ProcessTask extends Task {
 	}
 
 	/**
-	 * Returns the period associated with the process in the in the meta-model as the {@link PeriodicTrigger}. Note that the {@link ProcessTask} assumes that there is at most
-	 * one instance of {@link PeriodicTrigger} associated with the process in the meta-model.
+	 * Returns the period associated with the process in the in the meta-model as the {@link TimeTrigger}. Note that the {@link ProcessTask} assumes that there is at most
+	 * one instance of {@link TimeTrigger} associated with the process in the meta-model.
 	 * 
 	 * @return Periodic trigger or null no period is associated with the task.
 	 */
 	@Override
-	public PeriodicTrigger getPeriodicTrigger() {
+	public TimeTrigger getTimeTrigger() {
 		for (Trigger trigger : componentProcess.getTriggers()) {
-			if (trigger instanceof PeriodicTrigger) {
-				return ((PeriodicTrigger) trigger);
+			if (trigger instanceof TimeTrigger) {
+				return ((TimeTrigger) trigger);
 			}
 		}
 		

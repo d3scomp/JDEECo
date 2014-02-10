@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 
+import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.task.Task;
 
 /**
@@ -22,6 +23,7 @@ public abstract class ExecutorTest {
 	protected ExecutionListener listener;
 	protected Task taskSuccess; 
 	protected Task taskFail;
+	protected Trigger trigger;
 	protected Exception taskException; 
 	
 	@Rule
@@ -36,10 +38,11 @@ public abstract class ExecutorTest {
 		tested = setUpTested();
 		listener = mock(ExecutionListener.class);		
 		taskSuccess = mock(Task.class);
+		trigger = mock(Trigger.class);
 		
 		taskException = new RuntimeException("Failed invoke");
 		taskFail = mock(Task.class);
-		doThrow(taskException).when(taskFail).invoke(null);
+		doThrow(taskException).when(taskFail).invoke(any(Trigger.class));
 	}
 	
 	@Test
@@ -65,20 +68,20 @@ public abstract class ExecutorTest {
 		// GIVEN an executor with a registered listener
 		tested.setExecutionListener(listener);
 		// WHEN a task that succeeds is scheduled for execution		
-		tested.execute(taskSuccess, null);
+		tested.execute(taskSuccess, trigger);
 		// THEN the listener is notified that the task completed
-		verify(listener).executionCompleted(taskSuccess);
-		verify(listener, never()).executionFailed(eq(taskSuccess), any(Exception.class));
+		verify(listener).executionCompleted(taskSuccess, trigger);
+		verify(listener, never()).executionFailed(eq(taskSuccess), any(Trigger.class), any(Exception.class));
 
 
 		reset(listener);
 		
 		// WHEN the listener is unset and the task is scheduled for execution
 		tested.setExecutionListener(null);
-		tested.execute(taskSuccess, null);
+		tested.execute(taskSuccess, trigger);
 		// THEN it is no longer notified when execute is called
-		verify(listener, never()).executionCompleted(taskSuccess);
-		verify(listener, never()).executionFailed(eq(taskSuccess), any(Exception.class));
+		verify(listener, never()).executionCompleted(taskSuccess, trigger);
+		verify(listener, never()).executionFailed(eq(taskSuccess), any(Trigger.class), any(Exception.class));
 	}
 	
 	@Test
@@ -86,19 +89,19 @@ public abstract class ExecutorTest {
 		// GIVEN an executor with a registered listener
 		tested.setExecutionListener(listener);
 		// WHEN a task that fails is scheduled for execution		
-		tested.execute(taskFail, null);
+		tested.execute(taskFail, trigger);
 		// THEN the listener is notified that the task completed
-		verify(listener).executionFailed(taskFail, taskException);
-		verify(listener, never()).executionCompleted(taskSuccess);
+		verify(listener).executionFailed(taskFail, trigger, taskException);
+		verify(listener, never()).executionCompleted(eq(taskSuccess), any(Trigger.class));
 
 		reset(listener);
 		
 		// WHEN the listener is unset and the task is scheduled for execution
 		tested.setExecutionListener(null);
-		tested.execute(taskFail, null);
+		tested.execute(taskFail, trigger);
 		// THEN it is no longer notified when execute is called
-		verify(listener, never()).executionFailed(taskFail, taskException);
-		verify(listener, never()).executionCompleted(taskSuccess);
+		verify(listener, never()).executionFailed(taskFail, trigger, taskException);
+		verify(listener, never()).executionCompleted(eq(taskSuccess), any(Trigger.class));
 	}
 
 	@Test
