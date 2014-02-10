@@ -24,9 +24,9 @@ A new node called `jdeeco-concepts` is available now. It contains projects that 
 Demo projects for jdeeco can be found in `jdeeco-demos` folder. They can be built either by running `mvn clean install` in jdeeco-demos or via running the same command from `jdeeco-parent` (this will eventually generate all the binaries). In both cases binaries `cloud.jar` and `firefighters.jar` will appear in `dist` folder along with an ant script to run them. There are 5 different demos out of those two demo binaries
 
 #### Cloud demos
-* ant LocalLauncherCloudNoJPF
-* ant LocalLauncherDynamicCloudNoJPF
-* ant TSLauncherCloudNoJPF
+* ant LocalLauncherCloud
+* ant LocalLauncherDynamicCloud
+* ant TSLauncherCloud
 
 #### Firefighters demos
 * ant FFLauncher
