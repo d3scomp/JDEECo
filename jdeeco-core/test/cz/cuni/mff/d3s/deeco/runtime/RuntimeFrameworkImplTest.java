@@ -13,7 +13,7 @@ import org.junit.contrib.java.lang.system.StandardErrorStreamLog;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.knowledge.BaseKnowledgeManager;
-import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerContainer;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
@@ -41,7 +41,7 @@ public class RuntimeFrameworkImplTest {
 
 	Scheduler scheduler;
 	Executor executor;
-	CloningKnowledgeManagerContainer kmContainer;
+	KnowledgeManagerContainer kmContainer;
 	
 	RuntimeMetadata model;	
 	
@@ -60,7 +60,7 @@ public class RuntimeFrameworkImplTest {
 	public void setUp() throws Exception {
 		scheduler = mock(Scheduler.class);
 		executor = mock(Executor.class);
-		kmContainer = mock(CloningKnowledgeManagerContainer.class);
+		kmContainer = mock(KnowledgeManagerContainer.class);
 		
 				
 

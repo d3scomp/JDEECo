@@ -1,12 +1,13 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.MockitoAnnotations.initMocks;
 
+import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -24,12 +25,12 @@ public class CloningKnowledgeManagerContainerTest {
 	@Mock
 	private ReplicaListener replicaListener;
 
-	private CloningKnowledgeManagerContainer tested;
+	private KnowledgeManagerContainer tested;
 
 	@Before
 	public void setUp() {
 		initMocks(this);
-		this.tested = new CloningKnowledgeManagerContainer();
+		this.tested = new KnowledgeManagerContainer();
 	}
 
 	@Test
@@ -53,9 +54,9 @@ public class CloningKnowledgeManagerContainerTest {
 		tested.registerReplicaListener(replicaListener);
 		tested.registerLocalListener(localListener);
 		// and WHEN new replica knowledge manager has been created
-		KnowledgeManager replica = tested.createReplica("TEST");
+		KnowledgeManager replica = tested.createReplica("T1");
 		// THEN the listener is notified about this fact
-		verify(replicaListener).replicaCreated(replica, tested);
+		verify(replicaListener).replicaRegistered(replica, tested);
 		// and none of the local listeners is notified
 		verifyZeroInteractions(localListener);
 	}
@@ -82,11 +83,10 @@ public class CloningKnowledgeManagerContainerTest {
 		tested.registerReplicaListener(replicaListener);
 		tested.registerLocalListener(localListener);
 		// and WHEN a replica of a knowledge manager has been removed
-		KnowledgeManager replica = tested
-				.createReplica("TEST");
+		KnowledgeManager replica = tested.createReplica("T1");
 		tested.removeReplica(replica);
 		// THEN the listener is notified about this fact
-		verify(replicaListener).replicaRemoved(replica, tested);
+		verify(replicaListener).replicaUnregistered(replica, tested);
 		// and none of the local listeners is notified
 		verifyZeroInteractions(localListener);
 	}
@@ -95,29 +95,39 @@ public class CloningKnowledgeManagerContainerTest {
 	public void getLocalsTest() {
 		// WHEN a set of local knowledge managers has been created within the
 		// container instance
-		List<KnowledgeManager> locals = new LinkedList<>();
-		locals.add(tested.createLocal("L1"));
-		locals.add(tested.createLocal("L2"));
-		locals.add(tested.createLocal("L3"));
+		Collection<KnowledgeManager> locals = new LinkedList<>();
+		KnowledgeManager l1, l2, l3;
+		locals.add(l1 = tested.createLocal("L1"));
+		locals.add(l2 = tested.createLocal("L2"));
+		locals.add(l3 = tested.createLocal("L3"));
 		// WHEN the container is accessed for all local knowledge managers
-		List<KnowledgeManager> containerLocals = tested.getLocals();
+		Collection<KnowledgeManager> containerLocals = tested.getLocals();
 		// THEN the container returns all local knowledge managers created
 		// before
-		assertEquals(locals, containerLocals);
+		assertEquals(3, containerLocals.size());
+		assertThat(containerLocals, hasItem(l1));
+		assertThat(containerLocals, hasItem(l2));
+		assertThat(containerLocals, hasItem(l3));
 	}
 
 	@Test
 	public void getReplicasTest() {
 		// WHEN a set of replica knowledge managers has been created within the
 		// container instance
-		List<KnowledgeManager> replicas = new LinkedList<>();
-		replicas.add(tested.createReplica("T1"));
-		replicas.add(tested.createReplica("T2"));
-		replicas.add(tested.createReplica("T3"));
+		Collection<KnowledgeManager> replicas = new LinkedList<>();
+		KnowledgeManager r1, r2, r3;
+
+		replicas.add(r1 = tested.createReplica("R1"));
+		replicas.add(r2 = tested.createReplica("R2"));
+		replicas.add(r3 = tested.createReplica("R3"));
+				
 		// WHEN the container is accessed for all replica knowledge managers
-		List<KnowledgeManager> containerReplicas = tested.getReplicas();
+		Collection<KnowledgeManager> containerReplicas = tested.getReplicas();
+		
 		// THEN the container returns all replica knowledge managers created
 		// before
-		assertEquals(replicas, containerReplicas);
-	}
+		assertEquals(3, containerReplicas.size());
+		assertThat(containerReplicas, hasItem(r1));
+		assertThat(containerReplicas, hasItem(r2));
+		assertThat(containerReplicas, hasItem(r3));	}
 }

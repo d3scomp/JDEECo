@@ -87,43 +87,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int TRIGGER_OPERATION_COUNT = 0;
 
 	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.PeriodicTriggerImpl <em>Periodic Trigger</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.PeriodicTriggerImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getPeriodicTrigger()
-	 * @generated
-	 */
-	int PERIODIC_TRIGGER = 0;
-
-	/**
-	 * The feature id for the '<em><b>Period</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PERIODIC_TRIGGER__PERIOD = TRIGGER_FEATURE_COUNT + 0;
-
-	/**
-	 * The number of structural features of the '<em>Periodic Trigger</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PERIODIC_TRIGGER_FEATURE_COUNT = TRIGGER_FEATURE_COUNT + 1;
-
-	/**
-	 * The number of operations of the '<em>Periodic Trigger</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PERIODIC_TRIGGER_OPERATION_COUNT = TRIGGER_OPERATION_COUNT + 0;
-
-	/**
 	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.KnowledgeChangeTriggerImpl <em>Knowledge Change Trigger</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -132,6 +95,222 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 */
 	int KNOWLEDGE_CHANGE_TRIGGER = 2;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.KnowledgePathImpl <em>Knowledge Path</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.KnowledgePathImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getKnowledgePath()
+	 * @generated
+	 */
+	int KNOWLEDGE_PATH = 3;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeImpl <em>Path Node</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getPathNode()
+	 * @generated
+	 */
+	int PATH_NODE = 4;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeFieldImpl <em>Path Node Field</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeFieldImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getPathNodeField()
+	 * @generated
+	 */
+	int PATH_NODE_FIELD = 5;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeMapKeyImpl <em>Path Node Map Key</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeMapKeyImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getPathNodeMapKey()
+	 * @generated
+	 */
+	int PATH_NODE_MAP_KEY = 6;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataImpl <em>Runtime Metadata</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getRuntimeMetadata()
+	 * @generated
+	 */
+	int RUNTIME_METADATA = 7;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl <em>Component Instance</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getComponentInstance()
+	 * @generated
+	 */
+	int COMPONENT_INSTANCE = 8;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl <em>Ensemble Definition</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getEnsembleDefinition()
+	 * @generated
+	 */
+	int ENSEMBLE_DEFINITION = 9;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.InvocableImpl <em>Invocable</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.InvocableImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getInvocable()
+	 * @generated
+	 */
+	int INVOCABLE = 14;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ConditionImpl <em>Condition</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.ConditionImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getCondition()
+	 * @generated
+	 */
+	int CONDITION = 10;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ExchangeImpl <em>Exchange</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.ExchangeImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getExchange()
+	 * @generated
+	 */
+	int EXCHANGE = 11;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl <em>Component Process</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getComponentProcess()
+	 * @generated
+	 */
+	int COMPONENT_PROCESS = 12;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ParameterImpl <em>Parameter</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.ParameterImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getParameter()
+	 * @generated
+	 */
+	int PARAMETER = 13;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleControllerImpl <em>Ensemble Controller</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleControllerImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getEnsembleController()
+	 * @generated
+	 */
+	int ENSEMBLE_CONTROLLER = 15;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeCoordinatorImpl <em>Path Node Coordinator</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeCoordinatorImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getPathNodeCoordinator()
+	 * @generated
+	 */
+	int PATH_NODE_COORDINATOR = 16;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeMemberImpl <em>Path Node Member</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeMemberImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getPathNodeMember()
+	 * @generated
+	 */
+	int PATH_NODE_MEMBER = 17;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeComponentIdImpl <em>Path Node Component Id</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeComponentIdImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getPathNodeComponentId()
+	 * @generated
+	 */
+	int PATH_NODE_COMPONENT_ID = 18;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.StringToObjectMapImpl <em>String To Object Map</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.StringToObjectMapImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getStringToObjectMap()
+	 * @generated
+	 */
+	int STRING_TO_OBJECT_MAP = 19;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.TimeTriggerImpl <em>Time Trigger</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.TimeTriggerImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getTimeTrigger()
+	 * @generated
+	 */
+	int TIME_TRIGGER = 0;
+
+	/**
+	 * The feature id for the '<em><b>Period</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TIME_TRIGGER__PERIOD = TRIGGER_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Offset</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TIME_TRIGGER__OFFSET = TRIGGER_FEATURE_COUNT + 1;
+
+	/**
+	 * The number of structural features of the '<em>Time Trigger</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TIME_TRIGGER_FEATURE_COUNT = TRIGGER_FEATURE_COUNT + 2;
+
+	/**
+	 * The number of operations of the '<em>Time Trigger</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TIME_TRIGGER_OPERATION_COUNT = TRIGGER_OPERATION_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Knowledge Path</b></em>' containment reference.
@@ -161,16 +340,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int KNOWLEDGE_CHANGE_TRIGGER_OPERATION_COUNT = TRIGGER_OPERATION_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.KnowledgePathImpl <em>Knowledge Path</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.KnowledgePathImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getKnowledgePath()
-	 * @generated
-	 */
-	int KNOWLEDGE_PATH = 3;
-
-	/**
 	 * The feature id for the '<em><b>Nodes</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -198,16 +367,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int KNOWLEDGE_PATH_OPERATION_COUNT = 0;
 
 	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeImpl <em>Path Node</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getPathNode()
-	 * @generated
-	 */
-	int PATH_NODE = 4;
-
-	/**
 	 * The number of structural features of the '<em>Path Node</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -224,16 +383,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @ordered
 	 */
 	int PATH_NODE_OPERATION_COUNT = 0;
-
-	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeFieldImpl <em>Path Node Field</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeFieldImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getPathNodeField()
-	 * @generated
-	 */
-	int PATH_NODE_FIELD = 5;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -263,16 +412,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int PATH_NODE_FIELD_OPERATION_COUNT = PATH_NODE_OPERATION_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeMapKeyImpl <em>Path Node Map Key</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeMapKeyImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getPathNodeMapKey()
-	 * @generated
-	 */
-	int PATH_NODE_MAP_KEY = 6;
-
-	/**
 	 * The feature id for the '<em><b>Key Path</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -298,16 +437,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @ordered
 	 */
 	int PATH_NODE_MAP_KEY_OPERATION_COUNT = PATH_NODE_OPERATION_COUNT + 0;
-
-	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataImpl <em>Runtime Metadata</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getRuntimeMetadata()
-	 * @generated
-	 */
-	int RUNTIME_METADATA = 7;
 
 	/**
 	 * The feature id for the '<em><b>Ensemble Definitions</b></em>' containment reference list.
@@ -344,16 +473,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @ordered
 	 */
 	int RUNTIME_METADATA_OPERATION_COUNT = 0;
-
-	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl <em>Component Instance</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getComponentInstance()
-	 * @generated
-	 */
-	int COMPONENT_INSTANCE = 8;
 
 	/**
 	 * The feature id for the '<em><b>Component Processes</b></em>' containment reference list.
@@ -401,13 +520,22 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS = 4;
 
 	/**
+	 * The feature id for the '<em><b>Internal Data</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPONENT_INSTANCE__INTERNAL_DATA = 5;
+
+	/**
 	 * The number of structural features of the '<em>Component Instance</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_INSTANCE_FEATURE_COUNT = 5;
+	int COMPONENT_INSTANCE_FEATURE_COUNT = 6;
 
 	/**
 	 * The number of operations of the '<em>Component Instance</em>' class.
@@ -417,16 +545,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @ordered
 	 */
 	int COMPONENT_INSTANCE_OPERATION_COUNT = 0;
-
-	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl <em>Ensemble Definition</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getEnsembleDefinition()
-	 * @generated
-	 */
-	int ENSEMBLE_DEFINITION = 9;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -465,13 +583,22 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int ENSEMBLE_DEFINITION__TRIGGERS = 3;
 
 	/**
+	 * The feature id for the '<em><b>Communication Boundary</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ENSEMBLE_DEFINITION__COMMUNICATION_BOUNDARY = 4;
+
+	/**
 	 * The number of structural features of the '<em>Ensemble Definition</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ENSEMBLE_DEFINITION_FEATURE_COUNT = 4;
+	int ENSEMBLE_DEFINITION_FEATURE_COUNT = 5;
 
 	/**
 	 * The number of operations of the '<em>Ensemble Definition</em>' class.
@@ -481,16 +608,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @ordered
 	 */
 	int ENSEMBLE_DEFINITION_OPERATION_COUNT = 0;
-
-	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.InvocableImpl <em>Invocable</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.InvocableImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getInvocable()
-	 * @generated
-	 */
-	int INVOCABLE = 14;
 
 	/**
 	 * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
@@ -529,16 +646,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int INVOCABLE_OPERATION_COUNT = 0;
 
 	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ConditionImpl <em>Condition</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.ConditionImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getCondition()
-	 * @generated
-	 */
-	int CONDITION = 10;
-
-	/**
 	 * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -575,16 +682,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int CONDITION_OPERATION_COUNT = INVOCABLE_OPERATION_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ExchangeImpl <em>Exchange</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.ExchangeImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getExchange()
-	 * @generated
-	 */
-	int EXCHANGE = 11;
-
-	/**
 	 * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -619,16 +716,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @ordered
 	 */
 	int EXCHANGE_OPERATION_COUNT = INVOCABLE_OPERATION_COUNT + 0;
-
-	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl <em>Component Process</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getComponentProcess()
-	 * @generated
-	 */
-	int COMPONENT_PROCESS = 12;
 
 	/**
 	 * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
@@ -703,16 +790,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int COMPONENT_PROCESS_OPERATION_COUNT = INVOCABLE_OPERATION_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ParameterImpl <em>Parameter</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.ParameterImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getParameter()
-	 * @generated
-	 */
-	int PARAMETER = 13;
-
-	/**
 	 * The feature id for the '<em><b>Direction</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -758,16 +835,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int PARAMETER_OPERATION_COUNT = 0;
 
 	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleControllerImpl <em>Ensemble Controller</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleControllerImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getEnsembleController()
-	 * @generated
-	 */
-	int ENSEMBLE_CONTROLLER = 15;
-
-	/**
 	 * The feature id for the '<em><b>Component Instance</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -804,16 +871,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int ENSEMBLE_CONTROLLER_OPERATION_COUNT = 0;
 
 	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeCoordinatorImpl <em>Path Node Coordinator</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeCoordinatorImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getPathNodeCoordinator()
-	 * @generated
-	 */
-	int PATH_NODE_COORDINATOR = 16;
-
-	/**
 	 * The number of structural features of the '<em>Path Node Coordinator</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -830,16 +887,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @ordered
 	 */
 	int PATH_NODE_COORDINATOR_OPERATION_COUNT = PATH_NODE_OPERATION_COUNT + 0;
-
-	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeMemberImpl <em>Path Node Member</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeMemberImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getPathNodeMember()
-	 * @generated
-	 */
-	int PATH_NODE_MEMBER = 17;
 
 	/**
 	 * The number of structural features of the '<em>Path Node Member</em>' class.
@@ -860,16 +907,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int PATH_NODE_MEMBER_OPERATION_COUNT = PATH_NODE_OPERATION_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeComponentIdImpl <em>Path Node Component Id</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeComponentIdImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getPathNodeComponentId()
-	 * @generated
-	 */
-	int PATH_NODE_COMPONENT_ID = 18;
-
-	/**
 	 * The number of structural features of the '<em>Path Node Component Id</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -888,6 +925,42 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int PATH_NODE_COMPONENT_ID_OPERATION_COUNT = PATH_NODE_OPERATION_COUNT + 0;
 
 	/**
+	 * The feature id for the '<em><b>Key</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STRING_TO_OBJECT_MAP__KEY = 0;
+
+	/**
+	 * The feature id for the '<em><b>Value</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STRING_TO_OBJECT_MAP__VALUE = 1;
+
+	/**
+	 * The number of structural features of the '<em>String To Object Map</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STRING_TO_OBJECT_MAP_FEATURE_COUNT = 2;
+
+	/**
+	 * The number of operations of the '<em>String To Object Map</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STRING_TO_OBJECT_MAP_OPERATION_COUNT = 0;
+
+	/**
 	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection <em>Parameter Direction</em>}' enum.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -895,7 +968,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getParameterDirection()
 	 * @generated
 	 */
-	int PARAMETER_DIRECTION = 19;
+	int PARAMETER_DIRECTION = 20;
 
 	/**
 	 * The meta object id for the '<em>Method</em>' data type.
@@ -905,7 +978,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getMethod()
 	 * @generated
 	 */
-	int METHOD = 20;
+	int METHOD = 21;
 
 	/**
 	 * The meta object id for the '<em>Knowledge Manager</em>' data type.
@@ -915,7 +988,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getKnowledgeManager()
 	 * @generated
 	 */
-	int KNOWLEDGE_MANAGER = 21;
+	int KNOWLEDGE_MANAGER = 22;
 
 	/**
 	 * The meta object id for the '<em>Shadow Knowledge Manager Registry</em>' data type.
@@ -925,28 +998,17 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getShadowKnowledgeManagerRegistry()
 	 * @generated
 	 */
-	int SHADOW_KNOWLEDGE_MANAGER_REGISTRY = 22;
+	int SHADOW_KNOWLEDGE_MANAGER_REGISTRY = 23;
 
 	/**
-	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger <em>Periodic Trigger</em>}'.
+	 * The meta object id for the '<em>Communication Boundary</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Periodic Trigger</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger
+	 * @see cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getCommunicationBoundary()
 	 * @generated
 	 */
-	EClass getPeriodicTrigger();
-
-	/**
-	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger#getPeriod <em>Period</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Period</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger#getPeriod()
-	 * @see #getPeriodicTrigger()
-	 * @generated
-	 */
-	EAttribute getPeriodicTrigger_Period();
+	int COMMUNICATION_BOUNDARY = 24;
 
 	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger <em>Trigger</em>}'.
@@ -1150,6 +1212,17 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EReference getComponentInstance_EnsembleControllers();
 
 	/**
+	 * Returns the meta object for the map '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getInternalData <em>Internal Data</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the map '<em>Internal Data</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getInternalData()
+	 * @see #getComponentInstance()
+	 * @generated
+	 */
+	EReference getComponentInstance_InternalData();
+
+	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition <em>Ensemble Definition</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1202,6 +1275,17 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getEnsembleDefinition_Triggers();
+
+	/**
+	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getCommunicationBoundary <em>Communication Boundary</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Communication Boundary</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getCommunicationBoundary()
+	 * @see #getEnsembleDefinition()
+	 * @generated
+	 */
+	EAttribute getEnsembleDefinition_CommunicationBoundary();
 
 	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Condition <em>Condition</em>}'.
@@ -1415,6 +1499,72 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EClass getPathNodeComponentId();
 
 	/**
+	 * Returns the meta object for class '{@link java.util.Map.Entry <em>String To Object Map</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>String To Object Map</em>'.
+	 * @see java.util.Map.Entry
+	 * @model keyDataType="org.eclipse.emf.ecore.EString"
+	 *        valueDataType="org.eclipse.emf.ecore.EJavaObject"
+	 * @generated
+	 */
+	EClass getStringToObjectMap();
+
+	/**
+	 * Returns the meta object for the attribute '{@link java.util.Map.Entry <em>Key</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Key</em>'.
+	 * @see java.util.Map.Entry
+	 * @see #getStringToObjectMap()
+	 * @generated
+	 */
+	EAttribute getStringToObjectMap_Key();
+
+	/**
+	 * Returns the meta object for the attribute '{@link java.util.Map.Entry <em>Value</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Value</em>'.
+	 * @see java.util.Map.Entry
+	 * @see #getStringToObjectMap()
+	 * @generated
+	 */
+	EAttribute getStringToObjectMap_Value();
+
+	/**
+	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger <em>Time Trigger</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Time Trigger</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger
+	 * @generated
+	 */
+	EClass getTimeTrigger();
+
+	/**
+	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger#getPeriod <em>Period</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Period</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger#getPeriod()
+	 * @see #getTimeTrigger()
+	 * @generated
+	 */
+	EAttribute getTimeTrigger_Period();
+
+	/**
+	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger#getOffset <em>Offset</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Offset</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger#getOffset()
+	 * @see #getTimeTrigger()
+	 * @generated
+	 */
+	EAttribute getTimeTrigger_Offset();
+
+	/**
 	 * Returns the meta object for enum '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection <em>Parameter Direction</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1458,6 +1608,17 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EDataType getShadowKnowledgeManagerRegistry();
 
 	/**
+	 * Returns the meta object for data type '{@link cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate <em>Communication Boundary</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>Communication Boundary</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate
+	 * @model instanceClass="cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate"
+	 * @generated
+	 */
+	EDataType getCommunicationBoundary();
+
+	/**
 	 * Returns the factory that creates the instances of the model.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1480,24 +1641,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 */
 	interface Literals {
-		/**
-		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.PeriodicTriggerImpl <em>Periodic Trigger</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.PeriodicTriggerImpl
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getPeriodicTrigger()
-		 * @generated
-		 */
-		EClass PERIODIC_TRIGGER = eINSTANCE.getPeriodicTrigger();
-
-		/**
-		 * The meta object literal for the '<em><b>Period</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute PERIODIC_TRIGGER__PERIOD = eINSTANCE.getPeriodicTrigger_Period();
-
 		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.TriggerImpl <em>Trigger</em>}' class.
 		 * <!-- begin-user-doc -->
@@ -1667,6 +1810,14 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EReference COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS = eINSTANCE.getComponentInstance_EnsembleControllers();
 
 		/**
+		 * The meta object literal for the '<em><b>Internal Data</b></em>' map feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference COMPONENT_INSTANCE__INTERNAL_DATA = eINSTANCE.getComponentInstance_InternalData();
+
+		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl <em>Ensemble Definition</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1707,6 +1858,14 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * @generated
 		 */
 		EReference ENSEMBLE_DEFINITION__TRIGGERS = eINSTANCE.getEnsembleDefinition_Triggers();
+
+		/**
+		 * The meta object literal for the '<em><b>Communication Boundary</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ENSEMBLE_DEFINITION__COMMUNICATION_BOUNDARY = eINSTANCE.getEnsembleDefinition_CommunicationBoundary();
 
 		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ConditionImpl <em>Condition</em>}' class.
@@ -1887,6 +2046,58 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EClass PATH_NODE_COMPONENT_ID = eINSTANCE.getPathNodeComponentId();
 
 		/**
+		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.StringToObjectMapImpl <em>String To Object Map</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.StringToObjectMapImpl
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getStringToObjectMap()
+		 * @generated
+		 */
+		EClass STRING_TO_OBJECT_MAP = eINSTANCE.getStringToObjectMap();
+
+		/**
+		 * The meta object literal for the '<em><b>Key</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute STRING_TO_OBJECT_MAP__KEY = eINSTANCE.getStringToObjectMap_Key();
+
+		/**
+		 * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute STRING_TO_OBJECT_MAP__VALUE = eINSTANCE.getStringToObjectMap_Value();
+
+		/**
+		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.TimeTriggerImpl <em>Time Trigger</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.TimeTriggerImpl
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getTimeTrigger()
+		 * @generated
+		 */
+		EClass TIME_TRIGGER = eINSTANCE.getTimeTrigger();
+
+		/**
+		 * The meta object literal for the '<em><b>Period</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute TIME_TRIGGER__PERIOD = eINSTANCE.getTimeTrigger_Period();
+
+		/**
+		 * The meta object literal for the '<em><b>Offset</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute TIME_TRIGGER__OFFSET = eINSTANCE.getTimeTrigger_Offset();
+
+		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection <em>Parameter Direction</em>}' enum.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1925,6 +2136,16 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * @generated
 		 */
 		EDataType SHADOW_KNOWLEDGE_MANAGER_REGISTRY = eINSTANCE.getShadowKnowledgeManagerRegistry();
+
+		/**
+		 * The meta object literal for the '<em>Communication Boundary</em>' data type.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getCommunicationBoundary()
+		 * @generated
+		 */
+		EDataType COMMUNICATION_BOUNDARY = eINSTANCE.getCommunicationBoundary();
 
 	}
 

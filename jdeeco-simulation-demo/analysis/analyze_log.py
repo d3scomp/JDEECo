@@ -1,0 +1,141 @@
+import re
+from numpy import average, median
+
+
+lines = []
+with open('../logs/jdeeco.log.0', 'r') as f:
+    lines = f.readlines()
+    
+pattern = re.compile('Simulation parameters: (.+)\n')
+config = ""
+for line in lines:
+    if 'Simulation parameters' in line:
+        m = pattern.search(line)
+        config = m.group(1)               
+        break
+    
+print config                
+print '--------------------------------------------'
+    
+hoplines = filter(lambda x: x.endswith('hops\n'), lines)
+hopData = []
+pattern = re.compile('after (\d+)ms and (\d+) hops')
+for line in hoplines:
+    m = pattern.search(line)
+    time = m.group(1)
+    hops = m.group(2)
+    hopData.append({'time': int(time), 'hops': int(hops)})
+
+
+    
+timesPerHop = map(lambda x: x['time'] / x['hops'], hopData)
+hopCounts = map(lambda x: x['hops'], hopData)
+
+avgTimePerHop = average(timesPerHop)
+maxNumOfHops = max(hopCounts)
+avgNumOfHops = average(hopCounts)
+print "Average time per hop: ", avgTimePerHop, 'ms'
+print "Max number of hops: ", maxNumOfHops
+print "Average number of hops: ", avgNumOfHops
+
+
+boundaryFailedLines = filter(lambda x: 'Boundary failed' in x, lines)
+boundaryFailedCnt = len(boundaryFailedLines)
+print 'Boundary prevented sending of:', boundaryFailedCnt
+
+publishLines = filter(lambda x: 'Publish' in x, lines)
+# on each publish line, each sent KD is followed by a ',' + there is one more in the message
+knowledgeDataPublished = sum(map(lambda l: l.count(',') - 1, publishLines)) 
+print 'KnowledgeData published:', knowledgeDataPublished
+
+
+receiveLines = filter(lambda x: ', received [' in x, lines)
+# on each receive line, each received KD is followed by a ',' + there is one more in the message
+knowledgeDataReceived = sum(map(lambda l: l.count(',') - 1, receiveLines)) 
+print 'KnowledgeData received:', knowledgeDataReceived
+
+
+def extract_sent_id(line):
+    p = re.compile('with messageid (.\d+)')
+    m = p.search(line)
+    return m.group(1)
+
+sentMsgLines = filter(lambda x: 'PacketSender: Sending MSG' in x, lines)
+sentIds = set(map(extract_sent_id, sentMsgLines))
+sentIdsCnt = len(sentIds)
+print 'Sent messages: ', sentIdsCnt
+
+
+
+ 
+def extract_received_id(line):
+    p = re.compile('with messageid (.\d+)')
+    m = p.search(line)
+    return m.group(1)
+receivedMsgLines = filter(lambda x: 'PacketReceiver: Message completed' in x, lines)
+receivedIds = set(map(extract_received_id, receivedMsgLines))
+receivedIdsCnt = len(receivedIds)
+print 'Received messages: ', receivedIdsCnt
+
+def extract_dropped_ids(line):
+    p = re.compile('dropped messageids \[(.*)\]')
+    m = p.search(line)
+    ids = m.group(1)
+    if ids is not None:
+        return set(ids.split(', '))
+    else:
+        return set() 
+dropMsgLines = filter(lambda x: 'dropped messageids' in x, lines)
+droppedIds = set.union(*map(extract_dropped_ids, dropMsgLines))
+droppedIds = droppedIds - receivedIds
+droppedIdsCnt = len(droppedIds)
+print 'Dropped messages: ', droppedIdsCnt
+
+recSendRatio = len(receivedIds) * 1.0 /len(sentIds)
+print 'Received/Sent ratio:', recSendRatio
+
+def printStats(description, values):
+    print description, 'avg=%f, min=%f, max=%f, median=%f' %(average(values), min(values), max(values), median(values))
+
+def extract_sent_length(line):
+    p = re.compile('and size (.\d+)')
+    m = p.search(line)
+    return int(m.group(1))
+sentSizes = map(extract_sent_length, sentMsgLines);
+printStats('Message size:', sentSizes)
+
+
+rebroadcastLines = filter(lambda x: 'Rebroadcasting' in x, lines)
+def extract_rebroadcast_cnt(line):
+    p = re.compile('Rebroadcasting (\d+)')
+    m = p.search(line)
+    return int(m.group(1))
+def extract_rebroadcast_ratio(line):
+    p = re.compile('Rebroadcasting (\d+) out of (\d+)')
+    m = p.search(line)
+    sent = float(m.group(1))
+    total = float(m.group(2))
+    if total == 0:
+        return -1
+    else:
+        return  sent*1.0/total 
+rebroadcastCounts = map(extract_rebroadcast_cnt, rebroadcastLines);
+printStats('Rebroadcast count:', rebroadcastCounts)
+rebroadcastRatios = filter(lambda x: x >= 0, map(extract_rebroadcast_ratio, rebroadcastLines));
+printStats('Rebroadcast ratio:', rebroadcastRatios)
+
+
+csvLine = [config, 
+           avgTimePerHop, 
+           maxNumOfHops, 
+           avgNumOfHops, 
+           boundaryFailedCnt, 
+           knowledgeDataPublished, 
+           knowledgeDataReceived,
+           sentIdsCnt,
+           receivedIdsCnt,
+           droppedIdsCnt,
+           recSendRatio ]
+print '\nCSV:'
+print ';'.join(map(str, csvLine))
+

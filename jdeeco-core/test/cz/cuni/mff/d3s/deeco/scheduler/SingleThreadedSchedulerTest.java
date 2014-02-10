@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.task.Task;
 
 /**
@@ -75,13 +75,14 @@ public class SingleThreadedSchedulerTest extends SchedulerTest {
 	public void testRemovesCancelledEvents() throws InterruptedException {
 		// Creating mocks of the task and the trigger 
 		Task t= mock(Task.class);
-		PeriodicTrigger trigger = mock(PeriodicTrigger.class);
+		TimeTrigger trigger = mock(TimeTrigger.class);
 
 		// And stubbing their behavior
 		// Task period has to be big. We don't need to run
 		// the task too often since we don't need it
 		when(trigger.getPeriod()).thenReturn(20000L);  
-		when(t.getPeriodicTrigger()).thenReturn(trigger);
+		when(trigger.getOffset()).thenReturn(0L);
+		when(t.getTimeTrigger()).thenReturn(trigger);
 		
 		tested.addTask(t);
 		tested.start();

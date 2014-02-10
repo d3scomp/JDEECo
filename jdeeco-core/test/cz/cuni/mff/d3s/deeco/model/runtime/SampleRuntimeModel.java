@@ -16,8 +16,8 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PeriodicTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 
@@ -36,14 +36,14 @@ public class SampleRuntimeModel {
 	public ComponentInstance componentInstance;
 	public EnsembleController ensembleController;
 	public ComponentProcess process;
-	public PeriodicTrigger processPeriodicTrigger;
+	public TimeTrigger processPeriodicTrigger;
 	public KnowledgeChangeTrigger processKnowledgeChangeTrigger;
 	public Parameter processParamIn, processParamOut, processParamInOut;
 	
 	public EnsembleDefinition ensembleDefinition;
 	public Condition membershipCondition;
 	public Exchange knowledgeExchange;
-	public PeriodicTrigger ensemblePeriodicTrigger;
+	public TimeTrigger ensemblePeriodicTrigger;
 	public KnowledgeChangeTrigger ensembleKnowledgeChangeTrigger;
 	
 	// It is assumed that xxxParamCoord and xxxParamMember are equal and that membershipParamXXX and exchangeParamXXXIn are equal

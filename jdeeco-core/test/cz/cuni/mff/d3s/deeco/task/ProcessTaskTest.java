@@ -97,7 +97,7 @@ public class ProcessTaskTest {
 	public void testSchedulingPeriod() {
 		// GIVEN a ProcessTask initialized with an ComponentProcess
 		// WHEN getSchedulingPeriod is called
-		long period = task.getPeriodicTrigger().getPeriod();
+		long period = task.getTimeTrigger().getPeriod();
 		// THEN it returns the period specified in the model
 		assertEquals(model.processPeriodicTrigger.getPeriod(), period);
 	}

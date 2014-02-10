@@ -1,0 +1,129 @@
+[General]
+network = manet.MANET
+sim-time-limit = 10s
+
+load-libs = model oppcmdenv
+ned-path = model;mixim/examples;mixim/src/base;mixim/src/inet_stub;mixim/src/modules 
+
+##########################################################
+#	 Visualization parameters                        #
+##########################################################
+**.playgroundLatitude = -25.39
+**.playgroundLongitude = 131.05
+
+**.node[*].appl.modelURL = "http://omnetpp.org/download/demo/car.kmz/models/skpfile.dae"
+**.node[*].appl.txRange = 250m
+**.node[*].appl.modelScale = 5
+
+**.visualize = true
+cmdenv-express-mode = true
+scheduler-class = "cSocketSequentialScheduler"
+cmdenv-event-banners = true
+cmdenv-module-messages = false
+
+##########################################################
+#	 Simulation parameters                        #
+##########################################################
+**.**.coreDebug = false
+# see below
+**.playgroundSizeZ = 10m
+
+##########################################################
+#	 WorldUtility parameters                      #
+##########################################################
+**.world.useTorus = false
+
+##########################################################
+#      				 NIC cards        	     	  #
+##########################################################
+**.node[*].manetNicType = "Nic802154_TI_CC2420" # max range around 250m
+#**.node[*].ipNicType = "Nic80211" # max range around 250m
+
+##########################################################
+#       Parameters for the ConnectionManager             #
+##########################################################
+**.MANETCM.carrierFrequency = 2.4e9Hz  # [Hz]
+# max transmission power [mW]
+**.MANETCM.pMax = 1.1mW  # [mW]
+# signal attenuation threshold [dBm]
+**.MANETCM.sat = -100dBm  # [dBm]
+# path loss coefficient alpha
+**.MANETCM.alpha = 2.5
+**.MANETCM.sendDirect = false
+
+**.IPCM.carrierFrequency = 2.412e9Hz  # [Hz]
+# max transmission power [mW]
+**.IPCM.pMax = 110.11mW  # [mW]
+# signal attenuation threshold [dBm]
+**.IPCM.sat = -100dBm  # [dBm]
+# path loss coefficient alpha
+**.IPCM.alpha = 3.0
+**.IPCM.sendDirect = false
+
+#	Parameters for the default ConnectionManager
+**.connectionManager.carrierFrequency = 0Hz  # [Hz]
+# max transmission power [mW]
+**.connectionManager.pMax = 1000mW  # [mW]
+# signal attenuation threshold [dBm]
+**.connectionManager.sat = -100dBm  # [dBm]
+# path loss coefficient alpha
+**.connectionManager.alpha = 0.0
+**.connectionManager.sendDirect = false
+
+##########################################################
+#       Parameters for the Host                          #
+##########################################################
+############# Phy parameters #############################
+**.manetNic.phy.usePropagationDelay = false
+**.manetNic.phy.useThermalNoise = true
+**.manetNic.phy.analogueModels = xmldoc("config-manet.xml")
+**.manetNic.phy.maxTXPower = 1.1mW
+**.manetNic.phy.sensitivity = -100dBm
+**.manetNic.phy.sensitivity = -100dBm
+
+**.ipNic.phy.usePropagationDelay = false
+**.ipNic.phy.thermalNoise = -110dBm  # [dBm]
+**.ipNic.phy.useThermalNoise = true
+**.ipNic.phy.analogueModels = xmldoc("config-ip.xml")
+**.ipNic.phy.decider = xmldoc("config-ip.xml")
+**.ipNic.phy.maxTXPower = 110.11mW
+############# Battery statistic parameters ###############
+**.batteryStats.debug = false
+**.batteryStats.detail = false
+**.batteryStats.timeSeries = false
+############# Battery parameters #########################
+**.battery.debug = false
+**.battery.nominal = 99999mAh
+**.battery.capacity = 99999mAh
+**.battery.voltage = 3.3V
+**.battery.resolution = 10s
+**.battery.publishDelta = 0.1
+**.battery.publishTime = 0
+**.battery.numDevices = 1
+################ Application layer parameters ############
+**.node[*].applicationType = "JDEECoApplication"
+################ NETW layer parameters ###################
+**.node[*].netwl.headerLength = 32bit
+################ Mobility parameters #####################
+**.node[*].mobilityType = "StationaryMobility"
+**.node[*].mobility.initFromDisplayString = false
+
+
+
+##########################################################
+#       Generated                                        #
+##########################################################
+# the following is to be generated
+
+#**.playgroundWidth = 2km
+#**.playgroundHeight = 2km
+
+#**.playgroundSizeX = 1500m
+#**.playgroundSizeY = 1500m
+
+#**.numNodes = 5
+
+#**.node[0].mobility.initialX = 150m
+#**.node[0].mobility.initialY = 200m
+#**.node[0].mobility.initialZ = 250m
+#**.node[0].appl.id = NodeID

@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/cz.cuni.mff.d3s.jdeeco.core"/>
-	<classpathentry kind="lib" path="/cz.cuni.mff.d3s.jdeeco.core/target/cz.cuni.mff.d3s.jdeeco.core-2.0.0.jar"/>
-	<classpathentry kind="output" path="bin"/>
-</classpath>

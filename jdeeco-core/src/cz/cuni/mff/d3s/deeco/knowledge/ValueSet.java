@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +15,8 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
  * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
  *
  */
-public class ValueSet {
+@SuppressWarnings("serial")
+public class ValueSet implements Serializable {
 	
 	
 	private Map<KnowledgePath, Object> values = new HashMap<>();
@@ -46,5 +48,32 @@ public class ValueSet {
 	 */
 	public void setValue(KnowledgePath path, Object value) {		
 		values.put(path, value);		
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((values == null) ? 0 : values.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ValueSet other = (ValueSet) obj;
+		if (values == null) {
+			if (other.values != null)
+				return false;
+		} else if (!values.equals(other.values))
+			return false;
+		return true;
 	}	
+	
+	
 }
