@@ -28,9 +28,9 @@ import inet.networklayer.autorouting.ipv4.IPv4NetworkConfigurator;
 network MANET
 {
     parameters:
-        double playgroundSizeX @unit(m); // x size of the area the nodes are in (in meters)
-        double playgroundSizeY @unit(m); // y size of the area the nodes are in (in meters)
-        double playgroundSizeZ @unit(m); // z size of the area the nodes are in (in meters)
+        double playgroundSizeX @unit(m) = default(1000m); // x size of the area the nodes are in (in meters)
+        double playgroundSizeY @unit(m) = default(1000m); // y size of the area the nodes are in (in meters)
+        double playgroundSizeZ @unit(m) = default(1000m); // z size of the area the nodes are in (in meters)
         
         bool visualize = default(true);
         double playgroundLatitude = default(0.0); // geographic position of the playground's north-west corner

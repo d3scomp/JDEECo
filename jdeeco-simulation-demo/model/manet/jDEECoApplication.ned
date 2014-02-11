@@ -23,7 +23,10 @@ simple JDEECoApplication
         int headerLength = 0;
         string id = default("not-assigned");
         int port = default(2222);
-        int packetByteLength = default(1000);
+        
+        int packet80211ByteLength @unit("B") = default(1000B);
+        int packet802154ByteLength @unit ("B") = default(1000B);
+        
         //Google-Earth relevant paramters
         string color = default(""); // the color of the trail and range indicator in hex BBGGRR format or "" for random color
         string modelURL = default(""); // the URL of the 3D model (COLLADA file format) to be used for the node

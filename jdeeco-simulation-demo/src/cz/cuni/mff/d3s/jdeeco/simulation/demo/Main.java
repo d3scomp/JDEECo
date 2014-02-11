@@ -110,8 +110,6 @@ public class Main {
 		
 		PrintWriter out = new PrintWriter(Files.newOutputStream(Paths.get(OMNET_CONFIG_PATH), StandardOpenOption.APPEND));
 		out.println();
-		out.println(String.format("**.playgroundWidth = %dm", (int) topRight.x));
-		out.println(String.format("**.playgroundHeight = %dm",(int) topRight.y));
 		out.println(String.format("**.playgroundSizeX = %dm", (int) topRight.x));
 		out.println(String.format("**.playgroundSizeY = %dm", (int) topRight.y));
 		out.println();

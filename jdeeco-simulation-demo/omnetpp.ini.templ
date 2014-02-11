@@ -3,120 +3,220 @@ network = manet.MANET
 sim-time-limit = 10s
 
 load-libs = model oppcmdenv
-ned-path = model;mixim/examples;mixim/src/base;mixim/src/inet_stub;mixim/src/modules 
+ned-path = model;mixim/examples;mixim/src/base;mixim/src/modules;inet/
 
 ##########################################################
-#	 Visualization parameters                        #
+#					Logging                 			 #
 ##########################################################
-**.playgroundLatitude = -25.39
-**.playgroundLongitude = 131.05
+cmdenv-express-mode = false
+cmdenv-event-banners = true
+**.debug = true
+cmdenv-module-messages = true
+**.coreDebug = true
+##########################################################
+#		Network Configurator parameters                  #
+##########################################################
+*.configurator.config = xmldoc("network-config/network.xml")
+*.configurator.addStaticRoutes = true
+*.configurator.dumpAddresses = true
+*.configurator.dumpRoutes = true
+*.configurator.dumpLinks = true
+#*.assignDisjunctSubnetAddresses = false;
+**.dumpTopology = true
+**.dumpAddresses = true
 
-**.node[*].appl.modelURL = "http://omnetpp.org/download/demo/car.kmz/models/skpfile.dae"
-**.node[*].appl.txRange = 250m
-**.node[*].appl.modelScale = 5
+##########################################################
+#	 	Visualization parameters                         #
+##########################################################
+scheduler-class = "cSocketSequentialScheduler" #other option is cSocketRealTimeScheduler, or comment if you do not need visualization.
 
 **.visualize = true
-cmdenv-express-mode = true
-scheduler-class = "cSocketSequentialScheduler"
-cmdenv-event-banners = true
-cmdenv-module-messages = false
+**.playgroundLatitude = -25.39
+**.playgroundLongitude = 131.05
+**.node[*].appl.modelURL = "http://omnetpp.org/download/demo/car.kmz/models/skpfile.dae"
+**.node[*].appl.txRange = 249m
+**.node[*].appl.modelScale = 5
 
 ##########################################################
-#	 Simulation parameters                        #
+#      				 NIC cards        	     	  		 #
 ##########################################################
-**.**.coreDebug = false
-# see below
-**.playgroundSizeZ = 10m
+**.node[*].nic802154Type = "Nic802154_TI_CC2420" # max range around 250m
+**.node[*].nic80211Type = "Nic80211" # max range around 250m
+**.router[*].wlan[0].typename = "Nic80211" # max range around 250m
 
-##########################################################
-#	 WorldUtility parameters                      #
-##########################################################
-**.world.useTorus = false
+##############################################################################
+#       Parameters for the 802.11 ConnectionManager                          #
+##############################################################################
+**.node[*].nic80211.connectionManagerName = "channel80211"
+**.router[*].wlan[0].connectionManagerName = "channel80211"
 
-##########################################################
-#      				 NIC cards        	     	  #
-##########################################################
-**.node[*].manetNicType = "Nic802154_TI_CC2420" # max range around 250m
-#**.node[*].ipNicType = "Nic80211" # max range around 250m
+**.channel80211.sendDirect = false
+**.channel80211.pMax = 110.11mW  # [mW]
+**.channel80211.sat = -110dBm  # [dBm]
+**.channel80211.alpha = 3
+**.channel80211.carrierFrequency = 2.4e+9Hz  # [Hz]
 
-##########################################################
-#       Parameters for the ConnectionManager             #
-##########################################################
-**.MANETCM.carrierFrequency = 2.4e9Hz  # [Hz]
-# max transmission power [mW]
-**.MANETCM.pMax = 1.1mW  # [mW]
-# signal attenuation threshold [dBm]
-**.MANETCM.sat = -100dBm  # [dBm]
-# path loss coefficient alpha
-**.MANETCM.alpha = 2.5
-**.MANETCM.sendDirect = false
+##############################################################################
+#       Parameters for the 802.15.4 ConnectionManager                        #
+##############################################################################
+**.node[*].nic802154.connectionManagerName = "channel802154"
 
-**.IPCM.carrierFrequency = 2.412e9Hz  # [Hz]
-# max transmission power [mW]
-**.IPCM.pMax = 110.11mW  # [mW]
-# signal attenuation threshold [dBm]
-**.IPCM.sat = -100dBm  # [dBm]
-# path loss coefficient alpha
-**.IPCM.alpha = 3.0
-**.IPCM.sendDirect = false
+**.channel802154.sendDirect = false
+**.channel802154.pMax = 1.1mW
+**.channel802154.sat = -100dBm
+**.channel802154.alpha = 2.5
+**.channel802154.carrierFrequency = 2.4E+9Hz
+##############################################################################
+#       Parameters for the 802.15.4 MAC-Layer                                #
+##############################################################################
 
-#	Parameters for the default ConnectionManager
-**.connectionManager.carrierFrequency = 0Hz  # [Hz]
-# max transmission power [mW]
-**.connectionManager.pMax = 1000mW  # [mW]
-# signal attenuation threshold [dBm]
-**.connectionManager.sat = -100dBm  # [dBm]
-# path loss coefficient alpha
-**.connectionManager.alpha = 0.0
-**.connectionManager.sendDirect = false
+**.nic802154.mac.txPower = 1mW  # [mW]
+**.nic802154.mac.notAffectedByHostState = true
+**.nic802154.mac.macMinBE = 1
+**.nic802154.mac.macMaxBE = 6
+**.nic802154.mac.macMaxCSMABackoffs = 20
+**.nic802154.mac.macAckWaitDuration = 0.000864s
+**.nic802154.mac.aUnitBackoffPeriod = 0.02s
 
-##########################################################
-#       Parameters for the Host                          #
-##########################################################
-############# Phy parameters #############################
-**.manetNic.phy.usePropagationDelay = false
-**.manetNic.phy.useThermalNoise = true
-**.manetNic.phy.analogueModels = xmldoc("config-manet.xml")
-**.manetNic.phy.maxTXPower = 1.1mW
-**.manetNic.phy.sensitivity = -100dBm
-**.manetNic.phy.sensitivity = -100dBm
+##############################################################################
+#       Parameters for the 802.11 MAC-Layer                                  #
+##############################################################################
 
-**.ipNic.phy.usePropagationDelay = false
-**.ipNic.phy.thermalNoise = -110dBm  # [dBm]
-**.ipNic.phy.useThermalNoise = true
-**.ipNic.phy.analogueModels = xmldoc("config-ip.xml")
-**.ipNic.phy.decider = xmldoc("config-ip.xml")
-**.ipNic.phy.maxTXPower = 110.11mW
-############# Battery statistic parameters ###############
-**.batteryStats.debug = false
-**.batteryStats.detail = false
-**.batteryStats.timeSeries = false
-############# Battery parameters #########################
+# debug switch
+**.nic80211.mac.headerLength = 272 bit
+**.nic80211.mac.queueLength = 14
+**.nic80211.mac.bitrate = 2E+6bps# in bits/second
+**.nic80211.mac.defaultChannel = 0
+**.nic80211.mac.autoBitrate = false
+
+### values if no fading is modelled, gives at most 1% packet error rate
+**.nic80211.mac.snr2Mbit = 1.46dB  # [dB]
+**.nic80211.mac.snr5Mbit = 2.6dB  # [dB]
+**.nic80211.mac.snr11Mbit = 5.68dB  # [dB]
+
+**.nic80211.mac.rtsCtsThreshold = 400
+**.nic80211.mac.neighborhoodCacheSize = 30
+**.nic80211.mac.neighborhoodCacheMaxAge = 100s  # [s]
+
+**.nic80211.mac.txPower = 110.11mW  # [mW]
+**.nic80211.mac.centerFrequency = 2.4e+9Hz
+
+# debug switch
+**.router[*].wlan[0].mac.headerLength = 272 bit
+**.router[*].wlan[0].mac.queueLength = 14
+**.router[*].wlan[0].mac.bitrate = 2E+6bps# in bits/second
+**.router[*].wlan[0].mac.defaultChannel = 0
+**.router[*].wlan[0].mac.autoBitrate = false
+
+### values if no fading is modelled, gives at most 1% packet error rate
+**.router[*].wlan[0].mac.snr2Mbit = 1.46dB  # [dB]
+**.router[*].wlan[0].mac.snr5Mbit = 2.6dB  # [dB]
+**.router[*].wlan[0].mac.snr11Mbit = 5.68dB  # [dB]
+
+**.router[*].wlan[0].mac.rtsCtsThreshold = 400
+**.router[*].wlan[0].mac.neighborhoodCacheSize = 30
+**.router[*].wlan[0].mac.neighborhoodCacheMaxAge = 100s  # [s]
+
+**.router[*].wlan[0].mac.txPower = 110.11mW  # [mW]
+**.router[*].wlan[0].mac.centerFrequency = 2.4e+9Hz
+
+##############################################################################
+#       Parameters for the 802.15.4 Phy                                      #
+##############################################################################
+
+**.nic802154.phy.usePropagationDelay = false
+**.nic802154.phy.analogueModels = xmldoc("config802154.xml")
+#**.nic802154.phy.decider = xmldoc("Nic802154_TI_CC2420_Decider.xml")
+**.nic802154.phy.sensitivity = -100dBm
+**.nic802154.phy.maxTXPower = 1.1mW
+**.nic802154.phy.initialRadioState = 0
+**.nic802154.phy.useThermalNoise = true
+
+### battery-related parameters
 **.battery.debug = false
 **.battery.nominal = 99999mAh
 **.battery.capacity = 99999mAh
 **.battery.voltage = 3.3V
-**.battery.resolution = 10s
-**.battery.publishDelta = 0.1
+**.battery.resolution = 0.1s
+**.battery.publishDelta = 1
 **.battery.publishTime = 0
 **.battery.numDevices = 1
-################ Application layer parameters ############
+
+**.batteryStats.debug = false
+**.batteryStats.detail = false
+**.batteryStats.timeSeries = false
+
+##############################################################################
+#       Parameters for the 802.11 Phy                                        #
+##############################################################################
+
+**.nic80211.phy.usePropagationDelay = false
+**.nic80211.phy.thermalNoise = -110dBm  # [dBm]
+**.nic80211.phy.analogueModels = xmldoc("config80211.xml")
+**.nic80211.phy.decider = xmldoc("config80211.xml")
+**.nic80211.phy.sensitivity = -119.5dBm  # [dBm]
+**.nic80211.phy.maxTXPower = 110.11mW
+**.nic80211.phy.timeRXToTX = 0s
+**.nic80211.phy.timeRXToSleep = 0s
+**.nic80211.phy.timeTXToRX = 0s
+**.nic80211.phy.timeTXToSleep = 0s
+**.nic80211.phy.timeSleepToRX = 0s
+**.nic80211.phy.timeSleepToTX = 0s
+**.nic80211.phy.initialRadioState = 0
+**.nic80211.phy.useThermalNoise = true
+
+**.router[*].wlan[0].phy.usePropagationDelay = false
+**.router[*].wlan[0].phy.thermalNoise = -110dBm  # [dBm]
+**.router[*].wlan[0].phy.analogueModels = xmldoc("config80211.xml")
+**.router[*].wlan[0].phy.decider = xmldoc("config80211.xml")
+**.router[*].wlan[0].phy.sensitivity = -119.5dBm  # [dBm]
+**.router[*].wlan[0].phy.maxTXPower = 110.11mW
+**.router[*].wlan[0].phy.timeRXToTX = 0s
+**.router[*].wlan[0].phy.timeRXToSleep = 0s
+**.router[*].wlan[0].phy.timeTXToRX = 0s
+**.router[*].wlan[0].phy.timeTXToSleep = 0s
+**.router[*].wlan[0].phy.timeSleepToRX = 0s
+**.router[*].wlan[0].phy.timeSleepToTX = 0s
+**.router[*].wlan[0].phy.initialRadioState = 0
+**.router[*].wlan[0].phy.useThermalNoise = true
+
+
+#Added by mkit start
+
+**.router[*].wlan[0].mgmtType = "Ieee80211MgmtAdhoc"
+**.router[*].mobilityType = "StationaryMobility"
+**.router[*].mobility.initFromDisplayString = false
+**.router[*].numRadios = 1
+
+**.numRouters = 2
+
+**.router[0].mobility.initialX = 300m
+**.router[0].mobility.initialY = 0m
+**.router[0].mobility.initialZ = 0m
+
+**.router[1].mobility.initialX = 1200m
+**.router[1].mobility.initialY = 0m
+**.router[1].mobility.initialZ = 0m
+
+#Added by mkit end
+
+##########################################################
+#       			Application                          #
+##########################################################
 **.node[*].applicationType = "JDEECoApplication"
-################ NETW layer parameters ###################
-**.node[*].netwl.headerLength = 32bit
-################ Mobility parameters #####################
+**.node[*].appl.packet80211ByteLength = 1000B
+**.node[*].appl.packet802154ByteLength = 1000B
+
+##########################################################
+#       			Nodes Mobility                       #
+##########################################################
 **.node[*].mobilityType = "StationaryMobility"
 **.node[*].mobility.initFromDisplayString = false
 
-
-
 ##########################################################
-#       Generated                                        #
+#       			Generated                            #
 ##########################################################
 # the following is to be generated
-
-#**.playgroundWidth = 2km
-#**.playgroundHeight = 2km
 
 #**.playgroundSizeX = 1500m
 #**.playgroundSizeY = 1500m
