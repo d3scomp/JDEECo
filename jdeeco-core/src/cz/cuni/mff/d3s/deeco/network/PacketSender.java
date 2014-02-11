@@ -26,8 +26,9 @@ public abstract class PacketSender implements KnowledgeDataSender {
 	private static int CURRENT_MESSAGE_ID = Integer.MIN_VALUE;
 
 	private final String host;
-	
 	private final int packetSize;
+	private final boolean hasMANETNic;
+	private final boolean hasIPNic;
 
 	//FIXME: this would not work if distributed on multiple JVMs
 	public synchronized static int getNextMessageId() {
@@ -35,23 +36,32 @@ public abstract class PacketSender implements KnowledgeDataSender {
 		return CURRENT_MESSAGE_ID;
 	}
 
-
 	/**
 	 * Minimum fragment size is at least 12 bytes.
 	 * 
 	 */
-	public PacketSender(String host, int packetSize) {
+	public PacketSender(String host, int packetSize, boolean hasMANETNic, boolean hasIPNic) {
 		// At least 12 because: 4 bytes for the initial frame marker, 4 bytes
 		// for message id and 4 bytes for packet count.
 		assert packetSize >= 12;
 		this.packetSize = packetSize;
 		this.host = host;
+		this.hasIPNic = hasIPNic;
+		this.hasMANETNic = hasMANETNic;
 		
 		Log.d(String.format("PacketSender at %s uses packetSize = %d", host, packetSize));
 	}
 	
 	public PacketSender(String host) {
-		this(host, Integer.getInteger(DeecoProperties.PACKET_SIZE, DEFAULT_PACKET_SIZE));
+		this(host, Integer.getInteger(DeecoProperties.PACKET_SIZE, DEFAULT_PACKET_SIZE), true, true);
+	}
+	
+	public boolean hasMANETNic() {
+		return hasMANETNic;
+	}
+	
+	public boolean hasIPNic() {
+		return hasIPNic;
 	}
 	
 	@Override
