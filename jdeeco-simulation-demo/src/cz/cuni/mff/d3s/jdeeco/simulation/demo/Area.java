@@ -22,4 +22,7 @@ public abstract class Area {
 
 	public abstract boolean isInArea(Position pos);
 	
+	public abstract double getCenterX();
+	public abstract double getCenterY();
+	
 }

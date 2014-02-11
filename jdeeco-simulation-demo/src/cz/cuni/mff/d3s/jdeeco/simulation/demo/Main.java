@@ -8,6 +8,7 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -36,6 +37,7 @@ public class Main {
 
 	static String OMNET_CONFIG_TEMPLATE = "omnetpp.ini.templ";
 	static String OMNET_CONFIG_PATH = "omnetpp.ini";
+	static String OMNET_NETWORK_CONF_PATH = "network-config/network-demo.xml";
 	
 	static String DEFAULT_COMPONENT_CFG = "component.cfg";
 	static String DEFAULT_SITE_CFG = "site.cfg";
@@ -79,7 +81,9 @@ public class Main {
 		
 		// for each component config crate a separate model including only the component and all ensemble definitions,
 		// a separate host, and a separate runtime framework
+		List<PositionAwareComponent> components = new LinkedList<>();
 		while ((component = parser.parseComponent()) != null) {
+			components.add(component);
 			RuntimeMetadata model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
 			processor.process(model, component, MemberDataAggregation.class); 
 						
@@ -93,7 +97,8 @@ public class Main {
 					"**.node[%s].mobility.initialZ = 0m\n", i));
 			omnetConfig.append(String.format(
 					"**.node[%s].appl.id = \"%s\"\n\n", i, component.id));
-			
+			//Be careful here jDEECoAppModuleId != nodeId in omnet
+			//As such when addressing directly (i.e when sending message to a concrete ip) you need to provide nodeId and not jDEECoAppModuleId.
 			Host host = sim.getHost(component.id);			
 			hosts.add(host);
 			
@@ -115,9 +120,13 @@ public class Main {
 		out.println();
 		out.println(String.format("**.numNodes = %d", hosts.size()));
 		out.println();
-		out.println(omnetConfig.toString());		
-		out.close();
+		out.println(omnetConfig.toString());
 		
+		StringBuilder routerConfig = generateNetworkConfig(areas, components, OMNET_NETWORK_CONF_PATH);
+		
+		out.println(routerConfig);
+		
+		out.close();
 
 		logSimulationParameters(i);
 		
@@ -139,5 +148,53 @@ public class Main {
 				Integer.getInteger(DeecoProperties.MESSAGE_CACHE_DEADLINE, PacketReceiver.DEFAULT_MAX_MESSAGE_TIME),
 				Integer.getInteger(DeecoProperties.MESSAGE_CACHE_WIPE_PERIOD, PacketReceiver.DEFAULT_MESSAGE_WIPE_PERIOD),
 				Integer.getInteger(DeecoProperties.MAXIMUM_REBROADCAST_DELAY, KnowledgeDataManager.DEFAULT_MAX_REBROADCAST_DELAY)));
+	}
+	
+	private static StringBuilder generateNetworkConfig(Set<Area> areas, List<PositionAwareComponent> components, String networkConfig) throws IOException {
+		assert areas.size() < 250;
+		StringBuilder nConfig = new StringBuilder();
+		StringBuilder oConfig = new StringBuilder();
+		oConfig.append("\n");
+		oConfig.append("**.numRouters = " + areas.size() + "\n\n");
+		oConfig.append("\n");
+		
+		nConfig.append("<config>\n");
+		//Generate interfaces for each of the areas
+		List<PositionAwareComponent> copyOfComponents = new LinkedList<>(components);
+		Set<PositionAwareComponent> toDelete;
+		PositionAwareComponent c;
+		int i = 0;
+		for (Area area : areas) {
+			nConfig.append("<interface hosts='router["+ i +"]' names='wlan*' address='192." + (i+1) + ".x.x' netmask='255.255.x.x'/>\n");
+			//Default route to Wireless
+			nConfig.append("<route hosts='router["+ i +"]' destination='192." + (i+1) + ".0.0' netmask='255.255.0.0' interface='wlan0'/>\n");
+			//Default route to previous router
+			if (i > 0)
+				nConfig.append("<route hosts='router["+ i +"]' destination='192.0.0.0' netmask='255.0.0.0' gateway='router["+ (i-1) +"]' interface='eth0'/>\n");
+			toDelete = new HashSet<>();
+			for (int j = 0; j < copyOfComponents.size(); j++) {
+				c = copyOfComponents.get(j);
+				if (area.isInArea(c.position)) {
+					toDelete.add(c);
+					//Interface description
+					nConfig.append("<interface hosts='node["+ j +"]' names='nic80211' address='192." + (i+1) + ".x.x' netmask='255.255.x.x'/>\n");
+					//Default route
+					nConfig.append("<route hosts='node[" + j + "]' destination='*' netmask='*' gateway='router[" + i + "]' interface='nic80211'/>\n");
+				}
+			}
+			nConfig.append("\n");
+			copyOfComponents.removeAll(toDelete);
+			
+			oConfig.append("**.router["+i+"].mobility.initialX = " + area.getCenterX() + "m\n");
+			oConfig.append("**.router["+i+"].mobility.initialY = " + area.getCenterY() + "m\n");
+			oConfig.append("**.router["+i+"].mobility.initialZ = 0m\n");
+			
+			i++;
+		}
+		nConfig.append("</config>");
+		PrintWriter out = new PrintWriter(Files.newOutputStream(Paths.get(networkConfig), StandardOpenOption.CREATE));
+		out.println(nConfig.toString());	
+		out.close();
+		return oConfig;
 	}
 }

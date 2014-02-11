@@ -1,6 +1,6 @@
 <config>
-<interface hosts='node[0] node[1]' address='192.168.1.x' netmask='255.255.255.x'/>
-<interface hosts='node[2] node[3]' address='192.168.2.x' netmask='255.255.255.x'/>
+<interface hosts='node[0..1]' names='nic80211' address='192.168.1.x' netmask='255.255.255.x'/>
+<interface hosts='node[2..3]' names='nic80211' address='192.168.2.x' netmask='255.255.255.x'/>
 <interface hosts='router[0] router[1]' names='eth*' address='192.168.3.x' netmask='255.255.255.x'/>
 <interface hosts='router[0]' names='wlan*' address='192.168.1.x' netmask='255.255.255.x'/>
 <interface hosts='router[1]' names='wlan*' address='192.168.2.x' netmask='255.255.255.x'/>

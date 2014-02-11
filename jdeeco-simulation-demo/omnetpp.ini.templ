@@ -8,22 +8,20 @@ ned-path = model;mixim/examples;mixim/src/base;mixim/src/modules;inet/
 ##########################################################
 #					Logging                 			 #
 ##########################################################
-cmdenv-express-mode = false
-cmdenv-event-banners = true
-**.debug = true
-cmdenv-module-messages = true
-**.coreDebug = true
+cmdenv-express-mode = true
+cmdenv-event-banners = false
+**.debug = false
+cmdenv-module-messages = false
+**.coreDebug = false
 ##########################################################
 #		Network Configurator parameters                  #
 ##########################################################
-*.configurator.config = xmldoc("network-config/network.xml")
-*.configurator.addStaticRoutes = true
+*.configurator.config = xmldoc("network-config/network-demo.xml")
+
+*.configurator.dumpTopology = true
 *.configurator.dumpAddresses = true
 *.configurator.dumpRoutes = true
 *.configurator.dumpLinks = true
-#*.assignDisjunctSubnetAddresses = false;
-**.dumpTopology = true
-**.dumpAddresses = true
 
 ##########################################################
 #	 	Visualization parameters                         #
@@ -187,18 +185,6 @@ scheduler-class = "cSocketSequentialScheduler" #other option is cSocketRealTimeS
 **.router[*].mobilityType = "StationaryMobility"
 **.router[*].mobility.initFromDisplayString = false
 **.router[*].numRadios = 1
-
-**.numRouters = 2
-
-**.router[0].mobility.initialX = 300m
-**.router[0].mobility.initialY = 0m
-**.router[0].mobility.initialZ = 0m
-
-**.router[1].mobility.initialX = 1200m
-**.router[1].mobility.initialY = 0m
-**.router[1].mobility.initialZ = 0m
-
-#Added by mkit end
 
 ##########################################################
 #       			Application                          #

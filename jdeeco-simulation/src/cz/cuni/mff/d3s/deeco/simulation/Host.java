@@ -21,10 +21,10 @@ public class Host extends PacketSender implements CurrentTimeProvider {
 	private final Simulation simulation;
 	private final String id;
 	
-	protected Host(Simulation simulation, String id) {
-		super(id);
+	protected Host(Simulation simulation, String jDEECoAppModuleId) {
+		super(jDEECoAppModuleId);
 		this.simulation = simulation;
-		this.id = id;
+		this.id = jDEECoAppModuleId;
 		this.packetReceiver = new PacketReceiver(id);
 		this.packetReceiver.setCurrentTimeProvider(this);
 		simulation.register(this, id);

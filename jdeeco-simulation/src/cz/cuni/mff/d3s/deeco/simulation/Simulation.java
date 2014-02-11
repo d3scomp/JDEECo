@@ -69,8 +69,8 @@ public class Simulation {
 	 * 
 	 * @return new host instance
 	 */
-	public Host getHost(String id) {
-		return new Host(this, id);
+	public Host getHost(String jDEECoAppModuleId) {
+		return new Host(this, jDEECoAppModuleId);
 	}
 	// Wrapper methods we may need them.
 
