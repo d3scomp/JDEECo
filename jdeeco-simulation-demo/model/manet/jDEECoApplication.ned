@@ -22,7 +22,8 @@ simple JDEECoApplication
     parameters:
         int headerLength = 0;
         string id = default("not-assigned");
-        
+        int port = default(2222);
+        int packetByteLength = default(1000);
         //Google-Earth relevant paramters
         string color = default(""); // the color of the trail and range indicator in hex BBGGRR format or "" for random color
         string modelURL = default(""); // the URL of the 3D model (COLLADA file format) to be used for the node
@@ -30,13 +31,9 @@ simple JDEECoApplication
         bool showTxRange = default(true);  // whether to show the transmission range around the nodes
         double txRange @unit("m") = default(250m);  // the transmission range of the mobile node's radio
     gates:
-        input lowerIPLayerIn; // from network layer
-        output lowerIPLayerOut; // to network layer
-        input lowerIPControlIn; // control from network layer
-        output lowerIPControlOut; // control to network layer
+        input lowerLayerIn; // from network layer
+        output lowerLayerOut; // to network layer
         
-        input lowerMANETLayerIn; // from manet layer
-        output lowerMANETLayerOut; // to manet layer
-        input lowerMANETControlIn; // control from manet layer
-        output lowerMANETControlOut; // control to manet layer
+        input lower802154LayerIn; // from manet layer
+        output lower802154LayerOut; // to manet layer
 }
