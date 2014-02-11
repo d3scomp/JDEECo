@@ -68,6 +68,8 @@ public class Main {
 		while ((area = siteParser.parseArea()) != null) {
 			areas.add(area);
 		}
+		
+		NetworkRegistry.INSTANCE.init(areas);
 		TeamLocationService.INSTANCE.init(areas);
 		
 		ComponentConfigParser parser = new ComponentConfigParser(componentCfg);
@@ -99,6 +101,8 @@ public class Main {
 					"**.node[%s].appl.id = \"%s\"\n\n", i, component.id));
 			Host host = sim.getHost(component.id, "node["+i+"]");			
 			hosts.add(host);
+			
+			NetworkRegistry.INSTANCE.addjDEECoModule(component.id, component.position);
 			
 			// there is only one component instance
 			model.getComponentInstances().get(0).getInternalData().put(PositionAwareComponent.HOST_REFERENCE, host);
