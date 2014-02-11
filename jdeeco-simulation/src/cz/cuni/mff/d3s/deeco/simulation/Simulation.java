@@ -1,5 +1,8 @@
 package cz.cuni.mff.d3s.deeco.simulation;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 /**
  * Class representing the entry point for a simulation. It is responsible for
@@ -57,6 +60,12 @@ public class Simulation {
 	private native double nativeGetPositionX(String nodeId);
 	private native double nativeGetPositionY(String nodeId);
 	private native double nativeGetPositionZ(String nodeId);
+	
+	private final Map<String, String> jDEECoAppModuleIdToNodeId;
+	
+	public Simulation() {
+		jDEECoAppModuleIdToNodeId = new HashMap<String, String>();
+	}
 
 	public void initialize() {
 		System.loadLibrary("libintegration");
@@ -69,7 +78,8 @@ public class Simulation {
 	 * 
 	 * @return new host instance
 	 */
-	public Host getHost(String jDEECoAppModuleId) {
+	public Host getHost(String jDEECoAppModuleId, String nodeId) {
+		jDEECoAppModuleIdToNodeId.put(jDEECoAppModuleId, nodeId);
 		return new Host(this, jDEECoAppModuleId);
 	}
 	// Wrapper methods we may need them.
@@ -79,7 +89,13 @@ public class Simulation {
 	}
 
 	public void sendPacket(String id, byte[] data, String recipient) {
-		nativeSendPacket(id, data, recipient);
+		String sendTo;
+		if (recipient == null || recipient.equals("")) {
+			sendTo = "";
+		} else {
+			sendTo = jDEECoAppModuleIdToNodeId.get(recipient);
+		}
+		nativeSendPacket(id, data, sendTo);
 	}
 
 	public void run(String environment, String configFile) {

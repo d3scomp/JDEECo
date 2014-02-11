@@ -97,9 +97,7 @@ public class Main {
 					"**.node[%s].mobility.initialZ = 0m\n", i));
 			omnetConfig.append(String.format(
 					"**.node[%s].appl.id = \"%s\"\n\n", i, component.id));
-			//Be careful here jDEECoAppModuleId != nodeId in omnet
-			//As such when addressing directly (i.e when sending message to a concrete ip) you need to provide nodeId and not jDEECoAppModuleId.
-			Host host = sim.getHost(component.id);			
+			Host host = sim.getHost(component.id, "node["+i+"]");			
 			hosts.add(host);
 			
 			// there is only one component instance

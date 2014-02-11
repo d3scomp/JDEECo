@@ -38,7 +38,7 @@ public class DemoJNIKnowledgeDataManager implements KnowledgeDataReceiver,
 						md.rebroadcastCount++;
 						toSend.add(new KnowledgeData(new ValueSet(), md));
 					} else if (host.getId().equals("0")){
-						recipient = "node[2]";
+						recipient = "2";
 						md.rebroadcastCount = 0;
 						toSend.add(new KnowledgeData(new ValueSet(), md));
 					}
