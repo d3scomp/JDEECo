@@ -162,12 +162,15 @@ hops = []
 versionDifs = []
 shouldDiscover = 0;
 reallyDiscovered = 0
+membersInDanger = set()
+membersDiscovered = set()
 for team in teamLeaders.keys():
     for leader in teamLeaders[team]:
         for member in teamMembers[team]:
             inDanger = memberInDanger[member]
             if inDanger.dangertime is not inf:
                 shouldDiscover+=1
+                membersInDanger.add(member)
                 discovery = dangerDiscovered[leader][member]
                 if discovery.discoverytime is not inf:
                     resTimes.append(discovery.discoverytime - inDanger.dangertime);
@@ -175,13 +178,14 @@ for team in teamLeaders.keys():
                     versionDifs.append(discovery.version - inDanger.version)
                     hops.append(discovery.hops) 
                     reallyDiscovered += 1
+                    membersDiscovered.add(member)
                     print 'leader %s of team %s discovered at %f that %s is in danger (after %dms proces-to-process, %dms node-to-node, %dhops, %dversions)' % \
                         (leader, team, discovery.discoverytime, member, resTimes[-1], resTimesNetwork[-1], hops[-1], versionDifs[-1])
                 else:
                     print 'leader %s of team %s never discovered that %s is in danger from %d.' % (leader, team, member, inDanger.dangertime)
                     
 def printStats(description, values):
-    print description, 'avg=%f, min=%f, max=%f, median=%f' %(average(values), min(values), max(values), median(values))
+    print description, 'avg=%f, min=%d, max=%d, median=%d' %(average(values), min(values), max(values), median(values))
 
 print '\nResults: \n-----------------------------'
 printStats('Process-2-process response time:', resTimes)
@@ -191,6 +195,7 @@ printStats('Process-2-process response time / 1 hop:', map(lambda time, hop: tim
 printStats('Node-2-node response time / 1 hop:', map(lambda time, hop: time/hop, resTimesNetwork, hops))
 printStats('Version difference:', versionDifs)
  
-print 'Ratio of discovered: %d of %d (%f%%)' %(reallyDiscovered, shouldDiscover, reallyDiscovered*100.0/shouldDiscover)
+print 'Ratio of leader discoveries: %d of %d (%f%%)' %(reallyDiscovered, shouldDiscover, reallyDiscovered*100.0/shouldDiscover)
+print 'Ratio of discoveries regardless the number of leaders: %d of %d (%f%%)' %(len(membersDiscovered), len(memberInDanger), len(membersDiscovered)*100.0/len(memberInDanger))
             
             

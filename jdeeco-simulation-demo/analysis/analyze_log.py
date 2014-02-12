@@ -43,37 +43,54 @@ boundaryFailedLines = filter(lambda x: 'Boundary failed' in x, lines)
 boundaryFailedCnt = len(boundaryFailedLines)
 print 'Boundary prevented sending of:', boundaryFailedCnt
 
-publishLines = filter(lambda x: 'Publish' in x, lines)
+def extract_published_signatures(line):
+    p = re.compile('\[([^\]]*)\]')
+    m = p.search(line)   
+    ids = m.group(1)
+    if ids is not None:
+        return ids.split(', ')[:-1]
+    else:
+        return []
+
+def flatten(list):
+    return [item for sublist in list for item in sublist]
+
+publishLines = filter(lambda x: 'Publish' in x and ', sending [' in x, lines)
 # on each publish line, each sent KD is followed by a ',' + there is one more in the message
-knowledgeDataPublished = sum(map(lambda l: l.count(',') - 1, publishLines)) 
-print 'KnowledgeData published:', knowledgeDataPublished
+#knowledgeDataPublished = sum(map(lambda l: l.count(',') - 1, publishLines))
+publishedSignatures = flatten(map(extract_published_signatures, publishLines))
+knowledgeDataPublished = len(publishedSignatures)
+print 'KnowledgeData published:', knowledgeDataPublished, 'unique:', len(set(publishedSignatures))
 
 
-receiveLines = filter(lambda x: ', received [' in x, lines)
+def extract_received_signatures(line):
+    p = re.compile('\[([^\]]*)\]')
+    m = p.search(line)  
+    sigs = m.group(1)
+    if sigs is not None:        
+        return [re.search('(.+)<-.+', sig).group(1) for sig in sigs.split(', ')[:-1]]            
+    else:
+        return []
+receiveLines = filter(lambda x: 'Receive' in x and ', received [' in x, lines)
 # on each receive line, each received KD is followed by a ',' + there is one more in the message
-knowledgeDataReceived = sum(map(lambda l: l.count(',') - 1, receiveLines)) 
-print 'KnowledgeData received:', knowledgeDataReceived
+receivedSignatures = flatten(map(extract_received_signatures, receiveLines))
+knowledgeDataReceived = len(receivedSignatures) #sum(map(lambda l: l.count(',') - 1, receiveLines)) 
+print 'KnowledgeData received:', knowledgeDataReceived, 'unique:', len(set(receivedSignatures))
 
 
-def extract_sent_id(line):
-    p = re.compile('with messageid (.\d+)')
+def extract_id(line):
+    p = re.compile('with messageid (-?\d+)')
     m = p.search(line)
     return m.group(1)
 
 sentMsgLines = filter(lambda x: 'PacketSender: Sending MSG' in x, lines)
-sentIds = set(map(extract_sent_id, sentMsgLines))
+sentIds = set(map(extract_id, sentMsgLines))
 sentIdsCnt = len(sentIds)
 print 'Sent messages: ', sentIdsCnt
 
 
-
- 
-def extract_received_id(line):
-    p = re.compile('with messageid (.\d+)')
-    m = p.search(line)
-    return m.group(1)
 receivedMsgLines = filter(lambda x: 'PacketReceiver: Message completed' in x, lines)
-receivedIds = set(map(extract_received_id, receivedMsgLines))
+receivedIds = set(map(extract_id, receivedMsgLines))
 receivedIdsCnt = len(receivedIds)
 print 'Received messages: ', receivedIdsCnt
 
@@ -142,6 +159,6 @@ csvLine = [config,
            receivedIdsCnt,
            droppedIdsCnt,
            recSendRatio ]
-print '\nCSV:'
-print ';'.join(map(str, csvLine))
+#print '\nCSV:'
+#print ';'.join(map(str, csvLine))
 
