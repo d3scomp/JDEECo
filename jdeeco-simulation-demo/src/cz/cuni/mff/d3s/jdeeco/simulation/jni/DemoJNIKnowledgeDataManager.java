@@ -38,7 +38,7 @@ public class DemoJNIKnowledgeDataManager implements KnowledgeDataReceiver,
 						md.rebroadcastCount++;
 						toSend.add(new KnowledgeData(new ValueSet(), md));
 					} else if (host.getId().equals("0")){
-						recipient = "2";
+						recipient = "node[2]";
 						md.rebroadcastCount = 0;
 						toSend.add(new KnowledgeData(new ValueSet(), md));
 					}
@@ -56,7 +56,7 @@ public class DemoJNIKnowledgeDataManager implements KnowledgeDataReceiver,
 			System.out.println(" Rebroadcast Counter: " + ((DemoKnowledgeMetaData) kd.getMetaData()).rebroadcastCount);
 		}
 		if (recipient.equals(""))
-			host.sendData(toSend);
+			host.sendData(toSend, "");
 		else
 			host.sendData(toSend, recipient);
 		toSend.clear();

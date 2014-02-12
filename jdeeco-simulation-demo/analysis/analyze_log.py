@@ -77,6 +77,12 @@ receivedIds = set(map(extract_received_id, receivedMsgLines))
 receivedIdsCnt = len(receivedIds)
 print 'Received messages: ', receivedIdsCnt
 
+receivedDirectMsgLines = filter(lambda x: 'RSSI: -1.0' in x, lines)
+receivedDirectIds = set(map(extract_received_id, receivedDirectMsgLines))
+receivedDirectIdsCnt = len(receivedDirectIds)
+print 'Received direct messages: ', receivedDirectIdsCnt
+
+
 def extract_dropped_ids(line):
     p = re.compile('dropped messageids \[(.*)\]')
     m = p.search(line)

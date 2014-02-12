@@ -1,16 +1,24 @@
 <config>
-<interface hosts='node[0..1]' names='nic80211' address='192.168.1.x' netmask='255.255.255.x'/>
-<interface hosts='node[2..3]' names='nic80211' address='192.168.2.x' netmask='255.255.255.x'/>
-<interface hosts='router[0] router[1]' names='eth*' address='192.168.3.x' netmask='255.255.255.x'/>
-<interface hosts='router[0]' names='wlan*' address='192.168.1.x' netmask='255.255.255.x'/>
-<interface hosts='router[1]' names='wlan*' address='192.168.2.x' netmask='255.255.255.x'/>
+<interface hosts='node[0..1]' names='nic80211' address='192.168.0.x' netmask='255.255.255.x'/>
+<interface hosts='node[2..3]' names='nic80211' address='192.168.1.x' netmask='255.255.255.x'/>
+<interface hosts='router[0]' names='wlan0' address='192.168.0.x' netmask='255.255.255.x'/>
+<interface hosts='router[1]' names='wlan0' address='192.168.1.x' netmask='255.255.255.x'/>
+<interface hosts='router[0] router[1]' names='eth0' address='192.168.255.x' netmask='255.255.255.x'/>
 
-<route hosts="node[0] node[1]" destination="*" netmask="*" gateway="router[0]" interface="nic80211"/>
-<route hosts="node[2] node[3]" destination="*" netmask="*" gateway="router[1]" interface="nic80211"/>
+<route hosts='node[0] node[1]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<route hosts='node[2] node[3]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
 
-<route hosts="router[0]" destination='192.168.2.0' netmask='255.255.255.0' gateway="router[1]" interface="eth0"/>
-<route hosts="router[1]" destination='192.168.1.0' netmask='255.255.255.0' gateway="router[0]" interface="eth0"/>
+<route hosts='router[0]' destination='192.168.1.0' netmask='255.255.255.0' interface='eth0'/>
+<route hosts='router[1]' destination='192.168.0.0' netmask='255.255.255.0' interface='eth0'/>
 
-<route hosts="router[0]" destination='192.168.1.0' netmask='255.255.255.0' interface="wlan0"/>
-<route hosts="router[1]" destination='192.168.2.0' netmask='255.255.255.0' interface="wlan0"/>
+<route hosts='router[0]' destination='192.168.0.0' netmask='255.255.255.0' interface='wlan0'/>
+<route hosts='router[1]' destination='192.168.1.0' netmask='255.255.255.0' interface='wlan0'/>
+
+<multicast-group hosts='node[0..1]' towards='router[0]' interfaces='nic80211' address='224.0.0.1'/>
+<multicast-group hosts='node[2..3]' towards='router[1]' interfaces='nic80211' address='224.0.0.2'/>
+
+<multicast-route hosts='router[0]' groups='224.0.0.1' parent='eth0' children='wlan0'/>
+<multicast-route hosts='router[0]' groups='224.0.0.2' parent='wlan0' children='>router[1]'/>
+<multicast-route hosts='router[1]' groups='224.0.0.2' parent='eth0' children='wlan0'/>
+<multicast-route hosts='router[1]' groups='224.0.0.1' parent='wlan0' children='>router[0]'/>
 </config>

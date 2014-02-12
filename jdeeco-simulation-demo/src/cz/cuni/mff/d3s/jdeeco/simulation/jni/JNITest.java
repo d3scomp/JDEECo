@@ -24,6 +24,9 @@ public class JNITest {
 		
 		Host h3 = simulation.getHost("3", "node[3]");
 		kr = new DemoJNIKnowledgeDataManager(h3);
+		
+		simulation.registerGroupId("area01", "224.0.0.1");
+		simulation.registerGroupId("area23", "224.0.0.2");
 
 		simulation.run("Cmdenv", "omnetpp-jni.ini");
 		

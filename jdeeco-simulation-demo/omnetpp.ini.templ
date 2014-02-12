@@ -9,14 +9,15 @@ ned-path = model;mixim/examples;mixim/src/base;mixim/src/modules;inet/
 #					Logging                 			 #
 ##########################################################
 cmdenv-express-mode = true
-cmdenv-event-banners = false
+cmdenv-event-banners = true
 **.debug = false
 cmdenv-module-messages = false
 **.coreDebug = false
 ##########################################################
 #		Network Configurator parameters                  #
 ##########################################################
-*.configurator.config = xmldoc("network-config/network-demo.xml")
+#*.configurator.config = xmldoc("network-config/network-demo.xml")
+*.ethernet = true #use ethernet links
 
 *.configurator.dumpTopology = true
 *.configurator.dumpAddresses = true
@@ -39,7 +40,7 @@ scheduler-class = "cSocketSequentialScheduler" #other option is cSocketRealTimeS
 #      				 NIC cards        	     	  		 #
 ##########################################################
 **.node[*].nic802154Type = "Nic802154_TI_CC2420" # max range around 250m
-**.node[*].nic80211Type = "Nic80211" # max range around 250m
+#**.node[*].nic80211Type = "Nic80211" # max range around 250m
 **.router[*].wlan[0].typename = "Nic80211" # max range around 250m
 
 ##############################################################################

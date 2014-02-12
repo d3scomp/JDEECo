@@ -20,8 +20,6 @@ public class Host extends PacketSender implements CurrentTimeProvider {
 	private final PacketReceiver packetReceiver;
 	private final Simulation simulation;
 	private final String id;
-	private final boolean hasMANETNic;
-	private final boolean hasIPNic;
 	
 	protected Host(Simulation simulation, String jDEECoAppModuleId, boolean hasMANETNic, boolean hasIPNic) {
 		super(jDEECoAppModuleId);
@@ -29,21 +27,11 @@ public class Host extends PacketSender implements CurrentTimeProvider {
 		this.id = jDEECoAppModuleId;
 		this.packetReceiver = new PacketReceiver(id);
 		this.packetReceiver.setCurrentTimeProvider(this);
-		this.hasMANETNic = hasMANETNic;
-		this.hasIPNic = hasIPNic;
 		simulation.register(this, id);
 	}
 	
 	public Host(Simulation simulation, String jDEECoAppModuleId) {
 		this(simulation, jDEECoAppModuleId, true, true);
-	}
-	
-	public boolean hasMANETNic() {
-		return hasMANETNic;
-	}
-	
-	public boolean hasIPNic() {
-		return hasIPNic;
 	}
 
 	public PacketReceiver getPacketReceiver() {
@@ -91,5 +79,9 @@ public class Host extends PacketSender implements CurrentTimeProvider {
 	@Override
 	public long getCurrentTime() {
 		return simulation.getSimulationTime();
+	}
+	
+	public void finalize() {
+		packetReceiver.clearCachedMessages();
 	}
 }

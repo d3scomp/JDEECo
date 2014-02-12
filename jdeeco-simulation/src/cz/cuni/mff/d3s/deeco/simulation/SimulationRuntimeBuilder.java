@@ -1,9 +1,12 @@
 package cz.cuni.mff.d3s.deeco.simulation;
 
+import java.util.Collection;
+
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.executor.SameThreadExecutor;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
+import cz.cuni.mff.d3s.deeco.network.DirectRecipientSelector;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeDataManager;
 import cz.cuni.mff.d3s.deeco.network.PublisherTask;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework;
@@ -13,7 +16,7 @@ import cz.cuni.mff.d3s.deeco.simulation.scheduler.SimulationScheduler;
 
 public class SimulationRuntimeBuilder {
 
-	public RuntimeFramework build(Host host, RuntimeMetadata model) {
+	public RuntimeFramework build(Host host, RuntimeMetadata model, Collection<DirectRecipientSelector> recipientSelectors) {
 		if (model == null) {
 			throw new IllegalArgumentException("Model must not be null");
 		}
@@ -33,7 +36,7 @@ public class SimulationRuntimeBuilder {
 				host, 
 				model.getEnsembleDefinitions(), 
 				host.getId(), 
-				scheduler);
+				scheduler, recipientSelectors);
 		
 		// Bind KnowledgeDataReceiver with PacketDataReceiver
 		host.getPacketReceiver().setKnowledgeDataReceiver(kdManager);

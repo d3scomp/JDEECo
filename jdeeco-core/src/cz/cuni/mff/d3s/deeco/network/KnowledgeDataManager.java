@@ -1,6 +1,7 @@
 package cz.cuni.mff.d3s.deeco.network;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -91,6 +92,10 @@ KnowledgeDataPublisher {
 	
 	public static final int DEFAULT_MAX_REBROADCAST_DELAY = (int) (PublisherTask.DEFAULT_PUBLISHING_PERIOD);
 	private final int maxRebroadcastDelay;
+	
+	
+	//TODO This needs to be changed
+	private final Collection<DirectRecipientSelector> recipientSelectors;
 
 
 	
@@ -107,7 +112,8 @@ KnowledgeDataPublisher {
 			KnowledgeDataSender knowledgeDataSender,
 			List<EnsembleDefinition> ensembleDefinitions,
 			String host,
-			Scheduler scheduler) {
+			Scheduler scheduler,
+			Collection<DirectRecipientSelector> recipientSelectors) {
 		this.host = host;		
 		this.scheduler = scheduler;
 		this.timeProvider = scheduler;
@@ -116,6 +122,7 @@ KnowledgeDataPublisher {
 		this.ensembleDefinitions = ensembleDefinitions;
 		this.localVersion = 0;
 		this.replicaMetadata = new HashMap<>();
+		this.recipientSelectors = recipientSelectors;
 		
 		dataToRebroadcast = new HashMap<>();
 		
@@ -168,10 +175,11 @@ KnowledgeDataPublisher {
 //		}
 //		dataToRebroadcast.clear();
 		
-		logPublish(data);
 		
 		//TODO
 		if (!data.isEmpty()) {
+			
+			logPublish(data);
 			
 			if (useIndividualPublishing) {
 				// broadcast each kd individually to minimize the message size and
@@ -181,6 +189,19 @@ KnowledgeDataPublisher {
 				}
 			} else {
 				knowledgeDataSender.broadcastKnowledgeData(data);
+			}
+			
+			if (recipientSelectors != null && !recipientSelectors.isEmpty()) {
+				//Publishing to IP
+				Collection<String> recipients;
+				//For IP part we are using individual publishing only
+				for (KnowledgeData kd : data) {
+					recipients = getRecipients(kd, getNodeKnowledge());
+					for (String recipient: recipients) {
+						logPublish(data, recipient);
+						knowledgeDataSender.sendKnowledgeData(Arrays.asList(kd), recipient);
+					}
+				}
 			}
 			localVersion++;
 		}
@@ -304,6 +325,14 @@ KnowledgeDataPublisher {
 			}
 		}
 		return isInSomeBoundary;
+	}
+	
+	private Collection<String> getRecipients(KnowledgeData data, KnowledgeManager sender) {
+		List<String> result = new LinkedList<>();
+		for (DirectRecipientSelector selector: recipientSelectors) {
+			result.addAll(selector.getRecipients(data, sender));
+		}
+		return result;
 	}
 	
 
@@ -455,13 +484,21 @@ KnowledgeDataPublisher {
 	}
 	
 	private void logPublish(List<? extends KnowledgeData> data) {
+		logPublish(data, "");
+	}
+	
+	private void logPublish(List<? extends KnowledgeData> data, String recipient) {
 		StringBuilder sb = new StringBuilder();
 		for (KnowledgeData kd: data) {
 			sb.append(kd.getMetaData().componentId + "v" + kd.getMetaData().versionId);
 			sb.append(", ");			
 		}		
-		Log.d(String.format("Publish (%d) at %s, sending [%s]\n", 
-				timeProvider.getCurrentTime(), host, sb.toString()));
+		if (recipient != null && !recipient.isEmpty())
+			Log.d(String.format("Publish (%d) at %s, sending [%s] directly to %s\n", 
+				timeProvider.getCurrentTime(), host, sb.toString(), recipient));
+		else
+			Log.d(String.format("Publish (%d) at %s, sending [%s]\n", 
+					timeProvider.getCurrentTime(), host, sb.toString()));
 	}
 	
 	private void logReceive(List<? extends KnowledgeData> knowledgeData) {

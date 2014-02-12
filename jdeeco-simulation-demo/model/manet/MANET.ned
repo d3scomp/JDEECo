@@ -37,7 +37,9 @@ network MANET
         double playgroundLongitude = default(0.0); // geographic position of the playground's north-west corner
         
         int numNodes;
-        int numRouters;
+        int numRouters = default(0);
+        
+        bool ethernet = default(false);
         
         @display("bgb=469,300,white;bgp=10,50");
     submodules:
@@ -62,8 +64,12 @@ network MANET
             	@display("p=391,24");
         }
         
-        node[numNodes]: Node {}
+        node[numNodes]: Node {
+        	useEthernet = ethernet;
+        }
         router[numRouters]: Router {}
+        
+        switch: Switch {}
         
         configurator: IPv4NetworkConfigurator {
             @display("p=140,50");
@@ -78,8 +84,11 @@ network MANET
         }
     connections allowunconnected:
         //Connect routers
-        for i=0..numRouters-2 {
-        	router[i].ethg++ <--> {  datarate = 10Mbps; delay = 0.1us; } <--> router[i+1].ethg++;
+        for i=0..numRouters-1 {
+        	router[i].ethg++ <--> {  datarate = 100Mbps; delay = 0.1us; } <--> switch.ethg++ if !ethernet;
         }
-	
+        
+        for i=0..numNodes-1 {
+            node[i].ethg <--> {  datarate = 1000Mbps; delay = 0us; } <--> switch.ethg++ if ethernet;
+        }
 }

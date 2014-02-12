@@ -58,6 +58,7 @@ module Node
         bool IPForward = default(false);  // disable routing by default
         string routingFile = default("");
         bool forwardMulticast = default(false);
+        bool useEthernet = default(false);
         
         //NIC
         string nic802154Type = default("");
@@ -68,8 +69,8 @@ module Node
     gates:
      	input radio80211In @directIn;
      	input radio802154In @directIn;
-        inout ethg[] @labels(EtherFrame-conn);
-        
+        inout ethg @labels(EtherFrame-conn);
+        inout direct[];
     submodules:
 
         //Application
@@ -78,7 +79,7 @@ module Node
                 @display("p=70,30;i=app");
         }
         
-        udp: UDP if nic80211Type != "" {
+        udp: UDP if nic80211Type != "" || useEthernet {
             parameters:
                 @display("p=329,141");
         }
@@ -90,7 +91,7 @@ module Node
         }
         
         //Network layer
-        networkLayer: NetworkLayer if nic80211Type != "" {
+        networkLayer: NetworkLayer if nic80211Type != "" || useEthernet {
             parameters:
                 proxyARP = false;
                 @display("p=329,287;q=queue");
@@ -120,6 +121,11 @@ module Node
                 @display("p=132,406,row,60;q=queue");
         }
         
+        eth: <default("EthernetInterface")> like IWiredNic if useEthernet {
+            parameters:
+                @display("p=368,406,row,60;q=txQueue");
+        }
+        
         //Battery
         batteryStats: BatteryStats {
             @display("p=60,106;i=block/circle");
@@ -135,9 +141,17 @@ module Node
     connections allowunconnected:
  
         //# Connect IP branch
-        if (nic80211Type != "") {
+        if (useEthernet) {
+            ethg <--> { @display("m=s"); } <--> eth.phys;
+            eth.upperLayerOut --> networkLayer.ifIn++;
+            eth.upperLayerIn <-- networkLayer.ifOut++;
+        }
+        if (!useEthernet && nic80211Type != "") {
             nic80211.upperLayerOut --> networkLayer.ifIn++;
             nic80211.upperLayerIn <-- networkLayer.ifOut++;
+        }
+        
+        if (nic80211Type != "" || useEthernet) {
             udp.ipOut --> networkLayer.udpIn;
         	udp.ipIn <-- networkLayer.udpOut;
             udp.appOut++ --> appl.lowerLayerIn;

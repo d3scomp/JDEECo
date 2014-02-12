@@ -66,11 +66,12 @@ public abstract class PacketSender implements KnowledgeDataSender {
 	
 	@Override
 	public void broadcastKnowledgeData(List<? extends KnowledgeData> knowledgeData) {
-		sendData(knowledgeData);
+		sendData(knowledgeData, "");
 	}
 	
-	public void sendData(Object data) {
-		sendData(data, "");
+	@Override
+	public void sendKnowledgeData(List<? extends KnowledgeData> knowledgeData, String recipient) {
+		sendData(knowledgeData, recipient);
 	}
 
 	public void sendData(Object data, String recipient) {
