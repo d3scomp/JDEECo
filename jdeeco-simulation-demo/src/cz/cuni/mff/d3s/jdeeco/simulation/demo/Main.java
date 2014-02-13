@@ -22,8 +22,10 @@ import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
 import cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
+import cz.cuni.mff.d3s.deeco.network.DirectGossipStrategy;
 import cz.cuni.mff.d3s.deeco.network.DirectRecipientSelector;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeData;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeDataManager;
@@ -62,7 +64,7 @@ public class Main {
 			siteCfg = args[1];
 		}
 		
-		Simulation sim = new Simulation();
+		Simulation sim = new Simulation(true);
 		sim.initialize(); //loads Library
 		
 		AnnotationProcessor processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE);
@@ -77,7 +79,7 @@ public class Main {
 			areas.add(area);
 		}
 		
-		AreaNetworkRegistry networkRegistry = AreaNetworkRegistry.getInstance();
+		final AreaNetworkRegistry networkRegistry = AreaNetworkRegistry.getInstance();
 		networkRegistry.initialize(areas);
 
 		TeamLocationService.INSTANCE.init(areas);
@@ -92,6 +94,13 @@ public class Main {
 		int i = 0;		
 		
 		DirectRecipientSelector directRecipientSelector;
+		DirectGossipStrategy directGossipStrategy = new DirectGossipStrategy() {
+			
+			@Override
+			public boolean gossipTo(String recipient) {
+				return new Random().nextInt(100) < 5;
+			}
+		};
 		
 		// for each component config crate a separate model including only the component and all ensemble definitions,
 		// a separate host, and a separate runtime framework
@@ -114,36 +123,39 @@ public class Main {
 			Host host = sim.getHost(component.id, "node["+i+"]");			
 			hosts.add(host);
 			
-			networkRegistry.addjDEECoModule(component.id, component.position);
+			networkRegistry.addComponent(component);
 			
 			// there is only one component instance
 			model.getComponentInstances().get(0).getInternalData().put(PositionAwareComponent.HOST_REFERENCE, host);
 			
 			directRecipientSelector = new DirectRecipientSelector() {
 				
-				private final int maxRecipients = 10;
-				
 				@Override
 				public Collection<String> getRecipients(KnowledgeData data,
 						ReadOnlyKnowledgeManager sender) {
 					List<String> result = new LinkedList<>();
-					if (new Random().nextInt(10) < 5) {
-						if (new Random().nextInt(10) < 7) {
-							result.addAll(AreaNetworkRegistry.getInstance().getRandomRecipients(sender.getId()));
-							if (maxRecipients < result.size()) {
-								int removeCount = result.size() - maxRecipients;
-								for (int i = 0; i < removeCount; i++)
-									result.remove(new Random().nextInt(result.size()));
+					KnowledgePath kpTeam = KnowledgePathBuilder.buildSimplePath("teamId");
+					String ownerTeam = (String) data.getKnowledge().getValue(kpTeam);
+					if (ownerTeam != null) {
+						//Find all areas of my team
+						List<Area> areas = networkRegistry.getTeamSites(ownerTeam);
+						//Pick one randomly
+						Area area = areas.get(new Random().nextInt(areas.size()));
+						//Get all the members in that area
+						List<PositionAwareComponent> recipients = networkRegistry.getMembersBelongingToTeam(ownerTeam, area);
+						//Randomly choose a subset of them and return those as possible message recipients
+						for (PositionAwareComponent c : recipients) {
+							if (!c.id.equals(sender.getId()) &&new Random().nextInt(2) == 0) {
+								result.add(c.id);
 							}
-						} else {
-							result.add(AreaNetworkRegistry.getInstance().getRandomRecipient(sender.getId()));
 						}
 					}
-					return result;
+					//return result;
+					return new LinkedList<>();
 				}
 			};
 			
-			RuntimeFramework runtime = builder.build(host, model, Arrays.asList(directRecipientSelector)); 
+			RuntimeFramework runtime = builder.build(host, model, Arrays.asList(directRecipientSelector), directGossipStrategy); 
 			runtimes.add(runtime);
 			runtime.start();
 			i++;

@@ -89,6 +89,6 @@ network MANET
         }
         
         for i=0..numNodes-1 {
-            node[i].ethg <--> {  datarate = 1000Mbps; delay = 0us; } <--> switch.ethg++ if ethernet;
+            node[i].ethg <--> {  datarate = 100Mbps; delay = 0.1us; } <--> switch.ethg++ if ethernet;
         }
 }

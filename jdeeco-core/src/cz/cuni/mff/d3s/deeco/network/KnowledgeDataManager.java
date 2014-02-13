@@ -96,7 +96,7 @@ KnowledgeDataPublisher {
 	
 	//TODO This needs to be changed
 	private final Collection<DirectRecipientSelector> recipientSelectors;
-
+	private final DirectGossipStrategy directGossipStrategy;
 
 	
 	/**
@@ -113,7 +113,7 @@ KnowledgeDataPublisher {
 			List<EnsembleDefinition> ensembleDefinitions,
 			String host,
 			Scheduler scheduler,
-			Collection<DirectRecipientSelector> recipientSelectors) {
+			Collection<DirectRecipientSelector> recipientSelectors, DirectGossipStrategy directGossipStrategy) {
 		this.host = host;		
 		this.scheduler = scheduler;
 		this.timeProvider = scheduler;
@@ -123,6 +123,7 @@ KnowledgeDataPublisher {
 		this.localVersion = 0;
 		this.replicaMetadata = new HashMap<>();
 		this.recipientSelectors = recipientSelectors;
+		this.directGossipStrategy = directGossipStrategy;
 		
 		dataToRebroadcast = new HashMap<>();
 		
@@ -198,8 +199,10 @@ KnowledgeDataPublisher {
 				for (KnowledgeData kd : data) {
 					recipients = getRecipients(kd, getNodeKnowledge());
 					for (String recipient: recipients) {
-						logPublish(data, recipient);
-						knowledgeDataSender.sendKnowledgeData(Arrays.asList(kd), recipient);
+						if (directGossipStrategy.gossipTo(recipient)) {
+							logPublish(data, recipient);
+							knowledgeDataSender.sendKnowledgeData(Arrays.asList(kd), recipient);
+						}
 					}
 				}
 			}

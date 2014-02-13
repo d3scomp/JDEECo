@@ -64,9 +64,6 @@ sentMsgLines = filter(lambda x: 'PacketSender: Sending MSG' in x, lines)
 sentIds = set(map(extract_sent_id, sentMsgLines))
 sentIdsCnt = len(sentIds)
 print 'Sent messages: ', sentIdsCnt
-
-
-
  
 def extract_received_id(line):
     p = re.compile('with messageid (.\d+)')

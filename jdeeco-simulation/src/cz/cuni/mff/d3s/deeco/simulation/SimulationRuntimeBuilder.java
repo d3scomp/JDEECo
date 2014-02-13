@@ -6,6 +6,7 @@ import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.executor.SameThreadExecutor;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
+import cz.cuni.mff.d3s.deeco.network.DirectGossipStrategy;
 import cz.cuni.mff.d3s.deeco.network.DirectRecipientSelector;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeDataManager;
 import cz.cuni.mff.d3s.deeco.network.PublisherTask;
@@ -16,7 +17,7 @@ import cz.cuni.mff.d3s.deeco.simulation.scheduler.SimulationScheduler;
 
 public class SimulationRuntimeBuilder {
 
-	public RuntimeFramework build(Host host, RuntimeMetadata model, Collection<DirectRecipientSelector> recipientSelectors) {
+	public RuntimeFramework build(Host host, RuntimeMetadata model, Collection<DirectRecipientSelector> recipientSelectors, DirectGossipStrategy directGossipStrategy) {
 		if (model == null) {
 			throw new IllegalArgumentException("Model must not be null");
 		}
@@ -36,7 +37,7 @@ public class SimulationRuntimeBuilder {
 				host, 
 				model.getEnsembleDefinitions(), 
 				host.getId(), 
-				scheduler, recipientSelectors);
+				scheduler, recipientSelectors, directGossipStrategy);
 		
 		// Bind KnowledgeDataReceiver with PacketDataReceiver
 		host.getPacketReceiver().setKnowledgeDataReceiver(kdManager);

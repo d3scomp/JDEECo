@@ -93,7 +93,7 @@ module Node
         //Network layer
         networkLayer: NetworkLayer if nic80211Type != "" || useEthernet {
             parameters:
-                proxyARP = false;
+                proxyARP = true;
                 @display("p=329,287;q=queue");
         }
         

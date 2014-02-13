@@ -1,7 +1,9 @@
 package cz.cuni.mff.d3s.jdeeco.simulation.demo;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +15,7 @@ public class AreaNetworkRegistry {
 
 	private static AreaNetworkRegistry INSTANCE;
 
-	private final Map<Area, List<String>> jDEECoMoudlesByArea = new HashMap<Area, List<String>>();
+	private final Map<Area, List<PositionAwareComponent>> componentsByArea = new HashMap<Area, List<PositionAwareComponent>>();
 
 	private AreaNetworkRegistry() {
 	}
@@ -26,53 +28,42 @@ public class AreaNetworkRegistry {
 	}
 
 	public void initialize(Collection<Area> areas) {
-		if (jDEECoMoudlesByArea.isEmpty()) {
+		if (componentsByArea.isEmpty()) {
 			for (Area area : areas) {
-				jDEECoMoudlesByArea.put(area, new LinkedList<String>());
+				componentsByArea.put(area, new LinkedList<PositionAwareComponent>());
 			}
 		}
 	}
 
-	public void addjDEECoModule(String jDEECoModuleId, Position position) {
-		for (Area area : jDEECoMoudlesByArea.keySet()) {
-			if (area.isInArea(position)) {
-				jDEECoMoudlesByArea.get(area).add(jDEECoModuleId);
+	public void addComponent(PositionAwareComponent component) {
+		for (Area area : componentsByArea.keySet()) {
+			if (area.isInArea(component.position)) {
+				componentsByArea.get(area).add(component);
 			}
 		}
 	}
-
-	public String getRandomRecipient(String host) {
-		List<Area> toPickFrom = new LinkedList<>(jDEECoMoudlesByArea.keySet());
-		List<Area> toOmmit = new LinkedList<>();
-		for (Area area : toPickFrom) {
-			if (jDEECoMoudlesByArea.get(area).contains(host)) {
-				toOmmit.add(area);
-			}
-		}
-		toPickFrom.removeAll(toOmmit);
-		if (toPickFrom.isEmpty()) {
-			return null;
-		} else {
-			Area area = toPickFrom.get(new Random().nextInt(toPickFrom.size()));
-			return jDEECoMoudlesByArea.get(area).get(new Random().nextInt(jDEECoMoudlesByArea.get(area).size()));
-		}
+	
+	public List<Area> getTeamSites(String teamId) {
+		List<Area> result = new LinkedList<>();
+		for (Area area : componentsByArea.keySet())
+			if (Arrays.binarySearch(area.getTeams(), teamId) > -1)
+				result.add(area);
+		return result;
 	}
-
-	public Collection<String> getRandomRecipients(String host) {
-		List<Area> toPickFrom = new LinkedList<>(jDEECoMoudlesByArea.keySet());
-		List<Area> toOmmit = new LinkedList<>();
-		for (Area area : toPickFrom) {
-			if (jDEECoMoudlesByArea.get(area).contains(host)) {
-				toOmmit.add(area);
+	
+	public List<PositionAwareComponent> getMembersBelongingToTeam(String teamId, Area area) {
+		List<PositionAwareComponent> result = new LinkedList<>();
+		if (Arrays.binarySearch(area.getTeams(), teamId) < 0)
+			return result;
+		Member m;
+		for (PositionAwareComponent c : componentsByArea.get(area)) {
+			if (c instanceof Member) {
+				m = (Member) c;
+				if (m.teamId.equals(teamId))
+					result.add(c);
 			}
 		}
-		toPickFrom.removeAll(toOmmit);
-		if (toPickFrom.isEmpty()) {
-			return null;
-		} else {
-			Area area = toPickFrom.get(new Random().nextInt(toPickFrom.size()));
-			return jDEECoMoudlesByArea.get(area);
-		}
+		return result;
 	}
 
 }
