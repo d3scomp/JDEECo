@@ -64,7 +64,7 @@ public class Main {
 			siteCfg = args[1];
 		}
 		
-		Simulation sim = new Simulation(true);
+		Simulation sim = new Simulation();
 		sim.initialize(); //loads Library
 		
 		AnnotationProcessor processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE);
@@ -74,7 +74,7 @@ public class Main {
 		Position topRight = siteParser.parseTopRightCorner();
 		
 		Area area = null;
-		Set<Area> areas = new HashSet<>();
+		final Set<Area> areas = new HashSet<>();
 		while ((area = siteParser.parseArea()) != null) {
 			areas.add(area);
 		}
@@ -98,7 +98,7 @@ public class Main {
 			
 			@Override
 			public boolean gossipTo(String recipient) {
-				return new Random().nextInt(100) < 5;
+				return new Random(areas.size()).nextInt(100) < 20;
 			}
 		};
 		
