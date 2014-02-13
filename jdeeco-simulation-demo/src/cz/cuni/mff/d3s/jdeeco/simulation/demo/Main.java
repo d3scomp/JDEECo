@@ -93,7 +93,7 @@ public class Main {
 		StringBuilder omnetConfig = new StringBuilder();
 		int i = 0;		
 		
-		DirectRecipientSelector directRecipientSelector;
+		DifferentAreaSelector directRecipientSelector = new DifferentAreaSelector();
 		DirectGossipStrategy directGossipStrategy = new DirectGossipStrategy() {
 			
 			@Override
@@ -128,38 +128,22 @@ public class Main {
 			// there is only one component instance
 			model.getComponentInstances().get(0).getInternalData().put(PositionAwareComponent.HOST_REFERENCE, host);
 			
-			directRecipientSelector = new DirectRecipientSelector() {
-				
-				@Override
-				public Collection<String> getRecipients(KnowledgeData data,
-						ReadOnlyKnowledgeManager sender) {
-					List<String> result = new LinkedList<>();
-					KnowledgePath kpTeam = KnowledgePathBuilder.buildSimplePath("teamId");
-					String ownerTeam = (String) data.getKnowledge().getValue(kpTeam);
-					if (ownerTeam != null) {
-						//Find all areas of my team
-						List<Area> areas = networkRegistry.getTeamSites(ownerTeam);
-						//Pick one randomly
-						Area area = areas.get(new Random().nextInt(areas.size()));
-						//Get all the members in that area
-						List<PositionAwareComponent> recipients = networkRegistry.getMembersBelongingToTeam(ownerTeam, area);
-						//Randomly choose a subset of them and return those as possible message recipients
-						for (PositionAwareComponent c : recipients) {
-							if (!c.id.equals(sender.getId()) &&new Random().nextInt(2) == 0) {
-								result.add(c.id);
-							}
-						}
-					}
-					//return result;
-					return new LinkedList<>();
-				}
-			};
-			
-			RuntimeFramework runtime = builder.build(host, model, Arrays.asList(directRecipientSelector), directGossipStrategy); 
+			RuntimeFramework runtime = builder.build(host, model, Arrays.asList((DirectRecipientSelector) directRecipientSelector), directGossipStrategy); 
 			runtimes.add(runtime);
 			runtime.start();
 			i++;
 		}	
+		
+		//Designate some of the nodes to be Ethernet enabled
+		List<String> ethernetEnabled = new LinkedList<>();
+		for (Area a : areas) {
+			for (PositionAwareComponent pac : networkRegistry.getComponentsOfArea(a)) {
+				if (new Random(components.size()).nextInt(2) == 0)
+					ethernetEnabled.add(pac.id);
+			}
+		}
+		
+		directRecipientSelector.initialize(ethernetEnabled, networkRegistry);
 		
 		Files.copy(Paths.get(OMNET_CONFIG_TEMPLATE), Paths.get(OMNET_CONFIG_PATH), StandardCopyOption.REPLACE_EXISTING);
 		
@@ -200,6 +184,42 @@ public class Main {
 				Integer.getInteger(DeecoProperties.MESSAGE_CACHE_DEADLINE, PacketReceiver.DEFAULT_MAX_MESSAGE_TIME),
 				Integer.getInteger(DeecoProperties.MESSAGE_CACHE_WIPE_PERIOD, PacketReceiver.DEFAULT_MESSAGE_WIPE_PERIOD),
 				Integer.getInteger(DeecoProperties.MAXIMUM_REBROADCAST_DELAY, KnowledgeDataManager.DEFAULT_MAX_REBROADCAST_DELAY)));
+	}
+	
+	private static class DifferentAreaSelector implements DirectRecipientSelector {
+
+		private List<String> ethernetEnabled = null;
+		private AreaNetworkRegistry networkRegistry = null;
+		
+		public void initialize(List<String> ethernetEnabled, AreaNetworkRegistry networkRegistry) {
+			this.ethernetEnabled = ethernetEnabled;
+			this.networkRegistry = networkRegistry;
+		}
+		
+		@Override
+		public Collection<String> getRecipients(KnowledgeData data,
+				ReadOnlyKnowledgeManager sender) {
+			List<String> result = new LinkedList<>();
+			KnowledgePath kpTeam = KnowledgePathBuilder.buildSimplePath("teamId");
+			String ownerTeam = (String) data.getKnowledge().getValue(kpTeam);
+			if (ownerTeam != null) {
+				//Find all areas of my team
+				List<Area> areas = networkRegistry.getTeamSites(ownerTeam);
+				//Pick one randomly
+				Area area = areas.get(new Random().nextInt(areas.size()));
+				//Get all the members in that area
+				List<PositionAwareComponent> recipients = networkRegistry.getMembersBelongingToTeam(ownerTeam, area);
+				//Randomly choose a subset of them and return those as possible message recipients
+				for (PositionAwareComponent c : recipients) {
+					if (!c.id.equals(sender.getId()) && ethernetEnabled.contains(c.id)) {
+						result.add(c.id);
+					}
+				}
+			}
+			//return result;
+			return new LinkedList<>();
+		}
+		
 	}
 	
 //	private static StringBuilder generateNetworkConfig(Set<Area> areas, List<PositionAwareComponent> components, String networkConfig) throws IOException {

@@ -192,21 +192,26 @@ KnowledgeDataPublisher {
 				knowledgeDataSender.broadcastKnowledgeData(data);
 			}
 			
-			if (recipientSelectors != null && !recipientSelectors.isEmpty()) {
-				//Publishing to IP
-				Collection<String> recipients;
-				//For IP part we are using individual publishing only
-				for (KnowledgeData kd : data) {
-					recipients = getRecipients(kd, getNodeKnowledge());
-					for (String recipient: recipients) {
-						if (directGossipStrategy.gossipTo(recipient)) {
-							logPublish(data, recipient);
-							knowledgeDataSender.sendKnowledgeData(Arrays.asList(kd), recipient);
-						}
+			sendDirect(data);
+			localVersion++;
+		}
+	}
+
+
+	private void sendDirect(List<KnowledgeData> data) {
+		if (recipientSelectors != null && !recipientSelectors.isEmpty()) {
+			//Publishing to IP
+			Collection<String> recipients;
+			//For IP part we are using individual publishing only
+			for (KnowledgeData kd : data) {
+				recipients = getRecipients(kd, getNodeKnowledge());
+				for (String recipient: recipients) {
+					if (directGossipStrategy.gossipTo(recipient)) {
+						logPublish(data, recipient);
+						knowledgeDataSender.sendKnowledgeData(Arrays.asList(kd), recipient);
 					}
 				}
 			}
-			localVersion++;
 		}
 	}
 	
@@ -227,6 +232,7 @@ KnowledgeDataPublisher {
 		dataToRebroadcast.remove(sig);
 		Log.d(String.format("Rebroadcast finished (%d) at %s, data %s", timeProvider.getCurrentTime(), host, sig));
 		
+		sendDirect(Arrays.asList(data));
 	}
 
 	@Override

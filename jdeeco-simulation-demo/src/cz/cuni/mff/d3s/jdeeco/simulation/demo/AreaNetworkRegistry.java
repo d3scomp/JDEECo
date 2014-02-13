@@ -51,6 +51,10 @@ public class AreaNetworkRegistry {
 		return result;
 	}
 	
+	public Collection<PositionAwareComponent> getComponentsOfArea(Area area) {
+		return componentsByArea.get(area);
+	}
+	
 	public List<PositionAwareComponent> getMembersBelongingToTeam(String teamId, Area area) {
 		List<PositionAwareComponent> result = new LinkedList<>();
 		if (Arrays.binarySearch(area.getTeams(), teamId) < 0)
