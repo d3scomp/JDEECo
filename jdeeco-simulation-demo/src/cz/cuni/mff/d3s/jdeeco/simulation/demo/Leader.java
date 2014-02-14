@@ -91,7 +91,7 @@ public class Leader extends PositionAwareComponent {
 			@TriggerOnChange @In("membersInDanger")  Set<String> membersInDanger) {
 		
 		StringBuilder sb = new StringBuilder();
-		sb.append(id + ": Firefighters in danger: ");
+		sb.append(String.format("(%d) %s: Firefighters in danger: ", ProcessContext.getTimeProvider().getCurrentTime(), id));
 		for (String ff: membersInDanger) {
 			sb.append(ff + ", ");
 		}

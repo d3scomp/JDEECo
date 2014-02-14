@@ -210,7 +210,7 @@ public class PacketReceiver {
 							.format("Message %d received more data than expected (by %d bytes).",
 									messageId, -remainingBytes));
 				}
-				System.arraycopy(data, 0, this.data, seqNumber * packetSize, cnt);
+				System.arraycopy(data, 0, this.data, seqNumber * (packetSize-PacketSender.HEADER_SIZE), cnt);
 			} else {
 				cache.put(seqNumber, data);
 			}

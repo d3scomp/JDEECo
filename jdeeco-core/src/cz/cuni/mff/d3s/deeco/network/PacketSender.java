@@ -21,6 +21,8 @@ import cz.cuni.mff.d3s.deeco.logging.Log;
 public abstract class PacketSender implements KnowledgeDataSender {
 
 	public static int DEFAULT_PACKET_SIZE = 1000;
+	
+	public static int HEADER_SIZE = 8;
 
 	// We reserver Integer.MIN_VALUE for distinguishing initial packets.
 	private static int CURRENT_MESSAGE_ID = Integer.MIN_VALUE;
@@ -100,14 +102,15 @@ public abstract class PacketSender implements KnowledgeDataSender {
 	protected abstract void sendPacket(byte[] packet, String recipient);
 
 	private byte[][] fragment(Object data, int packetSize) throws IOException {
+		int fragmentSize = packetSize - HEADER_SIZE;
 		byte[] serialized = Serializer.serialize(data);
 		byte[][] result = new byte[(int) Math.ceil(serialized.length
-				/ (double) packetSize)][packetSize];
+				/ (double) fragmentSize)][fragmentSize];
 		int start = 0;
 		for (int i = 0; i < result.length; i++) {
 			result[i] = Arrays.copyOfRange(serialized, start, start
-					+ packetSize);
-			start += packetSize;
+					+ fragmentSize);
+			start += fragmentSize;
 		}
 		return result;
 	}
@@ -120,13 +123,13 @@ public abstract class PacketSender implements KnowledgeDataSender {
 	private byte[] buildPacket(int id, int seqNumber, byte[] packetData) {
 		byte[] bId = ByteBuffer.allocate(4).putInt(id).array();
 		byte[] bSeqNumber = ByteBuffer.allocate(4).putInt(seqNumber).array();
-		byte[] result = new byte[8 + packetData.length];
+		byte[] result = new byte[HEADER_SIZE + packetData.length];
 		for (int i = 0; i < bId.length; i++)
 			result[i] = bId[i];
 		for (int i = 0; i < bSeqNumber.length; i++)
 			result[i + 4] = bSeqNumber[i];
 		for (int i = 0; i < packetData.length; i++)
-			result[i + 8] = packetData[i];
+			result[i + HEADER_SIZE] = packetData[i];
 		return result;
 	}
 	

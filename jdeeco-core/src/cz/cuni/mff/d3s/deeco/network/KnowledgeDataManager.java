@@ -62,7 +62,7 @@ KnowledgeDataPublisher {
 	public static final double RSSI_50m = 5.59e-9;
 	
 	// this rssi corresponds to max (roughly 250m) distance
-	public static final double RSSI_MAX = 1.11e-10;
+	public static final double RSSI_MIN = 1.11e-10;
 	
 	/** Global version counter for all outgoing local knowledge. */
 	protected long localVersion;	
@@ -91,7 +91,7 @@ KnowledgeDataPublisher {
 	private final double rssiLimit;
 	private final Random random;
 	
-	public static final int DEFAULT_MAX_REBROADCAST_DELAY = (int) (PublisherTask.DEFAULT_PUBLISHING_PERIOD / 2.0);
+	public static final int DEFAULT_MAX_REBROADCAST_DELAY = (int) (PublisherTask.DEFAULT_PUBLISHING_PERIOD);
 	private final int maxRebroadcastDelay;
 	
 	
@@ -369,10 +369,10 @@ KnowledgeDataPublisher {
 		
 		// the further further from the source (i.e. smaller rssi) the bigger
 		// probability to of rebroadcast (i.e., the smaller delay)
-		double rssi = Math.log(Math.max(RSSI_MAX, metaData.rssi));
-		double ratio = rssi/Math.log(RSSI_MAX);	
+		double rssi = Math.max(RSSI_MIN, metaData.rssi);
+		double ratio = Math.abs(Math.log(rssi)/Math.log(RSSI_MIN));	
 		
-		int maxDelay = (int) (ratio * maxRebroadcastDelay);
+		int maxDelay = (int) ((1-ratio) * maxRebroadcastDelay);
 		
 		// special case: rebroadcast immediately
 		if (maxDelay == 0)

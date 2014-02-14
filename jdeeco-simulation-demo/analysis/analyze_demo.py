@@ -179,8 +179,8 @@ for team in teamLeaders.keys():
                     hops.append(discovery.hops) 
                     reallyDiscovered += 1
                     membersDiscovered.add(member)
-                    print 'leader %s of team %s discovered at %f that %s is in danger (after %dms proces-to-process, %dms node-to-node, %dhops, %dversions)' % \
-                        (leader, team, discovery.discoverytime, member, resTimes[-1], resTimesNetwork[-1], hops[-1], versionDifs[-1])
+                    print 'leader %s of team %s discovered at %f that %s is in danger (after %dms proces-to-process, %dms node-to-node, %dhops, %dversions (%d first, %d discovered)' % \
+                        (leader, team, discovery.discoverytime, member, resTimes[-1], resTimesNetwork[-1], hops[-1], versionDifs[-1],  inDanger.version, discovery.version)
                 else:
                     print 'leader %s of team %s never discovered that %s is in danger from %d.' % (leader, team, member, inDanger.dangertime)
                     
