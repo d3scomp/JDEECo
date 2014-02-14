@@ -3,7 +3,7 @@ from numpy import average, median
 
 
 lines = []
-with open('../logs/jdeeco.log.0', 'r') as f:
+with open('jdeeco.log.0', 'r') as f:
     lines = f.readlines()
     
 pattern = re.compile('Simulation parameters: (.+)\n')
@@ -16,6 +16,13 @@ for line in lines:
     
 print config                
 print '--------------------------------------------'
+
+if 'boundary disabled' in config:
+    rMessagesName = 'result-messages-no-bc.txt'
+else:
+    rMessagesName = 'result-messages-bc.txt'
+r = open(rMessagesName, 'w')
+r.write(config + "\n")
     
 hoplines = filter(lambda x: x.endswith('hops\n'), lines)
 hopData = []
@@ -159,5 +166,8 @@ csvLine = [config,
            receivedIdsCnt,
            droppedIdsCnt,
            recSendRatio ]
+
+r.close()
+
 #print '\nCSV:'
 #print ';'.join(map(str, csvLine))

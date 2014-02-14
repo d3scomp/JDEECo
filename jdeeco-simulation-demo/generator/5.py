@@ -1,11 +1,11 @@
 from ffConfiguration import *
 
-aHQ = RectanguralArea('HQ',200,200,300,200,range(0,1))
-aHQExtended = RectanguralArea('HQExt',200,200,300,200,[])
+aHQ = RectanguralArea('HQ',200,200,100,100,range(0,1))
+aHQExtended = RectanguralArea('HQExt',200,200,100,100,[])
 
 areas = [aHQ, aHQExtended]
 
-SCALE_FACTOR = 2
+SCALE_FACTOR = 5
 
 fig = figure()
 area = fig.add_subplot(111, aspect='equal')
@@ -45,7 +45,7 @@ for cmp in members:
 for cmp in others:
     cmp.plot(area, 'O'+str(others.index(cmp)))
    
-f = open('../configurations/component.cfg', 'w') 
+f = open('../configurations/5/component5.cfg', 'w') 
 
 for idx in range(size(leaders)):
     print>>f, leaders[idx].toString(idx)
@@ -55,11 +55,11 @@ for idx in range(size(others)):
     print>>f, others[idx].toString(idx)
 f.close()
 
-f = open('../configurations/site.cfg', 'w') 
+f = open('../configurations/5/site5.cfg', 'w') 
 print>>f, xSize, ySize
 for area in [aHQ]:
     print>>f, area.toString();
 f.close()
 
-savefig("../configurations/cfg.png")
+savefig("../configurations/5/cfg5.png")
 show()

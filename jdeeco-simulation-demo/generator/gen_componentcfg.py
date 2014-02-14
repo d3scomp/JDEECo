@@ -1,4 +1,4 @@
-from ffConfiguration import *
+from base import *
 
 aHQ = RectanguralArea('HQ',100,100,300,200,range(0,4))
 aSite = CircularArea('Site1',1200,1000,150,range(4,7))

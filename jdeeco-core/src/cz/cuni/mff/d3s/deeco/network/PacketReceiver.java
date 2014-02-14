@@ -74,7 +74,7 @@ public class PacketReceiver {
 	public void packetReceived(byte[] packet, double rssi) {
 		Message msg;
 		int messageId = getMessageId(packet);
-
+		Log.d(String.format("PacketReceiver: Packet received at %s with messageid %d with RSSI: %g", host, messageId, rssi));
 		if (messages.containsKey(messageId)) {
 			msg = messages.get(messageId);
 		} else {
