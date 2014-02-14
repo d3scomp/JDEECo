@@ -1,6 +1,6 @@
 [General]
 network = manet.MANET
-sim-time-limit = 10s
+sim-time-limit = 120s
 
 load-libs = model oppcmdenv
 ned-path = model;mixim/examples;mixim/src/base;mixim/src/modules;inet/
@@ -40,6 +40,7 @@ scheduler-class = "cSocketSequentialScheduler" #other option is cSocketRealTimeS
 #      				 NIC cards        	     	  		 #
 ##########################################################
 **.node[*].nic802154Type = "Nic802154_TI_CC2420" # max range around 250m
+**.macMaxCSMABackoffs = 10
 #**.node[*].nic80211Type = "Nic80211" # max range around 250m
 **.router[*].wlan[0].typename = "Nic80211" # max range around 250m
 
@@ -192,7 +193,6 @@ scheduler-class = "cSocketSequentialScheduler" #other option is cSocketRealTimeS
 ##########################################################
 **.node[*].applicationType = "JDEECoApplication"
 **.node[*].appl.packet80211ByteLength = 1000B
-**.node[*].appl.packet802154ByteLength = 1000B
 
 ##########################################################
 #       			Nodes Mobility                       #

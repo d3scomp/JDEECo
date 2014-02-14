@@ -94,8 +94,7 @@ public class Main {
 		int i = 0;		
 		
 		DifferentAreaSelector directRecipientSelector = new DifferentAreaSelector();
-		DirectGossipStrategy directGossipStrategy = new DirectGossipStrategy() {
-			
+		DirectGossipStrategy directGossipStrategy = new DirectGossipStrategy() {			
 			@Override
 			public boolean gossipTo(String recipient) {
 				return new Random(areas.size()).nextInt(100) < 20;
@@ -153,6 +152,8 @@ public class Main {
 		out.println(String.format("**.playgroundSizeY = %dm", (int) topRight.y));
 		out.println();
 		out.println(String.format("**.numNodes = %d", hosts.size()));
+		out.println(); 
+		out.println(String.format("**.node[*].appl.packet802154ByteLength = %dB", Integer.getInteger(DeecoProperties.PACKET_SIZE, PacketSender.DEFAULT_PACKET_SIZE)));
 		out.println();
 		out.println(omnetConfig.toString());
 		

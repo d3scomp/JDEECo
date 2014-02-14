@@ -76,7 +76,7 @@ public abstract class PacketSender implements KnowledgeDataSender {
 
 	public void sendData(Object data, String recipient) {
 		try {
-			byte[][] fragments = fragment(data);
+			byte[][] fragments = fragment(data, packetSize);
 
 			int messageId = getNextMessageId();
 			
@@ -99,7 +99,7 @@ public abstract class PacketSender implements KnowledgeDataSender {
 
 	protected abstract void sendPacket(byte[] packet, String recipient);
 
-	private byte[][] fragment(Object data) throws IOException {
+	private byte[][] fragment(Object data, int packetSize) throws IOException {
 		byte[] serialized = Serializer.serialize(data);
 		byte[][] result = new byte[(int) Math.ceil(serialized.length
 				/ (double) packetSize)][packetSize];

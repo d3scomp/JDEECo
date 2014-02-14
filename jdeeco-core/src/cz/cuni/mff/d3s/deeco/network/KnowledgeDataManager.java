@@ -1,3 +1,4 @@
+
 package cz.cuni.mff.d3s.deeco.network;
 
 import java.util.Arrays;
@@ -90,7 +91,7 @@ KnowledgeDataPublisher {
 	private final double rssiLimit;
 	private final Random random;
 	
-	public static final int DEFAULT_MAX_REBROADCAST_DELAY = (int) (PublisherTask.DEFAULT_PUBLISHING_PERIOD);
+	public static final int DEFAULT_MAX_REBROADCAST_DELAY = (int) (PublisherTask.DEFAULT_PUBLISHING_PERIOD / 2.0);
 	private final int maxRebroadcastDelay;
 	
 	
@@ -368,10 +369,10 @@ KnowledgeDataPublisher {
 		
 		// the further further from the source (i.e. smaller rssi) the bigger
 		// probability to of rebroadcast (i.e., the smaller delay)
-		double rssi = Math.max(RSSI_MAX, metaData.rssi);
-		double ratio = RSSI_MAX/rssi;	
+		double rssi = Math.log(Math.max(RSSI_MAX, metaData.rssi));
+		double ratio = rssi/Math.log(RSSI_MAX);	
 		
-		int maxDelay = (int) ((1-ratio) * maxRebroadcastDelay);
+		int maxDelay = (int) (ratio * maxRebroadcastDelay);
 		
 		// special case: rebroadcast immediately
 		if (maxDelay == 0)
