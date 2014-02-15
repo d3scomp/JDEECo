@@ -9,7 +9,6 @@
 	</parent>
 	<artifactId>cz.cuni.mff.d3s.jdeeco.core</artifactId>
 	<packaging>jar</packaging>
-	<version>2.0.0</version>
 	<properties>
 		<dist>../dist</dist>
 		<coreJar>jdeeco.jar</coreJar>

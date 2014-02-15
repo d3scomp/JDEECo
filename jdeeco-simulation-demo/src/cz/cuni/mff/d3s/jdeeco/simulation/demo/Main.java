@@ -52,14 +52,14 @@ public class Main {
 	static String DEFAULT_COMPONENT_CFG = "configurations/component.cfg";
 	static String DEFAULT_SITE_CFG = "configurations/site.cfg";
 	
-	static int SIMULATION_DURATION = 60000;
+	static int SIMULATION_DURATION = 10000;
 
 	
 	public static void main(String[] args) throws AnnotationProcessorException, IOException {
 		String componentCfg = DEFAULT_COMPONENT_CFG;
 		String siteCfg = DEFAULT_SITE_CFG;
 		
-		if (args.length == 2) {
+		if (args.length >= 2) {
 			componentCfg = args[0];
 			siteCfg = args[1];
 		}
@@ -144,6 +144,9 @@ public class Main {
 		
 		directRecipientSelector.initialize(ethernetEnabled, networkRegistry);
 		String confName = "omnetpp" + "-" + components.size() + "-" + (Boolean.getBoolean(DeecoProperties.DISABLE_BOUNDARY_CONDITIONS) ?  "disabled" : "enabled");
+		if (args.length >= 3) {
+			confName = args[2];
+		}
 		Files.copy(Paths.get(OMNET_CONFIG_TEMPLATE), Paths.get(confName), StandardCopyOption.REPLACE_EXISTING);
 		
 		PrintWriter out = new PrintWriter(Files.newOutputStream(Paths.get(confName), StandardOpenOption.APPEND));
