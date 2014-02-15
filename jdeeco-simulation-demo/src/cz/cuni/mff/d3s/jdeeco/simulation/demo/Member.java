@@ -61,7 +61,7 @@ public class Member extends PositionAwareComponent {
 			for (char c: id.toCharArray())
 				seed += c;
 			Random rnd = new Random(seed);		
-			long dangerTime = ProcessContext.getTimeProvider().getCurrentTime() + rnd.nextInt((Main.SIMULATION_DURATION/3));
+			long dangerTime = ProcessContext.getTimeProvider().getCurrentTime() + rnd.nextInt((Main.SIMULATION_DURATION/4));
 			internal.put(DANGER_TIME, dangerTime);
 		}
 		long currentTime = ProcessContext.getTimeProvider().getCurrentTime();
@@ -78,8 +78,8 @@ public class Member extends PositionAwareComponent {
 		}
 		
 //		memberData.value = new MemberData(new Random().nextFloat() * 100);
-		System.out.println(id + " new temperature: "
-				+ Math.round(memberData.value.temperature) + " degrees Celcious.");
+//		System.out.println(id + " new temperature: "
+//				+ Math.round(memberData.value.temperature) + " degrees Celcious.");
 	}
 
 }

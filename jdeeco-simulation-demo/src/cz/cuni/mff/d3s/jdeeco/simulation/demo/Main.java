@@ -52,7 +52,7 @@ public class Main {
 	static String DEFAULT_COMPONENT_CFG = "configurations/component.cfg";
 	static String DEFAULT_SITE_CFG = "configurations/site.cfg";
 	
-	static int SIMULATION_DURATION = 10000;
+	static int SIMULATION_DURATION = 60000;
 
 	
 	public static void main(String[] args) throws AnnotationProcessorException, IOException {
@@ -153,7 +153,11 @@ public class Main {
 		out.println();
 		out.println(String.format("**.numNodes = %d", hosts.size()));
 		out.println(); 
-		out.println(String.format("**.node[*].appl.packet802154ByteLength = %dB", Integer.getInteger(DeecoProperties.PACKET_SIZE, PacketSender.DEFAULT_PACKET_SIZE)));
+		//out.println(String.format("**.node[*].appl.packet802154ByteLength = %dB", Integer.getInteger(DeecoProperties.PACKET_SIZE, PacketSender.DEFAULT_PACKET_SIZE)));
+		out.println("**.node[*].appl.packet802154ByteLength = 128B");
+		out.println();
+		out.println(); 
+		out.println(String.format("sim-time-limit = %ds", SIMULATION_DURATION / 1000));
 		out.println();
 		out.println(omnetConfig.toString());
 		

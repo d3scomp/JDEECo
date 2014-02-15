@@ -1,7 +1,7 @@
-from ffConfiguration import *
+from base import *
 
 aHQ = RectanguralArea('HQ',200,200,100,100,range(0,1))
-aHQExtended = RectanguralArea('HQExt',200,200,100,100,[])
+aHQExtended = RectanguralArea('HQExt',190,190,120,120,[])
 
 areas = [aHQ, aHQExtended]
 
@@ -32,7 +32,7 @@ members.extend(aHQ.generateMembers(49))
 
 
 others = []
-#others.extend(aHQExtended.generateOthers(1))
+others.extend(aHQExtended.generateOthersEdgy(25,10*SCALE_FACTOR))
 
 
 

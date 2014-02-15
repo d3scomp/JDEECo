@@ -4,3 +4,4 @@
 /logs
 /omnetpp.ini
 /c-log.txt
+**/*.log

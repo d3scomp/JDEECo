@@ -89,6 +89,12 @@ class Area:
         for (x, y) in zip(lx, ly):
             ret.append(Other(x, y))
         return ret
+    def generateOthersEdgy(self, cnt, innerDistance):
+        ret = []
+        lx, ly = self.generatePositionsEdgy(cnt, innerDistance)
+        for (x, y) in zip(lx, ly):
+            ret.append(Other(x, y))
+        return ret
     def toString(self, idx):
         raise NotImplementedError()
     def scale(self, factor):
@@ -109,6 +115,28 @@ class RectanguralArea(Area):
         for i in range(cnt):
             rx.append(self.x + random()*self.width)
             ry.append(self.y + random()*self.height)
+        return rx, ry
+    
+    def generatePositionsEdgy(self, cnt, innerDistance):
+        rx = []
+        ry = []
+        for i in range(cnt):
+            nx = self.x + random()*self.width
+            ny = self.y + random()*self.height
+            if (random() > 0.5):
+                nx = random()
+                if nx > 0.5:
+                    nx = self.x + self.width - nx*innerDistance
+                else:
+                    nx = self.x + nx*innerDistance;
+            else:
+                ny = random()
+                if ny > 0.5:
+                    ny = self.y + self.height - ny*innerDistance
+                else:
+                    ny = self.y + ny*innerDistance;
+            rx.append(nx)
+            ry.append(ny)
         return rx, ry
     
     def getPlotObject(self, **kwargs):
@@ -138,7 +166,15 @@ class CircularArea(Area):
             rx.append((r1 * self.r) * cos(a) + self.x)
             ry.append((r1 * self.r) * sin(a) + self.y)
         return rx, ry
-    
+    def generatePositionsEdgy(self, cnt, innerDistance):
+        rx = []
+        ry = []
+        for i in range(cnt):
+            a = 2 * pi * random()
+            r1 = self.r - (sqrt(random())*innerDistance)
+            rx.append(r1 * cos(a) + self.x)
+            ry.append(r1 * sin(a) + self.y)
+        return rx, ry
     def getPlotObject(self, **kwargs):
         return plt.Circle((self.x, self.y), self.r, fill=False, **kwargs)
     
