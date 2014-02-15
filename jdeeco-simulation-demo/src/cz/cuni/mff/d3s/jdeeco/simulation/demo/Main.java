@@ -143,10 +143,10 @@ public class Main {
 		}
 		
 		directRecipientSelector.initialize(ethernetEnabled, networkRegistry);
+		String confName = "omnetpp" + "-" + components.size() + "-" + (Boolean.getBoolean(DeecoProperties.DISABLE_BOUNDARY_CONDITIONS) ?  "disabled" : "enabled");
+		Files.copy(Paths.get(OMNET_CONFIG_TEMPLATE), Paths.get(confName), StandardCopyOption.REPLACE_EXISTING);
 		
-		Files.copy(Paths.get(OMNET_CONFIG_TEMPLATE), Paths.get(OMNET_CONFIG_PATH), StandardCopyOption.REPLACE_EXISTING);
-		
-		PrintWriter out = new PrintWriter(Files.newOutputStream(Paths.get(OMNET_CONFIG_PATH), StandardOpenOption.APPEND));
+		PrintWriter out = new PrintWriter(Files.newOutputStream(Paths.get(confName), StandardOpenOption.APPEND));
 		out.println();
 		out.println(String.format("**.playgroundSizeX = %dm", (int) topRight.x));
 		out.println(String.format("**.playgroundSizeY = %dm", (int) topRight.y));
@@ -169,7 +169,7 @@ public class Main {
 
 		logSimulationParameters(i);
 		
-		sim.run("Cmdenv", OMNET_CONFIG_PATH);
+		sim.run("Cmdenv", confName);
 		
 		sim.finalize();
 		
