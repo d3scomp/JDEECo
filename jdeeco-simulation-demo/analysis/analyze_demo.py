@@ -61,7 +61,6 @@ class DemoAnalysis:
         posx = {}
         posy = {}
         
- 
         
         pattern = re.compile('^(.) (.\d+) (.\d+)')
         pattern2 = re.compile('^(.) (.\d+) (.\d+) (\d+) (\d+)')
