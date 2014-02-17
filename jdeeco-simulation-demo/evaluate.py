@@ -250,6 +250,6 @@ def plot():
     
 if __name__ == '__main__':
     #generate()
-    simulate()
-    analyze()
+    #simulate()
+    #analyze()
     plot()

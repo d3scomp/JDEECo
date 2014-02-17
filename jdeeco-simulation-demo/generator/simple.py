@@ -23,19 +23,22 @@ class AreaConfiguration:
 
 def generateConfig(numLeaders, numMembers, numOthers, prefix, ipCount=0):
     f = open(prefix + 'site.cfg', 'w') 
-    print>>f, 400, 400
+    sizeX = 300
+    sizeY = 300
+    print>>f, sizeX, sizeY
     f.close()
     f = open(prefix + 'component.cfg', 'w') 
     f.close()
     fig = figure()
+    SCALE_FACTOR = 10
     area = fig.add_subplot(111, aspect='equal')
-    area.set_xlim(0, 4000)
-    area.set_ylim(0, 4000)
-    generateSimpleConfig("a", "HQ", 100, 100, 100, 120, 10, range(0,1), numLeaders, numMembers, numOthers, prefix, ipCount, 0, area)
+    area.set_xlim(0, SCALE_FACTOR * sizeX)
+    area.set_ylim(0, SCALE_FACTOR * sizeY)
+    generateSimpleConfig("a", "HQ", 100, 100, 100, 120, SCALE_FACTOR, range(0,1), numLeaders, numMembers, numOthers, prefix, ipCount, 0, area)
     savefig(prefix + "cfg.png")
-    close()
     if __name__ == '__main__':
         show()
+    close()
 
 def generateSimpleConfig(writeMode, areaId, posX, posY, areaSize, extSize, scale, teams, numLeaders, numMembers, numOthers, prefix, ipCount, idCounter, area):
     HQ = RectanguralArea(areaId,posX,posY,areaSize,areaSize,teams)
