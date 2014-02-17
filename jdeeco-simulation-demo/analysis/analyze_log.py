@@ -34,17 +34,15 @@ class GenericAnalysis:
             hops = m.group(2)
             hopData.append({'time': int(time), 'hops': int(hops)})
         
-        
-            
         timesPerHop = map(lambda x: x['time'] / x['hops'], hopData)
         hopCounts = map(lambda x: x['hops'], hopData)
-        
-        avgTimePerHop = average(timesPerHop)
-        maxNumOfHops = max(hopCounts)
-        avgNumOfHops = average(hopCounts)
-        print "Average time per hop: ", avgTimePerHop, 'ms'
-        print "Max number of hops: ", maxNumOfHops
-        print "Average number of hops: ", avgNumOfHops
+        if len(hopData) > 0:
+            avgTimePerHop = average(timesPerHop)
+            maxNumOfHops = max(hopCounts)
+            avgNumOfHops = average(hopCounts)
+            print "Average time per hop: ", avgTimePerHop, 'ms'
+            print "Max number of hops: ", maxNumOfHops
+            print "Average number of hops: ", avgNumOfHops
         
         
         boundaryFailedLines = filter(lambda x: 'Boundary failed' in x, lines)
@@ -118,11 +116,14 @@ class GenericAnalysis:
         droppedIdsCnt = len(droppedIds)
         print 'Dropped messages: ', droppedIdsCnt
         
-        recSendRatio = len(receivedIds) * 1.0 /len(sentIds)
+        recSendRatio = len(receivedIds) * 1.0 /max(1, len(sentIds))
         print 'Received/Sent ratio:', recSendRatio
         
         def printStats(description, values):
-            print description, 'avg=%f, min=%f, max=%f, median=%f' %(average(values), min(values), max(values), median(values))
+            if len(values) > 0:
+                print description, 'avg=%f, min=%f, max=%f, median=%f' %(average(values), min(values), max(values), median(values))
+            else:
+                print description, 'N/A'
         
         def extract_sent_length(line):
             p = re.compile('and size (.\d+)')
@@ -136,7 +137,7 @@ class GenericAnalysis:
         rebroadcastsAborted = len(filter(lambda x: 'Rebroadcast aborted' in x, lines));
         print 'Rebroadcasts aborted: ', rebroadcastsAborted
         print 'Rebroadcasts finished: ', len(filter(lambda x: 'Rebroadcast finished' in x, lines))
-        print 'Average abort ratio: ', rebroadcastsAborted*1.0/rebroadcastsPlanned
+        print 'Average abort ratio: ', rebroadcastsAborted*1.0/max(1, rebroadcastsPlanned)
 
 #rebroadcastLines = filter(lambda x: 'Rebroadcasting' in x, lines)
 #def extract_rebroadcast_cnt(line):
