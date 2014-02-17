@@ -43,8 +43,8 @@ public class Member extends PositionAwareComponent {
 	public MemberData memberData;
 	public String teamId;
 
-	public Member(String id, String team_id, Position position) {
-		super(id, position);		
+	public Member(String id, String team_id, Position position, boolean hasIP) {
+		super(id, position, hasIP);		
 		this.teamId = team_id;
 		this.memberData = new MemberData(25.0f);
 	}

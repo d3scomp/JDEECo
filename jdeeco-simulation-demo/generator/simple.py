@@ -3,10 +3,9 @@ from base import *
 from optparse import OptionParser
 from matplotlib.pyplot import close
 
+import random
 
-
-
-def generateConfig(numLeaders, numMembers, numOthers, prefix):
+def generateConfig(numLeaders, numMembers, numOthers, prefix, ipCount=0):
     aHQ = RectanguralArea('HQ',100,100,100,100,range(0,1))
     aHQExtended = RectanguralArea('HQExt',90,90,120,120,[])
     
@@ -40,6 +39,11 @@ def generateConfig(numLeaders, numMembers, numOthers, prefix):
     
     others = []
     others.extend(aHQExtended.generateOthersEdgy(numOthers,10*SCALE_FACTOR))
+    
+    
+    
+    for cmp in random.sample(leaders + members + others, ipCount):
+        cmp.ip = True
     
     
     
@@ -85,6 +89,8 @@ if __name__ == '__main__':
                       help="number of others")
     parser.add_option("-p", "--path", dest="prefix",
                       help="output file prefix (inxluding path)")
+    parser.add_option("-i", "--ip", dest="ip",
+                      help="IP enabled nodes count")
     (options, args) = parser.parse_args()
     
     
@@ -92,13 +98,16 @@ if __name__ == '__main__':
     numLeaders = 1
     numMembers = 9
     numOthers = 0
+    ip = 0
     
     if options.numLeaders is not None:
-        numLeaders = options.numLeaders
+        numLeaders = int(options.numLeaders)
     if options.numMembers is not None:
-        numMembers = options.numMembers
+        numMembers = int(options.numMembers)
     if options.numOthers is not None:
-        numOthers = options.numOthers
+        numOthers = int(options.numOthers)
+    if options.ip is not None:
+        ip = int(options.ip)
     if options.prefix is not None:
         prefix = options.prefix
-    generateConfig(numLeaders, numMembers, numOthers, prefix)
+    generateConfig(numLeaders, numMembers, numOthers, prefix, ip)

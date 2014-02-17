@@ -44,7 +44,7 @@ public class TestKnowledgeDataSize {
 		processor = new AnnotationProcessor(factory);
 		model = factory.createRuntimeMetadata();
 		
-		processor.process(model, new Member("M1", "T1", new Position(1, 2)));
+		processor.process(model, new Member("M1", "T1", new Position(1, 2), false));
 		component = model.getComponentInstances().get(0); 
 		
 		KnowledgePath empty = factory.createKnowledgePath();

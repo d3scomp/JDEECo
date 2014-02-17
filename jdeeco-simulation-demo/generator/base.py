@@ -22,9 +22,10 @@ def points_in_circle(x, y, r, cnt):
 teamColors = ['b','r','g','y','c','m','k','b','r','g','y','c','m','k', 'b','r','g','y','c','m','k'];
 
 class Component:
-    def __init__(self, x, y):
+    def __init__(self, x, y, ip = False):
         self.x = x
         self.y = y
+        self.ip = ip
     def toString(self, idx):
         raise NotImplementedError()
     def plotType(self):
@@ -39,7 +40,7 @@ class Leader(Component):
         Component.__init__(self, x, y)
         self.team = team
     def toString(self, idx):
-        return "L L%d T%d %d %d" % (idx, self.team, self.x, self.y) 
+        return "L L%d T%d %d %d %r" % (idx, self.team, self.x, self.y, self.ip) 
     def plotType(self):
         return 'o' + teamColors[self.team]
     
@@ -48,7 +49,7 @@ class Member(Component):
         Component.__init__(self, x, y)
         self.team = team
     def toString(self, idx):
-        return "M M%d T%d %d %d" % (idx, self.team, self.x, self.y)
+        return "M M%d T%d %d %d %r" % (idx, self.team, self.x, self.y, self.ip)
     def plotType(self):
         return '*' + teamColors[self.team]
     
@@ -56,7 +57,7 @@ class Other(Component):
     def __init__(self, x, y):
         Component.__init__(self, x, y)
     def toString(self, idx):
-        return "O O%d %d %d" % (idx, self.x, self.y) 
+        return "O O%d %d %d %r" % (idx, self.x, self.y, self.ip) 
     def plotType(self):
         return 'xm'
                 

@@ -53,8 +53,8 @@ public class Leader extends PositionAwareComponent {
 	public Float temperatureThreshold = 50.0f;
 	
 	
-	public Leader(String id, String team_id, Position position)  {
-		super(id, position);
+	public Leader(String id, String team_id, Position position, boolean hasIP)  {
+		super(id, position, hasIP);
 		this.teamId = team_id;
 		this.memberPositions = new HashMap<>();
 		this.memberAggregateData = new HashMap<>();

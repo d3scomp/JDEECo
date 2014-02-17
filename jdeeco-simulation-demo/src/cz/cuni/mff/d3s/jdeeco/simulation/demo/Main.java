@@ -135,11 +135,9 @@ public class Main {
 		
 		//Designate some of the nodes to be Ethernet enabled
 		List<String> ethernetEnabled = new LinkedList<>();
-		for (Area a : areas) {
-			for (PositionAwareComponent pac : networkRegistry.getComponentsOfArea(a)) {
-				if (new Random(components.size()).nextInt(2) == 0)
-					ethernetEnabled.add(pac.id);
-			}
+		for (PositionAwareComponent pac : components) {
+			if (pac.hasIP)
+				ethernetEnabled.add(pac.id);
 		}
 		
 		directRecipientSelector.initialize(ethernetEnabled, networkRegistry);
