@@ -192,7 +192,7 @@ def analyze():
 def colorBoxplot(bp):
     pylab.setp(bp['boxes'], color='black')
     pylab.setp(bp['whiskers'], color='black')
-
+    pylab.setp(bp['fliers'], marker='None')
 def plot():    
     print 'Plotting...'
     results = {}
@@ -200,7 +200,7 @@ def plot():
     messages = {}
     
     pylab.hold(True)
-    ax = pylab.axes()
+   
     
     for nodeCnt in evaluations.keys():       
         results[nodeCnt] = []
@@ -227,10 +227,17 @@ def plot():
         colorBoxplot(bp)
     
     pylab.figure(0)
-    ax.set_xticks(evaluations.keys())       
-    pylab.xlim(min(evaluations.keys())-3,max(evaluations.keys()) +3)
-    pylab.savefig("results.png")
+    pylab.axes().set_yticks(range(0, 60000, 5000))
+    pylab.axes().set_yticklabels(range(0, 60, 5))        
     
+    
+    for fig in range(2):
+        pylab.figure(fig)     
+        ax = pylab.axes()
+        ax.set_xticks(evaluations.keys())       
+        pylab.xlim(min(evaluations.keys())-3,max(evaluations.keys()) +3)
+        
+        
     pylab.show()
     
     print 'Plotting done'
@@ -240,7 +247,7 @@ def plot():
     
     
 if __name__ == '__main__':
-    #generate()
-    #simulate()
-    #analyze()
+    generate()
+    simulate()
+    analyze()
     plot()
