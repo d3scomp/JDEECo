@@ -34,17 +34,15 @@ class GenericAnalysis:
             hops = m.group(2)
             hopData.append({'time': int(time), 'hops': int(hops)})
         
-        
-            
         timesPerHop = map(lambda x: x['time'] / x['hops'], hopData)
         hopCounts = map(lambda x: x['hops'], hopData)
-        
-        avgTimePerHop = average(timesPerHop)
-        maxNumOfHops = max(hopCounts)
-        avgNumOfHops = average(hopCounts)
-        print "Average time per hop: ", avgTimePerHop, 'ms'
-        print "Max number of hops: ", maxNumOfHops
-        print "Average number of hops: ", avgNumOfHops
+        if len(hopData) > 0:
+            avgTimePerHop = average(timesPerHop)
+            maxNumOfHops = max(hopCounts)
+            avgNumOfHops = average(hopCounts)
+            print "Average time per hop: ", avgTimePerHop, 'ms'
+            print "Max number of hops: ", maxNumOfHops
+            print "Average number of hops: ", avgNumOfHops
         
         
         boundaryFailedLines = filter(lambda x: 'Boundary failed' in x, lines)
@@ -122,7 +120,10 @@ class GenericAnalysis:
         print 'Received/Sent ratio:', recSendRatio
         
         def printStats(description, values):
-            print description, 'avg=%f, min=%f, max=%f, median=%f' %(average(values), min(values), max(values), median(values))
+            if len(values) > 0:
+                print description, 'avg=%f, min=%f, max=%f, median=%f' %(average(values), min(values), max(values), median(values))
+            else:
+                print description, 'N/A'
         
         def extract_sent_length(line):
             p = re.compile('and size (.\d+)')
