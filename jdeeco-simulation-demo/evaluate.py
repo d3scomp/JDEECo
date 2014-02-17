@@ -259,12 +259,30 @@ def analyze():
                 
     print 'Analysis done'
 
-def colorBoxplot(bp):
-    pylab.setp(bp['boxes'], color='black')
-    pylab.setp(bp['whiskers'], color='black')
+def colorBoxplot(bp, isSecond):
+    mycolor = '#E24A33'
+    if isSecond:
+        mycolor = '#348ABD'
+    pylab.setp(bp['boxes'], color=mycolor)
+    pylab.setp(bp['whiskers'], color=mycolor)
     pylab.setp(bp['fliers'], marker='None')
     
+
+def plotPandas():
+    import pandas as pd
     
+    dataWithoutBoundary = [[s.messageStats[1], s.messageStats[0] - s.messageStats[1]] for s in scenariosWithoutBoundary]
+    dataWithBoundary = [[s.messageStats[1], s.messageStats[0] - s.messageStats[1]] for s in scenariosWithBoundary]
+    df = pd.DataFrame(dataWithoutBoundary, columns=['received', 'dropped'])
+    df.plot(kind='bar', stacked=True);
+    
+    return
+    dataWithoutBoundary = [x for s in scenariosWithoutBoundary for x in s.node2nodeResponseTimes]
+    dataWithBoundary = [x for s in scenariosWithBoundary for x in s.node2nodeResponseTimes]
+    nodeCounts = [s.nodeCnt for s in scenariosWithoutBoundary for x in s.node2nodeResponseTimes]
+    df = pd.DataFrame(zip(dataWithoutBoundary, dataWithBoundary), columns=['No boundary', 'Boundary'] )
+    df['Node count'] = pd.Series(nodeCounts)
+    df.boxplot(by='Node count')
     
 def plot():    
     print 'Plotting...'
@@ -292,10 +310,12 @@ def plot():
             
         pylab.figure(0)
         bp = pylab.boxplot(s.node2nodeResponseTimes, positions = [s.nodeCnt+positionOffset], widths = width)        
-        colorBoxplot(bp)
+        colorBoxplot(bp, s.boundaryEnabled)
         pylab.figure(1)
         bp = pylab.boxplot(s.neighbors, positions = [s.nodeCnt+positionOffset], widths = width)
-        colorBoxplot(bp)
+        colorBoxplot(bp, s.boundaryEnabled)
+ 
+    plotPandas()
     
     pylab.figure(0)
     pylab.title('End-to-end response')    
@@ -320,9 +340,14 @@ def plot():
         pylab.axes().set_xticks(nodeCounts)       
         pylab.axes().set_xticklabels(nodeTicks)
         pylab.xlim(min(nodeCounts)-3,max(nodeCounts) +3)
-        
-        
+    
+    pylab.figure(0)
+    pylab.savefig("simulation-results\\result-n2n-response.png")
+    pylab.figure(1)
+    pylab.savefig("simulation-results\\result-neighbors.png")    
+    
     pylab.show()
+  
     
     print 'Plotting done'
      
