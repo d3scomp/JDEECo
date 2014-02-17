@@ -247,7 +247,7 @@ def plot():
     
     
 if __name__ == '__main__':
-    #generate()
-    #simulate()
-    #analyze()
+    generate()
+    simulate()
+    analyze()
     plot()
