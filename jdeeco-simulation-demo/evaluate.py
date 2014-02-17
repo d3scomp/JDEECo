@@ -32,14 +32,84 @@ def cleanup():
             p.kill()  # supported from python 2.6
   
 
-
 atexit.register(cleanup)
 root = os.path.dirname(os.path.realpath(__file__))
+
+
+class Scenario():
+    def __init__(self, nodeCnt, iterationCnt, boundaryEnabled=True, generator='simple.py'):
+        self.nodeCnt = nodeCnt
+        self.iterationCnt = iterationCnt
+        self.boundaryEnabled = boundaryEnabled
+        self.generator = generator
+        self.iterations = []
+        for i in range(iterationCnt):
+            self.iterations.append(ScenarioIteration(self, nodeCnt, i, boundaryEnabled, generator)) 
+    def folder(self):
+        return 'simulation-results\\%d' % (self.nodeCnt)
+    def folderPath(self):
+        return root + 'simulation-results\\%d' % (self.nodeCnt)
+    def genericResultsPath(self): 
+        return root + 'simulation-results\\results-generic-%d.csv' % self.nodeCnt
+    def demoResultsPath(self): 
+        return root + 'simulation-results\\results-demo-%d.csv' % self.nodeCnt
+    def neighborResultsPath(self): 
+        return root + 'simulation-results\\results-neighbors-%d.csv' % self.nodeCnt
+       
+    
+class ScenarioIteration:
+    def __init__(self, scenario, nodeCnt, iteration, boundaryEnabled, generator):
+        self.scenario = scenario
+        self.nodeCnt = nodeCnt
+        self.iteration = iteration
+        self.boundaryEnabled = boundaryEnabled
+        self.generator = generator    
+    def folder(self):
+        return self.scenario.folder()
+    def prefix(self):
+        return '%d-%d-%s-%s-' % (self.nodeCnt, self.iteration, 'b' if self.boundaryEnabled else 'n', self.generator[0])
+    def prefixPath(self):
+        return root + '\\' + self.folder() + '\\' + self.prefix()
+    def genericAnalysisStdoutPath(self):
+        return self.prefixPath() + 'analysis-generic.txt'
+    def demoAnalysisStdoutPath(self):
+        return self.prefixPath() + 'analysis-demo.txt'
+    def logPath(self):
+        return self.prefixPath() + 'jdeeco.log.0'
+    def logTemplatePath(self):
+        return self.prefixPath() + 'jdeeco.log'
+    def stdOutPath(self):
+        return self.prefixPath() + 'stdout.log'
+    def loggingPropertiesPath(self):
+        return self.prefix() + 'logging.properties'
+    def componentCfgPath(self):
+        return self.prefixPath() + 'component.cfg'
+    def siteCfgPath(self):
+        return self.prefixPath() + 'site.cfg'
+    def omnetppPath(self):
+        return self.prefix() + 'omnetpp.ini'    
+    def name(self):
+        return self.prefix() + 'scenario'
+
 #evaluations = {4:10, 8:10, 12: 10, 16:10, 20:10}
 evaluations = {8:10, 12: 10, 16:10, 20:10, 24:10, 28:10}
 
+# GENERATE SCENARIOS
+scenarios = []
+for nodeCnt in evaluations.keys():    
+    scenarios.append(Scenario(nodeCnt, evaluations[nodeCnt], False, 'simple.py'))
+
 def generate():
     print 'Generating configurations...'
+    for s in scenarios:
+        try:
+            os.makedirs(s.folderPath())
+        except OSError as e:
+            pass
+        for iteration in s.iterations:
+            print 'Generating ', iteration.name()
+            generateConfig(1, siteration.nodeCnt-1, 0, siteration.prefixPath(), 0)
+            
     for nodeCnt in evaluations.keys():
         iterations = evaluations[nodeCnt]
         try:
@@ -227,8 +297,12 @@ def plot():
         colorBoxplot(bp)
     
     pylab.figure(0)
+    pylab.title('End-to-end response')
     pylab.axes().set_yticks(range(0, 60000, 5000))
     pylab.axes().set_yticklabels(range(0, 60, 5))        
+    
+    pylab.figure(1)
+    pylab.title('Number of neighbors')
     
     
     for fig in range(2):
@@ -247,7 +321,7 @@ def plot():
     
     
 if __name__ == '__main__':
-    generate()
-    simulate()
-    analyze()
+    #generate()
+    #simulate()
+    #analyze()
     plot()
