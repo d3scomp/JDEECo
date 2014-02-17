@@ -18,34 +18,34 @@ from multiprocessing import *
 root = os.path.dirname(os.path.realpath(__file__))
 
 class Scenario():
-    def __init__(self, nodeCnt, othersCount, iterationCnt, boundaryEnabled, generator):
+    def __init__(self, nodeCnt, othersCnt, iterationCnt, boundaryEnabled, generator):
         self.nodeCnt = nodeCnt
-        self.othersCount = othersCount
+        self.othersCnt = othersCnt
         self.iterationCnt = iterationCnt
         self.boundaryEnabled = boundaryEnabled
         self.generator = generator
         self.iterations = []
         for i in range(iterationCnt):
-            self.iterations.append(ScenarioIteration(self, nodeCnt, othersCount, i, boundaryEnabled, generator)) 
+            self.iterations.append(ScenarioIteration(self, nodeCnt, othersCnt, i, boundaryEnabled, generator)) 
     def folder(self):
         return 'simulation-results\\%d' % (self.nodeCnt)
     def folderPath(self):
         return root + '\\simulation-results\\%d' % (self.nodeCnt)
     def genericResultsPath(self): 
-        return root + '\\simulation-results\\results-generic-%d.csv' % self.nodeCnt
+        return root + '\\simulation-results\\results-generic-%d-%s.csv' % (self.nodeCnt, 't' if self.boundaryEnabled else 'f')
     def demoResultsPath(self): 
-        return root + '\\simulation-results\\results-demo-%d.csv' % self.nodeCnt
+        return root + '\\simulation-results\\results-demo-%d-%s.csv' % (self.nodeCnt, 't' if self.boundaryEnabled else 'f')
     def neighborResultsPath(self): 
-        return root + '\\simulation-results\\results-neighbors-%d.csv' % self.nodeCnt
+        return root + '\\simulation-results\\results-neighbors-%d-%s.csv' % (self.nodeCnt, 't' if self.boundaryEnabled else 'f')
     def plotTick(self):
         return str(self.nodeCnt) + 't' if self.boundaryEnabled else 'f'
        
     
 class ScenarioIteration:
-    def __init__(self, scenario, nodeCnt, othersCount, iteration, boundaryEnabled, generator):
+    def __init__(self, scenario, nodeCnt, othersCnt, iteration, boundaryEnabled, generator):
         self.scenario = scenario
         self.nodeCnt = nodeCnt
-        self.othersCount = othersCount
+        self.othersCnt = othersCnt
         self.iteration = iteration
         self.boundaryEnabled = boundaryEnabled
         self.generator = generator    
@@ -73,31 +73,25 @@ class ScenarioIteration:
     def loggingPropertiesPath(self):
         # needs to be relative path
         return self.prefix() + 'logging.properties'
+    def baseCfgPath(self):
+        # config files are shared between boundary and non-boundary scenarios
+        return root + '\\' + self.folder() + '\\' + '%d-%d-%s-' % (self.nodeCnt, self.iteration, self.generator[0])
     def componentCfgPath(self):
-        return self.prefixPath() + 'component.cfg'
+        return self.baseCfgPath() + 'component.cfg'
     def siteCfgPath(self):
-        return self.prefixPath() + 'site.cfg'
+        return self.baseCfgPath() + 'site.cfg'
     def omnetppPath(self):
         # needs to be relative path
         return self.prefix() + 'omnetpp.ini'    
     def name(self):
         return self.prefix() + 'scenario'
 
-#evaluations = {4:10, 8:10, 12: 10, 16:10, 20:10}
-#evaluations = {8:10, 12: 10, 16:10, 20:10, 24:10, 28:10}
-evaluations = {8:3, 12: 3}
 
-# GENERATE SCENARIOS
+
+# main list of scenarios
 scenarios = []
 scenariosWithBoundary = []
 scenariosWithoutBoundary = []
-for nodeCnt in evaluations.keys():    
-    s1 = Scenario(nodeCnt, nodeCnt/2, evaluations[nodeCnt], False, 'simple')
-    scenarios.append(s1)
-    scenariosWithoutBoundary.append(s1)
-    s2 = Scenario(nodeCnt, nodeCnt/2, evaluations[nodeCnt], True, 'simple')
-    scenarios.append(s2)
-    scenariosWithBoundary.append(s2)
 
 
 
@@ -105,18 +99,30 @@ for nodeCnt in evaluations.keys():
 # generic part
 ######################################################################
 def generate():
+    generated = {}
     print 'Generating configurations...'
     for s in scenarios:
         try:
             os.makedirs(s.folderPath())
         except OSError as e:
-            pass
+            pass        
+        if s.nodeCnt not in generated:
+            generated[s.nodeCnt] = {}
+            
         for it in s.iterations:
             print 'Generating ', it.name()
+            # reuse the same configuration if it was already generated for 
+            # the scenario with same node cnt and iteration number 
+            # (but different bundaryEnabled)
+            if it.iteration in generated[s.nodeCnt]:
+                print 'Reusing', generated[s.nodeCnt][it.iteration].name()
+                
             if it.generator == 'simple':
-                generateConfig(1, it.nodeCnt-1, it.othersCount, it.prefixPath(), 0)
+                generateConfig(1, it.nodeCnt-1, it.othersCnt, it.baseCfgPath(), 0)
             else:
                 raise Error('Unsupported generator: ' + it.generator)
+            
+            generated[s.nodeCnt][it.iteration] = it
     print 'Generating done'
 
 
@@ -165,7 +171,7 @@ def simulateScenario(iteration):
     cmd = ['java', '-cp', classpath,
            '-Ddeeco.receive.cache.deadline="500"',
            '-Ddeeco.publish.individual="true"',
-           '-Ddeeco.boundary.disable="%s"' % ('true' if iteration.boundaryEnabled else 'false'),
+           '-Ddeeco.boundary.disable="%s"' % ('false' if iteration.boundaryEnabled else 'true'),
            '-Ddeeco.publish.packetsize="3000"',
            '-Ddeeco.publish.period="1000"',
            '-Ddeeco.rebroadcast.delay="1000"',
@@ -264,7 +270,7 @@ def plot():
     
     
     pylab.hold(True)
-   
+    width = 1
     for s in scenarios:        
         with open(s.demoResultsPath() , 'r') as resultsFile: 
             contents = np.loadtxt(resultsFile)
@@ -278,7 +284,7 @@ def plot():
             contents = np.loadtxt(resultsFile)
             s.neighbors = map(int, contents)
     
-        width = 1
+       
         positionOffset = -width/1.5
         if s.boundaryEnabled:
             positionOffset = width/1.5
@@ -297,9 +303,17 @@ def plot():
     pylab.figure(1)
     pylab.title('Number of neighbors')
     
-    
-    nodeTicks = [s.plotTick() for s in scenariosWithoutBoundary] + [s.plotTick() for s in scenariosWithBoundary]
-    nodeCounts = [s.nodeCnt - 1 for s in scenariosWithoutBoundary] + [s.nodeCnt + 1 for s in scenariosWithBoundary]
+    nodeTicks = []
+    nodeCounts = []
+    offset = width/1.5
+    for s in scenariosWithoutBoundary:
+        nodeCounts.append(s.nodeCnt - offset)
+        nodeCounts.append(s.nodeCnt + offset)
+        nodeTicks.append('%df' %(s.nodeCnt))
+        nodeTicks.append('%dt' %(s.nodeCnt))
+        
+    #nodeTicks = [s.plotTick() for s in scenariosWithoutBoundary] + [s.plotTick() for s in scenariosWithBoundary]
+    #nodeCounts = [s.nodeCnt - 1 for s in scenariosWithoutBoundary] + [s.nodeCnt + 1 for s in scenariosWithBoundary]
     for fig in range(2):
         pylab.figure(fig)      
         pylab.axes().set_xticks(nodeCounts)       
@@ -311,12 +325,35 @@ def plot():
     
     print 'Plotting done'
      
+
     
     
+def duplicateScenariosForBoundary():
+    oldScenarios = scenarios[:]
+    for s in oldScenarios:
+        s2 = Scenario(s.nodeCnt, s.othersCnt, s.iterationCnt, not s.boundaryEnabled, s.generator)
+        scenarios.append(s2)
+        if s.boundaryEnabled:
+            scenariosWithBoundary.append(s)
+            scenariosWithoutBoundary.append(s2)
+        else:
+            scenariosWithBoundary.append(s2)
+            scenariosWithoutBoundary.append(s)
     
     
 if __name__ == '__main__':
+ 
+    
+    #evaluations = {4:10, 8:10, 12: 10, 16:10, 20:10}
+    #evaluations = {8:10, 12: 10, 16:10, 20:10, 24:10, 28:10}
+    evaluations = {8:3, 12: 3}
+    # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
+    for nodeCnt in evaluations.keys():    
+        scenarios.append(Scenario(nodeCnt, nodeCnt/2, evaluations[nodeCnt], False, 'simple'))
+    duplicateScenariosForBoundary()
+
+        
     #generate()
-    simulate()
-    analyze()
+    #simulate()
+    #analyze()
     plot()
