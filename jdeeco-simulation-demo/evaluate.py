@@ -116,6 +116,7 @@ def generate():
             # (but different bundaryEnabled)
             if it.iteration in generated[s.nodeCnt]:
                 print 'Reusing', generated[s.nodeCnt][it.iteration].name()
+                break
                 
             if it.generator == 'simple':
                 generateConfig(1, it.nodeCnt-1, it.othersCnt, it.baseCfgPath(), 0)
@@ -345,15 +346,15 @@ if __name__ == '__main__':
  
     
     #evaluations = {4:10, 8:10, 12: 10, 16:10, 20:10}
-    #evaluations = {8:10, 12: 10, 16:10, 20:10, 24:10, 28:10}
-    evaluations = {8:3, 12: 3}
+    evaluations = {8:10, 12: 10, 16:10, 20:10, 24:10, 28:10}
+    #evaluations = {8:3, 12: 3}
     # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
     for nodeCnt in evaluations.keys():    
         scenarios.append(Scenario(nodeCnt, nodeCnt/2, evaluations[nodeCnt], False, 'simple'))
     duplicateScenariosForBoundary()
 
         
-    #generate()
-    #simulate()
-    #analyze()
+    generate()
+    simulate()
+    analyze()
     plot()
