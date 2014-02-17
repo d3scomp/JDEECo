@@ -52,7 +52,7 @@ public class Main {
 	static String DEFAULT_COMPONENT_CFG = "configurations/component.cfg";
 	static String DEFAULT_SITE_CFG = "configurations/site.cfg";
 	
-	static int SIMULATION_DURATION = 10000;
+	static int SIMULATION_DURATION = 60000;
 
 	
 	public static void main(String[] args) throws AnnotationProcessorException, IOException {
