@@ -20,6 +20,8 @@ stdoutFiles = {}
 
 cpus = 3
 
+java_command = 'C:/Program Files (x86)/Java/jdk7/bin/java.exe'
+
 def cleanup():
     timeout_sec = 5
     for p in processes:  # list of your processes
@@ -82,7 +84,7 @@ def simulateScenario(nodeCnt, iteration):
     
     #cmd = 'cd %s; java -cp %s cz.cuni.mff.d3s.jdeeco.simulation.demo.Main %s %s' % \
     #    (root + folder, classpath, prefix + 'component.cfg', prefix + 'site.cfg')
-    cmd = ['java', '-cp', classpath,
+    cmd = [java_command, '-cp', classpath,
            '-Ddeeco.receive.cache.deadline="500"',
            '-Ddeeco.publish.individual="true"',
            '-Ddeeco.boundary.disable="false"',
@@ -247,7 +249,7 @@ def plot():
     
     
 if __name__ == '__main__':
-    generate()
+    #generate()
     simulate()
     analyze()
     plot()

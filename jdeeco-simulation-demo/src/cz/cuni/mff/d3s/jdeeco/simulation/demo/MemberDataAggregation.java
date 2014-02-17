@@ -77,7 +77,7 @@ public class MemberDataAggregation {
 		// if the current component does not hawe a position or the owner does
 		// not belong to a team then we do not propagate the knowledge (includes
 		// all O*)
-		if (senderPos == null || ownerTeam == null)
+		if (senderPos == null || ownerTeam == null || sender.getId().startsWith("L"))
 			return false;
 		return TeamLocationService.INSTANCE.isAtTheTeamsSite(ownerTeam, senderPos);
 	}
