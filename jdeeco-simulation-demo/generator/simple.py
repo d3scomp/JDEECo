@@ -1,6 +1,7 @@
 from base import *
 
 from optparse import OptionParser
+from matplotlib.pyplot import close
 
 
 
@@ -11,7 +12,7 @@ def generateConfig(numLeaders, numMembers, numOthers, prefix):
     
     areas = [aHQ, aHQExtended]
     
-    SCALE_FACTOR = 5
+    SCALE_FACTOR = 10
     
     fig = figure()
     area = fig.add_subplot(111, aspect='equal')
@@ -68,6 +69,7 @@ def generateConfig(numLeaders, numMembers, numOthers, prefix):
     f.close()
     
     savefig(prefix + "cfg.png")
+    close()
     if __name__ == '__main__':
         show()
     

@@ -1,9 +1,14 @@
 import re
+import sys
 from numpy import average, median
 
 
 lines = []
-with open('../logs/jdeeco.log.0', 'r') as f:
+logname = '../logs/jdeeco.log.0'
+if len(sys.argv) > 1:
+    logname = sys.argv[1]
+    
+with open(logname, 'r') as f:
     lines = f.readlines()
     
 pattern = re.compile('Simulation parameters: (.+)\n')
