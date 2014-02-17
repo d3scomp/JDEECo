@@ -14,34 +14,19 @@ import pylab
 from numpy import average
 from multiprocessing import *
 
-simulated = []
 
-cpus = 3
-
-def cleanup():
-    timeout_sec = 5
-    for p in [s.simulation for s in simulated]:  # list of your processes
-        p_sec = 0
-        for second in range(timeout_sec):
-            if p.poll() == None:
-                time.sleep(1)
-                p_sec += 1
-        if p_sec >= timeout_sec:
-            p.kill()  # supported from python 2.6
-  
-
-atexit.register(cleanup)
 root = os.path.dirname(os.path.realpath(__file__))
 
 class Scenario():
-    def __init__(self, nodeCnt, iterationCnt, boundaryEnabled, generator):
+    def __init__(self, nodeCnt, othersCount, iterationCnt, boundaryEnabled, generator):
         self.nodeCnt = nodeCnt
+        self.othersCount = othersCount
         self.iterationCnt = iterationCnt
         self.boundaryEnabled = boundaryEnabled
         self.generator = generator
         self.iterations = []
         for i in range(iterationCnt):
-            self.iterations.append(ScenarioIteration(self, nodeCnt, i, boundaryEnabled, generator)) 
+            self.iterations.append(ScenarioIteration(self, nodeCnt, othersCount, i, boundaryEnabled, generator)) 
     def folder(self):
         return 'simulation-results\\%d' % (self.nodeCnt)
     def folderPath(self):
@@ -53,13 +38,14 @@ class Scenario():
     def neighborResultsPath(self): 
         return root + '\\simulation-results\\results-neighbors-%d.csv' % self.nodeCnt
     def plotTick(self):
-        return str(self.nodeCnt)
+        return str(self.nodeCnt) + 't' if self.boundaryEnabled else 'f'
        
     
 class ScenarioIteration:
-    def __init__(self, scenario, nodeCnt, iteration, boundaryEnabled, generator):
+    def __init__(self, scenario, nodeCnt, othersCount, iteration, boundaryEnabled, generator):
         self.scenario = scenario
         self.nodeCnt = nodeCnt
+        self.othersCount = othersCount
         self.iteration = iteration
         self.boundaryEnabled = boundaryEnabled
         self.generator = generator    
@@ -103,9 +89,21 @@ evaluations = {8:3, 12: 3}
 
 # GENERATE SCENARIOS
 scenarios = []
+scenariosWithBoundary = []
+scenariosWithoutBoundary = []
 for nodeCnt in evaluations.keys():    
-    scenarios.append(Scenario(nodeCnt, evaluations[nodeCnt], False, 'simple'))
+    s1 = Scenario(nodeCnt, nodeCnt/2, evaluations[nodeCnt], False, 'simple')
+    scenarios.append(s1)
+    scenariosWithoutBoundary.append(s1)
+    s2 = Scenario(nodeCnt, nodeCnt/2, evaluations[nodeCnt], True, 'simple')
+    scenarios.append(s2)
+    scenariosWithBoundary.append(s2)
 
+
+
+
+# generic part
+######################################################################
 def generate():
     print 'Generating configurations...'
     for s in scenarios:
@@ -116,11 +114,28 @@ def generate():
         for it in s.iterations:
             print 'Generating ', it.name()
             if it.generator == 'simple':
-                generateConfig(1, it.nodeCnt-1, 0, it.prefixPath(), 0)
+                generateConfig(1, it.nodeCnt-1, it.othersCount, it.prefixPath(), 0)
             else:
                 raise Error('Unsupported generator: ' + it.generator)
     print 'Generating done'
 
+
+simulated = []
+cpus = 3
+
+def cleanup():
+    timeout_sec = 5
+    for p in [s.simulation for s in simulated]:  # list of your processes
+        p_sec = 0
+        for second in range(timeout_sec):
+            if p.poll() == None:
+                time.sleep(1)
+                p_sec += 1
+        if p_sec >= timeout_sec:
+            p.kill()  # supported from python 2.6
+  
+
+atexit.register(cleanup)
 
 def finalizeSimulation(iteration):
     iteration.simulation.wait() 
@@ -150,7 +165,7 @@ def simulateScenario(iteration):
     cmd = ['java', '-cp', classpath,
            '-Ddeeco.receive.cache.deadline="500"',
            '-Ddeeco.publish.individual="true"',
-           '-Ddeeco.boundary.disable="false"',
+           '-Ddeeco.boundary.disable="%s"' % ('true' if iteration.boundaryEnabled else 'false'),
            '-Ddeeco.publish.packetsize="3000"',
            '-Ddeeco.publish.period="1000"',
            '-Ddeeco.rebroadcast.delay="1000"',
@@ -184,12 +199,6 @@ def simulate():
 
 
 def analyzeScenario(iteration):    
-    #folder = root + '\simulation-results\%d\\' % (nodeCnt)        
-    #prefix = '%d-%d-' % (nodeCnt, iteration)
-    #stdoutNameGeneric = folder + prefix + 'analysis-generic.txt'
-    #stdoutNameDemo = folder + prefix + 'analysis-demo.txt'
-    #logName =  folder + prefix + 'jdeeco.log.0'
-    #componentConfigName = folder + prefix + 'component.cfg'
    
     print 'Analyzing', iteration.name()  
     with open(iteration.genericAnalysisStdoutPath(), 'w') as genericStdout:
@@ -199,10 +208,6 @@ def analyzeScenario(iteration):
         a.analyze(iteration.logPath())        
         sys.stdout = oldStdOut
         iteration.genericAnalysis = a 
-        #genericAnalyses[nodeCnt].append(a)       
-         
-        #pGeneric = Popen(['python', root + '\\analysis\\analyze_log.py', logName], stderr=STDOUT, stdout=genericStdout)
-        #pGeneric.wait()
     
     with open(iteration.demoAnalysisStdoutPath(), 'w') as demoStdout:
         oldStdOut = sys.stdout
@@ -212,15 +217,10 @@ def analyzeScenario(iteration):
         a.analyze(iteration.logPath(), iteration.componentCfgPath())                   
         sys.stdout = oldStdOut
         iteration.demoAnalysis = a 
-        #demoAnalyses[nodeCnt].append(a)
-        #pDemo = Popen(['python', root + '\\analysis\\analyze_demo.py', logName, componentConfigName], stderr=STDOUT, stdout=demoStdout)
-        #pDemo.wait()
-
 
     a = NeighborAnalysis()
     a.analyze(iteration.componentCfgPath())
     iteration.neighborAnalysis = a
-    #neighborAnalyses[nodeCnt].append(a)
 
 def analyze():
     print 'Analyzing...'
@@ -256,6 +256,9 @@ def colorBoxplot(bp):
     pylab.setp(bp['boxes'], color='black')
     pylab.setp(bp['whiskers'], color='black')
     pylab.setp(bp['fliers'], marker='None')
+    
+    
+    
 def plot():    
     print 'Plotting...'
     
@@ -275,11 +278,16 @@ def plot():
             contents = np.loadtxt(resultsFile)
             s.neighbors = map(int, contents)
     
+        width = 1
+        positionOffset = -width/1.5
+        if s.boundaryEnabled:
+            positionOffset = width/1.5
+            
         pylab.figure(0)
-        bp = pylab.boxplot(s.node2nodeResponseTimes, positions = [s.nodeCnt], widths = 2)        
+        bp = pylab.boxplot(s.node2nodeResponseTimes, positions = [s.nodeCnt+positionOffset], widths = width)        
         colorBoxplot(bp)
         pylab.figure(1)
-        bp = pylab.boxplot(s.neighbors, positions = [s.nodeCnt], widths = 2)
+        bp = pylab.boxplot(s.neighbors, positions = [s.nodeCnt+positionOffset], widths = width)
         colorBoxplot(bp)
     
     pylab.figure(0)
@@ -290,8 +298,8 @@ def plot():
     pylab.title('Number of neighbors')
     
     
-    nodeTicks = [s.plotTick() for s in scenarios]
-    nodeCounts = [s.nodeCnt for s in scenarios]
+    nodeTicks = [s.plotTick() for s in scenariosWithoutBoundary] + [s.plotTick() for s in scenariosWithBoundary]
+    nodeCounts = [s.nodeCnt - 1 for s in scenariosWithoutBoundary] + [s.nodeCnt + 1 for s in scenariosWithBoundary]
     for fig in range(2):
         pylab.figure(fig)      
         pylab.axes().set_xticks(nodeCounts)       
@@ -309,6 +317,6 @@ def plot():
     
 if __name__ == '__main__':
     #generate()
-    #simulate()
-    #analyze()
+    simulate()
+    analyze()
     plot()
