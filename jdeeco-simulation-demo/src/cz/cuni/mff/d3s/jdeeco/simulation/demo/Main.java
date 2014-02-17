@@ -97,7 +97,8 @@ public class Main {
 		DirectGossipStrategy directGossipStrategy = new DirectGossipStrategy() {			
 			@Override
 			public boolean gossipTo(String recipient) {
-				return new Random(areas.size()).nextInt(100) < 20;
+				//50% chances of sending to the given recipient
+				return new Random(areas.size()).nextInt(100) < 50;
 			}
 		};
 		
@@ -178,7 +179,6 @@ public class Main {
 		System.out.println("Simulation finished.");
 	}
 
-
 	private static void logSimulationParameters(int componentCnt) {
 		Log.d(String.format("Simulation parameters: %d components, packet size %d, publish period %d,"
 				+ " %s publishing, boundary %s, cache deadline %d, cache wipe period %d, maxRebroadcastDelay %d",
@@ -205,25 +205,29 @@ public class Main {
 		@Override
 		public Collection<String> getRecipients(KnowledgeData data,
 				ReadOnlyKnowledgeManager sender) {
-			List<String> result = new LinkedList<>();
-			KnowledgePath kpTeam = KnowledgePathBuilder.buildSimplePath("teamId");
-			String ownerTeam = (String) data.getKnowledge().getValue(kpTeam);
-			if (ownerTeam != null) {
-				//Find all areas of my team
-				List<Area> areas = networkRegistry.getTeamSites(ownerTeam);
-				//Pick one randomly
-				Area area = areas.get(new Random().nextInt(areas.size()));
-				//Get all the members in that area
-				List<PositionAwareComponent> recipients = networkRegistry.getMembersBelongingToTeam(ownerTeam, area);
-				//Randomly choose a subset of them and return those as possible message recipients
-				for (PositionAwareComponent c : recipients) {
-					if (!c.id.equals(sender.getId()) && ethernetEnabled.contains(c.id)) {
-						result.add(c.id);
+			if (networkRegistry.getAreas().size() > 1) {
+				List<String> result = new LinkedList<>();
+				KnowledgePath kpTeam = KnowledgePathBuilder.buildSimplePath("teamId");
+				String ownerTeam = (String) data.getKnowledge().getValue(kpTeam);
+				if (ownerTeam != null) {
+					//Find all areas of my team
+					List<Area> areas = networkRegistry.getTeamSites(ownerTeam);
+					//Pick one randomly
+					Area area = areas.get(new Random().nextInt(areas.size()));
+					//Get all the members in that area
+					List<PositionAwareComponent> recipients = networkRegistry.getMembersBelongingToTeam(ownerTeam, area);
+					//Randomly choose a subset of them and return those as possible message recipients
+					for (PositionAwareComponent c : recipients) {
+						if (!c.id.equals(sender.getId()) && ethernetEnabled.contains(c.id)) {
+							result.add(c.id);
+						}
 					}
 				}
+				//return result;
+				return new LinkedList<>();
+			} else {
+				return new LinkedList<>(ethernetEnabled);
 			}
-			//return result;
-			return new LinkedList<>();
 		}
 		
 	}

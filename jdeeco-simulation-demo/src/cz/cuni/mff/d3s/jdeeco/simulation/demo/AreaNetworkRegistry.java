@@ -3,12 +3,9 @@ package cz.cuni.mff.d3s.jdeeco.simulation.demo;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
-import java.util.Set;
 
 
 public class AreaNetworkRegistry {
@@ -18,6 +15,10 @@ public class AreaNetworkRegistry {
 	private final Map<Area, List<PositionAwareComponent>> componentsByArea = new HashMap<Area, List<PositionAwareComponent>>();
 
 	private AreaNetworkRegistry() {
+	}
+	
+	public Collection<Area> getAreas() {
+		return componentsByArea.keySet();
 	}
 
 	public synchronized static AreaNetworkRegistry getInstance() {

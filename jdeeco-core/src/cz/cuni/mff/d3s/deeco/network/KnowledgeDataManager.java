@@ -64,6 +64,8 @@ KnowledgeDataPublisher {
 	// this rssi corresponds to max (roughly 250m) distance
 	public static final double RSSI_MIN = 1.11e-10;
 	
+	public static final int IP_DELAY = 1;
+	
 	/** Global version counter for all outgoing local knowledge. */
 	protected long localVersion;	
 	/** For scheduling rebroadcasts. */
@@ -83,7 +85,8 @@ KnowledgeDataPublisher {
 	/** List of ensemble definitions whose boundary conditions should be considered. */
 	private final List<EnsembleDefinition> ensembleDefinitions;
 	
-	private final Map<String, KnowledgeData> dataToRebroadcast;
+	private final Map<String, KnowledgeData> dataToRebroadcastOverMANET;
+	private final Map<String, KnowledgeData> dataToRebroadcastOverIP;
 	
 	private final boolean useIndividualPublishing;
 	private final boolean checkGossipCondition;
@@ -126,7 +129,8 @@ KnowledgeDataPublisher {
 		this.recipientSelectors = recipientSelectors;
 		this.directGossipStrategy = directGossipStrategy;
 		
-		dataToRebroadcast = new HashMap<>();
+		dataToRebroadcastOverMANET = new HashMap<>();
+		dataToRebroadcastOverIP = new HashMap<>();
 		
 		RuntimeMetadataFactory factory = RuntimeMetadataFactoryExt.eINSTANCE;
 		KnowledgePath empty = factory.createKnowledgePath();
@@ -166,16 +170,16 @@ KnowledgeDataPublisher {
 		// we re-publish periodically only local data
 		List<KnowledgeData> data = prepareLocalKnowledgeData();
 		
-//		int origCnt = dataToRebroadcast.size();
-//		filterBasedOnBoundaryCondition(dataToRebroadcast, getNodeKnowledge());
-//		filterBasedOnGossipCondition(dataToRebroadcast);
+//		int origCnt = dataToRebroadcastOverMANET.size();
+//		filterBasedOnBoundaryCondition(dataToRebroadcastOverMANET, getNodeKnowledge());
+//		filterBasedOnGossipCondition(dataToRebroadcastOverMANET);
 //		
-//		Log.d(String.format("Rebroadcasting %d out of %d received messages", dataToRebroadcast.size(), origCnt));
+//		Log.d(String.format("Rebroadcasting %d out of %d received messages", dataToRebroadcastOverMANET.size(), origCnt));
 //		
-//		for (KnowledgeData kd: dataToRebroadcast) {
+//		for (KnowledgeData kd: dataToRebroadcastOverMANET) {
 //			data.add(prepareForRebroadcast(kd));
 //		}
-//		dataToRebroadcast.clear();
+//		dataToRebroadcastOverMANET.clear();
 		
 		
 		//TODO
@@ -218,22 +222,26 @@ KnowledgeDataPublisher {
 	
 
 	@Override
-	public void rebroacast(KnowledgeMetaData metadata) {
+	public void rebroacast(KnowledgeMetaData metadata, NICType nicType) {
 		String sig = metadata.getSignature();
 		// if the data was marked as not to be sent anymore (e.g., it was received again in the mean time)
-		if (!dataToRebroadcast.containsKey(sig))  {			
+		if (!dataToRebroadcastOverMANET.containsKey(sig))  {			
 			return;
 		}
 		
-		KnowledgeData data = prepareForRebroadcast(dataToRebroadcast.get(sig));
+		if (!dataToRebroadcastOverIP.containsKey(sig)) {
+			return;
+		}
 		
+		KnowledgeData data = prepareForRebroadcast(dataToRebroadcastOverMANET.get(sig));
 		logPublish(Arrays.asList(data));
-				
-		knowledgeDataSender.broadcastKnowledgeData(Arrays.asList(data));
-		dataToRebroadcast.remove(sig);
+		if (nicType.equals(NICType.MANET)) {	
+			knowledgeDataSender.broadcastKnowledgeData(Arrays.asList(data));
+			dataToRebroadcastOverMANET.remove(sig);
+		} else {
+			sendDirect(Arrays.asList(data));
+		}
 		Log.d(String.format("Rebroadcast finished (%d) at %s, data %s", timeProvider.getCurrentTime(), host, sig));
-		
-		sendDirect(Arrays.asList(data));
 	}
 
 	@Override
@@ -255,10 +263,21 @@ KnowledgeDataPublisher {
 			// if we get the same or newer data before we manage to rebroadcast, abort the rebroadcast 
 			if ((currentMetadata != null)
 					&& (currentMetadata.versionId <= newMetadata.versionId)
-					&& dataToRebroadcast.containsKey(currentMetadata.getSignature())) {
-				dataToRebroadcast.remove(currentMetadata.getSignature());
+					&& dataToRebroadcastOverMANET.containsKey(currentMetadata.getSignature())) {
+				dataToRebroadcastOverMANET.remove(currentMetadata.getSignature());
 				Log.d(String.format(
-						"Rebroadcast aborted (%d) at %s, data %s, because of %s",
+						"MANET: Rebroadcast aborted (%d) at %s, data %s, because of %s",
+						timeProvider.getCurrentTime(), host,
+						currentMetadata.getSignature(),
+						newMetadata.getSignature()));
+			}
+			
+			if ((currentMetadata != null)
+					&& (currentMetadata.versionId < newMetadata.versionId)
+					&& dataToRebroadcastOverIP.containsKey(currentMetadata.getSignature())) {
+				dataToRebroadcastOverIP.remove(currentMetadata.getSignature());
+				Log.d(String.format(
+						"IP: Rebroadcast aborted (%d) at %s, data %s, because of %s",
 						timeProvider.getCurrentTime(), host,
 						currentMetadata.getSignature(),
 						newMetadata.getSignature()));
@@ -316,10 +335,13 @@ KnowledgeDataPublisher {
 				kmd.versionId, kmd.sender,
 				kmd.rssi, delay));
 		
-		dataToRebroadcast.put(kmd.getSignature(), kd);
+		dataToRebroadcastOverMANET.put(kmd.getSignature(), kd);
+		dataToRebroadcastOverIP.put(kmd.getSignature(), kd);
 		
 		// schedule a task for rebroadcast
-		RebroadcastTask task = new RebroadcastTask(scheduler, this, delay, kmd);
+		RebroadcastTask task = new RebroadcastTask(scheduler, this, IP_DELAY, kmd, NICType.IP);
+		scheduler.addTask(task);
+		task = new RebroadcastTask(scheduler, this, delay, kmd, NICType.MANET);
 		scheduler.addTask(task);
 	}
 	
@@ -364,7 +386,7 @@ KnowledgeDataPublisher {
 		// rssi < 0 means received from IP
 		if (metaData.rssi < 0) {
 			Log.d("Got data from IP. Gossip condition does not apply, rebroadcasting automatically.");
-			return 1;
+			return IP_DELAY;
 		}
 		
 		// the further further from the source (i.e. smaller rssi) the bigger

@@ -12,11 +12,13 @@ class RebroadcastTask extends Task {
 	private final TimeTrigger trigger;
 	private final KnowledgeMetaData dataToRebroadcast;
 	private final KnowledgeDataPublisher publisher;
+	private final NICType nicType;
 	
-	public RebroadcastTask(Scheduler scheduler, KnowledgeDataPublisher  publisher, int rebroadcastAfter, KnowledgeMetaData metadata) {
+	public RebroadcastTask(Scheduler scheduler, KnowledgeDataPublisher  publisher, int rebroadcastAfter, KnowledgeMetaData metadata, NICType nicType) {
 		super(scheduler);
 		this.dataToRebroadcast = metadata;
 		this.publisher = publisher;
+		this.nicType = nicType;
 		
 		trigger = RuntimeMetadataFactoryExt.eINSTANCE.createTimeTrigger();
 		trigger.setPeriod(0);
@@ -25,7 +27,7 @@ class RebroadcastTask extends Task {
 
 	@Override
 	public void invoke(Trigger trigger) throws TaskInvocationException {
-		publisher.rebroacast(dataToRebroadcast);
+		publisher.rebroacast(dataToRebroadcast, nicType);
 	}
 
 	/* (non-Javadoc)
