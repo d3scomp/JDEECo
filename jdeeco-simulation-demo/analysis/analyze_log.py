@@ -116,7 +116,7 @@ class GenericAnalysis:
         droppedIdsCnt = len(droppedIds)
         print 'Dropped messages: ', droppedIdsCnt
         
-        recSendRatio = len(receivedIds) * 1.0 /len(sentIds)
+        recSendRatio = len(receivedIds) * 1.0 /max(1, len(sentIds))
         print 'Received/Sent ratio:', recSendRatio
         
         def printStats(description, values):
@@ -137,7 +137,7 @@ class GenericAnalysis:
         rebroadcastsAborted = len(filter(lambda x: 'Rebroadcast aborted' in x, lines));
         print 'Rebroadcasts aborted: ', rebroadcastsAborted
         print 'Rebroadcasts finished: ', len(filter(lambda x: 'Rebroadcast finished' in x, lines))
-        print 'Average abort ratio: ', rebroadcastsAborted*1.0/rebroadcastsPlanned
+        print 'Average abort ratio: ', rebroadcastsAborted*1.0/max(1, rebroadcastsPlanned)
 
 #rebroadcastLines = filter(lambda x: 'Rebroadcasting' in x, lines)
 #def extract_rebroadcast_cnt(line):

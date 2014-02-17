@@ -190,9 +190,9 @@ class DemoAnalysis:
         printStats('Node-2-node response time / 1 hop:', map(lambda time, hop: time/hop, self.resTimesNetwork, self.hops))
         printStats('Version difference:', self.versionDifs)
          
-        print 'Ratio of leader discoveries: %d of %d (%f%%)' %(reallyDiscovered, shouldDiscover, reallyDiscovered*100.0/shouldDiscover)
+        print 'Ratio of leader discoveries: %d of %d (%f%%)' %(reallyDiscovered, shouldDiscover, reallyDiscovered*100.0/max(1, shouldDiscover))
         print 'Ratio of discoveries regardless the number of leaders: %d of %d (%f%%)' % \
-            (len(membersDiscovered), len(self.memberInDanger), len(membersDiscovered)*100.0/len(self.memberInDanger))
+            (len(membersDiscovered), len(self.memberInDanger), len(membersDiscovered)*100.0/max(1, len(self.memberInDanger)))
                     
 if __name__ == '__main__':      
     logname = '../logs/jdeeco.log.0'
