@@ -128,9 +128,9 @@ def generate():
                                             100, #area size 
                                             120, #external area size 
                                             10, #scale
-                                            [[0, 1], [0]], # distribution of teams
-                                            [[1, 1], [1,0]], # distribution of leaders 
-                                            [[it.nodeCnt-1,it.nodeCnt-1],[it.nodeCnt-1]], #distribution of members 
+                                            [[0, 1], [1, 2]], # distribution of teams
+                                            [[1, 1, 0], [1, 0, 1]], # distribution of leaders 
+                                            [[it.nodeCnt-1,nodeCnt-1,0],[it.nodeCnt-1,0,it.nodeCnt-1]], #distribution of members 
                                             [it.othersCnt, it.othersCnt], # distribution of others 
                                             it.baseCfgPath(), 
                                             [int(ceil(it.nodeCnt*IP_FACTOR)), int(ceil(it.nodeCnt*IP_FACTOR))] # distribution of IP-enabled nodes
@@ -412,6 +412,6 @@ if __name__ == '__main__':
 
         
     generate()
-    simulate()
-    analyze()
-    plot()
+    #simulate()
+    #analyze()
+    #plot()
