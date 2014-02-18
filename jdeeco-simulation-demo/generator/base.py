@@ -72,29 +72,47 @@ class Area:
         raise NotImplementedError()
     def generateLeaders(self, cnt):
         ret = []
-        lx, ly = self.generatePositions(cnt)
-        for (x, y) in zip(lx, ly):
-            team = choice(self.teams)
-            ret.append(Leader(team, x, y))
+        if (cnt > 0):
+            lx, ly = self.generatePositions(cnt)
+            for (x, y) in zip(lx, ly):
+                team = choice(self.teams)
+                ret.append(Leader(team, x, y))
+        return ret
+    def generateLeadersForTeam(self, cnt, team):
+        ret = []
+        if (cnt > 0):
+            lx, ly = self.generatePositions(cnt)
+            for (x, y) in zip(lx, ly):
+                ret.append(Leader(team, x, y))
         return ret
     def generateMembers(self, cnt):
         ret = []
-        lx, ly = self.generatePositions(cnt)
-        for (x, y) in zip(lx, ly):
-            team = choice(self.teams)
-            ret.append(Member(team, x, y))
+        if (cnt > 0):
+            lx, ly = self.generatePositions(cnt)
+            for (x, y) in zip(lx, ly):
+                team = choice(self.teams)
+                ret.append(Member(team, x, y))
+        return ret
+    def generateMembersForTeam(self, cnt, team):
+        ret = []
+        if (cnt > 0):
+            lx, ly = self.generatePositions(cnt)
+            for (x, y) in zip(lx, ly):
+                ret.append(Member(team, x, y))
         return ret
     def generateOthers(self, cnt):
         ret = []
-        lx, ly = self.generatePositions(cnt)
-        for (x, y) in zip(lx, ly):
-            ret.append(Other(x, y))
+        if (cnt > 0):
+            lx, ly = self.generatePositions(cnt)
+            for (x, y) in zip(lx, ly):
+                ret.append(Other(x, y))
         return ret
     def generateOthersEdgy(self, cnt, innerDistance):
         ret = []
-        lx, ly = self.generatePositionsEdgy(cnt, innerDistance)
-        for (x, y) in zip(lx, ly):
-            ret.append(Other(x, y))
+        if (cnt > 0):
+            lx, ly = self.generatePositionsEdgy(cnt, innerDistance)
+            for (x, y) in zip(lx, ly):
+                ret.append(Other(x, y))
         return ret
     def toString(self, idx):
         raise NotImplementedError()

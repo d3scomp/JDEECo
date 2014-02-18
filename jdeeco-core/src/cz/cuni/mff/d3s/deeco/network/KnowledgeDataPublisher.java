@@ -17,5 +17,5 @@ public interface KnowledgeDataPublisher {
 	/**
 	 * Republishes the received knowledge data with the given metadata
 	 */
-	void rebroacast(KnowledgeMetaData metadata);
+	void rebroacast(KnowledgeMetaData metadata, NICType nicType);
 }

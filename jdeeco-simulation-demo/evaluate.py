@@ -1,5 +1,6 @@
 import os, sys
 from generator.simple import generateConfig
+from generator.complex import generateComplexRandomConfig
 from analysis.analyze_demo import *
 from analysis.analyze_log import *
 from analysis.analyze_neighbors import *
@@ -120,9 +121,11 @@ def generate():
                 
             if it.generator == 'simple':
                 generateConfig(1, it.nodeCnt-1, it.othersCnt, it.baseCfgPath(), 0)
+            elif it.generator == 'complex':
+                generateComplexRandomConfig(100, 120, 10, [range(0, 2), range(0, 1)], [[1,1], [1,1]], [[it.nodeCnt-1,1],[1, it.nodeCnt-1]], [it.othersCount, it.othersCount], it.prefixPath(), it.nodeCnt)
             else:
                 raise Error('Unsupported generator: ' + it.generator)
-            
+                
             generated[s.nodeCnt][it.iteration] = it
     print 'Generating done'
 
@@ -289,7 +292,15 @@ def plot():
     
     
     pylab.hold(True)
+
     width = 1
+
+   
+    counts = []
+    aggSent = []
+    aggReceived = []
+    aggRatio = []
+
     for s in scenarios:        
         with open(s.demoResultsPath() , 'r') as resultsFile: 
             contents = np.loadtxt(resultsFile)
@@ -299,6 +310,10 @@ def plot():
             sent = map(int, contents[:, 0])            
             received = map(int, contents[:, 1])
             s.messageStats = [average(sent), average(received), average(received)*1.0/average(sent)]
+            aggSent.extend([average(sent)])
+            aggReceived.extend([average(received)])
+            aggRatio.extend([average(received)*1.0/average(sent)])
+            
         with open(s.neighborResultsPath() , 'r') as resultsFile: 
             contents = np.loadtxt(resultsFile)
             s.neighbors = map(int, contents)
@@ -313,9 +328,16 @@ def plot():
         colorBoxplot(bp, s.boundaryEnabled)
         pylab.figure(1)
         bp = pylab.boxplot(s.neighbors, positions = [s.nodeCnt+positionOffset], widths = width)
+
         colorBoxplot(bp, s.boundaryEnabled)
- 
+        colorBoxplot(bp)
+        counts.extend([s.nodeCnt])
+        
     plotPandas()
+    
+    pylab.figure(2)
+    lp = pylab.plot(counts, aggSent)
+    lp = pylab.plot(counts, aggReceived)
     
     pylab.figure(0)
     pylab.title('End-to-end response')    
@@ -368,8 +390,6 @@ def duplicateScenariosForBoundary():
     
     
 if __name__ == '__main__':
- 
-    
     #evaluations = {4:10, 8:10, 12: 10, 16:10, 20:10}
     evaluations = {8:10, 12: 10, 16:10, 20:10, 24:10, 28:10}
     #evaluations = {8:3, 12: 3}
@@ -383,3 +403,4 @@ if __name__ == '__main__':
     simulate()
     analyze()
     plot()
+
