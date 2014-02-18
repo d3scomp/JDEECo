@@ -118,7 +118,7 @@ def generate():
                 generateConfig(1, it.nodeCnt-1, it.othersCount, it.prefixPath(), 0)
             else:
                 if it.generator == 'complex':
-                    generateComplexRandomConfig(100, 120, 10, [range(0, 2), range(0, 1)], [[1,1], [1,1]], [[it.nodeCnt-1,1],[1, it.nodeCnt-1]], [it.othersCount, it.othersCount], it.prefixPath(), it.nodeCnt)
+                    generateComplexRandomConfig(100, 120, 10, [range(0, 2), range(0, 1)], [[1,1], [1,1]], [[it.nodeCnt-1,1],[1, it.nodeCnt-1]], [it.othersCount, it.othersCount], it.prefixPath(), [it.nodeCnt, it.nodeCnt])
                 else:
                     raise Error('Unsupported generator: ' + it.generator)
     print 'Generating done'
@@ -126,6 +126,8 @@ def generate():
 
 simulated = []
 cpus = 3
+
+command = "C:/Program Files (x86)/Java/jdk7/bin/java.exe"
 
 def cleanup():
     timeout_sec = 5
@@ -166,7 +168,7 @@ def simulateScenario(iteration):
     with open(iteration.loggingPropertiesPath() , 'a') as f:
         print>>f, '\n\njava.util.logging.FileHandler.pattern=' + iteration.logTemplatePath().replace('\\', '/')
    
-    cmd = ['java', '-cp', classpath,
+    cmd = [command, '-cp', classpath,
            '-Ddeeco.receive.cache.deadline="500"',
            '-Ddeeco.publish.individual="true"',
            '-Ddeeco.boundary.disable="%s"' % ('true' if iteration.boundaryEnabled else 'false'),
@@ -327,14 +329,10 @@ def plot():
         
     pylab.show()
     
-    print 'Plotting done'
-     
-    
-    
-    
+    print 'Plotting done'   
     
 if __name__ == '__main__':
-    #generate()
-    #simulate()
-    #analyze()
+    generate()
+    simulate()
+    analyze()
     plot()
