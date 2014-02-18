@@ -84,7 +84,7 @@ class ScenarioIteration:
         return self.baseCfgPath() + 'site.cfg'
     def omnetppPath(self):
         # needs to be relative path
-        return self.prefix() + 'omnetpp.ini'    
+        return self.prefix() + 'omnetpp'    
     def name(self):
         return self.prefix() + 'scenario'
 
@@ -144,7 +144,7 @@ def generate():
 simulated = []
 cpus = 3
 
-command = "java"
+command = "C:/Program Files (x86)/Java/jdk7/bin/java.exe"
 
 def cleanup():
     timeout_sec = 5
