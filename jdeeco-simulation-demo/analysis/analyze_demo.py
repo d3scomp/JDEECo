@@ -182,8 +182,8 @@ class DemoAnalysis:
             else:
                 print description, 'N/A'
         
-        self.shouldDiscover = shouldDiscover
-        self.reallyDiscovered = reallyDiscovered
+        self.shouldDiscover = len(self.memberInDanger)
+        self.reallyDiscovered = len(membersDiscovered)
         
         print '\nResults: \n-----------------------------'
         printStats('Process-2-process response time:', self.resTimes)
