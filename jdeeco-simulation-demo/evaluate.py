@@ -293,19 +293,50 @@ def plotPandas():
         ['T', s.messageStats[1], s.messageStats[0] - s.messageStats[1]] for s in scenariosWithBoundary]
     df = pd.DataFrame(dataWithoutBoundary + dataWithBoundary, columns=['boundary', 'received', 'dropped'])    
 
-    fig, axes = pylab.subplots(nrows=1, ncols=2)
-    df.loc[df['boundary'] == 'F'].plot(kind='bar', stacked=True, ax=axes[0]);    
-    axes[0].set_title('F')
-    df.loc[df['boundary'] == 'T'].plot(kind='bar', stacked=True, ax=axes[1]);
-    axes[1].set_title('T')
+
+
+    fig = pylab.figure(facecolor='white')
+    ax = fig.add_subplot(111)
+    axes = [fig.add_subplot(121), fig.add_subplot(122)]
     
     
-    dataWithoutBoundary = [x for s in scenariosWithoutBoundary for x in s.node2nodeResponseTimes]
-    dataWithBoundary = [x for s in scenariosWithBoundary for x in s.node2nodeResponseTimes]
-    nodeCounts = [s.nodeCnt for s in scenariosWithoutBoundary for x in s.node2nodeResponseTimes]
-    df = pd.DataFrame(zip(dataWithoutBoundary, dataWithBoundary), columns=['No boundary', 'Boundary'] )
-    df['Node count'] = pd.Series(nodeCounts)
-    df.boxplot(by='Node count')
+    yticks = range(0, 85000, 5000)
+    xticksLabels = ['%d/%d' % (s.nodeCnt*4, s.nodeCnt*2) for s in scenariosWithoutBoundary]
+    
+    ax.set_yticks(yticks)
+    ax.set_yticklabels(map(lambda x: x/1000, yticks))
+    ax.set_frame_on(False)
+    ax.set_ylabel('number of messages [in thousands]')
+    ax.set_xlabel('total number of nodes [firefighters/others]')
+    ax.set_xticklabels([])
+    ax.tick_params(axis='x', pad=20)
+    
+    
+    plt1 = df.loc[df['boundary'] == 'F'].plot(kind='bar', stacked=True, ax=axes[0]);
+    axes[0].set_title('Boundary disabled')    
+    axes[0].set_yticklabels([])
+    axes[0].set_xticklabels(xticksLabels)
+    axes[0].set_yticks(yticks)
+    
+    pylab.setp(axes[0].xaxis.get_majorticklabels(), rotation=0 )
+    
+    plt2 = df.loc[df['boundary'] == 'T'].plot(kind='bar', stacked=True, ax=axes[1], legend=False);
+    axes[1].set_title('Boundary enabled')
+    axes[1].set_yticks(yticks)
+    axes[1].set_yticklabels([])
+    axes[1].set_xticklabels(xticksLabels)    
+    pylab.setp(axes[1].xaxis.get_majorticklabels(), rotation=0 )
+    
+    #formating
+    
+    
+    return
+    #dataWithoutBoundary = [x for s in scenariosWithoutBoundary for x in s.node2nodeResponseTimes]
+    #dataWithBoundary = [x for s in scenariosWithBoundary for x in s.node2nodeResponseTimes]
+    #nodeCounts = [s.nodeCnt for s in scenariosWithoutBoundary for x in s.node2nodeResponseTimes]
+    #df = pd.DataFrame(zip(dataWithoutBoundary, dataWithBoundary), columns=['No boundary', 'Boundary'] )
+    #df['Node count'] = pd.Series(nodeCounts)
+    #df.boxplot(by='Node count')
     
 def plot():    
     print 'Plotting...'
@@ -338,7 +369,6 @@ def plot():
             contents = np.loadtxt(resultsFile)
             s.neighbors = map(int, contents)
     
-       
         positionOffset = -width/1.5
         if s.boundaryEnabled:
             positionOffset = width/1.5
@@ -352,8 +382,8 @@ def plot():
         colorBoxplot(bp, s.boundaryEnabled)        
         counts.extend([s.nodeCnt])
         
-    plotPandas()
-    
+    plotPandas()    
+
     pylab.figure(2)
     lp = pylab.plot(counts, aggSent)
     lp = pylab.plot(counts, aggReceived)
@@ -406,17 +436,21 @@ def duplicateScenariosForBoundary():
         else:
             scenariosWithBoundary.append(s2)
             scenariosWithoutBoundary.append(s)
-    
+    scenarios.sort(key=lambda x: x.nodeCnt)
+    scenariosWithBoundary.sort(key=lambda x: x.nodeCnt)
+    scenariosWithoutBoundary.sort(key=lambda x: x.nodeCnt)
     
 if __name__ == '__main__':
     #evaluations = {4:10, 8:10, 12: 10, 16:10, 20:10}
     #evaluations = {8:10, 12: 10, 16:10, 20:10, 24:10, 28:10}
-    #evaluations = {8:3, 12: 3}
-    evaluations = {8:10, 12: 10}
+    evaluations = {2:10, 4:10, 8:10, 12: 10, 16:10}
+    #evaluations = {8:10, 12: 10}
     # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
     for nodeCnt in evaluations.keys():    
         scenarios.append(Scenario(nodeCnt, nodeCnt/2, evaluations[nodeCnt], False, 'complex'))
-    duplicateScenariosForBoundary()    #generate()
+    duplicateScenariosForBoundary()    
+    
+    #generate()
     #simulate()
     #analyze()
     plot()
