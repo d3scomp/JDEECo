@@ -21,6 +21,7 @@ from collections import namedtuple
 
 
 root = os.path.dirname(os.path.realpath(__file__))
+cpus = 3
 
 class Scenario():
     def __init__(self, nodeCnt, othersCnt, iterationCnt, boundaryEnabled, generator):
@@ -106,6 +107,14 @@ scenariosWithoutBoundary = []
 
 # generic part
 ######################################################################
+generators = []
+def finalizeOldestGenerator():
+    if len(generators) == 0:
+        return
+    g = generators[0]
+    g.join()
+    generators.pop(0)
+    
 def generate():
     generated = {}
     print 'Generating configurations...'
@@ -124,13 +133,18 @@ def generate():
             # (but different bundaryEnabled)
             if it.iteration in generated[s.nodeCnt]:
                 print 'Reusing', generated[s.nodeCnt][it.iteration].name()
-                break
+                continue
+            
+            if len(generators) > cpus:
+                finalizeOldestGenerator()
+                
                 
             if it.generator == 'simple':
-                generateConfig(1, it.nodeCnt-1, it.othersCnt, it.baseCfgPath(), 0)
+                p = Process(target=generateConfig, args=(1, it.nodeCnt-1, it.othersCnt, it.baseCfgPath(), 0,))
             elif it.generator == 'complex':
                 IP_FACTOR = 0.25
-                generateComplexRandomConfig(
+                p = Process(target=generateComplexRandomConfig,
+                            args=(
                                             100, #area size 
                                             120, #external area size 
                                             10, #scale
@@ -139,16 +153,20 @@ def generate():
                                             [[it.nodeCnt-1,nodeCnt-1,0],[it.nodeCnt-1,0,it.nodeCnt-1]], #distribution of members 
                                             [it.othersCnt, it.othersCnt], # distribution of others 
                                             it.baseCfgPath(), 
-                                            [int(ceil(it.nodeCnt*IP_FACTOR)), int(ceil(it.nodeCnt*IP_FACTOR))] # distribution of IP-enabled nodes
-                                            )
+                                            [int(ceil(it.nodeCnt*IP_FACTOR)), int(ceil(it.nodeCnt*IP_FACTOR))], # distribution of IP-enabled nodes
+                                            ))
             else:
                 raise Error('Unsupported generator: ' + it.generator)
             generated[s.nodeCnt][it.iteration] = it
+            generators.append(p)
+            p.start()
+    while len(generators) > 0:
+        finalizeOldestGenerator()
     print 'Generating done'
 
 
 simulated = []
-cpus = 3
+
 
 #command = "C:/Program Files (x86)/Java/jdk7/bin/java.exe"
 command = 'java'
@@ -173,13 +191,15 @@ def finalizeSimulation(iteration):
     os.remove(iteration.loggingPropertiesPath())
     iteration.stdOut.flush()
     iteration.stdOut.close()
+    iteration.stdOut = None
+    iteration.simulation = None
     simulated.remove(iteration)
 
 
 def simulateScenario(iteration):
     #folder = root + '\simulation-results\%d\\' % (nodeCnt)        
     #prefix = '%d-%d-' % (nodeCnt, iteration)
-    classpath = root + '\..\dist\*;.'
+    classpath = root + '\\..\\dist\\*;.'
     
     #logPropsFile = prefix + 'logging.properties'
     #logFile = folder + prefix + 'jdeeco.log'
@@ -188,7 +208,7 @@ def simulateScenario(iteration):
     #stdoutName = folder + prefix + 'stdout.log'
     
     
-    copyfile(root + '\analysis\logging.properties', iteration.loggingPropertiesPath())
+    copyfile(root + '\\analysis\\logging.properties', iteration.loggingPropertiesPath())
     with open(iteration.loggingPropertiesPath() , 'a') as f:
         print>>f, '\n\njava.util.logging.FileHandler.pattern=' + iteration.logTemplatePath().replace('\\', '/')
    
@@ -502,15 +522,16 @@ def duplicateScenariosForBoundary():
 if __name__ == '__main__':
     #evaluations = {4:10, 8:10, 12: 10, 16:10, 20:10}
     #evaluations = {8:10, 12: 10, 16:10, 20:10, 24:10, 28:10}
-    evaluations = {2:10, 4:10, 8:10, 12: 10, 16:10, 20:10}
-    #evaluations = {2:3, 4: 3}
-
+    #evaluations = {2:10, 4:10, 8:10, 12: 10, 16:10, 20:10}
+    evaluations = {2:3, 4: 3}
+    #for i in range(8,36,4):
+    #    evaluations[i] = 5*cpus
     # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
     for nodeCnt in evaluations.keys():    
         scenarios.append(Scenario(nodeCnt, nodeCnt/2, evaluations[nodeCnt], False, 'complex'))
     duplicateScenariosForBoundary()    
 
-    #generate()
-    #simulate()
+    generate()
+    simulate()
     analyze()
     plot()
