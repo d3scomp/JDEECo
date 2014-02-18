@@ -32,8 +32,8 @@ def generateConfig(numLeaders, numMembers, numOthers, prefix, ipCount=0):
     f.close()
     fig = figure()
     area = fig.add_subplot(111, aspect='equal')
-    area.set_xlim(0, SCALE_FACTOR * sizeX)
-    area.set_ylim(0, SCALE_FACTOR * sizeY)
+    area.set_xlim(0, sizeX)
+    area.set_ylim(0, sizeY)
     generateSimpleConfig("a", "HQ", 100, 100, 100, 120, SCALE_FACTOR, range(0,1), numLeaders, numMembers, numOthers, prefix, ipCount, 0, area)
     savefig(prefix + "cfg.png")
     if __name__ == '__main__':
