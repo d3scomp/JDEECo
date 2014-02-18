@@ -279,7 +279,7 @@ def plotPandas():
     df = pd.DataFrame(dataWithoutBoundary, columns=['received', 'dropped'])
     df.plot(kind='bar', stacked=True);
     
-    return
+    
     dataWithoutBoundary = [x for s in scenariosWithoutBoundary for x in s.node2nodeResponseTimes]
     dataWithBoundary = [x for s in scenariosWithBoundary for x in s.node2nodeResponseTimes]
     nodeCounts = [s.nodeCnt for s in scenariosWithoutBoundary for x in s.node2nodeResponseTimes]
@@ -329,8 +329,7 @@ def plot():
         pylab.figure(1)
         bp = pylab.boxplot(s.neighbors, positions = [s.nodeCnt+positionOffset], widths = width)
 
-        colorBoxplot(bp, s.boundaryEnabled)
-        colorBoxplot(bp)
+        colorBoxplot(bp, s.boundaryEnabled)        
         counts.extend([s.nodeCnt])
         
     plotPandas()
