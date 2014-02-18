@@ -265,6 +265,10 @@ def plot():
     
     pylab.hold(True)
    
+    counts = []
+    aggSent = []
+    aggReceived = []
+    aggRatio = []
     for s in scenarios:        
         with open(s.demoResultsPath() , 'r') as resultsFile: 
             contents = np.loadtxt(resultsFile)
@@ -274,6 +278,10 @@ def plot():
             sent = map(int, contents[:, 0])            
             received = map(int, contents[:, 1])
             s.messageStats = [average(sent), average(received), average(received)*1.0/average(sent)]
+            aggSent.extend([average(sent)])
+            aggReceived.extend([average(received)])
+            aggRatio.extend([average(received)*1.0/average(sent)])
+            
         with open(s.neighborResultsPath() , 'r') as resultsFile: 
             contents = np.loadtxt(resultsFile)
             s.neighbors = map(int, contents)
@@ -289,6 +297,12 @@ def plot():
         pylab.figure(1)
         bp = pylab.boxplot(s.neighbors, positions = [s.nodeCnt+positionOffset], widths = width)
         colorBoxplot(bp)
+        counts.extend([s.nodeCnt])
+        
+
+    pylab.figure(2)
+    lp = pylab.plot(counts, aggSent)
+    lp = pylab.plot(counts, aggReceived)
     
     pylab.figure(0)
     pylab.title('End-to-end response')    
@@ -317,6 +331,6 @@ def plot():
     
 if __name__ == '__main__':
     #generate()
-    simulate()
-    analyze()
+    #simulate()
+    #analyze()
     plot()

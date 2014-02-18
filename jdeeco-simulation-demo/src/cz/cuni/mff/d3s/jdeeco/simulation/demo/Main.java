@@ -223,8 +223,7 @@ public class Main {
 						}
 					}
 				}
-				//return result;
-				return new LinkedList<>();
+				return result;
 			} else {
 				return new LinkedList<>(ethernetEnabled);
 			}

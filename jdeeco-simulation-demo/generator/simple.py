@@ -23,14 +23,14 @@ class AreaConfiguration:
 
 def generateConfig(numLeaders, numMembers, numOthers, prefix, ipCount=0):
     f = open(prefix + 'site.cfg', 'w') 
-    sizeX = 300
-    sizeY = 300
+    SCALE_FACTOR = 10
+    sizeX = 300*SCALE_FACTOR
+    sizeY = 300*SCALE_FACTOR
     print>>f, sizeX, sizeY
     f.close()
     f = open(prefix + 'component.cfg', 'w') 
     f.close()
     fig = figure()
-    SCALE_FACTOR = 10
     area = fig.add_subplot(111, aspect='equal')
     area.set_xlim(0, SCALE_FACTOR * sizeX)
     area.set_ylim(0, SCALE_FACTOR * sizeY)

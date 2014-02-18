@@ -202,7 +202,6 @@ KnowledgeDataPublisher {
 		}
 	}
 
-
 	private void sendDirect(List<KnowledgeData> data) {
 		if (recipientSelectors != null && !recipientSelectors.isEmpty()) {
 			//Publishing to IP
@@ -224,24 +223,19 @@ KnowledgeDataPublisher {
 	@Override
 	public void rebroacast(KnowledgeMetaData metadata, NICType nicType) {
 		String sig = metadata.getSignature();
-		// if the data was marked as not to be sent anymore (e.g., it was received again in the mean time)
-		if (!dataToRebroadcastOverMANET.containsKey(sig))  {			
-			return;
-		}
-		
-		if (!dataToRebroadcastOverIP.containsKey(sig)) {
-			return;
-		}
-		
-		KnowledgeData data = prepareForRebroadcast(dataToRebroadcastOverMANET.get(sig));
-		logPublish(Arrays.asList(data));
-		if (nicType.equals(NICType.MANET)) {	
+		KnowledgeData data;
+		if (nicType.equals(NICType.MANET) && dataToRebroadcastOverMANET.containsKey(sig)) {	
+			data = prepareForRebroadcast(dataToRebroadcastOverMANET.get(sig));
+			logPublish(Arrays.asList(data));
 			knowledgeDataSender.broadcastKnowledgeData(Arrays.asList(data));
 			dataToRebroadcastOverMANET.remove(sig);
-		} else {
+			Log.d(String.format("Rebroadcast finished (%d) at %s, data %s", timeProvider.getCurrentTime(), host, sig));
+		} else if (dataToRebroadcastOverMANET.containsKey(sig)) {
+			data = prepareForRebroadcast(dataToRebroadcastOverIP.get(sig));
+			logPublish(Arrays.asList(data));
 			sendDirect(Arrays.asList(data));
+			Log.d(String.format("Rebroadcast finished (%d) at %s, data %s", timeProvider.getCurrentTime(), host, sig));
 		}
-		Log.d(String.format("Rebroadcast finished (%d) at %s, data %s", timeProvider.getCurrentTime(), host, sig));
 	}
 
 	@Override
@@ -307,9 +301,7 @@ KnowledgeDataPublisher {
 						timeProvider.getCurrentTime() - newMetadata.createdAt,
 						newMetadata.hopCount));
 			} 
-			
 		}
-		
 	}
 	
 	void queueForRebroadcast(KnowledgeData kd) {
