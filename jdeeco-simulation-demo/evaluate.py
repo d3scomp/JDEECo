@@ -17,6 +17,7 @@ from multiprocessing import *
 from math import ceil
 from pylab import plot, show, savefig, xlim, figure, \
                 hold, ylim, legend, boxplot, setp, axes
+from collections import namedtuple
 
 
 root = os.path.dirname(os.path.realpath(__file__))
@@ -227,6 +228,7 @@ def simulate():
     print 'Simulation done'
 
 
+
 def analyzeScenario(iteration):    
    
     print 'Analyzing', iteration.name()  
@@ -251,33 +253,71 @@ def analyzeScenario(iteration):
     a.analyze(iteration.componentCfgPath())
     iteration.neighborAnalysis = a
 
+def parallelAnalyze(qin, qout):
+    iteration = qin.get()
+    analyzeScenario(iteration)
+    qout.put(iteration)
+
+analyses = []
+def callParallelAnalyze(iteration):
+    qin = Queue()
+    qout = Queue()
+    p = Process(target=parallelAnalyze, args=(qin, qout,))
+    Analysis = namedtuple('Analysis', 'p qin qout iteration')
+    analyses.append(Analysis(p, qin, qout, iteration))
+    p.start()
+    qin.put(iteration)
+
+def finalizeOldestParallelAnalyze():
+    if len(analyses) == 0:
+        return
+    a = analyses[0]
+    iteration = a.iteration
+    a.p.join()
+    it = a.qout.get()
+    iteration.genericAnalysis = it.genericAnalysis
+    iteration.demoAnalysis = it.demoAnalysis
+    iteration.neighborAnalysis = it.neighborAnalysis
+    analyses.pop(0)
+
+
 def analyze():
     print 'Analyzing...'
     
     for s in scenarios:    
         for it in s.iterations:           
-            analyzeScenario(it)
+            #analyzeScenario(it)
+            if len(analyses) > cpus:
+                finalizeOldestParallelAnalyze()
+            callParallelAnalyze(it)
+        while len(analyses) > 0:
+            finalizeOldestParallelAnalyze()
+                
        
         # demo analysis
         with open(s.demoResultsPath(), 'w') as results: 
             for it in s.iterations:
                 a = it.demoAnalysis
-                np.savetxt(results, zip(a.resTimes, a.resTimesNetwork, a.hops, a.versionDifs, a.shouldDiscover, a.reallyDiscovered), fmt='%d')
-                it.demoAnalysis = None            
+                np.savetxt(results, zip(a.resTimes, a.resTimesNetwork, a.hops, a.versionDifs), fmt='%d')
+                          
         
         # generic analysis
         with open(s.genericResultsPath(), 'w') as results: 
-            messageStats = [[it.genericAnalysis.sentMessagesCnt, it.genericAnalysis.receivedMessagesCnt] for it in s.iterations]           
-            np.savetxt(results, messageStats, fmt='%d')
-            for it in s.iterations:
-                it.genericAnalysis = None
+            genericStats = [[it.genericAnalysis.sentMessagesCnt, it.genericAnalysis.receivedMessagesCnt,
+                             it.demoAnalysis.shouldDiscover, it.demoAnalysis.reallyDiscovered] for it in s.iterations]           
+            np.savetxt(results, genericStats, fmt='%d')
+            
         
         # neighbor analysis
         with open(s.neighborResultsPath(), 'w') as results: 
             neighbors = [cnt for it in s.iterations for cnt in it.neighborAnalysis.neighborCnts]            
             np.savetxt(results, neighbors, fmt='%d')
-            for it in s.iterations:
-                it.neighborAnalysis = None
+            
+            
+        for it in s.iterations:
+            it.demoAnalysis = None  
+            it.genericAnalysis = None
+            it.neighborAnalysis = None
                 
     print 'Analysis done'
 
@@ -413,12 +453,12 @@ def plot():
         with open(s.demoResultsPath() , 'r') as resultsFile: 
             contents = np.loadtxt(resultsFile)
             s.node2nodeResponseTimes = map(int, contents[:, 1])
-            s.discoveryRatio = map(lambda should, did: did * 1.0 / should, map(int, contents[:, 4]), map(int, contents[:, 5]))
         with open(s.genericResultsPath(), 'r') as resultsFile: 
             contents = np.loadtxt(resultsFile)
             sent = map(int, contents[:, 0])            
             received = map(int, contents[:, 1])            
             s.messageStats = [average(sent), average(received), average(received)*1.0/average(sent)]
+            s.discoveryRatio = map(lambda should, did: did * 1.0 / should, map(int, contents[:, 2]), map(int, contents[:, 3]))
             
         with open(s.neighborResultsPath() , 'r') as resultsFile: 
             contents = np.loadtxt(resultsFile)
@@ -428,6 +468,7 @@ def plot():
     plotResponseTimes(scenarios)
     plotMessageCounts()
     plotNeighborCounts()
+    plotDiscoveryRate()
     
     pylab.show()
 
@@ -454,8 +495,8 @@ def duplicateScenariosForBoundary():
 if __name__ == '__main__':
     #evaluations = {4:10, 8:10, 12: 10, 16:10, 20:10}
     #evaluations = {8:10, 12: 10, 16:10, 20:10, 24:10, 28:10}
-    evaluations = {2:10, 4:10, 8:10, 12: 10, 16:10}
-    #evaluations = {8:10, 12: 10}
+    #evaluations = {2:10, 4:10, 8:10, 12: 10, 16:10}
+    evaluations = {8:3, 12: 3}
 
     # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
     for nodeCnt in evaluations.keys():    
