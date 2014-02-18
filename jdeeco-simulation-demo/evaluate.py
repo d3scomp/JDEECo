@@ -231,7 +231,7 @@ def simulate():
 
 def analyzeScenario(iteration):    
    
-    print 'Analyzing', iteration.name()  
+    
     with open(iteration.genericAnalysisStdoutPath(), 'w') as genericStdout:
         oldStdOut = sys.stdout
         sys.stdout = genericStdout
@@ -272,9 +272,9 @@ def finalizeOldestParallelAnalyze():
     if len(analyses) == 0:
         return
     a = analyses[0]
-    iteration = a.iteration
-    a.p.join()
+    iteration = a.iteration    
     it = a.qout.get()
+    a.p.join()
     iteration.genericAnalysis = it.genericAnalysis
     iteration.demoAnalysis = it.demoAnalysis
     iteration.neighborAnalysis = it.neighborAnalysis
@@ -285,7 +285,8 @@ def analyze():
     print 'Analyzing...'
     
     for s in scenarios:    
-        for it in s.iterations:           
+        for it in s.iterations:   
+            print 'Analyzing', it.name()         
             #analyzeScenario(it)
             if len(analyses) > cpus:
                 finalizeOldestParallelAnalyze()
