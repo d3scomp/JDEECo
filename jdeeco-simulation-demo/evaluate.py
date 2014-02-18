@@ -186,12 +186,12 @@ def simulateScenario(iteration):
         print>>f, '\n\njava.util.logging.FileHandler.pattern=' + iteration.logTemplatePath().replace('\\', '/')
    
     cmd = [command, '-cp', classpath,
-           '-Ddeeco.receive.cache.deadline="500"',
-           '-Ddeeco.publish.individual="true"',
-           '-Ddeeco.boundary.disable="%s"' % ('false' if iteration.boundaryEnabled else 'true'),
-           '-Ddeeco.publish.packetsize="3000"',
-           '-Ddeeco.publish.period="1000"',
-           '-Ddeeco.rebroadcast.delay="1000"',
+           '-Ddeeco.receive.cache.deadline=500',
+           '-Ddeeco.publish.individual=true',
+           '-Ddeeco.boundary.disable=%s' % ('false' if iteration.boundaryEnabled else 'true'),
+           '-Ddeeco.publish.packetsize=3000',
+           '-Ddeeco.publish.period=1000',
+           '-Ddeeco.rebroadcast.delay=1000',
            '-Djava.util.logging.config.file=%s' % (iteration.loggingPropertiesPath().replace('\\', '/')),
            'cz.cuni.mff.d3s.jdeeco.simulation.demo.Main',
            iteration.componentCfgPath(), iteration.siteCfgPath(), iteration.omnetppPath() ]
