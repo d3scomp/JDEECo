@@ -220,16 +220,17 @@ public class Main {
 				if (ownerTeam != null) {
 					//Find all areas of my team
 					List<Area> areas = networkRegistry.getTeamSites(ownerTeam);
-					//Pick one randomly
-					Area area = areas.get(new Random().nextInt(areas.size()));
-					//Get all the members in that area
-					List<PositionAwareComponent> recipients = networkRegistry.getMembersBelongingToTeam(ownerTeam, area);
-					//Randomly choose a subset of them and return those as possible message recipients
-					for (PositionAwareComponent c : recipients) {
-						if (!c.id.equals(sender.getId()) && ethernetEnabled.contains(c.id)) {
-							result.add(c.id);
+					List<String> recipients = new LinkedList<>();
+					// return all components in those areas that are not the sender and are "ethernet-enabled"
+					for (Area a: areas) {
+						for (PositionAwareComponent c: networkRegistry.getComponentsInArea(a)) {
+							if (!c.id.equals(sender.getId()) && ethernetEnabled.contains(c.id)) {
+								recipients.add(c.id);
+							}
 						}
 					}
+					Log.d("Recipients for " + ownerTeam + " at " + sender.getId() + " are " + Arrays.deepToString(recipients.toArray()));
+					return recipients;
 				}
 				return result;
 			} else {

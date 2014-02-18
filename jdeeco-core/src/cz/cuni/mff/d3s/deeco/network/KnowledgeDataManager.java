@@ -230,10 +230,11 @@ KnowledgeDataPublisher {
 			knowledgeDataSender.broadcastKnowledgeData(Arrays.asList(data));
 			dataToRebroadcastOverMANET.remove(sig);
 			Log.d(String.format("Rebroadcast finished (%d) at %s, data %s", timeProvider.getCurrentTime(), host, sig));
-		} else if (dataToRebroadcastOverMANET.containsKey(sig)) {
+		} else if (dataToRebroadcastOverIP.containsKey(sig)) {
 			data = prepareForRebroadcast(dataToRebroadcastOverIP.get(sig));
 			logPublish(Arrays.asList(data));
 			sendDirect(Arrays.asList(data));
+			dataToRebroadcastOverIP.remove(sig);
 			Log.d(String.format("Rebroadcast finished (%d) at %s, data %s", timeProvider.getCurrentTime(), host, sig));
 		}
 	}

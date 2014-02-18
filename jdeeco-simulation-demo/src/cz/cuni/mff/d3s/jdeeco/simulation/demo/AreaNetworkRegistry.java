@@ -70,5 +70,9 @@ public class AreaNetworkRegistry {
 		}
 		return result;
 	}
+	
+	public List<PositionAwareComponent> getComponentsInArea(Area area) {
+		return new LinkedList<>(componentsByArea.get(area));		
+	}
 
 }
