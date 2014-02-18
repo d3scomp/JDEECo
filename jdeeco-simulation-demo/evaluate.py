@@ -14,6 +14,7 @@ import numpy as np
 import pylab
 from numpy import average
 from multiprocessing import *
+from math import ceil
 
 
 root = os.path.dirname(os.path.realpath(__file__))
@@ -122,7 +123,18 @@ def generate():
             if it.generator == 'simple':
                 generateConfig(1, it.nodeCnt-1, it.othersCnt, it.baseCfgPath(), 0)
             elif it.generator == 'complex':
-                generateComplexRandomConfig(100, 120, 10, [range(0, 2), range(0, 1)], [[1,1], [1,1]], [[it.nodeCnt-1,1],[1, it.nodeCnt-1]], [it.othersCount, it.othersCount], it.prefixPath(), [it.nodeCnt, it.nodeCnt])
+                IP_FACTOR = 0.25
+                generateComplexRandomConfig(
+                                            100, #area size 
+                                            120, #external area size 
+                                            10, #scale
+                                            [[0, 1], [0]], # distribution of teams
+                                            [[1, 1], [1,0]], # distribution of leaders 
+                                            [[it.nodeCnt-1,it.nodeCnt-1],[it.nodeCnt-1]], #distribution of members 
+                                            [it.othersCnt, it.othersCnt], # distribution of others 
+                                            it.baseCfgPath(), 
+                                            [int(ceil(it.nodeCnt*IP_FACTOR)), int(ceil(it.nodeCnt*IP_FACTOR))] # distribution of IP-enabled nodes
+                                            )
             else:
                 raise Error('Unsupported generator: ' + it.generator)
             generated[s.nodeCnt][it.iteration] = it
@@ -132,7 +144,7 @@ def generate():
 simulated = []
 cpus = 3
 
-command = "C:/Program Files (x86)/Java/jdk7/bin/java.exe"
+command = "java"
 
 def cleanup():
     timeout_sec = 5
@@ -395,7 +407,7 @@ if __name__ == '__main__':
     evaluations = {8:3, 12: 3}
     # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
     for nodeCnt in evaluations.keys():    
-        scenarios.append(Scenario(nodeCnt, nodeCnt/2, evaluations[nodeCnt], False, 'simple'))
+        scenarios.append(Scenario(nodeCnt, nodeCnt/2, evaluations[nodeCnt], False, 'complex'))
     duplicateScenariosForBoundary()
 
         

@@ -32,6 +32,7 @@ class Component:
         raise NotImplementedError()
     def plot(self, area, id):
         area.plot(self.x, self.y, self.plotType(), zorder=1)
+        id = id+'*' if self.ip else id
         area.annotate(id, xy=(self.x,self.y), xytext=(self.x+10, self.y+10))
         area.add_artist(plt.Circle((self.x, self.y), 250, fill=False, color='#eeeeee', zorder=0))
         
