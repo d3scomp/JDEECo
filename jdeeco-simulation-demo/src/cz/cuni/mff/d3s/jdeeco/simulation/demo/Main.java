@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.jdeeco.simulation.demo;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
@@ -15,7 +16,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Scanner;
 import java.util.Set;
+import java.util.UUID;
 
 import cz.cuni.mff.d3s.deeco.DeecoProperties;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
@@ -142,13 +145,18 @@ public class Main {
 		}
 		
 		directRecipientSelector.initialize(ethernetEnabled, networkRegistry);
-		String confName = "omnetpp" + "-" + components.size() + "-" + (Boolean.getBoolean(DeecoProperties.DISABLE_BOUNDARY_CONDITIONS) ?  "disabled" : "enabled");
+		String confName = "omnetpp";
 		if (args.length >= 3) {
 			confName = args[2];
 		}
-		Files.copy(Paths.get(OMNET_CONFIG_TEMPLATE), Paths.get(confName), StandardCopyOption.REPLACE_EXISTING);
+		String confFile = confName + ".ini";
+		Scanner scanner = new Scanner(new File(OMNET_CONFIG_TEMPLATE));
+		String template = scanner.useDelimiter("\\Z").next();
+		template = template.replace("<<<configName>>>", confName);
+		scanner.close();
 		
-		PrintWriter out = new PrintWriter(Files.newOutputStream(Paths.get(confName), StandardOpenOption.APPEND));
+		PrintWriter out = new PrintWriter(Files.newOutputStream(Paths.get(confFile), StandardOpenOption.CREATE));
+		out.println(template);
 		out.println();
 		out.println(String.format("**.playgroundSizeX = %dm", (int) topRight.x));
 		out.println(String.format("**.playgroundSizeY = %dm", (int) topRight.y));
@@ -171,7 +179,7 @@ public class Main {
 
 		logSimulationParameters(i);
 		
-		sim.run("Cmdenv", confName);
+		sim.run("Cmdenv", confFile);
 		
 		sim.finalize();
 		
