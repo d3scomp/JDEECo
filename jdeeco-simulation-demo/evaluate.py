@@ -188,7 +188,7 @@ def simulateScenario(iteration):
     #stdoutName = folder + prefix + 'stdout.log'
     
     
-    copyfile(root + '\simulation-results\logging.properties', iteration.loggingPropertiesPath())
+    copyfile(root + '\analysis\logging.properties', iteration.loggingPropertiesPath())
     with open(iteration.loggingPropertiesPath() , 'a') as f:
         print>>f, '\n\njava.util.logging.FileHandler.pattern=' + iteration.logTemplatePath().replace('\\', '/')
    
