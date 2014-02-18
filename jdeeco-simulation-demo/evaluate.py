@@ -135,7 +135,7 @@ def generate():
                 print 'Reusing', generated[s.nodeCnt][it.iteration].name()
                 continue
             
-            if len(generators) > cpus:
+            if len(generators) >= cpus:
                 finalizeOldestGenerator()
                 
                 
@@ -470,6 +470,7 @@ def plotBoundaryHits():
     pylab.axes().set_ylabel("boundary hits");
     pylab.axes().set_xlabel("total number of nodes [firefighters/others]");       
     
+
 def plot():    
     print 'Plotting...'
         
@@ -478,15 +479,21 @@ def plot():
     for s in scenarios:        
         with open(s.demoResultsPath() , 'r') as resultsFile: 
             contents = np.loadtxt(resultsFile)
+            # if there is only one row, duplicate it so that the selectors don't fail
+            if len(contents.shape) == 1:
+                contents = np.vstack((contents, contents))
             s.node2nodeResponseTimes = map(int, contents[:, 1])
         with open(s.genericResultsPath(), 'r') as resultsFile: 
             contents = np.loadtxt(resultsFile)
+            # if there is only one row, duplicate it so that the selectors don't fail
+            if len(contents.shape) == 1:
+                contents = np.vstack((contents, contents))
             sent = map(int, contents[:, 0])            
             received = map(int, contents[:, 1])            
             s.messageStats = [average(sent), average(received), average(received)*1.0/average(sent)]
             s.discoveryRatio = map(lambda should, did: did * 1.0 / should, map(int, contents[:, 2]), map(int, contents[:, 3]))
             s.boundaryHits = map(int, contents[:, 4])
-        with open(s.neighborResultsPath() , 'r') as resultsFile: 
+        with open(s.neighborResultsPath() , 'r') as resultsFile:
             contents = np.loadtxt(resultsFile)
             s.neighbors = map(int, contents)        
 
@@ -523,15 +530,16 @@ if __name__ == '__main__':
     #evaluations = {4:10, 8:10, 12: 10, 16:10, 20:10}
     #evaluations = {8:10, 12: 10, 16:10, 20:10, 24:10, 28:10}
     #evaluations = {2:10, 4:10, 8:10, 12: 10, 16:10, 20:10}
-    evaluations = {2:3, 4: 3}
-    #for i in range(8,36,4):
-    #    evaluations[i] = 5*cpus
+    evaluations = {}
+    
+    for i in range(10,80,10):
+        evaluations[i] = 1#5*cpus
     # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
     for nodeCnt in evaluations.keys():    
-        scenarios.append(Scenario(nodeCnt, nodeCnt/2, evaluations[nodeCnt], False, 'complex'))
-    duplicateScenariosForBoundary()    
+        scenarios.append(Scenario(nodeCnt, nodeCnt/2, evaluations[nodeCnt], False, 'simple'))
+    duplicateScenariosForBoundary()   
 
-    generate()
-    simulate()
-    analyze()
+    #generate()
+    #simulate()
+    #analyze()
     plot()
