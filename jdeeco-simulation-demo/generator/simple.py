@@ -56,10 +56,18 @@ def generateSimpleConfig(writeMode, areaId, posX, posY, areaSize, extSize, scale
     area.add_artist(HQExtended.getPlotObject(color='k', linestyle='dashed'))
     
     leaders = []
-    leaders.extend(HQ.generateLeaders(numLeaders)) 
-    
+    if isinstance(numLeaders, list):
+        for i in range(0, len(numLeaders)):
+            leaders.extend(HQ.generateLeadersForTeam(numLeaders[i], i))        
+    else:
+        leaders.extend(HQ.generateLeaders(numLeaders))
+        
     members = []
-    members.extend(HQ.generateMembers(numMembers))
+    if isinstance(numMembers, list):
+        for i in range(0, len(numMembers)):
+            members.extend(HQ.generateMembersForTeam(numMembers[i], i))        
+    else:
+        members.extend(HQ.generateMembers(numMembers))
     
     others = []
     others.extend(HQExtended.generateOthersEdgy(numOthers,exDiff*scale))
@@ -68,13 +76,13 @@ def generateSimpleConfig(writeMode, areaId, posX, posY, areaSize, extSize, scale
         cmp.ip = True
     
     for cmp in leaders:
-        cmp.plot(area, 'L'+str(leaders.index(cmp)))
+        cmp.plot(area, 'L'+str(leaders.index(cmp) + idCounter))
         
     for cmp in members:
-        cmp.plot(area, 'M'+str(members.index(cmp)))
+        cmp.plot(area, 'M'+str(members.index(cmp) + idCounter))
         
     for cmp in others:
-        cmp.plot(area, 'O'+str(others.index(cmp)))
+        cmp.plot(area, 'O'+str(others.index(cmp) + idCounter))
        
     f = open(prefix + 'component.cfg', writeMode) 
     

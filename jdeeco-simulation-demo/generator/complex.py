@@ -1,6 +1,17 @@
+import collections
+
 from simple import *
 
-def generateComplexRandomConfig(areaSize, extSize, scale, teamDistribution, numLeaders, numMembers, numOthers, prefix, ipCount):
+
+def flatten(l):
+    for el in l:
+        if isinstance(el, collections.Iterable) and not isinstance(el, basestring):
+            for sub in flatten(el):
+                yield sub
+        else:
+            yield el
+
+def generateComplexRandomConfig(areaSize, extSize, scale, teamDistribution, leadersDistribution, membersDistribution, othersDistribution, prefix, ipCount):
     f = open(prefix + 'site.cfg', 'w') 
     sizeX = areaSize*len(teamDistribution)*2*scale
     sizeY = areaSize*len(teamDistribution)*2*scale
@@ -13,8 +24,10 @@ def generateComplexRandomConfig(areaSize, extSize, scale, teamDistribution, numL
     area.set_xlim(0, sizeX)
     area.set_ylim(0, sizeY)
     diff = extSize - areaSize
+    offset = 0;
     for i in range(0, len(teamDistribution)):
-        generateSimpleConfig("a", str(i), diff+i*areaSize*2, diff+i*areaSize*2, areaSize, extSize, scale, teamDistribution[i], numLeaders, numMembers, numOthers, prefix, ipCount, i*max([numLeaders, numMembers, numOthers]), area)
+        generateSimpleConfig("a", str(i), diff+i*areaSize*2, diff+i*areaSize*2, areaSize, extSize, scale, teamDistribution[i], leadersDistribution[i], membersDistribution[i], othersDistribution[i], prefix, ipCount, offset, area)
+        offset = offset + sum(flatten([leadersDistribution[i], membersDistribution[i], othersDistribution[i]]))
     savefig(prefix + "cfg.png")
     if __name__ == '__main__':
         show()
@@ -51,4 +64,4 @@ if __name__ == '__main__':
         ip = int(options.ip)
     if options.prefix is not None:
         prefix = options.prefix
-    generateComplexRandomConfig(100, 120, 10, [range(0, 2), range(0, 1)], numLeaders, numMembers, numOthers, prefix, ip)
+    generateComplexRandomConfig(100, 120, 10, [range(0, 2), range(0, 1)], [[1,1], [0,1]], [[5,1], [1,5]], [5, 5], prefix, ip)

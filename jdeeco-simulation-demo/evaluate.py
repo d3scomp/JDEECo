@@ -1,5 +1,6 @@
 import os, sys
 from generator.simple import generateConfig
+from generator.complex import generateComplexRandomConfig
 from analysis.analyze_demo import *
 from analysis.analyze_log import *
 from analysis.analyze_neighbors import *
@@ -116,7 +117,10 @@ def generate():
             if it.generator == 'simple':
                 generateConfig(1, it.nodeCnt-1, it.othersCount, it.prefixPath(), 0)
             else:
-                raise Error('Unsupported generator: ' + it.generator)
+                if it.generator == 'complex':
+                    generateComplexRandomConfig(100, 120, 10, [range(0, 2), range(0, 1)], [[1,1], [1,1]], [[it.nodeCnt-1,1],[1, it.nodeCnt-1]], [it.othersCount, it.othersCount], it.prefixPath(), it.nodeCnt)
+                else:
+                    raise Error('Unsupported generator: ' + it.generator)
     print 'Generating done'
 
 
