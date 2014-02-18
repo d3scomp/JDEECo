@@ -49,6 +49,8 @@ class GenericAnalysis:
         boundaryFailedCnt = len(boundaryFailedLines)
         print 'Boundary prevented sending of:', boundaryFailedCnt
         
+        self.boundaryHits = boundaryFailedCnt
+        
         def extract_published_signatures(line):
             p = re.compile('\[([^\]]*)\]')
             m = p.search(line)   

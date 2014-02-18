@@ -305,7 +305,7 @@ def analyze():
         # generic analysis
         with open(s.genericResultsPath(), 'w') as results: 
             genericStats = [[it.genericAnalysis.sentMessagesCnt, it.genericAnalysis.receivedMessagesCnt,
-                             it.demoAnalysis.shouldDiscover, it.demoAnalysis.reallyDiscovered] for it in s.iterations]           
+                             it.demoAnalysis.shouldDiscover, it.demoAnalysis.reallyDiscovered, it.genericAnalysis.boundaryHits] for it in s.iterations]           
             np.savetxt(results, genericStats, fmt='%d')
             
         
@@ -348,11 +348,11 @@ def plotMessageCounts():
     axes = [fig.add_subplot(121), fig.add_subplot(122)]
     
     
-    yticks = range(0, 85000, 5000)
+    yticks = range(0, 185000, 5000)
     xticksLabels = [s.tickLabel() for s in scenariosWithoutBoundary]
     
-    ax.set_yticks(yticks)
-    ax.set_yticklabels(map(lambda x: x/1000, yticks))
+    #ax.set_yticks(yticks)
+    #ax.set_yticklabels(map(lambda x: x/1000, yticks))
     ax.set_frame_on(False)
     ax.set_ylabel('number of messages [in thousands]')
     ax.set_xlabel('total number of nodes [firefighters/others]')
@@ -364,13 +364,13 @@ def plotMessageCounts():
     axes[0].set_title('Boundary disabled')    
     axes[0].set_yticklabels([])
     axes[0].set_xticklabels(xticksLabels)
-    axes[0].set_yticks(yticks)
+    #axes[0].set_yticks(yticks)
     
     pylab.setp(axes[0].xaxis.get_majorticklabels(), rotation=0 )
     
     plt2 = df.loc[df['boundary'] == 'T'].plot(kind='bar', stacked=True, ax=axes[1], legend=False);
     axes[1].set_title('Boundary enabled')
-    axes[1].set_yticks(yticks)
+    #axes[1].set_yticks(yticks)
     axes[1].set_yticklabels([])
     axes[1].set_xticklabels(xticksLabels)    
     pylab.setp(axes[1].xaxis.get_majorticklabels(), rotation=0 )    
@@ -444,6 +444,11 @@ def plotDiscoveryRate():
     pylab.axes().set_ylabel("discovery ratio");
     pylab.axes().set_xlabel("total number of nodes [firefighters/others]");       
     
+def plotBoundaryHits():    
+    pylab.figure(4).set_facecolor('white')    
+    plotBoundarySplitBoxplot(scenarios, 'boundaryHits')    
+    pylab.axes().set_ylabel("boundary hits");
+    pylab.axes().set_xlabel("total number of nodes [firefighters/others]");       
     
 def plot():    
     print 'Plotting...'
@@ -460,7 +465,7 @@ def plot():
             received = map(int, contents[:, 1])            
             s.messageStats = [average(sent), average(received), average(received)*1.0/average(sent)]
             s.discoveryRatio = map(lambda should, did: did * 1.0 / should, map(int, contents[:, 2]), map(int, contents[:, 3]))
-            
+            s.boundaryHits = map(int, contents[:, 4])
         with open(s.neighborResultsPath() , 'r') as resultsFile: 
             contents = np.loadtxt(resultsFile)
             s.neighbors = map(int, contents)        
@@ -470,6 +475,7 @@ def plot():
     plotMessageCounts()
     plotNeighborCounts()
     plotDiscoveryRate()
+    plotBoundaryHits()
     
     pylab.show()
 
@@ -496,15 +502,15 @@ def duplicateScenariosForBoundary():
 if __name__ == '__main__':
     #evaluations = {4:10, 8:10, 12: 10, 16:10, 20:10}
     #evaluations = {8:10, 12: 10, 16:10, 20:10, 24:10, 28:10}
-    #evaluations = {2:10, 4:10, 8:10, 12: 10, 16:10}
-    evaluations = {8:3, 12: 3}
+    evaluations = {2:10, 4:10, 8:10, 12: 10, 16:10, 20:10}
+    #evaluations = {2:3, 4: 3}
 
     # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
     for nodeCnt in evaluations.keys():    
         scenarios.append(Scenario(nodeCnt, nodeCnt/2, evaluations[nodeCnt], False, 'complex'))
     duplicateScenariosForBoundary()    
 
-    generate()
-    simulate()
+    #generate()
+    #simulate()
     analyze()
     plot()
