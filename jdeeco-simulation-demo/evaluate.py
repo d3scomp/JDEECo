@@ -15,6 +15,8 @@ import pylab
 from numpy import average
 from multiprocessing import *
 from math import ceil
+from pylab import plot, show, savefig, xlim, figure, \
+                hold, ylim, legend, boxplot, setp, axes
 
 
 root = os.path.dirname(os.path.realpath(__file__))
@@ -144,7 +146,8 @@ def generate():
 simulated = []
 cpus = 3
 
-command = "java"
+#command = "C:/Program Files (x86)/Java/jdk7/bin/java.exe"
+command = 'java'
 
 def cleanup():
     timeout_sec = 5
@@ -307,6 +310,58 @@ def plotPandas():
     df['Node count'] = pd.Series(nodeCounts)
     df.boxplot(by='Node count')
     
+def setBoxColors(pylab, bp, color):
+    pylab.setp(bp['boxes'], color=color)
+    pylab.setp(bp['caps'], color=color)
+    pylab.setp(bp['whiskers'], color=color)
+    pylab.setp(bp['fliers'], marker='None')
+    pylab.setp(bp['medians'], color=color)
+    
+def plotResponseTimes(pylab, scenarios):
+    pylab.figure(0)
+    xGapWidth = 0
+    xTicks = [0]
+    nodeCnts = []
+    for s in scenarios:
+        nodeCnts.append(s.nodeCnt)
+    uniqueList = list(set(nodeCnts))
+    uniqueList.sort()
+    xLabels = ['' for x in range(len(uniqueList))]
+    for cnt in uniqueList:
+        xGapWidth += cnt
+    xGapWidth = xGapWidth / len(xTicks)
+    partialSum = xGapWidth
+    for cnt in uniqueList:
+        xTicks.append(partialSum)
+        partialSum += xGapWidth
+    width = xGapWidth / 5
+    for s in scenarios:
+        positionOffset = width/1.5
+        if s.boundaryEnabled:
+            positionOffset = -width/1.5
+        bp = pylab.boxplot(s.node2nodeResponseTimes, positions = [(xGapWidth*(uniqueList.index(s.nodeCnt) + 1))+positionOffset], widths = width) 
+        if s.boundaryEnabled:
+            color = '#348ABD'
+            xLabels[uniqueList.index(s.nodeCnt)] = str(s.nodeCnt) + '/' + str(s.othersCnt)
+        else: 
+            color = '#E24A33'
+        setBoxColors(pylab, bp, color)
+        
+    xTicks.append(xTicks[1] + xTicks[len(xTicks) - 1])
+    xLabels = [''] + xLabels
+    
+    hB, = pylab.plot([1,1],'#348ABD')
+    hR, = pylab.plot([1,1],'#E24A33')
+    
+    pylab.figure(0)
+    pylab.axes().set_ylabel("time [s]");
+    pylab.axes().set_xlabel("total number of nodes [firefighters/others]");
+    pylab.axes().set_yticks(range(0, 60000, 5000))
+    pylab.axes().set_yticklabels(range(0, 60, 5))    
+    pylab.axes().set_xticks(xTicks)
+    pylab.axes().set_xticklabels(xLabels)
+    pylab.legend((hB, hR),('Boundary Condition enabled', 'Boundary Condition disabled'), loc='upper left')
+    
 def plot():    
     print 'Plotting...'
     
@@ -314,12 +369,8 @@ def plot():
     pylab.hold(True)
 
     width = 1
-
    
     counts = []
-    aggSent = []
-    aggReceived = []
-    aggRatio = []
 
     for s in scenarios:        
         with open(s.demoResultsPath() , 'r') as resultsFile: 
@@ -330,9 +381,6 @@ def plot():
             sent = map(int, contents[:, 0])            
             received = map(int, contents[:, 1])            
             s.messageStats = [average(sent), average(received), average(received)*1.0/average(sent)]
-            aggSent.extend([average(sent)])
-            aggReceived.extend([average(received)])
-            aggRatio.extend([average(received)*1.0/average(sent)])
             
         with open(s.neighborResultsPath() , 'r') as resultsFile: 
             contents = np.loadtxt(resultsFile)
@@ -342,26 +390,15 @@ def plot():
         positionOffset = -width/1.5
         if s.boundaryEnabled:
             positionOffset = width/1.5
-            
-        pylab.figure(0)
-        bp = pylab.boxplot(s.node2nodeResponseTimes, positions = [s.nodeCnt+positionOffset], widths = width)        
-        colorBoxplot(bp, s.boundaryEnabled)
+                   
         pylab.figure(1)
         bp = pylab.boxplot(s.neighbors, positions = [s.nodeCnt+positionOffset], widths = width)
 
         colorBoxplot(bp, s.boundaryEnabled)        
-        counts.extend([s.nodeCnt])
         
     plotPandas()
+    plotResponseTimes(pylab, scenarios)
     
-    pylab.figure(2)
-    lp = pylab.plot(counts, aggSent)
-    lp = pylab.plot(counts, aggReceived)
-    
-    pylab.figure(0)
-    pylab.title('End-to-end response')    
-    pylab.axes().set_yticks(range(0, 60000, 5000))
-    pylab.axes().set_yticklabels(range(0, 60, 5))    
     pylab.figure(1)
     pylab.title('Number of neighbors')
     
@@ -371,16 +408,17 @@ def plot():
     for s in scenariosWithoutBoundary:
         nodeCounts.append(s.nodeCnt - offset)
         nodeCounts.append(s.nodeCnt + offset)
-        nodeTicks.append('%df' %(s.nodeCnt))
-        nodeTicks.append('%dt' %(s.nodeCnt))
+        nodeTicks.append('%d BD' %(s.nodeCnt))
+        nodeTicks.append('%d BE' %(s.nodeCnt))
         
     #nodeTicks = [s.plotTick() for s in scenariosWithoutBoundary] + [s.plotTick() for s in scenariosWithBoundary]
     #nodeCounts = [s.nodeCnt - 1 for s in scenariosWithoutBoundary] + [s.nodeCnt + 1 for s in scenariosWithBoundary]
-    for fig in range(2):
+    for fig in range(1,2):
         pylab.figure(fig)      
         pylab.axes().set_xticks(nodeCounts)       
         pylab.axes().set_xticklabels(nodeTicks)
         pylab.xlim(min(nodeCounts)-3,max(nodeCounts) +3)
+    
     
     pylab.figure(0)
     pylab.savefig("simulation-results\\result-n2n-response.png")
@@ -412,11 +450,13 @@ if __name__ == '__main__':
     #evaluations = {4:10, 8:10, 12: 10, 16:10, 20:10}
     #evaluations = {8:10, 12: 10, 16:10, 20:10, 24:10, 28:10}
     #evaluations = {8:3, 12: 3}
-    evaluations = {8:10, 12: 10}
+    #evaluations = {8:10, 12: 10}
+    evaluations = {2:10, 4:10, 8:10, 12: 10, 16:10}
     # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
     for nodeCnt in evaluations.keys():    
         scenarios.append(Scenario(nodeCnt, nodeCnt/2, evaluations[nodeCnt], False, 'complex'))
-    duplicateScenariosForBoundary()    #generate()
+    duplicateScenariosForBoundary()    
+    #generate()
     #simulate()
     #analyze()
     plot()
