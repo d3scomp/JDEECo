@@ -182,6 +182,9 @@ class DemoAnalysis:
             else:
                 print description, 'N/A'
         
+        self.shouldDiscover = shouldDiscover
+        self.reallyDiscovered = reallyDiscovered
+        
         print '\nResults: \n-----------------------------'
         printStats('Process-2-process response time:', self.resTimes)
         printStats('Node-2-node response time:', self.resTimesNetwork)

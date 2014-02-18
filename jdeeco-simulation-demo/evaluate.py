@@ -262,7 +262,7 @@ def analyze():
         with open(s.demoResultsPath(), 'w') as results: 
             for it in s.iterations:
                 a = it.demoAnalysis
-                np.savetxt(results, zip(a.resTimes, a.resTimesNetwork, a.hops, a.versionDifs), fmt='%d')
+                np.savetxt(results, zip(a.resTimes, a.resTimesNetwork, a.hops, a.versionDifs, a.shouldDiscover, a.reallyDiscovered), fmt='%d')
                 it.demoAnalysis = None            
         
         # generic analysis
@@ -396,6 +396,12 @@ def plotNeighborCounts():
     plotBoundarySplitBoxplot(scenarios, 'neighbors')    
     pylab.axes().set_ylabel("number of neighbors");
     pylab.axes().set_xlabel("total number of nodes [firefighters/others]");       
+
+def plotDiscoveryRate():
+    pylab.figure(3).set_facecolor('white')    
+    plotBoundarySplitBoxplot(scenarios, 'discoveryRatio')    
+    pylab.axes().set_ylabel("discovery ratio");
+    pylab.axes().set_xlabel("total number of nodes [firefighters/others]");       
     
     
 def plot():    
@@ -407,6 +413,7 @@ def plot():
         with open(s.demoResultsPath() , 'r') as resultsFile: 
             contents = np.loadtxt(resultsFile)
             s.node2nodeResponseTimes = map(int, contents[:, 1])
+            s.discoveryRatio = map(lambda should, did: did * 1.0 / should, map(int, contents[:, 4]), map(int, contents[:, 5]))
         with open(s.genericResultsPath(), 'r') as resultsFile: 
             contents = np.loadtxt(resultsFile)
             sent = map(int, contents[:, 0])            
@@ -455,7 +462,7 @@ if __name__ == '__main__':
         scenarios.append(Scenario(nodeCnt, nodeCnt/2, evaluations[nodeCnt], False, 'complex'))
     duplicateScenariosForBoundary()    
 
-    #generate()
-    #simulate()
-    #analyze()
+    generate()
+    simulate()
+    analyze()
     plot()
