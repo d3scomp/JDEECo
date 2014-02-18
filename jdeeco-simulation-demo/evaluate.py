@@ -286,11 +286,18 @@ def colorBoxplot(bp, isSecond):
 
 def plotPandas():
     import pandas as pd
-    
-    dataWithoutBoundary = [[s.messageStats[1], s.messageStats[0] - s.messageStats[1]] for s in scenariosWithoutBoundary]
-    dataWithBoundary = [[s.messageStats[1], s.messageStats[0] - s.messageStats[1]] for s in scenariosWithBoundary]
-    df = pd.DataFrame(dataWithoutBoundary, columns=['received', 'dropped'])
-    df.plot(kind='bar', stacked=True);
+
+    dataWithoutBoundary = [
+        ['F', s.messageStats[1], s.messageStats[0] - s.messageStats[1]] for s in scenariosWithoutBoundary]
+    dataWithBoundary = [
+        ['T', s.messageStats[1], s.messageStats[0] - s.messageStats[1]] for s in scenariosWithBoundary]
+    df = pd.DataFrame(dataWithoutBoundary + dataWithBoundary, columns=['boundary', 'received', 'dropped'])    
+
+    fig, axes = pylab.subplots(nrows=1, ncols=2)
+    df.loc[df['boundary'] == 'F'].plot(kind='bar', stacked=True, ax=axes[0]);    
+    axes[0].set_title('F')
+    df.loc[df['boundary'] == 'T'].plot(kind='bar', stacked=True, ax=axes[1]);
+    axes[1].set_title('T')
     
     
     dataWithoutBoundary = [x for s in scenariosWithoutBoundary for x in s.node2nodeResponseTimes]
@@ -321,7 +328,7 @@ def plot():
         with open(s.genericResultsPath(), 'r') as resultsFile: 
             contents = np.loadtxt(resultsFile)
             sent = map(int, contents[:, 0])            
-            received = map(int, contents[:, 1])
+            received = map(int, contents[:, 1])            
             s.messageStats = [average(sent), average(received), average(received)*1.0/average(sent)]
             aggSent.extend([average(sent)])
             aggReceived.extend([average(received)])
@@ -404,14 +411,15 @@ def duplicateScenariosForBoundary():
 if __name__ == '__main__':
     #evaluations = {4:10, 8:10, 12: 10, 16:10, 20:10}
     #evaluations = {8:10, 12: 10, 16:10, 20:10, 24:10, 28:10}
-    evaluations = {8:3, 12: 3}
+    #evaluations = {8:3, 12: 3}
+    evaluations = {8:10, 12: 10}
     # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
     for nodeCnt in evaluations.keys():    
         scenarios.append(Scenario(nodeCnt, nodeCnt/2, evaluations[nodeCnt], False, 'complex'))
     duplicateScenariosForBoundary()
 
         
-    generate()
-    simulate()
-    analyze()
+    #generate()
+    #simulate()
+    #analyze()
     plot()
