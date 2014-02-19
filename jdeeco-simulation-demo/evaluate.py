@@ -379,11 +379,11 @@ def plotMessageCounts():
     axes = [fig.add_subplot(121), fig.add_subplot(122)]
     
 
-    yticks = range(0, 185000, 5000)
+    yticks = range(0, 85000, 5000)
     xticksLabels = [s.tickLabel() for s in scenariosWithoutBoundary]
     
-    #ax.set_yticks(yticks)
-    #ax.set_yticklabels(map(lambda x: x/1000, yticks))
+    ax.set_yticks(yticks)
+    ax.set_yticklabels(map(lambda x: x/1000, yticks))
     ax.set_frame_on(False)
     ax.set_ylabel('number of messages [in thousands]')
     ax.set_xlabel('total number of nodes [firefighters/others]')
