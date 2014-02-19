@@ -402,6 +402,7 @@ def plotMessageCounts(fig, scenarios):
 
 color2 = '#C4CC35'
 color1 = '#423F8C'
+lineThickness = 3
     
 def setBoxColors(pylab, bp, color):
     pylab.setp(bp['boxes'], color=color)
@@ -410,17 +411,23 @@ def setBoxColors(pylab, bp, color):
     pylab.setp(bp['fliers'], marker='None')
     pylab.setp(bp['medians'], color=color)
     
-    pylab.setp(bp['boxes'], linewidth=1)
-    pylab.setp(bp['caps'], linewidth=1)
-    pylab.setp(bp['whiskers'], linewidth=1)
-    pylab.setp(bp['fliers'], linewidth=1)
-    pylab.setp(bp['medians'], linewidth=1)    
+    pylab.setp(bp['boxes'], linewidth=lineThickness)
+    pylab.setp(bp['caps'], linewidth=lineThickness)
+    pylab.setp(bp['whiskers'], linewidth=lineThickness)
+    pylab.setp(bp['fliers'], linewidth=lineThickness)
+    pylab.setp(bp['medians'], linewidth=lineThickness)    
     
 
 def plotBoundaryBoxplot(scenarios, valuesAttribute, split):    
     xGapWidth = 0
     xTicks = [0]
     nodeCnts = []
+    if split:
+        boundaryEnabledColor = color1
+        boundaryDisabledColor = color2
+    else:
+        boundaryDisabledColor = color1
+        boundaryEnabledColor = color2
     for s in scenarios:
         nodeCnts.append(s.nodeCnt)
     uniqueList = list(set(nodeCnts))
@@ -443,9 +450,9 @@ def plotBoundaryBoxplot(scenarios, valuesAttribute, split):
                 positionOffset = -width/1.5
         bp = pylab.boxplot(getattr(s, valuesAttribute), positions = [(xGapWidth*(uniqueList.index(s.nodeCnt) + 1))+positionOffset], widths = width) 
         if s.boundaryEnabled:
-            color = color1 #'#348ABD'
+            color = boundaryEnabledColor #'#348ABD'
         else: 
-            color = color2 #'#E24A33'
+            color = boundaryDisabledColor #'#E24A33'
             xLabels[uniqueList.index(s.nodeCnt)] = s.tickLabel() #s.4*str(s.nodeCnt) + '/' + 2*str(s.othersCnt)
         setBoxColors(pylab, bp, color)
         
@@ -454,10 +461,10 @@ def plotBoundaryBoxplot(scenarios, valuesAttribute, split):
     
     pylab.axes().set_xticks(xTicks)
     pylab.axes().set_xticklabels(xLabels)
-    pylab.axes().yaxis.grid(True, linestyle=':', which='major', color='black',alpha=0.5)
+    pylab.axes().yaxis.grid(True, linestyle=':', which='major', color='lightgrey',alpha=0.8)
     if split:
-        hB, = pylab.plot([1,1],color1) #'#348ABD')
-        hR, = pylab.plot([1,1],color2) #'#E24A33')
+        hB, = pylab.plot([1,1],boundaryEnabledColor) #'#348ABD')
+        hR, = pylab.plot([1,1],boundaryDisabledColor) #'#E24A33')
         pylab.legend((hB, hR),('Boundary Condition enabled', 'Boundary Condition disabled'), loc='upper left')
     
 def plotResponseTimes(fig, scenarios, splitBoundary):
