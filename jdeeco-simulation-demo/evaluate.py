@@ -400,8 +400,8 @@ def plotMessageCounts(fig, scenarios):
     axes[1].set_xticklabels(xticksLabels)    
     pylab.setp(axes[1].xaxis.get_majorticklabels(), rotation=0 )    
 
-color1 = '#B0D190'
-color2 = '#7B3DB8'
+color2 = '#C4CC35'
+color1 = '#423F8C'
     
 def setBoxColors(pylab, bp, color):
     pylab.setp(bp['boxes'], color=color)
@@ -410,12 +410,11 @@ def setBoxColors(pylab, bp, color):
     pylab.setp(bp['fliers'], marker='None')
     pylab.setp(bp['medians'], color=color)
     
-    pylab.setp(bp['boxes'], linewidth=2)
-    pylab.setp(bp['caps'], linewidth=2)
-    pylab.setp(bp['whiskers'], linewidth=2)
-    pylab.setp(bp['fliers'], linewidth=2)
-    pylab.setp(bp['medians'], linewidth=2)
-    
+    pylab.setp(bp['boxes'], linewidth=1)
+    pylab.setp(bp['caps'], linewidth=1)
+    pylab.setp(bp['whiskers'], linewidth=1)
+    pylab.setp(bp['fliers'], linewidth=1)
+    pylab.setp(bp['medians'], linewidth=1)    
     
 
 def plotBoundaryBoxplot(scenarios, valuesAttribute, split):    
@@ -455,7 +454,7 @@ def plotBoundaryBoxplot(scenarios, valuesAttribute, split):
     
     pylab.axes().set_xticks(xTicks)
     pylab.axes().set_xticklabels(xLabels)
-    
+    pylab.axes().yaxis.grid(True, linestyle=':', which='major', color='black',alpha=0.5)
     if split:
         hB, = pylab.plot([1,1],color1) #'#348ABD')
         hR, = pylab.plot([1,1],color2) #'#E24A33')
