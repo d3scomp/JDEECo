@@ -35,9 +35,9 @@ class Scenario():
         for i in range(iterationCnt):
             self.iterations.append(ScenarioIteration(self, nodeCnt, othersCnt, start + i, boundaryEnabled, generator)) 
     def folder(self):
-        return 'simulation-results\\%d' % (self.nodeCnt)
+        return 'simulation-results\\%d-%s' % (self.nodeCnt, self.generator[0])
     def folderPath(self):
-        return root + '\\simulation-results\\%d' % (self.nodeCnt)
+        return root + '\\simulation-results\\%d-%s' % (self.nodeCnt, self.generator[0])
     def genericResultsPath(self): 
         return root + '\\simulation-results\\results-generic-%d-%s-%s.csv' % (self.nodeCnt, 't' if self.boundaryEnabled else 'f', self.generator[0])
     def demoResultsPath(self): 
@@ -48,7 +48,7 @@ class Scenario():
         if self.generator == 'simple':
             return '%d/%d' % (self.nodeCnt, self.othersCnt)  
         else:
-            return '%d/%d' % (4*self.nodeCnt, 2*self.othersCnt)
+            return '%d/%d' % (2*self.nodeCnt, 1*self.othersCnt)
        
     
 class ScenarioIteration:
