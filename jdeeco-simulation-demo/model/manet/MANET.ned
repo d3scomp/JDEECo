@@ -84,11 +84,13 @@ network MANET
         }
     connections allowunconnected:
         //Connect routers
+        
         for i=0..numRouters-1 {
         	router[i].ethg++ <--> {  datarate = 100Mbps; delay = 0.1us; } <--> switch.ethg++ if !ethernet;
         }
-        
+        // 4G:  6Mbps down, 1.5Mbps up, 150ms latency 
+        // simulate 4G
         for i=0..numNodes-1 {
-            node[i].ethg <--> {  datarate = 100Mbps; delay = 0.1us; } <--> switch.ethg++ if ethernet;
+            node[i].ethg <--> {  datarate = 10Mbps; delay = 100000us; } <--> switch.ethg++ if ethernet;
         }
 }

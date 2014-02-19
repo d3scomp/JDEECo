@@ -363,7 +363,7 @@ def plotMessageCounts(fig, scenarios):
         ['F', s.messageStats[1], s.messageStats[0] - s.messageStats[1]] for s in scenariosWithoutBoundary]
     dataWithBoundary = [
         ['T', s.messageStats[1], s.messageStats[0] - s.messageStats[1]] for s in scenariosWithBoundary]
-    df = pd.DataFrame(dataWithoutBoundary + dataWithBoundary, columns=['boundary', 'received', 'dropped'])    
+    df = pd.DataFrame(dataWithoutBoundary + dataWithBoundary, columns=['boundary', 'delivered', 'lost'])    
 
 
 
@@ -379,14 +379,14 @@ def plotMessageCounts(fig, scenarios):
     ax.set_yticks(yticks)
     ax.set_yticklabels(map(lambda x: x/1000, yticks))
     ax.set_frame_on(False)
-    ax.set_ylabel('number of messages [in thousands]')
+    ax.set_ylabel('replicas disseminated [in thousands]')
     ax.set_xlabel('total number of nodes [firefighters/others]')
     ax.set_xticklabels([])
     ax.tick_params(axis='x', pad=20)
     
     
     plt1 = df.loc[df['boundary'] == 'F'].plot(kind='bar', stacked=True, ax=axes[0]);
-    axes[0].set_title('Boundary disabled')    
+    axes[0].set_title('without boundary')    
     axes[0].set_yticklabels([])
     axes[0].set_xticklabels(xticksLabels)
     #axes[0].set_yticks(yticks)
@@ -394,7 +394,7 @@ def plotMessageCounts(fig, scenarios):
     pylab.setp(axes[0].xaxis.get_majorticklabels(), rotation=0 )
     
     plt2 = df.loc[df['boundary'] == 'T'].plot(kind='bar', stacked=True, ax=axes[1], legend=False);
-    axes[1].set_title('Boundary enabled')
+    axes[1].set_title('with boundary')
     #axes[1].set_yticks(yticks)
     axes[1].set_yticklabels([])
     axes[1].set_xticklabels(xticksLabels)    
@@ -591,89 +591,114 @@ if __name__ == '__main__':
 
     
     #simple
-    evaluations = {}    
-    for i in range(4,30,4): #30
-        evaluations[i] = 5*cpus
-    for nodeCnt in evaluations.keys():    
-        scenarios.append(Scenario(nodeCnt, nodeCnt/2, evaluations[nodeCnt], False, 'simple'))
-    duplicateScenariosForBoundary()   
-    plot('simple')
-
-'''
-    try:
-        generate()
-        simulate()    
-        analyze()
-    except Exception:
-        print 'Step error'     
-  
-
-    scenarios = []
-    scenariosWithBoundary = []
-    scenariosWithoutBoundary = []
-    
-    #complex
-    evaluations = {}    
-    for i in range(2,20,2): #20
-        evaluations[i] = 5*cpus
-    # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
-    for nodeCnt in evaluations.keys():    
-        scenarios.append(Scenario(nodeCnt, nodeCnt, evaluations[nodeCnt], False, 'complex'))
-    duplicateScenariosForBoundary()   
-
-    try:
-        generate()
-        simulate()    
-        analyze()
-    except Exception:
-        print 'Step error'
-        
+#     evaluations = {}    
+#     for i in range(4,30,4): #30
+#         evaluations[i] = 5*cpus
+#     # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
+#     for nodeCnt in evaluations.keys():    
+#         scenarios.append(Scenario(nodeCnt, nodeCnt/2, evaluations[nodeCnt], False, 'simple'))
+#     duplicateScenariosForBoundary()   
+# 
+#     try:
+#         generate()
+#         simulate()    
+#         analyze()
+#     except Exception:
+#         print 'Step error'
+#         
+    #plot()
     
 
     scenarios = []
     scenariosWithBoundary = []
     scenariosWithoutBoundary = []
-
-    # move analysis results
-    backupResults()
-
-    #further simple iterations
+    
+    #simulate the remaining complex
     evaluations = {}    
-    for i in range(4,30,4):#30
-        evaluations[i] = 5*cpus
-    # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
-    for nodeCnt in evaluations.keys():
-        # continue after the previous iterations
-        scenarios.append(Scenario(nodeCnt, nodeCnt/2, evaluations[nodeCnt], False, 'simple', 5*cpus)) #5*cpus
-    duplicateScenariosForBoundary()   
-
-    try:
-        generate()
-        simulate()    
-        analyze()
-    except Exception:
-        print 'Step error'
-        
-   
-    scenarios = []
-    scenariosWithBoundary = []
-    scenariosWithoutBoundary = []
-
-
-    #further complex evaluations
-    evaluations = {}    
-    for i in range(20,29,2): #20-28
-        evaluations[i] = 5*cpus
+    for i in range(10,18,2): #20
+        evaluations[i] = 1*cpus
     # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
     for nodeCnt in evaluations.keys():    
         scenarios.append(Scenario(nodeCnt, nodeCnt, evaluations[nodeCnt], False, 'complex'))
     duplicateScenariosForBoundary()   
 
-    try:
-        generate()
-        simulate()    
-        analyze()
-    except Exception:
-        print 'Step error'
-              
-'''
+    
+    #generate()
+    #simulate()    
+    #analyze()
+    
+    plot('complex')
+    sys.exit()
+
+#     scenarios = []
+#     scenariosWithBoundary = []
+#     scenariosWithoutBoundary = []
+#     
+#     # evaluate complex
+#     evaluations = {}    
+#     for i in range(2,18,2): #20
+#         if i <= 8:
+#             evaluations[i] = 3*cpus
+#         else:
+#             evaluations[i] = 1*cpus
+#     # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
+#     for nodeCnt in evaluations.keys():    
+#         scenarios.append(Scenario(nodeCnt, nodeCnt, evaluations[nodeCnt], False, 'complex'))
+#     duplicateScenariosForBoundary()
+# 
+#     try:
+#         #generate()
+#         #simulate()    
+#         #analyze()
+#     except Exception:
+#         print 'Step error'
+#     
+#     #plot()
+# 
+#     scenarios = []
+#     scenariosWithBoundary = []
+#     scenariosWithoutBoundary = []
+#  
+#     # move analysis results
+#     backupResults()
+#  
+#     #further simple iterations
+#     evaluations = {}    
+#     for i in range(4,30,4):#30
+#         evaluations[i] = 5*cpus
+#     # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
+#     for nodeCnt in evaluations.keys():
+#         # continue after the previous iterations
+#         scenarios.append(Scenario(nodeCnt, nodeCnt/2, evaluations[nodeCnt], False, 'simple', 5*cpus)) #5*cpus
+#     duplicateScenariosForBoundary()   
+#  
+#     try:
+#         generate()
+#         simulate()    
+#         analyze()
+#     except Exception:
+#         print 'Step error'
+#          
+#     #plot()
+# 
+#     scenarios = []
+#     scenariosWithBoundary = []
+#     scenariosWithoutBoundary = []
+# 
+# 
+#     #further complex simulations
+#     evaluations = {}    
+#     for i in range(10,18,2): #20-28
+#         evaluations[i] = 1*cpus
+#     # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
+#     for nodeCnt in evaluations.keys():    
+#         scenarios.append(Scenario(nodeCnt, nodeCnt, evaluations[nodeCnt], False, 'complex', start=1*cpus))
+#     duplicateScenariosForBoundary()   
+# 
+#     try:
+#         generate()
+#         simulate()    
+#         #analyze()
+#     except Exception:
+#         print 'Step error'
+#         
