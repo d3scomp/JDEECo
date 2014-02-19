@@ -187,15 +187,17 @@ def cleanup():
 
 atexit.register(cleanup)
 
-def finalizeSimulation(iteration):
-    iteration.simulation.wait() 
+def finalizeOldestSimulation():
+    iteration = simulated[0]
+    iteration.simulation.wait()
+    simulated.pop(0)
     os.remove(iteration.omnetppPath() + '.ini')
     os.remove(iteration.loggingPropertiesPath())
     iteration.stdOut.flush()
     iteration.stdOut.close()
     iteration.stdOut = None
     iteration.simulation = None
-    simulated.remove(iteration)
+    
 
 
 def simulateScenario(iteration):
@@ -226,7 +228,7 @@ def simulateScenario(iteration):
            iteration.componentCfgPath(), iteration.siteCfgPath(), iteration.omnetppPath() ]
     
     if len(simulated) >= cpus:
-        finalizeSimulation(simulated[0])
+        finalizeOldestSimulation()
     
     print 'Evaluating', iteration.name() 
     print 'Executing: ', ' '.join(cmd)
@@ -297,10 +299,11 @@ def finalizeOldestParallelAnalyze():
     iteration = a.iteration    
     it = a.qout.get()
     a.p.join()
+    analyses.pop(0)
     iteration.genericAnalysis = it.genericAnalysis
     iteration.demoAnalysis = it.demoAnalysis
     iteration.neighborAnalysis = it.neighborAnalysis
-    analyses.pop(0)
+    
 
 
 def analyze():
