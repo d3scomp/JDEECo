@@ -143,7 +143,8 @@ def generate():
             if it.generator == 'simple':
                 p = Process(target=generateConfig, args=(1, it.nodeCnt-1, it.othersCnt, it.baseCfgPath(), 0,))
             elif it.generator == 'complex':
-                IP_FACTOR = 0.25
+                IP_FACTOR = 0.5
+                ipNodes = max(1, int(ceil(it.nodeCnt*IP_FACTOR)))
                 p = Process(target=generateComplexRandomConfig,
                             args=(
                                             100, #area size 
@@ -154,7 +155,7 @@ def generate():
                                             [[it.nodeCnt-1,it.nodeCnt-1,0],[it.nodeCnt-1,0,it.nodeCnt-1]], #distribution of members 
                                             [it.othersCnt, it.othersCnt], # distribution of others 
                                             it.baseCfgPath(), 
-                                            [int(ceil(it.nodeCnt*IP_FACTOR)), int(ceil(it.nodeCnt*IP_FACTOR))], # distribution of IP-enabled nodes
+                                            [ipNodes, ipNodes], # distribution of IP-enabled nodes
                                             ))
             else:
                 raise Error('Unsupported generator: ' + it.generator)
