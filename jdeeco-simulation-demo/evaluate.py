@@ -407,8 +407,15 @@ def setBoxColors(pylab, bp, color):
     pylab.setp(bp['fliers'], marker='None')
     pylab.setp(bp['medians'], color=color)
     
+    pylab.setp(bp['boxes'], linewidth=2)
+    pylab.setp(bp['caps'], linewidth=2)
+    pylab.setp(bp['whiskers'], linewidth=2)
+    pylab.setp(bp['fliers'], linewidth=2)
+    pylab.setp(bp['medians'], linewidth=2)
+    
+    
 
-def plotBoundarySplitBoxplot(scenarios, valuesAttribute):    
+def plotBoundaryBoxplot(scenarios, valuesAttribute, split):    
     xGapWidth = 0
     xTicks = [0]
     nodeCnts = []
@@ -426,31 +433,34 @@ def plotBoundarySplitBoxplot(scenarios, valuesAttribute):
         partialSum += xGapWidth
     width = xGapWidth / 5
     for s in scenarios:
-        positionOffset = -width/1.5
-        if s.boundaryEnabled:
-            positionOffset = width/1.5
+        positionOffset = 0
+        if split:
+            if s.boundaryEnabled:
+                positionOffset = width/1.5
+            else:
+                positionOffset = -width/1.5
         bp = pylab.boxplot(getattr(s, valuesAttribute), positions = [(xGapWidth*(uniqueList.index(s.nodeCnt) + 1))+positionOffset], widths = width) 
         if s.boundaryEnabled:
             color = '#348ABD'
-            xLabels[uniqueList.index(s.nodeCnt)] = s.tickLabel() #s.4*str(s.nodeCnt) + '/' + 2*str(s.othersCnt)
         else: 
             color = '#E24A33'
+            xLabels[uniqueList.index(s.nodeCnt)] = s.tickLabel() #s.4*str(s.nodeCnt) + '/' + 2*str(s.othersCnt)
         setBoxColors(pylab, bp, color)
         
     xTicks.append(xTicks[1] + xTicks[len(xTicks) - 1])
     xLabels = [''] + xLabels
     
-    hB, = pylab.plot([1,1],'#348ABD')
-    hR, = pylab.plot([1,1],'#E24A33')
-    
-    
     pylab.axes().set_xticks(xTicks)
     pylab.axes().set_xticklabels(xLabels)
-    pylab.legend((hB, hR),('Boundary Condition enabled', 'Boundary Condition disabled'), loc='upper left')
+    
+    if split:
+        hB, = pylab.plot([1,1],'#348ABD')
+        hR, = pylab.plot([1,1],'#E24A33')
+        pylab.legend((hB, hR),('Boundary Condition enabled', 'Boundary Condition disabled'), loc='upper left')
     
 def plotResponseTimes(scenarios):
     pylab.figure(0).set_facecolor('white')    
-    plotBoundarySplitBoxplot(scenarios, 'node2nodeResponseTimes')     
+    plotBoundaryBoxplot(scenarios, 'node2nodeResponseTimes', False)     
     pylab.axes().set_ylabel("time [s]");
     pylab.axes().set_xlabel("total number of nodes [firefighters/others]");
     pylab.axes().set_yticks(range(0, 60000, 5000))
@@ -458,23 +468,22 @@ def plotResponseTimes(scenarios):
     
 def plotNeighborCounts():
     pylab.figure(1).set_facecolor('white')    
-    plotBoundarySplitBoxplot(scenarios, 'neighbors')    
+    plotBoundaryBoxplot(scenarios, 'neighbors', True)    
     pylab.axes().set_ylabel("number of neighbors");
     pylab.axes().set_xlabel("total number of nodes [firefighters/others]");       
 
 def plotDiscoveryRate():
     pylab.figure(3).set_facecolor('white')    
-    plotBoundarySplitBoxplot(scenarios, 'discoveryRatio')    
+    plotBoundaryBoxplot(scenarios, 'discoveryRatio', True)    
     pylab.axes().set_ylabel("discovery ratio");
     pylab.axes().set_xlabel("total number of nodes [firefighters/others]");       
     
 def plotBoundaryHits():    
     pylab.figure(4).set_facecolor('white')    
-    plotBoundarySplitBoxplot(scenarios, 'boundaryHits')    
+    plotBoundaryBoxplot(scenarios, 'boundaryHits', True)    
     pylab.axes().set_ylabel("boundary hits");
     pylab.axes().set_xlabel("total number of nodes [firefighters/others]");       
     
-
 def plot():    
     print 'Plotting...'
         
@@ -568,19 +577,18 @@ if __name__ == '__main__':
     evaluations = {}    
     for i in range(4,30,4): #30
         evaluations[i] = 5*cpus
-    # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
     for nodeCnt in evaluations.keys():    
         scenarios.append(Scenario(nodeCnt, nodeCnt/2, evaluations[nodeCnt], False, 'simple'))
-    duplicateScenariosForBoundary()   
+    #duplicateScenariosForBoundary()   
+    plot()
+
 
     try:
         generate()
         simulate()    
         analyze()
     except Exception:
-        print 'Step error'
-        
-    #plot()
+        print 'Step error'     
     
 
     scenarios = []
@@ -651,4 +659,4 @@ if __name__ == '__main__':
         analyze()
     except Exception:
         print 'Step error'
-        
+              
