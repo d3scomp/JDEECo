@@ -589,6 +589,8 @@ if __name__ == '__main__':
         analyze()
     except Exception:
         print 'Step error'     
+          
+    plot()
     
 
     scenarios = []

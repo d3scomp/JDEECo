@@ -72,7 +72,7 @@ def generateSimpleConfig(writeMode, areaId, posX, posY, areaSize, extSize, scale
     others = []
     others.extend(HQExtended.generateOthersEdgy(numOthers,exDiff*scale))
     
-    for cmp in random.sample(leaders + members + others, ipCount):
+    for cmp in random.sample(leaders + members, ipCount):
         cmp.ip = True
     
     for cmp in leaders:
