@@ -21,28 +21,29 @@ from collections import namedtuple
 
 
 root = os.path.dirname(os.path.realpath(__file__))
-cpus = 3
+cpus = 19
 
 class Scenario():
-    def __init__(self, nodeCnt, othersCnt, iterationCnt, boundaryEnabled, generator):
+    def __init__(self, nodeCnt, othersCnt, iterationCnt, boundaryEnabled, generator, start = 0):
         self.nodeCnt = nodeCnt
         self.othersCnt = othersCnt
         self.iterationCnt = iterationCnt
         self.boundaryEnabled = boundaryEnabled
         self.generator = generator
         self.iterations = []
+        self.start = start
         for i in range(iterationCnt):
-            self.iterations.append(ScenarioIteration(self, nodeCnt, othersCnt, i, boundaryEnabled, generator)) 
+            self.iterations.append(ScenarioIteration(self, nodeCnt, othersCnt, start + i, boundaryEnabled, generator)) 
     def folder(self):
         return 'simulation-results\\%d' % (self.nodeCnt)
     def folderPath(self):
         return root + '\\simulation-results\\%d' % (self.nodeCnt)
     def genericResultsPath(self): 
-        return root + '\\simulation-results\\results-generic-%d-%s.csv' % (self.nodeCnt, 't' if self.boundaryEnabled else 'f')
+        return root + '\\simulation-results\\results-generic-%d-%s-%s.csv' % (self.nodeCnt, 't' if self.boundaryEnabled else 'f', self.generator[0])
     def demoResultsPath(self): 
-        return root + '\\simulation-results\\results-demo-%d-%s.csv' % (self.nodeCnt, 't' if self.boundaryEnabled else 'f')
+        return root + '\\simulation-results\\results-demo-%d-%s-%s.csv' % (self.nodeCnt, 't' if self.boundaryEnabled else 'f', self.generator[0])
     def neighborResultsPath(self): 
-        return root + '\\simulation-results\\results-neighbors-%d-%s.csv' % (self.nodeCnt, 't' if self.boundaryEnabled else 'f')
+        return root + '\\simulation-results\\results-neighbors-%d-%s-%s.csv' % (self.nodeCnt, 't' if self.boundaryEnabled else 'f', self.generator[0])
     def tickLabel(self):
         if self.generator == 'simple':
             return '%d/%d' % (self.nodeCnt, self.othersCnt)  
@@ -314,23 +315,26 @@ def analyze():
         while len(analyses) > 0:
             finalizeOldestParallelAnalyze()
                 
-       
+        mode = 'w'
+        # if this is a continuation of a previous run, append
+        if s.start > 0:
+            mode = 'a'
         # demo analysis
-        with open(s.demoResultsPath(), 'w') as results: 
+        with open(s.demoResultsPath(), mode) as results: 
             for it in s.iterations:
                 a = it.demoAnalysis
                 np.savetxt(results, zip(a.resTimes, a.resTimesNetwork, a.hops, a.versionDifs), fmt='%d')
                           
         
         # generic analysis
-        with open(s.genericResultsPath(), 'w') as results: 
+        with open(s.genericResultsPath(), mode) as results: 
             genericStats = [[it.genericAnalysis.sentMessagesCnt, it.genericAnalysis.receivedMessagesCnt,
                              it.demoAnalysis.shouldDiscover, it.demoAnalysis.reallyDiscovered, it.genericAnalysis.boundaryHits] for it in s.iterations]           
             np.savetxt(results, genericStats, fmt='%d')
             
         
         # neighbor analysis
-        with open(s.neighborResultsPath(), 'w') as results: 
+        with open(s.neighborResultsPath(), mode) as results: 
             neighbors = [cnt for it in s.iterations for cnt in it.neighborAnalysis.neighborCnts]            
             np.savetxt(results, neighbors, fmt='%d')
             
@@ -479,10 +483,13 @@ def plot():
     for s in scenarios:        
         with open(s.demoResultsPath() , 'r') as resultsFile: 
             contents = np.loadtxt(resultsFile)
-            # if there is only one row, duplicate it so that the selectors don't fail
-            if len(contents.shape) == 1:
-                contents = np.vstack((contents, contents))
-            s.node2nodeResponseTimes = map(int, contents[:, 1])
+            if len(contents) == 0:
+                s.node2nodeResponseTimes = []
+            else:
+                # if there is only one row, duplicate it so that the selectors don't fail
+                if len(contents.shape) == 1:
+                    contents = np.vstack((contents, contents))
+                s.node2nodeResponseTimes = map(int, contents[:, 1])
         with open(s.genericResultsPath(), 'r') as resultsFile: 
             contents = np.loadtxt(resultsFile)
             # if there is only one row, duplicate it so that the selectors don't fail
@@ -514,7 +521,7 @@ def plot():
 def duplicateScenariosForBoundary():
     oldScenarios = scenarios[:]
     for s in oldScenarios:
-        s2 = Scenario(s.nodeCnt, s.othersCnt, s.iterationCnt, not s.boundaryEnabled, s.generator)
+        s2 = Scenario(s.nodeCnt, s.othersCnt, s.iterationCnt, not s.boundaryEnabled, s.generator, s.start)
         scenarios.append(s2)
         if s.boundaryEnabled:
             scenariosWithBoundary.append(s)
@@ -525,21 +532,123 @@ def duplicateScenariosForBoundary():
     scenarios.sort(key=lambda x: x.nodeCnt)
     scenariosWithBoundary.sort(key=lambda x: x.nodeCnt)
     scenariosWithoutBoundary.sort(key=lambda x: x.nodeCnt)
-    
+
+def backupResults():
+    from itertools import ifilter
+    from fnmatch import fnmatch
+
+    ext = '.csv'
+    fnPattern = '*'+ext
+    source_dir = 'simulation-results'
+    dest_dir = source_dir + '\\backup'
+
+    for dirName, subdirList, fileList in os.walk(source_dir):
+
+        # generate list of files in directory with desired extension
+        matches = ifilter(lambda fname: fnmatch(fname, fnPattern), fileList)
+
+        # skip subdirectory if it does not contain any files of interest
+        if not matches:
+            continue
+        try:
+            os.makedirs(dest_dir)
+        except OSError as e:
+            pass  
+        #  copy each file to destination directory
+        for fname in matches:
+          copyfile(source_dir + '\\' + fname, dest_dir + '\\' + fname)
+          
 if __name__ == '__main__':
     #evaluations = {4:10, 8:10, 12: 10, 16:10, 20:10}
     #evaluations = {8:10, 12: 10, 16:10, 20:10, 24:10, 28:10}
     #evaluations = {2:10, 4:10, 8:10, 12: 10, 16:10, 20:10}
-    evaluations = {}
+
     
-    for i in range(10,80,10):
-        evaluations[i] = 1#5*cpus
+    #simple
+    evaluations = {}    
+    for i in range(4,30,4): #30
+        evaluations[i] = 5*cpus
     # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
     for nodeCnt in evaluations.keys():    
         scenarios.append(Scenario(nodeCnt, nodeCnt/2, evaluations[nodeCnt], False, 'simple'))
     duplicateScenariosForBoundary()   
 
-    #generate()
-    #simulate()
-    #analyze()
-    plot()
+    try:
+        generate()
+        simulate()    
+        analyze()
+    except Exception:
+        print 'Step error'
+        
+    #plot()
+    
+
+    scenarios = []
+    scenariosWithBoundary = []
+    scenariosWithoutBoundary = []
+    
+    #complex
+    evaluations = {}    
+    for i in range(2,20,2): #20
+        evaluations[i] = 5*cpus
+    # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
+    for nodeCnt in evaluations.keys():    
+        scenarios.append(Scenario(nodeCnt, nodeCnt, evaluations[nodeCnt], False, 'complex'))
+    duplicateScenariosForBoundary()   
+
+    try:
+        generate()
+        simulate()    
+        analyze()
+    except Exception:
+        print 'Step error'
+        
+    #plot()
+
+    scenarios = []
+    scenariosWithBoundary = []
+    scenariosWithoutBoundary = []
+
+    # move analysis results
+    backupResults()
+
+    #further simple iterations
+    evaluations = {}    
+    for i in range(4,30,4):#30
+        evaluations[i] = 5*cpus
+    # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
+    for nodeCnt in evaluations.keys():
+        # continue after the previous iterations
+        scenarios.append(Scenario(nodeCnt, nodeCnt/2, evaluations[nodeCnt], False, 'simple', 5*cpus)) #5*cpus
+    duplicateScenariosForBoundary()   
+
+    try:
+        generate()
+        simulate()    
+        analyze()
+    except Exception:
+        print 'Step error'
+        
+    #plot()
+
+    scenarios = []
+    scenariosWithBoundary = []
+    scenariosWithoutBoundary = []
+
+
+    #further complex evaluations
+    evaluations = {}    
+    for i in range(20,29,2): #20-28
+        evaluations[i] = 5*cpus
+    # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
+    for nodeCnt in evaluations.keys():    
+        scenarios.append(Scenario(nodeCnt, nodeCnt, evaluations[nodeCnt], False, 'complex'))
+    duplicateScenariosForBoundary()   
+
+    try:
+        generate()
+        simulate()    
+        analyze()
+    except Exception:
+        print 'Step error'
+        
