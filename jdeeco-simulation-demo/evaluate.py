@@ -35,9 +35,9 @@ class Scenario():
         for i in range(iterationCnt):
             self.iterations.append(ScenarioIteration(self, nodeCnt, othersCnt, start + i, boundaryEnabled, generator)) 
     def folder(self):
-        return 'simulation-results\\%d-%s' % (self.nodeCnt, self.generator[0])
+        return 'simulation-results\\%d' % (self.nodeCnt)
     def folderPath(self):
-        return root + '\\simulation-results\\%d-%s' % (self.nodeCnt, self.generator[0])
+        return root + '\\simulation-results\\%d' % (self.nodeCnt)
     def genericResultsPath(self): 
         return root + '\\simulation-results\\results-generic-%d-%s-%s.csv' % (self.nodeCnt, 't' if self.boundaryEnabled else 'f', self.generator[0])
     def demoResultsPath(self): 
@@ -143,8 +143,7 @@ def generate():
             if it.generator == 'simple':
                 p = Process(target=generateConfig, args=(1, it.nodeCnt-1, it.othersCnt, it.baseCfgPath(), 0,))
             elif it.generator == 'complex':
-                IP_FACTOR = 0.5
-                ipNodes = max(1, int(ceil(it.nodeCnt*IP_FACTOR)))
+                IP_FACTOR = 0.25
                 p = Process(target=generateComplexRandomConfig,
                             args=(
                                             100, #area size 
@@ -152,10 +151,10 @@ def generate():
                                             10, #scale
                                             [[0, 1], [1, 2]], # distribution of teams
                                             [[1, 1, 0], [1, 0, 1]], # distribution of leaders 
-                                            [[it.nodeCnt-1,it.nodeCnt-1,0],[it.nodeCnt-1,0,it.nodeCnt-1]], #distribution of members 
+                                            [[it.nodeCnt-1,nodeCnt-1,0],[it.nodeCnt-1,0,it.nodeCnt-1]], #distribution of members 
                                             [it.othersCnt, it.othersCnt], # distribution of others 
                                             it.baseCfgPath(), 
-                                            [ipNodes, ipNodes], # distribution of IP-enabled nodes
+                                            [int(ceil(it.nodeCnt*IP_FACTOR)), int(ceil(it.nodeCnt*IP_FACTOR))], # distribution of IP-enabled nodes
                                             ))
             else:
                 raise Error('Unsupported generator: ' + it.generator)
@@ -187,17 +186,15 @@ def cleanup():
 
 atexit.register(cleanup)
 
-def finalizeOldestSimulation():
-    iteration = simulated[0]
-    iteration.simulation.wait()
-    simulated.pop(0)
+def finalizeSimulation(iteration):
+    iteration.simulation.wait() 
     os.remove(iteration.omnetppPath() + '.ini')
     os.remove(iteration.loggingPropertiesPath())
     iteration.stdOut.flush()
     iteration.stdOut.close()
     iteration.stdOut = None
     iteration.simulation = None
-    
+    simulated.remove(iteration)
 
 
 def simulateScenario(iteration):
@@ -228,7 +225,7 @@ def simulateScenario(iteration):
            iteration.componentCfgPath(), iteration.siteCfgPath(), iteration.omnetppPath() ]
     
     if len(simulated) >= cpus:
-        finalizeOldestSimulation()
+        finalizeSimulation(simulated[0])
     
     print 'Evaluating', iteration.name() 
     print 'Executing: ', ' '.join(cmd)
@@ -299,11 +296,10 @@ def finalizeOldestParallelAnalyze():
     iteration = a.iteration    
     it = a.qout.get()
     a.p.join()
-    analyses.pop(0)
     iteration.genericAnalysis = it.genericAnalysis
     iteration.demoAnalysis = it.demoAnalysis
     iteration.neighborAnalysis = it.neighborAnalysis
-    
+    analyses.pop(0)
 
 
 def analyze():
@@ -350,10 +346,6 @@ def analyze():
                 
     print 'Analysis done'
 
-
-color1 = '#B0D190'
-color2 = '#7B3DB8'
-
 def colorBoxplot(bp, isSecond):
     mycolor = '#E24A33'
     if isSecond:
@@ -363,7 +355,8 @@ def colorBoxplot(bp, isSecond):
     pylab.setp(bp['fliers'], marker='None')
     
 
-def plotMessageCounts():
+
+def plotMessageCounts(fig, scenarios):
     import pandas as pd
 
     dataWithoutBoundary = [
@@ -374,12 +367,13 @@ def plotMessageCounts():
 
 
 
-    fig = pylab.figure(2, facecolor='white')
+    fig = pylab.figure(fig, facecolor='white')
     ax = fig.add_subplot(111)
     axes = [fig.add_subplot(121), fig.add_subplot(122)]
     
 
     yticks = range(0, 85000, 5000)
+
     xticksLabels = [s.tickLabel() for s in scenariosWithoutBoundary]
     
     ax.set_yticks(yticks)
@@ -392,7 +386,6 @@ def plotMessageCounts():
     
     
     plt1 = df.loc[df['boundary'] == 'F'].plot(kind='bar', stacked=True, ax=axes[0]);
-    
     axes[0].set_title('Boundary disabled')    
     axes[0].set_yticklabels([])
     axes[0].set_xticklabels(xticksLabels)
@@ -407,6 +400,8 @@ def plotMessageCounts():
     axes[1].set_xticklabels(xticksLabels)    
     pylab.setp(axes[1].xaxis.get_majorticklabels(), rotation=0 )    
 
+color1 = '#B0D190'
+color2 = '#7B3DB8'
     
 def setBoxColors(pylab, bp, color):
     pylab.setp(bp['boxes'], color=color)
@@ -415,8 +410,15 @@ def setBoxColors(pylab, bp, color):
     pylab.setp(bp['fliers'], marker='None')
     pylab.setp(bp['medians'], color=color)
     
+    pylab.setp(bp['boxes'], linewidth=2)
+    pylab.setp(bp['caps'], linewidth=2)
+    pylab.setp(bp['whiskers'], linewidth=2)
+    pylab.setp(bp['fliers'], linewidth=2)
+    pylab.setp(bp['medians'], linewidth=2)
+    
+    
 
-def plotBoundarySplitBoxplot(scenarios, valuesAttribute):    
+def plotBoundaryBoxplot(scenarios, valuesAttribute, split):    
     xGapWidth = 0
     xTicks = [0]
     nodeCnts = []
@@ -434,56 +436,58 @@ def plotBoundarySplitBoxplot(scenarios, valuesAttribute):
         partialSum += xGapWidth
     width = xGapWidth / 5
     for s in scenarios:
-        positionOffset = -width/1.5
-        if s.boundaryEnabled:
-            positionOffset = width/1.5
+        positionOffset = 0
+        if split:
+            if s.boundaryEnabled:
+                positionOffset = width/1.5
+            else:
+                positionOffset = -width/1.5
         bp = pylab.boxplot(getattr(s, valuesAttribute), positions = [(xGapWidth*(uniqueList.index(s.nodeCnt) + 1))+positionOffset], widths = width) 
         if s.boundaryEnabled:
-            color = '#348ABD'
-            xLabels[uniqueList.index(s.nodeCnt)] = s.tickLabel() #s.4*str(s.nodeCnt) + '/' + 2*str(s.othersCnt)
+            color = color1 #'#348ABD'
         else: 
-            color = '#E24A33'
+            color = color2 #'#E24A33'
+            xLabels[uniqueList.index(s.nodeCnt)] = s.tickLabel() #s.4*str(s.nodeCnt) + '/' + 2*str(s.othersCnt)
         setBoxColors(pylab, bp, color)
         
     xTicks.append(xTicks[1] + xTicks[len(xTicks) - 1])
     xLabels = [''] + xLabels
     
-    hB, = pylab.plot([1,1],'#348ABD')
-    hR, = pylab.plot([1,1],'#E24A33')
-    
-    
     pylab.axes().set_xticks(xTicks)
     pylab.axes().set_xticklabels(xLabels)
-    pylab.legend((hB, hR),('Boundary Condition enabled', 'Boundary Condition disabled'), loc='upper left')
     
-def plotResponseTimes(scenarios):
-    pylab.figure(0).set_facecolor('white')    
-    plotBoundarySplitBoxplot(scenarios, 'node2nodeResponseTimes')     
+    if split:
+        hB, = pylab.plot([1,1],color1) #'#348ABD')
+        hR, = pylab.plot([1,1],color2) #'#E24A33')
+        pylab.legend((hB, hR),('Boundary Condition enabled', 'Boundary Condition disabled'), loc='upper left')
+    
+def plotResponseTimes(fig, scenarios, splitBoundary):
+    pylab.figure(fig).set_facecolor('white')    
+    plotBoundaryBoxplot(scenarios, 'node2nodeResponseTimes', splitBoundary)     
     pylab.axes().set_ylabel("time [s]");
     pylab.axes().set_xlabel("total number of nodes [firefighters/others]");
     pylab.axes().set_yticks(range(0, 60000, 5000))
     pylab.axes().set_yticklabels(range(0, 60, 5))   
     
-def plotNeighborCounts():
-    pylab.figure(1).set_facecolor('white')    
-    plotBoundarySplitBoxplot(scenarios, 'neighbors')    
+def plotNeighborCounts(fig, scenarios, splitBoundary):
+    pylab.figure(fig).set_facecolor('white')    
+    plotBoundaryBoxplot(scenarios, 'neighbors', splitBoundary)    
     pylab.axes().set_ylabel("number of neighbors");
     pylab.axes().set_xlabel("total number of nodes [firefighters/others]");       
 
-def plotDiscoveryRate():
-    pylab.figure(3).set_facecolor('white')    
-    plotBoundarySplitBoxplot(scenarios, 'discoveryRatio')    
+def plotDiscoveryRate(fig, scenarios, splitBoundary):
+    pylab.figure(fig).set_facecolor('white')    
+    plotBoundaryBoxplot(scenarios, 'discoveryRatio', splitBoundary)    
     pylab.axes().set_ylabel("discovery ratio");
     pylab.axes().set_xlabel("total number of nodes [firefighters/others]");       
     
-def plotBoundaryHits():    
-    pylab.figure(4).set_facecolor('white')    
-    plotBoundarySplitBoxplot(scenarios, 'boundaryHits')    
+def plotBoundaryHits(fig, scenarios, splitBoundary):    
+    pylab.figure(fig).set_facecolor('white')    
+    plotBoundaryBoxplot(scenarios, 'boundaryHits', splitBoundary)    
     pylab.axes().set_ylabel("boundary hits");
     pylab.axes().set_xlabel("total number of nodes [firefighters/others]");       
     
-
-def plot():    
+def plot(generator):    
     print 'Plotting...'
         
     pylab.hold(True)
@@ -513,11 +517,19 @@ def plot():
             s.neighbors = map(int, contents)        
 
     pylab.rc('axes', color_cycle=[color1, color2])
-    plotResponseTimes(scenarios)
-    plotMessageCounts()
-    plotNeighborCounts()
-    plotDiscoveryRate()
-    plotBoundaryHits()
+    
+    if generator == 'simple':
+        scenairosToPlot = scenariosWithoutBoundary
+        split = False
+    else:        
+        scenairosToPlot = scenarios
+        split = True
+    
+    plotResponseTimes(0, scenairosToPlot, split)
+    plotMessageCounts(1, scenairosToPlot)
+    plotNeighborCounts(2, scenairosToPlot, split)
+    plotDiscoveryRate(3, scenairosToPlot, split)
+    plotBoundaryHits(4, scenairosToPlot, split)
     
     pylab.show()
 
@@ -576,50 +588,49 @@ if __name__ == '__main__':
     evaluations = {}    
     for i in range(4,30,4): #30
         evaluations[i] = 5*cpus
-    # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
     for nodeCnt in evaluations.keys():    
         scenarios.append(Scenario(nodeCnt, nodeCnt/2, evaluations[nodeCnt], False, 'simple'))
     duplicateScenariosForBoundary()   
- 
+    plot('simple')
+
+'''
+    try:
+        generate()
+        simulate()    
+        analyze()
+    except Exception:
+        print 'Step error'     
+  
+
+    scenarios = []
+    scenariosWithBoundary = []
+    scenariosWithoutBoundary = []
+    
+    #complex
+    evaluations = {}    
+    for i in range(2,20,2): #20
+        evaluations[i] = 5*cpus
+    # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
+    for nodeCnt in evaluations.keys():    
+        scenarios.append(Scenario(nodeCnt, nodeCnt, evaluations[nodeCnt], False, 'complex'))
+    duplicateScenariosForBoundary()   
+
     try:
         generate()
         simulate()    
         analyze()
     except Exception:
         print 'Step error'
-          
-    plot()
+        
     
 
     scenarios = []
     scenariosWithBoundary = []
     scenariosWithoutBoundary = []
-     
-    #complex
-    evaluations = {}    
-    for i in range(2,20,2): #20
-        evaluations[i] = 3*cpus
-    # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
-    for nodeCnt in evaluations.keys():    
-        scenarios.append(Scenario(nodeCnt, nodeCnt, evaluations[nodeCnt], False, 'complex'))
-    duplicateScenariosForBoundary()   
- 
-    try:
-        generate()
-        simulate()    
-        analyze()
-    except Exception:
-        print 'Step error'
-         
-    #plot()
 
-    scenarios = []
-    scenariosWithBoundary = []
-    scenariosWithoutBoundary = []
- 
     # move analysis results
     backupResults()
- 
+
     #further simple iterations
     evaluations = {}    
     for i in range(4,30,4):#30
@@ -629,30 +640,7 @@ if __name__ == '__main__':
         # continue after the previous iterations
         scenarios.append(Scenario(nodeCnt, nodeCnt/2, evaluations[nodeCnt], False, 'simple', 5*cpus)) #5*cpus
     duplicateScenariosForBoundary()   
- 
-    try:
-        generate()
-        simulate()    
-        analyze()
-    except Exception:
-        print 'Step error'
-         
-    #plot()
 
-    scenarios = []
-    scenariosWithBoundary = []
-    scenariosWithoutBoundary = []
- 
- 
-    #further complex evaluations
-    evaluations = {}    
-    for i in range(20,29,2): #20-28
-        evaluations[i] = 3*cpus
-    # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
-    for nodeCnt in evaluations.keys():    
-        scenarios.append(Scenario(nodeCnt, nodeCnt, evaluations[nodeCnt], False, 'complex'))
-    duplicateScenariosForBoundary()   
- 
     try:
         generate()
         simulate()    
@@ -660,3 +648,26 @@ if __name__ == '__main__':
     except Exception:
         print 'Step error'
         
+   
+    scenarios = []
+    scenariosWithBoundary = []
+    scenariosWithoutBoundary = []
+
+
+    #further complex evaluations
+    evaluations = {}    
+    for i in range(20,29,2): #20-28
+        evaluations[i] = 5*cpus
+    # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
+    for nodeCnt in evaluations.keys():    
+        scenarios.append(Scenario(nodeCnt, nodeCnt, evaluations[nodeCnt], False, 'complex'))
+    duplicateScenariosForBoundary()   
+
+    try:
+        generate()
+        simulate()    
+        analyze()
+    except Exception:
+        print 'Step error'
+              
+'''
