@@ -63,11 +63,12 @@ module Switch
                 addressTableSize = 10000;
                 numCPUs = sizeof(ethg);
         }
-        eth[sizeof(ethg)]: EthernetInterface {
+        eth[sizeof(ethg)]: CustomEthernetInterface {
             parameters:
                 csmacdSupport = false;
                 encapType = "EtherEncapDummy";
                 mac.promiscuous = true;
+                mac.txQueueLimit = default(1000000);
                 @display("p=170,150,row;q=txQueue");
         }
     connections:
