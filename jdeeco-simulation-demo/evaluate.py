@@ -48,7 +48,7 @@ class Scenario():
         if self.generator == 'simple':
             return '%d/%d' % (self.nodeCnt, self.othersCnt)  
         else:
-            return '%d/%d' % (2*self.nodeCnt, 1*self.othersCnt)
+            return '%d/%d' % (4*self.nodeCnt, 2*self.othersCnt)
        
     
 class ScenarioIteration:
@@ -143,7 +143,8 @@ def generate():
             if it.generator == 'simple':
                 p = Process(target=generateConfig, args=(1, it.nodeCnt-1, it.othersCnt, it.baseCfgPath(), 0,))
             elif it.generator == 'complex':
-                IP_FACTOR = 0.25
+                IP_FACTOR = 0.5
+                ipNodes = max(1, int(ceil(it.nodeCnt*IP_FACTOR)))
                 p = Process(target=generateComplexRandomConfig,
                             args=(
                                             100, #area size 
@@ -154,7 +155,7 @@ def generate():
                                             [[it.nodeCnt-1,it.nodeCnt-1,0],[it.nodeCnt-1,0,it.nodeCnt-1]], #distribution of members 
                                             [it.othersCnt, it.othersCnt], # distribution of others 
                                             it.baseCfgPath(), 
-                                            [int(ceil(it.nodeCnt*IP_FACTOR)), int(ceil(it.nodeCnt*IP_FACTOR))], # distribution of IP-enabled nodes
+                                            [ipNodes, ipNodes], # distribution of IP-enabled nodes
                                             ))
             else:
                 raise Error('Unsupported generator: ' + it.generator)
@@ -186,15 +187,17 @@ def cleanup():
 
 atexit.register(cleanup)
 
-def finalizeSimulation(iteration):
-    iteration.simulation.wait() 
+def finalizeOldestSimulation():
+    iteration = simulated[0]
+    iteration.simulation.wait()
+    simulated.pop(0)
     os.remove(iteration.omnetppPath() + '.ini')
     os.remove(iteration.loggingPropertiesPath())
     iteration.stdOut.flush()
     iteration.stdOut.close()
     iteration.stdOut = None
     iteration.simulation = None
-    simulated.remove(iteration)
+    
 
 
 def simulateScenario(iteration):
@@ -225,7 +228,7 @@ def simulateScenario(iteration):
            iteration.componentCfgPath(), iteration.siteCfgPath(), iteration.omnetppPath() ]
     
     if len(simulated) >= cpus:
-        finalizeSimulation(simulated[0])
+        finalizeOldestSimulation()
     
     print 'Evaluating', iteration.name() 
     print 'Executing: ', ' '.join(cmd)
@@ -245,7 +248,7 @@ def simulate():
     
     # finalize the rest    
     while len(simulated) > 0:
-        finalizeSimulation(simulated[0])
+        finalizeOldestSimulation()
     print 'Simulation done'
 
 
@@ -296,10 +299,10 @@ def finalizeOldestParallelAnalyze():
     iteration = a.iteration    
     it = a.qout.get()
     a.p.join()
+    analyses.pop(0)
     iteration.genericAnalysis = it.genericAnalysis
     iteration.demoAnalysis = it.demoAnalysis
     iteration.neighborAnalysis = it.neighborAnalysis
-    analyses.pop(0)
 
 
 def analyze():
@@ -585,11 +588,7 @@ def backupResults():
           copyfile(source_dir + '\\' + fname, dest_dir + '\\' + fname)
           
 if __name__ == '__main__':
-    #evaluations = {4:10, 8:10, 12: 10, 16:10, 20:10}
-    #evaluations = {8:10, 12: 10, 16:10, 20:10, 24:10, 28:10}
-    #evaluations = {2:10, 4:10, 8:10, 12: 10, 16:10, 20:10}
-
-    
+   
     #simple
 #     evaluations = {}    
 #     for i in range(4,30,4): #30
@@ -608,14 +607,13 @@ if __name__ == '__main__':
 #         
     #plot()
     
-
+    
     scenarios = []
     scenariosWithBoundary = []
     scenariosWithoutBoundary = []
-    
-    #simulate the remaining complex
+        
     evaluations = {}    
-    for i in range(10,18,2): #20
+    for i in range(10,12,2): 
         evaluations[i] = 1*cpus
     # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
     for nodeCnt in evaluations.keys():    
@@ -623,82 +621,11 @@ if __name__ == '__main__':
     duplicateScenariosForBoundary()   
 
     
-    #generate()
-    #simulate()    
-    #analyze()
-    
+    try:
+        generate()
+        simulate()    
+        analyze()
+    except Exception:
+        print 'Step error'
+        
     plot('complex')
-    sys.exit()
-
-#     scenarios = []
-#     scenariosWithBoundary = []
-#     scenariosWithoutBoundary = []
-#     
-#     # evaluate complex
-#     evaluations = {}    
-#     for i in range(2,18,2): #20
-#         if i <= 8:
-#             evaluations[i] = 3*cpus
-#         else:
-#             evaluations[i] = 1*cpus
-#     # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
-#     for nodeCnt in evaluations.keys():    
-#         scenarios.append(Scenario(nodeCnt, nodeCnt, evaluations[nodeCnt], False, 'complex'))
-#     duplicateScenariosForBoundary()
-# 
-#     try:
-#         #generate()
-#         #simulate()    
-#         #analyze()
-#     except Exception:
-#         print 'Step error'
-#     
-#     #plot()
-# 
-#     scenarios = []
-#     scenariosWithBoundary = []
-#     scenariosWithoutBoundary = []
-#  
-#     # move analysis results
-#     backupResults()
-#  
-#     #further simple iterations
-#     evaluations = {}    
-#     for i in range(4,30,4):#30
-#         evaluations[i] = 5*cpus
-#     # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
-#     for nodeCnt in evaluations.keys():
-#         # continue after the previous iterations
-#         scenarios.append(Scenario(nodeCnt, nodeCnt/2, evaluations[nodeCnt], False, 'simple', 5*cpus)) #5*cpus
-#     duplicateScenariosForBoundary()   
-#  
-#     try:
-#         generate()
-#         simulate()    
-#         analyze()
-#     except Exception:
-#         print 'Step error'
-#          
-#     #plot()
-# 
-#     scenarios = []
-#     scenariosWithBoundary = []
-#     scenariosWithoutBoundary = []
-# 
-# 
-#     #further complex simulations
-#     evaluations = {}    
-#     for i in range(10,18,2): #20-28
-#         evaluations[i] = 1*cpus
-#     # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
-#     for nodeCnt in evaluations.keys():    
-#         scenarios.append(Scenario(nodeCnt, nodeCnt, evaluations[nodeCnt], False, 'complex', start=1*cpus))
-#     duplicateScenariosForBoundary()   
-# 
-#     try:
-#         generate()
-#         simulate()    
-#         #analyze()
-#     except Exception:
-#         print 'Step error'
-#         
