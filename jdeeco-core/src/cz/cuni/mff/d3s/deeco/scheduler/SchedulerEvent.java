@@ -33,6 +33,12 @@ public class SchedulerEvent implements Comparable<SchedulerEvent> {
     public long nextExecutionTime;
 
     /**
+	 * For a periodic tasks indicates the start of the period which the
+	 * {@link #nextExecutionTime} falls in.
+	 */
+    public long nextPeriodStart;
+    
+    /**
      * Indicator, whether the event is periodic (i.e., fixed-rate execution). 
      * It is set to true only if the trigger is a TimeTrigger with period > 0.
      */
@@ -47,6 +53,8 @@ public class SchedulerEvent implements Comparable<SchedulerEvent> {
      * The trigger associated with this event.
      */
     public final Trigger trigger;
+
+	
     
 
     /**

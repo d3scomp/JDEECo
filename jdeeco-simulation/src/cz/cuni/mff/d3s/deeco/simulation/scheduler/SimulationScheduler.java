@@ -56,7 +56,7 @@ public class SimulationScheduler implements Scheduler,
 		
 		long seed = 0;
 		for (char c: host.getId().toCharArray())
-			seed += c;
+			seed = seed*32+(c-'a');
 		rnd = new Random(seed);
 		
 		host.setSimulationTimeEventListener(this);
@@ -149,7 +149,7 @@ public class SimulationScheduler implements Scheduler,
 
 		if (executedBecauseOfPeriodic && lastProcessExecutionTime > ((TimeTrigger) trigger).getPeriod()) {
 			Log.e("Periodic task " + task.toString()
-					+ " has greater actual execution time than its period ("
+					+ " didn't finish before the end of the period (period="
 					+ task.getTimeTrigger().getPeriod() + ")");
 		}
 		registerNextExecution();
@@ -181,9 +181,12 @@ public class SimulationScheduler implements Scheduler,
 			pop();
 			if (event.periodic) {
 				// schedule for the next period (the period might be variable,
-				// that's we query the trigger)
-				event.nextExecutionTime = event.nextExecutionTime
-						+ event.executable.getTimeTrigger().getPeriod();
+				// that's we query the trigger)				
+				// add a random offset within the period (up to half the period)
+				event.nextPeriodStart += event.executable.getTimeTrigger().getPeriod();
+				
+				int offset = rnd.nextInt((int) (event.executable.getTimeTrigger().getPeriod()/0.75));
+				event.nextExecutionTime = event.nextPeriodStart + offset;
 				push(event);
 			}
 			if (executor != null) {
@@ -215,7 +218,8 @@ public class SimulationScheduler implements Scheduler,
 	 * Note that this method has to be explicitly protected by queue's monitor!
 	 */
 	void scheduleAfter(SchedulerEvent event, long delay) {			
-		event.nextExecutionTime = host.getCurrentTime() + delay;		
+		event.nextExecutionTime = host.getCurrentTime() + delay;
+		event.nextPeriodStart = host.getCurrentTime() + delay;
 		push(event);
 					
 	}
