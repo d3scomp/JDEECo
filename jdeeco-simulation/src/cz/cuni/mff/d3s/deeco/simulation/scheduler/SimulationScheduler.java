@@ -180,9 +180,8 @@ public class SimulationScheduler implements Scheduler,
 			// The time is right to execute the next task			
 			pop();
 			if (event.periodic) {
-				// schedule for the next period (the period might be variable,
-				// that's we query the trigger)				
-				// add a random offset within the period (up to half the period)
+				// schedule for the next period 
+				// add a random offset within the period (up to 75% of the period)
 				event.nextPeriodStart += event.executable.getTimeTrigger().getPeriod();
 				
 				int offset = rnd.nextInt((int) (event.executable.getTimeTrigger().getPeriod()/0.75));
