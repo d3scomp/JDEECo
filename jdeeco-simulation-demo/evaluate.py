@@ -21,7 +21,7 @@ from collections import namedtuple
 
 
 root = os.path.dirname(os.path.realpath(__file__))
-cpus = 19
+cpus = 3
 
 class Scenario():
     def __init__(self, nodeCnt, othersCnt, iterationCnt, boundaryEnabled, generator, start = 0):
@@ -588,26 +588,7 @@ def backupResults():
           copyfile(source_dir + '\\' + fname, dest_dir + '\\' + fname)
           
 if __name__ == '__main__':
-   
-    #simple
-#     evaluations = {}    
-#     for i in range(4,30,4): #30
-#         evaluations[i] = 5*cpus
-#     # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
-#     for nodeCnt in evaluations.keys():    
-#         scenarios.append(Scenario(nodeCnt, nodeCnt/2, evaluations[nodeCnt], False, 'simple'))
-#     duplicateScenariosForBoundary()   
-# 
-#     try:
-#         generate()
-#         simulate()    
-#         analyze()
-#     except Exception:
-#         print 'Step error'
-#         
-    #plot()
-    
-    
+ 
     scenarios = []
     scenariosWithBoundary = []
     scenariosWithoutBoundary = []
