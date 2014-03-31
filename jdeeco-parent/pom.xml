@@ -23,6 +23,8 @@
 				<module>../jdeeco-core</module>
 				<module>../jdeeco-demo</module>
 				<module>../jdeeco-core-osgi</module>
+				<module>../jdeeco-simulation</module>
+				<module>../jdeeco-simulation-demo</module>
 			</modules>
 		</profile>
 	</profiles>

@@ -1,0 +1,414 @@
+<config>
+<interface hosts='router[0]' names='wlan0' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='router[0]' names='eth0' address='193.1.x.x' netmask='255.255.x.x'/>
+<route hosts='router[0]' destination='192.0.0.0' netmask='255.255.0.0' interface='wlan0'/>
+<route hosts='router[0]' destination='192.1.0.0' netmask='255.255.0.0' gateway='router[1]' interface='eth0'/>
+<route hosts='router[0]' destination='192.2.0.0' netmask='255.255.0.0' gateway='router[2]' interface='eth0'/>
+<route hosts='router[0]' destination='192.3.0.0' netmask='255.255.0.0' gateway='router[3]' interface='eth0'/>
+<interface hosts='node[20]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[20]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[21]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[21]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[22]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[22]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[23]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[23]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[24]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[24]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[110]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[110]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[111]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[111]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[112]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[112]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[113]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[113]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[114]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[114]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[115]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[115]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[116]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[116]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[117]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[117]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[118]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[118]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[119]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[119]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[120]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[120]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[121]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[121]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[122]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[122]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[123]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[123]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[124]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[124]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[125]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[125]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[126]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[126]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[127]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[127]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[128]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[128]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[129]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[129]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[130]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[130]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[131]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[131]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[132]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[132]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[133]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[133]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[134]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[134]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[135]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[135]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[136]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[136]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[137]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[137]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[138]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[138]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[139]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[139]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[202]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[202]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[204]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[204]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[205]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[205]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[207]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[207]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[209]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[209]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[215]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[215]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='node[219]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<route hosts='node[219]' destination='*' netmask='*' gateway='router[0]' interface='nic80211'/>
+<interface hosts='router[1]' names='wlan0' address='192.1.x.x' netmask='255.255.x.x'/>
+<interface hosts='router[1]' names='eth0' address='193.1.x.x' netmask='255.255.x.x'/>
+<route hosts='router[1]' destination='192.1.0.0' netmask='255.255.0.0' interface='wlan0'/>
+<route hosts='router[1]' destination='192.0.0.0' netmask='255.255.0.0' gateway='router[0]' interface='eth0'/>
+<route hosts='router[1]' destination='192.2.0.0' netmask='255.255.0.0' gateway='router[2]' interface='eth0'/>
+<route hosts='router[1]' destination='192.3.0.0' netmask='255.255.0.0' gateway='router[3]' interface='eth0'/>
+<interface hosts='node[15]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[15]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[16]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[16]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[17]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[17]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[18]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[18]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[19]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[19]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[80]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[80]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[81]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[81]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[82]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[82]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[83]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[83]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[84]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[84]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[85]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[85]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[86]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[86]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[87]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[87]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[88]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[88]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[89]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[89]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[90]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[90]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[91]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[91]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[92]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[92]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[93]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[93]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[94]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[94]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[95]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[95]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[96]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[96]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[97]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[97]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[98]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[98]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[99]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[99]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[100]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[100]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[101]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[101]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[102]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[102]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[103]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[103]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[104]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[104]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[105]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[105]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[106]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[106]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[107]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[107]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[108]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[108]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[109]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[109]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[180]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[180]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[182]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[182]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[186]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[186]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[187]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[187]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[192]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[192]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[194]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[194]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='node[196]' names='nic80211' address='192.1.x.x' netmask='255.255.x.x'/>
+<route hosts='node[196]' destination='*' netmask='*' gateway='router[1]' interface='nic80211'/>
+<interface hosts='router[2]' names='wlan0' address='192.2.x.x' netmask='255.255.x.x'/>
+<interface hosts='router[2]' names='eth0' address='193.1.x.x' netmask='255.255.x.x'/>
+<route hosts='router[2]' destination='192.2.0.0' netmask='255.255.0.0' interface='wlan0'/>
+<route hosts='router[2]' destination='192.0.0.0' netmask='255.255.0.0' gateway='router[0]' interface='eth0'/>
+<route hosts='router[2]' destination='192.1.0.0' netmask='255.255.0.0' gateway='router[1]' interface='eth0'/>
+<route hosts='router[2]' destination='192.3.0.0' netmask='255.255.0.0' gateway='router[3]' interface='eth0'/>
+<interface hosts='node[10]' names='nic80211' address='192.2.x.x' netmask='255.255.x.x'/>
+<route hosts='node[10]' destination='*' netmask='*' gateway='router[2]' interface='nic80211'/>
+<interface hosts='node[11]' names='nic80211' address='192.2.x.x' netmask='255.255.x.x'/>
+<route hosts='node[11]' destination='*' netmask='*' gateway='router[2]' interface='nic80211'/>
+<interface hosts='node[12]' names='nic80211' address='192.2.x.x' netmask='255.255.x.x'/>
+<route hosts='node[12]' destination='*' netmask='*' gateway='router[2]' interface='nic80211'/>
+<interface hosts='node[13]' names='nic80211' address='192.2.x.x' netmask='255.255.x.x'/>
+<route hosts='node[13]' destination='*' netmask='*' gateway='router[2]' interface='nic80211'/>
+<interface hosts='node[14]' names='nic80211' address='192.2.x.x' netmask='255.255.x.x'/>
+<route hosts='node[14]' destination='*' netmask='*' gateway='router[2]' interface='nic80211'/>
+<interface hosts='node[50]' names='nic80211' address='192.2.x.x' netmask='255.255.x.x'/>
+<route hosts='node[50]' destination='*' netmask='*' gateway='router[2]' interface='nic80211'/>
+<interface hosts='node[51]' names='nic80211' address='192.2.x.x' netmask='255.255.x.x'/>
+<route hosts='node[51]' destination='*' netmask='*' gateway='router[2]' interface='nic80211'/>
+<interface hosts='node[52]' names='nic80211' address='192.2.x.x' netmask='255.255.x.x'/>
+<route hosts='node[52]' destination='*' netmask='*' gateway='router[2]' interface='nic80211'/>
+<interface hosts='node[53]' names='nic80211' address='192.2.x.x' netmask='255.255.x.x'/>
+<route hosts='node[53]' destination='*' netmask='*' gateway='router[2]' interface='nic80211'/>
+<interface hosts='node[54]' names='nic80211' address='192.2.x.x' netmask='255.255.x.x'/>
+<route hosts='node[54]' destination='*' netmask='*' gateway='router[2]' interface='nic80211'/>
+<interface hosts='node[55]' names='nic80211' address='192.2.x.x' netmask='255.255.x.x'/>
+<route hosts='node[55]' destination='*' netmask='*' gateway='router[2]' interface='nic80211'/>
+<interface hosts='node[56]' names='nic80211' address='192.2.x.x' netmask='255.255.x.x'/>
+<route hosts='node[56]' destination='*' netmask='*' gateway='router[2]' interface='nic80211'/>
+<interface hosts='node[57]' names='nic80211' address='192.2.x.x' netmask='255.255.x.x'/>
+<route hosts='node[57]' destination='*' netmask='*' gateway='router[2]' interface='nic80211'/>
+<interface hosts='node[58]' names='nic80211' address='192.2.x.x' netmask='255.255.x.x'/>
+<route hosts='node[58]' destination='*' netmask='*' gateway='router[2]' interface='nic80211'/>
+<interface hosts='node[59]' names='nic80211' address='192.2.x.x' netmask='255.255.x.x'/>
+<route hosts='node[59]' destination='*' netmask='*' gateway='router[2]' interface='nic80211'/>
+<interface hosts='node[60]' names='nic80211' address='192.2.x.x' netmask='255.255.x.x'/>
+<route hosts='node[60]' destination='*' netmask='*' gateway='router[2]' interface='nic80211'/>
+<interface hosts='node[61]' names='nic80211' address='192.2.x.x' netmask='255.255.x.x'/>
+<route hosts='node[61]' destination='*' netmask='*' gateway='router[2]' interface='nic80211'/>
+<interface hosts='node[62]' names='nic80211' address='192.2.x.x' netmask='255.255.x.x'/>
+<route hosts='node[62]' destination='*' netmask='*' gateway='router[2]' interface='nic80211'/>
+<interface hosts='node[63]' names='nic80211' address='192.2.x.x' netmask='255.255.x.x'/>
+<route hosts='node[63]' destination='*' netmask='*' gateway='router[2]' interface='nic80211'/>
+<interface hosts='node[64]' names='nic80211' address='192.2.x.x' netmask='255.255.x.x'/>
+<route hosts='node[64]' destination='*' netmask='*' gateway='router[2]' interface='nic80211'/>
+<interface hosts='node[65]' names='nic80211' address='192.2.x.x' netmask='255.255.x.x'/>
+<route hosts='node[65]' destination='*' netmask='*' gateway='router[2]' interface='nic80211'/>
+<interface hosts='node[66]' names='nic80211' address='192.2.x.x' netmask='255.255.x.x'/>
+<route hosts='node[66]' destination='*' netmask='*' gateway='router[2]' interface='nic80211'/>
+<interface hosts='node[67]' names='nic80211' address='192.2.x.x' netmask='255.255.x.x'/>
+<route hosts='node[67]' destination='*' netmask='*' gateway='router[2]' interface='nic80211'/>
+<interface hosts='node[68]' names='nic80211' address='192.2.x.x' netmask='255.255.x.x'/>
+<route hosts='node[68]' destination='*' netmask='*' gateway='router[2]' interface='nic80211'/>
+<interface hosts='node[69]' names='nic80211' address='192.2.x.x' netmask='255.255.x.x'/>
+<route hosts='node[69]' destination='*' netmask='*' gateway='router[2]' interface='nic80211'/>
+<interface hosts='node[70]' names='nic80211' address='192.2.x.x' netmask='255.255.x.x'/>
+<route hosts='node[70]' destination='*' netmask='*' gateway='router[2]' interface='nic80211'/>
+<interface hosts='node[71]' names='nic80211' address='192.2.x.x' netmask='255.255.x.x'/>
+<route hosts='node[71]' destination='*' netmask='*' gateway='router[2]' interface='nic80211'/>
+<interface hosts='node[72]' names='nic80211' address='192.2.x.x' netmask='255.255.x.x'/>
+<route hosts='node[72]' destination='*' netmask='*' gateway='router[2]' interface='nic80211'/>
+<interface hosts='node[73]' names='nic80211' address='192.2.x.x' netmask='255.255.x.x'/>
+<route hosts='node[73]' destination='*' netmask='*' gateway='router[2]' interface='nic80211'/>
+<interface hosts='node[74]' names='nic80211' address='192.2.x.x' netmask='255.255.x.x'/>
+<route hosts='node[74]' destination='*' netmask='*' gateway='router[2]' interface='nic80211'/>
+<interface hosts='node[75]' names='nic80211' address='192.2.x.x' netmask='255.255.x.x'/>
+<route hosts='node[75]' destination='*' netmask='*' gateway='router[2]' interface='nic80211'/>
+<interface hosts='node[76]' names='nic80211' address='192.2.x.x' netmask='255.255.x.x'/>
+<route hosts='node[76]' destination='*' netmask='*' gateway='router[2]' interface='nic80211'/>
+<interface hosts='node[77]' names='nic80211' address='192.2.x.x' netmask='255.255.x.x'/>
+<route hosts='node[77]' destination='*' netmask='*' gateway='router[2]' interface='nic80211'/>
+<interface hosts='node[78]' names='nic80211' address='192.2.x.x' netmask='255.255.x.x'/>
+<route hosts='node[78]' destination='*' netmask='*' gateway='router[2]' interface='nic80211'/>
+<interface hosts='node[79]' names='nic80211' address='192.2.x.x' netmask='255.255.x.x'/>
+<route hosts='node[79]' destination='*' netmask='*' gateway='router[2]' interface='nic80211'/>
+<interface hosts='node[164]' names='nic80211' address='192.2.x.x' netmask='255.255.x.x'/>
+<route hosts='node[164]' destination='*' netmask='*' gateway='router[2]' interface='nic80211'/>
+<interface hosts='node[165]' names='nic80211' address='192.2.x.x' netmask='255.255.x.x'/>
+<route hosts='node[165]' destination='*' netmask='*' gateway='router[2]' interface='nic80211'/>
+<interface hosts='node[174]' names='nic80211' address='192.2.x.x' netmask='255.255.x.x'/>
+<route hosts='node[174]' destination='*' netmask='*' gateway='router[2]' interface='nic80211'/>
+<interface hosts='router[3]' names='wlan0' address='192.3.x.x' netmask='255.255.x.x'/>
+<interface hosts='router[3]' names='eth0' address='193.1.x.x' netmask='255.255.x.x'/>
+<route hosts='router[3]' destination='192.3.0.0' netmask='255.255.0.0' interface='wlan0'/>
+<route hosts='router[3]' destination='192.0.0.0' netmask='255.255.0.0' gateway='router[0]' interface='eth0'/>
+<route hosts='router[3]' destination='192.1.0.0' netmask='255.255.0.0' gateway='router[1]' interface='eth0'/>
+<route hosts='router[3]' destination='192.2.0.0' netmask='255.255.0.0' gateway='router[2]' interface='eth0'/>
+<interface hosts='node[0]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[0]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[1]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[1]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[2]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[2]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[3]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[3]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[4]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[4]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[5]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[5]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[6]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[6]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[7]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[7]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[8]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[8]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[9]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[9]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[25]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[25]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[26]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[26]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[27]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[27]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[28]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[28]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[29]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[29]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[30]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[30]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[31]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[31]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[32]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[32]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[33]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[33]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[34]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[34]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[35]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[35]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[36]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[36]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[37]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[37]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[38]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[38]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[39]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[39]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[40]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[40]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[41]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[41]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[42]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[42]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[43]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[43]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[44]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[44]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[45]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[45]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[46]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[46]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[47]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[47]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[48]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[48]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[49]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[49]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[140]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[140]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[141]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[141]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[142]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[142]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[144]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[144]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[152]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[152]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[153]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[153]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[154]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[154]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[155]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[155]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[156]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[156]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[158]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[158]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[159]' names='nic80211' address='192.3.x.x' netmask='255.255.x.x'/>
+<route hosts='node[159]' destination='*' netmask='*' gateway='router[3]' interface='nic80211'/>
+<interface hosts='node[143]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[145]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[146]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[147]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[148]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[149]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[150]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[151]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[157]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[160]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[161]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[162]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[163]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[166]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[167]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[168]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[169]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[170]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[171]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[172]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[173]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[175]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[176]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[177]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[178]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[179]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[181]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[183]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[184]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[185]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[188]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[189]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[190]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[191]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[193]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[195]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[197]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[198]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[199]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[200]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[201]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[203]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[206]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[208]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[210]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[211]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[212]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[213]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[214]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[216]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[217]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+<interface hosts='node[218]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>
+</config>

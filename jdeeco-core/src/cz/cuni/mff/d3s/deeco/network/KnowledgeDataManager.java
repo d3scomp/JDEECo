@@ -1,6 +1,8 @@
+
 package cz.cuni.mff.d3s.deeco.network;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -60,7 +62,9 @@ KnowledgeDataPublisher {
 	public static final double RSSI_50m = 5.59e-9;
 	
 	// this rssi corresponds to max (roughly 250m) distance
-	public static final double RSSI_MAX = 1.11e-10;
+	public static final double RSSI_MIN = 1.11e-10;
+	
+	public static final int IP_DELAY = 1;
 	
 	/** Global version counter for all outgoing local knowledge. */
 	protected long localVersion;	
@@ -81,7 +85,8 @@ KnowledgeDataPublisher {
 	/** List of ensemble definitions whose boundary conditions should be considered. */
 	private final List<EnsembleDefinition> ensembleDefinitions;
 	
-	private final Map<String, KnowledgeData> dataToRebroadcast;
+	private final Map<String, KnowledgeData> dataToRebroadcastOverMANET;
+	private final Map<String, KnowledgeData> dataToRebroadcastOverIP;
 	
 	private final boolean useIndividualPublishing;
 	private final boolean checkGossipCondition;
@@ -91,7 +96,11 @@ KnowledgeDataPublisher {
 	
 	public static final int DEFAULT_MAX_REBROADCAST_DELAY = (int) (PublisherTask.DEFAULT_PUBLISHING_PERIOD);
 	private final int maxRebroadcastDelay;
-
+	
+	
+	//TODO This needs to be changed
+	private final Collection<DirectRecipientSelector> recipientSelectors;
+	private final DirectGossipStrategy directGossipStrategy;
 
 	
 	/**
@@ -107,7 +116,8 @@ KnowledgeDataPublisher {
 			KnowledgeDataSender knowledgeDataSender,
 			List<EnsembleDefinition> ensembleDefinitions,
 			String host,
-			Scheduler scheduler) {
+			Scheduler scheduler,
+			Collection<DirectRecipientSelector> recipientSelectors, DirectGossipStrategy directGossipStrategy) {
 		this.host = host;		
 		this.scheduler = scheduler;
 		this.timeProvider = scheduler;
@@ -116,8 +126,11 @@ KnowledgeDataPublisher {
 		this.ensembleDefinitions = ensembleDefinitions;
 		this.localVersion = 0;
 		this.replicaMetadata = new HashMap<>();
+		this.recipientSelectors = recipientSelectors;
+		this.directGossipStrategy = directGossipStrategy;
 		
-		dataToRebroadcast = new HashMap<>();
+		dataToRebroadcastOverMANET = new HashMap<>();
+		dataToRebroadcastOverIP = new HashMap<>();
 		
 		RuntimeMetadataFactory factory = RuntimeMetadataFactoryExt.eINSTANCE;
 		KnowledgePath empty = factory.createKnowledgePath();
@@ -157,21 +170,22 @@ KnowledgeDataPublisher {
 		// we re-publish periodically only local data
 		List<KnowledgeData> data = prepareLocalKnowledgeData();
 		
-//		int origCnt = dataToRebroadcast.size();
-//		filterBasedOnBoundaryCondition(dataToRebroadcast, getNodeKnowledge());
-//		filterBasedOnGossipCondition(dataToRebroadcast);
+//		int origCnt = dataToRebroadcastOverMANET.size();
+//		filterBasedOnBoundaryCondition(dataToRebroadcastOverMANET, getNodeKnowledge());
+//		filterBasedOnGossipCondition(dataToRebroadcastOverMANET);
 //		
-//		Log.d(String.format("Rebroadcasting %d out of %d received messages", dataToRebroadcast.size(), origCnt));
+//		Log.d(String.format("Rebroadcasting %d out of %d received messages", dataToRebroadcastOverMANET.size(), origCnt));
 //		
-//		for (KnowledgeData kd: dataToRebroadcast) {
+//		for (KnowledgeData kd: dataToRebroadcastOverMANET) {
 //			data.add(prepareForRebroadcast(kd));
 //		}
-//		dataToRebroadcast.clear();
+//		dataToRebroadcastOverMANET.clear();
 		
-		logPublish(data);
 		
 		//TODO
 		if (!data.isEmpty()) {
+			
+			logPublish(data);
 			
 			if (useIndividualPublishing) {
 				// broadcast each kd individually to minimize the message size and
@@ -182,27 +196,47 @@ KnowledgeDataPublisher {
 			} else {
 				knowledgeDataSender.broadcastKnowledgeData(data);
 			}
+			
+			sendDirect(data);
 			localVersion++;
+		}
+	}
+
+	private void sendDirect(List<KnowledgeData> data) {
+		if (recipientSelectors != null && !recipientSelectors.isEmpty()) {
+			//Publishing to IP
+			Collection<String> recipients;
+			//For IP part we are using individual publishing only
+			for (KnowledgeData kd : data) {
+				recipients = getRecipients(kd, getNodeKnowledge());
+				for (String recipient: recipients) {
+					if (directGossipStrategy.gossipTo(recipient)) {
+						logPublish(data, recipient);
+						knowledgeDataSender.sendKnowledgeData(Arrays.asList(kd), recipient);
+					}
+				}
+			}
 		}
 	}
 	
 
 	@Override
-	public void rebroacast(KnowledgeMetaData metadata) {
+	public void rebroacast(KnowledgeMetaData metadata, NICType nicType) {
 		String sig = metadata.getSignature();
-		// if the data was marked as not to be sent anymore (e.g., it was received again in the mean time)
-		if (!dataToRebroadcast.containsKey(sig))  {			
-			return;
+		KnowledgeData data;
+		if (nicType.equals(NICType.MANET) && dataToRebroadcastOverMANET.containsKey(sig)) {	
+			data = prepareForRebroadcast(dataToRebroadcastOverMANET.get(sig));
+			logPublish(Arrays.asList(data));
+			knowledgeDataSender.broadcastKnowledgeData(Arrays.asList(data));
+			dataToRebroadcastOverMANET.remove(sig);
+			Log.d(String.format("Rebroadcast finished (%d) at %s, data %s", timeProvider.getCurrentTime(), host, sig));
+		} else if (dataToRebroadcastOverIP.containsKey(sig)) {
+			data = prepareForRebroadcast(dataToRebroadcastOverIP.get(sig));
+			logPublish(Arrays.asList(data));
+			sendDirect(Arrays.asList(data));
+			dataToRebroadcastOverIP.remove(sig);
+			Log.d(String.format("Rebroadcast finished (%d) at %s, data %s", timeProvider.getCurrentTime(), host, sig));
 		}
-		
-		KnowledgeData data = prepareForRebroadcast(dataToRebroadcast.get(sig));
-		
-		logPublish(Arrays.asList(data));
-				
-		knowledgeDataSender.broadcastKnowledgeData(Arrays.asList(data));
-		dataToRebroadcast.remove(sig);
-		Log.d(String.format("Rebroadcast finished (%d) at %s, data %s", timeProvider.getCurrentTime(), host, sig));
-		
 	}
 
 	@Override
@@ -224,10 +258,21 @@ KnowledgeDataPublisher {
 			// if we get the same or newer data before we manage to rebroadcast, abort the rebroadcast 
 			if ((currentMetadata != null)
 					&& (currentMetadata.versionId <= newMetadata.versionId)
-					&& dataToRebroadcast.containsKey(currentMetadata.getSignature())) {
-				dataToRebroadcast.remove(currentMetadata.getSignature());
+					&& dataToRebroadcastOverMANET.containsKey(currentMetadata.getSignature())) {
+				dataToRebroadcastOverMANET.remove(currentMetadata.getSignature());
 				Log.d(String.format(
-						"Rebroadcast aborted (%d) at %s, data %s, because of %s",
+						"MANET: Rebroadcast aborted (%d) at %s, data %s, because of %s",
+						timeProvider.getCurrentTime(), host,
+						currentMetadata.getSignature(),
+						newMetadata.getSignature()));
+			}
+			
+			if ((currentMetadata != null)
+					&& (currentMetadata.versionId < newMetadata.versionId)
+					&& dataToRebroadcastOverIP.containsKey(currentMetadata.getSignature())) {
+				dataToRebroadcastOverIP.remove(currentMetadata.getSignature());
+				Log.d(String.format(
+						"IP: Rebroadcast aborted (%d) at %s, data %s, because of %s",
 						timeProvider.getCurrentTime(), host,
 						currentMetadata.getSignature(),
 						newMetadata.getSignature()));
@@ -257,9 +302,7 @@ KnowledgeDataPublisher {
 						timeProvider.getCurrentTime() - newMetadata.createdAt,
 						newMetadata.hopCount));
 			} 
-			
 		}
-		
 	}
 	
 	void queueForRebroadcast(KnowledgeData kd) {
@@ -285,10 +328,13 @@ KnowledgeDataPublisher {
 				kmd.versionId, kmd.sender,
 				kmd.rssi, delay));
 		
-		dataToRebroadcast.put(kmd.getSignature(), kd);
+		dataToRebroadcastOverMANET.put(kmd.getSignature(), kd);
+		dataToRebroadcastOverIP.put(kmd.getSignature(), kd);
 		
 		// schedule a task for rebroadcast
-		RebroadcastTask task = new RebroadcastTask(scheduler, this, delay, kmd);
+		RebroadcastTask task = new RebroadcastTask(scheduler, this, IP_DELAY, kmd, NICType.IP);
+		scheduler.addTask(task);
+		task = new RebroadcastTask(scheduler, this, delay, kmd, NICType.MANET);
 		scheduler.addTask(task);
 	}
 	
@@ -304,6 +350,14 @@ KnowledgeDataPublisher {
 			}
 		}
 		return isInSomeBoundary;
+	}
+	
+	private Collection<String> getRecipients(KnowledgeData data, KnowledgeManager sender) {
+		List<String> result = new LinkedList<>();
+		for (DirectRecipientSelector selector: recipientSelectors) {
+			result.addAll(selector.getRecipients(data, sender));
+		}
+		return result;
 	}
 	
 
@@ -325,13 +379,13 @@ KnowledgeDataPublisher {
 		// rssi < 0 means received from IP
 		if (metaData.rssi < 0) {
 			Log.d("Got data from IP. Gossip condition does not apply, rebroadcasting automatically.");
-			return 1;
+			return IP_DELAY;
 		}
 		
 		// the further further from the source (i.e. smaller rssi) the bigger
 		// probability to of rebroadcast (i.e., the smaller delay)
-		double rssi = Math.max(RSSI_MAX, metaData.rssi);
-		double ratio = RSSI_MAX/rssi;	
+		double rssi = Math.max(RSSI_MIN, metaData.rssi);
+		double ratio = Math.abs(Math.log(rssi)/Math.log(RSSI_MIN));	
 		
 		int maxDelay = (int) ((1-ratio) * maxRebroadcastDelay);
 		
@@ -455,13 +509,21 @@ KnowledgeDataPublisher {
 	}
 	
 	private void logPublish(List<? extends KnowledgeData> data) {
+		logPublish(data, "");
+	}
+	
+	private void logPublish(List<? extends KnowledgeData> data, String recipient) {
 		StringBuilder sb = new StringBuilder();
 		for (KnowledgeData kd: data) {
 			sb.append(kd.getMetaData().componentId + "v" + kd.getMetaData().versionId);
 			sb.append(", ");			
 		}		
-		Log.d(String.format("Publish (%d) at %s, sending [%s]\n", 
-				timeProvider.getCurrentTime(), host, sb.toString()));
+		if (recipient != null && !recipient.isEmpty())
+			Log.d(String.format("Publish (%d) at %s, sending [%s] directly to %s\n", 
+				timeProvider.getCurrentTime(), host, sb.toString(), recipient));
+		else
+			Log.d(String.format("Publish (%d) at %s, sending [%s]\n", 
+					timeProvider.getCurrentTime(), host, sb.toString()));
 	}
 	
 	private void logReceive(List<? extends KnowledgeData> knowledgeData) {

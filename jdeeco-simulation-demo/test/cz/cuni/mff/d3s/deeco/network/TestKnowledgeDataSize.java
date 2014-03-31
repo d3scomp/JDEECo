@@ -44,7 +44,7 @@ public class TestKnowledgeDataSize {
 		processor = new AnnotationProcessor(factory);
 		model = factory.createRuntimeMetadata();
 		
-		processor.process(model, new Member("M1", "T1", new Position(1, 2)));
+		processor.process(model, new Member("M1", "T1", new Position(1, 2), false));
 		component = model.getComponentInstances().get(0); 
 		
 		KnowledgePath empty = factory.createKnowledgePath();
@@ -57,7 +57,7 @@ public class TestKnowledgeDataSize {
 	@Test
 	public void testMemberKnowledgeDataSize() throws IOException, ClassNotFoundException, KnowledgeUpdateException, KnowledgeNotFoundException {
 		List<EnsembleDefinition> ens = Collections.emptyList();
-		KnowledgeDataManager kdManager = new KnowledgeDataManager(null, null, null, "", mock(Scheduler.class));
+		KnowledgeDataManager kdManager = new KnowledgeDataManager(null, null, null, "", mock(Scheduler.class), null, null);
 		
 		
 		KnowledgeData kd = kdManager.prepareLocalKnowledgeData(component.getKnowledgeManager());

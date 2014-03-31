@@ -15,99 +15,154 @@
 
 package manet;
 
-import org.mixim.modules.nic.Nic802154_TI_CC2420;
+import inet.nodes.inet.WirelessHost;
 import org.mixim.modules.power.battery.BatteryStats;
 import org.mixim.modules.power.battery.SimpleBattery;
-import org.mixim.modules.nic.IWirelessNicUpperCtrl;
-import org.mixim.base.modules.IBaseArp;
-import org.mixim.base.modules.IBaseApplLayer;
-import org.mixim.base.modules.IBaseNetwLayer;
-import inet.linklayer.INic;
+import inet.applications.IPingApp;
+import inet.applications.ISCTPApp;
+import inet.applications.ITCPApp;
+import inet.applications.IUDPApp;
+import inet.transport.ISCTP;
+import inet.transport.ITCP;
+import inet.transport.IUDP;
+import inet.util.PcapRecorder;
+import inet.networklayer.ipv4.RoutingTable;
+import inet.networklayer.common.InterfaceTable;
+import inet.mobility.IMobility;
+import inet.linklayer.IWirelessNic;
+import inet.linklayer.IWiredNic;
+import inet.linklayer.IExternalNic;
+import inet.base.NotificationBoard;
+import inet.nodes.inet.NetworkLayer;
+import inet.transport.udp.UDP;
+
+// This host is an example on how a host with INET network stack
+// can be equipped with mobility- and wireless-modules from MiXiM. 
+//
+// It contains an INET network stack and a MiXiM 802.15.4 NIC (TI_CC2420)
+// as well as a battery module from MiXiM which is used by the NIC.
+//
+// This host's NIC is able to operate in a multi-ConnectionManager
+// network, i.e. more than one physical network in parallel (non-interfering).
+// TODO: factor out battery into INET
 
 module Node
 {
-    parameters:
-        string transportType = default("");    //type of the transport layer
-        string networkType = default("BaseNetwLayer");       //type of the network layer
-        string arpType = default("BaseArp");                 //type of address resolution module
-        string mobilityType = default("StationaryMobility"); //type of the mobility module
-        string manetNicType = default("");
-        string ipNicType = default("");
 
-        @display("bgb=158,152,white;i=device/palm;b=40,40,rect");
-        @node();
-
+     parameters:
+        @display("i=device/pc2");
+        @node;
+        @labels(node,ethernet-node,wireless-node);
+        
+        //IP protoctol
+        bool IPForward = default(false);  // disable routing by default
+        string routingFile = default("");
+        bool forwardMulticast = default(false);
+        bool useEthernet = default(false);
+        
+        //NIC
+        string nic802154Type = default("");
+        string nic80211Type = default("");
+        
+        string mobilityType = default(numRadios > 0 ? "StationaryMobility" : "");
+        
+    gates:
+     	input radio80211In @directIn;
+     	input radio802154In @directIn;
+        inout ethg @labels(EtherFrame-conn);
+        inout direct[];
     submodules:
+
+        //Application
         appl: JDEECoApplication {
             parameters:
                 @display("p=70,30;i=app");
         }
-
-        arp: <arpType> like IBaseArp {
-            @display("p=140,100;i=block/network2");
-        }
-        manetNic: <manetNicType> like IWirelessNicUpperCtrl if manetNicType != "" {
+        
+        udp: UDP if nic80211Type != "" || useEthernet {
             parameters:
-                @display("p=70,380;i=block/wrxtx,#008000");
+                @display("p=329,141");
         }
-        ipNic: <ipNicType> like IWirelessNicUpperCtrl if ipNicType != "" {
+        
+        // optional mobility module. Required only if wireless cards are present
+        mobility: <mobilityType> like IMobility if mobilityType != "" {
             parameters:
-                @display("p=70,440;i=block/wrxtx,#008000");
+                @display("p=53,111");
         }
-        // OSI network layer
-        netwl: <networkType> like IBaseNetwLayer {
+        
+        //Network layer
+        networkLayer: NetworkLayer if nic80211Type != "" || useEthernet {
             parameters:
-                @display("p=70,310;i=block/layer");
+                proxyARP = true;
+                @display("p=329,287;q=queue");
         }
-        // OSI transport layer if defined
-        tranl: <transportType> like IBaseNetwLayer if transportType != "" {
+        
+        routingTable: RoutingTable {
             parameters:
-                @display("p=70,240;i=block/layer");
+                @display("p=53,225;is=s");
+                IPForward = IPForward;
+                forwardMulticast = forwardMulticast;
+                routingFile = routingFile;
         }
+        
+        //linklayer
+        interfaceTable: InterfaceTable {
+            parameters:
+                @display("p=53,287;is=s");
+        } 
+            
+        //NIC
+        nic80211: <nic80211Type> like IWirelessNic if nic80211Type != "" {
+            parameters:
+                @display("p=132,406,row,60;q=queue");
+        }
+        nic802154: <nic802154Type> like IWirelessNic if nic802154Type != "" {
+            parameters:
+                @display("p=132,406,row,60;q=queue");
+        }
+        
+        eth: <default("EthernetInterface")> like IWiredNic if useEthernet {
+            parameters:
+                @display("p=368,406,row,60;q=txQueue");
+        }
+        
+        //Battery
         batteryStats: BatteryStats {
-            @display("p=140,240;i=block/table,#FF8040");
+            @display("p=60,106;i=block/circle");
         }
         battery: SimpleBattery {
-            @display("p=116,36;i=block/plug,#FF8000");
+            @display("p=60,176;i=block/control");
         }
-        mobility: <mobilityType> like inet.mobility.IMobility {
+                notificationBoard: NotificationBoard {
             parameters:
-                @display("p=140,30;i=block/cogwheel");
+                @display("p=53,155;is=s");
         }
+        
     connections allowunconnected:
-
+ 
         //# Connect IP branch
-        if (ipNicType != "") {
-            ipNic.upperLayerOut --> netwl.lowerLayerIn;
-            ipNic.upperLayerIn <-- netwl.lowerLayerOut;
-            ipNic.upperControlOut --> { @display("ls=red;m=m,70,0,70,0"); } --> netwl.lowerControlIn;
-            ipNic.upperControlIn <-- { @display("ls=red;m=m,70,0,70,0"); } <-- netwl.lowerControlOut;
+        if (useEthernet) {
+            ethg <--> { @display("m=s"); } <--> eth.phys;
+            eth.upperLayerOut --> networkLayer.ifIn++;
+            eth.upperLayerIn <-- networkLayer.ifOut++;
+        }
+        if (!useEthernet && nic80211Type != "") {
+            nic80211.upperLayerOut --> networkLayer.ifIn++;
+            nic80211.upperLayerIn <-- networkLayer.ifOut++;
+        }
+        
+        if (nic80211Type != "" || useEthernet) {
+            udp.ipOut --> networkLayer.udpIn;
+        	udp.ipIn <-- networkLayer.udpOut;
+            udp.appOut++ --> appl.lowerLayerIn;
+            udp.appIn++ <-- appl.lowerLayerOut;
         }
 
-        if (ipNicType != "" && transportType != "") {
-            //# transport layer exists, so we can connect netwl <--> tranl
-            netwl.upperLayerOut --> tranl.lowerLayerIn;
-            netwl.upperLayerIn <-- tranl.lowerLayerOut;
-            netwl.upperControlOut --> tranl.lowerControlIn;
-            netwl.upperControlIn <-- tranl.lowerControlOut;
-
-            tranl.upperLayerOut --> appl.lowerIPLayerIn;
-            tranl.upperLayerIn <-- appl.lowerIPLayerOut;
-            tranl.upperControlOut --> { @display("ls=red;m=m,70,0,70,0"); } --> appl.lowerIPControlIn;
-            tranl.upperControlIn <-- { @display("ls=red;m=m,70,0,70,0"); } <-- appl.lowerIPControlOut;
-        }
-        if (ipNicType != "" && transportType == "") {
-            netwl.upperLayerOut --> appl.lowerIPLayerIn;
-            netwl.upperLayerIn <-- appl.lowerIPLayerOut;
-            netwl.upperControlOut --> { @display("ls=red;m=m,70,0,70,0"); } --> appl.lowerIPControlIn;
-            netwl.upperControlIn <-- { @display("ls=red;m=m,70,0,70,0"); } <-- appl.lowerIPControlOut;
-        }
         //# Connect MANET branch
 
-        if (manetNicType != "") {
-            manetNic.upperLayerOut --> appl.lowerMANETLayerIn;
-            manetNic.upperLayerIn <-- appl.lowerMANETLayerOut;
-            manetNic.upperControlOut --> appl.lowerMANETControlIn;
-            manetNic.upperControlIn <-- appl.lowerMANETControlOut;
+        if (nic802154Type != "") {
+            nic802154.upperLayerOut --> appl.lower802154LayerIn;
+            nic802154.upperLayerIn <-- appl.lower802154LayerOut;
         }
 }
+

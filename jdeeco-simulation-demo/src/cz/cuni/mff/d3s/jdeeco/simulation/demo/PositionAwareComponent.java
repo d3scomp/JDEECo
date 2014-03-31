@@ -11,12 +11,14 @@ import cz.cuni.mff.d3s.deeco.task.ProcessContext;
 public class PositionAwareComponent {
 	public String id;
 	public Position position;
+	public boolean hasIP;
 	
 	public static String HOST_REFERENCE = "simulation.host";
 
-	public PositionAwareComponent(String id, Position position) {
+	public PositionAwareComponent(String id, Position position, boolean hasIP) {
 		this.id = id;
 		this.position = position;
+		this.hasIP = hasIP;
 	}
 	
 

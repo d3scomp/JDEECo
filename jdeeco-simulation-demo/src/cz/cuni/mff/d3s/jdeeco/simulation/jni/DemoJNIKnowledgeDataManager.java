@@ -15,6 +15,7 @@ public class DemoJNIKnowledgeDataManager implements KnowledgeDataReceiver,
 
 	private final Host host;
 	private final List<KnowledgeData> toSend;
+	private String recipient = "";
 
 	public DemoJNIKnowledgeDataManager(Host host) {
 		this.host = host;
@@ -36,6 +37,10 @@ public class DemoJNIKnowledgeDataManager implements KnowledgeDataReceiver,
 					if (md.rebroadcastCount < 5) {
 						md.rebroadcastCount++;
 						toSend.add(new KnowledgeData(new ValueSet(), md));
+					} else if (host.getId().equals("0")){
+						recipient = "node[2]";
+						md.rebroadcastCount = 0;
+						toSend.add(new KnowledgeData(new ValueSet(), md));
 					}
 			}
 			if (!toSend.isEmpty())
@@ -46,11 +51,14 @@ public class DemoJNIKnowledgeDataManager implements KnowledgeDataReceiver,
 
 	@Override
 	public void at(long time) {
-		System.out.print("Node " + host.getId() + " is broadcasting data.");
+		System.out.print("Node " + host.getId() + " is broadcasting data." + recipient);
 		for (KnowledgeData kd : toSend) {
 			System.out.println(" Rebroadcast Counter: " + ((DemoKnowledgeMetaData) kd.getMetaData()).rebroadcastCount);
 		}
-		host.sendData(toSend);
+		if (recipient.equals(""))
+			host.sendData(toSend, "");
+		else
+			host.sendData(toSend, recipient);
 		toSend.clear();
 		System.out.println("Node " + host.getId() + " is located at: (" + host.getPositionX() + ", " + host.getPositionY() + ")");
 	}

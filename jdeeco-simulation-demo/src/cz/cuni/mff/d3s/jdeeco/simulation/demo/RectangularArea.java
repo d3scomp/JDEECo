@@ -21,4 +21,15 @@ public class RectangularArea extends Area {
 		return pos.x >= (x-TOLERANCE) && pos.x <= (x+width+TOLERANCE) && pos.y >= (y-TOLERANCE) && pos.y <= (y+height+TOLERANCE);
 	}
 
+	@Override
+	public double getCenterX() {
+		return x + (width / 2.0);
+	}
+
+	@Override
+	public double getCenterY() {
+		// TODO Auto-generated method stub
+		return y + (height / 2.0);
+	}
+
 }

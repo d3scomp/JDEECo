@@ -84,7 +84,9 @@ public class SimulationScheduler implements Scheduler,
 			
 			// for experiments, publisher task has a random start offset up to its period
 			if (event.periodic) {
-				 task.getTimeTrigger().setOffset(rnd.nextInt((int) (task.getTimeTrigger().getPeriod() + 1)));
+				int offset = rnd.nextInt((int) (task.getTimeTrigger().getPeriod() + 1));
+				task.getTimeTrigger().setOffset(offset);
+				Log.d(String.format("Scheduler init: Periodic task %s offset %d",task.getClass().toString(), offset));
 			}
 				
 			scheduleAfter(event, task.getTimeTrigger().getOffset());

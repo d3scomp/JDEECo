@@ -27,7 +27,7 @@ import cz.cuni.mff.d3s.deeco.annotations.Component;
 @Component 
 public class OtherComponent extends PositionAwareComponent {
 
-	public OtherComponent(String id, Position position) {
-		super(id, position);
+	public OtherComponent(String id, Position position, boolean hasIP) {
+		super(id, position, hasIP);
 	}
 }

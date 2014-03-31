@@ -53,8 +53,8 @@ public class Leader extends PositionAwareComponent {
 	public Float temperatureThreshold = 50.0f;
 	
 	
-	public Leader(String id, String team_id, Position position)  {
-		super(id, position);
+	public Leader(String id, String team_id, Position position, boolean hasIP)  {
+		super(id, position, hasIP);
 		this.teamId = team_id;
 		this.memberPositions = new HashMap<>();
 		this.memberAggregateData = new HashMap<>();
@@ -91,7 +91,7 @@ public class Leader extends PositionAwareComponent {
 			@TriggerOnChange @In("membersInDanger")  Set<String> membersInDanger) {
 		
 		StringBuilder sb = new StringBuilder();
-		sb.append(id + ": Firefighters in danger: ");
+		sb.append(String.format("(%d) %s: Firefighters in danger: ", ProcessContext.getTimeProvider().getCurrentTime(), id));
 		for (String ff: membersInDanger) {
 			sb.append(ff + ", ");
 		}

@@ -67,7 +67,6 @@
 								<option defaultValue="true" id="gnu.cpp.link.option.shared.385892315" name="Shared (-shared)" superClass="gnu.cpp.link.option.shared" valueType="boolean"/>
 								<option id="gnu.cpp.link.option.paths.1918967119" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="../."/>
-									<listOptionValue builtIn="false" value="&quot;D:\Programs\OMNeT++\bin&quot;"/>
 								</option>
 								<option id="gnu.cpp.link.option.libs.1292439920" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="oppenvir"/>
@@ -213,5 +212,12 @@
 		</scannerConfigBuildInfo>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
-	<storageModule moduleId="refreshScope"/>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Release">
+			<resource resourceType="PROJECT" workspacePath="/cz.cuni.mff.d3s.jdeeco.simulation.integration"/>
+		</configuration>
+		<configuration configurationName="Debug">
+			<resource resourceType="PROJECT" workspacePath="/cz.cuni.mff.d3s.jdeeco.simulation.integration"/>
+		</configuration>
+	</storageModule>
 </cproject>

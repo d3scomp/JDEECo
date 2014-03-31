@@ -74,7 +74,7 @@ public class PacketReceiver {
 	public void packetReceived(byte[] packet, double rssi) {
 		Message msg;
 		int messageId = getMessageId(packet);
-
+		Log.d(String.format("PacketReceiver: Packet received at %s with messageid %d with RSSI: %g", host, messageId, rssi));
 		if (messages.containsKey(messageId)) {
 			msg = messages.get(messageId);
 		} else {
@@ -92,7 +92,7 @@ public class PacketReceiver {
 		if (msg.isComplete() && knowledgeDataReceiver != null) {
 			//Log.i(String.format("R: " + "(" + messageId + ")"
 			//		+ Arrays.toString(msg.data)));
-			Log.d(String.format("PacketReceiver: Message completed at %s with messageid %d", host, messageId));
+			Log.d(String.format("PacketReceiver: Message completed at %s with messageid %d with RSSI: %g", host, messageId, msg.lastRSSI));
 			
 			messages.remove(messageId);
 			List<? extends KnowledgeData> kd = msg.getKnowledgeDataList();
@@ -100,6 +100,27 @@ public class PacketReceiver {
 				knowledgeDataReceiver.receive(kd);
 		}
 		clearCachedMessagesIfNecessary();
+	}
+	
+	public void clearCachedMessages() {
+		int origCnt = messages.size();
+
+		Set<Integer> droppedIds = new HashSet<>();
+		
+		Message message;
+		Iterator<Entry<Integer, Message>> it = messages.entrySet().iterator();
+		while (it.hasNext()) {
+			Entry<Integer, Message> entry = it.next();				
+			message = entry.getValue();
+			if (message != null) {
+				droppedIds.add(entry.getKey());
+				it.remove();					
+			}
+		}
+		lastMessagesWipe = timeProvider.getCurrentTime();
+		int currentCnt = messages.size();
+		Log.i(String.format("Message wipe at %s removed %d cached packets", host, origCnt - currentCnt));
+		Log.d(String.format("PacketReceiver: Message wipe %s dropped messageids %s", host, Arrays.deepToString(droppedIds.toArray())));
 	}
 
 	//TODO Possibly this should be scheduled as a task in the Scheduler.
@@ -189,7 +210,7 @@ public class PacketReceiver {
 							.format("Message %d received more data than expected (by %d bytes).",
 									messageId, -remainingBytes));
 				}
-				System.arraycopy(data, 0, this.data, seqNumber * packetSize, cnt);
+				System.arraycopy(data, 0, this.data, seqNumber * (packetSize-PacketSender.HEADER_SIZE), cnt);
 			} else {
 				cache.put(seqNumber, data);
 			}

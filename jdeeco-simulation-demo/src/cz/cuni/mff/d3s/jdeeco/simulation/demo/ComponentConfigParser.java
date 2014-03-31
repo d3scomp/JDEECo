@@ -24,24 +24,24 @@ class ComponentConfigParser {
 			return null;
 		
 		String[] parts = line.split(" ");
-		if (parts.length < 4)
+		if (parts.length < 5)
 			return null;
 		
 		
 		switch (parts[0]) {
 		case "M":
-			if (parts.length < 5)
+			if (parts.length < 6)
 				return null;
 			return new Member(parts[1], parts[2], 
-					new Position(Integer.parseInt(parts[3]), Integer.parseInt(parts[4])));
+					new Position(Integer.parseInt(parts[3]), Integer.parseInt(parts[4])), Boolean.parseBoolean(parts[5]));
 		case "L":
-			if (parts.length < 5)
+			if (parts.length < 6)
 				return null;
 			return new Leader(parts[1], parts[2], 
-					new Position(Integer.parseInt(parts[3]), Integer.parseInt(parts[4])));
+					new Position(Integer.parseInt(parts[3]), Integer.parseInt(parts[4])), Boolean.parseBoolean(parts[5]));
 		case "O":				
 			return new OtherComponent(parts[1], 
-					new Position(Integer.parseInt(parts[2]), Integer.parseInt(parts[3])));
+					new Position(Integer.parseInt(parts[2]), Integer.parseInt(parts[3])), Boolean.parseBoolean(parts[4]));
 		default:
 			return null;
 		}			

@@ -284,6 +284,7 @@ JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_Simulation_nativeS
 			for (int i = 0; i < length; i++)
 				jPacket->setData(i, buffer[i]);
 			const char * cRecipient = env->GetStringUTFChars(recipient, 0);
+			EV << "OMNET++ ("<< simTime() <<") : " << (*it)->jDEECoGetModuleId() << " sending packet with ID = " << jPacket->getId() << endl;
 			(*it)->jDEECoSendPacket(jPacket, cRecipient);
 			env->ReleaseByteArrayElements(packet, buffer, JNI_ABORT);
 			env->ReleaseStringUTFChars(recipient, cRecipient);
@@ -445,6 +446,7 @@ DLLEXPORT_OR_IMPORT void jDEECoModule::jDEECoOnHandleMessage(cMessage *msg, doub
 			}
 		} else if (opp_strcmp(msg->getName(), JDEECO_DATA_MESSAGE) == 0) {
 			//std::cout << "jDEECoOnHandleMessage: " << this->jDEECoGetModuleId() << " Before getting the \"packetRecived\" method reference" << std::endl;
+			EV << "OMNET++ ("<< simTime() <<") : " << jDEECoGetModuleId() << " received packet with ID = " << msg->getId() << endl;
 			mid = env->GetMethodID(cls, "packetReceived", "([BD)V");
 			if (mid == 0)
 				return;

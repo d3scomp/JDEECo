@@ -4,3 +4,8 @@
 /logs
 /omnetpp.ini
 /c-log.txt
+**/*.log
+/simulation-results/*
+/target/*
+/bin/*
+**/*.pyc
