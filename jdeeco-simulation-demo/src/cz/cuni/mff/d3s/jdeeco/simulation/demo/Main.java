@@ -130,8 +130,11 @@ public class Main {
 			
 			// there is only one component instance
 			model.getComponentInstances().get(0).getInternalData().put(PositionAwareComponent.HOST_REFERENCE, host);
-			
-			RuntimeFramework runtime = builder.build(host, model, Arrays.asList((DirectRecipientSelector) directRecipientSelector), directGossipStrategy); 
+			Collection<DirectRecipientSelector> recipientSelectors = null;
+			if (component.hasIP) {
+				recipientSelectors = Arrays.asList((DirectRecipientSelector) directRecipientSelector);
+			}
+			RuntimeFramework runtime = builder.build(host, model, recipientSelectors, directGossipStrategy); 
 			runtimes.add(runtime);
 			runtime.start();
 			i++;
