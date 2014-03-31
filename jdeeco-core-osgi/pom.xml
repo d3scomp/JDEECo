@@ -118,18 +118,7 @@
         <dependencies>
                 <!-- dependency> <groupId>org.testng</groupId> <artifactId>testng</artifactId> 
                         <version>6.5.1</version> </dependency -->
-                <dependency>
-                        <groupId>cz.cuni.mff.d3s</groupId>
-                        <artifactId>cz.cuni.mff.d3s.bcel</artifactId>
-                        <version>1.0.0</version>
-                        <scope>provided</scope>
-                </dependency>
-                <dependency>
-                        <groupId>cz.cuni.mff.d3s</groupId>
-                        <artifactId>cz.cuni.mff.d3s.jini</artifactId>
-                        <version>1.0.0</version>
-                        <scope>provided</scope>
-                </dependency>
+              
 				<dependency>
 					<groupId>org.eclipse.emf</groupId>
 					<artifactId>org.eclipse.emf.ecore</artifactId>
