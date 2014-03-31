@@ -3,8 +3,6 @@
  */
 package cz.cuni.mff.d3s.deeco.network;
 
-import java.util.Random;
-
 import cz.cuni.mff.d3s.deeco.DeecoProperties;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
@@ -26,46 +24,18 @@ public class PublisherTask extends Task {
 	public static final int DEFAULT_PUBLISHING_PERIOD = 1000;
 
 	private final KnowledgeDataPublisher publisher;
-	private final PublisherTrigger trigger;
+	private final TimeTrigger trigger;
 	
-	/**
-	 * Randomized periodic trigger for avoiding recurring collisions of
-	 * wireless network publishing.
-	 * 
-	 * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
-	 * 
-	 */
-	private static class PublisherTrigger extends TimeTriggerExt {
-		public static final double PERIOD_VARIABILITY = 0.01;
-
-		Random random;
-
-		public PublisherTrigger(long period, long seed) {
-			super();
-			setPeriod(period);
-			random = new Random(seed);
-
-			setOffset(0);
-			
-		}
-		
-		@Override
-		public long getPeriod() {			
-			// variability is randomized by at most +- PERIOD_VARIABILITY * getPeriod()
-			int variability = (int) (PERIOD_VARIABILITY*super.getPeriod());
-			return super.getPeriod() + random.nextInt(2*variability) - variability;
-		}		
-	}
 	
 	public PublisherTask(Scheduler scheduler, KnowledgeDataPublisher publisher, String host) {
 		this(scheduler, publisher, Integer.getInteger(DeecoProperties.PUBLISHING_PERIOD, DEFAULT_PUBLISHING_PERIOD), host);
 	}
 	public PublisherTask(Scheduler scheduler, KnowledgeDataPublisher publisher, long period, String host) {
 		super(scheduler);		
-		long seed = 0;
-		for (char c: host.toCharArray())
-			seed += c;
-		this.trigger = new PublisherTrigger(period, seed);
+
+		this.trigger = new TimeTriggerExt();
+		this.trigger.setOffset(0);
+		this.trigger.setPeriod(period);
 		this.publisher = publisher;
 		
 		Log.i(String.format("PublisherTask at %s uses publishing period %d", host, period));
