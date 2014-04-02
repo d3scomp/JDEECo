@@ -2,7 +2,6 @@ from base import *
 from optparse import OptionParser
 from matplotlib.pyplot import close
 
-
 import random
 
 class AreaConfiguration:
@@ -20,6 +19,113 @@ class AreaConfiguration:
         self.numOthers = numOthers
         self.prefix = prefix
         self.ipCount = ipCount
+
+def generateNonArealTeams(teams, sizeX, sizeY, scale, excludeRectangularAreas, numLeaders, numMember, numOthers, prefix, ipCount, idCounter, area): 
+    leaders = []
+    members = []
+    others = []
+    for t in teams:
+        for i in range(numLeaders[t]):
+            point = generatePositionBetweenSpots(sizeX, sizeY, excludeRectangularAreas)
+            leaders.append(Leader(t, point[0]*scale, point[1]*scale))
+        for i in range(numMember[t]):
+            point = generatePositionBetweenSpots(sizeX, sizeY, excludeRectangularAreas)
+            members.append(Member(t, point[0]*scale, point[1]*scale))
+    for i in range(numOthers):
+        point = generatePositionBetweenSpots(sizeX, sizeY, excludeRectangularAreas)
+        others.append(Other(point[0]*scale, point[1]*scale))
+            
+    if ipCount < len(leaders + members):
+        for c in random.sample(leaders + members, ipCount):
+            c.ip = True
+        
+    for c in leaders:
+        c.plot(area, 'L'+str(leaders.index(c) + idCounter))
+        
+    for c in members:
+        c.plot(area, 'M'+str(members.index(c) + idCounter))
+        
+    for c in others:
+        c.plot(area, 'O'+str(others.index(c) + idCounter))
+       
+    f = open(prefix + 'component.cfg', 'a') 
+    
+    for idx in range(size(leaders)):
+        print>>f, leaders[idx].toString(idx + idCounter)
+    for idx in range(size(members)):
+        print>>f, members[idx].toString(idx + idCounter)
+    for idx in range(size(others)):
+        print>>f, others[idx].toString(idx + idCounter)
+    f.close()
+        
+def generatePositionBetweenSpots(sizeX, sizeY, spots):
+    x = random.random()*sizeX
+    y = random.random()*sizeY
+    if random.random() < 0.5:
+        gaps = generateHorizontalSpots(spots)
+        for gap in gaps:
+            if x >= gap[0] and x <= gap[1]:
+                x = getRandomCoordBetweenSpots(gaps, sizeX)
+                break
+    else:
+        gaps = generateVerticalSpots(spots)
+        for gap in gaps:
+            if y >= gap[0] and y <= gap[1]:
+                y = getRandomCoordBetweenSpots(gaps, sizeY)
+                break
+    return [x, y]
+    
+    
+def getRandomCoordBetweenSpots(spots, size):
+    index = randint(0, len(spots))
+    flat = [y for x in spots for y in x]
+    flat.sort()
+    if index == 0:
+        coord = randint(0, flat[0])
+    elif index == len(spots):
+        coord = randint(flat[index*2], size)
+    else:
+        coord = randint(flat[index*2-1], flat[index*2])
+    return coord
+        
+def generateHorizontalSpots(excludeRectangularAreas):    
+    horizontalSpots = []
+    for rect in excludeRectangularAreas:
+        spot = [rect[0], rect[0] + rect[2]]
+        for hSpot in horizontalSpots:
+            if spot[0] >= hSpot[0] and spot[1] <= hSpot[1]:
+                horizontalSpots.remove(hSpot)
+                spot = hSpot
+            elif spot[0] <= hSpot[0] and spot[1] >= hSpot[1]:
+                horizontalSpots.remove(hSpot)
+            elif spot[1] >= hSpot[0] and spot[1] <= hSpot[1]:
+                spot = [spot[0], hSpot[1]]
+                horizontalSpots.remove(hSpot)
+            elif spot[0] >= hSpot[0] and spot[0] <= hSpot[1]:
+                spot = [hSpot[0], spot[1]]
+                horizontalSpots.remove(hSpot)
+        horizontalSpots.append(spot)
+    return horizontalSpots
+
+def generateVerticalSpots(excludeRectangularAreas):    
+    verticalSpots = []
+    for rect in excludeRectangularAreas:
+        spot = [rect[1], rect[1] + rect[3]]
+        for vSpot in verticalSpots:
+            if spot[0] >= vSpot[0] and spot[1] <= vSpot[1]:
+                verticalSpots.remove(vSpot)
+                spot = vSpot
+            elif spot[0] <= vSpot[0] and spot[1] >= vSpot[1]:
+                verticalSpots.remove(vSpot)
+            elif spot[1] >= vSpot[0] and spot[1] <= vSpot[1]:
+                spot = [spot[0], vSpot[1]]
+                verticalSpots.remove(vSpot)
+            elif spot[0] >= vSpot[0] and spot[0] <= vSpot[1]:
+                spot = [vSpot[0], spot[1]]
+                verticalSpots.remove(vSpot)
+        verticalSpots.append(spot)
+    return verticalSpots
+         
 
 def generateConfig(numLeaders, numMembers, numOthers, prefix, ipCount=0):
     f = open(prefix + 'site.cfg', 'w') 

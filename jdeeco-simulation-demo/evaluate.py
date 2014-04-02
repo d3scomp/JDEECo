@@ -1,6 +1,7 @@
 import os, sys
 from generator.simple import generateConfig
 from generator.complex import generateComplexRandomConfig
+from generator.complex import generateComplexRandomConfigWithOutsiders
 from analysis.analyze_demo import *
 from analysis.analyze_log import *
 from analysis.analyze_neighbors import *
@@ -145,17 +146,31 @@ def generate():
             elif it.generator == 'complex':
                 IP_FACTOR = 0.5
                 ipNodes = max(1, int(ceil(it.nodeCnt*IP_FACTOR)))
-                p = Process(target=generateComplexRandomConfig,
+#                 p = Process(target=generateComplexRandomConfig,
+#                             args=(
+#                                             100, #area size 
+#                                             120, #external area size 
+#                                             10, #scale
+#                                             [[0, 1], [0, 2]], # distribution of teams
+#                                             [[1, 1, 0], [1, 0, 1]], # distribution of leaders 
+#                                             [[it.nodeCnt-1,it.nodeCnt-1,0],[it.nodeCnt-1,0,it.nodeCnt-1]], #distribution of members 
+#                                             [it.othersCnt, it.othersCnt], # distribution of others 
+#                                             it.baseCfgPath(), 
+#                                             [ipNodes, ipNodes], # distribution of IP-enabled nodes
+#                                             ))
+
+                p = Process(target=generateComplexRandomConfigWithOutsiders,
                             args=(
                                             100, #area size 
-                                            120, #external area size 
+                                            0, #external area size 
                                             10, #scale
                                             [[0, 1], [0, 2]], # distribution of teams
-                                            [[1, 1, 0], [1, 0, 1]], # distribution of leaders 
-                                            [[it.nodeCnt-1,it.nodeCnt-1,0],[it.nodeCnt-1,0,it.nodeCnt-1]], #distribution of members 
-                                            [it.othersCnt, it.othersCnt], # distribution of others 
+                                            [3], # outside teams
+                                            [[1, 1, 0, 0], [1, 0, 1, 0], [0, 0, 0, 1]], # distribution of leaders 
+                                            [[it.nodeCnt-1,it.nodeCnt-1,0, 0],[it.nodeCnt-1,0,it.nodeCnt-1, 0], [0, 0, 0, it.nodeCnt-1]], #distribution of members 
+                                            [0, 0, 0], # distribution of others 
                                             it.baseCfgPath(), 
-                                            [ipNodes, ipNodes], # distribution of IP-enabled nodes
+                                            [ipNodes, ipNodes, ipNodes], # distribution of IP-enabled nodes
                                             ))
             else:
                 raise Error('Unsupported generator: ' + it.generator)
@@ -602,12 +617,12 @@ if __name__ == '__main__':
     duplicateScenariosForBoundary()   
 
     
-    try:
-        generate()
-        simulate()    
-        analyze()
-    except Exception:
-        print 'Step error'
+    #try:
+    generate()
+        #simulate()    
+        #analyze()
+    #except Exception:
+    #    print 'Step error'
         
-    plot('complex')
+    #plot('complex')
 
