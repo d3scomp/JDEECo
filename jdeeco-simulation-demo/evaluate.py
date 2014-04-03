@@ -51,7 +51,9 @@ class ScenarioIteration:
         self.margin = margin
         self.density = density
         self.iteration = iteration
-        self.boundaryEnabled = boundaryEnabled  
+        self.boundaryEnabled = boundaryEnabled
+        self.insideNodes = 0
+        self.totalNodes = 0  
         self.stdOut = None
         self.simulation = None
         self.demoAnalysis = None
@@ -97,12 +99,18 @@ scenariosWithoutBoundary = []
 # generic part
 ######################################################################
 generators = []
+generatorQueues = {}
+generator2Iteration = {}
 def finalizeOldestGenerator():
     if len(generators) == 0:
         return
     g = generators[0]
     g.join()
+    
+    generator2Iteration[g].totalNodes = generatorQueues[g].get()
     generators.pop(0)
+    generator2Iteration.pop(g)
+    generatorQueues.pop(g)
     
 def generate():
     generated = {}
@@ -129,10 +137,20 @@ def generate():
                 
             
             IP_FACTOR = 0.2
+            DENSITY = 1
+            BUILDING_SIZE = 5
+            RADIO_DISTANCE = 25
+            q = Queue()
             p = Process(target=generate2AreasPlayground, 
-                        args=([2,2,0], 1, 20, 5, 5, s.margin, 10, it.baseCfgPath(), [IP_FACTOR, IP_FACTOR, IP_FACTOR]))
+                        args=(DENSITY, 20, BUILDING_SIZE, BUILDING_SIZE, s.margin, RADIO_DISTANCE, 
+                              [2,2,0], [IP_FACTOR, IP_FACTOR, IP_FACTOR], it.baseCfgPath(), q))
+            it.insideNodes = BUILDING_SIZE * BUILDING_SIZE * DENSITY
+             
             generated[s.margin][it.iteration] = it
             generators.append(p)
+            generatorQueues[p] = q
+            generator2Iteration[p] = it
+           
             p.start()
     while len(generators) > 0:
         finalizeOldestGenerator()
@@ -559,20 +577,20 @@ if __name__ == '__main__':
     scenariosWithoutBoundary = []
         
     evaluations = {}    
-    for i in range(2,5): 
-        evaluations[i] = 1*cpus
+    for i in range(2,3): 
+        evaluations[i] = 1#*cpus
     # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
     for margin in evaluations.keys():    
         scenarios.append(Scenario(margin, 1, evaluations[margin], False))
     duplicateScenariosForBoundary()   
 
     
-    #try:
-    generate()
-        #simulate()    
-        #analyze()
-    #except Exception:
-    #    print 'Step error'
+    try:
+        generate()
+        simulate()    
+        analyze()
+    except Exception:
+        print 'Step error'
         
-    #plot('complex')
+    plot('complex')
 

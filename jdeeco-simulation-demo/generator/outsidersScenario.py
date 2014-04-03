@@ -13,15 +13,17 @@ def memberToLeader(member):
     leader.ip = member.ip
     return leader
 
-def generate2AreasPlayground(leadersDistribution, density, cellSize,  areaSizeX, areaSizeY, margin, scale, prefix, ipCount):
+def generate2AreasPlayground(density, cellSize,  areaSizeX, areaSizeY, margin, radioDistance, leadersDistribution, ipCount, prefix, outQueue):
+    scale = 250 / radioDistance # scale the scenario to match the required radio distance
+    
     totalCellCountX = 3*margin + 2*areaSizeX  
     totalCellCountY = 2*margin + areaSizeY
-    sizeX = cellSize*totalCellCountX
-    sizeY = cellSize*totalCellCountY
+    sizeX = scale*cellSize*totalCellCountX
+    sizeY = scale*cellSize*totalCellCountY
     fig = figure()
     plot = fig.add_subplot(111, aspect='equal')
-    plot.set_xlim(0, sizeX*scale)
-    plot.set_ylim(0, sizeY*scale)
+    plot.set_xlim(0, sizeX)
+    plot.set_ylim(0, sizeY)
     
     totalDensity = density // 1
     totalDensity = int(totalDensity)
@@ -81,10 +83,10 @@ def generate2AreasPlayground(leadersDistribution, density, cellSize,  areaSizeX,
     #Distribute leaders
     
     for i in range(3):
-        l[i] = random.sample(m[i], leadersDistribution[0])
-        for lii in range(len(l[i])):
-            l[i].append(memberToLeader(l[i][lii]))    
-            l[i].remove(l[i][lii])
+        leaders = random.sample(m[i], leadersDistribution[i])
+        for c in leaders:
+            l[i].append(memberToLeader(c))    
+            m[i].remove(c)
     
     cCount = 0
     
@@ -125,7 +127,7 @@ def generate2AreasPlayground(leadersDistribution, density, cellSize,  areaSizeX,
         show()
     close()
     
-    print cCount
+    outQueue.put(cCount)
     
     return cCount
     
