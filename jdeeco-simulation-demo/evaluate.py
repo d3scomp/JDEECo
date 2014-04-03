@@ -1,7 +1,5 @@
 import os, sys
-from generator.simple import generateConfig
-from generator.complex import generateComplexRandomConfig
-from generator.complex import generateComplexRandomConfigWithOutsiders
+from generator.outsidersScenario import generate2AreasPlayground
 from analysis.analyze_demo import *
 from analysis.analyze_log import *
 from analysis.analyze_neighbors import *
@@ -20,46 +18,40 @@ from pylab import plot, show, savefig, xlim, figure, \
                 hold, ylim, legend, boxplot, setp, axes
 from collections import namedtuple
 
-
 root = os.path.dirname(os.path.realpath(__file__))
 cpus = 3
 
 class Scenario():
-    def __init__(self, nodeCnt, othersCnt, iterationCnt, boundaryEnabled, generator, start = 0):
-        self.nodeCnt = nodeCnt
-        self.othersCnt = othersCnt
+    def __init__(self, margin, density, iterationCnt, boundaryEnabled, start = 0):
+        self.density = density
+        self.margin = margin
         self.iterationCnt = iterationCnt
         self.boundaryEnabled = boundaryEnabled
-        self.generator = generator
         self.iterations = []
         self.start = start
         for i in range(iterationCnt):
-            self.iterations.append(ScenarioIteration(self, nodeCnt, othersCnt, start + i, boundaryEnabled, generator)) 
+            self.iterations.append(ScenarioIteration(self, margin, density, start + i, boundaryEnabled)) 
     def folder(self):
-        return 'simulation-results\\%d-%s' % (self.nodeCnt, self.generator[0])
+        return 'simulation-results\\%d' % (self.margin)
     def folderPath(self):
-        return root + '\\simulation-results\\%d-%s' % (self.nodeCnt, self.generator[0])
+        return root + '\\simulation-results\\%d' % (self.margin)
     def genericResultsPath(self): 
-        return root + '\\simulation-results\\results-generic-%d-%s-%s.csv' % (self.nodeCnt, 't' if self.boundaryEnabled else 'f', self.generator[0])
+        return root + '\\simulation-results\\results-generic-%d-%s.csv' % (self.margin, 't' if self.boundaryEnabled else 'f')
     def demoResultsPath(self): 
-        return root + '\\simulation-results\\results-demo-%d-%s-%s.csv' % (self.nodeCnt, 't' if self.boundaryEnabled else 'f', self.generator[0])
+        return root + '\\simulation-results\\results-demo-%d-%s.csv' % (self.margin, 't' if self.boundaryEnabled else 'f')
     def neighborResultsPath(self): 
-        return root + '\\simulation-results\\results-neighbors-%d-%s-%s.csv' % (self.nodeCnt, 't' if self.boundaryEnabled else 'f', self.generator[0])
+        return root + '\\simulation-results\\results-neighbors-%d-%s.csv' % (self.margin, 't' if self.boundaryEnabled else 'f')
     def tickLabel(self):
-        if self.generator == 'simple':
-            return '%d/%d' % (self.nodeCnt, self.othersCnt)  
-        else:
-            return '%d/%d' % (4*self.nodeCnt, 2*self.othersCnt)
+        return '%d' % (self.margin)
        
     
 class ScenarioIteration:
-    def __init__(self, scenario, nodeCnt, othersCnt, iteration, boundaryEnabled, generator):
+    def __init__(self, scenario, margin, density, iteration, boundaryEnabled):
         self.scenario = scenario
-        self.nodeCnt = nodeCnt
-        self.othersCnt = othersCnt
+        self.margin = margin
+        self.density = density
         self.iteration = iteration
-        self.boundaryEnabled = boundaryEnabled
-        self.generator = generator    
+        self.boundaryEnabled = boundaryEnabled  
         self.stdOut = None
         self.simulation = None
         self.demoAnalysis = None
@@ -68,7 +60,7 @@ class ScenarioIteration:
     def folder(self):
         return self.scenario.folder()
     def prefix(self):
-        return '%d-%d-%s-%s-' % (self.nodeCnt, self.iteration, 't' if self.boundaryEnabled else 'f', self.generator[0])
+        return '%d-%d-%s-' % (self.margin, self.iteration, 't' if self.boundaryEnabled else 'f')
     def prefixPath(self):
         return root + '\\' + self.folder() + '\\' + self.prefix()
     def genericAnalysisStdoutPath(self):
@@ -86,7 +78,7 @@ class ScenarioIteration:
         return self.prefix() + 'logging.properties'
     def baseCfgPath(self):
         # config files are shared between boundary and non-boundary scenarios
-        return root + '\\' + self.folder() + '\\' + '%d-%d-%s-' % (self.nodeCnt, self.iteration, self.generator[0])
+        return root + '\\' + self.folder() + '\\' + '%d-%d-' % (self.margin, self.iteration)
     def componentCfgPath(self):
         return self.baseCfgPath() + 'component.cfg'
     def siteCfgPath(self):
@@ -97,15 +89,10 @@ class ScenarioIteration:
     def name(self):
         return self.prefix() + 'scenario'
 
-
-
 # main list of scenarios
 scenarios = []
 scenariosWithBoundary = []
 scenariosWithoutBoundary = []
-
-
-
 
 # generic part
 ######################################################################
@@ -125,56 +112,26 @@ def generate():
             os.makedirs(s.folderPath())
         except OSError as e:
             pass        
-        if s.nodeCnt not in generated:
-            generated[s.nodeCnt] = {}
+        if s.margin not in generated:
+            generated[s.margin] = {}
             
         for it in s.iterations:
             print 'Generating ', it.name()
             # reuse the same configuration if it was already generated for 
             # the scenario with same node cnt and iteration number 
             # (but different bundaryEnabled)
-            if it.iteration in generated[s.nodeCnt]:
-                print 'Reusing', generated[s.nodeCnt][it.iteration].name()
+            if it.iteration in generated[s.margin]:
+                print 'Reusing', generated[s.margin][it.iteration].name()
                 continue
             
             if len(generators) >= cpus:
                 finalizeOldestGenerator()
                 
-                
-            if it.generator == 'simple':
-                p = Process(target=generateConfig, args=(1, it.nodeCnt-1, it.othersCnt, it.baseCfgPath(), 0,))
-            elif it.generator == 'complex':
-                IP_FACTOR = 0.5
-                ipNodes = max(1, int(ceil(it.nodeCnt*IP_FACTOR)))
-#                 p = Process(target=generateComplexRandomConfig,
-#                             args=(
-#                                             100, #area size 
-#                                             120, #external area size 
-#                                             10, #scale
-#                                             [[0, 1], [0, 2]], # distribution of teams
-#                                             [[1, 1, 0], [1, 0, 1]], # distribution of leaders 
-#                                             [[it.nodeCnt-1,it.nodeCnt-1,0],[it.nodeCnt-1,0,it.nodeCnt-1]], #distribution of members 
-#                                             [it.othersCnt, it.othersCnt], # distribution of others 
-#                                             it.baseCfgPath(), 
-#                                             [ipNodes, ipNodes], # distribution of IP-enabled nodes
-#                                             ))
-
-                p = Process(target=generateComplexRandomConfigWithOutsiders,
-                            args=(
-                                            100, #area size 
-                                            0, #external area size 
-                                            10, #scale
-                                            [[0, 1], [0, 2]], # distribution of teams
-                                            [3], # outside teams
-                                            [[1, 1, 0, 0], [1, 0, 1, 0], [0, 0, 0, 1]], # distribution of leaders 
-                                            [[it.nodeCnt-1,it.nodeCnt-1,0, 0],[it.nodeCnt-1,0,it.nodeCnt-1, 0], [0, 0, 0, it.nodeCnt-1]], #distribution of members 
-                                            [0, 0, 0], # distribution of others 
-                                            it.baseCfgPath(), 
-                                            [ipNodes, ipNodes, ipNodes], # distribution of IP-enabled nodes
-                                            ))
-            else:
-                raise Error('Unsupported generator: ' + it.generator)
-            generated[s.nodeCnt][it.iteration] = it
+            
+            IP_FACTOR = 0.2
+            p = Process(target=generate2AreasPlayground, 
+                        args=([2,2,0], 1, 20, 5, 5, s.margin, 10, it.baseCfgPath(), [IP_FACTOR, IP_FACTOR, IP_FACTOR]))
+            generated[s.margin][it.iteration] = it
             generators.append(p)
             p.start()
     while len(generators) > 0:
@@ -269,8 +226,6 @@ def simulate():
 
 
 def analyzeScenario(iteration):    
-   
-    
     with open(iteration.genericAnalysisStdoutPath(), 'w') as genericStdout:
         oldStdOut = sys.stdout
         sys.stdout = genericStdout
@@ -439,7 +394,7 @@ def setBoxColors(pylab, bp, color):
 def plotBoundaryBoxplot(scenarios, valuesAttribute, split):    
     xGapWidth = 0
     xTicks = [0]
-    nodeCnts = []
+    margins = []
     if split:
         boundaryEnabledColor = color1
         boundaryDisabledColor = color2
@@ -447,8 +402,8 @@ def plotBoundaryBoxplot(scenarios, valuesAttribute, split):
         boundaryDisabledColor = color1
         boundaryEnabledColor = color2
     for s in scenarios:
-        nodeCnts.append(s.nodeCnt)
-    uniqueList = list(set(nodeCnts))
+        margins.append(s.margin)
+    uniqueList = list(set(margins))
     uniqueList.sort()
     xLabels = ['' for x in range(len(uniqueList))]
     for cnt in uniqueList:
@@ -466,12 +421,12 @@ def plotBoundaryBoxplot(scenarios, valuesAttribute, split):
                 positionOffset = width/1.5
             else:
                 positionOffset = -width/1.5
-        bp = pylab.boxplot(getattr(s, valuesAttribute), positions = [(xGapWidth*(uniqueList.index(s.nodeCnt) + 1))+positionOffset], widths = width) 
+        bp = pylab.boxplot(getattr(s, valuesAttribute), positions = [(xGapWidth*(uniqueList.index(s.margin) + 1))+positionOffset], widths = width) 
         if s.boundaryEnabled:
             color = boundaryEnabledColor #'#348ABD'
         else: 
             color = boundaryDisabledColor #'#E24A33'
-            xLabels[uniqueList.index(s.nodeCnt)] = s.tickLabel() #s.4*str(s.nodeCnt) + '/' + 2*str(s.othersCnt)
+            xLabels[uniqueList.index(s.margin)] = s.tickLabel()
         setBoxColors(pylab, bp, color)
         
     xTicks.append(xTicks[1] + xTicks[len(xTicks) - 1])
@@ -541,13 +496,9 @@ def plot(generator):
             s.neighbors = map(int, contents)        
 
     pylab.rc('axes', color_cycle=[color1, color2])
-    
-    if generator == 'simple':
-        scenairosToPlot = scenariosWithoutBoundary
-        split = False
-    else:        
-        scenairosToPlot = scenarios
-        split = True
+      
+    scenairosToPlot = scenarios
+    split = True
     
     plotResponseTimes(0, scenairosToPlot, split)
     plotMessageCounts(1, scenairosToPlot)
@@ -565,7 +516,7 @@ def plot(generator):
 def duplicateScenariosForBoundary():
     oldScenarios = scenarios[:]
     for s in oldScenarios:
-        s2 = Scenario(s.nodeCnt, s.othersCnt, s.iterationCnt, not s.boundaryEnabled, s.generator, s.start)
+        s2 = Scenario(s.margin, s.density, s.iterationCnt, not s.boundaryEnabled, s.start)
         scenarios.append(s2)
         if s.boundaryEnabled:
             scenariosWithBoundary.append(s)
@@ -573,10 +524,9 @@ def duplicateScenariosForBoundary():
         else:
             scenariosWithBoundary.append(s2)
             scenariosWithoutBoundary.append(s)
-    scenarios.sort(key=lambda x: x.nodeCnt)
-    scenariosWithBoundary.sort(key=lambda x: x.nodeCnt)
-    scenariosWithoutBoundary.sort(key=lambda x: x.nodeCnt)
-
+    scenarios.sort(key=lambda x: x.margin)
+    scenariosWithBoundary.sort(key=lambda x: x.margin)
+    scenariosWithoutBoundary.sort(key=lambda x: x.margin)
 def backupResults():
     from itertools import ifilter
     from fnmatch import fnmatch
@@ -609,11 +559,11 @@ if __name__ == '__main__':
     scenariosWithoutBoundary = []
         
     evaluations = {}    
-    for i in range(10,12,2): 
+    for i in range(2,5): 
         evaluations[i] = 1*cpus
     # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
-    for nodeCnt in evaluations.keys():    
-        scenarios.append(Scenario(nodeCnt, nodeCnt, evaluations[nodeCnt], False, 'complex'))
+    for margin in evaluations.keys():    
+        scenarios.append(Scenario(margin, 1, evaluations[margin], False))
     duplicateScenariosForBoundary()   
 
     

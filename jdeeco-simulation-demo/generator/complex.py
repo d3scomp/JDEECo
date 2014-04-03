@@ -11,6 +11,32 @@ def flatten(l):
         else:
             yield el
             
+
+def generate2AreasPlayground(density, cellSize,  areaSizeX, areaSizeY, margin, scale, prefix, ipCount):
+    sizeX = 2*cellSize*areaSizeX + 3*margin*cellSize
+    sizeY = cellSize*areaSizeY + 2*margin*cellSize
+    f = open(prefix + 'site.cfg', 'w') 
+    print>>f, sizeX, sizeY
+    f.close()
+    f = open(prefix + 'component.cfg', 'w') 
+    f.close()
+    fig = figure()
+    area = fig.add_subplot(111, aspect='equal')
+    area.set_xlim(0, sizeX*scale)
+    area.set_ylim(0, sizeY*scale)
+    
+    
+    
+    
+    
+    savefig(prefix + "cfg.png")
+    if __name__ == '__main__':
+        show()
+    close()
+    
+    
+
+            
 def generateComplexRandomConfigWithOutsiders(areaSize, extSize, scale, teamDistribution, outsideTeams, leadersDistribution, membersDistribution, othersDistribution, prefix, ipCount):
     f = open(prefix + 'site.cfg', 'w') 
     sizeX = areaSize*len(teamDistribution)*2
