@@ -18,7 +18,7 @@ class AreaConfiguration:
         self.numMembers = numMembers
         self.numOthers = numOthers
         self.prefix = prefix
-        self.ipCount = ipCount
+        self.ipCount = ipCount        
 
 def generateNonArealTeams(teams, sizeX, sizeY, scale, excludeRectangularAreas, numLeaders, numMember, numOthers, prefix, ipCount, idCounter, area): 
     leaders = []
@@ -189,7 +189,7 @@ def generateSimpleConfig(writeMode, areaId, posX, posY, areaSize, extSize, scale
         
     for cmp in others:
         cmp.plot(area, 'O'+str(others.index(cmp) + idCounter))
-       
+
     f = open(prefix + 'component.cfg', writeMode) 
     
     for idx in range(size(leaders)):
