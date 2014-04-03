@@ -29,6 +29,8 @@ class Scenario():
         self.boundaryEnabled = boundaryEnabled
         self.iterations = []
         self.start = start
+        self.insideNodes = 0
+        self.totalNodes = 0  
         for i in range(iterationCnt):
             self.iterations.append(ScenarioIteration(self, margin, density, start + i, boundaryEnabled)) 
     def folder(self):
@@ -42,7 +44,7 @@ class Scenario():
     def neighborResultsPath(self): 
         return root + '\\simulation-results\\results-neighbors-%d-%s.csv' % (self.margin, 't' if self.boundaryEnabled else 'f')
     def tickLabel(self):
-        return '%d' % (self.margin)
+        return '%d/%d\n(%d)' % (self.insideNodes, self.totalNodes, self.margin)
        
     
 class ScenarioIteration:
@@ -51,9 +53,7 @@ class ScenarioIteration:
         self.margin = margin
         self.density = density
         self.iteration = iteration
-        self.boundaryEnabled = boundaryEnabled
-        self.insideNodes = 0
-        self.totalNodes = 0  
+        self.boundaryEnabled = boundaryEnabled       
         self.stdOut = None
         self.simulation = None
         self.demoAnalysis = None
@@ -107,7 +107,7 @@ def finalizeOldestGenerator():
     g = generators[0]
     g.join()
     
-    generator2Iteration[g].totalNodes = generatorQueues[g].get()
+    generator2Iteration[g].scenario.totalNodes = generatorQueues[g].get()
     generators.pop(0)
     generator2Iteration.pop(g)
     generatorQueues.pop(g)
@@ -144,7 +144,7 @@ def generate():
             p = Process(target=generate2AreasPlayground, 
                         args=(DENSITY, 20, BUILDING_SIZE, BUILDING_SIZE, s.margin, RADIO_DISTANCE, 
                               [2,2,0], [IP_FACTOR, IP_FACTOR, IP_FACTOR], it.baseCfgPath(), q))
-            it.insideNodes = BUILDING_SIZE * BUILDING_SIZE * DENSITY
+            it.scenario.insideNodes = BUILDING_SIZE * BUILDING_SIZE * DENSITY
              
             generated[s.margin][it.iteration] = it
             generators.append(p)
@@ -363,7 +363,9 @@ def plotMessageCounts(fig, scenarios):
     axes = [fig.add_subplot(121), fig.add_subplot(122)]
     
 
-    yticks = range(0, 85000, 5000)
+    maxMessageCount = max([s.messageStats[0] for s in scenariosWithoutBoundary])
+    STEP = 20000
+    yticks = range(0, int(maxMessageCount - maxMessageCount % STEP + STEP + 1), STEP)
 
     xticksLabels = [s.tickLabel() for s in scenariosWithoutBoundary]
     
@@ -380,13 +382,13 @@ def plotMessageCounts(fig, scenarios):
     axes[0].set_title('without boundary')    
     axes[0].set_yticklabels([])
     axes[0].set_xticklabels(xticksLabels)
-    #axes[0].set_yticks(yticks)
+    axes[0].set_yticks(yticks)
     
     pylab.setp(axes[0].xaxis.get_majorticklabels(), rotation=0 )
     
     plt2 = df.loc[df['boundary'] == 'T'].plot(kind='bar', stacked=True, ax=axes[1], legend=False);
     axes[1].set_title('with boundary')
-    #axes[1].set_yticks(yticks)
+    axes[1].set_yticks(yticks)
     axes[1].set_yticklabels([])
     axes[1].set_xticklabels(xticksLabels)    
     pylab.setp(axes[1].xaxis.get_majorticklabels(), rotation=0 )    
@@ -431,7 +433,7 @@ def plotBoundaryBoxplot(scenarios, valuesAttribute, split):
     for cnt in uniqueList:
         xTicks.append(partialSum)
         partialSum += xGapWidth
-    width = xGapWidth / 5
+    width = xGapWidth / (len(scenarios)/2)
     for s in scenarios:
         positionOffset = 0
         if split:
@@ -454,8 +456,8 @@ def plotBoundaryBoxplot(scenarios, valuesAttribute, split):
     pylab.axes().set_xticklabels(xLabels)
     pylab.axes().yaxis.grid(True, linestyle=':', which='major', color='lightgrey',alpha=0.8)
     if split:
-        hB, = pylab.plot([1,1],boundaryEnabledColor) #'#348ABD')
-        hR, = pylab.plot([1,1],boundaryDisabledColor) #'#E24A33')
+        hB, = pylab.plot([0,0],boundaryEnabledColor) #'#348ABD')
+        hR, = pylab.plot([0,0],boundaryDisabledColor) #'#E24A33')
         pylab.legend((hB, hR),('Boundary Condition enabled', 'Boundary Condition disabled'), loc='upper left')
     
 def plotResponseTimes(fig, scenarios, splitBoundary):
@@ -484,7 +486,7 @@ def plotBoundaryHits(fig, scenarios, splitBoundary):
     pylab.axes().set_ylabel("boundary hits");
     pylab.axes().set_xlabel("total number of nodes [firefighters/others]");       
     
-def plot(generator):    
+def plot():    
     print 'Plotting...'
         
     pylab.hold(True)
@@ -577,7 +579,7 @@ if __name__ == '__main__':
     scenariosWithoutBoundary = []
         
     evaluations = {}    
-    for i in range(2,3): 
+    for i in range(1,3): 
         evaluations[i] = 1#*cpus
     # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
     for margin in evaluations.keys():    
@@ -585,12 +587,12 @@ if __name__ == '__main__':
     duplicateScenariosForBoundary()   
 
     
-    try:
-        generate()
-        simulate()    
-        analyze()
-    except Exception:
-        print 'Step error'
+#     try:
+#         generate()
+#         simulate()    
+#         analyze()
+#     except Exception:
+#         print 'Step error'
         
-    plot('complex')
+    plot()
 

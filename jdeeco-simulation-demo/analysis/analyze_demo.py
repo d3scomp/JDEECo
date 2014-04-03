@@ -182,7 +182,7 @@ class DemoAnalysis:
             else:
                 print description, 'N/A'
         
-        self.shouldDiscover = len(self.memberInDanger)
+        self.shouldDiscover = len(membersInDanger)
         self.reallyDiscovered = len(membersDiscovered)
         
         print '\nResults: \n-----------------------------'
@@ -195,7 +195,7 @@ class DemoAnalysis:
          
         print 'Ratio of leader discoveries: %d of %d (%f%%)' %(reallyDiscovered, shouldDiscover, reallyDiscovered*100.0/max(1, shouldDiscover))
         print 'Ratio of discoveries regardless the number of leaders: %d of %d (%f%%)' % \
-            (len(membersDiscovered), len(self.memberInDanger), len(membersDiscovered)*100.0/max(1, len(self.memberInDanger)))
+            (len(membersDiscovered), len(membersInDanger), len(membersDiscovered)*100.0/max(1, len(membersInDanger)))
                     
 if __name__ == '__main__':      
     logname = '../logs/jdeeco.log.0'
