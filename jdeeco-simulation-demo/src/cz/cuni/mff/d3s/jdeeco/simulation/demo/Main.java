@@ -110,15 +110,15 @@ public class Main {
 			processor.process(model, component, MemberDataAggregation.class); 
 						
 			omnetConfig.append(String.format(
-					"**.node[%s].mobility.initialX = %dm\n", 
-					i, (int) (component.position.x)));
+					"**.node[%s].mobility.initialX = %dm %n", 
+					i, (int) (component.position.x)));			
 			omnetConfig.append(String.format(
-					"**.node[%s].mobility.initialY = %dm\n", 
+					"**.node[%s].mobility.initialY = %dm %n", 
 					i, (int) (component.position.y)));
 			omnetConfig.append(String.format(
-					"**.node[%s].mobility.initialZ = 0m\n", i));
+					"**.node[%s].mobility.initialZ = 0m %n", i));
 			omnetConfig.append(String.format(
-					"**.node[%s].appl.id = \"%s\"\n\n", i, component.id));
+					"**.node[%s].appl.id = \"%s\" %n%n", i, component.id));
 			Host host = sim.getHost(component.id, "node["+i+"]");			
 			hosts.add(host);
 			
@@ -239,54 +239,4 @@ public class Main {
 		
 	}
 	
-//	private static StringBuilder generateNetworkConfig(Set<Area> areas, List<PositionAwareComponent> components, String networkConfig) throws IOException {
-//		assert areas.size() < 250;
-//		StringBuilder oConfig = new StringBuilder();
-//		PrintWriter out = new PrintWriter(Files.newOutputStream(Paths.get(networkConfig)));
-//		oConfig.append("\n");
-//		oConfig.append("**.numRouters = " + areas.size() + "\n\n");
-//		oConfig.append("\n");
-//		
-//		out.println("<config>");
-//		//Generate interfaces for each of the areas
-//		List<PositionAwareComponent> copyOfComponents = new LinkedList<>(components);
-//		Set<PositionAwareComponent> toDelete;
-//		int i = 0;
-//		//Configure interfaces and default routes
-//		for (Area area : areas) {
-//			//Assign addresses to the ethernet interfaces
-//			out.println("<interface hosts='router["+ i +"]' names='wlan0' address='192." + i + ".x.x' netmask='255.255.x.x'/>");
-//			out.println("<interface hosts='router[" + i + "]' names='eth0' address='193.1.x.x' netmask='255.255.x.x'/>");
-//			//Assign the default route to Wireless
-//			out.println("<route hosts='router["+ i +"]' destination='192." + i + ".0.0' netmask='255.255.0.0' interface='wlan0'/>");
-//			//Assign the default route to switch
-//			for (int j = 0; j < areas.size(); j++)
-//				if (j != i)
-//					out.println("<route hosts='router["+ i +"]' destination='192."+j+".0.0' netmask='255.255.0.0' gateway='router["+j+"]' interface='eth0'/>");
-//			toDelete = new HashSet<>();
-//			for (PositionAwareComponent c : copyOfComponents) {
-//				if (area.isInArea(c.position)) {
-//					System.out.println();
-//					toDelete.add(c);
-//					//Interface description
-//					out.println("<interface hosts='node["+ components.indexOf(c) +"]' names='nic80211' address='192." + i + ".x.x' netmask='255.255.x.x'/>");
-//					//Default route
-//					out.println("<route hosts='node[" + components.indexOf(c) + "]' destination='*' netmask='*' gateway='router[" + i + "]' interface='nic80211'/>");
-//				}
-//			}
-//			copyOfComponents.removeAll(toDelete);			
-//			oConfig.append("**.router["+i+"].mobility.initialX = " + area.getCenterX() + "m\n");
-//			oConfig.append("**.router["+i+"].mobility.initialY = " + area.getCenterY() + "m\n");
-//			oConfig.append("**.router["+i+"].mobility.initialZ = 0m\n");
-//			
-//			i++;
-//		}
-//		//Assign default network
-//		for (PositionAwareComponent c : copyOfComponents) {
-//			out.println("<interface hosts='node["+ components.indexOf(c) +"]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>");
-//		}
-//		out.println("</config>");
-//		out.close();
-//		return oConfig;
-//	}
 }
