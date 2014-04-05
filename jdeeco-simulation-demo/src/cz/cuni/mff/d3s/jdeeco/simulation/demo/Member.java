@@ -59,9 +59,12 @@ public class Member extends PositionAwareComponent {
 		if (!internal.containsKey(DANGER_TIME)) {
 			long seed = 0;
 			for (char c: id.toCharArray())
-				seed += c;
+				seed = seed*32 + (c-'a');
 			Random rnd = new Random(seed);		
-			long dangerTime = ProcessContext.getTimeProvider().getCurrentTime() + rnd.nextInt((Main.SIMULATION_DURATION/4));
+			// the danger occurs in the second quarter of the simulation
+			long dangerTime = ProcessContext.getTimeProvider().getCurrentTime() 
+					+ (Main.SIMULATION_DURATION/4)
+					+ rnd.nextInt(Main.SIMULATION_DURATION/4);
 			internal.put(DANGER_TIME, dangerTime);
 		}
 		long currentTime = ProcessContext.getTimeProvider().getCurrentTime();

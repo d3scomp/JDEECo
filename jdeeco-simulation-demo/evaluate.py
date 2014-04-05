@@ -22,7 +22,7 @@ root = os.path.dirname(os.path.realpath(__file__))
 cpus = 3
 
 class Scenario():
-    IP_FACTOR = 0.2
+    IP_FACTOR = 0.25
     BUILDING_SIZE = 5
     RADIO_DISTANCE = 25
     
@@ -203,7 +203,7 @@ def simulateScenario(iteration):
            '-Ddeeco.publish.individual=true',
            '-Ddeeco.boundary.disable=%s' % ('false' if iteration.boundaryEnabled else 'true'),
            '-Ddeeco.publish.packetsize=3000',
-           '-Ddeeco.publish.period=1000',
+           '-Ddeeco.publish.period=2000',
            '-Ddeeco.rebroadcast.delay=1000',
            '-Djava.util.logging.config.file=%s' % (iteration.loggingPropertiesPath().replace('\\', '/')),
            'cz.cuni.mff.d3s.jdeeco.simulation.demo.Main',
