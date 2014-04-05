@@ -292,7 +292,7 @@ def analyze():
         for it in s.iterations:   
             print 'Analyzing', it.name()         
             #analyzeScenario(it)
-            if len(analyses) > cpus:
+            if len(analyses) >= cpus:
                 finalizeOldestParallelAnalyze()
             callParallelAnalyze(it)
         while len(analyses) > 0:
