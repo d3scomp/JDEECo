@@ -22,6 +22,10 @@ root = os.path.dirname(os.path.realpath(__file__))
 cpus = 3
 
 class Scenario():
+    IP_FACTOR = 0.2
+    BUILDING_SIZE = 5
+    RADIO_DISTANCE = 25
+    
     def __init__(self, margin, density, iterationCnt, boundaryEnabled, start = 0):
         self.density = density
         self.margin = margin
@@ -29,8 +33,8 @@ class Scenario():
         self.boundaryEnabled = boundaryEnabled
         self.iterations = []
         self.start = start
-        self.insideNodes = 0
-        self.totalNodes = 0  
+        self.insideNodes = self.density * self.BUILDING_SIZE * self.BUILDING_SIZE * 2
+        self.totalNodes = self.density * (2*self.margin + self.BUILDING_SIZE) * (3*self.margin+2*self.BUILDING_SIZE)  
         for i in range(iterationCnt):
             self.iterations.append(ScenarioIteration(self, margin, density, start + i, boundaryEnabled)) 
     def folder(self):
@@ -107,7 +111,7 @@ def finalizeOldestGenerator():
     g = generators[0]
     g.join()
     
-    generator2Iteration[g].scenario.totalNodes = generatorQueues[g].get()
+    assert generator2Iteration[g].scenario.totalNodes == generatorQueues[g].get()
     generators.pop(0)
     generator2Iteration.pop(g)
     generatorQueues.pop(g)
@@ -136,15 +140,12 @@ def generate():
                 finalizeOldestGenerator()
                 
             
-            IP_FACTOR = 0.2
-            DENSITY = 1
-            BUILDING_SIZE = 5
-            RADIO_DISTANCE = 25
+            
             q = Queue()
             p = Process(target=generate2AreasPlayground, 
-                        args=(DENSITY, 20, BUILDING_SIZE, BUILDING_SIZE, s.margin, RADIO_DISTANCE, 
-                              [2,2,0], [IP_FACTOR, IP_FACTOR, IP_FACTOR], it.baseCfgPath(), q))
-            it.scenario.insideNodes = BUILDING_SIZE * BUILDING_SIZE * DENSITY
+                        args=(s.density, 20, s.BUILDING_SIZE, s.BUILDING_SIZE, s.margin, s.RADIO_DISTANCE, 
+                              [2,2,0], [s.IP_FACTOR, s.IP_FACTOR, s.IP_FACTOR], it.baseCfgPath(), q))
+            
              
             generated[s.margin][it.iteration] = it
             generators.append(p)
@@ -191,16 +192,7 @@ def finalizeOldestSimulation():
 
 
 def simulateScenario(iteration):
-    #folder = root + '\simulation-results\%d\\' % (nodeCnt)        
-    #prefix = '%d-%d-' % (nodeCnt, iteration)
     classpath = root + '\\..\\dist\\*;.'
-    
-    #logPropsFile = prefix + 'logging.properties'
-    #logFile = folder + prefix + 'jdeeco.log'
-    #logFile = logFile.replace('\\', '/')
-    
-    #stdoutName = folder + prefix + 'stdout.log'
-    
     
     copyfile(root + '\\analysis\\logging.properties', iteration.loggingPropertiesPath())
     with open(iteration.loggingPropertiesPath() , 'a') as f:
