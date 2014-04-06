@@ -2,6 +2,7 @@ package cz.cuni.mff.d3s.jdeeco.simulation.demo;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -57,7 +58,10 @@ public enum AreaNetworkRegistry {
 	}
 	
 	public List<Area> getTeamSites(String teamId) {
-		return new ArrayList<>(teamAreas.get(teamId));		
+		if (teamAreas.containsKey(teamId))
+			return new ArrayList<>(teamAreas.get(teamId));
+		else
+			return Collections.emptyList();
 	}		
 	
 	public List<PositionAwareComponent> getComponentsInArea(Area area) {
