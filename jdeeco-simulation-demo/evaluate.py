@@ -199,6 +199,7 @@ def simulateScenario(iteration):
         print>>f, '\n\njava.util.logging.FileHandler.pattern=' + iteration.logTemplatePath().replace('\\', '/')
    
     cmd = [command, '-cp', classpath,
+           '-Xmx1590M',
            '-Ddeeco.receive.cache.deadline=1500',
            '-Ddeeco.publish.individual=true',
            '-Ddeeco.boundary.disable=%s' % ('false' if iteration.boundaryEnabled else 'true'),
@@ -572,17 +573,16 @@ if __name__ == '__main__':
         
     evaluations = {}    
     for i in range(1,5): 
-        evaluations[i] = 10#*cpus
+        evaluations[i] = 1*cpus
     # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
     for margin in evaluations.keys():    
         scenarios.append(Scenario(margin, 1, evaluations[margin], False))
     duplicateScenariosForBoundary()   
 
     
-    
-    #generate()
-    #simulate()    
-    #analyze()
-    
+    generate()
+    simulate()    
+    analyze()
+      
     plot()
 
