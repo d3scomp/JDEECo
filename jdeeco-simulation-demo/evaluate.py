@@ -199,10 +199,10 @@ def simulateScenario(iteration):
         print>>f, '\n\njava.util.logging.FileHandler.pattern=' + iteration.logTemplatePath().replace('\\', '/')
    
     cmd = [command, '-cp', classpath,
-           '-Ddeeco.receive.cache.deadline=500',
+           '-Ddeeco.receive.cache.deadline=1500',
            '-Ddeeco.publish.individual=true',
            '-Ddeeco.boundary.disable=%s' % ('false' if iteration.boundaryEnabled else 'true'),
-           '-Ddeeco.publish.packetsize=3000',
+           '-Ddeeco.publish.packetsize=6000',
            '-Ddeeco.publish.period=2000',
            '-Ddeeco.rebroadcast.delay=1000',
            '-Djava.util.logging.config.file=%s' % (iteration.loggingPropertiesPath().replace('\\', '/')),
@@ -571,20 +571,18 @@ if __name__ == '__main__':
     scenariosWithoutBoundary = []
         
     evaluations = {}    
-    for i in range(1,3): 
-        evaluations[i] = 1#*cpus
+    for i in range(1,5): 
+        evaluations[i] = 10#*cpus
     # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
     for margin in evaluations.keys():    
         scenarios.append(Scenario(margin, 1, evaluations[margin], False))
     duplicateScenariosForBoundary()   
 
     
-#     try:
-#         generate()
-#         simulate()    
-#         analyze()
-#     except Exception:
-#         print 'Step error'
-        
+    
+    #generate()
+    #simulate()    
+    #analyze()
+    
     plot()
 

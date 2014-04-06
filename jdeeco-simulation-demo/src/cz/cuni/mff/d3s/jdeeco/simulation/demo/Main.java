@@ -137,13 +137,15 @@ public class Main {
 		}	
 		
 		//Designate some of the nodes to be Ethernet enabled
-		List<String> ethernetEnabled = new LinkedList<>();
+		Set<String> ethernetEnabled = new HashSet<>();
 		for (PositionAwareComponent pac : components) {
 			if (pac.hasIP)
 				ethernetEnabled.add(pac.id);
 		}
 		
 		directRecipientSelector.initialize(ethernetEnabled, networkRegistry);
+		
+		
 		String confName = "omnetpp";
 		if (args.length >= 3) {
 			confName = args[2];
@@ -201,10 +203,10 @@ public class Main {
 	
 	private static class DifferentAreaSelector implements DirectRecipientSelector {
 
-		private List<String> ethernetEnabled = null;
+		private Set<String> ethernetEnabled = null;
 		private AreaNetworkRegistry networkRegistry = null;
 		
-		public void initialize(List<String> ethernetEnabled, AreaNetworkRegistry networkRegistry) {
+		public void initialize(Set<String> ethernetEnabled, AreaNetworkRegistry networkRegistry) {
 			this.ethernetEnabled = ethernetEnabled;
 			this.networkRegistry = networkRegistry;
 		}
@@ -212,29 +214,39 @@ public class Main {
 		@Override
 		public Collection<String> getRecipients(KnowledgeData data,
 				ReadOnlyKnowledgeManager sender) {
-			if (networkRegistry.getAreas().size() > 1) {
-				List<String> result = new LinkedList<>();
-				KnowledgePath kpTeam = KnowledgePathBuilder.buildSimplePath("teamId");
-				String ownerTeam = (String) data.getKnowledge().getValue(kpTeam);
-				if (ownerTeam != null) {
-					//Find all areas of my team
-					List<Area> areas = networkRegistry.getTeamSites(ownerTeam);
-					List<String> recipients = new LinkedList<>();
-					// return all components in those areas that are not the sender and are "ethernet-enabled"
-					for (Area a: areas) {
-						for (PositionAwareComponent c: networkRegistry.getComponentsInArea(a)) {
-							if (!c.id.equals(sender.getId()) && ethernetEnabled.contains(c.id)) {
-								recipients.add(c.id);
-							}
-						}
-					}
-					Log.d("Recipients for " + ownerTeam + " at " + sender.getId() + " are " + Arrays.deepToString(recipients.toArray()));
-					return recipients;
-				}
-				return result;
-			} else {
-				return new LinkedList<>(ethernetEnabled);
+			// when there is just one area, return everyone
+			if (networkRegistry.getAreas().size() <= 1) {
+				return new ArrayList<>(ethernetEnabled);
 			}
+			List<String> result = new LinkedList<>();
+			KnowledgePath kpTeam = KnowledgePathBuilder.buildSimplePath("teamId");
+			String ownerTeam = (String) data.getKnowledge().getValue(kpTeam);
+			if (ownerTeam != null) {
+				//Find all areas of my team
+				List<Area> areas = networkRegistry.getTeamSites(ownerTeam);
+				List<String> recipients = new ArrayList<>();
+				
+				Collection<PositionAwareComponent> candidateComponents = new ArrayList<>();
+				// handle teams deployed outside specifically
+				if (areas.isEmpty()) {
+					candidateComponents.addAll(networkRegistry.getComponentsOutside());
+				} else {
+					// get all components in those areas
+					for (Area a: areas) {
+						candidateComponents.addAll(networkRegistry.getComponentsInArea(a));
+					}
+				}
+				// return all candidate components that are not the sender and are "ethernet-enabled"
+				for (PositionAwareComponent c: candidateComponents) {
+					if (!c.id.equals(sender.getId()) && ethernetEnabled.contains(c.id)) {
+						recipients.add(c.id);
+					}
+				}
+				
+				Log.d("Recipients for " + ownerTeam + " at " + sender.getId() + " are " + Arrays.deepToString(recipients.toArray()));
+				return recipients;
+			}
+			return result;
 		}
 		
 	}
