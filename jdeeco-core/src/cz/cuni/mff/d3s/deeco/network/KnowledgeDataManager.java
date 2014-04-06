@@ -64,7 +64,7 @@ KnowledgeDataPublisher {
 	// this rssi corresponds to max (roughly 250m) distance
 	public static final double RSSI_MIN = 1.11e-10;
 	
-	public static final int IP_DELAY = 1;
+	public static final int IP_DELAY = 100;
 	
 	/** Global version counter for all outgoing local knowledge. */
 	protected long localVersion;	

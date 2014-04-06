@@ -199,7 +199,7 @@ def simulateScenario(iteration):
         print>>f, '\n\njava.util.logging.FileHandler.pattern=' + iteration.logTemplatePath().replace('\\', '/')
    
     cmd = [command, '-cp', classpath,
-           '-Xmx1590M',
+           '-Xmx1200M',
            '-Ddeeco.receive.cache.deadline=1500',
            '-Ddeeco.publish.individual=true',
            '-Ddeeco.boundary.disable=%s' % ('false' if iteration.boundaryEnabled else 'true'),
