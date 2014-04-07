@@ -1,5 +1,5 @@
 import os, sys
-from generator.outsidersScenario import generate2AreasPlayground
+from generator.outsidersScenario import generateCrossAreas
 from analysis.analyze_demo import *
 from analysis.analyze_log import *
 from analysis.analyze_neighbors import *
@@ -103,18 +103,14 @@ scenariosWithoutBoundary = []
 # generic part
 ######################################################################
 generators = []
-generatorQueues = {}
-generator2Iteration = {}
+
 def finalizeOldestGenerator():
     if len(generators) == 0:
         return
     g = generators[0]
     g.join()
     
-    assert generator2Iteration[g].scenario.totalNodes == generatorQueues[g].get()
     generators.pop(0)
-    generator2Iteration.pop(g)
-    generatorQueues.pop(g)
     
 def generate():
     generated = {}
@@ -141,16 +137,14 @@ def generate():
                 
             
             
-            q = Queue()
-            p = Process(target=generate2AreasPlayground, 
-                        args=(s.density, 20, s.BUILDING_SIZE, s.BUILDING_SIZE, s.margin, s.RADIO_DISTANCE, 
-                              [2,2,0], [s.IP_FACTOR, s.IP_FACTOR, s.IP_FACTOR], it.baseCfgPath(), q))
+            p = Process(target=generateCrossAreas, 
+                        args=(s.density, 20, s.BUILDING_SIZE, 2*s.BUILDING_SIZE + s.margin, 2*s.BUILDING_SIZE, s.RADIO_DISTANCE, 
+                              2, s.IP_FACTOR, it.baseCfgPath()))
             
              
             generated[s.margin][it.iteration] = it
             generators.append(p)
-            generatorQueues[p] = q
-            generator2Iteration[p] = it
+
            
             p.start()
     while len(generators) > 0:
@@ -582,8 +576,8 @@ if __name__ == '__main__':
 
     
     generate()
-    simulate()    
-    analyze()
+    #simulate()    
+    #analyze()
       
-    plot()
+    #plot()
 
