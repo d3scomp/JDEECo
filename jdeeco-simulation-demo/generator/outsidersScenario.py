@@ -13,7 +13,114 @@ def memberToLeader(member):
     leader.ip = member.ip
     return leader
 
-def generate2AreasPlayground(density, cellSize,  areaSizeX, areaSizeY, margin, radioDistance, leadersDistribution, ipCount, prefix, outQueue):
+def generateCrossAreas(density, cellSize, thickness, xSize, ySize, radioDistance, leaderNumber, ipCount, prefix):
+    scale = 250 / radioDistance
+    
+    sizeX = scale*cellSize*xSize
+    sizeY = scale*cellSize*ySize
+    fig = figure()
+    plot = fig.add_subplot(111, aspect='equal')
+    plot.set_xlim(0, sizeX)
+    plot.set_ylim(0, sizeY)
+    
+    areaH = RectanguralArea('H',0,0,xSize*cellSize,thickness*cellSize,[0,1])
+    areaV = RectanguralArea('V',0,0,thickness*cellSize,ySize*cellSize,[0,1])
+    areaV.scale(scale)
+    areaH.scale(scale)
+    plot.add_artist(areaH.getPlotObject(color='k'))
+    plot.add_artist(areaV.getPlotObject(color='k'))
+    
+    totalDensity = density // 1
+    totalDensity = int(totalDensity)
+    v = []
+    h = []
+    vh = []
+    #Generate components
+    if totalDensity > 0:
+        for i in range(0, xSize):
+            for j in range(0, ySize):
+                if ((j >= 0) and (j < thickness)) or ((i >= 0) and (i < thickness)):
+                    for k in range(0, totalDensity):
+                        point = randomPoint(cellSize*i, cellSize*j, cellSize, cellSize)
+                        component = Member(0, point[0]*scale, point[1]*scale);
+                        if ((j >= 0) and (j < thickness)) and ((i >= 0) and (i < thickness)):
+                            component.team = random.randint(0,1)
+                            vh.append(component)
+                        elif (j >= 0) and (j < thickness):
+                            h.append(component)
+                        else:
+                            component.team = 1
+                            v.append(component)
+                        
+    fracDensity = density - totalDensity
+    
+    totalInAreaCellCount = (xSize + ySize - thickness)*thickness
+    
+    if fracDensity > 0:
+        currentIndex = -1
+        toAdd = random.sample(range(totalInAreaCellCount), int(totalInAreaCellCount*fracDensity))
+        for i in range(0, xSize):
+            for j in range(0, ySize):
+                if ((j >= 0) and (j < thickness)) or ((i >= 0) and (i < thickness)):
+                    currentIndex += 1
+                    if currentIndex in toAdd:
+                        point = randomPoint(cellSize*i, cellSize*j, cellSize, cellSize)
+                        component = Member(0, point[0]*scale, point[1]*scale);
+                        if ((j >= 0) and (j < thickness)) and ((i >= 0) and (i < thickness)):
+                            component.team = random.randint(0,1)
+                            vh.append(component)
+                        elif (j >= 0) and (j < thickness):
+                            h.append(component)
+                        else:
+                            component.team = 1
+                            v.append(component)
+                        
+    possibleLeaders = v + vh
+    l = []
+    toLeader = random.sample(possibleLeaders, leaderNumber)
+    for i in toLeader:
+        if i in v:
+            target = v
+        else:
+            target = vh
+        target.remove(i)
+        l.append(memberToLeader(i))
+                   
+    m = vh + v + h           
+
+    #IP support
+    all = m + l
+    for ip in random.sample(all, int(len(all)*ipCount)):
+        ip.ip = True         
+    
+    f = open(prefix + 'component.cfg', 'w') 
+
+    for i in range(len(l)):
+        l[i].plot(plot, 'L'+str(i))
+        print>>f, l[i].toString(i)
+       
+    for i in range(len(m)):
+        m[i].plot(plot, 'M'+str(i))  
+        print>>f, m[i].toString(i)
+               
+    f.close()
+    
+    f = open(prefix + 'site.cfg', 'w') 
+    print>>f, sizeX, sizeY
+    for a in [areaH, areaV]:
+        print>>f, a.toString();
+    f.close()    
+    
+    
+    savefig(prefix + "cfg.png")
+    if __name__ == '__main__':
+        show()
+    close()
+    
+    print len(all)
+    
+
+def generate2AreasPlayground(density, cellSize,  areaSizeX, areaSizeY, margin, radioDistance, leadersDistribution, ipCount, prefix):
     scale = 250 / radioDistance # scale the scenario to match the required radio distance
     
     totalCellCountX = 3*margin + 2*areaSizeX  
@@ -97,6 +204,8 @@ def generate2AreasPlayground(density, cellSize,  areaSizeX, areaSizeY, margin, r
         cCount += len(cs)
         for c in random.sample(cs, int(len(cs)*ipCount[i])):
             c.ip = True
+            
+    
 
     f = open(prefix + 'component.cfg', 'w') 
 
@@ -131,5 +240,7 @@ def generate2AreasPlayground(density, cellSize,  areaSizeX, areaSizeY, margin, r
     
     return cCount
     
+    (density, cellSize,  areaSizeX, areaSizeY, margin, radioDistance, leadersDistribution, ipCount, prefix)
 if __name__ == '__main__':
-    generate2AreasPlayground([2,2,0], 1.5, 20, 4, 4, 2, 10, '', [0.2, 0.2, 0.2])
+    #generate2AreasPlayground(1.5, 20, 4, 4, 2, 25, [2,2,0], [0.2, 0.2, 0.2], '')
+    generateCrossAreas(1, 20, 4, 10, 10, 25, 2, 0.25, '')
