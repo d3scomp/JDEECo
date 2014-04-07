@@ -32,8 +32,8 @@ public class TestAreaBase {
 		a2 = new RectangularArea("A2", 0, 50, 100, 100, new String[]{"T0", "T2"});
 		areas = new HashSet<>(Arrays.<Area>asList(a1,a2)); 
 		
-		m01 = new Member("M01", "T0", new Position(1, 1), true);
-		m02 = new Member("M02", "T0", new Position(1, 60), false);
+		m01 = new Member("M01", "T0", new Position(1, 1), false);
+		m02 = new Member("M02", "T0", new Position(1, 60), true);
 		m03 = new Member("M03", "T0", new Position(1, 120), false);
 		m1 = new Member("M1", "T1", new Position(1, 1), true);
 		m2 = new Member("M2", "T2", new Position(1, 120), true);

@@ -3,6 +3,8 @@ package cz.cuni.mff.d3s.jdeeco.simulation.demo;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import cz.cuni.mff.d3s.deeco.DeecoProperties;
 import cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager;
@@ -40,7 +42,7 @@ class DifferentAreaSelector implements DirectRecipientSelector {
 		if (returnAll || (ownerTeam == null)) {
 			candidateComponents = networkRegistry.getIpEnabledComponents();			
 		} else {
-			candidateComponents = new ArrayList<>();
+			candidateComponents = new HashSet<>();
 			
 			//Find all areas of my team
 			List<Area> areas = networkRegistry.getTeamSites(ownerTeam);				

@@ -35,7 +35,7 @@ public class TestAreaNetworkRegistry extends TestAreaBase {
 
 	@Test
 	public void testGetIpComponents(){		
-		assertContainsAll(Arrays.<PositionAwareComponent>asList(m01, m1, m2, m0), tested.getIpEnabledComponents());
+		assertContainsAll(Arrays.<PositionAwareComponent>asList(m02, m1, m2, m0), tested.getIpEnabledComponents());
 	}
 
 	@Test

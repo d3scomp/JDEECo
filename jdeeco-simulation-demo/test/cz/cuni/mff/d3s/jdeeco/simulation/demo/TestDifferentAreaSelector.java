@@ -30,9 +30,9 @@ public class TestDifferentAreaSelector extends TestAreaBase {
 	
 	@Test
 	public void testGetRecipientsForTeam(){		
-		assertContainsAll(Arrays.<String>asList("M01", "M1", "M2"), tested.getRecipientsForTeam("T0"));
-		assertContainsAll(Arrays.<String>asList("M01", "M1"), tested.getRecipientsForTeam("T1"));
-		assertContainsAll(Arrays.<String>asList("M2"), tested.getRecipientsForTeam("T2"));
+		assertContainsAll(Arrays.<String>asList("M02", "M1", "M2"), tested.getRecipientsForTeam("T0"));
+		assertContainsAll(Arrays.<String>asList("M02", "M1"), tested.getRecipientsForTeam("T1"));
+		assertContainsAll(Arrays.<String>asList("M02", "M2"), tested.getRecipientsForTeam("T2"));
 		assertContainsAll(Arrays.<String>asList("M0"), tested.getRecipientsForTeam("T3"));
 	}
 
@@ -41,10 +41,10 @@ public class TestDifferentAreaSelector extends TestAreaBase {
 		System.setProperty(DeecoProperties.DISABLE_BOUNDARY_CONDITIONS, "true");
 		tested.initialize(AreaNetworkRegistry.INSTANCE);
 		
-		assertContainsAll(Arrays.<String>asList("M01", "M1", "M2", "M0"), tested.getRecipientsForTeam("T0"));
-		assertContainsAll(Arrays.<String>asList("M01", "M1", "M2", "M0"), tested.getRecipientsForTeam("T1"));
-		assertContainsAll(Arrays.<String>asList("M01", "M1", "M2", "M0"), tested.getRecipientsForTeam("T2"));
-		assertContainsAll(Arrays.<String>asList("M01", "M1", "M2", "M0"), tested.getRecipientsForTeam("T3"));
+		assertContainsAll(Arrays.<String>asList("M02", "M1", "M2", "M0"), tested.getRecipientsForTeam("T0"));
+		assertContainsAll(Arrays.<String>asList("M02", "M1", "M2", "M0"), tested.getRecipientsForTeam("T1"));
+		assertContainsAll(Arrays.<String>asList("M02", "M1", "M2", "M0"), tested.getRecipientsForTeam("T2"));
+		assertContainsAll(Arrays.<String>asList("M02", "M1", "M2", "M0"), tested.getRecipientsForTeam("T3"));
 	}
 
 	
