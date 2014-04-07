@@ -206,6 +206,7 @@ def simulateScenario(iteration):
            '-Ddeeco.publish.packetsize=1024',
            '-Ddeeco.publish.period=2000',
            '-Ddeeco.rebroadcast.delay=1000',
+           '-Ddeeco.rebroadcast.ipdelay=200',
            '-Djava.util.logging.config.file=%s' % (iteration.loggingPropertiesPath().replace('\\', '/')),
            'cz.cuni.mff.d3s.jdeeco.simulation.demo.Main',
            iteration.componentCfgPath(), iteration.siteCfgPath(), iteration.omnetppPath() ]

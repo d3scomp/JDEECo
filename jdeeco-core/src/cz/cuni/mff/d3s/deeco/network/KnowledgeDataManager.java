@@ -64,7 +64,6 @@ KnowledgeDataPublisher {
 	// this rssi corresponds to max (roughly 250m) distance
 	public static final double RSSI_MIN = 1.11e-10;
 	
-	public static final int IP_DELAY = 100;
 	
 	/** Global version counter for all outgoing local knowledge. */
 	protected long localVersion;	
@@ -95,7 +94,9 @@ KnowledgeDataPublisher {
 	private final Random random;
 	
 	public static final int DEFAULT_MAX_REBROADCAST_DELAY = (int) (PublisherTask.DEFAULT_PUBLISHING_PERIOD);
-	private final int maxRebroadcastDelay;
+	public static final int DEFAULT_IP_DELAY = 100;
+	private final int maxRebroadcastDelay;	
+	private final int ipDelay;
 	
 	
 	//TODO This needs to be changed
@@ -117,7 +118,8 @@ KnowledgeDataPublisher {
 			List<EnsembleDefinition> ensembleDefinitions,
 			String host,
 			Scheduler scheduler,
-			Collection<DirectRecipientSelector> recipientSelectors, DirectGossipStrategy directGossipStrategy) {
+			Collection<DirectRecipientSelector> recipientSelectors,
+			DirectGossipStrategy directGossipStrategy) {
 		this.host = host;		
 		this.scheduler = scheduler;
 		this.timeProvider = scheduler;
@@ -148,6 +150,9 @@ KnowledgeDataPublisher {
 		
 		maxRebroadcastDelay = Integer.getInteger(DeecoProperties.MAXIMUM_REBROADCAST_DELAY, DEFAULT_MAX_REBROADCAST_DELAY);
 		Log.d(String.format("KnowledgeDataManager at %s uses maxRebroadcastDelay = %d", host, maxRebroadcastDelay));
+		
+		ipDelay = Integer.getInteger(DeecoProperties.IP_REBROADCAST_DELAY, DEFAULT_IP_DELAY);
+		Log.d(String.format("KnowledgeDataManager at %s uses ipDelay = %d", host, ipDelay));
 
 		double rssi = 0;
 		try {
@@ -313,7 +318,7 @@ KnowledgeDataPublisher {
 		} 
 		
 		KnowledgeMetaData kmd = kd.getMetaData();
-		int delay = getRebroadcastDelay(kmd);
+		int delay = getManetRebroadcastDelay(kmd);
 		
 		
 		// delay < 0 indicates not rebroadcasting
@@ -332,7 +337,7 @@ KnowledgeDataPublisher {
 		dataToRebroadcastOverIP.put(kmd.getSignature(), kd);
 		
 		// schedule a task for rebroadcast
-		RebroadcastTask task = new RebroadcastTask(scheduler, this, IP_DELAY, kmd, NICType.IP);
+		RebroadcastTask task = new RebroadcastTask(scheduler, this, ipDelay, kmd, NICType.IP);
 		scheduler.addTask(task);
 		task = new RebroadcastTask(scheduler, this, delay, kmd, NICType.MANET);
 		scheduler.addTask(task);
@@ -375,11 +380,11 @@ KnowledgeDataPublisher {
 //		return random.nextDouble() < ratio;		
 //	}
 //	
-	private int getRebroadcastDelay(KnowledgeMetaData metaData) {
+	private int getManetRebroadcastDelay(KnowledgeMetaData metaData) {
 		// rssi < 0 means received from IP
 		if (metaData.rssi < 0) {
 			Log.d("Got data from IP. Gossip condition does not apply, rebroadcasting automatically.");
-			return IP_DELAY;
+			return ipDelay;
 		}
 		
 		// the further further from the source (i.e. smaller rssi) the bigger
