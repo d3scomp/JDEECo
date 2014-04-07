@@ -78,12 +78,11 @@ public class Main {
 			areas.add(area);
 		}
 		
-		final AreaNetworkRegistry networkRegistry = AreaNetworkRegistry.getInstance();
-		networkRegistry.initialize(areas);
-
-		TeamLocationService.INSTANCE.init(areas);				
+		AreaNetworkRegistry.INSTANCE.initialize(areas);
 		
 		final DifferentAreaSelector directRecipientSelector = new DifferentAreaSelector();
+		directRecipientSelector.initialize(AreaNetworkRegistry.INSTANCE);
+
 		final Random rnd = new Random(componentCfg.hashCode());
 		final DirectGossipStrategy directGossipStrategy = new DirectGossipStrategy() {
 			@Override
@@ -143,7 +142,7 @@ public class Main {
 			Host host = sim.getHost(component.id, "node["+i+"]");			
 			hosts.add(host);
 			
-			networkRegistry.addComponent(component);
+			AreaNetworkRegistry.INSTANCE.addComponent(component);
 			
 			// there is only one component instance
 			model.getComponentInstances().get(0).getInternalData().put(PositionAwareComponent.HOST_REFERENCE, host);
@@ -155,17 +154,7 @@ public class Main {
 			runtimes.add(runtime);
 			runtime.start();
 			i++;
-		}			
-		
-		//Designate some of the nodes to be Ethernet enabled
-		Set<String> ethernetEnabled = new HashSet<>();
-		for (PositionAwareComponent pac : components) {
-			if (pac.hasIP)
-				ethernetEnabled.add(pac.id);
-		}
-		directRecipientSelector.initialize(ethernetEnabled, networkRegistry);
-		
-				
+		}		
 		
 		String confName = "omnetpp";
 		if (args.length >= 3) {
