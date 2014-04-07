@@ -73,7 +73,7 @@ public class Main {
 		Position topRight = siteParser.parseTopRightCorner();
 		
 		Area area = null;
-		final Set<Area> areas = new HashSet<>();
+		Set<Area> areas = new HashSet<>();
 		while ((area = siteParser.parseArea()) != null) {
 			areas.add(area);
 		}
@@ -81,29 +81,28 @@ public class Main {
 		final AreaNetworkRegistry networkRegistry = AreaNetworkRegistry.getInstance();
 		networkRegistry.initialize(areas);
 
-		TeamLocationService.INSTANCE.init(areas);
+		TeamLocationService.INSTANCE.init(areas);				
 		
-		ComponentConfigParser parser = new ComponentConfigParser(componentCfg);
-		
-		PositionAwareComponent component = null;
-		List<RuntimeFramework> runtimes = new ArrayList<>();
-		List<Host> hosts = new ArrayList<>();
-		
-		StringBuilder omnetConfig = new StringBuilder();
-		int i = 0;		
-		
-		DifferentAreaSelector directRecipientSelector = new DifferentAreaSelector();
-		DirectGossipStrategy directGossipStrategy = new DirectGossipStrategy() {			
+		final DifferentAreaSelector directRecipientSelector = new DifferentAreaSelector();
+		final Random rnd = new Random(componentCfg.hashCode());
+		final DirectGossipStrategy directGossipStrategy = new DirectGossipStrategy() {			
 			@Override
 			public boolean gossipTo(String recipient) {
-				//50% chances of sending to the given recipient
-				return new Random(areas.size()).nextInt(100) < 50;
+				//20% chances of sending to the given recipient
+				return rnd.nextInt(100) < 20;
 			}
-		};
+		};	
 		
 		// for each component config crate a separate model including only the component and all ensemble definitions,
 		// a separate host, and a separate runtime framework
 		List<PositionAwareComponent> components = new LinkedList<>();
+		PositionAwareComponent component = null;
+		List<RuntimeFramework> runtimes = new ArrayList<>();
+		List<Host> hosts = new ArrayList<>();		
+		StringBuilder omnetConfig = new StringBuilder();
+		ComponentConfigParser parser = new ComponentConfigParser(componentCfg);
+		int i = 0;
+		
 		while ((component = parser.parseComponent()) != null) {
 			components.add(component);
 			RuntimeMetadata model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
@@ -134,7 +133,7 @@ public class Main {
 			runtimes.add(runtime);
 			runtime.start();
 			i++;
-		}	
+		}			
 		
 		//Designate some of the nodes to be Ethernet enabled
 		Set<String> ethernetEnabled = new HashSet<>();
@@ -142,9 +141,9 @@ public class Main {
 			if (pac.hasIP)
 				ethernetEnabled.add(pac.id);
 		}
-		
 		directRecipientSelector.initialize(ethernetEnabled, networkRegistry);
 		
+				
 		
 		String confName = "omnetpp";
 		if (args.length >= 3) {
@@ -221,6 +220,7 @@ public class Main {
 			List<String> result = new LinkedList<>();
 			KnowledgePath kpTeam = KnowledgePathBuilder.buildSimplePath("teamId");
 			String ownerTeam = (String) data.getKnowledge().getValue(kpTeam);
+			String ownerId = (String) data.getKnowledge().getValue(KnowledgePathBuilder.buildSimplePath("id"));
 			if (ownerTeam != null) {
 				//Find all areas of my team
 				List<Area> areas = networkRegistry.getTeamSites(ownerTeam);
@@ -238,7 +238,7 @@ public class Main {
 				}
 				// return all candidate components that are not the sender and are "ethernet-enabled"
 				for (PositionAwareComponent c: candidateComponents) {
-					if (!c.id.equals(sender.getId()) && ethernetEnabled.contains(c.id)) {
+					if (!c.id.equals(sender.getId()) && !c.id.equals(ownerId) && ethernetEnabled.contains(c.id)) {
 						recipients.add(c.id);
 					}
 				}
