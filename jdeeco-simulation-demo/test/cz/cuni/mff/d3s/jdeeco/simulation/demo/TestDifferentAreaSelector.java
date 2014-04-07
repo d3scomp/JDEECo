@@ -5,6 +5,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import cz.cuni.mff.d3s.deeco.DeecoProperties;
+
 
 public class TestDifferentAreaSelector extends TestAreaBase {
 		
@@ -32,6 +34,17 @@ public class TestDifferentAreaSelector extends TestAreaBase {
 		assertContainsAll(Arrays.<String>asList("M01", "M1"), tested.getRecipientsForTeam("T1"));
 		assertContainsAll(Arrays.<String>asList("M2"), tested.getRecipientsForTeam("T2"));
 		assertContainsAll(Arrays.<String>asList("M0"), tested.getRecipientsForTeam("T3"));
+	}
+
+	@Test
+	public void testWhenBoundaryDisabled(){
+		System.setProperty(DeecoProperties.DISABLE_BOUNDARY_CONDITIONS, "true");
+		tested.initialize(AreaNetworkRegistry.INSTANCE);
+		
+		assertContainsAll(Arrays.<String>asList("M01", "M1", "M2", "M0"), tested.getRecipientsForTeam("T0"));
+		assertContainsAll(Arrays.<String>asList("M01", "M1", "M2", "M0"), tested.getRecipientsForTeam("T1"));
+		assertContainsAll(Arrays.<String>asList("M01", "M1", "M2", "M0"), tested.getRecipientsForTeam("T2"));
+		assertContainsAll(Arrays.<String>asList("M01", "M1", "M2", "M0"), tested.getRecipientsForTeam("T3"));
 	}
 
 	
