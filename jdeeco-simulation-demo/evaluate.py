@@ -203,7 +203,7 @@ def simulateScenario(iteration):
            '-Ddeeco.receive.cache.deadline=1500',
            '-Ddeeco.publish.individual=true',
            '-Ddeeco.boundary.disable=%s' % ('false' if iteration.boundaryEnabled else 'true'),
-           '-Ddeeco.publish.packetsize=6000',
+           '-Ddeeco.publish.packetsize=1024',
            '-Ddeeco.publish.period=2000',
            '-Ddeeco.rebroadcast.delay=1000',
            '-Djava.util.logging.config.file=%s' % (iteration.loggingPropertiesPath().replace('\\', '/')),
