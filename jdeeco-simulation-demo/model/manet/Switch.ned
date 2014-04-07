@@ -62,6 +62,7 @@ module Switch
                 @display("p=270,50");
                 addressTableSize = 10000;
                 numCPUs = sizeof(ethg);
+                bufferSize = 2MiB;
         }
         eth[sizeof(ethg)]: CustomEthernetInterface {
             parameters:
