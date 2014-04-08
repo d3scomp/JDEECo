@@ -69,7 +69,7 @@ module Switch
                 csmacdSupport = false;
                 encapType = "EtherEncapDummy";
                 mac.promiscuous = true;
-                mac.txQueueLimit = default(1000000);
+                mac.txQueueLimit = default(10000000);
                 @display("p=170,150,row;q=txQueue");
         }
     connections:

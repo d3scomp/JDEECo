@@ -50,7 +50,7 @@ public class Main {
 	static String DEFAULT_SITE_CFG = "configurations/site.cfg";
 	
 	static int SIMULATION_DURATION = 60000;
-	static int IP_GOSSIP_TARGET_PERCENTAGE = 25;
+	static int IP_GOSSIP_TARGET_PERCENTAGE = 20;
 	
 
 	
@@ -103,9 +103,7 @@ public class Main {
 			        copy.set(pos, copy.get(i));
 			        copy.set(i, rId);			        
 			    }
-				Collection<String> result = copy.subList(0, targetCnt);
-				System.out.println("Gossip recipients are " + Arrays.deepToString(result.toArray()));
-				return result;
+				return copy.subList(0, targetCnt);
 				
 				// originally was this				
 				//for (String rId: recipients) {

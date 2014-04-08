@@ -152,7 +152,7 @@ def generate():
             elif s.scenario == 'c': 
                 #(density, cellSize, areaCount, areaSize, overlap, radioDistance, leaderNumber, ipCountPerTeam, prefix)
                 p = Process(target=overlapingAreas, 
-                            args=(s.density, 20, s.scale+1, s.BUILDING_SIZE, 3, s.RADIO_DISTANCE, 
+                            args=(s.density, 20, s.scale+2, s.BUILDING_SIZE, 3, s.RADIO_DISTANCE, 
                                   2, s.IP_FACTOR, it.baseCfgPath()))
             else:
                 print 'Error no such scenario!'
@@ -418,7 +418,7 @@ def setBoxColors(pylab, bp, color):
 def plotBoundaryBoxplot(scenarios, valuesAttribute, split):    
     xGapWidth = 0
     xTicks = [0]
-    margins = []
+    scales = []
     if split:
         boundaryEnabledColor = color1
         boundaryDisabledColor = color2
@@ -426,8 +426,8 @@ def plotBoundaryBoxplot(scenarios, valuesAttribute, split):
         boundaryDisabledColor = color1
         boundaryEnabledColor = color2
     for s in scenarios:
-        margins.append(s.margin)
-    uniqueList = list(set(margins))
+        scales.append(s.scale)
+    uniqueList = list(set(scales))
     uniqueList.sort()
     xLabels = ['' for x in range(len(uniqueList))]
     for cnt in uniqueList:
@@ -445,12 +445,12 @@ def plotBoundaryBoxplot(scenarios, valuesAttribute, split):
                 positionOffset = width/1.5
             else:
                 positionOffset = -width/1.5
-        bp = pylab.boxplot(getattr(s, valuesAttribute), positions = [(xGapWidth*(uniqueList.index(s.margin) + 1))+positionOffset], widths = width) 
+        bp = pylab.boxplot(getattr(s, valuesAttribute), positions = [(xGapWidth*(uniqueList.index(s.scale) + 1))+positionOffset], widths = width) 
         if s.boundaryEnabled:
             color = boundaryEnabledColor #'#348ABD'
         else: 
             color = boundaryDisabledColor #'#E24A33'
-            xLabels[uniqueList.index(s.margin)] = s.tickLabel()
+            xLabels[uniqueList.index(s.scale)] = s.tickLabel()
         setBoxColors(pylab, bp, color)
         
     xTicks.append(xTicks[1] + xTicks[len(xTicks) - 1])
@@ -537,10 +537,14 @@ def plot():
 
     
     
-def duplicateScenariosForBoundary():
+def duplicateScenariosForBoundary(scenarios, scenariosWithBoundary, scenariosWithoutBoundary):
     oldScenarios = scenarios[:]
-    for s in oldScenarios:
+    del scenarios[:]
+    del scenariosWithBoundary[:]
+    del scenariosWithoutBoundary[:]
+    for s in oldScenarios:        
         s2 = Scenario(s.scenario, s.scale, s.density, s.iterationCnt, not s.boundaryEnabled, s.start)
+        scenarios.append(s)
         scenarios.append(s2)
         if s.boundaryEnabled:
             scenariosWithBoundary.append(s)
@@ -548,9 +552,10 @@ def duplicateScenariosForBoundary():
         else:
             scenariosWithBoundary.append(s2)
             scenariosWithoutBoundary.append(s)
-    scenarios.sort(key=lambda x: x.scale)
-    scenariosWithBoundary.sort(key=lambda x: x.scale)
-    scenariosWithoutBoundary.sort(key=lambda x: x.scale)
+    
+
+    
+    
 def backupResults():
     from itertools import ifilter
     from fnmatch import fnmatch
@@ -581,18 +586,23 @@ if __name__ == '__main__':
     scenarios = []
     scenariosWithBoundary = []
     scenariosWithoutBoundary = []
-        
+    
+    cpus = 2
     evaluations = {}    
-    for i in range(1,5): 
-        evaluations[i] = 1*cpus
+    for i in range(1,8,2): 
+        evaluations[i] = cpus/2
     # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
     for scale in evaluations.keys():    
+        scenarios.append(Scenario('a', scale, 1, evaluations[scale], False))
+        scenarios.append(Scenario('b', scale, 1, evaluations[scale], False))
         scenarios.append(Scenario('c', scale, 1, evaluations[scale], False))
-    duplicateScenariosForBoundary()   
+
+    duplicateScenariosForBoundary(scenarios, scenariosWithBoundary, scenariosWithoutBoundary)   
 
     
     generate()
-    #simulate()    
+    #simulate(
+    cpus = cpus/2    
     #analyze()
       
     #plot()
