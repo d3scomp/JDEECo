@@ -125,14 +125,16 @@ def generate():
             pass        
         if s.scale not in generated:
             generated[s.scale] = {}
+        if s.scenario not in generated[s.scale]:
+            generated[s.scale][s.scenario] = {}
             
         for it in s.iterations:
             print 'Generating ', it.name()
             # reuse the same configuration if it was already generated for 
             # the scenario with same node cnt and iteration number 
             # (but different bundaryEnabled)
-            if it.iteration in generated[s.scale]:
-                print 'Reusing', generated[s.scale][it.iteration].name()
+            if it.iteration in generated[s.scale][s.scenario]:
+                print 'Reusing', generated[s.scale][s.scenario][it.iteration].name()
                 continue
             
             if len(generators) >= cpus:
@@ -158,7 +160,7 @@ def generate():
                 print 'Error no such scenario!'
             
              
-            generated[s.scale][it.iteration] = it
+            generated[s.scale][s.scenario][it.iteration] = it
             generators.append(p)
 
            
