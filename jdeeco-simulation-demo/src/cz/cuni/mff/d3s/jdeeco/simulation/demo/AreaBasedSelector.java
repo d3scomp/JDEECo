@@ -12,14 +12,17 @@ import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.network.DirectRecipientSelector;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeData;
 
-class DifferentAreaSelector implements DirectRecipientSelector {
+class AreaBasedSelector implements DirectRecipientSelector {
+
+	public static final String IP_BOUNDARY_ALWAYS_ON = "demo.boundary.alwayson";
 
 	private AreaNetworkRegistry networkRegistry = null;
 	private boolean returnAll = false;
 	
 	public void initialize(AreaNetworkRegistry networkRegistry) {
 		this.networkRegistry = networkRegistry;		
-		returnAll = Boolean.getBoolean(DeecoProperties.DISABLE_BOUNDARY_CONDITIONS);
+		boolean alwaysOn = Boolean.getBoolean(IP_BOUNDARY_ALWAYS_ON);
+		returnAll = !alwaysOn && Boolean.getBoolean(DeecoProperties.DISABLE_BOUNDARY_CONDITIONS);
 	}
 	
 	@Override

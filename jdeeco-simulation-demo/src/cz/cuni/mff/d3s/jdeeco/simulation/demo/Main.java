@@ -80,7 +80,7 @@ public class Main {
 		
 		AreaNetworkRegistry.INSTANCE.initialize(areas);
 		
-		final DifferentAreaSelector directRecipientSelector = new DifferentAreaSelector();
+		final AreaBasedSelector directRecipientSelector = new AreaBasedSelector();
 		directRecipientSelector.initialize(AreaNetworkRegistry.INSTANCE);
 
 		final Random rnd = new Random(componentCfg.hashCode());
@@ -166,7 +166,11 @@ public class Main {
 		template = template.replace("<<<configName>>>", confName);
 		scanner.close();
 		
-		PrintWriter out = new PrintWriter(Files.newOutputStream(Paths.get(confFile), StandardOpenOption.CREATE));
+		PrintWriter out = new PrintWriter(
+				Files.newOutputStream(Paths.get(confFile), 
+						StandardOpenOption.CREATE, 
+						StandardOpenOption.WRITE, 
+						StandardOpenOption.TRUNCATE_EXISTING));
 		out.println(template);
 		out.println();
 		out.println(String.format("**.playgroundSizeX = %dm", (int) topRight.x));
