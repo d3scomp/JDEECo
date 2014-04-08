@@ -60,7 +60,7 @@ module Switch
         relayUnit: MACRelayUnitNP {
             parameters:
                 @display("p=270,50");
-                addressTableSize = 10000;
+                addressTableSize = 1000;
                 numCPUs = sizeof(ethg);
                 bufferSize = 2MiB;
         }

@@ -362,8 +362,10 @@ KnowledgeDataPublisher {
 		}
 		
 		// filter the sender and owner of the data
-		result.remove(data.getMetaData().componentId);
-		result.remove(sender.getId());
+		// remove all
+		while (result.remove(data.getMetaData().componentId));
+		// remove all
+		while(result.remove(sender.getId()));
 		return directGossipStrategy.filterRecipients(result);
 	}
 	
