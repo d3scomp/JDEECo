@@ -103,7 +103,9 @@ public class Main {
 			        copy.set(pos, copy.get(i));
 			        copy.set(i, rId);			        
 			    }
-				return copy.subList(0, targetCnt);
+				Collection<String> result = copy.subList(0, targetCnt);
+				System.out.println("Gossip recipients are " + Arrays.deepToString(result.toArray()));
+				return result;
 				
 				// originally was this				
 				//for (String rId: recipients) {
