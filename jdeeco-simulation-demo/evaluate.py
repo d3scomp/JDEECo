@@ -149,12 +149,12 @@ def generate():
             elif s.scenario == 'b':
                 #(density, cellSize, thickness, xSize, ySize, radioDistance, leaderNumber, ipCount, prefix)
                 p = Process(target=crossAreas, 
-                            args=(s.density, 20, s.BUILDING_SIZE, (2+s.scale)*s.BUILDING_SIZE, 2*s.BUILDING_SIZE, s.RADIO_DISTANCE, 
+                            args=(s.density, 20, s.BUILDING_SIZE, (2+2*s.scale)*s.BUILDING_SIZE, 2*s.BUILDING_SIZE, s.RADIO_DISTANCE, 
                                   2, s.IP_FACTOR, it.baseCfgPath()))
             elif s.scenario == 'c': 
                 #(density, cellSize, areaCount, areaSize, overlap, radioDistance, leaderNumber, ipCountPerTeam, prefix)
                 p = Process(target=overlapingAreas, 
-                            args=(s.density, 20, s.scale+2, s.BUILDING_SIZE, 3, s.RADIO_DISTANCE, 
+                            args=(s.density, 20, 4*s.scale, s.BUILDING_SIZE, 1, s.RADIO_DISTANCE, 
                                   2, s.IP_FACTOR, it.baseCfgPath()))
             else:
                 print 'Error no such scenario!'

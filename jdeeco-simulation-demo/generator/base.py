@@ -20,6 +20,7 @@ def points_in_circle(x, y, r, cnt):
     return rx, ry
 
 teamColors = ['b','r','g','y','c','m','k','b','r','g','y','c','m','k', 'b','r','g','y','c','m','k'];
+teamColors = teamColors + teamColors + teamColors
 
 class Component:
     def __init__(self, x, y, ip = False):
