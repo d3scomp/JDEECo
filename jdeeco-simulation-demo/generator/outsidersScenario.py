@@ -62,22 +62,24 @@ def overlapingAreas(density, cellSize, areaCount, areaSize, overlap, radioDistan
             if member.x >= area.x and member.x <= area.x + area.width:
                 if member.team > -1:
                     probability = random.random()
+                    teams[member.team].remove(member)
                 else:
                     probability = 1
                 if probability > 0.5:
                     member.team = ti
-                teams[ti].append(member)
+                teams[member.team].append(member)
                 
                 
     #Assign leaders
-    toLeader = random.sample(teams[0], leaderNumber)
     leaders = []
-    for l in toLeader:
-        m.remove(l)
-        teams[0].remove(l)
-        leader = memberToLeader(l)
-        teams[0].append(leader)
-        leaders.append(leader)
+    for ti in range(len(teams)):
+        toLeader = random.sample(teams[ti], leaderNumber)
+        for l in toLeader:
+            m.remove(l)
+            teams[ti].remove(l)
+            leader = memberToLeader(l)
+            teams[ti].append(leader)
+            leaders.append(leader)
         
     #IP support
     for team in teams:
@@ -107,6 +109,8 @@ def overlapingAreas(density, cellSize, areaCount, areaSize, overlap, radioDistan
     savefig(prefix + "cfg.png")
     if __name__ == '__main__':
         show()
+        
+    
     close()
 
 def crossAreas(density, cellSize, thickness, xSize, ySize, radioDistance, leaderNumber, ipCount, prefix):
@@ -211,10 +215,7 @@ def crossAreas(density, cellSize, thickness, xSize, ySize, radioDistance, leader
     savefig(prefix + "cfg.png")
     if __name__ == '__main__':
         show()
-    close()
-    
-    print len(all)
-    
+    close()    
 
 def twoAreasPlayground(density, cellSize,  areaSizeX, areaSizeY, margin, radioDistance, leadersDistribution, ipCount, prefix):
     scale = 250 / radioDistance # scale the scenario to match the required radio distance
@@ -332,8 +333,6 @@ def twoAreasPlayground(density, cellSize,  areaSizeX, areaSizeY, margin, radioDi
         show()
     close()
     
-    outQueue.put(cCount)
-    
     return cCount
     
     (density, cellSize,  areaSizeX, areaSizeY, margin, radioDistance, leadersDistribution, ipCount, prefix)
@@ -341,4 +340,4 @@ if __name__ == '__main__':
     #generate2AreasPlayground(1.5, 20, 4, 4, 2, 25, [2,2,0], [0.2, 0.2, 0.2], '')
     #generateCrossAreas(1, 20, 4, 10, 10, 25, 2, 0.25, '')
     #(density, cellSize, areaCount, areaSize, overlap, radioDistance, leaderNumber, ipCountPerTeam, prefix)
-    generateOverlapingAreas(1, 20, 4, 6, 2, 25, 2, 0.25, '')
+    overlapingAreas(1, 20, 4, 6, 2, 25, 2, 0.25, '')

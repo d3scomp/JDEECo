@@ -29,7 +29,7 @@ class Scenario():
     RADIO_DISTANCE = 25
     
     def __init__(self, scenario, scale, density, iterationCnt, boundaryEnabled, start = 0):
-        self.secenario = scenario
+        self.scenario = scenario
         self.density = density
         self.scale = scale
         self.iterationCnt = iterationCnt
@@ -123,16 +123,16 @@ def generate():
             os.makedirs(s.folderPath())
         except OSError as e:
             pass        
-        if s.margin not in generated:
-            generated[s.margin] = {}
+        if s.scale not in generated:
+            generated[s.scale] = {}
             
         for it in s.iterations:
             print 'Generating ', it.name()
             # reuse the same configuration if it was already generated for 
             # the scenario with same node cnt and iteration number 
             # (but different bundaryEnabled)
-            if it.iteration in generated[s.margin]:
-                print 'Reusing', generated[s.margin][it.iteration].name()
+            if it.iteration in generated[s.scale]:
+                print 'Reusing', generated[s.scale][it.iteration].name()
                 continue
             
             if len(generators) >= cpus:
@@ -140,25 +140,25 @@ def generate():
                 
             
             if s.scenario == 'a':
-                #(density, cellSize,  areaSizeX, areaSizeY, margin, radioDistance, leadersDistribution, ipCount, prefix)
-                p = Process(target=generate2AreasPlayground, 
+                #(density, cellSize,  areaSizeX, areaSizeY, scale, radioDistance, leadersDistribution, ipCount, prefix)
+                p = Process(target=twoAreasPlayground, 
                             args=(s.density, 20, s.BUILDING_SIZE, s.BUILDING_SIZE, s.scale, s.RADIO_DISTANCE, 
                                   [2,2,0], [s.IP_FACTOR, s.IP_FACTOR, s.IP_FACTOR], it.baseCfgPath()))
             elif s.scenario == 'b':
                 #(density, cellSize, thickness, xSize, ySize, radioDistance, leaderNumber, ipCount, prefix)
-                p = Process(target=generateCrossAreas, 
-                            args=(s.density, 20, s.BUILDING_SIZE, 2*s.BUILDING_SIZE + s.scale, 2*s.BUILDING_SIZE, s.RADIO_DISTANCE, 
+                p = Process(target=crossAreas, 
+                            args=(s.density, 20, s.BUILDING_SIZE, (2+s.scale)*s.BUILDING_SIZE, 2*s.BUILDING_SIZE, s.RADIO_DISTANCE, 
                                   2, s.IP_FACTOR, it.baseCfgPath()))
-            elif s.sceanrio == 'c': 
+            elif s.scenario == 'c': 
                 #(density, cellSize, areaCount, areaSize, overlap, radioDistance, leaderNumber, ipCountPerTeam, prefix)
-                p = Process(target=generateOverlapingAreas, 
-                            args=(s.density, 20, s.scale, s.BUILDING_SIZE, 3, s.RADIO_DISTANCE, 
+                p = Process(target=overlapingAreas, 
+                            args=(s.density, 20, s.scale+1, s.BUILDING_SIZE, 3, s.RADIO_DISTANCE, 
                                   2, s.IP_FACTOR, it.baseCfgPath()))
             else:
                 print 'Error no such scenario!'
             
              
-            generated[s.margin][it.iteration] = it
+            generated[s.scale][it.iteration] = it
             generators.append(p)
 
            
@@ -540,7 +540,7 @@ def plot():
 def duplicateScenariosForBoundary():
     oldScenarios = scenarios[:]
     for s in oldScenarios:
-        s2 = Scenario(s.margin, s.density, s.iterationCnt, not s.boundaryEnabled, s.start)
+        s2 = Scenario(s.scenario, s.scale, s.density, s.iterationCnt, not s.boundaryEnabled, s.start)
         scenarios.append(s2)
         if s.boundaryEnabled:
             scenariosWithBoundary.append(s)
@@ -548,9 +548,9 @@ def duplicateScenariosForBoundary():
         else:
             scenariosWithBoundary.append(s2)
             scenariosWithoutBoundary.append(s)
-    scenarios.sort(key=lambda x: x.margin)
-    scenariosWithBoundary.sort(key=lambda x: x.margin)
-    scenariosWithoutBoundary.sort(key=lambda x: x.margin)
+    scenarios.sort(key=lambda x: x.scale)
+    scenariosWithBoundary.sort(key=lambda x: x.scale)
+    scenariosWithoutBoundary.sort(key=lambda x: x.scale)
 def backupResults():
     from itertools import ifilter
     from fnmatch import fnmatch
@@ -586,8 +586,8 @@ if __name__ == '__main__':
     for i in range(1,5): 
         evaluations[i] = 1*cpus
     # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
-    for margin in evaluations.keys():    
-        scenarios.append(Scenario(margin, 1, evaluations[margin], False))
+    for scale in evaluations.keys():    
+        scenarios.append(Scenario('c', scale, 1, evaluations[scale], False))
     duplicateScenariosForBoundary()   
 
     
