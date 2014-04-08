@@ -15,10 +15,14 @@ public enum AreaNetworkRegistry {
 	INSTANCE;
 	
 
-	private final Map<Area, List<PositionAwareComponent>> componentsByArea = new HashMap<Area, List<PositionAwareComponent>>();
-	private final Set<PositionAwareComponent> componentsOutside = new HashSet<>();
-	private final Map<String, Set<Area>> teamAreas = new HashMap<String, Set<Area>>(); 
+	private Map<Area, List<PositionAwareComponent>> componentsByArea;
+	private Set<PositionAwareComponent> componentsOutside;
+	private Set<PositionAwareComponent> allComponents;
+	private Set<PositionAwareComponent> ipEnabledComponents;	
+	private Map<String, Set<Area>> teamAreas; 
+	
 	private AreaNetworkRegistry() {
+		clear();
 	}
 	
 	public Collection<Area> getAreas() {
@@ -39,8 +43,16 @@ public enum AreaNetworkRegistry {
 					}
 					teamAreas.get(team).add(area);
 				}
-			}
+			}			
 		}
+	}
+	
+	public void clear() {
+		componentsByArea = new HashMap<Area, List<PositionAwareComponent>>();
+		componentsOutside = new HashSet<>();
+		allComponents = new HashSet<>();
+		ipEnabledComponents = new HashSet<>();	
+		teamAreas = new HashMap<String, Set<Area>>(); 
 	}
 
 	public void addComponent(PositionAwareComponent component) {
@@ -55,6 +67,10 @@ public enum AreaNetworkRegistry {
 		if (!isInAnArea) {
 			componentsOutside.add(component);
 		}
+		if (component.hasIP) {
+			ipEnabledComponents.add(component);
+		}
+		allComponents.add(component);
 	}
 	
 	public List<Area> getTeamSites(String teamId) {
@@ -64,12 +80,38 @@ public enum AreaNetworkRegistry {
 			return Collections.emptyList();
 	}		
 	
-	public List<PositionAwareComponent> getComponentsInArea(Area area) {
-		return new LinkedList<>(componentsByArea.get(area));		
+	public Collection<PositionAwareComponent> getComponentsInArea(Area area) {
+		return new HashSet<>(componentsByArea.get(area));		
 	}
 	
-	public Set<PositionAwareComponent> getComponentsOutside() {
+	public Collection<PositionAwareComponent> getComponentsOutside() {
 		return new HashSet<>(componentsOutside);		
 	}
-
+	
+	public Collection<PositionAwareComponent> getAllComponents() {
+		return allComponents;
+	}
+	
+	public Collection<PositionAwareComponent> getIpEnabledComponents() {
+		return ipEnabledComponents;
+	}
+	
+	public boolean isAtTheTeamsSite(String teamId, Position pos) {
+		// The team has no registered site - it is in the "outside world"
+		if (!teamAreas.containsKey(teamId)) {
+			// then return true if the position is outside every registered area
+			for (Area site: componentsByArea.keySet()) {
+				if (site.isInArea(pos))
+					return false;
+			}
+			return true;
+		}
+		// else check whether the position belongs to some of the registered
+		// areas for the team 
+		for (Area site: teamAreas.get(teamId)) {		
+			if (site.isInArea(pos))
+				return true;
+		}
+		return false;
+	}
 }

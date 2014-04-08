@@ -4,7 +4,7 @@ public abstract class Area {
 	private final String[] teams;
 	private final String id;
 	
-	protected final double TOLERANCE = 15;
+	protected final double TOLERANCE = 0;
 
 	
 	public Area(String id, String[] teams) {

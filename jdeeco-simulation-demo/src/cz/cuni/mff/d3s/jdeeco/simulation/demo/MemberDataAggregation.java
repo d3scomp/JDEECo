@@ -79,7 +79,7 @@ public class MemberDataAggregation {
 		// all O*)
 		if (senderPos == null || ownerTeam == null || !data.getMetaData().componentId.startsWith("M"))
 			return false;
-		return TeamLocationService.INSTANCE.isAtTheTeamsSite(ownerTeam, senderPos);
+		return AreaNetworkRegistry.INSTANCE.isAtTheTeamsSite(ownerTeam, senderPos);
 	}
 	
 	private static double distance(Position a, Position b) {

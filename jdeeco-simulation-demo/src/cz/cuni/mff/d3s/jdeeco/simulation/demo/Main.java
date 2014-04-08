@@ -9,6 +9,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,14 +20,11 @@ import java.util.Set;
 import cz.cuni.mff.d3s.deeco.DeecoProperties;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
-import cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.network.DirectGossipStrategy;
 import cz.cuni.mff.d3s.deeco.network.DirectRecipientSelector;
-import cz.cuni.mff.d3s.deeco.network.KnowledgeData;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeDataManager;
 import cz.cuni.mff.d3s.deeco.network.PacketReceiver;
 import cz.cuni.mff.d3s.deeco.network.PacketSender;
@@ -52,6 +50,8 @@ public class Main {
 	static String DEFAULT_SITE_CFG = "configurations/site.cfg";
 	
 	static int SIMULATION_DURATION = 60000;
+	static int IP_GOSSIP_TARGET_PERCENTAGE = 25;
+	
 
 	
 	public static void main(String[] args) throws AnnotationProcessorException, IOException {
@@ -78,18 +78,39 @@ public class Main {
 			areas.add(area);
 		}
 		
-		final AreaNetworkRegistry networkRegistry = AreaNetworkRegistry.getInstance();
-		networkRegistry.initialize(areas);
-
-		TeamLocationService.INSTANCE.init(areas);				
+		AreaNetworkRegistry.INSTANCE.initialize(areas);
 		
 		final DifferentAreaSelector directRecipientSelector = new DifferentAreaSelector();
+		directRecipientSelector.initialize(AreaNetworkRegistry.INSTANCE);
+
 		final Random rnd = new Random(componentCfg.hashCode());
-		final DirectGossipStrategy directGossipStrategy = new DirectGossipStrategy() {			
+		final DirectGossipStrategy directGossipStrategy = new DirectGossipStrategy() {
 			@Override
-			public boolean gossipTo(String recipient) {
-				//20% chances of sending to the given recipient
-				return rnd.nextInt(100) < 20;
+			public Collection<String> filterRecipients(
+					Collection<String> recipients) {
+				
+				if (recipients.isEmpty())
+					return recipients;
+												
+ 				int targetCnt = (int) Math.ceil(recipients.size() * (IP_GOSSIP_TARGET_PERCENTAGE/100.0)); 
+ 				targetCnt = Math.min(recipients.size(), targetCnt);				
+				List<String> copy = new ArrayList<>(recipients);
+				
+				// shuffle 'copy' and select the first 'targetCnt' elements
+				for(int i=0; i < targetCnt; i++){
+			        int pos = i + rnd.nextInt(copy.size() - i);			      
+			        String rId = copy.get(pos);
+			        copy.set(pos, copy.get(i));
+			        copy.set(i, rId);			        
+			    }
+				return copy.subList(0, targetCnt);
+				
+				// originally was this				
+				//for (String rId: recipients) {
+				//	//20% chances of sending to the given recipient
+				//	if (rnd.nextInt(100) < 20)
+				//		result.add(rId);
+				//}
 			}
 		};	
 		
@@ -121,7 +142,7 @@ public class Main {
 			Host host = sim.getHost(component.id, "node["+i+"]");			
 			hosts.add(host);
 			
-			networkRegistry.addComponent(component);
+			AreaNetworkRegistry.INSTANCE.addComponent(component);
 			
 			// there is only one component instance
 			model.getComponentInstances().get(0).getInternalData().put(PositionAwareComponent.HOST_REFERENCE, host);
@@ -133,17 +154,7 @@ public class Main {
 			runtimes.add(runtime);
 			runtime.start();
 			i++;
-		}			
-		
-		//Designate some of the nodes to be Ethernet enabled
-		Set<String> ethernetEnabled = new HashSet<>();
-		for (PositionAwareComponent pac : components) {
-			if (pac.hasIP)
-				ethernetEnabled.add(pac.id);
-		}
-		directRecipientSelector.initialize(ethernetEnabled, networkRegistry);
-		
-				
+		}		
 		
 		String confName = "omnetpp";
 		if (args.length >= 3) {
@@ -198,57 +209,6 @@ public class Main {
 				Integer.getInteger(DeecoProperties.MESSAGE_CACHE_DEADLINE, PacketReceiver.DEFAULT_MAX_MESSAGE_TIME),
 				Integer.getInteger(DeecoProperties.MESSAGE_CACHE_WIPE_PERIOD, PacketReceiver.DEFAULT_MESSAGE_WIPE_PERIOD),
 				Integer.getInteger(DeecoProperties.MAXIMUM_REBROADCAST_DELAY, KnowledgeDataManager.DEFAULT_MAX_REBROADCAST_DELAY)));
-	}
-	
-	private static class DifferentAreaSelector implements DirectRecipientSelector {
-
-		private Set<String> ethernetEnabled = null;
-		private AreaNetworkRegistry networkRegistry = null;
-		
-		public void initialize(Set<String> ethernetEnabled, AreaNetworkRegistry networkRegistry) {
-			this.ethernetEnabled = ethernetEnabled;
-			this.networkRegistry = networkRegistry;
-		}
-		
-		@Override
-		public Collection<String> getRecipients(KnowledgeData data,
-				ReadOnlyKnowledgeManager sender) {
-			// when there is just one area, return everyone
-			if (networkRegistry.getAreas().size() <= 1) {
-				return new ArrayList<>(ethernetEnabled);
-			}
-			List<String> result = new LinkedList<>();
-			KnowledgePath kpTeam = KnowledgePathBuilder.buildSimplePath("teamId");
-			String ownerTeam = (String) data.getKnowledge().getValue(kpTeam);
-			String ownerId = (String) data.getKnowledge().getValue(KnowledgePathBuilder.buildSimplePath("id"));
-			if (ownerTeam != null) {
-				//Find all areas of my team
-				List<Area> areas = networkRegistry.getTeamSites(ownerTeam);
-				List<String> recipients = new ArrayList<>();
-				
-				Collection<PositionAwareComponent> candidateComponents = new ArrayList<>();
-				// handle teams deployed outside specifically
-				if (areas.isEmpty()) {
-					candidateComponents.addAll(networkRegistry.getComponentsOutside());
-				} else {
-					// get all components in those areas
-					for (Area a: areas) {
-						candidateComponents.addAll(networkRegistry.getComponentsInArea(a));
-					}
-				}
-				// return all candidate components that are not the sender and are "ethernet-enabled"
-				for (PositionAwareComponent c: candidateComponents) {
-					if (!c.id.equals(sender.getId()) && !c.id.equals(ownerId) && ethernetEnabled.contains(c.id)) {
-						recipients.add(c.id);
-					}
-				}
-				
-				Log.d("Recipients for " + ownerTeam + " at " + sender.getId() + " are " + Arrays.deepToString(recipients.toArray()));
-				return recipients;
-			}
-			return result;
-		}
-		
 	}
 	
 }

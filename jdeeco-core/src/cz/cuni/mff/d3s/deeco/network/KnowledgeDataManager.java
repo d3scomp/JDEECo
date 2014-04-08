@@ -214,11 +214,9 @@ KnowledgeDataPublisher {
 			//For IP part we are using individual publishing only
 			for (KnowledgeData kd : data) {
 				recipients = getRecipients(kd, getNodeKnowledge());
-				for (String recipient: recipients) {
-					if (directGossipStrategy.gossipTo(recipient)) {
-						logPublish(data, recipient);
-						knowledgeDataSender.sendKnowledgeData(Arrays.asList(kd), recipient);
-					}
+				for (String recipient: recipients) {					
+					logPublish(data, recipient);
+					knowledgeDataSender.sendKnowledgeData(Arrays.asList(kd), recipient);					
 				}
 			}
 		}
@@ -362,7 +360,11 @@ KnowledgeDataPublisher {
 		for (DirectRecipientSelector selector: recipientSelectors) {
 			result.addAll(selector.getRecipients(data, sender));
 		}
-		return result;
+		
+		// filter the sender and owner of the data
+		result.remove(data.getMetaData().componentId);
+		result.remove(sender.getId());
+		return directGossipStrategy.filterRecipients(result);
 	}
 	
 
