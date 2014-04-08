@@ -27,7 +27,7 @@ def overlapingAreas(density, cellSize, areaCount, areaSize, overlap, radioDistan
     areas = []
     teams = []
     for i in range(areaCount):
-        area = RectanguralArea('A'+str(i), i*(areaSize-overlap)*cellSize, 0, areaSize*cellSize, areaSize*cellSize, [i, i+1])
+        area = RectanguralArea('A'+str(i), i*(areaSize-overlap)*cellSize, 0, areaSize*cellSize, areaSize*cellSize, [i])
         area.scale(scale)
         plot.add_artist(area.getPlotObject(color='k'))
         areas.append(area)
@@ -68,7 +68,6 @@ def overlapingAreas(density, cellSize, areaCount, areaSize, overlap, radioDistan
                 if probability > 0.5:
                     member.team = ti
                 teams[member.team].append(member)
-                
                 
     #Assign leaders
     leaders = []
@@ -123,8 +122,8 @@ def crossAreas(density, cellSize, thickness, xSize, ySize, radioDistance, leader
     plot.set_xlim(0, sizeX)
     plot.set_ylim(0, sizeY)
     
-    areaH = RectanguralArea('H',0,0,xSize*cellSize,thickness*cellSize,[0,1])
-    areaV = RectanguralArea('V',0,0,thickness*cellSize,ySize*cellSize,[0,1])
+    areaH = RectanguralArea('H',0,0,xSize*cellSize,thickness*cellSize,[0])
+    areaV = RectanguralArea('V',0,0,thickness*cellSize,ySize*cellSize,[1])
     areaV.scale(scale)
     areaH.scale(scale)
     plot.add_artist(areaH.getPlotObject(color='k'))
@@ -338,6 +337,5 @@ def twoAreasPlayground(density, cellSize,  areaSizeX, areaSizeY, margin, radioDi
     (density, cellSize,  areaSizeX, areaSizeY, margin, radioDistance, leadersDistribution, ipCount, prefix)
 if __name__ == '__main__':
     #generate2AreasPlayground(1.5, 20, 4, 4, 2, 25, [2,2,0], [0.2, 0.2, 0.2], '')
-    #generateCrossAreas(1, 20, 4, 10, 10, 25, 2, 0.25, '')
-    #(density, cellSize, areaCount, areaSize, overlap, radioDistance, leaderNumber, ipCountPerTeam, prefix)
+    #crossAreas(1, 20, 4, 10, 10, 25, 2, 0.25, '')
     overlapingAreas(1, 20, 4, 6, 2, 25, 2, 0.25, '')
