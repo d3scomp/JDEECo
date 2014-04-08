@@ -83,7 +83,7 @@ public class Main {
 		final AreaBasedSelector directRecipientSelector = new AreaBasedSelector();
 		directRecipientSelector.initialize(AreaNetworkRegistry.INSTANCE);
 
-		final Random rnd = new Random(componentCfg.hashCode());
+		final Random rnd = new Random(areas.size());
 		final DirectGossipStrategy directGossipStrategy = new DirectGossipStrategy() {
 			@Override
 			public Collection<String> filterRecipients(
@@ -155,6 +155,10 @@ public class Main {
 			runtime.start();
 			i++;
 		}		
+		
+		int seed = omnetConfig.toString().hashCode();
+		System.out.println(String.format("Using Gossip Strategy seed %d.", seed));
+		rnd.setSeed(seed);
 		
 		String confName = "omnetpp";
 		if (args.length >= 3) {
