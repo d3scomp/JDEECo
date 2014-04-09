@@ -590,7 +590,7 @@ def backupResults():
 def simplyfiLogs():
     for scenario in scenarios:
         for it in scenario.iterations:
-            cmd = ['cat', it.logPath(), '|', 'grep', '"^DEBUG:"', '>', it.shortenedLogPath()]
+            cmd = ['grep', '"^DEBUG:"', it.logPath(), '>', it.shortenedLogPath()]
             line = ' '.join(cmd)     
             print 'Executing: ', line         
             os.system(line)
@@ -616,7 +616,7 @@ if __name__ == '__main__':
     
     #generate()
     #simulate()
-    cpus = cpus/2
+    cpus = 2
     simplyfiLogs()    
     analyze()
       
