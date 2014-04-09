@@ -78,6 +78,8 @@ class ScenarioIteration:
         return self.prefixPath() + 'analysis-demo.txt'
     def logPath(self):
         return self.prefixPath() + 'jdeeco.log.0'
+    def shortenedLogPath(self):
+        return self.prefixPath() + 'jdeeco.log.0.short'
     def logTemplatePath(self):
         return self.prefixPath() + 'jdeeco.log'
     def stdOutPath(self):
@@ -211,7 +213,7 @@ def simulateScenario(iteration):
         print>>f, '\n\njava.util.logging.FileHandler.pattern=' + iteration.logTemplatePath().replace('\\', '/')
    
     cmd = [command, '-cp', classpath,
-           '-Xmx1200M',
+           '-Xmx1600M',
            '-Ddeeco.receive.cache.deadline=1500',
            '-Ddeeco.publish.individual=true',
            '-Ddeeco.boundary.disable=%s' % ('false' if iteration.boundaryEnabled else 'true'),
@@ -231,6 +233,7 @@ def simulateScenario(iteration):
     
     iteration.stdOut = open(iteration.stdOutPath(), 'w')
     iteration.simulation = Popen(cmd, stderr=STDOUT, stdout=iteration.stdOut)
+    print 'with PID ', str(iteration.simulation.pid)
      
     simulated.append(iteration)
 
@@ -254,7 +257,7 @@ def analyzeScenario(iteration):
         oldStdOut = sys.stdout
         sys.stdout = genericStdout
         a = GenericAnalysis()
-        a.analyze(iteration.logPath())        
+        a.analyze(iteration.shortenedLogPath())        
         sys.stdout = oldStdOut
         iteration.genericAnalysis = a 
     
@@ -263,7 +266,7 @@ def analyzeScenario(iteration):
         sys.stdout = demoStdout
         
         a = DemoAnalysis()
-        a.analyze(iteration.logPath(), iteration.componentCfgPath())                   
+        a.analyze(iteration.shortenedLogPath(), iteration.componentCfgPath())                   
         sys.stdout = oldStdOut
         iteration.demoAnalysis = a 
 
@@ -284,6 +287,7 @@ def callParallelAnalyze(iteration):
     Analysis = namedtuple('Analysis', 'p qin qout iteration')
     analyses.append(Analysis(p, qin, qout, iteration))
     p.start()
+    print 'with PID ', str(p.pid)
     qin.put(iteration)
 
 def finalizeOldestParallelAnalyze():
@@ -582,9 +586,17 @@ def backupResults():
         #  copy each file to destination directory
         for fname in matches:
           copyfile(source_dir + '\\' + fname, dest_dir + '\\' + fname)
-          
-if __name__ == '__main__':
- 
+        
+def simplyfiLogs():
+    for scenario in scenarios:
+        for it in scenario.iterations:
+            cmd = ['cat', it.logPath(), '|', 'grep', '"^DEBUG:"', '>', it.shortenedLogPath()]
+            line = ' '.join(cmd)     
+            print 'Executing: ', line         
+            os.system(line)
+    
+    
+if __name__ == '__main__': 
     scenarios = []
     scenariosWithBoundary = []
     scenariosWithoutBoundary = []
@@ -592,20 +604,21 @@ if __name__ == '__main__':
     cpus = 2
     evaluations = {}    
     for i in range(1,8,2): 
-        evaluations[i] = cpus/2
+        evaluations[i] = 2
     # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
     for scale in evaluations.keys():    
         scenarios.append(Scenario('a', scale, 1, evaluations[scale], False))
         scenarios.append(Scenario('b', scale, 1, evaluations[scale], False))
-        scenarios.append(Scenario('c', scale, 1, evaluations[scale], False))
+        scenarios.append(Scenario('a', scale, 1, evaluations[scale], False))
 
     duplicateScenariosForBoundary(scenarios, scenariosWithBoundary, scenariosWithoutBoundary)   
 
     
-    generate()
-    #simulate(
-    cpus = cpus/2    
-    #analyze()
+    #generate()
+    #simulate()
+    cpus = cpus/2
+    simplyfiLogs()    
+    analyze()
       
-    #plot()
+    plot()
 

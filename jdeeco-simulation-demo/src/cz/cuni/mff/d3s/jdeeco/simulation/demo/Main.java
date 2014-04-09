@@ -92,7 +92,7 @@ public class Main {
 				if (recipients.isEmpty())
 					return recipients;
 												
- 				int targetCnt = (int) Math.ceil(recipients.size() * (IP_GOSSIP_TARGET_PERCENTAGE/100.0)); 
+ 				int targetCnt = 3;//(int) Math.ceil(recipients.size() * (IP_GOSSIP_TARGET_PERCENTAGE/100.0)); 
  				targetCnt = Math.min(recipients.size(), targetCnt);				
 				List<String> copy = new ArrayList<>(recipients);
 				
