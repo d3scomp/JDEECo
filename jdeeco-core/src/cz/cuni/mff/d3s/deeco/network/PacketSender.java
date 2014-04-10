@@ -22,7 +22,7 @@ public abstract class PacketSender implements KnowledgeDataSender {
 
 	public static int DEFAULT_PACKET_SIZE = 1000;
 	
-	public static int HEADER_SIZE = 8;
+	public static int HEADER_SIZE = 12;
 
 	// We reserver Integer.MIN_VALUE for distinguishing initial packets.
 	private static int CURRENT_MESSAGE_ID = Integer.MIN_VALUE;
@@ -78,19 +78,17 @@ public abstract class PacketSender implements KnowledgeDataSender {
 
 	public void sendData(Object data, String recipient) {
 		try {
-			byte[][] fragments = fragment(data, packetSize);
+			byte[] serialized = Serializer.serialize(data);
+
+			byte[][] fragments = fragment(serialized, packetSize);
 
 			int messageId = getNextMessageId();
+			int dataLength = serialized.length;
 			
-			Log.d(String.format("PacketSender: Sending MSG at %s with messageid %d and size %d (packets=%d)", host, messageId, getDataLength(fragments), fragments.length));
+			Log.d(String.format("PacketSender: Sending MSG at %s with messageid %d and size %d (packets=%d)", host, messageId, dataLength, fragments.length));			
 			
-			// We need to send the message containing id and the number of
-			// packets.that will be sent.
-			sendPacket(buildInitialPacket(messageId, getDataLength(fragments)), recipient);
-						
-			// Now we can send packets
 			for (int i = 0; i < fragments.length; i++) {
-				sendPacket(buildPacket(messageId, i, fragments[i]), recipient);
+				sendPacket(buildPacket(messageId, i, dataLength, fragments[i]), recipient);
 			}
 		} catch (IOException e) {
 			Log.e("Error while serializing data: " + data);
@@ -100,42 +98,34 @@ public abstract class PacketSender implements KnowledgeDataSender {
 
 	protected abstract void sendPacket(byte[] packet, String recipient);
 
-	private byte[][] fragment(Object data, int packetSize) throws IOException {
+	byte[][] fragment(byte[] serialized, int packetSize) throws IOException {
 		int fragmentSize = packetSize - HEADER_SIZE;
-		byte[] serialized = Serializer.serialize(data);
 		byte[][] result = new byte[(int) Math.ceil(serialized.length
-				/ (double) fragmentSize)][fragmentSize];
+				/ (double) fragmentSize)][];
 		int start = 0;
-		for (int i = 0; i < result.length; i++) {
-			result[i] = Arrays.copyOfRange(serialized, start, start
-					+ fragmentSize);
-			start += fragmentSize;
+		for (int i = 0; i < result.length; i++) {	
+			int remainingBytes = serialized.length - start;
+			int cnt = Math.min(fragmentSize, remainingBytes);
+			result[i] = new byte[cnt];
+			result[i] = Arrays.copyOfRange(serialized, start, start + cnt);
+			start += cnt;
 		}
 		return result;
 	}
 
-	private byte[] buildInitialPacket(int id, int messageSize) {
-		byte[] size = ByteBuffer.allocate(4).putInt(messageSize).array();
-		return  buildPacket(id, Integer.MIN_VALUE, size);	
-	}
-
-	private byte[] buildPacket(int id, int seqNumber, byte[] packetData) {
-		byte[] bId = ByteBuffer.allocate(4).putInt(id).array();
-		byte[] bSeqNumber = ByteBuffer.allocate(4).putInt(seqNumber).array();
-		byte[] result = new byte[HEADER_SIZE + packetData.length];
-		for (int i = 0; i < bId.length; i++)
-			result[i] = bId[i];
-		for (int i = 0; i < bSeqNumber.length; i++)
-			result[i + 4] = bSeqNumber[i];
-		for (int i = 0; i < packetData.length; i++)
-			result[i + HEADER_SIZE] = packetData[i];
-		return result;
+	byte[] buildPacket(int id, int seqNumber, int totalSize, byte[] packetData) {
+		ByteBuffer bb = ByteBuffer.allocate(HEADER_SIZE+packetData.length);
+		bb.putInt(id);
+		bb.putInt(seqNumber);
+		bb.putInt(totalSize);
+		bb.put(packetData);
+		return bb.array();
 	}
 	
-	private int getDataLength(byte [][] data) {
+	/*private int getDataLength(byte [][] data) {
 		int result = 0;
 		for (int i = 0; i < data.length; i++)
 			result += data[i].length;
 		return result;
-	}
+	}*/
 }

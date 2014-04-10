@@ -75,19 +75,21 @@ public class PacketReceiver {
 		Message msg;
 		int messageId = getMessageId(packet);
 		Log.d(String.format("PacketReceiver: Packet received at %s with messageid %d with RSSI: %g", host, messageId, rssi));
+		
 		if (messages.containsKey(messageId)) {
 			msg = messages.get(messageId);
 		} else {
 			msg = new Message(messageId);
 			messages.put(messageId, msg);
 		}
+		
 		if (isInitialPacket(packet)) {
 			int messageSize = getMessageSize(packet);
 			msg.initialize(messageSize);
-		} else {
-			int seqNumber = getPacketSeqNumber(packet);
-			msg.setData(seqNumber, getPacketData(packet));
 		}
+		
+		int seqNumber = getPacketSeqNumber(packet);
+		msg.setData(seqNumber, getPacketData(packet));
 		msg.setLastRSSI(rssi);
 		if (msg.isComplete() && knowledgeDataReceiver != null) {
 			//Log.i(String.format("R: " + "(" + messageId + ")"
@@ -104,7 +106,6 @@ public class PacketReceiver {
 	
 	public void clearCachedMessages() {
 		int origCnt = messages.size();
-
 		Set<Integer> droppedIds = new HashSet<>();
 		
 		Message message;
@@ -149,6 +150,8 @@ public class PacketReceiver {
 	}
 
 	// -----------Helper methods-----------
+	
+	//TODO Extract into packet protocol class together with methods from the PacketSender
 
 	private int getMessageId(byte[] packet) {
 		return ByteBuffer.wrap(Arrays.copyOfRange(packet, 0, 4)).getInt();
@@ -166,11 +169,11 @@ public class PacketReceiver {
 	}
 
 	private boolean isInitialPacket(byte[] packet) {
-		return getPacketSeqNumber(packet) == Integer.MIN_VALUE;
+		return getPacketSeqNumber(packet) == 0;
 	}
 
 	private byte[] getPacketData(byte[] packet) {
-		return Arrays.copyOfRange(packet, 8, packet.length);
+		return Arrays.copyOfRange(packet, PacketSender.HEADER_SIZE, packet.length);
 	}
 
 	// ---------Helper Class--------------
