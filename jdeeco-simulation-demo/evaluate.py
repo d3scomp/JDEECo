@@ -19,7 +19,9 @@ from math import ceil
 from pylab import plot, show, savefig, xlim, figure, \
                 hold, ylim, legend, boxplot, setp, axes
 from collections import namedtuple
+from time import sleep
 
+coderoot = os.path.dirname(os.path.realpath(__file__))
 root = os.path.dirname(os.path.realpath(__file__))
 cpus = 3
 
@@ -192,10 +194,21 @@ def cleanup():
 
 atexit.register(cleanup)
 
+
 def finalizeOldestSimulation():
-    iteration = simulated[0]
-    iteration.simulation.wait()
-    simulated.pop(0)
+    iteration = None
+    while iteration is None:
+        for it in simulated:
+            if it.simulation.poll() is not None:
+                iteration = it
+                break
+        if iteration is None:
+            #print 'sleeping'
+            sleep(5)
+            
+    iteration.simulation.wait()    
+    simulated.remove(iteration)
+
     os.remove(iteration.omnetppPath() + '.ini')
     os.remove(iteration.loggingPropertiesPath())
     iteration.stdOut.flush()
@@ -206,14 +219,14 @@ def finalizeOldestSimulation():
 
 
 def simulateScenario(iteration):
-    classpath = root + '\\..\\dist\\*;.'
+    classpath = coderoot + '\\..\\dist\\*;.'
     
-    copyfile(root + '\\analysis\\logging.properties', iteration.loggingPropertiesPath())
+    copyfile(coderoot + '\\analysis\\logging.properties', iteration.loggingPropertiesPath())
     with open(iteration.loggingPropertiesPath() , 'a') as f:
         print>>f, '\n\njava.util.logging.FileHandler.pattern=' + iteration.logTemplatePath().replace('\\', '/')
    
     cmd = [command, '-cp', classpath,
-           '-Xmx1600M',
+           '-Xmx1200M',
            '-Ddeeco.receive.cache.deadline=1500',
            '-Ddeeco.publish.individual=true',
            '-Ddeeco.boundary.disable=%s' % ('false' if iteration.boundaryEnabled else 'true'),
@@ -601,24 +614,24 @@ if __name__ == '__main__':
     scenariosWithBoundary = []
     scenariosWithoutBoundary = []
     
-    cpus = 2
+    cpus = 1
     evaluations = {}    
-    for i in range(1,8,2): 
-        evaluations[i] = 2
+    for i in range(1,2,2): 
+        evaluations[i] = 1
     # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
     for scale in evaluations.keys():    
         scenarios.append(Scenario('a', scale, 1, evaluations[scale], False))
-        scenarios.append(Scenario('b', scale, 1, evaluations[scale], False))
-        scenarios.append(Scenario('a', scale, 1, evaluations[scale], False))
+        cenarios.append(Scenario('b', scale, 1, evaluations[scale], False))
+        scenarios.append(Scenario('c', scale, 1, evaluations[scale], False))
 
     duplicateScenariosForBoundary(scenarios, scenariosWithBoundary, scenariosWithoutBoundary)   
 
     
     #generate()
     #simulate()
-    cpus = 2
-    simplyfiLogs()    
-    analyze()
+    #cpus = 2
+    #simplyfiLogs()    
+    #analyze()
       
-    plot()
+    #plot()
 
