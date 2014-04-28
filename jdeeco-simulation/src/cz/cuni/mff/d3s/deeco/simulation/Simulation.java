@@ -73,12 +73,12 @@ public class Simulation {
 	private native double nativeGetPositionZ(String nodeId);
 
 	private final Map<String, String> idsToAddresses;
-	private final List<Host> hosts;
+	private final Map<String, Host> hosts;
 	private final boolean useOMNETForDirectPacketPassing;
 
 	public Simulation(boolean useOMNETForDirectPacketPassing) {
 		idsToAddresses = new HashMap<String, String>();
-		hosts = new LinkedList<>();
+		hosts = new HashMap<>();
 		this.useOMNETForDirectPacketPassing = useOMNETForDirectPacketPassing;
 	}
 
@@ -98,7 +98,7 @@ public class Simulation {
 	public Host getHost(String jDEECoAppModuleId, String nodeId) {
 		idsToAddresses.put(jDEECoAppModuleId, nodeId);
 		Host host = new Host(this, jDEECoAppModuleId);
-		hosts.add(host);
+		hosts.put(host.getId(), host);
 		return host;
 	}
 
@@ -113,11 +113,8 @@ public class Simulation {
 	}
 
 	public void sendPacket(String id, byte[] data, String recipient) {
-		if (!recipient.equals("") && useOMNETForDirectPacketPassing) {
-			for (Host h : hosts)
-				if (h.getId().equals(recipient)) {
-					h.packetReceived(data, -1);
-				}
+		if (!recipient.equals("") && hosts.containsKey(recipient) && useOMNETForDirectPacketPassing) {
+			hosts.get(recipient).packetReceived(data, -1);
 		} else {
 			String sendTo;
 			if (recipient == null || recipient.equals("")) {
@@ -171,7 +168,7 @@ public class Simulation {
 	}
 
 	public void finalize() {
-		for (Host h : hosts)
+		for (Host h : hosts.values())
 			h.finalize();
 	}
 
