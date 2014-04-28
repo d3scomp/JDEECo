@@ -50,7 +50,8 @@ public class Main {
 	static String DEFAULT_SITE_CFG = "configurations/site.cfg";
 	
 	static int SIMULATION_DURATION = 60000;
-	static int IP_GOSSIP_TARGET_PERCENTAGE = 20;
+	static int IP_GOSSIP_TARGET_CNT = 2;
+	static String IP_GOSSIP_TARGET_PROPERTY = "deeco.rebroadcast.ipcount";
 	
 
 	
@@ -92,7 +93,7 @@ public class Main {
 				if (recipients.isEmpty())
 					return recipients;
 												
- 				int targetCnt = 3;//(int) Math.ceil(recipients.size() * (IP_GOSSIP_TARGET_PERCENTAGE/100.0)); 
+ 				int targetCnt = Integer.getInteger(IP_GOSSIP_TARGET_PROPERTY, IP_GOSSIP_TARGET_CNT); 
  				targetCnt = Math.min(recipients.size(), targetCnt);				
 				List<String> copy = new ArrayList<>(recipients);
 				
@@ -104,19 +105,12 @@ public class Main {
 			        copy.set(i, rId);			        
 			    }
 				return copy.subList(0, targetCnt);
-				
-				// originally was this				
-				//for (String rId: recipients) {
-				//	//20% chances of sending to the given recipient
-				//	if (rnd.nextInt(100) < 20)
-				//		result.add(rId);
-				//}
 			}
 		};	
 		
 		// for each component config crate a separate model including only the component and all ensemble definitions,
 		// a separate host, and a separate runtime framework
-		List<PositionAwareComponent> components = new LinkedList<>();
+		List<PositionAwareComponent> components = new ArrayList<>();
 		PositionAwareComponent component = null;
 		List<RuntimeFramework> runtimes = new ArrayList<>();
 		List<Host> hosts = new ArrayList<>();		

@@ -13,7 +13,7 @@ import time
 from shutil import copyfile
 import numpy as np
 import pylab
-from numpy import average
+from numpy import average, round, sign
 from multiprocessing import *
 from math import ceil
 from pylab import plot, show, savefig, xlim, figure, \
@@ -38,8 +38,17 @@ class Scenario():
         self.boundaryEnabled = boundaryEnabled
         self.iterations = []
         self.start = start
-        self.insideNodes = self.density * self.BUILDING_SIZE * self.BUILDING_SIZE * 2
-        self.totalNodes = self.density * (2*self.scale + self.BUILDING_SIZE) * (3*self.scale+2*self.BUILDING_SIZE)  
+        if self.scenario == 'a':
+            self.insideNodes = self.density * self.BUILDING_SIZE * self.BUILDING_SIZE * 2
+            self.totalNodes = self.density * (2*self.scale + self.BUILDING_SIZE) * (3*self.scale+2*self.BUILDING_SIZE)
+        elif self.scenario == 'b':  
+            self.insideNodes = self.BUILDING_SIZE * 2 *self.BUILDING_SIZE * self.density
+            self.totalNodes = self.density * (2+2*self.scale)*self.BUILDING_SIZE*self.BUILDING_SIZE
+        elif self.scenario == 'c':
+            self.insideNodes = (self.BUILDING_SIZE) * self.BUILDING_SIZE * self.density
+            buildings = 4 * self.scale
+            self.totalNodes = self.density * (buildings * self.BUILDING_SIZE - (buildings-1)) * self.BUILDING_SIZE  
+            
         for i in range(iterationCnt):
             self.iterations.append(ScenarioIteration(self, scale, density, start + i, boundaryEnabled)) 
     def folder(self):
@@ -53,7 +62,7 @@ class Scenario():
     def neighborResultsPath(self): 
         return root + '\\simulation-results\\results-neighbors-%d-%s-%s.csv' % (self.scale, 't' if self.boundaryEnabled else 'f', self.scenario)
     def tickLabel(self):
-        return '%d/%d\n(%d)' % (self.insideNodes, self.totalNodes, self.scale)
+        return '%d/%d' % (self.insideNodes, self.totalNodes)
        
     
 class ScenarioIteration:
@@ -226,14 +235,14 @@ def simulateScenario(iteration):
         print>>f, '\n\njava.util.logging.FileHandler.pattern=' + iteration.logTemplatePath().replace('\\', '/')
    
     cmd = [command, '-cp', classpath,
-           '-Xmx1200M',
+           '-Xmx1600M',
            '-Ddeeco.receive.cache.deadline=1500',
            '-Ddeeco.publish.individual=true',
            '-Ddeeco.boundary.disable=%s' % ('false' if iteration.boundaryEnabled else 'true'),
            '-Ddeeco.publish.packetsize=1024',
            '-Ddeeco.publish.period=2000',
            '-Ddeeco.rebroadcast.delay=1000',
-           '-Ddeeco.rebroadcast.ipdelay=200',
+           '-Ddeeco.rebroadcast.ipdelay=400',
            '-Djava.util.logging.config.file=%s' % (iteration.loggingPropertiesPath().replace('\\', '/')),
            'cz.cuni.mff.d3s.jdeeco.simulation.demo.Main',
            iteration.componentCfgPath(), iteration.siteCfgPath(), iteration.omnetppPath() ]
@@ -266,6 +275,12 @@ def simulate():
 
 
 def analyzeScenario(iteration):    
+    #shorten the log before analysis
+    cmd = ['grep', '"^DEBUG:"', it.logPath(), '>', it.shortenedLogPath()]
+    line = ' '.join(cmd)     
+    print 'Executing: ', line         
+    os.system(line)
+    
     with open(iteration.genericAnalysisStdoutPath(), 'w') as genericStdout:
         oldStdOut = sys.stdout
         sys.stdout = genericStdout
@@ -360,18 +375,17 @@ def analyze():
                 
     print 'Analysis done'
 
-def colorBoxplot(bp, isSecond):
-    mycolor = '#E24A33'
-    if isSecond:
-        mycolor = '#348ABD'
-    pylab.setp(bp['boxes'], color=mycolor)
-    pylab.setp(bp['whiskers'], color=mycolor)
-    pylab.setp(bp['fliers'], marker='None')
-    
 
+
+color2 = '#C4CC35'#'black'
+color1 = '#423F8C'#'red'#'
+lineThickness = 3
 
 def plotMessageCounts(fig, scenarios):
     import pandas as pd
+    pylab.rc('axes', color_cycle=[color2, color1])
+    pylab.figure(fig).set_facecolor('white')    
+
 
     dataWithoutBoundary = [
         ['F', s.messageStats[1], s.messageStats[0] - s.messageStats[1]] for s in scenariosWithoutBoundary]
@@ -387,63 +401,57 @@ def plotMessageCounts(fig, scenarios):
     
 
     maxMessageCount = max([s.messageStats[0] for s in scenariosWithoutBoundary])
-    STEP = 20000
+    STEP = 100000
     yticks = range(0, int(maxMessageCount - maxMessageCount % STEP + STEP + 1), STEP)
 
     xticksLabels = [s.tickLabel() for s in scenariosWithoutBoundary]
     
     ax.set_yticks(yticks)
-    ax.set_yticklabels(map(lambda x: x/1000, yticks))
+    ax.set_yticklabels(map(lambda x: x/1000000.0, yticks))
     ax.set_frame_on(False)
-    ax.set_ylabel('replicas disseminated [in thousands]')
-    ax.set_xlabel('total number of nodes [firefighters/others]')
+    ax.set_ylabel('replicas disseminated [millions]')
+    ax.set_xlabel('number of nodes [within communication boundary/total]')
     ax.set_xticklabels([])
     ax.tick_params(axis='x', pad=20)
     
     
-    plt1 = df.loc[df['boundary'] == 'F'].plot(kind='bar', stacked=True, ax=axes[0]);
-    axes[0].set_title('without boundary')    
+    plt1 = df.loc[df['boundary'] == 'F'].plot(kind='bar', stacked=True, ax=axes[0], legend=False);
+    axes[0].set_title('without boundary', fontsize='medium')    
     axes[0].set_yticklabels([])
     axes[0].set_xticklabels(xticksLabels)
     axes[0].set_yticks(yticks)
+    axes[0].xaxis.grid(False)
+    patches, labels = plt1.get_legend_handles_labels()
+    plt1.legend(patches, labels, loc='best', fontsize='medium')
     
     pylab.setp(axes[0].xaxis.get_majorticklabels(), rotation=0 )
     
     plt2 = df.loc[df['boundary'] == 'T'].plot(kind='bar', stacked=True, ax=axes[1], legend=False);
-    axes[1].set_title('with boundary')
+    axes[1].set_title('with boundary', fontsize='medium')
     axes[1].set_yticks(yticks)
     axes[1].set_yticklabels([])
     axes[1].set_xticklabels(xticksLabels)    
     pylab.setp(axes[1].xaxis.get_majorticklabels(), rotation=0 )    
+    axes[1].xaxis.grid(False)
 
-color2 = '#C4CC35'
-color1 = '#423F8C'
-lineThickness = 3
-    
+
+
+
 def setBoxColors(pylab, bp, color):
     pylab.setp(bp['boxes'], color=color)
     pylab.setp(bp['caps'], color=color)
     pylab.setp(bp['whiskers'], color=color)
-    pylab.setp(bp['fliers'], marker='None')
+    pylab.setp(bp['fliers'], color='lightgray')
     pylab.setp(bp['medians'], color=color)
-    
-    pylab.setp(bp['boxes'], linewidth=lineThickness)
-    pylab.setp(bp['caps'], linewidth=lineThickness)
-    pylab.setp(bp['whiskers'], linewidth=lineThickness)
-    pylab.setp(bp['fliers'], linewidth=lineThickness)
-    pylab.setp(bp['medians'], linewidth=lineThickness)    
-    
 
 def plotBoundaryBoxplot(scenarios, valuesAttribute, split):    
     xGapWidth = 0
     xTicks = [0]
     scales = []
-    if split:
-        boundaryEnabledColor = color1
-        boundaryDisabledColor = color2
-    else:
-        boundaryDisabledColor = color1
-        boundaryEnabledColor = color2
+   
+    boundaryEnabledColor = color1
+    boundaryDisabledColor = color2
+    
     for s in scenarios:
         scales.append(s.scale)
     uniqueList = list(set(scales))
@@ -456,58 +464,89 @@ def plotBoundaryBoxplot(scenarios, valuesAttribute, split):
     for cnt in uniqueList:
         xTicks.append(partialSum)
         partialSum += xGapWidth
-    width = xGapWidth / (len(scenarios)/2)
+    if split:
+        width = xGapWidth / (len(scenarios)/2)
+    else:
+        width = xGapWidth / (len(scenarios))
     for s in scenarios:
-        positionOffset = 0
+        positionOffset = 0        
         if split:
             if s.boundaryEnabled:
                 positionOffset = width/1.5
+                align='left'
+                color = boundaryEnabledColor #'#348ABD'
             else:
                 positionOffset = -width/1.5
-        bp = pylab.boxplot(getattr(s, valuesAttribute), positions = [(xGapWidth*(uniqueList.index(s.scale) + 1))+positionOffset], widths = width) 
-        if s.boundaryEnabled:
-            color = boundaryEnabledColor #'#348ABD'
-        else: 
-            color = boundaryDisabledColor #'#E24A33'
+                align='right'
+                color = boundaryDisabledColor #'#E24A33'
+                xLabels[uniqueList.index(s.scale)] = s.tickLabel()
+            textOffset = sign(positionOffset)*(width-1)
+        else:
+            align='left'
+            color = boundaryEnabledColor
             xLabels[uniqueList.index(s.scale)] = s.tickLabel()
+            textOffset = (width-1)
+            
+                   
+            
+        xPosition = (xGapWidth*(uniqueList.index(s.scale) + 1))+positionOffset
+        values = getattr(s, valuesAttribute)
+        bp = pylab.boxplot(values, positions = [xPosition], widths = width) 
+
         setBoxColors(pylab, bp, color)
-        
+            
+        # Due to the Y-axis scale being different across samples, it can be
+        # hard to compare differences in medians across the samples. Add upper
+        # X-axis tick labels with the sample medians to aid in comparison
+        # (just use two decimal places of precision)
+        median = bp['medians'][0].get_ydata()[0]
+        pylab.axes().text(xPosition+textOffset, median, str(int(median)),
+             horizontalalignment=align, size='small', weight='bold',
+             color=color)
+
     xTicks.append(xTicks[1] + xTicks[len(xTicks) - 1])
-    xLabels = [''] + xLabels
+    xLabels = [''] + xLabels    
     
     pylab.axes().set_xticks(xTicks)
     pylab.axes().set_xticklabels(xLabels)
     pylab.axes().yaxis.grid(True, linestyle=':', which='major', color='lightgrey',alpha=0.8)
     if split:
-        hB, = pylab.plot([0,0],boundaryEnabledColor) #'#348ABD')
-        hR, = pylab.plot([0,0],boundaryDisabledColor) #'#E24A33')
-        pylab.legend((hB, hR),('Boundary Condition enabled', 'Boundary Condition disabled'), loc='upper left')
+        hR, = pylab.plot([0,-100],boundaryDisabledColor, linewidth=3) #'#E24A33')
+        hB, = pylab.plot([0,-100],boundaryEnabledColor, linewidth=3) #'#348ABD')
+        pylab.legend((hR, hB),('without communication boundary', 'with communication boundary'), loc='upper left', fontsize='medium')
+    pylab.ylim(ymin=0)
     
+
+
+
 def plotResponseTimes(fig, scenarios, splitBoundary):
     pylab.figure(fig).set_facecolor('white')    
-    plotBoundaryBoxplot(scenarios, 'node2nodeResponseTimes', splitBoundary)     
-    pylab.axes().set_ylabel("time [s]");
-    pylab.axes().set_xlabel("total number of nodes [firefighters/others]");
-    pylab.axes().set_yticks(range(0, 60000, 5000))
-    pylab.axes().set_yticklabels(range(0, 60, 5))   
+    plotBoundaryBoxplot(scenarios, 'node2nodeResponseTimesPerHop', splitBoundary)     
+    pylab.axes().set_ylabel("response time per 1 hop [ms]");
+    pylab.axes().set_xlabel("number of nodes [within communication boundary/total]");
+    pylab.ylim(ymax=8000)
+    pylab.axes().set_yticks(range(0, 10000, 1000))
+    pylab.axes().set_yticklabels(range(0, 10000, 1000))   
     
 def plotNeighborCounts(fig, scenarios, splitBoundary):
     pylab.figure(fig).set_facecolor('white')    
     plotBoundaryBoxplot(scenarios, 'neighbors', splitBoundary)    
+    pylab.ylim(ymax=25)
     pylab.axes().set_ylabel("number of neighbors");
-    pylab.axes().set_xlabel("total number of nodes [firefighters/others]");       
+    pylab.axes().set_xlabel("number of nodes [within communication boundary/total]");       
 
 def plotDiscoveryRate(fig, scenarios, splitBoundary):
     pylab.figure(fig).set_facecolor('white')    
     plotBoundaryBoxplot(scenarios, 'discoveryRatio', splitBoundary)    
     pylab.axes().set_ylabel("discovery ratio");
-    pylab.axes().set_xlabel("total number of nodes [firefighters/others]");       
+    pylab.axes().set_xlabel("number of nodes [within communication boundary/total]");       
+    pylab.ylim(ymax=1)
     
 def plotBoundaryHits(fig, scenarios, splitBoundary):    
     pylab.figure(fig).set_facecolor('white')    
     plotBoundaryBoxplot(scenarios, 'boundaryHits', splitBoundary)    
-    pylab.axes().set_ylabel("boundary hits");
-    pylab.axes().set_xlabel("total number of nodes [firefighters/others]");       
+    pylab.axes().set_ylabel("dissemniations prevented due to communication boundary");
+    pylab.axes().set_xlabel("number of nodes [within communication boundary/total]");       
     
 def plot():    
     print 'Plotting...'
@@ -519,11 +558,14 @@ def plot():
             contents = np.loadtxt(resultsFile)
             if len(contents) == 0:
                 s.node2nodeResponseTimes = []
+                s.hops = []
             else:
                 # if there is only one row, duplicate it so that the selectors don't fail
                 if len(contents.shape) == 1:
                     contents = np.vstack((contents, contents))
                 s.node2nodeResponseTimes = map(int, contents[:, 1])
+                s.hops = map(int, contents[:, 2])
+            s.node2nodeResponseTimesPerHop = [t/h for t, h in zip(s.node2nodeResponseTimes, s.hops)]
         with open(s.genericResultsPath(), 'r') as resultsFile: 
             contents = np.loadtxt(resultsFile)
             # if there is only one row, duplicate it so that the selectors don't fail
@@ -538,16 +580,15 @@ def plot():
             contents = np.loadtxt(resultsFile)
             s.neighbors = map(int, contents)        
 
-    pylab.rc('axes', color_cycle=[color1, color2])
       
     scenairosToPlot = scenarios
-    split = True
     
-    plotResponseTimes(0, scenairosToPlot, split)
-    plotMessageCounts(1, scenairosToPlot)
-    plotNeighborCounts(2, scenairosToPlot, split)
-    plotDiscoveryRate(3, scenairosToPlot, split)
-    plotBoundaryHits(4, scenairosToPlot, split)
+    plotResponseTimes(0, scenarios, True)
+    plotMessageCounts(1, scenarios)
+    plotNeighborCounts(2, scenariosWithBoundary, False)
+    plotDiscoveryRate(3, scenarios, True)
+    plotBoundaryHits(4, scenariosWithBoundary, False)
+
     
     pylab.show()
 
@@ -614,24 +655,19 @@ if __name__ == '__main__':
     scenariosWithBoundary = []
     scenariosWithoutBoundary = []
     
-    cpus = 1
+    cpus = 2
     evaluations = {}    
-    for i in range(1,2,2): 
-        evaluations[i] = 1
+    for i in range(1,6,1): 
+        evaluations[i] = 4
     # init with only scenarios with disabled boundary (they enbaled counterparts will be created automatically after the generation step)
-    for scale in evaluations.keys():    
-        scenarios.append(Scenario('a', scale, 1, evaluations[scale], False))
-        cenarios.append(Scenario('b', scale, 1, evaluations[scale], False))
+    for scale in evaluations.keys():        
         scenarios.append(Scenario('c', scale, 1, evaluations[scale], False))
 
     duplicateScenariosForBoundary(scenarios, scenariosWithBoundary, scenariosWithoutBoundary)   
 
     
-    #generate()
-    #simulate()
-    #cpus = 2
-    #simplyfiLogs()    
-    #analyze()
-      
-    #plot()
+    generate()
+    simulate()    
+    analyze()      
+    plot()
 

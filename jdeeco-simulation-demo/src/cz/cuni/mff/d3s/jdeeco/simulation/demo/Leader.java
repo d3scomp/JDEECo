@@ -61,10 +61,9 @@ public class Leader extends PositionAwareComponent {
 		this.membersInDanger = new HashSet<>();
 	}
 
-	@Process
-	@PeriodicScheduling(500)	
+	@Process	
 	public static void processMemberData(@In("id") String id,
-			@In("memberAggregateData") Map<String, MemberData> memberAggregateData,
+			@TriggerOnChange @In("memberAggregateData") Map<String, MemberData> memberAggregateData,
 			@In("memberPositions") Map<String, Position> memberPositions,
 			@InOut("membersInDanger") ParamHolder<Set<String>> membersInDanger) {
 		StringBuffer sb = new StringBuffer();
