@@ -1,10 +1,11 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -87,7 +88,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 			if (knowledgeChangeListeners.containsKey(kct)) {
 				listeners = knowledgeChangeListeners.get(kct);
 			} else {
-				listeners = new LinkedList<>();
+				listeners = new ArrayList<>();
 				knowledgeChangeListeners.put(kct, listeners);
 			}
 			listeners.add(triggerListener);
@@ -130,7 +131,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	@Override
 	public void update(final ChangeSet changeSet) throws KnowledgeUpdateException {
 		final Map<KnowledgePath, Object> updated = new HashMap<>();
-		final List<KnowledgePath> added = new LinkedList<>();
+		final List<KnowledgePath> added = new ArrayList<>();
 		Object original = null;
 		try {
 			boolean exists;
@@ -280,7 +281,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		if (noPathOverlapWithAny(knowledgePath, knowledge.keySet())) {
 			knowledge.put(knowledgePath, value);
 		} else {
-			final List<PathNode> pathNodesToParent = new LinkedList<>(
+			final List<PathNode> pathNodesToParent = new ArrayList<>(
 					knowledgePath.getNodes());
 			final String fieldName = ((PathNodeField) pathNodesToParent
 					.remove(pathNodesToParent.size() - 1)).getName();
@@ -308,7 +309,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 				}
 			} else {
 				try {
-					final Field field = parent.getClass().getField(fieldName);
+					Field field = parent.getClass().getField(fieldName);
 					field.set(parent, value);
 				} catch (final NoSuchFieldException | IllegalAccessException e) {
 					throw new KnowledgeUpdateException("Forbidden update: "
@@ -357,7 +358,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		} else {
 			// Otherwise, get the path to the parent (owner) of the object being
 			// deleted.
-			final List<PathNode> pathNodesToParent = new LinkedList<>(
+			final List<PathNode> pathNodesToParent = new ArrayList<>(
 					knowledgePath.getNodes());
 			final String fieldName = ((PathNodeField) pathNodesToParent
 					.remove(pathNodesToParent.size() - 1)).getName();
@@ -439,7 +440,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 			final Collection<KnowledgePath> knowledgePaths) {
 		final Map<KnowledgePath, Object> deleted = new HashMap<>();
 		// First lets delete free (root) nodes
-		final List<KnowledgePath> reducedKnowledgePaths = new LinkedList<>(
+		final List<KnowledgePath> reducedKnowledgePaths = new ArrayList<>(
 				knowledgePaths);
 		for (final KnowledgePath kp : knowledgePaths) {
 			if (knowledge.containsKey(kp)) {
@@ -461,14 +462,14 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 			try {
 				// Retrieve path to the owner of the object being deleted
 				// but keep the name of object being deleted.
-				pathNodesToParent = new LinkedList<>(kp.getNodes());
+				pathNodesToParent = new ArrayList<>(kp.getNodes());
 				fieldName = ((PathNodeField) pathNodesToParent
 						.remove(pathNodesToParent.size() - 1)).getName();
 				parent = getKnowledge(pathNodesToParent);
 				if (parentsToPaths.containsKey(parent)) {
 					keysToDelete = parentsToPaths.get(parent);
 				} else {
-					keysToDelete = new LinkedList<>();
+					keysToDelete = new ArrayList<>();
 					parentsToPaths.put(parent, keysToDelete);
 				}
 				keysToDelete.add(fieldName);
@@ -540,8 +541,8 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		assert (longer != null && shorter != null);
 		// We need this as EList has differs in implementation of List
 		// specification, See indexOf method.
-		final List<Object> longerList = new LinkedList<>();
-		final List<Object> shorterList = new LinkedList<>();
+		final List<Object> longerList = new ArrayList<>();
+		final List<Object> shorterList = new ArrayList<>();
 		longerList.addAll(longer);
 		shorterList.addAll(shorter);
 		if (shorterList.isEmpty()) {

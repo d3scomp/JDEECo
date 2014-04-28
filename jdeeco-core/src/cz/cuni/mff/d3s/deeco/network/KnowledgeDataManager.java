@@ -1,12 +1,16 @@
 
 package cz.cuni.mff.d3s.deeco.network;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 
 import cz.cuni.mff.d3s.deeco.DeecoProperties;
@@ -20,10 +24,14 @@ import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
+import cz.cuni.mff.d3s.deeco.task.Task;
+import cz.cuni.mff.d3s.deeco.task.TaskInvocationException;
 
 
 /**
@@ -79,6 +87,8 @@ KnowledgeDataPublisher {
 	protected final KnowledgeDataSender knowledgeDataSender;	
 	/** Stores received KnowledgeMetaData for replicas (received ValueSet is deleted) */
 	protected final Map<KnowledgeManager, KnowledgeMetaData> replicaMetadata;
+	/** Stores timestamp of receive time of replicas */
+	protected final Map<KnowledgeManager, Long> replicaReceived;
 	/** Empty knowledge path enabling convenient query for all knowledge */  
 	private final List<KnowledgePath> emptyPath;
 	/** List of ensemble definitions whose boundary conditions should be considered. */
@@ -98,10 +108,15 @@ KnowledgeDataPublisher {
 	private final int maxRebroadcastDelay;	
 	private final int ipDelay;
 	
+	public static final int DEFAULT_MAX_REPLICA_STORAGE_TIME = 60000; //60sec
+	private final int maxReplicaStorageTime;
+	
 	
 	//TODO This needs to be changed
 	private final Collection<DirectRecipientSelector> recipientSelectors;
 	private final DirectGossipStrategy directGossipStrategy;
+	
+	private final ReplicaCleanerTask cleaner;
 
 	
 	/**
@@ -128,6 +143,7 @@ KnowledgeDataPublisher {
 		this.ensembleDefinitions = ensembleDefinitions;
 		this.localVersion = 0;
 		this.replicaMetadata = new HashMap<>();
+		this.replicaReceived = new HashMap<>();
 		this.recipientSelectors = recipientSelectors;
 		this.directGossipStrategy = directGossipStrategy;
 		
@@ -153,7 +169,13 @@ KnowledgeDataPublisher {
 		
 		ipDelay = Integer.getInteger(DeecoProperties.IP_REBROADCAST_DELAY, DEFAULT_IP_DELAY);
 		Log.d(String.format("KnowledgeDataManager at %s uses ipDelay = %d", host, ipDelay));
-
+		
+		maxReplicaStorageTime = Integer.getInteger(DeecoProperties.REPLICA_STORAGE_DEADLINE, DEFAULT_MAX_REPLICA_STORAGE_TIME);
+		Log.d(String.format("KnowledgeDataManager at %s uses maxReplicaStorageTime = %d", host, maxReplicaStorageTime));
+		
+		cleaner = new ReplicaCleanerTask(scheduler, maxReplicaStorageTime);
+		scheduler.addTask(cleaner);
+		
 		double rssi = 0;
 		try {
 			rssi = Double.parseDouble(System.getProperty(DeecoProperties.GOSSIP_CONDITION_RSSI));
@@ -285,14 +307,15 @@ KnowledgeDataPublisher {
 			boolean haveOlder = (currentMetadata == null) || (currentMetadata.versionId < newMetadata.versionId);			
 			if (haveOlder) {	
 				try {
-				replica.update(toChangeSet(kd.getKnowledge()));			
+					replica.update(toChangeSet(kd.getKnowledge()));			
 				} catch (KnowledgeUpdateException e) {
 					Log.w(String
 							.format("KnowledgeDataManager.receive: Could not update replica of %s.",
 									newMetadata.componentId), e);
 				}
 				//	store the metadata without the knowledge values
-				replicaMetadata.put(replica, newMetadata);
+				replicaMetadata.put(replica, newMetadata);				
+				replicaReceived.put(replica, timeProvider.getCurrentTime());
 				
 				// rebroadcast only data that is of some value (i.e., newer than we have)
 				queueForRebroadcast(kd);
@@ -306,6 +329,22 @@ KnowledgeDataPublisher {
 						newMetadata.hopCount));
 			} 
 		}
+	}
+	
+	void cleanOldReplicas() {
+		long currentTime = timeProvider.getCurrentTime();
+		int cleaned = 0;
+		Iterator<Entry<KnowledgeManager, Long>> it = replicaReceived.entrySet().iterator();
+		while (it.hasNext()) {
+			Entry<KnowledgeManager, Long> e = it.next();
+			if ((currentTime - e.getValue()) > maxReplicaStorageTime) {				
+				replicaMetadata.remove(e.getKey());
+				kmContainer.removeReplica(e.getKey());
+				it.remove();
+				cleaned++;
+			}
+		}
+		Log.d(String.format("Cleaned %d replicas at %s (%d)\n", cleaned, host, currentTime));
 	}
 	
 	void queueForRebroadcast(KnowledgeData kd) {
@@ -356,7 +395,7 @@ KnowledgeDataPublisher {
 	}
 	
 	private Collection<String> getRecipients(KnowledgeData data, KnowledgeManager sender) {
-		List<String> result = new LinkedList<>();
+		Collection<String> result = new HashSet<>();
 		for (DirectRecipientSelector selector: recipientSelectors) {
 			result.addAll(selector.getRecipients(data, sender));
 		}
@@ -414,7 +453,7 @@ KnowledgeDataPublisher {
 		return result;
 	}
 
-
+	
 
 //	
 //	void filterBasedOnGossipCondition(Collection<? extends KnowledgeData> data) {		
@@ -453,7 +492,7 @@ KnowledgeDataPublisher {
 		
 	
 	List<KnowledgeData> prepareLocalKnowledgeData() {
-		List<KnowledgeData> result = new LinkedList<>();
+		List<KnowledgeData> result = new ArrayList<>();
 		for (KnowledgeManager km : kmContainer.getLocals()) {
 			try {
 				KnowledgeData kd = prepareLocalKnowledgeData(km);				
@@ -546,4 +585,36 @@ KnowledgeDataPublisher {
 				timeProvider.getCurrentTime(), host, sb.toString()));
 	}
 	
+	
+	class ReplicaCleanerTask extends Task {
+		final TimeTrigger trigger;
+		
+		public ReplicaCleanerTask(Scheduler scheduler, int period) {
+			super(scheduler);
+			
+			trigger = RuntimeMetadataFactoryExt.eINSTANCE.createTimeTrigger();
+			trigger.setPeriod(period);
+			trigger.setOffset(0);
+		}
+
+		@Override
+		public void invoke(Trigger trigger) throws TaskInvocationException {
+			cleanOldReplicas();
+		}
+
+		@Override
+		protected void registerTriggers() {
+			
+		}
+
+		@Override
+		protected void unregisterTriggers() {
+			
+		}
+
+		@Override
+		public TimeTrigger getTimeTrigger() {
+			return trigger;
+		}		
+	}	
 }
