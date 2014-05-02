@@ -31,7 +31,7 @@ import cz.cuni.mff.d3s.deeco.network.PacketSender;
 import cz.cuni.mff.d3s.deeco.network.PublisherTask;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework;
 import cz.cuni.mff.d3s.deeco.simulation.Host;
-import cz.cuni.mff.d3s.deeco.simulation.Simulation;
+import cz.cuni.mff.d3s.deeco.simulation.OMNetSimulation;
 import cz.cuni.mff.d3s.deeco.simulation.SimulationRuntimeBuilder;
 
 /**
@@ -63,7 +63,7 @@ public class Main {
 			siteCfg = args[1];
 		}
 		
-		Simulation sim = new Simulation();
+		OMNetSimulation sim = new OMNetSimulation();
 		sim.initialize(); //loads Library
 		
 		AnnotationProcessor processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE);
@@ -150,7 +150,7 @@ public class Main {
 			if (component.hasIP) {
 				recipientSelectors = Arrays.asList((DirectRecipientSelector) directRecipientSelector);
 			}
-			RuntimeFramework runtime = builder.build(host, model, recipientSelectors, directGossipStrategy); 
+			RuntimeFramework runtime = builder.build(host, sim, model, recipientSelectors, directGossipStrategy); 
 			runtimes.add(runtime);
 			runtime.start();
 			i++;

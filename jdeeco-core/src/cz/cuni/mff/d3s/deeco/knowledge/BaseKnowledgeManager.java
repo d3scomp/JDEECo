@@ -252,6 +252,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 						break;
 					}
 				} catch (KnowledgeNotFoundException knfe) {
+					endIndex = -1;
 					continue;
 				}
 			}

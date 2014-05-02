@@ -1,9 +1,11 @@
 package cz.cuni.mff.d3s.deeco.simulation;
 
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
+
+import cz.cuni.mff.d3s.deeco.network.NetworkInterface;
+import cz.cuni.mff.d3s.deeco.network.NetworkProvider;
+import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
 
 /**
  * Class representing the entry point for a simulation. It is responsible for
@@ -14,7 +16,8 @@ import java.util.Map;
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
  * 
  */
-public class Simulation {
+public class OMNetSimulation implements CurrentTimeProvider, NetworkProvider,
+		PositionProvider, CallbackProvider {
 
 	/**
 	 * Retrieves current time of the simulation.
@@ -72,18 +75,10 @@ public class Simulation {
 
 	private native double nativeGetPositionZ(String nodeId);
 
-	private final Map<String, String> idsToAddresses;
-	private final List<Host> hosts;
-	private final boolean useOMNETForDirectPacketPassing;
+	private final Map<String, Host> networkAddressesToHosts;
 
-	public Simulation(boolean useOMNETForDirectPacketPassing) {
-		idsToAddresses = new HashMap<String, String>();
-		hosts = new LinkedList<>();
-		this.useOMNETForDirectPacketPassing = useOMNETForDirectPacketPassing;
-	}
-
-	public Simulation() {
-		this(false);
+	public OMNetSimulation() {
+		networkAddressesToHosts = new HashMap<String, Host>();
 	}
 
 	public void initialize() {
@@ -95,39 +90,38 @@ public class Simulation {
 	 * 
 	 * @return new host instance
 	 */
-	public Host getHost(String jDEECoAppModuleId, String nodeId) {
-		idsToAddresses.put(jDEECoAppModuleId, nodeId);
-		Host host = new Host(this, jDEECoAppModuleId);
-		hosts.add(host);
+	public Host getHost(String logicalId, String networkId) {
+		Host host;
+		if (networkAddressesToHosts.containsKey(networkId)) {
+			host = networkAddressesToHosts.get(networkId);
+		} else {
+			host = new Host(this, this, this, logicalId);
+			networkAddressesToHosts.put(networkId, host);
+			registerInNetwork(host, networkId);
+		}
 		return host;
 	}
 
-	// Wrapper methods we may need them.
-
-	public void registerGroupId(String gropuId, String groupAddress) {
-		idsToAddresses.put(gropuId, groupAddress);
+	public void registerInNetwork(NetworkInterface networkInterface, String networkId) {
+		nativeRegister(networkInterface, networkInterface.getHostId());
 	}
 
-	public void register(Object host, String id) {
-		nativeRegister(host, id);
-	}
-
-	public void sendPacket(String id, byte[] data, String recipient) {
-		if (!recipient.equals("") && useOMNETForDirectPacketPassing) {
-			for (Host h : hosts)
-				if (h.getId().equals(recipient)) {
-					h.packetReceived(data, -1);
-				}
+	public void sendPacket(String fromId, byte[] data, String recipient) {
+		String sendTo = null;
+		if (recipient == null || recipient.equals("")) {
+			sendTo = "";
 		} else {
-			String sendTo;
-			if (recipient == null || recipient.equals("")) {
-				sendTo = "";
-			} else if (idsToAddresses.containsKey(recipient))
-				sendTo = idsToAddresses.get(recipient);
-			else
+			for (String networkId : networkAddressesToHosts.keySet()) {
+				if (networkAddressesToHosts.get(networkId).getHostId().equals(recipient)) {
+					sendTo = networkId;
+					break;
+				}
+			}
+			if (sendTo == null)
 				sendTo = recipient;
-			nativeSendPacket(id, data, sendTo);
+			
 		}
+		nativeSendPacket(fromId, data, sendTo);
 	}
 
 	public void run(String environment, String configFile) {
@@ -138,23 +132,23 @@ public class Simulation {
 		nativeCallAt(timeLongToDouble(absoluteTime), nodeId);
 	}
 
-	public boolean isGPSAvailable(String id) {
-		return nativeIsPositionInfoAvailable(id);
+	public boolean isPositionSensorAvailable(Host host) {
+		return nativeIsPositionInfoAvailable(host.getHostId());
 	}
 
-	public double getPositionX(String id) {
-		return nativeGetPositionX(id);
+	public double getPositionX(Host host) {
+		return nativeGetPositionX(host.getHostId());
 	}
 
-	public double getPositionY(String id) {
-		return nativeGetPositionY(id);
+	public double getPositionY(Host host) {
+		return nativeGetPositionY(host.getHostId());
 	}
 
-	public double getPositionZ(String id) {
-		return nativeGetPositionZ(id);
+	public double getPositionZ(Host host) {
+		return nativeGetPositionZ(host.getHostId());
 	}
 
-	public long getSimulationTime() {
+	public long getCurrentTime() {
 		double nativeTime = nativeGetCurrentTime();
 		if (nativeTime < 0)
 			return 0;
@@ -171,7 +165,7 @@ public class Simulation {
 	}
 
 	public void finalize() {
-		for (Host h : hosts)
+		for (Host h : networkAddressesToHosts.values())
 			h.finalize();
 	}
 

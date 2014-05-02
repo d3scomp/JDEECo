@@ -17,7 +17,7 @@ import cz.cuni.mff.d3s.deeco.simulation.scheduler.SimulationScheduler;
 
 public class SimulationRuntimeBuilder {
 
-	public RuntimeFramework build(Host host, RuntimeMetadata model, Collection<DirectRecipientSelector> recipientSelectors, DirectGossipStrategy directGossipStrategy) {
+	public RuntimeFramework build(Host host, CallbackProvider callbackProvider, RuntimeMetadata model, Collection<DirectRecipientSelector> recipientSelectors, DirectGossipStrategy directGossipStrategy) {
 		if (model == null) {
 			throw new IllegalArgumentException("Model must not be null");
 		}
@@ -26,7 +26,7 @@ public class SimulationRuntimeBuilder {
 		Executor executor = new SameThreadExecutor();
 
 		// Set up the simulation scheduler
-		Scheduler scheduler = new SimulationScheduler(host);
+		Scheduler scheduler = new SimulationScheduler(host, callbackProvider);
 		scheduler.setExecutor(executor);
 
 		// Set up the host container
@@ -34,9 +34,9 @@ public class SimulationRuntimeBuilder {
 
 		KnowledgeDataManager kdManager = new KnowledgeDataManager(
 				container, 
-				host, 
+				host.getPacketSender(), 
 				model.getEnsembleDefinitions(), 
-				host.getId(), 
+				host.getHostId(), 
 				scheduler, recipientSelectors, directGossipStrategy);
 		
 		// Bind KnowledgeDataReceiver with PacketDataReceiver
@@ -46,7 +46,7 @@ public class SimulationRuntimeBuilder {
 		PublisherTask publisherTask = new PublisherTask(
 				scheduler, 
 				kdManager,				
-				host.getId());
+				host.getHostId());
 		
 		// Add publisher task to the scheduler
 		scheduler.addTask(publisherTask);

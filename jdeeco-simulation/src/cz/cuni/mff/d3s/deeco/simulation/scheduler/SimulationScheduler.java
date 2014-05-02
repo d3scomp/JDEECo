@@ -1,6 +1,5 @@
 package cz.cuni.mff.d3s.deeco.simulation.scheduler;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -17,6 +16,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.scheduler.SchedulerEvent;
+import cz.cuni.mff.d3s.deeco.simulation.CallbackProvider;
 import cz.cuni.mff.d3s.deeco.simulation.Host;
 import cz.cuni.mff.d3s.deeco.simulation.SimulationTimeEventListener;
 import cz.cuni.mff.d3s.deeco.task.Task;
@@ -34,6 +34,8 @@ public class SimulationScheduler implements Scheduler,
 		SimulationTimeEventListener {
 
 	private final Host host;
+	private final CallbackProvider callbackProvider;
+	
 	private final SortedSet<SchedulerEvent> queue;
 	private final Set<Task> allTasks;
 	private final Map<Task, SchedulerEvent> periodicEvents;
@@ -47,15 +49,16 @@ public class SimulationScheduler implements Scheduler,
 	
 	private Random rnd;
 
-	public SimulationScheduler(Host host) {
+	public SimulationScheduler(Host host, CallbackProvider callbackProvider) {
 		this.host = host;
+		this.callbackProvider = callbackProvider;
 		queue = new TreeSet<SchedulerEvent>();
 		allTasks = new HashSet<>();
 		periodicEvents = new HashMap<>();	
 		onTriggerSchedules = new HashSet<>();
 		
 		long seed = 0;
-		for (char c: host.getId().toCharArray())
+		for (char c: host.getHostId().toCharArray())
 			seed = seed*32+(c-'a');
 		rnd = new Random(seed);
 		
@@ -229,7 +232,7 @@ public class SimulationScheduler implements Scheduler,
 			if (nextExecutionTime <= host.getCurrentTime()) {
 				return; //nextExecutionTime = host.getSimulationTime() + 1;
 			}
-			host.callAt(nextExecutionTime);
+			callbackProvider.callAt(nextExecutionTime, host.getHostId());
 			//System.out.println("Scheduler " + host.getId() + " registering callback at " + nextExecutionTime);
 		}
 	}

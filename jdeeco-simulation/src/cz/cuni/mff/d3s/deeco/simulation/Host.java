@@ -1,6 +1,8 @@
 package cz.cuni.mff.d3s.deeco.simulation;
 
-import static cz.cuni.mff.d3s.deeco.simulation.Simulation.timeDoubleToLong;
+import static cz.cuni.mff.d3s.deeco.simulation.OMNetSimulation.timeDoubleToLong;
+import cz.cuni.mff.d3s.deeco.network.NetworkInterface;
+import cz.cuni.mff.d3s.deeco.network.NetworkProvider;
 import cz.cuni.mff.d3s.deeco.network.PacketReceiver;
 import cz.cuni.mff.d3s.deeco.network.PacketSender;
 import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
@@ -12,43 +14,50 @@ import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
  * 
  */
-public class Host extends PacketSender implements CurrentTimeProvider {
+public class Host implements CurrentTimeProvider, NetworkInterface {
 	
 
 	private SimulationTimeEventListener timeEventListener = null;
 
 	private final PacketReceiver packetReceiver;
-	private final Simulation simulation;
+	private final PacketSender packetSender;
+	
 	private final String id;
 	
-	protected Host(Simulation simulation, String jDEECoAppModuleId, boolean hasMANETNic, boolean hasIPNic) {
-		super(jDEECoAppModuleId);
-		this.simulation = simulation;
+	private final NetworkProvider networkProvider;
+	private final PositionProvider positionProvider;
+	private final CurrentTimeProvider timeProvider;
+	
+	
+	protected Host(NetworkProvider networkProvider, PositionProvider positionProvider, CurrentTimeProvider timeProvider, String jDEECoAppModuleId, boolean hasMANETNic, boolean hasIPNic) {
+		this.networkProvider = networkProvider;
+		this.positionProvider = positionProvider;
+		this.timeProvider = timeProvider;
 		this.id = jDEECoAppModuleId;
 		this.packetReceiver = new PacketReceiver(id);
+		this.packetSender = new PacketSender(this);
 		this.packetReceiver.setCurrentTimeProvider(this);
-		simulation.register(this, id);
 	}
 	
-	public Host(Simulation simulation, String jDEECoAppModuleId) {
-		this(simulation, jDEECoAppModuleId, true, true);
+	public Host(NetworkProvider networkProvider, PositionProvider positionProvider, CurrentTimeProvider timeProvider, String jDEECoAppModuleId) {
+		this(networkProvider, positionProvider, timeProvider, jDEECoAppModuleId, true, true);
 	}
 
 	public PacketReceiver getPacketReceiver() {
 		return packetReceiver;
 	}
+	
+	public PacketSender getPacketSender() {
+		return packetSender;
+	}
 
-	public String getId() {
+	public String getHostId() {
 		return id;
 	}
 
 	public void setSimulationTimeEventListener(
 			SimulationTimeEventListener timeEventListener) {
 		this.timeEventListener = timeEventListener;
-	}
-
-	public void callAt(long absoluteTime) {
-		simulation.callAt(absoluteTime, id);
 	}
 
 	// Method used by the simulation
@@ -62,23 +71,21 @@ public class Host extends PacketSender implements CurrentTimeProvider {
 	}
 
 	// The method used by publisher
-
-	@Override
-	protected void sendPacket(byte[] packet, String recipient) {
-		simulation.sendPacket(id, packet, recipient);
+	public void sendPacket(byte[] packet, String recipient) {
+		networkProvider.sendPacket(id, packet, recipient);
 	}
 
 	public double getPositionX() {
-		return simulation.getPositionX(id);
+		return positionProvider.getPositionX(this);
 	}
 
 	public double getPositionY() {
-		return simulation.getPositionY(id);
+		return positionProvider.getPositionY(this);
 	}
 
 	@Override
 	public long getCurrentTime() {
-		return simulation.getSimulationTime();
+		return timeProvider.getCurrentTime();
 	}
 	
 	public void finalize() {

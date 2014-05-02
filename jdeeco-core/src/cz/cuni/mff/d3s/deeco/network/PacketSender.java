@@ -18,7 +18,7 @@ import cz.cuni.mff.d3s.deeco.logging.Log;
  * @see PacketReceiver
  * 
  */
-public abstract class PacketSender implements KnowledgeDataSender {
+public class PacketSender implements KnowledgeDataSender {
 
 	public static int DEFAULT_PACKET_SIZE = 1000;
 	
@@ -27,7 +27,7 @@ public abstract class PacketSender implements KnowledgeDataSender {
 	// We reserver Integer.MIN_VALUE for distinguishing initial packets.
 	private static int CURRENT_MESSAGE_ID = Integer.MIN_VALUE;
 
-	private final String host;
+	private final NetworkInterface networkInterface;
 	private final int packetSize;
 	private final boolean hasMANETNic;
 	private final boolean hasIPNic;
@@ -42,20 +42,20 @@ public abstract class PacketSender implements KnowledgeDataSender {
 	 * Minimum fragment size is at least 12 bytes.
 	 * 
 	 */
-	public PacketSender(String host, int packetSize, boolean hasMANETNic, boolean hasIPNic) {
+	public PacketSender(NetworkInterface networkInterface, int packetSize, boolean hasMANETNic, boolean hasIPNic) {
 		// At least 12 because: 4 bytes for the initial frame marker, 4 bytes
 		// for message id and 4 bytes for packet count.
 		assert packetSize >= 12;
 		this.packetSize = packetSize;
-		this.host = host;
+		this.networkInterface = networkInterface;
 		this.hasIPNic = hasIPNic;
 		this.hasMANETNic = hasMANETNic;
 		
-		Log.d(String.format("PacketSender at %s uses packetSize = %d", host, packetSize));
+		Log.d(String.format("PacketSender at %s uses packetSize = %d", networkInterface.getHostId(), packetSize));
 	}
 	
-	public PacketSender(String host) {
-		this(host, Integer.getInteger(DeecoProperties.PACKET_SIZE, DEFAULT_PACKET_SIZE), true, true);
+	public PacketSender(NetworkInterface hostInterface) {
+		this(hostInterface, Integer.getInteger(DeecoProperties.PACKET_SIZE, DEFAULT_PACKET_SIZE), true, true);
 	}
 	
 	public boolean hasMANETNic() {
@@ -85,7 +85,7 @@ public abstract class PacketSender implements KnowledgeDataSender {
 			int messageId = getNextMessageId();
 			int dataLength = serialized.length;
 			
-			Log.d(String.format("PacketSender: Sending MSG at %s with messageid %d and size %d (packets=%d)", host, messageId, dataLength, fragments.length));			
+			Log.d(String.format("PacketSender: Sending MSG at %s with messageid %d and size %d (packets=%d)", networkInterface.getHostId(), messageId, dataLength, fragments.length));			
 			
 			for (int i = 0; i < fragments.length; i++) {
 				sendPacket(buildPacket(messageId, i, dataLength, fragments[i]), recipient);
@@ -96,7 +96,9 @@ public abstract class PacketSender implements KnowledgeDataSender {
 		}
 	}
 
-	protected abstract void sendPacket(byte[] packet, String recipient);
+	protected void sendPacket(byte[] packet, String recipient) {
+		networkInterface.sendPacket(packet, recipient);
+	}
 
 	byte[][] fragment(byte[] serialized, int packetSize) throws IOException {
 		int fragmentSize = packetSize - HEADER_SIZE;
