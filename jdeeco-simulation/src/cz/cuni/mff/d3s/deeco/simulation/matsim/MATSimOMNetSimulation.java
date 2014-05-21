@@ -58,8 +58,7 @@ public class MATSimOMNetSimulation extends OMNetSimulation implements
 		this.simulationEndTime = Math.round(controler.getConfig()
 				.getQSimConfigGroup().getEndTime()
 				* Constants.MILLIS_IN_SECOND);
-		this.remainingExchanges = Math.floorDiv(this.simulationEndTime,
-				this.simulationStep) + 1;
+		this.remainingExchanges = (this.simulationEndTime / this.simulationStep) + 1;
 	}
 
 	public void at(long time) {
