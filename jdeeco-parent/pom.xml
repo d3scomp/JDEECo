@@ -67,8 +67,8 @@
 			<url>https://github.com/d3scomp/mvn-repo/raw/master/releases/</url>
 		</repository>	
 		<repository>
-              		<id>sonatype.releases</id>
-	                <url>http://oss.sonatype.org/content/repositories/releases/</url>
-	        </repository>
+           <id>sonatype.releases</id>
+	       <url>http://oss.sonatype.org/content/repositories/releases/</url>
+	    </repository>
 	</repositories>
 </project>

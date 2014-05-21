@@ -7,21 +7,21 @@ import java.util.Random;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeData;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeDataReceiver;
-import cz.cuni.mff.d3s.deeco.simulation.Host;
-import cz.cuni.mff.d3s.deeco.simulation.OMNetSimulation;
+import cz.cuni.mff.d3s.deeco.simulation.SimulationHost;
 import cz.cuni.mff.d3s.deeco.simulation.SimulationTimeEventListener;
+import cz.cuni.mff.d3s.deeco.simulation.omnet.OMNetSimulation;
 
 public class DemoJNIKnowledgeDataManager implements KnowledgeDataReceiver,
 		SimulationTimeEventListener {
 
-	private final Host host;
-	private final OMNetSimulation simulation;
+	private final SimulationHost host;
+	private final OMNetSimulation oMNetSimulation;
 	private final List<KnowledgeData> toSend;
 	private String recipient = "";
 
-	public DemoJNIKnowledgeDataManager(Host host, OMNetSimulation simulation) {
+	public DemoJNIKnowledgeDataManager(SimulationHost host, OMNetSimulation oMNetSimulation) {
 		this.host = host;
-		this.simulation = simulation;
+		this.oMNetSimulation = oMNetSimulation;
 		this.host.getPacketReceiver().setKnowledgeDataReceiver(this);
 		toSend = new LinkedList<KnowledgeData>();
 		this.host.setSimulationTimeEventListener(this);
@@ -47,7 +47,7 @@ public class DemoJNIKnowledgeDataManager implements KnowledgeDataReceiver,
 					}
 			}
 			if (!toSend.isEmpty())
-				simulation.callAt(host.getCurrentTime()
+				oMNetSimulation.callAt(host.getCurrentTime()
 						+ new Random().nextInt(2000), host.getHostId());
 		}
 	}
@@ -69,7 +69,7 @@ public class DemoJNIKnowledgeDataManager implements KnowledgeDataReceiver,
 	public void sendDummyData() {
 		KnowledgeData kd = new KnowledgeData(new ValueSet(), new DemoKnowledgeMetaData(host.getHostId(), 0, host.getHostId(), 0, 0));
 		toSend.add(kd);
-		simulation.callAt(host.getCurrentTime() + 2000, host.getHostId());
+		oMNetSimulation.callAt(host.getCurrentTime() + 2000, host.getHostId());
 	}
 
 }

@@ -17,7 +17,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.scheduler.SchedulerEvent;
 import cz.cuni.mff.d3s.deeco.simulation.CallbackProvider;
-import cz.cuni.mff.d3s.deeco.simulation.Host;
+import cz.cuni.mff.d3s.deeco.simulation.SimulationHost;
 import cz.cuni.mff.d3s.deeco.simulation.SimulationTimeEventListener;
 import cz.cuni.mff.d3s.deeco.task.Task;
 import cz.cuni.mff.d3s.deeco.task.TaskTriggerListener;
@@ -33,7 +33,7 @@ import cz.cuni.mff.d3s.deeco.task.TaskTriggerListener;
 public class SimulationScheduler implements Scheduler,
 		SimulationTimeEventListener {
 
-	private final Host host;
+	private final SimulationHost host;
 	private final CallbackProvider callbackProvider;
 	
 	private final SortedSet<SchedulerEvent> queue;
@@ -49,7 +49,7 @@ public class SimulationScheduler implements Scheduler,
 	
 	private Random rnd;
 
-	public SimulationScheduler(Host host, CallbackProvider callbackProvider) {
+	public SimulationScheduler(SimulationHost host, CallbackProvider callbackProvider) {
 		this.host = host;
 		this.callbackProvider = callbackProvider;
 		queue = new TreeSet<SchedulerEvent>();

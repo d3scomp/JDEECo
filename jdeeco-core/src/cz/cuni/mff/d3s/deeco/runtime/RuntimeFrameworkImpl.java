@@ -71,16 +71,16 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 	/** 
 	 * The scheduler used by the runtime.
 	 */
-	protected Scheduler scheduler;	
+	protected final Scheduler scheduler;	
 	
 	/**
 	 * The executor used by the runtime.
 	 */
-	protected Executor executor;	
+	protected final Executor executor;	
 	/**
 	 * The KM container used by the runtime.
 	 */
-	protected KnowledgeManagerContainer kmContainer;
+	protected final KnowledgeManagerContainer kmContainer;
 	
 	/**
 	 * Keeps track of each instance's tasks.
@@ -491,6 +491,16 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 	@Override
 	public void invokeAndWait(Runnable r) throws InterruptedException {
 		scheduler.invokeAndWait(r);		
+	}
+
+	@Override
+	public Scheduler getScheduler() {
+		return scheduler;
+	}
+
+	@Override
+	public KnowledgeManagerContainer getContainer() {
+		return kmContainer;
 	}
 	
 

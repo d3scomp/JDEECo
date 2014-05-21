@@ -1,5 +1,8 @@
 package cz.cuni.mff.d3s.deeco.runtime;
 
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
+import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
+
 /**
  * JDEECo runtime framework management interface.
  * 
@@ -26,5 +29,8 @@ public interface RuntimeFramework {
 	 * @throws InterruptedException if the invocation was interrupted.
 	 */
 	void invokeAndWait(Runnable r) throws InterruptedException;
+	
+	Scheduler getScheduler();
+	KnowledgeManagerContainer getContainer();
 
 }

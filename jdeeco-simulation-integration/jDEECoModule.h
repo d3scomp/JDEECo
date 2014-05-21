@@ -40,6 +40,12 @@ public:
 	virtual double jDEECoGetPositionY() {return 0;};
 	//Needs to be implemented by the module
 	virtual double jDEECoGetPositionZ() {return 0;};
+	//Needs to be implemented by the module
+	virtual void jDEECoSetPositionX(double value) {};
+	//Needs to be implemented by the module
+	virtual void jDEECoSetPositionY(double value) {};
+	//Needs to be implemented by the module
+	virtual void jDEECoSetPositionZ(double value) {};
 
 protected:
 	//Needs to be called at the module initialisation

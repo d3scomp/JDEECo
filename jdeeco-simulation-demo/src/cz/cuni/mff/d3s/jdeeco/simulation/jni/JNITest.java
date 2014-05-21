@@ -1,31 +1,31 @@
 package cz.cuni.mff.d3s.jdeeco.simulation.jni;
-import cz.cuni.mff.d3s.deeco.simulation.Host;
-import cz.cuni.mff.d3s.deeco.simulation.OMNetSimulation;
+import cz.cuni.mff.d3s.deeco.simulation.SimulationHost;
+import cz.cuni.mff.d3s.deeco.simulation.omnet.OMNetSimulation;
 
 
 public class JNITest {
 
 	public static void main(String[] args) throws Exception {
 		System.out.println(System.getProperty("java.library.path"));
-		OMNetSimulation simulation = new OMNetSimulation();
+		OMNetSimulation oMNetSimulation = new OMNetSimulation();
 		
-		simulation.initialize(); //loads Library
+		oMNetSimulation.initialize(); //loads Library
 		
 
-		Host h0 = simulation.getHost("0", "node[0]");
-		DemoJNIKnowledgeDataManager kr = new DemoJNIKnowledgeDataManager(h0, simulation);
+		SimulationHost h0 = oMNetSimulation.getHost("0", "node[0]");
+		DemoJNIKnowledgeDataManager kr = new DemoJNIKnowledgeDataManager(h0, oMNetSimulation);
 		kr.sendDummyData();
 		
-		Host h1 = simulation.getHost("1", "node[1]");
-		kr = new DemoJNIKnowledgeDataManager(h1, simulation);
+		SimulationHost h1 = oMNetSimulation.getHost("1", "node[1]");
+		kr = new DemoJNIKnowledgeDataManager(h1, oMNetSimulation);
 		
-		Host h2 = simulation.getHost("2", "node[2]");
-		kr = new DemoJNIKnowledgeDataManager(h2, simulation);
+		SimulationHost h2 = oMNetSimulation.getHost("2", "node[2]");
+		kr = new DemoJNIKnowledgeDataManager(h2, oMNetSimulation);
 		
-		Host h3 = simulation.getHost("3", "node[3]");
-		kr = new DemoJNIKnowledgeDataManager(h3, simulation);
+		SimulationHost h3 = oMNetSimulation.getHost("3", "node[3]");
+		kr = new DemoJNIKnowledgeDataManager(h3, oMNetSimulation);
 
-		simulation.run("Cmdenv", "omnetpp-jni.ini");
+		oMNetSimulation.run("Cmdenv", "omnetpp-jni.ini");
 		
 		System.gc();
 		System.out.println("Simulation finished.");
