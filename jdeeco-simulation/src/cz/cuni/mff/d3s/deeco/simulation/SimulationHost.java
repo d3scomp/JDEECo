@@ -15,7 +15,7 @@ public class SimulationHost extends Host {
 				jDEECoAppModuleId);
 	}
 
-	protected SimulationHost(NetworkProvider networkProvider,
+	public SimulationHost(NetworkProvider networkProvider,
 			PositionProvider positionProvider,
 			CurrentTimeProvider timeProvider, String jDEECoAppModuleId,
 			boolean hasMANETNic, boolean hasIPNic) {

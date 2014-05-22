@@ -98,11 +98,15 @@ public class OMNetSimulation implements CurrentTimeProvider, NetworkProvider,
 	 * @return new host instance
 	 */
 	public SimulationHost getHost(String logicalId, String networkId) {
+		return getHost(logicalId, networkId, true, true);
+	}
+	
+	public SimulationHost getHost(String logicalId, String networkId, boolean hasMANETNic, boolean hasEthernetNic) {
 		SimulationHost host;
 		if (networkAddressesToHosts.containsKey(networkId)) {
 			host = networkAddressesToHosts.get(networkId);
 		} else {
-			host = new SimulationHost(this, this, this, logicalId);
+			host = new SimulationHost(this, this, this, logicalId, hasMANETNic, hasEthernetNic);
 			networkAddressesToHosts.put(networkId, host);
 			registerInNetwork(host, networkId);
 		}
