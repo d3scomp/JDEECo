@@ -103,8 +103,14 @@
 		</dependency>
 		<dependency>
 			<groupId>org.matsim</groupId>
-			<artifactId>org.matsim</artifactId>
+			<artifactId>matsim</artifactId>
 			<version>0.5.0</version>
 		</dependency>
 	</dependencies>
+	<repositories>
+		<repository>
+			<id>mvn-local-repo</id>
+			<url>file://${basedir}/mvn-local-repo</url>
+		</repository>
+	</repositories>
 </project>
