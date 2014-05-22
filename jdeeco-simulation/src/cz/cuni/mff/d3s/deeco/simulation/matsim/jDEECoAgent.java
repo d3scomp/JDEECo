@@ -154,6 +154,8 @@ public class jDEECoAgent implements MobsimDriverAgent {
 			} else if (index < route.size() - 1) {
 				this.nextLinkId = route.get(index + 1);
 			}
+		} else {
+			this.nextLinkId = null;
 		}
 	}
 
