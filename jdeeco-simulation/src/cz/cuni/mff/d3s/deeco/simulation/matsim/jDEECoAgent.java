@@ -10,8 +10,6 @@ import org.matsim.core.mobsim.framework.MobsimDriverAgent;
 import org.matsim.core.mobsim.qsim.interfaces.MobsimVehicle;
 import org.matsim.core.mobsim.qsim.interfaces.Netsim;
 
-import cz.cuni.mff.d3s.deeco.logging.Log;
-
 public class jDEECoAgent implements MobsimDriverAgent {
 
 	private MobsimVehicle vehicle;
@@ -106,7 +104,6 @@ public class jDEECoAgent implements MobsimDriverAgent {
 	}
 
 	public Id getDestinationLinkId() {
-		Log.e("jDEECoAgent "+id.toString()+" destination read");
 		return this.destinationLinkId;
 	}
 	
@@ -119,7 +116,6 @@ public class jDEECoAgent implements MobsimDriverAgent {
 	}
 
 	public Id chooseNextLinkId() {
-		Log.e("jDEECoAgent "+id.toString()+" next read");
 		return nextLinkId;
 	}
 
@@ -148,8 +144,14 @@ public class jDEECoAgent implements MobsimDriverAgent {
 		if (route != null && !route.isEmpty()) {
 			int index = route.indexOf(currentLinkId);
 			if (index < 0) {
-				this.nextLinkId = route.get(0);
-			} else if (index != route.size() - 1) {
+				if (currentLinkId.equals(destinationLinkId)) {
+					this.nextLinkId = null;
+				} else { 
+					this.nextLinkId = route.get(0);
+				}
+			} else if (index == route.size() - 1) {
+				this.nextLinkId = destinationLinkId;
+			} else if (index < route.size() - 1) {
 				this.nextLinkId = route.get(index + 1);
 			}
 		}

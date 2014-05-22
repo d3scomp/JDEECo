@@ -30,8 +30,7 @@ public class jDEECoWithinDayMobsimListener implements
 			// Get agents current positions and jDEECoAgents
 			MATSimOutput matSimOutput;
 			for (jDEECoAgent agent : agentProvider.getAgents()) {
-				matSimOutput = new MATSimOutput();
-				matSimOutput.currentLinkId = agent.getCurrentLinkId();
+				matSimOutput = new MATSimOutput(agent.getCurrentLinkId());
 				matSimOutputs.put(agent.getId().toString(), matSimOutput);
 			}
 			System.out.println();
