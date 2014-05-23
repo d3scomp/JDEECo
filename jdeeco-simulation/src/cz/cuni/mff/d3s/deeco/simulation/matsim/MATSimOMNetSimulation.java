@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Exchanger;
 
+import org.matsim.api.core.v01.Coord;
 import org.matsim.api.core.v01.TransportMode;
 import org.matsim.core.controler.events.StartupEvent;
 import org.matsim.core.controler.listener.StartupListener;
@@ -29,6 +30,7 @@ public class MATSimOMNetSimulation extends OMNetSimulation implements
 	private final long simulationStep; // in milliseconds
 	private final long simulationEndTime; // in milliseconds
 	private final jDEECoWithinDayMobsimListener listener;
+	private final MATSimOMNetCoordinatesTranslator positionTranslator;
 
 	private Thread matSimThread;
 	private long remainingExchanges;
@@ -45,6 +47,8 @@ public class MATSimOMNetSimulation extends OMNetSimulation implements
 		
 		this.controler = new MATSimPreloadingControler(matSimConf);
 		this.controler.setOverwriteFiles(true);
+		
+		this.positionTranslator = new MATSimOMNetCoordinatesTranslator(controler.getNetwork());
 
 		Set<String> analyzedModes = new HashSet<String>();
 		analyzedModes.add(TransportMode.car);
@@ -99,6 +103,10 @@ public class MATSimOMNetSimulation extends OMNetSimulation implements
 	public TravelTime getTravelTime() {
 		return travelTime;
 	}
+	
+	public MATSimOMNetCoordinatesTranslator getPositionTranslator() {
+		return positionTranslator;
+	}
 
 	/**
 	 * As the source needs to be correlated with the DEECo model being deployed,
@@ -121,6 +129,8 @@ public class MATSimOMNetSimulation extends OMNetSimulation implements
 						agentSources));
 			}
 		});
+		
+		
 	}
 
 	public void run(String environment, String configFile) {

@@ -18,7 +18,7 @@ public class jDEECoWithinDayMobsimListener implements
 	public jDEECoWithinDayMobsimListener(Exchanger<Map<String, ?>> exchanger) {
 		this.exchanger = exchanger;
 	}
-	
+
 	public void registerAgentProvider(jDEECoAgentProvider agentProvider) {
 		this.agentProvider = agentProvider;
 	}
@@ -30,7 +30,8 @@ public class jDEECoWithinDayMobsimListener implements
 			// Get agents current positions and jDEECoAgents
 			MATSimOutput matSimOutput;
 			for (jDEECoAgent agent : agentProvider.getAgents()) {
-				matSimOutput = new MATSimOutput(agent.getCurrentLinkId());
+				matSimOutput = new MATSimOutput(agent.getCurrentLinkId(),
+						agent.estimatePosition(event.getSimulationTime()));
 				matSimOutputs.put(agent.getId().toString(), matSimOutput);
 			}
 			System.out.println();

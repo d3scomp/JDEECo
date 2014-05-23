@@ -38,6 +38,7 @@ public class jDEECoAgentSource implements AdditionAwareAgentSource, jDEECoAgentP
 					agent.getId().toString() + "-vehicle"));
 			agent.setSimulation(qSim);
 			agent.setPlannedVehicleId(vehicle.getId());
+			agent.setVehicle(vehicle);
 			qSim.addParkedVehicle(vehicle, agent.getCurrentLinkId());
 			qSim.insertAgentIntoMobsim(agent);
 		}

@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.deeco.simulation.omnet;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -134,6 +135,10 @@ public class OMNetSimulation implements CurrentTimeProvider, NetworkProvider,
 		}
 		nativeSendPacket(fromId, data, sendTo);
 	}
+	
+	public Collection<SimulationHost> getHosts() {
+		return networkAddressesToHosts.values();
+	}
 
 	public void run(String environment, String configFile) {
 		nativeRun(environment, configFile);
@@ -157,6 +162,18 @@ public class OMNetSimulation implements CurrentTimeProvider, NetworkProvider,
 
 	public double getPositionZ(Host host) {
 		return nativeGetPositionZ(host.getHostId());
+	}
+	
+	public double setPositionX(Host host, double x) {
+		return nativeSetPositionX(host.getHostId(), x);
+	}
+	
+	public double setPositionY(Host host, double y) {
+		return nativeSetPositionY(host.getHostId(), y);
+	}
+	
+	public double setPositionZ(Host host, double z) {
+		return nativeSetPositionZ(host.getHostId(), z);
 	}
 
 	public long getCurrentTime() {
