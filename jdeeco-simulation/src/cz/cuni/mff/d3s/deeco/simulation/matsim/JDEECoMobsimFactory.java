@@ -12,6 +12,13 @@ import org.matsim.core.mobsim.qsim.TeleportationEngine;
 import org.matsim.core.mobsim.qsim.qnetsimengine.DefaultQSimEngineFactory;
 import org.matsim.core.mobsim.qsim.qnetsimengine.QNetsimEngine;
 
+/**
+ * Mobisim engine factory. It is the configuration point for the MATSim
+ * simulation to let it know, which agent source, listeners etc... to use.
+ * 
+ * @author Michal Kit <kit@d3s.mff.cuni.cz>
+ * 
+ */
 public class JDEECoMobsimFactory implements MobsimFactory {
 
 	private final JDEECoWithinDayMobsimListener listener;

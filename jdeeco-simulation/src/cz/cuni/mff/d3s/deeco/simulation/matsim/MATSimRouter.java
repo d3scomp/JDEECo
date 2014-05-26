@@ -29,13 +29,16 @@ import org.matsim.pt.router.TransitRouterFactory;
 import org.matsim.pt.router.TransitRouterImplFactory;
 
 /**
+ * MATSim router. The class reuses the functionality available already in
+ * MATSim.
+ * 
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
- *
+ * 
  */
 public class MATSimRouter {
-	
+
 	public static int DEFAULT_LINK_PARKING_CAPACITY = 3;
-	
+
 	private final Controler controler;
 	private final TripRouterFactory tripRouterFactory;
 
@@ -59,13 +62,13 @@ public class MATSimRouter {
 		int idx = MatsimRandom.getRandom().nextInt(outLinks.length);
 		return outLinks[idx].toString();
 	}
-	
+
 	public Link findLinkById(Id id) {
 		return controler.getNetwork().getLinks().get(id);
 	}
-	
+
 	public int getLinkParkingCapacity(Id linkId) {
-		//TODO: Needs to be changed
+		// TODO: Needs to be changed
 		return DEFAULT_LINK_PARKING_CAPACITY;
 	}
 
@@ -118,14 +121,13 @@ public class MATSimRouter {
 		Leg leg = (Leg) legs.get(0);
 		return ((NetworkRoute) leg.getRoute()).getLinkIds();
 	}
-	
-	public List<Id> route(Id from, Id to, double departureTime,
-			Person person) {
+
+	public List<Id> route(Id from, Id to, double departureTime, Person person) {
 		Link fromLink = controler.getNetwork().getLinks().get(from);
 		Link toLink = controler.getNetwork().getLinks().get(to);
 		return route(fromLink, toLink, departureTime, person);
 	}
-	
+
 	public List<Id> getAdjacentLinks(Id linkId) {
 		Link link = controler.getNetwork().getLinks().get(linkId);
 		if (link == null)

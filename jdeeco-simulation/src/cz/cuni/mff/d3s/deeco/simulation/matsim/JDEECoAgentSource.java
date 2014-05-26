@@ -11,19 +11,26 @@ import org.matsim.core.mobsim.qsim.interfaces.MobsimVehicle;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
 
-public class JDEECoAgentSource implements AdditionAwareAgentSource, JDEECoAgentProvider {
+/**
+ * JDEECo agent source, which is used by MATSim to retrieve agents that need to
+ * be simulated.
+ * 
+ * @author Michal Kit <kit@d3s.mff.cuni.cz>
+ * 
+ */
+public class JDEECoAgentSource implements AdditionAwareAgentSource,
+		JDEECoAgentProvider {
 	private QSim qSim;
 	private final List<JDEECoAgent> agents;
 
-	
 	public JDEECoAgentSource() {
 		this.agents = new LinkedList<JDEECoAgent>();
 	}
-	
+
 	public void agentSourceAdded(QSim qSim) {
 		this.qSim = qSim;
 	}
-	
+
 	public void addAgent(JDEECoAgent agent) {
 		agents.add(agent);
 	}

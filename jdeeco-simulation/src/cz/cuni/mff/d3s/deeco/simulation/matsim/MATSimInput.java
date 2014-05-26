@@ -5,12 +5,18 @@ import java.util.List;
 
 import org.matsim.api.core.v01.Id;
 
+/**
+ * Data that is needed by MATSim to execute the simulation.
+ * 
+ * @author Michal Kit <kit@d3s.mff.cuni.cz>
+ * 
+ */
 public class MATSimInput {
 	public Id destination;
 	public double activityEndTime;
 	public List<Id> route;
 	public String activityType;
-	
+
 	public MATSimInput clone() {
 		MATSimInput result = new MATSimInput();
 		result.activityEndTime = activityEndTime;

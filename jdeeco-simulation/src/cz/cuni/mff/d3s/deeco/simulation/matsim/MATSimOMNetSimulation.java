@@ -18,6 +18,12 @@ import cz.cuni.mff.d3s.deeco.simulation.SimulationStepListener;
 import cz.cuni.mff.d3s.deeco.simulation.omnet.OMNetSimulation;
 import cz.cuni.mff.d3s.deeco.simulation.task.SimulationStepTask;
 
+/**
+ * Main simulation class.
+ * 
+ * @author Michal Kit <kit@d3s.mff.cuni.cz>
+ *
+ */
 public class MATSimOMNetSimulation extends OMNetSimulation implements SimulationStepListener {
 
 	private final Exchanger<Map<String, ?>> exchanger;

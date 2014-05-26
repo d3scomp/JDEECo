@@ -5,6 +5,16 @@ import org.matsim.api.core.v01.network.Network;
 import org.matsim.api.core.v01.network.Node;
 import org.matsim.core.utils.geometry.CoordImpl;
 
+/**
+ * Because the coordinates in MATSim are given in meters in large numbers, this
+ * class takes care to translate coordinates from MATSim to OMNet, which are
+ * much smaller.
+ * 
+ * 
+ * 
+ * @author Michal Kit <kit@d3s.mff.cuni.cz>
+ * 
+ */
 public class MATSimOMNetCoordinatesTranslator {
 
 	private final double OMNetSizeX;

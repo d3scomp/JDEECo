@@ -11,24 +11,35 @@ import cz.cuni.mff.d3s.deeco.simulation.SimulationHost;
 import cz.cuni.mff.d3s.deeco.simulation.omnet.OMNetSimulationRuntimeBuilder;
 import cz.cuni.mff.d3s.deeco.simulation.task.SimulationStepTask;
 
+/**
+ * MATSim-OMNet simulation builder. An additional functionality of this class is
+ * to register the simulation step task at one (i.e. the first) scheduler.
+ * 
+ * @author Michal Kit <kit@d3s.mff.cuni.cz>
+ * 
+ */
 public class MATSimOMNetSimulationRuntimeBuilder extends
 		OMNetSimulationRuntimeBuilder {
 	private boolean simulationTaskRegistered = false;
-	
-	public RuntimeFramework build(SimulationHost host, MATSimOMNetSimulation simulation, RuntimeMetadata model, Collection<DirectRecipientSelector> recipientSelectors, DirectGossipStrategy directGossipStrategy) {
-		RuntimeFramework result = super.build(host, simulation, model, recipientSelectors, directGossipStrategy);
+
+	public RuntimeFramework build(SimulationHost host,
+			MATSimOMNetSimulation simulation, RuntimeMetadata model,
+			Collection<DirectRecipientSelector> recipientSelectors,
+			DirectGossipStrategy directGossipStrategy) {
+		RuntimeFramework result = super.build(host, simulation, model,
+				recipientSelectors, directGossipStrategy);
 		if (!simulationTaskRegistered && result != null) {
 			Scheduler scheduler = result.getScheduler();
 			// Set up the simulation step task
-			SimulationStepTask simulationStepTask = new SimulationStepTask(scheduler, 
-					simulation);
-			
+			SimulationStepTask simulationStepTask = new SimulationStepTask(
+					scheduler, simulation);
+
 			// Add simulation step task to the scheduler
 			scheduler.addTask(simulationStepTask);
-			
+
 			simulationTaskRegistered = true;
 		}
 		return result;
 	}
-	
+
 }

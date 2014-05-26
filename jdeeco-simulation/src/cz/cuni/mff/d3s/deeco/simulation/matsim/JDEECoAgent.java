@@ -14,8 +14,14 @@ import org.matsim.core.mobsim.qsim.interfaces.Netsim;
 import org.matsim.core.mobsim.qsim.qnetsimengine.QVehicle;
 import org.matsim.core.utils.geometry.CoordImpl;
 
-import cz.cuni.mff.d3s.deeco.logging.Log;
-
+/**
+ * JDEECo agent implementation. The agent is used by the
+ * {@link JDEECoWithinDayMobsimListener} to steer the MATSim simulation,
+ * according to the state of the JDEECo component.
+ * 
+ * @author Michal Kit <kit@d3s.mff.cuni.cz>
+ * 
+ */
 public class JDEECoAgent implements MobsimDriverAgent {
 
 	private MobsimVehicle vehicle;
@@ -90,7 +96,7 @@ public class JDEECoAgent implements MobsimDriverAgent {
 	public State getState() {
 		return this.state;
 	}
-	
+
 	public void setActivityType(String value) {
 		this.activityType = value;
 	}

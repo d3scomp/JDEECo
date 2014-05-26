@@ -9,6 +9,16 @@ import org.matsim.core.mobsim.framework.listeners.MobsimBeforeSimStepListener;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
 
+/**
+ * 
+ * This class represents the interface (on the MATSim side) between jDEECo and
+ * MATSim. It's notifyMobsimBeforeSimStep is executed before each simulation
+ * step and data exchange between MATSim and jDEECo happens via the exchanger
+ * instance.
+ * 
+ * @author Michal Kit <kit@d3s.mff.cuni.cz>
+ * 
+ */
 public class JDEECoWithinDayMobsimListener implements
 		MobsimBeforeSimStepListener {
 
@@ -35,9 +45,11 @@ public class JDEECoWithinDayMobsimListener implements
 				matSimOutputs.put(agent.getId().toString(), matSimOutput);
 			}
 			// Exchange data (Rendezvous)
-			//Log.w("MATSim Before data exchange at " + event.getSimulationTime());
+			// Log.w("MATSim Before data exchange at " +
+			// event.getSimulationTime());
 			Map<String, ?> matSimInputs = exchanger.exchange(matSimOutputs);
-			//Log.w("MATSim After data exchange at " + event.getSimulationTime());
+			// Log.w("MATSim After data exchange at " +
+			// event.getSimulationTime());
 			// Update jDEECo agents next link id
 			if (matSimInputs != null && !matSimInputs.isEmpty()) {
 				MATSimInput mData;
