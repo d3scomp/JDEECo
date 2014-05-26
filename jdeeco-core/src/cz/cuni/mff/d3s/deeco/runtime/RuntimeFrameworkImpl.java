@@ -367,7 +367,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 		
 		Task t = componentRecords.get(instance).getProcessTasks().get(process);
 		
-		Log.i(String.format("Changing the activity of task %s corresponding to process %s to %s.", t, process, active));
+		Log.d(String.format("Changing the activity of task %s corresponding to process %s to %s.", t, process, active));
 		
 		if (active) {
 			scheduler.addTask(t);

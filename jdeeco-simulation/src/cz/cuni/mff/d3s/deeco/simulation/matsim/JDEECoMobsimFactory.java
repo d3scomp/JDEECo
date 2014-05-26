@@ -12,12 +12,12 @@ import org.matsim.core.mobsim.qsim.TeleportationEngine;
 import org.matsim.core.mobsim.qsim.qnetsimengine.DefaultQSimEngineFactory;
 import org.matsim.core.mobsim.qsim.qnetsimengine.QNetsimEngine;
 
-public class jDEECoMobsimFactory implements MobsimFactory {
+public class JDEECoMobsimFactory implements MobsimFactory {
 
-	private final jDEECoWithinDayMobsimListener listener;
+	private final JDEECoWithinDayMobsimListener listener;
 	private final Collection<? extends AdditionAwareAgentSource> agentSources;
 
-	public jDEECoMobsimFactory(jDEECoWithinDayMobsimListener listener,
+	public JDEECoMobsimFactory(JDEECoWithinDayMobsimListener listener,
 			Collection<? extends AdditionAwareAgentSource> agentSources) {
 		this.listener = listener;
 		this.agentSources = agentSources;

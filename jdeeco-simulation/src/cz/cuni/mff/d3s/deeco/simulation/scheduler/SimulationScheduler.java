@@ -72,7 +72,7 @@ public class SimulationScheduler implements Scheduler,
 
 	@Override
 	public void stop() {
-		Log.i("The simulation scheduler is stopped together with the simulation.");
+		Log.d("The simulation scheduler is stopped together with the simulation.");
 	}
 
 	@Override
@@ -187,7 +187,7 @@ public class SimulationScheduler implements Scheduler,
 				// add a random offset within the period (up to 75% of the period)
 				event.nextPeriodStart += event.executable.getTimeTrigger().getPeriod();
 				
-				int offset = rnd.nextInt((int) (event.executable.getTimeTrigger().getPeriod()/0.75));
+				int offset = rnd.nextInt((int) (event.executable.getTimeTrigger().getPeriod()*0.75));
 				event.nextExecutionTime = event.nextPeriodStart + offset;
 				push(event);
 			}
@@ -248,10 +248,10 @@ public class SimulationScheduler implements Scheduler,
 	}
 
 	private void push(SchedulerEvent event) {
-		//Log.i("Adding: " + event);
+		//Log.d("Adding: " + event);
 
 		queue.add(event);
-		//Log.i("Queue: " + Arrays.toString(queue.toArray()));
+		//Log.d("Queue: " + Arrays.toString(queue.toArray()));
 
 		// TODO take into account different scheduling policies and WCET of
 		// tasks. According to those the tasks need to be rescheduled.

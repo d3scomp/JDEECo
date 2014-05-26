@@ -21,9 +21,7 @@ public class MATSimOMNetSimulationRuntimeBuilder extends
 			Scheduler scheduler = result.getScheduler();
 			// Set up the simulation step task
 			SimulationStepTask simulationStepTask = new SimulationStepTask(scheduler, 
-					simulation, 
-					simulation.getSimulationStep(), 
-					host.getHostId());
+					simulation);
 			
 			// Add simulation step task to the scheduler
 			scheduler.addTask(simulationStepTask);

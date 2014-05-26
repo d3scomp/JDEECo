@@ -92,7 +92,7 @@ public class PacketReceiver {
 		msg.setData(seqNumber, getPacketData(packet));
 		msg.setLastRSSI(rssi);
 		if (msg.isComplete() && knowledgeDataReceiver != null) {
-			//Log.i(String.format("R: " + "(" + messageId + ")"
+			//Log.d(String.format("R: " + "(" + messageId + ")"
 			//		+ Arrays.toString(msg.data)));
 			Log.d(String.format("PacketReceiver: Message completed at %s with messageid %d with RSSI: %g", host, messageId, msg.lastRSSI));
 			
@@ -120,7 +120,7 @@ public class PacketReceiver {
 		}
 		lastMessagesWipe = timeProvider.getCurrentTime();
 		int currentCnt = messages.size();
-		Log.i(String.format("Message wipe at %s removed %d cached packets", host, origCnt - currentCnt));
+		Log.d(String.format("Message wipe at %s removed %d cached packets", host, origCnt - currentCnt));
 		Log.d(String.format("PacketReceiver: Message wipe %s dropped messageids %s", host, Arrays.deepToString(droppedIds.toArray())));
 	}
 
@@ -143,7 +143,7 @@ public class PacketReceiver {
 			}
 			lastMessagesWipe = timeProvider.getCurrentTime();
 			int currentCnt = messages.size();
-			Log.i(String.format("Message wipe at %s removed %d cached packets", host, origCnt - currentCnt));
+			Log.d(String.format("Message wipe at %s removed %d cached packets", host, origCnt - currentCnt));
 			Log.d(String.format("PacketReceiver: Message wipe %s dropped messageids %s", host, Arrays.deepToString(droppedIds.toArray())));
 		}
 		

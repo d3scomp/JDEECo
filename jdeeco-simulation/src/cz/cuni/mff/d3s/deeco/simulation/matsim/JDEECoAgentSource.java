@@ -11,20 +11,20 @@ import org.matsim.core.mobsim.qsim.interfaces.MobsimVehicle;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
 
-public class jDEECoAgentSource implements AdditionAwareAgentSource, jDEECoAgentProvider {
+public class JDEECoAgentSource implements AdditionAwareAgentSource, JDEECoAgentProvider {
 	private QSim qSim;
-	private final List<jDEECoAgent> agents;
+	private final List<JDEECoAgent> agents;
 
 	
-	public jDEECoAgentSource() {
-		this.agents = new LinkedList<jDEECoAgent>();
+	public JDEECoAgentSource() {
+		this.agents = new LinkedList<JDEECoAgent>();
 	}
 	
 	public void agentSourceAdded(QSim qSim) {
 		this.qSim = qSim;
 	}
 	
-	public void addAgent(jDEECoAgent agent) {
+	public void addAgent(JDEECoAgent agent) {
 		agents.add(agent);
 	}
 
@@ -33,7 +33,7 @@ public class jDEECoAgentSource implements AdditionAwareAgentSource, jDEECoAgentP
 			Log.e("jDEECoAgentSource not properly initialized!");
 			return;
 		}
-		for (jDEECoAgent agent : agents) {
+		for (JDEECoAgent agent : agents) {
 			MobsimVehicle vehicle = QSimUtils.createDefaultVehicle(new IdImpl(
 					agent.getId().toString() + "-vehicle"));
 			agent.setSimulation(qSim);
@@ -44,7 +44,7 @@ public class jDEECoAgentSource implements AdditionAwareAgentSource, jDEECoAgentP
 		}
 	}
 
-	public Collection<jDEECoAgent> getAgents() {
+	public Collection<JDEECoAgent> getAgents() {
 		return agents;
 	}
 }

@@ -38,7 +38,7 @@ public class PublisherTask extends Task {
 		this.trigger.setPeriod(period);
 		this.publisher = publisher;
 		
-		Log.i(String.format("PublisherTask at %s uses publishing period %d", host, period));
+		Log.d(String.format("PublisherTask at %s uses publishing period %d", host, period));
 	}
 
 	/* (non-Javadoc)

@@ -252,7 +252,7 @@ KnowledgeDataPublisher {
 		for (KnowledgeData kd : knowledgeData) {
 			KnowledgeMetaData newMetadata = kd.getMetaData();
 			if (kmContainer.hasLocal(newMetadata.componentId)) {
-				Log.i("KnowledgeDataManager.receive: Dropping KnowledgeData for local component " + newMetadata.componentId);
+				Log.d("KnowledgeDataManager.receive: Dropping KnowledgeData for local component " + newMetadata.componentId);
 				continue;
 			} 
 			KnowledgeManager replica = kmContainer.createReplica(newMetadata.componentId);			

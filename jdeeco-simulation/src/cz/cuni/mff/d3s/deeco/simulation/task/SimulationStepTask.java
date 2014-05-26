@@ -1,28 +1,29 @@
 package cz.cuni.mff.d3s.deeco.simulation.task;
 
-import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.TimeTriggerExt;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
-import cz.cuni.mff.d3s.deeco.simulation.SimulationTimeEventListener;
+import cz.cuni.mff.d3s.deeco.simulation.SimulationStepListener;
 import cz.cuni.mff.d3s.deeco.task.Task;
 import cz.cuni.mff.d3s.deeco.task.TaskInvocationException;
 
 public class SimulationStepTask extends Task {
 
 	private final TimeTrigger trigger;
-	private final SimulationTimeEventListener simulationStepListener;
+	private final SimulationStepListener simulationStepListener;
 	
-	public SimulationStepTask(Scheduler scheduler, SimulationTimeEventListener simulationStepListener, long period, String host) {
+	public SimulationStepTask(Scheduler scheduler, SimulationStepListener simulationStepListener) {
+		this(scheduler, simulationStepListener, 1);
+	}
+	
+	public SimulationStepTask(Scheduler scheduler, SimulationStepListener simulationStepListener, long delay) {
 		super(scheduler);		
 
 		this.trigger = new TimeTriggerExt();
-		this.trigger.setOffset(0);
-		this.trigger.setPeriod(period);
+		this.trigger.setOffset(delay);
+		this.trigger.setPeriod(0);
 		this.simulationStepListener = simulationStepListener;
-		
-		Log.i(String.format("SimulationStepTask at %s with simulation step %d", host, period));
 	}
 
 	/* (non-Javadoc)
@@ -30,7 +31,11 @@ public class SimulationStepTask extends Task {
 	 */
 	@Override
 	public void invoke(Trigger trigger) throws TaskInvocationException {
-		simulationStepListener.at(scheduler.getCurrentTime());
+		simulationStepListener.at(scheduler.getCurrentTime(), this);
+	}
+	
+	public void scheduleNextExecutionAfter(long delay) {
+		scheduler.addTask(new SimulationStepTask(scheduler, simulationStepListener, delay));
 	}
 
 	/* (non-Javadoc)

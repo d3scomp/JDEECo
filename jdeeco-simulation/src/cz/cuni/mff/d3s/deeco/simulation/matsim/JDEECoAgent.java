@@ -14,7 +14,9 @@ import org.matsim.core.mobsim.qsim.interfaces.Netsim;
 import org.matsim.core.mobsim.qsim.qnetsimengine.QVehicle;
 import org.matsim.core.utils.geometry.CoordImpl;
 
-public class jDEECoAgent implements MobsimDriverAgent {
+import cz.cuni.mff.d3s.deeco.logging.Log;
+
+public class JDEECoAgent implements MobsimDriverAgent {
 
 	private MobsimVehicle vehicle;
 	private Id currentLinkId;
@@ -24,17 +26,20 @@ public class jDEECoAgent implements MobsimDriverAgent {
 	private Id plannedVehicleId;
 	private List<Id> route;
 	private Id nextLinkId;
+	private String activityType;
 
 	private Netsim simulation;
 
-	private double activityEndTime = 0.; // in seconds
+	private double activityEndTime; // in seconds
 
-	public jDEECoAgent(Id id, Id currentLinkId, List<Id> route,
-			Id destinationLinkId) {
+	public JDEECoAgent(Id id, Id currentLinkId, List<Id> route,
+			Id destinationLinkId, String activityType, double activityEndTime) {
 		this.id = id;
 		this.destinationLinkId = destinationLinkId;
+		this.activityEndTime = activityEndTime;
 		this.currentLinkId = currentLinkId;
 		this.route = route;
+		this.activityType = activityType;
 		/**
 		 * Initialize next link id
 		 */
@@ -55,7 +60,7 @@ public class jDEECoAgent implements MobsimDriverAgent {
 						.getEventsManager()
 						.getFactory()
 						.createActivityEndEvent(now, this.getId(),
-								currentLinkId, new IdImpl(100), "parking"));
+								currentLinkId, new IdImpl(100), activityType));
 		this.state = State.LEG; // want to move
 	}
 
@@ -84,6 +89,10 @@ public class jDEECoAgent implements MobsimDriverAgent {
 
 	public State getState() {
 		return this.state;
+	}
+	
+	public void setActivityType(String value) {
+		this.activityType = value;
 	}
 
 	public void notifyArrivalOnLinkByNonNetworkMode(Id linkId) {
@@ -162,14 +171,14 @@ public class jDEECoAgent implements MobsimDriverAgent {
 	}
 
 	private void updateNextLink() {
+		if (currentLinkId.equals(destinationLinkId)) {
+			this.nextLinkId = null;
+			return;
+		}
 		if (route != null && !route.isEmpty()) {
 			int index = route.indexOf(currentLinkId);
 			if (index < 0) {
-				if (currentLinkId.equals(destinationLinkId)) {
-					this.nextLinkId = null;
-				} else {
-					this.nextLinkId = route.get(0);
-				}
+				this.nextLinkId = route.get(0);
 			} else if (index == route.size() - 1) {
 				this.nextLinkId = destinationLinkId;
 			} else if (index < route.size() - 1) {

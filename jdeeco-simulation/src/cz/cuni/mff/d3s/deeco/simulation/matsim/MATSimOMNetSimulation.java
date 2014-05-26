@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Exchanger;
 
-import org.matsim.api.core.v01.Coord;
 import org.matsim.api.core.v01.TransportMode;
 import org.matsim.core.controler.events.StartupEvent;
 import org.matsim.core.controler.listener.StartupListener;
@@ -15,11 +14,11 @@ import org.matsim.withinday.trafficmonitoring.TravelTimeCollector;
 import org.matsim.withinday.trafficmonitoring.TravelTimeCollectorFactory;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.simulation.SteppableSimulation;
+import cz.cuni.mff.d3s.deeco.simulation.SimulationStepListener;
 import cz.cuni.mff.d3s.deeco.simulation.omnet.OMNetSimulation;
+import cz.cuni.mff.d3s.deeco.simulation.task.SimulationStepTask;
 
-public class MATSimOMNetSimulation extends OMNetSimulation implements
-		SteppableSimulation {
+public class MATSimOMNetSimulation extends OMNetSimulation implements SimulationStepListener {
 
 	private final Exchanger<Map<String, ?>> exchanger;
 	private final MATSimDataProvider matSimProvider;
@@ -29,7 +28,7 @@ public class MATSimOMNetSimulation extends OMNetSimulation implements
 	private final TravelTime travelTime;
 	private final long simulationStep; // in milliseconds
 	private final long simulationEndTime; // in milliseconds
-	private final jDEECoWithinDayMobsimListener listener;
+	private final JDEECoWithinDayMobsimListener listener;
 	private final MATSimOMNetCoordinatesTranslator positionTranslator;
 
 	private Thread matSimThread;
@@ -40,7 +39,7 @@ public class MATSimOMNetSimulation extends OMNetSimulation implements
 			Collection<? extends AdditionAwareAgentSource> agentSources, String matSimConf) {
 
 		this.exchanger = new Exchanger<Map<String, ?>>();
-		this.listener = new jDEECoWithinDayMobsimListener(exchanger);
+		this.listener = new JDEECoWithinDayMobsimListener(exchanger);
 		this.matSimProvider = matSimProvider;
 		this.matSimReceiver = matSimReceiver;
 		this.agentSources = agentSources;
@@ -65,7 +64,7 @@ public class MATSimOMNetSimulation extends OMNetSimulation implements
 		this.remainingExchanges = (this.simulationEndTime / this.simulationStep) + 1;
 	}
 
-	public void at(long time) {
+	public void at(long time, SimulationStepTask task) {
 		try {
 			if (remainingExchanges > 0) {
 				if (matSimThread == null) {
@@ -79,20 +78,19 @@ public class MATSimOMNetSimulation extends OMNetSimulation implements
 					});
 					matSimThread.start();
 				}
+				//Log.w("jDEECo Before data exchange at " + getCurrentTime());
 				matSimReceiver.setMATSimData(exchanger
 						.exchange(matSimProvider.getMATSimData()));
+				//Log.w("jDEECo After data exchange at " + getCurrentTime());
+				task.scheduleNextExecutionAfter(simulationStep);
 				remainingExchanges--;
 			}
 		} catch (InterruptedException e) {
 			Log.e("MATSimOMNetSimulation", e);
 		}
 	}
-
-	public long getSimulationStep() {
-		return simulationStep;
-	}
 	
-	public jDEECoWithinDayMobsimListener getJDEECoMobsimListener() {
+	public JDEECoWithinDayMobsimListener getJDEECoMobsimListener() {
 		return listener;
 	}
 
@@ -125,7 +123,7 @@ public class MATSimOMNetSimulation extends OMNetSimulation implements
 						(TravelTimeCollector) travelTime);
 				controler.getMobsimListeners().add(
 						(TravelTimeCollector) travelTime);
-				controler.setMobsimFactory(new jDEECoMobsimFactory(listener,
+				controler.setMobsimFactory(new JDEECoMobsimFactory(listener,
 						agentSources));
 			}
 		});
