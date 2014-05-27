@@ -87,9 +87,6 @@ public class OMNetSimulation implements CurrentTimeProvider, NetworkProvider,
 
 	public OMNetSimulation() {
 		networkAddressesToHosts = new HashMap<String, SimulationHost>();
-	}
-
-	public void initialize() {
 		System.loadLibrary("libintegration");
 	}
 

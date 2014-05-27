@@ -1,6 +1,8 @@
 package cz.cuni.mff.d3s.deeco.simulation.matsim;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Exchanger;
 
@@ -23,14 +25,17 @@ public class JDEECoWithinDayMobsimListener implements
 		MobsimBeforeSimStepListener {
 
 	private final Exchanger<Map<String, ?>> exchanger;
-	private JDEECoAgentProvider agentProvider;
+	private final List<JDEECoAgentProvider> agentProviders;
 
 	public JDEECoWithinDayMobsimListener(Exchanger<Map<String, ?>> exchanger) {
 		this.exchanger = exchanger;
+		this.agentProviders = new LinkedList<JDEECoAgentProvider>();
 	}
 
 	public void registerAgentProvider(JDEECoAgentProvider agentProvider) {
-		this.agentProvider = agentProvider;
+		if (agentProviders.contains(agentProvider)) {
+			agentProviders.add(agentProvider);
+		}
 	}
 
 	public void notifyMobsimBeforeSimStep(MobsimBeforeSimStepEvent event) {
@@ -39,28 +44,32 @@ public class JDEECoWithinDayMobsimListener implements
 
 			// Get agents current positions and jDEECoAgents
 			MATSimOutput matSimOutput;
-			for (JDEECoAgent agent : agentProvider.getAgents()) {
-				matSimOutput = new MATSimOutput(agent.getCurrentLinkId(),
-						agent.estimatePosition(event.getSimulationTime()));
-				matSimOutputs.put(agent.getId().toString(), matSimOutput);
+			for (JDEECoAgentProvider agentProvider : agentProviders) {
+				for (JDEECoAgent agent : agentProvider.getAgents()) {
+					matSimOutput = new MATSimOutput(agent.getCurrentLinkId(),
+							agent.estimatePosition(event.getSimulationTime()));
+					matSimOutputs.put(agent.getId().toString(), matSimOutput);
+				}
 			}
+
 			// Exchange data (Rendezvous)
-			// Log.w("MATSim Before data exchange at " +
-			// event.getSimulationTime());
 			Map<String, ?> matSimInputs = exchanger.exchange(matSimOutputs);
-			// Log.w("MATSim After data exchange at " +
-			// event.getSimulationTime());
+//			 Log.w("MATSim After data exchange at "
+//			 + event.getSimulationTime());
+
 			// Update jDEECo agents next link id
 			if (matSimInputs != null && !matSimInputs.isEmpty()) {
 				MATSimInput mData;
-				for (JDEECoAgent agent : agentProvider.getAgents()) {
-					if (matSimInputs.containsKey(agent.getId().toString())) {
-						mData = (MATSimInput) matSimInputs.get(agent.getId()
-								.toString());
-						agent.setDestinationLinkId(mData.destination);
-						agent.setRoute(mData.route);
-						agent.setActivityEndTime(mData.activityEndTime);
-						agent.setActivityType(mData.activityType);
+				for (JDEECoAgentProvider agentProvider : agentProviders) {
+					for (JDEECoAgent agent : agentProvider.getAgents()) {
+						if (matSimInputs.containsKey(agent.getId().toString())) {
+							mData = (MATSimInput) matSimInputs.get(agent
+									.getId().toString());
+							agent.setDestinationLinkId(mData.destination);
+							agent.setRoute(mData.route);
+							agent.setActivityEndTime(mData.activityEndTime);
+							agent.setActivityType(mData.activityType);
+						}
 					}
 				}
 			}

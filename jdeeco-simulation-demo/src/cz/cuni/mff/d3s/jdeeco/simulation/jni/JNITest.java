@@ -9,8 +9,6 @@ public class JNITest {
 		System.out.println(System.getProperty("java.library.path"));
 		OMNetSimulation oMNetSimulation = new OMNetSimulation();
 		
-		oMNetSimulation.initialize(); //loads Library
-		
 
 		SimulationHost h0 = oMNetSimulation.getHost("0", "node[0]");
 		DemoJNIKnowledgeDataManager kr = new DemoJNIKnowledgeDataManager(h0, oMNetSimulation);

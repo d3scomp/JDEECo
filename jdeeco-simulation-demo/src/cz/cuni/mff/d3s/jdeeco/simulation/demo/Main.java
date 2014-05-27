@@ -9,7 +9,6 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -64,7 +63,6 @@ public class Main {
 		}
 		
 		OMNetSimulation sim = new OMNetSimulation();
-		sim.initialize(); //loads Library
 		
 		AnnotationProcessor processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE);
 		OMNetSimulationRuntimeBuilder builder = new OMNetSimulationRuntimeBuilder();
