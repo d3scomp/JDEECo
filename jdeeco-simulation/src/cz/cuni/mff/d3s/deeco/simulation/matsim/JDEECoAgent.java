@@ -1,7 +1,5 @@
 package cz.cuni.mff.d3s.deeco.simulation.matsim;
 
-import java.util.List;
-
 import org.matsim.api.core.v01.Coord;
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.TransportMode;
@@ -26,26 +24,21 @@ public class JDEECoAgent implements MobsimDriverAgent {
 
 	private MobsimVehicle vehicle;
 	private Id currentLinkId;
+	private Id nextLinkId;
 	private Id id;
 	private State state = State.ACTIVITY;
-	private Id destinationLinkId;
 	private Id plannedVehicleId;
-	private List<Id> route;
-	private Id nextLinkId;
-	private String activityType;
 
 	private Netsim simulation;
 
-	private double activityEndTime; // in seconds
+	private MATSimInput currentInput;
+	private MATSimInput nextInput;
 
-	public JDEECoAgent(Id id, Id currentLinkId, List<Id> route,
-			Id destinationLinkId, String activityType, double activityEndTime) {
+	public JDEECoAgent(Id id, Id currentLinkId, MATSimInput input) {
 		this.id = id;
-		this.destinationLinkId = destinationLinkId;
-		this.activityEndTime = activityEndTime;
 		this.currentLinkId = currentLinkId;
-		this.route = route;
-		this.activityType = activityType;
+
+		this.currentInput = input;
 		/**
 		 * Initialize next link id
 		 */
@@ -61,13 +54,18 @@ public class JDEECoAgent implements MobsimDriverAgent {
 	}
 
 	public void endActivityAndComputeNextState(double now) {
-		this.simulation.getEventsManager().processEvent(
-				this.simulation
-						.getEventsManager()
-						.getFactory()
-						.createActivityEndEvent(now, this.getId(),
-								currentLinkId, new IdImpl(100), activityType));
-		this.state = State.LEG; // want to move
+		if (now == currentInput.activityEndTime) {
+			this.simulation.getEventsManager().processEvent(
+					this.simulation
+							.getEventsManager()
+							.getFactory()
+							.createActivityEndEvent(now, this.getId(),
+									currentLinkId, new IdImpl(100),
+									currentInput.activityType));
+			this.state = State.LEG; // want to move
+			this.currentInput = nextInput;
+			updateNextLink();
+		}
 	}
 
 	public void endLegAndComputeNextState(double now) {
@@ -78,11 +76,8 @@ public class JDEECoAgent implements MobsimDriverAgent {
 	}
 
 	public double getActivityEndTime() {
-		return this.activityEndTime;
-	}
-
-	public void setActivityEndTime(double value) {
-		this.activityEndTime = value;
+		double currentTime = this.simulation.getSimTimer().getTimeOfDay();
+		return currentTime + this.simulation.getSimTimer().getSimTimestepSize();
 	}
 
 	public Double getExpectedTravelTime() {
@@ -97,18 +92,18 @@ public class JDEECoAgent implements MobsimDriverAgent {
 		return this.state;
 	}
 
-	public void setActivityType(String value) {
-		this.activityType = value;
-	}
-
 	public void notifyArrivalOnLinkByNonNetworkMode(Id linkId) {
 		this.currentLinkId = linkId;
 		updateNextLink();
 	}
 
-	public void setRoute(List<Id> route) {
-		this.route = route;
-		updateNextLink();
+	public void setInput(MATSimInput input) {
+		if (state.equals(State.ACTIVITY)) {
+			this.nextInput = input;
+		} else {
+			this.currentInput = input;
+			updateNextLink();
+		}
 	}
 
 	public Id getCurrentLinkId() {
@@ -116,11 +111,7 @@ public class JDEECoAgent implements MobsimDriverAgent {
 	}
 
 	public Id getDestinationLinkId() {
-		return this.destinationLinkId;
-	}
-
-	public void setDestinationLinkId(Id destinationLinkId) {
-		this.destinationLinkId = destinationLinkId;
+		return currentInput.destination;
 	}
 
 	public Id getId() {
@@ -177,18 +168,22 @@ public class JDEECoAgent implements MobsimDriverAgent {
 	}
 
 	private void updateNextLink() {
-		if (currentLinkId.equals(destinationLinkId)) {
+		if (currentLinkId.equals(currentInput.destination)) {
 			this.nextLinkId = null;
 			return;
 		}
-		if (route != null && !route.isEmpty()) {
-			int index = route.indexOf(currentLinkId);
+		if (currentInput.route != null) {
+			int index = currentInput.route.indexOf(currentLinkId);
 			if (index < 0) {
-				this.nextLinkId = route.get(0);
-			} else if (index == route.size() - 1) {
-				this.nextLinkId = destinationLinkId;
-			} else if (index < route.size() - 1) {
-				this.nextLinkId = route.get(index + 1);
+				if (currentInput.route.isEmpty()) {
+					this.nextLinkId = currentInput.destination;
+				} else {
+					this.nextLinkId = currentInput.route.get(0);
+				}
+			} else if (index == currentInput.route.size() - 1) {
+				this.nextLinkId = currentInput.destination;
+			} else if (index < currentInput.route.size() - 1) {
+				this.nextLinkId = currentInput.route.get(index + 1);
 			}
 		} else {
 			this.nextLinkId = null;

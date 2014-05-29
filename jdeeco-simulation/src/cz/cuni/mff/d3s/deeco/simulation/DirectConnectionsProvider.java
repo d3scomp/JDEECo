@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.deeco.simulation;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,13 +26,20 @@ public class DirectConnectionsProvider implements NetworkProvider {
 	public void sendPacket(String fromId, byte[] data, String recipient) {
 		if (recipient == null || recipient.isEmpty()) {
 			for (NetworkInterface networkInterface: network.values()) {
-				networkInterface.sendPacket(data, recipient);
+				if (!networkInterface.getHostId().equals(fromId)) {
+					networkInterface.packetReceived(data, 1.0);
+				}
 			}
 		} else {
 			NetworkInterface networkInterface = network.get(recipient);
 			if (networkInterface != null)
-				networkInterface.sendPacket(data, recipient);
+				networkInterface.packetReceived(data, 1.0);
 		}
+	}
+
+	@Override
+	public Collection<? extends NetworkInterface> getNetworkInterfaces() {
+		return network.values();
 	}
 
 }

@@ -22,8 +22,6 @@ import org.matsim.core.router.TripRouterFactory;
 import org.matsim.core.router.TripRouterFactoryImpl;
 import org.matsim.core.router.util.DijkstraFactory;
 import org.matsim.core.router.util.TravelTime;
-import org.matsim.core.scenario.ScenarioImpl;
-import org.matsim.population.algorithms.XY2Links;
 import org.matsim.pt.router.TransitRouterConfig;
 import org.matsim.pt.router.TransitRouterFactory;
 import org.matsim.pt.router.TransitRouterImplFactory;
@@ -46,10 +44,6 @@ public class MATSimRouter {
 		this.tripRouterFactory = new WithinDayTripRouterFactory(controler,
 				travelTime);
 		this.controler = controler;
-		XY2Links xy2Links = new XY2Links(this.controler.getNetwork(),
-				((ScenarioImpl) this.controler.getScenario())
-						.getActivityFacilities());
-		xy2Links.run(controler.getPopulation());
 	}
 
 	public String routeRandomly(Id currentLinkId) {

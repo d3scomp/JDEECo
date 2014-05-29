@@ -5,8 +5,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Exchanger;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.matsim.api.core.v01.TransportMode;
 import org.matsim.core.controler.events.StartupEvent;
@@ -16,6 +14,7 @@ import org.matsim.withinday.trafficmonitoring.TravelTimeCollector;
 import org.matsim.withinday.trafficmonitoring.TravelTimeCollectorFactory;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.network.NetworkProvider;
 import cz.cuni.mff.d3s.deeco.simulation.SimulationStepListener;
 import cz.cuni.mff.d3s.deeco.simulation.omnet.OMNetSimulation;
 import cz.cuni.mff.d3s.deeco.simulation.task.SimulationStepTask;
@@ -28,8 +27,6 @@ import cz.cuni.mff.d3s.deeco.simulation.task.SimulationStepTask;
  */
 public class MATSimOMNetSimulation extends OMNetSimulation implements
 		SimulationStepListener {
-
-	private static final int MATSIM_WAITING_TIME = 10; // in milliseconds
 	private static final int MILLIS_IN_SECOND = 1000;
 
 	private final Exchanger<Map<String, ?>> exchanger;
@@ -42,19 +39,34 @@ public class MATSimOMNetSimulation extends OMNetSimulation implements
 	private final MATSimOMNetCoordinatesTranslator positionTranslator;
 
 	private Thread matSimThread;
+	private long remainingExchanges;
 
-	public MATSimOMNetSimulation(MATSimDataReceiver matSimReceiver,
+	public MATSimOMNetSimulation(NetworkProvider np,
+			MATSimDataReceiver matSimReceiver,
 			MATSimDataProvider matSimProvider,
 			final Collection<? extends AdditionAwareAgentSource> agentSources,
 			String matSimConf) {
-
-		this.exchanger = new Exchanger<Map<String, ?>>();
-		this.listener = new JDEECoWithinDayMobsimListener(exchanger);
-		this.matSimProvider = matSimProvider;
-		this.matSimReceiver = matSimReceiver;
-
+		super(np);
+		
 		this.controler = new MATSimPreloadingControler(matSimConf);
 		this.controler.setOverwriteFiles(true);
+		this.controler.getConfig().getQSimConfigGroup()
+				.setSimStarttimeInterpretation("onlyUseStarttime");
+		
+		double end = this.controler.getConfig().getQSimConfigGroup()
+				.getEndTime();
+		double start = this.controler.getConfig().getQSimConfigGroup()
+				.getStartTime();
+		double step = this.controler.getConfig().getQSimConfigGroup().getTimeStepSize();
+		Log.i("Starting simulation: matsimStartTime: " + start
+				+ " matsimEndTime: " + end);
+		this.remainingExchanges = new Double((end - start) / step)
+				.longValue() + 1;
+		
+		this.exchanger = new Exchanger<Map<String, ?>>();
+		this.listener = new JDEECoWithinDayMobsimListener(exchanger, this.remainingExchanges);
+		this.matSimProvider = matSimProvider;
+		this.matSimReceiver = matSimReceiver;
 
 		this.positionTranslator = new MATSimOMNetCoordinatesTranslator(
 				controler.getNetwork());
@@ -76,19 +88,32 @@ public class MATSimOMNetSimulation extends OMNetSimulation implements
 			}
 		});
 
-		this.simulationStep = Math.round(controler.getConfig()
-				.getQSimConfigGroup().getTimeStepSize())
-				* MILLIS_IN_SECOND;
+		this.simulationStep = new Double(step * MILLIS_IN_SECOND).longValue();
 		/**
 		 * Bind MATSim listener with the agent source. It is necessary to let
 		 * the listener know about the jDEECo agents that it needs to update
 		 * with data coming from a jDEECo runtime.
 		 */
-		for (AdditionAwareAgentSource source: agentSources) {
+		for (AdditionAwareAgentSource source : agentSources) {
 			if (source instanceof JDEECoAgentSource) {
 				listener.registerAgentProvider((JDEECoAgentSource) source);
 			}
 		}
+	}
+
+	public MATSimOMNetSimulation(MATSimDataReceiver matSimReceiver,
+			MATSimDataProvider matSimProvider,
+			final Collection<? extends AdditionAwareAgentSource> agentSources,
+			String matSimConf) {
+		this(null, matSimReceiver, matSimProvider, agentSources, matSimConf);
+	}
+
+	public double getDuration() {
+		double end = this.controler.getConfig().getQSimConfigGroup()
+				.getEndTime();
+		double start = this.controler.getConfig().getQSimConfigGroup()
+				.getStartTime();
+		return end - start;
 	}
 
 	public void at(long time, SimulationStepTask task) {
@@ -104,23 +129,14 @@ public class MATSimOMNetSimulation extends OMNetSimulation implements
 				});
 				matSimThread.start();
 			}
-			if (matSimThread.isAlive()) {
+			if (matSimThread.isAlive() && this.remainingExchanges > 0) {
 //				long currentTime = getCurrentTime();
 //				long matsimTime = getMATSimTime();
-				boolean loop = true;
-				while (loop) {
-					try {
-						matSimReceiver.setMATSimData(exchanger.exchange(
-								matSimProvider.getMATSimData(),
-								MATSIM_WAITING_TIME, TimeUnit.MILLISECONDS));
-//						Log.w("jDEECo After data exchange at " + currentTime
-//								+ " MATSim time: " + matsimTime);
-						loop = false;
-					} catch (TimeoutException e) {
-						// Wait for the MATSim thread.
-						loop = matSimThread.isAlive();
-					}
-				}
+				matSimReceiver.setMATSimData(exchanger.exchange(matSimProvider
+						.getMATSimData()));
+				this.remainingExchanges--;
+//				Log.w("jDEECo After data exchange at " + currentTime
+//				+ " MATSim time: " + matsimTime + " " + remainingExchanges);
 				task.scheduleNextExecutionAfter(simulationStep);
 			}
 		} catch (InterruptedException e) {
@@ -131,8 +147,7 @@ public class MATSimOMNetSimulation extends OMNetSimulation implements
 	public long getMATSimTime() {
 		long currentTime = getCurrentTime();
 		return Math.round((currentTime / MILLIS_IN_SECOND)
-				+ controler.getConfig().getQSimConfigGroup()
-						.getStartTime());
+				+ controler.getConfig().getQSimConfigGroup().getStartTime());
 	}
 
 	public MATSimPreloadingControler getControler() {
@@ -148,15 +163,6 @@ public class MATSimOMNetSimulation extends OMNetSimulation implements
 	}
 
 	public void run(String environment, String configFile) {
-		throw new UnsupportedOperationException(
-				"Use run(double matsimStartTime, String environment, String configFile)");
-	}
-
-	public void run(double matsimStartTime, double matsimEndTime,
-			String environment, String configFile) {
-		controler.getConfig().getQSimConfigGroup().setEndTime(matsimEndTime);
-		controler.getConfig().getQSimConfigGroup()
-				.setStartTime(matsimStartTime);
 		super.run(environment, configFile);
 		System.out.println("OMNet ended");
 		try {

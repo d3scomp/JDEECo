@@ -61,6 +61,7 @@ public class OMNetSimulation implements CurrentTimeProvider, NetworkProvider,
 	 * method without changing its C counterpart.
 	 */
 	private native void nativeRun(String environment, String configFile);
+
 	/**
 	 * Registers a callback within the simulation resulting in method "at"
 	 * execution at the absoluteTime. Do not change this method without changing
@@ -70,24 +71,41 @@ public class OMNetSimulation implements CurrentTimeProvider, NetworkProvider,
 	 * @param nodeId
 	 */
 	private native void nativeCallAt(double absoluteTime, String nodeId);
+
 	private native boolean nativeIsPositionInfoAvailable(String nodeId);
+
 	/**
 	 * 
 	 * @param nodeId
 	 * @return
 	 */
 	private native double nativeGetPositionX(String nodeId);
+
 	private native double nativeGetPositionY(String nodeId);
+
 	private native double nativeGetPositionZ(String nodeId);
+
 	private native double nativeSetPositionX(String nodeId, double value);
+
 	private native double nativeSetPositionY(String nodeId, double value);
+
 	private native double nativeSetPositionZ(String nodeId, double value);
 
 	private final Map<String, SimulationHost> networkAddressesToHosts;
+	private final NetworkProvider networkProvider;
 
-	public OMNetSimulation() {
+	public OMNetSimulation(NetworkProvider networkProvider) {
+		if (networkProvider == null) {
+			this.networkProvider = this;
+		} else {
+			this.networkProvider = networkProvider;
+		}
 		networkAddressesToHosts = new HashMap<String, SimulationHost>();
 		System.loadLibrary("libintegration");
+	}
+
+	public OMNetSimulation() {
+		this(null);
 	}
 
 	/**
@@ -98,21 +116,25 @@ public class OMNetSimulation implements CurrentTimeProvider, NetworkProvider,
 	public SimulationHost getHost(String logicalId, String networkId) {
 		return getHost(logicalId, networkId, true, true);
 	}
-	
-	public SimulationHost getHost(String logicalId, String networkId, boolean hasMANETNic, boolean hasEthernetNic) {
+
+	public SimulationHost getHost(String logicalId, String networkId,
+			boolean hasMANETNic, boolean hasEthernetNic) {
 		SimulationHost host;
 		if (networkAddressesToHosts.containsKey(networkId)) {
 			host = networkAddressesToHosts.get(networkId);
 		} else {
-			host = new SimulationHost(this, this, this, logicalId, hasMANETNic, hasEthernetNic);
-			networkAddressesToHosts.put(networkId, host);
-			registerInNetwork(host, networkId);
+			host = new SimulationHost(networkProvider, this, this, logicalId,
+					hasMANETNic, hasEthernetNic);
+			networkProvider.registerInNetwork(host, networkId);
+			nativeRegister(host, host.getHostId());
 		}
 		return host;
 	}
 
-	public void registerInNetwork(NetworkInterface networkInterface, String networkId) {
-		nativeRegister(networkInterface, networkInterface.getHostId());
+	public void registerInNetwork(NetworkInterface networkInterface,
+			String networkId) {
+		networkAddressesToHosts.put(networkId,
+				(SimulationHost) networkInterface);
 	}
 
 	public void sendPacket(String fromId, byte[] data, String recipient) {
@@ -121,20 +143,25 @@ public class OMNetSimulation implements CurrentTimeProvider, NetworkProvider,
 			sendTo = "";
 		} else {
 			for (String networkId : networkAddressesToHosts.keySet()) {
-				if (networkAddressesToHosts.get(networkId).getHostId().equals(recipient)) {
+				if (networkAddressesToHosts.get(networkId).getHostId()
+						.equals(recipient)) {
 					sendTo = networkId;
 					break;
 				}
 			}
 			if (sendTo == null)
 				sendTo = recipient;
-			
+
 		}
 		nativeSendPacket(fromId, data, sendTo);
 	}
-	
-	public Collection<SimulationHost> getHosts() {
-		return networkAddressesToHosts.values();
+
+	public Collection<? extends NetworkInterface> getNetworkInterfaces() {
+		if (networkProvider == this) {
+			return networkAddressesToHosts.values();
+		} else {
+			return networkProvider.getNetworkInterfaces();
+		}
 	}
 
 	public void run(String environment, String configFile) {
@@ -160,15 +187,15 @@ public class OMNetSimulation implements CurrentTimeProvider, NetworkProvider,
 	public double getPositionZ(Host host) {
 		return nativeGetPositionZ(host.getHostId());
 	}
-	
+
 	public double setPositionX(Host host, double x) {
 		return nativeSetPositionX(host.getHostId(), x);
 	}
-	
+
 	public double setPositionY(Host host, double y) {
 		return nativeSetPositionY(host.getHostId(), y);
 	}
-	
+
 	public double setPositionZ(Host host, double z) {
 		return nativeSetPositionZ(host.getHostId(), z);
 	}
@@ -190,8 +217,8 @@ public class OMNetSimulation implements CurrentTimeProvider, NetworkProvider,
 	}
 
 	public void finalize() {
-		for (Host h : networkAddressesToHosts.values())
-			h.finalize();
+		for (NetworkInterface ni : getNetworkInterfaces())
+			((Host) ni).finalize();
 	}
 
 }
