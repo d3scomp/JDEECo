@@ -12,6 +12,8 @@ import org.matsim.core.mobsim.qsim.interfaces.Netsim;
 import org.matsim.core.mobsim.qsim.qnetsimengine.QVehicle;
 import org.matsim.core.utils.geometry.CoordImpl;
 
+import cz.cuni.mff.d3s.deeco.logging.Log;
+
 /**
  * JDEECo agent implementation. The agent is used by the
  * {@link JDEECoWithinDayMobsimListener} to steer the MATSim simulation,
@@ -31,14 +33,13 @@ public class JDEECoAgent implements MobsimDriverAgent {
 
 	private Netsim simulation;
 
-	private MATSimInput currentInput;
-	private MATSimInput nextInput;
+	private MATSimInput input;
 
 	public JDEECoAgent(Id id, Id currentLinkId, MATSimInput input) {
 		this.id = id;
 		this.currentLinkId = currentLinkId;
 
-		this.currentInput = input;
+		this.input = input;
 		/**
 		 * Initialize next link id
 		 */
@@ -54,16 +55,15 @@ public class JDEECoAgent implements MobsimDriverAgent {
 	}
 
 	public void endActivityAndComputeNextState(double now) {
-		if (now == currentInput.activityEndTime) {
+		if (now == input.activityEndTime) {
 			this.simulation.getEventsManager().processEvent(
 					this.simulation
 							.getEventsManager()
 							.getFactory()
 							.createActivityEndEvent(now, this.getId(),
 									currentLinkId, new IdImpl(100),
-									currentInput.activityType));
+									input.activityType));
 			this.state = State.LEG; // want to move
-			this.currentInput = nextInput;
 			updateNextLink();
 		}
 	}
@@ -98,20 +98,18 @@ public class JDEECoAgent implements MobsimDriverAgent {
 	}
 
 	public void setInput(MATSimInput input) {
-		if (state.equals(State.ACTIVITY)) {
-			this.nextInput = input;
-		} else {
-			this.currentInput = input;
-			updateNextLink();
-		}
+		this.input = input;
+		updateNextLink();
 	}
 
 	public Id getCurrentLinkId() {
+		//Log.i(id.toString() + " getCurrentLinkId " + currentLinkId.toString());
 		return this.currentLinkId;
 	}
 
 	public Id getDestinationLinkId() {
-		return currentInput.destination;
+		//Log.i(id.toString() + " getDestination " + input.destination);
+		return input.destination;
 	}
 
 	public Id getId() {
@@ -119,6 +117,7 @@ public class JDEECoAgent implements MobsimDriverAgent {
 	}
 
 	public Id chooseNextLinkId() {
+		//Log.i(id.toString() + " chooseNextLinkId " + ((nextLinkId == null) ? "null" :nextLinkId.toString()));
 		return nextLinkId;
 	}
 
@@ -168,22 +167,22 @@ public class JDEECoAgent implements MobsimDriverAgent {
 	}
 
 	private void updateNextLink() {
-		if (currentLinkId.equals(currentInput.destination)) {
+		if (currentLinkId.equals(input.destination)) {
 			this.nextLinkId = null;
 			return;
 		}
-		if (currentInput.route != null) {
-			int index = currentInput.route.indexOf(currentLinkId);
+		if (input.route != null) {
+			int index = input.route.indexOf(currentLinkId);
 			if (index < 0) {
-				if (currentInput.route.isEmpty()) {
-					this.nextLinkId = currentInput.destination;
+				if (input.route.isEmpty()) {
+					this.nextLinkId = input.destination;
 				} else {
-					this.nextLinkId = currentInput.route.get(0);
+					this.nextLinkId = input.route.get(0);
 				}
-			} else if (index == currentInput.route.size() - 1) {
-				this.nextLinkId = currentInput.destination;
-			} else if (index < currentInput.route.size() - 1) {
-				this.nextLinkId = currentInput.route.get(index + 1);
+			} else if (index == input.route.size() - 1) {
+				this.nextLinkId = input.destination;
+			} else if (index < input.route.size() - 1) {
+				this.nextLinkId = input.route.get(index + 1);
 			}
 		} else {
 			this.nextLinkId = null;
