@@ -62,12 +62,12 @@ public class Member extends PositionAwareComponent {
 				seed = seed*32 + (c-'a');
 			Random rnd = new Random(seed);		
 			// the danger occurs in the second quarter of the simulation
-			long dangerTime = ProcessContext.getTimeProvider().getCurrentTime() 
+			long dangerTime = ProcessContext.getTimeProvider().getCurrentMilliseconds() 
 					+ (Main.SIMULATION_DURATION/4)
 					+ rnd.nextInt(Main.SIMULATION_DURATION/4);
 			internal.put(DANGER_TIME, dangerTime);
 		}
-		long currentTime = ProcessContext.getTimeProvider().getCurrentTime();
+		long currentTime = ProcessContext.getTimeProvider().getCurrentMilliseconds();
 		// if the time has come, go to "danger" state
 		if (currentTime < (long) internal.get(DANGER_TIME)) {
 			memberData.value = new MemberData(25.0f);

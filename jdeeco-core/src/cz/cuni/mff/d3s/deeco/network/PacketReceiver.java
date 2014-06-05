@@ -101,7 +101,9 @@ public class PacketReceiver {
 			if (kd != null)
 				knowledgeDataReceiver.receive(kd);
 		}
-		clearCachedMessagesIfNecessary();
+		if (timeProvider.getCurrentMilliseconds() - lastMessagesWipe >= messageWipePeriod) {
+			clearCachedMessages();
+		}
 	}
 	
 	public void clearCachedMessages() {
@@ -118,35 +120,10 @@ public class PacketReceiver {
 				it.remove();					
 			}
 		}
-		lastMessagesWipe = timeProvider.getCurrentTime();
+		lastMessagesWipe = timeProvider.getCurrentMilliseconds();
 		int currentCnt = messages.size();
 		Log.d(String.format("Message wipe at %s removed %d cached packets", host, origCnt - currentCnt));
 		Log.d(String.format("PacketReceiver: Message wipe %s dropped messageids %s", host, Arrays.deepToString(droppedIds.toArray())));
-	}
-
-	//TODO Possibly this should be scheduled as a task in the Scheduler.
-	private void clearCachedMessagesIfNecessary() {
-		if (timeProvider.getCurrentTime() - lastMessagesWipe >= messageWipePeriod) {
-			int origCnt = messages.size();
-
-			Set<Integer> droppedIds = new HashSet<>();
-			
-			Message message;
-			Iterator<Entry<Integer, Message>> it = messages.entrySet().iterator();
-			while (it.hasNext()) {
-				Entry<Integer, Message> entry = it.next();				
-				message = entry.getValue();
-				if (message != null && message.isStale()) {
-					droppedIds.add(entry.getKey());
-					it.remove();					
-				}
-			}
-			lastMessagesWipe = timeProvider.getCurrentTime();
-			int currentCnt = messages.size();
-			Log.d(String.format("Message wipe at %s removed %d cached packets", host, origCnt - currentCnt));
-			Log.d(String.format("PacketReceiver: Message wipe %s dropped messageids %s", host, Arrays.deepToString(droppedIds.toArray())));
-		}
-		
 	}
 
 	// -----------Helper methods-----------
@@ -193,11 +170,11 @@ public class PacketReceiver {
 
 		public Message(int messageId) {
 			this.messageId = messageId;
-			this.creationTime = timeProvider.getCurrentTime();
+			this.creationTime = timeProvider.getCurrentMilliseconds();
 		}
 
 		public boolean isStale() {
-			return timeProvider.getCurrentTime() - creationTime > maxMessageTime;
+			return timeProvider.getCurrentMilliseconds() - creationTime > maxMessageTime;
 		}
 		
 		public void setLastRSSI(double rssi) {

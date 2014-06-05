@@ -67,8 +67,8 @@ public class Host implements CurrentTimeProvider, NetworkInterface {
 	}
 
 	@Override
-	public long getCurrentTime() {
-		return timeProvider.getCurrentTime();
+	public long getCurrentMilliseconds() {
+		return timeProvider.getCurrentMilliseconds();
 	}
 	
 	public void finalize() {

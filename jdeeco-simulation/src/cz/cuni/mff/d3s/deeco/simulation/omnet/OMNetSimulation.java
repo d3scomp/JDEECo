@@ -200,7 +200,7 @@ public class OMNetSimulation implements CurrentTimeProvider, NetworkProvider,
 		return nativeSetPositionZ(host.getHostId(), z);
 	}
 
-	public long getCurrentTime() {
+	public long getCurrentMilliseconds() {
 		double nativeTime = nativeGetCurrentTime();
 		if (nativeTime < 0)
 			return 0;
