@@ -232,13 +232,13 @@ KnowledgeDataPublisher {
 			logPublish(Arrays.asList(data));
 			knowledgeDataSender.broadcastKnowledgeData(Arrays.asList(data));
 			dataToRebroadcastOverMANET.remove(sig);
-			Log.d(String.format("Rebroadcast finished (%d) at %s, data %s", timeProvider.getCurrentTime(), host, sig));
+			Log.d(String.format("Rebroadcast finished (%d) at %s, data %s", timeProvider.getCurrentMilliseconds(), host, sig));
 		} else if (dataToRebroadcastOverIP.containsKey(sig)) {
 			data = prepareForRebroadcast(dataToRebroadcastOverIP.get(sig));
 			logPublish(Arrays.asList(data));
 			sendDirect(Arrays.asList(data));
 			dataToRebroadcastOverIP.remove(sig);
-			Log.d(String.format("Rebroadcast finished (%d) at %s, data %s", timeProvider.getCurrentTime(), host, sig));
+			Log.d(String.format("Rebroadcast finished (%d) at %s, data %s", timeProvider.getCurrentMilliseconds(), host, sig));
 		}
 	}
 
@@ -265,7 +265,7 @@ KnowledgeDataPublisher {
 				dataToRebroadcastOverMANET.remove(currentMetadata.getSignature());
 				Log.d(String.format(
 						"MANET: Rebroadcast aborted (%d) at %s, data %s, because of %s",
-						timeProvider.getCurrentTime(), host,
+						timeProvider.getCurrentMilliseconds(), host,
 						currentMetadata.getSignature(),
 						newMetadata.getSignature()));
 			}
@@ -276,7 +276,7 @@ KnowledgeDataPublisher {
 				dataToRebroadcastOverIP.remove(currentMetadata.getSignature());
 				Log.d(String.format(
 						"IP: Rebroadcast aborted (%d) at %s, data %s, because of %s",
-						timeProvider.getCurrentTime(), host,
+						timeProvider.getCurrentMilliseconds(), host,
 						currentMetadata.getSignature(),
 						newMetadata.getSignature()));
 			}
@@ -298,11 +298,11 @@ KnowledgeDataPublisher {
 				queueForRebroadcast(kd);
 				
 				Log.d(String.format("Receive (%d) at %s got %sv%d after %dms and %d hops\n", 
-						timeProvider.getCurrentTime(), 
+						timeProvider.getCurrentMilliseconds(), 
 						host, 
 						newMetadata.componentId, 
 						newMetadata.versionId,
-						timeProvider.getCurrentTime() - newMetadata.createdAt,
+						timeProvider.getCurrentMilliseconds() - newMetadata.createdAt,
 						newMetadata.hopCount));
 			} 
 		}
@@ -311,7 +311,7 @@ KnowledgeDataPublisher {
 	void queueForRebroadcast(KnowledgeData kd) {
 		if (checkBoundaryCondition && !isInSomeBoundary(kd, getNodeKnowledge())) {
 			Log.d(String.format("Boundary failed (%d) at %s for %sv%d\n", 
-					timeProvider.getCurrentTime(), host, kd.getMetaData().componentId, kd.getMetaData().versionId));
+					timeProvider.getCurrentMilliseconds(), host, kd.getMetaData().componentId, kd.getMetaData().versionId));
 			return;
 		} 
 		
@@ -326,7 +326,7 @@ KnowledgeDataPublisher {
 		
 		Log.d(String.format(
 				"Gossip rebroadcast (%d) at %s for %sv%d from %s with rssi %g with delay %d\n",
-				timeProvider.getCurrentTime(), host,
+				timeProvider.getCurrentMilliseconds(), host,
 				kmd.componentId,
 				kmd.versionId, kmd.sender,
 				kmd.rssi, delay));
@@ -470,7 +470,7 @@ KnowledgeDataPublisher {
 			throws KnowledgeNotFoundException {
 		return new KnowledgeData(
 				km.get(emptyPath), 
-				new KnowledgeMetaData(km.getId(), localVersion, host, timeProvider.getCurrentTime(), 1));
+				new KnowledgeMetaData(km.getId(), localVersion, host, timeProvider.getCurrentMilliseconds(), 1));
 	}
 	
 	KnowledgeData prepareForRebroadcast(KnowledgeData receivedData) {		
@@ -529,10 +529,10 @@ KnowledgeDataPublisher {
 		}		
 		if (recipient != null && !recipient.isEmpty())
 			Log.d(String.format("Publish (%d) at %s, sending [%s] directly to %s\n", 
-				timeProvider.getCurrentTime(), host, sb.toString(), recipient));
+				timeProvider.getCurrentMilliseconds(), host, sb.toString(), recipient));
 		else
 			Log.d(String.format("Publish (%d) at %s, sending [%s]\n", 
-					timeProvider.getCurrentTime(), host, sb.toString()));
+					timeProvider.getCurrentMilliseconds(), host, sb.toString()));
 	}
 	
 	private void logReceive(List<? extends KnowledgeData> knowledgeData) {
@@ -543,7 +543,7 @@ KnowledgeDataPublisher {
 		}
 		
 		Log.d(String.format("Receive (%d) at %s, received [%s]\n", 
-				timeProvider.getCurrentTime(), host, sb.toString()));
+				timeProvider.getCurrentMilliseconds(), host, sb.toString()));
 	}
 	
 }

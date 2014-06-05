@@ -47,24 +47,25 @@ public class MATSimOMNetSimulation extends OMNetSimulation implements
 			final Collection<? extends AdditionAwareAgentSource> agentSources,
 			String matSimConf) {
 		super(np);
-		
+
 		this.controler = new MATSimPreloadingControler(matSimConf);
 		this.controler.setOverwriteFiles(true);
 		this.controler.getConfig().getQSimConfigGroup()
 				.setSimStarttimeInterpretation("onlyUseStarttime");
-		
+
 		double end = this.controler.getConfig().getQSimConfigGroup()
 				.getEndTime();
 		double start = this.controler.getConfig().getQSimConfigGroup()
 				.getStartTime();
-		double step = this.controler.getConfig().getQSimConfigGroup().getTimeStepSize();
+		double step = this.controler.getConfig().getQSimConfigGroup()
+				.getTimeStepSize();
 		Log.i("Starting simulation: matsimStartTime: " + start
 				+ " matsimEndTime: " + end);
-		this.remainingExchanges = new Double((end - start) / step)
-				.longValue() + 1;
-		
+		this.remainingExchanges = new Double((end - start) / step).longValue() + 1;
+
 		this.exchanger = new Exchanger<Map<String, ?>>();
-		this.listener = new JDEECoWithinDayMobsimListener(exchanger, this.remainingExchanges);
+		this.listener = new JDEECoWithinDayMobsimListener(exchanger,
+				this.remainingExchanges);
 		this.matSimProvider = matSimProvider;
 		this.matSimReceiver = matSimReceiver;
 
@@ -130,13 +131,13 @@ public class MATSimOMNetSimulation extends OMNetSimulation implements
 				matSimThread.start();
 			}
 			if (matSimThread.isAlive() && this.remainingExchanges > 0) {
-//				long currentTime = getCurrentTime();
-//				long matsimTime = getMATSimTime();
+				// long currentTime = getCurrentTime();
+				// long matsimTime = getMATSimTime();
 				matSimReceiver.setMATSimData(exchanger.exchange(matSimProvider
 						.getMATSimData()));
 				this.remainingExchanges--;
-//				Log.w("jDEECo After data exchange at " + currentTime
-//				+ " MATSim time: " + matsimTime + " " + remainingExchanges);
+				// Log.w("jDEECo After data exchange at " + currentTime
+				// + " MATSim time: " + matsimTime + " " + remainingExchanges);
 				task.scheduleNextExecutionAfter(simulationStep);
 			}
 		} catch (InterruptedException e) {
@@ -144,10 +145,16 @@ public class MATSimOMNetSimulation extends OMNetSimulation implements
 		}
 	}
 
-	public long getMATSimTime() {
-		long currentTime = getCurrentTime();
+	public long getMATSimSeconds() {
+		long currentTime = getCurrentMilliseconds();
 		return Math.round((currentTime / MILLIS_IN_SECOND)
 				+ controler.getConfig().getQSimConfigGroup().getStartTime());
+	}
+
+	public long getMATSimMilliseconds() {
+		return getCurrentMilliseconds()
+				+ (Math.round(controler.getConfig().getQSimConfigGroup()
+						.getStartTime()) * MILLIS_IN_SECOND);
 	}
 
 	public MATSimPreloadingControler getControler() {

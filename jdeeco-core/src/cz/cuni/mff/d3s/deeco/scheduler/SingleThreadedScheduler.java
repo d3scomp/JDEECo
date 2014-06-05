@@ -305,7 +305,7 @@ public class SingleThreadedScheduler implements Scheduler {
 	 * @see cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider#getCurrentTime()
 	 */
 	@Override
-	public long getCurrentTime() {
+	public long getCurrentMilliseconds() {
 		return System.currentTimeMillis();
 	}
 }

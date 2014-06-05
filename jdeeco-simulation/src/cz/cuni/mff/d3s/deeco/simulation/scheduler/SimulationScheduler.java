@@ -204,8 +204,8 @@ public class SimulationScheduler implements Scheduler,
 	 * @see cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider#getCurrentTime()
 	 */
 	@Override
-	public long getCurrentTime() {
-		return host.getCurrentTime();
+	public long getCurrentMilliseconds() {
+		return host.getCurrentMilliseconds();
 	}
 
 	// ------Private methods--------
@@ -220,8 +220,8 @@ public class SimulationScheduler implements Scheduler,
 	 * Note that this method has to be explicitly protected by queue's monitor!
 	 */
 	void scheduleAfter(SchedulerEvent event, long delay) {			
-		event.nextExecutionTime = host.getCurrentTime() + delay;
-		event.nextPeriodStart = host.getCurrentTime() + delay;
+		event.nextExecutionTime = host.getCurrentMilliseconds() + delay;
+		event.nextPeriodStart = host.getCurrentMilliseconds() + delay;
 		push(event);
 					
 	}
@@ -229,7 +229,7 @@ public class SimulationScheduler implements Scheduler,
 	private void registerNextExecution() {
 		if (!queue.isEmpty()) {
 			long nextExecutionTime = queue.first().nextExecutionTime;
-			if (nextExecutionTime <= host.getCurrentTime()) {
+			if (nextExecutionTime <= host.getCurrentMilliseconds()) {
 				return; //nextExecutionTime = host.getSimulationTime() + 1;
 			}
 			callbackProvider.callAt(nextExecutionTime, host.getHostId());

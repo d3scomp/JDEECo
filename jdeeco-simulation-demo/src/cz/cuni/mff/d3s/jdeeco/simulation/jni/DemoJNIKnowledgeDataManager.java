@@ -32,7 +32,7 @@ public class DemoJNIKnowledgeDataManager implements KnowledgeDataReceiver,
 		if (knowledgeData != null) {
 			for (KnowledgeData kd : knowledgeData) {
 					DemoKnowledgeMetaData md = (DemoKnowledgeMetaData) kd.getMetaData();
-							System.out.print(host.getCurrentTime() + " Node "
+							System.out.print(host.getCurrentMilliseconds() + " Node "
 									+ host.getHostId() + " has received knowledge from "
 									+ md.componentId + ".");		
 					System.out.println(" Rebroadcast Counter: "
@@ -47,7 +47,7 @@ public class DemoJNIKnowledgeDataManager implements KnowledgeDataReceiver,
 					}
 			}
 			if (!toSend.isEmpty())
-				oMNetSimulation.callAt(host.getCurrentTime()
+				oMNetSimulation.callAt(host.getCurrentMilliseconds()
 						+ new Random().nextInt(2000), host.getHostId());
 		}
 	}
@@ -69,7 +69,7 @@ public class DemoJNIKnowledgeDataManager implements KnowledgeDataReceiver,
 	public void sendDummyData() {
 		KnowledgeData kd = new KnowledgeData(new ValueSet(), new DemoKnowledgeMetaData(host.getHostId(), 0, host.getHostId(), 0, 0));
 		toSend.add(kd);
-		oMNetSimulation.callAt(host.getCurrentTime() + 2000, host.getHostId());
+		oMNetSimulation.callAt(host.getCurrentMilliseconds() + 2000, host.getHostId());
 	}
 
 }

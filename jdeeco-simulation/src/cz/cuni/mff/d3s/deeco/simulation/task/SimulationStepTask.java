@@ -31,7 +31,7 @@ public class SimulationStepTask extends Task {
 	 */
 	@Override
 	public void invoke(Trigger trigger) throws TaskInvocationException {
-		simulationStepListener.at(scheduler.getCurrentTime(), this);
+		simulationStepListener.at(scheduler.getCurrentMilliseconds(), this);
 	}
 	
 	public void scheduleNextExecutionAfter(long delay) {
