@@ -8,7 +8,7 @@
 #include <vector>
 #include <algorithm>
 
-#include "jdeecomodule.h"
+#include "JDEECoModule.h"
 #include "cmessage.h"
 
 #include "opp_ctype.h"

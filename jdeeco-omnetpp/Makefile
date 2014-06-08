@@ -1,4 +1,4 @@
-JDK_HOME=/usr/lib/jvm/java-7-openjdk-amd64
+JAVA_HOME ?= /usr/lib/jvm/java-7-openjdk-amd64
 
 CONFIGFILE = $(shell opp_configfilepath)
 include $(CONFIGFILE)
@@ -16,8 +16,8 @@ cleanall: checkmakefiles
 
 # Create makefiles that allows building mixim without a separate INET installation.
 makefiles:
-	cd src && opp_makemake -f --deep --make-so -o jdeeco-omnetpp -O out -I${JDK_HOME}/include \
-		-I${OMNETPP_SRC_DIR}/common -I${OMNETPP_INCL_DIR}/platdep -I${OMNETPP_SRC_DIR}/envir
+	cd src && opp_makemake -f --deep --make-so -o jdeeco-omnetpp -O out -I${JAVA_HOME}/include \
+		-I${OMNETPP_SRC_DIR}/common -I${OMNETPP_INCL_DIR}/platdep -I${OMNETPP_SRC_DIR}/envir -KV=1
 
 checkmakefiles:
 	@if [ ! -f src/Makefile ]; then \
