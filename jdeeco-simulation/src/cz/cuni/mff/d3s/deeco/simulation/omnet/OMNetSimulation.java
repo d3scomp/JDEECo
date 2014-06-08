@@ -85,15 +85,15 @@ public class OMNetSimulation implements CurrentTimeProvider, NetworkProvider,
 
 	private native double nativeGetPositionZ(String nodeId);
 
-	private native double nativeSetPositionX(String nodeId, double value);
-
-	private native double nativeSetPositionY(String nodeId, double value);
-
-	private native double nativeSetPositionZ(String nodeId, double value);
+	private native void nativeSetPosition(String nodeId, double valX, double valY, double valZ);
 
 	private final Map<String, SimulationHost> networkAddressesToHosts;
 	private final NetworkProvider networkProvider;
 
+	static {
+		System.loadLibrary("jdeeco-omnetpp");
+	}
+	
 	public OMNetSimulation(NetworkProvider networkProvider) {
 		if (networkProvider == null) {
 			this.networkProvider = this;
@@ -101,7 +101,6 @@ public class OMNetSimulation implements CurrentTimeProvider, NetworkProvider,
 			this.networkProvider = networkProvider;
 		}
 		networkAddressesToHosts = new HashMap<String, SimulationHost>();
-		System.loadLibrary("libintegration");
 	}
 
 	public OMNetSimulation() {
@@ -188,16 +187,8 @@ public class OMNetSimulation implements CurrentTimeProvider, NetworkProvider,
 		return nativeGetPositionZ(host.getHostId());
 	}
 
-	public double setPositionX(Host host, double x) {
-		return nativeSetPositionX(host.getHostId(), x);
-	}
-
-	public double setPositionY(Host host, double y) {
-		return nativeSetPositionY(host.getHostId(), y);
-	}
-
-	public double setPositionZ(Host host, double z) {
-		return nativeSetPositionZ(host.getHostId(), z);
+	public void setPosition(Host host, double x, double y, double z) {
+		nativeSetPosition(host.getHostId(), x, y, z);
 	}
 
 	public long getCurrentMilliseconds() {

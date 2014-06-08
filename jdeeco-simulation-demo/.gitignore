@@ -9,3 +9,4 @@
 /target/*
 /bin/*
 **/*.pyc
+/simulation-results

@@ -41,15 +41,15 @@ class Scenario():
         for i in range(iterationCnt):
             self.iterations.append(ScenarioIteration(self, scale, density, start + i, boundaryEnabled)) 
     def folder(self):
-        return 'simulation-results\\%d-%s' % (self.scale, self.scenario)
+        return os.path.join(root, 'simulation-results', '%d-%s' % (self.scale, self.scenario))
     def folderPath(self):
-        return root + '\\simulation-results\\%d-%s' % (self.scale, self.scenario)
+        return os.path.join(root, 'simulation-results', '%d-%s' % (self.scale, self.scenario))
     def genericResultsPath(self): 
-        return root + '\\simulation-results\\results-generic-%d-%s-%s.csv' % (self.scale, 't' if self.boundaryEnabled else 'f', self.scenario)
+        return os.path.join(root, 'simulation-results', 'results-generic-%d-%s-%s.csv' % (self.scale, 't' if self.boundaryEnabled else 'f', self.scenario))
     def demoResultsPath(self): 
-        return root + '\\simulation-results\\results-demo-%d-%s-%s.csv' % (self.scale, 't' if self.boundaryEnabled else 'f', self.scenario)
+        return os.path.join(root, 'simulation-results', 'results-demo-%d-%s-%s.csv' % (self.scale, 't' if self.boundaryEnabled else 'f', self.scenario))
     def neighborResultsPath(self): 
-        return root + '\\simulation-results\\results-neighbors-%d-%s-%s.csv' % (self.scale, 't' if self.boundaryEnabled else 'f', self.scenario)
+        return os.path.join(root, 'simulation-results', 'results-neighbors-%d-%s-%s.csv' % (self.scale, 't' if self.boundaryEnabled else 'f', self.scenario))
     def tickLabel(self):
         return '%d/%d\n(%d)' % (self.insideNodes, self.totalNodes, self.scale)
        
@@ -71,7 +71,7 @@ class ScenarioIteration:
     def prefix(self):
         return '%d-%d-%s-%s-' % (self.scale, self.iteration, 't' if self.boundaryEnabled else 'f', self.scenario.scenario)
     def prefixPath(self):
-        return root + '\\' + self.folder() + '\\' + self.prefix()
+        return os.path.join(root, self.folder(), self.prefix())
     def genericAnalysisStdoutPath(self):
         return self.prefixPath() + 'analysis-generic.txt'
     def demoAnalysisStdoutPath(self):
@@ -89,7 +89,7 @@ class ScenarioIteration:
         return self.prefix() + 'logging.properties'
     def baseCfgPath(self):
         # config files are shared between boundary and non-boundary scenarios
-        return root + '\\' + self.folder() + '\\' + '%d-%d-%s-' % (self.scale, self.iteration, self.scenario.scenario)
+        return os.path.join(root, self.folder(), '%d-%d-%s-' % (self.scale, self.iteration, self.scenario.scenario))
     def componentCfgPath(self):
         return self.baseCfgPath() + 'component.cfg'
     def siteCfgPath(self):
@@ -206,9 +206,9 @@ def finalizeOldestSimulation():
 
 
 def simulateScenario(iteration):
-    classpath = root + '\\..\\dist\\*;.'
+    classpath = os.path.join(root, '..' , 'dist' ,'*' + os.pathsep + '.')
     
-    copyfile(root + '\\analysis\\logging.properties', iteration.loggingPropertiesPath())
+    copyfile(os.path.join(root, 'analysis', 'logging.properties'), iteration.loggingPropertiesPath())
     with open(iteration.loggingPropertiesPath() , 'a') as f:
         print>>f, '\n\njava.util.logging.FileHandler.pattern=' + iteration.logTemplatePath().replace('\\', '/')
    
@@ -569,7 +569,7 @@ def backupResults():
     ext = '.csv'
     fnPattern = '*'+ext
     source_dir = 'simulation-results'
-    dest_dir = source_dir + '\\backup'
+    dest_dir = os.path.join(source_dir, 'backup')
 
     for dirName, subdirList, fileList in os.walk(source_dir):
 
@@ -585,7 +585,7 @@ def backupResults():
             pass  
         #  copy each file to destination directory
         for fname in matches:
-          copyfile(source_dir + '\\' + fname, dest_dir + '\\' + fname)
+          copyfile(os.path.join(source_dir, fname), os.path.join(dest_dir, fname))
         
 def simplyfiLogs():
     for scenario in scenarios:
@@ -601,7 +601,7 @@ if __name__ == '__main__':
     scenariosWithBoundary = []
     scenariosWithoutBoundary = []
     
-    cpus = 2
+    cpus = 1
     evaluations = {}    
     for i in range(1,8,2): 
         evaluations[i] = 2
@@ -614,8 +614,8 @@ if __name__ == '__main__':
     duplicateScenariosForBoundary(scenarios, scenariosWithBoundary, scenariosWithoutBoundary)   
 
     
-    #generate()
-    #simulate()
+    generate()
+    simulate()
     cpus = 2
     simplyfiLogs()    
     analyze()

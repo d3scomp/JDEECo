@@ -45,8 +45,8 @@ public class Main {
 	static String OMNET_CONFIG_PATH = "omnetpp.ini";
 	static String OMNET_NETWORK_CONF_PATH = "network-config/network-demo.xml";
 	
-	static String DEFAULT_COMPONENT_CFG = "configurations/component.cfg";
-	static String DEFAULT_SITE_CFG = "configurations/site.cfg";
+	static String DEFAULT_COMPONENT_CFG = "component.cfg";
+	static String DEFAULT_SITE_CFG = "site.cfg";
 	
 	static int SIMULATION_DURATION = 60000;
 	static int IP_GOSSIP_TARGET_PERCENTAGE = 20;
