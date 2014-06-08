@@ -21,7 +21,7 @@ class DLLEXPORT_OR_IMPORT JDEECoModule {
 	void *currentCallAtMessage;
 
 public:
-	JDEECoModule() {currentCallAtTime = -1.0; currentCallAtMessage = NULL; initialized = FALSE; }
+	JDEECoModule() {currentCallAtTime = -1.0; currentCallAtMessage = NULL; initialized = false; }
 	virtual ~JDEECoModule() {}
 
 	void callAt(double absoluteTime);

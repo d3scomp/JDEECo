@@ -61,7 +61,7 @@ static JDEECoRuntime* findRuntime(const char *id) {
 
 	for (std::vector<JDEECoRuntime *>::iterator it = jDEECoRuntimes.begin();
 			it != jDEECoRuntimes.end(); ++it) {
-		if (opp_strcmp((*it)->id, cstring) == 0) {
+		if (opp_strcmp((*it)->id, id) == 0) {
 			result = *it;
 			break;
 		}
@@ -70,7 +70,7 @@ static JDEECoRuntime* findRuntime(const char *id) {
 	return result;
 }
 
-static JDEECoRuntime* findRuntime(jstring id) {
+static JDEECoRuntime* findRuntime(JNIEnv *env, jstring id) {
 	JDEECoRuntime *result = NULL;
 	const char *cstring = env->GetStringUTFChars(id, 0);
 
@@ -80,7 +80,7 @@ static JDEECoRuntime* findRuntime(jstring id) {
 	return result;
 }
 
-static JDEECoModule* findModule(jstring id) {
+static JDEECoModule* findModule(JNIEnv *env, jstring id) {
 	JDEECoModule *result = NULL;
 	const char *cstring = env->GetStringUTFChars(id, 0);
 
@@ -291,15 +291,19 @@ JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulat
 		JNIEnv *env, jobject jsimulation, jobject object, jstring id) {
 	//std::cout << "nativeRegister: Begin" << std::endl;
 
-	if (findRuntime(id) != NULL) {
+	if (findRuntime(env, id) != NULL) {
 		return;
 	}
 
 	JavaVM *jvm;
 	jint status = env->GetJavaVM(&jvm);
 	if (JNI_OK == status) {
-		JDEECoRuntimes.push_back(
+		const char *cstring = env->GetStringUTFChars(id, 0);
+
+		jDEECoRuntimes.push_back(
 				new JDEECoRuntime(env->NewGlobalRef(object), jvm, cstring));
+
+		env->ReleaseStringUTFChars(id, cstring);
 		//std::cout << "nativeRegister: JDEECo runtime created for " << cstring << std::endl;
 	} else {
 		//std::cout << "nativeRegister: JVM could not be retrieved" << std::endl;
@@ -311,8 +315,9 @@ JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulat
 		JNIEnv *env, jobject jsimulation, jstring id, jbyteArray packet,
 		jstring recipient) {
 	//std::cout << "nativeSendPacket: Begin" << std::endl;
+	JDEECoModule *module = findModule(env, id);
 
-	if ((JDEECoModule *module = findModule(id)) != NULL) {
+	if (module != NULL) {
 		int length = env->GetArrayLength(packet);
 		jbyte *buffer = env->GetByteArrayElements(packet, 0);
 		JDEECoPacket *jPacket = new JDEECoPacket(JDEECO_DATA_MESSAGE);
@@ -347,12 +352,16 @@ JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulat
 		JNIEnv *env, jobject jsimulation, jdouble absoluteTime, jstring id) {
 	//std::cout << "nativeCallAt: Begin" << std::endl;
 	if (cSimulation::getActiveSimulation() != NULL) {
-		if ((JDEECoModule *module = findModule(id)) != NULL) {
+		JDEECoModule *module = findModule(env, id);
+
+		if (module != NULL) {
 			//std::cout << "nativeCallAt: " << (*it)->getModuleId() << " will be called at " << absoluteTime << std::endl;
 			module->callAt(absoluteTime);
 		}
 	} else {
-		if ((JDEECoRuntime *runtime = findRuntime(id)) != NULL) {
+		JDEECoRuntime *runtime = findRuntime(env, id);
+
+		if (runtime != NULL) {
 			//std::cout << "nativeCallAt: " << (*it)->id << " will be first called at " << absoluteTime << std::endl;
 			runtime->firstCallAt = absoluteTime;
 		}
@@ -363,10 +372,11 @@ JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulat
 JNIEXPORT jboolean JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulation_nativeIsPositionInfoAvailable
   (JNIEnv *env, jobject jsimulation, jstring id) {
 	//std::cout << "nativeIsPositionInfoAvailable: Begin" << std::endl;
-	jboolean result = 0;
+	jboolean result = JNI_FALSE;
+	JDEECoModule *module = findModule(env, id);
 
-	if ((JDEECoModule *module = findModule(id)) != NULL) {
-		result = module->isPositionInfoAvailable();
+	if (module != NULL) {
+		result = module->isPositionInfoAvailable() ? JNI_TRUE : JNI_FALSE;
 	}
 
 	//std::cout << "nativeIsPositionInfoAvailable: End" << std::endl;
@@ -379,9 +389,10 @@ JNIEXPORT jdouble JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimu
   (JNIEnv *env, jobject jsimulation, jstring id) {
 	//std::cout << "nativeGetPositionX: Begin" << std::endl;
 	jdouble result = 0;
+	JDEECoModule *module = findModule(env, id);
 
-	if ((JDEECoModule *module = findModule(id)) != NULL) {
-		result = (*it)->getPositionX();
+	if (module != NULL) {
+		result = module->getPositionX();
 	}
 
 	//std::cout << "nativeGetPositionX: End" << std::endl;
@@ -392,9 +403,10 @@ JNIEXPORT jdouble JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimu
   (JNIEnv *env, jobject jsimulation, jstring id) {
 	//std::cout << "nativeGetPositionY: Begin" << std::endl;
 	jdouble result = 0;
+	JDEECoModule *module = findModule(env, id);
 
-	if ((JDEECoModule *module = findModule(id)) != NULL) {
-		result = (*it)->getPositionY();
+	if (module != NULL) {
+		result = module->getPositionY();
 	}
 
 	//std::cout << "nativeGetPositionY: End" << std::endl;
@@ -405,9 +417,10 @@ JNIEXPORT jdouble JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimu
 (JNIEnv *env, jobject jsimulation, jstring id) {
 	//std::cout << "nativeGetPositionZ: Begin" << std::endl;
 	jdouble result = 0;
+	JDEECoModule *module = findModule(env, id);
 
-	if ((JDEECoModule *module = findModule(id)) != NULL) {
-		result = (*it)->getPositionZ();
+	if (module != NULL) {
+		result = module->getPositionZ();
 	}
 
 	//std::cout << "nativeGetPositionZ: End" << std::endl;
@@ -415,8 +428,10 @@ JNIEXPORT jdouble JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimu
 }
 
 JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulation_nativeSetPosition
-(JNIEnv *env, jobject jsimulation, jstring id, jdouble value, jdouble value, jdouble valX, jdouble valY, jdouble valZ) {
-	if ((JDEECoModule *module = findModule(id)) != NULL) {
+(JNIEnv *env, jobject jsimulation, jstring id, jdouble valX, jdouble valY, jdouble valZ) {
+	JDEECoModule *module = findModule(env, id);
+
+	if (module != NULL) {
 		module->setPosition(valX, valY, valZ);
 	}
 }
@@ -435,7 +450,9 @@ DLLEXPORT_OR_IMPORT void JDEECoModule::callAt(double absoluteTime) {
 
 DLLEXPORT_OR_IMPORT void JDEECoModule::onHandleMessage(cMessage *msg, double rssi) {
 	//std::cout << "jDEECoOnHandleMessage: " << this->jDEECoGetModuleId() << " Begin" << std::endl;
-	if ((JDEECoRuntime *runtime = findRuntime(getModuleId())) != NULL) {
+	JDEECoRuntime* runtime = findRuntime(getModuleId());
+
+	if (runtime != NULL) {
 		JNIEnv *env;
 		//std::cout << "jDEECoOnHandleMessage: " << this->jDEECoGetModuleId() << " Before getting the environment" << std::endl;
 		runtime->jvm->AttachCurrentThread((void **) &env, NULL);
@@ -456,7 +473,7 @@ DLLEXPORT_OR_IMPORT void JDEECoModule::onHandleMessage(cMessage *msg, double rss
 			}
 		} else if (opp_strcmp(msg->getName(), JDEECO_DATA_MESSAGE) == 0) {
 			//std::cout << "jDEECoOnHandleMessage: " << this->jDEECoGetModuleId() << " Before getting the \"packetRecived\" method reference" << std::endl;
-			EV << "OMNET++ ("<< simTime() <<") : " << jDEECoGetModuleId() << " received packet with ID = " << msg->getId() << endl;
+			EV << "OMNET++ ("<< simTime() <<") : " << getModuleId() << " received packet with ID = " << msg->getId() << endl;
 			mid = env->GetMethodID(cls, "packetReceived", "([BD)V");
 			if (mid == 0)
 				return;
@@ -492,11 +509,11 @@ DLLEXPORT_OR_IMPORT void JDEECoModule::initialize() {
 		assert(runtime != NULL);
 
 		if (runtime->firstCallAt >= 0)
-			jDEECoCallAt((*it)->firstCallAt);
+			callAt(runtime->firstCallAt);
 
 		jDEECoModules.push_back(this);
 	}
 
-	initialized = TRUE;
+	initialized = true;
 	//std::cout << "jDEECoInitialize: " << this->jDEECoGetModuleId() << " End" << std::endl;
 }
