@@ -83,20 +83,8 @@ JNIEXPORT jdouble JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimu
 /*
  * Class:     cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulation
  */
-JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulation_nativeSetPositionX
-  (JNIEnv *, jobject, jstring, jdouble);
-
-/*
- * Class:     cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulation
- */
-JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulation_nativeSetPositionY
-  (JNIEnv *, jobject, jstring, jdouble);
-
-/*
- * Class:     cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulation
- */
-JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulation_nativeSetPositionZ
-  (JNIEnv *, jobject, jstring, jdouble);
+JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulation_nativeSetPosition
+  (JNIEnv *, jobject, jstring, jdouble, jdouble, jdouble);
 
 #ifdef __cplusplus
 }
