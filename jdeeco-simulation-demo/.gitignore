@@ -4,6 +4,7 @@
 /omnetpp.ini
 /c-log.txt
 **/*.log
+logs/*.log.*
 /simulation-results/*
 /target/*
 /bin/*
