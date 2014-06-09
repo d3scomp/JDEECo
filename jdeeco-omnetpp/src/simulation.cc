@@ -59,14 +59,20 @@ std::vector<JDEECoModule *> jDEECoModules;
 static JDEECoRuntime* findRuntime(const char *id) {
 	JDEECoRuntime *result = NULL;
 
+    std::cout << "findRuntime: " << id << " Begin" << std::endl;
+
+    std::cout << "findRuntime: jDEECoRuntimes=" << &jDEECoRuntimes << std::endl;
+
 	for (std::vector<JDEECoRuntime *>::iterator it = jDEECoRuntimes.begin();
 			it != jDEECoRuntimes.end(); ++it) {
+	    std::cout << "findRuntime: runtime with id " << (*it)->id << std::endl;
 		if (opp_strcmp((*it)->id, id) == 0) {
 			result = *it;
 			break;
 		}
 	}
 
+    std::cout << "findRuntime: End" << std::endl;
 	return result;
 }
 
@@ -289,7 +295,7 @@ JNIEXPORT jdouble JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimul
 
 JNIEXPORT void JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulation_nativeRegister(
 		JNIEnv *env, jobject jsimulation, jobject object, jstring id) {
-	//std::cout << "nativeRegister: Begin" << std::endl;
+	std::cout << "nativeRegister: Begin" << std::endl;
 
 	if (findRuntime(env, id) != NULL) {
 		return;
@@ -303,12 +309,15 @@ JNIEXPORT void JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulati
 		jDEECoRuntimes.push_back(
 				new JDEECoRuntime(env->NewGlobalRef(object), jvm, cstring));
 
-		env->ReleaseStringUTFChars(id, cstring);
-		//std::cout << "nativeRegister: JDEECo runtime created for " << cstring << std::endl;
+		findRuntime(env, id);
+
+//  XXX: If simulation is repeated and runtimes are re-registered, then this should be called somewhere in the cleanup
+//	env->ReleaseStringUTFChars(id, cstring);
+		std::cout << "nativeRegister: JDEECo runtime created for " << cstring << std::endl;
 	} else {
-		//std::cout << "nativeRegister: JVM could not be retrieved" << std::endl;
+		std::cout << "nativeRegister: JVM could not be retrieved" << std::endl;
 	}
-	//std::cout << "nativeRegister: End" << std::endl;
+	std::cout << "nativeRegister: End" << std::endl;
 }
 
 JNIEXPORT void JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulation_nativeSendPacket(
@@ -337,15 +346,17 @@ JNIEXPORT void JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulati
 
 JNIEXPORT void JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulation_nativeRun(
 		JNIEnv *env, jobject jsimulation, jstring environment, jstring confFile) {
-	//std::cout << "nativeRun: Begin" << std::endl;
+	std::cout << "nativeRun: Begin" << std::endl;
 	const char * cEnv = env->GetStringUTFChars(environment, 0);
 	const char * cConfFile = env->GetStringUTFChars(confFile, 0);
+    std::cout << "nativeRun: simulate" << std::endl;
 	simulate(cEnv, cConfFile);
+    std::cout << "nativeRun: clearing runtimes" << std::endl;
 	jDEECoModules.clear();
 	jDEECoRuntimes.clear();
 	env->ReleaseStringUTFChars(environment, cEnv);
 	env->ReleaseStringUTFChars(confFile, cConfFile);
-	//std::cout << "nativeRun: End" << std::endl;
+	std::cout << "nativeRun: End" << std::endl;
 }
 
 JNIEXPORT void JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulation_nativeCallAt(
@@ -387,7 +398,8 @@ JNIEXPORT jboolean JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimu
 
 JNIEXPORT jdouble JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulation_nativeGetPositionX
   (JNIEnv *env, jobject jsimulation, jstring id) {
-	//std::cout << "nativeGetPositionX: Begin" << std::endl;
+
+    //std::cout << "nativeGetPositionX: Begin" << std::endl;
 	jdouble result = 0;
 	JDEECoModule *module = findModule(env, id);
 
@@ -501,8 +513,8 @@ DLLEXPORT_OR_IMPORT void JDEECoModule::onHandleMessage(cMessage *msg, double rss
 }
 
 DLLEXPORT_OR_IMPORT void JDEECoModule::initialize() {
-	//std::cout << "jDEECoInitialize: " << this->jDEECoGetModuleId() << " Begin" << std::endl;
-	//std::cout << "jDEECoInitialize: " << this->jDEECoGetModuleId() << " Initializing jDEECo module: " << this->jDEECoGetModuleId() << std::endl;
+	std::cout << "initialize: " << this->getModuleId() << " Begin" << std::endl;
+	std::cout << "initialize: " << this->getModuleId() << " Initializing jDEECo module: " << this->getModuleId() << std::endl;
 	if (!initialized) {
 		JDEECoRuntime *runtime = findRuntime(getModuleId());
 
@@ -515,5 +527,5 @@ DLLEXPORT_OR_IMPORT void JDEECoModule::initialize() {
 	}
 
 	initialized = true;
-	//std::cout << "jDEECoInitialize: " << this->jDEECoGetModuleId() << " End" << std::endl;
+	std::cout << "initialize: " << this->getModuleId() << " End" << std::endl;
 }

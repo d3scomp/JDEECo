@@ -16,7 +16,7 @@ getlibs:
 	cp -v ${OMNETPP_LIB_DIR}/liboppnedxmld.so .
 	cp -v ${OMNETPP_LIB_DIR}/liboppsimd.so .
 	cp -v ${JDEECO_OMNETPP_DIR}/out/$(CONFIGNAME)/src/libjdeeco-omnetpp.so .
-	cp -v ${JDEECO_OMNETPP_MANET_DIR}/out/$(CONFIGNAME)/src/libjdeeco-omnetpp-manet.so .
+#	cp -v ${JDEECO_OMNETPP_MANET_DIR}/out/$(CONFIGNAME)/src/libjdeeco-omnetpp-manet.so .
 	cp -v ${MIXIM_DIR}/out/$(CONFIGNAME)/src/libmixim.so .
 	cp -v ${INET_DIR}/out/$(CONFIGNAME)/src/libinet.so .
 
