@@ -14,7 +14,6 @@ import java.util.Set;
 public enum AreaNetworkRegistry {
 	INSTANCE;
 	
-
 	private Map<Area, List<PositionAwareComponent>> componentsByArea;
 	private Set<PositionAwareComponent> componentsOutside;
 	private Set<PositionAwareComponent> allComponents;

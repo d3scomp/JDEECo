@@ -20,7 +20,7 @@ public class Host implements CurrentTimeProvider, NetworkInterface {
 	private final PositionProvider positionProvider;
 	private final CurrentTimeProvider timeProvider;
 	
-	
+	// XXX: Why are the two last booleans here if they are not used?
 	protected Host(NetworkProvider networkProvider, PositionProvider positionProvider, CurrentTimeProvider timeProvider, String jDEECoAppModuleId, boolean hasMANETNic, boolean hasIPNic) {
 		this.networkProvider = networkProvider;
 		this.positionProvider = positionProvider;
