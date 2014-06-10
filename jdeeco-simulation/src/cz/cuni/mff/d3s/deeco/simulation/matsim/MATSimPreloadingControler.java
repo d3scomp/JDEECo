@@ -21,7 +21,6 @@ public class MATSimPreloadingControler extends Controler {
 		XY2Links xy2Links = new XY2Links(this.getNetwork(),
 				((ScenarioImpl) this.getScenario())
 						.getActivityFacilities());
-		xy2Links.run(getPopulation());
 	}
 
 }
