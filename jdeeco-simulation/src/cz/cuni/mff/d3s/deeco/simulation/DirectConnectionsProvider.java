@@ -42,4 +42,9 @@ public class DirectConnectionsProvider implements NetworkProvider {
 		return network.values();
 	}
 
+	@Override
+	public NetworkInterface getNetworkInterfaceByNetworkAddress(String address) {
+		return network.get(address);
+	}
+
 }

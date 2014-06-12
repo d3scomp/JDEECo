@@ -138,7 +138,7 @@ public class JDEECoAgent implements MobsimDriverAgent {
 	public Coord estimatePosition(double now) {
 		if (state.equals(State.ACTIVITY) && currentLinkId != null) {
 			return simulation.getScenario().getNetwork().getLinks()
-					.get(currentLinkId).getCoord();
+					.get(currentLinkId).getToNode().getCoord();
 		}
 		if (vehicle != null) {
 			QVehicle qVehicle = (QVehicle) vehicle;

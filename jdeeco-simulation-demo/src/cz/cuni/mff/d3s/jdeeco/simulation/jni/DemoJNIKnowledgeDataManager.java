@@ -63,7 +63,6 @@ public class DemoJNIKnowledgeDataManager implements KnowledgeDataReceiver,
 		else
 			host.getPacketSender().sendData(toSend, recipient);
 		toSend.clear();
-		System.out.println("Node " + host.getHostId() + " is located at: (" + host.getPositionX() + ", " + host.getPositionY() + ")");
 	}
 
 	public void sendDummyData() {

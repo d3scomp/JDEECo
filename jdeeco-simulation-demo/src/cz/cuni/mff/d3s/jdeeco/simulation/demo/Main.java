@@ -20,6 +20,7 @@ import cz.cuni.mff.d3s.deeco.DeecoProperties;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.network.DirectGossipStrategy;
@@ -143,7 +144,9 @@ public class Main {
 			AreaNetworkRegistry.INSTANCE.addComponent(component);
 			
 			// there is only one component instance
-			model.getComponentInstances().get(0).getInternalData().put(PositionAwareComponent.HOST_REFERENCE, host);
+			for (ComponentInstance ci: model.getComponentInstances()) {
+				PositionAwareComponent.initialize(ci, new PositionSensor(host, sim));
+			}
 			Collection<DirectRecipientSelector> recipientSelectors = null;
 			if (component.hasIP) {
 				recipientSelectors = Arrays.asList((DirectRecipientSelector) directRecipientSelector);

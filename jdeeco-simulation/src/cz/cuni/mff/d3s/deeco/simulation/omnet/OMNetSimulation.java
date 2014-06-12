@@ -7,9 +7,7 @@ import java.util.Map;
 import cz.cuni.mff.d3s.deeco.network.Host;
 import cz.cuni.mff.d3s.deeco.network.NetworkInterface;
 import cz.cuni.mff.d3s.deeco.network.NetworkProvider;
-import cz.cuni.mff.d3s.deeco.network.PositionProvider;
-import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
-import cz.cuni.mff.d3s.deeco.simulation.CallbackProvider;
+import cz.cuni.mff.d3s.deeco.simulation.Simulation;
 import cz.cuni.mff.d3s.deeco.simulation.SimulationHost;
 
 /**
@@ -21,8 +19,7 @@ import cz.cuni.mff.d3s.deeco.simulation.SimulationHost;
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
  * 
  */
-public class OMNetSimulation implements CurrentTimeProvider, NetworkProvider,
-		PositionProvider, CallbackProvider {
+public class OMNetSimulation extends Simulation implements NetworkProvider {
 
 	/**
 	 * Retrieves current time of the simulation.
@@ -91,16 +88,15 @@ public class OMNetSimulation implements CurrentTimeProvider, NetworkProvider,
 
 	private native double nativeSetPositionZ(String nodeId, double value);
 
-	private final Map<String, SimulationHost> networkAddressesToHosts;
-	private final NetworkProvider networkProvider;
+	private Map<String, SimulationHost> networkAddressesToHosts;
 
 	public OMNetSimulation(NetworkProvider networkProvider) {
+		super(networkProvider);
 		if (networkProvider == null) {
 			this.networkProvider = this;
 		} else {
-			this.networkProvider = networkProvider;
+			networkAddressesToHosts = new HashMap<String, SimulationHost>();
 		}
-		networkAddressesToHosts = new HashMap<String, SimulationHost>();
 		System.loadLibrary("libintegration");
 	}
 
@@ -108,24 +104,11 @@ public class OMNetSimulation implements CurrentTimeProvider, NetworkProvider,
 		this(null);
 	}
 
-	/**
-	 * Creates new instance of the {@link Host}.
-	 * 
-	 * @return new host instance
-	 */
-	public SimulationHost getHost(String logicalId, String networkId) {
-		return getHost(logicalId, networkId, true, true);
-	}
-
 	public SimulationHost getHost(String logicalId, String networkId,
 			boolean hasMANETNic, boolean hasEthernetNic) {
-		SimulationHost host;
-		if (networkAddressesToHosts.containsKey(networkId)) {
-			host = networkAddressesToHosts.get(networkId);
-		} else {
-			host = new SimulationHost(networkProvider, this, this, logicalId,
-					hasMANETNic, hasEthernetNic);
-			networkProvider.registerInNetwork(host, networkId);
+		SimulationHost host = (SimulationHost) networkProvider.getNetworkInterfaceByNetworkAddress(networkId);
+		if (host == null) {
+			host = super.getHost(logicalId, networkId, hasMANETNic, hasEthernetNic);
 			nativeRegister(host, host.getHostId());
 		}
 		return host;
@@ -135,6 +118,11 @@ public class OMNetSimulation implements CurrentTimeProvider, NetworkProvider,
 			String networkId) {
 		networkAddressesToHosts.put(networkId,
 				(SimulationHost) networkInterface);
+	}
+	
+	@Override
+	public NetworkInterface getNetworkInterfaceByNetworkAddress(String address) {
+		return networkAddressesToHosts.get(address);
 	}
 
 	public void sendPacket(String fromId, byte[] data, String recipient) {
