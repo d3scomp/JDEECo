@@ -101,9 +101,7 @@ public class PacketReceiver {
 			if (kd != null)
 				knowledgeDataReceiver.receive(kd);
 		}
-		if (timeProvider.getCurrentMilliseconds() - lastMessagesWipe >= messageWipePeriod) {
-			clearCachedMessages();
-		}
+		clearCachedMessagesIfNecessary();
 	}
 	
 	public void clearCachedMessages() {
@@ -124,6 +122,30 @@ public class PacketReceiver {
 		int currentCnt = messages.size();
 		Log.d(String.format("Message wipe at %s removed %d cached packets", host, origCnt - currentCnt));
 		Log.d(String.format("PacketReceiver: Message wipe %s dropped messageids %s", host, Arrays.deepToString(droppedIds.toArray())));
+	}
+	
+	private void clearCachedMessagesIfNecessary() {
+		if (timeProvider.getCurrentMilliseconds() - lastMessagesWipe >= messageWipePeriod) {
+			int origCnt = messages.size();
+
+			Set<Integer> droppedIds = new HashSet<>();
+
+			Message message;
+			Iterator<Entry<Integer, Message>> it = messages.entrySet().iterator();
+			while (it.hasNext()) {
+				Entry<Integer, Message> entry = it.next();				
+				message = entry.getValue();
+				if (message != null && message.isStale()) {
+					droppedIds.add(entry.getKey());
+					it.remove();					
+				}
+			}
+			lastMessagesWipe = timeProvider.getCurrentMilliseconds();
+			int currentCnt = messages.size();
+			Log.d(String.format("Message wipe at %s removed %d cached packets", host, origCnt - currentCnt));
+			Log.d(String.format("PacketReceiver: Message wipe %s dropped messageids %s", host, Arrays.deepToString(droppedIds.toArray())));
+		}
+
 	}
 
 	// -----------Helper methods-----------
