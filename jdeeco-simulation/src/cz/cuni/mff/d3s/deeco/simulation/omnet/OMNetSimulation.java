@@ -20,7 +20,7 @@ import cz.cuni.mff.d3s.deeco.simulation.SimulationHost;
  * 
  */
 public class OMNetSimulation extends Simulation implements NetworkProvider {
-
+	
 	/**
 	 * Retrieves current time of the simulation.
 	 * 
@@ -124,6 +124,16 @@ public class OMNetSimulation extends Simulation implements NetworkProvider {
 	public NetworkInterface getNetworkInterfaceByNetworkAddress(String address) {
 		return networkAddressesToHosts.get(address);
 	}
+	
+	@Override
+	public NetworkInterface getNetworkInterfaceByHostId(String hostId) {
+		for (SimulationHost sh: networkAddressesToHosts.values()) {
+			if (sh.getHostId().equals(hostId)) {
+				return sh;
+			}
+		}
+		return null;
+	}
 
 	public void sendPacket(String fromId, byte[] data, String recipient) {
 		String sendTo = null;
@@ -157,7 +167,7 @@ public class OMNetSimulation extends Simulation implements NetworkProvider {
 	}
 
 	public void callAt(long absoluteTime, String nodeId) {
-		nativeCallAt(timeLongToDouble(absoluteTime), nodeId);
+		nativeCallAt(millisecondsToSeconds(absoluteTime), nodeId);
 	}
 
 	public boolean isPositionSensorAvailable(Host host) {
@@ -193,15 +203,7 @@ public class OMNetSimulation extends Simulation implements NetworkProvider {
 		if (nativeTime < 0)
 			return 0;
 		else
-			return timeDoubleToLong(nativeTime);
-	}
-
-	public static double timeLongToDouble(long time) {
-		return time / 1000.0;
-	}
-
-	public static long timeDoubleToLong(double time) {
-		return Math.round(time * 1000);
+			return secondsToMilliseconds(nativeTime);
 	}
 
 	public void finalize() {

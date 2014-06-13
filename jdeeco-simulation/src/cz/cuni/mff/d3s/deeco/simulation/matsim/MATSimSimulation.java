@@ -6,9 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.Exchanger;
 
-import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.TransportMode;
 import org.matsim.core.controler.Controler;
 import org.matsim.core.controler.events.StartupEvent;
@@ -18,23 +16,24 @@ import org.matsim.withinday.trafficmonitoring.TravelTimeCollector;
 import org.matsim.withinday.trafficmonitoring.TravelTimeCollectorFactory;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.network.Host;
 import cz.cuni.mff.d3s.deeco.network.NetworkProvider;
 import cz.cuni.mff.d3s.deeco.simulation.Simulation;
 import cz.cuni.mff.d3s.deeco.simulation.SimulationHost;
+import cz.cuni.mff.d3s.deeco.simulation.SimulationStepListener;
+import cz.cuni.mff.d3s.deeco.simulation.task.SimulationStepTask;
 
-public class MATSimSimulation extends Simulation {
+public class MATSimSimulation extends Simulation implements SimulationStepListener {
 
-	private static final int MILLIS_IN_SECOND = 1000;
+	private static final String SIMULATION_CALLBACK = "SIMULATION_CALLBACK";
 	
-	private long currentMilliseconds = 0;
+	private long currentMilliseconds;
 	private final TreeSet<Callback> callbacks;
 	private final Map<String, Callback> hostIdToCallback;
 	private final MATSimPreloadingControler controler;
-	private final Exchanger<Map<Id, ?>> exchanger;
 	private final JDEECoWithinDayMobsimListener listener;
 	private final MATSimDataProvider matSimProvider;
 	private final MATSimDataReceiver matSimReceiver;
+	private final long simulationStep; // in milliseconds
 	private final TravelTime travelTime;
 	
 	public MATSimSimulation(NetworkProvider np, MATSimDataReceiver matSimReceiver,
@@ -58,8 +57,7 @@ public class MATSimSimulation extends Simulation {
 				.getTimeStepSize();
 		Log.i("Starting simulation: matsimStartTime: " + start
 				+ " matsimEndTime: " + end);
-		this.exchanger = new Exchanger<Map<Id, ?>>();
-		this.listener = new JDEECoWithinDayMobsimListener(exchanger);
+		this.listener = new JDEECoWithinDayMobsimListener(this);
 		this.matSimProvider = matSimProvider;
 		this.matSimReceiver = matSimReceiver;
 
@@ -89,22 +87,21 @@ public class MATSimSimulation extends Simulation {
 				listener.registerAgentProvider((JDEECoAgentSource) source);
 			}
 		}
+		
+		this.simulationStep = secondsToMilliseconds(step);
+		currentMilliseconds = secondsToMilliseconds(controler.getConfig().getQSimConfigGroup().getStartTime());
 	}
 	
 	public Controler getControler() {
 		return this.controler;
 	}
 	
-	public long getMATSimSeconds() {
-		long currentTime = getCurrentMilliseconds();
-		return Math.round((currentTime / MILLIS_IN_SECOND)
-				+ controler.getConfig().getQSimConfigGroup().getStartTime());
+	public double getMATSimSeconds() {
+		return millisecondsToSeconds(currentMilliseconds);
 	}
 
 	public long getMATSimMilliseconds() {
-		return getCurrentMilliseconds()
-				+ (Math.round(controler.getConfig().getQSimConfigGroup()
-						.getStartTime()) * MILLIS_IN_SECOND);
+		return currentMilliseconds;
 	}
 	
 	public TravelTime getTravelTime() {
@@ -127,30 +124,47 @@ public class MATSimSimulation extends Simulation {
 		callbacks.add(callback);
 	}
 	
-	public synchronized void run() {
-		Callback callback;
+	@Override
+	public void at(long seconds, SimulationStepTask task) {
+		//Exchange data with MATSim
+		long milliseconds = secondsToMilliseconds(seconds);
+		if (milliseconds > callbacks.first().milliseconds) {
+			return;
+		}
+		matSimReceiver.setMATSimData(listener.getOutputs(seconds));
+		listener.setInputs(matSimProvider.getMATSimData());
+		//Add callback for the MATSim step
+		callAt(milliseconds+simulationStep, SIMULATION_CALLBACK);
 		SimulationHost host;
+		Callback callback;
+		//Iterate through all the callbacks until the MATSim callback.
 		while (!callbacks.isEmpty()) {
 			callback = callbacks.pollFirst();
+			if (callback.getHostId().equals(SIMULATION_CALLBACK)) {
+				break;
+			}
 			currentMilliseconds = callback.getAbsoluteTime();
-			host = (SimulationHost) networkProvider.getNetworkInterfaceByNetworkAddress(callback.hostId);
-			host.at(currentMilliseconds);
-			
+			host = (SimulationHost) networkProvider.getNetworkInterfaceByHostId(callback.hostId);
+			host.at(millisecondsToSeconds(currentMilliseconds));
 		}
+	}
+	
+	public synchronized void run() {
+		controler.run();
 	}
 	
 	private class Callback implements Comparable<Callback> {
 
-		private final long absoluteTime;
+		private final long milliseconds;
 		private final String hostId;
 		
-		public Callback(String hostId, long absoluteTime) {
+		public Callback(String hostId, long milliseconds) {
 			this.hostId = hostId;
-			this.absoluteTime = absoluteTime;
+			this.milliseconds = milliseconds;
 		}
 		
 		public long getAbsoluteTime() {
-			return absoluteTime;
+			return milliseconds;
 		}
 
 		public String getHostId() {
@@ -159,14 +173,56 @@ public class MATSimSimulation extends Simulation {
 
 		@Override
 		public int compareTo(Callback c) {
-			if (c.getAbsoluteTime() < absoluteTime) {
+			if (c.getAbsoluteTime() < milliseconds) {
 				return 1;
-			} else if (c.getAbsoluteTime() > absoluteTime) {
+			} else if (c.getAbsoluteTime() > milliseconds) {
 				return -1;
-			} else {
+			} else if (this == c) {
 				return 0;
+			} else {
+				return this.hashCode() < c.hashCode() ? 1 : -1;
 			}
 		}
-	}
+		
+		public String toString() {
+			return hostId + " " + milliseconds;
+		}
 
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result
+					+ ((hostId == null) ? 0 : hostId.hashCode());
+			result = prime * result
+					+ (int) (milliseconds ^ (milliseconds >>> 32));
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Callback other = (Callback) obj;
+			if (!getOuterType().equals(other.getOuterType()))
+				return false;
+			if (hostId == null) {
+				if (other.hostId != null)
+					return false;
+			} else if (!hostId.equals(other.hostId))
+				return false;
+			if (milliseconds != other.milliseconds)
+				return false;
+			return true;
+		}
+
+		private MATSimSimulation getOuterType() {
+			return MATSimSimulation.this;
+		}	
+	}
 }

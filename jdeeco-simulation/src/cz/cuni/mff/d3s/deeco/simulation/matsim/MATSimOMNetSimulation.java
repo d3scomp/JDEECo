@@ -62,7 +62,7 @@ public class MATSimOMNetSimulation extends OMNetSimulation implements
 				.getTimeStepSize();
 		Log.i("Starting simulation: matsimStartTime: " + start
 				+ " matsimEndTime: " + end);
-		this.remainingExchanges = new Double((end - start) / step).longValue() + 1;
+		this.remainingExchanges = Math.round((end - start) / step) + 1;
 
 		this.exchanger = new Exchanger<Map<Id, ?>>();
 		this.listener = new JDEECoWithinDayMobsimListener(exchanger);
@@ -89,7 +89,7 @@ public class MATSimOMNetSimulation extends OMNetSimulation implements
 			}
 		});
 
-		this.simulationStep = new Double(step * MILLIS_IN_SECOND).longValue();
+		this.simulationStep = Math.round(step * MILLIS_IN_SECOND);
 		/**
 		 * Bind MATSim listener with the agent source. It is necessary to let
 		 * the listener know about the jDEECo agents that it needs to update

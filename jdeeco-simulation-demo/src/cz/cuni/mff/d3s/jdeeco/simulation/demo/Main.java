@@ -31,8 +31,8 @@ import cz.cuni.mff.d3s.deeco.network.PacketSender;
 import cz.cuni.mff.d3s.deeco.network.PublisherTask;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework;
 import cz.cuni.mff.d3s.deeco.simulation.SimulationHost;
+import cz.cuni.mff.d3s.deeco.simulation.SimulationRuntimeBuilder;
 import cz.cuni.mff.d3s.deeco.simulation.omnet.OMNetSimulation;
-import cz.cuni.mff.d3s.deeco.simulation.omnet.OMNetSimulationRuntimeBuilder;
 
 /**
  * Main class for launching the CBSE evaluation demo.
@@ -66,7 +66,7 @@ public class Main {
 		OMNetSimulation sim = new OMNetSimulation();
 		
 		AnnotationProcessor processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE);
-		OMNetSimulationRuntimeBuilder builder = new OMNetSimulationRuntimeBuilder();
+		SimulationRuntimeBuilder builder = new SimulationRuntimeBuilder();
 		
 		SiteConfigParser siteParser = new SiteConfigParser(siteCfg);
 		Position topRight = siteParser.parseTopRightCorner();

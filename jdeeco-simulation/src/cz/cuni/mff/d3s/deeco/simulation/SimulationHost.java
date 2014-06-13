@@ -1,6 +1,6 @@
 package cz.cuni.mff.d3s.deeco.simulation;
 
-import static cz.cuni.mff.d3s.deeco.simulation.omnet.OMNetSimulation.timeDoubleToLong;
+import static cz.cuni.mff.d3s.deeco.simulation.Simulation.secondsToMilliseconds;
 import cz.cuni.mff.d3s.deeco.network.Host;
 import cz.cuni.mff.d3s.deeco.network.NetworkProvider;
 import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
@@ -28,6 +28,6 @@ public class SimulationHost extends Host {
 	}
 
 	public void at(double absoluteTime) {
-		timeEventListener.at(timeDoubleToLong(absoluteTime));
+		timeEventListener.at(secondsToMilliseconds(absoluteTime));
 	}
 }
