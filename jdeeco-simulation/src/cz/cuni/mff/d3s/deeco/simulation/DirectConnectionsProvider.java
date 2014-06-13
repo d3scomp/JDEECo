@@ -42,4 +42,19 @@ public class DirectConnectionsProvider implements NetworkProvider {
 		return network.values();
 	}
 
+	@Override
+	public NetworkInterface getNetworkInterfaceByNetworkAddress(String address) {
+		return network.get(address);
+	}
+
+	@Override
+	public NetworkInterface getNetworkInterfaceByHostId(String hostId) {
+		for (NetworkInterface ni: network.values()) {
+			if (ni.getHostId().equals(hostId)) {
+				return ni;
+			}
+		}
+		return null;
+	}
+
 }

@@ -7,9 +7,7 @@ import java.util.Map;
 import cz.cuni.mff.d3s.deeco.network.Host;
 import cz.cuni.mff.d3s.deeco.network.NetworkInterface;
 import cz.cuni.mff.d3s.deeco.network.NetworkProvider;
-import cz.cuni.mff.d3s.deeco.network.PositionProvider;
-import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
-import cz.cuni.mff.d3s.deeco.simulation.CallbackProvider;
+import cz.cuni.mff.d3s.deeco.simulation.Simulation;
 import cz.cuni.mff.d3s.deeco.simulation.SimulationHost;
 
 /**
@@ -21,9 +19,8 @@ import cz.cuni.mff.d3s.deeco.simulation.SimulationHost;
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
  * 
  */
-public class OMNetSimulation implements CurrentTimeProvider, NetworkProvider,
-		PositionProvider, CallbackProvider {
-
+public class OMNetSimulation extends Simulation implements NetworkProvider {
+	
 	/**
 	 * Retrieves current time of the simulation.
 	 * 
@@ -87,44 +84,30 @@ public class OMNetSimulation implements CurrentTimeProvider, NetworkProvider,
 
 	private native void nativeSetPosition(String nodeId, double valX, double valY, double valZ);
 
-	private final Map<String, SimulationHost> networkAddressesToHosts;
-	private final NetworkProvider networkProvider;
+	private Map<String, SimulationHost> networkAddressesToHosts;
 
 	static {
 		System.loadLibrary("jdeeco-omnetpp");
 	}
 	
 	public OMNetSimulation(NetworkProvider networkProvider) {
+		super(networkProvider);
 		if (networkProvider == null) {
 			this.networkProvider = this;
 		} else {
-			this.networkProvider = networkProvider;
+			networkAddressesToHosts = new HashMap<String, SimulationHost>();
 		}
-		networkAddressesToHosts = new HashMap<String, SimulationHost>();
 	}
 
 	public OMNetSimulation() {
 		this(null);
 	}
 
-	/**
-	 * Creates new instance of the {@link Host}.
-	 * 
-	 * @return new host instance
-	 */
-	public SimulationHost getHost(String logicalId, String networkId) {
-		return getHost(logicalId, networkId, true, true);
-	}
-
 	public SimulationHost getHost(String logicalId, String networkId,
 			boolean hasMANETNic, boolean hasEthernetNic) {
-		SimulationHost host;
-		if (networkAddressesToHosts.containsKey(networkId)) {
-			host = networkAddressesToHosts.get(networkId);
-		} else {
-			host = new SimulationHost(networkProvider, this, this, logicalId,
-					hasMANETNic, hasEthernetNic);
-			networkProvider.registerInNetwork(host, networkId);
+		SimulationHost host = (SimulationHost) networkProvider.getNetworkInterfaceByNetworkAddress(networkId);
+		if (host == null) {
+			host = super.getHost(logicalId, networkId, hasMANETNic, hasEthernetNic);
 			nativeRegister(host, host.getHostId());
 		}
 		return host;
@@ -134,6 +117,21 @@ public class OMNetSimulation implements CurrentTimeProvider, NetworkProvider,
 			String networkId) {
 		networkAddressesToHosts.put(networkId,
 				(SimulationHost) networkInterface);
+	}
+	
+	@Override
+	public NetworkInterface getNetworkInterfaceByNetworkAddress(String address) {
+		return networkAddressesToHosts.get(address);
+	}
+	
+	@Override
+	public NetworkInterface getNetworkInterfaceByHostId(String hostId) {
+		for (SimulationHost sh: networkAddressesToHosts.values()) {
+			if (sh.getHostId().equals(hostId)) {
+				return sh;
+			}
+		}
+		return null;
 	}
 
 	public void sendPacket(String fromId, byte[] data, String recipient) {
@@ -168,7 +166,7 @@ public class OMNetSimulation implements CurrentTimeProvider, NetworkProvider,
 	}
 
 	public void callAt(long absoluteTime, String nodeId) {
-		nativeCallAt(timeLongToDouble(absoluteTime), nodeId);
+		nativeCallAt(millisecondsToSeconds(absoluteTime), nodeId);
 	}
 
 	public boolean isPositionSensorAvailable(Host host) {
@@ -196,15 +194,7 @@ public class OMNetSimulation implements CurrentTimeProvider, NetworkProvider,
 		if (nativeTime < 0)
 			return 0;
 		else
-			return timeDoubleToLong(nativeTime);
-	}
-
-	public static double timeLongToDouble(long time) {
-		return time / 1000.0;
-	}
-
-	public static long timeDoubleToLong(double time) {
-		return Math.round(time * 1000);
+			return secondsToMilliseconds(nativeTime);
 	}
 
 	public void finalize() {

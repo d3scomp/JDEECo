@@ -44,7 +44,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="ensembleControllers" upperBound="-1"
         eType="#//EnsembleController" containment="true" eOpposite="#//EnsembleController/componentInstance"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="internalData" upperBound="-1"
-        eType="#//StringToObjectMap" containment="true"/>
+        eType="#//ObjectToObjectMap" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EnsembleDefinition">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -96,8 +96,8 @@
   <eClassifiers xsi:type="ecore:EClass" name="PathNodeCoordinator" eSuperTypes="#//PathNode"/>
   <eClassifiers xsi:type="ecore:EClass" name="PathNodeMember" eSuperTypes="#//PathNode"/>
   <eClassifiers xsi:type="ecore:EClass" name="PathNodeComponentId" eSuperTypes="#//PathNode"/>
-  <eClassifiers xsi:type="ecore:EClass" name="StringToObjectMap" instanceClassName="java.util.Map$Entry">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ObjectToObjectMap" instanceClassName="java.util.Map$Entry">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="CommunicationBoundary" instanceClassName="cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate"/>

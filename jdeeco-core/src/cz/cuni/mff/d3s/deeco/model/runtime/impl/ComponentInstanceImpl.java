@@ -137,7 +137,7 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	 * @generated
 	 * @ordered
 	 */
-	protected EMap<String, Object> internalData;
+	protected EMap<Object, Object> internalData;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -250,9 +250,9 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EMap<String, Object> getInternalData() {
+	public EMap<Object, Object> getInternalData() {
 		if (internalData == null) {
-			internalData = new EcoreEMap<String,Object>(RuntimeMetadataPackage.Literals.STRING_TO_OBJECT_MAP, StringToObjectMapImpl.class, this, RuntimeMetadataPackage.COMPONENT_INSTANCE__INTERNAL_DATA);
+			internalData = new EcoreEMap<Object,Object>(RuntimeMetadataPackage.Literals.OBJECT_TO_OBJECT_MAP, ObjectToObjectMapImpl.class, this, RuntimeMetadataPackage.COMPONENT_INSTANCE__INTERNAL_DATA);
 		}
 		return internalData;
 	}

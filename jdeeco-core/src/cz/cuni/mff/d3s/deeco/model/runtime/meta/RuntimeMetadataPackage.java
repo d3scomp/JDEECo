@@ -257,16 +257,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int PATH_NODE_COMPONENT_ID = 18;
 
 	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.StringToObjectMapImpl <em>String To Object Map</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.StringToObjectMapImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getStringToObjectMap()
-	 * @generated
-	 */
-	int STRING_TO_OBJECT_MAP = 19;
-
-	/**
 	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.TimeTriggerImpl <em>Time Trigger</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -925,13 +915,23 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int PATH_NODE_COMPONENT_ID_OPERATION_COUNT = PATH_NODE_OPERATION_COUNT + 0;
 
 	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ObjectToObjectMapImpl <em>Object To Object Map</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.ObjectToObjectMapImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getObjectToObjectMap()
+	 * @generated
+	 */
+	int OBJECT_TO_OBJECT_MAP = 19;
+
+	/**
 	 * The feature id for the '<em><b>Key</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int STRING_TO_OBJECT_MAP__KEY = 0;
+	int OBJECT_TO_OBJECT_MAP__KEY = 0;
 
 	/**
 	 * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -940,25 +940,25 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int STRING_TO_OBJECT_MAP__VALUE = 1;
+	int OBJECT_TO_OBJECT_MAP__VALUE = 1;
 
 	/**
-	 * The number of structural features of the '<em>String To Object Map</em>' class.
+	 * The number of structural features of the '<em>Object To Object Map</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int STRING_TO_OBJECT_MAP_FEATURE_COUNT = 2;
+	int OBJECT_TO_OBJECT_MAP_FEATURE_COUNT = 2;
 
 	/**
-	 * The number of operations of the '<em>String To Object Map</em>' class.
+	 * The number of operations of the '<em>Object To Object Map</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int STRING_TO_OBJECT_MAP_OPERATION_COUNT = 0;
+	int OBJECT_TO_OBJECT_MAP_OPERATION_COUNT = 0;
 
 	/**
 	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection <em>Parameter Direction</em>}' enum.
@@ -1499,16 +1499,16 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EClass getPathNodeComponentId();
 
 	/**
-	 * Returns the meta object for class '{@link java.util.Map.Entry <em>String To Object Map</em>}'.
+	 * Returns the meta object for class '{@link java.util.Map.Entry <em>Object To Object Map</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>String To Object Map</em>'.
+	 * @return the meta object for class '<em>Object To Object Map</em>'.
 	 * @see java.util.Map.Entry
-	 * @model keyDataType="org.eclipse.emf.ecore.EString"
+	 * @model keyDataType="org.eclipse.emf.ecore.EJavaObject"
 	 *        valueDataType="org.eclipse.emf.ecore.EJavaObject"
 	 * @generated
 	 */
-	EClass getStringToObjectMap();
+	EClass getObjectToObjectMap();
 
 	/**
 	 * Returns the meta object for the attribute '{@link java.util.Map.Entry <em>Key</em>}'.
@@ -1516,10 +1516,10 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Key</em>'.
 	 * @see java.util.Map.Entry
-	 * @see #getStringToObjectMap()
+	 * @see #getObjectToObjectMap()
 	 * @generated
 	 */
-	EAttribute getStringToObjectMap_Key();
+	EAttribute getObjectToObjectMap_Key();
 
 	/**
 	 * Returns the meta object for the attribute '{@link java.util.Map.Entry <em>Value</em>}'.
@@ -1527,10 +1527,10 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Value</em>'.
 	 * @see java.util.Map.Entry
-	 * @see #getStringToObjectMap()
+	 * @see #getObjectToObjectMap()
 	 * @generated
 	 */
-	EAttribute getStringToObjectMap_Value();
+	EAttribute getObjectToObjectMap_Value();
 
 	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger <em>Time Trigger</em>}'.
@@ -2046,14 +2046,14 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EClass PATH_NODE_COMPONENT_ID = eINSTANCE.getPathNodeComponentId();
 
 		/**
-		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.StringToObjectMapImpl <em>String To Object Map</em>}' class.
+		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ObjectToObjectMapImpl <em>Object To Object Map</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.StringToObjectMapImpl
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getStringToObjectMap()
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.ObjectToObjectMapImpl
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getObjectToObjectMap()
 		 * @generated
 		 */
-		EClass STRING_TO_OBJECT_MAP = eINSTANCE.getStringToObjectMap();
+		EClass OBJECT_TO_OBJECT_MAP = eINSTANCE.getObjectToObjectMap();
 
 		/**
 		 * The meta object literal for the '<em><b>Key</b></em>' attribute feature.
@@ -2061,7 +2061,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute STRING_TO_OBJECT_MAP__KEY = eINSTANCE.getStringToObjectMap_Key();
+		EAttribute OBJECT_TO_OBJECT_MAP__KEY = eINSTANCE.getObjectToObjectMap_Key();
 
 		/**
 		 * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
@@ -2069,7 +2069,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute STRING_TO_OBJECT_MAP__VALUE = eINSTANCE.getStringToObjectMap_Value();
+		EAttribute OBJECT_TO_OBJECT_MAP__VALUE = eINSTANCE.getObjectToObjectMap_Value();
 
 		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.TimeTriggerImpl <em>Time Trigger</em>}' class.

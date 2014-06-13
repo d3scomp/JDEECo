@@ -8,7 +8,7 @@ import cz.cuni.mff.d3s.deeco.network.DirectRecipientSelector;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.simulation.SimulationHost;
-import cz.cuni.mff.d3s.deeco.simulation.omnet.OMNetSimulationRuntimeBuilder;
+import cz.cuni.mff.d3s.deeco.simulation.SimulationRuntimeBuilder;
 import cz.cuni.mff.d3s.deeco.simulation.task.SimulationStepTask;
 
 /**
@@ -19,7 +19,7 @@ import cz.cuni.mff.d3s.deeco.simulation.task.SimulationStepTask;
  * 
  */
 public class MATSimOMNetSimulationRuntimeBuilder extends
-		OMNetSimulationRuntimeBuilder {
+		SimulationRuntimeBuilder {
 	private boolean simulationTaskRegistered = false;
 
 	public RuntimeFramework build(SimulationHost host,

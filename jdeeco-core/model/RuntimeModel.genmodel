@@ -16,9 +16,11 @@
     </genEnums>
     <genDataTypes ecoreDataType="RuntimeModel.ecore#//Method"/>
     <genDataTypes ecoreDataType="RuntimeModel.ecore#//KnowledgeManager"/>
-    <genDataTypes ecoreDataType="RuntimeModel.ecore#//KnowledgeManagersView"/>
-    <genClasses ecoreClass="RuntimeModel.ecore#//PeriodicTrigger">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//PeriodicTrigger/period"/>
+    <genDataTypes ecoreDataType="RuntimeModel.ecore#//ShadowKnowledgeManagerRegistry"/>
+    <genDataTypes ecoreDataType="RuntimeModel.ecore#//CommunicationBoundary"/>
+    <genClasses ecoreClass="RuntimeModel.ecore#//TimeTrigger">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//TimeTrigger/period"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//TimeTrigger/offset"/>
     </genClasses>
     <genClasses image="false" ecoreClass="RuntimeModel.ecore#//Trigger"/>
     <genClasses ecoreClass="RuntimeModel.ecore#//KnowledgeChangeTrigger">
@@ -42,14 +44,16 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentInstance/componentProcesses"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentInstance/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentInstance/knowledgeManager"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentInstance/otherKnowledgeManagersAccess"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentInstance/shadowKnowledgeManagerRegistry"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentInstance/ensembleControllers"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentInstance/internalData"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//EnsembleDefinition">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//EnsembleDefinition/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//EnsembleDefinition/membership"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//EnsembleDefinition/knowledgeExchange"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//EnsembleDefinition/triggers"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//EnsembleDefinition/communicationBoundary"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//Condition"/>
     <genClasses ecoreClass="RuntimeModel.ecore#//Exchange"/>
@@ -62,6 +66,7 @@
     <genClasses ecoreClass="RuntimeModel.ecore#//Parameter">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//Parameter/direction"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//Parameter/knowledgePath"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//Parameter/type"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//Invocable">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//Invocable/parameters"/>
@@ -74,5 +79,9 @@
     <genClasses ecoreClass="RuntimeModel.ecore#//PathNodeCoordinator"/>
     <genClasses ecoreClass="RuntimeModel.ecore#//PathNodeMember"/>
     <genClasses ecoreClass="RuntimeModel.ecore#//PathNodeComponentId"/>
+    <genClasses ecoreClass="RuntimeModel.ecore#//ObjectToObjectMap">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ObjectToObjectMap/key"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ObjectToObjectMap/value"/>
+    </genClasses>
   </genPackages>
 </genmodel:GenModel>
