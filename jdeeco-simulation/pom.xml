@@ -36,8 +36,8 @@
 	</dependencies>
 	<repositories>
 		<repository>
-			<id>mvn-local-repo</id>
-			<url>file://${basedir}/mvn-local-repo</url>
+			<id>d3s</id>
+			<url>https://gitlab.d3s.mff.cuni.cz:8443/nexus/content/repositories/thirdparty/</url>
 		</repository>
 	</repositories>
 </project>
