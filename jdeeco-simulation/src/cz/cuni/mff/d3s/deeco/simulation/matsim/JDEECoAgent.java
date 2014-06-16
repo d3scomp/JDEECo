@@ -43,6 +43,15 @@ public class JDEECoAgent implements MobsimDriverAgent {
 		 */
 		updateNextLink();
 	}
+	
+	public JDEECoAgent(Id id, Id currentLinkId) {
+		this.id = id;
+		this.currentLinkId = currentLinkId;
+		/**
+		 * Initialize next link id
+		 */
+		updateNextLink();
+	}
 
 	public void setSimulation(Netsim simulation) {
 		this.simulation = simulation;
@@ -53,7 +62,7 @@ public class JDEECoAgent implements MobsimDriverAgent {
 	}
 
 	public void endActivityAndComputeNextState(double now) {
-		if (now == input.activityEndTime) {
+		if (input != null && now == input.activityEndTime) {
 			this.simulation.getEventsManager().processEvent(
 					this.simulation
 							.getEventsManager()
@@ -108,6 +117,7 @@ public class JDEECoAgent implements MobsimDriverAgent {
 
 	public Id getDestinationLinkId() {
 		// Log.i(id.toString() + " getDestination " + input.destination);
+		//We assume here input not being null.
 		return input.destination;
 	}
 
