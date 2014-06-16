@@ -12,7 +12,7 @@ extern "C" {
  * Method:    nativeGetCurrentTime
  * Signature: ()D
  */
-JNIEXPORT jdouble JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulation_nativeGetCurrentTime
+JNIEXPORT jdouble JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulation_nativeGetCurrentTime
   (JNIEnv *, jobject);
 
 /*
@@ -20,7 +20,7 @@ JNIEXPORT jdouble JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimul
  * Method:    nativeRegister
  * Signature: (Ljava/lang/Object;Ljava/lang/String;)V
  */
-JNIEXPORT void JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulation_nativeRegister
+JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulation_nativeRegister
   (JNIEnv *, jobject, jobject, jstring);
 
 /*
@@ -28,7 +28,7 @@ JNIEXPORT void JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulati
  * Method:    nativeSendPacket
  * Signature: (Ljava/lang/String;[BLjava/lang/String;)V
  */
-JNIEXPORT void JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulation_nativeSendPacket
+JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulation_nativeSendPacket
   (JNIEnv *, jobject, jstring, jbyteArray, jstring);
 
 /*
@@ -36,7 +36,7 @@ JNIEXPORT void JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulati
  * Method:    nativeRun
  * Signature: (Ljava/lang/String;Ljava/lang/String;)V
  */
-JNIEXPORT void JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulation_nativeRun
+JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulation_nativeRun
   (JNIEnv *, jobject, jstring, jstring);
 
 /*
@@ -44,7 +44,7 @@ JNIEXPORT void JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulati
  * Method:    nativeCallAt
  * Signature: (DLjava/lang/String;)V
  */
-JNIEXPORT void JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulation_nativeCallAt
+JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulation_nativeCallAt
   (JNIEnv *, jobject, jdouble, jstring);
 
 /*
@@ -52,7 +52,7 @@ JNIEXPORT void JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulati
  * Method:    nativeIsPositionInfoAvailable
  * Signature: (Ljava/lang/String;)Z
  */
-JNIEXPORT jboolean JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulation_nativeIsPositionInfoAvailable
+JNIEXPORT jboolean JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulation_nativeIsPositionInfoAvailable
   (JNIEnv *, jobject, jstring);
 
 /*
@@ -60,7 +60,7 @@ JNIEXPORT jboolean JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimu
  * Method:    nativeGetPositionX
  * Signature: (Ljava/lang/String;)D
  */
-JNIEXPORT jdouble JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulation_nativeGetPositionX
+JNIEXPORT jdouble JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulation_nativeGetPositionX
   (JNIEnv *, jobject, jstring);
 
 /*
@@ -68,7 +68,7 @@ JNIEXPORT jdouble JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimul
  * Method:    nativeGetPositionY
  * Signature: (Ljava/lang/String;)D
  */
-JNIEXPORT jdouble JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulation_nativeGetPositionY
+JNIEXPORT jdouble JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulation_nativeGetPositionY
   (JNIEnv *, jobject, jstring);
 
 /*
@@ -76,7 +76,7 @@ JNIEXPORT jdouble JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimul
  * Method:    nativeGetPositionZ
  * Signature: (Ljava/lang/String;)D
  */
-JNIEXPORT jdouble JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulation_nativeGetPositionZ
+JNIEXPORT jdouble JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulation_nativeGetPositionZ
   (JNIEnv *, jobject, jstring);
 
 /*
@@ -84,7 +84,7 @@ JNIEXPORT jdouble JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimul
  * Method:    nativeSetPosition
  * Signature: (Ljava/lang/String;DDD)V
  */
-JNIEXPORT void JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulation_nativeSetPosition
+JNIEXPORT void JNICALL _Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulation_nativeSetPosition
   (JNIEnv *, jobject, jstring, jdouble, jdouble, jdouble);
 
 #ifdef __cplusplus

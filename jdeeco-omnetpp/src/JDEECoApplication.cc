@@ -85,6 +85,10 @@ void JDEECoApplication::handleMessage(cMessage *msg) {
     delete (msg);
 }
 
+void JDEECoApplication::registerCallbackAt(double absoluteTime, cMessage *msg) {
+    scheduleAt(absoluteTime, msg);
+}
+
 void JDEECoApplication::sendPacket(JDEECoPacket *packet,
         const char *recipient) {
     if (opp_strcmp("", recipient) == 0) {

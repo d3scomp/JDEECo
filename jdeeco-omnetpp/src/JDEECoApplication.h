@@ -66,6 +66,7 @@ public:
     JDEECoApplication() {}
     virtual const char *getModuleId();
     virtual void sendPacket(JDEECoPacket *packet, const char *recipient);
+    virtual void registerCallbackAt(double absoluteTime, cMessage *msg);
 
     //Position
     virtual bool isPositionInfoAvailable();

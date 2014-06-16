@@ -30,7 +30,7 @@ public:
 	//Needs to be implemented by the module
 	virtual void sendPacket(JDEECoPacket *packet, const char *recipient) {};
 	//Needs to be implemented by the module
-	virtual void scheduleAt(double absoluteTime, cMessage *msg) {};
+	virtual void registerCallbackAt(double absoluteTime, cMessage *msg) {};
 	//Needs to be implemented by the module
 	virtual bool isPositionInfoAvailable() {return false;};
 	//Needs to be implemented by the module
