@@ -33,6 +33,11 @@ public class CloningKnowledgeManager extends BaseKnowledgeManager {
 	@Override
 	public ValueSet get(Collection<KnowledgePath> knowledgePaths)
 			throws KnowledgeNotFoundException {
+
+		// XXX: This is temporary hack before Michal implements the local knowledge correctly
+		return super.get(knowledgePaths);
+
+/*		
 		ValueSet values = super.get(knowledgePaths);
 		ValueSet copy = new ValueSet();
 		// only values need to be cloned (cloning KnowledgePaths in a full model
@@ -41,6 +46,7 @@ public class CloningKnowledgeManager extends BaseKnowledgeManager {
 			copy.setValue(p, cloner.deepClone(values.getValue(p)));
 		}
 		return copy;
+*/
 	}
 
 	/*
@@ -52,6 +58,11 @@ public class CloningKnowledgeManager extends BaseKnowledgeManager {
 	 */
 	@Override
 	public void update(ChangeSet changeSet) throws KnowledgeUpdateException {
+		
+		// XXX: This is temporary hack before Michal implements the local knowledge correctly
+		super.update(changeSet);
+
+/*		
 		ChangeSet copy = new ChangeSet();
 		// only values need to be cloned (cloning KnowledgePaths in a full model
 		// causes a loopback in the cloner)
@@ -62,5 +73,6 @@ public class CloningKnowledgeManager extends BaseKnowledgeManager {
 			copy.setDeleted(p);
 		}
 		super.update(copy);
+*/
 	}
 }
