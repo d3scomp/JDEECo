@@ -41,16 +41,13 @@ public class JDEECoAgent implements MobsimDriverAgent {
 		/**
 		 * Initialize next link id
 		 */
-		updateNextLink();
+		if (input != null) {
+			updateNextLink();
+		}
 	}
 	
 	public JDEECoAgent(Id id, Id currentLinkId) {
-		this.id = id;
-		this.currentLinkId = currentLinkId;
-		/**
-		 * Initialize next link id
-		 */
-		updateNextLink();
+		this(id, currentLinkId, null);
 	}
 
 	public void setSimulation(Netsim simulation) {
