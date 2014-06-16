@@ -9,8 +9,8 @@
    <extension point="org.eclipse.emf.ecore.generated_package">
       <!-- @generated RuntimeModel -->
       <package
-            uri="http://runtimemodel/1.0"
-            class="cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimePackage"
+            uri="http://cz.cuni.mff.d3s.deeco.model.runtime/1.0"
+            class="cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage"
             genModel="model/RuntimeModel.genmodel"/>
    </extension>
 

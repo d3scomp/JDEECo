@@ -18,14 +18,12 @@ package cz.cuni.mff.d3s.jdeeco.simulation.demo;
 import java.util.Map;
 import java.util.Random;
 
-import cz.cuni.mff.d3s.deeco.DeecoProperties;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.network.PublisherTask;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 import cz.cuni.mff.d3s.deeco.task.ProcessContext;
 
@@ -55,7 +53,7 @@ public class Member extends PositionAwareComponent {
 	@PeriodicScheduling(500)
 	public static void measureMemberData(@In("id") String id,			
 			@Out("memberData") ParamHolder<MemberData> memberData) {
-		Map<String, Object> internal = ProcessContext.getCurrentProcess().getComponentInstance().getInternalData().map();
+		Map<Object, Object> internal = ProcessContext.getCurrentProcess().getComponentInstance().getInternalData().map();
 		if (!internal.containsKey(DANGER_TIME)) {
 			long seed = 0;
 			for (char c: id.toCharArray())

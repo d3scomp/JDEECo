@@ -19,7 +19,6 @@ public class Host implements CurrentTimeProvider, NetworkInterface {
 	private final NetworkProvider networkProvider;
 	private final CurrentTimeProvider timeProvider;
 	
-	
 	protected Host(NetworkProvider networkProvider, CurrentTimeProvider timeProvider, String jDEECoAppModuleId, boolean hasMANETNic, boolean hasIPNic) {
 		this.networkProvider = networkProvider;
 		this.timeProvider = timeProvider;
