@@ -148,7 +148,7 @@ public interface ComponentInstance extends EObject {
 
 	/**
 	 * Returns the value of the '<em><b>Internal Data</b></em>' map.
-	 * The key is of type {@link java.lang.String},
+	 * The key is of type {@link java.lang.Object},
 	 * and the value is of type {@link java.lang.Object},
 	 * <!-- begin-user-doc -->
 	 * <p>
@@ -158,9 +158,9 @@ public interface ComponentInstance extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Internal Data</em>' map.
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance_InternalData()
-	 * @model mapType="cz.cuni.mff.d3s.deeco.model.runtime.api.StringToObjectMap<org.eclipse.emf.ecore.EString, org.eclipse.emf.ecore.EJavaObject>"
+	 * @model mapType="cz.cuni.mff.d3s.deeco.model.runtime.api.ObjectToObjectMap<org.eclipse.emf.ecore.EJavaObject, org.eclipse.emf.ecore.EJavaObject>"
 	 * @generated
 	 */
-	EMap<String, Object> getInternalData();
+	EMap<Object, Object> getInternalData();
 
 } // ComponentInstance

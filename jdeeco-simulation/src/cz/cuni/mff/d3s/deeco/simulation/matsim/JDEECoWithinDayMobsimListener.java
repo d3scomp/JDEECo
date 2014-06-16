@@ -6,10 +6,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Exchanger;
 
+import org.matsim.api.core.v01.Id;
 import org.matsim.core.mobsim.framework.events.MobsimBeforeSimStepEvent;
 import org.matsim.core.mobsim.framework.listeners.MobsimBeforeSimStepListener;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.simulation.SimulationStepListener;
 
 /**
  * 
@@ -24,15 +26,22 @@ import cz.cuni.mff.d3s.deeco.logging.Log;
 public class JDEECoWithinDayMobsimListener implements
 		MobsimBeforeSimStepListener {
 
-	private final Exchanger<Map<String, ?>> exchanger;
+	private final Exchanger<Map<Id, ?>> exchanger;
 	private final List<JDEECoAgentProvider> agentProviders;
-	private long remainingExchanges;
+	private final SimulationStepListener stepListener;
 
-	public JDEECoWithinDayMobsimListener(Exchanger<Map<String, ?>> exchanger,
-			long remainingExchanges) {
+	protected JDEECoWithinDayMobsimListener(Exchanger<Map<Id, ?>> exchanger, SimulationStepListener stepListener) {
 		this.exchanger = exchanger;
 		this.agentProviders = new LinkedList<JDEECoAgentProvider>();
-		this.remainingExchanges = remainingExchanges;
+		this.stepListener = stepListener;
+	}
+	
+	public JDEECoWithinDayMobsimListener(Exchanger<Map<Id, ?>> exchanger) {
+		this(exchanger, null);
+	}
+	
+	public JDEECoWithinDayMobsimListener(SimulationStepListener stepListener) {
+		this(null, stepListener);
 	}
 
 	public void registerAgentProvider(JDEECoAgentProvider agentProvider) {
@@ -41,47 +50,56 @@ public class JDEECoWithinDayMobsimListener implements
 		}
 	}
 
-	public void notifyMobsimBeforeSimStep(MobsimBeforeSimStepEvent event) {
-		try {
-//			if (this.remainingExchanges > 0) {
-				Map<String, MATSimOutput> matSimOutputs = new HashMap<String, MATSimOutput>();
+	public Map<Id, MATSimOutput> getOutputs(double currentSeconds) {
+		Map<Id, MATSimOutput> matSimOutputs = new HashMap<Id, MATSimOutput>();
 
-				// Get agents current positions and jDEECoAgents
-				MATSimOutput matSimOutput;
-				for (JDEECoAgentProvider agentProvider : agentProviders) {
-					for (JDEECoAgent agent : agentProvider.getAgents()) {
-						matSimOutput = new MATSimOutput(
-								agent.getCurrentLinkId(),
-								agent.estimatePosition(event
-										.getSimulationTime()));
-						matSimOutputs.put(agent.getId().toString(),
-								matSimOutput);
+		// Get agents current positions and jDEECoAgents
+		MATSimOutput matSimOutput;
+		for (JDEECoAgentProvider agentProvider : agentProviders) {
+			for (JDEECoAgent agent : agentProvider.getAgents()) {
+				matSimOutput = new MATSimOutput(agent.getCurrentLinkId(),
+						agent.estimatePosition(currentSeconds));
+				matSimOutputs.put(agent.getId(), matSimOutput);
+			}
+		}
+		return matSimOutputs;
+	}
+	
+	public void setInputs(Map<Id, ?> matSimInputs) {
+		if (matSimInputs != null && !matSimInputs.isEmpty()) {
+			MATSimInput mData;
+			for (JDEECoAgentProvider agentProvider : agentProviders) {
+				for (JDEECoAgent agent : agentProvider.getAgents()) {
+					if (matSimInputs.containsKey(agent.getId()
+							.toString())) {
+						mData = (MATSimInput) matSimInputs.get(agent
+								.getId().toString());
+						agent.setInput(mData);
 					}
 				}
+			}
+		}
+	}
 
+	@SuppressWarnings("rawtypes")
+	public void notifyMobsimBeforeSimStep(MobsimBeforeSimStepEvent event) {
+		if (exchanger != null) {
+			try {
+				Map<Id, MATSimOutput> matSimOutputs = getOutputs(event
+						.getSimulationTime());
 				// Exchange data (Rendezvous)
-				Map<String, ?> matSimInputs = exchanger.exchange(matSimOutputs);
-				this.remainingExchanges--;
-//				Log.w("MATSim After data exchange at " +
-//				event.getSimulationTime() + " " + remainingExchanges );
+				Map<Id, ?> matSimInputs = exchanger.exchange(matSimOutputs);
+				// Log.w("MATSim After data exchange at " +
+				// event.getSimulationTime() + " " + remainingExchanges );
 
 				// Update jDEECo agents next link id
-				if (matSimInputs != null && !matSimInputs.isEmpty()) {
-					MATSimInput mData;
-					for (JDEECoAgentProvider agentProvider : agentProviders) {
-						for (JDEECoAgent agent : agentProvider.getAgents()) {
-							if (matSimInputs.containsKey(agent.getId()
-									.toString())) {
-								mData = (MATSimInput) matSimInputs.get(agent
-										.getId().toString());
-								agent.setInput(mData);
-							}
-						}
-					}
-				}
-//			}
-		} catch (Exception e) {
-			Log.e("jDEECoWithinDayMobsimListener: ", e);
+				setInputs(matSimInputs);
+			} catch (Exception e) {
+				Log.e("jDEECoWithinDayMobsimListener: ", e);
+			}
+		} 
+		if (stepListener != null) {
+			stepListener.at(Math.round(event.getSimulationTime()), null);
 		}
 	}
 

@@ -1,7 +1,7 @@
-JAVA_HOME ?= /usr/lib/jvm/java-7-openjdk-amd64
+JAVA_HOME = C:/Progra~2/Java/jdk8
 
 INET_DIR ?= ${OMNETPP_ROOT}/../inet
-MIXIM_DIR ?= ${OMNETPP_ROOT}/../mixim-2.3
+MIXIM_DIR ?= ${OMNETPP_ROOT}/../mixim
 
 CONFIGFILE = $(shell opp_configfilepath)
 include $(CONFIGFILE)
@@ -21,6 +21,7 @@ cleanall: checkmakefiles
 makefiles:
 	cd src && opp_makemake -f --deep --make-so -o jdeeco-omnetpp -O out \
 	-I${JAVA_HOME}/include \
+	-I${JAVA_HOME}/include/win32 \
 	-I${OMNETPP_SRC_DIR}/common -I${OMNETPP_INCL_DIR}/platdep -I${OMNETPP_SRC_DIR}/envir \
 	-I${MIXIM_DIR}/src \
 	-I${MIXIM_DIR}/src/base \

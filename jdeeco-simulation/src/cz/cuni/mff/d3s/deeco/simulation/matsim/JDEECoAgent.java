@@ -103,12 +103,13 @@ public class JDEECoAgent implements MobsimDriverAgent {
 	}
 
 	public Id getCurrentLinkId() {
-		//Log.i(id.toString() + " getCurrentLinkId " + currentLinkId.toString());
+		// Log.i(id.toString() + " getCurrentLinkId " +
+		// currentLinkId.toString());
 		return this.currentLinkId;
 	}
 
 	public Id getDestinationLinkId() {
-		//Log.i(id.toString() + " getDestination " + input.destination);
+		// Log.i(id.toString() + " getDestination " + input.destination);
 		return input.destination;
 	}
 
@@ -117,7 +118,8 @@ public class JDEECoAgent implements MobsimDriverAgent {
 	}
 
 	public Id chooseNextLinkId() {
-		//Log.i(id.toString() + " chooseNextLinkId " + ((nextLinkId == null) ? "null" :nextLinkId.toString()));
+		// Log.i(id.toString() + " chooseNextLinkId " + ((nextLinkId == null) ?
+		// "null" :nextLinkId.toString()));
 		return nextLinkId;
 	}
 
@@ -134,6 +136,10 @@ public class JDEECoAgent implements MobsimDriverAgent {
 	}
 
 	public Coord estimatePosition(double now) {
+		if (state.equals(State.ACTIVITY) && currentLinkId != null) {
+			return simulation.getScenario().getNetwork().getLinks()
+					.get(currentLinkId).getToNode().getCoord();
+		}
 		if (vehicle != null) {
 			QVehicle qVehicle = (QVehicle) vehicle;
 			Link link = qVehicle.getCurrentLink();

@@ -448,7 +448,7 @@ JNIEXPORT void JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulati
 	}
 }
 
-DLLEXPORT_OR_IMPORT void JDEECoModule::callAt(double absoluteTime) {
+void JDEECoModule::callAt(double absoluteTime) {
 	//std::cout << "jDEECoCallAt: " << this->jDEECoGetModuleId() << " Begin" << std::endl;
 	if (currentCallAtTime != absoluteTime && simTime().dbl() < absoluteTime) {
 		currentCallAtTime = absoluteTime;
@@ -460,7 +460,7 @@ DLLEXPORT_OR_IMPORT void JDEECoModule::callAt(double absoluteTime) {
 	//std::cout << "jDEECoCallAt: " << this->jDEECoGetModuleId() << " End" << std::endl;
 }
 
-DLLEXPORT_OR_IMPORT void JDEECoModule::onHandleMessage(cMessage *msg, double rssi) {
+void JDEECoModule::onHandleMessage(cMessage *msg, double rssi) {
 	//std::cout << "jDEECoOnHandleMessage: " << this->jDEECoGetModuleId() << " Begin" << std::endl;
 	JDEECoRuntime* runtime = findRuntime(getModuleId());
 
@@ -512,7 +512,7 @@ DLLEXPORT_OR_IMPORT void JDEECoModule::onHandleMessage(cMessage *msg, double rss
 	//std::cout << "jDEECoOnHandleMessage: " << this->jDEECoGetModuleId() << " End" << std::endl;
 }
 
-DLLEXPORT_OR_IMPORT void JDEECoModule::initialize() {
+void JDEECoModule::initialize() {
 	std::cout << "initialize: " << this->getModuleId() << " Begin" << std::endl;
 	std::cout << "initialize: " << this->getModuleId() << " Initializing jDEECo module: " << this->getModuleId() << std::endl;
 	if (!initialized) {

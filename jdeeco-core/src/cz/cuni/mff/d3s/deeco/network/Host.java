@@ -17,13 +17,11 @@ public class Host implements CurrentTimeProvider, NetworkInterface {
 	private final String id;
 	
 	private final NetworkProvider networkProvider;
-	private final PositionProvider positionProvider;
 	private final CurrentTimeProvider timeProvider;
 	
-	// XXX: Why are the two last booleans here if they are not used?
-	protected Host(NetworkProvider networkProvider, PositionProvider positionProvider, CurrentTimeProvider timeProvider, String jDEECoAppModuleId, boolean hasMANETNic, boolean hasIPNic) {
+	
+	protected Host(NetworkProvider networkProvider, CurrentTimeProvider timeProvider, String jDEECoAppModuleId, boolean hasMANETNic, boolean hasIPNic) {
 		this.networkProvider = networkProvider;
-		this.positionProvider = positionProvider;
 		this.timeProvider = timeProvider;
 		this.id = jDEECoAppModuleId;
 		this.packetReceiver = new PacketReceiver(id);
@@ -31,8 +29,8 @@ public class Host implements CurrentTimeProvider, NetworkInterface {
 		this.packetReceiver.setCurrentTimeProvider(this);
 	}
 	
-	public Host(NetworkProvider networkProvider, PositionProvider positionProvider, CurrentTimeProvider timeProvider, String jDEECoAppModuleId) {
-		this(networkProvider, positionProvider, timeProvider, jDEECoAppModuleId, true, true);
+	public Host(NetworkProvider networkProvider, CurrentTimeProvider timeProvider, String jDEECoAppModuleId) {
+		this(networkProvider, timeProvider, jDEECoAppModuleId, true, true);
 	}
 
 	public PacketReceiver getPacketReceiver() {
@@ -48,7 +46,6 @@ public class Host implements CurrentTimeProvider, NetworkInterface {
 	}
 
 	// Method used by the simulation
-
 	public void packetReceived(byte[] packet, double rssi) {
 		packetReceiver.packetReceived(packet, rssi);
 	}
@@ -56,14 +53,6 @@ public class Host implements CurrentTimeProvider, NetworkInterface {
 	// The method used by publisher
 	public void sendPacket(byte[] packet, String recipient) {
 		networkProvider.sendPacket(id, packet, recipient);
-	}
-
-	public double getPositionX() {
-		return positionProvider.getPositionX(this);
-	}
-
-	public double getPositionY() {
-		return positionProvider.getPositionY(this);
 	}
 
 	@Override

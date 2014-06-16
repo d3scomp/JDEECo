@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Exchanger;
 
+import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.TransportMode;
 import org.matsim.core.controler.events.StartupEvent;
 import org.matsim.core.controler.listener.StartupListener;
@@ -29,7 +30,7 @@ public class MATSimOMNetSimulation extends OMNetSimulation implements
 		SimulationStepListener {
 	private static final int MILLIS_IN_SECOND = 1000;
 
-	private final Exchanger<Map<String, ?>> exchanger;
+	private final Exchanger<Map<Id, ?>> exchanger;
 	private final MATSimDataProvider matSimProvider;
 	private final MATSimDataReceiver matSimReceiver;
 	private final MATSimPreloadingControler controler;
@@ -61,11 +62,10 @@ public class MATSimOMNetSimulation extends OMNetSimulation implements
 				.getTimeStepSize();
 		Log.i("Starting simulation: matsimStartTime: " + start
 				+ " matsimEndTime: " + end);
-		this.remainingExchanges = new Double((end - start) / step).longValue() + 1;
+		this.remainingExchanges = Math.round((end - start) / step) + 1;
 
-		this.exchanger = new Exchanger<Map<String, ?>>();
-		this.listener = new JDEECoWithinDayMobsimListener(exchanger,
-				this.remainingExchanges);
+		this.exchanger = new Exchanger<Map<Id, ?>>();
+		this.listener = new JDEECoWithinDayMobsimListener(exchanger);
 		this.matSimProvider = matSimProvider;
 		this.matSimReceiver = matSimReceiver;
 
@@ -89,7 +89,7 @@ public class MATSimOMNetSimulation extends OMNetSimulation implements
 			}
 		});
 
-		this.simulationStep = new Double(step * MILLIS_IN_SECOND).longValue();
+		this.simulationStep = Math.round(step * MILLIS_IN_SECOND);
 		/**
 		 * Bind MATSim listener with the agent source. It is necessary to let
 		 * the listener know about the jDEECo agents that it needs to update

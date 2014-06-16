@@ -35,7 +35,7 @@ import org.matsim.pt.router.TransitRouterImplFactory;
  */
 public class MATSimRouter {
 
-	public static int DEFAULT_LINK_PARKING_CAPACITY = 3;
+	public static int DEFAULT_LINK_PARKING_CAPACITY = 5;
 
 	private final Controler controler;
 	private final TripRouterFactory tripRouterFactory;
@@ -120,6 +120,10 @@ public class MATSimRouter {
 		Link fromLink = controler.getNetwork().getLinks().get(from);
 		Link toLink = controler.getNetwork().getLinks().get(to);
 		return route(fromLink, toLink, departureTime, person);
+	}
+	
+	public Link getLink(Id linkId) {
+		return controler.getNetwork().getLinks().get(linkId);
 	}
 
 	public List<Id> getAdjacentLinks(Id linkId) {
