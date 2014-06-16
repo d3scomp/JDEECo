@@ -12,8 +12,6 @@ import org.matsim.core.mobsim.qsim.interfaces.Netsim;
 import org.matsim.core.mobsim.qsim.qnetsimengine.QVehicle;
 import org.matsim.core.utils.geometry.CoordImpl;
 
-import cz.cuni.mff.d3s.deeco.logging.Log;
-
 /**
  * JDEECo agent implementation. The agent is used by the
  * {@link JDEECoWithinDayMobsimListener} to steer the MATSim simulation,
