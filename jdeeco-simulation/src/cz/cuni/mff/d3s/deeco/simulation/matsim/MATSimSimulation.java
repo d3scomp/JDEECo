@@ -128,9 +128,6 @@ public class MATSimSimulation extends Simulation implements SimulationStepListen
 	public void at(long seconds, SimulationStepTask task) {
 		//Exchange data with MATSim
 		long milliseconds = secondsToMilliseconds(seconds);
-		if (milliseconds > callbacks.first().milliseconds) {
-			return;
-		}
 		matSimReceiver.setMATSimData(listener.getOutputs(seconds));
 		listener.setInputs(matSimProvider.getMATSimData());
 		//Add callback for the MATSim step
