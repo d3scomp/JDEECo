@@ -27,7 +27,7 @@ import cz.cuni.mff.d3s.deeco.simulation.task.SimulationStepTask;
  * 
  */
 public class MATSimOMNetSimulation extends OMNetSimulation implements
-		SimulationStepListener {
+		SimulationStepListener, MATSimTimeProvider {
 	private static final int MILLIS_IN_SECOND = 1000;
 
 	private final Exchanger<Map<Id, ?>> exchanger;
@@ -145,10 +145,10 @@ public class MATSimOMNetSimulation extends OMNetSimulation implements
 		}
 	}
 
-	public long getMATSimSeconds() {
+	public double getMATSimSeconds() {
 		long currentTime = getCurrentMilliseconds();
-		return Math.round((currentTime / MILLIS_IN_SECOND)
-				+ controler.getConfig().getQSimConfigGroup().getStartTime());
+		return (currentTime / MILLIS_IN_SECOND)
+				+ controler.getConfig().getQSimConfigGroup().getStartTime();
 	}
 
 	public long getMATSimMilliseconds() {

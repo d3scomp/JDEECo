@@ -22,7 +22,7 @@ import cz.cuni.mff.d3s.deeco.simulation.SimulationHost;
 import cz.cuni.mff.d3s.deeco.simulation.SimulationStepListener;
 import cz.cuni.mff.d3s.deeco.simulation.task.SimulationStepTask;
 
-public class MATSimSimulation extends Simulation implements SimulationStepListener {
+public class MATSimSimulation extends Simulation implements SimulationStepListener, MATSimTimeProvider {
 
 	private static final String SIMULATION_CALLBACK = "SIMULATION_CALLBACK";
 	

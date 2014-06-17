@@ -91,6 +91,10 @@ public class MATSimRouter {
 		Leg leg = (Leg) legs.get(0);
 		return ((NetworkRoute) leg.getRoute()).getLinkIds();
 	}
+	
+	public List<Id> route(Activity from, Activity to, double departureTime) {
+		return route(from, to, departureTime, null);
+	}
 
 	/**
 	 * @param linkFrom
@@ -115,11 +119,19 @@ public class MATSimRouter {
 		Leg leg = (Leg) legs.get(0);
 		return ((NetworkRoute) leg.getRoute()).getLinkIds();
 	}
+	
+	public List<Id> route(Link linkFrom, Link linkTo, double departureTime) {
+		return route(linkFrom, linkTo, departureTime, null);
+	}
 
 	public List<Id> route(Id from, Id to, double departureTime, Person person) {
 		Link fromLink = controler.getNetwork().getLinks().get(from);
 		Link toLink = controler.getNetwork().getLinks().get(to);
 		return route(fromLink, toLink, departureTime, person);
+	}
+	
+	public List<Id> route(Id from, Id to, double departureTime) {
+		return route(from, to, departureTime, null);
 	}
 	
 	public Link getLink(Id linkId) {
