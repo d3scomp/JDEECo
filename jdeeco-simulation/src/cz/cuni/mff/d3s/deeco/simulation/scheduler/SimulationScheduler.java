@@ -12,7 +12,6 @@ import java.util.TreeSet;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.scheduler.SchedulerEvent;
@@ -39,9 +38,6 @@ public class SimulationScheduler implements Scheduler,
 	private final SortedSet<SchedulerEvent> queue;
 	private final Set<Task> allTasks;
 	private final Map<Task, SchedulerEvent> periodicEvents;
-	
-	private long lastProcessStartTime = -1;
-	private long lastProcessExecutionTime = 1;
 	
 	private final Set<Trigger> onTriggerSchedules;
 
@@ -106,7 +102,6 @@ public class SimulationScheduler implements Scheduler,
 					if (onTriggerSchedules.contains(trigger))
 						return;
 					onTriggerSchedules.add(trigger);
-					measureExecutionTime();
 					// schedule immediately, regardless the actual runtime of
 					// the process that triggered this trigger					
 					scheduleAfter(new SchedulerEvent(task, trigger), 0);
@@ -142,19 +137,7 @@ public class SimulationScheduler implements Scheduler,
 
 	@Override
 	public void executionCompleted(Task task, Trigger trigger) {
-		measureExecutionTime();
-		
-		boolean executedBecauseOfPeriodic = 
-				(trigger instanceof TimeTrigger)
-				&& (((TimeTrigger) trigger).getPeriod() > 0);
-
 		onTriggerSchedules.remove(trigger);
-
-		if (executedBecauseOfPeriodic && lastProcessExecutionTime > ((TimeTrigger) trigger).getPeriod()) {
-			Log.e("Periodic task " + task.toString()
-					+ " didn't finish before the end of the period (period="
-					+ task.getTimeTrigger().getPeriod() + ")");
-		}
 		registerNextExecution();
 	}
 
@@ -192,7 +175,6 @@ public class SimulationScheduler implements Scheduler,
 				push(event);
 			}
 			if (executor != null) {
-				lastProcessStartTime = System.currentTimeMillis();
 				executor.execute(event.executable, event.trigger);
 			} else {
 				Log.e("The simulation scheduler is associated with no excecutor!");
@@ -255,9 +237,5 @@ public class SimulationScheduler implements Scheduler,
 
 		// TODO take into account different scheduling policies and WCET of
 		// tasks. According to those the tasks need to be rescheduled.
-	}
-	
-	private void measureExecutionTime() {
-		lastProcessExecutionTime = Math.max(System.currentTimeMillis() - lastProcessStartTime, 1);
 	}
 }
