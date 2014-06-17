@@ -70,10 +70,8 @@ public class JDEECoWithinDayMobsimListener implements
 			MATSimInput mData;
 			for (JDEECoAgentProvider agentProvider : agentProviders) {
 				for (JDEECoAgent agent : agentProvider.getAgents()) {
-					if (matSimInputs.containsKey(agent.getId()
-							.toString())) {
-						mData = (MATSimInput) matSimInputs.get(agent
-								.getId().toString());
+					if (matSimInputs.containsKey(agent.getId())) {
+						mData = (MATSimInput) matSimInputs.get(agent.getId());
 						agent.setInput(mData);
 					}
 				}
