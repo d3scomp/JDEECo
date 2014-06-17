@@ -12,16 +12,46 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import cz.cuni.mff.d3s.deeco.annotations.*;
+import cz.cuni.mff.d3s.deeco.annotations.CommunicationBoundary;
+import cz.cuni.mff.d3s.deeco.annotations.Component;
+import cz.cuni.mff.d3s.deeco.annotations.Ensemble;
+import cz.cuni.mff.d3s.deeco.annotations.In;
+import cz.cuni.mff.d3s.deeco.annotations.InOut;
+import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
+import cz.cuni.mff.d3s.deeco.annotations.Local;
+import cz.cuni.mff.d3s.deeco.annotations.Membership;
+import cz.cuni.mff.d3s.deeco.annotations.Out;
+import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
-import cz.cuni.mff.d3s.deeco.annotations.pathparser.*;
+import cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange;
+import cz.cuni.mff.d3s.deeco.annotations.pathparser.ComponentIdentifier;
+import cz.cuni.mff.d3s.deeco.annotations.pathparser.EEnsembleParty;
+import cz.cuni.mff.d3s.deeco.annotations.pathparser.PNode;
+import cz.cuni.mff.d3s.deeco.annotations.pathparser.ParseException;
+import cz.cuni.mff.d3s.deeco.annotations.pathparser.PathParser;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.*;
-import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.Condition;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.Exchange;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
 import cz.cuni.mff.d3s.deeco.network.GenericCommunicationBoundaryPredicate;
@@ -228,13 +258,16 @@ public class AnnotationProcessor {
 		componentInstance.setName(clazz.getCanonicalName());
 		
 		try {
-			ChangeSet initialK = extractInitialKnowledge(obj);
+			ChangeSet initialK = extractInitialKnowledge(obj, false);
+			ChangeSet initialLocalK = extractInitialKnowledge(obj, true);
 			String id = getComponentId(initialK);
 			if (id == null) {
 				id = clazz.getSimpleName() + UUID.randomUUID().toString();
 			}
 	        KnowledgeManager km = new CloningKnowledgeManager(id);		
 			km.update(initialK);
+			km.update(initialLocalK);
+			km.markAsLocal(initialLocalK.getUpdatedReferences());
 	        componentInstance.setKnowledgeManager(km); 
 	        
 			List<Method> methods = getMethodsMarkedAsProcesses(clazz);
@@ -724,7 +757,7 @@ public class AnnotationProcessor {
 	 *  
 	 * @param knowledge the object of a class annotated as DEECo component (@{@link Component}).
 	 */
-	ChangeSet extractInitialKnowledge(Object knowledge) {
+	ChangeSet extractInitialKnowledge(Object knowledge, boolean local) {
 		ChangeSet changeSet = new ChangeSet();
 		
 		// print a warning if the component definition contains non-public fields
@@ -738,6 +771,8 @@ public class AnnotationProcessor {
 		for (Field f : knowledge.getClass().getFields()) {
 			if (Modifier.isStatic(f.getModifiers()))
 				continue;
+			if (!(isAnnotatedAsLocal(f) && local) && (isAnnotatedAsLocal(f) || local))
+				continue;
 			KnowledgePath knowledgePath = factory.createKnowledgePath();
 			PathNodeField pathNodeField = factory.createPathNodeField();
 			pathNodeField.setName(new String(f.getName()));
@@ -749,6 +784,10 @@ public class AnnotationProcessor {
 			}
 		}
 		return changeSet;
+	}
+	
+	private boolean isAnnotatedAsLocal(Field f) {
+		return f != null && f.getAnnotation(Local.class) != null;
 	}
 
 	/**

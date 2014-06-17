@@ -280,6 +280,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 		} catch (KnowledgeUpdateException e) {
 			Log.e("bindKnowledgeManagerContainer: exception when updating the knowledge manager", e);
 		}
+		km.markAsLocal(ci.getKnowledgeManager().getLocalPaths());
 		// replace the KM and the KMView references
 		ci.setKnowledgeManager(km);	
 		ci.setShadowKnowledgeManagerRegistry(new ShadowKnowledgeManagerRegistryImpl(km, kmContainer));			

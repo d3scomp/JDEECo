@@ -524,7 +524,7 @@ public class AnnotationProcessorTest {
 		 *	public Integer capacity;
 		 *	public Date time;
 		 */
-		ChangeSet cs = processor.extractInitialKnowledge(o);
+		ChangeSet cs = processor.extractInitialKnowledge(o, false);
 		assertEquals(cs.getUpdatedReferences().size(),3);
 		assertEquals(cs.getDeletedReferences().size(),0);
 		KnowledgePath kp = factory.createKnowledgePath();

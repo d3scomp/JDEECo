@@ -469,8 +469,18 @@ KnowledgeDataPublisher {
 	KnowledgeData prepareLocalKnowledgeData(KnowledgeManager km)
 			throws KnowledgeNotFoundException {
 		return new KnowledgeData(
-				km.get(emptyPath), 
+				getNonLocalKnowledge(km.get(emptyPath), km), 
 				new KnowledgeMetaData(km.getId(), localVersion, host, timeProvider.getCurrentMilliseconds(), 1));
+	}
+
+	ValueSet getNonLocalKnowledge(ValueSet toFilter, KnowledgeManager km) {
+		ValueSet result = new ValueSet();
+		for (KnowledgePath kp: toFilter.getKnowledgePaths()) {
+			if (!km.isLocal(kp)) {
+				result.setValue(kp, toFilter.getValue(kp));
+			}
+		}
+		return result;
 	}
 	
 	KnowledgeData prepareForRebroadcast(KnowledgeData receivedData) {		
@@ -481,7 +491,7 @@ KnowledgeDataPublisher {
 	}
 	
 	KnowledgeData filterLocalKnowledgeForKnownEnsembles(KnowledgeData kd) {
-		//FIXME: make this generic
+		// FIXME: make this generic
 		// now we hardcode our demo (we filter the Leader knowledge to only
 		// publish id, team, and position.
 		if (kd.getMetaData().componentId.startsWith("L")) {

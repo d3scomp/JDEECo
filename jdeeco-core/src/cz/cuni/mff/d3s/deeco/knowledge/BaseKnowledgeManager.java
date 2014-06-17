@@ -29,6 +29,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 
 	private final Map<KnowledgePath, Object> knowledge;
 	private final Map<KnowledgeChangeTrigger, List<TriggerListener>> knowledgeChangeListeners;
+	private final Collection<KnowledgePath> localKnowledgePaths;
 
 	private final String id;
 
@@ -36,6 +37,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		this.id = id;
 		this.knowledge = new HashMap<>();
 		this.knowledgeChangeListeners = new HashMap<>();
+		this.localKnowledgePaths = new LinkedList<>();
 	}
 
 	@Override
@@ -583,5 +585,20 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		}
 		// Revert adding new nodes to the knowledge
 		deleteKnowledge(added);
+	}
+
+	@Override
+	public void markAsLocal(Collection<KnowledgePath> knowledgePaths) {
+		localKnowledgePaths.addAll(knowledgePaths);
+	}
+
+	@Override
+	public boolean isLocal(KnowledgePath knowledgePath) {
+		return localKnowledgePaths.contains(knowledgePath);
+	}
+
+	@Override
+	public Collection<KnowledgePath> getLocalPaths() {
+		return localKnowledgePaths;
 	}
 }
