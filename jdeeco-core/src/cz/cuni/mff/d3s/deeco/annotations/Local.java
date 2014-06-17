@@ -21,9 +21,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Used to mark a class to be a DEECo ensemble.
+ * Used to mark a knowledge field as non-serializable.
  * 
- * @author Ilias Gerostathopoulos
+ * @author Michal Kit
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)
