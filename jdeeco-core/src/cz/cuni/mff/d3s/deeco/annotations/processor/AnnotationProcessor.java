@@ -266,8 +266,8 @@ public class AnnotationProcessor {
 			}
 	        KnowledgeManager km = new CloningKnowledgeManager(id);		
 			km.update(initialK);
-			km.update(initialLocalK);
 			km.markAsLocal(initialLocalK.getUpdatedReferences());
+			km.update(initialLocalK);
 	        componentInstance.setKnowledgeManager(km); 
 	        
 			List<Method> methods = getMethodsMarkedAsProcesses(clazz);

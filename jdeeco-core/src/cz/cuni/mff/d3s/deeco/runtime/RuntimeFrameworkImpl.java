@@ -275,12 +275,12 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 		
 		// create a new KM with the same id and knowledge values
 		KnowledgeManager km = kmContainer.createLocal(ci.getKnowledgeManager().getId());
+		km.markAsLocal(ci.getKnowledgeManager().getLocalPaths());
 		try {
 			km.update(cs);
 		} catch (KnowledgeUpdateException e) {
 			Log.e("bindKnowledgeManagerContainer: exception when updating the knowledge manager", e);
 		}
-		km.markAsLocal(ci.getKnowledgeManager().getLocalPaths());
 		// replace the KM and the KMView references
 		ci.setKnowledgeManager(km);	
 		ci.setShadowKnowledgeManagerRegistry(new ShadowKnowledgeManagerRegistryImpl(km, kmContainer));			
