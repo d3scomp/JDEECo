@@ -18,7 +18,7 @@ import org.eclipse.emf.ecore.EObject;
  * </ul>
  * </p>
  *
- * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getParameter()
+ * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getParameter()
  * @model
  * @generated
  */
@@ -38,7 +38,7 @@ public interface Parameter extends EObject {
 	 * @see #isSetDirection()
 	 * @see #unsetDirection()
 	 * @see #setDirection(ParameterDirection)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getParameter_Direction()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getParameter_Direction()
 	 * @model default="INOUT" unsettable="true" required="true"
 	 * @generated
 	 */
@@ -90,7 +90,7 @@ public interface Parameter extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Knowledge Path</em>' containment reference.
 	 * @see #setKnowledgePath(KnowledgePath)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getParameter_KnowledgePath()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getParameter_KnowledgePath()
 	 * @model containment="true"
 	 * @generated
 	 */
@@ -116,7 +116,7 @@ public interface Parameter extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Type</em>' attribute.
 	 * @see #setType(Class)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getParameter_Type()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getParameter_Type()
 	 * @model
 	 * @generated
 	 */

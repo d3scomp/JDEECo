@@ -44,14 +44,6 @@ public class ProcessContext {
 			return null;
 	}
 	
-	public static Object getInternalData(Object key) {
-		return getCurrentProcess().getComponentInstance().getInternalData().get(key);
-	}
-	
-	public static void setInternalData(Object key, Object value) {
-		getCurrentProcess().getComponentInstance().getInternalData().put(key, value);
-	}
-	
 	private static RuntimeMetadata getModel() {
 		ComponentProcess p = getCurrentProcess();
 		if (p == null)

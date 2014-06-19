@@ -9,7 +9,7 @@ package cz.cuni.mff.d3s.deeco.model.runtime.api;
  * <!-- end-user-doc -->
  *
  *
- * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getPathNodeMember()
+ * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getPathNodeMember()
  * @model
  * @generated
  */

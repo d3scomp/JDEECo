@@ -5,7 +5,7 @@ package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
+import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -55,7 +55,7 @@ public class PathNodeMapKeyImpl extends PathNodeImpl implements PathNodeMapKey {
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return RuntimeMetadataPackage.Literals.PATH_NODE_MAP_KEY;
+		return RuntimePackage.Literals.PATH_NODE_MAP_KEY;
 	}
 
 	/**
@@ -76,7 +76,7 @@ public class PathNodeMapKeyImpl extends PathNodeImpl implements PathNodeMapKey {
 		KnowledgePath oldKeyPath = keyPath;
 		keyPath = newKeyPath;
 		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.PATH_NODE_MAP_KEY__KEY_PATH, oldKeyPath, newKeyPath);
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, RuntimePackage.PATH_NODE_MAP_KEY__KEY_PATH, oldKeyPath, newKeyPath);
 			if (msgs == null) msgs = notification; else msgs.add(notification);
 		}
 		return msgs;
@@ -91,14 +91,14 @@ public class PathNodeMapKeyImpl extends PathNodeImpl implements PathNodeMapKey {
 		if (newKeyPath != keyPath) {
 			NotificationChain msgs = null;
 			if (keyPath != null)
-				msgs = ((InternalEObject)keyPath).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - RuntimeMetadataPackage.PATH_NODE_MAP_KEY__KEY_PATH, null, msgs);
+				msgs = ((InternalEObject)keyPath).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - RuntimePackage.PATH_NODE_MAP_KEY__KEY_PATH, null, msgs);
 			if (newKeyPath != null)
-				msgs = ((InternalEObject)newKeyPath).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - RuntimeMetadataPackage.PATH_NODE_MAP_KEY__KEY_PATH, null, msgs);
+				msgs = ((InternalEObject)newKeyPath).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - RuntimePackage.PATH_NODE_MAP_KEY__KEY_PATH, null, msgs);
 			msgs = basicSetKeyPath(newKeyPath, msgs);
 			if (msgs != null) msgs.dispatch();
 		}
 		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.PATH_NODE_MAP_KEY__KEY_PATH, newKeyPath, newKeyPath));
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimePackage.PATH_NODE_MAP_KEY__KEY_PATH, newKeyPath, newKeyPath));
 	}
 
 	/**
@@ -109,7 +109,7 @@ public class PathNodeMapKeyImpl extends PathNodeImpl implements PathNodeMapKey {
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.PATH_NODE_MAP_KEY__KEY_PATH:
+			case RuntimePackage.PATH_NODE_MAP_KEY__KEY_PATH:
 				return basicSetKeyPath(null, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -123,7 +123,7 @@ public class PathNodeMapKeyImpl extends PathNodeImpl implements PathNodeMapKey {
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.PATH_NODE_MAP_KEY__KEY_PATH:
+			case RuntimePackage.PATH_NODE_MAP_KEY__KEY_PATH:
 				return getKeyPath();
 		}
 		return super.eGet(featureID, resolve, coreType);
@@ -137,7 +137,7 @@ public class PathNodeMapKeyImpl extends PathNodeImpl implements PathNodeMapKey {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.PATH_NODE_MAP_KEY__KEY_PATH:
+			case RuntimePackage.PATH_NODE_MAP_KEY__KEY_PATH:
 				setKeyPath((KnowledgePath)newValue);
 				return;
 		}
@@ -152,7 +152,7 @@ public class PathNodeMapKeyImpl extends PathNodeImpl implements PathNodeMapKey {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.PATH_NODE_MAP_KEY__KEY_PATH:
+			case RuntimePackage.PATH_NODE_MAP_KEY__KEY_PATH:
 				setKeyPath((KnowledgePath)null);
 				return;
 		}
@@ -167,7 +167,7 @@ public class PathNodeMapKeyImpl extends PathNodeImpl implements PathNodeMapKey {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.PATH_NODE_MAP_KEY__KEY_PATH:
+			case RuntimePackage.PATH_NODE_MAP_KEY__KEY_PATH:
 				return keyPath != null;
 		}
 		return super.eIsSet(featureID);

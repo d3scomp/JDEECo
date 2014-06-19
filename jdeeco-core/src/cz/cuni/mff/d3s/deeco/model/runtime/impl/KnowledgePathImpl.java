@@ -5,7 +5,7 @@ package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
+import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage;
 
 import java.util.Collection;
 
@@ -61,7 +61,7 @@ public class KnowledgePathImpl extends MinimalEObjectImpl.Container implements K
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return RuntimeMetadataPackage.Literals.KNOWLEDGE_PATH;
+		return RuntimePackage.Literals.KNOWLEDGE_PATH;
 	}
 
 	/**
@@ -71,7 +71,7 @@ public class KnowledgePathImpl extends MinimalEObjectImpl.Container implements K
 	 */
 	public EList<PathNode> getNodes() {
 		if (nodes == null) {
-			nodes = new EObjectContainmentEList<PathNode>(PathNode.class, this, RuntimeMetadataPackage.KNOWLEDGE_PATH__NODES);
+			nodes = new EObjectContainmentEList<PathNode>(PathNode.class, this, RuntimePackage.KNOWLEDGE_PATH__NODES);
 		}
 		return nodes;
 	}
@@ -84,7 +84,7 @@ public class KnowledgePathImpl extends MinimalEObjectImpl.Container implements K
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.KNOWLEDGE_PATH__NODES:
+			case RuntimePackage.KNOWLEDGE_PATH__NODES:
 				return ((InternalEList<?>)getNodes()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -98,7 +98,7 @@ public class KnowledgePathImpl extends MinimalEObjectImpl.Container implements K
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.KNOWLEDGE_PATH__NODES:
+			case RuntimePackage.KNOWLEDGE_PATH__NODES:
 				return getNodes();
 		}
 		return super.eGet(featureID, resolve, coreType);
@@ -113,7 +113,7 @@ public class KnowledgePathImpl extends MinimalEObjectImpl.Container implements K
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.KNOWLEDGE_PATH__NODES:
+			case RuntimePackage.KNOWLEDGE_PATH__NODES:
 				getNodes().clear();
 				getNodes().addAll((Collection<? extends PathNode>)newValue);
 				return;
@@ -129,7 +129,7 @@ public class KnowledgePathImpl extends MinimalEObjectImpl.Container implements K
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.KNOWLEDGE_PATH__NODES:
+			case RuntimePackage.KNOWLEDGE_PATH__NODES:
 				getNodes().clear();
 				return;
 		}
@@ -144,7 +144,7 @@ public class KnowledgePathImpl extends MinimalEObjectImpl.Container implements K
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.KNOWLEDGE_PATH__NODES:
+			case RuntimePackage.KNOWLEDGE_PATH__NODES:
 				return nodes != null && !nodes.isEmpty();
 		}
 		return super.eIsSet(featureID);

@@ -29,5 +29,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface Process {
-
+	long wcet() default 0;
+	long bcet() default 0;
 }

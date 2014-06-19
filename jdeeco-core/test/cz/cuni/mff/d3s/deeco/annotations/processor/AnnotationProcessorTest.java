@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import junitx.framework.FileAssert;
 
 import org.eclipse.emf.common.util.URI;

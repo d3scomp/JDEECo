@@ -460,8 +460,10 @@ public class AnnotationProcessor {
 		for (Annotation a : annotations) {
 			if (a instanceof PeriodicScheduling) {
 				TimeTrigger periodicTrigger = factory.createTimeTrigger();
-				periodicTrigger.setPeriod(((PeriodicScheduling) a).value());
-				periodicTrigger.setOffset(0);
+				PeriodicScheduling ps = (PeriodicScheduling) a;
+				periodicTrigger.setPeriod(ps.period());
+				periodicTrigger.setOffset(ps.offset());
+				periodicTrigger.setOrder(ps.order());
 				return periodicTrigger;
 			}
 		}

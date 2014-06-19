@@ -4,7 +4,7 @@ package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
+import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage;
 
 import org.eclipse.emf.common.notify.Notification;
 
@@ -21,6 +21,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * <ul>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.TimeTriggerImpl#getPeriod <em>Period</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.TimeTriggerImpl#getOffset <em>Offset</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.TimeTriggerImpl#getOrder <em>Order</em>}</li>
  * </ul>
  * </p>
  *
@@ -68,6 +69,26 @@ public class TimeTriggerImpl extends TriggerImpl implements TimeTrigger {
 	protected long offset = OFFSET_EDEFAULT;
 
 	/**
+	 * The default value of the '{@link #getOrder() <em>Order</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getOrder()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final int ORDER_EDEFAULT = 0;
+
+	/**
+	 * The cached value of the '{@link #getOrder() <em>Order</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getOrder()
+	 * @generated
+	 * @ordered
+	 */
+	protected int order = ORDER_EDEFAULT;
+
+	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -83,7 +104,7 @@ public class TimeTriggerImpl extends TriggerImpl implements TimeTrigger {
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return RuntimeMetadataPackage.Literals.TIME_TRIGGER;
+		return RuntimePackage.Literals.TIME_TRIGGER;
 	}
 
 	/**
@@ -104,7 +125,7 @@ public class TimeTriggerImpl extends TriggerImpl implements TimeTrigger {
 		long oldPeriod = period;
 		period = newPeriod;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.TIME_TRIGGER__PERIOD, oldPeriod, period));
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimePackage.TIME_TRIGGER__PERIOD, oldPeriod, period));
 	}
 
 	/**
@@ -125,7 +146,28 @@ public class TimeTriggerImpl extends TriggerImpl implements TimeTrigger {
 		long oldOffset = offset;
 		offset = newOffset;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.TIME_TRIGGER__OFFSET, oldOffset, offset));
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimePackage.TIME_TRIGGER__OFFSET, oldOffset, offset));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public int getOrder() {
+		return order;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setOrder(int newOrder) {
+		int oldOrder = order;
+		order = newOrder;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimePackage.TIME_TRIGGER__ORDER, oldOrder, order));
 	}
 
 	/**
@@ -136,10 +178,12 @@ public class TimeTriggerImpl extends TriggerImpl implements TimeTrigger {
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.TIME_TRIGGER__PERIOD:
+			case RuntimePackage.TIME_TRIGGER__PERIOD:
 				return getPeriod();
-			case RuntimeMetadataPackage.TIME_TRIGGER__OFFSET:
+			case RuntimePackage.TIME_TRIGGER__OFFSET:
 				return getOffset();
+			case RuntimePackage.TIME_TRIGGER__ORDER:
+				return getOrder();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -152,11 +196,14 @@ public class TimeTriggerImpl extends TriggerImpl implements TimeTrigger {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.TIME_TRIGGER__PERIOD:
+			case RuntimePackage.TIME_TRIGGER__PERIOD:
 				setPeriod((Long)newValue);
 				return;
-			case RuntimeMetadataPackage.TIME_TRIGGER__OFFSET:
+			case RuntimePackage.TIME_TRIGGER__OFFSET:
 				setOffset((Long)newValue);
+				return;
+			case RuntimePackage.TIME_TRIGGER__ORDER:
+				setOrder((Integer)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -170,11 +217,14 @@ public class TimeTriggerImpl extends TriggerImpl implements TimeTrigger {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.TIME_TRIGGER__PERIOD:
+			case RuntimePackage.TIME_TRIGGER__PERIOD:
 				setPeriod(PERIOD_EDEFAULT);
 				return;
-			case RuntimeMetadataPackage.TIME_TRIGGER__OFFSET:
+			case RuntimePackage.TIME_TRIGGER__OFFSET:
 				setOffset(OFFSET_EDEFAULT);
+				return;
+			case RuntimePackage.TIME_TRIGGER__ORDER:
+				setOrder(ORDER_EDEFAULT);
 				return;
 		}
 		super.eUnset(featureID);
@@ -188,10 +238,12 @@ public class TimeTriggerImpl extends TriggerImpl implements TimeTrigger {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.TIME_TRIGGER__PERIOD:
+			case RuntimePackage.TIME_TRIGGER__PERIOD:
 				return period != PERIOD_EDEFAULT;
-			case RuntimeMetadataPackage.TIME_TRIGGER__OFFSET:
+			case RuntimePackage.TIME_TRIGGER__OFFSET:
 				return offset != OFFSET_EDEFAULT;
+			case RuntimePackage.TIME_TRIGGER__ORDER:
+				return order != ORDER_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -210,6 +262,8 @@ public class TimeTriggerImpl extends TriggerImpl implements TimeTrigger {
 		result.append(period);
 		result.append(", offset: ");
 		result.append(offset);
+		result.append(", order: ");
+		result.append(order);
 		result.append(')');
 		return result.toString();
 	}

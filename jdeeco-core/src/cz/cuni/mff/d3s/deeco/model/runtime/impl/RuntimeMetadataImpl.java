@@ -6,7 +6,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
+import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage;
 
 import java.util.Collection;
 
@@ -24,7 +24,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Runtime Metadata</b></em>'.
+ * An implementation of the model object '<em><b>Metadata</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
@@ -73,7 +73,7 @@ public class RuntimeMetadataImpl extends MinimalEObjectImpl.Container implements
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return RuntimeMetadataPackage.Literals.RUNTIME_METADATA;
+		return RuntimePackage.Literals.RUNTIME_METADATA;
 	}
 
 	/**
@@ -83,7 +83,7 @@ public class RuntimeMetadataImpl extends MinimalEObjectImpl.Container implements
 	 */
 	public EList<EnsembleDefinition> getEnsembleDefinitions() {
 		if (ensembleDefinitions == null) {
-			ensembleDefinitions = new EObjectContainmentEList<EnsembleDefinition>(EnsembleDefinition.class, this, RuntimeMetadataPackage.RUNTIME_METADATA__ENSEMBLE_DEFINITIONS);
+			ensembleDefinitions = new EObjectContainmentEList<EnsembleDefinition>(EnsembleDefinition.class, this, RuntimePackage.RUNTIME_METADATA__ENSEMBLE_DEFINITIONS);
 		}
 		return ensembleDefinitions;
 	}
@@ -95,7 +95,7 @@ public class RuntimeMetadataImpl extends MinimalEObjectImpl.Container implements
 	 */
 	public EList<ComponentInstance> getComponentInstances() {
 		if (componentInstances == null) {
-			componentInstances = new EObjectContainmentEList<ComponentInstance>(ComponentInstance.class, this, RuntimeMetadataPackage.RUNTIME_METADATA__COMPONENT_INSTANCES);
+			componentInstances = new EObjectContainmentEList<ComponentInstance>(ComponentInstance.class, this, RuntimePackage.RUNTIME_METADATA__COMPONENT_INSTANCES);
 		}
 		return componentInstances;
 	}
@@ -108,9 +108,9 @@ public class RuntimeMetadataImpl extends MinimalEObjectImpl.Container implements
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.RUNTIME_METADATA__ENSEMBLE_DEFINITIONS:
+			case RuntimePackage.RUNTIME_METADATA__ENSEMBLE_DEFINITIONS:
 				return ((InternalEList<?>)getEnsembleDefinitions()).basicRemove(otherEnd, msgs);
-			case RuntimeMetadataPackage.RUNTIME_METADATA__COMPONENT_INSTANCES:
+			case RuntimePackage.RUNTIME_METADATA__COMPONENT_INSTANCES:
 				return ((InternalEList<?>)getComponentInstances()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -124,9 +124,9 @@ public class RuntimeMetadataImpl extends MinimalEObjectImpl.Container implements
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.RUNTIME_METADATA__ENSEMBLE_DEFINITIONS:
+			case RuntimePackage.RUNTIME_METADATA__ENSEMBLE_DEFINITIONS:
 				return getEnsembleDefinitions();
-			case RuntimeMetadataPackage.RUNTIME_METADATA__COMPONENT_INSTANCES:
+			case RuntimePackage.RUNTIME_METADATA__COMPONENT_INSTANCES:
 				return getComponentInstances();
 		}
 		return super.eGet(featureID, resolve, coreType);
@@ -141,11 +141,11 @@ public class RuntimeMetadataImpl extends MinimalEObjectImpl.Container implements
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.RUNTIME_METADATA__ENSEMBLE_DEFINITIONS:
+			case RuntimePackage.RUNTIME_METADATA__ENSEMBLE_DEFINITIONS:
 				getEnsembleDefinitions().clear();
 				getEnsembleDefinitions().addAll((Collection<? extends EnsembleDefinition>)newValue);
 				return;
-			case RuntimeMetadataPackage.RUNTIME_METADATA__COMPONENT_INSTANCES:
+			case RuntimePackage.RUNTIME_METADATA__COMPONENT_INSTANCES:
 				getComponentInstances().clear();
 				getComponentInstances().addAll((Collection<? extends ComponentInstance>)newValue);
 				return;
@@ -161,10 +161,10 @@ public class RuntimeMetadataImpl extends MinimalEObjectImpl.Container implements
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.RUNTIME_METADATA__ENSEMBLE_DEFINITIONS:
+			case RuntimePackage.RUNTIME_METADATA__ENSEMBLE_DEFINITIONS:
 				getEnsembleDefinitions().clear();
 				return;
-			case RuntimeMetadataPackage.RUNTIME_METADATA__COMPONENT_INSTANCES:
+			case RuntimePackage.RUNTIME_METADATA__COMPONENT_INSTANCES:
 				getComponentInstances().clear();
 				return;
 		}
@@ -179,9 +179,9 @@ public class RuntimeMetadataImpl extends MinimalEObjectImpl.Container implements
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.RUNTIME_METADATA__ENSEMBLE_DEFINITIONS:
+			case RuntimePackage.RUNTIME_METADATA__ENSEMBLE_DEFINITIONS:
 				return ensembleDefinitions != null && !ensembleDefinitions.isEmpty();
-			case RuntimeMetadataPackage.RUNTIME_METADATA__COMPONENT_INSTANCES:
+			case RuntimePackage.RUNTIME_METADATA__COMPONENT_INSTANCES:
 				return componentInstances != null && !componentInstances.isEmpty();
 		}
 		return super.eIsSet(featureID);

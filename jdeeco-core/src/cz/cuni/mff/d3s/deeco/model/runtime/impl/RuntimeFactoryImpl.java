@@ -7,13 +7,13 @@ import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.*;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
-import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
+import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeFactory;
+import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage;
 
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
+
 import java.lang.reflect.Method;
 
-import java.util.Map;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
@@ -29,24 +29,24 @@ import org.eclipse.emf.ecore.plugin.EcorePlugin;
  * <!-- end-user-doc -->
  * @generated
  */
-public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeMetadataFactory {
+public class RuntimeFactoryImpl extends EFactoryImpl implements RuntimeFactory {
 	/**
 	 * Creates the default factory implementation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public static RuntimeMetadataFactory init() {
+	public static RuntimeFactory init() {
 		try {
-			RuntimeMetadataFactory theRuntimeMetadataFactory = (RuntimeMetadataFactory)EPackage.Registry.INSTANCE.getEFactory("http://cz.cuni.mff.d3s.deeco.model.runtime/1.0"); 
-			if (theRuntimeMetadataFactory != null) {
-				return theRuntimeMetadataFactory;
+			RuntimeFactory theRuntimeFactory = (RuntimeFactory)EPackage.Registry.INSTANCE.getEFactory(RuntimePackage.eNS_URI);
+			if (theRuntimeFactory != null) {
+				return theRuntimeFactory;
 			}
 		}
 		catch (Exception exception) {
 			EcorePlugin.INSTANCE.log(exception);
 		}
-		return new cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt();
+		return new RuntimeFactoryImpl();
 	}
 
 	/**
@@ -55,7 +55,7 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public RuntimeMetadataFactoryImpl() {
+	public RuntimeFactoryImpl() {
 		super();
 	}
 
@@ -67,23 +67,23 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	@Override
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
-			case RuntimeMetadataPackage.TIME_TRIGGER: return createTimeTrigger();
-			case RuntimeMetadataPackage.KNOWLEDGE_CHANGE_TRIGGER: return createKnowledgeChangeTrigger();
-			case RuntimeMetadataPackage.KNOWLEDGE_PATH: return createKnowledgePath();
-			case RuntimeMetadataPackage.PATH_NODE_FIELD: return createPathNodeField();
-			case RuntimeMetadataPackage.PATH_NODE_MAP_KEY: return createPathNodeMapKey();
-			case RuntimeMetadataPackage.RUNTIME_METADATA: return createRuntimeMetadata();
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE: return createComponentInstance();
-			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION: return createEnsembleDefinition();
-			case RuntimeMetadataPackage.CONDITION: return createCondition();
-			case RuntimeMetadataPackage.EXCHANGE: return createExchange();
-			case RuntimeMetadataPackage.COMPONENT_PROCESS: return createComponentProcess();
-			case RuntimeMetadataPackage.PARAMETER: return createParameter();
-			case RuntimeMetadataPackage.INVOCABLE: return createInvocable();
-			case RuntimeMetadataPackage.ENSEMBLE_CONTROLLER: return createEnsembleController();
-			case RuntimeMetadataPackage.PATH_NODE_COORDINATOR: return createPathNodeCoordinator();
-			case RuntimeMetadataPackage.PATH_NODE_MEMBER: return createPathNodeMember();
-			case RuntimeMetadataPackage.PATH_NODE_COMPONENT_ID: return createPathNodeComponentId();
+			case RuntimePackage.TIME_TRIGGER: return createTimeTrigger();
+			case RuntimePackage.KNOWLEDGE_CHANGE_TRIGGER: return createKnowledgeChangeTrigger();
+			case RuntimePackage.KNOWLEDGE_PATH: return createKnowledgePath();
+			case RuntimePackage.PATH_NODE_FIELD: return createPathNodeField();
+			case RuntimePackage.PATH_NODE_MAP_KEY: return createPathNodeMapKey();
+			case RuntimePackage.RUNTIME_METADATA: return createRuntimeMetadata();
+			case RuntimePackage.COMPONENT_INSTANCE: return createComponentInstance();
+			case RuntimePackage.ENSEMBLE_DEFINITION: return createEnsembleDefinition();
+			case RuntimePackage.CONDITION: return createCondition();
+			case RuntimePackage.EXCHANGE: return createExchange();
+			case RuntimePackage.COMPONENT_PROCESS: return createComponentProcess();
+			case RuntimePackage.PARAMETER: return createParameter();
+			case RuntimePackage.INVOCABLE: return createInvocable();
+			case RuntimePackage.ENSEMBLE_CONTROLLER: return createEnsembleController();
+			case RuntimePackage.PATH_NODE_COORDINATOR: return createPathNodeCoordinator();
+			case RuntimePackage.PATH_NODE_MEMBER: return createPathNodeMember();
+			case RuntimePackage.PATH_NODE_COMPONENT_ID: return createPathNodeComponentId();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -97,15 +97,15 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	@Override
 	public Object createFromString(EDataType eDataType, String initialValue) {
 		switch (eDataType.getClassifierID()) {
-			case RuntimeMetadataPackage.PARAMETER_DIRECTION:
+			case RuntimePackage.PARAMETER_DIRECTION:
 				return createParameterDirectionFromString(eDataType, initialValue);
-			case RuntimeMetadataPackage.METHOD:
+			case RuntimePackage.METHOD:
 				return createMethodFromString(eDataType, initialValue);
-			case RuntimeMetadataPackage.KNOWLEDGE_MANAGER:
+			case RuntimePackage.KNOWLEDGE_MANAGER:
 				return createKnowledgeManagerFromString(eDataType, initialValue);
-			case RuntimeMetadataPackage.SHADOW_KNOWLEDGE_MANAGER_REGISTRY:
+			case RuntimePackage.SHADOW_KNOWLEDGE_MANAGER_REGISTRY:
 				return createShadowKnowledgeManagerRegistryFromString(eDataType, initialValue);
-			case RuntimeMetadataPackage.COMMUNICATION_BOUNDARY:
+			case RuntimePackage.COMMUNICATION_BOUNDARY:
 				return createCommunicationBoundaryFromString(eDataType, initialValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
@@ -120,19 +120,29 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	@Override
 	public String convertToString(EDataType eDataType, Object instanceValue) {
 		switch (eDataType.getClassifierID()) {
-			case RuntimeMetadataPackage.PARAMETER_DIRECTION:
+			case RuntimePackage.PARAMETER_DIRECTION:
 				return convertParameterDirectionToString(eDataType, instanceValue);
-			case RuntimeMetadataPackage.METHOD:
+			case RuntimePackage.METHOD:
 				return convertMethodToString(eDataType, instanceValue);
-			case RuntimeMetadataPackage.KNOWLEDGE_MANAGER:
+			case RuntimePackage.KNOWLEDGE_MANAGER:
 				return convertKnowledgeManagerToString(eDataType, instanceValue);
-			case RuntimeMetadataPackage.SHADOW_KNOWLEDGE_MANAGER_REGISTRY:
+			case RuntimePackage.SHADOW_KNOWLEDGE_MANAGER_REGISTRY:
 				return convertShadowKnowledgeManagerRegistryToString(eDataType, instanceValue);
-			case RuntimeMetadataPackage.COMMUNICATION_BOUNDARY:
+			case RuntimePackage.COMMUNICATION_BOUNDARY:
 				return convertCommunicationBoundaryToString(eDataType, instanceValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public TimeTrigger createTimeTrigger() {
+		TimeTriggerImpl timeTrigger = new TimeTriggerImpl();
+		return timeTrigger;
 	}
 
 	/**
@@ -300,16 +310,6 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public TimeTrigger createTimeTrigger() {
-		TimeTriggerImpl timeTrigger = new TimeTriggerImpl();
-		return timeTrigger;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public ParameterDirection createParameterDirectionFromString(EDataType eDataType, String initialValue) {
 		ParameterDirection result = ParameterDirection.get(initialValue);
 		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
@@ -402,8 +402,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public RuntimeMetadataPackage getRuntimeMetadataPackage() {
-		return (RuntimeMetadataPackage)getEPackage();
+	public RuntimePackage getRuntimePackage() {
+		return (RuntimePackage)getEPackage();
 	}
 
 	/**
@@ -413,8 +413,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * @generated
 	 */
 	@Deprecated
-	public static RuntimeMetadataPackage getPackage() {
-		return RuntimeMetadataPackage.eINSTANCE;
+	public static RuntimePackage getPackage() {
+		return RuntimePackage.eINSTANCE;
 	}
 
-} //RuntimeMetadataFactoryImpl
+} //RuntimeFactoryImpl

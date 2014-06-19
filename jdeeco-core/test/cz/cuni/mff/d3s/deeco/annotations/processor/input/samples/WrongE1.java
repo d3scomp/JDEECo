@@ -16,7 +16,7 @@ import cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange;
  * 
  */
 @Ensemble
-@PeriodicScheduling(3000)
+@PeriodicScheduling(period=3000)
 public class WrongE1 {
 
 	@Membership

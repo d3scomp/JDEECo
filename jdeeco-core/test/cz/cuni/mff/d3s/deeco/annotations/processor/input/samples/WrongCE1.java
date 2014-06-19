@@ -13,7 +13,7 @@ import cz.cuni.mff.d3s.deeco.annotations.Component;
  * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
  *
  */
-@PeriodicScheduling(1000)
+@PeriodicScheduling(period=1000)
 public class WrongCE1 {
 
 	@Process

@@ -7,12 +7,16 @@ Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Export-Package: cz.cuni.mff.d3s.deeco.model.runtimemodel,
- cz.cuni.mff.d3s.deeco.model.runtimemodel.impl,
+Export-Package: cz.cuni.mff.d3s.deeco.model.runtime.api,
  cz.cuni.mff.d3s.deeco.model.runtime,
- cz.cuni.mff.d3s.deeco.model.runtime.api,
  cz.cuni.mff.d3s.deeco.model.runtime.impl,
- cz.cuni.mff.d3s.deeco.model.runtime.meta
+ cz.cuni.mff.d3s.deeco.model.runtime.meta,
+ cz.cuni.mff.d3s.deeco.model.runtime.util,
+ cz.cuni.mff.d3s.deeco.model.runtimemodel,
+ cz.cuni.mff.d3s.deeco.model.runtimemodel.impl,
+ runtime,
+ runtime.impl,
+ runtime.util
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecore;visibility:=reexport,
  org.eclipse.emf.ecore.xmi

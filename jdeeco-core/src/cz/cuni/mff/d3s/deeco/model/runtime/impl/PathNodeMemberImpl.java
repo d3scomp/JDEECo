@@ -4,7 +4,7 @@ package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
+import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage;
 
 import org.eclipse.emf.ecore.EClass;
 
@@ -34,7 +34,7 @@ public class PathNodeMemberImpl extends PathNodeImpl implements PathNodeMember {
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return RuntimeMetadataPackage.Literals.PATH_NODE_MEMBER;
+		return RuntimePackage.Literals.PATH_NODE_MEMBER;
 	}
 
 } //PathNodeMemberImpl

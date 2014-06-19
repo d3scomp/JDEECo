@@ -2,6 +2,7 @@ package cz.cuni.mff.d3s.deeco.runtime;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;

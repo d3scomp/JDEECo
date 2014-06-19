@@ -7,7 +7,6 @@ import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry;
 
 import org.eclipse.emf.common.util.EList;
 
-import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -23,11 +22,10 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getKnowledgeManager <em>Knowledge Manager</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getShadowKnowledgeManagerRegistry <em>Shadow Knowledge Manager Registry</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getEnsembleControllers <em>Ensemble Controllers</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getInternalData <em>Internal Data</em>}</li>
  * </ul>
  * </p>
  *
- * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance()
+ * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getComponentInstance()
  * @model
  * @generated
  */
@@ -43,7 +41,7 @@ public interface ComponentInstance extends EObject {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Component Processes</em>' containment reference list.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance_ComponentProcesses()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getComponentInstance_ComponentProcesses()
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getComponentInstance
 	 * @model opposite="componentInstance" containment="true"
 	 * @generated
@@ -60,7 +58,7 @@ public interface ComponentInstance extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Name</em>' attribute.
 	 * @see #setName(String)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance_Name()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getComponentInstance_Name()
 	 * @model required="true"
 	 * @generated
 	 */
@@ -86,7 +84,7 @@ public interface ComponentInstance extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Knowledge Manager</em>' attribute.
 	 * @see #setKnowledgeManager(KnowledgeManager)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance_KnowledgeManager()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getComponentInstance_KnowledgeManager()
 	 * @model dataType="cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeManager" required="true"
 	 * @generated
 	 */
@@ -112,7 +110,7 @@ public interface ComponentInstance extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Shadow Knowledge Manager Registry</em>' attribute.
 	 * @see #setShadowKnowledgeManagerRegistry(ShadowKnowledgeManagerRegistry)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance_ShadowKnowledgeManagerRegistry()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getComponentInstance_ShadowKnowledgeManagerRegistry()
 	 * @model dataType="cz.cuni.mff.d3s.deeco.model.runtime.api.ShadowKnowledgeManagerRegistry" required="true"
 	 * @generated
 	 */
@@ -139,28 +137,11 @@ public interface ComponentInstance extends EObject {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Ensemble Controllers</em>' containment reference list.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance_EnsembleControllers()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getComponentInstance_EnsembleControllers()
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController#getComponentInstance
 	 * @model opposite="componentInstance" containment="true"
 	 * @generated
 	 */
 	EList<EnsembleController> getEnsembleControllers();
-
-	/**
-	 * Returns the value of the '<em><b>Internal Data</b></em>' map.
-	 * The key is of type {@link java.lang.Object},
-	 * and the value is of type {@link java.lang.Object},
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Internal Data</em>' map isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Internal Data</em>' map.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance_InternalData()
-	 * @model mapType="cz.cuni.mff.d3s.deeco.model.runtime.api.ObjectToObjectMap<org.eclipse.emf.ecore.EJavaObject, org.eclipse.emf.ecore.EJavaObject>"
-	 * @generated
-	 */
-	EMap<Object, Object> getInternalData();
 
 } // ComponentInstance

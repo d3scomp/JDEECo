@@ -15,7 +15,7 @@ package cz.cuni.mff.d3s.deeco.model.runtime.api;
  * </ul>
  * </p>
  *
- * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getPathNodeField()
+ * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getPathNodeField()
  * @model
  * @generated
  */
@@ -30,7 +30,7 @@ public interface PathNodeField extends PathNode {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Name</em>' attribute.
 	 * @see #setName(String)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getPathNodeField_Name()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getPathNodeField_Name()
 	 * @model required="true"
 	 * @generated
 	 */

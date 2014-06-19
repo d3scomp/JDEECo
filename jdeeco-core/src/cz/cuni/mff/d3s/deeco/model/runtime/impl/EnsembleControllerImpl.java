@@ -6,7 +6,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
+import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -60,7 +60,7 @@ public class EnsembleControllerImpl extends MinimalEObjectImpl.Container impleme
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return RuntimeMetadataPackage.Literals.ENSEMBLE_CONTROLLER;
+		return RuntimePackage.Literals.ENSEMBLE_CONTROLLER;
 	}
 
 	/**
@@ -69,7 +69,7 @@ public class EnsembleControllerImpl extends MinimalEObjectImpl.Container impleme
 	 * @generated
 	 */
 	public ComponentInstance getComponentInstance() {
-		if (eContainerFeatureID() != RuntimeMetadataPackage.ENSEMBLE_CONTROLLER__COMPONENT_INSTANCE) return null;
+		if (eContainerFeatureID() != RuntimePackage.ENSEMBLE_CONTROLLER__COMPONENT_INSTANCE) return null;
 		return (ComponentInstance)eInternalContainer();
 	}
 
@@ -79,7 +79,7 @@ public class EnsembleControllerImpl extends MinimalEObjectImpl.Container impleme
 	 * @generated
 	 */
 	public NotificationChain basicSetComponentInstance(ComponentInstance newComponentInstance, NotificationChain msgs) {
-		msgs = eBasicSetContainer((InternalEObject)newComponentInstance, RuntimeMetadataPackage.ENSEMBLE_CONTROLLER__COMPONENT_INSTANCE, msgs);
+		msgs = eBasicSetContainer((InternalEObject)newComponentInstance, RuntimePackage.ENSEMBLE_CONTROLLER__COMPONENT_INSTANCE, msgs);
 		return msgs;
 	}
 
@@ -89,19 +89,19 @@ public class EnsembleControllerImpl extends MinimalEObjectImpl.Container impleme
 	 * @generated
 	 */
 	public void setComponentInstance(ComponentInstance newComponentInstance) {
-		if (newComponentInstance != eInternalContainer() || (eContainerFeatureID() != RuntimeMetadataPackage.ENSEMBLE_CONTROLLER__COMPONENT_INSTANCE && newComponentInstance != null)) {
+		if (newComponentInstance != eInternalContainer() || (eContainerFeatureID() != RuntimePackage.ENSEMBLE_CONTROLLER__COMPONENT_INSTANCE && newComponentInstance != null)) {
 			if (EcoreUtil.isAncestor(this, newComponentInstance))
 				throw new IllegalArgumentException("Recursive containment not allowed for " + toString());
 			NotificationChain msgs = null;
 			if (eInternalContainer() != null)
 				msgs = eBasicRemoveFromContainer(msgs);
 			if (newComponentInstance != null)
-				msgs = ((InternalEObject)newComponentInstance).eInverseAdd(this, RuntimeMetadataPackage.COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS, ComponentInstance.class, msgs);
+				msgs = ((InternalEObject)newComponentInstance).eInverseAdd(this, RuntimePackage.COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS, ComponentInstance.class, msgs);
 			msgs = basicSetComponentInstance(newComponentInstance, msgs);
 			if (msgs != null) msgs.dispatch();
 		}
 		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.ENSEMBLE_CONTROLLER__COMPONENT_INSTANCE, newComponentInstance, newComponentInstance));
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimePackage.ENSEMBLE_CONTROLLER__COMPONENT_INSTANCE, newComponentInstance, newComponentInstance));
 	}
 
 	/**
@@ -115,7 +115,7 @@ public class EnsembleControllerImpl extends MinimalEObjectImpl.Container impleme
 			ensembleDefinition = (EnsembleDefinition)eResolveProxy(oldEnsembleDefinition);
 			if (ensembleDefinition != oldEnsembleDefinition) {
 				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, RuntimeMetadataPackage.ENSEMBLE_CONTROLLER__ENSEMBLE_DEFINITION, oldEnsembleDefinition, ensembleDefinition));
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, RuntimePackage.ENSEMBLE_CONTROLLER__ENSEMBLE_DEFINITION, oldEnsembleDefinition, ensembleDefinition));
 			}
 		}
 		return ensembleDefinition;
@@ -139,7 +139,7 @@ public class EnsembleControllerImpl extends MinimalEObjectImpl.Container impleme
 		EnsembleDefinition oldEnsembleDefinition = ensembleDefinition;
 		ensembleDefinition = newEnsembleDefinition;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.ENSEMBLE_CONTROLLER__ENSEMBLE_DEFINITION, oldEnsembleDefinition, ensembleDefinition));
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimePackage.ENSEMBLE_CONTROLLER__ENSEMBLE_DEFINITION, oldEnsembleDefinition, ensembleDefinition));
 	}
 
 	/**
@@ -150,7 +150,7 @@ public class EnsembleControllerImpl extends MinimalEObjectImpl.Container impleme
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.ENSEMBLE_CONTROLLER__COMPONENT_INSTANCE:
+			case RuntimePackage.ENSEMBLE_CONTROLLER__COMPONENT_INSTANCE:
 				if (eInternalContainer() != null)
 					msgs = eBasicRemoveFromContainer(msgs);
 				return basicSetComponentInstance((ComponentInstance)otherEnd, msgs);
@@ -166,7 +166,7 @@ public class EnsembleControllerImpl extends MinimalEObjectImpl.Container impleme
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.ENSEMBLE_CONTROLLER__COMPONENT_INSTANCE:
+			case RuntimePackage.ENSEMBLE_CONTROLLER__COMPONENT_INSTANCE:
 				return basicSetComponentInstance(null, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -180,8 +180,8 @@ public class EnsembleControllerImpl extends MinimalEObjectImpl.Container impleme
 	@Override
 	public NotificationChain eBasicRemoveFromContainerFeature(NotificationChain msgs) {
 		switch (eContainerFeatureID()) {
-			case RuntimeMetadataPackage.ENSEMBLE_CONTROLLER__COMPONENT_INSTANCE:
-				return eInternalContainer().eInverseRemove(this, RuntimeMetadataPackage.COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS, ComponentInstance.class, msgs);
+			case RuntimePackage.ENSEMBLE_CONTROLLER__COMPONENT_INSTANCE:
+				return eInternalContainer().eInverseRemove(this, RuntimePackage.COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS, ComponentInstance.class, msgs);
 		}
 		return super.eBasicRemoveFromContainerFeature(msgs);
 	}
@@ -194,9 +194,9 @@ public class EnsembleControllerImpl extends MinimalEObjectImpl.Container impleme
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.ENSEMBLE_CONTROLLER__COMPONENT_INSTANCE:
+			case RuntimePackage.ENSEMBLE_CONTROLLER__COMPONENT_INSTANCE:
 				return getComponentInstance();
-			case RuntimeMetadataPackage.ENSEMBLE_CONTROLLER__ENSEMBLE_DEFINITION:
+			case RuntimePackage.ENSEMBLE_CONTROLLER__ENSEMBLE_DEFINITION:
 				if (resolve) return getEnsembleDefinition();
 				return basicGetEnsembleDefinition();
 		}
@@ -211,10 +211,10 @@ public class EnsembleControllerImpl extends MinimalEObjectImpl.Container impleme
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.ENSEMBLE_CONTROLLER__COMPONENT_INSTANCE:
+			case RuntimePackage.ENSEMBLE_CONTROLLER__COMPONENT_INSTANCE:
 				setComponentInstance((ComponentInstance)newValue);
 				return;
-			case RuntimeMetadataPackage.ENSEMBLE_CONTROLLER__ENSEMBLE_DEFINITION:
+			case RuntimePackage.ENSEMBLE_CONTROLLER__ENSEMBLE_DEFINITION:
 				setEnsembleDefinition((EnsembleDefinition)newValue);
 				return;
 		}
@@ -229,10 +229,10 @@ public class EnsembleControllerImpl extends MinimalEObjectImpl.Container impleme
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.ENSEMBLE_CONTROLLER__COMPONENT_INSTANCE:
+			case RuntimePackage.ENSEMBLE_CONTROLLER__COMPONENT_INSTANCE:
 				setComponentInstance((ComponentInstance)null);
 				return;
-			case RuntimeMetadataPackage.ENSEMBLE_CONTROLLER__ENSEMBLE_DEFINITION:
+			case RuntimePackage.ENSEMBLE_CONTROLLER__ENSEMBLE_DEFINITION:
 				setEnsembleDefinition((EnsembleDefinition)null);
 				return;
 		}
@@ -247,9 +247,9 @@ public class EnsembleControllerImpl extends MinimalEObjectImpl.Container impleme
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.ENSEMBLE_CONTROLLER__COMPONENT_INSTANCE:
+			case RuntimePackage.ENSEMBLE_CONTROLLER__COMPONENT_INSTANCE:
 				return getComponentInstance() != null;
-			case RuntimeMetadataPackage.ENSEMBLE_CONTROLLER__ENSEMBLE_DEFINITION:
+			case RuntimePackage.ENSEMBLE_CONTROLLER__ENSEMBLE_DEFINITION:
 				return ensembleDefinition != null;
 		}
 		return super.eIsSet(featureID);

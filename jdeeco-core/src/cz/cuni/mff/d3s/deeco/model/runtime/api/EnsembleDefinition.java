@@ -3,6 +3,7 @@
 package cz.cuni.mff.d3s.deeco.model.runtime.api;
 
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
+
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EObject;
@@ -23,7 +24,7 @@ import org.eclipse.emf.ecore.EObject;
  * </ul>
  * </p>
  *
- * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getEnsembleDefinition()
+ * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getEnsembleDefinition()
  * @model
  * @generated
  */
@@ -38,7 +39,7 @@ public interface EnsembleDefinition extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Name</em>' attribute.
 	 * @see #setName(String)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getEnsembleDefinition_Name()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getEnsembleDefinition_Name()
 	 * @model required="true"
 	 * @generated
 	 */
@@ -64,7 +65,7 @@ public interface EnsembleDefinition extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Membership</em>' containment reference.
 	 * @see #setMembership(Condition)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getEnsembleDefinition_Membership()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getEnsembleDefinition_Membership()
 	 * @model containment="true" required="true"
 	 * @generated
 	 */
@@ -90,7 +91,7 @@ public interface EnsembleDefinition extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Knowledge Exchange</em>' containment reference.
 	 * @see #setKnowledgeExchange(Exchange)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getEnsembleDefinition_KnowledgeExchange()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getEnsembleDefinition_KnowledgeExchange()
 	 * @model containment="true" required="true"
 	 * @generated
 	 */
@@ -116,7 +117,7 @@ public interface EnsembleDefinition extends EObject {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Triggers</em>' containment reference list.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getEnsembleDefinition_Triggers()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getEnsembleDefinition_Triggers()
 	 * @model containment="true"
 	 * @generated
 	 */
@@ -132,7 +133,7 @@ public interface EnsembleDefinition extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Communication Boundary</em>' attribute.
 	 * @see #setCommunicationBoundary(CommunicationBoundaryPredicate)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getEnsembleDefinition_CommunicationBoundary()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getEnsembleDefinition_CommunicationBoundary()
 	 * @model dataType="cz.cuni.mff.d3s.deeco.model.runtime.api.CommunicationBoundary"
 	 * @generated
 	 */

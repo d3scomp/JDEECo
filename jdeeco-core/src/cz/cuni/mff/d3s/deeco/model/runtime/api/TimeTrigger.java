@@ -13,10 +13,11 @@ package cz.cuni.mff.d3s.deeco.model.runtime.api;
  * <ul>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger#getPeriod <em>Period</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger#getOffset <em>Offset</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger#getOrder <em>Order</em>}</li>
  * </ul>
  * </p>
  *
- * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getTimeTrigger()
+ * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getTimeTrigger()
  * @model
  * @generated
  */
@@ -32,7 +33,7 @@ public interface TimeTrigger extends Trigger {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Period</em>' attribute.
 	 * @see #setPeriod(long)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getTimeTrigger_Period()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getTimeTrigger_Period()
 	 * @model default="0" required="true"
 	 * @generated
 	 */
@@ -59,7 +60,7 @@ public interface TimeTrigger extends Trigger {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Offset</em>' attribute.
 	 * @see #setOffset(long)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getTimeTrigger_Offset()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getTimeTrigger_Offset()
 	 * @model default="0" required="true"
 	 * @generated
 	 */
@@ -74,5 +75,31 @@ public interface TimeTrigger extends Trigger {
 	 * @generated
 	 */
 	void setOffset(long value);
+
+	/**
+	 * Returns the value of the '<em><b>Order</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Order</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Order</em>' attribute.
+	 * @see #setOrder(int)
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getTimeTrigger_Order()
+	 * @model required="true"
+	 * @generated
+	 */
+	int getOrder();
+
+	/**
+	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger#getOrder <em>Order</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Order</em>' attribute.
+	 * @see #getOrder()
+	 * @generated
+	 */
+	void setOrder(int value);
 
 } // TimeTrigger

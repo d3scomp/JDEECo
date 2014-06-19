@@ -8,7 +8,7 @@ import org.eclipse.emf.ecore.EObject;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Runtime Metadata</b></em>'.
+ * A representation of the model object '<em><b>Metadata</b></em>'.
  * <!-- end-user-doc -->
  *
  * <p>
@@ -19,7 +19,7 @@ import org.eclipse.emf.ecore.EObject;
  * </ul>
  * </p>
  *
- * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getRuntimeMetadata()
+ * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getRuntimeMetadata()
  * @model
  * @generated
  */
@@ -34,7 +34,7 @@ public interface RuntimeMetadata extends EObject {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Ensemble Definitions</em>' containment reference list.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getRuntimeMetadata_EnsembleDefinitions()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getRuntimeMetadata_EnsembleDefinitions()
 	 * @model containment="true"
 	 * @generated
 	 */
@@ -50,7 +50,7 @@ public interface RuntimeMetadata extends EObject {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Component Instances</em>' containment reference list.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getRuntimeMetadata_ComponentInstances()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getRuntimeMetadata_ComponentInstances()
 	 * @model containment="true"
 	 * @generated
 	 */

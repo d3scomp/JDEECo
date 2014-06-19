@@ -19,7 +19,7 @@ import org.eclipse.emf.common.util.EList;
  * </ul>
  * </p>
  *
- * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentProcess()
+ * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getComponentProcess()
  * @model
  * @generated
  */
@@ -34,7 +34,7 @@ public interface ComponentProcess extends Invocable {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Name</em>' attribute.
 	 * @see #setName(String)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentProcess_Name()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getComponentProcess_Name()
 	 * @model required="true"
 	 * @generated
 	 */
@@ -61,7 +61,7 @@ public interface ComponentProcess extends Invocable {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Component Instance</em>' container reference.
 	 * @see #setComponentInstance(ComponentInstance)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentProcess_ComponentInstance()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getComponentProcess_ComponentInstance()
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getComponentProcesses
 	 * @model opposite="componentProcesses" required="true" transient="false"
 	 * @generated
@@ -89,7 +89,7 @@ public interface ComponentProcess extends Invocable {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Is Active</em>' attribute.
 	 * @see #setIsActive(boolean)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentProcess_IsActive()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getComponentProcess_IsActive()
 	 * @model default="true" required="true"
 	 * @generated
 	 */
@@ -115,7 +115,7 @@ public interface ComponentProcess extends Invocable {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Triggers</em>' containment reference list.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentProcess_Triggers()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getComponentProcess_Triggers()
 	 * @model containment="true"
 	 * @generated
 	 */

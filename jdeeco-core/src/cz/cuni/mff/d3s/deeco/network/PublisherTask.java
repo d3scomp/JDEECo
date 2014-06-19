@@ -26,19 +26,13 @@ public class PublisherTask extends Task {
 	private final KnowledgeDataPublisher publisher;
 	private final TimeTrigger trigger;
 	
-	
-	public PublisherTask(Scheduler scheduler, KnowledgeDataPublisher publisher, String host) {
-		this(scheduler, publisher, Integer.getInteger(DeecoProperties.PUBLISHING_PERIOD, DEFAULT_PUBLISHING_PERIOD), host);
-	}
-	public PublisherTask(Scheduler scheduler, KnowledgeDataPublisher publisher, long period, String host) {
+	public PublisherTask(Scheduler scheduler, KnowledgeDataPublisher publisher, TimeTrigger trigger, String host) {
 		super(scheduler);		
 
-		this.trigger = new TimeTriggerExt();
-		this.trigger.setOffset(0);
-		this.trigger.setPeriod(period);
+		this.trigger = trigger;
 		this.publisher = publisher;
 		
-		Log.d(String.format("PublisherTask at %s uses publishing period %d", host, period));
+		Log.d(String.format("PublisherTask at %s uses publishing period %d", host, trigger.getPeriod()));
 	}
 
 	/* (non-Javadoc)

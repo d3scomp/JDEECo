@@ -4,7 +4,7 @@ package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
+import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage;
 
 import org.eclipse.emf.common.notify.Notification;
 
@@ -62,7 +62,7 @@ public class PathNodeFieldImpl extends PathNodeImpl implements PathNodeField {
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return RuntimeMetadataPackage.Literals.PATH_NODE_FIELD;
+		return RuntimePackage.Literals.PATH_NODE_FIELD;
 	}
 
 	/**
@@ -83,7 +83,7 @@ public class PathNodeFieldImpl extends PathNodeImpl implements PathNodeField {
 		String oldName = name;
 		name = newName;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.PATH_NODE_FIELD__NAME, oldName, name));
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimePackage.PATH_NODE_FIELD__NAME, oldName, name));
 	}
 
 	/**
@@ -94,7 +94,7 @@ public class PathNodeFieldImpl extends PathNodeImpl implements PathNodeField {
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.PATH_NODE_FIELD__NAME:
+			case RuntimePackage.PATH_NODE_FIELD__NAME:
 				return getName();
 		}
 		return super.eGet(featureID, resolve, coreType);
@@ -108,7 +108,7 @@ public class PathNodeFieldImpl extends PathNodeImpl implements PathNodeField {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.PATH_NODE_FIELD__NAME:
+			case RuntimePackage.PATH_NODE_FIELD__NAME:
 				setName((String)newValue);
 				return;
 		}
@@ -123,7 +123,7 @@ public class PathNodeFieldImpl extends PathNodeImpl implements PathNodeField {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.PATH_NODE_FIELD__NAME:
+			case RuntimePackage.PATH_NODE_FIELD__NAME:
 				setName(NAME_EDEFAULT);
 				return;
 		}
@@ -138,7 +138,7 @@ public class PathNodeFieldImpl extends PathNodeImpl implements PathNodeField {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.PATH_NODE_FIELD__NAME:
+			case RuntimePackage.PATH_NODE_FIELD__NAME:
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
 		}
 		return super.eIsSet(featureID);

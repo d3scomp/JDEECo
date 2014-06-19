@@ -31,7 +31,7 @@ public class ExampleComponent {
 	public List<String> typeMismatch = Collections.emptyList();
 	
 	@Process
-	@PeriodicScheduling(1000)
+	@PeriodicScheduling(period=1000)
 	public static void process1(
 			@In("in") Integer p1,
 			@InOut("inout") String p2,

@@ -6,7 +6,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
+import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -98,7 +98,7 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return RuntimeMetadataPackage.Literals.PARAMETER;
+		return RuntimePackage.Literals.PARAMETER;
 	}
 
 	/**
@@ -121,7 +121,7 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 		boolean oldDirectionESet = directionESet;
 		directionESet = true;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.PARAMETER__DIRECTION, oldDirection, direction, !oldDirectionESet));
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimePackage.PARAMETER__DIRECTION, oldDirection, direction, !oldDirectionESet));
 	}
 
 	/**
@@ -135,7 +135,7 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 		direction = DIRECTION_EDEFAULT;
 		directionESet = false;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.UNSET, RuntimeMetadataPackage.PARAMETER__DIRECTION, oldDirection, DIRECTION_EDEFAULT, oldDirectionESet));
+			eNotify(new ENotificationImpl(this, Notification.UNSET, RuntimePackage.PARAMETER__DIRECTION, oldDirection, DIRECTION_EDEFAULT, oldDirectionESet));
 	}
 
 	/**
@@ -165,7 +165,7 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 		KnowledgePath oldKnowledgePath = knowledgePath;
 		knowledgePath = newKnowledgePath;
 		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.PARAMETER__KNOWLEDGE_PATH, oldKnowledgePath, newKnowledgePath);
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, RuntimePackage.PARAMETER__KNOWLEDGE_PATH, oldKnowledgePath, newKnowledgePath);
 			if (msgs == null) msgs = notification; else msgs.add(notification);
 		}
 		return msgs;
@@ -180,14 +180,14 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 		if (newKnowledgePath != knowledgePath) {
 			NotificationChain msgs = null;
 			if (knowledgePath != null)
-				msgs = ((InternalEObject)knowledgePath).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - RuntimeMetadataPackage.PARAMETER__KNOWLEDGE_PATH, null, msgs);
+				msgs = ((InternalEObject)knowledgePath).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - RuntimePackage.PARAMETER__KNOWLEDGE_PATH, null, msgs);
 			if (newKnowledgePath != null)
-				msgs = ((InternalEObject)newKnowledgePath).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - RuntimeMetadataPackage.PARAMETER__KNOWLEDGE_PATH, null, msgs);
+				msgs = ((InternalEObject)newKnowledgePath).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - RuntimePackage.PARAMETER__KNOWLEDGE_PATH, null, msgs);
 			msgs = basicSetKnowledgePath(newKnowledgePath, msgs);
 			if (msgs != null) msgs.dispatch();
 		}
 		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.PARAMETER__KNOWLEDGE_PATH, newKnowledgePath, newKnowledgePath));
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimePackage.PARAMETER__KNOWLEDGE_PATH, newKnowledgePath, newKnowledgePath));
 	}
 
 	/**
@@ -208,7 +208,7 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 		Class oldType = type;
 		type = newType;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.PARAMETER__TYPE, oldType, type));
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimePackage.PARAMETER__TYPE, oldType, type));
 	}
 
 	/**
@@ -219,7 +219,7 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.PARAMETER__KNOWLEDGE_PATH:
+			case RuntimePackage.PARAMETER__KNOWLEDGE_PATH:
 				return basicSetKnowledgePath(null, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -233,11 +233,11 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.PARAMETER__DIRECTION:
+			case RuntimePackage.PARAMETER__DIRECTION:
 				return getDirection();
-			case RuntimeMetadataPackage.PARAMETER__KNOWLEDGE_PATH:
+			case RuntimePackage.PARAMETER__KNOWLEDGE_PATH:
 				return getKnowledgePath();
-			case RuntimeMetadataPackage.PARAMETER__TYPE:
+			case RuntimePackage.PARAMETER__TYPE:
 				return getType();
 		}
 		return super.eGet(featureID, resolve, coreType);
@@ -251,13 +251,13 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.PARAMETER__DIRECTION:
+			case RuntimePackage.PARAMETER__DIRECTION:
 				setDirection((ParameterDirection)newValue);
 				return;
-			case RuntimeMetadataPackage.PARAMETER__KNOWLEDGE_PATH:
+			case RuntimePackage.PARAMETER__KNOWLEDGE_PATH:
 				setKnowledgePath((KnowledgePath)newValue);
 				return;
-			case RuntimeMetadataPackage.PARAMETER__TYPE:
+			case RuntimePackage.PARAMETER__TYPE:
 				setType((Class)newValue);
 				return;
 		}
@@ -272,13 +272,13 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.PARAMETER__DIRECTION:
+			case RuntimePackage.PARAMETER__DIRECTION:
 				unsetDirection();
 				return;
-			case RuntimeMetadataPackage.PARAMETER__KNOWLEDGE_PATH:
+			case RuntimePackage.PARAMETER__KNOWLEDGE_PATH:
 				setKnowledgePath((KnowledgePath)null);
 				return;
-			case RuntimeMetadataPackage.PARAMETER__TYPE:
+			case RuntimePackage.PARAMETER__TYPE:
 				setType((Class)null);
 				return;
 		}
@@ -293,11 +293,11 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.PARAMETER__DIRECTION:
+			case RuntimePackage.PARAMETER__DIRECTION:
 				return isSetDirection();
-			case RuntimeMetadataPackage.PARAMETER__KNOWLEDGE_PATH:
+			case RuntimePackage.PARAMETER__KNOWLEDGE_PATH:
 				return knowledgePath != null;
-			case RuntimeMetadataPackage.PARAMETER__TYPE:
+			case RuntimePackage.PARAMETER__TYPE:
 				return type != null;
 		}
 		return super.eIsSet(featureID);

@@ -58,7 +58,7 @@ public class JDEECoWithinDayMobsimListener implements
 		for (JDEECoAgentProvider agentProvider : agentProviders) {
 			for (JDEECoAgent agent : agentProvider.getAgents()) {
 				matSimOutput = new MATSimOutput(agent.getCurrentLinkId(),
-						agent.estimatePosition(currentSeconds));
+						agent.estimatePosition(currentSeconds), agent.getState());
 				matSimOutputs.put(agent.getId(), matSimOutput);
 			}
 		}
@@ -72,7 +72,7 @@ public class JDEECoWithinDayMobsimListener implements
 				for (JDEECoAgent agent : agentProvider.getAgents()) {
 					if (matSimInputs.containsKey(agent.getId())) {
 						mData = (MATSimInput) matSimInputs.get(agent.getId());
-						agent.setInput(mData);
+						agent.setRoute(mData.route);
 					}
 				}
 			}

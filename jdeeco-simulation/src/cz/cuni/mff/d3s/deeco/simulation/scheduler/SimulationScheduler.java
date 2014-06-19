@@ -5,13 +5,13 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.scheduler.SchedulerEvent;
@@ -34,30 +34,24 @@ public class SimulationScheduler implements Scheduler,
 
 	private final SimulationHost host;
 	private final CallbackProvider callbackProvider;
-	
+
 	private final SortedSet<SchedulerEvent> queue;
 	private final Set<Task> allTasks;
 	private final Map<Task, SchedulerEvent> periodicEvents;
-	
+
 	private final Set<Trigger> onTriggerSchedules;
 
 	private Executor executor;
-	
-	private Random rnd;
 
-	public SimulationScheduler(SimulationHost host, CallbackProvider callbackProvider) {
+	public SimulationScheduler(SimulationHost host,
+			CallbackProvider callbackProvider) {
 		this.host = host;
 		this.callbackProvider = callbackProvider;
 		queue = new TreeSet<SchedulerEvent>();
 		allTasks = new HashSet<>();
-		periodicEvents = new HashMap<>();	
+		periodicEvents = new HashMap<>();
 		onTriggerSchedules = new HashSet<>();
-		
-		long seed = 0;
-		for (char c: host.getHostId().toCharArray())
-			seed = seed*32+(c-'a');
-		rnd = new Random(seed);
-		
+
 		host.setSimulationTimeEventListener(this);
 	}
 
@@ -80,35 +74,39 @@ public class SimulationScheduler implements Scheduler,
 		if (task.getTimeTrigger() != null) {
 			SchedulerEvent event = new SchedulerEvent(task,
 					task.getTimeTrigger());
-			
-			// for experiments, publisher task has a random start offset up to its period
+
+			// for experiments, publisher task has a random start offset up to
+			// its period
 			if (event.periodic) {
-				int offset = rnd.nextInt((int) (task.getTimeTrigger().getPeriod() + 1));
-				task.getTimeTrigger().setOffset(offset);
-				Log.d(String.format("Scheduler init: Periodic task %s offset %d",task.getClass().toString(), offset));
+				Log.d(String.format(
+						"Scheduler init: Periodic task %s offset %d", task
+								.getClass().toString(), task.getTimeTrigger()
+								.getOffset()));
 			}
-				
+
 			scheduleAfter(event, task.getTimeTrigger().getOffset());
 
 			periodicEvents.put(task, event);
 		}
 		task.setTriggerListener(new TaskTriggerListener() {
 			@Override
-			public void triggered(Task task, Trigger trigger) {				
+			public void triggered(Task task, Trigger trigger) {
 				if (allTasks.contains(task)) {
-					// if the trigger has been already scheduled (i.e., there have
-					// been many consecutive invocations of that trigger in a row),
+					// if the trigger has been already scheduled (i.e., there
+					// have
+					// been many consecutive invocations of that trigger in a
+					// row),
 					// then skip this event
 					if (onTriggerSchedules.contains(trigger))
 						return;
 					onTriggerSchedules.add(trigger);
 					// schedule immediately, regardless the actual runtime of
-					// the process that triggered this trigger					
+					// the process that triggered this trigger
 					scheduleAfter(new SchedulerEvent(task, trigger), 0);
 				}
 			}
 		});
-		
+
 		allTasks.add(task);
 
 	}
@@ -155,34 +153,39 @@ public class SimulationScheduler implements Scheduler,
 
 	@Override
 	public void at(long time) {
-		//System.out.println("Scheduler " +host.getId()+" at: "+time+" called with queue: " + Arrays.toString(queue.toArray()));
+		// System.out.println("Scheduler "
+		// +host.getId()+" at: "+time+" called with queue: " +
+		// Arrays.toString(queue.toArray()));
 		SchedulerEvent event;
-		while ((event = queue.first()) != null)  {
+		while ((event = queue.first()) != null) {
 			// if notified too early (or already processed all events scheduled
 			// for the current time)
 			if (event.nextExecutionTime > time)
 				break;
-			
-			// The time is right to execute the next task			
+
+			// The time is right to execute the next task
 			pop();
 			if (event.periodic) {
-				// schedule for the next period 
-				// add a random offset within the period (up to 75% of the period)
-				event.nextPeriodStart += event.executable.getTimeTrigger().getPeriod();
-				
-				int offset = rnd.nextInt((int) (event.executable.getTimeTrigger().getPeriod()*0.75));
-				event.nextExecutionTime = event.nextPeriodStart + offset;
+				// schedule for the next period
+				// add a random offset within the period (up to 75% of the
+				// period)
+				TimeTrigger timeTrigger = event.executable.getTimeTrigger();
+				event.nextPeriodStart += timeTrigger.getPeriod();
+				event.nextExecutionTime = event.nextPeriodStart
+						+ timeTrigger.getOffset();
 				push(event);
 			}
 			if (executor != null) {
 				executor.execute(event.executable, event.trigger);
 			} else {
 				Log.e("The simulation scheduler is associated with no excecutor!");
-			}			
+			}
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider#getCurrentTime()
 	 */
 	@Override
@@ -192,30 +195,32 @@ public class SimulationScheduler implements Scheduler,
 
 	// ------Private methods--------
 
-//	private void scheduleNow(SchedulerEvent event, long period) {
-//		event.period = period;
-//		event.nextExecutionTime = host.getCurrentTime() + lastProcessExecutionTime;
-//		push(event);
-//	}
-	
+	// private void scheduleNow(SchedulerEvent event, long period) {
+	// event.period = period;
+	// event.nextExecutionTime = host.getCurrentTime() +
+	// lastProcessExecutionTime;
+	// push(event);
+	// }
+
 	/**
 	 * Note that this method has to be explicitly protected by queue's monitor!
 	 */
-	void scheduleAfter(SchedulerEvent event, long delay) {			
+	void scheduleAfter(SchedulerEvent event, long delay) {
 		event.nextExecutionTime = host.getCurrentMilliseconds() + delay;
 		event.nextPeriodStart = host.getCurrentMilliseconds() + delay;
 		push(event);
-					
+
 	}
 
 	private void registerNextExecution() {
 		if (!queue.isEmpty()) {
 			long nextExecutionTime = queue.first().nextExecutionTime;
 			if (nextExecutionTime <= host.getCurrentMilliseconds()) {
-				return; //nextExecutionTime = host.getSimulationTime() + 1;
+				return; // nextExecutionTime = host.getSimulationTime() + 1;
 			}
 			callbackProvider.callAt(nextExecutionTime, host.getHostId());
-			//System.out.println("Scheduler " + host.getId() + " registering callback at " + nextExecutionTime);
+			// System.out.println("Scheduler " + host.getId() +
+			// " registering callback at " + nextExecutionTime);
 		}
 	}
 
@@ -230,10 +235,10 @@ public class SimulationScheduler implements Scheduler,
 	}
 
 	private void push(SchedulerEvent event) {
-		//Log.d("Adding: " + event);
+		// Log.d("Adding: " + event);
 
 		queue.add(event);
-		//Log.d("Queue: " + Arrays.toString(queue.toArray()));
+		// Log.d("Queue: " + Arrays.toString(queue.toArray()));
 
 		// TODO take into account different scheduling policies and WCET of
 		// tasks. According to those the tasks need to be rescheduled.

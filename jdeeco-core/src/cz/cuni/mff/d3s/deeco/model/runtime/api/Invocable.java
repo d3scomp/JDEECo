@@ -21,7 +21,7 @@ import org.eclipse.emf.ecore.EObject;
  * </ul>
  * </p>
  *
- * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getInvocable()
+ * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getInvocable()
  * @model
  * @generated
  */
@@ -36,7 +36,7 @@ public interface Invocable extends EObject {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Parameters</em>' containment reference list.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getInvocable_Parameters()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getInvocable_Parameters()
 	 * @model containment="true"
 	 * @generated
 	 */
@@ -52,7 +52,7 @@ public interface Invocable extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Method</em>' attribute.
 	 * @see #setMethod(Method)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getInvocable_Method()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getInvocable_Method()
 	 * @model dataType="cz.cuni.mff.d3s.deeco.model.runtime.api.Method" required="true"
 	 * @generated
 	 */

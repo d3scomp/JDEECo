@@ -8,9 +8,7 @@ import java.util.Set;
 import org.matsim.api.core.v01.Coord;
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.network.Link;
-import org.matsim.api.core.v01.population.Activity;
 import org.matsim.api.core.v01.population.Leg;
-import org.matsim.api.core.v01.population.Person;
 import org.matsim.api.core.v01.population.PlanElement;
 import org.matsim.core.api.experimental.facilities.Facility;
 import org.matsim.core.config.Config;
@@ -67,36 +65,6 @@ public class MATSimRouter {
 	}
 
 	/**
-	 * 
-	 * @param from
-	 *            start activity id
-	 * @param to
-	 *            end activity id
-	 * @param departureTime
-	 *            start activity end time
-	 * @param person
-	 *            person for who the route is calculated
-	 * @return
-	 */
-	public List<Id> route(Activity from, Activity to, double departureTime,
-			Person person) {
-		TripRouter tr = tripRouterFactory.createTripRouter();
-		List<? extends PlanElement> legs = tr.calcRoute("car",
-				new ActivityWrapper(from), new ActivityWrapper(to),
-				departureTime, person);
-		if (legs.size() == 0) {
-			throw new RuntimeException("Person's " + person.getId().toString()
-					+ " route calculation failed.");
-		}
-		Leg leg = (Leg) legs.get(0);
-		return ((NetworkRoute) leg.getRoute()).getLinkIds();
-	}
-	
-	public List<Id> route(Activity from, Activity to, double departureTime) {
-		return route(from, to, departureTime, null);
-	}
-
-	/**
 	 * @param linkFrom
 	 *            start link
 	 * @param linkTo
@@ -107,33 +75,28 @@ public class MATSimRouter {
 	 *            person for who the route is calculated
 	 * @return
 	 */
-	public List<Id> route(Link linkFrom, Link linkTo, double departureTime,
-			Person person) {
+	public List<Id> route(Link linkFrom, Link linkTo) {
 		TripRouter tr = tripRouterFactory.createTripRouter();
 		List<? extends PlanElement> legs = tr.calcRoute("car", new LinkWrapper(
-				linkFrom), new LinkWrapper(linkTo), departureTime, person);
+				linkFrom), new LinkWrapper(linkTo), 0.0, null);
 		if (legs.size() == 0) {
-			throw new RuntimeException("Person's " + person.getId().toString()
-					+ " route calculation failed.");
+			throw new RuntimeException("Route calculation failed: "
+					+ linkFrom.getId().toString() + " - "
+					+ linkTo.getId().toString());
 		}
 		Leg leg = (Leg) legs.get(0);
-		return ((NetworkRoute) leg.getRoute()).getLinkIds();
-	}
-	
-	public List<Id> route(Link linkFrom, Link linkTo, double departureTime) {
-		return route(linkFrom, linkTo, departureTime, null);
+		List<Id> route = new LinkedList<>(((NetworkRoute) leg.getRoute()).getLinkIds());
+		if (!route.contains(linkTo.getId()) && !linkTo.equals(linkFrom))
+			route.add(linkTo.getId());
+		return route;
 	}
 
-	public List<Id> route(Id from, Id to, double departureTime, Person person) {
+	public List<Id> route(Id from, Id to) {
 		Link fromLink = controler.getNetwork().getLinks().get(from);
 		Link toLink = controler.getNetwork().getLinks().get(to);
-		return route(fromLink, toLink, departureTime, person);
+		return route(fromLink, toLink);
 	}
-	
-	public List<Id> route(Id from, Id to, double departureTime) {
-		return route(from, to, departureTime, null);
-	}
-	
+
 	public Link getLink(Id linkId) {
 		return controler.getNetwork().getLinks().get(linkId);
 	}
@@ -172,32 +135,6 @@ public class MATSimRouter {
 
 		public Id getLinkId() {
 			return link.getId();
-		}
-
-	}
-
-	private static class ActivityWrapper implements Facility {
-
-		private final Activity activity;
-
-		public ActivityWrapper(Activity activity) {
-			this.activity = activity;
-		}
-
-		public Coord getCoord() {
-			return activity.getCoord();
-		}
-
-		public Id getId() {
-			throw new UnsupportedOperationException();
-		}
-
-		public Map<String, Object> getCustomAttributes() {
-			return null;
-		}
-
-		public Id getLinkId() {
-			return activity.getLinkId();
 		}
 
 	}
