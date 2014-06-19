@@ -80,8 +80,8 @@ public class SchedulerEvent implements Comparable<SchedulerEvent> {
 			if (this.trigger instanceof TimeTrigger && o.trigger instanceof TimeTrigger) {
 				TimeTrigger thisTimeTrigger = (TimeTrigger) this.trigger;
 				TimeTrigger otherTimeTrigger = (TimeTrigger) o.trigger;
-				if (thisTimeTrigger.getOffset() < otherTimeTrigger.getOffset()) return -1;
-				else if (thisTimeTrigger.getOffset() < otherTimeTrigger.getOffset()) return 1;
+				if (thisTimeTrigger.getOrder() < otherTimeTrigger.getOrder()) return -1;
+				else if (thisTimeTrigger.getOrder() < otherTimeTrigger.getOrder()) return 1;
 			}
 			return this.hashCode() < o.hashCode() ? 1 : -1;
 		}
