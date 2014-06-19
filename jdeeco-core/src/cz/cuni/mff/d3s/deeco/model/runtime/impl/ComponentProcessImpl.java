@@ -6,7 +6,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage;
+import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 
 import java.util.Collection;
 
@@ -107,7 +107,7 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return RuntimePackage.Literals.COMPONENT_PROCESS;
+		return RuntimeMetadataPackage.Literals.COMPONENT_PROCESS;
 	}
 
 	/**
@@ -128,7 +128,7 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 		String oldName = name;
 		name = newName;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RuntimePackage.COMPONENT_PROCESS__NAME, oldName, name));
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT_PROCESS__NAME, oldName, name));
 	}
 
 	/**
@@ -137,7 +137,7 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 	 * @generated
 	 */
 	public ComponentInstance getComponentInstance() {
-		if (eContainerFeatureID() != RuntimePackage.COMPONENT_PROCESS__COMPONENT_INSTANCE) return null;
+		if (eContainerFeatureID() != RuntimeMetadataPackage.COMPONENT_PROCESS__COMPONENT_INSTANCE) return null;
 		return (ComponentInstance)eInternalContainer();
 	}
 
@@ -147,7 +147,7 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 	 * @generated
 	 */
 	public NotificationChain basicSetComponentInstance(ComponentInstance newComponentInstance, NotificationChain msgs) {
-		msgs = eBasicSetContainer((InternalEObject)newComponentInstance, RuntimePackage.COMPONENT_PROCESS__COMPONENT_INSTANCE, msgs);
+		msgs = eBasicSetContainer((InternalEObject)newComponentInstance, RuntimeMetadataPackage.COMPONENT_PROCESS__COMPONENT_INSTANCE, msgs);
 		return msgs;
 	}
 
@@ -157,19 +157,19 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 	 * @generated
 	 */
 	public void setComponentInstance(ComponentInstance newComponentInstance) {
-		if (newComponentInstance != eInternalContainer() || (eContainerFeatureID() != RuntimePackage.COMPONENT_PROCESS__COMPONENT_INSTANCE && newComponentInstance != null)) {
+		if (newComponentInstance != eInternalContainer() || (eContainerFeatureID() != RuntimeMetadataPackage.COMPONENT_PROCESS__COMPONENT_INSTANCE && newComponentInstance != null)) {
 			if (EcoreUtil.isAncestor(this, newComponentInstance))
 				throw new IllegalArgumentException("Recursive containment not allowed for " + toString());
 			NotificationChain msgs = null;
 			if (eInternalContainer() != null)
 				msgs = eBasicRemoveFromContainer(msgs);
 			if (newComponentInstance != null)
-				msgs = ((InternalEObject)newComponentInstance).eInverseAdd(this, RuntimePackage.COMPONENT_INSTANCE__COMPONENT_PROCESSES, ComponentInstance.class, msgs);
+				msgs = ((InternalEObject)newComponentInstance).eInverseAdd(this, RuntimeMetadataPackage.COMPONENT_INSTANCE__COMPONENT_PROCESSES, ComponentInstance.class, msgs);
 			msgs = basicSetComponentInstance(newComponentInstance, msgs);
 			if (msgs != null) msgs.dispatch();
 		}
 		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RuntimePackage.COMPONENT_PROCESS__COMPONENT_INSTANCE, newComponentInstance, newComponentInstance));
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT_PROCESS__COMPONENT_INSTANCE, newComponentInstance, newComponentInstance));
 	}
 
 	/**
@@ -190,7 +190,7 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 		boolean oldIsActive = isActive;
 		isActive = newIsActive;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RuntimePackage.COMPONENT_PROCESS__IS_ACTIVE, oldIsActive, isActive));
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT_PROCESS__IS_ACTIVE, oldIsActive, isActive));
 	}
 
 	/**
@@ -200,7 +200,7 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 	 */
 	public EList<Trigger> getTriggers() {
 		if (triggers == null) {
-			triggers = new EObjectContainmentEList<Trigger>(Trigger.class, this, RuntimePackage.COMPONENT_PROCESS__TRIGGERS);
+			triggers = new EObjectContainmentEList<Trigger>(Trigger.class, this, RuntimeMetadataPackage.COMPONENT_PROCESS__TRIGGERS);
 		}
 		return triggers;
 	}
@@ -213,7 +213,7 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case RuntimePackage.COMPONENT_PROCESS__COMPONENT_INSTANCE:
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__COMPONENT_INSTANCE:
 				if (eInternalContainer() != null)
 					msgs = eBasicRemoveFromContainer(msgs);
 				return basicSetComponentInstance((ComponentInstance)otherEnd, msgs);
@@ -229,9 +229,9 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case RuntimePackage.COMPONENT_PROCESS__COMPONENT_INSTANCE:
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__COMPONENT_INSTANCE:
 				return basicSetComponentInstance(null, msgs);
-			case RuntimePackage.COMPONENT_PROCESS__TRIGGERS:
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__TRIGGERS:
 				return ((InternalEList<?>)getTriggers()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -245,8 +245,8 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 	@Override
 	public NotificationChain eBasicRemoveFromContainerFeature(NotificationChain msgs) {
 		switch (eContainerFeatureID()) {
-			case RuntimePackage.COMPONENT_PROCESS__COMPONENT_INSTANCE:
-				return eInternalContainer().eInverseRemove(this, RuntimePackage.COMPONENT_INSTANCE__COMPONENT_PROCESSES, ComponentInstance.class, msgs);
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__COMPONENT_INSTANCE:
+				return eInternalContainer().eInverseRemove(this, RuntimeMetadataPackage.COMPONENT_INSTANCE__COMPONENT_PROCESSES, ComponentInstance.class, msgs);
 		}
 		return super.eBasicRemoveFromContainerFeature(msgs);
 	}
@@ -259,13 +259,13 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case RuntimePackage.COMPONENT_PROCESS__NAME:
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__NAME:
 				return getName();
-			case RuntimePackage.COMPONENT_PROCESS__COMPONENT_INSTANCE:
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__COMPONENT_INSTANCE:
 				return getComponentInstance();
-			case RuntimePackage.COMPONENT_PROCESS__IS_ACTIVE:
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__IS_ACTIVE:
 				return isIsActive();
-			case RuntimePackage.COMPONENT_PROCESS__TRIGGERS:
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__TRIGGERS:
 				return getTriggers();
 		}
 		return super.eGet(featureID, resolve, coreType);
@@ -280,16 +280,16 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case RuntimePackage.COMPONENT_PROCESS__NAME:
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__NAME:
 				setName((String)newValue);
 				return;
-			case RuntimePackage.COMPONENT_PROCESS__COMPONENT_INSTANCE:
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__COMPONENT_INSTANCE:
 				setComponentInstance((ComponentInstance)newValue);
 				return;
-			case RuntimePackage.COMPONENT_PROCESS__IS_ACTIVE:
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__IS_ACTIVE:
 				setIsActive((Boolean)newValue);
 				return;
-			case RuntimePackage.COMPONENT_PROCESS__TRIGGERS:
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__TRIGGERS:
 				getTriggers().clear();
 				getTriggers().addAll((Collection<? extends Trigger>)newValue);
 				return;
@@ -305,16 +305,16 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case RuntimePackage.COMPONENT_PROCESS__NAME:
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__NAME:
 				setName(NAME_EDEFAULT);
 				return;
-			case RuntimePackage.COMPONENT_PROCESS__COMPONENT_INSTANCE:
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__COMPONENT_INSTANCE:
 				setComponentInstance((ComponentInstance)null);
 				return;
-			case RuntimePackage.COMPONENT_PROCESS__IS_ACTIVE:
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__IS_ACTIVE:
 				setIsActive(IS_ACTIVE_EDEFAULT);
 				return;
-			case RuntimePackage.COMPONENT_PROCESS__TRIGGERS:
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__TRIGGERS:
 				getTriggers().clear();
 				return;
 		}
@@ -329,13 +329,13 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case RuntimePackage.COMPONENT_PROCESS__NAME:
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__NAME:
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-			case RuntimePackage.COMPONENT_PROCESS__COMPONENT_INSTANCE:
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__COMPONENT_INSTANCE:
 				return getComponentInstance() != null;
-			case RuntimePackage.COMPONENT_PROCESS__IS_ACTIVE:
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__IS_ACTIVE:
 				return isActive != IS_ACTIVE_EDEFAULT;
-			case RuntimePackage.COMPONENT_PROCESS__TRIGGERS:
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__TRIGGERS:
 				return triggers != null && !triggers.isEmpty();
 		}
 		return super.eIsSet(featureID);

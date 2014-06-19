@@ -25,7 +25,7 @@ import org.eclipse.emf.ecore.EObject;
  * </ul>
  * </p>
  *
- * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getComponentInstance()
+ * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance()
  * @model
  * @generated
  */
@@ -41,7 +41,7 @@ public interface ComponentInstance extends EObject {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Component Processes</em>' containment reference list.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getComponentInstance_ComponentProcesses()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance_ComponentProcesses()
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getComponentInstance
 	 * @model opposite="componentInstance" containment="true"
 	 * @generated
@@ -58,7 +58,7 @@ public interface ComponentInstance extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Name</em>' attribute.
 	 * @see #setName(String)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getComponentInstance_Name()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance_Name()
 	 * @model required="true"
 	 * @generated
 	 */
@@ -84,7 +84,7 @@ public interface ComponentInstance extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Knowledge Manager</em>' attribute.
 	 * @see #setKnowledgeManager(KnowledgeManager)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getComponentInstance_KnowledgeManager()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance_KnowledgeManager()
 	 * @model dataType="cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeManager" required="true"
 	 * @generated
 	 */
@@ -110,7 +110,7 @@ public interface ComponentInstance extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Shadow Knowledge Manager Registry</em>' attribute.
 	 * @see #setShadowKnowledgeManagerRegistry(ShadowKnowledgeManagerRegistry)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getComponentInstance_ShadowKnowledgeManagerRegistry()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance_ShadowKnowledgeManagerRegistry()
 	 * @model dataType="cz.cuni.mff.d3s.deeco.model.runtime.api.ShadowKnowledgeManagerRegistry" required="true"
 	 * @generated
 	 */
@@ -137,7 +137,7 @@ public interface ComponentInstance extends EObject {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Ensemble Controllers</em>' containment reference list.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getComponentInstance_EnsembleControllers()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance_EnsembleControllers()
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController#getComponentInstance
 	 * @model opposite="componentInstance" containment="true"
 	 * @generated

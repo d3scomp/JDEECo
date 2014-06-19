@@ -15,7 +15,7 @@ package cz.cuni.mff.d3s.deeco.model.runtime.api;
  * </ul>
  * </p>
  *
- * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getKnowledgeChangeTrigger()
+ * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getKnowledgeChangeTrigger()
  * @model
  * @generated
  */
@@ -30,7 +30,7 @@ public interface KnowledgeChangeTrigger extends Trigger {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Knowledge Path</em>' containment reference.
 	 * @see #setKnowledgePath(KnowledgePath)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getKnowledgeChangeTrigger_KnowledgePath()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getKnowledgeChangeTrigger_KnowledgePath()
 	 * @model containment="true" required="true"
 	 * @generated
 	 */

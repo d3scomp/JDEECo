@@ -11,9 +11,9 @@ import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
+
 import java.lang.reflect.Method;
 
-import java.util.Map;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
@@ -133,6 +133,16 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public TimeTrigger createTimeTrigger() {
+		TimeTriggerImpl timeTrigger = new TimeTriggerImpl();
+		return timeTrigger;
 	}
 
 	/**
@@ -293,16 +303,6 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	public PathNodeComponentId createPathNodeComponentId() {
 		PathNodeComponentIdImpl pathNodeComponentId = new PathNodeComponentIdImpl();
 		return pathNodeComponentId;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public TimeTrigger createTimeTrigger() {
-		TimeTriggerImpl timeTrigger = new TimeTriggerImpl();
-		return timeTrigger;
 	}
 
 	/**

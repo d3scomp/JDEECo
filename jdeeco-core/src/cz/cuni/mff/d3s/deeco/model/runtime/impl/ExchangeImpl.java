@@ -4,7 +4,7 @@ package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Exchange;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage;
+import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 
 import org.eclipse.emf.ecore.EClass;
 
@@ -34,7 +34,7 @@ public class ExchangeImpl extends InvocableImpl implements Exchange {
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return RuntimePackage.Literals.EXCHANGE;
+		return RuntimeMetadataPackage.Literals.EXCHANGE;
 	}
 
 } //ExchangeImpl

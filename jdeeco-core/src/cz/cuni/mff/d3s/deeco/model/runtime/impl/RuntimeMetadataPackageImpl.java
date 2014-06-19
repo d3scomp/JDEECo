@@ -30,13 +30,14 @@ import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
+
 import java.lang.reflect.Method;
 
-import java.util.Map;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EEnum;
+import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
@@ -49,6 +50,13 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
  * @generated
  */
 public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeMetadataPackage {
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass timeTriggerEClass = null;
+
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -180,20 +188,6 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass objectToObjectMapEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EClass timeTriggerEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	private EEnum parameterDirectionEEnum = null;
 
 	/**
@@ -283,6 +277,42 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		// Update the registry and return the package
 		EPackage.Registry.INSTANCE.put(RuntimeMetadataPackage.eNS_URI, theRuntimeMetadataPackage);
 		return theRuntimeMetadataPackage;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getTimeTrigger() {
+		return timeTriggerEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getTimeTrigger_Period() {
+		return (EAttribute)timeTriggerEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getTimeTrigger_Offset() {
+		return (EAttribute)timeTriggerEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getTimeTrigger_Order() {
+		return (EAttribute)timeTriggerEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -454,15 +484,6 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 */
 	public EReference getComponentInstance_EnsembleControllers() {
 		return (EReference)componentInstanceEClass.getEStructuralFeatures().get(4);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EReference getComponentInstance_InternalData() {
-		return (EReference)componentInstanceEClass.getEStructuralFeatures().get(5);
 	}
 
 	/**
@@ -704,60 +725,6 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getObjectToObjectMap() {
-		return objectToObjectMapEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getObjectToObjectMap_Key() {
-		return (EAttribute)objectToObjectMapEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getObjectToObjectMap_Value() {
-		return (EAttribute)objectToObjectMapEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EClass getTimeTrigger() {
-		return timeTriggerEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getTimeTrigger_Period() {
-		return (EAttribute)timeTriggerEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getTimeTrigger_Offset() {
-		return (EAttribute)timeTriggerEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EEnum getParameterDirection() {
 		return parameterDirectionEEnum;
 	}
@@ -829,6 +796,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		timeTriggerEClass = createEClass(TIME_TRIGGER);
 		createEAttribute(timeTriggerEClass, TIME_TRIGGER__PERIOD);
 		createEAttribute(timeTriggerEClass, TIME_TRIGGER__OFFSET);
+		createEAttribute(timeTriggerEClass, TIME_TRIGGER__ORDER);
 
 		triggerEClass = createEClass(TRIGGER);
 
@@ -856,7 +824,6 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		createEAttribute(componentInstanceEClass, COMPONENT_INSTANCE__KNOWLEDGE_MANAGER);
 		createEAttribute(componentInstanceEClass, COMPONENT_INSTANCE__SHADOW_KNOWLEDGE_MANAGER_REGISTRY);
 		createEReference(componentInstanceEClass, COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS);
-		createEReference(componentInstanceEClass, COMPONENT_INSTANCE__INTERNAL_DATA);
 
 		ensembleDefinitionEClass = createEClass(ENSEMBLE_DEFINITION);
 		createEAttribute(ensembleDefinitionEClass, ENSEMBLE_DEFINITION__NAME);
@@ -893,10 +860,6 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		pathNodeMemberEClass = createEClass(PATH_NODE_MEMBER);
 
 		pathNodeComponentIdEClass = createEClass(PATH_NODE_COMPONENT_ID);
-
-		objectToObjectMapEClass = createEClass(OBJECT_TO_OBJECT_MAP);
-		createEAttribute(objectToObjectMapEClass, OBJECT_TO_OBJECT_MAP__KEY);
-		createEAttribute(objectToObjectMapEClass, OBJECT_TO_OBJECT_MAP__VALUE);
 
 		// Create enums
 		parameterDirectionEEnum = createEEnum(PARAMETER_DIRECTION);
@@ -951,6 +914,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		initEClass(timeTriggerEClass, TimeTrigger.class, "TimeTrigger", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getTimeTrigger_Period(), ecorePackage.getELong(), "period", "0", 1, 1, TimeTrigger.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getTimeTrigger_Offset(), ecorePackage.getELong(), "offset", "0", 1, 1, TimeTrigger.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getTimeTrigger_Order(), ecorePackage.getEInt(), "order", null, 1, 1, TimeTrigger.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(triggerEClass, Trigger.class, "Trigger", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
@@ -978,7 +942,6 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		initEAttribute(getComponentInstance_KnowledgeManager(), this.getKnowledgeManager(), "knowledgeManager", null, 1, 1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getComponentInstance_ShadowKnowledgeManagerRegistry(), this.getShadowKnowledgeManagerRegistry(), "shadowKnowledgeManagerRegistry", null, 1, 1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getComponentInstance_EnsembleControllers(), this.getEnsembleController(), this.getEnsembleController_ComponentInstance(), "ensembleControllers", null, 0, -1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getComponentInstance_InternalData(), this.getObjectToObjectMap(), null, "internalData", null, 0, -1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(ensembleDefinitionEClass, EnsembleDefinition.class, "EnsembleDefinition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getEnsembleDefinition_Name(), ecorePackage.getEString(), "name", null, 1, 1, EnsembleDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1000,7 +963,10 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		initEClass(parameterEClass, Parameter.class, "Parameter", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getParameter_Direction(), this.getParameterDirection(), "direction", "INOUT", 1, 1, Parameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getParameter_KnowledgePath(), this.getKnowledgePath(), null, "knowledgePath", null, 0, 1, Parameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getParameter_Type(), ecorePackage.getEJavaClass(), "type", null, 0, 1, Parameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		EGenericType g1 = createEGenericType(ecorePackage.getEJavaClass());
+		EGenericType g2 = createEGenericType();
+		g1.getETypeArguments().add(g2);
+		initEAttribute(getParameter_Type(), g1, "type", null, 0, 1, Parameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(invocableEClass, Invocable.class, "Invocable", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getInvocable_Parameters(), this.getParameter(), null, "parameters", null, 0, -1, Invocable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1015,10 +981,6 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		initEClass(pathNodeMemberEClass, PathNodeMember.class, "PathNodeMember", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(pathNodeComponentIdEClass, PathNodeComponentId.class, "PathNodeComponentId", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-
-		initEClass(objectToObjectMapEClass, Map.Entry.class, "ObjectToObjectMap", !IS_ABSTRACT, !IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getObjectToObjectMap_Key(), ecorePackage.getEJavaObject(), "key", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getObjectToObjectMap_Value(), ecorePackage.getEJavaObject(), "value", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize enums and add enum literals
 		initEEnum(parameterDirectionEEnum, ParameterDirection.class, "ParameterDirection");

@@ -15,7 +15,7 @@ package cz.cuni.mff.d3s.deeco.model.runtime.api;
  * </ul>
  * </p>
  *
- * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getPathNodeMapKey()
+ * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getPathNodeMapKey()
  * @model
  * @generated
  */
@@ -30,7 +30,7 @@ public interface PathNodeMapKey extends PathNode {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Key Path</em>' containment reference.
 	 * @see #setKeyPath(KnowledgePath)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getPathNodeMapKey_KeyPath()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getPathNodeMapKey_KeyPath()
 	 * @model containment="true" required="true"
 	 * @generated
 	 */

@@ -4,7 +4,7 @@ package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage;
+import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 
 import org.eclipse.emf.common.notify.Notification;
 
@@ -104,7 +104,7 @@ public class TimeTriggerImpl extends TriggerImpl implements TimeTrigger {
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return RuntimePackage.Literals.TIME_TRIGGER;
+		return RuntimeMetadataPackage.Literals.TIME_TRIGGER;
 	}
 
 	/**
@@ -125,7 +125,7 @@ public class TimeTriggerImpl extends TriggerImpl implements TimeTrigger {
 		long oldPeriod = period;
 		period = newPeriod;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RuntimePackage.TIME_TRIGGER__PERIOD, oldPeriod, period));
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.TIME_TRIGGER__PERIOD, oldPeriod, period));
 	}
 
 	/**
@@ -146,7 +146,7 @@ public class TimeTriggerImpl extends TriggerImpl implements TimeTrigger {
 		long oldOffset = offset;
 		offset = newOffset;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RuntimePackage.TIME_TRIGGER__OFFSET, oldOffset, offset));
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.TIME_TRIGGER__OFFSET, oldOffset, offset));
 	}
 
 	/**
@@ -167,7 +167,7 @@ public class TimeTriggerImpl extends TriggerImpl implements TimeTrigger {
 		int oldOrder = order;
 		order = newOrder;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RuntimePackage.TIME_TRIGGER__ORDER, oldOrder, order));
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.TIME_TRIGGER__ORDER, oldOrder, order));
 	}
 
 	/**
@@ -178,11 +178,11 @@ public class TimeTriggerImpl extends TriggerImpl implements TimeTrigger {
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case RuntimePackage.TIME_TRIGGER__PERIOD:
+			case RuntimeMetadataPackage.TIME_TRIGGER__PERIOD:
 				return getPeriod();
-			case RuntimePackage.TIME_TRIGGER__OFFSET:
+			case RuntimeMetadataPackage.TIME_TRIGGER__OFFSET:
 				return getOffset();
-			case RuntimePackage.TIME_TRIGGER__ORDER:
+			case RuntimeMetadataPackage.TIME_TRIGGER__ORDER:
 				return getOrder();
 		}
 		return super.eGet(featureID, resolve, coreType);
@@ -196,13 +196,13 @@ public class TimeTriggerImpl extends TriggerImpl implements TimeTrigger {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case RuntimePackage.TIME_TRIGGER__PERIOD:
+			case RuntimeMetadataPackage.TIME_TRIGGER__PERIOD:
 				setPeriod((Long)newValue);
 				return;
-			case RuntimePackage.TIME_TRIGGER__OFFSET:
+			case RuntimeMetadataPackage.TIME_TRIGGER__OFFSET:
 				setOffset((Long)newValue);
 				return;
-			case RuntimePackage.TIME_TRIGGER__ORDER:
+			case RuntimeMetadataPackage.TIME_TRIGGER__ORDER:
 				setOrder((Integer)newValue);
 				return;
 		}
@@ -217,13 +217,13 @@ public class TimeTriggerImpl extends TriggerImpl implements TimeTrigger {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case RuntimePackage.TIME_TRIGGER__PERIOD:
+			case RuntimeMetadataPackage.TIME_TRIGGER__PERIOD:
 				setPeriod(PERIOD_EDEFAULT);
 				return;
-			case RuntimePackage.TIME_TRIGGER__OFFSET:
+			case RuntimeMetadataPackage.TIME_TRIGGER__OFFSET:
 				setOffset(OFFSET_EDEFAULT);
 				return;
-			case RuntimePackage.TIME_TRIGGER__ORDER:
+			case RuntimeMetadataPackage.TIME_TRIGGER__ORDER:
 				setOrder(ORDER_EDEFAULT);
 				return;
 		}
@@ -238,11 +238,11 @@ public class TimeTriggerImpl extends TriggerImpl implements TimeTrigger {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case RuntimePackage.TIME_TRIGGER__PERIOD:
+			case RuntimeMetadataPackage.TIME_TRIGGER__PERIOD:
 				return period != PERIOD_EDEFAULT;
-			case RuntimePackage.TIME_TRIGGER__OFFSET:
+			case RuntimeMetadataPackage.TIME_TRIGGER__OFFSET:
 				return offset != OFFSET_EDEFAULT;
-			case RuntimePackage.TIME_TRIGGER__ORDER:
+			case RuntimeMetadataPackage.TIME_TRIGGER__ORDER:
 				return order != ORDER_EDEFAULT;
 		}
 		return super.eIsSet(featureID);

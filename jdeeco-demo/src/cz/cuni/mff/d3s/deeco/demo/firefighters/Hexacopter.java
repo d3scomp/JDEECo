@@ -64,7 +64,7 @@ public class Hexacopter {
 	}
 
 	@Process
-	@PeriodicScheduling(2000)
+	@PeriodicScheduling(period=2000)
 	public static void moveAlongGLs(
 			@Out("leaderPosition") ParamHolder<Position> leaderPosition) {
 		// just a random position inside the (0,0), (0,1000), (1000,1000),

@@ -9,7 +9,7 @@ package cz.cuni.mff.d3s.deeco.model.runtime.api;
  * <!-- end-user-doc -->
  *
  *
- * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getExchange()
+ * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getExchange()
  * @model
  * @generated
  */

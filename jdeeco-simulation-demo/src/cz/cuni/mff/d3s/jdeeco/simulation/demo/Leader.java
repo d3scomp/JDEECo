@@ -62,7 +62,7 @@ public class Leader extends PositionAwareComponent {
 	}
 
 	@Process
-	@PeriodicScheduling(500)	
+	@PeriodicScheduling(period=500)	
 	public static void processMemberData(@In("id") String id,
 			@In("memberAggregateData") Map<String, MemberData> memberAggregateData,
 			@In("memberPositions") Map<String, Position> memberPositions,

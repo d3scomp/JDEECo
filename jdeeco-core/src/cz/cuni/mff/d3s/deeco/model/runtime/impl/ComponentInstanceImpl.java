@@ -9,7 +9,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage;
+import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 
 import java.util.Collection;
 
@@ -141,7 +141,7 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return RuntimePackage.Literals.COMPONENT_INSTANCE;
+		return RuntimeMetadataPackage.Literals.COMPONENT_INSTANCE;
 	}
 
 	/**
@@ -151,7 +151,7 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	 */
 	public EList<ComponentProcess> getComponentProcesses() {
 		if (componentProcesses == null) {
-			componentProcesses = new EObjectContainmentWithInverseEList<ComponentProcess>(ComponentProcess.class, this, RuntimePackage.COMPONENT_INSTANCE__COMPONENT_PROCESSES, RuntimePackage.COMPONENT_PROCESS__COMPONENT_INSTANCE);
+			componentProcesses = new EObjectContainmentWithInverseEList<ComponentProcess>(ComponentProcess.class, this, RuntimeMetadataPackage.COMPONENT_INSTANCE__COMPONENT_PROCESSES, RuntimeMetadataPackage.COMPONENT_PROCESS__COMPONENT_INSTANCE);
 		}
 		return componentProcesses;
 	}
@@ -174,7 +174,7 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 		String oldName = name;
 		name = newName;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RuntimePackage.COMPONENT_INSTANCE__NAME, oldName, name));
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT_INSTANCE__NAME, oldName, name));
 	}
 
 	/**
@@ -195,7 +195,7 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 		KnowledgeManager oldKnowledgeManager = knowledgeManager;
 		knowledgeManager = newKnowledgeManager;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RuntimePackage.COMPONENT_INSTANCE__KNOWLEDGE_MANAGER, oldKnowledgeManager, knowledgeManager));
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT_INSTANCE__KNOWLEDGE_MANAGER, oldKnowledgeManager, knowledgeManager));
 	}
 
 	/**
@@ -216,7 +216,7 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 		ShadowKnowledgeManagerRegistry oldShadowKnowledgeManagerRegistry = shadowKnowledgeManagerRegistry;
 		shadowKnowledgeManagerRegistry = newShadowKnowledgeManagerRegistry;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RuntimePackage.COMPONENT_INSTANCE__SHADOW_KNOWLEDGE_MANAGER_REGISTRY, oldShadowKnowledgeManagerRegistry, shadowKnowledgeManagerRegistry));
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT_INSTANCE__SHADOW_KNOWLEDGE_MANAGER_REGISTRY, oldShadowKnowledgeManagerRegistry, shadowKnowledgeManagerRegistry));
 	}
 
 	/**
@@ -226,7 +226,7 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	 */
 	public EList<EnsembleController> getEnsembleControllers() {
 		if (ensembleControllers == null) {
-			ensembleControllers = new EObjectContainmentWithInverseEList<EnsembleController>(EnsembleController.class, this, RuntimePackage.COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS, RuntimePackage.ENSEMBLE_CONTROLLER__COMPONENT_INSTANCE);
+			ensembleControllers = new EObjectContainmentWithInverseEList<EnsembleController>(EnsembleController.class, this, RuntimeMetadataPackage.COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS, RuntimeMetadataPackage.ENSEMBLE_CONTROLLER__COMPONENT_INSTANCE);
 		}
 		return ensembleControllers;
 	}
@@ -240,9 +240,9 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case RuntimePackage.COMPONENT_INSTANCE__COMPONENT_PROCESSES:
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__COMPONENT_PROCESSES:
 				return ((InternalEList<InternalEObject>)(InternalEList<?>)getComponentProcesses()).basicAdd(otherEnd, msgs);
-			case RuntimePackage.COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS:
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS:
 				return ((InternalEList<InternalEObject>)(InternalEList<?>)getEnsembleControllers()).basicAdd(otherEnd, msgs);
 		}
 		return super.eInverseAdd(otherEnd, featureID, msgs);
@@ -256,9 +256,9 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case RuntimePackage.COMPONENT_INSTANCE__COMPONENT_PROCESSES:
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__COMPONENT_PROCESSES:
 				return ((InternalEList<?>)getComponentProcesses()).basicRemove(otherEnd, msgs);
-			case RuntimePackage.COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS:
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS:
 				return ((InternalEList<?>)getEnsembleControllers()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -272,15 +272,15 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case RuntimePackage.COMPONENT_INSTANCE__COMPONENT_PROCESSES:
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__COMPONENT_PROCESSES:
 				return getComponentProcesses();
-			case RuntimePackage.COMPONENT_INSTANCE__NAME:
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__NAME:
 				return getName();
-			case RuntimePackage.COMPONENT_INSTANCE__KNOWLEDGE_MANAGER:
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__KNOWLEDGE_MANAGER:
 				return getKnowledgeManager();
-			case RuntimePackage.COMPONENT_INSTANCE__SHADOW_KNOWLEDGE_MANAGER_REGISTRY:
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__SHADOW_KNOWLEDGE_MANAGER_REGISTRY:
 				return getShadowKnowledgeManagerRegistry();
-			case RuntimePackage.COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS:
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS:
 				return getEnsembleControllers();
 		}
 		return super.eGet(featureID, resolve, coreType);
@@ -295,20 +295,20 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case RuntimePackage.COMPONENT_INSTANCE__COMPONENT_PROCESSES:
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__COMPONENT_PROCESSES:
 				getComponentProcesses().clear();
 				getComponentProcesses().addAll((Collection<? extends ComponentProcess>)newValue);
 				return;
-			case RuntimePackage.COMPONENT_INSTANCE__NAME:
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__NAME:
 				setName((String)newValue);
 				return;
-			case RuntimePackage.COMPONENT_INSTANCE__KNOWLEDGE_MANAGER:
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__KNOWLEDGE_MANAGER:
 				setKnowledgeManager((KnowledgeManager)newValue);
 				return;
-			case RuntimePackage.COMPONENT_INSTANCE__SHADOW_KNOWLEDGE_MANAGER_REGISTRY:
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__SHADOW_KNOWLEDGE_MANAGER_REGISTRY:
 				setShadowKnowledgeManagerRegistry((ShadowKnowledgeManagerRegistry)newValue);
 				return;
-			case RuntimePackage.COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS:
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS:
 				getEnsembleControllers().clear();
 				getEnsembleControllers().addAll((Collection<? extends EnsembleController>)newValue);
 				return;
@@ -324,19 +324,19 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case RuntimePackage.COMPONENT_INSTANCE__COMPONENT_PROCESSES:
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__COMPONENT_PROCESSES:
 				getComponentProcesses().clear();
 				return;
-			case RuntimePackage.COMPONENT_INSTANCE__NAME:
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__NAME:
 				setName(NAME_EDEFAULT);
 				return;
-			case RuntimePackage.COMPONENT_INSTANCE__KNOWLEDGE_MANAGER:
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__KNOWLEDGE_MANAGER:
 				setKnowledgeManager(KNOWLEDGE_MANAGER_EDEFAULT);
 				return;
-			case RuntimePackage.COMPONENT_INSTANCE__SHADOW_KNOWLEDGE_MANAGER_REGISTRY:
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__SHADOW_KNOWLEDGE_MANAGER_REGISTRY:
 				setShadowKnowledgeManagerRegistry(SHADOW_KNOWLEDGE_MANAGER_REGISTRY_EDEFAULT);
 				return;
-			case RuntimePackage.COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS:
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS:
 				getEnsembleControllers().clear();
 				return;
 		}
@@ -351,15 +351,15 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case RuntimePackage.COMPONENT_INSTANCE__COMPONENT_PROCESSES:
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__COMPONENT_PROCESSES:
 				return componentProcesses != null && !componentProcesses.isEmpty();
-			case RuntimePackage.COMPONENT_INSTANCE__NAME:
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__NAME:
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-			case RuntimePackage.COMPONENT_INSTANCE__KNOWLEDGE_MANAGER:
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__KNOWLEDGE_MANAGER:
 				return KNOWLEDGE_MANAGER_EDEFAULT == null ? knowledgeManager != null : !KNOWLEDGE_MANAGER_EDEFAULT.equals(knowledgeManager);
-			case RuntimePackage.COMPONENT_INSTANCE__SHADOW_KNOWLEDGE_MANAGER_REGISTRY:
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__SHADOW_KNOWLEDGE_MANAGER_REGISTRY:
 				return SHADOW_KNOWLEDGE_MANAGER_REGISTRY_EDEFAULT == null ? shadowKnowledgeManagerRegistry != null : !SHADOW_KNOWLEDGE_MANAGER_REGISTRY_EDEFAULT.equals(shadowKnowledgeManagerRegistry);
-			case RuntimePackage.COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS:
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS:
 				return ensembleControllers != null && !ensembleControllers.isEmpty();
 		}
 		return super.eIsSet(featureID);

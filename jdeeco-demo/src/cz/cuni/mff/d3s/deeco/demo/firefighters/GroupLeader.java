@@ -90,7 +90,7 @@ public class GroupLeader {
 	}
 
 	@Process
-	@PeriodicScheduling(2000)
+	@PeriodicScheduling(period=2000)
 	public static void processSensorData(@In("id") String GLId,
 			@In("temperatures") Map<String, Float> temperatures,
 			@In("positions") Map<String, Position> positions,

@@ -17,7 +17,7 @@ import org.eclipse.emf.ecore.EObject;
  * </ul>
  * </p>
  *
- * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getEnsembleController()
+ * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getEnsembleController()
  * @model
  * @generated
  */
@@ -33,7 +33,7 @@ public interface EnsembleController extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Component Instance</em>' container reference.
 	 * @see #setComponentInstance(ComponentInstance)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getEnsembleController_ComponentInstance()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getEnsembleController_ComponentInstance()
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getEnsembleControllers
 	 * @model opposite="ensembleControllers" required="true" transient="false"
 	 * @generated
@@ -60,7 +60,7 @@ public interface EnsembleController extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Ensemble Definition</em>' reference.
 	 * @see #setEnsembleDefinition(EnsembleDefinition)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getEnsembleController_EnsembleDefinition()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getEnsembleController_EnsembleDefinition()
 	 * @model required="true"
 	 * @generated
 	 */

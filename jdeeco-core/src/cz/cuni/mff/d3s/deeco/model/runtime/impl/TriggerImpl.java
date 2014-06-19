@@ -4,7 +4,7 @@ package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage;
+import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 
 import org.eclipse.emf.ecore.EClass;
 
@@ -36,7 +36,7 @@ public abstract class TriggerImpl extends MinimalEObjectImpl.Container implement
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return RuntimePackage.Literals.TRIGGER;
+		return RuntimeMetadataPackage.Literals.TRIGGER;
 	}
 
 } //TriggerImpl

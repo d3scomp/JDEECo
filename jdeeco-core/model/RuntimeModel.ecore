@@ -77,7 +77,11 @@
         eType="#//ParameterDirection" defaultValueLiteral="INOUT" unsettable="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="knowledgePath" eType="#//KnowledgePath"
         containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaClass"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type">
+      <eGenericType eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaClass">
+        <eTypeArguments/>
+      </eGenericType>
+    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Invocable">
     <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"

@@ -32,7 +32,7 @@ import cz.cuni.mff.d3s.deeco.task.ParamHolder;
  * 
  */
 @Ensemble
-@PeriodicScheduling(1000)
+@PeriodicScheduling(period=1000)
 public class SensorDataAggregation {
 
 	private static final long serialVersionUID = 5991804902054860542L;

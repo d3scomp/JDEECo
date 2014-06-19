@@ -50,7 +50,7 @@ public class Member extends PositionAwareComponent {
 	
 
 	@Process
-	@PeriodicScheduling(500)
+	@PeriodicScheduling(period=500)
 	public static void measureMemberData(@In("id") String id,			
 			@Out("memberData") ParamHolder<MemberData> memberData) {
 		Map<Object, Object> internal = ProcessContext.getCurrentProcess().getComponentInstance().getInternalData().map();

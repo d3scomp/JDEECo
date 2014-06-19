@@ -17,7 +17,7 @@ package cz.cuni.mff.d3s.deeco.model.runtime.api;
  * </ul>
  * </p>
  *
- * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getTimeTrigger()
+ * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getTimeTrigger()
  * @model
  * @generated
  */
@@ -33,7 +33,7 @@ public interface TimeTrigger extends Trigger {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Period</em>' attribute.
 	 * @see #setPeriod(long)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getTimeTrigger_Period()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getTimeTrigger_Period()
 	 * @model default="0" required="true"
 	 * @generated
 	 */
@@ -60,7 +60,7 @@ public interface TimeTrigger extends Trigger {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Offset</em>' attribute.
 	 * @see #setOffset(long)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getTimeTrigger_Offset()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getTimeTrigger_Offset()
 	 * @model default="0" required="true"
 	 * @generated
 	 */
@@ -86,7 +86,7 @@ public interface TimeTrigger extends Trigger {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Order</em>' attribute.
 	 * @see #setOrder(int)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getTimeTrigger_Order()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getTimeTrigger_Order()
 	 * @model required="true"
 	 * @generated
 	 */

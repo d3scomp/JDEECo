@@ -18,7 +18,7 @@
       <!-- @generated RuntimeModel -->
       <package
             uri="http://cz.cuni.mff.d3s.deeco.model.runtime/1.0"
-            class="cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage"
+            class="cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage"
             genModel="model/RuntimeModel.genmodel"/>
    </extension>
 

@@ -10,7 +10,7 @@ import org.eclipse.emf.ecore.EObject;
  * <!-- end-user-doc -->
  *
  *
- * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getPathNode()
+ * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getPathNode()
  * @model abstract="true"
  * @generated
  */

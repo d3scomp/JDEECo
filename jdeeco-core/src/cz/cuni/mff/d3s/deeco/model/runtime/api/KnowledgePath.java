@@ -18,7 +18,7 @@ import org.eclipse.emf.ecore.EObject;
  * </ul>
  * </p>
  *
- * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getKnowledgePath()
+ * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getKnowledgePath()
  * @model
  * @generated
  */
@@ -33,7 +33,7 @@ public interface KnowledgePath extends EObject {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Nodes</em>' containment reference list.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage#getKnowledgePath_Nodes()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getKnowledgePath_Nodes()
 	 * @model containment="true" required="true"
 	 * @generated
 	 */

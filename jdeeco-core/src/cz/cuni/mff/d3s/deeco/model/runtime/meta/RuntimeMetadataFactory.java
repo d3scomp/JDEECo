@@ -18,8 +18,8 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
-
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
+
 import org.eclipse.emf.ecore.EFactory;
 
 /**
@@ -38,6 +38,15 @@ public interface RuntimeMetadataFactory extends EFactory {
 	 * @generated
 	 */
 	RuntimeMetadataFactory eINSTANCE = cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataFactoryImpl.init();
+
+	/**
+	 * Returns a new object of class '<em>Time Trigger</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Time Trigger</em>'.
+	 * @generated
+	 */
+	TimeTrigger createTimeTrigger();
 
 	/**
 	 * Returns a new object of class '<em>Knowledge Change Trigger</em>'.
@@ -182,15 +191,6 @@ public interface RuntimeMetadataFactory extends EFactory {
 	 * @generated
 	 */
 	PathNodeComponentId createPathNodeComponentId();
-
-	/**
-	 * Returns a new object of class '<em>Time Trigger</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Time Trigger</em>'.
-	 * @generated
-	 */
-	TimeTrigger createTimeTrigger();
 
 	/**
 	 * Returns the package supported by this factory.

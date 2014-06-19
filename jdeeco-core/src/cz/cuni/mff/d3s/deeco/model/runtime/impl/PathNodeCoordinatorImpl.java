@@ -4,7 +4,7 @@ package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimePackage;
+import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 
 import org.eclipse.emf.ecore.EClass;
 
@@ -34,7 +34,7 @@ public class PathNodeCoordinatorImpl extends PathNodeImpl implements PathNodeCoo
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return RuntimePackage.Literals.PATH_NODE_COORDINATOR;
+		return RuntimeMetadataPackage.Literals.PATH_NODE_COORDINATOR;
 	}
 
 } //PathNodeCoordinatorImpl

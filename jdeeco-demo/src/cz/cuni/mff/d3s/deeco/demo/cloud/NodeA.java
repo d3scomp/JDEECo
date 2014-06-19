@@ -54,7 +54,7 @@ public class NodeA {
 	}
 
 	@Process
-	@PeriodicScheduling(6000)
+	@PeriodicScheduling(period=6000)
 	public static void process(@Out("loadRatio") ParamHolder<Float> loadRatio) {
 		loadRatio.value = new Random().nextFloat();
 		System.out.println("Node A new load ratio: "
