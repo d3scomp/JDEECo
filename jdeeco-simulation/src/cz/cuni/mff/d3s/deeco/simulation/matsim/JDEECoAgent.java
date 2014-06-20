@@ -137,6 +137,9 @@ public class JDEECoAgent implements MobsimDriverAgent {
 		return this.vehicle;
 	}
 
+	// This method should not be used because in case of traffic jam, it gives completely off results. It acts if the road was empty and
+	// then waits minutes at the end of the link
+	@Deprecated
 	public Coord estimatePosition(double now) {
 		if (state.equals(State.ACTIVITY) && currentLinkId != null) {
 			return simulation.getScenario().getNetwork().getLinks()
@@ -149,6 +152,8 @@ public class JDEECoAgent implements MobsimDriverAgent {
 			if (time <= 0) {
 				return qVehicle.getCurrentLink().getToNode().getCoord();
 			}
+			
+			// XXX: Since the time is used, it's not necessary to use the velocity, as the velocity is constant!!! This is an overkill!
 			double velocity = (link.getFreespeed() > qVehicle
 					.getMaximumVelocity()) ? qVehicle.getMaximumVelocity()
 					: link.getFreespeed();

@@ -29,7 +29,7 @@ public class MATSimSimulation extends Simulation implements SimulationStepListen
 	private long currentMilliseconds;
 	private final TreeSet<Callback> callbacks;
 	private final Map<String, Callback> hostIdToCallback;
-	private final MATSimPreloadingControler controler;
+	private final Controler controler;
 	private final JDEECoWithinDayMobsimListener listener;
 	private final MATSimDataProvider matSimProvider;
 	private final MATSimDataReceiver matSimReceiver;

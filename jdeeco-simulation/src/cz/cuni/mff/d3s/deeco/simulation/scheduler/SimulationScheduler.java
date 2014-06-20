@@ -1,12 +1,12 @@
 package cz.cuni.mff.d3s.deeco.simulation.scheduler;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeSet;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
@@ -35,7 +35,7 @@ public class SimulationScheduler implements Scheduler,
 	private final SimulationHost host;
 	private final CallbackProvider callbackProvider;
 
-	private final SortedSet<SchedulerEvent> queue;
+	private final TreeSet<SchedulerEvent> queue;
 	private final Set<Task> allTasks;
 	private final Map<Task, SchedulerEvent> periodicEvents;
 
@@ -57,7 +57,7 @@ public class SimulationScheduler implements Scheduler,
 
 	@Override
 	public void start() {
-		registerNextExecution();
+		registerNextExecution(true);
 	}
 
 	@Override
@@ -136,7 +136,7 @@ public class SimulationScheduler implements Scheduler,
 	@Override
 	public void executionCompleted(Task task, Trigger trigger) {
 		onTriggerSchedules.remove(trigger);
-		registerNextExecution();
+		registerNextExecution(false);
 	}
 
 	@Override
@@ -153,9 +153,7 @@ public class SimulationScheduler implements Scheduler,
 
 	@Override
 	public void at(long time) {
-		// System.out.println("Scheduler "
-		// +host.getId()+" at: "+time+" called with queue: " +
-		// Arrays.toString(queue.toArray()));
+		Log.d("Scheduler " + host.getHostId()+" at: "+time+" called with queue: " + Arrays.toString(queue.toArray()));
 		SchedulerEvent event;
 		while ((event = queue.first()) != null) {
 			// if notified too early (or already processed all events scheduled
@@ -171,8 +169,7 @@ public class SimulationScheduler implements Scheduler,
 				// period)
 				TimeTrigger timeTrigger = event.executable.getTimeTrigger();
 				event.nextPeriodStart += timeTrigger.getPeriod();
-				event.nextExecutionTime = event.nextPeriodStart
-						+ timeTrigger.getOffset();
+				event.nextExecutionTime = event.nextPeriodStart;
 				push(event);
 			}
 			if (executor != null) {
@@ -209,13 +206,12 @@ public class SimulationScheduler implements Scheduler,
 		event.nextExecutionTime = host.getCurrentMilliseconds() + delay;
 		event.nextPeriodStart = host.getCurrentMilliseconds() + delay;
 		push(event);
-
 	}
 
-	private void registerNextExecution() {
+	private void registerNextExecution(boolean firstExecution) {
 		if (!queue.isEmpty()) {
 			long nextExecutionTime = queue.first().nextExecutionTime;
-			if (nextExecutionTime <= host.getCurrentMilliseconds()) {
+			if (!firstExecution && nextExecutionTime <= host.getCurrentMilliseconds()) {
 				return; // nextExecutionTime = host.getSimulationTime() + 1;
 			}
 			callbackProvider.callAt(nextExecutionTime, host.getHostId());
@@ -225,20 +221,16 @@ public class SimulationScheduler implements Scheduler,
 	}
 
 	private SchedulerEvent pop() {
-		if (queue.isEmpty())
-			return null;
-		else {
-			SchedulerEvent result = queue.first();
-			queue.remove(result);
-			return result;
-		}
+		return queue.pollFirst();
 	}
 
 	private void push(SchedulerEvent event) {
 		// Log.d("Adding: " + event);
 
 		queue.add(event);
-		// Log.d("Queue: " + Arrays.toString(queue.toArray()));
+		
+
+		// Log.d("Queue: " + queue);
 
 		// TODO take into account different scheduling policies and WCET of
 		// tasks. According to those the tasks need to be rescheduled.

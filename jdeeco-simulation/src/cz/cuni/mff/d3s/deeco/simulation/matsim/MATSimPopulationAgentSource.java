@@ -6,8 +6,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.management.RuntimeErrorException;
-
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.population.Activity;
 import org.matsim.api.core.v01.population.Leg;
@@ -21,8 +19,6 @@ import org.matsim.core.mobsim.qsim.agents.AgentFactory;
 import org.matsim.core.mobsim.qsim.agents.ExperimentalBasicWithindayAgentFactory;
 import org.matsim.vehicles.VehicleType;
 import org.matsim.vehicles.VehicleUtils;
-
-import cz.cuni.mff.d3s.deeco.simulation.matsim.AdditionAwareAgentSource;
 
 public class MATSimPopulationAgentSource implements
 		AdditionAwareAgentSource {
