@@ -45,6 +45,8 @@
         eType="#//EnsembleController" containment="true" eOpposite="#//EnsembleController/componentInstance"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="internalData" upperBound="-1"
         eType="#//StringToObjectMap" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="componentModes" upperBound="-1"
+        eType="#//ComponentMode" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EnsembleDefinition">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -101,4 +103,5 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="CommunicationBoundary" instanceClassName="cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ComponentMode"/>
 </ecore:EPackage>

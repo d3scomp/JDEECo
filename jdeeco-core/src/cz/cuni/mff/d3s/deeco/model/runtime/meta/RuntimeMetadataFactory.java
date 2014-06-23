@@ -3,6 +3,7 @@
 package cz.cuni.mff.d3s.deeco.model.runtime.meta;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentMode;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Condition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
@@ -182,6 +183,15 @@ public interface RuntimeMetadataFactory extends EFactory {
 	 * @generated
 	 */
 	PathNodeComponentId createPathNodeComponentId();
+
+	/**
+	 * Returns a new object of class '<em>Component Mode</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Component Mode</em>'.
+	 * @generated
+	 */
+	ComponentMode createComponentMode();
 
 	/**
 	 * Returns a new object of class '<em>Time Trigger</em>'.

@@ -6,6 +6,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentMode;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 
@@ -26,6 +27,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
 import org.eclipse.emf.ecore.util.EcoreEMap;
 import org.eclipse.emf.ecore.util.InternalEList;
@@ -43,6 +45,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getShadowKnowledgeManagerRegistry <em>Shadow Knowledge Manager Registry</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getEnsembleControllers <em>Ensemble Controllers</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getInternalData <em>Internal Data</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getComponentModes <em>Component Modes</em>}</li>
  * </ul>
  * </p>
  *
@@ -138,6 +141,16 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	 * @ordered
 	 */
 	protected EMap<String, Object> internalData;
+
+	/**
+	 * The cached value of the '{@link #getComponentModes() <em>Component Modes</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getComponentModes()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<ComponentMode> componentModes;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -262,6 +275,18 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EList<ComponentMode> getComponentModes() {
+		if (componentModes == null) {
+			componentModes = new EObjectContainmentEList<ComponentMode>(ComponentMode.class, this, RuntimeMetadataPackage.COMPONENT_INSTANCE__COMPONENT_MODES);
+		}
+		return componentModes;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
@@ -288,6 +313,8 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 				return ((InternalEList<?>)getEnsembleControllers()).basicRemove(otherEnd, msgs);
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__INTERNAL_DATA:
 				return ((InternalEList<?>)getInternalData()).basicRemove(otherEnd, msgs);
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__COMPONENT_MODES:
+				return ((InternalEList<?>)getComponentModes()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -313,6 +340,8 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__INTERNAL_DATA:
 				if (coreType) return getInternalData();
 				else return getInternalData().map();
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__COMPONENT_MODES:
+				return getComponentModes();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -346,6 +375,10 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__INTERNAL_DATA:
 				((EStructuralFeature.Setting)getInternalData()).set(newValue);
 				return;
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__COMPONENT_MODES:
+				getComponentModes().clear();
+				getComponentModes().addAll((Collection<? extends ComponentMode>)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -376,6 +409,9 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__INTERNAL_DATA:
 				getInternalData().clear();
 				return;
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__COMPONENT_MODES:
+				getComponentModes().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -400,6 +436,8 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 				return ensembleControllers != null && !ensembleControllers.isEmpty();
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__INTERNAL_DATA:
 				return internalData != null && !internalData.isEmpty();
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__COMPONENT_MODES:
+				return componentModes != null && !componentModes.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
