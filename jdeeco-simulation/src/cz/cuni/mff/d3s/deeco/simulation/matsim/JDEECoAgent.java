@@ -53,6 +53,8 @@ public class JDEECoAgent implements MobsimDriverAgent {
 	}
 
 	public void endActivityAndComputeNextState(double now) {
+		if (route == null || route.isEmpty())
+			return;
 		this.simulation.getEventsManager().processEvent(
 				this.simulation
 						.getEventsManager()
@@ -100,8 +102,7 @@ public class JDEECoAgent implements MobsimDriverAgent {
 	}
 
 	public Id getCurrentLinkId() {
-		// Log.i(id.toString() + " getCurrentLinkId " +
-		// currentLinkId.toString());
+		//System.out.println(id.toString() + " getCurrentLinkId " + currentLinkId.toString());
 		return this.currentLinkId;
 	}
 
