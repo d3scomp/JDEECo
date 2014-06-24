@@ -6,8 +6,10 @@ import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.MetadataType;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 
+//define all the component modes with its tree structure (modes have submodes - that will help in defining the )
 @ComponentModes(modes = {@ModesInfo(initMode = "initilizedLeader", 
-				                    allModes = {"initilizedLeader","alarmed"})})
+				                    allModes = {"initilizedLeader","FFConnected","alarmed"})})
+//the state space model have the in states and the out states are the index of in states or -1 to use the model and calculate the derived value
 @StateSpaceModel(state  = {"hFFSpeed","hFFPos"}, 
 				 result = @Fun(returnedIndex = {-1,0}, referenceModel = VehicleModel.class))
 @Component
@@ -26,13 +28,21 @@ public class Leader {
 
 	
 	@ModeTransactions( 
-			    transitions= {@ModeTransition(meta = MetadataType.INACCURACY, 
-			    								fromMode = "initilizedLeader" , toMode = "alarmed" , 
-			    								transitionCondition = "? > 10000"),
-			    			  @ModeTransition(meta = MetadataType.INACCURACY, 
-			    								fromMode = "alarmed" , toMode = "initilizedLeader" , 
-			    								transitionCondition = "? < 10000")}
-	) 	
+		    transitions= {@ModeTransition(meta = MetadataType.INACCURACY, 
+		    								fromMode = "initilizedLeader" , toMode = "alarmed" , 
+		    								transitionCondition = "? > 10000"), 
+		    								// MODETIMEPERIOD = 200 .... could be added to enter the periodic time 
+		    								//for the mode. I should try it as code to know if it could work or not.
+		    			  @ModeTransition(meta = MetadataType.INACCURACY, 
+		    								fromMode = "initilizedLeader" , toMode = "ffConnected" , 
+		    								transitionCondition = "? <= 10000"),
+		    			  @ModeTransition(meta = MetadataType.INACCURACY, 
+		    								fromMode = "ffConnected" , toMode = "alarmed" , 
+		    								transitionCondition = "? > 10000"),
+		    			  @ModeTransition(meta = MetadataType.INACCURACY, 
+		    								fromMode = "alarmed" , toMode = "ffConnected" , 
+		    								transitionCondition = "? <= 10000")}
+			) 	
 	@TimeStamp
 	public Double lFFPos = 0.0;
 
@@ -44,6 +54,7 @@ public class Leader {
 	protected static final double KI = 0.000228325;
 	protected static final double KT = 0.01;
 	protected static final double TIMEPERIOD = 100;
+	protected static final double MODETIMEPERIOD = 100;
 	protected static final double SEC_MILI_SEC_FACTOR = 1000;
 
 	public Leader() {
@@ -52,7 +63,7 @@ public class Leader {
 
 
 	@Process
-	@PeriodicSchedulingOnModeChange(value = 100)
+	@PeriodicSchedulingOnActivateMode(value = (int) MODETIMEPERIOD)
 	public static void initilizedLeader(
 			@Out("lPos") ParamHolder<Double> lPos,
 			@Out("lSpeed") ParamHolder<Double> lSpeed,
@@ -81,18 +92,18 @@ public class Leader {
 	}
 	
 	
-//	//it will have a problem because there is no parameters
-//	@Process
-//	@PeriodicSchedulingOnModeChange(value = 100)
-//	public static void ffConnected(
-//			@In("lPos") Double lPos
-//			){
-//		System.out.println("The FireFighter is connected");
-//	}
+	//it will have a problem because there is no parameters in the process
+	@Process
+	@PeriodicSchedulingOnActivateMode(value = (int) MODETIMEPERIOD)
+	public static void ffConnected(
+			@In("lPos") Double lPos
+			){
+		System.out.println("The FireFighter is connected");
+	}
 	
 	
 	@Process
-	@PeriodicSchedulingOnModeChange(value = 100)
+	@PeriodicSchedulingOnActivateMode(value = (int) MODETIMEPERIOD)
 	public static void alarmed(
 			@Out("lAlarm") ParamHolder<Double> lAlarm			
 			){
@@ -141,27 +152,3 @@ public class Leader {
 	}
 
 }
-
-//the values should be numerical 
-//@FieldModes(DefaultMode = InitilizedLeader.class, Meta = MetadataType.INACCURATE, 
-//	Transitions= {@Tran(from = InitilizedLeader.class , to = FFConnected.class , con = "10000")},
-//	StateSpace = @StateSpaceModel(state = {"hFFSpeed","hFFPos"}, result = @Fun(returnedIndex =0)))
-
-//con = @Condition(var = @Variable(value = MetadataType.INACCURATE, boundary = Boundary.SUBSTRACT , predicteTime = 0.0),
-//factor = "<" , limit = "1000")),
-//or we can use simple string " ? < 10000" /  "(-,0) < 10000" where ? for the value and - for the substract of max-min inaccurate value [ min and ] max
-
-//@Tran(from ="FFConnected", to="Alarmed", con = " ? > 10000 "),
-//@Tran(from ="Alarmed", to="FFConnected", con = " ? <= 10000 "),
-//@Tran(from ="InitilizedLeader", to="Alarmed", con = " ? > 10000 ")})
-//timestamp - inaccuracy (min,max.substarct(default)+statespacemodel)
-//@Process
-//public static void init(		
-//		@InOut("lFFPos")  ModeParamHolder<Double> lFFPos,
-//		@InOut("lFFSpeed") @TriggerOnChange ParamHolder<Double> lFFSpeed
-//		){
-////	lFFPos.minBoundary = lFFPos.minBoundary + 1;
-////	System.out.println("min --------------- "+lFFPos.minBoundary);
-//	System.out.println("inaskljdnasjdnsa&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&   "+lFFPos.value);
-//	
-//}

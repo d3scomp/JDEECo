@@ -9,7 +9,10 @@ import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 
 
 @ComponentModes(modes = {@ModesInfo(initMode = "inactive", 
-				allModes = {"inactive","mediatorConnected"})})
+							allModes = {"inactive","active"}),
+						 @ModesInfo(parentMode = "active", initMode = "wait", 
+							allModes = {"wait","LeaderConnected","mediatorConnected"})}
+				)
 @StateSpaceModel(state  = {"hFFSpeed","hFFPos"}, 
 				result = @Fun(returnedIndex = {-1,0}, referenceModel = VehicleModel.class))
 @Component
@@ -29,28 +32,50 @@ public class FireFighter{
 	public Double ffErrorWindup = 0.0;
 
 	public Double ffMID = 0.0;
-//	public Double ffActive = 0.0;
+	
+	
+	@ModeTransactions( 
+		    transitions= {@ModeTransition(	fromMode = "inactive" , toMode = "active" , 
+		    								transitionCondition = "? == 1"),
+		    			  @ModeTransition(	fromMode = "active" , toMode = "inactive" , 
+		    								transitionCondition = "? == 1")}
+	) 	
+	public Double ffActive = 0.0;
+	
+	
+	@ModeTransactions( 
+		    transitions= {@ModeTransition(  fromMode = "wait" , toMode = "leaderConnected" , 
+		    								transitionCondition = "? > 0"),
+		    			  @ModeTransition(	fromMode = "leaderConnected" , toMode = "wait" , 
+		    								transitionCondition = "? == 0")}
+	) 	
 	public Double ffConn = 0.0;
+	
+	
+	//Since it is array. I already used "E" to represent there is one element at least (instead of || ) satisfies the condition
+	//and "V" for all the values in the array (instead of && )
 	@ModeTransactions( 
 		    transitions= {@ModeTransition(meta = MetadataType.EMPTY, 
-		    								fromMode = "inactive" , toMode = "mediatorConnected" , 
-		    								transitionCondition = "E? > 1"),
+		    								fromMode = "wait" , toMode = "mediatorConnected" , 
+		    								transitionCondition = "E? > 0"),
 		    			  @ModeTransition(meta = MetadataType.EMPTY, 
-		    								fromMode = "mediatorConnected" , toMode = "inactive" , 
-		    								transitionCondition = "V? > 1")}
+		    								fromMode = "mediatorConnected" , toMode = "wait" , 
+		    								transitionCondition = "V? == 0")}
 	) 	
 	public Double[] ffHconn = {0.0,0.0,0.0};
+	
 	
 	private static final double KP = 0.05;
 	private static final double KI = 0.000228325;
 	private static final double KT = 0.01;
 	private static final double DISEREDSPEED = 50;
 	private static final double TIMEPERIOD = 100;
+	protected static final double MODETIMEPERIOD = 100;
 	private static final double SEC_MILI_SEC_FACTOR = 1000;
 
 
 	@Process
-	@PeriodicSchedulingOnModeChange(value = 100, entry = {@Code(field = {@Field(name = "ffGas", value = "0.0"),
+	@PeriodicSchedulingOnActivateMode(value = (int) MODETIMEPERIOD, entry = {@Code(field = {@Field(name = "ffGas", value = "0.0"),
 																		@Field(name = "ffBrake", value = "0.0"),
 																		@Field(name = "ffIntegratorSpeedError", value = "0.0"),
 																		@Field(name = "ffErrorWindup", value = "0.0"),
@@ -75,36 +100,36 @@ public class FireFighter{
 	}
 	
 	
-//	@Process
-//	@PeriodicSchedulingOnModeChange(value = 100)
-//	public static void Active(
-//			@Out("ffActive") ParamHolder<Double> ffActive
-//			){
-//		System.out.println("Active firefighter ... ");
-//	}
-//	
-//	
-//	
-//	@Process
-//	@PeriodicSchedulingOnModeChange(value = 100)
-//	public static void Wait(
-//			@Out("ffConn") ParamHolder<Double> ffConn,
-//			@Out("ffHconn") ParamHolder<Double>[] ffHconn
-//			){
-//		
-//	}
-//
-//	
-//	@Process
-//	@PeriodicSchedulingOnModeChange(value = 100)
-//	public static void LeaderConnected(
-//			@Out("ffConn") ParamHolder<Double> ffConn
-//			){
-//		
-//	}
+	@Process
+	@PeriodicSchedulingOnActivateMode(value = (int) MODETIMEPERIOD)
+	public static void Active(
+			@Out("ffActive") ParamHolder<Double> ffActive
+			){
+		System.out.println("Active firefighter ... ");
+	}
+	
+	
+	
+	@Process
+	@PeriodicSchedulingOnActivateMode(value = (int) MODETIMEPERIOD)
+	public static void Wait(
+			@Out("ffConn") ParamHolder<Double> ffConn,
+			@Out("ffHconn") ParamHolder<Double>[] ffHconn
+			){
+		
+	}
+
+	
+	@Process
+	@PeriodicSchedulingOnActivateMode(value = (int) MODETIMEPERIOD)
+	public static void LeaderConnected(
+			@Out("ffConn") ParamHolder<Double> ffConn
+			){
+		
+	}
 
 	@Process
-	@PeriodicSchedulingOnModeChange(value = 100, entry = {@Code(field = {@Field(name = "ffMID", value = "0.0")})}, 
+	@PeriodicSchedulingOnActivateMode(value = (int) MODETIMEPERIOD, entry = {@Code(field = {@Field(name = "ffMID", value = "0.0")})}, 
 												 exit  = {@Code(field = {@Field(name = "ffMID", value = "0.0")})}) //@Method("methodName", parms, return)???
 	public static void mediatorConnected(
 			@InOut("ffMID") ParamHolder<Double> ffMID,
