@@ -13,7 +13,6 @@ import org.matsim.api.core.v01.population.PlanElement;
 import org.matsim.core.api.experimental.facilities.Facility;
 import org.matsim.core.config.Config;
 import org.matsim.core.controler.Controler;
-import org.matsim.core.gbl.MatsimRandom;
 import org.matsim.core.population.routes.NetworkRoute;
 import org.matsim.core.router.TripRouter;
 import org.matsim.core.router.TripRouterFactory;
@@ -44,6 +43,9 @@ public class MATSimRouter {
 		this.controler = controler;
 	}
 
+	/*
+	 * XXX possibly remove
+
 	public String routeRandomly(Id currentLinkId) {
 		Link currentLink = controler.getScenario().getNetwork().getLinks()
 				.get(currentLinkId);
@@ -54,6 +56,7 @@ public class MATSimRouter {
 		int idx = MatsimRandom.getRandom().nextInt(outLinks.length);
 		return outLinks[idx].toString();
 	}
+	*/
 
 	public Link findLinkById(Id id) {
 		return controler.getNetwork().getLinks().get(id);
@@ -97,6 +100,10 @@ public class MATSimRouter {
 		return route(fromLink, toLink);
 	}
 
+	public Map<Id, ? extends Link> getLinks() {
+		return controler.getNetwork().getLinks();
+	}
+	
 	public Link getLink(Id linkId) {
 		return controler.getNetwork().getLinks().get(linkId);
 	}
