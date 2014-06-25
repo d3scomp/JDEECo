@@ -145,7 +145,7 @@ public class FireFighter{
 	
 	@Process
 	@PeriodicScheduling((int)TIMEPERIOD)
-	public static void FFPos_Out(
+	public static void speedControl(
 			@InOut("ffPos") TSParamHolder<Double> ffPos,
 			@InOut("ffSpeed") TSParamHolder<Double> ffSpeed,
 

@@ -30,18 +30,18 @@ public class Leader {
 	@ModeTransactions( 
 		    transitions= {@ModeTransition(meta = MetadataType.INACCURACY, 
 		    								fromMode = "initilizedLeader" , toMode = "alarmed" , 
-		    								transitionCondition = "? > 10000"), 
+		    								transitionCondition = "(? + 0) > 10000"), 
 		    								// MODETIMEPERIOD = 200 .... could be added to enter the periodic time 
 		    								//for the mode. I should try it as code to know if it could work or not.
 		    			  @ModeTransition(meta = MetadataType.INACCURACY, 
 		    								fromMode = "initilizedLeader" , toMode = "ffConnected" , 
-		    								transitionCondition = "? <= 10000"),
+		    								transitionCondition = "(? + 0) <= 10000"),
 		    			  @ModeTransition(meta = MetadataType.INACCURACY, 
 		    								fromMode = "ffConnected" , toMode = "alarmed" , 
-		    								transitionCondition = "? > 10000"),
+		    								transitionCondition = "(? + 0) > 10000"),
 		    			  @ModeTransition(meta = MetadataType.INACCURACY, 
 		    								fromMode = "alarmed" , toMode = "ffConnected" , 
-		    								transitionCondition = "? <= 10000")}
+		    								transitionCondition = "(? + 0) <= 10000")}
 			) 	
 	@TimeStamp
 	public Double lFFPos = 0.0;
