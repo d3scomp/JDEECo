@@ -7,8 +7,8 @@ import cz.cuni.mff.d3s.deeco.network.DirectGossipStrategy;
 import cz.cuni.mff.d3s.deeco.network.DirectRecipientSelector;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
-import cz.cuni.mff.d3s.deeco.simulation.SimulationHost;
 import cz.cuni.mff.d3s.deeco.simulation.SimulationRuntimeBuilder;
+import cz.cuni.mff.d3s.deeco.simulation.omnet.OMNetSimulationHost;
 import cz.cuni.mff.d3s.deeco.simulation.task.SimulationStepTask;
 
 /**
@@ -22,7 +22,7 @@ public class MATSimOMNetSimulationRuntimeBuilder extends
 		SimulationRuntimeBuilder {
 	private boolean simulationTaskRegistered = false;
 
-	public RuntimeFramework build(SimulationHost host,
+	public RuntimeFramework build(OMNetSimulationHost host,
 			MATSimOMNetSimulation simulation, RuntimeMetadata model,
 			Collection<DirectRecipientSelector> recipientSelectors,
 			DirectGossipStrategy directGossipStrategy) {

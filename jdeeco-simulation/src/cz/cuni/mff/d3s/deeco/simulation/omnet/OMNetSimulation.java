@@ -8,7 +8,6 @@ import cz.cuni.mff.d3s.deeco.network.Host;
 import cz.cuni.mff.d3s.deeco.network.NetworkInterface;
 import cz.cuni.mff.d3s.deeco.network.NetworkProvider;
 import cz.cuni.mff.d3s.deeco.simulation.Simulation;
-import cz.cuni.mff.d3s.deeco.simulation.SimulationHost;
 
 /**
  * Class representing the entry point for a simulation. It is responsible for
@@ -84,14 +83,16 @@ public class OMNetSimulation extends Simulation implements NetworkProvider {
 
 	private native void nativeSetPosition(String nodeId, double valX, double valY, double valZ);
 
-	private Map<String, SimulationHost> networkAddressesToHosts;
+	private Map<String, OMNetSimulationHost> networkAddressesToHosts;
+	
+	protected NetworkProvider networkProvider;
 
 	public OMNetSimulation(NetworkProvider networkProvider) {
-		super(networkProvider);
+		this.networkProvider = networkProvider;
 		if (networkProvider == null) {
 			this.networkProvider = this;
 		} else {
-			networkAddressesToHosts = new HashMap<String, SimulationHost>();
+			networkAddressesToHosts = new HashMap<String, OMNetSimulationHost>();
 		}
 		System.loadLibrary("libjdeeco-omnetpp");
 	}
@@ -99,21 +100,32 @@ public class OMNetSimulation extends Simulation implements NetworkProvider {
 	public OMNetSimulation() {
 		this(null);
 	}
+	
+	/**
+	 * Creates new instance of the {@link Host}.
+	 * 
+	 * @return new host instance
+	 */
+	public OMNetSimulationHost getHost(String logicalId, String networkId) {
+		return getHost(logicalId, networkId, true, true);
+	}
 
-	public SimulationHost getHost(String logicalId, String networkId,
+	public OMNetSimulationHost getHost(String logicalId, String networkId,
 			boolean hasMANETNic, boolean hasEthernetNic) {
-		SimulationHost host = (SimulationHost) networkProvider.getNetworkInterfaceByNetworkAddress(networkId);
+		OMNetSimulationHost host = (OMNetSimulationHost) networkProvider.getNetworkInterfaceByNetworkAddress(networkId);
 		if (host == null) {
-			host = super.getHost(logicalId, networkId, hasMANETNic, hasEthernetNic);
+			host = new OMNetSimulationHost(networkProvider, this, logicalId,
+					hasMANETNic, hasEthernetNic);
+			networkProvider.registerInNetwork(host, networkId);
 			nativeRegister(host, host.getHostId());
 		}
 		return host;
 	}
-
+	
 	public void registerInNetwork(NetworkInterface networkInterface,
 			String networkId) {
 		networkAddressesToHosts.put(networkId,
-				(SimulationHost) networkInterface);
+				(OMNetSimulationHost) networkInterface);
 	}
 	
 	@Override
@@ -123,7 +135,7 @@ public class OMNetSimulation extends Simulation implements NetworkProvider {
 	
 	@Override
 	public NetworkInterface getNetworkInterfaceByHostId(String hostId) {
-		for (SimulationHost sh: networkAddressesToHosts.values()) {
+		for (OMNetSimulationHost sh: networkAddressesToHosts.values()) {
 			if (sh.getHostId().equals(hostId)) {
 				return sh;
 			}

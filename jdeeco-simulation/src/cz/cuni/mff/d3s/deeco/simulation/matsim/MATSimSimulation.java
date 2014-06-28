@@ -16,33 +16,38 @@ import org.matsim.withinday.trafficmonitoring.TravelTimeCollector;
 import org.matsim.withinday.trafficmonitoring.TravelTimeCollectorFactory;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.network.NetworkProvider;
+import cz.cuni.mff.d3s.deeco.network.DirectKnowledgeDataHandler;
+import cz.cuni.mff.d3s.deeco.simulation.SimpleSimulationHost;
 import cz.cuni.mff.d3s.deeco.simulation.Simulation;
-import cz.cuni.mff.d3s.deeco.simulation.SimulationHost;
 import cz.cuni.mff.d3s.deeco.simulation.SimulationStepListener;
 import cz.cuni.mff.d3s.deeco.simulation.task.SimulationStepTask;
 
-public class MATSimSimulation extends Simulation implements SimulationStepListener, MATSimTimeProvider {
+public class MATSimSimulation extends Simulation implements
+		SimulationStepListener, MATSimTimeProvider {
 
 	private static final String SIMULATION_CALLBACK = "SIMULATION_CALLBACK";
-	
+
 	private long currentMilliseconds;
+	private final long simulationStep; // in milliseconds
+	private final TravelTime travelTime;
 	private final TreeSet<Callback> callbacks;
 	private final Map<String, Callback> hostIdToCallback;
 	private final Controler controler;
 	private final JDEECoWithinDayMobsimListener listener;
 	private final MATSimDataProvider matSimProvider;
 	private final MATSimDataReceiver matSimReceiver;
-	private final long simulationStep; // in milliseconds
-	private final TravelTime travelTime;
-	
-	public MATSimSimulation(NetworkProvider np, MATSimDataReceiver matSimReceiver,
+	private final Map<String, SimpleSimulationHost> hosts;
+
+	private final DirectKnowledgeDataHandler knowledgeDataHandler;
+
+	public MATSimSimulation(MATSimDataReceiver matSimReceiver,
 			MATSimDataProvider matSimProvider,
 			final Collection<? extends AdditionAwareAgentSource> agentSources,
 			String matSimConf) {
-		super(np);
+		this.knowledgeDataHandler = new DirectKnowledgeDataHandler();
 		this.callbacks = new TreeSet<>();
 		this.hostIdToCallback = new HashMap<>();
+		this.hosts = new HashMap<>();
 
 		this.controler = new MATSimPreloadingControler(matSimConf);
 		this.controler.setOverwriteFiles(true);
@@ -87,15 +92,26 @@ public class MATSimSimulation extends Simulation implements SimulationStepListen
 				listener.registerAgentProvider((JDEECoAgentSource) source);
 			}
 		}
-		
+
 		this.simulationStep = secondsToMilliseconds(step);
-		currentMilliseconds = secondsToMilliseconds(controler.getConfig().getQSimConfigGroup().getStartTime());
+		currentMilliseconds = secondsToMilliseconds(controler.getConfig()
+				.getQSimConfigGroup().getStartTime());
 	}
-	
+
+	public SimpleSimulationHost getHost(String id) {
+		
+		SimpleSimulationHost host = hosts.get(id);
+		if (host == null) {
+			host = new SimpleSimulationHost(id, this, knowledgeDataHandler);
+			hosts.put(id, host);
+		}
+		return host;
+	}
+
 	public Controler getControler() {
 		return this.controler;
 	}
-	
+
 	public double getMATSimSeconds() {
 		return millisecondsToSeconds(currentMilliseconds);
 	}
@@ -103,7 +119,7 @@ public class MATSimSimulation extends Simulation implements SimulationStepListen
 	public long getMATSimMilliseconds() {
 		return currentMilliseconds;
 	}
-	
+
 	public TravelTime getTravelTime() {
 		return this.travelTime;
 	}
@@ -123,43 +139,43 @@ public class MATSimSimulation extends Simulation implements SimulationStepListen
 		hostIdToCallback.put(hostId, callback);
 		callbacks.add(callback);
 	}
-	
+
 	@Override
 	public void at(long seconds, SimulationStepTask task) {
-		//Exchange data with MATSim
+		// Exchange data with MATSim
 		long milliseconds = secondsToMilliseconds(seconds);
 		matSimReceiver.setMATSimData(listener.getOutputs(seconds));
 		listener.setInputs(matSimProvider.getMATSimData());
-		//Add callback for the MATSim step
-		callAt(milliseconds+simulationStep, SIMULATION_CALLBACK);
-		SimulationHost host;
+		// Add callback for the MATSim step
+		callAt(milliseconds + simulationStep, SIMULATION_CALLBACK);
+		SimpleSimulationHost host;
 		Callback callback;
-		//Iterate through all the callbacks until the MATSim callback.
+		// Iterate through all the callbacks until the MATSim callback.
 		while (!callbacks.isEmpty()) {
 			callback = callbacks.pollFirst();
 			if (callback.getHostId().equals(SIMULATION_CALLBACK)) {
 				break;
 			}
 			currentMilliseconds = callback.getAbsoluteTime();
-			host = (SimulationHost) networkProvider.getNetworkInterfaceByHostId(callback.hostId);
+			host = (SimpleSimulationHost) hosts.get(callback.hostId);
 			host.at(millisecondsToSeconds(currentMilliseconds));
 		}
 	}
-	
+
 	public synchronized void run() {
 		controler.run();
 	}
-	
+
 	private class Callback implements Comparable<Callback> {
 
 		private final long milliseconds;
 		private final String hostId;
-		
+
 		public Callback(String hostId, long milliseconds) {
 			this.hostId = hostId;
 			this.milliseconds = milliseconds;
 		}
-		
+
 		public long getAbsoluteTime() {
 			return milliseconds;
 		}
@@ -180,7 +196,7 @@ public class MATSimSimulation extends Simulation implements SimulationStepListen
 				return this.hashCode() < c.hashCode() ? 1 : -1;
 			}
 		}
-		
+
 		public String toString() {
 			return hostId + " " + milliseconds;
 		}
@@ -220,6 +236,6 @@ public class MATSimSimulation extends Simulation implements SimulationStepListen
 
 		private MATSimSimulation getOuterType() {
 			return MATSimSimulation.this;
-		}	
+		}
 	}
 }

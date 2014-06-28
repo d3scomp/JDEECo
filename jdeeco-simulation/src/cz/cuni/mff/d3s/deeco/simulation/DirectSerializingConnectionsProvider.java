@@ -2,16 +2,19 @@ package cz.cuni.mff.d3s.deeco.simulation;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import cz.cuni.mff.d3s.deeco.network.KnowledgeData;
+import cz.cuni.mff.d3s.deeco.network.KnowledgeDataSender;
 import cz.cuni.mff.d3s.deeco.network.NetworkInterface;
 import cz.cuni.mff.d3s.deeco.network.NetworkProvider;
 
-public class DirectConnectionsProvider implements NetworkProvider {
+public class DirectSerializingConnectionsProvider implements NetworkProvider {
 
 	private final Map<String, NetworkInterface> network;
 	
-	public DirectConnectionsProvider() {
+	public DirectSerializingConnectionsProvider() {
 		this.network = new HashMap<String, NetworkInterface>();
 	}
 	
@@ -56,5 +59,4 @@ public class DirectConnectionsProvider implements NetworkProvider {
 		}
 		return null;
 	}
-
 }

@@ -9,20 +9,16 @@ import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
  * 
  */
-public class Host implements CurrentTimeProvider, NetworkInterface {
+public class Host extends AbstractHost implements NetworkInterface {
 
 	private final PacketReceiver packetReceiver;
 	private final PacketSender packetSender;
 	
-	private final String id;
-	
 	private final NetworkProvider networkProvider;
-	private final CurrentTimeProvider timeProvider;
 	
 	protected Host(NetworkProvider networkProvider, CurrentTimeProvider timeProvider, String jDEECoAppModuleId, boolean hasMANETNic, boolean hasIPNic) {
+		super(jDEECoAppModuleId, timeProvider);
 		this.networkProvider = networkProvider;
-		this.timeProvider = timeProvider;
-		this.id = jDEECoAppModuleId;
 		this.packetReceiver = new PacketReceiver(id);
 		this.packetSender = new PacketSender(this);
 		this.packetReceiver.setCurrentTimeProvider(this);
@@ -32,16 +28,12 @@ public class Host implements CurrentTimeProvider, NetworkInterface {
 		this(networkProvider, timeProvider, jDEECoAppModuleId, true, true);
 	}
 
-	public PacketReceiver getPacketReceiver() {
-		return packetReceiver;
+	public void setKnowledgeDataReceiver(KnowledgeDataReceiver knowledgeDataReceiver) {
+		packetReceiver.setKnowledgeDataReceiver(knowledgeDataReceiver);
 	}
 	
-	public PacketSender getPacketSender() {
+	public KnowledgeDataSender getKnowledgeDataSender() {
 		return packetSender;
-	}
-
-	public String getHostId() {
-		return id;
 	}
 
 	// Method used by the simulation
@@ -52,11 +44,6 @@ public class Host implements CurrentTimeProvider, NetworkInterface {
 	// The method used by publisher
 	public void sendPacket(byte[] packet, String recipient) {
 		networkProvider.sendPacket(id, packet, recipient);
-	}
-
-	@Override
-	public long getCurrentMilliseconds() {
-		return timeProvider.getCurrentMilliseconds();
 	}
 	
 	public void finalize() {

@@ -10,8 +10,8 @@ import org.eclipse.emf.common.notify.impl.AdapterImpl;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistryImpl;
@@ -66,7 +66,6 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 	 * The model corresponding to the running application.
 	 */
 	protected RuntimeMetadata model;
-	
 	
 	/** 
 	 * The scheduler used by the runtime.
@@ -503,6 +502,4 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 	public KnowledgeManagerContainer getContainer() {
 		return kmContainer;
 	}
-	
-
 }

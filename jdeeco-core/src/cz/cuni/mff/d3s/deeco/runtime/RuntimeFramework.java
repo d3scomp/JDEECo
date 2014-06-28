@@ -32,5 +32,4 @@ public interface RuntimeFramework {
 	
 	Scheduler getScheduler();
 	KnowledgeManagerContainer getContainer();
-
 }

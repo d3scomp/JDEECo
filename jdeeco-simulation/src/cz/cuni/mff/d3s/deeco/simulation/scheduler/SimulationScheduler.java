@@ -13,11 +13,12 @@ import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
+import cz.cuni.mff.d3s.deeco.network.AbstractHost;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.scheduler.SchedulerEvent;
 import cz.cuni.mff.d3s.deeco.simulation.CallbackProvider;
-import cz.cuni.mff.d3s.deeco.simulation.SimulationHost;
 import cz.cuni.mff.d3s.deeco.simulation.SimulationTimeEventListener;
+import cz.cuni.mff.d3s.deeco.simulation.omnet.OMNetSimulationHost;
 import cz.cuni.mff.d3s.deeco.task.Task;
 import cz.cuni.mff.d3s.deeco.task.TaskTriggerListener;
 
@@ -32,7 +33,7 @@ import cz.cuni.mff.d3s.deeco.task.TaskTriggerListener;
 public class SimulationScheduler implements Scheduler,
 		SimulationTimeEventListener {
 
-	private final SimulationHost host;
+	private final AbstractHost host;
 	private final CallbackProvider callbackProvider;
 
 	private final TreeSet<SchedulerEvent> queue;
@@ -43,7 +44,7 @@ public class SimulationScheduler implements Scheduler,
 
 	private Executor executor;
 
-	public SimulationScheduler(SimulationHost host,
+	public SimulationScheduler(AbstractHost host,
 			CallbackProvider callbackProvider) {
 		this.host = host;
 		this.callbackProvider = callbackProvider;
@@ -51,8 +52,6 @@ public class SimulationScheduler implements Scheduler,
 		allTasks = new HashSet<>();
 		periodicEvents = new HashMap<>();
 		onTriggerSchedules = new HashSet<>();
-
-		host.setSimulationTimeEventListener(this);
 	}
 
 	@Override

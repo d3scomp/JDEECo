@@ -1,26 +1,21 @@
-package cz.cuni.mff.d3s.deeco.simulation;
+package cz.cuni.mff.d3s.deeco.simulation.omnet;
 
 import static cz.cuni.mff.d3s.deeco.simulation.Simulation.secondsToMilliseconds;
 import cz.cuni.mff.d3s.deeco.network.Host;
 import cz.cuni.mff.d3s.deeco.network.NetworkProvider;
 import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
+import cz.cuni.mff.d3s.deeco.simulation.SimulationTimeEventListener;
 
-public class SimulationHost extends Host {
+public class OMNetSimulationHost extends Host {
+	
+	private SimulationTimeEventListener timeEventListener = null;
 
-	public SimulationHost(NetworkProvider networkProvider,
-			CurrentTimeProvider timeProvider, String jDEECoAppModuleId) {
-		super(networkProvider, timeProvider,
-				jDEECoAppModuleId);
-	}
-
-	public SimulationHost(NetworkProvider networkProvider,
+	public OMNetSimulationHost(NetworkProvider networkProvider,
 			CurrentTimeProvider timeProvider, String jDEECoAppModuleId,
 			boolean hasMANETNic, boolean hasIPNic) {
 		super(networkProvider, timeProvider,
 				jDEECoAppModuleId, hasMANETNic, hasIPNic);
 	}
-
-	private SimulationTimeEventListener timeEventListener = null;
 
 	public void setSimulationTimeEventListener(
 			SimulationTimeEventListener timeEventListener) {
