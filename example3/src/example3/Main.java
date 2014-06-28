@@ -15,10 +15,8 @@ import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
-import cz.cuni.mff.d3s.deeco.network.NetworkProvider;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework;
-import cz.cuni.mff.d3s.deeco.simulation.DirectConnectionsProvider;
-import cz.cuni.mff.d3s.deeco.simulation.SimulationHost;
+import cz.cuni.mff.d3s.deeco.simulation.SimpleSimulationHost;
 import cz.cuni.mff.d3s.deeco.simulation.SimulationRuntimeBuilder;
 import cz.cuni.mff.d3s.deeco.simulation.matsim.JDEECoAgent;
 import cz.cuni.mff.d3s.deeco.simulation.matsim.JDEECoAgentSource;
@@ -54,10 +52,8 @@ public class Main {
 		jdeecoAgentSource = new JDEECoAgentSource();
 		PopulationAgentSource populationAgentSource = new PopulationAgentSource();
 		
-		NetworkProvider np = new DirectConnectionsProvider();
-		
 		matSimProviderReceiver = new MATSimDataProviderReceiver();
-		simulation = new MATSimSimulation(np, matSimProviderReceiver, matSimProviderReceiver, Arrays.asList(jdeecoAgentSource, populationAgentSource), MATSIM_CONFIG_CUSTOM);
+		simulation = new MATSimSimulation(matSimProviderReceiver, matSimProviderReceiver, Arrays.asList(jdeecoAgentSource, populationAgentSource), MATSIM_CONFIG_CUSTOM);
 		populationAgentSource.setPopulation(simulation.getControler().getPopulation());
 		
 		router = new MATSimRouter(simulation.getControler(), simulation.getTravelTime());
@@ -91,7 +87,7 @@ public class Main {
 		RuntimeMetadata model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
 		processor.process(model, component, CapacityExchangeEnsemble.class);
 		
-		SimulationHost host = simulation.getHost(compIdString, "node[" + idx + "]", false, false);
+		SimpleSimulationHost host = simulation.getHost(compIdString);
 		RuntimeFramework runtime = builder.build(host, simulation, model, null, null);
 		runtime.start();		
 	}
