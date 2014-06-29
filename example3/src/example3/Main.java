@@ -64,7 +64,7 @@ public class Main {
 		processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE);
 		builder = new SimulationRuntimeBuilder();
 
-		for (int i=1; i <= 20; i++) {
+		for (int i=1; i <= 1000; i++) {
 			createAndDeployVehicleComponent(i, getRandomLink().toString(), "22_3");
 		}
 		
@@ -97,7 +97,7 @@ public class Main {
 		Set<Id> linkIds = router.getLinks().keySet();			
 
 		int nth = random.nextInt(linkIds.size());
-		for (Iterator<Id> iter = linkIds.iterator(); nth>0; nth--) {
+		for (Iterator<Id> iter = linkIds.iterator(); nth>=0; nth--) {
 			result = iter.next();
 		}
 

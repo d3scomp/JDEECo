@@ -133,7 +133,7 @@ public class VehicleComponent {
 			Set<Id> linkIds = router.getLinks().keySet();			
 			do {
 				int nth = random.nextInt(linkIds.size());
-				for (Iterator<Id> iter = linkIds.iterator(); nth>0; nth--) {
+				for (Iterator<Id> iter = linkIds.iterator(); nth>=0; nth--) {
 					destinationLink.value = iter.next();
 				}
 			} while (destinationLink.value.equals(currentLink));
