@@ -85,7 +85,7 @@ public class VehicleComponent {
 		
 		this.router = router;
 		this.clock = clock;
-		this.random = new Random(388334L);
+		this.random = new Random(id.hashCode());
 	}
 
 	/**

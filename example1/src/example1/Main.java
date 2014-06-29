@@ -52,6 +52,7 @@ public class Main {
 		populationAgentSource.setPopulation(simulation.getControler().getPopulation());
 		
 		router = new MATSimRouter(simulation.getControler(), simulation.getTravelTime());
+		matSimProviderReceiver.setRouter(router);
 
 		Log.i("Creating components");
 

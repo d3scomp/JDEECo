@@ -64,7 +64,7 @@ public class Main {
 		processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE);
 		builder = new SimulationRuntimeBuilder();
 
-		for (int i=1; i <= 1000; i++) {
+		for (int i=1; i <= 10; i++) {
 			createAndDeployVehicleComponent(i, getRandomLink().toString(), "22_3");
 		}
 		

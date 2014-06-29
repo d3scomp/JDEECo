@@ -22,9 +22,12 @@ public class CapacityExchangeEnsemble {
 
 	@Membership
 	public static boolean membership(
+			@In("member.id") Id mId,
+			@In("coord.id") Id cId,
 			@In("member.position") Coord mPos,
 			@In("coord.position") Coord cPos) {
 
+		System.out.format("CapacityExchangeEnsemble: mId: %s  cId: %s  mPos: %s  cPos: %s\n", mId, cId, mPos, cPos);
 		return getEuclidDistance(cPos, mPos) <= ENSEMBLE_RADIUS;
 	}
 
