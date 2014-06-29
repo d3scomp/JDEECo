@@ -99,8 +99,8 @@ public class KnowledgePathHelper {
 					value = km.getId();
 				}
 				else {
-					ValueSet vs = km.get(Arrays.asList(innerPath));
-					value = vs.getValue(innerPath).toString();
+					ValueSet vs = km.get(Arrays.asList(innerPathAndRoot.knowledgePath));
+					value = vs.getValue(innerPathAndRoot.knowledgePath).toString();
 				}
 				PathNodeField resField = factory.createPathNodeField();
 				resField.setName(value);

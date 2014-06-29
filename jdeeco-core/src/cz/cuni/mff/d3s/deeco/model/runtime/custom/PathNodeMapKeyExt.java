@@ -30,4 +30,9 @@ public class PathNodeMapKeyExt extends PathNodeMapKeyImpl {
 		return getClass().hashCode();
 	}
 	
+	@Override
+	public String toString() {
+		return "[" + getKeyPath().toString() + "]";
+	}	
+	
 } 

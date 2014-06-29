@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,8 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
+
+// TB: XXX - This would really benefit from being re-implemented using trie datastructure
 
 /**
  * This class implements the KnowledgeManager interface. It allows the user to
@@ -114,13 +117,6 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 			}
 		}
 	}
-
-	// FIXME TB: The code here desperately needs comments - in this case even
-	// inside the functions
-	// BTW, is the check implemented whether a path forming a prefix is already
-	// contained?
-	// BTW, why do you decompose the initial object on the first level of
-	// nesting? Why can't you just store the initial object as such?
 
 	/*
 	 * (non-Javadoc)
@@ -240,31 +236,31 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 			// Otherwise we should go through each knowledge entry, find the
 			// partial path matching and try to retrieve the data from the
 			// matched node in the knowledge
-			int endIndex = -1;
+			boolean wasFound = false;
 			for (final KnowledgePath kPath : knowledge.keySet()) {
 				try {
-					// Find partial matching of the path
-					endIndex = containmentEndIndex(knowledgePath,
-							kPath.getNodes());
-					if (endIndex > -1) {
-						// Retrieve data from the node
+					List<PathNode> kPathNodes = kPath.getNodes();
+					
+					if (startsWith(knowledgePath, kPathNodes)) {
 						result = getKnowledgeFromNode(knowledgePath.subList(
-								endIndex + 1, knowledgePath.size()),
+								kPathNodes.size(), knowledgePath.size()),
 								knowledge.get(kPath));
+						wasFound = true;
 						break;
+						
 					}
 				} catch (KnowledgeNotFoundException knfe) {
-					endIndex = -1;
 					continue;
 				}
 			}
-			if (endIndex < 0) {
+			if (!wasFound) {
 				throw new KnowledgeNotFoundException();
 			}
 		}
 		return result;
 	}
 
+	// TB: FIXME - This method is supposedly buggy. Assume that someone puts a.b.c and then tries to put a.b 
 	/**
 	 * Updates current knowledge entry with the specified value. It adds new
 	 * knowledge entries in case of maps and lists as well as entries, which
@@ -335,8 +331,8 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 			final Collection<KnowledgePath> paths) {
 		boolean result = true;
 		for (final KnowledgePath p : paths) {
-			if (containmentEndIndex(p.getNodes(), path.getNodes()) > -1
-					|| containmentEndIndex(path.getNodes(), p.getNodes()) > -1) {
+			if (startsWith(p.getNodes(), path.getNodes())
+					|| startsWith(path.getNodes(), p.getNodes())) {
 				result = false;
 				break;
 			}
@@ -520,8 +516,8 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 			// Examples:
 			// knowledgePath: a.b.c, kct: a.b
 			// knowledgePath : a.b, kct: a.b.c
-			if (containmentEndIndex(kpNodes, kctNodes) > -1
-					|| containmentEndIndex(kctNodes, kpNodes) > -1) {
+			if (startsWith(kpNodes, kctNodes)
+					|| startsWith(kctNodes, kpNodes)) {
 				// If the knowledge change trigger matches then we need to
 				// notify its listeners about the change
 				for (final TriggerListener listener : knowledgeChangeListeners.get(kct)) {
@@ -531,39 +527,33 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		}
 	}
 
+	
 	/**
-	 * Checks whether the shorter list is contained in the longer one, keeping
-	 * the order. It returns the containment end index.
-	 * 
-	 * @param longer
-	 * @param shorter
-	 * @return
+	 * Checks whether the list longerNodes starts with the list of shorterNodes.
 	 */
-	private int containmentEndIndex(final List<?> longer, final List<?> shorter) {
-		assert (longer != null && shorter != null);
-		// We need this as EList has differs in implementation of List
-		// specification, See indexOf method.
-		final List<Object> longerList = new LinkedList<>();
-		final List<Object> shorterList = new LinkedList<>();
-		longerList.addAll(longer);
-		shorterList.addAll(shorter);
-		if (shorterList.isEmpty()) {
-			return 0;
+	private boolean startsWith(final List<PathNode> longerNodes, final List<PathNode> shorterNodes) {
+		assert (longerNodes != null && shorterNodes != null);
+		
+		if (shorterNodes.isEmpty()) {
+			return true;
+		} else if (longerNodes.size() < shorterNodes.size()) {
+			return false;
 		}
-		if (longerList.isEmpty()) {
-			return -1;
+		
+		Iterator<PathNode> shorterIterator = shorterNodes.iterator();
+		Iterator<PathNode> longerIterator = longerNodes.iterator();
+		
+		while (shorterIterator.hasNext()) {
+			PathNode shorterNode = shorterIterator.next();
+			PathNode longerNode = longerIterator.next();
+			
+			assert (shorterNode != null && longerNode != null);
+			if (!shorterNode.equals(longerNode)) {
+				return false;
+			}
 		}
-		int index = longerList.indexOf(shorterList.get(0));
-		if (index < 0) {
-			return -1;
-		}
-		index++;
-		for (int i = 1; i < shorterList.size(); i++, index++) {
-			if (index != longerList.indexOf(shorterList.get(i)))
-				return -1;
-		}
-		index--;
-		return index;
+		
+		return true;
 	}
 
 	/**

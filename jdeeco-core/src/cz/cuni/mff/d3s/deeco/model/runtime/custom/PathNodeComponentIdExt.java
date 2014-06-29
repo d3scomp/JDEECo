@@ -27,4 +27,9 @@ public class PathNodeComponentIdExt extends PathNodeComponentIdImpl {
 		return getClass().hashCode();
 	}
 	
+	@Override
+	public String toString() {
+		return "<ID>";
+	}	
+
 } 
