@@ -56,6 +56,14 @@ public class CloningKnowledgeManager extends BaseKnowledgeManager {
 	 */
 	@Override
 	public void update(ChangeSet changeSet) throws KnowledgeUpdateException {
+		/* XXX: TB: This is quite experimental. As far as my understanding is correct, it should not
+		be necessary to clone the data on update. The only case, I can come up with, when this 
+		would be problematic is when local data would be also stored as non-local. Then the 
+		changes to the local data would cause changes in the non-local. But this is anti-pattern
+		by itself; thus it can be safely disregarded. */
+		super.update(changeSet);
+			
+/*		
 		ChangeSet toUpdate = new ChangeSet();
 		// only values need to be cloned (cloning KnowledgePaths in a full model
 		// causes a loopback in the cloner)
@@ -70,5 +78,6 @@ public class CloningKnowledgeManager extends BaseKnowledgeManager {
 			toUpdate.setDeleted(p);
 		}
 		super.update(toUpdate);
+*/
 	}
 }

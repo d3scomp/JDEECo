@@ -152,7 +152,10 @@ public class SimulationScheduler implements Scheduler,
 
 	@Override
 	public void at(long time) {
-		Log.d("Scheduler " + host.getHostId()+" at: "+time+" called with queue: " + Arrays.toString(queue.toArray()));
+		if (Log.isDebugLoggable()) {
+			Log.d("Scheduler " + host.getHostId()+" at: "+time+" called with queue: " + Arrays.toString(queue.toArray()));
+		}
+		
 		SchedulerEvent event;
 		while ((event = queue.first()) != null) {
 			// if notified too early (or already processed all events scheduled

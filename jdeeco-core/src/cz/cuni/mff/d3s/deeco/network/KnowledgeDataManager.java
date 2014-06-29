@@ -532,17 +532,19 @@ KnowledgeDataPublisher {
 	}
 	
 	private void logPublish(List<? extends KnowledgeData> data, String recipient) {
-		StringBuilder sb = new StringBuilder();
-		for (KnowledgeData kd: data) {
-			sb.append(kd.getMetaData().componentId + "v" + kd.getMetaData().versionId);
-			sb.append(", ");			
-		}		
-		if (recipient != null && !recipient.isEmpty())
-			Log.d(String.format("Publish (%d) at %s, sending [%s] directly to %s\n", 
-				timeProvider.getCurrentMilliseconds(), host, sb.toString(), recipient));
-		else
-			Log.d(String.format("Publish (%d) at %s, sending [%s]\n", 
-					timeProvider.getCurrentMilliseconds(), host, sb.toString()));
+		if (Log.isDebugLoggable()) {
+			StringBuilder sb = new StringBuilder();
+			for (KnowledgeData kd: data) {
+				sb.append(kd.getMetaData().componentId + "v" + kd.getMetaData().versionId);
+				sb.append(", ");			
+			}		
+			if (recipient != null && !recipient.isEmpty())
+				Log.d(String.format("Publish (%d) at %s, sending [%s] directly to %s\n", 
+					timeProvider.getCurrentMilliseconds(), host, sb.toString(), recipient));
+			else
+				Log.d(String.format("Publish (%d) at %s, sending [%s]\n", 
+						timeProvider.getCurrentMilliseconds(), host, sb.toString()));
+		}
 	}
 	
 	private void logReceive(List<? extends KnowledgeData> knowledgeData) {

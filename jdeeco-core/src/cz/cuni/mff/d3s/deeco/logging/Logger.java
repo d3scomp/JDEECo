@@ -17,6 +17,8 @@ interface Logger {
 	 *            the string message
 	 */
 	void debug(String msg);
+	
+	boolean isDebugLoggable();
 
 	/**
 	 * Log on the DEBUG level with associated Throwable information (exception

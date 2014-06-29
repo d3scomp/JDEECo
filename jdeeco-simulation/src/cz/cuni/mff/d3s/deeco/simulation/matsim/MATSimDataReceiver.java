@@ -11,5 +11,5 @@ import org.matsim.api.core.v01.Id;
  * 
  */
 public interface MATSimDataReceiver {
-	public void setMATSimData(Map<Id, ?> data);
+	public void setMATSimData(Map<Id, MATSimOutput> data);
 }

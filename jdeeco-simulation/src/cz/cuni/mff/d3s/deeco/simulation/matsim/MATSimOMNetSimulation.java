@@ -133,7 +133,7 @@ public class MATSimOMNetSimulation extends OMNetSimulation implements
 			if (matSimThread.isAlive() && this.remainingExchanges > 0) {
 				// long currentTime = getCurrentTime();
 				// long matsimTime = getMATSimTime();
-				matSimReceiver.setMATSimData(exchanger.exchange(matSimProvider
+				matSimReceiver.setMATSimData((Map<Id, MATSimOutput>)exchanger.exchange(matSimProvider
 						.getMATSimData()));
 				this.remainingExchanges--;
 				// Log.w("jDEECo After data exchange at " + currentTime
