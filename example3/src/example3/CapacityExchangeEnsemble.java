@@ -15,19 +15,16 @@ import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 import example3.VehicleComponent.LinkCapacityEntry;
 
 @Ensemble
-@PeriodicScheduling(period = 1000)
+@PeriodicScheduling(period = 10000)
 public class CapacityExchangeEnsemble {
 
 	public static final double ENSEMBLE_RADIUS = 2000.0; // in meters
 
 	@Membership
 	public static boolean membership(
-			@In("member.id") Id mId,
-			@In("coord.id") Id cId,
 			@In("member.position") Coord mPos,
 			@In("coord.position") Coord cPos) {
 
-		System.out.format("CapacityExchangeEnsemble: mId: %s  cId: %s  mPos: %s  cPos: %s\n", mId, cId, mPos, cPos);
 		return getEuclidDistance(cPos, mPos) <= ENSEMBLE_RADIUS;
 	}
 
