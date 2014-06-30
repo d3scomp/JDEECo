@@ -13,7 +13,7 @@ import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework;
-import cz.cuni.mff.d3s.deeco.simulation.SimpleSimulationHost;
+import cz.cuni.mff.d3s.deeco.simulation.DirectSimulationHost;
 import cz.cuni.mff.d3s.deeco.simulation.SimulationRuntimeBuilder;
 import cz.cuni.mff.d3s.deeco.simulation.matsim.JDEECoAgent;
 import cz.cuni.mff.d3s.deeco.simulation.matsim.JDEECoAgentSource;
@@ -82,7 +82,7 @@ public class Main {
 		RuntimeMetadata model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
 		processor.process(model, component, FollowerLeaderEnsemble.class);
 		
-		SimpleSimulationHost host = simulation.getHost(compIdString);
+		DirectSimulationHost host = simulation.getHost(compIdString);
 		RuntimeFramework runtime = builder.build(host, simulation, model, null, null);
 		runtime.start();		
 	}
