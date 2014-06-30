@@ -15,29 +15,29 @@ public class ComponentModeInfoRegistry {
 	
 	public void registerComponentMode(ModesInfo modeInfo){
 		
-		ComponentModeInfo cmContainer = new ComponentModeInfo();
-		System.out.println(modeInfo.initMode().getSimpleName());
-		System.out.println(modeInfo.parentMode().getSimpleName());
-		for (ComponentMode cparent : modes) {
-			if(cparent.name.equals(modeInfo.parentMode().getSimpleName())){
-				cmContainer.parentMode = cparent;
-			}
-		}
-		
-		for (Class<?> mode : modeInfo.allModes()) {
-				try {
-					ComponentMode cm = (ComponentMode) mode.newInstance();
-					cm.name = mode.getSimpleName();
-					System.out.println(mode.getName());
-					if(modeInfo.initMode().getSimpleName().equals(mode.getSimpleName())){
-						cmContainer.initMode = cm;
-					}
-					modes.add(cm);
-				} catch (IllegalAccessException | InstantiationException e) {
-					System.err.println("Fail in generating new mode ..... "+e.getMessage());
-				}
-			}
-		modeInfos.add(cmContainer);
+//		ComponentModeInfo cmContainer = new ComponentModeInfo();
+//		System.out.println(modeInfo.initMode().getSimpleName());
+//		System.out.println(modeInfo.parentMode().getSimpleName());
+//		for (ComponentMode cparent : modes) {
+//			if(cparent.name.equals(modeInfo.parentMode().getSimpleName())){
+//				cmContainer.parentMode = cparent;
+//			}
+//		}
+//		
+//		for (Class<?> mode : modeInfo.allModes()) {
+//				try {
+//					ComponentMode cm = (ComponentMode) mode.newInstance();
+//					cm.name = mode.getSimpleName();
+//					System.out.println(mode.getName());
+//					if(modeInfo.initMode().getSimpleName().equals(mode.getSimpleName())){
+//						cmContainer.initMode = cm;
+//					}
+//					modes.add(cm);
+//				} catch (IllegalAccessException | InstantiationException e) {
+//					System.err.println("Fail in generating new mode ..... "+e.getMessage());
+//				}
+//			}
+//		modeInfos.add(cmContainer);
 		
 	}
 	

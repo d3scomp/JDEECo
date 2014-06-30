@@ -23,6 +23,7 @@ import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.*;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
+import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder;
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
 import cz.cuni.mff.d3s.deeco.network.GenericCommunicationBoundaryPredicate;
 
@@ -40,6 +41,9 @@ import cz.cuni.mff.d3s.deeco.network.GenericCommunicationBoundaryPredicate;
  * 
  */
 public class AnnotationProcessor {
+	
+	
+	protected static final double SEC_NANOSEC_FACTOR = 1000000000;
 	
 	private static final Map<Class<? extends Annotation>, ParameterDirection> parameterAnnotationsToParameterDirections = Collections
 			.unmodifiableMap(new HashMap<Class<? extends Annotation>, ParameterDirection>() {
@@ -743,7 +747,22 @@ public class AnnotationProcessor {
 			pathNodeField.setName(new String(f.getName()));
 			knowledgePath.getNodes().add(pathNodeField);
 			try {
-				changeSet.setValue(knowledgePath, f.get(knowledge));
+				Object value = null;
+				Annotation[] anns = f.getDeclaredAnnotations();
+				System.out.println("anns : "+anns.length);
+				for (int i = 0; i < anns.length; i++) {
+					System.out.println("anns : "+anns[i]);
+					if(anns[0].annotationType().getName().contains("TimeStamp")){
+						value = new TSParamHolder();
+						((TSParamHolder)value).value = f.get(knowledge);
+						((TSParamHolder)value).creationTime = System.nanoTime()/SEC_NANOSEC_FACTOR;
+					}
+				}
+				
+				if(value == null)
+					value = f.get(knowledge);
+				System.out.println(knowledgePath+"   -------   value : "+value);
+				changeSet.setValue(knowledgePath, value);
 			} catch (IllegalAccessException e) {
 				continue;
 			}

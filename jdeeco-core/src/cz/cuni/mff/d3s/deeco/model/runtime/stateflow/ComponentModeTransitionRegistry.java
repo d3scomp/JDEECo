@@ -17,7 +17,7 @@ public class ComponentModeTransitionRegistry {
 
 	public ComponentModeInfoRegistry cReg = null;
 	public KnowledgePath knowledgePath = null;
-	public StateSpaceModel statespace = null;
+//	public StateSpaceModel statespace = null;
 	public ArrayList<ComponentModeTransition> transitions = new ArrayList<ComponentModeTransition>();
 	protected EList<Trigger> triggers = null;
 	
@@ -29,20 +29,20 @@ public class ComponentModeTransitionRegistry {
 	
 	public void registerModeTransition(ModeTransactions modeTrans){
 		
-		for (ModeTransition modeTran : modeTrans.transitions()) {
-			ComponentModeTransition newTran = new ComponentModeTransition();
-			for (ComponentMode cm : cReg.modes) {
-				if(cm.name.equals(modeTran.fromMode().getSimpleName())){
-					newTran.fromMode = cm;
-				}
-				if(cm.name.equals(modeTran.toMode().getSimpleName())){
-					newTran.fromMode = cm;
-				}
-			}
-			newTran.transitionCondition = modeTran.transitionCondition();
-			transitions.add(newTran);
-//			statespace = modeTrans.statespace();
-		}
+//		for (ModeTransition modeTran : modeTrans.transitions()) {
+//			ComponentModeTransition newTran = new ComponentModeTransition();
+//			for (ComponentMode cm : cReg.modes) {
+//				if(cm.name.equals(modeTran.fromMode().getSimpleName())){
+//					newTran.fromMode = cm;
+//				}
+//				if(cm.name.equals(modeTran.toMode().getSimpleName())){
+//					newTran.fromMode = cm;
+//				}
+//			}
+//			newTran.transitionCondition = modeTran.transitionCondition();
+//			transitions.add(newTran);
+////			statespace = modeTrans.statespace();
+//		}
 	}
 	
 	

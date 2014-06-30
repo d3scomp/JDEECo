@@ -1,6 +1,7 @@
 package cz.cuni.mff.d3s.deeco.task;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -18,6 +19,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
 /**
@@ -122,21 +124,41 @@ public class ProcessTask extends Task {
 
 		// Construct the parameters for the process method invocation
 		Object[] actualParams = new Object[formalParams.size()];
+		Object[] actualParamsPlain = new Object[formalParams.size()];
 		
 		int paramIdx = 0;
 		Iterator<KnowledgePath> allPathsIter = allPaths.iterator();
+		
 		for (Parameter formalParam : formalParams) {
 			ParameterDirection paramDir = formalParam.getDirection();
 			KnowledgePath absoluteKnowledgePath = allPathsIter.next();
 
+			Object obj = inKnowledge.getValue(absoluteKnowledgePath);
+			
 			if (paramDir == ParameterDirection.IN) {
-				actualParams[paramIdx] = inKnowledge.getValue(absoluteKnowledgePath);
+				if(obj instanceof TSParamHolder)
+					actualParams[paramIdx] = ((TSParamHolder<Object>)obj).value;//FIXME	
+				else 
+					actualParams[paramIdx] = obj;
 				
+				actualParamsPlain[paramIdx] = actualParams[paramIdx];
 			} else if (paramDir == ParameterDirection.OUT) {
-				actualParams[paramIdx] = new ParamHolder<Object>();
-
+				if(obj instanceof TSParamHolder)
+					actualParams[paramIdx] = new TSParamHolder<Object>();
+				else
+					actualParams[paramIdx] = new ParamHolder<Object>();
+				
+				actualParamsPlain[paramIdx] = new ParamHolder<Object>();
 			} else if (paramDir == ParameterDirection.INOUT) {
-				actualParams[paramIdx] = new ParamHolder<Object>(inKnowledge.getValue(absoluteKnowledgePath));
+				if(obj instanceof TSParamHolder){
+					TSParamHolder<Object> mv =  (TSParamHolder<Object>)obj;
+					TSParamHolder<Object> pv = new TSParamHolder<Object>();
+					pv.value = mv.value;
+					pv.creationTime = mv.creationTime;
+					actualParams[paramIdx] = pv;
+				}else{
+					actualParams[paramIdx] = new ParamHolder<Object>(obj);
+				}
 			}
 			// TODO: We could have an option of not creating the wrapper. That would make it easier to work with mutable out types.
 			// TODO: We need some way of handling insertions/deletions in a hashmap.
@@ -159,9 +181,22 @@ public class ProcessTask extends Task {
 			for (Parameter formalParam : formalParams) {
 				ParameterDirection paramDir = formalParam.getDirection();
 				KnowledgePath absoluteKnowledgePath = allPathsIter.next();
-
+			
+				Object obj = inKnowledge.getValue(absoluteKnowledgePath);
+				TSParamHolder<Object> tsMeta;
+				
 				if (paramDir == ParameterDirection.OUT || paramDir == ParameterDirection.INOUT) {
-					changeSet.setValue(absoluteKnowledgePath, ((ParamHolder<Object>)actualParams[paramIdx]).value);
+					if( obj instanceof TSParamHolder){
+						if(obj == null)
+							tsMeta = new TSParamHolder<Object>();
+						else			
+							tsMeta = (TSParamHolder<Object>)obj;
+						TSParamHolder<Object> v = ((TSParamHolder<Object>)actualParams[paramIdx]);
+						tsMeta.value = v.value;
+						tsMeta.creationTime = v.creationTime;
+						changeSet.setValue(absoluteKnowledgePath, tsMeta);
+					}else
+						changeSet.setValue(absoluteKnowledgePath, ((ParamHolder<Object>)actualParams[paramIdx]).value);
 				}
 
 				paramIdx++;
@@ -174,7 +209,7 @@ public class ProcessTask extends Task {
 			throw new TaskInvocationException("Error when invoking a process method.", e);
 		} catch (InvocationTargetException e) {
 			Log.w("Process method returned an exception.", e.getTargetException());
-		}		
+		}	
 	}
 
 	/* (non-Javadoc)

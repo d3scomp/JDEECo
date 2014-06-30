@@ -27,6 +27,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.impl.TriggerImpl;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
+import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.KnowledgePathAndRoot;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.PathRoot;
@@ -292,6 +293,13 @@ public class EnsembleTask extends Task {
 				actualParams[paramIdx] = shadowKnowledge.getValue(absoluKnowledgePathAndRoot.knowledgePath);	
 			}
 			
+			
+			if(actualParams[paramIdx] instanceof TSParamHolder){
+				actualParams[paramIdx] = ((TSParamHolder)actualParams[paramIdx]).value;
+			}else
+				actualParams[paramIdx] = actualParams[paramIdx];
+
+			
 			paramIdx++;
 		}
 		
@@ -409,15 +417,26 @@ public class EnsembleTask extends Task {
 					paramValue = shadowKnowledge.getValue(absoluteKnowledgePathAndRoot.knowledgePath);	
 				}
 			}
-			
-			if (paramDir == ParameterDirection.IN) {
-				actualParams[paramIdx] = paramValue;
-				
-			} else if (paramDir == ParameterDirection.OUT) {
-				actualParams[paramIdx] = new ParamHolder<Object>();
 
-			} else if (paramDir == ParameterDirection.INOUT) {
-				actualParams[paramIdx] = new ParamHolder<Object>(paramValue);
+			if (paramDir == ParameterDirection.IN) {
+				if(paramValue instanceof TSParamHolder){
+					actualParams[paramIdx] = ((TSParamHolder<Object>)paramValue).value;
+				}else{
+					actualParams[paramIdx] = paramValue;
+				}
+			} else if (paramDir == ParameterDirection.OUT) {
+				if(paramValue instanceof TSParamHolder ){
+					actualParams[paramIdx] = new TSParamHolder<Object>();
+				}else{
+					actualParams[paramIdx] = new ParamHolder<Object>();
+				}
+	
+			} else if(paramDir == ParameterDirection.INOUT) {
+				if(paramValue instanceof TSParamHolder){
+					actualParams[paramIdx] = new TSParamHolder<Object>((TSParamHolder<Object>)paramValue);
+				}else{
+					actualParams[paramIdx] = new ParamHolder<Object>(paramValue);
+				}
 			}
 			// TODO: We could have an option of not creating the wrapper. That would make it easier to work with mutable out types.
 			// TODO: We need some way of handling insertions/deletions in a hashmap.
@@ -440,7 +459,10 @@ public class EnsembleTask extends Task {
 
 				if (absoluteKnowledgePathAndRoot.root == localRole) {
 					if (paramDir == ParameterDirection.OUT || paramDir == ParameterDirection.INOUT) {
-						localChangeSet.setValue(absoluteKnowledgePathAndRoot.knowledgePath, ((ParamHolder<Object>)actualParams[paramIdx]).value);
+						if(actualParams[paramIdx] instanceof TSParamHolder)
+							localChangeSet.setValue(absoluteKnowledgePathAndRoot.knowledgePath, ((TSParamHolder<Object>)actualParams[paramIdx]));
+						else
+							localChangeSet.setValue(absoluteKnowledgePathAndRoot.knowledgePath, ((ParamHolder<Object>)actualParams[paramIdx]).value);
 					}
 				}
 				
