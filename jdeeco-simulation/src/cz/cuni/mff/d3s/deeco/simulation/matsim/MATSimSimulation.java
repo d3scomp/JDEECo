@@ -16,8 +16,8 @@ import org.matsim.withinday.trafficmonitoring.TravelTimeCollector;
 import org.matsim.withinday.trafficmonitoring.TravelTimeCollectorFactory;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.network.DirectKnowledgeDataHandler;
-import cz.cuni.mff.d3s.deeco.simulation.SimpleSimulationHost;
+import cz.cuni.mff.d3s.deeco.simulation.DirectKnowledgeDataHandler;
+import cz.cuni.mff.d3s.deeco.simulation.DirectSimulationHost;
 import cz.cuni.mff.d3s.deeco.simulation.Simulation;
 import cz.cuni.mff.d3s.deeco.simulation.SimulationStepListener;
 import cz.cuni.mff.d3s.deeco.simulation.task.SimulationStepTask;
@@ -36,7 +36,7 @@ public class MATSimSimulation extends Simulation implements
 	private final JDEECoWithinDayMobsimListener listener;
 	private final MATSimDataProvider matSimProvider;
 	private final MATSimDataReceiver matSimReceiver;
-	private final Map<String, SimpleSimulationHost> hosts;
+	private final Map<String, DirectSimulationHost> hosts;
 
 	private final DirectKnowledgeDataHandler knowledgeDataHandler;
 
@@ -98,11 +98,11 @@ public class MATSimSimulation extends Simulation implements
 				.getQSimConfigGroup().getStartTime());
 	}
 
-	public SimpleSimulationHost getHost(String id) {
+	public DirectSimulationHost getHost(String id) {
 		
-		SimpleSimulationHost host = hosts.get(id);
+		DirectSimulationHost host = hosts.get(id);
 		if (host == null) {
-			host = new SimpleSimulationHost(id, this, knowledgeDataHandler);
+			host = new DirectSimulationHost(id, this, knowledgeDataHandler);
 			hosts.put(id, host);
 		}
 		return host;
@@ -148,7 +148,7 @@ public class MATSimSimulation extends Simulation implements
 		listener.setInputs(matSimProvider.getMATSimData());
 		// Add callback for the MATSim step
 		callAt(milliseconds + simulationStep, SIMULATION_CALLBACK);
-		SimpleSimulationHost host;
+		DirectSimulationHost host;
 		Callback callback;
 		// Iterate through all the callbacks until the MATSim callback.
 		while (!callbacks.isEmpty()) {
@@ -157,7 +157,7 @@ public class MATSimSimulation extends Simulation implements
 				break;
 			}
 			currentMilliseconds = callback.getAbsoluteTime();
-			host = (SimpleSimulationHost) hosts.get(callback.hostId);
+			host = (DirectSimulationHost) hosts.get(callback.hostId);
 			host.at(millisecondsToSeconds(currentMilliseconds));
 		}
 	}

@@ -1,4 +1,6 @@
-package cz.cuni.mff.d3s.deeco.network;
+package cz.cuni.mff.d3s.deeco.simulation;
+
+import cz.cuni.mff.d3s.deeco.network.KnowledgeDataReceiver;
 
 public interface KnowledgeDataReceiversHolder {
 	

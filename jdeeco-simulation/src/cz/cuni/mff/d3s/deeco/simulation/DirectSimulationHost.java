@@ -6,27 +6,26 @@ import cz.cuni.mff.d3s.deeco.network.KnowledgeDataReceiver;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeDataSender;
 import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
 
-public class SimpleSimulationHost extends AbstractHost implements SimulationTimeEventListenerHolder {
+public class DirectSimulationHost extends AbstractHost implements SimulationTimeEventListenerHolder {
 	
-	private final KnowledgeDataSender sender;
-	private KnowledgeDataReceiver receiver;
+	private final DirectKnowledgeDataHandler handler;
 	private SimulationTimeEventListener timeEventListener = null;
 
-	public SimpleSimulationHost(String id, CurrentTimeProvider timeProvider, KnowledgeDataSender sender) {
+	public DirectSimulationHost(String id, CurrentTimeProvider timeProvider, DirectKnowledgeDataHandler handler) {
 		super(id, timeProvider);
-		this.sender = sender;
+		this.handler = handler;
 		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public KnowledgeDataSender getKnowledgeDataSender() {
-		return sender;
+		return handler;
 	}
 
 	@Override
 	public void setKnowledgeDataReceiver(
 			KnowledgeDataReceiver knowledgeDataReceiver) {
-		this.receiver = receiver;
+		this.handler.addKnowledgeDataReceiver(id, knowledgeDataReceiver);
 	}
 	
 	public void setSimulationTimeEventListener(
