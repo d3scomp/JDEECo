@@ -232,13 +232,18 @@ KnowledgeDataPublisher {
 			logPublish(Arrays.asList(data));
 			knowledgeDataSender.broadcastKnowledgeData(host, Arrays.asList(data));
 			dataToRebroadcastOverMANET.remove(sig);
-			Log.d(String.format("Rebroadcast finished (%d) at %s, data %s", timeProvider.getCurrentMilliseconds(), host, sig));
+			
+			if (Log.isDebugLoggable())
+				Log.d(String.format("Rebroadcast finished (%d) at %s, data %s", timeProvider.getCurrentMilliseconds(), host, sig));
+			
 		} else if (dataToRebroadcastOverIP.containsKey(sig)) {
 			data = prepareForRebroadcast(dataToRebroadcastOverIP.get(sig));
 			logPublish(Arrays.asList(data));
 			sendDirect(Arrays.asList(data));
 			dataToRebroadcastOverIP.remove(sig);
-			Log.d(String.format("Rebroadcast finished (%d) at %s, data %s", timeProvider.getCurrentMilliseconds(), host, sig));
+			
+			if (Log.isDebugLoggable())
+				Log.d(String.format("Rebroadcast finished (%d) at %s, data %s", timeProvider.getCurrentMilliseconds(), host, sig));
 		}
 	}
 
@@ -252,7 +257,9 @@ KnowledgeDataPublisher {
 		for (KnowledgeData kd : knowledgeData) {
 			KnowledgeMetaData newMetadata = kd.getMetaData();
 			if (kmContainer.hasLocal(newMetadata.componentId)) {
-				Log.d("KnowledgeDataManager.receive: Dropping KnowledgeData for local component " + newMetadata.componentId);
+				if (Log.isDebugLoggable()) 
+					Log.d("KnowledgeDataManager.receive: Dropping KnowledgeData for local component " + newMetadata.componentId);
+				
 				continue;
 			} 
 			KnowledgeManager replica = kmContainer.createReplica(newMetadata.componentId);			
@@ -263,22 +270,26 @@ KnowledgeDataPublisher {
 					&& (currentMetadata.versionId <= newMetadata.versionId)
 					&& dataToRebroadcastOverMANET.containsKey(currentMetadata.getSignature())) {
 				dataToRebroadcastOverMANET.remove(currentMetadata.getSignature());
-				Log.d(String.format(
-						"MANET: Rebroadcast aborted (%d) at %s, data %s, because of %s",
-						timeProvider.getCurrentMilliseconds(), host,
-						currentMetadata.getSignature(),
-						newMetadata.getSignature()));
+				if (Log.isDebugLoggable()) {
+					Log.d(String.format(
+							"MANET: Rebroadcast aborted (%d) at %s, data %s, because of %s",
+							timeProvider.getCurrentMilliseconds(), host,
+							currentMetadata.getSignature(),
+							newMetadata.getSignature()));
+				}
 			}
 			
 			if ((currentMetadata != null)
 					&& (currentMetadata.versionId < newMetadata.versionId)
 					&& dataToRebroadcastOverIP.containsKey(currentMetadata.getSignature())) {
 				dataToRebroadcastOverIP.remove(currentMetadata.getSignature());
-				Log.d(String.format(
-						"IP: Rebroadcast aborted (%d) at %s, data %s, because of %s",
-						timeProvider.getCurrentMilliseconds(), host,
-						currentMetadata.getSignature(),
-						newMetadata.getSignature()));
+				if (Log.isDebugLoggable()) {
+					Log.d(String.format(
+							"IP: Rebroadcast aborted (%d) at %s, data %s, because of %s",
+							timeProvider.getCurrentMilliseconds(), host,
+							currentMetadata.getSignature(),
+							newMetadata.getSignature()));
+				}
 			}
 			
 			// accept only fresh knowledge data (drop if we have already a newer value)
@@ -297,21 +308,25 @@ KnowledgeDataPublisher {
 				// rebroadcast only data that is of some value (i.e., newer than we have)
 				queueForRebroadcast(kd);
 				
-				Log.d(String.format("Receive (%d) at %s got %sv%d after %dms and %d hops\n", 
-						timeProvider.getCurrentMilliseconds(), 
-						host, 
-						newMetadata.componentId, 
-						newMetadata.versionId,
-						timeProvider.getCurrentMilliseconds() - newMetadata.createdAt,
-						newMetadata.hopCount));
+				if (Log.isDebugLoggable()) {
+					Log.d(String.format("Receive (%d) at %s got %sv%d after %dms and %d hops\n", 
+							timeProvider.getCurrentMilliseconds(), 
+							host, 
+							newMetadata.componentId, 
+							newMetadata.versionId,
+							timeProvider.getCurrentMilliseconds() - newMetadata.createdAt,
+							newMetadata.hopCount));
+				}
 			} 
 		}
 	}
 	
 	void queueForRebroadcast(KnowledgeData kd) {
 		if (checkBoundaryCondition && !isInSomeBoundary(kd, getNodeKnowledge())) {
-			Log.d(String.format("Boundary failed (%d) at %s for %sv%d\n", 
+			if (Log.isDebugLoggable()) { 
+				Log.d(String.format("Boundary failed (%d) at %s for %sv%d\n", 
 					timeProvider.getCurrentMilliseconds(), host, kd.getMetaData().componentId, kd.getMetaData().versionId));
+			}
 			return;
 		} 
 		
@@ -324,12 +339,14 @@ KnowledgeDataPublisher {
 			return;
 		}
 		
-		Log.d(String.format(
-				"Gossip rebroadcast (%d) at %s for %sv%d from %s with rssi %g with delay %d\n",
-				timeProvider.getCurrentMilliseconds(), host,
-				kmd.componentId,
-				kmd.versionId, kmd.sender,
-				kmd.rssi, delay));
+		if (Log.isDebugLoggable()) {
+			Log.d(String.format(
+					"Gossip rebroadcast (%d) at %s for %sv%d from %s with rssi %g with delay %d\n",
+					timeProvider.getCurrentMilliseconds(), host,
+					kmd.componentId,
+					kmd.versionId, kmd.sender,
+					kmd.rssi, delay));
+		}
 		
 		dataToRebroadcastOverMANET.put(kmd.getSignature(), kd);
 		dataToRebroadcastOverIP.put(kmd.getSignature(), kd);
@@ -387,7 +404,9 @@ KnowledgeDataPublisher {
 	private int getManetRebroadcastDelay(KnowledgeMetaData metaData) {
 		// rssi < 0 means received from IP
 		if (metaData.rssi < 0) {
-			Log.d("Got data from IP. Gossip condition does not apply, rebroadcasting automatically.");
+			if (Log.isDebugLoggable()) 
+				Log.d("Got data from IP. Gossip condition does not apply, rebroadcasting automatically.");
+			
 			return ipDelay;
 		}
 		
@@ -539,23 +558,32 @@ KnowledgeDataPublisher {
 				sb.append(", ");			
 			}		
 			if (recipient != null && !recipient.isEmpty())
-				Log.d(String.format("Publish (%d) at %s, sending [%s] directly to %s\n", 
-					timeProvider.getCurrentMilliseconds(), host, sb.toString(), recipient));
+				if (Log.isDebugLoggable()) {
+					Log.d(String.format("Publish (%d) at %s, sending [%s] directly to %s\n", 
+							timeProvider.getCurrentMilliseconds(), host, sb.toString(), recipient));
+				}
+
 			else
-				Log.d(String.format("Publish (%d) at %s, sending [%s]\n", 
-						timeProvider.getCurrentMilliseconds(), host, sb.toString()));
+				if (Log.isDebugLoggable()) {
+					Log.d(String.format("Publish (%d) at %s, sending [%s]\n", 
+							timeProvider.getCurrentMilliseconds(), host, sb.toString()));
+				}
 		}
 	}
 	
 	private void logReceive(List<? extends KnowledgeData> knowledgeData) {
-		StringBuilder sb = new StringBuilder();
-		for (KnowledgeData kd: knowledgeData) {
-			sb.append(kd.getMetaData().componentId + "v" + kd.getMetaData().versionId + "<-" + kd.getMetaData().sender);
-			sb.append(", ");			
+		if (Log.isDebugLoggable()) {
+			StringBuilder sb = new StringBuilder();
+			for (KnowledgeData kd: knowledgeData) {
+				sb.append(kd.getMetaData().componentId + "v" + kd.getMetaData().versionId + "<-" + kd.getMetaData().sender);
+				sb.append(", ");			
+			}
+
+			if (Log.isDebugLoggable()) {
+				Log.d(String.format("Receive (%d) at %s, received [%s]\n", 
+						timeProvider.getCurrentMilliseconds(), host, sb.toString()));
+			}
 		}
-		
-		Log.d(String.format("Receive (%d) at %s, received [%s]\n", 
-				timeProvider.getCurrentMilliseconds(), host, sb.toString()));
 	}
-	
+
 }

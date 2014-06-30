@@ -82,6 +82,7 @@ public class KnowledgeMetaData implements Serializable {
 
 
 	public String getSignature() {
-		return String.format("%sv%d", componentId, versionId);
+//		return String.format("%sv%d", componentId, versionId);
+		return componentId + "v" + versionId;
 	}
 }
