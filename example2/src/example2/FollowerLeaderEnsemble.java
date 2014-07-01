@@ -15,7 +15,7 @@ import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 @PeriodicScheduling(period = 1000)
 public class FollowerLeaderEnsemble {
 
-	public static final double ENSEMBLE_RADIUS = 2000.0; // in meters
+	public static final double ENSEMBLE_RADIUS = 2000.0;
 
 	@Membership
 	public static boolean membership(

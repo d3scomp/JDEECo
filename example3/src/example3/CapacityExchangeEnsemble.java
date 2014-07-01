@@ -18,7 +18,7 @@ import example3.VehicleComponent.LinkCapacityEntry;
 @PeriodicScheduling(period = 10000)
 public class CapacityExchangeEnsemble {
 
-	public static final double ENSEMBLE_RADIUS = 2000.0; // in meters
+	public static final double ENSEMBLE_RADIUS = 2000.0; 
 
 	@Membership
 	public static boolean membership(
