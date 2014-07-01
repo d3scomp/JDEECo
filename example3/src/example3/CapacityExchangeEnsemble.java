@@ -18,25 +18,25 @@ import example3.VehicleComponent.LinkCapacityEntry;
 @PeriodicScheduling(period = 10000)
 public class CapacityExchangeEnsemble {
 
-	public static final double ENSEMBLE_RADIUS = 2000.0; 
+	public static final double ENSEMBLE_RADIUS = 2000.0;
 
 	@Membership
 	public static boolean membership(
-			@In("member.position") Coord mPos,
-			@In("coord.position") Coord cPos) {
+			@In("coord.position") Coord cPos,
+			@In("member.position") Coord mPos) {
 
 		return getEuclidDistance(cPos, mPos) <= ENSEMBLE_RADIUS;
 	}
 
 	@KnowledgeExchange
 	public static void exchange(
-			@In("coord.linksCapacity") Map<Id, LinkCapacityEntry> cLinksCapacity,
-			@InOut("member.linksCapacity") ParamHolder<Map<Id, LinkCapacityEntry>> mLinksCapacity) {
+			@InOut("coord.linksCapacity") ParamHolder<Map<Id, LinkCapacityEntry>> cLinksCapacity,
+			@In("member.linksCapacity") Map<Id, LinkCapacityEntry> mLinksCapacity) {
 
-		for (LinkCapacityEntry cEntry : cLinksCapacity.values()) {
-			LinkCapacityEntry mEntry = mLinksCapacity.value.get(cEntry.linkId);
-			if (mEntry == null || mEntry.timestamp < cEntry.timestamp) {
-				mLinksCapacity.value.put(cEntry.linkId, cEntry);
+		for (LinkCapacityEntry mEntry : mLinksCapacity.values()) {
+			LinkCapacityEntry cEntry = cLinksCapacity.value.get(mEntry.linkId);
+			if (cEntry == null || cEntry.timestamp < mEntry.timestamp) {
+				cLinksCapacity.value.put(mEntry.linkId, mEntry);
 			}
 		}
 	}
