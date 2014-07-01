@@ -32,7 +32,7 @@ import org.matsim.pt.router.TransitRouterImplFactory;
  */
 public class MATSimRouter {
 
-	public static int DEFAULT_LINK_PARKING_CAPACITY = 5;
+	public static int DEFAULT_LINK_PARKING_CAPACITY = 2;
 
 	private final Controler controler;
 	private final TripRouterFactory tripRouterFactory;
