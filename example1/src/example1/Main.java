@@ -35,8 +35,6 @@ public class Main {
 	private static SimulationRuntimeBuilder builder;
 
 	public static void main(String[] args) throws AnnotationProcessorException,	IOException {
-		MATSimRouter.DEFAULT_LINK_PARKING_CAPACITY = 2;
-		
 		Log.i("Preparing simulation");
 
 		jdeecoAgentSource = new JDEECoAgentSource();
@@ -62,7 +60,6 @@ public class Main {
 		
 		simulation.run();
 		Log.i("Simulation Finished");
-
 	}
 	
 	private static void createAndDeployVehicleComponent(int idx, String sourceLinkIdString) throws AnnotationProcessorException {

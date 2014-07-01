@@ -24,13 +24,6 @@ import cz.cuni.mff.d3s.deeco.simulation.matsim.JDEECoAgentSource;
 import cz.cuni.mff.d3s.deeco.simulation.matsim.MATSimRouter;
 import cz.cuni.mff.d3s.deeco.simulation.matsim.MATSimSimulation;
 
-/**
- * jDEECo-MATSim integration demo based on the Sioux Falls scenario of the
- * MATSim.
- * 
- * @author Michal Kit <kit@d3s.mff.cuni.cz>
- * 
- */
 public class Main {
 
 	private static final String MATSIM_CONFIG_CUSTOM = "input/config.xml";
@@ -46,8 +39,6 @@ public class Main {
 	private static Random random = new Random(329884L);
 	
 	public static void main(String[] args) throws AnnotationProcessorException,	IOException {
-		MATSimRouter.DEFAULT_LINK_PARKING_CAPACITY = 2;
-		
 		Log.i("Preparing simulation");
 
 		jdeecoAgentSource = new JDEECoAgentSource();
@@ -72,7 +63,6 @@ public class Main {
 		
 		simulation.run();
 		Log.i("Simulation Finished");
-
 	}
 	
 	private static void createAndDeployVehicleComponent(int idx, String sourceLinkIdString, String destLinkIdString) throws AnnotationProcessorException {
