@@ -12,4 +12,4 @@ The project contains 4 examples:
 
 Each of the projects is an Eclipse project. To run it, simply import the project to Eclipse. The launch configuration is part of the project, thus a corresponding run target automatically appears in the Run configurations. Simply run the project by executing the run configuration.
 
-The slides accompanying the examples are located in file [tutorial.pdf](http://https://github.com/d3scomp/cbse-tutorial/blob/master/tutorial.pdf).
+The slides accompanying the examples are located in file [tutorial.pdf](https://github.com/d3scomp/cbse-tutorial/raw/master/tutorial.pdf).
