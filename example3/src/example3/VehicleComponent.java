@@ -149,10 +149,7 @@ public class VehicleComponent {
 		int min = (int)(ts % 60); ts = ts / 60;
 		int hour = (int)ts;
 		
-//		if (id.equals("V1")) {
-			System.out.format("<%02d:%02d:%02d.%03d> [%s]  link: %s  currentLinkFreeCapacitySensor: %d  isParked: %s  destinationLink: %s  linkToBeParkedAt: %s  route: %s\n", hour, min, sec, msec, id, currentLinkSensor.read(), currentLinkFreeCapacitySensor.read(), isParkedSensor.read(), destinationLink, linkToBeParkedAt, route);
-//		}
-//		System.out.format("<%02d:%02d:%02d.%03d> [%s]  link: %s  currentLinkFreeCapacitySensor: %d  isParked: %s  destinationLink: %s  linkToBeParkedAt: %s  route: %s\n", hour, min, sec, msec, id, currentLinkSensor.read(), currentLinkFreeCapacitySensor.read(), isParkedSensor.read(), destinationLink, linkToBeParkedAt, route);
+		System.out.format("<%02d:%02d:%02d.%03d> [%s]  link: %s  currentLinkFreeCapacitySensor: %d  isParked: %s  destinationLink: %s  linkToBeParkedAt: %s  route: %s\n", hour, min, sec, msec, id, currentLinkSensor.read(), currentLinkFreeCapacitySensor.read(), isParkedSensor.read(), destinationLink, linkToBeParkedAt, route);
 	}
 
 	/**
