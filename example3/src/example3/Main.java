@@ -6,6 +6,7 @@ import java.util.Random;
 import java.util.Set;
 
 import org.matsim.api.core.v01.Id;
+import org.matsim.api.core.v01.population.Population;
 import org.matsim.core.basic.v01.IdImpl;
 
 import tutorial.environment.MATSimDataProviderReceiver;
@@ -54,6 +55,7 @@ public class Main {
 		
 		matSimProviderReceiver = new MATSimDataProviderReceiver();
 		simulation = new MATSimSimulation(matSimProviderReceiver, matSimProviderReceiver, Arrays.asList(jdeecoAgentSource, populationAgentSource), MATSIM_CONFIG_CUSTOM);
+		reducePopulation(simulation.getControler().getPopulation());
 		populationAgentSource.setPopulation(simulation.getControler().getPopulation());
 		
 		router = new MATSimRouter(simulation.getControler(), simulation.getTravelTime());
@@ -64,7 +66,7 @@ public class Main {
 		processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE);
 		builder = new SimulationRuntimeBuilder();
 
-		for (int i=1; i <= 10; i++) {
+		for (int i=1; i <= 20; i++) {
 			createAndDeployVehicleComponent(i, getRandomLink().toString(), "22_3");
 		}
 		
@@ -104,5 +106,22 @@ public class Main {
 		return result;
 	}
 
+	/**
+	 * This method reduces the original population. This is for didactic purposes - it decreases the traffic jams
+	 * and makes the visualization of our components more informative. 
+	 */
+	private static void reducePopulation(Population population) {
+		Iterator<Id> personIter = population.getPersons().keySet().iterator();
+		int counter = 0;
+		while (personIter.hasNext()) {
+			personIter.next();
+			
+			if (counter % 4 != 0) {
+				personIter.remove();
+			}
+			
+			counter++;
+		}		
+	}
 
 }

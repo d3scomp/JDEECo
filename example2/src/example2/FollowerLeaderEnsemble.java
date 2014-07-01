@@ -24,7 +24,7 @@ public class FollowerLeaderEnsemble {
 			@In("member.position") Coord mPos,
 			@In("coord.position") Coord cPos) {
 
-		return getEuclidDistance(cPos, mPos) <= ENSEMBLE_RADIUS && cId.compareTo(mId) == -1;
+		return getEuclidDistance(cPos, mPos) <= ENSEMBLE_RADIUS && cId.compareTo(mId) < 0;
 	}
 
 	@KnowledgeExchange

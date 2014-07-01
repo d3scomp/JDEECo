@@ -110,13 +110,14 @@ public class VehicleComponent {
 			@In("id") String id,
 			@In("state") State state, 
 			@In("currentLinkSensor") Sensor<Id> currentLinkSensor,
+			@In("position") Coord position,
 			@In("isParkedSensor") Sensor<Boolean> isParkedSensor,
 			@In("destinationLink") Id destinationLink,
 			@In("route") List<Id> route,
 			@In("clock") MATSimTimeProvider clock
 			) {
 		
-		System.out.format("<%s> [%s]  state: %s  currentLink: %s  isParked: %s  destinationLink: %s  route: %s\n", getTime(clock), id, state, currentLinkSensor.read(), isParkedSensor.read(), destinationLink, route);
+		System.out.format("<%s> [%s]  state: %s  currentLink: %s  position: %s  isParked: %s  destinationLink: %s  route: %s\n", getTime(clock), id, state, currentLinkSensor.read(), position, isParkedSensor.read(), destinationLink, route);
 	}
 
 	/**

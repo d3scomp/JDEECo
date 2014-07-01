@@ -34,7 +34,7 @@ public class HelloWorld {
 			@In("id") String id
 			) {
 		
-		System.out.format("Hello world!\n");
+		System.out.println("Hello world!");
 	}
 	
 	/**
@@ -47,5 +47,6 @@ public class HelloWorld {
 			) {
 		
 		counter.value ++;
+		System.out.println("... counter incremented to " + counter.value);
 	}
 }

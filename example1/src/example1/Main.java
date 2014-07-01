@@ -1,8 +1,10 @@
 package example1;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Iterator;
 
 import org.matsim.api.core.v01.Id;
+import org.matsim.api.core.v01.population.Population;
 import org.matsim.core.basic.v01.IdImpl;
 
 import tutorial.environment.MATSimDataProviderReceiver;
@@ -20,13 +22,6 @@ import cz.cuni.mff.d3s.deeco.simulation.matsim.JDEECoAgentSource;
 import cz.cuni.mff.d3s.deeco.simulation.matsim.MATSimRouter;
 import cz.cuni.mff.d3s.deeco.simulation.matsim.MATSimSimulation;
 
-/**
- * jDEECo-MATSim integration demo based on the Sioux Falls scenario of the
- * MATSim.
- * 
- * @author Michal Kit <kit@d3s.mff.cuni.cz>
- * 
- */
 public class Main {
 
 	private static final String MATSIM_CONFIG_CUSTOM = "input/config.xml";
@@ -49,6 +44,7 @@ public class Main {
 		
 		matSimProviderReceiver = new MATSimDataProviderReceiver();
 		simulation = new MATSimSimulation(matSimProviderReceiver, matSimProviderReceiver, Arrays.asList(jdeecoAgentSource, populationAgentSource), MATSIM_CONFIG_CUSTOM);
+		reducePopulation(simulation.getControler().getPopulation());
 		populationAgentSource.setPopulation(simulation.getControler().getPopulation());
 		
 		router = new MATSimRouter(simulation.getControler(), simulation.getTravelTime());
@@ -59,10 +55,10 @@ public class Main {
 		processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE);
 		builder = new SimulationRuntimeBuilder();
 
-//		createAndDeployVehicleComponent(1, "1_1");
-//		createAndDeployVehicleComponent(2, "50_2");
+		createAndDeployVehicleComponent(1, "1_1");
+		createAndDeployVehicleComponent(2, "50_2");
 		createAndDeployVehicleComponent(3, "22_3");
-//		createAndDeployVehicleComponent(4, "59_3");
+		createAndDeployVehicleComponent(4, "59_3");		
 		
 		simulation.run();
 		Log.i("Simulation Finished");
@@ -87,5 +83,22 @@ public class Main {
 		runtime.start();		
 	}
 
+	/**
+	 * This method reduces the original population. This is for didactic purposes - it decreases the traffic jams
+	 * and makes the visualization of our components more informative. 
+	 */
+	private static void reducePopulation(Population population) {
+		Iterator<Id> personIter = population.getPersons().keySet().iterator();
+		int counter = 0;
+		while (personIter.hasNext()) {
+			personIter.next();
+			
+			if (counter % 4 != 0) {
+				personIter.remove();
+			}
+			
+			counter++;
+		}		
+	}
 
 }

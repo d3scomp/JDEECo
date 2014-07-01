@@ -27,9 +27,5 @@ public class Main {
 						Execution.SINGLE_THREADED));
 		RuntimeFramework runtime = builder.build(model); 
 		runtime.start();
-		
-		Thread.sleep(5000);
-		
-		runtime.stop();
 	}
 }
