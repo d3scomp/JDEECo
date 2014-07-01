@@ -8,5 +8,5 @@
 </listAttribute>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="example3.Main"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="example3"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dlog4j.configuration=log4j-custom.xml -mx2000m"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dlog4j.configuration=log4j-custom.xml -mx1300m"/>
 </launchConfiguration>
