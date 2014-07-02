@@ -9,6 +9,7 @@ import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.TimeStamp;
+import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 
@@ -56,12 +57,12 @@ public class Environment {
 			@In("eHGass") HashMap<String, Double> eHGass,
 			@In("eHBrakes") HashMap<String, Double> eHBrakes,
 
-			@InOut("eFFPos") TSParamHolder<Double> eFFPos,
-			@InOut("eFFSpeed") TSParamHolder<Double> eFFSpeed,
+			@InOut("eFFPos") InaccuracyParamHolder<Double> eFFPos,
+			@InOut("eFFSpeed") InaccuracyParamHolder<Double> eFFSpeed,
 			@InOut("eLPos") ParamHolder<Double> eLPos,
 			@InOut("eLSpeed") ParamHolder<Double> eLSpeed,
-			@InOut("eHPoss") HashMap<String, TSParamHolder<Double>> eHPoss,
-			@InOut("eHSpeeds") HashMap<String, TSParamHolder<Double>> eHSpeeds
+			@InOut("eHPoss") ParamHolder<HashMap<String, InaccuracyParamHolder<Double>>> eHPoss,
+			@InOut("eHSpeeds") ParamHolder<HashMap<String, InaccuracyParamHolder<Double>>> eHSpeeds
 			){
 	
 		double currentTime = System.nanoTime()/SEC_NANOSECOND_FACTOR;
@@ -71,23 +72,34 @@ public class Environment {
 		double ffAcceleration = Database.getAcceleration(eFFSpeed.value, eFFPos.value, Database.fTorques, eFFGas, eFFBrake,Database.fMass);
 		eFFSpeed.value += ffAcceleration * timePeriodInSeconds; 
 		eFFPos.value += eFFSpeed.value * timePeriodInSeconds;
-  		//------------------------ Leader  ---------------------------------------------------------------------
+ 
+		
+		double minffAcceleration = Database.getAcceleration(eFFSpeed.minBoundary, eFFPos.minBoundary, Database.fTorques, 0.0, 1.0,Database.fMass);
+		eFFSpeed.minBoundary += minffAcceleration * timePeriodInSeconds; 
+		eFFPos.minBoundary += eFFSpeed.minBoundary * timePeriodInSeconds;
+
+		double maxffAcceleration = Database.getAcceleration(eFFSpeed.maxBoundary, eFFPos.maxBoundary, Database.fTorques, 1.0, 0.0,Database.fMass);
+		eFFSpeed.maxBoundary += maxffAcceleration * timePeriodInSeconds; 
+		eFFPos.maxBoundary += eFFSpeed.maxBoundary * timePeriodInSeconds;
+
+		
+		//------------------------ Leader  ---------------------------------------------------------------------
 		double lAcceleration = Database.getAcceleration(eLSpeed.value, eLPos.value, Database.fTorques, eLGas, eLBrake,Database.fMass);
 		eLSpeed.value += lAcceleration * timePeriodInSeconds; 
 		eLPos.value += eLSpeed.value * timePeriodInSeconds;
   		//------------------------ Helicopters  ---------------------------------------------------------------------
-		for (String hName : eHPoss.keySet()) {
-			double hAcceleration = Database.getAcceleration(eHSpeeds.get(hName).value, eHPoss.get(hName).value, Database.fTorques, eHGass.get(hName), eHBrakes.get(hName),Database.fMass);
-			eHSpeeds.get(hName).value += hAcceleration * timePeriodInSeconds; 
-			eHPoss.get(hName).value += eHSpeeds.get(hName).value * timePeriodInSeconds;
+		for (String hName : eHPoss.value.keySet()) {
+			double hAcceleration = Database.getAcceleration(eHSpeeds.value.get(hName).value, eHPoss.value.get(hName).value, Database.fTorques, eHGass.get(hName), eHBrakes.get(hName),Database.fMass);
+			eHSpeeds.value.get(hName).value += hAcceleration * timePeriodInSeconds; 
+			eHPoss.value.get(hName).value += eHSpeeds.value.get(hName).value * timePeriodInSeconds;
 	 	}
 		//--------------------------------------------------------------------------------------------------------
 		System.out.println("=================================== statue ==========================================");
  		System.out.println("Speed FireFighter : "+eFFSpeed.value+", pos : "+eFFPos.value+"... time :"+currentTime);
 		System.out.println("Speed Leader : "+eLSpeed.value+", pos : "+eLPos.value+"... time :"+currentTime);
-		for (String hName : eHPoss.keySet()) {
-			System.out.println("Speed Helicopter : "+eHSpeeds.get(hName).value+", pos : "+eHPoss.get(hName).value+"... time :"+currentTime);
-		}
+//		for (String hName : eHPoss.keySet()) {
+//			System.out.println("Speed Helicopter : "+eHSpeeds.get(hName).value+", pos : "+eHPoss.get(hName).value+"... time :"+currentTime);
+//		}
 		System.out.println("==========================================================================================");
 	}
 }

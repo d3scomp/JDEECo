@@ -6,8 +6,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface Field {
-	String name();
-	String value();
+@Target(ElementType.TYPE)
+public @interface Model {
+	String[] state();
+	Fun result();
 }
+

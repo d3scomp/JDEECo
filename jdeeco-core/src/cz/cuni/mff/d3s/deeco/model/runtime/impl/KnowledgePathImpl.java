@@ -3,6 +3,7 @@
 package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ModeTransition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
@@ -29,6 +30,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * The following features are implemented:
  * <ul>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.KnowledgePathImpl#getNodes <em>Nodes</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.KnowledgePathImpl#getModeTransitions <em>Mode Transitions</em>}</li>
  * </ul>
  * </p>
  *
@@ -44,6 +46,16 @@ public class KnowledgePathImpl extends MinimalEObjectImpl.Container implements K
 	 * @ordered
 	 */
 	protected EList<PathNode> nodes;
+
+	/**
+	 * The cached value of the '{@link #getModeTransitions() <em>Mode Transitions</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getModeTransitions()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<ModeTransition> modeTransitions;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -81,11 +93,25 @@ public class KnowledgePathImpl extends MinimalEObjectImpl.Container implements K
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EList<ModeTransition> getModeTransitions() {
+		if (modeTransitions == null) {
+			modeTransitions = new EObjectContainmentEList<ModeTransition>(ModeTransition.class, this, RuntimeMetadataPackage.KNOWLEDGE_PATH__MODE_TRANSITIONS);
+		}
+		return modeTransitions;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
 			case RuntimeMetadataPackage.KNOWLEDGE_PATH__NODES:
 				return ((InternalEList<?>)getNodes()).basicRemove(otherEnd, msgs);
+			case RuntimeMetadataPackage.KNOWLEDGE_PATH__MODE_TRANSITIONS:
+				return ((InternalEList<?>)getModeTransitions()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -100,6 +126,8 @@ public class KnowledgePathImpl extends MinimalEObjectImpl.Container implements K
 		switch (featureID) {
 			case RuntimeMetadataPackage.KNOWLEDGE_PATH__NODES:
 				return getNodes();
+			case RuntimeMetadataPackage.KNOWLEDGE_PATH__MODE_TRANSITIONS:
+				return getModeTransitions();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -117,6 +145,10 @@ public class KnowledgePathImpl extends MinimalEObjectImpl.Container implements K
 				getNodes().clear();
 				getNodes().addAll((Collection<? extends PathNode>)newValue);
 				return;
+			case RuntimeMetadataPackage.KNOWLEDGE_PATH__MODE_TRANSITIONS:
+				getModeTransitions().clear();
+				getModeTransitions().addAll((Collection<? extends ModeTransition>)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -132,6 +164,9 @@ public class KnowledgePathImpl extends MinimalEObjectImpl.Container implements K
 			case RuntimeMetadataPackage.KNOWLEDGE_PATH__NODES:
 				getNodes().clear();
 				return;
+			case RuntimeMetadataPackage.KNOWLEDGE_PATH__MODE_TRANSITIONS:
+				getModeTransitions().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -146,6 +181,8 @@ public class KnowledgePathImpl extends MinimalEObjectImpl.Container implements K
 		switch (featureID) {
 			case RuntimeMetadataPackage.KNOWLEDGE_PATH__NODES:
 				return nodes != null && !nodes.isEmpty();
+			case RuntimeMetadataPackage.KNOWLEDGE_PATH__MODE_TRANSITIONS:
+				return modeTransitions != null && !modeTransitions.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

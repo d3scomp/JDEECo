@@ -19,7 +19,6 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface Code {
-	Field[] field() default {};
-//	Method[] method() default {}; 
+public @interface TriggerOnDeactiveModeChange {
+
 }

@@ -8,8 +8,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-
-
 /**
  * Used to mark an ensemble / component process to be executed when the object the parameter's path points to changes.  
  * <p>
@@ -21,8 +19,6 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface PeriodicSchedulingOnActivateMode {
-	int value() default 0;
-	Code[] entry() default {};
-	Code[] exit() default {};
+public @interface TriggerOnActiveModeChange {
+
 }

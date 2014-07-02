@@ -16,6 +16,8 @@
   <eClassifiers xsi:type="ecore:EClass" name="KnowledgePath">
     <eStructuralFeatures xsi:type="ecore:EReference" name="nodes" lowerBound="1" upperBound="-1"
         eType="#//PathNode" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="modeTransitions" upperBound="-1"
+        eType="#//ModeTransition" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PathNode" abstract="true"/>
   <eClassifiers xsi:type="ecore:EDataType" name="Method" instanceClassName="java.lang.reflect.Method"/>
@@ -45,8 +47,14 @@
         eType="#//EnsembleController" containment="true" eOpposite="#//EnsembleController/componentInstance"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="internalData" upperBound="-1"
         eType="#//StringToObjectMap" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="componentModes" upperBound="-1"
-        eType="#//ComponentMode" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="modeControllers" upperBound="-1"
+        eType="#//ModeController" containment="true" eOpposite="#//ModeController/componentInstance"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="stateSpaceModels" upperBound="-1"
+        eType="#//StateSpaceModel" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="entry" eType="#//ComponentProcessEntry"
+        containment="true" eOpposite="#//ComponentProcessEntry/componentInstance"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="exit" eType="#//ComponentProcessExit"
+        containment="true" eOpposite="#//ComponentProcessExit/componentInstance"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EnsembleDefinition">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -76,10 +84,10 @@
     <eLiterals name="INOUT" value="2"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Parameter">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="direction" lowerBound="1"
-        eType="#//ParameterDirection" defaultValueLiteral="INOUT" unsettable="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="knowledgePath" eType="#//KnowledgePath"
         containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="direction" lowerBound="1"
+        eType="#//ParameterDirection" defaultValueLiteral="INOUT" unsettable="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaClass"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Invocable">
@@ -103,5 +111,59 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="CommunicationBoundary" instanceClassName="cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate"/>
-  <eClassifiers xsi:type="ecore:EClass" name="ComponentMode"/>
+  <eClassifiers xsi:type="ecore:EClass" name="StateSpaceModel">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="inStates" lowerBound="1"
+        upperBound="-1" eType="#//KnowledgePath"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="derivationStates" upperBound="-1"
+        eType="#//KnowledgePath"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="model" eType="#//ModelType"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ModeController">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="initMode" lowerBound="1"
+        eType="#//ComponentProcess"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parentMode" eType="#//ComponentProcess"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="allModes" lowerBound="1"
+        upperBound="-1" eType="#//ComponentProcess"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="componentInstance" lowerBound="1"
+        eType="#//ComponentInstance" eOpposite="#//ComponentInstance/modeControllers"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ModeTransition">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="fromMode" lowerBound="1"
+        eType="#//ComponentProcess"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="toMode" lowerBound="1"
+        eType="#//ComponentProcess"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="transitionCondition" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="meta" eType="#//MetadataType"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="ModelType" instanceClassName="cz.cuni.mff.d3s.deeco.model.runtime.stateflow.Model"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ComponentProcessEntry" eSuperTypes="#//Invocable">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="componentInstance" eType="#//ComponentInstance"
+        eOpposite="#//ComponentInstance/entry"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="triggers" upperBound="-1"
+        eType="#//ActivateModeTrigger" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isActive" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ComponentProcessExit" eSuperTypes="#//Invocable">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="componentInstance" eType="#//ComponentInstance"
+        eOpposite="#//ComponentInstance/exit"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="triggers" upperBound="-1"
+        eType="#//DeactivateModeTrigger" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isActive" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ActivateModeTrigger" eSuperTypes="#//Trigger">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="mode" eType="#//ComponentProcess"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="DeactivateModeTrigger" eSuperTypes="#//Trigger">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="mode" eType="#//ComponentProcess"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="MetadataType">
+    <eLiterals name="EMPTY"/>
+    <eLiterals name="TS" value="1"/>
+    <eLiterals name="MIN_BOUNDARY" value="2"/>
+    <eLiterals name="MAX_BOUNDARY" value="3"/>
+    <eLiterals name="INACCURACY" value="4"/>
+  </eClassifiers>
 </ecore:EPackage>

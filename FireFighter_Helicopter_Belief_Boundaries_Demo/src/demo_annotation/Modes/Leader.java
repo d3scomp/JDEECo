@@ -10,8 +10,8 @@ import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 @ComponentModes(modes = {@ModesInfo(initMode = "initilizedLeader", 
 				                    allModes = {"initilizedLeader","FFConnected","alarmed"})})
 //the state space model have the in states and the out states are the index of in states or -1 to use the model and calculate the derived value
-@StateSpaceModel(state  = {"hFFSpeed","hFFPos"}, 
-				 result = @Fun(returnedIndex = {-1,0}, referenceModel = VehicleModel.class))
+@StateSpaceModel(models = @Model(state  = {"hFFSpeed","hFFPos"}, 
+				 result = @Fun(returnedIndex = {-1,0}, referenceModel = VehicleModel.class)))
 @Component
 public class Leader {
 
@@ -62,8 +62,9 @@ public class Leader {
 	}
 
 
+	@Mode
 	@Process
-	@PeriodicSchedulingOnActivateMode(value = (int) MODETIMEPERIOD)
+	@PeriodicScheduling(value = (int) MODETIMEPERIOD)
 	public static void initilizedLeader(
 			@Out("lPos") ParamHolder<Double> lPos,
 			@Out("lSpeed") ParamHolder<Double> lSpeed,
@@ -93,8 +94,9 @@ public class Leader {
 	
 	
 	//it will have a problem because there is no parameters in the process
+	@Mode
 	@Process
-	@PeriodicSchedulingOnActivateMode(value = (int) MODETIMEPERIOD)
+	@PeriodicScheduling(value = (int) MODETIMEPERIOD)
 	public static void ffConnected(
 			@In("lPos") Double lPos
 			){
@@ -102,8 +104,9 @@ public class Leader {
 	}
 	
 	
+	@Mode
 	@Process
-	@PeriodicSchedulingOnActivateMode(value = (int) MODETIMEPERIOD)
+	@PeriodicScheduling(value = (int) MODETIMEPERIOD)
 	public static void alarmed(
 			@Out("lAlarm") ParamHolder<Double> lAlarm			
 			){

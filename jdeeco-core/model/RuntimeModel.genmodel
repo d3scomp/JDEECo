@@ -14,11 +14,21 @@
       <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//ParameterDirection/OUT"/>
       <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//ParameterDirection/INOUT"/>
     </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="RuntimeModel.ecore#//MetadataType">
+      <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//MetadataType/EMPTY"/>
+      <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//MetadataType/TS"/>
+      <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//MetadataType/MIN_BOUNDARY"/>
+      <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//MetadataType/MAX_BOUNDARY"/>
+      <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//MetadataType/INACCURACY"/>
+    </genEnums>
     <genDataTypes ecoreDataType="RuntimeModel.ecore#//Method"/>
     <genDataTypes ecoreDataType="RuntimeModel.ecore#//KnowledgeManager"/>
-    <genDataTypes ecoreDataType="RuntimeModel.ecore#//KnowledgeManagersView"/>
-    <genClasses ecoreClass="RuntimeModel.ecore#//PeriodicTrigger">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//PeriodicTrigger/period"/>
+    <genDataTypes ecoreDataType="RuntimeModel.ecore#//ShadowKnowledgeManagerRegistry"/>
+    <genDataTypes ecoreDataType="RuntimeModel.ecore#//CommunicationBoundary"/>
+    <genDataTypes ecoreDataType="RuntimeModel.ecore#//ModelType"/>
+    <genClasses ecoreClass="RuntimeModel.ecore#//TimeTrigger">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//TimeTrigger/period"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//TimeTrigger/offset"/>
     </genClasses>
     <genClasses image="false" ecoreClass="RuntimeModel.ecore#//Trigger"/>
     <genClasses ecoreClass="RuntimeModel.ecore#//KnowledgeChangeTrigger">
@@ -26,6 +36,7 @@
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//KnowledgePath">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//KnowledgePath/nodes"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//KnowledgePath/modeTransitions"/>
     </genClasses>
     <genClasses image="false" ecoreClass="RuntimeModel.ecore#//PathNode"/>
     <genClasses ecoreClass="RuntimeModel.ecore#//PathNodeField">
@@ -42,14 +53,20 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentInstance/componentProcesses"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentInstance/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentInstance/knowledgeManager"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentInstance/otherKnowledgeManagersAccess"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentInstance/shadowKnowledgeManagerRegistry"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentInstance/ensembleControllers"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentInstance/internalData"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentInstance/modeControllers"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentInstance/stateSpaceModels"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentInstance/entry"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentInstance/exit"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//EnsembleDefinition">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//EnsembleDefinition/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//EnsembleDefinition/membership"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//EnsembleDefinition/knowledgeExchange"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//EnsembleDefinition/triggers"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//EnsembleDefinition/communicationBoundary"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//Condition"/>
     <genClasses ecoreClass="RuntimeModel.ecore#//Exchange"/>
@@ -60,8 +77,9 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentProcess/triggers"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//Parameter">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//Parameter/direction"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//Parameter/knowledgePath"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//Parameter/direction"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//Parameter/type"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//Invocable">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//Invocable/parameters"/>
@@ -74,5 +92,44 @@
     <genClasses ecoreClass="RuntimeModel.ecore#//PathNodeCoordinator"/>
     <genClasses ecoreClass="RuntimeModel.ecore#//PathNodeMember"/>
     <genClasses ecoreClass="RuntimeModel.ecore#//PathNodeComponentId"/>
+    <genClasses ecoreClass="RuntimeModel.ecore#//StringToObjectMap">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//StringToObjectMap/key"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//StringToObjectMap/value"/>
+    </genClasses>
+    <genClasses ecoreClass="RuntimeModel.ecore#//StateSpaceModel">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//StateSpaceModel/inStates"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//StateSpaceModel/derivationStates"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//StateSpaceModel/model"/>
+    </genClasses>
+    <genClasses ecoreClass="RuntimeModel.ecore#//ModeController">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ModeController/initMode"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ModeController/parentMode"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ModeController/allModes"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ModeController/componentInstance"/>
+    </genClasses>
+    <genClasses ecoreClass="RuntimeModel.ecore#//ModeTransition">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ModeTransition/fromMode"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ModeTransition/toMode"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ModeTransition/transitionCondition"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ModeTransition/meta"/>
+    </genClasses>
+    <genClasses ecoreClass="RuntimeModel.ecore#//ComponentProcessEntry">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentProcessEntry/componentInstance"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentProcessEntry/triggers"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentProcessEntry/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentProcessEntry/isActive"/>
+    </genClasses>
+    <genClasses ecoreClass="RuntimeModel.ecore#//ComponentProcessExit">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentProcessExit/componentInstance"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentProcessExit/triggers"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentProcessExit/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentProcessExit/isActive"/>
+    </genClasses>
+    <genClasses ecoreClass="RuntimeModel.ecore#//ActivateModeTrigger">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ActivateModeTrigger/mode"/>
+    </genClasses>
+    <genClasses ecoreClass="RuntimeModel.ecore#//DeactivateModeTrigger">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//DeactivateModeTrigger/mode"/>
+    </genClasses>
   </genPackages>
 </genmodel:GenModel>

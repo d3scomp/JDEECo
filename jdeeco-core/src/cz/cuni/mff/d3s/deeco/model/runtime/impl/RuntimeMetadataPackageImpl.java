@@ -5,16 +5,22 @@ package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry;
 
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ActivateModeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentMode;
+
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcessEntry;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcessExit;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Condition;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.DeactivateModeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Exchange;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Invocable;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ModeController;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ModeTransition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
@@ -24,12 +30,15 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModel;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 
+import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.MetadataType;
+import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.Model;
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
 import java.lang.reflect.Method;
 
@@ -38,6 +47,7 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EEnum;
+import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
@@ -188,7 +198,49 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass componentModeEClass = null;
+	private EClass stateSpaceModelEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass modeControllerEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass modeTransitionEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass componentProcessEntryEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass componentProcessExitEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass activateModeTriggerEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass deactivateModeTriggerEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -203,6 +255,13 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * @generated
 	 */
 	private EEnum parameterDirectionEEnum = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EEnum metadataTypeEEnum = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -231,6 +290,13 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * @generated
 	 */
 	private EDataType communicationBoundaryEDataType = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType modelTypeEDataType = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -336,6 +402,15 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 */
 	public EReference getKnowledgePath_Nodes() {
 		return (EReference)knowledgePathEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getKnowledgePath_ModeTransitions() {
+		return (EReference)knowledgePathEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -478,8 +553,35 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getComponentInstance_ComponentModes() {
+	public EReference getComponentInstance_ModeControllers() {
 		return (EReference)componentInstanceEClass.getEStructuralFeatures().get(6);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getComponentInstance_StateSpaceModels() {
+		return (EReference)componentInstanceEClass.getEStructuralFeatures().get(7);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getComponentInstance_Entry() {
+		return (EReference)componentInstanceEClass.getEStructuralFeatures().get(8);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getComponentInstance_Exit() {
+		return (EReference)componentInstanceEClass.getEStructuralFeatures().get(9);
 	}
 
 	/**
@@ -614,7 +716,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * @generated
 	 */
 	public EAttribute getParameter_Direction() {
-		return (EAttribute)parameterEClass.getEStructuralFeatures().get(0);
+		return (EAttribute)parameterEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -623,7 +725,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * @generated
 	 */
 	public EReference getParameter_KnowledgePath() {
-		return (EReference)parameterEClass.getEStructuralFeatures().get(1);
+		return (EReference)parameterEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -748,8 +850,251 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getComponentMode() {
-		return componentModeEClass;
+	public EClass getStateSpaceModel() {
+		return stateSpaceModelEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getStateSpaceModel_InStates() {
+		return (EReference)stateSpaceModelEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getStateSpaceModel_DerivationStates() {
+		return (EReference)stateSpaceModelEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getStateSpaceModel_Model() {
+		return (EAttribute)stateSpaceModelEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getModeController() {
+		return modeControllerEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getModeController_InitMode() {
+		return (EReference)modeControllerEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getModeController_ParentMode() {
+		return (EReference)modeControllerEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getModeController_AllModes() {
+		return (EReference)modeControllerEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getModeController_ComponentInstance() {
+		return (EReference)modeControllerEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getModeTransition() {
+		return modeTransitionEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getModeTransition_FromMode() {
+		return (EReference)modeTransitionEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getModeTransition_ToMode() {
+		return (EReference)modeTransitionEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getModeTransition_TransitionCondition() {
+		return (EAttribute)modeTransitionEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getModeTransition_Meta() {
+		return (EAttribute)modeTransitionEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getComponentProcessEntry() {
+		return componentProcessEntryEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getComponentProcessEntry_ComponentInstance() {
+		return (EReference)componentProcessEntryEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getComponentProcessEntry_Triggers() {
+		return (EReference)componentProcessEntryEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getComponentProcessEntry_Name() {
+		return (EAttribute)componentProcessEntryEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getComponentProcessEntry_IsActive() {
+		return (EAttribute)componentProcessEntryEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getComponentProcessExit() {
+		return componentProcessExitEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getComponentProcessExit_ComponentInstance() {
+		return (EReference)componentProcessExitEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getComponentProcessExit_Triggers() {
+		return (EReference)componentProcessExitEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getComponentProcessExit_Name() {
+		return (EAttribute)componentProcessExitEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getComponentProcessExit_IsActive() {
+		return (EAttribute)componentProcessExitEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getActivateModeTrigger() {
+		return activateModeTriggerEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getActivateModeTrigger_Mode() {
+		return (EReference)activateModeTriggerEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getDeactivateModeTrigger() {
+		return deactivateModeTriggerEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getDeactivateModeTrigger_Mode() {
+		return (EReference)deactivateModeTriggerEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -829,6 +1174,24 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EEnum getMetadataType() {
+		return metadataTypeEEnum;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EDataType getModelType() {
+		return modelTypeEDataType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public RuntimeMetadataFactory getRuntimeMetadataFactory() {
 		return (RuntimeMetadataFactory)getEFactoryInstance();
 	}
@@ -863,6 +1226,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 
 		knowledgePathEClass = createEClass(KNOWLEDGE_PATH);
 		createEReference(knowledgePathEClass, KNOWLEDGE_PATH__NODES);
+		createEReference(knowledgePathEClass, KNOWLEDGE_PATH__MODE_TRANSITIONS);
 
 		pathNodeEClass = createEClass(PATH_NODE);
 
@@ -883,7 +1247,10 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		createEAttribute(componentInstanceEClass, COMPONENT_INSTANCE__SHADOW_KNOWLEDGE_MANAGER_REGISTRY);
 		createEReference(componentInstanceEClass, COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS);
 		createEReference(componentInstanceEClass, COMPONENT_INSTANCE__INTERNAL_DATA);
-		createEReference(componentInstanceEClass, COMPONENT_INSTANCE__COMPONENT_MODES);
+		createEReference(componentInstanceEClass, COMPONENT_INSTANCE__MODE_CONTROLLERS);
+		createEReference(componentInstanceEClass, COMPONENT_INSTANCE__STATE_SPACE_MODELS);
+		createEReference(componentInstanceEClass, COMPONENT_INSTANCE__ENTRY);
+		createEReference(componentInstanceEClass, COMPONENT_INSTANCE__EXIT);
 
 		ensembleDefinitionEClass = createEClass(ENSEMBLE_DEFINITION);
 		createEAttribute(ensembleDefinitionEClass, ENSEMBLE_DEFINITION__NAME);
@@ -903,8 +1270,8 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		createEReference(componentProcessEClass, COMPONENT_PROCESS__TRIGGERS);
 
 		parameterEClass = createEClass(PARAMETER);
-		createEAttribute(parameterEClass, PARAMETER__DIRECTION);
 		createEReference(parameterEClass, PARAMETER__KNOWLEDGE_PATH);
+		createEAttribute(parameterEClass, PARAMETER__DIRECTION);
 		createEAttribute(parameterEClass, PARAMETER__TYPE);
 
 		invocableEClass = createEClass(INVOCABLE);
@@ -925,16 +1292,51 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		createEAttribute(stringToObjectMapEClass, STRING_TO_OBJECT_MAP__KEY);
 		createEAttribute(stringToObjectMapEClass, STRING_TO_OBJECT_MAP__VALUE);
 
-		componentModeEClass = createEClass(COMPONENT_MODE);
+		stateSpaceModelEClass = createEClass(STATE_SPACE_MODEL);
+		createEReference(stateSpaceModelEClass, STATE_SPACE_MODEL__IN_STATES);
+		createEReference(stateSpaceModelEClass, STATE_SPACE_MODEL__DERIVATION_STATES);
+		createEAttribute(stateSpaceModelEClass, STATE_SPACE_MODEL__MODEL);
+
+		modeControllerEClass = createEClass(MODE_CONTROLLER);
+		createEReference(modeControllerEClass, MODE_CONTROLLER__INIT_MODE);
+		createEReference(modeControllerEClass, MODE_CONTROLLER__PARENT_MODE);
+		createEReference(modeControllerEClass, MODE_CONTROLLER__ALL_MODES);
+		createEReference(modeControllerEClass, MODE_CONTROLLER__COMPONENT_INSTANCE);
+
+		modeTransitionEClass = createEClass(MODE_TRANSITION);
+		createEReference(modeTransitionEClass, MODE_TRANSITION__FROM_MODE);
+		createEReference(modeTransitionEClass, MODE_TRANSITION__TO_MODE);
+		createEAttribute(modeTransitionEClass, MODE_TRANSITION__TRANSITION_CONDITION);
+		createEAttribute(modeTransitionEClass, MODE_TRANSITION__META);
+
+		componentProcessEntryEClass = createEClass(COMPONENT_PROCESS_ENTRY);
+		createEReference(componentProcessEntryEClass, COMPONENT_PROCESS_ENTRY__COMPONENT_INSTANCE);
+		createEReference(componentProcessEntryEClass, COMPONENT_PROCESS_ENTRY__TRIGGERS);
+		createEAttribute(componentProcessEntryEClass, COMPONENT_PROCESS_ENTRY__NAME);
+		createEAttribute(componentProcessEntryEClass, COMPONENT_PROCESS_ENTRY__IS_ACTIVE);
+
+		componentProcessExitEClass = createEClass(COMPONENT_PROCESS_EXIT);
+		createEReference(componentProcessExitEClass, COMPONENT_PROCESS_EXIT__COMPONENT_INSTANCE);
+		createEReference(componentProcessExitEClass, COMPONENT_PROCESS_EXIT__TRIGGERS);
+		createEAttribute(componentProcessExitEClass, COMPONENT_PROCESS_EXIT__NAME);
+		createEAttribute(componentProcessExitEClass, COMPONENT_PROCESS_EXIT__IS_ACTIVE);
+
+		activateModeTriggerEClass = createEClass(ACTIVATE_MODE_TRIGGER);
+		createEReference(activateModeTriggerEClass, ACTIVATE_MODE_TRIGGER__MODE);
+
+		deactivateModeTriggerEClass = createEClass(DEACTIVATE_MODE_TRIGGER);
+		createEReference(deactivateModeTriggerEClass, DEACTIVATE_MODE_TRIGGER__MODE);
 
 		// Create enums
 		parameterDirectionEEnum = createEEnum(PARAMETER_DIRECTION);
+		metadataTypeEEnum = createEEnum(METADATA_TYPE);
 
 		// Create data types
 		methodEDataType = createEDataType(METHOD);
 		knowledgeManagerEDataType = createEDataType(KNOWLEDGE_MANAGER);
 		shadowKnowledgeManagerRegistryEDataType = createEDataType(SHADOW_KNOWLEDGE_MANAGER_REGISTRY);
 		communicationBoundaryEDataType = createEDataType(COMMUNICATION_BOUNDARY);
+		modelTypeEDataType = createEDataType(MODEL_TYPE);
 	}
 
 	/**
@@ -975,6 +1377,10 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		pathNodeCoordinatorEClass.getESuperTypes().add(this.getPathNode());
 		pathNodeMemberEClass.getESuperTypes().add(this.getPathNode());
 		pathNodeComponentIdEClass.getESuperTypes().add(this.getPathNode());
+		componentProcessEntryEClass.getESuperTypes().add(this.getInvocable());
+		componentProcessExitEClass.getESuperTypes().add(this.getInvocable());
+		activateModeTriggerEClass.getESuperTypes().add(this.getTrigger());
+		deactivateModeTriggerEClass.getESuperTypes().add(this.getTrigger());
 
 		// Initialize classes, features, and operations; add parameters
 		initEClass(timeTriggerEClass, TimeTrigger.class, "TimeTrigger", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -988,6 +1394,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 
 		initEClass(knowledgePathEClass, KnowledgePath.class, "KnowledgePath", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getKnowledgePath_Nodes(), this.getPathNode(), null, "nodes", null, 1, -1, KnowledgePath.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getKnowledgePath_ModeTransitions(), this.getModeTransition(), null, "modeTransitions", null, 0, -1, KnowledgePath.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(pathNodeEClass, PathNode.class, "PathNode", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
@@ -1008,7 +1415,10 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		initEAttribute(getComponentInstance_ShadowKnowledgeManagerRegistry(), this.getShadowKnowledgeManagerRegistry(), "shadowKnowledgeManagerRegistry", null, 1, 1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getComponentInstance_EnsembleControllers(), this.getEnsembleController(), this.getEnsembleController_ComponentInstance(), "ensembleControllers", null, 0, -1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getComponentInstance_InternalData(), this.getStringToObjectMap(), null, "internalData", null, 0, -1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getComponentInstance_ComponentModes(), this.getComponentMode(), null, "componentModes", null, 0, -1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getComponentInstance_ModeControllers(), this.getModeController(), this.getModeController_ComponentInstance(), "modeControllers", null, 0, -1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getComponentInstance_StateSpaceModels(), this.getStateSpaceModel(), null, "stateSpaceModels", null, 0, -1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getComponentInstance_Entry(), this.getComponentProcessEntry(), this.getComponentProcessEntry_ComponentInstance(), "entry", null, 0, 1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getComponentInstance_Exit(), this.getComponentProcessExit(), this.getComponentProcessExit_ComponentInstance(), "exit", null, 0, 1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(ensembleDefinitionEClass, EnsembleDefinition.class, "EnsembleDefinition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getEnsembleDefinition_Name(), ecorePackage.getEString(), "name", null, 1, 1, EnsembleDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1028,8 +1438,8 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		initEReference(getComponentProcess_Triggers(), this.getTrigger(), null, "triggers", null, 0, -1, ComponentProcess.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(parameterEClass, Parameter.class, "Parameter", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getParameter_Direction(), this.getParameterDirection(), "direction", "INOUT", 1, 1, Parameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getParameter_KnowledgePath(), this.getKnowledgePath(), null, "knowledgePath", null, 0, 1, Parameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getParameter_Direction(), this.getParameterDirection(), "direction", "INOUT", 1, 1, Parameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getParameter_Type(), ecorePackage.getEJavaClass(), "type", null, 0, 1, Parameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(invocableEClass, Invocable.class, "Invocable", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -1050,7 +1460,40 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		initEAttribute(getStringToObjectMap_Key(), ecorePackage.getEString(), "key", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getStringToObjectMap_Value(), ecorePackage.getEJavaObject(), "value", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(componentModeEClass, ComponentMode.class, "ComponentMode", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEClass(stateSpaceModelEClass, StateSpaceModel.class, "StateSpaceModel", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getStateSpaceModel_InStates(), this.getKnowledgePath(), null, "inStates", null, 1, -1, StateSpaceModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getStateSpaceModel_DerivationStates(), this.getKnowledgePath(), null, "derivationStates", null, 0, -1, StateSpaceModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getStateSpaceModel_Model(), this.getModelType(), "model", null, 0, 1, StateSpaceModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(modeControllerEClass, ModeController.class, "ModeController", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getModeController_InitMode(), this.getComponentProcess(), null, "initMode", null, 1, 1, ModeController.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getModeController_ParentMode(), this.getComponentProcess(), null, "parentMode", null, 0, 1, ModeController.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getModeController_AllModes(), this.getComponentProcess(), null, "allModes", null, 1, -1, ModeController.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getModeController_ComponentInstance(), this.getComponentInstance(), this.getComponentInstance_ModeControllers(), "componentInstance", null, 1, 1, ModeController.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(modeTransitionEClass, ModeTransition.class, "ModeTransition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getModeTransition_FromMode(), this.getComponentProcess(), null, "fromMode", null, 1, 1, ModeTransition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getModeTransition_ToMode(), this.getComponentProcess(), null, "toMode", null, 1, 1, ModeTransition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getModeTransition_TransitionCondition(), ecorePackage.getEString(), "transitionCondition", null, 0, 1, ModeTransition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getModeTransition_Meta(), this.getMetadataType(), "meta", null, 0, 1, ModeTransition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(componentProcessEntryEClass, ComponentProcessEntry.class, "ComponentProcessEntry", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getComponentProcessEntry_ComponentInstance(), this.getComponentInstance(), this.getComponentInstance_Entry(), "componentInstance", null, 0, 1, ComponentProcessEntry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getComponentProcessEntry_Triggers(), this.getActivateModeTrigger(), null, "triggers", null, 0, -1, ComponentProcessEntry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getComponentProcessEntry_Name(), ecorePackage.getEString(), "name", null, 1, 1, ComponentProcessEntry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getComponentProcessEntry_IsActive(), ecorePackage.getEBoolean(), "isActive", null, 1, 1, ComponentProcessEntry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(componentProcessExitEClass, ComponentProcessExit.class, "ComponentProcessExit", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getComponentProcessExit_ComponentInstance(), this.getComponentInstance(), this.getComponentInstance_Exit(), "componentInstance", null, 0, 1, ComponentProcessExit.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getComponentProcessExit_Triggers(), this.getDeactivateModeTrigger(), null, "triggers", null, 0, -1, ComponentProcessExit.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getComponentProcessExit_Name(), ecorePackage.getEString(), "name", null, 1, 1, ComponentProcessExit.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getComponentProcessExit_IsActive(), ecorePackage.getEBoolean(), "isActive", null, 0, 1, ComponentProcessExit.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(activateModeTriggerEClass, ActivateModeTrigger.class, "ActivateModeTrigger", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getActivateModeTrigger_Mode(), this.getComponentProcess(), null, "mode", null, 0, 1, ActivateModeTrigger.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(deactivateModeTriggerEClass, DeactivateModeTrigger.class, "DeactivateModeTrigger", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getDeactivateModeTrigger_Mode(), this.getComponentProcess(), null, "mode", null, 0, 1, DeactivateModeTrigger.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize enums and add enum literals
 		initEEnum(parameterDirectionEEnum, ParameterDirection.class, "ParameterDirection");
@@ -1058,11 +1501,19 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		addEEnumLiteral(parameterDirectionEEnum, ParameterDirection.OUT);
 		addEEnumLiteral(parameterDirectionEEnum, ParameterDirection.INOUT);
 
+		initEEnum(metadataTypeEEnum, cz.cuni.mff.d3s.deeco.model.runtime.api.MetadataType.class, "MetadataType");
+		addEEnumLiteral(metadataTypeEEnum, cz.cuni.mff.d3s.deeco.model.runtime.api.MetadataType.EMPTY);
+		addEEnumLiteral(metadataTypeEEnum, cz.cuni.mff.d3s.deeco.model.runtime.api.MetadataType.TS);
+		addEEnumLiteral(metadataTypeEEnum, cz.cuni.mff.d3s.deeco.model.runtime.api.MetadataType.MIN_BOUNDARY);
+		addEEnumLiteral(metadataTypeEEnum, cz.cuni.mff.d3s.deeco.model.runtime.api.MetadataType.MAX_BOUNDARY);
+		addEEnumLiteral(metadataTypeEEnum, cz.cuni.mff.d3s.deeco.model.runtime.api.MetadataType.INACCURACY);
+
 		// Initialize data types
 		initEDataType(methodEDataType, Method.class, "Method", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(knowledgeManagerEDataType, KnowledgeManager.class, "KnowledgeManager", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(shadowKnowledgeManagerRegistryEDataType, ShadowKnowledgeManagerRegistry.class, "ShadowKnowledgeManagerRegistry", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(communicationBoundaryEDataType, CommunicationBoundaryPredicate.class, "CommunicationBoundary", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(modelTypeEDataType, Model.class, "ModelType", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
 		createResource(eNS_URI);

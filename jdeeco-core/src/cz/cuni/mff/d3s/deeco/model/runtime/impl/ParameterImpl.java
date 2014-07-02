@@ -24,8 +24,8 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ParameterImpl#getDirection <em>Direction</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ParameterImpl#getKnowledgePath <em>Knowledge Path</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ParameterImpl#getDirection <em>Direction</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ParameterImpl#getType <em>Type</em>}</li>
  * </ul>
  * </p>
@@ -33,6 +33,16 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * @generated
  */
 public class ParameterImpl extends MinimalEObjectImpl.Container implements Parameter {
+	/**
+	 * The cached value of the '{@link #getKnowledgePath() <em>Knowledge Path</em>}' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getKnowledgePath()
+	 * @generated
+	 * @ordered
+	 */
+	protected KnowledgePath knowledgePath;
+
 	/**
 	 * The default value of the '{@link #getDirection() <em>Direction</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -61,16 +71,6 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 	 * @ordered
 	 */
 	protected boolean directionESet;
-
-	/**
-	 * The cached value of the '{@link #getKnowledgePath() <em>Knowledge Path</em>}' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getKnowledgePath()
-	 * @generated
-	 * @ordered
-	 */
-	protected KnowledgePath knowledgePath;
 
 	/**
 	 * The cached value of the '{@link #getType() <em>Type</em>}' attribute.
@@ -233,10 +233,10 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.PARAMETER__DIRECTION:
-				return getDirection();
 			case RuntimeMetadataPackage.PARAMETER__KNOWLEDGE_PATH:
 				return getKnowledgePath();
+			case RuntimeMetadataPackage.PARAMETER__DIRECTION:
+				return getDirection();
 			case RuntimeMetadataPackage.PARAMETER__TYPE:
 				return getType();
 		}
@@ -251,11 +251,11 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.PARAMETER__DIRECTION:
-				setDirection((ParameterDirection)newValue);
-				return;
 			case RuntimeMetadataPackage.PARAMETER__KNOWLEDGE_PATH:
 				setKnowledgePath((KnowledgePath)newValue);
+				return;
+			case RuntimeMetadataPackage.PARAMETER__DIRECTION:
+				setDirection((ParameterDirection)newValue);
 				return;
 			case RuntimeMetadataPackage.PARAMETER__TYPE:
 				setType((Class)newValue);
@@ -272,11 +272,11 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.PARAMETER__DIRECTION:
-				unsetDirection();
-				return;
 			case RuntimeMetadataPackage.PARAMETER__KNOWLEDGE_PATH:
 				setKnowledgePath((KnowledgePath)null);
+				return;
+			case RuntimeMetadataPackage.PARAMETER__DIRECTION:
+				unsetDirection();
 				return;
 			case RuntimeMetadataPackage.PARAMETER__TYPE:
 				setType((Class)null);
@@ -293,10 +293,10 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.PARAMETER__DIRECTION:
-				return isSetDirection();
 			case RuntimeMetadataPackage.PARAMETER__KNOWLEDGE_PATH:
 				return knowledgePath != null;
+			case RuntimeMetadataPackage.PARAMETER__DIRECTION:
+				return isSetDirection();
 			case RuntimeMetadataPackage.PARAMETER__TYPE:
 				return type != null;
 		}

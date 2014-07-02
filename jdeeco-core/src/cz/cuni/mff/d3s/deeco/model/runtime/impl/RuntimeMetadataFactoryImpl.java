@@ -10,6 +10,8 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.*;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 
+import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.MetadataType;
+import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.Model;
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
 import java.lang.reflect.Method;
 
@@ -85,7 +87,13 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 			case RuntimeMetadataPackage.PATH_NODE_MEMBER: return createPathNodeMember();
 			case RuntimeMetadataPackage.PATH_NODE_COMPONENT_ID: return createPathNodeComponentId();
 			case RuntimeMetadataPackage.STRING_TO_OBJECT_MAP: return (EObject)createStringToObjectMap();
-			case RuntimeMetadataPackage.COMPONENT_MODE: return createComponentMode();
+			case RuntimeMetadataPackage.STATE_SPACE_MODEL: return createStateSpaceModel();
+			case RuntimeMetadataPackage.MODE_CONTROLLER: return createModeController();
+			case RuntimeMetadataPackage.MODE_TRANSITION: return createModeTransition();
+			case RuntimeMetadataPackage.COMPONENT_PROCESS_ENTRY: return createComponentProcessEntry();
+			case RuntimeMetadataPackage.COMPONENT_PROCESS_EXIT: return createComponentProcessExit();
+			case RuntimeMetadataPackage.ACTIVATE_MODE_TRIGGER: return createActivateModeTrigger();
+			case RuntimeMetadataPackage.DEACTIVATE_MODE_TRIGGER: return createDeactivateModeTrigger();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -101,6 +109,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 		switch (eDataType.getClassifierID()) {
 			case RuntimeMetadataPackage.PARAMETER_DIRECTION:
 				return createParameterDirectionFromString(eDataType, initialValue);
+			case RuntimeMetadataPackage.METADATA_TYPE:
+				return createMetadataTypeFromString(eDataType, initialValue);
 			case RuntimeMetadataPackage.METHOD:
 				return createMethodFromString(eDataType, initialValue);
 			case RuntimeMetadataPackage.KNOWLEDGE_MANAGER:
@@ -109,6 +119,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 				return createShadowKnowledgeManagerRegistryFromString(eDataType, initialValue);
 			case RuntimeMetadataPackage.COMMUNICATION_BOUNDARY:
 				return createCommunicationBoundaryFromString(eDataType, initialValue);
+			case RuntimeMetadataPackage.MODEL_TYPE:
+				return createModelTypeFromString(eDataType, initialValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -124,6 +136,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 		switch (eDataType.getClassifierID()) {
 			case RuntimeMetadataPackage.PARAMETER_DIRECTION:
 				return convertParameterDirectionToString(eDataType, instanceValue);
+			case RuntimeMetadataPackage.METADATA_TYPE:
+				return convertMetadataTypeToString(eDataType, instanceValue);
 			case RuntimeMetadataPackage.METHOD:
 				return convertMethodToString(eDataType, instanceValue);
 			case RuntimeMetadataPackage.KNOWLEDGE_MANAGER:
@@ -132,6 +146,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 				return convertShadowKnowledgeManagerRegistryToString(eDataType, instanceValue);
 			case RuntimeMetadataPackage.COMMUNICATION_BOUNDARY:
 				return convertCommunicationBoundaryToString(eDataType, instanceValue);
+			case RuntimeMetadataPackage.MODEL_TYPE:
+				return convertModelTypeToString(eDataType, instanceValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -312,9 +328,69 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public ComponentMode createComponentMode() {
-		ComponentModeImpl componentMode = new ComponentModeImpl();
-		return componentMode;
+	public StateSpaceModel createStateSpaceModel() {
+		StateSpaceModelImpl stateSpaceModel = new StateSpaceModelImpl();
+		return stateSpaceModel;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public ModeController createModeController() {
+		ModeControllerImpl modeController = new ModeControllerImpl();
+		return modeController;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public ModeTransition createModeTransition() {
+		ModeTransitionImpl modeTransition = new ModeTransitionImpl();
+		return modeTransition;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public ComponentProcessEntry createComponentProcessEntry() {
+		ComponentProcessEntryImpl componentProcessEntry = new ComponentProcessEntryImpl();
+		return componentProcessEntry;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public ComponentProcessExit createComponentProcessExit() {
+		ComponentProcessExitImpl componentProcessExit = new ComponentProcessExitImpl();
+		return componentProcessExit;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public ActivateModeTrigger createActivateModeTrigger() {
+		ActivateModeTriggerImpl activateModeTrigger = new ActivateModeTriggerImpl();
+		return activateModeTrigger;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public DeactivateModeTrigger createDeactivateModeTrigger() {
+		DeactivateModeTriggerImpl deactivateModeTrigger = new DeactivateModeTriggerImpl();
+		return deactivateModeTrigger;
 	}
 
 	/**
@@ -416,6 +492,44 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * @generated
 	 */
 	public String convertCommunicationBoundaryToString(EDataType eDataType, Object instanceValue) {
+		return super.convertToString(eDataType, instanceValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public cz.cuni.mff.d3s.deeco.model.runtime.api.MetadataType createMetadataTypeFromString(EDataType eDataType, String initialValue) {
+		cz.cuni.mff.d3s.deeco.model.runtime.api.MetadataType result = cz.cuni.mff.d3s.deeco.model.runtime.api.MetadataType.get(initialValue);
+		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+		return result;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertMetadataTypeToString(EDataType eDataType, Object instanceValue) {
+		return instanceValue == null ? null : instanceValue.toString();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Model createModelTypeFromString(EDataType eDataType, String initialValue) {
+		return (Model)super.createFromString(eDataType, initialValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertModelTypeToString(EDataType eDataType, Object instanceValue) {
 		return super.convertToString(eDataType, instanceValue);
 	}
 

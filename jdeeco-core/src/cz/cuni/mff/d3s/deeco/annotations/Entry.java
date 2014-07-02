@@ -21,20 +21,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Used to mark an ensemble class or a component process to be executed
- * periodically.
- * <p>
- * The attribute <code>value</code> indicates time period (in milliseconds) of the
- * execution.
- * </p>
+ * Used to mark a method to be a component process.
  * 
- * @author Michal Kit
+ * @author Rima Al Ali
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD, ElementType.TYPE})
-public @interface PeriodicScheduling {
-	long value() default 0;;
-	long value_min() default 0;
-	long value_max() default 0;
+@Target(ElementType.METHOD)
+public @interface Entry {
+
 }

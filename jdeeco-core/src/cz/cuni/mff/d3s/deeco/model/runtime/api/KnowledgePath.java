@@ -15,6 +15,7 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * <ul>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath#getNodes <em>Nodes</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath#getModeTransitions <em>Mode Transitions</em>}</li>
  * </ul>
  * </p>
  *
@@ -38,5 +39,21 @@ public interface KnowledgePath extends EObject {
 	 * @generated
 	 */
 	EList<PathNode> getNodes();
+
+	/**
+	 * Returns the value of the '<em><b>Mode Transitions</b></em>' containment reference list.
+	 * The list contents are of type {@link cz.cuni.mff.d3s.deeco.model.runtime.api.ModeTransition}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Mode Transitions</em>' containment reference list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Mode Transitions</em>' containment reference list.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getKnowledgePath_ModeTransitions()
+	 * @model containment="true"
+	 * @generated
+	 */
+	EList<ModeTransition> getModeTransitions();
 
 } // KnowledgePath

@@ -8,7 +8,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface StateSpaceModel {
-	String[] state();
-	Fun result();
+	Model[] models();
 }
 
