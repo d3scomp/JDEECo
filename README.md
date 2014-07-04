@@ -13,3 +13,9 @@ The project contains 4 examples:
 Each of the projects is an Eclipse project. To run it, simply import the project to Eclipse. The launch configuration is part of the project, thus a corresponding run target automatically appears in the Run configurations. Simply run the project by executing the run configuration.
 
 The slides accompanying the examples are located in the file [tutorial.pdf](https://github.com/d3scomp/cbse-tutorial/raw/master/tutorial.pdf).
+
+More information about DEECo and jDEECo can be found at:
+
+http://d3s.mff.cuni.cz/projects/components_and_services/deeco/
+and
+https://github.com/d3scomp/JDEECo
