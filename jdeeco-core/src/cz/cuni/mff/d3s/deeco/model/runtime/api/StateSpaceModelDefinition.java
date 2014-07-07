@@ -31,7 +31,7 @@ import org.eclipse.emf.ecore.EObject;
  * @model
  * @generated
  */
-public interface StateSpaceModelDefinition extends Invocable {
+public interface StateSpaceModelDefinition extends EObject {
 	/**
 	 * Returns the value of the '<em><b>Trigger Kowledge Path</b></em>' reference.
 	 * <!-- begin-user-doc -->

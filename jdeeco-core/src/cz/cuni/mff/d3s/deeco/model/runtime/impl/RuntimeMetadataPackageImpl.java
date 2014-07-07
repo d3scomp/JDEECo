@@ -1242,7 +1242,6 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		pathNodeCoordinatorEClass.getESuperTypes().add(this.getPathNode());
 		pathNodeMemberEClass.getESuperTypes().add(this.getPathNode());
 		pathNodeComponentIdEClass.getESuperTypes().add(this.getPathNode());
-		stateSpaceModelDefinitionEClass.getESuperTypes().add(this.getInvocable());
 
 		// Initialize classes, features, and operations; add parameters
 		initEClass(timeTriggerEClass, TimeTrigger.class, "TimeTrigger", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);

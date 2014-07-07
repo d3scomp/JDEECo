@@ -50,7 +50,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *
  * @generated
  */
-public class StateSpaceModelDefinitionImpl extends InvocableImpl implements StateSpaceModelDefinition {
+public class StateSpaceModelDefinitionImpl extends MinimalEObjectImpl.Container implements StateSpaceModelDefinition {
 	/**
 	 * The cached value of the '{@link #getTriggerKowledgePath() <em>Trigger Kowledge Path</em>}' reference.
 	 * <!-- begin-user-doc -->

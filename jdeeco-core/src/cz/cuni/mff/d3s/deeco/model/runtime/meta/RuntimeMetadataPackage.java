@@ -999,31 +999,13 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int STATE_SPACE_MODEL_DEFINITION = 20;
 
 	/**
-	 * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int STATE_SPACE_MODEL_DEFINITION__PARAMETERS = INVOCABLE__PARAMETERS;
-
-	/**
-	 * The feature id for the '<em><b>Method</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int STATE_SPACE_MODEL_DEFINITION__METHOD = INVOCABLE__METHOD;
-
-	/**
 	 * The feature id for the '<em><b>Trigger Kowledge Path</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int STATE_SPACE_MODEL_DEFINITION__TRIGGER_KOWLEDGE_PATH = INVOCABLE_FEATURE_COUNT + 0;
+	int STATE_SPACE_MODEL_DEFINITION__TRIGGER_KOWLEDGE_PATH = 0;
 
 	/**
 	 * The feature id for the '<em><b>Model</b></em>' attribute.
@@ -1032,7 +1014,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int STATE_SPACE_MODEL_DEFINITION__MODEL = INVOCABLE_FEATURE_COUNT + 1;
+	int STATE_SPACE_MODEL_DEFINITION__MODEL = 1;
 
 	/**
 	 * The feature id for the '<em><b>Derivation States</b></em>' attribute list.
@@ -1041,7 +1023,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int STATE_SPACE_MODEL_DEFINITION__DERIVATION_STATES = INVOCABLE_FEATURE_COUNT + 2;
+	int STATE_SPACE_MODEL_DEFINITION__DERIVATION_STATES = 2;
 
 	/**
 	 * The feature id for the '<em><b>Component Instance</b></em>' container reference.
@@ -1050,7 +1032,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int STATE_SPACE_MODEL_DEFINITION__COMPONENT_INSTANCE = INVOCABLE_FEATURE_COUNT + 3;
+	int STATE_SPACE_MODEL_DEFINITION__COMPONENT_INSTANCE = 3;
 
 	/**
 	 * The feature id for the '<em><b>In States</b></em>' attribute list.
@@ -1059,7 +1041,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int STATE_SPACE_MODEL_DEFINITION__IN_STATES = INVOCABLE_FEATURE_COUNT + 4;
+	int STATE_SPACE_MODEL_DEFINITION__IN_STATES = 4;
 
 	/**
 	 * The feature id for the '<em><b>Triggers</b></em>' containment reference list.
@@ -1068,7 +1050,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int STATE_SPACE_MODEL_DEFINITION__TRIGGERS = INVOCABLE_FEATURE_COUNT + 5;
+	int STATE_SPACE_MODEL_DEFINITION__TRIGGERS = 5;
 
 	/**
 	 * The feature id for the '<em><b>Is Active</b></em>' attribute.
@@ -1077,7 +1059,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int STATE_SPACE_MODEL_DEFINITION__IS_ACTIVE = INVOCABLE_FEATURE_COUNT + 6;
+	int STATE_SPACE_MODEL_DEFINITION__IS_ACTIVE = 6;
 
 	/**
 	 * The number of structural features of the '<em>State Space Model Definition</em>' class.
@@ -1086,7 +1068,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int STATE_SPACE_MODEL_DEFINITION_FEATURE_COUNT = INVOCABLE_FEATURE_COUNT + 7;
+	int STATE_SPACE_MODEL_DEFINITION_FEATURE_COUNT = 7;
 
 	/**
 	 * The number of operations of the '<em>State Space Model Definition</em>' class.
@@ -1095,7 +1077,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int STATE_SPACE_MODEL_DEFINITION_OPERATION_COUNT = INVOCABLE_OPERATION_COUNT + 0;
+	int STATE_SPACE_MODEL_DEFINITION_OPERATION_COUNT = 0;
 
 	/**
 	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ModeControllerImpl <em>Mode Controller</em>}' class.
