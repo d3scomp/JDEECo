@@ -2,14 +2,11 @@
  */
 package cz.cuni.mff.d3s.deeco.model.runtime.meta;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.api.ActivateModeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcessEntry;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcessExit;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Condition;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.DeactivateModeTrigger;
+
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Exchange;
@@ -26,7 +23,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModel;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import org.eclipse.emf.ecore.EFactory;
 
@@ -192,13 +189,13 @@ public interface RuntimeMetadataFactory extends EFactory {
 	PathNodeComponentId createPathNodeComponentId();
 
 	/**
-	 * Returns a new object of class '<em>State Space Model</em>'.
+	 * Returns a new object of class '<em>State Space Model Definition</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>State Space Model</em>'.
+	 * @return a new object of class '<em>State Space Model Definition</em>'.
 	 * @generated
 	 */
-	StateSpaceModel createStateSpaceModel();
+	StateSpaceModelDefinition createStateSpaceModelDefinition();
 
 	/**
 	 * Returns a new object of class '<em>Mode Controller</em>'.
@@ -217,42 +214,6 @@ public interface RuntimeMetadataFactory extends EFactory {
 	 * @generated
 	 */
 	ModeTransition createModeTransition();
-
-	/**
-	 * Returns a new object of class '<em>Component Process Entry</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Component Process Entry</em>'.
-	 * @generated
-	 */
-	ComponentProcessEntry createComponentProcessEntry();
-
-	/**
-	 * Returns a new object of class '<em>Component Process Exit</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Component Process Exit</em>'.
-	 * @generated
-	 */
-	ComponentProcessExit createComponentProcessExit();
-
-	/**
-	 * Returns a new object of class '<em>Activate Mode Trigger</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Activate Mode Trigger</em>'.
-	 * @generated
-	 */
-	ActivateModeTrigger createActivateModeTrigger();
-
-	/**
-	 * Returns a new object of class '<em>Deactivate Mode Trigger</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Deactivate Mode Trigger</em>'.
-	 * @generated
-	 */
-	DeactivateModeTrigger createDeactivateModeTrigger();
 
 	/**
 	 * Returns a new object of class '<em>Time Trigger</em>'.

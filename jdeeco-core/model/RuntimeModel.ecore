@@ -50,11 +50,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="modeControllers" upperBound="-1"
         eType="#//ModeController" containment="true" eOpposite="#//ModeController/componentInstance"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="stateSpaceModels" upperBound="-1"
-        eType="#//StateSpaceModel" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="entry" eType="#//ComponentProcessEntry"
-        containment="true" eOpposite="#//ComponentProcessEntry/componentInstance"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="exit" eType="#//ComponentProcessExit"
-        containment="true" eOpposite="#//ComponentProcessExit/componentInstance"/>
+        eType="#//StateSpaceModelDefinition" containment="true" eOpposite="#//StateSpaceModelDefinition/componentInstance"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EnsembleDefinition">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -111,12 +107,20 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="CommunicationBoundary" instanceClassName="cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate"/>
-  <eClassifiers xsi:type="ecore:EClass" name="StateSpaceModel">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="inStates" lowerBound="1"
-        upperBound="-1" eType="#//KnowledgePath"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="derivationStates" upperBound="-1"
+  <eClassifiers xsi:type="ecore:EClass" name="StateSpaceModelDefinition" eSuperTypes="#//Invocable">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="triggerKowledgePath" lowerBound="1"
         eType="#//KnowledgePath"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="model" eType="#//ModelType"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="derivationStates" lowerBound="1"
+        upperBound="-1" eType="#//InaccurateValue"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="componentInstance" lowerBound="1"
+        eType="#//ComponentInstance" eOpposite="#//ComponentInstance/stateSpaceModels"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="inStates" lowerBound="1"
+        upperBound="-1" eType="#//InaccurateValue"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="triggers" upperBound="-1"
+        eType="#//Trigger" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isActive" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ModeController">
     <eStructuralFeatures xsi:type="ecore:EReference" name="initMode" lowerBound="1"
@@ -135,30 +139,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="transitionCondition" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="meta" eType="#//MetadataType"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EDataType" name="ModelType" instanceClassName="cz.cuni.mff.d3s.deeco.model.runtime.stateflow.Model"/>
-  <eClassifiers xsi:type="ecore:EClass" name="ComponentProcessEntry" eSuperTypes="#//Invocable">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="componentInstance" eType="#//ComponentInstance"
-        eOpposite="#//ComponentInstance/entry"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="triggers" upperBound="-1"
-        eType="#//ActivateModeTrigger" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isActive" lowerBound="1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ComponentProcessExit" eSuperTypes="#//Invocable">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="componentInstance" eType="#//ComponentInstance"
-        eOpposite="#//ComponentInstance/exit"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="triggers" upperBound="-1"
-        eType="#//DeactivateModeTrigger" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isActive" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ActivateModeTrigger" eSuperTypes="#//Trigger">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="mode" eType="#//ComponentProcess"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="DeactivateModeTrigger" eSuperTypes="#//Trigger">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="mode" eType="#//ComponentProcess"/>
-  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="ModelType" instanceClassName="cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ModelInterface"/>
   <eClassifiers xsi:type="ecore:EEnum" name="MetadataType">
     <eLiterals name="EMPTY"/>
     <eLiterals name="TS" value="1"/>
@@ -166,4 +147,5 @@
     <eLiterals name="MAX_BOUNDARY" value="3"/>
     <eLiterals name="INACCURACY" value="4"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="InaccurateValue" instanceClassName="cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccurateValueDefinition"/>
 </ecore:EPackage>

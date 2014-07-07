@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.eclipse.emf.common.util.EList;
+
 import cz.cuni.mff.d3s.deeco.annotations.*;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.*;
@@ -21,11 +23,14 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.*;
-import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
+import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccurateValueDefinition;
+import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ModelInterface;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder;
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
 import cz.cuni.mff.d3s.deeco.network.GenericCommunicationBoundaryPredicate;
+import cz.cuni.mff.d3s.deeco.network.KnowledgeData;
+import cz.cuni.mff.d3s.deeco.network.KnowledgeMetaData;
 
 /**
  * Common gateway for processing of Java objects/classes with DEECo annotations.
@@ -43,7 +48,8 @@ import cz.cuni.mff.d3s.deeco.network.GenericCommunicationBoundaryPredicate;
 public class AnnotationProcessor {
 	
 	
-	protected static final double SEC_NANOSEC_FACTOR = 1000000000;
+	protected static final double SEC_NANOSECOND_FACTOR = 1000000000;
+	
 	
 	private static final Map<Class<? extends Annotation>, ParameterDirection> parameterAnnotationsToParameterDirections = Collections
 			.unmodifiableMap(new HashMap<Class<? extends Annotation>, ParameterDirection>() {
@@ -55,7 +61,8 @@ public class AnnotationProcessor {
 				}
 			});
 	protected RuntimeMetadataFactory factory;
-	
+	private double currentTime = System.nanoTime() / SEC_NANOSECOND_FACTOR;
+
 	
 	/**
 	 * Initializes the processor with the given model factory.
@@ -141,10 +148,13 @@ public class AnnotationProcessor {
 		Class<?> clazz = (isClass) ? (Class<?>) obj : obj.getClass();
 		boolean isC = isComponentDefinition(clazz);
 		boolean isE = isEnsembleDefinition(clazz);
-		if (isC && isE) {
+		boolean isSSM = isStateSpaceModel(clazz);
+		
+		if ((isC && isE) || (isE && isSSM)) {
 			throw new AnnotationProcessorException(
 					"Class: " + clazz.getCanonicalName() +
-					"->Both @" + Component.class.getSimpleName() + " or @" + Ensemble.class.getSimpleName() + " annotation found.");
+					"->Both @" + Component.class.getSimpleName() + " or @" + Ensemble.class.getSimpleName() + " annotation found."+
+					"or ->Both @"+ Ensemble.class.getSimpleName() + " and @"+ StateSpaceModel.class.getSimpleName() + " are found.");
 		}
 		if (isC) {			
 			processComponentInstance(model, obj);
@@ -161,13 +171,13 @@ public class AnnotationProcessor {
 			}
 			
 			model.getEnsembleDefinitions().add(ed);
-
 			return;
 		} 
 		throw new AnnotationProcessorException(
 				"Class: " + clazz.getCanonicalName() +
 				"->No @" + Component.class.getSimpleName() + " or @" + Ensemble.class.getSimpleName() + " annotation found.");
 	}
+	
 	
 	/**
 	 * Checks if the object is annotated as @{@link Component} and calls the respective creator. 
@@ -211,6 +221,26 @@ public class AnnotationProcessor {
 
 		return ci;
 	}
+	
+	
+	//FIXME: put the notes
+	public ComponentInstance processStateSpaceModel(RuntimeMetadata model, ComponentInstance ci) throws AnnotationProcessorException {
+		if (model == null) {
+			throw new AnnotationProcessorException("Provided model cannot be null.");
+		}
+		
+		// Create ensemble controllers for all the already-processed ensemble definitions
+		for (EnsembleDefinition ed: model.getEnsembleDefinitions()) {
+			EnsembleController ec = factory.createEnsembleController();
+			ec.setComponentInstance(ci);
+			ec.setEnsembleDefinition(ed);
+			ci.getEnsembleControllers().add(ec);
+		}
+		
+		model.getComponentInstances().add(ci);
+
+		return ci;
+	}
 
 	/**
 	 * Creator of a single correctly-initialized {@link ComponentInstance} object. 
@@ -231,7 +261,9 @@ public class AnnotationProcessor {
 		ComponentInstance componentInstance = factory.createComponentInstance();
 		componentInstance.setName(clazz.getCanonicalName());
 		
+		
 		try {
+
 			ChangeSet initialK = extractInitialKnowledge(obj);
 			String id = getComponentId(initialK);
 			if (id == null) {
@@ -241,6 +273,13 @@ public class AnnotationProcessor {
 			km.update(initialK);
 	        componentInstance.setKnowledgeManager(km); 
 	        
+	        boolean isSSM = isStateSpaceModel(clazz);
+		    if(isSSM){
+		       	List<StateSpaceModelDefinition> statespaceModels = new ArrayList<>();
+			    processStateSpaceModelAnnotation(clazz, initialK, statespaceModels); 
+			}
+		    
+		    
 			List<Method> methods = getMethodsMarkedAsProcesses(clazz);
 	        
 			for (Method m : methods) {
@@ -255,7 +294,7 @@ public class AnnotationProcessor {
 				}
 			}
 		} catch (KnowledgeUpdateException | AnnotationProcessorException
-				| ParseException e) {
+				| ParseException | InstantiationException | IllegalAccessException e) {
 			String msg = Component.class.getSimpleName() + ": "
 					+ componentInstance.getName() + "->" + e.getMessage();
 			throw new AnnotationProcessorException(msg, e);
@@ -264,7 +303,71 @@ public class AnnotationProcessor {
 	}
 
 
+	public void processStateSpaceModelAnnotation(Class<?> clazz, ChangeSet initialK, List<StateSpaceModelDefinition> statespaceModels) throws InstantiationException, IllegalAccessException{
 
+		for (Annotation ann : clazz.getAnnotations()) {
+			if(ann.annotationType().getSimpleName().equals("StateSpaceModel")){
+				
+				for (Model models : ((StateSpaceModel)ann).models()) {
+					StateSpaceModelDefinition ssm = factory.createStateSpaceModelDefinition();
+
+					//Adding inStates....
+					for (String state : models.state()) {
+						for (KnowledgePath kp : initialK.getUpdatedReferences()) {
+							if((kp.toString().equals(state)) && (initialK.getValue(kp) instanceof TSParamHolder)){
+								InaccurateValueDefinition<Object> inaccValue = new InaccurateValueDefinition<Object>(kp,(TSParamHolder<Object>)initialK.getValue(kp));
+								ssm.getInStates().add(inaccValue);										
+								System.out.println("instate "+inaccValue.path);
+							}
+						}
+					}
+					
+				
+					//Adding dervStates....
+					Class<?> m = models.result().referenceModel();
+					Object newModel = m.newInstance();
+					int[] returnIndex = models.result().returnedIndex();
+					for (int i = 0; i< models.result().returnedIndex().length; i++) {
+						if(returnIndex[i] > -1){		
+							InaccurateValueDefinition inaccValue = ssm.getInStates().get(returnIndex[i]);
+							ssm.getDerivationStates().add(i,inaccValue);
+						}else{
+							InaccurateValueDefinition inaccValue = new InaccurateValueDefinition<>();
+							ssm.getDerivationStates().add(i,inaccValue);
+							if(newModel instanceof ModelInterface){
+								ssm.setModel((ModelInterface)newModel);
+								InaccurateValueDefinition newBoundraies = ((ModelInterface) newModel).getModelBoundaries(ssm.getInStates());	
+								ssm.getDerivationStates().set(i,newBoundraies);
+								System.out.println("* " + inaccValue.minBoundary + "  " + m.getSimpleName() + "   " + ssm.getDerivationStates().size());
+							}
+							
+							for (KnowledgePath kp : initialK.getUpdatedReferences()) {
+								if((kp.toString().equals(models.triggerField()))){
+									ssm.setTriggerKowledgePath(kp);
+								}
+								
+								TimeTrigger periodicTrigger = null;
+								if (models.periodicScheduling() instanceof PeriodicScheduling) {
+									periodicTrigger = factory.createTimeTrigger();
+									periodicTrigger.setPeriod(((PeriodicScheduling) models.periodicScheduling()).value());
+									periodicTrigger.setOffset(0);
+									ssm.getTriggers().add(periodicTrigger);
+								}
+								
+								
+//								List<KnowledgeChangeTrigger> knowledgeChangeTriggers = new ArrayList<>();
+//								KnowledgeChangeTrigger trigger = factory.createKnowledgeChangeTrigger();
+//								trigger.setKnowledgePath(ssm.getTriggerKowledgePath());
+//								knowledgeChangeTriggers.add(trigger);
+//								ssm.getTriggers().addAll(knowledgeChangeTriggers);
+							}	
+						}
+					}
+					statespaceModels.add(ssm);
+				}	
+			}
+		}
+	}
 
 
 	/**
@@ -723,6 +826,11 @@ public class AnnotationProcessor {
 		return clazz != null && clazz.isAnnotationPresent(Ensemble.class);
 	}
 	
+	
+	boolean isStateSpaceModel(Class<?> clazz) {
+		return clazz != null && clazz.isAnnotationPresent(StateSpaceModel.class);
+	}
+	
 	/**
 	 * Returns a {@link ChangeSet} containing the initial values of the knowledge of the parsed Component.
 	 *  
@@ -749,19 +857,16 @@ public class AnnotationProcessor {
 			try {
 				Object value = null;
 				Annotation[] anns = f.getDeclaredAnnotations();
-				System.out.println("anns : "+anns.length);
 				for (int i = 0; i < anns.length; i++) {
-					System.out.println("anns : "+anns[i]);
 					if(anns[0].annotationType().getName().contains("TimeStamp")){
 						value = new TSParamHolder();
 						((TSParamHolder)value).value = f.get(knowledge);
-						((TSParamHolder)value).creationTime = System.nanoTime()/SEC_NANOSEC_FACTOR;
+						((TSParamHolder)value).creationTime = currentTime;
 					}
 				}
 				
 				if(value == null)
 					value = f.get(knowledge);
-				System.out.println(knowledgePath+"   -------   value : "+value);
 				changeSet.setValue(knowledgePath, value);
 			} catch (IllegalAccessException e) {
 				continue;

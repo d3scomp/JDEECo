@@ -9,7 +9,7 @@ public class ComponentModeTransition {
 	public String transitionCondition = new String(); 
 	
 	
-	boolean analyzeCondition(InaccurateValue inacc){
+	boolean analyzeCondition(InaccurateValueDefinition inacc){
 //		Number variable = 0;
 //		String comparisonOperator = new String();
 //		Number limit = 0;

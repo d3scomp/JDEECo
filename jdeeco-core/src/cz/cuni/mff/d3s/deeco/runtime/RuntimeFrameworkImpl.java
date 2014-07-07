@@ -7,6 +7,7 @@ import java.util.Map;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
+import org.eclipse.emf.common.util.EList;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
@@ -22,11 +23,13 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.task.EnsembleTask;
 import cz.cuni.mff.d3s.deeco.task.ProcessTask;
+import cz.cuni.mff.d3s.deeco.task.StateSpaceModelTask;
 import cz.cuni.mff.d3s.deeco.task.Task;
 
 /**
@@ -97,7 +100,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 	 */
 	protected Map<ComponentProcess, Adapter> componentProcessAdapters = new HashMap<>();
 
-	
+	protected Map<StateSpaceModelDefinition, Adapter> stateSpaceModelAdapters = new HashMap<>();
 
 	/**
 	 * Initializes the runtime with the given internal services and prepares the
@@ -220,6 +223,12 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 		// replace the KM with one created via kmContainer
 		replaceKnowledgeManager(instance);
 		
+		
+		for (StateSpaceModelDefinition s: instance.getStateSpaceModels()) {			
+			stateSpaceModelAdded(instance, s);
+		}
+		
+		
 		for (ComponentProcess p: instance.getComponentProcesses()) {			
 			componentProcessAdded(instance, p);
 		}
@@ -338,6 +347,51 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 		componentProcessAdapters.put(process, componentProcessAdapter);
 	} 
 	
+	
+	
+	
+	
+	void stateSpaceModelAdded(final ComponentInstance instance,
+			final StateSpaceModelDefinition stateSpaceModel) {
+		if ((instance == null) || (stateSpaceModel == null)) {
+			Log.w(String.format("Attempting to add an invalid stateSpaceModel (%s) to an invalid component instance (%s)", stateSpaceModel, instance));
+			return;
+		}
+		
+	
+		ComponentInstanceRecord cir = componentRecords.get(instance);		
+		if (cir == null) {
+			Log.w(String.format("Attempting to add a stateSpaceModel (%s) to an unregistered instance (%s)", stateSpaceModel, instance));
+			return;
+		}
+		
+		if (cir.getStateSpaceModelTasks().containsKey(stateSpaceModel)) {
+			Log.w(String.format("Attempting to add an already existing stateSpaceModel (%s) to instance (%s)", stateSpaceModel, instance));
+			return;
+		}
+		
+		final Task newTask = new StateSpaceModelTask(stateSpaceModel, scheduler);
+		cir.getStateSpaceModelTasks().put(stateSpaceModel, newTask);
+		
+		stateSpaceModelActiveChanged(instance, stateSpaceModel, stateSpaceModel.isIsActive());
+		
+		// register adapters to listen for model changes
+		// listen to change in ComponentProcess.isActive
+		Adapter stateSpaceModelAdapter = new AdapterImpl() {
+			public void notifyChanged(Notification notification) {
+				super.notifyChanged(notification);
+				if ((notification.getFeatureID(StateSpaceModelDefinition.class) == RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__IS_ACTIVE)
+						&& (notification.getEventType() == Notification.SET)){
+					stateSpaceModelActiveChanged(instance, stateSpaceModel, notification.getNewBooleanValue());
+				}
+			}
+		};
+		stateSpaceModel.eAdapters().add(stateSpaceModelAdapter);	
+		stateSpaceModelAdapters.put(stateSpaceModel, stateSpaceModelAdapter);
+	} 
+	
+	
+	
 	/**
 	 * Implementation of a notification indicating that a process became (in)active.
 	 * 
@@ -377,6 +431,31 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 	}
 
 
+	
+	void stateSpaceModelActiveChanged(ComponentInstance instance, StateSpaceModelDefinition stateSpaceModel, boolean active) {		
+		if (stateSpaceModel == null) {
+			Log.w("Attempting to to change the activity of a null stateSpaceModel.");
+			return;
+		}
+		// the instance is not registered 
+		if ((!componentRecords.containsKey(instance) 
+			// OR the process is not registered
+			|| (!componentRecords.get(instance).getStateSpaceModelTasks().containsKey(stateSpaceModel)))) {
+			Log.w(String.format("Attempting to change the activity of an unregistered stateSpaceModel (%s).", stateSpaceModel));
+			return;
+		}
+		
+		Task t = componentRecords.get(instance).getStateSpaceModelTasks().get(stateSpaceModel);
+		
+		Log.i(String.format("Changing the activity of task %s corresponding to stateSpaceModel %s to %s.", t, stateSpaceModel, active));
+		
+		if (active) {
+			scheduler.addTask(t);
+		} else {
+			scheduler.removeTask(t);
+		}
+	}
+	
 	/**
 	 * Implementation of a notification indicating that an existing component
 	 * instance has been removed from the model.

@@ -2,15 +2,46 @@ package cz.cuni.mff.d3s.deeco.model.runtime.stateflow;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 
-public class InaccurateValue {
+public class InaccurateValueDefinition<T> {
 
 	public KnowledgePath path;
 	public Number value;
 	public Number minBoundary;
 	public Number maxBoundary;
 	public Double creationTime;
+
 	
 	
+	public InaccurateValueDefinition() {
+	}
+	
+	public InaccurateValueDefinition(Number value){
+		this.value = value;
+	}
+	
+	public InaccurateValueDefinition(KnowledgePath kp, TSParamHolder<T> value){
+		this.path = kp;
+		TSParamHolder<T> obj = new TSParamHolder<T>(value);
+		this.value = (Number) obj.value;
+		this.minBoundary = (Number) obj.value;
+		this.maxBoundary = (Number) obj.value;
+		this.creationTime = obj.creationTime;
+	}
+	
+	public InaccurateValueDefinition(InaccurateValueDefinition<T> value){
+		this.path = value.path;
+		this.value = value.value;
+		this.minBoundary = value.minBoundary;
+		this.maxBoundary = value.maxBoundary;
+		this.creationTime = value.creationTime;
+	}
+	
+	
+	public void init(){
+		this.minBoundary = this.value;
+		this.maxBoundary = this.value;		
+	}
+
 	public void setPath(KnowledgePath path) {
 		this.path = path;
 	}
@@ -50,4 +81,5 @@ public class InaccurateValue {
 	public Number getMinBoundary() {
 		return minBoundary;
 	}
+
 }

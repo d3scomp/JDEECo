@@ -26,8 +26,6 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getInternalData <em>Internal Data</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getModeControllers <em>Mode Controllers</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getStateSpaceModels <em>State Space Models</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getEntry <em>Entry</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getExit <em>Exit</em>}</li>
  * </ul>
  * </p>
  *
@@ -187,7 +185,8 @@ public interface ComponentInstance extends EObject {
 
 	/**
 	 * Returns the value of the '<em><b>State Space Models</b></em>' containment reference list.
-	 * The list contents are of type {@link cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModel}.
+	 * The list contents are of type {@link cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition}.
+	 * It is bidirectional and its opposite is '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getComponentInstance <em>Component Instance</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>State Space Models</em>' containment reference list isn't clear,
@@ -196,65 +195,10 @@ public interface ComponentInstance extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>State Space Models</em>' containment reference list.
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance_StateSpaceModels()
-	 * @model containment="true"
-	 * @generated
-	 */
-	EList<StateSpaceModel> getStateSpaceModels();
-
-	/**
-	 * Returns the value of the '<em><b>Entry</b></em>' containment reference.
-	 * It is bidirectional and its opposite is '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcessEntry#getComponentInstance <em>Component Instance</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Entry</em>' containment reference isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Entry</em>' containment reference.
-	 * @see #setEntry(ComponentProcessEntry)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance_Entry()
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcessEntry#getComponentInstance
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getComponentInstance
 	 * @model opposite="componentInstance" containment="true"
 	 * @generated
 	 */
-	ComponentProcessEntry getEntry();
-
-	/**
-	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getEntry <em>Entry</em>}' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Entry</em>' containment reference.
-	 * @see #getEntry()
-	 * @generated
-	 */
-	void setEntry(ComponentProcessEntry value);
-
-	/**
-	 * Returns the value of the '<em><b>Exit</b></em>' containment reference.
-	 * It is bidirectional and its opposite is '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcessExit#getComponentInstance <em>Component Instance</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Exit</em>' containment reference isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Exit</em>' containment reference.
-	 * @see #setExit(ComponentProcessExit)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance_Exit()
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcessExit#getComponentInstance
-	 * @model opposite="componentInstance" containment="true"
-	 * @generated
-	 */
-	ComponentProcessExit getExit();
-
-	/**
-	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getExit <em>Exit</em>}' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Exit</em>' containment reference.
-	 * @see #getExit()
-	 * @generated
-	 */
-	void setExit(ComponentProcessExit value);
+	EList<StateSpaceModelDefinition> getStateSpaceModels();
 
 } // ComponentInstance

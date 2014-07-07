@@ -557,31 +557,13 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int COMPONENT_INSTANCE__STATE_SPACE_MODELS = 7;
 
 	/**
-	 * The feature id for the '<em><b>Entry</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMPONENT_INSTANCE__ENTRY = 8;
-
-	/**
-	 * The feature id for the '<em><b>Exit</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMPONENT_INSTANCE__EXIT = 9;
-
-	/**
 	 * The number of structural features of the '<em>Component Instance</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_INSTANCE_FEATURE_COUNT = 10;
+	int COMPONENT_INSTANCE_FEATURE_COUNT = 8;
 
 	/**
 	 * The number of operations of the '<em>Component Instance</em>' class.
@@ -1007,32 +989,41 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int STRING_TO_OBJECT_MAP_OPERATION_COUNT = 0;
 
 	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.StateSpaceModelImpl <em>State Space Model</em>}' class.
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.StateSpaceModelDefinitionImpl <em>State Space Model Definition</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.StateSpaceModelImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getStateSpaceModel()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.StateSpaceModelDefinitionImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getStateSpaceModelDefinition()
 	 * @generated
 	 */
-	int STATE_SPACE_MODEL = 20;
+	int STATE_SPACE_MODEL_DEFINITION = 20;
 
 	/**
-	 * The feature id for the '<em><b>In States</b></em>' reference list.
+	 * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int STATE_SPACE_MODEL__IN_STATES = 0;
+	int STATE_SPACE_MODEL_DEFINITION__PARAMETERS = INVOCABLE__PARAMETERS;
 
 	/**
-	 * The feature id for the '<em><b>Derivation States</b></em>' reference list.
+	 * The feature id for the '<em><b>Method</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int STATE_SPACE_MODEL__DERIVATION_STATES = 1;
+	int STATE_SPACE_MODEL_DEFINITION__METHOD = INVOCABLE__METHOD;
+
+	/**
+	 * The feature id for the '<em><b>Trigger Kowledge Path</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STATE_SPACE_MODEL_DEFINITION__TRIGGER_KOWLEDGE_PATH = INVOCABLE_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Model</b></em>' attribute.
@@ -1041,25 +1032,70 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int STATE_SPACE_MODEL__MODEL = 2;
+	int STATE_SPACE_MODEL_DEFINITION__MODEL = INVOCABLE_FEATURE_COUNT + 1;
 
 	/**
-	 * The number of structural features of the '<em>State Space Model</em>' class.
+	 * The feature id for the '<em><b>Derivation States</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int STATE_SPACE_MODEL_FEATURE_COUNT = 3;
+	int STATE_SPACE_MODEL_DEFINITION__DERIVATION_STATES = INVOCABLE_FEATURE_COUNT + 2;
 
 	/**
-	 * The number of operations of the '<em>State Space Model</em>' class.
+	 * The feature id for the '<em><b>Component Instance</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int STATE_SPACE_MODEL_OPERATION_COUNT = 0;
+	int STATE_SPACE_MODEL_DEFINITION__COMPONENT_INSTANCE = INVOCABLE_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>In States</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STATE_SPACE_MODEL_DEFINITION__IN_STATES = INVOCABLE_FEATURE_COUNT + 4;
+
+	/**
+	 * The feature id for the '<em><b>Triggers</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STATE_SPACE_MODEL_DEFINITION__TRIGGERS = INVOCABLE_FEATURE_COUNT + 5;
+
+	/**
+	 * The feature id for the '<em><b>Is Active</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STATE_SPACE_MODEL_DEFINITION__IS_ACTIVE = INVOCABLE_FEATURE_COUNT + 6;
+
+	/**
+	 * The number of structural features of the '<em>State Space Model Definition</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STATE_SPACE_MODEL_DEFINITION_FEATURE_COUNT = INVOCABLE_FEATURE_COUNT + 7;
+
+	/**
+	 * The number of operations of the '<em>State Space Model Definition</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STATE_SPACE_MODEL_DEFINITION_OPERATION_COUNT = INVOCABLE_OPERATION_COUNT + 0;
 
 	/**
 	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ModeControllerImpl <em>Mode Controller</em>}' class.
@@ -1190,244 +1226,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int MODE_TRANSITION_OPERATION_COUNT = 0;
 
 	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessEntryImpl <em>Component Process Entry</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessEntryImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getComponentProcessEntry()
-	 * @generated
-	 */
-	int COMPONENT_PROCESS_ENTRY = 23;
-
-	/**
-	 * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMPONENT_PROCESS_ENTRY__PARAMETERS = INVOCABLE__PARAMETERS;
-
-	/**
-	 * The feature id for the '<em><b>Method</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMPONENT_PROCESS_ENTRY__METHOD = INVOCABLE__METHOD;
-
-	/**
-	 * The feature id for the '<em><b>Component Instance</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMPONENT_PROCESS_ENTRY__COMPONENT_INSTANCE = INVOCABLE_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Triggers</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMPONENT_PROCESS_ENTRY__TRIGGERS = INVOCABLE_FEATURE_COUNT + 1;
-
-	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMPONENT_PROCESS_ENTRY__NAME = INVOCABLE_FEATURE_COUNT + 2;
-
-	/**
-	 * The feature id for the '<em><b>Is Active</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMPONENT_PROCESS_ENTRY__IS_ACTIVE = INVOCABLE_FEATURE_COUNT + 3;
-
-	/**
-	 * The number of structural features of the '<em>Component Process Entry</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMPONENT_PROCESS_ENTRY_FEATURE_COUNT = INVOCABLE_FEATURE_COUNT + 4;
-
-	/**
-	 * The number of operations of the '<em>Component Process Entry</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMPONENT_PROCESS_ENTRY_OPERATION_COUNT = INVOCABLE_OPERATION_COUNT + 0;
-
-	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessExitImpl <em>Component Process Exit</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessExitImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getComponentProcessExit()
-	 * @generated
-	 */
-	int COMPONENT_PROCESS_EXIT = 24;
-
-	/**
-	 * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMPONENT_PROCESS_EXIT__PARAMETERS = INVOCABLE__PARAMETERS;
-
-	/**
-	 * The feature id for the '<em><b>Method</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMPONENT_PROCESS_EXIT__METHOD = INVOCABLE__METHOD;
-
-	/**
-	 * The feature id for the '<em><b>Component Instance</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMPONENT_PROCESS_EXIT__COMPONENT_INSTANCE = INVOCABLE_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Triggers</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMPONENT_PROCESS_EXIT__TRIGGERS = INVOCABLE_FEATURE_COUNT + 1;
-
-	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMPONENT_PROCESS_EXIT__NAME = INVOCABLE_FEATURE_COUNT + 2;
-
-	/**
-	 * The feature id for the '<em><b>Is Active</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMPONENT_PROCESS_EXIT__IS_ACTIVE = INVOCABLE_FEATURE_COUNT + 3;
-
-	/**
-	 * The number of structural features of the '<em>Component Process Exit</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMPONENT_PROCESS_EXIT_FEATURE_COUNT = INVOCABLE_FEATURE_COUNT + 4;
-
-	/**
-	 * The number of operations of the '<em>Component Process Exit</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMPONENT_PROCESS_EXIT_OPERATION_COUNT = INVOCABLE_OPERATION_COUNT + 0;
-
-	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ActivateModeTriggerImpl <em>Activate Mode Trigger</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.ActivateModeTriggerImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getActivateModeTrigger()
-	 * @generated
-	 */
-	int ACTIVATE_MODE_TRIGGER = 25;
-
-	/**
-	 * The feature id for the '<em><b>Mode</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ACTIVATE_MODE_TRIGGER__MODE = TRIGGER_FEATURE_COUNT + 0;
-
-	/**
-	 * The number of structural features of the '<em>Activate Mode Trigger</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ACTIVATE_MODE_TRIGGER_FEATURE_COUNT = TRIGGER_FEATURE_COUNT + 1;
-
-	/**
-	 * The number of operations of the '<em>Activate Mode Trigger</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ACTIVATE_MODE_TRIGGER_OPERATION_COUNT = TRIGGER_OPERATION_COUNT + 0;
-
-	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.DeactivateModeTriggerImpl <em>Deactivate Mode Trigger</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.DeactivateModeTriggerImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getDeactivateModeTrigger()
-	 * @generated
-	 */
-	int DEACTIVATE_MODE_TRIGGER = 26;
-
-	/**
-	 * The feature id for the '<em><b>Mode</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DEACTIVATE_MODE_TRIGGER__MODE = TRIGGER_FEATURE_COUNT + 0;
-
-	/**
-	 * The number of structural features of the '<em>Deactivate Mode Trigger</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DEACTIVATE_MODE_TRIGGER_FEATURE_COUNT = TRIGGER_FEATURE_COUNT + 1;
-
-	/**
-	 * The number of operations of the '<em>Deactivate Mode Trigger</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DEACTIVATE_MODE_TRIGGER_OPERATION_COUNT = TRIGGER_OPERATION_COUNT + 0;
-
-	/**
 	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection <em>Parameter Direction</em>}' enum.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1435,7 +1233,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getParameterDirection()
 	 * @generated
 	 */
-	int PARAMETER_DIRECTION = 27;
+	int PARAMETER_DIRECTION = 23;
 
 	/**
 	 * The meta object id for the '<em>Method</em>' data type.
@@ -1445,7 +1243,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getMethod()
 	 * @generated
 	 */
-	int METHOD = 29;
+	int METHOD = 25;
 
 	/**
 	 * The meta object id for the '<em>Knowledge Manager</em>' data type.
@@ -1455,7 +1253,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getKnowledgeManager()
 	 * @generated
 	 */
-	int KNOWLEDGE_MANAGER = 30;
+	int KNOWLEDGE_MANAGER = 26;
 
 	/**
 	 * The meta object id for the '<em>Shadow Knowledge Manager Registry</em>' data type.
@@ -1465,7 +1263,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getShadowKnowledgeManagerRegistry()
 	 * @generated
 	 */
-	int SHADOW_KNOWLEDGE_MANAGER_REGISTRY = 31;
+	int SHADOW_KNOWLEDGE_MANAGER_REGISTRY = 27;
 
 	/**
 	 * The meta object id for the '<em>Communication Boundary</em>' data type.
@@ -1475,7 +1273,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getCommunicationBoundary()
 	 * @generated
 	 */
-	int COMMUNICATION_BOUNDARY = 32;
+	int COMMUNICATION_BOUNDARY = 28;
 
 	/**
 	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.MetadataType <em>Metadata Type</em>}' enum.
@@ -1485,17 +1283,27 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getMetadataType()
 	 * @generated
 	 */
-	int METADATA_TYPE = 28;
+	int METADATA_TYPE = 24;
 
 	/**
 	 * The meta object id for the '<em>Model Type</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.stateflow.Model
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ModelInterface
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getModelType()
 	 * @generated
 	 */
-	int MODEL_TYPE = 33;
+	int MODEL_TYPE = 29;
+
+	/**
+	 * The meta object id for the '<em>Inaccurate Value</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccurateValueDefinition
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getInaccurateValue()
+	 * @generated
+	 */
+	int INACCURATE_VALUE = 30;
 
 	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger <em>Trigger</em>}'.
@@ -1741,28 +1549,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getComponentInstance_StateSpaceModels();
-
-	/**
-	 * Returns the meta object for the containment reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getEntry <em>Entry</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference '<em>Entry</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getEntry()
-	 * @see #getComponentInstance()
-	 * @generated
-	 */
-	EReference getComponentInstance_Entry();
-
-	/**
-	 * Returns the meta object for the containment reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getExit <em>Exit</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference '<em>Exit</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getExit()
-	 * @see #getComponentInstance()
-	 * @generated
-	 */
-	EReference getComponentInstance_Exit();
 
 	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition <em>Ensemble Definition</em>}'.
@@ -2075,47 +1861,91 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EAttribute getStringToObjectMap_Value();
 
 	/**
-	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModel <em>State Space Model</em>}'.
+	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition <em>State Space Model Definition</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>State Space Model</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModel
+	 * @return the meta object for class '<em>State Space Model Definition</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition
 	 * @generated
 	 */
-	EClass getStateSpaceModel();
+	EClass getStateSpaceModelDefinition();
 
 	/**
-	 * Returns the meta object for the reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModel#getInStates <em>In States</em>}'.
+	 * Returns the meta object for the reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getTriggerKowledgePath <em>Trigger Kowledge Path</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>In States</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModel#getInStates()
-	 * @see #getStateSpaceModel()
+	 * @return the meta object for the reference '<em>Trigger Kowledge Path</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getTriggerKowledgePath()
+	 * @see #getStateSpaceModelDefinition()
 	 * @generated
 	 */
-	EReference getStateSpaceModel_InStates();
+	EReference getStateSpaceModelDefinition_TriggerKowledgePath();
 
 	/**
-	 * Returns the meta object for the reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModel#getDerivationStates <em>Derivation States</em>}'.
+	 * Returns the meta object for the attribute list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getInStates <em>In States</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>Derivation States</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModel#getDerivationStates()
-	 * @see #getStateSpaceModel()
+	 * @return the meta object for the attribute list '<em>In States</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getInStates()
+	 * @see #getStateSpaceModelDefinition()
 	 * @generated
 	 */
-	EReference getStateSpaceModel_DerivationStates();
+	EAttribute getStateSpaceModelDefinition_InStates();
 
 	/**
-	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModel#getModel <em>Model</em>}'.
+	 * Returns the meta object for the containment reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getTriggers <em>Triggers</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Triggers</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getTriggers()
+	 * @see #getStateSpaceModelDefinition()
+	 * @generated
+	 */
+	EReference getStateSpaceModelDefinition_Triggers();
+
+	/**
+	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#isIsActive <em>Is Active</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Is Active</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#isIsActive()
+	 * @see #getStateSpaceModelDefinition()
+	 * @generated
+	 */
+	EAttribute getStateSpaceModelDefinition_IsActive();
+
+	/**
+	 * Returns the meta object for the attribute list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getDerivationStates <em>Derivation States</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>Derivation States</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getDerivationStates()
+	 * @see #getStateSpaceModelDefinition()
+	 * @generated
+	 */
+	EAttribute getStateSpaceModelDefinition_DerivationStates();
+
+	/**
+	 * Returns the meta object for the container reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getComponentInstance <em>Component Instance</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the container reference '<em>Component Instance</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getComponentInstance()
+	 * @see #getStateSpaceModelDefinition()
+	 * @generated
+	 */
+	EReference getStateSpaceModelDefinition_ComponentInstance();
+
+	/**
+	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getModel <em>Model</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Model</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModel#getModel()
-	 * @see #getStateSpaceModel()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getModel()
+	 * @see #getStateSpaceModelDefinition()
 	 * @generated
 	 */
-	EAttribute getStateSpaceModel_Model();
+	EAttribute getStateSpaceModelDefinition_Model();
 
 	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ModeController <em>Mode Controller</em>}'.
@@ -2226,156 +2056,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EAttribute getModeTransition_Meta();
 
 	/**
-	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcessEntry <em>Component Process Entry</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Component Process Entry</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcessEntry
-	 * @generated
-	 */
-	EClass getComponentProcessEntry();
-
-	/**
-	 * Returns the meta object for the container reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcessEntry#getComponentInstance <em>Component Instance</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the container reference '<em>Component Instance</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcessEntry#getComponentInstance()
-	 * @see #getComponentProcessEntry()
-	 * @generated
-	 */
-	EReference getComponentProcessEntry_ComponentInstance();
-
-	/**
-	 * Returns the meta object for the containment reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcessEntry#getTriggers <em>Triggers</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Triggers</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcessEntry#getTriggers()
-	 * @see #getComponentProcessEntry()
-	 * @generated
-	 */
-	EReference getComponentProcessEntry_Triggers();
-
-	/**
-	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcessEntry#getName <em>Name</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Name</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcessEntry#getName()
-	 * @see #getComponentProcessEntry()
-	 * @generated
-	 */
-	EAttribute getComponentProcessEntry_Name();
-
-	/**
-	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcessEntry#isIsActive <em>Is Active</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Is Active</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcessEntry#isIsActive()
-	 * @see #getComponentProcessEntry()
-	 * @generated
-	 */
-	EAttribute getComponentProcessEntry_IsActive();
-
-	/**
-	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcessExit <em>Component Process Exit</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Component Process Exit</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcessExit
-	 * @generated
-	 */
-	EClass getComponentProcessExit();
-
-	/**
-	 * Returns the meta object for the container reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcessExit#getComponentInstance <em>Component Instance</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the container reference '<em>Component Instance</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcessExit#getComponentInstance()
-	 * @see #getComponentProcessExit()
-	 * @generated
-	 */
-	EReference getComponentProcessExit_ComponentInstance();
-
-	/**
-	 * Returns the meta object for the containment reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcessExit#getTriggers <em>Triggers</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Triggers</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcessExit#getTriggers()
-	 * @see #getComponentProcessExit()
-	 * @generated
-	 */
-	EReference getComponentProcessExit_Triggers();
-
-	/**
-	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcessExit#getName <em>Name</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Name</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcessExit#getName()
-	 * @see #getComponentProcessExit()
-	 * @generated
-	 */
-	EAttribute getComponentProcessExit_Name();
-
-	/**
-	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcessExit#isIsActive <em>Is Active</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Is Active</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcessExit#isIsActive()
-	 * @see #getComponentProcessExit()
-	 * @generated
-	 */
-	EAttribute getComponentProcessExit_IsActive();
-
-	/**
-	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ActivateModeTrigger <em>Activate Mode Trigger</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Activate Mode Trigger</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ActivateModeTrigger
-	 * @generated
-	 */
-	EClass getActivateModeTrigger();
-
-	/**
-	 * Returns the meta object for the reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ActivateModeTrigger#getMode <em>Mode</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Mode</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ActivateModeTrigger#getMode()
-	 * @see #getActivateModeTrigger()
-	 * @generated
-	 */
-	EReference getActivateModeTrigger_Mode();
-
-	/**
-	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.DeactivateModeTrigger <em>Deactivate Mode Trigger</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Deactivate Mode Trigger</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.DeactivateModeTrigger
-	 * @generated
-	 */
-	EClass getDeactivateModeTrigger();
-
-	/**
-	 * Returns the meta object for the reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.DeactivateModeTrigger#getMode <em>Mode</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Mode</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.DeactivateModeTrigger#getMode()
-	 * @see #getDeactivateModeTrigger()
-	 * @generated
-	 */
-	EReference getDeactivateModeTrigger_Mode();
-
-	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger <em>Time Trigger</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2472,15 +2152,26 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EEnum getMetadataType();
 
 	/**
-	 * Returns the meta object for data type '{@link cz.cuni.mff.d3s.deeco.model.runtime.stateflow.Model <em>Model Type</em>}'.
+	 * Returns the meta object for data type '{@link cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ModelInterface <em>Model Type</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for data type '<em>Model Type</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.stateflow.Model
-	 * @model instanceClass="cz.cuni.mff.d3s.deeco.model.runtime.stateflow.Model"
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ModelInterface
+	 * @model instanceClass="cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ModelInterface"
 	 * @generated
 	 */
 	EDataType getModelType();
+
+	/**
+	 * Returns the meta object for data type '{@link cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccurateValueDefinition <em>Inaccurate Value</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>Inaccurate Value</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccurateValueDefinition
+	 * @model instanceClass="cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccurateValueDefinition"
+	 * @generated
+	 */
+	EDataType getInaccurateValue();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -2704,22 +2395,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * @generated
 		 */
 		EReference COMPONENT_INSTANCE__STATE_SPACE_MODELS = eINSTANCE.getComponentInstance_StateSpaceModels();
-
-		/**
-		 * The meta object literal for the '<em><b>Entry</b></em>' containment reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference COMPONENT_INSTANCE__ENTRY = eINSTANCE.getComponentInstance_Entry();
-
-		/**
-		 * The meta object literal for the '<em><b>Exit</b></em>' containment reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference COMPONENT_INSTANCE__EXIT = eINSTANCE.getComponentInstance_Exit();
 
 		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl <em>Ensemble Definition</em>}' class.
@@ -2976,30 +2651,62 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EAttribute STRING_TO_OBJECT_MAP__VALUE = eINSTANCE.getStringToObjectMap_Value();
 
 		/**
-		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.StateSpaceModelImpl <em>State Space Model</em>}' class.
+		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.StateSpaceModelDefinitionImpl <em>State Space Model Definition</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.StateSpaceModelImpl
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getStateSpaceModel()
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.StateSpaceModelDefinitionImpl
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getStateSpaceModelDefinition()
 		 * @generated
 		 */
-		EClass STATE_SPACE_MODEL = eINSTANCE.getStateSpaceModel();
+		EClass STATE_SPACE_MODEL_DEFINITION = eINSTANCE.getStateSpaceModelDefinition();
 
 		/**
-		 * The meta object literal for the '<em><b>In States</b></em>' reference list feature.
+		 * The meta object literal for the '<em><b>Trigger Kowledge Path</b></em>' reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference STATE_SPACE_MODEL__IN_STATES = eINSTANCE.getStateSpaceModel_InStates();
+		EReference STATE_SPACE_MODEL_DEFINITION__TRIGGER_KOWLEDGE_PATH = eINSTANCE.getStateSpaceModelDefinition_TriggerKowledgePath();
 
 		/**
-		 * The meta object literal for the '<em><b>Derivation States</b></em>' reference list feature.
+		 * The meta object literal for the '<em><b>In States</b></em>' attribute list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference STATE_SPACE_MODEL__DERIVATION_STATES = eINSTANCE.getStateSpaceModel_DerivationStates();
+		EAttribute STATE_SPACE_MODEL_DEFINITION__IN_STATES = eINSTANCE.getStateSpaceModelDefinition_InStates();
+
+		/**
+		 * The meta object literal for the '<em><b>Triggers</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference STATE_SPACE_MODEL_DEFINITION__TRIGGERS = eINSTANCE.getStateSpaceModelDefinition_Triggers();
+
+		/**
+		 * The meta object literal for the '<em><b>Is Active</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute STATE_SPACE_MODEL_DEFINITION__IS_ACTIVE = eINSTANCE.getStateSpaceModelDefinition_IsActive();
+
+		/**
+		 * The meta object literal for the '<em><b>Derivation States</b></em>' attribute list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute STATE_SPACE_MODEL_DEFINITION__DERIVATION_STATES = eINSTANCE.getStateSpaceModelDefinition_DerivationStates();
+
+		/**
+		 * The meta object literal for the '<em><b>Component Instance</b></em>' container reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference STATE_SPACE_MODEL_DEFINITION__COMPONENT_INSTANCE = eINSTANCE.getStateSpaceModelDefinition_ComponentInstance();
 
 		/**
 		 * The meta object literal for the '<em><b>Model</b></em>' attribute feature.
@@ -3007,7 +2714,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute STATE_SPACE_MODEL__MODEL = eINSTANCE.getStateSpaceModel_Model();
+		EAttribute STATE_SPACE_MODEL_DEFINITION__MODEL = eINSTANCE.getStateSpaceModelDefinition_Model();
 
 		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ModeControllerImpl <em>Mode Controller</em>}' class.
@@ -3092,126 +2799,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute MODE_TRANSITION__META = eINSTANCE.getModeTransition_Meta();
-
-		/**
-		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessEntryImpl <em>Component Process Entry</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessEntryImpl
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getComponentProcessEntry()
-		 * @generated
-		 */
-		EClass COMPONENT_PROCESS_ENTRY = eINSTANCE.getComponentProcessEntry();
-
-		/**
-		 * The meta object literal for the '<em><b>Component Instance</b></em>' container reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference COMPONENT_PROCESS_ENTRY__COMPONENT_INSTANCE = eINSTANCE.getComponentProcessEntry_ComponentInstance();
-
-		/**
-		 * The meta object literal for the '<em><b>Triggers</b></em>' containment reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference COMPONENT_PROCESS_ENTRY__TRIGGERS = eINSTANCE.getComponentProcessEntry_Triggers();
-
-		/**
-		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute COMPONENT_PROCESS_ENTRY__NAME = eINSTANCE.getComponentProcessEntry_Name();
-
-		/**
-		 * The meta object literal for the '<em><b>Is Active</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute COMPONENT_PROCESS_ENTRY__IS_ACTIVE = eINSTANCE.getComponentProcessEntry_IsActive();
-
-		/**
-		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessExitImpl <em>Component Process Exit</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessExitImpl
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getComponentProcessExit()
-		 * @generated
-		 */
-		EClass COMPONENT_PROCESS_EXIT = eINSTANCE.getComponentProcessExit();
-
-		/**
-		 * The meta object literal for the '<em><b>Component Instance</b></em>' container reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference COMPONENT_PROCESS_EXIT__COMPONENT_INSTANCE = eINSTANCE.getComponentProcessExit_ComponentInstance();
-
-		/**
-		 * The meta object literal for the '<em><b>Triggers</b></em>' containment reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference COMPONENT_PROCESS_EXIT__TRIGGERS = eINSTANCE.getComponentProcessExit_Triggers();
-
-		/**
-		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute COMPONENT_PROCESS_EXIT__NAME = eINSTANCE.getComponentProcessExit_Name();
-
-		/**
-		 * The meta object literal for the '<em><b>Is Active</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute COMPONENT_PROCESS_EXIT__IS_ACTIVE = eINSTANCE.getComponentProcessExit_IsActive();
-
-		/**
-		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ActivateModeTriggerImpl <em>Activate Mode Trigger</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.ActivateModeTriggerImpl
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getActivateModeTrigger()
-		 * @generated
-		 */
-		EClass ACTIVATE_MODE_TRIGGER = eINSTANCE.getActivateModeTrigger();
-
-		/**
-		 * The meta object literal for the '<em><b>Mode</b></em>' reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference ACTIVATE_MODE_TRIGGER__MODE = eINSTANCE.getActivateModeTrigger_Mode();
-
-		/**
-		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.DeactivateModeTriggerImpl <em>Deactivate Mode Trigger</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.DeactivateModeTriggerImpl
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getDeactivateModeTrigger()
-		 * @generated
-		 */
-		EClass DEACTIVATE_MODE_TRIGGER = eINSTANCE.getDeactivateModeTrigger();
-
-		/**
-		 * The meta object literal for the '<em><b>Mode</b></em>' reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference DEACTIVATE_MODE_TRIGGER__MODE = eINSTANCE.getDeactivateModeTrigger_Mode();
 
 		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.TimeTriggerImpl <em>Time Trigger</em>}' class.
@@ -3303,11 +2890,21 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * The meta object literal for the '<em>Model Type</em>' data type.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.stateflow.Model
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ModelInterface
 		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getModelType()
 		 * @generated
 		 */
 		EDataType MODEL_TYPE = eINSTANCE.getModelType();
+
+		/**
+		 * The meta object literal for the '<em>Inaccurate Value</em>' data type.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccurateValueDefinition
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getInaccurateValue()
+		 * @generated
+		 */
+		EDataType INACCURATE_VALUE = eINSTANCE.getInaccurateValue();
 
 	}
 

@@ -1,7 +1,6 @@
 package cz.cuni.mff.d3s.deeco.task;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -124,7 +123,6 @@ public class ProcessTask extends Task {
 
 		// Construct the parameters for the process method invocation
 		Object[] actualParams = new Object[formalParams.size()];
-		Object[] actualParamsPlain = new Object[formalParams.size()];
 		
 		int paramIdx = 0;
 		Iterator<KnowledgePath> allPathsIter = allPaths.iterator();
@@ -141,14 +139,12 @@ public class ProcessTask extends Task {
 				else 
 					actualParams[paramIdx] = obj;
 				
-				actualParamsPlain[paramIdx] = actualParams[paramIdx];
 			} else if (paramDir == ParameterDirection.OUT) {
 				if(obj instanceof TSParamHolder)
 					actualParams[paramIdx] = new TSParamHolder<Object>();
 				else
 					actualParams[paramIdx] = new ParamHolder<Object>();
 				
-				actualParamsPlain[paramIdx] = new ParamHolder<Object>();
 			} else if (paramDir == ParameterDirection.INOUT) {
 				if(obj instanceof TSParamHolder){
 					TSParamHolder<Object> mv =  (TSParamHolder<Object>)obj;

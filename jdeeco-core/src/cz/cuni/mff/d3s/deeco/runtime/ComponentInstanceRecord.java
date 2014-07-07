@@ -9,6 +9,8 @@ import java.util.Set;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition;
+import cz.cuni.mff.d3s.deeco.task.StateSpaceModelTask;
 import cz.cuni.mff.d3s.deeco.task.Task;
 
 /**
@@ -33,6 +35,10 @@ class ComponentInstanceRecord {
 	 * @see ComponentInstanceRecord#getEnsembleTasks()
 	 */
 	Map<EnsembleController, Task> ensembleTasks = new HashMap<>();	
+	
+	
+	
+	Map<StateSpaceModelDefinition , Task> stateSpaceModelTasks = new HashMap<>();
 
 		
 	public ComponentInstanceRecord(ComponentInstance componentInstance) {
@@ -60,6 +66,11 @@ class ComponentInstanceRecord {
 	public Map<EnsembleController, Task> getEnsembleTasks() {
 		return ensembleTasks;
 	}
+	
+	
+	public Map<StateSpaceModelDefinition , Task> getStateSpaceModelTasks() {
+		return stateSpaceModelTasks;
+	}	
 
 
 	/**
@@ -69,7 +80,8 @@ class ComponentInstanceRecord {
 	public Collection<Task> getAllTasks() {
 		Set<Task> all = new HashSet<>();
 		all.addAll(processTasks.values());
-		all.addAll(ensembleTasks.values());		
+		all.addAll(ensembleTasks.values());	
+		all.addAll(stateSpaceModelTasks.values());	
 		return all;
 	}
 	

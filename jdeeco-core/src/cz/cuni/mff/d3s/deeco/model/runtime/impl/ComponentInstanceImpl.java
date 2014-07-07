@@ -8,12 +8,12 @@ import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcessEntry;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcessExit;
+
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ModeController;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModel;
+
+import cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 
 import java.util.Collection;
@@ -51,8 +51,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getInternalData <em>Internal Data</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getModeControllers <em>Mode Controllers</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getStateSpaceModels <em>State Space Models</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getEntry <em>Entry</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getExit <em>Exit</em>}</li>
  * </ul>
  * </p>
  *
@@ -167,27 +165,7 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<StateSpaceModel> stateSpaceModels;
-
-	/**
-	 * The cached value of the '{@link #getEntry() <em>Entry</em>}' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getEntry()
-	 * @generated
-	 * @ordered
-	 */
-	protected ComponentProcessEntry entry;
-
-	/**
-	 * The cached value of the '{@link #getExit() <em>Exit</em>}' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getExit()
-	 * @generated
-	 * @ordered
-	 */
-	protected ComponentProcessExit exit;
+	protected EList<StateSpaceModelDefinition> stateSpaceModels;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -324,97 +302,11 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<StateSpaceModel> getStateSpaceModels() {
+	public EList<StateSpaceModelDefinition> getStateSpaceModels() {
 		if (stateSpaceModels == null) {
-			stateSpaceModels = new EObjectContainmentEList<StateSpaceModel>(StateSpaceModel.class, this, RuntimeMetadataPackage.COMPONENT_INSTANCE__STATE_SPACE_MODELS);
+			stateSpaceModels = new EObjectContainmentWithInverseEList<StateSpaceModelDefinition>(StateSpaceModelDefinition.class, this, RuntimeMetadataPackage.COMPONENT_INSTANCE__STATE_SPACE_MODELS, RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__COMPONENT_INSTANCE);
 		}
 		return stateSpaceModels;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public ComponentProcessEntry getEntry() {
-		return entry;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public NotificationChain basicSetEntry(ComponentProcessEntry newEntry, NotificationChain msgs) {
-		ComponentProcessEntry oldEntry = entry;
-		entry = newEntry;
-		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT_INSTANCE__ENTRY, oldEntry, newEntry);
-			if (msgs == null) msgs = notification; else msgs.add(notification);
-		}
-		return msgs;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setEntry(ComponentProcessEntry newEntry) {
-		if (newEntry != entry) {
-			NotificationChain msgs = null;
-			if (entry != null)
-				msgs = ((InternalEObject)entry).eInverseRemove(this, RuntimeMetadataPackage.COMPONENT_PROCESS_ENTRY__COMPONENT_INSTANCE, ComponentProcessEntry.class, msgs);
-			if (newEntry != null)
-				msgs = ((InternalEObject)newEntry).eInverseAdd(this, RuntimeMetadataPackage.COMPONENT_PROCESS_ENTRY__COMPONENT_INSTANCE, ComponentProcessEntry.class, msgs);
-			msgs = basicSetEntry(newEntry, msgs);
-			if (msgs != null) msgs.dispatch();
-		}
-		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT_INSTANCE__ENTRY, newEntry, newEntry));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public ComponentProcessExit getExit() {
-		return exit;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public NotificationChain basicSetExit(ComponentProcessExit newExit, NotificationChain msgs) {
-		ComponentProcessExit oldExit = exit;
-		exit = newExit;
-		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT_INSTANCE__EXIT, oldExit, newExit);
-			if (msgs == null) msgs = notification; else msgs.add(notification);
-		}
-		return msgs;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setExit(ComponentProcessExit newExit) {
-		if (newExit != exit) {
-			NotificationChain msgs = null;
-			if (exit != null)
-				msgs = ((InternalEObject)exit).eInverseRemove(this, RuntimeMetadataPackage.COMPONENT_PROCESS_EXIT__COMPONENT_INSTANCE, ComponentProcessExit.class, msgs);
-			if (newExit != null)
-				msgs = ((InternalEObject)newExit).eInverseAdd(this, RuntimeMetadataPackage.COMPONENT_PROCESS_EXIT__COMPONENT_INSTANCE, ComponentProcessExit.class, msgs);
-			msgs = basicSetExit(newExit, msgs);
-			if (msgs != null) msgs.dispatch();
-		}
-		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT_INSTANCE__EXIT, newExit, newExit));
 	}
 
 	/**
@@ -432,14 +324,8 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 				return ((InternalEList<InternalEObject>)(InternalEList<?>)getEnsembleControllers()).basicAdd(otherEnd, msgs);
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__MODE_CONTROLLERS:
 				return ((InternalEList<InternalEObject>)(InternalEList<?>)getModeControllers()).basicAdd(otherEnd, msgs);
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ENTRY:
-				if (entry != null)
-					msgs = ((InternalEObject)entry).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - RuntimeMetadataPackage.COMPONENT_INSTANCE__ENTRY, null, msgs);
-				return basicSetEntry((ComponentProcessEntry)otherEnd, msgs);
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__EXIT:
-				if (exit != null)
-					msgs = ((InternalEObject)exit).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - RuntimeMetadataPackage.COMPONENT_INSTANCE__EXIT, null, msgs);
-				return basicSetExit((ComponentProcessExit)otherEnd, msgs);
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__STATE_SPACE_MODELS:
+				return ((InternalEList<InternalEObject>)(InternalEList<?>)getStateSpaceModels()).basicAdd(otherEnd, msgs);
 		}
 		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}
@@ -462,10 +348,6 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 				return ((InternalEList<?>)getModeControllers()).basicRemove(otherEnd, msgs);
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__STATE_SPACE_MODELS:
 				return ((InternalEList<?>)getStateSpaceModels()).basicRemove(otherEnd, msgs);
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ENTRY:
-				return basicSetEntry(null, msgs);
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__EXIT:
-				return basicSetExit(null, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -495,10 +377,6 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 				return getModeControllers();
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__STATE_SPACE_MODELS:
 				return getStateSpaceModels();
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ENTRY:
-				return getEntry();
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__EXIT:
-				return getExit();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -538,13 +416,7 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 				return;
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__STATE_SPACE_MODELS:
 				getStateSpaceModels().clear();
-				getStateSpaceModels().addAll((Collection<? extends StateSpaceModel>)newValue);
-				return;
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ENTRY:
-				setEntry((ComponentProcessEntry)newValue);
-				return;
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__EXIT:
-				setExit((ComponentProcessExit)newValue);
+				getStateSpaceModels().addAll((Collection<? extends StateSpaceModelDefinition>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -582,12 +454,6 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__STATE_SPACE_MODELS:
 				getStateSpaceModels().clear();
 				return;
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ENTRY:
-				setEntry((ComponentProcessEntry)null);
-				return;
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__EXIT:
-				setExit((ComponentProcessExit)null);
-				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -616,10 +482,6 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 				return modeControllers != null && !modeControllers.isEmpty();
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__STATE_SPACE_MODELS:
 				return stateSpaceModels != null && !stateSpaceModels.isEmpty();
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ENTRY:
-				return entry != null;
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__EXIT:
-				return exit != null;
 		}
 		return super.eIsSet(featureID);
 	}

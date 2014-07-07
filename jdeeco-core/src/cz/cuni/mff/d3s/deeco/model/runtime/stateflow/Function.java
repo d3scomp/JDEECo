@@ -6,6 +6,6 @@ public class Function {
 	
 	public int returnedIndex = 0;
 	public ArrayList<String> params = new ArrayList<String>();
-	public Model referenceModel = null;
+	public ModelInterface referenceModel = null;
 	
 }
