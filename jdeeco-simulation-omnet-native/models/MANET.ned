@@ -24,7 +24,6 @@ import org.mixim.base.connectionManager.ConnectionManager;
 import org.mixim.base.modules.BaseWorldUtility;
 import inet.nodes.inet.Router;
 import inet.networklayer.autorouting.ipv4.IPv4NetworkConfigurator;
-import ned.DatarateChannel;
 
 network MANET
 {
@@ -33,22 +32,12 @@ network MANET
         double playgroundSizeY @unit(m) = default(1000m); // y size of the area the nodes are in (in meters)
         double playgroundSizeZ @unit(m) = default(1000m); // z size of the area the nodes are in (in meters)
         
-        bool visualize = default(true);
-        double playgroundLatitude = default(0.0); // geographic position of the playground's north-west corner
-        double playgroundLongitude = default(0.0); // geographic position of the playground's north-west corner
-        
         int numNodes;
         int numRouters = default(0);
         
         bool ethernet = default(false);
         
         @display("bgb=469,300,white;bgp=10,50");
-    types:
-        channel C extends DatarateChannel
-        {
-            delay = 1us;
-            datarate = 512Mbps;
-        }
     submodules:
         
         world: BaseWorldUtility {
@@ -81,21 +70,15 @@ network MANET
         configurator: IPv4NetworkConfigurator {
             @display("p=140,50");
         }
-        
-        //Visualization
-        visualizationController: VisualizationController if visualize {
-            @display("p=90,250");
-        }
-        kmlHttpServer: KmlHttpServer if visualize {
-            @display("p=320,250;t=Run the simulation in Fast mode\\, then\npoint your browser to localhost:4242\nor open the provided KML file");
-        }
     connections allowunconnected:
         //Connect routers
-        for i=0..numRouters-1 {
-        	router[i].ethg++ <--> C <--> switch.ethg++ if !ethernet;
-        }
         
+        for i=0..numRouters-1 {
+        	router[i].ethg++ <--> {  datarate = 100Mbps; delay = 0.1us; } <--> switch.ethg++ if !ethernet;
+        }
+        // 4G:  6Mbps down, 1.5Mbps up, 150ms latency 
+        // simulate 4G
         for i=0..numNodes-1 {
-            node[i].ethg <--> C <--> switch.ethg++ if ethernet;
+            node[i].ethg <--> {  datarate = 10Mbps; delay = 100000us; } <--> switch.ethg++ if ethernet;
         }
 }

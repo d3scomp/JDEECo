@@ -64,7 +64,7 @@ module Node
         string nic802154Type = default("");
         string nic80211Type = default("");
         
-        string mobilityType = default(numRadios > 0 ? "StationaryMobility" : "");
+        string mobilityType = default(numRadios > 0 ? "CustomMobility" : "");
         
     gates:
      	input radio80211In @directIn;

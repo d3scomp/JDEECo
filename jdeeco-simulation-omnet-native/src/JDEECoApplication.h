@@ -21,26 +21,17 @@
 #include "JDEECoModule.h"
 #include "IMobility.h"
 
-#include "KmlHttpServer.h"
-#include "KmlUtil.h"
-#include "VisualizationController.h"
 #include "UDPSocket.h"
 
 /**
  * TODO - Generated class
  */
 class JDEECoApplication: public cSimpleModule,
-        public JDEECoModule,
-        public IMobileApplication,
-        public IKmlFragmentProvider {
+        public JDEECoModule {
     const char * id;
-    double playgroundLat, playgroundLon;  // NW corner of playground, in degrees
-    double playgroundHeight, playgroundWidth;
     std::string color;
     std::string modelURL;
     double modelScale;
-    bool showTxRange;
-    double txRange;
 
     int lowerLayerIn;
     int lowerLayerOut;
@@ -66,6 +57,7 @@ public:
     JDEECoApplication() {}
     virtual const char *getModuleId();
     virtual void sendPacket(JDEECoPacket *packet, const char *recipient);
+    virtual void registerCallbackAt(double absoluteTime, cMessage *msg);
 
     //Position
     virtual bool isPositionInfoAvailable();
@@ -74,10 +66,6 @@ public:
     virtual double getPositionZ();
 
     virtual void setPosition(double valX, double valY, double valZ);
-
-    virtual double getTxRange();
-
-    virtual std::string getKmlFragment();
 };
 
 #endif

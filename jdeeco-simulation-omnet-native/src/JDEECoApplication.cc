@@ -26,33 +26,6 @@ Define_Module(JDEECoApplication);
 void JDEECoApplication::initialize(int stage) {
     if (stage == 1) {
         id = par("id").stringValue();
-
-        if (simulation.getSystemModule()->par("visualize").boolValue()) {
-            color = par("color").stringValue();
-            modelURL = par("modelURL").str();
-            modelScale = par("modelScale").doubleValue();
-            showTxRange = par("showTxRange").boolValue();
-            txRange = par("txRange").doubleValue();
-
-            playgroundLat = simulation.getSystemModule()->par("playgroundLatitude");
-            playgroundLon = simulation.getSystemModule()->par("playgroundLongitude");
-            playgroundHeight = simulation.getSystemModule()->par("playgroundSizeY");
-            playgroundWidth = simulation.getSystemModule()->par("playgroundSizeX");
-
-            if (color.empty()) {
-                // pick a color with a random hue
-                char buf[16];
-                double red, green, blue;
-                KmlUtil::hsbToRgb(dblrand(), 1.0, 1.0, red, green, blue);
-                sprintf(buf, "%2.2x%2.2x%2.2x", int(blue * 255), int(green * 255),
-                int(red * 255));
-                color = buf;
-            }
-
-            KmlHttpServer::getInstance()->addKmlFragmentProvider(this);
-            VisualizationController::getInstance()->addMobileNode(this);
-        }
-
         lowerLayerIn = findGate("lowerLayerIn");
         lowerLayerOut = findGate("lowerLayerOut");
 
@@ -83,6 +56,10 @@ void JDEECoApplication::handleMessage(cMessage *msg) {
     }
     onHandleMessage(msg, rssi);
     delete (msg);
+}
+
+void JDEECoApplication::registerCallbackAt(double absoluteTime, cMessage *msg) {
+    scheduleAt(absoluteTime, msg);
 }
 
 void JDEECoApplication::sendPacket(JDEECoPacket *packet,
@@ -144,47 +121,8 @@ void JDEECoApplication::setPosition(double valX, double valY, double valZ) {
     }
 }
 
-double JDEECoApplication::getTxRange() {
-    return 249.0;
-}
-
 IMobility *JDEECoApplication::getMobilityModule() {
     IMobility *mobility = check_and_cast<IMobility *>(
             getParentModule()->getSubmodule("mobility"));
     return mobility;
-}
-
-std::string JDEECoApplication::getKmlFragment() {
-    double longitude = x2lon(getPositionX());
-    double latitude = y2lat(getPositionY());
-    char buf[16];
-    sprintf(buf, "%d", getIndex());
-    std::string fragment;
-    fragment += KmlUtil::folderHeader((std::string("folder_") + buf).c_str(),
-            getFullName());
-
-    fragment += KmlUtil::placemark((std::string("placemark_") + buf).c_str(),
-            longitude, latitude, 2 * modelScale, getModuleId(), NULL);
-    if (showTxRange)
-        fragment += KmlUtil::disk((std::string("disk_") + buf).c_str(),
-                longitude, latitude, txRange, "transmission range", NULL,
-                (std::string("40") + color).c_str());
-    if (!modelURL.empty()) {
-        fragment += KmlUtil::model((std::string("model_") + buf).c_str(),
-                longitude, latitude, 360, modelScale, modelURL.c_str(),
-                "3D model", NULL);
-    }
-
-    fragment += "</Folder>\n";
-    return fragment;
-}
-
-// utility function: converts playground-relative y coordinate (meters) to latitude
-double JDEECoApplication::y2lat(double y) {
-    return KmlUtil::y2lat(playgroundLat, y);
-}
-
-// utility function: converts playground-relative x coordinate (meters) to longitude
-double JDEECoApplication::x2lon(double x) {
-    return KmlUtil::x2lon(playgroundLat, playgroundLon, x);
 }

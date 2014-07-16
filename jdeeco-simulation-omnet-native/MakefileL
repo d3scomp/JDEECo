@@ -1,16 +1,10 @@
-JDK_HOME ?= /c/Progra~2/Java/jdk8
-OMNETPP_ROOT ?= /d/omnetpp-4.3.1
+#JAVA_HOME ?= /usr/lib/jvm/java-7-openjdk-amd64
+
 INET_DIR ?= ${OMNETPP_ROOT}/../inet
-MIXIM_DIR ?= ${OMNETPP_ROOT}/../mixim
+MIXIM_DIR ?= ${OMNETPP_ROOT}/../mixim-2.3
 
-OMNETPP_SRC_DIR ?= ${OMNETPP_ROOT}/src
-OMNETPP_INCL_DIR ?= ${OMNETPP_INCL_DIR}/include
-
-
-CONFIGFILE = ${OMNETPP_ROOT}/Makefile.inc
+CONFIGFILE = $(shell opp_configfilepath)
 include $(CONFIGFILE)
-
-LDFLAGS += -Wl,--allow-multiple-definition,--kill-at
 
 all: checkmakefiles
 	cd src && $(MAKE)
@@ -25,9 +19,8 @@ cleanall: checkmakefiles
 
 # Create makefiles that allows building mixim without a separate INET installation.
 makefiles:
-	cd src && ${OMNETPP_ROOT}/bin/opp_makemake -f --deep --make-so -o jdeeco-omnetpp -O out \
-	-I${JDK_HOME}/include \
-	-I${JDK_HOME}/include/win32 \
+	cd src && opp_makemake -f --deep --make-so -o jdeeco-omnetpp -O out \
+	-I${JAVA_HOME}/include \
 	-I${OMNETPP_SRC_DIR}/common -I${OMNETPP_INCL_DIR}/platdep -I${OMNETPP_SRC_DIR}/envir \
 	-I${MIXIM_DIR}/src \
 	-I${MIXIM_DIR}/src/base \
@@ -79,11 +72,11 @@ makefiles:
 	-I${INET_DIR}/src/mobility/contract \
 	-L${MIXIM_DIR}/out/$(CONFIGNAME)/src \
 	-L${INET_DIR}/out/$(CONFIGNAME)/src \
-	-loppcommond -lmixim -linet -DMIXIM_INET=1 -DINET_IMPORT -KMIXIM_PROJ=${MIXIM_DIR} -KINET_PROJ=${INET_DIR} -KV=1
+	-lmixim -linet -DMIXIM_INET=1 -DINET_IMPORT -KMIXIM_PROJ=${MIXIM_DIR} -KINET_PROJ=${INET_DIR} -KV=1
 
 
-checkmakefiles:
-	@if [ ! -f src/Makefile ]; then \
+checkmakefiles: makefiles
+#	@if [ ! -f src/Makefile ]; then \
 	echo; \
 	echo '=========================================================='; \
 	echo 'src/Makefile does not exist. Please use "make makefiles"'; \

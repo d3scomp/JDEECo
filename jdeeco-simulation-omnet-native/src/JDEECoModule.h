@@ -8,14 +8,13 @@
 #ifndef JDEECOMODULE_H_
 #define JDEECOMODULE_H_
 
-#include "config.h"
 #include "csimplemodule.h"
 #include "JDEECoPacket_m.h"
 
 #define JDEECO_TIMER_MESSAGE "@jDEECoTimerMessage@"
 #define JDEECO_DATA_MESSAGE "@jDEECoPacketMessage@"
 
-class DLLEXPORT_OR_IMPORT JDEECoModule {
+class JDEECoModule {
 
 	double currentCallAtTime;
 	void *currentCallAtMessage;
@@ -31,7 +30,7 @@ public:
 	//Needs to be implemented by the module
 	virtual void sendPacket(JDEECoPacket *packet, const char *recipient) {};
 	//Needs to be implemented by the module
-	virtual void scheduleAt(double absoluteTime, cMessage *msg) {};
+	virtual void registerCallbackAt(double absoluteTime, cMessage *msg) {};
 	//Needs to be implemented by the module
 	virtual bool isPositionInfoAvailable() {return false;};
 	//Needs to be implemented by the module

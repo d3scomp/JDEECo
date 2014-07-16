@@ -59,20 +59,20 @@ std::vector<JDEECoModule *> jDEECoModules;
 static JDEECoRuntime* findRuntime(const char *id) {
 	JDEECoRuntime *result = NULL;
 
-    std::cout << "findRuntime: " << id << " Begin" << std::endl;
+    //std::cout << "findRuntime: " << id << " Begin" << std::endl;
 
-    std::cout << "findRuntime: jDEECoRuntimes=" << &jDEECoRuntimes << std::endl;
+    //std::cout << "findRuntime: jDEECoRuntimes=" << &jDEECoRuntimes << std::endl;
 
 	for (std::vector<JDEECoRuntime *>::iterator it = jDEECoRuntimes.begin();
 			it != jDEECoRuntimes.end(); ++it) {
-	    std::cout << "findRuntime: runtime with id " << (*it)->id << std::endl;
+	    //std::cout << "findRuntime: runtime with id " << (*it)->id << std::endl;
 		if (opp_strcmp((*it)->id, id) == 0) {
 			result = *it;
 			break;
 		}
 	}
 
-    std::cout << "findRuntime: End" << std::endl;
+    //std::cout << "findRuntime: End" << std::endl;
 	return result;
 }
 
@@ -448,37 +448,37 @@ JNIEXPORT void JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulati
 	}
 }
 
-DLLEXPORT_OR_IMPORT void JDEECoModule::callAt(double absoluteTime) {
-	//std::cout << "jDEECoCallAt: " << this->jDEECoGetModuleId() << " Begin" << std::endl;
+void JDEECoModule::callAt(double absoluteTime) {
+	//std::cout << "jDEECoCallAt: " << this->getModuleId() << " Begin" << std::endl;
 	if (currentCallAtTime != absoluteTime && simTime().dbl() < absoluteTime) {
 		currentCallAtTime = absoluteTime;
 		cMessage *msg = new cMessage(JDEECO_TIMER_MESSAGE);
 		currentCallAtMessage = msg;
-		scheduleAt(absoluteTime, msg);
-		//std::cout << "jDEECoCallAt: " << this->jDEECoGetModuleId() << " Callback added: " << this->jDEECoGetModuleId() << " for " << absoluteTime << std::endl;
+		registerCallbackAt(absoluteTime, msg);
+		//std::cout << "jDEECoCallAt: " << this->getModuleId() << " Callback added: " << this->getModuleId() << " for " << absoluteTime << std::endl;
 	}
 	//std::cout << "jDEECoCallAt: " << this->jDEECoGetModuleId() << " End" << std::endl;
 }
 
-DLLEXPORT_OR_IMPORT void JDEECoModule::onHandleMessage(cMessage *msg, double rssi) {
+void JDEECoModule::onHandleMessage(cMessage *msg, double rssi) {
 	//std::cout << "jDEECoOnHandleMessage: " << this->jDEECoGetModuleId() << " Begin" << std::endl;
+	//std::cout << "jDEECoOnHandleMessage" << std::endl;
 	JDEECoRuntime* runtime = findRuntime(getModuleId());
-
 	if (runtime != NULL) {
 		JNIEnv *env;
-		//std::cout << "jDEECoOnHandleMessage: " << this->jDEECoGetModuleId() << " Before getting the environment" << std::endl;
+		//std::cout << "jDEECoOnHandleMessage: " << this->getModuleId() << " Before getting the environment" << std::endl;
 		runtime->jvm->AttachCurrentThread((void **) &env, NULL);
-		//std::cout << "jDEECoOnHandleMessage: " << this->jDEECoGetModuleId() << " Before getting jobject class" << std::endl;
+		//std::cout << "jDEECoOnHandleMessage: " << this->getModuleId() << " Before getting jobject class" << std::endl;
 		jclass cls = env->GetObjectClass(runtime->host);
 		jmethodID mid;
 		if (opp_strcmp(msg->getName(), JDEECO_TIMER_MESSAGE) == 0) {
 			// compare in nanos
 			if (((long) round(simTime().dbl() * 1000000)) == ((long) round(currentCallAtTime * 1000000))) {
-				//std::cout << "jDEECoOnHandleMessage: " << this->jDEECoGetModuleId() << " Before getting the \"at\" method reference" << std::endl;
+				//std::cout << "jDEECoOnHandleMessage: " << this->getModuleId() << " Before getting the \"at\" method reference" << std::endl;
 				mid = env->GetMethodID(cls, "at", "(D)V");
 				if (mid == 0)
 					return;
-				//std::cout << "jDEECoOnHandleMessage: " << this->jDEECoGetModuleId() << " Before calling the \"at\" method" << std::endl;
+				//std::cout << "jDEECoOnHandleMessage: " << this->getModuleId() << " Before calling the \"at\" method" << std::endl;
 				env->CallVoidMethod(runtime->host, mid, currentCallAtTime);
 			} else {
 				//Ignore the message as it is not valid any longer.
@@ -500,11 +500,11 @@ DLLEXPORT_OR_IMPORT void JDEECoModule::onHandleMessage(cMessage *msg, double rss
 			}
 			env->SetByteArrayRegion(jArray, 0, jPacket->getDataArraySize(),
 					buffer);
-			//std::cout << "jDEECoOnHandleMessage: " << this->jDEECoGetModuleId() << " Before calling the \"packetRecived\" method" << std::endl;
+			//std::cout << "jDEECoOnHandleMessage: " << this->getModuleId() << " Before calling the \"packetRecived\" method" << std::endl;
 			env->CallVoidMethod(runtime->host, mid, jArray, rssi);
-			//std::cout << "jDEECoOnHandleMessage: " << this->jDEECoGetModuleId() << " After calling the \"packetRecived\" method" << std::endl;
+			//std::cout << "jDEECoOnHandleMessage: " << this->getModuleId() << " After calling the \"packetRecived\" method" << std::endl;
 			env->DeleteLocalRef(jArray);
-			//std::cout << "jDEECoOnHandleMessage: " << this->jDEECoGetModuleId() << " After deleting the array reference" << std::endl;
+			//std::cout << "jDEECoOnHandleMessage: " << this->getModuleId() << " After deleting the array reference" << std::endl;
 			delete [] buffer;
 		}
 		env->DeleteLocalRef(cls);
@@ -512,7 +512,7 @@ DLLEXPORT_OR_IMPORT void JDEECoModule::onHandleMessage(cMessage *msg, double rss
 	//std::cout << "jDEECoOnHandleMessage: " << this->jDEECoGetModuleId() << " End" << std::endl;
 }
 
-DLLEXPORT_OR_IMPORT void JDEECoModule::initialize() {
+void JDEECoModule::initialize() {
 	std::cout << "initialize: " << this->getModuleId() << " Begin" << std::endl;
 	std::cout << "initialize: " << this->getModuleId() << " Initializing jDEECo module: " << this->getModuleId() << std::endl;
 	if (!initialized) {
@@ -520,8 +520,10 @@ DLLEXPORT_OR_IMPORT void JDEECoModule::initialize() {
 
 		assert(runtime != NULL);
 
-		if (runtime->firstCallAt >= 0)
+		if (runtime->firstCallAt >= 0) {
+			std::cout << "adding the first callback: " << this->getModuleId() << std::endl;
 			callAt(runtime->firstCallAt);
+		}
 
 		jDEECoModules.push_back(this);
 	}

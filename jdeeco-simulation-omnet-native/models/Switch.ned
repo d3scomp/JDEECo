@@ -60,15 +60,16 @@ module Switch
         relayUnit: MACRelayUnitNP {
             parameters:
                 @display("p=270,50");
-                addressTableSize = 10000;
+                addressTableSize = 1000;
                 numCPUs = sizeof(ethg);
+                bufferSize = 2MiB;
         }
         eth[sizeof(ethg)]: CustomEthernetInterface {
             parameters:
                 csmacdSupport = false;
                 encapType = "EtherEncapDummy";
                 mac.promiscuous = true;
-                mac.txQueueLimit = default(1000000);
+                mac.txQueueLimit = default(10000000);
                 @display("p=170,150,row;q=txQueue");
         }
     connections:
