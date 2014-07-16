@@ -1,0 +1,37 @@
+<project name="JDEECo-Core" default="jpf-convoy" basedir=".">
+	<description>JDEECo build file</description>
+
+	<property name="dist" location="target" />
+	<property name="lib" location="${dist}/lib" />
+	<property name="src" location="src" />
+	<property name="core-src" location="../jdeeco-core/src" />
+	<property name="jpf" location="${dist}/jpf-core" />
+
+    <path id="jpf.path.unix">
+        <pathelement location="${dist}/classes"/>
+        <pathelement location="${dist}/test-classes"/>
+        <pathelement location="${dist}/cloning.jar"/>
+        <pathelement location="${dist}/cz.cuni.mff.d3s.jdeeco.core.jar" />
+        <pathelement location="${dist}/hamcrest-core.jar" />
+        <pathelement location="${dist}/junit.jar" />
+        <pathelement location="${dist}/objenesis.jar" />
+        <pathelement location="${dist}/org.eclipse.emf.common.jar" />
+        <pathelement location="${dist}/org.eclipse.emf.ecore.jar" />
+        <pathelement location="${dist}/org.eclipse.emf.ecore.xmi.jar" />
+    </path>
+
+	<!-- run convoy demo under jpf -->
+	<target name="jpf-convoy">	
+		<java fork="true" jar="${jpf}/build/RunJPF.jar" dir="${dist}">
+            <jvmarg value="-Djdeeco-dist=${dist}" />
+            <jvmarg value="-Djdeeco-src=${core-src}" />
+            <jvmarg value="-Djdeeco-src-demo=${src}" />
+			<jvmarg value="-Dorg.eclipse.emf.common.util.ReferenceClearingQueue=false"/>
+			<arg value="+classpath=${dist}/classes,${dist}/test-classes,${dist}/objenesis.jar,${dist}/cloning.jar,${dist}/cz.cuni.mff.d3s.jdeeco.core.jar,${dist}/org.eclipse.emf.common.jar,${dist}/org.eclipse.emf.ecore.jar" />
+			<arg value="+jpf-core.native_classpath+=;${dist}/classes;${dist}/test-classes;${dist}/cz.cuni.mff.d3s.jdeeco.core.jar" />
+			<!-- <arg value="+listener=gov.nasa.jpf.listener.ExecTracker" /> -->
+			<arg value="${dist}/../jpfProperties/TestJPFConvoy.jpf" />			
+			<jvmarg value="-Xmx1g" />
+		</java>
+	</target>
+</project>

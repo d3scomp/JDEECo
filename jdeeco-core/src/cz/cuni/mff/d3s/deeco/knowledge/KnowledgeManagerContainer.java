@@ -102,6 +102,13 @@ public class KnowledgeManagerContainer  {
 		return locals.containsKey(id);
 	}
 
+    /**
+     * Returns an existing KnowledgeManager for the given component id.
+     */
+    public KnowledgeManager getLocal(String id) {
+        return locals.get(id);
+    }
+
 	/**
 	 * Adds the local listener to the container
 	 * 
@@ -151,6 +158,13 @@ public class KnowledgeManagerContainer  {
 	public boolean hasReplica(String id) {
 		return replicas.containsKey(id);
 	}
+
+    /**
+     * Returns an existing replica for the given component id.
+     */
+    public KnowledgeManager getReplica(String id) {
+        return replicas.get(id);
+    }
 
 	/**
 	 * Adds the replica listener to the container

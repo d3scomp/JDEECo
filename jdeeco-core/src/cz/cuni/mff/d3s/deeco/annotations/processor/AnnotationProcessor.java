@@ -16,12 +16,11 @@ import cz.cuni.mff.d3s.deeco.annotations.*;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.*;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
-import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManager;
+import cz.cuni.mff.d3s.deeco.knowledge.BaseKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.*;
-import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
 import cz.cuni.mff.d3s.deeco.network.GenericCommunicationBoundaryPredicate;
@@ -233,7 +232,7 @@ public class AnnotationProcessor {
 			if (id == null) {
 				id = clazz.getSimpleName() + UUID.randomUUID().toString();
 			}
-	        KnowledgeManager km = new CloningKnowledgeManager(id);		
+	        KnowledgeManager km = new BaseKnowledgeManager(id);		
 			km.update(initialK);
 	        componentInstance.setKnowledgeManager(km); 
 	        
@@ -513,6 +512,19 @@ public class AnnotationProcessor {
 			throw new AnnotationProcessorException(msg, e);
 		}
 		return parameter;
+	}
+	
+	/**
+	 * Public creator of a {@link KnowledgePath} from a simple String of type
+	 * 'parent.child.grandchild'. Does not support ensemble-related syntax
+	 * (e.g., coordinator/member keywords) or prefixes including component id.
+	 * 
+	 * @param path
+	 *            string to be parsed into knowledge path
+	 */
+	public KnowledgePath createSimplePath(String path) throws ParseException,
+			AnnotationProcessorException {
+		return createKnowledgePath(path, true);
 	}
 	
 	/**

@@ -23,7 +23,7 @@ public interface ReadOnlyKnowledgeManager {
 	 * @param knowledgeReferenceList
 	 * @return {@link ValueSet} object containing values for the specified
 	 *         knowledge paths
-	 * @throws KnowledgeNotExistentException
+	 * @throws KnowledgeNotFoundException
 	 *             when there is no value for at least one knowledge path
 	 */
 	public ValueSet get(Collection<KnowledgePath> knowledgeReferenceList)

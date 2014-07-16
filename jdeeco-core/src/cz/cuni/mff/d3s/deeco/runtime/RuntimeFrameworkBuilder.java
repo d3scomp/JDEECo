@@ -54,7 +54,7 @@ public class RuntimeFrameworkBuilder {
 	/**
 	 * The knowledge manager container corresponding to the {@link #configuration}.
 	 */
-	KnowledgeManagerContainer kmContainer;	
+	protected KnowledgeManagerContainer kmContainer;	
 	
 	/**
 	 * The configuration for which a new runtime framework has to be created and set up.

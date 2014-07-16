@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
@@ -18,6 +19,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
+import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 
 
@@ -86,7 +88,7 @@ public class KnowledgePathHelper {
 	 */
 	public static KnowledgePathAndRoot getAbsoluteStrippedPath(KnowledgePath path, ReadOnlyKnowledgeManager coordKnowledgeManager, ReadOnlyKnowledgeManager memberKnowledgeManager)
 			throws KnowledgeNotFoundException {
-		RuntimeMetadataFactory factory = RuntimeMetadataFactory.eINSTANCE;
+		RuntimeMetadataFactory factory = RuntimeMetadataFactoryExt.eINSTANCE;
 		for (int i=0; i<path.getNodes().size();i++) {
 			PathNode pn = path.getNodes().get(i);
 			if (pn instanceof PathNodeMapKey) {
@@ -122,7 +124,7 @@ public class KnowledgePathHelper {
 	 */
 	protected static KnowledgePath getAbsolutePath(KnowledgePath path, ReadOnlyKnowledgeManager knowledgeManager) 
 			throws KnowledgeNotFoundException {
-		RuntimeMetadataFactory factory = RuntimeMetadataFactory.eINSTANCE;
+		RuntimeMetadataFactory factory = RuntimeMetadataFactoryExt.eINSTANCE;
 		for (int i=0; i<path.getNodes().size();i++) {
 			PathNode pn = path.getNodes().get(i);
 			if (pn instanceof PathNodeMapKey) {
@@ -195,5 +197,5 @@ public class KnowledgePathHelper {
 		
 		return result; 
 	}
-	
+
 }

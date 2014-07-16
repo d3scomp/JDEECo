@@ -38,7 +38,11 @@ public class CloningKnowledgeManager extends BaseKnowledgeManager {
 		// only values need to be cloned (cloning KnowledgePaths in a full model
 		// causes a loopback in the cloner)
 		for (KnowledgePath p: values.getKnowledgePaths()) {
-			copy.setValue(p, cloner.deepClone(values.getValue(p)));
+            if (values.getValue(p) != null) {
+                copy.setValue(p, cloner.deepClone(values.getValue(p)));
+            } else {
+                copy.setValue(p, null);
+            }
 		}
 		return copy;
 	}

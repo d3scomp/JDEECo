@@ -1,0 +1,21 @@
+target=cz.cuni.mff.d3s.deeco.jpf.convoy.TestJPFConvoy
+
+report.console.property_violation=error,trace
+
+# not to schedule in atomic blocks
+vm.max_transition_length = MAX
+
+# the only threads are created by jDeeco framework which guarantees that after all the threads are started there is a thread choice
+cg.threads.break_start=false
+
+# TODO update
+vm.por.field_boundaries.never = java.*,javax.*,sun.*,org.eclipse.emf.*,cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.*
+#,cz.cuni.mff.d3s.deeco.knowledge.RepositoryKnowledgeManager.rkmh
+
+vm.scheduler_factory.class=cz.cuni.mff.d3s.deeco.jpf.JDEECoSchedulerFactory
+
+cg.enumerate_random=true
+vm.random_ints=0,1
+
+vm.sysprop.keys=path.separator,line.separator,file.separator,user.name,user.dir,user.timezone,user.country,java.home,java.version,java.class.path,org.eclipse.emf.common.util.ReferenceClearingQueue
+
