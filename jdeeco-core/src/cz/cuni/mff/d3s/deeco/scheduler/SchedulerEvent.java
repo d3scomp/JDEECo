@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.deeco.scheduler;
 
+
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.task.Task;
@@ -38,6 +39,7 @@ public class SchedulerEvent implements Comparable<SchedulerEvent> {
      */
     public final boolean periodic;
     
+
     /**
      * The actual task to be executed.
      */
@@ -55,11 +57,12 @@ public class SchedulerEvent implements Comparable<SchedulerEvent> {
     public SchedulerEvent(Task task, Trigger trigger) {
     	this.executable = task;
     	this.trigger = trigger;    	
-    	if ((trigger != null) && (trigger instanceof TimeTrigger) && (((TimeTrigger) trigger).getPeriod() > 0)) {
+    	if ((trigger != null) && ((trigger instanceof TimeTrigger) && (((TimeTrigger) trigger).getPeriod() > 0))) {
     		periodic = true;
-    	} else {
+    	} else{
     		periodic = false;
     	}
+    	
     }
 
 

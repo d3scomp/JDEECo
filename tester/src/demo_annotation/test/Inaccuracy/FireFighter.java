@@ -33,20 +33,20 @@ public class FireFighter{
 	protected static final double SEC_MILISEC_FACTOR = 1000;
 	
 	
-//	@Process
-//	@PeriodicScheduling(value = 10000)
-//	public static void waitConnection(
-//			@InOut("ffHold") ParamHolder<Boolean> ffHold
-//			){
-//		ffHold.value = false;
-//		try {
-//			Thread.sleep(5000);
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		ffHold.value = true;
-//	}
+	@Process
+	@PeriodicScheduling(value = 10000)
+	public static void waitConnection(
+			@InOut("ffHold") ParamHolder<Boolean> ffHold
+			){
+		ffHold.value = false;
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		ffHold.value = true;
+	}
 
 		
 	@Process
@@ -85,9 +85,9 @@ public class FireFighter{
 		ffSpeed.creationTime = currentTime;
 
 		
-		System.out.println("=================================== FireFighter statue ==========================================");
- 		System.out.println("Speed FireFighter : "+ffSpeed.value+", pos : "+ffPos.value+"... time :"+ffPos.creationTime);
-		System.out.println("==========================================================================================");
+		System.err.println("=================================== FireFighter statue ==========================================");
+ 		System.err.println("Speed FireFighter : "+ffSpeed.value+", pos : "+ffPos.value+"... current time :"+ffPos.creationTime);
+		System.err.println("=================================================================================================");
 		
 	}
 

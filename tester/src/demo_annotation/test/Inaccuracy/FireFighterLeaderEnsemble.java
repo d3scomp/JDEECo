@@ -7,6 +7,7 @@ import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
 import cz.cuni.mff.d3s.deeco.annotations.Membership;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
+import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 
@@ -27,7 +28,9 @@ public class FireFighterLeaderEnsemble {
 			@In("member.lFFSpeed") Double lFFSpeed,
 			@In("member.lFFHold") Boolean lFFHold
  		){
+		if(ffPos < 100)
 			return true;
+		return false;
 	}
 	
 	@KnowledgeExchange
@@ -36,8 +39,8 @@ public class FireFighterLeaderEnsemble {
 			@InOut("coord.ffSpeed") TSParamHolder<Double> ffSpeed,
 			@In("coord.ffHold") Boolean ffHold,
 			
-			@InOut("member.lFFPos") TSParamHolder<Double> lFFPos,
-			@InOut("member.lFFSpeed") TSParamHolder<Double> lFFSpeed,
+			@InOut("member.lFFPos") InaccuracyParamHolder<Double> lFFPos,
+			@InOut("member.lFFSpeed") InaccuracyParamHolder<Double> lFFSpeed,
 			@Out("member.lFFHold") ParamHolder<Boolean> lFFHold
 	) {
 		lFFPos.setWithTS(ffPos.value,ffPos.creationTime);

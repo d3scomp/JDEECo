@@ -7,7 +7,8 @@ import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.*;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
-import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccurateValueDefinition;
+
+import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ModelInterface;
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
 
@@ -495,8 +496,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public InaccurateValueDefinition createInaccurateValueFromString(EDataType eDataType, String initialValue) {
-		return (InaccurateValueDefinition)super.createFromString(eDataType, initialValue);
+	public InaccuracyParamHolder createInaccurateValueFromString(EDataType eDataType, String initialValue) {
+		return (InaccuracyParamHolder)super.createFromString(eDataType, initialValue);
 	}
 
 	/**

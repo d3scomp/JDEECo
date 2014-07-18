@@ -18,6 +18,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
@@ -134,18 +135,27 @@ public class ProcessTask extends Task {
 			Object obj = inKnowledge.getValue(absoluteKnowledgePath);
 			
 			if (paramDir == ParameterDirection.IN) {
+				if(obj instanceof InaccuracyParamHolder)
+					actualParams[paramIdx] = ((InaccuracyParamHolder<Object>)obj).value;
+				else 
 				if(obj instanceof TSParamHolder)
-					actualParams[paramIdx] = ((TSParamHolder<Object>)obj).value;//FIXME	
+					actualParams[paramIdx] = ((TSParamHolder<Object>)obj).value;
 				else 
 					actualParams[paramIdx] = obj;
 				
 			} else if (paramDir == ParameterDirection.OUT) {
+				if(obj instanceof InaccuracyParamHolder)
+					actualParams[paramIdx] =  new InaccuracyParamHolder();	
+				else 
 				if(obj instanceof TSParamHolder)
 					actualParams[paramIdx] = new TSParamHolder<Object>();
 				else
 					actualParams[paramIdx] = new ParamHolder<Object>();
 				
 			} else if (paramDir == ParameterDirection.INOUT) {
+				if(obj instanceof InaccuracyParamHolder)
+					actualParams[paramIdx] = (InaccuracyParamHolder<Object>)obj;
+				else 
 				if(obj instanceof TSParamHolder){
 					TSParamHolder<Object> mv =  (TSParamHolder<Object>)obj;
 					TSParamHolder<Object> pv = new TSParamHolder<Object>();
@@ -182,6 +192,16 @@ public class ProcessTask extends Task {
 				TSParamHolder<Object> tsMeta;
 				
 				if (paramDir == ParameterDirection.OUT || paramDir == ParameterDirection.INOUT) {
+					if( obj instanceof InaccuracyParamHolder){
+						if(obj == null)
+							tsMeta = new InaccuracyParamHolder();
+						else			
+							tsMeta = (InaccuracyParamHolder<Object>)obj;
+						InaccuracyParamHolder<Object> v = ((InaccuracyParamHolder<Object>)actualParams[paramIdx]);
+						tsMeta.value = v.value;
+						tsMeta.creationTime = v.creationTime;
+						changeSet.setValue(absoluteKnowledgePath, tsMeta);
+					}else
 					if( obj instanceof TSParamHolder){
 						if(obj == null)
 							tsMeta = new TSParamHolder<Object>();

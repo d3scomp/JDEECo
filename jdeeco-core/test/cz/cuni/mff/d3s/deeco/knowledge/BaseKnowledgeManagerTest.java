@@ -164,13 +164,15 @@ public class BaseKnowledgeManagerTest {
 		KnowledgePath kp = RuntimeModelHelper.createKnowledgePath("map", "a");
 		List<KnowledgePath> knowledgePaths = new LinkedList<>();
 		knowledgePaths.add(kp);
-
+		System.out.println("size : "+knowledgePaths.size()+" "+tested.get(knowledgePaths).getValue(kp));
 		ChangeSet toDelete = new ChangeSet();
 		toDelete.setDeleted(kp);
+		System.out.println("size : "+knowledgePaths.size()+" "+tested.get(knowledgePaths).getValue(kp));
 		tested.update(toDelete);
-
+		System.out.println("size : "+knowledgePaths.size()+" "+tested.get(knowledgePaths).getValue(kp));
 		// THEN when accessed the removed element value the KnowledgeManager
 		// should throw the KnowledgeNotExistentException
+		//Rima: it seems to me that it does not work with the updated references but with all the set.
 		tested.get(knowledgePaths);
 	}
 

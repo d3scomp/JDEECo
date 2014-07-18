@@ -1,16 +1,19 @@
 package cz.cuni.mff.d3s.deeco.task;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+//
+//import org.apache.commons.math3.analysis.differentiation.DerivativeStructure;
+//import org.apache.commons.math3.exception.DimensionMismatchException;
+//import org.apache.commons.math3.exception.MaxCountExceededException;
+//import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
+//import org.apache.commons.math3.ode.FirstOrderIntegrator;
+//import org.apache.commons.math3.ode.nonstiff.MidpointIntegrator;
 
-import org.apache.commons.math3.analysis.differentiation.DerivativeStructure;
-import org.apache.commons.math3.exception.DimensionMismatchException;
-import org.apache.commons.math3.exception.MaxCountExceededException;
-import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
-import org.apache.commons.math3.ode.FirstOrderIntegrator;
-import org.apache.commons.math3.ode.nonstiff.MidpointIntegrator;
-
+import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.knowledge.TriggerListener;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
@@ -18,10 +21,9 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
-import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccurateValueDefinition;
+import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
-import org.eclipse.emf.common.util.EList;
 
 /**
  * The implementation of {@link Task} that corresponds to a component process. This class is responsible for (a) registering triggers with the
@@ -37,7 +39,7 @@ public class StateSpaceModelTask extends Task {
 	 */
 	StateSpaceModelDefinition stateSpaceModel;
 
-	private static double lastTime;
+	protected static double lastTime;
 	private static final double SEC_NANOSECOND_FACTOR = 1000000000;
 
 	
@@ -65,6 +67,7 @@ public class StateSpaceModelTask extends Task {
 	public StateSpaceModelTask(StateSpaceModelDefinition stateSpaceModel, Scheduler scheduler) {
 		super(scheduler);
 		this.stateSpaceModel = stateSpaceModel;
+		init(stateSpaceModel.getComponentInstance().getKnowledgeManager(), -1.0);
 	}
 
 	/**
@@ -86,36 +89,153 @@ public class StateSpaceModelTask extends Task {
 	 */
 	@Override
 	public void invoke(Trigger trigger) throws TaskInvocationException {
-		// Obtain parameters from the knowledge
-		
-//		KnowledgeManager knowledgeManager = stateSpaceModel.getComponentInstance().getKnowledgeManager();
-//		List<KnowledgePath> kps = new ArrayList<KnowledgePath>();
-//		kps.add(stateSpaceModel.getTriggerKowledgePath());
-//		ValueSet values = knowledgeManager.get(kps);
-//		if()
-		
-		
-		double currentTime = System.nanoTime() / SEC_NANOSECOND_FACTOR;
-		double[] boundaries = new double[1];
-		double 	startTime = startTime();
-		double dt = lastTime - startTime;
-		// ---------------------- knowledge evaluation --------------------------------
-			
-		InaccurateValueDefinition inDerv = new InaccurateValueDefinition<>();
-		inDerv = stateSpaceModel.getModel().getModelBoundaries(stateSpaceModel.getInStates());
-		stateSpaceModel.getDerivationStates().set(0,inDerv);
-		
-		FirstOrderIntegrator integrator = new MidpointIntegrator(1);
-		integrator.setMaxEvaluations((int) dt);
-		FirstOrderDifferentialEquations f = new Derivation(); 
-		//-----------------------  Boundaries    ----------------------------------
-		for (int i = 0; i < stateSpaceModel.getInStates().size(); i++) {
-			computeBoundary(boundaries, i, f, integrator, startTime, currentTime);
-			System.out.println("boundaries : "+boundaries.length+"     "+stateSpaceModel.getDerivationStates().get(0).minBoundary+"  "+stateSpaceModel.getDerivationStates().get(0).maxBoundary);
-		}
 
+		try {
+					KnowledgeManager knowledgeManager = stateSpaceModel.getComponentInstance().getKnowledgeManager();
+					ValueSet values = knowledgeManager.get(stateSpaceModel.getInStates());
+					
+					double currentTime = System.nanoTime() / SEC_NANOSECOND_FACTOR;
+					double 	startTime = startTime(knowledgeManager,values);
+					values = knowledgeManager.get(stateSpaceModel.getInStates());
+
+					// ---------------------- knowledge evaluation --------------------------------
+
+					ArrayList<InaccuracyParamHolder<Number>> in = new ArrayList<>();	
+					for (KnowledgePath kp : stateSpaceModel.getInStates()) {
+						Object v = values.getValue(kp);
+						if(v instanceof InaccuracyParamHolder){
+							InaccuracyParamHolder<Number> inacc = (InaccuracyParamHolder)v;
+							in.add(inacc);
+						}
+					}
+					
+					InaccuracyParamHolder inDerv = stateSpaceModel.getModel().getModelBoundaries(in);
+					stateSpaceModel.setModelValue(inDerv);					
+					
+					//-----------------------  Boundaries    ----------------------------------
+					
+					for (int i = 0; i < stateSpaceModel.getInStates().size(); i++) {
+						values = knowledgeManager.get(stateSpaceModel.getInStates());
+						computeBoundary(knowledgeManager, values, i, startTime, currentTime);
+						values = knowledgeManager.get(stateSpaceModel.getInStates());
+					}
+					
+					lastTime = currentTime;
+			} catch (KnowledgeUpdateException|KnowledgeNotFoundException e) {
+				e.printStackTrace();
+			}
+	}	
+	
+
+	
+	public void init(KnowledgeManager km, Double creationTime) {
+		try {
+			initBoundaries(stateSpaceModel.getInStates(), km);
+			initBoundaries(stateSpaceModel.getDerivationStates(), km);
+			lastTime = creationTime;
+		} catch (KnowledgeNotFoundException|KnowledgeUpdateException e) {
+			e.printStackTrace();
+		}
+	}
+	
+
+	private void computeBoundary(KnowledgeManager km, ValueSet vs, int i,
+			 double startTime, double currentTime) throws KnowledgeUpdateException {
+		
+		ChangeSet ch = new ChangeSet();
+		ChangeSet dervCh = new ChangeSet();
+		KnowledgePath inKp = null;
+		KnowledgePath dervKp = null;
+		InaccuracyParamHolder value = new InaccuracyParamHolder<>();
+		InaccuracyParamHolder dervValue = new InaccuracyParamHolder<>();
+		
+		inKp = stateSpaceModel.getInStates().get(i);
+		value = (InaccuracyParamHolder)vs.getValue(inKp);
+		
+		if(i == 0){
+			dervValue = stateSpaceModel.getModelValue();	
+		}else{
+			dervKp = stateSpaceModel.getDerivationStates().get(i-1);
+			dervValue = (InaccuracyParamHolder) vs.getValue(dervKp);
+		}
+		
+		
+//		MidpointIntegrator integrator = new MidpointIntegrator(1);
+//		FirstOrderDifferentialEquations f = new Derivation(); 
+	
+		double[] minBoundaries = new double[1];
+		minBoundaries[0] = (double) dervValue.minBoundary;
+//		integrator.integrate(f, startTime, minBoundaries, currentTime, minBoundaries);
+		value.minBoundary = (double)value.minBoundary + minBoundaries[0]*(currentTime-startTime);
+		dervValue.minBoundary = minBoundaries[0];
+		
+		
+		double[] maxBoundaries = new double[1];
+		maxBoundaries[0] = (double)dervValue.maxBoundary;
+//		integrator.integrate(f, startTime, maxBoundaries, currentTime, maxBoundaries);
+		value.maxBoundary = (double)value.maxBoundary + maxBoundaries[0]*(currentTime - startTime);
+		dervValue.maxBoundary = maxBoundaries[0];
+
+		ch.setValue(inKp, value);
+		km.update(ch);
+		
+		if(i == 0){
+			stateSpaceModel.setModelValue(dervValue);
+		}else{
+			dervCh.setValue(dervKp, dervValue);
+			km.update(dervCh);
+		}
 	}
 
+	
+	private void resetBoundaries(KnowledgeManager km, ValueSet values, Double ctime) throws KnowledgeUpdateException{
+		ChangeSet ch = new ChangeSet();
+		
+		for (int i = 0; i < stateSpaceModel.getInStates().size(); i++) {
+			Object val = values.getValue(stateSpaceModel.getInStates().get(i));
+			if(val instanceof InaccuracyParamHolder){
+				InaccuracyParamHolder v = (InaccuracyParamHolder)val;
+				v.minBoundary = v.value; 
+				v.maxBoundary = v.value; 
+				ch.setValue(stateSpaceModel.getInStates().get(i), v);
+			}
+		}
+		km.update(ch);
+		stateSpaceModel.setModelValue(new InaccuracyParamHolder<>());
+	}
+	
+	
+	private Double startTime(KnowledgeManager km, ValueSet values) throws KnowledgeUpdateException{
+		
+		Double startTime;
+		Double ctime = ((InaccuracyParamHolder)values.getValue(stateSpaceModel.getInStates().get(0))).creationTime;
+		if (ctime <= lastTime) {
+			startTime = lastTime;
+		} else {
+			startTime = ctime;
+			resetBoundaries(km,values,ctime);
+		}
+		return startTime;
+	}
+	
+	
+	private void initBoundaries(Collection<KnowledgePath> inStates, KnowledgeManager km) throws KnowledgeNotFoundException, KnowledgeUpdateException {
+		ChangeSet ch = new ChangeSet();
+		ValueSet vals = km.get(inStates);
+		for (KnowledgePath knowledgePath : inStates) {
+			InaccuracyParamHolder newVal = new InaccuracyParamHolder<>();
+			InaccuracyParamHolder oldVal = ((InaccuracyParamHolder)vals.getValue(knowledgePath));
+			newVal.value = oldVal.value;
+			newVal.minBoundary = oldVal.value;
+			newVal.maxBoundary = oldVal.value;
+			newVal.creationTime = oldVal.creationTime;
+			ch.setValue(knowledgePath, newVal);	
+		}
+		km.update(ch);
+		stateSpaceModel.setModelValue(new InaccuracyParamHolder<>());
+	}
+	
+	
 	/* (non-Javadoc)
 	 * @see cz.cuni.mff.d3s.deeco.task.Task#registerTriggers()
 	 */
@@ -159,76 +279,22 @@ public class StateSpaceModelTask extends Task {
 		return null;
 	}
 	
-
-	public void init(Double creationTime) {
-		initBoundaries(stateSpaceModel.getInStates(), creationTime);
-		initBoundaries(stateSpaceModel.getDerivationStates(), creationTime);
-		lastTime = creationTime;
-	}
-	
-
-	private void computeBoundary(double[] boundaries, int i, FirstOrderDifferentialEquations f,
-			FirstOrderIntegrator integrator, double startTime, double currentTime) {
-		
-		double[] minBoundaries = new double[1];
-		minBoundaries[0] = boundaries[0];
-		integrator.integrate(f, startTime, minBoundaries, currentTime, minBoundaries);
-		stateSpaceModel.getInStates().get(i).minBoundary = stateSpaceModel.getInStates().get(i).minBoundary.doubleValue() + minBoundaries[0];
-		boundaries[0] = minBoundaries[0];
-		
-		double[] maxBoundaries = new double[1];
-		maxBoundaries[0] = boundaries[1];
-		integrator.integrate(f, startTime, maxBoundaries, currentTime, maxBoundaries);
-		stateSpaceModel.getDerivationStates().get(i).maxBoundary = stateSpaceModel.getDerivationStates().get(i).maxBoundary.doubleValue() + maxBoundaries[0];
-		boundaries[1] = maxBoundaries[0];
-	}
-
-	private void resetBoundaries(){
-		for (int i = 0; i < stateSpaceModel.getInStates().size(); i++) {
-			stateSpaceModel.getInStates().get(i).minBoundary = stateSpaceModel.getInStates().get(i).value; 
-			stateSpaceModel.getInStates().get(i).maxBoundary = stateSpaceModel.getInStates().get(i).value; 
-		}
-	}
-	
-	private Double startTime(){
-		
-		Double startTime;
-		if (stateSpaceModel.getInStates().get(0).creationTime <= lastTime) {
-			startTime = lastTime;
-		} else {
-			startTime = stateSpaceModel.getInStates().get(0).creationTime;
-			resetBoundaries();
-		}
-		return startTime;
-	}
-	
-	private static class Derivation implements FirstOrderDifferentialEquations {
-
-		@Override
-		public int getDimension() {
-			return 1;
-		}
-
-		@Override
-		public void computeDerivatives(double t, double[] y, double[] yDot)
-				throws MaxCountExceededException, DimensionMismatchException {
-			int params = 1;
-			int order = 1;
-			DerivativeStructure x = new DerivativeStructure(params, order, 0,
-					y[0]);
-			DerivativeStructure f = x.divide(t);
-			yDot[0] = f.getValue();
-		}
-	}
-	
-	
-	private void initBoundaries(EList<InaccurateValueDefinition> eList, Double creationTime){
-		for (int i = 0; i < eList.size(); i++) {
-				eList.get(i).value = eList.get(i).value;
-				eList.get(i).minBoundary = eList.get(i).value;
-				eList.get(i).maxBoundary = eList.get(i).value;
-				eList.get(i).creationTime = creationTime;
-		}
-	}
-
+//	private static class Derivation implements FirstOrderDifferentialEquations {
+//
+//		@Override
+//		public int getDimension() {
+//			return 1;
+//		}
+//
+//		@Override
+//		public void computeDerivatives(double t, double[] y, double[] yDot)
+//				throws MaxCountExceededException, DimensionMismatchException {
+//			int params = 1;
+//			int order = 1;
+//			DerivativeStructure x = new DerivativeStructure(params, order, 0,
+//					y[0]);
+//			DerivativeStructure f = x.divide(t);
+//			yDot[0] = f.getValue();
+//		}
+//	}
 }

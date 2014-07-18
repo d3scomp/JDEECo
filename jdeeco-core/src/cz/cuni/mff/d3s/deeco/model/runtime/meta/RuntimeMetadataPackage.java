@@ -999,31 +999,13 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int STATE_SPACE_MODEL_DEFINITION = 20;
 
 	/**
-	 * The feature id for the '<em><b>Trigger Kowledge Path</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int STATE_SPACE_MODEL_DEFINITION__TRIGGER_KOWLEDGE_PATH = 0;
-
-	/**
 	 * The feature id for the '<em><b>Model</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int STATE_SPACE_MODEL_DEFINITION__MODEL = 1;
-
-	/**
-	 * The feature id for the '<em><b>Derivation States</b></em>' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int STATE_SPACE_MODEL_DEFINITION__DERIVATION_STATES = 2;
+	int STATE_SPACE_MODEL_DEFINITION__MODEL = 0;
 
 	/**
 	 * The feature id for the '<em><b>Component Instance</b></em>' container reference.
@@ -1032,16 +1014,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int STATE_SPACE_MODEL_DEFINITION__COMPONENT_INSTANCE = 3;
-
-	/**
-	 * The feature id for the '<em><b>In States</b></em>' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int STATE_SPACE_MODEL_DEFINITION__IN_STATES = 4;
+	int STATE_SPACE_MODEL_DEFINITION__COMPONENT_INSTANCE = 1;
 
 	/**
 	 * The feature id for the '<em><b>Triggers</b></em>' containment reference list.
@@ -1050,7 +1023,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int STATE_SPACE_MODEL_DEFINITION__TRIGGERS = 5;
+	int STATE_SPACE_MODEL_DEFINITION__TRIGGERS = 2;
 
 	/**
 	 * The feature id for the '<em><b>Is Active</b></em>' attribute.
@@ -1059,7 +1032,34 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int STATE_SPACE_MODEL_DEFINITION__IS_ACTIVE = 6;
+	int STATE_SPACE_MODEL_DEFINITION__IS_ACTIVE = 3;
+
+	/**
+	 * The feature id for the '<em><b>In States</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STATE_SPACE_MODEL_DEFINITION__IN_STATES = 4;
+
+	/**
+	 * The feature id for the '<em><b>Derivation States</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STATE_SPACE_MODEL_DEFINITION__DERIVATION_STATES = 5;
+
+	/**
+	 * The feature id for the '<em><b>Model Value</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STATE_SPACE_MODEL_DEFINITION__MODEL_VALUE = 6;
 
 	/**
 	 * The number of structural features of the '<em>State Space Model Definition</em>' class.
@@ -1281,7 +1281,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * The meta object id for the '<em>Inaccurate Value</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccurateValueDefinition
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getInaccurateValue()
 	 * @generated
 	 */
@@ -1853,37 +1853,15 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EClass getStateSpaceModelDefinition();
 
 	/**
-	 * Returns the meta object for the reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getTriggerKowledgePath <em>Trigger Kowledge Path</em>}'.
+	 * Returns the meta object for the reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getInStates <em>In States</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Trigger Kowledge Path</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getTriggerKowledgePath()
-	 * @see #getStateSpaceModelDefinition()
-	 * @generated
-	 */
-	EReference getStateSpaceModelDefinition_TriggerKowledgePath();
-
-	/**
-	 * Returns the meta object for the attribute list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getInStates <em>In States</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute list '<em>In States</em>'.
+	 * @return the meta object for the reference list '<em>In States</em>'.
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getInStates()
 	 * @see #getStateSpaceModelDefinition()
 	 * @generated
 	 */
-	EAttribute getStateSpaceModelDefinition_InStates();
-
-	/**
-	 * Returns the meta object for the containment reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getTriggers <em>Triggers</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Triggers</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getTriggers()
-	 * @see #getStateSpaceModelDefinition()
-	 * @generated
-	 */
-	EReference getStateSpaceModelDefinition_Triggers();
+	EReference getStateSpaceModelDefinition_InStates();
 
 	/**
 	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#isIsActive <em>Is Active</em>}'.
@@ -1897,15 +1875,26 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EAttribute getStateSpaceModelDefinition_IsActive();
 
 	/**
-	 * Returns the meta object for the attribute list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getDerivationStates <em>Derivation States</em>}'.
+	 * Returns the meta object for the reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getDerivationStates <em>Derivation States</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute list '<em>Derivation States</em>'.
+	 * @return the meta object for the reference list '<em>Derivation States</em>'.
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getDerivationStates()
 	 * @see #getStateSpaceModelDefinition()
 	 * @generated
 	 */
-	EAttribute getStateSpaceModelDefinition_DerivationStates();
+	EReference getStateSpaceModelDefinition_DerivationStates();
+
+	/**
+	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getModelValue <em>Model Value</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Model Value</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getModelValue()
+	 * @see #getStateSpaceModelDefinition()
+	 * @generated
+	 */
+	EAttribute getStateSpaceModelDefinition_ModelValue();
 
 	/**
 	 * Returns the meta object for the container reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getComponentInstance <em>Component Instance</em>}'.
@@ -1917,6 +1906,17 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getStateSpaceModelDefinition_ComponentInstance();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getTriggers <em>Triggers</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Triggers</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getTriggers()
+	 * @see #getStateSpaceModelDefinition()
+	 * @generated
+	 */
+	EReference getStateSpaceModelDefinition_Triggers();
 
 	/**
 	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getModel <em>Model</em>}'.
@@ -2145,12 +2145,12 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EDataType getModelType();
 
 	/**
-	 * Returns the meta object for data type '{@link cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccurateValueDefinition <em>Inaccurate Value</em>}'.
+	 * Returns the meta object for data type '{@link cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder <em>Inaccurate Value</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for data type '<em>Inaccurate Value</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccurateValueDefinition
-	 * @model instanceClass="cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccurateValueDefinition"
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder
+	 * @model instanceClass="cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder"
 	 * @generated
 	 */
 	EDataType getInaccurateValue();
@@ -2643,28 +2643,12 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EClass STATE_SPACE_MODEL_DEFINITION = eINSTANCE.getStateSpaceModelDefinition();
 
 		/**
-		 * The meta object literal for the '<em><b>Trigger Kowledge Path</b></em>' reference feature.
+		 * The meta object literal for the '<em><b>In States</b></em>' reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference STATE_SPACE_MODEL_DEFINITION__TRIGGER_KOWLEDGE_PATH = eINSTANCE.getStateSpaceModelDefinition_TriggerKowledgePath();
-
-		/**
-		 * The meta object literal for the '<em><b>In States</b></em>' attribute list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute STATE_SPACE_MODEL_DEFINITION__IN_STATES = eINSTANCE.getStateSpaceModelDefinition_InStates();
-
-		/**
-		 * The meta object literal for the '<em><b>Triggers</b></em>' containment reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference STATE_SPACE_MODEL_DEFINITION__TRIGGERS = eINSTANCE.getStateSpaceModelDefinition_Triggers();
+		EReference STATE_SPACE_MODEL_DEFINITION__IN_STATES = eINSTANCE.getStateSpaceModelDefinition_InStates();
 
 		/**
 		 * The meta object literal for the '<em><b>Is Active</b></em>' attribute feature.
@@ -2675,12 +2659,20 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EAttribute STATE_SPACE_MODEL_DEFINITION__IS_ACTIVE = eINSTANCE.getStateSpaceModelDefinition_IsActive();
 
 		/**
-		 * The meta object literal for the '<em><b>Derivation States</b></em>' attribute list feature.
+		 * The meta object literal for the '<em><b>Derivation States</b></em>' reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute STATE_SPACE_MODEL_DEFINITION__DERIVATION_STATES = eINSTANCE.getStateSpaceModelDefinition_DerivationStates();
+		EReference STATE_SPACE_MODEL_DEFINITION__DERIVATION_STATES = eINSTANCE.getStateSpaceModelDefinition_DerivationStates();
+
+		/**
+		 * The meta object literal for the '<em><b>Model Value</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute STATE_SPACE_MODEL_DEFINITION__MODEL_VALUE = eINSTANCE.getStateSpaceModelDefinition_ModelValue();
 
 		/**
 		 * The meta object literal for the '<em><b>Component Instance</b></em>' container reference feature.
@@ -2689,6 +2681,14 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * @generated
 		 */
 		EReference STATE_SPACE_MODEL_DEFINITION__COMPONENT_INSTANCE = eINSTANCE.getStateSpaceModelDefinition_ComponentInstance();
+
+		/**
+		 * The meta object literal for the '<em><b>Triggers</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference STATE_SPACE_MODEL_DEFINITION__TRIGGERS = eINSTANCE.getStateSpaceModelDefinition_Triggers();
 
 		/**
 		 * The meta object literal for the '<em><b>Model</b></em>' attribute feature.
@@ -2882,7 +2882,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * The meta object literal for the '<em>Inaccurate Value</em>' data type.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccurateValueDefinition
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder
 		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getInaccurateValue()
 		 * @generated
 		 */

@@ -3,14 +3,11 @@ package demo_annotation.test.Inaccuracy;
 import cz.cuni.mff.d3s.deeco.annotations.*;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
-import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 
-
-@StateSpaceModel(models = @Model(periodicScheduling = @PeriodicScheduling(100), 
-								 triggerField = "lFFHold",
-								 state  = {"lFFPos","lFFSpeed"}, 
-								 result = @Fun(returnedIndex = {1,-1}, referenceModel = VehicleModel.class)))
+//The order of the attributes matters. Start with the higher differential The index -1 shou
+@StateSpaceModel(models = @Model( period = 100, state  = {"lFFSpeed","lFFPos"}, 
+								 result = @Fun(returnedIndex = {-1,0}, referenceModel = VehicleModel.class)))
 @Component
 public class Leader {
 
@@ -48,13 +45,14 @@ public class Leader {
 
 	
 	@Process
-	@PeriodicScheduling((int) TIMEPERIOD)
+	@PeriodicScheduling(value = (int) TIMEPERIOD)
 	public static void speedControl(
 			@InOut("lPos") ParamHolder<Double> lPos,
 			@InOut("lSpeed") ParamHolder<Double> lSpeed,
 
-			@InOut("lFFPos") TSParamHolder<Double> lFFPos,
-			@InOut("lFFSpeed") TSParamHolder<Double> lFFSpeed,
+			@InOut("lFFPos") InaccuracyParamHolder<Double> lFFPos,
+			@InOut("lFFSpeed") InaccuracyParamHolder<Double> lFFSpeed,
+			@InOut("lFFHold") ParamHolder<Boolean> lFFHold,
 			@InOut("lGas") ParamHolder<Double> lGas,
 			@InOut("lBrake") ParamHolder<Double> lBrake,
 
@@ -82,18 +80,12 @@ public class Leader {
 		lSpeed.value += lAcceleration * timePeriodInSeconds; 
 		lPos.value += lSpeed.value * timePeriodInSeconds;
 
-//		double ffAccelerationMin = Database.getAcceleration(lFFSpeed.value, lFFPos.value, Database.fTorques, 0.0, 1.0,Database.fMass);
-//		lFFSpeed.value += ffAccelerationMin * timePeriodInSeconds; 
-//		lFFPos.value += lFFSpeed.value * timePeriodInSeconds;
-//
-//		double ffAccelerationMax = Database.getAcceleration(lFFSpeed.value, lFFPos.value, Database.fTorques, lGas.value, lBrake.value,Database.fMass);
-//		lSpeed.value += ffAccelerationMax * timePeriodInSeconds; 
-//		lPos.value += lSpeed.value * timePeriodInSeconds;
-
 		System.out.println("=================================== Leader statue ==========================================");
  		System.out.println("Speed Leader : "+lSpeed.value+", pos : "+lPos.value+"... time :"+currentTime);
  		System.out.println("Speed Leader_FireFighter : "+lFFSpeed.value+", pos : "+lFFPos.value+"... time :"+lFFPos.creationTime);
-		System.out.println("==========================================================================================");
+ 		System.out.println("Inaccuracy Leader_FireFighter : pos : "+lFFPos.value+" E ["+lFFPos.minBoundary+" , "+lFFPos.maxBoundary+"] ... time :"+lFFPos.creationTime+" ... current time: "+currentTime+" ...  dt : "+(currentTime-lFFPos.creationTime));
+		System.out.println("============================================================================================");
+		lFFHold.value = !lFFHold.value;
 
 	}
 

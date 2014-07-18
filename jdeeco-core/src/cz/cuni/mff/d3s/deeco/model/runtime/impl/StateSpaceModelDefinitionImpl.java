@@ -4,12 +4,14 @@ package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+
 import cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition;
 
+import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccurateValueDefinition;
+import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ModelInterface;
 
 import java.util.Collection;
@@ -38,29 +40,19 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.StateSpaceModelDefinitionImpl#getTriggerKowledgePath <em>Trigger Kowledge Path</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.StateSpaceModelDefinitionImpl#getModel <em>Model</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.StateSpaceModelDefinitionImpl#getDerivationStates <em>Derivation States</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.StateSpaceModelDefinitionImpl#getComponentInstance <em>Component Instance</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.StateSpaceModelDefinitionImpl#getInStates <em>In States</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.StateSpaceModelDefinitionImpl#getTriggers <em>Triggers</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.StateSpaceModelDefinitionImpl#isIsActive <em>Is Active</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.StateSpaceModelDefinitionImpl#getInStates <em>In States</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.StateSpaceModelDefinitionImpl#getDerivationStates <em>Derivation States</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.StateSpaceModelDefinitionImpl#getModelValue <em>Model Value</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
 public class StateSpaceModelDefinitionImpl extends MinimalEObjectImpl.Container implements StateSpaceModelDefinition {
-	/**
-	 * The cached value of the '{@link #getTriggerKowledgePath() <em>Trigger Kowledge Path</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getTriggerKowledgePath()
-	 * @generated
-	 * @ordered
-	 */
-	protected KnowledgePath triggerKowledgePath;
-
 	/**
 	 * The default value of the '{@link #getModel() <em>Model</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -82,26 +74,6 @@ public class StateSpaceModelDefinitionImpl extends MinimalEObjectImpl.Container 
 	protected ModelInterface model = MODEL_EDEFAULT;
 
 	/**
-	 * The cached value of the '{@link #getDerivationStates() <em>Derivation States</em>}' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getDerivationStates()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<InaccurateValueDefinition> derivationStates;
-
-	/**
-	 * The cached value of the '{@link #getInStates() <em>In States</em>}' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getInStates()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<InaccurateValueDefinition> inStates;
-
-	/**
 	 * The cached value of the '{@link #getTriggers() <em>Triggers</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -109,7 +81,7 @@ public class StateSpaceModelDefinitionImpl extends MinimalEObjectImpl.Container 
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<Trigger> triggers;
+	protected EList<TimeTrigger> triggers;
 
 	/**
 	 * The default value of the '{@link #isIsActive() <em>Is Active</em>}' attribute.
@@ -130,6 +102,46 @@ public class StateSpaceModelDefinitionImpl extends MinimalEObjectImpl.Container 
 	 * @ordered
 	 */
 	protected boolean isActive = IS_ACTIVE_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getInStates() <em>In States</em>}' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getInStates()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<KnowledgePath> inStates;
+
+	/**
+	 * The cached value of the '{@link #getDerivationStates() <em>Derivation States</em>}' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getDerivationStates()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<KnowledgePath> derivationStates;
+
+	/**
+	 * The default value of the '{@link #getModelValue() <em>Model Value</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getModelValue()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final InaccuracyParamHolder MODEL_VALUE_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getModelValue() <em>Model Value</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getModelValue()
+	 * @generated
+	 * @ordered
+	 */
+	protected InaccuracyParamHolder modelValue = MODEL_VALUE_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -155,61 +167,11 @@ public class StateSpaceModelDefinitionImpl extends MinimalEObjectImpl.Container 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public KnowledgePath getTriggerKowledgePath() {
-		if (triggerKowledgePath != null && triggerKowledgePath.eIsProxy()) {
-			InternalEObject oldTriggerKowledgePath = (InternalEObject)triggerKowledgePath;
-			triggerKowledgePath = (KnowledgePath)eResolveProxy(oldTriggerKowledgePath);
-			if (triggerKowledgePath != oldTriggerKowledgePath) {
-				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__TRIGGER_KOWLEDGE_PATH, oldTriggerKowledgePath, triggerKowledgePath));
-			}
-		}
-		return triggerKowledgePath;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public KnowledgePath basicGetTriggerKowledgePath() {
-		return triggerKowledgePath;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setTriggerKowledgePath(KnowledgePath newTriggerKowledgePath) {
-		KnowledgePath oldTriggerKowledgePath = triggerKowledgePath;
-		triggerKowledgePath = newTriggerKowledgePath;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__TRIGGER_KOWLEDGE_PATH, oldTriggerKowledgePath, triggerKowledgePath));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EList<InaccurateValueDefinition> getInStates() {
+	public EList<KnowledgePath> getInStates() {
 		if (inStates == null) {
-			inStates = new EDataTypeUniqueEList<InaccurateValueDefinition>(InaccurateValueDefinition.class, this, RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__IN_STATES);
+			inStates = new EObjectResolvingEList<KnowledgePath>(KnowledgePath.class, this, RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__IN_STATES);
 		}
 		return inStates;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EList<Trigger> getTriggers() {
-		if (triggers == null) {
-			triggers = new EObjectContainmentEList<Trigger>(Trigger.class, this, RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__TRIGGERS);
-		}
-		return triggers;
 	}
 
 	/**
@@ -259,11 +221,32 @@ public class StateSpaceModelDefinitionImpl extends MinimalEObjectImpl.Container 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<InaccurateValueDefinition> getDerivationStates() {
+	public EList<KnowledgePath> getDerivationStates() {
 		if (derivationStates == null) {
-			derivationStates = new EDataTypeUniqueEList<InaccurateValueDefinition>(InaccurateValueDefinition.class, this, RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__DERIVATION_STATES);
+			derivationStates = new EObjectResolvingEList<KnowledgePath>(KnowledgePath.class, this, RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__DERIVATION_STATES);
 		}
 		return derivationStates;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public InaccuracyParamHolder getModelValue() {
+		return modelValue;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setModelValue(InaccuracyParamHolder newModelValue) {
+		InaccuracyParamHolder oldModelValue = modelValue;
+		modelValue = newModelValue;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__MODEL_VALUE, oldModelValue, modelValue));
 	}
 
 	/**
@@ -305,6 +288,18 @@ public class StateSpaceModelDefinitionImpl extends MinimalEObjectImpl.Container 
 		}
 		else if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__COMPONENT_INSTANCE, newComponentInstance, newComponentInstance));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EList<TimeTrigger> getTriggers() {
+		if (triggers == null) {
+			triggers = new EObjectContainmentEList<TimeTrigger>(TimeTrigger.class, this, RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__TRIGGERS);
+		}
+		return triggers;
 	}
 
 	/**
@@ -361,21 +356,20 @@ public class StateSpaceModelDefinitionImpl extends MinimalEObjectImpl.Container 
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__TRIGGER_KOWLEDGE_PATH:
-				if (resolve) return getTriggerKowledgePath();
-				return basicGetTriggerKowledgePath();
 			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__MODEL:
 				return getModel();
-			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__DERIVATION_STATES:
-				return getDerivationStates();
 			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__COMPONENT_INSTANCE:
 				return getComponentInstance();
-			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__IN_STATES:
-				return getInStates();
 			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__TRIGGERS:
 				return getTriggers();
 			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__IS_ACTIVE:
 				return isIsActive();
+			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__IN_STATES:
+				return getInStates();
+			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__DERIVATION_STATES:
+				return getDerivationStates();
+			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__MODEL_VALUE:
+				return getModelValue();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -389,29 +383,29 @@ public class StateSpaceModelDefinitionImpl extends MinimalEObjectImpl.Container 
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__TRIGGER_KOWLEDGE_PATH:
-				setTriggerKowledgePath((KnowledgePath)newValue);
-				return;
 			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__MODEL:
 				setModel((ModelInterface)newValue);
-				return;
-			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__DERIVATION_STATES:
-				getDerivationStates().clear();
-				getDerivationStates().addAll((Collection<? extends InaccurateValueDefinition>)newValue);
 				return;
 			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__COMPONENT_INSTANCE:
 				setComponentInstance((ComponentInstance)newValue);
 				return;
-			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__IN_STATES:
-				getInStates().clear();
-				getInStates().addAll((Collection<? extends InaccurateValueDefinition>)newValue);
-				return;
 			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__TRIGGERS:
 				getTriggers().clear();
-				getTriggers().addAll((Collection<? extends Trigger>)newValue);
+				getTriggers().addAll((Collection<? extends TimeTrigger>)newValue);
 				return;
 			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__IS_ACTIVE:
 				setIsActive((Boolean)newValue);
+				return;
+			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__IN_STATES:
+				getInStates().clear();
+				getInStates().addAll((Collection<? extends KnowledgePath>)newValue);
+				return;
+			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__DERIVATION_STATES:
+				getDerivationStates().clear();
+				getDerivationStates().addAll((Collection<? extends KnowledgePath>)newValue);
+				return;
+			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__MODEL_VALUE:
+				setModelValue((InaccuracyParamHolder)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -425,26 +419,26 @@ public class StateSpaceModelDefinitionImpl extends MinimalEObjectImpl.Container 
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__TRIGGER_KOWLEDGE_PATH:
-				setTriggerKowledgePath((KnowledgePath)null);
-				return;
 			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__MODEL:
 				setModel(MODEL_EDEFAULT);
 				return;
-			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__DERIVATION_STATES:
-				getDerivationStates().clear();
-				return;
 			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__COMPONENT_INSTANCE:
 				setComponentInstance((ComponentInstance)null);
-				return;
-			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__IN_STATES:
-				getInStates().clear();
 				return;
 			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__TRIGGERS:
 				getTriggers().clear();
 				return;
 			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__IS_ACTIVE:
 				setIsActive(IS_ACTIVE_EDEFAULT);
+				return;
+			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__IN_STATES:
+				getInStates().clear();
+				return;
+			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__DERIVATION_STATES:
+				getDerivationStates().clear();
+				return;
+			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__MODEL_VALUE:
+				setModelValue(MODEL_VALUE_EDEFAULT);
 				return;
 		}
 		super.eUnset(featureID);
@@ -458,20 +452,20 @@ public class StateSpaceModelDefinitionImpl extends MinimalEObjectImpl.Container 
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__TRIGGER_KOWLEDGE_PATH:
-				return triggerKowledgePath != null;
 			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__MODEL:
 				return MODEL_EDEFAULT == null ? model != null : !MODEL_EDEFAULT.equals(model);
-			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__DERIVATION_STATES:
-				return derivationStates != null && !derivationStates.isEmpty();
 			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__COMPONENT_INSTANCE:
 				return getComponentInstance() != null;
-			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__IN_STATES:
-				return inStates != null && !inStates.isEmpty();
 			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__TRIGGERS:
 				return triggers != null && !triggers.isEmpty();
 			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__IS_ACTIVE:
 				return isActive != IS_ACTIVE_EDEFAULT;
+			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__IN_STATES:
+				return inStates != null && !inStates.isEmpty();
+			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__DERIVATION_STATES:
+				return derivationStates != null && !derivationStates.isEmpty();
+			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__MODEL_VALUE:
+				return MODEL_VALUE_EDEFAULT == null ? modelValue != null : !MODEL_VALUE_EDEFAULT.equals(modelValue);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -488,12 +482,10 @@ public class StateSpaceModelDefinitionImpl extends MinimalEObjectImpl.Container 
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (model: ");
 		result.append(model);
-		result.append(", derivationStates: ");
-		result.append(derivationStates);
-		result.append(", inStates: ");
-		result.append(inStates);
 		result.append(", isActive: ");
 		result.append(isActive);
+		result.append(", modelValue: ");
+		result.append(modelValue);
 		result.append(')');
 		return result.toString();
 	}

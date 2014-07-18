@@ -110,6 +110,6 @@ public class ChangeSet {
 	 * {@link #setValue(KnowledgeReference, Object)}.
 	 */
 	public void setDeleted(KnowledgePath reference) {
-		values.put(reference, KnowledgeValue.EMPTY);		
+		values.put(reference, KnowledgeValue.EMPTY);	
 	}
 }

@@ -4,20 +4,29 @@ package cz.cuni.mff.d3s.deeco.model.runtime.stateflow;
 public class InaccuracyParamHolder<T> extends TSParamHolder<T> {
 	
 	public final static long serialVersionUID = 1L;
-	public Double minBoundary;
-	public Double maxBoundary;
+	public T minBoundary;
+	public T maxBoundary;
 
 
 	public InaccuracyParamHolder() {
-		this.minBoundary = new Double(0.0);
-		this.maxBoundary = new Double(0.0);
 	}
 
-	public InaccuracyParamHolder(Double min, Double max) {
+	public InaccuracyParamHolder(InaccuracyParamHolder<T> inacc) {
+		setWithInaccuracy(inacc);
+	}
+
+	public InaccuracyParamHolder(T min, T max) {
 		this.minBoundary = min;
 		this.maxBoundary = max;
 	}
 
+	public void setWithTS(TSParamHolder<T> e){
+		super.setWithTS(e.value,e.creationTime);
+		this.minBoundary = e.value;
+		this.maxBoundary = e.value;
+	}
+	
+	
 	public void setWithInaccuracy(InaccuracyParamHolder<T> e){
 		super.setWithTS(e.value,e.creationTime);
 		this.minBoundary = e.minBoundary;

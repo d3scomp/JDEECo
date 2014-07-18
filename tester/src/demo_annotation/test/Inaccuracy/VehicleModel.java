@@ -4,9 +4,8 @@ package demo_annotation.test.Inaccuracy;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccurateValueDefinition;
+import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ModelInterface;
 
 
@@ -14,18 +13,18 @@ import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ModelInterface;
 public class VehicleModel implements ModelInterface {
 
 	@Override
-	public InaccurateValueDefinition getModelBoundaries(Collection<InaccurateValueDefinition> inaccValues) {
-		InaccurateValueDefinition val = new InaccurateValueDefinition();
-		ArrayList<InaccurateValueDefinition> arr = new ArrayList<InaccurateValueDefinition>();
-		for (InaccurateValueDefinition inaccValue : inaccValues) {
-			arr.add(inaccValue);
-		}
-		val.minBoundary = Database.getAcceleration(arr.get(0).minBoundary.doubleValue(), 
-				arr.get(1).minBoundary.doubleValue(), Database.lTorques, 0.0, 1.0, Database.lMass);
-		val.maxBoundary = Database.getAcceleration(arr.get(0).maxBoundary.doubleValue(),
-				arr.get(1).maxBoundary.doubleValue(), Database.lTorques, 1.0, 0.0, Database.lMass);
+	public InaccuracyParamHolder getModelBoundaries(Collection eList) {
+		InaccuracyParamHolder val = new InaccuracyParamHolder<>();
+		ArrayList<InaccuracyParamHolder<Double>> ranges = new ArrayList<InaccuracyParamHolder<Double>>();
+		ranges.addAll(eList);
+//		System.out.println("inside 0 min = "+ranges.get(0).minBoundary.doubleValue()+"   max = "+ranges.get(0).maxBoundary.doubleValue());
+//		System.out.println("inside 1 min = "+ranges.get(1).minBoundary.doubleValue()+"   max = "+ranges.get(1).maxBoundary.doubleValue());
+		val.minBoundary = Database.getAcceleration(ranges.get(0).minBoundary.doubleValue(), 
+				ranges.get(1).minBoundary.doubleValue(), Database.lTorques, 0.0, 1.0, Database.lMass);
+		val.maxBoundary = Database.getAcceleration(ranges.get(0).maxBoundary.doubleValue(),
+				ranges.get(1).maxBoundary.doubleValue(), Database.lTorques, 1.0, 0.0, Database.lMass);
 		
-		System.out.println("min = "+val.minBoundary);
+//		System.out.println("inside : min = "+val.minBoundary+"   max = "+val.maxBoundary);
 		return val;
 	}
 }

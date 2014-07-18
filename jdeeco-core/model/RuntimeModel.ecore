@@ -108,19 +108,19 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="CommunicationBoundary" instanceClassName="cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate"/>
   <eClassifiers xsi:type="ecore:EClass" name="StateSpaceModelDefinition">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="triggerKowledgePath" lowerBound="1"
-        eType="#//KnowledgePath"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="model" eType="#//ModelType"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="derivationStates" lowerBound="1"
-        upperBound="-1" eType="#//InaccurateValue"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="componentInstance" lowerBound="1"
         eType="#//ComponentInstance" eOpposite="#//ComponentInstance/stateSpaceModels"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="inStates" lowerBound="1"
-        upperBound="-1" eType="#//InaccurateValue"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="triggers" upperBound="-1"
-        eType="#//Trigger" containment="true"/>
+        eType="#//TimeTrigger" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="isActive" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="inStates" lowerBound="1"
+        upperBound="-1" eType="#//KnowledgePath"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="derivationStates" upperBound="-1"
+        eType="#//KnowledgePath"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="modelValue" lowerBound="1"
+        eType="#//InaccurateValue"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ModeController">
     <eStructuralFeatures xsi:type="ecore:EReference" name="initMode" lowerBound="1"
@@ -147,5 +147,5 @@
     <eLiterals name="MAX_BOUNDARY" value="3"/>
     <eLiterals name="INACCURACY" value="4"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EDataType" name="InaccurateValue" instanceClassName="cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccurateValueDefinition"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="InaccurateValue" instanceClassName="cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder"/>
 </ecore:EPackage>

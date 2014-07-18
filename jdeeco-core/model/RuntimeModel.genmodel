@@ -96,13 +96,13 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//StringToObjectMap/value"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//StateSpaceModelDefinition">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//StateSpaceModelDefinition/triggerKowledgePath"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//StateSpaceModelDefinition/model"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//StateSpaceModelDefinition/derivationStates"/>
       <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference RuntimeModel.ecore#//StateSpaceModelDefinition/componentInstance"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//StateSpaceModelDefinition/inStates"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//StateSpaceModelDefinition/triggers"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//StateSpaceModelDefinition/isActive"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//StateSpaceModelDefinition/inStates"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//StateSpaceModelDefinition/derivationStates"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//StateSpaceModelDefinition/modelValue"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//ModeController">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ModeController/initMode"/>

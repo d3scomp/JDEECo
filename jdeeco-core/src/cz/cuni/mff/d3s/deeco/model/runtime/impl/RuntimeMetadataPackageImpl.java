@@ -16,6 +16,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Exchange;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Invocable;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+
 import cz.cuni.mff.d3s.deeco.model.runtime.api.MetadataType;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ModeController;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ModeTransition;
@@ -35,10 +36,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
-
-import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccurateValueDefinition;
-
-
+import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ModelInterface;
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
 import java.lang.reflect.Method;
@@ -820,26 +818,8 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getStateSpaceModelDefinition_TriggerKowledgePath() {
-		return (EReference)stateSpaceModelDefinitionEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getStateSpaceModelDefinition_InStates() {
-		return (EAttribute)stateSpaceModelDefinitionEClass.getEStructuralFeatures().get(4);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EReference getStateSpaceModelDefinition_Triggers() {
-		return (EReference)stateSpaceModelDefinitionEClass.getEStructuralFeatures().get(5);
+	public EReference getStateSpaceModelDefinition_InStates() {
+		return (EReference)stateSpaceModelDefinitionEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -848,6 +828,24 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * @generated
 	 */
 	public EAttribute getStateSpaceModelDefinition_IsActive() {
+		return (EAttribute)stateSpaceModelDefinitionEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getStateSpaceModelDefinition_DerivationStates() {
+		return (EReference)stateSpaceModelDefinitionEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getStateSpaceModelDefinition_ModelValue() {
 		return (EAttribute)stateSpaceModelDefinitionEClass.getEStructuralFeatures().get(6);
 	}
 
@@ -856,8 +854,8 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getStateSpaceModelDefinition_DerivationStates() {
-		return (EAttribute)stateSpaceModelDefinitionEClass.getEStructuralFeatures().get(2);
+	public EReference getStateSpaceModelDefinition_ComponentInstance() {
+		return (EReference)stateSpaceModelDefinitionEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -865,8 +863,8 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getStateSpaceModelDefinition_ComponentInstance() {
-		return (EReference)stateSpaceModelDefinitionEClass.getEStructuralFeatures().get(3);
+	public EReference getStateSpaceModelDefinition_Triggers() {
+		return (EReference)stateSpaceModelDefinitionEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -875,7 +873,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * @generated
 	 */
 	public EAttribute getStateSpaceModelDefinition_Model() {
-		return (EAttribute)stateSpaceModelDefinitionEClass.getEStructuralFeatures().get(1);
+		return (EAttribute)stateSpaceModelDefinitionEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -1171,13 +1169,13 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		createEAttribute(stringToObjectMapEClass, STRING_TO_OBJECT_MAP__VALUE);
 
 		stateSpaceModelDefinitionEClass = createEClass(STATE_SPACE_MODEL_DEFINITION);
-		createEReference(stateSpaceModelDefinitionEClass, STATE_SPACE_MODEL_DEFINITION__TRIGGER_KOWLEDGE_PATH);
 		createEAttribute(stateSpaceModelDefinitionEClass, STATE_SPACE_MODEL_DEFINITION__MODEL);
-		createEAttribute(stateSpaceModelDefinitionEClass, STATE_SPACE_MODEL_DEFINITION__DERIVATION_STATES);
 		createEReference(stateSpaceModelDefinitionEClass, STATE_SPACE_MODEL_DEFINITION__COMPONENT_INSTANCE);
-		createEAttribute(stateSpaceModelDefinitionEClass, STATE_SPACE_MODEL_DEFINITION__IN_STATES);
 		createEReference(stateSpaceModelDefinitionEClass, STATE_SPACE_MODEL_DEFINITION__TRIGGERS);
 		createEAttribute(stateSpaceModelDefinitionEClass, STATE_SPACE_MODEL_DEFINITION__IS_ACTIVE);
+		createEReference(stateSpaceModelDefinitionEClass, STATE_SPACE_MODEL_DEFINITION__IN_STATES);
+		createEReference(stateSpaceModelDefinitionEClass, STATE_SPACE_MODEL_DEFINITION__DERIVATION_STATES);
+		createEAttribute(stateSpaceModelDefinitionEClass, STATE_SPACE_MODEL_DEFINITION__MODEL_VALUE);
 
 		modeControllerEClass = createEClass(MODE_CONTROLLER);
 		createEReference(modeControllerEClass, MODE_CONTROLLER__INIT_MODE);
@@ -1320,13 +1318,13 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		initEAttribute(getStringToObjectMap_Value(), ecorePackage.getEJavaObject(), "value", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(stateSpaceModelDefinitionEClass, StateSpaceModelDefinition.class, "StateSpaceModelDefinition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getStateSpaceModelDefinition_TriggerKowledgePath(), this.getKnowledgePath(), null, "triggerKowledgePath", null, 1, 1, StateSpaceModelDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getStateSpaceModelDefinition_Model(), this.getModelType(), "model", null, 0, 1, StateSpaceModelDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getStateSpaceModelDefinition_DerivationStates(), this.getInaccurateValue(), "derivationStates", null, 1, -1, StateSpaceModelDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getStateSpaceModelDefinition_ComponentInstance(), this.getComponentInstance(), this.getComponentInstance_StateSpaceModels(), "componentInstance", null, 1, 1, StateSpaceModelDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getStateSpaceModelDefinition_InStates(), this.getInaccurateValue(), "inStates", null, 1, -1, StateSpaceModelDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getStateSpaceModelDefinition_Triggers(), this.getTrigger(), null, "triggers", null, 0, -1, StateSpaceModelDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getStateSpaceModelDefinition_Triggers(), this.getTimeTrigger(), null, "triggers", null, 0, -1, StateSpaceModelDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getStateSpaceModelDefinition_IsActive(), ecorePackage.getEBoolean(), "isActive", null, 1, 1, StateSpaceModelDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getStateSpaceModelDefinition_InStates(), this.getKnowledgePath(), null, "inStates", null, 1, -1, StateSpaceModelDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getStateSpaceModelDefinition_DerivationStates(), this.getKnowledgePath(), null, "derivationStates", null, 0, -1, StateSpaceModelDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getStateSpaceModelDefinition_ModelValue(), this.getInaccurateValue(), "modelValue", null, 1, 1, StateSpaceModelDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(modeControllerEClass, ModeController.class, "ModeController", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getModeController_InitMode(), this.getComponentProcess(), null, "initMode", null, 1, 1, ModeController.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1359,7 +1357,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		initEDataType(shadowKnowledgeManagerRegistryEDataType, ShadowKnowledgeManagerRegistry.class, "ShadowKnowledgeManagerRegistry", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(communicationBoundaryEDataType, CommunicationBoundaryPredicate.class, "CommunicationBoundary", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(modelTypeEDataType, ModelInterface.class, "ModelType", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-		initEDataType(inaccurateValueEDataType, InaccurateValueDefinition.class, "InaccurateValue", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(inaccurateValueEDataType, InaccuracyParamHolder.class, "InaccurateValue", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
 		createResource(eNS_URI);

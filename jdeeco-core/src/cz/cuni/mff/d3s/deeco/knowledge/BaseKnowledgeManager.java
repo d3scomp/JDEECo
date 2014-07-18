@@ -56,7 +56,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		final ValueSet result = new ValueSet();
 		Object value;
 		for (KnowledgePath kp : knowledgePaths) {
-			try {				
+			try {
 				value = getKnowledge(kp.getNodes());
 			} catch (KnowledgeNotFoundException knfe) {
 				throw new KnowledgeNotFoundException(kp);
@@ -79,8 +79,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	 * cz.cuni.mff.d3s.deeco.knowledge.TriggerListener)
 	 */
 	@Override
-	public void register(Trigger trigger,
-			TriggerListener triggerListener) {
+	public void register(Trigger trigger, TriggerListener triggerListener) {
 		if (trigger instanceof KnowledgeChangeTrigger) {
 			final KnowledgeChangeTrigger kct = (KnowledgeChangeTrigger) trigger;
 			List<TriggerListener> listeners;
@@ -103,8 +102,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	 * cz.cuni.mff.d3s.deeco.knowledge.TriggerListener)
 	 */
 	@Override
-	public void unregister(Trigger trigger,
-			TriggerListener triggerListener) {
+	public void unregister(Trigger trigger, TriggerListener triggerListener) {
 		if (trigger instanceof KnowledgeChangeTrigger) {
 			final KnowledgeChangeTrigger kct = (KnowledgeChangeTrigger) trigger;
 			if (knowledgeChangeListeners.containsKey(kct)) {
@@ -128,7 +126,8 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	 * .deeco.knowledge.ChangeSet)
 	 */
 	@Override
-	public void update(final ChangeSet changeSet) throws KnowledgeUpdateException {
+	public void update(final ChangeSet changeSet)
+			throws KnowledgeUpdateException {
 		final Map<KnowledgePath, Object> updated = new HashMap<>();
 		final List<KnowledgePath> added = new LinkedList<>();
 		Object original = null;
@@ -195,11 +194,11 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	 */
 	@Override
 	public boolean equals(final Object that) {
-		//FIXME: this does not seem right (equals does not consider the contents)
+		// FIXME: this does not seem right (equals does not consider the
+		// contents)
 		boolean result = false;
 		if (that instanceof BaseKnowledgeManager) {
-			result = ((BaseKnowledgeManager) that).id
-					.equals(id);
+			result = ((BaseKnowledgeManager) that).id.equals(id);
 		}
 		return result;
 	}
@@ -208,9 +207,9 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	 * (non-Javadoc)
 	 * 
 	 * @see java.lang.Object#hashCode()
-	 */	
+	 */
 	@Override
-	public int hashCode() {		
+	public int hashCode() {
 		return id.hashCode();
 	}
 
@@ -232,9 +231,10 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		if (knowledgePath.isEmpty()) {
 			result = knowledge;
 		} else {
-		// handle ID separately
-		if ((knowledgePath.size() == 1) && (knowledgePath.get(0) instanceof PathNodeComponentId))
-			return id;
+			// handle ID separately
+			if ((knowledgePath.size() == 1)
+					&& (knowledgePath.get(0) instanceof PathNodeComponentId))
+				return id;
 			// Otherwise we should go through each knowledge entry, find the
 			// partial path matching and try to retrieve the data from the
 			// matched node in the knowledge
@@ -509,7 +509,8 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		List<PathNode> kctNodes;
 		final List<PathNode> kpNodes = knowledgePath.getNodes();
 		// Go through each knowledge change trigger
-		for (final KnowledgeChangeTrigger kct : knowledgeChangeListeners.keySet()) {
+		for (final KnowledgeChangeTrigger kct : knowledgeChangeListeners
+				.keySet()) {
 			kctNodes = kct.getKnowledgePath().getNodes();
 			// Now we need to check if the knowledge change trigger matches
 			// the knowledge path that has changed.
@@ -521,7 +522,8 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 					|| containmentEndIndex(kctNodes, kpNodes) > -1) {
 				// If the knowledge change trigger matches then we need to
 				// notify its listeners about the change
-				for (final TriggerListener listener : knowledgeChangeListeners.get(kct)) {
+				for (final TriggerListener listener : knowledgeChangeListeners
+						.get(kct)) {
 					listener.triggered(kct);
 				}
 			}
