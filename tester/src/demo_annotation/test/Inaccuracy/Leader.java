@@ -5,7 +5,7 @@ import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 
-//The order of the attributes matters. Start with the higher differential The index -1 shou
+//The order of the attributes matters. Start with the higher differential The index -1 should be once in each ModelDefinition
 @StateSpaceModel(models = @Model( period = 100, state  = {"lFFSpeed","lFFPos"}, 
 								 result = @Fun(returnedIndex = {-1,0}, referenceModel = VehicleModel.class)))
 @Component
@@ -17,7 +17,6 @@ public class Leader {
 	public Double lSpeed = 0.0;
 	public Double lGas = 0.0;
 	public Double lBrake = 0.0;
-	public Double lAlarm = 0.0;
 	
 	public Double lIntegratorSpeedError = 0.0;
 	public Double lErrorWindup = 0.0;
@@ -27,7 +26,6 @@ public class Leader {
 	public Double lFFPos = 0.0;
 	@TimeStamp
 	public Double lFFSpeed = 0.0;
-	public Boolean lFFHold = false;
 
 	protected static final double KP = 0.05;
 	protected static final double KI = 0.000228325;
@@ -52,7 +50,6 @@ public class Leader {
 
 			@InOut("lFFPos") InaccuracyParamHolder<Double> lFFPos,
 			@InOut("lFFSpeed") InaccuracyParamHolder<Double> lFFSpeed,
-			@InOut("lFFHold") ParamHolder<Boolean> lFFHold,
 			@InOut("lGas") ParamHolder<Double> lGas,
 			@InOut("lBrake") ParamHolder<Double> lBrake,
 
@@ -85,8 +82,6 @@ public class Leader {
  		System.out.println("Speed Leader_FireFighter : "+lFFSpeed.value+", pos : "+lFFPos.value+"... time :"+lFFPos.creationTime);
  		System.out.println("Inaccuracy Leader_FireFighter : pos : "+lFFPos.value+" E ["+lFFPos.minBoundary+" , "+lFFPos.maxBoundary+"] ... time :"+lFFPos.creationTime+" ... current time: "+currentTime+" ...  dt : "+(currentTime-lFFPos.creationTime));
 		System.out.println("============================================================================================");
-		lFFHold.value = !lFFHold.value;
-
 	}
 
 	
@@ -99,69 +94,3 @@ public class Leader {
 	}
 
 }
-
-
-
-//the state space model have the in states and the out states are the index of in states or -1 to use the model and calculate the derived value
-
-
-//
-//
-
-//double lFFAccelerationMin = Database.getAcceleration(lFFSpeed.value, lFFPos.value, Database.fTorques, 0.0, 1.0,Database.fMass);
-//lFFSpeed.value += lFFAccelerationMin * timePeriodInSeconds; 
-//lFFPos.value += lFFSpeed.value * timePeriodInSeconds;
-//
-//double lFFAccelerationMax = Database.getAcceleration(lFFSpeed.value, lFFPos.value, Database.fTorques, 1.0, 0.0,Database.fMass);
-//lFFSpeed.value += lFFAccelerationMax * timePeriodInSeconds; 
-//lFFPos.value += lFFSpeed.value * timePeriodInSeconds;
-
-
-//@Process
-//@PeriodicScheduling(value = (int) MODETIMEPERIOD)
-//public static void initilizedLeader(
-//		@Out("lPos") ParamHolder<Double> lPos,
-//		@Out("lSpeed") ParamHolder<Double> lSpeed,
-//
-//		@InOut("lFFPos") TSParamHolder<Double> lFFPos,
-//		@InOut("lFFSpeed") TSParamHolder<Double> lFFSpeed,
-//		@Out("lGas") ParamHolder<Double> lGas,
-//		@Out("lBrake") ParamHolder<Double> lBrake,
-//		@Out("lAlarm") ParamHolder<Double> lAlarm,
-//
-//		@Out("lIntegratorSpeedError") ParamHolder<Double> lIntegratorSpeedError,
-//		@Out("lErrorWindup") ParamHolder<Double> lErrorWindup			
-//		){
-//	
-//	lPos.value = 0.0;
-//	lSpeed.value = 0.0;
-//
-//	lFFPos.value = 0.0;
-//	lFFSpeed.value = 0.0;
-//	lGas.value = 0.0; 
-//	lBrake.value = 0.0;
-//	lAlarm.value = 0.0;
-//
-//	lIntegratorSpeedError.value = 0.0;
-//	lErrorWindup.value = 0.0;
-//}
-//
-//
-//@Process
-//@PeriodicScheduling(value = (int) MODETIMEPERIOD)
-//public static void ffConnected(
-//		@In("lPos") Double lPos
-//		){
-//	System.out.println("The FireFighter is connected");
-//}
-//
-//
-//@Process
-//@PeriodicScheduling(value = (int) MODETIMEPERIOD)
-//public static void alarmed(
-//		@Out("lAlarm") ParamHolder<Double> lAlarm			
-//		){
-//	lAlarm.value = 1.0;
-//	System.out.println("Alarm .......");
-//}
-	

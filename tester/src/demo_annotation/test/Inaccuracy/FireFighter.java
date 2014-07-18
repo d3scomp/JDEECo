@@ -17,7 +17,6 @@ public class FireFighter{
 	public Double ffSpeed = 0.0;
 	public Double ffGas = 0.0;
 	public Double ffBrake = 0.0;
-	public Boolean ffHold = true;
 	
 	public Double ffIntegratorSpeedError = 0.0;
 	public Double ffErrorWindup = 0.0;
@@ -32,22 +31,6 @@ public class FireFighter{
 	protected static final double SEC_NANOSECOND_FACTOR = 1000000000;
 	protected static final double SEC_MILISEC_FACTOR = 1000;
 	
-	
-	@Process
-	@PeriodicScheduling(value = 10000)
-	public static void waitConnection(
-			@InOut("ffHold") ParamHolder<Boolean> ffHold
-			){
-		ffHold.value = false;
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		ffHold.value = true;
-	}
-
 		
 	@Process
 	@PeriodicScheduling((int)TIMEPERIOD)
