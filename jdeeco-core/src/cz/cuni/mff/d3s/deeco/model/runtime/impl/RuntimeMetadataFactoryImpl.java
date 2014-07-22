@@ -86,8 +86,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 			case RuntimeMetadataPackage.PATH_NODE_COMPONENT_ID: return createPathNodeComponentId();
 			case RuntimeMetadataPackage.STRING_TO_OBJECT_MAP: return (EObject)createStringToObjectMap();
 			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION: return createStateSpaceModelDefinition();
-			case RuntimeMetadataPackage.MODE_CONTROLLER: return createModeController();
-			case RuntimeMetadataPackage.MODE_TRANSITION: return createModeTransition();
+			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_UNCHANGE_TRIGGER: return createKnowledgeValueUnchangeTrigger();
+			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER: return createKnowledgeValueChangeTrigger();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -105,6 +105,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 				return createParameterDirectionFromString(eDataType, initialValue);
 			case RuntimeMetadataPackage.METADATA_TYPE:
 				return createMetadataTypeFromString(eDataType, initialValue);
+			case RuntimeMetadataPackage.COMPARISON_TYPE:
+				return createComparisonTypeFromString(eDataType, initialValue);
 			case RuntimeMetadataPackage.METHOD:
 				return createMethodFromString(eDataType, initialValue);
 			case RuntimeMetadataPackage.KNOWLEDGE_MANAGER:
@@ -134,6 +136,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 				return convertParameterDirectionToString(eDataType, instanceValue);
 			case RuntimeMetadataPackage.METADATA_TYPE:
 				return convertMetadataTypeToString(eDataType, instanceValue);
+			case RuntimeMetadataPackage.COMPARISON_TYPE:
+				return convertComparisonTypeToString(eDataType, instanceValue);
 			case RuntimeMetadataPackage.METHOD:
 				return convertMethodToString(eDataType, instanceValue);
 			case RuntimeMetadataPackage.KNOWLEDGE_MANAGER:
@@ -336,9 +340,9 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public ModeController createModeController() {
-		ModeControllerImpl modeController = new ModeControllerImpl();
-		return modeController;
+	public KnowledgeValueUnchangeTrigger createKnowledgeValueUnchangeTrigger() {
+		KnowledgeValueUnchangeTriggerImpl knowledgeValueUnchangeTrigger = new KnowledgeValueUnchangeTriggerImpl();
+		return knowledgeValueUnchangeTrigger;
 	}
 
 	/**
@@ -346,9 +350,9 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public ModeTransition createModeTransition() {
-		ModeTransitionImpl modeTransition = new ModeTransitionImpl();
-		return modeTransition;
+	public KnowledgeValueChangeTrigger createKnowledgeValueChangeTrigger() {
+		KnowledgeValueChangeTriggerImpl knowledgeValueChangeTrigger = new KnowledgeValueChangeTriggerImpl();
+		return knowledgeValueChangeTrigger;
 	}
 
 	/**
@@ -470,6 +474,26 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * @generated
 	 */
 	public String convertMetadataTypeToString(EDataType eDataType, Object instanceValue) {
+		return instanceValue == null ? null : instanceValue.toString();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public ComparisonType createComparisonTypeFromString(EDataType eDataType, String initialValue) {
+		ComparisonType result = ComparisonType.get(initialValue);
+		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+		return result;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertComparisonTypeToString(EDataType eDataType, Object instanceValue) {
 		return instanceValue == null ? null : instanceValue.toString();
 	}
 

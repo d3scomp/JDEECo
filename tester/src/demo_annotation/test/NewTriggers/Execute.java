@@ -1,4 +1,4 @@
-package demo_annotation.test.TS;
+package demo_annotation.test.NewTriggers;
 
  
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
@@ -21,12 +21,9 @@ public class Execute {
 		RuntimeMetadata model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
 		
 		processor.process(model, 
-//				   			 new Leader(), 
+				   			 new Leader(), 
 				   			 new FireFighter(), 
-				   			 new Environment(),  // Components 
-//							 LeaderEnvEnsemble.class,  
-				   			 FireFighterEnvEnsemble.class//,
-//				   			 FireFighterLeaderEnsemble.class // Ensembles
+				   			 FireFighterLeaderEnsemble.class // Ensembles
 							);
 		
 		RuntimeFrameworkBuilder builder = new RuntimeFrameworkBuilder(

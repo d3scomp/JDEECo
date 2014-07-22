@@ -8,12 +8,20 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.emf.common.util.EList;
+
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComparisonType;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueChangeTrigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueUnchangeTrigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.MetadataType;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
+import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder;
 
 /**
  * This class implements the KnowledgeManager interface. It allows the user to
@@ -28,6 +36,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 public class BaseKnowledgeManager implements KnowledgeManager {
 
 	private final Map<KnowledgePath, Object> knowledge;
+	private final Map<KnowledgePath, Boolean> updateKnowledge;
 	private final Map<KnowledgeChangeTrigger, List<TriggerListener>> knowledgeChangeListeners;
 
 	private final String id;
@@ -35,6 +44,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	public BaseKnowledgeManager(String id) {
 		this.id = id;
 		this.knowledge = new HashMap<>();
+		this.updateKnowledge = new HashMap<>();
 		this.knowledgeChangeListeners = new HashMap<>();
 	}
 
@@ -80,8 +90,17 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	 */
 	@Override
 	public void register(Trigger trigger, TriggerListener triggerListener) {
-		if (trigger instanceof KnowledgeChangeTrigger) {
-			final KnowledgeChangeTrigger kct = (KnowledgeChangeTrigger) trigger;
+
+		KnowledgeChangeTrigger kct = null;
+		if (trigger instanceof KnowledgeValueChangeTrigger) {
+			kct = (KnowledgeValueChangeTrigger) trigger;
+		} else if (trigger instanceof KnowledgeValueUnchangeTrigger) {
+			kct = (KnowledgeValueUnchangeTrigger) trigger;
+		}else if (trigger instanceof KnowledgeChangeTrigger) {
+			kct = (KnowledgeChangeTrigger) trigger;
+		}
+		
+		if(kct != null){
 			List<TriggerListener> listeners;
 			if (knowledgeChangeListeners.containsKey(kct)) {
 				listeners = knowledgeChangeListeners.get(kct);
@@ -103,8 +122,18 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	 */
 	@Override
 	public void unregister(Trigger trigger, TriggerListener triggerListener) {
-		if (trigger instanceof KnowledgeChangeTrigger) {
-			final KnowledgeChangeTrigger kct = (KnowledgeChangeTrigger) trigger;
+		
+		KnowledgeChangeTrigger kct = null;
+		
+		if (trigger instanceof KnowledgeValueChangeTrigger) {
+			kct = (KnowledgeValueChangeTrigger) trigger;
+		}else if (trigger instanceof KnowledgeValueUnchangeTrigger) {
+			kct = (KnowledgeValueUnchangeTrigger) trigger;
+		}else if (trigger instanceof KnowledgeChangeTrigger) {
+			kct = (KnowledgeChangeTrigger) trigger;
+		}
+		
+		if(kct != null){
 			if (knowledgeChangeListeners.containsKey(kct)) {
 				knowledgeChangeListeners.get(kct).remove(triggerListener);
 			}
@@ -148,7 +177,12 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 				// revert it back in case of problems
 				if (exists) {
 					updated.put(updateKP, original);
+					if(checkValueEquality(original,changeSet.getValue(updateKP)))
+						updateKnowledge.put(updateKP, false);
+					else
+						updateKnowledge.put(updateKP, true);
 				} else {
+					updateKnowledge.put(updateKP, true);
 					added.add(updateKP);
 				}
 			}
@@ -183,10 +217,99 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		// thrown, we need to notify the listeners about updates done.
 		for (final KnowledgePath knowledgePath : changeSet
 				.getUpdatedReferences()) {
+			if(updateKnowledge.get(knowledgePath))
+				notifyKnowledgeValueChangeListeners(knowledgePath);
+			else if(!updateKnowledge.get(knowledgePath))
+				notifyKnowledgeValueUnchangeListeners(knowledgePath, changeSet.getValue(knowledgePath));
 			notifyKnowledgeChangeListeners(knowledgePath);
+			
 		}
 	}
 
+	private boolean checkValueEquality(Object original, Object value) {
+		
+		InaccuracyParamHolder oldV = new InaccuracyParamHolder<>();
+		InaccuracyParamHolder newV = new InaccuracyParamHolder<>();
+		
+		if(original instanceof InaccuracyParamHolder){
+			oldV = (InaccuracyParamHolder)original;
+			newV = (InaccuracyParamHolder)value;
+		}else if(original instanceof TSParamHolder){
+			oldV.setWithTS((TSParamHolder)original);
+			newV.setWithTS((TSParamHolder)value);			
+		}else{
+			oldV.value = original;
+			newV.value = value;
+		}
+			
+		if(oldV.value.equals(newV.value))
+			return true;
+		
+		return false;
+	}
+
+	private boolean checkCondition(KnowledgeValueUnchangeTrigger kct, Object object) {
+		
+		InaccuracyParamHolder<Double> key = new InaccuracyParamHolder<Double>();
+		if(object instanceof InaccuracyParamHolder){
+			key.setWithInaccuracy((InaccuracyParamHolder)object);
+		}else if(object instanceof TSParamHolder){
+			key.setWithTS((TSParamHolder)object);
+		}else{
+			key.value = (Double)object;
+		}
+		
+		Double val =  new Double(0.0);
+		switch(kct.getMeta()){
+		case INACCURACY:
+			val = key.maxBoundary - key.minBoundary;
+			break;
+		case TS:
+			val = key.creationTime;
+			break;
+		case MIN_BOUNDARY:
+			val = key.minBoundary;
+			break;
+		case MAX_BOUNDARY:
+			val = key.maxBoundary;
+			break;
+		case EMPTY:
+			val = key.value;
+			break;
+		default:
+			val = key.value;
+			break;				
+		}
+		
+			EList<ComparisonType> comps = kct.getComparison();
+			EList<Long> vals = kct.getValue();
+			Boolean result = true;
+			
+			for (int i = 0; i < comps.size(); i++) {
+				result = result && checkComparison(comps.get(i), val, vals.get(i).doubleValue());
+			}
+		return result;
+	}
+
+	
+	
+	private boolean checkComparison(ComparisonType comp, double val1, double val2){
+		switch(comp){
+		case EQUAL:
+			if(val1 == val2) return true; else return false;
+		case EQUAL_LESS_THAN:
+			if(val1 <= val2) return true; else return false;
+		case EQUAL_MORE_THAN:
+			if(val1 >= val2) return true; else return false;
+		case LESS_THAN:
+			if(val1 < val2) return true; else return false;
+		case MORE_THAN:
+			if(val1 > val2) return true; else return false;
+		default:
+			return false;
+	}
+
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -511,20 +634,83 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		// Go through each knowledge change trigger
 		for (final KnowledgeChangeTrigger kct : knowledgeChangeListeners
 				.keySet()) {
-			kctNodes = kct.getKnowledgePath().getNodes();
-			// Now we need to check if the knowledge change trigger matches
-			// the knowledge path that has changed.
-			// There can be diffferent path prefixing that we need to consider.
-			// Examples:
-			// knowledgePath: a.b.c, kct: a.b
-			// knowledgePath : a.b, kct: a.b.c
-			if (containmentEndIndex(kpNodes, kctNodes) > -1
-					|| containmentEndIndex(kctNodes, kpNodes) > -1) {
-				// If the knowledge change trigger matches then we need to
-				// notify its listeners about the change
-				for (final TriggerListener listener : knowledgeChangeListeners
-						.get(kct)) {
-					listener.triggered(kct);
+			if(!(kct instanceof KnowledgeValueChangeTrigger) && !(kct instanceof KnowledgeValueUnchangeTrigger)){
+				kctNodes = kct.getKnowledgePath().getNodes();
+				// Now we need to check if the knowledge change trigger matches
+				// the knowledge path that has changed.
+				// There can be diffferent path prefixing that we need to consider.
+				// Examples:
+				// knowledgePath: a.b.c, kct: a.b
+				// knowledgePath : a.b, kct: a.b.c
+				if (containmentEndIndex(kpNodes, kctNodes) > -1
+						|| containmentEndIndex(kctNodes, kpNodes) > -1) {
+					// If the knowledge change trigger matches then we need to
+					// notify its listeners about the change
+					for (final TriggerListener listener : knowledgeChangeListeners
+							.get(kct)) {
+						listener.triggered(kct);
+					}
+				}
+			}
+		}
+	}
+
+	
+	private void notifyKnowledgeValueChangeListeners(
+			final KnowledgePath knowledgePath) {
+		List<PathNode> kctNodes;
+		final List<PathNode> kpNodes = knowledgePath.getNodes();
+		// Go through each knowledge change trigger
+		for (final KnowledgeChangeTrigger kct : knowledgeChangeListeners
+				.keySet()) {
+			if(kct instanceof KnowledgeValueChangeTrigger){
+				KnowledgeValueChangeTrigger kvct = (KnowledgeValueChangeTrigger)kct; 
+				kctNodes = kvct.getKnowledgePath().getNodes();
+				// Now we need to check if the knowledge change trigger matches
+				// the knowledge path that has changed.
+				// There can be diffferent path prefixing that we need to consider.
+				// Examples:
+				// knowledgePath: a.b.c, kct: a.b
+				// knowledgePath : a.b, kct: a.b.c
+				if (containmentEndIndex(kpNodes, kctNodes) > -1
+						|| containmentEndIndex(kctNodes, kpNodes) > -1) {
+					// If the knowledge change trigger matches then we need to
+					// notify its listeners about the change
+					for (final TriggerListener listener : knowledgeChangeListeners
+							.get(kvct)) {
+						listener.triggered(kvct);
+					}
+				}
+			}
+		}
+	}
+
+	
+	private void notifyKnowledgeValueUnchangeListeners(
+			final KnowledgePath knowledgePath, Object value) {
+		List<PathNode> kctNodes;
+		final List<PathNode> kpNodes = knowledgePath.getNodes();
+		// Go through each knowledge change trigger
+		for (final KnowledgeChangeTrigger kct : knowledgeChangeListeners
+				.keySet()) {
+			if(kct instanceof KnowledgeValueUnchangeTrigger){
+				KnowledgeValueUnchangeTrigger kvct = (KnowledgeValueUnchangeTrigger)kct; 
+				kctNodes = kvct.getKnowledgePath().getNodes();
+				// Now we need to check if the knowledge change trigger matches
+				// the knowledge path that has changed.
+				// There can be diffferent path prefixing that we need to consider.
+				// Examples:
+				// knowledgePath: a.b.c, kct: a.b
+				// knowledgePath : a.b, kct: a.b.c
+				if (containmentEndIndex(kpNodes, kctNodes) > -1
+						|| containmentEndIndex(kctNodes, kpNodes) > -1) {
+					// If the knowledge change trigger matches then we need to
+					// notify its listeners about the change
+					for (final TriggerListener listener : knowledgeChangeListeners
+							.get(kvct)) {
+						if(checkCondition(kvct, value))
+							listener.triggered(kvct);
+					}
 				}
 			}
 		}

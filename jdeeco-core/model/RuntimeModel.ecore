@@ -16,8 +16,6 @@
   <eClassifiers xsi:type="ecore:EClass" name="KnowledgePath">
     <eStructuralFeatures xsi:type="ecore:EReference" name="nodes" lowerBound="1" upperBound="-1"
         eType="#//PathNode" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="modeTransitions" upperBound="-1"
-        eType="#//ModeTransition" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PathNode" abstract="true"/>
   <eClassifiers xsi:type="ecore:EDataType" name="Method" instanceClassName="java.lang.reflect.Method"/>
@@ -47,8 +45,6 @@
         eType="#//EnsembleController" containment="true" eOpposite="#//EnsembleController/componentInstance"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="internalData" upperBound="-1"
         eType="#//StringToObjectMap" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="modeControllers" upperBound="-1"
-        eType="#//ModeController" containment="true" eOpposite="#//ModeController/componentInstance"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="stateSpaceModels" upperBound="-1"
         eType="#//StateSpaceModelDefinition" containment="true" eOpposite="#//StateSpaceModelDefinition/componentInstance"/>
   </eClassifiers>
@@ -122,23 +118,6 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="modelValue" lowerBound="1"
         eType="#//InaccurateValue"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ModeController">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="initMode" lowerBound="1"
-        eType="#//ComponentProcess"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="parentMode" eType="#//ComponentProcess"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="allModes" lowerBound="1"
-        upperBound="-1" eType="#//ComponentProcess"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="componentInstance" lowerBound="1"
-        eType="#//ComponentInstance" eOpposite="#//ComponentInstance/modeControllers"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ModeTransition">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="fromMode" lowerBound="1"
-        eType="#//ComponentProcess"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="toMode" lowerBound="1"
-        eType="#//ComponentProcess"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="transitionCondition" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="meta" eType="#//MetadataType"/>
-  </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="ModelType" instanceClassName="cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ModelInterface"/>
   <eClassifiers xsi:type="ecore:EEnum" name="MetadataType">
     <eLiterals name="EMPTY"/>
@@ -148,4 +127,19 @@
     <eLiterals name="INACCURACY" value="4"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="InaccurateValue" instanceClassName="cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder"/>
+  <eClassifiers xsi:type="ecore:EClass" name="KnowledgeValueUnchangeTrigger" eSuperTypes="#//KnowledgeChangeTrigger">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" upperBound="-1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="comparison" upperBound="-1"
+        eType="#//ComparisonType"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="meta" eType="#//MetadataType"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="ComparisonType">
+    <eLiterals name="EQUAL"/>
+    <eLiterals name="EQUAL_LESS_THAN" value="1"/>
+    <eLiterals name="EQUAL_MORE_THAN" value="2"/>
+    <eLiterals name="LESS_THAN" value="3"/>
+    <eLiterals name="MORE_THAN" value="4"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="KnowledgeValueChangeTrigger" eSuperTypes="#//KnowledgeChangeTrigger"/>
 </ecore:EPackage>

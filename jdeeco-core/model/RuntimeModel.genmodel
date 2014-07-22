@@ -21,6 +21,13 @@
       <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//MetadataType/MAX_BOUNDARY"/>
       <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//MetadataType/INACCURACY"/>
     </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="RuntimeModel.ecore#//ComparisonType">
+      <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//ComparisonType/EQUAL"/>
+      <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//ComparisonType/EQUAL_LESS_THAN"/>
+      <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//ComparisonType/EQUAL_MORE_THAN"/>
+      <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//ComparisonType/LESS_THAN"/>
+      <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//ComparisonType/MORE_THAN"/>
+    </genEnums>
     <genDataTypes ecoreDataType="RuntimeModel.ecore#//Method"/>
     <genDataTypes ecoreDataType="RuntimeModel.ecore#//KnowledgeManager"/>
     <genDataTypes ecoreDataType="RuntimeModel.ecore#//ShadowKnowledgeManagerRegistry"/>
@@ -37,7 +44,6 @@
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//KnowledgePath">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//KnowledgePath/nodes"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//KnowledgePath/modeTransitions"/>
     </genClasses>
     <genClasses image="false" ecoreClass="RuntimeModel.ecore#//PathNode"/>
     <genClasses ecoreClass="RuntimeModel.ecore#//PathNodeField">
@@ -57,7 +63,6 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentInstance/shadowKnowledgeManagerRegistry"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentInstance/ensembleControllers"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentInstance/internalData"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentInstance/modeControllers"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentInstance/stateSpaceModels"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//EnsembleDefinition">
@@ -104,17 +109,11 @@
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//StateSpaceModelDefinition/derivationStates"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//StateSpaceModelDefinition/modelValue"/>
     </genClasses>
-    <genClasses ecoreClass="RuntimeModel.ecore#//ModeController">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ModeController/initMode"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ModeController/parentMode"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ModeController/allModes"/>
-      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ModeController/componentInstance"/>
+    <genClasses ecoreClass="RuntimeModel.ecore#//KnowledgeValueUnchangeTrigger">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//KnowledgeValueUnchangeTrigger/value"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//KnowledgeValueUnchangeTrigger/comparison"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//KnowledgeValueUnchangeTrigger/meta"/>
     </genClasses>
-    <genClasses ecoreClass="RuntimeModel.ecore#//ModeTransition">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ModeTransition/fromMode"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ModeTransition/toMode"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ModeTransition/transitionCondition"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ModeTransition/meta"/>
-    </genClasses>
+    <genClasses ecoreClass="RuntimeModel.ecore#//KnowledgeValueChangeTrigger"/>
   </genPackages>
 </genmodel:GenModel>

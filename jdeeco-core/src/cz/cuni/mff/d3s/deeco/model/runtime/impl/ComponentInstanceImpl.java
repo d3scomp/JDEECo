@@ -11,7 +11,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.api.ModeController;
+
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
@@ -49,7 +49,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getShadowKnowledgeManagerRegistry <em>Shadow Knowledge Manager Registry</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getEnsembleControllers <em>Ensemble Controllers</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getInternalData <em>Internal Data</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getModeControllers <em>Mode Controllers</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getStateSpaceModels <em>State Space Models</em>}</li>
  * </ul>
  * </p>
@@ -146,16 +145,6 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	 * @ordered
 	 */
 	protected EMap<String, Object> internalData;
-
-	/**
-	 * The cached value of the '{@link #getModeControllers() <em>Mode Controllers</em>}' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getModeControllers()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<ModeController> modeControllers;
 
 	/**
 	 * The cached value of the '{@link #getStateSpaceModels() <em>State Space Models</em>}' containment reference list.
@@ -290,18 +279,6 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<ModeController> getModeControllers() {
-		if (modeControllers == null) {
-			modeControllers = new EObjectContainmentWithInverseEList<ModeController>(ModeController.class, this, RuntimeMetadataPackage.COMPONENT_INSTANCE__MODE_CONTROLLERS, RuntimeMetadataPackage.MODE_CONTROLLER__COMPONENT_INSTANCE);
-		}
-		return modeControllers;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EList<StateSpaceModelDefinition> getStateSpaceModels() {
 		if (stateSpaceModels == null) {
 			stateSpaceModels = new EObjectContainmentWithInverseEList<StateSpaceModelDefinition>(StateSpaceModelDefinition.class, this, RuntimeMetadataPackage.COMPONENT_INSTANCE__STATE_SPACE_MODELS, RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__COMPONENT_INSTANCE);
@@ -322,8 +299,6 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 				return ((InternalEList<InternalEObject>)(InternalEList<?>)getComponentProcesses()).basicAdd(otherEnd, msgs);
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS:
 				return ((InternalEList<InternalEObject>)(InternalEList<?>)getEnsembleControllers()).basicAdd(otherEnd, msgs);
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__MODE_CONTROLLERS:
-				return ((InternalEList<InternalEObject>)(InternalEList<?>)getModeControllers()).basicAdd(otherEnd, msgs);
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__STATE_SPACE_MODELS:
 				return ((InternalEList<InternalEObject>)(InternalEList<?>)getStateSpaceModels()).basicAdd(otherEnd, msgs);
 		}
@@ -344,8 +319,6 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 				return ((InternalEList<?>)getEnsembleControllers()).basicRemove(otherEnd, msgs);
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__INTERNAL_DATA:
 				return ((InternalEList<?>)getInternalData()).basicRemove(otherEnd, msgs);
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__MODE_CONTROLLERS:
-				return ((InternalEList<?>)getModeControllers()).basicRemove(otherEnd, msgs);
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__STATE_SPACE_MODELS:
 				return ((InternalEList<?>)getStateSpaceModels()).basicRemove(otherEnd, msgs);
 		}
@@ -373,8 +346,6 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__INTERNAL_DATA:
 				if (coreType) return getInternalData();
 				else return getInternalData().map();
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__MODE_CONTROLLERS:
-				return getModeControllers();
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__STATE_SPACE_MODELS:
 				return getStateSpaceModels();
 		}
@@ -410,10 +381,6 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__INTERNAL_DATA:
 				((EStructuralFeature.Setting)getInternalData()).set(newValue);
 				return;
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__MODE_CONTROLLERS:
-				getModeControllers().clear();
-				getModeControllers().addAll((Collection<? extends ModeController>)newValue);
-				return;
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__STATE_SPACE_MODELS:
 				getStateSpaceModels().clear();
 				getStateSpaceModels().addAll((Collection<? extends StateSpaceModelDefinition>)newValue);
@@ -448,9 +415,6 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__INTERNAL_DATA:
 				getInternalData().clear();
 				return;
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__MODE_CONTROLLERS:
-				getModeControllers().clear();
-				return;
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__STATE_SPACE_MODELS:
 				getStateSpaceModels().clear();
 				return;
@@ -478,8 +442,6 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 				return ensembleControllers != null && !ensembleControllers.isEmpty();
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__INTERNAL_DATA:
 				return internalData != null && !internalData.isEmpty();
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__MODE_CONTROLLERS:
-				return modeControllers != null && !modeControllers.isEmpty();
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__STATE_SPACE_MODELS:
 				return stateSpaceModels != null && !stateSpaceModels.isEmpty();
 		}

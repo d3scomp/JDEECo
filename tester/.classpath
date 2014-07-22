@@ -2,8 +2,8 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/cz.cuni.mff.d3s.jdeeco.core"/>
 	<classpathentry kind="lib" path="C:/Users/Rima_a/Downloads/common-lang3.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Rima_a/Downloads/commons-math3-3.1.1.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/cz.cuni.mff.d3s.jdeeco.core"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

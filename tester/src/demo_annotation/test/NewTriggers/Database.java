@@ -1,4 +1,4 @@
-package demo_annotation.Modes;
+package demo_annotation.test.NewTriggers;
 
 import java.util.ArrayList;
 
@@ -165,7 +165,7 @@ public class Database {
 		double FHill = Math.sin(getValue(positionSeries, routeSlops, pos)) * g * mass;
 		double FFinal = FEng - FResistance - FEngResistance - FHill;
 		double Acceleration = FFinal / mass;
-		if(speed < 0 ) Acceleration = 0.0; 
+		
 		return Acceleration;
 	}
 	
@@ -177,7 +177,7 @@ public class Database {
 		double FResistance = (r_density / 2) * C_D * Math.pow(speed, 2) * A;
 		double FFinal = FL - FResistance;
 		double Acceleration = FFinal / mass;
-		if(speed < 0 ) Acceleration = 0.0;
+
 		return Acceleration;
 	}
 

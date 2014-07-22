@@ -8,7 +8,6 @@ import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 
 @ComponentModes(modes = {@ModesInfo(initMode = "inactive", allModes = {"inactive","active"}),
 						 @ModesInfo(parentMode = "active", initMode = "waitConnection", allModes = {"waitConnection","leaderConnected","mediatorConnected"})})
-@StateSpaceModel(models = @Model(state  = {"hFFSpeed","hFFPos"}, result = @Fun(returnedIndex = {-1,0}, referenceModel = VehicleModel.class)))
 @Component
 public class FireFighter{
 

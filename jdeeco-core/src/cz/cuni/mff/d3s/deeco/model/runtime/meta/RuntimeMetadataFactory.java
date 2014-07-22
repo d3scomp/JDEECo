@@ -12,10 +12,11 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Exchange;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Invocable;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
+
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.api.ModeController;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.ModeTransition;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueChangeTrigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueUnchangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
@@ -199,22 +200,22 @@ public interface RuntimeMetadataFactory extends EFactory {
 	StateSpaceModelDefinition createStateSpaceModelDefinition();
 
 	/**
-	 * Returns a new object of class '<em>Mode Controller</em>'.
+	 * Returns a new object of class '<em>Knowledge Value Unchange Trigger</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Mode Controller</em>'.
+	 * @return a new object of class '<em>Knowledge Value Unchange Trigger</em>'.
 	 * @generated
 	 */
-	ModeController createModeController();
+	KnowledgeValueUnchangeTrigger createKnowledgeValueUnchangeTrigger();
 
 	/**
-	 * Returns a new object of class '<em>Mode Transition</em>'.
+	 * Returns a new object of class '<em>Knowledge Value Change Trigger</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Mode Transition</em>'.
+	 * @return a new object of class '<em>Knowledge Value Change Trigger</em>'.
 	 * @generated
 	 */
-	ModeTransition createModeTransition();
+	KnowledgeValueChangeTrigger createKnowledgeValueChangeTrigger();
 
 	/**
 	 * Returns a new object of class '<em>Time Trigger</em>'.

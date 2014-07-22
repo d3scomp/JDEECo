@@ -24,7 +24,6 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getShadowKnowledgeManagerRegistry <em>Shadow Knowledge Manager Registry</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getEnsembleControllers <em>Ensemble Controllers</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getInternalData <em>Internal Data</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getModeControllers <em>Mode Controllers</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getStateSpaceModels <em>State Space Models</em>}</li>
  * </ul>
  * </p>
@@ -164,24 +163,6 @@ public interface ComponentInstance extends EObject {
 	 * @generated
 	 */
 	EMap<String, Object> getInternalData();
-
-	/**
-	 * Returns the value of the '<em><b>Mode Controllers</b></em>' containment reference list.
-	 * The list contents are of type {@link cz.cuni.mff.d3s.deeco.model.runtime.api.ModeController}.
-	 * It is bidirectional and its opposite is '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ModeController#getComponentInstance <em>Component Instance</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Mode Controllers</em>' containment reference list isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Mode Controllers</em>' containment reference list.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance_ModeControllers()
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ModeController#getComponentInstance
-	 * @model opposite="componentInstance" containment="true"
-	 * @generated
-	 */
-	EList<ModeController> getModeControllers();
 
 	/**
 	 * Returns the value of the '<em><b>State Space Models</b></em>' containment reference list.

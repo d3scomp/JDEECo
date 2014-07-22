@@ -5,13 +5,15 @@ import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.MetadataType;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
+import demo_annotation.test.Inaccuracy.VehicleModel;
+
+
 
 //define all the component modes with its tree structure (modes have submodes - that will help in defining the )
-@ComponentModes(modes = {@ModesInfo(initMode = "initilizedLeader", 
-				                    allModes = {"initilizedLeader","FFConnected","alarmed"})})
+@ComponentModes(modes = {@ModesInfo(initMode = "initilizedLeader", allModes = {"initilizedLeader","FFConnected","alarmed"})})
 //the state space model have the in states and the out states are the index of in states or -1 to use the model and calculate the derived value
-@StateSpaceModel(models = @Model(state  = {"hFFSpeed","hFFPos"}, 
-				 result = @Fun(returnedIndex = {-1,0}, referenceModel = VehicleModel.class)))
+@StateSpaceModel(models = @Model(periodicScheduling = @PeriodicScheduling(100), triggerField = "lFFHold",
+								 state  = {"lFFPos","lFFSpeed"}, result = @Fun(returnedIndex = {1,-1}, referenceModel = VehicleModel.class)))
 @Component
 public class Leader {
 
@@ -28,21 +30,12 @@ public class Leader {
 
 	
 	@ModeTransactions( 
-		    transitions= {@ModeTransition(meta = MetadataType.INACCURACY, 
-		    								fromMode = "initilizedLeader" , toMode = "alarmed" , 
-		    								transitionCondition = "(? + 0) > 10000"), 
+		    transitions= {@ModeTransition(meta = MetadataType.INACCURACY, fromMode = "initilizedLeader" , toMode = "alarmed", transitionCondition = "(? + 0) > 10000"), 
 		    								// MODETIMEPERIOD = 200 .... could be added to enter the periodic time 
 		    								//for the mode. I should try it as code to know if it could work or not.
-		    			  @ModeTransition(meta = MetadataType.INACCURACY, 
-		    								fromMode = "initilizedLeader" , toMode = "ffConnected" , 
-		    								transitionCondition = "(? + 0) <= 10000"),
-		    			  @ModeTransition(meta = MetadataType.INACCURACY, 
-		    								fromMode = "ffConnected" , toMode = "alarmed" , 
-		    								transitionCondition = "(? + 0) > 10000"),
-		    			  @ModeTransition(meta = MetadataType.INACCURACY, 
-		    								fromMode = "alarmed" , toMode = "ffConnected" , 
-		    								transitionCondition = "(? + 0) <= 10000")}
-			) 	
+		    			  @ModeTransition(meta = MetadataType.INACCURACY, fromMode = "initilizedLeader" , toMode = "ffConnected", transitionCondition = "(? + 0) <= 10000"),
+		    			  @ModeTransition(meta = MetadataType.INACCURACY, fromMode = "ffConnected" , toMode = "alarmed", transitionCondition = "(? + 0) > 10000"),
+		    			  @ModeTransition(meta = MetadataType.INACCURACY, fromMode = "alarmed" , toMode = "ffConnected", transitionCondition = "(? + 0) <= 10000")}) 	
 	@TimeStamp
 	public Double lFFPos = 0.0;
 
@@ -64,7 +57,6 @@ public class Leader {
 
 	@Mode
 	@Process
-	@PeriodicScheduling(value = (int) MODETIMEPERIOD)
 	public static void initilizedLeader(
 			@Out("lPos") ParamHolder<Double> lPos,
 			@Out("lSpeed") ParamHolder<Double> lSpeed,
@@ -96,7 +88,6 @@ public class Leader {
 	//it will have a problem because there is no parameters in the process
 	@Mode
 	@Process
-	@PeriodicScheduling(value = (int) MODETIMEPERIOD)
 	public static void ffConnected(
 			@In("lPos") Double lPos
 			){
@@ -106,7 +97,6 @@ public class Leader {
 	
 	@Mode
 	@Process
-	@PeriodicScheduling(value = (int) MODETIMEPERIOD)
 	public static void alarmed(
 			@Out("lAlarm") ParamHolder<Double> lAlarm			
 			){

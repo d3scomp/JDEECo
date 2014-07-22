@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +26,6 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.*;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ModelInterface;
-
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder;
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
 import cz.cuni.mff.d3s.deeco.network.GenericCommunicationBoundaryPredicate;
@@ -480,15 +480,19 @@ public class AnnotationProcessor {
 			componentProcess.getParameters().addAll(createParameters(m, true));
 			TimeTrigger periodicTrigger = createPeriodicTrigger(m);
 			List<KnowledgeChangeTrigger> knowledgeChangeTriggers = createKnowledgeChangeTriggers(m, true);
+			List<KnowledgeValueChangeTrigger> knowledgeValueChangeTriggers = createKnowledgeValueChangeTriggers(m, true);
+			List<KnowledgeValueUnchangeTrigger> knowledgeValueUnchangeTriggers = createKnowledgeValueUnchangeTriggers(m, true);
 			if (periodicTrigger == null) {
-				if (knowledgeChangeTriggers.isEmpty()) {
+				if (knowledgeChangeTriggers.isEmpty()&&knowledgeValueChangeTriggers.isEmpty()&&knowledgeValueUnchangeTriggers.isEmpty()) {
 					throw new AnnotationProcessorException("No triggers were found.");
 				}
 			} else {
 				componentProcess.getTriggers().add(periodicTrigger);
 			}
 			componentProcess.getTriggers().addAll(knowledgeChangeTriggers);
-
+			componentProcess.getTriggers().addAll(knowledgeValueChangeTriggers);
+			componentProcess.getTriggers().addAll(knowledgeValueUnchangeTriggers);
+			
 		} catch (AnnotationProcessorException e) {
 			String msg = "Process: "+componentProcess.getName()+"->"+e.getMessage();
 			throw new AnnotationProcessorException(msg, e);
@@ -553,7 +557,51 @@ public class AnnotationProcessor {
 		return knowledgeChangeTriggers;
 	}
 	
-
+	List<KnowledgeValueChangeTrigger> createKnowledgeValueChangeTriggers(Method method, boolean inComponentProcess) 
+			throws AnnotationProcessorException, ParseException {
+		List<KnowledgeValueChangeTrigger> knowledgeValueChangeTriggers = new ArrayList<>();
+		Type[] parameterTypes = method.getParameterTypes();
+		Annotation[][] allAnnotations = method.getParameterAnnotations();
+		for (int i = 0; i < parameterTypes.length; i++) {
+			TriggerOnValueChange t = getAnnotation(allAnnotations[i], TriggerOnValueChange.class);
+			if (t != null) {
+				Annotation directionAnnotation = getDirectionAnnotation(allAnnotations[i]);
+				String path = getDirectionAnnotationValue(directionAnnotation);
+				KnowledgeValueChangeTrigger trigger = factory.createKnowledgeValueChangeTrigger();
+				trigger.setKnowledgePath(createKnowledgePath(path, inComponentProcess));
+				knowledgeValueChangeTriggers.add(trigger);
+			}
+		}
+		return knowledgeValueChangeTriggers;
+	}
+	
+	List<KnowledgeValueUnchangeTrigger> createKnowledgeValueUnchangeTriggers(Method method, boolean inComponentProcess) 
+			throws AnnotationProcessorException, ParseException {
+		List<KnowledgeValueUnchangeTrigger> knowledgeValueUnchangeTriggers = new ArrayList<>();
+		Type[] parameterTypes = method.getParameterTypes();
+		Annotation[][] allAnnotations = method.getParameterAnnotations();
+		for (int i = 0; i < parameterTypes.length; i++) {
+			TriggerOnValueUnchange t = getAnnotation(allAnnotations[i], TriggerOnValueUnchange.class);
+			if (t != null) {
+				Annotation directionAnnotation = getDirectionAnnotation(allAnnotations[i]);
+				String path = getDirectionAnnotationValue(directionAnnotation);
+				KnowledgeValueUnchangeTrigger trigger = factory.createKnowledgeValueUnchangeTrigger();
+				trigger.setKnowledgePath(createKnowledgePath(path, inComponentProcess));
+				List<Long> values = new ArrayList<Long>();
+				List<ComparisonType> comps = new ArrayList<ComparisonType>();
+				if(t.equal() > 0) {values.add(t.equal()); comps.add(ComparisonType.EQUAL);} 
+				if(t.equalLessThan() > 0) {values.add(t.equalLessThan()); comps.add(ComparisonType.EQUAL_LESS_THAN);}
+				if(t.equalMoreThan() > 0) {values.add(t.equalMoreThan()); comps.add(ComparisonType.EQUAL_MORE_THAN);}
+				if(t.lessThan() > 0) {values.add(t.lessThan()); comps.add(ComparisonType.LESS_THAN);}
+				if(t.moreThan() > 0) {values.add(t.moreThan()); comps.add(ComparisonType.MORE_THAN);}
+				trigger.getValue().addAll(values);
+				trigger.getComparison().addAll(comps);
+				trigger.setMeta(t.meta());
+				knowledgeValueUnchangeTriggers.add(trigger);
+			}
+		}
+		return knowledgeValueUnchangeTriggers;
+	}
 	/**
 	 * Creator a list of {@link Parameter} from a method. 
 	 * <p>
