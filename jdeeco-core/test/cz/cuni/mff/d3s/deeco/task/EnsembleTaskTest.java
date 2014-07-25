@@ -35,6 +35,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.SampleRuntimeModel;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
+import cz.cuni.mff.d3s.deeco.runtime.ArchitectureObserver;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
 /**
@@ -63,6 +64,8 @@ public class EnsembleTaskTest {
 	private ArgumentCaptor<Trigger> triggerCaptor;
 	@Mock
 	private Scheduler scheduler;
+	@Mock
+	private ArchitectureObserver architectureObserver;
 	
 	private Task task;
 
@@ -162,7 +165,7 @@ public class EnsembleTaskTest {
 		model.setKnowledgeManager(knowledgeManager);
 		model.setOtherKnowledgeManagersAccess(shadowReplicasAccess);
 
-		this.task = new EnsembleTask(model.ensembleController, scheduler);
+		this.task = new EnsembleTask(model.ensembleController, scheduler, architectureObserver);
 	}
 	
 	@Test

@@ -6,10 +6,13 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import cz.cuni.mff.d3s.deeco.annotations.*;
@@ -21,7 +24,6 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.*;
-import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
 import cz.cuni.mff.d3s.deeco.network.GenericCommunicationBoundaryPredicate;
@@ -41,7 +43,10 @@ import cz.cuni.mff.d3s.deeco.network.GenericCommunicationBoundaryPredicate;
  */
 public class AnnotationProcessor {
 	
-	private static final Map<Class<? extends Annotation>, ParameterDirection> parameterAnnotationsToParameterDirections = Collections
+	/**
+	 * Mapping of direction annotations to the respective runtime metadata model classes. 
+	 */
+	static final Map<Class<? extends Annotation>, ParameterDirection> parameterAnnotationsToParameterDirections = Collections
 			.unmodifiableMap(new HashMap<Class<? extends Annotation>, ParameterDirection>() {
 				private static final long serialVersionUID = 1L;
 				{
@@ -50,44 +55,99 @@ public class AnnotationProcessor {
 					put(Out.class, ParameterDirection.OUT);
 				}
 			});
-	protected RuntimeMetadataFactory factory;
-	
 	
 	/**
-	 * Initializes the processor with the given model factory.
-	 * All the model elements produced by the processor will be created via this factory.
+	 * Annotations that can appear in a class and can be handled by the main processor (this)
 	 */
-	public AnnotationProcessor(RuntimeMetadataFactory factory) {
-		this.factory = factory;
-	}
-		
+	static final Set<Class<? extends Annotation>> KNOWN_CLASS_ANNOTATIONS = new HashSet<>(
+			Arrays.asList(PeriodicScheduling.class, Component.class, Ensemble.class));
 	
+	/**
+	 * Annotations that can appear in a method and can be handled by the main processor (this)  
+	 */
+	static final Set<Class<? extends Annotation>> KNOWN_METHOD_ANNOTATIONS = new HashSet<>(
+			Arrays.asList(Process.class, PeriodicScheduling.class, KnowledgeExchange.class, Membership.class, CommunicationBoundary.class));
 
+	/**
+	 *  Places in the parsing process where the processor's extensions are called. 
+	 */
+	enum ParsingEvent {
+		ON_COMPONENT_CREATION, ON_PROCESS_CREATION, ON_ENSEMBLE_CREATION, 
+		ON_UNKNOWN_COMPONENT_METHOD_ANNOTATION, ON_UNKNOWN_ENSEMBLE_METHOD_ANNOTATION
+	}
+	
+	/**
+	 * Holds the EMF factory used to create runtime metadata model instances during the parsing process.
+	 */
+	RuntimeMetadataFactory factory;
+	
+	/**
+	 * Holds the EMF model to be updated during the parsing process. 
+	 */
+	RuntimeMetadata model;
+	
+	/**
+	 * Processors to handle additional annotations that are not handled by the main processor.
+	 * They are called via the <code>callExtensions()</code>. 
+	 */
+	AnnotationProcessorExtensionPoint[] extensions;
+	
+	/**
+	 * Initializes the processor with the given model factory (convenience
+	 * method when no extensions are provided). All the model elements produced
+	 * by the processor will be created via the provided factory and added to
+	 * the provided model.
+	 * 
+	 * @param factory
+	 *            EMF runtime metadata factory
+	 * @param model
+	 *            runtime metadata model to be updated by the processor
+	 */
+	public AnnotationProcessor(RuntimeMetadataFactory factory,
+			RuntimeMetadata model) {
+		this.factory = factory;
+		this.model = model;
+	}
+	
+	/**
+	 * Initializes the processor with the given model factory and extensions.
+	 * All the model elements produced by the processor will be created via the
+	 * provided factory and added to the provided model.
+	 * 
+	 * @param factory
+	 *            EMF runtime metadata factory
+	 * @param model
+	 *            runtime metadata model to be updated by the processor
+	 * @param extensions
+	 *            one or more classes extending the <code>AnnotationProcessorExtensionPoint</code> that provide additional processing functionality
+	 */
+	public AnnotationProcessor(RuntimeMetadataFactory factory, RuntimeMetadata model, AnnotationProcessorExtensionPoint... extensions) {
+		this.factory = factory;
+		this.model = model;
+		this.extensions = extensions;
+	}
+	
 	/**
 	 * Processing of a single file.
 	 * 
-	 * @param model
-	 *            EMF model to be updated
 	 * @param obj
 	 *            object to be processed
 	 * @throws AnnotationProcessorException
 	 */
-	public void process(RuntimeMetadata model, Object obj) throws AnnotationProcessorException {
+	public void process(Object obj) throws AnnotationProcessorException {
 		processObject(model, obj); 
 	}
 	
 	/**
-	 * Batch processing of multiple inputs provided as extra parameters.
+	 * Batch processing of multiple files provided as extra parameters.
 	 * 
-	 * @param model
-	 *            EMF model to be updated
 	 * @param obj
 	 *            object to be processed
 	 * @param objs
 	 *            rest of objects to be processed, if any
 	 * @throws AnnotationProcessorException
 	 */
-	public void process(RuntimeMetadata model, Object obj, Object... objs) throws AnnotationProcessorException {
+	public void process(Object obj, Object... objs) throws AnnotationProcessorException {
 		processObject(model, obj); 
 		for (Object o: objs) {
 			processObject(model, o);
@@ -95,15 +155,13 @@ public class AnnotationProcessor {
 	}
 	
 	/**
-	 * Batch processing of multiple inputs provided as a list of objects.
+	 * Batch processing of multiple files provided as a list of objects.
 	 * 
-	 * @param model
-	 *            EMF model to be updated
 	 * @param objs
 	 *            list of objects to be processed
 	 * @throws AnnotationProcessorException
 	 */
-	public void process(RuntimeMetadata model, List<Object> objs) throws AnnotationProcessorException {
+	public void process(List<Object> objs) throws AnnotationProcessorException {
 		if (objs == null) {
 			throw new AnnotationProcessorException("Provide an initialized object or a non-empty list of objects.");
 		}
@@ -116,14 +174,18 @@ public class AnnotationProcessor {
 	}
 
 	/**
-	 * Checks if the object is annotated as @{@link Component}/@{@link Ensemble} and calls the respective creator. 
-	 * It also creates the appropriate {@link EnsembleController}s.
+	 * Checks if the object is annotated as @{@link Component}/@{@link Ensemble}
+	 * and calls the respective creator. It also creates the appropriate
+	 * {@link EnsembleController}s.
 	 * <p>
 	 * If both/no such annotations are found, it throws an exception.
 	 * </p>
 	 * 
+	 * @param model
+	 *            runtime model to be updated
 	 * @param obj
 	 *            object to be processed
+	 * @throws AnnotationProcessorException
 	 */
 	void processObject(RuntimeMetadata model, Object obj) throws AnnotationProcessorException {
 		if (model == null) {
@@ -190,8 +252,7 @@ public class AnnotationProcessor {
 		// TODO: unify the checks (in processObject the presence of multiple annotations is checked)
 		if (!isC || isClass) {
 			throw new AnnotationProcessorException(
-					"For a component to be parsed, it has to be an INSTANCE of a class annotated with @"
-							+ Component.class.getSimpleName() + ".");	
+					"For a component to be parsed, it has to be an INSTANCE of a class annotated with @" + Component.class.getSimpleName() + ".");	
 		}
 		
 		ComponentInstance ci = createComponentInstance(obj);
@@ -237,9 +298,20 @@ public class AnnotationProcessor {
 			km.update(initialK);
 	        componentInstance.setKnowledgeManager(km); 
 	        
-			List<Method> methods = getMethodsMarkedAsProcesses(clazz);
-	        
-			for (Method m : methods) {
+			List<Method> methodsMarkedAsProcesses = new ArrayList<>(); 
+			Method[] allMethods = clazz.getMethods();
+			for (Method m : allMethods) {
+				if (m.getAnnotations().length > 0) {
+					if (m.getAnnotation(Process.class) == null) {
+						// when the method has some annotation(s), but not a @Process one
+						callExtensions(ParsingEvent.ON_UNKNOWN_COMPONENT_METHOD_ANNOTATION, m, getUnknownAnnotations(m));
+					} else {
+						methodsMarkedAsProcesses.add(m);
+					}
+				}
+			}
+			
+			for (Method m : methodsMarkedAsProcesses) {
 				int modifier = m.getModifiers();
 				if (Modifier.isPublic(modifier) && Modifier.isStatic(modifier)) {
 					componentInstance.getComponentProcesses().add(
@@ -250,6 +322,9 @@ public class AnnotationProcessor {
 							" should be public and static.");
 				}
 			}
+			
+			callExtensions(ParsingEvent.ON_COMPONENT_CREATION, componentInstance, getUnknownAnnotations(clazz));
+			
 		} catch (KnowledgeUpdateException | AnnotationProcessorException
 				| ParseException e) {
 			String msg = Component.class.getSimpleName() + ": "
@@ -258,10 +333,6 @@ public class AnnotationProcessor {
 		}
 		return componentInstance;
 	}
-
-
-
-
 
 	/**
 	 * Creator of a single correctly-initialized {@link EnsembleDefinition} object. 
@@ -279,19 +350,35 @@ public class AnnotationProcessor {
 	 *            <b>or</b> the annotated class object itself
 	 */
 	EnsembleDefinition createEnsembleDefinition(Class<?> clazz) throws AnnotationProcessorException {
+		
 		EnsembleDefinition ensembleDefinition = factory.createEnsembleDefinition();
 		ensembleDefinition.setName(clazz.getCanonicalName());
+		
 		try {
+
+			Method[] allMethods = clazz.getMethods();
+			for (Method m : allMethods) {
+				if (m.getAnnotations().length > 0) {
+					if ((m.getAnnotation(Membership.class) == null) && (m.getAnnotation(KnowledgeExchange.class) == null)){
+						// when the method has some annotation(s), but not a @Membership or a @KnowledgeExchange one
+						callExtensions(ParsingEvent.ON_UNKNOWN_ENSEMBLE_METHOD_ANNOTATION, m, getUnknownAnnotations(m));
+					} 
+				}
+			}
+			
 			Condition condition = createCondition(clazz);
 			ensembleDefinition.setMembership(condition);
+			
 			Exchange exchange = createExchange(clazz);
 			ensembleDefinition.setKnowledgeExchange(exchange);
+			
 			CommunicationBoundaryPredicate cBoundary = createCommunicationBoundary(clazz);			
 			ensembleDefinition.setCommunicationBoundary(cBoundary);
 			
 			TimeTrigger periodicEnsembleTrigger = createPeriodicTrigger(clazz);
 			List<KnowledgeChangeTrigger> exchangeKChangeTriggers = createKnowledgeChangeTriggers(exchange.getMethod(), false);
 			List<KnowledgeChangeTrigger> conditionKChangeTriggers = createKnowledgeChangeTriggers(condition.getMethod(), false);
+			
 			if (periodicEnsembleTrigger == null) {
 				if (exchangeKChangeTriggers.isEmpty() && conditionKChangeTriggers.isEmpty()) {
 					throw new AnnotationProcessorException("No triggers were found.");
@@ -299,8 +386,12 @@ public class AnnotationProcessor {
 			} else {
 				ensembleDefinition.getTriggers().add(periodicEnsembleTrigger);
 			}
+			
 			ensembleDefinition.getTriggers().addAll(exchangeKChangeTriggers);
 			ensembleDefinition.getTriggers().addAll(conditionKChangeTriggers);
+			
+			callExtensions(ParsingEvent.ON_ENSEMBLE_CREATION, ensembleDefinition, getUnknownAnnotations(clazz));
+			
 		} catch (AnnotationProcessorException | ParseException e) {
 			String msg = Ensemble.class.getSimpleName()+": " + ensembleDefinition.getName() + "->" + e.getMessage();
 			throw new AnnotationProcessorException(msg, e);
@@ -400,6 +491,9 @@ public class AnnotationProcessor {
 				componentProcess.getTriggers().add(periodicTrigger);
 			}
 			componentProcess.getTriggers().addAll(knowledgeChangeTriggers);
+			
+			callExtensions(ParsingEvent.ON_PROCESS_CREATION, componentProcess, getUnknownAnnotations(m));
+
 		} catch (AnnotationProcessorException e) {
 			String msg = "Process: "+componentProcess.getName()+"->"+e.getMessage();
 			throw new AnnotationProcessorException(msg, e);
@@ -605,22 +699,6 @@ public class AnnotationProcessor {
 	}
 	
 	/**
-	 * Returns list of methods in the class definition which are annotated as
-	 * DEECo processes.
-	 */
-	List<Method> getMethodsMarkedAsProcesses(Class<?> c) {
-		List<Method> result = new ArrayList<Method>();
-		if (c != null) {
-			Method[] methods = c.getMethods();
-			for (Method m : methods) {
-				if (m.getAnnotation(Process.class) != null)
-					result.add(m);
-			}
-		}
-		return result;
-	}
-	
-	/**
 	 * Returns a method in the class definition which is annotated as
 	 * DEECo ensemble condition/exchange (ie, with @{@link Condition}/@{@link Exchange} annotation).
 	 * <p>
@@ -763,4 +841,80 @@ public class AnnotationProcessor {
 		String id = (String) initialK.getValue(idPath);
 		return id;
 	}
+	
+	/**
+	 * Calls the processor's extensions.
+	 * 
+	 * Annotations are passed both as a list and individually (for client code convenience).
+	 * 
+	 * @param event	the type of the event (point at the main processing process)
+	 * @param object	the context of the call
+	 * @param unknownAnnotations	annotations delegated to the callee
+	 */
+	private void callExtensions(ParsingEvent event, Object object, List<Annotation> unknownAnnotations) throws AnnotationProcessorException {
+		if ((extensions != null) && (extensions.length > 0)) {
+			for (AnnotationProcessorExtensionPoint extension : extensions) {
+				Log.d("in 'CallExtensions': [EventType: "+ event + ", runtimeObject: " + object + ", extension: "+ extension +"]");
+				switch (event) {
+				case ON_COMPONENT_CREATION: 
+					extension.onComponentInstanceCreation((ComponentInstance) object, unknownAnnotations); 
+					for (Annotation a: unknownAnnotations) {
+						extension.onComponentInstanceCreation((ComponentInstance) object, a); 
+					}
+					break;  
+				case ON_PROCESS_CREATION: 
+					extension.onComponentProcessCreation((ComponentProcess) object, unknownAnnotations); 
+					for (Annotation a: unknownAnnotations) {
+						extension.onComponentProcessCreation((ComponentProcess) object, a); 
+					}
+					break;
+				case ON_ENSEMBLE_CREATION: 
+					extension.onEnsembleDefinitionCreation((EnsembleDefinition) object, unknownAnnotations); 
+					for (Annotation a: unknownAnnotations) {
+						extension.onEnsembleDefinitionCreation((EnsembleDefinition) object, a); 
+					}
+					break;
+				case ON_UNKNOWN_COMPONENT_METHOD_ANNOTATION:
+					extension.onUnknownMethodAnnotation(this, true, (Method) object, unknownAnnotations); 
+					for (Annotation a: unknownAnnotations) {
+						extension.onUnknownMethodAnnotation(this, true, (Method) object, a); 
+					}					
+					break;
+				case ON_UNKNOWN_ENSEMBLE_METHOD_ANNOTATION:
+					extension.onUnknownMethodAnnotation(this, false, (Method) object, unknownAnnotations); 
+					for (Annotation a: unknownAnnotations) {
+						extension.onUnknownMethodAnnotation(this, false, (Method) object, a); 
+					}					
+					break;
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Go through the annotations of a class and get the ones that are not handled by this processor.
+	 */
+	List<Annotation> getUnknownAnnotations(Class<?> clazz) {
+		List<Annotation> unknownAnnotations = new ArrayList<>();
+		for (Annotation a: clazz.getAnnotations()) {
+			if (!KNOWN_CLASS_ANNOTATIONS.contains(a.getClass())) {
+				unknownAnnotations.add(a);	
+			}
+		}
+		return unknownAnnotations;
+	}
+
+	/**
+	 * Go through the annotations of a method and get the ones that are not handled by this processor. 
+	 */
+	List<Annotation> getUnknownAnnotations(Method m) {
+		List<Annotation> unknownAnnotations = new ArrayList<>();
+		for (Annotation a: m.getAnnotations()) {
+			if (!KNOWN_METHOD_ANNOTATIONS.contains(a.getClass())) {
+				unknownAnnotations.add(a);
+			}
+		}
+		return unknownAnnotations;
+	}
+	
 }

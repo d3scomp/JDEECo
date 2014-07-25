@@ -142,9 +142,12 @@ public class SingleThreadedScheduler implements Scheduler {
 			
 			SchedulerEvent event = periodicEvents.get(task);
 			
-			// if the periodic task execution took more than it remained till the next period 
-			if (event.nextExecutionTime < System.currentTimeMillis()) {				
-				queue.rescheduleTask(event, System.currentTimeMillis() + event.executable.getTimeTrigger().getPeriod());
+			// event can be null if a process deactivates itself
+			if (event != null) {
+				// if the periodic task execution took more than it remained till the next period 
+				if (event.nextExecutionTime < System.currentTimeMillis()) {				
+					queue.rescheduleTask(event, System.currentTimeMillis() + event.executable.getTimeTrigger().getPeriod());
+				}
 			}
 			
 		}		
@@ -296,6 +299,8 @@ public class SingleThreadedScheduler implements Scheduler {
 		InvokeAndWaitTask task = new InvokeAndWaitTask(this, doRun);
 		synchronized (task) {
 			addTask(task);
+			// TODO(IG): Check if the execution thread of the scheduler's thread. If yes don't wait. 
+			// In combination with the Todo in RuntimeFrameworkImpl#ensembleFormed()
 			task.wait();
 		}
 	}

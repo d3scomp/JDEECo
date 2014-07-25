@@ -176,7 +176,7 @@
     </children>
     <styles xmi:type="notation:ShapeStyle" xmi:id="_V0KE0T28EeO2QcBZHbiySQ" fontColor="4210752" fontName="Segoe UI" fontHeight="10" fillColor="13761016" lineColor="8421504"/>
     <element xmi:type="ecore:EClass" href="RuntimeModel.ecore#//EnsembleDefinition"/>
-    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_V0KE0j28EeO2QcBZHbiySQ" x="675" y="639"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_V0KE0j28EeO2QcBZHbiySQ" x="675" y="648" height="75"/>
   </children>
   <children xmi:type="notation:Node" xmi:id="_bcRj4D28EeO2QcBZHbiySQ" type="1001">
     <children xmi:type="notation:Node" xmi:id="_bcSK8D28EeO2QcBZHbiySQ" type="4001"/>
@@ -218,7 +218,7 @@
         <layoutConstraint xmi:type="notation:Location" xmi:id="_FjXv8T5WEeO2QcBZHbiySQ"/>
       </children>
       <children xmi:type="notation:Node" xmi:id="_4YRSAERzEeObn7g1FMSRDg" type="2001">
-        <element xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//ComponentProcess/isActive"/>
+        <element xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//ComponentProcess/active"/>
         <layoutConstraint xmi:type="notation:Location" xmi:id="_4YRSAURzEeObn7g1FMSRDg"/>
       </children>
       <styles xmi:type="notation:DrawerStyle" xmi:id="_c_N9Uj28EeO2QcBZHbiySQ"/>
@@ -311,6 +311,10 @@
   <children xmi:type="notation:Node" xmi:id="_QCPNkD89EeOJd_mPeXeLdw" type="1001">
     <children xmi:type="notation:Node" xmi:id="_QCP0oD89EeOJd_mPeXeLdw" type="4001"/>
     <children xmi:type="notation:Node" xmi:id="_QCP0oT89EeOJd_mPeXeLdw" type="5001">
+      <children xmi:type="notation:Node" xmi:id="_BxLIwBJREeSz9qtm1hy-Jw" type="2001">
+        <element xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//EnsembleController/active"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_BxLIwRJREeSz9qtm1hy-Jw"/>
+      </children>
       <styles xmi:type="notation:DrawerStyle" xmi:id="_QCP0oj89EeOJd_mPeXeLdw"/>
       <styles xmi:type="notation:SortingStyle" xmi:id="_QCP0oz89EeOJd_mPeXeLdw"/>
       <styles xmi:type="notation:FilteringStyle" xmi:id="_QCP0pD89EeOJd_mPeXeLdw"/>
@@ -338,6 +342,10 @@
       <children xmi:type="notation:Node" xmi:id="_dmD7cEMNEeO3_auUY0X6vg" type="2001">
         <element xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//ComponentInstance/shadowKnowledgeManagerRegistry"/>
         <layoutConstraint xmi:type="notation:Location" xmi:id="_dmD7cUMNEeO3_auUY0X6vg"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_eneE4ALKEeSwd6qt5CsqeA" type="2001">
+        <element xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//ComponentInstance/systemComponent"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_eneE4QLKEeSwd6qt5CsqeA"/>
       </children>
       <styles xmi:type="notation:DrawerStyle" xmi:id="_dl_C8kMNEeO3_auUY0X6vg"/>
       <styles xmi:type="notation:SortingStyle" xmi:id="_dl_C80MNEeO3_auUY0X6vg"/>
@@ -623,7 +631,7 @@
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_yPrHQD89EeOJd_mPeXeLdw" type="3002" source="_QCPNkD89EeOJd_mPeXeLdw" target="_V0KE0D28EeO2QcBZHbiySQ">
     <children xmi:type="notation:Node" xmi:id="_yPrHRD89EeOJd_mPeXeLdw" type="4011">
-      <layoutConstraint xmi:type="notation:Location" xmi:id="_yPrHRT89EeOJd_mPeXeLdw" x="-45" y="-23"/>
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_yPrHRT89EeOJd_mPeXeLdw" x="-24" y="14"/>
     </children>
     <children xmi:type="notation:Node" xmi:id="_yPruUD89EeOJd_mPeXeLdw" type="4012">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_yPruUT89EeOJd_mPeXeLdw" x="10" y="10"/>

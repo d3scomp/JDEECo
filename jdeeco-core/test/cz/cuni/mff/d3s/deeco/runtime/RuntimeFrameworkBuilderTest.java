@@ -86,9 +86,10 @@ public class RuntimeFrameworkBuilderTest {
 		tested.kmContainer = mock(KnowledgeManagerContainer.class);		
 		
 		RuntimeMetadata model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
+		tested.model = model;
 		
 		// WHEN buildRuntime() is called
-		tested.buildRuntime(model);
+		tested.buildRuntime();
 		// THEN it creates a runtime with the corresponding
 		// scheduler, executor, and knowledge registry
 		assertNotNull(tested.runtime);
