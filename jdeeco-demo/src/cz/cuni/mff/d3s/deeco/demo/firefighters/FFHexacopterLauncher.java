@@ -21,10 +21,10 @@ public class FFHexacopterLauncher {
 
 	public static void main(String[] args) throws AnnotationProcessorException {
 		
-		AnnotationProcessor processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE);
 		RuntimeMetadata model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE, model);
 		
-		processor.process(model, 
+		processor.process( 
 						new GroupMember("FF1", "T1"), new GroupMember("FF2", "T1"),
 						new GroupMember("FF3", "T1"), new GroupMember("FF4", "T2"),
 						new GroupMember("FF5", "T2"), new GroupMember("FF6", "T2"),

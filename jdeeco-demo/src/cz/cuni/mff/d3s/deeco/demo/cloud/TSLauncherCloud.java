@@ -20,10 +20,10 @@ import cz.cuni.mff.d3s.deeco.runtime.RuntimeConfiguration.Scheduling;
 public class TSLauncherCloud {
 
 	public static void main(String[] args) throws AnnotationProcessorException {
-		AnnotationProcessor processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE);
 		RuntimeMetadata model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE, model);
 		
-		processor.process(model, 
+		processor.process( 
 							new NodeA(), new NodeB(), // Components 
 							MigrationEnsemble.class // Ensembles
 							);
