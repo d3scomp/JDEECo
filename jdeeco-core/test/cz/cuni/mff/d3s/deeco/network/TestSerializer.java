@@ -60,10 +60,10 @@ public class TestSerializer {
 	
 	@Before
 	public void setUp() throws Exception {
-		processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE);
 		model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
+		processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE, model);
 		
-		processor.process(model, new TestComponent("M1"));
+		processor.process(new TestComponent("M1"));
 		component = model.getComponentInstances().get(0); 
 		kp = component.getComponentProcesses().get(0).getParameters().get(0).getKnowledgePath();
 	}

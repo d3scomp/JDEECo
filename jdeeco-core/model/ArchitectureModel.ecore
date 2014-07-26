@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="architecture" nsURI="http://cz.cuni.mff.d3s.deeco.model.architecture/1.0"
+    nsPrefix="cz.cuni.mff.d3s.deeco.model.architecture">
+  <eClassifiers xsi:type="ecore:EClass" name="Architecture">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ensembleInstances" upperBound="-1"
+        eType="#//EnsembleInstance" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="componentInstances" upperBound="-1"
+        eType="#//ComponentInstance" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="LocalComponentInstance" eSuperTypes="#//ComponentInstance">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="runtimeInstance" lowerBound="1"
+        eType="#//ComponentInstanceMetadata"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EnsembleInstance">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ensembleDefinition" lowerBound="1"
+        eType="#//EnsembleDefinitionMetadata"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="coordinator" lowerBound="1"
+        eType="#//ComponentInstance"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="members" upperBound="-1"
+        eType="#//ComponentInstance"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="ComponentInstanceMetadata" instanceClassName="cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="EnsembleDefinitionMetadata" instanceClassName="cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ComponentInstance" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="knowledgeManager" eType="#//ReadOnlyKnowledgeManager"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="RemoteComponentInstance" eSuperTypes="#//ComponentInstance"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="ReadOnlyKnowledgeManager" instanceClassName="cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager"/>
+</ecore:EPackage>

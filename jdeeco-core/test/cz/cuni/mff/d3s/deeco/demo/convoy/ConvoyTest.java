@@ -36,10 +36,10 @@ public class ConvoyTest {
 	@Test
 	public void testConvoy() throws AnnotationProcessorException, InterruptedException {
 		
-		AnnotationProcessor processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE);
 		RuntimeMetadata model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE, model);
 		
-		processor.process(model, new Leader(), new Follower(), new ConvoyEnsemble());
+		processor.process(new Leader(), new Follower(), new ConvoyEnsemble());
 		
 		RuntimeFrameworkBuilder builder = new RuntimeFrameworkBuilder(
 				new RuntimeConfiguration(

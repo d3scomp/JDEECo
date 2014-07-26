@@ -597,7 +597,7 @@ public class RuntimeFrameworkImplTest {
 		assertNotNull(tested.componentProcessAdapters.get(process2));
 		assertTrue(process2.eAdapters().contains(tested.componentProcessAdapters.get(process2)));
 		// AND componentProcessActiveChanged was called on the process
-		verify(tested).componentProcessActiveChanged(component, process2, process.isIsActive());
+		verify(tested).componentProcessActiveChanged(component, process2, process.isActive());
 	}	
 	
 	@Test
@@ -608,9 +608,9 @@ public class RuntimeFrameworkImplTest {
 		// WHEN the runtime is initialized with a model having a component with
 		// one active and one inactive process
 		ComponentProcess process2 = EcoreUtil.copy(process);
-		process2.setIsActive(false);
+		process2.setActive(false);
 		component.getComponentProcesses().add(process2);
-		process.setIsActive(true);
+		process.setActive(true);
 		tested.init();		
 
 		@SuppressWarnings("unused")
@@ -831,7 +831,7 @@ public class RuntimeFrameworkImplTest {
 		reset(spy);
 			
 		// WHEN a process is set to active
-		process.setIsActive(true);
+		process.setActive(true);
 		
 		// THEN the componentProcessActiveChanged is called on the runtime
 		verify(spy).componentProcessActiveChanged(component, process, true);
@@ -839,7 +839,7 @@ public class RuntimeFrameworkImplTest {
 		assertTrue(log.getLog().isEmpty());
 		
 		// WHEN a process is set to inactive
-		process.setIsActive(false);
+		process.setActive(false);
 		
 		// THEN the componentProcessActiveChanged is called on the runtime
 		verify(spy).componentProcessActiveChanged(component, process, false);

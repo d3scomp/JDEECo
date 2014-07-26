@@ -14,7 +14,7 @@ import org.eclipse.emf.common.util.EList;
  * <ul>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getName <em>Name</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getComponentInstance <em>Component Instance</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#isIsActive <em>Is Active</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#isActive <em>Active</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getTriggers <em>Triggers</em>}</li>
  * </ul>
  * </p>
@@ -79,31 +79,31 @@ public interface ComponentProcess extends Invocable {
 	void setComponentInstance(ComponentInstance value);
 
 	/**
-	 * Returns the value of the '<em><b>Is Active</b></em>' attribute.
+	 * Returns the value of the '<em><b>Active</b></em>' attribute.
 	 * The default value is <code>"true"</code>.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Is Active</em>' attribute isn't clear,
+	 * If the meaning of the '<em>Active</em>' attribute isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Is Active</em>' attribute.
-	 * @see #setIsActive(boolean)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentProcess_IsActive()
+	 * @return the value of the '<em>Active</em>' attribute.
+	 * @see #setActive(boolean)
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentProcess_Active()
 	 * @model default="true" required="true"
 	 * @generated
 	 */
-	boolean isIsActive();
+	boolean isActive();
 
 	/**
-	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#isIsActive <em>Is Active</em>}' attribute.
+	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#isActive <em>Active</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Is Active</em>' attribute.
-	 * @see #isIsActive()
+	 * @param value the new value of the '<em>Active</em>' attribute.
+	 * @see #isActive()
 	 * @generated
 	 */
-	void setIsActive(boolean value);
+	void setActive(boolean value);
 
 	/**
 	 * Returns the value of the '<em><b>Triggers</b></em>' containment reference list.

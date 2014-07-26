@@ -70,7 +70,6 @@ public class Main {
 		Simulation sim = new Simulation();
 		sim.initialize(); //loads Library
 		
-		AnnotationProcessor processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE);
 		SimulationRuntimeBuilder builder = new SimulationRuntimeBuilder();
 		
 		SiteConfigParser siteParser = new SiteConfigParser(siteCfg);
@@ -111,7 +110,8 @@ public class Main {
 		while ((component = parser.parseComponent()) != null) {
 			components.add(component);
 			RuntimeMetadata model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
-			processor.process(model, component, MemberDataAggregation.class); 
+			AnnotationProcessor processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE, model);
+			processor.process(component, MemberDataAggregation.class); 
 						
 			omnetConfig.append(String.format(
 					"**.node[%s].mobility.initialX = %dm\n", 
