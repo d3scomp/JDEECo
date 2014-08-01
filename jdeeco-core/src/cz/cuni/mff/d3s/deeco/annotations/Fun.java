@@ -7,6 +7,11 @@ import java.lang.annotation.Target;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ModelInterface;
 
+/**
+ * 
+ * @author Rima Al Ali
+ *
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface Fun {

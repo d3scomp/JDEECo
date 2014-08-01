@@ -6,7 +6,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -19,12 +18,14 @@ import cz.cuni.mff.d3s.deeco.annotations.pathparser.*;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.*;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
+import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ModeParamHolder;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ModelInterface;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder;
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
@@ -41,6 +42,7 @@ import cz.cuni.mff.d3s.deeco.network.GenericCommunicationBoundaryPredicate;
  * </p>
  * 
  * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
+ * @author Rima Al Ali <alali@d3s.mff.cuni.cz>
  * 
  */
 public class AnnotationProcessor {
@@ -60,7 +62,7 @@ public class AnnotationProcessor {
 			});
 	protected RuntimeMetadataFactory factory;
 	private double currentTime = System.nanoTime() / SEC_NANOSECOND_FACTOR;
-
+	private HashMap<KnowledgePath,Transitions> transitions = new HashMap<KnowledgePath,Transitions>();
 	
 	/**
 	 * Initializes the processor with the given model factory.
@@ -257,10 +259,7 @@ public class AnnotationProcessor {
 		    	statespaceModels = createStateSpaceModelAnnotation(clazz, componentInstance, initialK); 
 			    componentInstance.getStateSpaceModels().addAll(statespaceModels);
 			    initialK = extractInitialKnowledgeWithInaccuracy(initialK, statespaceModels);
-			    km.update(initialK);
 			}
-	        componentInstance.setKnowledgeManager(km); 
-
 	        
 			List<Method> methods = getMethodsMarkedAsProcesses(clazz);
 	        
@@ -275,6 +274,17 @@ public class AnnotationProcessor {
 							" should be public and static.");
 				}
 			}
+			
+			
+			
+			List<TransitionDefinition> trans = createTransitions(componentInstance,methods);
+			initialK = extractInitialKnowledgeWithModes(initialK, trans);
+			componentInstance.getTransitions().addAll(trans);
+			
+			
+			km.update(initialK);
+			componentInstance.setKnowledgeManager(km);
+
 		} catch (KnowledgeUpdateException | AnnotationProcessorException
 				| ParseException | InstantiationException | IllegalAccessException e) {
 			String msg = Component.class.getSimpleName() + ": "
@@ -284,7 +294,95 @@ public class AnnotationProcessor {
 		return componentInstance;
 	}
 
+	
+	List<TransitionDefinition> createTransitions(ComponentInstance componentInstance, List<Method> methods) {
+		ArrayList<TransitionDefinition> returnTrans = new ArrayList<TransitionDefinition>();
+		for (KnowledgePath kp : transitions.keySet()) {
+			Transitions trans = transitions.get(kp);
+			for (Transition tran : trans.map()) {
+				for (String name : tran.to()) {
+					TransitionDefinition newTransition = factory.createTransitionDefinition();
+					newTransition.setInit(false);
+					newTransition.setFromMode(getProcess(tran.from(),componentInstance));
+					ComponentProcess toMode = getProcess(name,componentInstance);
+					newTransition.setToMode(toMode);
+					newTransition.setTrigger(getTrigger(kp,toMode,componentInstance));
+					returnTrans.add(newTransition);
+				}
+			}
+		}
+		
+		ArrayList<ComponentProcess> processes = returnInitProcess(componentInstance,methods);
+		for (ComponentProcess componentProcess : processes) {
+			for (Trigger trigger : componentProcess.getTriggers()) {
+				if(trigger instanceof KnowledgeChangeTrigger){
+					TransitionDefinition newTransition = factory.createTransitionDefinition();
+					newTransition.setInit(true);
+					newTransition.setToMode(componentProcess);
+					if(trigger instanceof KnowledgeValueUnchangeTrigger)
+						newTransition.setTrigger((KnowledgeValueUnchangeTrigger)trigger);
+					else if(trigger instanceof KnowledgeValueChangeTrigger)
+						newTransition.setTrigger((KnowledgeValueChangeTrigger)trigger);
+					else if(trigger instanceof KnowledgeChangeTrigger)
+						newTransition.setTrigger((KnowledgeChangeTrigger)trigger);
+					returnTrans.add(newTransition);
+				}
+			}
+		}
+		
+		
+		return returnTrans;
+	}
 
+
+	private ArrayList<ComponentProcess> returnInitProcess(ComponentInstance componentInstance, List<Method> methods) {
+		boolean init = false;
+		ArrayList<ComponentProcess> compProcesses = new ArrayList<ComponentProcess>();
+		for (Method method: methods) {
+			Annotation[] anns = method.getAnnotations();
+			for (Annotation annotation : anns) {
+				if(annotation instanceof Mode){
+					Mode m = (Mode)annotation;
+					init = m.init();
+					if(init){
+						for (ComponentProcess process : componentInstance.getComponentProcesses()) {
+							if(process.getName().equals(method.getName()))
+								compProcesses.add(process);
+						}
+					}
+				}
+			}
+		}
+		return compProcesses;
+	}
+
+
+	private KnowledgeValueUnchangeTrigger getTrigger(KnowledgePath kp, ComponentProcess toMode,
+			ComponentInstance componentInstance) {
+		for (Trigger trigger : toMode.getTriggers()) {
+			if(trigger instanceof KnowledgeValueUnchangeTrigger){
+				KnowledgeValueUnchangeTrigger tr = (KnowledgeValueUnchangeTrigger)trigger;
+				KnowledgePath newkp = tr.getKnowledgePath();
+				if(newkp.equals(kp)){
+					 return tr;
+				}	 
+			}
+		}
+		return null;
+	}
+
+
+
+	private ComponentProcess getProcess(String string, ComponentInstance componentInstance) {
+		for (ComponentProcess process : componentInstance.getComponentProcesses()) {
+			if(string.equals(process.getName())){
+				return process;
+			}
+		}
+		return null;
+	}
+
+	
 	public List<StateSpaceModelDefinition> createStateSpaceModelAnnotation(Class<?> clazz,ComponentInstance componentInstance, ChangeSet initialK) throws InstantiationException, IllegalAccessException{
 		
 		
@@ -492,7 +590,8 @@ public class AnnotationProcessor {
 			componentProcess.getTriggers().addAll(knowledgeChangeTriggers);
 			componentProcess.getTriggers().addAll(knowledgeValueChangeTriggers);
 			componentProcess.getTriggers().addAll(knowledgeValueUnchangeTriggers);
-			
+			componentProcess.setState(getState(m));
+				
 		} catch (AnnotationProcessorException e) {
 			String msg = "Process: "+componentProcess.getName()+"->"+e.getMessage();
 			throw new AnnotationProcessorException(msg, e);
@@ -500,6 +599,19 @@ public class AnnotationProcessor {
 		return componentProcess;
 	}
 	
+	private ModeState getState(Method m) {
+		Mode state = m.getAnnotation(Mode.class);
+		if ( state != null){
+			if(state.init())
+				return ModeState.REACHABLE;
+			else
+				return ModeState.IDLE;
+		}
+		return ModeState.REACHABLE;
+	}
+
+
+
 	/**
 	 * Creator of a {@link PeriodicTrigger} from a method or a class. (Both Method and Class can hold a @ {@link PeriodicTrigger}.)
 	 * <p>
@@ -890,10 +1002,14 @@ public class AnnotationProcessor {
 				Object value = null;
 				Annotation[] anns = f.getDeclaredAnnotations();
 				for (int i = 0; i < anns.length; i++) {
-					if(anns[0].annotationType().getName().contains("TimeStamp")){
+					if(anns[i].annotationType().getName().contains("TimeStamp")){
 						value = new TSParamHolder();
 						((TSParamHolder)value).value = f.get(knowledge);
 						((TSParamHolder)value).creationTime = currentTime;
+					}
+					if(anns[i].annotationType().getName().contains("Transitions")){
+						Transitions intrans = (Transitions)anns[i];
+						transitions.put(knowledgePath, intrans);
 					}
 				}
 				
@@ -930,6 +1046,34 @@ public class AnnotationProcessor {
 		}
 		return changeSet;
 	}
+	
+	
+	public ChangeSet extractInitialKnowledgeWithModes(ChangeSet changeSet, List<TransitionDefinition> trans) {
+		ChangeSet ch = changeSet;
+		for (KnowledgePath csKP : changeSet.getUpdatedReferences()) {
+			ModeParamHolder value = new ModeParamHolder();
+			for (TransitionDefinition tran : trans) {
+				if(tran.getTrigger().getKnowledgePath().equals(csKP)){
+					if(ch.getValue(csKP) instanceof ModeParamHolder){
+						value.trans.add(tran);
+					}else if(ch.getValue(csKP) instanceof InaccuracyParamHolder){
+						InaccuracyParamHolder v = (InaccuracyParamHolder)changeSet.getValue(csKP);
+						value.setWithInaccuracy(v);
+						value.trans.add(tran);
+					}else if(ch.getValue(csKP) instanceof TSParamHolder){
+						TSParamHolder v = (TSParamHolder)changeSet.getValue(csKP);
+						value.setWithTS(v);
+						value.minBoundary = v.value;
+						value.maxBoundary = v.value;
+						value.trans.add(tran);
+					}
+					ch.setValue(csKP, value);
+				}
+			}		
+		}
+		return ch;
+	}
+
 	/**
 	 * Returns component ID given the initial knowledge. Returns null if ID is
 	 * not specified as a public non-static String field.

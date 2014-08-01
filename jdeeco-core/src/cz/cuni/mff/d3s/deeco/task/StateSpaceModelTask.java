@@ -22,6 +22,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
+import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ModeParamHolder;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
 
@@ -67,7 +68,7 @@ public class StateSpaceModelTask extends Task {
 	public StateSpaceModelTask(StateSpaceModelDefinition stateSpaceModel, Scheduler scheduler) {
 		super(scheduler);
 		this.stateSpaceModel = stateSpaceModel;
-		init(stateSpaceModel.getComponentInstance().getKnowledgeManager(), -1.0);
+		init(stateSpaceModel.getComponentInstance().getKnowledgeManager(), 0.0);
 	}
 
 	/**
@@ -100,13 +101,10 @@ public class StateSpaceModelTask extends Task {
 
 					// ---------------------- knowledge evaluation --------------------------------
 
-					ArrayList<InaccuracyParamHolder<Number>> in = new ArrayList<>();	
+					ArrayList<InaccuracyParamHolder> in = new ArrayList<InaccuracyParamHolder>();
 					for (KnowledgePath kp : stateSpaceModel.getInStates()) {
 						Object v = values.getValue(kp);
-						if(v instanceof InaccuracyParamHolder){
-							InaccuracyParamHolder<Number> inacc = (InaccuracyParamHolder)v;
-							in.add(inacc);
-						}
+						in.add(getValue(v));
 					}
 					
 					InaccuracyParamHolder inDerv = stateSpaceModel.getModel().getModelBoundaries(in);
@@ -117,7 +115,6 @@ public class StateSpaceModelTask extends Task {
 					for (int i = 0; i < stateSpaceModel.getInStates().size(); i++) {
 						values = knowledgeManager.get(stateSpaceModel.getInStates());
 						computeBoundary(knowledgeManager, values, i, startTime, currentTime);
-						values = knowledgeManager.get(stateSpaceModel.getInStates());
 					}
 					
 					lastTime = currentTime;
@@ -150,13 +147,13 @@ public class StateSpaceModelTask extends Task {
 		InaccuracyParamHolder dervValue = new InaccuracyParamHolder<>();
 		
 		inKp = stateSpaceModel.getInStates().get(i);
-		value = (InaccuracyParamHolder)vs.getValue(inKp);
+		value = getValue(vs.getValue(inKp));
 		
 		if(i == 0){
 			dervValue = stateSpaceModel.getModelValue();	
 		}else{
 			dervKp = stateSpaceModel.getDerivationStates().get(i-1);
-			dervValue = (InaccuracyParamHolder) vs.getValue(dervKp);
+			dervValue = getValue(vs.getValue(dervKp));
 		}
 		
 		
@@ -176,15 +173,49 @@ public class StateSpaceModelTask extends Task {
 		value.maxBoundary = (double)value.maxBoundary + maxBoundaries[0]*(currentTime - startTime);
 		dervValue.maxBoundary = maxBoundaries[0];
 
-		ch.setValue(inKp, value);
+		Object updatedValue = updateValue(value, vs , inKp);
+		ch.setValue(inKp, updatedValue);
 		km.update(ch);
 		
 		if(i == 0){
 			stateSpaceModel.setModelValue(dervValue);
 		}else{
-			dervCh.setValue(dervKp, dervValue);
+			Object updatedValueDerv = updateValue(dervValue, vs, dervKp);
+			dervCh.setValue(dervKp, updatedValueDerv );
 			km.update(dervCh);
 		}
+	}
+
+	
+	private InaccuracyParamHolder getValue(Object v){
+		InaccuracyParamHolder value = new InaccuracyParamHolder<>();
+		if(v instanceof ModeParamHolder){
+			ModeParamHolder<Number> mode = (ModeParamHolder)v;
+			value.value = mode.value;
+			value.creationTime = mode.creationTime;
+			value.minBoundary = mode.minBoundary;
+			value.maxBoundary = mode.maxBoundary;
+		}else if(v instanceof InaccuracyParamHolder){
+			value = (InaccuracyParamHolder)v;
+		}else
+			System.err.println("Wrong value for state space model : "+v);
+
+		return value;
+	}
+	
+	private Object updateValue(InaccuracyParamHolder val, ValueSet vs, KnowledgePath kp){
+		if(vs.getValue(kp) instanceof ModeParamHolder){
+			ModeParamHolder v = (ModeParamHolder)vs.getValue(kp);
+			v.minBoundary = val.minBoundary;
+			v.maxBoundary = val.maxBoundary;
+			return v;
+		}else if(vs.getValue(kp) instanceof InaccuracyParamHolder){
+			InaccuracyParamHolder v = (InaccuracyParamHolder)vs.getValue(kp);
+			v.minBoundary = val.minBoundary;
+			v.maxBoundary = val.maxBoundary;
+			return v;			
+		}
+		return null;
 	}
 
 	
@@ -193,7 +224,12 @@ public class StateSpaceModelTask extends Task {
 		
 		for (int i = 0; i < stateSpaceModel.getInStates().size(); i++) {
 			Object val = values.getValue(stateSpaceModel.getInStates().get(i));
-			if(val instanceof InaccuracyParamHolder){
+			if(val instanceof ModeParamHolder){
+				ModeParamHolder v = (ModeParamHolder)val;
+				v.minBoundary = v.value; 
+				v.maxBoundary = v.value; 
+				ch.setValue(stateSpaceModel.getInStates().get(i), v);
+			}if(val instanceof InaccuracyParamHolder){
 				InaccuracyParamHolder v = (InaccuracyParamHolder)val;
 				v.minBoundary = v.value; 
 				v.maxBoundary = v.value; 
@@ -208,7 +244,13 @@ public class StateSpaceModelTask extends Task {
 	private Double startTime(KnowledgeManager km, ValueSet values) throws KnowledgeUpdateException{
 		
 		Double startTime;
-		Double ctime = ((InaccuracyParamHolder)values.getValue(stateSpaceModel.getInStates().get(0))).creationTime;
+		Object obj = values.getValue(stateSpaceModel.getInStates().get(0));
+		Double ctime = 0.0;
+		if(obj instanceof ModeParamHolder)
+			ctime = ((ModeParamHolder)obj).creationTime;
+		else 
+			ctime = ((InaccuracyParamHolder)obj).creationTime;
+		
 		if (ctime <= lastTime) {
 			startTime = lastTime;
 		} else {
@@ -223,13 +265,25 @@ public class StateSpaceModelTask extends Task {
 		ChangeSet ch = new ChangeSet();
 		ValueSet vals = km.get(inStates);
 		for (KnowledgePath knowledgePath : inStates) {
-			InaccuracyParamHolder newVal = new InaccuracyParamHolder<>();
-			InaccuracyParamHolder oldVal = ((InaccuracyParamHolder)vals.getValue(knowledgePath));
-			newVal.value = oldVal.value;
-			newVal.minBoundary = oldVal.value;
-			newVal.maxBoundary = oldVal.value;
-			newVal.creationTime = oldVal.creationTime;
-			ch.setValue(knowledgePath, newVal);	
+			Object obj = vals.getValue(knowledgePath);
+			if(obj instanceof ModeParamHolder){
+				ModeParamHolder newVal = new ModeParamHolder<>();
+				ModeParamHolder oldVal = ((ModeParamHolder)obj);
+				newVal.value = oldVal.value;
+				newVal.minBoundary = oldVal.value;
+				newVal.maxBoundary = oldVal.value;
+				newVal.creationTime = oldVal.creationTime;
+				newVal.trans.addAll(oldVal.trans);
+				ch.setValue(knowledgePath, newVal);	
+			}else {
+				InaccuracyParamHolder newVal = new InaccuracyParamHolder<>();
+				InaccuracyParamHolder oldVal = ((InaccuracyParamHolder)obj);
+				newVal.value = oldVal.value;
+				newVal.minBoundary = oldVal.value;
+				newVal.maxBoundary = oldVal.value;
+				newVal.creationTime = oldVal.creationTime;
+				ch.setValue(knowledgePath, newVal);	
+			}
 		}
 		km.update(ch);
 		stateSpaceModel.setModelValue(new InaccuracyParamHolder<>());

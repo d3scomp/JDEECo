@@ -9,12 +9,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Used to mark an ensemble / component process to be executed when the object the parameter's path points to changes.  
- * <p>
- * Attached to a method parameter that is annotated also with @{@link In} / @{@link InOut}. 
- * </p>
- * 
- * @author Michal Kit
+ * @author Rima Al Ali
  *
  */
 @Retention(RetentionPolicy.RUNTIME)

@@ -14,6 +14,8 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition;
+
+import cz.cuni.mff.d3s.deeco.model.runtime.api.TransitionDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 
 import java.util.Collection;
@@ -50,6 +52,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getEnsembleControllers <em>Ensemble Controllers</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getInternalData <em>Internal Data</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getStateSpaceModels <em>State Space Models</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getTransitions <em>Transitions</em>}</li>
  * </ul>
  * </p>
  *
@@ -155,6 +158,16 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	 * @ordered
 	 */
 	protected EList<StateSpaceModelDefinition> stateSpaceModels;
+
+	/**
+	 * The cached value of the '{@link #getTransitions() <em>Transitions</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getTransitions()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<TransitionDefinition> transitions;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -291,6 +304,18 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EList<TransitionDefinition> getTransitions() {
+		if (transitions == null) {
+			transitions = new EObjectContainmentEList<TransitionDefinition>(TransitionDefinition.class, this, RuntimeMetadataPackage.COMPONENT_INSTANCE__TRANSITIONS);
+		}
+		return transitions;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
@@ -321,6 +346,8 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 				return ((InternalEList<?>)getInternalData()).basicRemove(otherEnd, msgs);
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__STATE_SPACE_MODELS:
 				return ((InternalEList<?>)getStateSpaceModels()).basicRemove(otherEnd, msgs);
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__TRANSITIONS:
+				return ((InternalEList<?>)getTransitions()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -348,6 +375,8 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 				else return getInternalData().map();
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__STATE_SPACE_MODELS:
 				return getStateSpaceModels();
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__TRANSITIONS:
+				return getTransitions();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -385,6 +414,10 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 				getStateSpaceModels().clear();
 				getStateSpaceModels().addAll((Collection<? extends StateSpaceModelDefinition>)newValue);
 				return;
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__TRANSITIONS:
+				getTransitions().clear();
+				getTransitions().addAll((Collection<? extends TransitionDefinition>)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -418,6 +451,9 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__STATE_SPACE_MODELS:
 				getStateSpaceModels().clear();
 				return;
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__TRANSITIONS:
+				getTransitions().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -444,6 +480,8 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 				return internalData != null && !internalData.isEmpty();
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__STATE_SPACE_MODELS:
 				return stateSpaceModels != null && !stateSpaceModels.isEmpty();
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__TRANSITIONS:
+				return transitions != null && !transitions.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

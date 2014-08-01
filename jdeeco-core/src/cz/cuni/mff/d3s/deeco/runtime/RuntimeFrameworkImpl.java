@@ -99,7 +99,9 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 	 * Keeps track of ecore adapters for component processes.
 	 */
 	protected Map<ComponentProcess, Adapter> componentProcessAdapters = new HashMap<>();
-
+	/**
+	 * Keeps track of ecore adapters for state space model.
+	 */
 	protected Map<StateSpaceModelDefinition, Adapter> stateSpaceModelAdapters = new HashMap<>();
 
 	/**

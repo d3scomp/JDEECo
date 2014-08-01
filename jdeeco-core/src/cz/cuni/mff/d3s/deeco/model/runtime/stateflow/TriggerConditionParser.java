@@ -12,7 +12,10 @@ public class TriggerConditionParser {
 		InaccuracyParamHolder oldV = new InaccuracyParamHolder<>();
 		InaccuracyParamHolder newV = new InaccuracyParamHolder<>();
 		
-		if(original instanceof InaccuracyParamHolder){
+		if(original instanceof ModeParamHolder){
+			oldV = (ModeParamHolder)original;
+			newV = (ModeParamHolder)value;
+		}else if(original instanceof InaccuracyParamHolder){
 			oldV = (InaccuracyParamHolder)original;
 			newV = (InaccuracyParamHolder)value;
 		}else if(original instanceof TSParamHolder){
@@ -23,23 +26,26 @@ public class TriggerConditionParser {
 			newV.value = value;
 		}
 			
-		if(oldV.value.equals(newV.value))
+		if(oldV.creationTime.equals(newV.creationTime))
 			return true;
 		
 		return false;
 	}
 
+	
 	public static boolean checkCondition(KnowledgeValueUnchangeTrigger kct, Object object) {
 		
-		InaccuracyParamHolder<Double> key = new InaccuracyParamHolder<Double>();
-		if(object instanceof InaccuracyParamHolder){
+		ModeParamHolder<Double> key = new ModeParamHolder<Double>();
+		if(object instanceof ModeParamHolder){
+			key.setWithMode((ModeParamHolder)object);
+		}else if(object instanceof InaccuracyParamHolder){
 			key.setWithInaccuracy((InaccuracyParamHolder)object);
 		}else if(object instanceof TSParamHolder){
 			key.setWithTS((TSParamHolder)object);
 		}else{
 			key.value = (Double)object;
 		}
-		
+				
 		Double val =  new Double(0.0);
 		switch(kct.getMeta()){
 		case INACCURACY:
@@ -73,7 +79,6 @@ public class TriggerConditionParser {
 	}
 
 	
-	
 	public static boolean checkComparison(ComparisonType comp, double val1, double val2){
 		switch(comp){
 		case EQUAL:
@@ -88,8 +93,6 @@ public class TriggerConditionParser {
 			if(val1 > val2) return true; else return false;
 		default:
 			return false;
+		}
 	}
-
-	}
-
 }

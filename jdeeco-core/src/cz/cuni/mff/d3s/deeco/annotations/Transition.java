@@ -12,7 +12,8 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface TimeStamp {
-	double value() default 0.0;
+public @interface Transition {
+	String from();
+	String[] to();
 }
 

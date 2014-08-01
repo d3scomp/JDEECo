@@ -6,6 +6,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 
+import cz.cuni.mff.d3s.deeco.model.runtime.api.TransitionDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 
 import java.util.Collection;
@@ -20,6 +21,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 /**

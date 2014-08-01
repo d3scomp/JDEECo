@@ -9,8 +9,10 @@ public class InaccuracyParamHolder<T> extends TSParamHolder<T> {
 
 
 	public InaccuracyParamHolder() {
+		super();
 	}
 
+	
 	public InaccuracyParamHolder(InaccuracyParamHolder<T> inacc) {
 		setWithInaccuracy(inacc);
 	}

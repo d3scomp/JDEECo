@@ -5,14 +5,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-
+/**
+ * 
+ * @author Rima Al Ali
+ *
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface ModeTransactions {
-	ModeTransition[] transitions();
+public @interface Transitions {
+	Transition[] map();
 }
-
-
-
-
 

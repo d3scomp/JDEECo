@@ -88,6 +88,7 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION: return createStateSpaceModelDefinition();
 			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_UNCHANGE_TRIGGER: return createKnowledgeValueUnchangeTrigger();
 			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER: return createKnowledgeValueChangeTrigger();
+			case RuntimeMetadataPackage.TRANSITION_DEFINITION: return createTransitionDefinition();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -107,6 +108,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 				return createMetadataTypeFromString(eDataType, initialValue);
 			case RuntimeMetadataPackage.COMPARISON_TYPE:
 				return createComparisonTypeFromString(eDataType, initialValue);
+			case RuntimeMetadataPackage.MODE_STATE:
+				return createModeStateFromString(eDataType, initialValue);
 			case RuntimeMetadataPackage.METHOD:
 				return createMethodFromString(eDataType, initialValue);
 			case RuntimeMetadataPackage.KNOWLEDGE_MANAGER:
@@ -138,6 +141,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 				return convertMetadataTypeToString(eDataType, instanceValue);
 			case RuntimeMetadataPackage.COMPARISON_TYPE:
 				return convertComparisonTypeToString(eDataType, instanceValue);
+			case RuntimeMetadataPackage.MODE_STATE:
+				return convertModeStateToString(eDataType, instanceValue);
 			case RuntimeMetadataPackage.METHOD:
 				return convertMethodToString(eDataType, instanceValue);
 			case RuntimeMetadataPackage.KNOWLEDGE_MANAGER:
@@ -360,6 +365,16 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public TransitionDefinition createTransitionDefinition() {
+		TransitionDefinitionImpl transitionDefinition = new TransitionDefinitionImpl();
+		return transitionDefinition;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public TimeTrigger createTimeTrigger() {
 		TimeTriggerImpl timeTrigger = new TimeTriggerImpl();
 		return timeTrigger;
@@ -494,6 +509,26 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * @generated
 	 */
 	public String convertComparisonTypeToString(EDataType eDataType, Object instanceValue) {
+		return instanceValue == null ? null : instanceValue.toString();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public ModeState createModeStateFromString(EDataType eDataType, String initialValue) {
+		ModeState result = ModeState.get(initialValue);
+		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+		return result;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertModeStateToString(EDataType eDataType, Object instanceValue) {
 		return instanceValue == null ? null : instanceValue.toString();
 	}
 

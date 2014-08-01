@@ -20,19 +20,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ComponentMode;
-
-
 /**
- * Used to mark a class to be a DEECo component.
+ * Used to mark a method to be a component process.
  * 
- * @author Ilias Gerostathopoulos
+ * @author Michal Kit
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface ModesInfo {
-	String parentMode() default "";
-	String initMode();
-	String[] allModes();
+@Target(ElementType.METHOD)
+public @interface Mode {
+	boolean init() default false;
 }

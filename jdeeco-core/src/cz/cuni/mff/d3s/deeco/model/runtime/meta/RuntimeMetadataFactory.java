@@ -27,6 +27,8 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
+
+import cz.cuni.mff.d3s.deeco.model.runtime.api.TransitionDefinition;
 import org.eclipse.emf.ecore.EFactory;
 
 /**
@@ -216,6 +218,15 @@ public interface RuntimeMetadataFactory extends EFactory {
 	 * @generated
 	 */
 	KnowledgeValueChangeTrigger createKnowledgeValueChangeTrigger();
+
+	/**
+	 * Returns a new object of class '<em>Transition Definition</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Transition Definition</em>'.
+	 * @generated
+	 */
+	TransitionDefinition createTransitionDefinition();
 
 	/**
 	 * Returns a new object of class '<em>Time Trigger</em>'.

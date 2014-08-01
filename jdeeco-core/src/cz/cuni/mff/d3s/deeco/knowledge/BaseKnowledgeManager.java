@@ -8,20 +8,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.emf.common.util.EList;
-
-import cz.cuni.mff.d3s.deeco.model.runtime.api.ComparisonType;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueUnchangeTrigger;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.MetadataType;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ModeState;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.TransitionDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
-import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
-import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder;
+import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ModeParamHolder;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TriggerConditionParser;
 
 /**
@@ -214,7 +211,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 			throw new KnowledgeUpdateException(
 					"Update exception - Failed to delete " + invalidDelete);
 		}
-		// Now afeter doing the update and delete - if no exception has been
+		// Now after doing the update and delete - if no exception has been
 		// thrown, we need to notify the listeners about updates done.
 		for (final KnowledgePath knowledgePath : changeSet
 				.getUpdatedReferences()) {
@@ -625,13 +622,81 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 					// notify its listeners about the change
 					for (final TriggerListener listener : knowledgeChangeListeners
 							.get(kvct)) {
-						if(TriggerConditionParser.checkCondition(kvct, value))
-							listener.triggered(kvct);
+						if(TriggerConditionParser.checkCondition(kvct, value)){
+							KnowledgePath kp = kvct.getKnowledgePath();
+							if(value instanceof ModeParamHolder)
+							triggerReachableState((ModeParamHolder)value, kvct, kp, listener);
+						}
 					}
 				}
 			}
 		}
 	}
+
+	private void setNewReachableStates(ModeParamHolder value) {
+		List<TransitionDefinition> trans = value.trans;
+		for (TransitionDefinition tran : trans) {
+			if(tran.getFromMode() != null)
+				if(tran.getFromMode().getState() == ModeState.RUNNING){
+					tran.getToMode().setState(ModeState.REACHABLE);
+				}
+		}
+	}
+
+	private void triggerReachableState(ModeParamHolder value,
+			KnowledgeValueUnchangeTrigger kvct, KnowledgePath kp, TriggerListener listener) {
+		List<TransitionDefinition> trans = value.trans;
+		for (TransitionDefinition tran : trans) {
+			if(checkTriggerEquality(tran.getTrigger(),kvct)){
+//				System.out.println(tran.getTrigger()+"   from : "+tran.getFromMode()+"   to : "+tran.getToMode());
+				if(tran.getFromMode() == null && tran.isInit() && tran.getToMode().getState()== ModeState.REACHABLE){
+					tran.getToMode().setState(ModeState.RUNNING);
+					setNewReachableStates(value);
+					listener.triggered(kvct);	
+				}else if(tran.getFromMode() == null && tran.isInit() && tran.getToMode().getState()== ModeState.RUNNING){
+					listener.triggered(kvct);
+				}else if(tran.getFromMode().getState() == ModeState.RUNNING && tran.getToMode().getState()== ModeState.REACHABLE){
+					tran.getFromMode().setState(ModeState.IDLE);
+					tran.getToMode().setState(ModeState.RUNNING);
+					resetOtherReachableStates(value);
+					setNewReachableStates(value);
+					listener.triggered(kvct);
+				}else if(tran.getFromMode().getState() == ModeState.IDLE && tran.getToMode().getState()== ModeState.RUNNING){
+					listener.triggered(kvct);
+				}else if(tran.getFromMode().getState() == ModeState.IDLE && tran.getToMode().getState()== ModeState.REACHABLE){
+					tran.getToMode().setState(ModeState.IDLE);				
+				}
+			}
+			
+		}
+	}
+	
+	
+	private boolean checkTriggerEquality(Trigger t1, Trigger t2){
+		if(t1 instanceof KnowledgeValueUnchangeTrigger)
+			if(t2 instanceof KnowledgeValueUnchangeTrigger){
+				KnowledgeValueUnchangeTrigger tr1 = (KnowledgeValueUnchangeTrigger)t1;
+				KnowledgeValueUnchangeTrigger tr2= (KnowledgeValueUnchangeTrigger)t2;
+				if(tr1.getComparison().equals(tr2.getComparison()) && tr1.getKnowledgePath().equals(tr2.getKnowledgePath()) && tr1.getMeta().equals(tr2.getMeta()))
+					return true;
+			}
+		return false;
+	}
+
+	private void resetOtherReachableStates(ModeParamHolder m) {
+		for (KnowledgePath kp : knowledge.keySet()){
+			List<TransitionDefinition> trans = m.trans;
+			for (TransitionDefinition tran : trans) {
+				if(tran.getFromMode() != null){
+					if(tran.getFromMode().getState() == ModeState.IDLE && tran.getToMode().getState() == ModeState.REACHABLE){
+						tran.getToMode().setState(ModeState.IDLE);
+	//					tran.getToMode().setIsActive(false);
+					}
+				}
+			}
+		}	
+	}
+
 
 	/**
 	 * Checks whether the shorter list is contained in the longer one, keeping
