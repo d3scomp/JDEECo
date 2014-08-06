@@ -3,11 +3,12 @@ package cz.cuni.mff.d3s.deeco.model.runtime.stateflow;
 import org.eclipse.emf.common.util.EList;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComparisonType;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueUnchangeTrigger;
 
 public class TriggerConditionParser {
 
-	public static boolean checkValueEquality(Object original, Object value) {
+	public static boolean checkTimeStampEquality(Object original, Object value) {
 		
 		InaccuracyParamHolder oldV = new InaccuracyParamHolder<>();
 		InaccuracyParamHolder newV = new InaccuracyParamHolder<>();
@@ -26,7 +27,7 @@ public class TriggerConditionParser {
 			newV.value = value;
 		}
 			
-		if(oldV.creationTime.equals(newV.creationTime))
+		if(oldV.creationTime.equals(newV.creationTime) && oldV.value.equals(newV.value))
 			return true;
 		
 		return false;
@@ -77,7 +78,7 @@ public class TriggerConditionParser {
 			}
 		return result;
 	}
-
+	
 	
 	public static boolean checkComparison(ComparisonType comp, double val1, double val2){
 		switch(comp){

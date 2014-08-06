@@ -175,7 +175,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 				// revert it back in case of problems
 				if (exists) {
 					updated.put(updateKP, original);
-					if(TriggerConditionParser.checkValueEquality(original,changeSet.getValue(updateKP)))
+					if(TriggerConditionParser.checkTimeStampEquality(original,changeSet.getValue(updateKP)))
 						updateKnowledge.put(updateKP, false);
 					else
 						updateKnowledge.put(updateKP, true);
@@ -215,10 +215,11 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		// thrown, we need to notify the listeners about updates done.
 		for (final KnowledgePath knowledgePath : changeSet
 				.getUpdatedReferences()) {
-			if(updateKnowledge.get(knowledgePath))
-				notifyKnowledgeValueChangeListeners(knowledgePath);
-			else if(!updateKnowledge.get(knowledgePath))
+			if(!updateKnowledge.get(knowledgePath))
 				notifyKnowledgeValueUnchangeListeners(knowledgePath, changeSet.getValue(knowledgePath));
+			else if(updateKnowledge.get(knowledgePath)){
+				notifyKnowledgeValueChangeListeners(knowledgePath, changeSet.getValue(knowledgePath));
+			}
 			notifyKnowledgeChangeListeners(knowledgePath);
 			
 		}
@@ -571,7 +572,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 
 	
 	private void notifyKnowledgeValueChangeListeners(
-			final KnowledgePath knowledgePath) {
+			final KnowledgePath knowledgePath, Object value) {
 		List<PathNode> kctNodes;
 		final List<PathNode> kpNodes = knowledgePath.getNodes();
 		// Go through each knowledge change trigger
@@ -592,7 +593,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 					// notify its listeners about the change
 					for (final TriggerListener listener : knowledgeChangeListeners
 							.get(kvct)) {
-						listener.triggered(kvct);
+							listener.triggered(kvct);
 					}
 				}
 			}
@@ -626,6 +627,9 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 							KnowledgePath kp = kvct.getKnowledgePath();
 							if(value instanceof ModeParamHolder)
 							triggerReachableState((ModeParamHolder)value, kvct, kp, listener);
+							else
+								listener.triggered(kvct);
+								
 						}
 					}
 				}

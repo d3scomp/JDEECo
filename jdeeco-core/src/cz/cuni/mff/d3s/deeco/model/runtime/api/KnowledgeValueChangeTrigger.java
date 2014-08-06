@@ -2,6 +2,8 @@
  */
 package cz.cuni.mff.d3s.deeco.model.runtime.api;
 
+import org.eclipse.emf.common.util.EList;
+
 
 /**
  * <!-- begin-user-doc -->
