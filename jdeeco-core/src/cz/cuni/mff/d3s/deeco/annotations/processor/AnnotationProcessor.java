@@ -62,7 +62,6 @@ public class AnnotationProcessor {
 			});
 	protected RuntimeMetadataFactory factory;
 	private double currentTime = System.nanoTime() / SEC_NANOSECOND_FACTOR;
-	private HashMap<KnowledgePath,Transitions> transitions = new HashMap<KnowledgePath,Transitions>();
 	
 	/**
 	 * Initializes the processor with the given model factory.
@@ -277,7 +276,7 @@ public class AnnotationProcessor {
 			
 			
 			
-			List<TransitionDefinition> trans = createTransitions(componentInstance,methods);
+			List<TransitionDefinition> trans = createTransitions(obj, componentInstance,methods);
 			initialK = extractInitialKnowledgeWithModes(initialK, trans);
 			componentInstance.getTransitions().addAll(trans);
 			
@@ -295,7 +294,8 @@ public class AnnotationProcessor {
 	}
 
 	
-	List<TransitionDefinition> createTransitions(ComponentInstance componentInstance, List<Method> methods) {
+	List<TransitionDefinition> createTransitions(Object knowledge, ComponentInstance componentInstance, List<Method> methods) {
+		HashMap<KnowledgePath,Transitions> transitions = extractInitialKnowledgeTransitions(knowledge);
 		ArrayList<TransitionDefinition> returnTrans = new ArrayList<TransitionDefinition>();
 		for (KnowledgePath kp : transitions.keySet()) {
 			Transitions trans = transitions.get(kp);
@@ -357,11 +357,17 @@ public class AnnotationProcessor {
 	}
 
 
-	private KnowledgeValueUnchangeTrigger getTrigger(KnowledgePath kp, ComponentProcess toMode,
+	private KnowledgeChangeTrigger getTrigger(KnowledgePath kp, ComponentProcess toMode,
 			ComponentInstance componentInstance) {
 		for (Trigger trigger : toMode.getTriggers()) {
 			if(trigger instanceof KnowledgeValueUnchangeTrigger){
 				KnowledgeValueUnchangeTrigger tr = (KnowledgeValueUnchangeTrigger)trigger;
+				KnowledgePath newkp = tr.getKnowledgePath();
+				if(newkp.equals(kp)){
+					 return tr;
+				}	 
+			}else if(trigger instanceof KnowledgeValueChangeTrigger){
+				KnowledgeValueChangeTrigger tr = (KnowledgeValueChangeTrigger)trigger;
 				KnowledgePath newkp = tr.getKnowledgePath();
 				if(newkp.equals(kp)){
 					 return tr;
@@ -681,6 +687,20 @@ public class AnnotationProcessor {
 				String path = getDirectionAnnotationValue(directionAnnotation);
 				KnowledgeValueChangeTrigger trigger = factory.createKnowledgeValueChangeTrigger();
 				trigger.setKnowledgePath(createKnowledgePath(path, inComponentProcess));
+				List<Object> values = new ArrayList<Object>();
+				List<ComparisonType> comps = new ArrayList<ComparisonType>();
+				if(t.equal() >= 0) {values.add(t.equal()); comps.add(ComparisonType.EQUAL);}
+				if(!t.equalStr().equals("")) {values.add(t.equalStr()); comps.add(ComparisonType.EQUAL_STR);}
+				if(t.notEqual() >= 0) {values.add(t.notEqual()); comps.add(ComparisonType.NOT_EQUAL);}
+				if(!t.notEqualStr().equals("")) {values.add(t.notEqualStr()); comps.add(ComparisonType.NOT_EQUAL_STR);}
+				if(t.equalLessThan() >= 0) {values.add(t.equalLessThan()); comps.add(ComparisonType.EQUAL_LESS_THAN);}
+				if(t.equalMoreThan() >= 0) {values.add(t.equalMoreThan()); comps.add(ComparisonType.EQUAL_MORE_THAN);}
+				if(t.lessThan() >= 0) {values.add(t.lessThan()); comps.add(ComparisonType.LESS_THAN);}
+				if(t.moreThan() >= 0) {values.add(t.moreThan()); comps.add(ComparisonType.MORE_THAN);}
+				System.out.println(t+"  "+values);
+				trigger.getValue().addAll(values);
+				trigger.getComparison().addAll(comps);
+				trigger.setMeta(t.meta());
 				knowledgeValueChangeTriggers.add(trigger);
 			}
 		}
@@ -699,13 +719,17 @@ public class AnnotationProcessor {
 				String path = getDirectionAnnotationValue(directionAnnotation);
 				KnowledgeValueUnchangeTrigger trigger = factory.createKnowledgeValueUnchangeTrigger();
 				trigger.setKnowledgePath(createKnowledgePath(path, inComponentProcess));
-				List<Long> values = new ArrayList<Long>();
+				List<Object> values = new ArrayList<Object>();
 				List<ComparisonType> comps = new ArrayList<ComparisonType>();
-				if(t.equal() > 0) {values.add(t.equal()); comps.add(ComparisonType.EQUAL);} 
-				if(t.equalLessThan() > 0) {values.add(t.equalLessThan()); comps.add(ComparisonType.EQUAL_LESS_THAN);}
-				if(t.equalMoreThan() > 0) {values.add(t.equalMoreThan()); comps.add(ComparisonType.EQUAL_MORE_THAN);}
-				if(t.lessThan() > 0) {values.add(t.lessThan()); comps.add(ComparisonType.LESS_THAN);}
-				if(t.moreThan() > 0) {values.add(t.moreThan()); comps.add(ComparisonType.MORE_THAN);}
+				if(t.equal() >= 0) {values.add(t.equal()); comps.add(ComparisonType.EQUAL);}
+				if(!t.equalStr().equals("")) {values.add(t.equalStr()); comps.add(ComparisonType.EQUAL_STR);}
+				if(t.notEqual() >= 0) {values.add(t.notEqual()); comps.add(ComparisonType.NOT_EQUAL);}
+				if(!t.notEqualStr().equals("")) {values.add(t.notEqualStr()); comps.add(ComparisonType.NOT_EQUAL_STR);}
+				if(t.equalLessThan() >= 0) {values.add(t.equalLessThan()); comps.add(ComparisonType.EQUAL_LESS_THAN);}
+				if(t.equalMoreThan() >= 0) {values.add(t.equalMoreThan()); comps.add(ComparisonType.EQUAL_MORE_THAN);}
+				if(t.lessThan() >= 0) {values.add(t.lessThan()); comps.add(ComparisonType.LESS_THAN);}
+				if(t.moreThan() >= 0) {values.add(t.moreThan()); comps.add(ComparisonType.MORE_THAN);}
+				System.out.println(t+"  "+values);
 				trigger.getValue().addAll(values);
 				trigger.getComparison().addAll(comps);
 				trigger.setMeta(t.meta());
@@ -1007,10 +1031,10 @@ public class AnnotationProcessor {
 						((TSParamHolder)value).value = f.get(knowledge);
 						((TSParamHolder)value).creationTime = currentTime;
 					}
-					if(anns[i].annotationType().getName().contains("Transitions")){
-						Transitions intrans = (Transitions)anns[i];
-						transitions.put(knowledgePath, intrans);
-					}
+//					if(anns[i].annotationType().getName().contains("Transitions")){
+//						Transitions intrans = (Transitions)anns[i];
+//						transitions.put(knowledgePath, intrans);
+//					}
 				}
 				
 				if(value == null)
@@ -1023,7 +1047,35 @@ public class AnnotationProcessor {
 		return changeSet;
 	}
 	
-	
+	HashMap<KnowledgePath,Transitions> extractInitialKnowledgeTransitions(Object knowledge) {
+		HashMap<KnowledgePath,Transitions> transitions = new HashMap<KnowledgePath,Transitions>();
+		
+		// print a warning if the component definition contains non-public fields
+		for (Field f : knowledge.getClass().getDeclaredFields()) {
+			if (!Modifier.isPublic(f.getModifiers()) || Modifier.isStatic(f.getModifiers())) {
+				Log.w("Non-public or static fields are ignored during the extraction of initial knowledge ("
+						+ knowledge.getClass().getCanonicalName());
+				break;
+			}
+		}
+		for (Field f : knowledge.getClass().getFields()) {
+			if (Modifier.isStatic(f.getModifiers()))
+				continue;
+			KnowledgePath knowledgePath = factory.createKnowledgePath();
+			PathNodeField pathNodeField = factory.createPathNodeField();
+			pathNodeField.setName(new String(f.getName()));
+			knowledgePath.getNodes().add(pathNodeField);
+			Object value = null;
+			Annotation[] anns = f.getDeclaredAnnotations();
+			for (int i = 0; i < anns.length; i++) {
+				if(anns[i].annotationType().getName().contains("Transitions")){
+					Transitions intrans = (Transitions)anns[i];
+					transitions.put(knowledgePath, intrans);
+				}
+			}
+		}
+		return transitions;
+	}
 	
 	ChangeSet extractInitialKnowledgeWithInaccuracy(ChangeSet changeSet, List<StateSpaceModelDefinition> stateSpaceModels) {
 		

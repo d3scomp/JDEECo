@@ -25,7 +25,7 @@ import org.eclipse.emf.common.util.EList;
 public interface KnowledgeValueUnchangeTrigger extends KnowledgeChangeTrigger {
 	/**
 	 * Returns the value of the '<em><b>Value</b></em>' attribute list.
-	 * The list contents are of type {@link java.lang.Long}.
+	 * The list contents are of type {@link java.lang.Object}.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Value</em>' attribute list isn't clear,
@@ -37,7 +37,7 @@ public interface KnowledgeValueUnchangeTrigger extends KnowledgeChangeTrigger {
 	 * @model
 	 * @generated
 	 */
-	EList<Long> getValue();
+	EList<Object> getValue();
 
 	/**
 	 * Returns the value of the '<em><b>Comparison</b></em>' attribute list.

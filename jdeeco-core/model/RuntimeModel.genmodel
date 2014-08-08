@@ -27,6 +27,9 @@
       <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//ComparisonType/EQUAL_MORE_THAN"/>
       <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//ComparisonType/LESS_THAN"/>
       <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//ComparisonType/MORE_THAN"/>
+      <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//ComparisonType/EQUAL_STR"/>
+      <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//ComparisonType/NOT_EQUAL"/>
+      <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//ComparisonType/NOT_EQUAL_STR"/>
     </genEnums>
     <genEnums typeSafeEnumCompatible="false" ecoreEnum="RuntimeModel.ecore#//ModeState">
       <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//ModeState/IDLE"/>
@@ -121,7 +124,11 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//KnowledgeValueUnchangeTrigger/comparison"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//KnowledgeValueUnchangeTrigger/meta"/>
     </genClasses>
-    <genClasses ecoreClass="RuntimeModel.ecore#//KnowledgeValueChangeTrigger"/>
+    <genClasses ecoreClass="RuntimeModel.ecore#//KnowledgeValueChangeTrigger">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//KnowledgeValueChangeTrigger/value"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//KnowledgeValueChangeTrigger/comparison"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//KnowledgeValueChangeTrigger/meta"/>
+    </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//TransitionDefinition">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//TransitionDefinition/fromMode"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//TransitionDefinition/toMode"/>

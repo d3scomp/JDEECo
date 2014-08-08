@@ -66,7 +66,31 @@ public enum ComparisonType implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	MORE_THAN(4, "MORE_THAN", "MORE_THAN");
+	MORE_THAN(4, "MORE_THAN", "MORE_THAN"), /**
+	 * The '<em><b>EQUAL STR</b></em>' literal object.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #EQUAL_STR_VALUE
+	 * @generated
+	 * @ordered
+	 */
+	EQUAL_STR(5, "EQUAL_STR", "EQUAL_STR"), /**
+	 * The '<em><b>NOT EQUAL</b></em>' literal object.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #NOT_EQUAL_VALUE
+	 * @generated
+	 * @ordered
+	 */
+	NOT_EQUAL(6, "NOT_EQUAL", "NOT_EQUAL"), /**
+	 * The '<em><b>NOT EQUAL STR</b></em>' literal object.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #NOT_EQUAL_STR_VALUE
+	 * @generated
+	 * @ordered
+	 */
+	NOT_EQUAL_STR(7, "NOT_EQUAL_STR", "NOT_EQUAL_STR");
 
 	/**
 	 * The '<em><b>EQUAL</b></em>' literal value.
@@ -144,6 +168,51 @@ public enum ComparisonType implements Enumerator {
 	public static final int MORE_THAN_VALUE = 4;
 
 	/**
+	 * The '<em><b>EQUAL STR</b></em>' literal value.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of '<em><b>EQUAL STR</b></em>' literal object isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @see #EQUAL_STR
+	 * @model
+	 * @generated
+	 * @ordered
+	 */
+	public static final int EQUAL_STR_VALUE = 5;
+
+	/**
+	 * The '<em><b>NOT EQUAL</b></em>' literal value.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of '<em><b>NOT EQUAL</b></em>' literal object isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @see #NOT_EQUAL
+	 * @model
+	 * @generated
+	 * @ordered
+	 */
+	public static final int NOT_EQUAL_VALUE = 6;
+
+	/**
+	 * The '<em><b>NOT EQUAL STR</b></em>' literal value.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of '<em><b>NOT EQUAL STR</b></em>' literal object isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @see #NOT_EQUAL_STR
+	 * @model
+	 * @generated
+	 * @ordered
+	 */
+	public static final int NOT_EQUAL_STR_VALUE = 7;
+
+	/**
 	 * An array of all the '<em><b>Comparison Type</b></em>' enumerators.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -156,6 +225,9 @@ public enum ComparisonType implements Enumerator {
 			EQUAL_MORE_THAN,
 			LESS_THAN,
 			MORE_THAN,
+			EQUAL_STR,
+			NOT_EQUAL,
+			NOT_EQUAL_STR,
 		};
 
 	/**
@@ -211,6 +283,9 @@ public enum ComparisonType implements Enumerator {
 			case EQUAL_MORE_THAN_VALUE: return EQUAL_MORE_THAN;
 			case LESS_THAN_VALUE: return LESS_THAN;
 			case MORE_THAN_VALUE: return MORE_THAN;
+			case EQUAL_STR_VALUE: return EQUAL_STR;
+			case NOT_EQUAL_VALUE: return NOT_EQUAL;
+			case NOT_EQUAL_STR_VALUE: return NOT_EQUAL_STR;
 		}
 		return null;
 	}

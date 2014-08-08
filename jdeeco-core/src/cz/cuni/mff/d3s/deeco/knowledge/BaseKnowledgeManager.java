@@ -39,13 +39,6 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 
 	private final String id;
 
-	public BaseKnowledgeManager(String id) {
-		this.id = id;
-		this.knowledge = new HashMap<>();
-		this.updateKnowledge = new HashMap<>();
-		this.knowledgeChangeListeners = new HashMap<>();
-	}
-
 	@Override
 	public String getId() {
 		return this.id;
@@ -76,6 +69,13 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 				result.setValue(kp, value);
 		}
 		return result;
+	}
+
+	public BaseKnowledgeManager(String id) {
+		this.id = id;
+		this.knowledge = new HashMap<>();
+		this.updateKnowledge = new HashMap<>();
+		this.knowledgeChangeListeners = new HashMap<>();
 	}
 
 	/*
@@ -593,6 +593,10 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 					// notify its listeners about the change
 					for (final TriggerListener listener : knowledgeChangeListeners
 							.get(kvct)) {
+						KnowledgePath kp = kvct.getKnowledgePath();
+						if(value instanceof ModeParamHolder)
+							triggerReachableState((ModeParamHolder)value, kvct, kp, listener);
+						else
 							listener.triggered(kvct);
 					}
 				}
@@ -626,10 +630,9 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 						if(TriggerConditionParser.checkCondition(kvct, value)){
 							KnowledgePath kp = kvct.getKnowledgePath();
 							if(value instanceof ModeParamHolder)
-							triggerReachableState((ModeParamHolder)value, kvct, kp, listener);
+								triggerReachableState((ModeParamHolder)value, kvct, kp, listener);
 							else
 								listener.triggered(kvct);
-								
 						}
 					}
 				}
@@ -637,68 +640,50 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		}
 	}
 
-	private void setNewReachableStates(ModeParamHolder value) {
-		List<TransitionDefinition> trans = value.trans;
-		for (TransitionDefinition tran : trans) {
-			if(tran.getFromMode() != null)
-				if(tran.getFromMode().getState() == ModeState.RUNNING){
-					tran.getToMode().setState(ModeState.REACHABLE);
-				}
-		}
-	}
-
+	
 	private void triggerReachableState(ModeParamHolder value,
-			KnowledgeValueUnchangeTrigger kvct, KnowledgePath kp, TriggerListener listener) {
+			KnowledgeChangeTrigger kvct, KnowledgePath kp, TriggerListener listener) {
 		List<TransitionDefinition> trans = value.trans;
 		for (TransitionDefinition tran : trans) {
-			if(checkTriggerEquality(tran.getTrigger(),kvct)){
-//				System.out.println(tran.getTrigger()+"   from : "+tran.getFromMode()+"   to : "+tran.getToMode());
-				if(tran.getFromMode() == null && tran.isInit() && tran.getToMode().getState()== ModeState.REACHABLE){
-					tran.getToMode().setState(ModeState.RUNNING);
-					setNewReachableStates(value);
-					listener.triggered(kvct);	
-				}else if(tran.getFromMode() == null && tran.isInit() && tran.getToMode().getState()== ModeState.RUNNING){
-					listener.triggered(kvct);
-				}else if(tran.getFromMode().getState() == ModeState.RUNNING && tran.getToMode().getState()== ModeState.REACHABLE){
+			if(checkTriggerEquality(tran.getTrigger(),kvct,value)){
+				if(!tran.isInit() && tran.getFromMode().getState() == ModeState.RUNNING && tran.getToMode().getState()== ModeState.REACHABLE){
 					tran.getFromMode().setState(ModeState.IDLE);
 					tran.getToMode().setState(ModeState.RUNNING);
-					resetOtherReachableStates(value);
-					setNewReachableStates(value);
 					listener.triggered(kvct);
-				}else if(tran.getFromMode().getState() == ModeState.IDLE && tran.getToMode().getState()== ModeState.RUNNING){
-					listener.triggered(kvct);
-				}else if(tran.getFromMode().getState() == ModeState.IDLE && tran.getToMode().getState()== ModeState.REACHABLE){
-					tran.getToMode().setState(ModeState.IDLE);				
+				}else if(tran.isInit() && tran.getToMode().getState()== ModeState.REACHABLE){
+					tran.getToMode().setState(ModeState.RUNNING);
+					listener.triggered(kvct);	
+				} else if(tran.getToMode().getState()== ModeState.RUNNING){
+					listener.triggered(kvct);	
+				} else if(!tran.isInit() && tran.getFromMode().getState() == ModeState.IDLE && tran.getToMode().getState()== ModeState.REACHABLE){
+					tran.getToMode().setState(ModeState.IDLE);
 				}
 			}
-			
 		}
 	}
 	
 	
-	private boolean checkTriggerEquality(Trigger t1, Trigger t2){
-		if(t1 instanceof KnowledgeValueUnchangeTrigger)
+	private boolean checkTriggerEquality(Trigger t1, Trigger t2,Object value){
+		if(t1 instanceof KnowledgeValueUnchangeTrigger){
 			if(t2 instanceof KnowledgeValueUnchangeTrigger){
 				KnowledgeValueUnchangeTrigger tr1 = (KnowledgeValueUnchangeTrigger)t1;
 				KnowledgeValueUnchangeTrigger tr2= (KnowledgeValueUnchangeTrigger)t2;
-				if(tr1.getComparison().equals(tr2.getComparison()) && tr1.getKnowledgePath().equals(tr2.getKnowledgePath()) && tr1.getMeta().equals(tr2.getMeta()))
-					return true;
-			}
-		return false;
-	}
-
-	private void resetOtherReachableStates(ModeParamHolder m) {
-		for (KnowledgePath kp : knowledge.keySet()){
-			List<TransitionDefinition> trans = m.trans;
-			for (TransitionDefinition tran : trans) {
-				if(tran.getFromMode() != null){
-					if(tran.getFromMode().getState() == ModeState.IDLE && tran.getToMode().getState() == ModeState.REACHABLE){
-						tran.getToMode().setState(ModeState.IDLE);
-	//					tran.getToMode().setIsActive(false);
-					}
+				if(tr1.getComparison().equals(tr2.getComparison()) && tr1.getKnowledgePath().equals(tr2.getKnowledgePath()) && tr1.getMeta().equals(tr2.getMeta())){
+					if(TriggerConditionParser.checkCondition(tr1, value))
+						return true;
 				}
 			}
-		}	
+		}else if(t1 instanceof KnowledgeValueChangeTrigger){
+				if(t2 instanceof KnowledgeValueChangeTrigger){
+					KnowledgeValueChangeTrigger tr1 = (KnowledgeValueChangeTrigger)t1;
+					KnowledgeValueChangeTrigger tr2= (KnowledgeValueChangeTrigger)t2;
+					if(tr1.getComparison().equals(tr2.getComparison()) && tr1.getKnowledgePath().equals(tr2.getKnowledgePath()) && tr1.getMeta().equals(tr2.getMeta())){
+						if(TriggerConditionParser.checkCondition(tr1, value))
+							return true;
+					}
+				}
+		}
+		return false;
 	}
 
 

@@ -44,7 +44,7 @@ public class KnowledgeValueUnchangeTriggerImpl extends KnowledgeChangeTriggerImp
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<Long> value;
+	protected EList<Object> value;
 
 	/**
 	 * The cached value of the '{@link #getComparison() <em>Comparison</em>}' attribute list.
@@ -100,9 +100,9 @@ public class KnowledgeValueUnchangeTriggerImpl extends KnowledgeChangeTriggerImp
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<Long> getValue() {
+	public EList<Object> getValue() {
 		if (value == null) {
-			value = new EDataTypeUniqueEList<Long>(Long.class, this, RuntimeMetadataPackage.KNOWLEDGE_VALUE_UNCHANGE_TRIGGER__VALUE);
+			value = new EDataTypeUniqueEList<Object>(Object.class, this, RuntimeMetadataPackage.KNOWLEDGE_VALUE_UNCHANGE_TRIGGER__VALUE);
 		}
 		return value;
 	}
@@ -169,7 +169,7 @@ public class KnowledgeValueUnchangeTriggerImpl extends KnowledgeChangeTriggerImp
 		switch (featureID) {
 			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_UNCHANGE_TRIGGER__VALUE:
 				getValue().clear();
-				getValue().addAll((Collection<? extends Long>)newValue);
+				getValue().addAll((Collection<? extends Object>)newValue);
 				return;
 			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_UNCHANGE_TRIGGER__COMPARISON:
 				getComparison().clear();

@@ -1163,13 +1163,40 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int KNOWLEDGE_VALUE_CHANGE_TRIGGER__KNOWLEDGE_PATH = KNOWLEDGE_CHANGE_TRIGGER__KNOWLEDGE_PATH;
 
 	/**
+	 * The feature id for the '<em><b>Value</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int KNOWLEDGE_VALUE_CHANGE_TRIGGER__VALUE = KNOWLEDGE_CHANGE_TRIGGER_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Comparison</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int KNOWLEDGE_VALUE_CHANGE_TRIGGER__COMPARISON = KNOWLEDGE_CHANGE_TRIGGER_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Meta</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int KNOWLEDGE_VALUE_CHANGE_TRIGGER__META = KNOWLEDGE_CHANGE_TRIGGER_FEATURE_COUNT + 2;
+
+	/**
 	 * The number of structural features of the '<em>Knowledge Value Change Trigger</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int KNOWLEDGE_VALUE_CHANGE_TRIGGER_FEATURE_COUNT = KNOWLEDGE_CHANGE_TRIGGER_FEATURE_COUNT + 0;
+	int KNOWLEDGE_VALUE_CHANGE_TRIGGER_FEATURE_COUNT = KNOWLEDGE_CHANGE_TRIGGER_FEATURE_COUNT + 3;
 
 	/**
 	 * The number of operations of the '<em>Knowledge Value Change Trigger</em>' class.
@@ -2007,6 +2034,39 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EClass getKnowledgeValueChangeTrigger();
 
 	/**
+	 * Returns the meta object for the attribute list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueChangeTrigger#getValue <em>Value</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>Value</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueChangeTrigger#getValue()
+	 * @see #getKnowledgeValueChangeTrigger()
+	 * @generated
+	 */
+	EAttribute getKnowledgeValueChangeTrigger_Value();
+
+	/**
+	 * Returns the meta object for the attribute list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueChangeTrigger#getComparison <em>Comparison</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>Comparison</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueChangeTrigger#getComparison()
+	 * @see #getKnowledgeValueChangeTrigger()
+	 * @generated
+	 */
+	EAttribute getKnowledgeValueChangeTrigger_Comparison();
+
+	/**
+	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueChangeTrigger#getMeta <em>Meta</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Meta</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueChangeTrigger#getMeta()
+	 * @see #getKnowledgeValueChangeTrigger()
+	 * @generated
+	 */
+	EAttribute getKnowledgeValueChangeTrigger_Meta();
+
+	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.TransitionDefinition <em>Transition Definition</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2793,6 +2853,30 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * @generated
 		 */
 		EClass KNOWLEDGE_VALUE_CHANGE_TRIGGER = eINSTANCE.getKnowledgeValueChangeTrigger();
+
+		/**
+		 * The meta object literal for the '<em><b>Value</b></em>' attribute list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute KNOWLEDGE_VALUE_CHANGE_TRIGGER__VALUE = eINSTANCE.getKnowledgeValueChangeTrigger_Value();
+
+		/**
+		 * The meta object literal for the '<em><b>Comparison</b></em>' attribute list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute KNOWLEDGE_VALUE_CHANGE_TRIGGER__COMPARISON = eINSTANCE.getKnowledgeValueChangeTrigger_Comparison();
+
+		/**
+		 * The meta object literal for the '<em><b>Meta</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute KNOWLEDGE_VALUE_CHANGE_TRIGGER__META = eINSTANCE.getKnowledgeValueChangeTrigger_Meta();
 
 		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.TransitionDefinitionImpl <em>Transition Definition</em>}' class.

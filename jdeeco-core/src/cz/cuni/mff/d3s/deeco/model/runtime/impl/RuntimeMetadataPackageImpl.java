@@ -918,6 +918,33 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getKnowledgeValueChangeTrigger_Value() {
+		return (EAttribute)knowledgeValueChangeTriggerEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getKnowledgeValueChangeTrigger_Comparison() {
+		return (EAttribute)knowledgeValueChangeTriggerEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getKnowledgeValueChangeTrigger_Meta() {
+		return (EAttribute)knowledgeValueChangeTriggerEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getTransitionDefinition() {
 		return transitionDefinitionEClass;
 	}
@@ -1220,6 +1247,9 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		createEAttribute(knowledgeValueUnchangeTriggerEClass, KNOWLEDGE_VALUE_UNCHANGE_TRIGGER__META);
 
 		knowledgeValueChangeTriggerEClass = createEClass(KNOWLEDGE_VALUE_CHANGE_TRIGGER);
+		createEAttribute(knowledgeValueChangeTriggerEClass, KNOWLEDGE_VALUE_CHANGE_TRIGGER__VALUE);
+		createEAttribute(knowledgeValueChangeTriggerEClass, KNOWLEDGE_VALUE_CHANGE_TRIGGER__COMPARISON);
+		createEAttribute(knowledgeValueChangeTriggerEClass, KNOWLEDGE_VALUE_CHANGE_TRIGGER__META);
 
 		transitionDefinitionEClass = createEClass(TRANSITION_DEFINITION);
 		createEReference(transitionDefinitionEClass, TRANSITION_DEFINITION__FROM_MODE);
@@ -1369,11 +1399,14 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		initEAttribute(getStateSpaceModelDefinition_ModelValue(), this.getInaccurateValue(), "modelValue", null, 1, 1, StateSpaceModelDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(knowledgeValueUnchangeTriggerEClass, KnowledgeValueUnchangeTrigger.class, "KnowledgeValueUnchangeTrigger", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getKnowledgeValueUnchangeTrigger_Value(), ecorePackage.getELong(), "value", null, 0, -1, KnowledgeValueUnchangeTrigger.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getKnowledgeValueUnchangeTrigger_Value(), ecorePackage.getEJavaObject(), "value", null, 0, -1, KnowledgeValueUnchangeTrigger.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getKnowledgeValueUnchangeTrigger_Comparison(), this.getComparisonType(), "comparison", null, 0, -1, KnowledgeValueUnchangeTrigger.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getKnowledgeValueUnchangeTrigger_Meta(), this.getMetadataType(), "meta", null, 0, 1, KnowledgeValueUnchangeTrigger.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(knowledgeValueChangeTriggerEClass, KnowledgeValueChangeTrigger.class, "KnowledgeValueChangeTrigger", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getKnowledgeValueChangeTrigger_Value(), ecorePackage.getEJavaObject(), "value", null, 0, -1, KnowledgeValueChangeTrigger.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getKnowledgeValueChangeTrigger_Comparison(), this.getComparisonType(), "comparison", null, 0, -1, KnowledgeValueChangeTrigger.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getKnowledgeValueChangeTrigger_Meta(), this.getMetadataType(), "meta", null, 0, 1, KnowledgeValueChangeTrigger.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(transitionDefinitionEClass, TransitionDefinition.class, "TransitionDefinition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getTransitionDefinition_FromMode(), this.getComponentProcess(), null, "fromMode", null, 0, 1, TransitionDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1400,6 +1433,9 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		addEEnumLiteral(comparisonTypeEEnum, ComparisonType.EQUAL_MORE_THAN);
 		addEEnumLiteral(comparisonTypeEEnum, ComparisonType.LESS_THAN);
 		addEEnumLiteral(comparisonTypeEEnum, ComparisonType.MORE_THAN);
+		addEEnumLiteral(comparisonTypeEEnum, ComparisonType.EQUAL_STR);
+		addEEnumLiteral(comparisonTypeEEnum, ComparisonType.NOT_EQUAL);
+		addEEnumLiteral(comparisonTypeEEnum, ComparisonType.NOT_EQUAL_STR);
 
 		initEEnum(modeStateEEnum, ModeState.class, "ModeState");
 		addEEnumLiteral(modeStateEEnum, ModeState.IDLE);

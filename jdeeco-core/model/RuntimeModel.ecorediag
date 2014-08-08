@@ -543,6 +543,18 @@
         <element xmi:type="ecore:EEnumLiteral" href="RuntimeModel.ecore#//ComparisonType/EQUAL"/>
         <layoutConstraint xmi:type="notation:Location" xmi:id="_DMiYAQ52EeS4Lqa6b0xbGw"/>
       </children>
+      <children xmi:type="notation:Node" xmi:id="_lIxEoB7XEeS9C8M9BxJk1g" type="2006">
+        <element xmi:type="ecore:EEnumLiteral" href="RuntimeModel.ecore#//ComparisonType/EQUAL_STR"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_lIxEoR7XEeS9C8M9BxJk1g"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_oPdIwB7XEeS9C8M9BxJk1g" type="2006">
+        <element xmi:type="ecore:EEnumLiteral" href="RuntimeModel.ecore#//ComparisonType/NOT_EQUAL"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_oPdIwR7XEeS9C8M9BxJk1g"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_qpp6UB7XEeS9C8M9BxJk1g" type="2006">
+        <element xmi:type="ecore:EEnumLiteral" href="RuntimeModel.ecore#//ComparisonType/NOT_EQUAL_STR"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_qpp6UR7XEeS9C8M9BxJk1g"/>
+      </children>
       <children xmi:type="notation:Node" xmi:id="_FHwHgA52EeS4Lqa6b0xbGw" type="2006">
         <element xmi:type="ecore:EEnumLiteral" href="RuntimeModel.ecore#//ComparisonType/EQUAL_LESS_THAN"/>
         <layoutConstraint xmi:type="notation:Location" xmi:id="_FHwHgQ52EeS4Lqa6b0xbGw"/>
@@ -570,6 +582,18 @@
   <children xmi:type="notation:Node" xmi:id="_xrDMUA53EeS4Lqa6b0xbGw" type="1001">
     <children xmi:type="notation:Node" xmi:id="_xrDzYA53EeS4Lqa6b0xbGw" type="4001"/>
     <children xmi:type="notation:Node" xmi:id="_xrDzYQ53EeS4Lqa6b0xbGw" type="5001">
+      <children xmi:type="notation:Node" xmi:id="_kYn2kB7WEeS9C8M9BxJk1g" type="2001">
+        <element xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//KnowledgeValueChangeTrigger/value"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_kYn2kR7WEeS9C8M9BxJk1g"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_maHNMB7WEeS9C8M9BxJk1g" type="2001">
+        <element xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//KnowledgeValueChangeTrigger/comparison"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_maHNMR7WEeS9C8M9BxJk1g"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_tJjgsB7WEeS9C8M9BxJk1g" type="2001">
+        <element xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//KnowledgeValueChangeTrigger/meta"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_tJjgsR7WEeS9C8M9BxJk1g"/>
+      </children>
       <styles xmi:type="notation:DrawerStyle" xmi:id="_xrDzYg53EeS4Lqa6b0xbGw"/>
       <styles xmi:type="notation:SortingStyle" xmi:id="_xrDzYw53EeS4Lqa6b0xbGw"/>
       <styles xmi:type="notation:FilteringStyle" xmi:id="_xrDzZA53EeS4Lqa6b0xbGw"/>

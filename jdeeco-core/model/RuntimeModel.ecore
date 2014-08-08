@@ -132,7 +132,7 @@
   <eClassifiers xsi:type="ecore:EDataType" name="InaccurateValue" instanceClassName="cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder"/>
   <eClassifiers xsi:type="ecore:EClass" name="KnowledgeValueUnchangeTrigger" eSuperTypes="#//KnowledgeChangeTrigger">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" upperBound="-1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="comparison" upperBound="-1"
         eType="#//ComparisonType"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="meta" eType="#//MetadataType"/>
@@ -143,8 +143,17 @@
     <eLiterals name="EQUAL_MORE_THAN" value="2"/>
     <eLiterals name="LESS_THAN" value="3"/>
     <eLiterals name="MORE_THAN" value="4"/>
+    <eLiterals name="EQUAL_STR" value="5"/>
+    <eLiterals name="NOT_EQUAL" value="6"/>
+    <eLiterals name="NOT_EQUAL_STR" value="7"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="KnowledgeValueChangeTrigger" eSuperTypes="#//KnowledgeChangeTrigger"/>
+  <eClassifiers xsi:type="ecore:EClass" name="KnowledgeValueChangeTrigger" eSuperTypes="#//KnowledgeChangeTrigger">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" upperBound="-1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="comparison" upperBound="-1"
+        eType="#//ComparisonType"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="meta" eType="#//MetadataType"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="TransitionDefinition">
     <eStructuralFeatures xsi:type="ecore:EReference" name="fromMode" eType="#//ComponentProcess"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="toMode" eType="#//ComponentProcess"/>

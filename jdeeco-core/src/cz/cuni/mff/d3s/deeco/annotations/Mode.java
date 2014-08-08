@@ -23,11 +23,12 @@ import java.lang.annotation.Target;
 /**
  * Used to mark a method to be a component process.
  * 
- * @author Michal Kit
+ * @author Rima Al Ali
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface Mode {
 	boolean init() default false;
+	String parent() default "";
 }
