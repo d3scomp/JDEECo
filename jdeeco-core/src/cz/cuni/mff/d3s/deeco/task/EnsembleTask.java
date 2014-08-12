@@ -28,7 +28,6 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.impl.TriggerImpl;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
-import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ModeParamHolder;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.KnowledgePathAndRoot;
@@ -295,9 +294,6 @@ public class EnsembleTask extends Task {
 				actualParams[paramIdx] = shadowKnowledge.getValue(absoluKnowledgePathAndRoot.knowledgePath);	
 			}
 			
-			if(actualParams[paramIdx] instanceof ModeParamHolder){
-				actualParams[paramIdx] = ((ModeParamHolder)actualParams[paramIdx]).value;
-			}else			
 			if(actualParams[paramIdx] instanceof InaccuracyParamHolder){
 				actualParams[paramIdx] = ((InaccuracyParamHolder)actualParams[paramIdx]).value;
 			}else			
@@ -426,9 +422,6 @@ public class EnsembleTask extends Task {
 			}
 
 			if (paramDir == ParameterDirection.IN) {
-				if(paramValue instanceof ModeParamHolder){
-					actualParams[paramIdx] = ((ModeParamHolder<Object>)paramValue).value;
-				}else
 				if(paramValue instanceof InaccuracyParamHolder){
 					actualParams[paramIdx] = ((InaccuracyParamHolder<Object>)paramValue).value;
 				}else
@@ -438,9 +431,6 @@ public class EnsembleTask extends Task {
 					actualParams[paramIdx] = paramValue;
 				}
 			} else if (paramDir == ParameterDirection.OUT) {
-				if(paramValue instanceof ModeParamHolder ){
-					actualParams[paramIdx] = new ModeParamHolder<Object>();
-				}else
 				if(paramValue instanceof InaccuracyParamHolder ){
 					actualParams[paramIdx] = new InaccuracyParamHolder<Object>();
 				}else
@@ -451,9 +441,6 @@ public class EnsembleTask extends Task {
 				}
 	
 			} else if(paramDir == ParameterDirection.INOUT) {
-				if(paramValue instanceof ModeParamHolder){
-					actualParams[paramIdx] = new ModeParamHolder<Object>((ModeParamHolder<Object>)paramValue);
-				}else
 				if(paramValue instanceof InaccuracyParamHolder){
 					actualParams[paramIdx] = new InaccuracyParamHolder<Object>((InaccuracyParamHolder<Object>)paramValue);
 				}else
@@ -484,9 +471,6 @@ public class EnsembleTask extends Task {
 
 				if (absoluteKnowledgePathAndRoot.root == localRole) {
 					if (paramDir == ParameterDirection.OUT || paramDir == ParameterDirection.INOUT) {
-						if(actualParams[paramIdx] instanceof ModeParamHolder)
-							localChangeSet.setValue(absoluteKnowledgePathAndRoot.knowledgePath, ((ModeParamHolder<Object>)actualParams[paramIdx]));
-						else
 						if(actualParams[paramIdx] instanceof InaccuracyParamHolder)
 							localChangeSet.setValue(absoluteKnowledgePathAndRoot.knowledgePath, ((InaccuracyParamHolder<Object>)actualParams[paramIdx]));
 						else

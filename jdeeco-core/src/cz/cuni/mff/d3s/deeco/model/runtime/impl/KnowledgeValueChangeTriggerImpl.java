@@ -3,6 +3,7 @@
 package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComparisonType;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueChangeTrigger;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.MetadataType;
@@ -12,8 +13,10 @@ import java.util.Collection;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
+import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -22,9 +25,9 @@ import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.KnowledgeValueChangeTriggerImpl#getValue <em>Value</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.KnowledgeValueChangeTriggerImpl#getComparison <em>Comparison</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.KnowledgeValueChangeTriggerImpl#getMeta <em>Meta</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.KnowledgeValueChangeTriggerImpl#getCondition <em>Condition</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.KnowledgeValueChangeTriggerImpl#getFrom <em>From</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.KnowledgeValueChangeTriggerImpl#getTo <em>To</em>}</li>
  * </ul>
  * </p>
  *
@@ -32,42 +35,32 @@ import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
  */
 public class KnowledgeValueChangeTriggerImpl extends KnowledgeChangeTriggerImpl implements KnowledgeValueChangeTrigger {
 	/**
-	 * The cached value of the '{@link #getValue() <em>Value</em>}' attribute list.
+	 * The cached value of the '{@link #getCondition() <em>Condition</em>}' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getValue()
+	 * @see #getCondition()
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<Object> value;
+	protected EList<String> condition;
 	/**
-	 * The cached value of the '{@link #getComparison() <em>Comparison</em>}' attribute list.
+	 * The cached value of the '{@link #getFrom() <em>From</em>}' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getComparison()
+	 * @see #getFrom()
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<ComparisonType> comparison;
+	protected EList<ComponentProcess> from;
 	/**
-	 * The default value of the '{@link #getMeta() <em>Meta</em>}' attribute.
+	 * The cached value of the '{@link #getTo() <em>To</em>}' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getMeta()
+	 * @see #getTo()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final MetadataType META_EDEFAULT = MetadataType.EMPTY;
-	/**
-	 * The cached value of the '{@link #getMeta() <em>Meta</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getMeta()
-	 * @generated
-	 * @ordered
-	 */
-	protected MetadataType meta = META_EDEFAULT;
-
+	protected ComponentProcess to;
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -92,11 +85,11 @@ public class KnowledgeValueChangeTriggerImpl extends KnowledgeChangeTriggerImpl 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<Object> getValue() {
-		if (value == null) {
-			value = new EDataTypeUniqueEList<Object>(Object.class, this, RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__VALUE);
+	public EList<String> getCondition() {
+		if (condition == null) {
+			condition = new EDataTypeUniqueEList<String>(String.class, this, RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__CONDITION);
 		}
-		return value;
+		return condition;
 	}
 
 	/**
@@ -104,11 +97,11 @@ public class KnowledgeValueChangeTriggerImpl extends KnowledgeChangeTriggerImpl 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<ComparisonType> getComparison() {
-		if (comparison == null) {
-			comparison = new EDataTypeUniqueEList<ComparisonType>(ComparisonType.class, this, RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__COMPARISON);
+	public EList<ComponentProcess> getFrom() {
+		if (from == null) {
+			from = new EObjectResolvingEList<ComponentProcess>(ComponentProcess.class, this, RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__FROM);
 		}
-		return comparison;
+		return from;
 	}
 
 	/**
@@ -116,8 +109,16 @@ public class KnowledgeValueChangeTriggerImpl extends KnowledgeChangeTriggerImpl 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MetadataType getMeta() {
-		return meta;
+	public ComponentProcess getTo() {
+		if (to != null && to.eIsProxy()) {
+			InternalEObject oldTo = (InternalEObject)to;
+			to = (ComponentProcess)eResolveProxy(oldTo);
+			if (to != oldTo) {
+				if (eNotificationRequired())
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__TO, oldTo, to));
+			}
+		}
+		return to;
 	}
 
 	/**
@@ -125,11 +126,20 @@ public class KnowledgeValueChangeTriggerImpl extends KnowledgeChangeTriggerImpl 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setMeta(MetadataType newMeta) {
-		MetadataType oldMeta = meta;
-		meta = newMeta == null ? META_EDEFAULT : newMeta;
+	public ComponentProcess basicGetTo() {
+		return to;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setTo(ComponentProcess newTo) {
+		ComponentProcess oldTo = to;
+		to = newTo;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__META, oldMeta, meta));
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__TO, oldTo, to));
 	}
 
 	/**
@@ -140,12 +150,13 @@ public class KnowledgeValueChangeTriggerImpl extends KnowledgeChangeTriggerImpl 
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__VALUE:
-				return getValue();
-			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__COMPARISON:
-				return getComparison();
-			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__META:
-				return getMeta();
+			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__CONDITION:
+				return getCondition();
+			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__FROM:
+				return getFrom();
+			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__TO:
+				if (resolve) return getTo();
+				return basicGetTo();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -159,16 +170,16 @@ public class KnowledgeValueChangeTriggerImpl extends KnowledgeChangeTriggerImpl 
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__VALUE:
-				getValue().clear();
-				getValue().addAll((Collection<? extends Object>)newValue);
+			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__CONDITION:
+				getCondition().clear();
+				getCondition().addAll((Collection<? extends String>)newValue);
 				return;
-			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__COMPARISON:
-				getComparison().clear();
-				getComparison().addAll((Collection<? extends ComparisonType>)newValue);
+			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__FROM:
+				getFrom().clear();
+				getFrom().addAll((Collection<? extends ComponentProcess>)newValue);
 				return;
-			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__META:
-				setMeta((MetadataType)newValue);
+			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__TO:
+				setTo((ComponentProcess)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -182,14 +193,14 @@ public class KnowledgeValueChangeTriggerImpl extends KnowledgeChangeTriggerImpl 
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__VALUE:
-				getValue().clear();
+			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__CONDITION:
+				getCondition().clear();
 				return;
-			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__COMPARISON:
-				getComparison().clear();
+			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__FROM:
+				getFrom().clear();
 				return;
-			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__META:
-				setMeta(META_EDEFAULT);
+			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__TO:
+				setTo((ComponentProcess)null);
 				return;
 		}
 		super.eUnset(featureID);
@@ -203,12 +214,12 @@ public class KnowledgeValueChangeTriggerImpl extends KnowledgeChangeTriggerImpl 
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__VALUE:
-				return value != null && !value.isEmpty();
-			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__COMPARISON:
-				return comparison != null && !comparison.isEmpty();
-			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__META:
-				return meta != META_EDEFAULT;
+			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__CONDITION:
+				return condition != null && !condition.isEmpty();
+			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__FROM:
+				return from != null && !from.isEmpty();
+			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__TO:
+				return to != null;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -223,12 +234,8 @@ public class KnowledgeValueChangeTriggerImpl extends KnowledgeChangeTriggerImpl 
 		if (eIsProxy()) return super.toString();
 
 		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (value: ");
-		result.append(value);
-		result.append(", comparison: ");
-		result.append(comparison);
-		result.append(", meta: ");
-		result.append(meta);
+		result.append(" (condition: ");
+		result.append(condition);
 		result.append(')');
 		return result.toString();
 	}

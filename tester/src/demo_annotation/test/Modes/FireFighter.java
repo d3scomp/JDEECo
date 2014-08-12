@@ -3,8 +3,7 @@ package demo_annotation.test.Modes;
 
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.*;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.MetadataType;
-import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ModeParamHolder;
+import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 
@@ -26,8 +25,6 @@ public class FireFighter{
 	public Double ffIntegratorSpeedError = 0.0;
 	public Double ffErrorWindup = 0.0;
 
-	@Transitions( map = {@Transition( from = "leaderConnected", to = {"mediatorConnected"}),
-						@Transition( from = "leaderConnected", to = {"nonWorking"})})
 	@TimeStamp
 	public Double ffLPos = 0.0;
 	@TimeStamp
@@ -45,27 +42,26 @@ public class FireFighter{
 	
  	@Process
 	public static void mediatorConnected(
-			@InOut("ffLPos") @TriggerOnValueUnchange( moreThan = 5 , lessThan = 15, meta = MetadataType.INACCURACY) ModeParamHolder<Double> ffLPos
+			@InOut("ffLPos") @TriggerOnValueUnchange(from = "leaderConnected", guard = "LH > 5 && LH < 10") InaccuracyParamHolder<Double> ffLPos
  			){
-  		System.out.println("choose between the helicopters .... "+ffLPos.value+" ["+ffLPos.minBoundary+" , "+ffLPos.maxBoundary+" ] "+ffLPos.trans );
+  		System.out.println("choose between the helicopters .... "+ffLPos.value+" ["+ffLPos.minBoundary+" , "+ffLPos.maxBoundary+" ] " );
  	}
 
 	
- 	@Mode(init = true)
  	@Process
 	public static void leaderConnected(
-			@InOut("ffLPos") @TriggerOnValueUnchange( lessThan = 1 , meta = MetadataType.INACCURACY) ModeParamHolder<Double> ffLPos
+			@InOut("ffLPos") @TriggerOnValueUnchange(guard = "LH < 1") InaccuracyParamHolder<Double> ffLPos
  			){
  		double currentTime = System.nanoTime()/SEC_NANOSECOND_FACTOR;
-  		System.out.println("connected to leader .... "+ffLPos.value+" ["+ffLPos.minBoundary+" , "+ffLPos.maxBoundary+" ]  "+(currentTime-ffLPos.creationTime)+"  "+ffLPos.trans );
+  		System.out.println("connected to leader .... "+ffLPos.value+" ["+ffLPos.minBoundary+" , "+ffLPos.maxBoundary+" ]  "+(currentTime-ffLPos.creationTime) );
  	}
  	
  	
  	@Process
 	public static void nonWorking(
-			@InOut("ffLPos") @TriggerOnValueUnchange(moreThan = 6 , meta = MetadataType.INACCURACY) ModeParamHolder<Double> ffLPos
+			@InOut("ffLPos") @TriggerOnValueUnchange(from = "leaderConnected", guard = "LH > 8") InaccuracyParamHolder<Double> ffLPos
  			){
-  		System.err.println("none working .... "+ffLPos.value+" ["+ffLPos.minBoundary+" , "+ffLPos.maxBoundary+" ] "+ffLPos.trans );
+  		System.err.println("none working .... "+ffLPos.value+" ["+ffLPos.minBoundary+" , "+ffLPos.maxBoundary+" ] " );
  	}
 
  	

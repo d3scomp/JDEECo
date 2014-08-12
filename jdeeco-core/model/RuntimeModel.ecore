@@ -47,8 +47,6 @@
         eType="#//StringToObjectMap" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="stateSpaceModels" upperBound="-1"
         eType="#//StateSpaceModelDefinition" containment="true" eOpposite="#//StateSpaceModelDefinition/componentInstance"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="transitions" upperBound="-1"
-        eType="#//TransitionDefinition" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EnsembleDefinition">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -72,6 +70,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="triggers" upperBound="-1"
         eType="#//Trigger" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="state" lowerBound="1" eType="#//ModeState"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eType="#//ComponentProcess"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="ParameterDirection">
     <eLiterals name="IN"/>
@@ -131,11 +130,10 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="InaccurateValue" instanceClassName="cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder"/>
   <eClassifiers xsi:type="ecore:EClass" name="KnowledgeValueUnchangeTrigger" eSuperTypes="#//KnowledgeChangeTrigger">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" upperBound="-1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="comparison" upperBound="-1"
-        eType="#//ComparisonType"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="meta" eType="#//MetadataType"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="condition" upperBound="-1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="from" upperBound="-1" eType="#//ComponentProcess"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="to" lowerBound="1" eType="#//ComponentProcess"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="ComparisonType">
     <eLiterals name="EQUAL"/>
@@ -148,21 +146,14 @@
     <eLiterals name="NOT_EQUAL_STR" value="7"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="KnowledgeValueChangeTrigger" eSuperTypes="#//KnowledgeChangeTrigger">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" upperBound="-1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="comparison" upperBound="-1"
-        eType="#//ComparisonType"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="meta" eType="#//MetadataType"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="TransitionDefinition">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="fromMode" eType="#//ComponentProcess"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="toMode" eType="#//ComponentProcess"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="init" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="trigger" eType="#//KnowledgeChangeTrigger"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="condition" upperBound="-1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="from" upperBound="-1" eType="#//ComponentProcess"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="to" lowerBound="1" eType="#//ComponentProcess"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="ModeState">
     <eLiterals name="IDLE"/>
-    <eLiterals name="REACHABLE" value="1"/>
     <eLiterals name="RUNNING" value="2"/>
+    <eLiterals name="DEACTIVATED" value="1"/>
   </eClassifiers>
 </ecore:EPackage>

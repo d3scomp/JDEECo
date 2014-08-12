@@ -2,6 +2,7 @@
  */
 package cz.cuni.mff.d3s.deeco.model.runtime.api;
 
+
 import org.eclipse.emf.common.util.EList;
 
 /**
@@ -12,9 +13,9 @@ import org.eclipse.emf.common.util.EList;
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueUnchangeTrigger#getValue <em>Value</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueUnchangeTrigger#getComparison <em>Comparison</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueUnchangeTrigger#getMeta <em>Meta</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueUnchangeTrigger#getCondition <em>Condition</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueUnchangeTrigger#getFrom <em>From</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueUnchangeTrigger#getTo <em>To</em>}</li>
  * </ul>
  * </p>
  *
@@ -24,66 +25,61 @@ import org.eclipse.emf.common.util.EList;
  */
 public interface KnowledgeValueUnchangeTrigger extends KnowledgeChangeTrigger {
 	/**
-	 * Returns the value of the '<em><b>Value</b></em>' attribute list.
-	 * The list contents are of type {@link java.lang.Object}.
+	 * Returns the value of the '<em><b>Condition</b></em>' attribute list.
+	 * The list contents are of type {@link java.lang.String}.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Value</em>' attribute list isn't clear,
+	 * If the meaning of the '<em>Condition</em>' attribute isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Value</em>' attribute list.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getKnowledgeValueUnchangeTrigger_Value()
+	 * @return the value of the '<em>Condition</em>' attribute list.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getKnowledgeValueUnchangeTrigger_Condition()
 	 * @model
 	 * @generated
 	 */
-	EList<Object> getValue();
+	EList<String> getCondition();
 
 	/**
-	 * Returns the value of the '<em><b>Comparison</b></em>' attribute list.
-	 * The list contents are of type {@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComparisonType}.
-	 * The literals are from the enumeration {@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComparisonType}.
+	 * Returns the value of the '<em><b>From</b></em>' reference list.
+	 * The list contents are of type {@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess}.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Comparison</em>' attribute list isn't clear,
+	 * If the meaning of the '<em>From</em>' reference isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Comparison</em>' attribute list.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComparisonType
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getKnowledgeValueUnchangeTrigger_Comparison()
+	 * @return the value of the '<em>From</em>' reference list.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getKnowledgeValueUnchangeTrigger_From()
 	 * @model
 	 * @generated
 	 */
-	EList<ComparisonType> getComparison();
+	EList<ComponentProcess> getFrom();
 
 	/**
-	 * Returns the value of the '<em><b>Meta</b></em>' attribute.
-	 * The literals are from the enumeration {@link cz.cuni.mff.d3s.deeco.model.runtime.api.MetadataType}.
+	 * Returns the value of the '<em><b>To</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Meta</em>' attribute isn't clear,
+	 * If the meaning of the '<em>To</em>' reference isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Meta</em>' attribute.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.MetadataType
-	 * @see #setMeta(MetadataType)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getKnowledgeValueUnchangeTrigger_Meta()
-	 * @model
+	 * @return the value of the '<em>To</em>' reference.
+	 * @see #setTo(ComponentProcess)
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getKnowledgeValueUnchangeTrigger_To()
+	 * @model required="true"
 	 * @generated
 	 */
-	MetadataType getMeta();
+	ComponentProcess getTo();
 
 	/**
-	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueUnchangeTrigger#getMeta <em>Meta</em>}' attribute.
+	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueUnchangeTrigger#getTo <em>To</em>}' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Meta</em>' attribute.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.MetadataType
-	 * @see #getMeta()
+	 * @param value the new value of the '<em>To</em>' reference.
+	 * @see #getTo()
 	 * @generated
 	 */
-	void setMeta(MetadataType value);
+	void setTo(ComponentProcess value);
 
 } // KnowledgeValueUnchangeTrigger

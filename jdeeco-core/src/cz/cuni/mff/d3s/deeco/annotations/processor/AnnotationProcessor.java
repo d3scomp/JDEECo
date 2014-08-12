@@ -18,14 +18,12 @@ import cz.cuni.mff.d3s.deeco.annotations.pathparser.*;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
-
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.*;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
-import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ModeParamHolder;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ModelInterface;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder;
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
@@ -46,7 +44,6 @@ import cz.cuni.mff.d3s.deeco.network.GenericCommunicationBoundaryPredicate;
  * 
  */
 public class AnnotationProcessor {
-	
 	
 	protected static final double SEC_NANOSECOND_FACTOR = 1000000000;
 	
@@ -274,11 +271,9 @@ public class AnnotationProcessor {
 				}
 			}
 			
-			
-			
-			List<TransitionDefinition> trans = createTransitions(obj, componentInstance,methods);
-			initialK = extractInitialKnowledgeWithModes(initialK, trans);
-			componentInstance.getTransitions().addAll(trans);
+			for (Method m : methods) {
+				createTriggerTransition(componentInstance,m);
+			}
 			
 			
 			km.update(initialK);
@@ -291,101 +286,6 @@ public class AnnotationProcessor {
 			throw new AnnotationProcessorException(msg, e);
 		}
 		return componentInstance;
-	}
-
-	
-	List<TransitionDefinition> createTransitions(Object knowledge, ComponentInstance componentInstance, List<Method> methods) {
-		HashMap<KnowledgePath,Transitions> transitions = extractInitialKnowledgeTransitions(knowledge);
-		ArrayList<TransitionDefinition> returnTrans = new ArrayList<TransitionDefinition>();
-		for (KnowledgePath kp : transitions.keySet()) {
-			Transitions trans = transitions.get(kp);
-			for (Transition tran : trans.map()) {
-				for (String name : tran.to()) {
-					TransitionDefinition newTransition = factory.createTransitionDefinition();
-					newTransition.setInit(false);
-					newTransition.setFromMode(getProcess(tran.from(),componentInstance));
-					ComponentProcess toMode = getProcess(name,componentInstance);
-					newTransition.setToMode(toMode);
-					newTransition.setTrigger(getTrigger(kp,toMode,componentInstance));
-					returnTrans.add(newTransition);
-				}
-			}
-		}
-		
-		ArrayList<ComponentProcess> processes = returnInitProcess(componentInstance,methods);
-		for (ComponentProcess componentProcess : processes) {
-			for (Trigger trigger : componentProcess.getTriggers()) {
-				if(trigger instanceof KnowledgeChangeTrigger){
-					TransitionDefinition newTransition = factory.createTransitionDefinition();
-					newTransition.setInit(true);
-					newTransition.setToMode(componentProcess);
-					if(trigger instanceof KnowledgeValueUnchangeTrigger)
-						newTransition.setTrigger((KnowledgeValueUnchangeTrigger)trigger);
-					else if(trigger instanceof KnowledgeValueChangeTrigger)
-						newTransition.setTrigger((KnowledgeValueChangeTrigger)trigger);
-					else if(trigger instanceof KnowledgeChangeTrigger)
-						newTransition.setTrigger((KnowledgeChangeTrigger)trigger);
-					returnTrans.add(newTransition);
-				}
-			}
-		}
-		
-		
-		return returnTrans;
-	}
-
-
-	private ArrayList<ComponentProcess> returnInitProcess(ComponentInstance componentInstance, List<Method> methods) {
-		boolean init = false;
-		ArrayList<ComponentProcess> compProcesses = new ArrayList<ComponentProcess>();
-		for (Method method: methods) {
-			Annotation[] anns = method.getAnnotations();
-			for (Annotation annotation : anns) {
-				if(annotation instanceof Mode){
-					Mode m = (Mode)annotation;
-					init = m.init();
-					if(init){
-						for (ComponentProcess process : componentInstance.getComponentProcesses()) {
-							if(process.getName().equals(method.getName()))
-								compProcesses.add(process);
-						}
-					}
-				}
-			}
-		}
-		return compProcesses;
-	}
-
-
-	private KnowledgeChangeTrigger getTrigger(KnowledgePath kp, ComponentProcess toMode,
-			ComponentInstance componentInstance) {
-		for (Trigger trigger : toMode.getTriggers()) {
-			if(trigger instanceof KnowledgeValueUnchangeTrigger){
-				KnowledgeValueUnchangeTrigger tr = (KnowledgeValueUnchangeTrigger)trigger;
-				KnowledgePath newkp = tr.getKnowledgePath();
-				if(newkp.equals(kp)){
-					 return tr;
-				}	 
-			}else if(trigger instanceof KnowledgeValueChangeTrigger){
-				KnowledgeValueChangeTrigger tr = (KnowledgeValueChangeTrigger)trigger;
-				KnowledgePath newkp = tr.getKnowledgePath();
-				if(newkp.equals(kp)){
-					 return tr;
-				}	 
-			}
-		}
-		return null;
-	}
-
-
-
-	private ComponentProcess getProcess(String string, ComponentInstance componentInstance) {
-		for (ComponentProcess process : componentInstance.getComponentProcesses()) {
-			if(string.equals(process.getName())){
-				return process;
-			}
-		}
-		return null;
 	}
 
 	
@@ -584,8 +484,8 @@ public class AnnotationProcessor {
 			componentProcess.getParameters().addAll(createParameters(m, true));
 			TimeTrigger periodicTrigger = createPeriodicTrigger(m);
 			List<KnowledgeChangeTrigger> knowledgeChangeTriggers = createKnowledgeChangeTriggers(m, true);
-			List<KnowledgeValueChangeTrigger> knowledgeValueChangeTriggers = createKnowledgeValueChangeTriggers(m, true);
-			List<KnowledgeValueUnchangeTrigger> knowledgeValueUnchangeTriggers = createKnowledgeValueUnchangeTriggers(m, true);
+			List<KnowledgeValueChangeTrigger> knowledgeValueChangeTriggers = createKnowledgeValueChangeTriggers(componentInstance, m, true);
+			List<KnowledgeValueUnchangeTrigger> knowledgeValueUnchangeTriggers = createKnowledgeValueUnchangeTriggers(componentInstance, m, true);
 			if (periodicTrigger == null) {
 				if (knowledgeChangeTriggers.isEmpty()&&knowledgeValueChangeTriggers.isEmpty()&&knowledgeValueUnchangeTriggers.isEmpty()) {
 					throw new AnnotationProcessorException("No triggers were found.");
@@ -596,7 +496,7 @@ public class AnnotationProcessor {
 			componentProcess.getTriggers().addAll(knowledgeChangeTriggers);
 			componentProcess.getTriggers().addAll(knowledgeValueChangeTriggers);
 			componentProcess.getTriggers().addAll(knowledgeValueUnchangeTriggers);
-			componentProcess.setState(getState(m));
+			componentProcess.setState(ModeState.IDLE);
 				
 		} catch (AnnotationProcessorException e) {
 			String msg = "Process: "+componentProcess.getName()+"->"+e.getMessage();
@@ -604,18 +504,6 @@ public class AnnotationProcessor {
 		}
 		return componentProcess;
 	}
-	
-	private ModeState getState(Method m) {
-		Mode state = m.getAnnotation(Mode.class);
-		if ( state != null){
-			if(state.init())
-				return ModeState.REACHABLE;
-			else
-				return ModeState.IDLE;
-		}
-		return ModeState.REACHABLE;
-	}
-
 
 
 	/**
@@ -674,8 +562,9 @@ public class AnnotationProcessor {
 		}
 		return knowledgeChangeTriggers;
 	}
+
 	
-	List<KnowledgeValueChangeTrigger> createKnowledgeValueChangeTriggers(Method method, boolean inComponentProcess) 
+	List<KnowledgeValueChangeTrigger> createKnowledgeValueChangeTriggers(ComponentInstance componentInstance, Method method, boolean inComponentProcess) 
 			throws AnnotationProcessorException, ParseException {
 		List<KnowledgeValueChangeTrigger> knowledgeValueChangeTriggers = new ArrayList<>();
 		Type[] parameterTypes = method.getParameterTypes();
@@ -687,27 +576,16 @@ public class AnnotationProcessor {
 				String path = getDirectionAnnotationValue(directionAnnotation);
 				KnowledgeValueChangeTrigger trigger = factory.createKnowledgeValueChangeTrigger();
 				trigger.setKnowledgePath(createKnowledgePath(path, inComponentProcess));
-				List<Object> values = new ArrayList<Object>();
-				List<ComparisonType> comps = new ArrayList<ComparisonType>();
-				if(t.equal() >= 0) {values.add(t.equal()); comps.add(ComparisonType.EQUAL);}
-				if(!t.equalStr().equals("")) {values.add(t.equalStr()); comps.add(ComparisonType.EQUAL_STR);}
-				if(t.notEqual() >= 0) {values.add(t.notEqual()); comps.add(ComparisonType.NOT_EQUAL);}
-				if(!t.notEqualStr().equals("")) {values.add(t.notEqualStr()); comps.add(ComparisonType.NOT_EQUAL_STR);}
-				if(t.equalLessThan() >= 0) {values.add(t.equalLessThan()); comps.add(ComparisonType.EQUAL_LESS_THAN);}
-				if(t.equalMoreThan() >= 0) {values.add(t.equalMoreThan()); comps.add(ComparisonType.EQUAL_MORE_THAN);}
-				if(t.lessThan() >= 0) {values.add(t.lessThan()); comps.add(ComparisonType.LESS_THAN);}
-				if(t.moreThan() >= 0) {values.add(t.moreThan()); comps.add(ComparisonType.MORE_THAN);}
-				System.out.println(t+"  "+values);
-				trigger.getValue().addAll(values);
-				trigger.getComparison().addAll(comps);
-				trigger.setMeta(t.meta());
+				for (String guard : t.guard()) {
+					trigger.getCondition().add(guard);
+				}
 				knowledgeValueChangeTriggers.add(trigger);
 			}
 		}
 		return knowledgeValueChangeTriggers;
 	}
 	
-	List<KnowledgeValueUnchangeTrigger> createKnowledgeValueUnchangeTriggers(Method method, boolean inComponentProcess) 
+	List<KnowledgeValueUnchangeTrigger> createKnowledgeValueUnchangeTriggers(ComponentInstance componentInstance, Method method, boolean inComponentProcess) 
 			throws AnnotationProcessorException, ParseException {
 		List<KnowledgeValueUnchangeTrigger> knowledgeValueUnchangeTriggers = new ArrayList<>();
 		Type[] parameterTypes = method.getParameterTypes();
@@ -719,25 +597,81 @@ public class AnnotationProcessor {
 				String path = getDirectionAnnotationValue(directionAnnotation);
 				KnowledgeValueUnchangeTrigger trigger = factory.createKnowledgeValueUnchangeTrigger();
 				trigger.setKnowledgePath(createKnowledgePath(path, inComponentProcess));
-				List<Object> values = new ArrayList<Object>();
-				List<ComparisonType> comps = new ArrayList<ComparisonType>();
-				if(t.equal() >= 0) {values.add(t.equal()); comps.add(ComparisonType.EQUAL);}
-				if(!t.equalStr().equals("")) {values.add(t.equalStr()); comps.add(ComparisonType.EQUAL_STR);}
-				if(t.notEqual() >= 0) {values.add(t.notEqual()); comps.add(ComparisonType.NOT_EQUAL);}
-				if(!t.notEqualStr().equals("")) {values.add(t.notEqualStr()); comps.add(ComparisonType.NOT_EQUAL_STR);}
-				if(t.equalLessThan() >= 0) {values.add(t.equalLessThan()); comps.add(ComparisonType.EQUAL_LESS_THAN);}
-				if(t.equalMoreThan() >= 0) {values.add(t.equalMoreThan()); comps.add(ComparisonType.EQUAL_MORE_THAN);}
-				if(t.lessThan() >= 0) {values.add(t.lessThan()); comps.add(ComparisonType.LESS_THAN);}
-				if(t.moreThan() >= 0) {values.add(t.moreThan()); comps.add(ComparisonType.MORE_THAN);}
-				System.out.println(t+"  "+values);
-				trigger.getValue().addAll(values);
-				trigger.getComparison().addAll(comps);
-				trigger.setMeta(t.meta());
+				for (String guard : t.guard()) {
+					trigger.getCondition().add(guard);
+				}
 				knowledgeValueUnchangeTriggers.add(trigger);
 			}
 		}
 		return knowledgeValueUnchangeTriggers;
 	}
+
+	void createTriggerTransition(ComponentInstance componentInstance, Method method) 
+			throws AnnotationProcessorException, ParseException {
+		Type[] parameterTypes = method.getParameterTypes();
+		Annotation[][] allAnnotations = method.getParameterAnnotations();
+		ComponentProcess toProcess = getProcess(componentInstance, method.getName(), null);
+	
+		for (int i = 0; i < parameterTypes.length; i++) {
+			TriggerOnValueUnchange t = getAnnotation(allAnnotations[i], TriggerOnValueUnchange.class);
+			if (t != null) {
+				for (Trigger trigger : toProcess.getTriggers()) {
+					if(trigger instanceof KnowledgeValueUnchangeTrigger){
+						String[] from = t.from();
+						for (String string : from) {
+							System.out.println(string);
+							if(string.equals("")){
+								toProcess.setState(ModeState.RUNNING);
+								((KnowledgeValueUnchangeTrigger)trigger).getFrom().add(toProcess);
+								((KnowledgeValueUnchangeTrigger)trigger).setTo(toProcess);
+							}else{
+								if(toProcess.getState() != ModeState.RUNNING)
+									toProcess.setState(ModeState.IDLE);
+								ComponentProcess fromProcess = getProcess(componentInstance, string, toProcess);
+								((KnowledgeValueUnchangeTrigger)trigger).getFrom().add(fromProcess);
+								((KnowledgeValueUnchangeTrigger)trigger).setTo(toProcess);
+							}
+						}
+					}
+				}
+			}
+			TriggerOnValueChange tc = getAnnotation(allAnnotations[i], TriggerOnValueChange.class);
+			if (tc != null) {
+				for (Trigger trigger : toProcess.getTriggers()) {
+					if(trigger instanceof KnowledgeValueChangeTrigger){
+						String[] from = tc.from();
+						for (String string : from) {
+							if(string.equals("")){
+								toProcess.setState(ModeState.RUNNING);
+								((KnowledgeValueChangeTrigger)trigger).getFrom().add(toProcess);
+								((KnowledgeValueChangeTrigger)trigger).setTo(toProcess);
+							}else{
+								if(toProcess.getState() != ModeState.RUNNING)
+									toProcess.setState(ModeState.IDLE);
+								ComponentProcess fromProcess = getProcess(componentInstance, string, toProcess);
+								((KnowledgeValueChangeTrigger)trigger).getFrom().add(fromProcess);
+								((KnowledgeValueChangeTrigger)trigger).setTo(toProcess);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	
+	
+	private ComponentProcess getProcess(ComponentInstance componentInstance,
+			String name, ComponentProcess toProcess) {
+		for (ComponentProcess process : componentInstance.getComponentProcesses()) {
+			if(process.getName().equals(name))
+				return process;
+		}
+	
+		return toProcess;
+	} 
+	
+
 	/**
 	 * Creator a list of {@link Parameter} from a method. 
 	 * <p>
@@ -838,7 +772,7 @@ public class AnnotationProcessor {
 									"A component identifier cannot be followed by any other fields in a path.");
 						} 
 						return knowledgePath;
-				} 
+				}
 				PathNodeField pathNodeField = factory.createPathNodeField();
 				pathNodeField.setName((String) nValue);
 				knowledgePath.getNodes().add(pathNodeField);
@@ -1031,10 +965,6 @@ public class AnnotationProcessor {
 						((TSParamHolder)value).value = f.get(knowledge);
 						((TSParamHolder)value).creationTime = currentTime;
 					}
-//					if(anns[i].annotationType().getName().contains("Transitions")){
-//						Transitions intrans = (Transitions)anns[i];
-//						transitions.put(knowledgePath, intrans);
-//					}
 				}
 				
 				if(value == null)
@@ -1065,7 +995,6 @@ public class AnnotationProcessor {
 			PathNodeField pathNodeField = factory.createPathNodeField();
 			pathNodeField.setName(new String(f.getName()));
 			knowledgePath.getNodes().add(pathNodeField);
-			Object value = null;
 			Annotation[] anns = f.getDeclaredAnnotations();
 			for (int i = 0; i < anns.length; i++) {
 				if(anns[i].annotationType().getName().contains("Transitions")){
@@ -1099,33 +1028,6 @@ public class AnnotationProcessor {
 		return changeSet;
 	}
 	
-	
-	public ChangeSet extractInitialKnowledgeWithModes(ChangeSet changeSet, List<TransitionDefinition> trans) {
-		ChangeSet ch = changeSet;
-		for (KnowledgePath csKP : changeSet.getUpdatedReferences()) {
-			ModeParamHolder value = new ModeParamHolder();
-			for (TransitionDefinition tran : trans) {
-				if(tran.getTrigger().getKnowledgePath().equals(csKP)){
-					if(ch.getValue(csKP) instanceof ModeParamHolder){
-						value.trans.add(tran);
-					}else if(ch.getValue(csKP) instanceof InaccuracyParamHolder){
-						InaccuracyParamHolder v = (InaccuracyParamHolder)changeSet.getValue(csKP);
-						value.setWithInaccuracy(v);
-						value.trans.add(tran);
-					}else if(ch.getValue(csKP) instanceof TSParamHolder){
-						TSParamHolder v = (TSParamHolder)changeSet.getValue(csKP);
-						value.setWithTS(v);
-						value.minBoundary = v.value;
-						value.maxBoundary = v.value;
-						value.trans.add(tran);
-					}
-					ch.setValue(csKP, value);
-				}
-			}		
-		}
-		return ch;
-	}
-
 	/**
 	 * Returns component ID given the initial knowledge. Returns null if ID is
 	 * not specified as a public non-static String field.

@@ -29,16 +29,6 @@ public enum ModeState implements Enumerator {
 	IDLE(0, "IDLE", "IDLE"),
 
 	/**
-	 * The '<em><b>REACHABLE</b></em>' literal object.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #REACHABLE_VALUE
-	 * @generated
-	 * @ordered
-	 */
-	REACHABLE(1, "REACHABLE", "REACHABLE"),
-
-	/**
 	 * The '<em><b>RUNNING</b></em>' literal object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -46,7 +36,15 @@ public enum ModeState implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	RUNNING(2, "RUNNING", "RUNNING");
+	RUNNING(2, "RUNNING", "RUNNING"), /**
+	 * The '<em><b>DEACTIVATED</b></em>' literal object.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #DEACTIVATED_VALUE
+	 * @generated
+	 * @ordered
+	 */
+	DEACTIVATED(1, "DEACTIVATED", "DEACTIVATED");
 
 	/**
 	 * The '<em><b>IDLE</b></em>' literal value.
@@ -64,21 +62,6 @@ public enum ModeState implements Enumerator {
 	public static final int IDLE_VALUE = 0;
 
 	/**
-	 * The '<em><b>REACHABLE</b></em>' literal value.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of '<em><b>REACHABLE</b></em>' literal object isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @see #REACHABLE
-	 * @model
-	 * @generated
-	 * @ordered
-	 */
-	public static final int REACHABLE_VALUE = 1;
-
-	/**
 	 * The '<em><b>RUNNING</b></em>' literal value.
 	 * <!-- begin-user-doc -->
 	 * <p>
@@ -94,6 +77,21 @@ public enum ModeState implements Enumerator {
 	public static final int RUNNING_VALUE = 2;
 
 	/**
+	 * The '<em><b>DEACTIVATED</b></em>' literal value.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of '<em><b>DEACTIVATED</b></em>' literal object isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @see #DEACTIVATED
+	 * @model
+	 * @generated
+	 * @ordered
+	 */
+	public static final int DEACTIVATED_VALUE = 1;
+
+	/**
 	 * An array of all the '<em><b>Mode State</b></em>' enumerators.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -102,8 +100,8 @@ public enum ModeState implements Enumerator {
 	private static final ModeState[] VALUES_ARRAY =
 		new ModeState[] {
 			IDLE,
-			REACHABLE,
 			RUNNING,
+			DEACTIVATED,
 		};
 
 	/**
@@ -155,8 +153,8 @@ public enum ModeState implements Enumerator {
 	public static ModeState get(int value) {
 		switch (value) {
 			case IDLE_VALUE: return IDLE;
-			case REACHABLE_VALUE: return REACHABLE;
 			case RUNNING_VALUE: return RUNNING;
+			case DEACTIVATED_VALUE: return DEACTIVATED;
 		}
 		return null;
 	}

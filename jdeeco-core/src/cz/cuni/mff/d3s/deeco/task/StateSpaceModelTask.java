@@ -22,7 +22,6 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
-import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ModeParamHolder;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
 
@@ -189,13 +188,7 @@ public class StateSpaceModelTask extends Task {
 	
 	private InaccuracyParamHolder getValue(Object v){
 		InaccuracyParamHolder value = new InaccuracyParamHolder<>();
-		if(v instanceof ModeParamHolder){
-			ModeParamHolder<Number> mode = (ModeParamHolder)v;
-			value.value = mode.value;
-			value.creationTime = mode.creationTime;
-			value.minBoundary = mode.minBoundary;
-			value.maxBoundary = mode.maxBoundary;
-		}else if(v instanceof InaccuracyParamHolder){
+		if(v instanceof InaccuracyParamHolder){
 			value = (InaccuracyParamHolder)v;
 		}else
 			System.err.println("Wrong value for state space model : "+v);
@@ -204,12 +197,7 @@ public class StateSpaceModelTask extends Task {
 	}
 	
 	private Object updateValue(InaccuracyParamHolder val, ValueSet vs, KnowledgePath kp){
-		if(vs.getValue(kp) instanceof ModeParamHolder){
-			ModeParamHolder v = (ModeParamHolder)vs.getValue(kp);
-			v.minBoundary = val.minBoundary;
-			v.maxBoundary = val.maxBoundary;
-			return v;
-		}else if(vs.getValue(kp) instanceof InaccuracyParamHolder){
+		if(vs.getValue(kp) instanceof InaccuracyParamHolder){
 			InaccuracyParamHolder v = (InaccuracyParamHolder)vs.getValue(kp);
 			v.minBoundary = val.minBoundary;
 			v.maxBoundary = val.maxBoundary;
@@ -224,12 +212,7 @@ public class StateSpaceModelTask extends Task {
 		
 		for (int i = 0; i < stateSpaceModel.getInStates().size(); i++) {
 			Object val = values.getValue(stateSpaceModel.getInStates().get(i));
-			if(val instanceof ModeParamHolder){
-				ModeParamHolder v = (ModeParamHolder)val;
-				v.minBoundary = v.value; 
-				v.maxBoundary = v.value; 
-				ch.setValue(stateSpaceModel.getInStates().get(i), v);
-			}if(val instanceof InaccuracyParamHolder){
+			if(val instanceof InaccuracyParamHolder){
 				InaccuracyParamHolder v = (InaccuracyParamHolder)val;
 				v.minBoundary = v.value; 
 				v.maxBoundary = v.value; 
@@ -246,10 +229,7 @@ public class StateSpaceModelTask extends Task {
 		Double startTime;
 		Object obj = values.getValue(stateSpaceModel.getInStates().get(0));
 		Double ctime = 0.0;
-		if(obj instanceof ModeParamHolder)
-			ctime = ((ModeParamHolder)obj).creationTime;
-		else 
-			ctime = ((InaccuracyParamHolder)obj).creationTime;
+		ctime = ((InaccuracyParamHolder)obj).creationTime;
 		
 		if (ctime <= lastTime) {
 			startTime = lastTime;
@@ -266,24 +246,13 @@ public class StateSpaceModelTask extends Task {
 		ValueSet vals = km.get(inStates);
 		for (KnowledgePath knowledgePath : inStates) {
 			Object obj = vals.getValue(knowledgePath);
-			if(obj instanceof ModeParamHolder){
-				ModeParamHolder newVal = new ModeParamHolder<>();
-				ModeParamHolder oldVal = ((ModeParamHolder)obj);
-				newVal.value = oldVal.value;
-				newVal.minBoundary = oldVal.value;
-				newVal.maxBoundary = oldVal.value;
-				newVal.creationTime = oldVal.creationTime;
-				newVal.trans.addAll(oldVal.trans);
-				ch.setValue(knowledgePath, newVal);	
-			}else {
-				InaccuracyParamHolder newVal = new InaccuracyParamHolder<>();
-				InaccuracyParamHolder oldVal = ((InaccuracyParamHolder)obj);
-				newVal.value = oldVal.value;
-				newVal.minBoundary = oldVal.value;
-				newVal.maxBoundary = oldVal.value;
-				newVal.creationTime = oldVal.creationTime;
-				ch.setValue(knowledgePath, newVal);	
-			}
+			InaccuracyParamHolder newVal = new InaccuracyParamHolder<>();
+			InaccuracyParamHolder oldVal = ((InaccuracyParamHolder)obj);
+			newVal.value = oldVal.value;
+			newVal.minBoundary = oldVal.value;
+			newVal.maxBoundary = oldVal.value;
+			newVal.creationTime = oldVal.creationTime;
+			ch.setValue(knowledgePath, newVal);	
 		}
 		km.update(ch);
 		stateSpaceModel.setModelValue(new InaccuracyParamHolder<>());

@@ -49,10 +49,10 @@ public class Leader {
 
   	@Process
 	public static void alarmed(
-			//the condition holds simple comparisons ... many simple conditions are joined with && operator
-			//DOTO: do I join them by || also ?? ... this can be done now by defining another field for "lFFPos" with the new condition
-			// or I just allow strings and parse them ?? It is easier to read
-			@InOut("lFFPos") @TriggerOnValueUnchange( equalMoreThan = 100 , lessThan = 150 , meta = MetadataType.INACCURACY) InaccuracyParamHolder<Double> lFFPos
+			//the condition holds simple comparisons ... many simple conditions are joined with && or || operators
+			//The compared value could be : V = value , TS = timestamp, L = minimum bound, H = maximum bound, LH = inaccuracy (max-min)
+			//DOTO: adding the composed conditions
+			@InOut("lFFPos") @TriggerOnValueUnchange(guard = "LH >= 100 && LH < 150") InaccuracyParamHolder<Double> lFFPos
  			){
   		System.out.println("alarm ....."+lFFPos.value+"  ["+lFFPos.minBoundary+" , "+lFFPos.maxBoundary+"]");
  	}
@@ -94,11 +94,11 @@ public class Leader {
 		lSpeed.value += lAcceleration * timePeriodInSeconds; 
 		lPos.value += lSpeed.value * timePeriodInSeconds;
 
-		System.out.println("=================================== Leader statue ==========================================");
- 		System.out.println("Speed Leader : "+lSpeed.value+", pos : "+lPos.value+"... time :"+currentTime);
- 		System.out.println("Speed Leader_FireFighter : "+lFFSpeed.value+", pos : "+lFFPos.value+"... time :"+lFFPos.creationTime);
- 		System.out.println("Inaccuracy Leader_FireFighter : pos : "+lFFPos.value+" E ["+lFFPos.minBoundary+" , "+lFFPos.maxBoundary+"] ... time :"+lFFPos.creationTime+" ... current time: "+currentTime+" ...  dt : "+(currentTime-lFFPos.creationTime));
-		System.out.println("============================================================================================");
+//		System.out.println("=================================== Leader statue ==========================================");
+// 		System.out.println("Speed Leader : "+lSpeed.value+", pos : "+lPos.value+"... time :"+currentTime);
+// 		System.out.println("Speed Leader_FireFighter : "+lFFSpeed.value+", pos : "+lFFPos.value+"... time :"+lFFPos.creationTime);
+// 		System.out.println("Inaccuracy Leader_FireFighter : pos : "+lFFPos.value+" E ["+lFFPos.minBoundary+" , "+lFFPos.maxBoundary+"] ... time :"+lFFPos.creationTime+" ... current time: "+currentTime+" ...  dt : "+(currentTime-lFFPos.creationTime));
+//		System.out.println("============================================================================================");
 	
 	}
 

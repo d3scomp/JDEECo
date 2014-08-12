@@ -38,6 +38,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#isIsActive <em>Is Active</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getTriggers <em>Triggers</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getState <em>State</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getParent <em>Parent</em>}</li>
  * </ul>
  * </p>
  *
@@ -113,6 +114,16 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 	 * @ordered
 	 */
 	protected ModeState state = STATE_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getParent() <em>Parent</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getParent()
+	 * @generated
+	 * @ordered
+	 */
+	protected ComponentProcess parent;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -254,6 +265,44 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public ComponentProcess getParent() {
+		if (parent != null && parent.eIsProxy()) {
+			InternalEObject oldParent = (InternalEObject)parent;
+			parent = (ComponentProcess)eResolveProxy(oldParent);
+			if (parent != oldParent) {
+				if (eNotificationRequired())
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, RuntimeMetadataPackage.COMPONENT_PROCESS__PARENT, oldParent, parent));
+			}
+		}
+		return parent;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public ComponentProcess basicGetParent() {
+		return parent;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setParent(ComponentProcess newParent) {
+		ComponentProcess oldParent = parent;
+		parent = newParent;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT_PROCESS__PARENT, oldParent, parent));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -313,6 +362,9 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 				return getTriggers();
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__STATE:
 				return getState();
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__PARENT:
+				if (resolve) return getParent();
+				return basicGetParent();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -342,6 +394,9 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__STATE:
 				setState((ModeState)newValue);
 				return;
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__PARENT:
+				setParent((ComponentProcess)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -369,6 +424,9 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__STATE:
 				setState(STATE_EDEFAULT);
 				return;
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__PARENT:
+				setParent((ComponentProcess)null);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -391,6 +449,8 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 				return triggers != null && !triggers.isEmpty();
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__STATE:
 				return state != STATE_EDEFAULT;
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__PARENT:
+				return parent != null;
 		}
 		return super.eIsSet(featureID);
 	}

@@ -88,7 +88,6 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION: return createStateSpaceModelDefinition();
 			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_UNCHANGE_TRIGGER: return createKnowledgeValueUnchangeTrigger();
 			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER: return createKnowledgeValueChangeTrigger();
-			case RuntimeMetadataPackage.TRANSITION_DEFINITION: return createTransitionDefinition();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -358,16 +357,6 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	public KnowledgeValueChangeTrigger createKnowledgeValueChangeTrigger() {
 		KnowledgeValueChangeTriggerImpl knowledgeValueChangeTrigger = new KnowledgeValueChangeTriggerImpl();
 		return knowledgeValueChangeTrigger;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public TransitionDefinition createTransitionDefinition() {
-		TransitionDefinitionImpl transitionDefinition = new TransitionDefinitionImpl();
-		return transitionDefinition;
 	}
 
 	/**

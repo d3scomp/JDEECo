@@ -13,7 +13,7 @@ public class Database {
 	protected static final ArrayList<Double> routeSlops = new ArrayList<Double>();
 	protected static final ArrayList<Double> fTorques = new ArrayList<Double>();
 	protected static final ArrayList<Double> lTorques = new ArrayList<Double>();
-	protected static final ArrayList<Double> hTorques = new ArrayList<Double>();
+	public static final ArrayList<Double> hTorques = new ArrayList<Double>();
 	protected static final ArrayList<Double> positionSeries = new ArrayList<Double>();
 	protected static final ArrayList<Double> speedSeries = new ArrayList<Double>();
 	protected static final ArrayList<Double> rotationSeries = new ArrayList<Double>();
@@ -21,7 +21,7 @@ public class Database {
 	protected static final ArrayList<Double> helicopterArea = new ArrayList<Double>();
 	protected static final double lMass = 1000;
 	protected static final double fMass = 1000;
-	protected static final double hMass = 5;
+	public static final double hMass = 5;
 	protected static final double r_density = 1000; // depends on the temperature of air, altitude, and humidity. 
 	protected static final double C_L = 0.5;
 	protected static final double C_D = 0.00005;

@@ -2,7 +2,6 @@ package demo_annotation.test.NewTriggers;
 
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.*;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.MetadataType;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
@@ -40,7 +39,7 @@ public class FireFighter{
 	
 
  	@Process
-	public static void alarmed(
+	public static void copy(
 			// Triggered only if the value is changed
 			//uncomment the line in Leader to disable the trigger
 			@InOut("ffLPos") @TriggerOnValueChange InaccuracyParamHolder<Double> ffLPos
@@ -85,9 +84,9 @@ public class FireFighter{
 		ffSpeed.creationTime = currentTime;
 
 		
-		System.err.println("=================================== FireFighter statue ==========================================");
- 		System.err.println("Speed FireFighter : "+ffSpeed.value+", pos : "+ffPos.value+"... current time :"+ffPos.creationTime);
-		System.err.println("=================================================================================================");
+//		System.err.println("=================================== FireFighter statue ==========================================");
+// 		System.err.println("Speed FireFighter : "+ffSpeed.value+", pos : "+ffPos.value+"... current time :"+ffPos.creationTime);
+//		System.err.println("=================================================================================================");
 		
 	}
 

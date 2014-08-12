@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: cz.cuni.mff.d3s.jdeeco.core.edit;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-ClassPath: .
+Bundle-Activator: cz.cuni.mff.d3s.deeco.model.runtime.provider.RuntimeModelEditPlugin$Implementation
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: cz.cuni.mff.d3s.deeco.model.runtime.provider
+Require-Bundle: org.eclipse.core.runtime,
+ cz.cuni.mff.d3s.jdeeco.core;visibility:=reexport,
+ org.eclipse.emf.edit;visibility:=reexport
+Bundle-ActivationPolicy: lazy

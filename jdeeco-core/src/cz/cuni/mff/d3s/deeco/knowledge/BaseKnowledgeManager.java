@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueChangeTrigger;
@@ -16,9 +17,8 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ModeState;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.TransitionDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
-import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ModeParamHolder;
+import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TriggerConditionParser;
 
 /**
@@ -34,9 +34,8 @@ import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TriggerConditionParser;
 public class BaseKnowledgeManager implements KnowledgeManager {
 
 	private final Map<KnowledgePath, Object> knowledge;
-	private final Map<KnowledgePath, Boolean> updateKnowledge;
 	private final Map<KnowledgeChangeTrigger, List<TriggerListener>> knowledgeChangeListeners;
-
+	private Object value = null;
 	private final String id;
 
 	@Override
@@ -74,7 +73,6 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	public BaseKnowledgeManager(String id) {
 		this.id = id;
 		this.knowledge = new HashMap<>();
-		this.updateKnowledge = new HashMap<>();
 		this.knowledgeChangeListeners = new HashMap<>();
 	}
 
@@ -155,6 +153,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	@Override
 	public void update(final ChangeSet changeSet)
 			throws KnowledgeUpdateException {
+		final Map<KnowledgePath, Boolean> updateKnowledge = new HashMap<>();
 		final Map<KnowledgePath, Object> updated = new HashMap<>();
 		final List<KnowledgePath> added = new LinkedList<>();
 		Object original = null;
@@ -221,7 +220,6 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 				notifyKnowledgeValueChangeListeners(knowledgePath, changeSet.getValue(knowledgePath));
 			}
 			notifyKnowledgeChangeListeners(knowledgePath);
-			
 		}
 	}
 
@@ -593,11 +591,10 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 					// notify its listeners about the change
 					for (final TriggerListener listener : knowledgeChangeListeners
 							.get(kvct)) {
-						KnowledgePath kp = kvct.getKnowledgePath();
-						if(value instanceof ModeParamHolder)
-							triggerReachableState((ModeParamHolder)value, kvct, kp, listener);
-						else
-							listener.triggered(kvct);
+						if(TriggerConditionParser.checkCondition(kvct, value)){
+								listener.triggered(kvct);
+								resetStates(kvct);
+						}
 					}
 				}
 			}
@@ -628,11 +625,8 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 					for (final TriggerListener listener : knowledgeChangeListeners
 							.get(kvct)) {
 						if(TriggerConditionParser.checkCondition(kvct, value)){
-							KnowledgePath kp = kvct.getKnowledgePath();
-							if(value instanceof ModeParamHolder)
-								triggerReachableState((ModeParamHolder)value, kvct, kp, listener);
-							else
 								listener.triggered(kvct);
+								resetStates(kvct);
 						}
 					}
 				}
@@ -640,48 +634,39 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		}
 	}
 
-	
-	private void triggerReachableState(ModeParamHolder value,
-			KnowledgeChangeTrigger kvct, KnowledgePath kp, TriggerListener listener) {
-		List<TransitionDefinition> trans = value.trans;
-		for (TransitionDefinition tran : trans) {
-			if(checkTriggerEquality(tran.getTrigger(),kvct,value)){
-				if(!tran.isInit() && tran.getFromMode().getState() == ModeState.RUNNING && tran.getToMode().getState()== ModeState.REACHABLE){
-					tran.getFromMode().setState(ModeState.IDLE);
-					tran.getToMode().setState(ModeState.RUNNING);
-					listener.triggered(kvct);
-				}else if(tran.isInit() && tran.getToMode().getState()== ModeState.REACHABLE){
-					tran.getToMode().setState(ModeState.RUNNING);
-					listener.triggered(kvct);	
-				} else if(tran.getToMode().getState()== ModeState.RUNNING){
-					listener.triggered(kvct);	
-				} else if(!tran.isInit() && tran.getFromMode().getState() == ModeState.IDLE && tran.getToMode().getState()== ModeState.REACHABLE){
-					tran.getToMode().setState(ModeState.IDLE);
-				}
+
+	private void resetStates(KnowledgeValueUnchangeTrigger kvct){
+		for (ComponentProcess from : kvct.getFrom()) {
+			if(from.getState() == ModeState.RUNNING && kvct.getTo().getState() != ModeState.RUNNING){
+				from.setState(ModeState.DEACTIVATED);			
+				kvct.getTo().setState(ModeState.RUNNING);
 			}
 		}
 	}
 	
 	
-	private boolean checkTriggerEquality(Trigger t1, Trigger t2,Object value){
-		if(t1 instanceof KnowledgeValueUnchangeTrigger){
-			if(t2 instanceof KnowledgeValueUnchangeTrigger){
-				KnowledgeValueUnchangeTrigger tr1 = (KnowledgeValueUnchangeTrigger)t1;
-				KnowledgeValueUnchangeTrigger tr2= (KnowledgeValueUnchangeTrigger)t2;
-				if(tr1.getComparison().equals(tr2.getComparison()) && tr1.getKnowledgePath().equals(tr2.getKnowledgePath()) && tr1.getMeta().equals(tr2.getMeta())){
-					if(TriggerConditionParser.checkCondition(tr1, value))
-						return true;
-				}
+	private void resetStates(KnowledgeValueChangeTrigger kvct){
+		for (ComponentProcess from : kvct.getFrom()) {
+			if(from.getState() == ModeState.RUNNING && kvct.getTo().getState() != ModeState.RUNNING){
+				from.setState(ModeState.DEACTIVATED);			
+				kvct.getTo().setState(ModeState.RUNNING);
 			}
-		}else if(t1 instanceof KnowledgeValueChangeTrigger){
-				if(t2 instanceof KnowledgeValueChangeTrigger){
-					KnowledgeValueChangeTrigger tr1 = (KnowledgeValueChangeTrigger)t1;
-					KnowledgeValueChangeTrigger tr2= (KnowledgeValueChangeTrigger)t2;
-					if(tr1.getComparison().equals(tr2.getComparison()) && tr1.getKnowledgePath().equals(tr2.getKnowledgePath()) && tr1.getMeta().equals(tr2.getMeta())){
-						if(TriggerConditionParser.checkCondition(tr1, value))
-							return true;
-					}
-				}
+		}
+	}
+	
+	private boolean checkTriggerEquality(KnowledgeValueUnchangeTrigger t1, KnowledgeValueUnchangeTrigger t2,Object value){
+		if(t1.getCondition().equals(t2.getCondition()) && t1.getKnowledgePath().equals(t2.getKnowledgePath())){
+			if(TriggerConditionParser.checkCondition(t1, value))
+				return true;
+		}
+		return false;
+	}
+	
+
+	private boolean checkTriggerEquality(KnowledgeValueChangeTrigger t1, KnowledgeValueChangeTrigger t2,Object value){
+		if(t1.getCondition().equals(t2.getCondition()) && t1.getKnowledgePath().equals(t2.getKnowledgePath())){
+			if(TriggerConditionParser.checkCondition(t1, value))
+				return true;
 		}
 		return false;
 	}

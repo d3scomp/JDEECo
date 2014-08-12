@@ -5,8 +5,6 @@ package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
-
-import cz.cuni.mff.d3s.deeco.model.runtime.api.TransitionDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 
 import java.util.Collection;

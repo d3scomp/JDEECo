@@ -25,7 +25,6 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getEnsembleControllers <em>Ensemble Controllers</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getInternalData <em>Internal Data</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getStateSpaceModels <em>State Space Models</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getTransitions <em>Transitions</em>}</li>
  * </ul>
  * </p>
  *
@@ -182,21 +181,5 @@ public interface ComponentInstance extends EObject {
 	 * @generated
 	 */
 	EList<StateSpaceModelDefinition> getStateSpaceModels();
-
-	/**
-	 * Returns the value of the '<em><b>Transitions</b></em>' containment reference list.
-	 * The list contents are of type {@link cz.cuni.mff.d3s.deeco.model.runtime.api.TransitionDefinition}.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Transitions</em>' containment reference list isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Transitions</em>' containment reference list.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance_Transitions()
-	 * @model containment="true"
-	 * @generated
-	 */
-	EList<TransitionDefinition> getTransitions();
 
 } // ComponentInstance
