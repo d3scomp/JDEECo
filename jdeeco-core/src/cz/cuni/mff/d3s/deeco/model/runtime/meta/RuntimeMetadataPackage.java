@@ -1099,22 +1099,13 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int KNOWLEDGE_VALUE_UNCHANGE_TRIGGER__KNOWLEDGE_PATH = KNOWLEDGE_CHANGE_TRIGGER__KNOWLEDGE_PATH;
 
 	/**
-	 * The feature id for the '<em><b>Condition</b></em>' attribute list.
+	 * The feature id for the '<em><b>Constraints</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int KNOWLEDGE_VALUE_UNCHANGE_TRIGGER__CONDITION = KNOWLEDGE_CHANGE_TRIGGER_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>From</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int KNOWLEDGE_VALUE_UNCHANGE_TRIGGER__FROM = KNOWLEDGE_CHANGE_TRIGGER_FEATURE_COUNT + 1;
+	int KNOWLEDGE_VALUE_UNCHANGE_TRIGGER__CONSTRAINTS = KNOWLEDGE_CHANGE_TRIGGER_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>To</b></em>' reference.
@@ -1123,7 +1114,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int KNOWLEDGE_VALUE_UNCHANGE_TRIGGER__TO = KNOWLEDGE_CHANGE_TRIGGER_FEATURE_COUNT + 2;
+	int KNOWLEDGE_VALUE_UNCHANGE_TRIGGER__TO = KNOWLEDGE_CHANGE_TRIGGER_FEATURE_COUNT + 1;
 
 	/**
 	 * The number of structural features of the '<em>Knowledge Value Unchange Trigger</em>' class.
@@ -1132,7 +1123,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int KNOWLEDGE_VALUE_UNCHANGE_TRIGGER_FEATURE_COUNT = KNOWLEDGE_CHANGE_TRIGGER_FEATURE_COUNT + 3;
+	int KNOWLEDGE_VALUE_UNCHANGE_TRIGGER_FEATURE_COUNT = KNOWLEDGE_CHANGE_TRIGGER_FEATURE_COUNT + 2;
 
 	/**
 	 * The number of operations of the '<em>Knowledge Value Unchange Trigger</em>' class.
@@ -1163,22 +1154,13 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int KNOWLEDGE_VALUE_CHANGE_TRIGGER__KNOWLEDGE_PATH = KNOWLEDGE_CHANGE_TRIGGER__KNOWLEDGE_PATH;
 
 	/**
-	 * The feature id for the '<em><b>Condition</b></em>' attribute list.
+	 * The feature id for the '<em><b>Constraints</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int KNOWLEDGE_VALUE_CHANGE_TRIGGER__CONDITION = KNOWLEDGE_CHANGE_TRIGGER_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>From</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int KNOWLEDGE_VALUE_CHANGE_TRIGGER__FROM = KNOWLEDGE_CHANGE_TRIGGER_FEATURE_COUNT + 1;
+	int KNOWLEDGE_VALUE_CHANGE_TRIGGER__CONSTRAINTS = KNOWLEDGE_CHANGE_TRIGGER_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>To</b></em>' reference.
@@ -1187,7 +1169,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int KNOWLEDGE_VALUE_CHANGE_TRIGGER__TO = KNOWLEDGE_CHANGE_TRIGGER_FEATURE_COUNT + 2;
+	int KNOWLEDGE_VALUE_CHANGE_TRIGGER__TO = KNOWLEDGE_CHANGE_TRIGGER_FEATURE_COUNT + 1;
 
 	/**
 	 * The number of structural features of the '<em>Knowledge Value Change Trigger</em>' class.
@@ -1196,7 +1178,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int KNOWLEDGE_VALUE_CHANGE_TRIGGER_FEATURE_COUNT = KNOWLEDGE_CHANGE_TRIGGER_FEATURE_COUNT + 3;
+	int KNOWLEDGE_VALUE_CHANGE_TRIGGER_FEATURE_COUNT = KNOWLEDGE_CHANGE_TRIGGER_FEATURE_COUNT + 2;
 
 	/**
 	 * The number of operations of the '<em>Knowledge Value Change Trigger</em>' class.
@@ -1306,6 +1288,16 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 */
 	int INACCURATE_VALUE = 32;
+
+	/**
+	 * The meta object id for the '<em>Condition Type</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ConditionType
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getConditionType()
+	 * @generated
+	 */
+	int CONDITION_TYPE = 33;
 
 	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger <em>Trigger</em>}'.
@@ -1927,26 +1919,15 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EClass getKnowledgeValueUnchangeTrigger();
 
 	/**
-	 * Returns the meta object for the attribute list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueUnchangeTrigger#getCondition <em>Condition</em>}'.
+	 * Returns the meta object for the attribute list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueUnchangeTrigger#getConstraints <em>Constraints</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute list '<em>Condition</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueUnchangeTrigger#getCondition()
+	 * @return the meta object for the attribute list '<em>Constraints</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueUnchangeTrigger#getConstraints()
 	 * @see #getKnowledgeValueUnchangeTrigger()
 	 * @generated
 	 */
-	EAttribute getKnowledgeValueUnchangeTrigger_Condition();
-
-	/**
-	 * Returns the meta object for the reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueUnchangeTrigger#getFrom <em>From</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>From</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueUnchangeTrigger#getFrom()
-	 * @see #getKnowledgeValueUnchangeTrigger()
-	 * @generated
-	 */
-	EReference getKnowledgeValueUnchangeTrigger_From();
+	EAttribute getKnowledgeValueUnchangeTrigger_Constraints();
 
 	/**
 	 * Returns the meta object for the reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueUnchangeTrigger#getTo <em>To</em>}'.
@@ -1970,26 +1951,15 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EClass getKnowledgeValueChangeTrigger();
 
 	/**
-	 * Returns the meta object for the attribute list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueChangeTrigger#getCondition <em>Condition</em>}'.
+	 * Returns the meta object for the attribute list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueChangeTrigger#getConstraints <em>Constraints</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute list '<em>Condition</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueChangeTrigger#getCondition()
+	 * @return the meta object for the attribute list '<em>Constraints</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueChangeTrigger#getConstraints()
 	 * @see #getKnowledgeValueChangeTrigger()
 	 * @generated
 	 */
-	EAttribute getKnowledgeValueChangeTrigger_Condition();
-
-	/**
-	 * Returns the meta object for the reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueChangeTrigger#getFrom <em>From</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>From</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueChangeTrigger#getFrom()
-	 * @see #getKnowledgeValueChangeTrigger()
-	 * @generated
-	 */
-	EReference getKnowledgeValueChangeTrigger_From();
+	EAttribute getKnowledgeValueChangeTrigger_Constraints();
 
 	/**
 	 * Returns the meta object for the reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueChangeTrigger#getTo <em>To</em>}'.
@@ -2172,6 +2142,17 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 */
 	EDataType getInaccurateValue();
+
+	/**
+	 * Returns the meta object for data type '{@link cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ConditionType <em>Condition Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>Condition Type</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ConditionType
+	 * @model instanceClass="cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ConditionType"
+	 * @generated
+	 */
+	EDataType getConditionType();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -2703,20 +2684,12 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EClass KNOWLEDGE_VALUE_UNCHANGE_TRIGGER = eINSTANCE.getKnowledgeValueUnchangeTrigger();
 
 		/**
-		 * The meta object literal for the '<em><b>Condition</b></em>' attribute list feature.
+		 * The meta object literal for the '<em><b>Constraints</b></em>' attribute list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute KNOWLEDGE_VALUE_UNCHANGE_TRIGGER__CONDITION = eINSTANCE.getKnowledgeValueUnchangeTrigger_Condition();
-
-		/**
-		 * The meta object literal for the '<em><b>From</b></em>' reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference KNOWLEDGE_VALUE_UNCHANGE_TRIGGER__FROM = eINSTANCE.getKnowledgeValueUnchangeTrigger_From();
+		EAttribute KNOWLEDGE_VALUE_UNCHANGE_TRIGGER__CONSTRAINTS = eINSTANCE.getKnowledgeValueUnchangeTrigger_Constraints();
 
 		/**
 		 * The meta object literal for the '<em><b>To</b></em>' reference feature.
@@ -2737,20 +2710,12 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EClass KNOWLEDGE_VALUE_CHANGE_TRIGGER = eINSTANCE.getKnowledgeValueChangeTrigger();
 
 		/**
-		 * The meta object literal for the '<em><b>Condition</b></em>' attribute list feature.
+		 * The meta object literal for the '<em><b>Constraints</b></em>' attribute list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute KNOWLEDGE_VALUE_CHANGE_TRIGGER__CONDITION = eINSTANCE.getKnowledgeValueChangeTrigger_Condition();
-
-		/**
-		 * The meta object literal for the '<em><b>From</b></em>' reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference KNOWLEDGE_VALUE_CHANGE_TRIGGER__FROM = eINSTANCE.getKnowledgeValueChangeTrigger_From();
+		EAttribute KNOWLEDGE_VALUE_CHANGE_TRIGGER__CONSTRAINTS = eINSTANCE.getKnowledgeValueChangeTrigger_Constraints();
 
 		/**
 		 * The meta object literal for the '<em><b>To</b></em>' reference feature.
@@ -2909,6 +2874,16 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * @generated
 		 */
 		EDataType INACCURATE_VALUE = eINSTANCE.getInaccurateValue();
+
+		/**
+		 * The meta object literal for the '<em>Condition Type</em>' data type.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ConditionType
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getConditionType()
+		 * @generated
+		 */
+		EDataType CONDITION_TYPE = eINSTANCE.getConditionType();
 
 	}
 

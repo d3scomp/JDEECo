@@ -3,12 +3,14 @@ package cz.cuni.mff.d3s.deeco.model.runtime.stateflow;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import org.mvel2.MVEL;
+
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueUnchangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ModeState;
+
 
 
 public class TriggerConditionParser {
@@ -24,32 +26,31 @@ public class TriggerConditionParser {
 	}
 
 	
-	public static boolean checkCondition(KnowledgeChangeTrigger kct, Object object) {
-		if(kct instanceof KnowledgeValueChangeTrigger)
-			return checkCondition((KnowledgeValueChangeTrigger)kct, object);
-		else if(kct instanceof KnowledgeValueUnchangeTrigger)
-			return checkCondition((KnowledgeValueUnchangeTrigger)kct, object);
-		return false;
-	}
-	
-	
 	public static boolean checkCondition(KnowledgeValueChangeTrigger kct, Object object) {
 		
 		InaccuracyParamHolder key = getInaccurateValue(object);
 		Boolean result = false;
 		Map<String, Object> context = getContext(key);
-		List<Boolean> index = isReachable(kct.getFrom(),kct.getTo());
-		List<String> conds = kct.getCondition();
-		
+		List<Boolean> index = isReachable(kct.getConstraints(),kct.getTo());
+		List<ConditionType> conds = kct.getConstraints();
 		for (int i = 0; i < index.size(); i++) {
 			if(index.get(i)){
-				if(!conds.get(i).equals("")){
-					Object eval = MVEL.eval(conds.get(i), context);
-					result = result || (Boolean)eval;
-				}else 
-					result = true;
+				Object eval = MVEL.eval(conds.get(i).condition, context);
+				result = result || (Boolean)eval;
 			}
 		}
+		
+		if(result) {
+			StatesType s = resetStates(kct.getConstraints(),kct.getTo());
+			kct.setTo(s.toProcess);
+			kct.getConstraints().clear();
+			kct.getConstraints().addAll(s.conds);
+		}
+		StatesType s = refresh(kct.getConstraints(),kct.getTo());
+		kct.setTo(s.toProcess);
+		kct.getConstraints().clear();
+		kct.getConstraints().addAll(s.conds);
+
 		return result;
 	}
 	
@@ -59,18 +60,29 @@ public class TriggerConditionParser {
 		InaccuracyParamHolder key = getInaccurateValue(object);	
 		Boolean result = false;
 		Map<String, Object> context = getContext(key);
-		List<Boolean> index = isReachable(kct.getFrom(),kct.getTo());
-		List<String> conds = kct.getCondition();
+		List<Boolean> index = isReachable(kct.getConstraints(),kct.getTo());
+		List<ConditionType> conds = kct.getConstraints();
 		
 		for (int i = 0; i < index.size(); i++) {
 			if(index.get(i)){
-				if(!conds.get(i).equals("")){
-					Object eval = MVEL.eval(conds.get(i), context);
-					result = result || (Boolean)eval;
-				}else 
-					result = true;
+				Object eval = MVEL.eval(conds.get(i).condition, context);
+				result = result || (Boolean)eval;
 			}
 		}
+		
+		if(result) {
+			StatesType s = resetStates(kct.getConstraints(),kct.getTo());
+			kct.setTo(s.toProcess);
+			kct.getConstraints().clear();
+			kct.getConstraints().addAll(s.conds);
+		}
+		
+		StatesType s = refresh(kct.getConstraints(),kct.getTo());
+		kct.setTo(s.toProcess);
+		kct.getConstraints().clear();
+		kct.getConstraints().addAll(s.conds);
+
+		
 		return result;
 	}
 
@@ -99,22 +111,50 @@ public class TriggerConditionParser {
 	}
 
 	
-	public static List<Boolean> isReachable(List<ComponentProcess> processes, ComponentProcess toProcess){
+	public static List<Boolean> isReachable(List<ConditionType> conds, ComponentProcess toProcess){
 		List<Boolean> index = new ArrayList<Boolean>();
-		for (ComponentProcess process : processes) {
-			if(process.getState() == ModeState.RUNNING)
+		for (ConditionType cond : conds) {
+			if(cond.from.isIsActive())
 				index.add(true);
-			else if(process.getState() == ModeState.DEACTIVATED){
-					if(toProcess.getState() == ModeState.RUNNING)
-						index.add(true);
-					else
-						index.add(false);
-			}else
-				index.add(false);
-		}
+			else if(toProcess.isIsActive())
+					index.add(true);
+				 else
+					index.add(false);
+		}		
 		return index;
-		
 	}
 	
-	
+	public static StatesType resetStates(List<ConditionType> conds, ComponentProcess toProcess){
+		StatesType s = new StatesType();
+		for (ConditionType cond : conds) {			
+			if(cond.from.getState() == ModeState.RUNNING && toProcess.getState() != ModeState.RUNNING){
+				cond.from.setIsActive(false);
+				toProcess.setIsActive(true);
+				cond.from.setState(ModeState.DEACTIVATED);
+				toProcess.setState(ModeState.RUNNING);
+			}
+		}
+		s.conds.addAll(conds);
+		s.toProcess = toProcess;
+		return s;
+	}
+
+	public static StatesType refresh(List<ConditionType> conds, ComponentProcess toProcess){
+		StatesType s = new StatesType();
+		for (ConditionType cond : conds) {			
+			if(cond.from.getState() == ModeState.DEACTIVATED && toProcess.getState() != ModeState.RUNNING){
+				cond.from.setIsActive(false);
+				cond.from.setState(ModeState.IDLE);
+			}
+		}
+		s.conds.addAll(conds);
+		s.toProcess = toProcess;
+		return s;
+	}
+
+}
+
+class StatesType{
+	List<ConditionType> conds = new ArrayList<ConditionType>();
+	ComponentProcess toProcess = null;
 }

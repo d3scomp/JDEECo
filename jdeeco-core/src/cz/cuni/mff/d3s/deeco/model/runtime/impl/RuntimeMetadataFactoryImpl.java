@@ -8,6 +8,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.*;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 
+import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ConditionType;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ModelInterface;
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
@@ -121,6 +122,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 				return createModelTypeFromString(eDataType, initialValue);
 			case RuntimeMetadataPackage.INACCURATE_VALUE:
 				return createInaccurateValueFromString(eDataType, initialValue);
+			case RuntimeMetadataPackage.CONDITION_TYPE:
+				return createConditionTypeFromString(eDataType, initialValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -154,6 +157,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 				return convertModelTypeToString(eDataType, instanceValue);
 			case RuntimeMetadataPackage.INACCURATE_VALUE:
 				return convertInaccurateValueToString(eDataType, instanceValue);
+			case RuntimeMetadataPackage.CONDITION_TYPE:
+				return convertConditionTypeToString(eDataType, instanceValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -554,6 +559,24 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * @generated
 	 */
 	public String convertInaccurateValueToString(EDataType eDataType, Object instanceValue) {
+		return super.convertToString(eDataType, instanceValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public ConditionType createConditionTypeFromString(EDataType eDataType, String initialValue) {
+		return (ConditionType)super.createFromString(eDataType, initialValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertConditionTypeToString(EDataType eDataType, Object instanceValue) {
 		return super.convertToString(eDataType, instanceValue);
 	}
 

@@ -42,6 +42,7 @@
     <genDataTypes ecoreDataType="RuntimeModel.ecore#//CommunicationBoundary"/>
     <genDataTypes ecoreDataType="RuntimeModel.ecore#//ModelType"/>
     <genDataTypes ecoreDataType="RuntimeModel.ecore#//InaccurateValue"/>
+    <genDataTypes ecoreDataType="RuntimeModel.ecore#//ConditionType"/>
     <genClasses ecoreClass="RuntimeModel.ecore#//TimeTrigger">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//TimeTrigger/period"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//TimeTrigger/offset"/>
@@ -120,13 +121,11 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//StateSpaceModelDefinition/modelValue"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//KnowledgeValueUnchangeTrigger">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//KnowledgeValueUnchangeTrigger/condition"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//KnowledgeValueUnchangeTrigger/from"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//KnowledgeValueUnchangeTrigger/constraints"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//KnowledgeValueUnchangeTrigger/to"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//KnowledgeValueChangeTrigger">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//KnowledgeValueChangeTrigger/condition"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//KnowledgeValueChangeTrigger/from"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//KnowledgeValueChangeTrigger/constraints"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//KnowledgeValueChangeTrigger/to"/>
     </genClasses>
   </genPackages>

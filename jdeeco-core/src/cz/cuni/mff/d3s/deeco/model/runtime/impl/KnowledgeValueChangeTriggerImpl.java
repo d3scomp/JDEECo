@@ -9,6 +9,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.MetadataType;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 
+import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ConditionType;
 import java.util.Collection;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.EList;
@@ -25,8 +26,7 @@ import org.eclipse.emf.ecore.util.EObjectResolvingEList;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.KnowledgeValueChangeTriggerImpl#getCondition <em>Condition</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.KnowledgeValueChangeTriggerImpl#getFrom <em>From</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.KnowledgeValueChangeTriggerImpl#getConstraints <em>Constraints</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.KnowledgeValueChangeTriggerImpl#getTo <em>To</em>}</li>
  * </ul>
  * </p>
@@ -35,23 +35,14 @@ import org.eclipse.emf.ecore.util.EObjectResolvingEList;
  */
 public class KnowledgeValueChangeTriggerImpl extends KnowledgeChangeTriggerImpl implements KnowledgeValueChangeTrigger {
 	/**
-	 * The cached value of the '{@link #getCondition() <em>Condition</em>}' attribute list.
+	 * The cached value of the '{@link #getConstraints() <em>Constraints</em>}' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getCondition()
+	 * @see #getConstraints()
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<String> condition;
-	/**
-	 * The cached value of the '{@link #getFrom() <em>From</em>}' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getFrom()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<ComponentProcess> from;
+	protected EList<ConditionType> constraints;
 	/**
 	 * The cached value of the '{@link #getTo() <em>To</em>}' reference.
 	 * <!-- begin-user-doc -->
@@ -85,23 +76,11 @@ public class KnowledgeValueChangeTriggerImpl extends KnowledgeChangeTriggerImpl 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<String> getCondition() {
-		if (condition == null) {
-			condition = new EDataTypeUniqueEList<String>(String.class, this, RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__CONDITION);
+	public EList<ConditionType> getConstraints() {
+		if (constraints == null) {
+			constraints = new EDataTypeUniqueEList<ConditionType>(ConditionType.class, this, RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__CONSTRAINTS);
 		}
-		return condition;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EList<ComponentProcess> getFrom() {
-		if (from == null) {
-			from = new EObjectResolvingEList<ComponentProcess>(ComponentProcess.class, this, RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__FROM);
-		}
-		return from;
+		return constraints;
 	}
 
 	/**
@@ -150,10 +129,8 @@ public class KnowledgeValueChangeTriggerImpl extends KnowledgeChangeTriggerImpl 
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__CONDITION:
-				return getCondition();
-			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__FROM:
-				return getFrom();
+			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__CONSTRAINTS:
+				return getConstraints();
 			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__TO:
 				if (resolve) return getTo();
 				return basicGetTo();
@@ -170,13 +147,9 @@ public class KnowledgeValueChangeTriggerImpl extends KnowledgeChangeTriggerImpl 
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__CONDITION:
-				getCondition().clear();
-				getCondition().addAll((Collection<? extends String>)newValue);
-				return;
-			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__FROM:
-				getFrom().clear();
-				getFrom().addAll((Collection<? extends ComponentProcess>)newValue);
+			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__CONSTRAINTS:
+				getConstraints().clear();
+				getConstraints().addAll((Collection<? extends ConditionType>)newValue);
 				return;
 			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__TO:
 				setTo((ComponentProcess)newValue);
@@ -193,11 +166,8 @@ public class KnowledgeValueChangeTriggerImpl extends KnowledgeChangeTriggerImpl 
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__CONDITION:
-				getCondition().clear();
-				return;
-			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__FROM:
-				getFrom().clear();
+			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__CONSTRAINTS:
+				getConstraints().clear();
 				return;
 			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__TO:
 				setTo((ComponentProcess)null);
@@ -214,10 +184,8 @@ public class KnowledgeValueChangeTriggerImpl extends KnowledgeChangeTriggerImpl 
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__CONDITION:
-				return condition != null && !condition.isEmpty();
-			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__FROM:
-				return from != null && !from.isEmpty();
+			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__CONSTRAINTS:
+				return constraints != null && !constraints.isEmpty();
 			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER__TO:
 				return to != null;
 		}
@@ -234,8 +202,8 @@ public class KnowledgeValueChangeTriggerImpl extends KnowledgeChangeTriggerImpl 
 		if (eIsProxy()) return super.toString();
 
 		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (condition: ");
-		result.append(condition);
+		result.append(" (constraints: ");
+		result.append(constraints);
 		result.append(')');
 		return result.toString();
 	}

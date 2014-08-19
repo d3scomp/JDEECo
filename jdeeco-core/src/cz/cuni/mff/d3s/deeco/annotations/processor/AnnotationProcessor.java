@@ -23,6 +23,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.*;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
+import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ConditionType;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ModelInterface;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder;
@@ -576,9 +577,17 @@ public class AnnotationProcessor {
 				String path = getDirectionAnnotationValue(directionAnnotation);
 				KnowledgeValueChangeTrigger trigger = factory.createKnowledgeValueChangeTrigger();
 				trigger.setKnowledgePath(createKnowledgePath(path, inComponentProcess));
-				for (String guard : t.guard()) {
-					trigger.getCondition().add(guard);
-				}
+				for (int j = 0; j < t.from().length; j++) {
+					if(t.guard().length == t.from().length){
+						ConditionType cond = new ConditionType();
+						cond.condition = t.guard()[j];
+						trigger.getConstraints().add(cond);
+					}else{
+						ConditionType cond = new ConditionType();
+						cond.condition = t.guard()[0];
+						trigger.getConstraints().add(cond);
+					}
+				}	
 				knowledgeValueChangeTriggers.add(trigger);
 			}
 		}
@@ -597,9 +606,17 @@ public class AnnotationProcessor {
 				String path = getDirectionAnnotationValue(directionAnnotation);
 				KnowledgeValueUnchangeTrigger trigger = factory.createKnowledgeValueUnchangeTrigger();
 				trigger.setKnowledgePath(createKnowledgePath(path, inComponentProcess));
-				for (String guard : t.guard()) {
-					trigger.getCondition().add(guard);
-				}
+				for (int j = 0; j < t.from().length; j++) {
+					if(t.guard().length == t.from().length){
+						ConditionType cond = new ConditionType();
+						cond.condition = t.guard()[j];
+						trigger.getConstraints().add(cond);
+					}else{
+						ConditionType cond = new ConditionType();
+						cond.condition = t.guard()[0];
+						trigger.getConstraints().add(cond);
+					}
+				}	
 				knowledgeValueUnchangeTriggers.add(trigger);
 			}
 		}
@@ -618,17 +635,16 @@ public class AnnotationProcessor {
 				for (Trigger trigger : toProcess.getTriggers()) {
 					if(trigger instanceof KnowledgeValueUnchangeTrigger){
 						String[] from = t.from();
-						for (String string : from) {
-							System.out.println(string);
-							if(string.equals("")){
+						for (int j = 0; j < from.length; j++) {
+							if(from[j].equals("")){
 								toProcess.setState(ModeState.RUNNING);
-								((KnowledgeValueUnchangeTrigger)trigger).getFrom().add(toProcess);
+								((KnowledgeValueUnchangeTrigger)trigger).getConstraints().get(j).from = toProcess;
 								((KnowledgeValueUnchangeTrigger)trigger).setTo(toProcess);
 							}else{
 								if(toProcess.getState() != ModeState.RUNNING)
 									toProcess.setState(ModeState.IDLE);
-								ComponentProcess fromProcess = getProcess(componentInstance, string, toProcess);
-								((KnowledgeValueUnchangeTrigger)trigger).getFrom().add(fromProcess);
+								ComponentProcess fromProcess = getProcess(componentInstance, from[j], toProcess);
+								((KnowledgeValueUnchangeTrigger)trigger).getConstraints().get(j).from = fromProcess;
 								((KnowledgeValueUnchangeTrigger)trigger).setTo(toProcess);
 							}
 						}
@@ -640,16 +656,16 @@ public class AnnotationProcessor {
 				for (Trigger trigger : toProcess.getTriggers()) {
 					if(trigger instanceof KnowledgeValueChangeTrigger){
 						String[] from = tc.from();
-						for (String string : from) {
-							if(string.equals("")){
+						for (int j = 0; j < from.length; j++) {
+							if(from[j].equals("")){
 								toProcess.setState(ModeState.RUNNING);
-								((KnowledgeValueChangeTrigger)trigger).getFrom().add(toProcess);
+								((KnowledgeValueChangeTrigger)trigger).getConstraints().get(j).from = toProcess;
 								((KnowledgeValueChangeTrigger)trigger).setTo(toProcess);
 							}else{
 								if(toProcess.getState() != ModeState.RUNNING)
 									toProcess.setState(ModeState.IDLE);
-								ComponentProcess fromProcess = getProcess(componentInstance, string, toProcess);
-								((KnowledgeValueChangeTrigger)trigger).getFrom().add(fromProcess);
+								ComponentProcess fromProcess = getProcess(componentInstance, from[j], toProcess);
+								((KnowledgeValueChangeTrigger)trigger).getConstraints().get(j).from = fromProcess;
 								((KnowledgeValueChangeTrigger)trigger).setTo(toProcess);
 							}
 						}

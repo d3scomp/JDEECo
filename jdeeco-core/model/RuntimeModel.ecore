@@ -130,9 +130,8 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="InaccurateValue" instanceClassName="cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder"/>
   <eClassifiers xsi:type="ecore:EClass" name="KnowledgeValueUnchangeTrigger" eSuperTypes="#//KnowledgeChangeTrigger">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="condition" upperBound="-1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="from" upperBound="-1" eType="#//ComponentProcess"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="constraints" upperBound="-1"
+        eType="#//ConditionType" defaultValueLiteral=""/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="to" lowerBound="1" eType="#//ComponentProcess"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="ComparisonType">
@@ -146,9 +145,8 @@
     <eLiterals name="NOT_EQUAL_STR" value="7"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="KnowledgeValueChangeTrigger" eSuperTypes="#//KnowledgeChangeTrigger">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="condition" upperBound="-1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="from" upperBound="-1" eType="#//ComponentProcess"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="constraints" upperBound="-1"
+        eType="#//ConditionType"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="to" lowerBound="1" eType="#//ComponentProcess"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="ModeState">
@@ -156,4 +154,5 @@
     <eLiterals name="RUNNING" value="2"/>
     <eLiterals name="DEACTIVATED" value="1"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="ConditionType" instanceClassName="cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ConditionType"/>
 </ecore:EPackage>

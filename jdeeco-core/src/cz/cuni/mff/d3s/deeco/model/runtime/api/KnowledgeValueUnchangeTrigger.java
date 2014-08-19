@@ -3,6 +3,7 @@
 package cz.cuni.mff.d3s.deeco.model.runtime.api;
 
 
+import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ConditionType;
 import org.eclipse.emf.common.util.EList;
 
 /**
@@ -13,8 +14,7 @@ import org.eclipse.emf.common.util.EList;
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueUnchangeTrigger#getCondition <em>Condition</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueUnchangeTrigger#getFrom <em>From</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueUnchangeTrigger#getConstraints <em>Constraints</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueUnchangeTrigger#getTo <em>To</em>}</li>
  * </ul>
  * </p>
@@ -25,36 +25,20 @@ import org.eclipse.emf.common.util.EList;
  */
 public interface KnowledgeValueUnchangeTrigger extends KnowledgeChangeTrigger {
 	/**
-	 * Returns the value of the '<em><b>Condition</b></em>' attribute list.
-	 * The list contents are of type {@link java.lang.String}.
+	 * Returns the value of the '<em><b>Constraints</b></em>' attribute list.
+	 * The list contents are of type {@link cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ConditionType}.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Condition</em>' attribute isn't clear,
+	 * If the meaning of the '<em>Constraints</em>' attribute list isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Condition</em>' attribute list.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getKnowledgeValueUnchangeTrigger_Condition()
-	 * @model
+	 * @return the value of the '<em>Constraints</em>' attribute list.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getKnowledgeValueUnchangeTrigger_Constraints()
+	 * @model default="" dataType="cz.cuni.mff.d3s.deeco.model.runtime.api.ConditionType"
 	 * @generated
 	 */
-	EList<String> getCondition();
-
-	/**
-	 * Returns the value of the '<em><b>From</b></em>' reference list.
-	 * The list contents are of type {@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess}.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>From</em>' reference isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>From</em>' reference list.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getKnowledgeValueUnchangeTrigger_From()
-	 * @model
-	 * @generated
-	 */
-	EList<ComponentProcess> getFrom();
+	EList<ConditionType> getConstraints();
 
 	/**
 	 * Returns the value of the '<em><b>To</b></em>' reference.
