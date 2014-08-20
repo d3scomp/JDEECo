@@ -1027,7 +1027,7 @@
     </children>
     <styles xmi:type="notation:ConnectorStyle" xmi:id="_H4bKUSE4EeS9C8M9BxJk1g" lineColor="4210752"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_H4bKUiE4EeS9C8M9BxJk1g" fontColor="4210752" fontName="Segoe UI" fontHeight="10"/>
-    <element xmi:type="ecore:EReference" href="RuntimeModel.ecore#//ComponentProcess/parent"/>
+    <element xmi:type="ecore:EReference" href="RuntimeModel.ecore#//ComponentProcess/children"/>
     <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_H4bKUyE4EeS9C8M9BxJk1g" points="[22, 3, 21, 48]$[84, 3, 83, 48]$[102, 3, 101, 48]$[102, -45, 101, 0]$[22, -45, 21, 0]"/>
     <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_H4whgCE4EeS9C8M9BxJk1g" id="(0.8641975308641975,0.736)"/>
     <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_H47goCE4EeS9C8M9BxJk1g" id="(0.8703703703703703,0.368)"/>

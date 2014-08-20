@@ -8,18 +8,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueUnchangeTrigger;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.ModeState;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
-import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ConditionType;
-import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TriggerConditionParser;
 
 /**
@@ -36,7 +32,6 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 
 	private final Map<KnowledgePath, Object> knowledge;
 	private final Map<KnowledgeChangeTrigger, List<TriggerListener>> knowledgeChangeListeners;
-	private Object value = null;
 	private final String id;
 
 	@Override
@@ -592,7 +587,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 					// notify its listeners about the change
 					for (final TriggerListener listener : knowledgeChangeListeners
 							.get(kvct)) {
-						if(TriggerConditionParser.checkCondition(kvct, value)){
+						if(TriggerConditionParser.checkCondition(knowledge, kvct, value)){
 							listener.triggered(kvct);
 						}
 					}
@@ -624,7 +619,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 					// notify its listeners about the change
 					for (final TriggerListener listener : knowledgeChangeListeners
 							.get(kvct)) {
-						if(TriggerConditionParser.checkCondition(kvct, value)){
+						if(TriggerConditionParser.checkCondition(knowledge, kvct, value)){
 							listener.triggered(kvct);
 						}
 					}
@@ -632,25 +627,6 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 			}
 		}
 	}
-
-
-//	private boolean checkTriggerEquality(KnowledgeValueUnchangeTrigger t1, KnowledgeValueUnchangeTrigger t2,Object value){
-//		if(t1.getConstraints().equals(t2.getConstraints()) && t1.getKnowledgePath().equals(t2.getKnowledgePath())){
-//			if(TriggerConditionParser.checkCondition(t1, value))
-//				return true;
-//		}
-//		return false;
-//	}
-//	
-//
-//	private boolean checkTriggerEquality(KnowledgeValueChangeTrigger t1, KnowledgeValueChangeTrigger t2,Object value){
-//		if(t1.getConstraints().equals(t2.getConstraints()) && t1.getKnowledgePath().equals(t2.getKnowledgePath())){
-//			if(TriggerConditionParser.checkCondition(t1, value))
-//				return true;
-//		}
-//		return false;
-//	}
-
 
 	/**
 	 * Checks whether the shorter list is contained in the longer one, keeping

@@ -70,7 +70,8 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="triggers" upperBound="-1"
         eType="#//Trigger" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="state" lowerBound="1" eType="#//ModeState"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eType="#//ComponentProcess"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="children" upperBound="-1"
+        eType="#//ComponentProcess"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="ParameterDirection">
     <eLiterals name="IN"/>

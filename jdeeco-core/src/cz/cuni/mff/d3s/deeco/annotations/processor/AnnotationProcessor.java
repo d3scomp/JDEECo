@@ -274,6 +274,7 @@ public class AnnotationProcessor {
 			
 			for (Method m : methods) {
 				createTriggerTransition(componentInstance,m);
+				createChildren(componentInstance, methods);
 			}
 			
 			
@@ -628,7 +629,7 @@ public class AnnotationProcessor {
 		Type[] parameterTypes = method.getParameterTypes();
 		Annotation[][] allAnnotations = method.getParameterAnnotations();
 		ComponentProcess toProcess = getProcess(componentInstance, method.getName(), null);
-	
+		
 		for (int i = 0; i < parameterTypes.length; i++) {
 			TriggerOnValueUnchange t = getAnnotation(allAnnotations[i], TriggerOnValueUnchange.class);
 			if (t != null) {
@@ -676,6 +677,25 @@ public class AnnotationProcessor {
 	}
 
 	
+	
+	private void createChildren(ComponentInstance componentInstance, List<Method> methods) {
+
+		List<ComponentProcess> children = new ArrayList<ComponentProcess>();
+		for (Method m : methods) {
+			Annotation[] anns = m.getDeclaredAnnotations();
+			ComponentProcess child = getProcess(componentInstance, m.getName(), null);
+			for (Annotation annotation : anns) {
+				if(annotation instanceof Mode){
+					for (ComponentProcess process : componentInstance.getComponentProcesses()) {
+						if(((Mode)annotation).parent().equals(process.getName())){
+							process.getChildren().add(child);
+						}
+					}
+				}
+			}
+		}
+	}
+
 	
 	private ComponentProcess getProcess(ComponentInstance componentInstance,
 			String name, ComponentProcess toProcess) {

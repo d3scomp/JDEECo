@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.InternalEList;
 
@@ -38,7 +39,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#isIsActive <em>Is Active</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getTriggers <em>Triggers</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getState <em>State</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getParent <em>Parent</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getChildren <em>Children</em>}</li>
  * </ul>
  * </p>
  *
@@ -116,14 +117,14 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 	protected ModeState state = STATE_EDEFAULT;
 
 	/**
-	 * The cached value of the '{@link #getParent() <em>Parent</em>}' reference.
+	 * The cached value of the '{@link #getChildren() <em>Children</em>}' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getParent()
+	 * @see #getChildren()
 	 * @generated
 	 * @ordered
 	 */
-	protected ComponentProcess parent;
+	protected EList<ComponentProcess> children;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -265,37 +266,11 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public ComponentProcess getParent() {
-		if (parent != null && parent.eIsProxy()) {
-			InternalEObject oldParent = (InternalEObject)parent;
-			parent = (ComponentProcess)eResolveProxy(oldParent);
-			if (parent != oldParent) {
-				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, RuntimeMetadataPackage.COMPONENT_PROCESS__PARENT, oldParent, parent));
-			}
+	public EList<ComponentProcess> getChildren() {
+		if (children == null) {
+			children = new EObjectResolvingEList<ComponentProcess>(ComponentProcess.class, this, RuntimeMetadataPackage.COMPONENT_PROCESS__CHILDREN);
 		}
-		return parent;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public ComponentProcess basicGetParent() {
-		return parent;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setParent(ComponentProcess newParent) {
-		ComponentProcess oldParent = parent;
-		parent = newParent;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT_PROCESS__PARENT, oldParent, parent));
+		return children;
 	}
 
 	/**
@@ -362,9 +337,8 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 				return getTriggers();
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__STATE:
 				return getState();
-			case RuntimeMetadataPackage.COMPONENT_PROCESS__PARENT:
-				if (resolve) return getParent();
-				return basicGetParent();
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__CHILDREN:
+				return getChildren();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -394,8 +368,9 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__STATE:
 				setState((ModeState)newValue);
 				return;
-			case RuntimeMetadataPackage.COMPONENT_PROCESS__PARENT:
-				setParent((ComponentProcess)newValue);
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__CHILDREN:
+				getChildren().clear();
+				getChildren().addAll((Collection<? extends ComponentProcess>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -424,8 +399,8 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__STATE:
 				setState(STATE_EDEFAULT);
 				return;
-			case RuntimeMetadataPackage.COMPONENT_PROCESS__PARENT:
-				setParent((ComponentProcess)null);
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__CHILDREN:
+				getChildren().clear();
 				return;
 		}
 		super.eUnset(featureID);
@@ -449,8 +424,8 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 				return triggers != null && !triggers.isEmpty();
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__STATE:
 				return state != STATE_EDEFAULT;
-			case RuntimeMetadataPackage.COMPONENT_PROCESS__PARENT:
-				return parent != null;
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__CHILDREN:
+				return children != null && !children.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

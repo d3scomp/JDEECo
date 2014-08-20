@@ -791,13 +791,13 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int COMPONENT_PROCESS__STATE = INVOCABLE_FEATURE_COUNT + 4;
 
 	/**
-	 * The feature id for the '<em><b>Parent</b></em>' reference.
+	 * The feature id for the '<em><b>Children</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_PROCESS__PARENT = INVOCABLE_FEATURE_COUNT + 5;
+	int COMPONENT_PROCESS__CHILDREN = INVOCABLE_FEATURE_COUNT + 5;
 
 	/**
 	 * The number of structural features of the '<em>Component Process</em>' class.
@@ -1673,15 +1673,15 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EAttribute getComponentProcess_State();
 
 	/**
-	 * Returns the meta object for the reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getParent <em>Parent</em>}'.
+	 * Returns the meta object for the reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getChildren <em>Children</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Parent</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getParent()
+	 * @return the meta object for the reference list '<em>Children</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getChildren()
 	 * @see #getComponentProcess()
 	 * @generated
 	 */
-	EReference getComponentProcess_Parent();
+	EReference getComponentProcess_Children();
 
 	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter <em>Parameter</em>}'.
@@ -2482,12 +2482,12 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EAttribute COMPONENT_PROCESS__STATE = eINSTANCE.getComponentProcess_State();
 
 		/**
-		 * The meta object literal for the '<em><b>Parent</b></em>' reference feature.
+		 * The meta object literal for the '<em><b>Children</b></em>' reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference COMPONENT_PROCESS__PARENT = eINSTANCE.getComponentProcess_Parent();
+		EReference COMPONENT_PROCESS__CHILDREN = eINSTANCE.getComponentProcess_Children();
 
 		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ParameterImpl <em>Parameter</em>}' class.

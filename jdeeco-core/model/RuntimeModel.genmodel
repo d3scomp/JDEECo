@@ -89,7 +89,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentProcess/isActive"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentProcess/triggers"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentProcess/state"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentProcess/parent"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentProcess/children"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//Parameter">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//Parameter/knowledgePath"/>

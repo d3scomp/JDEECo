@@ -17,7 +17,7 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#isIsActive <em>Is Active</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getTriggers <em>Triggers</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getState <em>State</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getParent <em>Parent</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getChildren <em>Children</em>}</li>
  * </ul>
  * </p>
  *
@@ -153,29 +153,19 @@ public interface ComponentProcess extends Invocable {
 	void setState(ModeState value);
 
 	/**
-	 * Returns the value of the '<em><b>Parent</b></em>' reference.
+	 * Returns the value of the '<em><b>Children</b></em>' reference list.
+	 * The list contents are of type {@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess}.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Parent</em>' reference isn't clear,
+	 * If the meaning of the '<em>Children</em>' reference list isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Parent</em>' reference.
-	 * @see #setParent(ComponentProcess)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentProcess_Parent()
+	 * @return the value of the '<em>Children</em>' reference list.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentProcess_Children()
 	 * @model
 	 * @generated
 	 */
-	ComponentProcess getParent();
-
-	/**
-	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getParent <em>Parent</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Parent</em>' reference.
-	 * @see #getParent()
-	 * @generated
-	 */
-	void setParent(ComponentProcess value);
+	EList<ComponentProcess> getChildren();
 
 } // ComponentProcess

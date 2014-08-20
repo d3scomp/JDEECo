@@ -1,4 +1,4 @@
-package demo_annotation.test.FullExample;
+package demo_annotation.test.HierchicalModes;
 
 import java.util.HashMap;
 
