@@ -15,8 +15,9 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueChangeTrigger;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueUnchangeTrigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeTimeStampChangeTrigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeTimeStampTrigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeTimeStampUnchangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
@@ -28,6 +29,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 
+import cz.cuni.mff.d3s.deeco.model.runtime.api.Transition;
 import org.eclipse.emf.ecore.EFactory;
 
 /**
@@ -201,22 +203,40 @@ public interface RuntimeMetadataFactory extends EFactory {
 	StateSpaceModelDefinition createStateSpaceModelDefinition();
 
 	/**
-	 * Returns a new object of class '<em>Knowledge Value Unchange Trigger</em>'.
+	 * Returns a new object of class '<em>Knowledge Time Stamp Unchange Trigger</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Knowledge Value Unchange Trigger</em>'.
+	 * @return a new object of class '<em>Knowledge Time Stamp Unchange Trigger</em>'.
 	 * @generated
 	 */
-	KnowledgeValueUnchangeTrigger createKnowledgeValueUnchangeTrigger();
+	KnowledgeTimeStampUnchangeTrigger createKnowledgeTimeStampUnchangeTrigger();
 
 	/**
-	 * Returns a new object of class '<em>Knowledge Value Change Trigger</em>'.
+	 * Returns a new object of class '<em>Knowledge Time Stamp Change Trigger</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Knowledge Value Change Trigger</em>'.
+	 * @return a new object of class '<em>Knowledge Time Stamp Change Trigger</em>'.
 	 * @generated
 	 */
-	KnowledgeValueChangeTrigger createKnowledgeValueChangeTrigger();
+	KnowledgeTimeStampChangeTrigger createKnowledgeTimeStampChangeTrigger();
+
+	/**
+	 * Returns a new object of class '<em>Knowledge Time Stamp Trigger</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Knowledge Time Stamp Trigger</em>'.
+	 * @generated
+	 */
+	KnowledgeTimeStampTrigger createKnowledgeTimeStampTrigger();
+
+	/**
+	 * Returns a new object of class '<em>Transition</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Transition</em>'.
+	 * @generated
+	 */
+	Transition createTransition();
 
 	/**
 	 * Returns a new object of class '<em>Time Trigger</em>'.

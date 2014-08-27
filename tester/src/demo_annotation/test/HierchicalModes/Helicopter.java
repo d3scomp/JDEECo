@@ -13,8 +13,8 @@ import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.StateSpaceModel;
 import cz.cuni.mff.d3s.deeco.annotations.TimeStamp;
-import cz.cuni.mff.d3s.deeco.annotations.TriggerOnValueChange;
-import cz.cuni.mff.d3s.deeco.annotations.TriggerOnValueUnchange;
+import cz.cuni.mff.d3s.deeco.annotations.TriggerOnTimeStampChange;
+import cz.cuni.mff.d3s.deeco.annotations.TriggerOnTimeStampUnchange;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
@@ -70,7 +70,7 @@ public class Helicopter {
 
 	@Process
 	public static void initilizedSystem(
-			@InOut("hFFPos") @TriggerOnValueUnchange(from = "organizeSearch", guard = "V > 0 && LH > 10") InaccuracyParamHolder<Double> hFFPos
+			@InOut("hFFPos") @TriggerOnTimeStampUnchange(from = "organizeSearch", guard = "V > 0 && LH > 10") InaccuracyParamHolder<Double> hFFPos
 			){
 		System.out.println("init ...... "+hFFPos.value+" "+hFFPos.creationTime+"  ["+hFFPos.minBoundary+" "+hFFPos.maxBoundary+"]...");
 		hFFPos.value = 0.0;
@@ -81,7 +81,7 @@ public class Helicopter {
 
 	@Process
 	public static void toldToSearch(
-			@In("hSearch_In") @TriggerOnValueChange(from = "initilizedSystem", guard = "V == hID") String hSearch_In,
+			@In("hSearch_In") @TriggerOnTimeStampChange(from = "initilizedSystem", guard = "V == hID") String hSearch_In,
 			@In("hFFPos") Double hFFPos,
 			@In("hFFSpeed") Double hFFSpeed,
 			@Out("hFFTargetPos") ParamHolder<Double> hFFTargetPos,
@@ -95,7 +95,7 @@ public class Helicopter {
 	
 	@Process
 	public static void mediate(
-			@InOut("hFFPos") @TriggerOnValueChange(from = {"","initilizedSystem","organizeSearch"}, guard = {"V > 0","V > 0","LH <= 5"}) InaccuracyParamHolder<Double> hFFPos,
+			@InOut("hFFPos") @TriggerOnTimeStampChange(from = {"","initilizedSystem","organizeSearch"}, guard = {"V > 0","V > 0","LH <= 5"}) InaccuracyParamHolder<Double> hFFPos,
 			@InOut("hFFSpeed") InaccuracyParamHolder<Double> hFFSpeed
 			){
 		System.out.println("mediate ..... "+hFFPos.value+" .... ["+hFFPos.minBoundary+" , "+hFFPos.maxBoundary+"]");
@@ -104,7 +104,7 @@ public class Helicopter {
 	
 	@Process
 	public static void organizeSearch(
-			@InOut("hFFPos") @TriggerOnValueUnchange(from = "mediate", guard = "LH > 5") InaccuracyParamHolder<Double> hFFPos,
+			@InOut("hFFPos") @TriggerOnTimeStampUnchange(from = "mediate", guard = "LH > 5") InaccuracyParamHolder<Double> hFFPos,
 			@InOut("hSearchID") ParamHolder<String> hSearchID
 			){
 		System.out.println("organize ..... "+hFFPos.value+" .... ["+hFFPos.minBoundary+" , "+hFFPos.maxBoundary+"]");
@@ -120,7 +120,7 @@ public class Helicopter {
 	@Mode(parent = "organizeSearch")
 	@Process
 	public static void otherSearch(
-			@In("hSearchID") @TriggerOnValueChange(guard = "V != hID") String hSearchID,
+			@In("hSearchID") @TriggerOnTimeStampChange(guard = "V != hID") String hSearchID,
 			@InOut("hSearch_Out") ParamHolder<String> hSearch_Out
 		){
 		System.err.println("otherSearch ...");
@@ -132,7 +132,7 @@ public class Helicopter {
 	@Process
 	public static void leadSearch(
 			// It can't put handle simple string for comparing. We should pass variable or numbers.
-			@In("hSearchID") @TriggerOnValueChange(guard = "V == hID") String hSearchID
+			@In("hSearchID") @TriggerOnTimeStampChange(guard = "V == hID") String hSearchID
 			){
 		System.err.println("leadSearch ...");
 	}

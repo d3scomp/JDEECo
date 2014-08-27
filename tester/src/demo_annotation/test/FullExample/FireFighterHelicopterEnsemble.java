@@ -1,15 +1,12 @@
 package demo_annotation.test.FullExample;
 
-import java.util.ArrayList;
-import java.util.List;
+
 import cz.cuni.mff.d3s.deeco.annotations.Ensemble;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
 import cz.cuni.mff.d3s.deeco.annotations.Membership;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.ModeState;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder;
 
@@ -28,7 +25,7 @@ public class FireFighterHelicopterEnsemble {
 			@In("member.hFFPos") Double hFFPos,
 			@In("member.hFFSpeed") Double hFFSpeed
  		){
-		if(ffPos < 100)
+		if(ffPos > 100 && ffPos < 200)
 			return true;
 		return false;
 	}

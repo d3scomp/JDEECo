@@ -52,7 +52,7 @@ public class Leader {
 			//the condition holds simple comparisons ... many simple conditions are joined with && or || operators
 			//The compared value could be : V = value , TS = timestamp, L = minimum bound, H = maximum bound, LH = inaccuracy (max-min)
 			//DOTO: adding the composed conditions
-			@InOut("lFFPos") @TriggerOnValueUnchange(guard = "LH >= 100 && LH < 150") InaccuracyParamHolder<Double> lFFPos
+			@InOut("lFFPos") @TriggerOnTimeStampUnchange(guard = "LH >= 100 && LH < 150") InaccuracyParamHolder<Double> lFFPos
  			){
   		System.out.println("alarm ....."+lFFPos.value+"  ["+lFFPos.minBoundary+" , "+lFFPos.maxBoundary+"]");
  	}

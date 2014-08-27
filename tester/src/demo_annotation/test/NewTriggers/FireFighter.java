@@ -42,7 +42,7 @@ public class FireFighter{
 	public static void copy(
 			// Triggered only if the value is changed
 			//uncomment the line in Leader to disable the trigger
-			@InOut("ffLPos") @TriggerOnValueChange InaccuracyParamHolder<Double> ffLPos
+			@InOut("ffLPos") @TriggerOnTimeStampChange InaccuracyParamHolder<Double> ffLPos
  			){
   		System.out.println("FF ..... leader info : "+ffLPos.value+"  ["+ffLPos.minBoundary+" , "+ffLPos.maxBoundary+"]");
  	}

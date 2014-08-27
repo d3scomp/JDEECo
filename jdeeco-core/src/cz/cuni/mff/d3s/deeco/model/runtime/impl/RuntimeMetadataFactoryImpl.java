@@ -8,7 +8,6 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.*;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ConditionType;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ModelInterface;
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
@@ -87,8 +86,10 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 			case RuntimeMetadataPackage.PATH_NODE_COMPONENT_ID: return createPathNodeComponentId();
 			case RuntimeMetadataPackage.STRING_TO_OBJECT_MAP: return (EObject)createStringToObjectMap();
 			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION: return createStateSpaceModelDefinition();
-			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_UNCHANGE_TRIGGER: return createKnowledgeValueUnchangeTrigger();
-			case RuntimeMetadataPackage.KNOWLEDGE_VALUE_CHANGE_TRIGGER: return createKnowledgeValueChangeTrigger();
+			case RuntimeMetadataPackage.KNOWLEDGE_TIME_STAMP_UNCHANGE_TRIGGER: return createKnowledgeTimeStampUnchangeTrigger();
+			case RuntimeMetadataPackage.KNOWLEDGE_TIME_STAMP_CHANGE_TRIGGER: return createKnowledgeTimeStampChangeTrigger();
+			case RuntimeMetadataPackage.KNOWLEDGE_TIME_STAMP_TRIGGER: return createKnowledgeTimeStampTrigger();
+			case RuntimeMetadataPackage.TRANSITION: return createTransition();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -108,8 +109,6 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 				return createMetadataTypeFromString(eDataType, initialValue);
 			case RuntimeMetadataPackage.COMPARISON_TYPE:
 				return createComparisonTypeFromString(eDataType, initialValue);
-			case RuntimeMetadataPackage.MODE_STATE:
-				return createModeStateFromString(eDataType, initialValue);
 			case RuntimeMetadataPackage.METHOD:
 				return createMethodFromString(eDataType, initialValue);
 			case RuntimeMetadataPackage.KNOWLEDGE_MANAGER:
@@ -122,8 +121,6 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 				return createModelTypeFromString(eDataType, initialValue);
 			case RuntimeMetadataPackage.INACCURATE_VALUE:
 				return createInaccurateValueFromString(eDataType, initialValue);
-			case RuntimeMetadataPackage.CONDITION_TYPE:
-				return createConditionTypeFromString(eDataType, initialValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -143,8 +140,6 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 				return convertMetadataTypeToString(eDataType, instanceValue);
 			case RuntimeMetadataPackage.COMPARISON_TYPE:
 				return convertComparisonTypeToString(eDataType, instanceValue);
-			case RuntimeMetadataPackage.MODE_STATE:
-				return convertModeStateToString(eDataType, instanceValue);
 			case RuntimeMetadataPackage.METHOD:
 				return convertMethodToString(eDataType, instanceValue);
 			case RuntimeMetadataPackage.KNOWLEDGE_MANAGER:
@@ -157,8 +152,6 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 				return convertModelTypeToString(eDataType, instanceValue);
 			case RuntimeMetadataPackage.INACCURATE_VALUE:
 				return convertInaccurateValueToString(eDataType, instanceValue);
-			case RuntimeMetadataPackage.CONDITION_TYPE:
-				return convertConditionTypeToString(eDataType, instanceValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -349,9 +342,9 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public KnowledgeValueUnchangeTrigger createKnowledgeValueUnchangeTrigger() {
-		KnowledgeValueUnchangeTriggerImpl knowledgeValueUnchangeTrigger = new KnowledgeValueUnchangeTriggerImpl();
-		return knowledgeValueUnchangeTrigger;
+	public KnowledgeTimeStampUnchangeTrigger createKnowledgeTimeStampUnchangeTrigger() {
+		KnowledgeTimeStampUnchangeTriggerImpl knowledgeTimeStampUnchangeTrigger = new KnowledgeTimeStampUnchangeTriggerImpl();
+		return knowledgeTimeStampUnchangeTrigger;
 	}
 
 	/**
@@ -359,9 +352,29 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public KnowledgeValueChangeTrigger createKnowledgeValueChangeTrigger() {
-		KnowledgeValueChangeTriggerImpl knowledgeValueChangeTrigger = new KnowledgeValueChangeTriggerImpl();
-		return knowledgeValueChangeTrigger;
+	public KnowledgeTimeStampChangeTrigger createKnowledgeTimeStampChangeTrigger() {
+		KnowledgeTimeStampChangeTriggerImpl knowledgeTimeStampChangeTrigger = new KnowledgeTimeStampChangeTriggerImpl();
+		return knowledgeTimeStampChangeTrigger;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public KnowledgeTimeStampTrigger createKnowledgeTimeStampTrigger() {
+		KnowledgeTimeStampTriggerImpl knowledgeTimeStampTrigger = new KnowledgeTimeStampTriggerImpl();
+		return knowledgeTimeStampTrigger;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Transition createTransition() {
+		TransitionImpl transition = new TransitionImpl();
+		return transition;
 	}
 
 	/**
@@ -511,26 +524,6 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public ModeState createModeStateFromString(EDataType eDataType, String initialValue) {
-		ModeState result = ModeState.get(initialValue);
-		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
-		return result;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String convertModeStateToString(EDataType eDataType, Object instanceValue) {
-		return instanceValue == null ? null : instanceValue.toString();
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public ModelInterface createModelTypeFromString(EDataType eDataType, String initialValue) {
 		return (ModelInterface)super.createFromString(eDataType, initialValue);
 	}
@@ -559,24 +552,6 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * @generated
 	 */
 	public String convertInaccurateValueToString(EDataType eDataType, Object instanceValue) {
-		return super.convertToString(eDataType, instanceValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public ConditionType createConditionTypeFromString(EDataType eDataType, String initialValue) {
-		return (ConditionType)super.createFromString(eDataType, initialValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String convertConditionTypeToString(EDataType eDataType, Object instanceValue) {
 		return super.convertToString(eDataType, instanceValue);
 	}
 

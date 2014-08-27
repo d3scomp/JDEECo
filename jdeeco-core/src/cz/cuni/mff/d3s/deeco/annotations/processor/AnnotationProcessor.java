@@ -22,8 +22,8 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.*;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.Transition;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
-import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ConditionType;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ModelInterface;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder;
@@ -237,11 +237,9 @@ public class AnnotationProcessor {
 	ComponentInstance createComponentInstance(Object obj) throws AnnotationProcessorException {
 		Class<?> clazz = obj.getClass();
 		ComponentInstance componentInstance = factory.createComponentInstance();
-		componentInstance.setName(clazz.getCanonicalName());
-		
+		componentInstance.setName(clazz.getCanonicalName());	
 		
 		try {
-
 			ChangeSet initialK = extractInitialKnowledge(obj);
 			String id = getComponentId(initialK);
 			if (id == null) {
@@ -273,10 +271,12 @@ public class AnnotationProcessor {
 			}
 			
 			for (Method m : methods) {
-				createTriggerTransition(componentInstance,m);
 				createChildren(componentInstance, methods);
 			}
 			
+			for (Method m : methods) {
+				createTriggerTransition(componentInstance,m);
+			}
 			
 			km.update(initialK);
 			componentInstance.setKnowledgeManager(km);
@@ -486,8 +486,8 @@ public class AnnotationProcessor {
 			componentProcess.getParameters().addAll(createParameters(m, true));
 			TimeTrigger periodicTrigger = createPeriodicTrigger(m);
 			List<KnowledgeChangeTrigger> knowledgeChangeTriggers = createKnowledgeChangeTriggers(m, true);
-			List<KnowledgeValueChangeTrigger> knowledgeValueChangeTriggers = createKnowledgeValueChangeTriggers(componentInstance, m, true);
-			List<KnowledgeValueUnchangeTrigger> knowledgeValueUnchangeTriggers = createKnowledgeValueUnchangeTriggers(componentInstance, m, true);
+			List<KnowledgeTimeStampChangeTrigger> knowledgeValueChangeTriggers = createKnowledgeTimeStampChangeTriggers(componentInstance, m, true);
+			List<KnowledgeTimeStampUnchangeTrigger> knowledgeValueUnchangeTriggers = createKnowledgeTimeStampUnchangeTriggers(componentInstance, m, true);
 			if (periodicTrigger == null) {
 				if (knowledgeChangeTriggers.isEmpty()&&knowledgeValueChangeTriggers.isEmpty()&&knowledgeValueUnchangeTriggers.isEmpty()) {
 					throw new AnnotationProcessorException("No triggers were found.");
@@ -498,7 +498,6 @@ public class AnnotationProcessor {
 			componentProcess.getTriggers().addAll(knowledgeChangeTriggers);
 			componentProcess.getTriggers().addAll(knowledgeValueChangeTriggers);
 			componentProcess.getTriggers().addAll(knowledgeValueUnchangeTriggers);
-			componentProcess.setState(ModeState.IDLE);
 				
 		} catch (AnnotationProcessorException e) {
 			String msg = "Process: "+componentProcess.getName()+"->"+e.getMessage();
@@ -566,58 +565,56 @@ public class AnnotationProcessor {
 	}
 
 	
-	List<KnowledgeValueChangeTrigger> createKnowledgeValueChangeTriggers(ComponentInstance componentInstance, Method method, boolean inComponentProcess) 
+	List<KnowledgeTimeStampChangeTrigger> createKnowledgeTimeStampChangeTriggers(ComponentInstance componentInstance, Method method, boolean inComponentProcess) 
 			throws AnnotationProcessorException, ParseException {
-		List<KnowledgeValueChangeTrigger> knowledgeValueChangeTriggers = new ArrayList<>();
+		List<KnowledgeTimeStampChangeTrigger> knowledgeTimeStampChangeTriggers = new ArrayList<>();
 		Type[] parameterTypes = method.getParameterTypes();
 		Annotation[][] allAnnotations = method.getParameterAnnotations();
 		for (int i = 0; i < parameterTypes.length; i++) {
-			TriggerOnValueChange t = getAnnotation(allAnnotations[i], TriggerOnValueChange.class);
+			TriggerOnTimeStampChange t = getAnnotation(allAnnotations[i], TriggerOnTimeStampChange.class);
 			if (t != null) {
 				Annotation directionAnnotation = getDirectionAnnotation(allAnnotations[i]);
 				String path = getDirectionAnnotationValue(directionAnnotation);
-				KnowledgeValueChangeTrigger trigger = factory.createKnowledgeValueChangeTrigger();
+				KnowledgeTimeStampChangeTrigger trigger = factory.createKnowledgeTimeStampChangeTrigger();
 				trigger.setKnowledgePath(createKnowledgePath(path, inComponentProcess));
 				for (int j = 0; j < t.from().length; j++) {
+					Transition tr = factory.createTransition();
 					if(t.guard().length == t.from().length){
-						ConditionType cond = new ConditionType();
-						cond.condition = t.guard()[j];
-						trigger.getConstraints().add(cond);
+						tr.setCondition(t.guard()[j]);
+						trigger.getEvents().add(tr);
 					}else{
-						ConditionType cond = new ConditionType();
-						cond.condition = t.guard()[0];
-						trigger.getConstraints().add(cond);
+						tr.setCondition(t.guard()[0]);
+						trigger.getEvents().add(tr);
 					}
-				}	
-				knowledgeValueChangeTriggers.add(trigger);
+				}
+				knowledgeTimeStampChangeTriggers.add(trigger);
 			}
 		}
-		return knowledgeValueChangeTriggers;
+		return knowledgeTimeStampChangeTriggers;
 	}
 	
-	List<KnowledgeValueUnchangeTrigger> createKnowledgeValueUnchangeTriggers(ComponentInstance componentInstance, Method method, boolean inComponentProcess) 
+	List<KnowledgeTimeStampUnchangeTrigger> createKnowledgeTimeStampUnchangeTriggers(ComponentInstance componentInstance, Method method, boolean inComponentProcess) 
 			throws AnnotationProcessorException, ParseException {
-		List<KnowledgeValueUnchangeTrigger> knowledgeValueUnchangeTriggers = new ArrayList<>();
+		List<KnowledgeTimeStampUnchangeTrigger> knowledgeValueUnchangeTriggers = new ArrayList<>();
 		Type[] parameterTypes = method.getParameterTypes();
 		Annotation[][] allAnnotations = method.getParameterAnnotations();
 		for (int i = 0; i < parameterTypes.length; i++) {
-			TriggerOnValueUnchange t = getAnnotation(allAnnotations[i], TriggerOnValueUnchange.class);
+			TriggerOnTimeStampUnchange t = getAnnotation(allAnnotations[i], TriggerOnTimeStampUnchange.class);
 			if (t != null) {
 				Annotation directionAnnotation = getDirectionAnnotation(allAnnotations[i]);
 				String path = getDirectionAnnotationValue(directionAnnotation);
-				KnowledgeValueUnchangeTrigger trigger = factory.createKnowledgeValueUnchangeTrigger();
+				KnowledgeTimeStampUnchangeTrigger trigger = factory.createKnowledgeTimeStampUnchangeTrigger();
 				trigger.setKnowledgePath(createKnowledgePath(path, inComponentProcess));
 				for (int j = 0; j < t.from().length; j++) {
+					Transition tr = factory.createTransition();
 					if(t.guard().length == t.from().length){
-						ConditionType cond = new ConditionType();
-						cond.condition = t.guard()[j];
-						trigger.getConstraints().add(cond);
+						tr.setCondition(t.guard()[j]);
+						trigger.getEvents().add(tr);
 					}else{
-						ConditionType cond = new ConditionType();
-						cond.condition = t.guard()[0];
-						trigger.getConstraints().add(cond);
+						tr.setCondition(t.guard()[0]);
+						trigger.getEvents().add(tr);
 					}
-				}	
+				}
 				knowledgeValueUnchangeTriggers.add(trigger);
 			}
 		}
@@ -631,43 +628,41 @@ public class AnnotationProcessor {
 		ComponentProcess toProcess = getProcess(componentInstance, method.getName(), null);
 		
 		for (int i = 0; i < parameterTypes.length; i++) {
-			TriggerOnValueUnchange t = getAnnotation(allAnnotations[i], TriggerOnValueUnchange.class);
+			TriggerOnTimeStampUnchange t = getAnnotation(allAnnotations[i], TriggerOnTimeStampUnchange.class);
 			if (t != null) {
 				for (Trigger trigger : toProcess.getTriggers()) {
-					if(trigger instanceof KnowledgeValueUnchangeTrigger){
+					if(trigger instanceof KnowledgeTimeStampUnchangeTrigger){
 						String[] from = t.from();
-						for (int j = 0; j < from.length; j++) {
+						for (int j = 0; j < from.length; j++) {			
 							if(from[j].equals("")){
-								toProcess.setState(ModeState.RUNNING);
-								((KnowledgeValueUnchangeTrigger)trigger).getConstraints().get(j).from = toProcess;
-								((KnowledgeValueUnchangeTrigger)trigger).setTo(toProcess);
+								((KnowledgeTimeStampUnchangeTrigger)trigger).getEvents().get(j).setIsReachable(true);
+								((KnowledgeTimeStampUnchangeTrigger)trigger).getEvents().get(j).setFrom(toProcess);
+								((KnowledgeTimeStampUnchangeTrigger)trigger).getEvents().get(j).setTo(toProcess);
 							}else{
-								if(toProcess.getState() != ModeState.RUNNING)
-									toProcess.setState(ModeState.IDLE);
+								((KnowledgeTimeStampUnchangeTrigger)trigger).getEvents().get(j).setIsReachable(false);
 								ComponentProcess fromProcess = getProcess(componentInstance, from[j], toProcess);
-								((KnowledgeValueUnchangeTrigger)trigger).getConstraints().get(j).from = fromProcess;
-								((KnowledgeValueUnchangeTrigger)trigger).setTo(toProcess);
+								((KnowledgeTimeStampUnchangeTrigger)trigger).getEvents().get(j).setFrom(fromProcess);
+								((KnowledgeTimeStampUnchangeTrigger)trigger).getEvents().get(j).setTo(toProcess);
 							}
 						}
 					}
 				}
 			}
-			TriggerOnValueChange tc = getAnnotation(allAnnotations[i], TriggerOnValueChange.class);
+			TriggerOnTimeStampChange tc = getAnnotation(allAnnotations[i], TriggerOnTimeStampChange.class);
 			if (tc != null) {
 				for (Trigger trigger : toProcess.getTriggers()) {
-					if(trigger instanceof KnowledgeValueChangeTrigger){
+					if(trigger instanceof KnowledgeTimeStampChangeTrigger){
 						String[] from = tc.from();
 						for (int j = 0; j < from.length; j++) {
 							if(from[j].equals("")){
-								toProcess.setState(ModeState.RUNNING);
-								((KnowledgeValueChangeTrigger)trigger).getConstraints().get(j).from = toProcess;
-								((KnowledgeValueChangeTrigger)trigger).setTo(toProcess);
+								((KnowledgeTimeStampChangeTrigger)trigger).getEvents().get(j).setIsReachable(true);
+								((KnowledgeTimeStampChangeTrigger)trigger).getEvents().get(j).setFrom(toProcess);
+								((KnowledgeTimeStampChangeTrigger)trigger).getEvents().get(j).setTo(toProcess);
 							}else{
-								if(toProcess.getState() != ModeState.RUNNING)
-									toProcess.setState(ModeState.IDLE);
+								((KnowledgeTimeStampChangeTrigger)trigger).getEvents().get(j).setIsReachable(false);
 								ComponentProcess fromProcess = getProcess(componentInstance, from[j], toProcess);
-								((KnowledgeValueChangeTrigger)trigger).getConstraints().get(j).from = fromProcess;
-								((KnowledgeValueChangeTrigger)trigger).setTo(toProcess);
+								((KnowledgeTimeStampChangeTrigger)trigger).getEvents().get(j).setFrom(fromProcess);
+								((KnowledgeTimeStampChangeTrigger)trigger).getEvents().get(j).setTo(toProcess);
 							}
 						}
 					}
@@ -679,7 +674,6 @@ public class AnnotationProcessor {
 	
 	
 	private void createChildren(ComponentInstance componentInstance, List<Method> methods) {
-
 		List<ComponentProcess> children = new ArrayList<ComponentProcess>();
 		for (Method m : methods) {
 			Annotation[] anns = m.getDeclaredAnnotations();
@@ -703,7 +697,6 @@ public class AnnotationProcessor {
 			if(process.getName().equals(name))
 				return process;
 		}
-	
 		return toProcess;
 	} 
 	

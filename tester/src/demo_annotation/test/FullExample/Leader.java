@@ -29,7 +29,7 @@ public class Leader {
 	public Double lFFPos = 0.0;
 	@TimeStamp
 	public Double lFFSpeed = 0.0;
-	
+		
 	@TimeStamp
 	public Double lHPos = 0.0;
 	@TimeStamp
@@ -46,16 +46,16 @@ public class Leader {
 	public Leader() {
 		lName = "Leader";
 	}
-
-
+ 	
+ 	
 //  	@Process
 //	public static void alarmed(
 //			@InOut("lFFPos") @TriggerOnValueUnchange(guard = "LH >= 200 && LH < 500") InaccuracyParamHolder<Double> lFFPos
 // 			){
-////  		System.err.println("alarm ....."+lFFPos.value+"  ["+lFFPos.minBoundary+" , "+lFFPos.maxBoundary+"]");
+//   		System.err.println("alarm ....."+lFFPos.value+"  ["+lFFPos.minBoundary+" , "+lFFPos.maxBoundary+"]");
 // 	}
-//
-//	
+
+	
 	@Process
 	@PeriodicScheduling(value = (int) TIMEPERIOD)
 	public static void speedControl(
@@ -83,9 +83,7 @@ public class Leader {
 			lGas.value = 0.0;
 			lBrake.value = -pid;
 		}
-		
-		
-		
+	
 		double lAcceleration = Database.getAcceleration(lSpeed.value, lPos.value, Database.fTorques, lGas.value, lBrake.value,Database.fMass);
 		lSpeed.value += lAcceleration * timePeriodInSeconds; 
 		lPos.value += lSpeed.value * timePeriodInSeconds;

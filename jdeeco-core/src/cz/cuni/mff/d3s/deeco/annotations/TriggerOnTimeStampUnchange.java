@@ -9,14 +9,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 
-
 /**
+ * 
  * @author Rima Al Ali
  *
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
-public @interface TriggerOnValueChange {
+public @interface TriggerOnTimeStampUnchange {
 	String[] from() default "";
 	String[] guard() default "";
 }

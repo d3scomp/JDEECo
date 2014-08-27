@@ -1,4 +1,4 @@
-package demo_annotation.test.FullExample;
+package demo_annotation.Modes;
 
 import cz.cuni.mff.d3s.deeco.annotations.Ensemble;
 import cz.cuni.mff.d3s.deeco.annotations.In;
@@ -12,21 +12,21 @@ import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder;
 
 @Ensemble
 @PeriodicScheduling(80)
-public class FireFighterLeaderEnsemble {
+public class FireFighterHelicopterEnsembledfds {
 
 	@Membership
 	public static boolean membership(
 			@In("coord.ffPos") Double ffPos,
 			@In("coord.ffSpeed") Double ffSpeed,
-			@In("coord.ffLPos") Double ffLPos,
-			@In("coord.ffLSpeed") Double ffLSpeed,
+			@In("coord.ffHPoss") Double ffHPoss,
+			@In("coord.ffHSpeeds") Double ffHSpeeds,
 			
-			@In("member.lPos") Double lPos,
-			@In("member.lSpeed") Double lSpeed,
-			@In("member.lFFPos") Double lFFPos,
-			@In("member.lFFSpeed") Double lFFSpeed
+			@In("member.hPos") Double hPos,
+			@In("member.hSpeed") Double hSpeed,
+			@In("member.hFFPos") Double hFFPos,
+			@In("member.hFFSpeed") Double hFFSpeed
  		){
-		if(ffPos < 50)
+		if(ffPos < 100)
 			return true;
 		return false;
 	}
@@ -35,17 +35,17 @@ public class FireFighterLeaderEnsemble {
 	public static void map(
 			@InOut("coord.ffPos") TSParamHolder<Double> ffPos,
 			@InOut("coord.ffSpeed") TSParamHolder<Double> ffSpeed,
-			@InOut("coord.ffLPos") InaccuracyParamHolder<Double> ffLPos,
-			@InOut("coord.ffLSpeed") InaccuracyParamHolder<Double> ffLSpeed,
-			
-			@InOut("member.lPos") TSParamHolder<Double> lPos,
-			@InOut("member.lSpeed") TSParamHolder<Double> lSpeed,
-			@InOut("member.lFFPos") InaccuracyParamHolder<Double> lFFPos,
-			@InOut("member.lFFSpeed") InaccuracyParamHolder<Double> lFFSpeed
+			@InOut("coord.ffHPos") InaccuracyParamHolder<Double> ffHPos,
+			@InOut("coord.ffHSpeed") InaccuracyParamHolder<Double> ffHSpeed,
+						
+			@InOut("member.hPos") TSParamHolder<Double> hPos,
+			@InOut("member.hSpeed") TSParamHolder<Double> hSpeed,
+			@InOut("member.hFFPos") InaccuracyParamHolder<Double> hFFPos,
+			@InOut("member.hFFSpeed") InaccuracyParamHolder<Double> hFFSpeed
 	) {
-		lFFPos.setWithTS(ffPos);
-		lFFSpeed.setWithTS(ffSpeed);
-		ffLPos.setWithTS(lPos);
-		ffLSpeed.setWithTS(lSpeed);
+		ffHPos.setWithTS(hPos);
+		ffHSpeed.setWithTS(hSpeed);
+		hFFPos.setWithTS(ffPos);
+		hFFSpeed.setWithTS(ffSpeed);
 	}
 }

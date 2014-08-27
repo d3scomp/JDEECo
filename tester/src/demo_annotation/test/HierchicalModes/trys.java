@@ -25,5 +25,7 @@ public class trys {
 		
 		System.out.println(MVEL.eval("g > 0 && ( F < 10 || ( F < 10 && T > 0 ) )", context));
 		System.out.println(MVEL.eval("T > 0+A", context));
+		
+		
 	}
 }

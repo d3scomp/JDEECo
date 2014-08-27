@@ -8,13 +8,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueChangeTrigger;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueUnchangeTrigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeTimeStampChangeTrigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeTimeStampTrigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeTimeStampUnchangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.Transition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TriggerConditionParser;
 
@@ -84,10 +87,10 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	public void register(Trigger trigger, TriggerListener triggerListener) {
 
 		KnowledgeChangeTrigger kct = null;
-		if (trigger instanceof KnowledgeValueChangeTrigger) {
-			kct = (KnowledgeValueChangeTrigger) trigger;
-		} else if (trigger instanceof KnowledgeValueUnchangeTrigger) {
-			kct = (KnowledgeValueUnchangeTrigger) trigger;
+		if (trigger instanceof KnowledgeTimeStampChangeTrigger) {
+			kct = (KnowledgeTimeStampChangeTrigger) trigger;
+		} else if (trigger instanceof KnowledgeTimeStampUnchangeTrigger) {
+			kct = (KnowledgeTimeStampUnchangeTrigger) trigger;
 		}else if (trigger instanceof KnowledgeChangeTrigger) {
 			kct = (KnowledgeChangeTrigger) trigger;
 		}
@@ -117,10 +120,10 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		
 		KnowledgeChangeTrigger kct = null;
 		
-		if (trigger instanceof KnowledgeValueChangeTrigger) {
-			kct = (KnowledgeValueChangeTrigger) trigger;
-		}else if (trigger instanceof KnowledgeValueUnchangeTrigger) {
-			kct = (KnowledgeValueUnchangeTrigger) trigger;
+		if (trigger instanceof KnowledgeTimeStampChangeTrigger) {
+			kct = (KnowledgeTimeStampChangeTrigger) trigger;
+		}else if (trigger instanceof KnowledgeTimeStampUnchangeTrigger) {
+			kct = (KnowledgeTimeStampUnchangeTrigger) trigger;
 		}else if (trigger instanceof KnowledgeChangeTrigger) {
 			kct = (KnowledgeChangeTrigger) trigger;
 		}
@@ -211,9 +214,9 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		for (final KnowledgePath knowledgePath : changeSet
 				.getUpdatedReferences()) {
 			if(!updateKnowledge.get(knowledgePath))
-				notifyKnowledgeValueUnchangeListeners(knowledgePath, changeSet.getValue(knowledgePath));
+				notifyKnowledgeTimeStampUnchangeListeners(knowledgePath, changeSet.getValue(knowledgePath));
 			else if(updateKnowledge.get(knowledgePath)){
-				notifyKnowledgeValueChangeListeners(knowledgePath, changeSet.getValue(knowledgePath));
+				notifyKnowledgeTimeStampChangeListeners(knowledgePath, changeSet.getValue(knowledgePath));
 			}
 			notifyKnowledgeChangeListeners(knowledgePath);
 		}
@@ -543,7 +546,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		// Go through each knowledge change trigger
 		for (final KnowledgeChangeTrigger kct : knowledgeChangeListeners
 				.keySet()) {
-			if(!(kct instanceof KnowledgeValueChangeTrigger) && !(kct instanceof KnowledgeValueUnchangeTrigger)){
+			if(!(kct instanceof KnowledgeTimeStampChangeTrigger) && !(kct instanceof KnowledgeTimeStampUnchangeTrigger)){
 				kctNodes = kct.getKnowledgePath().getNodes();
 				// Now we need to check if the knowledge change trigger matches
 				// the knowledge path that has changed.
@@ -565,15 +568,15 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	}
 
 	
-	private void notifyKnowledgeValueChangeListeners(
+	private void notifyKnowledgeTimeStampChangeListeners(
 			final KnowledgePath knowledgePath, Object value) {
 		List<PathNode> kctNodes;
 		final List<PathNode> kpNodes = knowledgePath.getNodes();
 		// Go through each knowledge change trigger
 		for (final KnowledgeChangeTrigger kct : knowledgeChangeListeners
 				.keySet()) {
-			if(kct instanceof KnowledgeValueChangeTrigger){
-				KnowledgeValueChangeTrigger kvct = (KnowledgeValueChangeTrigger)kct; 
+			if(kct instanceof KnowledgeTimeStampChangeTrigger){
+				KnowledgeTimeStampChangeTrigger kvct = (KnowledgeTimeStampChangeTrigger)kct; 
 				kctNodes = kvct.getKnowledgePath().getNodes();
 				// Now we need to check if the knowledge change trigger matches
 				// the knowledge path that has changed.
@@ -587,8 +590,10 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 					// notify its listeners about the change
 					for (final TriggerListener listener : knowledgeChangeListeners
 							.get(kvct)) {
-						if(TriggerConditionParser.checkCondition(knowledge, kvct, value)){
+						Transition tran = TriggerConditionParser.returnTransition(knowledge, kvct, value); 
+						if(tran != null){
 							listener.triggered(kvct);
+							resetStates(kvct,tran);
 						}
 					}
 				}
@@ -597,15 +602,15 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	}
 
 	
-	private void notifyKnowledgeValueUnchangeListeners(
+	private void notifyKnowledgeTimeStampUnchangeListeners(
 			final KnowledgePath knowledgePath, Object value) {
 		List<PathNode> kctNodes;
 		final List<PathNode> kpNodes = knowledgePath.getNodes();
 		// Go through each knowledge change trigger
 		for (final KnowledgeChangeTrigger kct : knowledgeChangeListeners
 				.keySet()) {
-			if(kct instanceof KnowledgeValueUnchangeTrigger){
-				KnowledgeValueUnchangeTrigger kvct = (KnowledgeValueUnchangeTrigger)kct; 
+			if(kct instanceof KnowledgeTimeStampUnchangeTrigger){
+				KnowledgeTimeStampUnchangeTrigger kvct = (KnowledgeTimeStampUnchangeTrigger)kct; 
 				kctNodes = kvct.getKnowledgePath().getNodes();
 				// Now we need to check if the knowledge change trigger matches
 				// the knowledge path that has changed.
@@ -619,8 +624,10 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 					// notify its listeners about the change
 					for (final TriggerListener listener : knowledgeChangeListeners
 							.get(kvct)) {
-						if(TriggerConditionParser.checkCondition(knowledge, kvct, value)){
+						Transition tran = TriggerConditionParser.returnTransition(knowledge, kvct, value); 
+						if(tran != null){
 							listener.triggered(kvct);
+							resetStates(kvct,tran);
 						}
 					}
 				}
@@ -628,6 +635,94 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		}
 	}
 
+	
+	private void resetStates(KnowledgeTimeStampTrigger kvct, Transition tran) {
+		if(!tran.getFrom().equals(tran.getTo())){
+			tran.getFrom().setIsActive(false);
+			filterSilbing(kvct, tran);		
+		}
+		setNextStates(kvct, tran);
+		setChildren(kvct);
+	}
+	
+	
+	private void setChildren(KnowledgeTimeStampTrigger kvct) {
+		for (Trigger trigger : knowledgeChangeListeners.keySet()) {
+			if(trigger instanceof KnowledgeTimeStampTrigger){
+				KnowledgeTimeStampTrigger tr = (KnowledgeTimeStampTrigger)trigger;
+				if(!tr.equals(kvct)){
+					for (Transition event : tr.getEvents()) {
+							for (ComponentProcess fromChild : event.getFrom().getChildren()) {
+								for (Trigger fcTrigger : fromChild.getTriggers()) {
+									if(fcTrigger instanceof KnowledgeTimeStampTrigger){
+										KnowledgeTimeStampTrigger fctr = (KnowledgeTimeStampTrigger)fcTrigger;
+										for (Transition fcevent : fctr.getEvents()) {
+											if(fcevent.getFrom().equals(fcevent.getTo())){
+												if(event.getFrom().isIsActive()){
+													fcevent.getTo().setIsActive(true);
+												}else{
+													fcevent.getTo().setIsActive(false);
+												}
+											}
+										}
+									}
+								}
+							}
+							for (ComponentProcess toChild : event.getTo().getChildren()) {
+								for (Trigger tcTrigger : toChild.getTriggers()) {
+									if(tcTrigger instanceof KnowledgeTimeStampTrigger){
+										KnowledgeTimeStampTrigger tctr = (KnowledgeTimeStampTrigger)tcTrigger;
+										for (Transition tcevent : tctr.getEvents()) {
+											if(tcevent.getFrom().equals(tcevent.getTo())){
+												if(event.getFrom().isIsActive()){
+													tcevent.getTo().setIsActive(true);
+												}else{
+													tcevent.getTo().setIsActive(false);
+												}
+											}
+										}
+									}
+								}								
+							}
+					}
+				}
+			}
+		}		
+	}
+
+	private void filterSilbing(KnowledgeTimeStampTrigger kvct, Transition tran) {
+		for (Trigger trigger : knowledgeChangeListeners.keySet()) {
+			if(trigger instanceof KnowledgeTimeStampTrigger){
+				KnowledgeTimeStampTrigger tr = (KnowledgeTimeStampTrigger)trigger;
+				if(!tr.equals(kvct)){
+					for (Transition event : tr.getEvents()) {
+						if(!tran.equals(event))
+							if(tran.getFrom().equals(event.getFrom())){
+								event.getTo().setIsActive(false);
+								event.setIsReachable(false);
+							}
+					}
+				}
+			}
+		}		
+	}
+
+	private void setNextStates(KnowledgeTimeStampTrigger kvct, Transition tran){
+		for (Trigger trigger : knowledgeChangeListeners.keySet()) {
+			if(trigger instanceof KnowledgeTimeStampTrigger){
+				KnowledgeTimeStampTrigger tr = (KnowledgeTimeStampTrigger)trigger;
+				if(!tr.equals(kvct)){
+					for (Transition event : tr.getEvents()) {
+						if(!tran.equals(event))
+							if(tran.getTo().equals(event.getFrom())){
+								event.getTo().setIsActive(true);
+								event.setIsReachable(true);
+							}
+					}
+				}
+			}
+		}
+	}
 	/**
 	 * Checks whether the shorter list is contained in the longer one, keeping
 	 * the order. It returns the containment end index.

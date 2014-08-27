@@ -38,7 +38,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getComponentInstance <em>Component Instance</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#isIsActive <em>Is Active</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getTriggers <em>Triggers</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getState <em>State</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getChildren <em>Children</em>}</li>
  * </ul>
  * </p>
@@ -95,26 +94,6 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 	 * @ordered
 	 */
 	protected EList<Trigger> triggers;
-
-	/**
-	 * The default value of the '{@link #getState() <em>State</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getState()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final ModeState STATE_EDEFAULT = ModeState.IDLE;
-
-	/**
-	 * The cached value of the '{@link #getState() <em>State</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getState()
-	 * @generated
-	 * @ordered
-	 */
-	protected ModeState state = STATE_EDEFAULT;
 
 	/**
 	 * The cached value of the '{@link #getChildren() <em>Children</em>}' reference list.
@@ -245,27 +224,6 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public ModeState getState() {
-		return state;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setState(ModeState newState) {
-		ModeState oldState = state;
-		state = newState == null ? STATE_EDEFAULT : newState;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT_PROCESS__STATE, oldState, state));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EList<ComponentProcess> getChildren() {
 		if (children == null) {
 			children = new EObjectResolvingEList<ComponentProcess>(ComponentProcess.class, this, RuntimeMetadataPackage.COMPONENT_PROCESS__CHILDREN);
@@ -335,8 +293,6 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 				return isIsActive();
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__TRIGGERS:
 				return getTriggers();
-			case RuntimeMetadataPackage.COMPONENT_PROCESS__STATE:
-				return getState();
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__CHILDREN:
 				return getChildren();
 		}
@@ -364,9 +320,6 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__TRIGGERS:
 				getTriggers().clear();
 				getTriggers().addAll((Collection<? extends Trigger>)newValue);
-				return;
-			case RuntimeMetadataPackage.COMPONENT_PROCESS__STATE:
-				setState((ModeState)newValue);
 				return;
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__CHILDREN:
 				getChildren().clear();
@@ -396,9 +349,6 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__TRIGGERS:
 				getTriggers().clear();
 				return;
-			case RuntimeMetadataPackage.COMPONENT_PROCESS__STATE:
-				setState(STATE_EDEFAULT);
-				return;
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__CHILDREN:
 				getChildren().clear();
 				return;
@@ -422,8 +372,6 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 				return isActive != IS_ACTIVE_EDEFAULT;
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__TRIGGERS:
 				return triggers != null && !triggers.isEmpty();
-			case RuntimeMetadataPackage.COMPONENT_PROCESS__STATE:
-				return state != STATE_EDEFAULT;
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__CHILDREN:
 				return children != null && !children.isEmpty();
 		}
@@ -444,8 +392,6 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 		result.append(name);
 		result.append(", isActive: ");
 		result.append(isActive);
-		result.append(", state: ");
-		result.append(state);
 		result.append(')');
 		return result.toString();
 	}

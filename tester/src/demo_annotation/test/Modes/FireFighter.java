@@ -42,7 +42,7 @@ public class FireFighter{
 	
  	@Process
 	public static void mediatorConnected(
-			@InOut("ffLPos") @TriggerOnValueUnchange(from = "leaderConnected", guard = "LH > 5 && LH < 10") InaccuracyParamHolder<Double> ffLPos
+			@InOut("ffLPos") @TriggerOnTimeStampUnchange(from = "leaderConnected", guard = "LH > 5 && LH < 10") InaccuracyParamHolder<Double> ffLPos
  			){
   		System.out.println("choose between the helicopters .... "+ffLPos.value+" ["+ffLPos.minBoundary+" , "+ffLPos.maxBoundary+" ] " );
  	}
@@ -50,7 +50,7 @@ public class FireFighter{
 	
  	@Process
 	public static void leaderConnected(
-			@InOut("ffLPos") @TriggerOnValueUnchange(guard = "LH < 1") InaccuracyParamHolder<Double> ffLPos
+			@InOut("ffLPos") @TriggerOnTimeStampUnchange(guard = "LH < 1") InaccuracyParamHolder<Double> ffLPos
  			){
  		double currentTime = System.nanoTime()/SEC_NANOSECOND_FACTOR;
   		System.out.println("connected to leader .... "+ffLPos.value+" ["+ffLPos.minBoundary+" , "+ffLPos.maxBoundary+" ]  "+(currentTime-ffLPos.creationTime) );
@@ -59,7 +59,7 @@ public class FireFighter{
  	
  	@Process
 	public static void nonWorking(
-			@InOut("ffLPos") @TriggerOnValueUnchange(from = "leaderConnected", guard = "LH > 8") InaccuracyParamHolder<Double> ffLPos
+			@InOut("ffLPos") @TriggerOnTimeStampUnchange(from = "leaderConnected", guard = "LH > 8") InaccuracyParamHolder<Double> ffLPos
  			){
   		System.err.println("none working .... "+ffLPos.value+" ["+ffLPos.minBoundary+" , "+ffLPos.maxBoundary+" ] " );
  	}

@@ -1,17 +1,20 @@
-package demo_annotation.test.Modes.complex;
+package demo_annotation.Modes;
 
 
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.*;
-import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.MetadataType;
+import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ModeParamHolder;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
+import demo_annotation.test.Modes.Database;
+import demo_annotation.test.Modes.VehicleModel;
 
 
 @StateSpaceModel(models = @Model( period = 100, state  = {"ffLSpeed","ffLPos"}, 
 				result = @Fun(returnedIndex = {-1,0}, referenceModel = VehicleModel.class)))
 @Component
-public class FireFighter{
+public class FireFightersadsada{
 
 	public final static long serialVersionUID = 1L;
 	public String ffName = "FF";
@@ -25,11 +28,18 @@ public class FireFighter{
 	public Double ffIntegratorSpeedError = 0.0;
 	public Double ffErrorWindup = 0.0;
 
+	@Transitions( map = {@Transition( from = "leaderConnected", to = {"mediatorConnected"}),
+						@Transition( from = "leaderConnected", to = {"nonWorking"})})
 	@TimeStamp
 	public Double ffLPos = 0.0;
 	@TimeStamp
 	public Double ffLSpeed = 0.0;
 	
+
+	@TimeStamp
+	public Double ffHPos = 0.0;// should be  HashMap<String, Double>  ffHPoss = new HashMap<String, Double>(); 
+	@TimeStamp
+	public Double ffHSpeed = 0.0;//HashMap<String, Double>  ffHSpeeds = new HashMap<String, Double>();
 
 	private static final double KP = 0.05;
 	private static final double KI = 0.000228325;
@@ -42,32 +52,35 @@ public class FireFighter{
 	
  	@Process
 	public static void mediatorConnected(
-			@InOut("ffLPos") @TriggerOnTimeStampUnchange(from = "leaderConnected", guard = "LH > 5 && LH < 10") InaccuracyParamHolder<Double> ffLPos
+			@InOut("ffLPos") @TriggerOnTimeStampUnchange( moreThan = 5 , lessThan = 15, meta = MetadataType.INACCURACY) ModeParamHolder<Double> ffLPos
  			){
-  		System.out.println("choose between the helicopters .... "+ffLPos.value+" ["+ffLPos.minBoundary+" , "+ffLPos.maxBoundary+" ] " );
+  		System.out.println("choose between the helicopters .... "+ffLPos.value+" ["+ffLPos.minBoundary+" , "+ffLPos.maxBoundary+" ] "+ffLPos.trans );
  	}
 
 	
+ 	@Mode(init = true)
  	@Process
 	public static void leaderConnected(
-			@InOut("ffLPos") @TriggerOnTimeStampUnchange(from = {"","mediatorConnected"}, guard = {"LH < 1","LH > 30 || (LH > 15 && LH < 20)"}) InaccuracyParamHolder<Double> ffLPos
+			@InOut("ffLPos") @TriggerOnTimeStampUnchange( lessThan = 3 , meta = MetadataType.INACCURACY) ModeParamHolder<Double> ffLPos
  			){
  		double currentTime = System.nanoTime()/SEC_NANOSECOND_FACTOR;
-  		System.out.println("connected to leader .... "+ffLPos.value+" ["+ffLPos.minBoundary+" , "+ffLPos.maxBoundary+" ]  "+(currentTime-ffLPos.creationTime) );
+//  		System.out.println("connected to leader .... "+ffLPos.value+" ["+ffLPos.minBoundary+" , "+ffLPos.maxBoundary+" ]  "+(currentTime-ffLPos.creationTime)+"  "+ffLPos.trans );
  	}
  	
  	
- 	@Process
+  	@Process
 	public static void nonWorking(
-			@InOut("ffLPos") @TriggerOnTimeStampUnchange(from = {"leaderConnected","mediatorConnected"}, guard = {"LH < 10 && LH > 8","LH < 3"}) InaccuracyParamHolder<Double> ffLPos
+			@InOut("ffLPos") @TriggerOnTimeStampUnchange(moreThan = 6 , meta = MetadataType.INACCURACY) ModeParamHolder<Double> ffLPos
  			){
-  		System.err.println("none working .... "+ffLPos.value+" ["+ffLPos.minBoundary+" , "+ffLPos.maxBoundary+" ] " );
+  		System.err.println("none working .... "+ffLPos.value+" ["+ffLPos.minBoundary+" , "+ffLPos.maxBoundary+" ] "+ffLPos.trans );
  	}
 
  	
- 	@Process@PeriodicScheduling((int)TIMEPERIOD)
+ 	@Process
+	@PeriodicScheduling((int)TIMEPERIOD)
 	public static void speedControl(
 			@InOut("ffPos") TSParamHolder<Double> ffPos,
+//			@InOut("ffLPos") ModeParamHolder<Double> ffLPos,
 			@InOut("ffSpeed") TSParamHolder<Double> ffSpeed,
 
 			@InOut("ffGas") ParamHolder<Double> ffGas,
@@ -114,5 +127,16 @@ public class FireFighter{
 		else if (val < -1)
 			val = -1;
 		return val;
+	}
+	
+	private static double MIDValue(Double[] ffHconn){
+		if(ffHconn[0] > 0)
+			return 1.0;
+		else if(ffHconn[1] > 0)
+			return 2.0;
+		else if(ffHconn[2] > 0)
+			return 3.0;
+		
+		return 0.0;
 	}
 }

@@ -10,7 +10,7 @@ import demo_annotation.test.Inaccuracy.VehicleModel;
 
 
 //define all the component modes with its tree structure (modes have submodes - that will help in defining the )
-@ComponentModes(modes = {@ModesInfo(initMode = "initilizedLeader", allModes = {"initilizedLeader","FFConnected","alarmed"})})
+@ComponentModes(modes = {@Modes(initMode = "initilizedLeader", allModes = {"initilizedLeader","FFConnected","alarmed"})})
 //the state space model have the in states and the out states are the index of in states or -1 to use the model and calculate the derived value
 @StateSpaceModel(models = @Model(periodicScheduling = @PeriodicScheduling(100), triggerField = "lFFHold",
 								 state  = {"lFFPos","lFFSpeed"}, result = @Fun(returnedIndex = {1,-1}, referenceModel = VehicleModel.class)))

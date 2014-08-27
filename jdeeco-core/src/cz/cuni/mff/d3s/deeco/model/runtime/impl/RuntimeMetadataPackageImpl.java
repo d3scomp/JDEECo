@@ -14,8 +14,9 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Exchange;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Invocable;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueChangeTrigger;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeValueUnchangeTrigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeTimeStampChangeTrigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeTimeStampTrigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeTimeStampUnchangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.MetadataType;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ModeState;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
@@ -30,10 +31,10 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 
+import cz.cuni.mff.d3s.deeco.model.runtime.api.Transition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
-import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ConditionType;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ModelInterface;
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
@@ -201,14 +202,28 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass knowledgeValueUnchangeTriggerEClass = null;
+	private EClass knowledgeTimeStampUnchangeTriggerEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass knowledgeValueChangeTriggerEClass = null;
+	private EClass knowledgeTimeStampChangeTriggerEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass knowledgeTimeStampTriggerEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass transitionEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -237,13 +252,6 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * @generated
 	 */
 	private EEnum comparisonTypeEEnum = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EEnum modeStateEEnum = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -286,13 +294,6 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * @generated
 	 */
 	private EDataType inaccurateValueEDataType = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EDataType conditionTypeEDataType = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -666,17 +667,8 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getComponentProcess_State() {
-		return (EAttribute)componentProcessEClass.getEStructuralFeatures().get(4);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EReference getComponentProcess_Children() {
-		return (EReference)componentProcessEClass.getEStructuralFeatures().get(5);
+		return (EReference)componentProcessEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -873,8 +865,8 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getKnowledgeValueUnchangeTrigger() {
-		return knowledgeValueUnchangeTriggerEClass;
+	public EClass getKnowledgeTimeStampUnchangeTrigger() {
+		return knowledgeTimeStampUnchangeTriggerEClass;
 	}
 
 	/**
@@ -882,8 +874,8 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getKnowledgeValueUnchangeTrigger_Constraints() {
-		return (EAttribute)knowledgeValueUnchangeTriggerEClass.getEStructuralFeatures().get(0);
+	public EClass getKnowledgeTimeStampChangeTrigger() {
+		return knowledgeTimeStampChangeTriggerEClass;
 	}
 
 	/**
@@ -891,8 +883,8 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getKnowledgeValueUnchangeTrigger_To() {
-		return (EReference)knowledgeValueUnchangeTriggerEClass.getEStructuralFeatures().get(1);
+	public EClass getKnowledgeTimeStampTrigger() {
+		return knowledgeTimeStampTriggerEClass;
 	}
 
 	/**
@@ -900,8 +892,8 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getKnowledgeValueChangeTrigger() {
-		return knowledgeValueChangeTriggerEClass;
+	public EReference getKnowledgeTimeStampTrigger_Events() {
+		return (EReference)knowledgeTimeStampTriggerEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -909,8 +901,8 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getKnowledgeValueChangeTrigger_Constraints() {
-		return (EAttribute)knowledgeValueChangeTriggerEClass.getEStructuralFeatures().get(0);
+	public EClass getTransition() {
+		return transitionEClass;
 	}
 
 	/**
@@ -918,8 +910,35 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getKnowledgeValueChangeTrigger_To() {
-		return (EReference)knowledgeValueChangeTriggerEClass.getEStructuralFeatures().get(1);
+	public EReference getTransition_To() {
+		return (EReference)transitionEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getTransition_From() {
+		return (EReference)transitionEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getTransition_Condition() {
+		return (EAttribute)transitionEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getTransition_IsReachable() {
+		return (EAttribute)transitionEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -1044,15 +1063,6 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EEnum getModeState() {
-		return modeStateEEnum;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EDataType getModelType() {
 		return modelTypeEDataType;
 	}
@@ -1064,15 +1074,6 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 */
 	public EDataType getInaccurateValue() {
 		return inaccurateValueEDataType;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EDataType getConditionType() {
-		return conditionTypeEDataType;
 	}
 
 	/**
@@ -1152,7 +1153,6 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		createEReference(componentProcessEClass, COMPONENT_PROCESS__COMPONENT_INSTANCE);
 		createEAttribute(componentProcessEClass, COMPONENT_PROCESS__IS_ACTIVE);
 		createEReference(componentProcessEClass, COMPONENT_PROCESS__TRIGGERS);
-		createEAttribute(componentProcessEClass, COMPONENT_PROCESS__STATE);
 		createEReference(componentProcessEClass, COMPONENT_PROCESS__CHILDREN);
 
 		parameterEClass = createEClass(PARAMETER);
@@ -1187,19 +1187,23 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		createEReference(stateSpaceModelDefinitionEClass, STATE_SPACE_MODEL_DEFINITION__DERIVATION_STATES);
 		createEAttribute(stateSpaceModelDefinitionEClass, STATE_SPACE_MODEL_DEFINITION__MODEL_VALUE);
 
-		knowledgeValueUnchangeTriggerEClass = createEClass(KNOWLEDGE_VALUE_UNCHANGE_TRIGGER);
-		createEAttribute(knowledgeValueUnchangeTriggerEClass, KNOWLEDGE_VALUE_UNCHANGE_TRIGGER__CONSTRAINTS);
-		createEReference(knowledgeValueUnchangeTriggerEClass, KNOWLEDGE_VALUE_UNCHANGE_TRIGGER__TO);
+		knowledgeTimeStampUnchangeTriggerEClass = createEClass(KNOWLEDGE_TIME_STAMP_UNCHANGE_TRIGGER);
 
-		knowledgeValueChangeTriggerEClass = createEClass(KNOWLEDGE_VALUE_CHANGE_TRIGGER);
-		createEAttribute(knowledgeValueChangeTriggerEClass, KNOWLEDGE_VALUE_CHANGE_TRIGGER__CONSTRAINTS);
-		createEReference(knowledgeValueChangeTriggerEClass, KNOWLEDGE_VALUE_CHANGE_TRIGGER__TO);
+		knowledgeTimeStampChangeTriggerEClass = createEClass(KNOWLEDGE_TIME_STAMP_CHANGE_TRIGGER);
+
+		knowledgeTimeStampTriggerEClass = createEClass(KNOWLEDGE_TIME_STAMP_TRIGGER);
+		createEReference(knowledgeTimeStampTriggerEClass, KNOWLEDGE_TIME_STAMP_TRIGGER__EVENTS);
+
+		transitionEClass = createEClass(TRANSITION);
+		createEReference(transitionEClass, TRANSITION__TO);
+		createEReference(transitionEClass, TRANSITION__FROM);
+		createEAttribute(transitionEClass, TRANSITION__CONDITION);
+		createEAttribute(transitionEClass, TRANSITION__IS_REACHABLE);
 
 		// Create enums
 		parameterDirectionEEnum = createEEnum(PARAMETER_DIRECTION);
 		metadataTypeEEnum = createEEnum(METADATA_TYPE);
 		comparisonTypeEEnum = createEEnum(COMPARISON_TYPE);
-		modeStateEEnum = createEEnum(MODE_STATE);
 
 		// Create data types
 		methodEDataType = createEDataType(METHOD);
@@ -1208,7 +1212,6 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		communicationBoundaryEDataType = createEDataType(COMMUNICATION_BOUNDARY);
 		modelTypeEDataType = createEDataType(MODEL_TYPE);
 		inaccurateValueEDataType = createEDataType(INACCURATE_VALUE);
-		conditionTypeEDataType = createEDataType(CONDITION_TYPE);
 	}
 
 	/**
@@ -1249,8 +1252,9 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		pathNodeCoordinatorEClass.getESuperTypes().add(this.getPathNode());
 		pathNodeMemberEClass.getESuperTypes().add(this.getPathNode());
 		pathNodeComponentIdEClass.getESuperTypes().add(this.getPathNode());
-		knowledgeValueUnchangeTriggerEClass.getESuperTypes().add(this.getKnowledgeChangeTrigger());
-		knowledgeValueChangeTriggerEClass.getESuperTypes().add(this.getKnowledgeChangeTrigger());
+		knowledgeTimeStampUnchangeTriggerEClass.getESuperTypes().add(this.getKnowledgeTimeStampTrigger());
+		knowledgeTimeStampChangeTriggerEClass.getESuperTypes().add(this.getKnowledgeTimeStampTrigger());
+		knowledgeTimeStampTriggerEClass.getESuperTypes().add(this.getKnowledgeChangeTrigger());
 
 		// Initialize classes, features, and operations; add parameters
 		initEClass(timeTriggerEClass, TimeTrigger.class, "TimeTrigger", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -1302,7 +1306,6 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		initEReference(getComponentProcess_ComponentInstance(), this.getComponentInstance(), this.getComponentInstance_ComponentProcesses(), "componentInstance", null, 1, 1, ComponentProcess.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getComponentProcess_IsActive(), ecorePackage.getEBoolean(), "isActive", "true", 1, 1, ComponentProcess.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getComponentProcess_Triggers(), this.getTrigger(), null, "triggers", null, 0, -1, ComponentProcess.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getComponentProcess_State(), this.getModeState(), "state", null, 1, 1, ComponentProcess.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getComponentProcess_Children(), this.getComponentProcess(), null, "children", null, 0, -1, ComponentProcess.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(parameterEClass, Parameter.class, "Parameter", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -1337,13 +1340,18 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		initEReference(getStateSpaceModelDefinition_DerivationStates(), this.getKnowledgePath(), null, "derivationStates", null, 0, -1, StateSpaceModelDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getStateSpaceModelDefinition_ModelValue(), this.getInaccurateValue(), "modelValue", null, 1, 1, StateSpaceModelDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(knowledgeValueUnchangeTriggerEClass, KnowledgeValueUnchangeTrigger.class, "KnowledgeValueUnchangeTrigger", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getKnowledgeValueUnchangeTrigger_Constraints(), this.getConditionType(), "constraints", "", 0, -1, KnowledgeValueUnchangeTrigger.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getKnowledgeValueUnchangeTrigger_To(), this.getComponentProcess(), null, "to", null, 1, 1, KnowledgeValueUnchangeTrigger.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEClass(knowledgeTimeStampUnchangeTriggerEClass, KnowledgeTimeStampUnchangeTrigger.class, "KnowledgeTimeStampUnchangeTrigger", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
-		initEClass(knowledgeValueChangeTriggerEClass, KnowledgeValueChangeTrigger.class, "KnowledgeValueChangeTrigger", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getKnowledgeValueChangeTrigger_Constraints(), this.getConditionType(), "constraints", null, 0, -1, KnowledgeValueChangeTrigger.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getKnowledgeValueChangeTrigger_To(), this.getComponentProcess(), null, "to", null, 1, 1, KnowledgeValueChangeTrigger.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEClass(knowledgeTimeStampChangeTriggerEClass, KnowledgeTimeStampChangeTrigger.class, "KnowledgeTimeStampChangeTrigger", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+		initEClass(knowledgeTimeStampTriggerEClass, KnowledgeTimeStampTrigger.class, "KnowledgeTimeStampTrigger", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getKnowledgeTimeStampTrigger_Events(), this.getTransition(), null, "events", null, 1, -1, KnowledgeTimeStampTrigger.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(transitionEClass, Transition.class, "Transition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getTransition_To(), this.getComponentProcess(), null, "to", null, 1, 1, Transition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getTransition_From(), this.getComponentProcess(), null, "from", null, 1, 1, Transition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getTransition_Condition(), ecorePackage.getEString(), "condition", null, 1, 1, Transition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getTransition_IsReachable(), ecorePackage.getEBoolean(), "isReachable", null, 1, 1, Transition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize enums and add enum literals
 		initEEnum(parameterDirectionEEnum, ParameterDirection.class, "ParameterDirection");
@@ -1368,11 +1376,6 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		addEEnumLiteral(comparisonTypeEEnum, ComparisonType.NOT_EQUAL);
 		addEEnumLiteral(comparisonTypeEEnum, ComparisonType.NOT_EQUAL_STR);
 
-		initEEnum(modeStateEEnum, ModeState.class, "ModeState");
-		addEEnumLiteral(modeStateEEnum, ModeState.IDLE);
-		addEEnumLiteral(modeStateEEnum, ModeState.RUNNING);
-		addEEnumLiteral(modeStateEEnum, ModeState.DEACTIVATED);
-
 		// Initialize data types
 		initEDataType(methodEDataType, Method.class, "Method", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(knowledgeManagerEDataType, KnowledgeManager.class, "KnowledgeManager", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
@@ -1380,7 +1383,6 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		initEDataType(communicationBoundaryEDataType, CommunicationBoundaryPredicate.class, "CommunicationBoundary", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(modelTypeEDataType, ModelInterface.class, "ModelType", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(inaccurateValueEDataType, InaccuracyParamHolder.class, "InaccurateValue", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-		initEDataType(conditionTypeEDataType, ConditionType.class, "ConditionType", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
 		createResource(eNS_URI);

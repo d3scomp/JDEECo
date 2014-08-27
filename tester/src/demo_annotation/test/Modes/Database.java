@@ -186,7 +186,8 @@ public class Database {
 		double b[] = ArrayUtils.toPrimitive(y.toArray(new Double[y.size()]));
 		UnivariateInterpolator interpolator = new LinearInterpolator();//Spline interpolation more accurate
 		UnivariateFunction function = interpolator.interpolate(a,b);
-		if(key < 0.0) return 0.0;
+		if(key < 0.0) key = 0.0;
+		if(key > 220.0) key = 220.0;
 		double value = function.value(key);
 		return value;
 	}

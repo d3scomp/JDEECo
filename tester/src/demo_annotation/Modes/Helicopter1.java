@@ -3,14 +3,10 @@ package demo_annotation.Modes;
 import java.util.HashMap;
 
 import cz.cuni.mff.d3s.deeco.annotations.Component;
-import cz.cuni.mff.d3s.deeco.annotations.ComponentModes;
 import cz.cuni.mff.d3s.deeco.annotations.Fun;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.Mode;
-import cz.cuni.mff.d3s.deeco.annotations.ModeTransactions;
-import cz.cuni.mff.d3s.deeco.annotations.ModeTransition;
-import cz.cuni.mff.d3s.deeco.annotations.ModesInfo;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
@@ -18,19 +14,11 @@ import cz.cuni.mff.d3s.deeco.annotations.StateSpaceModel;
 import cz.cuni.mff.d3s.deeco.annotations.Model;
 import cz.cuni.mff.d3s.deeco.annotations.TimeStamp;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
-import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.MetadataType;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 import demo_annotation.test.Inaccuracy.VehicleModel;
 
 
 
-@ComponentModes(modes = {@ModesInfo(initMode = "flyOff", allModes = {"flyOff","flyOn"}),
-						 @ModesInfo(parentMode = "flyOn", initMode = "initilizedSystem", allModes = {"initilizedSystem","mediate","organizeSearch","toldToSearch"}),
-						 @ModesInfo(parentMode = "organizeSearch", initMode = "initilizedSearch", allModes = {"initilizedSearch","otherSearch", "leadSearch"})})
-@StateSpaceModel(models = {@Model(periodicScheduling = @PeriodicScheduling(100), triggerField = "lFFHold",
-								 state  = {"lFFSpeed","lFFPos"}, result = @Fun(returnedIndex = {-1,0}, referenceModel = VehicleModel.class)),
-						   @Model(periodicScheduling = @PeriodicScheduling(100), triggerField = "lFFHold",
-								 state  = {"hHSpeeds","hHPoss"}, result = @Fun(returnedIndex = {-1,0}, referenceModel = VehicleModel.class))})
 @Component
 public class Helicopter1 {
 
@@ -43,20 +31,8 @@ public class Helicopter1 {
 	public Double  hBrake = 0.0;
 	public Double  hRangeDistance = 100.0; 
 	
-	//in all inaccuracy condition there is a pair of data (? + number), which means :
-	// 															? is the inaccurate value till this moment
-	// 															number is the inaccuracy during the future period of time
-	//Those two values should return the current inaccuracy plus the predicted inaccuracy
-	//the zero value could be done as default and just use ? to represent the current inaccuracy value
-	@ModeTransactions( 
-		    transitions= {@ModeTransition(meta = MetadataType.INACCURACY, fromMode = "mediate", toMode = "organizeSearch", transitionCondition = "(? + 0) > 5000"),
-		    			  @ModeTransition(meta = MetadataType.INACCURACY, fromMode = "organizeSearch", toMode = "mediate", transitionCondition = "(? + 0) <= 5000"),
-		    			  @ModeTransition(meta = MetadataType.INACCURACY, fromMode = "organizeSearch", toMode = "initilizedSystem", transitionCondition = "(? + #protocolDuration) > 10000")}) 		
 	@TimeStamp
 	public Double  hFFPos = 0.0;
-	
-	
-	
 	@TimeStamp
 	public Double  hFFSpeed = 0.0;
 	public Double  hFFTargetPos = 0.0;
@@ -70,30 +46,15 @@ public class Helicopter1 {
 	@TimeStamp
 	public HashMap<String, Double>  hHFFSpeeds = new HashMap<String, Double>();
 	// # in front of the field name to recognize that I should compare with the field's value
-	@ModeTransactions( 
-		    transitions= {@ModeTransition(fromMode = "initilizedSystem", toMode = "mediate", transitionCondition = "? == #hID"),
-		    			  @ModeTransition(fromMode = "mediate", toMode = "initilizedSystem", transitionCondition = "? != #hID && ? != null "),
-		    			  @ModeTransition(fromMode = "organizeSearch", toMode = "initilizedSystem", transitionCondition = "? != #hID && ? != null ")}) 	
 	public String mID = null;
 	//FIXME: change this kind of statement to accept "for" or any other normal command also
-	@ModeTransactions( 
-		    transitions= {@ModeTransition(fromMode = "initilizedSystem", toMode = "toldToSearch", transitionCondition = "E? == #hID"),
-		    			  @ModeTransition(fromMode = "toldToSearch", toMode = "initilizedSystem", transitionCondition = "V? != #hID")}) 	
 	public HashMap<String, String> search_In = new HashMap<String, String>();
 	public HashMap<String, String> search_Out = new HashMap<String, String>();
-	@ModeTransactions( 
-		    transitions= {@ModeTransition(fromMode = "flyOff", toMode = "flyOn", transitionCondition = "? == 1.0"),
-		    			  @ModeTransition(fromMode = "flyOn", toMode = "flyOff", transitionCondition = "? == 0.0")}) 
 	public Double switchSg = 0.0;
 	public HashMap<String, Double> signal_In = new HashMap<String, Double>();
 	public Double signal_Out = 0.0;
 	public HashMap<String, Double> signal_Reply_In = new HashMap<String, Double>();
 	public HashMap<String, Double> signal_Reply_Out = new HashMap<String, Double>();
-	@ModeTransactions( 
-		    transitions= {@ModeTransition(fromMode = "initilizedSearch", toMode = "leadSearch",	transitionCondition = "? == #hID"),
-		    			  @ModeTransition(fromMode = "initilizedSearch", toMode = "otherSearch", transitionCondition = "? != #hID"),
-		    			  @ModeTransition(fromMode = "leadSearch", toMode = "otherSearch", transitionCondition = "? != #hID"),
-		    			  @ModeTransition(fromMode = "otherSearch", toMode = "leadSearch", transitionCondition = "? == #hID")}) 	
 	public String searchID = null;  // it is local in the simulation
 	public Double time_last = 0.0;
 	public Double time_val = 0.0;
@@ -120,8 +81,8 @@ public class Helicopter1 {
 	
 	
 	
-	public Helicopter1() {
-		hID = "H1";
+	public Helicopter1(String name) {
+		hID = name;
 	}
 	
 	

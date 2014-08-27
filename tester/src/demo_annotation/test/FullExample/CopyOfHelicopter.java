@@ -1,7 +1,6 @@
 package demo_annotation.test.FullExample;
 
 import java.util.HashMap;
-
 import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.Fun;
 import cz.cuni.mff.d3s.deeco.annotations.In;
@@ -13,9 +12,12 @@ import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.StateSpaceModel;
 import cz.cuni.mff.d3s.deeco.annotations.TimeStamp;
-import cz.cuni.mff.d3s.deeco.annotations.TriggerOnValueChange;
-import cz.cuni.mff.d3s.deeco.annotations.TriggerOnValueUnchange;
+import cz.cuni.mff.d3s.deeco.annotations.Transition;
+import cz.cuni.mff.d3s.deeco.annotations.Transitions;
+import cz.cuni.mff.d3s.deeco.annotations.TriggerOnTimeStampChange;
+import cz.cuni.mff.d3s.deeco.annotations.TriggerOnTimeStampUnchange;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
+import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ModeParamHolder;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 import demo_annotation.test.Modes.Database;
@@ -23,9 +25,11 @@ import demo_annotation.test.Modes.Database;
 
 
 @StateSpaceModel(models = {@Model( period = 100, state  = {"hFFSpeed","hFFPos"}, 
+							result = @Fun(returnedIndex = {-1,0}, referenceModel = VehicleModel.class)),
+							@Model( period = 100, state  = {"hHSpeed","hHPos"}, 
 							result = @Fun(returnedIndex = {-1,0}, referenceModel = VehicleModel.class))})
 @Component
-public class Helicopter {
+public class CopyOfHelicopter {
 
 	public String  hID;
 	@TimeStamp
@@ -36,19 +40,46 @@ public class Helicopter {
 	public Double  hBrake = 0.0;
 	public Double  hRangeDistance = 100.0; 
 	
+	@Transitions(map = {@Transition(from = "initilizedSystem", to = "mediate")//,
+//				@Transition(from = "mediate", to = "organizeSearch"),
+//				@Transition(from = "organizeSearch", to = "initilizedSystem")
+	})	
 	@TimeStamp
 	public Double  hFFPos = 0.0;
 	@TimeStamp
 	public Double  hFFSpeed = 0.0;
 	public Double  hFFTargetPos = 0.0;
 	public Double  hFFTargetSpeed = 0.0;
+
 	
+	// In case loss of communication and FF did not communicate with the leader
+	public String hHName = "";
+	@TimeStamp
+	public Double  hHPos = 0.0;
+	@TimeStamp
+	public Double  hHSpeed = 0.0;
+	@TimeStamp
+	public Double  hLFFPos = 0.0;
+	@TimeStamp
+	public Double  hLFFSpeed = 0.0;
+	@TimeStamp
+	public Double  hHFFPos = 0.0;
+	@TimeStamp
+	public Double  hHFFSpeed = 0.0;
+	
+	//would it work without timestamp???
+//	@Transitions(map = {@Transition(from = "initilizedSystem", to = "toldToSearch"),
+//			@Transition(from = "toldToSearch", to = "initilizedSystem")})	
 	public String hSearch_In = "";
 	public String hSearch_Out = "";
-	public String hSearchID = "";  // it is local in the simulation
-//  public Double protocolDuration = 0.0; //for the prediction
+	
+//	@Transitions(map = {@Transition(from = "leadSearch", to = "otherSearch"),
+//			@Transition(from = "otherSearch", to = "leadSearch")})	
+	public String hSearchID = null;  // it is local in the simulation
+//	public Double protocolDuration = 0.0; //for the prediction
 
-
+	
+	
 	protected static double hIntegratorError = 0.0;
 	protected static double hErrorWindup = 0.0;
 	protected static final double KP_D = 0.193;
@@ -62,124 +93,103 @@ public class Helicopter {
 	protected static final double DESIRED_SPEED = 0;
 
 	
-	public Helicopter(String name, Double pos) {
+	public CopyOfHelicopter(String name, Double pos) {
 		hID = name;
 		hPos = pos; 
 	}
 	
-
+	
+	@Mode(init = true)
 	@Process
 	public static void initilizedSystem(
-			@InOut("hFFPos") @TriggerOnValueUnchange(from = "organizeSearch", guard = "V > 0 && LH > 10") InaccuracyParamHolder<Double> hFFPos,
-			@Out("hFFTargetPos") ParamHolder<Double> hFFTargetPos,
-			@Out("hFFTargetSpeed") ParamHolder<Double> hFFTargetSpeed
+			@InOut("hFFPos") @TriggerOnTimeStampUnchange(equal = 0) ModeParamHolder<Double> hFFPos
 			){
-		System.out.println("init ...... "+hFFPos.value+" "+hFFPos.creationTime+"  ["+hFFPos.minBoundary+" "+hFFPos.maxBoundary+"]...");
-		hFFPos.setWithTS(0.0, 0.0);
-		hFFPos.minBoundary = 0.0;
-		hFFPos.maxBoundary = 0.0;
-		hFFTargetPos.value = 0.0;
-		hFFTargetSpeed.value = 0.0;
-	}
-
-
-	@Process
-	public static void toldToSearch(
-			@In("hSearch_In") @TriggerOnValueChange(from = "initilizedSystem", guard = "V == hID") String hSearch_In,
-			@In("hPos") Double hPos,
-			@In("hSpeed") Double hSpeed,			
-			@InOut("hFFPos") InaccuracyParamHolder<Double> hFFPos,
-			@InOut("hFFSpeed") InaccuracyParamHolder<Double> hFFSpeed,
-			@Out("hFFTargetPos") ParamHolder<Double> hFFTargetPos,
-			@Out("hFFTargetSpeed") ParamHolder<Double> hFFTargetSpeed
-			){
-//		System.out.println("toldToSearch ...... "+hSearch_In);
-		TargetValue t = computeTarget(hPos, new RangeValue(hFFPos.minBoundary, hFFPos.maxBoundary), hSpeed, new RangeValue(hFFSpeed.minBoundary, hFFSpeed.maxBoundary));
-		hFFTargetPos.value = t.pos;
-		hFFTargetSpeed.value = t.speed;
+		System.out.println("init ......");
 	}
 
 	
 	@Process
 	public static void mediate(
-			@InOut("hFFPos") @TriggerOnValueChange(from = {"","initilizedSystem","organizeSearch"}, guard = {"V > 0","V > 0","LH <= 5"}) InaccuracyParamHolder<Double> hFFPos,
+			@InOut("hFFPos") @TriggerOnTimeStampChange ModeParamHolder<Double> hFFPos,
 			@InOut("hFFSpeed") InaccuracyParamHolder<Double> hFFSpeed,
-			@In("hPos") Double hPos,
-			@In("hSpeed") Double hSpeed,			
-			@Out("hFFTargetPos") ParamHolder<Double> hFFTargetPos,
-			@Out("hFFTargetSpeed") ParamHolder<Double> hFFTargetSpeed
+			@InOut("hLFFPos") TSParamHolder<Double> hLFFPos,
+			@InOut("hLFFSpeed") TSParamHolder<Double> hLFFSpeed
 			){
-//		System.out.println("mediate ..... "+hFFPos.value+" .... ["+hFFPos.minBoundary+" , "+hFFPos.maxBoundary+"]");
-		TargetValue t = computeTarget(hPos, new RangeValue(hFFPos.minBoundary, hFFPos.maxBoundary), hSpeed, new RangeValue(hFFSpeed.minBoundary, hFFSpeed.maxBoundary));
-		hFFTargetPos.value = t.pos;
-		hFFTargetSpeed.value = t.speed;
+		System.out.println("mediate .....");
+		hLFFPos.setWithTS(hFFPos.value, hFFPos.creationTime);
+		hLFFSpeed.setWithTS(hFFSpeed.value, hLFFSpeed.creationTime);
 	}
 
 	
-	@Process
-	public static void organizeSearch(
-			@In("hID") String hID,
-			@In("hPos") Double hPos,
-			@InOut("hFFPos") @TriggerOnValueUnchange(guard = "V > 0 && LH > 5") InaccuracyParamHolder<Double> hFFPos,
-			@InOut("hSearchID") ParamHolder<String> hSearchID
-			){
-//		System.out.println("organize ..... "+hFFPos.value+" .... ["+hFFPos.minBoundary+" , "+hFFPos.maxBoundary+"]");
-		RangeValue ffRange = new RangeValue(hFFPos.minBoundary, hFFPos.maxBoundary);
-		HashMap<String,RangeValue> objsRange = new HashMap<String,RangeValue>();
-		//TODO: add all other Hs
-		objsRange.put("H1", new RangeValue(hPos,hPos));
-		hSearchID.value = getClosest(ffRange,objsRange);
-	}	
-
+//	@Process
+//	public static void organizeSearch(
+//			@InOut("hFFPos") @TriggerOnValueUnchange(moreThan = 5000) ModeParamHolder<Double> hFFPos,
+//			@InOut("hSearchID") ModeParamHolder<String> hSearchID
+//			){
+//		RangeValue ffRange = new RangeValue();
+//		HashMap<String,RangeValue> objsRange = new HashMap<String,RangeValue>();
+//		//TODO:
+//		
+//		
+//		hSearchID.value = getClosest(ffRange,objsRange);
+//	}	
+//
+//	
+//	@Process
+//	public static void toldToSearch(
+//			@InOut("hSearch_In") @TriggerOnValueChange(notEqualStr = "") ModeParamHolder<Double> hSearch_In,
+//			@In("hPos") Double hPos,
+//			@In("hSpeed") Double hSpeed,
+//			@InOut("hFFPos") InaccuracyParamHolder<Double> hFFPos,
+//			@InOut("hHFFPos") InaccuracyParamHolder<Double> hHFFPos,
+//			@InOut("hHFFSpeed") InaccuracyParamHolder<Double> hHFFSpeed,
+//			@InOut("hFFTargetPos") InaccuracyParamHolder<Double> hFFTargetPos,
+//			@InOut("hFFTargetSpeed") InaccuracyParamHolder<Double> hFFTargetSpeed
+//			){
+//		Double max = hFFPos.creationTime;
+//		if(max < hHFFPos.creationTime){
+//			max = hHFFPos.creationTime;
+//		}
+//		
+//		RangeValue pos = new RangeValue(hHFFPos.minBoundary,hHFFPos.maxBoundary);
+//		RangeValue speed = new RangeValue(hHFFSpeed.minBoundary,hHFFSpeed.maxBoundary);
+//		TargetValue tr = computeTarget(hPos, pos, hSpeed, speed);
+//		hFFTargetPos.value = tr.pos;
+//		hFFTargetSpeed.value = tr.speed;
+//	}
+//
+//	
+//	@Mode(parent = "organizeSearch")
+//	@Process
+//	public static void otherSearch(
+//			@InOut("hSearchID") @TriggerOnValueChange(notEqualStr = "#hID") ModeParamHolder<String> hSearchID,
+//			@InOut("hSearch_Out") ParamHolder<String> hSearch_Out
+//		){
+//		hSearch_Out = hSearchID;
+//	}
+//	
+//	
+//	@Mode(init = true, parent = "organizeSearch")
+//	@Process
+//	public static void leadSearch(
+//			@InOut("hSearchID") @TriggerOnValueChange(equalStr = "#hID") ModeParamHolder<String> hSearchID,
+//			@In("hPos") Double hPos,
+//			@In("hSpeed") Double hSpeed,
+//			@In("hFFPos") InaccuracyParamHolder<Double> hFFPos,
+//			@In("hFFSpeed") InaccuracyParamHolder<Double> hFFSpeed,
+//			@InOut("hFFTargetPos") ParamHolder<Double> hFFTargetPos,
+//			@InOut("hFFTargetSpeed") ParamHolder<Double> hFFTargetSpeed
+//			){
+//		//--------------during---------------------------
+//		RangeValue pos = new RangeValue(hFFPos.minBoundary,hFFPos.maxBoundary);
+//		RangeValue speed = new RangeValue(hFFSpeed.minBoundary,hFFSpeed.maxBoundary);
+//		TargetValue tr = computeTarget(hPos, pos, hSpeed, speed);
+//		hFFTargetPos.value = tr.pos;
+//		hFFTargetSpeed.value = tr.speed;		
+//	}
 	
-	@Mode(parent = "organizeSearch")
-	@Process
-	public static void otherSearch(
-			@In("hPos") Double hPos,
-			@In("hSpeed") Double hSpeed,			
-			@InOut("hFFPos") InaccuracyParamHolder<Double> hFFPos,
-			@InOut("hFFSpeed") InaccuracyParamHolder<Double> hFFSpeed,
-			@In("hSearchID") @TriggerOnValueChange(guard = "V != hID") String hSearchID,
-			@Out("hFFTargetPos") ParamHolder<Double> hFFTargetPos,
-			@Out("hFFTargetSpeed") ParamHolder<Double> hFFTargetSpeed,
-			@InOut("hSearch_Out") ParamHolder<String> hSearch_Out
-		){
-//		System.err.println("otherSearch ...");
-//		hFFTargetPos.value = DESIRED_DISTANCE;
-//		hFFTargetSpeed.value = DESIRED_SPEED;
-		TargetValue t = computeTarget(hPos, new RangeValue(hFFPos.minBoundary, hFFPos.maxBoundary), hSpeed, new RangeValue(hFFSpeed.minBoundary, hFFSpeed.maxBoundary));
-		hFFTargetPos.value = t.pos;
-		hFFTargetSpeed.value = t.speed;
-		hSearch_Out.value = hSearchID;
-	}
 	
 	
-	@Mode(parent = "organizeSearch")
-	@Process
-	public static void leadSearch(
-			// It can't put handle simple string for comparing. We should pass variable or numbers.
-			@In("hPos") Double hPos,
-			@In("hSpeed") Double hSpeed,
-			@InOut("hFFPos") InaccuracyParamHolder<Double> hFFPos,
-			@InOut("hFFSpeed") InaccuracyParamHolder<Double> hFFSpeed,
-			@Out("hFFTargetPos") ParamHolder<Double> hFFTargetPos,
-			@Out("hFFTargetSpeed") ParamHolder<Double> hFFTargetSpeed,
-			@In("hSearchID") @TriggerOnValueChange(guard = "V == hID") String hSearchID
-			){
-//		System.err.println("leadSearch ...");
-//		RangeValue r1 = new RangeValue();
-//		RangeValue r2 = new RangeValue();
-//		r1.min = hFFPos.minBoundary;
-//		r1.max = hFFPos.maxBoundary;
-//		r2.min = hFFSpeed.minBoundary;
-//		r2.max = hFFSpeed.maxBoundary;
-		RangeValue result = new RangeValue();
-		result = computeTarget(hFFPos.value, r1, hFFSpeed.value, r2);
-		hFFTargetPos.value = hFFPos.maxBoundary;
-		hFFTargetSpeed.value = hFFSpeed.maxBoundary;
-	}
-	
-
 	@Process
 	@PeriodicScheduling((int) TIMEPERIOD)
 	public static void speedControl(
@@ -191,17 +201,19 @@ public class Helicopter {
 			@In("hFFTargetSpeed") Double hFFTargetSpeed,
 
 			@Out("hGas") ParamHolder<Double> hGas,
-			@Out("hBrake") ParamHolder<Double> hBrake
-			) {
+			@Out("hBrake") ParamHolder<Double> hBrake,
+
+			@InOut("hIntegratorSpeedError") ParamHolder<Double> hIntegratorSpeedError,
+			@InOut("hErrorWindup") ParamHolder<Double> hErrorWindup) {
 
 		double currentTime = System.nanoTime()/SEC_NANOSEC_FACTOR;
 		double timePeriodInSeconds = TIMEPERIOD / SEC_MILISEC_FACTOR;
 		double distanceError = -DESIRED_DISTANCE + hFFTargetPos - hFFPos;
 		double pidDistance = KP_D * distanceError;
 		double error = pidDistance + hFFTargetSpeed - hFFSpeed;
-		hIntegratorError += (KI_S * error + KT_S * hErrorWindup) * timePeriodInSeconds;
+		hIntegratorError += (KI_S * error + KT_S * hErrorWindup.value) * timePeriodInSeconds;
 		double pidSpeed = KP_S * error + hIntegratorError;
-		hErrorWindup = saturate(pidSpeed) - pidSpeed;
+		hErrorWindup.value = saturate(pidSpeed) - pidSpeed;
 
 		if (pidSpeed >= 0) {
 			hGas.value = pidSpeed;
@@ -217,7 +229,6 @@ public class Helicopter {
 		hPos.value += hSpeed.value * timePeriodInSeconds;
 		hPos.creationTime = currentTime;
 		hSpeed.creationTime = currentTime;
-		System.out.println("hPos : "+hPos.value+"   target:"+hFFTargetPos+" ,  hSpeed : "+hSpeed.value+"   target:"+hFFTargetSpeed);
 
 	}	
 
@@ -257,10 +268,10 @@ public class Helicopter {
 				schID = key;
 			}
 		}
+		
 		return schID;
 	}
 
-	
 	private static RangeValue getComposedInaccuracy(RangeValue range1, RangeValue range2){
 		double[] val = {0.0,0.0,0.0,0.0};
 		val[0] = Math.abs(range2.max - range1.max);

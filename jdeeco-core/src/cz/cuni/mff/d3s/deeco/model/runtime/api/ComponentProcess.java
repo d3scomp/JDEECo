@@ -16,7 +16,6 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getComponentInstance <em>Component Instance</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#isIsActive <em>Is Active</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getTriggers <em>Triggers</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getState <em>State</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getChildren <em>Children</em>}</li>
  * </ul>
  * </p>
@@ -122,35 +121,6 @@ public interface ComponentProcess extends Invocable {
 	 * @generated
 	 */
 	EList<Trigger> getTriggers();
-
-	/**
-	 * Returns the value of the '<em><b>State</b></em>' attribute.
-	 * The literals are from the enumeration {@link cz.cuni.mff.d3s.deeco.model.runtime.api.ModeState}.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>State</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>State</em>' attribute.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ModeState
-	 * @see #setState(ModeState)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentProcess_State()
-	 * @model required="true"
-	 * @generated
-	 */
-	ModeState getState();
-
-	/**
-	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getState <em>State</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>State</em>' attribute.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ModeState
-	 * @see #getState()
-	 * @generated
-	 */
-	void setState(ModeState value);
 
 	/**
 	 * Returns the value of the '<em><b>Children</b></em>' reference list.

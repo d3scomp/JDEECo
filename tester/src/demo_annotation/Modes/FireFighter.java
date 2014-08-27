@@ -6,8 +6,8 @@ import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 
 
-@ComponentModes(modes = {@ModesInfo(initMode = "inactive", allModes = {"inactive","active"}),
-						 @ModesInfo(parentMode = "active", initMode = "waitConnection", allModes = {"waitConnection","leaderConnected","mediatorConnected"})})
+@ComponentModes(modes = {@Modes(initMode = "inactive", allModes = {"inactive","active"}),
+						 @Modes(parentMode = "active", initMode = "waitConnection", allModes = {"waitConnection","leaderConnected","mediatorConnected"})})
 @Component
 public class FireFighter{
 
