@@ -33,7 +33,7 @@ import cz.cuni.mff.d3s.deeco.task.ParamHolder;
  * 
  */
 @Ensemble
-@PeriodicScheduling(4000)
+@PeriodicScheduling(period=4000)
 public class CriticalDataCopyFromHexacopterToSL {
 
 	private static final long serialVersionUID = 409847004319943982L;
@@ -52,7 +52,7 @@ public class CriticalDataCopyFromHexacopterToSL {
 	}
 
 	@KnowledgeExchange
-	@PeriodicScheduling(4000)
+	@PeriodicScheduling(period=4000)
 	public static void map(
 			@In("coord.id") String cId,
 			@In("member.FFsInDangerInSite") Map<String, Set<String>> mFFsInDangerInSite,

@@ -24,6 +24,10 @@ public class Log {
 	public static void d(String msg, Throwable t) {
 		getLogger().debug(msg, t);
 	}
+	
+	public static boolean isDebugLoggable() {
+		return getLogger().isDebugLoggable();
+	}
 
 	public static void i(String msg) {
 		getLogger().info(msg);

@@ -14,7 +14,7 @@ import cz.cuni.mff.d3s.deeco.annotations.Process;
 @Component
 public class CorrectC3 {
 
-	@Process @PeriodicScheduling(2000)
+	@Process @PeriodicScheduling(period=2000)
 	public static void process1(
 			@InOut("level1.[level21.level22].level3") String p2) {
 		// business logic

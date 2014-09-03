@@ -99,8 +99,8 @@ public class KnowledgePathHelper {
 					value = km.getId();
 				}
 				else {
-					ValueSet vs = km.get(Arrays.asList(innerPath));
-					value = vs.getValue(innerPath).toString();
+					ValueSet vs = km.get(Arrays.asList(innerPathAndRoot.knowledgePath));
+					value = vs.getValue(innerPathAndRoot.knowledgePath).toString();
 				}
 				PathNodeField resField = factory.createPathNodeField();
 				resField.setName(value);
@@ -120,7 +120,7 @@ public class KnowledgePathHelper {
 	 * @return absolute knowledge path.
 	 * @throws KnowledgeNotFoundException 
 	 */
-	public static KnowledgePath getAbsolutePath(KnowledgePath path, ReadOnlyKnowledgeManager knowledgeManager) 
+	protected static KnowledgePath getAbsolutePath(KnowledgePath path, ReadOnlyKnowledgeManager knowledgeManager) 
 			throws KnowledgeNotFoundException {
 		RuntimeMetadataFactory factory = RuntimeMetadataFactory.eINSTANCE;
 		for (int i=0; i<path.getNodes().size();i++) {

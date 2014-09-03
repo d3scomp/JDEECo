@@ -81,16 +81,16 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 	/** 
 	 * The scheduler used by the runtime.
 	 */
-	protected Scheduler scheduler;	
+	protected final Scheduler scheduler;	
 	
 	/**
 	 * The executor used by the runtime.
 	 */
-	protected Executor executor;	
+	protected final Executor executor;	
 	/**
 	 * The KM container used by the runtime.
 	 */
-	protected KnowledgeManagerContainer kmContainer;
+	protected final KnowledgeManagerContainer kmContainer;
 	
 	/**
 	 * Keeps track of each instance's tasks.
@@ -321,6 +321,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 		
 		// create a new KM with the same id and knowledge values
 		KnowledgeManager km = kmContainer.createLocal(ci.getKnowledgeManager().getId());
+		km.markAsLocal(ci.getKnowledgeManager().getLocalPaths());
 		try {
 			km.update(cs);
 		} catch (KnowledgeUpdateException e) {
@@ -413,7 +414,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 		
 		Task t = componentRecords.get(instance).getProcessTasks().get(process);
 		
-		Log.i(String.format("Changing the activity of task %s corresponding to process %s to %s.", t, process, active));
+		Log.d(String.format("Changing the activity of task %s corresponding to process %s to %s.", t, process, active));
 		
 		if (active) {
 			scheduler.addTask(t);
@@ -622,4 +623,13 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 		return instance;
 	}
 
+	@Override
+	public Scheduler getScheduler() {
+		return scheduler;
+	}
+
+	@Override
+	public KnowledgeManagerContainer getContainer() {
+		return kmContainer;
+	}
 }

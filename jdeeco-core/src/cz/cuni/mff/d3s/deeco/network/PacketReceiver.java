@@ -75,22 +75,24 @@ public class PacketReceiver {
 		Message msg;
 		int messageId = getMessageId(packet);
 		Log.d(String.format("PacketReceiver: Packet received at %s with messageid %d with RSSI: %g", host, messageId, rssi));
+		
 		if (messages.containsKey(messageId)) {
 			msg = messages.get(messageId);
 		} else {
 			msg = new Message(messageId);
 			messages.put(messageId, msg);
 		}
+		
 		if (isInitialPacket(packet)) {
 			int messageSize = getMessageSize(packet);
 			msg.initialize(messageSize);
-		} else {
-			int seqNumber = getPacketSeqNumber(packet);
-			msg.setData(seqNumber, getPacketData(packet));
 		}
+		
+		int seqNumber = getPacketSeqNumber(packet);
+		msg.setData(seqNumber, getPacketData(packet));
 		msg.setLastRSSI(rssi);
 		if (msg.isComplete() && knowledgeDataReceiver != null) {
-			//Log.i(String.format("R: " + "(" + messageId + ")"
+			//Log.d(String.format("R: " + "(" + messageId + ")"
 			//		+ Arrays.toString(msg.data)));
 			Log.d(String.format("PacketReceiver: Message completed at %s with messageid %d with RSSI: %g", host, messageId, msg.lastRSSI));
 			
@@ -104,7 +106,6 @@ public class PacketReceiver {
 	
 	public void clearCachedMessages() {
 		int origCnt = messages.size();
-
 		Set<Integer> droppedIds = new HashSet<>();
 		
 		Message message;
@@ -117,19 +118,18 @@ public class PacketReceiver {
 				it.remove();					
 			}
 		}
-		lastMessagesWipe = timeProvider.getCurrentTime();
+		lastMessagesWipe = timeProvider.getCurrentMilliseconds();
 		int currentCnt = messages.size();
-		Log.i(String.format("Message wipe at %s removed %d cached packets", host, origCnt - currentCnt));
+		Log.d(String.format("Message wipe at %s removed %d cached packets", host, origCnt - currentCnt));
 		Log.d(String.format("PacketReceiver: Message wipe %s dropped messageids %s", host, Arrays.deepToString(droppedIds.toArray())));
 	}
-
-	//TODO Possibly this should be scheduled as a task in the Scheduler.
+	
 	private void clearCachedMessagesIfNecessary() {
-		if (timeProvider.getCurrentTime() - lastMessagesWipe >= messageWipePeriod) {
+		if (timeProvider.getCurrentMilliseconds() - lastMessagesWipe >= messageWipePeriod) {
 			int origCnt = messages.size();
 
 			Set<Integer> droppedIds = new HashSet<>();
-			
+
 			Message message;
 			Iterator<Entry<Integer, Message>> it = messages.entrySet().iterator();
 			while (it.hasNext()) {
@@ -140,15 +140,17 @@ public class PacketReceiver {
 					it.remove();					
 				}
 			}
-			lastMessagesWipe = timeProvider.getCurrentTime();
+			lastMessagesWipe = timeProvider.getCurrentMilliseconds();
 			int currentCnt = messages.size();
-			Log.i(String.format("Message wipe at %s removed %d cached packets", host, origCnt - currentCnt));
+			Log.d(String.format("Message wipe at %s removed %d cached packets", host, origCnt - currentCnt));
 			Log.d(String.format("PacketReceiver: Message wipe %s dropped messageids %s", host, Arrays.deepToString(droppedIds.toArray())));
 		}
-		
+
 	}
 
 	// -----------Helper methods-----------
+	
+	//TODO Extract into packet protocol class together with methods from the PacketSender
 
 	private int getMessageId(byte[] packet) {
 		return ByteBuffer.wrap(Arrays.copyOfRange(packet, 0, 4)).getInt();
@@ -166,11 +168,11 @@ public class PacketReceiver {
 	}
 
 	private boolean isInitialPacket(byte[] packet) {
-		return getPacketSeqNumber(packet) == Integer.MIN_VALUE;
+		return getPacketSeqNumber(packet) == 0;
 	}
 
 	private byte[] getPacketData(byte[] packet) {
-		return Arrays.copyOfRange(packet, 8, packet.length);
+		return Arrays.copyOfRange(packet, PacketSender.HEADER_SIZE, packet.length);
 	}
 
 	// ---------Helper Class--------------
@@ -190,11 +192,11 @@ public class PacketReceiver {
 
 		public Message(int messageId) {
 			this.messageId = messageId;
-			this.creationTime = timeProvider.getCurrentTime();
+			this.creationTime = timeProvider.getCurrentMilliseconds();
 		}
 
 		public boolean isStale() {
-			return timeProvider.getCurrentTime() - creationTime > maxMessageTime;
+			return timeProvider.getCurrentMilliseconds() - creationTime > maxMessageTime;
 		}
 		
 		public void setLastRSSI(double rssi) {

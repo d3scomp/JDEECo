@@ -11,7 +11,7 @@ public class ChildOfCorrectC1 extends CorrectC1 {
 	public Integer number;
 	
 	@Process
-	@PeriodicScheduling(2000)
+	@PeriodicScheduling(period=2000)
 	public static void myprocess1(
 			@Out("x") Integer x) {
 		// business logic

@@ -25,7 +25,7 @@ public class CorrectC1 {
 	public Date time;
 	
 	@Process
-	@PeriodicScheduling(1000)
+	@PeriodicScheduling(period=1000)
 	public static void process1(
 			@In("level1") @TriggerOnChange Integer p1,
 			@InOut("level1.level2.level3") String p2,
@@ -34,7 +34,7 @@ public class CorrectC1 {
 	}
 	
 	// should be ignored
-	@PeriodicScheduling(2000)
+	@PeriodicScheduling(period=2000)
 	public static void helper(){
 	}
 	

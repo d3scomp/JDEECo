@@ -5,40 +5,34 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.UUID;
 
 import cz.cuni.mff.d3s.deeco.DeecoProperties;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
-import cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.network.DirectGossipStrategy;
 import cz.cuni.mff.d3s.deeco.network.DirectRecipientSelector;
-import cz.cuni.mff.d3s.deeco.network.KnowledgeData;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeDataManager;
 import cz.cuni.mff.d3s.deeco.network.PacketReceiver;
 import cz.cuni.mff.d3s.deeco.network.PacketSender;
 import cz.cuni.mff.d3s.deeco.network.PublisherTask;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework;
-import cz.cuni.mff.d3s.deeco.simulation.Host;
-import cz.cuni.mff.d3s.deeco.simulation.Simulation;
+import cz.cuni.mff.d3s.deeco.simulation.SimulationHost;
 import cz.cuni.mff.d3s.deeco.simulation.SimulationRuntimeBuilder;
+import cz.cuni.mff.d3s.deeco.simulation.omnet.OMNetSimulation;
 
 /**
  * Main class for launching the CBSE evaluation demo.
@@ -52,10 +46,12 @@ public class Main {
 	static String OMNET_CONFIG_PATH = "omnetpp.ini";
 	static String OMNET_NETWORK_CONF_PATH = "network-config/network-demo.xml";
 	
-	static String DEFAULT_COMPONENT_CFG = "configurations/component.cfg";
-	static String DEFAULT_SITE_CFG = "configurations/site.cfg";
+	static String DEFAULT_COMPONENT_CFG = "component.cfg";
+	static String DEFAULT_SITE_CFG = "site.cfg";
 	
 	static int SIMULATION_DURATION = 60000;
+	static int IP_GOSSIP_TARGET_PERCENTAGE = 20;
+	
 
 	
 	public static void main(String[] args) throws AnnotationProcessorException, IOException {
@@ -67,8 +63,7 @@ public class Main {
 			siteCfg = args[1];
 		}
 		
-		Simulation sim = new Simulation();
-		sim.initialize(); //loads Library
+		OMNetSimulation sim = new OMNetSimulation();
 		
 		SimulationRuntimeBuilder builder = new SimulationRuntimeBuilder();
 		
@@ -76,37 +71,57 @@ public class Main {
 		Position topRight = siteParser.parseTopRightCorner();
 		
 		Area area = null;
-		final Set<Area> areas = new HashSet<>();
+		Set<Area> areas = new HashSet<>();
 		while ((area = siteParser.parseArea()) != null) {
 			areas.add(area);
 		}
 		
-		final AreaNetworkRegistry networkRegistry = AreaNetworkRegistry.getInstance();
-		networkRegistry.initialize(areas);
+		AreaNetworkRegistry.INSTANCE.initialize(areas);
+		
+		final AreaBasedSelector directRecipientSelector = new AreaBasedSelector();
+		directRecipientSelector.initialize(AreaNetworkRegistry.INSTANCE);
 
-		TeamLocationService.INSTANCE.init(areas);
-		
-		ComponentConfigParser parser = new ComponentConfigParser(componentCfg);
-		
-		PositionAwareComponent component = null;
-		List<RuntimeFramework> runtimes = new ArrayList<>();
-		List<Host> hosts = new ArrayList<>();
-		
-		StringBuilder omnetConfig = new StringBuilder();
-		int i = 0;		
-		
-		DifferentAreaSelector directRecipientSelector = new DifferentAreaSelector();
-		DirectGossipStrategy directGossipStrategy = new DirectGossipStrategy() {			
+		final Random rnd = new Random(areas.size());
+		final DirectGossipStrategy directGossipStrategy = new DirectGossipStrategy() {
 			@Override
-			public boolean gossipTo(String recipient) {
-				//50% chances of sending to the given recipient
-				return new Random(areas.size()).nextInt(100) < 50;
+			public Collection<String> filterRecipients(
+					Collection<String> recipients) {
+				
+				if (recipients.isEmpty())
+					return recipients;
+												
+ 				int targetCnt = 3;//(int) Math.ceil(recipients.size() * (IP_GOSSIP_TARGET_PERCENTAGE/100.0)); 
+ 				targetCnt = Math.min(recipients.size(), targetCnt);				
+				List<String> copy = new ArrayList<>(recipients);
+				
+				// shuffle 'copy' and select the first 'targetCnt' elements
+				for(int i=0; i < targetCnt; i++){
+			        int pos = i + rnd.nextInt(copy.size() - i);			      
+			        String rId = copy.get(pos);
+			        copy.set(pos, copy.get(i));
+			        copy.set(i, rId);			        
+			    }
+				return copy.subList(0, targetCnt);
+				
+				// originally was this				
+				//for (String rId: recipients) {
+				//	//20% chances of sending to the given recipient
+				//	if (rnd.nextInt(100) < 20)
+				//		result.add(rId);
+				//}
 			}
-		};
+		};	
 		
 		// for each component config crate a separate model including only the component and all ensemble definitions,
 		// a separate host, and a separate runtime framework
 		List<PositionAwareComponent> components = new LinkedList<>();
+		PositionAwareComponent component = null;
+		List<RuntimeFramework> runtimes = new ArrayList<>();
+		List<SimulationHost> hosts = new ArrayList<>();		
+		StringBuilder omnetConfig = new StringBuilder();
+		ComponentConfigParser parser = new ComponentConfigParser(componentCfg);
+		int i = 0;
+		
 		while ((component = parser.parseComponent()) != null) {
 			components.add(component);
 			RuntimeMetadata model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
@@ -114,40 +129,38 @@ public class Main {
 			processor.process(component, MemberDataAggregation.class); 
 						
 			omnetConfig.append(String.format(
-					"**.node[%s].mobility.initialX = %dm\n", 
-					i, (int) (component.position.x)));
+					"**.node[%s].mobility.initialX = %dm %n", 
+					i, (int) (component.position.x)));			
 			omnetConfig.append(String.format(
-					"**.node[%s].mobility.initialY = %dm\n", 
+					"**.node[%s].mobility.initialY = %dm %n", 
 					i, (int) (component.position.y)));
 			omnetConfig.append(String.format(
-					"**.node[%s].mobility.initialZ = 0m\n", i));
+					"**.node[%s].mobility.initialZ = 0m %n", i));
 			omnetConfig.append(String.format(
-					"**.node[%s].appl.id = \"%s\"\n\n", i, component.id));
-			Host host = sim.getHost(component.id, "node["+i+"]");			
+					"**.node[%s].appl.id = \"%s\" %n%n", i, component.id));
+			SimulationHost host = sim.getHost(component.id, "node["+i+"]");			
 			hosts.add(host);
 			
-			networkRegistry.addComponent(component);
+			AreaNetworkRegistry.INSTANCE.addComponent(component);
 			
 			// there is only one component instance
-			model.getComponentInstances().get(0).getInternalData().put(PositionAwareComponent.HOST_REFERENCE, host);
+			for (ComponentInstance ci: model.getComponentInstances()) {
+				PositionAwareComponent.initialize(ci, new PositionSensor(host, sim));
+			}
 			Collection<DirectRecipientSelector> recipientSelectors = null;
 			if (component.hasIP) {
 				recipientSelectors = Arrays.asList((DirectRecipientSelector) directRecipientSelector);
 			}
-			RuntimeFramework runtime = builder.build(host, model, recipientSelectors, directGossipStrategy); 
+			RuntimeFramework runtime = builder.build(host, sim, model, recipientSelectors, directGossipStrategy); 
 			runtimes.add(runtime);
 			runtime.start();
 			i++;
-		}	
+		}		
 		
-		//Designate some of the nodes to be Ethernet enabled
-		List<String> ethernetEnabled = new LinkedList<>();
-		for (PositionAwareComponent pac : components) {
-			if (pac.hasIP)
-				ethernetEnabled.add(pac.id);
-		}
+		int seed = omnetConfig.toString().hashCode();
+		System.out.println(String.format("Using Gossip Strategy seed %d.", seed));
+		rnd.setSeed(seed);
 		
-		directRecipientSelector.initialize(ethernetEnabled, networkRegistry);
 		String confName = "omnetpp";
 		if (args.length >= 3) {
 			confName = args[2];
@@ -158,7 +171,11 @@ public class Main {
 		template = template.replace("<<<configName>>>", confName);
 		scanner.close();
 		
-		PrintWriter out = new PrintWriter(Files.newOutputStream(Paths.get(confFile), StandardOpenOption.CREATE));
+		PrintWriter out = new PrintWriter(
+				Files.newOutputStream(Paths.get(confFile), 
+						StandardOpenOption.CREATE, 
+						StandardOpenOption.WRITE, 
+						StandardOpenOption.TRUNCATE_EXISTING));
 		out.println(template);
 		out.println();
 		out.println(String.format("**.playgroundSizeX = %dm", (int) topRight.x));
@@ -203,94 +220,4 @@ public class Main {
 				Integer.getInteger(DeecoProperties.MAXIMUM_REBROADCAST_DELAY, KnowledgeDataManager.DEFAULT_MAX_REBROADCAST_DELAY)));
 	}
 	
-	private static class DifferentAreaSelector implements DirectRecipientSelector {
-
-		private List<String> ethernetEnabled = null;
-		private AreaNetworkRegistry networkRegistry = null;
-		
-		public void initialize(List<String> ethernetEnabled, AreaNetworkRegistry networkRegistry) {
-			this.ethernetEnabled = ethernetEnabled;
-			this.networkRegistry = networkRegistry;
-		}
-		
-		@Override
-		public Collection<String> getRecipients(KnowledgeData data,
-				ReadOnlyKnowledgeManager sender) {
-			if (networkRegistry.getAreas().size() > 1) {
-				List<String> result = new LinkedList<>();
-				KnowledgePath kpTeam = KnowledgePathBuilder.buildSimplePath("teamId");
-				String ownerTeam = (String) data.getKnowledge().getValue(kpTeam);
-				if (ownerTeam != null) {
-					//Find all areas of my team
-					List<Area> areas = networkRegistry.getTeamSites(ownerTeam);
-					List<String> recipients = new LinkedList<>();
-					// return all components in those areas that are not the sender and are "ethernet-enabled"
-					for (Area a: areas) {
-						for (PositionAwareComponent c: networkRegistry.getComponentsInArea(a)) {
-							if (!c.id.equals(sender.getId()) && ethernetEnabled.contains(c.id)) {
-								recipients.add(c.id);
-							}
-						}
-					}
-					Log.d("Recipients for " + ownerTeam + " at " + sender.getId() + " are " + Arrays.deepToString(recipients.toArray()));
-					return recipients;
-				}
-				return result;
-			} else {
-				return new LinkedList<>(ethernetEnabled);
-			}
-		}
-		
-	}
-	
-//	private static StringBuilder generateNetworkConfig(Set<Area> areas, List<PositionAwareComponent> components, String networkConfig) throws IOException {
-//		assert areas.size() < 250;
-//		StringBuilder oConfig = new StringBuilder();
-//		PrintWriter out = new PrintWriter(Files.newOutputStream(Paths.get(networkConfig)));
-//		oConfig.append("\n");
-//		oConfig.append("**.numRouters = " + areas.size() + "\n\n");
-//		oConfig.append("\n");
-//		
-//		out.println("<config>");
-//		//Generate interfaces for each of the areas
-//		List<PositionAwareComponent> copyOfComponents = new LinkedList<>(components);
-//		Set<PositionAwareComponent> toDelete;
-//		int i = 0;
-//		//Configure interfaces and default routes
-//		for (Area area : areas) {
-//			//Assign addresses to the ethernet interfaces
-//			out.println("<interface hosts='router["+ i +"]' names='wlan0' address='192." + i + ".x.x' netmask='255.255.x.x'/>");
-//			out.println("<interface hosts='router[" + i + "]' names='eth0' address='193.1.x.x' netmask='255.255.x.x'/>");
-//			//Assign the default route to Wireless
-//			out.println("<route hosts='router["+ i +"]' destination='192." + i + ".0.0' netmask='255.255.0.0' interface='wlan0'/>");
-//			//Assign the default route to switch
-//			for (int j = 0; j < areas.size(); j++)
-//				if (j != i)
-//					out.println("<route hosts='router["+ i +"]' destination='192."+j+".0.0' netmask='255.255.0.0' gateway='router["+j+"]' interface='eth0'/>");
-//			toDelete = new HashSet<>();
-//			for (PositionAwareComponent c : copyOfComponents) {
-//				if (area.isInArea(c.position)) {
-//					System.out.println();
-//					toDelete.add(c);
-//					//Interface description
-//					out.println("<interface hosts='node["+ components.indexOf(c) +"]' names='nic80211' address='192." + i + ".x.x' netmask='255.255.x.x'/>");
-//					//Default route
-//					out.println("<route hosts='node[" + components.indexOf(c) + "]' destination='*' netmask='*' gateway='router[" + i + "]' interface='nic80211'/>");
-//				}
-//			}
-//			copyOfComponents.removeAll(toDelete);			
-//			oConfig.append("**.router["+i+"].mobility.initialX = " + area.getCenterX() + "m\n");
-//			oConfig.append("**.router["+i+"].mobility.initialY = " + area.getCenterY() + "m\n");
-//			oConfig.append("**.router["+i+"].mobility.initialZ = 0m\n");
-//			
-//			i++;
-//		}
-//		//Assign default network
-//		for (PositionAwareComponent c : copyOfComponents) {
-//			out.println("<interface hosts='node["+ components.indexOf(c) +"]' names='nic80211' address='192.0.x.x' netmask='255.255.x.x'/>");
-//		}
-//		out.println("</config>");
-//		out.close();
-//		return oConfig;
-//	}
 }

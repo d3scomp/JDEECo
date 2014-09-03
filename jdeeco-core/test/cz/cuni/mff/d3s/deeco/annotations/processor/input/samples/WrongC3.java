@@ -16,7 +16,7 @@ import cz.cuni.mff.d3s.deeco.annotations.Process;
 @Component
 public class WrongC3 {
 
-	@Process @PeriodicScheduling(1000)
+	@Process @PeriodicScheduling(period=1000)
 	public static void process1(
 			@In("level1") Integer p1,
 			@InOut("level1") String p2,

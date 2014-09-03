@@ -1,7 +1,6 @@
 package cz.cuni.mff.d3s.deeco.model.runtime;
 
 import static cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper.*;
-
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;

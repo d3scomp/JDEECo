@@ -6,28 +6,14 @@
 	<packaging>pom</packaging>
 	<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
 	<properties>
-		<dist>../dist</dist>
-		<jdeecoCoreSrc>../jdeeco-core/src</jdeecoCoreSrc>
-		<mode>default</mode>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-	<profiles>
-		<profile>
-			<id>default</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<properties>
-				<mode>default</mode>
-			</properties>
-			<modules>
-				<module>../jdeeco-core</module>
-				<module>../jdeeco-demo</module>
-				<module>../jdeeco-core-osgi</module>
-				<module>../jdeeco-simulation</module>
-				<module>../jdeeco-simulation-demo</module>
-			</modules>
-		</profile>
-	</profiles>
+	<modules>
+		<module>../jdeeco-core</module>
+		<!-- <module>../jdeeco-demo</module> <module>../jdeeco-core-osgi</module> -->
+		<module>../jdeeco-simulation</module>
+		<!-- <module>../jdeeco-simulation-demo</module> -->
+	</modules>
 	<build>
 		<plugins>
 			<plugin>
@@ -38,37 +24,46 @@
 					<source>1.7</source>
 					<target>1.7</target>
 				</configuration>
-			</plugin>			
-			<plugin>
-				<artifactId>maven-clean-plugin</artifactId>
-				<version>2.5</version>
-				<executions>
-					<execution>
-						<id>clean-dist</id>
-						<goals>
-							<goal>clean</goal>
-						</goals>
-						<phase>clean</phase>
-						<configuration>
-							<filesets>
-								<fileset>
-									<directory>${dist}</directory>
-								</fileset>
-							</filesets>
-						</configuration>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!-- Ignore/Execute plugin execution -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<!-- copy-dependency plugin -->
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-dependency-plugin</artifactId>
+										<versionRange>[1.0.0,)</versionRange>
+										<goals>
+											<goal>unpack</goal>
+											<goal>
+												copy-dependencies
+											</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 	<repositories>
 		<repository>
-			<id>d3s-releases</id>
-			<url>https://github.com/d3scomp/mvn-repo/raw/master/releases/</url>
-		</repository>	
-		<repository>
-              		<id>sonatype.releases</id>
-	                <url>http://oss.sonatype.org/content/repositories/releases/</url>
-	        </repository>
+			<id>sonatype.releases</id>
+			<url>http://oss.sonatype.org/content/repositories/releases/</url>
+		</repository>
 	</repositories>
 </project>

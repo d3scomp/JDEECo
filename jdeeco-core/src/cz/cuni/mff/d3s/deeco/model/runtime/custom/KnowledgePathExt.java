@@ -53,9 +53,19 @@ public class KnowledgePathExt extends KnowledgePathImpl implements Serializable 
 	@Override
 	public boolean equals(Object that) {
 		if (that instanceof KnowledgePath) {
-			List<PathNode> thatNodes = new LinkedList<>(((KnowledgePath) that).getNodes());
-			List<PathNode> thisNodes = new LinkedList<>(nodes);
-			return thisNodes.equals(thatNodes);
+			Iterator<PathNode> thatNodesIterator = ((KnowledgePath) that).getNodes().iterator();
+			Iterator<PathNode> thisNodesIterator = nodes.iterator();
+			
+			while (thatNodesIterator.hasNext() && thisNodesIterator.hasNext()) {
+				PathNode thisNode = thisNodesIterator.next();
+				PathNode thatNode = thatNodesIterator.next();
+				
+				if (!thisNode.equals(thatNode)) {
+					return false;
+				}
+			}
+			
+			return (!thatNodesIterator.hasNext()) && (!thisNodesIterator.hasNext());
 		}
 		return false;
 	}

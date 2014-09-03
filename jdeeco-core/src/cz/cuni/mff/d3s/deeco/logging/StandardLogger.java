@@ -48,6 +48,10 @@ enum StandardLogger implements Logger {
 	public synchronized void debug(String s, Throwable t) {
 		logger.log(CustomLevel.DEBUG, s, t);
 	}
+	
+	public boolean isDebugLoggable() {
+		return logger.isLoggable(CustomLevel.DEBUG);
+	}
 
 	public synchronized void info(String s) {
 		logger.log(CustomLevel.INFO, s);

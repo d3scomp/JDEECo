@@ -45,7 +45,7 @@ public class TestSerializer {
 		}
 
 		@Process
-		@PeriodicScheduling(500)
+		@PeriodicScheduling(period=500)
 		public static void process(@In("id") String id) {
 			// whatever
 		}

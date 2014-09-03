@@ -25,8 +25,8 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
-import cz.cuni.mff.d3s.deeco.model.runtime.impl.TriggerImpl;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
+import cz.cuni.mff.d3s.deeco.model.runtime.impl.TriggerImpl;
 import cz.cuni.mff.d3s.deeco.runtime.ArchitectureObserver;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.KnowledgePathAndRoot;
@@ -279,7 +279,7 @@ public class EnsembleTask extends Task {
 			
 			// We were not able to find the knowledge, which means that the membership is false.
 			ReadOnlyKnowledgeManager where = localKnowledge == null ? localKnowledgeManager : shadowKnowledgeManager;
-			Log.i(String.format("Input knowledge (%s) of a membership in %s was not found in the knowledge manager %s.", 
+			Log.d(String.format("Input knowledge (%s) of a membership in %s was not found in the knowledge manager %s.", 
 					e.getNotFoundPath(), 
 					ensembleController.getEnsembleDefinition().getName(),
 					where.getId()
@@ -311,7 +311,7 @@ public class EnsembleTask extends Task {
 		} catch (ClassCastException e) {
 			throw new TaskInvocationException("Membership condition does not return a boolean.", e);			
 		} catch (InvocationTargetException e) {
-			Log.i("Membership condition returned an exception.", e.getTargetException());
+			Log.d("Membership condition returned an exception.", e.getTargetException());
 			return false;
 		}
 	}
@@ -362,7 +362,7 @@ public class EnsembleTask extends Task {
 					absoluteKnowledgePathAndRoot = getAbsoluteStrippedPath(formalParam.getKnowledgePath(), shadowKnowledgeManager, localKnowledgeManager);				
 				}
 			} catch (KnowledgeNotFoundException e) {
-				Log.i(String.format(
+				Log.d(String.format(
 						"Knowledge exchange of %s could not be performed: missing knowledge path (%s)", 
 						ensembleController.getEnsembleDefinition().getName(), e.getNotFoundPath()));
 				return;
@@ -390,7 +390,7 @@ public class EnsembleTask extends Task {
 		} catch (KnowledgeNotFoundException e) {
 			// We were not able to find the knowledge, which means that the membership is false.
 			ReadOnlyKnowledgeManager where = localKnowledge == null ? localKnowledgeManager : shadowKnowledgeManager;
-			Log.i(String.format("Input knowledge (%s) of a knowledge exchange in %s not found in the knowledge manager %s.", 
+			Log.d(String.format("Input knowledge (%s) of a knowledge exchange in %s not found in the knowledge manager %s.", 
 					e.getNotFoundPath(), 
 					ensembleController.getEnsembleDefinition().getName(),
 					where.getId()

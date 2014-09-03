@@ -4,7 +4,7 @@
     templateDirectory="cz.cuni.mff.d3s.jdeeco.core/model/runtime-templates" dynamicTemplates="true"
     modelName="RuntimeModel" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
     importerID="org.eclipse.emf.importer.ecore" complianceLevel="7.0" copyrightFields="false"
-    operationReflection="true">
+    operationReflection="true" importOrganizing="true">
   <foreignModel>RuntimeModel.ecore</foreignModel>
   <genPackages prefix="RuntimeMetadata" basePackage="cz.cuni.mff.d3s.deeco.model"
       disposableProviderFactory="true" adapterFactory="false" interfacePackageSuffix="api"
@@ -21,6 +21,8 @@
     <genClasses ecoreClass="RuntimeModel.ecore#//TimeTrigger">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//TimeTrigger/period"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//TimeTrigger/offset"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//TimeTrigger/order"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//TimeTrigger/wcet"/>
     </genClasses>
     <genClasses image="false" ecoreClass="RuntimeModel.ecore#//Trigger"/>
     <genClasses ecoreClass="RuntimeModel.ecore#//KnowledgeChangeTrigger">
@@ -66,7 +68,7 @@
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//Parameter">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//Parameter/direction"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//Parameter/knowledgePath"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//Parameter/knowledgePath"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//Parameter/type"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//Invocable">

@@ -11,6 +11,6 @@ import java.util.List;
  */
 public interface KnowledgeDataSender {
 	
-	public void broadcastKnowledgeData(List<? extends KnowledgeData> knowledgeData);
+	public void broadcastKnowledgeData(String from, List<? extends KnowledgeData> knowledgeData);
 	public void sendKnowledgeData(List<? extends KnowledgeData> knowledgeData, String recipient);
 }

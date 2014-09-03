@@ -34,7 +34,7 @@ import cz.cuni.mff.d3s.deeco.task.ParamHolder;
  */
 
 @Ensemble
-@PeriodicScheduling(4000)
+@PeriodicScheduling(period=4000)
 public class CriticalDataAggregationOnHexacopter {
 
 	private static final long serialVersionUID = -7835430643756278821L;

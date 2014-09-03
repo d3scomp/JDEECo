@@ -73,10 +73,17 @@ public class SchedulerEvent implements Comparable<SchedulerEvent> {
 
 	@Override
 	public int compareTo(SchedulerEvent o) {
-		if( this.nextExecutionTime < o.nextExecutionTime ) return -1;
-		else if( this.nextExecutionTime > o.nextExecutionTime ) return 1;
-		else if (this == o) return 0;
-		else return this.hashCode() < o.hashCode() ? 1 : -1;
+		if (this == o) return 0;
+		else if (this.nextExecutionTime < o.nextExecutionTime) return -1;
+		else if (this.nextExecutionTime > o.nextExecutionTime) return 1;
+		else {
+			int thisOrder = this.trigger instanceof TimeTrigger ? ((TimeTrigger)this.trigger).getOrder() : 0;
+			int thatOrder = o.trigger instanceof TimeTrigger ? ((TimeTrigger)o.trigger).getOrder() : 0;
+
+			if (thisOrder < thatOrder) return -1;
+			else if (thisOrder > thatOrder) return 1;
+			else return Integer.compare(this.hashCode(), o.hashCode());
+		}
 	}
 
 

@@ -18,14 +18,12 @@ package cz.cuni.mff.d3s.jdeeco.simulation.demo;
 import java.util.Map;
 import java.util.Random;
 
-import cz.cuni.mff.d3s.deeco.DeecoProperties;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.network.PublisherTask;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 import cz.cuni.mff.d3s.deeco.task.ProcessContext;
 
@@ -52,19 +50,22 @@ public class Member extends PositionAwareComponent {
 	
 
 	@Process
-	@PeriodicScheduling(500)
+	@PeriodicScheduling(period=500)
 	public static void measureMemberData(@In("id") String id,			
 			@Out("memberData") ParamHolder<MemberData> memberData) {
-		Map<String, Object> internal = ProcessContext.getCurrentProcess().getComponentInstance().getInternalData().map();
+		Map<Object, Object> internal = ProcessContext.getCurrentProcess().getComponentInstance().getInternalData().map();
 		if (!internal.containsKey(DANGER_TIME)) {
 			long seed = 0;
 			for (char c: id.toCharArray())
-				seed += c;
+				seed = seed*32 + (c-'a');
 			Random rnd = new Random(seed);		
-			long dangerTime = ProcessContext.getTimeProvider().getCurrentTime() + rnd.nextInt((Main.SIMULATION_DURATION/4));
+			// the danger occurs in the second quarter of the simulation
+			long dangerTime = ProcessContext.getTimeProvider().getCurrentMilliseconds() 
+					+ (Main.SIMULATION_DURATION/4)
+					+ rnd.nextInt(Main.SIMULATION_DURATION/4);
 			internal.put(DANGER_TIME, dangerTime);
 		}
-		long currentTime = ProcessContext.getTimeProvider().getCurrentTime();
+		long currentTime = ProcessContext.getTimeProvider().getCurrentMilliseconds();
 		// if the time has come, go to "danger" state
 		if (currentTime < (long) internal.get(DANGER_TIME)) {
 			memberData.value = new MemberData(25.0f);

@@ -57,4 +57,7 @@ public interface ReadOnlyKnowledgeManager {
 	 * @return id
 	 */
 	public String getId();
+	
+	public boolean isLocal(KnowledgePath knowledgePath);
+	public Collection<KnowledgePath> getLocalPaths();
 }

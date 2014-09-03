@@ -1,5 +1,7 @@
 package cz.cuni.mff.d3s.deeco.network;
 
+import java.util.Collection;
+
 public interface DirectGossipStrategy {
-	public boolean gossipTo(String recipient);
+	public Collection<String> filterRecipients(Collection<String> recipients);
 }

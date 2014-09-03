@@ -62,8 +62,9 @@ public class Leader extends PositionAwareComponent {
 	}
 
 	@Process
+	@PeriodicScheduling(period=500)	
 	public static void processMemberData(@In("id") String id,
-			@TriggerOnChange @In("memberAggregateData") Map<String, MemberData> memberAggregateData,
+			@In("memberAggregateData") Map<String, MemberData> memberAggregateData,
 			@In("memberPositions") Map<String, Position> memberPositions,
 			@InOut("membersInDanger") ParamHolder<Set<String>> membersInDanger) {
 		StringBuffer sb = new StringBuffer();
@@ -76,7 +77,7 @@ public class Leader extends PositionAwareComponent {
 			if (memberAggregateData.get(mid).temperature > TEMPERATURE_THRESHOLD) {
 				if (!membersInDanger.value.contains(mid)) {
 					membersInDanger.value.add(mid);
-					long currentTime = ProcessContext.getTimeProvider().getCurrentTime();
+					long currentTime = ProcessContext.getTimeProvider().getCurrentMilliseconds();
 					Log.d(String.format("Leader %s discovered at %d that %s got in danger", 
 							id, currentTime, mid));
 				}
@@ -91,7 +92,7 @@ public class Leader extends PositionAwareComponent {
 			@TriggerOnChange @In("membersInDanger")  Set<String> membersInDanger) {
 		
 		StringBuilder sb = new StringBuilder();
-		sb.append(String.format("(%d) %s: Firefighters in danger: ", ProcessContext.getTimeProvider().getCurrentTime(), id));
+		sb.append(String.format("(%d) %s: Firefighters in danger: ", ProcessContext.getTimeProvider().getCurrentMilliseconds(), id));
 		for (String ff: membersInDanger) {
 			sb.append(ff + ", ");
 		}

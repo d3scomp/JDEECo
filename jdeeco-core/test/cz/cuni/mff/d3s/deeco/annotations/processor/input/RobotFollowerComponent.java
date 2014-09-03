@@ -52,7 +52,7 @@ public class RobotFollowerComponent {
 	}
 
 	@Process
-	@PeriodicScheduling(6000)
+	@PeriodicScheduling(period=6000)
 	public static void move(@Out("path.level2") Path path,
 			@InOut("battery") ParamHolder<Integer> battery,
 			@In("convoyRobot") @TriggerOnChange String convoyRobot) {
@@ -64,7 +64,7 @@ public class RobotFollowerComponent {
 	}
 	
 	@Process
-	@PeriodicScheduling(5000)
+	@PeriodicScheduling(period=5000)
 	public static void follow(@In("path") Path path,
 			@InOut("battery.level2.level3") @TriggerOnChange ParamHolder<Integer> battery,
 			@In("convoyRobot") String convoyRobot) {

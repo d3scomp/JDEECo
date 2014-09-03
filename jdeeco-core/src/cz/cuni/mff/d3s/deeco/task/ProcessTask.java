@@ -178,6 +178,7 @@ public class ProcessTask extends Task {
 			knowledgeManager.update(changeSet);
 			
 		} catch (KnowledgeUpdateException | IllegalAccessException | IllegalArgumentException e) {
+			Log.e("Can't invoke process method " + componentProcess.getName());
 			throw new TaskInvocationException("Error when invoking a process method.", e);
 		} catch (InvocationTargetException e) {
 			Log.w("Process method returned an exception.", e.getTargetException());

@@ -40,7 +40,7 @@ public class Leader {
 	}
 	
 	@Process
-	@PeriodicScheduling(250)
+	@PeriodicScheduling(period=250)
 	public static void moveProcess(
 			@InOut("path") ParamHolder<List<Waypoint>> path,
 			@In("name") String name,

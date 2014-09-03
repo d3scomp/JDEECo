@@ -15,9 +15,23 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import cz.cuni.mff.d3s.deeco.annotations.*;
+import cz.cuni.mff.d3s.deeco.annotations.CommunicationBoundary;
+import cz.cuni.mff.d3s.deeco.annotations.Component;
+import cz.cuni.mff.d3s.deeco.annotations.Ensemble;
+import cz.cuni.mff.d3s.deeco.annotations.In;
+import cz.cuni.mff.d3s.deeco.annotations.InOut;
+import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
+import cz.cuni.mff.d3s.deeco.annotations.Local;
+import cz.cuni.mff.d3s.deeco.annotations.Membership;
+import cz.cuni.mff.d3s.deeco.annotations.Out;
+import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
-import cz.cuni.mff.d3s.deeco.annotations.pathparser.*;
+import cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange;
+import cz.cuni.mff.d3s.deeco.annotations.pathparser.ComponentIdentifier;
+import cz.cuni.mff.d3s.deeco.annotations.pathparser.EEnsembleParty;
+import cz.cuni.mff.d3s.deeco.annotations.pathparser.PNode;
+import cz.cuni.mff.d3s.deeco.annotations.pathparser.ParseException;
+import cz.cuni.mff.d3s.deeco.annotations.pathparser.PathParser;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
@@ -521,7 +535,7 @@ public class AnnotationProcessor {
 		for (Annotation a : annotations) {
 			if (a instanceof PeriodicScheduling) {
 				TimeTrigger periodicTrigger = factory.createTimeTrigger();
-				periodicTrigger.setPeriod(((PeriodicScheduling) a).value());
+				periodicTrigger.setPeriod(((PeriodicScheduling) a).period());
 				periodicTrigger.setOffset(0);
 				return periodicTrigger;
 			}
