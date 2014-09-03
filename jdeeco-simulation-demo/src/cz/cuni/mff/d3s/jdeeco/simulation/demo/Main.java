@@ -30,9 +30,9 @@ import cz.cuni.mff.d3s.deeco.network.PacketReceiver;
 import cz.cuni.mff.d3s.deeco.network.PacketSender;
 import cz.cuni.mff.d3s.deeco.network.PublisherTask;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework;
-import cz.cuni.mff.d3s.deeco.simulation.SimulationHost;
 import cz.cuni.mff.d3s.deeco.simulation.SimulationRuntimeBuilder;
 import cz.cuni.mff.d3s.deeco.simulation.omnet.OMNetSimulation;
+import cz.cuni.mff.d3s.deeco.simulation.omnet.OMNetSimulationHost;
 
 /**
  * Main class for launching the CBSE evaluation demo.
@@ -117,7 +117,7 @@ public class Main {
 		List<PositionAwareComponent> components = new LinkedList<>();
 		PositionAwareComponent component = null;
 		List<RuntimeFramework> runtimes = new ArrayList<>();
-		List<SimulationHost> hosts = new ArrayList<>();		
+		List<OMNetSimulationHost> hosts = new ArrayList<>();		
 		StringBuilder omnetConfig = new StringBuilder();
 		ComponentConfigParser parser = new ComponentConfigParser(componentCfg);
 		int i = 0;
@@ -138,7 +138,7 @@ public class Main {
 					"**.node[%s].mobility.initialZ = 0m %n", i));
 			omnetConfig.append(String.format(
 					"**.node[%s].appl.id = \"%s\" %n%n", i, component.id));
-			SimulationHost host = sim.getHost(component.id, "node["+i+"]");			
+			OMNetSimulationHost host = sim.getHost(component.id, "node["+i+"]");			
 			hosts.add(host);
 			
 			AreaNetworkRegistry.INSTANCE.addComponent(component);

@@ -26,10 +26,13 @@ public class PositionAwareComponent {
 	}
 
 	@Process
-	@PeriodicScheduling(500)
+	@PeriodicScheduling(period=500)
 	public static void measurePosition(
 			@InOut("position") ParamHolder<Position> position) {
-		PositionSensor sensor = (PositionSensor) ProcessContext.getInternalData(POSITION_SENSOR);
+//		FIXME
+//		PositionSensor sensor = (PositionSensor) ProcessContext.getInternalData(POSITION_SENSOR);
+		PositionSensor sensor = new PositionSensor(null, null);
+				
 		if (sensor != null) {
 			position.value = new Position(sensor.getX(), sensor.getY());
 		}
