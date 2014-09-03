@@ -3,7 +3,6 @@
  */
 package cz.cuni.mff.d3s.deeco.simulation;
 
-import cz.cuni.mff.d3s.deeco.simulation.task.SimulationStepTask;
 
 /**
  * Listener interface for time events triggered by a simulation.
@@ -19,5 +18,5 @@ public interface SimulationStepListener {
 	 * @param time
 	 *            current simulation time
 	 */
-	void at(long time, SimulationStepTask task);
+	void at(long time, Object trigerO);
 }

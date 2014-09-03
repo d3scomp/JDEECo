@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.deeco.simulation.matsim;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -8,11 +9,13 @@ import java.util.Set;
 import org.matsim.api.core.v01.Coord;
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.network.Link;
+import org.matsim.api.core.v01.network.Node;
 import org.matsim.api.core.v01.population.Leg;
 import org.matsim.api.core.v01.population.PlanElement;
 import org.matsim.core.api.experimental.facilities.Facility;
 import org.matsim.core.config.Config;
 import org.matsim.core.controler.Controler;
+import org.matsim.core.network.NetworkImpl;
 import org.matsim.core.population.routes.NetworkRoute;
 import org.matsim.core.router.TripRouter;
 import org.matsim.core.router.TripRouterFactory;
@@ -42,21 +45,6 @@ public class MATSimRouter {
 				travelTime);
 		this.controler = controler;
 	}
-
-	/*
-	 * XXX possibly remove
-
-	public String routeRandomly(Id currentLinkId) {
-		Link currentLink = controler.getScenario().getNetwork().getLinks()
-				.get(currentLinkId);
-		if (currentLink == null)
-			return null;
-		Object[] outLinks = currentLink.getToNode().getOutLinks().keySet()
-				.toArray();
-		int idx = MatsimRandom.getRandom().nextInt(outLinks.length);
-		return outLinks[idx].toString();
-	}
-	*/
 
 	public Link findLinkById(Id id) {
 		return controler.getNetwork().getLinks().get(id);
@@ -92,6 +80,26 @@ public class MATSimRouter {
 		if (!route.contains(linkTo.getId()) && !linkTo.equals(linkFrom))
 			route.add(linkTo.getId());
 		return route;
+	}
+	
+	public Link findNearestLink(Coord coord) {
+		return ((NetworkImpl)controler.getNetwork()).getNearestLink(coord);
+	}
+	
+	public Link findNearestLinkRight(Coord coord) {
+		return ((NetworkImpl)controler.getNetwork()).getNearestRightEntryLink(coord);
+	}
+	
+	public Link findNearestLinkExactly(Coord coord) {
+		return ((NetworkImpl)controler.getNetwork()).getNearestLinkExactly(coord);
+	}
+	
+	public Node findNearestNode(Coord coord) {
+		return ((NetworkImpl)controler.getNetwork()).getNearestNode(coord);
+	}
+	
+	public Collection<Node> getNearestNodes(Coord coord, double distance) {
+		return ((NetworkImpl)controler.getNetwork()).getNearestNodes(coord, distance);
 	}
 
 	public List<Id> route(Id from, Id to) {
@@ -160,14 +168,14 @@ public class MATSimRouter {
 
 		public TripRouter createTripRouter() {
 			Config config = controler.getConfig();
-			TransitRouterFactory trf = new TransitRouterImplFactory(controler
-					.getScenario().getTransitSchedule(),
-					new TransitRouterConfig(config.planCalcScore(), config
-							.plansCalcRoute(), config.transitRouter(), config
-							.vspExperimental()));
+//			TransitRouterFactory trf = new TransitRouterImplFactory(controler
+//					.getScenario().getTransitSchedule(),
+//					new TransitRouterConfig(config.planCalcScore(), config
+//							.plansCalcRoute(), config.transitRouter(), config
+//							.vspExperimental()));
 			return new TripRouterFactoryImpl(controler.getScenario(),
 					controler.getTravelDisutilityFactory(), travelTime,
-					new DijkstraFactory(), trf).createTripRouter();
+					new DijkstraFactory(), null).createTripRouter();
 		}
 
 	}

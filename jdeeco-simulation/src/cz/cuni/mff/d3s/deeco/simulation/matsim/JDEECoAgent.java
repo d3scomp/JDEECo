@@ -2,17 +2,13 @@ package cz.cuni.mff.d3s.deeco.simulation.matsim;
 
 import java.util.List;
 
-import org.matsim.api.core.v01.Coord;
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.TransportMode;
-import org.matsim.api.core.v01.network.Link;
 import org.matsim.core.api.experimental.events.AgentArrivalEvent;
 import org.matsim.core.basic.v01.IdImpl;
 import org.matsim.core.mobsim.framework.MobsimDriverAgent;
 import org.matsim.core.mobsim.qsim.interfaces.MobsimVehicle;
 import org.matsim.core.mobsim.qsim.interfaces.Netsim;
-import org.matsim.core.mobsim.qsim.qnetsimengine.QVehicle;
-import org.matsim.core.utils.geometry.CoordImpl;
 
 /**
  * JDEECo agent implementation. The agent is used by the
@@ -98,7 +94,25 @@ public class JDEECoAgent implements MobsimDriverAgent {
 	}
 
 	public void setRoute(List<Id> route) {
-		this.route = route;
+		int index = route.indexOf(currentLinkId);
+		if (index < 0) {
+			this.route = route;
+		} else {
+			boolean isPartOf = true;
+			int nextIndex;
+			for (Id lId: this.route) {
+				nextIndex = route.indexOf(lId);
+				if (index + 1 == nextIndex) {
+					index = nextIndex;
+				} else {
+					isPartOf = false;
+					break;
+				}
+			}
+			if (!isPartOf) {
+				this.route = route;
+			}
+		}
 	}
 
 	public Id getCurrentLinkId() {
@@ -122,7 +136,16 @@ public class JDEECoAgent implements MobsimDriverAgent {
 		if (route == null || route.isEmpty()) {
 			return null;
 		} else {
-			return route.remove(0);
+			Id result = route.remove(0);
+			if (result.equals(currentLinkId)) {
+				if (route.isEmpty()) {
+					return null;
+				} else {
+					return route.remove(0);
+				}
+			} else {
+				return result;
+			}
 		}
 	}
 
@@ -136,39 +159,6 @@ public class JDEECoAgent implements MobsimDriverAgent {
 
 	public MobsimVehicle getVehicle() {
 		return this.vehicle;
-	}
-
-	// This method should not be used because in case of traffic jam, it gives completely off results. It acts if the road was empty and
-	// then waits minutes at the end of the link
-	@Deprecated
-	public Coord estimatePosition(double now) {
-		if (state.equals(State.ACTIVITY) && currentLinkId != null) {
-			return simulation.getScenario().getNetwork().getLinks()
-					.get(currentLinkId).getToNode().getCoord();
-		}
-		if (vehicle != null) {
-			QVehicle qVehicle = (QVehicle) vehicle;
-			Link link = qVehicle.getCurrentLink();
-			double time = qVehicle.getEarliestLinkExitTime() - now;
-			if (time <= 0) {
-				return qVehicle.getCurrentLink().getToNode().getCoord();
-			}
-			
-			// XXX: Since the time is used, it's not necessary to use the velocity, as the velocity is constant!!! This is an overkill!
-			double velocity = (link.getFreespeed() > qVehicle
-					.getMaximumVelocity()) ? qVehicle.getMaximumVelocity()
-					: link.getFreespeed();
-			double remainingDistance = velocity * time;
-			double distanceDriven = link.getLength() - remainingDistance;
-			Coord from = link.getFromNode().getCoord();
-			Coord to = link.getToNode().getCoord();
-			double estX = ((distanceDriven * (to.getX() - from.getX())) / link
-					.getLength()) + from.getX();
-			double estY = ((distanceDriven * (to.getY() - from.getY())) / link
-					.getLength()) + from.getY();
-			return new CoordImpl(estX, estY);
-		}
-		return null;
 	}
 
 	public void notifyMoveOverNode(Id newLinkId) {

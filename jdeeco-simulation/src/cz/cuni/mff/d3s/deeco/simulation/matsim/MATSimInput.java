@@ -16,7 +16,11 @@ public class MATSimInput {
 
 	public MATSimInput clone() {
 		MATSimInput result = new MATSimInput();
-		result.route = new LinkedList<Id>(route);
+		if (route == null) {
+			result.route = null;
+		} else {
+			result.route = new LinkedList<Id>(route);
+		}
 		return result;
 	}
 }

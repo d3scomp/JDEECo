@@ -11,6 +11,7 @@ import org.matsim.api.core.v01.TransportMode;
 import org.matsim.core.controler.Controler;
 import org.matsim.core.controler.events.StartupEvent;
 import org.matsim.core.controler.listener.StartupListener;
+import org.matsim.core.mobsim.framework.Mobsim;
 import org.matsim.core.router.util.TravelTime;
 import org.matsim.withinday.trafficmonitoring.TravelTimeCollector;
 import org.matsim.withinday.trafficmonitoring.TravelTimeCollectorFactory;
@@ -20,7 +21,6 @@ import cz.cuni.mff.d3s.deeco.simulation.DirectKnowledgeDataHandler;
 import cz.cuni.mff.d3s.deeco.simulation.DirectSimulationHost;
 import cz.cuni.mff.d3s.deeco.simulation.Simulation;
 import cz.cuni.mff.d3s.deeco.simulation.SimulationStepListener;
-import cz.cuni.mff.d3s.deeco.simulation.task.SimulationStepTask;
 
 public class MATSimSimulation extends Simulation implements
 		SimulationStepListener, MATSimTimeProvider {
@@ -37,11 +37,12 @@ public class MATSimSimulation extends Simulation implements
 	private final MATSimDataProvider matSimProvider;
 	private final MATSimDataReceiver matSimReceiver;
 	private final Map<String, DirectSimulationHost> hosts;
+	private final MATSimExtractor extractor;
 
 	private final DirectKnowledgeDataHandler knowledgeDataHandler;
 
 	public MATSimSimulation(MATSimDataReceiver matSimReceiver,
-			MATSimDataProvider matSimProvider,
+			MATSimDataProvider matSimProvider, MATSimUpdater updater, MATSimExtractor extractor,
 			final Collection<? extends AdditionAwareAgentSource> agentSources,
 			String matSimConf) {
 		this.knowledgeDataHandler = new DirectKnowledgeDataHandler();
@@ -62,7 +63,8 @@ public class MATSimSimulation extends Simulation implements
 				.getTimeStepSize();
 		Log.i("Starting simulation: matsimStartTime: " + start
 				+ " matsimEndTime: " + end);
-		this.listener = new JDEECoWithinDayMobsimListener(this);
+		this.extractor = extractor;
+		this.listener = new JDEECoWithinDayMobsimListener(this, updater, extractor);
 		this.matSimProvider = matSimProvider;
 		this.matSimReceiver = matSimReceiver;
 
@@ -141,11 +143,12 @@ public class MATSimSimulation extends Simulation implements
 	}
 
 	@Override
-	public void at(long seconds, SimulationStepTask task) {
+	public void at(long seconds, Object triger) {
+		Mobsim mobsim = (Mobsim) triger;	
 		// Exchange data with MATSim
 		long milliseconds = secondsToMilliseconds(seconds);
-		matSimReceiver.setMATSimData(listener.getOutputs(seconds));
-		listener.setInputs(matSimProvider.getMATSimData());
+		matSimReceiver.setMATSimData(extractor.extractFromMATSim(listener.getAllJDEECoAgents(), mobsim));
+		listener.updateJDEECoAgents(matSimProvider.getMATSimData());
 		// Add callback for the MATSim step
 		callAt(milliseconds + simulationStep, SIMULATION_CALLBACK);
 		DirectSimulationHost host;
