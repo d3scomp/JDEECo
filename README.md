@@ -34,13 +34,10 @@ To build jDEECo as an OSGi bundle, you run `mvn clean install` in `jdeeco-core-o
 #### Core
 To build jDEECo core you need to go to `jdeeco-core` folder and run `mvn clean install`. This will build jDEECo along with tests and produce the jDEECo jar.
 
-#### Concepts
-The `jdeeco-concepts` folder contains projects that currently cannot be run or implemented(in terms of containing syntax sugar currently not supported by jDEECo). Those projects are for experimenting and coining ideas that would be nice to have in future releases only.
-
 #### Demos
 Demo projects for jdeeco can be found in `jdeeco-demos` folder. There are two projects: the cloud case study based one, and one concerning firefighters case study. They can be built either by running `mvn clean install` in jdeeco-demos or via running the same command from `jdeeco-parent` (this will eventually generate all the binaries, as mentioned before). In both cases binaries `cloud.jar` and `firefighters.jar` will appear in `dist` folder along with an ant script to run them. There are 5 different demos out of those two projects
 
-###### Cloud demos
+##### Cloud demos
 * ant LocalLauncherCloud
 * ant LocalLauncherDynamicCloud
 * ant TSLauncherCloud

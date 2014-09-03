@@ -34,5 +34,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.TYPE})
 public @interface PeriodicScheduling {
-	long value();
+	long period();
+	long offset() default 0;
+	int order() default 0;
 }

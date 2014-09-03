@@ -29,13 +29,13 @@ public class SameThreadExecutor implements Executor {
 			} catch (Exception e) {				
 				if (listener != null) {
 					Log.w("Task.invoke() failed", e);
-					listener.executionFailed(task, e);
+					listener.executionFailed(task, trigger, e);
 				}
 				return;
 			}			
 			
 			if (listener != null) {
-				listener.executionCompleted(task);
+				listener.executionCompleted(task, trigger);
 			}
 		}
 	}

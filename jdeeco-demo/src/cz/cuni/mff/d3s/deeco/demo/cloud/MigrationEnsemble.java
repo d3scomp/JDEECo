@@ -30,7 +30,7 @@ import cz.cuni.mff.d3s.deeco.task.ParamHolder;
  */
 
 @Ensemble
-@PeriodicScheduling(3000)
+@PeriodicScheduling(period=3000)
 public class MigrationEnsemble {
 
 	public final static long serialVersionUID = 1L;

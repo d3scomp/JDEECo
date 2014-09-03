@@ -31,6 +31,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.network.Serializer;
 import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
+import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
 
 public class TestSerializer {
@@ -44,7 +45,7 @@ public class TestSerializer {
 		}
 
 		@Process
-		@PeriodicScheduling(500)
+		@PeriodicScheduling(period=500)
 		public static void process(@In("id") String id) {
 			// whatever
 		}
@@ -59,10 +60,10 @@ public class TestSerializer {
 	
 	@Before
 	public void setUp() throws Exception {
-		processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE);
 		model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
+		processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE, model);
 		
-		processor.process(model, new TestComponent("M1"));
+		processor.process(new TestComponent("M1"));
 		component = model.getComponentInstances().get(0); 
 		kp = component.getComponentProcesses().get(0).getParameters().get(0).getKnowledgePath();
 	}
@@ -79,7 +80,7 @@ public class TestSerializer {
 	public void testKnowledgeDataSerialization() throws IOException, ClassNotFoundException, KnowledgeUpdateException, KnowledgeNotFoundException {
 		KnowledgeManagerContainer container = new KnowledgeManagerContainer();
 		List<EnsembleDefinition> ens = Collections.emptyList();
-		KnowledgeDataManager kdManager = new KnowledgeDataManager(container, null, ens, "", mock(CurrentTimeProvider.class));
+		KnowledgeDataManager kdManager = new KnowledgeDataManager(container, null, ens, "", mock(Scheduler.class), null, null);
 		
 		ValueSet initialKnowledge = null;
 		

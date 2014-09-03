@@ -7,7 +7,7 @@
 		<version>2.0.0</version>
 		<relativePath>../jdeeco-parent/pom.xml</relativePath>
 	</parent>
-	<artifactId>cz.cuni.mff.d3s.jdeeco.simulation.demo</artifactId>
+	<artifactId>cz.cuni.mff.d3s.jdeeco.simulationdemo</artifactId>
 	<properties>
 		<dist>../dist</dist>
 		<simulationJar>simulation-demo.jar</simulationJar>

@@ -9,8 +9,6 @@
 	</parent>
 	<artifactId>cz.cuni.mff.d3s.jdeeco.simulation</artifactId>
 	<properties>
-		<dist>../dist</dist>
-		<simulationJar>simulation.jar</simulationJar>
 	</properties>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
@@ -23,34 +21,6 @@
 				</excludes>
 			</resource>
 		</resources>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.6</version>
-				<executions>
-					<execution>
-						<id>copy</id>
-						<phase>install</phase>
-						<goals>
-							<goal>copy</goal>
-						</goals>
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>${project.groupId}</groupId>
-									<artifactId>${project.artifactId}</artifactId>
-									<version>${project.version}</version>
-									<type>${project.packaging}</type>
-									<destFileName>${simulationJar}</destFileName>
-									<outputDirectory>${dist}</outputDirectory>
-								</artifactItem>
-							</artifactItems>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
 	</build>
 	<dependencies>
 		<dependency>
@@ -58,5 +28,16 @@
 			<artifactId>cz.cuni.mff.d3s.jdeeco.core</artifactId>
 			<version>2.0.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.matsim</groupId>
+			<artifactId>matsim</artifactId>
+			<version>0.5.0</version>
+		</dependency>
 	</dependencies>
+	<repositories>
+		<repository>
+			<id>d3s</id>
+			<url>https://gitlab.d3s.mff.cuni.cz:8443/nexus/content/groups/public/</url>
+		</repository>
+	</repositories>
 </project>

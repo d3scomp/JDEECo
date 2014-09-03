@@ -28,6 +28,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  * <ul>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleControllerImpl#getComponentInstance <em>Component Instance</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleControllerImpl#getEnsembleDefinition <em>Ensemble Definition</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleControllerImpl#isActive <em>Active</em>}</li>
  * </ul>
  * </p>
  *
@@ -43,6 +44,25 @@ public class EnsembleControllerImpl extends MinimalEObjectImpl.Container impleme
 	 * @ordered
 	 */
 	protected EnsembleDefinition ensembleDefinition;
+
+	/**
+	 * The default value of the '{@link #isActive() <em>Active</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isActive()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean ACTIVE_EDEFAULT = true;
+	/**
+	 * The cached value of the '{@link #isActive() <em>Active</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isActive()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean active = ACTIVE_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -147,6 +167,27 @@ public class EnsembleControllerImpl extends MinimalEObjectImpl.Container impleme
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public boolean isActive() {
+		return active;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setActive(boolean newActive) {
+		boolean oldActive = active;
+		active = newActive;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.ENSEMBLE_CONTROLLER__ACTIVE, oldActive, active));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -199,6 +240,8 @@ public class EnsembleControllerImpl extends MinimalEObjectImpl.Container impleme
 			case RuntimeMetadataPackage.ENSEMBLE_CONTROLLER__ENSEMBLE_DEFINITION:
 				if (resolve) return getEnsembleDefinition();
 				return basicGetEnsembleDefinition();
+			case RuntimeMetadataPackage.ENSEMBLE_CONTROLLER__ACTIVE:
+				return isActive();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -216,6 +259,9 @@ public class EnsembleControllerImpl extends MinimalEObjectImpl.Container impleme
 				return;
 			case RuntimeMetadataPackage.ENSEMBLE_CONTROLLER__ENSEMBLE_DEFINITION:
 				setEnsembleDefinition((EnsembleDefinition)newValue);
+				return;
+			case RuntimeMetadataPackage.ENSEMBLE_CONTROLLER__ACTIVE:
+				setActive((Boolean)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -235,6 +281,9 @@ public class EnsembleControllerImpl extends MinimalEObjectImpl.Container impleme
 			case RuntimeMetadataPackage.ENSEMBLE_CONTROLLER__ENSEMBLE_DEFINITION:
 				setEnsembleDefinition((EnsembleDefinition)null);
 				return;
+			case RuntimeMetadataPackage.ENSEMBLE_CONTROLLER__ACTIVE:
+				setActive(ACTIVE_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -251,8 +300,26 @@ public class EnsembleControllerImpl extends MinimalEObjectImpl.Container impleme
 				return getComponentInstance() != null;
 			case RuntimeMetadataPackage.ENSEMBLE_CONTROLLER__ENSEMBLE_DEFINITION:
 				return ensembleDefinition != null;
+			case RuntimeMetadataPackage.ENSEMBLE_CONTROLLER__ACTIVE:
+				return active != ACTIVE_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String toString() {
+		if (eIsProxy()) return super.toString();
+
+		StringBuffer result = new StringBuffer(super.toString());
+		result.append(" (active: ");
+		result.append(active);
+		result.append(')');
+		return result.toString();
 	}
 
 } //EnsembleControllerImpl

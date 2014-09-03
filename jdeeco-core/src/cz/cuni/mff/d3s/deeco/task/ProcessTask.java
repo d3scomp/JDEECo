@@ -12,6 +12,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.knowledge.TriggerListener;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.model.architecture.api.Architecture;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
@@ -35,6 +36,11 @@ public class ProcessTask extends Task {
 	ComponentProcess componentProcess;
 	
 	/**
+	 * Reference to the architecture model.
+	 */
+	Architecture architecture;
+	
+	/**
 	 * Implementation of the trigger listener, which is registered in the local knowledge manager. When called, it calls the listener registered by
 	 * {@link Task#setTriggerListener(TaskTriggerListener)}.
 	 * 
@@ -55,8 +61,9 @@ public class ProcessTask extends Task {
 	}
 	KnowledgeManagerTriggerListenerImpl knowledgeManagerTriggerListener = new KnowledgeManagerTriggerListenerImpl();
 	
-	public ProcessTask(ComponentProcess componentProcess, Scheduler scheduler) {
+	public ProcessTask(ComponentProcess componentProcess, Scheduler scheduler, Architecture architecture) {
 		super(scheduler);
+		this.architecture = architecture;
 		this.componentProcess = componentProcess;
 	}
 
@@ -146,7 +153,7 @@ public class ProcessTask extends Task {
 		
 		try {
 			// Set the current process's context
-			ProcessContext.addContext(componentProcess, scheduler);
+			ProcessContext.addContext(componentProcess, scheduler, architecture);
 			
 			// Call the process method
 			componentProcess.getMethod().invoke(null, actualParams);
@@ -171,6 +178,7 @@ public class ProcessTask extends Task {
 			knowledgeManager.update(changeSet);
 			
 		} catch (KnowledgeUpdateException | IllegalAccessException | IllegalArgumentException e) {
+			Log.e("Can't invoke process method " + componentProcess.getName());
 			throw new TaskInvocationException("Error when invoking a process method.", e);
 		} catch (InvocationTargetException e) {
 			Log.w("Process method returned an exception.", e.getTargetException());

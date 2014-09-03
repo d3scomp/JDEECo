@@ -20,8 +20,11 @@ enum StandardLogger implements Logger {
 	private StandardLogger() {
 		CustomLevel.registerCustomLevels();
 		logger = java.util.logging.Logger.getLogger(getClass().getPackage().getName());
+		String confPath = System.getProperty("java.util.logging.config.file");
+		if (confPath == null || confPath.equals(""))
+			confPath = "logging.properties";
 		InputStream inputStream = getClass().getClassLoader()
-				.getResourceAsStream("logging.properties");
+				.getResourceAsStream(confPath);
 		try {
 			LogManager.getLogManager().readConfiguration(inputStream);
 		} catch (Exception e) {
@@ -44,6 +47,10 @@ enum StandardLogger implements Logger {
 
 	public synchronized void debug(String s, Throwable t) {
 		logger.log(CustomLevel.DEBUG, s, t);
+	}
+	
+	public boolean isDebugLoggable() {
+		return logger.isLoggable(CustomLevel.DEBUG);
 	}
 
 	public synchronized void info(String s) {

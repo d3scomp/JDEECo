@@ -33,6 +33,12 @@ public class SchedulerEvent implements Comparable<SchedulerEvent> {
     public long nextExecutionTime;
 
     /**
+	 * For a periodic tasks indicates the start of the period which the
+	 * {@link #nextExecutionTime} falls in.
+	 */
+    public long nextPeriodStart;
+    
+    /**
      * Indicator, whether the event is periodic (i.e., fixed-rate execution). 
      * It is set to true only if the trigger is a TimeTrigger with period > 0.
      */
@@ -47,6 +53,8 @@ public class SchedulerEvent implements Comparable<SchedulerEvent> {
      * The trigger associated with this event.
      */
     public final Trigger trigger;
+
+	
     
 
     /**
@@ -65,10 +73,17 @@ public class SchedulerEvent implements Comparable<SchedulerEvent> {
 
 	@Override
 	public int compareTo(SchedulerEvent o) {
-		if( this.nextExecutionTime < o.nextExecutionTime ) return -1;
-		else if( this.nextExecutionTime > o.nextExecutionTime ) return 1;
-		else if (this == o) return 0;
-		else return this.hashCode() < o.hashCode() ? 1 : -1;
+		if (this == o) return 0;
+		else if (this.nextExecutionTime < o.nextExecutionTime) return -1;
+		else if (this.nextExecutionTime > o.nextExecutionTime) return 1;
+		else {
+			int thisOrder = this.trigger instanceof TimeTrigger ? ((TimeTrigger)this.trigger).getOrder() : 0;
+			int thatOrder = o.trigger instanceof TimeTrigger ? ((TimeTrigger)o.trigger).getOrder() : 0;
+
+			if (thisOrder < thatOrder) return -1;
+			else if (thisOrder > thatOrder) return 1;
+			else return Integer.compare(this.hashCode(), o.hashCode());
+		}
 	}
 
 

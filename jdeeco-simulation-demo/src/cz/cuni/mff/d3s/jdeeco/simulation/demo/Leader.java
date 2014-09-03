@@ -26,7 +26,9 @@ import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange;
 import cz.cuni.mff.d3s.deeco.annotations.Component;
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
+import cz.cuni.mff.d3s.deeco.task.ProcessContext;
 
 
 /**
@@ -38,6 +40,7 @@ import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 @Component
 public class Leader extends PositionAwareComponent {
 
+	public static float TEMPERATURE_THRESHOLD = 50.0f;
 	public String teamId;
 	public Map<String, MemberData> memberAggregateData;
 	public Map<String, Position> memberPositions;
@@ -50,8 +53,8 @@ public class Leader extends PositionAwareComponent {
 	public Float temperatureThreshold = 50.0f;
 	
 	
-	public Leader(String id, String team_id, Position position)  {
-		super(id, position);
+	public Leader(String id, String team_id, Position position, boolean hasIP)  {
+		super(id, position, hasIP);
 		this.teamId = team_id;
 		this.memberPositions = new HashMap<>();
 		this.memberAggregateData = new HashMap<>();
@@ -59,23 +62,25 @@ public class Leader extends PositionAwareComponent {
 	}
 
 	@Process
-	@PeriodicScheduling(500)
+	@PeriodicScheduling(period=500)	
 	public static void processMemberData(@In("id") String id,
 			@In("memberAggregateData") Map<String, MemberData> memberAggregateData,
 			@In("memberPositions") Map<String, Position> memberPositions,
-			@In("temperatureThreshold") Float temperatureThreshold,
 			@InOut("membersInDanger") ParamHolder<Set<String>> membersInDanger) {
 		StringBuffer sb = new StringBuffer();
 
 		sb.append(id + ": Processing member data of ");
-		membersInDanger.value.clear();
-		
 
 		sb.append(memberAggregateData.keySet().size() + " members ");
 		for (String mid : memberAggregateData.keySet()) {
 			sb.append("[" + mid + ", " + memberAggregateData.get(mid).temperature + "]");
-			if (memberAggregateData.get(mid).temperature > temperatureThreshold) {
-				membersInDanger.value.add(mid);
+			if (memberAggregateData.get(mid).temperature > TEMPERATURE_THRESHOLD) {
+				if (!membersInDanger.value.contains(mid)) {
+					membersInDanger.value.add(mid);
+					long currentTime = ProcessContext.getTimeProvider().getCurrentMilliseconds();
+					Log.d(String.format("Leader %s discovered at %d that %s got in danger", 
+							id, currentTime, mid));
+				}
 			}
 		}
 		System.out.println(sb.toString());
@@ -87,7 +92,7 @@ public class Leader extends PositionAwareComponent {
 			@TriggerOnChange @In("membersInDanger")  Set<String> membersInDanger) {
 		
 		StringBuilder sb = new StringBuilder();
-		sb.append(id + ": Firefighters in danger: ");
+		sb.append(String.format("(%d) %s: Firefighters in danger: ", ProcessContext.getTimeProvider().getCurrentMilliseconds(), id));
 		for (String ff: membersInDanger) {
 			sb.append(ff + ", ");
 		}

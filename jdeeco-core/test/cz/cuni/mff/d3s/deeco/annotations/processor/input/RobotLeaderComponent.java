@@ -32,7 +32,7 @@ public class RobotLeaderComponent {
 	/*
 	 * Input: path, crossingRobots, convoyRobot Output: path
 	 */
-	@PeriodicScheduling(3000)
+	@PeriodicScheduling(period=3000)
 	@Process
 	public static void process(@InOut("path") Path path,
 			@InOut("battery") ParamHolder<Integer> battery) {

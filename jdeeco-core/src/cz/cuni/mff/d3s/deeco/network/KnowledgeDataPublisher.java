@@ -10,7 +10,12 @@ package cz.cuni.mff.d3s.deeco.network;
 public interface KnowledgeDataPublisher {
 	
 	/**
-	 * Publishes the local knowledge and replicas on the network.
+	 * Publishes the local knowledge on the network.
 	 */
 	void publish();
+
+	/**
+	 * Republishes the received knowledge data with the given metadata
+	 */
+	void rebroacast(KnowledgeMetaData metadata, NICType nicType);
 }

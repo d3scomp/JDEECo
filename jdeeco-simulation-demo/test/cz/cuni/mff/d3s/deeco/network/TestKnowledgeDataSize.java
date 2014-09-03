@@ -22,7 +22,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeData;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeDataManager;
 import cz.cuni.mff.d3s.deeco.network.Serializer;
-import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
+import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.jdeeco.simulation.demo.Member;
 import cz.cuni.mff.d3s.jdeeco.simulation.demo.Position;
 
@@ -41,10 +41,10 @@ public class TestKnowledgeDataSize {
 		
 		
 		
-		processor = new AnnotationProcessor(factory);
 		model = factory.createRuntimeMetadata();
+		processor = new AnnotationProcessor(factory, model);
 		
-		processor.process(model, new Member("M1", "T1", new Position(1, 2)));
+		processor.process(new Member("M1", "T1", new Position(1, 2), false));
 		component = model.getComponentInstances().get(0); 
 		
 		KnowledgePath empty = factory.createKnowledgePath();
@@ -57,7 +57,7 @@ public class TestKnowledgeDataSize {
 	@Test
 	public void testMemberKnowledgeDataSize() throws IOException, ClassNotFoundException, KnowledgeUpdateException, KnowledgeNotFoundException {
 		List<EnsembleDefinition> ens = Collections.emptyList();
-		KnowledgeDataManager kdManager = new KnowledgeDataManager(null, null, null, "", mock(CurrentTimeProvider.class));
+		KnowledgeDataManager kdManager = new KnowledgeDataManager(null, null, null, "", mock(Scheduler.class), null, null);
 		
 		
 		KnowledgeData kd = kdManager.prepareLocalKnowledgeData(component.getKnowledgeManager());

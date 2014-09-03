@@ -14,7 +14,7 @@ import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
  *
  */
 @Ensemble
-@PeriodicScheduling(200)
+@PeriodicScheduling(period=200)
 public class WrongE5 {
 
 	@Membership

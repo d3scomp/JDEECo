@@ -2,6 +2,7 @@ package cz.cuni.mff.d3s.deeco.runtime;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -86,9 +87,10 @@ public class RuntimeFrameworkBuilderTest {
 		tested.kmContainer = mock(KnowledgeManagerContainer.class);		
 		
 		RuntimeMetadata model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
+		tested.model = model;
 		
 		// WHEN buildRuntime() is called
-		tested.buildRuntime(model);
+		tested.buildRuntime();
 		// THEN it creates a runtime with the corresponding
 		// scheduler, executor, and knowledge registry
 		assertNotNull(tested.runtime);

@@ -20,4 +20,14 @@ public class CircularArea extends Area {
 		return Math.pow(pos.x - x, 2) + Math.pow(pos.y - y, 2) < Math.pow(r+TOLERANCE, 2);
 	}
 
+	@Override
+	public double getCenterX() {
+		return x;
+	}
+
+	@Override
+	public double getCenterY() {
+		return y;
+	}
+
 }

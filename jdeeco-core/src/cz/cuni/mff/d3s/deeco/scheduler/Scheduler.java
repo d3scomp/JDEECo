@@ -72,28 +72,7 @@ public interface Scheduler extends ExecutionListener, CurrentTimeProvider {
 	 */
 	public void removeTask( Task task );
 	
-	/**
-	 * Notifies the scheduler that the task has been completed with an error.
-	 * <p>
-	 * This method is identical to {@link cz.cuni.mff.d3s.deeco.scheduler.Scheduler#executionCompleted <code>executionCompleted</code>},
-	 * however the difference is that this method is used to signal that task execution completed with an error. 
-	 * It also passes the exception which interrupted execution flow of the task.  
-	 * @param task the task whose execution exited with failure
-	 * @param e the exception, which interrupted that execution
-	 * 
-	 * */
-	public void executionFailed(Task task, Exception e);
 	
-	/**
-	 * Notifies the scheduler that the task has been completed.
-	 * <p>
-	 * After the executed task is finished, this method is called on the scheduler by the executor to notify that the task
-	 * was executed successfully and needs further handling by scheduler.
-	 * Now scheduler may process the task further whether by rescheduling it or by leaving it until another trigger received.
-	 * @param task the task whose execution exited with failure
-	 * @see 	{@link cz.cuni.mff.d3s.deeco.scheduler.Scheduler#executionFailed executionFailed}
-	 * */
-	public void executionCompleted( Task task );
 	
 	/**
 	 * Associates an {@link Executor <code>Executor</code>} instance with this scheduler.

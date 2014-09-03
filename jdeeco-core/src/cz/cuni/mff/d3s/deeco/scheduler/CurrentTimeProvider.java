@@ -10,5 +10,5 @@ public interface CurrentTimeProvider {
 	/**
 	 * Returns current time in milliseconds.
 	 */
-	public long getCurrentTime();
+	public long getCurrentMilliseconds();
 }

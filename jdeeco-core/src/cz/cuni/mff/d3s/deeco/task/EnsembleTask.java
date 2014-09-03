@@ -25,8 +25,9 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
-import cz.cuni.mff.d3s.deeco.model.runtime.impl.TriggerImpl;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
+import cz.cuni.mff.d3s.deeco.model.runtime.impl.TriggerImpl;
+import cz.cuni.mff.d3s.deeco.runtime.ArchitectureObserver;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.KnowledgePathAndRoot;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.PathRoot;
@@ -47,6 +48,11 @@ public class EnsembleTask extends Task {
 	 */
 	EnsembleController ensembleController;
 
+	/**
+	 * Reference to the corresponding {@link ArchitectureObserver} 
+	 */
+	ArchitectureObserver architectureObserver;
+	
 	/**
 	 * A wrapper around a trigger obtained from the local knowledge manager. The sole purpose of this class is to be able to distinguish
 	 * when invoked back by the scheduler/executor whether the trigger came originally from a local knowledge manager or a 
@@ -127,9 +133,10 @@ public class EnsembleTask extends Task {
 	}
 	ShadowsTriggerListenerImpl shadowsTriggerListener = new ShadowsTriggerListenerImpl();
 
-	public EnsembleTask(EnsembleController ensembleController, Scheduler scheduler) {
+	public EnsembleTask(EnsembleController ensembleController, Scheduler scheduler, ArchitectureObserver architectureObserver) {
 		super(scheduler);
 		
+		this.architectureObserver = architectureObserver;
 		this.ensembleController = ensembleController;
 	}
 
@@ -272,7 +279,7 @@ public class EnsembleTask extends Task {
 			
 			// We were not able to find the knowledge, which means that the membership is false.
 			ReadOnlyKnowledgeManager where = localKnowledge == null ? localKnowledgeManager : shadowKnowledgeManager;
-			Log.i(String.format("Input knowledge (%s) of a membership in %s was not found in the knowledge manager %s.", 
+			Log.d(String.format("Input knowledge (%s) of a membership in %s was not found in the knowledge manager %s.", 
 					e.getNotFoundPath(), 
 					ensembleController.getEnsembleDefinition().getName(),
 					where.getId()
@@ -304,7 +311,7 @@ public class EnsembleTask extends Task {
 		} catch (ClassCastException e) {
 			throw new TaskInvocationException("Membership condition does not return a boolean.", e);			
 		} catch (InvocationTargetException e) {
-			Log.i("Membership condition returned an exception.", e.getTargetException());
+			Log.d("Membership condition returned an exception.", e.getTargetException());
 			return false;
 		}
 	}
@@ -355,7 +362,7 @@ public class EnsembleTask extends Task {
 					absoluteKnowledgePathAndRoot = getAbsoluteStrippedPath(formalParam.getKnowledgePath(), shadowKnowledgeManager, localKnowledgeManager);				
 				}
 			} catch (KnowledgeNotFoundException e) {
-				Log.i(String.format(
+				Log.d(String.format(
 						"Knowledge exchange of %s could not be performed: missing knowledge path (%s)", 
 						ensembleController.getEnsembleDefinition().getName(), e.getNotFoundPath()));
 				return;
@@ -383,7 +390,7 @@ public class EnsembleTask extends Task {
 		} catch (KnowledgeNotFoundException e) {
 			// We were not able to find the knowledge, which means that the membership is false.
 			ReadOnlyKnowledgeManager where = localKnowledge == null ? localKnowledgeManager : shadowKnowledgeManager;
-			Log.i(String.format("Input knowledge (%s) of a knowledge exchange in %s not found in the knowledge manager %s.", 
+			Log.d(String.format("Input knowledge (%s) of a knowledge exchange in %s not found in the knowledge manager %s.", 
 					e.getNotFoundPath(), 
 					ensembleController.getEnsembleDefinition().getName(),
 					where.getId()
@@ -470,38 +477,38 @@ public class EnsembleTask extends Task {
 	 */
 	@Override
 	public void invoke(Trigger trigger) throws TaskInvocationException {
+
 		if (trigger instanceof ShadowKMChangeTrigger) {
 			// If the trigger pertains to a shadow knowledge manager
 			ReadOnlyKnowledgeManager shadowKnowledgeManager = ((ShadowKMChangeTrigger)trigger).shadowKnowledgeManager;
 
-			// Invoke the membership condition and if the membership condition returned true, invoke the knowledge exchange
-			if (checkMembership(PathRoot.COORDINATOR, shadowKnowledgeManager)) {
-				performExchange(PathRoot.COORDINATOR, shadowKnowledgeManager);
-			}
-
-			// Do the same with the roles exchanged
-			if (checkMembership(PathRoot.MEMBER, shadowKnowledgeManager)) {
-				performExchange(PathRoot.MEMBER, shadowKnowledgeManager);
-			}
+			evaluateMembershipAndPerformExchange(shadowKnowledgeManager);
 			
 		} else {
 			// If the trigger is periodic trigger or pertains to the local knowledge manager, iterate over all shadow knowledge managers
 			ShadowKnowledgeManagerRegistry shadows = ensembleController.getComponentInstance().getShadowKnowledgeManagerRegistry();
 
 			for (ReadOnlyKnowledgeManager shadowKnowledgeManager : shadows.getShadowKnowledgeManagers()) {
-				// Invoke the membership condition and if the membership condition returned true, invoke the knowledge exchange
-				if (checkMembership(PathRoot.COORDINATOR, shadowKnowledgeManager)) {
-					performExchange(PathRoot.COORDINATOR, shadowKnowledgeManager);
-				}
-
-				// Do the same with the roles exchanged
-				if (checkMembership(PathRoot.MEMBER, shadowKnowledgeManager)) {
-					performExchange(PathRoot.MEMBER, shadowKnowledgeManager);
-				}
+				evaluateMembershipAndPerformExchange(shadowKnowledgeManager);
 			}			
 		}
 	}
 
+	private void evaluateMembershipAndPerformExchange(ReadOnlyKnowledgeManager shadowKnowledgeManager) throws TaskInvocationException {
+		// Invoke the membership condition and if the membership condition returned true, invoke the knowledge exchange
+		if (checkMembership(PathRoot.COORDINATOR, shadowKnowledgeManager)) {
+			architectureObserver.ensembleFormed(ensembleController.getEnsembleDefinition(), ensembleController.getComponentInstance(),
+					ensembleController.getComponentInstance().getKnowledgeManager().getId(),shadowKnowledgeManager.getId());
+			performExchange(PathRoot.COORDINATOR, shadowKnowledgeManager);
+		}
+		// Do the same with the roles exchanged
+		if (checkMembership(PathRoot.MEMBER, shadowKnowledgeManager)) {
+			architectureObserver.ensembleFormed(ensembleController.getEnsembleDefinition(), ensembleController.getComponentInstance(),
+					shadowKnowledgeManager.getId(), ensembleController.getComponentInstance().getKnowledgeManager().getId());
+			performExchange(PathRoot.MEMBER, shadowKnowledgeManager);
+		}
+	}
+	
 	/**
 	 * Returns the period associated with the ensemble in the in the meta-model as the {@link TimeTrigger}. Note that the {@link EnsembleTask} assumes that there is at most
 	 * one instance of {@link TimeTrigger} associated with the ensemble in the meta-model.

@@ -7,11 +7,27 @@
 <plugin>
 
    <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated RuntimeModel1 -->
+      <package
+            uri="http://cz.cuni.mff.d3s.deeco.model.runtime/1.0"
+            class="cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimePackage"
+            genModel="model/RuntimeModel1.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
       <!-- @generated RuntimeModel -->
       <package
-            uri="http://runtimemodel/1.0"
-            class="cz.cuni.mff.d3s.deeco.model.runtime.meta.runtimePackage"
+            uri="http://cz.cuni.mff.d3s.deeco.model.runtime/1.0"
+            class="cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage"
             genModel="model/RuntimeModel.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated ArchitectureModel -->
+      <package
+            uri="http://cz.cuni.mff.d3s.deeco.model.architecture/1.0"
+            class="cz.cuni.mff.d3s.deeco.model.architecture.meta.ArchitecturePackage"
+            genModel="model/ArchitectureModel.genmodel"/>
    </extension>
 
 </plugin>
