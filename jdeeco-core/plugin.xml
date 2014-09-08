@@ -22,4 +22,12 @@
             genModel="model/RuntimeModel.genmodel"/>
    </extension>
 
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated ArchitectureModel -->
+      <package
+            uri="http://cz.cuni.mff.d3s.deeco.model.architecture/1.0"
+            class="cz.cuni.mff.d3s.deeco.model.architecture.meta.ArchitecturePackage"
+            genModel="model/ArchitectureModel.genmodel"/>
+   </extension>
+
 </plugin>

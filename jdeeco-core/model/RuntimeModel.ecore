@@ -8,6 +8,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="offset" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong" defaultValueLiteral="0"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="order" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="wcet" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Trigger" abstract="true"/>
   <eClassifiers xsi:type="ecore:EClass" name="KnowledgeChangeTrigger" eSuperTypes="#//Trigger">
@@ -44,6 +45,10 @@
         lowerBound="1" eType="#//ShadowKnowledgeManagerRegistry"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="ensembleControllers" upperBound="-1"
         eType="#//EnsembleController" containment="true" eOpposite="#//EnsembleController/componentInstance"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="internalData" upperBound="-1"
+        eType="#//StringToObjectMap" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="systemComponent" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+        defaultValueLiteral="false"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EnsembleDefinition">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -62,7 +67,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="componentInstance" lowerBound="1"
         eType="#//ComponentInstance" eOpposite="#//ComponentInstance/componentProcesses"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isActive" lowerBound="1"
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="active" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean" defaultValueLiteral="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="triggers" upperBound="-1"
         eType="#//Trigger" containment="true"/>
@@ -75,13 +80,9 @@
   <eClassifiers xsi:type="ecore:EClass" name="Parameter">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="direction" lowerBound="1"
         eType="#//ParameterDirection" defaultValueLiteral="INOUT" unsettable="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="knowledgePath" eType="#//KnowledgePath"
-        containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type">
-      <eGenericType eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaClass">
-        <eTypeArguments/>
-      </eGenericType>
-    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="knowledgePath" lowerBound="1"
+        eType="#//KnowledgePath" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaClass"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Invocable">
     <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"
@@ -95,9 +96,15 @@
         eType="#//ComponentInstance" eOpposite="#//ComponentInstance/ensembleControllers"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="ensembleDefinition" lowerBound="1"
         eType="#//EnsembleDefinition"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="active" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean" defaultValueLiteral="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PathNodeCoordinator" eSuperTypes="#//PathNode"/>
   <eClassifiers xsi:type="ecore:EClass" name="PathNodeMember" eSuperTypes="#//PathNode"/>
   <eClassifiers xsi:type="ecore:EClass" name="PathNodeComponentId" eSuperTypes="#//PathNode"/>
+  <eClassifiers xsi:type="ecore:EClass" name="StringToObjectMap" instanceClassName="java.util.Map$Entry">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="CommunicationBoundary" instanceClassName="cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate"/>
 </ecore:EPackage>

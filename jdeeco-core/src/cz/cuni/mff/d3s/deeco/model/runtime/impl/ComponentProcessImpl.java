@@ -33,7 +33,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <ul>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getName <em>Name</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getComponentInstance <em>Component Instance</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#isIsActive <em>Is Active</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#isActive <em>Active</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getTriggers <em>Triggers</em>}</li>
  * </ul>
  * </p>
@@ -62,24 +62,24 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 	protected String name = NAME_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #isIsActive() <em>Is Active</em>}' attribute.
+	 * The default value of the '{@link #isActive() <em>Active</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #isIsActive()
+	 * @see #isActive()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final boolean IS_ACTIVE_EDEFAULT = true;
+	protected static final boolean ACTIVE_EDEFAULT = true;
 
 	/**
-	 * The cached value of the '{@link #isIsActive() <em>Is Active</em>}' attribute.
+	 * The cached value of the '{@link #isActive() <em>Active</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #isIsActive()
+	 * @see #isActive()
 	 * @generated
 	 * @ordered
 	 */
-	protected boolean isActive = IS_ACTIVE_EDEFAULT;
+	protected boolean active = ACTIVE_EDEFAULT;
 
 	/**
 	 * The cached value of the '{@link #getTriggers() <em>Triggers</em>}' containment reference list.
@@ -177,8 +177,8 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public boolean isIsActive() {
-		return isActive;
+	public boolean isActive() {
+		return active;
 	}
 
 	/**
@@ -186,11 +186,11 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setIsActive(boolean newIsActive) {
-		boolean oldIsActive = isActive;
-		isActive = newIsActive;
+	public void setActive(boolean newActive) {
+		boolean oldActive = active;
+		active = newActive;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT_PROCESS__IS_ACTIVE, oldIsActive, isActive));
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT_PROCESS__ACTIVE, oldActive, active));
 	}
 
 	/**
@@ -263,8 +263,8 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 				return getName();
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__COMPONENT_INSTANCE:
 				return getComponentInstance();
-			case RuntimeMetadataPackage.COMPONENT_PROCESS__IS_ACTIVE:
-				return isIsActive();
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__ACTIVE:
+				return isActive();
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__TRIGGERS:
 				return getTriggers();
 		}
@@ -286,8 +286,8 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__COMPONENT_INSTANCE:
 				setComponentInstance((ComponentInstance)newValue);
 				return;
-			case RuntimeMetadataPackage.COMPONENT_PROCESS__IS_ACTIVE:
-				setIsActive((Boolean)newValue);
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__ACTIVE:
+				setActive((Boolean)newValue);
 				return;
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__TRIGGERS:
 				getTriggers().clear();
@@ -311,8 +311,8 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__COMPONENT_INSTANCE:
 				setComponentInstance((ComponentInstance)null);
 				return;
-			case RuntimeMetadataPackage.COMPONENT_PROCESS__IS_ACTIVE:
-				setIsActive(IS_ACTIVE_EDEFAULT);
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__ACTIVE:
+				setActive(ACTIVE_EDEFAULT);
 				return;
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__TRIGGERS:
 				getTriggers().clear();
@@ -333,8 +333,8 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__COMPONENT_INSTANCE:
 				return getComponentInstance() != null;
-			case RuntimeMetadataPackage.COMPONENT_PROCESS__IS_ACTIVE:
-				return isActive != IS_ACTIVE_EDEFAULT;
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__ACTIVE:
+				return active != ACTIVE_EDEFAULT;
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__TRIGGERS:
 				return triggers != null && !triggers.isEmpty();
 		}
@@ -353,8 +353,8 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (name: ");
 		result.append(name);
-		result.append(", isActive: ");
-		result.append(isActive);
+		result.append(", active: ");
+		result.append(active);
 		result.append(')');
 		return result.toString();
 	}

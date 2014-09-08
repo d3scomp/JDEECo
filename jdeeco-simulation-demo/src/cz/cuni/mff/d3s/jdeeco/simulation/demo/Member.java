@@ -53,7 +53,10 @@ public class Member extends PositionAwareComponent {
 	@PeriodicScheduling(period=500)
 	public static void measureMemberData(@In("id") String id,			
 			@Out("memberData") ParamHolder<MemberData> memberData) {
-		Map<Object, Object> internal = ProcessContext.getCurrentProcess().getComponentInstance().getInternalData().map();
+//		FIXME
+//		Map<Object, Object> internal = ProcessContext.getCurrentProcess().getComponentInstance().getInternalData().map();
+		Map<Object, Object> internal = new java.util.HashMap<>();
+		
 		if (!internal.containsKey(DANGER_TIME)) {
 			long seed = 0;
 			for (char c: id.toCharArray())

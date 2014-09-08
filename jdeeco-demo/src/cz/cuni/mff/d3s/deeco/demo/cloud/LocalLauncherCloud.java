@@ -20,10 +20,10 @@ import cz.cuni.mff.d3s.deeco.runtime.RuntimeFrameworkBuilder;
 public class LocalLauncherCloud {
 
 	public static void main(String[] args) throws AnnotationProcessorException {
-		AnnotationProcessor processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE);
 		RuntimeMetadata model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE, model);
 		
-		processor.process(model, 
+		processor.process( 
 							new NodeB(), new NodeA("NodeA", .5f, 1), // Components 
 							MigrationEnsemble.class // Ensembles
 							);

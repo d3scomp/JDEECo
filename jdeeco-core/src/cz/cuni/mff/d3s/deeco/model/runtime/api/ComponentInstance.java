@@ -6,6 +6,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.EMap;
 
 import org.eclipse.emf.ecore.EObject;
 
@@ -22,6 +23,8 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getKnowledgeManager <em>Knowledge Manager</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getShadowKnowledgeManagerRegistry <em>Shadow Knowledge Manager Registry</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getEnsembleControllers <em>Ensemble Controllers</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getInternalData <em>Internal Data</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#isSystemComponent <em>System Component</em>}</li>
  * </ul>
  * </p>
  *
@@ -143,5 +146,49 @@ public interface ComponentInstance extends EObject {
 	 * @generated
 	 */
 	EList<EnsembleController> getEnsembleControllers();
+
+	/**
+	 * Returns the value of the '<em><b>Internal Data</b></em>' map.
+	 * The key is of type {@link java.lang.String},
+	 * and the value is of type {@link java.lang.Object},
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Internal Data</em>' map isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Internal Data</em>' map.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance_InternalData()
+	 * @model mapType="cz.cuni.mff.d3s.deeco.model.runtime.api.StringToObjectMap<org.eclipse.emf.ecore.EString, org.eclipse.emf.ecore.EJavaObject>"
+	 * @generated
+	 */
+	EMap<String, Object> getInternalData();
+
+	/**
+	 * Returns the value of the '<em><b>System Component</b></em>' attribute.
+	 * The default value is <code>"false"</code>.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>System Component</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>System Component</em>' attribute.
+	 * @see #setSystemComponent(boolean)
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance_SystemComponent()
+	 * @model default="false"
+	 * @generated
+	 */
+	boolean isSystemComponent();
+
+	/**
+	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#isSystemComponent <em>System Component</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>System Component</em>' attribute.
+	 * @see #isSystemComponent()
+	 * @generated
+	 */
+	void setSystemComponent(boolean value);
 
 } // ComponentInstance

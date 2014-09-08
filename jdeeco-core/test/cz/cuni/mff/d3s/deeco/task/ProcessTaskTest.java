@@ -28,6 +28,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.TriggerListener;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
+import cz.cuni.mff.d3s.deeco.model.architecture.api.Architecture;
 import cz.cuni.mff.d3s.deeco.model.runtime.SampleRuntimeModel;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
@@ -48,6 +49,8 @@ public class ProcessTaskTest {
 	private ArgumentCaptor<TriggerListener> knowledgeManagerTriggerListenerCaptor;
 	@Mock
 	private Scheduler scheduler;
+	@Mock
+	private Architecture architecture;
 
 	private Task task;
 	
@@ -90,7 +93,7 @@ public class ProcessTaskTest {
 		
 		model.setKnowledgeManager(knowledgeManager);
 		
-		this.task = new ProcessTask(model.process, scheduler);
+		this.task = new ProcessTask(model.process, scheduler, architecture);
 	}
 	
 	@Test

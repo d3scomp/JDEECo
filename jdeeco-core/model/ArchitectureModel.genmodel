@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/cz.cuni.mff.d3s.jdeeco.core/src" modelPluginID="cz.cuni.mff.d3s.jdeeco.core"
+    modelName="ArchitectureModel" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="7.0" copyrightFields="false"
+    operationReflection="true" importOrganizing="true">
+  <foreignModel>ArchitectureModel.ecore</foreignModel>
+  <genPackages prefix="Architecture" basePackage="cz.cuni.mff.d3s.deeco.model" disposableProviderFactory="true"
+      interfacePackageSuffix="api" metaDataPackageSuffix="meta" ecorePackage="ArchitectureModel.ecore#/">
+    <genDataTypes ecoreDataType="ArchitectureModel.ecore#//ComponentInstanceMetadata"/>
+    <genDataTypes ecoreDataType="ArchitectureModel.ecore#//EnsembleDefinitionMetadata"/>
+    <genDataTypes ecoreDataType="ArchitectureModel.ecore#//ReadOnlyKnowledgeManager"/>
+    <genClasses ecoreClass="ArchitectureModel.ecore#//Architecture">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference ArchitectureModel.ecore#//Architecture/ensembleInstances"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference ArchitectureModel.ecore#//Architecture/componentInstances"/>
+    </genClasses>
+    <genClasses ecoreClass="ArchitectureModel.ecore#//LocalComponentInstance">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ArchitectureModel.ecore#//LocalComponentInstance/runtimeInstance"/>
+    </genClasses>
+    <genClasses ecoreClass="ArchitectureModel.ecore#//EnsembleInstance">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ArchitectureModel.ecore#//EnsembleInstance/ensembleDefinition"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ArchitectureModel.ecore#//EnsembleInstance/coordinator"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ArchitectureModel.ecore#//EnsembleInstance/members"/>
+    </genClasses>
+    <genClasses ecoreClass="ArchitectureModel.ecore#//ComponentInstance">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ArchitectureModel.ecore#//ComponentInstance/id"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ArchitectureModel.ecore#//ComponentInstance/knowledgeManager"/>
+    </genClasses>
+    <genClasses ecoreClass="ArchitectureModel.ecore#//RemoteComponentInstance"/>
+  </genPackages>
+</genmodel:GenModel>

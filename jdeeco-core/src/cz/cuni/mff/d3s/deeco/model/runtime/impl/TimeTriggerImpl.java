@@ -22,6 +22,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.TimeTriggerImpl#getPeriod <em>Period</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.TimeTriggerImpl#getOffset <em>Offset</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.TimeTriggerImpl#getOrder <em>Order</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.TimeTriggerImpl#getWcet <em>Wcet</em>}</li>
  * </ul>
  * </p>
  *
@@ -87,6 +88,26 @@ public class TimeTriggerImpl extends TriggerImpl implements TimeTrigger {
 	 * @ordered
 	 */
 	protected int order = ORDER_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getWcet() <em>Wcet</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getWcet()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final long WCET_EDEFAULT = 0L;
+
+	/**
+	 * The cached value of the '{@link #getWcet() <em>Wcet</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getWcet()
+	 * @generated
+	 * @ordered
+	 */
+	protected long wcet = WCET_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -175,6 +196,27 @@ public class TimeTriggerImpl extends TriggerImpl implements TimeTrigger {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public long getWcet() {
+		return wcet;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setWcet(long newWcet) {
+		long oldWcet = wcet;
+		wcet = newWcet;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.TIME_TRIGGER__WCET, oldWcet, wcet));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
@@ -184,6 +226,8 @@ public class TimeTriggerImpl extends TriggerImpl implements TimeTrigger {
 				return getOffset();
 			case RuntimeMetadataPackage.TIME_TRIGGER__ORDER:
 				return getOrder();
+			case RuntimeMetadataPackage.TIME_TRIGGER__WCET:
+				return getWcet();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -204,6 +248,9 @@ public class TimeTriggerImpl extends TriggerImpl implements TimeTrigger {
 				return;
 			case RuntimeMetadataPackage.TIME_TRIGGER__ORDER:
 				setOrder((Integer)newValue);
+				return;
+			case RuntimeMetadataPackage.TIME_TRIGGER__WCET:
+				setWcet((Long)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -226,6 +273,9 @@ public class TimeTriggerImpl extends TriggerImpl implements TimeTrigger {
 			case RuntimeMetadataPackage.TIME_TRIGGER__ORDER:
 				setOrder(ORDER_EDEFAULT);
 				return;
+			case RuntimeMetadataPackage.TIME_TRIGGER__WCET:
+				setWcet(WCET_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -244,6 +294,8 @@ public class TimeTriggerImpl extends TriggerImpl implements TimeTrigger {
 				return offset != OFFSET_EDEFAULT;
 			case RuntimeMetadataPackage.TIME_TRIGGER__ORDER:
 				return order != ORDER_EDEFAULT;
+			case RuntimeMetadataPackage.TIME_TRIGGER__WCET:
+				return wcet != WCET_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -264,6 +316,8 @@ public class TimeTriggerImpl extends TriggerImpl implements TimeTrigger {
 		result.append(offset);
 		result.append(", order: ");
 		result.append(order);
+		result.append(", wcet: ");
+		result.append(wcet);
 		result.append(')');
 		return result.toString();
 	}

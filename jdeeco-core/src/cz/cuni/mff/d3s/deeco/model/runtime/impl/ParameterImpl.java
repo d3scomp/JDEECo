@@ -80,7 +80,7 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 	 * @generated
 	 * @ordered
 	 */
-	protected Class<?> type;
+	protected Class type;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -195,7 +195,7 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Class<?> getType() {
+	public Class getType() {
 		return type;
 	}
 
@@ -204,8 +204,8 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setType(Class<?> newType) {
-		Class<?> oldType = type;
+	public void setType(Class newType) {
+		Class oldType = type;
 		type = newType;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.PARAMETER__TYPE, oldType, type));
@@ -258,7 +258,7 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 				setKnowledgePath((KnowledgePath)newValue);
 				return;
 			case RuntimeMetadataPackage.PARAMETER__TYPE:
-				setType((Class<?>)newValue);
+				setType((Class)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -279,7 +279,7 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 				setKnowledgePath((KnowledgePath)null);
 				return;
 			case RuntimeMetadataPackage.PARAMETER__TYPE:
-				setType((Class<?>)null);
+				setType((Class)null);
 				return;
 		}
 		super.eUnset(featureID);

@@ -14,6 +14,7 @@ import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
 
 import java.lang.reflect.Method;
 
+import java.util.Map;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
@@ -84,6 +85,7 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 			case RuntimeMetadataPackage.PATH_NODE_COORDINATOR: return createPathNodeCoordinator();
 			case RuntimeMetadataPackage.PATH_NODE_MEMBER: return createPathNodeMember();
 			case RuntimeMetadataPackage.PATH_NODE_COMPONENT_ID: return createPathNodeComponentId();
+			case RuntimeMetadataPackage.STRING_TO_OBJECT_MAP: return (EObject)createStringToObjectMap();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -303,6 +305,16 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	public PathNodeComponentId createPathNodeComponentId() {
 		PathNodeComponentIdImpl pathNodeComponentId = new PathNodeComponentIdImpl();
 		return pathNodeComponentId;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Map.Entry<String, Object> createStringToObjectMap() {
+		StringToObjectMapImpl stringToObjectMap = new StringToObjectMapImpl();
+		return stringToObjectMap;
 	}
 
 	/**

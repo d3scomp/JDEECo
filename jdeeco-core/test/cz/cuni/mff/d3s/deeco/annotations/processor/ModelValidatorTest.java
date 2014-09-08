@@ -51,10 +51,10 @@ public class ModelValidatorTest {
 	@Before
 	public void setUp() throws Exception {
 		factory = RuntimeMetadataFactory.eINSTANCE;
-		processor = new AnnotationProcessor(factory);
-		
 		model = factory.createRuntimeMetadata(); 
-		processor.process(model, new ExampleComponent());
+		processor = new AnnotationProcessor(factory, model);
+		
+		processor.process(new ExampleComponent());
 		component = model.getComponentInstances().get(0);
 		process = component.getComponentProcesses().get(0);
 		

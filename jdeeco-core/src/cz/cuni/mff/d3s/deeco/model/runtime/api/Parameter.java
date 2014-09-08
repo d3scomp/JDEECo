@@ -91,7 +91,7 @@ public interface Parameter extends EObject {
 	 * @return the value of the '<em>Knowledge Path</em>' containment reference.
 	 * @see #setKnowledgePath(KnowledgePath)
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getParameter_KnowledgePath()
-	 * @model containment="true"
+	 * @model containment="true" required="true"
 	 * @generated
 	 */
 	KnowledgePath getKnowledgePath();
@@ -120,7 +120,7 @@ public interface Parameter extends EObject {
 	 * @model
 	 * @generated
 	 */
-	Class<?> getType();
+	Class getType();
 
 	/**
 	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter#getType <em>Type</em>}' attribute.
@@ -130,6 +130,6 @@ public interface Parameter extends EObject {
 	 * @see #getType()
 	 * @generated
 	 */
-	void setType(Class<?> value);
+	void setType(Class value);
 
 } // Parameter

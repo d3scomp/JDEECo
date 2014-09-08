@@ -22,6 +22,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//TimeTrigger/period"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//TimeTrigger/offset"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//TimeTrigger/order"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//TimeTrigger/wcet"/>
     </genClasses>
     <genClasses image="false" ecoreClass="RuntimeModel.ecore#//Trigger"/>
     <genClasses ecoreClass="RuntimeModel.ecore#//KnowledgeChangeTrigger">
@@ -47,6 +48,8 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentInstance/knowledgeManager"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentInstance/shadowKnowledgeManagerRegistry"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentInstance/ensembleControllers"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentInstance/internalData"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentInstance/systemComponent"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//EnsembleDefinition">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//EnsembleDefinition/name"/>
@@ -60,7 +63,7 @@
     <genClasses ecoreClass="RuntimeModel.ecore#//ComponentProcess">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentProcess/name"/>
       <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentProcess/componentInstance"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentProcess/isActive"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentProcess/active"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentProcess/triggers"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//Parameter">
@@ -75,9 +78,14 @@
     <genClasses ecoreClass="RuntimeModel.ecore#//EnsembleController">
       <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference RuntimeModel.ecore#//EnsembleController/componentInstance"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//EnsembleController/ensembleDefinition"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//EnsembleController/active"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//PathNodeCoordinator"/>
     <genClasses ecoreClass="RuntimeModel.ecore#//PathNodeMember"/>
     <genClasses ecoreClass="RuntimeModel.ecore#//PathNodeComponentId"/>
+    <genClasses ecoreClass="RuntimeModel.ecore#//StringToObjectMap">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//StringToObjectMap/key"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//StringToObjectMap/value"/>
+    </genClasses>
   </genPackages>
 </genmodel:GenModel>

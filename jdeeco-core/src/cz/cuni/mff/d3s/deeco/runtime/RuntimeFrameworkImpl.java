@@ -17,9 +17,15 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistryImpl;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.model.architecture.api.Architecture;
+import cz.cuni.mff.d3s.deeco.model.architecture.api.EnsembleInstance;
+import cz.cuni.mff.d3s.deeco.model.architecture.api.LocalComponentInstance;
+import cz.cuni.mff.d3s.deeco.model.architecture.api.RemoteComponentInstance;
+import cz.cuni.mff.d3s.deeco.model.architecture.meta.ArchitectureFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
@@ -60,13 +66,18 @@ import cz.cuni.mff.d3s.deeco.task.Task;
  * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
  * 
  */
-public class RuntimeFrameworkImpl implements RuntimeFramework {
+public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObserver {
 	
 	/**
-	 * The model corresponding to the running application.
+	 * The metadata model corresponding to the running application.
 	 */
 	protected RuntimeMetadata model;
 	
+	/**
+	 * The architecture model corresponding to the current snapshot of the running application.
+	 */
+	protected Architecture architecture;
+			
 	/** 
 	 * The scheduler used by the runtime.
 	 */
@@ -85,18 +96,31 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 	 * Keeps track of each instance's tasks.
 	 */
 	protected Map<ComponentInstance, ComponentInstanceRecord> componentRecords = new HashMap<>();
-		
 	
 	/**
 	 * Keeps track of ecore adapters for component instances.
 	 */
-	protected Map<ComponentInstance, Adapter> componentInstanceAdapters = new HashMap<>();	
+	protected Map<ComponentInstance, Adapter> componentInstanceAdapters = new HashMap<>();
+	
 	/**
 	 * Keeps track of ecore adapters for component processes.
 	 */
 	protected Map<ComponentProcess, Adapter> componentProcessAdapters = new HashMap<>();
-
 	
+	/**
+	 * Keeps track of the ecore adapters for ensemble definitions.
+	 */
+	protected Map<EnsembleController, Adapter> ensembleControllerAdapters = new HashMap<>();
+
+	/**
+	 * Keeps track of local component instances in the architecture model.
+	 */
+	protected Map<String, LocalComponentInstance> localComponentInstances = new HashMap<>();
+	
+	/**
+	 * Keeps track of remote component instances in the architecture model.
+	 */
+	protected Map<String, RemoteComponentInstance> remoteComponentInstances = new HashMap<>();
 
 	/**
 	 * Initializes the runtime with the given internal services and prepares the
@@ -145,6 +169,9 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 		this.executor = executor;
 		this.kmContainer = kmContainer;
 		
+		//create architecture model 
+		architecture = ArchitectureFactory.eINSTANCE.createArchitecture();
+				
 		if (autoInit)
 			init();
 	}
@@ -162,7 +189,6 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 			componentInstanceAdded(ci);
 		}
 		
-
 		// register adapters to listen for model changes
 		// listen to ADD/REMOVE in RuntimeMetadata.getComponentInstances()
 		Adapter componentInstancesAdapter = new AdapterImpl() {
@@ -180,9 +206,8 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 			}
 		};
 		model.eAdapters().add(componentInstancesAdapter);	
-	}
-	
 
+	}
 
 	/**
 	 * Implementation of a notification indicating that a new component instance
@@ -216,6 +241,15 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 		ComponentInstanceRecord ciRecord = new ComponentInstanceRecord(instance);
 		componentRecords.put(instance, ciRecord);
 		
+		// add component to architecture model
+		LocalComponentInstance localComponentInstance = ArchitectureFactory.eINSTANCE.createLocalComponentInstance();
+		localComponentInstance.setId(instance.getKnowledgeManager().getId());
+		localComponentInstance.setKnowledgeManager(instance.getKnowledgeManager());
+		localComponentInstance.setRuntimeInstance(instance);
+		
+		localComponentInstances.put(localComponentInstance.getId(), localComponentInstance);
+		architecture.getComponentInstances().add(localComponentInstance);
+		
 		// replace the KM with one created via kmContainer
 		replaceKnowledgeManager(instance);
 		
@@ -223,12 +257,25 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 			componentProcessAdded(instance, p);
 		}
 		
-		// for now, we do not assume that the EnsembleControllers will change,
-		// thus they are scheduled from the beginning and have no adapters
-		for (EnsembleController ec: instance.getEnsembleControllers()) {
-			Task task = new EnsembleTask(ec, scheduler);
+		// create a new task for each ensemble controller
+		// register ecore adapters to listen to change in EnsembleController.isActive 
+		for (final EnsembleController ec: instance.getEnsembleControllers()) {
+			Task task = new EnsembleTask(ec, scheduler, (ArchitectureObserver) this);
 			ciRecord.getEnsembleTasks().put(ec, task);
-			scheduler.addTask(task);						
+			scheduler.addTask(task);	
+			
+			// listen to change in EnsembleDefinition.isActive
+			Adapter ensembleDefAdapter = new AdapterImpl() {
+				public void notifyChanged(Notification notification) {
+					super.notifyChanged(notification);
+					if ((notification.getFeatureID(ComponentProcess.class) == RuntimeMetadataPackage.ENSEMBLE_CONTROLLER__ACTIVE)
+							&& (notification.getEventType() == Notification.SET)) {
+						ensembleControllerActiveChanged(instance, ec, notification.getNewBooleanValue());
+					}
+				}
+			};
+			ec.eAdapters().add(ensembleDefAdapter);	
+			ensembleControllerAdapters.put(ec, ensembleDefAdapter);
 		}
 						
 		// register adapters to listen for model changes
@@ -318,17 +365,17 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 			return;
 		}
 		
-		final Task newTask = new ProcessTask(process, scheduler);
+		final Task newTask = new ProcessTask(process, scheduler, architecture);
 		cir.getProcessTasks().put(process, newTask);
 		
-		componentProcessActiveChanged(instance, process, process.isIsActive());
+		componentProcessActiveChanged(instance, process, process.isActive());
 		
 		// register adapters to listen for model changes
 		// listen to change in ComponentProcess.isActive
 		Adapter componentProcessAdapter = new AdapterImpl() {
 			public void notifyChanged(Notification notification) {
 				super.notifyChanged(notification);
-				if ((notification.getFeatureID(ComponentProcess.class) == RuntimeMetadataPackage.COMPONENT_PROCESS__IS_ACTIVE)
+				if ((notification.getFeatureID(ComponentProcess.class) == RuntimeMetadataPackage.COMPONENT_PROCESS__ACTIVE)
 						&& (notification.getEventType() == Notification.SET)){
 					componentProcessActiveChanged(instance, process, notification.getNewBooleanValue());
 				}
@@ -376,6 +423,44 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 		}
 	}
 
+	/**
+	 * Implementation of a notification indicating that an ensemble became (in)active.
+	 * 
+	 * <p>
+	 * Schedules the corresponding task accordingly.   
+	 * </p> 
+	 * <p>
+	 * Logs errors but does not throw any exceptions.
+	 * </p>
+	 * @param instance 
+	 * 
+	 * @see Scheduler#addTask(Task)
+	 * @see Scheduler#removeTask(Task) 
+	 */
+	void ensembleControllerActiveChanged(ComponentInstance instance, EnsembleController ec, boolean active) {
+		if (ec == null) {
+			Log.w("Attempting to to change the activity of a null ensemble controller.");
+			return;
+		}
+		// the instance is not registered 
+		if ((!componentRecords.containsKey(instance) 
+			// OR the process is not registered
+			|| (!componentRecords.get(instance).getEnsembleTasks().containsKey(ec)))) {
+			Log.w(String.format("Attempting to change the activity of an unregistered ensemble controller (%s).", ec));
+			return;
+		}
+		
+		Task t = componentRecords.get(instance).getEnsembleTasks().get(ec);
+		
+		Log.i(String.format("Changing the activity of ensemble task %s corresponding to ensemble definition %s to %s.", t, ec.getEnsembleDefinition(), active));
+		
+		if (active) {
+			scheduler.addTask(t);
+		} else {
+			scheduler.removeTask(t);
+		}
+		
+	}
 
 	/**
 	 * Implementation of a notification indicating that an existing component
@@ -384,6 +469,10 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 	 * <p>
 	 * Removes and de-schedules the corresponding tasks for the removed instance.
 	 * Unregisters the ecore adaptors from the instance. 
+	 * </p>
+	 * 
+	 * <p>
+	 * Removes the respective architecture component from the architecture model and the local map. 
 	 * </p>
 	 * 
 	 * <p>
@@ -419,7 +508,13 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 		if (componentInstanceAdapters.containsKey(instance)) { 
 			instance.eAdapters().remove(componentInstanceAdapters.get(instance));
 			componentInstanceAdapters.remove(instance);
-		}		
+		}
+		
+		// remove the respective architecture component from architecture model
+		String localComponentInstanceID = instance.getKnowledgeManager().getId();
+		localComponentInstances.remove(localComponentInstanceID);
+		architecture.getComponentInstances().remove(localComponentInstanceID);
+		
 	}
 	
 	/**
@@ -466,8 +561,6 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 		cir.getProcessTasks().remove(process);		
 	}
 	
-	
-	
 	/* (non-Javadoc)
 	 * @see cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework#start()
 	 */
@@ -491,6 +584,43 @@ public class RuntimeFrameworkImpl implements RuntimeFramework {
 	@Override
 	public void invokeAndWait(Runnable r) throws InterruptedException {
 		scheduler.invokeAndWait(r);		
+	}
+
+	public void ensembleFormed(final EnsembleDefinition e, final ComponentInstance c, final String coordID, final String memberID) {
+		Log.w("Ensemble "+e+" formed at the side of " + c + " with coord: "+coordID+" and member: "+memberID);
+
+		EnsembleInstance ensembleInstance = ArchitectureFactory.eINSTANCE.createEnsembleInstance();
+		ensembleInstance.setEnsembleDefinition(e);
+		ensembleInstance.setCoordinator(getComponentInstance(c, coordID));
+		ensembleInstance.getMembers().add((getComponentInstance(c, memberID)));
+		
+		architecture.getEnsembleInstances().add(ensembleInstance);
+		//TODO(IG): wrap the code here into a Runnable and dispatch it through scheduler.invokeAndWait() to make it thread-safe	
+	}
+
+	private cz.cuni.mff.d3s.deeco.model.architecture.api.ComponentInstance getComponentInstance(ComponentInstance c, String id) {
+		cz.cuni.mff.d3s.deeco.model.architecture.api.ComponentInstance instance;
+		if (kmContainer.hasLocal(id)) {
+			LocalComponentInstance localComponentInstance = localComponentInstances.get(id);
+			if (localComponentInstance == null) {
+				localComponentInstance = ArchitectureFactory.eINSTANCE.createLocalComponentInstance();
+				localComponentInstance.setId(id);
+				localComponentInstance.setKnowledgeManager(kmContainer.getLocal(id));
+				localComponentInstance.setRuntimeInstance(c);
+				localComponentInstances.put(id, localComponentInstance);
+			}
+			instance = (cz.cuni.mff.d3s.deeco.model.architecture.api.ComponentInstance) localComponentInstance;
+		} else {
+			RemoteComponentInstance remoteComponentInstance = remoteComponentInstances.get(id);
+			if (remoteComponentInstance == null) {
+				remoteComponentInstance = ArchitectureFactory.eINSTANCE.createRemoteComponentInstance();
+				remoteComponentInstance.setId(id);
+				remoteComponentInstance.setKnowledgeManager(kmContainer.getReplica(id));
+				remoteComponentInstances.put(id, remoteComponentInstance);
+			}
+			instance = (cz.cuni.mff.d3s.deeco.model.architecture.api.ComponentInstance) remoteComponentInstance;
+		}
+		return instance;
 	}
 
 	@Override

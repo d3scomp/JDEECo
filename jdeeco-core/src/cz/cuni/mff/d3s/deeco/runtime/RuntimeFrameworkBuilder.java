@@ -44,27 +44,32 @@ public class RuntimeFrameworkBuilder {
 	/**
 	 * The scheduler corresponding to the {@link #configuration}.
 	 */
-	Scheduler scheduler;
+	protected Scheduler scheduler;
 	
 	/**
 	 * The executor corresponding to the {@link #configuration}.
 	 */
-	Executor executor;
+	protected Executor executor;
 	
 	/**
 	 * The knowledge manager container corresponding to the {@link #configuration}.
 	 */
-	KnowledgeManagerContainer kmContainer;	
+	protected KnowledgeManagerContainer kmContainer;	
 	
 	/**
 	 * The configuration for which a new runtime framework has to be created and set up.
 	 */
-	RuntimeConfiguration configuration;	
+	protected RuntimeConfiguration configuration;	
 	
 	/**
 	 * The runtime framework instance managing all the internal services corresponding to the {@link #configuration}.
 	 */
-	RuntimeFramework runtime;
+	protected RuntimeFramework runtime;
+
+	/**
+	 * The runtime metadata for the runtime.
+	 */
+	protected RuntimeMetadata model;
 	
 
 	/**
@@ -160,7 +165,7 @@ public class RuntimeFrameworkBuilder {
 	 * 
 	 * @see RuntimeFrameworkImpl
 	 */
-	protected void buildRuntime(RuntimeMetadata model) {
+	protected void buildRuntime() {
 		runtime = new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer);
 	}
 	
@@ -181,6 +186,8 @@ public class RuntimeFrameworkBuilder {
 			throw new IllegalArgumentException("Model must not be null");
 		}	
 		
+		this.model = model;
+		
 		// build all the building blocks
 		buildScheduler();
 		buildExecutor();
@@ -193,10 +200,8 @@ public class RuntimeFrameworkBuilder {
 		connect();
 		
 		// create a runtime using the connected building blocks and the given model
-		buildRuntime(model);
+		buildRuntime();
 		return runtime;
 	}
-
-	
 	
 }

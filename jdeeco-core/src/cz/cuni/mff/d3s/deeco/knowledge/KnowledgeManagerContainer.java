@@ -96,6 +96,20 @@ public class KnowledgeManagerContainer  {
 	}
 	
 	/**
+	 * Retrieves a local knowledge manager by its id.
+	 */
+	public KnowledgeManager getLocal(String id) {
+		return locals.get(id);
+	}
+	
+	/**
+	 * Retrieves a replica knowledge manager by its id.
+	 */
+	public KnowledgeManager getReplica(String id) {
+		return replicas.get(id);
+	}
+	
+	/**
 	 * Returns true if the container contains a local KM for the given component id.
 	 */
 	public boolean hasLocal(String id) {

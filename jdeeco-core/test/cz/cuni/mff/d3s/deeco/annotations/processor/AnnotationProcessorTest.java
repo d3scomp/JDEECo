@@ -10,7 +10,6 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import junitx.framework.FileAssert;
 
 import org.eclipse.emf.common.util.URI;
@@ -45,7 +44,6 @@ import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 public class AnnotationProcessorTest {
 
 	protected RuntimeMetadataFactory factory;
-	protected AnnotationProcessor processor;
 	protected File tempFile;
 	
 	@Rule
@@ -54,7 +52,6 @@ public class AnnotationProcessorTest {
 	@Before
 	public void setUp() throws Exception {
 		factory = RuntimeMetadataFactory.eINSTANCE;
-		processor = new AnnotationProcessor(factory);
 		tempFile = Files.createTempFile(null, ".xmi").toFile();
 	}
 
@@ -73,8 +70,10 @@ public class AnnotationProcessorTest {
 	@Test 
 	public void testAllComponentAnnotations() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata(); 
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model);
+		
 		CorrectC1 input = new CorrectC1();
-		processor.process(model,input);
+		processor.process(input);
 		removeKnowledgeManagersFromComponents(model);
 		File expected = getExpectedFile(input);
 		saveInXMI(model, tempFile);
@@ -84,8 +83,10 @@ public class AnnotationProcessorTest {
 	@Test
 	public void testComponentModelInheritance() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata(); 
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model);
+		
 		CorrectC1 input = new ChildOfCorrectC1();
-		processor.process(model,input);
+		processor.process(input);
 		removeKnowledgeManagersFromComponents(model);
 		File expected = getExpectedFile(input);
 //		saveInXMI(model, expected);
@@ -96,8 +97,10 @@ public class AnnotationProcessorTest {
 	@Test 
 	public void testAllEnsembleAnnotations() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model);
+		
 		CorrectE1 input = new CorrectE1();
-		processor.process(model,input);
+		processor.process(input);
 		File expected = getExpectedFile(input);
 		saveInXMI(model, tempFile);
 		FileAssert.assertEquals(expected, tempFile);
@@ -106,7 +109,9 @@ public class AnnotationProcessorTest {
 	@Test 
 	public void testModelDirectlyFromEnsembleClassDefinition() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
-		processor.process(model, CorrectE1.class);
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model);
+		
+		processor.process(CorrectE1.class);
 		CorrectE1 input = new CorrectE1();
 		File expected = getExpectedFile(input);
 		saveInXMI(model, tempFile);
@@ -116,18 +121,20 @@ public class AnnotationProcessorTest {
 	@Test
 	public void testSequencialUpdateOfTheSameModel() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model);
+
 		Object input = new CorrectC1();
-		processor.process(model,input);
+		processor.process(input);
 		input = new CorrectC2();
-		processor.process(model,input);
+		processor.process(input);
 		input = new CorrectC3();
-		processor.process(model,input);
+		processor.process(input);
 		input = new CorrectE1();
-		processor.process(model,input);
+		processor.process(input);
 		input = new CorrectE2();
-		processor.process(model,input);
+		processor.process(input);
 		input = new CorrectE3();
-		processor.process(model,input);
+		processor.process(input);
 		removeKnowledgeManagersFromComponents(model);
 		File expected = getExpectedFile(new C1C2C3E1E2E3());
 		saveInXMI(model, tempFile);
@@ -137,13 +144,15 @@ public class AnnotationProcessorTest {
 	@Test
 	public void testBatchUpdateOfTheSameModel1() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model);
+
 		Object input1 = new CorrectC1();
 		Object input2 = new CorrectC2();
 		Object input3 = new CorrectC3();
 		Object input4 = new CorrectE1();
 		Object input5 = new CorrectE2();
 		Object input6 = new CorrectE3();
-		processor.process(model,input1, input2, input3, input4, input5, input6);
+		processor.process(input1, input2, input3, input4, input5, input6);
 		removeKnowledgeManagersFromComponents(model);		
 		File expected = getExpectedFile(new C1C2C3E1E2E3());
 		saveInXMI(model, tempFile);
@@ -153,6 +162,8 @@ public class AnnotationProcessorTest {
 	@Test 
 	public void testBatchUpdateOfTheSameModel2() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model);
+
 		List<Object> inputs = new ArrayList<>();
 		inputs.add(new CorrectC1());
 		inputs.add(new CorrectC2());
@@ -160,7 +171,7 @@ public class AnnotationProcessorTest {
 		inputs.add(new CorrectE1());
 		inputs.add(new CorrectE2());
 		inputs.add(new CorrectE3());
-		processor.process(model,inputs);
+		processor.process(inputs);
 		removeKnowledgeManagersFromComponents(model);		
 		File expected = getExpectedFile(new C1C2C3E1E2E3());
 		saveInXMI(model, tempFile);
@@ -170,9 +181,11 @@ public class AnnotationProcessorTest {
 	@Test 
 	public void testEventBasedComponents() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model);
+
 		// no periodic trigger, 1 knowledge change trigger:
 		CorrectC2 input = new CorrectC2();
-		processor.process(model,input);
+		processor.process(input);
 		removeKnowledgeManagersFromComponents(model);
 		File expected = getExpectedFile(input);
 		saveInXMI(model, tempFile);
@@ -182,9 +195,11 @@ public class AnnotationProcessorTest {
 	@Test 
 	public void testEventBasedEnsembles() throws AnnotationProcessorException {		
 		RuntimeMetadata model = factory.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model);
+
 		// no periodic trigger, 2 knowledge change triggers:
 		CorrectE2 input = new CorrectE2();
-		processor.process(model,input);
+		processor.process(input);
 		removeKnowledgeManagersFromComponents(model);
 		File expected = getExpectedFile(input);
 		saveInXMI(model, tempFile);
@@ -194,8 +209,10 @@ public class AnnotationProcessorTest {
 	@Test 
 	public void testParameterWithMapEntry() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model);
+
 		CorrectC3 input = new CorrectC3();
-		processor.process(model,input);
+		processor.process(input);
 		removeKnowledgeManagersFromComponents(model);
 		File expected = getExpectedFile(input);
 		saveInXMI(model, tempFile);
@@ -205,8 +222,10 @@ public class AnnotationProcessorTest {
 	@Test 
 	public void testParameterWithNestedMapEntry() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model);
+
 		CorrectE3 input = new CorrectE3();
-		processor.process(model,input);
+		processor.process(input);
 		removeKnowledgeManagersFromComponents(model);
 		File expected = getExpectedFile(input);
 		saveInXMI(model, tempFile);
@@ -215,64 +234,78 @@ public class AnnotationProcessorTest {
 	
 	@Test 
 	public void testExceptionsNullModel() throws AnnotationProcessorException {
+		AnnotationProcessor processor = new AnnotationProcessor(factory,null);
+		
 		Object input = new Object();
 		exception.expect(AnnotationProcessorException.class);
 		exception.expectMessage("Provided model cannot be null.");
-		processor.process(null,input);	
+		processor.process(input);	
 	}
 	
 	@Test 
 	public void testExceptionsNullObject() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model);
+		
 		exception.expect(AnnotationProcessorException.class);
 		exception.expectMessage("Provide an initialized object or a non-empty list of objects.");
-		processor.process(model,null);	
+		processor.process(null);	
 	}	
 	
 	@Test 
 	public void testExceptionsNonInitializedComponent() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model);
+		
 		exception.expect(AnnotationProcessorException.class);
 		exception.expectMessage("For a component to be parsed, it has to be an INSTANCE of a class annotated with @Component.");
-		processor.process(model,CorrectC1.class);	
+		processor.process(CorrectC1.class);	
 	}
 	
 	@Test 
 	public void testExceptionsInClassAnnotations1() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model);
+		
 		WrongCE1 input = new WrongCE1();
 		exception.expect(AnnotationProcessorException.class);
 		exception.expectMessage(
 				"Class: "+input.getClass().getCanonicalName()+"->" +
 				"No @Component or @Ensemble annotation found.");
-		processor.process(model,input);	
+		processor.process(input);	
 	}
 	
 	@Test 
 	public void testExceptionsInClassAnnotations2() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model);
+		
 		WrongCE2 input = new WrongCE2();
 		exception.expect(AnnotationProcessorException.class);
 		exception.expectMessage(
 				"Class: "+input.getClass().getCanonicalName()+"->" +
 				"Both @Component or @Ensemble annotation found.");
-		processor.process(model,input);	
+		processor.process(input);	
 	}
 
 	@Test 
 	public void testExceptionsInComponentParsing1() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model);
+		
 		WrongC1 input = new WrongC1();
 		exception.expect(AnnotationProcessorException.class);
 		exception.expectMessage(
 				"Component: "+input.getClass().getCanonicalName()+"->" +
 				"Method process1 annotated as @Process should be public and static.");
-		processor.process(model,input);
+		processor.process(input);
 	}
 
 	@Test 
 	public void testExceptionsInComponentParsing2() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model);
+		
 		WrongC2 input = new WrongC2();
 		exception.expect(AnnotationProcessorException.class);
 		exception.expectMessage(
@@ -280,12 +313,14 @@ public class AnnotationProcessorTest {
 				"Process: process1->" +
 				"Parameter: 2->" +
 				"No direction annotation was found.");
-		processor.process(model,input);
+		processor.process(input);
 	}
 
 	@Test 
 	public void testExceptionsInComponentParsing3() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model);
+		
 		WrongC3 input = new WrongC3();
 		exception.expect(AnnotationProcessorException.class);
 		exception.expectMessage(
@@ -293,82 +328,96 @@ public class AnnotationProcessorTest {
 				"Process: process1->" +
 				"Parameter: 3->" +
 				"More than one direction annotation was found.");
-		processor.process(model,input);
+		processor.process(input);
 	}
 	
 	@Test 
 	public void testExceptionsInComponentParsing4() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model);
+		
 		WrongC4 input = new WrongC4();
 		exception.expect(AnnotationProcessorException.class);
 		exception.expectMessage(
 				"Component: "+input.getClass().getCanonicalName()+"->" +
 				"Process: process1->" +
 				"No triggers were found.");
-		processor.process(model,input);
+		processor.process(input);
 	}
 	
 	@Test 
 	public void testExceptionsInComponentParsing5() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model);
+		
 		WrongC5 input = new WrongC5();
 		exception.expect(AnnotationProcessorException.class);
 		exception.expectMessage(
 				"Component: "+input.getClass().getCanonicalName()+"->" +
 				"Process: process1->" +
 				"The component process cannot have zero parameters.");
-		processor.process(model,input);
+		processor.process(input);
 	}
 	
 	@Test 
 	public void testExceptionsInEnsembleParsing1() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model);
+		
 		WrongE1 input = new WrongE1();
 		exception.expect(AnnotationProcessorException.class);
 		exception.expectMessage(
 				"Ensemble: "+input.getClass().getCanonicalName()+"->" +
 				"Method knowledgeExchange annotated as @KnowledgeExchange should be public and static.");
-		processor.process(model,input);	
+		processor.process(input);	
 	}
 
 	@Test 
 	public void testExceptionsInEnsembleParsing2() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model);
+		
 		WrongE2 input = new WrongE2();
 		exception.expect(AnnotationProcessorException.class);
 		exception.expectMessage(
 				"Ensemble: "+input.getClass().getCanonicalName()+"->" +
 				"No @Membership annotation was found");
-		processor.process(model,input);	
+		processor.process(input);	
 	}
 
 	@Test 
 	public void testExceptionsInEnsembleParsing3() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model);
+		
 		WrongE3 input = new WrongE3();
 		exception.expect(AnnotationProcessorException.class);
 		exception.expectMessage(
 				"Ensemble: "+input.getClass().getCanonicalName()+"->" +
 				"More than one instance of @KnowledgeExchange annotation was found");
-		processor.process(model,input);	
+		processor.process(input);	
 	}
 
 	@Test 
 	public void testExceptionsInEnsembleParsing4()
 			throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model);
+		
 		WrongE4 input = new WrongE4();
 		exception.expect(AnnotationProcessorException.class);
 		exception.expectMessage(
 				"Ensemble: "+input.getClass().getCanonicalName()+"->" +
 				"No triggers were found.");
-		processor.process(model,input);
+		processor.process(input);
 	}
 	
 	@Test 
 	public void testExceptionsInEnsembleParsing5()
 			throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model);
+		
 		WrongE5 input = new WrongE5();
 		exception.expect(AnnotationProcessorException.class);
 		exception.expectMessage(
@@ -376,7 +425,7 @@ public class AnnotationProcessorTest {
 				"KnowledgeExchange->" +
 				"Parameter: 1->" +
 				"The path does not start with one of the 'coord' or 'member' keywords.");
-		processor.process(model,input);
+		processor.process(input);
 	}
 	
 	/*
@@ -385,6 +434,9 @@ public class AnnotationProcessorTest {
 	
 	@Test 
 	public void testCreateKnowledgePath() throws ParseException, AnnotationProcessorException {
+		RuntimeMetadata model = factory.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model);
+		
 		String pathStr = "level1.level2.level3";
 		KnowledgePath kp = processor.createKnowledgePath(pathStr, true);
 		assertEquals(kp.getNodes().size(),3);
@@ -451,6 +503,9 @@ public class AnnotationProcessorTest {
 	
 	@Test 
 	public void testExceptionsInCreateKnowledgePath1() throws ParseException, AnnotationProcessorException {
+		RuntimeMetadata model = factory.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model);
+		
 		String pathStr = "namesToAddresses[member.name]";
 		exception.expect(ParseException.class);
 		exception.expectMessage(
@@ -461,6 +516,9 @@ public class AnnotationProcessorTest {
 	
 	@Test
 	public void testExceptionsInCreateKnowledgePath2() throws ParseException, AnnotationProcessorException {
+		RuntimeMetadata model = factory.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model);
+		
 		String pathStr = "namesToAddresses.[member.name";
 		exception.expect(ParseException.class);
 		processor.createKnowledgePath(pathStr, true);		
@@ -468,6 +526,9 @@ public class AnnotationProcessorTest {
 	
 	@Test
 	public void testExceptionsInCreateKnowledgePath3() throws ParseException, AnnotationProcessorException {
+		RuntimeMetadata model = factory.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model);
+		
 		String pathStr = "level1..level2";
 		exception.expect(ParseException.class);
 		processor.createKnowledgePath(pathStr, true);		
@@ -475,6 +536,9 @@ public class AnnotationProcessorTest {
 	
 	@Test
 	public void testExceptionsInCreateKnowledgePath4() throws ParseException, AnnotationProcessorException {
+		RuntimeMetadata model = factory.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model);
+		
 		String pathStr = "level1.  .level2";
 		exception.expect(TokenMgrError.class);
 		processor.createKnowledgePath(pathStr, true);		
@@ -482,6 +546,9 @@ public class AnnotationProcessorTest {
 	
 	@Test
 	public void testExceptionsInCreateKnowledgePath5() throws ParseException, AnnotationProcessorException {
+		RuntimeMetadata model = factory.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model);
+		
 		String pathStr = "";
 		exception.expect(ParseException.class);
 		processor.createKnowledgePath(pathStr, true);		
@@ -489,6 +556,9 @@ public class AnnotationProcessorTest {
 
 	@Test 
 	public void testExceptionsInCreateKnowledgePath6() throws ParseException, AnnotationProcessorException {
+		RuntimeMetadata model = factory.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model);
+		
 		String pathStr = "id.level2";
 		exception.expect(AnnotationProcessorException.class);
 		exception.expectMessage(
@@ -498,6 +568,9 @@ public class AnnotationProcessorTest {
 	
 	@Test 
 	public void testExceptionsInCreateKnowledgePath7() throws ParseException, AnnotationProcessorException {
+		RuntimeMetadata model = factory.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model);
+		
 		String pathStr = "details.[id.x]";
 		exception.expect(AnnotationProcessorException.class);
 		exception.expectMessage(
@@ -507,6 +580,9 @@ public class AnnotationProcessorTest {
 	
 	@Test 
 	public void testExceptionsInCreateKnowledgePath8() throws ParseException, AnnotationProcessorException {
+		RuntimeMetadata model = factory.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model);
+		
 		String pathStr = "whatever.level2";
 		exception.expect(AnnotationProcessorException.class);
 		exception.expectMessage(
@@ -518,6 +594,9 @@ public class AnnotationProcessorTest {
 	
 	@Test
 	public void testProcessInitialKnowledge(){
+		RuntimeMetadata model = factory.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model);
+		
 		Object o = new CorrectC1();
 		/*  "CorrectC1" fields are:
 		 * 
@@ -525,7 +604,7 @@ public class AnnotationProcessorTest {
 		 *	public Integer capacity;
 		 *	public Date time;
 		 */
-		ChangeSet cs = processor.extractInitialKnowledge(o, false);
+		ChangeSet cs = processor.extractInitialKnowledge(o);
 		assertEquals(cs.getUpdatedReferences().size(),3);
 		assertEquals(cs.getDeletedReferences().size(),0);
 		KnowledgePath kp = factory.createKnowledgePath();
