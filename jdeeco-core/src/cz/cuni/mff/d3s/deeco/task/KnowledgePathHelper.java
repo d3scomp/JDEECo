@@ -120,7 +120,7 @@ public class KnowledgePathHelper {
 	 * @return absolute knowledge path.
 	 * @throws KnowledgeNotFoundException 
 	 */
-	protected static KnowledgePath getAbsolutePath(KnowledgePath path, ReadOnlyKnowledgeManager knowledgeManager) 
+	public static KnowledgePath getAbsolutePath(KnowledgePath path, ReadOnlyKnowledgeManager knowledgeManager) 
 			throws KnowledgeNotFoundException {
 		RuntimeMetadataFactory factory = RuntimeMetadataFactory.eINSTANCE;
 		for (int i=0; i<path.getNodes().size();i++) {
