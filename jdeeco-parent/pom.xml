@@ -60,10 +60,11 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-	<repositories>
-		<repository>
-			<id>sonatype.releases</id>
-			<url>http://oss.sonatype.org/content/repositories/releases/</url>
+	<distributionManagement>
+ 		<repository>
+			<id>d3s</id>
+			<name>D3S maven repository</name>
+			<url>https://gitlab.d3s.mff.cuni.cz:8443/nexus/content/repositories/releases</url>
 		</repository>
-	</repositories>
+	</distributionManagement>
 </project>
