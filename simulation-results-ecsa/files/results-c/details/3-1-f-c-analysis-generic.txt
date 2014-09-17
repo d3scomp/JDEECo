@@ -1,0 +1,17 @@
+245 components, packet size 1024, publish period 2000, individual publishing, boundary disabled, cache deadline 1500, cache wipe period 500, maxRebroadcastDelay 1000
+--------------------------------------------
+Average time per hop:  1188.77034613 ms
+Max number of hops:  25
+Average number of hops:  5.19860168918
+Boundary prevented sending of: 0
+KnowledgeData published: 1690784 unique: 7159
+KnowledgeData received: 1443417 unique: 6025
+Sent messages:  1175441
+Received messages:  973331
+Dropped messages:  1
+Received/Sent ratio: 0.828056023229
+Message size: avg=848.500162, min=629.000000, max=875.000000, median=873.000000
+Rebroadcasts planned:  524633
+Rebroadcasts aborted:  66237
+Rebroadcasts finished:  979876
+Average abort ratio:  0.126253971824

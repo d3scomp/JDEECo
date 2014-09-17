@@ -1,0 +1,17 @@
+target=cz.cuni.mff.d3s.deeco.demo.cloud.LocalLauncherCloudJPF
+
+report.console.property_violation=error,trace
+
+# not to schedule in atomic blocks
+vm.max_transition_length = MAX
+
+# the only threads are created by jDeeco framework which guarantees that after all the threads are started there is a thread choice
+cg.threads.break_start=false
+
+vm.por.field_boundaries.never = java.*,javax.*,sun.*,cz.cuni.mff.d3s.deeco.knowledge.RepositoryKnowledgeManager.rkmh
+
+vm.scheduler_factory.class=cz.cuni.mff.d3s.deeco.jpf.JDEECoSchedulerFactory
+
+cg.enumerate_random=true
+vm.random_floats=0.1,0.4,0.7
+

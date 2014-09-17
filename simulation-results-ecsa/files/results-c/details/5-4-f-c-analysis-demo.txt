@@ -1,0 +1,739 @@
+Config: 
+--------------------------------------------
+leader L16 of team T8 never discovered that M151 is in danger from 25873.
+leader L16 of team T8 discovered at 36318.000000 that M150 is in danger (after 15129ms proces-to-process, 14175ms node-to-node, 7hops, 4versions (10 first, 14 discovered)
+leader L16 of team T8 discovered at 32313.000000 that M160 is in danger (after 16665ms proces-to-process, 14019ms node-to-node, 2hops, 4versions (7 first, 11 discovered)
+leader L16 of team T8 discovered at 21730.000000 that M161 is in danger (after 2010ms proces-to-process, 233ms node-to-node, 1hops, 0versions (10 first, 10 discovered)
+leader L16 of team T8 discovered at 45322.000000 that M162 is in danger (after 23279ms proces-to-process, 22861ms node-to-node, 10hops, 7versions (10 first, 17 discovered)
+leader L16 of team T8 discovered at 28599.000000 that M164 is in danger (after 11660ms proces-to-process, 10434ms node-to-node, 4hops, 0versions (8 first, 8 discovered)
+leader L16 of team T8 discovered at 23093.000000 that M153 is in danger (after 2688ms proces-to-process, 2346ms node-to-node, 1hops, 0versions (9 first, 9 discovered)
+leader L16 of team T8 discovered at 30694.000000 that M166 is in danger (after 12728ms proces-to-process, 11151ms node-to-node, 8hops, 3versions (8 first, 11 discovered)
+leader L16 of team T8 discovered at 46306.000000 that M146 is in danger (after 16503ms proces-to-process, 14470ms node-to-node, 7hops, 0versions (14 first, 14 discovered)
+leader L16 of team T8 discovered at 37030.000000 that M147 is in danger (after 15035ms proces-to-process, 12098ms node-to-node, 3hops, 3versions (11 first, 14 discovered)
+leader L16 of team T8 discovered at 51550.000000 that M144 is in danger (after 22976ms proces-to-process, 20152ms node-to-node, 10hops, 0versions (14 first, 14 discovered)
+leader L16 of team T8 never discovered that M152 is in danger from 28488.
+leader L16 of team T8 discovered at 29377.000000 that M155 is in danger (after 8142ms proces-to-process, 7365ms node-to-node, 7hops, 1versions (10 first, 11 discovered)
+leader L16 of team T8 discovered at 53144.000000 that M154 is in danger (after 30255ms proces-to-process, 28433ms node-to-node, 9hops, 10versions (11 first, 21 discovered)
+leader L16 of team T8 discovered at 49328.000000 that M156 is in danger (after 25721ms proces-to-process, 24178ms node-to-node, 7hops, 8versions (11 first, 19 discovered)
+leader L16 of team T8 discovered at 28599.000000 that M159 is in danger (after 11870ms proces-to-process, 9095ms node-to-node, 3hops, 0versions (8 first, 8 discovered)
+leader L16 of team T8 discovered at 33638.000000 that M158 is in danger (after 15018ms proces-to-process, 14157ms node-to-node, 8hops, 2versions (9 first, 11 discovered)
+leader L16 of team T8 never discovered that M149 is in danger from 23031.
+leader L17 of team T8 never discovered that M151 is in danger from 25873.
+leader L17 of team T8 discovered at 54503.000000 that M150 is in danger (after 33314ms proces-to-process, 32560ms node-to-node, 9hops, 9versions (10 first, 19 discovered)
+leader L17 of team T8 discovered at 31667.000000 that M160 is in danger (after 16019ms proces-to-process, 13291ms node-to-node, 1hops, 4versions (7 first, 11 discovered)
+leader L17 of team T8 discovered at 21807.000000 that M161 is in danger (after 2087ms proces-to-process, 233ms node-to-node, 1hops, 0versions (10 first, 10 discovered)
+leader L17 of team T8 discovered at 49241.000000 that M162 is in danger (after 27198ms proces-to-process, 27022ms node-to-node, 11hops, 7versions (10 first, 17 discovered)
+leader L17 of team T8 discovered at 27484.000000 that M164 is in danger (after 10545ms proces-to-process, 9462ms node-to-node, 3hops, 0versions (8 first, 8 discovered)
+leader L17 of team T8 discovered at 28137.000000 that M153 is in danger (after 7732ms proces-to-process, 7345ms node-to-node, 2hops, 0versions (9 first, 9 discovered)
+leader L17 of team T8 discovered at 37467.000000 that M166 is in danger (after 19501ms proces-to-process, 17767ms node-to-node, 2hops, 2versions (8 first, 10 discovered)
+leader L17 of team T8 discovered at 46037.000000 that M146 is in danger (after 16234ms proces-to-process, 13763ms node-to-node, 6hops, 0versions (14 first, 14 discovered)
+leader L17 of team T8 discovered at 39984.000000 that M147 is in danger (after 17989ms proces-to-process, 15200ms node-to-node, 4hops, 3versions (11 first, 14 discovered)
+leader L17 of team T8 discovered at 50928.000000 that M144 is in danger (after 22354ms proces-to-process, 19898ms node-to-node, 9hops, 0versions (14 first, 14 discovered)
+leader L17 of team T8 never discovered that M152 is in danger from 28488.
+leader L17 of team T8 discovered at 35708.000000 that M155 is in danger (after 14473ms proces-to-process, 13211ms node-to-node, 8hops, 1versions (10 first, 11 discovered)
+leader L17 of team T8 never discovered that M154 is in danger from 22889.
+leader L17 of team T8 discovered at 53130.000000 that M156 is in danger (after 29523ms proces-to-process, 28547ms node-to-node, 8hops, 8versions (11 first, 19 discovered)
+leader L17 of team T8 discovered at 27484.000000 that M159 is in danger (after 10755ms proces-to-process, 8145ms node-to-node, 2hops, 0versions (8 first, 8 discovered)
+leader L17 of team T8 discovered at 44125.000000 that M158 is in danger (after 25505ms proces-to-process, 24308ms node-to-node, 7hops, 6versions (9 first, 15 discovered)
+leader L17 of team T8 never discovered that M149 is in danger from 23031.
+leader L18 of team T9 never discovered that M168 is in danger from 27762.
+leader L18 of team T9 never discovered that M169 is in danger from 25686.
+leader L18 of team T9 never discovered that M179 is in danger from 22952.
+leader L18 of team T9 never discovered that M170 is in danger from 27526.
+leader L18 of team T9 never discovered that M173 is in danger from 26371.
+leader L18 of team T9 never discovered that M172 is in danger from 18985.
+leader L18 of team T9 never discovered that M171 is in danger from 16659.
+leader L18 of team T9 never discovered that M163 is in danger from 29152.
+leader L18 of team T9 never discovered that M177 is in danger from 21803.
+leader L18 of team T9 never discovered that M165 is in danger from 30422.
+leader L18 of team T9 never discovered that M175 is in danger from 27067.
+leader L18 of team T9 never discovered that M167 is in danger from 25190.
+leader L18 of team T9 never discovered that M178 is in danger from 24037.
+leader L18 of team T9 never discovered that M176 is in danger from 29833.
+leader L18 of team T9 never discovered that M180 is in danger from 21358.
+leader L18 of team T9 never discovered that M174 is in danger from 28746.
+leader L19 of team T9 never discovered that M168 is in danger from 27762.
+leader L19 of team T9 never discovered that M169 is in danger from 25686.
+leader L19 of team T9 discovered at 47904.000000 that M179 is in danger (after 24952ms proces-to-process, 22713ms node-to-node, 8hops, 7versions (11 first, 18 discovered)
+leader L19 of team T9 discovered at 49136.000000 that M170 is in danger (after 21610ms proces-to-process, 18995ms node-to-node, 4hops, 7versions (13 first, 20 discovered)
+leader L19 of team T9 discovered at 53340.000000 that M173 is in danger (after 26969ms proces-to-process, 25127ms node-to-node, 5hops, 8versions (12 first, 20 discovered)
+leader L19 of team T9 discovered at 35257.000000 that M172 is in danger (after 16272ms proces-to-process, 14781ms node-to-node, 7hops, 4versions (8 first, 12 discovered)
+leader L19 of team T9 discovered at 50546.000000 that M171 is in danger (after 33887ms proces-to-process, 32655ms node-to-node, 8hops, 9versions (8 first, 17 discovered)
+leader L19 of team T9 never discovered that M163 is in danger from 29152.
+leader L19 of team T9 discovered at 35766.000000 that M177 is in danger (after 13963ms proces-to-process, 12554ms node-to-node, 7hops, 2versions (10 first, 12 discovered)
+leader L19 of team T9 discovered at 52775.000000 that M165 is in danger (after 22353ms proces-to-process, 19997ms node-to-node, 7hops, 7versions (14 first, 21 discovered)
+leader L19 of team T9 discovered at 47904.000000 that M175 is in danger (after 20837ms proces-to-process, 16550ms node-to-node, 10hops, 1versions (14 first, 15 discovered)
+leader L19 of team T9 discovered at 50546.000000 that M167 is in danger (after 25356ms proces-to-process, 23702ms node-to-node, 7hops, 6versions (12 first, 18 discovered)
+leader L19 of team T9 discovered at 49136.000000 that M178 is in danger (after 25099ms proces-to-process, 24736ms node-to-node, 8hops, 3versions (11 first, 14 discovered)
+leader L19 of team T9 never discovered that M176 is in danger from 29833.
+leader L19 of team T9 never discovered that M180 is in danger from 21358.
+leader L19 of team T9 never discovered that M174 is in danger from 28746.
+leader L12 of team T6 discovered at 38417.000000 that M124 is in danger (after 12413ms proces-to-process, 10612ms node-to-node, 3hops, 1versions (13 first, 14 discovered)
+leader L12 of team T6 discovered at 28381.000000 that M125 is in danger (after 4747ms proces-to-process, 2830ms node-to-node, 2hops, 1versions (11 first, 12 discovered)
+leader L12 of team T6 discovered at 33148.000000 that M126 is in danger (after 6739ms proces-to-process, 4865ms node-to-node, 3hops, 0versions (13 first, 13 discovered)
+leader L12 of team T6 discovered at 42061.000000 that M116 is in danger (after 24133ms proces-to-process, 23126ms node-to-node, 10hops, 0versions (8 first, 8 discovered)
+leader L12 of team T6 discovered at 49095.000000 that M119 is in danger (after 23049ms proces-to-process, 19459ms node-to-node, 8hops, 3versions (13 first, 16 discovered)
+leader L12 of team T6 discovered at 45263.000000 that M118 is in danger (after 17973ms proces-to-process, 15138ms node-to-node, 4hops, 0versions (14 first, 14 discovered)
+leader L12 of team T6 discovered at 35271.000000 that M122 is in danger (after 19224ms proces-to-process, 17733ms node-to-node, 10hops, 0versions (7 first, 7 discovered)
+leader L12 of team T6 discovered at 37209.000000 that M123 is in danger (after 13955ms proces-to-process, 11946ms node-to-node, 3hops, 2versions (11 first, 13 discovered)
+leader L12 of team T6 never discovered that M115 is in danger from 30032.
+leader L12 of team T6 discovered at 34961.000000 that M114 is in danger (after 17617ms proces-to-process, 16412ms node-to-node, 9hops, 2versions (8 first, 10 discovered)
+leader L12 of team T6 never discovered that M117 is in danger from 24549.
+leader L12 of team T6 never discovered that M109 is in danger from 16339.
+leader L12 of team T6 discovered at 27496.000000 that M129 is in danger (after 8030ms proces-to-process, 7190ms node-to-node, 2hops, 0versions (8 first, 8 discovered)
+leader L12 of team T6 never discovered that M113 is in danger from 29155.
+leader L12 of team T6 never discovered that M112 is in danger from 22343.
+leader L12 of team T6 discovered at 37524.000000 that M127 is in danger (after 18356ms proces-to-process, 17301ms node-to-node, 8hops, 2versions (9 first, 11 discovered)
+leader L12 of team T6 never discovered that M120 is in danger from 24111.
+leader L12 of team T6 discovered at 19828.000000 that M130 is in danger (after 1471ms proces-to-process, 1068ms node-to-node, 1hops, 0versions (8 first, 8 discovered)
+leader L12 of team T6 discovered at 44039.000000 that M121 is in danger (after 15394ms proces-to-process, 15098ms node-to-node, 5hops, 3versions (13 first, 16 discovered)
+leader L13 of team T6 discovered at 39508.000000 that M124 is in danger (after 13504ms proces-to-process, 11832ms node-to-node, 4hops, 3versions (13 first, 16 discovered)
+leader L13 of team T6 never discovered that M125 is in danger from 23634.
+leader L13 of team T6 discovered at 37358.000000 that M126 is in danger (after 10949ms proces-to-process, 8722ms node-to-node, 2hops, 1versions (13 first, 14 discovered)
+leader L13 of team T6 discovered at 19104.000000 that M116 is in danger (after 1176ms proces-to-process, 104ms node-to-node, 1hops, 0versions (8 first, 8 discovered)
+leader L13 of team T6 discovered at 41557.000000 that M119 is in danger (after 15511ms proces-to-process, 11913ms node-to-node, 6hops, 3versions (13 first, 16 discovered)
+leader L13 of team T6 discovered at 43779.000000 that M118 is in danger (after 16489ms proces-to-process, 13746ms node-to-node, 6hops, 0versions (14 first, 14 discovered)
+leader L13 of team T6 discovered at 52064.000000 that M122 is in danger (after 36017ms proces-to-process, 34591ms node-to-node, 5hops, 15versions (7 first, 22 discovered)
+leader L13 of team T6 discovered at 50367.000000 that M123 is in danger (after 27113ms proces-to-process, 25173ms node-to-node, 7hops, 8versions (11 first, 19 discovered)
+leader L13 of team T6 discovered at 47495.000000 that M115 is in danger (after 17463ms proces-to-process, 17092ms node-to-node, 5hops, 4versions (13 first, 17 discovered)
+leader L13 of team T6 discovered at 23910.000000 that M114 is in danger (after 6566ms proces-to-process, 5241ms node-to-node, 4hops, 0versions (8 first, 8 discovered)
+leader L13 of team T6 never discovered that M117 is in danger from 24549.
+leader L13 of team T6 discovered at 31164.000000 that M109 is in danger (after 14825ms proces-to-process, 13192ms node-to-node, 12hops, 1versions (7 first, 8 discovered)
+leader L13 of team T6 discovered at 52064.000000 that M129 is in danger (after 32598ms proces-to-process, 31645ms node-to-node, 6hops, 9versions (8 first, 17 discovered)
+leader L13 of team T6 discovered at 41090.000000 that M113 is in danger (after 11935ms proces-to-process, 10171ms node-to-node, 3hops, 1versions (14 first, 15 discovered)
+leader L13 of team T6 never discovered that M112 is in danger from 22343.
+leader L13 of team T6 discovered at 38895.000000 that M127 is in danger (after 19727ms proces-to-process, 18549ms node-to-node, 4hops, 6versions (9 first, 15 discovered)
+leader L13 of team T6 discovered at 42776.000000 that M120 is in danger (after 18665ms proces-to-process, 15762ms node-to-node, 1hops, 6versions (12 first, 18 discovered)
+leader L13 of team T6 discovered at 30061.000000 that M130 is in danger (after 11704ms proces-to-process, 10955ms node-to-node, 4hops, 1versions (8 first, 9 discovered)
+leader L13 of team T6 discovered at 29273.000000 that M121 is in danger (after 628ms proces-to-process, 304ms node-to-node, 1hops, 0versions (13 first, 13 discovered)
+leader L14 of team T7 discovered at 32262.000000 that M137 is in danger (after 4383ms proces-to-process, 3494ms node-to-node, 1hops, 0versions (13 first, 13 discovered)
+leader L14 of team T7 discovered at 23937.000000 that M136 is in danger (after 2893ms proces-to-process, 2010ms node-to-node, 4hops, 0versions (10 first, 10 discovered)
+leader L14 of team T7 discovered at 31550.000000 that M135 is in danger (after 13655ms proces-to-process, 11312ms node-to-node, 2hops, 1versions (9 first, 10 discovered)
+leader L14 of team T7 discovered at 25076.000000 that M134 is in danger (after 4656ms proces-to-process, 2439ms node-to-node, 1hops, 1versions (10 first, 11 discovered)
+leader L14 of team T7 discovered at 19905.000000 that M133 is in danger (after 2392ms proces-to-process, 933ms node-to-node, 1hops, 0versions (9 first, 9 discovered)
+leader L14 of team T7 discovered at 36607.000000 that M132 is in danger (after 11363ms proces-to-process, 9273ms node-to-node, 7hops, 0versions (12 first, 12 discovered)
+leader L14 of team T7 discovered at 29089.000000 that M131 is in danger (after 6854ms proces-to-process, 4970ms node-to-node, 6hops, 0versions (10 first, 10 discovered)
+leader L14 of team T7 discovered at 27600.000000 that M128 is in danger (after 6570ms proces-to-process, 5023ms node-to-node, 9hops, 0versions (10 first, 10 discovered)
+leader L14 of team T7 discovered at 35657.000000 that M139 is in danger (after 7151ms proces-to-process, 6784ms node-to-node, 3hops, 0versions (13 first, 13 discovered)
+leader L14 of team T7 discovered at 40669.000000 that M138 is in danger (after 10352ms proces-to-process, 10054ms node-to-node, 2hops, 2versions (14 first, 16 discovered)
+leader L14 of team T7 discovered at 38530.000000 that M145 is in danger (after 11407ms proces-to-process, 9086ms node-to-node, 2hops, 0versions (13 first, 13 discovered)
+leader L14 of team T7 discovered at 29089.000000 that M142 is in danger (after 9481ms proces-to-process, 7795ms node-to-node, 1hops, 2versions (9 first, 11 discovered)
+leader L14 of team T7 discovered at 34961.000000 that M143 is in danger (after 8683ms proces-to-process, 6776ms node-to-node, 2hops, 0versions (12 first, 12 discovered)
+leader L14 of team T7 discovered at 34961.000000 that M140 is in danger (after 7522ms proces-to-process, 7108ms node-to-node, 8hops, 0versions (13 first, 13 discovered)
+leader L14 of team T7 discovered at 19279.000000 that M141 is in danger (after 2759ms proces-to-process, 1453ms node-to-node, 1hops, 0versions (7 first, 7 discovered)
+leader L14 of team T7 discovered at 29729.000000 that M148 is in danger (after 5387ms proces-to-process, 5048ms node-to-node, 6hops, 0versions (11 first, 11 discovered)
+leader L15 of team T7 discovered at 36678.000000 that M137 is in danger (after 8799ms proces-to-process, 7713ms node-to-node, 8hops, 0versions (13 first, 13 discovered)
+leader L15 of team T7 discovered at 24363.000000 that M136 is in danger (after 3319ms proces-to-process, 2614ms node-to-node, 5hops, 0versions (10 first, 10 discovered)
+leader L15 of team T7 discovered at 35175.000000 that M135 is in danger (after 17280ms proces-to-process, 14926ms node-to-node, 8hops, 1versions (9 first, 10 discovered)
+leader L15 of team T7 discovered at 31915.000000 that M134 is in danger (after 11495ms proces-to-process, 9182ms node-to-node, 7hops, 2versions (10 first, 12 discovered)
+leader L15 of team T7 discovered at 23204.000000 that M133 is in danger (after 5691ms proces-to-process, 3949ms node-to-node, 6hops, 0versions (9 first, 9 discovered)
+leader L15 of team T7 discovered at 35746.000000 that M132 is in danger (after 10502ms proces-to-process, 8672ms node-to-node, 6hops, 0versions (12 first, 12 discovered)
+leader L15 of team T7 discovered at 30966.000000 that M131 is in danger (after 8731ms proces-to-process, 6777ms node-to-node, 9hops, 0versions (10 first, 10 discovered)
+leader L15 of team T7 discovered at 24363.000000 that M128 is in danger (after 3333ms proces-to-process, 2011ms node-to-node, 4hops, 0versions (10 first, 10 discovered)
+leader L15 of team T7 discovered at 35746.000000 that M139 is in danger (after 7240ms proces-to-process, 6784ms node-to-node, 3hops, 0versions (13 first, 13 discovered)
+leader L15 of team T7 discovered at 42578.000000 that M138 is in danger (after 12261ms proces-to-process, 11820ms node-to-node, 2hops, 0versions (14 first, 14 discovered)
+leader L15 of team T7 discovered at 38554.000000 that M145 is in danger (after 11431ms proces-to-process, 9086ms node-to-node, 2hops, 0versions (13 first, 13 discovered)
+leader L15 of team T7 discovered at 27680.000000 that M142 is in danger (after 8072ms proces-to-process, 6322ms node-to-node, 1hops, 0versions (9 first, 9 discovered)
+leader L15 of team T7 discovered at 35175.000000 that M143 is in danger (after 8897ms proces-to-process, 6776ms node-to-node, 2hops, 0versions (12 first, 12 discovered)
+leader L15 of team T7 discovered at 31678.000000 that M140 is in danger (after 4239ms proces-to-process, 4098ms node-to-node, 3hops, 0versions (13 first, 13 discovered)
+leader L15 of team T7 discovered at 19139.000000 that M141 is in danger (after 2619ms proces-to-process, 1453ms node-to-node, 1hops, 0versions (7 first, 7 discovered)
+leader L15 of team T7 discovered at 28855.000000 that M148 is in danger (after 4513ms proces-to-process, 3842ms node-to-node, 4hops, 0versions (11 first, 11 discovered)
+leader L8 of team T4 discovered at 51273.000000 that M72 is in danger (after 21689ms proces-to-process, 19230ms node-to-node, 2hops, 6versions (14 first, 20 discovered)
+leader L8 of team T4 discovered at 33466.000000 that M85 is in danger (after 17248ms proces-to-process, 15038ms node-to-node, 1hops, 4versions (8 first, 12 discovered)
+leader L8 of team T4 discovered at 31524.000000 that M77 is in danger (after 14709ms proces-to-process, 12217ms node-to-node, 1hops, 4versions (8 first, 12 discovered)
+leader L8 of team T4 never discovered that M88 is in danger from 28830.
+leader L8 of team T4 never discovered that M75 is in danger from 21968.
+leader L8 of team T4 discovered at 50290.000000 that M89 is in danger (after 23464ms proces-to-process, 22217ms node-to-node, 10hops, 2versions (13 first, 15 discovered)
+leader L8 of team T4 discovered at 36531.000000 that M86 is in danger (after 17550ms proces-to-process, 14542ms node-to-node, 2hops, 2versions (9 first, 11 discovered)
+leader L8 of team T4 discovered at 51273.000000 that M87 is in danger (after 25008ms proces-to-process, 23628ms node-to-node, 7hops, 3versions (13 first, 16 discovered)
+leader L8 of team T4 discovered at 31376.000000 that M79 is in danger (after 12947ms proces-to-process, 11250ms node-to-node, 3hops, 0versions (9 first, 9 discovered)
+leader L8 of team T4 discovered at 25945.000000 that M78 is in danger (after 6636ms proces-to-process, 4810ms node-to-node, 1hops, 0versions (9 first, 9 discovered)
+leader L8 of team T4 discovered at 23792.000000 that M82 is in danger (after 533ms proces-to-process, 7ms node-to-node, 1hops, 0versions (11 first, 11 discovered)
+leader L8 of team T4 never discovered that M83 is in danger from 30595.
+leader L8 of team T4 discovered at 41751.000000 that M80 is in danger (after 24738ms proces-to-process, 24365ms node-to-node, 4hops, 4versions (7 first, 11 discovered)
+leader L8 of team T4 never discovered that M81 is in danger from 20947.
+leader L8 of team T4 never discovered that M91 is in danger from 29809.
+leader L8 of team T4 discovered at 42909.000000 that M90 is in danger (after 17029ms proces-to-process, 13790ms node-to-node, 6hops, 1versions (13 first, 14 discovered)
+leader L8 of team T4 discovered at 38155.000000 that M84 is in danger (after 19221ms proces-to-process, 15938ms node-to-node, 6hops, 0versions (9 first, 9 discovered)
+leader L8 of team T4 never discovered that M93 is in danger from 24742.
+leader L9 of team T4 discovered at 37273.000000 that M72 is in danger (after 7689ms proces-to-process, 5420ms node-to-node, 7hops, 1versions (14 first, 15 discovered)
+leader L9 of team T4 discovered at 30996.000000 that M85 is in danger (after 14778ms proces-to-process, 12436ms node-to-node, 8hops, 2versions (8 first, 10 discovered)
+leader L9 of team T4 discovered at 34720.000000 that M77 is in danger (after 17905ms proces-to-process, 15229ms node-to-node, 6hops, 4versions (8 first, 12 discovered)
+leader L9 of team T4 discovered at 35898.000000 that M88 is in danger (after 7068ms proces-to-process, 6774ms node-to-node, 1hops, 1versions (13 first, 14 discovered)
+leader L9 of team T4 discovered at 33164.000000 that M75 is in danger (after 11196ms proces-to-process, 9044ms node-to-node, 9hops, 0versions (11 first, 11 discovered)
+leader L9 of team T4 discovered at 30267.000000 that M89 is in danger (after 3441ms proces-to-process, 2775ms node-to-node, 1hops, 0versions (13 first, 13 discovered)
+leader L9 of team T4 discovered at 24729.000000 that M86 is in danger (after 5748ms proces-to-process, 2999ms node-to-node, 5hops, 1versions (9 first, 10 discovered)
+leader L9 of team T4 discovered at 36861.000000 that M87 is in danger (after 10596ms proces-to-process, 9329ms node-to-node, 6hops, 1versions (13 first, 14 discovered)
+leader L9 of team T4 discovered at 27271.000000 that M79 is in danger (after 8842ms proces-to-process, 7749ms node-to-node, 6hops, 1versions (9 first, 10 discovered)
+leader L9 of team T4 discovered at 40354.000000 that M78 is in danger (after 21045ms proces-to-process, 19654ms node-to-node, 12hops, 1versions (9 first, 10 discovered)
+leader L9 of team T4 discovered at 41337.000000 that M82 is in danger (after 18078ms proces-to-process, 17627ms node-to-node, 4hops, 3versions (11 first, 14 discovered)
+leader L9 of team T4 discovered at 33887.000000 that M83 is in danger (after 3292ms proces-to-process, 804ms node-to-node, 2hops, 0versions (15 first, 15 discovered)
+leader L9 of team T4 discovered at 24729.000000 that M80 is in danger (after 7716ms proces-to-process, 6796ms node-to-node, 2hops, 3versions (7 first, 10 discovered)
+leader L9 of team T4 never discovered that M81 is in danger from 20947.
+leader L9 of team T4 discovered at 48090.000000 that M91 is in danger (after 18281ms proces-to-process, 15289ms node-to-node, 11hops, 1versions (15 first, 16 discovered)
+leader L9 of team T4 discovered at 30667.000000 that M90 is in danger (after 4787ms proces-to-process, 1536ms node-to-node, 1hops, 1versions (13 first, 14 discovered)
+leader L9 of team T4 discovered at 28530.000000 that M84 is in danger (after 9596ms proces-to-process, 6587ms node-to-node, 9hops, 0versions (9 first, 9 discovered)
+leader L9 of team T4 discovered at 33164.000000 that M93 is in danger (after 8422ms proces-to-process, 7274ms node-to-node, 3hops, 2versions (11 first, 13 discovered)
+leader L10 of team T5 never discovered that M99 is in danger from 20525.
+leader L10 of team T5 discovered at 36441.000000 that M98 is in danger (after 13588ms proces-to-process, 13272ms node-to-node, 5hops, 3versions (10 first, 13 discovered)
+leader L10 of team T5 discovered at 37093.000000 that M100 is in danger (after 15569ms proces-to-process, 14023ms node-to-node, 10hops, 0versions (11 first, 11 discovered)
+leader L10 of team T5 discovered at 32210.000000 that M101 is in danger (after 6706ms proces-to-process, 5887ms node-to-node, 3hops, 0versions (11 first, 11 discovered)
+leader L10 of team T5 discovered at 37093.000000 that M106 is in danger (after 13194ms proces-to-process, 11694ms node-to-node, 2hops, 3versions (11 first, 14 discovered)
+leader L10 of team T5 discovered at 20529.000000 that M107 is in danger (after 4687ms proces-to-process, 2508ms node-to-node, 2hops, 1versions (7 first, 8 discovered)
+leader L10 of team T5 never discovered that M104 is in danger from 23044.
+leader L10 of team T5 discovered at 32876.000000 that M103 is in danger (after 12937ms proces-to-process, 10924ms node-to-node, 5hops, 0versions (10 first, 10 discovered)
+leader L10 of team T5 discovered at 23155.000000 that M111 is in danger (after 3591ms proces-to-process, 832ms node-to-node, 1hops, 0versions (10 first, 10 discovered)
+leader L10 of team T5 discovered at 42661.000000 that M108 is in danger (after 24067ms proces-to-process, 21663ms node-to-node, 9hops, 2versions (9 first, 11 discovered)
+leader L10 of team T5 discovered at 50429.000000 that M92 is in danger (after 33080ms proces-to-process, 30615ms node-to-node, 9hops, 8versions (9 first, 17 discovered)
+leader L10 of team T5 discovered at 47696.000000 that M95 is in danger (after 22100ms proces-to-process, 19682ms node-to-node, 9hops, 2versions (12 first, 14 discovered)
+leader L10 of team T5 never discovered that M94 is in danger from 26697.
+leader L10 of team T5 discovered at 33977.000000 that M97 is in danger (after 13985ms proces-to-process, 11388ms node-to-node, 4hops, 3versions (9 first, 12 discovered)
+leader L10 of team T5 discovered at 45714.000000 that M96 is in danger (after 17740ms proces-to-process, 17375ms node-to-node, 8hops, 4versions (13 first, 17 discovered)
+leader L10 of team T5 discovered at 41186.000000 that M110 is in danger (after 10610ms proces-to-process, 10309ms node-to-node, 3hops, 3versions (14 first, 17 discovered)
+leader L10 of team T5 discovered at 32876.000000 that M105 is in danger (after 12257ms proces-to-process, 9995ms node-to-node, 3hops, 1versions (10 first, 11 discovered)
+leader L10 of team T5 discovered at 37093.000000 that M102 is in danger (after 9280ms proces-to-process, 8813ms node-to-node, 3hops, 1versions (13 first, 14 discovered)
+leader L11 of team T5 never discovered that M99 is in danger from 20525.
+leader L11 of team T5 discovered at 36855.000000 that M98 is in danger (after 14002ms proces-to-process, 13936ms node-to-node, 7hops, 1versions (10 first, 11 discovered)
+leader L11 of team T5 discovered at 32950.000000 that M100 is in danger (after 11426ms proces-to-process, 9607ms node-to-node, 3hops, 2versions (11 first, 13 discovered)
+leader L11 of team T5 discovered at 44388.000000 that M101 is in danger (after 18884ms proces-to-process, 17915ms node-to-node, 7hops, 3versions (11 first, 14 discovered)
+leader L11 of team T5 discovered at 44388.000000 that M106 is in danger (after 20489ms proces-to-process, 18854ms node-to-node, 5hops, 5versions (11 first, 16 discovered)
+leader L11 of team T5 discovered at 44388.000000 that M107 is in danger (after 28546ms proces-to-process, 26055ms node-to-node, 6hops, 8versions (7 first, 15 discovered)
+leader L11 of team T5 never discovered that M104 is in danger from 23044.
+leader L11 of team T5 never discovered that M103 is in danger from 19939.
+leader L11 of team T5 discovered at 48815.000000 that M111 is in danger (after 29251ms proces-to-process, 26662ms node-to-node, 6hops, 9versions (10 first, 19 discovered)
+leader L11 of team T5 discovered at 27839.000000 that M108 is in danger (after 9245ms proces-to-process, 6998ms node-to-node, 6hops, 0versions (9 first, 9 discovered)
+leader L11 of team T5 discovered at 22804.000000 that M92 is in danger (after 5455ms proces-to-process, 2910ms node-to-node, 1hops, 0versions (9 first, 9 discovered)
+leader L11 of team T5 discovered at 35058.000000 that M95 is in danger (after 9462ms proces-to-process, 6837ms node-to-node, 8hops, 0versions (12 first, 12 discovered)
+leader L11 of team T5 never discovered that M94 is in danger from 26697.
+leader L11 of team T5 discovered at 47034.000000 that M97 is in danger (after 27042ms proces-to-process, 24679ms node-to-node, 13hops, 6versions (9 first, 15 discovered)
+leader L11 of team T5 discovered at 46023.000000 that M96 is in danger (after 18049ms proces-to-process, 17488ms node-to-node, 4hops, 6versions (13 first, 19 discovered)
+leader L11 of team T5 never discovered that M110 is in danger from 30576.
+leader L11 of team T5 discovered at 32950.000000 that M105 is in danger (after 12331ms proces-to-process, 9541ms node-to-node, 8hops, 1versions (10 first, 11 discovered)
+leader L11 of team T5 discovered at 53598.000000 that M102 is in danger (after 25785ms proces-to-process, 25496ms node-to-node, 9hops, 4versions (13 first, 17 discovered)
+leader L4 of team T2 never discovered that M52 is in danger from 23359.
+leader L4 of team T2 discovered at 36683.000000 that M48 is in danger (after 16890ms proces-to-process, 15422ms node-to-node, 10hops, 0versions (9 first, 9 discovered)
+leader L4 of team T2 never discovered that M49 is in danger from 18599.
+leader L4 of team T2 discovered at 34474.000000 that M51 is in danger (after 13805ms proces-to-process, 10988ms node-to-node, 2hops, 1versions (10 first, 11 discovered)
+leader L4 of team T2 discovered at 27042.000000 that M50 is in danger (after 10041ms proces-to-process, 8725ms node-to-node, 1hops, 2versions (8 first, 10 discovered)
+leader L4 of team T2 discovered at 36683.000000 that M39 is in danger (after 13090ms proces-to-process, 10450ms node-to-node, 7hops, 0versions (12 first, 12 discovered)
+leader L4 of team T2 never discovered that M38 is in danger from 25756.
+leader L4 of team T2 never discovered that M42 is in danger from 29851.
+leader L4 of team T2 never discovered that M43 is in danger from 21135.
+leader L4 of team T2 discovered at 50358.000000 that M40 is in danger (after 27093ms proces-to-process, 24657ms node-to-node, 7hops, 6versions (12 first, 18 discovered)
+leader L4 of team T2 discovered at 50358.000000 that M41 is in danger (after 23131ms proces-to-process, 21630ms node-to-node, 9hops, 6versions (12 first, 18 discovered)
+leader L4 of team T2 discovered at 36683.000000 that M46 is in danger (after 11180ms proces-to-process, 10216ms node-to-node, 6hops, 0versions (12 first, 12 discovered)
+leader L4 of team T2 discovered at 29734.000000 that M47 is in danger (after 12311ms proces-to-process, 10095ms node-to-node, 2hops, 1versions (8 first, 9 discovered)
+leader L4 of team T2 never discovered that M44 is in danger from 24415.
+leader L4 of team T2 discovered at 54049.000000 that M45 is in danger (after 31661ms proces-to-process, 30955ms node-to-node, 9hops, 8versions (11 first, 19 discovered)
+leader L4 of team T2 discovered at 38573.000000 that M56 is in danger (after 19451ms proces-to-process, 17737ms node-to-node, 8hops, 3versions (9 first, 12 discovered)
+leader L4 of team T2 never discovered that M57 is in danger from 25882.
+leader L4 of team T2 discovered at 49619.000000 that M53 is in danger (after 33945ms proces-to-process, 32630ms node-to-node, 9hops, 9versions (7 first, 16 discovered)
+leader L4 of team T2 discovered at 19629.000000 that M54 is in danger (after 1116ms proces-to-process, 7ms node-to-node, 1hops, 0versions (8 first, 8 discovered)
+leader L4 of team T2 never discovered that M58 is in danger from 28961.
+leader L5 of team T2 discovered at 39040.000000 that M52 is in danger (after 15681ms proces-to-process, 13684ms node-to-node, 3hops, 4versions (11 first, 15 discovered)
+leader L5 of team T2 discovered at 25789.000000 that M48 is in danger (after 5996ms proces-to-process, 4771ms node-to-node, 2hops, 0versions (9 first, 9 discovered)
+leader L5 of team T2 discovered at 28202.000000 that M49 is in danger (after 9603ms proces-to-process, 6468ms node-to-node, 3hops, 2versions (9 first, 11 discovered)
+leader L5 of team T2 discovered at 43178.000000 that M51 is in danger (after 22509ms proces-to-process, 20009ms node-to-node, 7hops, 5versions (10 first, 15 discovered)
+leader L5 of team T2 discovered at 30069.000000 that M50 is in danger (after 13068ms proces-to-process, 11855ms node-to-node, 3hops, 2versions (8 first, 10 discovered)
+leader L5 of team T2 discovered at 41077.000000 that M39 is in danger (after 17484ms proces-to-process, 15170ms node-to-node, 5hops, 4versions (12 first, 16 discovered)
+leader L5 of team T2 discovered at 40665.000000 that M38 is in danger (after 14909ms proces-to-process, 14572ms node-to-node, 6hops, 3versions (11 first, 14 discovered)
+leader L5 of team T2 discovered at 41077.000000 that M42 is in danger (after 11226ms proces-to-process, 10226ms node-to-node, 5hops, 0versions (14 first, 14 discovered)
+leader L5 of team T2 discovered at 28202.000000 that M43 is in danger (after 7067ms proces-to-process, 3971ms node-to-node, 1hops, 0versions (11 first, 11 discovered)
+leader L5 of team T2 discovered at 33604.000000 that M40 is in danger (after 10339ms proces-to-process, 7956ms node-to-node, 5hops, 0versions (12 first, 12 discovered)
+leader L5 of team T2 discovered at 51185.000000 that M41 is in danger (after 23958ms proces-to-process, 22446ms node-to-node, 11hops, 8versions (12 first, 20 discovered)
+leader L5 of team T2 discovered at 44693.000000 that M46 is in danger (after 19190ms proces-to-process, 18752ms node-to-node, 8hops, 6versions (12 first, 18 discovered)
+leader L5 of team T2 discovered at 25789.000000 that M47 is in danger (after 8366ms proces-to-process, 6382ms node-to-node, 3hops, 1versions (8 first, 9 discovered)
+leader L5 of team T2 discovered at 28202.000000 that M44 is in danger (after 3787ms proces-to-process, 1900ms node-to-node, 1hops, 0versions (11 first, 11 discovered)
+leader L5 of team T2 discovered at 27136.000000 that M45 is in danger (after 4748ms proces-to-process, 4033ms node-to-node, 3hops, 0versions (11 first, 11 discovered)
+leader L5 of team T2 discovered at 27136.000000 that M56 is in danger (after 8014ms proces-to-process, 6212ms node-to-node, 5hops, 1versions (9 first, 10 discovered)
+leader L5 of team T2 never discovered that M57 is in danger from 25882.
+leader L5 of team T2 discovered at 53551.000000 that M53 is in danger (after 37877ms proces-to-process, 36280ms node-to-node, 3hops, 15versions (7 first, 22 discovered)
+leader L5 of team T2 never discovered that M54 is in danger from 18513.
+leader L5 of team T2 discovered at 41077.000000 that M58 is in danger (after 12116ms proces-to-process, 11579ms node-to-node, 4hops, 4versions (13 first, 17 discovered)
+leader L6 of team T3 discovered at 22178.000000 that M55 is in danger (after 5923ms proces-to-process, 5497ms node-to-node, 7hops, 1versions (7 first, 8 discovered)
+leader L6 of team T3 discovered at 30135.000000 that M60 is in danger (after 4699ms proces-to-process, 4212ms node-to-node, 3hops, 1versions (12 first, 13 discovered)
+leader L6 of team T3 discovered at 29275.000000 that M62 is in danger (after 11194ms proces-to-process, 9005ms node-to-node, 9hops, 1versions (8 first, 9 discovered)
+leader L6 of team T3 discovered at 30135.000000 that M63 is in danger (after 5632ms proces-to-process, 4389ms node-to-node, 9hops, 0versions (12 first, 12 discovered)
+leader L6 of team T3 discovered at 41429.000000 that M64 is in danger (after 14419ms proces-to-process, 13902ms node-to-node, 1hops, 3versions (13 first, 16 discovered)
+leader L6 of team T3 discovered at 37358.000000 that M65 is in danger (after 12050ms proces-to-process, 11189ms node-to-node, 8hops, 0versions (12 first, 12 discovered)
+leader L6 of team T3 discovered at 41984.000000 that M66 is in danger (after 13766ms proces-to-process, 12168ms node-to-node, 8hops, 2versions (14 first, 16 discovered)
+leader L6 of team T3 discovered at 40947.000000 that M61 is in danger (after 10945ms proces-to-process, 9664ms node-to-node, 9hops, 0versions (14 first, 14 discovered)
+leader L6 of team T3 discovered at 24682.000000 that M68 is in danger (after 1958ms proces-to-process, 1408ms node-to-node, 3hops, 0versions (10 first, 10 discovered)
+leader L6 of team T3 discovered at 27130.000000 that M69 is in danger (after 6637ms proces-to-process, 3818ms node-to-node, 7hops, 0versions (10 first, 10 discovered)
+leader L6 of team T3 discovered at 23009.000000 that M67 is in danger (after 3407ms proces-to-process, 2943ms node-to-node, 1hops, 0versions (8 first, 8 discovered)
+leader L6 of team T3 discovered at 45605.000000 that M59 is in danger (after 18555ms proces-to-process, 16303ms node-to-node, 12hops, 0versions (14 first, 14 discovered)
+leader L6 of team T3 discovered at 34830.000000 that M71 is in danger (after 7757ms proces-to-process, 5803ms node-to-node, 5hops, 3versions (13 first, 16 discovered)
+leader L6 of team T3 discovered at 30135.000000 that M73 is in danger (after 8231ms proces-to-process, 6906ms node-to-node, 2hops, 0versions (10 first, 10 discovered)
+leader L6 of team T3 discovered at 28525.000000 that M70 is in danger (after 6214ms proces-to-process, 4973ms node-to-node, 8hops, 1versions (10 first, 11 discovered)
+leader L6 of team T3 discovered at 30839.000000 that M74 is in danger (after 7192ms proces-to-process, 5407ms node-to-node, 5hops, 0versions (12 first, 12 discovered)
+leader L6 of team T3 discovered at 36817.000000 that M76 is in danger (after 11537ms proces-to-process, 6894ms node-to-node, 6hops, 2versions (13 first, 15 discovered)
+leader L7 of team T3 discovered at 26736.000000 that M55 is in danger (after 10481ms proces-to-process, 9879ms node-to-node, 2hops, 3versions (7 first, 10 discovered)
+leader L7 of team T3 discovered at 34351.000000 that M60 is in danger (after 8915ms proces-to-process, 8532ms node-to-node, 1hops, 0versions (12 first, 12 discovered)
+leader L7 of team T3 discovered at 24186.000000 that M62 is in danger (after 6105ms proces-to-process, 3900ms node-to-node, 1hops, 1versions (8 first, 9 discovered)
+leader L7 of team T3 discovered at 26262.000000 that M63 is in danger (after 1759ms proces-to-process, 378ms node-to-node, 2hops, 0versions (12 first, 12 discovered)
+leader L7 of team T3 discovered at 41715.000000 that M64 is in danger (after 14705ms proces-to-process, 13902ms node-to-node, 1hops, 3versions (13 first, 16 discovered)
+leader L7 of team T3 discovered at 28098.000000 that M65 is in danger (after 2790ms proces-to-process, 2200ms node-to-node, 1hops, 1versions (12 first, 13 discovered)
+leader L7 of team T3 discovered at 34351.000000 that M66 is in danger (after 6133ms proces-to-process, 4120ms node-to-node, 2hops, 2versions (14 first, 16 discovered)
+leader L7 of team T3 discovered at 36185.000000 that M61 is in danger (after 6183ms proces-to-process, 4843ms node-to-node, 1hops, 0versions (14 first, 14 discovered)
+leader L7 of team T3 discovered at 54596.000000 that M68 is in danger (after 31872ms proces-to-process, 31421ms node-to-node, 9hops, 9versions (10 first, 19 discovered)
+leader L7 of team T3 discovered at 39734.000000 that M69 is in danger (after 19241ms proces-to-process, 16727ms node-to-node, 10hops, 1versions (10 first, 11 discovered)
+leader L7 of team T3 never discovered that M67 is in danger from 19602.
+leader L7 of team T3 never discovered that M59 is in danger from 27050.
+leader L7 of team T3 never discovered that M71 is in danger from 27073.
+leader L7 of team T3 never discovered that M73 is in danger from 21904.
+leader L7 of team T3 never discovered that M70 is in danger from 22311.
+leader L7 of team T3 never discovered that M74 is in danger from 23647.
+leader L7 of team T3 discovered at 54007.000000 that M76 is in danger (after 28727ms proces-to-process, 24311ms node-to-node, 12hops, 3versions (13 first, 16 discovered)
+leader L0 of team T0 discovered at 41878.000000 that M11 is in danger (after 18465ms proces-to-process, 16657ms node-to-node, 6hops, 5versions (12 first, 17 discovered)
+leader L0 of team T0 discovered at 36797.000000 that M21 is in danger (after 19150ms proces-to-process, 17971ms node-to-node, 7hops, 2versions (8 first, 10 discovered)
+leader L0 of team T0 discovered at 51602.000000 that M17 is in danger (after 23190ms proces-to-process, 21365ms node-to-node, 8hops, 8versions (13 first, 21 discovered)
+leader L0 of team T0 discovered at 27082.000000 that M10 is in danger (after 7364ms proces-to-process, 6103ms node-to-node, 6hops, 0versions (9 first, 9 discovered)
+leader L0 of team T0 discovered at 30730.000000 that M16 is in danger (after 9298ms proces-to-process, 5520ms node-to-node, 4hops, 1versions (11 first, 12 discovered)
+leader L0 of team T0 discovered at 27456.000000 that M13 is in danger (after 9214ms proces-to-process, 6401ms node-to-node, 2hops, 1versions (9 first, 10 discovered)
+leader L0 of team T0 discovered at 29195.000000 that M18 is in danger (after 12943ms proces-to-process, 12183ms node-to-node, 3hops, 3versions (7 first, 10 discovered)
+leader L0 of team T0 discovered at 29195.000000 that M5 is in danger (after 9638ms proces-to-process, 9304ms node-to-node, 1hops, 3versions (9 first, 12 discovered)
+leader L0 of team T0 discovered at 24240.000000 that M4 is in danger (after 2108ms proces-to-process, 1859ms node-to-node, 2hops, 1versions (10 first, 11 discovered)
+leader L0 of team T0 discovered at 44032.000000 that M7 is in danger (after 14209ms proces-to-process, 12703ms node-to-node, 7hops, 1versions (14 first, 15 discovered)
+leader L0 of team T0 discovered at 47485.000000 that M6 is in danger (after 25014ms proces-to-process, 23059ms node-to-node, 9hops, 7versions (11 first, 18 discovered)
+leader L0 of team T0 discovered at 32222.000000 that M1 is in danger (after 7378ms proces-to-process, 6432ms node-to-node, 1hops, 1versions (12 first, 13 discovered)
+leader L0 of team T0 discovered at 24646.000000 that M0 is in danger (after 4008ms proces-to-process, 3285ms node-to-node, 2hops, 0versions (9 first, 9 discovered)
+leader L0 of team T0 never discovered that M3 is in danger from 18763.
+leader L0 of team T0 discovered at 32222.000000 that M2 is in danger (after 4792ms proces-to-process, 2613ms node-to-node, 1hops, 0versions (13 first, 13 discovered)
+leader L0 of team T0 discovered at 43613.000000 that M15 is in danger (after 24543ms proces-to-process, 22843ms node-to-node, 3hops, 7versions (9 first, 16 discovered)
+leader L0 of team T0 discovered at 41442.000000 that M12 is in danger (after 15105ms proces-to-process, 14450ms node-to-node, 6hops, 2versions (12 first, 14 discovered)
+leader L0 of team T0 discovered at 31697.000000 that M9 is in danger (after 1339ms proces-to-process, 556ms node-to-node, 1hops, 0versions (13 first, 13 discovered)
+leader L0 of team T0 discovered at 18462.000000 that M8 is in danger (after 1082ms proces-to-process, 411ms node-to-node, 2hops, 0versions (8 first, 8 discovered)
+leader L0 of team T0 discovered at 22026.000000 that M14 is in danger (after 1567ms proces-to-process, 889ms node-to-node, 2hops, 0versions (9 first, 9 discovered)
+leader L1 of team T0 never discovered that M11 is in danger from 23413.
+leader L1 of team T0 discovered at 44137.000000 that M21 is in danger (after 26490ms proces-to-process, 25503ms node-to-node, 6hops, 5versions (8 first, 13 discovered)
+leader L1 of team T0 discovered at 44137.000000 that M17 is in danger (after 15725ms proces-to-process, 13938ms node-to-node, 5hops, 4versions (13 first, 17 discovered)
+leader L1 of team T0 discovered at 28370.000000 that M10 is in danger (after 8652ms proces-to-process, 7223ms node-to-node, 2hops, 1versions (9 first, 10 discovered)
+leader L1 of team T0 discovered at 37324.000000 that M16 is in danger (after 15892ms proces-to-process, 12119ms node-to-node, 7hops, 2versions (11 first, 13 discovered)
+leader L1 of team T0 discovered at 42286.000000 that M13 is in danger (after 24044ms proces-to-process, 21167ms node-to-node, 8hops, 3versions (9 first, 12 discovered)
+leader L1 of team T0 discovered at 29745.000000 that M18 is in danger (after 13493ms proces-to-process, 12432ms node-to-node, 10hops, 0versions (7 first, 7 discovered)
+leader L1 of team T0 never discovered that M5 is in danger from 19557.
+leader L1 of team T0 never discovered that M4 is in danger from 22132.
+leader L1 of team T0 never discovered that M7 is in danger from 29823.
+leader L1 of team T0 discovered at 28370.000000 that M6 is in danger (after 5899ms proces-to-process, 4282ms node-to-node, 1hops, 0versions (11 first, 11 discovered)
+leader L1 of team T0 discovered at 51915.000000 that M1 is in danger (after 27071ms proces-to-process, 26244ms node-to-node, 9hops, 6versions (12 first, 18 discovered)
+leader L1 of team T0 discovered at 33282.000000 that M0 is in danger (after 12644ms proces-to-process, 12244ms node-to-node, 9hops, 0versions (9 first, 9 discovered)
+leader L1 of team T0 never discovered that M3 is in danger from 18763.
+leader L1 of team T0 discovered at 53293.000000 that M2 is in danger (after 25863ms proces-to-process, 23661ms node-to-node, 7hops, 9versions (13 first, 22 discovered)
+leader L1 of team T0 discovered at 39049.000000 that M15 is in danger (after 19979ms proces-to-process, 18585ms node-to-node, 5hops, 4versions (9 first, 13 discovered)
+leader L1 of team T0 discovered at 49769.000000 that M12 is in danger (after 23432ms proces-to-process, 22835ms node-to-node, 6hops, 5versions (12 first, 17 discovered)
+leader L1 of team T0 discovered at 50824.000000 that M9 is in danger (after 20466ms proces-to-process, 20220ms node-to-node, 8hops, 3versions (13 first, 16 discovered)
+leader L1 of team T0 discovered at 34740.000000 that M8 is in danger (after 17360ms proces-to-process, 16928ms node-to-node, 9hops, 1versions (8 first, 9 discovered)
+leader L1 of team T0 never discovered that M14 is in danger from 20459.
+leader L2 of team T1 discovered at 44064.000000 that M33 is in danger (after 16408ms proces-to-process, 14535ms node-to-node, 1hops, 5versions (13 first, 18 discovered)
+leader L2 of team T1 discovered at 46541.000000 that M34 is in danger (after 16217ms proces-to-process, 15064ms node-to-node, 2hops, 5versions (14 first, 19 discovered)
+leader L2 of team T1 discovered at 41607.000000 that M28 is in danger (after 16792ms proces-to-process, 14242ms node-to-node, 4hops, 5versions (12 first, 17 discovered)
+leader L2 of team T1 discovered at 49027.000000 that M29 is in danger (after 24955ms proces-to-process, 24080ms node-to-node, 6hops, 10versions (11 first, 21 discovered)
+leader L2 of team T1 discovered at 49312.000000 that M24 is in danger (after 19101ms proces-to-process, 16051ms node-to-node, 6hops, 4versions (15 first, 19 discovered)
+leader L2 of team T1 discovered at 40461.000000 that M25 is in danger (after 12375ms proces-to-process, 9806ms node-to-node, 4hops, 2versions (14 first, 16 discovered)
+leader L2 of team T1 discovered at 51958.000000 that M26 is in danger (after 21639ms proces-to-process, 19551ms node-to-node, 9hops, 1versions (14 first, 15 discovered)
+leader L2 of team T1 discovered at 48514.000000 that M27 is in danger (after 25688ms proces-to-process, 23411ms node-to-node, 5hops, 6versions (11 first, 17 discovered)
+leader L2 of team T1 discovered at 42085.000000 that M20 is in danger (after 13847ms proces-to-process, 11981ms node-to-node, 9hops, 2versions (13 first, 15 discovered)
+leader L2 of team T1 discovered at 39768.000000 that M32 is in danger (after 18662ms proces-to-process, 17707ms node-to-node, 10hops, 2versions (10 first, 12 discovered)
+leader L2 of team T1 discovered at 33056.000000 that M22 is in danger (after 13066ms proces-to-process, 11431ms node-to-node, 6hops, 1versions (9 first, 10 discovered)
+leader L2 of team T1 never discovered that M23 is in danger from 26727.
+leader L2 of team T1 discovered at 47550.000000 that M37 is in danger (after 24618ms proces-to-process, 22908ms node-to-node, 14hops, 0versions (11 first, 11 discovered)
+leader L2 of team T1 discovered at 43326.000000 that M31 is in danger (after 25665ms proces-to-process, 24331ms node-to-node, 10hops, 4versions (8 first, 12 discovered)
+leader L2 of team T1 discovered at 46541.000000 that M36 is in danger (after 30896ms proces-to-process, 28582ms node-to-node, 9hops, 5versions (7 first, 12 discovered)
+leader L2 of team T1 never discovered that M19 is in danger from 29161.
+leader L2 of team T1 discovered at 47550.000000 that M30 is in danger (after 19170ms proces-to-process, 18147ms node-to-node, 10hops, 5versions (13 first, 18 discovered)
+leader L2 of team T1 discovered at 41607.000000 that M35 is in danger (after 13732ms proces-to-process, 10356ms node-to-node, 3hops, 0versions (14 first, 14 discovered)
+leader L3 of team T1 discovered at 32286.000000 that M33 is in danger (after 4630ms proces-to-process, 2610ms node-to-node, 5hops, 0versions (13 first, 13 discovered)
+leader L3 of team T1 discovered at 36941.000000 that M34 is in danger (after 6617ms proces-to-process, 5705ms node-to-node, 2hops, 1versions (14 first, 15 discovered)
+leader L3 of team T1 discovered at 32286.000000 that M28 is in danger (after 7471ms proces-to-process, 4828ms node-to-node, 6hops, 1versions (12 first, 13 discovered)
+leader L3 of team T1 discovered at 25912.000000 that M29 is in danger (after 1840ms proces-to-process, 807ms node-to-node, 2hops, 0versions (11 first, 11 discovered)
+leader L3 of team T1 discovered at 40408.000000 that M24 is in danger (after 10197ms proces-to-process, 6774ms node-to-node, 4hops, 1versions (15 first, 16 discovered)
+leader L3 of team T1 discovered at 34671.000000 that M25 is in danger (after 6585ms proces-to-process, 4283ms node-to-node, 6hops, 0versions (14 first, 14 discovered)
+leader L3 of team T1 discovered at 45152.000000 that M26 is in danger (after 14833ms proces-to-process, 12369ms node-to-node, 9hops, 1versions (14 first, 15 discovered)
+leader L3 of team T1 discovered at 32793.000000 that M27 is in danger (after 9967ms proces-to-process, 8044ms node-to-node, 4hops, 2versions (11 first, 13 discovered)
+leader L3 of team T1 discovered at 33545.000000 that M20 is in danger (after 5307ms proces-to-process, 3381ms node-to-node, 5hops, 1versions (13 first, 14 discovered)
+leader L3 of team T1 discovered at 34281.000000 that M32 is in danger (after 13175ms proces-to-process, 12113ms node-to-node, 7hops, 2versions (10 first, 12 discovered)
+leader L3 of team T1 discovered at 25326.000000 that M22 is in danger (after 5336ms proces-to-process, 3661ms node-to-node, 3hops, 1versions (9 first, 10 discovered)
+leader L3 of team T1 discovered at 38820.000000 that M23 is in danger (after 12093ms proces-to-process, 11281ms node-to-node, 8hops, 2versions (12 first, 14 discovered)
+leader L3 of team T1 discovered at 39375.000000 that M37 is in danger (after 16443ms proces-to-process, 14767ms node-to-node, 6hops, 5versions (11 first, 16 discovered)
+leader L3 of team T1 discovered at 29664.000000 that M31 is in danger (after 12003ms proces-to-process, 10340ms node-to-node, 7hops, 0versions (8 first, 8 discovered)
+leader L3 of team T1 discovered at 28724.000000 that M36 is in danger (after 13079ms proces-to-process, 10427ms node-to-node, 9hops, 2versions (7 first, 9 discovered)
+leader L3 of team T1 discovered at 41470.000000 that M19 is in danger (after 12309ms proces-to-process, 11045ms node-to-node, 8hops, 1versions (14 first, 15 discovered)
+leader L3 of team T1 discovered at 35475.000000 that M30 is in danger (after 7095ms proces-to-process, 6350ms node-to-node, 8hops, 0versions (13 first, 13 discovered)
+leader L3 of team T1 discovered at 35988.000000 that M35 is in danger (after 8113ms proces-to-process, 4377ms node-to-node, 1hops, 0versions (14 first, 14 discovered)
+leader L29 of team T14 discovered at 51391.000000 that M262 is in danger (after 25514ms proces-to-process, 23087ms node-to-node, 4hops, 7versions (12 first, 19 discovered)
+leader L29 of team T14 discovered at 44753.000000 that M258 is in danger (after 23051ms proces-to-process, 20680ms node-to-node, 4hops, 6versions (11 first, 17 discovered)
+leader L29 of team T14 never discovered that M259 is in danger from 19944.
+leader L29 of team T14 never discovered that M270 is in danger from 15661.
+leader L29 of team T14 never discovered that M269 is in danger from 29364.
+leader L29 of team T14 never discovered that M268 is in danger from 16422.
+leader L29 of team T14 discovered at 18707.000000 that M252 is in danger (after 1674ms proces-to-process, 785ms node-to-node, 3hops, 0versions (8 first, 8 discovered)
+leader L29 of team T14 discovered at 33341.000000 that M263 is in danger (after 15220ms proces-to-process, 13007ms node-to-node, 4hops, 1versions (9 first, 10 discovered)
+leader L29 of team T14 discovered at 36452.000000 that M265 is in danger (after 17156ms proces-to-process, 16233ms node-to-node, 10hops, 2versions (9 first, 11 discovered)
+leader L29 of team T14 never discovered that M264 is in danger from 20265.
+leader L29 of team T14 never discovered that M256 is in danger from 27171.
+leader L29 of team T14 discovered at 35629.000000 that M257 is in danger (after 16186ms proces-to-process, 13444ms node-to-node, 3hops, 4versions (10 first, 14 discovered)
+leader L29 of team T14 never discovered that M261 is in danger from 23354.
+leader L29 of team T14 discovered at 25828.000000 that M255 is in danger (after 1077ms proces-to-process, 327ms node-to-node, 1hops, 0versions (11 first, 11 discovered)
+leader L29 of team T14 discovered at 50827.000000 that M267 is in danger (after 22166ms proces-to-process, 20466ms node-to-node, 5hops, 4versions (13 first, 17 discovered)
+leader L29 of team T14 discovered at 45815.000000 that M272 is in danger (after 23110ms proces-to-process, 21349ms node-to-node, 5hops, 7versions (12 first, 19 discovered)
+leader L29 of team T14 discovered at 42223.000000 that M266 is in danger (after 20903ms proces-to-process, 19587ms node-to-node, 9hops, 6versions (10 first, 16 discovered)
+leader L29 of team T14 never discovered that M273 is in danger from 29753.
+leader L29 of team T14 never discovered that M260 is in danger from 19211.
+leader L28 of team T14 discovered at 52796.000000 that M262 is in danger (after 26919ms proces-to-process, 23881ms node-to-node, 4hops, 2versions (12 first, 14 discovered)
+leader L28 of team T14 discovered at 39984.000000 that M258 is in danger (after 18282ms proces-to-process, 15983ms node-to-node, 3hops, 3versions (11 first, 14 discovered)
+leader L28 of team T14 discovered at 37495.000000 that M259 is in danger (after 17551ms proces-to-process, 16461ms node-to-node, 2hops, 4versions (9 first, 13 discovered)
+leader L28 of team T14 never discovered that M270 is in danger from 15661.
+leader L28 of team T14 never discovered that M269 is in danger from 29364.
+leader L28 of team T14 discovered at 49008.000000 that M268 is in danger (after 32586ms proces-to-process, 29679ms node-to-node, 9hops, 6versions (8 first, 14 discovered)
+leader L28 of team T14 never discovered that M252 is in danger from 17033.
+leader L28 of team T14 discovered at 32899.000000 that M263 is in danger (after 14778ms proces-to-process, 12261ms node-to-node, 3hops, 1versions (9 first, 10 discovered)
+leader L28 of team T14 discovered at 26619.000000 that M265 is in danger (after 7323ms proces-to-process, 6374ms node-to-node, 1hops, 1versions (9 first, 10 discovered)
+leader L28 of team T14 discovered at 31032.000000 that M264 is in danger (after 10767ms proces-to-process, 10667ms node-to-node, 2hops, 2versions (10 first, 12 discovered)
+leader L28 of team T14 never discovered that M256 is in danger from 27171.
+leader L28 of team T14 discovered at 35119.000000 that M257 is in danger (after 15676ms proces-to-process, 13127ms node-to-node, 5hops, 1versions (10 first, 11 discovered)
+leader L28 of team T14 never discovered that M261 is in danger from 23354.
+leader L28 of team T14 discovered at 50934.000000 that M255 is in danger (after 26183ms proces-to-process, 25929ms node-to-node, 19hops, 3versions (11 first, 14 discovered)
+leader L28 of team T14 discovered at 53713.000000 that M267 is in danger (after 25052ms proces-to-process, 23575ms node-to-node, 8hops, 4versions (13 first, 17 discovered)
+leader L28 of team T14 never discovered that M272 is in danger from 22705.
+leader L28 of team T14 discovered at 44398.000000 that M266 is in danger (after 23078ms proces-to-process, 20901ms node-to-node, 8hops, 4versions (10 first, 14 discovered)
+leader L28 of team T14 never discovered that M273 is in danger from 29753.
+leader L28 of team T14 discovered at 27034.000000 that M260 is in danger (after 7823ms proces-to-process, 6490ms node-to-node, 2hops, 2versions (9 first, 11 discovered)
+leader L30 of team T15 discovered at 39333.000000 that M281 is in danger (after 10169ms proces-to-process, 9804ms node-to-node, 5hops, 1versions (13 first, 14 discovered)
+leader L30 of team T15 discovered at 28946.000000 that M280 is in danger (after 3552ms proces-to-process, 1407ms node-to-node, 3hops, 0versions (12 first, 12 discovered)
+leader L30 of team T15 discovered at 44480.000000 that M283 is in danger (after 20947ms proces-to-process, 17867ms node-to-node, 9hops, 7versions (12 first, 19 discovered)
+leader L30 of team T15 discovered at 25615.000000 that M282 is in danger (after 8889ms proces-to-process, 7878ms node-to-node, 6hops, 0versions (7 first, 7 discovered)
+leader L30 of team T15 discovered at 41214.000000 that M278 is in danger (after 12758ms proces-to-process, 10255ms node-to-node, 2hops, 0versions (13 first, 13 discovered)
+leader L30 of team T15 discovered at 30058.000000 that M279 is in danger (after 3682ms proces-to-process, 3213ms node-to-node, 6hops, 0versions (12 first, 12 discovered)
+leader L30 of team T15 discovered at 36191.000000 that M287 is in danger (after 16451ms proces-to-process, 15968ms node-to-node, 5hops, 5versions (9 first, 14 discovered)
+leader L30 of team T15 discovered at 30058.000000 that M286 is in danger (after 2099ms proces-to-process, 1696ms node-to-node, 2hops, 1versions (13 first, 14 discovered)
+leader L30 of team T15 discovered at 32405.000000 that M274 is in danger (after 14966ms proces-to-process, 12866ms node-to-node, 9hops, 0versions (9 first, 9 discovered)
+leader L30 of team T15 discovered at 22232.000000 that M275 is in danger (after 6890ms proces-to-process, 6403ms node-to-node, 7hops, 1versions (7 first, 8 discovered)
+leader L30 of team T15 discovered at 33250.000000 that M276 is in danger (after 15031ms proces-to-process, 13084ms node-to-node, 6hops, 3versions (9 first, 12 discovered)
+leader L30 of team T15 discovered at 51099.000000 that M277 is in danger (after 26166ms proces-to-process, 25420ms node-to-node, 1hops, 7versions (11 first, 18 discovered)
+leader L30 of team T15 discovered at 33937.000000 that M271 is in danger (after 13264ms proces-to-process, 12840ms node-to-node, 6hops, 1versions (9 first, 10 discovered)
+leader L30 of team T15 discovered at 35217.000000 that M288 is in danger (after 13304ms proces-to-process, 10267ms node-to-node, 4hops, 3versions (11 first, 14 discovered)
+leader L30 of team T15 discovered at 32405.000000 that M285 is in danger (after 7713ms proces-to-process, 6563ms node-to-node, 1hops, 1versions (12 first, 13 discovered)
+leader L30 of team T15 discovered at 38213.000000 that M292 is in danger (after 11956ms proces-to-process, 11659ms node-to-node, 5hops, 2versions (12 first, 14 discovered)
+leader L30 of team T15 discovered at 32405.000000 that M284 is in danger (after 5997ms proces-to-process, 5479ms node-to-node, 9hops, 0versions (12 first, 12 discovered)
+leader L31 of team T15 discovered at 47780.000000 that M281 is in danger (after 18616ms proces-to-process, 18278ms node-to-node, 7hops, 3versions (13 first, 16 discovered)
+leader L31 of team T15 discovered at 39996.000000 that M280 is in danger (after 14602ms proces-to-process, 12226ms node-to-node, 8hops, 3versions (12 first, 15 discovered)
+leader L31 of team T15 discovered at 34958.000000 that M283 is in danger (after 11425ms proces-to-process, 7806ms node-to-node, 2hops, 3versions (12 first, 15 discovered)
+leader L31 of team T15 discovered at 30445.000000 that M282 is in danger (after 13719ms proces-to-process, 11779ms node-to-node, 7hops, 0versions (7 first, 7 discovered)
+leader L31 of team T15 discovered at 40971.000000 that M278 is in danger (after 12515ms proces-to-process, 10255ms node-to-node, 2hops, 0versions (13 first, 13 discovered)
+leader L31 of team T15 discovered at 37692.000000 that M279 is in danger (after 11316ms proces-to-process, 10762ms node-to-node, 6hops, 0versions (12 first, 12 discovered)
+leader L31 of team T15 discovered at 44512.000000 that M287 is in danger (after 24772ms proces-to-process, 24267ms node-to-node, 8hops, 8versions (9 first, 17 discovered)
+leader L31 of team T15 discovered at 42391.000000 that M286 is in danger (after 14432ms proces-to-process, 14208ms node-to-node, 6hops, 5versions (13 first, 18 discovered)
+leader L31 of team T15 discovered at 37225.000000 that M274 is in danger (after 19786ms proces-to-process, 17702ms node-to-node, 11hops, 2versions (9 first, 11 discovered)
+leader L31 of team T15 discovered at 25979.000000 that M275 is in danger (after 10637ms proces-to-process, 10266ms node-to-node, 2hops, 1versions (7 first, 8 discovered)
+leader L31 of team T15 discovered at 30445.000000 that M276 is in danger (after 12226ms proces-to-process, 10072ms node-to-node, 1hops, 3versions (9 first, 12 discovered)
+leader L31 of team T15 discovered at 51969.000000 that M277 is in danger (after 27036ms proces-to-process, 25420ms node-to-node, 1hops, 7versions (11 first, 18 discovered)
+leader L31 of team T15 never discovered that M271 is in danger from 20673.
+leader L31 of team T15 discovered at 37225.000000 that M288 is in danger (after 15312ms proces-to-process, 13009ms node-to-node, 5hops, 3versions (11 first, 14 discovered)
+leader L31 of team T15 discovered at 34958.000000 that M285 is in danger (after 10266ms proces-to-process, 9358ms node-to-node, 2hops, 1versions (12 first, 13 discovered)
+leader L31 of team T15 discovered at 42756.000000 that M292 is in danger (after 16499ms proces-to-process, 16438ms node-to-node, 11hops, 4versions (12 first, 16 discovered)
+leader L31 of team T15 never discovered that M284 is in danger from 26408.
+leader L32 of team T16 discovered at 52989.000000 that M296 is in danger (after 31296ms proces-to-process, 29673ms node-to-node, 9hops, 4versions (10 first, 14 discovered)
+leader L32 of team T16 discovered at 38645.000000 that M297 is in danger (after 10301ms proces-to-process, 9338ms node-to-node, 8hops, 0versions (14 first, 14 discovered)
+leader L32 of team T16 discovered at 37579.000000 that M294 is in danger (after 16753ms proces-to-process, 15081ms node-to-node, 6hops, 2versions (10 first, 12 discovered)
+leader L32 of team T16 discovered at 39633.000000 that M295 is in danger (after 20783ms proces-to-process, 17431ms node-to-node, 7hops, 6versions (9 first, 15 discovered)
+leader L32 of team T16 discovered at 44596.000000 that M293 is in danger (after 26916ms proces-to-process, 25036ms node-to-node, 3hops, 8versions (9 first, 17 discovered)
+leader L32 of team T16 never discovered that M290 is in danger from 19002.
+leader L32 of team T16 discovered at 41330.000000 that M291 is in danger (after 17834ms proces-to-process, 16797ms node-to-node, 7hops, 4versions (11 first, 15 discovered)
+leader L32 of team T16 discovered at 33515.000000 that M289 is in danger (after 13069ms proces-to-process, 12114ms node-to-node, 7hops, 3versions (9 first, 12 discovered)
+leader L32 of team T16 discovered at 22810.000000 that M298 is in danger (after 6493ms proces-to-process, 5378ms node-to-node, 2hops, 1versions (7 first, 8 discovered)
+leader L32 of team T16 discovered at 52989.000000 that M299 is in danger (after 23375ms proces-to-process, 22304ms node-to-node, 14hops, 5versions (14 first, 19 discovered)
+leader L32 of team T16 never discovered that M300 is in danger from 28848.
+leader L32 of team T16 discovered at 37579.000000 that M301 is in danger (after 20162ms proces-to-process, 19275ms node-to-node, 9hops, 5versions (8 first, 13 discovered)
+leader L32 of team T16 discovered at 27511.000000 that M302 is in danger (after 7424ms proces-to-process, 6402ms node-to-node, 4hops, 0versions (9 first, 9 discovered)
+leader L32 of team T16 discovered at 40561.000000 that M303 is in danger (after 12673ms proces-to-process, 11682ms node-to-node, 1hops, 2versions (13 first, 15 discovered)
+leader L32 of team T16 never discovered that M304 is in danger from 29922.
+leader L32 of team T16 discovered at 43679.000000 that M305 is in danger (after 15277ms proces-to-process, 14451ms node-to-node, 6hops, 1versions (13 first, 14 discovered)
+leader L32 of team T16 discovered at 31580.000000 that M306 is in danger (after 15577ms proces-to-process, 14271ms node-to-node, 9hops, 2versions (7 first, 9 discovered)
+leader L32 of team T16 discovered at 30533.000000 that M307 is in danger (after 7527ms proces-to-process, 5580ms node-to-node, 1hops, 0versions (11 first, 11 discovered)
+leader L32 of team T16 never discovered that M308 is in danger from 25626.
+leader L33 of team T16 discovered at 24036.000000 that M296 is in danger (after 2343ms proces-to-process, 1192ms node-to-node, 1hops, 0versions (10 first, 10 discovered)
+leader L33 of team T16 discovered at 44376.000000 that M297 is in danger (after 16032ms proces-to-process, 15062ms node-to-node, 11hops, 0versions (14 first, 14 discovered)
+leader L33 of team T16 discovered at 48547.000000 that M294 is in danger (after 27721ms proces-to-process, 25890ms node-to-node, 12hops, 6versions (10 first, 16 discovered)
+leader L33 of team T16 never discovered that M295 is in danger from 18850.
+leader L33 of team T16 never discovered that M293 is in danger from 17680.
+leader L33 of team T16 discovered at 24036.000000 that M290 is in danger (after 5034ms proces-to-process, 3599ms node-to-node, 3hops, 0versions (9 first, 9 discovered)
+leader L33 of team T16 discovered at 25407.000000 that M291 is in danger (after 1911ms proces-to-process, 958ms node-to-node, 2hops, 0versions (11 first, 11 discovered)
+leader L33 of team T16 discovered at 43734.000000 that M289 is in danger (after 23288ms proces-to-process, 22366ms node-to-node, 4hops, 9versions (9 first, 18 discovered)
+leader L33 of team T16 discovered at 32080.000000 that M298 is in danger (after 15763ms proces-to-process, 14637ms node-to-node, 14hops, 1versions (7 first, 8 discovered)
+leader L33 of team T16 never discovered that M299 is in danger from 29614.
+leader L33 of team T16 never discovered that M300 is in danger from 28848.
+leader L33 of team T16 discovered at 33545.000000 that M301 is in danger (after 16128ms proces-to-process, 15443ms node-to-node, 8hops, 2versions (8 first, 10 discovered)
+leader L33 of team T16 discovered at 38261.000000 that M302 is in danger (after 18174ms proces-to-process, 17508ms node-to-node, 11hops, 4versions (9 first, 13 discovered)
+leader L33 of team T16 discovered at 51035.000000 that M303 is in danger (after 23147ms proces-to-process, 22569ms node-to-node, 10hops, 2versions (13 first, 15 discovered)
+leader L33 of team T16 discovered at 45953.000000 that M304 is in danger (after 16031ms proces-to-process, 14287ms node-to-node, 11hops, 0versions (14 first, 14 discovered)
+leader L33 of team T16 discovered at 44781.000000 that M305 is in danger (after 16379ms proces-to-process, 15957ms node-to-node, 12hops, 0versions (13 first, 13 discovered)
+leader L33 of team T16 discovered at 50751.000000 that M306 is in danger (after 34748ms proces-to-process, 33598ms node-to-node, 10hops, 12versions (7 first, 19 discovered)
+leader L33 of team T16 never discovered that M307 is in danger from 23006.
+leader L33 of team T16 never discovered that M308 is in danger from 25626.
+leader L34 of team T17 discovered at 25709.000000 that M324 is in danger (after 7592ms proces-to-process, 4107ms node-to-node, 4hops, 0versions (9 first, 9 discovered)
+leader L34 of team T17 discovered at 25709.000000 that M313 is in danger (after 3752ms proces-to-process, 3149ms node-to-node, 1hops, 1versions (10 first, 11 discovered)
+leader L34 of team T17 discovered at 36205.000000 that M312 is in danger (after 7164ms proces-to-process, 6210ms node-to-node, 5hops, 2versions (13 first, 15 discovered)
+leader L34 of team T17 discovered at 45133.000000 that M311 is in danger (after 18080ms proces-to-process, 14817ms node-to-node, 7hops, 1versions (13 first, 14 discovered)
+leader L34 of team T17 discovered at 26997.000000 that M310 is in danger (after 4770ms proces-to-process, 4407ms node-to-node, 5hops, 0versions (10 first, 10 discovered)
+leader L34 of team T17 discovered at 34085.000000 that M317 is in danger (after 17391ms proces-to-process, 14424ms node-to-node, 7hops, 1versions (8 first, 9 discovered)
+leader L34 of team T17 discovered at 46523.000000 that M316 is in danger (after 21731ms proces-to-process, 20039ms node-to-node, 10hops, 3versions (12 first, 15 discovered)
+leader L34 of team T17 discovered at 35472.000000 that M315 is in danger (after 13173ms proces-to-process, 11336ms node-to-node, 10hops, 2versions (11 first, 13 discovered)
+leader L34 of team T17 discovered at 33354.000000 that M314 is in danger (after 9519ms proces-to-process, 9068ms node-to-node, 7hops, 0versions (11 first, 11 discovered)
+leader L34 of team T17 discovered at 31682.000000 that M326 is in danger (after 12629ms proces-to-process, 9931ms node-to-node, 11hops, 0versions (9 first, 9 discovered)
+leader L34 of team T17 discovered at 27649.000000 that M309 is in danger (after 4351ms proces-to-process, 3213ms node-to-node, 6hops, 0versions (11 first, 11 discovered)
+leader L34 of team T17 discovered at 28421.000000 that M319 is in danger (after 10806ms proces-to-process, 8208ms node-to-node, 6hops, 1versions (8 first, 9 discovered)
+leader L34 of team T17 discovered at 29295.000000 that M318 is in danger (after 9730ms proces-to-process, 8044ms node-to-node, 7hops, 2versions (9 first, 11 discovered)
+leader L34 of team T17 discovered at 37557.000000 that M322 is in danger (after 13914ms proces-to-process, 10184ms node-to-node, 4hops, 3versions (12 first, 15 discovered)
+leader L34 of team T17 discovered at 35472.000000 that M323 is in danger (after 4836ms proces-to-process, 4064ms node-to-node, 7hops, 0versions (14 first, 14 discovered)
+leader L34 of team T17 discovered at 21503.000000 that M320 is in danger (after 5133ms proces-to-process, 4791ms node-to-node, 7hops, 1versions (7 first, 8 discovered)
+leader L34 of team T17 discovered at 38304.000000 that M321 is in danger (after 17671ms proces-to-process, 14543ms node-to-node, 12hops, 1versions (10 first, 11 discovered)
+leader L35 of team T17 discovered at 26117.000000 that M324 is in danger (after 8000ms proces-to-process, 4708ms node-to-node, 5hops, 0versions (9 first, 9 discovered)
+leader L35 of team T17 discovered at 30434.000000 that M313 is in danger (after 8477ms proces-to-process, 7940ms node-to-node, 4hops, 2versions (10 first, 12 discovered)
+leader L35 of team T17 discovered at 38476.000000 that M312 is in danger (after 9435ms proces-to-process, 8619ms node-to-node, 9hops, 2versions (13 first, 15 discovered)
+leader L35 of team T17 discovered at 38931.000000 that M311 is in danger (after 11878ms proces-to-process, 8253ms node-to-node, 5hops, 1versions (13 first, 14 discovered)
+leader L35 of team T17 discovered at 29610.000000 that M310 is in danger (after 7383ms proces-to-process, 6801ms node-to-node, 8hops, 1versions (10 first, 11 discovered)
+leader L35 of team T17 discovered at 35081.000000 that M317 is in danger (after 18387ms proces-to-process, 15630ms node-to-node, 9hops, 1versions (8 first, 9 discovered)
+leader L35 of team T17 discovered at 42189.000000 that M316 is in danger (after 17397ms proces-to-process, 15762ms node-to-node, 8hops, 2versions (12 first, 14 discovered)
+leader L35 of team T17 discovered at 31759.000000 that M315 is in danger (after 9460ms proces-to-process, 7461ms node-to-node, 9hops, 0versions (11 first, 11 discovered)
+leader L35 of team T17 discovered at 37737.000000 that M314 is in danger (after 13902ms proces-to-process, 13730ms node-to-node, 5hops, 4versions (11 first, 15 discovered)
+leader L35 of team T17 discovered at 30434.000000 that M326 is in danger (after 11381ms proces-to-process, 8727ms node-to-node, 9hops, 0versions (9 first, 9 discovered)
+leader L35 of team T17 discovered at 27123.000000 that M309 is in danger (after 3825ms proces-to-process, 2548ms node-to-node, 4hops, 1versions (11 first, 12 discovered)
+leader L35 of team T17 discovered at 28959.000000 that M319 is in danger (after 11344ms proces-to-process, 8811ms node-to-node, 7hops, 1versions (8 first, 9 discovered)
+leader L35 of team T17 discovered at 27280.000000 that M318 is in danger (after 7715ms proces-to-process, 6237ms node-to-node, 4hops, 2versions (9 first, 11 discovered)
+leader L35 of team T17 discovered at 40365.000000 that M322 is in danger (after 16722ms proces-to-process, 12595ms node-to-node, 8hops, 3versions (12 first, 15 discovered)
+leader L35 of team T17 discovered at 36011.000000 that M323 is in danger (after 5375ms proces-to-process, 4664ms node-to-node, 8hops, 0versions (14 first, 14 discovered)
+leader L35 of team T17 discovered at 24689.000000 that M320 is in danger (after 8319ms proces-to-process, 7805ms node-to-node, 12hops, 1versions (7 first, 8 discovered)
+leader L35 of team T17 discovered at 43213.000000 that M321 is in danger (after 22580ms proces-to-process, 19570ms node-to-node, 10hops, 4versions (10 first, 14 discovered)
+leader L21 of team T10 discovered at 36918.000000 that M195 is in danger (after 6836ms proces-to-process, 5862ms node-to-node, 8hops, 0versions (15 first, 15 discovered)
+leader L21 of team T10 never discovered that M194 is in danger from 16680.
+leader L21 of team T10 discovered at 31778.000000 that M197 is in danger (after 6648ms proces-to-process, 4478ms node-to-node, 6hops, 1versions (12 first, 13 discovered)
+leader L21 of team T10 discovered at 28982.000000 that M196 is in danger (after 11122ms proces-to-process, 10376ms node-to-node, 6hops, 4versions (8 first, 12 discovered)
+leader L21 of team T10 discovered at 30618.000000 that M191 is in danger (after 10603ms proces-to-process, 9976ms node-to-node, 6hops, 3versions (8 first, 11 discovered)
+leader L21 of team T10 discovered at 36243.000000 that M190 is in danger (after 5587ms proces-to-process, 5102ms node-to-node, 6hops, 0versions (15 first, 15 discovered)
+leader L21 of team T10 discovered at 41343.000000 that M193 is in danger (after 11778ms proces-to-process, 9110ms node-to-node, 6hops, 1versions (15 first, 16 discovered)
+leader L21 of team T10 discovered at 26937.000000 that M192 is in danger (after 4506ms proces-to-process, 2612ms node-to-node, 5hops, 0versions (10 first, 10 discovered)
+leader L21 of team T10 discovered at 31296.000000 that M198 is in danger (after 3994ms proces-to-process, 3579ms node-to-node, 1hops, 1versions (12 first, 13 discovered)
+leader L21 of team T10 discovered at 31778.000000 that M202 is in danger (after 6470ms proces-to-process, 4426ms node-to-node, 1hops, 1versions (12 first, 13 discovered)
+leader L21 of team T10 discovered at 23499.000000 that M188 is in danger (after 5161ms proces-to-process, 3217ms node-to-node, 6hops, 0versions (8 first, 8 discovered)
+leader L21 of team T10 never discovered that M189 is in danger from 16182.
+leader L21 of team T10 discovered at 36243.000000 that M200 is in danger (after 17590ms proces-to-process, 15409ms node-to-node, 9hops, 3versions (9 first, 12 discovered)
+leader L21 of team T10 discovered at 37973.000000 that M182 is in danger (after 9999ms proces-to-process, 9203ms node-to-node, 7hops, 0versions (13 first, 13 discovered)
+leader L21 of team T10 discovered at 21703.000000 that M183 is in danger (after 1305ms proces-to-process, 805ms node-to-node, 2hops, 0versions (9 first, 9 discovered)
+leader L21 of team T10 discovered at 31296.000000 that M181 is in danger (after 5959ms proces-to-process, 4281ms node-to-node, 8hops, 0versions (13 first, 13 discovered)
+leader L21 of team T10 discovered at 42937.000000 that M186 is in danger (after 19124ms proces-to-process, 17123ms node-to-node, 6hops, 5versions (11 first, 16 discovered)
+leader L21 of team T10 discovered at 30618.000000 that M187 is in danger (after 14927ms proces-to-process, 12619ms node-to-node, 5hops, 2versions (7 first, 9 discovered)
+leader L21 of team T10 discovered at 37973.000000 that M184 is in danger (after 14916ms proces-to-process, 11403ms node-to-node, 5hops, 2versions (12 first, 14 discovered)
+leader L21 of team T10 discovered at 28471.000000 that M185 is in danger (after 7086ms proces-to-process, 5077ms node-to-node, 6hops, 1versions (10 first, 11 discovered)
+leader L20 of team T10 discovered at 42839.000000 that M195 is in danger (after 12757ms proces-to-process, 12200ms node-to-node, 4hops, 0versions (15 first, 15 discovered)
+leader L20 of team T10 never discovered that M194 is in danger from 16680.
+leader L20 of team T10 discovered at 38536.000000 that M197 is in danger (after 13406ms proces-to-process, 11342ms node-to-node, 7hops, 2versions (12 first, 14 discovered)
+leader L20 of team T10 discovered at 33452.000000 that M196 is in danger (after 15592ms proces-to-process, 14157ms node-to-node, 7hops, 4versions (8 first, 12 discovered)
+leader L20 of team T10 never discovered that M191 is in danger from 20015.
+leader L20 of team T10 discovered at 46840.000000 that M190 is in danger (after 16184ms proces-to-process, 15501ms node-to-node, 5hops, 1versions (15 first, 16 discovered)
+leader L20 of team T10 discovered at 46840.000000 that M193 is in danger (after 17275ms proces-to-process, 14067ms node-to-node, 7hops, 1versions (15 first, 16 discovered)
+leader L20 of team T10 discovered at 31259.000000 that M192 is in danger (after 8828ms proces-to-process, 7094ms node-to-node, 6hops, 0versions (10 first, 10 discovered)
+leader L20 of team T10 discovered at 31259.000000 that M198 is in danger (after 3957ms proces-to-process, 3579ms node-to-node, 1hops, 1versions (12 first, 13 discovered)
+leader L20 of team T10 discovered at 31700.000000 that M202 is in danger (after 6392ms proces-to-process, 4426ms node-to-node, 1hops, 1versions (12 first, 13 discovered)
+leader L20 of team T10 discovered at 26808.000000 that M188 is in danger (after 8470ms proces-to-process, 7316ms node-to-node, 7hops, 0versions (8 first, 8 discovered)
+leader L20 of team T10 never discovered that M189 is in danger from 16182.
+leader L20 of team T10 discovered at 39854.000000 that M200 is in danger (after 21201ms proces-to-process, 19180ms node-to-node, 2hops, 3versions (9 first, 12 discovered)
+leader L20 of team T10 discovered at 41285.000000 that M182 is in danger (after 13311ms proces-to-process, 12430ms node-to-node, 8hops, 0versions (13 first, 13 discovered)
+leader L20 of team T10 discovered at 42208.000000 that M183 is in danger (after 21810ms proces-to-process, 20735ms node-to-node, 5hops, 8versions (9 first, 17 discovered)
+leader L20 of team T10 discovered at 35423.000000 that M181 is in danger (after 10086ms proces-to-process, 7772ms node-to-node, 9hops, 0versions (13 first, 13 discovered)
+leader L20 of team T10 discovered at 53935.000000 that M186 is in danger (after 30122ms proces-to-process, 28333ms node-to-node, 4hops, 5versions (11 first, 16 discovered)
+leader L20 of team T10 discovered at 48128.000000 that M187 is in danger (after 32437ms proces-to-process, 30084ms node-to-node, 9hops, 8versions (7 first, 15 discovered)
+leader L20 of team T10 never discovered that M184 is in danger from 23057.
+leader L20 of team T10 discovered at 34662.000000 that M185 is in danger (after 13277ms proces-to-process, 11167ms node-to-node, 9hops, 2versions (10 first, 12 discovered)
+leader L23 of team T11 discovered at 39422.000000 that M214 is in danger (after 10598ms proces-to-process, 9908ms node-to-node, 1hops, 4versions (13 first, 17 discovered)
+leader L23 of team T11 discovered at 31470.000000 that M215 is in danger (after 3826ms proces-to-process, 1307ms node-to-node, 3hops, 1versions (13 first, 14 discovered)
+leader L23 of team T11 discovered at 53111.000000 that M212 is in danger (after 33650ms proces-to-process, 33108ms node-to-node, 11hops, 10versions (9 first, 19 discovered)
+leader L23 of team T11 discovered at 44231.000000 that M199 is in danger (after 18352ms proces-to-process, 15604ms node-to-node, 3hops, 4versions (12 first, 16 discovered)
+leader L23 of team T11 discovered at 37592.000000 that M213 is in danger (after 11479ms proces-to-process, 10939ms node-to-node, 4hops, 1versions (12 first, 13 discovered)
+leader L23 of team T11 discovered at 38887.000000 that M209 is in danger (after 10490ms proces-to-process, 9633ms node-to-node, 6hops, 1versions (14 first, 15 discovered)
+leader L23 of team T11 discovered at 30903.000000 that M208 is in danger (after 15485ms proces-to-process, 12549ms node-to-node, 9hops, 0versions (8 first, 8 discovered)
+leader L23 of team T11 discovered at 41693.000000 that M220 is in danger (after 19935ms proces-to-process, 17754ms node-to-node, 4hops, 9versions (10 first, 19 discovered)
+leader L23 of team T11 discovered at 29120.000000 that M210 is in danger (after 1267ms proces-to-process, 110ms node-to-node, 1hops, 0versions (13 first, 13 discovered)
+leader L23 of team T11 discovered at 37592.000000 that M218 is in danger (after 12665ms proces-to-process, 11400ms node-to-node, 9hops, 0versions (11 first, 11 discovered)
+leader L23 of team T11 discovered at 35631.000000 that M201 is in danger (after 12734ms proces-to-process, 9905ms node-to-node, 9hops, 2versions (11 first, 13 discovered)
+leader L23 of team T11 discovered at 52163.000000 that M203 is in danger (after 34516ms proces-to-process, 33183ms node-to-node, 8hops, 7versions (7 first, 14 discovered)
+leader L23 of team T11 discovered at 19268.000000 that M211 is in danger (after 2507ms proces-to-process, 1903ms node-to-node, 3hops, 0versions (8 first, 8 discovered)
+leader L23 of team T11 discovered at 37592.000000 that M205 is in danger (after 19395ms proces-to-process, 19340ms node-to-node, 1hops, 8versions (8 first, 16 discovered)
+leader L23 of team T11 discovered at 31470.000000 that M204 is in danger (after 11618ms proces-to-process, 11373ms node-to-node, 2hops, 2versions (8 first, 10 discovered)
+leader L23 of team T11 discovered at 35194.000000 that M207 is in danger (after 7523ms proces-to-process, 4533ms node-to-node, 2hops, 2versions (14 first, 16 discovered)
+leader L23 of team T11 discovered at 22231.000000 that M206 is in danger (after 1335ms proces-to-process, 634ms node-to-node, 1hops, 0versions (9 first, 9 discovered)
+leader L22 of team T11 discovered at 39351.000000 that M214 is in danger (after 10527ms proces-to-process, 9908ms node-to-node, 1hops, 4versions (13 first, 17 discovered)
+leader L22 of team T11 discovered at 49390.000000 that M215 is in danger (after 21746ms proces-to-process, 19299ms node-to-node, 6hops, 2versions (13 first, 15 discovered)
+leader L22 of team T11 discovered at 46356.000000 that M212 is in danger (after 26895ms proces-to-process, 26620ms node-to-node, 9hops, 10versions (9 first, 19 discovered)
+leader L22 of team T11 discovered at 39351.000000 that M199 is in danger (after 13472ms proces-to-process, 11040ms node-to-node, 8hops, 1versions (12 first, 13 discovered)
+leader L22 of team T11 discovered at 40085.000000 that M213 is in danger (after 13972ms proces-to-process, 13675ms node-to-node, 9hops, 1versions (12 first, 13 discovered)
+leader L22 of team T11 discovered at 43349.000000 that M209 is in danger (after 14952ms proces-to-process, 14008ms node-to-node, 7hops, 3versions (14 first, 17 discovered)
+leader L22 of team T11 discovered at 25357.000000 that M208 is in danger (after 9939ms proces-to-process, 7203ms node-to-node, 8hops, 0versions (8 first, 8 discovered)
+leader L22 of team T11 never discovered that M220 is in danger from 21758.
+leader L22 of team T11 discovered at 38256.000000 that M210 is in danger (after 10403ms proces-to-process, 9216ms node-to-node, 2hops, 4versions (13 first, 17 discovered)
+leader L22 of team T11 discovered at 40793.000000 that M218 is in danger (after 15866ms proces-to-process, 14327ms node-to-node, 8hops, 0versions (11 first, 11 discovered)
+leader L22 of team T11 discovered at 35759.000000 that M201 is in danger (after 12862ms proces-to-process, 9864ms node-to-node, 2hops, 4versions (11 first, 15 discovered)
+leader L22 of team T11 discovered at 30334.000000 that M203 is in danger (after 12687ms proces-to-process, 12066ms node-to-node, 6hops, 0versions (7 first, 7 discovered)
+leader L22 of team T11 discovered at 34399.000000 that M211 is in danger (after 17638ms proces-to-process, 16939ms node-to-node, 11hops, 0versions (8 first, 8 discovered)
+leader L22 of team T11 discovered at 26546.000000 that M205 is in danger (after 8349ms proces-to-process, 8196ms node-to-node, 5hops, 2versions (8 first, 10 discovered)
+leader L22 of team T11 discovered at 40085.000000 that M204 is in danger (after 20233ms proces-to-process, 19628ms node-to-node, 4hops, 5versions (8 first, 13 discovered)
+leader L22 of team T11 discovered at 48862.000000 that M207 is in danger (after 21191ms proces-to-process, 17992ms node-to-node, 12hops, 2versions (14 first, 16 discovered)
+leader L22 of team T11 discovered at 48862.000000 that M206 is in danger (after 27966ms proces-to-process, 27372ms node-to-node, 3hops, 7versions (9 first, 16 discovered)
+leader L25 of team T12 discovered at 31129.000000 that M238 is in danger (after 12154ms proces-to-process, 11983ms node-to-node, 4hops, 2versions (8 first, 10 discovered)
+leader L25 of team T12 discovered at 41161.000000 that M230 is in danger (after 19442ms proces-to-process, 17382ms node-to-node, 11hops, 0versions (10 first, 10 discovered)
+leader L25 of team T12 discovered at 35033.000000 that M237 is in danger (after 18604ms proces-to-process, 17767ms node-to-node, 6hops, 4versions (7 first, 11 discovered)
+leader L25 of team T12 discovered at 38364.000000 that M236 is in danger (after 13912ms proces-to-process, 13132ms node-to-node, 10hops, 0versions (11 first, 11 discovered)
+leader L25 of team T12 discovered at 53081.000000 that M231 is in danger (after 26987ms proces-to-process, 25987ms node-to-node, 9hops, 8versions (12 first, 20 discovered)
+leader L25 of team T12 discovered at 28803.000000 that M224 is in danger (after 5684ms proces-to-process, 4836ms node-to-node, 2hops, 1versions (10 first, 11 discovered)
+leader L25 of team T12 discovered at 49506.000000 that M232 is in danger (after 20517ms proces-to-process, 18177ms node-to-node, 11hops, 1versions (14 first, 15 discovered)
+leader L25 of team T12 discovered at 49506.000000 that M223 is in danger (after 28824ms proces-to-process, 26327ms node-to-node, 18hops, 3versions (9 first, 12 discovered)
+leader L25 of team T12 discovered at 44195.000000 that M222 is in danger (after 15804ms proces-to-process, 13682ms node-to-node, 3hops, 2versions (14 first, 16 discovered)
+leader L25 of team T12 discovered at 31129.000000 that M221 is in danger (after 5834ms proces-to-process, 3102ms node-to-node, 1hops, 0versions (12 first, 12 discovered)
+leader L25 of team T12 never discovered that M233 is in danger from 21183.
+leader L25 of team T12 discovered at 37812.000000 that M227 is in danger (after 21712ms proces-to-process, 20258ms node-to-node, 4hops, 0versions (8 first, 8 discovered)
+leader L25 of team T12 never discovered that M226 is in danger from 23652.
+leader L25 of team T12 discovered at 31129.000000 that M225 is in danger (after 9952ms proces-to-process, 9446ms node-to-node, 2hops, 1versions (10 first, 11 discovered)
+leader L25 of team T12 discovered at 50173.000000 that M219 is in danger (after 27343ms proces-to-process, 26285ms node-to-node, 5hops, 9versions (11 first, 20 discovered)
+leader L25 of team T12 discovered at 40277.000000 that M216 is in danger (after 10385ms proces-to-process, 8655ms node-to-node, 1hops, 1versions (15 first, 16 discovered)
+leader L25 of team T12 discovered at 31129.000000 that M217 is in danger (after 9256ms proces-to-process, 8176ms node-to-node, 1hops, 2versions (10 first, 12 discovered)
+leader L25 of team T12 discovered at 35543.000000 that M229 is in danger (after 18826ms proces-to-process, 16696ms node-to-node, 5hops, 3versions (8 first, 11 discovered)
+leader L25 of team T12 discovered at 54568.000000 that M228 is in danger (after 36022ms proces-to-process, 32969ms node-to-node, 5hops, 6versions (9 first, 15 discovered)
+leader L24 of team T12 never discovered that M238 is in danger from 18975.
+leader L24 of team T12 discovered at 40042.000000 that M230 is in danger (after 18323ms proces-to-process, 16638ms node-to-node, 5hops, 0versions (10 first, 10 discovered)
+leader L24 of team T12 discovered at 34443.000000 that M237 is in danger (after 18014ms proces-to-process, 17524ms node-to-node, 14hops, 1versions (7 first, 8 discovered)
+leader L24 of team T12 discovered at 37523.000000 that M236 is in danger (after 13071ms proces-to-process, 11781ms node-to-node, 4hops, 0versions (11 first, 11 discovered)
+leader L24 of team T12 never discovered that M231 is in danger from 26094.
+leader L24 of team T12 discovered at 46161.000000 that M224 is in danger (after 23042ms proces-to-process, 21562ms node-to-node, 5hops, 2versions (10 first, 12 discovered)
+leader L24 of team T12 discovered at 41882.000000 that M232 is in danger (after 12893ms proces-to-process, 10035ms node-to-node, 3hops, 1versions (14 first, 15 discovered)
+leader L24 of team T12 discovered at 22610.000000 that M223 is in danger (after 1928ms proces-to-process, 27ms node-to-node, 1hops, 0versions (9 first, 9 discovered)
+leader L24 of team T12 discovered at 38248.000000 that M222 is in danger (after 9857ms proces-to-process, 7561ms node-to-node, 3hops, 0versions (14 first, 14 discovered)
+leader L24 of team T12 never discovered that M221 is in danger from 25295.
+leader L24 of team T12 discovered at 22610.000000 that M233 is in danger (after 1427ms proces-to-process, 452ms node-to-node, 2hops, 0versions (10 first, 10 discovered)
+leader L24 of team T12 discovered at 24300.000000 that M227 is in danger (after 8200ms proces-to-process, 6954ms node-to-node, 2hops, 0versions (8 first, 8 discovered)
+leader L24 of team T12 discovered at 40042.000000 that M226 is in danger (after 16390ms proces-to-process, 14268ms node-to-node, 4hops, 0versions (12 first, 12 discovered)
+leader L24 of team T12 discovered at 35231.000000 that M225 is in danger (after 14054ms proces-to-process, 13271ms node-to-node, 4hops, 1versions (10 first, 11 discovered)
+leader L24 of team T12 discovered at 42387.000000 that M219 is in danger (after 19557ms proces-to-process, 18888ms node-to-node, 7hops, 2versions (11 first, 13 discovered)
+leader L24 of team T12 discovered at 52093.000000 that M216 is in danger (after 22201ms proces-to-process, 20641ms node-to-node, 6hops, 0versions (15 first, 15 discovered)
+leader L24 of team T12 discovered at 46161.000000 that M217 is in danger (after 24288ms proces-to-process, 22985ms node-to-node, 5hops, 2versions (10 first, 12 discovered)
+leader L24 of team T12 discovered at 41882.000000 that M229 is in danger (after 25165ms proces-to-process, 22936ms node-to-node, 10hops, 2versions (8 first, 10 discovered)
+leader L24 of team T12 discovered at 21375.000000 that M228 is in danger (after 2829ms proces-to-process, 27ms node-to-node, 1hops, 0versions (9 first, 9 discovered)
+leader L27 of team T13 discovered at 37610.000000 that M243 is in danger (after 7895ms proces-to-process, 7095ms node-to-node, 8hops, 0versions (14 first, 14 discovered)
+leader L27 of team T13 discovered at 31694.000000 that M253 is in danger (after 7801ms proces-to-process, 7123ms node-to-node, 5hops, 1versions (10 first, 11 discovered)
+leader L27 of team T13 never discovered that M250 is in danger from 25392.
+leader L27 of team T13 discovered at 36321.000000 that M251 is in danger (after 7556ms proces-to-process, 7039ms node-to-node, 8hops, 0versions (14 first, 14 discovered)
+leader L27 of team T13 discovered at 51183.000000 that M254 is in danger (after 24336ms proces-to-process, 22696ms node-to-node, 10hops, 7versions (13 first, 20 discovered)
+leader L27 of team T13 discovered at 25909.000000 that M245 is in danger (after 10108ms proces-to-process, 8264ms node-to-node, 3hops, 2versions (8 first, 10 discovered)
+leader L27 of team T13 discovered at 22758.000000 that M244 is in danger (after 5232ms proces-to-process, 4426ms node-to-node, 5hops, 0versions (8 first, 8 discovered)
+leader L27 of team T13 never discovered that M247 is in danger from 25432.
+leader L27 of team T13 discovered at 22758.000000 that M246 is in danger (after 4507ms proces-to-process, 3742ms node-to-node, 1hops, 2versions (8 first, 10 discovered)
+leader L27 of team T13 discovered at 34871.000000 that M234 is in danger (after 11149ms proces-to-process, 9195ms node-to-node, 6hops, 3versions (11 first, 14 discovered)
+leader L27 of team T13 discovered at 34473.000000 that M241 is in danger (after 14424ms proces-to-process, 12782ms node-to-node, 7hops, 2versions (9 first, 11 discovered)
+leader L27 of team T13 discovered at 38240.000000 that M242 is in danger (after 15166ms proces-to-process, 14394ms node-to-node, 7hops, 2versions (10 first, 12 discovered)
+leader L27 of team T13 discovered at 32839.000000 that M239 is in danger (after 15992ms proces-to-process, 15041ms node-to-node, 7hops, 4versions (8 first, 12 discovered)
+leader L27 of team T13 discovered at 33037.000000 that M249 is in danger (after 6181ms proces-to-process, 4690ms node-to-node, 6hops, 0versions (12 first, 12 discovered)
+leader L27 of team T13 discovered at 41162.000000 that M248 is in danger (after 13221ms proces-to-process, 12680ms node-to-node, 10hops, 3versions (13 first, 16 discovered)
+leader L27 of team T13 discovered at 31885.000000 that M240 is in danger (after 15796ms proces-to-process, 14360ms node-to-node, 10hops, 3versions (8 first, 11 discovered)
+leader L26 of team T13 discovered at 32801.000000 that M243 is in danger (after 3086ms proces-to-process, 1893ms node-to-node, 1hops, 0versions (14 first, 14 discovered)
+leader L26 of team T13 discovered at 40989.000000 that M253 is in danger (after 17096ms proces-to-process, 16622ms node-to-node, 8hops, 5versions (10 first, 15 discovered)
+leader L26 of team T13 never discovered that M250 is in danger from 25392.
+leader L26 of team T13 never discovered that M251 is in danger from 28765.
+leader L26 of team T13 discovered at 42988.000000 that M254 is in danger (after 16141ms proces-to-process, 14619ms node-to-node, 11hops, 3versions (13 first, 16 discovered)
+leader L26 of team T13 discovered at 44503.000000 that M245 is in danger (after 28702ms proces-to-process, 26554ms node-to-node, 6hops, 5versions (8 first, 13 discovered)
+leader L26 of team T13 discovered at 31935.000000 that M244 is in danger (after 14409ms proces-to-process, 13477ms node-to-node, 9hops, 3versions (8 first, 11 discovered)
+leader L26 of team T13 never discovered that M247 is in danger from 25432.
+leader L26 of team T13 never discovered that M246 is in danger from 18251.
+leader L26 of team T13 discovered at 43808.000000 that M234 is in danger (after 20086ms proces-to-process, 18044ms node-to-node, 7hops, 7versions (11 first, 18 discovered)
+leader L26 of team T13 discovered at 32313.000000 that M241 is in danger (after 12264ms proces-to-process, 10845ms node-to-node, 9hops, 0versions (9 first, 9 discovered)
+leader L26 of team T13 never discovered that M242 is in danger from 23074.
+leader L26 of team T13 discovered at 17697.000000 that M239 is in danger (after 850ms proces-to-process, 320ms node-to-node, 1hops, 0versions (8 first, 8 discovered)
+leader L26 of team T13 discovered at 34751.000000 that M249 is in danger (after 7895ms proces-to-process, 6107ms node-to-node, 1hops, 3versions (12 first, 15 discovered)
+leader L26 of team T13 discovered at 31935.000000 that M248 is in danger (after 3994ms proces-to-process, 3248ms node-to-node, 1hops, 1versions (13 first, 14 discovered)
+leader L26 of team T13 discovered at 19448.000000 that M240 is in danger (after 3359ms proces-to-process, 1664ms node-to-node, 2hops, 1versions (8 first, 9 discovered)
+leader L36 of team T18 discovered at 31786.000000 that M332 is in danger (after 8033ms proces-to-process, 5827ms node-to-node, 6hops, 0versions (12 first, 12 discovered)
+leader L36 of team T18 discovered at 36753.000000 that M344 is in danger (after 9340ms proces-to-process, 8029ms node-to-node, 10hops, 1versions (12 first, 13 discovered)
+leader L36 of team T18 discovered at 45659.000000 that M345 is in danger (after 20127ms proces-to-process, 17898ms node-to-node, 6hops, 2versions (13 first, 15 discovered)
+leader L36 of team T18 discovered at 37773.000000 that M329 is in danger (after 10652ms proces-to-process, 9739ms node-to-node, 4hops, 3versions (13 first, 16 discovered)
+leader L36 of team T18 discovered at 44998.000000 that M340 is in danger (after 18972ms proces-to-process, 16470ms node-to-node, 7hops, 3versions (12 first, 15 discovered)
+leader L36 of team T18 discovered at 37598.000000 that M341 is in danger (after 7204ms proces-to-process, 5766ms node-to-node, 3hops, 1versions (14 first, 15 discovered)
+leader L36 of team T18 discovered at 22844.000000 that M342 is in danger (after 5314ms proces-to-process, 4418ms node-to-node, 8hops, 0versions (8 first, 8 discovered)
+leader L36 of team T18 discovered at 34829.000000 that M343 is in danger (after 10014ms proces-to-process, 6929ms node-to-node, 7hops, 1versions (12 first, 13 discovered)
+leader L36 of team T18 discovered at 33579.000000 that M339 is in danger (after 6308ms proces-to-process, 4977ms node-to-node, 7hops, 0versions (13 first, 13 discovered)
+leader L36 of team T18 discovered at 34074.000000 that M338 is in danger (after 4912ms proces-to-process, 2257ms node-to-node, 4hops, 1versions (14 first, 15 discovered)
+leader L36 of team T18 discovered at 34829.000000 that M328 is in danger (after 6034ms proces-to-process, 2614ms node-to-node, 5hops, 0versions (15 first, 15 discovered)
+leader L36 of team T18 discovered at 25287.000000 that M330 is in danger (after 8435ms proces-to-process, 7971ms node-to-node, 5hops, 1versions (7 first, 8 discovered)
+leader L36 of team T18 discovered at 27796.000000 that M331 is in danger (after 6452ms proces-to-process, 5166ms node-to-node, 3hops, 1versions (10 first, 11 discovered)
+leader L36 of team T18 discovered at 28773.000000 that M327 is in danger (after 2853ms proces-to-process, 1407ms node-to-node, 3hops, 0versions (12 first, 12 discovered)
+leader L36 of team T18 discovered at 21852.000000 that M333 is in danger (after 5643ms proces-to-process, 4419ms node-to-node, 8hops, 0versions (7 first, 7 discovered)
+leader L36 of team T18 discovered at 32455.000000 that M325 is in danger (after 16354ms proces-to-process, 13948ms node-to-node, 9hops, 0versions (7 first, 7 discovered)
+leader L36 of team T18 discovered at 25287.000000 that M335 is in danger (after 9050ms proces-to-process, 8665ms node-to-node, 5hops, 1versions (7 first, 8 discovered)
+leader L36 of team T18 discovered at 28773.000000 that M334 is in danger (after 10165ms proces-to-process, 9503ms node-to-node, 7hops, 0versions (9 first, 9 discovered)
+leader L36 of team T18 discovered at 31786.000000 that M337 is in danger (after 5149ms proces-to-process, 2831ms node-to-node, 4hops, 0versions (13 first, 13 discovered)
+leader L36 of team T18 discovered at 29480.000000 that M336 is in danger (after 9724ms proces-to-process, 9261ms node-to-node, 11hops, 0versions (9 first, 9 discovered)
+leader L37 of team T18 discovered at 42682.000000 that M332 is in danger (after 18929ms proces-to-process, 16506ms node-to-node, 5hops, 5versions (12 first, 17 discovered)
+leader L37 of team T18 discovered at 44251.000000 that M344 is in danger (after 16838ms proces-to-process, 15521ms node-to-node, 10hops, 2versions (12 first, 14 discovered)
+leader L37 of team T18 discovered at 46999.000000 that M345 is in danger (after 21467ms proces-to-process, 19630ms node-to-node, 2hops, 2versions (13 first, 15 discovered)
+leader L37 of team T18 discovered at 44691.000000 that M329 is in danger (after 17570ms proces-to-process, 16681ms node-to-node, 8hops, 4versions (13 first, 17 discovered)
+leader L37 of team T18 discovered at 52323.000000 that M340 is in danger (after 26297ms proces-to-process, 23888ms node-to-node, 6hops, 7versions (12 first, 19 discovered)
+leader L37 of team T18 discovered at 41198.000000 that M341 is in danger (after 10804ms proces-to-process, 9982ms node-to-node, 5hops, 1versions (14 first, 15 discovered)
+leader L37 of team T18 discovered at 36436.000000 that M342 is in danger (after 18906ms proces-to-process, 18130ms node-to-node, 6hops, 5versions (8 first, 13 discovered)
+leader L37 of team T18 discovered at 43740.000000 that M343 is in danger (after 18925ms proces-to-process, 16085ms node-to-node, 6hops, 4versions (12 first, 16 discovered)
+leader L37 of team T18 discovered at 37203.000000 that M339 is in danger (after 9932ms proces-to-process, 8030ms node-to-node, 7hops, 0versions (13 first, 13 discovered)
+leader L37 of team T18 discovered at 46559.000000 that M338 is in danger (after 17397ms proces-to-process, 14650ms node-to-node, 7hops, 5versions (14 first, 19 discovered)
+leader L37 of team T18 never discovered that M328 is in danger from 28795.
+leader L37 of team T18 never discovered that M330 is in danger from 16852.
+leader L37 of team T18 discovered at 31280.000000 that M331 is in danger (after 9936ms proces-to-process, 8773ms node-to-node, 7hops, 0versions (10 first, 10 discovered)
+leader L37 of team T18 discovered at 48629.000000 that M327 is in danger (after 22709ms proces-to-process, 21471ms node-to-node, 9hops, 0versions (12 first, 12 discovered)
+leader L37 of team T18 discovered at 23745.000000 that M333 is in danger (after 7536ms proces-to-process, 5955ms node-to-node, 3hops, 1versions (7 first, 8 discovered)
+leader L37 of team T18 discovered at 32190.000000 that M325 is in danger (after 16089ms proces-to-process, 13798ms node-to-node, 13hops, 0versions (7 first, 7 discovered)
+leader L37 of team T18 discovered at 36292.000000 that M335 is in danger (after 20055ms proces-to-process, 19268ms node-to-node, 10hops, 3versions (7 first, 10 discovered)
+leader L37 of team T18 discovered at 33260.000000 that M334 is in danger (after 14652ms proces-to-process, 13332ms node-to-node, 9hops, 0versions (9 first, 9 discovered)
+leader L37 of team T18 never discovered that M337 is in danger from 26637.
+leader L37 of team T18 discovered at 50986.000000 that M336 is in danger (after 31230ms proces-to-process, 30776ms node-to-node, 7hops, 9versions (9 first, 18 discovered)
+leader L38 of team T19 discovered at 50835.000000 that M361 is in danger (after 32621ms proces-to-process, 32014ms node-to-node, 10hops, 12versions (8 first, 20 discovered)
+leader L38 of team T19 discovered at 39202.000000 that M354 is in danger (after 17777ms proces-to-process, 16051ms node-to-node, 6hops, 5versions (10 first, 15 discovered)
+leader L38 of team T19 never discovered that M348 is in danger from 23539.
+leader L38 of team T19 never discovered that M349 is in danger from 20923.
+leader L38 of team T19 discovered at 52226.000000 that M359 is in danger (after 22295ms proces-to-process, 21760ms node-to-node, 10hops, 6versions (14 first, 20 discovered)
+leader L38 of team T19 never discovered that M358 is in danger from 16903.
+leader L38 of team T19 never discovered that M357 is in danger from 29388.
+leader L38 of team T19 never discovered that M356 is in danger from 22366.
+leader L38 of team T19 discovered at 30324.000000 that M346 is in danger (after 1525ms proces-to-process, 265ms node-to-node, 1hops, 0versions (15 first, 15 discovered)
+leader L38 of team T19 never discovered that M347 is in danger from 20450.
+leader L38 of team T19 discovered at 47852.000000 that M353 is in danger (after 28989ms proces-to-process, 26284ms node-to-node, 11hops, 8versions (9 first, 17 discovered)
+leader L38 of team T19 discovered at 48369.000000 that M352 is in danger (after 21540ms proces-to-process, 20088ms node-to-node, 9hops, 4versions (13 first, 17 discovered)
+leader L38 of team T19 discovered at 46811.000000 that M351 is in danger (after 22713ms proces-to-process, 21711ms node-to-node, 8hops, 4versions (12 first, 16 discovered)
+leader L38 of team T19 discovered at 41232.000000 that M350 is in danger (after 20844ms proces-to-process, 19225ms node-to-node, 7hops, 5versions (10 first, 15 discovered)
+leader L38 of team T19 discovered at 41232.000000 that M362 is in danger (after 20084ms proces-to-process, 18366ms node-to-node, 8hops, 5versions (10 first, 15 discovered)
+leader L38 of team T19 never discovered that M364 is in danger from 15568.
+leader L38 of team T19 discovered at 37849.000000 that M363 is in danger (after 9796ms proces-to-process, 8776ms node-to-node, 10hops, 0versions (14 first, 14 discovered)
+leader L38 of team T19 discovered at 39202.000000 that M360 is in danger (after 10372ms proces-to-process, 9102ms node-to-node, 9hops, 1versions (14 first, 15 discovered)
+leader L38 of team T19 never discovered that M355 is in danger from 19956.
+leader L39 of team T19 discovered at 36831.000000 that M361 is in danger (after 18617ms proces-to-process, 17732ms node-to-node, 10hops, 4versions (8 first, 12 discovered)
+leader L39 of team T19 discovered at 29527.000000 that M354 is in danger (after 8102ms proces-to-process, 6449ms node-to-node, 3hops, 1versions (10 first, 11 discovered)
+leader L39 of team T19 never discovered that M348 is in danger from 23539.
+leader L39 of team T19 never discovered that M349 is in danger from 20923.
+leader L39 of team T19 discovered at 30885.000000 that M359 is in danger (after 954ms proces-to-process, 699ms node-to-node, 2hops, 0versions (14 first, 14 discovered)
+leader L39 of team T19 discovered at 25660.000000 that M358 is in danger (after 8757ms proces-to-process, 7909ms node-to-node, 3hops, 3versions (7 first, 10 discovered)
+leader L39 of team T19 discovered at 40022.000000 that M357 is in danger (after 10634ms proces-to-process, 9800ms node-to-node, 4hops, 0versions (13 first, 13 discovered)
+leader L39 of team T19 discovered at 38056.000000 that M356 is in danger (after 15690ms proces-to-process, 14969ms node-to-node, 5hops, 1versions (10 first, 11 discovered)
+leader L39 of team T19 never discovered that M346 is in danger from 28799.
+leader L39 of team T19 discovered at 43647.000000 that M347 is in danger (after 23197ms proces-to-process, 21553ms node-to-node, 6hops, 7versions (10 first, 17 discovered)
+leader L39 of team T19 discovered at 26836.000000 that M353 is in danger (after 7973ms proces-to-process, 4972ms node-to-node, 4hops, 0versions (9 first, 9 discovered)
+leader L39 of team T19 discovered at 38056.000000 that M352 is in danger (after 11227ms proces-to-process, 9647ms node-to-node, 4hops, 0versions (13 first, 13 discovered)
+leader L39 of team T19 discovered at 42440.000000 that M351 is in danger (after 18342ms proces-to-process, 17036ms node-to-node, 5hops, 4versions (12 first, 16 discovered)
+leader L39 of team T19 discovered at 38056.000000 that M350 is in danger (after 17668ms proces-to-process, 15988ms node-to-node, 10hops, 2versions (10 first, 12 discovered)
+leader L39 of team T19 discovered at 48556.000000 that M362 is in danger (after 27408ms proces-to-process, 25766ms node-to-node, 8hops, 4versions (10 first, 14 discovered)
+leader L39 of team T19 discovered at 19889.000000 that M364 is in danger (after 4321ms proces-to-process, 1284ms node-to-node, 2hops, 1versions (7 first, 8 discovered)
+leader L39 of team T19 discovered at 29959.000000 that M363 is in danger (after 1906ms proces-to-process, 1095ms node-to-node, 1hops, 0versions (14 first, 14 discovered)
+leader L39 of team T19 never discovered that M360 is in danger from 28830.
+leader L39 of team T19 discovered at 38486.000000 that M355 is in danger (after 18530ms proces-to-process, 16299ms node-to-node, 4hops, 2versions (9 first, 11 discovered)
+
+Results: 
+-----------------------------
+Process-2-process response time: avg=13932.093857, min=533, max=37877, median=13070
+Node-2-node response time: avg=12364.500000, min=7, max=36280, median=11401
+Hops: avg=5.587031, min=1, max=19, median=6
+Process-2-process response time / 1 hop: avg=3283.001706, min=477, max=27036, median=2483
+Node-2-node response time / 1 hop: avg=2816.440273, min=7, max=25420, median=2171
+Version difference: avg=2.230375, min=0, max=15, median=1
+Ratio of leader discoveries: 586 of 726 (80.716253%)
+Ratio of discoveries regardless the number of leaders: 333 of 363 (91.735537%)

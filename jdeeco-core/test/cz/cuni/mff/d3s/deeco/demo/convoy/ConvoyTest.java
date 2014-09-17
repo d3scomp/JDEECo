@@ -56,4 +56,28 @@ public class ConvoyTest {
 		// THEN the follower reaches his destination
 		assertThat(log.getLog(), containsString("Follower F: me = (1,3)"));
 	}	
+	
+	@Test
+	public void testConvoyThreadPooled() throws AnnotationProcessorException, InterruptedException {
+		
+		AnnotationProcessor processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE);
+		RuntimeMetadata model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
+		
+		processor.process(model, new Leader(), new Follower(), new ConvoyEnsemble());
+		
+		RuntimeFrameworkBuilder builder = new RuntimeFrameworkBuilder(
+				new RuntimeConfiguration(
+						Scheduling.WALL_TIME, 
+						Distribution.LOCAL, 
+						Execution.THREAD_POOLED));
+		RuntimeFramework runtime = builder.build(model); 
+		runtime.start();
+		
+		Thread.sleep(2000);
+		
+		runtime.stop();
+		
+		// THEN the follower reaches his destination
+		assertThat(log.getLog(), containsString("Follower F: me = (1,3)"));
+	}	
 }

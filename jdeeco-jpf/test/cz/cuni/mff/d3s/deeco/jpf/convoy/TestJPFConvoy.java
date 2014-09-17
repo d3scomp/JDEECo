@@ -26,17 +26,18 @@ import gov.nasa.jpf.Config;
 import gov.nasa.jpf.JPF;
 
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
 
 import org.junit.Test;
 
+
 public class TestJPFConvoy { //extends TestJPF {
-                        
+
+	
     @Test
     public void testJPFConvoy() throws FileNotFoundException {
     	
@@ -116,7 +117,8 @@ public class TestJPFConvoy { //extends TestJPF {
     static Follower f = new Follower("follower", new Waypoint(1, 4), new Waypoint(7, 2));
 
     public static void main (String[] args) throws AnnotationProcessorException {
-    	
+    	LogManager.getLogManager().reset();
+    	LogManager.getLogManager().getLogger("").setLevel(Level.OFF);
     	System.out.println(String.format("org.eclipse.emf.common.util.ReferenceClearingQueue = %s",
     			System.getProperty("org.eclipse.emf.common.util.ReferenceClearingQueue")));
     	
@@ -133,7 +135,7 @@ public class TestJPFConvoy { //extends TestJPF {
         RuntimeFrameworkBuilder builder = new RuntimeFrameworkBuilder(new RuntimeConfiguration(
                 RuntimeConfiguration.Scheduling.WALL_TIME,
                 RuntimeConfiguration.Distribution.LOCAL,
-                RuntimeConfiguration.Execution.SINGLE_THREADED)) {
+                RuntimeConfiguration.Execution.THREAD_POOLED)) {
         	
         	@Override
         	protected void buildKnowledgeManagerContainer() {

@@ -27,7 +27,7 @@ public class RuntimeConfiguration {
 	/**
 	 * The enumeration of supported options for execution/threading setup.
 	 */
-	public enum Execution { SINGLE_THREADED } // future: multi-threaded, actor-based
+	public enum Execution { SINGLE_THREADED, THREAD_POOLED } // future: multi-threaded, actor-based
 	
 	
 	

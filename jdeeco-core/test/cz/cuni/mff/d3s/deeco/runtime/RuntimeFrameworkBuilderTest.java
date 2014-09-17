@@ -8,6 +8,7 @@ import org.junit.rules.ExpectedException;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.executor.SameThreadExecutor;
+import cz.cuni.mff.d3s.deeco.executor.ThreadPooledExecutor;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
@@ -134,6 +135,18 @@ public class RuntimeFrameworkBuilderTest {
 		tested.buildExecutor();
 		assertNotNull(tested.executor);
 		assertTrue(tested.executor instanceof SameThreadExecutor);		
+	}
+	
+	
+	@Test
+	public void testGetThreadPooledExecutor() {
+		// GIVEN a configuration with THREAD_POOLED execution
+		RuntimeConfiguration cnf = new RuntimeConfiguration(null, null, Execution.THREAD_POOLED);
+		RuntimeFrameworkBuilder tested = new RuntimeFrameworkBuilder(cnf);
+		// THEN the builder creates an instance of ThreadPooledExecutor
+		tested.buildExecutor();
+		assertNotNull(tested.executor);
+		assertTrue(tested.executor instanceof ThreadPooledExecutor);		
 	}
 	
 	@Test
