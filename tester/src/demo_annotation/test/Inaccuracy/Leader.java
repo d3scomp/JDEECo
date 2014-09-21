@@ -5,9 +5,8 @@ import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 
-//The order of the attributes matters. Start with the higher differential The index -1 should be once in each ModelDefinition
-@StateSpaceModel(models = @Model( period = 100, state  = {"lFFSpeed","lFFPos"}, 
-								 result = @Fun(returnedIndex = {-1,0}, referenceModel = VehicleModel.class)))
+//what about the period behavior there??
+@StateSpaceModel(models = @Model( period = 100, state  = {"lFFPos","lFFSpeed"}, referenceModel = VehicleModel.class))
 @Component
 public class Leader {
 
@@ -39,8 +38,7 @@ public class Leader {
 	public Leader() {
 		lName = "Leader";
 	}
-
-
+	
 	
 	@Process
 	@PeriodicScheduling(value = (int) TIMEPERIOD)

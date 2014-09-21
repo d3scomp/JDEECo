@@ -5,6 +5,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ModelInterface;
+
 /**
  * 
  * @author Rima Al Ali
@@ -15,6 +17,6 @@ import java.lang.annotation.Target;
 public @interface Model {
 	long period();
 	String[] state();
-	Fun result();
+	Class<?> referenceModel() default ModelInterface.class;
 }
 

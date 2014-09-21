@@ -165,7 +165,6 @@ public class Database {
 		double FHill = Math.sin(getValue(positionSeries, routeSlops, pos)) * g * mass;
 		double FFinal = FEng - FResistance - FEngResistance - FHill;
 		double Acceleration = FFinal / mass;
-		
 		return Acceleration;
 	}
 	
@@ -186,7 +185,8 @@ public class Database {
 		double b[] = ArrayUtils.toPrimitive(y.toArray(new Double[y.size()]));
 		UnivariateInterpolator interpolator = new LinearInterpolator();//Spline interpolation more accurate
 		UnivariateFunction function = interpolator.interpolate(a,b);
-		if(key < 0.0) return 0.0;
+		if(key < 0.0) key = 0.0;
+		if(key > a[x.size()-1]) key = a[x.size()-1];
 		double value = function.value(key);
 		return value;
 	}

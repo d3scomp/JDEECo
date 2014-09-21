@@ -4,13 +4,11 @@ package demo_annotation.test.NewTriggers;
 
 import cz.cuni.mff.d3s.deeco.annotations.*;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.MetadataType;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 
 
-@StateSpaceModel(models = @Model( period = 100, state  = {"lFFSpeed","lFFPos"}, 
-								 result = @Fun(returnedIndex = {-1,0}, referenceModel = VehicleModel.class)))
+@StateSpaceModel(models = @Model(period=100,state={"lFFSpeed","lFFPos"},referenceModel=VehicleModel.class))
 @Component
 public class Leader {
 
@@ -46,13 +44,14 @@ public class Leader {
 		lName = "Leader";
 	}
 
-
+	@State(guard = "lFFPos_LH >= 100 && lFFPos_LH < 150")
   	@Process
+  	@PeriodicScheduling(100)
 	public static void alarmed(
 			//the condition holds simple comparisons ... many simple conditions are joined with && or || operators
 			//The compared value could be : V = value , TS = timestamp, L = minimum bound, H = maximum bound, LH = inaccuracy (max-min)
 			//DOTO: adding the composed conditions
-			@InOut("lFFPos") @TriggerOnTimeStampUnchange(guard = "LH >= 100 && LH < 150") InaccuracyParamHolder<Double> lFFPos
+			@InOut("lFFPos") InaccuracyParamHolder<Double> lFFPos
  			){
   		System.out.println("alarm ....."+lFFPos.value+"  ["+lFFPos.minBoundary+" , "+lFFPos.maxBoundary+"]");
  	}

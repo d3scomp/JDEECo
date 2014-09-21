@@ -23,7 +23,7 @@ public class Execute {
 		processor.process(model, 
 				   			 new Leader(), 
 				   			 new FireFighter(),
-				   			 new Helicopter("H1", 0.0),
+				   			 new Helicopter("H1", 200.0),
 				   			 FireFighterLeaderEnsemble.class,
 				   			 FireFighterHelicopterEnsemble.class
 							);

@@ -6,8 +6,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 
 
-@StateSpaceModel(models = @Model( period = 100, state  = {"lFFSpeed","lFFPos"}, 
-								 result = @Fun(returnedIndex = {-1,0}, referenceModel = VehicleModel.class)))
+@StateSpaceModel(models = @Model( period = 100, state  = {"lFFSpeed","lFFPos"}, referenceModel = VehicleModel.class))
 @Component
 public class Leader {
 
@@ -76,12 +75,12 @@ public class Leader {
 		double pid = KP * speedError + lIntegratorSpeedError.value;
 		lErrorWindup.value = saturate(pid) - pid;
 
-		if (pid >= 0) {
-			lGas.value = pid;
+		if (saturate(pid) >= 0) {
+			lGas.value = saturate(pid);
 			lBrake.value = 0.0;
 		} else {
 			lGas.value = 0.0;
-			lBrake.value = -pid;
+			lBrake.value = -saturate(pid);
 		}
 	
 		double lAcceleration = Database.getAcceleration(lSpeed.value, lPos.value, Database.fTorques, lGas.value, lBrake.value,Database.fMass);

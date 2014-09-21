@@ -1,8 +1,13 @@
 package cz.cuni.mff.d3s.deeco.scheduler;
 
 
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.Transition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ProcessConditionParser;
+import cz.cuni.mff.d3s.deeco.task.ProcessTask;
 import cz.cuni.mff.d3s.deeco.task.Task;
 
 /**
@@ -52,17 +57,22 @@ public class SchedulerEvent implements Comparable<SchedulerEvent> {
     
 
     /**
+     * 
+     */
+
+    
+    /**
      * Creates a new scheduler task.
      */
     public SchedulerEvent(Task task, Trigger trigger) {
     	this.executable = task;
     	this.trigger = trigger;    	
+
     	if ((trigger != null) && ((trigger instanceof TimeTrigger) && (((TimeTrigger) trigger).getPeriod() > 0))) {
-    		periodic = true;
+   			periodic = true;
     	} else{
     		periodic = false;
-    	}
-    	
+    	}	
     }
 
 

@@ -44,8 +44,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.StateSpaceModelDefinitionImpl#getComponentInstance <em>Component Instance</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.StateSpaceModelDefinitionImpl#getTriggers <em>Triggers</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.StateSpaceModelDefinitionImpl#isIsActive <em>Is Active</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.StateSpaceModelDefinitionImpl#getInStates <em>In States</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.StateSpaceModelDefinitionImpl#getDerivationStates <em>Derivation States</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.StateSpaceModelDefinitionImpl#getStates <em>States</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.StateSpaceModelDefinitionImpl#getModelValue <em>Model Value</em>}</li>
  * </ul>
  * </p>
@@ -104,24 +103,14 @@ public class StateSpaceModelDefinitionImpl extends MinimalEObjectImpl.Container 
 	protected boolean isActive = IS_ACTIVE_EDEFAULT;
 
 	/**
-	 * The cached value of the '{@link #getInStates() <em>In States</em>}' reference list.
+	 * The cached value of the '{@link #getStates() <em>States</em>}' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getInStates()
+	 * @see #getStates()
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<KnowledgePath> inStates;
-
-	/**
-	 * The cached value of the '{@link #getDerivationStates() <em>Derivation States</em>}' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getDerivationStates()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<KnowledgePath> derivationStates;
+	protected EList<KnowledgePath> states;
 
 	/**
 	 * The default value of the '{@link #getModelValue() <em>Model Value</em>}' attribute.
@@ -167,18 +156,6 @@ public class StateSpaceModelDefinitionImpl extends MinimalEObjectImpl.Container 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<KnowledgePath> getInStates() {
-		if (inStates == null) {
-			inStates = new EObjectResolvingEList<KnowledgePath>(KnowledgePath.class, this, RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__IN_STATES);
-		}
-		return inStates;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public boolean isIsActive() {
 		return isActive;
 	}
@@ -200,6 +177,18 @@ public class StateSpaceModelDefinitionImpl extends MinimalEObjectImpl.Container 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EList<KnowledgePath> getStates() {
+		if (states == null) {
+			states = new EObjectResolvingEList<KnowledgePath>(KnowledgePath.class, this, RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__STATES);
+		}
+		return states;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public ModelInterface getModel() {
 		return model;
 	}
@@ -214,18 +203,6 @@ public class StateSpaceModelDefinitionImpl extends MinimalEObjectImpl.Container 
 		model = newModel;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__MODEL, oldModel, model));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EList<KnowledgePath> getDerivationStates() {
-		if (derivationStates == null) {
-			derivationStates = new EObjectResolvingEList<KnowledgePath>(KnowledgePath.class, this, RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__DERIVATION_STATES);
-		}
-		return derivationStates;
 	}
 
 	/**
@@ -364,10 +341,8 @@ public class StateSpaceModelDefinitionImpl extends MinimalEObjectImpl.Container 
 				return getTriggers();
 			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__IS_ACTIVE:
 				return isIsActive();
-			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__IN_STATES:
-				return getInStates();
-			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__DERIVATION_STATES:
-				return getDerivationStates();
+			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__STATES:
+				return getStates();
 			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__MODEL_VALUE:
 				return getModelValue();
 		}
@@ -396,13 +371,9 @@ public class StateSpaceModelDefinitionImpl extends MinimalEObjectImpl.Container 
 			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__IS_ACTIVE:
 				setIsActive((Boolean)newValue);
 				return;
-			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__IN_STATES:
-				getInStates().clear();
-				getInStates().addAll((Collection<? extends KnowledgePath>)newValue);
-				return;
-			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__DERIVATION_STATES:
-				getDerivationStates().clear();
-				getDerivationStates().addAll((Collection<? extends KnowledgePath>)newValue);
+			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__STATES:
+				getStates().clear();
+				getStates().addAll((Collection<? extends KnowledgePath>)newValue);
 				return;
 			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__MODEL_VALUE:
 				setModelValue((InaccuracyParamHolder)newValue);
@@ -431,11 +402,8 @@ public class StateSpaceModelDefinitionImpl extends MinimalEObjectImpl.Container 
 			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__IS_ACTIVE:
 				setIsActive(IS_ACTIVE_EDEFAULT);
 				return;
-			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__IN_STATES:
-				getInStates().clear();
-				return;
-			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__DERIVATION_STATES:
-				getDerivationStates().clear();
+			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__STATES:
+				getStates().clear();
 				return;
 			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__MODEL_VALUE:
 				setModelValue(MODEL_VALUE_EDEFAULT);
@@ -460,10 +428,8 @@ public class StateSpaceModelDefinitionImpl extends MinimalEObjectImpl.Container 
 				return triggers != null && !triggers.isEmpty();
 			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__IS_ACTIVE:
 				return isActive != IS_ACTIVE_EDEFAULT;
-			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__IN_STATES:
-				return inStates != null && !inStates.isEmpty();
-			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__DERIVATION_STATES:
-				return derivationStates != null && !derivationStates.isEmpty();
+			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__STATES:
+				return states != null && !states.isEmpty();
 			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION__MODEL_VALUE:
 				return MODEL_VALUE_EDEFAULT == null ? modelValue != null : !MODEL_VALUE_EDEFAULT.equals(modelValue);
 		}

@@ -6,7 +6,7 @@ import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.Fun;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
-import cz.cuni.mff.d3s.deeco.annotations.Mode;
+import cz.cuni.mff.d3s.deeco.annotations.State;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
@@ -86,7 +86,7 @@ public class Helicopter1 {
 	}
 	
 	
-	@Mode
+	@State
 	@Process
 	public static void flyOff(
 			@Out("hFFPos") InaccuracyParamHolder<Double> hFFPos
@@ -96,7 +96,7 @@ public class Helicopter1 {
 	}
 	
 	
-	@Mode
+	@State
 	@Process
 	public static void flyOn(
 			@In("signal_In") HashMap<String, Double> signal_In,
@@ -112,7 +112,7 @@ public class Helicopter1 {
 	}
 	
 	
-	@Mode
+	@State
 	@Process
 	public static void initilizedSystem(
 			@In("hID") Double hID,
@@ -167,7 +167,7 @@ public class Helicopter1 {
 	}
 
 	
-	@Mode
+	@State
 	@Process
 	public static void mediate(
 			@Out("time_val") ParamHolder<Double> time_val,
@@ -183,7 +183,7 @@ public class Helicopter1 {
 	}
 
 	
-	@Mode
+	@State
 	@Process
 	public static void organizeSearch(
 			@In("hPos") Double hPos,
@@ -231,7 +231,7 @@ public class Helicopter1 {
 	}	
 
 	
-	@Mode
+	@State
 	@Process
 	public static void toldToSearch(
 			@In("hPos") Double hPos,
@@ -264,7 +264,7 @@ public class Helicopter1 {
 	}
 
 	
-	@Mode
+	@State
 	@Process
 	public static void initilizedSearch(
 			@InOut("hFFTargetPos") ParamHolder<Double> hFFTargetPos,
@@ -276,7 +276,7 @@ public class Helicopter1 {
 	}
 	
 	
-	@Mode
+	@State
 	@Process
 	public static void otherSearch(
 			@InOut("hold") ParamHolder<Double> hold
@@ -288,7 +288,7 @@ public class Helicopter1 {
 	}
 	
 	
-	@Mode
+	@State
 	@Process
 	public static void leadSearch(
 			@In("hPos") Double hPos,

@@ -5,6 +5,7 @@ package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ModeState;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.Transition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
@@ -38,7 +39,9 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getComponentInstance <em>Component Instance</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#isIsActive <em>Is Active</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getTriggers <em>Triggers</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getChildren <em>Children</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getTransitions <em>Transitions</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#isIsRunning <em>Is Running</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getSet <em>Set</em>}</li>
  * </ul>
  * </p>
  *
@@ -96,14 +99,54 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 	protected EList<Trigger> triggers;
 
 	/**
-	 * The cached value of the '{@link #getChildren() <em>Children</em>}' reference list.
+	 * The cached value of the '{@link #getTransitions() <em>Transitions</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getChildren()
+	 * @see #getTransitions()
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<ComponentProcess> children;
+	protected EList<Transition> transitions;
+
+	/**
+	 * The default value of the '{@link #isIsRunning() <em>Is Running</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isIsRunning()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean IS_RUNNING_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isIsRunning() <em>Is Running</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isIsRunning()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean isRunning = IS_RUNNING_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getSet() <em>Set</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getSet()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String SET_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getSet() <em>Set</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getSet()
+	 * @generated
+	 * @ordered
+	 */
+	protected String set = SET_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -224,11 +267,53 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<ComponentProcess> getChildren() {
-		if (children == null) {
-			children = new EObjectResolvingEList<ComponentProcess>(ComponentProcess.class, this, RuntimeMetadataPackage.COMPONENT_PROCESS__CHILDREN);
+	public EList<Transition> getTransitions() {
+		if (transitions == null) {
+			transitions = new EObjectContainmentEList<Transition>(Transition.class, this, RuntimeMetadataPackage.COMPONENT_PROCESS__TRANSITIONS);
 		}
-		return children;
+		return transitions;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean isIsRunning() {
+		return isRunning;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setIsRunning(boolean newIsRunning) {
+		boolean oldIsRunning = isRunning;
+		isRunning = newIsRunning;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT_PROCESS__IS_RUNNING, oldIsRunning, isRunning));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getSet() {
+		return set;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setSet(String newSet) {
+		String oldSet = set;
+		set = newSet;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT_PROCESS__SET, oldSet, set));
 	}
 
 	/**
@@ -259,6 +344,8 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 				return basicSetComponentInstance(null, msgs);
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__TRIGGERS:
 				return ((InternalEList<?>)getTriggers()).basicRemove(otherEnd, msgs);
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__TRANSITIONS:
+				return ((InternalEList<?>)getTransitions()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -293,8 +380,12 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 				return isIsActive();
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__TRIGGERS:
 				return getTriggers();
-			case RuntimeMetadataPackage.COMPONENT_PROCESS__CHILDREN:
-				return getChildren();
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__TRANSITIONS:
+				return getTransitions();
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__IS_RUNNING:
+				return isIsRunning();
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__SET:
+				return getSet();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -321,9 +412,15 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 				getTriggers().clear();
 				getTriggers().addAll((Collection<? extends Trigger>)newValue);
 				return;
-			case RuntimeMetadataPackage.COMPONENT_PROCESS__CHILDREN:
-				getChildren().clear();
-				getChildren().addAll((Collection<? extends ComponentProcess>)newValue);
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__TRANSITIONS:
+				getTransitions().clear();
+				getTransitions().addAll((Collection<? extends Transition>)newValue);
+				return;
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__IS_RUNNING:
+				setIsRunning((Boolean)newValue);
+				return;
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__SET:
+				setSet((String)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -349,8 +446,14 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__TRIGGERS:
 				getTriggers().clear();
 				return;
-			case RuntimeMetadataPackage.COMPONENT_PROCESS__CHILDREN:
-				getChildren().clear();
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__TRANSITIONS:
+				getTransitions().clear();
+				return;
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__IS_RUNNING:
+				setIsRunning(IS_RUNNING_EDEFAULT);
+				return;
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__SET:
+				setSet(SET_EDEFAULT);
 				return;
 		}
 		super.eUnset(featureID);
@@ -372,8 +475,12 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 				return isActive != IS_ACTIVE_EDEFAULT;
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__TRIGGERS:
 				return triggers != null && !triggers.isEmpty();
-			case RuntimeMetadataPackage.COMPONENT_PROCESS__CHILDREN:
-				return children != null && !children.isEmpty();
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__TRANSITIONS:
+				return transitions != null && !transitions.isEmpty();
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__IS_RUNNING:
+				return isRunning != IS_RUNNING_EDEFAULT;
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__SET:
+				return SET_EDEFAULT == null ? set != null : !SET_EDEFAULT.equals(set);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -392,6 +499,10 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 		result.append(name);
 		result.append(", isActive: ");
 		result.append(isActive);
+		result.append(", isRunning: ");
+		result.append(isRunning);
+		result.append(", set: ");
+		result.append(set);
 		result.append(')');
 		return result.toString();
 	}

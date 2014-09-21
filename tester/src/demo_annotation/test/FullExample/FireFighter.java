@@ -3,13 +3,11 @@ package demo_annotation.test.FullExample;
 
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.*;
-import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 
 
-@StateSpaceModel(models = @Model( period = 100, state  = {"ffLSpeed","ffLPos"}, 
-				result = @Fun(returnedIndex = {-1,0}, referenceModel = VehicleModel.class)))
+@StateSpaceModel(models = @Model( period = 100, state  = {"ffLSpeed","ffLPos"}, referenceModel = VehicleModel.class))
 @Component
 public class FireFighter{
 
@@ -86,12 +84,12 @@ public class FireFighter{
 		double pid = KP * speedError + ffIntegratorSpeedError.value;
 		ffErrorWindup.value = saturate(pid) - pid;
 		
-		if (pid >= 0) {
-			ffGas.value = pid;
+		if (saturate(pid) >= 0) {
+			ffGas.value = saturate(pid);
 			ffBrake.value = 0.0;
 		} else {
 			ffGas.value = 0.0;
-			ffBrake.value = -pid;
+			ffBrake.value = -saturate(pid);
 		}
 		
 		
@@ -103,7 +101,7 @@ public class FireFighter{
 
 		
 //		System.err.println("=================================== FireFighter statue ==========================================");
-// 		System.err.println("Speed FireFighter : "+ffSpeed.value+", pos : "+ffPos.value+"... current time :"+(currentTime-ffPos.creationTime));
+// 		System.out.println("Speed FireFighter : "+ffSpeed.value+", pos : "+ffPos.value+"... current time :"+ffPos.creationTime);
 // 		System.err.println("leader : pos : "+ffLPos.value+"... current time :"+(currentTime-ffLPos.creationTime));
 //		System.err.println("=================================================================================================");
 		

@@ -6,7 +6,7 @@ import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.Fun;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
-import cz.cuni.mff.d3s.deeco.annotations.Mode;
+import cz.cuni.mff.d3s.deeco.annotations.State;
 import cz.cuni.mff.d3s.deeco.annotations.Model;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
@@ -117,7 +117,7 @@ public class Helicopter {
 	}	
 
 	
-	@Mode(parent = "organizeSearch")
+	@State(parent = "organizeSearch")
 	@Process
 	public static void otherSearch(
 			@In("hSearchID") @TriggerOnTimeStampChange(guard = "V != hID") String hSearchID,
@@ -128,7 +128,7 @@ public class Helicopter {
 	}
 	
 	
-	@Mode(parent = "organizeSearch")
+	@State(parent = "organizeSearch")
 	@Process
 	public static void leadSearch(
 			// It can't put handle simple string for comparing. We should pass variable or numbers.

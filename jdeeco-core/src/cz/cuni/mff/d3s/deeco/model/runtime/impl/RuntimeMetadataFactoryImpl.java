@@ -86,7 +86,6 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 			case RuntimeMetadataPackage.PATH_NODE_COMPONENT_ID: return createPathNodeComponentId();
 			case RuntimeMetadataPackage.STRING_TO_OBJECT_MAP: return (EObject)createStringToObjectMap();
 			case RuntimeMetadataPackage.STATE_SPACE_MODEL_DEFINITION: return createStateSpaceModelDefinition();
-			case RuntimeMetadataPackage.KNOWLEDGE_TIME_STAMP_UNCHANGE_TRIGGER: return createKnowledgeTimeStampUnchangeTrigger();
 			case RuntimeMetadataPackage.KNOWLEDGE_TIME_STAMP_CHANGE_TRIGGER: return createKnowledgeTimeStampChangeTrigger();
 			case RuntimeMetadataPackage.KNOWLEDGE_TIME_STAMP_TRIGGER: return createKnowledgeTimeStampTrigger();
 			case RuntimeMetadataPackage.TRANSITION: return createTransition();
@@ -335,16 +334,6 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	public StateSpaceModelDefinition createStateSpaceModelDefinition() {
 		StateSpaceModelDefinitionImpl stateSpaceModelDefinition = new StateSpaceModelDefinitionImpl();
 		return stateSpaceModelDefinition;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public KnowledgeTimeStampUnchangeTrigger createKnowledgeTimeStampUnchangeTrigger() {
-		KnowledgeTimeStampUnchangeTriggerImpl knowledgeTimeStampUnchangeTrigger = new KnowledgeTimeStampUnchangeTriggerImpl();
-		return knowledgeTimeStampUnchangeTrigger;
 	}
 
 	/**

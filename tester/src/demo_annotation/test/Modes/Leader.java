@@ -6,8 +6,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 
 
-@StateSpaceModel(models = @Model( period = 100, state  = {"lFFSpeed","lFFPos"}, 
-								 result = @Fun(returnedIndex = {-1,0}, referenceModel = VehicleModel.class)))
+@StateSpaceModel(models = @Model( period = 100, state  = {"lFFSpeed","lFFPos"}, referenceModel = VehicleModel.class))
 @Component
 public class Leader {
 

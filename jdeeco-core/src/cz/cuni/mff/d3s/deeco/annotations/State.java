@@ -28,7 +28,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface Mode {
-//	boolean init() default false;
-	String parent();
+public @interface State {
+	String set() default "";
+	String[] guard() default "";
 }

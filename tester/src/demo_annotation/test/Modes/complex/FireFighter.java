@@ -8,8 +8,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 
 
-@StateSpaceModel(models = @Model( period = 100, state  = {"ffLSpeed","ffLPos"}, 
-				result = @Fun(returnedIndex = {-1,0}, referenceModel = VehicleModel.class)))
+@StateSpaceModel(models = @Model( period = 100, state  = {"ffLSpeed","ffLPos"}, referenceModel = VehicleModel.class))
 @Component
 public class FireFighter{
 
@@ -40,32 +39,40 @@ public class FireFighter{
 	protected static final double SEC_NANOSECOND_FACTOR = 1000000000;
 	
 	
- 	@Process
+	
+	@State(guard = "leaderConnected && ffLPos_LH > 50 && ffLPos_LH < 100")
+	@Process
+	@PeriodicScheduling(100)
 	public static void mediatorConnected(
-			@InOut("ffLPos") @TriggerOnTimeStampUnchange(from = "leaderConnected", guard = "LH > 5 && LH < 10") InaccuracyParamHolder<Double> ffLPos
+			@InOut("ffLPos") InaccuracyParamHolder<Double> ffLPos
  			){
   		System.out.println("choose between the helicopters .... "+ffLPos.value+" ["+ffLPos.minBoundary+" , "+ffLPos.maxBoundary+" ] " );
  	}
 
 	
- 	@Process
+	@State(guard = {"ffLPos_LH < 1","mediatorConnected && (ffLPos_LH > 300 || (ffLPos_LH > 150 && ffLPos_LH < 200))"})
+	@Process
+	@PeriodicScheduling(100)
 	public static void leaderConnected(
-			@InOut("ffLPos") @TriggerOnTimeStampUnchange(from = {"","mediatorConnected"}, guard = {"LH < 1","LH > 30 || (LH > 15 && LH < 20)"}) InaccuracyParamHolder<Double> ffLPos
+			@InOut("ffLPos") InaccuracyParamHolder<Double> ffLPos
  			){
  		double currentTime = System.nanoTime()/SEC_NANOSECOND_FACTOR;
-  		System.out.println("connected to leader .... "+ffLPos.value+" ["+ffLPos.minBoundary+" , "+ffLPos.maxBoundary+" ]  "+(currentTime-ffLPos.creationTime) );
+  		System.out.println("connected to leader .... "+ffLPos.value+" ["+ffLPos.minBoundary+" , "+ffLPos.maxBoundary+" ]  "+(currentTime-ffLPos.creationTime) +"   "+ffLPos.creationTime);
  	}
  	
  	
- 	@Process
+	@State(guard = {"leaderConnected && ffLPos_LH < 100 && ffLPos_LH > 80","mediatorConnected && ffLPos_LH < 30"})
+	@Process
+ 	@PeriodicScheduling(100)
 	public static void nonWorking(
-			@InOut("ffLPos") @TriggerOnTimeStampUnchange(from = {"leaderConnected","mediatorConnected"}, guard = {"LH < 10 && LH > 8","LH < 3"}) InaccuracyParamHolder<Double> ffLPos
+			@InOut("ffLPos") InaccuracyParamHolder<Double> ffLPos
  			){
   		System.err.println("none working .... "+ffLPos.value+" ["+ffLPos.minBoundary+" , "+ffLPos.maxBoundary+" ] " );
  	}
 
- 	
- 	@Process@PeriodicScheduling((int)TIMEPERIOD)
+	
+	@Process
+ 	@PeriodicScheduling((int)TIMEPERIOD)
 	public static void speedControl(
 			@InOut("ffPos") TSParamHolder<Double> ffPos,
 			@InOut("ffSpeed") TSParamHolder<Double> ffSpeed,

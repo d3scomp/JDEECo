@@ -69,8 +69,11 @@
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean" defaultValueLiteral="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="triggers" upperBound="-1"
         eType="#//Trigger" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="children" upperBound="-1"
-        eType="#//ComponentProcess"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="transitions" upperBound="-1"
+        eType="#//Transition" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isRunning" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="set" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="ParameterDirection">
     <eLiterals name="IN"/>
@@ -113,10 +116,8 @@
         eType="#//TimeTrigger" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="isActive" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="inStates" lowerBound="1"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="states" lowerBound="1"
         upperBound="-1" eType="#//KnowledgePath"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="derivationStates" upperBound="-1"
-        eType="#//KnowledgePath"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="modelValue" lowerBound="1"
         eType="#//InaccurateValue"/>
   </eClassifiers>
@@ -129,7 +130,6 @@
     <eLiterals name="INACCURACY" value="4"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="InaccurateValue" instanceClassName="cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder"/>
-  <eClassifiers xsi:type="ecore:EClass" name="KnowledgeTimeStampUnchangeTrigger" eSuperTypes="#//KnowledgeTimeStampTrigger"/>
   <eClassifiers xsi:type="ecore:EEnum" name="ComparisonType">
     <eLiterals name="EQUAL"/>
     <eLiterals name="EQUAL_LESS_THAN" value="1"/>
@@ -141,12 +141,8 @@
     <eLiterals name="NOT_EQUAL_STR" value="7"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="KnowledgeTimeStampChangeTrigger" eSuperTypes="#//KnowledgeTimeStampTrigger"/>
-  <eClassifiers xsi:type="ecore:EClass" name="KnowledgeTimeStampTrigger" eSuperTypes="#//KnowledgeChangeTrigger">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="events" lowerBound="1"
-        upperBound="-1" eType="#//Transition" containment="true"/>
-  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="KnowledgeTimeStampTrigger" eSuperTypes="#//KnowledgeChangeTrigger"/>
   <eClassifiers xsi:type="ecore:EClass" name="Transition">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="to" lowerBound="1" eType="#//ComponentProcess"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="from" lowerBound="1" eType="#//ComponentProcess"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="condition" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>

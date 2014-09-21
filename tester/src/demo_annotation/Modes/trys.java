@@ -1,4 +1,4 @@
-package demo_annotation.test.FullExample;
+package demo_annotation.Modes;
 
 import java.util.ArrayList;
 import java.util.Collection;

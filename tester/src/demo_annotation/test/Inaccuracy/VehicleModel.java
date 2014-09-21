@@ -15,16 +15,12 @@ public class VehicleModel implements ModelInterface {
 	@Override
 	public InaccuracyParamHolder getModelBoundaries(Collection eList) {
 		InaccuracyParamHolder val = new InaccuracyParamHolder<>();
-		ArrayList<InaccuracyParamHolder<Double>> ranges = new ArrayList<InaccuracyParamHolder<Double>>();
+		ArrayList<InaccuracyParamHolder> ranges = new ArrayList<InaccuracyParamHolder>();
 		ranges.addAll(eList);
-//		System.out.println("inside 0 min = "+ranges.get(0).minBoundary.doubleValue()+"   max = "+ranges.get(0).maxBoundary.doubleValue());
-//		System.out.println("inside 1 min = "+ranges.get(1).minBoundary.doubleValue()+"   max = "+ranges.get(1).maxBoundary.doubleValue());
-		val.minBoundary = Database.getAcceleration(ranges.get(0).minBoundary.doubleValue(), 
-				ranges.get(1).minBoundary.doubleValue(), Database.lTorques, 0.0, 1.0, Database.lMass);
-		val.maxBoundary = Database.getAcceleration(ranges.get(0).maxBoundary.doubleValue(),
-				ranges.get(1).maxBoundary.doubleValue(), Database.lTorques, 1.0, 0.0, Database.lMass);
-		
-//		System.out.println("inside : min = "+val.minBoundary+"   max = "+val.maxBoundary);
+		val.minBoundary = Database.getAcceleration((Double)ranges.get(0).minBoundary, 
+				(Double)ranges.get(1).minBoundary, Database.lTorques, 0.0, 1.0, Database.lMass);
+		val.maxBoundary = Database.getAcceleration((Double)ranges.get(0).maxBoundary,
+				(Double)ranges.get(1).maxBoundary, Database.lTorques, 1.0, 0.0, Database.lMass);
 		return val;
 	}
 }

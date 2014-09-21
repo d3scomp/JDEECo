@@ -17,7 +17,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeTimeStampChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeTimeStampTrigger;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeTimeStampUnchangeTrigger;
+
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
@@ -201,15 +201,6 @@ public interface RuntimeMetadataFactory extends EFactory {
 	 * @generated
 	 */
 	StateSpaceModelDefinition createStateSpaceModelDefinition();
-
-	/**
-	 * Returns a new object of class '<em>Knowledge Time Stamp Unchange Trigger</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Knowledge Time Stamp Unchange Trigger</em>'.
-	 * @generated
-	 */
-	KnowledgeTimeStampUnchangeTrigger createKnowledgeTimeStampUnchangeTrigger();
 
 	/**
 	 * Returns a new object of class '<em>Knowledge Time Stamp Change Trigger</em>'.

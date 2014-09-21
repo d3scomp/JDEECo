@@ -54,7 +54,7 @@ public class FireFighter{
 	
 	
 	
-	@Mode
+	@State
 	@Process
 	@PeriodicScheduling(value = (int) MODETIMEPERIOD)
 	public static void inactive(
@@ -84,7 +84,7 @@ public class FireFighter{
 	
 //Maybe just delete those empty modes would be a good idea	
 	
-	@Mode
+	@State
 	@Process
 	@PeriodicScheduling(value = (int) MODETIMEPERIOD)
 	public static void active(){
@@ -93,7 +93,7 @@ public class FireFighter{
 	
 	
 	
-	@Mode
+	@State
 	@Process
 	@PeriodicScheduling(value = (int) MODETIMEPERIOD)
 	public static void waitConnection(){
@@ -102,7 +102,7 @@ public class FireFighter{
 
 	
 	
-	@Mode
+	@State
 	@Process
 	@PeriodicScheduling(value = (int) MODETIMEPERIOD)
 	public static void leaderConnected(){
@@ -112,7 +112,7 @@ public class FireFighter{
 	
 	//[min,max] possible range for periodic scheduling of the process is what the guys suggested in their breakout_group in RELATE meeting. 
 	//So, I think I should leave it for them then. Isn't it?? 
-	@Mode
+	@State
 	@Process
 	@PeriodicScheduling(value_min = (int) MODETIMEPERIOD_MIN, value_max = (int) MODETIMEPERIOD_MAX)
 	public static void mediatorConnected(

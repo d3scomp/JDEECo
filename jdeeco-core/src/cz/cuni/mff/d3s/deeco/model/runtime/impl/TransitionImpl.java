@@ -22,7 +22,6 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.TransitionImpl#getTo <em>To</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.TransitionImpl#getFrom <em>From</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.TransitionImpl#getCondition <em>Condition</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.TransitionImpl#isIsReachable <em>Is Reachable</em>}</li>
@@ -32,16 +31,6 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * @generated
  */
 public class TransitionImpl extends MinimalEObjectImpl.Container implements Transition {
-	/**
-	 * The cached value of the '{@link #getTo() <em>To</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getTo()
-	 * @generated
-	 * @ordered
-	 */
-	protected ComponentProcess to;
-
 	/**
 	 * The cached value of the '{@link #getFrom() <em>From</em>}' reference.
 	 * <!-- begin-user-doc -->
@@ -109,44 +98,6 @@ public class TransitionImpl extends MinimalEObjectImpl.Container implements Tran
 	@Override
 	protected EClass eStaticClass() {
 		return RuntimeMetadataPackage.Literals.TRANSITION;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public ComponentProcess getTo() {
-		if (to != null && to.eIsProxy()) {
-			InternalEObject oldTo = (InternalEObject)to;
-			to = (ComponentProcess)eResolveProxy(oldTo);
-			if (to != oldTo) {
-				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, RuntimeMetadataPackage.TRANSITION__TO, oldTo, to));
-			}
-		}
-		return to;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public ComponentProcess basicGetTo() {
-		return to;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setTo(ComponentProcess newTo) {
-		ComponentProcess oldTo = to;
-		to = newTo;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.TRANSITION__TO, oldTo, to));
 	}
 
 	/**
@@ -237,9 +188,6 @@ public class TransitionImpl extends MinimalEObjectImpl.Container implements Tran
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.TRANSITION__TO:
-				if (resolve) return getTo();
-				return basicGetTo();
 			case RuntimeMetadataPackage.TRANSITION__FROM:
 				if (resolve) return getFrom();
 				return basicGetFrom();
@@ -259,9 +207,6 @@ public class TransitionImpl extends MinimalEObjectImpl.Container implements Tran
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.TRANSITION__TO:
-				setTo((ComponentProcess)newValue);
-				return;
 			case RuntimeMetadataPackage.TRANSITION__FROM:
 				setFrom((ComponentProcess)newValue);
 				return;
@@ -283,9 +228,6 @@ public class TransitionImpl extends MinimalEObjectImpl.Container implements Tran
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.TRANSITION__TO:
-				setTo((ComponentProcess)null);
-				return;
 			case RuntimeMetadataPackage.TRANSITION__FROM:
 				setFrom((ComponentProcess)null);
 				return;
@@ -307,8 +249,6 @@ public class TransitionImpl extends MinimalEObjectImpl.Container implements Tran
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.TRANSITION__TO:
-				return to != null;
 			case RuntimeMetadataPackage.TRANSITION__FROM:
 				return from != null;
 			case RuntimeMetadataPackage.TRANSITION__CONDITION:

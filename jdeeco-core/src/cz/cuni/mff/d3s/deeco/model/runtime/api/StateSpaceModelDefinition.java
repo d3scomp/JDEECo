@@ -21,8 +21,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getComponentInstance <em>Component Instance</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getTriggers <em>Triggers</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#isIsActive <em>Is Active</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getInStates <em>In States</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getDerivationStates <em>Derivation States</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getStates <em>States</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getModelValue <em>Model Value</em>}</li>
  * </ul>
  * </p>
@@ -129,36 +128,20 @@ public interface StateSpaceModelDefinition extends EObject {
 	void setIsActive(boolean value);
 
 	/**
-	 * Returns the value of the '<em><b>In States</b></em>' reference list.
+	 * Returns the value of the '<em><b>States</b></em>' reference list.
 	 * The list contents are of type {@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath}.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>In States</em>' containment reference list isn't clear,
+	 * If the meaning of the '<em>States</em>' reference list isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>In States</em>' reference list.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getStateSpaceModelDefinition_InStates()
+	 * @return the value of the '<em>States</em>' reference list.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getStateSpaceModelDefinition_States()
 	 * @model required="true"
 	 * @generated
 	 */
-	EList<KnowledgePath> getInStates();
-
-	/**
-	 * Returns the value of the '<em><b>Derivation States</b></em>' reference list.
-	 * The list contents are of type {@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath}.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Derivation States</em>' containment reference list isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Derivation States</em>' reference list.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getStateSpaceModelDefinition_DerivationStates()
-	 * @model
-	 * @generated
-	 */
-	EList<KnowledgePath> getDerivationStates();
+	EList<KnowledgePath> getStates();
 
 	/**
 	 * Returns the value of the '<em><b>Model Value</b></em>' attribute.

@@ -165,21 +165,20 @@ public class Database {
 		double FHill = Math.sin(getValue(positionSeries, routeSlops, pos)) * g * mass;
 		double FFinal = FEng - FResistance - FEngResistance - FHill;
 		double Acceleration = FFinal / mass;
-		
 		return Acceleration;
 	}
 	
 	
-//	public static Double getHelicopterAcceleration(Double speed, Double pos, ArrayList<Double> rotations,Double gas, Double brake, Double mass){
-//		double w = gas * getValue(helicopterSpeedSeries, rotations, speed);
-//		double A = brake * getValue(helicopterSpeedSeries, helicopterArea, speed);
-//		double FL = (r_density / 2) * C_L * Math.pow( w * r ,2) * 4 * r * c;
-//		double FResistance = (r_density / 2) * C_D * Math.pow(speed, 2) * A;
-//		double FFinal = FL - FResistance;
-//		double Acceleration = FFinal / mass;
-//
-//		return Acceleration;
-//	}
+	public static Double getHelicopterAcceleration(Double speed, Double pos, ArrayList<Double> rotations,Double gas, Double brake, Double mass){
+		double w = gas * getValue(helicopterSpeedSeries, rotations, speed);
+		double A = brake * getValue(helicopterSpeedSeries, helicopterArea, speed);
+		double FL = (r_density / 2) * C_L * Math.pow( w * r ,2) * 4 * r * c;
+		double FResistance = (r_density / 2) * C_D * Math.pow(speed, 2) * A;
+		double FFinal = FL - FResistance;
+		double Acceleration = FFinal / mass;
+
+		return Acceleration;
+	}
 
 	public static Double getValue(ArrayList<Double> x, ArrayList<Double> y, Double key){
 		double a[] = ArrayUtils.toPrimitive(x.toArray(new Double[x.size()]));

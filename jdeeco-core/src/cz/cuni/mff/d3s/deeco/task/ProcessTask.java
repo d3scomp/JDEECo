@@ -271,4 +271,8 @@ public class ProcessTask extends Task {
 		
 		return null;
 	}
+	
+	public ComponentProcess getComponentProcess(){
+		return componentProcess;
+	}
 }

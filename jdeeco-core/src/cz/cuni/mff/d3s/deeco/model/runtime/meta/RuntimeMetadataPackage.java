@@ -782,13 +782,31 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int COMPONENT_PROCESS__TRIGGERS = INVOCABLE_FEATURE_COUNT + 3;
 
 	/**
-	 * The feature id for the '<em><b>Children</b></em>' reference list.
+	 * The feature id for the '<em><b>Transitions</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_PROCESS__CHILDREN = INVOCABLE_FEATURE_COUNT + 4;
+	int COMPONENT_PROCESS__TRANSITIONS = INVOCABLE_FEATURE_COUNT + 4;
+
+	/**
+	 * The feature id for the '<em><b>Is Running</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPONENT_PROCESS__IS_RUNNING = INVOCABLE_FEATURE_COUNT + 5;
+
+	/**
+	 * The feature id for the '<em><b>Set</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPONENT_PROCESS__SET = INVOCABLE_FEATURE_COUNT + 6;
 
 	/**
 	 * The number of structural features of the '<em>Component Process</em>' class.
@@ -797,7 +815,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_PROCESS_FEATURE_COUNT = INVOCABLE_FEATURE_COUNT + 5;
+	int COMPONENT_PROCESS_FEATURE_COUNT = INVOCABLE_FEATURE_COUNT + 7;
 
 	/**
 	 * The number of operations of the '<em>Component Process</em>' class.
@@ -1026,22 +1044,13 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int STATE_SPACE_MODEL_DEFINITION__IS_ACTIVE = 3;
 
 	/**
-	 * The feature id for the '<em><b>In States</b></em>' reference list.
+	 * The feature id for the '<em><b>States</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int STATE_SPACE_MODEL_DEFINITION__IN_STATES = 4;
-
-	/**
-	 * The feature id for the '<em><b>Derivation States</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int STATE_SPACE_MODEL_DEFINITION__DERIVATION_STATES = 5;
+	int STATE_SPACE_MODEL_DEFINITION__STATES = 4;
 
 	/**
 	 * The feature id for the '<em><b>Model Value</b></em>' attribute.
@@ -1050,7 +1059,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int STATE_SPACE_MODEL_DEFINITION__MODEL_VALUE = 6;
+	int STATE_SPACE_MODEL_DEFINITION__MODEL_VALUE = 5;
 
 	/**
 	 * The number of structural features of the '<em>State Space Model Definition</em>' class.
@@ -1059,7 +1068,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int STATE_SPACE_MODEL_DEFINITION_FEATURE_COUNT = 7;
+	int STATE_SPACE_MODEL_DEFINITION_FEATURE_COUNT = 6;
 
 	/**
 	 * The number of operations of the '<em>State Space Model Definition</em>' class.
@@ -1078,7 +1087,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getKnowledgeTimeStampTrigger()
 	 * @generated
 	 */
-	int KNOWLEDGE_TIME_STAMP_TRIGGER = 23;
+	int KNOWLEDGE_TIME_STAMP_TRIGGER = 22;
 
 	/**
 	 * The feature id for the '<em><b>Knowledge Path</b></em>' containment reference.
@@ -1090,22 +1099,13 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int KNOWLEDGE_TIME_STAMP_TRIGGER__KNOWLEDGE_PATH = KNOWLEDGE_CHANGE_TRIGGER__KNOWLEDGE_PATH;
 
 	/**
-	 * The feature id for the '<em><b>Events</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int KNOWLEDGE_TIME_STAMP_TRIGGER__EVENTS = KNOWLEDGE_CHANGE_TRIGGER_FEATURE_COUNT + 0;
-
-	/**
 	 * The number of structural features of the '<em>Knowledge Time Stamp Trigger</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int KNOWLEDGE_TIME_STAMP_TRIGGER_FEATURE_COUNT = KNOWLEDGE_CHANGE_TRIGGER_FEATURE_COUNT + 1;
+	int KNOWLEDGE_TIME_STAMP_TRIGGER_FEATURE_COUNT = KNOWLEDGE_CHANGE_TRIGGER_FEATURE_COUNT + 0;
 
 	/**
 	 * The number of operations of the '<em>Knowledge Time Stamp Trigger</em>' class.
@@ -1117,52 +1117,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int KNOWLEDGE_TIME_STAMP_TRIGGER_OPERATION_COUNT = KNOWLEDGE_CHANGE_TRIGGER_OPERATION_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.KnowledgeTimeStampUnchangeTriggerImpl <em>Knowledge Time Stamp Unchange Trigger</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.KnowledgeTimeStampUnchangeTriggerImpl
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getKnowledgeTimeStampUnchangeTrigger()
-	 * @generated
-	 */
-	int KNOWLEDGE_TIME_STAMP_UNCHANGE_TRIGGER = 21;
-
-	/**
-	 * The feature id for the '<em><b>Knowledge Path</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int KNOWLEDGE_TIME_STAMP_UNCHANGE_TRIGGER__KNOWLEDGE_PATH = KNOWLEDGE_TIME_STAMP_TRIGGER__KNOWLEDGE_PATH;
-
-	/**
-	 * The feature id for the '<em><b>Events</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int KNOWLEDGE_TIME_STAMP_UNCHANGE_TRIGGER__EVENTS = KNOWLEDGE_TIME_STAMP_TRIGGER__EVENTS;
-
-	/**
-	 * The number of structural features of the '<em>Knowledge Time Stamp Unchange Trigger</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int KNOWLEDGE_TIME_STAMP_UNCHANGE_TRIGGER_FEATURE_COUNT = KNOWLEDGE_TIME_STAMP_TRIGGER_FEATURE_COUNT + 0;
-
-	/**
-	 * The number of operations of the '<em>Knowledge Time Stamp Unchange Trigger</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int KNOWLEDGE_TIME_STAMP_UNCHANGE_TRIGGER_OPERATION_COUNT = KNOWLEDGE_TIME_STAMP_TRIGGER_OPERATION_COUNT + 0;
-
-	/**
 	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.KnowledgeTimeStampChangeTriggerImpl <em>Knowledge Time Stamp Change Trigger</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1170,7 +1124,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getKnowledgeTimeStampChangeTrigger()
 	 * @generated
 	 */
-	int KNOWLEDGE_TIME_STAMP_CHANGE_TRIGGER = 22;
+	int KNOWLEDGE_TIME_STAMP_CHANGE_TRIGGER = 21;
 
 	/**
 	 * The feature id for the '<em><b>Knowledge Path</b></em>' containment reference.
@@ -1180,15 +1134,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @ordered
 	 */
 	int KNOWLEDGE_TIME_STAMP_CHANGE_TRIGGER__KNOWLEDGE_PATH = KNOWLEDGE_TIME_STAMP_TRIGGER__KNOWLEDGE_PATH;
-
-	/**
-	 * The feature id for the '<em><b>Events</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int KNOWLEDGE_TIME_STAMP_CHANGE_TRIGGER__EVENTS = KNOWLEDGE_TIME_STAMP_TRIGGER__EVENTS;
 
 	/**
 	 * The number of structural features of the '<em>Knowledge Time Stamp Change Trigger</em>' class.
@@ -1216,16 +1161,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getTransition()
 	 * @generated
 	 */
-	int TRANSITION = 24;
-
-	/**
-	 * The feature id for the '<em><b>To</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TRANSITION__TO = 0;
+	int TRANSITION = 23;
 
 	/**
 	 * The feature id for the '<em><b>From</b></em>' reference.
@@ -1234,7 +1170,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TRANSITION__FROM = 1;
+	int TRANSITION__FROM = 0;
 
 	/**
 	 * The feature id for the '<em><b>Condition</b></em>' attribute.
@@ -1243,7 +1179,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TRANSITION__CONDITION = 2;
+	int TRANSITION__CONDITION = 1;
 
 	/**
 	 * The feature id for the '<em><b>Is Reachable</b></em>' attribute.
@@ -1252,7 +1188,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TRANSITION__IS_REACHABLE = 3;
+	int TRANSITION__IS_REACHABLE = 2;
 
 	/**
 	 * The number of structural features of the '<em>Transition</em>' class.
@@ -1261,7 +1197,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TRANSITION_FEATURE_COUNT = 4;
+	int TRANSITION_FEATURE_COUNT = 3;
 
 	/**
 	 * The number of operations of the '<em>Transition</em>' class.
@@ -1280,7 +1216,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getParameterDirection()
 	 * @generated
 	 */
-	int PARAMETER_DIRECTION = 25;
+	int PARAMETER_DIRECTION = 24;
 
 	/**
 	 * The meta object id for the '<em>Method</em>' data type.
@@ -1290,7 +1226,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getMethod()
 	 * @generated
 	 */
-	int METHOD = 28;
+	int METHOD = 27;
 
 	/**
 	 * The meta object id for the '<em>Knowledge Manager</em>' data type.
@@ -1300,7 +1236,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getKnowledgeManager()
 	 * @generated
 	 */
-	int KNOWLEDGE_MANAGER = 29;
+	int KNOWLEDGE_MANAGER = 28;
 
 	/**
 	 * The meta object id for the '<em>Shadow Knowledge Manager Registry</em>' data type.
@@ -1310,7 +1246,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getShadowKnowledgeManagerRegistry()
 	 * @generated
 	 */
-	int SHADOW_KNOWLEDGE_MANAGER_REGISTRY = 30;
+	int SHADOW_KNOWLEDGE_MANAGER_REGISTRY = 29;
 
 	/**
 	 * The meta object id for the '<em>Communication Boundary</em>' data type.
@@ -1320,7 +1256,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getCommunicationBoundary()
 	 * @generated
 	 */
-	int COMMUNICATION_BOUNDARY = 31;
+	int COMMUNICATION_BOUNDARY = 30;
 
 	/**
 	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.MetadataType <em>Metadata Type</em>}' enum.
@@ -1330,7 +1266,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getMetadataType()
 	 * @generated
 	 */
-	int METADATA_TYPE = 26;
+	int METADATA_TYPE = 25;
 
 	/**
 	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComparisonType <em>Comparison Type</em>}' enum.
@@ -1340,7 +1276,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getComparisonType()
 	 * @generated
 	 */
-	int COMPARISON_TYPE = 27;
+	int COMPARISON_TYPE = 26;
 
 	/**
 	 * The meta object id for the '<em>Model Type</em>' data type.
@@ -1350,7 +1286,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getModelType()
 	 * @generated
 	 */
-	int MODEL_TYPE = 32;
+	int MODEL_TYPE = 31;
 
 	/**
 	 * The meta object id for the '<em>Inaccurate Value</em>' data type.
@@ -1360,7 +1296,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getInaccurateValue()
 	 * @generated
 	 */
-	int INACCURATE_VALUE = 33;
+	int INACCURATE_VALUE = 32;
 
 	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger <em>Trigger</em>}'.
@@ -1725,15 +1661,37 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EReference getComponentProcess_Triggers();
 
 	/**
-	 * Returns the meta object for the reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getChildren <em>Children</em>}'.
+	 * Returns the meta object for the containment reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getTransitions <em>Transitions</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>Children</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getChildren()
+	 * @return the meta object for the containment reference list '<em>Transitions</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getTransitions()
 	 * @see #getComponentProcess()
 	 * @generated
 	 */
-	EReference getComponentProcess_Children();
+	EReference getComponentProcess_Transitions();
+
+	/**
+	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#isIsRunning <em>Is Running</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Is Running</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#isIsRunning()
+	 * @see #getComponentProcess()
+	 * @generated
+	 */
+	EAttribute getComponentProcess_IsRunning();
+
+	/**
+	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getSet <em>Set</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Set</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getSet()
+	 * @see #getComponentProcess()
+	 * @generated
+	 */
+	EAttribute getComponentProcess_Set();
 
 	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter <em>Parameter</em>}'.
@@ -1917,17 +1875,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EClass getStateSpaceModelDefinition();
 
 	/**
-	 * Returns the meta object for the reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getInStates <em>In States</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>In States</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getInStates()
-	 * @see #getStateSpaceModelDefinition()
-	 * @generated
-	 */
-	EReference getStateSpaceModelDefinition_InStates();
-
-	/**
 	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#isIsActive <em>Is Active</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1939,15 +1886,15 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EAttribute getStateSpaceModelDefinition_IsActive();
 
 	/**
-	 * Returns the meta object for the reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getDerivationStates <em>Derivation States</em>}'.
+	 * Returns the meta object for the reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getStates <em>States</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>Derivation States</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getDerivationStates()
+	 * @return the meta object for the reference list '<em>States</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getStates()
 	 * @see #getStateSpaceModelDefinition()
 	 * @generated
 	 */
-	EReference getStateSpaceModelDefinition_DerivationStates();
+	EReference getStateSpaceModelDefinition_States();
 
 	/**
 	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.StateSpaceModelDefinition#getModelValue <em>Model Value</em>}'.
@@ -1959,16 +1906,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getStateSpaceModelDefinition_ModelValue();
-
-	/**
-	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeTimeStampUnchangeTrigger <em>Knowledge Time Stamp Unchange Trigger</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Knowledge Time Stamp Unchange Trigger</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeTimeStampUnchangeTrigger
-	 * @generated
-	 */
-	EClass getKnowledgeTimeStampUnchangeTrigger();
 
 	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeTimeStampChangeTrigger <em>Knowledge Time Stamp Change Trigger</em>}'.
@@ -1991,17 +1928,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EClass getKnowledgeTimeStampTrigger();
 
 	/**
-	 * Returns the meta object for the containment reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeTimeStampTrigger#getEvents <em>Events</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Events</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeTimeStampTrigger#getEvents()
-	 * @see #getKnowledgeTimeStampTrigger()
-	 * @generated
-	 */
-	EReference getKnowledgeTimeStampTrigger_Events();
-
-	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Transition <em>Transition</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2010,17 +1936,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getTransition();
-
-	/**
-	 * Returns the meta object for the reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Transition#getTo <em>To</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>To</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.Transition#getTo()
-	 * @see #getTransition()
-	 * @generated
-	 */
-	EReference getTransition_To();
 
 	/**
 	 * Returns the meta object for the reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Transition#getFrom <em>From</em>}'.
@@ -2536,12 +2451,28 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EReference COMPONENT_PROCESS__TRIGGERS = eINSTANCE.getComponentProcess_Triggers();
 
 		/**
-		 * The meta object literal for the '<em><b>Children</b></em>' reference list feature.
+		 * The meta object literal for the '<em><b>Transitions</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference COMPONENT_PROCESS__CHILDREN = eINSTANCE.getComponentProcess_Children();
+		EReference COMPONENT_PROCESS__TRANSITIONS = eINSTANCE.getComponentProcess_Transitions();
+
+		/**
+		 * The meta object literal for the '<em><b>Is Running</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute COMPONENT_PROCESS__IS_RUNNING = eINSTANCE.getComponentProcess_IsRunning();
+
+		/**
+		 * The meta object literal for the '<em><b>Set</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute COMPONENT_PROCESS__SET = eINSTANCE.getComponentProcess_Set();
 
 		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ParameterImpl <em>Parameter</em>}' class.
@@ -2696,14 +2627,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EClass STATE_SPACE_MODEL_DEFINITION = eINSTANCE.getStateSpaceModelDefinition();
 
 		/**
-		 * The meta object literal for the '<em><b>In States</b></em>' reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference STATE_SPACE_MODEL_DEFINITION__IN_STATES = eINSTANCE.getStateSpaceModelDefinition_InStates();
-
-		/**
 		 * The meta object literal for the '<em><b>Is Active</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2712,12 +2635,12 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EAttribute STATE_SPACE_MODEL_DEFINITION__IS_ACTIVE = eINSTANCE.getStateSpaceModelDefinition_IsActive();
 
 		/**
-		 * The meta object literal for the '<em><b>Derivation States</b></em>' reference list feature.
+		 * The meta object literal for the '<em><b>States</b></em>' reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference STATE_SPACE_MODEL_DEFINITION__DERIVATION_STATES = eINSTANCE.getStateSpaceModelDefinition_DerivationStates();
+		EReference STATE_SPACE_MODEL_DEFINITION__STATES = eINSTANCE.getStateSpaceModelDefinition_States();
 
 		/**
 		 * The meta object literal for the '<em><b>Model Value</b></em>' attribute feature.
@@ -2726,16 +2649,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute STATE_SPACE_MODEL_DEFINITION__MODEL_VALUE = eINSTANCE.getStateSpaceModelDefinition_ModelValue();
-
-		/**
-		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.KnowledgeTimeStampUnchangeTriggerImpl <em>Knowledge Time Stamp Unchange Trigger</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.KnowledgeTimeStampUnchangeTriggerImpl
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getKnowledgeTimeStampUnchangeTrigger()
-		 * @generated
-		 */
-		EClass KNOWLEDGE_TIME_STAMP_UNCHANGE_TRIGGER = eINSTANCE.getKnowledgeTimeStampUnchangeTrigger();
 
 		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.KnowledgeTimeStampChangeTriggerImpl <em>Knowledge Time Stamp Change Trigger</em>}' class.
@@ -2758,14 +2671,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EClass KNOWLEDGE_TIME_STAMP_TRIGGER = eINSTANCE.getKnowledgeTimeStampTrigger();
 
 		/**
-		 * The meta object literal for the '<em><b>Events</b></em>' containment reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference KNOWLEDGE_TIME_STAMP_TRIGGER__EVENTS = eINSTANCE.getKnowledgeTimeStampTrigger_Events();
-
-		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.TransitionImpl <em>Transition</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2774,14 +2679,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * @generated
 		 */
 		EClass TRANSITION = eINSTANCE.getTransition();
-
-		/**
-		 * The meta object literal for the '<em><b>To</b></em>' reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference TRANSITION__TO = eINSTANCE.getTransition_To();
 
 		/**
 		 * The meta object literal for the '<em><b>From</b></em>' reference feature.

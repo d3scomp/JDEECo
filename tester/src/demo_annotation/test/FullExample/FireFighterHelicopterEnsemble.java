@@ -22,11 +22,15 @@ public class FireFighterHelicopterEnsemble {
 			@In("coord.ffSpeed") Double ffSpeed,
 			@In("coord.ffLPos") Double ffLPos,
 			
+			@In("member.hPos") Double hPos,
 			@In("member.hFFPos") Double hFFPos,
 			@In("member.hFFSpeed") Double hFFSpeed
  		){
+//		System.out.println(hPos+"  "+ffPos+"  "+Math.abs(hPos - ffPos));
 		if(ffPos > 100 && ffPos < 200)
 			return true;
+//		if(Math.abs(hPos - ffPos) < 20)
+//			return true;
 		return false;
 	}
 	

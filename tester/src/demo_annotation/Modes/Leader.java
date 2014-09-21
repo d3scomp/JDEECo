@@ -55,7 +55,7 @@ public class Leader {
 	}
 
 
-	@Mode
+	@State
 	@Process
 	public static void initilizedLeader(
 			@Out("lPos") ParamHolder<Double> lPos,
@@ -86,7 +86,7 @@ public class Leader {
 	
 	
 	//it will have a problem because there is no parameters in the process
-	@Mode
+	@State
 	@Process
 	public static void ffConnected(
 			@In("lPos") Double lPos
@@ -95,7 +95,7 @@ public class Leader {
 	}
 	
 	
-	@Mode
+	@State
 	@Process
 	public static void alarmed(
 			@Out("lAlarm") ParamHolder<Double> lAlarm			

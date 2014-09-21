@@ -1,11 +1,12 @@
-package demo_annotation.test.FullExample;
+package demo_annotation.Modes;
 
 import java.util.HashMap;
+
 import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.Fun;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
-import cz.cuni.mff.d3s.deeco.annotations.Mode;
+import cz.cuni.mff.d3s.deeco.annotations.State;
 import cz.cuni.mff.d3s.deeco.annotations.Model;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
@@ -20,6 +21,9 @@ import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ModeParamHolder;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
+import demo_annotation.test.FullExample.RangeValue;
+import demo_annotation.test.FullExample.TargetValue;
+import demo_annotation.test.FullExample.VehicleModel;
 import demo_annotation.test.Modes.Database;
 
 
@@ -99,7 +103,7 @@ public class CopyOfHelicopter {
 	}
 	
 	
-	@Mode(init = true)
+	@State(init = true)
 	@Process
 	public static void initilizedSystem(
 			@InOut("hFFPos") @TriggerOnTimeStampUnchange(equal = 0) ModeParamHolder<Double> hFFPos

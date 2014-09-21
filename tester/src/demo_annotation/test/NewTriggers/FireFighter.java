@@ -7,8 +7,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 
 
-@StateSpaceModel(models = @Model( period = 100, state  = {"ffLSpeed","ffLPos"}, 
-				result = @Fun(returnedIndex = {-1,0}, referenceModel = VehicleModel.class)))
+@StateSpaceModel(models = @Model(period=100,state={"ffLPos","ffLSpeed"}, referenceModel = VehicleModel.class))
 @Component
 public class FireFighter{
 
@@ -38,11 +37,13 @@ public class FireFighter{
 	protected static final double SEC_NANOSECOND_FACTOR = 1000000000;
 	
 
+	@State(guard = "ffLPos_LH < 2")
  	@Process
+ 	@PeriodicScheduling(100)
 	public static void copy(
 			// Triggered only if the value is changed
 			//uncomment the line in Leader to disable the trigger
-			@InOut("ffLPos") @TriggerOnTimeStampChange InaccuracyParamHolder<Double> ffLPos
+			@InOut("ffLPos") InaccuracyParamHolder<Double> ffLPos
  			){
   		System.out.println("FF ..... leader info : "+ffLPos.value+"  ["+ffLPos.minBoundary+" , "+ffLPos.maxBoundary+"]");
  	}

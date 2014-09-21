@@ -8,8 +8,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 
 
-@StateSpaceModel(models = @Model( period = 100, state  = {"ffLSpeed","ffLPos"}, 
-				result = @Fun(returnedIndex = {-1,0}, referenceModel = VehicleModel.class)))
+@StateSpaceModel(models = @Model( period = 100, state  = {"ffLPos","ffLSpeed"},referenceModel = VehicleModel.class))
 @Component
 public class FireFighter{
 
@@ -39,27 +38,31 @@ public class FireFighter{
 	private static final double SEC_MILI_SEC_FACTOR = 1000;
 	protected static final double SEC_NANOSECOND_FACTOR = 1000000000;
 	
-	
- 	@Process
+	@State(from = "leaderConnected", guard = "ffLPos_LH > 50 && ffLPos_LH < 100")
+	@Process
+	@PeriodicScheduling(100)
 	public static void mediatorConnected(
-			@InOut("ffLPos") @TriggerOnTimeStampUnchange(from = "leaderConnected", guard = "LH > 5 && LH < 10") InaccuracyParamHolder<Double> ffLPos
+			@InOut("ffLPos") @TriggerOnTimeStampChange InaccuracyParamHolder<Double> ffLPos
  			){
   		System.out.println("choose between the helicopters .... "+ffLPos.value+" ["+ffLPos.minBoundary+" , "+ffLPos.maxBoundary+" ] " );
  	}
 
 	
- 	@Process
+	@State(guard = "ffLPos_LH < 1")
+	@Process
 	public static void leaderConnected(
-			@InOut("ffLPos") @TriggerOnTimeStampUnchange(guard = "LH < 1") InaccuracyParamHolder<Double> ffLPos
+			@InOut("ffLPos") @TriggerOnTimeStampChange InaccuracyParamHolder<Double> ffLPos
  			){
  		double currentTime = System.nanoTime()/SEC_NANOSECOND_FACTOR;
   		System.out.println("connected to leader .... "+ffLPos.value+" ["+ffLPos.minBoundary+" , "+ffLPos.maxBoundary+" ]  "+(currentTime-ffLPos.creationTime) );
  	}
  	
  	
- 	@Process
+	@State(from = "leaderConnected", guard = "ffLPos_LH > 80")
+	@Process
+ 	@PeriodicScheduling(100)
 	public static void nonWorking(
-			@InOut("ffLPos") @TriggerOnTimeStampUnchange(from = "leaderConnected", guard = "LH > 8") InaccuracyParamHolder<Double> ffLPos
+			@InOut("ffLPos") InaccuracyParamHolder<Double> ffLPos
  			){
   		System.err.println("none working .... "+ffLPos.value+" ["+ffLPos.minBoundary+" , "+ffLPos.maxBoundary+" ] " );
  	}
