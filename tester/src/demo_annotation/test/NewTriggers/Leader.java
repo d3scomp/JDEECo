@@ -5,6 +5,7 @@ package demo_annotation.test.NewTriggers;
 import cz.cuni.mff.d3s.deeco.annotations.*;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
+import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 
 
@@ -44,7 +45,7 @@ public class Leader {
 		lName = "Leader";
 	}
 
-	@State(guard = "lFFPos_LH >= 100 && lFFPos_LH < 150")
+	@Mode(guard = "lFFPos_LH >= 100 && lFFPos_LH < 150")
   	@Process
   	@PeriodicScheduling(100)
 	public static void alarmed(
@@ -60,8 +61,8 @@ public class Leader {
 	@Process
 	@PeriodicScheduling(value = (int) TIMEPERIOD)
 	public static void speedControl(
-			@InOut("lPos") ParamHolder<Double> lPos,
-			@InOut("lSpeed") ParamHolder<Double> lSpeed,
+			@InOut("lPos") TSParamHolder<Double> lPos,
+			@InOut("lSpeed") TSParamHolder<Double> lSpeed,
 
 			@InOut("lFFPos") InaccuracyParamHolder<Double> lFFPos,
 			@InOut("lFFSpeed") InaccuracyParamHolder<Double> lFFSpeed,
@@ -92,7 +93,9 @@ public class Leader {
 		double lAcceleration = Database.getAcceleration(lSpeed.value, lPos.value, Database.fTorques, lGas.value, lBrake.value,Database.fMass);
 		lSpeed.value += lAcceleration * timePeriodInSeconds; 
 		lPos.value += lSpeed.value * timePeriodInSeconds;
-
+		lPos.creationTime = currentTime;
+		lSpeed.creationTime = currentTime;
+		
 //		System.out.println("=================================== Leader statue ==========================================");
 // 		System.out.println("Speed Leader : "+lSpeed.value+", pos : "+lPos.value+"... time :"+currentTime);
 // 		System.out.println("Speed Leader_FireFighter : "+lFFSpeed.value+", pos : "+lFFPos.value+"... time :"+lFFPos.creationTime);

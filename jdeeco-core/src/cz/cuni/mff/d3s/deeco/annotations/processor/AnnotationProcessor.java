@@ -593,7 +593,7 @@ public class AnnotationProcessor {
 
 		Annotation[] allAnnotations = method.getDeclaredAnnotations();
 		ComponentProcess toProcess = getProcess(componentInstance, method.getName(), null);
-		State ss = getAnnotation(allAnnotations, State.class);
+		Mode ss = getAnnotation(allAnnotations, Mode.class);
 		if (ss != null) {
 			addSets(componentInstance,toProcess,ss);
 			String[] guards = ss.guard();
@@ -637,7 +637,7 @@ public class AnnotationProcessor {
 
 
 	
-	private void addSets(ComponentInstance componentInstance, ComponentProcess toProcess, State ss) {
+	private void addSets(ComponentInstance componentInstance, ComponentProcess toProcess, Mode ss) {
 		for (ComponentProcess process : componentInstance.getComponentProcesses()) {
 			if(process.equals(toProcess)){
 				process.setSet(ss.set());

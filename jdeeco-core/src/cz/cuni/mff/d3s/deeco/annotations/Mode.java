@@ -28,7 +28,10 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface State {
+public @interface Mode {
 	String set() default "";
+	String parent() default "";
+	String exclusive() default ""; 
+	String parallel() default "";
 	String[] guard() default "";
 }

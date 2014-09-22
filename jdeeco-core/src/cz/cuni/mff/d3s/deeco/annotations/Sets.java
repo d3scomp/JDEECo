@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Sets {
-	 Asynch[] asynch() default {};
-	 Synch[] synch() default {};
+	 Exclusive[] exclusive() default {};
+	 Parallel[] parallel() default {};
 }
 

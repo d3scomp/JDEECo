@@ -38,7 +38,7 @@ public class FireFighter{
 	private static final double SEC_MILI_SEC_FACTOR = 1000;
 	protected static final double SEC_NANOSECOND_FACTOR = 1000000000;
 	
-	@State(from = "leaderConnected", guard = "ffLPos_LH > 50 && ffLPos_LH < 100")
+	@Mode(guard = "leaderConnected && ffLPos_LH > 50 && ffLPos_LH < 100")
 	@Process
 	@PeriodicScheduling(100)
 	public static void mediatorConnected(
@@ -48,7 +48,7 @@ public class FireFighter{
  	}
 
 	
-	@State(guard = "ffLPos_LH < 1")
+	@Mode(guard = "ffLPos_LH < 1")
 	@Process
 	public static void leaderConnected(
 			@InOut("ffLPos") @TriggerOnTimeStampChange InaccuracyParamHolder<Double> ffLPos
@@ -58,7 +58,7 @@ public class FireFighter{
  	}
  	
  	
-	@State(from = "leaderConnected", guard = "ffLPos_LH > 80")
+	@Mode(guard = "leaderConnected && ffLPos_LH > 80")
 	@Process
  	@PeriodicScheduling(100)
 	public static void nonWorking(

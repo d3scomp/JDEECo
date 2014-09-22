@@ -184,7 +184,7 @@ public class ProcessConditionParser {
 					if(transition.getFrom().equals(process)){
 						transition.setIsReachable(true);
 						process.setIsActive(true);
-						process.setIsRunning(true);
+						process.setIsRunning(false);
 					}
 				}
 			}
@@ -206,6 +206,22 @@ public class ProcessConditionParser {
 
 		setFromRunning(process);
 		setKnowledge(km,componentInstance);
+		
+//		List<KnowledgePath> kps = new ArrayList<KnowledgePath>();
+//		for (ComponentProcess cProcess : componentInstance.getComponentProcesses()) {
+//			KnowledgePath kp = RuntimeModelHelper.createKnowledgePath(cProcess.getName());
+//			kps.add(kp);
+//		}
+//		ValueSet vs;
+//		try {
+//			vs = km.get(kps);
+//			for (KnowledgePath knowledgePath : vs.getKnowledgePaths()) {
+//				System.out.println(knowledgePath+"   "+vs.getValue(knowledgePath)+"   ...   ");
+//			}
+//		} catch (KnowledgeNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 
 	private static void setKnowledge(KnowledgeManager km,

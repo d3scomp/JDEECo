@@ -58,7 +58,7 @@ public class FireFightersadsada{
  	}
 
 	
- 	@State(init = true)
+ 	@Mode(init = true)
  	@Process
 	public static void leaderConnected(
 			@InOut("ffLPos") @TriggerOnTimeStampUnchange( lessThan = 3 , meta = MetadataType.INACCURACY) ModeParamHolder<Double> ffLPos

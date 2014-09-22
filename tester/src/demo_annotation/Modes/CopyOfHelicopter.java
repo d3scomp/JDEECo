@@ -6,7 +6,7 @@ import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.Fun;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
-import cz.cuni.mff.d3s.deeco.annotations.State;
+import cz.cuni.mff.d3s.deeco.annotations.Mode;
 import cz.cuni.mff.d3s.deeco.annotations.Model;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
@@ -103,7 +103,7 @@ public class CopyOfHelicopter {
 	}
 	
 	
-	@State(init = true)
+	@Mode(init = true)
 	@Process
 	public static void initilizedSystem(
 			@InOut("hFFPos") @TriggerOnTimeStampUnchange(equal = 0) ModeParamHolder<Double> hFFPos

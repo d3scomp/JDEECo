@@ -37,13 +37,12 @@ public class FireFighter{
 	protected static final double SEC_NANOSECOND_FACTOR = 1000000000;
 	
 
-	@State(guard = "ffLPos_LH < 2")
+	@Mode(guard = "ffLPos_LH < 2")
  	@Process
- 	@PeriodicScheduling(100)
 	public static void copy(
 			// Triggered only if the value is changed
 			//uncomment the line in Leader to disable the trigger
-			@InOut("ffLPos") InaccuracyParamHolder<Double> ffLPos
+			@InOut("ffLPos") @TriggerOnTimeStampChange InaccuracyParamHolder<Double> ffLPos
  			){
   		System.out.println("FF ..... leader info : "+ffLPos.value+"  ["+ffLPos.minBoundary+" , "+ffLPos.maxBoundary+"]");
  	}

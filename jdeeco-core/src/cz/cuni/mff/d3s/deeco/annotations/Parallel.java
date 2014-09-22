@@ -12,8 +12,8 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Synch {
-	String[] names();
+public @interface Parallel {
+	String[] modes();
 	String parent() default "";
 }
 

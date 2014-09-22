@@ -12,8 +12,8 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Asynch {
-	String[] names();
+public @interface Exclusive {
+	String[] modes();
 	String parent() default "";
 }
 

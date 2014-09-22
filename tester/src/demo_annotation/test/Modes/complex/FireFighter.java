@@ -40,7 +40,7 @@ public class FireFighter{
 	
 	
 	
-	@State(guard = "leaderConnected && ffLPos_LH > 50 && ffLPos_LH < 100")
+	@Mode(guard = "leaderConnected && ffLPos_LH > 50 && ffLPos_LH < 100")
 	@Process
 	@PeriodicScheduling(100)
 	public static void mediatorConnected(
@@ -50,7 +50,7 @@ public class FireFighter{
  	}
 
 	
-	@State(guard = {"ffLPos_LH < 1","mediatorConnected && (ffLPos_LH > 300 || (ffLPos_LH > 150 && ffLPos_LH < 200))"})
+	@Mode(guard = {"ffLPos_LH < 1","mediatorConnected && (ffLPos_LH > 300 || (ffLPos_LH > 150 && ffLPos_LH < 200))"})
 	@Process
 	@PeriodicScheduling(100)
 	public static void leaderConnected(
@@ -61,7 +61,7 @@ public class FireFighter{
  	}
  	
  	
-	@State(guard = {"leaderConnected && ffLPos_LH < 100 && ffLPos_LH > 80","mediatorConnected && ffLPos_LH < 30"})
+	@Mode(guard = {"leaderConnected && ffLPos_LH < 100 && ffLPos_LH > 80","mediatorConnected && ffLPos_LH < 30"})
 	@Process
  	@PeriodicScheduling(100)
 	public static void nonWorking(
