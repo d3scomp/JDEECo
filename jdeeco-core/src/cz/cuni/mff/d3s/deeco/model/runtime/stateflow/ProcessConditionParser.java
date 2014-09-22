@@ -7,8 +7,10 @@ import java.util.Map;
 import org.eclipse.emf.common.util.EList;
 import org.mvel2.MVEL;
 
+import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
@@ -191,7 +193,7 @@ public class ProcessConditionParser {
 		}
 	}
 
-	public static void resetTransitions(ComponentInstance componentInstance,
+	public static void resetTransitions(KnowledgeManager km, ComponentInstance componentInstance,
 			ComponentProcess process, Transition transition) {
 		transition.setIsReachable(false);
 		process.setIsRunning(true);
@@ -203,6 +205,22 @@ public class ProcessConditionParser {
 		setNextTransitions(componentInstance,process, transition);
 
 		setFromRunning(process);
+		setKnowledge(km,componentInstance);
+	}
+
+	private static void setKnowledge(KnowledgeManager km,
+			ComponentInstance componentInstance) {
+		ChangeSet vs = new ChangeSet();
+		for (ComponentProcess cProcess : componentInstance.getComponentProcesses()) {
+			KnowledgePath kp = RuntimeModelHelper.createKnowledgePath(cProcess.getName());
+			vs.setValue(kp, cProcess.isIsRunning());
+		}
+		try {
+			km.update(vs);
+		} catch (KnowledgeUpdateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private static void filterSilbing(ComponentInstance componentInstance,

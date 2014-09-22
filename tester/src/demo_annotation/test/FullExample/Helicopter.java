@@ -2,7 +2,6 @@ package demo_annotation.test.FullExample;
 
 import java.util.HashMap;
 import cz.cuni.mff.d3s.deeco.annotations.Component;
-import cz.cuni.mff.d3s.deeco.annotations.Field;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.Model;
@@ -10,6 +9,9 @@ import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.State;
+import cz.cuni.mff.d3s.deeco.annotations.Sets;
+import cz.cuni.mff.d3s.deeco.annotations.Asynch;
+import cz.cuni.mff.d3s.deeco.annotations.Synch;
 import cz.cuni.mff.d3s.deeco.annotations.StateSpaceModel;
 import cz.cuni.mff.d3s.deeco.annotations.TimeStamp;
 import cz.cuni.mff.d3s.deeco.annotations.TriggerOnTimeStampChange;
@@ -21,6 +23,8 @@ import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 
 
 @StateSpaceModel(models = {@Model( period = 100, state  = {"hFFPos","hFFSpeed"}, referenceModel = VehicleModel.class)})
+@Sets(asynch = @Asynch(names = {"NoSearch","RequestSearch"}, parent = "NoSelfSearch"),
+		synch = @Synch(names = {"SelfSearch","NoSelfSearch"}))
 @Component
 public class Helicopter {
 
@@ -65,7 +69,7 @@ public class Helicopter {
 		hFFTargetPos = pos;
 	}
 	
-	@State(param = @Field(name = "hFFPos", guard = "organizeSearch && V > 0 && LH > 10"))
+	@State(set = "NoSearch", guard = "organizeSearch && V > 0 && LH > 10")
 	@Process
 	@PeriodicScheduling((int) TIMEPERIOD)
 	public static void initilizedSystem(
@@ -84,7 +88,7 @@ public class Helicopter {
 	}
 
 //I can mediate for another
-	//	@State(param = @Field(name = "hSearch_In", guard = "initilizedSystem && V == hID"))
+	@State(set = "RequestSearch", guard = "initilizedSystem && V == hID")
 	@Process
 	public static void toldToSearch(
 			@In("hSearch_In") @TriggerOnTimeStampChange String hSearch_In,
@@ -101,7 +105,7 @@ public class Helicopter {
 		hFFTargetSpeed.value = hSpeed;
 	}
 
-	@State(param = @Field( name = "hFFPos", guard = {"V > 0","initilizedSystem && V > 0","organizeSearch && LH <= 5"}))
+	@State(set = "NoSearch", guard = {"V > 0","initilizedSystem && V > 0","organizeSearch && LH <= 5"})
 	@Process
 	public static void mediate(
 			@InOut("hFFPos") @TriggerOnTimeStampChange InaccuracyParamHolder<Double> hFFPos,
@@ -116,7 +120,7 @@ public class Helicopter {
 		hFFTargetSpeed.value = hSpeed;
 	}
 
-	@State(param = {@Field(name = "hFFPos", guard = "V > 0 && LH > 5")})
+	@State(set = "NoSearch", guard = "V > 0 && LH > 5")
 	@Process
 	public static void otherSearch(
 			@In("hID") String hID,
@@ -144,7 +148,7 @@ public class Helicopter {
 	}
 	
 	
-	@State(param = {@Field(name = "hFFPos", guard = "V > 0 && LH > 5")})
+	@State(set = "SelfSearch", guard = "V > 0 && LH > 5")
 	@Process
 	public static void leadSearch(
 			@In("hID") String hID,

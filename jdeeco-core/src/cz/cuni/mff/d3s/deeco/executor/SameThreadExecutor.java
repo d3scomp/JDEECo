@@ -46,7 +46,7 @@ public class SameThreadExecutor implements Executor {
 						Transition transition = ProcessConditionParser.returnTransitions(componentInstance,km, process);
 						if(transition != null){
 //							System.out.println(".....................................................................reset........"+transition);
-							ProcessConditionParser.resetTransitions(componentInstance,process,transition);
+							ProcessConditionParser.resetTransitions(km,componentInstance,process,transition);
 						}
 						
 						if(process.isIsRunning()){
