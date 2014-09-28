@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.deeco.simulation.matsim;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.matsim.api.core.v01.Id;
@@ -98,20 +99,7 @@ public class JDEECoAgent implements MobsimDriverAgent {
 		if (index < 0) {
 			this.route = route;
 		} else {
-			boolean isPartOf = true;
-			int nextIndex;
-			for (Id lId: this.route) {
-				nextIndex = route.indexOf(lId);
-				if (index + 1 == nextIndex) {
-					index = nextIndex;
-				} else {
-					isPartOf = false;
-					break;
-				}
-			}
-			if (!isPartOf) {
-				this.route = route;
-			}
+			this.route = new LinkedList<Id>(route.subList(index + 1, route.size()));
 		}
 	}
 
