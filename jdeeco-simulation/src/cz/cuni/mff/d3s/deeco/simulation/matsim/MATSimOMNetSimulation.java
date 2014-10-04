@@ -14,9 +14,11 @@ import org.matsim.withinday.trafficmonitoring.TravelTimeCollectorFactory;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.network.NetworkProvider;
-import cz.cuni.mff.d3s.deeco.simulation.SimulationStepListener;
+import cz.cuni.mff.d3s.deeco.simulation.TimerTaskListener;
 import cz.cuni.mff.d3s.deeco.simulation.omnet.OMNetSimulation;
+import cz.cuni.mff.d3s.deeco.simulation.scheduler.SimulationScheduler;
 import cz.cuni.mff.d3s.deeco.simulation.task.SimulationStepTask;
+import cz.cuni.mff.d3s.deeco.simulation.task.TimerTask;
 
 /**
  * Main simulation class.
@@ -25,7 +27,7 @@ import cz.cuni.mff.d3s.deeco.simulation.task.SimulationStepTask;
  * 
  */
 public class MATSimOMNetSimulation extends OMNetSimulation implements
-		SimulationStepListener, MATSimTimeProvider {
+		TimerTaskListener {
 	private static final int MILLIS_IN_SECOND = 1000;
 
 	private final Exchanger<Object> exchanger;
@@ -140,14 +142,9 @@ public class MATSimOMNetSimulation extends OMNetSimulation implements
 		}
 	}
 
-	public double getMATSimSeconds() {
-		long currentTime = getCurrentMilliseconds();
-		return (currentTime / MILLIS_IN_SECOND)
-				+ controler.getConfig().getQSimConfigGroup().getStartTime();
-	}
-
-	public long getMATSimMilliseconds() {
-		return getCurrentMilliseconds()
+	@Override
+	public long getCurrentMilliseconds() {
+		return super.getCurrentMilliseconds()
 				+ (Math.round(controler.getConfig().getQSimConfigGroup()
 						.getStartTime()) * MILLIS_IN_SECOND);
 	}
@@ -174,5 +171,10 @@ public class MATSimOMNetSimulation extends OMNetSimulation implements
 		} catch (Exception e) {
 			Log.e("MATSimOMNetSimulation", e);
 		}
+	}
+
+	@Override
+	public TimerTask getInitialTask(SimulationScheduler scheduler) {
+		return new SimulationStepTask(scheduler, this);
 	}
 }

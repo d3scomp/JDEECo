@@ -67,7 +67,7 @@ public class PacketSender implements KnowledgeDataSender {
 	}
 	
 	@Override
-	public void broadcastKnowledgeData(String from, List<? extends KnowledgeData> knowledgeData) {
+	public void broadcastKnowledgeData(List<? extends KnowledgeData> knowledgeData) {
 		sendData(knowledgeData, "");
 	}
 	

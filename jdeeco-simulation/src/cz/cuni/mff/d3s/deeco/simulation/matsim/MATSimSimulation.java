@@ -17,13 +17,11 @@ import org.matsim.withinday.trafficmonitoring.TravelTimeCollector;
 import org.matsim.withinday.trafficmonitoring.TravelTimeCollectorFactory;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.simulation.DirectKnowledgeDataHandler;
 import cz.cuni.mff.d3s.deeco.simulation.DirectSimulationHost;
+import cz.cuni.mff.d3s.deeco.simulation.NetworkKnowledgeDataHandler;
 import cz.cuni.mff.d3s.deeco.simulation.Simulation;
-import cz.cuni.mff.d3s.deeco.simulation.SimulationStepListener;
 
-public class MATSimSimulation extends Simulation implements
-		SimulationStepListener, MATSimTimeProvider {
+public class MATSimSimulation extends Simulation implements MATSimSimulationStepListener {
 
 	private static final String SIMULATION_CALLBACK = "SIMULATION_CALLBACK";
 
@@ -39,13 +37,13 @@ public class MATSimSimulation extends Simulation implements
 	private final Map<String, DirectSimulationHost> hosts;
 	private final MATSimExtractor extractor;
 
-	private final DirectKnowledgeDataHandler knowledgeDataHandler;
+	private final NetworkKnowledgeDataHandler knowledgeDataHandler;
 
 	public MATSimSimulation(MATSimDataReceiver matSimReceiver,
-			MATSimDataProvider matSimProvider, MATSimUpdater updater, MATSimExtractor extractor,
+			MATSimDataProvider matSimProvider, MATSimUpdater updater, MATSimExtractor extractor, NetworkKnowledgeDataHandler knowledgeDataHandler,
 			final Collection<? extends AdditionAwareAgentSource> agentSources,
 			String matSimConf) {
-		this.knowledgeDataHandler = new DirectKnowledgeDataHandler();
+		this.knowledgeDataHandler = knowledgeDataHandler;
 		this.callbacks = new TreeSet<>();
 		this.hostIdToCallback = new HashMap<>();
 		this.hosts = new HashMap<>();
@@ -114,10 +112,6 @@ public class MATSimSimulation extends Simulation implements
 		return this.controler;
 	}
 
-	public double getMATSimSeconds() {
-		return millisecondsToSeconds(currentMilliseconds);
-	}
-
 	public long getMATSimMilliseconds() {
 		return currentMilliseconds;
 	}
@@ -139,12 +133,12 @@ public class MATSimSimulation extends Simulation implements
 		}
 		callback = new Callback(hostId, absoluteTime);
 		hostIdToCallback.put(hostId, callback);
+		//System.out.println("For " + absoluteTime);
 		callbacks.add(callback);
 	}
 
 	@Override
-	public void at(long seconds, Object triger) {
-		Mobsim mobsim = (Mobsim) triger;	
+	public void at(long seconds, Mobsim mobsim) {	
 		// Exchange data with MATSim
 		long milliseconds = secondsToMilliseconds(seconds);
 		matSimReceiver.setMATSimData(extractor.extractFromMATSim(listener.getAllJDEECoAgents(), mobsim));
@@ -160,6 +154,7 @@ public class MATSimSimulation extends Simulation implements
 				break;
 			}
 			currentMilliseconds = callback.getAbsoluteTime();
+			//System.out.println("At: " + currentMilliseconds);
 			host = (DirectSimulationHost) hosts.get(callback.hostId);
 			host.at(millisecondsToSeconds(currentMilliseconds));
 		}

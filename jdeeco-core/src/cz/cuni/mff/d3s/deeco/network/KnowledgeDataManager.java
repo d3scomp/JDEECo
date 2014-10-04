@@ -196,10 +196,10 @@ KnowledgeDataPublisher {
 				// broadcast each kd individually to minimize the message size and
 				// thus reduce network collisions.
 				for (KnowledgeData kd: data) {
-					knowledgeDataSender.broadcastKnowledgeData(host, Arrays.asList(kd));
+					knowledgeDataSender.broadcastKnowledgeData(Arrays.asList(kd));
 				}
 			} else {
-				knowledgeDataSender.broadcastKnowledgeData(host, data);
+				knowledgeDataSender.broadcastKnowledgeData(data);
 			}
 			
 			sendDirect(data);
@@ -230,7 +230,7 @@ KnowledgeDataPublisher {
 		if (nicType.equals(NICType.MANET) && dataToRebroadcastOverMANET.containsKey(sig)) {	
 			data = prepareForRebroadcast(dataToRebroadcastOverMANET.get(sig));
 			logPublish(Arrays.asList(data));
-			knowledgeDataSender.broadcastKnowledgeData(host, Arrays.asList(data));
+			knowledgeDataSender.broadcastKnowledgeData(Arrays.asList(data));
 			dataToRebroadcastOverMANET.remove(sig);
 			
 			if (Log.isDebugLoggable())

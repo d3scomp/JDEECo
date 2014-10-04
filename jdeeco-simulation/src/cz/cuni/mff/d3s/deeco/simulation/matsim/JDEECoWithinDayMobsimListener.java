@@ -9,7 +9,6 @@ import org.matsim.core.mobsim.framework.events.MobsimBeforeSimStepEvent;
 import org.matsim.core.mobsim.framework.listeners.MobsimBeforeSimStepListener;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.simulation.SimulationStepListener;
 
 /**
  * 
@@ -26,11 +25,11 @@ public class JDEECoWithinDayMobsimListener implements
 
 	private final Exchanger<Object> exchanger;
 	private final List<JDEECoAgentProvider> agentProviders;
-	private final SimulationStepListener stepListener;
+	private final MATSimSimulationStepListener stepListener;
 	private final MATSimUpdater updater;
 	private final MATSimExtractor extractor;
 
-	protected JDEECoWithinDayMobsimListener(Exchanger<Object> exchanger, SimulationStepListener stepListener, MATSimUpdater updater, MATSimExtractor extractor) {
+	protected JDEECoWithinDayMobsimListener(Exchanger<Object> exchanger, MATSimSimulationStepListener stepListener, MATSimUpdater updater, MATSimExtractor extractor) {
 		this.exchanger = exchanger;
 		this.agentProviders = new LinkedList<JDEECoAgentProvider>();
 		this.stepListener = stepListener;
@@ -42,7 +41,7 @@ public class JDEECoWithinDayMobsimListener implements
 		this(exchanger, null, updater, extractor);
 	}
 	
-	public JDEECoWithinDayMobsimListener(SimulationStepListener stepListener, MATSimUpdater updater, MATSimExtractor extractor) {
+	public JDEECoWithinDayMobsimListener(MATSimSimulationStepListener stepListener, MATSimUpdater updater, MATSimExtractor extractor) {
 		this(null, stepListener, updater, extractor);
 	}
 

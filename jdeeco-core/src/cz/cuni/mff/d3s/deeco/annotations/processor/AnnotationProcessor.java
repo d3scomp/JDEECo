@@ -303,14 +303,17 @@ public class AnnotationProcessor {
 		componentInstance.setName(clazz.getCanonicalName());
 		
 		try {
-			ChangeSet initialK = extractInitialKnowledge(obj);
+			ChangeSet initialK = extractInitialKnowledge(obj, false);
+			ChangeSet initialLocalK = extractInitialKnowledge(obj, true);
 			String id = getComponentId(initialK);
 			if (id == null) {
-				id = clazz.getSimpleName() + UUID.randomUUID().toString();
+				id = new StringBuilder().append(clazz.getSimpleName()).append(UUID.randomUUID().toString()).toString();
 			}
-	        KnowledgeManager km = new CloningKnowledgeManager(id);		
+			KnowledgeManager km = new CloningKnowledgeManager(id);
 			km.update(initialK);
-	        componentInstance.setKnowledgeManager(km); 
+			km.markAsLocal(initialLocalK.getUpdatedReferences());
+			km.update(initialLocalK);
+			componentInstance.setKnowledgeManager(km);
 	        
 			List<Method> methodsMarkedAsProcesses = new ArrayList<>(); 
 			Method[] allMethods = clazz.getMethods();
@@ -816,31 +819,39 @@ public class AnnotationProcessor {
 	 *  
 	 * @param knowledge the object of a class annotated as DEECo component (@{@link Component}).
 	 */
-	ChangeSet extractInitialKnowledge(Object knowledge) {
+	ChangeSet extractInitialKnowledge(Object knowledge, boolean local) {
 		ChangeSet changeSet = new ChangeSet();
-		
-		// print a warning if the component definition contains non-public fields
 		for (Field f : knowledge.getClass().getDeclaredFields()) {
-			if (!Modifier.isPublic(f.getModifiers()) || Modifier.isStatic(f.getModifiers())) {
-				Log.w("Non-public or static fields are ignored during the extraction of initial knowledge ("
-						+ knowledge.getClass().getCanonicalName());
+			if ((!Modifier.isPublic(f.getModifiers()))
+					|| (Modifier.isStatic(f.getModifiers()))) {
+				Log.w(new StringBuilder()
+						.append("Non-public or static fields are ignored during the extraction of initial knowledge (")
+						.append(knowledge.getClass().getCanonicalName())
+						.toString());
 				break;
 			}
 		}
-		for (Field f : knowledge.getClass().getFields()) {
-			if (Modifier.isStatic(f.getModifiers()))
-				continue;
-			KnowledgePath knowledgePath = factory.createKnowledgePath();
-			PathNodeField pathNodeField = factory.createPathNodeField();
-			pathNodeField.setName(new String(f.getName()));
-			knowledgePath.getNodes().add(pathNodeField);
-			try {
-				changeSet.setValue(knowledgePath, f.get(knowledge));
-			} catch (IllegalAccessException e) {
-				continue;
+		for (Field f : knowledge.getClass().getFields())
+			if (!Modifier.isStatic(f.getModifiers())) {
+				if (((isAnnotatedAsLocal(f)) && (local))
+						|| ((!isAnnotatedAsLocal(f)) && (!local))) {
+					KnowledgePath knowledgePath = this.factory
+							.createKnowledgePath();
+					PathNodeField pathNodeField = this.factory
+							.createPathNodeField();
+					pathNodeField.setName(new String(f.getName()));
+					knowledgePath.getNodes().add(pathNodeField);
+					try {
+						changeSet.setValue(knowledgePath, f.get(knowledge));
+					} catch (IllegalAccessException e) {
+					}
+				}
 			}
-		}
 		return changeSet;
+	}
+	
+	private boolean isAnnotatedAsLocal(Field f) {
+		return (f != null) && (f.getAnnotation(Local.class) != null);
 	}
 
 	/**

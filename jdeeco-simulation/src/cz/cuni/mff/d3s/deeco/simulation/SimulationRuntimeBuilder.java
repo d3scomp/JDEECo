@@ -17,11 +17,12 @@ import cz.cuni.mff.d3s.deeco.network.PublisherTask;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeFrameworkImpl;
 import cz.cuni.mff.d3s.deeco.simulation.scheduler.SimulationScheduler;
+import cz.cuni.mff.d3s.deeco.simulation.task.TimerTask;
 
 public class SimulationRuntimeBuilder {
 
 	public RuntimeFramework build(AbstractHost host,
-			CallbackProvider callbackProvider, RuntimeMetadata model,
+			CallbackProvider callbackProvider, Collection<? extends TimerTaskListener> listeners, RuntimeMetadata model,
 			Collection<DirectRecipientSelector> recipientSelectors,
 			DirectGossipStrategy directGossipStrategy) {
 		if (model == null) {
@@ -62,7 +63,16 @@ public class SimulationRuntimeBuilder {
 
 		// Add publisher task to the scheduler
 		scheduler.addTask(publisherTask);
-
+		
+		//Add extra tasks
+		if (listeners != null) {
+			for (TimerTaskListener listener: listeners) {
+				TimerTask task = listener.getInitialTask(scheduler);
+				if (task != null) {
+					scheduler.addTask(task);
+				}
+			}
+		}
 		return new RuntimeFrameworkImpl(model, scheduler, executor, container);
 	}
 

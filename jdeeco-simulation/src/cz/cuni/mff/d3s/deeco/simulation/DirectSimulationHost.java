@@ -8,10 +8,10 @@ import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
 
 public class DirectSimulationHost extends AbstractHost implements SimulationTimeEventListenerHolder {
 	
-	private final DirectKnowledgeDataHandler handler;
+	private final NetworkKnowledgeDataHandler handler;
 	private SimulationTimeEventListener timeEventListener = null;
 
-	public DirectSimulationHost(String id, CurrentTimeProvider timeProvider, DirectKnowledgeDataHandler handler) {
+	public DirectSimulationHost(String id, CurrentTimeProvider timeProvider, NetworkKnowledgeDataHandler handler) {
 		super(id, timeProvider);
 		this.handler = handler;
 		// TODO Auto-generated constructor stub
@@ -19,13 +19,13 @@ public class DirectSimulationHost extends AbstractHost implements SimulationTime
 
 	@Override
 	public KnowledgeDataSender getKnowledgeDataSender() {
-		return handler;
+		return handler.getKnowledgeDataSender(this);
 	}
 
 	@Override
 	public void setKnowledgeDataReceiver(
 			KnowledgeDataReceiver knowledgeDataReceiver) {
-		this.handler.addKnowledgeDataReceiver(id, knowledgeDataReceiver);
+		this.handler.addKnowledgeDataReceiver(this, knowledgeDataReceiver);
 	}
 	
 	public void setSimulationTimeEventListener(

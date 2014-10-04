@@ -1,6 +1,6 @@
 package cz.cuni.mff.d3s.deeco.network;
 
-public interface KnowledgeDataHandler {
+public interface HostKnowledgeDataHandler {
 	public KnowledgeDataSender getKnowledgeDataSender();
 	public void setKnowledgeDataReceiver(KnowledgeDataReceiver knowledgeDataReceiver);
 }

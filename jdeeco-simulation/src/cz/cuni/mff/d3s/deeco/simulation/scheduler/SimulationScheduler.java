@@ -18,7 +18,6 @@ import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.scheduler.SchedulerEvent;
 import cz.cuni.mff.d3s.deeco.simulation.CallbackProvider;
 import cz.cuni.mff.d3s.deeco.simulation.SimulationTimeEventListener;
-import cz.cuni.mff.d3s.deeco.simulation.omnet.OMNetSimulationHost;
 import cz.cuni.mff.d3s.deeco.task.Task;
 import cz.cuni.mff.d3s.deeco.task.TaskTriggerListener;
 
@@ -52,6 +51,10 @@ public class SimulationScheduler implements Scheduler,
 		allTasks = new HashSet<>();
 		periodicEvents = new HashMap<>();
 		onTriggerSchedules = new HashSet<>();
+	}
+	
+	public AbstractHost getHost() {
+		return host;
 	}
 
 	@Override
