@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.deeco.runtime;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +28,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
@@ -615,15 +617,47 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 			if (remoteComponentInstance == null) {
 				remoteComponentInstance = ArchitectureFactory.eINSTANCE.createRemoteComponentInstance();
 				remoteComponentInstance.setId(id);
+				System.out.println("### New replica: " + kmContainer.getReplica(id));
 				remoteComponentInstance.setKnowledgeManager(kmContainer.getReplica(id));
 				architecture.getComponentInstances().add(remoteComponentInstance);
 				remoteComponentInstances.put(id, remoteComponentInstance);
+				printKnowledgeManager(remoteComponentInstance);
 			}
 			instance = (cz.cuni.mff.d3s.deeco.model.architecture.api.ComponentInstance) remoteComponentInstance;
 		}
 		return instance;
 	}
 
+	/*
+	 * just for debuggin' - TO BE DELETED
+	 */
+	private void printKnowledgeManager(cz.cuni.mff.d3s.deeco.model.architecture.api.ComponentInstance componentInstance) {
+		System.out.println("#####################");
+		System.out.println("### Adding the remoteComponentInstance " + componentInstance.getId() + " to the architecture model");
+		KnowledgePath path = RuntimeMetadataFactoryExt.eINSTANCE.createKnowledgePath();
+		PathNodeField pNode = RuntimeMetadataFactoryExt.eINSTANCE.createPathNodeField();
+		// "noOfGMsInDanger" is used here just as an example.
+		// essentially the bug is that this field is present (and so printed below) 
+		// only in the case of a local knowledge manager. 
+		// In case of replicas (RemoteComponentInstance at the architecture model), 
+		// it seems that the field(s) other than "id" are not copied correctly, 
+		// so they cannot be retrieved.
+		pNode.setName("role");
+		path.getNodes().add(pNode);
+		ArrayList<KnowledgePath> paths = new ArrayList<>();
+		paths.add(path);
+		System.out.println("trying to retrieve data...");
+		try {
+			ValueSet p = componentInstance.getKnowledgeManager().get(paths);
+			System.out.println("Got path: " + p.getKnowledgePaths());
+			System.out.println("With value : " + p.getValue(path));
+		} catch (KnowledgeNotFoundException e) {
+			System.out.println("NO NO NO");
+		} finally {
+			System.out.println("#####################");
+		}
+	}
+	
 	@Override
 	public Scheduler getScheduler() {
 		return scheduler;
