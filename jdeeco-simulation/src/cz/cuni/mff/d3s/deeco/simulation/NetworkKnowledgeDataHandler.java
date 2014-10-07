@@ -2,6 +2,7 @@ package cz.cuni.mff.d3s.deeco.simulation;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -49,7 +50,7 @@ public abstract class NetworkKnowledgeDataHandler implements KnowledgeDataReceiv
 		@Override
 		public void broadcastKnowledgeData(
 				List<? extends KnowledgeData> knowledgeData) {
-			Collection<KnowledgeDataReceiver> sendTo = receivers.values();
+			Collection<KnowledgeDataReceiver> sendTo = new LinkedList<KnowledgeDataReceiver>(receivers.values());
 			sendTo.remove(receivers.get(host));
 			networkBroadcast(host, knowledgeData, sendTo);
 			

@@ -36,5 +36,9 @@ public class DirectSimulationHost extends AbstractHost implements SimulationTime
 	public void at(double absoluteTime) {
 		timeEventListener.at(secondsToMilliseconds(absoluteTime));
 	}
+	
+	public String toString() {
+		return "Host: " + id;
+	}
 
 }

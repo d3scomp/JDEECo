@@ -240,4 +240,8 @@ public class SimulationScheduler implements Scheduler,
 		// TODO take into account different scheduling policies and WCET of
 		// tasks. According to those the tasks need to be rescheduled.
 	}
+	
+	public String toString() {
+		return "SimulationScheduler of " + host.getHostId();
+	}
 }
