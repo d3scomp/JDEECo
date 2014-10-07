@@ -616,6 +616,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 				remoteComponentInstance = ArchitectureFactory.eINSTANCE.createRemoteComponentInstance();
 				remoteComponentInstance.setId(id);
 				remoteComponentInstance.setKnowledgeManager(kmContainer.getReplica(id));
+				architecture.getComponentInstances().add(remoteComponentInstance);
 				remoteComponentInstances.put(id, remoteComponentInstance);
 			}
 			instance = (cz.cuni.mff.d3s.deeco.model.architecture.api.ComponentInstance) remoteComponentInstance;
