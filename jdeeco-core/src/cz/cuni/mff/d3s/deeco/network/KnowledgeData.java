@@ -104,7 +104,9 @@ public class KnowledgeData implements Serializable {
 		}
 	}
 	
-	
+	public String toString() {
+		return "Owner " + metaData.componentId + " Sender: " + metaData.sender + " Values: " + knowledge;
+	}
 	
 	
 }
