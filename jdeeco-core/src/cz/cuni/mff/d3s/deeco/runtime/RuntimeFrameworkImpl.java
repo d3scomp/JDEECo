@@ -239,6 +239,9 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 			Log.w(String.format("Attempting to add an already-registered ComponentInstance (%s)", instance));		
 			return;
 		}		
+			
+		// replace the KM with one created via kmContainer
+		replaceKnowledgeManager(instance);
 				
 		ComponentInstanceRecord ciRecord = new ComponentInstanceRecord(instance);
 		componentRecords.put(instance, ciRecord);
@@ -251,9 +254,6 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 		
 		localComponentInstances.put(localComponentInstance.getId(), localComponentInstance);
 		architecture.getComponentInstances().add(localComponentInstance);
-		
-		// replace the KM with one created via kmContainer
-		replaceKnowledgeManager(instance);
 		
 		for (ComponentProcess p: instance.getComponentProcesses()) {			
 			componentProcessAdded(instance, p);
@@ -617,45 +617,13 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 			if (remoteComponentInstance == null) {
 				remoteComponentInstance = ArchitectureFactory.eINSTANCE.createRemoteComponentInstance();
 				remoteComponentInstance.setId(id);
-				System.out.println("### New replica: " + kmContainer.getReplica(id));
 				remoteComponentInstance.setKnowledgeManager(kmContainer.getReplica(id));
 				architecture.getComponentInstances().add(remoteComponentInstance);
 				remoteComponentInstances.put(id, remoteComponentInstance);
-				printKnowledgeManager(remoteComponentInstance);
 			}
 			instance = (cz.cuni.mff.d3s.deeco.model.architecture.api.ComponentInstance) remoteComponentInstance;
 		}
 		return instance;
-	}
-
-	/*
-	 * just for debuggin' - TO BE DELETED
-	 */
-	private void printKnowledgeManager(cz.cuni.mff.d3s.deeco.model.architecture.api.ComponentInstance componentInstance) {
-		System.out.println("#####################");
-		System.out.println("### Adding the remoteComponentInstance " + componentInstance.getId() + " to the architecture model");
-		KnowledgePath path = RuntimeMetadataFactoryExt.eINSTANCE.createKnowledgePath();
-		PathNodeField pNode = RuntimeMetadataFactoryExt.eINSTANCE.createPathNodeField();
-		// "noOfGMsInDanger" is used here just as an example.
-		// essentially the bug is that this field is present (and so printed below) 
-		// only in the case of a local knowledge manager. 
-		// In case of replicas (RemoteComponentInstance at the architecture model), 
-		// it seems that the field(s) other than "id" are not copied correctly, 
-		// so they cannot be retrieved.
-		pNode.setName("role");
-		path.getNodes().add(pNode);
-		ArrayList<KnowledgePath> paths = new ArrayList<>();
-		paths.add(path);
-		System.out.println("trying to retrieve data...");
-		try {
-			ValueSet p = componentInstance.getKnowledgeManager().get(paths);
-			System.out.println("Got path: " + p.getKnowledgePaths());
-			System.out.println("With value : " + p.getValue(path));
-		} catch (KnowledgeNotFoundException e) {
-			System.out.println("NO NO NO");
-		} finally {
-			System.out.println("#####################");
-		}
 	}
 	
 	@Override
