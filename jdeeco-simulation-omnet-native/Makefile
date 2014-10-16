@@ -13,7 +13,7 @@ include $(CONFIGFILE)
 LDFLAGS += -Wl,--allow-multiple-definition,--kill-at
 
 all: checkmakefiles
-	cd src && $(MAKE)
+	cd src && $(MAKE) LDFLAGS="$(LDFLAGS)"
 
 clean: checkmakefiles
 	cd src && $(MAKE) clean
@@ -80,7 +80,6 @@ makefiles:
 	-L${MIXIM_DIR}/out/$(CONFIGNAME)/src \
 	-L${INET_DIR}/out/$(CONFIGNAME)/src \
 	-loppcommond -lmixim -linet -DMIXIM_INET=1 -DINET_IMPORT -KMIXIM_PROJ=${MIXIM_DIR} -KINET_PROJ=${INET_DIR} -KV=1
-
 
 checkmakefiles:
 	@if [ ! -f src/Makefile ]; then \
