@@ -75,5 +75,7 @@ public class ValueSet implements Serializable {
 		return true;
 	}	
 	
-	
+	public String toString() {
+		return values.toString();
+	}
 }
