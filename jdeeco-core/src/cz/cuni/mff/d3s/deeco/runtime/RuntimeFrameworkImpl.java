@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.deeco.runtime;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +28,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
@@ -237,6 +239,9 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 			Log.w(String.format("Attempting to add an already-registered ComponentInstance (%s)", instance));		
 			return;
 		}		
+			
+		// replace the KM with one created via kmContainer
+		replaceKnowledgeManager(instance);
 				
 		ComponentInstanceRecord ciRecord = new ComponentInstanceRecord(instance);
 		componentRecords.put(instance, ciRecord);
@@ -249,9 +254,6 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 		
 		localComponentInstances.put(localComponentInstance.getId(), localComponentInstance);
 		architecture.getComponentInstances().add(localComponentInstance);
-		
-		// replace the KM with one created via kmContainer
-		replaceKnowledgeManager(instance);
 		
 		for (ComponentProcess p: instance.getComponentProcesses()) {			
 			componentProcessAdded(instance, p);
@@ -623,7 +625,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 		}
 		return instance;
 	}
-
+	
 	@Override
 	public Scheduler getScheduler() {
 		return scheduler;

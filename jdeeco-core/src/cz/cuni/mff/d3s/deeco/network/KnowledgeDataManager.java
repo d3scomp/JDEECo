@@ -196,9 +196,11 @@ KnowledgeDataPublisher {
 				// broadcast each kd individually to minimize the message size and
 				// thus reduce network collisions.
 				for (KnowledgeData kd: data) {
+					//System.out.println("Broadcasting data at " + host + kd);
 					knowledgeDataSender.broadcastKnowledgeData(Arrays.asList(kd));
 				}
 			} else {
+				//System.out.println("Broadcasting data at " + host + data);
 				knowledgeDataSender.broadcastKnowledgeData(data);
 			}
 			
@@ -317,7 +319,8 @@ KnowledgeDataPublisher {
 							timeProvider.getCurrentMilliseconds() - newMetadata.createdAt,
 							newMetadata.hopCount));
 				}
-			} 
+			}
+			//System.out.println("Received at " + host + " " + knowledgeData);
 		}
 	}
 	
@@ -517,10 +520,7 @@ KnowledgeDataPublisher {
 			ValueSet values = kd.getKnowledge();
 			ValueSet newValues = new ValueSet();
 			for (KnowledgePath kp: values.getKnowledgePaths()) {
-				String name = ((PathNodeField) kp.getNodes().get(0)).getName();
-				if (name.equals("id") || name.equals("teamId") || name.equals("position")) {
-					newValues.setValue(kp, values.getValue(kp));
-				}
+				newValues.setValue(kp, values.getValue(kp));
 			}
 			return new KnowledgeData(newValues, kd.getMetaData());
 		} else {
