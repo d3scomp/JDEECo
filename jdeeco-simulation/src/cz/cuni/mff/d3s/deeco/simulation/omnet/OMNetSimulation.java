@@ -174,7 +174,11 @@ public class OMNetSimulation extends Simulation implements NetworkProvider {
 	}
 
 	public void callAt(long absoluteTime, String nodeId) {
-		nativeCallAt(millisecondsToSeconds(absoluteTime), nodeId);
+		long callAtTime = absoluteTime;
+		if (callAtTime == 0) {
+			callAtTime++;
+		}
+		nativeCallAt(millisecondsToSeconds(callAtTime), nodeId);
 	}
 
 	public boolean isPositionSensorAvailable(Host host) {
