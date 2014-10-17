@@ -22,8 +22,8 @@ import cz.cuni.mff.d3s.deeco.simulation.task.TimerTask;
  */
 public class DelayedKnowledgeDataHandler extends NetworkKnowledgeDataHandler implements TimerTaskListener {
 
-	private final Map<String, SimulationScheduler> schedulers;
-	private final long delay;
+	protected final Map<String, SimulationScheduler> schedulers;
+	protected final long delay;
 	
 	
 	public DelayedKnowledgeDataHandler(long delay) {
