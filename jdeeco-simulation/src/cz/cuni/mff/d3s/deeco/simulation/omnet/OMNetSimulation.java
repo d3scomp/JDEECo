@@ -91,7 +91,6 @@ public class OMNetSimulation extends Simulation implements NetworkProvider {
 		this.networkProvider = networkProvider;
 		if (networkProvider == null) {
 			this.networkProvider = this;
-		} else {
 			networkAddressesToHosts = new HashMap<String, OMNetSimulationHost>();
 		}
 		System.loadLibrary("libjdeeco-omnetpp");

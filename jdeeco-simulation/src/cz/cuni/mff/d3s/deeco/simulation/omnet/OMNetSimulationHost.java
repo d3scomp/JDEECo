@@ -5,8 +5,9 @@ import cz.cuni.mff.d3s.deeco.network.Host;
 import cz.cuni.mff.d3s.deeco.network.NetworkProvider;
 import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
 import cz.cuni.mff.d3s.deeco.simulation.SimulationTimeEventListener;
+import cz.cuni.mff.d3s.deeco.simulation.SimulationTimeEventListenerHolder;
 
-public class OMNetSimulationHost extends Host {
+public class OMNetSimulationHost extends Host implements SimulationTimeEventListenerHolder {
 	
 	private SimulationTimeEventListener timeEventListener = null;
 

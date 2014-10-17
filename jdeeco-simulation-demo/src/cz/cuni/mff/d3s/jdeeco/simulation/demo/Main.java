@@ -151,7 +151,7 @@ public class Main {
 			if (component.hasIP) {
 				recipientSelectors = Arrays.asList((DirectRecipientSelector) directRecipientSelector);
 			}
-			RuntimeFramework runtime = builder.build(host, sim, model, recipientSelectors, directGossipStrategy); 
+			RuntimeFramework runtime = builder.build(host, sim, null, model, recipientSelectors, directGossipStrategy); 
 			runtimes.add(runtime);
 			runtime.start();
 			i++;
