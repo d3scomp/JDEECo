@@ -19,7 +19,6 @@ import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
@@ -98,10 +97,7 @@ KnowledgeDataPublisher {
 	private final int maxRebroadcastDelay;	
 	private final int ipDelay;
 	
-	
-	//TODO This needs to be changed
-	private final Collection<DirectRecipientSelector> recipientSelectors;
-	private final DirectGossipStrategy directGossipStrategy;
+	private final IPGossipStrategy ipGossipStrategy;
 
 	
 	/**
@@ -118,8 +114,7 @@ KnowledgeDataPublisher {
 			List<EnsembleDefinition> ensembleDefinitions,
 			String host,
 			Scheduler scheduler,
-			Collection<DirectRecipientSelector> recipientSelectors,
-			DirectGossipStrategy directGossipStrategy) {
+			IPGossipStrategy ipGossipStrategy) {
 		this.host = host;		
 		this.scheduler = scheduler;
 		this.timeProvider = scheduler;
@@ -128,8 +123,7 @@ KnowledgeDataPublisher {
 		this.ensembleDefinitions = ensembleDefinitions;
 		this.localVersion = 0;
 		this.replicaMetadata = new HashMap<>();
-		this.recipientSelectors = recipientSelectors;
-		this.directGossipStrategy = directGossipStrategy;
+		this.ipGossipStrategy = ipGossipStrategy;
 		
 		dataToRebroadcastOverMANET = new HashMap<>();
 		dataToRebroadcastOverIP = new HashMap<>();
@@ -210,20 +204,18 @@ KnowledgeDataPublisher {
 	}
 
 	private void sendDirect(List<KnowledgeData> data) {
-		if (recipientSelectors != null && !recipientSelectors.isEmpty()) {
-			//Publishing to IP
-			Collection<String> recipients;
-			//For IP part we are using individual publishing only
-			for (KnowledgeData kd : data) {
-				recipients = getRecipients(kd, getNodeKnowledge());
-				for (String recipient: recipients) {					
-					logPublish(data, recipient);
-					knowledgeDataSender.sendKnowledgeData(Arrays.asList(kd), recipient);					
-				}
+		// Publishing to IP
+		Collection<String> recipients;
+		
+		// For IP part we are using individual publishing only
+		for (KnowledgeData kd : data) {
+			recipients = ipGossipStrategy.getRecipients(kd, getNodeKnowledge());
+			for (String recipient: recipients) {					
+				logPublish(data, recipient);
+				knowledgeDataSender.sendKnowledgeData(Arrays.asList(kd), recipient);					
 			}
 		}
-	}
-	
+	}	
 
 	@Override
 	public void rebroacast(KnowledgeMetaData metadata, NICType nicType) {
@@ -375,21 +367,6 @@ KnowledgeDataPublisher {
 		return isInSomeBoundary;
 	}
 	
-	private Collection<String> getRecipients(KnowledgeData data, KnowledgeManager sender) {
-		List<String> result = new LinkedList<>();
-		for (DirectRecipientSelector selector: recipientSelectors) {
-			result.addAll(selector.getRecipients(data, sender));
-		}
-		
-		// filter the sender and owner of the data
-		// remove all
-		while (result.remove(data.getMetaData().componentId));
-		// remove all
-		while(result.remove(sender.getId()));
-		return directGossipStrategy.filterRecipients(result);
-	}
-	
-
 //	private boolean satisfiesGossipCondition(KnowledgeMetaData kmd) {
 //		// rssi < 0 means received from IP
 //		if (kmd.rssi < 0) {

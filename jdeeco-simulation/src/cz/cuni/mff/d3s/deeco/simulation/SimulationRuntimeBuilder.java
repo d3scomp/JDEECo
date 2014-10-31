@@ -14,6 +14,7 @@ import cz.cuni.mff.d3s.deeco.network.DirectGossipStrategy;
 import cz.cuni.mff.d3s.deeco.network.DirectRecipientSelector;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeDataManager;
 import cz.cuni.mff.d3s.deeco.network.PublisherTask;
+import cz.cuni.mff.d3s.deeco.network.RandomIPGossip;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeFrameworkImpl;
 import cz.cuni.mff.d3s.deeco.simulation.scheduler.SimulationScheduler;
@@ -44,8 +45,7 @@ public class SimulationRuntimeBuilder {
 
 		KnowledgeDataManager kdManager = new KnowledgeDataManager(container,
 				host.getKnowledgeDataSender(), model.getEnsembleDefinitions(),
-				host.getHostId(), scheduler, recipientSelectors,
-				directGossipStrategy);
+				host.getHostId(), scheduler, new RandomIPGossip(recipientSelectors, directGossipStrategy));
 		host.setKnowledgeDataReceiver(kdManager);
 		// Set up the publisher task
 		TimeTriggerExt publisherTrigger = new TimeTriggerExt();
