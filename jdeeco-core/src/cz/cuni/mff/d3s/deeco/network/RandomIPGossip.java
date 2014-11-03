@@ -23,16 +23,14 @@ public class RandomIPGossip implements IPGossipStrategy {
 		List<String> result = new LinkedList<>();
 		
 		// Guard for no recipients
-		if (recipientSelectors != null && !recipientSelectors.isEmpty())
+		if (recipientSelectors == null)
 			return result;
 
 		// Add recipients from all selectors
-		for (DirectRecipientSelector selector: recipientSelectors) {
+		for (DirectRecipientSelector selector: recipientSelectors)
 			result.addAll(selector.getRecipients(data, sender));
-		}
 		
-		// filter the owner of the data
-		// remove all
+		// Filter the owner of the data, remove all
 		while (result.remove(data.getMetaData().componentId));
 		
 		return directGossipStrategy.filterRecipients(result);
