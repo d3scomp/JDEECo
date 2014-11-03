@@ -205,11 +205,9 @@ KnowledgeDataPublisher {
 
 	private void sendDirect(List<KnowledgeData> data) {
 		// Publishing to IP
-		Collection<String> recipients;
-		
 		// For IP part we are using individual publishing only
 		for (KnowledgeData kd : data) {
-			recipients = ipGossipStrategy.getRecipients(kd, getNodeKnowledge());
+			Collection<String> recipients = ipGossipStrategy.getRecipients(kd, getNodeKnowledge());
 			for (String recipient: recipients) {					
 				logPublish(data, recipient);
 				knowledgeDataSender.sendKnowledgeData(Arrays.asList(kd), recipient);					
