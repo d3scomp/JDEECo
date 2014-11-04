@@ -227,4 +227,8 @@ public class ProcessTask extends Task {
 		
 		return null;
 	}
+	
+	public String toString() {
+		return componentProcess.getName();
+	}
 }

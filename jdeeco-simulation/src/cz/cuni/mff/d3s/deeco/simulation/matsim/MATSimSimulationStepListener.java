@@ -4,5 +4,5 @@ import org.matsim.core.mobsim.framework.Mobsim;
 
 public interface MATSimSimulationStepListener {
 
-	public void at(long seconds, Mobsim mobsim);
+	public void at(double seconds, Mobsim mobsim);
 }

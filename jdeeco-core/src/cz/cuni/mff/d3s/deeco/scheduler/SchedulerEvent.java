@@ -92,6 +92,38 @@ public class SchedulerEvent implements Comparable<SchedulerEvent> {
 		return "SchedulerEvent [nextExecutionTime=" + nextExecutionTime
 				+ ", executable=" + executable + ", trigger=" + trigger + "]";
 	}
+
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((executable == null) ? 0 : executable.hashCode());
+		result = prime * result
+				+ (int) (nextExecutionTime ^ (nextExecutionTime >>> 32));
+		return result;
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SchedulerEvent other = (SchedulerEvent) obj;
+		if (executable == null) {
+			if (other.executable != null)
+				return false;
+		} else if (!executable.equals(other.executable))
+			return false;
+		if (nextExecutionTime != other.nextExecutionTime)
+			return false;
+		return true;
+	}
 	
 	
 	

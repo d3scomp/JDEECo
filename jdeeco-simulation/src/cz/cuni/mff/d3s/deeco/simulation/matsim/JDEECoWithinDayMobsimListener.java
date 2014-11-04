@@ -28,21 +28,28 @@ public class JDEECoWithinDayMobsimListener implements
 	private final MATSimSimulationStepListener stepListener;
 	private final MATSimUpdater updater;
 	private final MATSimExtractor extractor;
+	
+	private long remainingExchanges;
 
-	protected JDEECoWithinDayMobsimListener(Exchanger<Object> exchanger, MATSimSimulationStepListener stepListener, MATSimUpdater updater, MATSimExtractor extractor) {
+	protected JDEECoWithinDayMobsimListener(Exchanger<Object> exchanger, MATSimSimulationStepListener stepListener, MATSimUpdater updater, MATSimExtractor extractor, long remainingExchanges) {
 		this.exchanger = exchanger;
 		this.agentProviders = new LinkedList<JDEECoAgentProvider>();
 		this.stepListener = stepListener;
 		this.updater = updater;
 		this.extractor = extractor;
+		this.remainingExchanges = remainingExchanges;
 	}
 	
 	public JDEECoWithinDayMobsimListener(Exchanger<Object> exchanger, MATSimUpdater updater, MATSimExtractor extractor) {
-		this(exchanger, null, updater, extractor);
+		this(exchanger, null, updater, extractor, -1);
+	}
+	
+	public JDEECoWithinDayMobsimListener(Exchanger<Object> exchanger, MATSimUpdater updater, MATSimExtractor extractor, long remainingExchanges) {
+		this(exchanger, null, updater, extractor, remainingExchanges);
 	}
 	
 	public JDEECoWithinDayMobsimListener(MATSimSimulationStepListener stepListener, MATSimUpdater updater, MATSimExtractor extractor) {
-		this(null, stepListener, updater, extractor);
+		this(null, stepListener, updater, extractor, -1);
 	}
 
 	public void registerAgentProvider(JDEECoAgentProvider agentProvider) {
@@ -65,15 +72,23 @@ public class JDEECoWithinDayMobsimListener implements
 
 	@SuppressWarnings("rawtypes")
 	public void notifyMobsimBeforeSimStep(MobsimBeforeSimStepEvent event) {
+		if (this.remainingExchanges == 0) {
+			return;
+		}
 		if (exchanger != null) {
 			try {
+				//System.out.println("MATSIM before: " + event.getSimulationTime());
 				updateJDEECoAgents(exchanger.exchange(extractor.extractFromMATSim(getAllJDEECoAgents(), event.getQueueSimulation())));
+				//System.out.println("MATSIM after: " + event.getSimulationTime());
 			} catch (Exception e) {
 				Log.e("jDEECoWithinDayMobsimListener: ", e);
 			}
 		} 
 		if (stepListener != null) {
-			stepListener.at(Math.round(event.getSimulationTime()), event.getQueueSimulation());
+			stepListener.at(event.getSimulationTime(), event.getQueueSimulation());
+		}
+		if (this.remainingExchanges > 0) {
+			this.remainingExchanges--;
 		}
 	}
 

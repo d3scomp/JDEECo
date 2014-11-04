@@ -13,7 +13,6 @@ import org.matsim.api.core.v01.network.Node;
 import org.matsim.api.core.v01.population.Leg;
 import org.matsim.api.core.v01.population.PlanElement;
 import org.matsim.core.api.experimental.facilities.Facility;
-import org.matsim.core.config.Config;
 import org.matsim.core.controler.Controler;
 import org.matsim.core.network.NetworkImpl;
 import org.matsim.core.population.routes.NetworkRoute;
@@ -22,9 +21,6 @@ import org.matsim.core.router.TripRouterFactory;
 import org.matsim.core.router.TripRouterFactoryImpl;
 import org.matsim.core.router.util.DijkstraFactory;
 import org.matsim.core.router.util.TravelTime;
-import org.matsim.pt.router.TransitRouterConfig;
-import org.matsim.pt.router.TransitRouterFactory;
-import org.matsim.pt.router.TransitRouterImplFactory;
 
 /**
  * MATSim router. The class reuses the functionality available already in
@@ -34,52 +30,20 @@ import org.matsim.pt.router.TransitRouterImplFactory;
  * 
  */
 public class MATSimRouter {
-
-	public static int DEFAULT_LINK_PARKING_CAPACITY = 2;
-
+	
 	private final Controler controler;
 	private final TripRouterFactory tripRouterFactory;
+	private final int routeCalculationOffset;
 
-	public MATSimRouter(Controler controler, TravelTime travelTime) {
+	public MATSimRouter(Controler controler, TravelTime travelTime, int routeCalculationOffset) {
 		this.tripRouterFactory = new WithinDayTripRouterFactory(controler,
 				travelTime);
 		this.controler = controler;
+		this.routeCalculationOffset = routeCalculationOffset;
 	}
 
 	public Link findLinkById(Id id) {
 		return controler.getNetwork().getLinks().get(id);
-	}
-
-	public int getLinkParkingCapacity(Id linkId) {
-		// TODO: Needs to be changed
-		return DEFAULT_LINK_PARKING_CAPACITY;
-	}
-
-	/**
-	 * @param linkFrom
-	 *            start link
-	 * @param linkTo
-	 *            end link
-	 * @param departureTime
-	 *            departure time
-	 * @param person
-	 *            person for who the route is calculated
-	 * @return
-	 */
-	public List<Id> route(Link linkFrom, Link linkTo) {
-		TripRouter tr = tripRouterFactory.createTripRouter();
-		List<? extends PlanElement> legs = tr.calcRoute("car", new LinkWrapper(
-				linkFrom), new LinkWrapper(linkTo), 0.0, null);
-		if (legs.size() == 0) {
-			throw new RuntimeException("Route calculation failed: "
-					+ linkFrom.getId().toString() + " - "
-					+ linkTo.getId().toString());
-		}
-		Leg leg = (Leg) legs.get(0);
-		List<Id> route = new LinkedList<>(((NetworkRoute) leg.getRoute()).getLinkIds());
-		if (!route.contains(linkTo.getId()) && !linkTo.equals(linkFrom))
-			route.add(linkTo.getId());
-		return route;
 	}
 	
 	public Link findNearestLink(Coord coord) {
@@ -101,11 +65,55 @@ public class MATSimRouter {
 	public Collection<Node> getNearestNodes(Coord coord, double distance) {
 		return ((NetworkImpl)controler.getNetwork()).getNearestNodes(coord, distance);
 	}
-
+	
 	public List<Id> route(Id from, Id to) {
-		Link fromLink = controler.getNetwork().getLinks().get(from);
+		return route(from, to, null);
+	}
+
+	public List<Id> route(Id from, Id to, List<Id> currentRoute) {
+		List<Id> routePrefix = null;
+		Id newFrom;
+		if (currentRoute == null || currentRoute.isEmpty()) {
+			newFrom = from;
+		} else {
+			List<Id> truncatedCurrentRoute = new LinkedList<>(currentRoute);
+			int fromIndex = truncatedCurrentRoute.indexOf(from);
+			if (fromIndex > -1) {
+				truncatedCurrentRoute = truncatedCurrentRoute.subList(fromIndex, truncatedCurrentRoute.size());
+			}
+			if (routeCalculationOffset < truncatedCurrentRoute.size()) {
+				fromIndex = Math.max(0, routeCalculationOffset-1);
+			} else {
+				fromIndex = truncatedCurrentRoute.size()-1;
+			}
+			routePrefix = truncatedCurrentRoute.subList(0, fromIndex + 1);
+			newFrom = truncatedCurrentRoute.get(fromIndex);
+			//System.out.println("from: "+from.toString()+" newFrom: " + newFrom.toString() + " to: " + to.toString());
+		}
+		Link fromLink = controler.getNetwork().getLinks().get(newFrom);
 		Link toLink = controler.getNetwork().getLinks().get(to);
-		return route(fromLink, toLink);
+		List<Id> calculatedRoute = route(fromLink, toLink);
+		//System.out.println("calculatedRoute: " + calculatedRoute.toString() + " prefix: " + ((routePrefix == null) ? "null" : routePrefix.toString()));
+		if (routePrefix != null && !routePrefix.isEmpty()) {
+			calculatedRoute.addAll(0, routePrefix);
+		}
+		return calculatedRoute;
+	}
+	
+	private List<Id> route(Link linkFrom, Link linkTo) {
+		TripRouter tr = tripRouterFactory.createTripRouter();
+		List<? extends PlanElement> legs = tr.calcRoute("car", new LinkWrapper(
+				linkFrom), new LinkWrapper(linkTo), 0.0, null);
+		if (legs.size() == 0) {
+			throw new RuntimeException("Route calculation failed: "
+					+ linkFrom.getId().toString() + " - "
+					+ linkTo.getId().toString());
+		}
+		Leg leg = (Leg) legs.get(0);
+		List<Id> route = new LinkedList<>(((NetworkRoute) leg.getRoute()).getLinkIds());
+		if (!route.contains(linkTo.getId()) && !linkTo.equals(linkFrom))
+			route.add(linkTo.getId());
+		return route;
 	}
 
 	public Map<Id, ? extends Link> getLinks() {
@@ -167,12 +175,6 @@ public class MATSimRouter {
 		}
 
 		public TripRouter createTripRouter() {
-			Config config = controler.getConfig();
-//			TransitRouterFactory trf = new TransitRouterImplFactory(controler
-//					.getScenario().getTransitSchedule(),
-//					new TransitRouterConfig(config.planCalcScore(), config
-//							.plansCalcRoute(), config.transitRouter(), config
-//							.vspExperimental()));
 			return new TripRouterFactoryImpl(controler.getScenario(),
 					controler.getTravelDisutilityFactory(), travelTime,
 					new DijkstraFactory(), null).createTripRouter();

@@ -8,8 +8,8 @@ import org.matsim.api.core.v01.TransportMode;
 import org.matsim.core.api.experimental.events.AgentArrivalEvent;
 import org.matsim.core.basic.v01.IdImpl;
 import org.matsim.core.mobsim.framework.MobsimDriverAgent;
+import org.matsim.core.mobsim.qsim.QSim;
 import org.matsim.core.mobsim.qsim.interfaces.MobsimVehicle;
-import org.matsim.core.mobsim.qsim.interfaces.Netsim;
 
 /**
  * JDEECo agent implementation. The agent is used by the
@@ -27,9 +27,13 @@ public class JDEECoAgent implements MobsimDriverAgent {
 	private State state = State.ACTIVITY;
 	private Id plannedVehicleId;
 
-	private Netsim simulation;
-
+	private QSim simulation;
 	private List<Id> route;
+
+	// We need this variable to prevent the stopping the car (i.e. setting the
+	// route to empty or null) when it is at the intersection (i.e. in the link
+	// buffer).
+	private boolean unreachedDestinationGiven = false;
 
 	public JDEECoAgent(Id id, Id currentLinkId, List<Id> route) {
 		this.id = id;
@@ -41,7 +45,7 @@ public class JDEECoAgent implements MobsimDriverAgent {
 		this(id, currentLinkId, null);
 	}
 
-	public void setSimulation(Netsim simulation) {
+	public void setSimulation(QSim simulation) {
 		this.simulation = simulation;
 	}
 
@@ -63,8 +67,8 @@ public class JDEECoAgent implements MobsimDriverAgent {
 
 	public void endLegAndComputeNextState(double now) {
 		this.simulation.getEventsManager().processEvent(
-				new AgentArrivalEvent(now, this.getId(), this
-						.getDestinationLinkId(), getMode()));
+				new AgentArrivalEvent(now, this.getId(), destination(),
+						getMode()));
 		this.state = State.ACTIVITY;
 	}
 
@@ -95,25 +99,44 @@ public class JDEECoAgent implements MobsimDriverAgent {
 	}
 
 	public void setRoute(List<Id> route) {
+		if (unreachedDestinationGiven && (route == null || route.isEmpty())) {
+			if (this.route != null && !this.route.isEmpty()) {
+				int indexOfCurrentLink = this.route.indexOf(currentLinkId);
+				if (indexOfCurrentLink < 0) {
+					this.route = new LinkedList<>(this.route.subList(0, 1));
+				} else if (indexOfCurrentLink < this.route.size() - 1){
+					this.route = new LinkedList<>(this.route.subList(indexOfCurrentLink + 1, indexOfCurrentLink + 2));
+				} else {
+					this.route = new LinkedList<>();
+				}
+				//System.out.println(id + " route: " + this.route.toString());
+				return;
+			}
+		}
 		int index = route.indexOf(currentLinkId);
 		if (index < 0) {
 			this.route = route;
 		} else {
-			this.route = new LinkedList<Id>(route.subList(index + 1, route.size()));
+			this.route = new LinkedList<Id>(route.subList(index + 1,
+					route.size()));
 		}
+		//System.out.println(id + " route: " + this.route.toString());
 	}
 
 	public Id getCurrentLinkId() {
-		//System.out.println(id.toString() + " getCurrentLinkId " + currentLinkId.toString());
+		//System.out.println(id + " current: " + currentLinkId.toString());
 		return this.currentLinkId;
 	}
 
 	public Id getDestinationLinkId() {
-		if (route == null || route.isEmpty()) {
-			return currentLinkId;
-		} else {
-			return route.get(route.size()-1);
-		}
+		Id result = destination();
+		// Here we mark the situation when the agent was asked for the
+		// destination and it replied with one which is not yet reached. From
+		// now on and until invoking the chooseNextLink method setting an empty
+		// route is not allowed.
+		unreachedDestinationGiven = !result.equals(currentLinkId);
+		//System.out.println(id + " destination: " + result);
+		return result;
 	}
 
 	public Id getId() {
@@ -121,20 +144,25 @@ public class JDEECoAgent implements MobsimDriverAgent {
 	}
 
 	public Id chooseNextLinkId() {
+		this.unreachedDestinationGiven = false;
+		Id result;
 		if (route == null || route.isEmpty()) {
-			return null;
+			result = null;
+		} else if (currentLinkId.equals(route.get(route.size()-1))) {
+			route.clear();
+			result = null;
 		} else {
-			Id result = route.remove(0);
+			result = route.remove(0);
 			if (result.equals(currentLinkId)) {
 				if (route.isEmpty()) {
-					return null;
+					result = null;
 				} else {
-					return route.remove(0);
+					result = route.remove(0);
 				}
-			} else {
-				return result;
 			}
 		}
+		//System.out.println(id + " nextLink: " + result);
+		return result;
 	}
 
 	public Id getPlannedVehicleId() {
@@ -155,5 +183,15 @@ public class JDEECoAgent implements MobsimDriverAgent {
 
 	public void setVehicle(MobsimVehicle veh) {
 		this.vehicle = veh;
+	}
+
+	private Id destination() {
+		Id result;
+		if (route == null || route.isEmpty()) {
+			result = currentLinkId;
+		} else {
+			result = route.get(route.size() - 1);
+		}
+		return result;
 	}
 }

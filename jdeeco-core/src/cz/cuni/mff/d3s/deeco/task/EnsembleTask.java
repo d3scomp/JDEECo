@@ -432,7 +432,7 @@ public class EnsembleTask extends Task {
 			paramIdx++;
 		}
 		
-		try {
+		try {			
 			// Call the process method
 			ensembleController.getEnsembleDefinition().getKnowledgeExchange().getMethod().invoke(null, actualParams);
 			
@@ -478,6 +478,8 @@ public class EnsembleTask extends Task {
 	@Override
 	public void invoke(Trigger trigger) throws TaskInvocationException {
 
+		EnsembleContext.addContext(scheduler);
+		
 		if (trigger instanceof ShadowKMChangeTrigger) {
 			// If the trigger pertains to a shadow knowledge manager
 			ReadOnlyKnowledgeManager shadowKnowledgeManager = ((ShadowKMChangeTrigger)trigger).shadowKnowledgeManager;
@@ -524,5 +526,9 @@ public class EnsembleTask extends Task {
 		}
 		
 		return null;
+	}
+	
+	public String toString() {
+		return ensembleController.getEnsembleDefinition().getName();
 	}
 }

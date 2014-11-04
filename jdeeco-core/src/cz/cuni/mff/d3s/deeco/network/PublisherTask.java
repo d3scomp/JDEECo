@@ -70,5 +70,9 @@ public class PublisherTask extends Task {
 	public TimeTrigger getTimeTrigger() {
 		return trigger;
 	}
+	
+	public String toString() {
+		return "PublisherTask";
+	}
 
 }

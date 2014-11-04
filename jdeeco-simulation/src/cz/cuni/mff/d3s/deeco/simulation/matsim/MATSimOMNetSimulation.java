@@ -38,6 +38,7 @@ public class MATSimOMNetSimulation extends OMNetSimulation implements
 	private final long simulationStep; // in milliseconds
 	private final JDEECoWithinDayMobsimListener listener;
 	private final MATSimOMNetCoordinatesTranslator positionTranslator;
+	private final long omnetSimulationDuration;
 
 	private Thread matSimThread;
 	private long remainingExchanges;
@@ -63,9 +64,12 @@ public class MATSimOMNetSimulation extends OMNetSimulation implements
 		Log.i("Starting simulation: matsimStartTime: " + start
 				+ " matsimEndTime: " + end);
 		this.remainingExchanges = Math.round((end - start) / step) + 1;
+		this.omnetSimulationDuration = Math.round(Math.ceil(this.remainingExchanges*step));
+		
+		
 
 		this.exchanger = new Exchanger<Object>();
-		this.listener = new JDEECoWithinDayMobsimListener(exchanger, updater, extractor);
+		this.listener = new JDEECoWithinDayMobsimListener(exchanger, updater, extractor, this.remainingExchanges);
 		this.matSimProvider = matSimProvider;
 		this.matSimReceiver = matSimReceiver;
 
@@ -131,8 +135,10 @@ public class MATSimOMNetSimulation extends OMNetSimulation implements
 				matSimThread.start();
 			}
 			if (matSimThread.isAlive() && this.remainingExchanges > 0) {
+				//System.out.println("OMNet before: " + getCurrentMilliseconds());
 				matSimReceiver.setMATSimData(exchanger.exchange(matSimProvider
 						.getMATSimData()));
+				//System.out.println("OMNet after: " + getCurrentMilliseconds());
 				this.remainingExchanges--;
 				SimulationStepTask task = (SimulationStepTask) triger;
 				task.scheduleNextExecutionAfter(simulationStep);
@@ -141,12 +147,9 @@ public class MATSimOMNetSimulation extends OMNetSimulation implements
 			Log.e("MATSimOMNetSimulation", e);
 		}
 	}
-
-	@Override
-	public long getCurrentMilliseconds() {
-		return super.getCurrentMilliseconds()
-				+ (Math.round(controler.getConfig().getQSimConfigGroup()
-						.getStartTime()) * MILLIS_IN_SECOND);
+	
+	public long getOMNetSimulationDuration() {
+		return omnetSimulationDuration;
 	}
 
 	public MATSimPreloadingControler getControler() {

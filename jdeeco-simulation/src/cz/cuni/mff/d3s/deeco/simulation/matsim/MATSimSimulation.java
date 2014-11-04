@@ -138,7 +138,7 @@ public class MATSimSimulation extends Simulation implements MATSimSimulationStep
 	}
 
 	@Override
-	public void at(long seconds, Mobsim mobsim) {	
+	public void at(double seconds, Mobsim mobsim) {	
 		// Exchange data with MATSim
 		long milliseconds = secondsToMilliseconds(seconds);
 		matSimReceiver.setMATSimData(extractor.extractFromMATSim(listener.getAllJDEECoAgents(), mobsim));
