@@ -33,6 +33,9 @@ public class RandomIPGossip implements IPGossipStrategy {
 		// Filter the owner of the data, remove all
 		while (result.remove(data.getMetaData().componentId));
 		
+		// Remove sender from recipients
+		while(result.remove(sender.getId()));
+		
 		return directGossipStrategy.filterRecipients(result);
 	}
 
