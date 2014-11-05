@@ -519,13 +519,22 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int ENSEMBLE_DEFINITION__COMMUNICATION_BOUNDARY = 4;
 
 	/**
+	 * The feature id for the '<em><b>Partitioned By</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ENSEMBLE_DEFINITION__PARTITIONED_BY = 5;
+
+	/**
 	 * The number of structural features of the '<em>Ensemble Definition</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ENSEMBLE_DEFINITION_FEATURE_COUNT = 5;
+	int ENSEMBLE_DEFINITION_FEATURE_COUNT = 6;
 
 	/**
 	 * The number of operations of the '<em>Ensemble Definition</em>' class.
@@ -1390,6 +1399,17 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EAttribute getEnsembleDefinition_CommunicationBoundary();
 
 	/**
+	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getPartitionedBy <em>Partitioned By</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Partitioned By</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getPartitionedBy()
+	 * @see #getEnsembleDefinition()
+	 * @generated
+	 */
+	EAttribute getEnsembleDefinition_PartitionedBy();
+
+	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Condition <em>Condition</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1997,6 +2017,14 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute ENSEMBLE_DEFINITION__COMMUNICATION_BOUNDARY = eINSTANCE.getEnsembleDefinition_CommunicationBoundary();
+
+		/**
+		 * The meta object literal for the '<em><b>Partitioned By</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ENSEMBLE_DEFINITION__PARTITIONED_BY = eINSTANCE.getEnsembleDefinition_PartitionedBy();
 
 		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ConditionImpl <em>Condition</em>}' class.

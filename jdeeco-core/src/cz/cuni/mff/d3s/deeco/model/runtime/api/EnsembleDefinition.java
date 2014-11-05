@@ -21,6 +21,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getKnowledgeExchange <em>Knowledge Exchange</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getTriggers <em>Triggers</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getCommunicationBoundary <em>Communication Boundary</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getPartitionedBy <em>Partitioned By</em>}</li>
  * </ul>
  * </p>
  *
@@ -148,5 +149,31 @@ public interface EnsembleDefinition extends EObject {
 	 * @generated
 	 */
 	void setCommunicationBoundary(CommunicationBoundaryPredicate value);
+
+	/**
+	 * Returns the value of the '<em><b>Partitioned By</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Partitioned By</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Partitioned By</em>' attribute.
+	 * @see #setPartitionedBy(String)
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getEnsembleDefinition_PartitionedBy()
+	 * @model
+	 * @generated
+	 */
+	String getPartitionedBy();
+
+	/**
+	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getPartitionedBy <em>Partitioned By</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Partitioned By</em>' attribute.
+	 * @see #getPartitionedBy()
+	 * @generated
+	 */
+	void setPartitionedBy(String value);
 
 } // EnsembleDefinition

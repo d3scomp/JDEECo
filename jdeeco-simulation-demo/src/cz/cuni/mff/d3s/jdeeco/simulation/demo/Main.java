@@ -25,10 +25,12 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.network.DirectGossipStrategy;
 import cz.cuni.mff.d3s.deeco.network.DirectRecipientSelector;
+import cz.cuni.mff.d3s.deeco.network.IPGossipStrategy;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeDataManager;
 import cz.cuni.mff.d3s.deeco.network.PacketReceiver;
 import cz.cuni.mff.d3s.deeco.network.PacketSender;
 import cz.cuni.mff.d3s.deeco.network.PublisherTask;
+import cz.cuni.mff.d3s.deeco.network.RandomIPGossip;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework;
 import cz.cuni.mff.d3s.deeco.simulation.SimulationRuntimeBuilder;
 import cz.cuni.mff.d3s.deeco.simulation.omnet.OMNetSimulation;
@@ -151,7 +153,8 @@ public class Main {
 			if (component.hasIP) {
 				recipientSelectors = Arrays.asList((DirectRecipientSelector) directRecipientSelector);
 			}
-			RuntimeFramework runtime = builder.build(host, sim, null, model, recipientSelectors, directGossipStrategy); 
+			IPGossipStrategy ipGossipStrategy = new RandomIPGossip(recipientSelectors, directGossipStrategy);
+			RuntimeFramework runtime = builder.build(host, sim, null, model, ipGossipStrategy); 
 			runtimes.add(runtime);
 			runtime.start();
 			i++;

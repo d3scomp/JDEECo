@@ -79,7 +79,7 @@ public class TestSerializer {
 	public void testKnowledgeDataSerialization() throws IOException, ClassNotFoundException, KnowledgeUpdateException, KnowledgeNotFoundException {
 		KnowledgeManagerContainer container = new KnowledgeManagerContainer(new CloningKnowledgeManagerFactory());
 		List<EnsembleDefinition> ens = Collections.emptyList();
-		KnowledgeDataManager kdManager = new KnowledgeDataManager(container, null, ens, "", mock(Scheduler.class), null, null);
+		KnowledgeDataManager kdManager = new KnowledgeDataManager(container, null, ens, "", mock(Scheduler.class), null);
 		
 		ValueSet initialKnowledge = null;
 		

@@ -11,8 +11,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.TimeTriggerExt;
 import cz.cuni.mff.d3s.deeco.network.AbstractHost;
-import cz.cuni.mff.d3s.deeco.network.DirectGossipStrategy;
-import cz.cuni.mff.d3s.deeco.network.DirectRecipientSelector;
+import cz.cuni.mff.d3s.deeco.network.IPGossipStrategy;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeDataManager;
 import cz.cuni.mff.d3s.deeco.network.PublisherTask;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework;
@@ -24,8 +23,7 @@ public class SimulationRuntimeBuilder {
 
 	public RuntimeFramework build(AbstractHost host,
 			CallbackProvider callbackProvider, Collection<? extends TimerTaskListener> listeners, RuntimeMetadata model,
-			Collection<DirectRecipientSelector> recipientSelectors,
-			DirectGossipStrategy directGossipStrategy, KnowledgeManagerFactory knowledgeManagerFactory) {
+			IPGossipStrategy ipGossipStrategy, KnowledgeManagerFactory knowledgeManagerFactory) {
 		if (model == null) {
 			throw new IllegalArgumentException("Model must not be null");
 		}
@@ -45,8 +43,7 @@ public class SimulationRuntimeBuilder {
 
 		KnowledgeDataManager kdManager = new KnowledgeDataManager(container,
 				host.getKnowledgeDataSender(), model.getEnsembleDefinitions(),
-				host.getHostId(), scheduler, recipientSelectors,
-				directGossipStrategy);
+				host.getHostId(), scheduler, ipGossipStrategy);
 		host.setKnowledgeDataReceiver(kdManager);
 		// Set up the publisher task
 		TimeTriggerExt publisherTrigger = new TimeTriggerExt();
