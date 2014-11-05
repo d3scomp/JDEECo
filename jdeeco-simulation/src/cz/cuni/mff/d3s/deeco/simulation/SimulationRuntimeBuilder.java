@@ -7,6 +7,7 @@ import cz.cuni.mff.d3s.deeco.DeecoProperties;
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.executor.SameThreadExecutor;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.TimeTriggerExt;
 import cz.cuni.mff.d3s.deeco.network.AbstractHost;
@@ -24,7 +25,7 @@ public class SimulationRuntimeBuilder {
 	public RuntimeFramework build(AbstractHost host,
 			CallbackProvider callbackProvider, Collection<? extends TimerTaskListener> listeners, RuntimeMetadata model,
 			Collection<DirectRecipientSelector> recipientSelectors,
-			DirectGossipStrategy directGossipStrategy) {
+			DirectGossipStrategy directGossipStrategy, KnowledgeManagerFactory knowledgeManagerFactory) {
 		if (model == null) {
 			throw new IllegalArgumentException("Model must not be null");
 		}
@@ -40,7 +41,7 @@ public class SimulationRuntimeBuilder {
 				.setSimulationTimeEventListener(scheduler);
 
 		// Set up the host container
-		KnowledgeManagerContainer container = new KnowledgeManagerContainer();
+		KnowledgeManagerContainer container = new KnowledgeManagerContainer(knowledgeManagerFactory);
 
 		KnowledgeDataManager kdManager = new KnowledgeDataManager(container,
 				host.getKnowledgeDataSender(), model.getEnsembleDefinitions(),

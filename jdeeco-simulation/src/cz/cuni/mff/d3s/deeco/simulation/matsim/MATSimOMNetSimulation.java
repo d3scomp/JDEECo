@@ -65,8 +65,6 @@ public class MATSimOMNetSimulation extends OMNetSimulation implements
 				+ " matsimEndTime: " + end);
 		this.remainingExchanges = Math.round((end - start) / step) + 1;
 		this.omnetSimulationDuration = Math.round(Math.ceil(this.remainingExchanges*step));
-		
-		
 
 		this.exchanger = new Exchanger<Object>();
 		this.listener = new JDEECoWithinDayMobsimListener(exchanger, updater, extractor, this.remainingExchanges);

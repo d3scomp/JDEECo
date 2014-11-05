@@ -16,11 +16,11 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
  */
 public class CloningKnowledgeManager extends BaseKnowledgeManager {
 
-	private final Cloner cloner;
+	private final ClonerWrapper cw;
 	
 	public CloningKnowledgeManager(String id) {
 		super(id);
-		cloner = new Cloner();
+		cw = new ClonerWrapper();
 	}
 	
 	/*
@@ -41,7 +41,7 @@ public class CloningKnowledgeManager extends BaseKnowledgeManager {
 			if (isLocal(p)) {
 				result.setValue(p, values.getValue(p));
 			} else {
-				result.setValue(p, cloner.deepClone(values.getValue(p)));
+				result.setValue(p, cw.deepClone(values.getValue(p)));
 			}
 		}
 		return result;
@@ -79,5 +79,19 @@ public class CloningKnowledgeManager extends BaseKnowledgeManager {
 		}
 		super.update(toUpdate);
 */
+	}
+	
+	private class ClonerWrapper {
+		
+		private final Cloner cloner;
+		
+		public ClonerWrapper() {
+			this.cloner = new Cloner();
+		}
+		
+		public Object deepClone(Object object) {
+			return cloner.deepClone(object);
+		}
+		
 	}
 }

@@ -3,11 +3,9 @@
  */
 package cz.cuni.mff.d3s.deeco.network;
 
-import cz.cuni.mff.d3s.deeco.DeecoProperties;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
-import cz.cuni.mff.d3s.deeco.model.runtime.custom.TimeTriggerExt;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.task.Task;
 import cz.cuni.mff.d3s.deeco.task.TaskInvocationException;

@@ -413,27 +413,28 @@ KnowledgeDataPublisher {
 			return ipDelay;
 		}
 		
-		// the further further from the source (i.e. smaller rssi) the bigger
-		// probability to of rebroadcast (i.e., the smaller delay)
-		double rssi = Math.max(RSSI_MIN, metaData.rssi);
-		double ratio = Math.abs(Math.log(rssi)/Math.log(RSSI_MIN));	
-		
-		int maxDelay = (int) ((1-ratio) * maxRebroadcastDelay);
-		
-		// special case: rebroadcast immediately
-		if (maxDelay == 0)
-			return 1;
-		
-		// if received invalid rssi, then do not rebroadcast
-		if (maxDelay < 0 || maxDelay > maxRebroadcastDelay) {
-			Log.w(String.format("Invalid RSSI: %d leading to invalid rebroadcast delay max: ", metaData.rssi, maxDelay));
-			return -1;
-		}
-		
-		int result = random.nextInt(maxDelay);		
-		// the delay must be > 0
-		result++;
-		return result;
+//		// the further further from the source (i.e. smaller rssi) the bigger
+//		// probability to of rebroadcast (i.e., the smaller delay)
+//		double rssi = Math.max(RSSI_MIN, metaData.rssi);
+//		double ratio = Math.abs(Math.log(rssi)/Math.log(RSSI_MIN));	
+//		
+//		int maxDelay = (int) ((1-ratio) * maxRebroadcastDelay);
+//		
+//		// special case: rebroadcast immediately
+//		if (maxDelay == 0)
+//			return 1;
+//		
+//		// if received invalid rssi, then do not rebroadcast
+//		if (maxDelay < 0 || maxDelay > maxRebroadcastDelay) {
+//			Log.w(String.format("Invalid RSSI: %d leading to invalid rebroadcast delay max: ", metaData.rssi, maxDelay));
+//			return -1;
+//		}
+//		
+//		int result = random.nextInt(maxDelay);		
+//		// the delay must be > 0
+//		result++;
+//		return result;
+		return 1;
 	}
 
 

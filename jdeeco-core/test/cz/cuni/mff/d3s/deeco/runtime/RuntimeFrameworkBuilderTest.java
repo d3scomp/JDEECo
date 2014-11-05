@@ -9,6 +9,7 @@ import org.junit.rules.ExpectedException;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.executor.SameThreadExecutor;
+import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerFactory;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
@@ -34,7 +35,7 @@ public class RuntimeFrameworkBuilderTest {
 		throws Exception {
 		RuntimeConfiguration configuration = new RuntimeConfiguration(Scheduling.WALL_TIME, Distribution.LOCAL, Execution.SINGLE_THREADED);
 
-		RuntimeFrameworkBuilder result = new RuntimeFrameworkBuilder(configuration);
+		RuntimeFrameworkBuilder result = new RuntimeFrameworkBuilder(configuration, new CloningKnowledgeManagerFactory());
 
 		// add additional test code here
 		assertNotNull(result);
@@ -46,14 +47,14 @@ public class RuntimeFrameworkBuilderTest {
 		thrown.expect(IllegalArgumentException.class);
 		
 		// WHEN a builder is created with a null configuration
-		new RuntimeFrameworkBuilder(null);
+		new RuntimeFrameworkBuilder(null, new CloningKnowledgeManagerFactory());
 		// THEN an IllegalArgumentException is thrown	
 	}
 	
 	@Test
 	public void testBuildNullModel() {		
 		RuntimeConfiguration configuration = mock(RuntimeConfiguration.class);
-		RuntimeFrameworkBuilder tested = new RuntimeFrameworkBuilder(configuration);
+		RuntimeFrameworkBuilder tested = new RuntimeFrameworkBuilder(configuration, new CloningKnowledgeManagerFactory());
 
 		thrown.expect(IllegalArgumentException.class);
 
@@ -66,7 +67,7 @@ public class RuntimeFrameworkBuilderTest {
 	public void testConnect() {
 		// GIVEN a builder that built proper scheduler, executor and km registry 
 		RuntimeConfiguration configuration = mock(RuntimeConfiguration.class);
-		RuntimeFrameworkBuilder tested = new RuntimeFrameworkBuilder(configuration);
+		RuntimeFrameworkBuilder tested = new RuntimeFrameworkBuilder(configuration, new CloningKnowledgeManagerFactory());
 		tested.scheduler = mock(Scheduler.class);
 		tested.executor = mock(Executor.class);
 		tested.kmContainer = mock(KnowledgeManagerContainer.class);		
@@ -81,7 +82,7 @@ public class RuntimeFrameworkBuilderTest {
 	public void testBuildRuntime() {
 		// GIVEN a builder that built proper scheduler, executor and km registry 
 		RuntimeConfiguration configuration = mock(RuntimeConfiguration.class);
-		RuntimeFrameworkBuilder tested = new RuntimeFrameworkBuilder(configuration);
+		RuntimeFrameworkBuilder tested = new RuntimeFrameworkBuilder(configuration, new CloningKnowledgeManagerFactory());
 		tested.scheduler = mock(Scheduler.class);
 		tested.executor = mock(Executor.class);
 		tested.kmContainer = mock(KnowledgeManagerContainer.class);		
@@ -108,7 +109,7 @@ public class RuntimeFrameworkBuilderTest {
 	public void testGetWallTimeScheduler() {
 		// GIVEN a configuration with WALL_TIME scheduling
 		RuntimeConfiguration cnf = new RuntimeConfiguration(Scheduling.WALL_TIME, null, null);
-		RuntimeFrameworkBuilder tested = new RuntimeFrameworkBuilder(cnf);
+		RuntimeFrameworkBuilder tested = new RuntimeFrameworkBuilder(cnf, new CloningKnowledgeManagerFactory());
 		// THEN the builder creates an instance of LocalTimeScheduler
 		tested.buildScheduler();
 		assertNotNull(tested.scheduler);
@@ -120,7 +121,7 @@ public class RuntimeFrameworkBuilderTest {
 	public void testGetUnsupportedScheduler() {
 		// GIVEN a configuration with null scheduling
 		RuntimeConfiguration cnf = new RuntimeConfiguration(null, null, null);
-		RuntimeFrameworkBuilder tested = new RuntimeFrameworkBuilder(cnf);
+		RuntimeFrameworkBuilder tested = new RuntimeFrameworkBuilder(cnf, new CloningKnowledgeManagerFactory());
 		// THEN buildScheduler() throws an UnsupportedOperationException
 		thrown.expect(UnsupportedOperationException.class);
 		tested.buildScheduler();
@@ -131,7 +132,7 @@ public class RuntimeFrameworkBuilderTest {
 	public void testGetSingleThreadedExecutor() {
 		// GIVEN a configuration with SINGLE_THREADED execution
 		RuntimeConfiguration cnf = new RuntimeConfiguration(null, null, Execution.SINGLE_THREADED);
-		RuntimeFrameworkBuilder tested = new RuntimeFrameworkBuilder(cnf);
+		RuntimeFrameworkBuilder tested = new RuntimeFrameworkBuilder(cnf, new CloningKnowledgeManagerFactory());
 		// THEN the builder creates an instance of SameThreadExecutor
 		tested.buildExecutor();
 		assertNotNull(tested.executor);
@@ -142,7 +143,7 @@ public class RuntimeFrameworkBuilderTest {
 	public void testGetUnsupportedExecutor() {
 		// GIVEN a configuration with null execution
 		RuntimeConfiguration cnf = new RuntimeConfiguration(null, null, null);
-		RuntimeFrameworkBuilder tested = new RuntimeFrameworkBuilder(cnf);
+		RuntimeFrameworkBuilder tested = new RuntimeFrameworkBuilder(cnf, new CloningKnowledgeManagerFactory());
 
 		// THEN buildExecutor() throws an UnsupportedOperationException
 		thrown.expect(UnsupportedOperationException.class);

@@ -31,10 +31,12 @@ public class KnowledgeManagerContainer  {
 	protected final Set<ReplicaListener> replicaListeners;
 	protected final Map<String, KnowledgeManager> locals;
 	protected final Set<LocalListener> localListeners;
+	protected final KnowledgeManagerFactory knowledgeManagerFactory;
 
 
 
-	public KnowledgeManagerContainer() {
+	public KnowledgeManagerContainer(KnowledgeManagerFactory knowledgeManagerFactory) {
+		this.knowledgeManagerFactory = knowledgeManagerFactory;
 		this.replicas = new HashMap<>();
 		this.replicaListeners = new HashSet<>();
 		this.locals = new HashMap<>();

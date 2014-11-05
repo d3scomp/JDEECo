@@ -1,7 +1,7 @@
 package cz.cuni.mff.d3s.deeco.network;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -19,6 +19,7 @@ import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
+import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerFactory;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
@@ -29,8 +30,6 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
-import cz.cuni.mff.d3s.deeco.network.Serializer;
-import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
 
@@ -61,7 +60,7 @@ public class TestSerializer {
 	@Before
 	public void setUp() throws Exception {
 		model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
-		processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE, model);
+		processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE, model, new CloningKnowledgeManagerFactory());
 		
 		processor.process(new TestComponent("M1"));
 		component = model.getComponentInstances().get(0); 
@@ -78,7 +77,7 @@ public class TestSerializer {
 	
 	@Test
 	public void testKnowledgeDataSerialization() throws IOException, ClassNotFoundException, KnowledgeUpdateException, KnowledgeNotFoundException {
-		KnowledgeManagerContainer container = new KnowledgeManagerContainer();
+		KnowledgeManagerContainer container = new KnowledgeManagerContainer(new CloningKnowledgeManagerFactory());
 		List<EnsembleDefinition> ens = Collections.emptyList();
 		KnowledgeDataManager kdManager = new KnowledgeDataManager(container, null, ens, "", mock(Scheduler.class), null, null);
 		

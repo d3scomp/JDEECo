@@ -9,6 +9,7 @@ import org.junit.contrib.java.lang.system.StandardOutputStreamLog;
 
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
+import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeConfiguration;
@@ -37,7 +38,7 @@ public class ConvoyTest {
 	public void testConvoy() throws AnnotationProcessorException, InterruptedException {
 		
 		RuntimeMetadata model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
-		AnnotationProcessor processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE, model);
+		AnnotationProcessor processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE, model, new CloningKnowledgeManagerFactory());
 		
 		processor.process(new Leader(), new Follower(), new ConvoyEnsemble());
 		
@@ -45,7 +46,7 @@ public class ConvoyTest {
 				new RuntimeConfiguration(
 						Scheduling.WALL_TIME, 
 						Distribution.LOCAL, 
-						Execution.SINGLE_THREADED));
+						Execution.SINGLE_THREADED), new CloningKnowledgeManagerFactory());
 		RuntimeFramework runtime = builder.build(model); 
 		runtime.start();
 		

@@ -33,11 +33,28 @@ import cz.cuni.mff.d3s.deeco.annotations.pathparser.PNode;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.ParseException;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.PathParser;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
-import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerFactory;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.*;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.Condition;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.Exchange;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
 import cz.cuni.mff.d3s.deeco.network.GenericCommunicationBoundaryPredicate;
@@ -106,6 +123,8 @@ public class AnnotationProcessor {
 	 */
 	AnnotationProcessorExtensionPoint[] extensions;
 	
+	KnowledgeManagerFactory knowledgeManagerFactory;
+	
 	/**
 	 * Initializes the processor with the given model factory (convenience
 	 * method when no extensions are provided). All the model elements produced
@@ -116,11 +135,12 @@ public class AnnotationProcessor {
 	 *            EMF runtime metadata factory
 	 * @param model
 	 *            runtime metadata model to be updated by the processor
+	 * @param knowledgeMangerFactory knowledge manager factory to be used
 	 */
-	public AnnotationProcessor(RuntimeMetadataFactory factory,
+
+	public AnnotationProcessor(RuntimeMetadataFactory factory, KnowledgeManagerFactory knowledgeMangerFactory,
 			RuntimeMetadata model) {
-		this.factory = factory;
-		this.model = model;
+		this(factory, model, knowledgeMangerFactory);
 	}
 	
 	/**
@@ -134,11 +154,13 @@ public class AnnotationProcessor {
 	 *            runtime metadata model to be updated by the processor
 	 * @param extensions
 	 *            one or more classes extending the <code>AnnotationProcessorExtensionPoint</code> that provide additional processing functionality
+	 * @param knowledgeMangerFactory knowledge manager factory to be used
 	 */
-	public AnnotationProcessor(RuntimeMetadataFactory factory, RuntimeMetadata model, AnnotationProcessorExtensionPoint... extensions) {
+	public AnnotationProcessor(RuntimeMetadataFactory factory, RuntimeMetadata model, KnowledgeManagerFactory knowledgeMangerFactory, AnnotationProcessorExtensionPoint... extensions) {
 		this.factory = factory;
 		this.model = model;
 		this.extensions = extensions;
+		this.knowledgeManagerFactory = knowledgeMangerFactory;
 	}
 	
 	/**
@@ -309,7 +331,7 @@ public class AnnotationProcessor {
 			if (id == null) {
 				id = new StringBuilder().append(clazz.getSimpleName()).append(UUID.randomUUID().toString()).toString();
 			}
-			KnowledgeManager km = new CloningKnowledgeManager(id);
+			KnowledgeManager km = knowledgeManagerFactory.create(id);
 			km.update(initialK);
 			km.markAsLocal(initialLocalK.getUpdatedReferences());
 			km.update(initialLocalK);

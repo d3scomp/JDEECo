@@ -2,6 +2,7 @@ package cz.cuni.mff.d3s.deeco.task;
 
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerFactory;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.architecture.api.Architecture;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
@@ -62,10 +63,10 @@ public class ProcessContext {
 		return (RuntimeMetadata) p.getComponentInstance().eContainer();		
 	}
 	
-	public static String startComponent(Object componentDefinition) throws Exception {
+	public static String startComponent(Object componentDefinition, KnowledgeManagerFactory knowledgeManagerFactory) throws Exception {
 		// TODO: figure somehow how to get the factory used to create the model
 		RuntimeMetadata model = getModel();
-		AnnotationProcessor processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE,model);
+		AnnotationProcessor processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE,model,knowledgeManagerFactory);
 		try {
 			ComponentInstance ci = processor.processComponentInstance(model, componentDefinition);
 			

@@ -197,8 +197,8 @@ public class OMNetSimulation extends Simulation implements NetworkProvider {
 		return nativeGetPositionZ(host.getHostId());
 	}
 
-	public void setPosition(Host host, double x, double y, double z) {
-		nativeSetPosition(host.getHostId(), x, y, z);
+	public void setPosition(String hostId, double x, double y, double z) {
+		nativeSetPosition(hostId, x, y, z);
 	}
 
 	public long getCurrentMilliseconds() {

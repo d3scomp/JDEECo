@@ -3,6 +3,7 @@ package cz.cuni.mff.d3s.deeco.runtime;
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.executor.SameThreadExecutor;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerFactory;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeConfiguration.Execution;
@@ -71,6 +72,8 @@ public class RuntimeFrameworkBuilder {
 	 */
 	protected RuntimeMetadata model;
 	
+	protected KnowledgeManagerFactory knowledgeManagerFactory;
+	
 
 	/**
 	 * Creates a builder capable of creating runtime framework instances that
@@ -78,12 +81,13 @@ public class RuntimeFrameworkBuilder {
 	 * 
 	 * @throws IllegalArgumentException if {@code configuration} is {@code null}.
 	 */
-	public RuntimeFrameworkBuilder(RuntimeConfiguration configuration) {
+	public RuntimeFrameworkBuilder(RuntimeConfiguration configuration, KnowledgeManagerFactory knowledgeManagerFactory) {
 		if (configuration == null) {
 			throw new IllegalArgumentException("Configuration must not be null");
 		}		
 		
 		this.configuration = configuration;
+		this.knowledgeManagerFactory = knowledgeManagerFactory;
 	}
 	
 	/**
@@ -147,7 +151,7 @@ public class RuntimeFrameworkBuilder {
 	 * the {@link #configuration}.
 	 */
 	protected void buildKnowledgeManagerContainer() {		
-		kmContainer = new KnowledgeManagerContainer();
+		kmContainer = new KnowledgeManagerContainer(knowledgeManagerFactory);
 	}
 	
 	/**

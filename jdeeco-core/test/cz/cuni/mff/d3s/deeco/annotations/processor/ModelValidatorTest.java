@@ -1,12 +1,12 @@
 package cz.cuni.mff.d3s.deeco.annotations.processor;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-
-import junitx.framework.FileAssert;
 
 import org.eclipse.emf.ecore.EObject;
 import org.hamcrest.core.StringContains;
@@ -16,13 +16,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import cz.cuni.mff.d3s.deeco.annotations.pathparser.PNode;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.ParseException;
-import cz.cuni.mff.d3s.deeco.annotations.pathparser.PathParser;
 import cz.cuni.mff.d3s.deeco.annotations.processor.ModelValidationError.Severity;
-import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectE1;
-import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.WrongC1;
 import cz.cuni.mff.d3s.deeco.annotations.processor.input.validation.ExampleComponent;
+import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
@@ -52,7 +49,7 @@ public class ModelValidatorTest {
 	public void setUp() throws Exception {
 		factory = RuntimeMetadataFactory.eINSTANCE;
 		model = factory.createRuntimeMetadata(); 
-		processor = new AnnotationProcessor(factory, model);
+		processor = new AnnotationProcessor(factory, model, new CloningKnowledgeManagerFactory());
 		
 		processor.process(new ExampleComponent());
 		component = model.getComponentInstances().get(0);

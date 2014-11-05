@@ -30,7 +30,7 @@ public class CloningKnowledgeManagerContainerTest {
 	@Before
 	public void setUp() {
 		initMocks(this);
-		this.tested = new KnowledgeManagerContainer();
+		this.tested = new KnowledgeManagerContainer(new CloningKnowledgeManagerFactory());
 	}
 
 	@Test
