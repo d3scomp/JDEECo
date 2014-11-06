@@ -16,17 +16,19 @@
 #ifndef __MANET_CUSTOMMOBILITY_H_
 #define __MANET_CUSTOMMOBILITY_H_
 
-#include <StationaryMobility.h>
+#include <MobilityBase.h>
 
 /**
  * TODO - Generated class
  */
-class CustomMobility : public StationaryMobility
+class CustomMobility : public MobilityBase
 {
   protected:
-    virtual void handleMessage(cMessage *msg);
+    virtual void handleSelfMessage(cMessage *msg);
   public:
     virtual void setCurrentPosition(Coord coordinates);
+    virtual Coord getCurrentPosition();
+    virtual Coord getCurrentSpeed();
 };
 
 #endif

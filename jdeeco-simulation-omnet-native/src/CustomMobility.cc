@@ -17,14 +17,39 @@
 
 Define_Module(CustomMobility);
 
-void CustomMobility::handleMessage(cMessage *msg)
+void CustomMobility::handleSelfMessage(cMessage *msg)
 {
     ASSERT(false);
 }
 
 void CustomMobility::setCurrentPosition(Coord coordinates)
 {
-    lastPosition.x = coordinates.x;
-    lastPosition.y = coordinates.y;
-    lastPosition.z = coordinates.z;
+	bool changed = false;
+	if (lastPosition.x != coordinates.x) {
+		lastPosition.x = coordinates.x;
+		changed = true;
+	}
+	if (lastPosition.y != coordinates.y) {
+		lastPosition.y = coordinates.y;
+		changed = true;
+	}
+    if (lastPosition.z != coordinates.z) {
+    	lastPosition.z = coordinates.z;
+    	changed = true;
+    }
+    if (changed) {
+    	emitMobilityStateChangedSignal();
+    	updateVisualRepresentation();
+    }
+}
+
+
+Coord CustomMobility::getCurrentPosition()
+{
+    return lastPosition;
+}
+
+Coord CustomMobility::getCurrentSpeed()
+{
+    return Coord::ZERO;
 }

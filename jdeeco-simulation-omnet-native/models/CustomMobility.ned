@@ -15,11 +15,16 @@
 
 package manet;
 
-import inet.mobility.models.StationaryMobility;
+import inet.mobility.models.MobilityBase;
 //
 // TODO auto-generated module
 //
-simple CustomMobility extends StationaryMobility
+simple CustomMobility extends MobilityBase
 {
-    @class(CustomMobility);
+
+	parameters:
+    	double initialX @unit(m);
+    	double initialY @unit(m);
+    	double initialZ @unit(m);
+    	@class(CustomMobility);
 }
