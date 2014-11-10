@@ -11,7 +11,6 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.TimeTriggerExt;
 import cz.cuni.mff.d3s.deeco.network.AbstractHost;
-import cz.cuni.mff.d3s.deeco.network.IPGossipStrategy;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeDataManager;
 import cz.cuni.mff.d3s.deeco.network.PublisherTask;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework;
@@ -23,7 +22,7 @@ public class SimulationRuntimeBuilder {
 
 	public RuntimeFramework build(AbstractHost host,
 			CallbackProvider callbackProvider, Collection<? extends TimerTaskListener> listeners, RuntimeMetadata model,
-			IPGossipStrategy ipGossipStrategy, KnowledgeManagerFactory knowledgeManagerFactory) {
+			KnowledgeDataManager knowledgeDataManager, KnowledgeManagerFactory knowledgeManagerFactory) {
 		if (model == null) {
 			throw new IllegalArgumentException("Model must not be null");
 		}
@@ -40,11 +39,8 @@ public class SimulationRuntimeBuilder {
 
 		// Set up the host container
 		KnowledgeManagerContainer container = new KnowledgeManagerContainer(knowledgeManagerFactory);
-
-		KnowledgeDataManager kdManager = new KnowledgeDataManager(container,
-				host.getKnowledgeDataSender(), model.getEnsembleDefinitions(),
-				host.getHostId(), scheduler, ipGossipStrategy);
-		host.setKnowledgeDataReceiver(kdManager);
+		knowledgeDataManager.initialize(container, host.getKnowledgeDataSender(), host.getHostId(), scheduler);
+		host.setKnowledgeDataReceiver(knowledgeDataManager);
 		// Set up the publisher task
 		TimeTriggerExt publisherTrigger = new TimeTriggerExt();
 		publisherTrigger.setPeriod(Integer.getInteger(
@@ -56,7 +52,7 @@ public class SimulationRuntimeBuilder {
 		Random rnd = new Random(seed);
 		publisherTrigger.setOffset(rnd.nextInt((int) publisherTrigger
 				.getPeriod()) + 1);
-		PublisherTask publisherTask = new PublisherTask(scheduler, kdManager,
+		PublisherTask publisherTask = new PublisherTask(scheduler, knowledgeDataManager,
 				publisherTrigger, host.getHostId());
 
 		// Add publisher task to the scheduler

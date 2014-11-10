@@ -99,9 +99,10 @@ public class JDEECoAgent implements MobsimDriverAgent {
 	}
 
 	public void setRoute(List<Id> route) {
+		int indexOfCurrentLink;
 		if (unreachedDestinationGiven && (route == null || route.isEmpty())) {
 			if (this.route != null && !this.route.isEmpty()) {
-				int indexOfCurrentLink = this.route.indexOf(currentLinkId);
+				indexOfCurrentLink = this.route.lastIndexOf(currentLinkId);
 				if (indexOfCurrentLink < 0) {
 					this.route = new LinkedList<>(this.route.subList(0, 1));
 				} else if (indexOfCurrentLink < this.route.size() - 1){
@@ -113,11 +114,11 @@ public class JDEECoAgent implements MobsimDriverAgent {
 				return;
 			}
 		}
-		int index = route.indexOf(currentLinkId);
-		if (index < 0) {
+		indexOfCurrentLink = route.lastIndexOf(currentLinkId);
+		if (indexOfCurrentLink < 0) {
 			this.route = route;
 		} else {
-			this.route = new LinkedList<Id>(route.subList(index + 1,
+			this.route = new LinkedList<Id>(route.subList(indexOfCurrentLink + 1,
 					route.size()));
 		}
 		//System.out.println(id + " route: " + this.route.toString());
