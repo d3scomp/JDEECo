@@ -269,13 +269,13 @@ public class AnnotationProcessor {
 				}
 			}
 			
-			for (Method m : methods) {
-				initialK = extractInitialKnowledgeWithStateVariables(initialK, componentInstance);
-			}
-			
-			for (Method m : methods) {
-				createProcessTransition(componentInstance,m, initialK);
-			}
+//			for (Method m : methods) {
+//				initialK = extractInitialKnowledgeWithStateVariables(initialK, componentInstance);
+//			}
+//			
+//			for (Method m : methods) {
+//				createProcessTransition(componentInstance,m, initialK);
+//			}
 			
 			km.update(initialK);
 			componentInstance.setKnowledgeManager(km);

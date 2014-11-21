@@ -60,3 +60,4 @@ doc.zip
 *.ispace
 
 jdeeco-core/.pmd
+/jdeeco-demo

@@ -1,6 +1,7 @@
 package demo_annotation.test.FullExample;
 
 import java.util.HashMap;
+
 import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
@@ -10,21 +11,39 @@ import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.Mode;
 import cz.cuni.mff.d3s.deeco.annotations.Sets;
+import cz.cuni.mff.d3s.deeco.annotations.Set;
 import cz.cuni.mff.d3s.deeco.annotations.Exclusive;
 import cz.cuni.mff.d3s.deeco.annotations.Parallel;
 import cz.cuni.mff.d3s.deeco.annotations.StateSpaceModel;
 import cz.cuni.mff.d3s.deeco.annotations.TimeStamp;
 import cz.cuni.mff.d3s.deeco.annotations.TriggerOnTimeStampChange;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ExecutionType;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 
 
-
-
 @StateSpaceModel( models = {@Model( period = 100, state  = {"hFFPos","hFFSpeed"}, referenceModel = VehicleModel.class)})
-@Sets(parallel = @Parallel(modes = {"SelfSearch","NoSelfSearch"}),
-		exclusive = @Exclusive(parent = "NoSelfSearch", modes = {"NoSearch","RequestSearch"}))
+//The order of gaurds and children is saved in the same order as they are written
+@Sets(sets = {@Set(name = "flyOn", children = {"resetOn","resetOff"}),
+		      @Set(name = "resetOff", guards ="resetOn && hSearch_In == hID", children = {"selfSearchOn","selfSearchOff"}),
+		    //since it is the first child it has also the init state
+			  @Set(name = "selfSearchOff", guards = "selfSearchOn && hSearchID != hID", 
+			  	children = {"requestedSearchOff","requestedSearchOn"}, decomposition = ExecutionType.PARALLEL),
+			  //this guard is internal one , the state will be activated when the parent is
+			  @Set(name = "requestedSearchOff", guards = "mediate && hFFPos_LH > 5000" ,
+			  	children = {"rsOffEmpty","mediate","otherSearchOn"}, decomposition = ExecutionType.EXECLUSIVE),
+			  //put the history only with parallel case ????
+			  @Set(name = "requestedSearchOn", children = {"rsOnEmpty","searchOn"}, history = false),
+
+			  @Set(name = "resetOn", guards ="hFFPos_V > 0 || (resetOff &&  (hFFPos_LH + protocolDuration) > 10000)"),
+			  @Set(name = "searchOn", guards = "rsOnEmpty && hSearch_In == hID"),
+			  @Set(name = "mediate", guards = "rsOffEmpty && hFFPos_V > 0"),
+			  @Set(name = "otherSearchOn", guards = "rsOffEmpty && hSearchID != hID"),
+			  @Set(name = "selfSearchOn", guards = "selfSearchOff && hSearchID == hID"),
+			  @Set(name = "rsOffEmpty"),
+			  @Set(name = "rsOnEmpty")
+			  })
 @Component
 public class Helicopter {
 
@@ -47,7 +66,7 @@ public class Helicopter {
 	public String hSearch_In = "";
 	public String hSearch_Out = "";
 	public String hSearchID = "";  // it is local in the simulation
-//  public Double protocolDuration = 0.0; //for the prediction
+  public Double protocolDuration = 0.0; //for the prediction
 
 
 	protected static double hIntegratorError = 0.0;
@@ -69,7 +88,6 @@ public class Helicopter {
 		hFFTargetPos = pos;
 	}
 	
-	@Mode(set = "NoSearch", guard = "organizeSearch && V > 0 && LH > 10")
 	@Process
 	@PeriodicScheduling((int) TIMEPERIOD)
 	public static void initilizedSystem(
@@ -88,7 +106,6 @@ public class Helicopter {
 	}
 
 //I can mediate for another
-	@Mode(set = "RequestSearch", guard = "initilizedSystem && V == hID")
 	@Process
 	public static void toldToSearch(
 			@In("hSearch_In") @TriggerOnTimeStampChange String hSearch_In,
@@ -105,7 +122,6 @@ public class Helicopter {
 		hFFTargetSpeed.value = hSpeed;
 	}
 
-	@Mode(set = "NoSearch", guard = {"V > 0","initilizedSystem && V > 0","organizeSearch && LH <= 5"})
 	@Process
 	public static void mediate(
 			@InOut("hFFPos") @TriggerOnTimeStampChange InaccuracyParamHolder<Double> hFFPos,
@@ -120,7 +136,6 @@ public class Helicopter {
 		hFFTargetSpeed.value = hSpeed;
 	}
 
-	@Mode(set = "NoSearch", guard = "V > 0 && LH > 5")
 	@Process
 	public static void otherSearch(
 			@In("hID") String hID,
@@ -148,9 +163,8 @@ public class Helicopter {
 	}
 	
 	
-	@Mode(set = "SelfSearch", guard = "V > 0 && LH > 5")
 	@Process
-	public static void leadSearch(
+	public static void selfSearch(
 			@In("hID") String hID,
 			@In("hPos") Double hPos,
 			@In("hSpeed") Double hSpeed,
@@ -180,11 +194,11 @@ public class Helicopter {
 			result = computeTarget(hFFPos.value, r1, hFFSpeed.value, r2, hPos, hSpeed);
 			hFFTargetPos.value = result.pos;
 			hFFTargetSpeed.value = hSpeed;
-			System.err.println("leadSearch ... ["+hFFPos.minBoundary+","+hFFPos.maxBoundary+"] "+hFFPos.creationTime+" - "+currentTime+" ... target = "+hFFTargetPos.value+" , "+hFFTargetSpeed.value+"   ---- "+hPos+"  ,  "+hSpeed);
+			System.err.println("selfSearch ... ["+hFFPos.minBoundary+","+hFFPos.maxBoundary+"] "+hFFPos.creationTime+" - "+currentTime+" ... target = "+hFFTargetPos.value+" , "+hFFTargetSpeed.value+"   ---- "+hPos+"  ,  "+hSpeed);
 		}
 	}
 	
-
+	
 	//
 	//-----------------------------------------------------------------------------------------------------------------------------
 	//

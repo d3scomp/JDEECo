@@ -1226,7 +1226,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getMethod()
 	 * @generated
 	 */
-	int METHOD = 27;
+	int METHOD = 28;
 
 	/**
 	 * The meta object id for the '<em>Knowledge Manager</em>' data type.
@@ -1236,7 +1236,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getKnowledgeManager()
 	 * @generated
 	 */
-	int KNOWLEDGE_MANAGER = 28;
+	int KNOWLEDGE_MANAGER = 29;
 
 	/**
 	 * The meta object id for the '<em>Shadow Knowledge Manager Registry</em>' data type.
@@ -1246,7 +1246,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getShadowKnowledgeManagerRegistry()
 	 * @generated
 	 */
-	int SHADOW_KNOWLEDGE_MANAGER_REGISTRY = 29;
+	int SHADOW_KNOWLEDGE_MANAGER_REGISTRY = 30;
 
 	/**
 	 * The meta object id for the '<em>Communication Boundary</em>' data type.
@@ -1256,7 +1256,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getCommunicationBoundary()
 	 * @generated
 	 */
-	int COMMUNICATION_BOUNDARY = 30;
+	int COMMUNICATION_BOUNDARY = 31;
 
 	/**
 	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.MetadataType <em>Metadata Type</em>}' enum.
@@ -1279,6 +1279,16 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int COMPARISON_TYPE = 26;
 
 	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ExecutionType <em>Execution Type</em>}' enum.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ExecutionType
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getExecutionType()
+	 * @generated
+	 */
+	int EXECUTION_TYPE = 27;
+
+	/**
 	 * The meta object id for the '<em>Model Type</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1286,7 +1296,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getModelType()
 	 * @generated
 	 */
-	int MODEL_TYPE = 31;
+	int MODEL_TYPE = 32;
 
 	/**
 	 * The meta object id for the '<em>Inaccurate Value</em>' data type.
@@ -1296,7 +1306,17 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getInaccurateValue()
 	 * @generated
 	 */
-	int INACCURATE_VALUE = 32;
+	int INACCURATE_VALUE = 33;
+
+	/**
+	 * The meta object id for the '<em>Set Type</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.stateflow.SetType
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getSetType()
+	 * @generated
+	 */
+	int SET_TYPE = 34;
 
 	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger <em>Trigger</em>}'.
@@ -2110,6 +2130,16 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EEnum getComparisonType();
 
 	/**
+	 * Returns the meta object for enum '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ExecutionType <em>Execution Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for enum '<em>Execution Type</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ExecutionType
+	 * @generated
+	 */
+	EEnum getExecutionType();
+
+	/**
 	 * Returns the meta object for data type '{@link cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ModelInterface <em>Model Type</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2130,6 +2160,17 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 */
 	EDataType getInaccurateValue();
+
+	/**
+	 * Returns the meta object for data type '{@link cz.cuni.mff.d3s.deeco.model.runtime.stateflow.SetType <em>Set Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>Set Type</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.stateflow.SetType
+	 * @model instanceClass="cz.cuni.mff.d3s.deeco.model.runtime.stateflow.SetType"
+	 * @generated
+	 */
+	EDataType getSetType();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -2825,6 +2866,16 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EEnum COMPARISON_TYPE = eINSTANCE.getComparisonType();
 
 		/**
+		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ExecutionType <em>Execution Type</em>}' enum.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ExecutionType
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getExecutionType()
+		 * @generated
+		 */
+		EEnum EXECUTION_TYPE = eINSTANCE.getExecutionType();
+
+		/**
 		 * The meta object literal for the '<em>Model Type</em>' data type.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2843,6 +2894,16 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * @generated
 		 */
 		EDataType INACCURATE_VALUE = eINSTANCE.getInaccurateValue();
+
+		/**
+		 * The meta object literal for the '<em>Set Type</em>' data type.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.stateflow.SetType
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getSetType()
+		 * @generated
+		 */
+		EDataType SET_TYPE = eINSTANCE.getSetType();
 
 	}
 

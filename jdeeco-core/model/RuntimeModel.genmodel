@@ -31,12 +31,17 @@
       <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//ComparisonType/NOT_EQUAL"/>
       <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//ComparisonType/NOT_EQUAL_STR"/>
     </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="RuntimeModel.ecore#//ExecutionType">
+      <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//ExecutionType/EXECLUSIVE"/>
+      <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//ExecutionType/PARALLEL"/>
+    </genEnums>
     <genDataTypes ecoreDataType="RuntimeModel.ecore#//Method"/>
     <genDataTypes ecoreDataType="RuntimeModel.ecore#//KnowledgeManager"/>
     <genDataTypes ecoreDataType="RuntimeModel.ecore#//ShadowKnowledgeManagerRegistry"/>
     <genDataTypes ecoreDataType="RuntimeModel.ecore#//CommunicationBoundary"/>
     <genDataTypes ecoreDataType="RuntimeModel.ecore#//ModelType"/>
     <genDataTypes ecoreDataType="RuntimeModel.ecore#//InaccurateValue"/>
+    <genDataTypes ecoreDataType="RuntimeModel.ecore#//SetType"/>
     <genClasses ecoreClass="RuntimeModel.ecore#//TimeTrigger">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//TimeTrigger/period"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//TimeTrigger/offset"/>

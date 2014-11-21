@@ -11,6 +11,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Condition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Exchange;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ExecutionType;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Invocable;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
@@ -36,6 +37,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ModelInterface;
+import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.SetType;
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
 
 import java.lang.reflect.Method;
@@ -250,6 +252,13 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	private EEnum executionTypeEEnum = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	private EDataType methodEDataType = null;
 
 	/**
@@ -286,6 +295,13 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * @generated
 	 */
 	private EDataType inaccurateValueEDataType = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType setTypeEDataType = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -1037,6 +1053,15 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EEnum getExecutionType() {
+		return executionTypeEEnum;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EDataType getModelType() {
 		return modelTypeEDataType;
 	}
@@ -1048,6 +1073,15 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 */
 	public EDataType getInaccurateValue() {
 		return inaccurateValueEDataType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EDataType getSetType() {
+		return setTypeEDataType;
 	}
 
 	/**
@@ -1175,6 +1209,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		parameterDirectionEEnum = createEEnum(PARAMETER_DIRECTION);
 		metadataTypeEEnum = createEEnum(METADATA_TYPE);
 		comparisonTypeEEnum = createEEnum(COMPARISON_TYPE);
+		executionTypeEEnum = createEEnum(EXECUTION_TYPE);
 
 		// Create data types
 		methodEDataType = createEDataType(METHOD);
@@ -1183,6 +1218,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		communicationBoundaryEDataType = createEDataType(COMMUNICATION_BOUNDARY);
 		modelTypeEDataType = createEDataType(MODEL_TYPE);
 		inaccurateValueEDataType = createEDataType(INACCURATE_VALUE);
+		setTypeEDataType = createEDataType(SET_TYPE);
 	}
 
 	/**
@@ -1343,6 +1379,10 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		addEEnumLiteral(comparisonTypeEEnum, ComparisonType.NOT_EQUAL);
 		addEEnumLiteral(comparisonTypeEEnum, ComparisonType.NOT_EQUAL_STR);
 
+		initEEnum(executionTypeEEnum, ExecutionType.class, "ExecutionType");
+		addEEnumLiteral(executionTypeEEnum, ExecutionType.EXECLUSIVE);
+		addEEnumLiteral(executionTypeEEnum, ExecutionType.PARALLEL);
+
 		// Initialize data types
 		initEDataType(methodEDataType, Method.class, "Method", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(knowledgeManagerEDataType, KnowledgeManager.class, "KnowledgeManager", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
@@ -1350,6 +1390,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		initEDataType(communicationBoundaryEDataType, CommunicationBoundaryPredicate.class, "CommunicationBoundary", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(modelTypeEDataType, ModelInterface.class, "ModelType", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(inaccurateValueEDataType, InaccuracyParamHolder.class, "InaccurateValue", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(setTypeEDataType, SetType.class, "SetType", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
 		createResource(eNS_URI);

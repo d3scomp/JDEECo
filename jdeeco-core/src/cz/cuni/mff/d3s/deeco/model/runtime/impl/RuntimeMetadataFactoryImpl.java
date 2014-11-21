@@ -10,6 +10,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder;
 import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.ModelInterface;
+import cz.cuni.mff.d3s.deeco.model.runtime.stateflow.SetType;
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
 
 
@@ -108,6 +109,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 				return createMetadataTypeFromString(eDataType, initialValue);
 			case RuntimeMetadataPackage.COMPARISON_TYPE:
 				return createComparisonTypeFromString(eDataType, initialValue);
+			case RuntimeMetadataPackage.EXECUTION_TYPE:
+				return createExecutionTypeFromString(eDataType, initialValue);
 			case RuntimeMetadataPackage.METHOD:
 				return createMethodFromString(eDataType, initialValue);
 			case RuntimeMetadataPackage.KNOWLEDGE_MANAGER:
@@ -120,6 +123,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 				return createModelTypeFromString(eDataType, initialValue);
 			case RuntimeMetadataPackage.INACCURATE_VALUE:
 				return createInaccurateValueFromString(eDataType, initialValue);
+			case RuntimeMetadataPackage.SET_TYPE:
+				return createSetTypeFromString(eDataType, initialValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -139,6 +144,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 				return convertMetadataTypeToString(eDataType, instanceValue);
 			case RuntimeMetadataPackage.COMPARISON_TYPE:
 				return convertComparisonTypeToString(eDataType, instanceValue);
+			case RuntimeMetadataPackage.EXECUTION_TYPE:
+				return convertExecutionTypeToString(eDataType, instanceValue);
 			case RuntimeMetadataPackage.METHOD:
 				return convertMethodToString(eDataType, instanceValue);
 			case RuntimeMetadataPackage.KNOWLEDGE_MANAGER:
@@ -151,6 +158,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 				return convertModelTypeToString(eDataType, instanceValue);
 			case RuntimeMetadataPackage.INACCURATE_VALUE:
 				return convertInaccurateValueToString(eDataType, instanceValue);
+			case RuntimeMetadataPackage.SET_TYPE:
+				return convertSetTypeToString(eDataType, instanceValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -513,6 +522,26 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public ExecutionType createExecutionTypeFromString(EDataType eDataType, String initialValue) {
+		ExecutionType result = ExecutionType.get(initialValue);
+		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+		return result;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertExecutionTypeToString(EDataType eDataType, Object instanceValue) {
+		return instanceValue == null ? null : instanceValue.toString();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public ModelInterface createModelTypeFromString(EDataType eDataType, String initialValue) {
 		return (ModelInterface)super.createFromString(eDataType, initialValue);
 	}
@@ -541,6 +570,24 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * @generated
 	 */
 	public String convertInaccurateValueToString(EDataType eDataType, Object instanceValue) {
+		return super.convertToString(eDataType, instanceValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public SetType createSetTypeFromString(EDataType eDataType, String initialValue) {
+		return (SetType)super.createFromString(eDataType, initialValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertSetTypeToString(EDataType eDataType, Object instanceValue) {
 		return super.convertToString(eDataType, instanceValue);
 	}
 

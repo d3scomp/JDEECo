@@ -1,426 +1,116 @@
-Sep 22, 2014 9:47:30 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger warning
-WARNING: Non-public or static fields are ignored during the extraction of initial knowledge (demo_annotation.test.Modes.complex.Leader
-Sep 22, 2014 9:47:30 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger warning
-WARNING: Non-public or static fields are ignored during the extraction of initial knowledge (demo_annotation.test.Modes.complex.FireFighter
-Sep 22, 2014 9:47:30 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Changing the activity of task cz.cuni.mff.d3s.deeco.task.StateSpaceModelTask@1a407d53 corresponding to stateSpaceModel cz.cuni.mff.d3s.deeco.model.runtime.impl.StateSpaceModelDefinitionImpl@71c7db30 (model: demo_annotation.test.Modes.complex.VehicleModel@3d8c7aca, isActive: true, modelValue: cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder@0) to true.
-Sep 22, 2014 9:47:30 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Changing the activity of task cz.cuni.mff.d3s.deeco.task.ProcessTask@dfd3711 corresponding to process cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl@38082d64 (method: public static void demo_annotation.test.Modes.complex.Leader.speedControl(cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder,cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder,cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder,cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder,cz.cuni.mff.d3s.deeco.task.ParamHolder,cz.cuni.mff.d3s.deeco.task.ParamHolder,cz.cuni.mff.d3s.deeco.task.ParamHolder,cz.cuni.mff.d3s.deeco.task.ParamHolder)) (name: speedControl, isActive: true, isRunning: false, set: null) to true.
-Sep 22, 2014 9:47:30 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Changing the activity of task cz.cuni.mff.d3s.deeco.task.StateSpaceModelTask@2ef9b8bc corresponding to stateSpaceModel cz.cuni.mff.d3s.deeco.model.runtime.impl.StateSpaceModelDefinitionImpl@7c30a502 (model: demo_annotation.test.Modes.complex.VehicleModel@5d624da6, isActive: true, modelValue: cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder@0) to true.
-Sep 22, 2014 9:47:30 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Changing the activity of task cz.cuni.mff.d3s.deeco.task.ProcessTask@60addb54 corresponding to process cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl@1e67b872 (method: public static void demo_annotation.test.Modes.complex.FireFighter.speedControl(cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder,cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder,cz.cuni.mff.d3s.deeco.task.ParamHolder,cz.cuni.mff.d3s.deeco.task.ParamHolder,cz.cuni.mff.d3s.deeco.task.ParamHolder,cz.cuni.mff.d3s.deeco.task.ParamHolder)) (name: speedControl, isActive: true, isRunning: false, set: null) to true.
-Sep 22, 2014 9:47:30 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Changing the activity of task cz.cuni.mff.d3s.deeco.task.ProcessTask@4cb2c100 corresponding to process cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl@3f2a3a5 (method: public static void demo_annotation.test.Modes.complex.FireFighter.leaderConnected(cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder)) (name: leaderConnected, isActive: true, isRunning: false, set: ) to true.
-Sep 22, 2014 9:47:30 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Changing the activity of task cz.cuni.mff.d3s.deeco.task.ProcessTask@614c5515 corresponding to process cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl@6fb554cc (method: public static void demo_annotation.test.Modes.complex.FireFighter.nonWorking(cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder)) (name: nonWorking, isActive: true, isRunning: false, set: ) to true.
-Sep 22, 2014 9:47:30 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Changing the activity of task cz.cuni.mff.d3s.deeco.task.ProcessTask@2d554825 corresponding to process cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl@77b52d12 (method: public static void demo_annotation.test.Modes.complex.FireFighter.mediatorConnected(cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder)) (name: mediatorConnected, isActive: true, isRunning: false, set: ) to true.
-Sep 22, 2014 9:47:30 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:30 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Changing the activity of task cz.cuni.mff.d3s.deeco.task.ProcessTask@4cb2c100 corresponding to process cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl@3f2a3a5 (method: public static void demo_annotation.test.Modes.complex.FireFighter.leaderConnected(cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder)) (name: leaderConnected, isActive: false, isRunning: false, set: ) to false.
-Sep 22, 2014 9:47:30 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Changing the activity of task cz.cuni.mff.d3s.deeco.task.ProcessTask@4cb2c100 corresponding to process cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl@3f2a3a5 (method: public static void demo_annotation.test.Modes.complex.FireFighter.leaderConnected(cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder)) (name: leaderConnected, isActive: false, isRunning: false, set: ) to false.
-Sep 22, 2014 9:47:30 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Changing the activity of task cz.cuni.mff.d3s.deeco.task.ProcessTask@614c5515 corresponding to process cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl@6fb554cc (method: public static void demo_annotation.test.Modes.complex.FireFighter.nonWorking(cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder)) (name: nonWorking, isActive: false, isRunning: false, set: ) to false.
-Sep 22, 2014 9:47:30 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Changing the activity of task cz.cuni.mff.d3s.deeco.task.ProcessTask@614c5515 corresponding to process cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl@6fb554cc (method: public static void demo_annotation.test.Modes.complex.FireFighter.nonWorking(cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder)) (name: nonWorking, isActive: false, isRunning: false, set: ) to false.
-Sep 22, 2014 9:47:30 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Changing the activity of task cz.cuni.mff.d3s.deeco.task.ProcessTask@2d554825 corresponding to process cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl@77b52d12 (method: public static void demo_annotation.test.Modes.complex.FireFighter.mediatorConnected(cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder)) (name: mediatorConnected, isActive: false, isRunning: false, set: ) to false.
-Sep 22, 2014 9:47:30 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Changing the activity of task cz.cuni.mff.d3s.deeco.task.ProcessTask@4cb2c100 corresponding to process cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl@3f2a3a5 (method: public static void demo_annotation.test.Modes.complex.FireFighter.leaderConnected(cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder)) (name: leaderConnected, isActive: true, isRunning: false, set: ) to true.
-Sep 22, 2014 9:47:30 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Changing the activity of task cz.cuni.mff.d3s.deeco.task.ProcessTask@614c5515 corresponding to process cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl@6fb554cc (method: public static void demo_annotation.test.Modes.complex.FireFighter.nonWorking(cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder)) (name: nonWorking, isActive: false, isRunning: false, set: ) to false.
-Sep 22, 2014 9:47:30 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Changing the activity of task cz.cuni.mff.d3s.deeco.task.ProcessTask@2d554825 corresponding to process cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl@77b52d12 (method: public static void demo_annotation.test.Modes.complex.FireFighter.mediatorConnected(cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder)) (name: mediatorConnected, isActive: false, isRunning: false, set: ) to false.
-Sep 22, 2014 9:47:30 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Changing the activity of task cz.cuni.mff.d3s.deeco.task.ProcessTask@614c5515 corresponding to process cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl@6fb554cc (method: public static void demo_annotation.test.Modes.complex.FireFighter.nonWorking(cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder)) (name: nonWorking, isActive: true, isRunning: false, set: ) to true.
-Sep 22, 2014 9:47:30 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Changing the activity of task cz.cuni.mff.d3s.deeco.task.ProcessTask@2d554825 corresponding to process cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl@77b52d12 (method: public static void demo_annotation.test.Modes.complex.FireFighter.mediatorConnected(cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder)) (name: mediatorConnected, isActive: true, isRunning: false, set: ) to true.
-Sep 22, 2014 9:47:30 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:30 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:30 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:30 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:30 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:30 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:30 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:30 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:30 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:30 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:30 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:30 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:30 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:30 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:30 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:30 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:30 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:30 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:31 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:31 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:31 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:31 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:31 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:31 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:31 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:31 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:31 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:31 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:31 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:31 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:31 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:31 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:31 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:31 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:31 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:31 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:31 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:31 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:31 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:31 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:31 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:31 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:32 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:32 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:32 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:32 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:32 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:32 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:32 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:32 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:32 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:32 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:32 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:32 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:32 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:32 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:32 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:32 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:32 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:32 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:32 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:32 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:32 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:32 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:32 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Changing the activity of task cz.cuni.mff.d3s.deeco.task.ProcessTask@4cb2c100 corresponding to process cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl@3f2a3a5 (method: public static void demo_annotation.test.Modes.complex.FireFighter.leaderConnected(cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder)) (name: leaderConnected, isActive: false, isRunning: true, set: ) to false.
-Sep 22, 2014 9:47:32 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Changing the activity of task cz.cuni.mff.d3s.deeco.task.ProcessTask@4cb2c100 corresponding to process cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl@3f2a3a5 (method: public static void demo_annotation.test.Modes.complex.FireFighter.leaderConnected(cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder)) (name: leaderConnected, isActive: false, isRunning: true, set: ) to false.
-Sep 22, 2014 9:47:32 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Changing the activity of task cz.cuni.mff.d3s.deeco.task.ProcessTask@614c5515 corresponding to process cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl@6fb554cc (method: public static void demo_annotation.test.Modes.complex.FireFighter.nonWorking(cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder)) (name: nonWorking, isActive: false, isRunning: false, set: ) to false.
-Sep 22, 2014 9:47:32 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Changing the activity of task cz.cuni.mff.d3s.deeco.task.ProcessTask@4cb2c100 corresponding to process cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl@3f2a3a5 (method: public static void demo_annotation.test.Modes.complex.FireFighter.leaderConnected(cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder)) (name: leaderConnected, isActive: true, isRunning: false, set: ) to true.
-Sep 22, 2014 9:47:32 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Changing the activity of task cz.cuni.mff.d3s.deeco.task.ProcessTask@614c5515 corresponding to process cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl@6fb554cc (method: public static void demo_annotation.test.Modes.complex.FireFighter.nonWorking(cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder)) (name: nonWorking, isActive: true, isRunning: false, set: ) to true.
-Sep 22, 2014 9:47:32 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:32 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:32 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:32 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:33 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:33 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:33 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:33 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:33 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:33 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:33 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:33 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:33 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:33 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:33 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:33 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:33 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:33 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:33 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:33 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:33 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:33 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:33 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:33 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:33 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:33 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:33 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:33 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:34 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:34 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:34 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:34 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:34 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:34 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:34 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:34 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:34 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:34 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:34 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:34 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:34 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:34 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:34 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:34 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:34 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:34 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:34 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:34 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:34 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:34 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:34 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:34 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:34 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:34 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:35 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:35 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:35 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:35 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:35 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:35 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:35 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Changing the activity of task cz.cuni.mff.d3s.deeco.task.ProcessTask@2d554825 corresponding to process cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl@77b52d12 (method: public static void demo_annotation.test.Modes.complex.FireFighter.mediatorConnected(cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder)) (name: mediatorConnected, isActive: false, isRunning: true, set: ) to false.
-Sep 22, 2014 9:47:35 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Changing the activity of task cz.cuni.mff.d3s.deeco.task.ProcessTask@614c5515 corresponding to process cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl@6fb554cc (method: public static void demo_annotation.test.Modes.complex.FireFighter.nonWorking(cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder)) (name: nonWorking, isActive: false, isRunning: false, set: ) to false.
-Sep 22, 2014 9:47:35 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Changing the activity of task cz.cuni.mff.d3s.deeco.task.ProcessTask@614c5515 corresponding to process cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl@6fb554cc (method: public static void demo_annotation.test.Modes.complex.FireFighter.nonWorking(cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder)) (name: nonWorking, isActive: true, isRunning: false, set: ) to true.
-Sep 22, 2014 9:47:35 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Changing the activity of task cz.cuni.mff.d3s.deeco.task.ProcessTask@2d554825 corresponding to process cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl@77b52d12 (method: public static void demo_annotation.test.Modes.complex.FireFighter.mediatorConnected(cz.cuni.mff.d3s.deeco.model.runtime.stateflow.InaccuracyParamHolder)) (name: mediatorConnected, isActive: true, isRunning: true, set: ) to true.
-Sep 22, 2014 9:47:35 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:35 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:35 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:35 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:35 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:35 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:35 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:35 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:35 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:35 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:35 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:35 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:35 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:35 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:35 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:35 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:35 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:35 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:36 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:36 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:36 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:36 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:36 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:36 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:36 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:36 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:36 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:36 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:36 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:36 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:36 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:36 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:36 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:36 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:36 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:36 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:36 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:36 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:36 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:36 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:36 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:36 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:36 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:36 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:37 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:37 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:37 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:37 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:37 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:37 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:37 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:37 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:37 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:37 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:37 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:37 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:37 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:37 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
-Sep 22, 2014 9:47:37 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager Leader8494ffa6-6abf-4a17-acd6-ce65990a6fb1.
-Sep 22, 2014 9:47:37 AM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
-INFO: Input knowledge (lPos) of a membership in demo_annotation.test.Modes.complex.FireFighterLeaderEnsemble was not found in the knowledge manager FireFighter59875217-c2d8-4a50-992e-9d249b1e7424.
+Oct 11, 2014 9:42:32 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger warning
+WARNING: Non-public or static fields are ignored during the extraction of initial knowledge (demo_annotation.test.TS.FireFighter
+Oct 11, 2014 9:42:33 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger warning
+WARNING: Non-public or static fields are ignored during the extraction of initial knowledge (demo_annotation.test.TS.Environment
+Oct 11, 2014 9:42:33 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Changing the activity of task cz.cuni.mff.d3s.deeco.task.ProcessTask@649d209a corresponding to process cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl@35851384 (method: public static void demo_annotation.test.TS.FireFighter.speedControl(cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder,cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder,cz.cuni.mff.d3s.deeco.task.ParamHolder,cz.cuni.mff.d3s.deeco.task.ParamHolder,cz.cuni.mff.d3s.deeco.task.ParamHolder,cz.cuni.mff.d3s.deeco.task.ParamHolder)) (name: speedControl, isActive: true, isRunning: false, set: null) to true.
+Oct 11, 2014 9:42:33 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Changing the activity of task cz.cuni.mff.d3s.deeco.task.ProcessTask@4cdbe50f corresponding to process cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl@45c8e616 (method: public static void demo_annotation.test.TS.Environment.environmentResponse(java.lang.Double,java.lang.Double,cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder,cz.cuni.mff.d3s.deeco.model.runtime.stateflow.TSParamHolder)) (name: environmentResponse, isActive: true, isRunning: false, set: null) to true.
+Oct 11, 2014 9:42:34 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (eFFGas) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager FireFighter4d747594-3217-477c-8232-8d010df3fc85.
+Oct 11, 2014 9:42:34 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager Environment9465ab90-d3f8-4f61-8b5b-253822c59192.
+Oct 11, 2014 9:42:34 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (eFFGas) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager FireFighter4d747594-3217-477c-8232-8d010df3fc85.
+Oct 11, 2014 9:42:34 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (eFFGas) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager FireFighter4d747594-3217-477c-8232-8d010df3fc85.
+Oct 11, 2014 9:42:34 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager Environment9465ab90-d3f8-4f61-8b5b-253822c59192.
+Oct 11, 2014 9:42:34 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (eFFGas) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager FireFighter4d747594-3217-477c-8232-8d010df3fc85.
+Oct 11, 2014 9:42:34 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager Environment9465ab90-d3f8-4f61-8b5b-253822c59192.
+Oct 11, 2014 9:42:34 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (eFFGas) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager FireFighter4d747594-3217-477c-8232-8d010df3fc85.
+Oct 11, 2014 9:42:34 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager Environment9465ab90-d3f8-4f61-8b5b-253822c59192.
+Oct 11, 2014 9:42:34 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (eFFGas) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager FireFighter4d747594-3217-477c-8232-8d010df3fc85.
+Oct 11, 2014 9:42:34 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager Environment9465ab90-d3f8-4f61-8b5b-253822c59192.
+Oct 11, 2014 9:42:34 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (eFFGas) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager FireFighter4d747594-3217-477c-8232-8d010df3fc85.
+Oct 11, 2014 9:42:34 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager Environment9465ab90-d3f8-4f61-8b5b-253822c59192.
+Oct 11, 2014 9:42:34 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (eFFGas) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager FireFighter4d747594-3217-477c-8232-8d010df3fc85.
+Oct 11, 2014 9:42:34 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager Environment9465ab90-d3f8-4f61-8b5b-253822c59192.
+Oct 11, 2014 9:42:34 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (eFFGas) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager FireFighter4d747594-3217-477c-8232-8d010df3fc85.
+Oct 11, 2014 9:42:34 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager Environment9465ab90-d3f8-4f61-8b5b-253822c59192.
+Oct 11, 2014 9:42:34 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (eFFGas) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager FireFighter4d747594-3217-477c-8232-8d010df3fc85.
+Oct 11, 2014 9:42:34 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager Environment9465ab90-d3f8-4f61-8b5b-253822c59192.
+Oct 11, 2014 9:42:34 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (eFFGas) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager FireFighter4d747594-3217-477c-8232-8d010df3fc85.
+Oct 11, 2014 9:42:34 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager Environment9465ab90-d3f8-4f61-8b5b-253822c59192.
+Oct 11, 2014 9:42:34 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (eFFGas) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager FireFighter4d747594-3217-477c-8232-8d010df3fc85.
+Oct 11, 2014 9:42:34 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager Environment9465ab90-d3f8-4f61-8b5b-253822c59192.
+Oct 11, 2014 9:42:34 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (eFFGas) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager FireFighter4d747594-3217-477c-8232-8d010df3fc85.
+Oct 11, 2014 9:42:34 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager Environment9465ab90-d3f8-4f61-8b5b-253822c59192.
+Oct 11, 2014 9:42:34 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (eFFGas) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager FireFighter4d747594-3217-477c-8232-8d010df3fc85.
+Oct 11, 2014 9:42:35 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager Environment9465ab90-d3f8-4f61-8b5b-253822c59192.
+Oct 11, 2014 9:42:35 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (eFFGas) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager FireFighter4d747594-3217-477c-8232-8d010df3fc85.
+Oct 11, 2014 9:42:35 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager Environment9465ab90-d3f8-4f61-8b5b-253822c59192.
+Oct 11, 2014 9:42:35 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (eFFGas) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager FireFighter4d747594-3217-477c-8232-8d010df3fc85.
+Oct 11, 2014 9:42:35 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager Environment9465ab90-d3f8-4f61-8b5b-253822c59192.
+Oct 11, 2014 9:42:35 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (eFFGas) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager FireFighter4d747594-3217-477c-8232-8d010df3fc85.
+Oct 11, 2014 9:42:35 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager Environment9465ab90-d3f8-4f61-8b5b-253822c59192.
+Oct 11, 2014 9:42:35 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (eFFGas) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager FireFighter4d747594-3217-477c-8232-8d010df3fc85.
+Oct 11, 2014 9:42:35 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager Environment9465ab90-d3f8-4f61-8b5b-253822c59192.
+Oct 11, 2014 9:42:35 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (eFFGas) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager FireFighter4d747594-3217-477c-8232-8d010df3fc85.
+Oct 11, 2014 9:42:35 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager Environment9465ab90-d3f8-4f61-8b5b-253822c59192.
+Oct 11, 2014 9:42:35 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (eFFGas) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager FireFighter4d747594-3217-477c-8232-8d010df3fc85.
+Oct 11, 2014 9:42:35 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager Environment9465ab90-d3f8-4f61-8b5b-253822c59192.
+Oct 11, 2014 9:42:35 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (eFFGas) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager FireFighter4d747594-3217-477c-8232-8d010df3fc85.
+Oct 11, 2014 9:42:35 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager Environment9465ab90-d3f8-4f61-8b5b-253822c59192.
+Oct 11, 2014 9:42:35 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (eFFGas) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager FireFighter4d747594-3217-477c-8232-8d010df3fc85.
+Oct 11, 2014 9:42:35 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager Environment9465ab90-d3f8-4f61-8b5b-253822c59192.
+Oct 11, 2014 9:42:35 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (eFFGas) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager FireFighter4d747594-3217-477c-8232-8d010df3fc85.
+Oct 11, 2014 9:42:35 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager Environment9465ab90-d3f8-4f61-8b5b-253822c59192.
+Oct 11, 2014 9:42:35 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (eFFGas) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager FireFighter4d747594-3217-477c-8232-8d010df3fc85.
+Oct 11, 2014 9:42:35 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager Environment9465ab90-d3f8-4f61-8b5b-253822c59192.
+Oct 11, 2014 9:42:35 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (eFFGas) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager FireFighter4d747594-3217-477c-8232-8d010df3fc85.
+Oct 11, 2014 9:42:35 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager Environment9465ab90-d3f8-4f61-8b5b-253822c59192.
+Oct 11, 2014 9:42:35 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (eFFGas) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager FireFighter4d747594-3217-477c-8232-8d010df3fc85.
+Oct 11, 2014 9:42:35 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager Environment9465ab90-d3f8-4f61-8b5b-253822c59192.
+Oct 11, 2014 9:42:36 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (eFFGas) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager FireFighter4d747594-3217-477c-8232-8d010df3fc85.
+Oct 11, 2014 9:42:36 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (ffPos) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager Environment9465ab90-d3f8-4f61-8b5b-253822c59192.
+Oct 11, 2014 9:42:36 PM cz.cuni.mff.d3s.deeco.logging.StandardLogger info
+INFO: Input knowledge (eFFGas) of a membership in demo_annotation.test.TS.FireFighterEnvEnsemble was not found in the knowledge manager FireFighter4d747594-3217-477c-8232-8d010df3fc85.
