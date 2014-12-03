@@ -3,7 +3,6 @@ package cz.cuni.mff.d3s.deeco.network;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
-import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.DeecoProperties;
 import cz.cuni.mff.d3s.deeco.logging.Log;
@@ -18,7 +17,7 @@ import cz.cuni.mff.d3s.deeco.logging.Log;
  * @see PacketReceiver
  * 
  */
-public class PacketSender implements KnowledgeDataSender {
+public class PacketSender implements DataSender {
 
 	public static int DEFAULT_PACKET_SIZE = 1000;
 	
@@ -66,7 +65,7 @@ public class PacketSender implements KnowledgeDataSender {
 		return hasIPNic;
 	}
 	
-	@Override
+	/*@Override
 	public void broadcastKnowledgeData(List<? extends KnowledgeData> knowledgeData) {
 		sendData(knowledgeData, "");
 	}
@@ -74,8 +73,15 @@ public class PacketSender implements KnowledgeDataSender {
 	@Override
 	public void sendKnowledgeData(List<? extends KnowledgeData> knowledgeData, String recipient) {
 		sendData(knowledgeData, recipient);
+	}*/
+	
+	public void broadcastData(Object data) {
+		sendData(data, "");
 	}
 
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.network.DataSender#sendData(java.lang.Object, java.lang.String)
+	 */
 	public void sendData(Object data, String recipient) {
 		try {
 			byte[] serialized = Serializer.serialize(data);

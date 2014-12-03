@@ -49,6 +49,7 @@ import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
  * @see KnowledgeDataSender
  * @see KnowledgeDataReceiver 
  */
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 	
 	// this rssi corresponds to roughly 20m distance
@@ -133,10 +134,10 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 	@Override
 	public void initialize(
 			KnowledgeManagerContainer kmContainer,
-			KnowledgeDataSender knowledgeDataSender,
+			DataSender dataSender,
 			String host,
 			Scheduler scheduler) {
-		super.initialize(kmContainer, knowledgeDataSender, host, scheduler);
+		super.initialize(kmContainer, dataSender, host, scheduler);
 		long seed = 0;
 		for (char c: host.toCharArray())
 			seed += c;
@@ -149,7 +150,6 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 		Log.d(String.format("KnowledgeDataManager at %s uses ipDelay = %d", host, ipDelay));
 		Log.d(String.format("KnowledgeDataManager at %s uses rssiLimit = %g", host, rssiLimit));
 	}
-	
 	
 	@Override
 	public void publish() {
@@ -165,11 +165,11 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 				// thus reduce network collisions.
 				for (KnowledgeData kd: data) {
 					//System.out.println("Broadcasting data at " + host + kd);
-					knowledgeDataSender.broadcastKnowledgeData(Arrays.asList(kd));
+					dataSender.broadcastData(Arrays.asList(kd));
 				}
 			} else {
 				//System.out.println("Broadcasting data at " + host + data);
-				knowledgeDataSender.broadcastKnowledgeData(data);
+				dataSender.broadcastData(data);
 			}
 			if (ipGossipStrategy != null) {
 				sendDirect(data);
@@ -185,7 +185,7 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 		if (nicType.equals(NICType.MANET) && dataToRebroadcastOverMANET.containsKey(sig)) {	
 			data = prepareForRebroadcast(dataToRebroadcastOverMANET.get(sig));
 			logPublish(Arrays.asList(data));
-			knowledgeDataSender.broadcastKnowledgeData(Arrays.asList(data));
+			dataSender.broadcastData(Arrays.asList(data));
 			dataToRebroadcastOverMANET.remove(sig);
 			
 			if (Log.isDebugLoggable())
@@ -203,13 +203,9 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 	}
 
 	@Override
-	public void receive(List<? extends KnowledgeData> knowledgeData) {
-		if (knowledgeData == null) 
-			Log.w("KnowledgeDataManager.receive: Received null KnowledgeData.");
-		
-		logReceive(knowledgeData);
-		
-		for (KnowledgeData kd : knowledgeData) {
+	public void receiveKnowledge(List<KnowledgeData> data) {	
+		logReceive(data);
+		for (KnowledgeData kd : data) {
 			KnowledgeMetaData newMetadata = kd.getMetaData();
 			if (kmContainer.hasLocal(newMetadata.componentId)) {
 				if (Log.isDebugLoggable()) 
@@ -286,7 +282,7 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 					getNodeKnowledge());
 			for (String recipient : recipients) {
 				logPublish(data, recipient);
-				knowledgeDataSender.sendKnowledgeData(Arrays.asList(kd),
+				dataSender.sendData(Arrays.asList(kd),
 						recipient);
 			}
 		}

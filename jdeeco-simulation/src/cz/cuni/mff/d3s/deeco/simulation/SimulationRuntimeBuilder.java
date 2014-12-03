@@ -39,8 +39,8 @@ public class SimulationRuntimeBuilder {
 
 		// Set up the host container
 		KnowledgeManagerContainer container = new KnowledgeManagerContainer(knowledgeManagerFactory);
-		knowledgeDataManager.initialize(container, host.getKnowledgeDataSender(), host.getHostId(), scheduler);
-		host.setKnowledgeDataReceiver(knowledgeDataManager);
+		knowledgeDataManager.initialize(container, host.getDataSender(), host.getHostId(), scheduler);
+		host.addDataReceiver(knowledgeDataManager);
 		// Set up the publisher task
 		TimeTriggerExt publisherTrigger = new TimeTriggerExt();
 		publisherTrigger.setPeriod(Integer.getInteger(

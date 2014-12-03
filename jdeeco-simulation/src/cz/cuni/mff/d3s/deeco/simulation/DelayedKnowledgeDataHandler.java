@@ -3,24 +3,23 @@
  */
 package cz.cuni.mff.d3s.deeco.simulation;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
 
 import cz.cuni.mff.d3s.deeco.network.AbstractHost;
-import cz.cuni.mff.d3s.deeco.network.KnowledgeData;
-import cz.cuni.mff.d3s.deeco.network.KnowledgeDataReceiver;
+import cz.cuni.mff.d3s.deeco.network.DataReceiver;
 import cz.cuni.mff.d3s.deeco.simulation.scheduler.SimulationScheduler;
 import cz.cuni.mff.d3s.deeco.simulation.task.KnowledgeUpdateTask;
 import cz.cuni.mff.d3s.deeco.simulation.task.TimerTask;
 
 /**
- * @author Michal
+ * @author Michal Kit
  * 
  */
-public class DelayedKnowledgeDataHandler extends NetworkKnowledgeDataHandler implements TimerTaskListener {
+@SuppressWarnings({"rawtypes", "unchecked"})
+public class DelayedKnowledgeDataHandler extends NetworkDataHandler implements TimerTaskListener {
 
 	protected final Map<String, SimulationScheduler> schedulers;
 	protected final long delay;
@@ -39,10 +38,10 @@ public class DelayedKnowledgeDataHandler extends NetworkKnowledgeDataHandler imp
 	 * (java.util.List)
 	 */
 	@Override
-	public void networkBroadcast(AbstractHost from, List<? extends KnowledgeData> knowledgeData, Collection<KnowledgeDataReceiver> receivers) {
+	public void networkBroadcast(AbstractHost from, Object data, Map<AbstractHost, Collection<DataReceiver>> receivers) {
 		SimulationScheduler scheduler = schedulers.get(from.getHostId());
 		//System.out.println("Broadcast request: " + from.getHostId() + " at " + scheduler.getCurrentMilliseconds());
-		scheduler.addTask(new KnowledgeUpdateTask(scheduler, this, from.getHostId(), knowledgeData, receivers, delay));
+		scheduler.addTask(new KnowledgeUpdateTask(scheduler, this, from.getHostId(), data, flattenReceivers(receivers.values()), delay));
 	}
 
 	/*
@@ -53,20 +52,17 @@ public class DelayedKnowledgeDataHandler extends NetworkKnowledgeDataHandler imp
 	 * .util.List, java.lang.String)
 	 */
 	@Override
-	public void  networkSend(AbstractHost from, List<? extends KnowledgeData> knowledgeData, KnowledgeDataReceiver recipient) {
+	public void  networkSend(AbstractHost from, Object data, AbstractHost recipientHost, Collection<DataReceiver> recipientReceivers) {
 		SimulationScheduler scheduler = schedulers.get(from.getHostId());
-		scheduler.addTask(new KnowledgeUpdateTask(scheduler, this, knowledgeData, Arrays.asList(recipient), delay));
+		scheduler.addTask(new KnowledgeUpdateTask(scheduler, this, data, recipientReceivers, delay));
 	}
 
 	@Override
 	public void at(long time, Object triger) {
 		KnowledgeUpdateTask task = (KnowledgeUpdateTask) triger;
-		if (task.getFrom() != null) {
-			SimulationScheduler scheduler = schedulers.get(task.getFrom());
-			//System.out.println("Broadcasting: " + task.getFrom() + " at " + scheduler.getCurrentMilliseconds());
-		}
-		for (KnowledgeDataReceiver receiver : task.getReceivers()) {
-			receiver.receive(task.getKnowledgeData());
+		double rssi = (task.getFrom() == null) ? DEFAULT_IP_RSSI : DEFAULT_MANET_RSSI;
+		for (DataReceiver receiver : task.getReceivers()) {
+			receiver.checkAndReceive(task.getData(), rssi);
 		}
 	}
 
@@ -74,5 +70,16 @@ public class DelayedKnowledgeDataHandler extends NetworkKnowledgeDataHandler imp
 	public TimerTask getInitialTask(SimulationScheduler scheduler) {
 		schedulers.put(scheduler.getHost().getHostId(), scheduler);
 		return null;
+	}
+	
+	protected Collection<DataReceiver> flattenReceivers(Collection<Collection<DataReceiver>> receivers) {
+		if (receivers == null) {
+			return null;
+		}
+		Collection<DataReceiver> result = new HashSet<>();
+		for (Collection<DataReceiver> innerReceivers: receivers) {
+			result.addAll(innerReceivers);
+		}
+		return result;
 	}
 }

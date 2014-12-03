@@ -3,6 +3,7 @@ package cz.cuni.mff.d3s.deeco.network;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,7 +39,8 @@ public class PacketReceiver {
 	private final int packetSize;
 	private final Map<Integer, Message> messages;
 
-	private KnowledgeDataReceiver knowledgeDataReceiver;
+	private List<DataReceiver<?>> dataReceivers;
+	
 	private CurrentTimeProvider timeProvider;
 	private long lastMessagesWipe = 0;
 	
@@ -49,6 +51,7 @@ public class PacketReceiver {
 		this.packetSize = packetSize;
 		this.messages = new HashMap<Integer, Message>();
 		this.host = host;
+		this.dataReceivers = new ArrayList<DataReceiver<?>>();
 		
 		maxMessageTime = Integer.getInteger(DeecoProperties.MESSAGE_CACHE_DEADLINE, DEFAULT_MAX_MESSAGE_TIME);
 		messageWipePeriod = Integer.getInteger(DeecoProperties.MESSAGE_CACHE_WIPE_PERIOD, DEFAULT_MESSAGE_WIPE_PERIOD);
@@ -62,9 +65,14 @@ public class PacketReceiver {
 		this(host, Integer.getInteger(DeecoProperties.PACKET_SIZE, PacketSender.DEFAULT_PACKET_SIZE));
 	}
 
-	public void setKnowledgeDataReceiver(
-			KnowledgeDataReceiver knowledgeDataReceiver) {
-		this.knowledgeDataReceiver = knowledgeDataReceiver;
+	public void addDataReceiver(DataReceiver<?> dataReceiver) {
+		this.dataReceivers.add(dataReceiver);
+	}
+	
+	private void receiveData(Object data, double rssi) {
+		for (DataReceiver<?> dataReceiver : dataReceivers) {
+			dataReceiver.checkAndReceive(data, rssi);
+		}
 	}
 	
 	public void setCurrentTimeProvider(CurrentTimeProvider timeProvider) {
@@ -91,15 +99,11 @@ public class PacketReceiver {
 		int seqNumber = getPacketSeqNumber(packet);
 		msg.setData(seqNumber, getPacketData(packet));
 		msg.setLastRSSI(rssi);
-		if (msg.isComplete() && knowledgeDataReceiver != null) {
-			//Log.d(String.format("R: " + "(" + messageId + ")"
-			//		+ Arrays.toString(msg.data)));
+		if (msg.isComplete()) {
 			Log.d(String.format("PacketReceiver: Message completed at %s with messageid %d with RSSI: %g", host, messageId, msg.lastRSSI));
 			
 			messages.remove(messageId);
-			List<? extends KnowledgeData> kd = msg.getKnowledgeDataList();
-			if (kd != null)
-				knowledgeDataReceiver.receive(kd);
+			receiveData(msg.getData(), msg.lastRSSI);
 		}
 		clearCachedMessagesIfNecessary();
 	}
@@ -222,13 +226,13 @@ public class PacketReceiver {
 			return isInitialized && (remainingBytes == 0);
 		}
 
-		@SuppressWarnings("unchecked")
-		public List<? extends KnowledgeData> getKnowledgeDataList() {
+		public Object getData() {
 			try {
 				if (isComplete()) {
-					List<? extends KnowledgeData> result = (List<? extends KnowledgeData>) Serializer.deserialize(data);
-					for (KnowledgeData kd : result)
-						kd.getMetaData().rssi = lastRSSI;
+					Object result = Serializer.deserialize(data);
+					// TODO: this needs to be fixed
+					//for (KnowledgeData kd : result)
+					//	kd.getMetaData().rssi = lastRSSI;
 					return result;
 				}
 			} catch (IOException | ClassNotFoundException e) {

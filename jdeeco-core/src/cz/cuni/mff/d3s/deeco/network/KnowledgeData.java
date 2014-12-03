@@ -4,12 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map.Entry;
 
-import cz.cuni.mff.d3s.deeco.annotations.pathparser.ParseException;
-import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
-import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;

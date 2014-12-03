@@ -4,19 +4,18 @@
 package cz.cuni.mff.d3s.deeco.simulation;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Map;
 
 import cz.cuni.mff.d3s.deeco.network.AbstractHost;
-import cz.cuni.mff.d3s.deeco.network.KnowledgeData;
-import cz.cuni.mff.d3s.deeco.network.KnowledgeDataReceiver;
+import cz.cuni.mff.d3s.deeco.network.DataReceiver;
 
 /**
  * @author Michal
  * 
  */
-public class DirectKnowledgeDataHandler extends NetworkKnowledgeDataHandler {
+@SuppressWarnings({ "rawtypes", "unchecked" })
+public class DirectKnowledgeDataHandler extends NetworkDataHandler {
 
-	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -25,9 +24,12 @@ public class DirectKnowledgeDataHandler extends NetworkKnowledgeDataHandler {
 	 * (java.util.List)
 	 */
 	@Override
-	public void networkBroadcast(AbstractHost from, List<? extends KnowledgeData> knowledgeData, Collection<KnowledgeDataReceiver> receivers) {
-		for (KnowledgeDataReceiver receiver: receivers) {
-			receiver.receive(knowledgeData);
+	public void networkBroadcast(AbstractHost from, Object data,
+			Map<AbstractHost, Collection<DataReceiver>> receivers) {
+		for (Collection<DataReceiver> innerReceivers : receivers.values()) {
+			for (DataReceiver receiver: innerReceivers) {
+				receiver.checkAndReceive(data, DEFAULT_MANET_RSSI);
+			}
 		}
 	}
 
@@ -39,7 +41,11 @@ public class DirectKnowledgeDataHandler extends NetworkKnowledgeDataHandler {
 	 * .util.List, java.lang.String)
 	 */
 	@Override
-	public void networkSend(AbstractHost from, List<? extends KnowledgeData> knowledgeData, KnowledgeDataReceiver recipient) {
-		recipient.receive(knowledgeData);
+	public void networkSend(AbstractHost from, Object data,
+			AbstractHost recipientHost,
+			Collection<DataReceiver> recipientReceivers) {
+		for (DataReceiver receiver : recipientReceivers) {
+			receiver.checkAndReceive(data, DEFAULT_IP_RSSI);
+		}
 	}
 }

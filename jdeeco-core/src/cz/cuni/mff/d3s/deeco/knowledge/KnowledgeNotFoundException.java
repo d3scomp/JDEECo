@@ -13,7 +13,7 @@ public class KnowledgeNotFoundException extends Exception {
 	
 	KnowledgePath notFoundPath;
 	
-	KnowledgeNotFoundException() {}
+	public KnowledgeNotFoundException() {}
 	
 	public KnowledgeNotFoundException(KnowledgePath notFoundPath) {
 		this.notFoundPath = notFoundPath;

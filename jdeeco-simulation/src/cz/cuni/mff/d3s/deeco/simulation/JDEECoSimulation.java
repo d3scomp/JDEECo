@@ -13,9 +13,9 @@ public class JDEECoSimulation extends Simulation {
 	private final Map<String, Callback> hostIdToCallback;
 	private final Map<String, DirectSimulationHost> hosts;
 
-	private final NetworkKnowledgeDataHandler knowledgeDataHandler;
+	private final NetworkDataHandler knowledgeDataHandler;
 
-	public JDEECoSimulation(long simulationStartTime, long simulationEndTime, NetworkKnowledgeDataHandler knowledgeDataHandler) {
+	public JDEECoSimulation(long simulationStartTime, long simulationEndTime, NetworkDataHandler knowledgeDataHandler) {
 		this.knowledgeDataHandler = knowledgeDataHandler;
 		this.simulationStartTime = simulationStartTime;
 		this.simulationEndTime = simulationEndTime;

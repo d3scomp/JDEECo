@@ -4,6 +4,7 @@ package cz.cuni.mff.d3s.deeco.network;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
@@ -33,9 +34,14 @@ import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
  * @see KnowledgeDataSender
  * @see KnowledgeDataReceiver 
  */
-public abstract class KnowledgeDataManager implements KnowledgeDataReceiver,
+@SuppressWarnings("rawtypes")
+public abstract class KnowledgeDataManager extends DataReceiver<List> implements
 KnowledgeDataPublisher {
 	
+	public KnowledgeDataManager() {
+		super(List.class);
+	}
+
 	/** For scheduling rebroadcasts. */
 	protected Scheduler scheduler;
 	/** Service for convenient time retrieval. */
@@ -44,8 +50,8 @@ KnowledgeDataPublisher {
 	protected String host;	
 	/** The local knowledge container that is connected by this object to the network. */
 	protected KnowledgeManagerContainer kmContainer;	
-	/** Object used for sending {@link KnowledgeData} over the network. */
-	protected KnowledgeDataSender knowledgeDataSender;		
+	/** Object used for sending {@link dataSender} over the network. */
+	protected DataSender dataSender;		
 
 	/**
 	 * Initializes instance.
@@ -57,13 +63,29 @@ KnowledgeDataPublisher {
 	 */	
 	public void initialize(
 			KnowledgeManagerContainer kmContainer,
-			KnowledgeDataSender knowledgeDataSender,
+			DataSender dataSender,
 			String host,
 			Scheduler scheduler) {
 		this.host = host;		
 		this.scheduler = scheduler;
 		this.timeProvider = scheduler;
 		this.kmContainer = kmContainer;
-		this.knowledgeDataSender = knowledgeDataSender;
+		this.dataSender = dataSender;
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public void receive(List data, double rssi) {
+		if (data == null) {
+			Log.w("KnowledgeDataManager.receive: Received null KnowledgeData.");
+		} else {
+			List<KnowledgeData> knowledgeData = (List<KnowledgeData> ) data;
+			for (KnowledgeData kd: knowledgeData) {
+				kd.getMetaData().rssi = rssi;
+			}
+			receiveKnowledge(knowledgeData);
+		}
+	}
+	
+	public abstract void receiveKnowledge(List<KnowledgeData> data);
 }
