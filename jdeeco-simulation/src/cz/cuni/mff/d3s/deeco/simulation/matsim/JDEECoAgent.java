@@ -125,7 +125,6 @@ public class JDEECoAgent implements MobsimDriverAgent {
 	}
 	
 	public void setSpeed(Double meterPerSecond) {
-		System.out.println("New speed: " + meterPerSecond);
 		getVehicle().getVehicle().getType().setMaximumVelocity(meterPerSecond);
 	}
 
