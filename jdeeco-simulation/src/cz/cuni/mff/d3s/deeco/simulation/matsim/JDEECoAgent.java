@@ -123,6 +123,11 @@ public class JDEECoAgent implements MobsimDriverAgent {
 		}
 		//System.out.println(id + " route: " + this.route.toString());
 	}
+	
+	public void setSpeed(Double meterPerSecond) {
+		System.out.println("New speed: " + meterPerSecond);
+		getVehicle().getVehicle().getType().setMaximumVelocity(meterPerSecond);
+	}
 
 	public Id getCurrentLinkId() {
 		//System.out.println(id + " current: " + currentLinkId.toString());

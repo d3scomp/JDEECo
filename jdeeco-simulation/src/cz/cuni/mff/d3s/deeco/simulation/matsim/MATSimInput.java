@@ -13,6 +13,7 @@ import org.matsim.api.core.v01.Id;
  */
 public class MATSimInput {
 	public List<Id> route = new LinkedList<>();
+	public Double speed = Double.POSITIVE_INFINITY;
 
 	public MATSimInput clone() {
 		MATSimInput result = new MATSimInput();
@@ -21,6 +22,7 @@ public class MATSimInput {
 		} else {
 			result.route = new LinkedList<Id>(route);
 		}
+		result.speed = speed;
 		return result;
 	}
 }
