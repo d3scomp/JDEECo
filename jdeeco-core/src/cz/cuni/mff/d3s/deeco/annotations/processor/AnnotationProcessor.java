@@ -14,7 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Stream;
 
+import cz.cuni.mff.d3s.deeco.annotations.Allow;
 import cz.cuni.mff.d3s.deeco.annotations.CommunicationBoundary;
 import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.Ensemble;
@@ -45,6 +47,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Exchange;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
@@ -336,7 +339,13 @@ public class AnnotationProcessor {
 			km.markAsLocal(initialLocalK.getUpdatedReferences());
 			km.update(initialLocalK);
 			componentInstance.setKnowledgeManager(km);
-	        
+	   
+			try {
+				addSecurityTags(clazz, km, initialK);
+			} catch (Exception ex) {
+				throw new AnnotationProcessorException(ex.getMessage());
+			}
+			
 			List<Method> methodsMarkedAsProcesses = new ArrayList<>(); 
 			Method[] allMethods = clazz.getMethods();
 			for (Method m : allMethods) {
@@ -372,6 +381,27 @@ public class AnnotationProcessor {
 		}
 		return componentInstance;
 	}
+
+	private void addSecurityTags(Class<?> clazz, KnowledgeManager km,
+			ChangeSet initialKnowledge) throws NoSuchFieldException, SecurityException, ParseException, AnnotationProcessorException {
+		for (KnowledgePath kp : initialKnowledge.getUpdatedReferences()) {
+			if (kp.getNodes().size() != 1) continue;
+			PathNodeField pathNodeField = (PathNodeField)kp.getNodes().get(0);
+			Field field = clazz.getField(pathNodeField.getName());
+			
+			Allow[] allows = field.getAnnotationsByType(Allow.class);
+			for (Allow allow : allows) {
+				KnowledgeSecurityTag tag = factory.createKnowledgeSecurityTag();
+				tag.setRoleName(allow.role());
+				for (String stringPath : allow.params()) {
+					tag.getArguments().add(createKnowledgePath(stringPath, true));
+				}
+				km.markAsSecured(Arrays.asList(kp), tag);			
+			}
+			
+		}		
+	}
+
 
 	/**
 	 * Creator of a single correctly-initialized {@link EnsembleDefinition} object. 

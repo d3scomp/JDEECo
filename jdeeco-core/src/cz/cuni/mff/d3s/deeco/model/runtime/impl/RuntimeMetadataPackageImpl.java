@@ -14,6 +14,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Exchange;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Invocable;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
@@ -190,6 +191,13 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * @generated
 	 */
 	private EClass stringToObjectMapEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass knowledgeSecurityTagEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -805,6 +813,33 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getKnowledgeSecurityTag() {
+		return knowledgeSecurityTagEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getKnowledgeSecurityTag_RoleName() {
+		return (EAttribute)knowledgeSecurityTagEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getKnowledgeSecurityTag_Arguments() {
+		return (EReference)knowledgeSecurityTagEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EEnum getParameterDirection() {
 		return parameterDirectionEEnum;
 	}
@@ -950,6 +985,10 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		createEAttribute(stringToObjectMapEClass, STRING_TO_OBJECT_MAP__KEY);
 		createEAttribute(stringToObjectMapEClass, STRING_TO_OBJECT_MAP__VALUE);
 
+		knowledgeSecurityTagEClass = createEClass(KNOWLEDGE_SECURITY_TAG);
+		createEAttribute(knowledgeSecurityTagEClass, KNOWLEDGE_SECURITY_TAG__ROLE_NAME);
+		createEReference(knowledgeSecurityTagEClass, KNOWLEDGE_SECURITY_TAG__ARGUMENTS);
+
 		// Create enums
 		parameterDirectionEEnum = createEEnum(PARAMETER_DIRECTION);
 
@@ -1076,6 +1115,10 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		initEClass(stringToObjectMapEClass, Map.Entry.class, "StringToObjectMap", !IS_ABSTRACT, !IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getStringToObjectMap_Key(), ecorePackage.getEString(), "key", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getStringToObjectMap_Value(), ecorePackage.getEJavaObject(), "value", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(knowledgeSecurityTagEClass, KnowledgeSecurityTag.class, "KnowledgeSecurityTag", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getKnowledgeSecurityTag_RoleName(), ecorePackage.getEString(), "roleName", null, 1, 1, KnowledgeSecurityTag.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getKnowledgeSecurityTag_Arguments(), this.getKnowledgePath(), null, "arguments", null, 0, -1, KnowledgeSecurityTag.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize enums and add enum literals
 		initEEnum(parameterDirectionEEnum, ParameterDirection.class, "ParameterDirection");

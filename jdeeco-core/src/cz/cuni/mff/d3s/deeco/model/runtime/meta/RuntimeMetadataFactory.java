@@ -11,6 +11,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Exchange;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Invocable;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
@@ -191,6 +192,15 @@ public interface RuntimeMetadataFactory extends EFactory {
 	 * @generated
 	 */
 	PathNodeComponentId createPathNodeComponentId();
+
+	/**
+	 * Returns a new object of class '<em>Knowledge Security Tag</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Knowledge Security Tag</em>'.
+	 * @generated
+	 */
+	KnowledgeSecurityTag createKnowledgeSecurityTag();
 
 	/**
 	 * Returns the package supported by this factory.

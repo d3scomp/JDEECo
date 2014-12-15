@@ -1006,6 +1006,52 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int STRING_TO_OBJECT_MAP_OPERATION_COUNT = 0;
 
 	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.KnowledgeSecurityTagImpl <em>Knowledge Security Tag</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.KnowledgeSecurityTagImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getKnowledgeSecurityTag()
+	 * @generated
+	 */
+	int KNOWLEDGE_SECURITY_TAG = 20;
+
+	/**
+	 * The feature id for the '<em><b>Role Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int KNOWLEDGE_SECURITY_TAG__ROLE_NAME = 0;
+
+	/**
+	 * The feature id for the '<em><b>Arguments</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int KNOWLEDGE_SECURITY_TAG__ARGUMENTS = 1;
+
+	/**
+	 * The number of structural features of the '<em>Knowledge Security Tag</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int KNOWLEDGE_SECURITY_TAG_FEATURE_COUNT = 2;
+
+	/**
+	 * The number of operations of the '<em>Knowledge Security Tag</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int KNOWLEDGE_SECURITY_TAG_OPERATION_COUNT = 0;
+
+	/**
 	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection <em>Parameter Direction</em>}' enum.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1013,7 +1059,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getParameterDirection()
 	 * @generated
 	 */
-	int PARAMETER_DIRECTION = 20;
+	int PARAMETER_DIRECTION = 21;
 
 	/**
 	 * The meta object id for the '<em>Method</em>' data type.
@@ -1023,7 +1069,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getMethod()
 	 * @generated
 	 */
-	int METHOD = 21;
+	int METHOD = 22;
 
 	/**
 	 * The meta object id for the '<em>Knowledge Manager</em>' data type.
@@ -1033,7 +1079,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getKnowledgeManager()
 	 * @generated
 	 */
-	int KNOWLEDGE_MANAGER = 22;
+	int KNOWLEDGE_MANAGER = 23;
 
 	/**
 	 * The meta object id for the '<em>Shadow Knowledge Manager Registry</em>' data type.
@@ -1043,7 +1089,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getShadowKnowledgeManagerRegistry()
 	 * @generated
 	 */
-	int SHADOW_KNOWLEDGE_MANAGER_REGISTRY = 23;
+	int SHADOW_KNOWLEDGE_MANAGER_REGISTRY = 24;
 
 	/**
 	 * The meta object id for the '<em>Communication Boundary</em>' data type.
@@ -1053,7 +1099,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getCommunicationBoundary()
 	 * @generated
 	 */
-	int COMMUNICATION_BOUNDARY = 24;
+	int COMMUNICATION_BOUNDARY = 25;
 
 
 	/**
@@ -1666,6 +1712,38 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EAttribute getStringToObjectMap_Value();
 
 	/**
+	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag <em>Knowledge Security Tag</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Knowledge Security Tag</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag
+	 * @generated
+	 */
+	EClass getKnowledgeSecurityTag();
+
+	/**
+	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag#getRoleName <em>Role Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Role Name</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag#getRoleName()
+	 * @see #getKnowledgeSecurityTag()
+	 * @generated
+	 */
+	EAttribute getKnowledgeSecurityTag_RoleName();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag#getArguments <em>Arguments</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Arguments</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag#getArguments()
+	 * @see #getKnowledgeSecurityTag()
+	 * @generated
+	 */
+	EReference getKnowledgeSecurityTag_Arguments();
+
+	/**
 	 * Returns the meta object for enum '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection <em>Parameter Direction</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2237,6 +2315,32 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute STRING_TO_OBJECT_MAP__VALUE = eINSTANCE.getStringToObjectMap_Value();
+
+		/**
+		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.KnowledgeSecurityTagImpl <em>Knowledge Security Tag</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.KnowledgeSecurityTagImpl
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getKnowledgeSecurityTag()
+		 * @generated
+		 */
+		EClass KNOWLEDGE_SECURITY_TAG = eINSTANCE.getKnowledgeSecurityTag();
+
+		/**
+		 * The meta object literal for the '<em><b>Role Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute KNOWLEDGE_SECURITY_TAG__ROLE_NAME = eINSTANCE.getKnowledgeSecurityTag_RoleName();
+
+		/**
+		 * The meta object literal for the '<em><b>Arguments</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference KNOWLEDGE_SECURITY_TAG__ARGUMENTS = eINSTANCE.getKnowledgeSecurityTag_Arguments();
 
 		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection <em>Parameter Direction</em>}' enum.

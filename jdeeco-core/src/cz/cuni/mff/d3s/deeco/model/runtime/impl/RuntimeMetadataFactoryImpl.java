@@ -85,6 +85,7 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 			case RuntimeMetadataPackage.PATH_NODE_MEMBER: return createPathNodeMember();
 			case RuntimeMetadataPackage.PATH_NODE_COMPONENT_ID: return createPathNodeComponentId();
 			case RuntimeMetadataPackage.STRING_TO_OBJECT_MAP: return (EObject)createStringToObjectMap();
+			case RuntimeMetadataPackage.KNOWLEDGE_SECURITY_TAG: return createKnowledgeSecurityTag();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -314,6 +315,16 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	public Map.Entry<String, Object> createStringToObjectMap() {
 		StringToObjectMapImpl stringToObjectMap = new StringToObjectMapImpl();
 		return stringToObjectMap;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public KnowledgeSecurityTag createKnowledgeSecurityTag() {
+		KnowledgeSecurityTagImpl knowledgeSecurityTag = new KnowledgeSecurityTagImpl();
+		return knowledgeSecurityTag;
 	}
 
 	/**

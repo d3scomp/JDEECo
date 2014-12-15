@@ -11,6 +11,7 @@ import java.util.Map;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
@@ -31,6 +32,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 public class BaseKnowledgeManager implements KnowledgeManager {
 
 	private final Map<KnowledgePath, Object> knowledge;
+	private final Map<KnowledgePath, List<KnowledgeSecurityTag>> securityTags;
 	private final Map<KnowledgeChangeTrigger, List<TriggerListener>> knowledgeChangeListeners;
 	private final Collection<KnowledgePath> localKnowledgePaths;
 
@@ -41,6 +43,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		this.knowledge = new HashMap<>();
 		this.knowledgeChangeListeners = new HashMap<>();
 		this.localKnowledgePaths = new LinkedList<>();
+		this.securityTags = new HashMap<>();
 	}
 
 	@Override
@@ -590,5 +593,26 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	@Override
 	public Collection<KnowledgePath> getLocalPaths() {
 		return localKnowledgePaths;
+	}
+
+	@Override
+	public void markAsSecured(Collection<KnowledgePath> knowledgePaths,
+			KnowledgeSecurityTag securityTag) {
+		for (KnowledgePath kp : knowledgePaths) {
+			if (!securityTags.containsKey(kp)) {
+				securityTags.put(kp, new LinkedList<>());
+			}
+			securityTags.get(kp).add(securityTag);
+		}		
+	}
+
+	@Override
+	public List<KnowledgeSecurityTag> getSecurityTagsFor(KnowledgePath knowledgePath) { 
+		List<KnowledgeSecurityTag> tags = securityTags.get(knowledgePath);
+		if (tags == null) {
+			return Collections.EMPTY_LIST;
+		} else {
+			return tags;
+		}
 	}
 }

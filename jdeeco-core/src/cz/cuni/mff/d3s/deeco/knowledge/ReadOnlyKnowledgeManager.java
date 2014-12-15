@@ -1,8 +1,10 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
 import java.util.Collection;
+import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 
 /**
@@ -60,4 +62,6 @@ public interface ReadOnlyKnowledgeManager {
 	
 	public boolean isLocal(KnowledgePath knowledgePath);
 	public Collection<KnowledgePath> getLocalPaths();
+	
+	List<KnowledgeSecurityTag> getSecurityTagsFor(KnowledgePath knowledgePath);
 }
