@@ -28,6 +28,7 @@ import cz.cuni.mff.d3s.deeco.annotations.Membership;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
+import cz.cuni.mff.d3s.deeco.annotations.Role;
 import cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.ComponentIdentifier;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.EEnsembleParty;
@@ -58,6 +59,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
@@ -369,6 +371,14 @@ public class AnnotationProcessor {
 					throw new AnnotationProcessorException(
 							"Method "+ m.getName()+ " annotated as @" + Process.class.getSimpleName() + 
 							" should be public and static.");
+				}
+			}
+			
+			for (Role role : clazz.getDeclaredAnnotationsByType(Role.class)) {
+				SecurityRole securityRole = factory.createSecurityRole();
+				securityRole.setRoleName(role.role());
+				for (String stringPath : role.params()) {
+					securityRole.getArguments().add(createKnowledgePath(stringPath, PathOrigin.SECURITY_ANNOTATION));
 				}
 			}
 			

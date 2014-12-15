@@ -86,6 +86,7 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 			case RuntimeMetadataPackage.PATH_NODE_COMPONENT_ID: return createPathNodeComponentId();
 			case RuntimeMetadataPackage.STRING_TO_OBJECT_MAP: return (EObject)createStringToObjectMap();
 			case RuntimeMetadataPackage.KNOWLEDGE_SECURITY_TAG: return createKnowledgeSecurityTag();
+			case RuntimeMetadataPackage.SECURITY_ROLE: return createSecurityRole();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -325,6 +326,16 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	public KnowledgeSecurityTag createKnowledgeSecurityTag() {
 		KnowledgeSecurityTagImpl knowledgeSecurityTag = new KnowledgeSecurityTagImpl();
 		return knowledgeSecurityTag;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public SecurityRole createSecurityRole() {
+		SecurityRoleImpl securityRole = new SecurityRoleImpl();
+		return securityRole;
 	}
 
 	/**
