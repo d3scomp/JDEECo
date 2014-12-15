@@ -596,14 +596,11 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	}
 
 	@Override
-	public void markAsSecured(Collection<KnowledgePath> knowledgePaths,
-			KnowledgeSecurityTag securityTag) {
-		for (KnowledgePath kp : knowledgePaths) {
-			if (!securityTags.containsKey(kp)) {
-				securityTags.put(kp, new LinkedList<>());
-			}
-			securityTags.get(kp).add(securityTag);
-		}		
+	public void markAsSecured(KnowledgePath knowledgePath, Collection<KnowledgeSecurityTag> newSecurityTags) {		
+		if (!securityTags.containsKey(knowledgePath)) {
+			securityTags.put(knowledgePath, new LinkedList<>());
+		}
+		securityTags.get(knowledgePath).addAll(newSecurityTags);		
 	}
 
 	@Override

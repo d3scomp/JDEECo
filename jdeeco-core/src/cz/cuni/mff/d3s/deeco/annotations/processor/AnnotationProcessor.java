@@ -395,9 +395,9 @@ public class AnnotationProcessor {
 				KnowledgeSecurityTag tag = factory.createKnowledgeSecurityTag();
 				tag.setRoleName(allow.role());
 				for (String stringPath : allow.params()) {
-					tag.getArguments().add(createKnowledgePath(stringPath, PathOrigin.COMPONENT));
+					tag.getArguments().add(createKnowledgePath(stringPath, PathOrigin.SECURITY_ANNOTATION));
 				}
-				km.markAsSecured(Arrays.asList(kp), tag);			
+				km.markAsSecured(kp, Arrays.asList(tag));			
 			}
 			
 		}		
@@ -719,7 +719,7 @@ public class AnnotationProcessor {
 				// Check if this is a component identifier ("id") node.
 				// In such case, this has to be the final node in the path:
 				if ((nValue.equals(ComponentIdentifier.ID.toString()))
-					&& ((pathOrigin == PathOrigin.COMPONENT && knowledgePath.getNodes().isEmpty()) 
+					&& (((pathOrigin == PathOrigin.COMPONENT || pathOrigin == PathOrigin.SECURITY_ANNOTATION) && knowledgePath.getNodes().isEmpty()) 
 					|| (pathOrigin == PathOrigin.ENSEMBLE && (knowledgePath.getNodes().size() == 1)))) {
 						PathNodeComponentId idField = factory.createPathNodeComponentId();
 						knowledgePath.getNodes().add(idField); 
