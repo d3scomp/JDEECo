@@ -33,6 +33,7 @@ import cz.cuni.mff.d3s.deeco.annotations.pathparser.ComponentIdentifier;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.EEnsembleParty;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.PNode;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.ParseException;
+import cz.cuni.mff.d3s.deeco.annotations.pathparser.PathOrigin;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.PathParser;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
@@ -394,7 +395,7 @@ public class AnnotationProcessor {
 				KnowledgeSecurityTag tag = factory.createKnowledgeSecurityTag();
 				tag.setRoleName(allow.role());
 				for (String stringPath : allow.params()) {
-					tag.getArguments().add(createKnowledgePath(stringPath, true));
+					tag.getArguments().add(createKnowledgePath(stringPath, PathOrigin.COMPONENT));
 				}
 				km.markAsSecured(Arrays.asList(kp), tag);			
 			}
@@ -445,8 +446,8 @@ public class AnnotationProcessor {
 			ensembleDefinition.setCommunicationBoundary(cBoundary);
 			
 			TimeTrigger periodicEnsembleTrigger = createPeriodicTrigger(clazz);
-			List<KnowledgeChangeTrigger> exchangeKChangeTriggers = createKnowledgeChangeTriggers(exchange.getMethod(), false);
-			List<KnowledgeChangeTrigger> conditionKChangeTriggers = createKnowledgeChangeTriggers(condition.getMethod(), false);
+			List<KnowledgeChangeTrigger> exchangeKChangeTriggers = createKnowledgeChangeTriggers(exchange.getMethod(), PathOrigin.ENSEMBLE);
+			List<KnowledgeChangeTrigger> conditionKChangeTriggers = createKnowledgeChangeTriggers(condition.getMethod(), PathOrigin.ENSEMBLE);
 			
 			if (periodicEnsembleTrigger == null) {
 				if (exchangeKChangeTriggers.isEmpty() && conditionKChangeTriggers.isEmpty()) {
@@ -481,7 +482,7 @@ public class AnnotationProcessor {
 		Condition condition = factory.createCondition();
 		condition.setMethod(m);
 		try {
-			condition.getParameters().addAll(createParameters(m, false));
+			condition.getParameters().addAll(createParameters(m, PathOrigin.ENSEMBLE));
 		} catch (AnnotationProcessorException e) {
 			String msg = Membership.class.getSimpleName()+"->"+e.getMessage();
 			throw new AnnotationProcessorException(msg, e);
@@ -502,7 +503,7 @@ public class AnnotationProcessor {
 		Exchange exchange = factory.createExchange();
 		exchange.setMethod(m);
 		try{
-			exchange.getParameters().addAll(createParameters(m, false));
+			exchange.getParameters().addAll(createParameters(m, PathOrigin.ENSEMBLE));
 		} catch (AnnotationProcessorException e) {
 			String msg = KnowledgeExchange.class.getSimpleName()+"->"+e.getMessage();
 			throw new AnnotationProcessorException(msg, e);
@@ -549,9 +550,9 @@ public class AnnotationProcessor {
 			componentProcess.setComponentInstance(componentInstance);
 			componentProcess.setMethod(m);
 			componentProcess.setName(m.getName());
-			componentProcess.getParameters().addAll(createParameters(m, true));
+			componentProcess.getParameters().addAll(createParameters(m, PathOrigin.COMPONENT));
 			TimeTrigger periodicTrigger = createPeriodicTrigger(m);
-			List<KnowledgeChangeTrigger> knowledgeChangeTriggers = createKnowledgeChangeTriggers(m, true);
+			List<KnowledgeChangeTrigger> knowledgeChangeTriggers = createKnowledgeChangeTriggers(m, PathOrigin.COMPONENT);
 			if (periodicTrigger == null) {
 				if (knowledgeChangeTriggers.isEmpty()) {
 					throw new AnnotationProcessorException("No triggers were found.");
@@ -607,9 +608,9 @@ public class AnnotationProcessor {
 	 * </p>
 	 * 
 	 * @param method method to be parsed
-	 * @param inComponentProcess indicates whether it is being called within the context of {@link #createComponentProcess} or {@link #createEnsembleDefinition}. 
+	 * @param pathOrigin indicates whether it is being called within the context of {@link #createComponentProcess}, {@link #createEnsembleDefinition} or {@link #addSecurityTags(Class, KnowledgeManager, ChangeSet)} . 
 	 */
-	List<KnowledgeChangeTrigger> createKnowledgeChangeTriggers(Method method, boolean inComponentProcess) 
+	List<KnowledgeChangeTrigger> createKnowledgeChangeTriggers(Method method, PathOrigin pathOrigin) 
 			throws AnnotationProcessorException, ParseException {
 		List<KnowledgeChangeTrigger> knowledgeChangeTriggers = new ArrayList<>();
 		Type[] parameterTypes = method.getParameterTypes();
@@ -620,7 +621,7 @@ public class AnnotationProcessor {
 				Annotation directionAnnotation = getDirectionAnnotation(allAnnotations[i]);
 				String path = getDirectionAnnotationValue(directionAnnotation);
 				KnowledgeChangeTrigger trigger = factory.createKnowledgeChangeTrigger();
-				trigger.setKnowledgePath(createKnowledgePath(path, inComponentProcess));
+				trigger.setKnowledgePath(createKnowledgePath(path, pathOrigin));
 				knowledgeChangeTriggers.add(trigger);
 			}
 		}
@@ -634,19 +635,19 @@ public class AnnotationProcessor {
 	 * </p>
 	 * 
 	 * @param method method to be parsed
-	 * @param inComponentProcess indicates whether it is being called within the context of {@link #createComponentProcess createComponentProcess()} or {@link #createEnsembleDefinition createEnsembleDefinition()}.
+	 * @param pathOrigin indicates whether it is being called within the context of {@link #createComponentProcess}, {@link #createEnsembleDefinition} or {@link #addSecurityTags(Class, KnowledgeManager, ChangeSet)} .
 	 */
-	List<Parameter> createParameters(Method method, boolean inComponentProcess)
+	List<Parameter> createParameters(Method method, PathOrigin pathOrigin)
 			throws AnnotationProcessorException, ParseException {
 		List<Parameter> parameters = new ArrayList<>();
 		Class<?>[] parameterTypes = method.getParameterTypes();
 		Annotation[][] allAnnotations = method.getParameterAnnotations();
 		for (int i = 0; i < parameterTypes.length; i++) {
-			parameters.add(createParameter(parameterTypes[i], i, allAnnotations[i], inComponentProcess));
+			parameters.add(createParameter(parameterTypes[i], i, allAnnotations[i], pathOrigin));
 		}
 		if (parameters.isEmpty()) {
  			throw new AnnotationProcessorException(
- 					"The "+ (inComponentProcess ? "component" : "ensemble") + " process cannot have zero parameters.");
+ 					"The "+ (pathOrigin == pathOrigin.COMPONENT ? "component" : "ensemble") + " process cannot have zero parameters.");
 		}
 		return parameters;
 	}
@@ -661,16 +662,16 @@ public class AnnotationProcessor {
 	 * @param type	the type of the parameter
 	 * @param parameterIndex order of the parameter in the method declaration
 	 * @param parameterAnnotations list of annotations extracted from method signature
-	 * @param inComponentProcess indicates whether it is being called within the context of {@link #createComponentProcess createComponentProcess()} or {@link #createEnsembleDefinition createEnsembleDefinition()}.
+	 * @param pathOrigin indicates whether it is being called within the context of {@link #createComponentProcess}, {@link #createEnsembleDefinition} or {@link #addSecurityTags(Class, KnowledgeManager, ChangeSet)} .
 	 */
-	Parameter createParameter(Class<?> type, int parameterIndex, Annotation[] parameterAnnotations, boolean inComponentProcess)
+	Parameter createParameter(Class<?> type, int parameterIndex, Annotation[] parameterAnnotations, PathOrigin pathOrigin)
 			throws AnnotationProcessorException, ParseException {
 		Parameter parameter = factory.createParameter();
 		try {
 			Annotation directionAnnotation = getDirectionAnnotation(parameterAnnotations);
 			parameter.setDirection(parameterAnnotationsToParameterDirections.get(directionAnnotation.annotationType()));
 			String path = getDirectionAnnotationValue(directionAnnotation);
-			parameter.setKnowledgePath(createKnowledgePath(path,inComponentProcess));
+			parameter.setKnowledgePath(createKnowledgePath(path,pathOrigin));
 			parameter.setType(type);
 		} catch (Exception e) {
 			String msg = "Parameter: "+(parameterIndex+1)+"->"+e.getMessage();
@@ -683,11 +684,11 @@ public class AnnotationProcessor {
 	 * Creator of a {@link KnowledgePath} from a String.  
 	 *  
 	 * @param path string to be parsed into knowledge path
-	 * @param inComponentProcess indicates whether it is being called within the context of {@link #createComponentProcess createComponentProcess()} or {@link #createEnsembleDefinition createEnsembleDefinition()}.
+	 * @param pathOrigin indicates whether it is being called within the context of {@link #createComponentProcess}, {@link #createEnsembleDefinition} or {@link #addSecurityTags(Class, KnowledgeManager, ChangeSet)} .
 	 */
-	KnowledgePath createKnowledgePath(String path, boolean inComponentProcess) throws ParseException, AnnotationProcessorException {
+	KnowledgePath createKnowledgePath(String path, PathOrigin pathOrigin) throws ParseException, AnnotationProcessorException {
 		PNode pNode = PathParser.parse(path);
-		return createKnowledgePath(pNode, inComponentProcess);
+		return createKnowledgePath(pNode, pathOrigin);
 	}
 	
 	/**
@@ -701,15 +702,15 @@ public class AnnotationProcessor {
 	 * </p>
 	 * 
 	 * @param pNode head of the list as retrieved by the {@link PathParser#parse} method.
-	 * @param inComponentProcess indicates whether it is being called within the context of {@link #createComponentProcess createComponentProcess()} or {@link #createEnsembleDefinition createEnsembleDefinition()}.
+	 * @param pathOrigin indicates whether it is being called within the context of {@link #createComponentProcess}, {@link #createEnsembleDefinition} or {@link #addSecurityTags(Class, KnowledgeManager, ChangeSet)} .
 	 */
-	KnowledgePath createKnowledgePath(PNode pNode, boolean inComponentProcess) throws AnnotationProcessorException {
+	KnowledgePath createKnowledgePath(PNode pNode, PathOrigin pathOrigin) throws AnnotationProcessorException {
 		KnowledgePath knowledgePath = factory.createKnowledgePath();
 		do {	
 			Object nValue = pNode.value;
 			if (nValue instanceof String) {
 				// check if the first node in an ensemble path is not 'coord' or 'member':
-				if (!inComponentProcess && knowledgePath.getNodes().isEmpty()) {
+				if (pathOrigin == PathOrigin.ENSEMBLE && knowledgePath.getNodes().isEmpty()) {
 					throw new AnnotationProcessorException(
 						"The path does not start with one of the '"
 						+ EEnsembleParty.COORDINATOR.toString() + "' or '"
@@ -718,8 +719,8 @@ public class AnnotationProcessor {
 				// Check if this is a component identifier ("id") node.
 				// In such case, this has to be the final node in the path:
 				if ((nValue.equals(ComponentIdentifier.ID.toString()))
-					&& ((inComponentProcess && knowledgePath.getNodes().isEmpty()) 
-					|| (!inComponentProcess && (knowledgePath.getNodes().size() == 1)))) {
+					&& ((pathOrigin == PathOrigin.COMPONENT && knowledgePath.getNodes().isEmpty()) 
+					|| (pathOrigin == PathOrigin.ENSEMBLE && (knowledgePath.getNodes().size() == 1)))) {
 						PathNodeComponentId idField = factory.createPathNodeComponentId();
 						knowledgePath.getNodes().add(idField); 
 						if (pNode.next!=null) {
@@ -734,7 +735,7 @@ public class AnnotationProcessor {
 			}
 			if (nValue instanceof EEnsembleParty) {
 				EEnsembleParty ensembleKeyword = (EEnsembleParty) nValue;
-				if (!inComponentProcess && knowledgePath.getNodes().isEmpty())  {
+				if (pathOrigin == PathOrigin.ENSEMBLE && knowledgePath.getNodes().isEmpty())  {
 					knowledgePath.getNodes().add(createMemberOrCoordinatorPathNode(ensembleKeyword));
 				} else {
 					PathNodeField pathNodeField = factory.createPathNodeField();
@@ -744,7 +745,7 @@ public class AnnotationProcessor {
 			}
 			if (nValue instanceof PNode) {
 				PathNodeMapKey pathNodeMapKey = factory.createPathNodeMapKey();
-				pathNodeMapKey.setKeyPath(createKnowledgePath((PNode) nValue, inComponentProcess));
+				pathNodeMapKey.setKeyPath(createKnowledgePath((PNode) nValue, pathOrigin));
 				knowledgePath.getNodes().add(pathNodeMapKey);
 			}
 			pNode = pNode.next;
