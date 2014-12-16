@@ -86,6 +86,12 @@
 			<version>1.2</version>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk15</artifactId>
+			<version>1.46</version>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
 	<distributionManagement>
  		<repository>
