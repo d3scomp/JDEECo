@@ -15,19 +15,24 @@ public class KnowledgeMetaData implements Serializable {
 	public transient double rssi;
 	public long createdAt; 
 	public int hopCount;
+	public byte[] encryptedKey;
 	
 	public KnowledgeMetaData(String componentId, long versionId, String sender, long createdAt, int hopCount) {
+		this(componentId, versionId, sender, createdAt, hopCount, null);
+	}
+
+	public KnowledgeMetaData(String componentId, long versionId, String sender, long createdAt, int hopCount, byte[] encryptedKey) {
 		super();
 		this.componentId = componentId;
 		this.versionId = versionId;
 		this.sender = sender;
 		this.createdAt = createdAt;
 		this.hopCount = hopCount;
+		this.encryptedKey = encryptedKey;
 	}
-
 	
 	public KnowledgeMetaData clone() {
-		return new KnowledgeMetaData(componentId, versionId, sender, createdAt, hopCount);
+		return new KnowledgeMetaData(componentId, versionId, sender, createdAt, hopCount, encryptedKey);
 	}
 	
 	

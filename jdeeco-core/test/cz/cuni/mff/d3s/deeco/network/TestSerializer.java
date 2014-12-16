@@ -81,7 +81,7 @@ public class TestSerializer {
 		KnowledgeManagerContainer container = new KnowledgeManagerContainer(new CloningKnowledgeManagerFactory());
 		List<EnsembleDefinition> ens = Collections.emptyList();
 		DefaultKnowledgeDataManager kdManager = new DefaultKnowledgeDataManager(ens, null);
-		kdManager.initialize(container, null, "", mock(Scheduler.class));
+		kdManager.initialize(container, null, "", mock(Scheduler.class), null);
 		
 		ValueSet initialKnowledge = null;
 		

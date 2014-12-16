@@ -15,6 +15,7 @@ import cz.cuni.mff.d3s.deeco.network.KnowledgeDataManager;
 import cz.cuni.mff.d3s.deeco.network.PublisherTask;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeFrameworkImpl;
+import cz.cuni.mff.d3s.deeco.security.SecurityKeyManager;
 import cz.cuni.mff.d3s.deeco.simulation.scheduler.SimulationScheduler;
 import cz.cuni.mff.d3s.deeco.simulation.task.TimerTask;
 
@@ -22,7 +23,7 @@ public class SimulationRuntimeBuilder {
 
 	public RuntimeFramework build(AbstractHost host,
 			CallbackProvider callbackProvider, Collection<? extends TimerTaskListener> listeners, RuntimeMetadata model,
-			KnowledgeDataManager knowledgeDataManager, KnowledgeManagerFactory knowledgeManagerFactory) {
+			KnowledgeDataManager knowledgeDataManager, KnowledgeManagerFactory knowledgeManagerFactory, SecurityKeyManager keyManager) {
 		if (model == null) {
 			throw new IllegalArgumentException("Model must not be null");
 		}
@@ -39,7 +40,7 @@ public class SimulationRuntimeBuilder {
 
 		// Set up the host container
 		KnowledgeManagerContainer container = new KnowledgeManagerContainer(knowledgeManagerFactory);
-		knowledgeDataManager.initialize(container, host.getDataSender(), host.getHostId(), scheduler);
+		knowledgeDataManager.initialize(container, host.getDataSender(), host.getHostId(), scheduler, keyManager);
 		host.addDataReceiver(knowledgeDataManager);
 		// Set up the publisher task
 		TimeTriggerExt publisherTrigger = new TimeTriggerExt();
