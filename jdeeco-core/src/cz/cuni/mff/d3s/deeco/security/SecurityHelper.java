@@ -1,9 +1,9 @@
 package cz.cuni.mff.d3s.deeco.security;
 
-import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
+import java.security.Security;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -11,10 +11,12 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
 public class SecurityHelper {
 
 	static {
-		//Security.addProvider(new BouncyCastleProvider());
+		Security.addProvider(new BouncyCastleProvider());
 	}
 	
 	public byte[] encryptKey(Key symmetricKey, Key publicKey) throws IllegalBlockSizeException, BadPaddingException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException {

@@ -5,7 +5,10 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.security.InvalidKeyException;
 import java.security.Key;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
+import java.security.cert.CertificateEncodingException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -458,7 +461,7 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 				
 				metaData.encryptedKey = encryptedKey;
 				valueSet.setValue(kp, encryptedKnowledge);
-			} catch (IllegalBlockSizeException | IOException | InvalidKeyException | BadPaddingException | NoSuchAlgorithmException | NoSuchPaddingException e) {
+			} catch (IllegalBlockSizeException | IOException | InvalidKeyException | BadPaddingException | NoSuchAlgorithmException | NoSuchPaddingException | KeyStoreException | CertificateEncodingException | SecurityException | SignatureException | IllegalStateException e) {
 				throw new SecurityException(e);
 			}				
 		}
