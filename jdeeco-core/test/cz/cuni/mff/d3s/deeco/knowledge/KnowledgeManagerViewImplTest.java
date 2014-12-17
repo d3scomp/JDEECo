@@ -57,8 +57,8 @@ public class KnowledgeManagerViewImplTest {
 		List<KnowledgeManager> replicas = new LinkedList<>();
 		replicas.add(replica);
 		when(container.getLocals()).thenReturn(locals);
-		when(container.getReplicas()).thenReturn(replicas);
-
+		when(container.getReplicas(local.getComponent())).thenReturn(replicas);
+		
 		// and WHEN the 'getOtherKnowledgeManagers' is called on the
 		// KnowledgeManagerView instance
 
@@ -68,7 +68,7 @@ public class KnowledgeManagerViewImplTest {
 		// managers
 		
 		verify(container).getLocals();
-		verify(container).getReplicas();
+		verify(container).getReplicas(local.getComponent());
 		
 		// and THEN the KnowledgeManagerView instance returns all container's
 		// knowledge managers apart of the one referenced by the

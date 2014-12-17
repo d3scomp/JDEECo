@@ -143,27 +143,6 @@ public class KnowledgeManagerContainer  {
 	}
 
 	/**
-	 * Removes a replica knowledge manager from the container and return it.
-	 * This implies also informing the replica listener about removing this
-	 * knowledge manager.
-	 * 
-	 * @param {@link KnowledgeManager} replica knowledge manager to be removed
-	 * @return {@link KnowledgeManager} the removed replica knowledge manager
-	 *         object containing values for the specified knowledge paths
-	 */
-	public KnowledgeManager removeReplica(KnowledgeManager km) {
-		KnowledgeManager kmVar = null;
-		if (replicas.containsValue(km)) {
-			replicas.remove(km);
-			for (ReplicaListener listener : replicaListeners) {
-				listener.replicaUnregistered(km, this);
-			}
-			kmVar = km;
-		}
-		return kmVar;
-	}
-
-	/**
 	 * Retrieves all the replica knowledge managers in the container.
 	 * 
 	 * @return List<{@link KnowledgeManager}> object containing values for the
@@ -172,6 +151,20 @@ public class KnowledgeManagerContainer  {
 	public Collection<KnowledgeManager> getReplicas() {
 		Collection<KnowledgeManager> result = new LinkedList<>();
 		replicas.values().stream().map(map -> map.values()).forEach(result::addAll);
+		return result;
+	}
+	
+	public Collection<KnowledgeManager> getReplicas(ComponentInstance component) {
+		Collection<KnowledgeManager> result = new LinkedList<>();
+		replicas
+			.values()
+			.stream()
+			.map(map -> map
+					.values()
+					.stream()
+					.filter(km -> km.getComponent().equals(component))
+					.collect(Collectors.toList())
+			).forEach(result::addAll);
 		return result;
 	}
 	
@@ -218,4 +211,6 @@ public class KnowledgeManagerContainer  {
 			return replicas.get(id).values();
 		} 
 	}
+
+	
 }

@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -63,23 +65,22 @@ public class RuntimeFrameworkImplTest {
 		executor = mock(Executor.class);
 		kmContainer = mock(KnowledgeManagerContainer.class);
 		
-				
+		component = factory.createComponentInstance();		
 
 		process = factory.createComponentProcess();
 		econtroller = factory.createEnsembleController();
 		km = mock(KnowledgeManager.class);
 		when(km.getId()).thenReturn("component");
-		
-		kmReplacement = new BaseKnowledgeManager("component");
-		when(kmContainer.createLocal(anyString())).thenReturn(kmReplacement);
-						
-		component = factory.createComponentInstance();
+				
 		component.getComponentProcesses().add(process);
 		component.getEnsembleControllers().add(econtroller);
 		component.setKnowledgeManager(km);
 		
 		model = factory.createRuntimeMetadata();
 		model.getComponentInstances().add(component);
+		
+		kmReplacement = new BaseKnowledgeManager("component", component);
+		when(kmContainer.createLocal(anyString(), anyObject())).thenReturn(kmReplacement);		
 		
 		spy = mock(RuntimeFrameworkImpl.class);
 		
@@ -862,7 +863,7 @@ public class RuntimeFrameworkImplTest {
 		tested.replaceKnowledgeManager(component);
 		
 		// THEN the KM of the instance is replaced by a new one created by kmContainer for the instance
-		verify(kmContainer).createLocal(km.getId());
+		verify(kmContainer).createLocal(km.getId(), component);
 		assertEquals(kmReplacement, component.getKnowledgeManager());		
 	}
 	
