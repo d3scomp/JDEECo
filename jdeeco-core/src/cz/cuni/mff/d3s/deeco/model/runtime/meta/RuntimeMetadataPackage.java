@@ -446,13 +446,22 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int COMPONENT_INSTANCE__SYSTEM_COMPONENT = 6;
 
 	/**
+	 * The feature id for the '<em><b>Roles</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPONENT_INSTANCE__ROLES = 7;
+
+	/**
 	 * The number of structural features of the '<em>Component Instance</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_INSTANCE_FEATURE_COUNT = 7;
+	int COMPONENT_INSTANCE_FEATURE_COUNT = 8;
 
 	/**
 	 * The number of operations of the '<em>Component Instance</em>' class.
@@ -748,22 +757,13 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int COMPONENT_PROCESS__TRIGGERS = INVOCABLE_FEATURE_COUNT + 3;
 
 	/**
-	 * The feature id for the '<em><b>Roles</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMPONENT_PROCESS__ROLES = INVOCABLE_FEATURE_COUNT + 4;
-
-	/**
 	 * The number of structural features of the '<em>Component Process</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_PROCESS_FEATURE_COUNT = INVOCABLE_FEATURE_COUNT + 5;
+	int COMPONENT_PROCESS_FEATURE_COUNT = INVOCABLE_FEATURE_COUNT + 4;
 
 	/**
 	 * The number of operations of the '<em>Component Process</em>' class.
@@ -1435,6 +1435,17 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EAttribute getComponentInstance_SystemComponent();
 
 	/**
+	 * Returns the meta object for the containment reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getRoles <em>Roles</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Roles</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getRoles()
+	 * @see #getComponentInstance()
+	 * @generated
+	 */
+	EReference getComponentInstance_Roles();
+
+	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition <em>Ensemble Definition</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1583,17 +1594,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getComponentProcess_Triggers();
-
-	/**
-	 * Returns the meta object for the containment reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getRoles <em>Roles</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Roles</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getRoles()
-	 * @see #getComponentProcess()
-	 * @generated
-	 */
-	EReference getComponentProcess_Roles();
 
 	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter <em>Parameter</em>}'.
@@ -2145,6 +2145,14 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EAttribute COMPONENT_INSTANCE__SYSTEM_COMPONENT = eINSTANCE.getComponentInstance_SystemComponent();
 
 		/**
+		 * The meta object literal for the '<em><b>Roles</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference COMPONENT_INSTANCE__ROLES = eINSTANCE.getComponentInstance_Roles();
+
+		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl <em>Ensemble Definition</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2263,14 +2271,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * @generated
 		 */
 		EReference COMPONENT_PROCESS__TRIGGERS = eINSTANCE.getComponentProcess_Triggers();
-
-		/**
-		 * The meta object literal for the '<em><b>Roles</b></em>' containment reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference COMPONENT_PROCESS__ROLES = eINSTANCE.getComponentProcess_Roles();
 
 		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ParameterImpl <em>Parameter</em>}' class.

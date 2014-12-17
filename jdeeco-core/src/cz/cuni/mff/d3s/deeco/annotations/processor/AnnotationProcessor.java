@@ -337,7 +337,7 @@ public class AnnotationProcessor {
 			if (id == null) {
 				id = new StringBuilder().append(clazz.getSimpleName()).append(UUID.randomUUID().toString()).toString();
 			}
-			KnowledgeManager km = knowledgeManagerFactory.create(id);
+			KnowledgeManager km = knowledgeManagerFactory.create(id, componentInstance);
 			km.update(initialK);
 			km.markAsLocal(initialLocalK.getUpdatedReferences());
 			km.update(initialLocalK);

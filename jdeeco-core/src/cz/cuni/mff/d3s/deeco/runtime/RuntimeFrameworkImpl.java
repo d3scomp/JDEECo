@@ -322,7 +322,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 		}
 		
 		// create a new KM with the same id and knowledge values
-		KnowledgeManager km = kmContainer.createLocal(ci.getKnowledgeManager().getId());
+		KnowledgeManager km = kmContainer.createLocal(ci.getKnowledgeManager().getId(), ci);
 		km.markAsLocal(ci.getKnowledgeManager().getLocalPaths());
 		
 		if (initialKnowledge != null) {
@@ -624,7 +624,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 			if (remoteComponentInstance == null) {
 				remoteComponentInstance = ArchitectureFactory.eINSTANCE.createRemoteComponentInstance();
 				remoteComponentInstance.setId(id);
-				remoteComponentInstance.setKnowledgeManager(kmContainer.getReplica(id));
+				remoteComponentInstance.setKnowledgeManager(kmContainer.getReplica(c, id));
 				architecture.getComponentInstances().add(remoteComponentInstance);
 				remoteComponentInstances.put(id, remoteComponentInstance);
 			}

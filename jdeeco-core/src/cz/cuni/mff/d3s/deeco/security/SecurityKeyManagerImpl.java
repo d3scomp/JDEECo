@@ -8,12 +8,11 @@ import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 import java.security.SecureRandom;
 import java.security.SignatureException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -28,12 +27,14 @@ import org.bouncycastle.x509.X509V3CertificateGenerator;
 public class SecurityKeyManagerImpl implements SecurityKeyManager {
 
 	private KeyStore keyStore;
+	private Map<String, PrivateKey> privateKeys;
 	private SecureRandom secureRandom;
 	
 	public SecurityKeyManagerImpl() throws KeyStoreException {
 		this.keyStore = KeyStore.getInstance("JKS");
 		//this.keyStore.load(stream, password); TODO
 		this.secureRandom = new SecureRandom();
+		this.privateKeys = new HashMap<>();
 	}
 	
 	@Override
@@ -41,18 +42,25 @@ public class SecurityKeyManagerImpl implements SecurityKeyManager {
 		String roleKey = getRoleKey(roleName, arguments);
 		
 		if (!keyStore.containsAlias(roleKey)) {
-			keyStore.setCertificateEntry(roleKey, generateCertificate(roleKey));
+			KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+	        keyGen.initialize(1024, secureRandom);
+	        KeyPair keypair = keyGen.generateKeyPair();
+			
+			keyStore.setCertificateEntry(roleKey, generateCertificate(roleKey, keypair));
+			privateKeys.put(roleKey, keypair.getPrivate());
 		}
 		
 		return keyStore.getCertificate(roleKey).getPublicKey();
 	}
 
+	@Override
+	public Key getPrivateKeyFor(String roleName, List<Object> arguments) {
+		String roleKey = getRoleKey(roleName, arguments);
+		return privateKeys.get(roleKey);
+	}
+	
 	@SuppressWarnings("deprecation")
-	private Certificate generateCertificate(String roleKey) throws NoSuchAlgorithmException, InvalidKeyException, SecurityException, SignatureException, CertificateEncodingException, IllegalStateException {
-		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-        keyGen.initialize(1024, secureRandom);
-        KeyPair keypair = keyGen.generateKeyPair();
-        
+	private Certificate generateCertificate(String roleKey, KeyPair keypair) throws NoSuchAlgorithmException, InvalidKeyException, SecurityException, SignatureException, CertificateEncodingException, IllegalStateException {		
         X509V3CertificateGenerator v3CertGen = new X509V3CertificateGenerator();
         v3CertGen.setSerialNumber(BigInteger.valueOf(new SecureRandom().nextInt()));
         v3CertGen.setIssuerDN(new X509Principal("CN=local, OU=None, O=None L=None, C=None"));

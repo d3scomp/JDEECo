@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import com.rits.cloning.Cloner;
 
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 
 /**
@@ -18,8 +19,8 @@ public class CloningKnowledgeManager extends BaseKnowledgeManager {
 
 	private final Cloner c;
 	
-	public CloningKnowledgeManager(String id) {
-		super(id);
+	public CloningKnowledgeManager(String id, ComponentInstance component) {
+		super(id, component);
 		c = new Cloner();
 	}
 	

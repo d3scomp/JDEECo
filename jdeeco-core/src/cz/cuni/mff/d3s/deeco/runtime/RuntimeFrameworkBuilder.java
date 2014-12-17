@@ -151,7 +151,7 @@ public class RuntimeFrameworkBuilder {
 	 * the {@link #configuration}.
 	 */
 	protected void buildKnowledgeManagerContainer() {		
-		kmContainer = new KnowledgeManagerContainer(knowledgeManagerFactory);
+		kmContainer = new KnowledgeManagerContainer(knowledgeManagerFactory, model);
 	}
 	
 	/**

@@ -2,6 +2,7 @@ package cz.cuni.mff.d3s.deeco.knowledge;
 
 import java.util.Collection;
 
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
 
@@ -30,4 +31,5 @@ public interface KnowledgeManager extends ReadOnlyKnowledgeManager {
 	void update(ChangeSet changeSet) throws KnowledgeUpdateException;
 	void markAsLocal(Collection<KnowledgePath> knowledgePaths);
 	void markAsSecured(KnowledgePath knowledgePath, Collection<KnowledgeSecurityTag> newSecurityTags);
+	ComponentInstance getComponent();
 }

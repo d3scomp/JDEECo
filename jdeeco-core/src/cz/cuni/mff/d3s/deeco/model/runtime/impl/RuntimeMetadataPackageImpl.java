@@ -542,6 +542,15 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EReference getComponentInstance_Roles() {
+		return (EReference)componentInstanceEClass.getEStructuralFeatures().get(7);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getEnsembleDefinition() {
 		return ensembleDefinitionEClass;
 	}
@@ -661,15 +670,6 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 */
 	public EReference getComponentProcess_Triggers() {
 		return (EReference)componentProcessEClass.getEStructuralFeatures().get(3);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EReference getComponentProcess_Roles() {
-		return (EReference)componentProcessEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -986,6 +986,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		createEReference(componentInstanceEClass, COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS);
 		createEReference(componentInstanceEClass, COMPONENT_INSTANCE__INTERNAL_DATA);
 		createEAttribute(componentInstanceEClass, COMPONENT_INSTANCE__SYSTEM_COMPONENT);
+		createEReference(componentInstanceEClass, COMPONENT_INSTANCE__ROLES);
 
 		ensembleDefinitionEClass = createEClass(ENSEMBLE_DEFINITION);
 		createEAttribute(ensembleDefinitionEClass, ENSEMBLE_DEFINITION__NAME);
@@ -1004,7 +1005,6 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		createEReference(componentProcessEClass, COMPONENT_PROCESS__COMPONENT_INSTANCE);
 		createEAttribute(componentProcessEClass, COMPONENT_PROCESS__ACTIVE);
 		createEReference(componentProcessEClass, COMPONENT_PROCESS__TRIGGERS);
-		createEReference(componentProcessEClass, COMPONENT_PROCESS__ROLES);
 
 		parameterEClass = createEClass(PARAMETER);
 		createEAttribute(parameterEClass, PARAMETER__DIRECTION);
@@ -1122,6 +1122,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		initEReference(getComponentInstance_EnsembleControllers(), this.getEnsembleController(), this.getEnsembleController_ComponentInstance(), "ensembleControllers", null, 0, -1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getComponentInstance_InternalData(), this.getStringToObjectMap(), null, "internalData", null, 0, -1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getComponentInstance_SystemComponent(), ecorePackage.getEBoolean(), "systemComponent", "false", 0, 1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getComponentInstance_Roles(), this.getSecurityRole(), null, "roles", null, 0, -1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(ensembleDefinitionEClass, EnsembleDefinition.class, "EnsembleDefinition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getEnsembleDefinition_Name(), ecorePackage.getEString(), "name", null, 1, 1, EnsembleDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1140,7 +1141,6 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		initEReference(getComponentProcess_ComponentInstance(), this.getComponentInstance(), this.getComponentInstance_ComponentProcesses(), "componentInstance", null, 1, 1, ComponentProcess.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getComponentProcess_Active(), ecorePackage.getEBoolean(), "active", "true", 1, 1, ComponentProcess.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getComponentProcess_Triggers(), this.getTrigger(), null, "triggers", null, 0, -1, ComponentProcess.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getComponentProcess_Roles(), this.getSecurityRole(), null, "roles", null, 0, -1, ComponentProcess.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(parameterEClass, Parameter.class, "Parameter", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getParameter_Direction(), this.getParameterDirection(), "direction", "INOUT", 1, 1, Parameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

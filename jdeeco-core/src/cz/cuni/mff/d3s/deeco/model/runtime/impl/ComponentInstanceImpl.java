@@ -9,6 +9,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 
+import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 
 import java.util.Collection;
@@ -26,6 +27,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
 import org.eclipse.emf.ecore.util.EcoreEMap;
 import org.eclipse.emf.ecore.util.InternalEList;
@@ -44,6 +46,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getEnsembleControllers <em>Ensemble Controllers</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getInternalData <em>Internal Data</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#isSystemComponent <em>System Component</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getRoles <em>Roles</em>}</li>
  * </ul>
  * </p>
  *
@@ -159,6 +162,16 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	 * @ordered
 	 */
 	protected boolean systemComponent = SYSTEM_COMPONENT_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getRoles() <em>Roles</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getRoles()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<SecurityRole> roles;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -304,6 +317,18 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EList<SecurityRole> getRoles() {
+		if (roles == null) {
+			roles = new EObjectContainmentEList<SecurityRole>(SecurityRole.class, this, RuntimeMetadataPackage.COMPONENT_INSTANCE__ROLES);
+		}
+		return roles;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
@@ -330,6 +355,8 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 				return ((InternalEList<?>)getEnsembleControllers()).basicRemove(otherEnd, msgs);
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__INTERNAL_DATA:
 				return ((InternalEList<?>)getInternalData()).basicRemove(otherEnd, msgs);
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ROLES:
+				return ((InternalEList<?>)getRoles()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -357,6 +384,8 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 				else return getInternalData().map();
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__SYSTEM_COMPONENT:
 				return isSystemComponent();
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ROLES:
+				return getRoles();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -393,6 +422,10 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__SYSTEM_COMPONENT:
 				setSystemComponent((Boolean)newValue);
 				return;
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ROLES:
+				getRoles().clear();
+				getRoles().addAll((Collection<? extends SecurityRole>)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -426,6 +459,9 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__SYSTEM_COMPONENT:
 				setSystemComponent(SYSTEM_COMPONENT_EDEFAULT);
 				return;
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ROLES:
+				getRoles().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -452,6 +488,8 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 				return internalData != null && !internalData.isEmpty();
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__SYSTEM_COMPONENT:
 				return systemComponent != SYSTEM_COMPONENT_EDEFAULT;
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ROLES:
+				return roles != null && !roles.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

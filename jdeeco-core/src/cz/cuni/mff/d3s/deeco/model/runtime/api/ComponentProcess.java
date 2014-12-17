@@ -16,7 +16,6 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getComponentInstance <em>Component Instance</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#isActive <em>Active</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getTriggers <em>Triggers</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getRoles <em>Roles</em>}</li>
  * </ul>
  * </p>
  *
@@ -121,21 +120,5 @@ public interface ComponentProcess extends Invocable {
 	 * @generated
 	 */
 	EList<Trigger> getTriggers();
-
-	/**
-	 * Returns the value of the '<em><b>Roles</b></em>' containment reference list.
-	 * The list contents are of type {@link cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole}.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Roles</em>' containment reference list isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Roles</em>' containment reference list.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentProcess_Roles()
-	 * @model containment="true"
-	 * @generated
-	 */
-	EList<SecurityRole> getRoles();
 
 } // ComponentProcess

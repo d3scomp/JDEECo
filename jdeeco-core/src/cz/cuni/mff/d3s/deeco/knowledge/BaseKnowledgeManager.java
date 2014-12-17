@@ -9,6 +9,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.crypto.SealedObject;
+
+import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
@@ -35,11 +39,13 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	private final Map<KnowledgePath, List<KnowledgeSecurityTag>> securityTags;
 	private final Map<KnowledgeChangeTrigger, List<TriggerListener>> knowledgeChangeListeners;
 	private final Collection<KnowledgePath> localKnowledgePaths;
-
+	
+	protected final ComponentInstance component;
 	private final String id;
 
-	public BaseKnowledgeManager(String id) {
+	public BaseKnowledgeManager(String id, ComponentInstance component) {
 		this.id = id;
+		this.component = component;
 		this.knowledge = new HashMap<>();
 		this.knowledgeChangeListeners = new HashMap<>();
 		this.localKnowledgePaths = new LinkedList<>();
@@ -51,6 +57,11 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		return this.id;
 	}
 
+	@Override
+	public ComponentInstance getComponent() {
+		return component;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -132,6 +143,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	public void update(final ChangeSet changeSet) throws KnowledgeUpdateException {
 		final Map<KnowledgePath, Object> updated = new HashMap<>();
 		final List<KnowledgePath> added = new LinkedList<>();
+		
 		Object original = null;
 		try {
 			boolean exists;
@@ -188,6 +200,8 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 			notifyKnowledgeChangeListeners(knowledgePath);
 		}
 	}
+
+
 
 	/*
 	 * (non-Javadoc)

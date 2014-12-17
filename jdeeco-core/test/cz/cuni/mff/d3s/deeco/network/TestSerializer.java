@@ -78,7 +78,7 @@ public class TestSerializer {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testKnowledgeDataSerialization() throws IOException, ClassNotFoundException, KnowledgeUpdateException, KnowledgeNotFoundException {
-		KnowledgeManagerContainer container = new KnowledgeManagerContainer(new CloningKnowledgeManagerFactory());
+		KnowledgeManagerContainer container = new KnowledgeManagerContainer(new CloningKnowledgeManagerFactory(), model);
 		List<EnsembleDefinition> ens = Collections.emptyList();
 		DefaultKnowledgeDataManager kdManager = new DefaultKnowledgeDataManager(ens, null);
 		kdManager.initialize(container, null, "", mock(Scheduler.class), null);

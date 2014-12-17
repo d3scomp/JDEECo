@@ -9,6 +9,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 import java.security.cert.CertificateEncodingException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -24,6 +25,8 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SealedObject;
 
+import org.mockito.cglib.core.GeneratorStrategy;
+
 import cz.cuni.mff.d3s.deeco.DeecoProperties;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
@@ -35,6 +38,7 @@ import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
@@ -81,7 +85,7 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 	
 	
 	/** Stores received KnowledgeMetaData for replicas (received ValueSet is deleted) */
-	protected final Map<KnowledgeManager, KnowledgeMetaData> replicaMetadata;
+	protected final Map<String, KnowledgeMetaData> replicaMetadata;
 	/** Global version counter for all outgoing local knowledge. */
 	protected long localVersion;
 	
@@ -234,9 +238,9 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 				
 				continue;
 			} 
-			KnowledgeManager replica = kmContainer.createReplica(newMetadata.componentId);			
-			KnowledgeMetaData currentMetadata = replicaMetadata.get(replica);
-						
+			
+			KnowledgeMetaData currentMetadata = replicaMetadata.get(newMetadata.componentId);
+			
 			// if we get the same or newer data before we manage to rebroadcast, abort the rebroadcast 
 			if ((currentMetadata != null)
 					&& (currentMetadata.versionId <= newMetadata.versionId)
@@ -265,17 +269,24 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 			}
 			
 			// accept only fresh knowledge data (drop if we have already a newer value)
-			boolean haveOlder = (currentMetadata == null) || (currentMetadata.versionId < newMetadata.versionId);			
-			if (haveOlder) {	
-				try {
-				replica.update(toChangeSet(kd.getKnowledge()));			
-				} catch (KnowledgeUpdateException e) {
-					Log.w(String
-							.format("KnowledgeDataManager.receive: Could not update replica of %s.",
-									newMetadata.componentId), e);
+			boolean haveOlder = (currentMetadata == null) || (currentMetadata.versionId < newMetadata.versionId);
+			
+			if (haveOlder) {
+				for (KnowledgeManager replica : kmContainer.createReplica(newMetadata.componentId)) {
+												
+					try {
+						ChangeSet changeSet = toChangeSet(kd.getKnowledge());
+						decryptChangeSet(changeSet, replica, kd.getMetaData());
+						replica.update(changeSet);			
+					} catch (KnowledgeUpdateException e) {
+						Log.w(String
+								.format("KnowledgeDataManager.receive: Could not update replica of %s.",
+										newMetadata.componentId), e);
+					}					
 				}
-				//	store the metadata without the knowledge values
-				replicaMetadata.put(replica, newMetadata);
+				
+				// store the metadata without the knowledge values
+				replicaMetadata.put(newMetadata.componentId, newMetadata);
 				
 				// rebroadcast only data that is of some value (i.e., newer than we have)
 				queueForRebroadcast(kd);
@@ -289,8 +300,9 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 							timeProvider.getCurrentMilliseconds() - newMetadata.createdAt,
 							newMetadata.hopCount));
 				}
+			
 			}
-			//System.out.println("Received at " + host + " " + knowledgeData);
+			
 		}
 	}
 	
@@ -393,6 +405,55 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 		// the delay must be > 0
 		result++;
 		return result;
+	}
+	
+	private void decryptChangeSet(ChangeSet changeSet, KnowledgeManager replica, KnowledgeMetaData metaData) {
+		Collection<KnowledgePath> unresolvedPaths = new LinkedList<KnowledgePath>();
+		
+		for (KnowledgePath kp : changeSet.getUpdatedReferences()) {
+			Object value = changeSet.getValue(kp);
+			if (value instanceof SealedObject) {
+				try {
+					Object decryptedValue = decryptValue((SealedObject)value, replica, metaData);
+					changeSet.setValue(kp, decryptedValue);
+				} catch (KnowledgeNotFoundException | SecurityException e) {
+					unresolvedPaths.add(kp);
+				}
+			}
+		}		
+		
+		changeSet.getUpdatedReferences().removeAll(unresolvedPaths);
+	}
+
+	private Object decryptValue(SealedObject sealedObject, KnowledgeManager replica, KnowledgeMetaData metaData) throws KnowledgeNotFoundException {
+		KnowledgeManager localKnowledgeManager = replica.getComponent().getKnowledgeManager();
+		Object value = null;
+		boolean encryptionSucceeded = false;
+		
+		for (SecurityRole role : replica.getComponent().getRoles()) {
+			String roleName = role.getRoleName();
+			ValueSet argumentsValueSet = localKnowledgeManager.get(role.getArguments());	
+			
+			List<Object> arguments = role.getArguments().stream().map(path -> argumentsValueSet.getValue(path)).collect(Collectors.toList());					
+			
+			try {
+				Key privateKey = keyManager.getPrivateKeyFor(roleName, arguments);
+				Key decryptedSymmetricKey = securityHelper.decryptKey(metaData.encryptedKey, privateKey);
+				value = sealedObject.getObject(securityHelper.getSymmetricCipher(Cipher.DECRYPT_MODE, decryptedSymmetricKey));
+				encryptionSucceeded = true;
+				break; // decryption succeeded - we have a value
+			} catch (InvalidKeyException | ClassNotFoundException
+					| IllegalBlockSizeException | BadPaddingException
+					| NoSuchAlgorithmException | NoSuchPaddingException
+					| IOException e) {
+				e.printStackTrace();
+			}		
+		}
+		
+		if (!encryptionSucceeded) {
+			throw new SecurityException();
+		}
+		return value;
 	}
 	
 	protected List<KnowledgeData> prepareLocalKnowledgeData() {

@@ -1,10 +1,16 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 
 /**
  * 
@@ -27,16 +33,17 @@ import java.util.Set;
  */
 public class KnowledgeManagerContainer  {
 
-	protected final Map<String, KnowledgeManager> replicas;
+	protected final Map<String, Map<ComponentInstance, KnowledgeManager>> replicas;
 	protected final Set<ReplicaListener> replicaListeners;
 	protected final Map<String, KnowledgeManager> locals;
 	protected final Set<LocalListener> localListeners;
 	protected final KnowledgeManagerFactory knowledgeManagerFactory;
+	protected final RuntimeMetadata runtimeModel;
 
 
-
-	public KnowledgeManagerContainer(KnowledgeManagerFactory knowledgeManagerFactory) {
+	public KnowledgeManagerContainer(KnowledgeManagerFactory knowledgeManagerFactory, RuntimeMetadata model) {
 		this.knowledgeManagerFactory = knowledgeManagerFactory;
+		this.runtimeModel = model;
 		this.replicas = new HashMap<>();
 		this.replicaListeners = new HashSet<>();
 		this.locals = new HashMap<>();
@@ -52,11 +59,11 @@ public class KnowledgeManagerContainer  {
 	 * @return {@link KnowledgeManager} the newly created object containing
 	 *         values for the specified knowledge paths.
 	 */
-	public KnowledgeManager createLocal(String id) {
+	public KnowledgeManager createLocal(String id, ComponentInstance component) {
 		if (locals.containsKey(id))
 			return locals.get(id);
 		
-		KnowledgeManager result = new CloningKnowledgeManager(id);
+		KnowledgeManager result = new CloningKnowledgeManager(id, component);
 		locals.put(id, result);
 		
 		for (LocalListener listener : localListeners) {
@@ -107,8 +114,13 @@ public class KnowledgeManagerContainer  {
 	/**
 	 * Retrieves a replica knowledge manager by its id.
 	 */
-	public KnowledgeManager getReplica(String id) {
-		return replicas.get(id);
+	public KnowledgeManager getReplica(ComponentInstance c, String id) {
+		Map<ComponentInstance, KnowledgeManager> map = replicas.get(id);
+		if (map == null) {
+			return null;
+		} else {
+			return map.get(id);
+		}
 	}
 	
 	/**
@@ -158,7 +170,9 @@ public class KnowledgeManagerContainer  {
 	 *         specified knowledge paths
 	 */
 	public Collection<KnowledgeManager> getReplicas() {
-		return replicas.values();
+		Collection<KnowledgeManager> result = new LinkedList<>();
+		replicas.values().stream().map(map -> map.values()).forEach(result::addAll);
+		return result;
 	}
 	
 	/**
@@ -187,18 +201,21 @@ public class KnowledgeManagerContainer  {
 	 * @param id
 	 *            of the replica being registered
 	 */
-	public KnowledgeManager createReplica(String id) {
+	public Collection<KnowledgeManager> createReplica(String id) {
 		if (locals.containsKey(id)) {
 			throw new RuntimeException("Cannot create replica for a local knowledge manager (id: " + id + ").");
 		} else if (replicas.containsKey(id)) {
-			return replicas.get(id);
+			return replicas.get(id).values();
 		} else {
-			KnowledgeManager result = new CloningKnowledgeManager(id);
-			replicas.put(id, result);
-			for (ReplicaListener listener : replicaListeners) {
-				listener.replicaRegistered(result, this);
+			replicas.put(id, new HashMap<>());
+			for (ComponentInstance component : runtimeModel.getComponentInstances()) {
+				KnowledgeManager result = new CloningKnowledgeManager(id, component);
+				replicas.get(id).put(component, result);
+				for (ReplicaListener listener : replicaListeners) {
+					listener.replicaRegistered(result, this);
+				}
 			}
-			return result;
+			return replicas.get(id).values();
 		} 
 	}
 }

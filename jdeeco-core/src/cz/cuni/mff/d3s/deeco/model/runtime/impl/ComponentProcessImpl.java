@@ -4,23 +4,15 @@ package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
-
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
-
 import java.util.Collection;
-
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
-
 import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
-
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.InternalEList;
@@ -36,7 +28,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getComponentInstance <em>Component Instance</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#isActive <em>Active</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getTriggers <em>Triggers</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getRoles <em>Roles</em>}</li>
  * </ul>
  * </p>
  *
@@ -92,16 +83,6 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 	 * @ordered
 	 */
 	protected EList<Trigger> triggers;
-
-	/**
-	 * The cached value of the '{@link #getRoles() <em>Roles</em>}' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getRoles()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<SecurityRole> roles;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -222,18 +203,6 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<SecurityRole> getRoles() {
-		if (roles == null) {
-			roles = new EObjectContainmentEList<SecurityRole>(SecurityRole.class, this, RuntimeMetadataPackage.COMPONENT_PROCESS__ROLES);
-		}
-		return roles;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -257,8 +226,6 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 				return basicSetComponentInstance(null, msgs);
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__TRIGGERS:
 				return ((InternalEList<?>)getTriggers()).basicRemove(otherEnd, msgs);
-			case RuntimeMetadataPackage.COMPONENT_PROCESS__ROLES:
-				return ((InternalEList<?>)getRoles()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -293,8 +260,6 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 				return isActive();
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__TRIGGERS:
 				return getTriggers();
-			case RuntimeMetadataPackage.COMPONENT_PROCESS__ROLES:
-				return getRoles();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -321,10 +286,6 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 				getTriggers().clear();
 				getTriggers().addAll((Collection<? extends Trigger>)newValue);
 				return;
-			case RuntimeMetadataPackage.COMPONENT_PROCESS__ROLES:
-				getRoles().clear();
-				getRoles().addAll((Collection<? extends SecurityRole>)newValue);
-				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -349,9 +310,6 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__TRIGGERS:
 				getTriggers().clear();
 				return;
-			case RuntimeMetadataPackage.COMPONENT_PROCESS__ROLES:
-				getRoles().clear();
-				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -372,8 +330,6 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 				return active != ACTIVE_EDEFAULT;
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__TRIGGERS:
 				return triggers != null && !triggers.isEmpty();
-			case RuntimeMetadataPackage.COMPONENT_PROCESS__ROLES:
-				return roles != null && !roles.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

@@ -39,7 +39,7 @@ public class SimulationRuntimeBuilder {
 				.setSimulationTimeEventListener(scheduler);
 
 		// Set up the host container
-		KnowledgeManagerContainer container = new KnowledgeManagerContainer(knowledgeManagerFactory);
+		KnowledgeManagerContainer container = new KnowledgeManagerContainer(knowledgeManagerFactory, model);
 		knowledgeDataManager.initialize(container, host.getDataSender(), host.getHostId(), scheduler, keyManager);
 		host.addDataReceiver(knowledgeDataManager);
 		// Set up the publisher task

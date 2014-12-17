@@ -779,7 +779,7 @@
     <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_JomqYISUEeSEFMusYuKq6w" id="(0.7908496732026143,0.7058823529411765)"/>
     <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_JonRcISUEeSEFMusYuKq6w" id="(0.1875,0.20930232558139536)"/>
   </edges>
-  <edges xmi:type="notation:Edge" xmi:id="_ko67cISnEeSEFMusYuKq6w" type="3002" source="_c_NWQD28EeO2QcBZHbiySQ" target="_aTPhEISnEeSEFMusYuKq6w">
+  <edges xmi:type="notation:Edge" xmi:id="_ko67cISnEeSEFMusYuKq6w" type="3002" source="_dl7_oEMNEeO3_auUY0X6vg" target="_aTPhEISnEeSEFMusYuKq6w">
     <children xmi:type="notation:Node" xmi:id="_ko7igISnEeSEFMusYuKq6w" type="4011">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_ko7igYSnEeSEFMusYuKq6w" x="-10" y="-10"/>
     </children>
@@ -788,9 +788,9 @@
     </children>
     <styles xmi:type="notation:ConnectorStyle" xmi:id="_ko67cYSnEeSEFMusYuKq6w" lineColor="4210752"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_ko67coSnEeSEFMusYuKq6w" fontColor="4210752" fontName="Segoe UI" fontHeight="10"/>
-    <element xmi:type="ecore:EReference" href="RuntimeModel.ecore#//ComponentProcess/roles"/>
+    <element xmi:type="ecore:EReference" href="RuntimeModel.ecore#//ComponentInstance/roles"/>
     <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_ko67c4SnEeSEFMusYuKq6w" points="[-11, -3, 69, 29]$[-55, -14, 25, 18]"/>
-    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ko9XsISnEeSEFMusYuKq6w" id="(0.11194029850746269,0.16176470588235295)"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ko9XsISnEeSEFMusYuKq6w" id="(0.189010989010989,0.020618556701030927)"/>
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_nyZ04ISnEeSEFMusYuKq6w" type="3002" source="_aTPhEISnEeSEFMusYuKq6w" target="_n6cEgDyaEeOBILfoZuXX_w">
     <children xmi:type="notation:Node" xmi:id="_nyab8ISnEeSEFMusYuKq6w" type="4011">
