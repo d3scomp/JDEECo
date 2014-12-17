@@ -9,9 +9,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.crypto.SealedObject;
-
-import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;

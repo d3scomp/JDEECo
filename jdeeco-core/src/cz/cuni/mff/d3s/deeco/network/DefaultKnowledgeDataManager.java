@@ -1,15 +1,6 @@
 
 package cz.cuni.mff.d3s.deeco.network;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.security.InvalidKeyException;
-import java.security.Key;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SignatureException;
-import java.security.cert.CertificateEncodingException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -18,14 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SealedObject;
-
-import org.mockito.cglib.core.GeneratorStrategy;
 
 import cz.cuni.mff.d3s.deeco.DeecoProperties;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
@@ -37,12 +20,10 @@ import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
-import cz.cuni.mff.d3s.deeco.security.SecurityHelper;
+import cz.cuni.mff.d3s.deeco.security.KnowledgeEncryptor;
 import cz.cuni.mff.d3s.deeco.security.SecurityKeyManager;
 
 
@@ -110,7 +91,7 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 	protected final int ipDelay;
 	
 	protected final IPGossipStrategy ipGossipStrategy;
-	protected final SecurityHelper securityHelper;
+	protected final KnowledgeEncryptor knowledgeEncryptor;
 	
 	
 	/**
@@ -143,7 +124,7 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 		maxRebroadcastDelay = Integer.getInteger(DeecoProperties.MAXIMUM_REBROADCAST_DELAY, DEFAULT_MAX_REBROADCAST_DELAY);
 		ipDelay = Integer.getInteger(DeecoProperties.IP_REBROADCAST_DELAY, DEFAULT_IP_DELAY);
 		
-		this.securityHelper = new SecurityHelper();
+		this.knowledgeEncryptor = new KnowledgeEncryptor(keyManager);
 
 		double rssi = 0;
 		try {
@@ -276,7 +257,7 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 												
 					try {
 						ChangeSet changeSet = toChangeSet(kd.getKnowledge());
-						decryptChangeSet(changeSet, replica, kd.getMetaData());
+						knowledgeEncryptor.decryptChangeSet(changeSet, replica, kd.getMetaData());
 						replica.update(changeSet);			
 					} catch (KnowledgeUpdateException e) {
 						Log.w(String
@@ -406,56 +387,7 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 		result++;
 		return result;
 	}
-	
-	private void decryptChangeSet(ChangeSet changeSet, KnowledgeManager replica, KnowledgeMetaData metaData) {
-		Collection<KnowledgePath> unresolvedPaths = new LinkedList<KnowledgePath>();
-		
-		for (KnowledgePath kp : changeSet.getUpdatedReferences()) {
-			Object value = changeSet.getValue(kp);
-			if (value instanceof SealedObject) {
-				try {
-					Object decryptedValue = decryptValue((SealedObject)value, replica, metaData);
-					changeSet.setValue(kp, decryptedValue);
-				} catch (KnowledgeNotFoundException | SecurityException e) {
-					unresolvedPaths.add(kp);
-				}
-			}
-		}		
-		
-		changeSet.getUpdatedReferences().removeAll(unresolvedPaths);
-	}
 
-	private Object decryptValue(SealedObject sealedObject, KnowledgeManager replica, KnowledgeMetaData metaData) throws KnowledgeNotFoundException {
-		KnowledgeManager localKnowledgeManager = replica.getComponent().getKnowledgeManager();
-		Object value = null;
-		boolean encryptionSucceeded = false;
-		
-		for (SecurityRole role : replica.getComponent().getRoles()) {
-			String roleName = role.getRoleName();
-			ValueSet argumentsValueSet = localKnowledgeManager.get(role.getArguments());	
-			
-			List<Object> arguments = role.getArguments().stream().map(path -> argumentsValueSet.getValue(path)).collect(Collectors.toList());					
-			
-			try {
-				Key privateKey = keyManager.getPrivateKeyFor(roleName, arguments);
-				Key decryptedSymmetricKey = securityHelper.decryptKey(metaData.encryptedKey, privateKey);
-				value = sealedObject.getObject(securityHelper.getSymmetricCipher(Cipher.DECRYPT_MODE, decryptedSymmetricKey));
-				encryptionSucceeded = true;
-				break; // decryption succeeded - we have a value
-			} catch (InvalidKeyException | ClassNotFoundException
-					| IllegalBlockSizeException | BadPaddingException
-					| NoSuchAlgorithmException | NoSuchPaddingException
-					| IOException e) {
-				e.printStackTrace();
-			}		
-		}
-		
-		if (!encryptionSucceeded) {
-			throw new SecurityException();
-		}
-		return value;
-	}
-	
 	protected List<KnowledgeData> prepareLocalKnowledgeData() {
 		List<KnowledgeData> result = new LinkedList<>();
 		for (KnowledgeManager km : kmContainer.getLocals()) {
@@ -474,68 +406,8 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 			throws KnowledgeNotFoundException {
 		// extract local knowledge
 		ValueSet basicValueSet = getNonLocalKnowledge(km.get(emptyPath), km);
-		Map<KnowledgeSecurityTag, ValueSet> securityMap = new HashMap<>();
-
-		// split the knowledge into groups according to their security
-		for (KnowledgePath kp : basicValueSet.getKnowledgePaths()) {
-			List<KnowledgeSecurityTag> tags = km.getSecurityTagsFor(kp);
-			
-			if (tags == null || tags.isEmpty()) {
-				addToSecurityMap(basicValueSet, securityMap, null, kp);
-			} else {
-				for (KnowledgeSecurityTag tag : tags) {
-					addToSecurityMap(basicValueSet, securityMap, tag, kp);
-				}
-			}
-		}
-		
-		// create copies of the knowledge data, each encrypted for target role
 		KnowledgeMetaData metaData = new KnowledgeMetaData(km.getId(), localVersion, host, timeProvider.getCurrentMilliseconds(), 1);
-		List<KnowledgeData> result = new LinkedList<>();
-		for (KnowledgeSecurityTag tag : securityMap.keySet()) {
-			if (tag == null) {
-				// data not encrypted
-				result.add(new KnowledgeData(securityMap.get(null), metaData));
-			} else {
-				ValueSet vs = securityMap.get(tag);
-				sealKnowledge(km, vs, tag, metaData);
-				result.add(new KnowledgeData(vs, metaData));
-			}
-		}
-		return result;
-	}
-
-	private void sealKnowledge(KnowledgeManager km, ValueSet valueSet, KnowledgeSecurityTag tag, KnowledgeMetaData metaData) throws KnowledgeNotFoundException {
-		for (KnowledgePath kp : valueSet.getKnowledgePaths()) {
-			Object plainKnowledge = valueSet.getValue(kp);
-			String roleName = tag.getRoleName();
-			
-			ValueSet argumentsValueSet = km.get(tag.getArguments());			
-			List<Object> arguments = tag.getArguments().stream().map(path -> argumentsValueSet.getValue(path)).collect(Collectors.toList());
-						
-			try {
-				Key publicKey = keyManager.getPublicKeyFor(roleName, arguments);
-				Key symmetricKey = securityHelper.generateSymmetricKey();
-				
-				SealedObject encryptedKnowledge = new SealedObject((Serializable) plainKnowledge, securityHelper.getSymmetricCipher(Cipher.ENCRYPT_MODE, symmetricKey));
-				byte[] encryptedKey = securityHelper.encryptKey(symmetricKey, publicKey);
-				
-				metaData.encryptedKey = encryptedKey;
-				valueSet.setValue(kp, encryptedKnowledge);
-			} catch (IllegalBlockSizeException | IOException | InvalidKeyException | BadPaddingException | NoSuchAlgorithmException | NoSuchPaddingException | KeyStoreException | CertificateEncodingException | SecurityException | SignatureException | IllegalStateException e) {
-				throw new SecurityException(e);
-			}				
-		}
-		
-	}
-
-	private void addToSecurityMap(ValueSet basicValueSet,
-			Map<KnowledgeSecurityTag, ValueSet> securityMap,
-			KnowledgeSecurityTag tag, KnowledgePath kp) {
-		if (!securityMap.containsKey(tag)) {
-			securityMap.put(tag, new ValueSet());
-		}
-		securityMap.get(tag).setValue(kp, basicValueSet.getValue(kp));
+		return knowledgeEncryptor.encryptValueSet(basicValueSet, km, metaData);
 	}
 
 	protected ValueSet getNonLocalKnowledge(ValueSet toFilter, KnowledgeManager km) {

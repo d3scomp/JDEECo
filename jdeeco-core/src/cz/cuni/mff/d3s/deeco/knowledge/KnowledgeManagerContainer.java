@@ -1,6 +1,5 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
