@@ -23,7 +23,9 @@ import org.bouncycastle.jce.X509Principal;
 import org.bouncycastle.x509.X509V3CertificateGenerator;
 
 
-
+/*
+ * @author Ondřej Štumpf  
+ */
 public class SecurityKeyManagerImpl implements SecurityKeyManager {
 
 	private KeyStore keyStore;

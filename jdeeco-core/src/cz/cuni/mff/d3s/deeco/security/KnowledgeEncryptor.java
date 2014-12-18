@@ -20,6 +20,7 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SealedObject;
+import javax.crypto.ShortBufferException;
 
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
@@ -31,6 +32,9 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeData;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeMetaData;
 
+/*
+ * @author Ondřej Štumpf  
+ */
 public class KnowledgeEncryptor {
 	
 	private final SecurityKeyManager keyManager;
@@ -58,41 +62,8 @@ public class KnowledgeEncryptor {
 		
 		changeSet.getUpdatedReferences().removeAll(unresolvedPaths);
 	}
-
-	private Object decryptValue(SealedObject sealedObject, KnowledgeManager replica, KnowledgeMetaData metaData) throws KnowledgeNotFoundException {
-		KnowledgeManager localKnowledgeManager = replica.getComponent().getKnowledgeManager();
-		Object value = null;
-		boolean encryptionSucceeded = false;
-		
-		for (SecurityRole role : replica.getComponent().getRoles()) {
-			String roleName = role.getRoleName();
-			ValueSet argumentsValueSet = localKnowledgeManager.get(role.getArguments());	
-			
-			List<Object> arguments = role.getArguments().stream().map(path -> argumentsValueSet.getValue(path)).collect(Collectors.toList());					
-			
-			try {
-				Key privateKey = keyManager.getPrivateKeyFor(roleName, arguments);
-				Key decryptedSymmetricKey = securityHelper.decryptKey(metaData.encryptedKey, privateKey);
-				value = sealedObject.getObject(securityHelper.getSymmetricCipher(Cipher.DECRYPT_MODE, decryptedSymmetricKey));
-				encryptionSucceeded = true;
-				break; // decryption succeeded - we have a value
-			} catch (InvalidKeyException | ClassNotFoundException
-					| IllegalBlockSizeException | BadPaddingException
-					| NoSuchAlgorithmException | NoSuchPaddingException
-					| IOException e) {
-				e.printStackTrace();
-			}		
-		}
-		
-		if (!encryptionSucceeded) {
-			throw new SecurityException();
-		}
-		return value;
-	}
-
-	public List<KnowledgeData> encryptValueSet(ValueSet basicValueSet,
-			KnowledgeManager km, 
-			KnowledgeMetaData metaData) throws KnowledgeNotFoundException {
+	
+	public List<KnowledgeData> encryptValueSet(ValueSet basicValueSet, KnowledgeManager km, KnowledgeMetaData metaData) throws KnowledgeNotFoundException {
 		Map<KnowledgeSecurityTag, ValueSet> securityMap = new HashMap<>();
 
 		// split the knowledge into groups according to their security
@@ -108,8 +79,7 @@ public class KnowledgeEncryptor {
 			}
 		}
 		
-		// create copies of the knowledge data, each encrypted for target role
-		
+		// create copies of the knowledge data, each encrypted for target role		
 		List<KnowledgeData> result = new LinkedList<>();
 		for (KnowledgeSecurityTag tag : securityMap.keySet()) {
 			if (tag == null) {
@@ -124,6 +94,37 @@ public class KnowledgeEncryptor {
 		return result;
 	}
 	
+	private Object decryptValue(SealedObject sealedObject, KnowledgeManager replica, KnowledgeMetaData metaData) throws KnowledgeNotFoundException {
+		KnowledgeManager localKnowledgeManager = replica.getComponent().getKnowledgeManager();
+		Object value = null;
+		boolean encryptionSucceeded = false;
+		
+		for (SecurityRole role : replica.getComponent().getRoles()) {
+			String roleName = role.getRoleName();
+			ValueSet argumentsValueSet = localKnowledgeManager.get(role.getArguments());	
+			
+			List<Object> arguments = role.getArguments().stream().map(path -> argumentsValueSet.getValue(path)).collect(Collectors.toList());					
+			
+			try {
+				Key privateKey = keyManager.getPrivateKeyFor(roleName, arguments);
+				Key decryptedSymmetricKey = securityHelper.decryptKey(metaData.encryptedKey, metaData.encryptedKeyAlgorithm, privateKey);
+				value = sealedObject.getObject(securityHelper.getSymmetricCipher(Cipher.DECRYPT_MODE, decryptedSymmetricKey));
+				encryptionSucceeded = true;
+				break; // decryption succeeded - we have a value
+			} catch (InvalidKeyException | ClassNotFoundException
+					| IllegalBlockSizeException | BadPaddingException
+					| NoSuchAlgorithmException | NoSuchPaddingException
+					| IOException | ShortBufferException e) {
+				e.printStackTrace();
+			}		
+		}
+		
+		if (!encryptionSucceeded) {
+			throw new SecurityException();
+		}
+		return value;
+	}
+
 	private void addToSecurityMap(ValueSet basicValueSet,
 			Map<KnowledgeSecurityTag, ValueSet> securityMap,
 			KnowledgeSecurityTag tag, KnowledgePath kp) {
@@ -143,14 +144,17 @@ public class KnowledgeEncryptor {
 						
 			try {
 				Key publicKey = keyManager.getPublicKeyFor(roleName, arguments);
-				Key symmetricKey = securityHelper.generateSymmetricKey();
+				Key symmetricKey = securityHelper.generateKey();
 				
 				SealedObject encryptedKnowledge = new SealedObject((Serializable) plainKnowledge, securityHelper.getSymmetricCipher(Cipher.ENCRYPT_MODE, symmetricKey));
 				byte[] encryptedKey = securityHelper.encryptKey(symmetricKey, publicKey);
 				
 				metaData.encryptedKey = encryptedKey;
+				metaData.encryptedKeyAlgorithm = symmetricKey.getAlgorithm();
+				
 				valueSet.setValue(kp, encryptedKnowledge);
-			} catch (IllegalBlockSizeException | IOException | InvalidKeyException | BadPaddingException | NoSuchAlgorithmException | NoSuchPaddingException | KeyStoreException | CertificateEncodingException | SecurityException | SignatureException | IllegalStateException e) {
+			} catch (IllegalBlockSizeException | IOException | InvalidKeyException | BadPaddingException | NoSuchAlgorithmException | NoSuchPaddingException 
+					| KeyStoreException | CertificateEncodingException | SecurityException | SignatureException | IllegalStateException | ShortBufferException e) {
 				throw new SecurityException(e);
 			}				
 		}

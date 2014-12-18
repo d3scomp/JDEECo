@@ -16,12 +16,13 @@ public class KnowledgeMetaData implements Serializable {
 	public long createdAt; 
 	public int hopCount;
 	public byte[] encryptedKey;
+	public String encryptedKeyAlgorithm;
 	
 	public KnowledgeMetaData(String componentId, long versionId, String sender, long createdAt, int hopCount) {
-		this(componentId, versionId, sender, createdAt, hopCount, null);
+		this(componentId, versionId, sender, createdAt, hopCount, null, null);
 	}
 
-	public KnowledgeMetaData(String componentId, long versionId, String sender, long createdAt, int hopCount, byte[] encryptedKey) {
+	public KnowledgeMetaData(String componentId, long versionId, String sender, long createdAt, int hopCount, byte[] encryptedKey, String encryptedKeyAlgorithm) {
 		super();
 		this.componentId = componentId;
 		this.versionId = versionId;
@@ -29,10 +30,11 @@ public class KnowledgeMetaData implements Serializable {
 		this.createdAt = createdAt;
 		this.hopCount = hopCount;
 		this.encryptedKey = encryptedKey;
+		this.encryptedKeyAlgorithm = encryptedKeyAlgorithm;
 	}
 	
 	public KnowledgeMetaData clone() {
-		return new KnowledgeMetaData(componentId, versionId, sender, createdAt, hopCount, encryptedKey);
+		return new KnowledgeMetaData(componentId, versionId, sender, createdAt, hopCount, encryptedKey, encryptedKeyAlgorithm);
 	}
 	
 	
