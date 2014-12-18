@@ -380,6 +380,7 @@ public class AnnotationProcessor {
 				for (String stringPath : role.params()) {
 					securityRole.getArguments().add(createKnowledgePath(stringPath, PathOrigin.SECURITY_ANNOTATION));
 				}
+				componentInstance.getRoles().add(securityRole);
 			}
 			
 			callExtensions(ParsingEvent.ON_COMPONENT_CREATION, componentInstance, getUnknownAnnotations(clazz));
