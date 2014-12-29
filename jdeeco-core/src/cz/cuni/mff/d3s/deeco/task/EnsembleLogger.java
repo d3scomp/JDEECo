@@ -11,11 +11,11 @@ import java.util.Map;
 import cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
-import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
+import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
 
 /**
  * Main usage of this class: logging of the changes in ensemble membership
- * @see {@link EnsembleLogger#logEvent(EnsembleController, ReadOnlyKnowledgeManager, Scheduler, boolean)}
+ * @see {@link EnsembleLogger#logEvent(EnsembleController, ReadOnlyKnowledgeManager, CurrentTimeProvider, boolean)}
  * @author Tomas Filipek
  */
 class EnsembleLogger {
@@ -122,13 +122,13 @@ class EnsembleLogger {
 	/**
 	 * The event log will be saved to this file.
 	 */
-	private final File ensembleEventLog = new File("logs/ensembles.xml");
+	private final File ensembleLogFile = new File("logs/ensembles.xml");
 	
 	/**
-	 * An instance of {@link Writer} that writes into {@link EnsembleLogger#ensembleEventLog}.
-	 * @see {@link EnsembleLogger#ensembleEventLog}
+	 * An instance of {@link Writer} that writes into {@link EnsembleLogger#ensembleLogFile}.
+	 * @see {@link EnsembleLogger#ensembleLogFile}
 	 */
-	private final OutputStreamWriter out;
+	private final Writer out;
 	
 	/**
 	 * <p> Used to remember the last encountered value of the membership condition, computed on the 
@@ -146,7 +146,7 @@ class EnsembleLogger {
 	private EnsembleLogger() {
 		OutputStreamWriter osw;
 		try {
-			FileOutputStream fos = new FileOutputStream(ensembleEventLog);
+			FileOutputStream fos = new FileOutputStream(ensembleLogFile);
 			osw = new OutputStreamWriter(fos);
 		} catch (Exception ex) {
 			osw = null;
@@ -166,18 +166,31 @@ class EnsembleLogger {
 	public static EnsembleLogger getInstance() {
 		return INSTANCE;
 	}
+	
+	/**
+	 * Local name of the event element, as it appears in the output log file 
+	 */
+	private final String eventElementName = "event";
+	
+	/**
+	 * Names of the event element attributes that appear in the output log file
+	 */
+	private final String[] eventAttributes = new String[] {"coordinator", "member", "membership", "ensemble", "time"};
 
 	/**
 	 * Logs the information about ensemble membership to the output file. It remembers the 
 	 * previous value, so the output is produced only if it has changed from the last time. 
 	 * @param ensembleController Controller of the {@link EnsembleTask} where this method is called.
 	 * @param shadowKnowledgeManager Knowledge of the other component
-	 * @param scheduler Used to get the current time
+	 * @param timeProvider Used to get the current time
 	 * @param membership The current value of the membership condition
 	 */
 	public void logEvent(EnsembleController ensembleController, ReadOnlyKnowledgeManager shadowKnowledgeManager, 
-			Scheduler scheduler, boolean membership){
-		long timeSeconds = scheduler.getCurrentMilliseconds() / 1000L;
+			CurrentTimeProvider timeProvider, boolean membership){
+		if ((out == null) || (ensembleController == null) || (shadowKnowledgeManager == null) || (timeProvider == null)){
+			return;
+		}		
+		long timeSeconds = timeProvider.getCurrentMilliseconds() / 1000L;
 		String ensembleName = ensembleController.getEnsembleDefinition().getName();
 		String coordinatorID = ensembleController.getComponentInstance().getKnowledgeManager().getId();
 		String memberID = shadowKnowledgeManager.getId();
@@ -185,14 +198,15 @@ class EnsembleLogger {
 		boolean oldMembership = membershipRecords.get(mr) == null ? false : membershipRecords.get(mr);
 		if (oldMembership != membership){
 			membershipRecords.put(mr, Boolean.valueOf(membership));
-			String[] attrNames = new String[] {"coordinator", "member", "membership", "ensemble", "time"};
-			String[] attrValues = new String[] {coordinatorID, memberID, Boolean.toString(membership), ensembleName, Long.toString(timeSeconds)};
-			String elementText = getElementText("event", attrNames, attrValues);
-			try {
-				out.append(elementText);
-				out.flush();
-			} catch (IOException | NullPointerException ex) {
-				Log.e("Could not log an ensemble event to " + ensembleEventLog.getAbsolutePath().toString());
+			String[] attributeValues = new String[] {coordinatorID, memberID, Boolean.toString(membership), ensembleName, Long.toString(timeSeconds)};
+			String elementText = getElementText(eventElementName, eventAttributes, attributeValues);
+			if (elementText != null){
+				try {
+					out.append(elementText);
+					out.flush();
+				} catch (IOException | NullPointerException ex) {
+					Log.e("Could not log an ensemble event to " + ensembleLogFile.getAbsolutePath().toString());
+				}
 			}
 		}
 	}
