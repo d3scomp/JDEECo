@@ -112,4 +112,11 @@ public class ChangeSet {
 	public void setDeleted(KnowledgePath reference) {
 		values.put(reference, KnowledgeValue.EMPTY);		
 	}
+	
+	/**
+	 * Removes the {@code kp} knowledge path from this change set.
+	 */
+	public void remove(KnowledgePath kp) {
+		values.remove(kp);
+	}
 }

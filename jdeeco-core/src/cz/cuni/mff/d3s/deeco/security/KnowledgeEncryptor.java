@@ -46,7 +46,6 @@ public class KnowledgeEncryptor {
 	}
 	
 	public void decryptChangeSet(ChangeSet changeSet, KnowledgeManager replica, KnowledgeMetaData metaData) {
-		Collection<KnowledgePath> unresolvedPaths = new LinkedList<KnowledgePath>();
 		
 		for (KnowledgePath kp : changeSet.getUpdatedReferences()) {
 			Object value = changeSet.getValue(kp);
@@ -55,12 +54,11 @@ public class KnowledgeEncryptor {
 					Object decryptedValue = decryptValue((SealedObject)value, replica, metaData);
 					changeSet.setValue(kp, decryptedValue);
 				} catch (KnowledgeNotFoundException | SecurityException e) {
-					unresolvedPaths.add(kp);
+					changeSet.remove(kp);
 				}
 			}
 		}		
-		
-		changeSet.getUpdatedReferences().removeAll(unresolvedPaths);
+
 	}
 	
 	public List<KnowledgeData> encryptValueSet(ValueSet basicValueSet, KnowledgeManager km, KnowledgeMetaData metaData) throws KnowledgeNotFoundException {
@@ -115,7 +113,7 @@ public class KnowledgeEncryptor {
 					| IllegalBlockSizeException | BadPaddingException
 					| NoSuchAlgorithmException | NoSuchPaddingException
 					| IOException | ShortBufferException e) {
-				e.printStackTrace();
+			
 			}		
 		}
 		

@@ -84,6 +84,20 @@ public class KnowledgeMetaData implements Serializable {
 			return false;
 		if (versionId != other.versionId)
 			return false;
+		if (encryptedKeyAlgorithm == null) {
+			if (other.encryptedKeyAlgorithm != null)
+				return false;
+		} else {
+			if (!encryptedKeyAlgorithm.equals(other.encryptedKeyAlgorithm)) 
+				return false;
+		}
+		if (encryptedKey == null) {
+			if (other.encryptedKey != null)
+				return false;
+		} else {
+			if (!encryptedKey.equals(other.encryptedKey)) 
+				return false;
+		}
 		return true;
 	}
 
