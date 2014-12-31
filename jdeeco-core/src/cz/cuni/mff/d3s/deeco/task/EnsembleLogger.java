@@ -1,10 +1,8 @@
 package cz.cuni.mff.d3s.deeco.task;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.io.RandomAccessFile;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,7 +14,8 @@ import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
 /**
  * Main usage of this class: logging of the changes in ensemble membership
  * @see {@link EnsembleLogger#logEvent(EnsembleController, ReadOnlyKnowledgeManager, CurrentTimeProvider, boolean)}
- * @author Tomas Filipek
+ * 
+ * @author Tomas Filipek <tom.filipek@seznam.cz>
  */
 class EnsembleLogger {
 	
@@ -24,7 +23,8 @@ class EnsembleLogger {
 	 * Encapsulates three pieces of data: ensemble name, coordinator ID and member ID.
 	 * It is used to index the information whether the membership condition holds for the 
 	 * given triplet. 
-	 * @author Tomas Filipek
+	 * 
+	 * @author Tomas Filipek <tom.filipek@seznam.cz>
 	 */
 	private static class MembershipRecord {
 		
@@ -125,17 +125,17 @@ class EnsembleLogger {
 	private final File ensembleLogFile = new File("logs/ensembles.xml");
 	
 	/**
-	 * An instance of {@link Writer} that writes into {@link EnsembleLogger#ensembleLogFile}.
+	 * An instance of {@link RandomAccessFile} that writes into {@link EnsembleLogger#ensembleLogFile}.
 	 * @see {@link EnsembleLogger#ensembleLogFile}
 	 */
-	private final Writer out;
+	private final RandomAccessFile out;
 	
 	/**
 	 * <p> Used to remember the last encountered value of the membership condition, computed on the 
 	 * input objects which are given as an instance of {@link MembershipRecord}. </p> 
 	 * <p> <b>Example:</b><br/>
 	 * key = triplet of (ensemble E, coordinator C, member M)<br/>
-	 * value = true (meaning that when last checked, M was in ensemble E, where C was the coordinator)
+	 * value = true (meaning that when last checked, M was in ensemble E with C as the coordinator)
 	 * </p>
 	 */
 	private final Map<EnsembleLogger.MembershipRecord, Boolean> membershipRecords = new HashMap<>();
@@ -144,14 +144,19 @@ class EnsembleLogger {
 	 * Initializes the output streams
 	 */
 	private EnsembleLogger() {
-		OutputStreamWriter osw;
+		RandomAccessFile raf;
 		try {
-			FileOutputStream fos = new FileOutputStream(ensembleLogFile);
-			osw = new OutputStreamWriter(fos);
+			raf = new RandomAccessFile(ensembleLogFile, "rwd");
 		} catch (Exception ex) {
-			osw = null;
+			raf = null;
 		}
-		out = osw;
+		out = raf;
+		try {
+			out.setLength(0);
+			out.write(("<events>\n" + bottomElement).getBytes());
+		} catch (IOException | NullPointerException ex) {
+			Log.e("Could not log an ensemble event to " + ensembleLogFile.getAbsolutePath().toString());
+		}
 	}
 	
 	/**
@@ -173,9 +178,20 @@ class EnsembleLogger {
 	private final String eventElementName = "event";
 	
 	/**
-	 * Names of the event element attributes that appear in the output log file
+	 * Names of the event element attributes that appear in the output log file,
+	 * excluding the "type" attribute, which is added to the output separately
 	 */
 	private final String[] eventAttributes = new String[] {"coordinator", "member", "membership", "ensemble", "time"};
+	
+	/**
+	 * Closing root element
+	 */
+	private final String bottomElement = "</events>";
+	
+	/**
+	 * Length (in characters) of the closing root element
+	 */
+	private final int footerLength = bottomElement.getBytes().length;
 
 	/**
 	 * Logs the information about ensemble membership to the output file. It remembers the 
@@ -202,12 +218,45 @@ class EnsembleLogger {
 			String elementText = getElementText(eventElementName, eventAttributes, attributeValues);
 			if (elementText != null){
 				try {
-					out.append(elementText);
-					out.flush();
+					bufferedWrite(elementText);
 				} catch (IOException | NullPointerException ex) {
 					Log.e("Could not log an ensemble event to " + ensembleLogFile.getAbsolutePath().toString());
 				}
 			}
+		}
+	}
+	
+	/**
+	 * Buffer for text that will be written to the output file
+	 */
+	private final StringBuilder buffer = new StringBuilder();
+	
+	/**
+	 * Current size of the buffer, i.e. number of event elements it holds
+	 */
+	private int bufferCurrentSize = 0;
+	
+	/**
+	 * When the buffer size {@link EnsembleLogger#bufferCurrentSize} grows to 
+	 * this size, the buffer contents are written to the output file.
+	 */
+	private final int bufferCapacity = 16;
+	
+	/**
+	 * Buffered write to the output file.
+	 * @param text Text to be written to the output file.
+	 * @throws IOException When the text could not be written to the output file for some reason
+	 */
+	private void bufferedWrite(String text) throws IOException{
+		buffer.append(text);
+		bufferCurrentSize += 1;
+		if (bufferCurrentSize >= bufferCapacity){
+			buffer.append(bottomElement);
+			long newPosition = out.length() - footerLength;
+			out.seek(newPosition);
+			out.write(buffer.toString().getBytes());
+			buffer.setLength(0);
+			bufferCurrentSize = 0;
 		}
 	}
 	
@@ -228,6 +277,7 @@ class EnsembleLogger {
 		sb.append("<");
 		sb.append(name);
 		sb.append(" ");
+		sb.append("type=\"ensemble\" ");
 		for (int i = 0; i < attributeNames.length; i++){
 			String attrName = attributeNames[i];
 			String attrValue = attributeValues[i];
