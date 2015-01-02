@@ -8,10 +8,14 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.internal.verification.Times;
+import org.mockito.verification.VerificationMode;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
@@ -39,9 +43,14 @@ public class CloningKnowledgeManagerContainerTest {
 		
 		// create runtime with a single component
 		this.runtimeMetaData = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
-		ComponentInstance component = RuntimeMetadataFactoryExt.eINSTANCE.createComponentInstance();
-		component.setName("C1");
-		this.runtimeMetaData.getComponentInstances().add(component);
+		
+		ComponentInstance component1 = RuntimeMetadataFactoryExt.eINSTANCE.createComponentInstance();
+		component1.setName("C1");
+		this.runtimeMetaData.getComponentInstances().add(component1);
+		
+		ComponentInstance component2 = RuntimeMetadataFactoryExt.eINSTANCE.createComponentInstance();
+		component2.setName("C2");
+		this.runtimeMetaData.getComponentInstances().add(component2);
 		
 		this.tested = new KnowledgeManagerContainer(new CloningKnowledgeManagerFactory(), runtimeMetaData); 
 	}
@@ -70,7 +79,7 @@ public class CloningKnowledgeManagerContainerTest {
 		Collection<KnowledgeManager> replicas = tested.createReplica("T1");
 		// THEN the listener is notified about this fact
 		for (KnowledgeManager replica : replicas) {
-			verify(replicaListener).replicaRegistered(replica, tested);
+			verify(replicaListener, new Times(2)).replicaRegistered(replica, tested);
 		}
 		// and none of the local listeners is notified
 		verifyZeroInteractions(localListener);
@@ -125,10 +134,20 @@ public class CloningKnowledgeManagerContainerTest {
 		Collection<KnowledgeManager> containerReplicas = tested.getReplicas();
 		
 		// THEN the container returns all replica knowledge managers created
-		// before
-		assertEquals(3, containerReplicas.size());
-		r1.stream().forEach(r ->  assertThat(containerReplicas, hasItem(r)));
-		r2.stream().forEach(r ->  assertThat(containerReplicas, hasItem(r)));
-		r3.stream().forEach(r ->  assertThat(containerReplicas, hasItem(r)));
+		// before (replica for each registered component)
+		assertEquals(3*2, containerReplicas.size());
+		checkReplicas(r1, containerReplicas);
+		checkReplicas(r2, containerReplicas);
+		checkReplicas(r3, containerReplicas);
 	}
+
+	private void checkReplicas(Collection<KnowledgeManager> replicas, Collection<KnowledgeManager> containerReplicas) {
+		replicas.stream().forEach(r ->  assertThat(containerReplicas, hasItem(r)));
+		List<KnowledgeManager> sortedReplicas = replicas.stream().sorted((c1, c2) -> c1.getComponent().getName().compareTo(c2.getComponent().getName())).collect(Collectors.toList());
+		assertEquals("C1", sortedReplicas.get(0).getComponent().getName());
+		assertEquals("C2", sortedReplicas.get(1).getComponent().getName());
+		
+	}
+	
+	
 }
