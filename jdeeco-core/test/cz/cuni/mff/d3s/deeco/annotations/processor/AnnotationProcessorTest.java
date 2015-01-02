@@ -30,9 +30,12 @@ import cz.cuni.mff.d3s.deeco.annotations.pathparser.TokenMgrError;
 import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.*;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerFactory;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerFactory;
+import cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
@@ -84,6 +87,48 @@ public class AnnotationProcessorTest {
 		File expected = getExpectedFile(input);
 		saveInXMI(model, tempFile);
 		FileAssert.assertEquals(expected, tempFile);
+	}
+	
+	@Test 
+	public void testComponentSecurityAnnotations() throws AnnotationProcessorException {
+		// given component with security annotations is processed by the annotations processor
+		RuntimeMetadata model = factory.createRuntimeMetadata(); 
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		CorrectC4WithSecurity input = new CorrectC4WithSecurity();
+		
+		// when process() is called
+		processor.process(input);
+		
+		// then annotations are parsed correct
+		assertEquals(1, model.getComponentInstances().size());
+		ComponentInstance component = model.getComponentInstances().get(0);
+		KnowledgeManager km = component.getKnowledgeManager();
+		
+		List<KnowledgeSecurityTag> nameSecurityTags = km.getSecurityTagsFor(RuntimeModelHelper.createKnowledgePath("name"));
+		assertEquals(0, nameSecurityTags.size());
+		
+		List<KnowledgeSecurityTag> capacitySecurityTags = km.getSecurityTagsFor(RuntimeModelHelper.createKnowledgePath("capacity"));
+		assertEquals(2, capacitySecurityTags.size());
+		assertEquals("role1", capacitySecurityTags.get(0).getRoleName());
+		assertEquals("role3", capacitySecurityTags.get(1).getRoleName());
+		assertEquals(0, capacitySecurityTags.get(0).getArguments().size());
+		assertEquals(0, capacitySecurityTags.get(1).getArguments().size());
+		
+		List<KnowledgeSecurityTag> timeSecurityTags = km.getSecurityTagsFor(RuntimeModelHelper.createKnowledgePath("time"));
+		assertEquals(1, timeSecurityTags.size());
+		assertEquals("role2", timeSecurityTags.get(0).getRoleName());
+		assertEquals(2, timeSecurityTags.get(0).getArguments().size());
+		assertEquals(RuntimeModelHelper.createKnowledgePath("name"), timeSecurityTags.get(0).getArguments().get(0));
+		assertEquals(RuntimeModelHelper.createKnowledgePath("time"), timeSecurityTags.get(0).getArguments().get(1));
+		
+		assertEquals(2, component.getRoles().size());
+		assertEquals("role1", component.getRoles().get(0).getRoleName());
+		assertEquals(0, component.getRoles().get(0).getArguments().size());
+		assertEquals("role2", component.getRoles().get(1).getRoleName());
+		assertEquals(2, component.getRoles().get(1).getArguments().size());
+		assertEquals(RuntimeModelHelper.createKnowledgePath("name"), component.getRoles().get(1).getArguments().get(0));
+		assertEquals(RuntimeModelHelper.createKnowledgePath("time"), component.getRoles().get(1).getArguments().get(1));
+		
 	}
 	
 	@Test

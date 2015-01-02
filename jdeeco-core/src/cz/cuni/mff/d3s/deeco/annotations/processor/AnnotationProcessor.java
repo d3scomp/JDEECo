@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 import cz.cuni.mff.d3s.deeco.annotations.Allow;
 import cz.cuni.mff.d3s.deeco.annotations.CommunicationBoundary;
@@ -658,7 +657,7 @@ public class AnnotationProcessor {
 		}
 		if (parameters.isEmpty()) {
  			throw new AnnotationProcessorException(
- 					"The "+ (pathOrigin == pathOrigin.COMPONENT ? "component" : "ensemble") + " process cannot have zero parameters.");
+ 					"The "+ (pathOrigin == PathOrigin.COMPONENT ? "component" : "ensemble") + " process cannot have zero parameters.");
 		}
 		return parameters;
 	}
