@@ -13,6 +13,7 @@ import java.security.SecureRandom;
 import java.security.SignatureException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -77,6 +78,9 @@ public class SecurityKeyManagerImpl implements SecurityKeyManager {
 	}
 
 	private String getRoleKey(String roleName, List<Object> arguments) {
+		if (arguments == null) {
+			arguments = Collections.emptyList();
+		}
 		return roleName+"("+arguments.stream().map(o -> o.toString()).collect(Collectors.joining(","))+")";
 	}
 

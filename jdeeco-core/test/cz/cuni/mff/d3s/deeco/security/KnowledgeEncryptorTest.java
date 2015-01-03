@@ -86,6 +86,16 @@ public class KnowledgeEncryptorTest {
 	}
 	
 	@Test
+	public void encryptValueSet_NullTest() throws KnowledgeNotFoundException {
+		// given null is passed
+		
+		// when encryptValueSet() is called
+		List<KnowledgeData> result = target.encryptValueSet(null, localKnowledgeManager, metaData);
+		
+		assertNull(result);
+	}
+	
+	@Test
 	public void encryptValueSet_NoSecurityTest() throws KnowledgeNotFoundException {
 		// given no security is used
 		
@@ -96,6 +106,12 @@ public class KnowledgeEncryptorTest {
 		assertEquals(1, result.size());
 		assertEquals(metaData, result.get(0).getMetaData());
 		assertEquals(valueSet, result.get(0).getKnowledge());
+		
+		for (KnowledgePath kp : result.get(0).getKnowledge().getKnowledgePaths()) {
+			assertFalse(result.get(0).getKnowledge().getValue(kp) instanceof SealedObject);
+		}
+		
+		assertNull(result.get(0).getMetaData().encryptedKey);
 	}
 	
 	@Test
@@ -119,24 +135,32 @@ public class KnowledgeEncryptorTest {
 		KnowledgeData securedDataForRole1 = result.get(1);
 		KnowledgeData securedDataForRole2 = result.get(2);
 		
-		assertEquals(metaData, plainData.getMetaData());
 		assertEquals(2, plainData.getKnowledge().getKnowledgePaths().size());
 		assertEquals("TEST", plainData.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("b")));
 		assertEquals(123, plainData.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("c")));
-		assertFalse(securedDataForRole1.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("b")) instanceof SealedObject);
-		assertFalse(securedDataForRole1.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("c")) instanceof SealedObject);
+		assertFalse(plainData.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("b")) instanceof SealedObject);
+		assertFalse(plainData.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("c")) instanceof SealedObject);
+		assertNull(plainData.getMetaData().encryptedKey);
 		
 		assertNotNull(securedDataForRole1.getMetaData().encryptedKey);
 		assertNotNull(securedDataForRole1.getMetaData().encryptedKeyAlgorithm);
-		assertEquals(metaData, securedDataForRole1.getMetaData());
 		assertNotNull(securedDataForRole1.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("secured")));
 		assertTrue(securedDataForRole1.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("secured")) instanceof SealedObject);
 		
 		assertNotNull(securedDataForRole2.getMetaData().encryptedKey);
 		assertNotNull(securedDataForRole2.getMetaData().encryptedKeyAlgorithm);
-		assertEquals(metaData, securedDataForRole2.getMetaData());
 		assertNotNull(securedDataForRole2.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("secured")));
 		assertTrue(securedDataForRole2.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("secured")) instanceof SealedObject);
+	}
+	
+	@Test
+	public void decryptChangeSet_NullTest() {
+		// given null is passed
+				
+		// when decryptChangeSet() is called
+		target.decryptChangeSet(null, localKnowledgeManager, metaData);
+		
+		// then no exception is thrown
 	}
 	
 	@Test
@@ -145,7 +169,7 @@ public class KnowledgeEncryptorTest {
 		ChangeSet changeSet1 = new ChangeSet();
 		changeSet1.setValue(RuntimeModelHelper.createKnowledgePath("b"), "TEST");
 		
-		// when encryptValueSet() is called
+		// when decryptChangeSet() is called
 		target.decryptChangeSet(changeSet1, localKnowledgeManager, metaData);
 		
 		// then data are not modified

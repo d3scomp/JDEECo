@@ -91,7 +91,7 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 	protected final int ipDelay;
 	
 	protected final IPGossipStrategy ipGossipStrategy;
-	protected final KnowledgeEncryptor knowledgeEncryptor;
+	protected KnowledgeEncryptor knowledgeEncryptor;
 	
 	
 	/**
@@ -123,8 +123,6 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 		checkBoundaryCondition = !Boolean.getBoolean(DeecoProperties.DISABLE_BOUNDARY_CONDITIONS);
 		maxRebroadcastDelay = Integer.getInteger(DeecoProperties.MAXIMUM_REBROADCAST_DELAY, DEFAULT_MAX_REBROADCAST_DELAY);
 		ipDelay = Integer.getInteger(DeecoProperties.IP_REBROADCAST_DELAY, DEFAULT_IP_DELAY);
-		
-		this.knowledgeEncryptor = new KnowledgeEncryptor(keyManager);
 
 		double rssi = 0;
 		try {
@@ -148,6 +146,8 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 		for (char c: host.toCharArray())
 			seed += c;
 		random.setSeed(seed);
+		
+		this.knowledgeEncryptor = new KnowledgeEncryptor(keyManager);
 		
 		Log.d(String.format("KnowledgeDataManager at %s uses %s publishing", host, useIndividualPublishing ? "individual" : "list"));
 		Log.d(String.format("KnowledgeDataManager at %s uses checkGossipCondition = %b", host, checkGossipCondition));

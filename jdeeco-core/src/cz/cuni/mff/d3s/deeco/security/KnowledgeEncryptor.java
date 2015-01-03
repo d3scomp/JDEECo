@@ -8,7 +8,6 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 import java.security.cert.CertificateEncodingException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -46,6 +45,7 @@ public class KnowledgeEncryptor {
 	}
 	
 	public void decryptChangeSet(ChangeSet changeSet, KnowledgeManager replica, KnowledgeMetaData metaData) {
+		if (changeSet == null) return;
 		
 		for (KnowledgePath kp : changeSet.getUpdatedReferences()) {
 			Object value = changeSet.getValue(kp);
@@ -62,8 +62,10 @@ public class KnowledgeEncryptor {
 	}
 	
 	public List<KnowledgeData> encryptValueSet(ValueSet basicValueSet, KnowledgeManager km, KnowledgeMetaData metaData) throws KnowledgeNotFoundException {
+		if (basicValueSet == null) return null;
+		
 		Map<KnowledgeSecurityTag, ValueSet> securityMap = new HashMap<>();
-
+		
 		// split the knowledge into groups according to their security
 		for (KnowledgePath kp : basicValueSet.getKnowledgePaths()) {
 			List<KnowledgeSecurityTag> tags = km.getSecurityTagsFor(kp);
@@ -79,14 +81,18 @@ public class KnowledgeEncryptor {
 		
 		// create copies of the knowledge data, each encrypted for target role		
 		List<KnowledgeData> result = new LinkedList<>();
+		
 		for (KnowledgeSecurityTag tag : securityMap.keySet()) {
+			// clone the meta data so the the copy can be modified
+			KnowledgeMetaData clonedMetaData = metaData.clone();
+			
 			if (tag == null) {
 				// data not encrypted
-				result.add(new KnowledgeData(securityMap.get(null), metaData));
+				result.add(new KnowledgeData(securityMap.get(null), clonedMetaData));
 			} else {
 				ValueSet vs = securityMap.get(tag);
-				sealKnowledge(km, vs, tag, metaData);
-				result.add(new KnowledgeData(vs, metaData));
+				sealKnowledge(km, vs, tag, clonedMetaData);
+				result.add(new KnowledgeData(vs, clonedMetaData));
 			}
 		}
 		return result;
