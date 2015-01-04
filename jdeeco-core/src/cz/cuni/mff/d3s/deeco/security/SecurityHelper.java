@@ -18,7 +18,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
-/*
+/**
  * @author Ondřej Štumpf  
  */
 public class SecurityHelper {

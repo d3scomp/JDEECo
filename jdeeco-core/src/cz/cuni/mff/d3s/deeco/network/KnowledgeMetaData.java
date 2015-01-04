@@ -15,14 +15,17 @@ public class KnowledgeMetaData implements Serializable {
 	public transient double rssi;
 	public long createdAt; 
 	public int hopCount;
+	
 	public byte[] encryptedKey;
 	public String encryptedKeyAlgorithm;
+	public String targetRole;
 	
 	public KnowledgeMetaData(String componentId, long versionId, String sender, long createdAt, int hopCount) {
-		this(componentId, versionId, sender, createdAt, hopCount, null, null);
+		this(componentId, versionId, sender, createdAt, hopCount, null, null, null);
 	}
 
-	public KnowledgeMetaData(String componentId, long versionId, String sender, long createdAt, int hopCount, byte[] encryptedKey, String encryptedKeyAlgorithm) {
+	public KnowledgeMetaData(String componentId, long versionId, String sender, long createdAt, int hopCount, 
+			byte[] encryptedKey, String encryptedKeyAlgorithm, String targetRole) {
 		super();
 		this.componentId = componentId;
 		this.versionId = versionId;
@@ -31,10 +34,11 @@ public class KnowledgeMetaData implements Serializable {
 		this.hopCount = hopCount;
 		this.encryptedKey = encryptedKey;
 		this.encryptedKeyAlgorithm = encryptedKeyAlgorithm;
+		this.targetRole = targetRole;
 	}
 	
 	public KnowledgeMetaData clone() {
-		return new KnowledgeMetaData(componentId, versionId, sender, createdAt, hopCount, encryptedKey, encryptedKeyAlgorithm);
+		return new KnowledgeMetaData(componentId, versionId, sender, createdAt, hopCount, encryptedKey, encryptedKeyAlgorithm, targetRole);
 	}
 	
 	
@@ -102,6 +106,14 @@ public class KnowledgeMetaData implements Serializable {
 	}
 
 
+	public String getSignatureWithRole() {
+		if (targetRole != null) {
+			return componentId + "v" + versionId + "_" + targetRole;
+		} else {
+			return getSignature();
+		}
+	}
+	
 	public String getSignature() {
 //		return String.format("%sv%d", componentId, versionId);
 		return componentId + "v" + versionId;

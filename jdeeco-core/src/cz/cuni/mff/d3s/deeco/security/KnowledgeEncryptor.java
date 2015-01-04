@@ -31,7 +31,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeData;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeMetaData;
 
-/*
+/**
  * @author Ondřej Štumpf  
  */
 public class KnowledgeEncryptor {
@@ -118,7 +118,8 @@ public class KnowledgeEncryptor {
 			} catch (InvalidKeyException | ClassNotFoundException
 					| IllegalBlockSizeException | BadPaddingException
 					| NoSuchAlgorithmException | NoSuchPaddingException
-					| IOException | ShortBufferException e) {
+					| IOException | ShortBufferException | CertificateEncodingException | KeyStoreException | SecurityException 
+					| SignatureException | IllegalStateException e) {
 			
 			}		
 		}
@@ -155,6 +156,7 @@ public class KnowledgeEncryptor {
 				
 				metaData.encryptedKey = encryptedKey;
 				metaData.encryptedKeyAlgorithm = symmetricKey.getAlgorithm();
+				metaData.targetRole = keyManager.getRoleKey(roleName, arguments);
 				
 				valueSet.setValue(kp, encryptedKnowledge);
 			} catch (IllegalBlockSizeException | IOException | InvalidKeyException | BadPaddingException | NoSuchAlgorithmException | NoSuchPaddingException 

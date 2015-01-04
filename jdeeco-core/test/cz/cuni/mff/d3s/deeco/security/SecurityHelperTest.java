@@ -18,6 +18,9 @@ import javax.crypto.ShortBufferException;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * @author Ondřej Štumpf  
+ */
 public class SecurityHelperTest {
 
 	private SecurityHelper target;

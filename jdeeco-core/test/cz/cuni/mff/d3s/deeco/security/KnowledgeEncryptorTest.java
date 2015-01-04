@@ -38,6 +38,9 @@ import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeData;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeMetaData;
 
+/**
+ * @author Ondřej Štumpf  
+ */
 public class KnowledgeEncryptorTest {
 
 	private KnowledgeEncryptor target;

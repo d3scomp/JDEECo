@@ -4,10 +4,12 @@ package cz.cuni.mff.d3s.deeco.network;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import cz.cuni.mff.d3s.deeco.DeecoProperties;
@@ -67,6 +69,8 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 	
 	/** Stores received KnowledgeMetaData for replicas (received ValueSet is deleted) */
 	protected final Map<String, KnowledgeMetaData> replicaMetadata;
+	/** Stores role names of accepted replica versions */
+	protected final Map<String, Set<String>> replicaRoles;
 	/** Global version counter for all outgoing local knowledge. */
 	protected long localVersion;
 	
@@ -109,6 +113,7 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 		this.localVersion = 0;
 		this.replicaMetadata = new HashMap<>();
 		this.ipGossipStrategy = ipGossipStrategy;
+		this.replicaRoles = new HashMap<>();
 		
 		dataToRebroadcastOverMANET = new HashMap<>();
 		dataToRebroadcastOverIP = new HashMap<>();
@@ -186,7 +191,7 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 
 	@Override
 	public void rebroacast(KnowledgeMetaData metadata, NICType nicType) {
-		String sig = metadata.getSignature();
+		String sig = metadata.getSignatureWithRole();
 		KnowledgeData data;
 		if (nicType.equals(NICType.MANET) && dataToRebroadcastOverMANET.containsKey(sig)) {	
 			data = prepareForRebroadcast(dataToRebroadcastOverMANET.get(sig));
@@ -222,35 +227,47 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 			
 			KnowledgeMetaData currentMetadata = replicaMetadata.get(newMetadata.componentId);
 			
+			if (!replicaRoles.containsKey(newMetadata.getSignature())) {
+				replicaRoles.put(newMetadata.getSignature(), new HashSet<>());
+			}
+			
 			// if we get the same or newer data before we manage to rebroadcast, abort the rebroadcast 
 			if ((currentMetadata != null)
 					&& (currentMetadata.versionId <= newMetadata.versionId)
-					&& dataToRebroadcastOverMANET.containsKey(currentMetadata.getSignature())) {
-				dataToRebroadcastOverMANET.remove(currentMetadata.getSignature());
+					&& dataToRebroadcastOverMANET.containsKey(currentMetadata.getSignatureWithRole())) {
+				dataToRebroadcastOverMANET.remove(currentMetadata.getSignatureWithRole());
 				if (Log.isDebugLoggable()) {
 					Log.d(String.format(
 							"MANET: Rebroadcast aborted (%d) at %s, data %s, because of %s",
 							timeProvider.getCurrentMilliseconds(), host,
-							currentMetadata.getSignature(),
-							newMetadata.getSignature()));
+							currentMetadata.getSignatureWithRole(),
+							newMetadata.getSignatureWithRole()));
 				}
 			}
 			
 			if ((currentMetadata != null)
 					&& (currentMetadata.versionId < newMetadata.versionId)
-					&& dataToRebroadcastOverIP.containsKey(currentMetadata.getSignature())) {
-				dataToRebroadcastOverIP.remove(currentMetadata.getSignature());
+					&& dataToRebroadcastOverIP.containsKey(currentMetadata.getSignatureWithRole())) {
+				dataToRebroadcastOverIP.remove(currentMetadata.getSignatureWithRole());
 				if (Log.isDebugLoggable()) {
 					Log.d(String.format(
 							"IP: Rebroadcast aborted (%d) at %s, data %s, because of %s",
 							timeProvider.getCurrentMilliseconds(), host,
-							currentMetadata.getSignature(),
-							newMetadata.getSignature()));
+							currentMetadata.getSignatureWithRole(),
+							newMetadata.getSignatureWithRole()));
 				}
 			}
 			
-			// accept only fresh knowledge data (drop if we have already a newer value)
-			boolean haveOlder = (currentMetadata == null) || (currentMetadata.versionId < newMetadata.versionId);
+			// accept only fresh knowledge data (drop if we have already a newer value) or data for not yet processed role
+			boolean haveOlder = (currentMetadata == null) || (currentMetadata.versionId < newMetadata.versionId); 
+			
+			if (!haveOlder) {
+				Set<String> newRoles = replicaRoles.get(newMetadata.getSignature());
+				Set<String> currentRoles = replicaRoles.get(currentMetadata.getSignature());
+				
+				boolean haveAllRoles = currentRoles.containsAll(newRoles) && currentRoles.contains(newMetadata.targetRole);
+				haveOlder = !haveAllRoles;
+			}
 			
 			if (haveOlder) {
 				for (KnowledgeManager replica : kmContainer.createReplica(newMetadata.componentId)) {
@@ -268,6 +285,7 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 				
 				// store the metadata without the knowledge values
 				replicaMetadata.put(newMetadata.componentId, newMetadata);
+				replicaRoles.get(newMetadata.getSignature()).add(newMetadata.targetRole);
 				
 				// rebroadcast only data that is of some value (i.e., newer than we have)
 				queueForRebroadcast(kd);
