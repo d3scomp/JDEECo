@@ -2,15 +2,8 @@ package cz.cuni.mff.d3s.deeco.task;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyCollectionOf;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 import java.util.Collection;
@@ -21,11 +14,14 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
+import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerFactory;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry;
 import cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ShadowsTriggerListener;
@@ -66,6 +62,8 @@ public class EnsembleTaskTest {
 	private Scheduler scheduler;
 	@Mock
 	private ArchitectureObserver architectureObserver;
+	@Mock
+	private KnowledgeManagerContainer kmContainer;
 	
 	private Task task;
 
@@ -165,7 +163,9 @@ public class EnsembleTaskTest {
 		model.setKnowledgeManager(knowledgeManager);
 		model.setOtherKnowledgeManagersAccess(shadowReplicasAccess);
 
-		this.task = new EnsembleTask(model.ensembleController, scheduler, architectureObserver);
+		when(kmContainer.hasReplica(anyString())).thenReturn(true);
+		
+		this.task = new EnsembleTask(model.ensembleController, scheduler, architectureObserver, kmContainer);
 	}
 	
 	@Test

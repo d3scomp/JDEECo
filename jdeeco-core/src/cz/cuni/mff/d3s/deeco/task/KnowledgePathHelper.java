@@ -146,6 +146,15 @@ public class KnowledgePathHelper {
 	}
 
 	/**
+	 * Checks whether the given knowledge path is absolute (i.e. consists only of {@link PathNodeField} or {@link PathNodeComponentId}).
+	 * @param path input knowledge path.
+	 * @return true if the path is absolute, false otherwise
+	 */
+	public static boolean isAbsolutePath(KnowledgePath path) {
+		return path.getNodes().stream().allMatch(node -> (node instanceof PathNodeField) || (node instanceof PathNodeComponentId));
+	}
+	
+	/**
 	 * Returns a stripped path (i.e. path without member/coordinator prefix. It further checks that the input path is absolute (i.e. is a sequence of only {@link PathNodeField}).
 	 * 
 	 * @param absolutePath input knowledge path.

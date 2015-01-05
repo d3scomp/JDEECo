@@ -4,11 +4,15 @@ import static cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.getAbsoluteStripped
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
@@ -21,8 +25,10 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
@@ -52,6 +58,11 @@ public class EnsembleTask extends Task {
 	 * Reference to the corresponding {@link ArchitectureObserver} 
 	 */
 	ArchitectureObserver architectureObserver;
+	
+	/**
+	 * Reference to the corresponding {@link KnowledgeManagerContainer} 
+	 */
+	KnowledgeManagerContainer kmContainer;
 	
 	/**
 	 * A wrapper around a trigger obtained from the local knowledge manager. The sole purpose of this class is to be able to distinguish
@@ -133,11 +144,12 @@ public class EnsembleTask extends Task {
 	}
 	ShadowsTriggerListenerImpl shadowsTriggerListener = new ShadowsTriggerListenerImpl();
 
-	public EnsembleTask(EnsembleController ensembleController, Scheduler scheduler, ArchitectureObserver architectureObserver) {
+	public EnsembleTask(EnsembleController ensembleController, Scheduler scheduler, ArchitectureObserver architectureObserver, KnowledgeManagerContainer kmContainer) {
 		super(scheduler);
 		
 		this.architectureObserver = architectureObserver;
 		this.ensembleController = ensembleController;
+		this.kmContainer = kmContainer;
 	}
 
 	/**
@@ -498,19 +510,113 @@ public class EnsembleTask extends Task {
 
 	private void evaluateMembershipAndPerformExchange(ReadOnlyKnowledgeManager shadowKnowledgeManager) throws TaskInvocationException {
 		// Invoke the membership condition and if the membership condition returned true, invoke the knowledge exchange
-		if (checkMembership(PathRoot.COORDINATOR, shadowKnowledgeManager)) {
+		if (checkMembership(PathRoot.COORDINATOR, shadowKnowledgeManager) && checkSecurity(PathRoot.COORDINATOR, shadowKnowledgeManager)) {
 			architectureObserver.ensembleFormed(ensembleController.getEnsembleDefinition(), ensembleController.getComponentInstance(),
 					ensembleController.getComponentInstance().getKnowledgeManager().getId(),shadowKnowledgeManager.getId());
 			performExchange(PathRoot.COORDINATOR, shadowKnowledgeManager);
 		}
 		// Do the same with the roles exchanged
-		if (checkMembership(PathRoot.MEMBER, shadowKnowledgeManager)) {
+		if (checkMembership(PathRoot.MEMBER, shadowKnowledgeManager) && checkSecurity(PathRoot.MEMBER, shadowKnowledgeManager)) {
 			architectureObserver.ensembleFormed(ensembleController.getEnsembleDefinition(), ensembleController.getComponentInstance(),
 					shadowKnowledgeManager.getId(), ensembleController.getComponentInstance().getKnowledgeManager().getId());
 			performExchange(PathRoot.MEMBER, shadowKnowledgeManager);
 		}
 	}
 	
+	private boolean checkSecurity(PathRoot localRole, ReadOnlyKnowledgeManager shadowKnowledgeManager) throws TaskInvocationException {
+		if (kmContainer.hasReplica(shadowKnowledgeManager.getId())) {
+			// if the shadow knowledge manager belongs to a remote component, security is already guaranteed with data encryption in DefaultKnowledgeDataManager
+			return true;
+		} else {			
+			// shadowKnowledgeManager is actually local and therefore has associated knowledge security tags
+			KnowledgeManager localKnowledgeManager = ensembleController.getComponentInstance().getKnowledgeManager();
+			
+			Collection<Parameter> formalParamsOfMembership = ensembleController.getEnsembleDefinition().getMembership().getParameters();
+			Collection<Parameter> formalParamsOfExchange = ensembleController.getEnsembleDefinition().getKnowledgeExchange().getParameters();
+			
+			Collection<KnowledgePath> shadowPathsFromMembership = new LinkedList<>();
+			Collection<KnowledgePath> localPathsFromMembership = new LinkedList<>();
+			Collection<KnowledgePath> shadowPathsFromExchange = new LinkedList<>();
+			Collection<KnowledgePath> localPathsFromExchange = new LinkedList<>();
+			
+			getPathsFrom(localRole, formalParamsOfMembership, shadowKnowledgeManager, localPathsFromMembership, shadowPathsFromMembership);
+			getPathsFrom(localRole, formalParamsOfExchange, shadowKnowledgeManager, localPathsFromExchange, shadowPathsFromExchange);
+			
+			return canAccessKnowledge(shadowPathsFromMembership, shadowKnowledgeManager, localKnowledgeManager) 
+					&& canAccessKnowledge(shadowPathsFromExchange, shadowKnowledgeManager, localKnowledgeManager) 
+					&& canAccessKnowledge(localPathsFromMembership, localKnowledgeManager, shadowKnowledgeManager) 
+					&& canAccessKnowledge(localPathsFromExchange, localKnowledgeManager, shadowKnowledgeManager);
+		}		
+	}
+
+	private boolean canAccessKnowledge(Collection<KnowledgePath> paths, ReadOnlyKnowledgeManager knowledgeManager, ReadOnlyKnowledgeManager otherKnowledgeManager) {
+		boolean canAccessAll = true;
+		
+		for (KnowledgePath kp : paths) {
+			Collection<KnowledgeSecurityTag> securityTags = knowledgeManager.getSecurityTagsFor(kp);
+			boolean canAccessPath = false;
+			for (KnowledgeSecurityTag securityTag : securityTags) {
+				canAccessPath = canAccessPath || canAccessTag(securityTag, knowledgeManager, otherKnowledgeManager);
+			}
+			canAccessAll = canAccessAll && (canAccessPath || securityTags.isEmpty());
+		}
+		
+		return canAccessAll;
+	}
+
+	private boolean canAccessTag(KnowledgeSecurityTag securityTag, ReadOnlyKnowledgeManager knowledgeManager, ReadOnlyKnowledgeManager otherKnowledgeManager) {
+		
+		Collection<SecurityRole> localRoles = otherKnowledgeManager.getComponent().getRoles();
+		boolean canAccessTag = false;
+		
+		for (SecurityRole role : localRoles) {
+			try {
+				String roleName = role.getRoleName();
+				ValueSet roleArgumentsValueSet = otherKnowledgeManager.get(role.getArguments());
+				List<Object> roleArguments = role.getArguments().stream().map(path -> roleArgumentsValueSet.getValue(path)).collect(Collectors.toList());
+				
+				String tagName = securityTag.getRoleName();
+				ValueSet tagArgumentsValueSet = knowledgeManager.get(securityTag.getArguments());
+				List<Object> tagArguments = securityTag.getArguments().stream().map(path -> tagArgumentsValueSet.getValue(path)).collect(Collectors.toList());
+				
+				canAccessTag = canAccessTag || (roleName.equals(tagName) && roleArguments.equals(tagArguments));
+			} catch (KnowledgeNotFoundException e) { }	
+		}
+		return canAccessTag;
+	}
+
+	private void getPathsFrom(PathRoot localRole, Collection<Parameter> formalParams, 
+			ReadOnlyKnowledgeManager shadowKnowledgeManager, Collection<KnowledgePath> localPaths, Collection<KnowledgePath> shadowPaths) throws TaskInvocationException {
+		KnowledgeManager localKnowledgeManager = ensembleController.getComponentInstance().getKnowledgeManager();
+		
+		for (Parameter formalParam : formalParams) {
+			KnowledgePathAndRoot absoluteKnowledgePathAndRoot;
+
+			// FIXME: The call to getAbsoluteStrippedPath is in theory wrong, because this way we are not obtaining the
+			// knowledge within one transaction. But fortunately this is not a problem with the single 
+			// threaded scheduler we have at the moment, because once the invoke method starts there is no other
+			// activity whatsoever in the system.	
+			try {
+				if (localRole == PathRoot.COORDINATOR) {
+					absoluteKnowledgePathAndRoot = getAbsoluteStrippedPath(formalParam.getKnowledgePath(), localKnowledgeManager, shadowKnowledgeManager);
+				} else {
+					absoluteKnowledgePathAndRoot = getAbsoluteStrippedPath(formalParam.getKnowledgePath(), shadowKnowledgeManager, localKnowledgeManager);				
+				}
+			} catch (KnowledgeNotFoundException e) {
+				break;
+			}
+			
+			if (absoluteKnowledgePathAndRoot == null) {
+				throw new TaskInvocationException("Member/Coordinator prefix required for membership and knowledge exchange paths.");
+			} if (absoluteKnowledgePathAndRoot.root == localRole) {
+				localPaths.add(absoluteKnowledgePathAndRoot.knowledgePath);
+			} else {
+				shadowPaths.add(absoluteKnowledgePathAndRoot.knowledgePath);
+			}				
+			
+		}
+	}
+
 	/**
 	 * Returns the period associated with the ensemble in the in the meta-model as the {@link TimeTrigger}. Note that the {@link EnsembleTask} assumes that there is at most
 	 * one instance of {@link TimeTrigger} associated with the ensemble in the meta-model.

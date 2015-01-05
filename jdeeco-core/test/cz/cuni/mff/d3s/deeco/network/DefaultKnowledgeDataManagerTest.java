@@ -5,10 +5,12 @@ import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.*;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -87,9 +89,11 @@ public class DefaultKnowledgeDataManagerTest {
 	@PeriodicScheduling(period = 1000)
 	public static class AllEnsemble {
 		
+		public static Predicate<String> membership;
+		
 		@Membership
 		public static boolean membership(@In("member.id") String id) {
-			return true;
+			return membership.test(id);
 		}
 
 		@KnowledgeExchange
@@ -142,11 +146,14 @@ public class DefaultKnowledgeDataManagerTest {
 		processor.process(policeComponent2);
 		processor.process(AllEnsemble.class);
 		
+		// set ensemble to allow all components
+		AllEnsemble.membership = id -> true;
+		
 		container = spy(new KnowledgeManagerContainer(new CloningKnowledgeManagerFactory(), model));
-		runtime = new RuntimeFrameworkImpl(model, scheduler, executor, container);
+		runtime = spy(new RuntimeFrameworkImpl(model, scheduler, executor, container));
 
 		knowledgeDataManager = new DefaultKnowledgeDataManager(model.getEnsembleDefinitions(), null);
-		knowledgeDataManager.initialize(container, dataSender, "1.2.3.4", scheduler, securityKeyManager);
+		knowledgeDataManager.initialize(container, dataSender, "1.2.3.4", scheduler, securityKeyManager);		
 	}
 
 	@Test
@@ -333,8 +340,11 @@ public class DefaultKnowledgeDataManagerTest {
 	}
 	
 	@Test
-	public void knowledgeSecurityTest() throws InterruptedException, TaskInvocationException {
-		performEnsembleTasks();
+	public void publishReceiveSecurityTest() throws InterruptedException, TaskInvocationException {		
+		// set ensemble to allow only remote components, so that we can ignore local-to-local knowledge exchange
+		AllEnsemble.membership = id -> id.contains("remote");
+				
+		invokeEnsembleTasks();
 		
 		// when publish() is called
 		knowledgeDataManager.publish();
@@ -353,19 +363,29 @@ public class DefaultKnowledgeDataManagerTest {
 		// then data are received
 		knowledgeDataManager.receiveKnowledge(data);
 		
-		performEnsembleTasks();
+		invokeEnsembleTasks();
 		
 		assertEquals(1, policeComponent1.secrets.size());
 		assertEquals("top secret", policeComponent1.secrets.get("V1_remote"));
 		assertTrue(policeComponent2.secrets.isEmpty());
 	}
 	
-	private void performEnsembleTasks() throws TaskInvocationException {
+	@Test
+	public void localKnowledgeExchangeSecurityTest() throws TaskInvocationException {
+		invokeEnsembleTasks();
+		
+		assertEquals(1, policeComponent1.secrets.size());
+		assertEquals("top secret", policeComponent1.secrets.get("V1"));
+		assertTrue(policeComponent2.secrets.isEmpty());
+	}
+	
+	
+	private void invokeEnsembleTasks() throws TaskInvocationException {
 		// manually invoke ensemble knowledge exchange
 		Trigger trigger = model.getEnsembleDefinitions().get(0).getTriggers().get(0);
 		
 		for (ComponentInstance ci : model.getComponentInstances()) {
-			Task task = new EnsembleTask(ci.getEnsembleControllers().get(0), scheduler, architectureObserver);
+			Task task = new EnsembleTask(ci.getEnsembleControllers().get(0), scheduler, architectureObserver, container);
 			task.invoke(trigger);
 		}
 		

@@ -30,6 +30,5 @@ public interface KnowledgeManager extends ReadOnlyKnowledgeManager {
 	 */
 	void update(ChangeSet changeSet) throws KnowledgeUpdateException;
 	void markAsLocal(Collection<KnowledgePath> knowledgePaths);
-	void markAsSecured(KnowledgePath knowledgePath, Collection<KnowledgeSecurityTag> newSecurityTags);
-	ComponentInstance getComponent();
+	void markAsSecured(KnowledgePath knowledgePath, Collection<KnowledgeSecurityTag> newSecurityTags);	
 }

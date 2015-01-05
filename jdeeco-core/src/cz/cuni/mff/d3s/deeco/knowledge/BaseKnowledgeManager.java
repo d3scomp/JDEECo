@@ -17,6 +17,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
+import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper;
 
 // TB: XXX - This would really benefit from being re-implemented using trie datastructure
 
@@ -33,7 +34,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 public class BaseKnowledgeManager implements KnowledgeManager {
 
 	private final Map<KnowledgePath, Object> knowledge;
-	private final Map<KnowledgePath, List<KnowledgeSecurityTag>> securityTags;
+	private final Map<PathNode, List<KnowledgeSecurityTag>> securityTags;
 	private final Map<KnowledgeChangeTrigger, List<TriggerListener>> knowledgeChangeListeners;
 	private final Collection<KnowledgePath> localKnowledgePaths;
 	
@@ -607,16 +608,27 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	}
 
 	@Override
-	public void markAsSecured(KnowledgePath knowledgePath, Collection<KnowledgeSecurityTag> newSecurityTags) {		
-		if (!securityTags.containsKey(knowledgePath)) {
-			securityTags.put(knowledgePath, new LinkedList<>());
+	public void markAsSecured(KnowledgePath knowledgePath, Collection<KnowledgeSecurityTag> newSecurityTags) {	
+		if (knowledgePath.getNodes().size() != 1) {
+			throw new IllegalArgumentException("Illegal use of method - only single-noded knowledge path can be secured.");
 		}
-		securityTags.get(knowledgePath).addAll(newSecurityTags);		
+		
+		PathNode pathNode = knowledgePath.getNodes().get(0);
+		if (!securityTags.containsKey(pathNode)) {
+			securityTags.put(pathNode, new LinkedList<>());
+		}
+		securityTags.get(pathNode).addAll(newSecurityTags);		
 	}
 
 	@Override
 	public List<KnowledgeSecurityTag> getSecurityTagsFor(KnowledgePath knowledgePath) { 
-		List<KnowledgeSecurityTag> tags = securityTags.get(knowledgePath);
+		if (!KnowledgePathHelper.isAbsolutePath(knowledgePath)) {
+			throw new IllegalArgumentException("The knowledge path must be absolute.");
+		}
+		
+		// assuming only the first node can contain security tags (i.e. no nested components are allowed)
+		PathNode pathNode = knowledgePath.getNodes().get(0);
+		List<KnowledgeSecurityTag> tags = securityTags.get(pathNode);
 		if (tags == null) {
 			return Collections.EMPTY_LIST;
 		} else {

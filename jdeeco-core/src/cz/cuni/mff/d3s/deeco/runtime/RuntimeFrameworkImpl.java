@@ -262,7 +262,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 		// create a new task for each ensemble controller
 		// register ecore adapters to listen to change in EnsembleController.isActive 
 		for (final EnsembleController ec: instance.getEnsembleControllers()) {
-			Task task = new EnsembleTask(ec, scheduler, (ArchitectureObserver) this);
+			Task task = new EnsembleTask(ec, scheduler, (ArchitectureObserver) this, kmContainer);
 			ciRecord.getEnsembleTasks().put(ec, task);
 			scheduler.addTask(task);	
 			
