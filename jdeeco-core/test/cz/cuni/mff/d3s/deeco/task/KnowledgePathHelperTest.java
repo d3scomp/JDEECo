@@ -2,7 +2,8 @@ package cz.cuni.mff.d3s.deeco.task;
 
 import static cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper.createKnowledgePath;
 import static cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.getStrippedPath;
-import static org.junit.Assert.assertEquals;
+import static cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.isAbsolutePath;
+import static org.junit.Assert.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -330,4 +331,23 @@ public class KnowledgePathHelperTest {
 		// THEN it returns null
 		assertEquals(null, getStrippedPath(knowledgePath));
 	}	
+	
+	@Test
+	public void testIsAbsolutePath1() {
+		// WHEN the path is absolute
+		KnowledgePath knowledgePath = createKnowledgePath("level1", "level2");
+		
+		// THEN isAbsolutePath returns true
+		assertTrue(isAbsolutePath(knowledgePath));
+	}
+	
+	@Test
+	public void testIsAbsolutePath2() {
+		// WHEN the path is absolute
+		KnowledgePath knowledgePath = createKnowledgePath("level1", "level2");
+		knowledgePath.getNodes().add(factory.createPathNodeMapKey());
+		
+		// THEN isAbsolutePath returns false
+		assertFalse(isAbsolutePath(knowledgePath));
+	}
 }
