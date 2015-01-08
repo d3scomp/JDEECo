@@ -3,10 +3,7 @@ package cz.cuni.mff.d3s.deeco.security.runtime;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.*;
 
-import java.io.IOException;
 import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -114,7 +111,7 @@ public class SecurityRuntimeModel {
 	
 	public ArchitectureObserver architectureObserver;
 	
-	public SecurityRuntimeModel() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, AnnotationProcessorException {
+	public SecurityRuntimeModel() throws KeyStoreException, AnnotationProcessorException {
 		initMocks(this);
 		
 		securityKeyManager = new SecurityKeyManagerImpl();

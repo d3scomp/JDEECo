@@ -2,14 +2,12 @@ package cz.cuni.mff.d3s.deeco.security;
 
 import static org.junit.Assert.*;
 
-import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -29,7 +27,7 @@ public class SecurityKeyManagerImplTest {
 	private SecurityKeyManagerImpl target;
 	
 	@Before
-	public void setUp() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+	public void setUp() throws KeyStoreException {
 		target = new SecurityKeyManagerImpl();
 	}
 	

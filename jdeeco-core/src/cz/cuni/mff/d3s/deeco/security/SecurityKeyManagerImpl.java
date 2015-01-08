@@ -20,7 +20,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.bouncycastle.jce.X509Principal;
 import org.bouncycastle.x509.X509V3CertificateGenerator;
@@ -35,12 +34,17 @@ public class SecurityKeyManagerImpl implements SecurityKeyManager {
 	private Map<String, PrivateKey> privateKeys;
 	private SecureRandom secureRandom;
 	
-	public SecurityKeyManagerImpl() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+	public SecurityKeyManagerImpl() throws KeyStoreException {
 		this.keyStore = KeyStore.getInstance("JKS");
 		this.secureRandom = new SecureRandom();
 		this.privateKeys = new HashMap<>();
 		
-		initialize();
+		try {
+			initialize();
+		} catch (NoSuchAlgorithmException | CertificateException | IOException e) {
+			throw new KeyStoreException(e);
+		}
+		
 	}
 	
 	private void initialize() throws NoSuchAlgorithmException, CertificateException, IOException {
