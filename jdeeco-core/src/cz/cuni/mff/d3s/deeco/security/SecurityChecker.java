@@ -77,7 +77,7 @@ public class SecurityChecker {
 			for (KnowledgeSecurityTag securityTag : securityTags) {
 				canAccessPath = canAccessPath || canAccessTag(securityTag, protectingKnowledgeManager, accessingKnowledgeManager);
 			}
-			canAccessAll = canAccessAll && (canAccessPath || securityTags.isEmpty());
+			canAccessAll = canAccessAll && (securityTags.isEmpty() || canAccessPath);
 		}
 		
 		return canAccessAll;
