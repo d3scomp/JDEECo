@@ -396,11 +396,16 @@ public class AnnotationProcessor {
 	private void addSecurityTags(Class<?> clazz, KnowledgeManager km,
 			ChangeSet initialKnowledge) throws NoSuchFieldException, SecurityException, ParseException, AnnotationProcessorException {
 		for (KnowledgePath kp : initialKnowledge.getUpdatedReferences()) {
-			if (kp.getNodes().size() != 1) continue;
+			if (kp.getNodes().size() != 1) throw new NoSuchFieldException();
 			PathNodeField pathNodeField = (PathNodeField)kp.getNodes().get(0);
 			Field field = clazz.getField(pathNodeField.getName());
 			
 			Allow[] allows = field.getAnnotationsByType(Allow.class);
+			
+			if (allows.length > 0 && field.getName().equals(ComponentIdentifier.ID.toString())) {
+				throw new SecurityException("The component ID must not be secured");
+			}
+			
 			for (Allow allow : allows) {
 				KnowledgeSecurityTag tag = factory.createKnowledgeSecurityTag();
 				tag.setRoleName(allow.role());
