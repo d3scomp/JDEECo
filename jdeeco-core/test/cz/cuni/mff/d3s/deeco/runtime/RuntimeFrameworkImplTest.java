@@ -3,10 +3,8 @@ package cz.cuni.mff.d3s.deeco.runtime;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.junit.Before;
@@ -878,6 +876,7 @@ public class RuntimeFrameworkImplTest {
 		vs.setValue(kp, knowledgeValue);		
 		
 		when(km.get(anyCollectionOf(KnowledgePath.class))).thenReturn(vs);		
+		when(km.getSecurityTags(anyObject())).thenReturn(new ArrayList<>());
 		
 		// GIVEN a non-initialized runtime
 		RuntimeFrameworkImpl tested = new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, false);	

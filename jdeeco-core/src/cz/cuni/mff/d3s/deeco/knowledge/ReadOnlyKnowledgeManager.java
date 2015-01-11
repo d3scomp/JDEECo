@@ -6,6 +6,7 @@ import java.util.List;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 
 /**
@@ -64,6 +65,17 @@ public interface ReadOnlyKnowledgeManager {
 	public boolean isLocal(KnowledgePath knowledgePath);
 	public Collection<KnowledgePath> getLocalPaths();
 	
-	List<KnowledgeSecurityTag> getSecurityTagsFor(KnowledgePath knowledgePath);
-	ComponentInstance getComponent();
+	/**
+	 * Local knowledge managers are associated with their local components; replica knowledge managers
+	 * are associated with such local component that was used to decrypt the knowledge.
+	 * @return component
+	 */
+	public ComponentInstance getComponent();
+
+	/**
+	 * Gets security annotations associated with given field
+	 * @param pathNodeField
+	 * @return list of security tags
+	 */
+	List<KnowledgeSecurityTag> getSecurityTags(PathNodeField pathNodeField);
 }

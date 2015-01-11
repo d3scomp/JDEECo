@@ -17,7 +17,6 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
-import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper;
 
 // TB: XXX - This would really benefit from being re-implemented using trie datastructure
 
@@ -34,7 +33,7 @@ import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper;
 public class BaseKnowledgeManager implements KnowledgeManager {
 
 	private final Map<KnowledgePath, Object> knowledge;
-	private final Map<PathNode, List<KnowledgeSecurityTag>> securityTags;
+	private final Map<PathNodeField, List<KnowledgeSecurityTag>> securityTags;
 	private final Map<KnowledgeChangeTrigger, List<TriggerListener>> knowledgeChangeListeners;
 	private final Collection<KnowledgePath> localKnowledgePaths;
 	
@@ -608,31 +607,33 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	}
 
 	@Override
-	public void markAsSecured(KnowledgePath knowledgePath, Collection<KnowledgeSecurityTag> newSecurityTags) {	
+	public void addSecurityTags(KnowledgePath knowledgePath, Collection<KnowledgeSecurityTag> newSecurityTags) {	
 		if (knowledgePath.getNodes().size() != 1) {
 			throw new IllegalArgumentException("Illegal use of method - only single-noded knowledge path can be secured.");
 		}
+		if (!(knowledgePath.getNodes().get(0) instanceof PathNodeField)) {
+			throw new IllegalArgumentException("Illegal use of method - the node must refer to a field within the component.");
+		}
 		
-		PathNode pathNode = knowledgePath.getNodes().get(0);
+		PathNodeField pathNode = (PathNodeField)knowledgePath.getNodes().get(0);
+		
 		if (!securityTags.containsKey(pathNode)) {
 			securityTags.put(pathNode, new LinkedList<>());
 		}
+		
 		securityTags.get(pathNode).addAll(newSecurityTags);		
 	}
-
+	
 	@Override
-	public List<KnowledgeSecurityTag> getSecurityTagsFor(KnowledgePath knowledgePath) { 
-		if (!KnowledgePathHelper.isAbsolutePath(knowledgePath)) {
-			throw new IllegalArgumentException("The knowledge path must be absolute.");
-		}
-		
-		// assuming only the first node can contain security tags (i.e. no nested components are allowed)
-		PathNode pathNode = knowledgePath.getNodes().get(0);
-		List<KnowledgeSecurityTag> tags = securityTags.get(pathNode);
-		if (tags == null) {
-			return Collections.EMPTY_LIST;
+	public List<KnowledgeSecurityTag> getSecurityTags(PathNodeField pathNodeField) {
+		List<KnowledgeSecurityTag> result = securityTags.get(pathNodeField);
+		if (result == null) {
+			return Collections.emptyList();
 		} else {
-			return tags;
+			return result;
 		}
 	}
+
+	
+
 }

@@ -27,9 +27,11 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeData;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeMetaData;
+import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper;
 
 /**
  * @author Ondřej Štumpf  
@@ -68,7 +70,11 @@ public class KnowledgeEncryptor {
 		
 		// split the knowledge into groups according to their security
 		for (KnowledgePath kp : basicValueSet.getKnowledgePaths()) {
-			List<KnowledgeSecurityTag> tags = km.getSecurityTagsFor(kp);
+			if (!KnowledgePathHelper.isAbsolutePath(kp)) {
+				throw new IllegalArgumentException("The value set must contain only absolute knowledge paths.");
+			}
+			
+			List<KnowledgeSecurityTag> tags = km.getSecurityTags((PathNodeField)kp.getNodes().get(0));
 			
 			if (tags == null || tags.isEmpty()) {
 				addToSecurityMap(basicValueSet, securityMap, null, kp);

@@ -1,8 +1,8 @@
 package cz.cuni.mff.d3s.deeco.runtime;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.notify.Adapter;
@@ -28,6 +28,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
@@ -326,9 +327,14 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 		km.markAsLocal(ci.getKnowledgeManager().getLocalPaths());
 		
 		if (initialKnowledge != null) {
-			for (KnowledgePath kp : initialKnowledge.getKnowledgePaths()) {
-				km.markAsSecured(kp, ci.getKnowledgeManager().getSecurityTagsFor(kp));
-			}			
+			try {
+				for (KnowledgePath kp : initialKnowledge.getKnowledgePaths()) {
+					List<KnowledgeSecurityTag> tags = ci.getKnowledgeManager().getSecurityTags((PathNodeField)kp.getNodes().get(0));
+					km.addSecurityTags(kp, tags);
+				}	
+			} catch (IllegalArgumentException e) {
+				Log.e("Error while securing knowledge for component " + ci.getKnowledgeManager().getId());
+			}
 		}
 		
 		try {

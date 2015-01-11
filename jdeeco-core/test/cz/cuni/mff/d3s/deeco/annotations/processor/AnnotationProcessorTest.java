@@ -10,7 +10,6 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import junitx.framework.FileAssert;
 
@@ -105,17 +104,17 @@ public class AnnotationProcessorTest {
 		ComponentInstance component = model.getComponentInstances().get(0);
 		KnowledgeManager km = component.getKnowledgeManager();
 		
-		List<KnowledgeSecurityTag> nameSecurityTags = km.getSecurityTagsFor(RuntimeModelHelper.createKnowledgePath("name")).stream().map(list -> list.get(0)).collect(Collectors.toList());
+		List<KnowledgeSecurityTag> nameSecurityTags = km.getSecurityTags(RuntimeModelHelper.createPathNodeField("name"));
 		assertEquals(0, nameSecurityTags.size());
 		
-		List<KnowledgeSecurityTag> capacitySecurityTags = km.getSecurityTagsFor(RuntimeModelHelper.createKnowledgePath("capacity")).stream().map(list -> list.get(0)).collect(Collectors.toList());
+		List<KnowledgeSecurityTag> capacitySecurityTags = km.getSecurityTags(RuntimeModelHelper.createPathNodeField("capacity"));
 		assertEquals(2, capacitySecurityTags.size());
 		assertEquals("role1", capacitySecurityTags.get(0).getRoleName());
 		assertEquals("role3", capacitySecurityTags.get(1).getRoleName());
 		assertEquals(0, capacitySecurityTags.get(0).getArguments().size());
 		assertEquals(0, capacitySecurityTags.get(1).getArguments().size());
 		
-		List<KnowledgeSecurityTag> timeSecurityTags = km.getSecurityTagsFor(RuntimeModelHelper.createKnowledgePath("time")).stream().map(list -> list.get(0)).collect(Collectors.toList());
+		List<KnowledgeSecurityTag> timeSecurityTags = km.getSecurityTags(RuntimeModelHelper.createPathNodeField("time"));
 		assertEquals(1, timeSecurityTags.size());
 		assertEquals("role2", timeSecurityTags.get(0).getRoleName());
 		assertEquals(2, timeSecurityTags.get(0).getArguments().size());

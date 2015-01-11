@@ -412,7 +412,7 @@ public class AnnotationProcessor {
 				for (String stringPath : allow.params()) {
 					tag.getArguments().add(createKnowledgePath(stringPath, PathOrigin.SECURITY_ANNOTATION));
 				}
-				km.markAsSecured(kp, Arrays.asList(tag));			
+				km.addSecurityTags(kp, Arrays.asList(tag));			
 			}
 			
 		}		

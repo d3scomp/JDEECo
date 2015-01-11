@@ -5,12 +5,8 @@ import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.*;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -21,32 +17,12 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import cz.cuni.mff.d3s.deeco.annotations.*;
-import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
-import cz.cuni.mff.d3s.deeco.executor.Executor;
-import cz.cuni.mff.d3s.deeco.executor.SameThreadExecutor;
 import cz.cuni.mff.d3s.deeco.knowledge.*;
 import cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
-import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
-import cz.cuni.mff.d3s.deeco.runtime.ArchitectureObserver;
-import cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework;
-import cz.cuni.mff.d3s.deeco.runtime.RuntimeFrameworkImpl;
-import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
-import cz.cuni.mff.d3s.deeco.scheduler.SingleThreadedScheduler;
-import cz.cuni.mff.d3s.deeco.security.SecurityKeyManager;
-import cz.cuni.mff.d3s.deeco.security.SecurityKeyManagerImpl;
 import cz.cuni.mff.d3s.deeco.security.runtime.SecurityRuntimeModel;
-import cz.cuni.mff.d3s.deeco.task.EnsembleTask;
-import cz.cuni.mff.d3s.deeco.task.ParamHolder;
-import cz.cuni.mff.d3s.deeco.task.Task;
-import cz.cuni.mff.d3s.deeco.task.TaskInvocationException;
 
 /**
  * @author Ondřej Štumpf  

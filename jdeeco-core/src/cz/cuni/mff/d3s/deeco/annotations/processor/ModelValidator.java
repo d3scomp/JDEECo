@@ -2,7 +2,6 @@ package cz.cuni.mff.d3s.deeco.annotations.processor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 

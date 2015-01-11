@@ -6,6 +6,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.MockitoAnnotations.initMocks;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,6 +20,9 @@ import org.mockito.Mock;
 import cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
+import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 
 /**
  * BaseKnowledgeManager testing.
@@ -44,6 +49,7 @@ public class BaseKnowledgeManagerTest {
 		ChangeSet result = new ChangeSet();
 		result.setValue(RuntimeModelHelper.createKnowledgePath("id"), "Test");
 		result.setValue(RuntimeModelHelper.createKnowledgePath("number"), 10);
+		result.setValue(RuntimeModelHelper.createKnowledgePath("mapKeyInner"), "x");
 		result.setValue(RuntimeModelHelper.createKnowledgePath("date"), null);
 		List<Integer> list = new LinkedList<>();
 		list.add(1);
@@ -58,6 +64,10 @@ public class BaseKnowledgeManagerTest {
 		result.setValue(
 				RuntimeModelHelper.createKnowledgePath("innerKnowledge"),
 				new InnerKnowledge("innerA", "innerB"));
+		Map<String, String> mapNested = new HashMap<>();
+		mapNested.put("x", "a");
+		result.setValue(RuntimeModelHelper.createKnowledgePath("mapNested"), mapNested);
+		
 		return result;
 	}
 
@@ -337,6 +347,50 @@ public class BaseKnowledgeManagerTest {
 		assertEquals(10, tested.get(listOfPaths).getValue(numberPath));
 	}
 
+	@Test
+	public void securityTagsTest() {
+		// given single-noded knowledge path and security tags are prepared
+		KnowledgePath kp = RuntimeModelHelper.createKnowledgePath("field");
+		KnowledgeSecurityTag tag = RuntimeMetadataFactory.eINSTANCE.createKnowledgeSecurityTag();
+		tag.setRoleName("role");
+		Collection<KnowledgeSecurityTag> expectedTags = Arrays.asList(tag);
+		
+		// when addSecurityTags() is called
+		tested.addSecurityTags(kp, expectedTags);
+		
+		// when security tags are then retrieved
+		KnowledgePath kp_same = RuntimeModelHelper.createKnowledgePath("field");
+		List<KnowledgeSecurityTag> actualTags = tested.getSecurityTags((PathNodeField) kp_same.getNodes().get(0));
+		
+		// then collections are equal
+		assertEquals(expectedTags, actualTags);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void markAsSecured_MultiNodePathTest() {
+		// given multi-noded knowledge path and security tags are prepared
+		KnowledgePath kp = RuntimeModelHelper.createKnowledgePath("field", "inner");
+		Collection<KnowledgeSecurityTag> expectedTags = Arrays.asList();
+		
+		// when addSecurityTags() is called
+		tested.addSecurityTags(kp, expectedTags);
+		
+		// then exception is thrown
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void markAsSecured_IdPathTest() {
+		// given single-noded knowledge path and security tags are prepared
+		KnowledgePath kp = RuntimeModelHelper.createKnowledgePath();
+		kp.getNodes().add(RuntimeMetadataFactory.eINSTANCE.createPathNodeComponentId());
+		Collection<KnowledgeSecurityTag> expectedTags = Arrays.asList();
+		
+		// when addSecurityTags() is called
+		tested.addSecurityTags(kp, expectedTags);
+		
+		// then exception is thrown
+	}
+	
 	public static class InnerKnowledge {
 		public String a;
 		public String b;

@@ -80,9 +80,15 @@ public class KnowledgePathHelperTest {
 		KnowledgeManager memberKnowledgeManager = new CloningKnowledgeManager("30", null);
 		KnowledgeManager coordKnowledgeManager = new CloningKnowledgeManager("1", null);
 		// THEN absolute path is 'positions.30.x' on the COORDINATOR side
+		
+		String originalPath = path.toString();
 		KnowledgePathAndRoot res = KnowledgePathHelper.getAbsoluteStrippedPath(path, coordKnowledgeManager, memberKnowledgeManager);
 		assertEquals(res.knowledgePath.toString(),"positions.30.x");
 		assertEquals(res.root,PathRoot.COORDINATOR);
+		
+		// then original path is not changed
+		String pathAfterCall = path.toString();
+		assertEquals(originalPath, pathAfterCall); 
 	}
 	
 	@Test
@@ -139,9 +145,14 @@ public class KnowledgePathHelperTest {
 		coordKnowledgeManager.update(cs);
 		
 		// THEN absolute path is '50.x' on the MEMBER side
+		String originalPath = path.toString();
 		KnowledgePathAndRoot res = KnowledgePathHelper.getAbsoluteStrippedPath(path, coordKnowledgeManager, memberKnowledgeManager);
 		assertEquals(res.knowledgePath.toString(),"50.x");
 		assertEquals(res.root,PathRoot.MEMBER);
+		
+		// then original path is not changed
+		String pathAfterCall = path.toString();
+		assertEquals(originalPath, pathAfterCall);
 	}
 
 	
@@ -215,9 +226,15 @@ public class KnowledgePathHelperTest {
 		cs = new ChangeSet();
 		cs.setValue(newNestedPath1, "5");
 		km.update(cs);
+		
 		// THEN absolute path is 'level1.5' 
+		String originalPath = path.toString();
 		KnowledgePath res = KnowledgePathHelper.getAbsolutePath(path, km);
 		assertEquals(res.toString(),"level1.5");
+		
+		// then original path is not changed
+		String pathAfterCall = path.toString();
+		assertEquals(originalPath, pathAfterCall);
 	}
 	
 	@Test
@@ -244,8 +261,14 @@ public class KnowledgePathHelperTest {
 		// WHEN '[id]' is evaluated to '42'
 		KnowledgeManager km = new CloningKnowledgeManager("42", null);
 		// THEN absolute path is 'coordinates.42.x'
+		
+		String originalPath = path.toString();
 		KnowledgePath res = KnowledgePathHelper.getAbsolutePath(path, km);
 		assertEquals(res.toString(),"coordinates.42.x");
+		
+		// then original path is not changed
+		String pathAfterCall = path.toString();
+		assertEquals(originalPath, pathAfterCall);
 	}
 
 	@Test

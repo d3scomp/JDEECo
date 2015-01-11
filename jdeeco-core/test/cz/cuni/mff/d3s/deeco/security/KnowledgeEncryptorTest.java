@@ -32,6 +32,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
@@ -98,6 +99,23 @@ public class KnowledgeEncryptorTest {
 		assertNull(result);
 	}
 	
+	@Test(expected = IllegalArgumentException.class)
+	public void encryptValueSet_NonAbsoluteTest() throws KnowledgeNotFoundException {
+		// given value set contains non absolute path
+		KnowledgePath nonAbsolutePath = RuntimeModelHelper.createKnowledgePath("map");
+		KnowledgePath innerPath = RuntimeModelHelper.createKnowledgePath("key");
+		PathNodeMapKey mapKey = factory.createPathNodeMapKey();
+		mapKey.setKeyPath(innerPath);
+		nonAbsolutePath.getNodes().add(mapKey);
+		
+		valueSet.setValue(nonAbsolutePath, 987);
+		
+		// when encryptValueSet() is called
+		target.encryptValueSet(valueSet, localKnowledgeManager, metaData);
+		
+		// then exception is thrown
+	}
+	
 	@Test
 	public void encryptValueSet_NoSecurityTest() throws KnowledgeNotFoundException {
 		// given no security is used
@@ -127,7 +145,7 @@ public class KnowledgeEncryptorTest {
 		tag2.setRoleName("testrole2");
 		tags.add(tag1);
 		tags.add(tag2);
-		localKnowledgeManager.markAsSecured(RuntimeModelHelper.createKnowledgePath("secured"), tags);
+		localKnowledgeManager.addSecurityTags(RuntimeModelHelper.createKnowledgePath("secured"), tags);
 		
 		// when encryptValueSet() is called
 		List<KnowledgeData> result = target.encryptValueSet(valueSet, localKnowledgeManager, metaData);
@@ -230,7 +248,7 @@ public class KnowledgeEncryptorTest {
 		KnowledgeSecurityTag tag1 = factory.createKnowledgeSecurityTag();
 		tag1.setRoleName("testrole1");
 		tags.add(tag1);
-		localKnowledgeManager.markAsSecured(RuntimeModelHelper.createKnowledgePath("secured"), tags);
+		localKnowledgeManager.addSecurityTags(RuntimeModelHelper.createKnowledgePath("secured"), tags);
 		
 		// when data are encrypted
 		List<KnowledgeData> kds = target.encryptValueSet(valueSet, localKnowledgeManager, metaData);
