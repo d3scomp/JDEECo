@@ -28,6 +28,10 @@ public class CorrectC4 {
 		public static final String name = "[name_path]";
 		@RoleParam
 		public static final String time = null;
+		@RoleParam
+		public static final Integer x_integer = 123;
+		@RoleParam
+		public static final String x_string = "some_value";
 	}
 	
 	@RoleDefinition

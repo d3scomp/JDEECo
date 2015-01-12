@@ -29,7 +29,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.impl.TriggerImpl;
 import cz.cuni.mff.d3s.deeco.runtime.ArchitectureObserver;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
-import cz.cuni.mff.d3s.deeco.security.SecurityChecker;
+import cz.cuni.mff.d3s.deeco.security.LocalSecurityChecker;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.KnowledgePathAndRoot;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.PathRoot;
 
@@ -55,9 +55,9 @@ public class EnsembleTask extends Task {
 	ArchitectureObserver architectureObserver;
 	
 	/**
-	 * Reference to the corresponding {@link SecurityChecker} 
+	 * Reference to the corresponding {@link LocalSecurityChecker} 
 	 */
-	SecurityChecker securityChecker;
+	LocalSecurityChecker securityChecker;
 	
 	/**
 	 * A wrapper around a trigger obtained from the local knowledge manager. The sole purpose of this class is to be able to distinguish
@@ -144,7 +144,7 @@ public class EnsembleTask extends Task {
 		
 		this.architectureObserver = architectureObserver;
 		this.ensembleController = ensembleController;
-		this.securityChecker = new SecurityChecker(ensembleController, kmContainer);
+		this.securityChecker = new LocalSecurityChecker(ensembleController, kmContainer);
 	}
 
 	/**

@@ -3,6 +3,7 @@ package cz.cuni.mff.d3s.deeco.task;
 import static cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper.createKnowledgePath;
 import static cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.getStrippedPath;
 import static cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.isAbsolutePath;
+import static cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.cloneKnowledgePath;
 import static org.junit.Assert.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -366,11 +367,29 @@ public class KnowledgePathHelperTest {
 	
 	@Test
 	public void testIsAbsolutePath2() {
-		// WHEN the path is absolute
+		// WHEN the path is not absolute
 		KnowledgePath knowledgePath = createKnowledgePath("level1", "level2");
 		knowledgePath.getNodes().add(factory.createPathNodeMapKey());
 		
 		// THEN isAbsolutePath returns false
 		assertFalse(isAbsolutePath(knowledgePath));
+	}
+	
+	@Test
+	public void testcloneKnowledgePath() {
+		// WHEN the path is created
+		KnowledgePath knowledgePath = createKnowledgePath("<C>", "level1", "level2");
+		PathNodeMapKey mapKey = factory.createPathNodeMapKey();
+		mapKey.setKeyPath(createKnowledgePath("<M>", "level1", "level2"));
+		knowledgePath.getNodes().add(mapKey);
+		
+		// THEN cloneKnowledgePath returns deep copy		
+		KnowledgePath copy= cloneKnowledgePath(knowledgePath);		
+		
+		assertEquals(knowledgePath, copy);
+		
+		// modify the original to verify deep clone
+		((PathNodeMapKey)knowledgePath.getNodes().get(3)).getKeyPath().getNodes().remove(1);
+		assertNotEquals(knowledgePath, copy);
 	}
 }

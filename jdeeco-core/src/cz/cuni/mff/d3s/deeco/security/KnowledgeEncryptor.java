@@ -40,12 +40,12 @@ public class KnowledgeEncryptor {
 	
 	private final SecurityKeyManager keyManager;
 	private final SecurityHelper securityHelper;
-	private final SecurityChecker securityChecker;
+	private final RemoteSecurityChecker securityChecker;
 	
 	public KnowledgeEncryptor(SecurityKeyManager keyManager) {
 		this.keyManager = keyManager;
 		this.securityHelper = new SecurityHelper();
-		this.securityChecker = new SecurityChecker(null, null);
+		this.securityChecker = new RemoteSecurityChecker();
 	}
 	
 	public void decryptChangeSet(ChangeSet changeSet, KnowledgeManager replica, KnowledgeMetaData metaData) {

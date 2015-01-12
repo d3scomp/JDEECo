@@ -39,9 +39,9 @@ import cz.cuni.mff.d3s.deeco.task.TaskInvocationException;
  * @author Ondřej Štumpf
  *
  */
-public class SecurityCheckerTest {
+public class LocalSecurityCheckerTest {
 	
-	SecurityChecker target;
+	LocalSecurityChecker target;
 	
 	@Mock
 	EnsembleController ensembleController;
@@ -61,7 +61,7 @@ public class SecurityCheckerTest {
 		when(kmContainer.hasReplica("remote")).thenReturn(true);
 		
 		factory = RuntimeMetadataFactory.eINSTANCE;
-		target = new SecurityChecker(ensembleController, kmContainer);
+		target = new LocalSecurityChecker(ensembleController, kmContainer);
 		
 		localComponent = factory.createComponentInstance();
 		shadowComponent = factory.createComponentInstance();

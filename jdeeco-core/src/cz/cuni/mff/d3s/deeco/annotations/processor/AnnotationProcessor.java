@@ -71,6 +71,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
 import cz.cuni.mff.d3s.deeco.network.GenericCommunicationBoundaryPredicate;
+import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper;
 
 /**
  * Common gateway for processing of Java objects/classes with DEECo annotations.
@@ -423,7 +424,7 @@ public class AnnotationProcessor {
 										
 			Object fieldValue = null;
 			try {
-				fieldValue = (String)field.get(null);
+				fieldValue = field.get(null);
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				throw new AnnotationProcessorException("Cannot read path from security role argument "+field.getName(), e);
 			}
@@ -466,7 +467,7 @@ public class AnnotationProcessor {
 	private void overrideArgument(SecurityRoleArgument argument, SecurityRole securityRole) {
 		Optional<SecurityRoleArgument> optionalArgument = securityRole.getArguments().stream().filter(arg -> arg.getName().equals(argument.getName())).findFirst();
 		if (optionalArgument.isPresent()) {
-			securityRole.getArguments().remove(optionalArgument.get());
+			securityRole.getArguments().removeIf(arg -> arg.getName().equals(optionalArgument.get().getName()));
 			
 			if (argument instanceof BlankSecurityRoleArgument) {
 				BlankSecurityRoleArgument arg = factory.createBlankSecurityRoleArgument();
@@ -475,7 +476,7 @@ public class AnnotationProcessor {
 			} else if (argument instanceof PathSecurityRoleArgument) {
 				PathSecurityRoleArgument arg = factory.createPathSecurityRoleArgument();
 				arg.setName(argument.getName());
-				arg.setKnowledgePath(((PathSecurityRoleArgument)argument).getKnowledgePath());
+				arg.setKnowledgePath(KnowledgePathHelper.cloneKnowledgePath(((PathSecurityRoleArgument)argument).getKnowledgePath()));
 				securityRole.getArguments().add(arg);
 			} else {
 				AbsoluteSecurityRoleArgument arg = factory.createAbsoluteSecurityRoleArgument();

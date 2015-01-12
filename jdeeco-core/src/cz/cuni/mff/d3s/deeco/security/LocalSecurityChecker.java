@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
@@ -25,7 +24,6 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
-import cz.cuni.mff.d3s.deeco.network.KnowledgeSecurityAnnotation;
 import cz.cuni.mff.d3s.deeco.task.TaskInvocationException;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.PathRoot;
 
@@ -33,7 +31,7 @@ import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.PathRoot;
  * 
  * @author Ondřej Štumpf
  */
-public class SecurityChecker {
+public class LocalSecurityChecker {
 	
 	/**
 	 * Reference to the corresponding {@link KnowledgeManagerContainer} 
@@ -45,16 +43,9 @@ public class SecurityChecker {
 	 */
 	EnsembleController ensembleController;
 	
-	public SecurityChecker(EnsembleController ensembleController, KnowledgeManagerContainer kmContainer) {
+	public LocalSecurityChecker(EnsembleController ensembleController, KnowledgeManagerContainer kmContainer) {
 		this.ensembleController = ensembleController;
 		this.kmContainer = kmContainer;		
-	}
-	
-	public boolean checkSecurity(SecurityRole securityRole, KnowledgeSecurityAnnotation securityAnnotation, ReadOnlyKnowledgeManager accessingKnowledgeManager) throws KnowledgeNotFoundException {		
-		Map<String, Object> roleArguments = RoleHelper.readRoleArguments(securityRole, accessingKnowledgeManager);
-		boolean namesMatch = securityRole.getRoleName().equals(securityAnnotation.getRoleName());
-		
-		return namesMatch && argumentsMatch(roleArguments, securityAnnotation.getRoleArguments());
 	}
 	
 	public boolean checkSecurity(PathRoot localRole, ReadOnlyKnowledgeManager shadowKnowledgeManager) throws TaskInvocationException {
@@ -174,29 +165,12 @@ public class SecurityChecker {
 				String tagName = securityTag.getRequiredRole().getRoleName();
 				Map<String, Object> tagArguments = RoleHelper.readRoleArguments(role, protectingKnowledgeManager);
 				
-				canAccessTag = canAccessTag || (roleName.equals(tagName) && argumentsMatch(roleArguments, tagArguments));
+				canAccessTag = canAccessTag || (roleName.equals(tagName) && RoleHelper.roleArgumentsMatch(roleArguments, tagArguments));
 			} catch (KnowledgeNotFoundException e) { 
 				
 			}	
 		}
 		return canAccessTag;
-	}
-	
-	private boolean argumentsMatch(Map<String, Object> roleArguments, Map<String, Object> tagArguments) {
-		boolean match = true;
-		
-		for (Entry<String, Object> entry : tagArguments.entrySet()) {
-			if (roleArguments.containsKey(entry.getKey())) {
-				Object roleArgumentValue = roleArguments.get(entry.getKey());
-				match = match && ((roleArgumentValue == null) || (entry.getValue() != null && entry.getValue().equals(roleArgumentValue)));
-			} else {
-				match = false;				
-			}
-			
-			if (!match) break;
-		}
-		
-		return match;
 	}
 	
 }

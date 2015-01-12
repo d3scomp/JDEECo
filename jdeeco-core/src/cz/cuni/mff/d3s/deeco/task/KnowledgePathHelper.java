@@ -114,7 +114,12 @@ public class KnowledgePathHelper {
 		return getStrippedPath(modifiablePath);
 	}
 
-	private static KnowledgePath cloneKnowledgePath(KnowledgePath path) {
+	/**
+	 * Creates a deep clone of the knowledge path
+	 * @param path to clone
+	 * @return the deep copy
+	 */
+	public static KnowledgePath cloneKnowledgePath(KnowledgePath path) {
 		RuntimeMetadataFactory factory = RuntimeMetadataFactory.eINSTANCE;
 		
 		KnowledgePath modifiablePath = factory.createKnowledgePath();

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
@@ -20,6 +21,24 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRoleArgument;
  * @author Ondřej Štumpf
  */
 public class RoleHelper {
+	
+	public static boolean roleArgumentsMatch(Map<String, Object> roleArguments, Map<String, Object> tagArguments) {
+		boolean match = true;
+		
+		for (Entry<String, Object> entry : tagArguments.entrySet()) {
+			if (roleArguments.containsKey(entry.getKey())) {
+				Object roleArgumentValue = roleArguments.get(entry.getKey());
+				match = match && ((roleArgumentValue == null) || (entry.getValue() != null && entry.getValue().equals(roleArgumentValue)));
+			} else {
+				match = false;				
+			}
+			
+			if (!match) break;
+		}
+		
+		return match;
+	}
+	
 	public static List<SecurityRole> getTransitiveRoles(List<SecurityRole> roles) {
 		List<SecurityRole> result = new LinkedList<>();
 		result.addAll(roles);
