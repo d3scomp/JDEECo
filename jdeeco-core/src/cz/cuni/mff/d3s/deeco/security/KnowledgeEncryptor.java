@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -31,6 +30,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeData;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeMetaData;
+import cz.cuni.mff.d3s.deeco.network.KnowledgeSecurityAnnotation;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper;
 
 /**
@@ -40,10 +40,12 @@ public class KnowledgeEncryptor {
 	
 	private final SecurityKeyManager keyManager;
 	private final SecurityHelper securityHelper;
+	private final SecurityChecker securityChecker;
 	
 	public KnowledgeEncryptor(SecurityKeyManager keyManager) {
 		this.keyManager = keyManager;
 		this.securityHelper = new SecurityHelper();
+		this.securityChecker = new SecurityChecker(null, null);
 	}
 	
 	public void decryptChangeSet(ChangeSet changeSet, KnowledgeManager replica, KnowledgeMetaData metaData) {
@@ -53,7 +55,7 @@ public class KnowledgeEncryptor {
 			Object value = changeSet.getValue(kp);
 			if (value instanceof SealedObject) {
 				try {
-					Object decryptedValue = decryptValue((SealedObject)value, replica, metaData);
+					Object decryptedValue = accessValue((SealedObject)value, replica, metaData);
 					changeSet.setValue(kp, decryptedValue);
 				} catch (KnowledgeNotFoundException | SecurityException e) {
 					changeSet.remove(kp);
@@ -104,22 +106,26 @@ public class KnowledgeEncryptor {
 		return result;
 	}
 	
-	private Object decryptValue(SealedObject sealedObject, KnowledgeManager replica, KnowledgeMetaData metaData) throws KnowledgeNotFoundException {
-		KnowledgeManager localKnowledgeManager = replica.getComponent().getKnowledgeManager();
+	private Object accessValue(SealedObject sealedObject, KnowledgeManager replica, KnowledgeMetaData metaData) throws KnowledgeNotFoundException {
 		Object value = null;
 		boolean encryptionSucceeded = false;
 		
-		for (SecurityRole role : replica.getComponent().getRoles()) {
-			String roleName = role.getRoleName();
-			ValueSet argumentsValueSet = localKnowledgeManager.get(role.getArguments());	
+		List<SecurityRole> transitiveRoles = RoleHelper.getTransitiveRoles(replica.getComponent().getRoles());
+		
+		for (SecurityRole role : transitiveRoles) {
+			if (!securityChecker.checkSecurity(role, metaData.targetRole, replica.getComponent().getKnowledgeManager())) {
+				continue;
+			}
 			
-			List<Object> arguments = role.getArguments().stream().map(path -> argumentsValueSet.getValue(path)).collect(Collectors.toList());					
+			String roleName = metaData.targetRole.getRoleName();
+			Map<String, Object> arguments = metaData.targetRole.getRoleArguments();
 			
 			try {
-				Key privateKey = keyManager.getPrivateKeyFor(roleName, arguments);
+				Key privateKey = keyManager.getPrivateKeyFor(roleName, arguments);				
 				Key decryptedSymmetricKey = securityHelper.decryptKey(metaData.encryptedKey, metaData.encryptedKeyAlgorithm, privateKey);
 				value = sealedObject.getObject(securityHelper.getSymmetricCipher(Cipher.DECRYPT_MODE, decryptedSymmetricKey));
-				encryptionSucceeded = true;
+				
+				encryptionSucceeded = true;				
 				break; // decryption succeeded - we have a value
 			} catch (InvalidKeyException | ClassNotFoundException
 					| IllegalBlockSizeException | BadPaddingException
@@ -148,10 +154,8 @@ public class KnowledgeEncryptor {
 	private void sealKnowledge(KnowledgeManager km, ValueSet valueSet, KnowledgeSecurityTag tag, KnowledgeMetaData metaData) throws KnowledgeNotFoundException {
 		for (KnowledgePath kp : valueSet.getKnowledgePaths()) {
 			Object plainKnowledge = valueSet.getValue(kp);
-			String roleName = tag.getRoleName();
-			
-			ValueSet argumentsValueSet = km.get(tag.getArguments());			
-			List<Object> arguments = tag.getArguments().stream().map(path -> argumentsValueSet.getValue(path)).collect(Collectors.toList());
+			String roleName = tag.getRequiredRole().getRoleName();
+			Map<String, Object> arguments = RoleHelper.readRoleArguments(tag.getRequiredRole(), km);
 						
 			try {
 				Key publicKey = keyManager.getPublicKeyFor(roleName, arguments);
@@ -162,7 +166,7 @@ public class KnowledgeEncryptor {
 				
 				metaData.encryptedKey = encryptedKey;
 				metaData.encryptedKeyAlgorithm = symmetricKey.getAlgorithm();
-				metaData.targetRole = keyManager.getRoleKey(roleName, arguments);
+				metaData.targetRole = new KnowledgeSecurityAnnotation(roleName, arguments);
 				
 				valueSet.setValue(kp, encryptedKnowledge);
 			} catch (IllegalBlockSizeException | IOException | InvalidKeyException | BadPaddingException | NoSuchAlgorithmException | NoSuchPaddingException 
@@ -172,4 +176,6 @@ public class KnowledgeEncryptor {
 		}
 		
 	}
+
+	
 }

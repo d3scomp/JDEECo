@@ -38,6 +38,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeData;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeMetaData;
+import cz.cuni.mff.d3s.deeco.network.KnowledgeSecurityAnnotation;
 
 /**
  * @author Ondřej Štumpf  
@@ -140,9 +141,11 @@ public class KnowledgeEncryptorTest {
 		// given single security tag is used
 		Collection<KnowledgeSecurityTag> tags = new LinkedList<>();
 		KnowledgeSecurityTag tag1 = factory.createKnowledgeSecurityTag();
-		tag1.setRoleName("testrole1");
+		tag1.setRequiredRole(factory.createSecurityRole());
+		tag1.getRequiredRole().setRoleName("testrole1");
 		KnowledgeSecurityTag tag2 = factory.createKnowledgeSecurityTag();
-		tag2.setRoleName("testrole2");
+		tag2.setRequiredRole(factory.createSecurityRole());
+		tag2.getRequiredRole().setRoleName("testrole2");
 		tags.add(tag1);
 		tags.add(tag2);
 		localKnowledgeManager.addSecurityTags(RuntimeModelHelper.createKnowledgePath("secured"), tags);
@@ -202,6 +205,7 @@ public class KnowledgeEncryptorTest {
 		// given security is used
 		metaData.encryptedKey = securityHelper.encryptKey(testrole1PublicKey, testrole1PublicKey);
 		metaData.encryptedKeyAlgorithm = testrole1PublicKey.getAlgorithm();
+		metaData.targetRole = new KnowledgeSecurityAnnotation("testrole1", null);
 		
 		Cipher cipher = securityHelper.getSymmetricCipher(Cipher.ENCRYPT_MODE, testrole1PublicKey);
 		SealedObject sealed = new SealedObject(666, cipher);
@@ -223,6 +227,7 @@ public class KnowledgeEncryptorTest {
 		// given security is used
 		metaData.encryptedKey = securityHelper.encryptKey(testrole1PublicKey, testrole1PublicKey);
 		metaData.encryptedKeyAlgorithm = testrole1PublicKey.getAlgorithm();
+		metaData.targetRole = new KnowledgeSecurityAnnotation("testrole1", null);
 		
 		// when testrole2 key is used to encrypt data
 		Cipher cipher = securityHelper.getSymmetricCipher(Cipher.ENCRYPT_MODE, testrole2PublicKey);
@@ -246,7 +251,8 @@ public class KnowledgeEncryptorTest {
 		// given local component has testrole1
 		Collection<KnowledgeSecurityTag> tags = new LinkedList<>();
 		KnowledgeSecurityTag tag1 = factory.createKnowledgeSecurityTag();
-		tag1.setRoleName("testrole1");
+		tag1.setRequiredRole(factory.createSecurityRole());
+		tag1.getRequiredRole().setRoleName("testrole1");
 		tags.add(tag1);
 		localKnowledgeManager.addSecurityTags(RuntimeModelHelper.createKnowledgePath("secured"), tags);
 		

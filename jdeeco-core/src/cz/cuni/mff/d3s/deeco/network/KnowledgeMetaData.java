@@ -18,14 +18,14 @@ public class KnowledgeMetaData implements Serializable {
 	
 	public byte[] encryptedKey;
 	public String encryptedKeyAlgorithm;
-	public String targetRole;
+	public KnowledgeSecurityAnnotation targetRole;
 	
 	public KnowledgeMetaData(String componentId, long versionId, String sender, long createdAt, int hopCount) {
 		this(componentId, versionId, sender, createdAt, hopCount, null, null, null);
 	}
 
 	public KnowledgeMetaData(String componentId, long versionId, String sender, long createdAt, int hopCount, 
-			byte[] encryptedKey, String encryptedKeyAlgorithm, String targetRole) {
+			byte[] encryptedKey, String encryptedKeyAlgorithm, KnowledgeSecurityAnnotation targetRole) {
 		super();
 		this.componentId = componentId;
 		this.versionId = versionId;
@@ -40,9 +40,7 @@ public class KnowledgeMetaData implements Serializable {
 	public KnowledgeMetaData clone() {
 		return new KnowledgeMetaData(componentId, versionId, sender, createdAt, hopCount, encryptedKey, encryptedKeyAlgorithm, targetRole);
 	}
-	
-	
-	
+		
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -102,20 +100,26 @@ public class KnowledgeMetaData implements Serializable {
 			if (!encryptedKey.equals(other.encryptedKey)) 
 				return false;
 		}
+		if (targetRole == null) {
+			if (other.targetRole != null)
+				return false;
+		} else {
+			if (!targetRole.equals(other.targetRole)) 
+				return false;
+		}
 		return true;
 	}
 
 
 	public String getSignatureWithRole() {
 		if (targetRole != null) {
-			return componentId + "v" + versionId + "_" + targetRole;
+			return componentId + "v" + versionId + "_" + targetRole.hashCode();
 		} else {
 			return getSignature();
 		}
 	}
 	
 	public String getSignature() {
-//		return String.format("%sv%d", componentId, versionId);
 		return componentId + "v" + versionId;
-	}
+	}	
 }

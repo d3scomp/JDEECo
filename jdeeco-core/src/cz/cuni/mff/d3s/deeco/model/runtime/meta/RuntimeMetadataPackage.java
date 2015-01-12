@@ -1025,22 +1025,13 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int KNOWLEDGE_SECURITY_TAG = 20;
 
 	/**
-	 * The feature id for the '<em><b>Role Name</b></em>' attribute.
+	 * The feature id for the '<em><b>Required Role</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int KNOWLEDGE_SECURITY_TAG__ROLE_NAME = 0;
-
-	/**
-	 * The feature id for the '<em><b>Arguments</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int KNOWLEDGE_SECURITY_TAG__ARGUMENTS = 1;
+	int KNOWLEDGE_SECURITY_TAG__REQUIRED_ROLE = 0;
 
 	/**
 	 * The number of structural features of the '<em>Knowledge Security Tag</em>' class.
@@ -1049,7 +1040,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int KNOWLEDGE_SECURITY_TAG_FEATURE_COUNT = 2;
+	int KNOWLEDGE_SECURITY_TAG_FEATURE_COUNT = 1;
 
 	/**
 	 * The number of operations of the '<em>Knowledge Security Tag</em>' class.
@@ -1071,13 +1062,22 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int SECURITY_ROLE = 21;
 
 	/**
+	 * The feature id for the '<em><b>Consists Of</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SECURITY_ROLE__CONSISTS_OF = 0;
+
+	/**
 	 * The feature id for the '<em><b>Role Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int SECURITY_ROLE__ROLE_NAME = 0;
+	int SECURITY_ROLE__ROLE_NAME = 1;
 
 	/**
 	 * The feature id for the '<em><b>Arguments</b></em>' containment reference list.
@@ -1086,7 +1086,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SECURITY_ROLE__ARGUMENTS = 1;
+	int SECURITY_ROLE__ARGUMENTS = 2;
 
 	/**
 	 * The number of structural features of the '<em>Security Role</em>' class.
@@ -1095,7 +1095,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SECURITY_ROLE_FEATURE_COUNT = 2;
+	int SECURITY_ROLE_FEATURE_COUNT = 3;
 
 	/**
 	 * The number of operations of the '<em>Security Role</em>' class.
@@ -1107,6 +1107,172 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int SECURITY_ROLE_OPERATION_COUNT = 0;
 
 	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.SecurityRoleArgumentImpl <em>Security Role Argument</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.SecurityRoleArgumentImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getSecurityRoleArgument()
+	 * @generated
+	 */
+	int SECURITY_ROLE_ARGUMENT = 22;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SECURITY_ROLE_ARGUMENT__NAME = 0;
+
+	/**
+	 * The number of structural features of the '<em>Security Role Argument</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SECURITY_ROLE_ARGUMENT_FEATURE_COUNT = 1;
+
+	/**
+	 * The number of operations of the '<em>Security Role Argument</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SECURITY_ROLE_ARGUMENT_OPERATION_COUNT = 0;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.PathSecurityRoleArgumentImpl <em>Path Security Role Argument</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.PathSecurityRoleArgumentImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getPathSecurityRoleArgument()
+	 * @generated
+	 */
+	int PATH_SECURITY_ROLE_ARGUMENT = 23;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PATH_SECURITY_ROLE_ARGUMENT__NAME = SECURITY_ROLE_ARGUMENT__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Knowledge Path</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PATH_SECURITY_ROLE_ARGUMENT__KNOWLEDGE_PATH = SECURITY_ROLE_ARGUMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>Path Security Role Argument</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PATH_SECURITY_ROLE_ARGUMENT_FEATURE_COUNT = SECURITY_ROLE_ARGUMENT_FEATURE_COUNT + 1;
+
+	/**
+	 * The number of operations of the '<em>Path Security Role Argument</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PATH_SECURITY_ROLE_ARGUMENT_OPERATION_COUNT = SECURITY_ROLE_ARGUMENT_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.BlankSecurityRoleArgumentImpl <em>Blank Security Role Argument</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.BlankSecurityRoleArgumentImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getBlankSecurityRoleArgument()
+	 * @generated
+	 */
+	int BLANK_SECURITY_ROLE_ARGUMENT = 24;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BLANK_SECURITY_ROLE_ARGUMENT__NAME = SECURITY_ROLE_ARGUMENT__NAME;
+
+	/**
+	 * The number of structural features of the '<em>Blank Security Role Argument</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BLANK_SECURITY_ROLE_ARGUMENT_FEATURE_COUNT = SECURITY_ROLE_ARGUMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of operations of the '<em>Blank Security Role Argument</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BLANK_SECURITY_ROLE_ARGUMENT_OPERATION_COUNT = SECURITY_ROLE_ARGUMENT_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.AbsoluteSecurityRoleArgumentImpl <em>Absolute Security Role Argument</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.AbsoluteSecurityRoleArgumentImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getAbsoluteSecurityRoleArgument()
+	 * @generated
+	 */
+	int ABSOLUTE_SECURITY_ROLE_ARGUMENT = 25;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ABSOLUTE_SECURITY_ROLE_ARGUMENT__NAME = SECURITY_ROLE_ARGUMENT__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Value</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ABSOLUTE_SECURITY_ROLE_ARGUMENT__VALUE = SECURITY_ROLE_ARGUMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>Absolute Security Role Argument</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ABSOLUTE_SECURITY_ROLE_ARGUMENT_FEATURE_COUNT = SECURITY_ROLE_ARGUMENT_FEATURE_COUNT + 1;
+
+	/**
+	 * The number of operations of the '<em>Absolute Security Role Argument</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ABSOLUTE_SECURITY_ROLE_ARGUMENT_OPERATION_COUNT = SECURITY_ROLE_ARGUMENT_OPERATION_COUNT + 0;
+
+	/**
 	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection <em>Parameter Direction</em>}' enum.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1114,7 +1280,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getParameterDirection()
 	 * @generated
 	 */
-	int PARAMETER_DIRECTION = 22;
+	int PARAMETER_DIRECTION = 26;
 
 	/**
 	 * The meta object id for the '<em>Method</em>' data type.
@@ -1124,7 +1290,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getMethod()
 	 * @generated
 	 */
-	int METHOD = 23;
+	int METHOD = 27;
 
 	/**
 	 * The meta object id for the '<em>Knowledge Manager</em>' data type.
@@ -1134,7 +1300,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getKnowledgeManager()
 	 * @generated
 	 */
-	int KNOWLEDGE_MANAGER = 24;
+	int KNOWLEDGE_MANAGER = 28;
 
 	/**
 	 * The meta object id for the '<em>Shadow Knowledge Manager Registry</em>' data type.
@@ -1144,7 +1310,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getShadowKnowledgeManagerRegistry()
 	 * @generated
 	 */
-	int SHADOW_KNOWLEDGE_MANAGER_REGISTRY = 25;
+	int SHADOW_KNOWLEDGE_MANAGER_REGISTRY = 29;
 
 	/**
 	 * The meta object id for the '<em>Communication Boundary</em>' data type.
@@ -1154,7 +1320,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getCommunicationBoundary()
 	 * @generated
 	 */
-	int COMMUNICATION_BOUNDARY = 26;
+	int COMMUNICATION_BOUNDARY = 30;
 
 
 	/**
@@ -1788,26 +1954,15 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EClass getKnowledgeSecurityTag();
 
 	/**
-	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag#getRoleName <em>Role Name</em>}'.
+	 * Returns the meta object for the containment reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag#getRequiredRole <em>Required Role</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Role Name</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag#getRoleName()
+	 * @return the meta object for the containment reference '<em>Required Role</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag#getRequiredRole()
 	 * @see #getKnowledgeSecurityTag()
 	 * @generated
 	 */
-	EAttribute getKnowledgeSecurityTag_RoleName();
-
-	/**
-	 * Returns the meta object for the containment reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag#getArguments <em>Arguments</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Arguments</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag#getArguments()
-	 * @see #getKnowledgeSecurityTag()
-	 * @generated
-	 */
-	EReference getKnowledgeSecurityTag_Arguments();
+	EReference getKnowledgeSecurityTag_RequiredRole();
 
 	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole <em>Security Role</em>}'.
@@ -1840,6 +1995,90 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getSecurityRole_Arguments();
+
+	/**
+	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRoleArgument <em>Security Role Argument</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Security Role Argument</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRoleArgument
+	 * @generated
+	 */
+	EClass getSecurityRoleArgument();
+
+	/**
+	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRoleArgument#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRoleArgument#getName()
+	 * @see #getSecurityRoleArgument()
+	 * @generated
+	 */
+	EAttribute getSecurityRoleArgument_Name();
+
+	/**
+	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.PathSecurityRoleArgument <em>Path Security Role Argument</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Path Security Role Argument</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.PathSecurityRoleArgument
+	 * @generated
+	 */
+	EClass getPathSecurityRoleArgument();
+
+	/**
+	 * Returns the meta object for the containment reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.PathSecurityRoleArgument#getKnowledgePath <em>Knowledge Path</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference '<em>Knowledge Path</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.PathSecurityRoleArgument#getKnowledgePath()
+	 * @see #getPathSecurityRoleArgument()
+	 * @generated
+	 */
+	EReference getPathSecurityRoleArgument_KnowledgePath();
+
+	/**
+	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.BlankSecurityRoleArgument <em>Blank Security Role Argument</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Blank Security Role Argument</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.BlankSecurityRoleArgument
+	 * @generated
+	 */
+	EClass getBlankSecurityRoleArgument();
+
+	/**
+	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.AbsoluteSecurityRoleArgument <em>Absolute Security Role Argument</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Absolute Security Role Argument</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.AbsoluteSecurityRoleArgument
+	 * @generated
+	 */
+	EClass getAbsoluteSecurityRoleArgument();
+
+	/**
+	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.AbsoluteSecurityRoleArgument#getValue <em>Value</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Value</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.AbsoluteSecurityRoleArgument#getValue()
+	 * @see #getAbsoluteSecurityRoleArgument()
+	 * @generated
+	 */
+	EAttribute getAbsoluteSecurityRoleArgument_Value();
+
+	/**
+	 * Returns the meta object for the reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole#getConsistsOf <em>Consists Of</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference list '<em>Consists Of</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole#getConsistsOf()
+	 * @see #getSecurityRole()
+	 * @generated
+	 */
+	EReference getSecurityRole_ConsistsOf();
 
 	/**
 	 * Returns the meta object for enum '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection <em>Parameter Direction</em>}'.
@@ -2433,20 +2672,12 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EClass KNOWLEDGE_SECURITY_TAG = eINSTANCE.getKnowledgeSecurityTag();
 
 		/**
-		 * The meta object literal for the '<em><b>Role Name</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Required Role</b></em>' containment reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute KNOWLEDGE_SECURITY_TAG__ROLE_NAME = eINSTANCE.getKnowledgeSecurityTag_RoleName();
-
-		/**
-		 * The meta object literal for the '<em><b>Arguments</b></em>' containment reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference KNOWLEDGE_SECURITY_TAG__ARGUMENTS = eINSTANCE.getKnowledgeSecurityTag_Arguments();
+		EReference KNOWLEDGE_SECURITY_TAG__REQUIRED_ROLE = eINSTANCE.getKnowledgeSecurityTag_RequiredRole();
 
 		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.SecurityRoleImpl <em>Security Role</em>}' class.
@@ -2473,6 +2704,78 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * @generated
 		 */
 		EReference SECURITY_ROLE__ARGUMENTS = eINSTANCE.getSecurityRole_Arguments();
+
+		/**
+		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.SecurityRoleArgumentImpl <em>Security Role Argument</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.SecurityRoleArgumentImpl
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getSecurityRoleArgument()
+		 * @generated
+		 */
+		EClass SECURITY_ROLE_ARGUMENT = eINSTANCE.getSecurityRoleArgument();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SECURITY_ROLE_ARGUMENT__NAME = eINSTANCE.getSecurityRoleArgument_Name();
+
+		/**
+		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.PathSecurityRoleArgumentImpl <em>Path Security Role Argument</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.PathSecurityRoleArgumentImpl
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getPathSecurityRoleArgument()
+		 * @generated
+		 */
+		EClass PATH_SECURITY_ROLE_ARGUMENT = eINSTANCE.getPathSecurityRoleArgument();
+
+		/**
+		 * The meta object literal for the '<em><b>Knowledge Path</b></em>' containment reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference PATH_SECURITY_ROLE_ARGUMENT__KNOWLEDGE_PATH = eINSTANCE.getPathSecurityRoleArgument_KnowledgePath();
+
+		/**
+		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.BlankSecurityRoleArgumentImpl <em>Blank Security Role Argument</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.BlankSecurityRoleArgumentImpl
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getBlankSecurityRoleArgument()
+		 * @generated
+		 */
+		EClass BLANK_SECURITY_ROLE_ARGUMENT = eINSTANCE.getBlankSecurityRoleArgument();
+
+		/**
+		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.AbsoluteSecurityRoleArgumentImpl <em>Absolute Security Role Argument</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.AbsoluteSecurityRoleArgumentImpl
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getAbsoluteSecurityRoleArgument()
+		 * @generated
+		 */
+		EClass ABSOLUTE_SECURITY_ROLE_ARGUMENT = eINSTANCE.getAbsoluteSecurityRoleArgument();
+
+		/**
+		 * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ABSOLUTE_SECURITY_ROLE_ARGUMENT__VALUE = eINSTANCE.getAbsoluteSecurityRoleArgument_Value();
+
+		/**
+		 * The meta object literal for the '<em><b>Consists Of</b></em>' reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference SECURITY_ROLE__CONSISTS_OF = eINSTANCE.getSecurityRole_ConsistsOf();
 
 		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection <em>Parameter Direction</em>}' enum.

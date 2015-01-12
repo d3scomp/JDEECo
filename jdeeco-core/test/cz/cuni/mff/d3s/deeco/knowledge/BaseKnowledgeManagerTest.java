@@ -352,7 +352,8 @@ public class BaseKnowledgeManagerTest {
 		// given single-noded knowledge path and security tags are prepared
 		KnowledgePath kp = RuntimeModelHelper.createKnowledgePath("field");
 		KnowledgeSecurityTag tag = RuntimeMetadataFactory.eINSTANCE.createKnowledgeSecurityTag();
-		tag.setRoleName("role");
+		tag.setRequiredRole(RuntimeMetadataFactory.eINSTANCE.createSecurityRole());
+		tag.getRequiredRole().setRoleName("role");
 		Collection<KnowledgeSecurityTag> expectedTags = Arrays.asList(tag);
 		
 		// when addSecurityTags() is called

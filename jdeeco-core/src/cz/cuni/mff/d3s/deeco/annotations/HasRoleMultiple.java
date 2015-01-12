@@ -1,22 +1,20 @@
 package cz.cuni.mff.d3s.deeco.annotations;
 
 import java.lang.annotation.ElementType;
-import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 
 /**
- * Used to decorate a knowledge field with access restrictions 
+ * Used to decorate a component with desired roles
  * 
  * @author Ondřej Štumpf
  * 
  */
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-@Repeatable(value=AllowMultiple.class)
-public @interface Allow {
-	Class<?> roleClass();
+@Target(ElementType.TYPE)
+public @interface HasRoleMultiple {
+	HasRole[] value();	
 }

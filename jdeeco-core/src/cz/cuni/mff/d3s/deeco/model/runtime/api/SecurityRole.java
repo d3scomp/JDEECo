@@ -14,6 +14,7 @@ import org.eclipse.emf.ecore.EObject;
  * <p>
  * The following features are supported:
  * <ul>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole#getConsistsOf <em>Consists Of</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole#getRoleName <em>Role Name</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole#getArguments <em>Arguments</em>}</li>
  * </ul>
@@ -52,7 +53,7 @@ public interface SecurityRole extends EObject {
 
 	/**
 	 * Returns the value of the '<em><b>Arguments</b></em>' containment reference list.
-	 * The list contents are of type {@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath}.
+	 * The list contents are of type {@link cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRoleArgument}.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Arguments</em>' containment reference list isn't clear,
@@ -64,6 +65,22 @@ public interface SecurityRole extends EObject {
 	 * @model containment="true"
 	 * @generated
 	 */
-	EList<KnowledgePath> getArguments();
+	EList<SecurityRoleArgument> getArguments();
+
+	/**
+	 * Returns the value of the '<em><b>Consists Of</b></em>' reference list.
+	 * The list contents are of type {@link cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Consists Of</em>' reference list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Consists Of</em>' reference list.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getSecurityRole_ConsistsOf()
+	 * @model
+	 * @generated
+	 */
+	EList<SecurityRole> getConsistsOf();
 
 } // SecurityRole

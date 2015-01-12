@@ -12,8 +12,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import cz.cuni.mff.d3s.deeco.annotations.Allow;
 import cz.cuni.mff.d3s.deeco.annotations.CommunicationBoundary;
@@ -27,7 +29,9 @@ import cz.cuni.mff.d3s.deeco.annotations.Membership;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
-import cz.cuni.mff.d3s.deeco.annotations.Role;
+import cz.cuni.mff.d3s.deeco.annotations.HasRole;
+import cz.cuni.mff.d3s.deeco.annotations.RoleDefinition;
+import cz.cuni.mff.d3s.deeco.annotations.RoleParam;
 import cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.ComponentIdentifier;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.EEnsembleParty;
@@ -40,6 +44,8 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerFactory;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.AbsoluteSecurityRoleArgument;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.BlankSecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Condition;
@@ -57,8 +63,10 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathSecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
@@ -96,7 +104,7 @@ public class AnnotationProcessor {
 	 * Annotations that can appear in a class and can be handled by the main processor (this)
 	 */
 	static final Set<Class<? extends Annotation>> KNOWN_CLASS_ANNOTATIONS = new HashSet<>(
-			Arrays.asList(PeriodicScheduling.class, Component.class, Ensemble.class));
+			Arrays.asList(PeriodicScheduling.class, Component.class, Ensemble.class, HasRole.class));
 	
 	/**
 	 * Annotations that can appear in a method and can be handled by the main processor (this)  
@@ -165,7 +173,7 @@ public class AnnotationProcessor {
 		this.factory = factory;
 		this.model = model;
 		this.extensions = extensions;
-		this.knowledgeManagerFactory = knowledgeMangerFactory;
+		this.knowledgeManagerFactory = knowledgeMangerFactory;		
 	}
 	
 	/**
@@ -373,12 +381,8 @@ public class AnnotationProcessor {
 				}
 			}
 			
-			for (Role role : clazz.getDeclaredAnnotationsByType(Role.class)) {
-				SecurityRole securityRole = factory.createSecurityRole();
-				securityRole.setRoleName(role.role());
-				for (String stringPath : role.params()) {
-					securityRole.getArguments().add(createKnowledgePath(stringPath, PathOrigin.SECURITY_ANNOTATION));
-				}
+			for (HasRole role : clazz.getDeclaredAnnotationsByType(HasRole.class)) {
+				SecurityRole securityRole = createRoleFromClassDefinition(role.roleClass());
 				componentInstance.getRoles().add(securityRole);
 			}
 			
@@ -391,6 +395,109 @@ public class AnnotationProcessor {
 			throw new AnnotationProcessorException(msg, e);
 		}
 		return componentInstance;
+	}
+
+	private SecurityRole createRoleFromClassDefinition(Class<?> roleClass) throws AnnotationProcessorException, ParseException {
+		if (roleClass.getAnnotationsByType(RoleDefinition.class).length == 0) {
+			throw new AnnotationProcessorException("Role class must be decoreted with @RoleDefinition.");
+		}
+		
+		SecurityRole securityRole = factory.createSecurityRole();
+		securityRole.setRoleName(roleClass.getName());		
+		
+		for (Class<?> iface : roleClass.getInterfaces()) {
+			securityRole.getConsistsOf().add(createRoleFromClassDefinition(iface));
+		}
+		
+		List<Field> fieldParameters = Arrays.stream(roleClass.getFields())
+				.filter(field -> field.getAnnotationsByType(RoleParam.class).length > 0)				
+				.collect(Collectors.toList());
+		
+		for (Field field : fieldParameters) {
+			if (!isValidForRole(field, fieldParameters, securityRole)) {
+				continue;
+			}			
+			if ((field.getModifiers() & Modifier.FINAL) != Modifier.FINAL || (field.getModifiers() & Modifier.STATIC) != Modifier.STATIC) {
+				throw new AnnotationProcessorException("Role parameter must be static and final.");
+			}
+										
+			Object fieldValue = null;
+			try {
+				fieldValue = (String)field.get(null);
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				throw new AnnotationProcessorException("Cannot read path from security role argument "+field.getName(), e);
+			}
+			
+			SecurityRoleArgument argument = null;						
+			if (fieldValue == null) {
+				argument = factory.createBlankSecurityRoleArgument();
+				argument.setName(field.getName());				
+			} else {
+				boolean createConcreteArgument = true;
+				if (fieldValue instanceof String) {
+					KnowledgePath kp = createKnowledgePath((String)fieldValue, PathOrigin.SECURITY_ANNOTATION);
+					if (kp.getNodes().get(0) instanceof PathNodeMapKey) {
+						argument = factory.createPathSecurityRoleArgument();
+						argument.setName(field.getName());
+						
+						KnowledgePath innerPath = ((PathNodeMapKey)kp.getNodes().get(0)).getKeyPath();
+						((PathSecurityRoleArgument)argument).setKnowledgePath(innerPath);
+						createConcreteArgument = false;
+					}
+				}
+				
+				if (createConcreteArgument) {					
+					argument = factory.createAbsoluteSecurityRoleArgument();
+					argument.setName(field.getName());
+					((AbsoluteSecurityRoleArgument)argument).setValue(fieldValue);
+				}
+			}
+			
+			securityRole.getArguments().add(argument);
+			for (SecurityRole role : securityRole.getConsistsOf()) {
+				overrideArgument(argument, role);
+			}
+			
+		}
+		
+		return securityRole;
+	}
+
+	private void overrideArgument(SecurityRoleArgument argument, SecurityRole securityRole) {
+		Optional<SecurityRoleArgument> optionalArgument = securityRole.getArguments().stream().filter(arg -> arg.getName().equals(argument.getName())).findFirst();
+		if (optionalArgument.isPresent()) {
+			securityRole.getArguments().remove(optionalArgument.get());
+			
+			if (argument instanceof BlankSecurityRoleArgument) {
+				BlankSecurityRoleArgument arg = factory.createBlankSecurityRoleArgument();
+				arg.setName(argument.getName());
+				securityRole.getArguments().add(arg);
+			} else if (argument instanceof PathSecurityRoleArgument) {
+				PathSecurityRoleArgument arg = factory.createPathSecurityRoleArgument();
+				arg.setName(argument.getName());
+				arg.setKnowledgePath(((PathSecurityRoleArgument)argument).getKnowledgePath());
+				securityRole.getArguments().add(arg);
+			} else {
+				AbsoluteSecurityRoleArgument arg = factory.createAbsoluteSecurityRoleArgument();
+				arg.setName(argument.getName());
+				arg.setValue(((AbsoluteSecurityRoleArgument)argument).getValue());
+				securityRole.getArguments().add(arg);
+			}
+			
+			securityRole.getConsistsOf().stream().forEach(role -> overrideArgument(argument, role));
+		}
+	}
+
+	private boolean isValidForRole(Field field, List<Field> fieldParameters, SecurityRole securityRole) {
+		if (field.getDeclaringClass().getName().equals(securityRole.getRoleName())) {
+			return true;
+		} else {
+			boolean definedInParent = securityRole.getConsistsOf().stream().anyMatch(
+					role -> role.getArguments().stream().anyMatch(argument -> argument.getName().equals(field.getName()))
+					);
+			boolean notAnyLocal = !fieldParameters.stream().anyMatch(otherField -> otherField.getName().equals(field.getName()) && otherField.getDeclaringClass().getName().equals(securityRole.getRoleName()));
+			return notAnyLocal && definedInParent;
+		}		
 	}
 
 	private void addSecurityTags(Class<?> clazz, KnowledgeManager km,
@@ -408,10 +515,7 @@ public class AnnotationProcessor {
 			
 			for (Allow allow : allows) {
 				KnowledgeSecurityTag tag = factory.createKnowledgeSecurityTag();
-				tag.setRoleName(allow.role());
-				for (String stringPath : allow.params()) {
-					tag.getArguments().add(createKnowledgePath(stringPath, PathOrigin.SECURITY_ANNOTATION));
-				}
+				tag.setRequiredRole(createRoleFromClassDefinition(allow.roleClass()));
 				km.addSecurityTags(kp, Arrays.asList(tag));			
 			}
 			

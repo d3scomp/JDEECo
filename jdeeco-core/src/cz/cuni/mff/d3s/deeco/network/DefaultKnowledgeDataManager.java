@@ -70,7 +70,7 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 	/** Stores received KnowledgeMetaData for replicas (received ValueSet is deleted) */
 	protected final Map<String, KnowledgeMetaData> replicaMetadata;
 	/** Stores role names of accepted replica versions */
-	protected final Map<String, Set<String>> replicaRoles;
+	protected final Map<String, Set<Integer>> replicaRoles;
 	/** Global version counter for all outgoing local knowledge. */
 	protected long localVersion;
 	
@@ -262,10 +262,10 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 			boolean haveOlder = (currentMetadata == null) || (currentMetadata.versionId < newMetadata.versionId); 
 			
 			if (!haveOlder) {
-				Set<String> newRoles = replicaRoles.get(newMetadata.getSignature());
-				Set<String> currentRoles = replicaRoles.get(currentMetadata.getSignature());
+				Set<Integer> newRoles = replicaRoles.get(newMetadata.getSignature());
+				Set<Integer> currentRoles = replicaRoles.get(currentMetadata.getSignature());
 				
-				boolean haveAllRoles = currentRoles.containsAll(newRoles) && currentRoles.contains(newMetadata.targetRole);
+				boolean haveAllRoles = currentRoles.containsAll(newRoles) && currentRoles.contains(newMetadata.targetRole == null ? null : newMetadata.targetRole.hashCode());
 				haveOlder = !haveAllRoles;
 			}
 			
@@ -285,7 +285,7 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 				
 				// store the metadata without the knowledge values
 				replicaMetadata.put(newMetadata.componentId, newMetadata);
-				replicaRoles.get(newMetadata.getSignature()).add(newMetadata.targetRole);
+				replicaRoles.get(newMetadata.getSignature()).add(newMetadata.targetRole == null ? null : newMetadata.targetRole.hashCode());
 				
 				// rebroadcast only data that is of some value (i.e., newer than we have)
 				queueForRebroadcast(kd);

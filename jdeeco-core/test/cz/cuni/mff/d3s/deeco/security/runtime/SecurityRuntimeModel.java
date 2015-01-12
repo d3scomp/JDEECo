@@ -17,7 +17,9 @@ import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
 import cz.cuni.mff.d3s.deeco.annotations.Local;
 import cz.cuni.mff.d3s.deeco.annotations.Membership;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
-import cz.cuni.mff.d3s.deeco.annotations.Role;
+import cz.cuni.mff.d3s.deeco.annotations.HasRole;
+import cz.cuni.mff.d3s.deeco.annotations.RoleDefinition;
+import cz.cuni.mff.d3s.deeco.annotations.RoleParam;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
 import cz.cuni.mff.d3s.deeco.executor.Executor;
@@ -43,23 +45,37 @@ import cz.cuni.mff.d3s.deeco.task.Task;
 import cz.cuni.mff.d3s.deeco.task.TaskInvocationException;
 
 public class SecurityRuntimeModel {
+	
+	@RoleDefinition
+	public static interface PoliceInCity {
+		@RoleParam
+		public static final String cityId = "[cityId]";
+	}
+	
+	@RoleDefinition
+	public static interface PoliceEverywhere extends PoliceInCity {
+		@RoleParam
+		public static final String cityId = null;
+	}
+	
 	@Component 
 	public static class VehicleComponent  {
 		public String id;
 		public String cityId;
 		
-		@Allow(role = "police", params = "cityId")
+		@Allow(roleClass = PoliceInCity.class)
 		public String secret;
 		
 		public VehicleComponent(String id, String cityId, String secret) {
 			this.id = id;		
 			this.cityId = cityId;
 			this.secret = secret;
+			
 		}
 	}
 	
 	@Component 
-	@Role(role = "police", params = "cityId")
+	@HasRole(roleClass = PoliceInCity.class)
 	public static class PoliceComponent  {
 		public String id;
 		public String cityId;
@@ -72,7 +88,20 @@ public class SecurityRuntimeModel {
 			this.cityId = cityId;
 			this.secrets = new HashMap<>();
 		}
+	}
+	
+	@Component 
+	@HasRole(roleClass = PoliceEverywhere.class)
+	public static class GlobalPoliceComponent  {
+		public String id;
 		
+		@Local
+		public Map<String, String> secrets;
+		
+		public GlobalPoliceComponent(String id) {
+			this.id = id;		
+			this.secrets = new HashMap<>();
+		}
 	}
 	
 	@Ensemble
@@ -106,6 +135,7 @@ public class SecurityRuntimeModel {
 	public KnowledgeManagerContainer container;
 	public VehicleComponent vehicleComponent;
 	public PoliceComponent policeComponent1, policeComponent2;
+	public GlobalPoliceComponent globalPoliceComponent;
 	
 	public RuntimeFramework runtime;
 	
@@ -126,10 +156,12 @@ public class SecurityRuntimeModel {
 		vehicleComponent = new VehicleComponent("V1", "Prague", "top secret");
 		policeComponent1 = new PoliceComponent("P1", "Prague");
 		policeComponent2 = new PoliceComponent("P2", "Pilsen");
+		globalPoliceComponent = new GlobalPoliceComponent("G1");
 		
 		processor.process(vehicleComponent);
 		processor.process(policeComponent1);
 		processor.process(policeComponent2);
+		processor.process(globalPoliceComponent);
 		processor.process(AllEnsemble.class);
 		
 		// set ensemble to allow all components

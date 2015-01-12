@@ -6,16 +6,14 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 import java.security.cert.CertificateEncodingException;
-import java.util.List;
+import java.util.Map;
 
 /**
  * @author Ondřej Štumpf  
  */
 public interface SecurityKeyManager {
 
-	Key getPublicKeyFor(String roleName, List<Object> arguments) throws KeyStoreException, NoSuchAlgorithmException, InvalidKeyException, CertificateEncodingException, SecurityException, SignatureException, IllegalStateException;
+	Key getPublicKeyFor(String roleName, Map<String, Object> arguments) throws KeyStoreException, NoSuchAlgorithmException, InvalidKeyException, CertificateEncodingException, SecurityException, SignatureException, IllegalStateException;
 
-	Key getPrivateKeyFor(String roleName, List<Object> arguments) throws InvalidKeyException, CertificateEncodingException, KeyStoreException, NoSuchAlgorithmException, SecurityException, SignatureException, IllegalStateException;
-
-	String getRoleKey(String roleName, List<Object> arguments);
+	Key getPrivateKeyFor(String roleName, Map<String, Object> arguments) throws InvalidKeyException, CertificateEncodingException, KeyStoreException, NoSuchAlgorithmException, SecurityException, SignatureException, IllegalStateException;
 }

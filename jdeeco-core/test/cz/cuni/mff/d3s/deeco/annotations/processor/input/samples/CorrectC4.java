@@ -9,14 +9,13 @@ import cz.cuni.mff.d3s.deeco.annotations.RoleDefinition;
 import cz.cuni.mff.d3s.deeco.annotations.RoleParam;
 
 /**
- * the ID field is marked as secured
  * @author Ondřej Štumpf
  */
 
 @Component
-@HasRole(roleClass = WrongC4WithSecurity.Role1.class)
-@HasRole(roleClass = WrongC4WithSecurity.Role2.class)
-public class WrongC4WithSecurity {
+@HasRole(roleClass = CorrectC4.Role1.class)
+@HasRole(roleClass = CorrectC4.Role2.class)
+public class CorrectC4 {
 
 	@RoleDefinition
 	public static interface Role1 {
@@ -26,9 +25,9 @@ public class WrongC4WithSecurity {
 	@RoleDefinition
 	public static interface Role2 {
 		@RoleParam
-		public static final String param1 = "a";
+		public static final String name = "[name_path]";
 		@RoleParam
-		public static final String param2 = null;
+		public static final String time = null;
 	}
 	
 	@RoleDefinition
@@ -38,13 +37,10 @@ public class WrongC4WithSecurity {
 	
 	public String name;
 	
-	@Allow(roleClass = WrongC4WithSecurity.Role1.class)
-	@Allow(roleClass = WrongC4WithSecurity.Role3.class)
+	@Allow(roleClass = Role1.class)
+	@Allow(roleClass = Role3.class)
 	public Integer capacity;
 	
-	@Allow(roleClass = WrongC4WithSecurity.Role2.class)
+	@Allow(roleClass = Role2.class)
 	public Date time;
-	
-	@Allow(roleClass = WrongC4WithSecurity.Role1.class)
-	public String id;
 }

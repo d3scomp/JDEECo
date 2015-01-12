@@ -18,6 +18,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
+import cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
@@ -27,6 +28,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathSecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.PathRoot;
@@ -134,22 +136,14 @@ public class SecurityCheckerTest {
 		ensembleDefinition.getKnowledgeExchange().getParameters().add(param3);
 		when(ensembleController.getEnsembleDefinition()).thenReturn(ensembleDefinition);
 		
-		KnowledgeSecurityTag roleATagLocal = factory.createKnowledgeSecurityTag();
-		roleATagLocal.setRoleName("roleA");
-		roleATagLocal.getArguments().add(RuntimeModelHelper.createKnowledgePath("some_param"));
-		KnowledgeSecurityTag roleATagShadow = factory.createKnowledgeSecurityTag();
-		roleATagShadow.setRoleName("roleA");
-		roleATagShadow.getArguments().add(RuntimeModelHelper.createKnowledgePath("some_param"));
+		KnowledgeSecurityTag roleATagLocal = createSecurityTag("roleA", "some_param");
+		KnowledgeSecurityTag roleATagShadow = createSecurityTag("roleA", "some_param");
 		
-		KnowledgeSecurityTag roleBTagLocal = factory.createKnowledgeSecurityTag();
-		roleBTagLocal.setRoleName("roleB");
-		KnowledgeSecurityTag roleBTagShadow = factory.createKnowledgeSecurityTag();
-		roleBTagShadow.setRoleName("roleB");
+		KnowledgeSecurityTag roleBTagLocal = createSecurityTag("roleB");
+		KnowledgeSecurityTag roleBTagShadow = createSecurityTag("roleB");
 		
-		KnowledgeSecurityTag roleCTagLocal = factory.createKnowledgeSecurityTag();
-		roleCTagLocal.setRoleName("roleC");
-		KnowledgeSecurityTag roleCTagShadow = factory.createKnowledgeSecurityTag();
-		roleCTagShadow.setRoleName("roleC");
+		KnowledgeSecurityTag roleCTagLocal = createSecurityTag("roleC");
+		KnowledgeSecurityTag roleCTagShadow = createSecurityTag("roleC");
 		
 		shadowKnowledgeManager.addSecurityTags(RuntimeModelHelper.createKnowledgePath("field1_oc") , Arrays.asList(roleATagShadow));
 		localKnowledgeManager.addSecurityTags(RuntimeModelHelper.createKnowledgePath("field1_oc"), Arrays.asList(roleATagLocal));
@@ -165,7 +159,9 @@ public class SecurityCheckerTest {
 		
 		SecurityRole roleA = factory.createSecurityRole();
 		roleA.setRoleName("roleA");
-		roleA.getArguments().add(RuntimeModelHelper.createKnowledgePath("some_param"));
+		PathSecurityRoleArgument arg_some_param = factory.createPathSecurityRoleArgument();
+		arg_some_param.setKnowledgePath(RuntimeModelHelper.createKnowledgePath("some_param"));
+		roleA.getArguments().add(arg_some_param);
 		localComponent.getRoles().add(roleA);
 		
 		SecurityRole roleB = factory.createSecurityRole();
@@ -196,7 +192,7 @@ public class SecurityCheckerTest {
 		assertFalse(target.checkSecurity(PathRoot.MEMBER, localKnowledgeManager));
 				
 	}
-	
+
 	@Test
 	public void checkSecurity_localTest2() throws TaskInvocationException, KnowledgeUpdateException {
 		EnsembleDefinition ensembleDefinition = factory.createEnsembleDefinition();
@@ -205,11 +201,8 @@ public class SecurityCheckerTest {
 		ensembleDefinition.setKnowledgeExchange(factory.createExchange());
 		when(ensembleController.getEnsembleDefinition()).thenReturn(ensembleDefinition);
 		
-		KnowledgeSecurityTag roleBTagShadow = factory.createKnowledgeSecurityTag();
-		roleBTagShadow.setRoleName("roleB");
-		
-		KnowledgeSecurityTag roleCTagShadow = factory.createKnowledgeSecurityTag();
-		roleCTagShadow.setRoleName("roleC");
+		KnowledgeSecurityTag roleBTagShadow = createSecurityTag("roleB");	
+		KnowledgeSecurityTag roleCTagShadow = createSecurityTag("roleC");
 		
 		shadowKnowledgeManager.addSecurityTags(RuntimeModelHelper.createKnowledgePath("map"), Arrays.asList(roleCTagShadow));
 		shadowKnowledgeManager.addSecurityTags(RuntimeModelHelper.createKnowledgePath("mapKey"), Arrays.asList(roleBTagShadow));
@@ -241,11 +234,8 @@ public class SecurityCheckerTest {
 		ensembleDefinition.setKnowledgeExchange(factory.createExchange());
 		when(ensembleController.getEnsembleDefinition()).thenReturn(ensembleDefinition);
 		
-		KnowledgeSecurityTag roleATag = factory.createKnowledgeSecurityTag();
-		roleATag.setRoleName("roleA");
-		
-		KnowledgeSecurityTag roleBTag = factory.createKnowledgeSecurityTag();
-		roleBTag.setRoleName("roleB");
+		KnowledgeSecurityTag roleATag = createSecurityTag("roleA");
+		KnowledgeSecurityTag roleBTag = createSecurityTag("roleB");
 		
 		// add security tags for map and key
 		shadowKnowledgeManager.addSecurityTags(RuntimeModelHelper.createKnowledgePath("map") , Arrays.asList(roleATag));
@@ -294,40 +284,35 @@ public class SecurityCheckerTest {
 		keyPath.getNodes().add(innerPathNode);
 		
 		// given path, keyPath and innerKeyPath are secured
-		KnowledgeSecurityTag tagMap1 = RuntimeMetadataFactory.eINSTANCE.createKnowledgeSecurityTag();
-		tagMap1.setRoleName("role1a");
-		KnowledgeSecurityTag tagMap2 = RuntimeMetadataFactory.eINSTANCE.createKnowledgeSecurityTag();
-		tagMap2.setRoleName("role1b");
+		KnowledgeSecurityTag tagMap1 = createSecurityTag("role1a");
+		KnowledgeSecurityTag tagMap2 = createSecurityTag("role1b");
 		localKnowledgeManager.addSecurityTags(RuntimeModelHelper.createKnowledgePath("map"), Arrays.asList(tagMap1, tagMap2));
 		
-		KnowledgeSecurityTag tagInner1 = RuntimeMetadataFactory.eINSTANCE.createKnowledgeSecurityTag();
-		tagInner1.setRoleName("role2a");
-		KnowledgeSecurityTag tagInner2 = RuntimeMetadataFactory.eINSTANCE.createKnowledgeSecurityTag();
-		tagInner2.setRoleName("role2b");
+		KnowledgeSecurityTag tagInner1 = createSecurityTag("role2a");
+		KnowledgeSecurityTag tagInner2 = createSecurityTag("role2b");
 		localKnowledgeManager.addSecurityTags(RuntimeModelHelper.createKnowledgePath("mapKeyInner"), Arrays.asList(tagInner1, tagInner2));
 		
-		KnowledgeSecurityTag tagMapNested1 = RuntimeMetadataFactory.eINSTANCE.createKnowledgeSecurityTag();
-		tagMapNested1.setRoleName("role3a");
-		KnowledgeSecurityTag tagMapNested2 = RuntimeMetadataFactory.eINSTANCE.createKnowledgeSecurityTag();
-		tagMapNested2.setRoleName("role3b");
+		KnowledgeSecurityTag tagMapNested1 = createSecurityTag("role3a");
+		KnowledgeSecurityTag tagMapNested2 = createSecurityTag("role3b");
 		localKnowledgeManager.addSecurityTags(RuntimeModelHelper.createKnowledgePath("mapNested"), Arrays.asList(tagMapNested1, tagMapNested2));
 		
 		// update the knowledge so that the path can be resolved
 		localKnowledgeManager.update(createKnowledge());
 		
 		// when non-absolute path is passed
-		SecurityTagCollection collection = target.getSecurityTagsFor(PathRoot.COORDINATOR, knowledgePath, localKnowledgeManager, null);
+		Map<KnowledgeSecurityTag, ReadOnlyKnowledgeManager> securityTagManager = new HashMap<>();
+		SecurityTagCollection collection = target.getSecurityTagsFor(PathRoot.COORDINATOR, knowledgePath, localKnowledgeManager, null, securityTagManager);
 		assertEquals(8, collection.size());
 		collection.stream().forEach(l -> assertEquals(3, l.size()));
 
-		assertArrayEquals(Arrays.asList("role1a", "role3a", "role2a").toArray(), collection.get(0).stream().map(r -> r.getRoleName()).toArray());
-		assertArrayEquals(Arrays.asList("role1a", "role3a", "role2b").toArray(), collection.get(1).stream().map(r -> r.getRoleName()).toArray());
-		assertArrayEquals(Arrays.asList("role1a", "role3b", "role2a").toArray(), collection.get(2).stream().map(r -> r.getRoleName()).toArray());
-		assertArrayEquals(Arrays.asList("role1a", "role3b", "role2b").toArray(), collection.get(3).stream().map(r -> r.getRoleName()).toArray());
-		assertArrayEquals(Arrays.asList("role1b", "role3a", "role2a").toArray(), collection.get(4).stream().map(r -> r.getRoleName()).toArray());
-		assertArrayEquals(Arrays.asList("role1b", "role3a", "role2b").toArray(), collection.get(5).stream().map(r -> r.getRoleName()).toArray());
-		assertArrayEquals(Arrays.asList("role1b", "role3b", "role2a").toArray(), collection.get(6).stream().map(r -> r.getRoleName()).toArray());
-		assertArrayEquals(Arrays.asList("role1b", "role3b", "role2b").toArray(), collection.get(7).stream().map(r -> r.getRoleName()).toArray());	
+		assertArrayEquals(Arrays.asList("role1a", "role3a", "role2a").toArray(), collection.get(0).stream().map(r -> r.getRequiredRole().getRoleName()).toArray());
+		assertArrayEquals(Arrays.asList("role1a", "role3a", "role2b").toArray(), collection.get(1).stream().map(r -> r.getRequiredRole().getRoleName()).toArray());
+		assertArrayEquals(Arrays.asList("role1a", "role3b", "role2a").toArray(), collection.get(2).stream().map(r -> r.getRequiredRole().getRoleName()).toArray());
+		assertArrayEquals(Arrays.asList("role1a", "role3b", "role2b").toArray(), collection.get(3).stream().map(r -> r.getRequiredRole().getRoleName()).toArray());
+		assertArrayEquals(Arrays.asList("role1b", "role3a", "role2a").toArray(), collection.get(4).stream().map(r -> r.getRequiredRole().getRoleName()).toArray());
+		assertArrayEquals(Arrays.asList("role1b", "role3a", "role2b").toArray(), collection.get(5).stream().map(r -> r.getRequiredRole().getRoleName()).toArray());
+		assertArrayEquals(Arrays.asList("role1b", "role3b", "role2a").toArray(), collection.get(6).stream().map(r -> r.getRequiredRole().getRoleName()).toArray());
+		assertArrayEquals(Arrays.asList("role1b", "role3b", "role2b").toArray(), collection.get(7).stream().map(r -> r.getRequiredRole().getRoleName()).toArray());	
 	}
 	
 	@Test
@@ -342,25 +327,24 @@ public class SecurityCheckerTest {
 		knowledgePath.getNodes().add(innerPathNode);
 		
 		// given innerKeyPath is secured
-		KnowledgeSecurityTag tagInner1 = RuntimeMetadataFactory.eINSTANCE.createKnowledgeSecurityTag();
-		tagInner1.setRoleName("role2a");
-		KnowledgeSecurityTag tagInner2 = RuntimeMetadataFactory.eINSTANCE.createKnowledgeSecurityTag();
-		tagInner2.setRoleName("role2b");
+		KnowledgeSecurityTag tagInner1 = createSecurityTag("role2a");
+		KnowledgeSecurityTag tagInner2 = createSecurityTag("role2b");
 		localKnowledgeManager.addSecurityTags(RuntimeModelHelper.createKnowledgePath("mapKeyInner"), Arrays.asList(tagInner1, tagInner2));
 		
 		// update the knowledge so that the path can be resolved
 		localKnowledgeManager.update(createKnowledge());
 		
 		// when non-absolute path is passed
-		SecurityTagCollection collection = target.getSecurityTagsFor(PathRoot.COORDINATOR, knowledgePath, localKnowledgeManager, null);
+		Map<KnowledgeSecurityTag, ReadOnlyKnowledgeManager> securityTagManager = new HashMap<>();
+		SecurityTagCollection collection = target.getSecurityTagsFor(PathRoot.COORDINATOR, knowledgePath, localKnowledgeManager, null, securityTagManager);
 		assertEquals(2, collection.size());
 		collection.stream().forEach(l -> assertEquals(1, l.size()));
 
-		assertEquals("role2a", collection.get(0).get(0).getRoleName());
-		assertEquals("role2b", collection.get(1).get(0).getRoleName());	
+		assertEquals("role2a", collection.get(0).get(0).getRequiredRole().getRoleName());
+		assertEquals("role2b", collection.get(1).get(0).getRequiredRole().getRoleName());	
 		
-		assertSame(localKnowledgeManager, target.securityTagManager.get(tagInner1));
-		assertSame(localKnowledgeManager, target.securityTagManager.get(tagInner2));
+		assertSame(localKnowledgeManager, securityTagManager.get(tagInner1));
+		assertSame(localKnowledgeManager, securityTagManager.get(tagInner2));
 	}
 	
 	@Test
@@ -375,27 +359,26 @@ public class SecurityCheckerTest {
 		knowledgePath.getNodes().add(innerPathNode);
 		
 		// given innerKeyPath is secured
-		KnowledgeSecurityTag tagMap1 = RuntimeMetadataFactory.eINSTANCE.createKnowledgeSecurityTag();
-		tagMap1.setRoleName("role1a");
+		KnowledgeSecurityTag tagMap1 = createSecurityTag("role1a");
 		localKnowledgeManager.addSecurityTags(RuntimeModelHelper.createKnowledgePath("mapNested"), Arrays.asList(tagMap1));
 		
-		KnowledgeSecurityTag tagInner1 = RuntimeMetadataFactory.eINSTANCE.createKnowledgeSecurityTag();
-		tagInner1.setRoleName("role2a");
+		KnowledgeSecurityTag tagInner1 = createSecurityTag("role2a");
 		localKnowledgeManager.addSecurityTags(RuntimeModelHelper.createKnowledgePath("mapKeyInner"), Arrays.asList(tagInner1));
 		
 		// update the knowledge so that the path can be resolved
 		localKnowledgeManager.update(createKnowledge());
 		
 		// when non-absolute path is passed
-		SecurityTagCollection collection = target.getSecurityTagsFor(PathRoot.COORDINATOR, knowledgePath, localKnowledgeManager, null);
+		Map<KnowledgeSecurityTag, ReadOnlyKnowledgeManager> securityTagManager = new HashMap<>();
+		SecurityTagCollection collection = target.getSecurityTagsFor(PathRoot.COORDINATOR, knowledgePath, localKnowledgeManager, null, securityTagManager);
 		assertEquals(1, collection.size());
 		collection.stream().forEach(l -> assertEquals(2, l.size()));
 
-		assertEquals("role1a", collection.get(0).get(0).getRoleName());
-		assertEquals("role2a", collection.get(0).get(1).getRoleName());	
+		assertEquals("role1a", collection.get(0).get(0).getRequiredRole().getRoleName());
+		assertEquals("role2a", collection.get(0).get(1).getRequiredRole().getRoleName());	
 		
-		assertSame(localKnowledgeManager, target.securityTagManager.get(tagMap1));
-		assertSame(localKnowledgeManager, target.securityTagManager.get(tagInner1));
+		assertSame(localKnowledgeManager, securityTagManager.get(tagMap1));
+		assertSame(localKnowledgeManager, securityTagManager.get(tagInner1));
 	}
 	
 	@Test
@@ -410,25 +393,24 @@ public class SecurityCheckerTest {
 		knowledgePath.getNodes().add(innerPathNode);
 		
 		// given innerKeyPath is secured
-		KnowledgeSecurityTag tagInner1 = RuntimeMetadataFactory.eINSTANCE.createKnowledgeSecurityTag();
-		tagInner1.setRoleName("role2a");
-		KnowledgeSecurityTag tagInner2 = RuntimeMetadataFactory.eINSTANCE.createKnowledgeSecurityTag();
-		tagInner2.setRoleName("role2b");
+		KnowledgeSecurityTag tagInner1 = createSecurityTag("role2a");
+		KnowledgeSecurityTag tagInner2 = createSecurityTag("role2b");
 		localKnowledgeManager.addSecurityTags(RuntimeModelHelper.createKnowledgePath("mapNested"), Arrays.asList(tagInner1, tagInner2));
 		
 		// update the knowledge so that the path can be resolved
 		localKnowledgeManager.update(createKnowledge());
 		
 		// when non-absolute path is passed
-		SecurityTagCollection collection = target.getSecurityTagsFor(PathRoot.COORDINATOR, knowledgePath, localKnowledgeManager, null);
+		Map<KnowledgeSecurityTag, ReadOnlyKnowledgeManager> securityTagManager = new HashMap<>();
+		SecurityTagCollection collection = target.getSecurityTagsFor(PathRoot.COORDINATOR, knowledgePath, localKnowledgeManager, null, securityTagManager);
 		assertEquals(2, collection.size());
 		collection.stream().forEach(l -> assertEquals(1, l.size()));
 
-		assertEquals("role2a", collection.get(0).get(0).getRoleName());
-		assertEquals("role2b", collection.get(1).get(0).getRoleName());	
+		assertEquals("role2a", collection.get(0).get(0).getRequiredRole().getRoleName());
+		assertEquals("role2b", collection.get(1).get(0).getRequiredRole().getRoleName());	
 		
-		assertSame(localKnowledgeManager, target.securityTagManager.get(tagInner1));
-		assertSame(localKnowledgeManager, target.securityTagManager.get(tagInner2));
+		assertSame(localKnowledgeManager, securityTagManager.get(tagInner1));
+		assertSame(localKnowledgeManager, securityTagManager.get(tagInner2));
 	}
 
 	@Test
@@ -443,10 +425,8 @@ public class SecurityCheckerTest {
 		knowledgePath.getNodes().add(innerPathNode);
 		
 		// given innerKeyPath is secured
-		KnowledgeSecurityTag tagMap = RuntimeMetadataFactory.eINSTANCE.createKnowledgeSecurityTag();
-		tagMap.setRoleName("role2a");
-		KnowledgeSecurityTag tagKey = RuntimeMetadataFactory.eINSTANCE.createKnowledgeSecurityTag();
-		tagKey.setRoleName("role2b");
+		KnowledgeSecurityTag tagMap = createSecurityTag("role2a");
+		KnowledgeSecurityTag tagKey = createSecurityTag("role2b");
 		localKnowledgeManager.addSecurityTags(RuntimeModelHelper.createKnowledgePath("mapNested"), Arrays.asList(tagMap));
 		shadowKnowledgeManager.addSecurityTags(RuntimeModelHelper.createKnowledgePath("mapKeyInner"), Arrays.asList(tagKey));
 		
@@ -455,14 +435,31 @@ public class SecurityCheckerTest {
 		shadowKnowledgeManager.update(createKnowledge());
 		
 		// when non-absolute path is passed
-		SecurityTagCollection collection = target.getSecurityTagsFor(PathRoot.COORDINATOR, knowledgePath, localKnowledgeManager, shadowKnowledgeManager);
+		Map<KnowledgeSecurityTag, ReadOnlyKnowledgeManager> securityTagManager = new HashMap<>();
+		SecurityTagCollection collection = target.getSecurityTagsFor(PathRoot.COORDINATOR, knowledgePath, localKnowledgeManager, shadowKnowledgeManager, securityTagManager);
 		assertEquals(1, collection.size());
 		collection.stream().forEach(l -> assertEquals(2, l.size()));
 
-		assertEquals("role2a", collection.get(0).get(0).getRoleName());
-		assertEquals("role2b", collection.get(0).get(1).getRoleName());	
+		assertEquals("role2a", collection.get(0).get(0).getRequiredRole().getRoleName());
+		assertEquals("role2b", collection.get(0).get(1).getRequiredRole().getRoleName());	
 		
-		assertSame(localKnowledgeManager, target.securityTagManager.get(tagMap));
-		assertSame(shadowKnowledgeManager, target.securityTagManager.get(tagKey));
+		assertSame(localKnowledgeManager, securityTagManager.get(tagMap));
+		assertSame(shadowKnowledgeManager, securityTagManager.get(tagKey));
+	}
+	
+	
+	
+	private KnowledgeSecurityTag createSecurityTag(String roleName, String... args) {
+		KnowledgeSecurityTag tag = factory.createKnowledgeSecurityTag();
+		tag.setRequiredRole(factory.createSecurityRole());
+		tag.getRequiredRole().setRoleName(roleName);
+		
+		for (String arg : args) {
+			PathSecurityRoleArgument argument = factory.createPathSecurityRoleArgument();
+			argument.setKnowledgePath(RuntimeModelHelper.createKnowledgePath(arg));
+			tag.getRequiredRole().getArguments().add(argument);
+		}
+		
+		return tag;
 	}
 }

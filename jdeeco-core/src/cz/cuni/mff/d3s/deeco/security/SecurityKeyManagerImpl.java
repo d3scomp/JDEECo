@@ -18,7 +18,6 @@ import java.security.cert.CertificateException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.bouncycastle.jce.X509Principal;
@@ -31,7 +30,7 @@ import org.bouncycastle.x509.X509V3CertificateGenerator;
 public class SecurityKeyManagerImpl implements SecurityKeyManager {
 
 	private KeyStore keyStore;
-	private Map<String, PrivateKey> privateKeys;
+	private Map<Integer, PrivateKey> privateKeys;
 	private SecureRandom secureRandom;
 	
 	public SecurityKeyManagerImpl() throws KeyStoreException {
@@ -52,30 +51,30 @@ public class SecurityKeyManagerImpl implements SecurityKeyManager {
 	}
 
 	@Override
-	public Key getPublicKeyFor(String roleName, List<Object> arguments) throws KeyStoreException, NoSuchAlgorithmException, InvalidKeyException, CertificateEncodingException, SecurityException, SignatureException, IllegalStateException {
-		String roleKey = getRoleKey(roleName, arguments);
+	public Key getPublicKeyFor(String roleName, Map<String, Object> arguments) throws KeyStoreException, NoSuchAlgorithmException, InvalidKeyException, CertificateEncodingException, SecurityException, SignatureException, IllegalStateException {
+		Integer roleKey = getRoleKey(roleName, arguments);
 		
-		if (!keyStore.containsAlias(roleKey)) {
+		if (!keyStore.containsAlias(roleKey.toString())) {
 			generateKeyPairFor(roleKey);
 		}
 		
-		return keyStore.getCertificate(roleKey).getPublicKey();
+		return keyStore.getCertificate(roleKey.toString()).getPublicKey();
 	}
 
-	private void generateKeyPairFor(String roleKey) throws NoSuchAlgorithmException, InvalidKeyException, CertificateEncodingException, KeyStoreException, SecurityException, SignatureException, IllegalStateException {
+	private void generateKeyPairFor(Integer roleKey) throws NoSuchAlgorithmException, InvalidKeyException, CertificateEncodingException, KeyStoreException, SecurityException, SignatureException, IllegalStateException {
 		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
         keyGen.initialize(1024, secureRandom);
         KeyPair keypair = keyGen.generateKeyPair();
 		
-		keyStore.setCertificateEntry(roleKey, generateCertificate(roleKey, keypair));
+		keyStore.setCertificateEntry(roleKey.toString(), generateCertificate(roleKey, keypair));
 		privateKeys.put(roleKey, keypair.getPrivate());
 	}
 
 	@Override
-	public Key getPrivateKeyFor(String roleName, List<Object> arguments) throws InvalidKeyException, CertificateEncodingException, KeyStoreException, NoSuchAlgorithmException, SecurityException, SignatureException, IllegalStateException {
-		String roleKey = getRoleKey(roleName, arguments);
+	public Key getPrivateKeyFor(String roleName, Map<String, Object> arguments) throws InvalidKeyException, CertificateEncodingException, KeyStoreException, NoSuchAlgorithmException, SecurityException, SignatureException, IllegalStateException {
+		Integer roleKey = getRoleKey(roleName, arguments);
 		
-		if (!keyStore.containsAlias(roleKey)) {
+		if (!keyStore.containsAlias(roleKey.toString())) {
 			generateKeyPairFor(roleKey);
 		}
 		
@@ -83,7 +82,7 @@ public class SecurityKeyManagerImpl implements SecurityKeyManager {
 	}
 	
 	@SuppressWarnings("deprecation")
-	private Certificate generateCertificate(String roleKey, KeyPair keypair) throws NoSuchAlgorithmException, InvalidKeyException, SecurityException, SignatureException, CertificateEncodingException, IllegalStateException {		
+	private Certificate generateCertificate(Integer roleKey, KeyPair keypair) throws NoSuchAlgorithmException, InvalidKeyException, SecurityException, SignatureException, CertificateEncodingException, IllegalStateException {		
         X509V3CertificateGenerator v3CertGen = new X509V3CertificateGenerator();
         v3CertGen.setSerialNumber(BigInteger.valueOf(Math.abs(secureRandom.nextInt())));
         v3CertGen.setIssuerDN(new X509Principal("CN=local, OU=None, O=None L=None, C=None"));
@@ -97,12 +96,12 @@ public class SecurityKeyManagerImpl implements SecurityKeyManager {
         return v3CertGen.generate(keypair.getPrivate());
 	}
 
-	public String getRoleKey(String roleName, List<Object> arguments) {
+	private Integer getRoleKey(String roleName, Map<String, Object> arguments) {
 		if (arguments == null) {
-			arguments = Collections.emptyList();
+			arguments = Collections.emptyMap();
 		}
-		int hash = roleName.hashCode()+arguments.stream().mapToInt(a -> a.hashCode()).sum();
-		return "role" + hash;
+		int hash = roleName.hashCode()+arguments.hashCode();
+		return hash;
 	}
 
 }

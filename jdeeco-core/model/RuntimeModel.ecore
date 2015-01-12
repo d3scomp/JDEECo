@@ -111,15 +111,26 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="CommunicationBoundary" instanceClassName="cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate"/>
   <eClassifiers xsi:type="ecore:EClass" name="KnowledgeSecurityTag">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="roleName" lowerBound="1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="arguments" upperBound="-1"
-        eType="#//KnowledgePath" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="requiredRole" lowerBound="1"
+        eType="#//SecurityRole" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="SecurityRole">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="consistsOf" upperBound="-1"
+        eType="#//SecurityRole"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="roleName" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="arguments" upperBound="-1"
+        eType="#//SecurityRoleArgument" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="SecurityRoleArgument" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="PathSecurityRoleArgument" eSuperTypes="#//SecurityRoleArgument">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="knowledgePath" lowerBound="1"
         eType="#//KnowledgePath" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="BlankSecurityRoleArgument" eSuperTypes="#//SecurityRoleArgument"/>
+  <eClassifiers xsi:type="ecore:EClass" name="AbsoluteSecurityRoleArgument" eSuperTypes="#//SecurityRoleArgument">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="Value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
   </eClassifiers>
 </ecore:EPackage>

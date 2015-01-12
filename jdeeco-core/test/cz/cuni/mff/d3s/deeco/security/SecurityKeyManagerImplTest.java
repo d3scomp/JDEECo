@@ -8,8 +8,8 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 import java.security.cert.CertificateEncodingException;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -38,13 +38,13 @@ public class SecurityKeyManagerImplTest {
 	
 	@Test
 	public void getPublicKeyTest2() throws InvalidKeyException, CertificateEncodingException, KeyStoreException, NoSuchAlgorithmException, SecurityException, SignatureException, IllegalStateException {
-		List<Object> args = new LinkedList<>();
-		args.add("x");
+		Map<String, Object> args = new HashMap<>();
+		args.put("x", "xvalue");
 
 		Key key1 = target.getPublicKeyFor("role1", null);
 		Key key2 = target.getPublicKeyFor("role1", args);
 		
-		args.add("y");
+		args.put("y", null);
 		Key key3 = target.getPublicKeyFor("role1", args);
 		
 		assertNotNull(key2);
@@ -67,13 +67,13 @@ public class SecurityKeyManagerImplTest {
 	public void incompatibilityTest() throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, CertificateEncodingException, KeyStoreException, SecurityException, SignatureException, IllegalStateException, IllegalBlockSizeException, BadPaddingException {
 		String text = "hello";
 		
-		List<Object> args = new LinkedList<>();
-		args.add("x");
+		Map<String, Object> args = new HashMap<>();
+		args.put("x", "xvalue");
 		Cipher decryptCipher = Cipher.getInstance("RSA");
 		decryptCipher.init(Cipher.DECRYPT_MODE, target.getPrivateKeyFor("role1", args));
 		
-		args = new LinkedList<>();
-		args.add("y");
+		args = new HashMap<>();
+		args.put("x", null);
 		Cipher encryptCipher = Cipher.getInstance("RSA");
 		encryptCipher.init(Cipher.ENCRYPT_MODE, target.getPublicKeyFor("role1", args));
 		

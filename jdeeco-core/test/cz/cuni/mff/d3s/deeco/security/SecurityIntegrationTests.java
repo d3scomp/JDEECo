@@ -59,6 +59,8 @@ public class SecurityIntegrationTests {
 		assertEquals(1, runtimeModel.policeComponent1.secrets.size());
 		assertEquals("top secret", runtimeModel.policeComponent1.secrets.get("V1_remote"));
 		assertTrue(runtimeModel.policeComponent2.secrets.isEmpty());
+		assertEquals(1, runtimeModel.globalPoliceComponent.secrets.size());
+		assertEquals("top secret", runtimeModel.globalPoliceComponent.secrets.get("V1_remote"));
 	}
 	
 	@Test
@@ -68,5 +70,7 @@ public class SecurityIntegrationTests {
 		assertEquals(1, runtimeModel.policeComponent1.secrets.size());
 		assertEquals("top secret", runtimeModel.policeComponent1.secrets.get("V1"));
 		assertTrue(runtimeModel.policeComponent2.secrets.isEmpty());
+		assertEquals(1, runtimeModel.globalPoliceComponent.secrets.size());
+		assertEquals("top secret", runtimeModel.globalPoliceComponent.secrets.get("V1"));	
 	}
 }
