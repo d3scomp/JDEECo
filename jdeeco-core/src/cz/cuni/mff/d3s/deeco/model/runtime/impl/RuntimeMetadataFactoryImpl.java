@@ -35,7 +35,6 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * Creates the default factory implementation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
 	 */
 	public static RuntimeMetadataFactory init() {
 		try {
@@ -86,6 +85,11 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 			case RuntimeMetadataPackage.PATH_NODE_MEMBER: return createPathNodeMember();
 			case RuntimeMetadataPackage.PATH_NODE_COMPONENT_ID: return createPathNodeComponentId();
 			case RuntimeMetadataPackage.STRING_TO_OBJECT_MAP: return (EObject)createStringToObjectMap();
+			case RuntimeMetadataPackage.KNOWLEDGE_SECURITY_TAG: return createKnowledgeSecurityTag();
+			case RuntimeMetadataPackage.SECURITY_ROLE: return createSecurityRole();
+			case RuntimeMetadataPackage.PATH_SECURITY_ROLE_ARGUMENT: return createPathSecurityRoleArgument();
+			case RuntimeMetadataPackage.BLANK_SECURITY_ROLE_ARGUMENT: return createBlankSecurityRoleArgument();
+			case RuntimeMetadataPackage.ABSOLUTE_SECURITY_ROLE_ARGUMENT: return createAbsoluteSecurityRoleArgument();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -315,6 +319,56 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	public Map.Entry<String, Object> createStringToObjectMap() {
 		StringToObjectMapImpl stringToObjectMap = new StringToObjectMapImpl();
 		return stringToObjectMap;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public KnowledgeSecurityTag createKnowledgeSecurityTag() {
+		KnowledgeSecurityTagImpl knowledgeSecurityTag = new KnowledgeSecurityTagImpl();
+		return knowledgeSecurityTag;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public SecurityRole createSecurityRole() {
+		SecurityRoleImpl securityRole = new SecurityRoleImpl();
+		return securityRole;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public PathSecurityRoleArgument createPathSecurityRoleArgument() {
+		PathSecurityRoleArgumentImpl pathSecurityRoleArgument = new PathSecurityRoleArgumentImpl();
+		return pathSecurityRoleArgument;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public BlankSecurityRoleArgument createBlankSecurityRoleArgument() {
+		BlankSecurityRoleArgumentImpl blankSecurityRoleArgument = new BlankSecurityRoleArgumentImpl();
+		return blankSecurityRoleArgument;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public AbsoluteSecurityRoleArgument createAbsoluteSecurityRoleArgument() {
+		AbsoluteSecurityRoleArgumentImpl absoluteSecurityRoleArgument = new AbsoluteSecurityRoleArgumentImpl();
+		return absoluteSecurityRoleArgument;
 	}
 
 	/**

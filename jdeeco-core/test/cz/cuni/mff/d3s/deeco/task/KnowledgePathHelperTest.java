@@ -2,7 +2,9 @@ package cz.cuni.mff.d3s.deeco.task;
 
 import static cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper.createKnowledgePath;
 import static cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.getStrippedPath;
-import static org.junit.Assert.assertEquals;
+import static cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.isAbsolutePath;
+import static cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.cloneKnowledgePath;
+import static org.junit.Assert.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -76,12 +78,18 @@ public class KnowledgePathHelperTest {
 		path.getNodes().add(field);
 		
 		// WHEN the id of member is '30'
-		KnowledgeManager memberKnowledgeManager = new CloningKnowledgeManager("30");
-		KnowledgeManager coordKnowledgeManager = new CloningKnowledgeManager("1");
+		KnowledgeManager memberKnowledgeManager = new CloningKnowledgeManager("30", null);
+		KnowledgeManager coordKnowledgeManager = new CloningKnowledgeManager("1", null);
 		// THEN absolute path is 'positions.30.x' on the COORDINATOR side
+		
+		String originalPath = path.toString();
 		KnowledgePathAndRoot res = KnowledgePathHelper.getAbsoluteStrippedPath(path, coordKnowledgeManager, memberKnowledgeManager);
 		assertEquals(res.knowledgePath.toString(),"positions.30.x");
 		assertEquals(res.root,PathRoot.COORDINATOR);
+		
+		// then original path is not changed
+		String pathAfterCall = path.toString();
+		assertEquals(originalPath, pathAfterCall); 
 	}
 	
 	@Test
@@ -122,8 +130,8 @@ public class KnowledgePathHelperTest {
 		path.getNodes().add(field);
 		
 		// WHEN the id of MEMBER is '4'
-		KnowledgeManager memberKnowledgeManager = new CloningKnowledgeManager("4");
-		KnowledgeManager coordKnowledgeManager = new CloningKnowledgeManager("1");
+		KnowledgeManager memberKnowledgeManager = new CloningKnowledgeManager("4", null);
+		KnowledgeManager coordKnowledgeManager = new CloningKnowledgeManager("1", null);
 		
 		// WHEN '[positions.4]' on the COORDINATOR knowledge is evaluated to '50'
 		ChangeSet cs = new ChangeSet();
@@ -138,9 +146,14 @@ public class KnowledgePathHelperTest {
 		coordKnowledgeManager.update(cs);
 		
 		// THEN absolute path is '50.x' on the MEMBER side
+		String originalPath = path.toString();
 		KnowledgePathAndRoot res = KnowledgePathHelper.getAbsoluteStrippedPath(path, coordKnowledgeManager, memberKnowledgeManager);
 		assertEquals(res.knowledgePath.toString(),"50.x");
 		assertEquals(res.root,PathRoot.MEMBER);
+		
+		// then original path is not changed
+		String pathAfterCall = path.toString();
+		assertEquals(originalPath, pathAfterCall);
 	}
 
 	
@@ -161,7 +174,7 @@ public class KnowledgePathHelperTest {
 		// WHEN '[level21.level22]' is evaluated to '5'
 		ChangeSet cs = new ChangeSet();
 		cs.setValue(nestedPath, "5");
-		KnowledgeManager km = new CloningKnowledgeManager("id");
+		KnowledgeManager km = new CloningKnowledgeManager("id", null);
 		km.update(cs);
 		// THEN absolute path is 'level1.5'
 		KnowledgePath res = KnowledgePathHelper.getAbsolutePath(path, km);
@@ -203,7 +216,7 @@ public class KnowledgePathHelperTest {
 		// WHEN '[level31]' is evaluated to '3'
 		ChangeSet cs = new ChangeSet();
 		cs.setValue(nestedPath2, "3");
-		KnowledgeManager km = new CloningKnowledgeManager("id");
+		KnowledgeManager km = new CloningKnowledgeManager("id", null);
 		km.update(cs);
 		// WHEN '[level21.level22.3]' is evaluated to '5'
 		KnowledgePath newNestedPath1 = EcoreUtil.copy(nestedPath1);
@@ -214,9 +227,15 @@ public class KnowledgePathHelperTest {
 		cs = new ChangeSet();
 		cs.setValue(newNestedPath1, "5");
 		km.update(cs);
+		
 		// THEN absolute path is 'level1.5' 
+		String originalPath = path.toString();
 		KnowledgePath res = KnowledgePathHelper.getAbsolutePath(path, km);
 		assertEquals(res.toString(),"level1.5");
+		
+		// then original path is not changed
+		String pathAfterCall = path.toString();
+		assertEquals(originalPath, pathAfterCall);
 	}
 	
 	@Test
@@ -241,10 +260,16 @@ public class KnowledgePathHelperTest {
 		path.getNodes().add(field);
 		
 		// WHEN '[id]' is evaluated to '42'
-		KnowledgeManager km = new CloningKnowledgeManager("42");
+		KnowledgeManager km = new CloningKnowledgeManager("42", null);
 		// THEN absolute path is 'coordinates.42.x'
+		
+		String originalPath = path.toString();
 		KnowledgePath res = KnowledgePathHelper.getAbsolutePath(path, km);
 		assertEquals(res.toString(),"coordinates.42.x");
+		
+		// then original path is not changed
+		String pathAfterCall = path.toString();
+		assertEquals(originalPath, pathAfterCall);
 	}
 
 	@Test
@@ -272,8 +297,8 @@ public class KnowledgePathHelperTest {
 		mapKey.setKeyPath(nestedPath);
 		path.getNodes().add(mapKey);
 		
-		KnowledgeManager memberKnowledgeManager = new CloningKnowledgeManager("1");
-		KnowledgeManager coordKnowledgeManager = new CloningKnowledgeManager("2");
+		KnowledgeManager memberKnowledgeManager = new CloningKnowledgeManager("1", null);
+		KnowledgeManager coordKnowledgeManager = new CloningKnowledgeManager("2", null);
 		// WHEN [name] cannot be resolved on the MEMBER's knowledge
 		// THEN a KnowledgeNotFoundException is thrown
 		exception.expect(KnowledgeNotFoundException.class);
@@ -300,7 +325,7 @@ public class KnowledgePathHelperTest {
 		mapKey.setKeyPath(nestedPath);
 		path.getNodes().add(mapKey);
 
-		KnowledgeManager km = new CloningKnowledgeManager("4324");
+		KnowledgeManager km = new CloningKnowledgeManager("4324", null);
 		// WHEN [name] cannot be resolved ('name' is not present in km's knowledge)
 		// THEN a KnowledgeNotFoundException is thrown
 		exception.expect(KnowledgeNotFoundException.class);
@@ -330,4 +355,41 @@ public class KnowledgePathHelperTest {
 		// THEN it returns null
 		assertEquals(null, getStrippedPath(knowledgePath));
 	}	
+	
+	@Test
+	public void testIsAbsolutePath1() {
+		// WHEN the path is absolute
+		KnowledgePath knowledgePath = createKnowledgePath("level1", "level2");
+		
+		// THEN isAbsolutePath returns true
+		assertTrue(isAbsolutePath(knowledgePath));
+	}
+	
+	@Test
+	public void testIsAbsolutePath2() {
+		// WHEN the path is not absolute
+		KnowledgePath knowledgePath = createKnowledgePath("level1", "level2");
+		knowledgePath.getNodes().add(factory.createPathNodeMapKey());
+		
+		// THEN isAbsolutePath returns false
+		assertFalse(isAbsolutePath(knowledgePath));
+	}
+	
+	@Test
+	public void testcloneKnowledgePath() {
+		// WHEN the path is created
+		KnowledgePath knowledgePath = createKnowledgePath("<C>", "level1", "level2");
+		PathNodeMapKey mapKey = factory.createPathNodeMapKey();
+		mapKey.setKeyPath(createKnowledgePath("<M>", "level1", "level2"));
+		knowledgePath.getNodes().add(mapKey);
+		
+		// THEN cloneKnowledgePath returns deep copy		
+		KnowledgePath copy= cloneKnowledgePath(knowledgePath);		
+		
+		assertEquals(knowledgePath, copy);
+		
+		// modify the original to verify deep clone
+		((PathNodeMapKey)knowledgePath.getNodes().get(3)).getKeyPath().getNodes().remove(1);
+		assertNotEquals(knowledgePath, copy);
+	}
 }

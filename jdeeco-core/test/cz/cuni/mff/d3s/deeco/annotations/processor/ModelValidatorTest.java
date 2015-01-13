@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.ParseException;
+import cz.cuni.mff.d3s.deeco.annotations.pathparser.PathOrigin;
 import cz.cuni.mff.d3s.deeco.annotations.processor.ModelValidationError.Severity;
 import cz.cuni.mff.d3s.deeco.annotations.processor.input.validation.ExampleComponent;
 import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerFactory;
@@ -89,7 +90,7 @@ public class ModelValidatorTest {
 	public void nonexistingProcessInputParametersAreIdentified() throws AnnotationProcessorException, ParseException {
 		// WHEN validating a model where a process has a non-existing knowledge
 		// field as its INOUT parameter		
-		KnowledgePath nonexistent = processor.createKnowledgePath("non.existent", true);
+		KnowledgePath nonexistent = processor.createKnowledgePath("non.existent", PathOrigin.COMPONENT);
 		process.getParameters().get(1).setKnowledgePath(nonexistent);
 		
 		// THEN validation finds this problem
@@ -104,7 +105,7 @@ public class ModelValidatorTest {
 	public void processInParametersThatAreNonPublicFieldsAreReported() throws AnnotationProcessorException, ParseException {
 		// WHEN validating a model where a process has an IN parameter that
 		// is a non-public class field
-		KnowledgePath privateField = processor.createKnowledgePath("inoutInvalid", true);
+		KnowledgePath privateField = processor.createKnowledgePath("inoutInvalid", PathOrigin.COMPONENT);
 		process.getParameters().get(0).setKnowledgePath(privateField);
 		
 		// THEN validation finds this problem
@@ -119,7 +120,7 @@ public class ModelValidatorTest {
 	public void processInOutParametersThatAreNonPublicFieldsAreReported() throws AnnotationProcessorException, ParseException {
 		// WHEN validating a model where a process has an INOUT parameter that
 		// is a non-public class field
-		KnowledgePath privateField = processor.createKnowledgePath("inoutInvalid", true);
+		KnowledgePath privateField = processor.createKnowledgePath("inoutInvalid", PathOrigin.COMPONENT);
 		process.getParameters().get(1).setKnowledgePath(privateField);
 		
 		// THEN validation finds this problem
@@ -135,7 +136,7 @@ public class ModelValidatorTest {
 	public void processInParametersTypeMismatchesAreReported() throws AnnotationProcessorException, ParseException {
 		// WHEN validating a model where a process has an IN parameter that has
 		// different type that the corresponding knowledge field
-		KnowledgePath typeMismatch = processor.createKnowledgePath("typeMismatch", true);
+		KnowledgePath typeMismatch = processor.createKnowledgePath("typeMismatch", PathOrigin.COMPONENT);
 		process.getParameters().get(0).setKnowledgePath(typeMismatch);
 		
 		// THEN validation finds this problem
@@ -149,7 +150,7 @@ public class ModelValidatorTest {
 	public void processInOutParametersTypeMismatchesAreReported() throws AnnotationProcessorException, ParseException {
 		// WHEN validating a model where a process has an INOUT parameter that has
 		// different type that the corresponding knowledge field
-		KnowledgePath typeMismatch = processor.createKnowledgePath("typeMismatch", true);
+		KnowledgePath typeMismatch = processor.createKnowledgePath("typeMismatch", PathOrigin.COMPONENT);
 		process.getParameters().get(1).setKnowledgePath(typeMismatch);
 		
 		// THEN validation finds this problem

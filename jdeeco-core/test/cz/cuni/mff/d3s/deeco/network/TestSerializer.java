@@ -78,10 +78,10 @@ public class TestSerializer {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testKnowledgeDataSerialization() throws IOException, ClassNotFoundException, KnowledgeUpdateException, KnowledgeNotFoundException {
-		KnowledgeManagerContainer container = new KnowledgeManagerContainer(new CloningKnowledgeManagerFactory());
+		KnowledgeManagerContainer container = new KnowledgeManagerContainer(new CloningKnowledgeManagerFactory(), model);
 		List<EnsembleDefinition> ens = Collections.emptyList();
 		DefaultKnowledgeDataManager kdManager = new DefaultKnowledgeDataManager(ens, null);
-		kdManager.initialize(container, null, "", mock(Scheduler.class));
+		kdManager.initialize(container, null, "", mock(Scheduler.class), null);
 		
 		ValueSet initialKnowledge = null;
 		
@@ -98,7 +98,7 @@ public class TestSerializer {
 		}
 		
 		// create a new KM with the same id and knowledge values
-		KnowledgeManager km = container.createLocal(component.getKnowledgeManager().getId());
+		KnowledgeManager km = container.createLocal(component.getKnowledgeManager().getId(), component);
 		km.update(cs);
 				
 		List<? extends KnowledgeData> kd = kdManager.prepareLocalKnowledgeData();		

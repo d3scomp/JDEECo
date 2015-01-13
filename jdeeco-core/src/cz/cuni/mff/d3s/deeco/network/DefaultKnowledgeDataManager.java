@@ -4,10 +4,13 @@ package cz.cuni.mff.d3s.deeco.network;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import cz.cuni.mff.d3s.deeco.DeecoProperties;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
@@ -22,6 +25,8 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
+import cz.cuni.mff.d3s.deeco.security.KnowledgeEncryptor;
+import cz.cuni.mff.d3s.deeco.security.SecurityKeyManager;
 
 
 /**
@@ -63,7 +68,9 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 	
 	
 	/** Stores received KnowledgeMetaData for replicas (received ValueSet is deleted) */
-	protected final Map<KnowledgeManager, KnowledgeMetaData> replicaMetadata;
+	protected final Map<String, KnowledgeMetaData> replicaMetadata;
+	/** Stores role names of accepted replica versions */
+	protected final Map<String, Set<Integer>> replicaRoles;
 	/** Global version counter for all outgoing local knowledge. */
 	protected long localVersion;
 	
@@ -88,7 +95,8 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 	protected final int ipDelay;
 	
 	protected final IPGossipStrategy ipGossipStrategy;
-
+	protected KnowledgeEncryptor knowledgeEncryptor;
+	
 	
 	/**
 	 * Creates an initialized instance.
@@ -105,6 +113,7 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 		this.localVersion = 0;
 		this.replicaMetadata = new HashMap<>();
 		this.ipGossipStrategy = ipGossipStrategy;
+		this.replicaRoles = new HashMap<>();
 		
 		dataToRebroadcastOverMANET = new HashMap<>();
 		dataToRebroadcastOverIP = new HashMap<>();
@@ -119,7 +128,6 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 		checkBoundaryCondition = !Boolean.getBoolean(DeecoProperties.DISABLE_BOUNDARY_CONDITIONS);
 		maxRebroadcastDelay = Integer.getInteger(DeecoProperties.MAXIMUM_REBROADCAST_DELAY, DEFAULT_MAX_REBROADCAST_DELAY);
 		ipDelay = Integer.getInteger(DeecoProperties.IP_REBROADCAST_DELAY, DEFAULT_IP_DELAY);
-		
 
 		double rssi = 0;
 		try {
@@ -136,12 +144,15 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 			KnowledgeManagerContainer kmContainer,
 			DataSender dataSender,
 			String host,
-			Scheduler scheduler) {
-		super.initialize(kmContainer, dataSender, host, scheduler);
+			Scheduler scheduler,
+			SecurityKeyManager keyManager) {
+		super.initialize(kmContainer, dataSender, host, scheduler, keyManager);
 		long seed = 0;
 		for (char c: host.toCharArray())
 			seed += c;
 		random.setSeed(seed);
+		
+		this.knowledgeEncryptor = new KnowledgeEncryptor(keyManager);
 		
 		Log.d(String.format("KnowledgeDataManager at %s uses %s publishing", host, useIndividualPublishing ? "individual" : "list"));
 		Log.d(String.format("KnowledgeDataManager at %s uses checkGossipCondition = %b", host, checkGossipCondition));
@@ -180,7 +191,7 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 
 	@Override
 	public void rebroacast(KnowledgeMetaData metadata, NICType nicType) {
-		String sig = metadata.getSignature();
+		String sig = metadata.getSignatureWithRole();
 		KnowledgeData data;
 		if (nicType.equals(NICType.MANET) && dataToRebroadcastOverMANET.containsKey(sig)) {	
 			data = prepareForRebroadcast(dataToRebroadcastOverMANET.get(sig));
@@ -213,48 +224,68 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 				
 				continue;
 			} 
-			KnowledgeManager replica = kmContainer.createReplica(newMetadata.componentId);			
-			KnowledgeMetaData currentMetadata = replicaMetadata.get(replica);
-						
+			
+			KnowledgeMetaData currentMetadata = replicaMetadata.get(newMetadata.componentId);
+			
+			if (!replicaRoles.containsKey(newMetadata.getSignature())) {
+				replicaRoles.put(newMetadata.getSignature(), new HashSet<>());
+			}
+			
 			// if we get the same or newer data before we manage to rebroadcast, abort the rebroadcast 
 			if ((currentMetadata != null)
 					&& (currentMetadata.versionId <= newMetadata.versionId)
-					&& dataToRebroadcastOverMANET.containsKey(currentMetadata.getSignature())) {
-				dataToRebroadcastOverMANET.remove(currentMetadata.getSignature());
+					&& dataToRebroadcastOverMANET.containsKey(currentMetadata.getSignatureWithRole())) {
+				dataToRebroadcastOverMANET.remove(currentMetadata.getSignatureWithRole());
 				if (Log.isDebugLoggable()) {
 					Log.d(String.format(
 							"MANET: Rebroadcast aborted (%d) at %s, data %s, because of %s",
 							timeProvider.getCurrentMilliseconds(), host,
-							currentMetadata.getSignature(),
-							newMetadata.getSignature()));
+							currentMetadata.getSignatureWithRole(),
+							newMetadata.getSignatureWithRole()));
 				}
 			}
 			
 			if ((currentMetadata != null)
 					&& (currentMetadata.versionId < newMetadata.versionId)
-					&& dataToRebroadcastOverIP.containsKey(currentMetadata.getSignature())) {
-				dataToRebroadcastOverIP.remove(currentMetadata.getSignature());
+					&& dataToRebroadcastOverIP.containsKey(currentMetadata.getSignatureWithRole())) {
+				dataToRebroadcastOverIP.remove(currentMetadata.getSignatureWithRole());
 				if (Log.isDebugLoggable()) {
 					Log.d(String.format(
 							"IP: Rebroadcast aborted (%d) at %s, data %s, because of %s",
 							timeProvider.getCurrentMilliseconds(), host,
-							currentMetadata.getSignature(),
-							newMetadata.getSignature()));
+							currentMetadata.getSignatureWithRole(),
+							newMetadata.getSignatureWithRole()));
 				}
 			}
 			
-			// accept only fresh knowledge data (drop if we have already a newer value)
-			boolean haveOlder = (currentMetadata == null) || (currentMetadata.versionId < newMetadata.versionId);			
-			if (haveOlder) {	
-				try {
-				replica.update(toChangeSet(kd.getKnowledge()));			
-				} catch (KnowledgeUpdateException e) {
-					Log.w(String
-							.format("KnowledgeDataManager.receive: Could not update replica of %s.",
-									newMetadata.componentId), e);
+			// accept only fresh knowledge data (drop if we have already a newer value) or data for not yet processed role
+			boolean haveOlder = (currentMetadata == null) || (currentMetadata.versionId < newMetadata.versionId); 
+			
+			if (!haveOlder) {
+				Set<Integer> newRoles = replicaRoles.get(newMetadata.getSignature());
+				Set<Integer> currentRoles = replicaRoles.get(currentMetadata.getSignature());
+				
+				boolean haveAllRoles = currentRoles.containsAll(newRoles) && currentRoles.contains(newMetadata.targetRole == null ? null : newMetadata.targetRole.hashCode());
+				haveOlder = !haveAllRoles;
+			}
+			
+			if (haveOlder) {
+				for (KnowledgeManager replica : kmContainer.createReplica(newMetadata.componentId)) {
+												
+					try {
+						ChangeSet changeSet = toChangeSet(kd.getKnowledge());
+						knowledgeEncryptor.decryptChangeSet(changeSet, replica, kd.getMetaData());
+						replica.update(changeSet);			
+					} catch (KnowledgeUpdateException e) {
+						Log.w(String
+								.format("KnowledgeDataManager.receive: Could not update replica of %s.",
+										newMetadata.componentId), e);
+					}					
 				}
-				//	store the metadata without the knowledge values
-				replicaMetadata.put(replica, newMetadata);
+				
+				// store the metadata without the knowledge values
+				replicaMetadata.put(newMetadata.componentId, newMetadata);
+				replicaRoles.get(newMetadata.getSignature()).add(newMetadata.targetRole == null ? null : newMetadata.targetRole.hashCode());
 				
 				// rebroadcast only data that is of some value (i.e., newer than we have)
 				queueForRebroadcast(kd);
@@ -268,8 +299,9 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 							timeProvider.getCurrentMilliseconds() - newMetadata.createdAt,
 							newMetadata.hopCount));
 				}
+			
 			}
-			//System.out.println("Received at " + host + " " + knowledgeData);
+			
 		}
 	}
 	
@@ -373,13 +405,13 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 		result++;
 		return result;
 	}
-	
+
 	protected List<KnowledgeData> prepareLocalKnowledgeData() {
 		List<KnowledgeData> result = new LinkedList<>();
 		for (KnowledgeManager km : kmContainer.getLocals()) {
 			try {
-				KnowledgeData kd = prepareLocalKnowledgeData(km);				
-				result.add(filterLocalKnowledgeForKnownEnsembles(kd));				
+				List<KnowledgeData> kds = prepareLocalKnowledgeData(km).stream().map(this::filterLocalKnowledgeForKnownEnsembles).collect(Collectors.toList());				
+				result.addAll(kds);				
 			} catch (Exception e) {
 				Log.e("prepareKnowledgeData error", e);
 			}
@@ -388,11 +420,12 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 	}
 	
 
-	protected KnowledgeData prepareLocalKnowledgeData(KnowledgeManager km)
+	protected List<KnowledgeData> prepareLocalKnowledgeData(KnowledgeManager km)
 			throws KnowledgeNotFoundException {
-		return new KnowledgeData(
-				getNonLocalKnowledge(km.get(emptyPath), km), 
-				new KnowledgeMetaData(km.getId(), localVersion, host, timeProvider.getCurrentMilliseconds(), 1));
+		// extract local knowledge
+		ValueSet basicValueSet = getNonLocalKnowledge(km.get(emptyPath), km);
+		KnowledgeMetaData metaData = new KnowledgeMetaData(km.getId(), localVersion, host, timeProvider.getCurrentMilliseconds(), 1);
+		return knowledgeEncryptor.encryptValueSet(basicValueSet, km, metaData);
 	}
 
 	protected ValueSet getNonLocalKnowledge(ValueSet toFilter, KnowledgeManager km) {

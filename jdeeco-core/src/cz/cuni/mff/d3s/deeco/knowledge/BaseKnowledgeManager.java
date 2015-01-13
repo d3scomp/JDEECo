@@ -9,8 +9,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
@@ -31,16 +33,20 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 public class BaseKnowledgeManager implements KnowledgeManager {
 
 	private final Map<KnowledgePath, Object> knowledge;
+	private final Map<PathNodeField, List<KnowledgeSecurityTag>> securityTags;
 	private final Map<KnowledgeChangeTrigger, List<TriggerListener>> knowledgeChangeListeners;
 	private final Collection<KnowledgePath> localKnowledgePaths;
-
+	
+	protected final ComponentInstance component;
 	private final String id;
 
-	public BaseKnowledgeManager(String id) {
+	public BaseKnowledgeManager(String id, ComponentInstance component) {
 		this.id = id;
+		this.component = component;
 		this.knowledge = new HashMap<>();
 		this.knowledgeChangeListeners = new HashMap<>();
 		this.localKnowledgePaths = new LinkedList<>();
+		this.securityTags = new HashMap<>();
 	}
 
 	@Override
@@ -48,6 +54,11 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		return this.id;
 	}
 
+	@Override
+	public ComponentInstance getComponent() {
+		return component;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -129,6 +140,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	public void update(final ChangeSet changeSet) throws KnowledgeUpdateException {
 		final Map<KnowledgePath, Object> updated = new HashMap<>();
 		final List<KnowledgePath> added = new LinkedList<>();
+		
 		Object original = null;
 		try {
 			boolean exists;
@@ -185,6 +197,8 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 			notifyKnowledgeChangeListeners(knowledgePath);
 		}
 	}
+
+
 
 	/*
 	 * (non-Javadoc)
@@ -591,4 +605,35 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	public Collection<KnowledgePath> getLocalPaths() {
 		return localKnowledgePaths;
 	}
+
+	@Override
+	public void addSecurityTags(KnowledgePath knowledgePath, Collection<KnowledgeSecurityTag> newSecurityTags) {	
+		if (knowledgePath.getNodes().size() != 1) {
+			throw new IllegalArgumentException("Illegal use of method - only single-noded knowledge path can be secured.");
+		}
+		if (!(knowledgePath.getNodes().get(0) instanceof PathNodeField)) {
+			throw new IllegalArgumentException("Illegal use of method - the node must refer to a field within the component.");
+		}
+		
+		PathNodeField pathNode = (PathNodeField)knowledgePath.getNodes().get(0);
+		
+		if (!securityTags.containsKey(pathNode)) {
+			securityTags.put(pathNode, new LinkedList<>());
+		}
+		
+		securityTags.get(pathNode).addAll(newSecurityTags);		
+	}
+	
+	@Override
+	public List<KnowledgeSecurityTag> getSecurityTags(PathNodeField pathNodeField) {
+		List<KnowledgeSecurityTag> result = securityTags.get(pathNodeField);
+		if (result == null) {
+			return Collections.emptyList();
+		} else {
+			return result;
+		}
+	}
+
+	
+
 }

@@ -87,8 +87,11 @@ public class KnowledgePathHelper {
 	public static KnowledgePathAndRoot getAbsoluteStrippedPath(KnowledgePath path, ReadOnlyKnowledgeManager coordKnowledgeManager, ReadOnlyKnowledgeManager memberKnowledgeManager)
 			throws KnowledgeNotFoundException {
 		RuntimeMetadataFactory factory = RuntimeMetadataFactory.eINSTANCE;
-		for (int i=0; i<path.getNodes().size();i++) {
-			PathNode pn = path.getNodes().get(i);
+		
+		KnowledgePath modifiablePath = cloneKnowledgePath(path);
+		
+		for (int i=0; i<modifiablePath.getNodes().size();i++) {
+			PathNode pn = modifiablePath.getNodes().get(i);
 			if (pn instanceof PathNodeMapKey) {
 				KnowledgePath innerPath = ((PathNodeMapKey) pn).getKeyPath();
 				KnowledgePathAndRoot innerPathAndRoot = getAbsoluteStrippedPath(innerPath, coordKnowledgeManager,memberKnowledgeManager);
@@ -104,11 +107,46 @@ public class KnowledgePathHelper {
 				}
 				PathNodeField resField = factory.createPathNodeField();
 				resField.setName(value);
-				path.getNodes().remove(i);
-				path.getNodes().add(i,resField);
+				modifiablePath.getNodes().remove(i);
+				modifiablePath.getNodes().add(i,resField);
 			}
 		}
-		return getStrippedPath(path);
+		return getStrippedPath(modifiablePath);
+	}
+
+	/**
+	 * Creates a deep clone of the knowledge path
+	 * @param path to clone
+	 * @return the deep copy
+	 */
+	public static KnowledgePath cloneKnowledgePath(KnowledgePath path) {
+		RuntimeMetadataFactory factory = RuntimeMetadataFactory.eINSTANCE;
+		
+		KnowledgePath modifiablePath = factory.createKnowledgePath();
+		for (PathNode node : path.getNodes()) {
+			if (node instanceof PathNodeField) {
+				PathNodeField copy = factory.createPathNodeField();
+				copy.setName(((PathNodeField)node).getName());
+				modifiablePath.getNodes().add(copy);
+			} else if (node instanceof PathNodeMapKey) {
+				PathNodeMapKey copy = factory.createPathNodeMapKey();
+				copy.setKeyPath(cloneKnowledgePath(((PathNodeMapKey)node).getKeyPath()));
+				modifiablePath.getNodes().add(copy);
+			} else if (node instanceof PathNodeComponentId) {
+				PathNodeComponentId copy = factory.createPathNodeComponentId();
+				modifiablePath.getNodes().add(copy);
+			} else if (node instanceof PathNodeCoordinator) {
+				PathNodeCoordinator copy = factory.createPathNodeCoordinator();
+				modifiablePath.getNodes().add(copy);
+			} else if (node instanceof PathNodeMember) {
+				PathNodeMember copy = factory.createPathNodeMember();
+				modifiablePath.getNodes().add(copy);
+			} else {
+				throw new IllegalArgumentException("Unknown node type "+node.getClass());
+			}
+		}
+		
+		return modifiablePath;
 	}
 
 	/**
@@ -123,8 +161,11 @@ public class KnowledgePathHelper {
 	public static KnowledgePath getAbsolutePath(KnowledgePath path, ReadOnlyKnowledgeManager knowledgeManager) 
 			throws KnowledgeNotFoundException {
 		RuntimeMetadataFactory factory = RuntimeMetadataFactory.eINSTANCE;
-		for (int i=0; i<path.getNodes().size();i++) {
-			PathNode pn = path.getNodes().get(i);
+		
+		KnowledgePath modifiablePath = cloneKnowledgePath(path);
+		
+		for (int i=0; i<modifiablePath.getNodes().size();i++) {
+			PathNode pn = modifiablePath.getNodes().get(i);
 			if (pn instanceof PathNodeMapKey) {
 				KnowledgePath innerPath = ((PathNodeMapKey) pn).getKeyPath();
 				innerPath = getAbsolutePath(innerPath, knowledgeManager);
@@ -138,13 +179,22 @@ public class KnowledgePathHelper {
 				}
 				PathNodeField resField = factory.createPathNodeField();
 				resField.setName(value);
-				path.getNodes().remove(i);
-				path.getNodes().add(i,resField);
+				modifiablePath.getNodes().remove(i);
+				modifiablePath.getNodes().add(i,resField);
 			}
 		}
-		return path;
+		return modifiablePath;
 	}
 
+	/**
+	 * Checks whether the given knowledge path is absolute (i.e. consists only of {@link PathNodeField} or {@link PathNodeComponentId}).
+	 * @param path input knowledge path.
+	 * @return true if the path is absolute, false otherwise
+	 */
+	public static boolean isAbsolutePath(KnowledgePath path) {
+		return path.getNodes().stream().allMatch(node -> (node instanceof PathNodeField) || (node instanceof PathNodeComponentId));
+	}
+	
 	/**
 	 * Returns a stripped path (i.e. path without member/coordinator prefix. It further checks that the input path is absolute (i.e. is a sequence of only {@link PathNodeField}).
 	 * 

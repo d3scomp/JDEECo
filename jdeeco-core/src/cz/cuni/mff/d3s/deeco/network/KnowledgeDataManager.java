@@ -7,6 +7,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
+import cz.cuni.mff.d3s.deeco.security.SecurityKeyManager;
 
 
 /**
@@ -52,7 +53,9 @@ KnowledgeDataPublisher {
 	protected KnowledgeManagerContainer kmContainer;	
 	/** Object used for sending {@link dataSender} over the network. */
 	protected DataSender dataSender;		
-
+	/** handles public keys for security roles */
+	protected SecurityKeyManager keyManager;
+	
 	/**
 	 * Initializes instance.
 	 * 
@@ -65,12 +68,14 @@ KnowledgeDataPublisher {
 			KnowledgeManagerContainer kmContainer,
 			DataSender dataSender,
 			String host,
-			Scheduler scheduler) {
+			Scheduler scheduler,
+			SecurityKeyManager keyManager) {
 		this.host = host;		
 		this.scheduler = scheduler;
 		this.timeProvider = scheduler;
 		this.kmContainer = kmContainer;
 		this.dataSender = dataSender;
+		this.keyManager = keyManager;
 	}
 	
 	@SuppressWarnings("unchecked")

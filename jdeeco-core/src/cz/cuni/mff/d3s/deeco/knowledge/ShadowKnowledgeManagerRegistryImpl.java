@@ -107,7 +107,7 @@ public class ShadowKnowledgeManagerRegistryImpl implements ShadowKnowledgeManage
 	public Collection<ReadOnlyKnowledgeManager> getShadowKnowledgeManagers() {
 		List<ReadOnlyKnowledgeManager> result = new LinkedList<>();
 		result.addAll(container.getLocals());
-		result.addAll(container.getReplicas());
+		result.addAll(container.getReplicas(knowledgeManager.getComponent()));
 		result.remove(knowledgeManager);
 		return result;
 	}

@@ -3,7 +3,7 @@ JDEECo is a Java implementation of the DEECo component system. For further infor
 ##Requirements
 To compile and run the JDEECo framework, the following software has to be available on your system:
 
-* Java SDK >= 1.7.0 ([http://java.com/en/](http://java.com/en/))
+* Java SDK >= 1.8.0 ([http://java.com/en/](http://java.com/en/))
 
 ## Compilation and Deployment
 To compile the project you will need to have Apache Maven (http://maven.apache.org/) installed on your machine (version 3.1.1 was used when writing the script).

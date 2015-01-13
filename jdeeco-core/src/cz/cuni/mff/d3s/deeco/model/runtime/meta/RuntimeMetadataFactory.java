@@ -2,6 +2,8 @@
  */
 package cz.cuni.mff.d3s.deeco.model.runtime.meta;
 
+import cz.cuni.mff.d3s.deeco.model.runtime.api.AbsoluteSecurityRoleArgument;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.BlankSecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Condition;
@@ -11,15 +13,17 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Exchange;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Invocable;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathSecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
-
 import org.eclipse.emf.ecore.EFactory;
 
 /**
@@ -191,6 +195,51 @@ public interface RuntimeMetadataFactory extends EFactory {
 	 * @generated
 	 */
 	PathNodeComponentId createPathNodeComponentId();
+
+	/**
+	 * Returns a new object of class '<em>Knowledge Security Tag</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Knowledge Security Tag</em>'.
+	 * @generated
+	 */
+	KnowledgeSecurityTag createKnowledgeSecurityTag();
+
+	/**
+	 * Returns a new object of class '<em>Security Role</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Security Role</em>'.
+	 * @generated
+	 */
+	SecurityRole createSecurityRole();
+
+	/**
+	 * Returns a new object of class '<em>Path Security Role Argument</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Path Security Role Argument</em>'.
+	 * @generated
+	 */
+	PathSecurityRoleArgument createPathSecurityRoleArgument();
+
+	/**
+	 * Returns a new object of class '<em>Blank Security Role Argument</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Blank Security Role Argument</em>'.
+	 * @generated
+	 */
+	BlankSecurityRoleArgument createBlankSecurityRoleArgument();
+
+	/**
+	 * Returns a new object of class '<em>Absolute Security Role Argument</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Absolute Security Role Argument</em>'.
+	 * @generated
+	 */
+	AbsoluteSecurityRoleArgument createAbsoluteSecurityRoleArgument();
 
 	/**
 	 * Returns the package supported by this factory.

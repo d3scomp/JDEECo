@@ -16,22 +16,31 @@ public class KnowledgeMetaData implements Serializable {
 	public long createdAt; 
 	public int hopCount;
 	
+	public byte[] encryptedKey;
+	public String encryptedKeyAlgorithm;
+	public KnowledgeSecurityAnnotation targetRole;
+	
 	public KnowledgeMetaData(String componentId, long versionId, String sender, long createdAt, int hopCount) {
+		this(componentId, versionId, sender, createdAt, hopCount, null, null, null);
+	}
+
+	public KnowledgeMetaData(String componentId, long versionId, String sender, long createdAt, int hopCount, 
+			byte[] encryptedKey, String encryptedKeyAlgorithm, KnowledgeSecurityAnnotation targetRole) {
 		super();
 		this.componentId = componentId;
 		this.versionId = versionId;
 		this.sender = sender;
 		this.createdAt = createdAt;
 		this.hopCount = hopCount;
+		this.encryptedKey = encryptedKey;
+		this.encryptedKeyAlgorithm = encryptedKeyAlgorithm;
+		this.targetRole = targetRole;
 	}
-
 	
 	public KnowledgeMetaData clone() {
-		return new KnowledgeMetaData(componentId, versionId, sender, createdAt, hopCount);
+		return new KnowledgeMetaData(componentId, versionId, sender, createdAt, hopCount, encryptedKey, encryptedKeyAlgorithm, targetRole);
 	}
-	
-	
-	
+		
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -77,12 +86,40 @@ public class KnowledgeMetaData implements Serializable {
 			return false;
 		if (versionId != other.versionId)
 			return false;
+		if (encryptedKeyAlgorithm == null) {
+			if (other.encryptedKeyAlgorithm != null)
+				return false;
+		} else {
+			if (!encryptedKeyAlgorithm.equals(other.encryptedKeyAlgorithm)) 
+				return false;
+		}
+		if (encryptedKey == null) {
+			if (other.encryptedKey != null)
+				return false;
+		} else {
+			if (!encryptedKey.equals(other.encryptedKey)) 
+				return false;
+		}
+		if (targetRole == null) {
+			if (other.targetRole != null)
+				return false;
+		} else {
+			if (!targetRole.equals(other.targetRole)) 
+				return false;
+		}
 		return true;
 	}
 
 
-	public String getSignature() {
-//		return String.format("%sv%d", componentId, versionId);
-		return componentId + "v" + versionId;
+	public String getSignatureWithRole() {
+		if (targetRole != null) {
+			return componentId + "v" + versionId + "_" + targetRole.hashCode();
+		} else {
+			return getSignature();
+		}
 	}
+	
+	public String getSignature() {
+		return componentId + "v" + versionId;
+	}	
 }

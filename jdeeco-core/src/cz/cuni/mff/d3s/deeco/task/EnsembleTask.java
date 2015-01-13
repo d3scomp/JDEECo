@@ -6,9 +6,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
-
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
@@ -29,6 +29,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.impl.TriggerImpl;
 import cz.cuni.mff.d3s.deeco.runtime.ArchitectureObserver;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
+import cz.cuni.mff.d3s.deeco.security.LocalSecurityChecker;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.KnowledgePathAndRoot;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.PathRoot;
 
@@ -52,6 +53,11 @@ public class EnsembleTask extends Task {
 	 * Reference to the corresponding {@link ArchitectureObserver} 
 	 */
 	ArchitectureObserver architectureObserver;
+	
+	/**
+	 * Reference to the corresponding {@link LocalSecurityChecker} 
+	 */
+	LocalSecurityChecker securityChecker;
 	
 	/**
 	 * A wrapper around a trigger obtained from the local knowledge manager. The sole purpose of this class is to be able to distinguish
@@ -133,11 +139,12 @@ public class EnsembleTask extends Task {
 	}
 	ShadowsTriggerListenerImpl shadowsTriggerListener = new ShadowsTriggerListenerImpl();
 
-	public EnsembleTask(EnsembleController ensembleController, Scheduler scheduler, ArchitectureObserver architectureObserver) {
+	public EnsembleTask(EnsembleController ensembleController, Scheduler scheduler, ArchitectureObserver architectureObserver, KnowledgeManagerContainer kmContainer) {
 		super(scheduler);
 		
 		this.architectureObserver = architectureObserver;
 		this.ensembleController = ensembleController;
+		this.securityChecker = new LocalSecurityChecker(ensembleController, kmContainer);
 	}
 
 	/**
@@ -498,19 +505,19 @@ public class EnsembleTask extends Task {
 
 	private void evaluateMembershipAndPerformExchange(ReadOnlyKnowledgeManager shadowKnowledgeManager) throws TaskInvocationException {
 		// Invoke the membership condition and if the membership condition returned true, invoke the knowledge exchange
-		if (checkMembership(PathRoot.COORDINATOR, shadowKnowledgeManager)) {
+		if (checkMembership(PathRoot.COORDINATOR, shadowKnowledgeManager) && securityChecker.checkSecurity(PathRoot.COORDINATOR, shadowKnowledgeManager)) {
 			architectureObserver.ensembleFormed(ensembleController.getEnsembleDefinition(), ensembleController.getComponentInstance(),
 					ensembleController.getComponentInstance().getKnowledgeManager().getId(),shadowKnowledgeManager.getId());
 			performExchange(PathRoot.COORDINATOR, shadowKnowledgeManager);
 		}
 		// Do the same with the roles exchanged
-		if (checkMembership(PathRoot.MEMBER, shadowKnowledgeManager)) {
+		if (checkMembership(PathRoot.MEMBER, shadowKnowledgeManager) && securityChecker.checkSecurity(PathRoot.MEMBER, shadowKnowledgeManager)) {
 			architectureObserver.ensembleFormed(ensembleController.getEnsembleDefinition(), ensembleController.getComponentInstance(),
 					shadowKnowledgeManager.getId(), ensembleController.getComponentInstance().getKnowledgeManager().getId());
 			performExchange(PathRoot.MEMBER, shadowKnowledgeManager);
 		}
 	}
-	
+
 	/**
 	 * Returns the period associated with the ensemble in the in the meta-model as the {@link TimeTrigger}. Note that the {@link EnsembleTask} assumes that there is at most
 	 * one instance of {@link TimeTrigger} associated with the ensemble in the meta-model.

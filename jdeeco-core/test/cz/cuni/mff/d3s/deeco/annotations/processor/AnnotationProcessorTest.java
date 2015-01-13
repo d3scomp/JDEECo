@@ -25,18 +25,26 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.ParseException;
+import cz.cuni.mff.d3s.deeco.annotations.pathparser.PathOrigin;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.TokenMgrError;
 import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.*;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerFactory;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerFactory;
+import cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.AbsoluteSecurityRoleArgument;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.BlankSecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathSecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 
 /**
@@ -84,6 +92,101 @@ public class AnnotationProcessorTest {
 		saveInXMI(model, tempFile);
 		FileAssert.assertEquals(expected, tempFile);
 	}
+	
+	@Test 
+	public void testComponentSecurityAnnotations() throws AnnotationProcessorException {
+		// given component with security annotations is processed by the annotations processor
+		RuntimeMetadata model = factory.createRuntimeMetadata(); 
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		CorrectC4 input = new CorrectC4();
+		
+		// when process() is called
+		processor.process(input);
+		
+		// then annotations are parsed correctly
+		assertEquals(1, model.getComponentInstances().size());
+		ComponentInstance component = model.getComponentInstances().get(0);
+		KnowledgeManager km = component.getKnowledgeManager();
+		
+		List<KnowledgeSecurityTag> nameSecurityTags = km.getSecurityTags(RuntimeModelHelper.createPathNodeField("name"));
+		assertEquals(0, nameSecurityTags.size());
+		
+		List<KnowledgeSecurityTag> capacitySecurityTags = km.getSecurityTags(RuntimeModelHelper.createPathNodeField("capacity"));
+		assertEquals(2, capacitySecurityTags.size());
+		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role1.class.getName(), capacitySecurityTags.get(0).getRequiredRole().getRoleName());
+		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role3.class.getName(), capacitySecurityTags.get(1).getRequiredRole().getRoleName());
+		assertEquals(0, capacitySecurityTags.get(0).getRequiredRole().getArguments().size());
+		assertEquals(0, capacitySecurityTags.get(1).getRequiredRole().getArguments().size());
+		
+		List<KnowledgeSecurityTag> timeSecurityTags = km.getSecurityTags(RuntimeModelHelper.createPathNodeField("time"));
+		assertEquals(1, timeSecurityTags.size());
+		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role2.class.getName(), timeSecurityTags.get(0).getRequiredRole().getRoleName());
+		assertEquals(4, timeSecurityTags.get(0).getRequiredRole().getArguments().size());
+		
+		PathSecurityRoleArgument pathArgument = (PathSecurityRoleArgument)timeSecurityTags.get(0).getRequiredRole().getArguments().get(0);
+		assertEquals(RuntimeModelHelper.createKnowledgePath("name_path"), pathArgument.getKnowledgePath());
+		assertEquals("name", pathArgument.getName());
+		assertEquals("time", timeSecurityTags.get(0).getRequiredRole().getArguments().get(1).getName());
+		assertTrue(timeSecurityTags.get(0).getRequiredRole().getArguments().get(0) instanceof PathSecurityRoleArgument);
+		assertTrue(timeSecurityTags.get(0).getRequiredRole().getArguments().get(1) instanceof BlankSecurityRoleArgument);
+		assertTrue(timeSecurityTags.get(0).getRequiredRole().getArguments().get(2) instanceof AbsoluteSecurityRoleArgument);
+		assertTrue(timeSecurityTags.get(0).getRequiredRole().getArguments().get(3) instanceof AbsoluteSecurityRoleArgument);
+		
+		assertEquals(RuntimeModelHelper.createKnowledgePath("name_path"), ((PathSecurityRoleArgument) timeSecurityTags.get(0).getRequiredRole().getArguments().get(0)).getKnowledgePath());
+		assertEquals(123, ((AbsoluteSecurityRoleArgument) timeSecurityTags.get(0).getRequiredRole().getArguments().get(2)).getValue());
+		assertEquals("some_value", ((AbsoluteSecurityRoleArgument) timeSecurityTags.get(0).getRequiredRole().getArguments().get(3)).getValue());
+		
+		assertEquals(2, component.getRoles().size());
+		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role1.class.getName(), component.getRoles().get(0).getRoleName());
+		assertEquals(0, component.getRoles().get(0).getArguments().size());
+		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role2.class.getName(), component.getRoles().get(1).getRoleName());
+		assertEquals(4, component.getRoles().get(1).getArguments().size());
+		
+		pathArgument = (PathSecurityRoleArgument)component.getRoles().get(1).getArguments().get(0);
+		assertEquals(RuntimeModelHelper.createKnowledgePath("name_path"), pathArgument.getKnowledgePath());
+		assertEquals("name", pathArgument.getName());
+		assertEquals("time", component.getRoles().get(1).getArguments().get(1).getName());		
+	}
+	
+	@Test 
+	public void testComponentSecurityInheritanceAnnotations1() throws AnnotationProcessorException {
+		// given component with security annotations is processed by the annotations processor
+		RuntimeMetadata model = factory.createRuntimeMetadata(); 
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		CorrectC5 input = new CorrectC5();
+		
+		// when process() is called
+		processor.process(input);
+		
+		// then annotations are parsed correctly
+		assertEquals(1, model.getComponentInstances().size());
+		ComponentInstance component = model.getComponentInstances().get(0);
+		KnowledgeManager km = component.getKnowledgeManager();
+		
+		List<KnowledgeSecurityTag> nameSecurityTags = km.getSecurityTags(RuntimeModelHelper.createPathNodeField("name"));
+		SecurityRole securityRole = nameSecurityTags.get(0).getRequiredRole();
+		
+		assertEquals(1, nameSecurityTags.size());
+		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC5.Role3.class.getName(), securityRole.getRoleName());
+		assertEquals(5, securityRole.getArguments().size());
+		
+		assertEquals("fieldRole2", securityRole.getArguments().get(0).getName());
+		assertEquals("fieldRole3", securityRole.getArguments().get(1).getName());
+		assertEquals("fieldRole0", securityRole.getArguments().get(2).getName());
+		assertEquals("fieldRole1", securityRole.getArguments().get(3).getName());
+		assertEquals("fieldRole_date", securityRole.getArguments().get(4).getName());
+
+		assertTrue(securityRole.getArguments().get(0) instanceof BlankSecurityRoleArgument);
+		assertTrue(securityRole.getArguments().get(1) instanceof PathSecurityRoleArgument);
+		assertTrue(securityRole.getArguments().get(2) instanceof AbsoluteSecurityRoleArgument);
+		assertTrue(securityRole.getArguments().get(3) instanceof PathSecurityRoleArgument);
+		assertTrue(securityRole.getArguments().get(4) instanceof AbsoluteSecurityRoleArgument);
+		
+		assertEquals(RuntimeModelHelper.createKnowledgePath("v"), ((PathSecurityRoleArgument)securityRole.getArguments().get(1)).getKnowledgePath() );
+		assertEquals("value_override", ((AbsoluteSecurityRoleArgument)securityRole.getArguments().get(2)).getValue() );
+		assertEquals(RuntimeModelHelper.createKnowledgePath("x"), ((PathSecurityRoleArgument)securityRole.getArguments().get(3)).getKnowledgePath() );
+		assertEquals(123, ((AbsoluteSecurityRoleArgument)securityRole.getArguments().get(4)).getValue() );
+	}	
 	
 	@Test
 	public void testComponentModelInheritance() throws AnnotationProcessorException {
@@ -443,14 +546,14 @@ public class AnnotationProcessorTest {
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);
 		
 		String pathStr = "level1.level2.level3";
-		KnowledgePath kp = processor.createKnowledgePath(pathStr, true);
+		KnowledgePath kp = processor.createKnowledgePath(pathStr, PathOrigin.COMPONENT);
 		assertEquals(kp.getNodes().size(),3);
 		assertEquals(((PathNodeField) kp.getNodes().get(0)).getName(),"level1");
 		assertEquals(((PathNodeField) kp.getNodes().get(1)).getName(),"level2");
 		assertEquals(((PathNodeField) kp.getNodes().get(2)).getName(),"level3");
 		
 		pathStr = "level1.[level21.level22.level23]";
-		kp = processor.createKnowledgePath(pathStr, true);
+		kp = processor.createKnowledgePath(pathStr, PathOrigin.COMPONENT);
 		assertEquals(kp.getNodes().size(),2);
 		assertEquals(((PathNodeField) kp.getNodes().get(0)).getName(),"level1");
 		assert kp.getNodes().get(1) instanceof PathNodeMapKey;
@@ -461,7 +564,7 @@ public class AnnotationProcessorTest {
 		assertEquals(((PathNodeField) kp.getNodes().get(2)).getName(),"level23");
 		
 		pathStr = "level1.[level21.[level221.level222].level23]";
-		kp = processor.createKnowledgePath(pathStr, true);
+		kp = processor.createKnowledgePath(pathStr, PathOrigin.COMPONENT);
 		assertEquals(kp.getNodes().size(),2);
 		assertEquals(((PathNodeField) kp.getNodes().get(0)).getName(),"level1");
 		assertTrue(kp.getNodes().get(1) instanceof PathNodeMapKey);
@@ -475,7 +578,7 @@ public class AnnotationProcessorTest {
 		assertEquals(((PathNodeField) kp.getNodes().get(1)).getName(),"level222");
 		
 		pathStr = "details.[id]";
-		kp = processor.createKnowledgePath(pathStr, true);
+		kp = processor.createKnowledgePath(pathStr, PathOrigin.COMPONENT);
 		assertEquals(kp.getNodes().size(),2);
 		assertEquals(((PathNodeField) kp.getNodes().get(0)).getName(),"details");
 		assertTrue(kp.getNodes().get(1) instanceof PathNodeMapKey);
@@ -483,14 +586,14 @@ public class AnnotationProcessorTest {
 		assertTrue(kp.getNodes().get(0) instanceof PathNodeComponentId);
 
 		pathStr = "level1.id.level2";
-		kp = processor.createKnowledgePath(pathStr, true);
+		kp = processor.createKnowledgePath(pathStr, PathOrigin.COMPONENT);
 		assertEquals(kp.getNodes().size(),3);
 		assertEquals(((PathNodeField) kp.getNodes().get(0)).getName(),"level1");
 		assertEquals(((PathNodeField) kp.getNodes().get(1)).getName(),"id");
 		assertEquals(((PathNodeField) kp.getNodes().get(2)).getName(),"level2");
 		
 		pathStr = "[coord.names]";
-		kp = processor.createKnowledgePath(pathStr, true);
+		kp = processor.createKnowledgePath(pathStr, PathOrigin.COMPONENT);
 		assertEquals(kp.getNodes().size(),1);
 		assertTrue(kp.getNodes().get(0) instanceof PathNodeMapKey);
 		kp = ((PathNodeMapKey) kp.getNodes().get(0)).getKeyPath();
@@ -498,7 +601,7 @@ public class AnnotationProcessorTest {
 		assertEquals(((PathNodeField) kp.getNodes().get(1)).getName(),"names");
 		
 		pathStr = "[coord.names]";
-		kp = processor.createKnowledgePath(pathStr, false);
+		kp = processor.createKnowledgePath(pathStr, PathOrigin.ENSEMBLE);
 		assertEquals(kp.getNodes().size(),1);
 		assertTrue(kp.getNodes().get(0) instanceof PathNodeMapKey);
 		kp = ((PathNodeMapKey) kp.getNodes().get(0)).getKeyPath();
@@ -516,7 +619,7 @@ public class AnnotationProcessorTest {
 		exception.expectMessage(
 				"The structure 'data1[data2]' is not allowed in a path, " +
 				"use the dot separator: 'data1.[data2]'");
-		processor.createKnowledgePath(pathStr, true);		
+		processor.createKnowledgePath(pathStr, PathOrigin.COMPONENT);		
 	}
 	
 	@Test
@@ -526,7 +629,7 @@ public class AnnotationProcessorTest {
 		
 		String pathStr = "namesToAddresses.[member.name";
 		exception.expect(ParseException.class);
-		processor.createKnowledgePath(pathStr, true);		
+		processor.createKnowledgePath(pathStr, PathOrigin.COMPONENT);		
 	}
 	
 	@Test
@@ -536,7 +639,7 @@ public class AnnotationProcessorTest {
 		
 		String pathStr = "level1..level2";
 		exception.expect(ParseException.class);
-		processor.createKnowledgePath(pathStr, true);		
+		processor.createKnowledgePath(pathStr, PathOrigin.COMPONENT);		
 	}
 	
 	@Test
@@ -546,7 +649,7 @@ public class AnnotationProcessorTest {
 		
 		String pathStr = "level1.  .level2";
 		exception.expect(TokenMgrError.class);
-		processor.createKnowledgePath(pathStr, true);		
+		processor.createKnowledgePath(pathStr, PathOrigin.COMPONENT);		
 	}
 	
 	@Test
@@ -556,7 +659,7 @@ public class AnnotationProcessorTest {
 		
 		String pathStr = "";
 		exception.expect(ParseException.class);
-		processor.createKnowledgePath(pathStr, true);		
+		processor.createKnowledgePath(pathStr, PathOrigin.COMPONENT);		
 	}
 
 	@Test 
@@ -568,7 +671,7 @@ public class AnnotationProcessorTest {
 		exception.expect(AnnotationProcessorException.class);
 		exception.expectMessage(
 				"A component identifier cannot be followed by any other fields in a path.");
-		processor.createKnowledgePath(pathStr, true);		
+		processor.createKnowledgePath(pathStr, PathOrigin.COMPONENT);		
 	}
 	
 	@Test 
@@ -580,7 +683,7 @@ public class AnnotationProcessorTest {
 		exception.expect(AnnotationProcessorException.class);
 		exception.expectMessage(
 				"A component identifier cannot be followed by any other fields in a path.");
-		processor.createKnowledgePath(pathStr, true);		
+		processor.createKnowledgePath(pathStr, PathOrigin.COMPONENT);		
 	}
 	
 	@Test 
@@ -593,7 +696,7 @@ public class AnnotationProcessorTest {
 		exception.expectMessage(
 				"The path does not start with one of the 'coord' or 'member' keywords.");
 		// false means that the knowledge path is found in an ensemble definition:
-		processor.createKnowledgePath(pathStr, false);		
+		processor.createKnowledgePath(pathStr, PathOrigin.ENSEMBLE);		
 	}
 
 	
@@ -623,6 +726,17 @@ public class AnnotationProcessorTest {
 		assertTrue(cs.getUpdatedReferences().contains(kp));
 		f.setName("anotherName");
 		assertFalse(cs.getUpdatedReferences().contains(kp));		
+	}
+	
+	@Test 
+	public void testSecurityOfIdField() throws AnnotationProcessorException {
+		RuntimeMetadata model = factory.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);
+		
+		WrongC4WithSecurity input = new WrongC4WithSecurity();
+		exception.expect(AnnotationProcessorException.class);
+		exception.expectMessage("The component ID must not be secured");
+		processor.process(input);	
 	}
 	
 	/*

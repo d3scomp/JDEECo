@@ -12,9 +12,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+import cz.cuni.mff.d3s.deeco.annotations.Allow;
 import cz.cuni.mff.d3s.deeco.annotations.CommunicationBoundary;
 import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.Ensemble;
@@ -26,17 +29,23 @@ import cz.cuni.mff.d3s.deeco.annotations.Membership;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
+import cz.cuni.mff.d3s.deeco.annotations.HasRole;
+import cz.cuni.mff.d3s.deeco.annotations.RoleDefinition;
+import cz.cuni.mff.d3s.deeco.annotations.RoleParam;
 import cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.ComponentIdentifier;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.EEnsembleParty;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.PNode;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.ParseException;
+import cz.cuni.mff.d3s.deeco.annotations.pathparser.PathOrigin;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.PathParser;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerFactory;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.AbsoluteSecurityRoleArgument;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.BlankSecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Condition;
@@ -45,6 +54,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Exchange;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
@@ -53,11 +63,15 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathSecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
 import cz.cuni.mff.d3s.deeco.network.GenericCommunicationBoundaryPredicate;
+import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper;
 
 /**
  * Common gateway for processing of Java objects/classes with DEECo annotations.
@@ -91,7 +105,7 @@ public class AnnotationProcessor {
 	 * Annotations that can appear in a class and can be handled by the main processor (this)
 	 */
 	static final Set<Class<? extends Annotation>> KNOWN_CLASS_ANNOTATIONS = new HashSet<>(
-			Arrays.asList(PeriodicScheduling.class, Component.class, Ensemble.class));
+			Arrays.asList(PeriodicScheduling.class, Component.class, Ensemble.class, HasRole.class));
 	
 	/**
 	 * Annotations that can appear in a method and can be handled by the main processor (this)  
@@ -160,7 +174,7 @@ public class AnnotationProcessor {
 		this.factory = factory;
 		this.model = model;
 		this.extensions = extensions;
-		this.knowledgeManagerFactory = knowledgeMangerFactory;
+		this.knowledgeManagerFactory = knowledgeMangerFactory;		
 	}
 	
 	/**
@@ -331,12 +345,18 @@ public class AnnotationProcessor {
 			if (id == null) {
 				id = new StringBuilder().append(clazz.getSimpleName()).append(UUID.randomUUID().toString()).toString();
 			}
-			KnowledgeManager km = knowledgeManagerFactory.create(id);
+			KnowledgeManager km = knowledgeManagerFactory.create(id, componentInstance);
 			km.update(initialK);
 			km.markAsLocal(initialLocalK.getUpdatedReferences());
 			km.update(initialLocalK);
 			componentInstance.setKnowledgeManager(km);
-	        
+	   
+			try {
+				addSecurityTags(clazz, km, initialK);
+			} catch (Exception ex) {
+				throw new AnnotationProcessorException(ex.getMessage());
+			}
+			
 			List<Method> methodsMarkedAsProcesses = new ArrayList<>(); 
 			Method[] allMethods = clazz.getMethods();
 			for (Method m : allMethods) {
@@ -362,6 +382,11 @@ public class AnnotationProcessor {
 				}
 			}
 			
+			for (HasRole role : clazz.getDeclaredAnnotationsByType(HasRole.class)) {
+				SecurityRole securityRole = createRoleFromClassDefinition(role.roleClass());
+				componentInstance.getRoles().add(securityRole);
+			}
+			
 			callExtensions(ParsingEvent.ON_COMPONENT_CREATION, componentInstance, getUnknownAnnotations(clazz));
 			
 		} catch (KnowledgeUpdateException | AnnotationProcessorException
@@ -372,6 +397,132 @@ public class AnnotationProcessor {
 		}
 		return componentInstance;
 	}
+
+	private SecurityRole createRoleFromClassDefinition(Class<?> roleClass) throws AnnotationProcessorException, ParseException {
+		if (roleClass.getAnnotationsByType(RoleDefinition.class).length == 0) {
+			throw new AnnotationProcessorException("Role class must be decoreted with @RoleDefinition.");
+		}
+		
+		SecurityRole securityRole = factory.createSecurityRole();
+		securityRole.setRoleName(roleClass.getName());		
+		
+		for (Class<?> iface : roleClass.getInterfaces()) {
+			securityRole.getConsistsOf().add(createRoleFromClassDefinition(iface));
+		}
+		
+		List<Field> fieldParameters = Arrays.stream(roleClass.getFields())
+				.filter(field -> field.getAnnotationsByType(RoleParam.class).length > 0)				
+				.collect(Collectors.toList());
+		
+		for (Field field : fieldParameters) {
+			if (!isValidForRole(field, fieldParameters, securityRole)) {
+				continue;
+			}			
+			if ((field.getModifiers() & Modifier.FINAL) != Modifier.FINAL || (field.getModifiers() & Modifier.STATIC) != Modifier.STATIC) {
+				throw new AnnotationProcessorException("Role parameter must be static and final.");
+			}
+										
+			Object fieldValue = null;
+			try {
+				fieldValue = field.get(null);
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				throw new AnnotationProcessorException("Cannot read path from security role argument "+field.getName(), e);
+			}
+			
+			SecurityRoleArgument argument = null;						
+			if (fieldValue == null) {
+				argument = factory.createBlankSecurityRoleArgument();
+				argument.setName(field.getName());				
+			} else {
+				boolean createConcreteArgument = true;
+				if (fieldValue instanceof String) {
+					KnowledgePath kp = createKnowledgePath((String)fieldValue, PathOrigin.SECURITY_ANNOTATION);
+					if (kp.getNodes().get(0) instanceof PathNodeMapKey) {
+						argument = factory.createPathSecurityRoleArgument();
+						argument.setName(field.getName());
+						
+						KnowledgePath innerPath = ((PathNodeMapKey)kp.getNodes().get(0)).getKeyPath();
+						((PathSecurityRoleArgument)argument).setKnowledgePath(innerPath);
+						createConcreteArgument = false;
+					}
+				}
+				
+				if (createConcreteArgument) {					
+					argument = factory.createAbsoluteSecurityRoleArgument();
+					argument.setName(field.getName());
+					((AbsoluteSecurityRoleArgument)argument).setValue(fieldValue);
+				}
+			}
+			
+			securityRole.getArguments().add(argument);
+			for (SecurityRole role : securityRole.getConsistsOf()) {
+				overrideArgument(argument, role);
+			}
+			
+		}
+		
+		return securityRole;
+	}
+
+	private void overrideArgument(SecurityRoleArgument argument, SecurityRole securityRole) {
+		Optional<SecurityRoleArgument> optionalArgument = securityRole.getArguments().stream().filter(arg -> arg.getName().equals(argument.getName())).findFirst();
+		if (optionalArgument.isPresent()) {
+			securityRole.getArguments().removeIf(arg -> arg.getName().equals(optionalArgument.get().getName()));
+			
+			if (argument instanceof BlankSecurityRoleArgument) {
+				BlankSecurityRoleArgument arg = factory.createBlankSecurityRoleArgument();
+				arg.setName(argument.getName());
+				securityRole.getArguments().add(arg);
+			} else if (argument instanceof PathSecurityRoleArgument) {
+				PathSecurityRoleArgument arg = factory.createPathSecurityRoleArgument();
+				arg.setName(argument.getName());
+				arg.setKnowledgePath(KnowledgePathHelper.cloneKnowledgePath(((PathSecurityRoleArgument)argument).getKnowledgePath()));
+				securityRole.getArguments().add(arg);
+			} else {
+				AbsoluteSecurityRoleArgument arg = factory.createAbsoluteSecurityRoleArgument();
+				arg.setName(argument.getName());
+				arg.setValue(((AbsoluteSecurityRoleArgument)argument).getValue());
+				securityRole.getArguments().add(arg);
+			}
+			
+			securityRole.getConsistsOf().stream().forEach(role -> overrideArgument(argument, role));
+		}
+	}
+
+	private boolean isValidForRole(Field field, List<Field> fieldParameters, SecurityRole securityRole) {
+		if (field.getDeclaringClass().getName().equals(securityRole.getRoleName())) {
+			return true;
+		} else {
+			boolean definedInParent = securityRole.getConsistsOf().stream().anyMatch(
+					role -> role.getArguments().stream().anyMatch(argument -> argument.getName().equals(field.getName()))
+					);
+			boolean notAnyLocal = !fieldParameters.stream().anyMatch(otherField -> otherField.getName().equals(field.getName()) && otherField.getDeclaringClass().getName().equals(securityRole.getRoleName()));
+			return notAnyLocal && definedInParent;
+		}		
+	}
+
+	private void addSecurityTags(Class<?> clazz, KnowledgeManager km,
+			ChangeSet initialKnowledge) throws NoSuchFieldException, SecurityException, ParseException, AnnotationProcessorException {
+		for (KnowledgePath kp : initialKnowledge.getUpdatedReferences()) {
+			if (kp.getNodes().size() != 1) throw new NoSuchFieldException();
+			PathNodeField pathNodeField = (PathNodeField)kp.getNodes().get(0);
+			Field field = clazz.getField(pathNodeField.getName());
+			
+			Allow[] allows = field.getAnnotationsByType(Allow.class);
+			
+			if (allows.length > 0 && field.getName().equals(ComponentIdentifier.ID.toString())) {
+				throw new SecurityException("The component ID must not be secured");
+			}
+			
+			for (Allow allow : allows) {
+				KnowledgeSecurityTag tag = factory.createKnowledgeSecurityTag();
+				tag.setRequiredRole(createRoleFromClassDefinition(allow.roleClass()));
+				km.addSecurityTags(kp, Arrays.asList(tag));			
+			}
+			
+		}		
+	}
+
 
 	/**
 	 * Creator of a single correctly-initialized {@link EnsembleDefinition} object. 
@@ -415,8 +566,8 @@ public class AnnotationProcessor {
 			ensembleDefinition.setCommunicationBoundary(cBoundary);
 			
 			TimeTrigger periodicEnsembleTrigger = createPeriodicTrigger(clazz);
-			List<KnowledgeChangeTrigger> exchangeKChangeTriggers = createKnowledgeChangeTriggers(exchange.getMethod(), false);
-			List<KnowledgeChangeTrigger> conditionKChangeTriggers = createKnowledgeChangeTriggers(condition.getMethod(), false);
+			List<KnowledgeChangeTrigger> exchangeKChangeTriggers = createKnowledgeChangeTriggers(exchange.getMethod(), PathOrigin.ENSEMBLE);
+			List<KnowledgeChangeTrigger> conditionKChangeTriggers = createKnowledgeChangeTriggers(condition.getMethod(), PathOrigin.ENSEMBLE);
 			
 			if (periodicEnsembleTrigger == null) {
 				if (exchangeKChangeTriggers.isEmpty() && conditionKChangeTriggers.isEmpty()) {
@@ -451,7 +602,7 @@ public class AnnotationProcessor {
 		Condition condition = factory.createCondition();
 		condition.setMethod(m);
 		try {
-			condition.getParameters().addAll(createParameters(m, false));
+			condition.getParameters().addAll(createParameters(m, PathOrigin.ENSEMBLE));
 		} catch (AnnotationProcessorException e) {
 			String msg = Membership.class.getSimpleName()+"->"+e.getMessage();
 			throw new AnnotationProcessorException(msg, e);
@@ -472,7 +623,7 @@ public class AnnotationProcessor {
 		Exchange exchange = factory.createExchange();
 		exchange.setMethod(m);
 		try{
-			exchange.getParameters().addAll(createParameters(m, false));
+			exchange.getParameters().addAll(createParameters(m, PathOrigin.ENSEMBLE));
 		} catch (AnnotationProcessorException e) {
 			String msg = KnowledgeExchange.class.getSimpleName()+"->"+e.getMessage();
 			throw new AnnotationProcessorException(msg, e);
@@ -519,9 +670,9 @@ public class AnnotationProcessor {
 			componentProcess.setComponentInstance(componentInstance);
 			componentProcess.setMethod(m);
 			componentProcess.setName(m.getName());
-			componentProcess.getParameters().addAll(createParameters(m, true));
+			componentProcess.getParameters().addAll(createParameters(m, PathOrigin.COMPONENT));
 			TimeTrigger periodicTrigger = createPeriodicTrigger(m);
-			List<KnowledgeChangeTrigger> knowledgeChangeTriggers = createKnowledgeChangeTriggers(m, true);
+			List<KnowledgeChangeTrigger> knowledgeChangeTriggers = createKnowledgeChangeTriggers(m, PathOrigin.COMPONENT);
 			if (periodicTrigger == null) {
 				if (knowledgeChangeTriggers.isEmpty()) {
 					throw new AnnotationProcessorException("No triggers were found.");
@@ -577,9 +728,9 @@ public class AnnotationProcessor {
 	 * </p>
 	 * 
 	 * @param method method to be parsed
-	 * @param inComponentProcess indicates whether it is being called within the context of {@link #createComponentProcess} or {@link #createEnsembleDefinition}. 
+	 * @param pathOrigin indicates whether it is being called within the context of {@link #createComponentProcess}, {@link #createEnsembleDefinition} or {@link #addSecurityTags(Class, KnowledgeManager, ChangeSet)} . 
 	 */
-	List<KnowledgeChangeTrigger> createKnowledgeChangeTriggers(Method method, boolean inComponentProcess) 
+	List<KnowledgeChangeTrigger> createKnowledgeChangeTriggers(Method method, PathOrigin pathOrigin) 
 			throws AnnotationProcessorException, ParseException {
 		List<KnowledgeChangeTrigger> knowledgeChangeTriggers = new ArrayList<>();
 		Type[] parameterTypes = method.getParameterTypes();
@@ -590,7 +741,7 @@ public class AnnotationProcessor {
 				Annotation directionAnnotation = getDirectionAnnotation(allAnnotations[i]);
 				String path = getDirectionAnnotationValue(directionAnnotation);
 				KnowledgeChangeTrigger trigger = factory.createKnowledgeChangeTrigger();
-				trigger.setKnowledgePath(createKnowledgePath(path, inComponentProcess));
+				trigger.setKnowledgePath(createKnowledgePath(path, pathOrigin));
 				knowledgeChangeTriggers.add(trigger);
 			}
 		}
@@ -604,19 +755,19 @@ public class AnnotationProcessor {
 	 * </p>
 	 * 
 	 * @param method method to be parsed
-	 * @param inComponentProcess indicates whether it is being called within the context of {@link #createComponentProcess createComponentProcess()} or {@link #createEnsembleDefinition createEnsembleDefinition()}.
+	 * @param pathOrigin indicates whether it is being called within the context of {@link #createComponentProcess}, {@link #createEnsembleDefinition} or {@link #addSecurityTags(Class, KnowledgeManager, ChangeSet)} .
 	 */
-	List<Parameter> createParameters(Method method, boolean inComponentProcess)
+	List<Parameter> createParameters(Method method, PathOrigin pathOrigin)
 			throws AnnotationProcessorException, ParseException {
 		List<Parameter> parameters = new ArrayList<>();
 		Class<?>[] parameterTypes = method.getParameterTypes();
 		Annotation[][] allAnnotations = method.getParameterAnnotations();
 		for (int i = 0; i < parameterTypes.length; i++) {
-			parameters.add(createParameter(parameterTypes[i], i, allAnnotations[i], inComponentProcess));
+			parameters.add(createParameter(parameterTypes[i], i, allAnnotations[i], pathOrigin));
 		}
 		if (parameters.isEmpty()) {
  			throw new AnnotationProcessorException(
- 					"The "+ (inComponentProcess ? "component" : "ensemble") + " process cannot have zero parameters.");
+ 					"The "+ (pathOrigin == PathOrigin.COMPONENT ? "component" : "ensemble") + " process cannot have zero parameters.");
 		}
 		return parameters;
 	}
@@ -631,16 +782,16 @@ public class AnnotationProcessor {
 	 * @param type	the type of the parameter
 	 * @param parameterIndex order of the parameter in the method declaration
 	 * @param parameterAnnotations list of annotations extracted from method signature
-	 * @param inComponentProcess indicates whether it is being called within the context of {@link #createComponentProcess createComponentProcess()} or {@link #createEnsembleDefinition createEnsembleDefinition()}.
+	 * @param pathOrigin indicates whether it is being called within the context of {@link #createComponentProcess}, {@link #createEnsembleDefinition} or {@link #addSecurityTags(Class, KnowledgeManager, ChangeSet)} .
 	 */
-	Parameter createParameter(Class<?> type, int parameterIndex, Annotation[] parameterAnnotations, boolean inComponentProcess)
+	Parameter createParameter(Class<?> type, int parameterIndex, Annotation[] parameterAnnotations, PathOrigin pathOrigin)
 			throws AnnotationProcessorException, ParseException {
 		Parameter parameter = factory.createParameter();
 		try {
 			Annotation directionAnnotation = getDirectionAnnotation(parameterAnnotations);
 			parameter.setDirection(parameterAnnotationsToParameterDirections.get(directionAnnotation.annotationType()));
 			String path = getDirectionAnnotationValue(directionAnnotation);
-			parameter.setKnowledgePath(createKnowledgePath(path,inComponentProcess));
+			parameter.setKnowledgePath(createKnowledgePath(path,pathOrigin));
 			parameter.setType(type);
 		} catch (Exception e) {
 			String msg = "Parameter: "+(parameterIndex+1)+"->"+e.getMessage();
@@ -653,11 +804,11 @@ public class AnnotationProcessor {
 	 * Creator of a {@link KnowledgePath} from a String.  
 	 *  
 	 * @param path string to be parsed into knowledge path
-	 * @param inComponentProcess indicates whether it is being called within the context of {@link #createComponentProcess createComponentProcess()} or {@link #createEnsembleDefinition createEnsembleDefinition()}.
+	 * @param pathOrigin indicates whether it is being called within the context of {@link #createComponentProcess}, {@link #createEnsembleDefinition} or {@link #addSecurityTags(Class, KnowledgeManager, ChangeSet)} .
 	 */
-	KnowledgePath createKnowledgePath(String path, boolean inComponentProcess) throws ParseException, AnnotationProcessorException {
+	KnowledgePath createKnowledgePath(String path, PathOrigin pathOrigin) throws ParseException, AnnotationProcessorException {
 		PNode pNode = PathParser.parse(path);
-		return createKnowledgePath(pNode, inComponentProcess);
+		return createKnowledgePath(pNode, pathOrigin);
 	}
 	
 	/**
@@ -671,15 +822,15 @@ public class AnnotationProcessor {
 	 * </p>
 	 * 
 	 * @param pNode head of the list as retrieved by the {@link PathParser#parse} method.
-	 * @param inComponentProcess indicates whether it is being called within the context of {@link #createComponentProcess createComponentProcess()} or {@link #createEnsembleDefinition createEnsembleDefinition()}.
+	 * @param pathOrigin indicates whether it is being called within the context of {@link #createComponentProcess}, {@link #createEnsembleDefinition} or {@link #addSecurityTags(Class, KnowledgeManager, ChangeSet)} .
 	 */
-	KnowledgePath createKnowledgePath(PNode pNode, boolean inComponentProcess) throws AnnotationProcessorException {
+	KnowledgePath createKnowledgePath(PNode pNode, PathOrigin pathOrigin) throws AnnotationProcessorException {
 		KnowledgePath knowledgePath = factory.createKnowledgePath();
 		do {	
 			Object nValue = pNode.value;
 			if (nValue instanceof String) {
 				// check if the first node in an ensemble path is not 'coord' or 'member':
-				if (!inComponentProcess && knowledgePath.getNodes().isEmpty()) {
+				if (pathOrigin == PathOrigin.ENSEMBLE && knowledgePath.getNodes().isEmpty()) {
 					throw new AnnotationProcessorException(
 						"The path does not start with one of the '"
 						+ EEnsembleParty.COORDINATOR.toString() + "' or '"
@@ -688,8 +839,8 @@ public class AnnotationProcessor {
 				// Check if this is a component identifier ("id") node.
 				// In such case, this has to be the final node in the path:
 				if ((nValue.equals(ComponentIdentifier.ID.toString()))
-					&& ((inComponentProcess && knowledgePath.getNodes().isEmpty()) 
-					|| (!inComponentProcess && (knowledgePath.getNodes().size() == 1)))) {
+					&& (((pathOrigin == PathOrigin.COMPONENT || pathOrigin == PathOrigin.SECURITY_ANNOTATION) && knowledgePath.getNodes().isEmpty()) 
+					|| (pathOrigin == PathOrigin.ENSEMBLE && (knowledgePath.getNodes().size() == 1)))) {
 						PathNodeComponentId idField = factory.createPathNodeComponentId();
 						knowledgePath.getNodes().add(idField); 
 						if (pNode.next!=null) {
@@ -704,7 +855,7 @@ public class AnnotationProcessor {
 			}
 			if (nValue instanceof EEnsembleParty) {
 				EEnsembleParty ensembleKeyword = (EEnsembleParty) nValue;
-				if (!inComponentProcess && knowledgePath.getNodes().isEmpty())  {
+				if (pathOrigin == PathOrigin.ENSEMBLE && knowledgePath.getNodes().isEmpty())  {
 					knowledgePath.getNodes().add(createMemberOrCoordinatorPathNode(ensembleKeyword));
 				} else {
 					PathNodeField pathNodeField = factory.createPathNodeField();
@@ -714,7 +865,7 @@ public class AnnotationProcessor {
 			}
 			if (nValue instanceof PNode) {
 				PathNodeMapKey pathNodeMapKey = factory.createPathNodeMapKey();
-				pathNodeMapKey.setKeyPath(createKnowledgePath((PNode) nValue, inComponentProcess));
+				pathNodeMapKey.setKeyPath(createKnowledgePath((PNode) nValue, pathOrigin));
 				knowledgePath.getNodes().add(pathNodeMapKey);
 			}
 			pNode = pNode.next;
