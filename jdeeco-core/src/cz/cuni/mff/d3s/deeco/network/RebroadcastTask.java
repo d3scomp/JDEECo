@@ -7,7 +7,7 @@ import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.task.Task;
 import cz.cuni.mff.d3s.deeco.task.TaskInvocationException;
 
-class RebroadcastTask extends Task {
+public class RebroadcastTask extends Task {
 
 	private final TimeTrigger trigger;
 	private final KnowledgeMetaData dataToRebroadcast;

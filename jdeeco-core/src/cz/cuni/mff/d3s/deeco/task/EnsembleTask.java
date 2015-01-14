@@ -465,7 +465,7 @@ public class EnsembleTask extends Task {
 			localKnowledgeManager.update(localChangeSet);
 			
 		} catch (KnowledgeUpdateException | IllegalAccessException | IllegalArgumentException e) {
-			throw new TaskInvocationException("Error when invoking a knowledge exchange.", e);
+			throw new TaskInvocationException(String.format("Error when invoking a knowledge exchange for ensemble: %s", ensembleController.getEnsembleDefinition().getName()), e);
 		} catch (InvocationTargetException e) {
 			Log.e("Knowledge exchange returned an exception.", e.getTargetException());
 		}		
