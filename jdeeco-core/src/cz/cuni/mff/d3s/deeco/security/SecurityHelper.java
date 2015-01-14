@@ -84,7 +84,7 @@ public class SecurityHelper {
 	}
 	
 	public Key generateKey() throws NoSuchAlgorithmException {
-		return generateKey("AES", 256);
+		return generateKey("AES", 128);
 	}
 
 	public Key generateKey(String algorithm, int keySize) throws NoSuchAlgorithmException {
