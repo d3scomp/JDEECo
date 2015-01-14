@@ -2,6 +2,7 @@ package cz.cuni.mff.d3s.deeco.security;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.*;
 
@@ -36,7 +37,7 @@ public class SecurityIntegrationTests {
 		SecurityRuntimeModel.AllEnsemble.membership = id -> id.contains("remote");
 				
 		runtimeModel.invokeEnsembleTasks();
-		
+				
 		// when publish() is called
 		runtimeModel.knowledgeDataManager.publish();
 		
@@ -45,12 +46,19 @@ public class SecurityIntegrationTests {
 		Object broadcastArgument = objectCaptor.getValue();
 		List<KnowledgeData> data = (List<KnowledgeData>)broadcastArgument;
 		
-		// modify component ids so that they are not accepted as local
-		data.stream().forEach(d -> d.getMetaData().componentId += "_remote");
-		
 		assertTrue(runtimeModel.policeComponent1.secrets.isEmpty());
 		assertTrue(runtimeModel.policeComponent2.secrets.isEmpty());
 		
+		// recalculate signature
+		data.stream().forEach(kd -> {
+			kd.getMetaData().componentId += "_remote";
+			try {
+				kd.getMetaData().signature = runtimeModel.securityHelper.sign(runtimeModel.securityKeyManager.getIntegrityPrivateKey(),
+						kd.getMetaData().componentId, kd.getMetaData().versionId, kd.getMetaData().targetRole);
+			} catch (Exception e) {
+				fail();
+			}
+		});
 		// then data are received
 		runtimeModel.knowledgeDataManager.receiveKnowledge(data);
 		

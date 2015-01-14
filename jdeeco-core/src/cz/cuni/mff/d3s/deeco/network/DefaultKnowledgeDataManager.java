@@ -424,10 +424,14 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 			throws KnowledgeNotFoundException {
 		// extract local knowledge
 		ValueSet basicValueSet = getNonLocalKnowledge(km.get(emptyPath), km);
-		KnowledgeMetaData metaData = new KnowledgeMetaData(km.getId(), localVersion, host, timeProvider.getCurrentMilliseconds(), 1);
+		KnowledgeMetaData metaData = createMetaData(km);
 		return knowledgeEncryptor.encryptValueSet(basicValueSet, km, metaData);
 	}
 
+	protected KnowledgeMetaData createMetaData(KnowledgeManager km) {
+		return new KnowledgeMetaData(km.getId(), localVersion, host, timeProvider.getCurrentMilliseconds(), 1);
+	}
+	
 	protected ValueSet getNonLocalKnowledge(ValueSet toFilter, KnowledgeManager km) {
 		ValueSet result = new ValueSet();
 		for (KnowledgePath kp: toFilter.getKnowledgePaths()) {

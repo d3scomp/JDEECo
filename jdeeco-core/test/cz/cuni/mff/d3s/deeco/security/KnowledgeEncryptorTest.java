@@ -6,8 +6,11 @@ import static org.mockito.Mockito.*;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.Key;
+import java.security.KeyPair;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.SignatureException;
 import java.security.cert.CertificateEncodingException;
 import java.util.Collection;
@@ -46,14 +49,16 @@ import cz.cuni.mff.d3s.deeco.network.KnowledgeSecurityAnnotation;
 public class KnowledgeEncryptorTest {
 
 	private KnowledgeEncryptor target;
-	private SecurityKeyManager keyManager;
 	private BaseKnowledgeManager localKnowledgeManager, replicaKnowledgeManager;
 	private ValueSet valueSet;
 	private KnowledgeMetaData metaData;
 	private RuntimeMetadataFactory factory;
 	private SecurityHelper securityHelper;
 	
-	private Key testrole1PublicKey, testrole2PublicKey;
+	private PublicKey testrole1PublicKey, testrole2PublicKey;
+	private PrivateKey testrole1PrivateKey;
+	
+	private SecurityKeyManager keyManagerMock;
 	
 	@Before
 	public void setUp() throws InvalidKeyException, CertificateEncodingException, KeyStoreException, NoSuchAlgorithmException, SecurityException, SignatureException, IllegalStateException {
@@ -79,15 +84,21 @@ public class KnowledgeEncryptorTest {
 		replicaKnowledgeManager = new BaseKnowledgeManager("receiver_id", component);
 		securityHelper = new SecurityHelper();
 		
-		keyManager = mock(SecurityKeyManager.class);
-		testrole1PublicKey = securityHelper.generateKey();	
-		testrole2PublicKey = securityHelper.generateKey();	
+		KeyPair role1Pair = securityHelper.generateKeyPair();
+		KeyPair role2Pair = securityHelper.generateKeyPair();
+		KeyPair integrityPair = securityHelper.generateKeyPair();
+		testrole1PublicKey = role1Pair.getPublic();
+		testrole2PublicKey = role2Pair.getPublic();
+		testrole1PrivateKey = role1Pair.getPrivate();
 		
-		when(keyManager.getPublicKeyFor(eq("testrole1"), anyObject())).thenReturn(testrole1PublicKey);
-		when(keyManager.getPrivateKeyFor(eq("testrole1"), anyObject())).thenReturn(testrole1PublicKey);
-		when(keyManager.getPublicKeyFor(eq("testrole2"), anyObject())).thenReturn(testrole2PublicKey);
+		keyManagerMock = mock(SecurityKeyManager.class);
+		when(keyManagerMock.getPublicKeyFor(eq("testrole1"), anyObject())).thenReturn(testrole1PublicKey);		
+		when(keyManagerMock.getPrivateKeyFor(eq("testrole1"), anyObject())).thenReturn(testrole1PrivateKey);
+		when(keyManagerMock.getPublicKeyFor(eq("testrole2"), anyObject())).thenReturn(testrole2PublicKey);
+		when(keyManagerMock.getIntegrityPublicKey()).thenReturn(integrityPair.getPublic());
+		when(keyManagerMock.getIntegrityPrivateKey()).thenReturn(integrityPair.getPrivate());
 		
-		target = new KnowledgeEncryptor(keyManager);
+		target = new KnowledgeEncryptor(keyManagerMock);
 	}
 	
 	@Test
@@ -201,13 +212,15 @@ public class KnowledgeEncryptorTest {
 	}
 	
 	@Test
-	public void decryptChangeSet_SecurityTest() throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, IOException, ShortBufferException, BadPaddingException {
+	public void decryptChangeSet_SecurityTest() throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, IOException, ShortBufferException, BadPaddingException, SignatureException, CertificateEncodingException, KeyStoreException, SecurityException, IllegalStateException {
 		// given security is used
-		metaData.encryptedKey = securityHelper.encryptKey(testrole1PublicKey, testrole1PublicKey);
-		metaData.encryptedKeyAlgorithm = testrole1PublicKey.getAlgorithm();
+		Key symmetricKey = securityHelper.generateKey();
+		metaData.encryptedKey = securityHelper.encryptKey(symmetricKey, testrole1PublicKey);
+		metaData.encryptedKeyAlgorithm = symmetricKey.getAlgorithm();
 		metaData.targetRole = new KnowledgeSecurityAnnotation("testrole1", null);
+		metaData.signature = securityHelper.sign(keyManagerMock.getIntegrityPrivateKey(), metaData.componentId, metaData.versionId, metaData.targetRole);
 		
-		Cipher cipher = securityHelper.getSymmetricCipher(Cipher.ENCRYPT_MODE, testrole1PublicKey);
+		Cipher cipher = securityHelper.getSymmetricCipher(Cipher.ENCRYPT_MODE, symmetricKey);
 		SealedObject sealed = new SealedObject(666, cipher);
 		
 		ChangeSet changeSet2 = new ChangeSet();
@@ -223,12 +236,14 @@ public class KnowledgeEncryptorTest {
 	}
 	
 	@Test
-	public void decryptChangeSet_WrongKeyTest() throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, IOException, ShortBufferException, BadPaddingException {
+	public void decryptChangeSet_WrongKeyTest() throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, IOException, ShortBufferException, BadPaddingException, CertificateEncodingException, SignatureException, KeyStoreException, SecurityException, IllegalStateException {
 		// given security is used
-		metaData.encryptedKey = securityHelper.encryptKey(testrole1PublicKey, testrole1PublicKey);
-		metaData.encryptedKeyAlgorithm = testrole1PublicKey.getAlgorithm();
+		Key symmetricKey = securityHelper.generateKey();
+		metaData.encryptedKey = securityHelper.encryptKey(symmetricKey, testrole1PublicKey);
+		metaData.encryptedKeyAlgorithm = symmetricKey.getAlgorithm();
 		metaData.targetRole = new KnowledgeSecurityAnnotation("testrole1", null);
-		
+		metaData.signature = securityHelper.sign(keyManagerMock.getIntegrityPrivateKey(), metaData.componentId, metaData.versionId, metaData.targetRole);
+				
 		// when testrole2 key is used to encrypt data
 		Cipher cipher = securityHelper.getSymmetricCipher(Cipher.ENCRYPT_MODE, testrole2PublicKey);
 		SealedObject sealed = new SealedObject(666, cipher);

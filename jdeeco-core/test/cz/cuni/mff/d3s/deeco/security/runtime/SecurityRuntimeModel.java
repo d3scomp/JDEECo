@@ -37,6 +37,7 @@ import cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeFrameworkImpl;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.scheduler.SingleThreadedScheduler;
+import cz.cuni.mff.d3s.deeco.security.SecurityHelper;
 import cz.cuni.mff.d3s.deeco.security.SecurityKeyManager;
 import cz.cuni.mff.d3s.deeco.security.SecurityKeyManagerImpl;
 import cz.cuni.mff.d3s.deeco.task.EnsembleTask;
@@ -138,7 +139,7 @@ public class SecurityRuntimeModel {
 	public GlobalPoliceComponent globalPoliceComponent;
 	
 	public RuntimeFramework runtime;
-	
+	public SecurityHelper securityHelper;
 	public ArchitectureObserver architectureObserver;
 	
 	public SecurityRuntimeModel() throws KeyStoreException, AnnotationProcessorException {
@@ -147,6 +148,7 @@ public class SecurityRuntimeModel {
 		securityKeyManager = new SecurityKeyManagerImpl();
 		scheduler = new SingleThreadedScheduler();
 		executor = new SameThreadExecutor();
+		securityHelper = new SecurityHelper();
 		
 		model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
 		processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE, model, new CloningKnowledgeManagerFactory());

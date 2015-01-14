@@ -107,6 +107,18 @@ public class KnowledgeEncryptor {
 	}
 	
 	private Object accessValue(SealedObject sealedObject, KnowledgeManager replica, KnowledgeMetaData metaData) throws KnowledgeNotFoundException {
+		// verify signature on metadata
+		boolean verificationSucceeded = false;
+		try {
+			verificationSucceeded = securityHelper.verify(metaData.signature, keyManager.getIntegrityPublicKey(), metaData.componentId, metaData.versionId, metaData.targetRole);
+		} catch (InvalidKeyException | CertificateEncodingException
+				| SignatureException | NoSuchAlgorithmException
+				| KeyStoreException | SecurityException | IllegalStateException e1) { }
+		
+		if (!verificationSucceeded) {
+			throw new SecurityException();
+		}
+		
 		Object value = null;
 		boolean encryptionSucceeded = false;
 		
@@ -131,9 +143,7 @@ public class KnowledgeEncryptor {
 					| IllegalBlockSizeException | BadPaddingException
 					| NoSuchAlgorithmException | NoSuchPaddingException
 					| IOException | ShortBufferException | CertificateEncodingException | KeyStoreException | SecurityException 
-					| SignatureException | IllegalStateException e) {
-			
-			}		
+					| SignatureException | IllegalStateException e) { }		
 		}
 		
 		if (!encryptionSucceeded) {
@@ -167,6 +177,7 @@ public class KnowledgeEncryptor {
 				metaData.encryptedKey = encryptedKey;
 				metaData.encryptedKeyAlgorithm = symmetricKey.getAlgorithm();
 				metaData.targetRole = new KnowledgeSecurityAnnotation(roleName, arguments);
+				metaData.signature = securityHelper.sign(keyManager.getIntegrityPrivateKey(), metaData.componentId, metaData.versionId, metaData.targetRole);
 				
 				valueSet.setValue(kp, encryptedKnowledge);
 			} catch (IllegalBlockSizeException | IOException | InvalidKeyException | BadPaddingException | NoSuchAlgorithmException | NoSuchPaddingException 

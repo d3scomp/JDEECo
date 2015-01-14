@@ -194,9 +194,9 @@ public class KnowledgeManagerContainer  {
 	 *            of the replica being registered
 	 */
 	public Collection<KnowledgeManager> createReplica(String id) {
-		if (locals.containsKey(id)) {
+		if (hasLocal(id)) {
 			throw new RuntimeException("Cannot create replica for a local knowledge manager (id: " + id + ").");
-		} else if (replicas.containsKey(id)) {
+		} else if (hasReplica(id)) {
 			return replicas.get(id).values();
 		} else {
 			replicas.put(id, new HashMap<>());
