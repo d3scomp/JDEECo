@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.AbsoluteSecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.BlankSecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathSecurityRoleArgument;
@@ -23,15 +24,15 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRoleArgument;
 public class RoleHelper {
 	
 	public static boolean roleArgumentsMatch(Map<String, Object> roleArguments, Map<String, Object> tagArguments) {
+		if (!roleArguments.keySet().equals(tagArguments.keySet())) {
+			return false;
+		}
+		
 		boolean match = true;
 		
-		for (Entry<String, Object> entry : tagArguments.entrySet()) {
-			if (roleArguments.containsKey(entry.getKey())) {
-				Object roleArgumentValue = roleArguments.get(entry.getKey());
-				match = match && ((roleArgumentValue == null) || (entry.getValue() != null && entry.getValue().equals(roleArgumentValue)));
-			} else {
-				match = false;				
-			}
+		for (Entry<String, Object> entry : tagArguments.entrySet()) {			
+			Object roleArgumentValue = roleArguments.get(entry.getKey());
+			match = match && ((roleArgumentValue == null) || (entry.getValue() != null && entry.getValue().equals(roleArgumentValue)));
 			
 			if (!match) break;
 		}
@@ -64,6 +65,8 @@ public class RoleHelper {
 				arguments.put(argument.getName(), argumentsValueSet.getValue(argumentPath));
 			} else if (argument instanceof BlankSecurityRoleArgument) {
 				arguments.put(argument.getName(), null);
+			} else if (argument instanceof AbsoluteSecurityRoleArgument) {
+				arguments.put(argument.getName(), ((AbsoluteSecurityRoleArgument)argument).getValue() );
 			} else throw new KnowledgeNotFoundException();
 		}
 		return arguments;
