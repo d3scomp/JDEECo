@@ -4,16 +4,12 @@ package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
-
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
-
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
-
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
@@ -24,7 +20,7 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ParameterImpl#getDirection <em>Direction</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ParameterImpl#getKind <em>Kind</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ParameterImpl#getKnowledgePath <em>Knowledge Path</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ParameterImpl#getType <em>Type</em>}</li>
  * </ul>
@@ -34,33 +30,33 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  */
 public class ParameterImpl extends MinimalEObjectImpl.Container implements Parameter {
 	/**
-	 * The default value of the '{@link #getDirection() <em>Direction</em>}' attribute.
+	 * The default value of the '{@link #getKind() <em>Kind</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getDirection()
+	 * @see #getKind()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final ParameterDirection DIRECTION_EDEFAULT = ParameterDirection.INOUT;
+	protected static final ParameterKind KIND_EDEFAULT = ParameterKind.INOUT;
 
 	/**
-	 * The cached value of the '{@link #getDirection() <em>Direction</em>}' attribute.
+	 * The cached value of the '{@link #getKind() <em>Kind</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getDirection()
+	 * @see #getKind()
 	 * @generated
 	 * @ordered
 	 */
-	protected ParameterDirection direction = DIRECTION_EDEFAULT;
+	protected ParameterKind kind = KIND_EDEFAULT;
 
 	/**
-	 * This is true if the Direction attribute has been set.
+	 * This is true if the Kind attribute has been set.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	protected boolean directionESet;
+	protected boolean kindESet;
 
 	/**
 	 * The cached value of the '{@link #getKnowledgePath() <em>Knowledge Path</em>}' containment reference.
@@ -106,8 +102,8 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public ParameterDirection getDirection() {
-		return direction;
+	public ParameterKind getKind() {
+		return kind;
 	}
 
 	/**
@@ -115,13 +111,13 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setDirection(ParameterDirection newDirection) {
-		ParameterDirection oldDirection = direction;
-		direction = newDirection == null ? DIRECTION_EDEFAULT : newDirection;
-		boolean oldDirectionESet = directionESet;
-		directionESet = true;
+	public void setKind(ParameterKind newKind) {
+		ParameterKind oldKind = kind;
+		kind = newKind == null ? KIND_EDEFAULT : newKind;
+		boolean oldKindESet = kindESet;
+		kindESet = true;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.PARAMETER__DIRECTION, oldDirection, direction, !oldDirectionESet));
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.PARAMETER__KIND, oldKind, kind, !oldKindESet));
 	}
 
 	/**
@@ -129,13 +125,13 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void unsetDirection() {
-		ParameterDirection oldDirection = direction;
-		boolean oldDirectionESet = directionESet;
-		direction = DIRECTION_EDEFAULT;
-		directionESet = false;
+	public void unsetKind() {
+		ParameterKind oldKind = kind;
+		boolean oldKindESet = kindESet;
+		kind = KIND_EDEFAULT;
+		kindESet = false;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.UNSET, RuntimeMetadataPackage.PARAMETER__DIRECTION, oldDirection, DIRECTION_EDEFAULT, oldDirectionESet));
+			eNotify(new ENotificationImpl(this, Notification.UNSET, RuntimeMetadataPackage.PARAMETER__KIND, oldKind, KIND_EDEFAULT, oldKindESet));
 	}
 
 	/**
@@ -143,8 +139,8 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public boolean isSetDirection() {
-		return directionESet;
+	public boolean isSetKind() {
+		return kindESet;
 	}
 
 	/**
@@ -233,8 +229,8 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.PARAMETER__DIRECTION:
-				return getDirection();
+			case RuntimeMetadataPackage.PARAMETER__KIND:
+				return getKind();
 			case RuntimeMetadataPackage.PARAMETER__KNOWLEDGE_PATH:
 				return getKnowledgePath();
 			case RuntimeMetadataPackage.PARAMETER__TYPE:
@@ -251,8 +247,8 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.PARAMETER__DIRECTION:
-				setDirection((ParameterDirection)newValue);
+			case RuntimeMetadataPackage.PARAMETER__KIND:
+				setKind((ParameterKind)newValue);
 				return;
 			case RuntimeMetadataPackage.PARAMETER__KNOWLEDGE_PATH:
 				setKnowledgePath((KnowledgePath)newValue);
@@ -272,8 +268,8 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.PARAMETER__DIRECTION:
-				unsetDirection();
+			case RuntimeMetadataPackage.PARAMETER__KIND:
+				unsetKind();
 				return;
 			case RuntimeMetadataPackage.PARAMETER__KNOWLEDGE_PATH:
 				setKnowledgePath((KnowledgePath)null);
@@ -293,8 +289,8 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case RuntimeMetadataPackage.PARAMETER__DIRECTION:
-				return isSetDirection();
+			case RuntimeMetadataPackage.PARAMETER__KIND:
+				return isSetKind();
 			case RuntimeMetadataPackage.PARAMETER__KNOWLEDGE_PATH:
 				return knowledgePath != null;
 			case RuntimeMetadataPackage.PARAMETER__TYPE:
@@ -313,8 +309,8 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 		if (eIsProxy()) return super.toString();
 
 		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (direction: ");
-		if (directionESet) result.append(direction); else result.append("<unset>");
+		result.append(" (kind: ");
+		if (kindESet) result.append(kind); else result.append("<unset>");
 		result.append(", type: ");
 		result.append(type);
 		result.append(')');

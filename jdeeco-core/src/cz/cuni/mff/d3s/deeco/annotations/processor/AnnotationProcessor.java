@@ -30,6 +30,8 @@ import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.HasRole;
+import cz.cuni.mff.d3s.deeco.annotations.Rating;
+import cz.cuni.mff.d3s.deeco.annotations.RatingsProcess;
 import cz.cuni.mff.d3s.deeco.annotations.RoleDefinition;
 import cz.cuni.mff.d3s.deeco.annotations.RoleParam;
 import cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange;
@@ -39,6 +41,8 @@ import cz.cuni.mff.d3s.deeco.annotations.pathparser.PNode;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.ParseException;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.PathOrigin;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.PathParser;
+import cz.cuni.mff.d3s.deeco.integrity.RatingsHolder;
+import cz.cuni.mff.d3s.deeco.integrity.ReadonlyRatingsHolder;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerFactory;
@@ -56,7 +60,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
@@ -91,13 +95,14 @@ public class AnnotationProcessor {
 	/**
 	 * Mapping of direction annotations to the respective runtime metadata model classes. 
 	 */
-	static final Map<Class<? extends Annotation>, ParameterDirection> parameterAnnotationsToParameterDirections = Collections
-			.unmodifiableMap(new HashMap<Class<? extends Annotation>, ParameterDirection>() {
+	static final Map<Class<? extends Annotation>, ParameterKind> parameterAnnotationsToParameterKinds = Collections
+			.unmodifiableMap(new HashMap<Class<? extends Annotation>, ParameterKind>() {
 				private static final long serialVersionUID = 1L;
 				{
-					put(InOut.class, ParameterDirection.INOUT);
-					put(In.class, ParameterDirection.IN);
-					put(Out.class, ParameterDirection.OUT);
+					put(InOut.class, ParameterKind.INOUT);
+					put(In.class, ParameterKind.IN);
+					put(Out.class, ParameterKind.OUT);
+					put(Rating.class, ParameterKind.RATING);
 				}
 			});
 	
@@ -351,6 +356,8 @@ public class AnnotationProcessor {
 			km.update(initialLocalK);
 			componentInstance.setKnowledgeManager(km);
 	   
+			
+			
 			try {
 				addSecurityTags(clazz, km, initialK);
 			} catch (Exception ex) {
@@ -358,15 +365,39 @@ public class AnnotationProcessor {
 			}
 			
 			List<Method> methodsMarkedAsProcesses = new ArrayList<>(); 
+			List<Method> methodsMarkedAsRatingProcesses = new ArrayList<>();
+			
 			Method[] allMethods = clazz.getMethods();
 			for (Method m : allMethods) {
 				if (m.getAnnotations().length > 0) {
-					if (m.getAnnotation(Process.class) == null) {
-						// when the method has some annotation(s), but not a @Process one
+					if (m.getAnnotation(Process.class) == null && m.getAnnotation(RatingsProcess.class) == null) {
+						// when the method has some annotation(s), but not a @Process nor @RatingsProcess
 						callExtensions(ParsingEvent.ON_UNKNOWN_COMPONENT_METHOD_ANNOTATION, m, getUnknownAnnotations(m));
+					} else if (m.getAnnotation(Process.class) != null && m.getAnnotation(RatingsProcess.class) != null) {
+						throw new AnnotationProcessorException("The same method cannot be marked as @" + Process.class.getSimpleName() + " and @" + RatingsProcess.class.getSimpleName() + ".");
 					} else {
-						methodsMarkedAsProcesses.add(m);
+						if (m.getAnnotation(Process.class) != null) {
+							methodsMarkedAsProcesses.add(m);
+						} else {
+							methodsMarkedAsRatingProcesses.add(m);
+						}
 					}
+					
+				}
+			}
+			
+			if (methodsMarkedAsRatingProcesses.size() > 1) {
+				throw new AnnotationProcessorException("Cannot have more @" + RatingsProcess.class.getSimpleName() + " methods.");
+			}
+			
+			if (methodsMarkedAsRatingProcesses.size() == 1) {
+				Method m = methodsMarkedAsRatingProcesses.get(0);
+				int modifier = m.getModifiers();
+				
+				if (Modifier.isPublic(modifier) && Modifier.isStatic(modifier)) {
+					componentInstance.setRatingsProcess(createRatingsProcess(componentInstance, m));
+				} else {
+					throw new AnnotationProcessorException("Method "+ m.getName()+ " annotated as @" + RatingsProcess.class.getSimpleName() + " should be public and static.");
 				}
 			}
 			
@@ -376,11 +407,10 @@ public class AnnotationProcessor {
 					componentInstance.getComponentProcesses().add(
 							createComponentProcess(componentInstance, m));
 				} else {
-					throw new AnnotationProcessorException(
-							"Method "+ m.getName()+ " annotated as @" + Process.class.getSimpleName() + 
-							" should be public and static.");
+					throw new AnnotationProcessorException("Method "+ m.getName()+ " annotated as @" + Process.class.getSimpleName() + " should be public and static.");
 				}
 			}
+			
 			
 			for (HasRole role : clazz.getDeclaredAnnotationsByType(HasRole.class)) {
 				SecurityRole securityRole = createRoleFromClassDefinition(role.roleClass());
@@ -396,6 +426,18 @@ public class AnnotationProcessor {
 			throw new AnnotationProcessorException(msg, e);
 		}
 		return componentInstance;
+	}
+
+	private cz.cuni.mff.d3s.deeco.model.runtime.api.RatingsProcess createRatingsProcess(ComponentInstance componentInstance, Method m) throws AnnotationProcessorException, ParseException {
+		cz.cuni.mff.d3s.deeco.model.runtime.api.RatingsProcess process = factory.createRatingsProcess();
+		try {
+			process.setComponentInstance(componentInstance);
+			process.setMethod(m);			
+			process.getParameters().addAll(createParameters(m, PathOrigin.RATING_PROCESS));			
+		} catch (AnnotationProcessorException e) {			
+			throw new AnnotationProcessorException("Ratings process ->"+e.getMessage(), e);
+		}
+		return process;
 	}
 
 	private SecurityRole createRoleFromClassDefinition(Class<?> roleClass) throws AnnotationProcessorException, ParseException {
@@ -418,7 +460,7 @@ public class AnnotationProcessor {
 			if (!isValidForRole(field, fieldParameters, securityRole)) {
 				continue;
 			}			
-			if ((field.getModifiers() & Modifier.FINAL) != Modifier.FINAL || (field.getModifiers() & Modifier.STATIC) != Modifier.STATIC) {
+			if (!Modifier.isFinal(field.getModifiers()) || !Modifier.isStatic(field.getModifiers())) {
 				throw new AnnotationProcessorException("Role parameter must be static and final.");
 			}
 										
@@ -429,30 +471,7 @@ public class AnnotationProcessor {
 				throw new AnnotationProcessorException("Cannot read path from security role argument "+field.getName(), e);
 			}
 			
-			SecurityRoleArgument argument = null;						
-			if (fieldValue == null) {
-				argument = factory.createBlankSecurityRoleArgument();
-				argument.setName(field.getName());				
-			} else {
-				boolean createConcreteArgument = true;
-				if (fieldValue instanceof String) {
-					KnowledgePath kp = createKnowledgePath((String)fieldValue, PathOrigin.SECURITY_ANNOTATION);
-					if (kp.getNodes().get(0) instanceof PathNodeMapKey) {
-						argument = factory.createPathSecurityRoleArgument();
-						argument.setName(field.getName());
-						
-						KnowledgePath innerPath = ((PathNodeMapKey)kp.getNodes().get(0)).getKeyPath();
-						((PathSecurityRoleArgument)argument).setKnowledgePath(innerPath);
-						createConcreteArgument = false;
-					}
-				}
-				
-				if (createConcreteArgument) {					
-					argument = factory.createAbsoluteSecurityRoleArgument();
-					argument.setName(field.getName());
-					((AbsoluteSecurityRoleArgument)argument).setValue(fieldValue);
-				}
-			}
+			SecurityRoleArgument argument = createSecurityroleArgument(field, fieldValue);						
 			
 			securityRole.getArguments().add(argument);
 			for (SecurityRole role : securityRole.getConsistsOf()) {
@@ -462,6 +481,36 @@ public class AnnotationProcessor {
 		}
 		
 		return securityRole;
+	}
+
+	private SecurityRoleArgument createSecurityroleArgument(Field field, Object fieldValue) throws ParseException, AnnotationProcessorException {
+		SecurityRoleArgument argument = null;
+		
+		if (fieldValue == null) {
+			argument = factory.createBlankSecurityRoleArgument();
+			argument.setName(field.getName());				
+		} else {
+			boolean createConcreteArgument = true;
+			if (fieldValue instanceof String) {
+				KnowledgePath kp = createKnowledgePath((String)fieldValue, PathOrigin.SECURITY_ANNOTATION);
+				if (kp.getNodes().get(0) instanceof PathNodeMapKey) {
+					argument = factory.createPathSecurityRoleArgument();
+					argument.setName(field.getName());
+					
+					KnowledgePath innerPath = ((PathNodeMapKey)kp.getNodes().get(0)).getKeyPath();
+					((PathSecurityRoleArgument)argument).setKnowledgePath(innerPath);
+					createConcreteArgument = false;
+				}
+			}
+			
+			if (createConcreteArgument) {					
+				argument = factory.createAbsoluteSecurityRoleArgument();
+				argument.setName(field.getName());
+				((AbsoluteSecurityRoleArgument)argument).setValue(fieldValue);
+			}
+		}
+		
+		return argument;
 	}
 
 	private void overrideArgument(SecurityRoleArgument argument, SecurityRole securityRole) {
@@ -738,8 +787,8 @@ public class AnnotationProcessor {
 		for (int i = 0; i < parameterTypes.length; i++) {
 			TriggerOnChange t = getAnnotation(allAnnotations[i], TriggerOnChange.class);
 			if (t != null) {
-				Annotation directionAnnotation = getDirectionAnnotation(allAnnotations[i]);
-				String path = getDirectionAnnotationValue(directionAnnotation);
+				Annotation directionAnnotation = getKindAnnotation(allAnnotations[i]);
+				String path = getKindAnnotationValue(directionAnnotation);
 				KnowledgeChangeTrigger trigger = factory.createKnowledgeChangeTrigger();
 				trigger.setKnowledgePath(createKnowledgePath(path, pathOrigin));
 				knowledgeChangeTriggers.add(trigger);
@@ -772,6 +821,7 @@ public class AnnotationProcessor {
 		return parameters;
 	}
 	
+	
 	/**
 	 * Creator of a {@link Parameter} of a {@link ComponentProcess}/{@link Condition}/{@link Exchange}.
 	 * <p>
@@ -788,11 +838,29 @@ public class AnnotationProcessor {
 			throws AnnotationProcessorException, ParseException {
 		Parameter parameter = factory.createParameter();
 		try {
-			Annotation directionAnnotation = getDirectionAnnotation(parameterAnnotations);
-			parameter.setDirection(parameterAnnotationsToParameterDirections.get(directionAnnotation.annotationType()));
-			String path = getDirectionAnnotationValue(directionAnnotation);
+			Annotation directionAnnotation = getKindAnnotation(parameterAnnotations);
+			parameter.setKind(parameterAnnotationsToParameterKinds.get(directionAnnotation.annotationType()));
+			String path = getKindAnnotationValue(directionAnnotation);
 			parameter.setKnowledgePath(createKnowledgePath(path,pathOrigin));
 			parameter.setType(type);
+			
+			if (parameter.getKind().equals(ParameterKind.RATING)) {
+				if (pathOrigin == PathOrigin.RATING_PROCESS) {
+					if (!type.equals(ReadonlyRatingsHolder.class) && !type.equals(RatingsHolder.class)) {
+						throw new AnnotationProcessorException("The rating process method parameter must be of type " + RatingsHolder.class.getSimpleName() + " or " + ReadonlyRatingsHolder.class.getSimpleName() + ".");
+					}
+				} else {
+					if (!type.equals(ReadonlyRatingsHolder.class)) {
+						throw new AnnotationProcessorException("The rating process method parameter must be of type " + ReadonlyRatingsHolder.class.getSimpleName() + ".");
+					}
+				}
+			}
+			if (parameter.getKind().equals(ParameterKind.OUT) || parameter.getKind().equals(ParameterKind.INOUT)) {
+				if (pathOrigin == PathOrigin.RATING_PROCESS) {
+					throw new AnnotationProcessorException("The rating process method parameter cannot contain " + Out.class.getSimpleName() + " nor " + InOut.class.getSimpleName() + " parameters.");
+				}
+			}
+			
 		} catch (Exception e) {
 			String msg = "Parameter: "+(parameterIndex+1)+"->"+e.getMessage();
 			throw new AnnotationProcessorException(msg, e);
@@ -839,7 +907,7 @@ public class AnnotationProcessor {
 				// Check if this is a component identifier ("id") node.
 				// In such case, this has to be the final node in the path:
 				if ((nValue.equals(ComponentIdentifier.ID.toString()))
-					&& (((pathOrigin == PathOrigin.COMPONENT || pathOrigin == PathOrigin.SECURITY_ANNOTATION) && knowledgePath.getNodes().isEmpty()) 
+					&& (((pathOrigin == PathOrigin.COMPONENT || pathOrigin == PathOrigin.SECURITY_ANNOTATION || pathOrigin == PathOrigin.RATING_PROCESS) && knowledgePath.getNodes().isEmpty()) 
 					|| (pathOrigin == PathOrigin.ENSEMBLE && (knowledgePath.getNodes().size() == 1)))) {
 						PathNodeComponentId idField = factory.createPathNodeComponentId();
 						knowledgePath.getNodes().add(idField); 
@@ -927,24 +995,24 @@ public class AnnotationProcessor {
 	}
 
 	/**
-	 * Retrieves the direction annotation, i.e. one of {Inout, In, Out} from an array of annotations.  
+	 * Retrieves the direction annotation, i.e. one of {Inout, In, Out, Rank} from an array of annotations.  
 	 * <p>
 	 * If more than one / none direction annotation is found, it throws an exception.
 	 * </p>
 	 */
-	Annotation getDirectionAnnotation(Annotation[] annotations) throws AnnotationProcessorException {
+	Annotation getKindAnnotation(Annotation[] annotations) throws AnnotationProcessorException {
 		Annotation foundAnnotation = null;
 		for (Annotation a : annotations) {
-			if (parameterAnnotationsToParameterDirections.containsKey(a.annotationType())) {
+			if (parameterAnnotationsToParameterKinds.containsKey(a.annotationType())) {
 				if (foundAnnotation == null) {
 					foundAnnotation = a;
 				} else {
-					throw new AnnotationProcessorException("More than one direction annotation was found.");
+					throw new AnnotationProcessorException("More than one kind annotation was found.");
 				}
 			}
 		}
 		if (foundAnnotation == null) {
-			throw new AnnotationProcessorException("No direction annotation was found.");
+			throw new AnnotationProcessorException("No kind annotation was found.");
 		}
 		return foundAnnotation;
 	}
@@ -952,7 +1020,7 @@ public class AnnotationProcessor {
 	/**
 	 * Helper method to get the value of a direction annotation. 
 	 */
-	String getDirectionAnnotationValue(Annotation a) {
+	String getKindAnnotationValue(Annotation a) {
 		if (a instanceof In) {
 			return ((In) a).value();
 		}
@@ -962,7 +1030,10 @@ public class AnnotationProcessor {
 		if (a instanceof InOut) {
 			return ((InOut) a).value();
 		}
-		Log.w("Invalid argument in getDirectionAnnotation()");
+		if (a instanceof Rating) {
+			return ((Rating) a).value();
+		}
+		Log.w("Invalid argument in getKindAnnotation()");
 		return null;
 	}
 

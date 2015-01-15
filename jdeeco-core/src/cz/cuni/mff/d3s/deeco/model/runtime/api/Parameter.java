@@ -12,7 +12,7 @@ import org.eclipse.emf.ecore.EObject;
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter#getDirection <em>Direction</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter#getKind <em>Kind</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter#getKnowledgePath <em>Knowledge Path</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter#getType <em>Type</em>}</li>
  * </ul>
@@ -24,61 +24,61 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface Parameter extends EObject {
 	/**
-	 * Returns the value of the '<em><b>Direction</b></em>' attribute.
+	 * Returns the value of the '<em><b>Kind</b></em>' attribute.
 	 * The default value is <code>"INOUT"</code>.
-	 * The literals are from the enumeration {@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection}.
+	 * The literals are from the enumeration {@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind}.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Direction</em>' attribute isn't clear,
+	 * If the meaning of the '<em>Kind</em>' attribute isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Direction</em>' attribute.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection
-	 * @see #isSetDirection()
-	 * @see #unsetDirection()
-	 * @see #setDirection(ParameterDirection)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getParameter_Direction()
+	 * @return the value of the '<em>Kind</em>' attribute.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind
+	 * @see #isSetKind()
+	 * @see #unsetKind()
+	 * @see #setKind(ParameterKind)
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getParameter_Kind()
 	 * @model default="INOUT" unsettable="true" required="true"
 	 * @generated
 	 */
-	ParameterDirection getDirection();
+	ParameterKind getKind();
 
 	/**
-	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter#getDirection <em>Direction</em>}' attribute.
+	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter#getKind <em>Kind</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Direction</em>' attribute.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection
-	 * @see #isSetDirection()
-	 * @see #unsetDirection()
-	 * @see #getDirection()
+	 * @param value the new value of the '<em>Kind</em>' attribute.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind
+	 * @see #isSetKind()
+	 * @see #unsetKind()
+	 * @see #getKind()
 	 * @generated
 	 */
-	void setDirection(ParameterDirection value);
+	void setKind(ParameterKind value);
 
 	/**
-	 * Unsets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter#getDirection <em>Direction</em>}' attribute.
+	 * Unsets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter#getKind <em>Kind</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #isSetDirection()
-	 * @see #getDirection()
-	 * @see #setDirection(ParameterDirection)
+	 * @see #isSetKind()
+	 * @see #getKind()
+	 * @see #setKind(ParameterKind)
 	 * @generated
 	 */
-	void unsetDirection();
+	void unsetKind();
 
 	/**
-	 * Returns whether the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter#getDirection <em>Direction</em>}' attribute is set.
+	 * Returns whether the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter#getKind <em>Kind</em>}' attribute is set.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return whether the value of the '<em>Direction</em>' attribute is set.
-	 * @see #unsetDirection()
-	 * @see #getDirection()
-	 * @see #setDirection(ParameterDirection)
+	 * @return whether the value of the '<em>Kind</em>' attribute is set.
+	 * @see #unsetKind()
+	 * @see #getKind()
+	 * @see #setKind(ParameterKind)
 	 * @generated
 	 */
-	boolean isSetDirection();
+	boolean isSetKind();
 
 	/**
 	 * Returns the value of the '<em><b>Knowledge Path</b></em>' containment reference.

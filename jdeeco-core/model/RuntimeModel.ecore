@@ -51,6 +51,10 @@
         defaultValueLiteral="false"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="roles" upperBound="-1"
         eType="#//SecurityRole" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ratingsManager" lowerBound="1"
+        eType="#//RatingsManager"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ratingsProcess" eType="#//RatingsProcess"
+        containment="true" eOpposite="#//RatingsProcess/componentInstance"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EnsembleDefinition">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -75,14 +79,15 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="triggers" upperBound="-1"
         eType="#//Trigger" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EEnum" name="ParameterDirection">
+  <eClassifiers xsi:type="ecore:EEnum" name="ParameterKind">
     <eLiterals name="IN"/>
     <eLiterals name="OUT" value="1"/>
     <eLiterals name="INOUT" value="2"/>
+    <eLiterals name="RATING" value="3"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Parameter">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="direction" lowerBound="1"
-        eType="#//ParameterDirection" defaultValueLiteral="INOUT" unsettable="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="kind" lowerBound="1" eType="#//ParameterKind"
+        defaultValueLiteral="INOUT" unsettable="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="knowledgePath" lowerBound="1"
         eType="#//KnowledgePath" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaClass"/>
@@ -132,5 +137,10 @@
   <eClassifiers xsi:type="ecore:EClass" name="BlankSecurityRoleArgument" eSuperTypes="#//SecurityRoleArgument"/>
   <eClassifiers xsi:type="ecore:EClass" name="AbsoluteSecurityRoleArgument" eSuperTypes="#//SecurityRoleArgument">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="Value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="RatingsManager" instanceClassName="cz.cuni.mff.d3s.deeco.integrity.RatingsManager"/>
+  <eClassifiers xsi:type="ecore:EClass" name="RatingsProcess" eSuperTypes="#//Invocable">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="componentInstance" lowerBound="1"
+        eType="#//ComponentInstance" eOpposite="#//ComponentInstance/ratingsProcess"/>
   </eClassifiers>
 </ecore:EPackage>

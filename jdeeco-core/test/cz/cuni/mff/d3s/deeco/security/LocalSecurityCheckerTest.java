@@ -26,7 +26,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathSecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
@@ -81,11 +81,11 @@ public class LocalSecurityCheckerTest {
 		param_error = factory.createParameter();
 	
 		param1.setKnowledgePath(RuntimeModelHelper.createKnowledgePath("<C>", "field1_oc"));
-		param1.setDirection(ParameterDirection.INOUT);
+		param1.setKind(ParameterKind.INOUT);
 		param2.setKnowledgePath(RuntimeModelHelper.createKnowledgePath("<M>", "field1_om"));
-		param2.setDirection(ParameterDirection.INOUT);
+		param2.setKind(ParameterKind.INOUT);
 		param3.setKnowledgePath(RuntimeModelHelper.createKnowledgePath("<C>", "field2_oc"));
-		param3.setDirection(ParameterDirection.INOUT);
+		param3.setKind(ParameterKind.INOUT);
 			
 		KnowledgePath mapPath = RuntimeModelHelper.createKnowledgePath("<C>", "map");
 		KnowledgePath innerPath = RuntimeModelHelper.createKnowledgePath("<C>", "mapKey");
@@ -93,7 +93,7 @@ public class LocalSecurityCheckerTest {
 		innerNode.setKeyPath(innerPath);
 		mapPath.getNodes().add(innerNode);
 		param4.setKnowledgePath(mapPath);
-		param4.setDirection(ParameterDirection.INOUT);
+		param4.setKind(ParameterKind.INOUT);
 		
 		param_error.setKnowledgePath(RuntimeModelHelper.createKnowledgePath("field1"));		
 		

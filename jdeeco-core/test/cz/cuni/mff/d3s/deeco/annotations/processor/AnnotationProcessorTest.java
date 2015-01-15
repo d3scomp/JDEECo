@@ -1,8 +1,6 @@
 package cz.cuni.mff.d3s.deeco.annotations.processor;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,10 +22,13 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import cz.cuni.mff.d3s.deeco.annotations.InOut;
+import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.ParseException;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.PathOrigin;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.TokenMgrError;
 import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.*;
+import cz.cuni.mff.d3s.deeco.integrity.ReadonlyRatingsHolder;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerFactory;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
@@ -36,13 +37,17 @@ import cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.AbsoluteSecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.BlankSecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathSecurityRoleArgument;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.RatingsProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
@@ -187,6 +192,106 @@ public class AnnotationProcessorTest {
 		assertEquals(RuntimeModelHelper.createKnowledgePath("x"), ((PathSecurityRoleArgument)securityRole.getArguments().get(3)).getKnowledgePath() );
 		assertEquals(123, ((AbsoluteSecurityRoleArgument)securityRole.getArguments().get(4)).getValue() );
 	}	
+	
+	@Test 
+	public void testRatingAnnotations() throws AnnotationProcessorException {
+		// given component with rating annotations is processed by the annotations processor
+		RuntimeMetadata model = factory.createRuntimeMetadata(); 
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		CorrectC6 input = new CorrectC6();
+		
+		// when process() is called
+		processor.process(input);
+		
+		// then annotations are parsed correctly
+		assertEquals(1, model.getComponentInstances().size());
+		ComponentInstance component = model.getComponentInstances().get(0);
+		
+		assertEquals(1, component.getComponentProcesses().size());
+		assertNotNull(component.getRatingsProcess());
+		
+		ComponentProcess process = component.getComponentProcesses().get(0);
+		RatingsProcess ratingsProcess = component.getRatingsProcess();
+		
+		assertEquals(3, process.getParameters().size());
+		assertEquals(3, ratingsProcess.getParameters().size());
+		
+		assertEquals(ParameterKind.IN, process.getParameters().get(0).getKind());
+		assertEquals(ParameterKind.RATING, process.getParameters().get(1).getKind());
+		assertEquals(ParameterKind.OUT, process.getParameters().get(2).getKind());
+		
+		assertEquals(ParameterKind.IN, ratingsProcess.getParameters().get(0).getKind());
+		assertEquals(ParameterKind.RATING, ratingsProcess.getParameters().get(1).getKind());
+		assertEquals(ParameterKind.RATING, ratingsProcess.getParameters().get(2).getKind());
+	}
+	
+	@Test 
+	public void testRatingAnnotationsEnsemble() throws AnnotationProcessorException {
+		// given component with rating annotations is processed by the annotations processor
+		RuntimeMetadata model = factory.createRuntimeMetadata(); 
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		CorrectE4 input = new CorrectE4();
+		
+		// when process() is called
+		processor.process(input);
+		
+		// then annotations are parsed correctly
+		assertEquals(1, model.getEnsembleDefinitions().size());
+		EnsembleDefinition ensemble = model.getEnsembleDefinitions().get(0);
+		
+		assertEquals(3, ensemble.getMembership().getParameters().size());
+		assertEquals(3, ensemble.getKnowledgeExchange().getParameters().size());
+		
+		assertEquals(ParameterKind.IN, ensemble.getMembership().getParameters().get(0).getKind());
+		assertEquals(ParameterKind.RATING, ensemble.getMembership().getParameters().get(1).getKind());
+		assertEquals(ParameterKind.IN, ensemble.getMembership().getParameters().get(2).getKind());
+		
+		assertEquals(ParameterKind.INOUT, ensemble.getKnowledgeExchange().getParameters().get(0).getKind());
+		assertEquals(ParameterKind.RATING, ensemble.getKnowledgeExchange().getParameters().get(1).getKind());
+		assertEquals(ParameterKind.IN, ensemble.getKnowledgeExchange().getParameters().get(2).getKind());
+	}
+	
+	@Test 
+	public void testRatingAnnotations_Error1() throws AnnotationProcessorException {
+		// given component with rating annotations is processed by the annotations processor
+		RuntimeMetadata model = factory.createRuntimeMetadata(); 
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		WrongC6 input = new WrongC6();
+		
+		exception.expect(AnnotationProcessorException.class);
+		exception.expectMessage("The rating process method parameter cannot contain " + Out.class.getSimpleName() + " nor " + InOut.class.getSimpleName() + " parameters.");
+		
+		// when process() is called
+		processor.process(input);
+	}
+	
+	@Test 
+	public void testRatingAnnotations_Error2() throws AnnotationProcessorException {
+		// given component with rating annotations is processed by the annotations processor
+		RuntimeMetadata model = factory.createRuntimeMetadata(); 
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		WrongC7 input = new WrongC7();
+		
+		exception.expect(AnnotationProcessorException.class);
+		exception.expectMessage("The rating process method parameter must be of type " + ReadonlyRatingsHolder.class.getSimpleName() + ".");
+		
+		// when process() is called
+		processor.process(input);
+	}
+	
+	@Test 
+	public void testRatingAnnotations_Error3() throws AnnotationProcessorException {
+		// given component with rating annotations is processed by the annotations processor
+		RuntimeMetadata model = factory.createRuntimeMetadata(); 
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		WrongE6 input = new WrongE6();
+		
+		exception.expect(AnnotationProcessorException.class);
+		exception.expectMessage("The rating process method parameter must be of type " + ReadonlyRatingsHolder.class.getSimpleName() + ".");
+		
+		// when process() is called
+		processor.process(input);
+	}
 	
 	@Test
 	public void testComponentModelInheritance() throws AnnotationProcessorException {
@@ -420,7 +525,7 @@ public class AnnotationProcessorTest {
 				"Component: "+input.getClass().getCanonicalName()+"->" +
 				"Process: process1->" +
 				"Parameter: 2->" +
-				"No direction annotation was found.");
+				"No kind annotation was found.");
 		processor.process(input);
 	}
 
@@ -435,7 +540,7 @@ public class AnnotationProcessorTest {
 				"Component: "+input.getClass().getCanonicalName()+"->" +
 				"Process: process1->" +
 				"Parameter: 3->" +
-				"More than one direction annotation was found.");
+				"More than one kind annotation was found.");
 		processor.process(input);
 	}
 	

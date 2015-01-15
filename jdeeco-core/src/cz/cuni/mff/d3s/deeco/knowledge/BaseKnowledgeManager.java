@@ -37,7 +37,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	private final Map<KnowledgeChangeTrigger, List<TriggerListener>> knowledgeChangeListeners;
 	private final Collection<KnowledgePath> localKnowledgePaths;
 	
-	protected final ComponentInstance component;
+	private final ComponentInstance component;
 	private final String id;
 
 	public BaseKnowledgeManager(String id, ComponentInstance component) {

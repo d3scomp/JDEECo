@@ -21,6 +21,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathSecurityRoleArgument;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.RatingsProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
@@ -240,6 +241,15 @@ public interface RuntimeMetadataFactory extends EFactory {
 	 * @generated
 	 */
 	AbsoluteSecurityRoleArgument createAbsoluteSecurityRoleArgument();
+
+	/**
+	 * Returns a new object of class '<em>Ratings Process</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Ratings Process</em>'.
+	 * @generated
+	 */
+	RatingsProcess createRatingsProcess();
 
 	/**
 	 * Returns the package supported by this factory.

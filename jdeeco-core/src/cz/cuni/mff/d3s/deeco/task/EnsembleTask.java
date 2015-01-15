@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
+
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
@@ -22,7 +23,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
@@ -243,9 +244,9 @@ public class EnsembleTask extends Task {
 		Collection<KnowledgePath> shadowPaths = new LinkedList<KnowledgePath>();
 		
 		for (Parameter formalParam : formalParams) {
-			ParameterDirection paramDir = formalParam.getDirection();
+			ParameterKind paramDir = formalParam.getKind();
 
-			if (paramDir != ParameterDirection.IN) {
+			if (paramDir != ParameterKind.IN) {
 				throw new TaskInvocationException("Only IN params allowed in membership condition.");
 			}
 			
@@ -354,7 +355,7 @@ public class EnsembleTask extends Task {
 		Collection<KnowledgePath> shadowPaths = new LinkedList<KnowledgePath>();
 		
 		for (Parameter formalParam : formalParams) {
-			ParameterDirection paramDir = formalParam.getDirection();
+			ParameterKind paramDir = formalParam.getKind();
 			
 			KnowledgePathAndRoot absoluteKnowledgePathAndRoot;
 
@@ -377,7 +378,7 @@ public class EnsembleTask extends Task {
 
 			allPathsWithRoots.add(absoluteKnowledgePathAndRoot);
 
-			if (paramDir == ParameterDirection.IN || paramDir == ParameterDirection.INOUT) {
+			if (paramDir == ParameterKind.IN || paramDir == ParameterKind.INOUT) {
 				if (absoluteKnowledgePathAndRoot == null) {
 					throw new TaskInvocationException("Member/Coordinator prefix required for knowledge exchange paths.");
 				} if (absoluteKnowledgePathAndRoot.root == localRole) {
@@ -411,12 +412,12 @@ public class EnsembleTask extends Task {
 		int paramIdx = 0;
 		Iterator<KnowledgePathAndRoot> allPathsWithRootsIter = allPathsWithRoots.iterator(); 
 		for (Parameter formalParam : formalParams) {
-			ParameterDirection paramDir = formalParam.getDirection();
+			ParameterKind paramDir = formalParam.getKind();
 			KnowledgePathAndRoot absoluteKnowledgePathAndRoot = allPathsWithRootsIter.next();
 
 			Object paramValue = null;
 			
-			if (paramDir == ParameterDirection.IN || paramDir == ParameterDirection.INOUT) {				
+			if (paramDir == ParameterKind.IN || paramDir == ParameterKind.INOUT) {				
 				if (absoluteKnowledgePathAndRoot.root == localRole) {
 					paramValue = localKnowledge.getValue(absoluteKnowledgePathAndRoot.knowledgePath);	
 				} else {
@@ -424,13 +425,13 @@ public class EnsembleTask extends Task {
 				}
 			}
 			
-			if (paramDir == ParameterDirection.IN) {
+			if (paramDir == ParameterKind.IN) {
 				actualParams[paramIdx] = paramValue;
 				
-			} else if (paramDir == ParameterDirection.OUT) {
+			} else if (paramDir == ParameterKind.OUT) {
 				actualParams[paramIdx] = new ParamHolder<Object>();
 
-			} else if (paramDir == ParameterDirection.INOUT) {
+			} else if (paramDir == ParameterKind.INOUT) {
 				actualParams[paramIdx] = new ParamHolder<Object>(paramValue);
 			}
 			// TODO: We could have an option of not creating the wrapper. That would make it easier to work with mutable out types.
@@ -449,11 +450,11 @@ public class EnsembleTask extends Task {
 			paramIdx = 0;
 			allPathsWithRootsIter = allPathsWithRoots.iterator(); 
 			for (Parameter formalParam : formalParams) {
-				ParameterDirection paramDir = formalParam.getDirection();
+				ParameterKind paramDir = formalParam.getKind();
 				KnowledgePathAndRoot absoluteKnowledgePathAndRoot = allPathsWithRootsIter.next();
 
 				if (absoluteKnowledgePathAndRoot.root == localRole) {
-					if (paramDir == ParameterDirection.OUT || paramDir == ParameterDirection.INOUT) {
+					if (paramDir == ParameterKind.OUT || paramDir == ParameterKind.INOUT) {
 						localChangeSet.setValue(absoluteKnowledgePathAndRoot.knowledgePath, ((ParamHolder<Object>)actualParams[paramIdx]).value);
 					}
 				}

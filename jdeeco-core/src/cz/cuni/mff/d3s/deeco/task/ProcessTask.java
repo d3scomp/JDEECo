@@ -16,7 +16,7 @@ import cz.cuni.mff.d3s.deeco.model.architecture.api.Architecture;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
@@ -93,7 +93,7 @@ public class ProcessTask extends Task {
 		Collection<KnowledgePath> inPaths = new LinkedList<KnowledgePath>();
 		Collection<KnowledgePath> allPaths = new LinkedList<KnowledgePath>();
 		for (Parameter formalParam : formalParams) {
-			ParameterDirection paramDir = formalParam.getDirection();
+			ParameterKind paramDir = formalParam.getKind();
 
 			KnowledgePath absoluteKnowledgePath;
 			// FIXME: The call to getAbsolutePath is in theory wrong, because this way we are not obtaining the
@@ -107,7 +107,7 @@ public class ProcessTask extends Task {
 						String.format("Knowledge path (%s) could not be resolved.", e.getNotFoundPath()), e);
 			}
 			
-			if (paramDir == ParameterDirection.IN || paramDir == ParameterDirection.INOUT) {
+			if (paramDir == ParameterKind.IN || paramDir == ParameterKind.INOUT) {
 				inPaths.add(absoluteKnowledgePath);
 			}
 			
@@ -133,16 +133,16 @@ public class ProcessTask extends Task {
 		int paramIdx = 0;
 		Iterator<KnowledgePath> allPathsIter = allPaths.iterator();
 		for (Parameter formalParam : formalParams) {
-			ParameterDirection paramDir = formalParam.getDirection();
+			ParameterKind paramDir = formalParam.getKind();
 			KnowledgePath absoluteKnowledgePath = allPathsIter.next();
 
-			if (paramDir == ParameterDirection.IN) {
+			if (paramDir == ParameterKind.IN) {
 				actualParams[paramIdx] = inKnowledge.getValue(absoluteKnowledgePath);
 				
-			} else if (paramDir == ParameterDirection.OUT) {
+			} else if (paramDir == ParameterKind.OUT) {
 				actualParams[paramIdx] = new ParamHolder<Object>();
 
-			} else if (paramDir == ParameterDirection.INOUT) {
+			} else if (paramDir == ParameterKind.INOUT) {
 				actualParams[paramIdx] = new ParamHolder<Object>(inKnowledge.getValue(absoluteKnowledgePath));
 			}
 			// TODO: We could have an option of not creating the wrapper. That would make it easier to work with mutable out types.
@@ -164,10 +164,10 @@ public class ProcessTask extends Task {
 			paramIdx = 0;
 			allPathsIter = allPaths.iterator();
 			for (Parameter formalParam : formalParams) {
-				ParameterDirection paramDir = formalParam.getDirection();
+				ParameterKind paramDir = formalParam.getKind();
 				KnowledgePath absoluteKnowledgePath = allPathsIter.next();
 
-				if (paramDir == ParameterDirection.OUT || paramDir == ParameterDirection.INOUT) {
+				if (paramDir == ParameterKind.OUT || paramDir == ParameterKind.INOUT) {
 					changeSet.setValue(absoluteKnowledgePath, ((ParamHolder<Object>)actualParams[paramIdx]).value);
 				}
 

@@ -2,6 +2,7 @@
  */
 package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 
+import cz.cuni.mff.d3s.deeco.integrity.RatingsManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry;
 
@@ -90,6 +91,7 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 			case RuntimeMetadataPackage.PATH_SECURITY_ROLE_ARGUMENT: return createPathSecurityRoleArgument();
 			case RuntimeMetadataPackage.BLANK_SECURITY_ROLE_ARGUMENT: return createBlankSecurityRoleArgument();
 			case RuntimeMetadataPackage.ABSOLUTE_SECURITY_ROLE_ARGUMENT: return createAbsoluteSecurityRoleArgument();
+			case RuntimeMetadataPackage.RATINGS_PROCESS: return createRatingsProcess();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -103,8 +105,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	@Override
 	public Object createFromString(EDataType eDataType, String initialValue) {
 		switch (eDataType.getClassifierID()) {
-			case RuntimeMetadataPackage.PARAMETER_DIRECTION:
-				return createParameterDirectionFromString(eDataType, initialValue);
+			case RuntimeMetadataPackage.PARAMETER_KIND:
+				return createParameterKindFromString(eDataType, initialValue);
 			case RuntimeMetadataPackage.METHOD:
 				return createMethodFromString(eDataType, initialValue);
 			case RuntimeMetadataPackage.KNOWLEDGE_MANAGER:
@@ -113,6 +115,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 				return createShadowKnowledgeManagerRegistryFromString(eDataType, initialValue);
 			case RuntimeMetadataPackage.COMMUNICATION_BOUNDARY:
 				return createCommunicationBoundaryFromString(eDataType, initialValue);
+			case RuntimeMetadataPackage.RATINGS_MANAGER:
+				return createRatingsManagerFromString(eDataType, initialValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -126,8 +130,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	@Override
 	public String convertToString(EDataType eDataType, Object instanceValue) {
 		switch (eDataType.getClassifierID()) {
-			case RuntimeMetadataPackage.PARAMETER_DIRECTION:
-				return convertParameterDirectionToString(eDataType, instanceValue);
+			case RuntimeMetadataPackage.PARAMETER_KIND:
+				return convertParameterKindToString(eDataType, instanceValue);
 			case RuntimeMetadataPackage.METHOD:
 				return convertMethodToString(eDataType, instanceValue);
 			case RuntimeMetadataPackage.KNOWLEDGE_MANAGER:
@@ -136,6 +140,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 				return convertShadowKnowledgeManagerRegistryToString(eDataType, instanceValue);
 			case RuntimeMetadataPackage.COMMUNICATION_BOUNDARY:
 				return convertCommunicationBoundaryToString(eDataType, instanceValue);
+			case RuntimeMetadataPackage.RATINGS_MANAGER:
+				return convertRatingsManagerToString(eDataType, instanceValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -376,8 +382,18 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public ParameterDirection createParameterDirectionFromString(EDataType eDataType, String initialValue) {
-		ParameterDirection result = ParameterDirection.get(initialValue);
+	public RatingsProcess createRatingsProcess() {
+		RatingsProcessImpl ratingsProcess = new RatingsProcessImpl();
+		return ratingsProcess;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public ParameterKind createParameterKindFromString(EDataType eDataType, String initialValue) {
+		ParameterKind result = ParameterKind.get(initialValue);
 		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
 		return result;
 	}
@@ -387,7 +403,7 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String convertParameterDirectionToString(EDataType eDataType, Object instanceValue) {
+	public String convertParameterKindToString(EDataType eDataType, Object instanceValue) {
 		return instanceValue == null ? null : instanceValue.toString();
 	}
 
@@ -460,6 +476,24 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * @generated
 	 */
 	public String convertCommunicationBoundaryToString(EDataType eDataType, Object instanceValue) {
+		return super.convertToString(eDataType, instanceValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public RatingsManager createRatingsManagerFromString(EDataType eDataType, String initialValue) {
+		return (RatingsManager)super.createFromString(eDataType, initialValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertRatingsManagerToString(EDataType eDataType, Object instanceValue) {
 		return super.convertToString(eDataType, instanceValue);
 	}
 
