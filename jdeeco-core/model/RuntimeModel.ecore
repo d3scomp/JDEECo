@@ -115,7 +115,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="CommunicationBoundary" instanceClassName="cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate"/>
-  <eClassifiers xsi:type="ecore:EClass" name="KnowledgeSecurityTag">
+  <eClassifiers xsi:type="ecore:EClass" name="KnowledgeSecurityTag" eSuperTypes="#//SecurityTag">
     <eStructuralFeatures xsi:type="ecore:EReference" name="requiredRole" lowerBound="1"
         eType="#//SecurityRole" containment="true"/>
   </eClassifiers>
@@ -143,4 +143,6 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="componentInstance" lowerBound="1"
         eType="#//ComponentInstance" eOpposite="#//ComponentInstance/ratingsProcess"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="LocalKnowledgeTag" eSuperTypes="#//SecurityTag"/>
+  <eClassifiers xsi:type="ecore:EClass" name="SecurityTag"/>
 </ecore:EPackage>

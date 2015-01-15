@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -76,7 +77,8 @@ public class KnowledgeEncryptor {
 				throw new IllegalArgumentException("The value set must contain only absolute knowledge paths.");
 			}
 			
-			List<KnowledgeSecurityTag> tags = km.getSecurityTags((PathNodeField)kp.getNodes().get(0));
+			List<KnowledgeSecurityTag> tags = km.getKnowledgeSecurityTags((PathNodeField)kp.getNodes().get(0)).stream()
+					.filter(t -> t instanceof KnowledgeSecurityTag).map(t -> (KnowledgeSecurityTag)t ).collect(Collectors.toList());
 			
 			if (tags == null || tags.isEmpty()) {
 				addToSecurityMap(basicValueSet, securityMap, null, kp);

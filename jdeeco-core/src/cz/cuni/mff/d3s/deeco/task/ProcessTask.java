@@ -4,6 +4,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
@@ -20,6 +22,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
+import cz.cuni.mff.d3s.deeco.security.ModelSecurityValidator;
 
 /**
  * The implementation of {@link Task} that corresponds to a component process. This class is responsible for (a) registering triggers with the
@@ -86,6 +89,11 @@ public class ProcessTask extends Task {
 	 */
 	@Override
 	public void invoke(Trigger trigger) throws TaskInvocationException {
+		List<String> compromitationErrors = ModelSecurityValidator.validate(componentProcess);
+		if (!compromitationErrors.isEmpty()) {
+			throw new TaskInvocationException("Component process would result into data compromise: " + compromitationErrors.stream().collect(Collectors.joining(", ")));
+		}
+		
 		// Obtain parameters from the knowledge
 		KnowledgeManager knowledgeManager = componentProcess.getComponentInstance().getKnowledgeManager();
 		Collection<Parameter> formalParams = componentProcess.getParameters();

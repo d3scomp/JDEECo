@@ -17,6 +17,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Invocable;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.LocalKnowledgeTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
@@ -30,6 +31,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.RatingsProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRoleArgument;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
@@ -240,6 +242,20 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * @generated
 	 */
 	private EClass ratingsProcessEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass localKnowledgeTagEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass securityTagEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -1015,6 +1031,24 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getLocalKnowledgeTag() {
+		return localKnowledgeTagEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getSecurityTag() {
+		return securityTagEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EEnum getParameterKind() {
 		return parameterKindEEnum;
 	}
@@ -1203,6 +1237,10 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		ratingsProcessEClass = createEClass(RATINGS_PROCESS);
 		createEReference(ratingsProcessEClass, RATINGS_PROCESS__COMPONENT_INSTANCE);
 
+		localKnowledgeTagEClass = createEClass(LOCAL_KNOWLEDGE_TAG);
+
+		securityTagEClass = createEClass(SECURITY_TAG);
+
 		// Create enums
 		parameterKindEEnum = createEEnum(PARAMETER_KIND);
 
@@ -1252,10 +1290,12 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		pathNodeCoordinatorEClass.getESuperTypes().add(this.getPathNode());
 		pathNodeMemberEClass.getESuperTypes().add(this.getPathNode());
 		pathNodeComponentIdEClass.getESuperTypes().add(this.getPathNode());
+		knowledgeSecurityTagEClass.getESuperTypes().add(this.getSecurityTag());
 		pathSecurityRoleArgumentEClass.getESuperTypes().add(this.getSecurityRoleArgument());
 		blankSecurityRoleArgumentEClass.getESuperTypes().add(this.getSecurityRoleArgument());
 		absoluteSecurityRoleArgumentEClass.getESuperTypes().add(this.getSecurityRoleArgument());
 		ratingsProcessEClass.getESuperTypes().add(this.getInvocable());
+		localKnowledgeTagEClass.getESuperTypes().add(this.getSecurityTag());
 
 		// Initialize classes, features, and operations; add parameters
 		initEClass(timeTriggerEClass, TimeTrigger.class, "TimeTrigger", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -1359,6 +1399,10 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 
 		initEClass(ratingsProcessEClass, RatingsProcess.class, "RatingsProcess", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getRatingsProcess_ComponentInstance(), this.getComponentInstance(), this.getComponentInstance_RatingsProcess(), "componentInstance", null, 1, 1, RatingsProcess.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(localKnowledgeTagEClass, LocalKnowledgeTag.class, "LocalKnowledgeTag", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+		initEClass(securityTagEClass, SecurityTag.class, "SecurityTag", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		// Initialize enums and add enum literals
 		initEEnum(parameterKindEEnum, ParameterKind.class, "ParameterKind");

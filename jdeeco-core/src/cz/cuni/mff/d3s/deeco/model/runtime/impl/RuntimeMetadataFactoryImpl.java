@@ -92,6 +92,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 			case RuntimeMetadataPackage.BLANK_SECURITY_ROLE_ARGUMENT: return createBlankSecurityRoleArgument();
 			case RuntimeMetadataPackage.ABSOLUTE_SECURITY_ROLE_ARGUMENT: return createAbsoluteSecurityRoleArgument();
 			case RuntimeMetadataPackage.RATINGS_PROCESS: return createRatingsProcess();
+			case RuntimeMetadataPackage.LOCAL_KNOWLEDGE_TAG: return createLocalKnowledgeTag();
+			case RuntimeMetadataPackage.SECURITY_TAG: return createSecurityTag();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -385,6 +387,26 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	public RatingsProcess createRatingsProcess() {
 		RatingsProcessImpl ratingsProcess = new RatingsProcessImpl();
 		return ratingsProcess;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public LocalKnowledgeTag createLocalKnowledgeTag() {
+		LocalKnowledgeTagImpl localKnowledgeTag = new LocalKnowledgeTagImpl();
+		return localKnowledgeTag;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public SecurityTag createSecurityTag() {
+		SecurityTagImpl securityTag = new SecurityTagImpl();
+		return securityTag;
 	}
 
 	/**

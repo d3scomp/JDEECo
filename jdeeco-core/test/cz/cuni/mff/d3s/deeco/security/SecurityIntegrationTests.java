@@ -44,6 +44,8 @@ public class SecurityIntegrationTests {
 		// then data are broadcasted and captured
 		verify(runtimeModel.dataSender).broadcastData(objectCaptor.capture());
 		Object broadcastArgument = objectCaptor.getValue();
+		
+		@SuppressWarnings("unchecked")
 		List<KnowledgeData> data = (List<KnowledgeData>)broadcastArgument;
 		
 		assertTrue(runtimeModel.policeComponent1.secrets.isEmpty());

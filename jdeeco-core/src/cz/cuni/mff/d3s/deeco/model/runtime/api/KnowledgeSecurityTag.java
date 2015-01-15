@@ -2,7 +2,6 @@
  */
 package cz.cuni.mff.d3s.deeco.model.runtime.api;
 
-import org.eclipse.emf.ecore.EObject;
 
 /**
  * <!-- begin-user-doc -->
@@ -20,7 +19,7 @@ import org.eclipse.emf.ecore.EObject;
  * @model
  * @generated
  */
-public interface KnowledgeSecurityTag extends EObject {
+public interface KnowledgeSecurityTag extends SecurityTag {
 	/**
 	 * Returns the value of the '<em><b>Required Role</b></em>' containment reference.
 	 * <!-- begin-user-doc -->

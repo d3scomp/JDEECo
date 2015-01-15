@@ -22,6 +22,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 
 /**
@@ -354,14 +355,14 @@ public class BaseKnowledgeManagerTest {
 		KnowledgeSecurityTag tag = RuntimeMetadataFactory.eINSTANCE.createKnowledgeSecurityTag();
 		tag.setRequiredRole(RuntimeMetadataFactory.eINSTANCE.createSecurityRole());
 		tag.getRequiredRole().setRoleName("role");
-		Collection<KnowledgeSecurityTag> expectedTags = Arrays.asList(tag);
+		Collection<SecurityTag> expectedTags = Arrays.asList(tag);
 		
 		// when addSecurityTags() is called
 		tested.addSecurityTags(kp, expectedTags);
 		
 		// when security tags are then retrieved
 		KnowledgePath kp_same = RuntimeModelHelper.createKnowledgePath("field");
-		List<KnowledgeSecurityTag> actualTags = tested.getSecurityTags((PathNodeField) kp_same.getNodes().get(0));
+		List<KnowledgeSecurityTag> actualTags = tested.getKnowledgeSecurityTags((PathNodeField) kp_same.getNodes().get(0));
 		
 		// then collections are equal
 		assertEquals(expectedTags, actualTags);
@@ -371,7 +372,7 @@ public class BaseKnowledgeManagerTest {
 	public void markAsSecured_MultiNodePathTest() {
 		// given multi-noded knowledge path and security tags are prepared
 		KnowledgePath kp = RuntimeModelHelper.createKnowledgePath("field", "inner");
-		Collection<KnowledgeSecurityTag> expectedTags = Arrays.asList();
+		Collection<SecurityTag> expectedTags = Arrays.asList();
 		
 		// when addSecurityTags() is called
 		tested.addSecurityTags(kp, expectedTags);
@@ -384,7 +385,7 @@ public class BaseKnowledgeManagerTest {
 		// given single-noded knowledge path and security tags are prepared
 		KnowledgePath kp = RuntimeModelHelper.createKnowledgePath();
 		kp.getNodes().add(RuntimeMetadataFactory.eINSTANCE.createPathNodeComponentId());
-		Collection<KnowledgeSecurityTag> expectedTags = Arrays.asList();
+		Collection<SecurityTag> expectedTags = Arrays.asList();
 		
 		// when addSecurityTags() is called
 		tested.addSecurityTags(kp, expectedTags);

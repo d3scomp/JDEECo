@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import junitx.framework.FileAssert;
 
@@ -113,17 +114,17 @@ public class AnnotationProcessorTest {
 		ComponentInstance component = model.getComponentInstances().get(0);
 		KnowledgeManager km = component.getKnowledgeManager();
 		
-		List<KnowledgeSecurityTag> nameSecurityTags = km.getSecurityTags(RuntimeModelHelper.createPathNodeField("name"));
+		List<KnowledgeSecurityTag> nameSecurityTags = km.getKnowledgeSecurityTags(RuntimeModelHelper.createPathNodeField("name"));
 		assertEquals(0, nameSecurityTags.size());
 		
-		List<KnowledgeSecurityTag> capacitySecurityTags = km.getSecurityTags(RuntimeModelHelper.createPathNodeField("capacity"));
+		List<KnowledgeSecurityTag> capacitySecurityTags = km.getKnowledgeSecurityTags(RuntimeModelHelper.createPathNodeField("capacity"));
 		assertEquals(2, capacitySecurityTags.size());
 		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role1.class.getName(), capacitySecurityTags.get(0).getRequiredRole().getRoleName());
 		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role3.class.getName(), capacitySecurityTags.get(1).getRequiredRole().getRoleName());
 		assertEquals(0, capacitySecurityTags.get(0).getRequiredRole().getArguments().size());
 		assertEquals(0, capacitySecurityTags.get(1).getRequiredRole().getArguments().size());
 		
-		List<KnowledgeSecurityTag> timeSecurityTags = km.getSecurityTags(RuntimeModelHelper.createPathNodeField("time"));
+		List<KnowledgeSecurityTag> timeSecurityTags = km.getKnowledgeSecurityTags(RuntimeModelHelper.createPathNodeField("time"));
 		assertEquals(1, timeSecurityTags.size());
 		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role2.class.getName(), timeSecurityTags.get(0).getRequiredRole().getRoleName());
 		assertEquals(4, timeSecurityTags.get(0).getRequiredRole().getArguments().size());
@@ -168,7 +169,7 @@ public class AnnotationProcessorTest {
 		ComponentInstance component = model.getComponentInstances().get(0);
 		KnowledgeManager km = component.getKnowledgeManager();
 		
-		List<KnowledgeSecurityTag> nameSecurityTags = km.getSecurityTags(RuntimeModelHelper.createPathNodeField("name"));
+		List<KnowledgeSecurityTag> nameSecurityTags = km.getKnowledgeSecurityTags(RuntimeModelHelper.createPathNodeField("name"));
 		SecurityRole securityRole = nameSecurityTags.get(0).getRequiredRole();
 		
 		assertEquals(1, nameSecurityTags.size());
@@ -288,6 +289,34 @@ public class AnnotationProcessorTest {
 		
 		exception.expect(AnnotationProcessorException.class);
 		exception.expectMessage("The rating process method parameter must be of type " + ReadonlyRatingsHolder.class.getSimpleName() + ".");
+		
+		// when process() is called
+		processor.process(input);
+	}
+	
+	@Test 
+	public void testSecurityAnnotations_Error1() throws AnnotationProcessorException {
+		// given component with security annotations is processed by the annotations processor
+		RuntimeMetadata model = factory.createRuntimeMetadata(); 
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		WrongC8 input = new WrongC8();
+		
+		exception.expect(AnnotationProcessorException.class);
+		exception.expectMessage("Cannot assign the same role " + WrongC8.Role1.class.getSimpleName() + " multiple times.");
+		
+		// when process() is called
+		processor.process(input);
+	}
+	
+	@Test 
+	public void testSecurityAnnotations_Error2() throws AnnotationProcessorException {
+		// given component with security annotations is processed by the annotations processor
+		RuntimeMetadata model = factory.createRuntimeMetadata(); 
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		WrongC9 input = new WrongC9();
+		
+		exception.expect(AnnotationProcessorException.class);
+		exception.expectMessage("Local knowledge must not be secured.");
 		
 		// when process() is called
 		processor.process(input);
@@ -806,7 +835,7 @@ public class AnnotationProcessorTest {
 
 	
 	@Test
-	public void testProcessInitialKnowledge(){
+	public void testProcessInitialKnowledge() throws AnnotationProcessorException{
 		RuntimeMetadata model = factory.createRuntimeMetadata();
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);
 		

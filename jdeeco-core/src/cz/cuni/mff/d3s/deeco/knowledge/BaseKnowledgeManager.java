@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
@@ -16,6 +17,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 
 // TB: XXX - This would really benefit from being re-implemented using trie datastructure
@@ -33,7 +35,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 public class BaseKnowledgeManager implements KnowledgeManager {
 
 	private final Map<KnowledgePath, Object> knowledge;
-	private final Map<PathNodeField, List<KnowledgeSecurityTag>> securityTags;
+	private final Map<PathNodeField, List<SecurityTag>> securityTags;
 	private final Map<KnowledgeChangeTrigger, List<TriggerListener>> knowledgeChangeListeners;
 	private final Collection<KnowledgePath> localKnowledgePaths;
 	
@@ -607,7 +609,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	}
 
 	@Override
-	public void addSecurityTags(KnowledgePath knowledgePath, Collection<KnowledgeSecurityTag> newSecurityTags) {	
+	public void addSecurityTags(KnowledgePath knowledgePath, Collection<SecurityTag> newSecurityTags) {	
 		if (knowledgePath.getNodes().size() != 1) {
 			throw new IllegalArgumentException("Illegal use of method - only single-noded knowledge path can be secured.");
 		}
@@ -625,15 +627,22 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	}
 	
 	@Override
-	public List<KnowledgeSecurityTag> getSecurityTags(PathNodeField pathNodeField) {
-		List<KnowledgeSecurityTag> result = securityTags.get(pathNodeField);
+	public List<KnowledgeSecurityTag> getKnowledgeSecurityTags(PathNodeField pathNodeField) {		
+		List<SecurityTag> result = securityTags.get(pathNodeField);
+		if (result == null) {
+			return Collections.emptyList();
+		} else {
+			return result.stream().filter(tag -> tag instanceof KnowledgeSecurityTag).map(tag -> (KnowledgeSecurityTag)tag).collect(Collectors.toList());
+		}
+	}
+
+	@Override
+	public List<SecurityTag> getSecurityTags(PathNodeField pathNodeField) {		
+		List<SecurityTag> result = securityTags.get(pathNodeField);
 		if (result == null) {
 			return Collections.emptyList();
 		} else {
 			return result;
 		}
 	}
-
-	
-
 }

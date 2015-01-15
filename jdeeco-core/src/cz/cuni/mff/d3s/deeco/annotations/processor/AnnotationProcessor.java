@@ -59,6 +59,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Exchange;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.LocalKnowledgeTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
@@ -356,10 +357,9 @@ public class AnnotationProcessor {
 			km.update(initialLocalK);
 			componentInstance.setKnowledgeManager(km);
 	   
-			
-			
 			try {
 				addSecurityTags(clazz, km, initialK);
+				addVirtualSecurityTags(km, initialLocalK);
 			} catch (Exception ex) {
 				throw new AnnotationProcessorException(ex.getMessage());
 			}
@@ -411,10 +411,14 @@ public class AnnotationProcessor {
 				}
 			}
 			
-			
+			Set<Class<?>> roles = new HashSet<>();
 			for (HasRole role : clazz.getDeclaredAnnotationsByType(HasRole.class)) {
+				if (roles.contains(role.roleClass())) {
+					throw new AnnotationProcessorException("The same role cannot be assigned multiply to a component.");
+				}
 				SecurityRole securityRole = createRoleFromClassDefinition(role.roleClass());
 				componentInstance.getRoles().add(securityRole);
+				roles.add(role.roleClass());
 			}
 			
 			callExtensions(ParsingEvent.ON_COMPONENT_CREATION, componentInstance, getUnknownAnnotations(clazz));
@@ -428,6 +432,14 @@ public class AnnotationProcessor {
 		return componentInstance;
 	}
 
+	/**
+	 * Creates ratings process - method used to get rating of knowledge
+	 * @param componentInstance the component 
+	 * @param m method used as a process
+	 * @return 
+	 * @throws AnnotationProcessorException
+	 * @throws ParseException
+	 */
 	private cz.cuni.mff.d3s.deeco.model.runtime.api.RatingsProcess createRatingsProcess(ComponentInstance componentInstance, Method m) throws AnnotationProcessorException, ParseException {
 		cz.cuni.mff.d3s.deeco.model.runtime.api.RatingsProcess process = factory.createRatingsProcess();
 		try {
@@ -440,6 +452,13 @@ public class AnnotationProcessor {
 		return process;
 	}
 
+	/**
+	 * Parses the class used as a role definition
+	 * @param roleClass the class from annotation
+	 * @return
+	 * @throws AnnotationProcessorException
+	 * @throws ParseException
+	 */
 	private SecurityRole createRoleFromClassDefinition(Class<?> roleClass) throws AnnotationProcessorException, ParseException {
 		if (roleClass.getAnnotationsByType(RoleDefinition.class).length == 0) {
 			throw new AnnotationProcessorException("Role class must be decoreted with @RoleDefinition.");
@@ -471,7 +490,7 @@ public class AnnotationProcessor {
 				throw new AnnotationProcessorException("Cannot read path from security role argument "+field.getName(), e);
 			}
 			
-			SecurityRoleArgument argument = createSecurityroleArgument(field, fieldValue);						
+			SecurityRoleArgument argument = createSecurityRoleArgument(field, fieldValue);						
 			
 			securityRole.getArguments().add(argument);
 			for (SecurityRole role : securityRole.getConsistsOf()) {
@@ -483,7 +502,15 @@ public class AnnotationProcessor {
 		return securityRole;
 	}
 
-	private SecurityRoleArgument createSecurityroleArgument(Field field, Object fieldValue) throws ParseException, AnnotationProcessorException {
+	/**
+	 * Creates a security role argument from the field
+	 * @param field field used as an argument
+	 * @param fieldValue either null, absolute value, or string path enclosed in brackets
+	 * @return
+	 * @throws ParseException
+	 * @throws AnnotationProcessorException
+	 */
+	private SecurityRoleArgument createSecurityRoleArgument(Field field, Object fieldValue) throws ParseException, AnnotationProcessorException {
 		SecurityRoleArgument argument = null;
 		
 		if (fieldValue == null) {
@@ -513,6 +540,11 @@ public class AnnotationProcessor {
 		return argument;
 	}
 
+	/**
+	 * Sets the current argument value in each parent of the security role
+	 * @param argument
+	 * @param securityRole
+	 */
 	private void overrideArgument(SecurityRoleArgument argument, SecurityRole securityRole) {
 		Optional<SecurityRoleArgument> optionalArgument = securityRole.getArguments().stream().filter(arg -> arg.getName().equals(argument.getName())).findFirst();
 		if (optionalArgument.isPresent()) {
@@ -538,6 +570,13 @@ public class AnnotationProcessor {
 		}
 	}
 
+	/**
+	 * Checks whether the given field is an applicable argument for the role
+	 * @param field
+	 * @param fieldParameters
+	 * @param securityRole
+	 * @return
+	 */
 	private boolean isValidForRole(Field field, List<Field> fieldParameters, SecurityRole securityRole) {
 		if (field.getDeclaringClass().getName().equals(securityRole.getRoleName())) {
 			return true;
@@ -550,8 +589,17 @@ public class AnnotationProcessor {
 		}		
 	}
 
+	/**
+	 * Iterates through the initial knowledge of the component and adds security tags for the associated knowledge manager
+	 * @param clazz
+	 * @param km
+	 * @param initialKnowledge
+	 * @throws NoSuchFieldException
+	 * @throws ParseException
+	 * @throws AnnotationProcessorException
+	 */
 	private void addSecurityTags(Class<?> clazz, KnowledgeManager km,
-			ChangeSet initialKnowledge) throws NoSuchFieldException, SecurityException, ParseException, AnnotationProcessorException {
+			ChangeSet initialKnowledge) throws NoSuchFieldException, ParseException, AnnotationProcessorException {
 		for (KnowledgePath kp : initialKnowledge.getUpdatedReferences()) {
 			if (kp.getNodes().size() != 1) throw new NoSuchFieldException();
 			PathNodeField pathNodeField = (PathNodeField)kp.getNodes().get(0);
@@ -560,19 +608,37 @@ public class AnnotationProcessor {
 			Allow[] allows = field.getAnnotationsByType(Allow.class);
 			
 			if (allows.length > 0 && field.getName().equals(ComponentIdentifier.ID.toString())) {
-				throw new SecurityException("The component ID must not be secured");
+				throw new AnnotationProcessorException("The component ID must not be secured.");
 			}
 			
+			Set<Class<?>> roleClasses = new HashSet<>();
+			
 			for (Allow allow : allows) {
+				if (roleClasses.contains(allow.roleClass())) {
+					throw new AnnotationProcessorException("Cannot assign the same role " + allow.roleClass().getSimpleName() + " multiple times.");
+				}
+				
 				KnowledgeSecurityTag tag = factory.createKnowledgeSecurityTag();
 				tag.setRequiredRole(createRoleFromClassDefinition(allow.roleClass()));
 				km.addSecurityTags(kp, Arrays.asList(tag));			
+				roleClasses.add(allow.roleClass());
 			}
 			
 		}		
 	}
 
-
+	/**
+	 * Adds blank security tags to the local knowledge, denotating it therefore as "infinitely secure"
+	 * @param km
+	 * @param initialKnowledge
+	 */
+	private void addVirtualSecurityTags(KnowledgeManager km, ChangeSet initialKnowledge) {
+		for (KnowledgePath kp : initialKnowledge.getUpdatedReferences()) {
+			LocalKnowledgeTag tag = factory.createLocalKnowledgeTag();
+			km.addSecurityTags(kp, Arrays.asList(tag));			
+		}
+	}
+	
 	/**
 	 * Creator of a single correctly-initialized {@link EnsembleDefinition} object. 
 	 * It calls all the necessary sub-creators to obtain the full graph of the Ecore object.
@@ -1063,8 +1129,9 @@ public class AnnotationProcessor {
 	 * Returns a {@link ChangeSet} containing the initial values of the knowledge of the parsed Component.
 	 *  
 	 * @param knowledge the object of a class annotated as DEECo component (@{@link Component}).
+	 * @throws AnnotationProcessorException 
 	 */
-	ChangeSet extractInitialKnowledge(Object knowledge, boolean local) {
+	ChangeSet extractInitialKnowledge(Object knowledge, boolean local) throws AnnotationProcessorException {
 		ChangeSet changeSet = new ChangeSet();
 		for (Field f : knowledge.getClass().getDeclaredFields()) {
 			if ((!Modifier.isPublic(f.getModifiers()))
@@ -1078,6 +1145,11 @@ public class AnnotationProcessor {
 		}
 		for (Field f : knowledge.getClass().getFields())
 			if (!Modifier.isStatic(f.getModifiers())) {
+				Allow[] allowAnnotations = f.getAnnotationsByType(Allow.class);
+				if (allowAnnotations.length > 0 && local && isAnnotatedAsLocal(f)) {
+					throw new AnnotationProcessorException("Local knowledge must not be secured.");
+				}
+				
 				if (((isAnnotatedAsLocal(f)) && (local))
 						|| ((!isAnnotatedAsLocal(f)) && (!local))) {
 					KnowledgePath knowledgePath = this.factory

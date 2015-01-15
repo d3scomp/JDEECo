@@ -10,7 +10,6 @@ import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 /**
  * <!-- begin-user-doc -->
@@ -25,7 +24,7 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  *
  * @generated
  */
-public class KnowledgeSecurityTagImpl extends MinimalEObjectImpl.Container implements KnowledgeSecurityTag {
+public class KnowledgeSecurityTagImpl extends SecurityTagImpl implements KnowledgeSecurityTag {
 	/**
 	 * The cached value of the '{@link #getRequiredRole() <em>Required Role</em>}' containment reference.
 	 * <!-- begin-user-doc -->

@@ -7,6 +7,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 
 /**
@@ -73,9 +74,16 @@ public interface ReadOnlyKnowledgeManager {
 	public ComponentInstance getComponent();
 
 	/**
-	 * Gets security annotations associated with given field
+	 * Gets security annotations associated with given field (setup during annotation processing)
 	 * @param pathNodeField
-	 * @return list of security tags
+	 * @return list of knowledge security tags (without local tags)
 	 */
-	List<KnowledgeSecurityTag> getSecurityTags(PathNodeField pathNodeField);
+	List<KnowledgeSecurityTag> getKnowledgeSecurityTags(PathNodeField pathNodeField);
+	
+	/**
+	 * Gets security annotations associated with given field (setup during annotation processing)
+	 * @param pathNodeField
+	 * @return list of security tags (including local tags)
+	 */
+	List<SecurityTag> getSecurityTags(PathNodeField pathNodeField);
 }

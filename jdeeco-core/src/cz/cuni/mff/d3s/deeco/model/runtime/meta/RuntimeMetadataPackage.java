@@ -1033,6 +1033,34 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int STRING_TO_OBJECT_MAP_OPERATION_COUNT = 0;
 
 	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.SecurityTagImpl <em>Security Tag</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.SecurityTagImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getSecurityTag()
+	 * @generated
+	 */
+	int SECURITY_TAG = 28;
+
+	/**
+	 * The number of structural features of the '<em>Security Tag</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SECURITY_TAG_FEATURE_COUNT = 0;
+
+	/**
+	 * The number of operations of the '<em>Security Tag</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SECURITY_TAG_OPERATION_COUNT = 0;
+
+	/**
 	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.KnowledgeSecurityTagImpl <em>Knowledge Security Tag</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1049,7 +1077,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int KNOWLEDGE_SECURITY_TAG__REQUIRED_ROLE = 0;
+	int KNOWLEDGE_SECURITY_TAG__REQUIRED_ROLE = SECURITY_TAG_FEATURE_COUNT + 0;
 
 	/**
 	 * The number of structural features of the '<em>Knowledge Security Tag</em>' class.
@@ -1058,7 +1086,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int KNOWLEDGE_SECURITY_TAG_FEATURE_COUNT = 1;
+	int KNOWLEDGE_SECURITY_TAG_FEATURE_COUNT = SECURITY_TAG_FEATURE_COUNT + 1;
 
 	/**
 	 * The number of operations of the '<em>Knowledge Security Tag</em>' class.
@@ -1067,7 +1095,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int KNOWLEDGE_SECURITY_TAG_OPERATION_COUNT = 0;
+	int KNOWLEDGE_SECURITY_TAG_OPERATION_COUNT = SECURITY_TAG_OPERATION_COUNT + 0;
 
 	/**
 	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.SecurityRoleImpl <em>Security Role</em>}' class.
@@ -1346,6 +1374,34 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int RATINGS_PROCESS_OPERATION_COUNT = INVOCABLE_OPERATION_COUNT + 0;
 
 	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.LocalKnowledgeTagImpl <em>Local Knowledge Tag</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.LocalKnowledgeTagImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getLocalKnowledgeTag()
+	 * @generated
+	 */
+	int LOCAL_KNOWLEDGE_TAG = 27;
+
+	/**
+	 * The number of structural features of the '<em>Local Knowledge Tag</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_KNOWLEDGE_TAG_FEATURE_COUNT = SECURITY_TAG_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of operations of the '<em>Local Knowledge Tag</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_KNOWLEDGE_TAG_OPERATION_COUNT = SECURITY_TAG_OPERATION_COUNT + 0;
+
+	/**
 	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind <em>Parameter Kind</em>}' enum.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1353,7 +1409,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getParameterKind()
 	 * @generated
 	 */
-	int PARAMETER_KIND = 27;
+	int PARAMETER_KIND = 29;
 
 	/**
 	 * The meta object id for the '<em>Method</em>' data type.
@@ -1363,7 +1419,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getMethod()
 	 * @generated
 	 */
-	int METHOD = 28;
+	int METHOD = 30;
 
 	/**
 	 * The meta object id for the '<em>Knowledge Manager</em>' data type.
@@ -1373,7 +1429,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getKnowledgeManager()
 	 * @generated
 	 */
-	int KNOWLEDGE_MANAGER = 29;
+	int KNOWLEDGE_MANAGER = 31;
 
 	/**
 	 * The meta object id for the '<em>Shadow Knowledge Manager Registry</em>' data type.
@@ -1383,7 +1439,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getShadowKnowledgeManagerRegistry()
 	 * @generated
 	 */
-	int SHADOW_KNOWLEDGE_MANAGER_REGISTRY = 30;
+	int SHADOW_KNOWLEDGE_MANAGER_REGISTRY = 32;
 
 	/**
 	 * The meta object id for the '<em>Communication Boundary</em>' data type.
@@ -1393,7 +1449,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getCommunicationBoundary()
 	 * @generated
 	 */
-	int COMMUNICATION_BOUNDARY = 31;
+	int COMMUNICATION_BOUNDARY = 33;
 
 
 	/**
@@ -1404,7 +1460,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getRatingsManager()
 	 * @generated
 	 */
-	int RATINGS_MANAGER = 32;
+	int RATINGS_MANAGER = 34;
 
 
 	/**
@@ -2197,6 +2253,26 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EReference getRatingsProcess_ComponentInstance();
 
 	/**
+	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.LocalKnowledgeTag <em>Local Knowledge Tag</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Local Knowledge Tag</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.LocalKnowledgeTag
+	 * @generated
+	 */
+	EClass getLocalKnowledgeTag();
+
+	/**
+	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityTag <em>Security Tag</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Security Tag</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityTag
+	 * @generated
+	 */
+	EClass getSecurityTag();
+
+	/**
 	 * Returns the meta object for enum '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind <em>Parameter Kind</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2940,6 +3016,26 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * @generated
 		 */
 		EReference RATINGS_PROCESS__COMPONENT_INSTANCE = eINSTANCE.getRatingsProcess_ComponentInstance();
+
+		/**
+		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.LocalKnowledgeTagImpl <em>Local Knowledge Tag</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.LocalKnowledgeTagImpl
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getLocalKnowledgeTag()
+		 * @generated
+		 */
+		EClass LOCAL_KNOWLEDGE_TAG = eINSTANCE.getLocalKnowledgeTag();
+
+		/**
+		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.SecurityTagImpl <em>Security Tag</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.SecurityTagImpl
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getSecurityTag()
+		 * @generated
+		 */
+		EClass SECURITY_TAG = eINSTANCE.getSecurityTag();
 
 		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind <em>Parameter Kind</em>}' enum.

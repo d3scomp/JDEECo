@@ -37,6 +37,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeData;
@@ -150,7 +151,7 @@ public class KnowledgeEncryptorTest {
 	@Test
 	public void encryptValueSet_SecurityTest() throws KnowledgeNotFoundException {
 		// given single security tag is used
-		Collection<KnowledgeSecurityTag> tags = new LinkedList<>();
+		Collection<SecurityTag> tags = new LinkedList<>();
 		KnowledgeSecurityTag tag1 = factory.createKnowledgeSecurityTag();
 		tag1.setRequiredRole(factory.createSecurityRole());
 		tag1.getRequiredRole().setRoleName("testrole1");
@@ -264,7 +265,7 @@ public class KnowledgeEncryptorTest {
 	@Test
 	public void encryptDecryptTest() throws KnowledgeNotFoundException {
 		// given local component has testrole1
-		Collection<KnowledgeSecurityTag> tags = new LinkedList<>();
+		Collection<SecurityTag> tags = new LinkedList<>();
 		KnowledgeSecurityTag tag1 = factory.createKnowledgeSecurityTag();
 		tag1.setRequiredRole(factory.createSecurityRole());
 		tag1.getRequiredRole().setRoleName("testrole1");

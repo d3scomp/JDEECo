@@ -1,10 +1,7 @@
 package cz.cuni.mff.d3s.deeco.security;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -13,17 +10,14 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager;
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.LocalKnowledgeTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityTag;
 import cz.cuni.mff.d3s.deeco.task.TaskInvocationException;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.PathRoot;
 
@@ -59,8 +53,16 @@ public class LocalSecurityChecker {
 			Collection<KnowledgePath> knowledgePathsFromMembership = formalParamsOfMembership.stream().map(param -> param.getKnowledgePath()).collect(Collectors.toList());
 			Collection<KnowledgePath> knowledgePathsFromExchange = formalParamsOfExchange.stream().map(param -> param.getKnowledgePath()).collect(Collectors.toList());
 			
-			return canAccessKnowledge(localRole, knowledgePathsFromMembership, shadowKnowledgeManager) 
-				&& canAccessKnowledge(localRole, knowledgePathsFromExchange, shadowKnowledgeManager);
+			boolean canAccess = canAccessKnowledge(localRole, knowledgePathsFromMembership, shadowKnowledgeManager) 
+							 && canAccessKnowledge(localRole, knowledgePathsFromExchange, shadowKnowledgeManager);
+			
+			List<String> compromitationErrors = ModelSecurityValidator.validate(localRole, ensembleController.getEnsembleDefinition().getKnowledgeExchange(), 
+					ensembleController.getComponentInstance(), shadowKnowledgeManager);
+			if (!compromitationErrors.isEmpty()) {
+				Log.e("Knowledge exchange would result into data compromise: " + compromitationErrors.stream().collect(Collectors.joining(", ")));
+			}
+			
+			return canAccess && compromitationErrors.isEmpty();
 		}		
 	}
 
@@ -71,14 +73,17 @@ public class LocalSecurityChecker {
 		boolean canAccessAll = true;
 		
 		for (KnowledgePath kp : paths) {		
-			Map<KnowledgeSecurityTag, ReadOnlyKnowledgeManager> securityTagManager = new HashMap<>();
-			SecurityTagCollection securityTagCollection = getSecurityTagsFor(localRole, kp, localKnowledgeManager, shadowKnowledgeManager, securityTagManager);
+			Map<SecurityTag, ReadOnlyKnowledgeManager> securityTagManager = new HashMap<>();
+			SecurityTagCollection securityTagCollection = SecurityTagCollection.getSecurityTags(localRole, kp, localKnowledgeManager, shadowKnowledgeManager, securityTagManager);
 			
 			boolean canAccessPath = false;
-			for (List<KnowledgeSecurityTag> securityTags : securityTagCollection) {
+			for (List<SecurityTag> securityTags : securityTagCollection) {
 				boolean canAccessAllConditions = true;
-				for (KnowledgeSecurityTag securityTag : securityTags) {
-					canAccessAllConditions = canAccessAllConditions && canAccessTag(securityTag, localKnowledgeManager, shadowKnowledgeManager, securityTagManager);
+				for (SecurityTag securityTag : securityTags) {
+					if (securityTag instanceof LocalKnowledgeTag) {
+						continue;
+					}
+					canAccessAllConditions = canAccessAllConditions && canAccessTag((KnowledgeSecurityTag) securityTag, localKnowledgeManager, shadowKnowledgeManager, securityTagManager);
 				}
 				canAccessPath = canAccessPath || canAccessAllConditions;
 				
@@ -89,61 +94,9 @@ public class LocalSecurityChecker {
 		
 		return canAccessAll;
 	}
-
-	public SecurityTagCollection getSecurityTagsFor(PathRoot localRole, KnowledgePath knowledgePath, ReadOnlyKnowledgeManager localKnowledgeManager, 
-			ReadOnlyKnowledgeManager shadowKnowledgeManager, Map<KnowledgeSecurityTag, ReadOnlyKnowledgeManager> securityTagManager) { 
-		SecurityTagCollection result = new SecurityTagCollection();
-		
-		Iterator<PathNode> iterator = knowledgePath.getNodes().iterator();
-		if (!iterator.hasNext()) {
-			throw new IllegalArgumentException("The knowledge path contains no nodes.");
-		}
-		PathNode firstNode = iterator.next();
-		
-		ReadOnlyKnowledgeManager relevantKnowledgeManager;
-		if (firstNode instanceof PathNodeCoordinator) {
-			if (localRole == PathRoot.COORDINATOR) {
-				relevantKnowledgeManager = localKnowledgeManager;
-			} else {
-				relevantKnowledgeManager = shadowKnowledgeManager;
-			}
-		} else if (firstNode instanceof PathNodeMember) {
-			if (localRole == PathRoot.COORDINATOR) {
-				relevantKnowledgeManager = shadowKnowledgeManager;
-			} else {
-				relevantKnowledgeManager = localKnowledgeManager;
-			}
-		} else {
-			throw new IllegalArgumentException("The knowledge path must start with member/coordinator.");
-		}
-		
-		PathNode secondNode = iterator.next();
-		if (!(secondNode instanceof PathNodeField) && !(secondNode instanceof PathNodeComponentId)) {
-			throw new IllegalArgumentException("The knowledge path must refer to a field.");
-		}
-		
-		List<KnowledgeSecurityTag> tags = (secondNode instanceof PathNodeField) ? relevantKnowledgeManager.getSecurityTags((PathNodeField)secondNode) : null;
-		if (tags == null) {
-			tags = new LinkedList<>();
-		}
-		
-		tags.stream().forEach(tag -> securityTagManager.put(tag, relevantKnowledgeManager));
-		result.addAll(tags.stream().map(tag -> Arrays.asList(tag)).collect(Collectors.toList()));
-		
-		while (iterator.hasNext()) {
-			PathNode node = iterator.next();
-			if (node instanceof PathNodeMapKey) {
-				KnowledgePath innerPath = ((PathNodeMapKey)node).getKeyPath();
-				SecurityTagCollection innerTags = getSecurityTagsFor(localRole, innerPath, localKnowledgeManager, shadowKnowledgeManager, securityTagManager);
-				result = result.mergeWith(innerTags);
-			}
-		}
-		
-		return result;
-	}
 	
 	private boolean canAccessTag(KnowledgeSecurityTag securityTag, ReadOnlyKnowledgeManager localKnowledgeManager, ReadOnlyKnowledgeManager shadowKnowledgeManager, 
-			Map<KnowledgeSecurityTag, ReadOnlyKnowledgeManager> securityTagManager) {
+			Map<SecurityTag, ReadOnlyKnowledgeManager> securityTagManager) {
 		ReadOnlyKnowledgeManager accessingKnowledgeManager, protectingKnowledgeManager;
 		
 		if (securityTagManager.get(securityTag) == localKnowledgeManager) {

@@ -876,7 +876,7 @@ public class RuntimeFrameworkImplTest {
 		vs.setValue(kp, knowledgeValue);		
 		
 		when(km.get(anyCollectionOf(KnowledgePath.class))).thenReturn(vs);		
-		when(km.getSecurityTags(anyObject())).thenReturn(new ArrayList<>());
+		when(km.getKnowledgeSecurityTags(anyObject())).thenReturn(new ArrayList<>());
 		
 		// GIVEN a non-initialized runtime
 		RuntimeFrameworkImpl tested = new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, false);	
