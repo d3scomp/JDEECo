@@ -145,7 +145,7 @@ void simulate(const char * envName, const char * confFile) {
 	cConfigurationEx *configobject = NULL;
 	try {
 		// construct global lists
-		ExecuteOnStartup::executeAll();
+		CodeFragments::executeAll(CodeFragments::STARTUP);
 
 		// verify definitions of int64, int32, etc.
 		verifyIntTypes();
@@ -279,7 +279,7 @@ void simulate(const char * envName, const char * confFile) {
 	classDescriptors.clear();
 	configOptions.clear();
 	omnetapps.clear();
-	cSimulation::clearLoadedNedFiles();
+	CodeFragments::executeAll(CodeFragments::SHUTDOWN);
 }
 
 JNIEXPORT jdouble JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulation_nativeGetCurrentTime(
