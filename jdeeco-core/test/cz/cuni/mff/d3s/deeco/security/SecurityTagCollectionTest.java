@@ -53,6 +53,27 @@ public class SecurityTagCollectionTest {
 		
 		localComponent.setKnowledgeManager(localKnowledgeManager);
 		shadowComponent.setKnowledgeManager(shadowKnowledgeManager);		
+	}	
+	
+	@Test
+	public void getSecurityTags_AbsolutePathTest1() throws KnowledgeUpdateException, KnowledgeNotFoundException {
+		// given absolute path coord.mapKeyInner is prepared
+		KnowledgePath absolutePath = RuntimeModelHelper.createKnowledgePath("<C>", "mapKeyInner");
+		
+		// when the path is secured
+		KnowledgeSecurityTag tag = createSecurityTag("role");
+		localKnowledgeManager.addSecurityTags(RuntimeModelHelper.createKnowledgePath("mapKeyInner"), Arrays.asList(tag));
+		
+		// update the knowledge so that the path can be resolved
+		localKnowledgeManager.update(createKnowledge());
+		
+		// when getSecurityTags() is called
+		Map<SecurityTag, ReadOnlyKnowledgeManager> securityTagManager = new HashMap<>();
+		SecurityTagCollection collection = SecurityTagCollection.getSecurityTags(PathRoot.COORDINATOR, absolutePath, localKnowledgeManager, null, securityTagManager);
+		assertEquals(1, collection.size());
+		collection.stream().forEach(l -> assertEquals(1, l.size()));
+
+		assertArrayEquals(Arrays.asList("role").toArray(), collection.get(0).stream().map(r -> ((KnowledgeSecurityTag)r).getRequiredRole().getRoleName()).toArray());
 	}
 	
 	@Test

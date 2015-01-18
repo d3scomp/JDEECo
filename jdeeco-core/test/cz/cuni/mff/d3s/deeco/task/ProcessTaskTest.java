@@ -21,6 +21,7 @@ import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import cz.cuni.mff.d3s.deeco.integrity.RatingsManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.TriggerListener;
@@ -48,7 +49,9 @@ public class ProcessTaskTest {
 	private Scheduler scheduler;
 	@Mock
 	private Architecture architecture;
-
+	@Mock	
+	private RatingsManager ratingsManager;
+	
 	private Task task;
 	
 	private Integer inValue;
@@ -90,7 +93,7 @@ public class ProcessTaskTest {
 		
 		model.setKnowledgeManager(knowledgeManager);
 		
-		this.task = new ProcessTask(model.process, scheduler, architecture);
+		this.task = new ProcessTask(model.process, scheduler, architecture, ratingsManager);
 	}
 	
 	@Test

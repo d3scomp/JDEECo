@@ -51,8 +51,6 @@
         defaultValueLiteral="false"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="roles" upperBound="-1"
         eType="#//SecurityRole" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ratingsManager" lowerBound="1"
-        eType="#//RatingsManager"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="ratingsProcess" eType="#//RatingsProcess"
         containment="true" eOpposite="#//RatingsProcess/componentInstance"/>
   </eClassifiers>

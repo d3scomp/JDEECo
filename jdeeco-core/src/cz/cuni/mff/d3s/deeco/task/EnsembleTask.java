@@ -4,9 +4,14 @@ import static cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.getAbsoluteStripped
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
 
+import cz.cuni.mff.d3s.deeco.integrity.RatingsHolder;
+import cz.cuni.mff.d3s.deeco.integrity.RatingsManager;
+import cz.cuni.mff.d3s.deeco.integrity.ReadonlyRatingsHolder;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
@@ -24,6 +29,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.RatingsProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
@@ -59,6 +65,11 @@ public class EnsembleTask extends Task {
 	 * Reference to the corresponding {@link LocalSecurityChecker} 
 	 */
 	LocalSecurityChecker securityChecker;
+	
+	/**
+	 * Reference to the ratings manager
+	 */
+	RatingsManager ratingsManager;
 	
 	/**
 	 * A wrapper around a trigger obtained from the local knowledge manager. The sole purpose of this class is to be able to distinguish
@@ -140,12 +151,14 @@ public class EnsembleTask extends Task {
 	}
 	ShadowsTriggerListenerImpl shadowsTriggerListener = new ShadowsTriggerListenerImpl();
 
-	public EnsembleTask(EnsembleController ensembleController, Scheduler scheduler, ArchitectureObserver architectureObserver, KnowledgeManagerContainer kmContainer) {
+	public EnsembleTask(EnsembleController ensembleController, Scheduler scheduler, ArchitectureObserver architectureObserver, 
+			KnowledgeManagerContainer kmContainer, RatingsManager ratingsManager) {
 		super(scheduler);
 		
 		this.architectureObserver = architectureObserver;
 		this.ensembleController = ensembleController;
 		this.securityChecker = new LocalSecurityChecker(ensembleController, kmContainer);
+		this.ratingsManager = ratingsManager;
 	}
 
 	/**
@@ -246,8 +259,8 @@ public class EnsembleTask extends Task {
 		for (Parameter formalParam : formalParams) {
 			ParameterKind paramDir = formalParam.getKind();
 
-			if (paramDir != ParameterKind.IN) {
-				throw new TaskInvocationException("Only IN params allowed in membership condition.");
+			if (paramDir != ParameterKind.IN && paramDir != ParameterKind.RATING) {
+				throw new TaskInvocationException("Only IN and RATING params allowed in membership condition.");
 			}
 			
 			KnowledgePathAndRoot absoluteKnowledgePathAndRoot;
@@ -299,12 +312,25 @@ public class EnsembleTask extends Task {
 		Object[] actualParams = new Object[formalParams.size()];
 		
 		int paramIdx = 0;
-		for (KnowledgePathAndRoot absoluKnowledgePathAndRoot : allPathsWithRoots) {
+		Iterator<KnowledgePathAndRoot> allPathsWithRootsIter = allPathsWithRoots.iterator(); 
+		for (Parameter formalParam : formalParams) {
+			ParameterKind paramDir = formalParam.getKind();			
+			KnowledgePathAndRoot absoluteKnowledgePathAndRoot = allPathsWithRootsIter.next();
 			
-			if (absoluKnowledgePathAndRoot.root == localRole) {
-				actualParams[paramIdx] = localKnowledge.getValue(absoluKnowledgePathAndRoot.knowledgePath);	
-			} else {
-				actualParams[paramIdx] = shadowKnowledge.getValue(absoluKnowledgePathAndRoot.knowledgePath);	
+			if (paramDir == ParameterKind.IN) {
+				if (absoluteKnowledgePathAndRoot.root == localRole) {
+					actualParams[paramIdx] = localKnowledge.getValue(absoluteKnowledgePathAndRoot.knowledgePath);						
+				} else {
+					actualParams[paramIdx] = shadowKnowledge.getValue(absoluteKnowledgePathAndRoot.knowledgePath);	
+				}
+			} else if (paramDir == ParameterKind.RATING) {		
+				String knowledgeAuthor;
+				if (absoluteKnowledgePathAndRoot.root == localRole) {
+					knowledgeAuthor = localKnowledgeManager.getAuthor(absoluteKnowledgePathAndRoot.knowledgePath);
+				} else {
+					knowledgeAuthor = shadowKnowledgeManager.getAuthor(absoluteKnowledgePathAndRoot.knowledgePath);
+				}
+				actualParams[paramIdx] = ratingsManager.createReadonlyRatingsHolder(knowledgeAuthor, absoluteKnowledgePathAndRoot.knowledgePath); 			
 			}
 			
 			paramIdx++;
@@ -341,11 +367,12 @@ public class EnsembleTask extends Task {
 	 * 
 	 * @param localRole specifies whether the knowledge exchange is to be evaluated with assuming the local component as a coordinator or member.
 	 * @param shadowKnowledgeManager specifies the shadow knowledge manager which contains data of the opposite component instance. 
+	 * @return true if the exchange was performed successfully
 	 * @throws TaskInvocationException thrown when the knowledge exchange can't be executed (e.g. it does not exist, has another parameters, has INOUT/OUT parameters, etc.).
 	 * The exception is thrown also in the case when parameters cannot be retrieved from the local/shadow knowledge manager or when the output
 	 * parameters can't be updated in the knowledge manager.
 	 */
-	private void performExchange(PathRoot localRole, ReadOnlyKnowledgeManager shadowKnowledgeManager) throws TaskInvocationException {
+	private boolean performExchange(PathRoot localRole, ReadOnlyKnowledgeManager shadowKnowledgeManager) throws TaskInvocationException {
 		// Obtain parameters from the local knowledge to perform the exchange
 		KnowledgeManager localKnowledgeManager = ensembleController.getComponentInstance().getKnowledgeManager();
 		Collection<Parameter> formalParams = ensembleController.getEnsembleDefinition().getKnowledgeExchange().getParameters();
@@ -373,7 +400,7 @@ public class EnsembleTask extends Task {
 				Log.d(String.format(
 						"Knowledge exchange of %s could not be performed: missing knowledge path (%s)", 
 						ensembleController.getEnsembleDefinition().getName(), e.getNotFoundPath()));
-				return;
+				return false;
 			}
 
 			allPathsWithRoots.add(absoluteKnowledgePathAndRoot);
@@ -386,7 +413,7 @@ public class EnsembleTask extends Task {
 				} else {
 					shadowPaths.add(absoluteKnowledgePathAndRoot.knowledgePath);
 				}				
-			}
+			}		
 		}
 		
 		ValueSet localKnowledge = null;
@@ -403,7 +430,7 @@ public class EnsembleTask extends Task {
 					ensembleController.getEnsembleDefinition().getName(),
 					where.getId()
 					));
-			return;
+			return false;
 		}
 
 		// Construct the parameters for the process method invocation
@@ -412,27 +439,29 @@ public class EnsembleTask extends Task {
 		int paramIdx = 0;
 		Iterator<KnowledgePathAndRoot> allPathsWithRootsIter = allPathsWithRoots.iterator(); 
 		for (Parameter formalParam : formalParams) {
-			ParameterKind paramDir = formalParam.getKind();
+			ParameterKind paramDir = formalParam.getKind();			
 			KnowledgePathAndRoot absoluteKnowledgePathAndRoot = allPathsWithRootsIter.next();
-
+			String knowledgeAuthor = null;
 			Object paramValue = null;
 			
-			if (paramDir == ParameterKind.IN || paramDir == ParameterKind.INOUT) {				
+			if (paramDir == ParameterKind.IN || paramDir == ParameterKind.INOUT || paramDir == ParameterKind.RATING) {				
 				if (absoluteKnowledgePathAndRoot.root == localRole) {
-					paramValue = localKnowledge.getValue(absoluteKnowledgePathAndRoot.knowledgePath);	
+					paramValue = localKnowledge.getValue(absoluteKnowledgePathAndRoot.knowledgePath);
+					knowledgeAuthor = localKnowledgeManager.getAuthor(absoluteKnowledgePathAndRoot.knowledgePath);
 				} else {
-					paramValue = shadowKnowledge.getValue(absoluteKnowledgePathAndRoot.knowledgePath);	
+					paramValue = shadowKnowledge.getValue(absoluteKnowledgePathAndRoot.knowledgePath);
+					knowledgeAuthor = shadowKnowledgeManager.getAuthor(absoluteKnowledgePathAndRoot.knowledgePath);
 				}
 			}
 			
 			if (paramDir == ParameterKind.IN) {
-				actualParams[paramIdx] = paramValue;
-				
+				actualParams[paramIdx] = paramValue;				
 			} else if (paramDir == ParameterKind.OUT) {
 				actualParams[paramIdx] = new ParamHolder<Object>();
-
 			} else if (paramDir == ParameterKind.INOUT) {
 				actualParams[paramIdx] = new ParamHolder<Object>(paramValue);
+			} else if (paramDir == ParameterKind.RATING) {				
+				actualParams[paramIdx] = ratingsManager.createReadonlyRatingsHolder(knowledgeAuthor, absoluteKnowledgePathAndRoot.knowledgePath); 			
 			}
 			// TODO: We could have an option of not creating the wrapper. That would make it easier to work with mutable out types.
 			// TODO: We need some way of handling insertions/deletions in a hashmap.
@@ -463,15 +492,110 @@ public class EnsembleTask extends Task {
 			}
 			
 			// Write the changeset back to the knowledge
-			localKnowledgeManager.update(localChangeSet);
-			
+			localKnowledgeManager.update(localChangeSet, shadowKnowledgeManager.getId());			
 		} catch (KnowledgeUpdateException | IllegalAccessException | IllegalArgumentException e) {
-			throw new TaskInvocationException(String.format("Error when invoking a knowledge exchange for ensemble: %s", ensembleController.getEnsembleDefinition().getName()), e);
+			throw new TaskInvocationException(String.format("Error when invoking a knowledge exchange for ensemble: %s", ensembleController.getEnsembleDefinition().getName()), e);			
 		} catch (InvocationTargetException e) {
 			Log.e("Knowledge exchange returned an exception.", e.getTargetException());
+			return false;
 		}		
+		
+		return true;
 	}
 
+	private void invokeRatingsProcess(String shadowComponentId) throws TaskInvocationException {
+		ComponentInstance component = ensembleController.getComponentInstance();
+		KnowledgeManager knowledgeManager = component.getKnowledgeManager();
+		RatingsProcess process = component.getRatingsProcess();
+		
+		// check if component has rating process defined
+		if (process == null) return;
+		
+		Collection<Parameter> formalParams = process.getParameters();
+		Collection<KnowledgePath> inPaths = new LinkedList<KnowledgePath>();
+		Collection<KnowledgePath> allPaths = new LinkedList<KnowledgePath>();
+		
+		for (Parameter formalParam : formalParams) {
+			ParameterKind paramDir = formalParam.getKind();
+
+			KnowledgePath absoluteKnowledgePath;
+			// FIXME: The call to getAbsolutePath is in theory wrong, because this way we are not obtaining the
+			// knowledge within one transaction. But fortunately this is not a problem with the single 
+			// threaded scheduler we have at the moment, because once the invoke method starts there is no other
+			// activity whatsoever in the system.
+			try {  
+				absoluteKnowledgePath = KnowledgePathHelper.getAbsolutePath(formalParam.getKnowledgePath(), knowledgeManager);
+			} catch (KnowledgeNotFoundException e) {
+				throw new TaskInvocationException(
+						String.format("Knowledge path (%s) could not be resolved.", e.getNotFoundPath()), e);
+			}
+			
+			if (paramDir == ParameterKind.IN) {
+				inPaths.add(absoluteKnowledgePath);
+			}
+			
+			allPaths.add(absoluteKnowledgePath);
+		}
+		
+		ValueSet inKnowledge;
+		
+		try {
+			inKnowledge = knowledgeManager.get(inPaths);
+		} catch (KnowledgeNotFoundException e) {		
+			throw new TaskInvocationException(
+					String.format("Input knowledge (%s) of a component rating process not found in the knowledge manager %s.", 
+							e.getNotFoundPath(), 							
+							knowledgeManager.getId()
+					), e);
+		}
+
+		// Construct the parameters for the process method invocation
+		Object[] actualParams = new Object[formalParams.size()];
+		
+		Map<KnowledgePath, RatingsHolder> ratingsHolders = new HashMap<>();
+		int paramIdx = 0;
+		Iterator<KnowledgePath> allPathsIter = allPaths.iterator();
+		
+		for (Parameter formalParam : formalParams) {
+			ParameterKind paramDir = formalParam.getKind();
+			Class paramType = formalParam.getType();
+			KnowledgePath absoluteKnowledgePath = allPathsIter.next();			
+			String knowledgeAuthor = knowledgeManager.getAuthor(absoluteKnowledgePath);
+			
+			if (paramDir == ParameterKind.IN) {
+				actualParams[paramIdx] = inKnowledge.getValue(absoluteKnowledgePath);
+				
+			} else if (paramDir == ParameterKind.RATING) {				
+				if (paramType.equals(ReadonlyRatingsHolder.class)) {					
+					actualParams[paramIdx] = ratingsManager.createReadonlyRatingsHolder(knowledgeAuthor, absoluteKnowledgePath);
+				} else {
+					RatingsHolder ratingsHolder = ratingsManager.createRatingsHolder(component.getKnowledgeManager().getId(), knowledgeAuthor, absoluteKnowledgePath);
+					ratingsHolders.put(absoluteKnowledgePath, ratingsHolder);
+					actualParams[paramIdx] = ratingsHolder;
+				}				 		
+			}
+			
+			paramIdx++;
+		}
+		
+		try {
+			// Set the current process's context
+			// FIXME is this necessary? The process context seems nowhere to be used.
+			//ProcessContext.addContext(componentProcess, scheduler, architecture);
+			
+			// Call the rating process method
+			process.getMethod().invoke(null, actualParams);
+			
+			ratingsManager.createRatingsChangeSet(ratingsHolders);
+			ratingsManager.update(ratingsManager.getRatingsChangeSets());
+		} catch (IllegalAccessException | IllegalArgumentException e) {
+			Log.e("Can't invoke rating process method of component " + component.getName());
+			throw new TaskInvocationException("Error when invoking a process method.", e);
+		} catch (InvocationTargetException e) {
+			Log.w("Rating process method returned an exception.", e.getTargetException());
+		}		
+	}
+	
 	/**
 	 * Invokes the membership + knowledge exchange on each relevant pair in which the local component instance plays the role of member/coordinator.
 	 * It optimizes the case when the trigger comes from the shadow knowledge manager. In such a case, it evaluates the membership + knowledge exchange only
@@ -505,19 +629,27 @@ public class EnsembleTask extends Task {
 	}
 
 	private void evaluateMembershipAndPerformExchange(ReadOnlyKnowledgeManager shadowKnowledgeManager) throws TaskInvocationException {
+		boolean coordinatorExchangePerformed = false;
+		boolean memberExchangePerformed = false;
+		
 		// Invoke the membership condition and if the membership condition returned true, invoke the knowledge exchange
 		if (checkMembership(PathRoot.COORDINATOR, shadowKnowledgeManager) && securityChecker.checkSecurity(PathRoot.COORDINATOR, shadowKnowledgeManager)) {
 			architectureObserver.ensembleFormed(ensembleController.getEnsembleDefinition(), ensembleController.getComponentInstance(),
 					ensembleController.getComponentInstance().getKnowledgeManager().getId(),shadowKnowledgeManager.getId());
-			performExchange(PathRoot.COORDINATOR, shadowKnowledgeManager);
+			coordinatorExchangePerformed = performExchange(PathRoot.COORDINATOR, shadowKnowledgeManager);					
 		}
 		// Do the same with the roles exchanged
 		if (checkMembership(PathRoot.MEMBER, shadowKnowledgeManager) && securityChecker.checkSecurity(PathRoot.MEMBER, shadowKnowledgeManager)) {
 			architectureObserver.ensembleFormed(ensembleController.getEnsembleDefinition(), ensembleController.getComponentInstance(),
 					shadowKnowledgeManager.getId(), ensembleController.getComponentInstance().getKnowledgeManager().getId());
-			performExchange(PathRoot.MEMBER, shadowKnowledgeManager);
+			memberExchangePerformed = performExchange(PathRoot.MEMBER, shadowKnowledgeManager);			
+		}
+		
+		if (coordinatorExchangePerformed || memberExchangePerformed) {
+			invokeRatingsProcess(shadowKnowledgeManager.getId());
 		}
 	}
+
 
 	/**
 	 * Returns the period associated with the ensemble in the in the meta-model as the {@link TimeTrigger}. Note that the {@link EnsembleTask} assumes that there is at most

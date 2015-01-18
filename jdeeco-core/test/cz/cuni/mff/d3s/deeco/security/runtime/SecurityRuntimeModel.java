@@ -18,12 +18,20 @@ import cz.cuni.mff.d3s.deeco.annotations.Local;
 import cz.cuni.mff.d3s.deeco.annotations.Membership;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.HasRole;
+import cz.cuni.mff.d3s.deeco.annotations.Process;
+import cz.cuni.mff.d3s.deeco.annotations.Rating;
+import cz.cuni.mff.d3s.deeco.annotations.RatingsProcess;
 import cz.cuni.mff.d3s.deeco.annotations.RoleDefinition;
 import cz.cuni.mff.d3s.deeco.annotations.RoleParam;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.executor.SameThreadExecutor;
+import cz.cuni.mff.d3s.deeco.integrity.PathRating;
+import cz.cuni.mff.d3s.deeco.integrity.RatingsHolder;
+import cz.cuni.mff.d3s.deeco.integrity.RatingsManager;
+import cz.cuni.mff.d3s.deeco.integrity.RatingsManagerImpl;
+import cz.cuni.mff.d3s.deeco.integrity.ReadonlyRatingsHolder;
 import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerFactory;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
@@ -89,6 +97,17 @@ public class SecurityRuntimeModel {
 			this.cityId = cityId;
 			this.secrets = new HashMap<>();
 		}
+		
+		@Process
+		@PeriodicScheduling(period=1000)
+		public static void process(@In("cityId") String cityId, @Rating("cityId") ReadonlyRatingsHolder holder) {
+			
+		}
+		
+		@RatingsProcess
+		public static void ratingProcess(@In("cityId") String cityId, @Rating("cityId") RatingsHolder holder) {
+			holder.setMyRating(PathRating.UNUSUAL);
+		}
 	}
 	
 	@Component 
@@ -141,6 +160,7 @@ public class SecurityRuntimeModel {
 	public RuntimeFramework runtime;
 	public SecurityHelper securityHelper;
 	public ArchitectureObserver architectureObserver;
+	public RatingsManager ratingsManager;
 	
 	public SecurityRuntimeModel() throws KeyStoreException, AnnotationProcessorException {
 		initMocks(this);
@@ -170,10 +190,11 @@ public class SecurityRuntimeModel {
 		AllEnsemble.membership = id -> true;
 		
 		container = spy(new KnowledgeManagerContainer(new CloningKnowledgeManagerFactory(), model));
-		runtime = spy(new RuntimeFrameworkImpl(model, scheduler, executor, container));
-
+		ratingsManager = spy(new RatingsManagerImpl());
+		runtime = spy(new RuntimeFrameworkImpl(model, scheduler, executor, container, ratingsManager));		
+		
 		knowledgeDataManager = new DefaultKnowledgeDataManager(model.getEnsembleDefinitions(), null);
-		knowledgeDataManager.initialize(container, dataSender, "1.2.3.4", scheduler, securityKeyManager);		
+		knowledgeDataManager.initialize(container, dataSender, "1.2.3.4", scheduler, securityKeyManager, ratingsManager);		
 	}
 	
 	public void invokeEnsembleTasks() throws TaskInvocationException {
@@ -181,7 +202,7 @@ public class SecurityRuntimeModel {
 		Trigger trigger = model.getEnsembleDefinitions().get(0).getTriggers().get(0);
 		
 		for (ComponentInstance ci : model.getComponentInstances()) {
-			Task task = new EnsembleTask(ci.getEnsembleControllers().get(0), scheduler, architectureObserver, container);
+			Task task = new EnsembleTask(ci.getEnsembleControllers().get(0), scheduler, architectureObserver, container, ratingsManager);
 			task.invoke(trigger);
 		}
 		

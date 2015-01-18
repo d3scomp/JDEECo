@@ -1,6 +1,7 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -83,11 +84,12 @@ public class BaseKnowledgeManagerTest {
 		ChangeSet toUpdate = new ChangeSet();
 		toUpdate.setValue(kp, 17);
 
-		tested.update(toUpdate);
+		tested.update(toUpdate, "X");
 		// THEN when accessed the number field the KnowledgeManager should
 		// return updated value
 		ValueSet result = tested.get(knowledgePaths);
 		assertEquals(17, result.getValue(kp));
+		assertEquals("X", tested.getAuthor(kp));
 	}
 
 	@Test
@@ -102,11 +104,13 @@ public class BaseKnowledgeManagerTest {
 		ChangeSet toUpdate = new ChangeSet();
 		toUpdate.setValue(kp, "innerAModified");
 
-		tested.update(toUpdate);
+		tested.update(toUpdate, "X");
 		// THEN when accessed the inner knowledge the KnowledgeManager should
 		// return updated value
 		ValueSet result = tested.get(knowledgePaths);
 		assertEquals("innerAModified", result.getValue(kp));
+		assertEquals("X", tested.getAuthor(kp));
+		assertEquals("TEST", tested.getAuthor(RuntimeModelHelper.createKnowledgePath("innerKnowledge")));
 	}
 
 	@Test
@@ -119,12 +123,14 @@ public class BaseKnowledgeManagerTest {
 
 		ChangeSet toUpdate = new ChangeSet();
 		toUpdate.setValue(kp, 4);
-		tested.update(toUpdate);
+		tested.update(toUpdate, "X");
 
 		// THEN when accessed the item value the KnowledgeManager should return
 		// updated value
 		ValueSet result = tested.get(knowledgePaths);
 		assertEquals(4, result.getValue(kp));
+		assertEquals("X", tested.getAuthor(kp));
+		assertEquals("TEST", tested.getAuthor(RuntimeModelHelper.createKnowledgePath("list")));
 	}
 
 	@Test
@@ -143,6 +149,8 @@ public class BaseKnowledgeManagerTest {
 		// updated value
 		ValueSet result = tested.get(knowledgePaths);
 		assertEquals(16, result.getValue(kp));
+		assertEquals("TEST", tested.getAuthor(kp));
+		assertEquals("TEST", tested.getAuthor(RuntimeModelHelper.createKnowledgePath("map")));
 	}
 
 	@Test
@@ -325,7 +333,7 @@ public class BaseKnowledgeManagerTest {
 		boolean exceptionThrown = false;
 
 		try {
-			tested.update(toChange);
+			tested.update(toChange, "update_author");
 		} catch (KnowledgeUpdateException e) {
 			exceptionThrown = true;
 		}
@@ -346,6 +354,11 @@ public class BaseKnowledgeManagerTest {
 		// and THEN number field has its original value
 		listOfPaths.add(numberPath);
 		assertEquals(10, tested.get(listOfPaths).getValue(numberPath));
+		
+		// then authors of knowledge remain the same
+		assertEquals("TEST", tested.getAuthor(numberPath));
+		assertEquals("TEST", tested.getAuthor(listElementPath));
+		assertEquals("TEST", tested.getAuthor(innerPath));
 	}
 
 	@Test
@@ -391,6 +404,37 @@ public class BaseKnowledgeManagerTest {
 		tested.addSecurityTags(kp, expectedTags);
 		
 		// then exception is thrown
+	}
+	
+	@Test
+	public void getAuthorTest1() {
+		// given basic knowledge is created
+		KnowledgePath nestedPath = RuntimeModelHelper.createKnowledgePath("innerKnowledge", "a");
+		KnowledgePath basicPath = RuntimeModelHelper.createKnowledgePath("innerKnowledge");
+		
+		// when nested path is used and getAuthor() called
+		String innerAuthor = tested.getAuthor(nestedPath);
+		String outerAuthor = tested.getAuthor(basicPath);
+		
+		// then author is returned
+		assertEquals("TEST", innerAuthor);
+		assertEquals("TEST", outerAuthor);
+		
+		// then knowledge paths remain intact
+		assertEquals(RuntimeModelHelper.createKnowledgePath("innerKnowledge", "a"), nestedPath);
+		assertEquals(RuntimeModelHelper.createKnowledgePath("innerKnowledge"), basicPath);
+	}
+	
+	@Test
+	public void getAuthorTest2() {
+		// given basic knowledge is created
+		KnowledgePath nonExistentPath = RuntimeModelHelper.createKnowledgePath("non", "existent", "path");
+		
+		// when getAuthor() is called
+		String author = tested.getAuthor(nonExistentPath);
+		
+		// then null is returned
+		assertNull(author);
 	}
 	
 	public static class InnerKnowledge {

@@ -86,4 +86,12 @@ public interface ReadOnlyKnowledgeManager {
 	 * @return list of security tags (including local tags)
 	 */
 	List<SecurityTag> getSecurityTags(PathNodeField pathNodeField);
+	
+	/**
+	 * Returns the ID of the component from which this knowledge path comes.
+	 * @param knowledgePath
+	 * @return
+	 */
+	String getAuthor(KnowledgePath knowledgePath);
+	
 }

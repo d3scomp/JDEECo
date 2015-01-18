@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import cz.cuni.mff.d3s.deeco.DeecoProperties;
+import cz.cuni.mff.d3s.deeco.integrity.RatingsManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
@@ -145,8 +146,9 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 			DataSender dataSender,
 			String host,
 			Scheduler scheduler,
-			SecurityKeyManager keyManager) {
-		super.initialize(kmContainer, dataSender, host, scheduler, keyManager);
+			SecurityKeyManager keyManager,
+			RatingsManager ratingsManager) {
+		super.initialize(kmContainer, dataSender, host, scheduler, keyManager, ratingsManager);
 		long seed = 0;
 		for (char c: host.toCharArray())
 			seed += c;

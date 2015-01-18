@@ -10,7 +10,6 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager;
-import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
@@ -56,13 +55,13 @@ public class LocalSecurityChecker {
 			boolean canAccess = canAccessKnowledge(localRole, knowledgePathsFromMembership, shadowKnowledgeManager) 
 							 && canAccessKnowledge(localRole, knowledgePathsFromExchange, shadowKnowledgeManager);
 			
-			List<String> compromitationErrors = ModelSecurityValidator.validate(localRole, ensembleController.getEnsembleDefinition().getKnowledgeExchange(), 
+			/*List<String> compromitationErrors = ModelSecurityValidator.validate(localRole, ensembleController.getEnsembleDefinition().getKnowledgeExchange(), 
 					ensembleController.getComponentInstance(), shadowKnowledgeManager);
 			if (!compromitationErrors.isEmpty()) {
 				Log.e("Knowledge exchange would result into data compromise: " + compromitationErrors.stream().collect(Collectors.joining(", ")));
-			}
+			}*/
 			
-			return canAccess && compromitationErrors.isEmpty();
+			return canAccess; // && compromitationErrors.isEmpty();
 		}		
 	}
 

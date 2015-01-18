@@ -608,17 +608,8 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getComponentInstance_RatingsManager() {
-		return (EAttribute)componentInstanceEClass.getEStructuralFeatures().get(8);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EReference getComponentInstance_RatingsProcess() {
-		return (EReference)componentInstanceEClass.getEStructuralFeatures().get(9);
+		return (EReference)componentInstanceEClass.getEStructuralFeatures().get(8);
 	}
 
 	/**
@@ -1170,7 +1161,6 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		createEReference(componentInstanceEClass, COMPONENT_INSTANCE__INTERNAL_DATA);
 		createEAttribute(componentInstanceEClass, COMPONENT_INSTANCE__SYSTEM_COMPONENT);
 		createEReference(componentInstanceEClass, COMPONENT_INSTANCE__ROLES);
-		createEAttribute(componentInstanceEClass, COMPONENT_INSTANCE__RATINGS_MANAGER);
 		createEReference(componentInstanceEClass, COMPONENT_INSTANCE__RATINGS_PROCESS);
 
 		ensembleDefinitionEClass = createEClass(ENSEMBLE_DEFINITION);
@@ -1333,7 +1323,6 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		initEReference(getComponentInstance_InternalData(), this.getStringToObjectMap(), null, "internalData", null, 0, -1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getComponentInstance_SystemComponent(), ecorePackage.getEBoolean(), "systemComponent", "false", 0, 1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getComponentInstance_Roles(), this.getSecurityRole(), null, "roles", null, 0, -1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getComponentInstance_RatingsManager(), this.getRatingsManager(), "ratingsManager", null, 1, 1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getComponentInstance_RatingsProcess(), this.getRatingsProcess(), this.getRatingsProcess_ComponentInstance(), "ratingsProcess", null, 0, 1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(ensembleDefinitionEClass, EnsembleDefinition.class, "EnsembleDefinition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);

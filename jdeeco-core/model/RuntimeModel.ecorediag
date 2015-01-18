@@ -355,10 +355,6 @@
         <element xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//ComponentInstance/knowledgeManager"/>
         <layoutConstraint xmi:type="notation:Location" xmi:id="_dmDUY0MNEeO3_auUY0X6vg"/>
       </children>
-      <children xmi:type="notation:Node" xmi:id="_wHFnwJwoEeSBUrmm7uUAmg" type="2001">
-        <element xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//ComponentInstance/ratingsManager"/>
-        <layoutConstraint xmi:type="notation:Location" xmi:id="_wHFnwZwoEeSBUrmm7uUAmg"/>
-      </children>
       <children xmi:type="notation:Node" xmi:id="_dmD7cEMNEeO3_auUY0X6vg" type="2001">
         <element xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//ComponentInstance/shadowKnowledgeManagerRegistry"/>
         <layoutConstraint xmi:type="notation:Location" xmi:id="_dmD7cUMNEeO3_auUY0X6vg"/>

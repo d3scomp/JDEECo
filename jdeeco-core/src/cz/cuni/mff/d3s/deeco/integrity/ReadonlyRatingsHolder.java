@@ -9,9 +9,14 @@ import java.util.Map;
  */
 public class ReadonlyRatingsHolder  {
 	
-	protected Map<PathRating, Integer> ratings;
+	protected Map<PathRating, Long> ratings;
 	
-	public int getOpinionsCount(PathRating rating) {
-		return ratings.get(rating);		
+	protected ReadonlyRatingsHolder(Map<PathRating, Long> ratings) {
+		this.ratings = ratings;
+	}
+	
+	public long getRatings(PathRating rating) {
+		Long l = ratings.get(rating);
+		return l == null ? 0l : l.longValue();		
 	}	
 }

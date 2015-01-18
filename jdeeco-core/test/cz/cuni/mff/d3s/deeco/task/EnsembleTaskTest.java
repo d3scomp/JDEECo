@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import cz.cuni.mff.d3s.deeco.integrity.RatingsManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
@@ -62,7 +63,8 @@ public class EnsembleTaskTest {
 	private ArchitectureObserver architectureObserver;
 	@Mock
 	private KnowledgeManagerContainer kmContainer;
-	
+	@Mock
+	private RatingsManager ratingsManager;
 	private Task task;
 
 	private Integer localInValue;
@@ -163,7 +165,7 @@ public class EnsembleTaskTest {
 
 		when(kmContainer.hasReplica(anyString())).thenReturn(true);
 		
-		this.task = new EnsembleTask(model.ensembleController, scheduler, architectureObserver, kmContainer);
+		this.task = new EnsembleTask(model.ensembleController, scheduler, architectureObserver, kmContainer, ratingsManager);
 	}
 	
 	@Test
@@ -240,7 +242,7 @@ public class EnsembleTaskTest {
 		assertTrue(model.getExchangeMethodCallCounter() == 2);
 		// AND it updates the instance knowledge with outputs of the knowledge exchange
 		ArgumentCaptor<ChangeSet> changeSetCaptor = ArgumentCaptor.forClass(ChangeSet.class);
-		verify(knowledgeManager, times(2)).update(changeSetCaptor.capture());
+		verify(knowledgeManager, times(2)).update(changeSetCaptor.capture(), anyString());
 		ChangeSet cs = changeSetCaptor.getValue();
 		assertEquals(cs.getValue(getStrippedPath(model.exchangeParamCoordInOut.getKnowledgePath())), expectedLocalInOutValue.value);
 		assertEquals(cs.getValue(getStrippedPath(model.exchangeParamCoordOut.getKnowledgePath())), expectedLocalOutValue.value);

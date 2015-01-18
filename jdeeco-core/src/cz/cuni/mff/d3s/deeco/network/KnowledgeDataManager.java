@@ -3,6 +3,7 @@ package cz.cuni.mff.d3s.deeco.network;
 
 import java.util.List;
 
+import cz.cuni.mff.d3s.deeco.integrity.RatingsManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
@@ -55,6 +56,8 @@ KnowledgeDataPublisher {
 	protected DataSender dataSender;		
 	/** handles public keys for security roles */
 	protected SecurityKeyManager keyManager;
+	/** Handles rating data*/
+	protected RatingsManager ratingsManager;
 	
 	/**
 	 * Initializes instance.
@@ -69,13 +72,15 @@ KnowledgeDataPublisher {
 			DataSender dataSender,
 			String host,
 			Scheduler scheduler,
-			SecurityKeyManager keyManager) {
+			SecurityKeyManager keyManager,
+			RatingsManager ratingsManager) {
 		this.host = host;		
 		this.scheduler = scheduler;
 		this.timeProvider = scheduler;
 		this.kmContainer = kmContainer;
 		this.dataSender = dataSender;
 		this.keyManager = keyManager;
+		this.ratingsManager = ratingsManager;
 	}
 	
 	@SuppressWarnings("unchecked")

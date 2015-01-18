@@ -176,11 +176,12 @@ public class AnnotationProcessor {
 	 *            one or more classes extending the <code>AnnotationProcessorExtensionPoint</code> that provide additional processing functionality
 	 * @param knowledgeMangerFactory knowledge manager factory to be used
 	 */
-	public AnnotationProcessor(RuntimeMetadataFactory factory, RuntimeMetadata model, KnowledgeManagerFactory knowledgeMangerFactory, AnnotationProcessorExtensionPoint... extensions) {
+	public AnnotationProcessor(RuntimeMetadataFactory factory, RuntimeMetadata model, KnowledgeManagerFactory knowledgeMangerFactory, 
+			AnnotationProcessorExtensionPoint... extensions) {
 		this.factory = factory;
 		this.model = model;
 		this.extensions = extensions;
-		this.knowledgeManagerFactory = knowledgeMangerFactory;		
+		this.knowledgeManagerFactory = knowledgeMangerFactory;				
 	}
 	
 	/**
@@ -356,7 +357,7 @@ public class AnnotationProcessor {
 			km.markAsLocal(initialLocalK.getUpdatedReferences());
 			km.update(initialLocalK);
 			componentInstance.setKnowledgeManager(km);
-	   
+			
 			try {
 				addSecurityTags(clazz, km, initialK);
 				addVirtualSecurityTags(km, initialLocalK);

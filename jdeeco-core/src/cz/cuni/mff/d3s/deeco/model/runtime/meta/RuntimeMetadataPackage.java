@@ -455,22 +455,13 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int COMPONENT_INSTANCE__ROLES = 7;
 
 	/**
-	 * The feature id for the '<em><b>Ratings Manager</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMPONENT_INSTANCE__RATINGS_MANAGER = 8;
-
-	/**
 	 * The feature id for the '<em><b>Ratings Process</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_INSTANCE__RATINGS_PROCESS = 9;
+	int COMPONENT_INSTANCE__RATINGS_PROCESS = 8;
 
 	/**
 	 * The number of structural features of the '<em>Component Instance</em>' class.
@@ -479,7 +470,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_INSTANCE_FEATURE_COUNT = 10;
+	int COMPONENT_INSTANCE_FEATURE_COUNT = 9;
 
 	/**
 	 * The number of operations of the '<em>Component Instance</em>' class.
@@ -1752,17 +1743,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EReference getComponentInstance_Roles();
 
 	/**
-	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getRatingsManager <em>Ratings Manager</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Ratings Manager</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getRatingsManager()
-	 * @see #getComponentInstance()
-	 * @generated
-	 */
-	EAttribute getComponentInstance_RatingsManager();
-
-	/**
 	 * Returns the meta object for the containment reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getRatingsProcess <em>Ratings Process</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2604,14 +2584,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * @generated
 		 */
 		EReference COMPONENT_INSTANCE__ROLES = eINSTANCE.getComponentInstance_Roles();
-
-		/**
-		 * The meta object literal for the '<em><b>Ratings Manager</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute COMPONENT_INSTANCE__RATINGS_MANAGER = eINSTANCE.getComponentInstance_RatingsManager();
 
 		/**
 		 * The meta object literal for the '<em><b>Ratings Process</b></em>' containment reference feature.

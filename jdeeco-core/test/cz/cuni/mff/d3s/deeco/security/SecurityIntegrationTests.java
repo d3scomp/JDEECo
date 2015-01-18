@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 
+import cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeData;
 import cz.cuni.mff.d3s.deeco.security.runtime.SecurityRuntimeModel;
 import cz.cuni.mff.d3s.deeco.task.TaskInvocationException;
@@ -82,5 +83,14 @@ public class SecurityIntegrationTests {
 		assertTrue(runtimeModel.policeComponent2.secrets.isEmpty());
 		assertEquals(1, runtimeModel.globalPoliceComponent.secrets.size());
 		assertEquals("top secret", runtimeModel.globalPoliceComponent.secrets.get("V1"));	
+	}
+	
+	@Test
+	public void localAuthorsTest() throws TaskInvocationException {
+		runtimeModel.invokeEnsembleTasks();
+		
+		assertEquals("V1", runtimeModel.container.getLocal("P1").getAuthor(RuntimeModelHelper.createKnowledgePath("secrets", "V1")));
+		assertEquals("V1", runtimeModel.container.getLocal("G1").getAuthor(RuntimeModelHelper.createKnowledgePath("secrets", "V1")));
+		assertEquals("P2", runtimeModel.container.getLocal("P2").getAuthor(RuntimeModelHelper.createKnowledgePath("secrets", "V1")));
 	}
 }

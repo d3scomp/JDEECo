@@ -2,6 +2,8 @@ package cz.cuni.mff.d3s.deeco.runtime;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.executor.SameThreadExecutor;
+import cz.cuni.mff.d3s.deeco.integrity.RatingsManager;
+import cz.cuni.mff.d3s.deeco.integrity.RatingsManagerImpl;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerFactory;
 import cz.cuni.mff.d3s.deeco.logging.Log;
@@ -74,7 +76,8 @@ public class RuntimeFrameworkBuilder {
 	
 	protected KnowledgeManagerFactory knowledgeManagerFactory;
 	
-
+	protected RatingsManager ratingsManager;
+	
 	/**
 	 * Creates a builder capable of creating runtime framework instances that
 	 * are set up according to the {@code configuration}.
@@ -170,10 +173,15 @@ public class RuntimeFrameworkBuilder {
 	 * @see RuntimeFrameworkImpl
 	 */
 	protected void buildRuntime() {
-		runtime = new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer);
+		runtime = new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, ratingsManager);
 	}
 	
-	
+	/**
+	 * Creates instance of the ratings manager
+	 */
+	protected void buildRatingsManager() {
+		ratingsManager = new RatingsManagerImpl();		
+	}
 	
 	/**
 	 * Builds an instance of {@link RuntimeFramework} based on the corresponding
@@ -196,7 +204,8 @@ public class RuntimeFrameworkBuilder {
 		buildScheduler();
 		buildExecutor();
 		buildKnowledgeManagerContainer();				
-				
+		buildRatingsManager();		
+		
 		//in the future: buildNetworkContainer() 
 		//in the future: buildSynchronizer()
 		
@@ -207,5 +216,7 @@ public class RuntimeFrameworkBuilder {
 		buildRuntime();
 		return runtime;
 	}
+
+	
 	
 }

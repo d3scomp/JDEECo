@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import cz.cuni.mff.d3s.deeco.integrity.RatingsManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
@@ -22,7 +23,6 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
-import cz.cuni.mff.d3s.deeco.security.ModelSecurityValidator;
 
 /**
  * The implementation of {@link Task} that corresponds to a component process. This class is responsible for (a) registering triggers with the
@@ -42,6 +42,11 @@ public class ProcessTask extends Task {
 	 * Reference to the architecture model.
 	 */
 	Architecture architecture;
+	
+	/**
+	 * Reference to the ratings manager
+	 */
+	RatingsManager ratingsManager;
 	
 	/**
 	 * Implementation of the trigger listener, which is registered in the local knowledge manager. When called, it calls the listener registered by
@@ -64,10 +69,11 @@ public class ProcessTask extends Task {
 	}
 	KnowledgeManagerTriggerListenerImpl knowledgeManagerTriggerListener = new KnowledgeManagerTriggerListenerImpl();
 	
-	public ProcessTask(ComponentProcess componentProcess, Scheduler scheduler, Architecture architecture) {
+	public ProcessTask(ComponentProcess componentProcess, Scheduler scheduler, Architecture architecture, RatingsManager ratingsManager) {
 		super(scheduler);
 		this.architecture = architecture;
 		this.componentProcess = componentProcess;
+		this.ratingsManager = ratingsManager;		
 	}
 
 	/**
@@ -89,11 +95,6 @@ public class ProcessTask extends Task {
 	 */
 	@Override
 	public void invoke(Trigger trigger) throws TaskInvocationException {
-		List<String> compromitationErrors = ModelSecurityValidator.validate(componentProcess);
-		if (!compromitationErrors.isEmpty()) {
-			throw new TaskInvocationException("Component process would result into data compromise: " + compromitationErrors.stream().collect(Collectors.joining(", ")));
-		}
-		
 		// Obtain parameters from the knowledge
 		KnowledgeManager knowledgeManager = componentProcess.getComponentInstance().getKnowledgeManager();
 		Collection<Parameter> formalParams = componentProcess.getParameters();
@@ -149,9 +150,11 @@ public class ProcessTask extends Task {
 				
 			} else if (paramDir == ParameterKind.OUT) {
 				actualParams[paramIdx] = new ParamHolder<Object>();
-
 			} else if (paramDir == ParameterKind.INOUT) {
 				actualParams[paramIdx] = new ParamHolder<Object>(inKnowledge.getValue(absoluteKnowledgePath));
+			} else if (paramDir == ParameterKind.RATING) {
+				String knowledgeAuthor = knowledgeManager.getAuthor(absoluteKnowledgePath);
+				actualParams[paramIdx] = ratingsManager.createReadonlyRatingsHolder(knowledgeAuthor, absoluteKnowledgePath); 			
 			}
 			// TODO: We could have an option of not creating the wrapper. That would make it easier to work with mutable out types.
 			// TODO: We need some way of handling insertions/deletions in a hashmap.
