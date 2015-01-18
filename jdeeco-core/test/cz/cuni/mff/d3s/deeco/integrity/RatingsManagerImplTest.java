@@ -133,13 +133,11 @@ public class RatingsManagerImplTest {
 		Map<KnowledgePath, RatingsHolder> holders = new HashMap<>();
 		holders.put(path1, holder1);
 		holders.put(path2, holder2);
-		assertEquals(0, target.getRatingsChangeSets().size());
 		
 		// when change set is created
-		target.createRatingsChangeSet(holders);
+		List<RatingsChangeSet> changeSets = target.createRatingsChangeSet(holders);
 		
-		// then proper change set is returned
-		List<RatingsChangeSet> changeSets = target.getRatingsChangeSets();
+		// then proper change set is returned		
 		assertEquals(2, changeSets.size());
 		
 		assertEquals("author", changeSets.get(0).getAuthorComponentId());
@@ -166,11 +164,11 @@ public class RatingsManagerImplTest {
 		Map<KnowledgePath, RatingsHolder> holders = new HashMap<>();
 		holders.put(path1, holder1);
 		holders.put(path2, holder2);
-		assertEquals(0, target.getRatingsChangeSets().size());
 		
 		// when change set is created
-		target.createRatingsChangeSet(holders);	
-		List<RatingsChangeSet> changeSets = target.getRatingsChangeSets();
+		List<RatingsChangeSet> changeSets = target.createRatingsChangeSet(holders);	
+		
+		assertEquals(2, changeSets.size());
 		
 		// when update() is called
 		target.update(changeSets);

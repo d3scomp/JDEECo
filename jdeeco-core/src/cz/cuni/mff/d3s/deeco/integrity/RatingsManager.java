@@ -13,7 +13,9 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 public interface RatingsManager {
 	public ReadonlyRatingsHolder createReadonlyRatingsHolder(String targetComponentId, KnowledgePath absolutePath);
 	public RatingsHolder createRatingsHolder(String askingComponentId, String targetComponentId, KnowledgePath absolutePath);
-	public void createRatingsChangeSet(Map<KnowledgePath, RatingsHolder> pathRatings);
+	public List<RatingsChangeSet> createRatingsChangeSet(Map<KnowledgePath, RatingsHolder> pathRatings);
+	
 	public void update(List<RatingsChangeSet> changeSets);
-	public List<RatingsChangeSet> getRatingsChangeSets();
+	public void addToPendingChangeSets(List<RatingsChangeSet> changeSets);
+	public List<RatingsChangeSet> getPendingChangeSets();
 }

@@ -7,8 +7,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
+import cz.cuni.mff.d3s.deeco.integrity.RatingsChangeSet;
 import cz.cuni.mff.d3s.deeco.integrity.RatingsHolder;
 import cz.cuni.mff.d3s.deeco.integrity.RatingsManager;
 import cz.cuni.mff.d3s.deeco.integrity.ReadonlyRatingsHolder;
@@ -279,12 +281,14 @@ public class EnsembleTask extends Task {
 				return false;
 			}
 			
-			if (absoluteKnowledgePathAndRoot == null) {
-				throw new TaskInvocationException("Member/Coordinator prefix required for membership paths.");
-			} if (absoluteKnowledgePathAndRoot.root == localRole) {
-				localPaths.add(absoluteKnowledgePathAndRoot.knowledgePath);
-			} else {
-				shadowPaths.add(absoluteKnowledgePathAndRoot.knowledgePath);
+			if (paramDir == ParameterKind.IN) {
+				if (absoluteKnowledgePathAndRoot == null) {
+					throw new TaskInvocationException("Member/Coordinator prefix required for membership paths.");
+				} if (absoluteKnowledgePathAndRoot.root == localRole) {
+					localPaths.add(absoluteKnowledgePathAndRoot.knowledgePath);
+				} else {
+					shadowPaths.add(absoluteKnowledgePathAndRoot.knowledgePath);
+				}
 			}
 			
 			allPathsWithRoots.add(absoluteKnowledgePathAndRoot);
@@ -586,8 +590,9 @@ public class EnsembleTask extends Task {
 			// Call the rating process method
 			process.getMethod().invoke(null, actualParams);
 			
-			ratingsManager.createRatingsChangeSet(ratingsHolders);
-			ratingsManager.update(ratingsManager.getRatingsChangeSets());
+			List<RatingsChangeSet> changes = ratingsManager.createRatingsChangeSet(ratingsHolders);
+			ratingsManager.update(changes);
+			ratingsManager.addToPendingChangeSets(changes);
 		} catch (IllegalAccessException | IllegalArgumentException e) {
 			Log.e("Can't invoke rating process method of component " + component.getName());
 			throw new TaskInvocationException("Error when invoking a process method.", e);

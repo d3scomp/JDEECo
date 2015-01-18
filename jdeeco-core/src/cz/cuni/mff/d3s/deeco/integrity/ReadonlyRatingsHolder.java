@@ -11,7 +11,7 @@ public class ReadonlyRatingsHolder  {
 	
 	protected Map<PathRating, Long> ratings;
 	
-	protected ReadonlyRatingsHolder(Map<PathRating, Long> ratings) {
+	public ReadonlyRatingsHolder(Map<PathRating, Long> ratings) {
 		this.ratings = ratings;
 	}
 	

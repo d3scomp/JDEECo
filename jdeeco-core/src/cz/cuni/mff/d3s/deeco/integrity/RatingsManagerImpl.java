@@ -78,29 +78,24 @@ public class RatingsManagerImpl implements RatingsManager {
 		return new RatingsHolder(askingComponentId, targetComponentId, oldPathRating, pathRating);
 	}
 	
-	public synchronized void createRatingsChangeSet(Map<KnowledgePath, RatingsHolder> pathRatings) {
-		if (pathRatings == null) return;
+	public synchronized List<RatingsChangeSet> createRatingsChangeSet(Map<KnowledgePath, RatingsHolder> pathRatings) {
+		if (pathRatings == null) return Collections.emptyList();
 		
+		List<RatingsChangeSet> changes = new ArrayList<>();
 		for (Entry<KnowledgePath, RatingsHolder> entry : pathRatings.entrySet()) {
 			RatingsHolder holder = entry.getValue();
 			if (holder.isDirty()) {				
-				pendingChanges.add(new RatingsChangeSet(holder.getAskingComponentId(), holder.getTargetComponentId(), entry.getKey(), holder.getMyRating()));
+				changes.add(new RatingsChangeSet(holder.getAskingComponentId(), holder.getTargetComponentId(), entry.getKey(), holder.getMyRating()));
 			}
 		}
-	}
-	
-	@Override
-	public synchronized List<RatingsChangeSet> getRatingsChangeSets() {
-		List<RatingsChangeSet> changes = new ArrayList<>();
-		changes.addAll(pendingChanges);		
+		
 		return changes;
 	}
-	
-	public void clearRatingsChangeSets() {
-		pendingChanges.clear();
+
+	public List<RatingsChangeSet> getPendingChangeSets() {
+		return pendingChanges;
 	}
 	
-	@Override
 	public synchronized void update(List<RatingsChangeSet> changeSets) {
 		if (changeSets == null) return;
 		
@@ -109,9 +104,12 @@ public class RatingsManagerImpl implements RatingsManager {
 		}
 	}
 	
+	public void addToPendingChangeSets(List<RatingsChangeSet> changeSets) {
+		pendingChanges.addAll(changeSets);		
+	}
+
+	
 	private Map<PathRating, Long> aggregateRatings(Map<String, PathRating> individualRating) {
 		return individualRating.values().stream().collect(Collectors.groupingBy(x -> x, Collectors.counting()));
 	}
-
-
 }
