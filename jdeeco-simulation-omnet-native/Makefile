@@ -1,5 +1,5 @@
-JDK_HOME ?= /c/Progra~2/Java/jdk8
-OMNETPP_ROOT ?= /c/tools64/omnetpp-4.6
+JDK_HOME ?= C:/Progra~2/Java/jdk8
+OMNETPP_ROOT ?= C:\tools64\omnetpp-4.6
 INET_DIR ?= ${OMNETPP_ROOT}/../inet
 MIXIM_DIR ?= ${OMNETPP_ROOT}/../mixim
 

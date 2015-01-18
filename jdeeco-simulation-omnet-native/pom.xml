@@ -8,7 +8,7 @@
 		<relativePath>../jdeeco-parent/pom.xml</relativePath>
 	</parent>
 	<artifactId>cz.cuni.mff.d3s.jdeeco.simulation.omnet-native</artifactId>
-	<packaging>pom</packaging>
+	<packaging>rar</packaging>
 	<profiles>
 		<profile>
 		<id>linux-build</id>
@@ -144,64 +144,28 @@
 			<properties>
 				<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 				<jdk>C:/Progra~2/Java/jdk8</jdk>
-				<omnet>D:/omnetpp-4.3.1</omnet>
+				<omnet>C:/tools64/omnetpp-4.6</omnet>
 			</properties>
 			<build>
 				<defaultGoal>install</defaultGoal>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>exec-maven-plugin</artifactId>
-						<version>1.3.1</version>
-						<executions>
-							<execution>
-								<id>exec-make</id>
-								<phase>compile</phase>
-								<configuration>
-									<executable>${omnet}/msys/bin/sh</executable>
-									<commandlineArgs>--login ${basedir}/script-build</commandlineArgs>
-								</configuration>
-								<goals>
-									<goal>exec</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>exec-make-clean</id>
-								<phase>clean</phase>
-								<configuration>
-									<executable>${omnet}/msys/bin/sh</executable>
-									<commandlineArgs>--login ${basedir}/script-clean</commandlineArgs>
-								</configuration>
-								<goals>
-									<goal>exec</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>build-helper-maven-plugin</artifactId>
-						<version>1.9</version>
-						<executions>
-							<execution>
-								<id>attach-artifacts</id>
-								<phase>package</phase>
-								<goals>
-									<goal>attach-artifact</goal>
-								</goals>
-								<configuration>
-									<artifacts>
-										<artifact>
-											<file>out/gcc-debug/src/libjdeeco-omnetpp.dll</file>
-											<type>dll</type>
-											<classifier>windows</classifier>
-										</artifact>
-									</artifacts>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
+				<resources>
+					<resource>
+						<targetPath>.</targetPath>
+						<filtering>false</filtering>
+						<directory>out/gcc-debug/src/</directory>
+						<includes>
+							<include>*.dll</include>
+						</includes>
+					</resource>
+					<resource>
+						<targetPath>.</targetPath>
+						<filtering>false</filtering>
+						<directory>${omnet}\out\</directory>
+						<includes>
+							<include>**\*.dll</include>
+						</includes>
+					</resource>
+				</resources>
 			</build>
 		</profile>
 	</profiles>
