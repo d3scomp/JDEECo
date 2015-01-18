@@ -144,3 +144,4 @@
   <eClassifiers xsi:type="ecore:EClass" name="LocalKnowledgeTag" eSuperTypes="#//SecurityTag"/>
   <eClassifiers xsi:type="ecore:EClass" name="SecurityTag"/>
 </ecore:EPackage>
+
