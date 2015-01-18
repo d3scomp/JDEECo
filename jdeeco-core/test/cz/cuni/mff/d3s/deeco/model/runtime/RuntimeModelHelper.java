@@ -3,7 +3,7 @@ package cz.cuni.mff.d3s.deeco.model.runtime;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
@@ -48,12 +48,12 @@ public class RuntimeModelHelper {
 		return trigger;
 	}
 	
-	public static Parameter createParameter(ParameterDirection direction,
+	public static Parameter createParameter(ParameterKind direction,
 			String... knowledgePathNodes) {
 		RuntimeMetadataFactory factory = RuntimeMetadataFactory.eINSTANCE;
 		Parameter param = factory.createParameter();
 
-		param.setDirection(direction);
+		param.setKind(direction);
 		param.setKnowledgePath(RuntimeModelHelper
 				.createKnowledgePath(knowledgePathNodes));
 

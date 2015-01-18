@@ -30,6 +30,8 @@ import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.HasRole;
+import cz.cuni.mff.d3s.deeco.annotations.Rating;
+import cz.cuni.mff.d3s.deeco.annotations.RatingsProcess;
 import cz.cuni.mff.d3s.deeco.annotations.RoleDefinition;
 import cz.cuni.mff.d3s.deeco.annotations.RoleParam;
 import cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange;
@@ -39,6 +41,8 @@ import cz.cuni.mff.d3s.deeco.annotations.pathparser.PNode;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.ParseException;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.PathOrigin;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.PathParser;
+import cz.cuni.mff.d3s.deeco.integrity.RatingsHolder;
+import cz.cuni.mff.d3s.deeco.integrity.ReadonlyRatingsHolder;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerFactory;
@@ -55,8 +59,9 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Exchange;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.LocalKnowledgeTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
@@ -91,13 +96,14 @@ public class AnnotationProcessor {
 	/**
 	 * Mapping of direction annotations to the respective runtime metadata model classes. 
 	 */
-	static final Map<Class<? extends Annotation>, ParameterDirection> parameterAnnotationsToParameterDirections = Collections
-			.unmodifiableMap(new HashMap<Class<? extends Annotation>, ParameterDirection>() {
+	static final Map<Class<? extends Annotation>, ParameterKind> parameterAnnotationsToParameterKinds = Collections
+			.unmodifiableMap(new HashMap<Class<? extends Annotation>, ParameterKind>() {
 				private static final long serialVersionUID = 1L;
 				{
-					put(InOut.class, ParameterDirection.INOUT);
-					put(In.class, ParameterDirection.IN);
-					put(Out.class, ParameterDirection.OUT);
+					put(InOut.class, ParameterKind.INOUT);
+					put(In.class, ParameterKind.IN);
+					put(Out.class, ParameterKind.OUT);
+					put(Rating.class, ParameterKind.RATING);
 				}
 			});
 	
@@ -170,11 +176,12 @@ public class AnnotationProcessor {
 	 *            one or more classes extending the <code>AnnotationProcessorExtensionPoint</code> that provide additional processing functionality
 	 * @param knowledgeMangerFactory knowledge manager factory to be used
 	 */
-	public AnnotationProcessor(RuntimeMetadataFactory factory, RuntimeMetadata model, KnowledgeManagerFactory knowledgeMangerFactory, AnnotationProcessorExtensionPoint... extensions) {
+	public AnnotationProcessor(RuntimeMetadataFactory factory, RuntimeMetadata model, KnowledgeManagerFactory knowledgeMangerFactory, 
+			AnnotationProcessorExtensionPoint... extensions) {
 		this.factory = factory;
 		this.model = model;
 		this.extensions = extensions;
-		this.knowledgeManagerFactory = knowledgeMangerFactory;		
+		this.knowledgeManagerFactory = knowledgeMangerFactory;				
 	}
 	
 	/**
@@ -350,23 +357,48 @@ public class AnnotationProcessor {
 			km.markAsLocal(initialLocalK.getUpdatedReferences());
 			km.update(initialLocalK);
 			componentInstance.setKnowledgeManager(km);
-	   
+			
 			try {
 				addSecurityTags(clazz, km, initialK);
+				addVirtualSecurityTags(km, initialLocalK);
 			} catch (Exception ex) {
 				throw new AnnotationProcessorException(ex.getMessage());
 			}
 			
 			List<Method> methodsMarkedAsProcesses = new ArrayList<>(); 
+			List<Method> methodsMarkedAsRatingProcesses = new ArrayList<>();
+			
 			Method[] allMethods = clazz.getMethods();
 			for (Method m : allMethods) {
 				if (m.getAnnotations().length > 0) {
-					if (m.getAnnotation(Process.class) == null) {
-						// when the method has some annotation(s), but not a @Process one
+					if (m.getAnnotation(Process.class) == null && m.getAnnotation(RatingsProcess.class) == null) {
+						// when the method has some annotation(s), but not a @Process nor @RatingsProcess
 						callExtensions(ParsingEvent.ON_UNKNOWN_COMPONENT_METHOD_ANNOTATION, m, getUnknownAnnotations(m));
+					} else if (m.getAnnotation(Process.class) != null && m.getAnnotation(RatingsProcess.class) != null) {
+						throw new AnnotationProcessorException("The same method cannot be marked as @" + Process.class.getSimpleName() + " and @" + RatingsProcess.class.getSimpleName() + ".");
 					} else {
-						methodsMarkedAsProcesses.add(m);
+						if (m.getAnnotation(Process.class) != null) {
+							methodsMarkedAsProcesses.add(m);
+						} else {
+							methodsMarkedAsRatingProcesses.add(m);
+						}
 					}
+					
+				}
+			}
+			
+			if (methodsMarkedAsRatingProcesses.size() > 1) {
+				throw new AnnotationProcessorException("Cannot have more @" + RatingsProcess.class.getSimpleName() + " methods.");
+			}
+			
+			if (methodsMarkedAsRatingProcesses.size() == 1) {
+				Method m = methodsMarkedAsRatingProcesses.get(0);
+				int modifier = m.getModifiers();
+				
+				if (Modifier.isPublic(modifier) && Modifier.isStatic(modifier)) {
+					componentInstance.setRatingsProcess(createRatingsProcess(componentInstance, m));
+				} else {
+					throw new AnnotationProcessorException("Method "+ m.getName()+ " annotated as @" + RatingsProcess.class.getSimpleName() + " should be public and static.");
 				}
 			}
 			
@@ -376,15 +408,18 @@ public class AnnotationProcessor {
 					componentInstance.getComponentProcesses().add(
 							createComponentProcess(componentInstance, m));
 				} else {
-					throw new AnnotationProcessorException(
-							"Method "+ m.getName()+ " annotated as @" + Process.class.getSimpleName() + 
-							" should be public and static.");
+					throw new AnnotationProcessorException("Method "+ m.getName()+ " annotated as @" + Process.class.getSimpleName() + " should be public and static.");
 				}
 			}
 			
+			Set<Class<?>> roles = new HashSet<>();
 			for (HasRole role : clazz.getDeclaredAnnotationsByType(HasRole.class)) {
+				if (roles.contains(role.roleClass())) {
+					throw new AnnotationProcessorException("The same role cannot be assigned multiply to a component.");
+				}
 				SecurityRole securityRole = createRoleFromClassDefinition(role.roleClass());
 				componentInstance.getRoles().add(securityRole);
+				roles.add(role.roleClass());
 			}
 			
 			callExtensions(ParsingEvent.ON_COMPONENT_CREATION, componentInstance, getUnknownAnnotations(clazz));
@@ -398,6 +433,33 @@ public class AnnotationProcessor {
 		return componentInstance;
 	}
 
+	/**
+	 * Creates ratings process - method used to get rating of knowledge
+	 * @param componentInstance the component 
+	 * @param m method used as a process
+	 * @return 
+	 * @throws AnnotationProcessorException
+	 * @throws ParseException
+	 */
+	private cz.cuni.mff.d3s.deeco.model.runtime.api.RatingsProcess createRatingsProcess(ComponentInstance componentInstance, Method m) throws AnnotationProcessorException, ParseException {
+		cz.cuni.mff.d3s.deeco.model.runtime.api.RatingsProcess process = factory.createRatingsProcess();
+		try {
+			process.setComponentInstance(componentInstance);
+			process.setMethod(m);			
+			process.getParameters().addAll(createParameters(m, PathOrigin.RATING_PROCESS));			
+		} catch (AnnotationProcessorException e) {			
+			throw new AnnotationProcessorException("Ratings process ->"+e.getMessage(), e);
+		}
+		return process;
+	}
+
+	/**
+	 * Parses the class used as a role definition
+	 * @param roleClass the class from annotation
+	 * @return
+	 * @throws AnnotationProcessorException
+	 * @throws ParseException
+	 */
 	private SecurityRole createRoleFromClassDefinition(Class<?> roleClass) throws AnnotationProcessorException, ParseException {
 		if (roleClass.getAnnotationsByType(RoleDefinition.class).length == 0) {
 			throw new AnnotationProcessorException("Role class must be decoreted with @RoleDefinition.");
@@ -418,7 +480,7 @@ public class AnnotationProcessor {
 			if (!isValidForRole(field, fieldParameters, securityRole)) {
 				continue;
 			}			
-			if ((field.getModifiers() & Modifier.FINAL) != Modifier.FINAL || (field.getModifiers() & Modifier.STATIC) != Modifier.STATIC) {
+			if (!Modifier.isFinal(field.getModifiers()) || !Modifier.isStatic(field.getModifiers())) {
 				throw new AnnotationProcessorException("Role parameter must be static and final.");
 			}
 										
@@ -429,30 +491,7 @@ public class AnnotationProcessor {
 				throw new AnnotationProcessorException("Cannot read path from security role argument "+field.getName(), e);
 			}
 			
-			SecurityRoleArgument argument = null;						
-			if (fieldValue == null) {
-				argument = factory.createBlankSecurityRoleArgument();
-				argument.setName(field.getName());				
-			} else {
-				boolean createConcreteArgument = true;
-				if (fieldValue instanceof String) {
-					KnowledgePath kp = createKnowledgePath((String)fieldValue, PathOrigin.SECURITY_ANNOTATION);
-					if (kp.getNodes().get(0) instanceof PathNodeMapKey) {
-						argument = factory.createPathSecurityRoleArgument();
-						argument.setName(field.getName());
-						
-						KnowledgePath innerPath = ((PathNodeMapKey)kp.getNodes().get(0)).getKeyPath();
-						((PathSecurityRoleArgument)argument).setKnowledgePath(innerPath);
-						createConcreteArgument = false;
-					}
-				}
-				
-				if (createConcreteArgument) {					
-					argument = factory.createAbsoluteSecurityRoleArgument();
-					argument.setName(field.getName());
-					((AbsoluteSecurityRoleArgument)argument).setValue(fieldValue);
-				}
-			}
+			SecurityRoleArgument argument = createSecurityRoleArgument(field, fieldValue);						
 			
 			securityRole.getArguments().add(argument);
 			for (SecurityRole role : securityRole.getConsistsOf()) {
@@ -464,6 +503,49 @@ public class AnnotationProcessor {
 		return securityRole;
 	}
 
+	/**
+	 * Creates a security role argument from the field
+	 * @param field field used as an argument
+	 * @param fieldValue either null, absolute value, or string path enclosed in brackets
+	 * @return
+	 * @throws ParseException
+	 * @throws AnnotationProcessorException
+	 */
+	private SecurityRoleArgument createSecurityRoleArgument(Field field, Object fieldValue) throws ParseException, AnnotationProcessorException {
+		SecurityRoleArgument argument = null;
+		
+		if (fieldValue == null) {
+			argument = factory.createBlankSecurityRoleArgument();
+			argument.setName(field.getName());				
+		} else {
+			boolean createConcreteArgument = true;
+			if (fieldValue instanceof String) {
+				KnowledgePath kp = createKnowledgePath((String)fieldValue, PathOrigin.SECURITY_ANNOTATION);
+				if (kp.getNodes().get(0) instanceof PathNodeMapKey) {
+					argument = factory.createPathSecurityRoleArgument();
+					argument.setName(field.getName());
+					
+					KnowledgePath innerPath = ((PathNodeMapKey)kp.getNodes().get(0)).getKeyPath();
+					((PathSecurityRoleArgument)argument).setKnowledgePath(innerPath);
+					createConcreteArgument = false;
+				}
+			}
+			
+			if (createConcreteArgument) {					
+				argument = factory.createAbsoluteSecurityRoleArgument();
+				argument.setName(field.getName());
+				((AbsoluteSecurityRoleArgument)argument).setValue(fieldValue);
+			}
+		}
+		
+		return argument;
+	}
+
+	/**
+	 * Sets the current argument value in each parent of the security role
+	 * @param argument
+	 * @param securityRole
+	 */
 	private void overrideArgument(SecurityRoleArgument argument, SecurityRole securityRole) {
 		Optional<SecurityRoleArgument> optionalArgument = securityRole.getArguments().stream().filter(arg -> arg.getName().equals(argument.getName())).findFirst();
 		if (optionalArgument.isPresent()) {
@@ -489,6 +571,13 @@ public class AnnotationProcessor {
 		}
 	}
 
+	/**
+	 * Checks whether the given field is an applicable argument for the role
+	 * @param field
+	 * @param fieldParameters
+	 * @param securityRole
+	 * @return
+	 */
 	private boolean isValidForRole(Field field, List<Field> fieldParameters, SecurityRole securityRole) {
 		if (field.getDeclaringClass().getName().equals(securityRole.getRoleName())) {
 			return true;
@@ -501,8 +590,17 @@ public class AnnotationProcessor {
 		}		
 	}
 
+	/**
+	 * Iterates through the initial knowledge of the component and adds security tags for the associated knowledge manager
+	 * @param clazz
+	 * @param km
+	 * @param initialKnowledge
+	 * @throws NoSuchFieldException
+	 * @throws ParseException
+	 * @throws AnnotationProcessorException
+	 */
 	private void addSecurityTags(Class<?> clazz, KnowledgeManager km,
-			ChangeSet initialKnowledge) throws NoSuchFieldException, SecurityException, ParseException, AnnotationProcessorException {
+			ChangeSet initialKnowledge) throws NoSuchFieldException, ParseException, AnnotationProcessorException {
 		for (KnowledgePath kp : initialKnowledge.getUpdatedReferences()) {
 			if (kp.getNodes().size() != 1) throw new NoSuchFieldException();
 			PathNodeField pathNodeField = (PathNodeField)kp.getNodes().get(0);
@@ -511,19 +609,37 @@ public class AnnotationProcessor {
 			Allow[] allows = field.getAnnotationsByType(Allow.class);
 			
 			if (allows.length > 0 && field.getName().equals(ComponentIdentifier.ID.toString())) {
-				throw new SecurityException("The component ID must not be secured");
+				throw new AnnotationProcessorException("The component ID must not be secured.");
 			}
 			
+			Set<Class<?>> roleClasses = new HashSet<>();
+			
 			for (Allow allow : allows) {
+				if (roleClasses.contains(allow.roleClass())) {
+					throw new AnnotationProcessorException("Cannot assign the same role " + allow.roleClass().getSimpleName() + " multiple times.");
+				}
+				
 				KnowledgeSecurityTag tag = factory.createKnowledgeSecurityTag();
 				tag.setRequiredRole(createRoleFromClassDefinition(allow.roleClass()));
 				km.addSecurityTags(kp, Arrays.asList(tag));			
+				roleClasses.add(allow.roleClass());
 			}
 			
 		}		
 	}
 
-
+	/**
+	 * Adds blank security tags to the local knowledge, denotating it therefore as "infinitely secure"
+	 * @param km
+	 * @param initialKnowledge
+	 */
+	private void addVirtualSecurityTags(KnowledgeManager km, ChangeSet initialKnowledge) {
+		for (KnowledgePath kp : initialKnowledge.getUpdatedReferences()) {
+			LocalKnowledgeTag tag = factory.createLocalKnowledgeTag();
+			km.addSecurityTags(kp, Arrays.asList(tag));			
+		}
+	}
+	
 	/**
 	 * Creator of a single correctly-initialized {@link EnsembleDefinition} object. 
 	 * It calls all the necessary sub-creators to obtain the full graph of the Ecore object.
@@ -738,8 +854,8 @@ public class AnnotationProcessor {
 		for (int i = 0; i < parameterTypes.length; i++) {
 			TriggerOnChange t = getAnnotation(allAnnotations[i], TriggerOnChange.class);
 			if (t != null) {
-				Annotation directionAnnotation = getDirectionAnnotation(allAnnotations[i]);
-				String path = getDirectionAnnotationValue(directionAnnotation);
+				Annotation directionAnnotation = getKindAnnotation(allAnnotations[i]);
+				String path = getKindAnnotationValue(directionAnnotation);
 				KnowledgeChangeTrigger trigger = factory.createKnowledgeChangeTrigger();
 				trigger.setKnowledgePath(createKnowledgePath(path, pathOrigin));
 				knowledgeChangeTriggers.add(trigger);
@@ -772,6 +888,7 @@ public class AnnotationProcessor {
 		return parameters;
 	}
 	
+	
 	/**
 	 * Creator of a {@link Parameter} of a {@link ComponentProcess}/{@link Condition}/{@link Exchange}.
 	 * <p>
@@ -788,11 +905,29 @@ public class AnnotationProcessor {
 			throws AnnotationProcessorException, ParseException {
 		Parameter parameter = factory.createParameter();
 		try {
-			Annotation directionAnnotation = getDirectionAnnotation(parameterAnnotations);
-			parameter.setDirection(parameterAnnotationsToParameterDirections.get(directionAnnotation.annotationType()));
-			String path = getDirectionAnnotationValue(directionAnnotation);
+			Annotation directionAnnotation = getKindAnnotation(parameterAnnotations);
+			parameter.setKind(parameterAnnotationsToParameterKinds.get(directionAnnotation.annotationType()));
+			String path = getKindAnnotationValue(directionAnnotation);
 			parameter.setKnowledgePath(createKnowledgePath(path,pathOrigin));
 			parameter.setType(type);
+			
+			if (parameter.getKind().equals(ParameterKind.RATING)) {
+				if (pathOrigin == PathOrigin.RATING_PROCESS) {
+					if (!type.equals(ReadonlyRatingsHolder.class) && !type.equals(RatingsHolder.class)) {
+						throw new AnnotationProcessorException("The rating process method parameter must be of type " + RatingsHolder.class.getSimpleName() + " or " + ReadonlyRatingsHolder.class.getSimpleName() + ".");
+					}
+				} else {
+					if (!type.equals(ReadonlyRatingsHolder.class)) {
+						throw new AnnotationProcessorException("The rating process method parameter must be of type " + ReadonlyRatingsHolder.class.getSimpleName() + ".");
+					}
+				}
+			}
+			if (parameter.getKind().equals(ParameterKind.OUT) || parameter.getKind().equals(ParameterKind.INOUT)) {
+				if (pathOrigin == PathOrigin.RATING_PROCESS) {
+					throw new AnnotationProcessorException("The rating process method parameter cannot contain " + Out.class.getSimpleName() + " nor " + InOut.class.getSimpleName() + " parameters.");
+				}
+			}
+			
 		} catch (Exception e) {
 			String msg = "Parameter: "+(parameterIndex+1)+"->"+e.getMessage();
 			throw new AnnotationProcessorException(msg, e);
@@ -839,7 +974,7 @@ public class AnnotationProcessor {
 				// Check if this is a component identifier ("id") node.
 				// In such case, this has to be the final node in the path:
 				if ((nValue.equals(ComponentIdentifier.ID.toString()))
-					&& (((pathOrigin == PathOrigin.COMPONENT || pathOrigin == PathOrigin.SECURITY_ANNOTATION) && knowledgePath.getNodes().isEmpty()) 
+					&& (((pathOrigin == PathOrigin.COMPONENT || pathOrigin == PathOrigin.SECURITY_ANNOTATION || pathOrigin == PathOrigin.RATING_PROCESS) && knowledgePath.getNodes().isEmpty()) 
 					|| (pathOrigin == PathOrigin.ENSEMBLE && (knowledgePath.getNodes().size() == 1)))) {
 						PathNodeComponentId idField = factory.createPathNodeComponentId();
 						knowledgePath.getNodes().add(idField); 
@@ -927,24 +1062,24 @@ public class AnnotationProcessor {
 	}
 
 	/**
-	 * Retrieves the direction annotation, i.e. one of {Inout, In, Out} from an array of annotations.  
+	 * Retrieves the direction annotation, i.e. one of {Inout, In, Out, Rank} from an array of annotations.  
 	 * <p>
 	 * If more than one / none direction annotation is found, it throws an exception.
 	 * </p>
 	 */
-	Annotation getDirectionAnnotation(Annotation[] annotations) throws AnnotationProcessorException {
+	Annotation getKindAnnotation(Annotation[] annotations) throws AnnotationProcessorException {
 		Annotation foundAnnotation = null;
 		for (Annotation a : annotations) {
-			if (parameterAnnotationsToParameterDirections.containsKey(a.annotationType())) {
+			if (parameterAnnotationsToParameterKinds.containsKey(a.annotationType())) {
 				if (foundAnnotation == null) {
 					foundAnnotation = a;
 				} else {
-					throw new AnnotationProcessorException("More than one direction annotation was found.");
+					throw new AnnotationProcessorException("More than one kind annotation was found.");
 				}
 			}
 		}
 		if (foundAnnotation == null) {
-			throw new AnnotationProcessorException("No direction annotation was found.");
+			throw new AnnotationProcessorException("No kind annotation was found.");
 		}
 		return foundAnnotation;
 	}
@@ -952,7 +1087,7 @@ public class AnnotationProcessor {
 	/**
 	 * Helper method to get the value of a direction annotation. 
 	 */
-	String getDirectionAnnotationValue(Annotation a) {
+	String getKindAnnotationValue(Annotation a) {
 		if (a instanceof In) {
 			return ((In) a).value();
 		}
@@ -962,7 +1097,10 @@ public class AnnotationProcessor {
 		if (a instanceof InOut) {
 			return ((InOut) a).value();
 		}
-		Log.w("Invalid argument in getDirectionAnnotation()");
+		if (a instanceof Rating) {
+			return ((Rating) a).value();
+		}
+		Log.w("Invalid argument in getKindAnnotation()");
 		return null;
 	}
 
@@ -992,8 +1130,9 @@ public class AnnotationProcessor {
 	 * Returns a {@link ChangeSet} containing the initial values of the knowledge of the parsed Component.
 	 *  
 	 * @param knowledge the object of a class annotated as DEECo component (@{@link Component}).
+	 * @throws AnnotationProcessorException 
 	 */
-	ChangeSet extractInitialKnowledge(Object knowledge, boolean local) {
+	ChangeSet extractInitialKnowledge(Object knowledge, boolean local) throws AnnotationProcessorException {
 		ChangeSet changeSet = new ChangeSet();
 		for (Field f : knowledge.getClass().getDeclaredFields()) {
 			if ((!Modifier.isPublic(f.getModifiers()))
@@ -1007,6 +1146,11 @@ public class AnnotationProcessor {
 		}
 		for (Field f : knowledge.getClass().getFields())
 			if (!Modifier.isStatic(f.getModifiers())) {
+				Allow[] allowAnnotations = f.getAnnotationsByType(Allow.class);
+				if (allowAnnotations.length > 0 && local && isAnnotatedAsLocal(f)) {
+					throw new AnnotationProcessorException("Local knowledge must not be secured.");
+				}
+				
 				if (((isAnnotatedAsLocal(f)) && (local))
 						|| ((!isAnnotatedAsLocal(f)) && (!local))) {
 					KnowledgePath knowledgePath = this.factory

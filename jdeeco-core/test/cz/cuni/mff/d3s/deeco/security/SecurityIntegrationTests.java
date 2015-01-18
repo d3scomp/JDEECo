@@ -2,6 +2,7 @@ package cz.cuni.mff.d3s.deeco.security;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.*;
 
@@ -12,6 +13,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 
+import cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeData;
 import cz.cuni.mff.d3s.deeco.security.runtime.SecurityRuntimeModel;
 import cz.cuni.mff.d3s.deeco.task.TaskInvocationException;
@@ -36,21 +38,30 @@ public class SecurityIntegrationTests {
 		SecurityRuntimeModel.AllEnsemble.membership = id -> id.contains("remote");
 				
 		runtimeModel.invokeEnsembleTasks();
-		
+				
 		// when publish() is called
 		runtimeModel.knowledgeDataManager.publish();
 		
 		// then data are broadcasted and captured
 		verify(runtimeModel.dataSender).broadcastData(objectCaptor.capture());
 		Object broadcastArgument = objectCaptor.getValue();
-		List<KnowledgeData> data = (List<KnowledgeData>)broadcastArgument;
 		
-		// modify component ids so that they are not accepted as local
-		data.stream().forEach(d -> d.getMetaData().componentId += "_remote");
+		@SuppressWarnings("unchecked")
+		List<KnowledgeData> data = (List<KnowledgeData>)broadcastArgument;
 		
 		assertTrue(runtimeModel.policeComponent1.secrets.isEmpty());
 		assertTrue(runtimeModel.policeComponent2.secrets.isEmpty());
 		
+		// recalculate signature
+		data.stream().forEach(kd -> {
+			kd.getMetaData().componentId += "_remote";
+			try {
+				kd.getMetaData().signature = runtimeModel.securityHelper.sign(runtimeModel.securityKeyManager.getIntegrityPrivateKey(),
+						kd.getMetaData().componentId, kd.getMetaData().versionId, kd.getMetaData().targetRole);
+			} catch (Exception e) {
+				fail();
+			}
+		});
 		// then data are received
 		runtimeModel.knowledgeDataManager.receiveKnowledge(data);
 		
@@ -72,5 +83,14 @@ public class SecurityIntegrationTests {
 		assertTrue(runtimeModel.policeComponent2.secrets.isEmpty());
 		assertEquals(1, runtimeModel.globalPoliceComponent.secrets.size());
 		assertEquals("top secret", runtimeModel.globalPoliceComponent.secrets.get("V1"));	
+	}
+	
+	@Test
+	public void localAuthorsTest() throws TaskInvocationException {
+		runtimeModel.invokeEnsembleTasks();
+		
+		assertEquals("V1", runtimeModel.container.getLocal("P1").getAuthor(RuntimeModelHelper.createKnowledgePath("secrets", "V1")));
+		assertEquals("V1", runtimeModel.container.getLocal("G1").getAuthor(RuntimeModelHelper.createKnowledgePath("secrets", "V1")));
+		assertEquals("P2", runtimeModel.container.getLocal("P2").getAuthor(RuntimeModelHelper.createKnowledgePath("secrets", "V1")));
 	}
 }

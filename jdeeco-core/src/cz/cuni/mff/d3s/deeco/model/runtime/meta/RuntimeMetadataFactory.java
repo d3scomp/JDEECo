@@ -14,6 +14,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Invocable;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.LocalKnowledgeTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
@@ -21,8 +22,10 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathSecurityRoleArgument;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.RatingsProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import org.eclipse.emf.ecore.EFactory;
 
@@ -240,6 +243,33 @@ public interface RuntimeMetadataFactory extends EFactory {
 	 * @generated
 	 */
 	AbsoluteSecurityRoleArgument createAbsoluteSecurityRoleArgument();
+
+	/**
+	 * Returns a new object of class '<em>Ratings Process</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Ratings Process</em>'.
+	 * @generated
+	 */
+	RatingsProcess createRatingsProcess();
+
+	/**
+	 * Returns a new object of class '<em>Local Knowledge Tag</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Local Knowledge Tag</em>'.
+	 * @generated
+	 */
+	LocalKnowledgeTag createLocalKnowledgeTag();
+
+	/**
+	 * Returns a new object of class '<em>Security Tag</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Security Tag</em>'.
+	 * @generated
+	 */
+	SecurityTag createSecurityTag();
 
 	/**
 	 * Returns the package supported by this factory.

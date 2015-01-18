@@ -8,6 +8,7 @@ import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -136,5 +137,59 @@ public class SecurityHelperTest {
 		// then text is the same
 		String decryptedText = new String(decryptedBytes);
 		assertEquals(text, decryptedText);
+	}
+	
+	@Test
+	public void generateKeyPairTest() throws NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException, ShortBufferException, IllegalBlockSizeException, BadPaddingException, IOException {
+		// given text
+		String text = "Lorem ipsum dolor sit amet.";
+		byte[] textBytes = text.getBytes();	
+		
+		// when key pair is generated
+		KeyPair keyPair = target.generateKeyPair();
+		Cipher encryptCipher = target.getSymmetricCipher(Cipher.ENCRYPT_MODE, keyPair.getPublic());
+		Cipher decryptCipher = target.getSymmetricCipher(Cipher.DECRYPT_MODE, keyPair.getPrivate());
+		
+		// then keys are compatible
+		byte[] encryptedBytes = target.transform(textBytes, encryptCipher);
+		byte[] decryptedBytes = target.transform(encryptedBytes, decryptCipher);
+		
+		// then text is the same
+		String decryptedText = new String(decryptedBytes);
+		assertEquals(text, decryptedText);
+	}
+	
+	@Test
+	public void signVerifyTest() throws NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException, SignatureException, IOException {
+		// given text
+		String text1 = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+		String text2 = "Hello, world!";
+		
+		// when signature is generated
+		KeyPair keyPair = target.generateKeyPair();
+		byte[] signature = target.sign(keyPair.getPrivate(), text1, text2);
+		
+		assertNotNull(signature);
+		
+		// then signature is verified
+		assertTrue(target.verify(signature, keyPair.getPublic(), text1, text2));
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void signTest_Exception() throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, SignatureException, IOException {
+		// when sign() with no data is called
+		KeyPair keyPair = target.generateKeyPair();
+		target.sign(keyPair.getPrivate());
+		
+		// then exception is thrown
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void verifyTest_Exception() throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, SignatureException, IOException {
+		// when verify() with no data is called
+		KeyPair keyPair = target.generateKeyPair();
+		target.verify(null, keyPair.getPublic());
+		
+		// then exception is thrown
 	}
 }

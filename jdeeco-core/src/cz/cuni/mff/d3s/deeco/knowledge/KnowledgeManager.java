@@ -3,7 +3,7 @@ package cz.cuni.mff.d3s.deeco.knowledge;
 import java.util.Collection;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityTag;
 
 /**
  * This interface allows the user to add, update and read the values from
@@ -28,6 +28,7 @@ public interface KnowledgeManager extends ReadOnlyKnowledgeManager {
 	 *             thrown when knowledge could not have been updated
 	 */
 	void update(ChangeSet changeSet) throws KnowledgeUpdateException;
+	void update(ChangeSet changeSet, String shadowComponentId) throws KnowledgeUpdateException;
 	void markAsLocal(Collection<KnowledgePath> knowledgePaths);
-	void addSecurityTags(KnowledgePath knowledgePath, Collection<KnowledgeSecurityTag> newSecurityTags);	
+	void addSecurityTags(KnowledgePath knowledgePath, Collection<SecurityTag> newSecurityTags);		
 }

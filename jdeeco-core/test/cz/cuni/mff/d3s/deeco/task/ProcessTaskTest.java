@@ -12,6 +12,8 @@ import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -21,11 +23,16 @@ import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import cz.cuni.mff.d3s.deeco.integrity.PathRating;
+import cz.cuni.mff.d3s.deeco.integrity.RatingsManager;
+import cz.cuni.mff.d3s.deeco.integrity.RatingsManagerImpl;
+import cz.cuni.mff.d3s.deeco.integrity.ReadonlyRatingsHolder;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.TriggerListener;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.model.architecture.api.Architecture;
+import cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper;
 import cz.cuni.mff.d3s.deeco.model.runtime.SampleRuntimeModel;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
@@ -48,12 +55,15 @@ public class ProcessTaskTest {
 	private Scheduler scheduler;
 	@Mock
 	private Architecture architecture;
-
+		
+	private RatingsManager ratingsManager;
+	
 	private Task task;
 	
 	private Integer inValue;
 	private Integer inOutValue;
-
+	private ReadonlyRatingsHolder ratingValue;
+	
 	private ParamHolder<Integer> expectedInOutValue;
 	private ParamHolder<Integer> expectedOutValue;
 
@@ -62,14 +72,21 @@ public class ProcessTaskTest {
 		initMocks(this);
 
 		model = new SampleRuntimeModel();
+		ratingsManager = new RatingsManagerImpl();
+		
+		Map<PathRating, Long> ratingContent = new HashMap<>();
+		ratingContent.put(PathRating.OK, 38l);
+		ratingValue = new ReadonlyRatingsHolder(ratingContent);		
 		
 		inValue = 21;
-		inOutValue = 108;
+		inOutValue = 108 + 38;		
 		expectedInOutValue = new ParamHolder<Integer>(108);
-		expectedOutValue = new ParamHolder<Integer>(0);		
-		SampleRuntimeModel.processMethod(inValue, expectedOutValue, expectedInOutValue);
+		expectedOutValue = new ParamHolder<Integer>(0);				
+		SampleRuntimeModel.processMethod(inValue, expectedOutValue, expectedInOutValue, ratingValue);
 		
 		doNothing().when(knowledgeManager).register(eq(model.processKnowledgeChangeTrigger), knowledgeManagerTriggerListenerCaptor.capture());
+		
+		when(knowledgeManager.getAuthor(eq(RuntimeModelHelper.createKnowledgePath("level1", "rating")))).thenReturn(model.componentInstance.getName());
 		
 		when(knowledgeManager.get(anyCollectionOf(KnowledgePath.class))).then(new Answer<ValueSet>() {
 			public ValueSet answer(InvocationOnMock invocation) {
@@ -90,7 +107,7 @@ public class ProcessTaskTest {
 		
 		model.setKnowledgeManager(knowledgeManager);
 		
-		this.task = new ProcessTask(model.process, scheduler, architecture);
+		this.task = new ProcessTask(model.process, scheduler, architecture, ratingsManager);
 	}
 	
 	@Test

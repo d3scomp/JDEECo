@@ -10,14 +10,14 @@ import org.eclipse.emf.common.util.Enumerator;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the literals of the enumeration '<em><b>Parameter Direction</b></em>',
+ * A representation of the literals of the enumeration '<em><b>Parameter Kind</b></em>',
  * and utility methods for working with them.
  * <!-- end-user-doc -->
- * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getParameterDirection()
+ * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getParameterKind()
  * @model
  * @generated
  */
-public enum ParameterDirection implements Enumerator {
+public enum ParameterKind implements Enumerator {
 	/**
 	 * The '<em><b>IN</b></em>' literal object.
 	 * <!-- begin-user-doc -->
@@ -46,7 +46,17 @@ public enum ParameterDirection implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	INOUT(2, "INOUT", "INOUT");
+	INOUT(2, "INOUT", "INOUT"),
+
+	/**
+	 * The '<em><b>RATING</b></em>' literal object.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #RATING_VALUE
+	 * @generated
+	 * @ordered
+	 */
+	RATING(3, "RATING", "RATING");
 
 	/**
 	 * The '<em><b>IN</b></em>' literal value.
@@ -94,35 +104,51 @@ public enum ParameterDirection implements Enumerator {
 	public static final int INOUT_VALUE = 2;
 
 	/**
-	 * An array of all the '<em><b>Parameter Direction</b></em>' enumerators.
+	 * The '<em><b>RATING</b></em>' literal value.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of '<em><b>RATING</b></em>' literal object isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @see #RATING
+	 * @model
+	 * @generated
+	 * @ordered
+	 */
+	public static final int RATING_VALUE = 3;
+
+	/**
+	 * An array of all the '<em><b>Parameter Kind</b></em>' enumerators.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private static final ParameterDirection[] VALUES_ARRAY =
-		new ParameterDirection[] {
+	private static final ParameterKind[] VALUES_ARRAY =
+		new ParameterKind[] {
 			IN,
 			OUT,
 			INOUT,
+			RATING,
 		};
 
 	/**
-	 * A public read-only list of all the '<em><b>Parameter Direction</b></em>' enumerators.
+	 * A public read-only list of all the '<em><b>Parameter Kind</b></em>' enumerators.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public static final List<ParameterDirection> VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
+	public static final List<ParameterKind> VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
 
 	/**
-	 * Returns the '<em><b>Parameter Direction</b></em>' literal with the specified literal value.
+	 * Returns the '<em><b>Parameter Kind</b></em>' literal with the specified literal value.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public static ParameterDirection get(String literal) {
+	public static ParameterKind get(String literal) {
 		for (int i = 0; i < VALUES_ARRAY.length; ++i) {
-			ParameterDirection result = VALUES_ARRAY[i];
+			ParameterKind result = VALUES_ARRAY[i];
 			if (result.toString().equals(literal)) {
 				return result;
 			}
@@ -131,14 +157,14 @@ public enum ParameterDirection implements Enumerator {
 	}
 
 	/**
-	 * Returns the '<em><b>Parameter Direction</b></em>' literal with the specified name.
+	 * Returns the '<em><b>Parameter Kind</b></em>' literal with the specified name.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public static ParameterDirection getByName(String name) {
+	public static ParameterKind getByName(String name) {
 		for (int i = 0; i < VALUES_ARRAY.length; ++i) {
-			ParameterDirection result = VALUES_ARRAY[i];
+			ParameterKind result = VALUES_ARRAY[i];
 			if (result.getName().equals(name)) {
 				return result;
 			}
@@ -147,16 +173,17 @@ public enum ParameterDirection implements Enumerator {
 	}
 
 	/**
-	 * Returns the '<em><b>Parameter Direction</b></em>' literal with the specified integer value.
+	 * Returns the '<em><b>Parameter Kind</b></em>' literal with the specified integer value.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public static ParameterDirection get(int value) {
+	public static ParameterKind get(int value) {
 		switch (value) {
 			case IN_VALUE: return IN;
 			case OUT_VALUE: return OUT;
 			case INOUT_VALUE: return INOUT;
+			case RATING_VALUE: return RATING;
 		}
 		return null;
 	}
@@ -188,7 +215,7 @@ public enum ParameterDirection implements Enumerator {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private ParameterDirection(int value, String name, String literal) {
+	private ParameterKind(int value, String name, String literal) {
 		this.value = value;
 		this.name = name;
 		this.literal = literal;
@@ -232,4 +259,4 @@ public enum ParameterDirection implements Enumerator {
 		return literal;
 	}
 	
-} //ParameterDirection
+} //ParameterKind

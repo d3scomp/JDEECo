@@ -16,7 +16,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 
 /**
@@ -135,19 +135,19 @@ public class ModelValidator {
 		
 		int idx = 1;
 		for (Parameter pp: cp.getParameters()) {
-			if ((pp.getDirection() == ParameterDirection.IN) || (pp.getDirection() == ParameterDirection.INOUT))
+			if ((pp.getKind() == ParameterKind.IN) || (pp.getKind() == ParameterKind.INOUT))
 				hasInputs = true;
-			if ((pp.getDirection() == ParameterDirection.OUT) || (pp.getDirection() == ParameterDirection.INOUT))
+			if ((pp.getKind() == ParameterKind.OUT) || (pp.getKind() == ParameterKind.INOUT))
 				hasOutputs = true;
 			
 			// The IN/INOUT parameters need to exist in the initial component knowledge with the correct type
-			if ((pp.getDirection() == ParameterDirection.IN) || (pp.getDirection() == ParameterDirection.INOUT)) {				
+			if ((pp.getKind() == ParameterKind.IN) || (pp.getKind() == ParameterKind.INOUT)) {				
 				if (!hasKnowledgePath(pp.getKnowledgePath(), cp.getComponentInstance().getKnowledgeManager())) {
 					reportError(				
 						cp,
 						"%s parameter \"%s\" (%d) of process %s.%s refers to non-existent knowledge field.\n" 
 						+ "Check that all the corresponding knowledge fields are declared as public class fields.",
-						pp.getDirection(),
+						pp.getKind(),
 						pp.getKnowledgePath(),
 						idx,
 						cp.getComponentInstance().getName(),
@@ -157,7 +157,7 @@ public class ModelValidator {
 					reportError(				
 							cp,
 							"%s parameter \"%s\" (%d) of process %s.%s does not match the type of the corresponding knowledge field.",
-							pp.getDirection(),
+							pp.getKind(),
 							pp.getKnowledgePath(),
 							idx,
 							cp.getComponentInstance().getName(),

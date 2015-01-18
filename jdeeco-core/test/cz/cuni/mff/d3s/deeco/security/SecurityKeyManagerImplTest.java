@@ -98,4 +98,20 @@ public class SecurityKeyManagerImplTest {
 		
 		assertEquals(text, new String(decipheredText));
 	}
+	
+	@Test
+	public void integrityCompatibilityTest() throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, CertificateEncodingException, KeyStoreException, SecurityException, SignatureException, IllegalStateException, IllegalBlockSizeException, BadPaddingException {
+		String text = "hello";
+		
+		Cipher decryptCipher = Cipher.getInstance("RSA");
+		decryptCipher.init(Cipher.DECRYPT_MODE, target.getIntegrityPrivateKey());
+		
+		Cipher encryptCipher = Cipher.getInstance("RSA");
+		encryptCipher.init(Cipher.ENCRYPT_MODE, target.getIntegrityPublicKey());
+		
+		byte[] cipherText = encryptCipher.doFinal(text.getBytes());
+		byte[] decipheredText = decryptCipher.doFinal(cipherText);
+		
+		assertEquals(text, new String(decipheredText));
+	}
 }

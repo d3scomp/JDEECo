@@ -455,13 +455,22 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int COMPONENT_INSTANCE__ROLES = 7;
 
 	/**
+	 * The feature id for the '<em><b>Ratings Process</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPONENT_INSTANCE__RATINGS_PROCESS = 8;
+
+	/**
 	 * The number of structural features of the '<em>Component Instance</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_INSTANCE_FEATURE_COUNT = 8;
+	int COMPONENT_INSTANCE_FEATURE_COUNT = 9;
 
 	/**
 	 * The number of operations of the '<em>Component Instance</em>' class.
@@ -785,13 +794,13 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int PARAMETER = 13;
 
 	/**
-	 * The feature id for the '<em><b>Direction</b></em>' attribute.
+	 * The feature id for the '<em><b>Kind</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PARAMETER__DIRECTION = 0;
+	int PARAMETER__KIND = 0;
 
 	/**
 	 * The feature id for the '<em><b>Knowledge Path</b></em>' containment reference.
@@ -1015,6 +1024,34 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int STRING_TO_OBJECT_MAP_OPERATION_COUNT = 0;
 
 	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.SecurityTagImpl <em>Security Tag</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.SecurityTagImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getSecurityTag()
+	 * @generated
+	 */
+	int SECURITY_TAG = 28;
+
+	/**
+	 * The number of structural features of the '<em>Security Tag</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SECURITY_TAG_FEATURE_COUNT = 0;
+
+	/**
+	 * The number of operations of the '<em>Security Tag</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SECURITY_TAG_OPERATION_COUNT = 0;
+
+	/**
 	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.KnowledgeSecurityTagImpl <em>Knowledge Security Tag</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1031,7 +1068,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int KNOWLEDGE_SECURITY_TAG__REQUIRED_ROLE = 0;
+	int KNOWLEDGE_SECURITY_TAG__REQUIRED_ROLE = SECURITY_TAG_FEATURE_COUNT + 0;
 
 	/**
 	 * The number of structural features of the '<em>Knowledge Security Tag</em>' class.
@@ -1040,7 +1077,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int KNOWLEDGE_SECURITY_TAG_FEATURE_COUNT = 1;
+	int KNOWLEDGE_SECURITY_TAG_FEATURE_COUNT = SECURITY_TAG_FEATURE_COUNT + 1;
 
 	/**
 	 * The number of operations of the '<em>Knowledge Security Tag</em>' class.
@@ -1049,7 +1086,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int KNOWLEDGE_SECURITY_TAG_OPERATION_COUNT = 0;
+	int KNOWLEDGE_SECURITY_TAG_OPERATION_COUNT = SECURITY_TAG_OPERATION_COUNT + 0;
 
 	/**
 	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.SecurityRoleImpl <em>Security Role</em>}' class.
@@ -1273,14 +1310,97 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int ABSOLUTE_SECURITY_ROLE_ARGUMENT_OPERATION_COUNT = SECURITY_ROLE_ARGUMENT_OPERATION_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection <em>Parameter Direction</em>}' enum.
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.RatingsProcessImpl <em>Ratings Process</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getParameterDirection()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RatingsProcessImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getRatingsProcess()
 	 * @generated
 	 */
-	int PARAMETER_DIRECTION = 26;
+	int RATINGS_PROCESS = 26;
+
+	/**
+	 * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RATINGS_PROCESS__PARAMETERS = INVOCABLE__PARAMETERS;
+
+	/**
+	 * The feature id for the '<em><b>Method</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RATINGS_PROCESS__METHOD = INVOCABLE__METHOD;
+
+	/**
+	 * The feature id for the '<em><b>Component Instance</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RATINGS_PROCESS__COMPONENT_INSTANCE = INVOCABLE_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>Ratings Process</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RATINGS_PROCESS_FEATURE_COUNT = INVOCABLE_FEATURE_COUNT + 1;
+
+	/**
+	 * The number of operations of the '<em>Ratings Process</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RATINGS_PROCESS_OPERATION_COUNT = INVOCABLE_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.LocalKnowledgeTagImpl <em>Local Knowledge Tag</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.LocalKnowledgeTagImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getLocalKnowledgeTag()
+	 * @generated
+	 */
+	int LOCAL_KNOWLEDGE_TAG = 27;
+
+	/**
+	 * The number of structural features of the '<em>Local Knowledge Tag</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_KNOWLEDGE_TAG_FEATURE_COUNT = SECURITY_TAG_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of operations of the '<em>Local Knowledge Tag</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_KNOWLEDGE_TAG_OPERATION_COUNT = SECURITY_TAG_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind <em>Parameter Kind</em>}' enum.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getParameterKind()
+	 * @generated
+	 */
+	int PARAMETER_KIND = 29;
 
 	/**
 	 * The meta object id for the '<em>Method</em>' data type.
@@ -1290,7 +1410,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getMethod()
 	 * @generated
 	 */
-	int METHOD = 27;
+	int METHOD = 30;
 
 	/**
 	 * The meta object id for the '<em>Knowledge Manager</em>' data type.
@@ -1300,7 +1420,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getKnowledgeManager()
 	 * @generated
 	 */
-	int KNOWLEDGE_MANAGER = 28;
+	int KNOWLEDGE_MANAGER = 31;
 
 	/**
 	 * The meta object id for the '<em>Shadow Knowledge Manager Registry</em>' data type.
@@ -1310,7 +1430,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getShadowKnowledgeManagerRegistry()
 	 * @generated
 	 */
-	int SHADOW_KNOWLEDGE_MANAGER_REGISTRY = 29;
+	int SHADOW_KNOWLEDGE_MANAGER_REGISTRY = 32;
 
 	/**
 	 * The meta object id for the '<em>Communication Boundary</em>' data type.
@@ -1320,7 +1440,18 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getCommunicationBoundary()
 	 * @generated
 	 */
-	int COMMUNICATION_BOUNDARY = 30;
+	int COMMUNICATION_BOUNDARY = 33;
+
+
+	/**
+	 * The meta object id for the '<em>Ratings Manager</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.integrity.RatingsManager
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getRatingsManager()
+	 * @generated
+	 */
+	int RATINGS_MANAGER = 34;
 
 
 	/**
@@ -1612,6 +1743,17 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EReference getComponentInstance_Roles();
 
 	/**
+	 * Returns the meta object for the containment reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getRatingsProcess <em>Ratings Process</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference '<em>Ratings Process</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getRatingsProcess()
+	 * @see #getComponentInstance()
+	 * @generated
+	 */
+	EReference getComponentInstance_RatingsProcess();
+
+	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition <em>Ensemble Definition</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1772,15 +1914,15 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EClass getParameter();
 
 	/**
-	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter#getDirection <em>Direction</em>}'.
+	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter#getKind <em>Kind</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Direction</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter#getDirection()
+	 * @return the meta object for the attribute '<em>Kind</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter#getKind()
 	 * @see #getParameter()
 	 * @generated
 	 */
-	EAttribute getParameter_Direction();
+	EAttribute getParameter_Kind();
 
 	/**
 	 * Returns the meta object for the containment reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter#getKnowledgePath <em>Knowledge Path</em>}'.
@@ -2070,6 +2212,57 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EAttribute getAbsoluteSecurityRoleArgument_Value();
 
 	/**
+	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.RatingsProcess <em>Ratings Process</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Ratings Process</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.RatingsProcess
+	 * @generated
+	 */
+	EClass getRatingsProcess();
+
+	/**
+	 * Returns the meta object for the container reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.RatingsProcess#getComponentInstance <em>Component Instance</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the container reference '<em>Component Instance</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.RatingsProcess#getComponentInstance()
+	 * @see #getRatingsProcess()
+	 * @generated
+	 */
+	EReference getRatingsProcess_ComponentInstance();
+
+	/**
+	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.LocalKnowledgeTag <em>Local Knowledge Tag</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Local Knowledge Tag</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.LocalKnowledgeTag
+	 * @generated
+	 */
+	EClass getLocalKnowledgeTag();
+
+	/**
+	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityTag <em>Security Tag</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Security Tag</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityTag
+	 * @generated
+	 */
+	EClass getSecurityTag();
+
+	/**
+	 * Returns the meta object for enum '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind <em>Parameter Kind</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for enum '<em>Parameter Kind</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind
+	 * @generated
+	 */
+	EEnum getParameterKind();
+
+	/**
 	 * Returns the meta object for the reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole#getConsistsOf <em>Consists Of</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2079,16 +2272,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getSecurityRole_ConsistsOf();
-
-	/**
-	 * Returns the meta object for enum '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection <em>Parameter Direction</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for enum '<em>Parameter Direction</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection
-	 * @generated
-	 */
-	EEnum getParameterDirection();
 
 	/**
 	 * Returns the meta object for data type '{@link java.lang.reflect.Method <em>Method</em>}'.
@@ -2133,6 +2316,17 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 */
 	EDataType getCommunicationBoundary();
+
+	/**
+	 * Returns the meta object for data type '{@link cz.cuni.mff.d3s.deeco.integrity.RatingsManager <em>Ratings Manager</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>Ratings Manager</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.integrity.RatingsManager
+	 * @model instanceClass="cz.cuni.mff.d3s.deeco.integrity.RatingsManager"
+	 * @generated
+	 */
+	EDataType getRatingsManager();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -2392,6 +2586,14 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EReference COMPONENT_INSTANCE__ROLES = eINSTANCE.getComponentInstance_Roles();
 
 		/**
+		 * The meta object literal for the '<em><b>Ratings Process</b></em>' containment reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference COMPONENT_INSTANCE__RATINGS_PROCESS = eINSTANCE.getComponentInstance_RatingsProcess();
+
+		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl <em>Ensemble Definition</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2522,12 +2724,12 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EClass PARAMETER = eINSTANCE.getParameter();
 
 		/**
-		 * The meta object literal for the '<em><b>Direction</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Kind</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute PARAMETER__DIRECTION = eINSTANCE.getParameter_Direction();
+		EAttribute PARAMETER__KIND = eINSTANCE.getParameter_Kind();
 
 		/**
 		 * The meta object literal for the '<em><b>Knowledge Path</b></em>' containment reference feature.
@@ -2770,22 +2972,60 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EAttribute ABSOLUTE_SECURITY_ROLE_ARGUMENT__VALUE = eINSTANCE.getAbsoluteSecurityRoleArgument_Value();
 
 		/**
+		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.RatingsProcessImpl <em>Ratings Process</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RatingsProcessImpl
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getRatingsProcess()
+		 * @generated
+		 */
+		EClass RATINGS_PROCESS = eINSTANCE.getRatingsProcess();
+
+		/**
+		 * The meta object literal for the '<em><b>Component Instance</b></em>' container reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference RATINGS_PROCESS__COMPONENT_INSTANCE = eINSTANCE.getRatingsProcess_ComponentInstance();
+
+		/**
+		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.LocalKnowledgeTagImpl <em>Local Knowledge Tag</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.LocalKnowledgeTagImpl
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getLocalKnowledgeTag()
+		 * @generated
+		 */
+		EClass LOCAL_KNOWLEDGE_TAG = eINSTANCE.getLocalKnowledgeTag();
+
+		/**
+		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.SecurityTagImpl <em>Security Tag</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.SecurityTagImpl
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getSecurityTag()
+		 * @generated
+		 */
+		EClass SECURITY_TAG = eINSTANCE.getSecurityTag();
+
+		/**
+		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind <em>Parameter Kind</em>}' enum.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getParameterKind()
+		 * @generated
+		 */
+		EEnum PARAMETER_KIND = eINSTANCE.getParameterKind();
+
+		/**
 		 * The meta object literal for the '<em><b>Consists Of</b></em>' reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
 		EReference SECURITY_ROLE__CONSISTS_OF = eINSTANCE.getSecurityRole_ConsistsOf();
-
-		/**
-		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection <em>Parameter Direction</em>}' enum.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterDirection
-		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getParameterDirection()
-		 * @generated
-		 */
-		EEnum PARAMETER_DIRECTION = eINSTANCE.getParameterDirection();
 
 		/**
 		 * The meta object literal for the '<em>Method</em>' data type.
@@ -2826,6 +3066,16 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * @generated
 		 */
 		EDataType COMMUNICATION_BOUNDARY = eINSTANCE.getCommunicationBoundary();
+
+		/**
+		 * The meta object literal for the '<em>Ratings Manager</em>' data type.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see cz.cuni.mff.d3s.deeco.integrity.RatingsManager
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getRatingsManager()
+		 * @generated
+		 */
+		EDataType RATINGS_MANAGER = eINSTANCE.getRatingsManager();
 
 	}
 

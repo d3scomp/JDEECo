@@ -2,22 +2,24 @@
 <genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
     xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/cz.cuni.mff.d3s.jdeeco.core/src" modelPluginID="cz.cuni.mff.d3s.jdeeco.core"
     templateDirectory="cz.cuni.mff.d3s.jdeeco.core/model/runtime-templates" dynamicTemplates="true"
-    modelName="RuntimeModel" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    modelName="RuntimeModel" modelPluginClass="" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
     importerID="org.eclipse.emf.importer.ecore" complianceLevel="7.0" copyrightFields="false"
-    operationReflection="true" importOrganizing="true">
+    interfaceNamePattern="" operationReflection="true" importOrganizing="true">
   <foreignModel>RuntimeModel.ecore</foreignModel>
   <genPackages prefix="RuntimeMetadata" basePackage="cz.cuni.mff.d3s.deeco.model"
       disposableProviderFactory="true" adapterFactory="false" interfacePackageSuffix="api"
       metaDataPackageSuffix="meta" ecorePackage="RuntimeModel.ecore#/">
-    <genEnums typeSafeEnumCompatible="false" ecoreEnum="RuntimeModel.ecore#//ParameterDirection">
-      <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//ParameterDirection/IN"/>
-      <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//ParameterDirection/OUT"/>
-      <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//ParameterDirection/INOUT"/>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="RuntimeModel.ecore#//ParameterKind">
+      <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//ParameterKind/IN"/>
+      <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//ParameterKind/OUT"/>
+      <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//ParameterKind/INOUT"/>
+      <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//ParameterKind/RATING"/>
     </genEnums>
     <genDataTypes ecoreDataType="RuntimeModel.ecore#//Method"/>
     <genDataTypes ecoreDataType="RuntimeModel.ecore#//KnowledgeManager"/>
     <genDataTypes ecoreDataType="RuntimeModel.ecore#//ShadowKnowledgeManagerRegistry"/>
     <genDataTypes ecoreDataType="RuntimeModel.ecore#//CommunicationBoundary"/>
+    <genDataTypes ecoreDataType="RuntimeModel.ecore#//RatingsManager"/>
     <genClasses ecoreClass="RuntimeModel.ecore#//TimeTrigger">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//TimeTrigger/period"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//TimeTrigger/offset"/>
@@ -51,6 +53,8 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentInstance/internalData"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentInstance/systemComponent"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentInstance/roles"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentInstance/ratingsManager"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentInstance/ratingsProcess"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//EnsembleDefinition">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//EnsembleDefinition/name"/>
@@ -69,7 +73,7 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentProcess/triggers"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//Parameter">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//Parameter/direction"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//Parameter/kind"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//Parameter/knowledgePath"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//Parameter/type"/>
     </genClasses>
@@ -93,9 +97,22 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//KnowledgeSecurityTag/requiredRole"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//SecurityRole">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//SecurityRole/consistsOf"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//SecurityRole/roleName"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//SecurityRole/arguments"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//SecurityRole/consistsOf"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="RuntimeModel.ecore#//SecurityRoleArgument">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//SecurityRoleArgument/name"/>
+    </genClasses>
+    <genClasses ecoreClass="RuntimeModel.ecore#//PathSecurityRoleArgument">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//PathSecurityRoleArgument/knowledgePath"/>
+    </genClasses>
+    <genClasses ecoreClass="RuntimeModel.ecore#//BlankSecurityRoleArgument"/>
+    <genClasses ecoreClass="RuntimeModel.ecore#//AbsoluteSecurityRoleArgument">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//AbsoluteSecurityRoleArgument/Value"/>
+    </genClasses>
+    <genClasses ecoreClass="RuntimeModel.ecore#//RatingsProcess">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference RuntimeModel.ecore#//RatingsProcess/componentInstance"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

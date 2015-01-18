@@ -4,10 +4,8 @@ package cz.cuni.mff.d3s.deeco.model.runtime.api;
 
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry;
-
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
-
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -26,6 +24,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getInternalData <em>Internal Data</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#isSystemComponent <em>System Component</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getRoles <em>Roles</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getRatingsProcess <em>Ratings Process</em>}</li>
  * </ul>
  * </p>
  *
@@ -207,5 +206,33 @@ public interface ComponentInstance extends EObject {
 	 * @generated
 	 */
 	EList<SecurityRole> getRoles();
+
+	/**
+	 * Returns the value of the '<em><b>Ratings Process</b></em>' containment reference.
+	 * It is bidirectional and its opposite is '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.RatingsProcess#getComponentInstance <em>Component Instance</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Ratings Process</em>' containment reference isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Ratings Process</em>' containment reference.
+	 * @see #setRatingsProcess(RatingsProcess)
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance_RatingsProcess()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.RatingsProcess#getComponentInstance
+	 * @model opposite="componentInstance" containment="true"
+	 * @generated
+	 */
+	RatingsProcess getRatingsProcess();
+
+	/**
+	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getRatingsProcess <em>Ratings Process</em>}' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Ratings Process</em>' containment reference.
+	 * @see #getRatingsProcess()
+	 * @generated
+	 */
+	void setRatingsProcess(RatingsProcess value);
 
 } // ComponentInstance
