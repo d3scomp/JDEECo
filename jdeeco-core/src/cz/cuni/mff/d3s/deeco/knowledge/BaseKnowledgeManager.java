@@ -153,7 +153,6 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	@Override
 	public void update(final ChangeSet changeSet) throws KnowledgeUpdateException {
 		update(changeSet, getId());
-		// TODO deleting authors?
 	}
 	
 	/*
@@ -164,7 +163,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	 * .deeco.knowledge.ChangeSet)
 	 */
 	@Override
-	public void update(final ChangeSet changeSet, String shadowComponentId) throws KnowledgeUpdateException {
+	public void update(final ChangeSet changeSet, String authorId) throws KnowledgeUpdateException {
 		final Map<KnowledgePath, Object> updated = new HashMap<>();
 		final List<KnowledgePath> added = new LinkedList<>();
 		final Map<KnowledgePath, String> updatedAuthors = new HashMap<>();
@@ -185,7 +184,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 					exists = false;
 				}
 				updateKnowledge(updateKP, changeSet.getValue(updateKP));
-				knowledgeAuthors.put(updateKP, shadowComponentId);
+				updateAuthors(updateKP, authorId, updatedAuthors);
 				
 				// We need to preserve the state of the knowledge, in order to
 				// revert it back in case of problems
@@ -215,6 +214,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		// If so, then we delete all the relevant entries from the knowledge
 		if (invalidDelete == null) {
 			deleteKnowledge(changeSet.getDeletedReferences());
+			deleteAuthors(changeSet.getDeletedReferences());
 		} else {
 			// Otherwise, we need to:
 			// Revert changes
@@ -231,7 +231,39 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		}
 	}
 
-
+	private void deleteAuthors(Collection<KnowledgePath> knowledgePaths) {
+		List<KnowledgePath> listToRemove = new LinkedList<>();
+		
+		for (KnowledgePath deleteKP : knowledgePaths) {
+			knowledgeAuthors.remove(deleteKP);
+			// if a parent knowledge was updated, delete obsolete child-entries
+			for (KnowledgePath kp : knowledgeAuthors.keySet()) {
+				if (startsWith(kp.getNodes(), deleteKP.getNodes()) && !kp.equals(deleteKP)) {
+					listToRemove.add(kp);					
+				}
+			}
+		}
+		
+		knowledgeAuthors.keySet().removeAll(listToRemove);
+	}	
+	
+	private void updateAuthors(KnowledgePath updateKP, String authorId, Map<KnowledgePath, String> updatedAuthors) {
+		knowledgeAuthors.put(updateKP, authorId);
+		updatedAuthors.put(updateKP, authorId);
+		
+		List<KnowledgePath> listToRemove = new LinkedList<>();
+		
+		// if a parent knowledge was updated, delete obsolete child-entries
+		// TODO this really needs trie
+		for (KnowledgePath kp : knowledgeAuthors.keySet()) {
+			if (startsWith(kp.getNodes(), updateKP.getNodes()) && !kp.equals(updateKP)) {
+				listToRemove.add(kp);
+				updatedAuthors.put(kp, knowledgeAuthors.get(kp));
+			}
+		}
+		
+		knowledgeAuthors.keySet().removeAll(listToRemove);
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -624,7 +656,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		// Revert adding new nodes to the knowledge
 		deleteKnowledge(added);
 		for (final KnowledgePath revertKP : updatedAuthors.keySet()) {
-			knowledgeAuthors.put(revertKP, updatedAuthors.get(revertKP));
+			knowledgeAuthors.put(revertKP, updatedAuthors.get(revertKP));			
 		}
 	}
 

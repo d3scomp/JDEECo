@@ -143,13 +143,13 @@ public class BaseKnowledgeManagerTest {
 
 		ChangeSet toUpdate = new ChangeSet();
 		toUpdate.setValue(kp, 16);
-		tested.update(toUpdate);
+		tested.update(toUpdate, "X");
 
 		// THEN when accessed the item value the KnowledgeManager should return
 		// updated value
 		ValueSet result = tested.get(knowledgePaths);
 		assertEquals(16, result.getValue(kp));
-		assertEquals("TEST", tested.getAuthor(kp));
+		assertEquals("X", tested.getAuthor(kp));
 		assertEquals("TEST", tested.getAuthor(RuntimeModelHelper.createKnowledgePath("map")));
 	}
 
@@ -435,6 +435,58 @@ public class BaseKnowledgeManagerTest {
 		
 		// then null is returned
 		assertNull(author);
+	}
+	
+	@Test
+	public void getAuthorTest3() throws KnowledgeUpdateException, KnowledgeNotFoundException {
+		// WHEN the update method is called on the KnowledgeManager
+		// and as a ChangeSet, the update for one of the 'map' items is passed
+		KnowledgePath kp = RuntimeModelHelper.createKnowledgePath("map", "a");
+		List<KnowledgePath> knowledgePaths = new LinkedList<>();
+		knowledgePaths.add(kp);
+
+		ChangeSet toUpdate = new ChangeSet();
+		toUpdate.setValue(kp, 16);
+		tested.update(toUpdate, "X");
+
+		// WHEN the 'map' itself is then updated by a different author
+		KnowledgePath kp2 = RuntimeModelHelper.createKnowledgePath("map");
+		List<KnowledgePath> knowledgePaths2 = new LinkedList<>();
+		knowledgePaths2.add(kp2);
+
+		ChangeSet toUpdate2 = new ChangeSet();
+		toUpdate2.setValue(kp2, new HashMap<>());
+		tested.update(toUpdate2, "Y");
+		
+		// THEN author of the 'map' and the 'map.a' is set to Y
+		assertEquals("Y", tested.getAuthor(kp2));
+		assertEquals("Y", tested.getAuthor(kp));
+	}
+	
+	@Test
+	public void getAuthorTest4() throws KnowledgeUpdateException, KnowledgeNotFoundException {
+		// WHEN the update method is called on the KnowledgeManager
+		// and as a ChangeSet, the update for one of the 'map' items is passed
+		KnowledgePath kp = RuntimeModelHelper.createKnowledgePath("map", "a");
+		List<KnowledgePath> knowledgePaths = new LinkedList<>();
+		knowledgePaths.add(kp);
+
+		ChangeSet toUpdate = new ChangeSet();
+		toUpdate.setValue(kp, 16);
+		tested.update(toUpdate, "X");
+
+		// WHEN the 'map' itself is then deleted
+		KnowledgePath kp2 = RuntimeModelHelper.createKnowledgePath("map");
+		List<KnowledgePath> knowledgePaths2 = new LinkedList<>();
+		knowledgePaths2.add(kp2);
+
+		ChangeSet toUpdate2 = new ChangeSet();
+		toUpdate2.setDeleted(kp2);
+		tested.update(toUpdate2, "Y");
+		
+		// THEN author of the 'map' and the 'map.a' is null
+		assertNull(tested.getAuthor(kp2));
+		assertNull(tested.getAuthor(kp));
 	}
 	
 	public static class InnerKnowledge {
