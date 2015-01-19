@@ -94,4 +94,11 @@ public interface ReadOnlyKnowledgeManager {
 	 */
 	String getAuthor(KnowledgePath knowledgePath);
 	
+	/**
+	 * Returns true if given knowledge path is a parameter of some security role and therefore its value cannot be modified
+	 * @param knowledgePath
+	 * @return
+	 */
+	boolean isLocked(KnowledgePath knowledgePath);
+	
 }

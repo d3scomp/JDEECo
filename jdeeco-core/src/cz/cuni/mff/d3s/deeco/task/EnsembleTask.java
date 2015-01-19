@@ -406,16 +406,23 @@ public class EnsembleTask extends Task {
 						ensembleController.getEnsembleDefinition().getName(), e.getNotFoundPath()));
 				return false;
 			}
-
+			
 			allPathsWithRoots.add(absoluteKnowledgePathAndRoot);
 
+			if (paramDir == ParameterKind.OUT || paramDir == ParameterKind.INOUT) {
+				// no paths are locked in shadow knowledge manager
+				if (absoluteKnowledgePathAndRoot.root == localRole && localKnowledgeManager.isLocked(absoluteKnowledgePathAndRoot.knowledgePath)) {
+					throw new TaskInvocationException(String.format("Path %s is used as a parameter of a security role and therefore cannot be modified.", absoluteKnowledgePathAndRoot.knowledgePath));
+				}
+			}
+			
 			if (paramDir == ParameterKind.IN || paramDir == ParameterKind.INOUT) {
 				if (absoluteKnowledgePathAndRoot == null) {
 					throw new TaskInvocationException("Member/Coordinator prefix required for knowledge exchange paths.");
 				} if (absoluteKnowledgePathAndRoot.root == localRole) {
-					localPaths.add(absoluteKnowledgePathAndRoot.knowledgePath);
+					localPaths.add(absoluteKnowledgePathAndRoot.knowledgePath);					
 				} else {
-					shadowPaths.add(absoluteKnowledgePathAndRoot.knowledgePath);
+					shadowPaths.add(absoluteKnowledgePathAndRoot.knowledgePath);					
 				}				
 			}		
 		}

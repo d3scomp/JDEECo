@@ -21,7 +21,6 @@ import org.mockito.stubbing.Answer;
 
 import cz.cuni.mff.d3s.deeco.integrity.PathRating;
 import cz.cuni.mff.d3s.deeco.integrity.RatingsChangeSet;
-import cz.cuni.mff.d3s.deeco.integrity.RatingsHolder;
 import cz.cuni.mff.d3s.deeco.integrity.RatingsManager;
 import cz.cuni.mff.d3s.deeco.integrity.RatingsManagerImpl;
 import cz.cuni.mff.d3s.deeco.integrity.ReadonlyRatingsHolder;
@@ -45,6 +44,7 @@ import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
  * @author Tomas Bures <bures@d3s.mff.cuni.cz>
  * 
  */
+@SuppressWarnings("unused")
 public class EnsembleTaskTest {
 	
 	private SampleRuntimeModel model;
@@ -288,6 +288,16 @@ public class EnsembleTaskTest {
 		assertEquals("KM1", changeSet.getTargetComponentId());
 		assertEquals(RuntimeModelHelper.createKnowledgePath("level1", "rating"), changeSet.getKnowledgePath());
 		assertEquals(PathRating.OUT_OF_RANGE, changeSet.getPathRating());
+	}
+	
+	@Test(expected = TaskInvocationException.class)
+	public void testEnsembleTaskLockedPath() throws TaskInvocationException {
+		// GIVEN inout path is locked
+		when(knowledgeManager.isLocked(eq(RuntimeModelHelper.createKnowledgePath("level1", "trigger")))).thenReturn(true);		
+		
+		task.invoke(model.ensemblePeriodicTrigger);
+		
+		// THEN exception is thrown
 	}
 }
 

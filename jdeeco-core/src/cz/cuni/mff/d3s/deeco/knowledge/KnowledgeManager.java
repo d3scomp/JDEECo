@@ -31,4 +31,5 @@ public interface KnowledgeManager extends ReadOnlyKnowledgeManager {
 	void update(ChangeSet changeSet, String shadowComponentId) throws KnowledgeUpdateException;
 	void markAsLocal(Collection<KnowledgePath> knowledgePaths);
 	void addSecurityTags(KnowledgePath knowledgePath, Collection<SecurityTag> newSecurityTags);		
+	void lockKnowledgePath(KnowledgePath knowledgePath);
 }

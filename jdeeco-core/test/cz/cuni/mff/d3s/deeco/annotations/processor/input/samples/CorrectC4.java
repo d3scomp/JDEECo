@@ -25,13 +25,15 @@ public class CorrectC4 {
 	@RoleDefinition
 	public static interface Role2 {
 		@RoleParam
-		public static final String name = "[name_path]";
+		public static final String name = "[name]";
 		@RoleParam
 		public static final String time = null;
 		@RoleParam
 		public static final Integer x_integer = 123;
 		@RoleParam
 		public static final String x_string = "some_value";
+		@RoleParam
+		public static final String[] x_array = {"a", "b", "c"};
 	}
 	
 	@RoleDefinition

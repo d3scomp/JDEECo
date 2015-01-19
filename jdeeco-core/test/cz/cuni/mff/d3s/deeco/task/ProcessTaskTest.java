@@ -165,5 +165,15 @@ public class ProcessTaskTest {
 		assertEquals(cs.getValue(model.processParamOut.getKnowledgePath()), expectedOutValue.value);
 		assertTrue(cs.getDeletedReferences().isEmpty());
 		assertTrue(cs.getUpdatedReferences().size() == 2);
-	}	
+	}
+	
+	@Test(expected = TaskInvocationException.class)
+	public void testProcessTaskLockedPath() throws TaskInvocationException {
+		// GIVEN inout path is locked
+		when(knowledgeManager.isLocked(eq(RuntimeModelHelper.createKnowledgePath("level1", "inout")))).thenReturn(true);
+		
+		task.invoke(null);
+		
+		// THEN exception is thrown
+	}
 }

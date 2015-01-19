@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -126,10 +127,10 @@ public class AnnotationProcessorTest {
 		List<KnowledgeSecurityTag> timeSecurityTags = km.getKnowledgeSecurityTags(RuntimeModelHelper.createPathNodeField("time"));
 		assertEquals(1, timeSecurityTags.size());
 		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role2.class.getName(), timeSecurityTags.get(0).getRequiredRole().getRoleName());
-		assertEquals(4, timeSecurityTags.get(0).getRequiredRole().getArguments().size());
+		assertEquals(5, timeSecurityTags.get(0).getRequiredRole().getArguments().size());
 		
 		PathSecurityRoleArgument pathArgument = (PathSecurityRoleArgument)timeSecurityTags.get(0).getRequiredRole().getArguments().get(0);
-		assertEquals(RuntimeModelHelper.createKnowledgePath("name_path"), pathArgument.getKnowledgePath());
+		assertEquals(RuntimeModelHelper.createKnowledgePath("name"), pathArgument.getKnowledgePath());
 		assertEquals("name", pathArgument.getName());
 		assertEquals("time", timeSecurityTags.get(0).getRequiredRole().getArguments().get(1).getName());
 		assertTrue(timeSecurityTags.get(0).getRequiredRole().getArguments().get(0) instanceof PathSecurityRoleArgument);
@@ -137,7 +138,7 @@ public class AnnotationProcessorTest {
 		assertTrue(timeSecurityTags.get(0).getRequiredRole().getArguments().get(2) instanceof AbsoluteSecurityRoleArgument);
 		assertTrue(timeSecurityTags.get(0).getRequiredRole().getArguments().get(3) instanceof AbsoluteSecurityRoleArgument);
 		
-		assertEquals(RuntimeModelHelper.createKnowledgePath("name_path"), ((PathSecurityRoleArgument) timeSecurityTags.get(0).getRequiredRole().getArguments().get(0)).getKnowledgePath());
+		assertEquals(RuntimeModelHelper.createKnowledgePath("name"), ((PathSecurityRoleArgument) timeSecurityTags.get(0).getRequiredRole().getArguments().get(0)).getKnowledgePath());
 		assertEquals(123, ((AbsoluteSecurityRoleArgument) timeSecurityTags.get(0).getRequiredRole().getArguments().get(2)).getValue());
 		assertEquals("some_value", ((AbsoluteSecurityRoleArgument) timeSecurityTags.get(0).getRequiredRole().getArguments().get(3)).getValue());
 		
@@ -145,13 +146,80 @@ public class AnnotationProcessorTest {
 		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role1.class.getName(), component.getRoles().get(0).getRoleName());
 		assertEquals(0, component.getRoles().get(0).getArguments().size());
 		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role2.class.getName(), component.getRoles().get(1).getRoleName());
-		assertEquals(4, component.getRoles().get(1).getArguments().size());
+		assertEquals(5, component.getRoles().get(1).getArguments().size());
 		
 		pathArgument = (PathSecurityRoleArgument)component.getRoles().get(1).getArguments().get(0);
-		assertEquals(RuntimeModelHelper.createKnowledgePath("name_path"), pathArgument.getKnowledgePath());
+		assertEquals(RuntimeModelHelper.createKnowledgePath("name"), pathArgument.getKnowledgePath());
 		assertEquals("name", pathArgument.getName());
 		assertEquals("time", component.getRoles().get(1).getArguments().get(1).getName());		
 	}
+		
+	@Test 
+	public void testCloningOfSecurityAnnotations() throws AnnotationProcessorException {
+		// given component with security annotations is processed by the annotations processor
+		RuntimeMetadata model = factory.createRuntimeMetadata(); 
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		CorrectC4 input = new CorrectC4();
+		
+		// when process() is called
+		processor.process(input);
+		
+		// then annotations are parsed correctly
+		assertEquals(1, model.getComponentInstances().size());
+		ComponentInstance component = model.getComponentInstances().get(0);
+		KnowledgeManager km = component.getKnowledgeManager();
+		
+		List<KnowledgeSecurityTag> timeSecurityTags = km.getKnowledgeSecurityTags(RuntimeModelHelper.createPathNodeField("time"));
+		SecurityRole role = timeSecurityTags.get(0).getRequiredRole();		
+		AbsoluteSecurityRoleArgument argument = (AbsoluteSecurityRoleArgument) role.getArguments().stream().filter(arg -> arg.getName().equals("x_array")).findFirst().get();
+		
+		// get current content of the tag
+		String[] oldValue = (String[]) argument.getValue();
+		assertArrayEquals(new String[] {"a", "b", "c"}, oldValue);
+		
+		// modify the array
+		cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role2.x_array[0] = "x";
+		
+		// verify the change didn't affect loaded parameter
+		assertArrayEquals(new String[] {"a", "b", "c"}, oldValue);
+		
+		// restore the original value 
+		cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role2.x_array[0] = "a";
+	}
+	
+	@Test 
+	public void testLockingOfSecurityAnnotations() throws AnnotationProcessorException {
+		// given component with security annotations is processed by the annotations processor
+		RuntimeMetadata model = factory.createRuntimeMetadata(); 
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		CorrectC4 input = new CorrectC4();
+		
+		// when process() is called
+		processor.process(input);
+		
+		// then annotations are parsed correctly
+		assertEquals(1, model.getComponentInstances().size());
+		ComponentInstance component = model.getComponentInstances().get(0);
+		KnowledgeManager km = component.getKnowledgeManager();
+		
+		// verify that the knowledge path used as a security role argument is locked
+		assertTrue(km.isLocked(RuntimeModelHelper.createKnowledgePath("name")));
+	}
+	
+	@Test
+	public void testNonExistingSecurityArgument() throws AnnotationProcessorException {
+		// given component with role, which contains unresolvable argument is processed
+		RuntimeMetadata model = factory.createRuntimeMetadata(); 
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		WrongC10 input = new WrongC10();
+		
+		exception.expect(AnnotationProcessorException.class);
+		exception.expectMessage("Parameter no_such_field is not present in the knowledge.");
+		
+		// when process() is called
+		processor.process(input);
+	}
+		
 	
 	@Test 
 	public void testComponentSecurityInheritanceAnnotations1() throws AnnotationProcessorException {

@@ -4,10 +4,12 @@ import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
@@ -40,6 +42,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	private final Map<PathNodeField, List<SecurityTag>> securityTags;
 	private final Map<KnowledgeChangeTrigger, List<TriggerListener>> knowledgeChangeListeners;
 	private final Collection<KnowledgePath> localKnowledgePaths;
+	private final Set<KnowledgePath> lockedKnowledgePaths;
 	
 	private final ComponentInstance component;
 	private final String id;
@@ -52,6 +55,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		this.localKnowledgePaths = new LinkedList<>();
 		this.securityTags = new HashMap<>();
 		this.knowledgeAuthors = new HashMap<>();
+		this.lockedKnowledgePaths = new HashSet<>();
 	}
 
 	@Override
@@ -711,6 +715,22 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		} else {
 			return result;
 		}
+	}
+
+	@Override
+	public boolean isLocked(KnowledgePath knowledgePath) {
+		if (!KnowledgePathHelper.isAbsolutePath(knowledgePath)) {
+			throw new IllegalArgumentException("Only absolute knowledge paths can be checked for locking.");
+		}
+		return this.lockedKnowledgePaths.contains(knowledgePath);
+	}
+
+	@Override
+	public void lockKnowledgePath(KnowledgePath knowledgePath) {
+		if (!KnowledgePathHelper.isAbsolutePath(knowledgePath)) {
+			throw new IllegalArgumentException("Only absolute knowledge paths can be locked.");
+		}
+		this.lockedKnowledgePaths.add(knowledgePath);
 	}
 
 }

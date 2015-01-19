@@ -17,6 +17,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.rits.cloning.Cloner;
+
 import cz.cuni.mff.d3s.deeco.annotations.Allow;
 import cz.cuni.mff.d3s.deeco.annotations.CommunicationBoundary;
 import cz.cuni.mff.d3s.deeco.annotations.Component;
@@ -46,6 +48,7 @@ import cz.cuni.mff.d3s.deeco.integrity.ReadonlyRatingsHolder;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerFactory;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.AbsoluteSecurityRoleArgument;
@@ -145,6 +148,7 @@ public class AnnotationProcessor {
 	
 	KnowledgeManagerFactory knowledgeManagerFactory;
 	
+	Cloner cloner;
 	/**
 	 * Initializes the processor with the given model factory (convenience
 	 * method when no extensions are provided). All the model elements produced
@@ -181,7 +185,8 @@ public class AnnotationProcessor {
 		this.factory = factory;
 		this.model = model;
 		this.extensions = extensions;
-		this.knowledgeManagerFactory = knowledgeMangerFactory;				
+		this.knowledgeManagerFactory = knowledgeMangerFactory;	
+		this.cloner = new Cloner();
 	}
 	
 	/**
@@ -417,7 +422,7 @@ public class AnnotationProcessor {
 				if (roles.contains(role.roleClass())) {
 					throw new AnnotationProcessorException("The same role cannot be assigned multiply to a component.");
 				}
-				SecurityRole securityRole = createRoleFromClassDefinition(role.roleClass());
+				SecurityRole securityRole = createRoleFromClassDefinition(role.roleClass(), km, true);
 				componentInstance.getRoles().add(securityRole);
 				roles.add(role.roleClass());
 			}
@@ -460,7 +465,7 @@ public class AnnotationProcessor {
 	 * @throws AnnotationProcessorException
 	 * @throws ParseException
 	 */
-	private SecurityRole createRoleFromClassDefinition(Class<?> roleClass) throws AnnotationProcessorException, ParseException {
+	private SecurityRole createRoleFromClassDefinition(Class<?> roleClass, KnowledgeManager knowledgeManager, boolean validateKnowledgePaths) throws AnnotationProcessorException, ParseException {
 		if (roleClass.getAnnotationsByType(RoleDefinition.class).length == 0) {
 			throw new AnnotationProcessorException("Role class must be decoreted with @RoleDefinition.");
 		}
@@ -469,7 +474,7 @@ public class AnnotationProcessor {
 		securityRole.setRoleName(roleClass.getName());		
 		
 		for (Class<?> iface : roleClass.getInterfaces()) {
-			securityRole.getConsistsOf().add(createRoleFromClassDefinition(iface));
+			securityRole.getConsistsOf().add(createRoleFromClassDefinition(iface, knowledgeManager, false));
 		}
 		
 		List<Field> fieldParameters = Arrays.stream(roleClass.getFields())
@@ -496,8 +501,27 @@ public class AnnotationProcessor {
 			securityRole.getArguments().add(argument);
 			for (SecurityRole role : securityRole.getConsistsOf()) {
 				overrideArgument(argument, role);
+			}			
+		}
+		
+		// if not a superclass is processed
+		if (validateKnowledgePaths) {
+			// replace paths in arguments with their absolute values and lock them
+			List<PathSecurityRoleArgument> pathArguments = securityRole.getArguments().stream()
+					.filter(arg -> arg instanceof PathSecurityRoleArgument).map(arg -> (PathSecurityRoleArgument)arg).collect(Collectors.toList());
+			for (PathSecurityRoleArgument argument : pathArguments) {
+				KnowledgePath innerPath = argument.getKnowledgePath();
+				KnowledgePath absolutePath = null;
+				try {
+					absolutePath = KnowledgePathHelper.getAbsolutePath(innerPath, knowledgeManager);
+					knowledgeManager.get(Arrays.asList(absolutePath));
+				} catch (KnowledgeNotFoundException e) {
+					throw new AnnotationProcessorException("Parameter " + absolutePath + " is not present in the knowledge.", e);
+				}
+				
+				knowledgeManager.lockKnowledgePath(absolutePath);
+				argument.setKnowledgePath(absolutePath);
 			}
-			
 		}
 		
 		return securityRole;
@@ -525,16 +549,18 @@ public class AnnotationProcessor {
 					argument = factory.createPathSecurityRoleArgument();
 					argument.setName(field.getName());
 					
-					KnowledgePath innerPath = ((PathNodeMapKey)kp.getNodes().get(0)).getKeyPath();
+					KnowledgePath innerPath = ((PathNodeMapKey)kp.getNodes().get(0)).getKeyPath();					
 					((PathSecurityRoleArgument)argument).setKnowledgePath(innerPath);
-					createConcreteArgument = false;
+					createConcreteArgument = false;					
 				}
 			}
 			
-			if (createConcreteArgument) {					
+			if (createConcreteArgument) {						
 				argument = factory.createAbsoluteSecurityRoleArgument();
 				argument.setName(field.getName());
-				((AbsoluteSecurityRoleArgument)argument).setValue(fieldValue);
+				
+				// clone the field value to prevent later tampering
+				((AbsoluteSecurityRoleArgument)argument).setValue( cloner.deepClone(fieldValue) );				
 			}
 		}
 		
@@ -599,8 +625,7 @@ public class AnnotationProcessor {
 	 * @throws ParseException
 	 * @throws AnnotationProcessorException
 	 */
-	private void addSecurityTags(Class<?> clazz, KnowledgeManager km,
-			ChangeSet initialKnowledge) throws NoSuchFieldException, ParseException, AnnotationProcessorException {
+	private void addSecurityTags(Class<?> clazz, KnowledgeManager km, ChangeSet initialKnowledge) throws NoSuchFieldException, ParseException, AnnotationProcessorException {
 		for (KnowledgePath kp : initialKnowledge.getUpdatedReferences()) {
 			if (kp.getNodes().size() != 1) throw new NoSuchFieldException();
 			PathNodeField pathNodeField = (PathNodeField)kp.getNodes().get(0);
@@ -620,9 +645,9 @@ public class AnnotationProcessor {
 				}
 				
 				KnowledgeSecurityTag tag = factory.createKnowledgeSecurityTag();
-				tag.setRequiredRole(createRoleFromClassDefinition(allow.roleClass()));
+				tag.setRequiredRole(createRoleFromClassDefinition(allow.roleClass(), km, true));
 				km.addSecurityTags(kp, Arrays.asList(tag));			
-				roleClasses.add(allow.roleClass());
+				roleClasses.add(allow.roleClass());				
 			}
 			
 		}		

@@ -4,8 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import cz.cuni.mff.d3s.deeco.integrity.RatingsManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
@@ -114,6 +112,12 @@ public class ProcessTask extends Task {
 			} catch (KnowledgeNotFoundException e) {
 				throw new TaskInvocationException(
 						String.format("Knowledge path (%s) could not be resolved.", e.getNotFoundPath()), e);
+			}
+			
+			if (paramDir == ParameterKind.OUT || paramDir == ParameterKind.INOUT) {
+				if (knowledgeManager.isLocked(absoluteKnowledgePath)) {
+					throw new TaskInvocationException(String.format("Path %s is used as a parameter of a security role and therefore cannot be modified.", absoluteKnowledgePath));
+				}
 			}
 			
 			if (paramDir == ParameterKind.IN || paramDir == ParameterKind.INOUT) {
