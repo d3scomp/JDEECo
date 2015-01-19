@@ -53,6 +53,11 @@ import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 import cz.cuni.mff.d3s.deeco.task.Task;
 import cz.cuni.mff.d3s.deeco.task.TaskInvocationException;
 
+/**
+ * 
+ * @author Ondřej Štumpf
+ *
+ */
 public class SecurityRuntimeModel {
 	
 	@RoleDefinition
@@ -106,7 +111,11 @@ public class SecurityRuntimeModel {
 		
 		@RatingsProcess
 		public static void ratingProcess(@In("cityId") String cityId, @Rating("cityId") RatingsHolder holder) {
-			holder.setMyRating(PathRating.UNUSUAL);
+			if (cityId.equals("Prague")) {
+				holder.setMyRating(PathRating.UNUSUAL);
+			} else {
+				holder.setMyRating(PathRating.OK);
+			}
 		}
 	}
 	

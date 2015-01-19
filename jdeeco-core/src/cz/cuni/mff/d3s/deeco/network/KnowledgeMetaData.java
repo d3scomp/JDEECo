@@ -1,6 +1,8 @@
 package cz.cuni.mff.d3s.deeco.network;
 
 import java.io.Serializable;
+import java.util.Arrays;
+
 
 /**
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
@@ -99,7 +101,7 @@ public class KnowledgeMetaData implements Serializable {
 			if (other.encryptedKey != null)
 				return false;
 		} else {
-			if (!encryptedKey.equals(other.encryptedKey)) 
+			if (!Arrays.equals(encryptedKey, other.encryptedKey)) 
 				return false;
 		}
 		if (targetRole == null) {

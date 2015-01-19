@@ -1,11 +1,13 @@
 package cz.cuni.mff.d3s.deeco.security;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
@@ -13,11 +15,21 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 
+import cz.cuni.mff.d3s.deeco.integrity.PathRating;
+import cz.cuni.mff.d3s.deeco.integrity.RatingsChangeSet;
+import cz.cuni.mff.d3s.deeco.integrity.ReadonlyRatingsHolder;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeData;
+import cz.cuni.mff.d3s.deeco.network.RatingsData;
 import cz.cuni.mff.d3s.deeco.security.runtime.SecurityRuntimeModel;
 import cz.cuni.mff.d3s.deeco.task.TaskInvocationException;
 
+/**
+ * 
+ * @author Ondřej Štumpf
+ *
+ */
 public class SecurityIntegrationTests {
 	
 	SecurityRuntimeModel runtimeModel;
@@ -43,27 +55,12 @@ public class SecurityIntegrationTests {
 		runtimeModel.knowledgeDataManager.publish();
 		
 		// then data are broadcasted and captured
-		verify(runtimeModel.dataSender).broadcastData(objectCaptor.capture());
-		Object broadcastArgument = objectCaptor.getValue();
-		
-		@SuppressWarnings("unchecked")
-		List<KnowledgeData> data = (List<KnowledgeData>)broadcastArgument;
+		List<KnowledgeData> data = captureKnowledgeData();
 		
 		assertTrue(runtimeModel.policeComponent1.secrets.isEmpty());
 		assertTrue(runtimeModel.policeComponent2.secrets.isEmpty());
-		
-		// recalculate signature
-		data.stream().forEach(kd -> {
-			kd.getMetaData().componentId += "_remote";
-			try {
-				kd.getMetaData().signature = runtimeModel.securityHelper.sign(runtimeModel.securityKeyManager.getIntegrityPrivateKey(),
-						kd.getMetaData().componentId, kd.getMetaData().versionId, kd.getMetaData().targetRole);
-			} catch (Exception e) {
-				fail();
-			}
-		});
 		// then data are received
-		runtimeModel.knowledgeDataManager.receiveKnowledge(data);
+		runtimeModel.knowledgeDataManager.receive(data, 123);
 		
 		runtimeModel.invokeEnsembleTasks();
 		
@@ -92,5 +89,104 @@ public class SecurityIntegrationTests {
 		assertEquals("V1", runtimeModel.container.getLocal("P1").getAuthor(RuntimeModelHelper.createKnowledgePath("secrets", "V1")));
 		assertEquals("V1", runtimeModel.container.getLocal("G1").getAuthor(RuntimeModelHelper.createKnowledgePath("secrets", "V1")));
 		assertEquals("P2", runtimeModel.container.getLocal("P2").getAuthor(RuntimeModelHelper.createKnowledgePath("secrets", "V1")));
+	}
+	
+	@Test	
+	public void remoteAuthorsTest() throws TaskInvocationException {
+		SecurityRuntimeModel.AllEnsemble.membership = id -> id.contains("remote");
+	
+		// when publish() is called
+		runtimeModel.knowledgeDataManager.publish();
+		
+		// then data are broadcasted and captured
+		List<KnowledgeData> data = captureKnowledgeData();
+		
+		// then data are received
+		runtimeModel.knowledgeDataManager.receive(data, 123);
+		
+		assertEquals(16, runtimeModel.container.getReplicas().size());
+		int counter = 0;
+		
+		for (KnowledgeManager replica : runtimeModel.container.getReplicas()) {
+			if (replica.getId().equals("V1_remote") && replica.getComponent().getKnowledgeManager().getId().equals("P1")) {
+				assertEquals("V1_remote", replica.getAuthor(RuntimeModelHelper.createKnowledgePath("secret")));
+				counter++;
+			}
+			if (replica.getId().equals("V1_remote") && replica.getComponent().getKnowledgeManager().getId().equals("P2")) {
+				assertNull(replica.getAuthor(RuntimeModelHelper.createKnowledgePath("secret")));
+				counter++;
+			}
+			if (replica.getId().equals("V1_remote") && replica.getComponent().getKnowledgeManager().getId().equals("G1")) {
+				assertEquals("V1_remote", replica.getAuthor(RuntimeModelHelper.createKnowledgePath("secret")));
+				counter++;
+			}
+		}
+		assertEquals(3, counter);
+	}
+
+	@Test
+	public void localRatingsTest() throws TaskInvocationException {
+		runtimeModel.invokeEnsembleTasks();
+		
+		List<RatingsChangeSet> ratings = runtimeModel.ratingsManager.getPendingChangeSets();
+		assertEquals(1, ratings.size());
+		
+		assertEquals("P1", ratings.get(0).getAuthorComponentId());
+		assertEquals("P1", ratings.get(0).getTargetComponentId());
+		assertEquals(RuntimeModelHelper.createKnowledgePath("cityId"), ratings.get(0).getKnowledgePath());
+		assertEquals(PathRating.UNUSUAL, ratings.get(0).getPathRating());
+	}
+	
+	@Test
+	public void remoteRatingsTest() throws TaskInvocationException {
+		runtimeModel.invokeEnsembleTasks();
+		
+		// when publish() is called
+		runtimeModel.knowledgeDataManager.publish();
+		
+		// then ratings data are broadcasted and captured
+		List<RatingsData> data = captureRatingsData();
+		
+		// then data are received
+		runtimeModel.knowledgeDataManager.receive(data, 123);
+		
+		// change the rating so that remote changes are reflected
+		runtimeModel.ratingsManager.update(Arrays.asList(new RatingsChangeSet("X", "P1", RuntimeModelHelper.createKnowledgePath("cityId"), PathRating.OUT_OF_RANGE)));
+		List<RatingsChangeSet> ratings = runtimeModel.ratingsManager.getPendingChangeSets();
+		assertEquals(0, ratings.size());
+		
+		ReadonlyRatingsHolder p1Holder = runtimeModel.ratingsManager.createReadonlyRatingsHolder("P1", RuntimeModelHelper.createKnowledgePath("cityId"));				
+		assertEquals(1, p1Holder.getRatings(PathRating.OUT_OF_RANGE));		
+		assertEquals(1, p1Holder.getRatings(PathRating.UNUSUAL));
+		assertEquals(0, p1Holder.getRatings(PathRating.OK));
+	}
+	
+	
+	
+	@SuppressWarnings("unchecked")
+	private List<KnowledgeData> captureKnowledgeData() {
+		verify(runtimeModel.dataSender).broadcastData(objectCaptor.capture());
+		Object broadcastArgument = objectCaptor.getValue();			
+		List<KnowledgeData> data = (List<KnowledgeData>)broadcastArgument;
+
+		// recalculate signature
+		data.stream().forEach(kd -> {
+			kd.getMetaData().componentId += "_remote";
+			try {
+				kd.getMetaData().signature = runtimeModel.securityHelper.sign(runtimeModel.securityKeyManager.getIntegrityPrivateKey(),
+						kd.getMetaData().componentId, kd.getMetaData().versionId, kd.getMetaData().targetRole);
+			} catch (Exception e) {
+				fail();
+			}
+		});
+		return data;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<RatingsData> captureRatingsData() {
+		verify(runtimeModel.dataSender, times(2)).broadcastData(objectCaptor.capture());
+		Object broadcastArgument = objectCaptor.getValue();			
+		List<RatingsData> data = (List<RatingsData>)broadcastArgument;
+		return data;
 	}
 }

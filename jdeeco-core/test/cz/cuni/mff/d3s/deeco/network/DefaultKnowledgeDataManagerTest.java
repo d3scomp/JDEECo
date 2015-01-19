@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.*;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,6 +21,9 @@ import org.mockito.Captor;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import cz.cuni.mff.d3s.deeco.integrity.PathRating;
+import cz.cuni.mff.d3s.deeco.integrity.RatingsChangeSet;
+import cz.cuni.mff.d3s.deeco.integrity.ReadonlyRatingsHolder;
 import cz.cuni.mff.d3s.deeco.knowledge.*;
 import cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper;
 import cz.cuni.mff.d3s.deeco.security.runtime.SecurityRuntimeModel;
@@ -43,11 +47,11 @@ public class DefaultKnowledgeDataManagerTest {
 	}
 
 	@Test
-	public void publishTest() {
+	public void publishTest1() {
 		// when publish() is called
 		runtimeModel.knowledgeDataManager.publish();
 		
-		// then data are broadcasted
+		// then knowledge data are broadcasted
 		verify(runtimeModel.dataSender).broadcastData(objectCaptor.capture());
 		Object broadcastArgument = objectCaptor.getValue();
 		List<KnowledgeData> data = (List<KnowledgeData>)broadcastArgument;
@@ -65,8 +69,25 @@ public class DefaultKnowledgeDataManagerTest {
 		testPartOfKnowledgeData(data, "P2", new String[] {"id", "cityId"}, new String[] {});
 		testPartOfKnowledgeData(data, "V1", new String[] {}, new String[] {"secret"});
 		testPartOfKnowledgeData(data, "V1", new String[] {"id", "cityId"}, new String[] {});
-		testPartOfKnowledgeData(data, "G1", new String[] {"id"}, new String[] {});
+		testPartOfKnowledgeData(data, "G1", new String[] {"id"}, new String[] {});		
+	}
+	
+	@Test
+	public void publishTest2() {
+		// given ratings manager contains pending changes
+		RatingsChangeSet changeSet1 = new RatingsChangeSet("author", "target", RuntimeModelHelper.createKnowledgePath("level1"), PathRating.OUT_OF_RANGE);
+		RatingsChangeSet changeSet2 = new RatingsChangeSet("author", "target", RuntimeModelHelper.createKnowledgePath("level2"), PathRating.OK);
+		runtimeModel.ratingsManager.addToPendingChangeSets(Arrays.asList(changeSet1, changeSet2));
 		
+		// when publish() is called
+		runtimeModel.knowledgeDataManager.publish();
+		
+		// then ratings data are broadcasted
+		verify(runtimeModel.dataSender, times(2)).broadcastData(objectCaptor.capture());
+		Object broadcastArgument = objectCaptor.getValue();
+		RatingsData ratingsData = ((List<RatingsData>)broadcastArgument).get(0);
+		
+		assertEquals(2, ratingsData.getRatings().size());
 	}
 		
 	private void testPartOfKnowledgeData(List<KnowledgeData> listOfData, String componentId, String[] plainFields, String[] encryptedFields) {
@@ -223,8 +244,47 @@ public class DefaultKnowledgeDataManagerTest {
 		
 		// then update() is called on each replica
 		for (KnowledgeManager km : replicas) {
-			verify(km).update(notNull(ChangeSet.class));
+			verify(km).update(notNull(ChangeSet.class), eq("V_remote"));
 		}
+	}
+	
+	@Test
+	public void prepareRatingsDataTest() {
+		// given ratings manager contains pending changes
+		RatingsChangeSet changeSet1 = new RatingsChangeSet("author", "target", RuntimeModelHelper.createKnowledgePath("level1"), PathRating.OUT_OF_RANGE);
+		RatingsChangeSet changeSet2 = new RatingsChangeSet("author", "target", RuntimeModelHelper.createKnowledgePath("level2"), PathRating.OK);
+		runtimeModel.ratingsManager.addToPendingChangeSets(Arrays.asList(changeSet1, changeSet2));
+		
+		// when prepareRatingsData() is called
+		RatingsData ratingsData = runtimeModel.knowledgeDataManager.prepareRatingsData();
+		
+		// then ratings data are correct
+		assertEquals(2, ratingsData.getRatings().size());
+		
+		// then there are no pending changes in the ratings manager
+		assertTrue(runtimeModel.ratingsManager.getPendingChangeSets().isEmpty());
+	}
+	
+	@Test
+	public void receiveRatingsTest() {
+		// given ratings data are prepared
+		RatingsChangeSet changeSet1 = new RatingsChangeSet("author1", "target", RuntimeModelHelper.createKnowledgePath("level1"), PathRating.OUT_OF_RANGE);
+		RatingsChangeSet changeSet2 = new RatingsChangeSet("author2", "target", RuntimeModelHelper.createKnowledgePath("level1"), PathRating.OK);
+		RatingsMetaData metaData = new RatingsMetaData(123, 4);
+		List<SealedObject> ratings = runtimeModel.knowledgeDataManager.ratingsEncryptor.encryptRatings(Arrays.asList(changeSet1, changeSet2), metaData);
+		RatingsData ratingsData = new RatingsData(ratings, metaData);
+		
+		// when receive() is called
+		runtimeModel.knowledgeDataManager.receive(Arrays.asList(ratingsData), 45);
+		
+		// then ratings manager is updated
+		assertTrue(runtimeModel.ratingsManager.getPendingChangeSets().isEmpty());
+		
+		ReadonlyRatingsHolder holder = runtimeModel.ratingsManager.createReadonlyRatingsHolder("target", RuntimeModelHelper.createKnowledgePath("level1"));
+		assertEquals(1, holder.getRatings(PathRating.OUT_OF_RANGE));
+		assertEquals(1, holder.getRatings(PathRating.OK));
+		assertEquals(0, holder.getRatings(PathRating.UNUSUAL));
+		assertEquals(0, holder.getRatings(null));
 	}
 	
 	private KnowledgeSecurityAnnotation createKnowledgeAnnotation(String roleName) {		
