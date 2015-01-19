@@ -8,7 +8,6 @@
 		<relativePath>../jdeeco-parent/pom.xml</relativePath>
 	</parent>
 	<artifactId>cz.cuni.mff.d3s.jdeeco.simulation.omnet-native</artifactId>
-	<packaging>rar</packaging>
 	<profiles>
 		<profile>
 		<id>linux-build</id>
@@ -152,17 +151,9 @@
 					<resource>
 						<targetPath>.</targetPath>
 						<filtering>false</filtering>
-						<directory>out/gcc-debug/src/</directory>
+						<directory>libs</directory>
 						<includes>
 							<include>*.dll</include>
-						</includes>
-					</resource>
-					<resource>
-						<targetPath>.</targetPath>
-						<filtering>false</filtering>
-						<directory>${omnet}\out\</directory>
-						<includes>
-							<include>**\*.dll</include>
 						</includes>
 					</resource>
 				</resources>
