@@ -25,6 +25,39 @@ cleanall: checkmakefiles
 	cd src && $(MAKE) clean
 	rm -f src/Makefile
 	rm -rf out/
+	rm -rf src/main/resources/*
+	
+install:
+	# Copy libraries
+	
+	# libjdeeco
+	cp out/gcc-debug/src/libjdeeco-omnetpp.dll libs/libjdeeco-omnetppd.dll
+	
+	# omnetpp
+	cp ${OMNETPP_ROOT}/out/gcc-debug/src/cmdenv/liboppcmdenvd.dll libs
+	cp ${OMNETPP_ROOT}/out/gcc-debug/src/common/liboppcommond.dll libs
+	cp ${OMNETPP_ROOT}/out/gcc-debug/src/envir/liboppenvird.dll libs
+	cp ${OMNETPP_ROOT}/out/gcc-debug/src/eventlog/liboppeventlogd.dll libs
+	cp ${OMNETPP_ROOT}/out/gcc-debug/src/layout/libopplayoutd.dll libs
+	cp ${OMNETPP_ROOT}/out/gcc-debug/src/nedxml/liboppnedxmld.dll libs
+	cp ${OMNETPP_ROOT}/out/gcc-debug/src/scave/liboppscaved.dll libs
+	cp ${OMNETPP_ROOT}/out/gcc-debug/src/sim/liboppsimd.dll libs
+	cp ${OMNETPP_ROOT}/out/gcc-debug/src/tkenv/libopptkenvd.dll libs
+	cp ${OMNETPP_ROOT}/out/gcc-release/src/cmdenv/liboppcmdenv.dll libs
+	cp ${OMNETPP_ROOT}/out/gcc-release/src/common/liboppcommon.dll libs
+	cp ${OMNETPP_ROOT}/out/gcc-release/src/envir/liboppenvir.dll libs
+	cp ${OMNETPP_ROOT}/out/gcc-release/src/eventlog/liboppeventlog.dll libs
+	cp ${OMNETPP_ROOT}/out/gcc-release/src/layout/libopplayout.dll libs
+	cp ${OMNETPP_ROOT}/out/gcc-release/src/nedxml/liboppnedxml.dll libs
+	cp ${OMNETPP_ROOT}/out/gcc-release/src/scave/liboppscave.dll libs
+	cp ${OMNETPP_ROOT}/out/gcc-release/src/sim/liboppsim.dll libs
+	cp ${OMNETPP_ROOT}/out/gcc-release/src/tkenv/libopptkenv.dll libs
+	
+	# inet
+	
+	# mixim
+	 
+	
 
 # Create makefiles that allows building mixim without a separate INET installation.
 makefiles:
