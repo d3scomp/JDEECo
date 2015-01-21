@@ -16,121 +16,18 @@
 					<family>Linux</family>
 				</os>
 			</activation>
-			<properties>
-				<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-				<jdk>C:/Progra~2/Java/jdk8</jdk>
-			</properties>
 			<build>
 				<defaultGoal>install</defaultGoal>
-				<plugins>
-					<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-dependency-plugin</artifactId> 
-						<version>2.6</version> <executions> <execution> <phase>initialize</phase> 
-						<goals> <goal>copy-dependencies</goal> </goals> <configuration> <outputDirectory>${deps}</outputDirectory> 
-						<includeScope>compile</includeScope> </configuration> </execution> </executions> 
-						</plugin> -->
-					<!-- plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>native-maven-plugin</artifactId> 
-						<executions> <execution> <goals> <goal>javah</goal> </goals> <configuration> 
-						<javahClassNames> <javahClassName>cz.cuni.mff.d3s.deeco.simulation.omnet.OMNetSimulation</javahClassName> 
-						</javahClassNames> <javahPath>${jdk.home}/bin/javah</javahPath> <javahOutputDirectory>src</javahOutputDirectory> 
-						</configuration> </execution> </executions> </plugin -->
-
-					<plugin>
-						<artifactId>maven-clean-plugin</artifactId>
-						<version>2.5</version>
-						<executions>
-							<execution>
-								<id>clean-javah</id>
-								<goals>
-									<goal>clean</goal>
-								</goals>
-								<phase>clean</phase>
-								<configuration>
-									<filesets>
-										<fileset>
-											<directory>src</directory>
-											<includes>
-												<include>cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulation.h</include>
-											</includes>
-										</fileset>
-									</filesets>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>exec-maven-plugin</artifactId>
-						<version>1.3.1</version>
-						<executions>
-							<execution>
-								<id>exec-make-makefiles</id>
-								<phase>compile</phase>
-								<configuration>
-									<executable>make</executable>
-									<arguments>
-										<argument>makefiles</argument>
-										<argument>JAVA_HOME=${jdk.home}</argument>
-									</arguments>
-								</configuration>
-								<goals>
-									<goal>exec</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>exec-make-all</id>
-								<phase>compile</phase>
-								<configuration>
-									<executable>make</executable>
-									<arguments>
-										<argument>all</argument>
-										<argument>JAVA_HOME=${jdk}</argument>
-									</arguments>
-								</configuration>
-								<goals>
-									<goal>exec</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>exec-make-clean</id>
-								<phase>clean</phase>
-								<configuration>
-									<executable>make</executable>
-									<arguments>
-										<argument>cleanall</argument>
-										<argument>JAVA_HOME=${jdk}</argument>
-									</arguments>
-								</configuration>
-								<goals>
-									<goal>exec</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>build-helper-maven-plugin</artifactId>
-						<version>1.9</version>
-						<executions>
-							<execution>
-								<id>attach-artifacts</id>
-								<phase>package</phase>
-								<goals>
-									<goal>attach-artifact</goal>
-								</goals>
-								<configuration>
-									<artifacts>
-										<artifact>
-											<file>out/gcc-debug/src/libjdeeco-omnetpp.so</file>
-											<type>so</type>
-											<classifier>linux</classifier>
-										</artifact>
-									</artifacts>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
+				<resources>
+					<resource>
+						<targetPath>.</targetPath>
+						<filtering>false</filtering>
+						<directory>libs/current</directory>
+						<includes>
+							<include>*.so</include>
+						</includes>
+					</resource>
+				</resources>
 			</build>
 		</profile>
 		<profile>
@@ -149,9 +46,9 @@
 					<resource>
 						<targetPath>.</targetPath>
 						<filtering>false</filtering>
-						<directory>libs</directory>
+						<directory>libs/current</directory>
 						<includes>
-							<include>**/*.dll</include>
+							<include>*.dll</include>
 						</includes>
 					</resource>
 				</resources>
