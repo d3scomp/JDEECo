@@ -35,7 +35,7 @@ install:
 	
 	# libjdeeco
 	cp out/gcc-debug/src/libjdeeco-omnetpp.dll libs/debug
-#	cp out/gcc-release/src/libjdeeco-omnetpp.dll libs/release
+	cp out/gcc-release/src/libjdeeco-omnetpp.dll libs/release
 	
 	# omnetpp
 	cp ${OMNETPP_ROOT}/out/gcc-debug/src/cmdenv/liboppcmdenvd.dll libs/debug
@@ -60,9 +60,11 @@ install:
 	
 	# inet
 	cp ${INET_DIR}/out/gcc-debug/src/libinet.dll libs/debug
+	cp ${INET_DIR}/out/gcc-release/src/libinet.dll libs/release
 	
 	# mixim
 	cp ${MIXIM_DIR}/out/gcc-debug/src/libmixim.dll libs/debug
+	cp ${MIXIM_DIR}/out/gcc-release/src/libmixim.dll libs/release
 	
 
 # Create makefiles that allows building mixim without a separate INET installation.
