@@ -418,12 +418,12 @@ public class AnnotationProcessor {
 			
 			Set<Class<?>> roles = new HashSet<>();
 			for (HasRole role : clazz.getDeclaredAnnotationsByType(HasRole.class)) {
-				if (roles.contains(role.roleClass())) {
+				if (roles.contains(role.value())) {
 					throw new AnnotationProcessorException("The same role cannot be assigned multiply to a component.");
 				}
-				SecurityRole securityRole = createRoleFromClassDefinition(role.roleClass(), km, true);
+				SecurityRole securityRole = createRoleFromClassDefinition(role.value(), km, true);
 				componentInstance.getRoles().add(securityRole);
-				roles.add(role.roleClass());
+				roles.add(role.value());
 			}
 			
 			callExtensions(ParsingEvent.ON_COMPONENT_CREATION, componentInstance, getUnknownAnnotations(clazz));
@@ -458,7 +458,7 @@ public class AnnotationProcessor {
 	}
 
 	/**
-	 * Parses the class used as a role definition
+	 * Parses the class used as a role definition and returns the {@link SecurityRole} created from the class.
 	 * @param roleClass the class from annotation
 	 * @return
 	 * @throws AnnotationProcessorException
@@ -472,15 +472,18 @@ public class AnnotationProcessor {
 		SecurityRole securityRole = factory.createSecurityRole();
 		securityRole.setRoleName(roleClass.getName());		
 		
+		// create parent roles recursively
 		for (Class<?> iface : roleClass.getInterfaces()) {
 			securityRole.getConsistsOf().add(createRoleFromClassDefinition(iface, knowledgeManager, false));
 		}
 		
+		// select only fields decorated with @RoleParam
 		List<Field> fieldParameters = Arrays.stream(roleClass.getFields())
 				.filter(field -> field.getAnnotationsByType(RoleParam.class).length > 0)				
 				.collect(Collectors.toList());
 		
 		for (Field field : fieldParameters) {
+			// check if the field is not overriden by another field
 			if (!isValidForRole(field, fieldParameters, securityRole)) {
 				continue;
 			}			
@@ -495,9 +498,12 @@ public class AnnotationProcessor {
 				throw new AnnotationProcessorException("Cannot read path from security role argument "+field.getName(), e);
 			}
 			
+			// create appropriate argument from the field value
 			SecurityRoleArgument argument = createSecurityRoleArgument(field, fieldValue);						
 			
 			securityRole.getArguments().add(argument);
+			
+			// override argument values in parent roles
 			for (SecurityRole role : securityRole.getConsistsOf()) {
 				overrideArgument(argument, role);
 			}			
@@ -597,7 +603,7 @@ public class AnnotationProcessor {
 	}
 
 	/**
-	 * Checks whether the given field is an applicable argument for the role
+	 * Checks whether the given field is an applicable argument for the role (not being overriden).
 	 * @param field
 	 * @param fieldParameters
 	 * @param securityRole
@@ -639,14 +645,14 @@ public class AnnotationProcessor {
 			Set<Class<?>> roleClasses = new HashSet<>();
 			
 			for (Allow allow : allows) {
-				if (roleClasses.contains(allow.roleClass())) {
-					throw new AnnotationProcessorException("Cannot assign the same role " + allow.roleClass().getSimpleName() + " multiple times.");
+				if (roleClasses.contains(allow.value())) {
+					throw new AnnotationProcessorException("Cannot assign the same role " + allow.value().getSimpleName() + " multiple times.");
 				}
 				
 				KnowledgeSecurityTag tag = factory.createKnowledgeSecurityTag();
-				tag.setRequiredRole(createRoleFromClassDefinition(allow.roleClass(), km, true));
+				tag.setRequiredRole(createRoleFromClassDefinition(allow.value(), km, true));
 				km.addSecurityTag(kp, tag);			
-				roleClasses.add(allow.roleClass());				
+				roleClasses.add(allow.value());				
 			}
 			
 		}		

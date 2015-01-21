@@ -33,7 +33,7 @@ public class SecurityKeyManagerImplTest {
 	
 	@Test
 	public void getPublicKeyTest1() throws InvalidKeyException, CertificateEncodingException, KeyStoreException, NoSuchAlgorithmException, SecurityException, SignatureException, IllegalStateException {
-		assertNotNull(target.getPublicKeyFor("role1", null));
+		assertNotNull(target.getPublicKey("role1", null));
 	}
 	
 	@Test
@@ -41,11 +41,11 @@ public class SecurityKeyManagerImplTest {
 		Map<String, Object> args = new HashMap<>();
 		args.put("x", "xvalue");
 
-		Key key1 = target.getPublicKeyFor("role1", null);
-		Key key2 = target.getPublicKeyFor("role1", args);
+		Key key1 = target.getPublicKey("role1", null);
+		Key key2 = target.getPublicKey("role1", args);
 		
 		args.put("y", null);
-		Key key3 = target.getPublicKeyFor("role1", args);
+		Key key3 = target.getPublicKey("role1", args);
 		
 		assertNotNull(key2);
 		assertNotEquals(key1, key2);
@@ -55,12 +55,12 @@ public class SecurityKeyManagerImplTest {
 	
 	@Test
 	public void getPublicKeyTest3() throws InvalidKeyException, CertificateEncodingException, KeyStoreException, NoSuchAlgorithmException, SecurityException, SignatureException, IllegalStateException {
-		assertEquals(target.getPublicKeyFor("role1", null), target.getPublicKeyFor("role1", null));
+		assertEquals(target.getPublicKey("role1", null), target.getPublicKey("role1", null));
 	}
 	
 	@Test
 	public void getPrivateKeyTest1() throws InvalidKeyException, CertificateEncodingException, KeyStoreException, NoSuchAlgorithmException, SecurityException, SignatureException, IllegalStateException {
-		assertNotNull(target.getPrivateKeyFor("role1", null));
+		assertNotNull(target.getPrivateKey("role1", null));
 	}
 	
 	@Test(expected = Throwable.class)
@@ -70,12 +70,12 @@ public class SecurityKeyManagerImplTest {
 		Map<String, Object> args = new HashMap<>();
 		args.put("x", "xvalue");
 		Cipher decryptCipher = Cipher.getInstance("RSA");
-		decryptCipher.init(Cipher.DECRYPT_MODE, target.getPrivateKeyFor("role1", args));
+		decryptCipher.init(Cipher.DECRYPT_MODE, target.getPrivateKey("role1", args));
 		
 		args = new HashMap<>();
 		args.put("x", null);
 		Cipher encryptCipher = Cipher.getInstance("RSA");
-		encryptCipher.init(Cipher.ENCRYPT_MODE, target.getPublicKeyFor("role1", args));
+		encryptCipher.init(Cipher.ENCRYPT_MODE, target.getPublicKey("role1", args));
 		
 		byte[] cipherText = encryptCipher.doFinal(text.getBytes());
 		byte[] decipheredText = decryptCipher.doFinal(cipherText);
@@ -88,10 +88,10 @@ public class SecurityKeyManagerImplTest {
 		String text = "hello";
 		
 		Cipher decryptCipher = Cipher.getInstance("RSA");
-		decryptCipher.init(Cipher.DECRYPT_MODE, target.getPrivateKeyFor("role1", null));
+		decryptCipher.init(Cipher.DECRYPT_MODE, target.getPrivateKey("role1", null));
 		
 		Cipher encryptCipher = Cipher.getInstance("RSA");
-		encryptCipher.init(Cipher.ENCRYPT_MODE, target.getPublicKeyFor("role1", null));
+		encryptCipher.init(Cipher.ENCRYPT_MODE, target.getPublicKey("role1", null));
 		
 		byte[] cipherText = encryptCipher.doFinal(text.getBytes());
 		byte[] decipheredText = decryptCipher.doFinal(cipherText);

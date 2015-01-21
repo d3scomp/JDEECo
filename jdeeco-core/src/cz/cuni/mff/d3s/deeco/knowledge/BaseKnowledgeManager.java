@@ -36,6 +36,7 @@ import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper;
  * 
  * @author Rima Al Ali <alali@d3s.mff.cuni.cz>
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
+ * @author Ondřej Štumpf
  * 
  */
 @SuppressWarnings("unchecked")
@@ -62,16 +63,26 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		this.lockedKnowledgePaths = new HashSet<>();
 	}
 
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager#getId()
+	 */
 	@Override
 	public String getId() {
 		return this.id;
 	}
 
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager#getComponent()
+	 */
 	@Override
 	public ComponentInstance getComponent() {
 		return component;
 	}
 	
+	
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager#getAuthor(cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath)
+	 */
 	@Override
 	public String getAuthor(KnowledgePath knowledgePath) {
 		if (!KnowledgePathHelper.isAbsolutePath(knowledgePath)) {
@@ -158,6 +169,9 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager#update(cz.cuni.mff.d3s.deeco.knowledge.ChangeSet)
+	 */
 	@Override
 	public void update(final ChangeSet changeSet) throws KnowledgeUpdateException {
 		update(changeSet, getId());
@@ -239,6 +253,10 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		}
 	}
 
+	/**
+	 * Removes authors of the given knowledge paths.
+	 * @param knowledgePaths
+	 */
 	private void deleteAuthors(Collection<KnowledgePath> knowledgePaths) {
 		List<KnowledgePath> listToRemove = new LinkedList<>();
 		
@@ -255,6 +273,12 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		knowledgeAuthors.keySet().removeAll(listToRemove);
 	}	
 	
+	/**
+	 * Sets the author fot the given knowlege path.
+	 * @param updateKP
+	 * @param authorId
+	 * @param updatedAuthors
+	 */
 	private void updateAuthors(KnowledgePath updateKP, String authorId, Map<KnowledgePath, String> updatedAuthors) {
 		knowledgeAuthors.put(updateKP, authorId);
 		updatedAuthors.put(updateKP, authorId);
@@ -668,6 +692,9 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager#markAsLocal(java.util.Collection)
+	 */
 	@Override
 	public void markAsLocal(Collection<KnowledgePath> knowledgePaths) {
 		for (KnowledgePath path : knowledgePaths) {
@@ -680,16 +707,25 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		localKnowledgePaths.addAll(knowledgePaths);
 	}
 
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager#isLocal(cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath)
+	 */
 	@Override
 	public boolean isLocal(KnowledgePath knowledgePath) {
 		return localKnowledgePaths.contains(knowledgePath);
 	}
 
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager#getLocalPaths()
+	 */
 	@Override
 	public Collection<KnowledgePath> getLocalPaths() {
 		return localKnowledgePaths;
 	}
 
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager#addSecurityTag(cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath, cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityTag)
+	 */
 	@Override
 	public void addSecurityTag(KnowledgePath knowledgePath, SecurityTag newSecurityTag) {
 		if (knowledgePath.getNodes().size() != 1) {
@@ -708,6 +744,9 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		securityTags.get(pathNode).add(newSecurityTag);	
 	}
 	
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager#setSecurityTags(cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath, java.util.Collection)
+	 */
 	@Override
 	public void setSecurityTags(KnowledgePath knowledgePath, Collection<SecurityTag> newSecurityTags) {	
 		if (knowledgePath.getNodes().size() != 1) {
@@ -723,6 +762,9 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		securityTags.get(pathNode).addAll(newSecurityTags);	
 	}
 	
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager#getKnowledgeSecurityTags(cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField)
+	 */
 	@Override
 	public List<KnowledgeSecurityTag> getKnowledgeSecurityTags(PathNodeField pathNodeField) {		
 		List<SecurityTag> result = securityTags.get(pathNodeField);
@@ -733,6 +775,9 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager#getSecurityTags(cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField)
+	 */
 	@Override
 	public List<SecurityTag> getSecurityTags(PathNodeField pathNodeField) {		
 		List<SecurityTag> result = securityTags.get(pathNodeField);
@@ -743,6 +788,9 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager#isLocked(cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath)
+	 */
 	@Override
 	public boolean isLocked(KnowledgePath knowledgePath) {
 		if (!KnowledgePathHelper.isAbsolutePath(knowledgePath)) {
@@ -751,6 +799,9 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		return this.lockedKnowledgePaths.contains(knowledgePath);
 	}
 
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager#lockKnowledgePath(cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath)
+	 */
 	@Override
 	public void lockKnowledgePath(KnowledgePath knowledgePath) {
 		if (!KnowledgePathHelper.isAbsolutePath(knowledgePath)) {

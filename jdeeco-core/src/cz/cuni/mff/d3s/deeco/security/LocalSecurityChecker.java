@@ -22,26 +22,43 @@ import cz.cuni.mff.d3s.deeco.task.TaskInvocationException;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.PathRoot;
 
 /**
- * 
+ * Performs security checks before knowledge exchange between two local components.
  * @author Ondřej Štumpf
  */
 public class LocalSecurityChecker {
 	
-	/**
-	 * Reference to the corresponding {@link KnowledgeManagerContainer} 
-	 */
+	/** Reference to the corresponding {@link KnowledgeManagerContainer}. */
 	KnowledgeManagerContainer kmContainer;
 	
-	/**
-	 * Reference to the corresponding {@link EnsembleController} 
-	 */
+	/** Reference to the corresponding {@link EnsembleController}. */
 	EnsembleController ensembleController;
 	
+	/**
+	 * Instantiates a new local security checker.
+	 *
+	 * @param ensembleController
+	 *            the ensemble controller
+	 * @param kmContainer
+	 *            the km container
+	 */
 	public LocalSecurityChecker(EnsembleController ensembleController, KnowledgeManagerContainer kmContainer) {
 		this.ensembleController = ensembleController;
 		this.kmContainer = kmContainer;		
 	}
 	
+	/**
+	 * Checks if all knowledge paths used in the membership and knowledge
+	 * exchange are secured in such way which enables the local component to
+	 * access them.
+	 *
+	 * @param localRole
+	 *            the role of the local component (member/coord)
+	 * @param shadowKnowledgeManager
+	 *            the shadow knowledge manager
+	 * @return true if the local component has such roles that allow it to access the knowledge
+	 * @throws TaskInvocationException
+	 *             the task invocation exception
+	 */
 	public boolean checkSecurity(PathRoot localRole, ReadOnlyKnowledgeManager shadowKnowledgeManager) throws TaskInvocationException {
 		boolean canAccess;
 		
@@ -69,12 +86,23 @@ public class LocalSecurityChecker {
 		return canAccess && compromitationErrors.isEmpty();
 	}
 
+	/**
+	 * Checks if the set of knowledge paths is secured in such way which enables the local component to
+	 * access them.
+	 * @param localRole
+	 * 			the role of the local component (member/coord)
+	 * @param paths
+	 * 			the knowledge paths
+	 * @param shadowKnowledgeManager
+	 * 			the shadow knowledge manager
+	 * @return true if the local component has such roles that allow it to access the knowledge
+	 */
 	private boolean canAccessKnowledge(PathRoot localRole, Collection<KnowledgePath> paths, ReadOnlyKnowledgeManager shadowKnowledgeManager) {
-		// shadowKnowledgeManager is actually local and therefore has associated knowledge security tags
 		KnowledgeManager localKnowledgeManager = ensembleController.getComponentInstance().getKnowledgeManager();
 		
 		boolean canAccessAll = true;
 		
+		// verify each of the paths
 		for (KnowledgePath kp : paths) {		
 			Map<SecurityTag, ReadOnlyKnowledgeManager> securityTagManager = new HashMap<>();
 			SecurityTagCollection securityTagCollection = SecurityTagCollection.getSecurityTags(localRole, kp, localKnowledgeManager, shadowKnowledgeManager, securityTagManager);
@@ -98,6 +126,9 @@ public class LocalSecurityChecker {
 		return canAccessAll;
 	}
 	
+	/**
+	 * Checks whether the local component has role to access the given security tag.
+	 */
 	private boolean canAccessTag(KnowledgeSecurityTag securityTag, ReadOnlyKnowledgeManager localKnowledgeManager, ReadOnlyKnowledgeManager shadowKnowledgeManager, 
 			Map<SecurityTag, ReadOnlyKnowledgeManager> securityTagManager) {
 		ReadOnlyKnowledgeManager accessingKnowledgeManager, protectingKnowledgeManager;
@@ -110,9 +141,11 @@ public class LocalSecurityChecker {
 			accessingKnowledgeManager = localKnowledgeManager;
 		}
 		
+		// get the roles transitive closure
 		List<SecurityRole> localRoles = RoleHelper.getTransitiveRoles(accessingKnowledgeManager.getComponent().getRoles());
 		boolean canAccessTag = false;
 		
+		// try each of the roles
 		for (SecurityRole role : localRoles) {
 			try {
 				String roleName = role.getRoleName();
@@ -123,7 +156,7 @@ public class LocalSecurityChecker {
 				
 				canAccessTag = canAccessTag || (roleName.equals(tagName) && RoleHelper.roleArgumentsMatch(roleArguments, tagArguments));
 			} catch (KnowledgeNotFoundException e) { 
-				
+				// do nothing
 			}	
 		}
 		return canAccessTag;

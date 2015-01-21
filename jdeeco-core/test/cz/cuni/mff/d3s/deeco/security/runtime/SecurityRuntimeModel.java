@@ -77,7 +77,7 @@ public class SecurityRuntimeModel {
 		public String id;
 		public String cityId;
 		
-		@Allow(roleClass = PoliceInCity.class)
+		@Allow(PoliceInCity.class)
 		public String secret;
 		
 		public VehicleComponent(String id, String cityId, String secret) {
@@ -89,7 +89,7 @@ public class SecurityRuntimeModel {
 	}
 	
 	@Component 
-	@HasRole(roleClass = PoliceInCity.class)
+	@HasRole(PoliceInCity.class)
 	public static class PoliceComponent  {
 		public String id;
 		public String cityId;
@@ -120,7 +120,7 @@ public class SecurityRuntimeModel {
 	}
 	
 	@Component 
-	@HasRole(roleClass = PoliceEverywhere.class)
+	@HasRole(PoliceEverywhere.class)
 	public static class GlobalPoliceComponent  {
 		public String id;
 		

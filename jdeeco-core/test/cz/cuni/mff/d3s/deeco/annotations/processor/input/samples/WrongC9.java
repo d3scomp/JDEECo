@@ -11,7 +11,7 @@ import cz.cuni.mff.d3s.deeco.annotations.RoleDefinition;
  */
 
 @Component
-@HasRole(roleClass = WrongC9.Role1.class)
+@HasRole(WrongC9.Role1.class)
 public class WrongC9 {
 
 	@RoleDefinition
@@ -20,7 +20,7 @@ public class WrongC9 {
 	}
 	
 	// local knowledge cannot be secured
-	@Allow(roleClass = Role1.class)
+	@Allow(Role1.class)
 	@Local
 	public Integer capacity;
 	

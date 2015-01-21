@@ -21,7 +21,7 @@ public class WrongC12 {
 		public static String nonexisting_param = "[no_such_parameter]";
 	}
 	
-	@Allow(roleClass = Role1.class)
+	@Allow(Role1.class)
 	public Integer securedCapacity;
 	
 	public Integer capacity;

@@ -94,9 +94,9 @@ public class KnowledgeEncryptorTest {
 		testrole1PrivateKey = role1Pair.getPrivate();
 		
 		keyManagerMock = mock(SecurityKeyManager.class);
-		when(keyManagerMock.getPublicKeyFor(eq("testrole1"), anyObject())).thenReturn(testrole1PublicKey);		
-		when(keyManagerMock.getPrivateKeyFor(eq("testrole1"), anyObject())).thenReturn(testrole1PrivateKey);
-		when(keyManagerMock.getPublicKeyFor(eq("testrole2"), anyObject())).thenReturn(testrole2PublicKey);
+		when(keyManagerMock.getPublicKey(eq("testrole1"), anyObject())).thenReturn(testrole1PublicKey);		
+		when(keyManagerMock.getPrivateKey(eq("testrole1"), anyObject())).thenReturn(testrole1PrivateKey);
+		when(keyManagerMock.getPublicKey(eq("testrole2"), anyObject())).thenReturn(testrole2PublicKey);
 		when(keyManagerMock.getIntegrityPublicKey()).thenReturn(integrityPair.getPublic());
 		when(keyManagerMock.getIntegrityPrivateKey()).thenReturn(integrityPair.getPrivate());
 		

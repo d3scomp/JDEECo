@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Used to decorate a knowledge field with access restrictions 
+ * Container of {@link Allow} annotations, required by Java to enable repeatable annotations.
  * 
  * @author Ondřej Štumpf
  * 

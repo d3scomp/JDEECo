@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Used to mark a method that performs an integrity check on component instance.
+ * Used to mark a method that performs an the rating in a component definition.
  * 
  * @author Ondřej Štumpf
  * 

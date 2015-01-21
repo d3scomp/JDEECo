@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 /**
- * 
+ * Ratings meta data.
  * @author Ondřej Štumpf
  *
  */

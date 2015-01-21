@@ -8,8 +8,9 @@ import java.lang.annotation.Target;
 
 
 /**
- * Used to decorate a knowledge field with access restrictions 
- * 
+ * Used to decorate a knowledge field with access restrictions. The parameter
+ * is the security interface, i.e. interface decorated with {@link RoleDefinition} with possible parameters {@link RoleParam}. 
+ * This annotation can be used multiple times on the same field.
  * @author Ondřej Štumpf
  * 
  */
@@ -18,5 +19,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 @Repeatable(value=AllowMultiple.class)
 public @interface Allow {
-	Class<?> roleClass();
+	Class<?> value();
 }

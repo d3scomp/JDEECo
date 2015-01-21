@@ -21,7 +21,7 @@ public class WrongC11 {
 		
 	}
 	
-	@Allow(roleClass = Role1.class)
+	@Allow(Role1.class)
 	public Integer securedCapacity;
 	
 	public Integer capacity;

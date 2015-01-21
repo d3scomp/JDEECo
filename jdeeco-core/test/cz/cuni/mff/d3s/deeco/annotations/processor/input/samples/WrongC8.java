@@ -10,7 +10,7 @@ import cz.cuni.mff.d3s.deeco.annotations.RoleDefinition;
  */
 
 @Component
-@HasRole(roleClass = WrongC8.Role1.class)
+@HasRole(WrongC8.Role1.class)
 public class WrongC8 {
 
 	@RoleDefinition
@@ -19,8 +19,8 @@ public class WrongC8 {
 	}
 	
 	// the same role assigned multiply
-	@Allow(roleClass = Role1.class)
-	@Allow(roleClass = Role1.class)
+	@Allow(Role1.class)
+	@Allow(Role1.class)
 	public Integer capacity;
 	
 }

@@ -514,6 +514,12 @@ public class EnsembleTask extends Task {
 		return true;
 	}
 
+	/**
+	 * Invokes the method marked with the {@link RatingsProcess} annotation.
+	 * @param shadowComponentId
+	 * 			the ID of the shadow component
+	 * @throws TaskInvocationException
+	 */
 	private void invokeRatingsProcess(String shadowComponentId) throws TaskInvocationException {
 		ComponentInstance component = ensembleController.getComponentInstance();
 		KnowledgeManager knowledgeManager = component.getKnowledgeManager();
@@ -541,6 +547,7 @@ public class EnsembleTask extends Task {
 						String.format("Knowledge path (%s) could not be resolved.", e.getNotFoundPath()), e);
 			}
 			
+			// only IN and RATING params are allowed
 			if (paramDir == ParameterKind.IN) {
 				inPaths.add(absoluteKnowledgePath);
 			}
@@ -597,6 +604,7 @@ public class EnsembleTask extends Task {
 			// Call the rating process method
 			process.getMethod().invoke(null, actualParams);
 			
+			// update the ratings container and prepare the change set for distribution
 			List<RatingsChangeSet> changes = ratingsManager.createRatingsChangeSet(ratingsHolders);
 			ratingsManager.update(changes);
 			ratingsManager.addToPendingChangeSets(changes);

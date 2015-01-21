@@ -10,7 +10,7 @@ import java.util.List;
 import javax.crypto.SealedObject;
 
 /**
- * 
+ * Container of ratings data that is sent across network.
  * @author Ondřej Štumpf
  *
  */

@@ -13,8 +13,8 @@ import cz.cuni.mff.d3s.deeco.annotations.RoleParam;
  */
 
 @Component
-@HasRole(roleClass = CorrectC4.Role1.class)
-@HasRole(roleClass = CorrectC4.Role2.class)
+@HasRole(CorrectC4.Role1.class)
+@HasRole(CorrectC4.Role2.class)
 public class CorrectC4 {
 
 	@RoleDefinition
@@ -43,10 +43,10 @@ public class CorrectC4 {
 	
 	public String name;
 	
-	@Allow(roleClass = Role1.class)
-	@Allow(roleClass = Role3.class)
+	@Allow(Role1.class)
+	@Allow(Role3.class)
 	public Integer capacity;
 	
-	@Allow(roleClass = Role2.class)
+	@Allow(Role2.class)
 	public Date time;
 }

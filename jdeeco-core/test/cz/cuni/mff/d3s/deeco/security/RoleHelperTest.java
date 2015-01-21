@@ -134,7 +134,7 @@ public class RoleHelperTest {
 	
 	@Test
 	public void argumentsRoleMatchTest5() {
-		// when key sets are not equal
+		// when the role contains an extra parameter
 		Map<String, Object> roleArguments = new HashMap<>();
 		roleArguments.put("x", null);
 		roleArguments.put("y", "y");
@@ -143,9 +143,25 @@ public class RoleHelperTest {
 		Map<String, Object> tagArguments = new HashMap<>();
 		tagArguments.put("x", null);
 		tagArguments.put("y", "y");
+				
+		// then true is returned
+		assertTrue(RoleHelper.roleArgumentsMatch(roleArguments, tagArguments));
+	}
+	
+	@Test
+	public void argumentsRoleMatchTest6() {
+		// when the tag contains an extra parameter
+		Map<String, Object> roleArguments = new HashMap<>();
+		roleArguments.put("x", null);
+		roleArguments.put("y", "y");
+				
+		Map<String, Object> tagArguments = new HashMap<>();
+		tagArguments.put("x", null);
+		tagArguments.put("y", "y");
+		tagArguments.put("z", Arrays.asList(1,2,3));
 		
 		// then false is returned
-		assertFalse(RoleHelper.roleArgumentsMatch(roleArguments, tagArguments));
+		assertTrue(RoleHelper.roleArgumentsMatch(roleArguments, tagArguments));
 	}
 	
 	@Test

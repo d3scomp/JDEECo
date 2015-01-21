@@ -21,7 +21,6 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
-import cz.cuni.mff.d3s.deeco.security.ModelSecurityValidator;
 
 /**
  * The implementation of {@link Task} that corresponds to a component process. This class is responsible for (a) registering triggers with the
@@ -92,6 +91,7 @@ public class ProcessTask extends Task {
 	 * @throws TaskInvocationException signifies a problem in executing the task including the case when parameters cannot be retrieved from / updated in
 	 * the knowledge manager.
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void invoke(Trigger trigger) throws TaskInvocationException {
 		// Obtain parameters from the knowledge

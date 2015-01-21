@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -34,7 +33,9 @@ import cz.cuni.mff.d3s.deeco.network.KnowledgeSecurityAnnotation;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper;
 
 /**
- * @author Ondřej Štumpf  
+ * The class managing encryption and decryption of {@link KnowledgeData}.
+ *
+ * @author Ondřej Štumpf
  */
 public class KnowledgeEncryptor {
 	
@@ -42,40 +43,63 @@ public class KnowledgeEncryptor {
 	private final SecurityHelper securityHelper;
 	private final RemoteSecurityChecker securityChecker;
 	
+	/**
+	 * Instantiates a new knowledge encryptor.
+	 *
+	 * @param keyManager
+	 *            the private/public key manager
+	 */
 	public KnowledgeEncryptor(SecurityKeyManager keyManager) {
 		this.keyManager = keyManager;
 		this.securityHelper = new SecurityHelper();
 		this.securityChecker = new RemoteSecurityChecker();
 	}
 	
-	@SuppressWarnings("unchecked")
+
+	/**
+	 * Attempts to decrypt the given {@link KnowledgeData}, using roles available for the given replica.
+	 *
+	 * @param kd
+	 *            the knowledge data (as received)
+	 * @param replica
+	 *            the replica (the component attempting to access the data)
+	 * @param metaData
+	 *            the meta data (as received)
+	 * @return the knowledge data with knowledge and security tags data decrypted (or removed if decryption failed)
+	 */	
 	public KnowledgeData decryptValueSet(KnowledgeData kd, KnowledgeManager replica, KnowledgeMetaData metaData) {
 		if (kd == null) return null;
 		
 		ValueSet decryptedKnowledge = decrypt(kd.getKnowledge(), replica, metaData);	
 		ValueSet decryptedSecuritySet = decrypt(kd.getSecuritySet(), replica, metaData);
 		
-		// replace lists of serializable roles with actual security tags
-		for (KnowledgePath path : decryptedSecuritySet.getKnowledgePaths()) {
-			List<KnowledgeSecurityTag> tags = (List<KnowledgeSecurityTag>)decryptedSecuritySet.getValue(path);			
-			decryptedSecuritySet.setValue(path, tags);
-		}
-		
 		return new KnowledgeData(decryptedKnowledge, decryptedSecuritySet, metaData);
 	}
 	
+	/**
+	 * Attempts to decrypt the {@link SealedObject} sealed objects present in the given {@link ValueSet}. 
+	 * @param valueSet
+	 *			the value set to decrypt
+	 * @param replica
+	 *  		the component attempting to decrypt
+	 * @param metaData
+	 * 			the meta data containing security information
+	 * @return the value set containing those knowledge paths that either were not encrypted or their decryption succeeded
+	 */
 	private ValueSet decrypt(ValueSet valueSet, KnowledgeManager replica, KnowledgeMetaData metaData) {
 		ValueSet result = new ValueSet();
 		for (KnowledgePath kp : valueSet.getKnowledgePaths()) {
 			Object value = valueSet.getValue(kp);
 			if (value instanceof SealedObject) {
 				try {
+					// attempt to decrypt the knowledge
 					Object decryptedValue = accessValue((SealedObject)value, replica, metaData);
 					result.setValue(kp, decryptedValue);					
 				} catch (KnowledgeNotFoundException | SecurityException e) {
 					// do nothing
 				}
 			} else {
+				// knowledge not encrypted
 				result.setValue(kp, value);
 			}
 		}	
@@ -83,6 +107,20 @@ public class KnowledgeEncryptor {
 		return result;
 	}
 
+	/**
+	 * Encrypts the value set, i.e. splits it into several {@link KnowledgeData} instances, each encrypted with different key.
+	 * There is a KnowledgeData instance for each {@link KnowledgeSecurityTag} used in the value set. 
+	 *
+	 * @param valueSet
+	 *            the value set
+	 * @param knowledgeManager
+	 *            the knowledge manager
+	 * @param metaData
+	 *            the meta data
+	 * @return the list of knowledge data instances
+	 * @throws KnowledgeNotFoundException
+	 *             the knowledge not found exception
+	 */
 	public List<KnowledgeData> encryptValueSet(ValueSet valueSet, KnowledgeManager knowledgeManager, KnowledgeMetaData metaData) throws KnowledgeNotFoundException {
 		if (valueSet == null) return null;
 		
@@ -95,8 +133,8 @@ public class KnowledgeEncryptor {
 				throw new IllegalArgumentException("The value set must contain only absolute knowledge paths.");
 			}
 			
-			List<KnowledgeSecurityTag> tags = knowledgeManager.getKnowledgeSecurityTags((PathNodeField)kp.getNodes().get(0)).stream()
-					.filter(t -> t instanceof KnowledgeSecurityTag).map(t -> (KnowledgeSecurityTag)t ).collect(Collectors.toList());
+			// get the security tags for the given knowledge path
+			List<KnowledgeSecurityTag> tags = knowledgeManager.getKnowledgeSecurityTags((PathNodeField)kp.getNodes().get(0));
 			securityTagsMap.put(kp, tags);
 			
 			if (tags == null || tags.isEmpty()) {
@@ -138,6 +176,17 @@ public class KnowledgeEncryptor {
 		return result;
 	}
 	
+	/**
+	 * Attempts to decrypt given {@link SealedObject} with roles assigned to the given component.
+	 * @param sealedObject
+	 * 			the object to decrypt
+	 * @param replica
+	 * 			the component
+	 * @param metaData
+	 * 			the metadata as received
+	 * @return
+	 * @throws KnowledgeNotFoundException
+	 */
 	private Object accessValue(SealedObject sealedObject, KnowledgeManager replica, KnowledgeMetaData metaData) throws KnowledgeNotFoundException {
 		// verify signature on metadata
 		boolean verificationSucceeded = false;
@@ -145,18 +194,23 @@ public class KnowledgeEncryptor {
 			verificationSucceeded = securityHelper.verify(metaData.signature, keyManager.getIntegrityPublicKey(), metaData.componentId, metaData.versionId, metaData.targetRole);
 		} catch (InvalidKeyException | CertificateEncodingException
 				| SignatureException | NoSuchAlgorithmException
-				| KeyStoreException | SecurityException | IllegalStateException e1) { }
+				| KeyStoreException | SecurityException | IllegalStateException e1) {
+			verificationSucceeded = false;
+		}
 		
 		if (!verificationSucceeded) {
 			throw new SecurityException();
 		}
 		
 		Object value = null;
-		boolean encryptionSucceeded = false;
+		boolean decryptionSucceeded = false;
 		
+		// gets the roles transitive closure
 		List<SecurityRole> transitiveRoles = RoleHelper.getTransitiveRoles(replica.getComponent().getRoles());
 		
+		// try each role, if it can decrypt the data
 		for (SecurityRole role : transitiveRoles) {
+			// perform local security check
 			if (!securityChecker.checkSecurity(role, metaData.targetRole, replica.getComponent().getKnowledgeManager())) {
 				continue;
 			}
@@ -165,25 +219,27 @@ public class KnowledgeEncryptor {
 			Map<String, Object> arguments = metaData.targetRole.getRoleArguments();
 			
 			try {
-				Key privateKey = keyManager.getPrivateKeyFor(roleName, arguments);				
+				Key privateKey = keyManager.getPrivateKey(roleName, arguments);				
 				Key decryptedSymmetricKey = securityHelper.decryptKey(metaData.encryptedKey, metaData.encryptedKeyAlgorithm, privateKey);
 				value = sealedObject.getObject(securityHelper.getSymmetricCipher(Cipher.DECRYPT_MODE, decryptedSymmetricKey));
 				
-				encryptionSucceeded = true;				
-				break; // decryption succeeded - we have a value
+				decryptionSucceeded = true;				
+				break; 
 			} catch (InvalidKeyException | ClassNotFoundException
 					| IllegalBlockSizeException | BadPaddingException
 					| NoSuchAlgorithmException | NoSuchPaddingException
 					| IOException | ShortBufferException | CertificateEncodingException | KeyStoreException | SecurityException 
-					| SignatureException | IllegalStateException e) { }		
+					| SignatureException | IllegalStateException e) {
+				decryptionSucceeded = false;
+			}		
 		}
 		
-		if (!encryptionSucceeded) {
+		if (!decryptionSucceeded) {
 			throw new SecurityException();
 		}
 		return value;
 	}
-
+	
 	private void addToSecurityMap(ValueSet basicValueSet,
 			Map<KnowledgeSecurityTag, ValueSet> securityMap,
 			KnowledgeSecurityTag tag, KnowledgePath kp) {
@@ -193,14 +249,28 @@ public class KnowledgeEncryptor {
 		securityMap.get(tag).setValue(kp, basicValueSet.getValue(kp));
 	}
 	
+	/**
+	 * Creates an instance of {@link Cipher} for the given security tag and modifies the given metadata instance accordingly.
+	 * @param knowledgeManager
+	 * 			the knowledge manager containing data referenced by the security role
+	 * @param tag
+	 * 			the security tag
+	 * @param metaData
+	 * 			the metadata
+	 * @return the cipher
+	 */
 	private Cipher prepareCipher(KnowledgeManager knowledgeManager, KnowledgeSecurityTag tag, KnowledgeMetaData metaData) {
 		try {
 			String roleName = tag.getRequiredRole().getRoleName();
 			Map<String, Object> arguments = RoleHelper.readRoleArguments(tag.getRequiredRole(), knowledgeManager);
 			
-			Key publicKey = keyManager.getPublicKeyFor(roleName, arguments);			
+			// get the public key for the given role
+			Key publicKey = keyManager.getPublicKey(roleName, arguments);
+			
+			// create random symmetric key
 			Key symmetricKey = securityHelper.generateKey();
 			
+			// encrypt the symmetric key using the public key
 			byte[] encryptedKey = securityHelper.encryptKey(symmetricKey, publicKey);
 			
 			metaData.encryptedKey = encryptedKey;
@@ -219,7 +289,14 @@ public class KnowledgeEncryptor {
 		}
 	}
 	
-	private void seal(ValueSet values, Cipher cipher) throws KnowledgeNotFoundException {				
+	/**
+	 * Replaces each value in the value set with its encrypted version.
+	 * @param values
+	 * 			the values to encrypt
+	 * @param cipher
+	 * 			the cipher to use for encryption
+	 */
+	private void seal(ValueSet values, Cipher cipher) {				
 		try {						
 			for (KnowledgePath kp : values.getKnowledgePaths()) {
 				Object plainKnowledge = values.getValue(kp);			

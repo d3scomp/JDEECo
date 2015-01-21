@@ -24,17 +24,30 @@ import org.bouncycastle.x509.X509V3CertificateGenerator;
 
 
 /**
- * @author Ondřej Štumpf  
+ * The security key manager.
+ *
+ * @author Ondřej Štumpf
  */
 public class SecurityKeyManagerImpl implements SecurityKeyManager {
 
+	/** storage of the certificates */
 	private KeyStore keyStore;
+	
+	/** storage of the private keys */
 	private Map<Integer, PrivateKey> privateKeys;
+	
+	/** secure random number generator */
 	private SecureRandom secureRandom;
+	
+	/** Security helper instance */
 	private SecurityHelper securityHelper;
 	
 	private final Integer INTEGRITY_KEY = 95423814;
 	
+	/**
+	 * Instantiates a new security key manager.
+	 *
+	 */
 	public SecurityKeyManagerImpl() throws KeyStoreException {
 		this.keyStore = KeyStore.getInstance("JKS");
 		this.secureRandom = new SecureRandom();
@@ -53,8 +66,11 @@ public class SecurityKeyManagerImpl implements SecurityKeyManager {
 		keyStore.load(null, null);
 	}
 
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.security.SecurityKeyManager#getPublicKey(java.lang.String, java.util.Map)
+	 */
 	@Override
-	public PublicKey getPublicKeyFor(String roleName, Map<String, Object> arguments) throws KeyStoreException, NoSuchAlgorithmException, InvalidKeyException, CertificateEncodingException, SecurityException, SignatureException, IllegalStateException {
+	public PublicKey getPublicKey(String roleName, Map<String, Object> arguments) throws KeyStoreException, NoSuchAlgorithmException, InvalidKeyException, CertificateEncodingException, SecurityException, SignatureException, IllegalStateException {
 		Integer roleKey = getRoleKey(roleName, arguments);
 		
 		if (!keyStore.containsAlias(roleKey.toString())) {
@@ -64,8 +80,11 @@ public class SecurityKeyManagerImpl implements SecurityKeyManager {
 		return keyStore.getCertificate(roleKey.toString()).getPublicKey();
 	}
 
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.security.SecurityKeyManager#getPrivateKey(java.lang.String, java.util.Map)
+	 */
 	@Override
-	public PrivateKey getPrivateKeyFor(String roleName, Map<String, Object> arguments) throws InvalidKeyException, CertificateEncodingException, KeyStoreException, NoSuchAlgorithmException, SecurityException, SignatureException, IllegalStateException {
+	public PrivateKey getPrivateKey(String roleName, Map<String, Object> arguments) throws InvalidKeyException, CertificateEncodingException, KeyStoreException, NoSuchAlgorithmException, SecurityException, SignatureException, IllegalStateException {
 		Integer roleKey = getRoleKey(roleName, arguments);
 		
 		if (!keyStore.containsAlias(roleKey.toString())) {
@@ -75,6 +94,9 @@ public class SecurityKeyManagerImpl implements SecurityKeyManager {
 		return privateKeys.get(roleKey);
 	}
 	
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.security.SecurityKeyManager#getIntegrityPrivateKey()
+	 */
 	@Override
 	public PrivateKey getIntegrityPrivateKey() throws InvalidKeyException, CertificateEncodingException, NoSuchAlgorithmException, KeyStoreException, SecurityException, SignatureException, IllegalStateException {
 		if (!keyStore.containsAlias(INTEGRITY_KEY.toString())) {
@@ -84,6 +106,9 @@ public class SecurityKeyManagerImpl implements SecurityKeyManager {
 		return privateKeys.get(INTEGRITY_KEY);
 	}
 
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.security.SecurityKeyManager#getIntegrityPublicKey()
+	 */
 	@Override
 	public PublicKey getIntegrityPublicKey() throws InvalidKeyException, CertificateEncodingException, KeyStoreException, NoSuchAlgorithmException, SecurityException, SignatureException, IllegalStateException {
 		if (!keyStore.containsAlias(INTEGRITY_KEY.toString())) {
