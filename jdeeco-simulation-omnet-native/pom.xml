@@ -142,8 +142,6 @@
 			</activation>
 			<properties>
 				<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-				<jdk>C:/Progra~2/Java/jdk8</jdk>
-				<omnet>C:/tools64/omnetpp-4.6</omnet>
 			</properties>
 			<build>
 				<defaultGoal>install</defaultGoal>
