@@ -10,7 +10,7 @@
 	<artifactId>cz.cuni.mff.d3s.jdeeco.simulation.omnet-native</artifactId>
 	<profiles>
 		<profile>
-		<id>linux-build</id>
+			<id>linux-build</id>
 			<activation>
 				<os>
 					<family>Linux</family>
@@ -134,7 +134,7 @@
 			</build>
 		</profile>
 		<profile>
-		<id>windows-build</id>
+			<id>windows-build</id>
 			<activation>
 				<os>
 					<family>Windows</family>
