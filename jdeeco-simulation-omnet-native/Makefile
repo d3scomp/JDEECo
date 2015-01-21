@@ -66,6 +66,14 @@ install:
 	cp ${MIXIM_DIR}/out/gcc-debug/src/libmixim.dll libs/debug
 	cp ${MIXIM_DIR}/out/gcc-release/src/libmixim.dll libs/release
 	
+	# gcc
+	cp ${OMNETPP_ROOT}/tools/win32/mingw64/bin/libgcc_s_seh-1.dll libs/debug
+	cp ${OMNETPP_ROOT}/tools/win32/mingw64/bin/libgcc_s_seh-1.dll libs/release
+	cp ${OMNETPP_ROOT}/tools/win32/mingw64/bin/libstdc++-6.dll libs/debug
+	cp ${OMNETPP_ROOT}/tools/win32/mingw64/bin/libstdc++-6.dll libs/release
+	cp ${OMNETPP_ROOT}/tools/win32/mingw64/bin/libwinpthread-1.dll libs/debug
+	cp ${OMNETPP_ROOT}/tools/win32/mingw64/bin/libwinpthread-1.dll libs/release
+	
 
 # Create makefiles that allows building mixim without a separate INET installation.
 makefiles:
