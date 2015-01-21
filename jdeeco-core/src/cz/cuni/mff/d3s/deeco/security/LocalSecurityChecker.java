@@ -10,6 +10,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager;
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
@@ -42,9 +43,11 @@ public class LocalSecurityChecker {
 	}
 	
 	public boolean checkSecurity(PathRoot localRole, ReadOnlyKnowledgeManager shadowKnowledgeManager) throws TaskInvocationException {
+		boolean canAccess;
+		
 		if (kmContainer.hasReplica(shadowKnowledgeManager.getId())) {
 			// if the shadow knowledge manager belongs to a remote component, security is already guaranteed with data encryption in DefaultKnowledgeDataManager
-			return true;
+			canAccess = true;
 		} else {			
 			Collection<Parameter> formalParamsOfMembership = ensembleController.getEnsembleDefinition().getMembership().getParameters();
 			Collection<Parameter> formalParamsOfExchange = ensembleController.getEnsembleDefinition().getKnowledgeExchange().getParameters();
@@ -52,17 +55,18 @@ public class LocalSecurityChecker {
 			Collection<KnowledgePath> knowledgePathsFromMembership = formalParamsOfMembership.stream().map(param -> param.getKnowledgePath()).collect(Collectors.toList());
 			Collection<KnowledgePath> knowledgePathsFromExchange = formalParamsOfExchange.stream().map(param -> param.getKnowledgePath()).collect(Collectors.toList());
 			
-			boolean canAccess = canAccessKnowledge(localRole, knowledgePathsFromMembership, shadowKnowledgeManager) 
-							 && canAccessKnowledge(localRole, knowledgePathsFromExchange, shadowKnowledgeManager);
-			
-			/*List<String> compromitationErrors = ModelSecurityValidator.validate(localRole, ensembleController.getEnsembleDefinition().getKnowledgeExchange(), 
-					ensembleController.getComponentInstance(), shadowKnowledgeManager);
-			if (!compromitationErrors.isEmpty()) {
-				Log.e("Knowledge exchange would result into data compromise: " + compromitationErrors.stream().collect(Collectors.joining(", ")));
-			}*/
-			
-			return canAccess; // && compromitationErrors.isEmpty();
+			canAccess = canAccessKnowledge(localRole, knowledgePathsFromMembership, shadowKnowledgeManager) 
+							 && canAccessKnowledge(localRole, knowledgePathsFromExchange, shadowKnowledgeManager);					
 		}		
+		
+		// validate that knowledge will not be compromised (i.e. moved to a path with lesser security)		
+		List<String> compromitationErrors = ModelSecurityValidator.validate(localRole, ensembleController.getEnsembleDefinition().getKnowledgeExchange(), 
+				ensembleController.getComponentInstance(), shadowKnowledgeManager);
+		if (!compromitationErrors.isEmpty()) {
+			Log.e("Knowledge exchange would result into data compromise: " + compromitationErrors.stream().collect(Collectors.joining(", ")));
+		}
+				
+		return canAccess && compromitationErrors.isEmpty();
 	}
 
 	private boolean canAccessKnowledge(PathRoot localRole, Collection<KnowledgePath> paths, ReadOnlyKnowledgeManager shadowKnowledgeManager) {

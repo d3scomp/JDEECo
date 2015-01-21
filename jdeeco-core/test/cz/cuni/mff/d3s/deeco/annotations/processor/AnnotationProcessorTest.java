@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -211,15 +210,14 @@ public class AnnotationProcessorTest {
 		// given component with role, which contains unresolvable argument is processed
 		RuntimeMetadata model = factory.createRuntimeMetadata(); 
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
-		WrongC10 input = new WrongC10();
+		WrongC12 input = new WrongC12();
 		
 		exception.expect(AnnotationProcessorException.class);
-		exception.expectMessage("Parameter no_such_field is not present in the knowledge.");
+		exception.expectMessage("Parameter no_such_parameter is not present in the knowledge.");
 		
 		// when process() is called
 		processor.process(input);
 	}
-		
 	
 	@Test 
 	public void testComponentSecurityInheritanceAnnotations1() throws AnnotationProcessorException {
@@ -260,6 +258,20 @@ public class AnnotationProcessorTest {
 		assertEquals(RuntimeModelHelper.createKnowledgePath("x"), ((PathSecurityRoleArgument)securityRole.getArguments().get(3)).getKnowledgePath() );
 		assertEquals(123, ((AbsoluteSecurityRoleArgument)securityRole.getArguments().get(4)).getValue() );
 	}	
+	
+	@Test
+	public void testSecurityCompromise() throws AnnotationProcessorException {
+		// given component with role, which contains unresolvable argument is processed
+		RuntimeMetadata model = factory.createRuntimeMetadata(); 
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		WrongC11 input = new WrongC11();
+		
+		exception.expect(AnnotationProcessorException.class);
+		exception.expectMessage("Parameter capacity is not appropriately secured.");
+		
+		// when process() is called
+		processor.process(input);
+	}
 	
 	@Test 
 	public void testRatingAnnotations() throws AnnotationProcessorException {

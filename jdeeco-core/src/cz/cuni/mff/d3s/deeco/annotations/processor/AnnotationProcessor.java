@@ -62,7 +62,6 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Exchange;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.LocalKnowledgeTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
@@ -79,6 +78,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
 import cz.cuni.mff.d3s.deeco.network.GenericCommunicationBoundaryPredicate;
+import cz.cuni.mff.d3s.deeco.security.ModelSecurityValidator;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper;
 
 /**
@@ -364,8 +364,7 @@ public class AnnotationProcessor {
 			componentInstance.setKnowledgeManager(km);
 			
 			try {
-				addSecurityTags(clazz, km, initialK);
-				addVirtualSecurityTags(km, initialLocalK);
+				addSecurityTags(clazz, km, initialK);				
 			} catch (Exception ex) {
 				throw new AnnotationProcessorException(ex.getMessage());
 			}
@@ -646,23 +645,11 @@ public class AnnotationProcessor {
 				
 				KnowledgeSecurityTag tag = factory.createKnowledgeSecurityTag();
 				tag.setRequiredRole(createRoleFromClassDefinition(allow.roleClass(), km, true));
-				km.addSecurityTags(kp, Arrays.asList(tag));			
+				km.addSecurityTag(kp, tag);			
 				roleClasses.add(allow.roleClass());				
 			}
 			
 		}		
-	}
-
-	/**
-	 * Adds blank security tags to the local knowledge, denotating it therefore as "infinitely secure"
-	 * @param km
-	 * @param initialKnowledge
-	 */
-	private void addVirtualSecurityTags(KnowledgeManager km, ChangeSet initialKnowledge) {
-		for (KnowledgePath kp : initialKnowledge.getUpdatedReferences()) {
-			LocalKnowledgeTag tag = factory.createLocalKnowledgeTag();
-			km.addSecurityTags(kp, Arrays.asList(tag));			
-		}
 	}
 	
 	/**
@@ -822,6 +809,12 @@ public class AnnotationProcessor {
 				componentProcess.getTriggers().add(periodicTrigger);
 			}
 			componentProcess.getTriggers().addAll(knowledgeChangeTriggers);
+			
+			// check for data compromise
+			List<String> compromitationErrors = ModelSecurityValidator.validate(componentProcess);
+			if (!compromitationErrors.isEmpty()) {
+				throw new AnnotationProcessorException("Running component process " + componentProcess.getName() + " would result into data compromise: " + compromitationErrors.stream().collect(Collectors.joining(", ")));
+			}
 			
 			callExtensions(ParsingEvent.ON_PROCESS_CREATION, componentProcess, getUnknownAnnotations(m));
 

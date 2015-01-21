@@ -1,6 +1,8 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -16,11 +18,13 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.LocalKnowledgeTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper;
 
 // TB: XXX - This would really benefit from being re-implemented using trie datastructure
@@ -666,6 +670,13 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 
 	@Override
 	public void markAsLocal(Collection<KnowledgePath> knowledgePaths) {
+		for (KnowledgePath path : knowledgePaths) {
+			//Add blank security tags to the local knowledge, denotating it therefore as "infinitely secure"
+			if (!isLocal(path)) {
+				LocalKnowledgeTag tag = RuntimeMetadataFactory.eINSTANCE.createLocalKnowledgeTag();
+				setSecurityTags(path, Arrays.asList(tag));
+			}
+		}
 		localKnowledgePaths.addAll(knowledgePaths);
 	}
 
@@ -680,7 +691,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	}
 
 	@Override
-	public void addSecurityTags(KnowledgePath knowledgePath, Collection<SecurityTag> newSecurityTags) {	
+	public void addSecurityTag(KnowledgePath knowledgePath, SecurityTag newSecurityTag) {
 		if (knowledgePath.getNodes().size() != 1) {
 			throw new IllegalArgumentException("Illegal use of method - only single-noded knowledge path can be secured.");
 		}
@@ -691,10 +702,25 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		PathNodeField pathNode = (PathNodeField)knowledgePath.getNodes().get(0);
 		
 		if (!securityTags.containsKey(pathNode)) {
-			securityTags.put(pathNode, new LinkedList<>());
+			securityTags.put(pathNode, new ArrayList<>());
 		}
 		
-		securityTags.get(pathNode).addAll(newSecurityTags);		
+		securityTags.get(pathNode).add(newSecurityTag);	
+	}
+	
+	@Override
+	public void setSecurityTags(KnowledgePath knowledgePath, Collection<SecurityTag> newSecurityTags) {	
+		if (knowledgePath.getNodes().size() != 1) {
+			throw new IllegalArgumentException("Illegal use of method - only single-noded knowledge path can be secured.");
+		}
+		if (!(knowledgePath.getNodes().get(0) instanceof PathNodeField)) {
+			throw new IllegalArgumentException("Illegal use of method - the node must refer to a field within the component.");
+		}
+		
+		PathNodeField pathNode = (PathNodeField)knowledgePath.getNodes().get(0);
+		
+		securityTags.put(pathNode, new ArrayList<>());
+		securityTags.get(pathNode).addAll(newSecurityTags);	
 	}
 	
 	@Override

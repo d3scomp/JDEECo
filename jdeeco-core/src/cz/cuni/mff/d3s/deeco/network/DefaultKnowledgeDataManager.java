@@ -24,6 +24,8 @@ import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
@@ -291,10 +293,13 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 			if (haveOlder) {
 				for (KnowledgeManager replica : kmContainer.createReplica(newMetadata.componentId)) {
 												
-					try {
-						ChangeSet changeSet = toChangeSet(kd.getKnowledge());
-						knowledgeEncryptor.decryptChangeSet(changeSet, replica, kd.getMetaData());
-						replica.update(changeSet, kd.getMetaData().componentId);			
+					try {						
+						KnowledgeData decryptedData = knowledgeEncryptor.decryptValueSet(kd, replica, kd.getMetaData());
+						
+						ChangeSet changeSet = toChangeSet(decryptedData.getKnowledge());
+						replica.update(changeSet, decryptedData.getMetaData().componentId);	
+						
+						decryptedData.getSecuritySet().getKnowledgePaths().stream().forEach(kp -> replica.setSecurityTags(kp, (List<SecurityTag>) decryptedData.getSecuritySet().getValue(kp)));
 					} catch (KnowledgeUpdateException e) {
 						Log.w(String
 								.format("KnowledgeDataManager.receive: Could not update replica of %s.",
@@ -452,9 +457,9 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 			throws KnowledgeNotFoundException {
 		// extract local knowledge
 		ValueSet basicValueSet = getNonLocalKnowledge(km.get(emptyPath), km);
-		KnowledgeMetaData metaData = createKnowledgeMetaData(km);
-		return knowledgeEncryptor.encryptValueSet(basicValueSet, km, metaData);
-	}
+		KnowledgeMetaData metaData = createKnowledgeMetaData(km);	
+		return knowledgeEncryptor.encryptValueSet(basicValueSet,km, metaData);
+	}	
 
 	protected KnowledgeMetaData createKnowledgeMetaData(KnowledgeManager km) {
 		return new KnowledgeMetaData(km.getId(), localVersion, host, timeProvider.getCurrentMilliseconds(), 1);
@@ -478,7 +483,7 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 		KnowledgeMetaData kmdCopy = receivedData.getMetaData().clone();
 		kmdCopy.sender = host;
 		kmdCopy.hopCount++;
-		return new KnowledgeData(receivedData.getKnowledge(), kmdCopy);
+		return new KnowledgeData(receivedData.getKnowledge(), receivedData.getSecuritySet(), kmdCopy);
 	}
 	
 	protected KnowledgeData filterLocalKnowledgeForKnownEnsembles(KnowledgeData kd) {
@@ -491,7 +496,7 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 			for (KnowledgePath kp: values.getKnowledgePaths()) {
 				newValues.setValue(kp, values.getValue(kp));
 			}
-			return new KnowledgeData(newValues, kd.getMetaData());
+			return new KnowledgeData(newValues, kd.getSecuritySet(), kd.getMetaData());
 		} else {
 			return kd;
 		}

@@ -62,7 +62,7 @@ public class SecurityTagCollectionTest {
 		
 		// when the path is secured
 		KnowledgeSecurityTag tag = createSecurityTag("role");
-		localKnowledgeManager.addSecurityTags(RuntimeModelHelper.createKnowledgePath("mapKeyInner"), Arrays.asList(tag));
+		localKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("mapKeyInner"), Arrays.asList(tag));
 		
 		// update the knowledge so that the path can be resolved
 		localKnowledgeManager.update(createKnowledge());
@@ -95,15 +95,15 @@ public class SecurityTagCollectionTest {
 		// given path, keyPath and innerKeyPath are secured
 		KnowledgeSecurityTag tagMap1 = createSecurityTag("role1a");
 		KnowledgeSecurityTag tagMap2 = createSecurityTag("role1b");
-		localKnowledgeManager.addSecurityTags(RuntimeModelHelper.createKnowledgePath("map"), Arrays.asList(tagMap1, tagMap2));
+		localKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("map"), Arrays.asList(tagMap1, tagMap2));
 		
 		KnowledgeSecurityTag tagInner1 = createSecurityTag("role2a");
 		KnowledgeSecurityTag tagInner2 = createSecurityTag("role2b");
-		localKnowledgeManager.addSecurityTags(RuntimeModelHelper.createKnowledgePath("mapKeyInner"), Arrays.asList(tagInner1, tagInner2));
+		localKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("mapKeyInner"), Arrays.asList(tagInner1, tagInner2));
 		
 		KnowledgeSecurityTag tagMapNested1 = createSecurityTag("role3a");
 		KnowledgeSecurityTag tagMapNested2 = createSecurityTag("role3b");
-		localKnowledgeManager.addSecurityTags(RuntimeModelHelper.createKnowledgePath("mapNested"), Arrays.asList(tagMapNested1, tagMapNested2));
+		localKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("mapNested"), Arrays.asList(tagMapNested1, tagMapNested2));
 		
 		// update the knowledge so that the path can be resolved
 		localKnowledgeManager.update(createKnowledge());
@@ -138,7 +138,7 @@ public class SecurityTagCollectionTest {
 		// given innerKeyPath is secured
 		KnowledgeSecurityTag tagInner1 = createSecurityTag("role2a");
 		KnowledgeSecurityTag tagInner2 = createSecurityTag("role2b");
-		localKnowledgeManager.addSecurityTags(RuntimeModelHelper.createKnowledgePath("mapKeyInner"), Arrays.asList(tagInner1, tagInner2));
+		localKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("mapKeyInner"), Arrays.asList(tagInner1, tagInner2));
 		
 		// update the knowledge so that the path can be resolved
 		localKnowledgeManager.update(createKnowledge());
@@ -169,10 +169,10 @@ public class SecurityTagCollectionTest {
 		
 		// given innerKeyPath is secured
 		KnowledgeSecurityTag tagMap1 = createSecurityTag("role1a");
-		localKnowledgeManager.addSecurityTags(RuntimeModelHelper.createKnowledgePath("mapNested"), Arrays.asList(tagMap1));
+		localKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("mapNested"), Arrays.asList(tagMap1));
 		
 		KnowledgeSecurityTag tagInner1 = createSecurityTag("role2a");
-		localKnowledgeManager.addSecurityTags(RuntimeModelHelper.createKnowledgePath("mapKeyInner"), Arrays.asList(tagInner1));
+		localKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("mapKeyInner"), Arrays.asList(tagInner1));
 		
 		// update the knowledge so that the path can be resolved
 		localKnowledgeManager.update(createKnowledge());
@@ -204,7 +204,7 @@ public class SecurityTagCollectionTest {
 		// given innerKeyPath is secured
 		KnowledgeSecurityTag tagInner1 = createSecurityTag("role2a");
 		KnowledgeSecurityTag tagInner2 = createSecurityTag("role2b");
-		localKnowledgeManager.addSecurityTags(RuntimeModelHelper.createKnowledgePath("mapNested"), Arrays.asList(tagInner1, tagInner2));
+		localKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("mapNested"), Arrays.asList(tagInner1, tagInner2));
 		
 		// update the knowledge so that the path can be resolved
 		localKnowledgeManager.update(createKnowledge());
@@ -236,8 +236,8 @@ public class SecurityTagCollectionTest {
 		// given innerKeyPath is secured
 		KnowledgeSecurityTag tagMap = createSecurityTag("role2a");
 		KnowledgeSecurityTag tagKey = createSecurityTag("role2b");
-		localKnowledgeManager.addSecurityTags(RuntimeModelHelper.createKnowledgePath("mapNested"), Arrays.asList(tagMap));
-		shadowKnowledgeManager.addSecurityTags(RuntimeModelHelper.createKnowledgePath("mapKeyInner"), Arrays.asList(tagKey));
+		localKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("mapNested"), Arrays.asList(tagMap));
+		shadowKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("mapKeyInner"), Arrays.asList(tagKey));
 		
 		// update the knowledge so that the path can be resolved
 		localKnowledgeManager.update(createKnowledge());

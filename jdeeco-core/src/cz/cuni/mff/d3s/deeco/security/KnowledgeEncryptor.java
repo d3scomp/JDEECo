@@ -21,7 +21,6 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SealedObject;
 import javax.crypto.ShortBufferException;
 
-import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
@@ -29,6 +28,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
+import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeData;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeMetaData;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeSecurityAnnotation;
@@ -49,43 +49,64 @@ public class KnowledgeEncryptor {
 		this.securityChecker = new RemoteSecurityChecker();
 	}
 	
-	public void decryptChangeSet(ChangeSet changeSet, KnowledgeManager replica, KnowledgeMetaData metaData) {
-		if (changeSet == null) return;
+	@SuppressWarnings("unchecked")
+	public KnowledgeData decryptValueSet(KnowledgeData kd, KnowledgeManager replica, KnowledgeMetaData metaData) {
+		if (kd == null) return null;
 		
-		for (KnowledgePath kp : changeSet.getUpdatedReferences()) {
-			Object value = changeSet.getValue(kp);
+		ValueSet decryptedKnowledge = decrypt(kd.getKnowledge(), replica, metaData);	
+		ValueSet decryptedSecuritySet = decrypt(kd.getSecuritySet(), replica, metaData);
+		
+		// replace lists of serializable roles with actual security tags
+		for (KnowledgePath path : decryptedSecuritySet.getKnowledgePaths()) {
+			List<KnowledgeSecurityTag> tags = (List<KnowledgeSecurityTag>)decryptedSecuritySet.getValue(path);			
+			decryptedSecuritySet.setValue(path, tags);
+		}
+		
+		return new KnowledgeData(decryptedKnowledge, decryptedSecuritySet, metaData);
+	}
+	
+	private ValueSet decrypt(ValueSet valueSet, KnowledgeManager replica, KnowledgeMetaData metaData) {
+		ValueSet result = new ValueSet();
+		for (KnowledgePath kp : valueSet.getKnowledgePaths()) {
+			Object value = valueSet.getValue(kp);
 			if (value instanceof SealedObject) {
 				try {
 					Object decryptedValue = accessValue((SealedObject)value, replica, metaData);
-					changeSet.setValue(kp, decryptedValue);
+					result.setValue(kp, decryptedValue);					
 				} catch (KnowledgeNotFoundException | SecurityException e) {
-					changeSet.remove(kp);
+					// do nothing
 				}
+			} else {
+				result.setValue(kp, value);
 			}
-		}		
-
+		}	
+		
+		return result;
 	}
-	
-	public List<KnowledgeData> encryptValueSet(ValueSet basicValueSet, KnowledgeManager km, KnowledgeMetaData metaData) throws KnowledgeNotFoundException {
-		if (basicValueSet == null) return null;
+
+	public List<KnowledgeData> encryptValueSet(ValueSet valueSet, KnowledgeManager knowledgeManager, KnowledgeMetaData metaData) throws KnowledgeNotFoundException {
+		if (valueSet == null) return null;
 		
 		Map<KnowledgeSecurityTag, ValueSet> securityMap = new HashMap<>();
+		Map<KnowledgePath, List<KnowledgeSecurityTag>> securityTagsMap = new HashMap<>();
 		
 		// split the knowledge into groups according to their security
-		for (KnowledgePath kp : basicValueSet.getKnowledgePaths()) {
+		for (KnowledgePath kp : valueSet.getKnowledgePaths()) {
 			if (!KnowledgePathHelper.isAbsolutePath(kp)) {
 				throw new IllegalArgumentException("The value set must contain only absolute knowledge paths.");
 			}
 			
-			List<KnowledgeSecurityTag> tags = km.getKnowledgeSecurityTags((PathNodeField)kp.getNodes().get(0)).stream()
+			List<KnowledgeSecurityTag> tags = knowledgeManager.getKnowledgeSecurityTags((PathNodeField)kp.getNodes().get(0)).stream()
 					.filter(t -> t instanceof KnowledgeSecurityTag).map(t -> (KnowledgeSecurityTag)t ).collect(Collectors.toList());
+			securityTagsMap.put(kp, tags);
 			
 			if (tags == null || tags.isEmpty()) {
-				addToSecurityMap(basicValueSet, securityMap, null, kp);
+				addToSecurityMap(valueSet, securityMap, null, kp);				
 			} else {
 				for (KnowledgeSecurityTag tag : tags) {
-					addToSecurityMap(basicValueSet, securityMap, tag, kp);
+					addToSecurityMap(valueSet, securityMap, tag, kp);
 				}
+				
 			}
 		}
 		
@@ -98,11 +119,21 @@ public class KnowledgeEncryptor {
 			
 			if (tag == null) {
 				// data not encrypted
-				result.add(new KnowledgeData(securityMap.get(null), clonedMetaData));
+				ValueSet vs = securityMap.get(null);
+				result.add(new KnowledgeData(vs, new ValueSet(), clonedMetaData));
 			} else {
 				ValueSet vs = securityMap.get(tag);
-				sealKnowledge(km, vs, tag, clonedMetaData);
-				result.add(new KnowledgeData(vs, clonedMetaData));
+				
+				// associate each knowledge path with a list of security tags
+				ValueSet securitySet = new ValueSet();
+				for (KnowledgePath path : vs.getKnowledgePaths()) {
+					securitySet.setValue(path, securityTagsMap.get(path) );
+				}				
+				
+				Cipher cipher = prepareCipher(knowledgeManager, tag, clonedMetaData);
+				seal(vs, cipher);
+				seal(securitySet, cipher);
+				result.add(new KnowledgeData(vs, securitySet, clonedMetaData));
 			}
 		}
 		return result;
@@ -163,31 +194,42 @@ public class KnowledgeEncryptor {
 		securityMap.get(tag).setValue(kp, basicValueSet.getValue(kp));
 	}
 	
-	private void sealKnowledge(KnowledgeManager km, ValueSet valueSet, KnowledgeSecurityTag tag, KnowledgeMetaData metaData) throws KnowledgeNotFoundException {
-		for (KnowledgePath kp : valueSet.getKnowledgePaths()) {
-			Object plainKnowledge = valueSet.getValue(kp);
+	private Cipher prepareCipher(KnowledgeManager knowledgeManager, KnowledgeSecurityTag tag, KnowledgeMetaData metaData) {
+		try {
 			String roleName = tag.getRequiredRole().getRoleName();
-			Map<String, Object> arguments = RoleHelper.readRoleArguments(tag.getRequiredRole(), km);
-						
-			try {
-				Key publicKey = keyManager.getPublicKeyFor(roleName, arguments);
-				Key symmetricKey = securityHelper.generateKey();
-				
-				SealedObject encryptedKnowledge = new SealedObject((Serializable) plainKnowledge, securityHelper.getSymmetricCipher(Cipher.ENCRYPT_MODE, symmetricKey));
-				byte[] encryptedKey = securityHelper.encryptKey(symmetricKey, publicKey);
-				
-				metaData.encryptedKey = encryptedKey;
-				metaData.encryptedKeyAlgorithm = symmetricKey.getAlgorithm();
-				metaData.targetRole = new KnowledgeSecurityAnnotation(roleName, arguments);
-				metaData.signature = securityHelper.sign(keyManager.getIntegrityPrivateKey(), metaData.componentId, metaData.versionId, metaData.targetRole);
-				
-				valueSet.setValue(kp, encryptedKnowledge);
-			} catch (IllegalBlockSizeException | IOException | InvalidKeyException | BadPaddingException | NoSuchAlgorithmException | NoSuchPaddingException 
-					| KeyStoreException | CertificateEncodingException | SecurityException | SignatureException | IllegalStateException | ShortBufferException e) {
-				throw new SecurityException(e);
-			}				
+			Map<String, Object> arguments = RoleHelper.readRoleArguments(tag.getRequiredRole(), knowledgeManager);
+			
+			Key publicKey = keyManager.getPublicKeyFor(roleName, arguments);			
+			Key symmetricKey = securityHelper.generateKey();
+			
+			byte[] encryptedKey = securityHelper.encryptKey(symmetricKey, publicKey);
+			
+			metaData.encryptedKey = encryptedKey;
+			metaData.encryptedKeyAlgorithm = symmetricKey.getAlgorithm();
+			metaData.targetRole = new KnowledgeSecurityAnnotation(roleName, arguments);
+			metaData.signature = securityHelper.sign(keyManager.getIntegrityPrivateKey(), metaData.componentId, metaData.versionId, metaData.targetRole);
+			
+			return securityHelper.getSymmetricCipher(Cipher.ENCRYPT_MODE, symmetricKey);
+		} catch (InvalidKeyException | CertificateEncodingException
+				| KeyStoreException | NoSuchAlgorithmException
+				| SecurityException | SignatureException
+				| IllegalStateException | KnowledgeNotFoundException | NoSuchPaddingException 
+				| ShortBufferException | IllegalBlockSizeException 
+				| BadPaddingException | IOException e) {
+			throw new SecurityException(e);
 		}
-		
+	}
+	
+	private void seal(ValueSet values, Cipher cipher) throws KnowledgeNotFoundException {				
+		try {						
+			for (KnowledgePath kp : values.getKnowledgePaths()) {
+				Object plainKnowledge = values.getValue(kp);			
+				SealedObject encryptedKnowledge = new SealedObject((Serializable) plainKnowledge, cipher);				
+				values.setValue(kp, encryptedKnowledge);						
+			}		
+		} catch (IllegalBlockSizeException | IOException | SecurityException | IllegalStateException e) {
+			throw new SecurityException(e);
+		}			
 	}
 
 	
