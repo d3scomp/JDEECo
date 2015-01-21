@@ -14,6 +14,11 @@ import org.eclipse.emf.ecore.xmi.impl.XMLResourceImpl;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.AbsoluteSecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.impl.AbsoluteSecurityRoleArgumentImpl;
 
+/**
+ * 
+ * @author Ondřej Štumpf
+ *
+ */
 public class AbsoluteSecurityRoleArgumentExt extends AbsoluteSecurityRoleArgumentImpl implements Serializable {
 
 	private static final long serialVersionUID = 4072094973100189590L;

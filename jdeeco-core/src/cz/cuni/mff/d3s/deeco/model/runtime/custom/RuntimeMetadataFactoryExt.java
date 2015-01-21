@@ -110,5 +110,6 @@ public class RuntimeMetadataFactoryExt extends RuntimeMetadataFactoryImpl {
 		return new AbsoluteSecurityRoleArgumentExt();
 	}
 	
+	
 	// TODO: We might have also toString() method implemented for the KnowledgePath
 }

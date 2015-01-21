@@ -68,7 +68,7 @@ public interface SecurityRole extends EObject {
 	EList<SecurityRoleArgument> getArguments();
 
 	/**
-	 * Returns the value of the '<em><b>Consists Of</b></em>' reference list.
+	 * Returns the value of the '<em><b>Consists Of</b></em>' containment reference list.
 	 * The list contents are of type {@link cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole}.
 	 * <!-- begin-user-doc -->
 	 * <p>
@@ -76,9 +76,9 @@ public interface SecurityRole extends EObject {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Consists Of</em>' reference list.
+	 * @return the value of the '<em>Consists Of</em>' containment reference list.
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getSecurityRole_ConsistsOf()
-	 * @model
+	 * @model containment="true"
 	 * @generated
 	 */
 	EList<SecurityRole> getConsistsOf();

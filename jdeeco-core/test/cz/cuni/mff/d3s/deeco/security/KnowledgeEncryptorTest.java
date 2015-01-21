@@ -265,9 +265,8 @@ public class KnowledgeEncryptorTest {
 		assertNotSame(securitySet, decryptedData.getSecuritySet());
 		
 		List<KnowledgeSecurityTag> tags = (List<KnowledgeSecurityTag>) decryptedData.getSecuritySet().getValue(RuntimeModelHelper.createKnowledgePath("secured"));
-		assertEquals(role.getRoleName(), tags.get(0).getRequiredRole().getRoleName());
-		assertEquals(role.getArguments().size(), tags.get(0).getRequiredRole().getArguments().size());
-		assertEquals(role.getConsistsOf().size(), tags.get(0).getRequiredRole().getConsistsOf().size());
+		assertEquals(tag, tags.get(0));
+		assertNotSame(tag, tags.get(0));
 	}
 	
 	@Test

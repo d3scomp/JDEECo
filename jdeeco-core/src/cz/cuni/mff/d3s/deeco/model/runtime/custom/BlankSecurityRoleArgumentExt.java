@@ -14,6 +14,11 @@ import org.eclipse.emf.ecore.xmi.impl.XMLResourceImpl;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.BlankSecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.impl.BlankSecurityRoleArgumentImpl;
 
+/**
+ * 
+ * @author Ondřej Štumpf
+ *
+ */
 public class BlankSecurityRoleArgumentExt extends BlankSecurityRoleArgumentImpl implements Serializable {
 
 	private static final long serialVersionUID = 1559162721313167821L;
@@ -69,7 +74,7 @@ public class BlankSecurityRoleArgumentExt extends BlankSecurityRoleArgumentImpl 
 			res.load(stream, null);
 			BlankSecurityRoleArgument argument = (BlankSecurityRoleArgument) res.getContents().get(0);
 			
-			name = argument.getName();
+			setName(argument.getName());
 		} catch (Exception e) {
 			throw e;
 		}

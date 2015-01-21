@@ -8,6 +8,8 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.rits.cloning.Cloner;
+
 import cz.cuni.mff.d3s.deeco.knowledge.BaseKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
@@ -24,6 +26,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathSecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
+import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 
 /**
@@ -41,7 +44,7 @@ public class ModelSecurityValidatorTest {
 	
 	@Before
 	public void setUp() throws KnowledgeUpdateException {
-		factory = RuntimeMetadataFactory.eINSTANCE;
+		factory = RuntimeMetadataFactoryExt.eINSTANCE;
 		
 		component = factory.createComponentInstance();
 		knowledgeManager = new BaseKnowledgeManager("ID1", component);
@@ -96,7 +99,7 @@ public class ModelSecurityValidatorTest {
 		BlankSecurityRoleArgument role5BlankArgument = factory.createBlankSecurityRoleArgument();
 		role5BlankArgument.setName("role1pathArgument");		
 		role5.getArguments().add(role5BlankArgument);
-		role5.getConsistsOf().add(role1);
+		role5.getConsistsOf().add(new Cloner().deepClone(role1));
 		inherited_tag_with_path.setRequiredRole(role5);
 		
 		// connect

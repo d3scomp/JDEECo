@@ -14,6 +14,11 @@ import org.eclipse.emf.ecore.xmi.impl.XMLResourceImpl;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathSecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.impl.PathSecurityRoleArgumentImpl;
 
+/**
+ * 
+ * @author Ondřej Štumpf
+ *
+ */
 public class PathSecurityRoleArgumentExt extends PathSecurityRoleArgumentImpl implements Serializable {
 
 	private static final long serialVersionUID = 5680133272326377414L;

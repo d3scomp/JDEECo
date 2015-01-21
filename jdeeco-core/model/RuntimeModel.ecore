@@ -119,7 +119,7 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="SecurityRole">
     <eStructuralFeatures xsi:type="ecore:EReference" name="consistsOf" upperBound="-1"
-        eType="#//SecurityRole"/>
+        eType="#//SecurityRole" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="roleName" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="arguments" upperBound="-1"
@@ -144,4 +144,3 @@
   <eClassifiers xsi:type="ecore:EClass" name="LocalKnowledgeTag" eSuperTypes="#//SecurityTag"/>
   <eClassifiers xsi:type="ecore:EClass" name="SecurityTag"/>
 </ecore:EPackage>
-

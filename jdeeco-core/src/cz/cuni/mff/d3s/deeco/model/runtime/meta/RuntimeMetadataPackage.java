@@ -1099,7 +1099,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int SECURITY_ROLE = 21;
 
 	/**
-	 * The feature id for the '<em><b>Consists Of</b></em>' reference list.
+	 * The feature id for the '<em><b>Consists Of</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -2263,10 +2263,10 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EEnum getParameterKind();
 
 	/**
-	 * Returns the meta object for the reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole#getConsistsOf <em>Consists Of</em>}'.
+	 * Returns the meta object for the containment reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole#getConsistsOf <em>Consists Of</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>Consists Of</em>'.
+	 * @return the meta object for the containment reference list '<em>Consists Of</em>'.
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole#getConsistsOf()
 	 * @see #getSecurityRole()
 	 * @generated
@@ -3020,7 +3020,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EEnum PARAMETER_KIND = eINSTANCE.getParameterKind();
 
 		/**
-		 * The meta object literal for the '<em><b>Consists Of</b></em>' reference list feature.
+		 * The meta object literal for the '<em><b>Consists Of</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated

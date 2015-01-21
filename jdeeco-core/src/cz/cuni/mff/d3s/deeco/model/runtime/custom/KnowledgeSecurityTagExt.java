@@ -52,12 +52,12 @@ public class KnowledgeSecurityTagExt extends KnowledgeSecurityTagImpl implements
 	
 	@Override
 	public String toString() {
-		return String.format("Knowledge Security Tag [role=%s]", requiredRole.toString());
+		return String.format("Knowledge Security Tag [role=%s]", requiredRole);
 	}
 	
 	private void writeObject(ObjectOutputStream out) throws IOException {
-		XMLResource res = new XMLResourceImpl();
-		res.getContents().add(this);
+		XMLResource res = new XMLResourceImpl();		
+		res.getContents().add(this);		
 		StringWriter sw = new StringWriter();
 		res.save(sw, null);
 		

@@ -7,6 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.io.StringWriter;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.eclipse.emf.ecore.xmi.XMLResource;
@@ -15,6 +16,11 @@ import org.eclipse.emf.ecore.xmi.impl.XMLResourceImpl;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
 import cz.cuni.mff.d3s.deeco.model.runtime.impl.SecurityRoleImpl;
 
+/**
+ * 
+ * @author Ondřej Štumpf
+ *
+ */
 public class SecurityRoleExt extends SecurityRoleImpl implements Serializable {
 
 	private static final long serialVersionUID = -4748717283540770244L;
@@ -34,20 +40,38 @@ public class SecurityRoleExt extends SecurityRoleImpl implements Serializable {
 				return false;
 		} else if (!roleName.equals(other.roleName))
 			return false;
+				
+		if (consistsOf == null) {
+			if (other.consistsOf != null)
+				return false;
+		} else if (!listsEqual(consistsOf,other.consistsOf))
+			return false;
 		
 		if (arguments == null) {
 			if (other.arguments != null)
 				return false;
-		} else if (!arguments.equals(other.arguments))
-			return false;
-		
-		if (consistsOf == null) {
-			if (other.consistsOf != null)
-				return false;
-		} else if (!consistsOf.equals(other.consistsOf))
+		} else if (!listsEqual(arguments, other.arguments))
 			return false;
 		
 		return true;
+	}
+	
+	/**
+	 * Manually calls equals() for each element of the list (cannot use basic equals() on the lists since the inheritance in Ecore)
+	 * @param list
+	 * @param other
+	 * @return
+	 */
+	private <T> boolean listsEqual(List<T> list, List<T> other) {
+		if (list.size() != other.size()) {
+			return false;
+		} else {
+			boolean equal = true;
+			for (int i=0; i< list.size(); i++) {
+				equal = equal && list.get(i).equals(other.get(i));
+			}
+			return equal;
+		}
 	}
 	
 	@Override
@@ -63,13 +87,13 @@ public class SecurityRoleExt extends SecurityRoleImpl implements Serializable {
 	@Override
 	public String toString() {
 		return String.format("Security Role [name=%s,args=%s,consistsOf=%s]", roleName, 
-				arguments.stream().map(arg -> arg.toString()).collect(Collectors.joining(",")),
-				consistsOf.stream().map(p -> p.toString()).collect(Collectors.joining(",")));
+				getArguments().stream().map(arg -> arg.toString()).collect(Collectors.joining(",")),
+				getConsistsOf().stream().map(p -> p.toString()).collect(Collectors.joining(",")));
 	}
 	
 	private void writeObject(ObjectOutputStream out) throws IOException {
-		XMLResource res = new XMLResourceImpl();
-		res.getContents().add(this);
+		XMLResource res = new XMLResourceImpl();		
+		res.getContents().add(this);		
 		StringWriter sw = new StringWriter();
 		res.save(sw, null);
 		

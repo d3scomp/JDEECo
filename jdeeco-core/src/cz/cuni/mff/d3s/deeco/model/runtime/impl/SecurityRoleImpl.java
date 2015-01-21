@@ -14,7 +14,6 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
-import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
@@ -34,7 +33,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  */
 public class SecurityRoleImpl extends MinimalEObjectImpl.Container implements SecurityRole {
 	/**
-	 * The cached value of the '{@link #getConsistsOf() <em>Consists Of</em>}' reference list.
+	 * The cached value of the '{@link #getConsistsOf() <em>Consists Of</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getConsistsOf()
@@ -132,7 +131,7 @@ public class SecurityRoleImpl extends MinimalEObjectImpl.Container implements Se
 	 */
 	public EList<SecurityRole> getConsistsOf() {
 		if (consistsOf == null) {
-			consistsOf = new EObjectResolvingEList<SecurityRole>(SecurityRole.class, this, RuntimeMetadataPackage.SECURITY_ROLE__CONSISTS_OF);
+			consistsOf = new EObjectContainmentEList<SecurityRole>(SecurityRole.class, this, RuntimeMetadataPackage.SECURITY_ROLE__CONSISTS_OF);
 		}
 		return consistsOf;
 	}
@@ -145,6 +144,8 @@ public class SecurityRoleImpl extends MinimalEObjectImpl.Container implements Se
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
+			case RuntimeMetadataPackage.SECURITY_ROLE__CONSISTS_OF:
+				return ((InternalEList<?>)getConsistsOf()).basicRemove(otherEnd, msgs);
 			case RuntimeMetadataPackage.SECURITY_ROLE__ARGUMENTS:
 				return ((InternalEList<?>)getArguments()).basicRemove(otherEnd, msgs);
 		}
