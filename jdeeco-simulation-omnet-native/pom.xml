@@ -55,17 +55,16 @@
 								<id>ned</id>
 								<configuration>
 									<classifier>natives-common-ned</classifier>
-									<classesDirectory>${omnet}\..\</classesDirectory>
+									<classesDirectory>${basedir}/libs/ned</classesDirectory>
 									<includes>
-										<include>inet\**\*.ned</include>
-										<include>mixim\**\*.ned</include>
+										<inlude>**\*.ned</inlude>
 									</includes>
 								</configuration>
 								<goals>
 									<goal>jar</goal>
 								</goals>
 							</execution>
-							<execution>
+			  				<execution>
 								<id>release</id>
 								<configuration>
 									<classifier>natives-windows64-release</classifier>
