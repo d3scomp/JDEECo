@@ -30,6 +30,8 @@ cleanall: checkmakefiles
 install:
 	mkdir -p libs/debug
 	mkdir -p libs/release
+	mkdir -p libs/ned/inet
+	mkdir -p libs/ned/mixim
 	
 	# Copy libraries
 	
@@ -73,6 +75,10 @@ install:
 	cp ${OMNETPP_ROOT}/tools/win32/mingw64/bin/libstdc++-6.dll libs/release
 	cp ${OMNETPP_ROOT}/tools/win32/mingw64/bin/libwinpthread-1.dll libs/debug
 	cp ${OMNETPP_ROOT}/tools/win32/mingw64/bin/libwinpthread-1.dll libs/release
+	
+	# ned files
+	echo 'cd ${INET_DIR}/src; find -name "*.ned" -exec cp --parents {} $(shell pwd)/libs/ned/inet ";"' | sh
+	echo 'cd ${MIXIM_DIR}; find -name "*.ned" -exec cp --parents {} $(shell pwd)/libs/ned/mixim ";"' | sh
 	
 
 # Create makefiles that allows building mixim without a separate INET installation.
