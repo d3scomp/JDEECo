@@ -12,7 +12,6 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.AbsoluteSecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
-import cz.cuni.mff.d3s.deeco.network.KnowledgeSecurityAnnotation;
 
 /**
  * 
@@ -41,7 +40,7 @@ public class RemoteSecurityCheckerTest {
 		argument.setValue(123);
 		role.getArguments().add(argument);
 		
-		KnowledgeSecurityAnnotation annotation = new KnowledgeSecurityAnnotation("role", annotationArguments);
+		RoleWithArguments annotation = new RoleWithArguments("role", annotationArguments);
 				
 		// when checkSecurity is called()
 		boolean result = target.checkSecurity(role, annotation, null);

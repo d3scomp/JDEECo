@@ -16,6 +16,7 @@ import java.security.SignatureException;
 import java.security.cert.CertificateEncodingException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -43,7 +44,6 @@ import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeData;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeMetaData;
-import cz.cuni.mff.d3s.deeco.network.KnowledgeSecurityAnnotation;
 
 /**
  * @author Ondřej Štumpf  
@@ -93,7 +93,7 @@ public class KnowledgeEncryptorTest {
 		testrole2PublicKey = role2Pair.getPublic();
 		testrole1PrivateKey = role1Pair.getPrivate();
 		
-		keyManagerMock = mock(SecurityKeyManager.class);
+		keyManagerMock = spy(new SecurityKeyManagerImpl());
 		when(keyManagerMock.getPublicKey(eq("testrole1"), anyObject())).thenReturn(testrole1PublicKey);		
 		when(keyManagerMock.getPrivateKey(eq("testrole1"), anyObject())).thenReturn(testrole1PrivateKey);
 		when(keyManagerMock.getPublicKey(eq("testrole2"), anyObject())).thenReturn(testrole2PublicKey);
@@ -234,8 +234,8 @@ public class KnowledgeEncryptorTest {
 		Key symmetricKey = securityHelper.generateKey();
 		metaData.encryptedKey = securityHelper.encryptKey(symmetricKey, testrole1PublicKey);
 		metaData.encryptedKeyAlgorithm = symmetricKey.getAlgorithm();
-		metaData.targetRole = new KnowledgeSecurityAnnotation("testrole1", null);
-		metaData.signature = securityHelper.sign(keyManagerMock.getIntegrityPrivateKey(), metaData.componentId, metaData.versionId, metaData.targetRole);
+		metaData.targetRoleHash = keyManagerMock.getRoleKey("testrole1", Collections.emptyMap());
+		metaData.signature = securityHelper.sign(keyManagerMock.getIntegrityPrivateKey(), metaData.componentId, metaData.versionId, metaData.targetRoleHash);
 		
 		Cipher cipher = securityHelper.getSymmetricCipher(Cipher.ENCRYPT_MODE, symmetricKey);
 		SealedObject sealedKnowledge = new SealedObject(666, cipher);
@@ -271,8 +271,8 @@ public class KnowledgeEncryptorTest {
 		Key symmetricKey = securityHelper.generateKey();
 		metaData.encryptedKey = securityHelper.encryptKey(symmetricKey, testrole1PublicKey);
 		metaData.encryptedKeyAlgorithm = symmetricKey.getAlgorithm();
-		metaData.targetRole = new KnowledgeSecurityAnnotation("testrole1", null);
-		metaData.signature = securityHelper.sign(keyManagerMock.getIntegrityPrivateKey(), metaData.componentId, metaData.versionId, metaData.targetRole);
+		metaData.targetRoleHash = keyManagerMock.getRoleKey("testrole1", null);
+		metaData.signature = securityHelper.sign(keyManagerMock.getIntegrityPrivateKey(), metaData.componentId, metaData.versionId, metaData.targetRoleHash);
 				
 		// when testrole2 key is used to encrypt data
 		Cipher cipher = securityHelper.getSymmetricCipher(Cipher.ENCRYPT_MODE, testrole2PublicKey);

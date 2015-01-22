@@ -36,6 +36,9 @@ public class SecurityKeyManagerImpl implements SecurityKeyManager {
 	/** storage of the private keys */
 	private Map<Integer, PrivateKey> privateKeys;
 	
+	/** mapping between role hash keys and actual role values */
+	private Map<Integer, RoleWithArguments> issuedRoleKeys;
+	
 	/** secure random number generator */
 	private SecureRandom secureRandom;
 	
@@ -53,6 +56,7 @@ public class SecurityKeyManagerImpl implements SecurityKeyManager {
 		this.secureRandom = new SecureRandom();
 		this.privateKeys = new HashMap<>();
 		this.securityHelper = new SecurityHelper();
+		this.issuedRoleKeys = new HashMap<>();
 		
 		try {
 			initialize();
@@ -140,12 +144,34 @@ public class SecurityKeyManagerImpl implements SecurityKeyManager {
         return v3CertGen.generate(keypair.getPrivate());
 	}
 
-	private Integer getRoleKey(String roleName, Map<String, Object> arguments) {
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.security.SecurityKeyManager#getRoleByKey(java.lang.Integer)
+	 */
+	@Override
+	public RoleWithArguments getRoleByKey(Integer roleKey) {
+		return issuedRoleKeys.get(roleKey);
+	}
+	
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.security.SecurityKeyManager#getRoleKey(java.lang.String, java.util.Map)
+	 */
+	@Override
+	public Integer getRoleKey(final String roleName, Map<String, Object> arguments) {		
 		if (arguments == null) {
 			arguments = Collections.emptyMap();
 		}
-		int hash = roleName.hashCode()+arguments.hashCode();
-		return hash;
+		
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (roleName == null ? 0 : roleName.hashCode());
+		result = prime * result + (arguments == null ? 0 : arguments.hashCode());
+		
+		if (!issuedRoleKeys.containsKey(result)) {
+			issuedRoleKeys.put(result, new RoleWithArguments(roleName, arguments));
+		}
+		
+		return result;
 	}
 
+	
 }

@@ -285,7 +285,7 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 				Set<Integer> newRoles = replicaRoles.get(newMetadata.getSignature());
 				Set<Integer> currentRoles = replicaRoles.get(currentMetadata.getSignature());
 				
-				boolean haveAllRoles = currentRoles.containsAll(newRoles) && currentRoles.contains(newMetadata.targetRole == null ? null : newMetadata.targetRole.hashCode());
+				boolean haveAllRoles = currentRoles.containsAll(newRoles) && currentRoles.contains(newMetadata.targetRoleHash == null ? null : newMetadata.targetRoleHash);
 				haveOlder = !haveAllRoles;
 			}
 			
@@ -308,7 +308,7 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 				
 				// store the metadata without the knowledge values
 				replicaMetadata.put(newMetadata.componentId, newMetadata);
-				replicaRoles.get(newMetadata.getSignature()).add(newMetadata.targetRole == null ? null : newMetadata.targetRole.hashCode());
+				replicaRoles.get(newMetadata.getSignature()).add(newMetadata.targetRoleHash == null ? null : newMetadata.targetRoleHash);
 				
 				// rebroadcast only data that is of some value (i.e., newer than we have)
 				queueForRebroadcast(kd);

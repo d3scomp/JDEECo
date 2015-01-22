@@ -174,7 +174,7 @@ public class SecurityIntegrationTests {
 			kd.getMetaData().componentId += "_remote";
 			try {
 				kd.getMetaData().signature = runtimeModel.securityHelper.sign(runtimeModel.securityKeyManager.getIntegrityPrivateKey(),
-						kd.getMetaData().componentId, kd.getMetaData().versionId, kd.getMetaData().targetRole);
+						kd.getMetaData().componentId, kd.getMetaData().versionId, kd.getMetaData().targetRoleHash);
 			} catch (Exception e) {
 				fail();
 			}

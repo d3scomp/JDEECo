@@ -29,7 +29,6 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeData;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeMetaData;
-import cz.cuni.mff.d3s.deeco.network.KnowledgeSecurityAnnotation;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper;
 
 /**
@@ -41,7 +40,7 @@ public class KnowledgeEncryptor {
 	
 	private final SecurityKeyManager keyManager;
 	private final SecurityHelper securityHelper;
-	private final RemoteSecurityChecker securityChecker;
+	private final RemoteSecurityChecker remoteSecurityChecker;
 	
 	/**
 	 * Instantiates a new knowledge encryptor.
@@ -51,8 +50,8 @@ public class KnowledgeEncryptor {
 	 */
 	public KnowledgeEncryptor(SecurityKeyManager keyManager) {
 		this.keyManager = keyManager;
-		this.securityHelper = new SecurityHelper();
-		this.securityChecker = new RemoteSecurityChecker();
+		this.securityHelper = new SecurityHelper();	
+		this.remoteSecurityChecker = new RemoteSecurityChecker();
 	}
 	
 
@@ -191,7 +190,7 @@ public class KnowledgeEncryptor {
 		// verify signature on metadata
 		boolean verificationSucceeded = false;
 		try {
-			verificationSucceeded = securityHelper.verify(metaData.signature, keyManager.getIntegrityPublicKey(), metaData.componentId, metaData.versionId, metaData.targetRole);
+			verificationSucceeded = securityHelper.verify(metaData.signature, keyManager.getIntegrityPublicKey(), metaData.componentId, metaData.versionId, metaData.targetRoleHash);
 		} catch (InvalidKeyException | CertificateEncodingException
 				| SignatureException | NoSuchAlgorithmException
 				| KeyStoreException | SecurityException | IllegalStateException e1) {
@@ -210,16 +209,14 @@ public class KnowledgeEncryptor {
 		
 		// try each role, if it can decrypt the data
 		for (SecurityRole role : transitiveRoles) {
-			// perform local security check
-			if (!securityChecker.checkSecurity(role, metaData.targetRole, replica.getComponent().getKnowledgeManager())) {
+			RoleWithArguments roleWithArguments = keyManager.getRoleByKey(metaData.targetRoleHash);
+			if (!remoteSecurityChecker.checkSecurity(role, roleWithArguments, replica.getComponent().getKnowledgeManager())) {
+				decryptionSucceeded = false;
 				continue;
 			}
-			
-			String roleName = metaData.targetRole.getRoleName();
-			Map<String, Object> arguments = metaData.targetRole.getRoleArguments();
-			
+
 			try {
-				Key privateKey = keyManager.getPrivateKey(roleName, arguments);				
+				Key privateKey = keyManager.getPrivateKey(roleWithArguments.roleName, roleWithArguments.arguments);				
 				Key decryptedSymmetricKey = securityHelper.decryptKey(metaData.encryptedKey, metaData.encryptedKeyAlgorithm, privateKey);
 				value = sealedObject.getObject(securityHelper.getSymmetricCipher(Cipher.DECRYPT_MODE, decryptedSymmetricKey));
 				
@@ -275,8 +272,8 @@ public class KnowledgeEncryptor {
 			
 			metaData.encryptedKey = encryptedKey;
 			metaData.encryptedKeyAlgorithm = symmetricKey.getAlgorithm();
-			metaData.targetRole = new KnowledgeSecurityAnnotation(roleName, arguments);
-			metaData.signature = securityHelper.sign(keyManager.getIntegrityPrivateKey(), metaData.componentId, metaData.versionId, metaData.targetRole);
+			metaData.targetRoleHash = keyManager.getRoleKey(roleName, arguments);
+			metaData.signature = securityHelper.sign(keyManager.getIntegrityPrivateKey(), metaData.componentId, metaData.versionId, metaData.targetRoleHash);
 			
 			return securityHelper.getSymmetricCipher(Cipher.ENCRYPT_MODE, symmetricKey);
 		} catch (InvalidKeyException | CertificateEncodingException
