@@ -141,17 +141,21 @@ public class ModelSecurityValidator {
 	 */
 	public static boolean isMoreRestrictive(SecurityTagCollection out, SecurityTagCollection in) {		
 		// if output has no security tags and input does
-		if (out.isEmpty() && !in.isEmpty()) {
+		if (out.isEmpty() && conjunctionWithoutLocalExists(in)) {
 			return false;
 		}
 		
 		// if output has some security tags and input does not
-		if (in.isEmpty() && !out.isEmpty()) {
+		if (!conjunctionWithoutLocalExists(in) && !out.isEmpty()) {
 			return true;
 		}
 		
 		// each conjunction from the output must override some conjunction from the input
 		return out.stream().allMatch(conjunction -> satisfiesConjunction(conjunction, in));
+	}
+	
+	private static boolean conjunctionWithoutLocalExists(SecurityTagCollection formula) {
+		return formula.stream().anyMatch(conjunction -> !conjunction.stream().anyMatch(tag -> tag instanceof LocalKnowledgeTag ) );
 	}
 	
 	private static boolean satisfiesConjunction(List<SecurityTag> outConjunction, SecurityTagCollection in) {

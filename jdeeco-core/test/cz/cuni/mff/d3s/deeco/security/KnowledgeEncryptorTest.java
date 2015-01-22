@@ -154,18 +154,14 @@ public class KnowledgeEncryptorTest {
 	}
 	
 	@Test
-	public void encryptValueSet_SecurityTest() throws KnowledgeNotFoundException {
-		// given single security tag is used
-		Collection<SecurityTag> tags = new LinkedList<>();
+	public void encryptValueSet_SecurityTest() throws KnowledgeNotFoundException {		
 		KnowledgeSecurityTag tag1 = factory.createKnowledgeSecurityTag();
 		tag1.setRequiredRole(factory.createSecurityRole());
 		tag1.getRequiredRole().setRoleName("testrole1");
 		KnowledgeSecurityTag tag2 = factory.createKnowledgeSecurityTag();
 		tag2.setRequiredRole(factory.createSecurityRole());
-		tag2.getRequiredRole().setRoleName("testrole2");
-		tags.add(tag1);
-		tags.add(tag2);
-		localKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("secured"), tags);
+		tag2.getRequiredRole().setRoleName("testrole2");		
+		localKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("secured"), Arrays.asList(tag1, tag2));
 		
 		// when encryptValueSet() is called
 		List<KnowledgeData> result = target.encryptValueSet(valueSet, localKnowledgeManager, metaData);

@@ -334,6 +334,55 @@ public class ModelSecurityValidatorTest {
 		assertEquals("Parameter map2 is not appropriately secured.", errors.get(0));
 	}
 	
+	@Test
+	public void validateProcessTest17() {
+		// given data is copied into local
+		knowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("map1"), Arrays.asList());
+		knowledgeManager.markAsLocal(Arrays.asList(RuntimeModelHelper.createKnowledgePath("map2")));
+		
+		process.getParameters().add(createParameter(ParameterKind.IN, createKnowledgePath(new String[] {"map1"})));
+		process.getParameters().add(createParameter(ParameterKind.OUT, createKnowledgePath(new String[] {"map2"})));
+		
+		List<String> errors = ModelSecurityValidator.validate(process);
+		assertTrue(errors.isEmpty());
+	}
+	
+	@Test
+	public void validateProcessTest18() {
+		// given data is copied from local
+		knowledgeManager.markAsLocal(Arrays.asList(RuntimeModelHelper.createKnowledgePath("map1")));
+		
+		process.getParameters().add(createParameter(ParameterKind.INOUT, createKnowledgePath(new String[] {"map1"})));
+		
+		List<String> errors = ModelSecurityValidator.validate(process);
+		assertTrue(errors.isEmpty());
+	}
+	
+	@Test
+	public void validateProcessTest19() {
+		// given data is copied from local to unsecured		
+		knowledgeManager.markAsLocal(Arrays.asList(RuntimeModelHelper.createKnowledgePath("map1")));
+		knowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("map2"), Arrays.asList());
+		
+		process.getParameters().add(createParameter(ParameterKind.IN, createKnowledgePath(new String[] {"map1"})));
+		process.getParameters().add(createParameter(ParameterKind.OUT, createKnowledgePath(new String[] {"map2"})));
+		
+		List<String> errors = ModelSecurityValidator.validate(process);
+		assertTrue(errors.isEmpty());
+	}
+	
+	@Test
+	public void validateProcessTest20() {
+		// given data is copied from local to unsecured		
+		knowledgeManager.markAsLocal(Arrays.asList(RuntimeModelHelper.createKnowledgePath("map1")));
+		knowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("map2"), Arrays.asList(tag_with_path));
+		
+		process.getParameters().add(createParameter(ParameterKind.IN, createKnowledgePath(new String[] {"map1"})));
+		process.getParameters().add(createParameter(ParameterKind.OUT, createKnowledgePath(new String[] {"map2"})));
+		
+		List<String> errors = ModelSecurityValidator.validate(process);
+		assertTrue(errors.isEmpty());
+	}
 	
 	
 	private Parameter createParameter(ParameterKind kind, KnowledgePath path) {
