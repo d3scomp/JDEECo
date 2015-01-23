@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -295,8 +296,10 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 					try {						
 						KnowledgeData decryptedData = knowledgeEncryptor.decryptValueSet(kd, replica, kd.getMetaData());
 						
-						ChangeSet changeSet = toChangeSet(decryptedData.getKnowledge());
-						replica.update(changeSet, decryptedData.getMetaData().componentId);	
+						Map<String, ChangeSet> changeSets = toChangeSets(decryptedData.getKnowledge(), decryptedData.getAuthors(), decryptedData.getMetaData());
+						for (Entry<String, ChangeSet> entry : changeSets.entrySet()) {
+							replica.update(entry.getValue(), entry.getKey());
+						}
 						
 						decryptedData.getSecuritySet().getKnowledgePaths().stream().forEach(kp -> replica.setSecurityTags(kp, (List<SecurityTag>) decryptedData.getSecuritySet().getValue(kp)));
 					} catch (KnowledgeUpdateException e) {
@@ -482,7 +485,7 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 		KnowledgeMetaData kmdCopy = receivedData.getMetaData().clone();
 		kmdCopy.sender = host;
 		kmdCopy.hopCount++;
-		return new KnowledgeData(receivedData.getKnowledge(), receivedData.getSecuritySet(), kmdCopy);
+		return new KnowledgeData(receivedData.getKnowledge(), receivedData.getSecuritySet(), receivedData.getAuthors(), kmdCopy);
 	}
 	
 	protected KnowledgeData filterLocalKnowledgeForKnownEnsembles(KnowledgeData kd) {
@@ -495,7 +498,7 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 			for (KnowledgePath kp: values.getKnowledgePaths()) {
 				newValues.setValue(kp, values.getValue(kp));
 			}
-			return new KnowledgeData(newValues, kd.getSecuritySet(), kd.getMetaData());
+			return new KnowledgeData(newValues, kd.getSecuritySet(), kd.getAuthors(), kd.getMetaData());
 		} else {
 			return kd;
 		}
@@ -506,16 +509,30 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 		return kmContainer.getLocals().iterator().next();
 	}
 
-	protected ChangeSet toChangeSet(ValueSet valueSet) {
-		if (valueSet != null) {
-			ChangeSet result = new ChangeSet();
-			for (KnowledgePath kp : valueSet.getKnowledgePaths())
-				result.setValue(kp, valueSet.getValue(kp));
+	private Map<String, ChangeSet> toChangeSets(ValueSet knowledge,
+			ValueSet authors, KnowledgeMetaData metaData) {
+		if (knowledge != null) {
+			Map<String, ChangeSet> result = new HashMap<>();
+			
+			for (KnowledgePath kp : knowledge.getKnowledgePaths()) {
+				String author = (String)authors.getValue(kp);
+				if (author == null) author = metaData.componentId;
+				
+				if (!result.containsKey(author)) {
+					result.put(author, new ChangeSet());
+				}
+				
+				result.get(author).setValue(kp, knowledge.getValue(kp));
+			}
+			
 			return result;
 		} else {
 			return null;
 		}
 	}
+
+	
+	
 	
 	protected void logPublish(List<? extends KnowledgeData> data) {
 		logPublish(data, "");

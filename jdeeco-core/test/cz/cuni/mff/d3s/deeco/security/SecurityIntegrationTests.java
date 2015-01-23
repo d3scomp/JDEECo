@@ -19,10 +19,13 @@ import cz.cuni.mff.d3s.deeco.integrity.PathRating;
 import cz.cuni.mff.d3s.deeco.integrity.RatingsChangeSet;
 import cz.cuni.mff.d3s.deeco.integrity.ReadonlyRatingsHolder;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeData;
 import cz.cuni.mff.d3s.deeco.network.RatingsData;
 import cz.cuni.mff.d3s.deeco.security.runtime.SecurityRuntimeModel;
+import cz.cuni.mff.d3s.deeco.security.runtime.SecurityRuntimeModel.PoliceEverywhereEnsemble;
 import cz.cuni.mff.d3s.deeco.task.TaskInvocationException;
 
 /**
@@ -109,7 +112,7 @@ public class SecurityIntegrationTests {
 		
 		for (KnowledgeManager replica : runtimeModel.container.getReplicas()) {
 			if (replica.getId().equals("V1_remote") && replica.getComponent().getKnowledgeManager().getId().equals("P1")) {
-				assertEquals("V1_remote", replica.getAuthor(RuntimeModelHelper.createKnowledgePath("secret")));
+				assertEquals("V1", replica.getAuthor(RuntimeModelHelper.createKnowledgePath("secret")));
 				counter++;
 			}
 			if (replica.getId().equals("V1_remote") && replica.getComponent().getKnowledgeManager().getId().equals("P2")) {
@@ -117,7 +120,7 @@ public class SecurityIntegrationTests {
 				counter++;
 			}
 			if (replica.getId().equals("V1_remote") && replica.getComponent().getKnowledgeManager().getId().equals("G1")) {
-				assertEquals("V1_remote", replica.getAuthor(RuntimeModelHelper.createKnowledgePath("secret")));
+				assertEquals("V1", replica.getAuthor(RuntimeModelHelper.createKnowledgePath("secret")));
 				counter++;
 			}
 		}
@@ -161,6 +164,53 @@ public class SecurityIntegrationTests {
 		assertEquals(0, p1Holder.getRatings(PathRating.OK));
 	}
 	
+	@Test
+	public void localKnowledgeExchangeSecurityTest2() throws TaskInvocationException, KnowledgeNotFoundException {		
+		// first round: the knowledge gets from vehicle to global police
+		runtimeModel.invokeEnsembleTasks();
+		KnowledgePath citySecretPath = RuntimeModelHelper.createKnowledgePath("secret_for_city");
+		
+		assertEquals("city secret", runtimeModel.container.getLocal("V1").get(Arrays.asList(citySecretPath)).getValue(citySecretPath));
+		assertEquals("city secret modified", runtimeModel.container.getLocal("G1").get(Arrays.asList(citySecretPath)).getValue(citySecretPath));
+		assertEquals("V1", runtimeModel.container.getLocal("G1").getAuthor(citySecretPath));
+		
+		// second round: the knowledge gets to the ordinary police
+		runtimeModel.invokeEnsembleTasks();
+		
+		assertEquals("city secret modified modified", runtimeModel.container.getLocal("P1").get(Arrays.asList(citySecretPath)).getValue(citySecretPath));
+	}
+	
+	@Test
+	public void remoteKnowledgeExchangeSecurityTest2() throws TaskInvocationException, KnowledgeNotFoundException {
+		PoliceEverywhereEnsemble.membership = (memberId, coordId) -> (memberId.equals("V1_remote") && coordId.equals("G1")) || (memberId.equals("G1_remote") && coordId.equals("P1"))
+				|| (memberId.equals("V1") && coordId.equals("G1"));
+		
+		// first round: the knowledge gets from vehicle to global police
+		runtimeModel.invokeEnsembleTasks();
+		
+		// delete ratings data
+		runtimeModel.ratingsManager.getPendingChangeSets().clear();
+		
+		// when publish() is called
+		runtimeModel.knowledgeDataManager.publish();
+		
+		// then data are broadcasted and captured
+		List<KnowledgeData> data = captureKnowledgeData();
+		
+		// then data are received
+		runtimeModel.knowledgeDataManager.receive(data, 123);
+		
+		KnowledgePath citySecretPath = RuntimeModelHelper.createKnowledgePath("secret_for_city");
+		
+		assertEquals("city secret", runtimeModel.container.getLocal("V1").get(Arrays.asList(citySecretPath)).getValue(citySecretPath));
+		assertEquals("V1", runtimeModel.container.getLocal("G1").getAuthor(citySecretPath));
+		assertEquals("city secret modified", runtimeModel.container.getLocal("G1").get(Arrays.asList(citySecretPath)).getValue(citySecretPath));		
+		
+		// second round: the knowledge gets to the ordinary police
+		runtimeModel.invokeEnsembleTasks();
+		
+		assertEquals("city secret modified modified", runtimeModel.container.getLocal("P1").get(Arrays.asList(citySecretPath)).getValue(citySecretPath));
+	}
 	
 	
 	@SuppressWarnings("unchecked")

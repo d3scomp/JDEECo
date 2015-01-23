@@ -56,6 +56,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.BlankSecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Condition;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ContextKind;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Exchange;
@@ -109,6 +110,12 @@ public class AnnotationProcessor {
 					put(Rating.class, ParameterKind.RATING);
 				}
 			});
+	
+	/** How path security roles are validated */
+	static enum SECURITY_ARGUMENT_PATH_VALIDATION { VALIDATE, NO_VALIDATION  }
+	
+	/** How security roles are loaded */
+	static enum SECURITY_ROLE_LOAD_TYPE { SIMPLE, RECURSIVE  }
 	
 	/**
 	 * Annotations that can appear in a class and can be handled by the main processor (this)
@@ -363,11 +370,7 @@ public class AnnotationProcessor {
 			km.update(initialLocalK);
 			componentInstance.setKnowledgeManager(km);
 			
-			try {
-				addSecurityTags(clazz, km, initialK);				
-			} catch (Exception ex) {
-				throw new AnnotationProcessorException(ex.getMessage());
-			}
+			addSecurityTags(clazz, km, initialK);				
 			
 			List<Method> methodsMarkedAsProcesses = new ArrayList<>(); 
 			List<Method> methodsMarkedAsRatingProcesses = new ArrayList<>();
@@ -421,7 +424,7 @@ public class AnnotationProcessor {
 				if (roles.contains(role.value())) {
 					throw new AnnotationProcessorException("The same role cannot be assigned multiply to a component.");
 				}
-				SecurityRole securityRole = createRoleFromClassDefinition(role.value(), km, true);
+				SecurityRole securityRole = createRoleFromClassDefinition(role.value(), km, SECURITY_ARGUMENT_PATH_VALIDATION.VALIDATE, SECURITY_ROLE_LOAD_TYPE.RECURSIVE);
 				componentInstance.getRoles().add(securityRole);
 				roles.add(role.value());
 			}
@@ -429,7 +432,7 @@ public class AnnotationProcessor {
 			callExtensions(ParsingEvent.ON_COMPONENT_CREATION, componentInstance, getUnknownAnnotations(clazz));
 			
 		} catch (KnowledgeUpdateException | AnnotationProcessorException
-				| ParseException e) {
+				| ParseException | NoSuchFieldException e) {
 			String msg = Component.class.getSimpleName() + ": "
 					+ componentInstance.getName() + "->" + e.getMessage();
 			throw new AnnotationProcessorException(msg, e);
@@ -464,17 +467,18 @@ public class AnnotationProcessor {
 	 * @throws AnnotationProcessorException
 	 * @throws ParseException
 	 */
-	private SecurityRole createRoleFromClassDefinition(Class<?> roleClass, KnowledgeManager knowledgeManager, boolean validateKnowledgePaths) throws AnnotationProcessorException, ParseException {
+	private SecurityRole createRoleFromClassDefinition(Class<?> roleClass, KnowledgeManager knowledgeManager, SECURITY_ARGUMENT_PATH_VALIDATION argumentValidation, 
+			SECURITY_ROLE_LOAD_TYPE loadType) throws AnnotationProcessorException, ParseException {
 		if (roleClass.getAnnotationsByType(RoleDefinition.class).length == 0) {
 			throw new AnnotationProcessorException("Role class must be decoreted with @RoleDefinition.");
 		}
-		
+				
 		SecurityRole securityRole = factory.createSecurityRole();
 		securityRole.setRoleName(roleClass.getName());		
 		
 		// create parent roles recursively
 		for (Class<?> iface : roleClass.getInterfaces()) {
-			securityRole.getConsistsOf().add(createRoleFromClassDefinition(iface, knowledgeManager, false));
+			securityRole.getConsistsOf().add(createRoleFromClassDefinition(iface, knowledgeManager, SECURITY_ARGUMENT_PATH_VALIDATION.NO_VALIDATION, SECURITY_ROLE_LOAD_TYPE.SIMPLE));
 		}
 		
 		// select only fields decorated with @RoleParam
@@ -482,7 +486,7 @@ public class AnnotationProcessor {
 				.filter(field -> field.getAnnotationsByType(RoleParam.class).length > 0)				
 				.collect(Collectors.toList());
 		
-		for (Field field : fieldParameters) {
+		for (Field field : roleClass.getFields()) {
 			// check if the field is not overriden by another field
 			if (!isValidForRole(field, fieldParameters, securityRole)) {
 				continue;
@@ -510,22 +514,37 @@ public class AnnotationProcessor {
 		}
 		
 		// if not a superclass is processed
-		if (validateKnowledgePaths) {
+		if (argumentValidation == SECURITY_ARGUMENT_PATH_VALIDATION.VALIDATE) {
 			// replace paths in arguments with their absolute values and lock them
 			List<PathSecurityRoleArgument> pathArguments = securityRole.getArguments().stream()
 					.filter(arg -> arg instanceof PathSecurityRoleArgument).map(arg -> (PathSecurityRoleArgument)arg).collect(Collectors.toList());
 			for (PathSecurityRoleArgument argument : pathArguments) {
-				KnowledgePath innerPath = argument.getKnowledgePath();
-				KnowledgePath absolutePath = null;
-				try {
-					absolutePath = KnowledgePathHelper.getAbsolutePath(innerPath, knowledgeManager);
-					knowledgeManager.get(Arrays.asList(absolutePath));
-				} catch (KnowledgeNotFoundException e) {
-					throw new AnnotationProcessorException("Parameter " + absolutePath + " is not present in the knowledge.", e);
-				}
+				KnowledgePath innerPath = argument.getKnowledgePath();				
 				
-				knowledgeManager.lockKnowledgePath(absolutePath);
-				argument.setKnowledgePath(absolutePath);
+				if (argument.getContextKind() == ContextKind.LOCAL) {
+					KnowledgePath absolutePath = null;
+					try {
+						absolutePath = KnowledgePathHelper.getAbsolutePath(innerPath, knowledgeManager);
+						knowledgeManager.get(Arrays.asList(absolutePath));
+					} catch (KnowledgeNotFoundException e) {
+						throw new AnnotationProcessorException("Parameter " + absolutePath + " is not present in the knowledge.", e);
+					}
+					
+					knowledgeManager.lockKnowledgePath(absolutePath);
+					argument.setKnowledgePath(absolutePath);
+				} else {
+					argument.setKnowledgePath(innerPath);
+				}				
+			}
+		}
+		
+		if (loadType == SECURITY_ROLE_LOAD_TYPE.RECURSIVE) {
+			RoleDefinition roleDefinition = roleClass.getAnnotation(RoleDefinition.class);
+			if (!roleDefinition.aliasedBy().equals(RoleDefinition.DEFAULT_ALIAS.class)) {
+				SecurityRole securityAliasRole = factory.createSecurityRole();
+				securityAliasRole.setRoleName(roleDefinition.aliasedBy().getName());
+				securityRole.getArguments().stream().forEach(argument -> securityAliasRole.getArguments().add(new Cloner().deepClone(argument)));  
+				securityRole.setAliasRole(securityAliasRole);
 			}
 		}
 		
@@ -554,8 +573,10 @@ public class AnnotationProcessor {
 					argument = factory.createPathSecurityRoleArgument();
 					argument.setName(field.getName());
 					
+					RoleParam roleParam = field.getAnnotation(RoleParam.class);
 					KnowledgePath innerPath = ((PathNodeMapKey)kp.getNodes().get(0)).getKeyPath();					
 					((PathSecurityRoleArgument)argument).setKnowledgePath(innerPath);
+					((PathSecurityRoleArgument)argument).setContextKind(roleParam.value());
 					createConcreteArgument = false;					
 				}
 			}
@@ -590,6 +611,7 @@ public class AnnotationProcessor {
 				PathSecurityRoleArgument arg = factory.createPathSecurityRoleArgument();
 				arg.setName(argument.getName());
 				arg.setKnowledgePath(KnowledgePathHelper.cloneKnowledgePath(((PathSecurityRoleArgument)argument).getKnowledgePath()));
+				arg.setContextKind(((PathSecurityRoleArgument)argument).getContextKind());
 				securityRole.getArguments().add(arg);
 			} else {
 				AbsoluteSecurityRoleArgument arg = factory.createAbsoluteSecurityRoleArgument();
@@ -650,7 +672,7 @@ public class AnnotationProcessor {
 				}
 				
 				KnowledgeSecurityTag tag = factory.createKnowledgeSecurityTag();
-				tag.setRequiredRole(createRoleFromClassDefinition(allow.value(), km, true));
+				tag.setRequiredRole(createRoleFromClassDefinition(allow.value(), km, SECURITY_ARGUMENT_PATH_VALIDATION.VALIDATE, SECURITY_ROLE_LOAD_TYPE.RECURSIVE));
 				km.addSecurityTag(kp, tag);			
 				roleClasses.add(allow.value());				
 			}

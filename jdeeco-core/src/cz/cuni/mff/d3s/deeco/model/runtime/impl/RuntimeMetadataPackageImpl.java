@@ -10,6 +10,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.BlankSecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Condition;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ContextKind;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Exchange;
@@ -263,6 +264,13 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * @generated
 	 */
 	private EEnum parameterKindEEnum = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EEnum contextKindEEnum = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -941,6 +949,15 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EReference getSecurityRole_AliasRole() {
+		return (EReference)securityRoleEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getSecurityRoleArgument() {
 		return securityRoleArgumentEClass;
 	}
@@ -970,6 +987,15 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 */
 	public EReference getPathSecurityRoleArgument_KnowledgePath() {
 		return (EReference)pathSecurityRoleArgumentEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getPathSecurityRoleArgument_ContextKind() {
+		return (EAttribute)pathSecurityRoleArgumentEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -1042,6 +1068,15 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 */
 	public EEnum getParameterKind() {
 		return parameterKindEEnum;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EEnum getContextKind() {
+		return contextKindEEnum;
 	}
 
 	/**
@@ -1212,12 +1247,14 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		createEReference(securityRoleEClass, SECURITY_ROLE__CONSISTS_OF);
 		createEAttribute(securityRoleEClass, SECURITY_ROLE__ROLE_NAME);
 		createEReference(securityRoleEClass, SECURITY_ROLE__ARGUMENTS);
+		createEReference(securityRoleEClass, SECURITY_ROLE__ALIAS_ROLE);
 
 		securityRoleArgumentEClass = createEClass(SECURITY_ROLE_ARGUMENT);
 		createEAttribute(securityRoleArgumentEClass, SECURITY_ROLE_ARGUMENT__NAME);
 
 		pathSecurityRoleArgumentEClass = createEClass(PATH_SECURITY_ROLE_ARGUMENT);
 		createEReference(pathSecurityRoleArgumentEClass, PATH_SECURITY_ROLE_ARGUMENT__KNOWLEDGE_PATH);
+		createEAttribute(pathSecurityRoleArgumentEClass, PATH_SECURITY_ROLE_ARGUMENT__CONTEXT_KIND);
 
 		blankSecurityRoleArgumentEClass = createEClass(BLANK_SECURITY_ROLE_ARGUMENT);
 
@@ -1233,6 +1270,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 
 		// Create enums
 		parameterKindEEnum = createEEnum(PARAMETER_KIND);
+		contextKindEEnum = createEEnum(CONTEXT_KIND);
 
 		// Create data types
 		methodEDataType = createEDataType(METHOD);
@@ -1374,12 +1412,14 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		initEReference(getSecurityRole_ConsistsOf(), this.getSecurityRole(), null, "consistsOf", null, 0, -1, SecurityRole.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getSecurityRole_RoleName(), ecorePackage.getEString(), "roleName", null, 1, 1, SecurityRole.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getSecurityRole_Arguments(), this.getSecurityRoleArgument(), null, "arguments", null, 0, -1, SecurityRole.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getSecurityRole_AliasRole(), this.getSecurityRole(), null, "aliasRole", null, 0, 1, SecurityRole.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(securityRoleArgumentEClass, SecurityRoleArgument.class, "SecurityRoleArgument", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getSecurityRoleArgument_Name(), ecorePackage.getEString(), "name", null, 1, 1, SecurityRoleArgument.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(pathSecurityRoleArgumentEClass, PathSecurityRoleArgument.class, "PathSecurityRoleArgument", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getPathSecurityRoleArgument_KnowledgePath(), this.getKnowledgePath(), null, "knowledgePath", null, 1, 1, PathSecurityRoleArgument.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getPathSecurityRoleArgument_ContextKind(), this.getContextKind(), "contextKind", null, 1, 1, PathSecurityRoleArgument.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(blankSecurityRoleArgumentEClass, BlankSecurityRoleArgument.class, "BlankSecurityRoleArgument", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
@@ -1399,6 +1439,10 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		addEEnumLiteral(parameterKindEEnum, ParameterKind.OUT);
 		addEEnumLiteral(parameterKindEEnum, ParameterKind.INOUT);
 		addEEnumLiteral(parameterKindEEnum, ParameterKind.RATING);
+
+		initEEnum(contextKindEEnum, ContextKind.class, "ContextKind");
+		addEEnumLiteral(contextKindEEnum, ContextKind.LOCAL);
+		addEEnumLiteral(contextKindEEnum, ContextKind.SHADOW);
 
 		// Initialize data types
 		initEDataType(methodEDataType, Method.class, "Method", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);

@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import cz.cuni.mff.d3s.deeco.integrity.RatingsChangeSet;
 import cz.cuni.mff.d3s.deeco.integrity.RatingsHolder;
@@ -485,7 +486,7 @@ public class EnsembleTask extends Task {
 			ensembleController.getEnsembleDefinition().getKnowledgeExchange().getMethod().invoke(null, actualParams);
 			
 			// Create a changeset
-			ChangeSet localChangeSet = new ChangeSet();
+			Map<String, ChangeSet> localChangeSets = new HashMap<>();
 			
 			paramIdx = 0;
 			allPathsWithRootsIter = allPathsWithRoots.iterator(); 
@@ -495,7 +496,16 @@ public class EnsembleTask extends Task {
 
 				if (absoluteKnowledgePathAndRoot.root == localRole) {
 					if (paramDir == ParameterKind.OUT || paramDir == ParameterKind.INOUT) {
-						localChangeSet.setValue(absoluteKnowledgePathAndRoot.knowledgePath, ((ParamHolder<Object>)actualParams[paramIdx]).value);
+						
+						String author = shadowKnowledgeManager.getAuthor(absoluteKnowledgePathAndRoot.knowledgePath);
+						if (author == null) {
+							author = shadowKnowledgeManager.getId();
+						}
+						if (!localChangeSets.containsKey(author)) {
+							localChangeSets.put(author, new ChangeSet());
+						}
+						
+						localChangeSets.get(author).setValue(absoluteKnowledgePathAndRoot.knowledgePath, ((ParamHolder<Object>)actualParams[paramIdx]).value);
 					}
 				}
 				
@@ -503,7 +513,9 @@ public class EnsembleTask extends Task {
 			}
 			
 			// Write the changeset back to the knowledge
-			localKnowledgeManager.update(localChangeSet, shadowKnowledgeManager.getId());
+			for (Entry<String, ChangeSet> entry : localChangeSets.entrySet()) {
+				localKnowledgeManager.update(entry.getValue(), entry.getKey());
+			}
 		} catch (KnowledgeUpdateException | IllegalAccessException | IllegalArgumentException e) {
 			throw new TaskInvocationException(String.format("Error when invoking a knowledge exchange for ensemble: %s", ensembleController.getEnsembleDefinition().getName()), e);			
 		} catch (InvocationTargetException e) {

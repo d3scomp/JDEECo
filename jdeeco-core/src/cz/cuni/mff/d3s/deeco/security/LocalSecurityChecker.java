@@ -10,14 +10,16 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager;
-import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.LocalKnowledgeTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityTag;
+import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.KnowledgePathAndRoot;
+import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper;
 import cz.cuni.mff.d3s.deeco.task.TaskInvocationException;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.PathRoot;
 
@@ -69,21 +71,26 @@ public class LocalSecurityChecker {
 			Collection<Parameter> formalParamsOfMembership = ensembleController.getEnsembleDefinition().getMembership().getParameters();
 			Collection<Parameter> formalParamsOfExchange = ensembleController.getEnsembleDefinition().getKnowledgeExchange().getParameters();
 			
-			Collection<KnowledgePath> knowledgePathsFromMembership = formalParamsOfMembership.stream().map(param -> param.getKnowledgePath()).collect(Collectors.toList());
-			Collection<KnowledgePath> knowledgePathsFromExchange = formalParamsOfExchange.stream().map(param -> param.getKnowledgePath()).collect(Collectors.toList());
+			Collection<KnowledgePath> knowledgePathsFromMembership = formalParamsOfMembership.stream()
+					.filter(param -> param.getKind() == ParameterKind.IN || param.getKind() == ParameterKind.INOUT)
+					.map(param -> param.getKnowledgePath()).collect(Collectors.toList());
+			Collection<KnowledgePath> knowledgePathsFromExchange = formalParamsOfExchange.stream()
+					.filter(param -> param.getKind() == ParameterKind.IN || param.getKind() == ParameterKind.INOUT)
+					.map(param -> param.getKnowledgePath()).collect(Collectors.toList());
 			
 			canAccess = canAccessKnowledge(localRole, knowledgePathsFromMembership, shadowKnowledgeManager) 
-							 && canAccessKnowledge(localRole, knowledgePathsFromExchange, shadowKnowledgeManager);					
+					 && canAccessKnowledge(localRole, knowledgePathsFromExchange, shadowKnowledgeManager);					
 		}		
 		
-		// validate that knowledge will not be compromised (i.e. moved to a path with lesser security)		
-		List<String> compromitationErrors = ModelSecurityValidator.validate(localRole, ensembleController.getEnsembleDefinition().getKnowledgeExchange(), 
-				ensembleController.getComponentInstance(), shadowKnowledgeManager);
-		if (!compromitationErrors.isEmpty()) {
-			Log.e("Knowledge exchange would result into data compromise: " + compromitationErrors.stream().collect(Collectors.joining(", ")));
-		}
-				
-		return canAccess && compromitationErrors.isEmpty();
+		if (canAccess) {
+			// validate that knowledge will not be compromised (i.e. moved to a path with lesser security)		
+			List<String> compromitationErrors = ModelSecurityValidator.validate(localRole, ensembleController.getEnsembleDefinition().getKnowledgeExchange(), 
+					ensembleController.getComponentInstance(), shadowKnowledgeManager);
+			
+			return compromitationErrors.isEmpty();
+		} else {
+			return false;
+		}		
 	}
 
 	/**
@@ -114,7 +121,7 @@ public class LocalSecurityChecker {
 					if (securityTag instanceof LocalKnowledgeTag) {
 						continue;
 					}
-					canAccessAllConditions = canAccessAllConditions && canAccessTag((KnowledgeSecurityTag) securityTag, localKnowledgeManager, shadowKnowledgeManager, securityTagManager);
+					canAccessAllConditions = canAccessAllConditions && canAccessTag(localRole, kp, (KnowledgeSecurityTag) securityTag, localKnowledgeManager, shadowKnowledgeManager, securityTagManager);
 				}
 				canAccessPath = canAccessPath || canAccessAllConditions;
 				
@@ -129,7 +136,7 @@ public class LocalSecurityChecker {
 	/**
 	 * Checks whether the local component has role to access the given security tag.
 	 */
-	private boolean canAccessTag(KnowledgeSecurityTag securityTag, ReadOnlyKnowledgeManager localKnowledgeManager, ReadOnlyKnowledgeManager shadowKnowledgeManager, 
+	private boolean canAccessTag(PathRoot localRole, KnowledgePath securedKnowledgePath, KnowledgeSecurityTag securityTag, ReadOnlyKnowledgeManager localKnowledgeManager, ReadOnlyKnowledgeManager shadowKnowledgeManager, 
 			Map<SecurityTag, ReadOnlyKnowledgeManager> securityTagManager) {
 		ReadOnlyKnowledgeManager accessingKnowledgeManager, protectingKnowledgeManager;
 		
@@ -145,14 +152,28 @@ public class LocalSecurityChecker {
 		List<SecurityRole> localRoles = RoleHelper.getTransitiveRoles(accessingKnowledgeManager.getComponent().getRoles());
 		boolean canAccessTag = false;
 		
+		// read the data from the security tag
+		String tagName = null;
+		Map<String, Object> tagArguments = null;
+		try {
+			KnowledgePathAndRoot pathAndRoot;
+			if (localRole == PathRoot.COORDINATOR) {
+				pathAndRoot = KnowledgePathHelper.getAbsoluteStrippedPath(securedKnowledgePath, localKnowledgeManager, shadowKnowledgeManager);
+			} else {
+				pathAndRoot = KnowledgePathHelper.getAbsoluteStrippedPath(securedKnowledgePath, shadowKnowledgeManager, localKnowledgeManager);
+			}
+			
+			tagName = securityTag.getRequiredRole().getRoleName();
+			tagArguments = RoleHelper.readRoleArguments(pathAndRoot.knowledgePath, securityTag.getRequiredRole(), protectingKnowledgeManager);
+		} catch (KnowledgeNotFoundException e) {	
+			return false;
+		}
+		 
 		// try each of the roles
 		for (SecurityRole role : localRoles) {
 			try {
 				String roleName = role.getRoleName();
-				Map<String, Object> roleArguments = RoleHelper.readRoleArguments(role, accessingKnowledgeManager);
-				
-				String tagName = securityTag.getRequiredRole().getRoleName();
-				Map<String, Object> tagArguments = RoleHelper.readRoleArguments(role, protectingKnowledgeManager);
+				Map<String, Object> roleArguments = RoleHelper.readRoleArguments(null, role, accessingKnowledgeManager);
 				
 				canAccessTag = canAccessTag || (roleName.equals(tagName) && RoleHelper.roleArgumentsMatch(roleArguments, tagArguments));
 			} catch (KnowledgeNotFoundException e) { 

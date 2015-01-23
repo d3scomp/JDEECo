@@ -17,5 +17,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface RoleDefinition {
+	Class<?> aliasedBy() default DEFAULT_ALIAS.class;
 	
+	static final class DEFAULT_ALIAS {}
 }

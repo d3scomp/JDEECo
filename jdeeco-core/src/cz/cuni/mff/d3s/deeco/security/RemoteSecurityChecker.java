@@ -25,7 +25,7 @@ public class RemoteSecurityChecker {
 	 * @throws KnowledgeNotFoundException
 	 */
 	public boolean checkSecurity(SecurityRole localSecurityRole, RoleWithArguments remoteSecurityRole, ReadOnlyKnowledgeManager accessingKnowledgeManager) throws KnowledgeNotFoundException {		
-		Map<String, Object> localRoleArguments = RoleHelper.readRoleArguments(localSecurityRole, accessingKnowledgeManager);
+		Map<String, Object> localRoleArguments = RoleHelper.readRoleArguments(null, localSecurityRole, accessingKnowledgeManager);
 		boolean namesMatch = localSecurityRole.getRoleName().equals(remoteSecurityRole.roleName);
 		
 		return namesMatch && RoleHelper.roleArgumentsMatch(localRoleArguments, remoteSecurityRole.arguments);

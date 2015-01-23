@@ -26,6 +26,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.SecurityRoleImpl#getConsistsOf <em>Consists Of</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.SecurityRoleImpl#getRoleName <em>Role Name</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.SecurityRoleImpl#getArguments <em>Arguments</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.SecurityRoleImpl#getAliasRole <em>Alias Role</em>}</li>
  * </ul>
  * </p>
  *
@@ -71,6 +72,16 @@ public class SecurityRoleImpl extends MinimalEObjectImpl.Container implements Se
 	 * @ordered
 	 */
 	protected EList<SecurityRoleArgument> arguments;
+
+	/**
+	 * The cached value of the '{@link #getAliasRole() <em>Alias Role</em>}' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getAliasRole()
+	 * @generated
+	 * @ordered
+	 */
+	protected SecurityRole aliasRole;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -129,6 +140,49 @@ public class SecurityRoleImpl extends MinimalEObjectImpl.Container implements Se
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public SecurityRole getAliasRole() {
+		return aliasRole;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public NotificationChain basicSetAliasRole(SecurityRole newAliasRole, NotificationChain msgs) {
+		SecurityRole oldAliasRole = aliasRole;
+		aliasRole = newAliasRole;
+		if (eNotificationRequired()) {
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.SECURITY_ROLE__ALIAS_ROLE, oldAliasRole, newAliasRole);
+			if (msgs == null) msgs = notification; else msgs.add(notification);
+		}
+		return msgs;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setAliasRole(SecurityRole newAliasRole) {
+		if (newAliasRole != aliasRole) {
+			NotificationChain msgs = null;
+			if (aliasRole != null)
+				msgs = ((InternalEObject)aliasRole).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - RuntimeMetadataPackage.SECURITY_ROLE__ALIAS_ROLE, null, msgs);
+			if (newAliasRole != null)
+				msgs = ((InternalEObject)newAliasRole).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - RuntimeMetadataPackage.SECURITY_ROLE__ALIAS_ROLE, null, msgs);
+			msgs = basicSetAliasRole(newAliasRole, msgs);
+			if (msgs != null) msgs.dispatch();
+		}
+		else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.SECURITY_ROLE__ALIAS_ROLE, newAliasRole, newAliasRole));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EList<SecurityRole> getConsistsOf() {
 		if (consistsOf == null) {
 			consistsOf = new EObjectContainmentEList<SecurityRole>(SecurityRole.class, this, RuntimeMetadataPackage.SECURITY_ROLE__CONSISTS_OF);
@@ -148,6 +202,8 @@ public class SecurityRoleImpl extends MinimalEObjectImpl.Container implements Se
 				return ((InternalEList<?>)getConsistsOf()).basicRemove(otherEnd, msgs);
 			case RuntimeMetadataPackage.SECURITY_ROLE__ARGUMENTS:
 				return ((InternalEList<?>)getArguments()).basicRemove(otherEnd, msgs);
+			case RuntimeMetadataPackage.SECURITY_ROLE__ALIAS_ROLE:
+				return basicSetAliasRole(null, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -166,6 +222,8 @@ public class SecurityRoleImpl extends MinimalEObjectImpl.Container implements Se
 				return getRoleName();
 			case RuntimeMetadataPackage.SECURITY_ROLE__ARGUMENTS:
 				return getArguments();
+			case RuntimeMetadataPackage.SECURITY_ROLE__ALIAS_ROLE:
+				return getAliasRole();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -190,6 +248,9 @@ public class SecurityRoleImpl extends MinimalEObjectImpl.Container implements Se
 				getArguments().clear();
 				getArguments().addAll((Collection<? extends SecurityRoleArgument>)newValue);
 				return;
+			case RuntimeMetadataPackage.SECURITY_ROLE__ALIAS_ROLE:
+				setAliasRole((SecurityRole)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -211,6 +272,9 @@ public class SecurityRoleImpl extends MinimalEObjectImpl.Container implements Se
 			case RuntimeMetadataPackage.SECURITY_ROLE__ARGUMENTS:
 				getArguments().clear();
 				return;
+			case RuntimeMetadataPackage.SECURITY_ROLE__ALIAS_ROLE:
+				setAliasRole((SecurityRole)null);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -229,6 +293,8 @@ public class SecurityRoleImpl extends MinimalEObjectImpl.Container implements Se
 				return ROLE_NAME_EDEFAULT == null ? roleName != null : !ROLE_NAME_EDEFAULT.equals(roleName);
 			case RuntimeMetadataPackage.SECURITY_ROLE__ARGUMENTS:
 				return arguments != null && !arguments.isEmpty();
+			case RuntimeMetadataPackage.SECURITY_ROLE__ALIAS_ROLE:
+				return aliasRole != null;
 		}
 		return super.eIsSet(featureID);
 	}

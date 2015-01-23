@@ -45,6 +45,13 @@ public class PathSecurityRoleArgumentExt extends PathSecurityRoleArgumentImpl im
 		} else if (!knowledgePath.equals(other.knowledgePath))
 			return false;	
 		
+		if (contextKind == null) {
+			if (other.contextKind != null)
+				return false;
+		} else if (!contextKind.equals(other.contextKind))
+			return false;	
+		
+		
 		return true;
 	}
 	
@@ -54,12 +61,13 @@ public class PathSecurityRoleArgumentExt extends PathSecurityRoleArgumentImpl im
 		int result = 1;
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((knowledgePath == null) ? 0 : knowledgePath.hashCode());
+		result = prime * result + ((contextKind == null) ? 0 : contextKind.hashCode());
 		return result;
 	}
 	
 	@Override
 	public String toString() {
-		return String.format("Path Security Role Argument [name=%s,path=%s]", name, knowledgePath);
+		return String.format("Path Security Role Argument [name=%s,path=%s,kind=%s]", name, knowledgePath,contextKind);
 	}
 	
 	private void writeObject(ObjectOutputStream out) throws IOException {
@@ -82,7 +90,8 @@ public class PathSecurityRoleArgumentExt extends PathSecurityRoleArgumentImpl im
 			PathSecurityRoleArgument argument = (PathSecurityRoleArgument) res.getContents().get(0);
 			
 			setName(argument.getName());
-			setKnowledgePath(argument.getKnowledgePath());			
+			setKnowledgePath(argument.getKnowledgePath());	
+			setContextKind(argument.getContextKind());
 		} catch (Exception e) {
 			throw e;
 		}

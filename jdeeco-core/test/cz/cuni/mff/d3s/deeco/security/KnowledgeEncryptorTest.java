@@ -70,7 +70,8 @@ public class KnowledgeEncryptorTest {
 		valueSet.setValue(RuntimeModelHelper.createKnowledgePath("b"), "TEST");
 		valueSet.setValue(RuntimeModelHelper.createKnowledgePath("c"), 123);
 		valueSet.setValue(RuntimeModelHelper.createKnowledgePath("secured"), 666);
-	
+		valueSet.setValue(RuntimeModelHelper.createKnowledgePath("secured2"), 667);
+		
 		metaData = new KnowledgeMetaData("xy", 13, "A", 123456, 45);
 		ComponentInstance component = mock(ComponentInstance.class);
 		
@@ -162,12 +163,17 @@ public class KnowledgeEncryptorTest {
 		tag2.setRequiredRole(factory.createSecurityRole());
 		tag2.getRequiredRole().setRoleName("testrole2");		
 		localKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("secured"), Arrays.asList(tag1, tag2));
+				
+		KnowledgeSecurityTag tag2_copy = factory.createKnowledgeSecurityTag();
+		tag2_copy.setRequiredRole(factory.createSecurityRole());
+		tag2_copy.getRequiredRole().setRoleName("testrole2");		
+		localKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("secured2"), Arrays.asList(tag2_copy));
 		
 		// when encryptValueSet() is called
 		List<KnowledgeData> result = target.encryptValueSet(valueSet, localKnowledgeManager, metaData);
 		
 		// then data secured data are encrypted
-		assertEquals(3, result.size()); // "b" and "c" plain, "secured" encrypted
+		assertEquals(3, result.size()); // "b" and "c" plain, "secured" and "secured2" encrypted
 		KnowledgeData plainData = result.get(0);
 		KnowledgeData securedDataForRole1 = result.get(1);
 		KnowledgeData securedDataForRole2 = result.get(2);
@@ -178,23 +184,30 @@ public class KnowledgeEncryptorTest {
 		assertFalse(plainData.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("b")) instanceof SealedObject);
 		assertFalse(plainData.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("c")) instanceof SealedObject);
 		assertNull(plainData.getMetaData().encryptedKey);
+		assertNull(plainData.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("secured")));
+		assertNull(plainData.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("secured2")));
+		assertNotNull(plainData.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("b")));
+		assertNotNull(plainData.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("c")));
 		
 		assertNotNull(securedDataForRole1.getMetaData().encryptedKey);
 		assertNotNull(securedDataForRole1.getMetaData().encryptedKeyAlgorithm);
 		assertNotNull(securedDataForRole1.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("secured")));
 		assertTrue(securedDataForRole1.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("secured")) instanceof SealedObject);
+		assertNull(securedDataForRole1.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("secured2")));
 		
 		assertNotNull(securedDataForRole2.getMetaData().encryptedKey);
 		assertNotNull(securedDataForRole2.getMetaData().encryptedKeyAlgorithm);
 		assertNotNull(securedDataForRole2.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("secured")));
 		assertTrue(securedDataForRole2.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("secured")) instanceof SealedObject);
+		assertTrue(securedDataForRole2.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("secured2")) instanceof SealedObject);
 		
 		assertEquals(0, plainData.getSecuritySet().getKnowledgePaths().size());
 		assertEquals(1, securedDataForRole1.getSecuritySet().getKnowledgePaths().size());
-		assertEquals(1, securedDataForRole2.getSecuritySet().getKnowledgePaths().size());
+		assertEquals(2, securedDataForRole2.getSecuritySet().getKnowledgePaths().size());
 		
 		assertTrue(securedDataForRole1.getSecuritySet().getValue(RuntimeModelHelper.createKnowledgePath("secured")) instanceof SealedObject);
 		assertTrue(securedDataForRole2.getSecuritySet().getValue(RuntimeModelHelper.createKnowledgePath("secured")) instanceof SealedObject);
+		assertTrue(securedDataForRole2.getSecuritySet().getValue(RuntimeModelHelper.createKnowledgePath("secured2")) instanceof SealedObject);
 	}
 	
 	@Test
@@ -212,7 +225,7 @@ public class KnowledgeEncryptorTest {
 		// given no security is used		
 		ValueSet valueSet = new ValueSet();
 		valueSet.setValue(RuntimeModelHelper.createKnowledgePath("b"), "TEST");
-		KnowledgeData data = new KnowledgeData(valueSet, new ValueSet(), metaData);
+		KnowledgeData data = new KnowledgeData(valueSet, new ValueSet(), new ValueSet(), metaData);
 		
 		// when decryptValueSet() is called
 		KnowledgeData decryptedData = target.decryptValueSet(data, localKnowledgeManager, metaData);
@@ -247,7 +260,7 @@ public class KnowledgeEncryptorTest {
 		SealedObject sealedTags = new SealedObject( (Serializable)Arrays.asList(tag), cipher);
 		securitySet.setValue(RuntimeModelHelper.createKnowledgePath("secured"), sealedTags);		
 		
-		KnowledgeData data = new KnowledgeData(valueSet2, securitySet, metaData);
+		KnowledgeData data = new KnowledgeData(valueSet2, securitySet, new ValueSet(), metaData);
 		
 		assertTrue(valueSet2.getValue(RuntimeModelHelper.createKnowledgePath("secured")) instanceof SealedObject);
 		assertTrue(securitySet.getValue(RuntimeModelHelper.createKnowledgePath("secured")) instanceof SealedObject);
@@ -280,7 +293,7 @@ public class KnowledgeEncryptorTest {
 		
 		ValueSet valueSet2 = new ValueSet();
 		valueSet2.setValue(RuntimeModelHelper.createKnowledgePath("secured"), sealed);
-		KnowledgeData data = new KnowledgeData(valueSet2, new ValueSet(), metaData);
+		KnowledgeData data = new KnowledgeData(valueSet2, new ValueSet(), new ValueSet(), metaData);
 		
 		assertTrue(valueSet2.getValue(RuntimeModelHelper.createKnowledgePath("secured")) instanceof SealedObject);
 		

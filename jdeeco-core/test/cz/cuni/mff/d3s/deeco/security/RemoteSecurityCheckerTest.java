@@ -1,13 +1,17 @@
 package cz.cuni.mff.d3s.deeco.security;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+import static org.mockito.MockitoAnnotations.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.AbsoluteSecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
@@ -22,9 +26,15 @@ public class RemoteSecurityCheckerTest {
 
 	RemoteSecurityChecker target;
 	
+	@Mock
+	KnowledgeManager knowledgeManagerMock;
+	
 	@Before
 	public void setUp() {
+		initMocks(this);
 		target = new RemoteSecurityChecker();
+		
+		when(knowledgeManagerMock.getId()).thenReturn("123");
 	}
 	
 	@Test
@@ -43,7 +53,7 @@ public class RemoteSecurityCheckerTest {
 		RoleWithArguments annotation = new RoleWithArguments("role", annotationArguments);
 				
 		// when checkSecurity is called()
-		boolean result = target.checkSecurity(role, annotation, null);
+		boolean result = target.checkSecurity(role, annotation, knowledgeManagerMock);
 		
 		// then true is returned
 		assertTrue(result);

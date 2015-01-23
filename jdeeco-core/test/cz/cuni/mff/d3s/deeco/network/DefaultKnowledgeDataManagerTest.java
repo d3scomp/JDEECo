@@ -56,7 +56,7 @@ public class DefaultKnowledgeDataManagerTest {
 		Object broadcastArgument = objectCaptor.getValue();
 		List<KnowledgeData> data = (List<KnowledgeData>)broadcastArgument;
 		
-		assertEquals(5, data.size());
+		assertEquals(6, data.size());
 		
 		Object[] componentIds = data.stream().map(d -> d.getMetaData().componentId).sorted().toArray();
 		assertEquals("G1", componentIds[0]);
@@ -64,12 +64,14 @@ public class DefaultKnowledgeDataManagerTest {
 		assertEquals("P2", componentIds[2]);
 		assertEquals("V1", componentIds[3]);
 		assertEquals("V1", componentIds[4]);
+		assertEquals("V1", componentIds[5]);
 				
-		testPartOfKnowledgeData(data, "P1", new String[] {"id", "cityId"}, new String[] {});
-		testPartOfKnowledgeData(data, "P2", new String[] {"id", "cityId"}, new String[] {});
-		testPartOfKnowledgeData(data, "V1", new String[] {}, new String[] {"secret"});
-		testPartOfKnowledgeData(data, "V1", new String[] {"id", "cityId"}, new String[] {});
-		testPartOfKnowledgeData(data, "G1", new String[] {"id"}, new String[] {});		
+		testPartOfKnowledgeData(data, "P1", 0, new String[] {"id", "cityId"}, new String[] {});
+		testPartOfKnowledgeData(data, "P2", 0, new String[] {"id", "cityId"}, new String[] {});
+		testPartOfKnowledgeData(data, "V1", 1, new String[] {}, new String[] {"secret"});
+		testPartOfKnowledgeData(data, "V1", 0, new String[] {}, new String[] {"secret_for_city"});
+		testPartOfKnowledgeData(data, "V1", 0, new String[] {"id", "cityId"}, new String[] {});
+		testPartOfKnowledgeData(data, "G1", 0, new String[] {"id"}, new String[] {});		
 	}
 	
 	@Test
@@ -90,7 +92,7 @@ public class DefaultKnowledgeDataManagerTest {
 		assertEquals(2, ratingsData.getRatings().size());
 	}
 		
-	private void testPartOfKnowledgeData(List<KnowledgeData> listOfData, String componentId, String[] plainFields, String[] encryptedFields) {
+	private void testPartOfKnowledgeData(List<KnowledgeData> listOfData, String componentId, int index, String[] plainFields, String[] encryptedFields) {
 		Stream<KnowledgeData> dataStream = listOfData.stream().filter(d -> d.getMetaData().componentId.equals(componentId));
 		if (plainFields.length > 0) {
 			dataStream = dataStream.filter(d -> d.getMetaData().encryptedKey == null);
@@ -98,7 +100,7 @@ public class DefaultKnowledgeDataManagerTest {
 			dataStream = dataStream.filter(d -> d.getMetaData().encryptedKey != null);
 		}
 		
-		KnowledgeData p1Data = dataStream.findFirst().get();
+		KnowledgeData p1Data = dataStream.skip(index).findFirst().get();
 		
 		for (String plainField : plainFields) {
 			assertTrue(p1Data.getKnowledge().getKnowledgePaths().contains(RuntimeModelHelper.createKnowledgePath(plainField)));
@@ -121,7 +123,7 @@ public class DefaultKnowledgeDataManagerTest {
 	public void receiveKnowledge_LocalTest() {
 		// given knowledge from local component is received
 		List<KnowledgeData> data = new LinkedList<>();
-		data.add(new KnowledgeData(new ValueSet(), new ValueSet(), new KnowledgeMetaData("V1", 123, "4.56", 456, 1)));
+		data.add(new KnowledgeData(new ValueSet(), new ValueSet(), new ValueSet(), new KnowledgeMetaData("V1", 123, "4.56", 456, 1)));
 		
 		// when receiveKnowledge() is called
 		runtimeModel.knowledgeDataManager.receiveKnowledge(data);
@@ -134,8 +136,8 @@ public class DefaultKnowledgeDataManagerTest {
 	public void receiveKnowledge_OldKnowledgeTest1() {
 		// given knowledge is received
 		List<KnowledgeData> data = new LinkedList<>();
-		data.add(new KnowledgeData(new ValueSet(), new ValueSet(), new KnowledgeMetaData("V_remote", 123, "4.56", 456, 1)));
-		data.add(new KnowledgeData(new ValueSet(), new ValueSet(), new KnowledgeMetaData("V_remote", 122, "4.56", 450, 1)));
+		data.add(new KnowledgeData(new ValueSet(), new ValueSet(), new ValueSet(), new KnowledgeMetaData("V_remote", 123, "4.56", 456, 1)));
+		data.add(new KnowledgeData(new ValueSet(), new ValueSet(), new ValueSet(), new KnowledgeMetaData("V_remote", 122, "4.56", 450, 1)));
 		
 		// when receiveKnowledge() is called
 		runtimeModel.knowledgeDataManager.receiveKnowledge(data);
@@ -148,8 +150,8 @@ public class DefaultKnowledgeDataManagerTest {
 	public void receiveKnowledge_OldKnowledgeTest2() {
 		// given knowledge of various roles is received
 		List<KnowledgeData> data = new LinkedList<>();
-		data.add(new KnowledgeData(new ValueSet(), new ValueSet(), new KnowledgeMetaData("V_remote", 123, "4.56", 456, 1)));
-		data.add(new KnowledgeData(new ValueSet(), new ValueSet(), new KnowledgeMetaData("V_remote", 122, "4.56", 450, 1, null, null, runtimeModel.securityKeyManager.getRoleKey("role", null), null)));
+		data.add(new KnowledgeData(new ValueSet(), new ValueSet(), new ValueSet(), new KnowledgeMetaData("V_remote", 123, "4.56", 456, 1)));
+		data.add(new KnowledgeData(new ValueSet(), new ValueSet(), new ValueSet(), new KnowledgeMetaData("V_remote", 122, "4.56", 450, 1, null, null, runtimeModel.securityKeyManager.getRoleKey("role", null), null)));
 		
 		// when receiveKnowledge() is called
 		runtimeModel.knowledgeDataManager.receiveKnowledge(data);
@@ -162,8 +164,8 @@ public class DefaultKnowledgeDataManagerTest {
 	public void receiveKnowledge_OldKnowledgeTest3() {
 		// given knowledge of various roles is received
 		List<KnowledgeData> data = new LinkedList<>();
-		data.add(new KnowledgeData(new ValueSet(), new ValueSet(), new KnowledgeMetaData("V_remote", 123, "4.56", 456, 1, null, null, runtimeModel.securityKeyManager.getRoleKey("role", null), null)));
-		data.add(new KnowledgeData(new ValueSet(), new ValueSet(), new KnowledgeMetaData("V_remote", 122, "4.56", 450, 1)));
+		data.add(new KnowledgeData(new ValueSet(), new ValueSet(), new ValueSet(), new KnowledgeMetaData("V_remote", 123, "4.56", 456, 1, null, null, runtimeModel.securityKeyManager.getRoleKey("role", null), null)));
+		data.add(new KnowledgeData(new ValueSet(), new ValueSet(), new ValueSet(), new KnowledgeMetaData("V_remote", 122, "4.56", 450, 1)));
 		
 		// when receiveKnowledge() is called
 		runtimeModel.knowledgeDataManager.receiveKnowledge(data);
@@ -176,9 +178,9 @@ public class DefaultKnowledgeDataManagerTest {
 	public void receiveKnowledge_OldKnowledgeTest4() {
 		// given knowledge of various roles is received
 		List<KnowledgeData> data = new LinkedList<>();
-		data.add(new KnowledgeData(new ValueSet(), new ValueSet(), new KnowledgeMetaData("V_remote", 123, "4.56", 456, 1)));
-		data.add(new KnowledgeData(new ValueSet(), new ValueSet(), new KnowledgeMetaData("V_remote", 122, "4.56", 450, 1, null, null, runtimeModel.securityKeyManager.getRoleKey("role", null), null)));
-		data.add(new KnowledgeData(new ValueSet(), new ValueSet(), new KnowledgeMetaData("V_remote", 123, "4.56", 450, 1, null, null, runtimeModel.securityKeyManager.getRoleKey("role", null), null)));
+		data.add(new KnowledgeData(new ValueSet(), new ValueSet(), new ValueSet(), new KnowledgeMetaData("V_remote", 123, "4.56", 456, 1)));
+		data.add(new KnowledgeData(new ValueSet(), new ValueSet(), new ValueSet(), new KnowledgeMetaData("V_remote", 122, "4.56", 450, 1, null, null, runtimeModel.securityKeyManager.getRoleKey("role", null), null)));
+		data.add(new KnowledgeData(new ValueSet(), new ValueSet(), new ValueSet(), new KnowledgeMetaData("V_remote", 123, "4.56", 450, 1, null, null, runtimeModel.securityKeyManager.getRoleKey("role", null), null)));
 		
 		// when receiveKnowledge() is called
 		runtimeModel.knowledgeDataManager.receiveKnowledge(data);
@@ -191,8 +193,8 @@ public class DefaultKnowledgeDataManagerTest {
 	public void receiveKnowledge_OldKnowledgeTest5() {
 		// given knowledge of various roles is received
 		List<KnowledgeData> data = new LinkedList<>();
-		data.add(new KnowledgeData(new ValueSet(), new ValueSet(), new KnowledgeMetaData("V_remote", 123, "4.56", 456, 1)));
-		data.add(new KnowledgeData(new ValueSet(), new ValueSet(), new KnowledgeMetaData("V_remote", 123, "4.56", 450, 1, null, null, runtimeModel.securityKeyManager.getRoleKey("role", null), null)));
+		data.add(new KnowledgeData(new ValueSet(), new ValueSet(), new ValueSet(), new KnowledgeMetaData("V_remote", 123, "4.56", 456, 1)));
+		data.add(new KnowledgeData(new ValueSet(), new ValueSet(), new ValueSet(), new KnowledgeMetaData("V_remote", 123, "4.56", 450, 1, null, null, runtimeModel.securityKeyManager.getRoleKey("role", null), null)));
 		
 		// when receiveKnowledge() is called
 		runtimeModel.knowledgeDataManager.receiveKnowledge(data);
@@ -205,11 +207,11 @@ public class DefaultKnowledgeDataManagerTest {
 	public void receiveKnowledge_OldKnowledgeTest6() {
 		// given knowledge of various roles is received
 		List<KnowledgeData> data = new LinkedList<>();
-		data.add(new KnowledgeData(new ValueSet(), new ValueSet(), new KnowledgeMetaData("V_remote", 123, "4.56", 456, 1)));
-		data.add(new KnowledgeData(new ValueSet(), new ValueSet(), new KnowledgeMetaData("V_remote", 122, "4.56", 450, 1)));
-		data.add(new KnowledgeData(new ValueSet(), new ValueSet(), new KnowledgeMetaData("V_remote", 123, "4.56", 450, 1, null, null, runtimeModel.securityKeyManager.getRoleKey("role", null), null)));
-		data.add(new KnowledgeData(new ValueSet(), new ValueSet(), new KnowledgeMetaData("V_remote", 122, "4.56", 450, 1, null, null, runtimeModel.securityKeyManager.getRoleKey("role", null), null)));
-		data.add(new KnowledgeData(new ValueSet(), new ValueSet(), new KnowledgeMetaData("V_remote", 125, "4.56", 450, 1, null, null, runtimeModel.securityKeyManager.getRoleKey("role", null), null)));
+		data.add(new KnowledgeData(new ValueSet(), new ValueSet(), new ValueSet(), new KnowledgeMetaData("V_remote", 123, "4.56", 456, 1)));
+		data.add(new KnowledgeData(new ValueSet(), new ValueSet(), new ValueSet(), new KnowledgeMetaData("V_remote", 122, "4.56", 450, 1)));
+		data.add(new KnowledgeData(new ValueSet(), new ValueSet(), new ValueSet(), new KnowledgeMetaData("V_remote", 123, "4.56", 450, 1, null, null, runtimeModel.securityKeyManager.getRoleKey("role", null), null)));
+		data.add(new KnowledgeData(new ValueSet(), new ValueSet(), new ValueSet(), new KnowledgeMetaData("V_remote", 122, "4.56", 450, 1, null, null, runtimeModel.securityKeyManager.getRoleKey("role", null), null)));
+		data.add(new KnowledgeData(new ValueSet(), new ValueSet(), new ValueSet(), new KnowledgeMetaData("V_remote", 125, "4.56", 450, 1, null, null, runtimeModel.securityKeyManager.getRoleKey("role", null), null)));
 		
 		// when receiveKnowledge() is called
 		runtimeModel.knowledgeDataManager.receiveKnowledge(data);
@@ -235,7 +237,10 @@ public class DefaultKnowledgeDataManagerTest {
 		List<KnowledgeData> data = new LinkedList<>();
 		ValueSet valueSet = new ValueSet();
 		ValueSet securitySet = new ValueSet();
-		data.add(new KnowledgeData(valueSet, securitySet, new KnowledgeMetaData("V_remote", 123, "4.56", 456, 1)));
+		valueSet.setValue(RuntimeModelHelper.createKnowledgePath("field"), 123);
+		ValueSet authors = new ValueSet();
+		authors.setValue(RuntimeModelHelper.createKnowledgePath("field"), "author");
+		data.add(new KnowledgeData(valueSet, securitySet, authors, new KnowledgeMetaData("V_remote", 123, "4.56", 456, 1)));
 		
 		// when receiveKnowledge() is called
 		runtimeModel.knowledgeDataManager.receiveKnowledge(data);
@@ -245,7 +250,7 @@ public class DefaultKnowledgeDataManagerTest {
 		
 		// then update() is called on each replica
 		for (KnowledgeManager km : replicas) {
-			verify(km).update(notNull(ChangeSet.class), eq("V_remote"));
+			verify(km).update(notNull(ChangeSet.class), eq("author"));
 		}
 	}
 	

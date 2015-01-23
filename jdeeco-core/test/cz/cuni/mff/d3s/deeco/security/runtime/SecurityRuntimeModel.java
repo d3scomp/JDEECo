@@ -1,11 +1,11 @@
 package cz.cuni.mff.d3s.deeco.security.runtime;
 
 import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.*;
 
 import java.security.KeyStoreException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
 import cz.cuni.mff.d3s.deeco.annotations.Allow;
@@ -16,6 +16,7 @@ import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
 import cz.cuni.mff.d3s.deeco.annotations.Local;
 import cz.cuni.mff.d3s.deeco.annotations.Membership;
+import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.HasRole;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
@@ -35,13 +36,12 @@ import cz.cuni.mff.d3s.deeco.integrity.ReadonlyRatingsHolder;
 import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerFactory;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ContextKind;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.network.DataSender;
 import cz.cuni.mff.d3s.deeco.network.DefaultKnowledgeDataManager;
-import cz.cuni.mff.d3s.deeco.runtime.ArchitectureObserver;
-import cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeFrameworkImpl;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.scheduler.SingleThreadedScheduler;
@@ -60,7 +60,7 @@ import cz.cuni.mff.d3s.deeco.task.TaskInvocationException;
  */
 public class SecurityRuntimeModel {
 	
-	@RoleDefinition
+	@RoleDefinition(aliasedBy = PoliceInAuthorsCity.class)
 	public static interface PoliceInCity {
 		@RoleParam
 		public static final String cityId = "[cityId]";
@@ -72,6 +72,12 @@ public class SecurityRuntimeModel {
 		public static final String cityId = null;
 	}
 	
+	@RoleDefinition
+	public static interface PoliceInAuthorsCity extends PoliceEverywhere {
+		@RoleParam(ContextKind.SHADOW)
+		public static final String cityId = "[cityId]";
+	}
+	
 	@Component 
 	public static class VehicleComponent  {
 		public String id;
@@ -80,11 +86,14 @@ public class SecurityRuntimeModel {
 		@Allow(PoliceInCity.class)
 		public String secret;
 		
-		public VehicleComponent(String id, String cityId, String secret) {
+		@Allow(PoliceEverywhere.class)		
+		public String secret_for_city;
+		
+		public VehicleComponent(String id, String cityId, String secret, String secret_for_city) {
 			this.id = id;		
 			this.cityId = cityId;
 			this.secret = secret;
-			
+			this.secret_for_city = secret_for_city;			
 		}
 	}
 	
@@ -96,6 +105,9 @@ public class SecurityRuntimeModel {
 		
 		@Local
 		public Map<String, String> secrets;
+		
+		@Local
+		public String secret_for_city;
 		
 		public PoliceComponent(String id, String cityId) {
 			this.id = id;		
@@ -120,12 +132,15 @@ public class SecurityRuntimeModel {
 	}
 	
 	@Component 
-	@HasRole(PoliceEverywhere.class)
+	@HasRole(PoliceEverywhere.class)		
 	public static class GlobalPoliceComponent  {
 		public String id;
 		
 		@Local
 		public Map<String, String> secrets;
+		
+		@Allow(PoliceInAuthorsCity.class)
+		public String secret_for_city;
 		
 		public GlobalPoliceComponent(String id) {
 			this.id = id;		
@@ -145,11 +160,29 @@ public class SecurityRuntimeModel {
 		}
 
 		@KnowledgeExchange
-		public static void exchange(@In("member.id") String id, @In("member.secret") String secret, @InOut("coord.secrets") ParamHolder<Map<String, String>> secrets) {
-			secrets.value.put(id, secret);
+		public static void exchange(@In("member.id") String id, @In("member.secret") String secret, 
+				 @InOut("coord.secrets") ParamHolder<Map<String, String>> secrets) {
+			secrets.value.put(id, secret);		
 		}
 	}
 
+	@Ensemble
+	@PeriodicScheduling(period = 1000)
+	public static class PoliceEverywhereEnsemble {
+		
+		public static BiFunction<String, String, Boolean> membership;
+		
+		@Membership
+		public static boolean membership(@In("member.id") String memberId, @In("coord.id") String coordId) {
+			return membership.apply(memberId, coordId);			
+		}
+
+		@KnowledgeExchange
+		public static void exchange(@In("member.secret_for_city") String member_secret_for_city, @Out("coord.secret_for_city") ParamHolder<String> coord_secret_for_city) {
+			coord_secret_for_city.value = member_secret_for_city + " modified";
+		}
+	}
+	
 	public RuntimeMetadata model;
 	public AnnotationProcessor processor;
 	public DefaultKnowledgeDataManager knowledgeDataManager;
@@ -166,14 +199,11 @@ public class SecurityRuntimeModel {
 	public PoliceComponent policeComponent1, policeComponent2;
 	public GlobalPoliceComponent globalPoliceComponent;
 	
-	public RuntimeFramework runtime;
+	public RuntimeFrameworkImpl runtime;
 	public SecurityHelper securityHelper;
-	public ArchitectureObserver architectureObserver;
 	public RatingsManager ratingsManager;
 	
 	public SecurityRuntimeModel() throws KeyStoreException, AnnotationProcessorException {
-		initMocks(this);
-		
 		securityKeyManager = new SecurityKeyManagerImpl();
 		scheduler = new SingleThreadedScheduler();
 		executor = new SameThreadExecutor();
@@ -182,9 +212,8 @@ public class SecurityRuntimeModel {
 		model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
 		processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE, model, new CloningKnowledgeManagerFactory());
 		dataSender = mock(DataSender.class);
-		architectureObserver = mock(ArchitectureObserver.class);
 		
-		vehicleComponent = new VehicleComponent("V1", "Prague", "top secret");
+		vehicleComponent = new VehicleComponent("V1", "Prague", "top secret", "city secret");
 		policeComponent1 = new PoliceComponent("P1", "Prague");
 		policeComponent2 = new PoliceComponent("P2", "Pilsen");
 		globalPoliceComponent = new GlobalPoliceComponent("G1");
@@ -194,9 +223,11 @@ public class SecurityRuntimeModel {
 		processor.process(policeComponent2);
 		processor.process(globalPoliceComponent);
 		processor.process(AllEnsemble.class);
+		processor.process(PoliceEverywhereEnsemble.class);
 		
 		// set ensemble to allow all components
 		AllEnsemble.membership = id -> true;
+		PoliceEverywhereEnsemble.membership = (memberId, coordId) -> (memberId.equals("V1") && coordId.equals("G1")) || (memberId.equals("G1") && coordId.equals("P1"));
 		
 		container = spy(new KnowledgeManagerContainer(new CloningKnowledgeManagerFactory(), model));
 		ratingsManager = spy(new RatingsManagerImpl());
@@ -208,12 +239,26 @@ public class SecurityRuntimeModel {
 	
 	public void invokeEnsembleTasks() throws TaskInvocationException {
 		// manually invoke ensemble knowledge exchange
+		
+		invokeAllEnsemble();
+		invokePoliceEverywhereEnsemble();
+	}
+	
+	public void invokeAllEnsemble() throws TaskInvocationException {
 		Trigger trigger = model.getEnsembleDefinitions().get(0).getTriggers().get(0);
 		
 		for (ComponentInstance ci : model.getComponentInstances()) {
-			Task task = new EnsembleTask(ci.getEnsembleControllers().get(0), scheduler, architectureObserver, container, ratingsManager);
+			Task task = new EnsembleTask(ci.getEnsembleControllers().get(0), scheduler, runtime, container, ratingsManager);
 			task.invoke(trigger);
 		}
+	}
+	
+	public void invokePoliceEverywhereEnsemble() throws TaskInvocationException {
+		Trigger trigger = model.getEnsembleDefinitions().get(1).getTriggers().get(0);
 		
+		for (ComponentInstance ci : model.getComponentInstances()) {
+			Task task = new EnsembleTask(ci.getEnsembleControllers().get(1), scheduler, runtime, container, ratingsManager);
+			task.invoke(trigger);
+		}	
 	}
 }

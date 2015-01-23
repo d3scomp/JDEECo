@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -71,8 +72,9 @@ public class KnowledgeEncryptor {
 		
 		ValueSet decryptedKnowledge = decrypt(kd.getKnowledge(), replica, metaData);	
 		ValueSet decryptedSecuritySet = decrypt(kd.getSecuritySet(), replica, metaData);
+		ValueSet decryptedAuthors = decrypt(kd.getAuthors(), replica, metaData);
 		
-		return new KnowledgeData(decryptedKnowledge, decryptedSecuritySet, metaData);
+		return new KnowledgeData(decryptedKnowledge, decryptedSecuritySet, decryptedAuthors, metaData);
 	}
 	
 	/**
@@ -123,10 +125,12 @@ public class KnowledgeEncryptor {
 	public List<KnowledgeData> encryptValueSet(ValueSet valueSet, KnowledgeManager knowledgeManager, KnowledgeMetaData metaData) throws KnowledgeNotFoundException {
 		if (valueSet == null) return null;
 		
-		Map<KnowledgeSecurityTag, ValueSet> securityMap = new HashMap<>();
-		Map<KnowledgePath, List<KnowledgeSecurityTag>> securityTagsMap = new HashMap<>();
+		Map<Integer, ValueSet> hashToKnowledge = new HashMap<>();
+		Map<Integer, ValueSet> hashToAuthors = new HashMap<>();
+		Map<Integer, KnowledgeMetaData> hashToMeta = new HashMap<>();
+		Map<Integer, Cipher> hashToCipher = new HashMap<>();	
+		Map<KnowledgePath, List<KnowledgeSecurityTag>> pathToSecurityTags = new HashMap<>();
 		
-		// split the knowledge into groups according to their security
 		for (KnowledgePath kp : valueSet.getKnowledgePaths()) {
 			if (!KnowledgePathHelper.isAbsolutePath(kp)) {
 				throw new IllegalArgumentException("The value set must contain only absolute knowledge paths.");
@@ -134,44 +138,71 @@ public class KnowledgeEncryptor {
 			
 			// get the security tags for the given knowledge path
 			List<KnowledgeSecurityTag> tags = knowledgeManager.getKnowledgeSecurityTags((PathNodeField)kp.getNodes().get(0));
-			securityTagsMap.put(kp, tags);
+			pathToSecurityTags.put(kp, tags);
 			
 			if (tags == null || tags.isEmpty()) {
-				addToSecurityMap(valueSet, securityMap, null, kp);				
-			} else {
-				for (KnowledgeSecurityTag tag : tags) {
-					addToSecurityMap(valueSet, securityMap, tag, kp);
+				if (!hashToKnowledge.containsKey(null)) {
+					hashToKnowledge.put(null, new ValueSet());
+				}
+				if (!hashToAuthors.containsKey(null)) {
+					hashToAuthors.put(null, new ValueSet());
 				}
 				
+				hashToKnowledge.get(null).setValue(kp, valueSet.getValue(kp));
+				hashToMeta.put(null, metaData.clone());
+				hashToAuthors.get(null).setValue(kp, knowledgeManager.getAuthor(kp));
+			} else {
+				for (KnowledgeSecurityTag tag : tags) {
+					Integer roleHash = getRoleKey(kp, knowledgeManager, tag);
+					
+					// the role and its arguments were not successfully resolved
+					if (roleHash == null) continue;				
+					
+					if (!hashToKnowledge.containsKey(roleHash)) {
+						hashToKnowledge.put(roleHash, new ValueSet());
+						hashToAuthors.put(roleHash, new ValueSet());
+						
+						KnowledgeMetaData meta = metaData.clone();
+						Cipher cipher = prepareCipher(kp, knowledgeManager, tag, meta);
+						
+						hashToCipher.put(roleHash, cipher);
+						hashToMeta.put(roleHash, meta);						
+					}
+					
+					hashToKnowledge.get(roleHash).setValue(kp, valueSet.getValue(kp));
+					hashToAuthors.get(roleHash).setValue(kp, knowledgeManager.getAuthor(kp));
+				}
 			}
 		}
+		
 		
 		// create copies of the knowledge data, each encrypted for target role		
 		List<KnowledgeData> result = new LinkedList<>();
 		
-		for (KnowledgeSecurityTag tag : securityMap.keySet()) {
-			// clone the meta data so the the copy can be modified
-			KnowledgeMetaData clonedMetaData = metaData.clone();
+		for (Entry<Integer, ValueSet> entry : hashToKnowledge.entrySet()) {
+			KnowledgeMetaData meta = hashToMeta.get(entry.getKey());
 			
-			if (tag == null) {
-				// data not encrypted
-				ValueSet vs = securityMap.get(null);
-				result.add(new KnowledgeData(vs, new ValueSet(), clonedMetaData));
-			} else {
-				ValueSet vs = securityMap.get(tag);
+			// no encryption
+			if (entry.getKey() == null) {
+				result.add(new KnowledgeData(entry.getValue(), new ValueSet(), hashToAuthors.get(null), meta));
+			} else {				
+				ValueSet knowledgeSet = entry.getValue();
+				Cipher cipher = hashToCipher.get(entry.getKey());
+				ValueSet authors = hashToAuthors.get(entry.getKey());
 				
 				// associate each knowledge path with a list of security tags
 				ValueSet securitySet = new ValueSet();
-				for (KnowledgePath path : vs.getKnowledgePaths()) {
-					securitySet.setValue(path, securityTagsMap.get(path) );
+				for (KnowledgePath path : knowledgeSet.getKnowledgePaths()) {
+					securitySet.setValue(path, pathToSecurityTags.get(path) );
 				}				
 				
-				Cipher cipher = prepareCipher(knowledgeManager, tag, clonedMetaData);
-				seal(vs, cipher);
+				seal(knowledgeSet, cipher);
 				seal(securitySet, cipher);
-				result.add(new KnowledgeData(vs, securitySet, clonedMetaData));
+				seal(authors, cipher);
+				result.add(new KnowledgeData(knowledgeSet, securitySet, authors, meta));
 			}
 		}
+		
 		return result;
 	}
 	
@@ -237,14 +268,6 @@ public class KnowledgeEncryptor {
 		return value;
 	}
 	
-	private void addToSecurityMap(ValueSet basicValueSet,
-			Map<KnowledgeSecurityTag, ValueSet> securityMap,
-			KnowledgeSecurityTag tag, KnowledgePath kp) {
-		if (!securityMap.containsKey(tag)) {
-			securityMap.put(tag, new ValueSet());
-		}
-		securityMap.get(tag).setValue(kp, basicValueSet.getValue(kp));
-	}
 	
 	/**
 	 * Creates an instance of {@link Cipher} for the given security tag and modifies the given metadata instance accordingly.
@@ -256,10 +279,10 @@ public class KnowledgeEncryptor {
 	 * 			the metadata
 	 * @return the cipher
 	 */
-	private Cipher prepareCipher(KnowledgeManager knowledgeManager, KnowledgeSecurityTag tag, KnowledgeMetaData metaData) {
+	private Cipher prepareCipher(KnowledgePath securedPath, KnowledgeManager knowledgeManager, KnowledgeSecurityTag tag, KnowledgeMetaData metaData) {
 		try {
 			String roleName = tag.getRequiredRole().getRoleName();
-			Map<String, Object> arguments = RoleHelper.readRoleArguments(tag.getRequiredRole(), knowledgeManager);
+			Map<String, Object> arguments = RoleHelper.readRoleArguments(securedPath, tag.getRequiredRole(), knowledgeManager);
 			
 			// get the public key for the given role
 			Key publicKey = keyManager.getPublicKey(roleName, arguments);
@@ -305,5 +328,17 @@ public class KnowledgeEncryptor {
 		}			
 	}
 
-	
+	/**
+	 * Computes unique hash for given role
+	 */
+	private Integer getRoleKey(KnowledgePath securedPath, KnowledgeManager knowledgeManager, KnowledgeSecurityTag tag) {
+		try {
+			String roleName = tag.getRequiredRole().getRoleName();
+			Map<String, Object> arguments = RoleHelper.readRoleArguments(securedPath, tag.getRequiredRole(), knowledgeManager);
+			
+			return keyManager.getRoleKey(roleName, arguments);
+		} catch (KnowledgeNotFoundException e) {
+			return null;
+		}
+	}
 }

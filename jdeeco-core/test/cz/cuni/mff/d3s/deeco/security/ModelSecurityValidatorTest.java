@@ -40,7 +40,7 @@ public class ModelSecurityValidatorTest {
 	private ComponentInstance component;
 	private RuntimeMetadataFactory factory;
 	private ComponentProcess process;
-	private KnowledgeSecurityTag tag_with_path, tag_only_role, tag_with_blank, tag_with_absolute, inherited_tag_with_path;
+	private KnowledgeSecurityTag tag_with_path, tag_only_role, tag_with_blank, tag_with_absolute, inherited_tag;
 	
 	@Before
 	public void setUp() throws KnowledgeUpdateException {
@@ -53,7 +53,7 @@ public class ModelSecurityValidatorTest {
 		tag_only_role = factory.createKnowledgeSecurityTag();
 		tag_with_blank = factory.createKnowledgeSecurityTag();
 		tag_with_absolute = factory.createKnowledgeSecurityTag();
-		inherited_tag_with_path = factory.createKnowledgeSecurityTag();
+		inherited_tag = factory.createKnowledgeSecurityTag();
 		
 		// create role1
 		SecurityRole role1 = factory.createSecurityRole();
@@ -92,15 +92,11 @@ public class ModelSecurityValidatorTest {
 		
 		tag_with_absolute.setRequiredRole(role4);
 		
-		// create descendant of role1
+		// create descendant of role2
 		SecurityRole role5 = factory.createSecurityRole();
-		role5.setRoleName("role5");
-
-		BlankSecurityRoleArgument role5BlankArgument = factory.createBlankSecurityRoleArgument();
-		role5BlankArgument.setName("role1pathArgument");		
-		role5.getArguments().add(role5BlankArgument);
-		role5.getConsistsOf().add(new Cloner().deepClone(role1));
-		inherited_tag_with_path.setRequiredRole(role5);
+		role5.setRoleName("role5");		
+		role5.getConsistsOf().add(new Cloner().deepClone(role2));
+		inherited_tag.setRequiredRole(role5);
 		
 		// connect
 		component.setKnowledgeManager(knowledgeManager);	
@@ -310,8 +306,8 @@ public class ModelSecurityValidatorTest {
 	@Test
 	public void validateProcessTest15() {
 		// given inheritance is used the correct way (output argument has role inheriting the role from input argument)
-		knowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("map1"), Arrays.asList(tag_with_path));
-		knowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("map2"), Arrays.asList(inherited_tag_with_path));
+		knowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("map1"), Arrays.asList(tag_only_role));
+		knowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("map2"), Arrays.asList(inherited_tag));
 		
 		process.getParameters().add(createParameter(ParameterKind.IN, createKnowledgePath(new String[] {"map1"})));
 		process.getParameters().add(createParameter(ParameterKind.OUT, createKnowledgePath(new String[] {"map2"})));
@@ -323,8 +319,8 @@ public class ModelSecurityValidatorTest {
 	@Test
 	public void validateProcessTest16() {
 		// given inheritance is used the wrong way (input argument has role inheriting the role from output argument)
-		knowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("map1"), Arrays.asList(inherited_tag_with_path));
-		knowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("map2"), Arrays.asList(tag_with_path));
+		knowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("map1"), Arrays.asList(inherited_tag));
+		knowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("map2"), Arrays.asList(tag_only_role));
 		
 		process.getParameters().add(createParameter(ParameterKind.IN, createKnowledgePath(new String[] {"map1"})));
 		process.getParameters().add(createParameter(ParameterKind.OUT, createKnowledgePath(new String[] {"map2"})));

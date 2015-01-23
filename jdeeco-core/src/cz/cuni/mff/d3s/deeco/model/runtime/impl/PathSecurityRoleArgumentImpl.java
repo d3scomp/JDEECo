@@ -2,6 +2,7 @@
  */
 package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ContextKind;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathSecurityRoleArgument;
 
@@ -23,6 +24,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * The following features are implemented:
  * <ul>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.PathSecurityRoleArgumentImpl#getKnowledgePath <em>Knowledge Path</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.PathSecurityRoleArgumentImpl#getContextKind <em>Context Kind</em>}</li>
  * </ul>
  * </p>
  *
@@ -38,6 +40,26 @@ public class PathSecurityRoleArgumentImpl extends SecurityRoleArgumentImpl imple
 	 * @ordered
 	 */
 	protected KnowledgePath knowledgePath;
+
+	/**
+	 * The default value of the '{@link #getContextKind() <em>Context Kind</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getContextKind()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final ContextKind CONTEXT_KIND_EDEFAULT = ContextKind.LOCAL;
+
+	/**
+	 * The cached value of the '{@link #getContextKind() <em>Context Kind</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getContextKind()
+	 * @generated
+	 * @ordered
+	 */
+	protected ContextKind contextKind = CONTEXT_KIND_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -106,6 +128,27 @@ public class PathSecurityRoleArgumentImpl extends SecurityRoleArgumentImpl imple
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public ContextKind getContextKind() {
+		return contextKind;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setContextKind(ContextKind newContextKind) {
+		ContextKind oldContextKind = contextKind;
+		contextKind = newContextKind == null ? CONTEXT_KIND_EDEFAULT : newContextKind;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.PATH_SECURITY_ROLE_ARGUMENT__CONTEXT_KIND, oldContextKind, contextKind));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -125,6 +168,8 @@ public class PathSecurityRoleArgumentImpl extends SecurityRoleArgumentImpl imple
 		switch (featureID) {
 			case RuntimeMetadataPackage.PATH_SECURITY_ROLE_ARGUMENT__KNOWLEDGE_PATH:
 				return getKnowledgePath();
+			case RuntimeMetadataPackage.PATH_SECURITY_ROLE_ARGUMENT__CONTEXT_KIND:
+				return getContextKind();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -139,6 +184,9 @@ public class PathSecurityRoleArgumentImpl extends SecurityRoleArgumentImpl imple
 		switch (featureID) {
 			case RuntimeMetadataPackage.PATH_SECURITY_ROLE_ARGUMENT__KNOWLEDGE_PATH:
 				setKnowledgePath((KnowledgePath)newValue);
+				return;
+			case RuntimeMetadataPackage.PATH_SECURITY_ROLE_ARGUMENT__CONTEXT_KIND:
+				setContextKind((ContextKind)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -155,6 +203,9 @@ public class PathSecurityRoleArgumentImpl extends SecurityRoleArgumentImpl imple
 			case RuntimeMetadataPackage.PATH_SECURITY_ROLE_ARGUMENT__KNOWLEDGE_PATH:
 				setKnowledgePath((KnowledgePath)null);
 				return;
+			case RuntimeMetadataPackage.PATH_SECURITY_ROLE_ARGUMENT__CONTEXT_KIND:
+				setContextKind(CONTEXT_KIND_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -169,8 +220,26 @@ public class PathSecurityRoleArgumentImpl extends SecurityRoleArgumentImpl imple
 		switch (featureID) {
 			case RuntimeMetadataPackage.PATH_SECURITY_ROLE_ARGUMENT__KNOWLEDGE_PATH:
 				return knowledgePath != null;
+			case RuntimeMetadataPackage.PATH_SECURITY_ROLE_ARGUMENT__CONTEXT_KIND:
+				return contextKind != CONTEXT_KIND_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String toString() {
+		if (eIsProxy()) return super.toString();
+
+		StringBuffer result = new StringBuffer(super.toString());
+		result.append(" (contextKind: ");
+		result.append(contextKind);
+		result.append(')');
+		return result.toString();
 	}
 
 } //PathSecurityRoleArgumentImpl

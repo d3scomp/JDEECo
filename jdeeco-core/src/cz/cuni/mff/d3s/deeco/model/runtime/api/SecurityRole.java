@@ -17,6 +17,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole#getConsistsOf <em>Consists Of</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole#getRoleName <em>Role Name</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole#getArguments <em>Arguments</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole#getAliasRole <em>Alias Role</em>}</li>
  * </ul>
  * </p>
  *
@@ -66,6 +67,32 @@ public interface SecurityRole extends EObject {
 	 * @generated
 	 */
 	EList<SecurityRoleArgument> getArguments();
+
+	/**
+	 * Returns the value of the '<em><b>Alias Role</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Alias Role</em>' containment reference isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Alias Role</em>' containment reference.
+	 * @see #setAliasRole(SecurityRole)
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getSecurityRole_AliasRole()
+	 * @model containment="true"
+	 * @generated
+	 */
+	SecurityRole getAliasRole();
+
+	/**
+	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole#getAliasRole <em>Alias Role</em>}' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Alias Role</em>' containment reference.
+	 * @see #getAliasRole()
+	 * @generated
+	 */
+	void setAliasRole(SecurityRole value);
 
 	/**
 	 * Returns the value of the '<em><b>Consists Of</b></em>' containment reference list.

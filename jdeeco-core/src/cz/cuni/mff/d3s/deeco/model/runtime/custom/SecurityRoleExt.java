@@ -53,6 +53,12 @@ public class SecurityRoleExt extends SecurityRoleImpl implements Serializable {
 		} else if (!listsEqual(arguments, other.arguments))
 			return false;
 		
+		if (aliasRole == null) {
+			if (other.aliasRole != null)
+				return false;
+		} else if (aliasRole.equals(other.aliasRole))
+			return false;
+		
 		return true;
 	}
 	
@@ -81,6 +87,7 @@ public class SecurityRoleExt extends SecurityRoleImpl implements Serializable {
 		result = prime * result + ((roleName == null) ? 0 : roleName.hashCode());
 		result = prime * result + ((arguments == null) ? 0 : arguments.hashCode());
 		result = prime * result + ((consistsOf == null) ? 0 : consistsOf.hashCode());
+		result = prime * result + ((aliasRole == null) ? 0 : aliasRole.hashCode());
 		return result;
 	}
 	
@@ -113,6 +120,7 @@ public class SecurityRoleExt extends SecurityRoleImpl implements Serializable {
 			setRoleName(role.getRoleName());
 			getArguments().addAll(role.getArguments());
 			getConsistsOf().addAll(role.getConsistsOf());
+			setAliasRole(role.getAliasRole());
 		} catch (Exception e) {
 			throw e;
 		}
