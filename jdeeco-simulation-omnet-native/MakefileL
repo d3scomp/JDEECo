@@ -1,7 +1,7 @@
-#JAVA_HOME ?= /usr/lib/jvm/java-7-openjdk-amd64
+JAVA_HOME ?= /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.25-5.b18.fc21.x86_64
 
 INET_DIR ?= ${OMNETPP_ROOT}/../inet
-MIXIM_DIR ?= ${OMNETPP_ROOT}/../mixim-2.3
+MIXIM_DIR ?= ${OMNETPP_ROOT}/../mixim
 
 CONFIGFILE = $(shell opp_configfilepath)
 include $(CONFIGFILE)
@@ -9,18 +9,22 @@ include $(CONFIGFILE)
 all: checkmakefiles
 	cd src && $(MAKE)
 
-clean: checkmakefiles
+clean: checkmakefiles header
 	cd src && $(MAKE) clean
 
 cleanall: checkmakefiles
 	cd src && $(MAKE) clean
 	rm -f src/Makefile
 	rm -rf out/
+	
+header:
+	$(JDK_HOME)/bin/javah -d src -classpath ../jdeeco-simulation/src cz.cuni.mff.d3s.deeco.simulation.omnet.OMNetSimulation
 
 # Create makefiles that allows building mixim without a separate INET installation.
 makefiles:
 	cd src && opp_makemake -f --deep --make-so -o jdeeco-omnetpp -O out \
 	-I${JAVA_HOME}/include \
+	-I${JAVA_HOME}/include/linux \
 	-I${OMNETPP_SRC_DIR}/common -I${OMNETPP_INCL_DIR}/platdep -I${OMNETPP_SRC_DIR}/envir \
 	-I${MIXIM_DIR}/src \
 	-I${MIXIM_DIR}/src/base \
