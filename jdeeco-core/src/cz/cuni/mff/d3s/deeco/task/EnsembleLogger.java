@@ -1,8 +1,12 @@
 package cz.cuni.mff.d3s.deeco.task;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,7 +21,7 @@ import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
  * 
  * @author Tomas Filipek <tom.filipek@seznam.cz>
  */
-class EnsembleLogger {
+public class EnsembleLogger {
 	
 	/**
 	 * Encapsulates three pieces of data: ensemble name, coordinator ID and member ID.
@@ -26,7 +30,7 @@ class EnsembleLogger {
 	 * 
 	 * @author Tomas Filipek <tom.filipek@seznam.cz>
 	 */
-	private static class MembershipRecord {
+	private static final class MembershipRecord {
 		
 		/**
 		 * Identification of the ensemble
@@ -125,10 +129,10 @@ class EnsembleLogger {
 	private final File ensembleLogFile = new File("logs/ensembles.xml");
 	
 	/**
-	 * An instance of {@link RandomAccessFile} that writes into {@link EnsembleLogger#ensembleLogFile}.
+	 * Writes to the output file specified by {@link EnsembleLogger#ensembleLogFile}
 	 * @see {@link EnsembleLogger#ensembleLogFile}
 	 */
-	private final RandomAccessFile out;
+	private final BufferedWriter out;
 	
 	/**
 	 * <p> Used to remember the last encountered value of the membership condition, computed on the 
@@ -141,22 +145,31 @@ class EnsembleLogger {
 	private final Map<EnsembleLogger.MembershipRecord, Boolean> membershipRecords = new HashMap<>();
 	
 	/**
-	 * Initializes the output streams
+	 * Encoding of the output log file
+	 */
+	private final String outputEncoding = "UTF-8"; 
+	
+	/**
+	 * Initializes the output stream and sets the shutdown hook.
 	 */
 	private EnsembleLogger() {
-		RandomAccessFile raf;
+		BufferedWriter out3;
 		try {
-			raf = new RandomAccessFile(ensembleLogFile, "rwd");
-		} catch (Exception ex) {
-			raf = null;
+			OutputStream stream = new FileOutputStream(ensembleLogFile, false);
+			out3 = new BufferedWriter(new OutputStreamWriter(stream, Charset.forName(outputEncoding)));
+		} catch (IOException ex){
+			Log.e("Can't log to " + ensembleLogFile.getAbsolutePath().toString());
+			out3 = null;
 		}
-		out = raf;
+		out = out3;
 		try {
-			out.setLength(0);
-			out.write(("<events>\n" + bottomElement).getBytes());
-		} catch (IOException | NullPointerException ex) {
-			Log.e("Could not log an ensemble event to " + ensembleLogFile.getAbsolutePath().toString());
+			if (out != null){
+				out.append("<events>\n");
+			}
+		} catch (IOException | NullPointerException ex){
+			Log.e("Can't log to " + ensembleLogFile.getAbsolutePath().toString());
 		}
+		setShutdownHook();
 	}
 	
 	/**
@@ -189,9 +202,34 @@ class EnsembleLogger {
 	private final String bottomElement = "</events>";
 	
 	/**
-	 * Length (in characters) of the closing root element
+	 * Thread to be executed upon JVM shutdown.
+	 * Makes sure that the enclosing "</events>" element is written to the output
+	 * file and the output stream is flushed.
 	 */
-	private final int footerLength = bottomElement.getBytes().length;
+	private final Thread shutdownHook = new Thread(new Runnable() {
+		
+		@Override
+		public void run() {
+			try {
+				if (out != null){
+					out.append(bottomElement);
+					out.newLine();
+					out.flush();
+				}
+			} catch (IOException e) {
+				Log.e("Could not write the enclosing element to " + ensembleLogFile.getAbsolutePath().toString());
+			}	
+		}
+	});
+	
+	/**
+	 * Makes sure that the {@link EnsembleLogger#shutdownHook} shutdown hook
+	 * is properly registered in the JVM.
+	 */
+	private void setShutdownHook(){
+		Runtime.getRuntime().removeShutdownHook(shutdownHook);
+		Runtime.getRuntime().addShutdownHook(shutdownHook);
+	}
 
 	/**
 	 * Logs the information about ensemble membership to the output file. It remembers the 
@@ -216,10 +254,11 @@ class EnsembleLogger {
 			membershipRecords.put(mr, Boolean.valueOf(membership));
 			String[] attributeValues = new String[] {coordinatorID, memberID, Boolean.toString(membership), ensembleName, Long.toString(timeSeconds)};
 			String elementText = getElementText(eventElementName, eventAttributes, attributeValues);
-			if (elementText != null){
+			if ((elementText != null) && !elementText.isEmpty()){
 				try {
-					bufferedWrite(elementText);
-				} catch (IOException | NullPointerException ex) {
+					out.append(elementText);
+					out.newLine();
+				} catch (IOException ex) {
 					Log.e("Could not log an ensemble event to " + ensembleLogFile.getAbsolutePath().toString());
 				}
 			}
@@ -227,42 +266,7 @@ class EnsembleLogger {
 	}
 	
 	/**
-	 * Buffer for text that will be written to the output file
-	 */
-	private final StringBuilder buffer = new StringBuilder();
-	
-	/**
-	 * Current size of the buffer, i.e. number of event elements it holds
-	 */
-	private int bufferCurrentSize = 0;
-	
-	/**
-	 * When the buffer size {@link EnsembleLogger#bufferCurrentSize} grows to 
-	 * this size, the buffer contents are written to the output file.
-	 */
-	private final int bufferCapacity = 16;
-	
-	/**
-	 * Buffered write to the output file.
-	 * @param text Text to be written to the output file.
-	 * @throws IOException When the text could not be written to the output file for some reason
-	 */
-	private void bufferedWrite(String text) throws IOException{
-		buffer.append(text);
-		bufferCurrentSize += 1;
-		if (bufferCurrentSize >= bufferCapacity){
-			buffer.append(bottomElement);
-			long newPosition = out.length() - footerLength;
-			out.seek(newPosition);
-			out.write(buffer.toString().getBytes());
-			buffer.setLength(0);
-			bufferCurrentSize = 0;
-		}
-	}
-	
-	/**
 	 * Builds a textual representation of an XML element defined by the parameters.
-	 * A newline is added to the end of the element.
 	 * @param name Name of the element
 	 * @param attributeNames Names of the attributes, in the order as they will appear
 	 * @param attributeValues Values of the attributes, in the same order as the names
@@ -287,7 +291,6 @@ class EnsembleLogger {
 			sb.append("\" ");
 		}
 		sb.append("/>");
-		sb.append("\n");
 		return sb.toString();
 	}	
 }
