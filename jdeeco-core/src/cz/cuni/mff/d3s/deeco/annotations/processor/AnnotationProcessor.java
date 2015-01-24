@@ -429,6 +429,12 @@ public class AnnotationProcessor {
 				roles.add(role.value());
 			}
 			
+			// check for data compromise
+			Set<String> compromitationErrors = ModelSecurityValidator.validate(componentInstance);
+			if (!compromitationErrors.isEmpty()) {
+				throw new AnnotationProcessorException("Running component " + componentInstance.getName() + " would result into data compromise: " + compromitationErrors.stream().collect(Collectors.joining(", ")));
+			}
+			
 			callExtensions(ParsingEvent.ON_COMPONENT_CREATION, componentInstance, getUnknownAnnotations(clazz));
 			
 		} catch (KnowledgeUpdateException | AnnotationProcessorException
@@ -841,12 +847,6 @@ public class AnnotationProcessor {
 				componentProcess.getTriggers().add(periodicTrigger);
 			}
 			componentProcess.getTriggers().addAll(knowledgeChangeTriggers);
-			
-			// check for data compromise
-			List<String> compromitationErrors = ModelSecurityValidator.validate(componentProcess);
-			if (!compromitationErrors.isEmpty()) {
-				throw new AnnotationProcessorException("Running component process " + componentProcess.getName() + " would result into data compromise: " + compromitationErrors.stream().collect(Collectors.joining(", ")));
-			}
 			
 			callExtensions(ParsingEvent.ON_PROCESS_CREATION, componentProcess, getUnknownAnnotations(m));
 

@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
@@ -84,7 +85,7 @@ public class LocalSecurityChecker {
 		
 		if (canAccess) {
 			// validate that knowledge will not be compromised (i.e. moved to a path with lesser security)		
-			List<String> compromitationErrors = ModelSecurityValidator.validate(localRole, ensembleController.getEnsembleDefinition().getKnowledgeExchange(), 
+			Set<String> compromitationErrors = ModelSecurityValidator.validate(localRole, ensembleController.getEnsembleDefinition().getKnowledgeExchange(), 
 					ensembleController.getComponentInstance(), shadowKnowledgeManager);
 			
 			return compromitationErrors.isEmpty();

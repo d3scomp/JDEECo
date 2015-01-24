@@ -1,8 +1,10 @@
 package cz.cuni.mff.d3s.deeco.security;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
@@ -12,9 +14,10 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.BlankSecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Exchange;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.Invocable;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.LocalKnowledgeTag;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathSecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
@@ -34,58 +37,45 @@ public class ModelSecurityValidator {
 	 *
 	 * @param component
 	 *            the component
-	 * @return the list of potential errors
+	 * @return the set of potential errors
 	 */
-	public static List<String> validate(ComponentInstance component) {
-		List<String> errorList = new ArrayList<>();
+	public static Set<String> validate(ComponentInstance component) {
+		Set<String> errorList = new HashSet<>();
 		
 		// no need to check ratings process since it can't change any knowledge
+		List<Invocable> invocables = component.getComponentProcesses().stream()
+				.map(process -> (Invocable)process)
+				.collect(Collectors.toList());
 		
 		// check security integrity in processes
 		for (ComponentProcess process : component.getComponentProcesses()) {
-			errorList.addAll(validate(process));
+			// get all output parameters		
+			Set<KnowledgePath> outputParameters = process.getParameters().stream()
+					.filter(param -> param.getKind() == ParameterKind.OUT || param.getKind() == ParameterKind.INOUT)
+					.map(param -> param.getKnowledgePath())
+					.collect(Collectors.toSet());
+			
+			for (KnowledgePath outputParameterPath : outputParameters) {
+				KnowledgeManager knowledgeManager = process.getComponentInstance().getKnowledgeManager();
+				SecurityTagCollection outputParamSecurity = SecurityTagCollection.getSecurityTags(outputParameterPath, knowledgeManager);
+				
+				Set<KnowledgePath> transitiveInputParameters = new HashSet<>(); 
+				getAllTransitiveInputParameters(outputParameterPath, process, invocables, transitiveInputParameters); 
+				
+				for (KnowledgePath inputParameterPath : transitiveInputParameters) {				
+					SecurityTagCollection inputParamSecurity = SecurityTagCollection.getSecurityTags(inputParameterPath, knowledgeManager);
+					
+					if (!isMoreRestrictive(outputParamSecurity, inputParamSecurity)) {
+						errorList.add(String.format("Parameter %s is not appropriately secured.", outputParameterPath.toString()));
+					}
+				}	
+			}			
 		}
 		
 		return errorList;
 	}
 
-	/**
-	 * Validates the component process.
-	 *
-	 * @param process
-	 *            the process
-	 * @return the list of potential errors
-	 */
-	public static List<String> validate(ComponentProcess process) {
-		List<String> errorList = new ArrayList<>();
-		
-		// get all input parameters
-		List<Parameter> inputParameters = process.getParameters().stream()
-				.filter(param -> param.getKind() == ParameterKind.IN || param.getKind() == ParameterKind.INOUT)
-				.collect(Collectors.toList());
-		
-		// get all output parameters		
-		List<Parameter> outputParameters = process.getParameters().stream()
-				.filter(param -> param.getKind() == ParameterKind.OUT || param.getKind() == ParameterKind.INOUT)
-				.collect(Collectors.toList());
-		
-		// each output parameter needs to be local or have higher security than all the input parameters
-		for (Parameter outputParameter : outputParameters) {
-			KnowledgeManager knowledgeManager = process.getComponentInstance().getKnowledgeManager();
-			SecurityTagCollection outputParamSecurity = SecurityTagCollection.getSecurityTags(outputParameter.getKnowledgePath(), knowledgeManager);
-			
-			for (Parameter inputParameter : inputParameters) {				
-				SecurityTagCollection inputParamSecurity = SecurityTagCollection.getSecurityTags(inputParameter.getKnowledgePath(), knowledgeManager);
-				
-				if (!isMoreRestrictive(outputParamSecurity, inputParamSecurity)) {
-					errorList.add(String.format("Parameter %s is not appropriately secured.", outputParameter.getKnowledgePath().toString()));
-				}
-			}			
-		}		
-		
-		return errorList;
-	}
-
+	
 	/**
 	 * Validates the knowledge exchange method.
 	 *
@@ -97,34 +87,59 @@ public class ModelSecurityValidator {
 	 *            the local component
 	 * @param shadowKnowledgeManager
 	 *            the shadow knowledge manager
-	 * @return the list of potential errors
+	 * @return the set of potential errors
 	 */
-	public static List<String> validate(PathRoot pathRoot, Exchange exchange, ComponentInstance component, ReadOnlyKnowledgeManager shadowKnowledgeManager) {
-		List<String> errorList = new ArrayList<>();
-		
-		// get all input parameters
-		List<Parameter> inputParameters = exchange.getParameters().stream()
-				.filter(param -> param.getKind() == ParameterKind.IN || param.getKind() == ParameterKind.INOUT)
-				.collect(Collectors.toList());
+	public static Set<String> validate(PathRoot pathRoot, Exchange exchange, ComponentInstance component, ReadOnlyKnowledgeManager shadowKnowledgeManager) {
+		Set<String> errorList = new HashSet<>();
 
-		// get all output parameters		
-		List<Parameter> outputParameters = exchange.getParameters().stream()
-				.filter(param -> param.getKind() == ParameterKind.OUT || param.getKind() == ParameterKind.INOUT)				
+		// add exchange process to the list of component processes
+		List<Invocable> invocables = component.getComponentProcesses().stream()
+				.map(process -> (Invocable)process)
 				.collect(Collectors.toList());
-				
-		// each output parameter needs to be local or have higher security than all the input parameters
-		for (Parameter outputParameter : outputParameters) {
-			KnowledgeManager localKnowledgeManager = component.getKnowledgeManager();
-			SecurityTagCollection outputParamSecurity = SecurityTagCollection.getSecurityTags(pathRoot, outputParameter.getKnowledgePath(), localKnowledgeManager, shadowKnowledgeManager, null);
+		invocables.add(exchange);
+		
+		// verify no process leads to a knowledge compromise
+		for (Invocable invocable : invocables) {
+			// get all output parameters		
+			Set<KnowledgePath> outputParameters = invocable.getParameters().stream()
+					.filter(param -> param.getKind() == ParameterKind.OUT || param.getKind() == ParameterKind.INOUT)
+					.map(param -> param.getKnowledgePath())
+					.collect(Collectors.toSet());
 			
-			for (Parameter inputParameter : inputParameters) {				
-				SecurityTagCollection inputParamSecurity = SecurityTagCollection.getSecurityTags(pathRoot, inputParameter.getKnowledgePath(), localKnowledgeManager, shadowKnowledgeManager, null);
-				
-				if (!isMoreRestrictive(outputParamSecurity, inputParamSecurity)) {
-					errorList.add(String.format("Parameter %s is not appropriately secured.", outputParameter.getKnowledgePath().toString()));
+			for (KnowledgePath outputParameterPath : outputParameters) {
+				SecurityTagCollection outputParamSecurity;
+				// get output parameter security
+				if (invocable instanceof ComponentProcess) {
+					KnowledgeManager knowledgeManager = ((ComponentProcess)invocable).getComponentInstance().getKnowledgeManager();
+					outputParamSecurity = SecurityTagCollection.getSecurityTags(outputParameterPath, knowledgeManager);
+				} else {
+					KnowledgeManager localKnowledgeManager = component.getKnowledgeManager();
+					outputParamSecurity = SecurityTagCollection.getSecurityTags(pathRoot, outputParameterPath, localKnowledgeManager, shadowKnowledgeManager, null);
 				}
-			}			
-		}		
+				
+				// get transitive input dependencies
+				Set<KnowledgePath> transitiveInputParameters = new HashSet<>(); 
+				getAllTransitiveInputParameters(outputParameterPath, invocable, invocables, transitiveInputParameters); 
+				
+				for (KnowledgePath inputParameterPath : transitiveInputParameters) {
+					// get input parameter security
+					SecurityTagCollection inputParamSecurity;
+					if (invocable instanceof ComponentProcess) {
+						KnowledgeManager knowledgeManager = ((ComponentProcess)invocable).getComponentInstance().getKnowledgeManager();
+						inputParamSecurity = SecurityTagCollection.getSecurityTags(inputParameterPath, knowledgeManager);
+					} else {
+						KnowledgeManager localKnowledgeManager = component.getKnowledgeManager();
+						inputParamSecurity = SecurityTagCollection.getSecurityTags(pathRoot, inputParameterPath, localKnowledgeManager, shadowKnowledgeManager, null);
+					}
+					
+					if (!isMoreRestrictive(outputParamSecurity, inputParamSecurity)) {
+						errorList.add(String.format("Parameter %s is not appropriately secured.", outputParameterPath.toString()));
+					}
+				}	
+			}		
+		}
+		
+				
 		
 		return errorList;
 	}
@@ -220,5 +235,37 @@ public class ModelSecurityValidator {
 		return false;
 	}
 
+	/**
+	 * Returns all knowledge paths on which the given output parameter knowledge path depends
+	 * @param outputParameterPath
+	 * 			the knowledge path of the output parameter of the process
+	 * @param process
+	 * 			the process in which the knowledge path belongs
+	 * @param result
+	 * 			the set of knowledge paths
+	 */
+	protected static void getAllTransitiveInputParameters(KnowledgePath outputParameterPath, Invocable process, Collection<Invocable> allProcesses, Set<KnowledgePath> result) {
+		Set<KnowledgePath> inputParameters = process.getParameters().stream()
+				.filter(param -> param.getKind() == ParameterKind.IN || param.getKind() == ParameterKind.INOUT)
+				.map(param -> param.getKnowledgePath())
+				.collect(Collectors.toSet());
+		
+		if (result.containsAll(inputParameters)) return;
+		result.addAll(inputParameters);
+		
+		for (KnowledgePath inputParameterPath : inputParameters) {
+			for (Invocable anotherProcess : allProcesses) {
+				Set<KnowledgePath> outputParameters = anotherProcess.getParameters().stream()
+						.filter(param -> param.getKind() == ParameterKind.OUT || param.getKind() == ParameterKind.INOUT)
+						.map(param -> param.getKnowledgePath())
+						.collect(Collectors.toSet());
+				
+				if (outputParameters.contains(inputParameterPath)) {
+					getAllTransitiveInputParameters(inputParameterPath, anotherProcess, allProcesses, result);
+				}
+			}
+		}
 	
+	}
+
 }
