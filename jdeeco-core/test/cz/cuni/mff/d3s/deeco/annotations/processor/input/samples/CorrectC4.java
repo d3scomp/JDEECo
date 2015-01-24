@@ -17,9 +17,10 @@ import cz.cuni.mff.d3s.deeco.annotations.RoleParam;
 @HasRole(CorrectC4.Role2.class)
 public class CorrectC4 {
 
-	@RoleDefinition
+	@RoleDefinition(aliasedBy = Role3.class)
 	public static interface Role1 {
-		
+		@RoleParam
+		public static final String x = null;
 	}
 	
 	@RoleDefinition

@@ -120,8 +120,10 @@ public class AnnotationProcessorTest {
 		assertEquals(2, capacitySecurityTags.size());
 		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role1.class.getName(), capacitySecurityTags.get(0).getRequiredRole().getRoleName());
 		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role3.class.getName(), capacitySecurityTags.get(1).getRequiredRole().getRoleName());
-		assertEquals(0, capacitySecurityTags.get(0).getRequiredRole().getArguments().size());
+		assertEquals(1, capacitySecurityTags.get(0).getRequiredRole().getArguments().size());
 		assertEquals(0, capacitySecurityTags.get(1).getRequiredRole().getArguments().size());
+		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role3.class.getName(), capacitySecurityTags.get(0).getRequiredRole().getAliasRole().getRoleName());
+		assertEquals(capacitySecurityTags.get(0).getRequiredRole().getAliasRole().getArguments().get(0), capacitySecurityTags.get(0).getRequiredRole().getArguments().get(0));
 		
 		List<KnowledgeSecurityTag> timeSecurityTags = km.getKnowledgeSecurityTags(RuntimeModelHelper.createPathNodeField("time"));
 		assertEquals(1, timeSecurityTags.size());
@@ -143,7 +145,7 @@ public class AnnotationProcessorTest {
 		
 		assertEquals(2, component.getRoles().size());
 		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role1.class.getName(), component.getRoles().get(0).getRoleName());
-		assertEquals(0, component.getRoles().get(0).getArguments().size());
+		assertEquals(1, component.getRoles().get(0).getArguments().size());
 		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role2.class.getName(), component.getRoles().get(1).getRoleName());
 		assertEquals(5, component.getRoles().get(1).getArguments().size());
 		
@@ -214,6 +216,20 @@ public class AnnotationProcessorTest {
 		
 		exception.expect(AnnotationProcessorException.class);
 		exception.expectMessage("Parameter no_such_parameter is not present in the knowledge.");
+		
+		// when process() is called
+		processor.process(input);
+	}
+	
+	@Test
+	public void testNonExistingAliasClass() throws AnnotationProcessorException {
+		// given roleAlias refers to something that is not a role definition
+		RuntimeMetadata model = factory.createRuntimeMetadata(); 
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		WrongC10 input = new WrongC10();
+		
+		exception.expect(AnnotationProcessorException.class);
+		exception.expectMessage("Role class must be decoreted with @RoleDefinition.");
 		
 		// when process() is called
 		processor.process(input);

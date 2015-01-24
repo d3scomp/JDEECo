@@ -509,7 +509,7 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 		return kmContainer.getLocals().iterator().next();
 	}
 
-	private Map<String, ChangeSet> toChangeSets(ValueSet knowledge,
+	protected Map<String, ChangeSet> toChangeSets(ValueSet knowledge,
 			ValueSet authors, KnowledgeMetaData metaData) {
 		if (knowledge != null) {
 			Map<String, ChangeSet> result = new HashMap<>();
@@ -531,9 +531,6 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 		}
 	}
 
-	
-	
-	
 	protected void logPublish(List<? extends KnowledgeData> data) {
 		logPublish(data, "");
 	}

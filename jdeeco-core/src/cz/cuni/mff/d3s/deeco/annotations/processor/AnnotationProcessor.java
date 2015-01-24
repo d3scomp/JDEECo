@@ -541,6 +541,10 @@ public class AnnotationProcessor {
 		if (loadType == SECURITY_ROLE_LOAD_TYPE.RECURSIVE) {
 			RoleDefinition roleDefinition = roleClass.getAnnotation(RoleDefinition.class);
 			if (!roleDefinition.aliasedBy().equals(RoleDefinition.DEFAULT_ALIAS.class)) {
+				if (roleDefinition.aliasedBy().getAnnotationsByType(RoleDefinition.class).length == 0) {
+					throw new AnnotationProcessorException("Role class must be decoreted with @RoleDefinition.");
+				}
+				
 				SecurityRole securityAliasRole = factory.createSecurityRole();
 				securityAliasRole.setRoleName(roleDefinition.aliasedBy().getName());
 				securityRole.getArguments().stream().forEach(argument -> securityAliasRole.getArguments().add(new Cloner().deepClone(argument)));  

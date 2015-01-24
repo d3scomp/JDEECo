@@ -31,7 +31,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import cz.cuni.mff.d3s.deeco.knowledge.BaseKnowledgeManager;
+import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
@@ -63,7 +65,7 @@ public class KnowledgeEncryptorTest {
 	private SecurityKeyManager keyManagerMock;
 	
 	@Before
-	public void setUp() throws InvalidKeyException, CertificateEncodingException, KeyStoreException, NoSuchAlgorithmException, SecurityException, SignatureException, IllegalStateException {
+	public void setUp() throws InvalidKeyException, CertificateEncodingException, KeyStoreException, NoSuchAlgorithmException, SecurityException, SignatureException, IllegalStateException, KnowledgeUpdateException {
 		factory = RuntimeMetadataFactoryExt.eINSTANCE;
 		
 		valueSet = new ValueSet();
@@ -76,6 +78,10 @@ public class KnowledgeEncryptorTest {
 		ComponentInstance component = mock(ComponentInstance.class);
 		
 		localKnowledgeManager = new BaseKnowledgeManager("sender_id", component);
+		
+		ChangeSet changeSet = new ChangeSet();
+		changeSet.setValue(RuntimeModelHelper.createKnowledgePath("secured"), "secured_value");
+		localKnowledgeManager.update(changeSet, "author_secured");
 		
 		when(component.getKnowledgeManager()).thenReturn(localKnowledgeManager);
 	 	SecurityRole role = factory.createSecurityRole();
@@ -144,6 +150,10 @@ public class KnowledgeEncryptorTest {
 		assertEquals(metaData, result.get(0).getMetaData());
 		assertEquals(valueSet, result.get(0).getKnowledge());
 		
+		assertEquals(4, result.get(0).getAuthors().getKnowledgePaths().size());
+		assertEquals("author_secured", result.get(0).getAuthors().getValue(RuntimeModelHelper.createKnowledgePath("secured")));
+		assertNull(result.get(0).getAuthors().getValue(RuntimeModelHelper.createKnowledgePath("secured2")));
+		
 		for (KnowledgePath kp : result.get(0).getKnowledge().getKnowledgePaths()) {
 			assertFalse(result.get(0).getKnowledge().getValue(kp) instanceof SealedObject);
 		}
@@ -188,18 +198,21 @@ public class KnowledgeEncryptorTest {
 		assertNull(plainData.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("secured2")));
 		assertNotNull(plainData.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("b")));
 		assertNotNull(plainData.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("c")));
+		assertEquals(2, plainData.getAuthors().getKnowledgePaths().size());
 		
 		assertNotNull(securedDataForRole1.getMetaData().encryptedKey);
 		assertNotNull(securedDataForRole1.getMetaData().encryptedKeyAlgorithm);
 		assertNotNull(securedDataForRole1.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("secured")));
 		assertTrue(securedDataForRole1.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("secured")) instanceof SealedObject);
 		assertNull(securedDataForRole1.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("secured2")));
+		assertEquals(1, securedDataForRole1.getAuthors().getKnowledgePaths().size());
 		
 		assertNotNull(securedDataForRole2.getMetaData().encryptedKey);
 		assertNotNull(securedDataForRole2.getMetaData().encryptedKeyAlgorithm);
 		assertNotNull(securedDataForRole2.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("secured")));
 		assertTrue(securedDataForRole2.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("secured")) instanceof SealedObject);
 		assertTrue(securedDataForRole2.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("secured2")) instanceof SealedObject);
+		assertEquals(2, securedDataForRole2.getAuthors().getKnowledgePaths().size());
 		
 		assertEquals(0, plainData.getSecuritySet().getKnowledgePaths().size());
 		assertEquals(1, securedDataForRole1.getSecuritySet().getKnowledgePaths().size());
@@ -223,16 +236,20 @@ public class KnowledgeEncryptorTest {
 	@Test
 	public void decryptValueSet_NoSecurityTest() {
 		// given no security is used		
-		ValueSet valueSet = new ValueSet();
-		valueSet.setValue(RuntimeModelHelper.createKnowledgePath("b"), "TEST");
-		KnowledgeData data = new KnowledgeData(valueSet, new ValueSet(), new ValueSet(), metaData);
+		ValueSet knowledge = new ValueSet();
+		knowledge.setValue(RuntimeModelHelper.createKnowledgePath("b"), "TEST");
+		ValueSet authors = new ValueSet();
+		authors.setValue(RuntimeModelHelper.createKnowledgePath("b"), "AUTHOR");
+		KnowledgeData data = new KnowledgeData(knowledge, new ValueSet(), authors, metaData);
 		
 		// when decryptValueSet() is called
 		KnowledgeData decryptedData = target.decryptValueSet(data, localKnowledgeManager, metaData);
 		
 		// then data are not modified
 		assertEquals("TEST", decryptedData.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("b")));
-		assertNotSame(decryptedData.getKnowledge(), valueSet);
+		assertEquals("AUTHOR", decryptedData.getAuthors().getValue(RuntimeModelHelper.createKnowledgePath("b")));
+		assertNotSame(decryptedData.getKnowledge(), knowledge);
+		assertNotSame(decryptedData.getAuthors(), authors);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -260,10 +277,15 @@ public class KnowledgeEncryptorTest {
 		SealedObject sealedTags = new SealedObject( (Serializable)Arrays.asList(tag), cipher);
 		securitySet.setValue(RuntimeModelHelper.createKnowledgePath("secured"), sealedTags);		
 		
-		KnowledgeData data = new KnowledgeData(valueSet2, securitySet, new ValueSet(), metaData);
+		ValueSet authorsSet = new ValueSet();
+		SealedObject sealedAuthor = new SealedObject("author", cipher);
+		authorsSet.setValue(RuntimeModelHelper.createKnowledgePath("secured"), sealedAuthor);	
+		
+		KnowledgeData data = new KnowledgeData(valueSet2, securitySet, authorsSet, metaData);
 		
 		assertTrue(valueSet2.getValue(RuntimeModelHelper.createKnowledgePath("secured")) instanceof SealedObject);
 		assertTrue(securitySet.getValue(RuntimeModelHelper.createKnowledgePath("secured")) instanceof SealedObject);
+		assertTrue(authorsSet.getValue(RuntimeModelHelper.createKnowledgePath("secured")) instanceof SealedObject);
 		
 		// when decryptValueSet() is called
 		KnowledgeData decryptedData = target.decryptValueSet(data, localKnowledgeManager, metaData);
@@ -272,10 +294,13 @@ public class KnowledgeEncryptorTest {
 		assertEquals(666, decryptedData.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("secured")));
 		assertNotSame(valueSet2, decryptedData.getKnowledge());
 		assertNotSame(securitySet, decryptedData.getSecuritySet());
+		assertNotSame(authorsSet, decryptedData.getAuthors());
 		
 		List<KnowledgeSecurityTag> tags = (List<KnowledgeSecurityTag>) decryptedData.getSecuritySet().getValue(RuntimeModelHelper.createKnowledgePath("secured"));
 		assertEquals(tag, tags.get(0));
 		assertNotSame(tag, tags.get(0));
+		
+		assertEquals("author", decryptedData.getAuthors().getValue(RuntimeModelHelper.createKnowledgePath("secured")));
 	}
 	
 	@Test
@@ -321,10 +346,12 @@ public class KnowledgeEncryptorTest {
 		KnowledgeData encryptedData = kds.get(1);
 		ValueSet valueSet = encryptedData.getKnowledge();
 		ValueSet securitySet = encryptedData.getSecuritySet();
+		ValueSet authorSet = encryptedData.getAuthors();
 		
 		// then SealedObject is used
 		assertTrue(valueSet.getValue(RuntimeModelHelper.createKnowledgePath("secured")) instanceof SealedObject);
 		assertTrue(securitySet.getValue(RuntimeModelHelper.createKnowledgePath("secured")) instanceof SealedObject);
+		assertTrue(authorSet.getValue(RuntimeModelHelper.createKnowledgePath("secured")) instanceof SealedObject);
 		
 		// when data are decrypted
 		KnowledgeData decryptedData = target.decryptValueSet(encryptedData, replicaKnowledgeManager, encryptedData.getMetaData());
@@ -336,6 +363,8 @@ public class KnowledgeEncryptorTest {
 		assertEquals(tag1.getRequiredRole().getRoleName(), decryptedTags.get(0).getRequiredRole().getRoleName());
 		assertEquals(tag1.getRequiredRole().getArguments().size(), decryptedTags.get(0).getRequiredRole().getArguments().size());
 		assertEquals(tag1.getRequiredRole().getConsistsOf().size(), decryptedTags.get(0).getRequiredRole().getConsistsOf().size());
+		
+		assertEquals("author_secured", decryptedData.getAuthors().getValue(RuntimeModelHelper.createKnowledgePath("secured")));
 	}
 	
 	

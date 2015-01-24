@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -293,4 +294,33 @@ public class DefaultKnowledgeDataManagerTest {
 		assertEquals(0, holder.getRatings(null));
 	}
 	
+	@Test
+	public void createChangeSetsTest() {
+		// given knowledge and authors are prepared
+		ValueSet knowledge = new ValueSet();
+		knowledge.setValue(RuntimeModelHelper.createKnowledgePath("field1"), 1);
+		knowledge.setValue(RuntimeModelHelper.createKnowledgePath("field2"), 2);
+		knowledge.setValue(RuntimeModelHelper.createKnowledgePath("field3"), 3);
+		knowledge.setValue(RuntimeModelHelper.createKnowledgePath("field4"), 4);
+		ValueSet authors = new ValueSet();
+		authors.setValue(RuntimeModelHelper.createKnowledgePath("field1"), "author1");
+		authors.setValue(RuntimeModelHelper.createKnowledgePath("field2"), "author1");
+		authors.setValue(RuntimeModelHelper.createKnowledgePath("field3"), "author2");
+		KnowledgeMetaData meta = new KnowledgeMetaData("123", 1, "", 888l, 4);
+		
+		// when toChangeSets() is called 
+		Map<String, ChangeSet> changeSets = runtimeModel.knowledgeDataManager.toChangeSets(knowledge, authors, meta);
+		
+		// then knowledge is split according to authors
+		assertEquals(3, changeSets.size());
+		
+		assertEquals(2, changeSets.get("author1").getUpdatedReferences().size());
+		assertEquals(1, changeSets.get("author2").getUpdatedReferences().size());
+		assertEquals(1, changeSets.get("123").getUpdatedReferences().size());
+		
+		assertEquals(1, changeSets.get("author1").getValue(RuntimeModelHelper.createKnowledgePath("field1")));
+		assertEquals(2, changeSets.get("author1").getValue(RuntimeModelHelper.createKnowledgePath("field2")));
+		assertEquals(3, changeSets.get("author2").getValue(RuntimeModelHelper.createKnowledgePath("field3")));
+		assertEquals(4, changeSets.get("123").getValue(RuntimeModelHelper.createKnowledgePath("field4")));
+	}
 }

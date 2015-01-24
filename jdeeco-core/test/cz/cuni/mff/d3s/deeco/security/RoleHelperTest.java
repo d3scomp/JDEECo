@@ -196,7 +196,7 @@ public class RoleHelperTest {
 	}
 	
 	@Test
-	public void readRoleArgumentsTes2() throws KnowledgeUpdateException, KnowledgeNotFoundException {
+	public void readRoleArgumentsTest2() throws KnowledgeUpdateException, KnowledgeNotFoundException {
 		// when role has arguments
 		SecurityRole role = createRole("testrole");
 		role.getArguments().add(createBlankArgument("blank"));
