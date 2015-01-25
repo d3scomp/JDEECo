@@ -2,12 +2,16 @@ package cz.cuni.mff.d3s.deeco.security;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.AbsoluteSecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.BlankSecurityRoleArgument;
@@ -19,10 +23,16 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.LocalKnowledgeTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathSecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityTag;
+import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper;
+import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.KnowledgePathAndRoot;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.PathRoot;
 
 /**
@@ -44,6 +54,7 @@ public class ModelSecurityValidator {
 		
 		// no need to check ratings process since it can't change any knowledge
 		List<Invocable> invocables = component.getComponentProcesses().stream()
+				.filter(process -> !process.isIgnoreKnowledgeCompromise())
 				.map(process -> (Invocable)process)
 				.collect(Collectors.toList());
 		
@@ -59,10 +70,10 @@ public class ModelSecurityValidator {
 				KnowledgeManager knowledgeManager = process.getComponentInstance().getKnowledgeManager();
 				SecurityTagCollection outputParamSecurity = SecurityTagCollection.getSecurityTags(outputParameterPath, knowledgeManager);
 				
-				Set<KnowledgePath> transitiveInputParameters = new HashSet<>(); 
-				getAllTransitiveInputParameters(outputParameterPath, process, invocables, transitiveInputParameters); 
+				Map<KnowledgePath, Invocable> transitiveInputParameters = new HashMap<>(); 
+				getAllTransitiveInputParameters(outputParameterPath, process, invocables, path -> path, transitiveInputParameters); 
 				
-				for (KnowledgePath inputParameterPath : transitiveInputParameters) {				
+				for (KnowledgePath inputParameterPath : transitiveInputParameters.keySet()) {				
 					SecurityTagCollection inputParamSecurity = SecurityTagCollection.getSecurityTags(inputParameterPath, knowledgeManager);
 					
 					if (!isMoreRestrictive(outputParamSecurity, inputParamSecurity)) {
@@ -94,9 +105,13 @@ public class ModelSecurityValidator {
 
 		// add exchange process to the list of component processes
 		List<Invocable> invocables = component.getComponentProcesses().stream()
+				.filter(process -> !process.isIgnoreKnowledgeCompromise())
 				.map(process -> (Invocable)process)
 				.collect(Collectors.toList());
-		invocables.add(exchange);
+		
+		if (!exchange.isIgnoreKnowledgeCompromise()) {
+			invocables.add(exchange);
+		}
 		
 		// verify no process leads to a knowledge compromise
 		for (Invocable invocable : invocables) {
@@ -108,43 +123,96 @@ public class ModelSecurityValidator {
 			
 			for (KnowledgePath outputParameterPath : outputParameters) {
 				SecurityTagCollection outputParamSecurity;
+				KnowledgeManager localKnowledgeManager;
+				
 				// get output parameter security
 				if (invocable instanceof ComponentProcess) {
-					KnowledgeManager knowledgeManager = ((ComponentProcess)invocable).getComponentInstance().getKnowledgeManager();
-					outputParamSecurity = SecurityTagCollection.getSecurityTags(outputParameterPath, knowledgeManager);
+					localKnowledgeManager = ((ComponentProcess)invocable).getComponentInstance().getKnowledgeManager();
+					outputParamSecurity = SecurityTagCollection.getSecurityTags(outputParameterPath, localKnowledgeManager);
 				} else {
-					KnowledgeManager localKnowledgeManager = component.getKnowledgeManager();
+					localKnowledgeManager = component.getKnowledgeManager();
 					outputParamSecurity = SecurityTagCollection.getSecurityTags(pathRoot, outputParameterPath, localKnowledgeManager, shadowKnowledgeManager, null);
 				}
+						
+				KnowledgePath localizedOutputPath = localizeKnowledgePath(pathRoot, outputParameterPath, localKnowledgeManager, shadowKnowledgeManager);
 				
-				// get transitive input dependencies
-				Set<KnowledgePath> transitiveInputParameters = new HashSet<>(); 
-				getAllTransitiveInputParameters(outputParameterPath, invocable, invocables, transitiveInputParameters); 
-				
-				for (KnowledgePath inputParameterPath : transitiveInputParameters) {
+				// get transitive input dependencies				
+				Map<KnowledgePath, Invocable> transitiveInputParameters = new HashMap<>();
+				getAllTransitiveInputParameters(localizedOutputPath, invocable, invocables, path -> localizeKnowledgePath(pathRoot, path, localKnowledgeManager, shadowKnowledgeManager), transitiveInputParameters); 
+										
+				for (KnowledgePath inputParameterPath : transitiveInputParameters.keySet()) {
 					// get input parameter security
 					SecurityTagCollection inputParamSecurity;
-					if (invocable instanceof ComponentProcess) {
-						KnowledgeManager knowledgeManager = ((ComponentProcess)invocable).getComponentInstance().getKnowledgeManager();
-						inputParamSecurity = SecurityTagCollection.getSecurityTags(inputParameterPath, knowledgeManager);
+					Invocable inputSourceInvocable = transitiveInputParameters.get(inputParameterPath);
+					if (inputSourceInvocable instanceof ComponentProcess) {
+						inputParamSecurity = SecurityTagCollection.getSecurityTags(inputParameterPath, localKnowledgeManager);
 					} else {
-						KnowledgeManager localKnowledgeManager = component.getKnowledgeManager();
 						inputParamSecurity = SecurityTagCollection.getSecurityTags(pathRoot, inputParameterPath, localKnowledgeManager, shadowKnowledgeManager, null);
 					}
 					
 					if (!isMoreRestrictive(outputParamSecurity, inputParamSecurity)) {
-						errorList.add(String.format("Parameter %s is not appropriately secured.", outputParameterPath.toString()));
+						if (invocable.getMethod() != null) {
+							errorList.add(String.format("Parameter %s is not appropriately secured (compromises %s in %s).", 
+								outputParameterPath.toString(), inputParameterPath.toString(), invocable.getMethod().getName()));
+						} else {
+							errorList.add(String.format("Parameter %s is not appropriately secured (compromises %s).", 
+									outputParameterPath.toString(), inputParameterPath.toString()));
+						}
 					}
 				}	
 			}		
 		}
 		
-				
-		
 		return errorList;
 	}
 	
-	
+	/**
+	 * If possible and necessary, converts this knowledge exchange path to its local form.
+	 * @param pathRoot
+	 * @param path
+	 * @param localKnowledgeManager
+	 * @param shadowKnowledgeManager
+	 * @return
+	 */
+	private static KnowledgePath localizeKnowledgePath(PathRoot pathRoot, KnowledgePath path, ReadOnlyKnowledgeManager localKnowledgeManager, ReadOnlyKnowledgeManager shadowKnowledgeManager)  {
+		if (path.getNodes().isEmpty()) {
+			return path;
+		}
+				
+		PathNode firstNode = path.getNodes().get(0);
+		
+		if (((firstNode instanceof PathNodeCoordinator) && pathRoot == PathRoot.COORDINATOR) || ((firstNode instanceof PathNodeMember) && pathRoot == PathRoot.MEMBER)) {	
+			KnowledgePath modifiablePath = KnowledgePathHelper.cloneKnowledgePath(path);
+			modifiablePath.getNodes().remove(0);
+			
+			for (PathNode node : modifiablePath.getNodes()) {
+				if (node instanceof PathNodeMapKey) {
+					PathNodeMapKey mapNode = (PathNodeMapKey)node;
+					mapNode.setKeyPath(localizeKnowledgePath(pathRoot, mapNode.getKeyPath(), localKnowledgeManager, shadowKnowledgeManager));
+				}
+			}
+			
+			return modifiablePath;
+		} else if ((firstNode instanceof PathNodeMember) && pathRoot == PathRoot.COORDINATOR) {
+			try {
+				KnowledgePathAndRoot pathAndRoot = KnowledgePathHelper.getAbsoluteStrippedPath(path, localKnowledgeManager, shadowKnowledgeManager);
+				return pathAndRoot.knowledgePath;
+			} catch (KnowledgeNotFoundException e) {
+				return path;
+			}
+		} else if ((firstNode instanceof PathNodeCoordinator) && pathRoot == PathRoot.MEMBER) {
+			try {
+				KnowledgePathAndRoot pathAndRoot = KnowledgePathHelper.getAbsoluteStrippedPath(path, shadowKnowledgeManager, localKnowledgeManager);
+				return pathAndRoot.knowledgePath;
+			} catch (KnowledgeNotFoundException e) {
+				return path;
+			}
+		} else {
+			return path;
+		}		
+	}
+
+
 	/**
 	 * Checks if the security of output is more or equally restrictive than the security of the input.
 	 *
@@ -244,24 +312,26 @@ public class ModelSecurityValidator {
 	 * @param result
 	 * 			the set of knowledge paths
 	 */
-	protected static void getAllTransitiveInputParameters(KnowledgePath outputParameterPath, Invocable process, Collection<Invocable> allProcesses, Set<KnowledgePath> result) {
-		Set<KnowledgePath> inputParameters = process.getParameters().stream()
+	protected static void getAllTransitiveInputParameters(KnowledgePath outputParameterPath, Invocable process, Collection<Invocable> allProcesses, 
+			UnaryOperator<KnowledgePath> mappingFunction, Map<KnowledgePath, Invocable> result) {
+		Map<KnowledgePath, KnowledgePath> inputParameters = process.getParameters().stream()
 				.filter(param -> param.getKind() == ParameterKind.IN || param.getKind() == ParameterKind.INOUT)
 				.map(param -> param.getKnowledgePath())
-				.collect(Collectors.toSet());
+				.collect(Collectors.toMap(key -> (KnowledgePath)key, mappingFunction));
 		
-		if (result.containsAll(inputParameters)) return;
-		result.addAll(inputParameters);
+		if (result.keySet().containsAll(inputParameters.keySet())) return;
+		inputParameters.keySet().stream().forEach(inputPath -> result.put(inputPath, process));
 		
-		for (KnowledgePath inputParameterPath : inputParameters) {
+		for (KnowledgePath inputParameterPath : inputParameters.keySet()) {
 			for (Invocable anotherProcess : allProcesses) {
 				Set<KnowledgePath> outputParameters = anotherProcess.getParameters().stream()
 						.filter(param -> param.getKind() == ParameterKind.OUT || param.getKind() == ParameterKind.INOUT)
 						.map(param -> param.getKnowledgePath())
+						.map(mappingFunction)
 						.collect(Collectors.toSet());
 				
-				if (outputParameters.contains(inputParameterPath)) {
-					getAllTransitiveInputParameters(inputParameterPath, anotherProcess, allProcesses, result);
+				if (outputParameters.contains(inputParameters.get(inputParameterPath))) {
+					getAllTransitiveInputParameters(inputParameterPath, anotherProcess, allProcesses, mappingFunction, result);
 				}
 			}
 		}

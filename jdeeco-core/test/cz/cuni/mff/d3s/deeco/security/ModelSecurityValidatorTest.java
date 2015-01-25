@@ -3,8 +3,9 @@ package cz.cuni.mff.d3s.deeco.security;
 import static org.junit.Assert.*;
 
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -441,46 +442,65 @@ public class ModelSecurityValidatorTest {
 	
 	@Test
 	public void getAllTransitiveInputParametersTest1() {
-		Set<KnowledgePath> result = new HashSet<>();
+		Map<KnowledgePath, Invocable> result = new HashMap<>();
 		List<Invocable> invocables = process1.getComponentInstance().getComponentProcesses().stream()
 				.map(process -> (Invocable)process)
 				.collect(Collectors.toList());
-		ModelSecurityValidator.getAllTransitiveInputParameters(RuntimeModelHelper.createKnowledgePath("inout1_1"), process1, invocables, result);
+		ModelSecurityValidator.getAllTransitiveInputParameters(RuntimeModelHelper.createKnowledgePath("inout1_1"), process1, invocables, path -> path, result);
 		
 		assertEquals(3, result.size());
-		assertEquals("inout1_1", result.toArray()[0].toString());
-		assertEquals("in1_1", result.toArray()[1].toString());
-		assertEquals("in1_2", result.toArray()[2].toString());
+		assertEquals("inout1_1", result.keySet().toArray()[0].toString());
+		assertEquals("in1_1", result.keySet().toArray()[1].toString());
+		assertEquals("in1_2", result.keySet().toArray()[2].toString());
+		assertEquals(process1, result.values().toArray()[0]);
+		assertEquals(process1, result.values().toArray()[1]);
+		assertEquals(process1, result.values().toArray()[2]);
 	}
 	
 	@Test
 	public void getAllTransitiveInputParametersTest2() {
-		Set<KnowledgePath> result = new HashSet<>();
+		Map<KnowledgePath, Invocable> result = new HashMap<>();
 		List<Invocable> invocables = process1.getComponentInstance().getComponentProcesses().stream()
 				.map(process -> (Invocable)process)
 				.collect(Collectors.toList());
-		ModelSecurityValidator.getAllTransitiveInputParameters(RuntimeModelHelper.createKnowledgePath("out1_1"), process3, invocables, result);
+		ModelSecurityValidator.getAllTransitiveInputParameters(RuntimeModelHelper.createKnowledgePath("out1_1"), process3, invocables, path -> path,result);
 		
 		assertEquals(4, result.size());
-		assertEquals("inout1_1", result.toArray()[0].toString());
-		assertEquals("in1_1", result.toArray()[1].toString());
-		assertEquals("in1_2", result.toArray()[2].toString());
-		assertEquals("out2_1", result.toArray()[3].toString());	
+		assertEquals("inout1_1", result.keySet().toArray()[0].toString());
+		assertEquals("in1_1", result.keySet().toArray()[1].toString());
+		assertEquals("in1_2", result.keySet().toArray()[2].toString());
+		assertEquals("out2_1", result.keySet().toArray()[3].toString());	
+		assertEquals(process1, result.values().toArray()[0]);
+		assertEquals(process1, result.values().toArray()[1]);
+		assertEquals(process1, result.values().toArray()[2]);
+		assertEquals(process3, result.values().toArray()[3]);
 	}
 	
 	@Test
 	public void getAllTransitiveInputParametersTest3() {
-		Set<KnowledgePath> result = new HashSet<>();
+		Map<KnowledgePath, Invocable> result = new HashMap<>();
 		List<Invocable> invocables = process1.getComponentInstance().getComponentProcesses().stream()
 				.map(process -> (Invocable)process)
 				.collect(Collectors.toList());
-		ModelSecurityValidator.getAllTransitiveInputParameters(RuntimeModelHelper.createKnowledgePath("out2_1"), process3, invocables, result);
 		
-		assertEquals(4, result.size());
-		assertEquals("inout1_1", result.toArray()[0].toString());
-		assertEquals("in1_1", result.toArray()[1].toString());
-		assertEquals("in1_2", result.toArray()[2].toString());
-		assertEquals("out2_1", result.toArray()[3].toString());
+		Exchange exchange = factory.createExchange();
+		exchange.getParameters().add(RuntimeModelHelper.createParameter(ParameterKind.IN, "exchange_in"));
+		exchange.getParameters().add(RuntimeModelHelper.createParameter(ParameterKind.OUT, "out2_1"));
+		invocables.add(exchange);
+		
+		ModelSecurityValidator.getAllTransitiveInputParameters(RuntimeModelHelper.createKnowledgePath("out2_2"), process3, invocables, path -> path, result);
+		
+		assertEquals(5, result.size());
+		assertEquals("inout1_1", result.keySet().toArray()[0].toString());
+		assertEquals("in1_1", result.keySet().toArray()[1].toString());
+		assertEquals("exchange_in", result.keySet().toArray()[2].toString());
+		assertEquals("in1_2", result.keySet().toArray()[3].toString());
+		assertEquals("out2_1", result.keySet().toArray()[4].toString());	
+		assertEquals(process1, result.values().toArray()[0]);
+		assertEquals(process1, result.values().toArray()[1]);
+		assertEquals(exchange, result.values().toArray()[2]);
+		assertEquals(process1, result.values().toArray()[3]);
+		assertEquals(process3, result.values().toArray()[4]);
 	}
 	
 	@Test
@@ -514,7 +534,7 @@ public class ModelSecurityValidatorTest {
 		
 		List<String> errors = ModelSecurityValidator.validate(PathRoot.COORDINATOR, exchange, complexComponent, shadowKnowledgeManager).stream().collect(Collectors.toList());
 		assertEquals(1, errors.size());
-		assertEquals("Parameter <COORDINATOR>.out is not appropriately secured.", errors.get(0));
+		assertEquals("Parameter <COORDINATOR>.out is not appropriately secured (compromises <MEMBER>.in).", errors.get(0));
 	}
 	
 	@Test
@@ -530,11 +550,15 @@ public class ModelSecurityValidatorTest {
 		complexKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("in1_1"), Arrays.asList(tag_with_absolute));
 		
 		List<String> errors = ModelSecurityValidator.validate(PathRoot.COORDINATOR, exchange, complexComponent, shadowKnowledgeManager).stream().collect(Collectors.toList());
-		assertEquals(4, errors.size());
-		assertEquals("Parameter out2_2 is not appropriately secured.", errors.get(0));
-		assertEquals("Parameter out1_1 is not appropriately secured.", errors.get(1));
-		assertEquals("Parameter inout1_1 is not appropriately secured.", errors.get(2));
-		assertEquals("Parameter out2_1 is not appropriately secured.", errors.get(3));
+		assertEquals(8, errors.size());
+		assertEquals("Parameter out1_1 is not appropriately secured (compromises in1_1).", errors.get(0));
+		assertEquals("Parameter out2_2 is not appropriately secured (compromises <MEMBER>.in).", errors.get(1));
+		assertEquals("Parameter out2_1 is not appropriately secured (compromises <MEMBER>.in).", errors.get(2));				
+		assertEquals("Parameter inout1_1 is not appropriately secured (compromises in1_1).", errors.get(3));		
+		assertEquals("Parameter out2_2 is not appropriately secured (compromises in1_1).", errors.get(4));		
+		assertEquals("Parameter inout1_1 is not appropriately secured (compromises <MEMBER>.in).", errors.get(5));				
+		assertEquals("Parameter out1_1 is not appropriately secured (compromises <MEMBER>.in).", errors.get(6));		
+		assertEquals("Parameter out2_1 is not appropriately secured (compromises in1_1).", errors.get(7));	
 	}
 	
 	@Test
@@ -573,8 +597,68 @@ public class ModelSecurityValidatorTest {
 		complexKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("out2_1"), Arrays.asList(tag_with_absolute));
 		
 		List<String> errors = ModelSecurityValidator.validate(PathRoot.COORDINATOR, exchange, complexComponent, shadowKnowledgeManager).stream().collect(Collectors.toList());
-		assertEquals(1, errors.size());
-		assertEquals("Parameter out2_2 is not appropriately secured.", errors.get(0));	
+		assertEquals(3, errors.size());
+		assertEquals("Parameter out2_2 is not appropriately secured (compromises <MEMBER>.in).", errors.get(0));
+		assertEquals("Parameter out2_2 is not appropriately secured (compromises inout1_1).", errors.get(1));
+		assertEquals("Parameter out2_2 is not appropriately secured (compromises in1_1).", errors.get(2));
+	}
+	
+	@Test
+	public void validateExchangeTest6() {
+		Exchange exchange = factory.createExchange();
+		exchange.getParameters().add(RuntimeModelHelper.createParameter(ParameterKind.IN, "<M>", "in1"));
+		exchange.getParameters().add(RuntimeModelHelper.createParameter(ParameterKind.IN, "<M>", "in2"));
+		exchange.getParameters().add(RuntimeModelHelper.createParameter(ParameterKind.OUT, "<C>", "out2_1"));
+		
+		KnowledgeManager shadowKnowledgeManager = new BaseKnowledgeManager("shadow123", complexComponent);
+		
+		shadowKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("in1"), Arrays.asList(tag_only_role));
+		complexKnowledgeManager.markAsLocal(Arrays.asList(RuntimeModelHelper.createKnowledgePath("out2_1"), RuntimeModelHelper.createKnowledgePath("out1_1")));
+		
+		Set<String> errors = ModelSecurityValidator.validate(PathRoot.COORDINATOR, exchange, complexComponent, shadowKnowledgeManager);
+		assertTrue(errors.isEmpty());
+	}
+	
+	@Test
+	public void validateExchangeTest7() throws KnowledgeUpdateException {
+		// given there is a dependency between knowledge exchange and component processes
+		Exchange exchange = factory.createExchange();
+		exchange.getParameters().add(RuntimeModelHelper.createParameter(ParameterKind.IN, "<M>", "in1"));
+		exchange.getParameters().add(RuntimeModelHelper.createParameter(ParameterKind.IN, "<M>", "in2"));
+		exchange.getParameters().add(RuntimeModelHelper.createParameter(ParameterKind.OUT, "<C>", "out2_1"));
+		
+		ChangeSet changeSet = new ChangeSet();
+		changeSet.setValue(RuntimeModelHelper.createKnowledgePath("in1"), 123);
+		changeSet.setValue(RuntimeModelHelper.createKnowledgePath("in2"), 456);
+		
+		KnowledgeManager shadowKnowledgeManager = new BaseKnowledgeManager("shadow123", complexComponent);
+		
+		shadowKnowledgeManager.update(changeSet);
+		shadowKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("in1"), Arrays.asList(tag_only_role));
+		complexKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("out2_1"), Arrays.asList(tag_only_role));
+			
+		List<String> errors = ModelSecurityValidator.validate(PathRoot.COORDINATOR, exchange, complexComponent, shadowKnowledgeManager).stream().collect(Collectors.toList());
+		assertEquals(2, errors.size());
+		assertEquals("Parameter out1_1 is not appropriately secured (compromises out2_1).", errors.get(0));
+		assertEquals("Parameter out1_1 is not appropriately secured (compromises <MEMBER>.in1).", errors.get(1));
+	}
+	
+	@Test
+	public void validateExchangeTest8() throws KnowledgeUpdateException {
+		// given there is a dependency between knowledge exchange and component processes
+		Exchange exchange = factory.createExchange();
+		exchange.getParameters().add(RuntimeModelHelper.createParameter(ParameterKind.IN, "<M>", "in1"));
+		exchange.getParameters().add(RuntimeModelHelper.createParameter(ParameterKind.IN, "<M>", "in2"));
+		exchange.getParameters().add(RuntimeModelHelper.createParameter(ParameterKind.INOUT, "<C>", "out1"));
+				
+		KnowledgeManager shadowKnowledgeManager = new BaseKnowledgeManager("shadow123", complexComponent);
+		
+		shadowKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("in1"), Arrays.asList(tag_only_role));
+		shadowKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("in2"), Arrays.asList());
+		complexKnowledgeManager.markAsLocal(Arrays.asList(RuntimeModelHelper.createKnowledgePath("out1")));
+			
+		Set<String> errors = ModelSecurityValidator.validate(PathRoot.COORDINATOR, exchange, complexComponent, shadowKnowledgeManager);
+		assertTrue(errors.isEmpty());
 	}
 	
 	private Parameter createParameter(ParameterKind kind, KnowledgePath path) {

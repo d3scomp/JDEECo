@@ -23,6 +23,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityTag;
@@ -32,6 +33,7 @@ import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.security.KnowledgeEncryptor;
 import cz.cuni.mff.d3s.deeco.security.RatingsEncryptor;
 import cz.cuni.mff.d3s.deeco.security.SecurityKeyManager;
+
 
 
 /**
@@ -374,12 +376,12 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 		}
 		
 		// schedule a task for rebroadcast
-		dataToRebroadcastOverMANET.put(kmd.getSignature(), kd);
+		dataToRebroadcastOverMANET.put(kmd.getSignatureWithRole(), kd);
 		RebroadcastTask task = new RebroadcastTask(scheduler, this, delay, kmd, NICType.MANET);
 		scheduler.addTask(task);
 		
 		if (ipGossipStrategy != null && ipDelay > 0) {
-			dataToRebroadcastOverIP.put(kmd.getSignature(), kd);
+			dataToRebroadcastOverIP.put(kmd.getSignatureWithRole(), kd);
 			task = new RebroadcastTask(scheduler, this, ipDelay, kmd, NICType.IP);
 			scheduler.addTask(task);
 		}

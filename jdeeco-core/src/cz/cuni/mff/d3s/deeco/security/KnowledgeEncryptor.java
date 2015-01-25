@@ -219,7 +219,7 @@ public class KnowledgeEncryptor {
 	 */
 	private Object accessValue(SealedObject sealedObject, KnowledgeManager replica, KnowledgeMetaData metaData) throws KnowledgeNotFoundException {
 		// verify signature on metadata
-		boolean verificationSucceeded = false;
+		boolean verificationSucceeded = true;
 		try {
 			verificationSucceeded = securityHelper.verify(metaData.signature, keyManager.getIntegrityPublicKey(), metaData.componentId, metaData.versionId, metaData.targetRoleHash);
 		} catch (InvalidKeyException | CertificateEncodingException
@@ -239,7 +239,7 @@ public class KnowledgeEncryptor {
 		List<SecurityRole> transitiveRoles = RoleHelper.getTransitiveRoles(replica.getComponent().getRoles());
 		
 		// try each role, if it can decrypt the data
-		for (SecurityRole role : transitiveRoles) {
+		for (SecurityRole role : transitiveRoles) {			
 			RoleWithArguments roleWithArguments = keyManager.getRoleByKey(metaData.targetRoleHash);
 			if (!remoteSecurityChecker.checkSecurity(role, roleWithArguments, replica.getComponent().getKnowledgeManager())) {
 				decryptionSucceeded = false;

@@ -814,6 +814,15 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getInvocable_IgnoreKnowledgeCompromise() {
+		return (EAttribute)invocableEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getEnsembleController() {
 		return ensembleControllerEClass;
 	}
@@ -1224,6 +1233,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		invocableEClass = createEClass(INVOCABLE);
 		createEReference(invocableEClass, INVOCABLE__PARAMETERS);
 		createEAttribute(invocableEClass, INVOCABLE__METHOD);
+		createEAttribute(invocableEClass, INVOCABLE__IGNORE_KNOWLEDGE_COMPROMISE);
 
 		ensembleControllerEClass = createEClass(ENSEMBLE_CONTROLLER);
 		createEReference(ensembleControllerEClass, ENSEMBLE_CONTROLLER__COMPONENT_INSTANCE);
@@ -1389,6 +1399,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		initEClass(invocableEClass, Invocable.class, "Invocable", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getInvocable_Parameters(), this.getParameter(), null, "parameters", null, 0, -1, Invocable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getInvocable_Method(), this.getMethod(), "method", null, 1, 1, Invocable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getInvocable_IgnoreKnowledgeCompromise(), ecorePackage.getEBoolean(), "ignoreKnowledgeCompromise", null, 1, 1, Invocable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(ensembleControllerEClass, EnsembleController.class, "EnsembleController", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getEnsembleController_ComponentInstance(), this.getComponentInstance(), this.getComponentInstance_EnsembleControllers(), "componentInstance", null, 1, 1, EnsembleController.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

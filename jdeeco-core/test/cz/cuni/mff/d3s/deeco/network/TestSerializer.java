@@ -127,7 +127,7 @@ public class TestSerializer {
 		changeSets.add(new RatingsChangeSet("e", "f", RuntimeModelHelper.createKnowledgePath("level1", "field3"), null));
 		
 		RatingsMetaData metaData = new RatingsMetaData(123, 4);		
-		RatingsEncryptor ratingsEncryptor = new RatingsEncryptor(new SecurityKeyManagerImpl());
+		RatingsEncryptor ratingsEncryptor = new RatingsEncryptor(SecurityKeyManagerImpl.getInstance());
 		
 		// given RatingsData instance is prepared
 		List<SealedObject> sealedChangeSets = ratingsEncryptor.encryptRatings(changeSets, metaData);

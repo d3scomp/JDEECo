@@ -204,7 +204,7 @@ public class SecurityRuntimeModel {
 	public RatingsManager ratingsManager;
 	
 	public SecurityRuntimeModel() throws KeyStoreException, AnnotationProcessorException {
-		securityKeyManager = new SecurityKeyManagerImpl();
+		securityKeyManager = SecurityKeyManagerImpl.getInstance();
 		scheduler = new SingleThreadedScheduler();
 		executor = new SameThreadExecutor();
 		securityHelper = new SecurityHelper();
@@ -230,7 +230,7 @@ public class SecurityRuntimeModel {
 		PoliceEverywhereEnsemble.membership = (memberId, coordId) -> (memberId.equals("V1") && coordId.equals("G1")) || (memberId.equals("G1") && coordId.equals("P1"));
 		
 		container = spy(new KnowledgeManagerContainer(new CloningKnowledgeManagerFactory(), model));
-		ratingsManager = spy(new RatingsManagerImpl());
+		ratingsManager = RatingsManagerImpl.getInstance();
 		runtime = spy(new RuntimeFrameworkImpl(model, scheduler, executor, container, ratingsManager));		
 		
 		knowledgeDataManager = new DefaultKnowledgeDataManager(model.getEnsembleDefinitions(), null);

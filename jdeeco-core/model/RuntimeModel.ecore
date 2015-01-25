@@ -95,6 +95,8 @@
         eType="#//Parameter" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="method" lowerBound="1"
         eType="#//Method"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ignoreKnowledgeCompromise"
+        lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="ShadowKnowledgeManagerRegistry" instanceClassName="cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry"/>
   <eClassifiers xsi:type="ecore:EClass" name="EnsembleController">

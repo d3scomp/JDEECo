@@ -12,7 +12,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper;
 
 /**
- * The Class RatingsManagerImpl.
+ * The implementation of RatingsManager.
  *
  * @author Ondřej Štumpf
  */
@@ -24,12 +24,33 @@ public class RatingsManagerImpl implements RatingsManager {
 	/** Changes to the ratings container that had not yet been distributed */
 	private List<RatingsChangeSet> pendingChanges;
 	
+	/** singleton instance */
+	private static RatingsManagerImpl instance;
+	
 	/**
 	 * Instantiates a new ratings manager.
 	 */
-	public RatingsManagerImpl() {
+	RatingsManagerImpl() {
 		this.ratings = new HashMap<>();		
 		this.pendingChanges = new ArrayList<>();
+	}
+	
+	/**
+	 * Gets the unique singleton instance.
+	 * @return
+	 */
+	public static synchronized RatingsManagerImpl getInstance() {
+		if (instance == null) {
+			instance = new RatingsManagerImpl();
+		}
+		return instance;
+	}
+	
+	/**
+	 * Drops the current singleton instance. This method should only be used in tests.
+	 */
+	public static void resetSingleton() {
+		instance = null;
 	}
 	
 	/**

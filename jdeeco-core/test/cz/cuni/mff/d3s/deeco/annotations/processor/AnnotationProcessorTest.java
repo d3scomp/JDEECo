@@ -319,6 +319,8 @@ public class AnnotationProcessorTest {
 		assertEquals(ParameterKind.IN, ratingsProcess.getParameters().get(0).getKind());
 		assertEquals(ParameterKind.RATING, ratingsProcess.getParameters().get(1).getKind());
 		assertEquals(ParameterKind.RATING, ratingsProcess.getParameters().get(2).getKind());
+		
+		assertTrue(process.isIgnoreKnowledgeCompromise());
 	}
 	
 	@Test 

@@ -1,6 +1,7 @@
 package cz.cuni.mff.d3s.deeco.annotations.processor.input.samples;
 
 import cz.cuni.mff.d3s.deeco.annotations.Component;
+import cz.cuni.mff.d3s.deeco.annotations.IgnoreKnowledgeCompromise;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
@@ -20,6 +21,7 @@ public class CorrectC6 {
 
 	@Process
 	@PeriodicScheduling(period=1000)
+	@IgnoreKnowledgeCompromise
 	public static void process1(@In("field1") Integer field1, @Rating("field2") ReadonlyRatingsHolder field2, @Out("field3") ParamHolder<Integer> field3) {
 		
 	}

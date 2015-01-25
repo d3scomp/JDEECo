@@ -304,6 +304,10 @@
         <element xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//Invocable/method"/>
         <layoutConstraint xmi:type="notation:Location" xmi:id="_DiEYET29EeO2QcBZHbiySQ"/>
       </children>
+      <children xmi:type="notation:Node" xmi:id="_q60noKTCEeSMVPyO8CzxyA" type="2001">
+        <element xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//Invocable/ignoreKnowledgeCompromise"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_q60noaTCEeSMVPyO8CzxyA"/>
+      </children>
       <styles xmi:type="notation:DrawerStyle" xmi:id="_9ylswT28EeO2QcBZHbiySQ"/>
       <styles xmi:type="notation:SortingStyle" xmi:id="_9ylswj28EeO2QcBZHbiySQ"/>
       <styles xmi:type="notation:FilteringStyle" xmi:id="_9ylswz28EeO2QcBZHbiySQ"/>

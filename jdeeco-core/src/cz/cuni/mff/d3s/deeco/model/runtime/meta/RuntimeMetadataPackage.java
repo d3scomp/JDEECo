@@ -592,13 +592,22 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int INVOCABLE__METHOD = 1;
 
 	/**
+	 * The feature id for the '<em><b>Ignore Knowledge Compromise</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INVOCABLE__IGNORE_KNOWLEDGE_COMPROMISE = 2;
+
+	/**
 	 * The number of structural features of the '<em>Invocable</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int INVOCABLE_FEATURE_COUNT = 2;
+	int INVOCABLE_FEATURE_COUNT = 3;
 
 	/**
 	 * The number of operations of the '<em>Invocable</em>' class.
@@ -636,6 +645,15 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @ordered
 	 */
 	int CONDITION__METHOD = INVOCABLE__METHOD;
+
+	/**
+	 * The feature id for the '<em><b>Ignore Knowledge Compromise</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CONDITION__IGNORE_KNOWLEDGE_COMPROMISE = INVOCABLE__IGNORE_KNOWLEDGE_COMPROMISE;
 
 	/**
 	 * The number of structural features of the '<em>Condition</em>' class.
@@ -684,6 +702,15 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int EXCHANGE__METHOD = INVOCABLE__METHOD;
 
 	/**
+	 * The feature id for the '<em><b>Ignore Knowledge Compromise</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EXCHANGE__IGNORE_KNOWLEDGE_COMPROMISE = INVOCABLE__IGNORE_KNOWLEDGE_COMPROMISE;
+
+	/**
 	 * The number of structural features of the '<em>Exchange</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -728,6 +755,15 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @ordered
 	 */
 	int COMPONENT_PROCESS__METHOD = INVOCABLE__METHOD;
+
+	/**
+	 * The feature id for the '<em><b>Ignore Knowledge Compromise</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPONENT_PROCESS__IGNORE_KNOWLEDGE_COMPROMISE = INVOCABLE__IGNORE_KNOWLEDGE_COMPROMISE;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1354,6 +1390,15 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @ordered
 	 */
 	int RATINGS_PROCESS__METHOD = INVOCABLE__METHOD;
+
+	/**
+	 * The feature id for the '<em><b>Ignore Knowledge Compromise</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RATINGS_PROCESS__IGNORE_KNOWLEDGE_COMPROMISE = INVOCABLE__IGNORE_KNOWLEDGE_COMPROMISE;
 
 	/**
 	 * The feature id for the '<em><b>Component Instance</b></em>' container reference.
@@ -2005,6 +2050,17 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getInvocable_Method();
+
+	/**
+	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Invocable#isIgnoreKnowledgeCompromise <em>Ignore Knowledge Compromise</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Ignore Knowledge Compromise</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.Invocable#isIgnoreKnowledgeCompromise()
+	 * @see #getInvocable()
+	 * @generated
+	 */
+	EAttribute getInvocable_IgnoreKnowledgeCompromise();
 
 	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController <em>Ensemble Controller</em>}'.
@@ -2832,6 +2888,14 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute INVOCABLE__METHOD = eINSTANCE.getInvocable_Method();
+
+		/**
+		 * The meta object literal for the '<em><b>Ignore Knowledge Compromise</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute INVOCABLE__IGNORE_KNOWLEDGE_COMPROMISE = eINSTANCE.getInvocable_IgnoreKnowledgeCompromise();
 
 		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleControllerImpl <em>Ensemble Controller</em>}' class.

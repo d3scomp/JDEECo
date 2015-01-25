@@ -124,21 +124,38 @@ public class LocalSecurityCheckerTest {
 		map.put("a", 1);
 		map.put("b", 2);
 		map.put("c", 3);
+		map.put("y", 4);		
 		result.setValue(RuntimeModelHelper.createKnowledgePath("map"), map);
 		Map<String, String> mapNested = new HashMap<>();
-		mapNested.put("x", "a");
+		mapNested.put("x", "a");		
 		result.setValue(RuntimeModelHelper.createKnowledgePath("mapNested"), mapNested);
 		
 		return result;
 	}
 	
 	@Test
-	public void checkSecurity_replicaTest() throws TaskInvocationException {
+	public void checkSecurity_replicaTest() throws TaskInvocationException, KnowledgeUpdateException {
 		// given replica is created
-		KnowledgeManager km = new CloningKnowledgeManager("remote", localComponent);
+		EnsembleDefinition ensembleDefinition = factory.createEnsembleDefinition();
+		ensembleDefinition.setMembership(factory.createCondition());
+		ensembleDefinition.getMembership().getParameters().add(param1);
+		ensembleDefinition.getMembership().getParameters().add(param2);
+		ensembleDefinition.setKnowledgeExchange(factory.createExchange());
+		ensembleDefinition.getKnowledgeExchange().getParameters().add(param3);
+		when(ensembleController.getEnsembleDefinition()).thenReturn(ensembleDefinition);
+		
+		KnowledgeManager shadowKnowledgeManager = new CloningKnowledgeManager("remote", localComponent);
+		
+		// given necessary data are created
+		ChangeSet changeSet = new ChangeSet();
+		changeSet.setValue(RuntimeModelHelper.createKnowledgePath("field1_oc"), 123);
+		changeSet.setValue(RuntimeModelHelper.createKnowledgePath("field1_om"), 123);
+		changeSet.setValue(RuntimeModelHelper.createKnowledgePath("field2_oc"), 123);
+		shadowKnowledgeManager.update(changeSet);
+		localKnowledgeManager.update(changeSet);
 		
 		// when access to a replica is checked
-		boolean result = target.checkSecurity(PathRoot.COORDINATOR, km);
+		boolean result = target.checkSecurity(PathRoot.COORDINATOR, shadowKnowledgeManager);
 		
 		// then true is returned
 		assertTrue(result);
@@ -172,6 +189,9 @@ public class LocalSecurityCheckerTest {
 
 		ChangeSet changeSet = new ChangeSet();
 		changeSet.setValue(RuntimeModelHelper.createKnowledgePath("some_param"), 123);
+		changeSet.setValue(RuntimeModelHelper.createKnowledgePath("field1_oc"), 123);
+		changeSet.setValue(RuntimeModelHelper.createKnowledgePath("field1_om"), 123);
+		changeSet.setValue(RuntimeModelHelper.createKnowledgePath("field2_oc"), 123);
 		shadowKnowledgeManager.update(changeSet);
 		localKnowledgeManager.update(changeSet);
 		
@@ -304,9 +324,9 @@ public class LocalSecurityCheckerTest {
 		shadowKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("mapKey") , Arrays.asList(roleBTag));
 
 		ChangeSet changeSet = new ChangeSet();
-		Map<Integer, Integer> map = new HashMap<>();
-		map.put(123, 456);
-		changeSet.setValue(RuntimeModelHelper.createKnowledgePath("mapKey"), 123);
+		Map<String, Integer> map = new HashMap<>();
+		map.put("123", 456);
+		changeSet.setValue(RuntimeModelHelper.createKnowledgePath("mapKey"), "123");
 		changeSet.setValue(RuntimeModelHelper.createKnowledgePath("map"), map);
 		
 		shadowKnowledgeManager.update(changeSet);

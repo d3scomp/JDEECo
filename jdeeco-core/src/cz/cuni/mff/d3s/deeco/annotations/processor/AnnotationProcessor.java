@@ -23,6 +23,7 @@ import cz.cuni.mff.d3s.deeco.annotations.Allow;
 import cz.cuni.mff.d3s.deeco.annotations.CommunicationBoundary;
 import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.Ensemble;
+import cz.cuni.mff.d3s.deeco.annotations.IgnoreKnowledgeCompromise;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
@@ -788,6 +789,11 @@ public class AnnotationProcessor {
 		Method m = getAnnotatedMethodInEnsemble(clazz, KnowledgeExchange.class);
 		Exchange exchange = factory.createExchange();
 		exchange.setMethod(m);
+		
+		if (m.getAnnotation(IgnoreKnowledgeCompromise.class) != null) {
+			exchange.setIgnoreKnowledgeCompromise(true);
+		}
+		
 		try{
 			exchange.getParameters().addAll(createParameters(m, PathOrigin.ENSEMBLE));
 		} catch (AnnotationProcessorException e) {
@@ -847,6 +853,10 @@ public class AnnotationProcessor {
 				componentProcess.getTriggers().add(periodicTrigger);
 			}
 			componentProcess.getTriggers().addAll(knowledgeChangeTriggers);
+			
+			if (m.getAnnotation(IgnoreKnowledgeCompromise.class) != null) {
+				componentProcess.setIgnoreKnowledgeCompromise(true);
+			}
 			
 			callExtensions(ParsingEvent.ON_PROCESS_CREATION, componentProcess, getUnknownAnnotations(m));
 

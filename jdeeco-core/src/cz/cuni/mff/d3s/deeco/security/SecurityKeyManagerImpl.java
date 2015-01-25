@@ -47,11 +47,14 @@ public class SecurityKeyManagerImpl implements SecurityKeyManager {
 	
 	private final Integer INTEGRITY_KEY = 95423814;
 	
+	/** singleton instance */
+	private static SecurityKeyManager instance;
+	
 	/**
 	 * Instantiates a new security key manager.
 	 *
 	 */
-	public SecurityKeyManagerImpl() throws KeyStoreException {
+	protected SecurityKeyManagerImpl() throws KeyStoreException {
 		this.keyStore = KeyStore.getInstance("JKS");
 		this.secureRandom = new SecureRandom();
 		this.privateKeys = new HashMap<>();
@@ -64,6 +67,18 @@ public class SecurityKeyManagerImpl implements SecurityKeyManager {
 			throw new KeyStoreException(e);
 		}
 		
+	}
+	
+	/**
+	 * Gets the unique instance of this class.
+	 * @return
+	 * @throws KeyStoreException
+	 */
+	public static synchronized SecurityKeyManager getInstance() throws KeyStoreException {
+		if (instance == null) {
+			instance = new SecurityKeyManagerImpl();
+		}
+		return instance;
 	}
 	
 	private void initialize() throws NoSuchAlgorithmException, CertificateException, IOException {

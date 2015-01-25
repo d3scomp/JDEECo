@@ -1,7 +1,10 @@
 package cz.cuni.mff.d3s.deeco.security;
 
+import static cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.getAbsoluteStrippedPath;
+
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -11,6 +14,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager;
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
@@ -65,13 +69,14 @@ public class LocalSecurityChecker {
 	public boolean checkSecurity(PathRoot localRole, ReadOnlyKnowledgeManager shadowKnowledgeManager) throws TaskInvocationException {
 		boolean canAccess;
 		
+		Collection<Parameter> formalParamsOfMembership = ensembleController.getEnsembleDefinition().getMembership().getParameters();
+		Collection<Parameter> formalParamsOfExchange = ensembleController.getEnsembleDefinition().getKnowledgeExchange().getParameters();
+		
 		if (kmContainer.hasReplica(shadowKnowledgeManager.getId())) {
 			// if the shadow knowledge manager belongs to a remote component, security is already guaranteed with data encryption in DefaultKnowledgeDataManager
-			canAccess = true;
-		} else {			
-			Collection<Parameter> formalParamsOfMembership = ensembleController.getEnsembleDefinition().getMembership().getParameters();
-			Collection<Parameter> formalParamsOfExchange = ensembleController.getEnsembleDefinition().getKnowledgeExchange().getParameters();
-			
+			canAccess = knowledgePresent(localRole, formalParamsOfMembership.stream().map(Parameter::getKnowledgePath).collect(Collectors.toList()), shadowKnowledgeManager) 
+					 && knowledgePresent(localRole, formalParamsOfExchange.stream().map(Parameter::getKnowledgePath).collect(Collectors.toList()), shadowKnowledgeManager);
+		} else {						
 			Collection<KnowledgePath> knowledgePathsFromMembership = formalParamsOfMembership.stream()
 					.filter(param -> param.getKind() == ParameterKind.IN || param.getKind() == ParameterKind.INOUT)
 					.map(param -> param.getKnowledgePath()).collect(Collectors.toList());
@@ -79,7 +84,9 @@ public class LocalSecurityChecker {
 					.filter(param -> param.getKind() == ParameterKind.IN || param.getKind() == ParameterKind.INOUT)
 					.map(param -> param.getKnowledgePath()).collect(Collectors.toList());
 			
-			canAccess = canAccessKnowledge(localRole, knowledgePathsFromMembership, shadowKnowledgeManager) 
+			canAccess = knowledgePresent(localRole, formalParamsOfMembership.stream().map(Parameter::getKnowledgePath).collect(Collectors.toList()), shadowKnowledgeManager) 
+					 && knowledgePresent(localRole, formalParamsOfExchange.stream().map(Parameter::getKnowledgePath).collect(Collectors.toList()), shadowKnowledgeManager) 
+					 && canAccessKnowledge(localRole, knowledgePathsFromMembership, shadowKnowledgeManager) 
 					 && canAccessKnowledge(localRole, knowledgePathsFromExchange, shadowKnowledgeManager);					
 		}		
 		
@@ -87,6 +94,10 @@ public class LocalSecurityChecker {
 			// validate that knowledge will not be compromised (i.e. moved to a path with lesser security)		
 			Set<String> compromitationErrors = ModelSecurityValidator.validate(localRole, ensembleController.getEnsembleDefinition().getKnowledgeExchange(), 
 					ensembleController.getComponentInstance(), shadowKnowledgeManager);
+			
+			if (!compromitationErrors.isEmpty()) {
+				Log.e(compromitationErrors.stream().collect(Collectors.joining(", ")));
+			}
 			
 			return compromitationErrors.isEmpty();
 		} else {
@@ -111,7 +122,7 @@ public class LocalSecurityChecker {
 		boolean canAccessAll = true;
 		
 		// verify each of the paths
-		for (KnowledgePath kp : paths) {		
+		for (KnowledgePath kp : paths) {					
 			Map<SecurityTag, ReadOnlyKnowledgeManager> securityTagManager = new HashMap<>();
 			SecurityTagCollection securityTagCollection = SecurityTagCollection.getSecurityTags(localRole, kp, localKnowledgeManager, shadowKnowledgeManager, securityTagManager);
 			
@@ -134,6 +145,41 @@ public class LocalSecurityChecker {
 		return canAccessAll;
 	}
 	
+	/**
+	 * Checks if such knowledge is present in the knowledge manager and therefore if it makes sense to validate security.
+	 */
+	private boolean knowledgePresent(PathRoot localRole, Collection<KnowledgePath> paths, ReadOnlyKnowledgeManager shadowKnowledgeManager) {		
+		KnowledgeManager localKnowledgeManager = ensembleController.getComponentInstance().getKnowledgeManager();
+		
+		try {
+			Collection<KnowledgePath> localPaths = new LinkedList<KnowledgePath>();
+			Collection<KnowledgePath> shadowPaths = new LinkedList<KnowledgePath>();
+			
+			for (KnowledgePath path : paths) {
+				KnowledgePathAndRoot absoluteKnowledgePathAndRoot;
+				
+				if (localRole == PathRoot.COORDINATOR) {
+					absoluteKnowledgePathAndRoot = getAbsoluteStrippedPath(path, localKnowledgeManager, shadowKnowledgeManager);
+				} else {
+					absoluteKnowledgePathAndRoot = getAbsoluteStrippedPath(path, shadowKnowledgeManager, localKnowledgeManager);				
+				}
+			
+				if (absoluteKnowledgePathAndRoot.root == localRole) {
+					localPaths.add(absoluteKnowledgePathAndRoot.knowledgePath);					
+				} else {
+					shadowPaths.add(absoluteKnowledgePathAndRoot.knowledgePath);					
+				}			
+			}
+		
+			localKnowledgeManager.get(localPaths);	
+			shadowKnowledgeManager.get(shadowPaths);	
+			
+			return true;
+		} catch (KnowledgeNotFoundException e) {
+			return false;
+		}		
+	}
+
 	/**
 	 * Checks whether the local component has role to access the given security tag.
 	 */

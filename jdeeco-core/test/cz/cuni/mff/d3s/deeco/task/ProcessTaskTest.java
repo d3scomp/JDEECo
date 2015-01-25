@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -72,7 +73,7 @@ public class ProcessTaskTest {
 		initMocks(this);
 
 		model = new SampleRuntimeModel();
-		ratingsManager = new RatingsManagerImpl();
+		ratingsManager = RatingsManagerImpl.getInstance();
 		
 		Map<PathRating, Long> ratingContent = new HashMap<>();
 		ratingContent.put(PathRating.OK, 38l);
@@ -108,6 +109,11 @@ public class ProcessTaskTest {
 		model.setKnowledgeManager(knowledgeManager);
 		
 		this.task = new ProcessTask(model.process, scheduler, architecture, ratingsManager);
+	}
+	
+	@After
+	public void tearDown() {
+		RatingsManagerImpl.resetSingleton();
 	}
 	
 	@Test
