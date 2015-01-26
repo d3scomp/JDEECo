@@ -222,6 +222,19 @@ public class AnnotationProcessorTest {
 	}
 	
 	@Test
+	public void testSecurityOnNonSerializableField() throws AnnotationProcessorException {
+		RuntimeMetadata model = factory.createRuntimeMetadata(); 
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		WrongC13 input = new WrongC13();
+		
+		exception.expect(AnnotationProcessorException.class);
+		exception.expectMessage("Field nonserializable is not serializable.");
+		
+		// when process() is called
+		processor.process(input);
+	}
+	
+	@Test
 	public void testNonExistingAliasClass() throws AnnotationProcessorException {
 		// given roleAlias refers to something that is not a role definition
 		RuntimeMetadata model = factory.createRuntimeMetadata(); 

@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.deeco.annotations.processor;
 
+import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -674,6 +675,9 @@ public class AnnotationProcessor {
 			if (allows.length > 0 && field.getName().equals(ComponentIdentifier.ID.toString())) {
 				throw new AnnotationProcessorException("The component ID must not be secured.");
 			}
+			if (allows.length > 0 && !canSerialize(initialKnowledge.getValue(kp))) {
+				throw new AnnotationProcessorException("Field " + field.getName() + " is not serializable.");
+			}
 			
 			Set<Class<?>> roleClasses = new HashSet<>();
 			
@@ -691,6 +695,16 @@ public class AnnotationProcessor {
 		}		
 	}
 	
+	private boolean canSerialize(Object value) {		
+		try {
+			@SuppressWarnings("unused")
+			Serializable s = (Serializable)value;
+			return true;
+		} catch (Exception e) {
+			return false;
+		}		
+	}
+
 	/**
 	 * Creator of a single correctly-initialized {@link EnsembleDefinition} object. 
 	 * It calls all the necessary sub-creators to obtain the full graph of the Ecore object.
