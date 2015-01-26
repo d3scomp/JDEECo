@@ -36,8 +36,8 @@ install:
 	# Copy libraries
 	
 	# libjdeeco
-	cp out/gcc-debug/src/libjdeeco-omnetpp.dll libs/debug
-	cp out/gcc-release/src/libjdeeco-omnetpp.dll libs/release
+	cp out/gcc-debug/src/libjdeeco-omnetpp.dll libs/debug/jdeeco-omnetpp.dll
+	cp out/gcc-release/src/libjdeeco-omnetpp.dll libs/release/jdeeco-omnetpp.dll
 	
 	# omnetpp
 	cp ${OMNETPP_ROOT}/out/gcc-debug/src/cmdenv/liboppcmdenvd.dll libs/debug
