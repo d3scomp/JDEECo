@@ -295,7 +295,7 @@ public class KnowledgeEncryptor {
 			
 			metaData.encryptedKey = encryptedKey;
 			metaData.encryptedKeyAlgorithm = symmetricKey.getAlgorithm();
-			metaData.targetRoleHash = keyManager.getRoleKey(roleName, arguments);
+			metaData.targetRoleHash = keyManager.getRoleKey(roleName, arguments);			
 			metaData.signature = securityHelper.sign(keyManager.getIntegrityPrivateKey(), metaData.componentId, metaData.versionId, metaData.targetRoleHash);
 			
 			return securityHelper.getSymmetricCipher(Cipher.ENCRYPT_MODE, symmetricKey);

@@ -1,6 +1,7 @@
 package cz.cuni.mff.d3s.deeco.security;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -48,10 +49,12 @@ public class ModelSecurityValidatorTest {
 	private RuntimeMetadataFactory factory;
 	private ComponentProcess process, process1, process2, process3;
 	private KnowledgeSecurityTag tag_with_path, tag_only_role, tag_with_blank, tag_with_absolute, inherited_tag;
+	private ModelSecurityValidator modelSecurityValidator;
 	
 	@Before
 	public void setUp() throws KnowledgeUpdateException {
 		factory = RuntimeMetadataFactoryExt.eINSTANCE;
+		modelSecurityValidator = spy(new ModelSecurityValidator());
 		
 		simpleComponent = factory.createComponentInstance();
 		simpleKnowledgeManager = new BaseKnowledgeManager("ID1", simpleComponent);		
@@ -155,7 +158,7 @@ public class ModelSecurityValidatorTest {
 		process.getParameters().add(createParameter(ParameterKind.IN, createKnowledgePath(new String[] {"map"}, RuntimeModelHelper.createKnowledgePath("key"))));
 		process.getParameters().add(createParameter(ParameterKind.OUT, createKnowledgePath(new String[] {"map"}, RuntimeModelHelper.createKnowledgePath("key"))));
 		
-		Set<String> errors = ModelSecurityValidator.validate(simpleComponent);
+		Set<String> errors = modelSecurityValidator.validate(simpleComponent);
 		assertTrue(errors.isEmpty());
 	}
 	
@@ -169,7 +172,7 @@ public class ModelSecurityValidatorTest {
 		process.getParameters().add(createParameter(ParameterKind.IN, createKnowledgePath(new String[] {"map1"})));
 		process.getParameters().add(createParameter(ParameterKind.OUT, createKnowledgePath(new String[] {"map2"}, RuntimeModelHelper.createKnowledgePath("key"))));
 		
-		Set<String> errors = ModelSecurityValidator.validate(simpleComponent);
+		Set<String> errors = modelSecurityValidator.validate(simpleComponent);
 		assertTrue(errors.isEmpty());
 	}
 	
@@ -182,7 +185,7 @@ public class ModelSecurityValidatorTest {
 		process.getParameters().add(createParameter(ParameterKind.IN, createKnowledgePath(new String[] {"map1"}, RuntimeModelHelper.createKnowledgePath("key"))));
 		process.getParameters().add(createParameter(ParameterKind.OUT, createKnowledgePath(new String[] {"map1"} )));
 		
-		List<String> errors = ModelSecurityValidator.validate(simpleComponent).stream().collect(Collectors.toList());
+		List<String> errors = modelSecurityValidator.validate(simpleComponent).stream().collect(Collectors.toList());
 		assertEquals(1, errors.size());
 		assertEquals("Parameter map1 is not appropriately secured.", errors.get(0));
 	}
@@ -196,7 +199,7 @@ public class ModelSecurityValidatorTest {
 		process.getParameters().add(createParameter(ParameterKind.IN, createKnowledgePath(new String[] {"map1"})));
 		process.getParameters().add(createParameter(ParameterKind.OUT, createKnowledgePath(new String[] {"map2"})));
 		
-		List<String> errors = ModelSecurityValidator.validate(simpleComponent).stream().collect(Collectors.toList());
+		List<String> errors = modelSecurityValidator.validate(simpleComponent).stream().collect(Collectors.toList());
 		assertEquals(1, errors.size());
 		assertEquals("Parameter map2 is not appropriately secured.", errors.get(0));
 	}
@@ -210,7 +213,7 @@ public class ModelSecurityValidatorTest {
 		process.getParameters().add(createParameter(ParameterKind.IN, createKnowledgePath(new String[] {"map1"})));
 		process.getParameters().add(createParameter(ParameterKind.OUT, createKnowledgePath(new String[] {"map2"})));
 		
-		Set<String> errors = ModelSecurityValidator.validate(simpleComponent);
+		Set<String> errors = modelSecurityValidator.validate(simpleComponent);
 		assertTrue(errors.isEmpty());
 	}
 	
@@ -223,7 +226,7 @@ public class ModelSecurityValidatorTest {
 		process.getParameters().add(createParameter(ParameterKind.IN, createKnowledgePath(new String[] {"map1"})));
 		process.getParameters().add(createParameter(ParameterKind.OUT, createKnowledgePath(new String[] {"map2"})));
 		
-		List<String> errors = ModelSecurityValidator.validate(simpleComponent).stream().collect(Collectors.toList());
+		List<String> errors = modelSecurityValidator.validate(simpleComponent).stream().collect(Collectors.toList());
 		assertEquals(1, errors.size());
 		assertEquals("Parameter map2 is not appropriately secured.", errors.get(0));
 	}
@@ -237,7 +240,7 @@ public class ModelSecurityValidatorTest {
 		process.getParameters().add(createParameter(ParameterKind.IN, createKnowledgePath(new String[] {"map1"})));
 		process.getParameters().add(createParameter(ParameterKind.OUT, createKnowledgePath(new String[] {"map2"})));
 		
-		Set<String> errors = ModelSecurityValidator.validate(simpleComponent);
+		Set<String> errors = modelSecurityValidator.validate(simpleComponent);
 		assertTrue(errors.isEmpty());
 	}
 	
@@ -250,7 +253,7 @@ public class ModelSecurityValidatorTest {
 		process.getParameters().add(createParameter(ParameterKind.IN, createKnowledgePath(new String[] {"map1"})));
 		process.getParameters().add(createParameter(ParameterKind.OUT, createKnowledgePath(new String[] {"map2"})));
 		
-		List<String> errors = ModelSecurityValidator.validate(simpleComponent).stream().collect(Collectors.toList());
+		List<String> errors = modelSecurityValidator.validate(simpleComponent).stream().collect(Collectors.toList());
 		assertEquals(1, errors.size());
 		assertEquals("Parameter map2 is not appropriately secured.", errors.get(0));
 	}
@@ -264,7 +267,7 @@ public class ModelSecurityValidatorTest {
 		process.getParameters().add(createParameter(ParameterKind.IN, createKnowledgePath(new String[] {"map1"})));
 		process.getParameters().add(createParameter(ParameterKind.OUT, createKnowledgePath(new String[] {"map2"}, RuntimeModelHelper.createKnowledgePath("key"))));
 		
-		Set<String> errors = ModelSecurityValidator.validate(simpleComponent);
+		Set<String> errors = modelSecurityValidator.validate(simpleComponent);
 		assertTrue(errors.isEmpty());
 	}
 	
@@ -276,7 +279,7 @@ public class ModelSecurityValidatorTest {
 		process.getParameters().add(createParameter(ParameterKind.IN, createKnowledgePath(new String[] {"map1"})));
 		process.getParameters().add(createParameter(ParameterKind.OUT, createKnowledgePath(new String[] {"map2"}, RuntimeModelHelper.createKnowledgePath("key"))));
 		
-		List<String> errors = ModelSecurityValidator.validate(simpleComponent).stream().collect(Collectors.toList());
+		List<String> errors = modelSecurityValidator.validate(simpleComponent).stream().collect(Collectors.toList());
 		assertEquals(1, errors.size());
 		assertEquals("Parameter map2.[key] is not appropriately secured.", errors.get(0));
 	}
@@ -293,7 +296,7 @@ public class ModelSecurityValidatorTest {
 		process.getParameters().add(createParameter(ParameterKind.OUT, createKnowledgePath(new String[] {"map2"})));
 		process.getParameters().add(createParameter(ParameterKind.OUT, createKnowledgePath(new String[] {"map3"})));
 		
-		List<String> errors = ModelSecurityValidator.validate(simpleComponent).stream().collect(Collectors.toList());
+		List<String> errors = modelSecurityValidator.validate(simpleComponent).stream().collect(Collectors.toList());
 		assertEquals(1, errors.size());
 		assertEquals("Parameter key is not appropriately secured.", errors.get(0));
 	}
@@ -307,7 +310,7 @@ public class ModelSecurityValidatorTest {
 		process.getParameters().add(createParameter(ParameterKind.IN, createKnowledgePath(new String[] {"map1"})));
 		process.getParameters().add(createParameter(ParameterKind.OUT, createKnowledgePath(new String[] {"map2"})));
 		
-		List<String> errors = ModelSecurityValidator.validate(simpleComponent).stream().collect(Collectors.toList());
+		List<String> errors = modelSecurityValidator.validate(simpleComponent).stream().collect(Collectors.toList());
 		assertEquals(1, errors.size());
 		assertEquals("Parameter map2 is not appropriately secured.", errors.get(0));
 	}
@@ -321,7 +324,7 @@ public class ModelSecurityValidatorTest {
 		process.getParameters().add(createParameter(ParameterKind.IN, createKnowledgePath(new String[] {"map1"})));
 		process.getParameters().add(createParameter(ParameterKind.OUT, createKnowledgePath(new String[] {"map2"})));
 		
-		Set<String> errors = ModelSecurityValidator.validate(simpleComponent);
+		Set<String> errors = modelSecurityValidator.validate(simpleComponent);
 		assertTrue(errors.isEmpty());
 	}
 	
@@ -333,7 +336,7 @@ public class ModelSecurityValidatorTest {
 		process.getParameters().add(createParameter(ParameterKind.IN, createKnowledgePath(new String[] {"map1"})));
 		process.getParameters().add(createParameter(ParameterKind.OUT, createKnowledgePath(new String[] {"map2"})));
 		
-		Set<String> errors = ModelSecurityValidator.validate(simpleComponent);
+		Set<String> errors = modelSecurityValidator.validate(simpleComponent);
 		assertTrue(errors.isEmpty());
 	}
 	
@@ -346,7 +349,7 @@ public class ModelSecurityValidatorTest {
 		process.getParameters().add(createParameter(ParameterKind.IN, createKnowledgePath(new String[] {"map1"})));
 		process.getParameters().add(createParameter(ParameterKind.OUT, createKnowledgePath(new String[] {"map2"})));
 		
-		Set<String> errors = ModelSecurityValidator.validate(simpleComponent);
+		Set<String> errors = modelSecurityValidator.validate(simpleComponent);
 		assertTrue(errors.isEmpty());
 	}
 	
@@ -359,7 +362,7 @@ public class ModelSecurityValidatorTest {
 		process.getParameters().add(createParameter(ParameterKind.IN, createKnowledgePath(new String[] {"map1"})));
 		process.getParameters().add(createParameter(ParameterKind.OUT, createKnowledgePath(new String[] {"map2"})));
 		
-		List<String> errors = ModelSecurityValidator.validate(simpleComponent).stream().collect(Collectors.toList());
+		List<String> errors = modelSecurityValidator.validate(simpleComponent).stream().collect(Collectors.toList());
 		assertEquals(1, errors.size());
 		assertEquals("Parameter map2 is not appropriately secured.", errors.get(0));
 	}
@@ -373,7 +376,7 @@ public class ModelSecurityValidatorTest {
 		process.getParameters().add(createParameter(ParameterKind.IN, createKnowledgePath(new String[] {"map1"})));
 		process.getParameters().add(createParameter(ParameterKind.OUT, createKnowledgePath(new String[] {"map2"})));
 		
-		Set<String> errors = ModelSecurityValidator.validate(simpleComponent);
+		Set<String> errors = modelSecurityValidator.validate(simpleComponent);
 		assertTrue(errors.isEmpty());
 	}
 	
@@ -384,7 +387,7 @@ public class ModelSecurityValidatorTest {
 		
 		process.getParameters().add(createParameter(ParameterKind.INOUT, createKnowledgePath(new String[] {"map1"})));
 		
-		Set<String> errors = ModelSecurityValidator.validate(simpleComponent);
+		Set<String> errors = modelSecurityValidator.validate(simpleComponent);
 		assertTrue(errors.isEmpty());
 	}
 	
@@ -397,7 +400,7 @@ public class ModelSecurityValidatorTest {
 		process.getParameters().add(createParameter(ParameterKind.IN, createKnowledgePath(new String[] {"map1"})));
 		process.getParameters().add(createParameter(ParameterKind.OUT, createKnowledgePath(new String[] {"map2"})));
 		
-		Set<String> errors = ModelSecurityValidator.validate(simpleComponent);
+		Set<String> errors = modelSecurityValidator.validate(simpleComponent);
 		assertTrue(errors.isEmpty());
 	}
 	
@@ -410,7 +413,7 @@ public class ModelSecurityValidatorTest {
 		process.getParameters().add(createParameter(ParameterKind.IN, createKnowledgePath(new String[] {"map1"})));
 		process.getParameters().add(createParameter(ParameterKind.OUT, createKnowledgePath(new String[] {"map2"})));
 		
-		Set<String> errors = ModelSecurityValidator.validate(simpleComponent);
+		Set<String> errors = modelSecurityValidator.validate(simpleComponent);
 		assertTrue(errors.isEmpty());
 	}
 	
@@ -423,7 +426,7 @@ public class ModelSecurityValidatorTest {
 		complexKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("out2_2"), Arrays.asList(tag_with_path));
 		complexKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("out1_1"), Arrays.asList(tag_with_path));
 		
-		Set<String> errors = ModelSecurityValidator.validate(complexComponent);
+		Set<String> errors = modelSecurityValidator.validate(complexComponent);
 		assertTrue(errors.isEmpty());		
 	}
 	
@@ -435,7 +438,7 @@ public class ModelSecurityValidatorTest {
 		complexKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("out2_2"), Arrays.asList(tag_with_path));
 		complexKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("out1_1"), Arrays.asList(tag_with_path));
 		
-		List<String> errors = ModelSecurityValidator.validate(complexComponent).stream().collect(Collectors.toList());
+		List<String> errors = modelSecurityValidator.validate(complexComponent).stream().collect(Collectors.toList());
 		assertEquals(1, errors.size());
 		assertEquals("Parameter out2_1 is not appropriately secured.", errors.get(0));
 	}
@@ -446,7 +449,7 @@ public class ModelSecurityValidatorTest {
 		List<Invocable> invocables = process1.getComponentInstance().getComponentProcesses().stream()
 				.map(process -> (Invocable)process)
 				.collect(Collectors.toList());
-		ModelSecurityValidator.getAllTransitiveInputParameters(RuntimeModelHelper.createKnowledgePath("inout1_1"), process1, invocables, path -> path, result);
+		modelSecurityValidator.getAllTransitiveInputParameters(RuntimeModelHelper.createKnowledgePath("inout1_1"), process1, invocables, path -> path, result);
 		
 		assertEquals(3, result.size());
 		assertEquals("inout1_1", result.keySet().toArray()[0].toString());
@@ -463,7 +466,7 @@ public class ModelSecurityValidatorTest {
 		List<Invocable> invocables = process1.getComponentInstance().getComponentProcesses().stream()
 				.map(process -> (Invocable)process)
 				.collect(Collectors.toList());
-		ModelSecurityValidator.getAllTransitiveInputParameters(RuntimeModelHelper.createKnowledgePath("out1_1"), process3, invocables, path -> path,result);
+		modelSecurityValidator.getAllTransitiveInputParameters(RuntimeModelHelper.createKnowledgePath("out1_1"), process3, invocables, path -> path,result);
 		
 		assertEquals(4, result.size());
 		assertEquals("inout1_1", result.keySet().toArray()[0].toString());
@@ -488,7 +491,7 @@ public class ModelSecurityValidatorTest {
 		exchange.getParameters().add(RuntimeModelHelper.createParameter(ParameterKind.OUT, "out2_1"));
 		invocables.add(exchange);
 		
-		ModelSecurityValidator.getAllTransitiveInputParameters(RuntimeModelHelper.createKnowledgePath("out2_2"), process3, invocables, path -> path, result);
+		modelSecurityValidator.getAllTransitiveInputParameters(RuntimeModelHelper.createKnowledgePath("out2_2"), process3, invocables, path -> path, result);
 		
 		assertEquals(5, result.size());
 		assertEquals("inout1_1", result.keySet().toArray()[0].toString());
@@ -515,7 +518,7 @@ public class ModelSecurityValidatorTest {
 		shadowKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("in"), Arrays.asList(tag_with_absolute));
 		complexKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("out"), Arrays.asList(tag_with_absolute));
 		
-		Set<String> errors = ModelSecurityValidator.validate(PathRoot.COORDINATOR, exchange, complexComponent, shadowKnowledgeManager);
+		Set<String> errors = modelSecurityValidator.validate(PathRoot.COORDINATOR, exchange, complexComponent, shadowKnowledgeManager);
 		assertTrue(errors.isEmpty());		
 	}
 	
@@ -532,7 +535,7 @@ public class ModelSecurityValidatorTest {
 		shadowKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("in"), Arrays.asList(tag_with_absolute));
 		complexKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("out"), Arrays.asList());
 		
-		List<String> errors = ModelSecurityValidator.validate(PathRoot.COORDINATOR, exchange, complexComponent, shadowKnowledgeManager).stream().collect(Collectors.toList());
+		List<String> errors = modelSecurityValidator.validate(PathRoot.COORDINATOR, exchange, complexComponent, shadowKnowledgeManager).stream().collect(Collectors.toList());
 		assertEquals(1, errors.size());
 		assertEquals("Parameter <COORDINATOR>.out is not appropriately secured (compromises <MEMBER>.in).", errors.get(0));
 	}
@@ -549,7 +552,7 @@ public class ModelSecurityValidatorTest {
 		shadowKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("in"), Arrays.asList(tag_with_absolute));
 		complexKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("in1_1"), Arrays.asList(tag_with_absolute));
 		
-		List<String> errors = ModelSecurityValidator.validate(PathRoot.COORDINATOR, exchange, complexComponent, shadowKnowledgeManager).stream().collect(Collectors.toList());
+		List<String> errors = modelSecurityValidator.validate(PathRoot.COORDINATOR, exchange, complexComponent, shadowKnowledgeManager).stream().collect(Collectors.toList());
 		assertEquals(8, errors.size());
 		assertEquals("Parameter out1_1 is not appropriately secured (compromises in1_1).", errors.get(0));
 		assertEquals("Parameter out2_2 is not appropriately secured (compromises <MEMBER>.in).", errors.get(1));
@@ -577,7 +580,7 @@ public class ModelSecurityValidatorTest {
 		complexKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("out2_1"), Arrays.asList(tag_with_absolute));
 		complexKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("out2_2"), Arrays.asList(tag_with_absolute));
 		
-		Set<String> errors = ModelSecurityValidator.validate(PathRoot.COORDINATOR, exchange, complexComponent, shadowKnowledgeManager);
+		Set<String> errors = modelSecurityValidator.validate(PathRoot.COORDINATOR, exchange, complexComponent, shadowKnowledgeManager);
 		assertTrue(errors.isEmpty());
 	}
 	
@@ -596,7 +599,7 @@ public class ModelSecurityValidatorTest {
 		complexKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("out1_1"), Arrays.asList(tag_with_absolute));
 		complexKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("out2_1"), Arrays.asList(tag_with_absolute));
 		
-		List<String> errors = ModelSecurityValidator.validate(PathRoot.COORDINATOR, exchange, complexComponent, shadowKnowledgeManager).stream().collect(Collectors.toList());
+		List<String> errors = modelSecurityValidator.validate(PathRoot.COORDINATOR, exchange, complexComponent, shadowKnowledgeManager).stream().collect(Collectors.toList());
 		assertEquals(3, errors.size());
 		assertEquals("Parameter out2_2 is not appropriately secured (compromises <MEMBER>.in).", errors.get(0));
 		assertEquals("Parameter out2_2 is not appropriately secured (compromises inout1_1).", errors.get(1));
@@ -615,7 +618,7 @@ public class ModelSecurityValidatorTest {
 		shadowKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("in1"), Arrays.asList(tag_only_role));
 		complexKnowledgeManager.markAsLocal(Arrays.asList(RuntimeModelHelper.createKnowledgePath("out2_1"), RuntimeModelHelper.createKnowledgePath("out1_1")));
 		
-		Set<String> errors = ModelSecurityValidator.validate(PathRoot.COORDINATOR, exchange, complexComponent, shadowKnowledgeManager);
+		Set<String> errors = modelSecurityValidator.validate(PathRoot.COORDINATOR, exchange, complexComponent, shadowKnowledgeManager);
 		assertTrue(errors.isEmpty());
 	}
 	
@@ -637,7 +640,7 @@ public class ModelSecurityValidatorTest {
 		shadowKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("in1"), Arrays.asList(tag_only_role));
 		complexKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("out2_1"), Arrays.asList(tag_only_role));
 			
-		List<String> errors = ModelSecurityValidator.validate(PathRoot.COORDINATOR, exchange, complexComponent, shadowKnowledgeManager).stream().collect(Collectors.toList());
+		List<String> errors = modelSecurityValidator.validate(PathRoot.COORDINATOR, exchange, complexComponent, shadowKnowledgeManager).stream().collect(Collectors.toList());
 		assertEquals(2, errors.size());
 		assertEquals("Parameter out1_1 is not appropriately secured (compromises out2_1).", errors.get(0));
 		assertEquals("Parameter out1_1 is not appropriately secured (compromises <MEMBER>.in1).", errors.get(1));
@@ -657,8 +660,30 @@ public class ModelSecurityValidatorTest {
 		shadowKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("in2"), Arrays.asList());
 		complexKnowledgeManager.markAsLocal(Arrays.asList(RuntimeModelHelper.createKnowledgePath("out1")));
 			
-		Set<String> errors = ModelSecurityValidator.validate(PathRoot.COORDINATOR, exchange, complexComponent, shadowKnowledgeManager);
+		Set<String> errors = modelSecurityValidator.validate(PathRoot.COORDINATOR, exchange, complexComponent, shadowKnowledgeManager);
 		assertTrue(errors.isEmpty());
+	}
+	
+	@Test
+	public void cacheTest() {
+		Exchange exchange = factory.createExchange();
+		exchange.getParameters().add(RuntimeModelHelper.createParameter(ParameterKind.IN, "<M>", "in1"));
+		exchange.getParameters().add(RuntimeModelHelper.createParameter(ParameterKind.OUT, "<C>", "out1"));
+				
+		KnowledgeManager shadowKnowledgeManager = new BaseKnowledgeManager("shadow123", complexComponent);
+		
+		shadowKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("in1"), Arrays.asList(tag_only_role));
+		complexKnowledgeManager.markAsLocal(Arrays.asList(RuntimeModelHelper.createKnowledgePath("out1")));
+			
+		// first validation - store to cache
+		Set<String> errors = modelSecurityValidator.validate(PathRoot.COORDINATOR, exchange, complexComponent, shadowKnowledgeManager);
+		assertTrue(errors.isEmpty());
+		
+		// second validation - no calculation
+		reset(modelSecurityValidator);
+		verify(modelSecurityValidator, never()).getAllTransitiveInputParameters(anyObject(), anyObject(), anyObject(), anyObject(), anyObject());
+		Set<String> errors2 = modelSecurityValidator.validate(PathRoot.COORDINATOR, exchange, complexComponent, shadowKnowledgeManager);
+		assertTrue(errors2.isEmpty());
 	}
 	
 	private Parameter createParameter(ParameterKind kind, KnowledgePath path) {

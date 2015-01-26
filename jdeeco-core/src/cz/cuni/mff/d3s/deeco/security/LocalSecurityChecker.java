@@ -40,6 +40,9 @@ public class LocalSecurityChecker {
 	/** Reference to the corresponding {@link EnsembleController}. */
 	EnsembleController ensembleController;
 	
+	/** Reference to the corresponding {@link ModelSecurityValidator}. */
+	ModelSecurityValidator modelSecurityValidator;
+	
 	/**
 	 * Instantiates a new local security checker.
 	 *
@@ -51,6 +54,7 @@ public class LocalSecurityChecker {
 	public LocalSecurityChecker(EnsembleController ensembleController, KnowledgeManagerContainer kmContainer) {
 		this.ensembleController = ensembleController;
 		this.kmContainer = kmContainer;		
+		this.modelSecurityValidator = new ModelSecurityValidator();
 	}
 	
 	/**
@@ -92,7 +96,7 @@ public class LocalSecurityChecker {
 		
 		if (canAccess) {
 			// validate that knowledge will not be compromised (i.e. moved to a path with lesser security)		
-			Set<String> compromitationErrors = ModelSecurityValidator.validate(localRole, ensembleController.getEnsembleDefinition().getKnowledgeExchange(), 
+			Set<String> compromitationErrors = modelSecurityValidator.validate(localRole, ensembleController.getEnsembleDefinition().getKnowledgeExchange(), 
 					ensembleController.getComponentInstance(), shadowKnowledgeManager);
 			
 			if (!compromitationErrors.isEmpty()) {

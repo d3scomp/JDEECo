@@ -431,7 +431,7 @@ public class AnnotationProcessor {
 			}
 			
 			// check for data compromise
-			Set<String> compromitationErrors = ModelSecurityValidator.validate(componentInstance);
+			Set<String> compromitationErrors = new ModelSecurityValidator().validate(componentInstance);
 			if (!compromitationErrors.isEmpty()) {
 				throw new AnnotationProcessorException("Running component " + componentInstance.getName() + " would result into data compromise: " + compromitationErrors.stream().collect(Collectors.joining(", ")));
 			}

@@ -42,6 +42,8 @@ import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.PathRoot;
  */
 public class ModelSecurityValidator {
 	
+	private Map<Integer, Set<String>> validationResultsCache = new HashMap<>();	
+	
 	/**
 	 * Validates all processes in the given component.
 	 *
@@ -49,7 +51,7 @@ public class ModelSecurityValidator {
 	 *            the component
 	 * @return the set of potential errors
 	 */
-	public static Set<String> validate(ComponentInstance component) {
+	public Set<String> validate(ComponentInstance component) {
 		Set<String> errorList = new HashSet<>();
 		
 		// no need to check ratings process since it can't change any knowledge
@@ -100,9 +102,14 @@ public class ModelSecurityValidator {
 	 *            the shadow knowledge manager
 	 * @return the set of potential errors
 	 */
-	public static Set<String> validate(PathRoot pathRoot, Exchange exchange, ComponentInstance component, ReadOnlyKnowledgeManager shadowKnowledgeManager) {
+	public Set<String> validate(PathRoot pathRoot, Exchange exchange, ComponentInstance component, ReadOnlyKnowledgeManager shadowKnowledgeManager) {
+		Set<String> cacheResult = getCacheResult(pathRoot, exchange, component, shadowKnowledgeManager);
+		if (cacheResult != null) {
+			return cacheResult;
+		}
+		
 		Set<String> errorList = new HashSet<>();
-
+		
 		// add exchange process to the list of component processes
 		List<Invocable> invocables = component.getComponentProcesses().stream()
 				.filter(process -> !process.isIgnoreKnowledgeCompromise())
@@ -163,9 +170,43 @@ public class ModelSecurityValidator {
 			}		
 		}
 		
+		createCacheResult(pathRoot, exchange, component, shadowKnowledgeManager, errorList);
 		return errorList;
 	}
 	
+	/**
+	 * Stores the validation result in the cache.
+	 */
+	protected void createCacheResult(PathRoot pathRoot, Exchange exchange, ComponentInstance component, ReadOnlyKnowledgeManager shadowKnowledgeManager, Set<String> errorList) {
+		int hash = getHash(pathRoot, exchange, component, shadowKnowledgeManager);
+		validationResultsCache.put(hash, errorList);
+	}
+
+	/**
+	 * Obtains the validation result from the cache - returns null if result is not present.
+	 */
+	protected Set<String> getCacheResult(PathRoot pathRoot, Exchange exchange, ComponentInstance component, ReadOnlyKnowledgeManager shadowKnowledgeManager) {
+		int hash = getHash(pathRoot, exchange, component, shadowKnowledgeManager);
+		if (validationResultsCache.containsKey(hash)) {
+			return validationResultsCache.get(hash);
+		} else {
+			return null;
+		}		
+	}
+
+	/**
+	 * Computes hash for given set of parameters. 
+	 */
+	protected int getHash(PathRoot pathRoot, Exchange exchange, ComponentInstance component, ReadOnlyKnowledgeManager shadowKnowledgeManager) {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((pathRoot == null) ? 0 : pathRoot.hashCode());
+		result = prime * result + ((exchange == null) ? 0 : exchange.hashCode());
+		result = prime * result + ((component == null) ? 0 : component.hashCode());
+		result = prime * result + ((shadowKnowledgeManager == null) ? 0 : shadowKnowledgeManager.hashCode());
+		return result;
+	}
+
 	/**
 	 * If possible and necessary, converts this knowledge exchange path to its local form.
 	 * @param pathRoot
@@ -174,7 +215,7 @@ public class ModelSecurityValidator {
 	 * @param shadowKnowledgeManager
 	 * @return
 	 */
-	private static KnowledgePath localizeKnowledgePath(PathRoot pathRoot, KnowledgePath path, ReadOnlyKnowledgeManager localKnowledgeManager, ReadOnlyKnowledgeManager shadowKnowledgeManager)  {
+	private KnowledgePath localizeKnowledgePath(PathRoot pathRoot, KnowledgePath path, ReadOnlyKnowledgeManager localKnowledgeManager, ReadOnlyKnowledgeManager shadowKnowledgeManager)  {		
 		if (path.getNodes().isEmpty()) {
 			return path;
 		}
@@ -190,12 +231,11 @@ public class ModelSecurityValidator {
 					PathNodeMapKey mapNode = (PathNodeMapKey)node;
 					mapNode.setKeyPath(localizeKnowledgePath(pathRoot, mapNode.getKeyPath(), localKnowledgeManager, shadowKnowledgeManager));
 				}
-			}
-			
+			}		
 			return modifiablePath;
 		} else if ((firstNode instanceof PathNodeMember) && pathRoot == PathRoot.COORDINATOR) {
 			try {
-				KnowledgePathAndRoot pathAndRoot = KnowledgePathHelper.getAbsoluteStrippedPath(path, localKnowledgeManager, shadowKnowledgeManager);
+				KnowledgePathAndRoot pathAndRoot = KnowledgePathHelper.getAbsoluteStrippedPath(path, localKnowledgeManager, shadowKnowledgeManager);				
 				return pathAndRoot.knowledgePath;
 			} catch (KnowledgeNotFoundException e) {
 				return path;
@@ -222,7 +262,7 @@ public class ModelSecurityValidator {
 	 *            the input security (DNF)
 	 * @return true, if is more restrictive
 	 */
-	public static boolean isMoreRestrictive(SecurityTagCollection out, SecurityTagCollection in) {		
+	public boolean isMoreRestrictive(SecurityTagCollection out, SecurityTagCollection in) {		
 		// if output has no security tags and input does
 		if (out.isEmpty() && conjunctionWithoutLocalExists(in)) {
 			return false;
@@ -237,28 +277,28 @@ public class ModelSecurityValidator {
 		return out.stream().allMatch(conjunction -> satisfiesConjunction(conjunction, in));
 	}
 	
-	private static boolean conjunctionWithoutLocalExists(SecurityTagCollection formula) {
+	private boolean conjunctionWithoutLocalExists(SecurityTagCollection formula) {
 		return formula.stream().anyMatch(conjunction -> !conjunction.stream().anyMatch(tag -> tag instanceof LocalKnowledgeTag ) );
 	}
 	
-	private static boolean satisfiesConjunction(List<SecurityTag> outConjunction, SecurityTagCollection in) {
+	private boolean satisfiesConjunction(List<SecurityTag> outConjunction, SecurityTagCollection in) {
 		// any of the conjunctions in the input must be overriden by the output conjunction
 		return in.stream().anyMatch(inConjunction -> satisfiesConjunction(outConjunction, inConjunction));
 	}
 
-	private static boolean satisfiesConjunction(List<SecurityTag> outConjunction, List<SecurityTag> inConjunction) {
+	private boolean satisfiesConjunction(List<SecurityTag> outConjunction, List<SecurityTag> inConjunction) {
 		// either an output conjunction contains local knowledge
 		// or each tag in the input conjunction is overriden in the output
 		return  outConjunction.stream().anyMatch(outTag -> outTag instanceof LocalKnowledgeTag) ||
 				inConjunction.stream().allMatch(inTag -> tagPresentOrOverriden(inTag, outConjunction));
 	}
 
-	private static boolean tagPresentOrOverriden(SecurityTag inTag, List<SecurityTag> outConjunction) {
+	private boolean tagPresentOrOverriden(SecurityTag inTag, List<SecurityTag> outConjunction) {
 		// any of the output tags must override the input tag
 		return outConjunction.stream().anyMatch(outTag -> satisfies(inTag, outTag));
 	}
 
-	private static boolean satisfies(SecurityTag inTag, SecurityTag outTag) {		
+	private boolean satisfies(SecurityTag inTag, SecurityTag outTag) {		
 		if (inTag instanceof KnowledgeSecurityTag && outTag instanceof KnowledgeSecurityTag) {
 			KnowledgeSecurityTag inKnowledgeTag = (KnowledgeSecurityTag) inTag;
 			KnowledgeSecurityTag outKnowledgeTag = (KnowledgeSecurityTag) outTag;
@@ -280,7 +320,7 @@ public class ModelSecurityValidator {
 		return false;
 	}
 
-	private static boolean satisfies(SecurityRoleArgument inArgument, SecurityRoleArgument outArgument) {
+	private boolean satisfies(SecurityRoleArgument inArgument, SecurityRoleArgument outArgument) {
 		boolean namesMatch = inArgument.getName().equals(outArgument.getName());
 		
 		// blank argument overrides anything
@@ -312,7 +352,7 @@ public class ModelSecurityValidator {
 	 * @param result
 	 * 			the set of knowledge paths
 	 */
-	protected static void getAllTransitiveInputParameters(KnowledgePath outputParameterPath, Invocable process, Collection<Invocable> allProcesses, 
+	protected void getAllTransitiveInputParameters(KnowledgePath outputParameterPath, Invocable process, Collection<Invocable> allProcesses, 
 			UnaryOperator<KnowledgePath> mappingFunction, Map<KnowledgePath, Invocable> result) {
 		Map<KnowledgePath, KnowledgePath> inputParameters = process.getParameters().stream()
 				.filter(param -> param.getKind() == ParameterKind.IN || param.getKind() == ParameterKind.INOUT)
