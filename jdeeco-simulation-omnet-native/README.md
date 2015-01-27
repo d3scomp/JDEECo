@@ -73,73 +73,73 @@ Appart from the Omnet++ related libraries these tools are required:
 - patch
 - mingw64 (only on windows)
 
-1 Create directory for the libraries (path to it should not contain spaces)
-1 Unpack omnet++ (choose package based on your platform) to that directory (dir/omnetpp-4.6)
-1 Unpack inet to that directory (dir/inet)
-1 Unpack mixim to that directory (dir/mixim)
-1 As the mixim 2.3 is not compatible with inet 2.5 it is necessary to apply a patch that solves the incompatibility. It is located in patches directory of this project and is called "mixim-2.3-with-inet-2.5.patch". Apply the patch to mixm directory
-1 Continue with platform specific steps mentioned below 
+1. Create directory for the libraries (path to it should not contain spaces)
+1. Unpack omnet++ (choose package based on your platform) to that directory (dir/omnetpp-4.6)
+1. Unpack inet to that directory (dir/inet)
+1. Unpack mixim to that directory (dir/mixim)
+1. As the mixim 2.3 is not compatible with inet 2.5 it is necessary to apply a patch that solves the incompatibility. It is located in patches directory of this project and is called "mixim-2.3-with-inet-2.5.patch". Apply the patch to mixm directory
+1. Continue with platform specific steps mentioned below 
 
 ### Linux steps
-1 Go to the omnetpp-4.6 directory
-1 Issue ". setenv" to setup environment variables (use this for every shell you will use)
-1 Issue command "./configure"
-1 Fix possible configure errors by installing appropriate packages (On Fedora it was necessary to install development versions of a few packages and tcl/tk libraries)
-1 Make sure the optional xml support was found by configure (it is not reported as error, but we need it)
-1 Issue "make -j5 MODE=debug" (assuming you want to compile the sources on 4 CPUs)
-1 Issue "make -j5 MODE=release" (assuming you want to compile the sources on 4 CPUs)
-1 Go to inet directory
-1 Issue "make makefiles"
-1 Issue "make -j5 MODE=debug" (assuming you want to compile the sources on 4 CPUs)
-1 Issue "make -j5 MODE=release" (assuming you want to compile the sources on 4 CPUs)
-1 Go to mixim directory
-1 Issue "makefiles-using-inet"
-1 Issue "make -j5 MODE=debug" (assuming you want to compile the sources on 4 CPUs)
-1 Issue "make -j5 MODE=release" (assuming you want to compile the sources on 4 CPUs)
-1 Now switch to the cz.cuni.mff.d3s.jdeeco.simulation.omnet-native project root
-1 Fix JAVA_HOME path in MakefileL
-1 Issue "make -f MakefileL makefiles"
-1 Issue "make -f MakefileL MODE=debug"
-1 Issue "make -f MakefileL MODE=release"
-1 Issue "make install"
-1 All the necessary libraries should have been compiled and copied to the libs/{debug|release} in the project root
-1 Issue "mvn install" to create packages
-1 Linux build does not produce the ned files which are needed, either produce them on windows, or grab all the *.ned files forom inet and mixim directories while keeping the directory structure. 
+1. Go to the omnetpp-4.6 directory
+1. Issue ". setenv" to setup environment variables (use this for every shell you will use)
+1. Issue command "./configure"
+1. Fix possible configure errors by installing appropriate packages (On Fedora it was necessary to install development versions of a few packages and tcl/tk libraries)
+1. Make sure the optional xml support was found by configure (it is not reported as error, but we need it)
+1. Issue "make -j5 MODE=debug" (assuming you want to compile the sources on 4 CPUs)
+1. Issue "make -j5 MODE=release" (assuming you want to compile the sources on 4 CPUs)
+1. Go to inet directory
+1. Issue "make makefiles"
+1. Issue "make -j5 MODE=debug" (assuming you want to compile the sources on 4 CPUs)
+1. Issue "make -j5 MODE=release" (assuming you want to compile the sources on 4 CPUs)
+1. Go to mixim directory
+1. Issue "makefiles-using-inet"
+1. Issue "make -j5 MODE=debug" (assuming you want to compile the sources on 4 CPUs)
+1. Issue "make -j5 MODE=release" (assuming you want to compile the sources on 4 CPUs)
+1. Now switch to the cz.cuni.mff.d3s.jdeeco.simulation.omnet-native project root
+1. Fix JAVA_HOME path in MakefileL
+1. Issue "make -f MakefileL makefiles"
+1. Issue "make -f MakefileL MODE=debug"
+1. Issue "make -f MakefileL MODE=release"
+1. Issue "make install"
+1. All the necessary libraries should have been compiled and copied to the libs/{debug|release} in the project root
+1. Issue "mvn install" to create packages
+1. Linux build does not produce the ned files which are needed, either produce them on windows, or grab all the *.ned files forom inet and mixim directories while keeping the directory structure. 
 
 ### Windows steps
-1 Go to the omnetpp-4.6 directory
-1 Unpack the mingw64 to the tools/win32/mingw64 (next to the mingw32)
-1 As Omnet++ and inet does not support windows 64bit builds a patches called "omnetpp-4.6-win.patch" and "inet-2.5-win.patch" needs to be applied to respective directories
-1 Run "mingwenv.cmd" in the omnetpp-4.6 root
-1 Issue command "./configure"
-1 Fix possible configure errors, it might be necessary to tune up configure.user and get tcl/tk libraries somewhere
-1 Make sure the optional xml support was found by configure (it is not reported as error, but we need it)
-1 Issue "make MODE=debug" (NOTE: parallel build does not work 100% properly on windows)
-1 Issue "make MODE=release" (NOTE: parallel build does not work 100% properly on windows)
-1 Go to inet directory
-1 Issue "make makefiles"
-1 Issue "make MODE=debug" (NOTE: parallel build does not work 100% properly on windows)
-1 Issue "make MODE=release" (NOTE: parallel build does not work 100% properly on windows)
-1 Go to mixim directory
-1 Issue "makefiles-using-inet"
-1 Issue "make MODE=debug" (NOTE: parallel build does not work 100% properly on windows)
-1 Issue "make MODE=release" (NOTE: parallel build does not work 100% properly on windows)
-1 Now switch to the cz.cuni.mff.d3s.jdeeco.simulation.omnet-native project root
-1 Fix JAVA_HOME path in MakefileL
-1 Issue "make -f Makefile makefiles"
-1 Issue "make -f Makefile MODE=debug" (NOTE: parallel build does not work 100% properly on windows)
-1 Replace "-loppcommond" with "-loppcommon" in the Makefile
-1 Issue "make -f Makefile MODE=release" (NOTE: parallel build does not work 100% properly on windows)
-1 Issue "make install"
-1 All the necessary libraries and network interface descriptions should have been compiled and copied to the libs/{debug|release|ned} in the project root
-1 Issue "mvn install" to create packages
+1. Go to the omnetpp-4.6 directory
+1. Unpack the mingw64 to the tools/win32/mingw64 (next to the mingw32)
+1. As Omnet++ and inet does not support windows 64bit builds a patches called "omnetpp-4.6-win.patch" and "inet-2.5-win.patch" needs to be applied to respective directories
+1. Run "mingwenv.cmd" in the omnetpp-4.6 root
+1. Issue command "./configure"
+1. Fix possible configure errors, it might be necessary to tune up configure.user and get tcl/tk libraries somewhere
+1. Make sure the optional xml support was found by configure (it is not reported as error, but we need it)
+1. Issue "make MODE=debug" (NOTE: parallel build does not work 100% properly on windows)
+1. Issue "make MODE=release" (NOTE: parallel build does not work 100% properly on windows)
+1. Go to inet directory
+1. Issue "make makefiles"
+1. Issue "make MODE=debug" (NOTE: parallel build does not work 100% properly on windows)
+1. Issue "make MODE=release" (NOTE: parallel build does not work 100% properly on windows)
+1. Go to mixim directory
+1. Issue "makefiles-using-inet"
+1. Issue "make MODE=debug" (NOTE: parallel build does not work 100% properly on windows)
+1. Issue "make MODE=release" (NOTE: parallel build does not work 100% properly on windows)
+1. Now switch to the cz.cuni.mff.d3s.jdeeco.simulation.omnet-native project root
+1. Fix JAVA_HOME path in MakefileL
+1. Issue "make -f Makefile makefiles"
+1. Issue "make -f Makefile MODE=debug" (NOTE: parallel build does not work 100% properly on windows)
+1. Replace "-loppcommond" with "-loppcommon" in the Makefile
+1. Issue "make -f Makefile MODE=release" (NOTE: parallel build does not work 100% properly on windows)
+1. Issue "make install"
+1. All the necessary libraries and network interface descriptions should have been compiled and copied to the libs/{debug|release|ned} in the project root
+1. Issue "mvn install" to create packages
 
 
 ### Deployment
-1 Switch to the cz.cuni.mff.d3s.jdeeco.simulation.omnet-native project root
-1 Fix "omnet" property in the pom.xml
-1 Issue "mvn deploy" in the root of the cz.cuni.mff.d3s.jdeeco.simulation.omnet-native project to deploy packages to the Maven repository
-1 It might happen that the deployment fails due to the pom file already in repository. This might happen when jar's for different architectures are deployed in separate steps. Just delete the pom from the repository and repeat deployment.
+1. Switch to the cz.cuni.mff.d3s.jdeeco.simulation.omnet-native project root
+1. Fix "omnet" property in the pom.xml
+1. Issue "mvn deploy" in the root of the cz.cuni.mff.d3s.jdeeco.simulation.omnet-native project to deploy packages to the Maven repository
+1. It might happen that the deployment fails due to the pom file already in repository. This might happen when jar's for different architectures are deployed in separate steps. Just delete the pom from the repository and repeat deployment.
 
 
 
