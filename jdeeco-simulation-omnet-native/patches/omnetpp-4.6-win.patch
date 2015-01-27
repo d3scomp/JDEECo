@@ -1,0 +1,138 @@
+diff -Naur a/configure b/configure
+--- a/configure	2014-12-02 11:31:02.000000000 +0100
++++ b/configure	2015-01-14 15:40:03.123911200 +0100
+@@ -2306,6 +2309,28 @@
+         OMNETPP_IMAGE_PATH="/;$OMNETPP_IMAGE_PATH"
+         EXE_SUFFIX=".exe"
+         SHARED_LIB_SUFFIX='$(DLL_LIB_SUFFIX)'
++        # on MinGW dll auto importing MUST be used with shared gcc and stdc++
++        # otherwise exceptions can't be thrown across dll boundaries
++        LDFLAGS_ARCH="$LDFLAGS_ARCH -Wl,--enable-auto-import -shared-libgcc -L/usr/bin"
++
++        # If we are building on windows (native compile) we have to add the /usr/lib and
++        # /usr/include directories as they are not added by default, but they are needed
++        # to properly find the Tcl/Tk, LibXML2 libraries.
++        if test "$cross_compiling" = no ; then
++            CFLAGS_ARCH="$CFLAGS_ARCH -I/usr/include"
++            LDFLAGS_ARCH="$LDFLAGS_ARCH -L/usr/lib"
++        fi
++            # NOTE: if we are cross-compiling we may need to add the lib and include path
++            # to the cross-compiled TckTk/Xml libs here. They should NOT reside in the default
++            # /usr/lib directory as that would interfere with the native build.
++        ;;
++	*-*-mingw64*)
++        mingw=yes
++        jni_platform=win64
++        PLATFORM=win32.x86_64
++        OMNETPP_IMAGE_PATH="/;$OMNETPP_IMAGE_PATH"
++        EXE_SUFFIX=".exe"
++        SHARED_LIB_SUFFIX='$(DLL_LIB_SUFFIX)'
+         # on MinGW dll auto importing MUST be used with shared gcc and stdc++
+         # otherwise exceptions can't be thrown across dll boundaries
+         LDFLAGS_ARCH="$LDFLAGS_ARCH -Wl,--enable-auto-import -shared-libgcc -L/usr/bin"
+diff -Naur a/configure.user b/configure.user
+--- a/configure.user	2014-12-02 11:32:18.000000000 +0100
++++ b/configure.user	2015-01-14 16:50:34.485808700 +0100
+@@ -48,7 +48,7 @@
+ # NOTE: that not all 64 bit libraries may be present on your system (i.e. Tcl/Tk and other
+ # libraries may be missing. Use the NO_TCL=yes if you want to skip the Tcl/Tk based parts)
+ #
+-#LDFLAGS=""
++LDFLAGS="-lpsapi"
+ 
+ #
+ # It is possible to have the Tcl files embedded into the compiled OMNeT++
+@@ -113,7 +113,8 @@
+ # or:
+ #TK_CFLAGS="-I$MSYS/include/tcl8.6"
+ #TK_LIBS="-L$MSYS/bin -ltk86 -ltcl86"
+-
++TK_CFLAGS="-I/c/tools64/omnetpp-4.6/tools/win32/mingw64/opt/include"
++TK_LIBS="-L/c/tools64/omnetpp-4.6/tools/win32/mingw64/opt/lib -ltk86 -ltcl86"
+ #
+ # With Cygwin, you can try:
+ # examle:TK_CFLAGS=
+@@ -164,6 +165,9 @@
+ #EXPAT_CFLAGS=
+ #EXPAT_LIBS=
+ 
++EXPAT_CFLAGS="-I/c/tools64/omnetpp-4.3/mingw/opt/include"
++EXPAT_LIBS="-L/c/tools64/omnetpp-4.3/mingw/opt/lib -lexpat"
++
+ #
+ # Compiler and linker options for LIBXML (optional component)
+ #
+diff -Naur a/mingwenv.cmd b/mingwenv.cmd
+--- a/mingwenv.cmd	2014-12-02 11:32:14.000000000 +0100
++++ b/mingwenv.cmd	2015-01-14 13:54:11.576779500 +0100
+@@ -1,3 +1,3 @@
+ @echo off
+ set HOME=%~dp0
+-call "%HOME%\tools\win32\mingw32_shell.bat"
++call "%HOME%\tools\win32\mingw64_shell.bat"
+diff -Naur a/src/envir/opp_run.cc b/src/envir/opp_run.cc
+--- a/src/envir/opp_run.cc	2014-12-02 11:31:04.000000000 +0100
++++ b/src/envir/opp_run.cc	2015-01-14 16:55:35.080817700 +0100
+@@ -174,7 +174,7 @@
+     // look up among all loaded modules
+     HMODULE handles[1024];
+     DWORD bytesNeeded = 0;
+-    if (!EnumProcessModules(GetCurrentProcess(), handles, sizeof(handles), &bytesNeeded))
++    if (/*!EnumProcessModules(GetCurrentProcess(), handles, sizeof(handles), &bytesNeeded)*/ false)
+     {
+         fprintf(stderr, "<!> Error: opp_run: Could not enumerate currently loaded modules.\n");
+         exit(1);
+diff -Naur a/src/eventlog/eventlogdefs.h b/src/eventlog/eventlogdefs.h
+--- a/src/eventlog/eventlogdefs.h	2014-12-02 11:31:04.000000000 +0100
++++ b/src/eventlog/eventlogdefs.h	2015-01-14 16:13:01.652784300 +0100
+@@ -48,7 +48,7 @@
+ //
+ // note that C99 defines intptr_t and uintptr_t and uintptr_t would be sufficient here
+ // but not all supported compilers are C99 compatible
+-typedef unsigned long ptr_t;
++typedef unsigned long long ptr_t;
+ 
+ typedef int64 eventnumber_t;
+ #define EVENTNUMBER_PRINTF_FORMAT INT64_PRINTF_FORMAT
+diff -Naur a/src/sim/nedsupport.cc b/src/sim/nedsupport.cc
+--- a/src/sim/nedsupport.cc	2014-12-02 11:31:04.000000000 +0100
++++ b/src/sim/nedsupport.cc	2015-01-14 16:27:49.618019600 +0100
+@@ -183,7 +183,7 @@
+     // Note: it might NOT mean gate vector of this module
+     if (module->hasGate(ident.c_str()))
+     {
+-        return (long) module->gateSize(ident.c_str()); // returns 1 if it's not a vector
++        return (long)(long long) module->gateSize(ident.c_str()); // returns 1 if it's not a vector
+     }
+     else
+     {
+@@ -193,7 +193,7 @@
+         cModule *siblingModule = module->getSubmodule(ident.c_str(), 0); // returns NULL if submodule is not a vector
+         if (!siblingModule && module->getSubmodule(ident.c_str()))
+             return 1L; // return 1 if submodule exists but not a vector
+-        return (long) siblingModule ? siblingModule->size() : 0L;
++        return (long)(long long) siblingModule ? siblingModule->size() : 0L;
+     }
+ 
+ }
+diff -Naur a/src/sim/parsim/cnullmessageprot.cc b/src/sim/parsim/cnullmessageprot.cc
+--- a/src/sim/parsim/cnullmessageprot.cc	2014-12-02 11:31:04.000000000 +0100
++++ b/src/sim/parsim/cnullmessageprot.cc	2015-01-14 16:30:59.580959100 +0100
+@@ -106,7 +106,7 @@
+         {
+             sprintf(buf,"resendEOT-%d", i);
+             cMessage *eotMsg =  new cMessage(buf,MK_PARSIM_RESENDEOT);
+-            eotMsg->setContextPointer((void *)(long)i);  // khmm...
++            eotMsg->setContextPointer((void *)(long long)i);  // khmm...
+             segInfo[i].eotEvent = eotMsg;
+             rescheduleEvent(eotMsg, 0.0);
+         }
+@@ -252,7 +252,7 @@
+         if (msg->getKind() == MK_PARSIM_RESENDEOT)
+         {
+             // send null messages if window closed for a partition
+-            int procId = (long) msg->getContextPointer();  // khmm...
++            int procId = (long long) msg->getContextPointer();  // khmm...
+             sendNullMessage(procId, msg->getArrivalTime());
+         }
+         else if (msg->getKind() == MK_PARSIM_EIT)
