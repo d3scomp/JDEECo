@@ -18,10 +18,10 @@ import cz.cuni.mff.d3s.deeco.integrity.ReadonlyRatingsHolder;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
-import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager;
+import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry;
 import cz.cuni.mff.d3s.deeco.knowledge.ShadowsTriggerListener;
 import cz.cuni.mff.d3s.deeco.knowledge.TriggerListener;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
@@ -35,8 +35,8 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RatingsProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
-import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.impl.TriggerImpl;
+import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.runtime.ArchitectureObserver;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.security.LocalSecurityChecker;
@@ -659,17 +659,21 @@ public class EnsembleTask extends Task {
 			}			
 		}
 	}
-
+	
 	private void evaluateMembershipAndPerformExchange(ReadOnlyKnowledgeManager shadowKnowledgeManager) throws TaskInvocationException {
 		boolean coordinatorExchangePerformed = false;
 		boolean memberExchangePerformed = false;
+		boolean membership = false;
 		
 		// Invoke the membership condition and if the membership condition returned true, invoke the knowledge exchange
 		if (checkMembership(PathRoot.COORDINATOR, shadowKnowledgeManager) && securityChecker.checkSecurity(PathRoot.COORDINATOR, shadowKnowledgeManager)) {
 			architectureObserver.ensembleFormed(ensembleController.getEnsembleDefinition(), ensembleController.getComponentInstance(),
 					ensembleController.getComponentInstance().getKnowledgeManager().getId(),shadowKnowledgeManager.getId());
-			coordinatorExchangePerformed = performExchange(PathRoot.COORDINATOR, shadowKnowledgeManager);					
+			coordinatorExchangePerformed = performExchange(PathRoot.COORDINATOR, shadowKnowledgeManager);
+			membership = true;
 		}
+		EnsembleLogger.getInstance().logEvent(ensembleController, shadowKnowledgeManager, scheduler, membership);
+		
 		// Do the same with the roles exchanged
 		if (checkMembership(PathRoot.MEMBER, shadowKnowledgeManager) && securityChecker.checkSecurity(PathRoot.MEMBER, shadowKnowledgeManager)) {
 			architectureObserver.ensembleFormed(ensembleController.getEnsembleDefinition(), ensembleController.getComponentInstance(),
