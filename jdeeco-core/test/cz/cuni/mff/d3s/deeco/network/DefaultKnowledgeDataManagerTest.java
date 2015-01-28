@@ -4,6 +4,12 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.*;
 
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
+import java.security.cert.CertificateEncodingException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -12,6 +18,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SealedObject;
 
 import org.junit.Before;
@@ -222,7 +229,7 @@ public class DefaultKnowledgeDataManagerTest {
 	}
 	
 	@Test
-	public void receiveKnowledge_NewKnowledgeTest() throws KnowledgeUpdateException {
+	public void receiveKnowledge_NewKnowledgeTest() throws KnowledgeUpdateException, InvalidKeyException, CertificateEncodingException, NoSuchAlgorithmException, NoSuchPaddingException, SignatureException, KeyStoreException, SecurityException, IllegalStateException, IOException {
 		Collection<KnowledgeManager> replicas = new LinkedList<>();
 		
 		// capture replicas as spies
@@ -241,7 +248,12 @@ public class DefaultKnowledgeDataManagerTest {
 		valueSet.setValue(RuntimeModelHelper.createKnowledgePath("field"), 123);
 		ValueSet authors = new ValueSet();
 		authors.setValue(RuntimeModelHelper.createKnowledgePath("field"), "author");
-		data.add(new KnowledgeData(valueSet, securitySet, authors, new KnowledgeMetaData("V_remote", 123, "4.56", 456, 1)));
+		
+		KnowledgeMetaData metaData = new KnowledgeMetaData("V_remote", 123, "4.56", 456, 1);
+		metaData.signature = runtimeModel.securityHelper.sign(runtimeModel.securityKeyManager.getIntegrityPrivateKey(),
+				metaData.componentId, metaData.versionId, metaData.targetRoleHash,
+				valueSet, securitySet, authors);
+		data.add(new KnowledgeData(valueSet, securitySet, authors, metaData));
 		
 		// when receiveKnowledge() is called
 		runtimeModel.knowledgeDataManager.receiveKnowledge(data);

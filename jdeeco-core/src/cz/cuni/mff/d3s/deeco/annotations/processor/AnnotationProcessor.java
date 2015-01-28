@@ -697,6 +697,8 @@ public class AnnotationProcessor {
 	
 	private boolean canSerialize(Object value) {		
 		try {
+			int x = 5;
+			Serializable a = (Serializable)x;
 			@SuppressWarnings("unused")
 			Serializable s = (Serializable)value;
 			return true;

@@ -30,6 +30,7 @@ import javax.crypto.ShortBufferException;
 import org.junit.Before;
 import org.junit.Test;
 
+import cz.cuni.mff.d3s.deeco.DeecoProperties;
 import cz.cuni.mff.d3s.deeco.knowledge.BaseKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
@@ -139,8 +140,12 @@ public class KnowledgeEncryptorTest {
 	}
 	
 	@Test
-	public void encryptValueSet_NoSecurityTest() throws KnowledgeNotFoundException {
+	public void encryptValueSet_NoSecurityTestWithPlaintextSignEnabled() throws KnowledgeNotFoundException {
 		// given no security is used
+		System.setProperty(DeecoProperties.SIGN_PLAINTEXT_MESSAGES, "true");
+		
+		// re-create the target to accepted the new system property value
+		target = new KnowledgeEncryptor(keyManagerMock);
 		
 		// when encryptValueSet() is called
 		List<KnowledgeData> result = target.encryptValueSet(valueSet, localKnowledgeManager, metaData);
@@ -162,6 +167,38 @@ public class KnowledgeEncryptorTest {
 		}
 		
 		assertNull(result.get(0).getMetaData().encryptedKey);
+		assertNotNull(result.get(0).getMetaData().signature);
+	}
+	
+	@Test
+	public void encryptValueSet_NoSecurityTestWithPlaintextSignDisabled() throws KnowledgeNotFoundException {
+		// given no security is used
+		System.setProperty(DeecoProperties.SIGN_PLAINTEXT_MESSAGES, "false");
+		
+		// re-create the target to accepted the new system property value
+		target = new KnowledgeEncryptor(keyManagerMock);
+		
+		// when encryptValueSet() is called
+		List<KnowledgeData> result = target.encryptValueSet(valueSet, localKnowledgeManager, metaData);
+		
+		// then data are not encrypted and not modified
+		assertEquals(1, result.size());
+		assertEquals(metaData, result.get(0).getMetaData());
+		assertEquals(valueSet, result.get(0).getKnowledge());
+		
+		assertEquals(4, result.get(0).getAuthors().getKnowledgePaths().size());
+		assertEquals("author_secured", result.get(0).getAuthors().getValue(RuntimeModelHelper.createKnowledgePath("secured")));
+		assertNull(result.get(0).getAuthors().getValue(RuntimeModelHelper.createKnowledgePath("secured2")));
+		
+		for (KnowledgePath kp : result.get(0).getKnowledge().getKnowledgePaths()) {
+			assertFalse(result.get(0).getKnowledge().getValue(kp) instanceof SealedObject);
+		}
+		for (KnowledgePath kp : result.get(0).getSecuritySet().getKnowledgePaths()) {
+			assertFalse(result.get(0).getSecuritySet().getValue(kp) instanceof SealedObject);
+		}
+		
+		assertNull(result.get(0).getMetaData().encryptedKey);
+		assertNull(result.get(0).getMetaData().signature);
 	}
 	
 	@Test
@@ -234,13 +271,50 @@ public class KnowledgeEncryptorTest {
 	}
 	
 	@Test
-	public void decryptValueSet_NoSecurityTest() {
+	public void decryptValueSet_NoSecurityTestWithPlaintextSignDisabled() throws InvalidKeyException, CertificateEncodingException, NoSuchAlgorithmException, NoSuchPaddingException, SignatureException, KeyStoreException, SecurityException, IllegalStateException, IOException {
+		// given no security is used
+		System.setProperty(DeecoProperties.SIGN_PLAINTEXT_MESSAGES, "false");
+		
+		// re-create the target to accepted the new system property value
+		target = new KnowledgeEncryptor(keyManagerMock);
+		
 		// given no security is used		
 		ValueSet knowledge = new ValueSet();
 		knowledge.setValue(RuntimeModelHelper.createKnowledgePath("b"), "TEST");
 		ValueSet authors = new ValueSet();
 		authors.setValue(RuntimeModelHelper.createKnowledgePath("b"), "AUTHOR");
 		KnowledgeData data = new KnowledgeData(knowledge, new ValueSet(), authors, metaData);
+		
+		metaData.signature = null;
+		
+		// when decryptValueSet() is called
+		KnowledgeData decryptedData = target.decryptValueSet(data, localKnowledgeManager, metaData);
+		
+		// then data are not modified
+		assertEquals("TEST", decryptedData.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("b")));
+		assertEquals("AUTHOR", decryptedData.getAuthors().getValue(RuntimeModelHelper.createKnowledgePath("b")));
+		assertNotSame(decryptedData.getKnowledge(), knowledge);
+		assertNotSame(decryptedData.getAuthors(), authors);
+	}
+	
+	@Test
+	public void decryptValueSet_NoSecurityTestWithPlaintextSignEnabled() throws InvalidKeyException, CertificateEncodingException, NoSuchAlgorithmException, NoSuchPaddingException, SignatureException, KeyStoreException, SecurityException, IllegalStateException, IOException {
+		// given no security is used
+		System.setProperty(DeecoProperties.SIGN_PLAINTEXT_MESSAGES, "true");
+		
+		// re-create the target to accepted the new system property value
+		target = new KnowledgeEncryptor(keyManagerMock);
+		
+		// given no security is used		
+		ValueSet knowledge = new ValueSet();
+		knowledge.setValue(RuntimeModelHelper.createKnowledgePath("b"), "TEST");
+		ValueSet authors = new ValueSet();
+		authors.setValue(RuntimeModelHelper.createKnowledgePath("b"), "AUTHOR");
+		KnowledgeData data = new KnowledgeData(knowledge, new ValueSet(), authors, metaData);
+		
+		metaData.signature = securityHelper.sign(keyManagerMock.getIntegrityPrivateKey(), 
+				metaData.componentId, metaData.versionId, metaData.targetRoleHash, 
+				knowledge, new ValueSet(), authors);
 		
 		// when decryptValueSet() is called
 		KnowledgeData decryptedData = target.decryptValueSet(data, localKnowledgeManager, metaData);
@@ -264,8 +338,7 @@ public class KnowledgeEncryptorTest {
 		Key symmetricKey = securityHelper.generateKey();
 		metaData.encryptedKey = securityHelper.encryptKey(symmetricKey, testrole1PublicKey);
 		metaData.encryptedKeyAlgorithm = symmetricKey.getAlgorithm();
-		metaData.targetRoleHash = keyManagerMock.getRoleKey("testrole1", Collections.emptyMap());
-		metaData.signature = securityHelper.sign(keyManagerMock.getIntegrityPrivateKey(), metaData.componentId, metaData.versionId, metaData.targetRoleHash);
+		metaData.targetRoleHash = keyManagerMock.getRoleKey("testrole1", Collections.emptyMap());		
 		
 		Cipher cipher = securityHelper.getSymmetricCipher(Cipher.ENCRYPT_MODE, symmetricKey);
 		SealedObject sealedKnowledge = new SealedObject(666, cipher);
@@ -281,6 +354,9 @@ public class KnowledgeEncryptorTest {
 		SealedObject sealedAuthor = new SealedObject("author", cipher);
 		authorsSet.setValue(RuntimeModelHelper.createKnowledgePath("secured"), sealedAuthor);	
 		
+		metaData.signature = securityHelper.sign(keyManagerMock.getIntegrityPrivateKey(), 
+				metaData.componentId, metaData.versionId, metaData.targetRoleHash, 
+				valueSet2, securitySet, authorsSet);
 		KnowledgeData data = new KnowledgeData(valueSet2, securitySet, authorsSet, metaData);
 		
 		assertTrue(valueSet2.getValue(RuntimeModelHelper.createKnowledgePath("secured")) instanceof SealedObject);

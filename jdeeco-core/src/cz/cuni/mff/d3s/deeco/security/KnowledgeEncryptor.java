@@ -21,6 +21,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SealedObject;
 import javax.crypto.ShortBufferException;
 
+import cz.cuni.mff.d3s.deeco.DeecoProperties;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
@@ -42,6 +43,7 @@ public class KnowledgeEncryptor {
 	private final SecurityKeyManager keyManager;
 	private final SecurityHelper securityHelper;
 	private final RemoteSecurityChecker remoteSecurityChecker;
+	private final boolean signPlaintextMessages;
 	
 	/**
 	 * Instantiates a new knowledge encryptor.
@@ -53,6 +55,7 @@ public class KnowledgeEncryptor {
 		this.keyManager = keyManager;
 		this.securityHelper = new SecurityHelper();	
 		this.remoteSecurityChecker = new RemoteSecurityChecker();
+		this.signPlaintextMessages = Boolean.getBoolean(DeecoProperties.SIGN_PLAINTEXT_MESSAGES);
 	}
 	
 
@@ -70,11 +73,32 @@ public class KnowledgeEncryptor {
 	public KnowledgeData decryptValueSet(KnowledgeData kd, KnowledgeManager replica, KnowledgeMetaData metaData) {
 		if (kd == null) return null;
 		
-		ValueSet decryptedKnowledge = decrypt(kd.getKnowledge(), replica, metaData);	
-		ValueSet decryptedSecuritySet = decrypt(kd.getSecuritySet(), replica, metaData);
-		ValueSet decryptedAuthors = decrypt(kd.getAuthors(), replica, metaData);
+		// verify signature on metadata
+		boolean verificationSucceeded;
 		
-		return new KnowledgeData(decryptedKnowledge, decryptedSecuritySet, decryptedAuthors, metaData);
+		if (!signPlaintextMessages && metaData.signature == null) {
+			verificationSucceeded = true;
+		} else {
+			try {
+				verificationSucceeded = securityHelper.verify(metaData.signature, keyManager.getIntegrityPublicKey(), 
+						metaData.componentId, metaData.versionId, metaData.targetRoleHash,  
+						kd.getKnowledge(), kd.getSecuritySet(), kd.getAuthors());
+			} catch (InvalidKeyException | CertificateEncodingException
+					| SignatureException | NoSuchAlgorithmException
+					| KeyStoreException | SecurityException | IllegalStateException e1) {
+				verificationSucceeded = false;
+			}
+		}
+		
+		if (verificationSucceeded) {
+			ValueSet decryptedKnowledge = decrypt(kd.getKnowledge(), replica, metaData);	
+			ValueSet decryptedSecuritySet = decrypt(kd.getSecuritySet(), replica, metaData);
+			ValueSet decryptedAuthors = decrypt(kd.getAuthors(), replica, metaData);
+			
+			return new KnowledgeData(decryptedKnowledge, decryptedSecuritySet, decryptedAuthors, metaData);
+		} else {
+			return new KnowledgeData(new ValueSet(), new ValueSet(), new ValueSet(), metaData);	
+		}		
 	}
 	
 	/**
@@ -181,10 +205,15 @@ public class KnowledgeEncryptor {
 		
 		for (Entry<Integer, ValueSet> entry : hashToKnowledge.entrySet()) {
 			KnowledgeMetaData meta = hashToMeta.get(entry.getKey());
+			KnowledgeData data;
 			
 			// no encryption
 			if (entry.getKey() == null) {
-				result.add(new KnowledgeData(entry.getValue(), new ValueSet(), hashToAuthors.get(null), meta));
+				data = new KnowledgeData(entry.getValue(), new ValueSet(), hashToAuthors.get(null), meta);
+				
+				if (signPlaintextMessages) {
+					sign(data);
+				}
 			} else {				
 				ValueSet knowledgeSet = entry.getValue();
 				Cipher cipher = hashToCipher.get(entry.getKey());
@@ -198,9 +227,15 @@ public class KnowledgeEncryptor {
 				
 				seal(knowledgeSet, cipher);
 				seal(securitySet, cipher);
-				seal(authors, cipher);
-				result.add(new KnowledgeData(knowledgeSet, securitySet, authors, meta));
+				seal(authors, cipher);						
+				
+				data = new KnowledgeData(knowledgeSet, securitySet, authors, meta);
+				
+				// encrypted data are always signed
+				sign(data);
 			}
+						
+			result.add(data);
 		}
 		
 		return result;
@@ -218,20 +253,6 @@ public class KnowledgeEncryptor {
 	 * @throws KnowledgeNotFoundException
 	 */
 	private Object accessValue(SealedObject sealedObject, KnowledgeManager replica, KnowledgeMetaData metaData) throws KnowledgeNotFoundException {
-		// verify signature on metadata
-		boolean verificationSucceeded = true;
-		try {
-			verificationSucceeded = securityHelper.verify(metaData.signature, keyManager.getIntegrityPublicKey(), metaData.componentId, metaData.versionId, metaData.targetRoleHash);
-		} catch (InvalidKeyException | CertificateEncodingException
-				| SignatureException | NoSuchAlgorithmException
-				| KeyStoreException | SecurityException | IllegalStateException e1) {
-			verificationSucceeded = false;
-		}
-		
-		if (!verificationSucceeded) {
-			throw new SecurityException();
-		}
-		
 		Object value = null;
 		boolean decryptionSucceeded = false;
 		
@@ -295,8 +316,7 @@ public class KnowledgeEncryptor {
 			
 			metaData.encryptedKey = encryptedKey;
 			metaData.encryptedKeyAlgorithm = symmetricKey.getAlgorithm();
-			metaData.targetRoleHash = keyManager.getRoleKey(roleName, arguments);			
-			metaData.signature = securityHelper.sign(keyManager.getIntegrityPrivateKey(), metaData.componentId, metaData.versionId, metaData.targetRoleHash);
+			metaData.targetRoleHash = keyManager.getRoleKey(roleName, arguments);						
 			
 			return securityHelper.getSymmetricCipher(Cipher.ENCRYPT_MODE, symmetricKey);
 		} catch (InvalidKeyException | CertificateEncodingException
@@ -307,6 +327,24 @@ public class KnowledgeEncryptor {
 				| BadPaddingException | IOException e) {
 			throw new SecurityException(e);
 		}
+	}
+	
+	/**
+	 * Appends a digital signature calculated from all parts of knowledge to the knowledge meta data. 
+	 */
+	private void sign(KnowledgeData data) {
+		KnowledgeMetaData metaData = data.getMetaData();
+		
+		try {
+			metaData.signature = securityHelper.sign(keyManager.getIntegrityPrivateKey(), 
+					metaData.componentId, metaData.versionId, metaData.targetRoleHash, 
+					data.getKnowledge(), data.getSecuritySet(), data.getAuthors());
+		} catch (InvalidKeyException | CertificateEncodingException
+				| NoSuchAlgorithmException | NoSuchPaddingException
+				| SignatureException | KeyStoreException | SecurityException
+				| IllegalStateException | IOException e) {
+			throw new SecurityException(e);
+		}		
 	}
 	
 	/**
