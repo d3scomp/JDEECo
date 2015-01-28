@@ -48,3 +48,6 @@ Demo projects for jdeeco can be found in `jdeeco-demos` folder. There are two pr
 
 ## Eclipse integration
 All of the projects in the repository are the Eclipse projects. As such they can be easily imported to the Eclipse workspace.
+
+#### CDEECo
+Apart from Java version of DEECo, there is its C++ realization that can be found under: ([http://github.com/d3scomp/CDEECo](http://github.com/d3scomp/CDEECo))
