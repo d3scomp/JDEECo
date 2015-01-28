@@ -8,11 +8,13 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import cz.cuni.mff.d3s.deeco.DeecoProperties;
+import cz.cuni.mff.d3s.deeco.integrity.RatingsChangeSet;
 import cz.cuni.mff.d3s.deeco.integrity.RatingsManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
@@ -21,13 +23,17 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.security.KnowledgeEncryptor;
+import cz.cuni.mff.d3s.deeco.security.RatingsEncryptor;
 import cz.cuni.mff.d3s.deeco.security.SecurityKeyManager;
+
 
 
 /**
@@ -55,7 +61,7 @@ import cz.cuni.mff.d3s.deeco.security.SecurityKeyManager;
  * @see KnowledgeDataSender
  * @see KnowledgeDataReceiver 
  */
-@SuppressWarnings({"rawtypes", "unchecked"})
+@SuppressWarnings({"unchecked"})
 public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 	
 	// this rssi corresponds to roughly 20m distance
@@ -97,7 +103,7 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 	
 	protected final IPGossipStrategy ipGossipStrategy;
 	protected KnowledgeEncryptor knowledgeEncryptor;
-	
+	protected RatingsEncryptor ratingsEncryptor;
 	
 	/**
 	 * Creates an initialized instance.
@@ -155,6 +161,7 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 		random.setSeed(seed);
 		
 		this.knowledgeEncryptor = new KnowledgeEncryptor(keyManager);
+		this.ratingsEncryptor = new RatingsEncryptor(keyManager);
 		
 		Log.d(String.format("KnowledgeDataManager at %s uses %s publishing", host, useIndividualPublishing ? "individual" : "list"));
 		Log.d(String.format("KnowledgeDataManager at %s uses checkGossipCondition = %b", host, checkGossipCondition));
@@ -167,27 +174,33 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 	@Override
 	public void publish() {
 		// we re-publish periodically only local data
-		List<KnowledgeData> data = prepareLocalKnowledgeData();
-		
-		if (!data.isEmpty()) {
+		List<KnowledgeData> knowledgeData = prepareLocalKnowledgeData();
+		if (!knowledgeData.isEmpty()) {
 			
-			logPublish(data);
+			logPublish(knowledgeData);
 			
 			if (useIndividualPublishing) {
 				// broadcast each kd individually to minimize the message size and
 				// thus reduce network collisions.
-				for (KnowledgeData kd: data) {
+				for (KnowledgeData kd: knowledgeData) {
 					//System.out.println("Broadcasting data at " + host + kd);
 					dataSender.broadcastData(Arrays.asList(kd));
 				}
 			} else {
 				//System.out.println("Broadcasting data at " + host + data);
-				dataSender.broadcastData(data);
+				dataSender.broadcastData(knowledgeData);
 			}
 			if (ipGossipStrategy != null) {
-				sendDirect(data);
+				sendDirect(knowledgeData);
 			}
 			localVersion++;
+		}
+		
+		// publish ratings data
+		RatingsData ratingsData = prepareRatingsData();
+		if (!ratingsData.getRatings().isEmpty()) {
+			dataSender.broadcastData(Arrays.asList(ratingsData));
+			// TODO sending directly via sendDirect()?
 		}
 	}	
 
@@ -213,6 +226,14 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 			if (Log.isDebugLoggable())
 				Log.d(String.format("Rebroadcast finished (%d) at %s, data %s", timeProvider.getCurrentMilliseconds(), host, sig));
 		}
+	}
+	
+	@Override
+	public void receiveRatings(List<RatingsData> ratingsDataList) {
+		for (RatingsData ratingsData : ratingsDataList) {
+			List<RatingsChangeSet> changeSets = ratingsEncryptor.decryptRatings(ratingsData.getRatings(), ratingsData.getRatingsMetaData());
+			ratingsManager.update(changeSets);
+		}		
 	}
 
 	@Override
@@ -267,17 +288,22 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 				Set<Integer> newRoles = replicaRoles.get(newMetadata.getSignature());
 				Set<Integer> currentRoles = replicaRoles.get(currentMetadata.getSignature());
 				
-				boolean haveAllRoles = currentRoles.containsAll(newRoles) && currentRoles.contains(newMetadata.targetRole == null ? null : newMetadata.targetRole.hashCode());
+				boolean haveAllRoles = currentRoles.containsAll(newRoles) && currentRoles.contains(newMetadata.targetRoleHash == null ? null : newMetadata.targetRoleHash);
 				haveOlder = !haveAllRoles;
 			}
 			
 			if (haveOlder) {
 				for (KnowledgeManager replica : kmContainer.createReplica(newMetadata.componentId)) {
 												
-					try {
-						ChangeSet changeSet = toChangeSet(kd.getKnowledge());
-						knowledgeEncryptor.decryptChangeSet(changeSet, replica, kd.getMetaData());
-						replica.update(changeSet);			
+					try {						
+						KnowledgeData decryptedData = knowledgeEncryptor.decryptValueSet(kd, replica, kd.getMetaData());
+						
+						Map<String, ChangeSet> changeSets = toChangeSets(decryptedData.getKnowledge(), decryptedData.getAuthors(), decryptedData.getMetaData());
+						for (Entry<String, ChangeSet> entry : changeSets.entrySet()) {
+							replica.update(entry.getValue(), entry.getKey());
+						}
+						
+						decryptedData.getSecuritySet().getKnowledgePaths().stream().forEach(kp -> replica.setSecurityTags(kp, (List<SecurityTag>) decryptedData.getSecuritySet().getValue(kp)));
 					} catch (KnowledgeUpdateException e) {
 						Log.w(String
 								.format("KnowledgeDataManager.receive: Could not update replica of %s.",
@@ -287,7 +313,7 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 				
 				// store the metadata without the knowledge values
 				replicaMetadata.put(newMetadata.componentId, newMetadata);
-				replicaRoles.get(newMetadata.getSignature()).add(newMetadata.targetRole == null ? null : newMetadata.targetRole.hashCode());
+				replicaRoles.get(newMetadata.getSignature()).add(newMetadata.targetRoleHash == null ? null : newMetadata.targetRoleHash);
 				
 				// rebroadcast only data that is of some value (i.e., newer than we have)
 				queueForRebroadcast(kd);
@@ -350,12 +376,12 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 		}
 		
 		// schedule a task for rebroadcast
-		dataToRebroadcastOverMANET.put(kmd.getSignature(), kd);
+		dataToRebroadcastOverMANET.put(kmd.getSignatureWithRole(), kd);
 		RebroadcastTask task = new RebroadcastTask(scheduler, this, delay, kmd, NICType.MANET);
 		scheduler.addTask(task);
 		
 		if (ipGossipStrategy != null && ipDelay > 0) {
-			dataToRebroadcastOverIP.put(kmd.getSignature(), kd);
+			dataToRebroadcastOverIP.put(kmd.getSignatureWithRole(), kd);
 			task = new RebroadcastTask(scheduler, this, ipDelay, kmd, NICType.IP);
 			scheduler.addTask(task);
 		}
@@ -408,6 +434,15 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 		return result;
 	}
 
+	protected RatingsData prepareRatingsData() {
+		List<RatingsChangeSet> changeSets = ratingsManager.getPendingChangeSets();
+		RatingsMetaData metaData = createRatingsMetaData();
+		RatingsData ratingsData = new RatingsData(ratingsEncryptor.encryptRatings(changeSets, metaData), metaData);
+		
+		ratingsManager.getPendingChangeSets().clear();
+		return ratingsData;
+	}
+	
 	protected List<KnowledgeData> prepareLocalKnowledgeData() {
 		List<KnowledgeData> result = new LinkedList<>();
 		for (KnowledgeManager km : kmContainer.getLocals()) {
@@ -426,12 +461,16 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 			throws KnowledgeNotFoundException {
 		// extract local knowledge
 		ValueSet basicValueSet = getNonLocalKnowledge(km.get(emptyPath), km);
-		KnowledgeMetaData metaData = createMetaData(km);
-		return knowledgeEncryptor.encryptValueSet(basicValueSet, km, metaData);
-	}
+		KnowledgeMetaData metaData = createKnowledgeMetaData(km);	
+		return knowledgeEncryptor.encryptValueSet(basicValueSet,km, metaData);
+	}	
 
-	protected KnowledgeMetaData createMetaData(KnowledgeManager km) {
+	protected KnowledgeMetaData createKnowledgeMetaData(KnowledgeManager km) {
 		return new KnowledgeMetaData(km.getId(), localVersion, host, timeProvider.getCurrentMilliseconds(), 1);
+	}
+	
+	protected RatingsMetaData createRatingsMetaData() {
+		return new RatingsMetaData(timeProvider.getCurrentMilliseconds(), 1);
 	}
 	
 	protected ValueSet getNonLocalKnowledge(ValueSet toFilter, KnowledgeManager km) {
@@ -448,7 +487,7 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 		KnowledgeMetaData kmdCopy = receivedData.getMetaData().clone();
 		kmdCopy.sender = host;
 		kmdCopy.hopCount++;
-		return new KnowledgeData(receivedData.getKnowledge(), kmdCopy);
+		return new KnowledgeData(receivedData.getKnowledge(), receivedData.getSecuritySet(), receivedData.getAuthors(), kmdCopy);
 	}
 	
 	protected KnowledgeData filterLocalKnowledgeForKnownEnsembles(KnowledgeData kd) {
@@ -461,7 +500,7 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 			for (KnowledgePath kp: values.getKnowledgePaths()) {
 				newValues.setValue(kp, values.getValue(kp));
 			}
-			return new KnowledgeData(newValues, kd.getMetaData());
+			return new KnowledgeData(newValues, kd.getSecuritySet(), kd.getAuthors(), kd.getMetaData());
 		} else {
 			return kd;
 		}
@@ -472,17 +511,28 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 		return kmContainer.getLocals().iterator().next();
 	}
 
-	protected ChangeSet toChangeSet(ValueSet valueSet) {
-		if (valueSet != null) {
-			ChangeSet result = new ChangeSet();
-			for (KnowledgePath kp : valueSet.getKnowledgePaths())
-				result.setValue(kp, valueSet.getValue(kp));
+	protected Map<String, ChangeSet> toChangeSets(ValueSet knowledge,
+			ValueSet authors, KnowledgeMetaData metaData) {
+		if (knowledge != null) {
+			Map<String, ChangeSet> result = new HashMap<>();
+			
+			for (KnowledgePath kp : knowledge.getKnowledgePaths()) {
+				String author = (String)authors.getValue(kp);
+				if (author == null) author = metaData.componentId;
+				
+				if (!result.containsKey(author)) {
+					result.put(author, new ChangeSet());
+				}
+				
+				result.get(author).setValue(kp, knowledge.getValue(kp));
+			}
+			
 			return result;
 		} else {
 			return null;
 		}
 	}
-	
+
 	protected void logPublish(List<? extends KnowledgeData> data) {
 		logPublish(data, "");
 	}

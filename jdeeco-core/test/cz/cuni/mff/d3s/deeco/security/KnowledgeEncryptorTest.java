@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyPair;
@@ -13,7 +14,9 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SignatureException;
 import java.security.cert.CertificateEncodingException;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -30,6 +33,7 @@ import org.junit.Test;
 import cz.cuni.mff.d3s.deeco.knowledge.BaseKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
@@ -42,7 +46,6 @@ import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeData;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeMetaData;
-import cz.cuni.mff.d3s.deeco.network.KnowledgeSecurityAnnotation;
 
 /**
  * @author Ondřej Štumpf  
@@ -62,18 +65,23 @@ public class KnowledgeEncryptorTest {
 	private SecurityKeyManager keyManagerMock;
 	
 	@Before
-	public void setUp() throws InvalidKeyException, CertificateEncodingException, KeyStoreException, NoSuchAlgorithmException, SecurityException, SignatureException, IllegalStateException {
+	public void setUp() throws InvalidKeyException, CertificateEncodingException, KeyStoreException, NoSuchAlgorithmException, SecurityException, SignatureException, IllegalStateException, KnowledgeUpdateException {
 		factory = RuntimeMetadataFactoryExt.eINSTANCE;
 		
 		valueSet = new ValueSet();
 		valueSet.setValue(RuntimeModelHelper.createKnowledgePath("b"), "TEST");
 		valueSet.setValue(RuntimeModelHelper.createKnowledgePath("c"), 123);
 		valueSet.setValue(RuntimeModelHelper.createKnowledgePath("secured"), 666);
+		valueSet.setValue(RuntimeModelHelper.createKnowledgePath("secured2"), 667);
 		
 		metaData = new KnowledgeMetaData("xy", 13, "A", 123456, 45);
 		ComponentInstance component = mock(ComponentInstance.class);
 		
 		localKnowledgeManager = new BaseKnowledgeManager("sender_id", component);
+		
+		ChangeSet changeSet = new ChangeSet();
+		changeSet.setValue(RuntimeModelHelper.createKnowledgePath("secured"), "secured_value");
+		localKnowledgeManager.update(changeSet, "author_secured");
 		
 		when(component.getKnowledgeManager()).thenReturn(localKnowledgeManager);
 	 	SecurityRole role = factory.createSecurityRole();
@@ -92,15 +100,16 @@ public class KnowledgeEncryptorTest {
 		testrole2PublicKey = role2Pair.getPublic();
 		testrole1PrivateKey = role1Pair.getPrivate();
 		
-		keyManagerMock = mock(SecurityKeyManager.class);
-		when(keyManagerMock.getPublicKeyFor(eq("testrole1"), anyObject())).thenReturn(testrole1PublicKey);		
-		when(keyManagerMock.getPrivateKeyFor(eq("testrole1"), anyObject())).thenReturn(testrole1PrivateKey);
-		when(keyManagerMock.getPublicKeyFor(eq("testrole2"), anyObject())).thenReturn(testrole2PublicKey);
+		keyManagerMock = spy(new SecurityKeyManagerImpl());
+		when(keyManagerMock.getPublicKey(eq("testrole1"), anyObject())).thenReturn(testrole1PublicKey);		
+		when(keyManagerMock.getPrivateKey(eq("testrole1"), anyObject())).thenReturn(testrole1PrivateKey);
+		when(keyManagerMock.getPublicKey(eq("testrole2"), anyObject())).thenReturn(testrole2PublicKey);
 		when(keyManagerMock.getIntegrityPublicKey()).thenReturn(integrityPair.getPublic());
 		when(keyManagerMock.getIntegrityPrivateKey()).thenReturn(integrityPair.getPrivate());
 		
 		target = new KnowledgeEncryptor(keyManagerMock);
 	}
+	
 	
 	@Test
 	public void encryptValueSet_NullTest() throws KnowledgeNotFoundException {
@@ -141,32 +150,40 @@ public class KnowledgeEncryptorTest {
 		assertEquals(metaData, result.get(0).getMetaData());
 		assertEquals(valueSet, result.get(0).getKnowledge());
 		
+		assertEquals(4, result.get(0).getAuthors().getKnowledgePaths().size());
+		assertEquals("author_secured", result.get(0).getAuthors().getValue(RuntimeModelHelper.createKnowledgePath("secured")));
+		assertNull(result.get(0).getAuthors().getValue(RuntimeModelHelper.createKnowledgePath("secured2")));
+		
 		for (KnowledgePath kp : result.get(0).getKnowledge().getKnowledgePaths()) {
 			assertFalse(result.get(0).getKnowledge().getValue(kp) instanceof SealedObject);
+		}
+		for (KnowledgePath kp : result.get(0).getSecuritySet().getKnowledgePaths()) {
+			assertFalse(result.get(0).getSecuritySet().getValue(kp) instanceof SealedObject);
 		}
 		
 		assertNull(result.get(0).getMetaData().encryptedKey);
 	}
 	
 	@Test
-	public void encryptValueSet_SecurityTest() throws KnowledgeNotFoundException {
-		// given single security tag is used
-		Collection<SecurityTag> tags = new LinkedList<>();
+	public void encryptValueSet_SecurityTest() throws KnowledgeNotFoundException {		
 		KnowledgeSecurityTag tag1 = factory.createKnowledgeSecurityTag();
 		tag1.setRequiredRole(factory.createSecurityRole());
 		tag1.getRequiredRole().setRoleName("testrole1");
 		KnowledgeSecurityTag tag2 = factory.createKnowledgeSecurityTag();
 		tag2.setRequiredRole(factory.createSecurityRole());
-		tag2.getRequiredRole().setRoleName("testrole2");
-		tags.add(tag1);
-		tags.add(tag2);
-		localKnowledgeManager.addSecurityTags(RuntimeModelHelper.createKnowledgePath("secured"), tags);
+		tag2.getRequiredRole().setRoleName("testrole2");		
+		localKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("secured"), Arrays.asList(tag1, tag2));
+				
+		KnowledgeSecurityTag tag2_copy = factory.createKnowledgeSecurityTag();
+		tag2_copy.setRequiredRole(factory.createSecurityRole());
+		tag2_copy.getRequiredRole().setRoleName("testrole2");		
+		localKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("secured2"), Arrays.asList(tag2_copy));
 		
 		// when encryptValueSet() is called
 		List<KnowledgeData> result = target.encryptValueSet(valueSet, localKnowledgeManager, metaData);
 		
 		// then data secured data are encrypted
-		assertEquals(3, result.size()); // "b" and "c" plain, "secured" encrypted
+		assertEquals(3, result.size()); // "b" and "c" plain, "secured" and "secured2" encrypted
 		KnowledgeData plainData = result.get(0);
 		KnowledgeData securedDataForRole1 = result.get(1);
 		KnowledgeData securedDataForRole2 = result.get(2);
@@ -177,91 +194,143 @@ public class KnowledgeEncryptorTest {
 		assertFalse(plainData.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("b")) instanceof SealedObject);
 		assertFalse(plainData.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("c")) instanceof SealedObject);
 		assertNull(plainData.getMetaData().encryptedKey);
+		assertNull(plainData.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("secured")));
+		assertNull(plainData.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("secured2")));
+		assertNotNull(plainData.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("b")));
+		assertNotNull(plainData.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("c")));
+		assertEquals(2, plainData.getAuthors().getKnowledgePaths().size());
 		
 		assertNotNull(securedDataForRole1.getMetaData().encryptedKey);
 		assertNotNull(securedDataForRole1.getMetaData().encryptedKeyAlgorithm);
 		assertNotNull(securedDataForRole1.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("secured")));
 		assertTrue(securedDataForRole1.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("secured")) instanceof SealedObject);
+		assertNull(securedDataForRole1.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("secured2")));
+		assertEquals(1, securedDataForRole1.getAuthors().getKnowledgePaths().size());
 		
 		assertNotNull(securedDataForRole2.getMetaData().encryptedKey);
 		assertNotNull(securedDataForRole2.getMetaData().encryptedKeyAlgorithm);
 		assertNotNull(securedDataForRole2.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("secured")));
 		assertTrue(securedDataForRole2.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("secured")) instanceof SealedObject);
+		assertTrue(securedDataForRole2.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("secured2")) instanceof SealedObject);
+		assertEquals(2, securedDataForRole2.getAuthors().getKnowledgePaths().size());
+		
+		assertEquals(0, plainData.getSecuritySet().getKnowledgePaths().size());
+		assertEquals(1, securedDataForRole1.getSecuritySet().getKnowledgePaths().size());
+		assertEquals(2, securedDataForRole2.getSecuritySet().getKnowledgePaths().size());
+		
+		assertTrue(securedDataForRole1.getSecuritySet().getValue(RuntimeModelHelper.createKnowledgePath("secured")) instanceof SealedObject);
+		assertTrue(securedDataForRole2.getSecuritySet().getValue(RuntimeModelHelper.createKnowledgePath("secured")) instanceof SealedObject);
+		assertTrue(securedDataForRole2.getSecuritySet().getValue(RuntimeModelHelper.createKnowledgePath("secured2")) instanceof SealedObject);
 	}
 	
 	@Test
-	public void decryptChangeSet_NullTest() {
+	public void decryptValueSet_NullTest() {
 		// given null is passed
 				
-		// when decryptChangeSet() is called
-		target.decryptChangeSet(null, localKnowledgeManager, metaData);
+		// when decryptValueSet() is called
+		assertNull(target.decryptValueSet(null, localKnowledgeManager, metaData));
 		
 		// then no exception is thrown
 	}
 	
 	@Test
-	public void decryptChangeSet_NoSecurityTest() {
-		// given no security is used
-		ChangeSet changeSet1 = new ChangeSet();
-		changeSet1.setValue(RuntimeModelHelper.createKnowledgePath("b"), "TEST");
+	public void decryptValueSet_NoSecurityTest() {
+		// given no security is used		
+		ValueSet knowledge = new ValueSet();
+		knowledge.setValue(RuntimeModelHelper.createKnowledgePath("b"), "TEST");
+		ValueSet authors = new ValueSet();
+		authors.setValue(RuntimeModelHelper.createKnowledgePath("b"), "AUTHOR");
+		KnowledgeData data = new KnowledgeData(knowledge, new ValueSet(), authors, metaData);
 		
-		// when decryptChangeSet() is called
-		target.decryptChangeSet(changeSet1, localKnowledgeManager, metaData);
+		// when decryptValueSet() is called
+		KnowledgeData decryptedData = target.decryptValueSet(data, localKnowledgeManager, metaData);
 		
 		// then data are not modified
-		assertEquals("TEST", changeSet1.getValue(RuntimeModelHelper.createKnowledgePath("b")));
+		assertEquals("TEST", decryptedData.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("b")));
+		assertEquals("AUTHOR", decryptedData.getAuthors().getValue(RuntimeModelHelper.createKnowledgePath("b")));
+		assertNotSame(decryptedData.getKnowledge(), knowledge);
+		assertNotSame(decryptedData.getAuthors(), authors);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Test
-	public void decryptChangeSet_SecurityTest() throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, IOException, ShortBufferException, BadPaddingException, SignatureException, CertificateEncodingException, KeyStoreException, SecurityException, IllegalStateException {
-		// given security is used
+	public void decryptValueSet_SecurityTest() throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, IOException, ShortBufferException, BadPaddingException, SignatureException, CertificateEncodingException, KeyStoreException, SecurityException, IllegalStateException {
+		// given security is used	
+		KnowledgeSecurityTag tag = factory.createKnowledgeSecurityTag();
+		SecurityRole role = factory.createSecurityRole();
+		role.setRoleName("testrole1");		
+		tag.setRequiredRole(role);
+		
 		Key symmetricKey = securityHelper.generateKey();
 		metaData.encryptedKey = securityHelper.encryptKey(symmetricKey, testrole1PublicKey);
 		metaData.encryptedKeyAlgorithm = symmetricKey.getAlgorithm();
-		metaData.targetRole = new KnowledgeSecurityAnnotation("testrole1", null);
-		metaData.signature = securityHelper.sign(keyManagerMock.getIntegrityPrivateKey(), metaData.componentId, metaData.versionId, metaData.targetRole);
+		metaData.targetRoleHash = keyManagerMock.getRoleKey("testrole1", Collections.emptyMap());
+		metaData.signature = securityHelper.sign(keyManagerMock.getIntegrityPrivateKey(), metaData.componentId, metaData.versionId, metaData.targetRoleHash);
 		
 		Cipher cipher = securityHelper.getSymmetricCipher(Cipher.ENCRYPT_MODE, symmetricKey);
-		SealedObject sealed = new SealedObject(666, cipher);
+		SealedObject sealedKnowledge = new SealedObject(666, cipher);
 		
-		ChangeSet changeSet2 = new ChangeSet();
-		changeSet2.setValue(RuntimeModelHelper.createKnowledgePath("secured"), sealed);
+		ValueSet valueSet2 = new ValueSet();
+		valueSet2.setValue(RuntimeModelHelper.createKnowledgePath("secured"), sealedKnowledge);
 		
-		assertTrue(changeSet2.getValue(RuntimeModelHelper.createKnowledgePath("secured")) instanceof SealedObject);
+		ValueSet securitySet = new ValueSet();
+		SealedObject sealedTags = new SealedObject( (Serializable)Arrays.asList(tag), cipher);
+		securitySet.setValue(RuntimeModelHelper.createKnowledgePath("secured"), sealedTags);		
 		
-		// when decryptChangeSet() is called
-		target.decryptChangeSet(changeSet2, localKnowledgeManager, metaData);
+		ValueSet authorsSet = new ValueSet();
+		SealedObject sealedAuthor = new SealedObject("author", cipher);
+		authorsSet.setValue(RuntimeModelHelper.createKnowledgePath("secured"), sealedAuthor);	
+		
+		KnowledgeData data = new KnowledgeData(valueSet2, securitySet, authorsSet, metaData);
+		
+		assertTrue(valueSet2.getValue(RuntimeModelHelper.createKnowledgePath("secured")) instanceof SealedObject);
+		assertTrue(securitySet.getValue(RuntimeModelHelper.createKnowledgePath("secured")) instanceof SealedObject);
+		assertTrue(authorsSet.getValue(RuntimeModelHelper.createKnowledgePath("secured")) instanceof SealedObject);
+		
+		// when decryptValueSet() is called
+		KnowledgeData decryptedData = target.decryptValueSet(data, localKnowledgeManager, metaData);
 		
 		// then data are decrypted
-		assertEquals(666, changeSet2.getValue(RuntimeModelHelper.createKnowledgePath("secured")));
+		assertEquals(666, decryptedData.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("secured")));
+		assertNotSame(valueSet2, decryptedData.getKnowledge());
+		assertNotSame(securitySet, decryptedData.getSecuritySet());
+		assertNotSame(authorsSet, decryptedData.getAuthors());
+		
+		List<KnowledgeSecurityTag> tags = (List<KnowledgeSecurityTag>) decryptedData.getSecuritySet().getValue(RuntimeModelHelper.createKnowledgePath("secured"));
+		assertEquals(tag, tags.get(0));
+		assertNotSame(tag, tags.get(0));
+		
+		assertEquals("author", decryptedData.getAuthors().getValue(RuntimeModelHelper.createKnowledgePath("secured")));
 	}
 	
 	@Test
-	public void decryptChangeSet_WrongKeyTest() throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, IOException, ShortBufferException, BadPaddingException, CertificateEncodingException, SignatureException, KeyStoreException, SecurityException, IllegalStateException {
+	public void decryptValueSet_WrongKeyTest() throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, IOException, ShortBufferException, BadPaddingException, CertificateEncodingException, SignatureException, KeyStoreException, SecurityException, IllegalStateException {
 		// given security is used
 		Key symmetricKey = securityHelper.generateKey();
 		metaData.encryptedKey = securityHelper.encryptKey(symmetricKey, testrole1PublicKey);
 		metaData.encryptedKeyAlgorithm = symmetricKey.getAlgorithm();
-		metaData.targetRole = new KnowledgeSecurityAnnotation("testrole1", null);
-		metaData.signature = securityHelper.sign(keyManagerMock.getIntegrityPrivateKey(), metaData.componentId, metaData.versionId, metaData.targetRole);
+		metaData.targetRoleHash = keyManagerMock.getRoleKey("testrole1", null);
+		metaData.signature = securityHelper.sign(keyManagerMock.getIntegrityPrivateKey(), metaData.componentId, metaData.versionId, metaData.targetRoleHash);
 				
 		// when testrole2 key is used to encrypt data
 		Cipher cipher = securityHelper.getSymmetricCipher(Cipher.ENCRYPT_MODE, testrole2PublicKey);
 		SealedObject sealed = new SealedObject(666, cipher);
 		
-		ChangeSet changeSet2 = new ChangeSet();
-		changeSet2.setValue(RuntimeModelHelper.createKnowledgePath("secured"), sealed);
+		ValueSet valueSet2 = new ValueSet();
+		valueSet2.setValue(RuntimeModelHelper.createKnowledgePath("secured"), sealed);
+		KnowledgeData data = new KnowledgeData(valueSet2, new ValueSet(), new ValueSet(), metaData);
 		
-		assertTrue(changeSet2.getValue(RuntimeModelHelper.createKnowledgePath("secured")) instanceof SealedObject);
+		assertTrue(valueSet2.getValue(RuntimeModelHelper.createKnowledgePath("secured")) instanceof SealedObject);
 		
-		// when decryptChangeSet() is called
-		target.decryptChangeSet(changeSet2, localKnowledgeManager, metaData);
+		// when decryptValueSet() is called
+		KnowledgeData decryptedData = target.decryptValueSet(data, localKnowledgeManager, metaData);
 		
 		// then knowledge is removed
-		assertNull(changeSet2.getValue(RuntimeModelHelper.createKnowledgePath("secured")));
-		assertEquals(0, changeSet2.getUpdatedReferences().size());
+		assertNull(decryptedData.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("secured")));
+		assertEquals(0, decryptedData.getKnowledge().getKnowledgePaths().size());
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Test
 	public void encryptDecryptTest() throws KnowledgeNotFoundException {
 		// given local component has testrole1
@@ -270,31 +339,33 @@ public class KnowledgeEncryptorTest {
 		tag1.setRequiredRole(factory.createSecurityRole());
 		tag1.getRequiredRole().setRoleName("testrole1");
 		tags.add(tag1);
-		localKnowledgeManager.addSecurityTags(RuntimeModelHelper.createKnowledgePath("secured"), tags);
+		localKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("secured"), tags);
 		
 		// when data are encrypted
 		List<KnowledgeData> kds = target.encryptValueSet(valueSet, localKnowledgeManager, metaData);
 		KnowledgeData encryptedData = kds.get(1);
-		ChangeSet changeSet = toChangeSet(encryptedData.getKnowledge());
+		ValueSet valueSet = encryptedData.getKnowledge();
+		ValueSet securitySet = encryptedData.getSecuritySet();
+		ValueSet authorSet = encryptedData.getAuthors();
 		
 		// then SealedObject is used
-		assertTrue(changeSet.getValue(RuntimeModelHelper.createKnowledgePath("secured")) instanceof SealedObject);
+		assertTrue(valueSet.getValue(RuntimeModelHelper.createKnowledgePath("secured")) instanceof SealedObject);
+		assertTrue(securitySet.getValue(RuntimeModelHelper.createKnowledgePath("secured")) instanceof SealedObject);
+		assertTrue(authorSet.getValue(RuntimeModelHelper.createKnowledgePath("secured")) instanceof SealedObject);
 		
 		// when data are decrypted
-		target.decryptChangeSet(changeSet, replicaKnowledgeManager, encryptedData.getMetaData());
+		KnowledgeData decryptedData = target.decryptValueSet(encryptedData, replicaKnowledgeManager, encryptedData.getMetaData());
 		
 		// then actual value is restored
-		assertEquals(666, changeSet.getValue(RuntimeModelHelper.createKnowledgePath("secured")));
+		assertEquals(666, decryptedData.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("secured")));
+		
+		List<KnowledgeSecurityTag> decryptedTags = (List<KnowledgeSecurityTag>) decryptedData.getSecuritySet().getValue(RuntimeModelHelper.createKnowledgePath("secured"));
+		assertEquals(tag1.getRequiredRole().getRoleName(), decryptedTags.get(0).getRequiredRole().getRoleName());
+		assertEquals(tag1.getRequiredRole().getArguments().size(), decryptedTags.get(0).getRequiredRole().getArguments().size());
+		assertEquals(tag1.getRequiredRole().getConsistsOf().size(), decryptedTags.get(0).getRequiredRole().getConsistsOf().size());
+		
+		assertEquals("author_secured", decryptedData.getAuthors().getValue(RuntimeModelHelper.createKnowledgePath("secured")));
 	}
 	
-	protected ChangeSet toChangeSet(ValueSet valueSet) {
-		if (valueSet != null) {
-			ChangeSet result = new ChangeSet();
-			for (KnowledgePath kp : valueSet.getKnowledgePaths())
-				result.setValue(kp, valueSet.getValue(kp));
-			return result;
-		} else {
-			return null;
-		}
-	}
+	
 }

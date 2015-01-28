@@ -592,13 +592,22 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int INVOCABLE__METHOD = 1;
 
 	/**
+	 * The feature id for the '<em><b>Ignore Knowledge Compromise</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INVOCABLE__IGNORE_KNOWLEDGE_COMPROMISE = 2;
+
+	/**
 	 * The number of structural features of the '<em>Invocable</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int INVOCABLE_FEATURE_COUNT = 2;
+	int INVOCABLE_FEATURE_COUNT = 3;
 
 	/**
 	 * The number of operations of the '<em>Invocable</em>' class.
@@ -636,6 +645,15 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @ordered
 	 */
 	int CONDITION__METHOD = INVOCABLE__METHOD;
+
+	/**
+	 * The feature id for the '<em><b>Ignore Knowledge Compromise</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CONDITION__IGNORE_KNOWLEDGE_COMPROMISE = INVOCABLE__IGNORE_KNOWLEDGE_COMPROMISE;
 
 	/**
 	 * The number of structural features of the '<em>Condition</em>' class.
@@ -684,6 +702,15 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int EXCHANGE__METHOD = INVOCABLE__METHOD;
 
 	/**
+	 * The feature id for the '<em><b>Ignore Knowledge Compromise</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EXCHANGE__IGNORE_KNOWLEDGE_COMPROMISE = INVOCABLE__IGNORE_KNOWLEDGE_COMPROMISE;
+
+	/**
 	 * The number of structural features of the '<em>Exchange</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -728,6 +755,15 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @ordered
 	 */
 	int COMPONENT_PROCESS__METHOD = INVOCABLE__METHOD;
+
+	/**
+	 * The feature id for the '<em><b>Ignore Knowledge Compromise</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPONENT_PROCESS__IGNORE_KNOWLEDGE_COMPROMISE = INVOCABLE__IGNORE_KNOWLEDGE_COMPROMISE;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1099,7 +1135,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int SECURITY_ROLE = 21;
 
 	/**
-	 * The feature id for the '<em><b>Consists Of</b></em>' reference list.
+	 * The feature id for the '<em><b>Consists Of</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -1126,13 +1162,22 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int SECURITY_ROLE__ARGUMENTS = 2;
 
 	/**
+	 * The feature id for the '<em><b>Alias Role</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SECURITY_ROLE__ALIAS_ROLE = 3;
+
+	/**
 	 * The number of structural features of the '<em>Security Role</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int SECURITY_ROLE_FEATURE_COUNT = 3;
+	int SECURITY_ROLE_FEATURE_COUNT = 4;
 
 	/**
 	 * The number of operations of the '<em>Security Role</em>' class.
@@ -1209,13 +1254,22 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int PATH_SECURITY_ROLE_ARGUMENT__KNOWLEDGE_PATH = SECURITY_ROLE_ARGUMENT_FEATURE_COUNT + 0;
 
 	/**
+	 * The feature id for the '<em><b>Context Kind</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PATH_SECURITY_ROLE_ARGUMENT__CONTEXT_KIND = SECURITY_ROLE_ARGUMENT_FEATURE_COUNT + 1;
+
+	/**
 	 * The number of structural features of the '<em>Path Security Role Argument</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PATH_SECURITY_ROLE_ARGUMENT_FEATURE_COUNT = SECURITY_ROLE_ARGUMENT_FEATURE_COUNT + 1;
+	int PATH_SECURITY_ROLE_ARGUMENT_FEATURE_COUNT = SECURITY_ROLE_ARGUMENT_FEATURE_COUNT + 2;
 
 	/**
 	 * The number of operations of the '<em>Path Security Role Argument</em>' class.
@@ -1338,6 +1392,15 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int RATINGS_PROCESS__METHOD = INVOCABLE__METHOD;
 
 	/**
+	 * The feature id for the '<em><b>Ignore Knowledge Compromise</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RATINGS_PROCESS__IGNORE_KNOWLEDGE_COMPROMISE = INVOCABLE__IGNORE_KNOWLEDGE_COMPROMISE;
+
+	/**
 	 * The feature id for the '<em><b>Component Instance</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1403,6 +1466,16 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int PARAMETER_KIND = 29;
 
 	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ContextKind <em>Context Kind</em>}' enum.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ContextKind
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getContextKind()
+	 * @generated
+	 */
+	int CONTEXT_KIND = 30;
+
+	/**
 	 * The meta object id for the '<em>Method</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1410,7 +1483,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getMethod()
 	 * @generated
 	 */
-	int METHOD = 30;
+	int METHOD = 31;
 
 	/**
 	 * The meta object id for the '<em>Knowledge Manager</em>' data type.
@@ -1420,7 +1493,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getKnowledgeManager()
 	 * @generated
 	 */
-	int KNOWLEDGE_MANAGER = 31;
+	int KNOWLEDGE_MANAGER = 32;
 
 	/**
 	 * The meta object id for the '<em>Shadow Knowledge Manager Registry</em>' data type.
@@ -1430,7 +1503,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getShadowKnowledgeManagerRegistry()
 	 * @generated
 	 */
-	int SHADOW_KNOWLEDGE_MANAGER_REGISTRY = 32;
+	int SHADOW_KNOWLEDGE_MANAGER_REGISTRY = 33;
 
 	/**
 	 * The meta object id for the '<em>Communication Boundary</em>' data type.
@@ -1440,7 +1513,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getCommunicationBoundary()
 	 * @generated
 	 */
-	int COMMUNICATION_BOUNDARY = 33;
+	int COMMUNICATION_BOUNDARY = 34;
 
 
 	/**
@@ -1451,7 +1524,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getRatingsManager()
 	 * @generated
 	 */
-	int RATINGS_MANAGER = 34;
+	int RATINGS_MANAGER = 35;
 
 
 	/**
@@ -1979,6 +2052,17 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EAttribute getInvocable_Method();
 
 	/**
+	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Invocable#isIgnoreKnowledgeCompromise <em>Ignore Knowledge Compromise</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Ignore Knowledge Compromise</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.Invocable#isIgnoreKnowledgeCompromise()
+	 * @see #getInvocable()
+	 * @generated
+	 */
+	EAttribute getInvocable_IgnoreKnowledgeCompromise();
+
+	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController <em>Ensemble Controller</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2139,6 +2223,17 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EReference getSecurityRole_Arguments();
 
 	/**
+	 * Returns the meta object for the containment reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole#getAliasRole <em>Alias Role</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference '<em>Alias Role</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole#getAliasRole()
+	 * @see #getSecurityRole()
+	 * @generated
+	 */
+	EReference getSecurityRole_AliasRole();
+
+	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRoleArgument <em>Security Role Argument</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2179,6 +2274,17 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getPathSecurityRoleArgument_KnowledgePath();
+
+	/**
+	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.PathSecurityRoleArgument#getContextKind <em>Context Kind</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Context Kind</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.PathSecurityRoleArgument#getContextKind()
+	 * @see #getPathSecurityRoleArgument()
+	 * @generated
+	 */
+	EAttribute getPathSecurityRoleArgument_ContextKind();
 
 	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.BlankSecurityRoleArgument <em>Blank Security Role Argument</em>}'.
@@ -2263,10 +2369,20 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EEnum getParameterKind();
 
 	/**
-	 * Returns the meta object for the reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole#getConsistsOf <em>Consists Of</em>}'.
+	 * Returns the meta object for enum '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ContextKind <em>Context Kind</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>Consists Of</em>'.
+	 * @return the meta object for enum '<em>Context Kind</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ContextKind
+	 * @generated
+	 */
+	EEnum getContextKind();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole#getConsistsOf <em>Consists Of</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Consists Of</em>'.
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole#getConsistsOf()
 	 * @see #getSecurityRole()
 	 * @generated
@@ -2774,6 +2890,14 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EAttribute INVOCABLE__METHOD = eINSTANCE.getInvocable_Method();
 
 		/**
+		 * The meta object literal for the '<em><b>Ignore Knowledge Compromise</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute INVOCABLE__IGNORE_KNOWLEDGE_COMPROMISE = eINSTANCE.getInvocable_IgnoreKnowledgeCompromise();
+
+		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleControllerImpl <em>Ensemble Controller</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2908,6 +3032,14 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EReference SECURITY_ROLE__ARGUMENTS = eINSTANCE.getSecurityRole_Arguments();
 
 		/**
+		 * The meta object literal for the '<em><b>Alias Role</b></em>' containment reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference SECURITY_ROLE__ALIAS_ROLE = eINSTANCE.getSecurityRole_AliasRole();
+
+		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.SecurityRoleArgumentImpl <em>Security Role Argument</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2942,6 +3074,14 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * @generated
 		 */
 		EReference PATH_SECURITY_ROLE_ARGUMENT__KNOWLEDGE_PATH = eINSTANCE.getPathSecurityRoleArgument_KnowledgePath();
+
+		/**
+		 * The meta object literal for the '<em><b>Context Kind</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute PATH_SECURITY_ROLE_ARGUMENT__CONTEXT_KIND = eINSTANCE.getPathSecurityRoleArgument_ContextKind();
 
 		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.BlankSecurityRoleArgumentImpl <em>Blank Security Role Argument</em>}' class.
@@ -3020,7 +3160,17 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EEnum PARAMETER_KIND = eINSTANCE.getParameterKind();
 
 		/**
-		 * The meta object literal for the '<em><b>Consists Of</b></em>' reference list feature.
+		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ContextKind <em>Context Kind</em>}' enum.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ContextKind
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getContextKind()
+		 * @generated
+		 */
+		EEnum CONTEXT_KIND = eINSTANCE.getContextKind();
+
+		/**
+		 * The meta object literal for the '<em><b>Consists Of</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated

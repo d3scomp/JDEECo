@@ -5,8 +5,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import cz.cuni.mff.d3s.deeco.integrity.RatingsHolder;
+import cz.cuni.mff.d3s.deeco.integrity.ReadonlyRatingsHolder;
+
 /**
- * Marks a method parameter to contain a ranking for specified knowledge path.
+ * Used to decorate a rating process argument as a source of rating information.
+ * The only allowed types for such parameter are {@link RatingsHolder} and {@link ReadonlyRatingsHolder}.
  * 
  * @author Ondřej Štumpf
  * 

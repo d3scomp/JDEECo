@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import cz.cuni.mff.d3s.deeco.integrity.RatingsChangeSet;
 import cz.cuni.mff.d3s.deeco.integrity.RatingsHolder;
@@ -406,16 +407,23 @@ public class EnsembleTask extends Task {
 						ensembleController.getEnsembleDefinition().getName(), e.getNotFoundPath()));
 				return false;
 			}
-
+			
 			allPathsWithRoots.add(absoluteKnowledgePathAndRoot);
 
+			if (paramDir == ParameterKind.OUT || paramDir == ParameterKind.INOUT) {
+				// no paths are locked in shadow knowledge manager
+				if (absoluteKnowledgePathAndRoot.root == localRole && localKnowledgeManager.isLocked(absoluteKnowledgePathAndRoot.knowledgePath)) {
+					throw new TaskInvocationException(String.format("Path %s is used as a parameter of a security role and therefore cannot be modified.", absoluteKnowledgePathAndRoot.knowledgePath));
+				}
+			}
+			
 			if (paramDir == ParameterKind.IN || paramDir == ParameterKind.INOUT) {
 				if (absoluteKnowledgePathAndRoot == null) {
 					throw new TaskInvocationException("Member/Coordinator prefix required for knowledge exchange paths.");
 				} if (absoluteKnowledgePathAndRoot.root == localRole) {
-					localPaths.add(absoluteKnowledgePathAndRoot.knowledgePath);
+					localPaths.add(absoluteKnowledgePathAndRoot.knowledgePath);					
 				} else {
-					shadowPaths.add(absoluteKnowledgePathAndRoot.knowledgePath);
+					shadowPaths.add(absoluteKnowledgePathAndRoot.knowledgePath);					
 				}				
 			}		
 		}
@@ -478,7 +486,7 @@ public class EnsembleTask extends Task {
 			ensembleController.getEnsembleDefinition().getKnowledgeExchange().getMethod().invoke(null, actualParams);
 			
 			// Create a changeset
-			ChangeSet localChangeSet = new ChangeSet();
+			Map<String, ChangeSet> localChangeSets = new HashMap<>();
 			
 			paramIdx = 0;
 			allPathsWithRootsIter = allPathsWithRoots.iterator(); 
@@ -488,7 +496,16 @@ public class EnsembleTask extends Task {
 
 				if (absoluteKnowledgePathAndRoot.root == localRole) {
 					if (paramDir == ParameterKind.OUT || paramDir == ParameterKind.INOUT) {
-						localChangeSet.setValue(absoluteKnowledgePathAndRoot.knowledgePath, ((ParamHolder<Object>)actualParams[paramIdx]).value);
+						
+						String author = shadowKnowledgeManager.getAuthor(absoluteKnowledgePathAndRoot.knowledgePath);
+						if (author == null) {
+							author = shadowKnowledgeManager.getId();
+						}
+						if (!localChangeSets.containsKey(author)) {
+							localChangeSets.put(author, new ChangeSet());
+						}
+						
+						localChangeSets.get(author).setValue(absoluteKnowledgePathAndRoot.knowledgePath, ((ParamHolder<Object>)actualParams[paramIdx]).value);
 					}
 				}
 				
@@ -496,7 +513,9 @@ public class EnsembleTask extends Task {
 			}
 			
 			// Write the changeset back to the knowledge
-			localKnowledgeManager.update(localChangeSet, shadowKnowledgeManager.getId());			
+			for (Entry<String, ChangeSet> entry : localChangeSets.entrySet()) {
+				localKnowledgeManager.update(entry.getValue(), entry.getKey());
+			}
 		} catch (KnowledgeUpdateException | IllegalAccessException | IllegalArgumentException e) {
 			throw new TaskInvocationException(String.format("Error when invoking a knowledge exchange for ensemble: %s", ensembleController.getEnsembleDefinition().getName()), e);			
 		} catch (InvocationTargetException e) {
@@ -507,6 +526,12 @@ public class EnsembleTask extends Task {
 		return true;
 	}
 
+	/**
+	 * Invokes the method marked with the {@link RatingsProcess} annotation.
+	 * @param shadowComponentId
+	 * 			the ID of the shadow component
+	 * @throws TaskInvocationException
+	 */
 	private void invokeRatingsProcess(String shadowComponentId) throws TaskInvocationException {
 		ComponentInstance component = ensembleController.getComponentInstance();
 		KnowledgeManager knowledgeManager = component.getKnowledgeManager();
@@ -534,6 +559,7 @@ public class EnsembleTask extends Task {
 						String.format("Knowledge path (%s) could not be resolved.", e.getNotFoundPath()), e);
 			}
 			
+			// only IN and RATING params are allowed
 			if (paramDir == ParameterKind.IN) {
 				inPaths.add(absoluteKnowledgePath);
 			}
@@ -590,6 +616,7 @@ public class EnsembleTask extends Task {
 			// Call the rating process method
 			process.getMethod().invoke(null, actualParams);
 			
+			// update the ratings container and prepare the change set for distribution
 			List<RatingsChangeSet> changes = ratingsManager.createRatingsChangeSet(ratingsHolders);
 			ratingsManager.update(changes);
 			ratingsManager.addToPendingChangeSets(changes);

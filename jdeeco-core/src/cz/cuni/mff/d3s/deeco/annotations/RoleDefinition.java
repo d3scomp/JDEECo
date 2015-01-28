@@ -7,7 +7,8 @@ import java.lang.annotation.Target;
 
 
 /**
- * Used to mark an interface as a security role
+ * Used to mark an interface as a security role. 
+ * Only such interfaces can be used as arguments for {@link Allow} and {@link HasRole} annotations.
  * 
  * @author Ondřej Štumpf
  * 
@@ -16,5 +17,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface RoleDefinition {
+	Class<?> aliasedBy() default DEFAULT_ALIAS.class;
 	
+	static final class DEFAULT_ALIAS {}
 }

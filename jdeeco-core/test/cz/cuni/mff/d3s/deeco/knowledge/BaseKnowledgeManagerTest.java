@@ -370,8 +370,8 @@ public class BaseKnowledgeManagerTest {
 		tag.getRequiredRole().setRoleName("role");
 		Collection<SecurityTag> expectedTags = Arrays.asList(tag);
 		
-		// when addSecurityTags() is called
-		tested.addSecurityTags(kp, expectedTags);
+		// when setSecurityTags() is called
+		tested.setSecurityTags(kp, expectedTags);
 		
 		// when security tags are then retrieved
 		KnowledgePath kp_same = RuntimeModelHelper.createKnowledgePath("field");
@@ -381,14 +381,37 @@ public class BaseKnowledgeManagerTest {
 		assertEquals(expectedTags, actualTags);
 	}
 	
+	@Test
+	public void addSecurityTagsTest() {
+		// given single-noded knowledge path and security tags are prepared
+		KnowledgePath kp = RuntimeModelHelper.createKnowledgePath("field");
+		KnowledgeSecurityTag tag = RuntimeMetadataFactory.eINSTANCE.createKnowledgeSecurityTag();
+		tag.setRequiredRole(RuntimeMetadataFactory.eINSTANCE.createSecurityRole());
+		tag.getRequiredRole().setRoleName("role");
+		Collection<SecurityTag> expectedTags = Arrays.asList(tag);
+		
+		// when setSecurityTags() is called
+		tested.setSecurityTags(kp, expectedTags);
+		tested.addSecurityTag(kp, tag);
+		
+		// when security tags are then retrieved
+		KnowledgePath kp_same = RuntimeModelHelper.createKnowledgePath("field");
+		List<KnowledgeSecurityTag> actualTags = tested.getKnowledgeSecurityTags((PathNodeField) kp_same.getNodes().get(0));
+		
+		// then collections are equal
+		assertEquals(2, actualTags.size());
+		assertEquals(tag, actualTags.get(0));
+		assertEquals(tag, actualTags.get(1));
+	}
+	
 	@Test(expected = IllegalArgumentException.class)
 	public void markAsSecured_MultiNodePathTest() {
 		// given multi-noded knowledge path and security tags are prepared
 		KnowledgePath kp = RuntimeModelHelper.createKnowledgePath("field", "inner");
 		Collection<SecurityTag> expectedTags = Arrays.asList();
 		
-		// when addSecurityTags() is called
-		tested.addSecurityTags(kp, expectedTags);
+		// when setSecurityTags() is called
+		tested.setSecurityTags(kp, expectedTags);
 		
 		// then exception is thrown
 	}
@@ -400,8 +423,8 @@ public class BaseKnowledgeManagerTest {
 		kp.getNodes().add(RuntimeMetadataFactory.eINSTANCE.createPathNodeComponentId());
 		Collection<SecurityTag> expectedTags = Arrays.asList();
 		
-		// when addSecurityTags() is called
-		tested.addSecurityTags(kp, expectedTags);
+		// when setSecurityTags() is called
+		tested.setSecurityTags(kp, expectedTags);
 		
 		// then exception is thrown
 	}

@@ -15,7 +15,7 @@ public class CorrectC5 {
 	@RoleDefinition
 	public static interface Role0 {
 		@RoleParam
-		public static final String fieldRole0 = "[0]";
+		public static final String fieldRole0 = "[z]";
 	}
 	
 	@RoleDefinition
@@ -43,6 +43,8 @@ public class CorrectC5 {
 		public static final String fieldRole0 = "value_override";
 	}
 	
-	@Allow(roleClass = Role3.class)
+	@Allow(Role3.class)
 	public String name;
+	
+	public String x,y,z,v;
 }

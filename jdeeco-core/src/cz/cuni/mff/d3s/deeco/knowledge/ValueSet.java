@@ -50,6 +50,14 @@ public class ValueSet implements Serializable {
 		values.put(path, value);		
 	}
 
+	/**
+	 * Removes the value associated with this knowledgePath
+	 * @param kp
+	 */
+	public void remove(KnowledgePath kp) {
+		values.remove(kp);
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

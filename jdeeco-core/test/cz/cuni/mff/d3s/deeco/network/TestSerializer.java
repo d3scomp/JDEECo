@@ -4,9 +4,13 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
+import java.security.KeyStoreException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import javax.crypto.SealedObject;
 
 import junitx.framework.ListAssert;
 
@@ -18,6 +22,8 @@ import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
+import cz.cuni.mff.d3s.deeco.integrity.PathRating;
+import cz.cuni.mff.d3s.deeco.integrity.RatingsChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerFactory;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
@@ -25,12 +31,15 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
+import cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
+import cz.cuni.mff.d3s.deeco.security.RatingsEncryptor;
+import cz.cuni.mff.d3s.deeco.security.SecurityKeyManagerImpl;
 
 
 public class TestSerializer {
@@ -107,5 +116,32 @@ public class TestSerializer {
 		
 		ListAssert.assertEquals(kd, nkd);
 	}
-
+	
+	@Test
+	@SuppressWarnings("unchecked")
+	public void testRatingsDataSerialization() throws KeyStoreException, IOException, ClassNotFoundException {
+		// given unsealed data are prepared
+		List<RatingsChangeSet> changeSets = new ArrayList<>();
+		changeSets.add(new RatingsChangeSet("a", "b", RuntimeModelHelper.createKnowledgePath("level1", "field1"), PathRating.OK));
+		changeSets.add(new RatingsChangeSet("c", "d", RuntimeModelHelper.createKnowledgePath("level1", "field2"), PathRating.OUT_OF_RANGE));
+		changeSets.add(new RatingsChangeSet("e", "f", RuntimeModelHelper.createKnowledgePath("level1", "field3"), null));
+		
+		RatingsMetaData metaData = new RatingsMetaData(123, 4);		
+		RatingsEncryptor ratingsEncryptor = new RatingsEncryptor(SecurityKeyManagerImpl.getInstance());
+		
+		// given RatingsData instance is prepared
+		List<SealedObject> sealedChangeSets = ratingsEncryptor.encryptRatings(changeSets, metaData);
+		RatingsData ratingsData = new RatingsData(sealedChangeSets, metaData);
+		
+		// when the data are serialized
+		byte[] data = Serializer.serialize(Arrays.asList(ratingsData));
+		
+		// when the data are then deserialized
+		RatingsData deserializedRatingsData = ((List<? extends RatingsData>) Serializer.deserialize(data)).get(0);
+		
+		// then they are equal		
+		List<RatingsChangeSet> deserializedChangeSets = ratingsEncryptor.decryptRatings(deserializedRatingsData.getRatings(), deserializedRatingsData.getRatingsMetaData());
+		assertEquals(ratingsData.getRatingsMetaData(), deserializedRatingsData.getRatingsMetaData());
+		assertEquals(changeSets, deserializedChangeSets);
+	}
 }

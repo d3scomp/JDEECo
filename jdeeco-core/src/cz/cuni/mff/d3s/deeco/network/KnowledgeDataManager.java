@@ -87,15 +87,29 @@ KnowledgeDataPublisher {
 	@Override
 	public void receive(List data, double rssi) {
 		if (data == null) {
-			Log.w("KnowledgeDataManager.receive: Received null KnowledgeData.");
+			Log.w("KnowledgeDataManager.receive: Received null data.");
+		} else if (data.isEmpty()) {
+			Log.w("KnowledgeDataManager.receive: Received empty data.");
 		} else {
-			List<KnowledgeData> knowledgeData = (List<KnowledgeData> ) data;
-			for (KnowledgeData kd: knowledgeData) {
-				kd.getMetaData().rssi = rssi;
+			Object firstElement = data.get(0);
+			if (firstElement.getClass().isAssignableFrom(KnowledgeData.class)) {
+				List<KnowledgeData> knowledgeData = (List<KnowledgeData> ) data;
+				for (KnowledgeData kd: knowledgeData) {
+					kd.getMetaData().rssi = rssi;
+				}
+				receiveKnowledge(knowledgeData);
+			} else if (firstElement.getClass().isAssignableFrom(RatingsData.class)) {
+				List<RatingsData> ratingsData = (List<RatingsData> ) data;
+				for (RatingsData rd : ratingsData) {
+					rd.getRatingsMetaData().rssi = rssi;
+				}
+				receiveRatings(ratingsData);
+			} else {
+				Log.e("Unkown data received: " + firstElement.getClass());
 			}
-			receiveKnowledge(knowledgeData);
 		}
 	}
-	
+		
 	public abstract void receiveKnowledge(List<KnowledgeData> data);
+	public abstract void receiveRatings(List<RatingsData> ratingsData);
 }

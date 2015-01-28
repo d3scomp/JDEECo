@@ -18,6 +18,7 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Invocable#getParameters <em>Parameters</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Invocable#getMethod <em>Method</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Invocable#isIgnoreKnowledgeCompromise <em>Ignore Knowledge Compromise</em>}</li>
  * </ul>
  * </p>
  *
@@ -67,5 +68,31 @@ public interface Invocable extends EObject {
 	 * @generated
 	 */
 	void setMethod(Method value);
+
+	/**
+	 * Returns the value of the '<em><b>Ignore Knowledge Compromise</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Ignore Knowledge Compromise</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Ignore Knowledge Compromise</em>' attribute.
+	 * @see #setIgnoreKnowledgeCompromise(boolean)
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getInvocable_IgnoreKnowledgeCompromise()
+	 * @model required="true"
+	 * @generated
+	 */
+	boolean isIgnoreKnowledgeCompromise();
+
+	/**
+	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Invocable#isIgnoreKnowledgeCompromise <em>Ignore Knowledge Compromise</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Ignore Knowledge Compromise</em>' attribute.
+	 * @see #isIgnoreKnowledgeCompromise()
+	 * @generated
+	 */
+	void setIgnoreKnowledgeCompromise(boolean value);
 
 } // Invocable

@@ -1,6 +1,8 @@
 package cz.cuni.mff.d3s.deeco.network;
 
 import java.io.Serializable;
+import java.util.Arrays;
+
 
 /**
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
@@ -18,7 +20,7 @@ public class KnowledgeMetaData implements Serializable {
 	
 	public byte[] encryptedKey;
 	public String encryptedKeyAlgorithm;
-	public KnowledgeSecurityAnnotation targetRole;
+	public Integer targetRoleHash;
 	public byte[] signature;
 	
 	public KnowledgeMetaData(String componentId, long versionId, String sender, long createdAt, int hopCount) {
@@ -26,7 +28,7 @@ public class KnowledgeMetaData implements Serializable {
 	}
 
 	public KnowledgeMetaData(String componentId, long versionId, String sender, long createdAt, int hopCount, 
-			byte[] encryptedKey, String encryptedKeyAlgorithm, KnowledgeSecurityAnnotation targetRole, byte[] signature) {
+			byte[] encryptedKey, String encryptedKeyAlgorithm, Integer targetRoleHash, byte[] signature) {
 		super();
 		this.componentId = componentId;
 		this.versionId = versionId;
@@ -35,12 +37,12 @@ public class KnowledgeMetaData implements Serializable {
 		this.hopCount = hopCount;
 		this.encryptedKey = encryptedKey;
 		this.encryptedKeyAlgorithm = encryptedKeyAlgorithm;
-		this.targetRole = targetRole;
+		this.targetRoleHash = targetRoleHash;
 		this.signature = signature;
 	}
 	
 	public KnowledgeMetaData clone() {
-		return new KnowledgeMetaData(componentId, versionId, sender, createdAt, hopCount, encryptedKey, encryptedKeyAlgorithm, targetRole, signature);
+		return new KnowledgeMetaData(componentId, versionId, sender, createdAt, hopCount, encryptedKey, encryptedKeyAlgorithm, targetRoleHash, signature);
 	}
 		
 	@Override
@@ -99,14 +101,14 @@ public class KnowledgeMetaData implements Serializable {
 			if (other.encryptedKey != null)
 				return false;
 		} else {
-			if (!encryptedKey.equals(other.encryptedKey)) 
+			if (!Arrays.equals(encryptedKey, other.encryptedKey)) 
 				return false;
 		}
-		if (targetRole == null) {
-			if (other.targetRole != null)
+		if (targetRoleHash == null) {
+			if (other.targetRoleHash != null)
 				return false;
 		} else {
-			if (!targetRole.equals(other.targetRole)) 
+			if (!targetRoleHash.equals(other.targetRoleHash)) 
 				return false;
 		}
 		return true;
@@ -114,8 +116,8 @@ public class KnowledgeMetaData implements Serializable {
 
 
 	public String getSignatureWithRole() {
-		if (targetRole != null) {
-			return componentId + "v" + versionId + "_" + targetRole.hashCode();
+		if (targetRoleHash != null) {
+			return componentId + "v" + versionId + "_" + targetRoleHash;
 		} else {
 			return getSignature();
 		}

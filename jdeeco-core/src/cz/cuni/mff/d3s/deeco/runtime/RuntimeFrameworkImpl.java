@@ -337,7 +337,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 			try {
 				for (KnowledgePath kp : initialKnowledge.getKnowledgePaths()) {
 					List<SecurityTag> tags = ci.getKnowledgeManager().getSecurityTags((PathNodeField)kp.getNodes().get(0));
-					km.addSecurityTags(kp, tags);
+					km.setSecurityTags(kp, tags);
 				}	
 			} catch (IllegalArgumentException e) {
 				Log.e("Error while securing knowledge for component " + ci.getKnowledgeManager().getId());

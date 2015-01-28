@@ -109,6 +109,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 		switch (eDataType.getClassifierID()) {
 			case RuntimeMetadataPackage.PARAMETER_KIND:
 				return createParameterKindFromString(eDataType, initialValue);
+			case RuntimeMetadataPackage.CONTEXT_KIND:
+				return createContextKindFromString(eDataType, initialValue);
 			case RuntimeMetadataPackage.METHOD:
 				return createMethodFromString(eDataType, initialValue);
 			case RuntimeMetadataPackage.KNOWLEDGE_MANAGER:
@@ -134,6 +136,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 		switch (eDataType.getClassifierID()) {
 			case RuntimeMetadataPackage.PARAMETER_KIND:
 				return convertParameterKindToString(eDataType, instanceValue);
+			case RuntimeMetadataPackage.CONTEXT_KIND:
+				return convertContextKindToString(eDataType, instanceValue);
 			case RuntimeMetadataPackage.METHOD:
 				return convertMethodToString(eDataType, instanceValue);
 			case RuntimeMetadataPackage.KNOWLEDGE_MANAGER:
@@ -426,6 +430,26 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * @generated
 	 */
 	public String convertParameterKindToString(EDataType eDataType, Object instanceValue) {
+		return instanceValue == null ? null : instanceValue.toString();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public ContextKind createContextKindFromString(EDataType eDataType, String initialValue) {
+		ContextKind result = ContextKind.get(initialValue);
+		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+		return result;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertContextKindToString(EDataType eDataType, Object instanceValue) {
 		return instanceValue == null ? null : instanceValue.toString();
 	}
 

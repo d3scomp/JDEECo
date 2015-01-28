@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Used to decorate a component with desired roles
+ * Container of {@link HasRole} annotations, required by Java to enable repeatable annotations.
  * 
  * @author Ondřej Štumpf
  * 

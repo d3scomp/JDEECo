@@ -95,6 +95,8 @@
         eType="#//Parameter" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="method" lowerBound="1"
         eType="#//Method"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ignoreKnowledgeCompromise"
+        lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="ShadowKnowledgeManagerRegistry" instanceClassName="cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry"/>
   <eClassifiers xsi:type="ecore:EClass" name="EnsembleController">
@@ -119,11 +121,13 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="SecurityRole">
     <eStructuralFeatures xsi:type="ecore:EReference" name="consistsOf" upperBound="-1"
-        eType="#//SecurityRole"/>
+        eType="#//SecurityRole" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="roleName" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="arguments" upperBound="-1"
         eType="#//SecurityRoleArgument" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="aliasRole" eType="#//SecurityRole"
+        containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="SecurityRoleArgument" abstract="true">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -131,6 +135,8 @@
   <eClassifiers xsi:type="ecore:EClass" name="PathSecurityRoleArgument" eSuperTypes="#//SecurityRoleArgument">
     <eStructuralFeatures xsi:type="ecore:EReference" name="knowledgePath" lowerBound="1"
         eType="#//KnowledgePath" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="contextKind" lowerBound="1"
+        eType="#//ContextKind"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="BlankSecurityRoleArgument" eSuperTypes="#//SecurityRoleArgument"/>
   <eClassifiers xsi:type="ecore:EClass" name="AbsoluteSecurityRoleArgument" eSuperTypes="#//SecurityRoleArgument">
@@ -143,5 +149,8 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="LocalKnowledgeTag" eSuperTypes="#//SecurityTag"/>
   <eClassifiers xsi:type="ecore:EClass" name="SecurityTag"/>
+  <eClassifiers xsi:type="ecore:EEnum" name="ContextKind">
+    <eLiterals name="LOCAL"/>
+    <eLiterals name="SHADOW" value="1"/>
+  </eClassifiers>
 </ecore:EPackage>
-

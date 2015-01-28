@@ -3,13 +3,18 @@
  */
 package cz.cuni.mff.d3s.deeco.model.runtime.custom;
 
+import cz.cuni.mff.d3s.deeco.model.runtime.api.AbsoluteSecurityRoleArgument;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.BlankSecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathSecurityRoleArgument;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataFactoryImpl;
 
@@ -79,6 +84,32 @@ public class RuntimeMetadataFactoryExt extends RuntimeMetadataFactoryImpl {
 	public PathNodeMapKey createPathNodeMapKey() {
 		return new PathNodeMapKeyExt();
 	}
+	
+	@Override
+	public KnowledgeSecurityTag createKnowledgeSecurityTag() {
+		return new KnowledgeSecurityTagExt();
+	}
 
+	@Override
+	public SecurityRole createSecurityRole() {
+		return new SecurityRoleExt();
+	}
+	
+	@Override
+	public BlankSecurityRoleArgument createBlankSecurityRoleArgument() {
+		return new BlankSecurityRoleArgumentExt();
+	}
+	
+	@Override
+	public PathSecurityRoleArgument createPathSecurityRoleArgument() {
+		return new PathSecurityRoleArgumentExt();
+	}
+	
+	@Override
+	public AbsoluteSecurityRoleArgument createAbsoluteSecurityRoleArgument() {
+		return new AbsoluteSecurityRoleArgumentExt();
+	}
+	
+	
 	// TODO: We might have also toString() method implemented for the KnowledgePath
 }
