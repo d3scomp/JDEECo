@@ -8,10 +8,9 @@
 		<relativePath>../jdeeco-parent/pom.xml</relativePath>
 	</parent>
 	<artifactId>cz.cuni.mff.d3s.jdeeco.simulation.omnet-native</artifactId>
-	<packaging>pom</packaging>
 	<profiles>
 		<profile>
-		<id>linux-build</id>
+			<id>linux-build</id>
 			<activation>
 				<os>
 					<family>Linux</family>
@@ -19,115 +18,43 @@
 			</activation>
 			<properties>
 				<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-				<jdk>C:/Progra~2/Java/jdk8</jdk>
+				<omnet>/home/vlada/tools/omnetpp-4.6</omnet>
 			</properties>
 			<build>
-				<defaultGoal>install</defaultGoal>
 				<plugins>
-					<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-dependency-plugin</artifactId> 
-						<version>2.6</version> <executions> <execution> <phase>initialize</phase> 
-						<goals> <goal>copy-dependencies</goal> </goals> <configuration> <outputDirectory>${deps}</outputDirectory> 
-						<includeScope>compile</includeScope> </configuration> </execution> </executions> 
-						</plugin> -->
-					<!-- plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>native-maven-plugin</artifactId> 
-						<executions> <execution> <goals> <goal>javah</goal> </goals> <configuration> 
-						<javahClassNames> <javahClassName>cz.cuni.mff.d3s.deeco.simulation.omnet.OMNetSimulation</javahClassName> 
-						</javahClassNames> <javahPath>${jdk.home}/bin/javah</javahPath> <javahOutputDirectory>src</javahOutputDirectory> 
-						</configuration> </execution> </executions> </plugin -->
-
 					<plugin>
-						<artifactId>maven-clean-plugin</artifactId>
-						<version>2.5</version>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-jar-plugin</artifactId>
 						<executions>
 							<execution>
-								<id>clean-javah</id>
-								<goals>
-									<goal>clean</goal>
-								</goals>
-								<phase>clean</phase>
-								<configuration>
-									<filesets>
-										<fileset>
-											<directory>src</directory>
-											<includes>
-												<include>cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulation.h</include>
-											</includes>
-										</fileset>
-									</filesets>
-								</configuration>
+								<id>default-jar</id>
+								<phase>none</phase>
 							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>exec-maven-plugin</artifactId>
-						<version>1.3.1</version>
-						<executions>
 							<execution>
-								<id>exec-make-makefiles</id>
-								<phase>compile</phase>
+								<id>release</id>
 								<configuration>
-									<executable>make</executable>
-									<arguments>
-										<argument>makefiles</argument>
-										<argument>JAVA_HOME=${jdk.home}</argument>
-									</arguments>
+									<classifier>natives-linux64-release</classifier>
+									<classesDirectory>${basedir}/libs/release</classesDirectory>
+									<includes>
+										<include>*.so</include>
+									</includes>
 								</configuration>
 								<goals>
-									<goal>exec</goal>
+									<goal>jar</goal>
 								</goals>
 							</execution>
 							<execution>
-								<id>exec-make-all</id>
-								<phase>compile</phase>
+								<id>debug</id>
 								<configuration>
-									<executable>make</executable>
-									<arguments>
-										<argument>all</argument>
-										<argument>JAVA_HOME=${jdk}</argument>
-									</arguments>
+									<classifier>natives-linux64-debug</classifier>
+									<classesDirectory>${basedir}/libs/debug</classesDirectory>
+									<includes>
+										<include>*.so</include>
+									</includes>
 								</configuration>
 								<goals>
-									<goal>exec</goal>
+									<goal>jar</goal>
 								</goals>
-							</execution>
-							<execution>
-								<id>exec-make-clean</id>
-								<phase>clean</phase>
-								<configuration>
-									<executable>make</executable>
-									<arguments>
-										<argument>cleanall</argument>
-										<argument>JAVA_HOME=${jdk}</argument>
-									</arguments>
-								</configuration>
-								<goals>
-									<goal>exec</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>build-helper-maven-plugin</artifactId>
-						<version>1.9</version>
-						<executions>
-							<execution>
-								<id>attach-artifacts</id>
-								<phase>package</phase>
-								<goals>
-									<goal>attach-artifact</goal>
-								</goals>
-								<configuration>
-									<artifacts>
-										<artifact>
-											<file>out/gcc-debug/src/libjdeeco-omnetpp.so</file>
-											<type>so</type>
-											<classifier>linux</classifier>
-										</artifact>
-									</artifacts>
-								</configuration>
 							</execution>
 						</executions>
 					</plugin>
@@ -135,7 +62,7 @@
 			</build>
 		</profile>
 		<profile>
-		<id>windows-build</id>
+			<id>windows-build</id>
 			<activation>
 				<os>
 					<family>Windows</family>
@@ -143,61 +70,56 @@
 			</activation>
 			<properties>
 				<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-				<jdk>C:/Progra~2/Java/jdk8</jdk>
-				<omnet>D:/omnetpp-4.3.1</omnet>
+				<omnet>C:\tools64\omnetpp-4.6</omnet>
 			</properties>
 			<build>
-				<defaultGoal>install</defaultGoal>
 				<plugins>
 					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>exec-maven-plugin</artifactId>
-						<version>1.3.1</version>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-jar-plugin</artifactId>
 						<executions>
 							<execution>
-								<id>exec-make</id>
-								<phase>compile</phase>
+								<id>default-jar</id>
+								<phase>none</phase>
+							</execution>
+							<execution>
+								<id>ned</id>
 								<configuration>
-									<executable>${omnet}/msys/bin/sh</executable>
-									<commandlineArgs>--login ${basedir}/script-build</commandlineArgs>
+									<classifier>natives-common-ned</classifier>
+									<classesDirectory>${basedir}/libs/ned</classesDirectory>
+									<includes>
+										<inlude>**\*.ned</inlude>
+									</includes>
 								</configuration>
 								<goals>
-									<goal>exec</goal>
+									<goal>jar</goal>
 								</goals>
 							</execution>
 							<execution>
-								<id>exec-make-clean</id>
-								<phase>clean</phase>
+								<id>release</id>
 								<configuration>
-									<executable>${omnet}/msys/bin/sh</executable>
-									<commandlineArgs>--login ${basedir}/script-clean</commandlineArgs>
+									<classifier>natives-windows64-release</classifier>
+									<classesDirectory>${basedir}/libs/release</classesDirectory>
+									<includes>
+										<include>*.dll</include>
+									</includes>
 								</configuration>
 								<goals>
-									<goal>exec</goal>
+									<goal>jar</goal>
 								</goals>
 							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>build-helper-maven-plugin</artifactId>
-						<version>1.9</version>
-						<executions>
 							<execution>
-								<id>attach-artifacts</id>
-								<phase>package</phase>
-								<goals>
-									<goal>attach-artifact</goal>
-								</goals>
+								<id>debug</id>
 								<configuration>
-									<artifacts>
-										<artifact>
-											<file>out/gcc-debug/src/libjdeeco-omnetpp.dll</file>
-											<type>dll</type>
-											<classifier>windows</classifier>
-										</artifact>
-									</artifacts>
+									<classifier>natives-windows64-debug</classifier>
+									<classesDirectory>${basedir}/libs/debug</classesDirectory>
+									<includes>
+										<include>*.dll</include>
+									</includes>
 								</configuration>
+								<goals>
+									<goal>jar</goal>
+								</goals>
 							</execution>
 						</executions>
 					</plugin>
@@ -206,15 +128,5 @@
 		</profile>
 	</profiles>
 	<dependencies>
-		<dependency>
-			<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
-			<artifactId>cz.cuni.mff.d3s.jdeeco.core</artifactId>
-			<version>2.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
-			<artifactId>cz.cuni.mff.d3s.jdeeco.simulation</artifactId>
-			<version>2.0.0</version>
-		</dependency>
 	</dependencies>
 </project>

@@ -2,4 +2,7 @@
 /src/JDEECoPacket_m.h
 /src/JDEECoPacket_m.cc
 /src/libjdeeco-omnetpp.dll
+/src/libjdeeco-omnetpp.so
 /src/cz_cuni_mff_d3s_deeco_simulation_omnet_OMNetSimulation.h
+/target
+/libs

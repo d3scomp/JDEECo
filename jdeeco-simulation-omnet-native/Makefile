@@ -1,5 +1,5 @@
-JDK_HOME ?= /c/Progra~2/Java/jdk8
-OMNETPP_ROOT ?= /d/omnetpp-4.3.1
+JDK_HOME ?= C:/Progra~2/Java/jdk8
+OMNETPP_ROOT ?= C:\tools64\omnetpp-4.6
 INET_DIR ?= ${OMNETPP_ROOT}/../inet
 MIXIM_DIR ?= ${OMNETPP_ROOT}/../mixim
 
@@ -24,7 +24,62 @@ clean: checkmakefiles
 cleanall: checkmakefiles
 	cd src && $(MAKE) clean
 	rm -f src/Makefile
-	rm -rf out/
+	rm -rf out
+	rm -rf libs
+	
+install:
+	mkdir -p libs/debug
+	mkdir -p libs/release
+	mkdir -p libs/ned/inet
+	mkdir -p libs/ned/mixim
+	
+	# Copy libraries
+	
+	# libjdeeco
+	cp out/gcc-debug/src/libjdeeco-omnetpp.dll libs/debug/jdeeco-omnetpp.dll
+	cp out/gcc-release/src/libjdeeco-omnetpp.dll libs/release/jdeeco-omnetpp.dll
+	
+	# omnetpp
+	cp ${OMNETPP_ROOT}/out/gcc-debug/src/cmdenv/liboppcmdenvd.dll libs/debug
+	cp ${OMNETPP_ROOT}/out/gcc-debug/src/common/liboppcommond.dll libs/debug
+	cp ${OMNETPP_ROOT}/out/gcc-debug/src/envir/liboppenvird.dll libs/debug
+	cp ${OMNETPP_ROOT}/out/gcc-debug/src/eventlog/liboppeventlogd.dll libs/debug
+	cp ${OMNETPP_ROOT}/out/gcc-debug/src/layout/libopplayoutd.dll libs/debug
+	cp ${OMNETPP_ROOT}/out/gcc-debug/src/nedxml/liboppnedxmld.dll libs/debug
+	cp ${OMNETPP_ROOT}/out/gcc-debug/src/scave/liboppscaved.dll libs/debug
+	cp ${OMNETPP_ROOT}/out/gcc-debug/src/sim/liboppsimd.dll libs/debug
+	cp ${OMNETPP_ROOT}/out/gcc-debug/src/tkenv/libopptkenvd.dll libs/debug
+	
+	cp ${OMNETPP_ROOT}/out/gcc-release/src/cmdenv/liboppcmdenv.dll libs/release
+	cp ${OMNETPP_ROOT}/out/gcc-release/src/common/liboppcommon.dll libs/release
+	cp ${OMNETPP_ROOT}/out/gcc-release/src/envir/liboppenvir.dll libs/release
+	cp ${OMNETPP_ROOT}/out/gcc-release/src/eventlog/liboppeventlog.dll libs/release
+	cp ${OMNETPP_ROOT}/out/gcc-release/src/layout/libopplayout.dll libs/release
+	cp ${OMNETPP_ROOT}/out/gcc-release/src/nedxml/liboppnedxml.dll libs/release
+	cp ${OMNETPP_ROOT}/out/gcc-release/src/scave/liboppscave.dll libs/release
+	cp ${OMNETPP_ROOT}/out/gcc-release/src/sim/liboppsim.dll libs/release
+	cp ${OMNETPP_ROOT}/out/gcc-release/src/tkenv/libopptkenv.dll libs/release
+	
+	# inet
+	cp ${INET_DIR}/out/gcc-debug/src/libinet.dll libs/debug
+	cp ${INET_DIR}/out/gcc-release/src/libinet.dll libs/release
+	
+	# mixim
+	cp ${MIXIM_DIR}/out/gcc-debug/src/libmixim.dll libs/debug
+	cp ${MIXIM_DIR}/out/gcc-release/src/libmixim.dll libs/release
+	
+	# gcc
+	cp ${OMNETPP_ROOT}/tools/win32/mingw64/bin/libgcc_s_seh-1.dll libs/debug
+	cp ${OMNETPP_ROOT}/tools/win32/mingw64/bin/libgcc_s_seh-1.dll libs/release
+	cp ${OMNETPP_ROOT}/tools/win32/mingw64/bin/libstdc++-6.dll libs/debug
+	cp ${OMNETPP_ROOT}/tools/win32/mingw64/bin/libstdc++-6.dll libs/release
+	cp ${OMNETPP_ROOT}/tools/win32/mingw64/bin/libwinpthread-1.dll libs/debug
+	cp ${OMNETPP_ROOT}/tools/win32/mingw64/bin/libwinpthread-1.dll libs/release
+	
+	# ned files
+	echo 'cd ${INET_DIR}/src; find -name "*.ned" -exec cp --parents {} $(shell pwd)/libs/ned/inet ";"' | sh
+	echo 'cd ${MIXIM_DIR}; find -name "*.ned" -exec cp --parents {} $(shell pwd)/libs/ned/mixim ";"' | sh
+	
 
 # Create makefiles that allows building mixim without a separate INET installation.
 makefiles:
