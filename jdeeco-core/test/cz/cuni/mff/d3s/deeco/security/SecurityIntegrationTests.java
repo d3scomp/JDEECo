@@ -10,7 +10,6 @@ import static org.mockito.MockitoAnnotations.*;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -18,7 +17,6 @@ import org.mockito.Captor;
 
 import cz.cuni.mff.d3s.deeco.integrity.PathRating;
 import cz.cuni.mff.d3s.deeco.integrity.RatingsChangeSet;
-import cz.cuni.mff.d3s.deeco.integrity.RatingsManagerImpl;
 import cz.cuni.mff.d3s.deeco.integrity.ReadonlyRatingsHolder;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
@@ -47,12 +45,7 @@ public class SecurityIntegrationTests {
 		initMocks(this);
 		
 		runtimeModel = new SecurityRuntimeModel();
-	}
-	
-	@After
-	public void tearDown() {
-		RatingsManagerImpl.resetSingleton();
-	}
+	}	
 	
 	@Test
 	public void publishReceiveSecurityTest() throws InterruptedException, TaskInvocationException {		

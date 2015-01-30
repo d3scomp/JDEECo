@@ -11,7 +11,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -95,7 +94,7 @@ public class EnsembleTaskTest {
 		initMocks(this);
 		
 		model = new SampleRuntimeModel();
-		ratingsManager = RatingsManagerImpl.getInstance();
+		ratingsManager = new RatingsManagerImpl();
 		
 		List<RatingsChangeSet> initialChangeSets = new ArrayList<>();
 		initialChangeSets.add(new RatingsChangeSet("author1", "KM1", RuntimeModelHelper.createKnowledgePath("level1", "rating"), PathRating.OK));
@@ -193,11 +192,6 @@ public class EnsembleTaskTest {
 		when(kmContainer.hasReplica(anyString())).thenReturn(true);
 		
 		this.task = new EnsembleTask(model.ensembleController, scheduler, architectureObserver, kmContainer, ratingsManager);
-	}
-	
-	@After
-	public void tearDown() {
-		RatingsManagerImpl.resetSingleton();
 	}
 	
 	@Test
