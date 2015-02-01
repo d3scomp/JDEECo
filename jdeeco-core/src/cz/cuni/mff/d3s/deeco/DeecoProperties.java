@@ -12,4 +12,5 @@ public final class DeecoProperties {
 	public static final String MESSAGE_CACHE_WIPE_PERIOD = "deeco.receive.cache.period";
 	public static final String MAXIMUM_REBROADCAST_DELAY = "deeco.rebroadcast.delay";
 	public static final String SIGN_PLAINTEXT_MESSAGES = "deeco.security.sign_plaintext_messages";
+	public static final String VERIFY_JARS = "deeco.security.verify_secured_component_jars";
 }

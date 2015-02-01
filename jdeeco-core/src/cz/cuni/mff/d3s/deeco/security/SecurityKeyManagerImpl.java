@@ -1,6 +1,8 @@
 package cz.cuni.mff.d3s.deeco.security;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
@@ -28,6 +30,7 @@ import org.bouncycastle.x509.X509V3CertificateGenerator;
  *
  * @author Ondřej Štumpf
  */
+@SuppressWarnings("deprecation")
 public class SecurityKeyManagerImpl implements SecurityKeyManager {
 
 	/** storage of the certificates */
@@ -46,6 +49,10 @@ public class SecurityKeyManagerImpl implements SecurityKeyManager {
 	private SecurityHelper securityHelper;
 	
 	private final Integer INTEGRITY_KEY = 95423814;
+	
+	/** Password for the keystore is blank, password for the private key corresponding with the CA certificate is Pa55w0rd */
+	private final String CERTIFICATION_AUTHORITY_ALIAS = "CA";
+	private final String KEYSTORE_PATH = "keystore/keystore.jks";
 	
 	/** singleton instance */
 	private static SecurityKeyManager instance;
@@ -82,7 +89,8 @@ public class SecurityKeyManagerImpl implements SecurityKeyManager {
 	}
 	
 	private void initialize() throws NoSuchAlgorithmException, CertificateException, IOException {
-		keyStore.load(null, null);
+		InputStream stream = new FileInputStream(KEYSTORE_PATH);
+		keyStore.load(stream, null);
 	}
 
 	/* (non-Javadoc)
@@ -143,8 +151,7 @@ public class SecurityKeyManagerImpl implements SecurityKeyManager {
 		keyStore.setCertificateEntry(roleKey.toString(), generateCertificate(roleKey, keypair));
 		privateKeys.put(roleKey, keypair.getPrivate());
 	}
-	
-	@SuppressWarnings("deprecation")
+		
 	private Certificate generateCertificate(Integer roleKey, KeyPair keypair) throws NoSuchAlgorithmException, InvalidKeyException, SecurityException, SignatureException, CertificateEncodingException, IllegalStateException {		
         X509V3CertificateGenerator v3CertGen = new X509V3CertificateGenerator();
         v3CertGen.setSerialNumber(BigInteger.valueOf(Math.abs(secureRandom.nextInt())));
@@ -186,6 +193,20 @@ public class SecurityKeyManagerImpl implements SecurityKeyManager {
 		}
 		
 		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.security.SecurityKeyManager#getAuthorityPublicKey()
+	 */
+	@Override
+	public PublicKey getAuthorityPublicKey() throws InvalidKeyException,
+			CertificateEncodingException, KeyStoreException,
+			NoSuchAlgorithmException, SecurityException, SignatureException,
+			IllegalStateException {
+		Certificate authorityCertificate = keyStore.getCertificate(CERTIFICATION_AUTHORITY_ALIAS);
+		if (authorityCertificate == null) throw new KeyStoreException("Authority certificate not found.");
+		
+		return authorityCertificate.getPublicKey();
 	}
 
 	

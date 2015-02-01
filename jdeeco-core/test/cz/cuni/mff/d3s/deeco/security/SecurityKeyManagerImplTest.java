@@ -114,4 +114,10 @@ public class SecurityKeyManagerImplTest {
 		
 		assertEquals(text, new String(decipheredText));
 	}
+	
+	@Test
+	public void CAPublicKeyTest() throws InvalidKeyException, CertificateEncodingException, KeyStoreException, NoSuchAlgorithmException, SecurityException, SignatureException, IllegalStateException {
+		assertNotNull(target.getAuthorityPublicKey());
+	}
+	
 }

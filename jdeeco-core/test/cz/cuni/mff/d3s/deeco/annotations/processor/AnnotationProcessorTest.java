@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,6 +24,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import cz.cuni.mff.d3s.deeco.DeecoProperties;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.ParseException;
@@ -55,6 +58,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 /**
  * 
  * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
+ * @author Ondřej Štumpf
  *
  */
 public class AnnotationProcessorTest {
@@ -76,6 +80,9 @@ public class AnnotationProcessorTest {
 	@After
 	public void tearDown() throws IOException {
 		Files.deleteIfExists(tempFile.toPath());
+		
+		// revert to default setting
+		System.setProperty(DeecoProperties.VERIFY_JARS, "false");
 	}
 	
 	/*
@@ -155,6 +162,77 @@ public class AnnotationProcessorTest {
 		assertEquals("time", component.getRoles().get(1).getArguments().get(1).getName());		
 	}
 		
+	@Test 
+	public void testSecurityJarVerification1() throws AnnotationProcessorException, ClassNotFoundException, IOException, InstantiationException, IllegalAccessException {
+		// given jar verification is turned on
+		System.setProperty(DeecoProperties.VERIFY_JARS, "true");
+		
+		File jar = new File("test/cz/cuni/mff/d3s/deeco/annotations/processor/input/samples/CorrectUnsigned.jar");
+		URLClassLoader classLoader = new URLClassLoader(new URL[] { jar.toURI().toURL() }, getClass().getClassLoader());
+		
+		// given component is assigned roles but its jar is not signed
+		RuntimeMetadata model = factory.createRuntimeMetadata(); 
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		Object input = classLoader.loadClass("cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectSigned").newInstance();
+		
+		// then exception is thrown
+		exception.expect(AnnotationProcessorException.class);
+		exception.expectMessage("is missing signature attributes.");
+		
+		// when process() is called
+		processor.process(input);
+		
+		// revert to default
+		System.setProperty(DeecoProperties.VERIFY_JARS, "false");
+		classLoader.close();		
+	}
+	
+	@Test 
+	public void testSecurityJarVerification2() throws AnnotationProcessorException, ClassNotFoundException, IOException, InstantiationException, IllegalAccessException {
+		// given jar verification is turned on
+		System.setProperty(DeecoProperties.VERIFY_JARS, "true");
+		
+		// JAR signed using "ca" certificate, from "keystore/keystore.jks". Keystore password is blank, certificate password is "Pa55w0rd".
+		File jar = new File("test/cz/cuni/mff/d3s/deeco/annotations/processor/input/samples/CorrectSigned.jar");
+		URLClassLoader classLoader = new URLClassLoader(new URL[] { jar.toURI().toURL() }, getClass().getClassLoader());
+		
+		// given component is assigned roles but its jar is not signed
+		RuntimeMetadata model = factory.createRuntimeMetadata(); 
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		Object input = classLoader.loadClass("cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectSigned").newInstance();
+		
+		// when process() is called
+		processor.process(input);
+		
+		// then annotations are parsed correctly
+		assertEquals(1, model.getComponentInstances().size());
+		
+		classLoader.close();		
+	}
+	
+	@Test 
+	public void testSecurityJarVerification3() throws AnnotationProcessorException, ClassNotFoundException, IOException, InstantiationException, IllegalAccessException {
+		// given jar verification is turned on
+		System.setProperty(DeecoProperties.VERIFY_JARS, "true");
+		
+		// signed but not with the right certificate
+		File jar = new File("test/cz/cuni/mff/d3s/deeco/annotations/processor/input/samples/WrongSigned.jar");
+		URLClassLoader classLoader = new URLClassLoader(new URL[] { jar.toURI().toURL() }, getClass().getClassLoader());
+		
+		RuntimeMetadata model = factory.createRuntimeMetadata(); 
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		Object input = classLoader.loadClass("cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectSigned").newInstance();
+		
+		// then exception is thrown
+		exception.expect(AnnotationProcessorException.class);	
+		exception.expectMessage("not signed by CA certificate.");
+		
+		// when process() is called
+		processor.process(input);
+		
+		classLoader.close();		
+	}
+	
 	@Test 
 	public void testCloningOfSecurityAnnotations() throws AnnotationProcessorException {
 		// given component with security annotations is processed by the annotations processor

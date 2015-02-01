@@ -1,11 +1,14 @@
 package cz.cuni.mff.d3s.deeco.annotations.processor;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
+import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,10 +19,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 
 import com.rits.cloning.Cloner;
 
+import cz.cuni.mff.d3s.deeco.DeecoProperties;
 import cz.cuni.mff.d3s.deeco.annotations.Allow;
 import cz.cuni.mff.d3s.deeco.annotations.CommunicationBoundary;
 import cz.cuni.mff.d3s.deeco.annotations.Component;
@@ -82,6 +89,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
 import cz.cuni.mff.d3s.deeco.network.GenericCommunicationBoundaryPredicate;
 import cz.cuni.mff.d3s.deeco.security.ModelSecurityValidator;
+import cz.cuni.mff.d3s.deeco.security.SecurityKeyManagerImpl;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper;
 
 /**
@@ -158,6 +166,9 @@ public class AnnotationProcessor {
 	KnowledgeManagerFactory knowledgeManagerFactory;
 	
 	Cloner cloner;
+	
+	final boolean verifySignaturesOnSecuredComponents;
+	
 	/**
 	 * Initializes the processor with the given model factory (convenience
 	 * method when no extensions are provided). All the model elements produced
@@ -196,6 +207,7 @@ public class AnnotationProcessor {
 		this.extensions = extensions;
 		this.knowledgeManagerFactory = knowledgeMangerFactory;	
 		this.cloner = new Cloner();
+		this.verifySignaturesOnSecuredComponents = Boolean.getBoolean(DeecoProperties.VERIFY_JARS);
 	}
 	
 	/**
@@ -422,13 +434,18 @@ public class AnnotationProcessor {
 			}
 			
 			Set<Class<?>> roles = new HashSet<>();
-			for (HasRole role : clazz.getDeclaredAnnotationsByType(HasRole.class)) {
+			HasRole[] rolesAnnotations = clazz.getDeclaredAnnotationsByType(HasRole.class);
+			for (HasRole role : rolesAnnotations) {
 				if (roles.contains(role.value())) {
 					throw new AnnotationProcessorException("The same role cannot be assigned multiply to a component.");
 				}
 				SecurityRole securityRole = createRoleFromClassDefinition(role.value(), km, SECURITY_ARGUMENT_PATH_VALIDATION.VALIDATE, SECURITY_ROLE_LOAD_TYPE.RECURSIVE);
 				componentInstance.getRoles().add(securityRole);
 				roles.add(role.value());
+			}
+			
+			if (rolesAnnotations.length > 0 && verifySignaturesOnSecuredComponents) {
+				checkCASignature(clazz);
 			}
 			
 			// check for data compromise
@@ -440,12 +457,70 @@ public class AnnotationProcessor {
 			callExtensions(ParsingEvent.ON_COMPONENT_CREATION, componentInstance, getUnknownAnnotations(clazz));
 			
 		} catch (KnowledgeUpdateException | AnnotationProcessorException
-				| ParseException | NoSuchFieldException e) {
+				| ParseException | NoSuchFieldException | IOException e) {
 			String msg = Component.class.getSimpleName() + ": "
 					+ componentInstance.getName() + "->" + e.getMessage();
 			throw new AnnotationProcessorException(msg, e);
 		}
 		return componentInstance;
+	}
+
+	/**
+	 * Verifies signature on the JAR the given class comes from.
+	 * @param clazz
+	 * @throws AnnotationProcessorException 
+	 * @throws IOException 
+	 */
+	private void checkCASignature(Class<?> clazz) throws AnnotationProcessorException, IOException {
+		if (clazz.getProtectionDomain() == null) throw new AnnotationProcessorException("Class " + clazz + " is not associated with a protection domain.");
+		if (clazz.getProtectionDomain().getCodeSource() == null) throw new AnnotationProcessorException("Class " + clazz + " is not associated with a code source.");
+		if (clazz.getProtectionDomain().getCodeSource().getLocation() == null) throw new AnnotationProcessorException("Class " + clazz + " is not associated with a JAR file.");
+		
+		// get the location of the JAR file
+		String jarPath = clazz.getProtectionDomain().getCodeSource().getLocation().getFile();
+		
+		JarFile jar = null;
+
+		try {
+			jar = new JarFile(jarPath);
+			// this will throw exception if the contents of the JAR file have been tampered with
+			// it will succeed if not signature is present
+			InputStream is = jar.getInputStream(jar.getEntry("META-INF/MANIFEST.MF"));
+			Manifest man = new Manifest(is);
+			is.close();
+			
+			// get the path to the class within the JAR
+			// even on Windows, / is used as delimiter
+			String classFileName = clazz.getName().replace(".", "/") + ".class";
+			Attributes attributes = man.getEntries().get(classFileName);
+			if (attributes == null) throw new AnnotationProcessorException("Class " + clazz + " is missing signature attributes.");
+			
+			Optional<Object> optionalDigestKey = attributes.keySet().stream().filter(key -> key.toString().endsWith("-Digest")).findFirst();
+			if (!optionalDigestKey.isPresent()) throw new AnnotationProcessorException("Class " + clazz + " is missing a signature.");
+			
+			// load certificates from JAR
+			Certificate[] certificates = clazz.getProtectionDomain().getCodeSource().getCertificates();
+			if (certificates == null || certificates.length == 0) throw new AnnotationProcessorException("JAR from which the class " + clazz + " was loaded is missing certificates.");
+			
+			
+			// verify that at least one was authorized by trusted authority
+			boolean signatureOk = Arrays.stream(certificates).anyMatch(certificate -> 
+			{
+				boolean ok;
+				try {	
+					certificate.verify(SecurityKeyManagerImpl.getInstance().getAuthorityPublicKey());
+					ok = true;
+				} catch (Exception e) {
+					ok = false;
+				}
+				return ok;
+			}
+			);
+			
+			if (!signatureOk) throw new AnnotationProcessorException("JAR from which the class " + clazz + " was loaded is not signed by CA certificate.");
+		} finally {
+			if (jar != null) jar.close();
+		}
 	}
 
 	/**
@@ -695,11 +770,9 @@ public class AnnotationProcessor {
 		}		
 	}
 	
+	@SuppressWarnings("unused")
 	private boolean canSerialize(Object value) {		
-		try {
-			int x = 5;
-			Serializable a = (Serializable)x;
-			@SuppressWarnings("unused")
+		try {			
 			Serializable s = (Serializable)value;
 			return true;
 		} catch (Exception e) {
