@@ -796,7 +796,15 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		if (!KnowledgePathHelper.isAbsolutePath(knowledgePath)) {
 			throw new IllegalArgumentException("Only absolute knowledge paths can be checked for locking.");
 		}
-		return this.lockedKnowledgePaths.contains(knowledgePath);
+		
+		boolean locked = false;
+		KnowledgePath modifiablePath = KnowledgePathHelper.cloneKnowledgePath(knowledgePath);
+		
+		while ( !(locked = lockedKnowledgePaths.contains(modifiablePath)) && modifiablePath.getNodes().size() > 0) {
+			modifiablePath.getNodes().remove(modifiablePath.getNodes().size() - 1);
+		}
+		
+		return locked;
 	}
 
 	/* (non-Javadoc)
