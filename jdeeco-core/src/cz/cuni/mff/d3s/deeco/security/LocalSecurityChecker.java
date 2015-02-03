@@ -15,6 +15,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.AccessRights;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
@@ -76,22 +77,24 @@ public class LocalSecurityChecker {
 		Collection<Parameter> formalParamsOfMembership = ensembleController.getEnsembleDefinition().getMembership().getParameters();
 		Collection<Parameter> formalParamsOfExchange = ensembleController.getEnsembleDefinition().getKnowledgeExchange().getParameters();
 		
+		List<KnowledgePath> membershipInputPaths = formalParamsOfMembership.stream()
+				.filter(parameter -> parameter.getKind() == ParameterKind.IN || parameter.getKind() == ParameterKind.INOUT)
+				.map(Parameter::getKnowledgePath)
+				.collect(Collectors.toList());
+		List<KnowledgePath> exchangeInputPaths = formalParamsOfExchange.stream()
+				.filter(parameter -> parameter.getKind() == ParameterKind.IN || parameter.getKind() == ParameterKind.INOUT)
+				.map(Parameter::getKnowledgePath)
+				.collect(Collectors.toList());
+		
 		if (kmContainer.hasReplica(shadowKnowledgeManager.getId())) {
 			// if the shadow knowledge manager belongs to a remote component, security is already guaranteed with data encryption in DefaultKnowledgeDataManager
-			canAccess = knowledgePresent(localRole, formalParamsOfMembership.stream().map(Parameter::getKnowledgePath).collect(Collectors.toList()), shadowKnowledgeManager) 
-					 && knowledgePresent(localRole, formalParamsOfExchange.stream().map(Parameter::getKnowledgePath).collect(Collectors.toList()), shadowKnowledgeManager);
+			canAccess = knowledgePresent(localRole, membershipInputPaths, shadowKnowledgeManager) 
+					 && knowledgePresent(localRole, exchangeInputPaths, shadowKnowledgeManager);
 		} else {						
-			Collection<KnowledgePath> knowledgePathsFromMembership = formalParamsOfMembership.stream()
-					.filter(param -> param.getKind() == ParameterKind.IN || param.getKind() == ParameterKind.INOUT)
-					.map(param -> param.getKnowledgePath()).collect(Collectors.toList());
-			Collection<KnowledgePath> knowledgePathsFromExchange = formalParamsOfExchange.stream()
-					.filter(param -> param.getKind() == ParameterKind.IN || param.getKind() == ParameterKind.INOUT)
-					.map(param -> param.getKnowledgePath()).collect(Collectors.toList());
-			
-			canAccess = knowledgePresent(localRole, formalParamsOfMembership.stream().map(Parameter::getKnowledgePath).collect(Collectors.toList()), shadowKnowledgeManager) 
-					 && knowledgePresent(localRole, formalParamsOfExchange.stream().map(Parameter::getKnowledgePath).collect(Collectors.toList()), shadowKnowledgeManager) 
-					 && canAccessKnowledge(localRole, knowledgePathsFromMembership, shadowKnowledgeManager) 
-					 && canAccessKnowledge(localRole, knowledgePathsFromExchange, shadowKnowledgeManager);					
+			canAccess = knowledgePresent(localRole, membershipInputPaths, shadowKnowledgeManager) 
+					 && knowledgePresent(localRole, exchangeInputPaths, shadowKnowledgeManager) 
+					 && canAccessKnowledge(localRole, formalParamsOfMembership, shadowKnowledgeManager) 
+					 && canAccessKnowledge(localRole, formalParamsOfExchange, shadowKnowledgeManager);					
 		}		
 		
 		if (canAccess) {
@@ -114,21 +117,21 @@ public class LocalSecurityChecker {
 	 * access them.
 	 * @param localRole
 	 * 			the role of the local component (member/coord)
-	 * @param paths
-	 * 			the knowledge paths
+	 * @param parameters
+	 * 			the method parameters
 	 * @param shadowKnowledgeManager
 	 * 			the shadow knowledge manager
 	 * @return true if the local component has such roles that allow it to access the knowledge
 	 */
-	private boolean canAccessKnowledge(PathRoot localRole, Collection<KnowledgePath> paths, ReadOnlyKnowledgeManager shadowKnowledgeManager) {
+	private boolean canAccessKnowledge(PathRoot localRole, Collection<Parameter> parameters, ReadOnlyKnowledgeManager shadowKnowledgeManager) {
 		KnowledgeManager localKnowledgeManager = ensembleController.getComponentInstance().getKnowledgeManager();
 		
 		boolean canAccessAll = true;
 		
 		// verify each of the paths
-		for (KnowledgePath kp : paths) {					
+		for (Parameter parameter : parameters) {					
 			Map<SecurityTag, ReadOnlyKnowledgeManager> securityTagManager = new HashMap<>();
-			SecurityTagCollection securityTagCollection = SecurityTagCollection.getSecurityTags(localRole, kp, localKnowledgeManager, shadowKnowledgeManager, securityTagManager);
+			SecurityTagCollection securityTagCollection = SecurityTagCollection.getSecurityTags(localRole, parameter.getKnowledgePath(), localKnowledgeManager, shadowKnowledgeManager, securityTagManager);
 			
 			boolean canAccessPath = false;
 			for (List<SecurityTag> securityTags : securityTagCollection) {
@@ -137,7 +140,7 @@ public class LocalSecurityChecker {
 					if (securityTag instanceof LocalKnowledgeTag) {
 						continue;
 					}
-					canAccessAllConditions = canAccessAllConditions && canAccessTag(localRole, kp, (KnowledgeSecurityTag) securityTag, localKnowledgeManager, shadowKnowledgeManager, securityTagManager);
+					canAccessAllConditions = canAccessAllConditions && canAccessTag(localRole, parameter, (KnowledgeSecurityTag) securityTag, localKnowledgeManager, shadowKnowledgeManager, securityTagManager);
 				}
 				canAccessPath = canAccessPath || canAccessAllConditions;
 				
@@ -187,8 +190,12 @@ public class LocalSecurityChecker {
 	/**
 	 * Checks whether the local component has role to access the given security tag.
 	 */
-	private boolean canAccessTag(PathRoot localRole, KnowledgePath securedKnowledgePath, KnowledgeSecurityTag securityTag, ReadOnlyKnowledgeManager localKnowledgeManager, ReadOnlyKnowledgeManager shadowKnowledgeManager, 
+	private boolean canAccessTag(PathRoot localRole, Parameter securedParameter, KnowledgeSecurityTag securityTag, ReadOnlyKnowledgeManager localKnowledgeManager, ReadOnlyKnowledgeManager shadowKnowledgeManager, 
 			Map<SecurityTag, ReadOnlyKnowledgeManager> securityTagManager) {
+		if (!accessRightsMatched(securedParameter, securityTag)) {
+			return false;
+		}
+		
 		ReadOnlyKnowledgeManager accessingKnowledgeManager, protectingKnowledgeManager;
 		
 		if (securityTagManager.get(securityTag) == localKnowledgeManager) {
@@ -209,9 +216,9 @@ public class LocalSecurityChecker {
 		try {
 			KnowledgePathAndRoot pathAndRoot;
 			if (localRole == PathRoot.COORDINATOR) {
-				pathAndRoot = KnowledgePathHelper.getAbsoluteStrippedPath(securedKnowledgePath, localKnowledgeManager, shadowKnowledgeManager);
+				pathAndRoot = KnowledgePathHelper.getAbsoluteStrippedPath(securedParameter.getKnowledgePath(), localKnowledgeManager, shadowKnowledgeManager);
 			} else {
-				pathAndRoot = KnowledgePathHelper.getAbsoluteStrippedPath(securedKnowledgePath, shadowKnowledgeManager, localKnowledgeManager);
+				pathAndRoot = KnowledgePathHelper.getAbsoluteStrippedPath(securedParameter.getKnowledgePath(), shadowKnowledgeManager, localKnowledgeManager);
 			}
 			
 			tagName = securityTag.getRequiredRole().getRoleName();
@@ -219,7 +226,7 @@ public class LocalSecurityChecker {
 		} catch (KnowledgeNotFoundException e) {	
 			return false;
 		}
-		 
+		
 		// try each of the roles
 		for (SecurityRole role : localRoles) {
 			try {
@@ -232,6 +239,20 @@ public class LocalSecurityChecker {
 			}	
 		}
 		return canAccessTag;
+	}
+
+	/** 
+	 * Checks if the parameter kind does not violate security access rights 
+	 */
+	private boolean accessRightsMatched(Parameter securedParameter, KnowledgeSecurityTag securityTag) {
+		if (securityTag.getAccessRights() == AccessRights.READ_WRITE) {
+			return true;
+		} else if (securityTag.getAccessRights() == AccessRights.READ && securedParameter.getKind() == ParameterKind.IN) {
+			return true;
+		} else if (securityTag.getAccessRights() == AccessRights.WRITE && securedParameter.getKind() == ParameterKind.OUT) {
+			return true;
+		}
+		return false;
 	}
 	
 }

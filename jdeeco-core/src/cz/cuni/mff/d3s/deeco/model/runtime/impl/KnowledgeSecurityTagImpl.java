@@ -2,6 +2,7 @@
  */
 package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 
+import cz.cuni.mff.d3s.deeco.model.runtime.api.AccessRights;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
@@ -19,6 +20,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * The following features are implemented:
  * <ul>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.KnowledgeSecurityTagImpl#getRequiredRole <em>Required Role</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.KnowledgeSecurityTagImpl#getAccessRights <em>Access Rights</em>}</li>
  * </ul>
  * </p>
  *
@@ -34,6 +36,25 @@ public class KnowledgeSecurityTagImpl extends SecurityTagImpl implements Knowled
 	 * @ordered
 	 */
 	protected SecurityRole requiredRole;
+
+	/**
+	 * The default value of the '{@link #getAccessRights() <em>Access Rights</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getAccessRights()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final AccessRights ACCESS_RIGHTS_EDEFAULT = AccessRights.READ_WRITE;
+	/**
+	 * The cached value of the '{@link #getAccessRights() <em>Access Rights</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getAccessRights()
+	 * @generated
+	 * @ordered
+	 */
+	protected AccessRights accessRights = ACCESS_RIGHTS_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -102,6 +123,27 @@ public class KnowledgeSecurityTagImpl extends SecurityTagImpl implements Knowled
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public AccessRights getAccessRights() {
+		return accessRights;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setAccessRights(AccessRights newAccessRights) {
+		AccessRights oldAccessRights = accessRights;
+		accessRights = newAccessRights == null ? ACCESS_RIGHTS_EDEFAULT : newAccessRights;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.KNOWLEDGE_SECURITY_TAG__ACCESS_RIGHTS, oldAccessRights, accessRights));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -121,6 +163,8 @@ public class KnowledgeSecurityTagImpl extends SecurityTagImpl implements Knowled
 		switch (featureID) {
 			case RuntimeMetadataPackage.KNOWLEDGE_SECURITY_TAG__REQUIRED_ROLE:
 				return getRequiredRole();
+			case RuntimeMetadataPackage.KNOWLEDGE_SECURITY_TAG__ACCESS_RIGHTS:
+				return getAccessRights();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -137,6 +181,9 @@ public class KnowledgeSecurityTagImpl extends SecurityTagImpl implements Knowled
 			case RuntimeMetadataPackage.KNOWLEDGE_SECURITY_TAG__REQUIRED_ROLE:
 				setRequiredRole((SecurityRole)newValue);
 				return;
+			case RuntimeMetadataPackage.KNOWLEDGE_SECURITY_TAG__ACCESS_RIGHTS:
+				setAccessRights((AccessRights)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -152,6 +199,9 @@ public class KnowledgeSecurityTagImpl extends SecurityTagImpl implements Knowled
 			case RuntimeMetadataPackage.KNOWLEDGE_SECURITY_TAG__REQUIRED_ROLE:
 				setRequiredRole((SecurityRole)null);
 				return;
+			case RuntimeMetadataPackage.KNOWLEDGE_SECURITY_TAG__ACCESS_RIGHTS:
+				setAccessRights(ACCESS_RIGHTS_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -166,8 +216,26 @@ public class KnowledgeSecurityTagImpl extends SecurityTagImpl implements Knowled
 		switch (featureID) {
 			case RuntimeMetadataPackage.KNOWLEDGE_SECURITY_TAG__REQUIRED_ROLE:
 				return requiredRole != null;
+			case RuntimeMetadataPackage.KNOWLEDGE_SECURITY_TAG__ACCESS_RIGHTS:
+				return accessRights != ACCESS_RIGHTS_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String toString() {
+		if (eIsProxy()) return super.toString();
+
+		StringBuffer result = new StringBuffer(super.toString());
+		result.append(" (accessRights: ");
+		result.append(accessRights);
+		result.append(')');
+		return result.toString();
 	}
 
 } //KnowledgeSecurityTagImpl

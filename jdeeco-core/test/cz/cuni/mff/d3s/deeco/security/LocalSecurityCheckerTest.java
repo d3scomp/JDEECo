@@ -22,6 +22,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry;
 import cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.AbsoluteSecurityRoleArgument;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.AccessRights;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ContextKind;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
@@ -94,7 +95,7 @@ public class LocalSecurityCheckerTest {
 		param1 = factory.createParameter();
 		param2 = factory.createParameter();
 		param3 = factory.createParameter();
-		param4 = factory.createParameter();
+		param4 = factory.createParameter();		
 		param_error = factory.createParameter();
 	
 		param1.setKnowledgePath(RuntimeModelHelper.createKnowledgePath("<C>", "field1_oc"));
@@ -261,6 +262,37 @@ public class LocalSecurityCheckerTest {
 		
 		// when checkSecurity() as member is called
 		assertTrue(target.checkSecurity(PathRoot.MEMBER, shadowKnowledgeManager));				
+	}
+	
+	@Test
+	public void checkSecurity_localTest3() throws TaskInvocationException, KnowledgeUpdateException {
+		EnsembleDefinition ensembleDefinition = factory.createEnsembleDefinition();
+		ensembleDefinition.setMembership(factory.createCondition());
+		ensembleDefinition.getMembership().getParameters().add(param4);
+		ensembleDefinition.setKnowledgeExchange(factory.createExchange());
+		when(ensembleController.getEnsembleDefinition()).thenReturn(ensembleDefinition);
+		
+		KnowledgeSecurityTag roleBTagShadow = createSecurityTag("roleB");	
+		
+		// set readonly access
+		roleBTagShadow.setAccessRights(AccessRights.READ);
+		KnowledgeSecurityTag roleCTagShadow = createSecurityTag("roleC");
+		
+		shadowKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("map"), Arrays.asList(roleCTagShadow));
+		shadowKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("mapKey"), Arrays.asList(roleBTagShadow));
+		
+		shadowKnowledgeManager.update(createKnowledge());
+		
+		SecurityRole roleB = factory.createSecurityRole();
+		roleB.setRoleName("roleB");
+		localComponent.getRoles().add(roleB);
+
+		SecurityRole roleC2 = factory.createSecurityRole();
+		roleC2.setRoleName("roleC");
+		localComponent.getRoles().add(roleC2);
+		
+		// when checkSecurity() as member is called
+		assertFalse(target.checkSecurity(PathRoot.MEMBER, shadowKnowledgeManager));				
 	}
 	
 	@Test

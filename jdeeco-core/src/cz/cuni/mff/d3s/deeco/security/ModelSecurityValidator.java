@@ -14,6 +14,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.AbsoluteSecurityRoleArgument;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.AccessRights;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.BlankSecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
@@ -315,11 +316,23 @@ public class ModelSecurityValidator {
 				roleMatched = roleMatched || (namesMatch && argumentsMatch);
 			}
 			
-			return roleMatched;
+			return roleMatched && accessRightsMatched(inKnowledgeTag, outKnowledgeTag);
 		}
 		return false;
 	}
 
+	/** 
+	 * Checks if the parameter kind does not violate security access rights 
+	 */
+	private boolean accessRightsMatched(KnowledgeSecurityTag inTag, KnowledgeSecurityTag outTag) {
+		if (inTag.getAccessRights() == outTag.getAccessRights()) {
+			return true;
+		} else if ((outTag.getAccessRights() == AccessRights.READ || outTag.getAccessRights() == AccessRights.WRITE) && (inTag.getAccessRights() == AccessRights.READ_WRITE)) {
+			return true;
+		}
+		return false;
+	}
+	
 	private boolean satisfies(SecurityRoleArgument inArgument, SecurityRoleArgument outArgument) {
 		boolean namesMatch = inArgument.getName().equals(outArgument.getName());
 		

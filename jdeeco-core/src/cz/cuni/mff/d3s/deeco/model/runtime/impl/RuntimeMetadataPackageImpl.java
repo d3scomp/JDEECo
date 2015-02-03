@@ -6,6 +6,7 @@ import cz.cuni.mff.d3s.deeco.integrity.RatingsManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.AbsoluteSecurityRoleArgument;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.AccessRights;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.BlankSecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
@@ -271,6 +272,13 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * @generated
 	 */
 	private EEnum contextKindEEnum = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EEnum accessRightsEEnum = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -931,6 +939,15 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getKnowledgeSecurityTag_AccessRights() {
+		return (EAttribute)knowledgeSecurityTagEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getSecurityRole() {
 		return securityRoleEClass;
 	}
@@ -1086,6 +1103,15 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 */
 	public EEnum getContextKind() {
 		return contextKindEEnum;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EEnum getAccessRights() {
+		return accessRightsEEnum;
 	}
 
 	/**
@@ -1252,6 +1278,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 
 		knowledgeSecurityTagEClass = createEClass(KNOWLEDGE_SECURITY_TAG);
 		createEReference(knowledgeSecurityTagEClass, KNOWLEDGE_SECURITY_TAG__REQUIRED_ROLE);
+		createEAttribute(knowledgeSecurityTagEClass, KNOWLEDGE_SECURITY_TAG__ACCESS_RIGHTS);
 
 		securityRoleEClass = createEClass(SECURITY_ROLE);
 		createEReference(securityRoleEClass, SECURITY_ROLE__CONSISTS_OF);
@@ -1281,6 +1308,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		// Create enums
 		parameterKindEEnum = createEEnum(PARAMETER_KIND);
 		contextKindEEnum = createEEnum(CONTEXT_KIND);
+		accessRightsEEnum = createEEnum(ACCESS_RIGHTS);
 
 		// Create data types
 		methodEDataType = createEDataType(METHOD);
@@ -1418,6 +1446,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 
 		initEClass(knowledgeSecurityTagEClass, KnowledgeSecurityTag.class, "KnowledgeSecurityTag", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getKnowledgeSecurityTag_RequiredRole(), this.getSecurityRole(), null, "requiredRole", null, 1, 1, KnowledgeSecurityTag.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getKnowledgeSecurityTag_AccessRights(), this.getAccessRights(), "accessRights", null, 1, 1, KnowledgeSecurityTag.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(securityRoleEClass, SecurityRole.class, "SecurityRole", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getSecurityRole_ConsistsOf(), this.getSecurityRole(), null, "consistsOf", null, 0, -1, SecurityRole.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1454,6 +1483,11 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		initEEnum(contextKindEEnum, ContextKind.class, "ContextKind");
 		addEEnumLiteral(contextKindEEnum, ContextKind.LOCAL);
 		addEEnumLiteral(contextKindEEnum, ContextKind.SHADOW);
+
+		initEEnum(accessRightsEEnum, AccessRights.class, "AccessRights");
+		addEEnumLiteral(accessRightsEEnum, AccessRights.READ_WRITE);
+		addEEnumLiteral(accessRightsEEnum, AccessRights.READ);
+		addEEnumLiteral(accessRightsEEnum, AccessRights.WRITE);
 
 		// Initialize data types
 		initEDataType(methodEDataType, Method.class, "Method", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);

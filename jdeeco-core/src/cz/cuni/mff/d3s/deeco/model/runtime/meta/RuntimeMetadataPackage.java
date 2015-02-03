@@ -1107,13 +1107,22 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int KNOWLEDGE_SECURITY_TAG__REQUIRED_ROLE = SECURITY_TAG_FEATURE_COUNT + 0;
 
 	/**
+	 * The feature id for the '<em><b>Access Rights</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int KNOWLEDGE_SECURITY_TAG__ACCESS_RIGHTS = SECURITY_TAG_FEATURE_COUNT + 1;
+
+	/**
 	 * The number of structural features of the '<em>Knowledge Security Tag</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int KNOWLEDGE_SECURITY_TAG_FEATURE_COUNT = SECURITY_TAG_FEATURE_COUNT + 1;
+	int KNOWLEDGE_SECURITY_TAG_FEATURE_COUNT = SECURITY_TAG_FEATURE_COUNT + 2;
 
 	/**
 	 * The number of operations of the '<em>Knowledge Security Tag</em>' class.
@@ -1476,6 +1485,16 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int CONTEXT_KIND = 30;
 
 	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.AccessRights <em>Access Rights</em>}' enum.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.AccessRights
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getAccessRights()
+	 * @generated
+	 */
+	int ACCESS_RIGHTS = 31;
+
+	/**
 	 * The meta object id for the '<em>Method</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1483,7 +1502,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getMethod()
 	 * @generated
 	 */
-	int METHOD = 31;
+	int METHOD = 32;
 
 	/**
 	 * The meta object id for the '<em>Knowledge Manager</em>' data type.
@@ -1493,7 +1512,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getKnowledgeManager()
 	 * @generated
 	 */
-	int KNOWLEDGE_MANAGER = 32;
+	int KNOWLEDGE_MANAGER = 33;
 
 	/**
 	 * The meta object id for the '<em>Shadow Knowledge Manager Registry</em>' data type.
@@ -1503,7 +1522,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getShadowKnowledgeManagerRegistry()
 	 * @generated
 	 */
-	int SHADOW_KNOWLEDGE_MANAGER_REGISTRY = 33;
+	int SHADOW_KNOWLEDGE_MANAGER_REGISTRY = 34;
 
 	/**
 	 * The meta object id for the '<em>Communication Boundary</em>' data type.
@@ -1513,7 +1532,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getCommunicationBoundary()
 	 * @generated
 	 */
-	int COMMUNICATION_BOUNDARY = 34;
+	int COMMUNICATION_BOUNDARY = 35;
 
 
 	/**
@@ -1524,7 +1543,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getRatingsManager()
 	 * @generated
 	 */
-	int RATINGS_MANAGER = 35;
+	int RATINGS_MANAGER = 36;
 
 
 	/**
@@ -2191,6 +2210,17 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EReference getKnowledgeSecurityTag_RequiredRole();
 
 	/**
+	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag#getAccessRights <em>Access Rights</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Access Rights</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag#getAccessRights()
+	 * @see #getKnowledgeSecurityTag()
+	 * @generated
+	 */
+	EAttribute getKnowledgeSecurityTag_AccessRights();
+
+	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole <em>Security Role</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2377,6 +2407,16 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 */
 	EEnum getContextKind();
+
+	/**
+	 * Returns the meta object for enum '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.AccessRights <em>Access Rights</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for enum '<em>Access Rights</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.AccessRights
+	 * @generated
+	 */
+	EEnum getAccessRights();
 
 	/**
 	 * Returns the meta object for the containment reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole#getConsistsOf <em>Consists Of</em>}'.
@@ -3006,6 +3046,14 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EReference KNOWLEDGE_SECURITY_TAG__REQUIRED_ROLE = eINSTANCE.getKnowledgeSecurityTag_RequiredRole();
 
 		/**
+		 * The meta object literal for the '<em><b>Access Rights</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute KNOWLEDGE_SECURITY_TAG__ACCESS_RIGHTS = eINSTANCE.getKnowledgeSecurityTag_AccessRights();
+
+		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.SecurityRoleImpl <em>Security Role</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -3168,6 +3216,16 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * @generated
 		 */
 		EEnum CONTEXT_KIND = eINSTANCE.getContextKind();
+
+		/**
+		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.AccessRights <em>Access Rights</em>}' enum.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.AccessRights
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getAccessRights()
+		 * @generated
+		 */
+		EEnum ACCESS_RIGHTS = eINSTANCE.getAccessRights();
 
 		/**
 		 * The meta object literal for the '<em><b>Consists Of</b></em>' containment reference list feature.

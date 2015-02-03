@@ -39,6 +39,12 @@ public class KnowledgeSecurityTagExt extends KnowledgeSecurityTagImpl implements
 		} else if (!requiredRole.equals(other.requiredRole))
 			return false;
 				
+		if (accessRights == null) {
+			if (other.accessRights != null)
+				return false;
+		} else if (!accessRights.equals(other.accessRights))
+			return false;
+		
 		return true;
 	}
 	
@@ -47,12 +53,13 @@ public class KnowledgeSecurityTagExt extends KnowledgeSecurityTagImpl implements
 		final int prime = 61;
 		int result = 1;
 		result = prime * result + ((requiredRole == null) ? 0 : requiredRole.hashCode());
+		result = prime * result + ((accessRights == null) ? 0 : accessRights.hashCode());
 		return result;
 	}
 	
 	@Override
 	public String toString() {
-		return String.format("Knowledge Security Tag [role=%s]", requiredRole);
+		return String.format("Knowledge Security Tag [role=%s, access=%s]", requiredRole, accessRights);
 	}
 	
 	private void writeObject(ObjectOutputStream out) throws IOException {
@@ -75,6 +82,7 @@ public class KnowledgeSecurityTagExt extends KnowledgeSecurityTagImpl implements
 			KnowledgeSecurityTag tag = (KnowledgeSecurityTag) res.getContents().get(0);
 			
 			setRequiredRole(tag.getRequiredRole());
+			setAccessRights(tag.getAccessRights());
 		} catch (Exception e) {
 			throw e;
 		}

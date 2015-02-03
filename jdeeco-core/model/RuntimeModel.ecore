@@ -118,6 +118,8 @@
   <eClassifiers xsi:type="ecore:EClass" name="KnowledgeSecurityTag" eSuperTypes="#//SecurityTag">
     <eStructuralFeatures xsi:type="ecore:EReference" name="requiredRole" lowerBound="1"
         eType="#//SecurityRole" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="accessRights" lowerBound="1"
+        eType="#//AccessRights"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="SecurityRole">
     <eStructuralFeatures xsi:type="ecore:EReference" name="consistsOf" upperBound="-1"
@@ -152,5 +154,10 @@
   <eClassifiers xsi:type="ecore:EEnum" name="ContextKind">
     <eLiterals name="LOCAL"/>
     <eLiterals name="SHADOW" value="1"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="AccessRights">
+    <eLiterals name="READ_WRITE" value="2"/>
+    <eLiterals name="READ"/>
+    <eLiterals name="WRITE" value="1"/>
   </eClassifiers>
 </ecore:EPackage>

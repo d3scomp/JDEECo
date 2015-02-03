@@ -763,6 +763,7 @@ public class AnnotationProcessor {
 				
 				KnowledgeSecurityTag tag = factory.createKnowledgeSecurityTag();
 				tag.setRequiredRole(createRoleFromClassDefinition(allow.value(), km, SECURITY_ARGUMENT_PATH_VALIDATION.VALIDATE, SECURITY_ROLE_LOAD_TYPE.RECURSIVE));
+				tag.setAccessRights(allow.accessRights());
 				km.addSecurityTag(kp, tag);			
 				roleClasses.add(allow.value());				
 			}

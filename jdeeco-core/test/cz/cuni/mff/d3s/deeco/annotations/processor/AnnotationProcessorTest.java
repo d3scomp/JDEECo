@@ -38,6 +38,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.AbsoluteSecurityRoleArgument;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.AccessRights;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.BlankSecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
@@ -126,7 +127,9 @@ public class AnnotationProcessorTest {
 		List<KnowledgeSecurityTag> capacitySecurityTags = km.getKnowledgeSecurityTags(RuntimeModelHelper.createPathNodeField("capacity"));
 		assertEquals(2, capacitySecurityTags.size());
 		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role1.class.getName(), capacitySecurityTags.get(0).getRequiredRole().getRoleName());
+		assertEquals(AccessRights.READ, capacitySecurityTags.get(0).getAccessRights());
 		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role3.class.getName(), capacitySecurityTags.get(1).getRequiredRole().getRoleName());
+		assertEquals(AccessRights.WRITE, capacitySecurityTags.get(1).getAccessRights());
 		assertEquals(1, capacitySecurityTags.get(0).getRequiredRole().getArguments().size());
 		assertEquals(0, capacitySecurityTags.get(1).getRequiredRole().getArguments().size());
 		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role3.class.getName(), capacitySecurityTags.get(0).getRequiredRole().getAliasRole().getRoleName());
@@ -135,6 +138,7 @@ public class AnnotationProcessorTest {
 		List<KnowledgeSecurityTag> timeSecurityTags = km.getKnowledgeSecurityTags(RuntimeModelHelper.createPathNodeField("time"));
 		assertEquals(1, timeSecurityTags.size());
 		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role2.class.getName(), timeSecurityTags.get(0).getRequiredRole().getRoleName());
+		assertEquals(AccessRights.READ_WRITE, timeSecurityTags.get(0).getAccessRights());
 		assertEquals(5, timeSecurityTags.get(0).getRequiredRole().getArguments().size());
 		
 		PathSecurityRoleArgument pathArgument = (PathSecurityRoleArgument)timeSecurityTags.get(0).getRequiredRole().getArguments().get(0);

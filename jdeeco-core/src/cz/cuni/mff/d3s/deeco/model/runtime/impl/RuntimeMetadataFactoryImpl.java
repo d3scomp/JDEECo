@@ -111,6 +111,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 				return createParameterKindFromString(eDataType, initialValue);
 			case RuntimeMetadataPackage.CONTEXT_KIND:
 				return createContextKindFromString(eDataType, initialValue);
+			case RuntimeMetadataPackage.ACCESS_RIGHTS:
+				return createAccessRightsFromString(eDataType, initialValue);
 			case RuntimeMetadataPackage.METHOD:
 				return createMethodFromString(eDataType, initialValue);
 			case RuntimeMetadataPackage.KNOWLEDGE_MANAGER:
@@ -138,6 +140,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 				return convertParameterKindToString(eDataType, instanceValue);
 			case RuntimeMetadataPackage.CONTEXT_KIND:
 				return convertContextKindToString(eDataType, instanceValue);
+			case RuntimeMetadataPackage.ACCESS_RIGHTS:
+				return convertAccessRightsToString(eDataType, instanceValue);
 			case RuntimeMetadataPackage.METHOD:
 				return convertMethodToString(eDataType, instanceValue);
 			case RuntimeMetadataPackage.KNOWLEDGE_MANAGER:
@@ -450,6 +454,26 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * @generated
 	 */
 	public String convertContextKindToString(EDataType eDataType, Object instanceValue) {
+		return instanceValue == null ? null : instanceValue.toString();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public AccessRights createAccessRightsFromString(EDataType eDataType, String initialValue) {
+		AccessRights result = AccessRights.get(initialValue);
+		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+		return result;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertAccessRightsToString(EDataType eDataType, Object instanceValue) {
 		return instanceValue == null ? null : instanceValue.toString();
 	}
 
