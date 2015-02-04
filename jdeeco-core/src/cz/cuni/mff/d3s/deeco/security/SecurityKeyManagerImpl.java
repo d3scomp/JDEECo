@@ -1,9 +1,11 @@
 package cz.cuni.mff.d3s.deeco.security;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
+import java.net.URL;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.KeyStore;
@@ -52,7 +54,7 @@ public class SecurityKeyManagerImpl implements SecurityKeyManager {
 	
 	/** Password for the keystore is blank, password for the private key corresponding with the CA certificate is Pa55w0rd */
 	private final String CERTIFICATION_AUTHORITY_ALIAS = "CA";
-	private final String KEYSTORE_PATH = "keystore/keystore.jks";
+	private final String KEYSTORE_PATH = "../../keystore/keystore.jks";
 	
 	/** singleton instance */
 	private static SecurityKeyManager instance;
@@ -89,7 +91,9 @@ public class SecurityKeyManagerImpl implements SecurityKeyManager {
 	}
 	
 	private void initialize() throws NoSuchAlgorithmException, CertificateException, IOException {
-		InputStream stream = new FileInputStream(KEYSTORE_PATH);
+		String base = getClass().getProtectionDomain().getCodeSource().getLocation().getFile();
+
+		InputStream stream = new FileInputStream(new File(base, KEYSTORE_PATH));
 		keyStore.load(stream, null);
 	}
 
