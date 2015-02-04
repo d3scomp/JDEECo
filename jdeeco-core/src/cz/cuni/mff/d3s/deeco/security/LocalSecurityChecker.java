@@ -2,6 +2,7 @@ package cz.cuni.mff.d3s.deeco.security;
 
 import static cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.getAbsoluteStrippedPath;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -72,30 +73,22 @@ public class LocalSecurityChecker {
 	 *             the task invocation exception
 	 */
 	public boolean checkSecurity(PathRoot localRole, ReadOnlyKnowledgeManager shadowKnowledgeManager) throws TaskInvocationException {
-		boolean canAccess;
 		
-		Collection<Parameter> formalParamsOfMembership = ensembleController.getEnsembleDefinition().getMembership().getParameters();
-		Collection<Parameter> formalParamsOfExchange = ensembleController.getEnsembleDefinition().getKnowledgeExchange().getParameters();
 		
-		List<KnowledgePath> membershipInputPaths = formalParamsOfMembership.stream()
-				.filter(parameter -> parameter.getKind() == ParameterKind.IN || parameter.getKind() == ParameterKind.INOUT)
-				.map(Parameter::getKnowledgePath)
+		List<Parameter> formalParamsOfMembership = ensembleController.getEnsembleDefinition().getMembership().getParameters();
+		List<Parameter> formalParamsOfExchange = ensembleController.getEnsembleDefinition().getKnowledgeExchange().getParameters();
+		
+		List<Parameter> membershipInputParams = formalParamsOfMembership.stream()
+				//.filter(parameter -> parameter.getKind() == ParameterKind.IN || parameter.getKind() == ParameterKind.INOUT)				
 				.collect(Collectors.toList());
-		List<KnowledgePath> exchangeInputPaths = formalParamsOfExchange.stream()
-				.filter(parameter -> parameter.getKind() == ParameterKind.IN || parameter.getKind() == ParameterKind.INOUT)
-				.map(Parameter::getKnowledgePath)
+		List<Parameter> exchangeInputParams = formalParamsOfExchange.stream()
+				//.filter(parameter -> parameter.getKind() == ParameterKind.IN || parameter.getKind() == ParameterKind.INOUT)
 				.collect(Collectors.toList());
-		
-		if (kmContainer.hasReplica(shadowKnowledgeManager.getId())) {
-			// if the shadow knowledge manager belongs to a remote component, security is already guaranteed with data encryption in DefaultKnowledgeDataManager
-			canAccess = knowledgePresent(localRole, membershipInputPaths, shadowKnowledgeManager) 
-					 && knowledgePresent(localRole, exchangeInputPaths, shadowKnowledgeManager);
-		} else {						
-			canAccess = knowledgePresent(localRole, membershipInputPaths, shadowKnowledgeManager) 
-					 && knowledgePresent(localRole, exchangeInputPaths, shadowKnowledgeManager) 
-					 && canAccessKnowledge(localRole, formalParamsOfMembership, shadowKnowledgeManager) 
-					 && canAccessKnowledge(localRole, formalParamsOfExchange, shadowKnowledgeManager);					
-		}		
+									
+		boolean canAccess = knowledgePresent(localRole, membershipInputParams.stream().map(Parameter::getKnowledgePath).collect(Collectors.toList()), shadowKnowledgeManager) 
+				 && knowledgePresent(localRole, exchangeInputParams.stream().map(Parameter::getKnowledgePath).collect(Collectors.toList()), shadowKnowledgeManager) 
+				 && canAccessKnowledge(localRole, membershipInputParams, shadowKnowledgeManager) 
+				 && canAccessKnowledge(localRole, exchangeInputParams, shadowKnowledgeManager);								
 		
 		if (canAccess) {
 			// validate that knowledge will not be compromised (i.e. moved to a path with lesser security)		
@@ -212,18 +205,34 @@ public class LocalSecurityChecker {
 		
 		// read the data from the security tag
 		String tagName = null;
+		KnowledgePathAndRoot pathAndRoot = null;
+		
 		Map<String, Object> tagArguments = null;
-		try {
-			KnowledgePathAndRoot pathAndRoot;
+		try {			
 			if (localRole == PathRoot.COORDINATOR) {
 				pathAndRoot = KnowledgePathHelper.getAbsoluteStrippedPath(securedParameter.getKnowledgePath(), localKnowledgeManager, shadowKnowledgeManager);
 			} else {
 				pathAndRoot = KnowledgePathHelper.getAbsoluteStrippedPath(securedParameter.getKnowledgePath(), shadowKnowledgeManager, localKnowledgeManager);
+			}			
+		} catch (KnowledgeNotFoundException e) {	
+			return false;
+		}
+		
+		if (securedParameter.getKind() == ParameterKind.INOUT || securedParameter.getKind() == ParameterKind.OUT) {
+			try {
+				accessingKnowledgeManager.get(Arrays.asList(pathAndRoot.knowledgePath));
+				
+				// accessing knowledge manager has the same knowledge - OK
+				return true;
+			} catch (KnowledgeNotFoundException e) {
+				// do nothing
 			}
-			
+		}
+				
+		try {
 			tagName = securityTag.getRequiredRole().getRoleName();
 			tagArguments = RoleHelper.readRoleArguments(pathAndRoot.knowledgePath, securityTag.getRequiredRole(), protectingKnowledgeManager);
-		} catch (KnowledgeNotFoundException e) {	
+		} catch (KnowledgeNotFoundException e1) {
 			return false;
 		}
 		

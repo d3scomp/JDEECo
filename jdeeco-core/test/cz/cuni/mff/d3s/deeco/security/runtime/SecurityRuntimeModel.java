@@ -67,15 +67,15 @@ public class SecurityRuntimeModel {
 	}
 	
 	@RoleDefinition
-	public static interface PoliceInAuthorsCity extends PoliceInCity {
-		@RoleParam(ContextKind.SHADOW)
-		public static final String cityId = "[cityId]";
+	public static interface PoliceEverywhere extends PoliceInCity {
+		@RoleParam
+		public static final String cityId = null;
 	}
 	
 	@RoleDefinition
-	public static interface PoliceEverywhere extends PoliceInAuthorsCity, PoliceInCity {
-		@RoleParam
-		public static final String cityId = null;
+	public static interface PoliceInAuthorsCity extends PoliceEverywhere {
+		@RoleParam(ContextKind.SHADOW)
+		public static final String cityId = "[cityId]";
 	}
 	
 	@Component 

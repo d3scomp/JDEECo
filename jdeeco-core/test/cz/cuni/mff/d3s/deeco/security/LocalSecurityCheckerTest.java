@@ -188,13 +188,16 @@ public class LocalSecurityCheckerTest {
 		shadowKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("field2_oc"), Arrays.asList(roleBTagShadow));
 		localKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("field2_oc"), Arrays.asList(roleBTagLocal));
 
-		ChangeSet changeSet = new ChangeSet();
-		changeSet.setValue(RuntimeModelHelper.createKnowledgePath("some_param"), 123);
-		changeSet.setValue(RuntimeModelHelper.createKnowledgePath("field1_oc"), 123);
-		changeSet.setValue(RuntimeModelHelper.createKnowledgePath("field1_om"), 123);
-		changeSet.setValue(RuntimeModelHelper.createKnowledgePath("field2_oc"), 123);
-		shadowKnowledgeManager.update(changeSet);
-		localKnowledgeManager.update(changeSet);
+		ChangeSet changeSetLocal = new ChangeSet();
+		changeSetLocal.setValue(RuntimeModelHelper.createKnowledgePath("some_param"), 123);
+		changeSetLocal.setValue(RuntimeModelHelper.createKnowledgePath("field1_oc"), 123);		
+		changeSetLocal.setValue(RuntimeModelHelper.createKnowledgePath("field2_oc"), 123);		
+		localKnowledgeManager.update(changeSetLocal);
+		
+		ChangeSet changeSetShadow = new ChangeSet();
+		changeSetShadow.setValue(RuntimeModelHelper.createKnowledgePath("field1_om"), 123);
+		changeSetShadow.setValue(RuntimeModelHelper.createKnowledgePath("some_param"), 123);
+		shadowKnowledgeManager.update(changeSetShadow);
 		
 		SecurityRole roleA = factory.createSecurityRole();
 		roleA.setRoleName("roleA");
@@ -202,37 +205,32 @@ public class LocalSecurityCheckerTest {
 		arg_some_param.setName("roleA_some_param");
 		arg_some_param.setKnowledgePath(RuntimeModelHelper.createKnowledgePath("some_param"));
 		roleA.getArguments().add(arg_some_param);
-		localComponent.getRoles().add(roleA);
+		shadowComponent.getRoles().add(roleA);
 		
 		SecurityRole roleB = factory.createSecurityRole();
 		roleB.setRoleName("roleB");
-		localComponent.getRoles().add(roleB);
+		shadowComponent.getRoles().add(roleB);
 			
 		SecurityRole roleC = factory.createSecurityRole();
 		roleC.setRoleName("roleC");
-		shadowComponent.getRoles().add(roleC);
+		localComponent.getRoles().add(roleC);
 		
 		SecurityRole roleC2 = factory.createSecurityRole();
 		roleC2.setRoleName("roleC");
-		localComponent.getRoles().add(roleC2);
-		
+		shadowComponent.getRoles().add(roleC2);
+				
 		// when checkSecurity() as coordinator is called
-		assertFalse(target.checkSecurity(PathRoot.COORDINATOR, shadowKnowledgeManager));
-		
-		// when checkSecurity() as member is called
-		assertTrue(target.checkSecurity(PathRoot.MEMBER, shadowKnowledgeManager));
-		
+		assertTrue(target.checkSecurity(PathRoot.COORDINATOR, shadowKnowledgeManager));
+		assertFalse(target.checkSecurity(PathRoot.MEMBER, shadowKnowledgeManager));
 		// switch components
 		when(ensembleController.getComponentInstance()).thenReturn(shadowComponent);
 		
 		// when checkSecurity() as coordinator is called
-		assertTrue(target.checkSecurity(PathRoot.COORDINATOR, localKnowledgeManager));
-		
-		// when checkSecurity() as member is called
-		assertFalse(target.checkSecurity(PathRoot.MEMBER, localKnowledgeManager));
-				
+		assertTrue(target.checkSecurity(PathRoot.MEMBER, localKnowledgeManager));
+		assertFalse(target.checkSecurity(PathRoot.COORDINATOR, localKnowledgeManager));
 	}
-
+	
+	
 	@Test
 	public void checkSecurity_localTest2() throws TaskInvocationException, KnowledgeUpdateException {
 		EnsembleDefinition ensembleDefinition = factory.createEnsembleDefinition();
