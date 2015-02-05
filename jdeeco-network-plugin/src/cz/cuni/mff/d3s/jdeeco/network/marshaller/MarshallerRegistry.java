@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.*;
 
 import cz.cuni.mff.d3s.jdeeco.network.PacketType;
+import cz.cuni.mff.d3s.jdeeco.network.exceptions.MarshallingException;
 import cz.cuni.mff.d3s.jdeeco.network.exceptions.UnregistredPacketType;
 
 public class MarshallerRegistry {
@@ -15,7 +16,11 @@ public class MarshallerRegistry {
 		if(marshaller == null) {
 			throw new UnregistredPacketType(type);
 		}
-		return marshaller.marshall(data);
+		try {
+			return marshaller.marshall(data);
+		} catch(Exception e) {
+			throw new MarshallingException(e);
+		}
 	}
 	
 	public Object unmarshall(int type, byte[] data) throws ClassNotFoundException, IOException, UnregistredPacketType {
@@ -27,7 +32,11 @@ public class MarshallerRegistry {
 		if(marshaller == null) {
 			throw new UnregistredPacketType(type);
 		}
-		return marshaller.unmashall(data);
+		try {
+			return marshaller.unmashall(data);
+		} catch(Exception e) {
+			throw new MarshallingException(e);
+		}
 	}
 	
 	public PacketType resolvePacketType(final Integer value) throws UnregistredPacketType {

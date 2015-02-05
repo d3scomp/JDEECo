@@ -12,11 +12,6 @@ import cz.cuni.mff.d3s.jdeeco.network.marshaller.MarshallerRegistry;
 import cz.cuni.mff.d3s.jdeeco.network.marshaller.SerializingMarshaller;
 
 public class MarshalingTest {
-	@Test
-	public void test() {
-		assertTrue(true);
-	}
-
 	// Registry used for testing
 	private MarshallerRegistry registry;
 
