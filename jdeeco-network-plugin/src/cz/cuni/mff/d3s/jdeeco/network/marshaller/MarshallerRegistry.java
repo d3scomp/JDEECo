@@ -3,19 +3,23 @@ package cz.cuni.mff.d3s.jdeeco.network.marshaller;
 import cz.cuni.mff.d3s.jdeeco.network.PacketType;
 
 public class MarshallerRegistry {
-	byte[] marshall(PacketType type, Object data) {
+	public byte[] marshall(PacketType type, Object data) {
 		return null;
 	}
 	
-	Object unmarshall(int type, byte[] data) {
+	public Object unmarshall(int type, byte[] data) {
+		return unmarshall(resolvePacketType(type), data);
+	}
+	
+	public Object unmarshall(PacketType type, byte[] data) {
 		return null;
 	}
 	
-	PacketType resolvePacketType(int type) {
+	public PacketType resolvePacketType(int type) {
 		throw new RuntimeException();
 	}
 	
-	void registerMarshaller(PacketType type, Marshaller marshaller) {
+	public void registerMarshaller(PacketType type, Marshaller marshaller) {
 		throw new RuntimeException();
 	}
 }
