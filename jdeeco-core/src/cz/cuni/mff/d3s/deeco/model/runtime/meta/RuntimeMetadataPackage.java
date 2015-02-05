@@ -446,13 +446,13 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int COMPONENT_INSTANCE__SYSTEM_COMPONENT = 6;
 
 	/**
-	 * The feature id for the '<em><b>Roles</b></em>' containment reference list.
+	 * The feature id for the '<em><b>Security Roles</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_INSTANCE__ROLES = 7;
+	int COMPONENT_INSTANCE__SECURITY_ROLES = 7;
 
 	/**
 	 * The feature id for the '<em><b>Ratings Process</b></em>' containment reference.
@@ -1805,15 +1805,15 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EAttribute getComponentInstance_SystemComponent();
 
 	/**
-	 * Returns the meta object for the containment reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getRoles <em>Roles</em>}'.
+	 * Returns the meta object for the containment reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getSecurityRoles <em>Security Roles</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Roles</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getRoles()
+	 * @return the meta object for the containment reference list '<em>Security Roles</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getSecurityRoles()
 	 * @see #getComponentInstance()
 	 * @generated
 	 */
-	EReference getComponentInstance_Roles();
+	EReference getComponentInstance_SecurityRoles();
 
 	/**
 	 * Returns the meta object for the containment reference '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getRatingsProcess <em>Ratings Process</em>}'.
@@ -2694,12 +2694,12 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EAttribute COMPONENT_INSTANCE__SYSTEM_COMPONENT = eINSTANCE.getComponentInstance_SystemComponent();
 
 		/**
-		 * The meta object literal for the '<em><b>Roles</b></em>' containment reference list feature.
+		 * The meta object literal for the '<em><b>Security Roles</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference COMPONENT_INSTANCE__ROLES = eINSTANCE.getComponentInstance_Roles();
+		EReference COMPONENT_INSTANCE__SECURITY_ROLES = eINSTANCE.getComponentInstance_SecurityRoles();
 
 		/**
 		 * The meta object literal for the '<em><b>Ratings Process</b></em>' containment reference feature.
