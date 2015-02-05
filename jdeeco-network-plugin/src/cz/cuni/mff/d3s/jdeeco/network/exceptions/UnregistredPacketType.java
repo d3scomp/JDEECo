@@ -9,6 +9,6 @@ public class UnregistredPacketType extends Exception {
 	
 	@Override
 	public String getMessage() {
-		return String.format("Packet type %d is has no registred for marschalling.", type);
+		return String.format("Packet type %d is has no registred for marshalling.", type);
 	}
 }
