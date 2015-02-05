@@ -7,6 +7,8 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
+import cz.cuni.mff.d3s.jdeeco.network.PacketTypes.GrouperPacketType;
+import cz.cuni.mff.d3s.jdeeco.network.PacketTypes.KnowledgePacketType;
 import cz.cuni.mff.d3s.jdeeco.network.exceptions.UnregistredPacketType;
 import cz.cuni.mff.d3s.jdeeco.network.marshaller.MarshallerRegistry;
 import cz.cuni.mff.d3s.jdeeco.network.marshaller.SerializingMarshaller;
@@ -31,13 +33,13 @@ public class MarshalingTest {
 	@Test
 	public void testPacketTypeResolution() throws UnregistredPacketType {
 		// Try to resolve knowledge packet type by int value
-		assertEquals(new KnowledgePacketType(), registry.resolvePacketType(new KnowledgePacketType().ordinal()));
+		assertEquals(new KnowledgePacketType(), registry.resolvePacketType(KnowledgePacketType.instance.value()));
 	}
 
 	@Test
 	public void testEncodeDecodeByValue() throws IOException, ClassNotFoundException, UnregistredPacketType {
 		byte[] data = registry.marshall(new KnowledgePacketType(), PAYLOAD);
-		Object obj = registry.unmarshall(new KnowledgePacketType().ordinal(), data);
+		Object obj = registry.unmarshall(new KnowledgePacketType().value(), data);
 		assertEquals(PAYLOAD, obj);
 	}
 
@@ -46,5 +48,13 @@ public class MarshalingTest {
 		byte[] data = registry.marshall(new KnowledgePacketType(), PAYLOAD);
 		Object obj = registry.unmarshall(new KnowledgePacketType(), data);
 		assertEquals(PAYLOAD, obj);
+	}
+
+	@Test
+	public void testPacketTypeVariability() {
+		// Test if value for knowledge packet type is zero (knowledge is special)
+		assertEquals(0, KnowledgePacketType.instance.value());
+		// Test if Grouper packet type is not zero (should be random abased on the GrouperPacketType class name)
+		assertNotEquals(0, GrouperPacketType.instance.value());
 	}
 }

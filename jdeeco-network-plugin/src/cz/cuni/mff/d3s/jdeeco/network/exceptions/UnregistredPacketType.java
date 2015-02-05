@@ -1,6 +1,6 @@
 package cz.cuni.mff.d3s.jdeeco.network.exceptions;
 
-import cz.cuni.mff.d3s.jdeeco.network.PacketType;
+import cz.cuni.mff.d3s.jdeeco.network.PacketTypes.PacketType;
 
 public class UnregistredPacketType extends Exception {
 	private Integer value;

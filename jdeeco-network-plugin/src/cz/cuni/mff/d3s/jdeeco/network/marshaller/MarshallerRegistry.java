@@ -3,7 +3,7 @@ package cz.cuni.mff.d3s.jdeeco.network.marshaller;
 import java.io.IOException;
 import java.util.*;
 
-import cz.cuni.mff.d3s.jdeeco.network.PacketType;
+import cz.cuni.mff.d3s.jdeeco.network.PacketTypes.PacketType;
 import cz.cuni.mff.d3s.jdeeco.network.exceptions.MarshallingException;
 import cz.cuni.mff.d3s.jdeeco.network.exceptions.UnregistredPacketType;
 
@@ -51,6 +51,6 @@ public class MarshallerRegistry {
 	
 	public void registerMarshaller(PacketType type, Marshaller marshaller) {
 		marshallers.put(type, marshaller);
-		packetTypes.put(type.ordinal(), type);
+		packetTypes.put(type.value(), type);
 	}
 }
