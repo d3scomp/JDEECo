@@ -25,6 +25,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#isSystemComponent <em>System Component</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getSecurityRoles <em>Security Roles</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getRatingsProcess <em>Ratings Process</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getRoles <em>Roles</em>}</li>
  * </ul>
  * </p>
  *
@@ -234,5 +235,21 @@ public interface ComponentInstance extends EObject {
 	 * @generated
 	 */
 	void setRatingsProcess(RatingsProcess value);
+
+	/**
+	 * Returns the value of the '<em><b>Roles</b></em>' attribute list.
+	 * The list contents are of type {@link java.lang.Class}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Roles</em>' attribute list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Roles</em>' attribute list.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance_Roles()
+	 * @model
+	 * @generated
+	 */
+	EList<Class> getRoles();
 
 } // ComponentInstance

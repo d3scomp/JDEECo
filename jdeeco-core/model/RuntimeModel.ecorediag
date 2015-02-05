@@ -367,6 +367,10 @@
         <element xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//ComponentInstance/systemComponent"/>
         <layoutConstraint xmi:type="notation:Location" xmi:id="_eneE4QLKEeSwd6qt5CsqeA"/>
       </children>
+      <children xmi:type="notation:Node" xmi:id="_ZBqogK04EeSJu-0pdLaXuw" type="2001">
+        <element xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//ComponentInstance/roles"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_ZBqoga04EeSJu-0pdLaXuw"/>
+      </children>
       <styles xmi:type="notation:DrawerStyle" xmi:id="_dl_C8kMNEeO3_auUY0X6vg"/>
       <styles xmi:type="notation:SortingStyle" xmi:id="_dl_C80MNEeO3_auUY0X6vg"/>
       <styles xmi:type="notation:FilteringStyle" xmi:id="_dl_C9EMNEeO3_auUY0X6vg"/>
