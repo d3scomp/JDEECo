@@ -238,16 +238,25 @@ public class EnsembleLogger {
 	 * @param shadowKnowledgeManager Knowledge of the other component
 	 * @param timeProvider Used to get the current time
 	 * @param membership The current value of the membership condition
+	 * @param reversedRoles If true, the agent whose knowledge is in shadowKnowledgeManager 
+	 * is consider as the coordinator. If false, it is considered as a member. 
 	 */
 	public void logEvent(EnsembleController ensembleController, ReadOnlyKnowledgeManager shadowKnowledgeManager, 
-			CurrentTimeProvider timeProvider, boolean membership){
+			CurrentTimeProvider timeProvider, boolean membership, boolean reversedRoles){
 		if ((out == null) || (ensembleController == null) || (shadowKnowledgeManager == null) || (timeProvider == null)){
 			return;
 		}		
 		long timeSeconds = timeProvider.getCurrentMilliseconds() / 1000L;
 		String ensembleName = ensembleController.getEnsembleDefinition().getName();
-		String coordinatorID = ensembleController.getComponentInstance().getKnowledgeManager().getId();
-		String memberID = shadowKnowledgeManager.getId();
+		String coordinatorID;
+		String memberID;
+		if (reversedRoles){
+			memberID = ensembleController.getComponentInstance().getKnowledgeManager().getId();
+			coordinatorID = shadowKnowledgeManager.getId();
+		} else {
+			coordinatorID = ensembleController.getComponentInstance().getKnowledgeManager().getId();
+			memberID = shadowKnowledgeManager.getId();
+		}
 		EnsembleLogger.MembershipRecord mr = new MembershipRecord(ensembleName, coordinatorID, memberID);
 		boolean oldMembership = membershipRecords.get(mr) == null ? false : membershipRecords.get(mr);
 		if (oldMembership != membership){
