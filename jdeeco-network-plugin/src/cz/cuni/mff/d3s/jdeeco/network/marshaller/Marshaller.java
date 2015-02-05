@@ -1,6 +1,7 @@
 package cz.cuni.mff.d3s.jdeeco.network.marshaller;
 
 /**
+ * Interface for data marshalers. These are responsible for encoding/decoding objects/binary data.
  * 
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *

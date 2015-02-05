@@ -2,7 +2,6 @@ package cz.cuni.mff.d3s.jdeeco.network.marshaller;
 
 import java.util.*;
 
-import cz.cuni.mff.d3s.jdeeco.network.PacketTypes.PacketType;
 import cz.cuni.mff.d3s.jdeeco.network.exceptions.MarshallingException;
 import cz.cuni.mff.d3s.jdeeco.network.exceptions.UnregistredPacketType;
 
@@ -13,9 +12,8 @@ import cz.cuni.mff.d3s.jdeeco.network.exceptions.UnregistredPacketType;
  *
  */
 public class MarshallerRegistry {
-	private Map<PacketType, Marshaller> marshallers = new HashMap<PacketType, Marshaller>();
-	private Map<Integer, PacketType> packetTypes = new HashMap<Integer, PacketType>();
-
+	private Map<Byte, Marshaller> marshallers = new HashMap<Byte, Marshaller>();
+	
 	/**
 	 * Encodes object according to type into binary data
 	 * 
@@ -25,7 +23,7 @@ public class MarshallerRegistry {
 	 *            Data to be encoded
 	 * @return Encoded data representing source object
 	 */
-	public byte[] marshall(PacketType type, Object data) throws UnregistredPacketType {
+	public byte[] marshall(byte type, Object data) throws UnregistredPacketType {
 		Marshaller marshaller = marshallers.get(type);
 		if (marshaller == null) {
 			throw new UnregistredPacketType(type);
@@ -41,25 +39,12 @@ public class MarshallerRegistry {
 	 * Decodes binary data to object according to type
 	 * 
 	 * @param type
-	 *            Packet type value to determine marshaler
-	 * @param data
-	 *            Binary data to be decoded into object
-	 * @return Decoded object
-	 */
-	public Object unmarshall(int type, byte[] data) throws UnregistredPacketType, MarshallingException {
-		return unmarshall(resolvePacketType(type), data);
-	}
-
-	/**
-	 * Decodes binary data to object according to type
-	 * 
-	 * @param type
 	 *            Packet type to determine marshaler
 	 * @param data
 	 *            Binary data to be decoded into object
 	 * @return Decoded object
 	 */
-	public Object unmarshall(PacketType type, byte[] data) {
+	public Object unmarshall(byte type, byte[] data) {
 		Marshaller marshaller = marshallers.get(type);
 		if (marshaller == null) {
 			throw new UnregistredPacketType(type);
@@ -70,24 +55,7 @@ public class MarshallerRegistry {
 			throw new MarshallingException(e);
 		}
 	}
-
-	/**
-	 * Resolves packet type based on the packet type integer value
-	 * 
-	 * @param value
-	 *            Integer value to be used to determine the packet type
-	 * @return Packet type matching the value specified
-	 */
-	public PacketType resolvePacketType(final Integer value) {
-		PacketType type = packetTypes.get(value);
-
-		if (type == null) {
-			throw new UnregistredPacketType(value);
-		}
-
-		return type;
-	}
-
+	
 	/**
 	 * Registers marshaler for particular value type
 	 * 
@@ -96,8 +64,7 @@ public class MarshallerRegistry {
 	 * @param marshaller
 	 *            Marshaler implementation
 	 */
-	public void registerMarshaller(PacketType type, Marshaller marshaller) {
+	public void registerMarshaller(byte type, Marshaller marshaller) {
 		marshallers.put(type, marshaller);
-		packetTypes.put(type.value(), type);
 	}
 }

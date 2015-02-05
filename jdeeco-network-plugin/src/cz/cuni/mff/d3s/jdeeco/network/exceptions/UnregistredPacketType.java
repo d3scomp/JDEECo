@@ -1,7 +1,5 @@
 package cz.cuni.mff.d3s.jdeeco.network.exceptions;
 
-import cz.cuni.mff.d3s.jdeeco.network.PacketTypes.PacketType;
-
 /**
  * Unregistered packet type exception is thrown when the packet type specified is not registered at marshaler registry
  * 
@@ -9,26 +7,14 @@ import cz.cuni.mff.d3s.jdeeco.network.PacketTypes.PacketType;
  *
  */
 public class UnregistredPacketType extends RuntimeException {
-	private Integer value;
-	private PacketType type;
+	private byte value;
 
-	public UnregistredPacketType(int value) {
+	public UnregistredPacketType(byte value) {
 		this.value = value;
-	}
-
-	public UnregistredPacketType(PacketType type) {
-		this.type = type;
 	}
 
 	@Override
 	public String getMessage() {
-		if (value != null) {
-			return String.format("Packet type %d is has no registred for marshalling.", value);
-		}
-
-		if (type != null)
-			return String.format("Packet type %s is has no registred for marshalling.", type);
-
-		return String.format("Packet type has not been registred for marshalling.");
+		return String.format("Packet type %d is has no registred for marshalling.", value);
 	}
 }
