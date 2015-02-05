@@ -1,5 +1,10 @@
 package cz.cuni.mff.d3s.jdeeco.network.PacketTypes;
 
+/**
+ * 
+ * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
+ *
+ */
 public class PacketType {
 	final private int value;
 
@@ -29,6 +34,11 @@ public class PacketType {
 		return this.getClass().getName();
 	}
 
+	/**
+	 * Get integer representation of this packet type
+	 * 
+	 * @return Integer value for this packet type
+	 */
 	public int value() {
 		return value;
 	}

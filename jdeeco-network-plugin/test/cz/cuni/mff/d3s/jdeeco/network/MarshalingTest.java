@@ -13,6 +13,12 @@ import cz.cuni.mff.d3s.jdeeco.network.exceptions.UnregistredPacketType;
 import cz.cuni.mff.d3s.jdeeco.network.marshaller.MarshallerRegistry;
 import cz.cuni.mff.d3s.jdeeco.network.marshaller.SerializingMarshaller;
 
+/**
+ * Tests data marshaling and related code
+ * 
+ * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
+ *
+ */
 public class MarshalingTest {
 	// Registry used for testing
 	private MarshallerRegistry registry;
@@ -20,6 +26,9 @@ public class MarshalingTest {
 	// Test pay-load for marshaling
 	private final String PAYLOAD = "payload";
 
+	/**
+	 * Initializes registry and registers knowledge marshaler
+	 */
 	@Before
 	public void initializeMarshallingRegistry() {
 		// Create registry
@@ -30,6 +39,10 @@ public class MarshalingTest {
 		registry.registerMarshaller(new KnowledgePacketType(), marshaller);
 	}
 
+	/**
+	 * Tests whenever packet type resolution based on the integer value works
+	 * @throws UnregistredPacketType
+	 */
 	@Test
 	public void testPacketTypeResolution() throws UnregistredPacketType {
 		// Try to resolve knowledge packet type by int value
@@ -37,7 +50,7 @@ public class MarshalingTest {
 	}
 
 	@Test
-	public void testEncodeDecodeByValue() throws IOException, ClassNotFoundException, UnregistredPacketType {
+	public void testEncodeDecodeByValue() throws UnregistredPacketType {
 		byte[] data = registry.marshall(new KnowledgePacketType(), PAYLOAD);
 		Object obj = registry.unmarshall(new KnowledgePacketType().value(), data);
 		assertEquals(PAYLOAD, obj);

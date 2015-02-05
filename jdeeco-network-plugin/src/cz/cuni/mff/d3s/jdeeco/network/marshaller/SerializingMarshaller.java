@@ -1,11 +1,18 @@
 package cz.cuni.mff.d3s.jdeeco.network.marshaller;
 
 import java.io.ByteArrayInputStream;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+/**
+ * Trivial implementation of marshaler using the object serialization
+ * 
+ * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
+ *
+ */
 public class SerializingMarshaller implements Marshaller {
 	public byte[] marshall(Object data) throws IOException {
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
