@@ -3,9 +3,8 @@ package cz.cuni.mff.d3s.jdeeco.network;
 /**
  * L2 Packet type
  * 
- * Determines pay-load type for L2 packet. Contains 4 bit value, stored as byte, to be used in packets.
- * 
- * Constants for known L2 packet types are provided as static fields.
+ * Determines pay-load type for L2 packet. Contains 4 bit value, stored as byte, to be used in packets. Constants for
+ * known L2 packet types are provided as static fields.
  * 
  * NOTE: Constants are bytes, but only 4 lowest bits are used for packet types.
  * 
@@ -22,7 +21,7 @@ public class PacketType {
 	 *            Packet type value, only 4 lowest bits can be specified
 	 */
 	public PacketType(byte value) {
-		if((value & ~0b1111) != 0) {
+		if ((value & ~0b1111) != 0) {
 			throw new UnsupportedOperationException("Value out of range");
 		}
 		this.value = value;

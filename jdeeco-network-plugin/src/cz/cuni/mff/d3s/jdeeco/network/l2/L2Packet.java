@@ -58,7 +58,7 @@ public class L2Packet {
 	}
 
 	/**
-	 * Get binary representation of packet content
+	 * Gets binary representation of packet content
 	 * 
 	 * The resulting binary data are created on demand and cached
 	 * 
@@ -70,5 +70,14 @@ public class L2Packet {
 		}
 
 		return data;
+	}
+
+	/**
+	 * Gets packet received info
+	 * 
+	 * @return Returns packet received info, or null when no packet received info is available.
+	 */
+	ReceivedInfo getReceivedInfo() {
+		return receivedInfo;
 	}
 }
