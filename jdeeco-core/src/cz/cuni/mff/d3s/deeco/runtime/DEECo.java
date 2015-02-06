@@ -95,7 +95,7 @@ public class DEECo implements DEECoPluginContainer {
 	
 	class DependencyNode {
 		DEECoPlugin plugin; 
-		List<DependencyNode> dependantPlugins;
+		List<DependencyNode> dependantPlugins = new ArrayList<>();
 		int dependencyCount;
 		
 		DependencyNode(DEECoPlugin plugin) {
@@ -154,7 +154,7 @@ public class DEECo implements DEECoPluginContainer {
 			DependencyNode n = queue.remove();				
 
 			if (n.dependencyCount == 0) {
-				n.plugin.init(null);
+				n.plugin.init(this);
 				pluginsMap.put(n.plugin.getClass(), n.plugin);				
 
 				for (DependencyNode dependantPlugin : n.dependantPlugins) {

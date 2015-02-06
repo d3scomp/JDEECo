@@ -16,10 +16,21 @@ import org.mockito.InOrder;
 
 /**
  * Test class for the main DEECo application container.
- * @author Filip Krijt<krijt@d3s.mff.cuni.cz>
+ * @author Filip Krijt <krijt@d3s.mff.cuni.cz>
  *
  */
 public class DEECoTest {	
+	
+	interface P0 extends DEECoPlugin{};
+	interface P1 extends DEECoPlugin{};
+	interface P2 extends DEECoPlugin{};
+	interface P3 extends DEECoPlugin{};
+	interface P4 extends DEECoPlugin{};
+	interface P5 extends DEECoPlugin{};
+	interface P6 extends DEECoPlugin{};
+	interface P7 extends DEECoPlugin{};
+	interface P8 extends DEECoPlugin{};
+	interface P9 extends DEECoPlugin{};
 	
 	@Test
 	public void testFieldInitialization() throws PluginDependencyException
@@ -36,8 +47,8 @@ public class DEECoTest {
 	@Test
 	public void testDependencyOrderSimple() throws PluginDependencyException
 	{
-		DEECoPlugin plugin1 = mock(DEECoPlugin.class);
-		DEECoPlugin plugin2 = mock(DEECoPlugin.class);		
+		DEECoPlugin plugin1 = mock(P0.class);
+		DEECoPlugin plugin2 = mock(P1.class);		
 		
 		when(plugin1.getDependencies()).thenReturn(Arrays.asList());
 		when(plugin2.getDependencies()).thenReturn(Arrays.asList(plugin1.getClass()));
@@ -53,10 +64,10 @@ public class DEECoTest {
 	@Test
 	public void testDependencyOrderDAG() throws PluginDependencyException
 	{
-		DEECoPlugin pluginBase = mock(DEECoPlugin.class);
-		DEECoPlugin plugin1 = mock(DEECoPlugin.class);
-		DEECoPlugin plugin2 = mock(DEECoPlugin.class);
-		DEECoPlugin plugin3 = mock(DEECoPlugin.class);
+		DEECoPlugin pluginBase = mock(P0.class);
+		DEECoPlugin plugin1 = mock(P1.class);
+		DEECoPlugin plugin2 = mock(P2.class);
+		DEECoPlugin plugin3 = mock(P3.class);
 		
 		when(pluginBase.getDependencies()).thenReturn(Arrays.asList());
 		when(plugin1.getDependencies()).thenReturn(Arrays.asList(pluginBase.getClass()));
@@ -86,9 +97,9 @@ public class DEECoTest {
 	@Test
 	public void testDependencyMultiBase() throws PluginDependencyException
 	{
-		DEECoPlugin pluginBase1 = mock(DEECoPlugin.class);
-		DEECoPlugin pluginBase2 = mock(DEECoPlugin.class);
-		DEECoPlugin plugin = mock(DEECoPlugin.class);
+		DEECoPlugin pluginBase1 = mock(P0.class);
+		DEECoPlugin pluginBase2 = mock(P1.class);
+		DEECoPlugin plugin = mock(P3.class);
 		
 		when(pluginBase1.getDependencies()).thenReturn(Arrays.asList());
 		when(pluginBase2.getDependencies()).thenReturn(Arrays.asList());
@@ -109,9 +120,9 @@ public class DEECoTest {
 	@Test
 	public void testDependencyOrderMultiExtension() throws PluginDependencyException
 	{
-		DEECoPlugin pluginBase = mock(DEECoPlugin.class);
-		DEECoPlugin plugin1 = mock(DEECoPlugin.class);
-		DEECoPlugin plugin2 = mock(DEECoPlugin.class);
+		DEECoPlugin pluginBase = mock(P0.class);
+		DEECoPlugin plugin1 = mock(P1.class);
+		DEECoPlugin plugin2 = mock(P2.class);
 		
 		when(pluginBase.getDependencies()).thenReturn(Arrays.asList());
 		when(plugin1.getDependencies()).thenReturn(Arrays.asList(pluginBase.getClass()));
@@ -129,7 +140,8 @@ public class DEECoTest {
 		order2.verify(plugin2).init(deeco);
 	}
 	
-	@Test void testDependencyOrderRandomized()
+	@Test @Ignore
+	public void testDependencyOrderRandomized()
 	{
 		Random generator = new Random(42);
 		//TODO
@@ -140,40 +152,40 @@ public class DEECoTest {
 	{
 		// Correct exception is thrown on detecting non-existent dependency		
 		
-		DEECoPlugin basePlugin = mock(DEECoPlugin.class);
-		DEECoPlugin dependentPlugin = mock(DEECoPlugin.class);
+		DEECoPlugin basePlugin = mock(P1.class);
+		DEECoPlugin dependentPlugin = mock(P2.class);
 		
 		when(dependentPlugin.getDependencies()).thenReturn(Arrays.asList(basePlugin.getClass()));
 		
-		DEECo deeco = new DEECo(dependentPlugin);		
+		new DEECo(dependentPlugin);		
 	}
 	
 	@Test(expected = cz.cuni.mff.d3s.deeco.runtime.CycleDetectedException.class)
 	public void testCycle() throws PluginDependencyException
 	{
 		// Tests for a basic (3 plugins) dependency cycle
-		DEECoPlugin plugin1 = mock(DEECoPlugin.class);
-		DEECoPlugin plugin2 = mock(DEECoPlugin.class);
-		DEECoPlugin plugin3 = mock(DEECoPlugin.class);
+		DEECoPlugin plugin1 = mock(P0.class);
+		DEECoPlugin plugin2 = mock(P1.class);
+		DEECoPlugin plugin3 = mock(P2.class);
 		
 		when(plugin1.getDependencies()).thenReturn(Arrays.asList(plugin2.getClass()));
 		when(plugin2.getDependencies()).thenReturn(Arrays.asList(plugin3.getClass()));
 		when(plugin3.getDependencies()).thenReturn(Arrays.asList(plugin1.getClass()));
 		
-		DEECo deeco = new DEECo(plugin1, plugin2, plugin3);
+		new DEECo(plugin1, plugin2, plugin3);
 	}
 	
 	@Test(expected = cz.cuni.mff.d3s.deeco.runtime.CycleDetectedException.class)
 	public void testCycle2() throws PluginDependencyException
 	{
 		// Test for a more elaborate plugin dependency cycle, decorated with a base dependency and an additional independent branch.
-		DEECoPlugin pluginBase = mock(DEECoPlugin.class);
-		DEECoPlugin plugin1 = mock(DEECoPlugin.class);
-		DEECoPlugin plugin2 = mock(DEECoPlugin.class);
-		DEECoPlugin plugin3 = mock(DEECoPlugin.class);		
+		DEECoPlugin pluginBase = mock(P0.class);
+		DEECoPlugin plugin1 = mock(P1.class);
+		DEECoPlugin plugin2 = mock(P2.class);
+		DEECoPlugin plugin3 = mock(P3.class);		
 		
-		DEECoPlugin pluginBase2 = mock(DEECoPlugin.class);
-		DEECoPlugin pluginOther = mock(DEECoPlugin.class);
+		DEECoPlugin pluginBase2 = mock(P9.class);
+		DEECoPlugin pluginOther = mock(P8.class);
 			
 		when(plugin1.getDependencies()).thenReturn(Arrays.asList(plugin2.getClass(), pluginBase.getClass()));
 		when(plugin2.getDependencies()).thenReturn(Arrays.asList(plugin3.getClass()));
@@ -184,22 +196,22 @@ public class DEECoTest {
 		when(pluginBase.getDependencies()).thenReturn(Arrays.asList());
 		when(pluginBase2.getDependencies()).thenReturn(Arrays.asList());
 		
-		DEECo deeco = new DEECo(plugin1, plugin2, plugin3, pluginBase, pluginBase2, pluginOther);
+		new DEECo(plugin1, plugin2, plugin3, pluginBase, pluginBase2, pluginOther);
 	}
 	
 	@Test
 	public void testNoPlugins() throws PluginDependencyException
 	{
-		DEECo deeco = new DEECo();
+		new DEECo();
 	}
 	
-	@Test
+	@Test @Ignore
 	public void testStartOnRunning()
 	{
 				
 	}		
 	
-	@Test
+	@Test @Ignore
 	public void testStopOnStopped()
 	{
 				
@@ -208,14 +220,18 @@ public class DEECoTest {
 	@Test
 	public void testPluginAccess() throws PluginDependencyException
 	{
+		
 		List<DEECoPlugin> plugins = new ArrayList<>();
-		
-		int pluginCount = 10;
-		for(int i = 0; i < pluginCount; ++i)
-		{
-			plugins.add(mock(DEECoPlugin.class));
-		}
-		
+		plugins.add(mock(P0.class));
+		plugins.add(mock(P1.class));
+		plugins.add(mock(P2.class));
+		plugins.add(mock(P3.class));
+		plugins.add(mock(P4.class));
+		plugins.add(mock(P5.class));
+		plugins.add(mock(P6.class));
+		plugins.add(mock(P7.class));
+		plugins.add(mock(P8.class));
+		plugins.add(mock(P9.class));
 		
 		DEECoPlugin[] pluginArray = plugins.toArray(new DEECoPlugin[0]);
 		

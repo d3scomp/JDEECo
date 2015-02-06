@@ -595,7 +595,7 @@ public class AnnotationProcessorTest {
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
 		
 		exception.expect(AnnotationProcessorException.class);
-		exception.expectMessage("For a component to be parsed, it has to be an INSTANCE of a class annotated with @Component.");
+		exception.expectMessage("Provided component object(s) cannot be classes.");
 		processor.processComponents(CorrectC1.class);	
 	}
 	
@@ -608,23 +608,10 @@ public class AnnotationProcessorTest {
 		exception.expect(AnnotationProcessorException.class);
 		exception.expectMessage(
 				"Class: "+input.getClass().getCanonicalName()+"->" +
-				"No @Component or @Ensemble annotation found.");
+				"No @Ensemble annotation found.");
 		processor.processEnsembles(WrongCE1.class);	
 	}
 	
-	@Test 
-	public void testExceptionsInClassAnnotations2() throws AnnotationProcessorException {
-		RuntimeMetadata model = factory.createRuntimeMetadata();
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
-		
-		WrongCE2 input = new WrongCE2();
-		exception.expect(AnnotationProcessorException.class);
-		exception.expectMessage(
-				"Class: "+input.getClass().getCanonicalName()+"->" +
-				"Both @Component or @Ensemble annotation found.");
-		processor.processComponents(input);	
-	}
-
 	@Test 
 	public void testExceptionsInComponentParsing1() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
@@ -762,7 +749,7 @@ public class AnnotationProcessorTest {
 				"KnowledgeExchange->" +
 				"Parameter: 1->" +
 				"The path does not start with one of the 'coord' or 'member' keywords.");
-		processor.processEnsembles(WrongE4.class);
+		processor.processEnsembles(WrongE5.class);
 	}
 	
 	/*

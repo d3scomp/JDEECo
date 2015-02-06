@@ -220,6 +220,7 @@ public class AnnotationProcessor {
 	 *            classes to be processed, if any, provided to the body of the method as an array 
 	 * @throws AnnotationProcessorException
 	 */
+	@SuppressWarnings("rawtypes")
 	public void processEnsembles(Class... clazzes) throws AnnotationProcessorException {
 		if (clazzes.length==0) {
 			throw new AnnotationProcessorException("Provide 1 or more files to be processed as parameters.");
@@ -236,6 +237,7 @@ public class AnnotationProcessor {
 	 *            list of classes to be processed
 	 * @throws AnnotationProcessorException
 	 */
+	@SuppressWarnings("rawtypes")
 	public void processEnsembles(List<Class> clazzes) throws AnnotationProcessorException {
 		if (clazzes.isEmpty()) {
 			throw new AnnotationProcessorException("Cannot process an empty list.");
@@ -275,9 +277,17 @@ public class AnnotationProcessor {
 			throw new AnnotationProcessorException("Class: " + componentClass.getCanonicalName() +
 					"->No @" + Component.class.getSimpleName() + " annotation found.");
 		}
-
-		processComponentInstance(model, componentObj);
 		
+		ComponentInstance ci = createComponentInstance(componentObj);
+		// Create ensemble controllers for all the already-processed ensemble definitions
+		for (EnsembleDefinition ed: model.getEnsembleDefinitions()) {
+			EnsembleController ec = factory.createEnsembleController();
+			ec.setComponentInstance(ci);
+			ec.setEnsembleDefinition(ed);
+			ci.getEnsembleControllers().add(ec);
+		}
+		
+		model.getComponentInstances().add(ci);
 	}
 	
 	/**
@@ -294,6 +304,7 @@ public class AnnotationProcessor {
 	 *            object to be processed
 	 * @throws AnnotationProcessorException
 	 */
+	@SuppressWarnings("rawtypes")
 	void processEnsemble(RuntimeMetadata model, Class ensembleClass) throws AnnotationProcessorException {
 		if (model == null) {
 			throw new AnnotationProcessorException("Provided model cannot be null.");
@@ -318,48 +329,6 @@ public class AnnotationProcessor {
 		
 	}
 	
-	/**
-	 * Checks if the object is annotated as @{@link Component} and calls the respective creator. 
-	 * It also creates the appropriate {@link EnsembleController}s for the {@link EnsembleDefinition}s in the model.
-	 * The parsed {@link ComponentInstance} is automatically added to the model.
-	 * 	
-	 * @param model the model to which the instance is to be added
-	 * @param obj instance definition to be processed
-	 * @return	the parsed {@link ComponentInstance}
-	 * @throws AnnotationProcessorException	if the instance definition object is invalid
-	 */
-	public ComponentInstance processComponentInstance(RuntimeMetadata model, Object obj) throws AnnotationProcessorException {
-		if (model == null) {
-			throw new AnnotationProcessorException("Provided model cannot be null.");
-		}
-		if (obj == null) {
-			throw new AnnotationProcessorException("Provided object(s) cannot be null.");
-		}
-		
-		boolean isClass = (obj instanceof Class<?>);
-		Class<?> clazz = (isClass) ? (Class<?>) obj : obj.getClass();
-		boolean isC = isComponentDefinition(clazz);
-		
-		// TODO: unify the checks (in processObject the presence of multiple annotations is checked)
-		if (!isC || isClass) {
-			throw new AnnotationProcessorException(
-					"For a component to be parsed, it has to be an INSTANCE of a class annotated with @" + Component.class.getSimpleName() + ".");	
-		}
-		
-		ComponentInstance ci = createComponentInstance(obj);
-		// Create ensemble controllers for all the already-processed ensemble definitions
-		for (EnsembleDefinition ed: model.getEnsembleDefinitions()) {
-			EnsembleController ec = factory.createEnsembleController();
-			ec.setComponentInstance(ci);
-			ec.setEnsembleDefinition(ed);
-			ci.getEnsembleControllers().add(ec);
-		}
-		
-		model.getComponentInstances().add(ci);
-
-		return ci;
-	}
-
 	/**
 	 * Creator of a single correctly-initialized {@link ComponentInstance} object. 
 	 * It calls all the necessary sub-creators to obtain the full graph of the Ecore object.    

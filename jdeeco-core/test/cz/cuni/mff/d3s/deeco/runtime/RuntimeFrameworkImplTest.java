@@ -23,6 +23,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
@@ -52,6 +53,8 @@ public class RuntimeFrameworkImplTest {
 	ComponentProcess process;
 	EnsembleController econtroller;
 	
+	EnsembleDefinition edefinition;
+	
 	KnowledgeManager km;
 	KnowledgeManager kmReplacement;
 	
@@ -69,8 +72,13 @@ public class RuntimeFrameworkImplTest {
 		
 		component = factory.createComponentInstance();		
 
+		edefinition = factory.createEnsembleDefinition();
+		edefinition.setName("dummyName");
+		
 		process = factory.createComponentProcess();
 		econtroller = factory.createEnsembleController();
+		econtroller.setEnsembleDefinition(edefinition);
+		
 		km = mock(KnowledgeManager.class);
 		when(km.getId()).thenReturn("component");
 				
@@ -80,6 +88,7 @@ public class RuntimeFrameworkImplTest {
 		
 		model = factory.createRuntimeMetadata();
 		model.getComponentInstances().add(component);
+		model.getEnsembleDefinitions().add(edefinition);
 		
 		kmReplacement = new BaseKnowledgeManager("component", component);
 		when(kmContainer.createLocal(anyString(), anyObject())).thenReturn(kmReplacement);		
