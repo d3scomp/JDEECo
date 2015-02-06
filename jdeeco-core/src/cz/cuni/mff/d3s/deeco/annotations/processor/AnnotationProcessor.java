@@ -23,19 +23,23 @@ import com.rits.cloning.Cloner;
 import cz.cuni.mff.d3s.deeco.annotations.Allow;
 import cz.cuni.mff.d3s.deeco.annotations.CommunicationBoundary;
 import cz.cuni.mff.d3s.deeco.annotations.Component;
+import cz.cuni.mff.d3s.deeco.annotations.CoordinatorRole;
 import cz.cuni.mff.d3s.deeco.annotations.Ensemble;
 import cz.cuni.mff.d3s.deeco.annotations.IgnoreKnowledgeCompromise;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
 import cz.cuni.mff.d3s.deeco.annotations.Local;
+import cz.cuni.mff.d3s.deeco.annotations.MemberRole;
 import cz.cuni.mff.d3s.deeco.annotations.Membership;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
+import cz.cuni.mff.d3s.deeco.annotations.PlaysRole;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.HasRole;
 import cz.cuni.mff.d3s.deeco.annotations.Rating;
 import cz.cuni.mff.d3s.deeco.annotations.RatingsProcess;
+import cz.cuni.mff.d3s.deeco.annotations.Role;
 import cz.cuni.mff.d3s.deeco.annotations.RoleDefinition;
 import cz.cuni.mff.d3s.deeco.annotations.RoleParam;
 import cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange;
@@ -123,13 +127,15 @@ public class AnnotationProcessor {
 	 * Annotations that can appear in a class and can be handled by the main processor (this)
 	 */
 	static final Set<Class<? extends Annotation>> KNOWN_CLASS_ANNOTATIONS = new HashSet<>(
-			Arrays.asList(PeriodicScheduling.class, Component.class, Ensemble.class, HasRole.class));
+			Arrays.asList(PeriodicScheduling.class, Component.class, Ensemble.class, HasRole.class,
+					Role.class, PlaysRole.class));
 	
 	/**
 	 * Annotations that can appear in a method and can be handled by the main processor (this)  
 	 */
 	static final Set<Class<? extends Annotation>> KNOWN_METHOD_ANNOTATIONS = new HashSet<>(
-			Arrays.asList(Process.class, PeriodicScheduling.class, KnowledgeExchange.class, Membership.class, CommunicationBoundary.class));
+			Arrays.asList(Process.class, PeriodicScheduling.class, KnowledgeExchange.class, Membership.class, 
+					CommunicationBoundary.class, CoordinatorRole.class, MemberRole.class));
 
 	/**
 	 *  Places in the parsing process where the processor's extensions are called. 
@@ -360,7 +366,9 @@ public class AnnotationProcessor {
 		componentInstance.setName(clazz.getCanonicalName());
 		
 		try {
-			ChangeSet initialK = extractInitialKnowledge(obj, false);
+			new RolesAnnotationChecker().checkRolesImplementation(obj);
+		
+			ChangeSet initialK = extractInitialKnowledge(obj, false);			
 			ChangeSet initialLocalK = extractInitialKnowledge(obj, true);
 			String id = getComponentId(initialK);
 			if (id == null) {
@@ -421,14 +429,14 @@ public class AnnotationProcessor {
 				}
 			}
 			
-			Set<Class<?>> roles = new HashSet<>();
+			Set<Class<?>> securityRoles = new HashSet<>();
 			for (HasRole role : clazz.getDeclaredAnnotationsByType(HasRole.class)) {
-				if (roles.contains(role.value())) {
+				if (securityRoles.contains(role.value())) {
 					throw new AnnotationProcessorException("The same role cannot be assigned multiply to a component.");
 				}
 				SecurityRole securityRole = createRoleFromClassDefinition(role.value(), km, SECURITY_ARGUMENT_PATH_VALIDATION.VALIDATE, SECURITY_ROLE_LOAD_TYPE.RECURSIVE);
 				componentInstance.getSecurityRoles().add(securityRole);
-				roles.add(role.value());
+				securityRoles.add(role.value());
 			}
 			
 			// check for data compromise
@@ -444,7 +452,7 @@ public class AnnotationProcessor {
 			String msg = Component.class.getSimpleName() + ": "
 					+ componentInstance.getName() + "->" + e.getMessage();
 			throw new AnnotationProcessorException(msg, e);
-		}
+		}		
 		return componentInstance;
 	}
 

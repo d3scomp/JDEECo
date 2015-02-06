@@ -16,6 +16,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
+// TODO rename to RoleDefinition once the current RoleDefinition annotation is renamed to SecurityRoleDefinition
 public @interface Role {
 
 }
