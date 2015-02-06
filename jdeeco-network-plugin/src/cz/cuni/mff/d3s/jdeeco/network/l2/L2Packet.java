@@ -12,7 +12,7 @@ public class L2Packet {
 	private byte[] data;
 	private Object object;
 
-	private Layer l2Layer;
+	private Layer2 l2Layer;
 
 	/**
 	 * Creates L2 packet from object
@@ -22,7 +22,7 @@ public class L2Packet {
 	 * @param object
 	 *            Source object to be stored in packet
 	 */
-	public L2Packet(Layer l2Layer, PacketHeader header, Object object) {
+	public L2Packet(Layer2 l2Layer, PacketHeader header, Object object) {
 		this.l2Layer = l2Layer;
 		this.header = header;
 		this.object = object;
@@ -36,10 +36,11 @@ public class L2Packet {
 	 * @param data
 	 *            Source binary data for object
 	 */
-	public L2Packet(Layer l2Layer, PacketHeader header, byte[] data) {
+	public L2Packet(Layer2 l2Layer, PacketHeader header, byte[] data, ReceivedInfo receivedInfo) {
 		this.l2Layer = l2Layer;
 		this.header = header;
 		this.data = data;
+		this.receivedInfo = receivedInfo;
 	}
 
 	/**

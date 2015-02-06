@@ -1,6 +1,10 @@
 package cz.cuni.mff.d3s.jdeeco.network.l2;
 
+import java.util.*;
+
 import cz.cuni.mff.d3s.jdeeco.network.l1.Address;
+import cz.cuni.mff.d3s.jdeeco.network.l1.Layer;
+import cz.cuni.mff.d3s.jdeeco.network.l2.Strategy;
 import cz.cuni.mff.d3s.jdeeco.network.marshaller.MarshallerRegistry;
 
 /**
@@ -9,8 +13,10 @@ import cz.cuni.mff.d3s.jdeeco.network.marshaller.MarshallerRegistry;
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
  */
-public class Layer {
+public class Layer2 {
+	private final Collection<Strategy> strategies = new HashSet<Strategy>();
 	private final MarshallerRegistry marshallers;
+	private final Layer layer1;
 
 	/**
 	 * Creates L2 layer
@@ -18,16 +24,17 @@ public class Layer {
 	 * @param marshallerRegistry
 	 *            MarshallerRegistry to be used by L2 and L2 packets
 	 */
-	public Layer(MarshallerRegistry marshallerRegistry) {
+	public Layer2(Layer layer1, MarshallerRegistry marshallerRegistry) {
 		marshallers = marshallerRegistry;
+		this.layer1 = layer1;
 	}
 
 	/**
-	 * Gets marshaller registry for this L2
+	 * Gets marshaler registry for this L2
 	 * 
-	 * @return marshaller registry used by layer
+	 * @return marshaler registry used by layer
 	 */
-	MarshallerRegistry getMarshallers() {
+	public MarshallerRegistry getMarshallers() {
 		return marshallers;
 	}
 
@@ -37,8 +44,10 @@ public class Layer {
 	 * @param packet
 	 *            Packet to be processed
 	 */
-	void processL2Packet(L2Packet packet) {
-		throw new UnsupportedOperationException();
+	public void processL2Packet(L2Packet packet) {
+		for (Strategy strategy : strategies) {
+			strategy.processL2Packet(packet);
+		}
 	}
 
 	/**
@@ -51,8 +60,10 @@ public class Layer {
 	 * @param address
 	 *            destination address for packet
 	 */
-	void sendL2Packet(L2Packet packet, Address address) {
-		throw new UnsupportedOperationException();
+	public void sendL2Packet(L2Packet packet, Address address) {
+		// Pass packet to lower layer
+		// TODO: Missing the address parameter
+		layer1.sendL2Packet(packet);
 	}
 
 	/**
@@ -61,8 +72,8 @@ public class Layer {
 	 * @param strategy
 	 *            Strategy to register
 	 */
-	void registerL2Strategy(Strategy strategy) {
-		throw new UnsupportedOperationException();
+	public void registerL2Strategy(Strategy strategy) {
+		strategies.add(strategy);
 	}
 
 	/**
@@ -80,12 +91,14 @@ public class Layer {
 	/**
 	 * Creates L2 packet from binary data
 	 * 
-	 * @param data
-	 *            Source binary data for object
 	 * @param header
 	 *            Packet header
+	 * @param data
+	 *            Source binary data for object
+	 * @param receifedInfo
+	 *            Information about received packet
 	 */
-	public L2Packet createPacket(PacketHeader header, byte[] data) {
-		return new L2Packet(this, header, data);
+	public L2Packet createPacket(PacketHeader header, byte[] data, ReceivedInfo receivedInfo) {
+		return new L2Packet(this, header, data, receivedInfo);
 	}
 }
