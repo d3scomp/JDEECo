@@ -52,7 +52,7 @@ public class ModelValidatorTest {
 		model = factory.createRuntimeMetadata(); 
 		processor = new AnnotationProcessor(factory, model, new CloningKnowledgeManagerFactory());
 		
-		processor.process(new ExampleComponent());
+		processor.processComponents(new ExampleComponent());
 		component = model.getComponentInstances().get(0);
 		process = component.getComponentProcesses().get(0);
 		

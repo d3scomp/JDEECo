@@ -11,10 +11,9 @@ import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
 import cz.cuni.mff.d3s.deeco.runtime.DEECo;
 import cz.cuni.mff.d3s.deeco.runtime.PluginDependencyException;
 
-
 /**
  * 
- * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
+ * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
  *
  */
 public class ConvoyTest {
@@ -32,7 +31,8 @@ public class ConvoyTest {
 		/* create main application container */
 		DEECo deeco = new DEECo();
 		/* deploy components and ensembles */
-		deeco.deploy(new Leader(), new Follower(), new ConvoyEnsemble());
+		deeco.deployComponents(new Leader(), new Follower());
+		deeco.deployEnsembles(ConvoyEnsemble.class);
 		
 		deeco.start();
 		Thread.sleep(2000);

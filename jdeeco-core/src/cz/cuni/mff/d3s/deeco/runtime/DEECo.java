@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.Plugin;
-
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
 import cz.cuni.mff.d3s.deeco.executor.Executor;
@@ -40,7 +38,7 @@ public class DEECo {
 	/**
 	 * To be used to process the annotated Java classes and populate the RuntimeMetadata model.  
 	 */
-	AnnotationProcessor processor;
+	public AnnotationProcessor processor;
 	
 	/**
 	 * To be used to create knowledgeManager objects. 
@@ -63,8 +61,13 @@ public class DEECo {
 		initializePlugins(plugins);
 	}
 	
-	public void deploy(Object... objs) throws AnnotationProcessorException {
-		processor.process(objs);
+	public void deployComponents(Object... components) throws AnnotationProcessorException {
+		processor.processComponents(components);
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public void deployEnsembles(Class... ensembles) throws AnnotationProcessorException { 
+		processor.processEnsembles(ensembles);
 	}
 	
 	public void start() {

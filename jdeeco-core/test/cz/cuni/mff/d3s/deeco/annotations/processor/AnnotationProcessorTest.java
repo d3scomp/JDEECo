@@ -91,7 +91,7 @@ public class AnnotationProcessorTest {
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);
 		
 		CorrectC1 input = new CorrectC1();
-		processor.process(input);
+		processor.processComponents(input);
 		removeKnowledgeManagersFromComponents(model);
 		File expected = getExpectedFile(input);
 		saveInXMI(model, tempFile);
@@ -106,7 +106,7 @@ public class AnnotationProcessorTest {
 		CorrectC4 input = new CorrectC4();
 		
 		// when process() is called
-		processor.process(input);
+		processor.processComponents(input);
 		
 		// then annotations are parsed correctly
 		assertEquals(1, model.getComponentInstances().size());
@@ -163,7 +163,7 @@ public class AnnotationProcessorTest {
 		CorrectC4 input = new CorrectC4();
 		
 		// when process() is called
-		processor.process(input);
+		processor.processComponents(input);
 		
 		// then annotations are parsed correctly
 		assertEquals(1, model.getComponentInstances().size());
@@ -196,7 +196,7 @@ public class AnnotationProcessorTest {
 		CorrectC4 input = new CorrectC4();
 		
 		// when process() is called
-		processor.process(input);
+		processor.processComponents(input);
 		
 		// then annotations are parsed correctly
 		assertEquals(1, model.getComponentInstances().size());
@@ -218,7 +218,7 @@ public class AnnotationProcessorTest {
 		exception.expectMessage("Parameter no_such_parameter is not present in the knowledge.");
 		
 		// when process() is called
-		processor.process(input);
+		processor.processComponents(input);
 	}
 	
 	@Test
@@ -231,7 +231,7 @@ public class AnnotationProcessorTest {
 		exception.expectMessage("Field nonserializable is not serializable.");
 		
 		// when process() is called
-		processor.process(input);
+		processor.processComponents(input);
 	}
 	
 	@Test
@@ -245,7 +245,7 @@ public class AnnotationProcessorTest {
 		exception.expectMessage("Role class must be decoreted with @RoleDefinition.");
 		
 		// when process() is called
-		processor.process(input);
+		processor.processComponents(input);
 	}
 	
 	@Test 
@@ -256,7 +256,7 @@ public class AnnotationProcessorTest {
 		CorrectC5 input = new CorrectC5();
 		
 		// when process() is called
-		processor.process(input);
+		processor.processComponents(input);
 		
 		// then annotations are parsed correctly
 		assertEquals(1, model.getComponentInstances().size());
@@ -299,7 +299,7 @@ public class AnnotationProcessorTest {
 		exception.expectMessage("Parameter capacity is not appropriately secured.");
 		
 		// when process() is called
-		processor.process(input);
+		processor.processComponents(input);
 	}
 	
 	@Test 
@@ -310,7 +310,7 @@ public class AnnotationProcessorTest {
 		CorrectC6 input = new CorrectC6();
 		
 		// when process() is called
-		processor.process(input);
+		processor.processComponents(input);
 		
 		// then annotations are parsed correctly
 		assertEquals(1, model.getComponentInstances().size());
@@ -341,10 +341,9 @@ public class AnnotationProcessorTest {
 		// given component with rating annotations is processed by the annotations processor
 		RuntimeMetadata model = factory.createRuntimeMetadata(); 
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
-		CorrectE4 input = new CorrectE4();
 		
 		// when process() is called
-		processor.process(input);
+		processor.processEnsembles(CorrectE4.class);
 		
 		// then annotations are parsed correctly
 		assertEquals(1, model.getEnsembleDefinitions().size());
@@ -373,7 +372,7 @@ public class AnnotationProcessorTest {
 		exception.expectMessage("The rating process method parameter cannot contain " + Out.class.getSimpleName() + " nor " + InOut.class.getSimpleName() + " parameters.");
 		
 		// when process() is called
-		processor.process(input);
+		processor.processComponents(input);
 	}
 	
 	@Test 
@@ -387,7 +386,7 @@ public class AnnotationProcessorTest {
 		exception.expectMessage("The rating process method parameter must be of type " + ReadonlyRatingsHolder.class.getSimpleName() + ".");
 		
 		// when process() is called
-		processor.process(input);
+		processor.processComponents(input);
 	}
 	
 	@Test 
@@ -395,13 +394,12 @@ public class AnnotationProcessorTest {
 		// given component with rating annotations is processed by the annotations processor
 		RuntimeMetadata model = factory.createRuntimeMetadata(); 
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
-		WrongE6 input = new WrongE6();
 		
 		exception.expect(AnnotationProcessorException.class);
 		exception.expectMessage("The rating process method parameter must be of type " + ReadonlyRatingsHolder.class.getSimpleName() + ".");
 		
 		// when process() is called
-		processor.process(input);
+		processor.processEnsembles(WrongE6.class);
 	}
 	
 	@Test 
@@ -415,7 +413,7 @@ public class AnnotationProcessorTest {
 		exception.expectMessage("Cannot assign the same role " + WrongC8.Role1.class.getSimpleName() + " multiple times.");
 		
 		// when process() is called
-		processor.process(input);
+		processor.processComponents(input);
 	}
 	
 	@Test 
@@ -429,7 +427,7 @@ public class AnnotationProcessorTest {
 		exception.expectMessage("Local knowledge must not be secured.");
 		
 		// when process() is called
-		processor.process(input);
+		processor.processComponents(input);
 	}
 	
 	@Test
@@ -438,7 +436,7 @@ public class AnnotationProcessorTest {
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
 		
 		CorrectC1 input = new ChildOfCorrectC1();
-		processor.process(input);
+		processor.processComponents(input);
 		removeKnowledgeManagersFromComponents(model);
 		File expected = getExpectedFile(input);
 //		saveInXMI(model, expected);
@@ -451,8 +449,8 @@ public class AnnotationProcessorTest {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
 		
+		processor.processEnsembles(CorrectE1.class);
 		CorrectE1 input = new CorrectE1();
-		processor.process(input);
 		File expected = getExpectedFile(input);
 		saveInXMI(model, tempFile);
 		FileAssert.assertEquals(expected, tempFile);
@@ -463,7 +461,7 @@ public class AnnotationProcessorTest {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
 		
-		processor.process(CorrectE1.class);
+		processor.processEnsembles(CorrectE1.class);
 		CorrectE1 input = new CorrectE1();
 		File expected = getExpectedFile(input);
 		saveInXMI(model, tempFile);
@@ -476,17 +474,14 @@ public class AnnotationProcessorTest {
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
 
 		Object input = new CorrectC1();
-		processor.process(input);
+		processor.processComponents(input);
 		input = new CorrectC2();
-		processor.process(input);
+		processor.processComponents(input);
 		input = new CorrectC3();
-		processor.process(input);
-		input = new CorrectE1();
-		processor.process(input);
-		input = new CorrectE2();
-		processor.process(input);
-		input = new CorrectE3();
-		processor.process(input);
+		processor.processComponents(input);
+		processor.processEnsembles(CorrectE1.class);
+		processor.processEnsembles(CorrectE2.class);
+		processor.processEnsembles(CorrectE3.class);
 		removeKnowledgeManagersFromComponents(model);
 		File expected = getExpectedFile(new C1C2C3E1E2E3());
 		saveInXMI(model, tempFile);
@@ -501,10 +496,8 @@ public class AnnotationProcessorTest {
 		Object input1 = new CorrectC1();
 		Object input2 = new CorrectC2();
 		Object input3 = new CorrectC3();
-		Object input4 = new CorrectE1();
-		Object input5 = new CorrectE2();
-		Object input6 = new CorrectE3();
-		processor.process(input1, input2, input3, input4, input5, input6);
+		processor.processComponents(input1, input2, input3);
+		processor.processEnsembles(CorrectE1.class, CorrectE2.class, CorrectE3.class);
 		removeKnowledgeManagersFromComponents(model);		
 		File expected = getExpectedFile(new C1C2C3E1E2E3());
 		saveInXMI(model, tempFile);
@@ -516,14 +509,16 @@ public class AnnotationProcessorTest {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
 
-		List<Object> inputs = new ArrayList<>();
-		inputs.add(new CorrectC1());
-		inputs.add(new CorrectC2());
-		inputs.add(new CorrectC3());
-		inputs.add(new CorrectE1());
-		inputs.add(new CorrectE2());
-		inputs.add(new CorrectE3());
-		processor.process(inputs);
+		List<Object> componentInputs = new ArrayList<>();
+		componentInputs.add(new CorrectC1());
+		componentInputs.add(new CorrectC2());
+		componentInputs.add(new CorrectC3());
+		List<Class> ensembleInputs = new ArrayList<>();
+		ensembleInputs.add(CorrectE1.class);
+		ensembleInputs.add(CorrectE2.class);
+		ensembleInputs.add(CorrectE3.class);
+		processor.processComponents(componentInputs);
+		processor.processEnsembles(ensembleInputs);
 		removeKnowledgeManagersFromComponents(model);		
 		File expected = getExpectedFile(new C1C2C3E1E2E3());
 		saveInXMI(model, tempFile);
@@ -537,7 +532,7 @@ public class AnnotationProcessorTest {
 
 		// no periodic trigger, 1 knowledge change trigger:
 		CorrectC2 input = new CorrectC2();
-		processor.process(input);
+		processor.processComponents(input);
 		removeKnowledgeManagersFromComponents(model);
 		File expected = getExpectedFile(input);
 		saveInXMI(model, tempFile);
@@ -550,9 +545,9 @@ public class AnnotationProcessorTest {
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
 
 		// no periodic trigger, 2 knowledge change triggers:
-		CorrectE2 input = new CorrectE2();
-		processor.process(input);
+		processor.processEnsembles(CorrectE2.class);
 		removeKnowledgeManagersFromComponents(model);
+		CorrectE2 input = new CorrectE2();
 		File expected = getExpectedFile(input);
 		saveInXMI(model, tempFile);
 		FileAssert.assertEquals(expected, tempFile);
@@ -564,7 +559,7 @@ public class AnnotationProcessorTest {
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
 
 		CorrectC3 input = new CorrectC3();
-		processor.process(input);
+		processor.processComponents(input);
 		removeKnowledgeManagersFromComponents(model);
 		File expected = getExpectedFile(input);
 		saveInXMI(model, tempFile);
@@ -576,9 +571,9 @@ public class AnnotationProcessorTest {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
 
-		CorrectE3 input = new CorrectE3();
-		processor.process(input);
+		processor.processEnsembles(CorrectE3.class);
 		removeKnowledgeManagersFromComponents(model);
+		CorrectE3 input = new CorrectE3();
 		File expected = getExpectedFile(input);
 		saveInXMI(model, tempFile);
 		FileAssert.assertEquals(expected, tempFile);
@@ -591,18 +586,8 @@ public class AnnotationProcessorTest {
 		Object input = new Object();
 		exception.expect(AnnotationProcessorException.class);
 		exception.expectMessage("Provided model cannot be null.");
-		processor.process(input);	
+		processor.processComponents(input);	
 	}
-	
-	@Test 
-	public void testExceptionsNullObject() throws AnnotationProcessorException {
-		RuntimeMetadata model = factory.createRuntimeMetadata();
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
-		
-		exception.expect(AnnotationProcessorException.class);
-		exception.expectMessage("Provide an initialized object or a non-empty list of objects.");
-		processor.process(null);	
-	}	
 	
 	@Test 
 	public void testExceptionsNonInitializedComponent() throws AnnotationProcessorException {
@@ -611,7 +596,7 @@ public class AnnotationProcessorTest {
 		
 		exception.expect(AnnotationProcessorException.class);
 		exception.expectMessage("For a component to be parsed, it has to be an INSTANCE of a class annotated with @Component.");
-		processor.process(CorrectC1.class);	
+		processor.processComponents(CorrectC1.class);	
 	}
 	
 	@Test 
@@ -624,7 +609,7 @@ public class AnnotationProcessorTest {
 		exception.expectMessage(
 				"Class: "+input.getClass().getCanonicalName()+"->" +
 				"No @Component or @Ensemble annotation found.");
-		processor.process(input);	
+		processor.processEnsembles(WrongCE1.class);	
 	}
 	
 	@Test 
@@ -637,7 +622,7 @@ public class AnnotationProcessorTest {
 		exception.expectMessage(
 				"Class: "+input.getClass().getCanonicalName()+"->" +
 				"Both @Component or @Ensemble annotation found.");
-		processor.process(input);	
+		processor.processComponents(input);	
 	}
 
 	@Test 
@@ -650,7 +635,7 @@ public class AnnotationProcessorTest {
 		exception.expectMessage(
 				"Component: "+input.getClass().getCanonicalName()+"->" +
 				"Method process1 annotated as @Process should be public and static.");
-		processor.process(input);
+		processor.processComponents(input);
 	}
 
 	@Test 
@@ -665,7 +650,7 @@ public class AnnotationProcessorTest {
 				"Process: process1->" +
 				"Parameter: 2->" +
 				"No kind annotation was found.");
-		processor.process(input);
+		processor.processComponents(input);
 	}
 
 	@Test 
@@ -680,7 +665,7 @@ public class AnnotationProcessorTest {
 				"Process: process1->" +
 				"Parameter: 3->" +
 				"More than one kind annotation was found.");
-		processor.process(input);
+		processor.processComponents(input);
 	}
 	
 	@Test 
@@ -694,7 +679,7 @@ public class AnnotationProcessorTest {
 				"Component: "+input.getClass().getCanonicalName()+"->" +
 				"Process: process1->" +
 				"No triggers were found.");
-		processor.process(input);
+		processor.processComponents(input);
 	}
 	
 	@Test 
@@ -708,7 +693,7 @@ public class AnnotationProcessorTest {
 				"Component: "+input.getClass().getCanonicalName()+"->" +
 				"Process: process1->" +
 				"The component process cannot have zero parameters.");
-		processor.process(input);
+		processor.processComponents(input);
 	}
 	
 	@Test 
@@ -721,7 +706,7 @@ public class AnnotationProcessorTest {
 		exception.expectMessage(
 				"Ensemble: "+input.getClass().getCanonicalName()+"->" +
 				"Method knowledgeExchange annotated as @KnowledgeExchange should be public and static.");
-		processor.process(input);	
+		processor.processEnsembles(WrongE1.class);	
 	}
 
 	@Test 
@@ -734,7 +719,7 @@ public class AnnotationProcessorTest {
 		exception.expectMessage(
 				"Ensemble: "+input.getClass().getCanonicalName()+"->" +
 				"No @Membership annotation was found");
-		processor.process(input);	
+		processor.processEnsembles(WrongE2.class);	
 	}
 
 	@Test 
@@ -747,7 +732,7 @@ public class AnnotationProcessorTest {
 		exception.expectMessage(
 				"Ensemble: "+input.getClass().getCanonicalName()+"->" +
 				"More than one instance of @KnowledgeExchange annotation was found");
-		processor.process(input);	
+		processor.processEnsembles(WrongE3.class);	
 	}
 
 	@Test 
@@ -761,7 +746,7 @@ public class AnnotationProcessorTest {
 		exception.expectMessage(
 				"Ensemble: "+input.getClass().getCanonicalName()+"->" +
 				"No triggers were found.");
-		processor.process(input);
+		processor.processEnsembles(WrongE4.class);
 	}
 	
 	@Test 
@@ -777,7 +762,7 @@ public class AnnotationProcessorTest {
 				"KnowledgeExchange->" +
 				"Parameter: 1->" +
 				"The path does not start with one of the 'coord' or 'member' keywords.");
-		processor.process(input);
+		processor.processEnsembles(WrongE4.class);
 	}
 	
 	/*
@@ -980,7 +965,7 @@ public class AnnotationProcessorTest {
 		WrongC4WithSecurity input = new WrongC4WithSecurity();
 		exception.expect(AnnotationProcessorException.class);
 		exception.expectMessage("The component ID must not be secured");
-		processor.process(input);	
+		processor.processComponents(input);	
 	}
 	
 	/*
