@@ -15,7 +15,7 @@ import cz.cuni.mff.d3s.jdeeco.network.marshaller.SerializingMarshaller;
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
  */
-public class L2Tests {
+public class L2Test {
 	private Layer l2Layer;
 
 	private final String PAYLOAD = "Dummy Payload";
@@ -36,7 +36,7 @@ public class L2Tests {
 	public void initializeL2() {
 		// Setup marshallers to be used by layer
 		MarshallerRegistry registry = new MarshallerRegistry();
-		registry.registerMarshaller(PacketTypes.KNOWLEDGE, new SerializingMarshaller());
+		registry.registerMarshaller(PacketType.KNOWLEDGE, new SerializingMarshaller());
 
 		// Instantiate layer
 		l2Layer = new Layer(registry);
@@ -48,11 +48,11 @@ public class L2Tests {
 	@Test
 	public void testL2PacketMarshalling() {
 		// Create source packet
-		L2Packet srcPacket = l2Layer.createPacket(new PacketHeader(PacketTypes.KNOWLEDGE), PAYLOAD);
+		L2Packet srcPacket = l2Layer.createPacket(new PacketHeader(PacketType.KNOWLEDGE), PAYLOAD);
 		assertPayload(srcPacket.getObject());
 
 		// Create destination packet from source packet binary data
-		L2Packet dstPacket = l2Layer.createPacket(new PacketHeader(PacketTypes.KNOWLEDGE), srcPacket.getData());
+		L2Packet dstPacket = l2Layer.createPacket(new PacketHeader(PacketType.KNOWLEDGE), srcPacket.getData());
 		assertPayload(dstPacket.getObject());
 	}
 }

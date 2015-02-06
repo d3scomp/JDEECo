@@ -1,5 +1,7 @@
 package cz.cuni.mff.d3s.jdeeco.network.l2;
 
+import cz.cuni.mff.d3s.jdeeco.network.PacketType;
+
 /**
  * Layer 2 packet header
  * 
@@ -10,7 +12,7 @@ public class PacketHeader {
 	/**
 	 * Type of L2 packet
 	 */
-	private byte packetType;
+	private PacketType packetType;
 
 	/**
 	 * Creates L2 packet header
@@ -18,7 +20,7 @@ public class PacketHeader {
 	 * @param packetType
 	 *            Type of packet
 	 */
-	public PacketHeader(byte packetType) {
+	public PacketHeader(PacketType packetType) {
 		this.packetType = packetType;
 	}
 
@@ -27,7 +29,7 @@ public class PacketHeader {
 	 * 
 	 * @return packet type
 	 */
-	public byte getPacketType() {
+	public PacketType getPacketType() {
 		return packetType;
 	}
 }

@@ -5,7 +5,6 @@ import static org.junit.Assert.*;
 import java.util.*;
 
 import org.junit.*;
-import org.omg.CORBA.COMM_FAILURE;
 
 import cz.cuni.mff.d3s.jdeeco.network.exceptions.UnregistredPacketType;
 import cz.cuni.mff.d3s.jdeeco.network.marshaller.MarshallerRegistry;
@@ -58,7 +57,7 @@ public class MarshallingTest {
 
 		// Register marshaler
 		SerializingMarshaller marshaller = new SerializingMarshaller();
-		registry.registerMarshaller(PacketTypes.KNOWLEDGE, marshaller);
+		registry.registerMarshaller(PacketType.KNOWLEDGE, marshaller);
 	}
 
 	/**
@@ -68,8 +67,8 @@ public class MarshallingTest {
 	 */
 	@Test
 	public void testEncodeDecodeSimple() throws UnregistredPacketType {
-		byte[] data = registry.marshall(PacketTypes.KNOWLEDGE, SIMPLE_PAYLOAD);
-		Object obj = registry.unmarshall(PacketTypes.KNOWLEDGE, data);
+		byte[] data = registry.marshall(PacketType.KNOWLEDGE, SIMPLE_PAYLOAD);
+		Object obj = registry.unmarshall(PacketType.KNOWLEDGE, data);
 		assertSimplePayload(obj);
 	}
 	
@@ -80,8 +79,8 @@ public class MarshallingTest {
 	 */
 	@Test
 	public void testEncodeDecodeComplex() throws UnregistredPacketType {
-		byte[] data = registry.marshall(PacketTypes.KNOWLEDGE, COMPLEX_PAYLOAD);
-		Object obj = registry.unmarshall(PacketTypes.KNOWLEDGE, data);
+		byte[] data = registry.marshall(PacketType.KNOWLEDGE, COMPLEX_PAYLOAD);
+		Object obj = registry.unmarshall(PacketType.KNOWLEDGE, data);
 		assertComplexPayload(obj);
 	}
 }
