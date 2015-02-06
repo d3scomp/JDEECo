@@ -440,7 +440,7 @@ public class AnnotationProcessor {
 					throw new AnnotationProcessorException("The same role cannot be assigned multiply to a component.");
 				}
 				SecurityRole securityRole = createRoleFromClassDefinition(role.value(), km, SECURITY_ARGUMENT_PATH_VALIDATION.VALIDATE, SECURITY_ROLE_LOAD_TYPE.RECURSIVE);
-				componentInstance.getRoles().add(securityRole);
+				componentInstance.getSecurityRoles().add(securityRole);
 				roles.add(role.value());
 			}
 			

@@ -205,19 +205,20 @@ public class LocalSecurityCheckerTest {
 		arg_some_param.setName("roleA_some_param");
 		arg_some_param.setKnowledgePath(RuntimeModelHelper.createKnowledgePath("some_param"));
 		roleA.getArguments().add(arg_some_param);
-		shadowComponent.getRoles().add(roleA);
+
+		shadowComponent.getSecurityRoles().add(roleA);
 		
 		SecurityRole roleB = factory.createSecurityRole();
 		roleB.setRoleName("roleB");
-		shadowComponent.getRoles().add(roleB);
+		shadowComponent.getSecurityRoles().add(roleB);
 			
 		SecurityRole roleC = factory.createSecurityRole();
 		roleC.setRoleName("roleC");
-		localComponent.getRoles().add(roleC);
+		localComponent.getSecurityRoles().add(roleC);
 		
 		SecurityRole roleC2 = factory.createSecurityRole();
 		roleC2.setRoleName("roleC");
-		shadowComponent.getRoles().add(roleC2);
+		shadowComponent.getSecurityRoles().add(roleC2);
 				
 		// when checkSecurity() as coordinator is called
 		assertTrue(target.checkSecurity(PathRoot.COORDINATOR, shadowKnowledgeManager));
@@ -249,14 +250,14 @@ public class LocalSecurityCheckerTest {
 		
 		SecurityRole roleB = factory.createSecurityRole();
 		roleB.setRoleName("roleB");
-		localComponent.getRoles().add(roleB);
+		localComponent.getSecurityRoles().add(roleB);
 		
 		// when checkSecurity() as member is called
 		assertFalse(target.checkSecurity(PathRoot.MEMBER, shadowKnowledgeManager));
 		
 		SecurityRole roleC2 = factory.createSecurityRole();
 		roleC2.setRoleName("roleC");
-		localComponent.getRoles().add(roleC2);
+		localComponent.getSecurityRoles().add(roleC2);
 		
 		// when checkSecurity() as member is called
 		assertTrue(target.checkSecurity(PathRoot.MEMBER, shadowKnowledgeManager));				
@@ -283,11 +284,11 @@ public class LocalSecurityCheckerTest {
 		
 		SecurityRole roleB = factory.createSecurityRole();
 		roleB.setRoleName("roleB");
-		localComponent.getRoles().add(roleB);
+		localComponent.getSecurityRoles().add(roleB);
 
 		SecurityRole roleC2 = factory.createSecurityRole();
 		roleC2.setRoleName("roleC");
-		localComponent.getRoles().add(roleC2);
+		localComponent.getSecurityRoles().add(roleC2);
 		
 		// when checkSecurity() as member is called
 		assertFalse(target.checkSecurity(PathRoot.MEMBER, shadowKnowledgeManager));				
@@ -321,7 +322,7 @@ public class LocalSecurityCheckerTest {
 		
 		SecurityRole role = factory.createSecurityRole();
 		role.setRoleName("role");
-		localComponent.getRoles().add(role);
+		localComponent.getSecurityRoles().add(role);
 			
 		assertFalse(target.checkSecurity(PathRoot.COORDINATOR, localKnowledgeManager));
 		
@@ -366,14 +367,14 @@ public class LocalSecurityCheckerTest {
 				
 		SecurityRole roleA = factory.createSecurityRole();
 		roleA.setRoleName("roleA");
-		localComponent.getRoles().add(roleA);
+		localComponent.getSecurityRoles().add(roleA);
 		
 		// when checkSecurity() as member is called (missing roleB)
 		assertFalse(target.checkSecurity(PathRoot.MEMBER, shadowKnowledgeManager));
 		
 		SecurityRole roleB = factory.createSecurityRole();
 		roleB.setRoleName("roleB");
-		localComponent.getRoles().add(roleB);
+		localComponent.getSecurityRoles().add(roleB);
 		
 		// when checkSecurity() as member is called
 		assertTrue(target.checkSecurity(PathRoot.MEMBER, shadowKnowledgeManager));

@@ -955,7 +955,7 @@
     </children>
     <styles xmi:type="notation:ConnectorStyle" xmi:id="_ko67cYSnEeSEFMusYuKq6w" lineColor="4210752"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_ko67coSnEeSEFMusYuKq6w" fontColor="4210752" fontName="Segoe UI" fontHeight="10"/>
-    <element xmi:type="ecore:EReference" href="RuntimeModel.ecore#//ComponentInstance/roles"/>
+    <element xmi:type="ecore:EReference" href="RuntimeModel.ecore#//ComponentInstance/securityRoles"/>
     <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_ko67c4SnEeSEFMusYuKq6w" points="[-11, -3, 69, 29]$[-55, -14, 25, 18]"/>
     <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ko9XsISnEeSEFMusYuKq6w" id="(0.2175824175824176,0.010309278350515464)"/>
   </edges>

@@ -88,8 +88,8 @@ public class KnowledgeEncryptorTest {
 	 	SecurityRole role = factory.createSecurityRole();
 	 	role.setRoleName("testrole1");
 	 	ComponentInstance tmpComponent = factory.createComponentInstance();
-	 	tmpComponent.getRoles().add(role);
-		when(component.getRoles()).thenReturn(tmpComponent.getRoles());
+	 	tmpComponent.getSecurityRoles().add(role);
+		when(component.getSecurityRoles()).thenReturn(tmpComponent.getSecurityRoles());
 		
 		replicaKnowledgeManager = new BaseKnowledgeManager("receiver_id", component);
 		securityHelper = new SecurityHelper();

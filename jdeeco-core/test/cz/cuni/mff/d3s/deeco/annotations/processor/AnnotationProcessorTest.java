@@ -154,16 +154,16 @@ public class AnnotationProcessorTest {
 		assertEquals(123, ((AbsoluteSecurityRoleArgument) timeSecurityTags.get(0).getRequiredRole().getArguments().get(2)).getValue());
 		assertEquals("some_value", ((AbsoluteSecurityRoleArgument) timeSecurityTags.get(0).getRequiredRole().getArguments().get(3)).getValue());
 		
-		assertEquals(2, component.getRoles().size());
-		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role1.class.getName(), component.getRoles().get(0).getRoleName());
-		assertEquals(1, component.getRoles().get(0).getArguments().size());
-		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role2.class.getName(), component.getRoles().get(1).getRoleName());
-		assertEquals(5, component.getRoles().get(1).getArguments().size());
+		assertEquals(2, component.getSecurityRoles().size());
+		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role1.class.getName(), component.getSecurityRoles().get(0).getRoleName());
+		assertEquals(1, component.getSecurityRoles().get(0).getArguments().size());
+		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role2.class.getName(), component.getSecurityRoles().get(1).getRoleName());
+		assertEquals(5, component.getSecurityRoles().get(1).getArguments().size());
 		
-		pathArgument = (PathSecurityRoleArgument)component.getRoles().get(1).getArguments().get(0);
+		pathArgument = (PathSecurityRoleArgument)component.getSecurityRoles().get(1).getArguments().get(0);
 		assertEquals(RuntimeModelHelper.createKnowledgePath("name"), pathArgument.getKnowledgePath());
 		assertEquals("name", pathArgument.getName());
-		assertEquals("time", component.getRoles().get(1).getArguments().get(1).getName());		
+		assertEquals("time", component.getSecurityRoles().get(1).getArguments().get(1).getName());		
 	}
 		
 	@Test 
