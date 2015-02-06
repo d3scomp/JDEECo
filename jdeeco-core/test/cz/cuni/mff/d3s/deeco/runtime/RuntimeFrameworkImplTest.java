@@ -140,12 +140,12 @@ public class RuntimeFrameworkImplTest {
 		// WHEN a new RuntimeFrameworkImpl is created via the public constructor 		
 		new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, ratingsManager) {
 			@Override
-			public void init() {
-				spy.init();
+			public void init(DEECoPluginContainer container) {
+				spy.init(null);
 			}
 		};
 		// THEN the init() gets called
-		verify(spy).init();
+		verify(spy).init(null);
 	}
 	
 	@Test
@@ -155,7 +155,7 @@ public class RuntimeFrameworkImplTest {
 		RuntimeFrameworkImpl tested = new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, ratingsManager, false);
 
 		// WHEN init() is called on the runtime
-		tested.init();
+		tested.init(null);
 		
 		// THEN the runtime sets up an adapter to observe changes of the list of
 		// component instances
@@ -171,7 +171,7 @@ public class RuntimeFrameworkImplTest {
 		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, ratingsManager, false));
 		
 		// WHEN when init is called() on the runtime		
-		tested.init();
+		tested.init(null);
 		
 		// THEN the callback componentInstanceAdded is not called 
 		verify(tested, never()).componentInstanceAdded(any(ComponentInstance.class));		
@@ -183,7 +183,7 @@ public class RuntimeFrameworkImplTest {
 		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, ratingsManager, false));
 		
 		// WHEN when init is called() on the runtime
-		tested.init();
+		tested.init(null);
 		
 		// THEN the component is added via the callback componentInstanceAdded 
 		verify(tested, times(1)).componentInstanceAdded(any(ComponentInstance.class));
@@ -198,7 +198,7 @@ public class RuntimeFrameworkImplTest {
 		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, ratingsManager, false));
 	
 		// WHEN when init is called() on the runtime
-		tested.init();		
+		tested.init(null);		
 		
 		// THEN the components are all added via the callback componentInstanceAdded 
 		verify(tested, times(2)).componentInstanceAdded(any(ComponentInstance.class));
@@ -615,7 +615,7 @@ public class RuntimeFrameworkImplTest {
 		process2.setActive(false);
 		component.getComponentProcesses().add(process2);
 		process.setActive(true);
-		tested.init();		
+		tested.init(null);		
 
 		@SuppressWarnings("unused")
 		ComponentInstanceRecord unused = tested.componentRecords.get(component);

@@ -164,7 +164,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 	 * FIXME remove this constructor when RatingsManager becomes a plugin
 	 * 
 	 * @see RuntimeFrameworkImpl#RuntimeFrameworkImpl(RuntimeMetadata, Scheduler, Executor, KnowledgeManagerContainer)
-	 * @see RuntimeFrameworkImpl#init()
+	 * @see RuntimeFrameworkImpl#init(DEECoPluginContainer)
 	 */
 	public RuntimeFrameworkImpl(RuntimeMetadata model, Scheduler scheduler,
 			Executor executor, KnowledgeManagerContainer kmContainer, RatingsManager ratingsManager, boolean autoInit) {
@@ -187,7 +187,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 		architecture = ArchitectureFactory.eINSTANCE.createArchitecture();
 
 		if (autoInit)
-			init();
+			init(null);
 	}
 
 	/**
@@ -198,7 +198,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 	 * </p>
 	 */
 	@Override
-	public void init() {		
+	public void init(DEECoPluginContainer container) {		
 		// initialize the components
 		for (ComponentInstance ci: model.getComponentInstances()) {
 			componentInstanceAdded(ci);
