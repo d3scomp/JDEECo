@@ -1,12 +1,9 @@
-package cz.cuni.mff.d3s.deeco.simulation.task;
+package cz.cuni.mff.d3s.deeco.task;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.TimeTriggerExt;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
-import cz.cuni.mff.d3s.deeco.simulation.TimerTaskListener;
-import cz.cuni.mff.d3s.deeco.task.Task;
-import cz.cuni.mff.d3s.deeco.task.TaskInvocationException;
 
 public abstract class TimerTask extends Task {
 

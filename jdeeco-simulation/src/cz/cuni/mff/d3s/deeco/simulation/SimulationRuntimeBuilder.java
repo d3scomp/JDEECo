@@ -18,7 +18,8 @@ import cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeFrameworkImpl;
 import cz.cuni.mff.d3s.deeco.security.SecurityKeyManager;
 import cz.cuni.mff.d3s.deeco.simulation.scheduler.SimulationScheduler;
-import cz.cuni.mff.d3s.deeco.simulation.task.TimerTask;
+import cz.cuni.mff.d3s.deeco.task.TimerTask;
+import cz.cuni.mff.d3s.deeco.task.TimerTaskListener;
 
 public class SimulationRuntimeBuilder {
 
