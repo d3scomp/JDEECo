@@ -1,11 +1,12 @@
 package cz.cuni.mff.d3s.deeco.runtime;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.eclipse.core.runtime.Plugin;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
@@ -25,7 +26,7 @@ import cz.cuni.mff.d3s.deeco.scheduler.SingleThreadedScheduler;
  * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
  * @author Filip Krijt <krijt@d3s.mff.cuni.cz>
  */
-public class DEECo {
+public class DEECo implements DEECoPluginContainer {
 
 	/**
 	 * The metadata model corresponding to the running application.
@@ -59,12 +60,13 @@ public class DEECo {
 		processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE, model, knowledgeManagerFactory);		
 		
 		createRuntime();
-		runtime.init();
+		runtime.init(this);
 		initializePlugins(plugins);
 	}
 	
-	public void deploy(Object... objs) throws AnnotationProcessorException {
-		processor.process(objs);
+	@Override
+	public void deploy(Object... components) throws AnnotationProcessorException {
+		processor.process(components);
 	}
 	
 	public void start() {
@@ -75,79 +77,92 @@ public class DEECo {
 		runtime.stop();
 	}
 	
+	@Override
 	@SuppressWarnings("unchecked")
-	public <T extends DEECoPlugin> T getPluginInstance(Class<T> clazz) {
-		return (T) pluginsMap.get(clazz);
+	public <T extends DEECoPlugin> T getPluginInstance(Class<T> pluginClass) {
+		return (T) pluginsMap.get(pluginClass);
 	}
 	
+	@Override
+	public RuntimeFramework getRuntime()
+	{
+		return runtime;
+	}
 	
-	class GraphNode {
-
+	class DependencyNode {
 		DEECoPlugin plugin; 
-		List<GraphNode> children;
-		int incomingEdges;
+		List<DependencyNode> dependantPlugins;
+		int dependencyCount;
 		
-		GraphNode(DEECoPlugin plugin) {
+		DependencyNode(DEECoPlugin plugin) {
 			this.plugin = plugin;
-			incomingEdges = 0;
+			this.dependencyCount = plugin.getDependencies().size();
 		}
-		GraphNode() {
-			incomingEdges = 0;
+		
+		DependencyNode() {
+			dependencyCount = 0;
 		}
+	}
+	
+	class DependencyNodeComparator implements Comparator<DependencyNode>
+	{
+		@Override
+		public int compare(DependencyNode o1, DependencyNode o2) {			
+			return Integer.compare(o1.dependencyCount, o2.dependencyCount);
+		}		
 	}
 	
 	@SuppressWarnings("rawtypes")
-	List<GraphNode> constructNodes(DEECoPlugin[] plugins) throws PluginDependencyException {		
-		List<GraphNode> nodes = new ArrayList<>();		
-		Map<Class, GraphNode> dict = new HashMap<>();
+	List<DependencyNode> constructDependencyNodes(DEECoPlugin[] plugins) throws PluginDependencyException {		
+		List<DependencyNode> dependencyNodes = new ArrayList<>();		
+		Map<Class, DependencyNode> knownPlugins = new HashMap<>();
 		
 		for (DEECoPlugin p: plugins) {
-			GraphNode node = new GraphNode(p);
-			node.incomingEdges = p.getDependencies().size();
-			dict.put(p.getClass(),node);
-			nodes.add(node);
+			DependencyNode node = new DependencyNode(p);
+			
+			knownPlugins.put(p.getClass(),node);
+			dependencyNodes.add(node);
 		}
-		for (GraphNode node: dict.values()) {
-			for (Class clazz: node.plugin.getDependencies()) {					
-				if (dict.containsKey(clazz)) {
-					dict.get(clazz).children.add(node);						
+		
+		for (DependencyNode node: dependencyNodes) {
+			for (Class pluginClass : node.plugin.getDependencies()) {					
+				if (knownPlugins.containsKey(pluginClass)) {
+					knownPlugins.get(pluginClass).dependantPlugins.add(node);						
 				} else {
-					throw new PluginDependencyException("Missing Dependency for " + node.plugin.getClass());
+					throw new MissingDependencyException(node.plugin.getClass(), pluginClass);
 				}
 			}
 		}	
-		return nodes;
+		
+		return dependencyNodes;
 	}		
 
 	void initializePlugins(DEECoPlugin[] plugins) throws PluginDependencyException {
-		List<GraphNode> nodes = constructNodes(plugins);		
-
-		while (!nodes.isEmpty()) {
-			boolean foundZeroNode = false;
-
-			for (int i = 0; i < nodes.size(); ++i) {
-				GraphNode n = nodes.get(i);
-
-				if (n.incomingEdges == 0) {
-					n.plugin.init();
-					pluginsMap.put(n.plugin.getClass(), n.plugin);
-
-					foundZeroNode = true;
-
-					for (GraphNode successor : n.children) {
-						successor.incomingEdges--;
-					}
-
-					nodes.remove(i);
-					break;
-				}
-			}
-
-			if (!foundZeroNode) {
-				throw new PluginDependencyException("Found a cycle.");
-			}
+		List<DependencyNode> nodes = constructDependencyNodes(plugins);
+		Queue<DependencyNode> queue = new PriorityQueue<DEECo.DependencyNode>(new DependencyNodeComparator());
+		
+		for(DependencyNode n : nodes)
+		{
+			queue.add(n);
 		}
-	
+
+		while (!queue.isEmpty()) {
+			DependencyNode n = queue.remove();				
+
+			if (n.dependencyCount == 0) {
+				n.plugin.init(null);
+				pluginsMap.put(n.plugin.getClass(), n.plugin);				
+
+				for (DependencyNode dependantPlugin : n.dependantPlugins) {
+					queue.remove(dependantPlugin);
+					dependantPlugin.dependencyCount--;
+					queue.add(dependantPlugin);					
+				}
+				
+			} else {
+				throw new CycleDetectedException();
+			}
+		}	
 	}
 	
 	private void createRuntime() {
@@ -156,8 +171,6 @@ public class DEECo {
 		KnowledgeManagerContainer kmContainer = new KnowledgeManagerContainer(knowledgeManagerFactory, model);
 		scheduler.setExecutor(executor);
 		executor.setExecutionListener(scheduler);
-		runtime = new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer);
-		
-	}
-	
+		runtime = new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer);		
+	}	
 }

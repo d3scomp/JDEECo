@@ -140,12 +140,12 @@ public class RuntimeFrameworkImplTest {
 		// WHEN a new RuntimeFrameworkImpl is created via the public constructor 		
 		new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, ratingsManager) {
 			@Override
-			public void init() {
-				spy.init();
+			public void init(DEECoPluginContainer container) {
+				spy.init(null);
 			}
 		};
 		// THEN the init() gets called
-		verify(spy).init();
+		verify(spy).init(null);
 	}
 	
 	@Test
@@ -155,7 +155,7 @@ public class RuntimeFrameworkImplTest {
 		RuntimeFrameworkImpl tested = new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, ratingsManager);
 
 		// WHEN init() is called on the runtime
-		tested.init();
+		tested.init(null);
 		
 		// THEN the runtime sets up an adapter to observe changes of the list of
 		// component instances
@@ -171,7 +171,7 @@ public class RuntimeFrameworkImplTest {
 		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, ratingsManager));
 		
 		// WHEN when init is called() on the runtime		
-		tested.init();
+		tested.init(null);
 		
 		// THEN the callback componentInstanceAdded is not called 
 		verify(tested, never()).componentInstanceAdded(any(ComponentInstance.class));		
@@ -183,7 +183,7 @@ public class RuntimeFrameworkImplTest {
 		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, ratingsManager));
 		
 		// WHEN when init is called() on the runtime
-		tested.init();
+		tested.init(null);
 		
 		// THEN the component is added via the callback componentInstanceAdded 
 		verify(tested, times(1)).componentInstanceAdded(any(ComponentInstance.class));
@@ -198,7 +198,7 @@ public class RuntimeFrameworkImplTest {
 		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, ratingsManager));
 	
 		// WHEN when init is called() on the runtime
-		tested.init();		
+		tested.init(null);		
 		
 		// THEN the components are all added via the callback componentInstanceAdded 
 		verify(tested, times(2)).componentInstanceAdded(any(ComponentInstance.class));
@@ -228,7 +228,7 @@ public class RuntimeFrameworkImplTest {
 	public void testComponentInstanceAddedExisting() {
 		// GIVEN a runtime initialized with a component instance
 		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, ratingsManager));
-		tested.init();
+		tested.init(null);
 		// WHEN adding the already added component instance
 		tested.componentInstanceAdded(component);		
 		
@@ -388,7 +388,7 @@ public class RuntimeFrameworkImplTest {
 	public void testComponentInstanceRemovedNonexisting() {
 		// GIVEN a runtime that uses a model with one component instance
 		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, ratingsManager));
-		tested.init();
+		tested.init(null);
 		// WHEN removing a non-existing component instance
 		tested.componentInstanceRemoved(mock(ComponentInstance.class));		
 		
@@ -401,7 +401,7 @@ public class RuntimeFrameworkImplTest {
 	public void testComponentInstanceRemovedExisting() {
 		// GIVEN a runtime that uses a model with a component instance 
 		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, ratingsManager));
-		tested.init();
+		tested.init(null);
 		// WHEN removing an existing component instance
 		tested.componentInstanceRemoved(component);		
 		
@@ -413,7 +413,7 @@ public class RuntimeFrameworkImplTest {
 	public void testComponentInstanceRemovedDeletesComponentRecord() {
 		// GIVEN a runtime that uses a model with a component instance 
 		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, ratingsManager));
-		tested.init();
+		tested.init(null);
 		assertNotNull(tested.componentRecords.get(component));		
 
 		// WHEN removing an existing component instance
@@ -429,7 +429,7 @@ public class RuntimeFrameworkImplTest {
 		// having no processes 
 		component.getComponentProcesses().clear();
 		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, ratingsManager));
-		tested.init();
+		tested.init(null);
 		// WHEN removing a component with zero processes
 		tested.componentInstanceRemoved(component);
 		
@@ -444,7 +444,7 @@ public class RuntimeFrameworkImplTest {
 		ComponentProcess process2 = EcoreUtil.copy(process);
 		component.getComponentProcesses().add(process2);
 		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, ratingsManager));
-		tested.init();		
+		tested.init(null);		
 		// WHEN removing a component instance with two processes		
 		tested.componentInstanceRemoved(component);
 		
@@ -461,7 +461,7 @@ public class RuntimeFrameworkImplTest {
 		component.getComponentProcesses().clear();
 		component.getEnsembleControllers().clear();
 		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, ratingsManager));
-		tested.init();
+		tested.init(null);
 		// WHEN removing a component instance with zero ensemble controllers and zero processes		
 		tested.componentInstanceRemoved(component);
 		
@@ -477,7 +477,7 @@ public class RuntimeFrameworkImplTest {
 		component.getComponentProcesses().clear();
 		component.getEnsembleControllers().add(econtroller2);
 		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, ratingsManager));
-		tested.init();
+		tested.init(null);
 		ComponentInstanceRecord cir = tested.componentRecords.get(component);
 		
 		// WHEN removing the component instance 
@@ -495,7 +495,7 @@ public class RuntimeFrameworkImplTest {
 	public void testComponentInstanceRemovedAdapterRemoved() {
 		// GIVEN a runtime that uses a model with a component instance 
 		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, ratingsManager));
-		tested.init();
+		tested.init(null);
 		Adapter a = tested.componentInstanceAdapters.get(component);
 				
 		
@@ -576,7 +576,7 @@ public class RuntimeFrameworkImplTest {
 	public void testComponentProcessAddedExisting() {
 		// GIVEN an initialized runtime 
 		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, ratingsManager));
-		tested.init();
+		tested.init(null);
 		// WHEN adding an already-added process to a component instance
 		tested.componentProcessAdded(component, process);		
 		
@@ -589,7 +589,7 @@ public class RuntimeFrameworkImplTest {
 	public void testComponentProcessAddedValid() {
 		// GIVEN an initialized runtime 
 		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, ratingsManager));
-		tested.init();		
+		tested.init(null);		
 		// WHEN adding a process to a registered component instance
 		ComponentProcess process2 = EcoreUtil.copy(process);
 		int numAdapters = process2.eAdapters().size();
@@ -617,7 +617,7 @@ public class RuntimeFrameworkImplTest {
 		process2.setActive(false);
 		component.getComponentProcesses().add(process2);
 		process.setActive(true);
-		tested.init();		
+		tested.init(null);		
 
 		@SuppressWarnings("unused")
 		ComponentInstanceRecord unused = tested.componentRecords.get(component);
@@ -658,7 +658,7 @@ public class RuntimeFrameworkImplTest {
 	public void testComponentProcessRemovedNullInstance() {
 		// GIVEN an initialized runtime 
 		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, ratingsManager));
-		tested.init();
+		tested.init(null);
 		// WHEN removing a process from a null component instance
 		tested.componentProcessRemoved(null, process);
 		
@@ -671,7 +671,7 @@ public class RuntimeFrameworkImplTest {
 	public void testComponentProcessRemovedNullProcess() {
 		// GIVEN an initialized runtime 
 		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, ratingsManager));
-		tested.init();
+		tested.init(null);
 		// WHEN removing a null process from a component instance
 		tested.componentProcessRemoved(component, null);
 		
@@ -697,7 +697,7 @@ public class RuntimeFrameworkImplTest {
 	public void testComponentProcessRemovedNonExistingProcess() {
 		// GIVEN an initialized runtime 
 		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, ratingsManager));
-		tested.init();
+		tested.init(null);
 		// WHEN removing a non-registered process from a registered component instance
 		tested.componentProcessRemoved(component, mock(ComponentProcess.class));		
 		
@@ -710,7 +710,7 @@ public class RuntimeFrameworkImplTest {
 	public void testComponentProcessRemovedValid() {
 		// GIVEN an initialized runtime 
 		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, ratingsManager));
-		tested.init();
+		tested.init(null);
 		ComponentInstanceRecord cir = tested.componentRecords.get(component);
 		int numAdapters = process.eAdapters().size();
 		
@@ -785,7 +785,7 @@ public class RuntimeFrameworkImplTest {
 	public void testComponentProcessActiveChangedUnregisteredProcess() {
 		// GIVEN an initialized runtime
 		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, ratingsManager));
-		tested.init();
+		tested.init(null);
 		reset(scheduler);
 		
 		// WHEN changing the activity of an unregistered process
@@ -800,7 +800,7 @@ public class RuntimeFrameworkImplTest {
 	public void testComponentProcessActiveActivate() {
 		// GIVEN an initialized runtime
 		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, ratingsManager));
-		tested.init();
+		tested.init(null);
 		reset(scheduler);
 		Task processTask = tested.componentRecords.get(component).getProcessTasks().get(process);
 		
@@ -815,7 +815,7 @@ public class RuntimeFrameworkImplTest {
 	public void testComponentProcessActiveDeactivate() {
 		// GIVEN an initialized runtime
 		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, ratingsManager));
-		tested.init();
+		tested.init(null);
 		reset(scheduler);
 		
 		Task processTask = tested.componentRecords.get(component).getProcessTasks().get(process);

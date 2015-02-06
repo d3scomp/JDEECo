@@ -21,7 +21,7 @@ public interface DEECoPlugin {
 
 	/**
 	 * Registers all listeners for this plugin to different places in the plugins it depends on. 
+	 * @param container TODO
 	 */
-	public void init();
-	
+	public void init(DEECoPluginContainer container);	
 }
