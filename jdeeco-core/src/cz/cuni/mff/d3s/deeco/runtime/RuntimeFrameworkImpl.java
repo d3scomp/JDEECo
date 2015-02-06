@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.deeco.runtime;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -151,19 +152,18 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 	 * @throws IllegalArgumentException if either of the arguments is null.
 	 */
 	public RuntimeFrameworkImpl(RuntimeMetadata model, Scheduler scheduler,
-			Executor executor, KnowledgeManagerContainer kmContainer, RatingsManager ratingsManager) {
-		this(model, scheduler, executor, kmContainer, ratingsManager, true);
+			Executor executor, KnowledgeManagerContainer kmContainer) {
+		this(model, scheduler, executor, kmContainer, null);
 	}
 	
 	/**
-	 * Convenience constructor to make the initialization of the runtime upon
-	 * creation optional. The public constructor has it always mandatory.
+	 * FIXME remove this constructor when RatingsManager becomes a plugin
 	 * 
 	 * @see RuntimeFrameworkImpl#RuntimeFrameworkImpl(RuntimeMetadata, Scheduler, Executor, KnowledgeManagerContainer)
 	 * @see RuntimeFrameworkImpl#init()
 	 */
-	RuntimeFrameworkImpl(RuntimeMetadata model, Scheduler scheduler,
-			Executor executor, KnowledgeManagerContainer kmContainer, RatingsManager ratingsManager, boolean autoInit) {
+	public RuntimeFrameworkImpl(RuntimeMetadata model, Scheduler scheduler,
+			Executor executor, KnowledgeManagerContainer kmContainer, RatingsManager ratingsManager) {
 		if (model == null)
 			throw new IllegalArgumentException("Model cannot be null");
 		if (scheduler == null)
@@ -181,9 +181,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 		
 		//create architecture model 
 		architecture = ArchitectureFactory.eINSTANCE.createArchitecture();
-				
-		if (autoInit)
-			init();
+
 	}
 
 	/**
@@ -193,7 +191,8 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 	 * Logs errors but does no throw any exceptions.
 	 * </p>
 	 */
-	void init() {		
+	@Override
+	public void init() {		
 		// initialize the components
 		for (ComponentInstance ci: model.getComponentInstances()) {
 			componentInstanceAdded(ci);
@@ -659,5 +658,12 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 	@Override
 	public RatingsManager getRatingsManager() {
 		return ratingsManager;
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public List<Class> getDependencies() {
+		// this is the core plugin, so it has no dependencies and we return an empty list
+		return new ArrayList<Class>();
 	}
 }

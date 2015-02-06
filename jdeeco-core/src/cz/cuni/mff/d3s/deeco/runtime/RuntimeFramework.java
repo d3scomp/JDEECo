@@ -10,7 +10,7 @@ import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
  * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
  *
  */
-public interface RuntimeFramework {
+public interface RuntimeFramework extends DEECoPlugin {
 
 	/**
 	 * Starts the execution of the runtime framework
