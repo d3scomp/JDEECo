@@ -15,7 +15,7 @@ import cz.cuni.mff.d3s.jdeeco.network.marshaller.SerializingMarshaller;
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
  */
-public class MarshalingTest {
+public class MarshallingTest {
 	// Registry used for testing
 	private MarshallerRegistry registry;
 
