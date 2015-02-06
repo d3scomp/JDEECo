@@ -39,7 +39,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getEnsembleControllers <em>Ensemble Controllers</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getInternalData <em>Internal Data</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#isSystemComponent <em>System Component</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getRoles <em>Roles</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getSecurityRoles <em>Security Roles</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getRatingsProcess <em>Ratings Process</em>}</li>
  * </ul>
  * </p>
@@ -158,14 +158,14 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	protected boolean systemComponent = SYSTEM_COMPONENT_EDEFAULT;
 
 	/**
-	 * The cached value of the '{@link #getRoles() <em>Roles</em>}' containment reference list.
+	 * The cached value of the '{@link #getSecurityRoles() <em>Security Roles</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getRoles()
+	 * @see #getSecurityRoles()
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<SecurityRole> roles;
+	protected EList<SecurityRole> securityRoles;
 
 	/**
 	 * The cached value of the '{@link #getRatingsProcess() <em>Ratings Process</em>}' containment reference.
@@ -321,11 +321,11 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<SecurityRole> getRoles() {
-		if (roles == null) {
-			roles = new EObjectContainmentEList<SecurityRole>(SecurityRole.class, this, RuntimeMetadataPackage.COMPONENT_INSTANCE__ROLES);
+	public EList<SecurityRole> getSecurityRoles() {
+		if (securityRoles == null) {
+			securityRoles = new EObjectContainmentEList<SecurityRole>(SecurityRole.class, this, RuntimeMetadataPackage.COMPONENT_INSTANCE__SECURITY_ROLES);
 		}
-		return roles;
+		return securityRoles;
 	}
 
 	/**
@@ -406,8 +406,8 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 				return ((InternalEList<?>)getEnsembleControllers()).basicRemove(otherEnd, msgs);
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__INTERNAL_DATA:
 				return ((InternalEList<?>)getInternalData()).basicRemove(otherEnd, msgs);
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ROLES:
-				return ((InternalEList<?>)getRoles()).basicRemove(otherEnd, msgs);
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__SECURITY_ROLES:
+				return ((InternalEList<?>)getSecurityRoles()).basicRemove(otherEnd, msgs);
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__RATINGS_PROCESS:
 				return basicSetRatingsProcess(null, msgs);
 		}
@@ -437,8 +437,8 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 				else return getInternalData().map();
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__SYSTEM_COMPONENT:
 				return isSystemComponent();
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ROLES:
-				return getRoles();
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__SECURITY_ROLES:
+				return getSecurityRoles();
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__RATINGS_PROCESS:
 				return getRatingsProcess();
 		}
@@ -477,9 +477,9 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__SYSTEM_COMPONENT:
 				setSystemComponent((Boolean)newValue);
 				return;
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ROLES:
-				getRoles().clear();
-				getRoles().addAll((Collection<? extends SecurityRole>)newValue);
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__SECURITY_ROLES:
+				getSecurityRoles().clear();
+				getSecurityRoles().addAll((Collection<? extends SecurityRole>)newValue);
 				return;
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__RATINGS_PROCESS:
 				setRatingsProcess((RatingsProcess)newValue);
@@ -517,8 +517,8 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__SYSTEM_COMPONENT:
 				setSystemComponent(SYSTEM_COMPONENT_EDEFAULT);
 				return;
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ROLES:
-				getRoles().clear();
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__SECURITY_ROLES:
+				getSecurityRoles().clear();
 				return;
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__RATINGS_PROCESS:
 				setRatingsProcess((RatingsProcess)null);
@@ -549,8 +549,8 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 				return internalData != null && !internalData.isEmpty();
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__SYSTEM_COMPONENT:
 				return systemComponent != SYSTEM_COMPONENT_EDEFAULT;
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ROLES:
-				return roles != null && !roles.isEmpty();
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__SECURITY_ROLES:
+				return securityRoles != null && !securityRoles.isEmpty();
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__RATINGS_PROCESS:
 				return ratingsProcess != null;
 		}

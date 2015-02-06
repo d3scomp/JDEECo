@@ -49,7 +49,7 @@
         eType="#//StringToObjectMap" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="systemComponent" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
         defaultValueLiteral="false"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="roles" upperBound="-1"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="securityRoles" upperBound="-1"
         eType="#//SecurityRole" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="ratingsProcess" eType="#//RatingsProcess"
         containment="true" eOpposite="#//RatingsProcess/componentInstance"/>
