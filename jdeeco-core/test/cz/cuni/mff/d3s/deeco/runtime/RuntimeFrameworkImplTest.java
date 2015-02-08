@@ -149,7 +149,7 @@ public class RuntimeFrameworkImplTest {
 		// WHEN a new RuntimeFrameworkImpl is created via the public constructor 		
 		new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, ratingsManager) {
 			@Override
-			public void init(DEECoPluginContainer container) {
+			public void init(DEECoContainer container) {
 				spy.init(null);
 			}
 		};

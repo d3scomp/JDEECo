@@ -10,7 +10,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
  * @author Filip Krijt <krijt@d3s.mff.cuni.cz>
  * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
  */
-public interface DEECoPluginContainer {
+public interface DEECoContainer {
 	
 	/**
 	 * Returns the instance of the initialized plugin of type <code>pluginClass</code>.

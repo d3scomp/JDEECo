@@ -26,7 +26,7 @@ import cz.cuni.mff.d3s.deeco.scheduler.SingleThreadedScheduler;
  * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
  * @author Filip Krijt <krijt@d3s.mff.cuni.cz>
  */
-public class DEECo implements DEECoPluginContainer {
+public class DEECo implements DEECoContainer {
 
 	/**
 	 * The metadata model corresponding to the running application.
