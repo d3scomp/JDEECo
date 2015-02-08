@@ -88,9 +88,19 @@ public class DEECo implements DEECoPluginContainer {
 	}
 	
 	@Override
-	public RuntimeFramework getRuntime()
+	public RuntimeFramework getRuntimeFramework()
 	{
 		return runtime;
+	}
+	
+	@Override
+	public AnnotationProcessor getProcessor() {
+		return processor;
+	}	
+	
+	@Override
+	public RuntimeMetadata getRuntimeMetadata() {
+		return model;
 	}
 	
 	class DependencyNode {
@@ -129,7 +139,7 @@ public class DEECo implements DEECoPluginContainer {
 		}
 		
 		for (DependencyNode node: dependencyNodes) {
-			for (Class pluginClass : node.plugin.getDependencies()) {					
+			for (Class<? extends DEECoPlugin> pluginClass : node.plugin.getDependencies()) {					
 				if (knownPlugins.containsKey(pluginClass)) {
 					knownPlugins.get(pluginClass).dependantPlugins.add(node);						
 				} else {
@@ -176,5 +186,6 @@ public class DEECo implements DEECoPluginContainer {
 		scheduler.setExecutor(executor);
 		executor.setExecutionListener(scheduler);
 		runtime = new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer);		
-	}	
+	}
+
 }

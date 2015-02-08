@@ -2,6 +2,8 @@ package cz.cuni.mff.d3s.deeco.runtime;
 
 
 /**
+ * @TODO(IG) : Check if it's OK to remove this class (the its tests) altogether
+ * 
  * A container for {@link RuntimeFramework} configuration options.
  * <p>
  * Hides the details of different options for runtime framework setup by providing a set of intuitive enums.

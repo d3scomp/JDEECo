@@ -8,7 +8,7 @@ package cz.cuni.mff.d3s.deeco.runtime;
 public class MissingDependencyException extends PluginDependencyException {	
 	private static final long serialVersionUID = 1L;
 
-	public MissingDependencyException(Class pluginWithMissingDependency, Class missingDependency) {
+	public MissingDependencyException(Class<? extends DEECoPlugin> pluginWithMissingDependency, Class<? extends DEECoPlugin> missingDependency) {
 		super("Missing dependency" + missingDependency + " for plugin "+ pluginWithMissingDependency + ".");
 	}
 }

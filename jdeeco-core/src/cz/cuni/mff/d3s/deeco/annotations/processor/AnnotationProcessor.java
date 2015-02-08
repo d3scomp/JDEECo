@@ -153,7 +153,7 @@ public class AnnotationProcessor {
 	 * Processors to handle additional annotations that are not handled by the main processor.
 	 * They are called via the <code>callExtensions()</code>. 
 	 */
-	AnnotationProcessorExtensionPoint[] extensions;
+	List<AnnotationProcessorExtensionPoint> extensions;
 	
 	KnowledgeManagerFactory knowledgeManagerFactory;
 	
@@ -176,9 +176,23 @@ public class AnnotationProcessor {
 			AnnotationProcessorExtensionPoint... extensions) {
 		this.factory = factory;
 		this.model = model;
-		this.extensions = extensions;
+		if (extensions.length == 0) {
+			this.extensions = new ArrayList<>();
+		} else {
+			this.extensions = Arrays.asList(extensions);
+		}
 		this.knowledgeManagerFactory = knowledgeMangerFactory;	
 		this.cloner = new Cloner();
+	}
+	
+	/**
+	 * To be used to register an extension to the main annotation processor.
+	 * All registered extensions get notified at different stages in the parsing process.  
+	 * 
+	 * @see #callExtensions
+	 */
+	public void addExtension(AnnotationProcessorExtensionPoint extension) {
+		extensions.add(extension);
 	}
 	
 	/**
@@ -1258,7 +1272,7 @@ public class AnnotationProcessor {
 	 * @param unknownAnnotations	annotations delegated to the callee
 	 */
 	private void callExtensions(ParsingEvent event, Object object, List<Annotation> unknownAnnotations) throws AnnotationProcessorException {
-		if ((extensions != null) && (extensions.length > 0)) {
+		if ((extensions != null) && (!extensions.isEmpty())) {
 			for (AnnotationProcessorExtensionPoint extension : extensions) {
 				Log.d("in 'CallExtensions': [EventType: "+ event + ", runtimeObject: " + object + ", extension: "+ extension +"]");
 				switch (event) {

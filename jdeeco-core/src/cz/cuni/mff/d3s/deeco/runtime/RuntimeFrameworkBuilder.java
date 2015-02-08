@@ -14,6 +14,8 @@ import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.scheduler.SingleThreadedScheduler;
 
 /**
+ * @TODO(IG) : Check if it's OK to remove this class (the its tests) altogether
+ * 
  * A builder for assembling a {@link RuntimeFramework} based on a
  * {@link RuntimeConfiguration}.
  * 

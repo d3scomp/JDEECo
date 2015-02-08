@@ -761,10 +761,9 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 		return ratingsManager;
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
-	public List<Class> getDependencies() {
+	public List<Class<? extends DEECoPlugin>> getDependencies() {
 		// this is the core plugin, so it has no dependencies and we return an empty list
-		return new ArrayList<Class>();
+		return new ArrayList<>();
 	}
 }
