@@ -41,7 +41,7 @@ public class DEECo implements DEECoContainer {
 	/**
 	 * To be used to process the annotated Java classes and populate the RuntimeMetadata model.  
 	 */
-	public AnnotationProcessor processor;
+	AnnotationProcessor processor;
 	
 	/**
 	 * To be used to create knowledgeManager objects. 
