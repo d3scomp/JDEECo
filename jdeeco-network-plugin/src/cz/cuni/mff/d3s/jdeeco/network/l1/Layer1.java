@@ -13,12 +13,12 @@ import cz.cuni.mff.d3s.jdeeco.network.l2.L2Packet;
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
  *
  */
-public class Layer {
+public class Layer1 {
 	
 	private final Set<Strategy> strategies;
 	private final Set<Device> devices;
 	
-	public Layer() {
+	public Layer1() {
 		this.strategies = new HashSet<Strategy>();
 		this.devices = new HashSet<Device>();
 	}
@@ -35,7 +35,7 @@ public class Layer {
 		if (packet != null) {
 			for (Device device: devices) {
 				if (device.canSend(address)) {
-					packet.getMarshalledData();
+					packet.getData();
 					//device.send(encapsulate(packet), address);
 					return true;
 				}
@@ -46,6 +46,7 @@ public class Layer {
 	
 	public boolean sendL1Packet(L1Packet packet, Address address) {
 		//TODO
+		return false;
 	}
 	
 	public L1Packet processL0Packet(byte [] packet) {
@@ -54,6 +55,7 @@ public class Layer {
 	}
 	
 	protected L1Packet encapsulateL2(L2Packet packet) {
-		return new L1Packet(packet.getMarshalledData(), packet., dataId, startPos, payloadSize, totalSize, receivedInfo)
+		//TODO
+		return null;
 	}
 }
