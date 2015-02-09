@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.jdeeco.network;
+package cz.cuni.mff.d3s.jdeeco.network.l2;
 
 import java.util.LinkedList;
 
@@ -10,6 +10,8 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.*;
+import cz.cuni.mff.d3s.jdeeco.network.Address;
+import cz.cuni.mff.d3s.jdeeco.network.PacketType;
 import cz.cuni.mff.d3s.jdeeco.network.l1.L1Packet;
 import cz.cuni.mff.d3s.jdeeco.network.l1.Layer1;
 import cz.cuni.mff.d3s.jdeeco.network.l2.L2Packet;

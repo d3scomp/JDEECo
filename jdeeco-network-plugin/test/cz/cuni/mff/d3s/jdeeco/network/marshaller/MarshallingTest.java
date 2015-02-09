@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.jdeeco.network;
+package cz.cuni.mff.d3s.jdeeco.network.marshaller;
 
 import static org.junit.Assert.*;
 
@@ -6,6 +6,7 @@ import java.util.*;
 
 import org.junit.*;
 
+import cz.cuni.mff.d3s.jdeeco.network.PacketType;
 import cz.cuni.mff.d3s.jdeeco.network.exceptions.UnregistredPacketType;
 import cz.cuni.mff.d3s.jdeeco.network.marshaller.MarshallerRegistry;
 import cz.cuni.mff.d3s.jdeeco.network.marshaller.SerializingMarshaller;
