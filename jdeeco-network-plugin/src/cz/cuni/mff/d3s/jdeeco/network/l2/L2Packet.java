@@ -56,7 +56,7 @@ public class L2Packet {
 	 */
 	public Object getObject() {
 		if (object == null) {
-			object = l2Layer.getMarshallers().unmarshall(header.getPacketType(), data);
+			object = l2Layer.getMarshallers().unmarshall(header.type, data);
 		}
 
 		return object;
@@ -71,7 +71,7 @@ public class L2Packet {
 	 */
 	public byte[] getData() {
 		if (data == null) {
-			data = l2Layer.getMarshallers().marshall(header.getPacketType(), object);
+			data = l2Layer.getMarshallers().marshall(header.type, object);
 		}
 		return data;
 	}

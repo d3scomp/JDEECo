@@ -13,14 +13,11 @@ import cz.cuni.mff.d3s.jdeeco.network.l1.L1Packet;
 public class L2ReceivedInfo {
 	/**
 	 * Source L1 packets
-	 * 
-	 * TODO: data type collection, is it OK ???
 	 */
 	public final Collection<L1Packet> srcFragments;
 
 	/**
 	 * Source jDEECo node
-	 * 
 	 */
 	public final int srcNode;
 
@@ -31,14 +28,20 @@ public class L2ReceivedInfo {
 	 * srcNode.
 	 */
 	public final int dataId;
-	
 
-	public L2ReceivedInfo(Collection<L1Packet> srcFragments, int srcNode,
-			int dataId) {
+	/**
+	 * Constructs ReceivedInfo
+	 * 
+	 * @param srcFragments
+	 *            Source L1 packets used to construct L2 packets
+	 * @param srcNode
+	 *            Source node
+	 * @param dataId
+	 *            Source data identification (Unique to L2 packet)
+	 */
+	public L2ReceivedInfo(Collection<L1Packet> srcFragments, int srcNode, int dataId) {
 		this.srcFragments = srcFragments;
 		this.srcNode = srcNode;
 		this.dataId = dataId;
 	}
-	
-	
 }

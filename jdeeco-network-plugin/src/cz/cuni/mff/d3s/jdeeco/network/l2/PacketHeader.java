@@ -12,7 +12,7 @@ public class PacketHeader {
 	/**
 	 * Type of L2 packet
 	 */
-	private PacketType packetType;
+	public PacketType type;
 
 	/**
 	 * Creates L2 packet header
@@ -21,15 +21,6 @@ public class PacketHeader {
 	 *            Type of packet
 	 */
 	public PacketHeader(PacketType packetType) {
-		this.packetType = packetType;
-	}
-
-	/**
-	 * Gets packet type
-	 * 
-	 * @return packet type
-	 */
-	public PacketType getPacketType() {
-		return packetType;
+		this.type = packetType;
 	}
 }
