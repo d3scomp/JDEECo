@@ -1,24 +1,21 @@
 package cz.cuni.mff.d3s.jdeeco.network.l2;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.LinkedList;
 
-import org.junit.*;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.junit.Assert.*;
 import cz.cuni.mff.d3s.jdeeco.network.Address;
 import cz.cuni.mff.d3s.jdeeco.network.PacketType;
 import cz.cuni.mff.d3s.jdeeco.network.l1.L1Packet;
 import cz.cuni.mff.d3s.jdeeco.network.l1.Layer1;
-import cz.cuni.mff.d3s.jdeeco.network.l2.L2Packet;
-import cz.cuni.mff.d3s.jdeeco.network.l2.Layer2;
-import cz.cuni.mff.d3s.jdeeco.network.l2.PacketHeader;
-import cz.cuni.mff.d3s.jdeeco.network.l2.L2ReceivedInfo;
-import cz.cuni.mff.d3s.jdeeco.network.l2.Strategy;
 import cz.cuni.mff.d3s.jdeeco.network.marshaller.MarshallerRegistry;
 import cz.cuni.mff.d3s.jdeeco.network.marshaller.SerializingMarshaller;
 
@@ -99,8 +96,8 @@ public class L2Test {
 	@Test
 	public void testL2PacketProcessing() {
 		// Register strategy with the L2
-		Strategy strategy = Mockito.mock(Strategy.class);
-		l2Layer.registerL2Strategy(strategy);
+		L2Strategy strategy = Mockito.mock(L2Strategy.class);
+		l2Layer.registerStrategy(strategy);
 
 		L2ReceivedInfo info = new L2ReceivedInfo(new LinkedList<L1Packet>(), 1, 1);
 

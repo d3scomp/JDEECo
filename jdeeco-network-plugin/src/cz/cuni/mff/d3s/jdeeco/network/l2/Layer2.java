@@ -4,7 +4,7 @@ import java.util.*;
 
 import cz.cuni.mff.d3s.jdeeco.network.Address;
 import cz.cuni.mff.d3s.jdeeco.network.l1.Layer1;
-import cz.cuni.mff.d3s.jdeeco.network.l2.Strategy;
+import cz.cuni.mff.d3s.jdeeco.network.l2.L2Strategy;
 import cz.cuni.mff.d3s.jdeeco.network.marshaller.MarshallerRegistry;
 
 /**
@@ -14,7 +14,7 @@ import cz.cuni.mff.d3s.jdeeco.network.marshaller.MarshallerRegistry;
  *
  */
 public class Layer2 {
-	private final Collection<Strategy> strategies = new HashSet<Strategy>();
+	private final Collection<L2Strategy> strategies = new HashSet<L2Strategy>();
 	private final MarshallerRegistry marshallers;
 	private final Layer1 layer1;
 
@@ -45,15 +45,13 @@ public class Layer2 {
 	 *            Packet to be processed
 	 */
 	public void processL2Packet(L2Packet packet) {
-		for (Strategy strategy : strategies) {
+		for (L2Strategy strategy : strategies) {
 			strategy.processL2Packet(packet);
 		}
 	}
 
 	/**
 	 * Sends L2 Packet to L1
-	 * 
-	 * TODO: Address is L1 specific ???
 	 * 
 	 * @param packet
 	 *            Packet to be sent
@@ -72,7 +70,7 @@ public class Layer2 {
 	 * @param strategy
 	 *            Strategy to register
 	 */
-	public void registerL2Strategy(Strategy strategy) {
+	public void registerStrategy(L2Strategy strategy) {
 		strategies.add(strategy);
 	}
 

@@ -1,7 +1,5 @@
 package cz.cuni.mff.d3s.jdeeco.network.l1;
 
-import java.nio.ByteBuffer;
-
 /**
  * Packet DTO for L1
  * 

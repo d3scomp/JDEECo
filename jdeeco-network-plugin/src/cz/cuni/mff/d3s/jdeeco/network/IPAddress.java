@@ -1,5 +1,4 @@
 package cz.cuni.mff.d3s.jdeeco.network;
-
 /**
  * Represents the IP network address.
  * 
@@ -12,5 +11,17 @@ public class IPAddress extends Address {
 
 	public IPAddress(String ipAddress) {
 		this.ipAddress = ipAddress;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		IPAddress other = (IPAddress) obj;
+		return other.ipAddress.equals(ipAddress);
 	}
 }

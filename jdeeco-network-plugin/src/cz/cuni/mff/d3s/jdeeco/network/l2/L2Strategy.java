@@ -6,7 +6,7 @@ package cz.cuni.mff.d3s.jdeeco.network.l2;
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
  */
-public interface Strategy {
+public interface L2Strategy {
 	/**
 	 * Processes packet received by L2 layer
 	 * 
