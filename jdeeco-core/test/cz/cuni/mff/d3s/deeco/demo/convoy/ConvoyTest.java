@@ -9,6 +9,8 @@ import org.junit.contrib.java.lang.system.StandardOutputStreamLog;
 
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
 import cz.cuni.mff.d3s.deeco.runtime.DEECo;
+import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
+import cz.cuni.mff.d3s.deeco.runtime.DuplicateEnsembleDefinitionException;
 import cz.cuni.mff.d3s.deeco.runtime.PluginDependencyException;
 
 /**
@@ -21,12 +23,12 @@ public class ConvoyTest {
 	@Rule
 	public final StandardOutputStreamLog  log = new StandardOutputStreamLog ();
 	
-	public static void main(String[] args) throws AnnotationProcessorException, InterruptedException, PluginDependencyException {
+	public static void main(String[] args) throws AnnotationProcessorException, InterruptedException, DEECoException {
 		new ConvoyTest().testConvoy();
 	}
 	
 	@Test
-	public void testConvoy() throws AnnotationProcessorException, InterruptedException, PluginDependencyException {
+	public void testConvoy() throws AnnotationProcessorException, InterruptedException, DEECoException {
 		
 		/* create main application container */
 		DEECo deeco = new DEECo();

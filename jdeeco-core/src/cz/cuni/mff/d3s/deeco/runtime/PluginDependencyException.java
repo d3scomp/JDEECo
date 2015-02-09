@@ -6,7 +6,7 @@ package cz.cuni.mff.d3s.deeco.runtime;
  * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
  *
  */
-public abstract class PluginDependencyException extends Exception {
+public abstract class PluginDependencyException extends DEECoException {
 
 	private static final long serialVersionUID = 1L;
 

@@ -55,8 +55,14 @@ public interface DEECoContainer {
 	 * 
 	 * @param ensembles ensemble-annotated classes
 	 * @throws AnnotationProcessorException
+	 * @throws DuplicateEnsembleDefinitionException 
 	 */
 	@SuppressWarnings("rawtypes")
-	public EnsembleDefinition deployEnsemble(Class ensembles) throws AnnotationProcessorException;
+	public EnsembleDefinition deployEnsemble(Class ensembles) throws AnnotationProcessorException, DuplicateEnsembleDefinitionException;
+
+	/**
+	 * Returns true if the DEECo application is running, otherwise false. 
+	 */
+	boolean isRunning();
 	
 }
