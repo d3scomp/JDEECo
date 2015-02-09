@@ -2,7 +2,7 @@ package cz.cuni.mff.d3s.jdeeco.network.l2;
 
 import java.util.*;
 
-import cz.cuni.mff.d3s.jdeeco.network.l1.Address;
+import cz.cuni.mff.d3s.jdeeco.network.Address;
 import cz.cuni.mff.d3s.jdeeco.network.l1.Layer1;
 import cz.cuni.mff.d3s.jdeeco.network.l2.Strategy;
 import cz.cuni.mff.d3s.jdeeco.network.marshaller.MarshallerRegistry;

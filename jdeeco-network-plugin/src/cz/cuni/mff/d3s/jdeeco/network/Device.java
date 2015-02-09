@@ -1,6 +1,5 @@
 package cz.cuni.mff.d3s.jdeeco.network;
 
-import cz.cuni.mff.d3s.jdeeco.network.l1.Address;
 
 /**
  * Represents a network interface card.

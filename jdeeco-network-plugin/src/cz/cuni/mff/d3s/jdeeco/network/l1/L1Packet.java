@@ -1,5 +1,7 @@
 package cz.cuni.mff.d3s.jdeeco.network.l1;
 
+import java.nio.ByteBuffer;
+
 /**
  * Packet DTO for L1
  * 
@@ -7,6 +9,9 @@ package cz.cuni.mff.d3s.jdeeco.network.l1;
  *
  */
 public class L1Packet {
+	
+	public static int HEADER_SIZE = 20;
+	
 	public final byte [] payload;			/** payload carried by this packet*/
 	public final int srcNode;				/** ID of source data originates from*/
 	public final int dataId;				/** ID of data this packet (fragment) belongs to*/

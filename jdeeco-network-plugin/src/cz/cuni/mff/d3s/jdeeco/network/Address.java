@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.jdeeco.network.l1;
+package cz.cuni.mff.d3s.jdeeco.network;
 
 /**
  * Represents a network address.
