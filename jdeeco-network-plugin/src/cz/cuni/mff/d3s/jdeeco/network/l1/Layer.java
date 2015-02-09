@@ -1,5 +1,8 @@
 package cz.cuni.mff.d3s.jdeeco.network.l1;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import cz.cuni.mff.d3s.jdeeco.network.Device;
 import cz.cuni.mff.d3s.jdeeco.network.l2.L2Packet;
 
@@ -12,20 +15,45 @@ import cz.cuni.mff.d3s.jdeeco.network.l2.L2Packet;
  */
 public class Layer {
 	
+	private final Set<Strategy> strategies;
+	private final Set<Device> devices;
+	
+	public Layer() {
+		this.strategies = new HashSet<Strategy>();
+		this.devices = new HashSet<Device>();
+	}
+	
 	public void registerStrategy(Strategy strategy) {
-		//TODO
+		strategies.add(strategy);
 	}
 	
 	public void registerDevice(Device device) {
+		devices.add(device);
+	}
+	
+	public boolean sendL2Packet(L2Packet packet, Address address) {
+		if (packet != null) {
+			for (Device device: devices) {
+				if (device.canSend(address)) {
+					packet.getMarshalledData();
+					//device.send(encapsulate(packet), address);
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	public boolean sendL1Packet(L1Packet packet, Address address) {
 		//TODO
 	}
 	
-	public void sendL2Packet(L2Packet packet) {
+	public L1Packet processL0Packet(byte [] packet) {
 		//TODO
+		return null;
 	}
 	
-	public void sendL1Packet(L1Packet packet) {
-		//TODO
+	protected L1Packet encapsulateL2(L2Packet packet) {
+		return new L1Packet(packet.getMarshalledData(), packet., dataId, startPos, payloadSize, totalSize, receivedInfo)
 	}
-	
 }

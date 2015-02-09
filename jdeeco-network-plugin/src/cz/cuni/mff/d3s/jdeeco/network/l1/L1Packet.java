@@ -7,15 +7,15 @@ package cz.cuni.mff.d3s.jdeeco.network.l1;
  *
  */
 public class L1Packet {
-	public final byte [] payload;	/** payload carried by this packet*/
-	public final String srcNode;	/** ID of source data originates from*/
-	public final int dataId;		/** ID of data this packet (fragment) belongs to*/
-	public final int startPos;		/** in bytes*/
-	public final int payloadSize; 	/** in bytes*/
-	public final int totalSize; 	/** in bytes*/
+	public final byte [] payload;			/** payload carried by this packet*/
+	public final int srcNode;				/** ID of source data originates from*/
+	public final int dataId;				/** ID of data this packet (fragment) belongs to*/
+	public final int startPos;				/** in bytes*/
+	public final int payloadSize; 			/** in bytes*/
+	public final int totalSize; 			/** in bytes*/
 	public final ReceivedInfo receivedInfo; /** receival additaional information */
 	
-	public L1Packet(byte[] payload, String srcNode, int dataId, int startPos,
+	public L1Packet(byte[] payload, int srcNode, int dataId, int startPos,
 			int payloadSize, int totalSize, ReceivedInfo receivedInfo) {
 		this.payload = payload;
 		this.srcNode = srcNode;
