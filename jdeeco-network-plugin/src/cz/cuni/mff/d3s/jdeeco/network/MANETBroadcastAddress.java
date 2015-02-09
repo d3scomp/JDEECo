@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.jdeeco.network;
 
+
 /**
  * Represents address for MANET broadcasting.
  * 
@@ -8,4 +9,13 @@ package cz.cuni.mff.d3s.jdeeco.network;
  */
 public class MANETBroadcastAddress extends Address {
 
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		return getClass() == obj.getClass();
+	}
+	
 }

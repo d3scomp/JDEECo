@@ -6,6 +6,6 @@ package cz.cuni.mff.d3s.jdeeco.network.l1;
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
  *
  */
-public interface Strategy {
+public interface L1Strategy {
 
 }

@@ -8,12 +8,20 @@ package cz.cuni.mff.d3s.jdeeco.network;
  *
  */
 public interface Device {
+	
+	/**
+	 * Retrieves the ID of the device
+	 * 
+	 * @return id of the device
+	 */
+	public String getId();
+	
 	/**
 	 * Returns maximum transmission unit size in bytes.
 	 * 
 	 * @return maximum transmission unit size in bytes.
 	 */
-	public abstract int getMTU();
+	public int getMTU();
 	
 	/**
 	 * Says whether the device can send to the given address.

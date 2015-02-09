@@ -16,7 +16,7 @@ import cz.cuni.mff.d3s.jdeeco.network.l2.L2Packet;
 import cz.cuni.mff.d3s.jdeeco.network.l2.Layer2;
 import cz.cuni.mff.d3s.jdeeco.network.l2.PacketHeader;
 import cz.cuni.mff.d3s.jdeeco.network.l2.L2ReceivedInfo;
-import cz.cuni.mff.d3s.jdeeco.network.l2.Strategy;
+import cz.cuni.mff.d3s.jdeeco.network.l2.L2Strategy;
 import cz.cuni.mff.d3s.jdeeco.network.marshaller.MarshallerRegistry;
 import cz.cuni.mff.d3s.jdeeco.network.marshaller.SerializingMarshaller;
 
@@ -97,7 +97,7 @@ public class L2Test {
 	@Test
 	public void testL2PacketProcessing() {
 		// Register strategy with the L2
-		Strategy strategy = Mockito.mock(Strategy.class);
+		L2Strategy strategy = Mockito.mock(L2Strategy.class);
 		l2Layer.registerL2Strategy(strategy);
 
 		L2ReceivedInfo info = new L2ReceivedInfo(new LinkedList<L1Packet>(), 1, 1);
