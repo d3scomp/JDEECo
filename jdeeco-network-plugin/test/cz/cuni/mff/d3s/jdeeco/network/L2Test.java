@@ -16,7 +16,7 @@ import cz.cuni.mff.d3s.jdeeco.network.l1.Layer1;
 import cz.cuni.mff.d3s.jdeeco.network.l2.L2Packet;
 import cz.cuni.mff.d3s.jdeeco.network.l2.Layer2;
 import cz.cuni.mff.d3s.jdeeco.network.l2.PacketHeader;
-import cz.cuni.mff.d3s.jdeeco.network.l2.ReceivedInfo;
+import cz.cuni.mff.d3s.jdeeco.network.l2.L2ReceivedInfo;
 import cz.cuni.mff.d3s.jdeeco.network.l2.Strategy;
 import cz.cuni.mff.d3s.jdeeco.network.marshaller.MarshallerRegistry;
 import cz.cuni.mff.d3s.jdeeco.network.marshaller.SerializingMarshaller;
@@ -68,7 +68,7 @@ public class L2Test {
 		assertPayload(srcPacket.getObject());
 
 		// Create destination packet from source packet binary data
-		ReceivedInfo info = new ReceivedInfo(new LinkedList<L1Packet>(), 1, 1);
+		L2ReceivedInfo info = new L2ReceivedInfo(new LinkedList<L1Packet>(), 1, 1);
 		L2Packet dstPacket = l2Layer.createPacket(new PacketHeader(PacketType.KNOWLEDGE), srcPacket.getData(), info);
 		assertPayload(dstPacket.getObject());
 	}
@@ -101,7 +101,7 @@ public class L2Test {
 		Strategy strategy = Mockito.mock(Strategy.class);
 		l2Layer.registerL2Strategy(strategy);
 
-		ReceivedInfo info = new ReceivedInfo(new LinkedList<L1Packet>(), 1, 1);
+		L2ReceivedInfo info = new L2ReceivedInfo(new LinkedList<L1Packet>(), 1, 1);
 
 		// Create source packet (created with data and received packet info)
 		L2Packet srcPacket = l2Layer.createPacket(new PacketHeader(PacketType.KNOWLEDGE),

@@ -98,7 +98,7 @@ public class Layer2 {
 	 * @param receifedInfo
 	 *            Information about received packet
 	 */
-	public L2Packet createPacket(PacketHeader header, byte[] data, ReceivedInfo receivedInfo) {
+	public L2Packet createPacket(PacketHeader header, byte[] data, L2ReceivedInfo receivedInfo) {
 		return new L2Packet(this, header, data, receivedInfo);
 	}
 }

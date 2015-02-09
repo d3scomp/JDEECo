@@ -10,7 +10,7 @@ import cz.cuni.mff.d3s.jdeeco.network.l1.L1Packet;
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
  */
-public class ReceivedInfo {
+public class L2ReceivedInfo {
 	/**
 	 * Source L1 packets
 	 * 
@@ -33,7 +33,7 @@ public class ReceivedInfo {
 	public final int dataId;
 	
 
-	public ReceivedInfo(Collection<L1Packet> srcFragments, int srcNode,
+	public L2ReceivedInfo(Collection<L1Packet> srcFragments, int srcNode,
 			int dataId) {
 		this.srcFragments = srcFragments;
 		this.srcNode = srcNode;

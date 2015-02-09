@@ -8,14 +8,14 @@ package cz.cuni.mff.d3s.jdeeco.network.l2;
  */
 public class L2Packet {
 	public final PacketHeader header;
-	public final ReceivedInfo receivedInfo;
+	public final L2ReceivedInfo receivedInfo;
 	
 	private byte[] data;
 	private Object object;
 	private final Layer2 l2Layer;
 	
 	
-	private L2Packet(Layer2 l2Layer, PacketHeader header, ReceivedInfo receivedInfo) {
+	private L2Packet(Layer2 l2Layer, PacketHeader header, L2ReceivedInfo receivedInfo) {
 		this.l2Layer = l2Layer;
 		this.header = header;
 		this.receivedInfo = receivedInfo;
@@ -42,7 +42,7 @@ public class L2Packet {
 	 * @param data
 	 *            Source binary data for object
 	 */
-	public L2Packet(Layer2 l2Layer, PacketHeader header, byte[] data, ReceivedInfo receivedInfo) {
+	public L2Packet(Layer2 l2Layer, PacketHeader header, byte[] data, L2ReceivedInfo receivedInfo) {
 		this(l2Layer, header, receivedInfo);
 		this.data = data;
 	}
@@ -74,14 +74,5 @@ public class L2Packet {
 			data = l2Layer.getMarshallers().marshall(header.getPacketType(), object);
 		}
 		return data;
-	}
-
-	/**
-	 * Gets packet received info
-	 * 
-	 * @return Returns packet received info, or null when no packet received info is available.
-	 */
-	public ReceivedInfo getReceivedInfo() {
-		return receivedInfo;
 	}
 }

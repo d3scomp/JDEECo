@@ -6,11 +6,11 @@ package cz.cuni.mff.d3s.jdeeco.network.l1;
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
  *
  */
-public class MANETReceivedInfo extends ReceivedInfo {
+public class MANETReceivedInfo extends L1ReceivedInfo {
 	
 	public final double rssi; /** Radio Signal Strength Indicator */
 	
-	public MANETReceivedInfo(String srcAddress, double rssi) {
+	public MANETReceivedInfo(Address srcAddress, double rssi) {
 		super(srcAddress);
 		this.rssi = rssi;
 	}
