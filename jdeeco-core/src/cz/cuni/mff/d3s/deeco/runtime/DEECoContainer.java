@@ -2,6 +2,8 @@ package cz.cuni.mff.d3s.deeco.runtime;
 
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 
 /**
@@ -44,7 +46,7 @@ public interface DEECoContainer {
 	 * @param components initialized objects of component-annotated classes
 	 * @throws AnnotationProcessorException 
 	 */
-	public void deployComponents(Object... components) throws AnnotationProcessorException;
+	public ComponentInstance deployComponent(Object components) throws AnnotationProcessorException;
 	
 	/**
 	 * Deploys ensembles to the DEECo rutime by parsing them and adding them to the metadata model.
@@ -55,6 +57,6 @@ public interface DEECoContainer {
 	 * @throws AnnotationProcessorException
 	 */
 	@SuppressWarnings("rawtypes")
-	public void deployEnsembles(Class... ensembles) throws AnnotationProcessorException;
+	public EnsembleDefinition deployEnsemble(Class ensembles) throws AnnotationProcessorException;
 	
 }

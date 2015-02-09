@@ -71,7 +71,7 @@ public class TestSerializer {
 		model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
 		processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE, model, new CloningKnowledgeManagerFactory());
 		
-		processor.processComponents(new TestComponent("M1"));
+		processor.processComponent(new TestComponent("M1"));
 		component = model.getComponentInstances().get(0); 
 		kp = component.getComponentProcesses().get(0).getParameters().get(0).getKnowledgePath();
 	}

@@ -15,6 +15,8 @@ import cz.cuni.mff.d3s.deeco.executor.SameThreadExecutor;
 import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerFactory;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerFactory;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
@@ -64,13 +66,13 @@ public class DEECo implements DEECoContainer {
 		initializePlugins(plugins);
 	}
 	
-	public void deployComponents(Object... components) throws AnnotationProcessorException {
-		processor.processComponents(components);
+	public ComponentInstance deployComponent(Object component) throws AnnotationProcessorException {
+		return processor.processComponent(component);
 	}
 	
 	@SuppressWarnings("rawtypes")
-	public void deployEnsembles(Class... ensembles) throws AnnotationProcessorException { 
-		processor.processEnsembles(ensembles);
+	public EnsembleDefinition deployEnsemble(Class ensemble) throws AnnotationProcessorException { 
+		return processor.processEnsemble(ensemble);
 	}
 	
 	public void start() {

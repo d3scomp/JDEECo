@@ -68,7 +68,7 @@ public class ProcessContext {
 		RuntimeMetadata model = getModel();
 		AnnotationProcessor processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE,model,knowledgeManagerFactory);
 		try {
-			processor.processComponents(componentDefinition);
+			processor.processComponent(componentDefinition);
 			
 			// TODO: check that the KM created by the processor has been already replaced by the runtime framework
 		} catch (AnnotationProcessorException e) {

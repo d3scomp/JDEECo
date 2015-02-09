@@ -218,12 +218,12 @@ public class SecurityRuntimeModel {
 		policeComponent2 = new PoliceComponent("P2", "Pilsen");
 		globalPoliceComponent = new GlobalPoliceComponent("G1");
 		
-		processor.processComponents(vehicleComponent);
-		processor.processComponents(policeComponent1);
-		processor.processComponents(policeComponent2);
-		processor.processComponents(globalPoliceComponent);
-		processor.processEnsembles(AllEnsemble.class);
-		processor.processEnsembles(PoliceEverywhereEnsemble.class);
+		processor.processComponent(vehicleComponent);
+		processor.processComponent(policeComponent1);
+		processor.processComponent(policeComponent2);
+		processor.processComponent(globalPoliceComponent);
+		processor.processEnsemble(AllEnsemble.class);
+		processor.processEnsemble(PoliceEverywhereEnsemble.class);
 		
 		// set ensemble to allow all components
 		AllEnsemble.membership = id -> true;

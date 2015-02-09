@@ -196,72 +196,6 @@ public class AnnotationProcessor {
 	}
 	
 	/**
-	 * Processing of one/multiple files provided as different parameters or as a single parameter-array of component objects 
-	 * 
-	 * @param objs
-	 *            component objects to be processed, if any, provided to the body of the method as an array 
-	 * @throws AnnotationProcessorException
-	 */
-	public void processComponents(Object... objs) throws AnnotationProcessorException {
-		if (objs.length==0) {
-			throw new AnnotationProcessorException("Provide 1 or more files to be processed as parameters.");
-		} 
-		for (Object o: objs) {
-			processComponent(model, o);
-		}
-	}
-	
-	/**
-	 * Processing of one/multiple files provided as a single parameter-list of component objects.
-	 * 
-	 * @param objs
-	 *            list of component objects to be processed
-	 * @throws AnnotationProcessorException
-	 */
-	public void processComponents(List<Object> objs) throws AnnotationProcessorException {
-		if (objs.isEmpty()) {
-			throw new AnnotationProcessorException("Cannot process an empty list.");
-		}
-		for (Object o: objs) {
-			processComponent(model, o);
-		}
-	}
-
-	/**
-	 * Processing of one/multiple classes with ensemble definitions provided as different parameters or as a single parameter-array of classes 
-	 * 
-	 * @param clazzes
-	 *            classes to be processed, if any, provided to the body of the method as an array 
-	 * @throws AnnotationProcessorException
-	 */
-	@SuppressWarnings("rawtypes")
-	public void processEnsembles(Class... clazzes) throws AnnotationProcessorException {
-		if (clazzes.length==0) {
-			throw new AnnotationProcessorException("Provide 1 or more files to be processed as parameters.");
-		} 
-		for (Class c: clazzes) {
-			processEnsemble(model, c);
-		}
-	}
-	
-	/**
-	 * Processing of one/multiple classes with ensemble definitions provided as a single parameter-list of classes.
-	 * 
-	 * @param clazzes
-	 *            list of classes to be processed
-	 * @throws AnnotationProcessorException
-	 */
-	@SuppressWarnings("rawtypes")
-	public void processEnsembles(List<Class> clazzes) throws AnnotationProcessorException {
-		if (clazzes.isEmpty()) {
-			throw new AnnotationProcessorException("Cannot process an empty list.");
-		}
-		for (Class c: clazzes) {
-			processEnsemble(model, c);
-		}
-	}
-	
-	/**
 	 * Checks if the object is annotated as @{@link Component}/@{@link Ensemble}
 	 * and calls the respective creator. It also creates the appropriate
 	 * {@link EnsembleController}s.
@@ -275,9 +209,9 @@ public class AnnotationProcessor {
 	 *            object to be processed
 	 * @throws AnnotationProcessorException
 	 */
-	void processComponent(RuntimeMetadata model, Object componentObj) throws AnnotationProcessorException {
+	public ComponentInstance processComponent(Object componentObj) throws AnnotationProcessorException {
 		if (model == null) {
-			throw new AnnotationProcessorException("Provided model cannot be null.");
+			throw new AnnotationProcessorException("RuntimeMetadata model cannot be null.");
 		}
 		if (componentObj == null) {
 			throw new AnnotationProcessorException("Provided component object(s) cannot be null.");
@@ -302,6 +236,8 @@ public class AnnotationProcessor {
 		}
 		
 		model.getComponentInstances().add(ci);
+		
+		return ci;
 	}
 	
 	/**
@@ -319,7 +255,7 @@ public class AnnotationProcessor {
 	 * @throws AnnotationProcessorException
 	 */
 	@SuppressWarnings("rawtypes")
-	void processEnsemble(RuntimeMetadata model, Class ensembleClass) throws AnnotationProcessorException {
+	public EnsembleDefinition processEnsemble(Class ensembleClass) throws AnnotationProcessorException {
 		if (model == null) {
 			throw new AnnotationProcessorException("Provided model cannot be null.");
 		}
@@ -341,6 +277,7 @@ public class AnnotationProcessor {
 			ec.setComponentInstance(ci);
 		}
 		
+		return ed;
 	}
 	
 	/**

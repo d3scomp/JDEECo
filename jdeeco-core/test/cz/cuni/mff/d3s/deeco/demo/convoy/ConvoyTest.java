@@ -31,8 +31,9 @@ public class ConvoyTest {
 		/* create main application container */
 		DEECo deeco = new DEECo();
 		/* deploy components and ensembles */
-		deeco.deployComponents(new Leader(), new Follower());
-		deeco.deployEnsembles(ConvoyEnsemble.class);
+		deeco.deployComponent(new Leader());
+		deeco.deployComponent(new Follower());
+		deeco.deployEnsemble(ConvoyEnsemble.class);
 		
 		deeco.start();
 		Thread.sleep(2000);
