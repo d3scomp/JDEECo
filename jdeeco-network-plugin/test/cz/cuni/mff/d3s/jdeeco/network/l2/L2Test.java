@@ -1,6 +1,6 @@
 package cz.cuni.mff.d3s.jdeeco.network.l2;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.util.LinkedList;
 
@@ -111,5 +111,38 @@ public class L2Test {
 
 		// Check packet was processed by strategy
 		Mockito.verify(strategy).processL2Packet(Matchers.eq(srcPacket));
+	}
+
+	/**
+	 * Test registering/unregistering L2 strategy
+	 */
+	@Test
+	public void testL2StrategyManagement() {
+		// Create mock strategy
+		L2Strategy strategy = Mockito.mock(L2Strategy.class);
+
+		// Register strategy
+		l2Layer.registerStrategy(strategy);
+
+		// Check strategy is registered
+		assertTrue(l2Layer.getRegisteredStrategies().contains(strategy));
+
+		// Unregister strategy
+		l2Layer.unregisterStrategy(strategy);
+
+		// Check strategy is unregistered
+		assertFalse(l2Layer.getRegisteredStrategies().contains(strategy));
+	}
+
+	/**
+	 * Test forbidden L2 strategy modification
+	 */
+	@Test(expected = UnsupportedOperationException.class)
+	public void testL2StrategyListReadOnly() {
+		// Create mock strategy
+		L2Strategy strategy = Mockito.mock(L2Strategy.class);
+
+		// Try to modify returned collection
+		l2Layer.getRegisteredStrategies().add(strategy);
 	}
 }

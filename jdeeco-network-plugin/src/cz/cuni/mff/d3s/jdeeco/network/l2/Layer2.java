@@ -75,6 +75,25 @@ public class Layer2 {
 	}
 
 	/**
+	 * Gets registered strategies
+	 * 
+	 * @return Read-only collection of registered strategies
+	 */
+	public Collection<L2Strategy> getRegisteredStrategies() {
+		return Collections.unmodifiableCollection(strategies);
+	}
+
+	/**
+	 * Removes strategy
+	 * 
+	 * @param strategy
+	 *            Strategy to remove
+	 */
+	public boolean unregisterStrategy(L2Strategy strategy) {
+		return strategies.remove(strategy);
+	}
+
+	/**
 	 * Creates L2 packet from object
 	 * 
 	 * @param object
