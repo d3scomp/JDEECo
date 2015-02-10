@@ -1,18 +1,18 @@
-package cz.cuni.mff.d3s.deeco.simlog;
+package cz.cuni.mff.d3s.deeco.runtimelog;
 
-import java.util.Map;
+import java.io.IOException;
 
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.task.CustomStepTask;
 import cz.cuni.mff.d3s.deeco.task.TimerTask;
 import cz.cuni.mff.d3s.deeco.task.TimerTaskListener;
 
-public class SimLogTimerTaskListener implements TimerTaskListener 
+public class RuntimeLogTimerTaskListener implements TimerTaskListener 
 {
 	private SnapshotProvider snapshotProvider;
 	private long period;
 	
-	public SimLogTimerTaskListener(SnapshotProvider snapshotProvider, long period)
+	public RuntimeLogTimerTaskListener(SnapshotProvider snapshotProvider, long period)
 	{
 		this.snapshotProvider = snapshotProvider;
 		this.period = period;
@@ -20,10 +20,18 @@ public class SimLogTimerTaskListener implements TimerTaskListener
 	
 	
 	@Override
-	public void at(long time, Object triger) 
+	public void at(long time, Object triger)
 	{
-		Map<String, Object> snapshot = snapshotProvider.getSnapshot();
-		// SimLogger.logSnapshot(snapshot); // TODO: find out whether the potential IO exception should be suppressed or expressed some other way  
+		try
+		{
+			RuntimeLogRecord snapshot = snapshotProvider.getSnapshot();
+			RuntimeLogger.logSnapshot(snapshot);
+		}
+		catch(IOException e)
+		{
+			// If the runtime logging fails interrupt the simulation
+			throw new RuntimeException(e);
+		}
 		
 		CustomStepTask task = (CustomStepTask) triger;
 		task.scheduleNextExecutionAfter(period);
