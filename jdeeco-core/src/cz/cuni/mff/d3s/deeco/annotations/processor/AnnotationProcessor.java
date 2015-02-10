@@ -153,28 +153,11 @@ public class AnnotationProcessor {
 	 * Processors to handle additional annotations that are not handled by the main processor.
 	 * They are called via the <code>callExtensions()</code>. 
 	 */
-	AnnotationProcessorExtensionPoint[] extensions;
+	List<AnnotationProcessorExtensionPoint> extensions;
 	
 	KnowledgeManagerFactory knowledgeManagerFactory;
 	
 	Cloner cloner;
-	/**
-	 * Initializes the processor with the given model factory (convenience
-	 * method when no extensions are provided). All the model elements produced
-	 * by the processor will be created via the provided factory and added to
-	 * the provided model.
-	 * 
-	 * @param factory
-	 *            EMF runtime metadata factory
-	 * @param model
-	 *            runtime metadata model to be updated by the processor
-	 * @param knowledgeMangerFactory knowledge manager factory to be used
-	 */
-
-	public AnnotationProcessor(RuntimeMetadataFactory factory, KnowledgeManagerFactory knowledgeMangerFactory,
-			RuntimeMetadata model) {
-		this(factory, model, knowledgeMangerFactory);
-	}
 	
 	/**
 	 * Initializes the processor with the given model factory and extensions.
@@ -193,57 +176,25 @@ public class AnnotationProcessor {
 			AnnotationProcessorExtensionPoint... extensions) {
 		this.factory = factory;
 		this.model = model;
-		this.extensions = extensions;
+		if (extensions.length == 0) {
+			this.extensions = new ArrayList<>();
+		} else {
+			this.extensions = Arrays.asList(extensions);
+		}
 		this.knowledgeManagerFactory = knowledgeMangerFactory;	
 		this.cloner = new Cloner();
 	}
 	
 	/**
-	 * Processing of a single file.
+	 * To be used to register an extension to the main annotation processor.
+	 * All registered extensions get notified at different stages in the parsing process.  
 	 * 
-	 * @param obj
-	 *            object to be processed
-	 * @throws AnnotationProcessorException
+	 * @see #callExtensions
 	 */
-	public void process(Object obj) throws AnnotationProcessorException {
-		processObject(model, obj); 
+	public void addExtension(AnnotationProcessorExtensionPoint extension) {
+		extensions.add(extension);
 	}
 	
-	/**
-	 * Batch processing of multiple files provided as extra parameters.
-	 * 
-	 * @param obj
-	 *            object to be processed
-	 * @param objs
-	 *            rest of objects to be processed, if any
-	 * @throws AnnotationProcessorException
-	 */
-	public void process(Object obj, Object... objs) throws AnnotationProcessorException {
-		processObject(model, obj); 
-		for (Object o: objs) {
-			processObject(model, o);
-		}
-	}
-	
-	/**
-	 * Batch processing of multiple files provided as a list of objects.
-	 * 
-	 * @param objs
-	 *            list of objects to be processed
-	 * @throws AnnotationProcessorException
-	 */
-	public void process(List<Object> objs) throws AnnotationProcessorException {
-		if (objs == null) {
-			throw new AnnotationProcessorException("Provide an initialized object or a non-empty list of objects.");
-		}
-		if (objs.isEmpty()) {
-			throw new AnnotationProcessorException("Cannot process an empty list.");
-		}
-		for (Object o: objs) {
-			processObject(model, o);
-		}
-	}
-
 	/**
 	 * Checks if the object is annotated as @{@link Component}/@{@link Ensemble}
 	 * and calls the respective creator. It also creates the appropriate
@@ -254,79 +205,28 @@ public class AnnotationProcessor {
 	 * 
 	 * @param model
 	 *            runtime model to be updated
-	 * @param obj
+	 * @param componentObj
 	 *            object to be processed
 	 * @throws AnnotationProcessorException
 	 */
-	void processObject(RuntimeMetadata model, Object obj) throws AnnotationProcessorException {
+	public ComponentInstance processComponent(Object componentObj) throws AnnotationProcessorException {
 		if (model == null) {
-			throw new AnnotationProcessorException("Provided model cannot be null.");
+			throw new AnnotationProcessorException("RuntimeMetadata model cannot be null.");
 		}
-		if (obj == null) {
-			throw new AnnotationProcessorException("Provided object(s) cannot be null.");
+		if (componentObj == null) {
+			throw new AnnotationProcessorException("Provided component object(s) cannot be null.");
 		}
-		
-		boolean isClass = (obj instanceof Class<?>);
-		Class<?> clazz = (isClass) ? (Class<?>) obj : obj.getClass();
-		boolean isC = isComponentDefinition(clazz);
-		boolean isE = isEnsembleDefinition(clazz);
-		if (isC && isE) {
-			throw new AnnotationProcessorException(
-					"Class: " + clazz.getCanonicalName() +
-					"->Both @" + Component.class.getSimpleName() + " or @" + Ensemble.class.getSimpleName() + " annotation found.");
-		}
-		if (isC) {			
-			processComponentInstance(model, obj);
-			return;
-		} 
-		if (isE) {
-			EnsembleDefinition ed = createEnsembleDefinition(clazz);
-			// Create ensemble controllers for all the already-processed component instance definitions
-			for (ComponentInstance ci: model.getComponentInstances()) {
-				EnsembleController ec = factory.createEnsembleController();
-				ec.setComponentInstance(ci);
-				ec.setEnsembleDefinition(ed);
-				ci.getEnsembleControllers().add(ec);
-			}
-			
-			model.getEnsembleDefinitions().add(ed);
-
-			return;
-		} 
-		throw new AnnotationProcessorException(
-				"Class: " + clazz.getCanonicalName() +
-				"->No @" + Component.class.getSimpleName() + " or @" + Ensemble.class.getSimpleName() + " annotation found.");
-	}
-	
-	/**
-	 * Checks if the object is annotated as @{@link Component} and calls the respective creator. 
-	 * It also creates the appropriate {@link EnsembleController}s for the {@link EnsembleDefinition}s in the model.
-	 * The parsed {@link ComponentInstance} is automatically added to the model.
-	 * 	
-	 * @param model the model to which the instance is to be added
-	 * @param obj instance definition to be processed
-	 * @return	the parsed {@link ComponentInstance}
-	 * @throws AnnotationProcessorException	if the instance definition object is invalid
-	 */
-	public ComponentInstance processComponentInstance(RuntimeMetadata model, Object obj) throws AnnotationProcessorException {
-		if (model == null) {
-			throw new AnnotationProcessorException("Provided model cannot be null.");
-		}
-		if (obj == null) {
-			throw new AnnotationProcessorException("Provided object(s) cannot be null.");
+		if (componentObj instanceof Class<?>) {
+			throw new AnnotationProcessorException("Provided component object(s) cannot be classes.");
 		}
 		
-		boolean isClass = (obj instanceof Class<?>);
-		Class<?> clazz = (isClass) ? (Class<?>) obj : obj.getClass();
-		boolean isC = isComponentDefinition(clazz);
-		
-		// TODO: unify the checks (in processObject the presence of multiple annotations is checked)
-		if (!isC || isClass) {
-			throw new AnnotationProcessorException(
-					"For a component to be parsed, it has to be an INSTANCE of a class annotated with @" + Component.class.getSimpleName() + ".");	
+		Class<?> componentClass = componentObj.getClass();
+		if (!isComponentDefinition(componentClass)) {
+			throw new AnnotationProcessorException("Class: " + componentClass.getCanonicalName() +
+					"->No @" + Component.class.getSimpleName() + " annotation found.");
 		}
 		
-		ComponentInstance ci = createComponentInstance(obj);
+		ComponentInstance ci = createComponentInstance(componentObj);
 		// Create ensemble controllers for all the already-processed ensemble definitions
 		for (EnsembleDefinition ed: model.getEnsembleDefinitions()) {
 			EnsembleController ec = factory.createEnsembleController();
@@ -336,10 +236,50 @@ public class AnnotationProcessor {
 		}
 		
 		model.getComponentInstances().add(ci);
-
+		
 		return ci;
 	}
+	
+	/**
+	 * Checks if the object is annotated as @{@link Component}/@{@link Ensemble}
+	 * and calls the respective creator. It also creates the appropriate
+	 * {@link EnsembleController}s.
+	 * <p>
+	 * If both/no such annotations are found, it throws an exception.
+	 * </p>
+	 * 
+	 * @param model
+	 *            runtime model to be updated
+	 * @param ensembleClass
+	 *            object to be processed
+	 * @throws AnnotationProcessorException
+	 */
+	@SuppressWarnings("rawtypes")
+	public EnsembleDefinition processEnsemble(Class ensembleClass) throws AnnotationProcessorException {
+		if (model == null) {
+			throw new AnnotationProcessorException("Provided model cannot be null.");
+		}
+		if (ensembleClass == null) {
+			throw new AnnotationProcessorException("Provided class(es) cannot be null.");
+		}
+		if (!isEnsembleDefinition(ensembleClass)) {
+			throw new AnnotationProcessorException("Class: " + ensembleClass.getCanonicalName() +
+					"->No @" + Ensemble.class.getSimpleName() + " annotation found.");
+		}
 
+		EnsembleDefinition ed = createEnsembleDefinition(ensembleClass);
+		model.getEnsembleDefinitions().add(ed);
+		// Create ensemble controllers for all the already-processed component instance definitions
+		for (ComponentInstance ci: model.getComponentInstances()) {
+			EnsembleController ec = factory.createEnsembleController();
+			ec.setEnsembleDefinition(ed);
+			ci.getEnsembleControllers().add(ec);
+			ec.setComponentInstance(ci);
+		}
+		
+		return ed;
+	}
+	
 	/**
 	 * Creator of a single correctly-initialized {@link ComponentInstance} object. 
 	 * It calls all the necessary sub-creators to obtain the full graph of the Ecore object.    
@@ -1269,7 +1209,7 @@ public class AnnotationProcessor {
 	 * @param unknownAnnotations	annotations delegated to the callee
 	 */
 	private void callExtensions(ParsingEvent event, Object object, List<Annotation> unknownAnnotations) throws AnnotationProcessorException {
-		if ((extensions != null) && (extensions.length > 0)) {
+		if ((extensions != null) && (!extensions.isEmpty())) {
 			for (AnnotationProcessorExtensionPoint extension : extensions) {
 				Log.d("in 'CallExtensions': [EventType: "+ event + ", runtimeObject: " + object + ", extension: "+ extension +"]");
 				switch (event) {
