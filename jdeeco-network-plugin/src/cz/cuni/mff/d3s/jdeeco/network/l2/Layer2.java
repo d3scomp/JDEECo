@@ -3,6 +3,7 @@ package cz.cuni.mff.d3s.jdeeco.network.l2;
 import java.util.*;
 
 import cz.cuni.mff.d3s.jdeeco.network.Address;
+import cz.cuni.mff.d3s.jdeeco.network.ILayer2;
 import cz.cuni.mff.d3s.jdeeco.network.l1.Layer1;
 import cz.cuni.mff.d3s.jdeeco.network.l2.L2Strategy;
 import cz.cuni.mff.d3s.jdeeco.network.marshaller.MarshallerRegistry;
@@ -13,7 +14,7 @@ import cz.cuni.mff.d3s.jdeeco.network.marshaller.MarshallerRegistry;
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
  */
-public class Layer2 {
+public class Layer2 implements ILayer2 {
 	private final Collection<L2Strategy> strategies = new HashSet<L2Strategy>();
 	private final MarshallerRegistry marshallers;
 	private final Layer1 layer1;
@@ -70,7 +71,7 @@ public class Layer2 {
 	 * @param strategy
 	 *            Strategy to register
 	 */
-	public void registerStrategy(L2Strategy strategy) {
+	public void registerL2Strategy(L2Strategy strategy) {
 		strategies.add(strategy);
 	}
 
@@ -79,7 +80,7 @@ public class Layer2 {
 	 * 
 	 * @return Read-only collection of registered strategies
 	 */
-	public Collection<L2Strategy> getRegisteredStrategies() {
+	public Collection<L2Strategy> getRegisteredL2Strategies() {
 		return Collections.unmodifiableCollection(strategies);
 	}
 
@@ -89,7 +90,7 @@ public class Layer2 {
 	 * @param strategy
 	 *            Strategy to remove
 	 */
-	public boolean unregisterStrategy(L2Strategy strategy) {
+	public boolean unregisterL2Strategy(L2Strategy strategy) {
 		return strategies.remove(strategy);
 	}
 

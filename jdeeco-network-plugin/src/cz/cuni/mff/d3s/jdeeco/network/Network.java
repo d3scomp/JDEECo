@@ -13,7 +13,7 @@ import cz.cuni.mff.d3s.jdeeco.network.l2.Layer2;
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
  */
-public class Network implements NetworkToDevice, NetworkToGossip, ILayer1, ILayer2 {
+public class Network implements INetworkToDevice, INetworkToGossip, ILayer1, ILayer2 {
 	private Layer1 l1;
 	private Layer2 l2;
 
@@ -26,15 +26,15 @@ public class Network implements NetworkToDevice, NetworkToGossip, ILayer1, ILaye
 	// Network layer 2 interface
 
 	public void registerL2Strategy(L2Strategy strategy) {
-		l2.registerStrategy(strategy);
+		l2.registerL2Strategy(strategy);
 	}
 
 	public Collection<L2Strategy> getRegisteredL2Strategies() {
-		return l2.getRegisteredStrategies();
+		return l2.getRegisteredL2Strategies();
 	}
 
 	public boolean unregisterL2Strategy(L2Strategy strategy) {
-		return l2.unregisterStrategy(strategy);
+		return l2.unregisterL2Strategy(strategy);
 	}
 
 	// Network layer 1 interface

@@ -97,7 +97,7 @@ public class L2Test {
 	public void testL2PacketProcessing() {
 		// Register strategy with the L2
 		L2Strategy strategy = Mockito.mock(L2Strategy.class);
-		l2Layer.registerStrategy(strategy);
+		l2Layer.registerL2Strategy(strategy);
 
 		L2ReceivedInfo info = new L2ReceivedInfo(new LinkedList<L1Packet>(), 1, 1);
 
@@ -122,16 +122,16 @@ public class L2Test {
 		L2Strategy strategy = Mockito.mock(L2Strategy.class);
 
 		// Register strategy
-		l2Layer.registerStrategy(strategy);
+		l2Layer.registerL2Strategy(strategy);
 
 		// Check strategy is registered
-		assertTrue(l2Layer.getRegisteredStrategies().contains(strategy));
+		assertTrue(l2Layer.getRegisteredL2Strategies().contains(strategy));
 
 		// Unregister strategy
-		l2Layer.unregisterStrategy(strategy);
+		l2Layer.unregisterL2Strategy(strategy);
 
 		// Check strategy is unregistered
-		assertFalse(l2Layer.getRegisteredStrategies().contains(strategy));
+		assertFalse(l2Layer.getRegisteredL2Strategies().contains(strategy));
 	}
 
 	/**
@@ -143,6 +143,6 @@ public class L2Test {
 		L2Strategy strategy = Mockito.mock(L2Strategy.class);
 
 		// Try to modify returned collection
-		l2Layer.getRegisteredStrategies().add(strategy);
+		l2Layer.getRegisteredL2Strategies().add(strategy);
 	}
 }
