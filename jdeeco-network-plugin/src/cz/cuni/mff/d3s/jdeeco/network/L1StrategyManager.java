@@ -11,7 +11,7 @@ import cz.cuni.mff.d3s.jdeeco.network.l2.L2Strategy;
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
  */
-public interface ILayer1 {
+public interface L1StrategyManager {
 	/**
 	 * Registers L1 strategy for processing L1 packets
 	 * 

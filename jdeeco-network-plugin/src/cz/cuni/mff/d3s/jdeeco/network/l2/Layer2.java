@@ -1,11 +1,13 @@
 package cz.cuni.mff.d3s.jdeeco.network.l2;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 
 import cz.cuni.mff.d3s.jdeeco.network.Address;
-import cz.cuni.mff.d3s.jdeeco.network.ILayer2;
-import cz.cuni.mff.d3s.jdeeco.network.l1.Layer1;
-import cz.cuni.mff.d3s.jdeeco.network.l2.L2Strategy;
+import cz.cuni.mff.d3s.jdeeco.network.L1DataProcessor;
+import cz.cuni.mff.d3s.jdeeco.network.L2PacketSender;
+import cz.cuni.mff.d3s.jdeeco.network.L2StrategyManager;
 import cz.cuni.mff.d3s.jdeeco.network.marshaller.MarshallerRegistry;
 
 /**
@@ -14,10 +16,10 @@ import cz.cuni.mff.d3s.jdeeco.network.marshaller.MarshallerRegistry;
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
  */
-public class Layer2 implements ILayer2 {
+public class Layer2 implements L2StrategyManager, L1DataProcessor {
 	private final Collection<L2Strategy> strategies = new HashSet<L2Strategy>();
 	private final MarshallerRegistry marshallers;
-	private final Layer1 layer1;
+	private final L2PacketSender l2Sender;
 
 	/**
 	 * Creates L2 layer
@@ -25,9 +27,9 @@ public class Layer2 implements ILayer2 {
 	 * @param marshallerRegistry
 	 *            MarshallerRegistry to be used by L2 and L2 packets
 	 */
-	public Layer2(Layer1 layer1, MarshallerRegistry marshallerRegistry) {
+	public Layer2(L2PacketSender l2Sender, MarshallerRegistry marshallerRegistry) {
 		marshallers = marshallerRegistry;
-		this.layer1 = layer1;
+		this.l2Sender = l2Sender;
 	}
 
 	/**
@@ -61,8 +63,7 @@ public class Layer2 implements ILayer2 {
 	 */
 	public void sendL2Packet(L2Packet packet, Address address) {
 		// Pass packet to lower layer
-		// TODO: Missing the address parameter
-		layer1.sendL2Packet(packet, address);
+		l2Sender.sendL2Packet(packet, address);
 	}
 
 	/**
@@ -118,5 +119,10 @@ public class Layer2 implements ILayer2 {
 	 */
 	public L2Packet createPacket(PacketHeader header, byte[] data, L2ReceivedInfo receivedInfo) {
 		return new L2Packet(this, header, data, receivedInfo);
+	}
+
+	@Override
+	public void processL1Data(PacketHeader header, byte[] data, L2ReceivedInfo receivedInfo) {
+		processL2Packet(createPacket(header, data, receivedInfo));
 	}
 }

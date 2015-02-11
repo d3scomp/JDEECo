@@ -6,7 +6,7 @@ package cz.cuni.mff.d3s.jdeeco.network;
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
  */
-public interface INetworkToGossip {
+public interface NetworkToGossip {
 	/**
 	 * Processes knowledge to be send to network from gossip
 	 * 

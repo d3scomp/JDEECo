@@ -8,7 +8,7 @@ import cz.cuni.mff.d3s.jdeeco.network.l0.Device;
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
  */
-public interface INetworkToDevice {
+public interface NetworkToDevice {
 	/**
 	 * Registers network device
 	 * 
