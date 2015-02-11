@@ -1,7 +1,11 @@
 package cz.cuni.mff.d3s.jdeeco.network;
 
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
+import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
+import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.jdeeco.network.l0.Device;
 import cz.cuni.mff.d3s.jdeeco.network.l1.L1Strategy;
 import cz.cuni.mff.d3s.jdeeco.network.l1.Layer1;
@@ -20,9 +24,19 @@ public class Network implements NetworkPlugin, L1DataProcessor, L2PacketSender {
 	private Layer1 l1;
 	private Layer2 l2;
 
+	@Override
+	public List<Class<? extends DEECoPlugin>> getDependencies() {
+		return new LinkedList<Class<? extends DEECoPlugin>>();
+	}
+
+	@Override
+	public void init(DEECoContainer container) {
+		// TODO Register at Gossip for data
+	}
+
 	// Network to gossip interface
 
-	public void processKnowledgeFromGossip(Object knowledge) {
+	public void processDataFromGossipLayer(Object knowledge) {
 		throw new UnsupportedOperationException();
 	}
 

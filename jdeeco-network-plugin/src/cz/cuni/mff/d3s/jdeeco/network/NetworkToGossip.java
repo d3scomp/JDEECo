@@ -14,5 +14,5 @@ public interface NetworkToGossip {
 	 * 
 	 * TODO: knowledge type
 	 */
-	public void processKnowledgeFromGossip(Object knowledge);
+	public void processDataFromGossipLayer(Object knowledge);
 }

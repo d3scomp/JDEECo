@@ -1,5 +1,8 @@
 package cz.cuni.mff.d3s.jdeeco.network;
 
-public interface NetworkPlugin extends NetworkToDevice, NetworkToGossip, L1StrategyManager, L2StrategyManager {
+import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
+
+public interface NetworkPlugin extends DEECoPlugin, NetworkToDevice, NetworkToGossip, L1StrategyManager,
+		L2StrategyManager {
 
 }
