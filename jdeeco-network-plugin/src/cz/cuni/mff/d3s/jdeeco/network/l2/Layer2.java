@@ -98,6 +98,8 @@ public class Layer2 implements L2StrategyManager, L1DataProcessor {
 	/**
 	 * Creates L2 packet from object
 	 * 
+	 * TODO: Reactor this once this method is really used
+	 * 
 	 * @param object
 	 *            Source object to be stored in packet
 	 * @param header
@@ -107,22 +109,9 @@ public class Layer2 implements L2StrategyManager, L1DataProcessor {
 		return new L2Packet(this, header, object);
 	}
 
-	/**
-	 * Creates L2 packet from binary data
-	 * 
-	 * @param header
-	 *            Packet header
-	 * @param data
-	 *            Source binary data for object
-	 * @param receifedInfo
-	 *            Information about received packet
-	 */
-	public L2Packet createPacket(PacketHeader header, byte[] data, L2ReceivedInfo receivedInfo) {
-		return new L2Packet(this, header, data, receivedInfo);
-	}
-
 	@Override
-	public void processL1Data(PacketHeader header, byte[] data, L2ReceivedInfo receivedInfo) {
-		processL2Packet(createPacket(header, data, receivedInfo));
+	public void processL1Data(byte[] data, L2ReceivedInfo receivedInfo) {
+		// Process packet
+		processL2Packet(new L2Packet(this, data, receivedInfo));
 	}
 }

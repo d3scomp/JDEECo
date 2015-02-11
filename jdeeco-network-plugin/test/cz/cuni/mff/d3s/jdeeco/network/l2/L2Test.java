@@ -1,6 +1,8 @@
 package cz.cuni.mff.d3s.jdeeco.network.l2;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.LinkedList;
 
@@ -67,7 +69,7 @@ public class L2Test {
 
 		// Create destination packet from source packet binary data
 		L2ReceivedInfo info = new L2ReceivedInfo(new LinkedList<L1Packet>(), 1, 1);
-		L2Packet dstPacket = l2Layer.createPacket(new PacketHeader(PacketType.KNOWLEDGE), srcPacket.getData(), info);
+		L2Packet dstPacket = new L2Packet(l2Layer, srcPacket.getData(), info);
 		assertPayload(dstPacket.getObject());
 	}
 
@@ -102,8 +104,9 @@ public class L2Test {
 		L2ReceivedInfo info = new L2ReceivedInfo(new LinkedList<L1Packet>(), 1, 1);
 
 		// Create source packet (created with data and received packet info)
-		L2Packet srcPacket = l2Layer.createPacket(new PacketHeader(PacketType.KNOWLEDGE),
-				registry.marshall(PacketType.KNOWLEDGE, PAYLOAD), info);
+		byte[] data = registry.marshall(PacketType.KNOWLEDGE, PAYLOAD);
+		L2Packet srcPacket = new L2Packet(l2Layer, L2Packet.createL2PacketData(new PacketHeader(PacketType.KNOWLEDGE),
+				data), info);
 		assertPayload(srcPacket.getObject());
 
 		// Process packet

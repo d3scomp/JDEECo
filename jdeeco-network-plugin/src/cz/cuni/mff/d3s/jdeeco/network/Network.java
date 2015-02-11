@@ -9,7 +9,6 @@ import cz.cuni.mff.d3s.jdeeco.network.l2.L2Packet;
 import cz.cuni.mff.d3s.jdeeco.network.l2.L2ReceivedInfo;
 import cz.cuni.mff.d3s.jdeeco.network.l2.L2Strategy;
 import cz.cuni.mff.d3s.jdeeco.network.l2.Layer2;
-import cz.cuni.mff.d3s.jdeeco.network.l2.PacketHeader;
 
 /**
  * Provides network plug-in for jDEECO
@@ -75,7 +74,7 @@ public class Network implements NetworkPlugin, L1DataProcessor, L2PacketSender {
 	}
 
 	@Override
-	public void processL1Data(PacketHeader header, byte[] data, L2ReceivedInfo receivedInfo) {
-		l2.processL1Data(header, data, receivedInfo);
+	public void processL1Data(byte[] data, L2ReceivedInfo receivedInfo) {
+		l2.processL1Data(data, receivedInfo);
 	}
 }

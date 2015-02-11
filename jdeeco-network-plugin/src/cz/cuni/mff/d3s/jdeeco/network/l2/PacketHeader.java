@@ -15,6 +15,17 @@ public class PacketHeader {
 	public PacketType type;
 
 	/**
+	 * Encodes header into byte array
+	 * 
+	 * @return Byte encoded packet header
+	 */
+	public byte[] marshall() {
+		byte[] data = new byte[1];
+		data[0] = type.getValue();
+		return data;
+	}
+
+	/**
 	 * Creates L2 packet header
 	 * 
 	 * @param packetType
