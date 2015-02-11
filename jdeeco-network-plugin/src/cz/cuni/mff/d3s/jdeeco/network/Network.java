@@ -2,6 +2,7 @@ package cz.cuni.mff.d3s.jdeeco.network;
 
 import java.util.Collection;
 
+import cz.cuni.mff.d3s.jdeeco.network.l0.Device;
 import cz.cuni.mff.d3s.jdeeco.network.l1.L1Strategy;
 import cz.cuni.mff.d3s.jdeeco.network.l1.Layer1;
 import cz.cuni.mff.d3s.jdeeco.network.l2.L2Strategy;

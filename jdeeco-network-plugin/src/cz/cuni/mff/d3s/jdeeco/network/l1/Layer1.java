@@ -2,6 +2,7 @@ package cz.cuni.mff.d3s.jdeeco.network.l1;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -10,7 +11,8 @@ import java.util.Map;
 import java.util.Set;
 
 import cz.cuni.mff.d3s.jdeeco.network.Address;
-import cz.cuni.mff.d3s.jdeeco.network.Device;
+import cz.cuni.mff.d3s.jdeeco.network.l0.Device;
+import cz.cuni.mff.d3s.jdeeco.network.l0.Layer0;
 import cz.cuni.mff.d3s.jdeeco.network.l2.L2Packet;
 import cz.cuni.mff.d3s.jdeeco.network.l2.L2ReceivedInfo;
 
@@ -24,15 +26,13 @@ import cz.cuni.mff.d3s.jdeeco.network.l2.L2ReceivedInfo;
 public class Layer1 {
 
 	private final Set<L1Strategy> strategies;
-	private final Set<Device> devices;
 	private final int nodeId;
 	private final DataIDSource dataIdSource;
-	private final Map<BufferKey, List<L1Packet>> buffer;
+	private final Map<Device, Layer0> layers0;
 
 	public Layer1(int nodeId, DataIDSource dataIdSource) {
-		this.buffer = new HashMap<Layer1.BufferKey, List<L1Packet>>();
+		this.layers0 = new HashMap<Device, Layer0>();
 		this.strategies = new HashSet<L1Strategy>();
-		this.devices = new HashSet<Device>();
 		this.nodeId = nodeId;
 		this.dataIdSource = dataIdSource;
 	}
@@ -42,21 +42,25 @@ public class Layer1 {
 	}
 
 	public void registerDevice(Device device) {
-		devices.add(device);
+		if (!layers0.containsKey(device)) {
+			layers0.put(device, new Layer0(device));
+		}
 	}
 
 	public boolean sendL2Packet(L2Packet l2Packet, Address address) {
 		if (l2Packet != null) {
-			for (Device device : devices) {
+			for (Device device : layers0.keySet()) {
+				/**
+				 * Go through every device and check whether it is capable to send to the desired address.
+				 */
 				if (device.canSend(address)) {
-					List<L1Packet> l1Packets = dissassembleL2ToL1(l2Packet, device.getMTU());
+					int chunkSize = device.getMTU()-4;
+					/**
+					 * Disassemble the L2 packet into the L1 packets.
+					 */
+					List<L1Packet> l1Packets = dissassembleL2ToL1(l2Packet, chunkSize);
 					if (l1Packets.size() > 0) {
-						if (l1Packets.size() > 1) {
-							for (int i = 0; i < l1Packets.size() - 1; i++) {
-								device.send(L1ToL0Packet(l1Packets.get(i), device.getMTU()), address);
-							}
-						}
-						sendOrBuffer(l1Packets.get(l1Packets.size()-1), device, address);
+						sendOrBuffer(l1Packets, device, address);
 						return true;
 					} else {
 						return false;
@@ -69,51 +73,47 @@ public class Layer1 {
 
 	public boolean sendL1Packet(L1Packet l1Packet, Address address) {
 		if (l1Packet != null) {
-			for (Device device : devices) {
+			for (Device device : layers0.keySet()) {
 				if (device.canSend(address)) {
-					device.send(L1ToL0Packet(l1Packet, device.getMTU()), address);
+					send(l1Packet, device, address);
 					return true;
 				}
 			}
 		}
 		return false;
 	}
-
-	public L1Packet processL0Packet(byte[] l0Packet, Address srcAddress) {
-		
-		//TODO to be rewritten
-		ByteBuffer byteBuffer = ByteBuffer.allocate(l0Packet.length);
-		int totalSize = byteBuffer.getInt(0);
-		int payloadSize = byteBuffer.get(4);
-		int startPos = byteBuffer.getInt(8);
-		int dataId = byteBuffer.getInt(12);
-		int srcNode = byteBuffer.getInt(16);
-		byte[] payload = Arrays.copyOfRange(l0Packet, 20, l0Packet.length);
-		return new L1Packet(payload, srcNode, dataId, startPos, payloadSize, totalSize, new L1ReceivedInfo(srcAddress));
+	
+	protected void send(L1Packet l1Packet, Device device, Address address) {
+		Layer0 layer0 = layers0.get(device);
+		layer0.bufferPackets(l1Packet, address);
+		layer0.sendAll();
 	}
 	
-	protected void sendOrBuffer(L1Packet l1Packet, Device device, Address address) {
-		//TODO
-		BufferKey bufferKey = new BufferKey(device, address);
-		buffer.get(bufferKey);
+	protected void sendOrBuffer(Collection<L1Packet> l1Packets, Device device, Address address) {
+		Layer0 layer0 = layers0.get(device);
+		layer0.bufferPackets(l1Packets, address);
+		layer0.sendMTUs();
 	}
 
-	/**
-	 * Retrieves the byte array representation of the L1 packet.
-	 * 
-	 * @param l1Packet
-	 *            packet to be encoded
-	 * @return array of bytes encoding this L1 packet
-	 */
-	protected byte[] L1ToL0Packet(L1Packet l1Packet, int l0PacketSize) {
-		ByteBuffer byteBuffer = ByteBuffer.allocate(L1Packet.HEADER_SIZE + l1Packet.payloadSize);
-		byteBuffer.putInt(l1Packet.totalSize);
-		byteBuffer.putInt(l1Packet.payloadSize);
-		byteBuffer.putInt(l1Packet.startPos);
-		byteBuffer.putInt(l1Packet.dataId);
-		byteBuffer.putInt(l1Packet.srcNode);
-		byteBuffer.put(l1Packet.payload);
-		return byteBuffer.array();
+	public void processL0Packet(byte[] l0Packet, Device device, Address srcAddress) {
+		LinkedList<L1Packet> l1Packets = new LinkedList<L1Packet>();
+		ByteBuffer byteBuffer = ByteBuffer.wrap(l0Packet);
+		int l1PacketCount = byteBuffer.getInt();
+		int l0PacketChunkSize;
+		byte [] l0PacketChunk;
+		L1Packet l1Packet;
+		for (int i = 0; i < l1PacketCount; i++) {
+			l0PacketChunkSize = byteBuffer.getInt();
+			l0PacketChunk = new byte [l0PacketChunkSize];
+			byteBuffer.get(l0PacketChunk, byteBuffer.position(), l0PacketChunkSize);
+			l1Packet = L1Packet.fromBytes(l0PacketChunk);
+			l1Packet.receivedInfo = new L1ReceivedInfo(srcAddress);
+			l1Packets.add(l1Packet);
+		}
+	}
+	
+	protected void l1PacketsReceived(Collection<L1Packet> l1Packets) {
+		
 	}
 
 	protected List<L1Packet> dissassembleL2ToL1(L2Packet l2Packet, int mtu) {
@@ -122,6 +122,7 @@ public class Layer1 {
 			L2ReceivedInfo receivedInfo = l2Packet.receivedInfo;
 			int totalSize = l2Packet.getData().length;
 			int srcNode, dataId;
+			int chunkSize = mtu - 4 - 4; //MTU - L1PacketCount - SIZE OF L1Packet
 			if (receivedInfo == null) {
 				srcNode = nodeId;
 				dataId = dataIdSource.createDataID();
@@ -133,35 +134,23 @@ public class Layer1 {
 			byte[] payload;
 			while (current < l2Packet.getData().length) {
 				payload = Arrays.copyOfRange(l2Packet.getData(), current,
-						Math.min(current + mtu, l2Packet.getData().length - 1));
-				result.add(new L1Packet(payload, srcNode, dataId, current, payload.length, totalSize, null));
-				current += mtu;
+						Math.min(current + chunkSize, l2Packet.getData().length - 1));
+				result.add(new L1Packet(payload, srcNode, dataId, current, totalSize, null));
+				current += chunkSize;
 			}
 		}
 		return result;
 	}
 	
-	private class BufferKey {
-		public final Device device;
-		public final Address address;
-
-		public BufferKey(Device device, Address address) {
-			this.device = device;
-			this.address = address;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			BufferKey other = (BufferKey) obj;
-			return other.address.equals(address) && other.device.equals(device);
+	private class L1PacketCollector {
+		private final LinkedList<L1Packet> l1Packets;
+		
+		public L1PacketCollector() {
+			this.l1Packets = new LinkedList<L1Packet>();
 		}
 		
-		
+		public void addL1Packets(Collection<L1Packet> l1Packets) {
+			
+		}
 	}
 }

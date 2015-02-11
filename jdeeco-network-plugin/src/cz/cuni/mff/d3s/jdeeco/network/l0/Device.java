@@ -1,4 +1,6 @@
-package cz.cuni.mff.d3s.jdeeco.network;
+package cz.cuni.mff.d3s.jdeeco.network.l0;
+
+import cz.cuni.mff.d3s.jdeeco.network.Address;
 
 
 /**
