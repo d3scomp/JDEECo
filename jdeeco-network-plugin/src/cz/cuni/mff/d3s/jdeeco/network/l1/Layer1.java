@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 import cz.cuni.mff.d3s.jdeeco.network.Address;
+import cz.cuni.mff.d3s.jdeeco.network.L2PacketSender;
 import cz.cuni.mff.d3s.jdeeco.network.l0.Device;
 import cz.cuni.mff.d3s.jdeeco.network.l0.Layer0;
 import cz.cuni.mff.d3s.jdeeco.network.l2.L2Packet;
@@ -23,7 +24,7 @@ import cz.cuni.mff.d3s.jdeeco.network.l2.L2ReceivedInfo;
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
  *
  */
-public class Layer1 {
+public class Layer1 implements L2PacketSender {
 
 	private final Set<L1Strategy> strategies;
 	private final int nodeId;

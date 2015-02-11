@@ -5,6 +5,7 @@ import java.util.Collection;
 import cz.cuni.mff.d3s.jdeeco.network.l0.Device;
 import cz.cuni.mff.d3s.jdeeco.network.l1.L1Strategy;
 import cz.cuni.mff.d3s.jdeeco.network.l1.Layer1;
+import cz.cuni.mff.d3s.jdeeco.network.l2.L2Packet;
 import cz.cuni.mff.d3s.jdeeco.network.l2.L2Strategy;
 import cz.cuni.mff.d3s.jdeeco.network.l2.Layer2;
 
@@ -14,7 +15,7 @@ import cz.cuni.mff.d3s.jdeeco.network.l2.Layer2;
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
  */
-public class Network implements INetworkToDevice, INetworkToGossip, ILayer1, ILayer2 {
+public class Network implements NetworkPlugin, L2PacketProcessor, L2PacketSender {
 	private Layer1 l1;
 	private Layer2 l2;
 
@@ -63,5 +64,17 @@ public class Network implements INetworkToDevice, INetworkToGossip, ILayer1, ILa
 	public void processDevicePacket(byte[] l0Packet, Address srcAddress) {
 		// l1.processL0Packet(l0Packet, srcAddress);
 		throw new UnsupportedOperationException();
+	}
+	
+	// Interlayer interface
+
+	@Override
+	public void processL2Packet(L2Packet packet) {
+		l2.processL2Packet(packet);		
+	}
+
+	@Override
+	public boolean sendL2Packet(L2Packet l2Packet, Address address) {
+		return l1.sendL2Packet(l2Packet, address);
 	}
 }
