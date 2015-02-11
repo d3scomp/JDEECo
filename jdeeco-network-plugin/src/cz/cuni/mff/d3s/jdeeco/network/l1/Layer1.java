@@ -28,12 +28,13 @@ import cz.cuni.mff.d3s.jdeeco.network.l2.L2ReceivedInfo;
  */
 public class Layer1 implements L2PacketSender, L1StrategyManager {
 
-	private final Set<L1Strategy> strategies;
-	private final int nodeId;
-	private final DataIDSource dataIdSource;
-	private final Map<Device, Layer0> layers0;
-	private final Map<CollectorKey, Collector> collectors;
-	private final L1DataProcessor l1DataProcessor;
+	private final Set<L1Strategy> strategies; // registered strategies
+	private final int nodeId; // node ID
+	private final DataIDSource dataIdSource; // data ID source
+	private final Map<Device, Layer0> layers0; // layers 0 for each device
+	private final Map<CollectorKey, Collector> collectors; // collectors that store incoming L1 packets. Grouped by data
+															// ID and Node ID
+	private final L1DataProcessor l1DataProcessor; // reference to the upper layer
 
 	public Layer1(L1DataProcessor l1DataProcessor, int nodeId, DataIDSource dataIdSource) {
 		this.layers0 = new HashMap<Device, Layer0>();
@@ -43,16 +44,21 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 		this.dataIdSource = dataIdSource;
 		this.l1DataProcessor = l1DataProcessor;
 	}
-	
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.jdeeco.network.L1StrategyManager#registerL1Strategy(cz.cuni.mff.d3s.jdeeco.network.l1.L1Strategy)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * cz.cuni.mff.d3s.jdeeco.network.L1StrategyManager#registerL1Strategy(cz.cuni.mff.d3s.jdeeco.network.l1.L1Strategy)
 	 */
 	@Override
 	public void registerL1Strategy(L1Strategy strategy) {
 		strategies.add(strategy);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see cz.cuni.mff.d3s.jdeeco.network.L1StrategyManager#getRegisteredL1Strategies()
 	 */
 	@Override
@@ -62,20 +68,36 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.jdeeco.network.L1StrategyManager#unregisterL1Strategy(cz.cuni.mff.d3s.jdeeco.network.l1.L1Strategy)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * cz.cuni.mff.d3s.jdeeco.network.L1StrategyManager#unregisterL1Strategy(cz.cuni.mff.d3s.jdeeco.network.l1.L1Strategy
+	 * )
 	 */
 	@Override
 	public boolean unregisterL1Strategy(L1Strategy strategy) {
 		return strategies.remove(strategy);
 	}
 
+	/**
+	 * Registers new network device.
+	 * 
+	 * @param device
+	 *            device to be registered
+	 */
 	public void registerDevice(Device device) {
 		if (!layers0.containsKey(device)) {
 			layers0.put(device, new Layer0(device));
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see cz.cuni.mff.d3s.jdeeco.network.L2PacketSender#sendL2Packet(cz.cuni.mff.d3s.jdeeco.network.l2.L2Packet,
+	 * cz.cuni.mff.d3s.jdeeco.network.Address)
+	 */
 	public boolean sendL2Packet(L2Packet l2Packet, Address address) {
 		if (l2Packet != null) {
 			for (Device device : layers0.keySet()) {
@@ -87,9 +109,9 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 					/**
 					 * Disassemble the L2 packet into the L1 packets.
 					 */
-					List<L1Packet> l1Packets = dissassembleL2ToL1(l2Packet, chunkSize);
+					List<L1Packet> l1Packets = disassembleL2ToL1(l2Packet, chunkSize);
 					if (l1Packets.size() > 0) {
-						sendOrBuffer(l1Packets, device, address);
+						bufferAndSend(l1Packets, device, address);
 						return true;
 					} else {
 						return false;
@@ -100,6 +122,16 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 		return false;
 	}
 
+	/**
+	 * Looks for a device being able to send data for a given address and when found it sends packet over that device.
+	 * Used by L1 strategies.
+	 * 
+	 * @param l1Packet
+	 *            packet to be sent
+	 * @param address
+	 *            network address to which packet is destined
+	 * @return true whenever packet was sent. False otherwise.
+	 */
 	public boolean sendL1Packet(L1Packet l1Packet, Address address) {
 		if (l1Packet != null) {
 			for (Device device : layers0.keySet()) {
@@ -112,18 +144,16 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 		return false;
 	}
 
-	protected void send(L1Packet l1Packet, Device device, Address address) {
-		Layer0 layer0 = layers0.get(device);
-		layer0.bufferPackets(l1Packet, address);
-		layer0.sendAll();
-	}
-
-	protected void sendOrBuffer(Collection<L1Packet> l1Packets, Device device, Address address) {
-		Layer0 layer0 = layers0.get(device);
-		layer0.bufferPackets(l1Packets, address);
-		layer0.sendMTUs();
-	}
-
+	/**
+	 * Processes L0 packet coming from a device.
+	 * 
+	 * @param l0Packet
+	 *            L0 packet to be processed
+	 * @param device
+	 *            device that received this L0 packet
+	 * @param receivedInfo
+	 *            additional information on packet receival
+	 */
 	public void processL0Packet(byte[] l0Packet, Device device, ReceivedInfo receivedInfo) {
 		ByteBuffer byteBuffer = ByteBuffer.wrap(l0Packet);
 		int l1PacketCount = byteBuffer.getInt();
@@ -155,7 +185,50 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 		}
 	}
 
-	protected List<L1Packet> dissassembleL2ToL1(L2Packet l2Packet, int mtu) {
+	/**
+	 * Sends L1 packet. Can be used by L1 strategies.
+	 * 
+	 * @param l1Packet
+	 *            L1 packet to be sent
+	 * @param device
+	 *            device to be used for transmission
+	 * @param address
+	 *            destination address
+	 */
+	protected void send(L1Packet l1Packet, Device device, Address address) {
+		Layer0 layer0 = layers0.get(device);
+		layer0.bufferPackets(l1Packet, address);
+		// FIX - should not send all the packets. It should send only this packet.
+		layer0.sendAll();
+	}
+
+	/**
+	 * It buffers L1 packet and then tries to send buffered packets in MTUs of the device.
+	 * 
+	 * 
+	 * @param l1Packet
+	 *            L1 packet to be sent
+	 * @param device
+	 *            device to be used for transmission
+	 * @param address
+	 *            destination address
+	 */
+	protected void bufferAndSend(Collection<L1Packet> l1Packets, Device device, Address address) {
+		Layer0 layer0 = layers0.get(device);
+		layer0.bufferPackets(l1Packets, address);
+		layer0.sendMTUs();
+	}
+
+	/**
+	 * Disassembles L2 packet into L1 packets according to the given MTU.
+	 * 
+	 * @param l2Packet
+	 *            L2 packet to be disassembled
+	 * @param mtu
+	 *            maximum L1 packet size
+	 * @return L1 packets being the disassembling the L2 packet
+	 */
+	protected List<L1Packet> disassembleL2ToL1(L2Packet l2Packet, int mtu) {
 		LinkedList<L1Packet> result = new LinkedList<L1Packet>();
 		if (l2Packet.getData() != null && l2Packet.getData().length > 0) {
 			L2ReceivedInfo receivedInfo = l2Packet.receivedInfo;
@@ -182,11 +255,28 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 		return result;
 	}
 
+	/**
+	 * Stores incoming L1 packets from the network. It provides facilities that help to assemble L2 packets from
+	 * retrieved L1 packets.
+	 * 
+	 * 
+	 * @author Michal Kit <kit@d3s.mff.cuni.cz>
+	 *
+	 */
 	protected class Collector {
-		private final LinkedList<L1Packet> l1Packets;
-		private final boolean[] map;
+		private final LinkedList<L1Packet> l1Packets; // incoming L1 packets
 
+		/**
+		 * Facility map representing the complete payload. Initially all elements are false indicating no data. While L1
+		 * packets arrive its false entries turn into true
+		 */
+		private final boolean[] map;
+		/**
+		 * Indicates whether it is possible to assemble L2 packet from the available L1 packets. This field is for
+		 * optimization
+		 */
 		private boolean isComplete = false;
+		/** Indicates whether the value in the isContinue field is valid */
 		private boolean isCompleteValid = true;
 
 		public Collector(int totalSize) {
@@ -194,6 +284,12 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 			this.map = new boolean[totalSize];
 		}
 
+		/**
+		 * Adds packet to the collector and updates the map of available data.
+		 * 
+		 * @param l1Packet
+		 *            L1 packet to be added
+		 */
 		public void addL1Packet(L1Packet l1Packet) {
 			isCompleteValid = false;
 			this.l1Packets.addAll(l1Packets);
@@ -202,6 +298,11 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 			}
 		}
 
+		/**
+		 * States whether the L2 packet is complete. For external use.
+		 * 
+		 * @return true whenever L2 packet is complete. False otherwise.
+		 */
 		public boolean isComplete() {
 			if (!isCompleteValid) {
 				isCompleteValid = true;
@@ -220,12 +321,17 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 			return isComplete;
 		}
 
+		/**
+		 * Retrieves the marshalled data of the L2 packet.
+		 * 
+		 * @return marshalled data of the L2 packet
+		 */
 		public byte[] getMarshalledData() {
 			if (isComplete()) {
 				int totalSize = l1Packets.getFirst().totalSize;
-				byte [] result = new byte[totalSize];
+				byte[] result = new byte[totalSize];
 				int to;
-				for (L1Packet l1Packet: l1Packets) {
+				for (L1Packet l1Packet : l1Packets) {
 					to = l1Packet.startPos + l1Packet.payloadSize;
 					for (int i = l1Packet.startPos, j = 0; i < to && j < l1Packet.payloadSize; i++, j++) {
 						result[i] = l1Packet.payload[j];
@@ -237,6 +343,11 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 			}
 		}
 
+		/**
+		 * Creates (if possible) L2ReceivedInfo instance from the L1 packets.
+		 * 
+		 * @return L2ReceivedInfo instance
+		 */
 		public L2ReceivedInfo getL2ReceivedInfo() {
 			if (isComplete()) {
 				L1Packet first = l1Packets.getFirst();
@@ -247,6 +358,12 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 		}
 	}
 
+	/**
+	 * Combines two values: data ID and source node to compose a key for each collector.
+	 * 
+	 * @author Michal Kit <kit@d3s.mff.cuni.cz>
+	 *
+	 */
 	protected class CollectorKey {
 		public final int dataId;
 		public final int srcNode;
