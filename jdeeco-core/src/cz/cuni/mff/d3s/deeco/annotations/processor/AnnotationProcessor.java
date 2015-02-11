@@ -81,6 +81,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
 import cz.cuni.mff.d3s.deeco.network.GenericCommunicationBoundaryPredicate;
+import cz.cuni.mff.d3s.deeco.runtime.DuplicateEnsembleDefinitionException;
 import cz.cuni.mff.d3s.deeco.security.ModelSecurityValidator;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper;
 
@@ -155,6 +156,12 @@ public class AnnotationProcessor {
 	 */
 	List<AnnotationProcessorExtensionPoint> extensions;
 	
+	/**
+	 * Maintains the set of known ensemble definitions for the purpose of guarding against duplicate deployment of one ensemble.
+	 */
+	@SuppressWarnings("rawtypes")
+	Set<Class> knownEnsembleDefinitions;
+	
 	KnowledgeManagerFactory knowledgeManagerFactory;
 	
 	Cloner cloner;
@@ -172,6 +179,7 @@ public class AnnotationProcessor {
 	 *            one or more classes extending the <code>AnnotationProcessorExtensionPoint</code> that provide additional processing functionality
 	 * @param knowledgeMangerFactory knowledge manager factory to be used
 	 */
+	@SuppressWarnings("rawtypes")
 	public AnnotationProcessor(RuntimeMetadataFactory factory, RuntimeMetadata model, KnowledgeManagerFactory knowledgeMangerFactory, 
 			AnnotationProcessorExtensionPoint... extensions) {
 		this.factory = factory;
@@ -183,6 +191,7 @@ public class AnnotationProcessor {
 		}
 		this.knowledgeManagerFactory = knowledgeMangerFactory;	
 		this.cloner = new Cloner();
+		knownEnsembleDefinitions = new HashSet<Class>();
 	}
 	
 	/**
@@ -253,9 +262,10 @@ public class AnnotationProcessor {
 	 * @param ensembleClass
 	 *            object to be processed
 	 * @throws AnnotationProcessorException
+	 * @throws DuplicateEnsembleDefinitionException 
 	 */
 	@SuppressWarnings("rawtypes")
-	public EnsembleDefinition processEnsemble(Class ensembleClass) throws AnnotationProcessorException {
+	public EnsembleDefinition processEnsemble(Class ensembleClass) throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		if (model == null) {
 			throw new AnnotationProcessorException("Provided model cannot be null.");
 		}
@@ -265,6 +275,9 @@ public class AnnotationProcessor {
 		if (!isEnsembleDefinition(ensembleClass)) {
 			throw new AnnotationProcessorException("Class: " + ensembleClass.getCanonicalName() +
 					"->No @" + Ensemble.class.getSimpleName() + " annotation found.");
+		}
+		if(knownEnsembleDefinitions.contains(ensembleClass)) {
+			throw new DuplicateEnsembleDefinitionException(ensembleClass);
 		}
 
 		EnsembleDefinition ed = createEnsembleDefinition(ensembleClass);
@@ -276,6 +289,8 @@ public class AnnotationProcessor {
 			ci.getEnsembleControllers().add(ec);
 			ec.setComponentInstance(ci);
 		}
+ 
+		knownEnsembleDefinitions.add(ensembleClass);
 		
 		return ed;
 	}
