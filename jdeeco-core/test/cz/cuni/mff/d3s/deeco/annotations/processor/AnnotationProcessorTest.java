@@ -51,6 +51,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.RatingsProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
+import cz.cuni.mff.d3s.deeco.runtime.DuplicateEnsembleDefinitionException;
 
 /**
  * 
@@ -337,7 +338,7 @@ public class AnnotationProcessorTest {
 	}
 	
 	@Test 
-	public void testRatingAnnotationsEnsemble() throws AnnotationProcessorException {
+	public void testRatingAnnotationsEnsemble() throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		// given component with rating annotations is processed by the annotations processor
 		RuntimeMetadata model = factory.createRuntimeMetadata(); 
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
@@ -390,7 +391,7 @@ public class AnnotationProcessorTest {
 	}
 	
 	@Test 
-	public void testRatingAnnotations_Error3() throws AnnotationProcessorException {
+	public void testRatingAnnotations_Error3() throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		// given component with rating annotations is processed by the annotations processor
 		RuntimeMetadata model = factory.createRuntimeMetadata(); 
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
@@ -445,7 +446,7 @@ public class AnnotationProcessorTest {
 	}
 	
 	@Test 
-	public void testAllEnsembleAnnotations() throws AnnotationProcessorException {
+	public void testAllEnsembleAnnotations() throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
 		
@@ -457,7 +458,7 @@ public class AnnotationProcessorTest {
 	}
 	
 	@Test 
-	public void testModelDirectlyFromEnsembleClassDefinition() throws AnnotationProcessorException {
+	public void testModelDirectlyFromEnsembleClassDefinition() throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
 		
@@ -469,7 +470,7 @@ public class AnnotationProcessorTest {
 	}
 	
 	@Test
-	public void testSequencialUpdateOfTheSameModel() throws AnnotationProcessorException {
+	public void testSequencialUpdateOfTheSameModel() throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
 
@@ -503,7 +504,7 @@ public class AnnotationProcessorTest {
 	}
 	
 	@Test 
-	public void testEventBasedEnsembles() throws AnnotationProcessorException {		
+	public void testEventBasedEnsembles() throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {		
 		RuntimeMetadata model = factory.createRuntimeMetadata();
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
 
@@ -530,7 +531,7 @@ public class AnnotationProcessorTest {
 	}
 
 	@Test 
-	public void testParameterWithNestedMapEntry() throws AnnotationProcessorException {
+	public void testParameterWithNestedMapEntry() throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
 
@@ -563,7 +564,7 @@ public class AnnotationProcessorTest {
 	}
 	
 	@Test 
-	public void testExceptionsInClassAnnotations1() throws AnnotationProcessorException {
+	public void testExceptionsInClassAnnotations1() throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
 		
@@ -647,7 +648,7 @@ public class AnnotationProcessorTest {
 	}
 	
 	@Test 
-	public void testExceptionsInEnsembleParsing1() throws AnnotationProcessorException {
+	public void testExceptionsInEnsembleParsing1() throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
 		
@@ -660,7 +661,7 @@ public class AnnotationProcessorTest {
 	}
 
 	@Test 
-	public void testExceptionsInEnsembleParsing2() throws AnnotationProcessorException {
+	public void testExceptionsInEnsembleParsing2() throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
 		
@@ -673,7 +674,7 @@ public class AnnotationProcessorTest {
 	}
 
 	@Test 
-	public void testExceptionsInEnsembleParsing3() throws AnnotationProcessorException {
+	public void testExceptionsInEnsembleParsing3() throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
 		
@@ -687,7 +688,7 @@ public class AnnotationProcessorTest {
 
 	@Test 
 	public void testExceptionsInEnsembleParsing4()
-			throws AnnotationProcessorException {
+			throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
 		
@@ -701,7 +702,7 @@ public class AnnotationProcessorTest {
 	
 	@Test 
 	public void testExceptionsInEnsembleParsing5()
-			throws AnnotationProcessorException {
+			throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
 		

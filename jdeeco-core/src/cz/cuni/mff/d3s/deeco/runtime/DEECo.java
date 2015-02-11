@@ -3,12 +3,10 @@ package cz.cuni.mff.d3s.deeco.runtime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
-import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
@@ -58,11 +56,6 @@ public class DEECo implements DEECoContainer {
 	Map<Class<? extends DEECoPlugin>, DEECoPlugin> pluginsMap;
 	
 	/**
-	 * Maintains the set of known ensemble definitions for the purpose of guarding against duplicate deployment of one ensemble.
-	 */
-	Set<Class> knownEnsembleDefinitions;
-	
-	/**
 	 * True if this DEECo application is running.
 	 */
 	protected boolean running = false;
@@ -70,7 +63,6 @@ public class DEECo implements DEECoContainer {
 	
 	public DEECo(DEECoPlugin... plugins) throws PluginDependencyException {			
 		pluginsMap= new HashMap<>();
-		knownEnsembleDefinitions = new HashSet<Class>();
 		model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
 		knowledgeManagerFactory = new CloningKnowledgeManagerFactory();
 		processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE, model, knowledgeManagerFactory);		
@@ -86,12 +78,7 @@ public class DEECo implements DEECoContainer {
 	
 	@SuppressWarnings("rawtypes")
 	public EnsembleDefinition deployEnsemble(Class ensemble) throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
-		if(knownEnsembleDefinitions.contains(ensemble))
-			throw new DuplicateEnsembleDefinitionException(ensemble);
-		
-		EnsembleDefinition ensembleDefinition = processor.processEnsemble(ensemble);
-		knownEnsembleDefinitions.add(ensemble);
-		return ensembleDefinition;
+		return processor.processEnsemble(ensemble);
 	}
 	
 	public void start() throws InvalidOperationException {

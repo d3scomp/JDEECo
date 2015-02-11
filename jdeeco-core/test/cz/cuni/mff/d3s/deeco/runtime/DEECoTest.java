@@ -13,7 +13,6 @@ import cz.cuni.mff.d3s.deeco.runtime.PluginDependencyException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 import org.junit.*;
 import org.mockito.InOrder;
@@ -53,7 +52,6 @@ public class DEECoTest {
 		assertNotNull(deeco.pluginsMap);
 		assertNotNull(deeco.processor);
 		assertNotNull(deeco.runtime);	
-		assertNotNull(deeco.knownEnsembleDefinitions);
 		assertFalse(deeco.isRunning());		
 	}
 	
