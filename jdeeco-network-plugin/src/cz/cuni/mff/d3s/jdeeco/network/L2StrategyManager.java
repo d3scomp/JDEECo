@@ -10,7 +10,7 @@ import cz.cuni.mff.d3s.jdeeco.network.l2.L2Strategy;
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
  */
-public interface Layer2Manager {
+public interface L2StrategyManager {
 	/**
 	 * Registers L2 strategy for processing L2 packets
 	 * 

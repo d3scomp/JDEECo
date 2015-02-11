@@ -7,7 +7,7 @@ import java.util.HashSet;
 import cz.cuni.mff.d3s.jdeeco.network.Address;
 import cz.cuni.mff.d3s.jdeeco.network.L2PacketProcessor;
 import cz.cuni.mff.d3s.jdeeco.network.L2PacketSender;
-import cz.cuni.mff.d3s.jdeeco.network.Layer2Manager;
+import cz.cuni.mff.d3s.jdeeco.network.L2StrategyManager;
 import cz.cuni.mff.d3s.jdeeco.network.marshaller.MarshallerRegistry;
 
 /**
@@ -16,7 +16,7 @@ import cz.cuni.mff.d3s.jdeeco.network.marshaller.MarshallerRegistry;
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
  */
-public class Layer2 implements Layer2Manager, L2PacketProcessor {
+public class Layer2 implements L2StrategyManager, L2PacketProcessor {
 	private final Collection<L2Strategy> strategies = new HashSet<L2Strategy>();
 	private final MarshallerRegistry marshallers;
 	private final L2PacketSender l2Sender;
