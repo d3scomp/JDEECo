@@ -44,6 +44,8 @@ public class Layer2 implements L2StrategyManager, L1DataProcessor {
 	/**
 	 * Processes L2 packet by registered L2 strategies
 	 * 
+	 * Passing packet from L1 to L2
+	 * 
 	 * @param packet
 	 *            Packet to be processed
 	 */
@@ -55,6 +57,8 @@ public class Layer2 implements L2StrategyManager, L1DataProcessor {
 
 	/**
 	 * Sends L2 Packet to L1
+	 * 
+	 * Passingpacket from L2 to L1
 	 * 
 	 * @param packet
 	 *            Packet to be sent
