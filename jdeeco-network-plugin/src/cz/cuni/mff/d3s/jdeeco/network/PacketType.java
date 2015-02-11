@@ -8,6 +8,8 @@ package cz.cuni.mff.d3s.jdeeco.network;
  * 
  * NOTE: Constants are bytes, but only 4 lowest bits are used for packet types.
  * 
+ * NOTE: THis class is just wrapper for binary value. Equals and hash are set accordingly
+ * 
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
  */
@@ -44,6 +46,20 @@ public class PacketType {
 	@Override
 	public String toString() {
 		return String.valueOf(getValue());
+	}
+
+	@Override
+	public int hashCode() {
+		return value;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof PacketType) {
+			return ((PacketType) obj).value == value;
+		} else {
+			return false;
+		}
 	}
 
 	public static PacketType KNOWLEDGE = new PacketType((byte) 0);
