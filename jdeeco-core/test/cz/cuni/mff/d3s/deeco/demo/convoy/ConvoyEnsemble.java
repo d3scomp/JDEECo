@@ -22,11 +22,15 @@ public class ConvoyEnsemble {
 
 	@Membership
 	public static boolean membership(
+			@In("member.id") String memberId,
+			@In("coord.id") String coordId,
 			@In("member.position") Waypoint fPosition,
 			@In("member.destination") Waypoint fDestination,
 			@In("coord.position") Waypoint lPosition,
 			@In("coord.path") List<Waypoint> lPath) {
 		
+		System.out.println("membership: "+ memberId + " " + coordId);
+
 		return 
 			!fPosition.equals(fDestination) &&
 			(Math.abs(lPosition.x - fPosition.x) + Math.abs(lPosition.y - fPosition.y)) <= 2 &&
@@ -35,8 +39,12 @@ public class ConvoyEnsemble {
 
 	@KnowledgeExchange
 	public static void map(
+			@In("member.id") String memberId,
+			@In("coord.id") String coordId,
 			@Out("member.leaderPosition") ParamHolder<Waypoint> fLeaderPosition,
 			@In("coord.position") Waypoint lPosition) {
+		
+		System.out.println("membership: "+ memberId + " " + coordId);
 		
 		fLeaderPosition.value = lPosition;
 	}

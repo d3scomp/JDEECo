@@ -236,7 +236,7 @@ public class KnowledgeEncryptor {
 		boolean decryptionSucceeded = false;
 		
 		// gets the roles transitive closure
-		List<SecurityRole> transitiveRoles = RoleHelper.getTransitiveRoles(replica.getComponent().getRoles());
+		List<SecurityRole> transitiveRoles = RoleHelper.getTransitiveRoles(replica.getComponent().getSecurityRoles());
 		
 		// try each role, if it can decrypt the data
 		for (SecurityRole role : transitiveRoles) {			
