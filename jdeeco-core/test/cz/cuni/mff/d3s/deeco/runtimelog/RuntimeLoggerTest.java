@@ -1,6 +1,8 @@
 package cz.cuni.mff.d3s.deeco.runtimelog;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 
 import java.io.ByteArrayInputStream;
@@ -14,6 +16,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -21,6 +24,7 @@ import org.w3c.dom.Element;
 
 import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
+import cz.cuni.mff.d3s.deeco.task.Task;
 
 public class RuntimeLoggerTest
 {
@@ -75,9 +79,7 @@ public class RuntimeLoggerTest
 	{
 		try
 		{
-			dataOut.close();
-			indexOut.close();
-			backLogOut.close();
+			RuntimeLogger.close();
 		}
 		catch(IOException e){}
 		
@@ -313,9 +315,7 @@ public class RuntimeLoggerTest
 		
 		RuntimeLogger.registerSnapshotProvider(snapshotProvider3, snapshotPeriod3);
 		
-		Mockito.verify(scheduler, Mockito.times(3));
-
-		System.out.println(backLogOut.toString());
+		Mockito.verify(scheduler, Mockito.times(3)).addTask(Matchers.any(Task.class));
 
 		StringBuilder answer = new StringBuilder();
 			answer.append(snapshotPeriod1)
@@ -353,14 +353,12 @@ public class RuntimeLoggerTest
 		long period2 = 15;
 		long period3 = 16;
 		
-		RuntimeLogger.registerBackLogOffset(period1); // TODO: allow only positive values (exclude 0)
+		RuntimeLogger.registerBackLogOffset(period1);
 		RuntimeLogger.registerBackLogOffset(period2);
 
 		RuntimeLogger.init(timeProvider, scheduler, dataOut, indexOut, backLogOut);
 
 		RuntimeLogger.registerBackLogOffset(period3);
-
-		System.out.println(backLogOut.toString());
 
 		StringBuilder answer = new StringBuilder();
 			answer.append(period1)

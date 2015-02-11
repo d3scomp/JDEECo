@@ -6,7 +6,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
@@ -27,6 +29,7 @@ public class RuntimeLogger {
 
 	private long currentDataOffset;
 	private final Map<SnapshotProvider, Long> snapshotProviders;
+	private final List<Long> backLogOffsets;
 	private CurrentTimeProvider timeProvider;
 	private Scheduler scheduler;
 
@@ -44,6 +47,7 @@ public class RuntimeLogger {
 
 	private RuntimeLogger() {
 		snapshotProviders = new HashMap<SnapshotProvider, Long>();
+		backLogOffsets = new ArrayList<Long>();
 	}
 
 	private static OutputStreamWriter openStream(File file) throws IOException {
@@ -69,6 +73,18 @@ public class RuntimeLogger {
 	public static void init(CurrentTimeProvider currentTimeProvider,
 			Scheduler scheduler, Writer dataOut, Writer indexOut,
 			Writer backLogOut) throws IOException {
+		if(currentTimeProvider == null) throw new IllegalArgumentException(
+				String.format("The argument \"%s\" is null.", "currentTimeProvider"));
+		if(scheduler == null) throw new IllegalArgumentException(
+				String.format("The argument \"%s\" is null.", "scheduler"));
+		if(dataOut == null) throw new IllegalArgumentException(
+				String.format("The argument \"%s\" is null.", "dataOut"));
+		if(indexOut == null) throw new IllegalArgumentException(
+				String.format("The argument \"%s\" is null.", "indexOut"));
+		if(backLogOut == null) throw new IllegalArgumentException(
+				String.format("The argument \"%s\" is null.", "backLogOut"));
+		
+		
 		// Opening the files in init method to avoid IOException in the constructor
 		instance.dataWriter = new BufferedWriter(dataOut);
 		instance.indexWriter = new BufferedWriter(indexOut);
@@ -86,8 +102,15 @@ public class RuntimeLogger {
 			scheduler.addTask(new CustomStepTask(scheduler, slttListener,
 					period));
 		}
-
 		instance.snapshotProviders.clear();
+		
+		for (Long time : instance.backLogOffsets)
+		{
+			instance.backLogWriter.write(String.format("%d\n", time));
+		}
+		instance.backLogWriter.flush();
+		instance.backLogOffsets.clear();
+
 	}
 
 	public static RuntimeLogger getInstance() {
@@ -109,6 +132,8 @@ public class RuntimeLogger {
 		if (instance.timeProvider == null)
 			throw new IllegalStateException(
 					"The SimLogger class not initialized.");
+		if(record == null) throw new IllegalArgumentException(
+				String.format("The argument \"%s\" is null.", "record"));
 
 		StringBuilder recordBuilder = new StringBuilder();
 		String recordName = snapshot ? SNAPSHOT_RECORD_NAME : EVENT_RECORD_NAME;
@@ -159,6 +184,8 @@ public class RuntimeLogger {
 
 	public static void registerSnapshotProvider(SnapshotProvider snapshotProvider,
 			long period) throws IOException {
+		if(snapshotProvider == null) throw new IllegalArgumentException(
+				String.format("The argument \"%s\" is null.", "snapshotProvider"));
 		if (instance.scheduler == null) // If not initialized, store the snapshot provider for later
 		{
 			instance.snapshotProviders.put(snapshotProvider, period);
@@ -174,8 +201,16 @@ public class RuntimeLogger {
 	}
 
 	public static void registerBackLogOffset(long time) throws IOException {
-		instance.backLogWriter.write(String.format("%d\n", time));
-		// TODO: make sure that the back log file is being written into after the init method was called
+		if(time <= 0) throw new IllegalArgumentException(
+				String.format("The argument \"%s\" has to be greater than 0.", "time"));
+		if (instance.scheduler == null) // If not initialized, store the snapshot provider for later
+		{
+			instance.backLogOffsets.add(time);
+		} else // If initialized register task for the snapshot provider
+		{
+			instance.backLogWriter.write(String.format("%d\n", time));
+			instance.backLogWriter.flush();
+		}
 	}
 
 	public static void flush() throws IOException {
@@ -183,15 +218,27 @@ public class RuntimeLogger {
 			throw new IllegalStateException(
 					"The SimLogger class not initialized.");
 
-		instance.dataWriter.flush();
-		instance.indexWriter.flush();
-		instance.backLogWriter.flush();
+		if(instance.dataWriter != null){
+			instance.dataWriter.flush();
+		}
+		if(instance.indexWriter != null){
+			instance.indexWriter.flush();
+		}
+		if(instance.backLogWriter != null){
+			instance.backLogWriter.flush();
+		}
 	}
 
 	public static void close() throws IOException {
-		instance.dataWriter.close();
-		instance.indexWriter.close();
-		instance.backLogWriter.close();
+		if(instance.dataWriter != null){
+			instance.dataWriter.close();
+		}
+		if(instance.indexWriter != null){
+			instance.indexWriter.close();
+		}
+		if(instance.backLogWriter != null){
+			instance.backLogWriter.close();
+		}
 	}
 	
 	static void unload() // Visible in tests, opposite to init. Doesn't replace close.
@@ -200,6 +247,7 @@ public class RuntimeLogger {
 		instance.scheduler = null;
 		instance.currentDataOffset = 0;
 		instance.snapshotProviders.clear();
+		instance.backLogOffsets.clear();
 	}
 
 }
