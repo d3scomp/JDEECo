@@ -9,6 +9,12 @@ package cz.cuni.mff.d3s.jdeeco.network;
  */
 public class MANETBroadcastAddress extends Address {
 
+	public final static MANETBroadcastAddress INSTANCE = new MANETBroadcastAddress();
+
+	private MANETBroadcastAddress() {
+		// Prevents instantiation from outside the class
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

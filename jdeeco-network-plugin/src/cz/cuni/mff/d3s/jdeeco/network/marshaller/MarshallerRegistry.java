@@ -2,7 +2,7 @@ package cz.cuni.mff.d3s.jdeeco.network.marshaller;
 
 import java.util.*;
 
-import cz.cuni.mff.d3s.jdeeco.network.PacketType;
+import cz.cuni.mff.d3s.jdeeco.network.L2PacketType;
 import cz.cuni.mff.d3s.jdeeco.network.exceptions.MarshallingException;
 import cz.cuni.mff.d3s.jdeeco.network.exceptions.UnregistredPacketType;
 
@@ -13,7 +13,7 @@ import cz.cuni.mff.d3s.jdeeco.network.exceptions.UnregistredPacketType;
  *
  */
 public class MarshallerRegistry {
-	private Map<PacketType, Marshaller> marshallers = new HashMap<PacketType, Marshaller>();
+	private Map<L2PacketType, Marshaller> marshallers = new HashMap<L2PacketType, Marshaller>();
 
 	/**
 	 * Encodes object according to type into binary data
@@ -24,7 +24,7 @@ public class MarshallerRegistry {
 	 *            Data to be encoded
 	 * @return Encoded data representing source object
 	 */
-	public byte[] marshall(PacketType type, Object data) throws UnregistredPacketType {
+	public byte[] marshall(L2PacketType type, Object data) throws UnregistredPacketType {
 		Marshaller marshaller = marshallers.get(type);
 		if (marshaller == null) {
 			throw new UnregistredPacketType(type);
@@ -45,7 +45,7 @@ public class MarshallerRegistry {
 	 *            Binary data to be decoded into object
 	 * @return Decoded object
 	 */
-	public Object unmarshall(PacketType type, byte[] data) {
+	public Object unmarshall(L2PacketType type, byte[] data) {
 		Marshaller marshaller = marshallers.get(type);
 		if (marshaller == null) {
 			throw new UnregistredPacketType(type);
@@ -65,7 +65,7 @@ public class MarshallerRegistry {
 	 * @param marshaller
 	 *            Marshaler implementation
 	 */
-	public void registerMarshaller(PacketType type, Marshaller marshaller) {
+	public void registerMarshaller(L2PacketType type, Marshaller marshaller) {
 		marshallers.put(type, marshaller);
 	}
 }

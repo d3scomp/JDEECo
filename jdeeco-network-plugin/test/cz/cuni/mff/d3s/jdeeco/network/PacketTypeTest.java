@@ -17,7 +17,7 @@ public class PacketTypeTest {
 	@Test
 	public void testValid() {
 		for (int i = 0; i <= 0b1111; ++i) {
-			PacketType type = new PacketType((byte) i);
+			L2PacketType type = new L2PacketType((byte) i);
 			assertEquals(i, type.getValue());
 		}
 	}
@@ -27,7 +27,7 @@ public class PacketTypeTest {
 	 */
 	@Test(expected = UnsupportedOperationException.class)
 	public void testInvalidNegative() {
-		PacketType type = new PacketType((byte) -1);
+		L2PacketType type = new L2PacketType((byte) -1);
 		assertEquals(-1, type.getValue());
 	}
 
@@ -36,7 +36,7 @@ public class PacketTypeTest {
 	 */
 	@Test(expected = UnsupportedOperationException.class)
 	public void testInvalidHigh() {
-		PacketType type = new PacketType((byte) 0b10000);
+		L2PacketType type = new L2PacketType((byte) 0b10000);
 		assertEquals(0b10000, type.getValue());
 	}
 }

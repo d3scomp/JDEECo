@@ -13,7 +13,7 @@ package cz.cuni.mff.d3s.jdeeco.network;
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
  */
-public class PacketType {
+public class L2PacketType {
 	private final byte value;
 
 	/**
@@ -22,7 +22,7 @@ public class PacketType {
 	 * @param value
 	 *            Packet type value, only 4 lowest bits can be specified
 	 */
-	public PacketType(byte value) {
+	public L2PacketType(byte value) {
 		if ((value & ~0b1111) != 0) {
 			throw new UnsupportedOperationException("Value out of range");
 		}
@@ -55,14 +55,14 @@ public class PacketType {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof PacketType) {
-			return ((PacketType) obj).value == value;
+		if (obj instanceof L2PacketType) {
+			return ((L2PacketType) obj).value == value;
 		} else {
 			return false;
 		}
 	}
 
-	public static PacketType KNOWLEDGE = new PacketType((byte) 0);
-	public static PacketType GROUPER = new PacketType((byte) 1);
-	public static PacketType ENSEMBLE_DEFINITION = new PacketType((byte) 2);
+	public static L2PacketType KNOWLEDGE = new L2PacketType((byte) 0);
+	public static L2PacketType GROUPER = new L2PacketType((byte) 1);
+	public static L2PacketType ENSEMBLE_DEFINITION = new L2PacketType((byte) 2);
 }
