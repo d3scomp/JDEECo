@@ -21,6 +21,8 @@ import cz.cuni.mff.d3s.jdeeco.network.l1.L1Packet;
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
  *
  */
+
+// XXX TB: I will take a look at it again once it is updated based on our last discussion.
 public class Layer0 {
 
 	public static final int L0_CHUNK_SIZE_BYTES = 4; // Number of bytes needed to store L0 packet chunk size

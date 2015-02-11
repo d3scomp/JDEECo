@@ -20,6 +20,10 @@ import cz.cuni.mff.d3s.jdeeco.network.l2.Layer2;
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
  */
+
+//XXX TB: I would not implement the L1DataProcessor, L2PacketSender here. I think it is overengineered.
+// I would make this class only to implement the init and getDependencies methods, plus getters for l1 and l2.
+
 public class Network implements NetworkPlugin, L1DataProcessor, L2PacketSender {
 	private Layer1 l1;
 	private Layer2 l2;
@@ -40,6 +44,10 @@ public class Network implements NetworkPlugin, L1DataProcessor, L2PacketSender {
 		throw new UnsupportedOperationException();
 	}
 
+	
+	// XXX TB: I would get rid of the delegators below. It seems overengineered to me. I think we don't need a facade to the network so dearly.
+	
+	
 	// Network layer 2 interface
 
 	public void registerL2Strategy(L2Strategy strategy) {

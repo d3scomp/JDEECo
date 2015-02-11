@@ -15,7 +15,7 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import cz.cuni.mff.d3s.jdeeco.network.Address;
-import cz.cuni.mff.d3s.jdeeco.network.PacketType;
+import cz.cuni.mff.d3s.jdeeco.network.L2PacketType;
 import cz.cuni.mff.d3s.jdeeco.network.l1.L1Packet;
 import cz.cuni.mff.d3s.jdeeco.network.l1.Layer1;
 import cz.cuni.mff.d3s.jdeeco.network.marshaller.MarshallerRegistry;
@@ -52,7 +52,7 @@ public class L2Test {
 	@Before
 	public void initializeL2() {
 		// Setup marshallers to be used by layer
-		registry.registerMarshaller(PacketType.KNOWLEDGE, new SerializingMarshaller());
+		registry.registerMarshaller(L2PacketType.KNOWLEDGE, new SerializingMarshaller());
 
 		// Instantiate layer
 		l2Layer = new Layer2(layer1, registry);
@@ -64,7 +64,7 @@ public class L2Test {
 	@Test
 	public void testL2PacketMarshalling() {
 		// Create source packet
-		L2Packet srcPacket = l2Layer.createPacket(new PacketHeader(PacketType.KNOWLEDGE), PAYLOAD);
+		L2Packet srcPacket = l2Layer.createPacket(new PacketHeader(L2PacketType.KNOWLEDGE), PAYLOAD);
 		assertPayload(srcPacket.getObject());
 
 		// Create destination packet from source packet binary data
@@ -79,7 +79,7 @@ public class L2Test {
 	@Test
 	public void testL2PacketSending() {
 		// Create source packet
-		L2Packet srcPacket = l2Layer.createPacket(new PacketHeader(PacketType.KNOWLEDGE), PAYLOAD);
+		L2Packet srcPacket = l2Layer.createPacket(new PacketHeader(L2PacketType.KNOWLEDGE), PAYLOAD);
 		assertPayload(srcPacket.getObject());
 
 		// TODO: Address is fake
@@ -104,8 +104,8 @@ public class L2Test {
 		L2ReceivedInfo info = new L2ReceivedInfo(new LinkedList<L1Packet>(), 1, 1);
 
 		// Create source packet (created with data and received packet info)
-		byte[] data = registry.marshall(PacketType.KNOWLEDGE, PAYLOAD);
-		L2Packet srcPacket = new L2Packet(l2Layer, L2Packet.createL2PacketData(new PacketHeader(PacketType.KNOWLEDGE),
+		byte[] data = registry.marshall(L2PacketType.KNOWLEDGE, PAYLOAD);
+		L2Packet srcPacket = new L2Packet(l2Layer, L2Packet.createL2PacketData(new PacketHeader(L2PacketType.KNOWLEDGE),
 				data), info);
 		assertPayload(srcPacket.getObject());
 
