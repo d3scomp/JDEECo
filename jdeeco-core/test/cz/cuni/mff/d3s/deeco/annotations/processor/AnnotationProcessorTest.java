@@ -51,6 +51,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.RatingsProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
+import cz.cuni.mff.d3s.deeco.runtime.DuplicateEnsembleDefinitionException;
 
 /**
  * 
@@ -91,7 +92,7 @@ public class AnnotationProcessorTest {
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);
 		
 		CorrectC1 input = new CorrectC1();
-		processor.process(input);
+		processor.processComponent(input);
 		removeKnowledgeManagersFromComponents(model);
 		File expected = getExpectedFile(input);
 		saveInXMI(model, tempFile);
@@ -106,7 +107,7 @@ public class AnnotationProcessorTest {
 		CorrectC4 input = new CorrectC4();
 		
 		// when process() is called
-		processor.process(input);
+		processor.processComponent(input);
 		
 		// then annotations are parsed correctly
 		assertEquals(1, model.getComponentInstances().size());
@@ -163,7 +164,7 @@ public class AnnotationProcessorTest {
 		CorrectC4 input = new CorrectC4();
 		
 		// when process() is called
-		processor.process(input);
+		processor.processComponent(input);
 		
 		// then annotations are parsed correctly
 		assertEquals(1, model.getComponentInstances().size());
@@ -196,7 +197,7 @@ public class AnnotationProcessorTest {
 		CorrectC4 input = new CorrectC4();
 		
 		// when process() is called
-		processor.process(input);
+		processor.processComponent(input);
 		
 		// then annotations are parsed correctly
 		assertEquals(1, model.getComponentInstances().size());
@@ -218,7 +219,7 @@ public class AnnotationProcessorTest {
 		exception.expectMessage("Parameter no_such_parameter is not present in the knowledge.");
 		
 		// when process() is called
-		processor.process(input);
+		processor.processComponent(input);
 	}
 	
 	@Test
@@ -231,7 +232,7 @@ public class AnnotationProcessorTest {
 		exception.expectMessage("Field nonserializable is not serializable.");
 		
 		// when process() is called
-		processor.process(input);
+		processor.processComponent(input);
 	}
 	
 	@Test
@@ -245,7 +246,7 @@ public class AnnotationProcessorTest {
 		exception.expectMessage("Role class must be decoreted with @RoleDefinition.");
 		
 		// when process() is called
-		processor.process(input);
+		processor.processComponent(input);
 	}
 	
 	@Test 
@@ -256,7 +257,7 @@ public class AnnotationProcessorTest {
 		CorrectC5 input = new CorrectC5();
 		
 		// when process() is called
-		processor.process(input);
+		processor.processComponent(input);
 		
 		// then annotations are parsed correctly
 		assertEquals(1, model.getComponentInstances().size());
@@ -299,7 +300,7 @@ public class AnnotationProcessorTest {
 		exception.expectMessage("Parameter capacity is not appropriately secured.");
 		
 		// when process() is called
-		processor.process(input);
+		processor.processComponent(input);
 	}
 	
 	@Test 
@@ -310,7 +311,7 @@ public class AnnotationProcessorTest {
 		CorrectC6 input = new CorrectC6();
 		
 		// when process() is called
-		processor.process(input);
+		processor.processComponent(input);
 		
 		// then annotations are parsed correctly
 		assertEquals(1, model.getComponentInstances().size());
@@ -337,14 +338,13 @@ public class AnnotationProcessorTest {
 	}
 	
 	@Test 
-	public void testRatingAnnotationsEnsemble() throws AnnotationProcessorException {
+	public void testRatingAnnotationsEnsemble() throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		// given component with rating annotations is processed by the annotations processor
 		RuntimeMetadata model = factory.createRuntimeMetadata(); 
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
-		CorrectE4 input = new CorrectE4();
 		
 		// when process() is called
-		processor.process(input);
+		processor.processEnsemble(CorrectE4.class);
 		
 		// then annotations are parsed correctly
 		assertEquals(1, model.getEnsembleDefinitions().size());
@@ -373,7 +373,7 @@ public class AnnotationProcessorTest {
 		exception.expectMessage("The rating process method parameter cannot contain " + Out.class.getSimpleName() + " nor " + InOut.class.getSimpleName() + " parameters.");
 		
 		// when process() is called
-		processor.process(input);
+		processor.processComponent(input);
 	}
 	
 	@Test 
@@ -387,21 +387,20 @@ public class AnnotationProcessorTest {
 		exception.expectMessage("The rating process method parameter must be of type " + ReadonlyRatingsHolder.class.getSimpleName() + ".");
 		
 		// when process() is called
-		processor.process(input);
+		processor.processComponent(input);
 	}
 	
 	@Test 
-	public void testRatingAnnotations_Error3() throws AnnotationProcessorException {
+	public void testRatingAnnotations_Error3() throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		// given component with rating annotations is processed by the annotations processor
 		RuntimeMetadata model = factory.createRuntimeMetadata(); 
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
-		WrongE6 input = new WrongE6();
 		
 		exception.expect(AnnotationProcessorException.class);
 		exception.expectMessage("The rating process method parameter must be of type " + ReadonlyRatingsHolder.class.getSimpleName() + ".");
 		
 		// when process() is called
-		processor.process(input);
+		processor.processEnsemble(WrongE6.class);
 	}
 	
 	@Test 
@@ -415,7 +414,7 @@ public class AnnotationProcessorTest {
 		exception.expectMessage("Cannot assign the same role " + WrongC8.Role1.class.getSimpleName() + " multiple times.");
 		
 		// when process() is called
-		processor.process(input);
+		processor.processComponent(input);
 	}
 	
 	@Test 
@@ -429,7 +428,7 @@ public class AnnotationProcessorTest {
 		exception.expectMessage("Local knowledge must not be secured.");
 		
 		// when process() is called
-		processor.process(input);
+		processor.processComponent(input);
 	}
 	
 	@Test
@@ -438,7 +437,7 @@ public class AnnotationProcessorTest {
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
 		
 		CorrectC1 input = new ChildOfCorrectC1();
-		processor.process(input);
+		processor.processComponent(input);
 		removeKnowledgeManagersFromComponents(model);
 		File expected = getExpectedFile(input);
 //		saveInXMI(model, expected);
@@ -447,23 +446,23 @@ public class AnnotationProcessorTest {
 	}
 	
 	@Test 
-	public void testAllEnsembleAnnotations() throws AnnotationProcessorException {
+	public void testAllEnsembleAnnotations() throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
 		
+		processor.processEnsemble(CorrectE1.class);
 		CorrectE1 input = new CorrectE1();
-		processor.process(input);
 		File expected = getExpectedFile(input);
 		saveInXMI(model, tempFile);
 		FileAssert.assertEquals(expected, tempFile);
 	}
 	
 	@Test 
-	public void testModelDirectlyFromEnsembleClassDefinition() throws AnnotationProcessorException {
+	public void testModelDirectlyFromEnsembleClassDefinition() throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
 		
-		processor.process(CorrectE1.class);
+		processor.processEnsemble(CorrectE1.class);
 		CorrectE1 input = new CorrectE1();
 		File expected = getExpectedFile(input);
 		saveInXMI(model, tempFile);
@@ -471,65 +470,25 @@ public class AnnotationProcessorTest {
 	}
 	
 	@Test
-	public void testSequencialUpdateOfTheSameModel() throws AnnotationProcessorException {
+	public void testSequencialUpdateOfTheSameModel() throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
 
 		Object input = new CorrectC1();
-		processor.process(input);
+		processor.processComponent(input);
 		input = new CorrectC2();
-		processor.process(input);
+		processor.processComponent(input);
 		input = new CorrectC3();
-		processor.process(input);
-		input = new CorrectE1();
-		processor.process(input);
-		input = new CorrectE2();
-		processor.process(input);
-		input = new CorrectE3();
-		processor.process(input);
+		processor.processComponent(input);
+		processor.processEnsemble(CorrectE1.class);
+		processor.processEnsemble(CorrectE2.class);
+		processor.processEnsemble(CorrectE3.class);
 		removeKnowledgeManagersFromComponents(model);
 		File expected = getExpectedFile(new C1C2C3E1E2E3());
 		saveInXMI(model, tempFile);
 		FileAssert.assertEquals(expected, tempFile);
 	}	
-	
-	@Test
-	public void testBatchUpdateOfTheSameModel1() throws AnnotationProcessorException {
-		RuntimeMetadata model = factory.createRuntimeMetadata();
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
 
-		Object input1 = new CorrectC1();
-		Object input2 = new CorrectC2();
-		Object input3 = new CorrectC3();
-		Object input4 = new CorrectE1();
-		Object input5 = new CorrectE2();
-		Object input6 = new CorrectE3();
-		processor.process(input1, input2, input3, input4, input5, input6);
-		removeKnowledgeManagersFromComponents(model);		
-		File expected = getExpectedFile(new C1C2C3E1E2E3());
-		saveInXMI(model, tempFile);
-		FileAssert.assertEquals(expected, tempFile);
-	}
-
-	@Test 
-	public void testBatchUpdateOfTheSameModel2() throws AnnotationProcessorException {
-		RuntimeMetadata model = factory.createRuntimeMetadata();
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
-
-		List<Object> inputs = new ArrayList<>();
-		inputs.add(new CorrectC1());
-		inputs.add(new CorrectC2());
-		inputs.add(new CorrectC3());
-		inputs.add(new CorrectE1());
-		inputs.add(new CorrectE2());
-		inputs.add(new CorrectE3());
-		processor.process(inputs);
-		removeKnowledgeManagersFromComponents(model);		
-		File expected = getExpectedFile(new C1C2C3E1E2E3());
-		saveInXMI(model, tempFile);
-		FileAssert.assertEquals(expected, tempFile);
-	}
-		
 	@Test 
 	public void testEventBasedComponents() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
@@ -537,7 +496,7 @@ public class AnnotationProcessorTest {
 
 		// no periodic trigger, 1 knowledge change trigger:
 		CorrectC2 input = new CorrectC2();
-		processor.process(input);
+		processor.processComponent(input);
 		removeKnowledgeManagersFromComponents(model);
 		File expected = getExpectedFile(input);
 		saveInXMI(model, tempFile);
@@ -545,14 +504,14 @@ public class AnnotationProcessorTest {
 	}
 	
 	@Test 
-	public void testEventBasedEnsembles() throws AnnotationProcessorException {		
+	public void testEventBasedEnsembles() throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {		
 		RuntimeMetadata model = factory.createRuntimeMetadata();
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
 
 		// no periodic trigger, 2 knowledge change triggers:
-		CorrectE2 input = new CorrectE2();
-		processor.process(input);
+		processor.processEnsemble(CorrectE2.class);
 		removeKnowledgeManagersFromComponents(model);
+		CorrectE2 input = new CorrectE2();
 		File expected = getExpectedFile(input);
 		saveInXMI(model, tempFile);
 		FileAssert.assertEquals(expected, tempFile);
@@ -564,7 +523,7 @@ public class AnnotationProcessorTest {
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
 
 		CorrectC3 input = new CorrectC3();
-		processor.process(input);
+		processor.processComponent(input);
 		removeKnowledgeManagersFromComponents(model);
 		File expected = getExpectedFile(input);
 		saveInXMI(model, tempFile);
@@ -572,13 +531,13 @@ public class AnnotationProcessorTest {
 	}
 
 	@Test 
-	public void testParameterWithNestedMapEntry() throws AnnotationProcessorException {
+	public void testParameterWithNestedMapEntry() throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
 
-		CorrectE3 input = new CorrectE3();
-		processor.process(input);
+		processor.processEnsemble(CorrectE3.class);
 		removeKnowledgeManagersFromComponents(model);
+		CorrectE3 input = new CorrectE3();
 		File expected = getExpectedFile(input);
 		saveInXMI(model, tempFile);
 		FileAssert.assertEquals(expected, tempFile);
@@ -590,19 +549,9 @@ public class AnnotationProcessorTest {
 		
 		Object input = new Object();
 		exception.expect(AnnotationProcessorException.class);
-		exception.expectMessage("Provided model cannot be null.");
-		processor.process(input);	
+		exception.expectMessage("RuntimeMetadata model cannot be null.");
+		processor.processComponent(input);	
 	}
-	
-	@Test 
-	public void testExceptionsNullObject() throws AnnotationProcessorException {
-		RuntimeMetadata model = factory.createRuntimeMetadata();
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
-		
-		exception.expect(AnnotationProcessorException.class);
-		exception.expectMessage("Provide an initialized object or a non-empty list of objects.");
-		processor.process(null);	
-	}	
 	
 	@Test 
 	public void testExceptionsNonInitializedComponent() throws AnnotationProcessorException {
@@ -610,12 +559,12 @@ public class AnnotationProcessorTest {
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
 		
 		exception.expect(AnnotationProcessorException.class);
-		exception.expectMessage("For a component to be parsed, it has to be an INSTANCE of a class annotated with @Component.");
-		processor.process(CorrectC1.class);	
+		exception.expectMessage("Provided component object(s) cannot be classes.");
+		processor.processComponent(CorrectC1.class);	
 	}
 	
 	@Test 
-	public void testExceptionsInClassAnnotations1() throws AnnotationProcessorException {
+	public void testExceptionsInClassAnnotations1() throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
 		
@@ -623,23 +572,10 @@ public class AnnotationProcessorTest {
 		exception.expect(AnnotationProcessorException.class);
 		exception.expectMessage(
 				"Class: "+input.getClass().getCanonicalName()+"->" +
-				"No @Component or @Ensemble annotation found.");
-		processor.process(input);	
+				"No @Ensemble annotation found.");
+		processor.processEnsemble(WrongCE1.class);	
 	}
 	
-	@Test 
-	public void testExceptionsInClassAnnotations2() throws AnnotationProcessorException {
-		RuntimeMetadata model = factory.createRuntimeMetadata();
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
-		
-		WrongCE2 input = new WrongCE2();
-		exception.expect(AnnotationProcessorException.class);
-		exception.expectMessage(
-				"Class: "+input.getClass().getCanonicalName()+"->" +
-				"Both @Component or @Ensemble annotation found.");
-		processor.process(input);	
-	}
-
 	@Test 
 	public void testExceptionsInComponentParsing1() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
@@ -650,7 +586,7 @@ public class AnnotationProcessorTest {
 		exception.expectMessage(
 				"Component: "+input.getClass().getCanonicalName()+"->" +
 				"Method process1 annotated as @Process should be public and static.");
-		processor.process(input);
+		processor.processComponent(input);
 	}
 
 	@Test 
@@ -665,7 +601,7 @@ public class AnnotationProcessorTest {
 				"Process: process1->" +
 				"Parameter: 2->" +
 				"No kind annotation was found.");
-		processor.process(input);
+		processor.processComponent(input);
 	}
 
 	@Test 
@@ -680,7 +616,7 @@ public class AnnotationProcessorTest {
 				"Process: process1->" +
 				"Parameter: 3->" +
 				"More than one kind annotation was found.");
-		processor.process(input);
+		processor.processComponent(input);
 	}
 	
 	@Test 
@@ -694,7 +630,7 @@ public class AnnotationProcessorTest {
 				"Component: "+input.getClass().getCanonicalName()+"->" +
 				"Process: process1->" +
 				"No triggers were found.");
-		processor.process(input);
+		processor.processComponent(input);
 	}
 	
 	@Test 
@@ -708,11 +644,11 @@ public class AnnotationProcessorTest {
 				"Component: "+input.getClass().getCanonicalName()+"->" +
 				"Process: process1->" +
 				"The component process cannot have zero parameters.");
-		processor.process(input);
+		processor.processComponent(input);
 	}
 	
 	@Test 
-	public void testExceptionsInEnsembleParsing1() throws AnnotationProcessorException {
+	public void testExceptionsInEnsembleParsing1() throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
 		
@@ -721,11 +657,11 @@ public class AnnotationProcessorTest {
 		exception.expectMessage(
 				"Ensemble: "+input.getClass().getCanonicalName()+"->" +
 				"Method knowledgeExchange annotated as @KnowledgeExchange should be public and static.");
-		processor.process(input);	
+		processor.processEnsemble(WrongE1.class);	
 	}
 
 	@Test 
-	public void testExceptionsInEnsembleParsing2() throws AnnotationProcessorException {
+	public void testExceptionsInEnsembleParsing2() throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
 		
@@ -734,11 +670,11 @@ public class AnnotationProcessorTest {
 		exception.expectMessage(
 				"Ensemble: "+input.getClass().getCanonicalName()+"->" +
 				"No @Membership annotation was found");
-		processor.process(input);	
+		processor.processEnsemble(WrongE2.class);	
 	}
 
 	@Test 
-	public void testExceptionsInEnsembleParsing3() throws AnnotationProcessorException {
+	public void testExceptionsInEnsembleParsing3() throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
 		
@@ -747,12 +683,12 @@ public class AnnotationProcessorTest {
 		exception.expectMessage(
 				"Ensemble: "+input.getClass().getCanonicalName()+"->" +
 				"More than one instance of @KnowledgeExchange annotation was found");
-		processor.process(input);	
+		processor.processEnsemble(WrongE3.class);	
 	}
 
 	@Test 
 	public void testExceptionsInEnsembleParsing4()
-			throws AnnotationProcessorException {
+			throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
 		
@@ -761,12 +697,12 @@ public class AnnotationProcessorTest {
 		exception.expectMessage(
 				"Ensemble: "+input.getClass().getCanonicalName()+"->" +
 				"No triggers were found.");
-		processor.process(input);
+		processor.processEnsemble(WrongE4.class);
 	}
 	
 	@Test 
 	public void testExceptionsInEnsembleParsing5()
-			throws AnnotationProcessorException {
+			throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
 		
@@ -777,7 +713,7 @@ public class AnnotationProcessorTest {
 				"KnowledgeExchange->" +
 				"Parameter: 1->" +
 				"The path does not start with one of the 'coord' or 'member' keywords.");
-		processor.process(input);
+		processor.processEnsemble(WrongE5.class);
 	}
 	
 	/*
@@ -980,7 +916,7 @@ public class AnnotationProcessorTest {
 		WrongC4WithSecurity input = new WrongC4WithSecurity();
 		exception.expect(AnnotationProcessorException.class);
 		exception.expectMessage("The component ID must not be secured");
-		processor.process(input);	
+		processor.processComponent(input);	
 	}
 	
 	/*

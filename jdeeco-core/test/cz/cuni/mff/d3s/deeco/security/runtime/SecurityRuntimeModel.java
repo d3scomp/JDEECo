@@ -42,6 +42,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.network.DataSender;
 import cz.cuni.mff.d3s.deeco.network.DefaultKnowledgeDataManager;
+import cz.cuni.mff.d3s.deeco.runtime.DuplicateEnsembleDefinitionException;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeFrameworkImpl;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.scheduler.SingleThreadedScheduler;
@@ -203,7 +204,7 @@ public class SecurityRuntimeModel {
 	public SecurityHelper securityHelper;
 	public RatingsManager ratingsManager;
 	
-	public SecurityRuntimeModel() throws KeyStoreException, AnnotationProcessorException {
+	public SecurityRuntimeModel() throws KeyStoreException, AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		securityKeyManager = SecurityKeyManagerImpl.getInstance();
 		scheduler = new SingleThreadedScheduler();
 		executor = new SameThreadExecutor();
@@ -218,12 +219,12 @@ public class SecurityRuntimeModel {
 		policeComponent2 = new PoliceComponent("P2", "Pilsen");
 		globalPoliceComponent = new GlobalPoliceComponent("G1");
 		
-		processor.process(vehicleComponent);
-		processor.process(policeComponent1);
-		processor.process(policeComponent2);
-		processor.process(globalPoliceComponent);
-		processor.process(AllEnsemble.class);
-		processor.process(PoliceEverywhereEnsemble.class);
+		processor.processComponent(vehicleComponent);
+		processor.processComponent(policeComponent1);
+		processor.processComponent(policeComponent2);
+		processor.processComponent(globalPoliceComponent);
+		processor.processEnsemble(AllEnsemble.class);
+		processor.processEnsemble(PoliceEverywhereEnsemble.class);
 		
 		// set ensemble to allow all components
 		AllEnsemble.membership = id -> true;
