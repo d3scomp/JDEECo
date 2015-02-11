@@ -29,10 +29,12 @@ public class Layer1 {
 	private final int nodeId;
 	private final DataIDSource dataIdSource;
 	private final Map<Device, Layer0> layers0;
+	private final Map<CollectorKey, Collector> collectors;
 
 	public Layer1(int nodeId, DataIDSource dataIdSource) {
 		this.layers0 = new HashMap<Device, Layer0>();
 		this.strategies = new HashSet<L1Strategy>();
+		this.collectors = new HashMap<CollectorKey, Collector>();
 		this.nodeId = nodeId;
 		this.dataIdSource = dataIdSource;
 	}
@@ -54,7 +56,7 @@ public class Layer1 {
 				 * Go through every device and check whether it is capable to send to the desired address.
 				 */
 				if (device.canSend(address)) {
-					int chunkSize = device.getMTU()-4;
+					int chunkSize = device.getMTU() - 4;
 					/**
 					 * Disassemble the L2 packet into the L1 packets.
 					 */
@@ -82,38 +84,46 @@ public class Layer1 {
 		}
 		return false;
 	}
-	
+
 	protected void send(L1Packet l1Packet, Device device, Address address) {
 		Layer0 layer0 = layers0.get(device);
 		layer0.bufferPackets(l1Packet, address);
 		layer0.sendAll();
 	}
-	
+
 	protected void sendOrBuffer(Collection<L1Packet> l1Packets, Device device, Address address) {
 		Layer0 layer0 = layers0.get(device);
 		layer0.bufferPackets(l1Packets, address);
 		layer0.sendMTUs();
 	}
 
-	public void processL0Packet(byte[] l0Packet, Device device, Address srcAddress) {
-		LinkedList<L1Packet> l1Packets = new LinkedList<L1Packet>();
+	public void processL0Packet(byte[] l0Packet, Device device, ReceivedInfo receivedInfo) {
 		ByteBuffer byteBuffer = ByteBuffer.wrap(l0Packet);
 		int l1PacketCount = byteBuffer.getInt();
 		int l0PacketChunkSize;
-		byte [] l0PacketChunk;
+		byte[] l0PacketChunk;
 		L1Packet l1Packet;
+		Collector collector = null;
+		CollectorKey key = null;
 		for (int i = 0; i < l1PacketCount; i++) {
 			l0PacketChunkSize = byteBuffer.getInt();
-			l0PacketChunk = new byte [l0PacketChunkSize];
+			l0PacketChunk = new byte[l0PacketChunkSize];
 			byteBuffer.get(l0PacketChunk, byteBuffer.position(), l0PacketChunkSize);
 			l1Packet = L1Packet.fromBytes(l0PacketChunk);
-			l1Packet.receivedInfo = new L1ReceivedInfo(srcAddress);
-			l1Packets.add(l1Packet);
+			l1Packet.receivedInfo = receivedInfo;
+			if (key == null || key.equals(new CollectorKey(l1Packet.dataId, l1Packet.srcNode))) {
+				key = new CollectorKey(l1Packet.dataId, l1Packet.srcNode);
+				collector = collectors.get(key);
+				if (collector == null) {
+					collector = new Collector(l1Packet.totalSize);
+					collectors.put(key, collector);
+				}
+			}
+			collector.addL1Packet(l1Packet);
+			if (collector.isComplete()) {
+				//TODO notify l2
+			}
 		}
-	}
-	
-	protected void l1PacketsReceived(Collection<L1Packet> l1Packets) {
-		
 	}
 
 	protected List<L1Packet> dissassembleL2ToL1(L2Packet l2Packet, int mtu) {
@@ -122,7 +132,8 @@ public class Layer1 {
 			L2ReceivedInfo receivedInfo = l2Packet.receivedInfo;
 			int totalSize = l2Packet.getData().length;
 			int srcNode, dataId;
-			int chunkSize = mtu - 4 - 4; //MTU - L1PacketCount - SIZE OF L1Packet
+			int chunkSize = mtu - Layer0.L0_CHUNK_COUNT_BYTES - Layer0.L0_CHUNK_SIZE_BYTES; // MTU - L1PacketCount -
+																							// SIZE OF L1Packet
 			if (receivedInfo == null) {
 				srcNode = nodeId;
 				dataId = dataIdSource.createDataID();
@@ -141,16 +152,75 @@ public class Layer1 {
 		}
 		return result;
 	}
-	
-	private class L1PacketCollector {
+
+	protected class Collector {
 		private final LinkedList<L1Packet> l1Packets;
-		
-		public L1PacketCollector() {
+		private final boolean[] map;
+
+		public Collector(int totalSize) {
 			this.l1Packets = new LinkedList<L1Packet>();
+			this.map = new boolean[totalSize];
 		}
-		
-		public void addL1Packets(Collection<L1Packet> l1Packets) {
-			
+
+		public void addL1Packet(L1Packet l1Packet) {
+			this.l1Packets.addAll(l1Packets);
+			for (int i = l1Packet.startPos; i < l1Packet.startPos + l1Packet.payloadSize; i++) {
+				map[i] = true;
+			}
+		}
+
+		public boolean isComplete() {
+			if (l1Packets.isEmpty()) {
+				return false;
+			}
+			for (boolean fill : map) {
+				if (!fill) {
+					return false;
+				}
+			}
+			return true;
+		}
+	}
+
+	protected class CollectorKey {
+		public final int dataId;
+		public final int srcNode;
+
+		public CollectorKey(int dataId, int srcNode) {
+			this.dataId = dataId;
+			this.srcNode = srcNode;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + dataId;
+			result = prime * result + srcNode;
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			CollectorKey other = (CollectorKey) obj;
+			if (!getOuterType().equals(other.getOuterType()))
+				return false;
+			if (dataId != other.dataId)
+				return false;
+			if (srcNode != other.srcNode)
+				return false;
+			return true;
+		}
+
+		private Layer1 getOuterType() {
+			return Layer1.this;
 		}
 	}
 }

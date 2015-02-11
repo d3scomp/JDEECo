@@ -16,8 +16,8 @@ import cz.cuni.mff.d3s.jdeeco.network.l1.L1Packet;
 
 public class Layer0 {
 
-	private static final int L0_CHUNK_SIZE_BYTES = 4;
-	private static final int L0_CHUNK_COUNT_BYTES = 4;
+	public static final int L0_CHUNK_SIZE_BYTES = 4;
+	public static final int L0_CHUNK_COUNT_BYTES = 4;
 
 	private final Device device;
 	private final Map<Address, Set<L1Packet>> l1PacketsByAddress;

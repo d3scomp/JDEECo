@@ -18,9 +18,9 @@ public class L1Packet {
 	public final int startPos;				/** in bytes*/
 	public final int payloadSize; 			/** in bytes*/
 	public final int totalSize; 			/** in bytes*/
-	public L1ReceivedInfo receivedInfo; /** receival additaional information */
+	public ReceivedInfo receivedInfo; /** receival additaional information */
 	
-	public L1Packet(byte[] payload, int srcNode, int dataId, int startPos, int totalSize, L1ReceivedInfo receivedInfo) {
+	public L1Packet(byte[] payload, int srcNode, int dataId, int startPos, int totalSize, ReceivedInfo receivedInfo) {
 		this.payload = payload;
 		this.srcNode = srcNode;
 		this.dataId = dataId;

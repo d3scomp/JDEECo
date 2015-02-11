@@ -8,7 +8,7 @@ import cz.cuni.mff.d3s.jdeeco.network.Address;
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
  *
  */
-public class MANETReceivedInfo extends L1ReceivedInfo {
+public class MANETReceivedInfo extends ReceivedInfo {
 	
 	public final double rssi; /** Radio Signal Strength Indicator */
 	

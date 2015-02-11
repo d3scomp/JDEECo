@@ -8,10 +8,10 @@ import cz.cuni.mff.d3s.jdeeco.network.Address;
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
  *
  */
-public class L1ReceivedInfo {
+public class ReceivedInfo {
 	public final Address srcAddress; /** packet sending node address */
 
-	public L1ReceivedInfo(Address srcAddress) {
+	public ReceivedInfo(Address srcAddress) {
 		this.srcAddress = srcAddress;
 	}
 }
