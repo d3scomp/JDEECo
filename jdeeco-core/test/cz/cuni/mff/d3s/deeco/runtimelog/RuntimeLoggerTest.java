@@ -34,8 +34,8 @@ public class RuntimeLoggerTest
 	private final String CHARSET_NAME = "UTF-8";
 	private final String EVENT_RECORD_NAME = "event";
 	private final String SNAPSHOT_RECORD_NAME = "snapshot";
-	private final String RECORD_ID = "event_id";
-	private final String RECORD_TYPE = "event_type";
+	private final String RECORD_ID = "componentID";
+	private final String RECORD_TYPE = "eventType";
 	private final String RECORD_TIME = "time";
 	private final String RECORD_OFFSET = "offset";
 	
@@ -166,15 +166,19 @@ public class RuntimeLoggerTest
 	{
 		RuntimeLogger.init(timeProvider, scheduler, dataOut, indexOut, backLogOut);
 
+		// Write and flush the record
 		RuntimeLogger.log(testRecord);
 		RuntimeLogger.flush();
 		
+		// Load the record to a DOM element node
+		// There has to be only one element written in order to be a valid XML
 		Element node = DocumentBuilderFactory
 				.newInstance()
 				.newDocumentBuilder()
 				.parse(new ByteArrayInputStream(dataOut.toString().getBytes()))
 				.getDocumentElement();
 		
+		// Assert the written record has all its values correctly written
 		assertEquals(EVENT_RECORD_NAME, node.getNodeName());
 		assertEquals(testRecord.getEventType(), node.getAttribute(RECORD_TYPE));
 		assertEquals(testRecord.getComponentID(), node.getAttribute(RECORD_ID));
@@ -186,8 +190,10 @@ public class RuntimeLoggerTest
 			assertEquals(recordValues.get(valueKey), node.getAttribute(valueKey));
 		}
 		
+		// Assert there are no extra attributes
 		assertEquals(recordValues.size() + 3, node.getAttributes().getLength()); // + 3 stands for the following attributes: RECORD_TYPE, RECORD_ID, RECORD_TIME		
 		
+		// Assert no other writer was written into
 		assertEquals(EMPTY_STRING, indexOut.toString());
 		assertEquals(EMPTY_STRING, backLogOut.toString());
 	}
@@ -206,13 +212,16 @@ public class RuntimeLoggerTest
 		RuntimeLogger.init(timeProvider, scheduler, dataOut, indexOut, backLogOut);
 		
 		RuntimeLogger.logSnapshot(testRecord); // Is supposed to flush itself
-		
+
+		// Load the record to a DOM element node
+		// There has to be only one element written in order to be a valid XML
 		Element node = DocumentBuilderFactory
 				.newInstance()
 				.newDocumentBuilder()
 				.parse(new ByteArrayInputStream(dataOut.toString().getBytes()))
 				.getDocumentElement();
-		
+
+		// Assert the written record has all its values correctly written
 		assertEquals(SNAPSHOT_RECORD_NAME, node.getNodeName());
 		assertEquals(testRecord.getEventType(), node.getAttribute(RECORD_TYPE));
 		assertEquals(testRecord.getComponentID(), node.getAttribute(RECORD_ID));
@@ -223,19 +232,24 @@ public class RuntimeLoggerTest
 		{
 			assertEquals(recordValues.get(valueKey), node.getAttribute(valueKey));
 		}
-		
+
+		// Assert there are no extra attributes
 		assertEquals(recordValues.size() + 3, node.getAttributes().getLength()); // + 3 stands for the following attributes: RECORD_TYPE, RECORD_ID, RECORD_TIME		
 
+		// Load the record to a DOM element node
+		// There has to be only one element written in order to be a valid XML
 		node = DocumentBuilderFactory
 				.newInstance()
 				.newDocumentBuilder()
 				.parse(new ByteArrayInputStream(indexOut.toString().getBytes()))
 				.getDocumentElement();
-		
+
+		// Assert the written record has all its values correctly written
 		assertEquals(SNAPSHOT_RECORD_NAME, node.getNodeName());
 		assertEquals(TEST_TIME, Long.parseLong(node.getAttribute(RECORD_TIME)));
 		assertEquals(0, Long.parseLong(node.getAttribute(RECORD_OFFSET)));
-		
+
+		// Assert no other writer was written into
 		assertEquals(EMPTY_STRING, backLogOut.toString());
 	}
 	
@@ -243,25 +257,31 @@ public class RuntimeLoggerTest
 	public void logSnapshot_recordAndSnapshot_recordWritten() throws Exception
 	{
 		RuntimeLogger.init(timeProvider, scheduler, dataOut, indexOut, backLogOut);
-		
+
+		// Write and flush the record
 		RuntimeLogger.log(testRecord);
 		RuntimeLogger.flush();
 		long dataOffset = dataOut.toString().getBytes(CHARSET_NAME).length;
 		RuntimeLogger.logSnapshot(testRecord); // Is supposed to flush itself
-		
+
+		// Load the record to a DOM element node
+		// There has to be only one element written in order to be a valid XML
 		Element node = DocumentBuilderFactory
 				.newInstance()
 				.newDocumentBuilder()
 				.parse(new ByteArrayInputStream(indexOut.toString().getBytes()))
 				.getDocumentElement();
-		
+
+		// Assert the written record has all its values correctly written
 		assertEquals(SNAPSHOT_RECORD_NAME, node.getNodeName());
 		assertEquals(TEST_TIME, Long.parseLong(node.getAttribute(RECORD_TIME)));
 		assertEquals(dataOffset, Long.parseLong(node.getAttribute(RECORD_OFFSET)));
-		
+
+		// Assert there are no extra attributes
 		assertEquals(2, node.getAttributes().getLength()); // The 2 stands for the following attributes: RECORD_TIME, RECORD_OFFSET
 		
 		assertNotNull(dataOut.toString());
+		// Assert no other writer was written into
 		assertNotEquals(EMPTY_STRING, dataOut.toString());
 		assertEquals(EMPTY_STRING, backLogOut.toString());
 	}
@@ -308,15 +328,19 @@ public class RuntimeLoggerTest
 		long snapshotPeriod2 = 2;
 		long snapshotPeriod3 = 3;
 		
+		// Register snapshot providers before init is called
 		RuntimeLogger.registerSnapshotProvider(snapshotProvider1, snapshotPeriod1);
 		RuntimeLogger.registerSnapshotProvider(snapshotProvider2, snapshotPeriod2);
 		
 		RuntimeLogger.init(timeProvider, scheduler, dataOut, indexOut, backLogOut);
 		
+		// Register snapshot provider after init was called
 		RuntimeLogger.registerSnapshotProvider(snapshotProvider3, snapshotPeriod3);
 		
+		// Assert the tasks for registered snapshot providers were scheduled
 		Mockito.verify(scheduler, Mockito.times(3)).addTask(Matchers.any(Task.class));
 
+		// Assert back log time offsets were written
 		StringBuilder answer = new StringBuilder();
 			answer.append(snapshotPeriod1)
 				.append("\n")
@@ -353,13 +377,16 @@ public class RuntimeLoggerTest
 		long period2 = 15;
 		long period3 = 16;
 		
+		// Register back log offsets before init is called
 		RuntimeLogger.registerBackLogOffset(period1);
 		RuntimeLogger.registerBackLogOffset(period2);
 
 		RuntimeLogger.init(timeProvider, scheduler, dataOut, indexOut, backLogOut);
 
+		// Register back log offsets after init was called
 		RuntimeLogger.registerBackLogOffset(period3);
 
+		// Assert back log time offsets were written
 		StringBuilder answer = new StringBuilder();
 			answer.append(period1)
 				.append("\n")
