@@ -44,10 +44,10 @@ public class Network implements NetworkPlugin, L1DataProcessor, L2PacketSender {
 	// Network layer 1 interface
 
 	public void registerL1Strategy(L1Strategy strategy) {
-		l1.registerStrategy(strategy);
+		l1.registerL1Strategy(strategy);
 	}
 
-	public Collection<L2Strategy> getRegisteredL1Strategies() {
+	public Collection<L1Strategy> getRegisteredL1Strategies() {
 		throw new UnsupportedOperationException();
 		// return l1.getRegisteredStrategies();
 	}

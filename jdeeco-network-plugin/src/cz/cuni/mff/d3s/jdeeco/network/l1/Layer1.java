@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Set;
 
 import cz.cuni.mff.d3s.jdeeco.network.Address;
+import cz.cuni.mff.d3s.jdeeco.network.L1DataProcessor;
+import cz.cuni.mff.d3s.jdeeco.network.L1StrategyManager;
 import cz.cuni.mff.d3s.jdeeco.network.L2PacketSender;
 import cz.cuni.mff.d3s.jdeeco.network.l0.Device;
 import cz.cuni.mff.d3s.jdeeco.network.l0.Layer0;
@@ -24,24 +26,48 @@ import cz.cuni.mff.d3s.jdeeco.network.l2.L2ReceivedInfo;
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
  *
  */
-public class Layer1 implements L2PacketSender {
+public class Layer1 implements L2PacketSender, L1StrategyManager {
 
 	private final Set<L1Strategy> strategies;
 	private final int nodeId;
 	private final DataIDSource dataIdSource;
 	private final Map<Device, Layer0> layers0;
 	private final Map<CollectorKey, Collector> collectors;
+	private final L1DataProcessor l1DataProcessor;
 
-	public Layer1(int nodeId, DataIDSource dataIdSource) {
+	public Layer1(L1DataProcessor l1DataProcessor, int nodeId, DataIDSource dataIdSource) {
 		this.layers0 = new HashMap<Device, Layer0>();
 		this.strategies = new HashSet<L1Strategy>();
 		this.collectors = new HashMap<CollectorKey, Collector>();
 		this.nodeId = nodeId;
 		this.dataIdSource = dataIdSource;
+		this.l1DataProcessor = l1DataProcessor;
+	}
+	
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.jdeeco.network.L1StrategyManager#registerL1Strategy(cz.cuni.mff.d3s.jdeeco.network.l1.L1Strategy)
+	 */
+	@Override
+	public void registerL1Strategy(L1Strategy strategy) {
+		strategies.add(strategy);
 	}
 
-	public void registerStrategy(L1Strategy strategy) {
-		strategies.add(strategy);
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.jdeeco.network.L1StrategyManager#getRegisteredL1Strategies()
+	 */
+	@Override
+	public Collection<L1Strategy> getRegisteredL1Strategies() {
+		Set<L1Strategy> result = new HashSet<L1Strategy>();
+		result.addAll(strategies);
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.jdeeco.network.L1StrategyManager#unregisterL1Strategy(cz.cuni.mff.d3s.jdeeco.network.l1.L1Strategy)
+	 */
+	@Override
+	public boolean unregisterL1Strategy(L1Strategy strategy) {
+		return strategies.remove(strategy);
 	}
 
 	public void registerDevice(Device device) {
@@ -122,7 +148,9 @@ public class Layer1 implements L2PacketSender {
 			}
 			collector.addL1Packet(l1Packet);
 			if (collector.isComplete()) {
-				//TODO notify l2
+				// FIX header is unknown at this level
+				l1DataProcessor.processL1Data(null, collector.getMarshalledData(), collector.getL2ReceivedInfo());
+				collectors.remove(key);
 			}
 		}
 	}
@@ -158,12 +186,16 @@ public class Layer1 implements L2PacketSender {
 		private final LinkedList<L1Packet> l1Packets;
 		private final boolean[] map;
 
+		private boolean isComplete = false;
+		private boolean isCompleteValid = true;
+
 		public Collector(int totalSize) {
 			this.l1Packets = new LinkedList<L1Packet>();
 			this.map = new boolean[totalSize];
 		}
 
 		public void addL1Packet(L1Packet l1Packet) {
+			isCompleteValid = false;
 			this.l1Packets.addAll(l1Packets);
 			for (int i = l1Packet.startPos; i < l1Packet.startPos + l1Packet.payloadSize; i++) {
 				map[i] = true;
@@ -171,15 +203,47 @@ public class Layer1 implements L2PacketSender {
 		}
 
 		public boolean isComplete() {
-			if (l1Packets.isEmpty()) {
-				return false;
-			}
-			for (boolean fill : map) {
-				if (!fill) {
-					return false;
+			if (!isCompleteValid) {
+				isCompleteValid = true;
+				if (l1Packets.isEmpty()) {
+					isComplete = false;
+				} else {
+					isComplete = true;
+					for (boolean fill : map) {
+						if (!fill) {
+							isComplete = false;
+							break;
+						}
+					}
 				}
 			}
-			return true;
+			return isComplete;
+		}
+
+		public byte[] getMarshalledData() {
+			if (isComplete()) {
+				int totalSize = l1Packets.getFirst().totalSize;
+				byte [] result = new byte[totalSize];
+				int to;
+				for (L1Packet l1Packet: l1Packets) {
+					to = l1Packet.startPos + l1Packet.payloadSize;
+					for (int i = l1Packet.startPos, j = 0; i < to && j < l1Packet.payloadSize; i++, j++) {
+						result[i] = l1Packet.payload[j];
+					}
+				}
+				return result;
+			} else {
+				return null;
+			}
+		}
+
+		public L2ReceivedInfo getL2ReceivedInfo() {
+			if (isComplete()) {
+				L1Packet first = l1Packets.getFirst();
+				return new L2ReceivedInfo(new LinkedList<L1Packet>(l1Packets), first.srcNode, first.dataId);
+			} else {
+				return null;
+			}
 		}
 	}
 
