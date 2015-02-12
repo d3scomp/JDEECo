@@ -1,10 +1,9 @@
 /**
  * 
  */
-package cz.cuni.mff.d3s.deeco.simulation;
+package cz.cuni.mff.d3s.deeco.task;
 
-import cz.cuni.mff.d3s.deeco.simulation.scheduler.SimulationScheduler;
-import cz.cuni.mff.d3s.deeco.simulation.task.TimerTask;
+import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
 
 /**
@@ -23,5 +22,5 @@ public interface TimerTaskListener {
 	 */
 	void at(long time, Object triger);
 	
-	TimerTask getInitialTask(SimulationScheduler scheduler);
+	TimerTask getInitialTask(Scheduler scheduler);
 }

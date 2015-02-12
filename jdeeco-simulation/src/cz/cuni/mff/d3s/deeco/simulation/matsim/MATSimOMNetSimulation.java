@@ -14,11 +14,11 @@ import org.matsim.withinday.trafficmonitoring.TravelTimeCollectorFactory;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.network.NetworkProvider;
-import cz.cuni.mff.d3s.deeco.simulation.TimerTaskListener;
+import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.simulation.omnet.OMNetSimulation;
-import cz.cuni.mff.d3s.deeco.simulation.scheduler.SimulationScheduler;
 import cz.cuni.mff.d3s.deeco.simulation.task.SimulationStepTask;
-import cz.cuni.mff.d3s.deeco.simulation.task.TimerTask;
+import cz.cuni.mff.d3s.deeco.task.TimerTask;
+import cz.cuni.mff.d3s.deeco.task.TimerTaskListener;
 
 /**
  * Main simulation class.
@@ -175,7 +175,7 @@ public class MATSimOMNetSimulation extends OMNetSimulation implements
 	}
 
 	@Override
-	public TimerTask getInitialTask(SimulationScheduler scheduler) {
+	public TimerTask getInitialTask(Scheduler scheduler) {
 		return new SimulationStepTask(scheduler, this);
 	}
 }

@@ -1,5 +1,8 @@
 package cz.cuni.mff.d3s.jdeeco.network;
 
+
+// XXX TB: What is gossip layer? I thought this should be a strategy. I think this does not belong to ...network. It should be a separate package with gossip strategy.
+
 /**
  * Interface for network used by gossip layer
  * 
@@ -14,5 +17,5 @@ public interface NetworkToGossip {
 	 * 
 	 * TODO: knowledge type
 	 */
-	public void processKnowledgeFromGossip(Object knowledge);
+	public void processDataFromGossipLayer(Object knowledge);
 }

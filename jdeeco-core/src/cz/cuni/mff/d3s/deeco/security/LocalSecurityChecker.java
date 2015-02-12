@@ -200,7 +200,7 @@ public class LocalSecurityChecker {
 		}
 		
 		// get the roles transitive closure
-		List<SecurityRole> localRoles = RoleHelper.getTransitiveRoles(accessingKnowledgeManager.getComponent().getRoles());
+		List<SecurityRole> localRoles = RoleHelper.getTransitiveRoles(accessingKnowledgeManager.getComponent().getSecurityRoles());
 		boolean canAccessTag = false;
 		
 		// read the data from the security tag

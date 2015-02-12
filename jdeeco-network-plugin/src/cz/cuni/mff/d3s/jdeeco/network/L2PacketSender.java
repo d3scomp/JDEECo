@@ -10,7 +10,7 @@ import cz.cuni.mff.d3s.jdeeco.network.l2.L2Packet;
  */
 public interface L2PacketSender {
 	/**
-	 * Sends L2 packet by Layer 1
+	 * Sends L2 packet to Layer 1
 	 * 
 	 * @param l2Packet
 	 *            Packet to send

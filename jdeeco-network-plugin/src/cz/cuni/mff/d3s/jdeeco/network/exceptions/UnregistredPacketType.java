@@ -1,6 +1,6 @@
 package cz.cuni.mff.d3s.jdeeco.network.exceptions;
 
-import cz.cuni.mff.d3s.jdeeco.network.PacketType;
+import cz.cuni.mff.d3s.jdeeco.network.L2PacketType;
 
 /**
  * Unregistered packet type exception is thrown when the packet type specified is not registered at marshaler registry
@@ -10,7 +10,7 @@ import cz.cuni.mff.d3s.jdeeco.network.PacketType;
  */
 public class UnregistredPacketType extends RuntimeException {
 	private static final long serialVersionUID = 1L;
-	private PacketType value;
+	private L2PacketType value;
 
 	/**
 	 * Creates unregistered packet type exception
@@ -18,7 +18,7 @@ public class UnregistredPacketType extends RuntimeException {
 	 * @param value
 	 *            Packet type that was not registered
 	 */
-	public UnregistredPacketType(PacketType value) {
+	public UnregistredPacketType(L2PacketType value) {
 		this.value = value;
 	}
 

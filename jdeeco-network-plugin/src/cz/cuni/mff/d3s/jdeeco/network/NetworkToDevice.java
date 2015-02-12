@@ -1,6 +1,8 @@
 package cz.cuni.mff.d3s.jdeeco.network;
 
 
+
+// XXX TB: Why this is suddenly called "device"? I think we need some consistent naming:
 /**
  * Interface for network features used by network device
  * 

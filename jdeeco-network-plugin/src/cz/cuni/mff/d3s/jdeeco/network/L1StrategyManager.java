@@ -4,6 +4,9 @@ import java.util.Collection;
 
 import cz.cuni.mff.d3s.jdeeco.network.l1.L1Strategy;
 
+//XXX TB: Why is this interface in ...network when L1Strategy is in network.l1 ?
+
+
 /**
  * Interface for Layer 1 network
  * 

@@ -2,7 +2,7 @@ package cz.cuni.mff.d3s.jdeeco.network.l2;
 
 import java.util.Arrays;
 
-import cz.cuni.mff.d3s.jdeeco.network.PacketType;
+import cz.cuni.mff.d3s.jdeeco.network.L2PacketType;
 
 /**
  * Layer 2 jDEECo network packet
@@ -54,7 +54,7 @@ public class L2Packet {
 
 		// Create packet
 		this.l2Layer = l2Layer;
-		this.header = new PacketHeader(new PacketType(type));
+		this.header = new PacketHeader(new L2PacketType(type));
 		this.receivedInfo = receivedInfo;
 		this.data = data;
 	}
