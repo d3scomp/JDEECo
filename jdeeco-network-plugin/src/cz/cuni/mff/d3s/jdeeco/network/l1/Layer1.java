@@ -127,7 +127,7 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 			int current = 0;
 			byte[] payload;
 			while (current < l2Packet.getData().length) {
-				fragmentSize = outputQueue.availableL0Space();
+				fragmentSize = outputQueue.availableL0Space() - L1Packet.HEADER_SIZE;
 				payload = Arrays.copyOfRange(l2Packet.getData(), current,
 						Math.min(current + fragmentSize, l2Packet.getData().length - 1));
 				outputQueue.sendDelayed(new L1Packet(payload, srcNode, dataId, current, totalSize, null));
