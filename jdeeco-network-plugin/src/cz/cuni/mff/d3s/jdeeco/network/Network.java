@@ -5,8 +5,11 @@ import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
+import cz.cuni.mff.d3s.jdeeco.network.l1.DataIDSource;
 import cz.cuni.mff.d3s.jdeeco.network.l1.Layer1;
 import cz.cuni.mff.d3s.jdeeco.network.l2.Layer2;
+import cz.cuni.mff.d3s.jdeeco.network.marshaller.MarshallerRegistry;
+import cz.cuni.mff.d3s.jdeeco.network.marshaller.SerializingMarshaller;
 
 /**
  * Provides network plug-in for jDEECO
@@ -14,10 +17,10 @@ import cz.cuni.mff.d3s.jdeeco.network.l2.Layer2;
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
  */
-
 public class Network implements DEECoPlugin {
 	private Layer1 l1;
 	private Layer2 l2;
+	private MarshallerRegistry registery = new MarshallerRegistry();
 
 	public Layer1 getL1() {
 		return l1;
@@ -34,6 +37,21 @@ public class Network implements DEECoPlugin {
 
 	@Override
 	public void init(DEECoContainer container) {
-		// TODO Register at Gossip for data
+		// Initialize Layer 1
+		// TODO: Data id source and node id should have been set properly
+		l1 = new Layer1(l2, 0, new DataIDSource() {
+			int nextId = 0;
+
+			@Override
+			public int createDataID() {
+				return nextId++;
+			}
+		});
+
+		// Initialize Layer 2
+		l2 = new Layer2(l1, registery);
+
+		// Add default marshaler for knowledge
+		registery.registerMarshaller(L2PacketType.KNOWLEDGE, new SerializingMarshaller());
 	}
 }

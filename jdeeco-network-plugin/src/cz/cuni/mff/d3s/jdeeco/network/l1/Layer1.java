@@ -190,7 +190,7 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 			collector.addL1Packet(l1Packet);
 			if (collector.isComplete()) {
 				// FIX header is unknown at this level
-				l1DataProcessor.processL1Data(collector.getMarshalledData(), collector.getL2ReceivedInfo());
+				l1DataProcessor.processL2Packet(new L2Packet(collector.getMarshalledData(), collector.getL2ReceivedInfo()));
 				collectors.remove(key);
 			}
 			position += l1Packet.payloadSize + L1Packet.HEADER_SIZE;
