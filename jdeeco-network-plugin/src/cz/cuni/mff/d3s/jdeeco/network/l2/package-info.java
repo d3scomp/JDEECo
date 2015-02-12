@@ -1,4 +1,8 @@
 /**
+ * <p>
+ * Main class: {@link cz.cuni.mff.d3s.jdeeco.network.l2.Layer2}
+ * </p>
+ * 
  * jDEECo Network Layer 2
  * 
  * Layer 2 network is intended to process assembled knowledge (or other data) fragments by strategies. Layer 2

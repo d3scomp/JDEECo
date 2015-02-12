@@ -1,6 +1,5 @@
 package cz.cuni.mff.d3s.jdeeco.network;
 
-import cz.cuni.mff.d3s.jdeeco.network.l0.Device;
 
 
 // XXX TB: Why this is suddenly called "device"? I think we need some consistent naming:
