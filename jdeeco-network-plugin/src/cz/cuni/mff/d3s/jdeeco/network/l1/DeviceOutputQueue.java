@@ -5,63 +5,78 @@ import java.nio.ByteBuffer;
 import cz.cuni.mff.d3s.jdeeco.network.Address;
 import cz.cuni.mff.d3s.jdeeco.network.Device;
 
+/**
+ * 
+ * Buffer for outgoing L0 packets.
+ * 
+ * @author Michal Kit <kit@d3s.mff.cuni.cz>
+ *
+ */
 public class DeviceOutputQueue {
-	
+
 	public final Device device;
 	public final Address address;
-	
-	private final byte [] l0Packet;
+
+	private final long timeout; // in milliseconds
+	private final byte[] l0Packet;
 	private int l0PacketSize;
-	
-	public DeviceOutputQueue(Device device, Address address) {
+
+	public DeviceOutputQueue(Device device, Address address, long timeout) {
+		this.timeout = timeout;
 		this.device = device;
 		this.address = address;
-		this.l0Packet = new byte [device.getMTU()];
+		this.l0Packet = new byte[device.getMTU()];
 	}
-	
+
+	/**
+	 * Calculates remaining space in the L0 packet
+	 * 
+	 * @return remaining space in L0 packet
+	 */
 	public int availableL0Space() {
 		return l0Packet.length - l0PacketSize;
 	}
-	
-	public boolean sendImmidiate(L1Packet packet) {
-		byte [] l1PacketBytes = packet.getBytes();
-		//L1 Packet is too big to fit into the device MTU.
-		if (l1PacketBytes.length > l0Packet.length) {
-			return false;
-		}
-		fillL0Packet(l1PacketBytes);
+
+	/**
+	 * Sends the L1 packet immediately.
+	 * 
+	 * @param packet
+	 *            L1 packet to be sent
+	 */
+	public void sendImmediately(L1Packet packet) {
+		fillL0Packet(packet);
 		send();
-		return true;
 	}
-	
-	public boolean sendDelayed(L1Packet packet) {
-		byte [] l1PacketBytes = packet.getBytes();
-		//L1 Packet is too big to fit into the device MTU.
-		if (l1PacketBytes.length > l0Packet.length) {
-			return false;
-		}
-		fillL0Packet(l1PacketBytes);
-		if (l0PacketSize == l0Packet.length) {
+
+	/**
+	 * Buffers the L1 packet and if there is still some space to accommodate other packets it waits until L0 packet is
+	 * filled in or the timeout is expired.
+	 * 
+	 * @param packet
+	 */
+	public void sendDelayed(L1Packet packet) {
+		fillL0Packet(packet);
+		if (availableL0Space() < Layer1.MINIMUM_DATA_TRANSMISSION_SIZE) {
 			send();
 		} else {
-			//TODO add scheduler task
+			// TODO add scheduler task
 		}
-		return true;
 	}
-	
-	//------------- PRIVATE METHODS --------------------
-	
+
+	// ------------- PRIVATE METHODS --------------------
+
 	private void send() {
 		if (l0PacketSize > 0) {
 			device.send(l0Packet, address);
 			l0PacketSize = 0;
 		}
 	}
-	
-	private void fillL0Packet(byte [] bytes) {
-		//L1 packet is too big to fit into the remaining L0 packet space.
+
+	private void fillL0Packet(L1Packet l1Packet) {
+		byte[] bytes = l1Packet.getBytes();
+		// L1 packet is too big to fit into the remaining L0 packet space.
 		if (bytes.length > availableL0Space()) {
-			//Send the current L0 packet to release L0 space.
+			// Send the current L0 packet to release L0 space.
 			send();
 		}
 		ByteBuffer byteBuffer = ByteBuffer.wrap(l0Packet);
@@ -69,6 +84,5 @@ public class DeviceOutputQueue {
 		byteBuffer.put(bytes);
 		l0PacketSize += bytes.length;
 	}
-	
-	
+
 }

@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,7 +25,8 @@ import cz.cuni.mff.d3s.jdeeco.network.l2.L2ReceivedInfo;
  */
 public class Layer1 implements L2PacketSender, L1StrategyManager {
 	
-	private final static int MINIMUM_PAYLOAD = 1;
+	protected final static int MINIMUM_PAYLOAD = 1;
+	protected final static int MINIMUM_DATA_TRANSMISSION_SIZE = MINIMUM_PAYLOAD + L1Packet.HEADER_SIZE;
 
 	private final Set<L1Strategy> strategies; 					// registered strategies
 	private final int nodeId; 									// node ID
@@ -88,8 +88,13 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 	 * @param device
 	 *            device to be registered
 	 */
-	public void registerDevice(Device device) {
-		devices.add(device);
+	public boolean registerDevice(Device device) {
+		if (device.getMTU() >= MINIMUM_DATA_TRANSMISSION_SIZE) {
+			devices.add(device);
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	/*
@@ -99,22 +104,33 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 	 * cz.cuni.mff.d3s.jdeeco.network.Address)
 	 */
 	public boolean sendL2Packet(L2Packet l2Packet, Address address) {
-		if (l2Packet != null) {
+		if (l2Packet != null && l2Packet.getData().length > 0) {
 			DeviceOutputQueue outputQueue = getDeviceOutputQueue(address);
 			if (outputQueue == null) {
 				return false;
 			}
-			int fragmentSize = outputQueue.availableL0Space();
-			int minDataTransmissionSize = L1Packet.HEADER_SIZE + MINIMUM_PAYLOAD;
-			if (fragmentSize < minDataTransmissionSize) {
-				fragmentSize = outputQueue.device.getMTU();
-			}
 			/**
-			 * Disassemble the L2 packet into the L1 packets.
+			 * Fragment the L2 packet into L1 packets.
 			 */
-			List<L1Packet> l1Packets = disassembleL2ToL1(l2Packet, fragmentSize);
-			for (L1Packet l1Packet: l1Packets) {
-				outputQueue.sendDelayed(l1Packet);
+			L2ReceivedInfo receivedInfo = l2Packet.receivedInfo;
+			int totalSize = l2Packet.getData().length;
+			int srcNode, dataId;
+			if (receivedInfo == null) {
+				srcNode = nodeId;
+				dataId = dataIdSource.createDataID();
+			} else {
+				srcNode = receivedInfo.srcNode;
+				dataId = receivedInfo.dataId;
+			}
+			int fragmentSize;
+			int current = 0;
+			byte[] payload;
+			while (current < l2Packet.getData().length) {
+				fragmentSize = outputQueue.availableL0Space();
+				payload = Arrays.copyOfRange(l2Packet.getData(), current,
+						Math.min(current + fragmentSize, l2Packet.getData().length - 1));
+				outputQueue.sendDelayed(new L1Packet(payload, srcNode, dataId, current, totalSize, null));
+				current += fragmentSize;
 			}
 			return true;
 		} else {
@@ -180,51 +196,17 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 			position += l1Packet.payloadSize + L1Packet.HEADER_SIZE;
 		}
 	}
-
-	/**
-	 * Disassembles L2 packet into L1 packets according to the given MTU.
-	 * 
-	 * @param l2Packet
-	 *            L2 packet to be disassembled
-	 * @param mtu
-	 *            maximum L1 packet size
-	 * @return L1 packets being the disassembling the L2 packet
-	 */
-	protected List<L1Packet> disassembleL2ToL1(L2Packet l2Packet, int fragmentSize) {
-		LinkedList<L1Packet> result = new LinkedList<L1Packet>();
-		if (l2Packet.getData() != null && l2Packet.getData().length > 0) {
-			L2ReceivedInfo receivedInfo = l2Packet.receivedInfo;
-			int totalSize = l2Packet.getData().length;
-			int srcNode, dataId;
-			if (receivedInfo == null) {
-				srcNode = nodeId;
-				dataId = dataIdSource.createDataID();
-			} else {
-				srcNode = receivedInfo.srcNode;
-				dataId = receivedInfo.dataId;
-			}
-			int current = 0;
-			byte[] payload;
-			while (current < l2Packet.getData().length) {
-				payload = Arrays.copyOfRange(l2Packet.getData(), current,
-						Math.min(current + fragmentSize, l2Packet.getData().length - 1));
-				result.add(new L1Packet(payload, srcNode, dataId, current, totalSize, null));
-				current += fragmentSize;
-			}
-		}
-		return result;
-	}
 	
 	protected DeviceOutputQueue getDeviceOutputQueue(Address address) {
-		int minDataTransmissionSize = L1Packet.HEADER_SIZE + MINIMUM_PAYLOAD;
 		DeviceOutputQueue outputQueue = outputQueues.get(address);
 		if (outputQueue == null) {
 			for (Device device : devices) {
 				/**
 				 * Go through every device and check whether it is capable to send the minimum packet size to the desired address.
 				 */
-				if (device.canSend(address) && device.getMTU() >= minDataTransmissionSize) {
-					outputQueue = new DeviceOutputQueue(device, address);
+				if (device.canSend(address)) {
+					//TODO change the timeout
+					outputQueue = new DeviceOutputQueue(device, address, -1L);
 					break;
 				}
 			}
