@@ -19,7 +19,7 @@ public class L2ReceivedInfo {
 	/**
 	 * Source jDEECo node
 	 */
-	public final int srcNode;
+	public final byte srcNode;
 
 	/**
 	 * L2 Packet identification
@@ -39,7 +39,7 @@ public class L2ReceivedInfo {
 	 * @param dataId
 	 *            Source data identification (Unique to L2 packet)
 	 */
-	public L2ReceivedInfo(Collection<L1Packet> srcFragments, int srcNode, int dataId) {
+	public L2ReceivedInfo(Collection<L1Packet> srcFragments, byte srcNode, int dataId) {
 		this.srcFragments = srcFragments;
 		this.srcNode = srcNode;
 		this.dataId = dataId;

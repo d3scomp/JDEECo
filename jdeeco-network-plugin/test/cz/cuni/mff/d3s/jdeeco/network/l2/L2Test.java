@@ -68,7 +68,7 @@ public class L2Test {
 		assertPayload(srcPacket.getObject());
 
 		// Create destination packet from source packet binary data
-		L2ReceivedInfo info = new L2ReceivedInfo(new LinkedList<L1Packet>(), 1, 1);
+		L2ReceivedInfo info = new L2ReceivedInfo(new LinkedList<L1Packet>(), (byte) 1, 1);
 		L2Packet dstPacket = new L2Packet(srcPacket.getData(), info);
 		dstPacket.setLayer(l2Layer);
 		assertPayload(dstPacket.getObject());
@@ -102,7 +102,7 @@ public class L2Test {
 		L2Strategy strategy = Mockito.mock(L2Strategy.class);
 		l2Layer.registerL2Strategy(strategy);
 
-		L2ReceivedInfo info = new L2ReceivedInfo(new LinkedList<L1Packet>(), 1, 1);
+		L2ReceivedInfo info = new L2ReceivedInfo(new LinkedList<L1Packet>(), (byte) 1, 1);
 
 		// Create source packet (created with data and received packet info)
 		byte[] data = registry.marshall(L2PacketType.KNOWLEDGE, PAYLOAD);

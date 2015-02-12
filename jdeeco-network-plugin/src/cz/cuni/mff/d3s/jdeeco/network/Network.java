@@ -5,7 +5,7 @@ import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
-import cz.cuni.mff.d3s.jdeeco.network.l1.DataIDSource;
+import cz.cuni.mff.d3s.jdeeco.network.l1.DefaultDataIDSource;
 import cz.cuni.mff.d3s.jdeeco.network.l1.Layer1;
 import cz.cuni.mff.d3s.jdeeco.network.l2.Layer2;
 import cz.cuni.mff.d3s.jdeeco.network.marshaller.MarshallerRegistry;
@@ -39,14 +39,7 @@ public class Network implements DEECoPlugin {
 	public void init(DEECoContainer container) {
 		// Initialize Layer 1
 		// TODO: Data id source and node id should have been set properly
-		l1 = new Layer1(l2, 0, new DataIDSource() {
-			int nextId = 0;
-
-			@Override
-			public int createDataID() {
-				return nextId++;
-			}
-		});
+		l1 = new Layer1(l2, (byte) 0, DefaultDataIDSource.getInstance());
 
 		// Initialize Layer 2
 		l2 = new Layer2(l1, registery);
