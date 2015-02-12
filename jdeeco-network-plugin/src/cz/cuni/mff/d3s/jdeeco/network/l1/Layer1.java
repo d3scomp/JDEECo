@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.jdeeco.network.Address;
 import cz.cuni.mff.d3s.jdeeco.network.Device;
 import cz.cuni.mff.d3s.jdeeco.network.L1DataProcessor;
@@ -88,12 +89,11 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 	 * @param device
 	 *            device to be registered
 	 */
-	public boolean registerDevice(Device device) {
+	public void registerDevice(Device device) {
 		if (device.getMTU() >= MINIMUM_DATA_TRANSMISSION_SIZE) {
 			devices.add(device);
-			return true;
 		} else {
-			return false;
+			Log.e("The device MTU is too small for the needs of jDEECo data transmission - minimum trasmission size is " + MINIMUM_DATA_TRANSMISSION_SIZE);
 		}
 	}
 
