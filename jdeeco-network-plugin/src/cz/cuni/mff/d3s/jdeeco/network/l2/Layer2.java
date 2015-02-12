@@ -51,6 +51,10 @@ public class Layer2 implements L2StrategyManager, L1DataProcessor {
 	 */
 	@Override
 	public void processL2Packet(L2Packet packet) {
+		// Assign packet to this layer 2 instance
+		packet.setLayer(this);
+
+		// Filter packet by L2 strategies
 		for (L2Strategy strategy : strategies) {
 			strategy.processL2Packet(packet);
 		}
@@ -111,6 +115,8 @@ public class Layer2 implements L2StrategyManager, L1DataProcessor {
 	 *            Packet header
 	 */
 	public L2Packet createPacket(PacketHeader header, Object object) {
-		return new L2Packet(this, header, object);
+		L2Packet packet = new L2Packet(header, object);
+		packet.setLayer(this);
+		return packet;
 	}
 }

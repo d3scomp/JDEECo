@@ -69,7 +69,8 @@ public class L2Test {
 
 		// Create destination packet from source packet binary data
 		L2ReceivedInfo info = new L2ReceivedInfo(new LinkedList<L1Packet>(), 1, 1);
-		L2Packet dstPacket = new L2Packet(l2Layer, srcPacket.getData(), info);
+		L2Packet dstPacket = new L2Packet(srcPacket.getData(), info);
+		dstPacket.setLayer(l2Layer);
 		assertPayload(dstPacket.getObject());
 	}
 
@@ -105,8 +106,9 @@ public class L2Test {
 
 		// Create source packet (created with data and received packet info)
 		byte[] data = registry.marshall(L2PacketType.KNOWLEDGE, PAYLOAD);
-		L2Packet srcPacket = new L2Packet(l2Layer, L2Packet.createL2PacketData(new PacketHeader(L2PacketType.KNOWLEDGE),
-				data), info);
+		L2Packet srcPacket = new L2Packet(L2Packet.createL2PacketData(new PacketHeader(L2PacketType.KNOWLEDGE), data),
+				info);
+		srcPacket.setLayer(l2Layer);
 		assertPayload(srcPacket.getObject());
 
 		// Process packet
