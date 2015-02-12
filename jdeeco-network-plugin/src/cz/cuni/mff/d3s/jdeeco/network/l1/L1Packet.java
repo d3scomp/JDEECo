@@ -1,6 +1,7 @@
 package cz.cuni.mff.d3s.jdeeco.network.l1;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 /**
  * L1 packet
@@ -10,25 +11,25 @@ import java.nio.ByteBuffer;
  */
 public class L1Packet {
 
-	public static int HEADER_SIZE = 20; // TotalSize + PayloadSize + SrcNode + StartPos + DataID
+	public static int HEADER_SIZE = 9; // TotalSize + PayloadSize + SrcNode + StartPos + DataID
 
 	public final byte[] payload;
 	/** payload carried by this packet */
-	public final int srcNode;
+	public final byte srcNode;
 	/** ID of the source that the data originates from */
 	public final int dataId;
-	/** data ID this packet (fragment) is part of */
+	/** data ID this packet (fragment) is part of - 2 bytes*/
 	public final int startPos;
-	/** this packet payload start position - in bytes */
+	/** this packet payload start position - in bytes - 2 bytes*/
 	public final int payloadSize;
-	/** this packet payload size - in bytes */
+	/** this packet payload size - in bytes - 2 bytes*/
 	public final int totalSize;
-	/** payload total size - in bytes */
+	/** payload total size - in bytes - 2 bytes*/
 	public ReceivedInfo receivedInfo;
 
 	/** receival additaional information */
 
-	public L1Packet(byte[] payload, int srcNode, int dataId, int startPos, int totalSize, ReceivedInfo receivedInfo) {
+	public L1Packet(byte[] payload, byte srcNode, int dataId, int startPos, int totalSize, ReceivedInfo receivedInfo) {
 		this.payload = payload;
 		this.srcNode = srcNode;
 		this.dataId = dataId;
@@ -38,7 +39,7 @@ public class L1Packet {
 		this.payloadSize = payload.length;
 	}
 
-	public L1Packet(byte[] payload, int srcNode, int dataId, int startPos, int totalSize) {
+	public L1Packet(byte[] payload, byte srcNode, int dataId, int startPos, int totalSize) {
 		this(payload, srcNode, dataId, startPos, totalSize, null);
 	}
 
@@ -52,11 +53,11 @@ public class L1Packet {
 	 */
 	public byte[] getBytes() {
 		ByteBuffer byteBuffer = ByteBuffer.allocate(HEADER_SIZE + payloadSize);
-		byteBuffer.putInt(totalSize);
-		byteBuffer.putInt(payloadSize);
-		byteBuffer.putInt(startPos);
-		byteBuffer.putInt(dataId);
-		byteBuffer.putInt(srcNode);
+		byteBuffer.put(encodeIntegerInto2Bytes(totalSize));
+		byteBuffer.put(encodeIntegerInto2Bytes(payloadSize));
+		byteBuffer.put(encodeIntegerInto2Bytes(startPos));
+		byteBuffer.put(encodeIntegerInto2Bytes(dataId));
+		byteBuffer.put(srcNode);
 		byteBuffer.put(payload);
 		return byteBuffer.array();
 	}
@@ -69,16 +70,12 @@ public class L1Packet {
 	 * @return L1 packet
 	 */
 	public static L1Packet fromBytes(byte[] bytes, int offset) {
-		ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);
-		byteBuffer.position(offset);
-		int totalSize = byteBuffer.getInt();
-		int payloadSize = byteBuffer.getInt();
-		int startPos = byteBuffer.getInt();
-		int dataId = byteBuffer.getInt();
-		int srcNode = byteBuffer.getInt();
-		byte[] payload = new byte[payloadSize];
-		byteBuffer.get(payload, byteBuffer.position(), payloadSize);
-		return new L1Packet(payload, srcNode, dataId, startPos, totalSize);
+		int totalSize = decodeIntegerFrom2Bytes(Arrays.copyOfRange(bytes, offset, offset+2));
+		int payloadSize = decodeIntegerFrom2Bytes(Arrays.copyOfRange(bytes, offset+2, offset+4));
+		int startPos = decodeIntegerFrom2Bytes(Arrays.copyOfRange(bytes, offset+4, offset+6));
+		int dataId = decodeIntegerFrom2Bytes(Arrays.copyOfRange(bytes, offset+6, offset+8));
+		byte srcNode = bytes[offset+8];
+		return new L1Packet(Arrays.copyOfRange(bytes, offset+9, offset + payloadSize + 9), srcNode, dataId, startPos, totalSize);
 	}
 
 	/**
@@ -88,5 +85,18 @@ public class L1Packet {
 	 */
 	public int getByteSize() {
 		return HEADER_SIZE + payloadSize;
+	}
+	
+	private static int decodeIntegerFrom2Bytes(byte [] value) {
+		int high = value[1] >= 0 ? value[1] : 256 + value[1];
+		int low = value[0] >= 0 ? value[0] : 256 + value[0];
+		return low | (high << 8);
+	}
+	
+	private static byte [] encodeIntegerInto2Bytes(int value) {
+		byte[] result = new byte[2];
+		result[0] = (byte)(value & 0xFF);
+		result[1] = (byte)((value >> 8) & 0xFF);
+		return result;
 	}
 }

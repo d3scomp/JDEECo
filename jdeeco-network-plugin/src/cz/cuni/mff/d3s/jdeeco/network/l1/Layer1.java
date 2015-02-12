@@ -30,7 +30,7 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 	protected final static int MINIMUM_DATA_TRANSMISSION_SIZE = MINIMUM_PAYLOAD + L1Packet.HEADER_SIZE;
 
 	private final Set<L1Strategy> strategies; 					// registered strategies
-	private final int nodeId; 									// node ID
+	private final byte nodeId; 									// node ID
 	private final DataIDSource dataIdSource; 					// data ID source
 	private final Set<Device> devices;							// registered devices
 	private final Map<Address, DeviceOutputQueue> outputQueues;
@@ -38,7 +38,7 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 																// ID and Node ID
 	private final L1DataProcessor l1DataProcessor; 				// reference to the upper layer
 
-	public Layer1(L1DataProcessor l1DataProcessor, int nodeId, DataIDSource dataIdSource) {
+	public Layer1(L1DataProcessor l1DataProcessor, byte nodeId, DataIDSource dataIdSource) {
 		this.outputQueues = new HashMap<Address, DeviceOutputQueue>();
 		this.strategies = new HashSet<L1Strategy>();
 		this.collectors = new HashMap<CollectorKey, Collector>();
@@ -114,7 +114,8 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 			 */
 			L2ReceivedInfo receivedInfo = l2Packet.receivedInfo;
 			int totalSize = l2Packet.getData().length;
-			int srcNode, dataId;
+			byte srcNode;
+			int dataId;
 			if (receivedInfo == null) {
 				srcNode = nodeId;
 				dataId = dataIdSource.createDataID();

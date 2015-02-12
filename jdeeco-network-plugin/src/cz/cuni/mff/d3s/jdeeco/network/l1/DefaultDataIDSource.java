@@ -11,7 +11,7 @@ public class DefaultDataIDSource implements DataIDSource {
 	private static DefaultDataIDSource instance;
 	private static int COUNTER = 0;
 
-	public synchronized DefaultDataIDSource getInstance() {
+	public static synchronized DefaultDataIDSource getInstance() {
 		if (instance == null) {
 			instance = new DefaultDataIDSource();
 		}
