@@ -2,6 +2,7 @@ package cz.cuni.mff.d3s.deeco.annotations.processor;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -453,9 +454,101 @@ public class RolesAnnotationCheckerTest {
 	/*
 	 * Checks for the checkRolesImplementation(List<Parameter>, CoordinatorRole[], MemberRole[]) method
 	 */
+	
+	@Test
+	public void checkRI2NoRolesTest() throws AnnotationProcessorException {
+		RolesAnnotationChecker checker = spy(new RolesAnnotationChecker());
+		when(checker.isFieldInRole(any(), any(), any())).thenReturn(true);
 		
-	//@Test
-	public void checkRI2NoRolesTest() throws AnnotationProcessorException, ParseException {
+		checker.checkRolesImplementation(new ArrayList<Parameter>(), new CoordinatorRole[0], new MemberRole[0]);
+		
+		verify(checker, times(1)).checkRolesImplementation(any(), any(), any());
+		verifyNoMoreInteractions(checker);
+	}
+	
+	@Test
+	public void checkRI2NullParametersTest() throws AnnotationProcessorException {
+		exception.expect(AnnotationProcessorException.class);
+		exception.expectMessage("The input parameters cannot be null.");
+		new RolesAnnotationChecker().checkRolesImplementation(null, new CoordinatorRole[0], new MemberRole[0]);
+	}	
+	
+	@Test
+	public void checkRI2NullCoordinatorRolesTest() throws AnnotationProcessorException {
+		exception.expect(AnnotationProcessorException.class);
+		exception.expectMessage("The coordinatorRoles parameter cannot be null.");
+		new RolesAnnotationChecker().checkRolesImplementation(new ArrayList<Parameter>(), null, new MemberRole[0]);
+	}
+	
+	@Test
+	public void checkRI2NullMemberRolesTest() throws AnnotationProcessorException {
+		exception.expect(AnnotationProcessorException.class);
+		exception.expectMessage("The memberRoles parameter cannot be null.");
+		new RolesAnnotationChecker().checkRolesImplementation(new ArrayList<Parameter>(), new CoordinatorRole[0], null);
+	}
+	
+	private List<Parameter> getTestParameters() throws ParseException, AnnotationProcessorException {	
+		Parameter param1 = RuntimeMetadataFactory.eINSTANCE.createParameter();
+		param1.setKind(ParameterKind.IN);
+		param1.setKnowledgePath(KnowledgePathHelper.createKnowledgePath("coord.x", PathOrigin.ENSEMBLE));
+		param1.setType(Integer.class);
+		Parameter param2 = RuntimeMetadataFactory.eINSTANCE.createParameter();
+		param2.setKind(ParameterKind.OUT);
+		param2.setKnowledgePath(KnowledgePathHelper.createKnowledgePath("coord.a.b", PathOrigin.ENSEMBLE));
+		param2.setType(Long.class);
+		Parameter param3 = RuntimeMetadataFactory.eINSTANCE.createParameter();
+		param3.setKind(ParameterKind.INOUT);
+		param3.setKnowledgePath(KnowledgePathHelper.createKnowledgePath("coord.z.[member.y.[coord.id]]", PathOrigin.ENSEMBLE));
+		param3.setType(String.class);
+		return Arrays.asList(param1, param2, param3);
+	}
+	
+	@Test
+	public void checkRI2ParametersButNoRolesTest() throws AnnotationProcessorException, ParseException {
+		RolesAnnotationChecker checker = spy(new RolesAnnotationChecker());
+		when(checker.isFieldInRole(any(), any(), any())).thenReturn(false);
+		
+		checker.checkRolesImplementation(getTestParameters(), new CoordinatorRole[0], new MemberRole[0]);
+		
+		verify(checker, times(1)).checkRolesImplementation(any(), any(), any());
+		verifyNoMoreInteractions(checker);
+	}
+	
+	@Test
+	public void checkRI2RolesButNoParametersTest() throws AnnotationProcessorException, ParseException {
+		
+		@Role
+		class RoleClass1 {
+			public Integer x;
+			public Integer y;
+		}
+		
+		class RoleAnnotationImpl implements CoordinatorRole, MemberRole {
+			@Override
+			public Class<?> value() {
+				return RoleClass1.class;
+			}
+
+			@Override
+			public Class<? extends Annotation> annotationType() {
+				return RoleAnnotationImpl.class;
+			}
+		}
+		
+		CoordinatorRole[] coordinatorRoles = new CoordinatorRole[] {new RoleAnnotationImpl()};
+		MemberRole[] memberRoles = new MemberRole[] {new RoleAnnotationImpl()};
+		
+		RolesAnnotationChecker checker = spy(new RolesAnnotationChecker());
+		when(checker.isFieldInRole(any(), any(), any())).thenReturn(false);
+		
+		checker.checkRolesImplementation(new ArrayList<Parameter>(), coordinatorRoles, memberRoles);
+		
+		verify(checker, times(1)).checkRolesImplementation(any(), any(), any());
+		verifyNoMoreInteractions(checker);
+	}
+	
+	@Test
+	public void checkRI2ExampleTest() throws AnnotationProcessorException, ParseException {
 		
 		@Role
 		class RoleClass1 {
@@ -495,38 +588,23 @@ public class RolesAnnotationCheckerTest {
 		CoordinatorRole[] coordinatorRoles = new CoordinatorRole[] {new RoleAnnotationImpl(RoleClass1.class), new RoleAnnotationImpl(RoleClass2.class)};
 		MemberRole[] memberRoles = new MemberRole[] {new RoleAnnotationImpl(RoleClass2.class), new RoleAnnotationImpl(RoleClass3.class)};;
 		
-		Parameter param1 = RuntimeMetadataFactory.eINSTANCE.createParameter();
-		param1.setKind(ParameterKind.IN);
-		param1.setKnowledgePath(KnowledgePathHelper.createKnowledgePath("coord.x", PathOrigin.ENSEMBLE));
-		param1.setType(Integer.class);
-		Parameter param2 = RuntimeMetadataFactory.eINSTANCE.createParameter();
-		param2.setKind(ParameterKind.OUT);
-		param2.setKnowledgePath(KnowledgePathHelper.createKnowledgePath("coord.a.b", PathOrigin.ENSEMBLE));
-		param2.setType(Long.class);
-		Parameter param3 = RuntimeMetadataFactory.eINSTANCE.createParameter();
-		param3.setKind(ParameterKind.INOUT);
-		param3.setKnowledgePath(KnowledgePathHelper.createKnowledgePath("coord.z.[member.y.[coord.id]]", PathOrigin.ENSEMBLE));
-		param3.setType(String.class);
-		List<Parameter> parameters = Arrays.asList(param1, param2, param3);
-		
-		RolesAnnotationChecker checker = mock(RolesAnnotationChecker.class);
+		RolesAnnotationChecker checker = spy(new RolesAnnotationChecker());
 		when(checker.isFieldInRole(any(), any(), any())).thenReturn(true);
 		
-		// TODO NO ORDER
-		InOrder order = inOrder(checker);
-		checker.checkRolesImplementation(parameters, coordinatorRoles, memberRoles);
+		checker.checkRolesImplementation(getTestParameters(), coordinatorRoles, memberRoles);
+		assertTrue(verify(checker, times(1)).isFieldInRole(Integer.class, Arrays.asList("x"), RoleClass1.class));
+		assertTrue(verify(checker, times(1)).isFieldInRole(Integer.class, Arrays.asList("x"), RoleClass2.class));
+		assertTrue(verify(checker, times(1)).isFieldInRole(Long.class, Arrays.asList("a", "b"), RoleClass1.class));
+		assertTrue(verify(checker, times(1)).isFieldInRole(Long.class, Arrays.asList("a", "b"), RoleClass2.class));
+		assertTrue(verify(checker, times(1)).isFieldInRole(Integer.class, Arrays.asList("id"), RoleClass1.class));
+		assertTrue(verify(checker, times(1)).isFieldInRole(Integer.class, Arrays.asList("id"), RoleClass2.class)); // TODO this needs subtyping approval
+		assertTrue(verify(checker, times(1)).isFieldInRole(Integer.class, Arrays.asList("y"), RoleClass2.class));
+		assertTrue(verify(checker, times(1)).isFieldInRole(Integer.class, Arrays.asList("y"), RoleClass3.class));
+		assertTrue(verify(checker, times(1)).isFieldInRole(String.class, Arrays.asList("z"), RoleClass1.class));
+		assertTrue(verify(checker, times(1)).isFieldInRole(String.class, Arrays.asList("z"), RoleClass2.class));
 		
-		order.verify(checker).isFieldInRole(Integer.class, Arrays.asList("x"), RoleClass1.class);
-		order.verify(checker).isFieldInRole(Integer.class, Arrays.asList("x"), RoleClass2.class);
-		order.verify(checker).isFieldInRole(Long.class, Arrays.asList("a", "b"), RoleClass1.class);
-		order.verify(checker).isFieldInRole(Long.class, Arrays.asList("a", "b"), RoleClass2.class);
-		order.verify(checker).isFieldInRole(Integer.class, Arrays.asList("id"), RoleClass1.class);
-		order.verify(checker).isFieldInRole(Integer.class, Arrays.asList("id"), RoleClass2.class); // TODO this needs subtyping approval
-		order.verify(checker).isFieldInRole(Integer.class, Arrays.asList("y"), RoleClass2.class);
-		order.verify(checker).isFieldInRole(Integer.class, Arrays.asList("y"), RoleClass3.class);
-		order.verify(checker).isFieldInRole(String.class, Arrays.asList("z"), RoleClass1.class);
-		order.verify(checker).isFieldInRole(String.class, Arrays.asList("z"), RoleClass2.class);
-		
+		verify(checker, times(1)).checkRolesImplementation(any(), any(), any());
+		verifyNoMoreInteractions(checker);
 	}
 	
 }

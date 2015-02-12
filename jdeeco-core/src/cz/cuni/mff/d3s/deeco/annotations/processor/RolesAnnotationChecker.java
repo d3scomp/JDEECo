@@ -64,17 +64,18 @@ public class RolesAnnotationChecker {
 	
 	public void checkRolesImplementation(List<Parameter> parameters, CoordinatorRole[] coordinatorRoleAnnotations, 
 			MemberRole[] memberRoleAnnotations) throws AnnotationProcessorException {
-		/*
+
 		for (Parameter parameter : parameters) {
-			
+		
 			KnowledgePath knowledgePath = parameter.getKnowledgePath();
-			knowledgePath.getNodes().get(0) PathNodeCoordinator, PathNodeMember, PathNodeField
+			
 		}
-		*/
+		
 	}
 	
 	boolean isFieldInRole(Class<?> fieldType, List<String> fieldNameSequence, Class<?> roleClass) {
-		
+
+		// TODO implement
 		return true;
 		
 	}
