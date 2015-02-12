@@ -2,6 +2,7 @@ package cz.cuni.mff.d3s.deeco.scheduler;
 
 import cz.cuni.mff.d3s.deeco.executor.ExecutionListener;
 import cz.cuni.mff.d3s.deeco.executor.Executor;
+import cz.cuni.mff.d3s.deeco.runtime.InvalidOperationException;
 import cz.cuni.mff.d3s.deeco.task.Task;
 
 /**
@@ -28,7 +29,7 @@ import cz.cuni.mff.d3s.deeco.task.Task;
  *
  */
 
-public interface Scheduler extends ExecutionListener, CurrentTimeProvider {
+public interface Scheduler extends ExecutionListener {
 	/**
 	 * Starts the scheduler thus triggering a sequence of operations on serving tasks in queue(if any). 
 	 * <p>
@@ -87,15 +88,9 @@ public interface Scheduler extends ExecutionListener, CurrentTimeProvider {
 	 * 
 	 */
 	public void setExecutor(Executor executor);
-	
-	/**
-	 * Invokes the runnable and waits for it to finish.
-	 * <p>
-	 * <b>Note:</b> This method is strongly implementation-based so it is advised to check with the documentation
-	 * specific for each Scheduler implementation. 
-	 * 
-	 * @param 	doRun	the runnable to invoke.
-	 * @throws 	InterruptedException if the invocation was interrupted.
-	 */
-	void invokeAndWait(Runnable doRun) throws InterruptedException;	
+
+	public SchedulerNotifier getSchedulerNotifier();
+
+	public boolean isRunning();
+
 }

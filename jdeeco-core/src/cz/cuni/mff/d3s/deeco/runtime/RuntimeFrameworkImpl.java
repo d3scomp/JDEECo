@@ -699,15 +699,6 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 		scheduler.stop();
 	}
 	
-	
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework#invokeAndWait(java.lang.Runnable)
-	 */
-	@Override
-	public void invokeAndWait(Runnable r) throws InterruptedException {
-		scheduler.invokeAndWait(r);		
-	}
-
 	public void ensembleFormed(final EnsembleDefinition e, final ComponentInstance c, final String coordID, final String memberID) {
 		Log.w("Ensemble "+e+" formed at the side of " + c + " with coord: "+coordID+" and member: "+memberID);
 

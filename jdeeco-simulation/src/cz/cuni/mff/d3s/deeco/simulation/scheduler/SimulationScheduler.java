@@ -14,8 +14,10 @@ import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.network.AbstractHost;
+import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.scheduler.SchedulerEvent;
+import cz.cuni.mff.d3s.deeco.scheduler.SchedulerNotifier;
 import cz.cuni.mff.d3s.deeco.simulation.CallbackProvider;
 import cz.cuni.mff.d3s.deeco.simulation.SimulationTimeEventListener;
 import cz.cuni.mff.d3s.deeco.task.Task;
@@ -28,6 +30,7 @@ import cz.cuni.mff.d3s.deeco.task.TaskTriggerListener;
  * 
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
  * 
+ * TODO Remove this class, it is no more needed since we have a new scheduler in core.
  */
 public class SimulationScheduler implements Scheduler,
 		SimulationTimeEventListener {
@@ -148,10 +151,6 @@ public class SimulationScheduler implements Scheduler,
 			this.executor.setExecutionListener(this);
 	}
 
-	@Override
-	public void invokeAndWait(Runnable doRun) throws InterruptedException {
-		Log.e("Simulation scheduler is being used! Invoking an external task is not allowed.");
-	}
 
 	@Override
 	public void at(long time) {
@@ -183,16 +182,6 @@ public class SimulationScheduler implements Scheduler,
 				Log.e("The simulation scheduler is associated with no excecutor!");
 			}
 		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider#getCurrentTime()
-	 */
-	@Override
-	public long getCurrentMilliseconds() {
-		return host.getCurrentMilliseconds();
 	}
 
 	// ------Private methods--------
@@ -243,5 +232,17 @@ public class SimulationScheduler implements Scheduler,
 	
 	public String toString() {
 		return "SimulationScheduler of " + host.getHostId();
+	}
+
+	@Override
+	public SchedulerNotifier getSchedulerNotifier() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isRunning() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

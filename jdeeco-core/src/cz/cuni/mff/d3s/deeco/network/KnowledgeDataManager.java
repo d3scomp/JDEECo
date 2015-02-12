@@ -76,7 +76,7 @@ KnowledgeDataPublisher {
 			RatingsManager ratingsManager) {
 		this.host = host;		
 		this.scheduler = scheduler;
-		this.timeProvider = scheduler;
+		this.timeProvider = scheduler.getSchedulerNotifier();
 		this.kmContainer = kmContainer;
 		this.dataSender = dataSender;
 		this.keyManager = keyManager;

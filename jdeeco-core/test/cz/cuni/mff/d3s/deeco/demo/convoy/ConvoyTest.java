@@ -10,13 +10,8 @@ import org.junit.contrib.java.lang.system.StandardOutputStreamLog;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
 import cz.cuni.mff.d3s.deeco.runtime.DEECo;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
-import cz.cuni.mff.d3s.deeco.runtime.DuplicateEnsembleDefinitionException;
-import cz.cuni.mff.d3s.deeco.runtime.PluginDependencyException;
-
 /**
- * 
  * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
- *
  */
 public class ConvoyTest {
 	
@@ -36,10 +31,9 @@ public class ConvoyTest {
 		deeco.deployComponent(new Leader());
 		deeco.deployComponent(new Follower());
 		deeco.deployEnsemble(ConvoyEnsemble.class);
-		
+		 
+		deeco.setTerminationTime(2000);
 		deeco.start();
-		Thread.sleep(2000);
-		deeco.stop();
 		
 		// THEN the follower reaches his destination
 		assertThat(log.getLog(), containsString("Follower F: me = (1,3)"));

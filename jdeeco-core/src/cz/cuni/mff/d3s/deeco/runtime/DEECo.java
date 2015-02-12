@@ -19,6 +19,8 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
+import cz.cuni.mff.d3s.deeco.scheduler.DiscreteEventSimulation;
+import cz.cuni.mff.d3s.deeco.scheduler.NoExecutorAvailableException;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.scheduler.SingleThreadedScheduler;
 
@@ -55,13 +57,7 @@ public class DEECo implements DEECoContainer {
 	 */
 	Map<Class<? extends DEECoPlugin>, DEECoPlugin> pluginsMap;
 	
-	/**
-	 * True if this DEECo application is running.
-	 */
-	protected boolean running = false;
-	
-	
-	public DEECo(DEECoPlugin... plugins) throws PluginDependencyException {			
+	public DEECo(DEECoPlugin... plugins) throws DEECoException {			
 		pluginsMap= new HashMap<>();
 		model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
 		knowledgeManagerFactory = new CloningKnowledgeManagerFactory();
@@ -82,19 +78,18 @@ public class DEECo implements DEECoContainer {
 	}
 	
 	public void start() throws InvalidOperationException {
-		if(running)
+		if(isRunning()) {
 			throw new InvalidOperationException("start");
-		
+		}
 		runtime.start();
-		running = true;
 	}
 
 	public void stop() throws InvalidOperationException {
-		if(!running)
-			throw new InvalidOperationException("stop");		
+		if(!isRunning()) {
+			throw new InvalidOperationException("stop");
+		}
 		
 		runtime.stop();
-		running = false;
 	}
 	
 	@Override
@@ -122,7 +117,7 @@ public class DEECo implements DEECoContainer {
 	@Override
 	public boolean isRunning()
 	{
-		return running;
+		return runtime.getScheduler().isRunning();
 	}
 	
 	class DependencyNode {
@@ -201,13 +196,18 @@ public class DEECo implements DEECoContainer {
 		}	
 	}
 	
-	private void createRuntime() {
-		Scheduler scheduler = new SingleThreadedScheduler();
+	private void createRuntime() throws NoExecutorAvailableException {
 		Executor executor = new SameThreadExecutor();
+		DiscreteEventSimulation discreteEventSimulation = new DiscreteEventSimulation();  
+		Scheduler scheduler = new SingleThreadedScheduler(executor, discreteEventSimulation);
 		KnowledgeManagerContainer kmContainer = new KnowledgeManagerContainer(knowledgeManagerFactory, model);
 		scheduler.setExecutor(executor);
 		executor.setExecutionListener(scheduler);
 		runtime = new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer);		
+	}
+
+	public void setTerminationTime(long terminationTime) {
+		runtime.getScheduler().getSchedulerNotifier().setTerminationTime(terminationTime);
 	}
 
 }

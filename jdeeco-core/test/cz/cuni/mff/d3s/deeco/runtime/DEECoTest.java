@@ -41,10 +41,10 @@ public class DEECoTest {
 	
 	/**
 	 * Tests if the object fields have been initialized correctly. 
-	 * @throws PluginDependencyException
+	 * @throws DEECoException 
 	 */
 	@Test
-	public void testFieldInitialization() throws PluginDependencyException
+	public void testFieldInitialization() throws DEECoException
 	{
 		DEECo deeco = new DEECo();
 		assertNotNull(deeco.knowledgeManagerFactory);
@@ -66,10 +66,10 @@ public class DEECoTest {
 	
 	/**
 	 * Tests if the DEECo can initialize two plugins in the correct order, with one of them being dependent on the other. 
-	 * @throws PluginDependencyException
+	 * @throws DEECoException 
 	 */
 	@Test
-	public void testDependencyOrderSimple() throws PluginDependencyException
+	public void testDependencyOrderSimple() throws DEECoException
 	{
 		DEECoPlugin plugin1 = mock(P0.class);
 		DEECoPlugin plugin2 = mock(P1.class);		
@@ -86,10 +86,10 @@ public class DEECoTest {
 	
 	/**
 	 * Tests if the DEECo can initialize several plugins in the correct order, with their dependency graph being a basic DAG
-	 * @throws PluginDependencyException
+	 * @throws DEECoException 
 	 */
 	@Test
-	public void testDependencyOrderDAG() throws PluginDependencyException
+	public void testDependencyOrderDAG() throws DEECoException
 	{
 		DEECoPlugin pluginBase = mock(P0.class);
 		DEECoPlugin plugin1 = mock(P1.class);
@@ -116,10 +116,10 @@ public class DEECoTest {
 	
 	/**
 	 * Tests if the DEECo can initialize three plugins in the correct order, with one of them being dependent on the other two base plugins.
-	 * @throws PluginDependencyException
+	 * @throws DEECoException 
 	 */
 	@Test
-	public void testDependencyMultiBase() throws PluginDependencyException
+	public void testDependencyMultiBase() throws DEECoException
 	{
 		DEECoPlugin pluginBase1 = mock(P0.class);
 		DEECoPlugin pluginBase2 = mock(P1.class);
@@ -140,10 +140,10 @@ public class DEECoTest {
 	
 	/**
 	 * Tests if the DEECo can initialize three plugins in the correct order, with one of them being a common base dependency of the other two.
-	 * @throws PluginDependencyException
+	 * @throws DEECoException 
 	 */
 	@Test
-	public void testDependencyOrderMultiExtension() throws PluginDependencyException
+	public void testDependencyOrderMultiExtension() throws DEECoException
 	{
 		DEECoPlugin pluginBase = mock(P0.class);
 		DEECoPlugin plugin1 = mock(P1.class);
@@ -164,10 +164,10 @@ public class DEECoTest {
 	
 	/**
 	 * Tests if the DEECo can initialize a fairly complex 10-plugin scenario in the correct order.
-	 * @throws PluginDependencyException
+	 * @throws DEECoException 
 	 */
 	@Test
-	public void testDependencyOrderComplex() throws PluginDependencyException
+	public void testDependencyOrderComplex() throws DEECoException
 	{
 		
 		// Create all the plugins
@@ -246,10 +246,10 @@ public class DEECoTest {
 	
 	/**
 	 * Tests if the DEECo can detect a missing plugin dependency and react by throwing a correct exception.
-	 * @throws PluginDependencyException
+	 * @throws DEECoException 
 	 */
 	@Test(expected = cz.cuni.mff.d3s.deeco.runtime.MissingDependencyException.class)
-	public void testNonExistentDependency() throws PluginDependencyException
+	public void testNonExistentDependency() throws DEECoException
 	{
 		// Correct exception is thrown on detecting non-existent dependency		
 		
@@ -263,10 +263,10 @@ public class DEECoTest {
 	
 	/**
 	 * Tests if the DEECo can detect a three-plugin dependency cycle and react by throwing a correct exception.
-	 * @throws PluginDependencyException
+	 * @throws DEECoException 
 	 */
 	@Test(expected = cz.cuni.mff.d3s.deeco.runtime.CycleDetectedException.class)
-	public void testCycle() throws PluginDependencyException
+	public void testCycle() throws DEECoException
 	{
 		// Tests for a basic (3 plugins) dependency cycle
 		DEECoPlugin plugin1 = mock(P0.class);
@@ -283,10 +283,10 @@ public class DEECoTest {
 	/**
 	 * Tests if the DEECo can detect a more elaborate plugin dependency cycle, decorated with a base dependency and an additional independent branch. 
 	 * Should react by throwing a correct exception. 
-	 * @throws PluginDependencyException
+	 * @throws DEECoException 
 	 */
 	@Test(expected = cz.cuni.mff.d3s.deeco.runtime.CycleDetectedException.class)
-	public void testCycle2() throws PluginDependencyException
+	public void testCycle2() throws DEECoException
 	{
 		// Test for a more elaborate plugin dependency cycle, decorated with a base dependency and an additional independent branch.
 		DEECoPlugin pluginBase = mock(P0.class);
@@ -311,16 +311,16 @@ public class DEECoTest {
 	
 	/**
 	 * Tests if a DEECo instance can be created without any plugins.
-	 * @throws PluginDependencyException
+	 * @throws DEECoException 
 	 */
 	@Test
-	public void testNoPlugins() throws PluginDependencyException
+	public void testNoPlugins() throws DEECoException
 	{
 		new DEECo();		
 	}	
 	
 	/**
-	 * Tests if the DEECo supports a basic legacy workflow (first adding components, then ensembles, then starting).
+	 * Tests if the DEECo supports a basic workflow (first adding components, then ensembles, then starting).
 	 * @throws DEECoException
 	 * @throws AnnotationProcessorException
 	 */
@@ -333,13 +333,13 @@ public class DEECoTest {
 		deeco.deployComponent(new CorrectC2());
 		deeco.deployEnsemble(CorrectE1.class);
 		
+		deeco.setTerminationTime(0);
 		deeco.start();
-		deeco.stop();
 		// TODO: Is there an easy way to check whether all necessary tasks and definitions have been added? 
 	}
 	
 	/**
-	 * Tests if the DEECo supports a basic legacy workflow (first adding ensembles, then components, then starting).
+	 * Tests if the DEECo supports a basic workflow (first adding ensembles, then components, then starting).
 	 * @throws DEECoException
 	 * @throws AnnotationProcessorException
 	 */
@@ -352,53 +352,37 @@ public class DEECoTest {
 		deeco.deployComponent(new CorrectC1());		
 		deeco.deployComponent(new CorrectC2());		
 		
+		deeco.setTerminationTime(0);
 		deeco.start();
-		deeco.stop();
 		// TODO: Is there an easy way to check whether all necessary tasks and definitions have been added?
 	}
 	
 	/**
-	 * Tests if the DEECo supports the dynamic deployment workflow (first starting, then deploying components and ensembles).
-	 * @throws DEECoException
-	 * @throws AnnotationProcessorException
+	 * Tests if the DEECo can restart when its run duration is reached.
+	 * @throws DEECoException 
 	 */
 	@Test
-	public void testDynamicDeploymentWorkflow() throws DEECoException, AnnotationProcessorException
-	{
-		DEECo deeco = new DEECo();		
-		deeco.start();
-		
-		deeco.deployComponent(new CorrectC1());
-		deeco.deployComponent(new CorrectC2());
-		deeco.deployEnsemble(CorrectE1.class);
-		
-		deeco.stop();
-		// TODO: Is there an easy way to check whether all necessary tasks and definitions have been added?
-	}
-	
-	
-	/**
-	 * Tests if the DEECo can detect duplicate start calls and react by throwing a correct exception.
-	 * @throws DEECoException
-	 */
-	@Test(expected = cz.cuni.mff.d3s.deeco.runtime.InvalidOperationException.class)
 	public void testStartOnRunning() throws DEECoException
 	{
 		DEECo deeco = new DEECo();
+		deeco.setTerminationTime(0);
 		deeco.start();
+		deeco.setTerminationTime(500);
 		deeco.start();		
 	}		
 	
 	/**
 	 * Tests if the DEECo can detect duplicate stop calls and react by throwing a correct exception.
 	 * @throws DEECoException
+	 * @throws InterruptedException 
 	 */
 	@Test(expected = cz.cuni.mff.d3s.deeco.runtime.InvalidOperationException.class)
-	public void testStopOnStopped() throws DEECoException
+	public void testStopOnStopped() throws DEECoException, InterruptedException
 	{
 		DEECo deeco = new DEECo();
+		deeco.setTerminationTime(2000);
 		deeco.start();
-		deeco.stop();
+		Thread.sleep(3000);
 		deeco.stop();
 	}
 	
@@ -415,10 +399,10 @@ public class DEECoTest {
 	
 	/**
 	 * Tests if the plugins injected into the DEECo are visible to the other plugins.
-	 * @throws PluginDependencyException
+	 * @throws DEECoException 
 	 */
 	@Test
-	public void testPluginAccess() throws PluginDependencyException
+	public void testPluginAccess() throws DEECoException
 	{		
 		List<DEECoPlugin> plugins = new ArrayList<>();
 		plugins.add(mock(P0.class));
