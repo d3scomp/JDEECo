@@ -1,18 +1,47 @@
 package cz.cuni.mff.d3s.deeco.annotations.processor;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
+import org.eclipse.emf.common.notify.Adapter;
+import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.TreeIterator;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EOperation;
+import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.InOrder;
 
 import cz.cuni.mff.d3s.deeco.annotations.Component;
+import cz.cuni.mff.d3s.deeco.annotations.CoordinatorRole;
 import cz.cuni.mff.d3s.deeco.annotations.Local;
+import cz.cuni.mff.d3s.deeco.annotations.MemberRole;
 import cz.cuni.mff.d3s.deeco.annotations.PlaysRole;
 import cz.cuni.mff.d3s.deeco.annotations.Role;
+import cz.cuni.mff.d3s.deeco.annotations.pathparser.ParseException;
+import cz.cuni.mff.d3s.deeco.annotations.pathparser.PathOrigin;
 import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC1;
 import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.WrongCE1;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
+import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
+import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper;
 
 public class RolesAnnotationCheckerTest {
 	
@@ -20,24 +49,24 @@ public class RolesAnnotationCheckerTest {
 	public ExpectedException exception = ExpectedException.none();
 	
 	/*
-	 * Checks for the checkRolesImplementation method
+	 * Checks for the checkRolesImplementation(Object) method
 	 */
 	
 	@Test
-	public void checkWhenNoRolesTest() throws AnnotationProcessorException {
+	public void checkRI1WhenNoRolesTest() throws AnnotationProcessorException {
 		CorrectC1 component = new CorrectC1();
 		new RolesAnnotationChecker().checkRolesImplementation(component);
 	}
 	
 	@Test
-	public void checkNullInputTest() throws AnnotationProcessorException {
+	public void checkRI1NullInputTest() throws AnnotationProcessorException {
 		exception.expect(AnnotationProcessorException.class);
 		exception.expectMessage("The input instance cannot be null.");
 		new RolesAnnotationChecker().checkRolesImplementation(null);
 	}
 	
 	@Test
-	public void checkNonComponentTest() throws AnnotationProcessorException {
+	public void checkRI1NonComponentTest() throws AnnotationProcessorException {
 		WrongCE1 nonComponent = new WrongCE1();
 		exception.expect(AnnotationProcessorException.class);
 		exception.expectMessage("The input instance is not a component (the class is not annotated by the @" + Component.class.getSimpleName() + " annotation).");
@@ -45,7 +74,7 @@ public class RolesAnnotationCheckerTest {
 	}
 	
 	@Test
-	public void checkComponentWithPlaysRoleTest() throws AnnotationProcessorException {
+	public void checkRI1ComponentWithPlaysRoleTest() throws AnnotationProcessorException {
 		@Role
 		class RoleClass {
 			public int x;
@@ -64,7 +93,7 @@ public class RolesAnnotationCheckerTest {
 	}
 	
 	@Test
-	public void checkCorrectComponentWithRoleTest() throws AnnotationProcessorException {
+	public void checkRI1CorrectComponentWithRoleTest() throws AnnotationProcessorException {
 		@Role
 		class RoleClass {
 			public int x;
@@ -82,7 +111,7 @@ public class RolesAnnotationCheckerTest {
 	}
 	
 	@Test
-	public void checkMissingRoleAnnotationTest() throws AnnotationProcessorException {
+	public void checkRI1MissingRoleAnnotationTest() throws AnnotationProcessorException {
 		class RoleClass {
 			public int x;
 		}
@@ -101,7 +130,7 @@ public class RolesAnnotationCheckerTest {
 	}
 
 	@Test
-	public void checkMissingFieldTest() throws AnnotationProcessorException {
+	public void checkRI1MissingFieldTest() throws AnnotationProcessorException {
 		@Role
 		class RoleClass {
 			public int x;
@@ -120,7 +149,7 @@ public class RolesAnnotationCheckerTest {
 	}
 	
 	@Test
-	public void checkBadlyTypedFieldTest() throws AnnotationProcessorException {
+	public void checkRI1BadlyTypedFieldTest() throws AnnotationProcessorException {
 		@Role
 		class RoleClass {
 			public int x;
@@ -140,7 +169,7 @@ public class RolesAnnotationCheckerTest {
 	}
 
 	@Test
-	public void checkCorrectComplexComponentTest() throws AnnotationProcessorException {
+	public void checkRI1CorrectComplexComponentTest() throws AnnotationProcessorException {
 		@Role
 		class RoleClass {
 			public int x;
@@ -163,7 +192,7 @@ public class RolesAnnotationCheckerTest {
 	}
 
 	@Test
-	public void checkSubtypeFieldTest() throws AnnotationProcessorException {
+	public void checkRI1SubtypeFieldTest() throws AnnotationProcessorException {
 		@Role
 		class RoleClass {
 			public int x;
@@ -188,7 +217,7 @@ public class RolesAnnotationCheckerTest {
 	}
 
 	@Test
-	public void checkBadlyTypedGenericArgumentTest() throws AnnotationProcessorException {
+	public void checkRI1BadlyTypedGenericArgumentTest() throws AnnotationProcessorException {
 		@Role
 		class RoleClass {
 			public int x;
@@ -213,7 +242,7 @@ public class RolesAnnotationCheckerTest {
 	}
 
 	@Test
-	public void checkBadlyTypedGenericArgumentsArgumentTest() throws AnnotationProcessorException {
+	public void checkRI1BadlyTypedGenericArgumentsArgumentTest() throws AnnotationProcessorException {
 		@Role
 		class RoleClass {
 			public int x;
@@ -238,7 +267,7 @@ public class RolesAnnotationCheckerTest {
 	}
 	
 	@Test
-	public void checkMultipleRolesCorrectTest() throws AnnotationProcessorException {
+	public void checkRI1MultipleRolesCorrectTest() throws AnnotationProcessorException {
 		@Role
 		class RoleClass1 {
 			public int x;
@@ -273,7 +302,7 @@ public class RolesAnnotationCheckerTest {
 	}	
 	
 	@Test
-	public void checkMultipleRolesMissingAnnotationTest() throws AnnotationProcessorException {
+	public void checkRI1MultipleRolesMissingAnnotationTest() throws AnnotationProcessorException {
 		@Role
 		class RoleClass1 {
 			public int x;
@@ -309,7 +338,7 @@ public class RolesAnnotationCheckerTest {
 	}
 	
 	@Test
-	public void checkMultipleRolesImpossibleTest() throws AnnotationProcessorException {
+	public void checkRI1MultipleRolesImpossibleTest() throws AnnotationProcessorException {
 		@Role
 		class RoleClass1 {
 			public int x;
@@ -338,7 +367,7 @@ public class RolesAnnotationCheckerTest {
 	}	
 		
 	@Test
-	public void checkIgnoreFieldsInRoleTest() throws AnnotationProcessorException {
+	public void checkRI1IgnoreFieldsInRoleTest() throws AnnotationProcessorException {
 		@Role
 		class RoleClass {
 			public int x;
@@ -359,7 +388,7 @@ public class RolesAnnotationCheckerTest {
 	}
 	
 	@Test
-	public void checkIgnoreNonpublicFieldsInComponentsTest() throws AnnotationProcessorException {
+	public void checkRI1IgnoreNonpublicFieldsInComponentsTest() throws AnnotationProcessorException {
 		@Role
 		class RoleClass {
 			public int x;
@@ -379,7 +408,7 @@ public class RolesAnnotationCheckerTest {
 	}	
 	
 	@Test
-	public void checkIgnoreStaticFieldsInComponentsTest() throws AnnotationProcessorException {
+	public void checkRI1IgnoreStaticFieldsInComponentsTest() throws AnnotationProcessorException {
 		@Role
 		class RoleClass {
 			public int x;
@@ -399,7 +428,7 @@ public class RolesAnnotationCheckerTest {
 	}
 	
 	@Test
-	public void checkIgnoreLocalFieldsInComponentsTest() throws AnnotationProcessorException {
+	public void checkRI1IgnoreLocalFieldsInComponentsTest() throws AnnotationProcessorException {
 		@Role
 		class RoleClass {
 			public int x;
@@ -418,4 +447,86 @@ public class RolesAnnotationCheckerTest {
 		exception.expectMessage("The field RoleClass.x is not implemented (or has a different type than int).");
 		new RolesAnnotationChecker().checkRolesImplementation(component);
 	}
+	
+	
+	
+	/*
+	 * Checks for the checkRolesImplementation(List<Parameter>, CoordinatorRole[], MemberRole[]) method
+	 */
+		
+	//@Test
+	public void checkRI2NoRolesTest() throws AnnotationProcessorException, ParseException {
+		
+		@Role
+		class RoleClass1 {
+			public Integer x;
+			public Integer y;
+		}
+		
+		@Role
+		class RoleClass2 {
+			public Integer y;
+			public HashMap<Integer, String> z;
+		}
+		
+		@Role
+		class RoleClass3 {
+			public String str;
+		}
+		
+		class RoleAnnotationImpl implements CoordinatorRole, MemberRole {
+			private Class<?> roleClass;
+			
+			public RoleAnnotationImpl(Class<?> roleClass) {
+				this.roleClass = roleClass;
+			}
+			
+			@Override
+			public Class<?> value() {
+				return roleClass;
+			}
+
+			@Override
+			public Class<? extends Annotation> annotationType() {
+				return RoleAnnotationImpl.class;
+			}
+		}
+		
+		CoordinatorRole[] coordinatorRoles = new CoordinatorRole[] {new RoleAnnotationImpl(RoleClass1.class), new RoleAnnotationImpl(RoleClass2.class)};
+		MemberRole[] memberRoles = new MemberRole[] {new RoleAnnotationImpl(RoleClass2.class), new RoleAnnotationImpl(RoleClass3.class)};;
+		
+		Parameter param1 = RuntimeMetadataFactory.eINSTANCE.createParameter();
+		param1.setKind(ParameterKind.IN);
+		param1.setKnowledgePath(KnowledgePathHelper.createKnowledgePath("coord.x", PathOrigin.ENSEMBLE));
+		param1.setType(Integer.class);
+		Parameter param2 = RuntimeMetadataFactory.eINSTANCE.createParameter();
+		param2.setKind(ParameterKind.OUT);
+		param2.setKnowledgePath(KnowledgePathHelper.createKnowledgePath("coord.a.b", PathOrigin.ENSEMBLE));
+		param2.setType(Long.class);
+		Parameter param3 = RuntimeMetadataFactory.eINSTANCE.createParameter();
+		param3.setKind(ParameterKind.INOUT);
+		param3.setKnowledgePath(KnowledgePathHelper.createKnowledgePath("coord.z.[member.y.[coord.id]]", PathOrigin.ENSEMBLE));
+		param3.setType(String.class);
+		List<Parameter> parameters = Arrays.asList(param1, param2, param3);
+		
+		RolesAnnotationChecker checker = mock(RolesAnnotationChecker.class);
+		when(checker.isFieldInRole(any(), any(), any())).thenReturn(true);
+		
+		// TODO NO ORDER
+		InOrder order = inOrder(checker);
+		checker.checkRolesImplementation(parameters, coordinatorRoles, memberRoles);
+		
+		order.verify(checker).isFieldInRole(Integer.class, Arrays.asList("x"), RoleClass1.class);
+		order.verify(checker).isFieldInRole(Integer.class, Arrays.asList("x"), RoleClass2.class);
+		order.verify(checker).isFieldInRole(Long.class, Arrays.asList("a", "b"), RoleClass1.class);
+		order.verify(checker).isFieldInRole(Long.class, Arrays.asList("a", "b"), RoleClass2.class);
+		order.verify(checker).isFieldInRole(Integer.class, Arrays.asList("id"), RoleClass1.class);
+		order.verify(checker).isFieldInRole(Integer.class, Arrays.asList("id"), RoleClass2.class); // TODO this needs subtyping approval
+		order.verify(checker).isFieldInRole(Integer.class, Arrays.asList("y"), RoleClass2.class);
+		order.verify(checker).isFieldInRole(Integer.class, Arrays.asList("y"), RoleClass3.class);
+		order.verify(checker).isFieldInRole(String.class, Arrays.asList("z"), RoleClass1.class);
+		order.verify(checker).isFieldInRole(String.class, Arrays.asList("z"), RoleClass2.class);
+		
+	}
+	
 }

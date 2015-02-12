@@ -7,10 +7,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.annotations.Component;
+import cz.cuni.mff.d3s.deeco.annotations.CoordinatorRole;
 import cz.cuni.mff.d3s.deeco.annotations.Local;
+import cz.cuni.mff.d3s.deeco.annotations.MemberRole;
 import cz.cuni.mff.d3s.deeco.annotations.PlaysRole;
 import cz.cuni.mff.d3s.deeco.annotations.Role;
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 
 /**
  * All checks associated with roles.
@@ -20,7 +25,7 @@ import cz.cuni.mff.d3s.deeco.logging.Log;
  *
  */
 public class RolesAnnotationChecker {
-	
+		
 	/**
 	 * Checks that a component instance class correctly implements all roles that are declared
 	 * by the {@link PlaysRole} annotation. The function does not return any value, it either
@@ -54,6 +59,23 @@ public class RolesAnnotationChecker {
 			
 			checkRoleFieldsImplementation(knowledgeFields, roleClass);
 		}
+		
+	}
+	
+	public void checkRolesImplementation(List<Parameter> parameters, CoordinatorRole[] coordinatorRoleAnnotations, 
+			MemberRole[] memberRoleAnnotations) throws AnnotationProcessorException {
+		/*
+		for (Parameter parameter : parameters) {
+			
+			KnowledgePath knowledgePath = parameter.getKnowledgePath();
+			knowledgePath.getNodes().get(0) PathNodeCoordinator, PathNodeMember, PathNodeField
+		}
+		*/
+	}
+	
+	boolean isFieldInRole(Class<?> fieldType, List<String> fieldNameSequence, Class<?> roleClass) {
+		
+		return true;
 		
 	}
 
