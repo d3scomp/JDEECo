@@ -102,7 +102,7 @@ public class DummyKnowledgePublisher implements DEECoPlugin {
 	protected KnowledgeData prepareLocalKnowledgeData(KnowledgeManager km) throws KnowledgeNotFoundException {
 
 		// TODO: We are ignoring security, version and host
-		return new KnowledgeData(getNonLocalKnowledge(km.get(emptyPath), km), null, null, new KnowledgeMetaData(
+		return new KnowledgeData(getNonLocalKnowledge(km.get(emptyPath), km), new ValueSet(), new ValueSet(), new KnowledgeMetaData(
 				km.getId(), 0xfa4e, "host here", timeProvider.getCurrentMilliseconds(), 1));
 	}
 
@@ -141,9 +141,10 @@ public class DummyKnowledgePublisher implements DEECoPlugin {
 	protected void publish() {
 		System.out.println("PUBLISHER CALLED");
 
-		Object data = prepareLocalKnowledgeData();
-		network.getL2().sendL2Packet(new L2Packet(new PacketHeader(L2PacketType.KNOWLEDGE), data),
-				MANETBroadcastAddress.INSTANCE);
+		for(KnowledgeData data: prepareLocalKnowledgeData()) {
+			network.getL2().sendL2Packet(new L2Packet(new PacketHeader(L2PacketType.KNOWLEDGE), data),
+					MANETBroadcastAddress.INSTANCE);
+		}
 	}
 
 	@Override
