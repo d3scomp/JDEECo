@@ -49,6 +49,7 @@ public class Layer2 implements L2StrategyManager, L1DataProcessor {
 	 * @param packet
 	 *            Packet to be processed
 	 */
+	@Override
 	public void processL2Packet(L2Packet packet) {
 		for (L2Strategy strategy : strategies) {
 			strategy.processL2Packet(packet);
@@ -58,7 +59,7 @@ public class Layer2 implements L2StrategyManager, L1DataProcessor {
 	/**
 	 * Sends L2 Packet to L1
 	 * 
-	 * Passingpacket from L2 to L1
+	 * Passing packet from L2 to L1
 	 * 
 	 * @param packet
 	 *            Packet to be sent
@@ -111,11 +112,5 @@ public class Layer2 implements L2StrategyManager, L1DataProcessor {
 	 */
 	public L2Packet createPacket(PacketHeader header, Object object) {
 		return new L2Packet(this, header, object);
-	}
-
-	@Override
-	public void processL1Data(byte[] data, L2ReceivedInfo receivedInfo) {
-		// Process packet
-		processL2Packet(new L2Packet(this, data, receivedInfo));
 	}
 }
