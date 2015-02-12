@@ -10,7 +10,7 @@ import java.nio.ByteBuffer;
  */
 public class L1Packet {
 
-	private static int HEADER_SIZE = 20; // TotalSize + PayloadSize + SrcNode + StartPos + DataID
+	public static int HEADER_SIZE = 20; // TotalSize + PayloadSize + SrcNode + StartPos + DataID
 
 	public final byte[] payload;
 	/** payload carried by this packet */
@@ -68,8 +68,9 @@ public class L1Packet {
 	 *            bytes to be decoded
 	 * @return L1 packet
 	 */
-	public static L1Packet fromBytes(byte[] bytes) {
+	public static L1Packet fromBytes(byte[] bytes, int offset) {
 		ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);
+		byteBuffer.position(offset);
 		int totalSize = byteBuffer.getInt();
 		int payloadSize = byteBuffer.getInt();
 		int startPos = byteBuffer.getInt();

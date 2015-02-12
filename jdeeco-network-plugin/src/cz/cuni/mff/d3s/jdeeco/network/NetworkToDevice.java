@@ -1,6 +1,5 @@
 package cz.cuni.mff.d3s.jdeeco.network;
 
-import cz.cuni.mff.d3s.jdeeco.network.l0.Device;
 
 /**
  * Interface for network features used by network device
