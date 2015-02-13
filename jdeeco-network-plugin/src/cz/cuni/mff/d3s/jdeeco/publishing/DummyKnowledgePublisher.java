@@ -84,8 +84,10 @@ public class DummyKnowledgePublisher implements DEECoPlugin {
 		emptyPath.add(empty);
 	}
 
+	// NOTE: Taken from DefaultKnowledgeDataManager
 	protected final List<KnowledgePath> emptyPath;
 
+	// NOTE: Taken from DefaultKnowledgeDataManager
 	protected List<KnowledgeData> prepareLocalKnowledgeData() {
 		List<KnowledgeData> result = new LinkedList<>();
 		for (KnowledgeManager km : knowledgeManagerContainer.getLocals()) {
@@ -99,6 +101,7 @@ public class DummyKnowledgePublisher implements DEECoPlugin {
 		return result;
 	}
 
+	// NOTE: Taken from DefaultKnowledgeDataManager
 	protected KnowledgeData prepareLocalKnowledgeData(KnowledgeManager km) throws KnowledgeNotFoundException {
 
 		// TODO: We are ignoring security, version and host
@@ -106,12 +109,14 @@ public class DummyKnowledgePublisher implements DEECoPlugin {
 				km.getId(), 0xfa4e, "host here", timeProvider.getCurrentMilliseconds(), 1));
 	}
 
+	// NOTE: Taken from DefaultKnowledgeDataManager
 	protected KnowledgeMetaData createKnowledgeMetaData(KnowledgeManager km) {
 
 		// TODO: Fake values here
 		return new KnowledgeMetaData(km.getId(), 0, "ID", timeProvider.getCurrentMilliseconds(), 1);
 	}
 
+	// NOTE: Taken from DefaultKnowledgeDataManager
 	protected ValueSet getNonLocalKnowledge(ValueSet toFilter, KnowledgeManager km) {
 		ValueSet result = new ValueSet();
 		for (KnowledgePath kp : toFilter.getKnowledgePaths()) {
@@ -122,6 +127,7 @@ public class DummyKnowledgePublisher implements DEECoPlugin {
 		return result;
 	}
 
+	// NOTE: Taken from DefaultKnowledgeDataManager
 	protected KnowledgeData filterLocalKnowledgeForKnownEnsembles(KnowledgeData kd) {
 		// FIXME: make this generic
 		// now we hardcode our demo (we filter the Leader knowledge to only
