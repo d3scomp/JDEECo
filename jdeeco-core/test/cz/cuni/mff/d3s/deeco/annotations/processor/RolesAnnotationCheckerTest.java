@@ -1,31 +1,22 @@
 package cz.cuni.mff.d3s.deeco.annotations.processor;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
-import org.eclipse.emf.common.notify.Adapter;
-import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.common.util.TreeIterator;
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EOperation;
-import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.mockito.InOrder;
 
 import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.CoordinatorRole;
@@ -37,10 +28,8 @@ import cz.cuni.mff.d3s.deeco.annotations.pathparser.ParseException;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.PathOrigin;
 import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC1;
 import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.WrongCE1;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper;
 
@@ -159,7 +148,7 @@ public class RolesAnnotationCheckerTest {
 		@Component
 		@PlaysRole(RoleClass.class)
 		class ComponentClass {
-			public long x;
+			public String x;
 			public int y;
 		}
 		
@@ -205,7 +194,7 @@ public class RolesAnnotationCheckerTest {
 		@Component
 		@PlaysRole(RoleClass.class)
 		class ComponentClass {
-			public Map<String, Long> map; // this should not be allowed (TODO or should it?)
+			public HashMap<String, Integer> map; // this should not be allowed (TODO or should it?)
 			public String str;
 			public List<List<String>> list;
 			public int x;
@@ -491,15 +480,15 @@ public class RolesAnnotationCheckerTest {
 		Parameter param1 = RuntimeMetadataFactory.eINSTANCE.createParameter();
 		param1.setKind(ParameterKind.IN);
 		param1.setKnowledgePath(KnowledgePathHelper.createKnowledgePath("coord.x", PathOrigin.ENSEMBLE));
-		param1.setType(Integer.class);
+		param1.setGenericType(Integer.class);
 		Parameter param2 = RuntimeMetadataFactory.eINSTANCE.createParameter();
 		param2.setKind(ParameterKind.OUT);
 		param2.setKnowledgePath(KnowledgePathHelper.createKnowledgePath("coord.a.b", PathOrigin.ENSEMBLE));
-		param2.setType(Long.class);
+		param2.setGenericType(Long.class);
 		Parameter param3 = RuntimeMetadataFactory.eINSTANCE.createParameter();
 		param3.setKind(ParameterKind.INOUT);
 		param3.setKnowledgePath(KnowledgePathHelper.createKnowledgePath("coord.z.[member.y.[coord.id]]", PathOrigin.ENSEMBLE));
-		param3.setType(String.class);
+		param3.setGenericType(String.class);
 		return Arrays.asList(param1, param2, param3);
 	}
 	
@@ -596,10 +585,10 @@ public class RolesAnnotationCheckerTest {
 		verify(checker, times(1)).isFieldInRole(Integer.class, Arrays.asList("x"), RoleClass2.class);
 		verify(checker, times(1)).isFieldInRole(Long.class, Arrays.asList("a", "b"), RoleClass1.class);
 		verify(checker, times(1)).isFieldInRole(Long.class, Arrays.asList("a", "b"), RoleClass2.class);
-		verify(checker, times(1)).isFieldInRole(Integer.class, Arrays.asList("id"), RoleClass1.class);
-		verify(checker, times(1)).isFieldInRole(Integer.class, Arrays.asList("id"), RoleClass2.class); // TODO this needs subtyping approval
-		verify(checker, times(1)).isFieldInRole(Integer.class, Arrays.asList("y"), RoleClass2.class);
-		verify(checker, times(1)).isFieldInRole(Integer.class, Arrays.asList("y"), RoleClass3.class);
+		verify(checker, times(1)).isFieldInRole(null, Arrays.asList("id"), RoleClass1.class);
+		verify(checker, times(1)).isFieldInRole(null, Arrays.asList("id"), RoleClass2.class); // TODO this needs subtyping approval
+		verify(checker, times(1)).isFieldInRole(null, Arrays.asList("y"), RoleClass2.class);
+		verify(checker, times(1)).isFieldInRole(null, Arrays.asList("y"), RoleClass3.class);
 		verify(checker, times(1)).isFieldInRole(String.class, Arrays.asList("z"), RoleClass1.class);
 		verify(checker, times(1)).isFieldInRole(String.class, Arrays.asList("z"), RoleClass2.class);
 		

@@ -968,9 +968,10 @@ public class AnnotationProcessor {
 			throws AnnotationProcessorException, ParseException {
 		List<Parameter> parameters = new ArrayList<>();
 		Class<?>[] parameterTypes = method.getParameterTypes();
+		Type[] genericTypes = method.getGenericParameterTypes();
 		Annotation[][] allAnnotations = method.getParameterAnnotations();
 		for (int i = 0; i < parameterTypes.length; i++) {
-			parameters.add(createParameter(parameterTypes[i], i, allAnnotations[i], pathOrigin));
+			parameters.add(createParameter(parameterTypes[i], genericTypes[i], i, allAnnotations[i], pathOrigin));
 		}
 		if (parameters.isEmpty()) {
  			throw new AnnotationProcessorException(
@@ -988,11 +989,12 @@ public class AnnotationProcessor {
 	 * </p>
 	 * 
 	 * @param type	the type of the parameter
+	 * @param genericType  the reflect type of the parameter, containing generic arguments information
 	 * @param parameterIndex order of the parameter in the method declaration
 	 * @param parameterAnnotations list of annotations extracted from method signature
 	 * @param pathOrigin indicates whether it is being called within the context of {@link #createComponentProcess}, {@link #createEnsembleDefinition} or {@link #addSecurityTags(Class, KnowledgeManager, ChangeSet)} .
 	 */
-	Parameter createParameter(Class<?> type, int parameterIndex, Annotation[] parameterAnnotations, PathOrigin pathOrigin)
+	Parameter createParameter(Class<?> type, Type genericType, int parameterIndex, Annotation[] parameterAnnotations, PathOrigin pathOrigin)
 			throws AnnotationProcessorException, ParseException {
 		Parameter parameter = factory.createParameter();
 		try {
@@ -1001,6 +1003,7 @@ public class AnnotationProcessor {
 			String path = getKindAnnotationValue(directionAnnotation);
 			parameter.setKnowledgePath(KnowledgePathHelper.createKnowledgePath(path,pathOrigin));
 			parameter.setType(type);
+			parameter.setGenericType(genericType);
 			
 			if (parameter.getKind().equals(ParameterKind.RATING)) {
 				if (pathOrigin == PathOrigin.RATING_PROCESS) {

@@ -81,7 +81,7 @@ public class RolesAnnotationChecker {
 		}
 		
 		for (Parameter parameter : parameters) {
-			checkKnowledgePath(parameter.getType(), parameter.getKnowledgePath(), coordinatorRoleAnnotations,
+			checkKnowledgePath(parameter.getGenericType(), parameter.getKnowledgePath(), coordinatorRoleAnnotations,
 					memberRoleAnnotations);
 		}
 		
@@ -138,8 +138,12 @@ public class RolesAnnotationChecker {
 	}
 	
 	boolean isFieldInRole(Type type, List<String> fieldNameSequence, Class<?> roleClass) {
-		// TODO implement
-		return true;
+		Type fieldType = getTypeInRole(fieldNameSequence, roleClass);
+		if (fieldType == null) {
+			return false; // field not present in the role class
+		}
+		
+		return type == null || compareTypes(type, fieldType);
 		
 	}
 	
@@ -203,15 +207,18 @@ public class RolesAnnotationChecker {
 			if (knowledgeField.getName().equals(roleField.getName())) {
 				Type knowledgeFieldType = knowledgeField.getGenericType();
 				Type roleFieldType = roleField.getGenericType();
-				if (knowledgeFieldType.equals(roleFieldType)) {
-					return true; // field name and type equals
-				} else {
-					return false; // field name equals, but types are different
-				}
+				return compareTypes(knowledgeFieldType, roleFieldType);
+				/*Class<?> knowledgeFieldClass = knowledgeField.getType();
+				Class<?> roleFieldClass = roleField.getType();
+				return (roleFieldClass.equals(knowledgeFieldClass));*/
 			}
 		}
 		
 		return false; // no field with equal name
+	}
+	
+	private boolean compareTypes(Type implementationType, Type roleType) {
+		return implementationType.equals(roleType);
 	}
 	
 }

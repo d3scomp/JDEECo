@@ -6,6 +6,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
+import java.lang.reflect.Type;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.ecore.EClass;
@@ -23,6 +24,7 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ParameterImpl#getKind <em>Kind</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ParameterImpl#getKnowledgePath <em>Knowledge Path</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ParameterImpl#getType <em>Type</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ParameterImpl#getGenericType <em>Generic Type</em>}</li>
  * </ul>
  * </p>
  *
@@ -77,6 +79,26 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 	 * @ordered
 	 */
 	protected Class type;
+
+	/**
+	 * The default value of the '{@link #getGenericType() <em>Generic Type</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getGenericType()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final Type GENERIC_TYPE_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getGenericType() <em>Generic Type</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getGenericType()
+	 * @generated
+	 * @ordered
+	 */
+	protected Type genericType = GENERIC_TYPE_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -212,6 +234,27 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public Type getGenericType() {
+		return genericType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setGenericType(Type newGenericType) {
+		Type oldGenericType = genericType;
+		genericType = newGenericType;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.PARAMETER__GENERIC_TYPE, oldGenericType, genericType));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -235,6 +278,8 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 				return getKnowledgePath();
 			case RuntimeMetadataPackage.PARAMETER__TYPE:
 				return getType();
+			case RuntimeMetadataPackage.PARAMETER__GENERIC_TYPE:
+				return getGenericType();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -255,6 +300,9 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 				return;
 			case RuntimeMetadataPackage.PARAMETER__TYPE:
 				setType((Class)newValue);
+				return;
+			case RuntimeMetadataPackage.PARAMETER__GENERIC_TYPE:
+				setGenericType((Type)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -277,6 +325,9 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 			case RuntimeMetadataPackage.PARAMETER__TYPE:
 				setType((Class)null);
 				return;
+			case RuntimeMetadataPackage.PARAMETER__GENERIC_TYPE:
+				setGenericType(GENERIC_TYPE_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -295,6 +346,8 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 				return knowledgePath != null;
 			case RuntimeMetadataPackage.PARAMETER__TYPE:
 				return type != null;
+			case RuntimeMetadataPackage.PARAMETER__GENERIC_TYPE:
+				return GENERIC_TYPE_EDEFAULT == null ? genericType != null : !GENERIC_TYPE_EDEFAULT.equals(genericType);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -313,6 +366,8 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 		if (kindESet) result.append(kind); else result.append("<unset>");
 		result.append(", type: ");
 		result.append(type);
+		result.append(", genericType: ");
+		result.append(genericType);
 		result.append(')');
 		return result.toString();
 	}
