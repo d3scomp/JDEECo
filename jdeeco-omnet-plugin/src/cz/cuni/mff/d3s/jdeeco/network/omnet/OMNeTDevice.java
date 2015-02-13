@@ -13,7 +13,7 @@ import cz.cuni.mff.d3s.jdeeco.network.device.Device;
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
  */
-public abstract class OMNeTDevice implements Device, DEECoPlugin {
+public abstract class OMNeTDevice extends Device implements DEECoPlugin {
 	protected final OMNeTSimulation omnet;
 
 	public OMNeTDevice(OMNeTSimulation simulation) {
