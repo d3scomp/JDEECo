@@ -17,7 +17,7 @@ import cz.cuni.mff.d3s.jdeeco.network.address.MANETBroadcastAddress;
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
  */
-public class PrintingBroadcastDevice implements Device, DEECoPlugin {
+public class PrintingBroadcastDevice extends Device implements DEECoPlugin {
 
 	@Override
 	public String getId() {

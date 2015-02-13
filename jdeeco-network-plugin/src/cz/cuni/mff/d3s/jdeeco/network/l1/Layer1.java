@@ -89,6 +89,7 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 	 */
 	public void registerDevice(Device device) {
 		if (device.getMTU() >= MINIMUM_DATA_TRANSMISSION_SIZE) {
+			device.registerL1(this);
 			devices.add(device);
 		} else {
 			Log.e("The device MTU is too small for the needs of jDEECo data transmission - minimum trasmission size is " + MINIMUM_DATA_TRANSMISSION_SIZE);
