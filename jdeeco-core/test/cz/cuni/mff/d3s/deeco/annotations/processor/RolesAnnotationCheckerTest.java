@@ -592,19 +592,57 @@ public class RolesAnnotationCheckerTest {
 		when(checker.isFieldInRole(any(), any(), any())).thenReturn(true);
 		
 		checker.checkRolesImplementation(getTestParameters(), coordinatorRoles, memberRoles);
-		assertTrue(verify(checker, times(1)).isFieldInRole(Integer.class, Arrays.asList("x"), RoleClass1.class));
-		assertTrue(verify(checker, times(1)).isFieldInRole(Integer.class, Arrays.asList("x"), RoleClass2.class));
-		assertTrue(verify(checker, times(1)).isFieldInRole(Long.class, Arrays.asList("a", "b"), RoleClass1.class));
-		assertTrue(verify(checker, times(1)).isFieldInRole(Long.class, Arrays.asList("a", "b"), RoleClass2.class));
-		assertTrue(verify(checker, times(1)).isFieldInRole(Integer.class, Arrays.asList("id"), RoleClass1.class));
-		assertTrue(verify(checker, times(1)).isFieldInRole(Integer.class, Arrays.asList("id"), RoleClass2.class)); // TODO this needs subtyping approval
-		assertTrue(verify(checker, times(1)).isFieldInRole(Integer.class, Arrays.asList("y"), RoleClass2.class));
-		assertTrue(verify(checker, times(1)).isFieldInRole(Integer.class, Arrays.asList("y"), RoleClass3.class));
-		assertTrue(verify(checker, times(1)).isFieldInRole(String.class, Arrays.asList("z"), RoleClass1.class));
-		assertTrue(verify(checker, times(1)).isFieldInRole(String.class, Arrays.asList("z"), RoleClass2.class));
+		verify(checker, times(1)).isFieldInRole(Integer.class, Arrays.asList("x"), RoleClass1.class);
+		verify(checker, times(1)).isFieldInRole(Integer.class, Arrays.asList("x"), RoleClass2.class);
+		verify(checker, times(1)).isFieldInRole(Long.class, Arrays.asList("a", "b"), RoleClass1.class);
+		verify(checker, times(1)).isFieldInRole(Long.class, Arrays.asList("a", "b"), RoleClass2.class);
+		verify(checker, times(1)).isFieldInRole(Integer.class, Arrays.asList("id"), RoleClass1.class);
+		verify(checker, times(1)).isFieldInRole(Integer.class, Arrays.asList("id"), RoleClass2.class); // TODO this needs subtyping approval
+		verify(checker, times(1)).isFieldInRole(Integer.class, Arrays.asList("y"), RoleClass2.class);
+		verify(checker, times(1)).isFieldInRole(Integer.class, Arrays.asList("y"), RoleClass3.class);
+		verify(checker, times(1)).isFieldInRole(String.class, Arrays.asList("z"), RoleClass1.class);
+		verify(checker, times(1)).isFieldInRole(String.class, Arrays.asList("z"), RoleClass2.class);
 		
 		verify(checker, times(1)).checkRolesImplementation(any(), any(), any());
 		verifyNoMoreInteractions(checker);
+	}
+	
+	@Test
+	public void checkRI2WrongKnowledgePathTest() throws AnnotationProcessorException, ParseException {
+		
+		@Role
+		class RoleClass1 {
+			public Integer x;
+			public Integer y;
+		}
+		
+		class RoleAnnotationImpl implements CoordinatorRole, MemberRole {
+			@Override
+			public Class<?> value() {
+				return RoleClass1.class;
+			}
+
+			@Override
+			public Class<? extends Annotation> annotationType() {
+				return RoleAnnotationImpl.class;
+			}
+		}
+		
+		CoordinatorRole[] coordinatorRoles = new CoordinatorRole[] {new RoleAnnotationImpl()};
+		MemberRole[] memberRoles = new MemberRole[] {new RoleAnnotationImpl()};
+		
+		Parameter param1 = RuntimeMetadataFactory.eINSTANCE.createParameter();
+		param1.setKind(ParameterKind.IN);
+		param1.setKnowledgePath(KnowledgePathHelper.createKnowledgePath("coord.x", PathOrigin.ENSEMBLE));
+		param1.setType(Integer.class);
+		
+		RolesAnnotationChecker checker = spy(new RolesAnnotationChecker());
+		when(checker.isFieldInRole(any(), any(), any())).thenReturn(false);
+		
+		exception.expect(AnnotationProcessorException.class);
+		exception.expectMessage("The knowledge path '<COORDINATOR>.x' is not valid for the role 'RoleClass1'.");
+		
+		checker.checkRolesImplementation(Arrays.asList(param1), coordinatorRoles, memberRoles);
 	}
 	
 }

@@ -2,6 +2,7 @@ package cz.cuni.mff.d3s.deeco.annotations.processor;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +16,12 @@ import cz.cuni.mff.d3s.deeco.annotations.Role;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
 
 /**
  * All checks associated with roles.
@@ -64,20 +70,81 @@ public class RolesAnnotationChecker {
 	
 	public void checkRolesImplementation(List<Parameter> parameters, CoordinatorRole[] coordinatorRoleAnnotations, 
 			MemberRole[] memberRoleAnnotations) throws AnnotationProcessorException {
-
-		for (Parameter parameter : parameters) {
+		if (parameters == null) {
+			throw new AnnotationProcessorException("The input parameters cannot be null.");
+		}
+		if (coordinatorRoleAnnotations == null) {
+			throw new AnnotationProcessorException("The coordinatorRoles parameter cannot be null.");
+		}
+		if (memberRoleAnnotations == null) {
+			throw new AnnotationProcessorException("The memberRoles parameter cannot be null.");
+		}
 		
-			KnowledgePath knowledgePath = parameter.getKnowledgePath();
-			
+		for (Parameter parameter : parameters) {
+			checkKnowledgePath(parameter.getType(), parameter.getKnowledgePath(), coordinatorRoleAnnotations,
+					memberRoleAnnotations);
 		}
 		
 	}
 	
-	boolean isFieldInRole(Class<?> fieldType, List<String> fieldNameSequence, Class<?> roleClass) {
+	private void checkKnowledgePath(Type type, KnowledgePath knowledgePath, CoordinatorRole[] coordinatorRoleAnnotations, 
+			MemberRole[] memberRoleAnnotations) throws AnnotationProcessorException {
+		if (knowledgePath.getNodes().size() < 2) {
+			throw new AnnotationProcessorException("A knowledge path must contain at least two elements (coord/member and field name).");
+		}
+		
+		// just choose coordinator / member role classes
+		List<Class<?>> roleClasses = new ArrayList<>();
+		PathNode first = knowledgePath.getNodes().get(0);
+		if (first instanceof PathNodeCoordinator) {
+			for (CoordinatorRole role : coordinatorRoleAnnotations) {
+				roleClasses.add(role.value());
+			}
+		} else if (first instanceof PathNodeMember) {
+			for (MemberRole role : memberRoleAnnotations) {
+				roleClasses.add(role.value());
+			}
+		} else {
+			throw new AnnotationProcessorException("A knowledge path does not start with coord/member.");
+		}
+		
+		// go through the path, evaluate inner knowledge paths of PathNodeMapKey-s
+		PathNode second = knowledgePath.getNodes().get(1);
+		List<String> fieldNameSequence = new ArrayList<>();
+		if (second instanceof PathNodeComponentId) {
+			fieldNameSequence.add("id");
+		} else if (second instanceof PathNodeField) {
+			for (int i = 1; i < knowledgePath.getNodes().size(); i++) {
+				PathNode pn = knowledgePath.getNodes().get(i);
+				if (pn instanceof PathNodeField) {
+					fieldNameSequence.add(((PathNodeField)pn).getName());
+				} else if (pn instanceof PathNodeMapKey) {
+					checkKnowledgePath(/*TODO*/null, ((PathNodeMapKey)pn).getKeyPath(), coordinatorRoleAnnotations,
+							memberRoleAnnotations);
+					break; // we don't check after [], but we actually could
+				}
+			}
+		} else {
+			throw new AnnotationProcessorException("A knowledge path's second element should be a field name.");
+		}
 
+		// test the knowledge path against all roles
+		for (Class<?> roleClass : roleClasses) {
+			if (!isFieldInRole(type, fieldNameSequence, roleClass)) {
+				throw new AnnotationProcessorException("The knowledge path '" + knowledgePath.toString() 
+						+ "' is not valid for the role '" + roleClass.getSimpleName() + "'.");
+			}
+		}
+	}
+	
+	boolean isFieldInRole(Type type, List<String> fieldNameSequence, Class<?> roleClass) {
 		// TODO implement
 		return true;
 		
+	}
+	
+	private Type getTypeInRole(List<String> fieldNameSequence, Class<?> roleClass) {
+		return null;
 	}
 
 	/**
