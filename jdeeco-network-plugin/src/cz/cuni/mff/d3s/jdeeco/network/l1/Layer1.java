@@ -9,11 +9,9 @@ import java.util.Map;
 import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.jdeeco.network.Address;
-import cz.cuni.mff.d3s.jdeeco.network.Device;
-import cz.cuni.mff.d3s.jdeeco.network.L1DataProcessor;
-import cz.cuni.mff.d3s.jdeeco.network.L1StrategyManager;
-import cz.cuni.mff.d3s.jdeeco.network.L2PacketSender;
+import cz.cuni.mff.d3s.jdeeco.network.address.Address;
+import cz.cuni.mff.d3s.jdeeco.network.device.Device;
+import cz.cuni.mff.d3s.jdeeco.network.l2.L1DataProcessor;
 import cz.cuni.mff.d3s.jdeeco.network.l2.L2Packet;
 import cz.cuni.mff.d3s.jdeeco.network.l2.L2ReceivedInfo;
 

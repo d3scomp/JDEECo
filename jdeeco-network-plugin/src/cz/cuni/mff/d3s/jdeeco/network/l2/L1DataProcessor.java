@@ -1,6 +1,5 @@
-package cz.cuni.mff.d3s.jdeeco.network;
+package cz.cuni.mff.d3s.jdeeco.network.l2;
 
-import cz.cuni.mff.d3s.jdeeco.network.l2.L2Packet;
 
 /**
  * Interface for passing L2 packets to Layer 2 from Layer 1 XXX TB: Is it really L2 packets?

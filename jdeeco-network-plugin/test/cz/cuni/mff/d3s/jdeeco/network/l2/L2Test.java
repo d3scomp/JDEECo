@@ -14,8 +14,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import cz.cuni.mff.d3s.jdeeco.network.Address;
-import cz.cuni.mff.d3s.jdeeco.network.L2PacketType;
+import cz.cuni.mff.d3s.jdeeco.network.address.Address;
 import cz.cuni.mff.d3s.jdeeco.network.l1.L1Packet;
 import cz.cuni.mff.d3s.jdeeco.network.l1.Layer1;
 import cz.cuni.mff.d3s.jdeeco.network.marshaller.MarshallerRegistry;

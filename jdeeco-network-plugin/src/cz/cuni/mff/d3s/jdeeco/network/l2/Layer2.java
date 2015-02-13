@@ -4,10 +4,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 
-import cz.cuni.mff.d3s.jdeeco.network.Address;
-import cz.cuni.mff.d3s.jdeeco.network.L1DataProcessor;
-import cz.cuni.mff.d3s.jdeeco.network.L2PacketSender;
-import cz.cuni.mff.d3s.jdeeco.network.L2StrategyManager;
+import cz.cuni.mff.d3s.jdeeco.network.address.Address;
+import cz.cuni.mff.d3s.jdeeco.network.l1.L2PacketSender;
 import cz.cuni.mff.d3s.jdeeco.network.marshaller.MarshallerRegistry;
 
 /**

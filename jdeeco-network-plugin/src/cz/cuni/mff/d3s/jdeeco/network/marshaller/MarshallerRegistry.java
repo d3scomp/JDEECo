@@ -2,9 +2,9 @@ package cz.cuni.mff.d3s.jdeeco.network.marshaller;
 
 import java.util.*;
 
-import cz.cuni.mff.d3s.jdeeco.network.L2PacketType;
 import cz.cuni.mff.d3s.jdeeco.network.exceptions.MarshallingException;
 import cz.cuni.mff.d3s.jdeeco.network.exceptions.UnregistredPacketType;
+import cz.cuni.mff.d3s.jdeeco.network.l2.L2PacketType;
 
 /**
  * Registry for marshalers based on the packet type

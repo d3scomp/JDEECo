@@ -1,8 +1,6 @@
-package cz.cuni.mff.d3s.jdeeco.network;
+package cz.cuni.mff.d3s.jdeeco.network.l1;
 
 import java.util.Collection;
-
-import cz.cuni.mff.d3s.jdeeco.network.l1.L1Strategy;
 
 //XXX TB: Why is this interface in ...network when L1Strategy is in network.l1 ?
 

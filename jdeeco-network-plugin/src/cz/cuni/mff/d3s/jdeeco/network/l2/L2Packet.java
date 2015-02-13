@@ -2,8 +2,6 @@ package cz.cuni.mff.d3s.jdeeco.network.l2;
 
 import java.util.Arrays;
 
-import cz.cuni.mff.d3s.jdeeco.network.L2PacketType;
-
 /**
  * Layer 2 jDEECo network packet
  * 

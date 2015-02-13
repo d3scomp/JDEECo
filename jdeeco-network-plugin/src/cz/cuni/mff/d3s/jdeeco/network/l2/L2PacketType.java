@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.jdeeco.network;
+package cz.cuni.mff.d3s.jdeeco.network.l2;
 
 /**
  * L2 Packet type

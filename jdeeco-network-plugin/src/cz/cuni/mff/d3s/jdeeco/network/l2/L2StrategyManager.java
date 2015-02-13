@@ -1,10 +1,6 @@
-package cz.cuni.mff.d3s.jdeeco.network;
+package cz.cuni.mff.d3s.jdeeco.network.l2;
 
 import java.util.Collection;
-
-// XXX TB: Why is this interface in ...network when L2Strategy is in network.l2 ?
-
-import cz.cuni.mff.d3s.jdeeco.network.l2.L2Strategy;
 
 /**
  * Interface for Layer 2 network

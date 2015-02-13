@@ -1,6 +1,6 @@
 package cz.cuni.mff.d3s.jdeeco.network.exceptions;
 
-import cz.cuni.mff.d3s.jdeeco.network.L2PacketType;
+import cz.cuni.mff.d3s.jdeeco.network.l2.L2PacketType;
 
 /**
  * Unregistered packet type exception is thrown when the packet type specified is not registered at marshaler registry

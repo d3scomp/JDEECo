@@ -5,10 +5,9 @@ import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
-import cz.cuni.mff.d3s.jdeeco.network.Address;
-import cz.cuni.mff.d3s.jdeeco.network.Device;
-import cz.cuni.mff.d3s.jdeeco.network.MANETBroadcastAddress;
 import cz.cuni.mff.d3s.jdeeco.network.Network;
+import cz.cuni.mff.d3s.jdeeco.network.address.Address;
+import cz.cuni.mff.d3s.jdeeco.network.address.MANETBroadcastAddress;
 
 /**
  * Dummy broadcast device
