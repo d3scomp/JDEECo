@@ -11,13 +11,14 @@ import java.util.TreeSet;
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
+import cz.cuni.mff.d3s.deeco.scheduler.notifier.SchedulerNotifier;
 import cz.cuni.mff.d3s.deeco.task.Task;
 import cz.cuni.mff.d3s.deeco.task.TaskTriggerListener;
 
 /**
  * TODO
  */
-public class SingleThreadedScheduler implements Scheduler, SimulationTimeEventListener {
+public class SingleThreadedScheduler implements Scheduler {
 
 	private Executor executor;
 	private SchedulerNotifier schedulerNotifier;
@@ -39,14 +40,18 @@ public class SingleThreadedScheduler implements Scheduler, SimulationTimeEventLi
 		
     	this.executor = executor;
     	this.schedulerNotifier = schedulerNotifier;
-    	this.schedulerNotifier.setSimulationTimeEventListener(this);
     	this.running = false;
     	
 		queue = new TreeSet<>();
 		allTasks = new HashSet<>();
 		timeTriggeredEvents = new HashMap<>();
 		knowledgeChangeTriggers = new HashSet<>();
+		
     }
+
+//		if (!queue.isEmpty()) {
+//			schedulerNotifier.notifyAt(queue.first().nextExecutionTime, this);
+
 
 	@Override
 	public void setExecutor(Executor executor) {
@@ -54,6 +59,11 @@ public class SingleThreadedScheduler implements Scheduler, SimulationTimeEventLi
 		if (this.executor != null) {
 			this.executor.setExecutionListener(this);
 		}
+	}
+	
+	@Override
+	public void setSchedulerNotifier(SchedulerNotifier schedulerNotifier) {
+		this.schedulerNotifier = schedulerNotifier;
 	}
 	
 	@Override
@@ -73,6 +83,8 @@ public class SingleThreadedScheduler implements Scheduler, SimulationTimeEventLi
 			event.nextPeriodStart = executionTime;
 			queue.add(event);
 			
+			schedulerNotifier.notifyAt(event.nextExecutionTime, this);
+						
 			timeTriggeredEvents.put(task, event);
 		}
 		
@@ -123,26 +135,6 @@ public class SingleThreadedScheduler implements Scheduler, SimulationTimeEventLi
 	}
 	
 	@Override
-	public void start() {
-		if (!queue.isEmpty()) {
-			schedulerNotifier.notifyAt(queue.first().nextExecutionTime);
-		}
-		
-		running = true;
-	
-		while (!schedulerNotifier.tryToTerminate() && !queue.isEmpty()) {
-			schedulerNotifier.nextStep();
-		};
-	
-		running = false;		
-	}
-	
-	@Override
-	public void stop() {
-		Log.d("The scheduler is stopped.");
-	}
-	
-	@Override
 	public void executionCompleted(Task task, Trigger trigger) {
 		knowledgeChangeTriggers.remove(trigger);
 		
@@ -150,7 +142,7 @@ public class SingleThreadedScheduler implements Scheduler, SimulationTimeEventLi
 			long nextExecutionTime = queue.first().nextExecutionTime;
 			// FIXME we need the '=' in the next line if we don't give a random offset
 			if (nextExecutionTime >= schedulerNotifier.getCurrentMilliseconds()) {
-				schedulerNotifier.notifyAt(nextExecutionTime);
+				schedulerNotifier.notifyAt(nextExecutionTime, this);
 			}
 		}
 	}
@@ -163,13 +155,8 @@ public class SingleThreadedScheduler implements Scheduler, SimulationTimeEventLi
 
 	@Override
 	public void at(long time) {
-		if (!queue.isEmpty()) {
+		while ((!queue.isEmpty()) && (queue.first().nextExecutionTime<=time)) {
 			SchedulerEvent event = queue.pollFirst(); 
-			
-			if (event.nextExecutionTime > time) {
-				Log.w("Scheduler was notified too early for this event, so it skips it.");
-				return;
-			}
 
 			if (event.periodic) {
 				// schedule for the next period add a random offset within the period (up to 75% of the period)

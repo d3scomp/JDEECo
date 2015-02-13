@@ -38,4 +38,5 @@ public class ConvoyTest {
 		// THEN the follower reaches his destination
 		assertThat(log.getLog(), containsString("Follower F: me = (1,3)"));
 	}	
+
 }

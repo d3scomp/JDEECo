@@ -6,8 +6,8 @@ import java.util.List;
 import cz.cuni.mff.d3s.deeco.integrity.RatingsManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
+import cz.cuni.mff.d3s.deeco.scheduler.notifier.CurrentTimeProvider;
 import cz.cuni.mff.d3s.deeco.security.SecurityKeyManager;
 
 

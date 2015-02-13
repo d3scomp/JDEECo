@@ -683,22 +683,6 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 		}		
 	}
 	
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework#start()
-	 */
-	@Override
-	public void start() {
-		scheduler.start();
-	}
-	
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework#stop()
-	 */
-	@Override
-	public void stop() {
-		scheduler.stop();
-	}
-	
 	public void ensembleFormed(final EnsembleDefinition e, final ComponentInstance c, final String coordID, final String memberID) {
 		Log.w("Ensemble "+e+" formed at the side of " + c + " with coord: "+coordID+" and member: "+memberID);
 

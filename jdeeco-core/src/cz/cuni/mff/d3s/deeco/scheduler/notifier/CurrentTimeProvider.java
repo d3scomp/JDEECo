@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.deeco.scheduler;
+package cz.cuni.mff.d3s.deeco.scheduler.notifier;
 
 /**
  * Gives access to current time in milliseconds.

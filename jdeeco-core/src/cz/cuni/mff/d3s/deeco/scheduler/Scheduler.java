@@ -2,7 +2,8 @@ package cz.cuni.mff.d3s.deeco.scheduler;
 
 import cz.cuni.mff.d3s.deeco.executor.ExecutionListener;
 import cz.cuni.mff.d3s.deeco.executor.Executor;
-import cz.cuni.mff.d3s.deeco.runtime.InvalidOperationException;
+import cz.cuni.mff.d3s.deeco.scheduler.notifier.SchedulerNotifier;
+import cz.cuni.mff.d3s.deeco.scheduler.notifier.SchedulerNotifierEventListener;
 import cz.cuni.mff.d3s.deeco.task.Task;
 
 /**
@@ -29,28 +30,7 @@ import cz.cuni.mff.d3s.deeco.task.Task;
  *
  */
 
-public interface Scheduler extends ExecutionListener {
-	/**
-	 * Starts the scheduler thus triggering a sequence of operations on serving tasks in queue(if any). 
-	 * <p>
-	 * After any implementation of scheduler is instantiated, it is by default stopped.
-	 * Even though it allows adding/removing tasks, none of them will be handled/executed
-	 * properly until the scheduler is started explicitly
-	 * <p>
-	 * <b>Note:</b> This method is strongly implementation-based so it is advised to check with the documentation
-	 * specific for each Scheduler implementation. 
-	 */
-	public void start();
-	
-	/**
-	 * Stops the scheduler by triggering it into an idle state. While new tasks may still be added and old ones 
-	 * removed from the queue none of them will be served according to their scheduling plan. After the scheduler
-	 * is started again it will serve the new queue. 
-	 * <p>
-	 * <b>Note:</b> This method is strongly implementation-based so it is advised to check with the documentation
-	 * specific for each Scheduler implementation. 
-	 */
-	public void stop();
+public interface Scheduler extends ExecutionListener, SchedulerNotifierEventListener {
 	
 	/**
 	 * Adds the task to the scheduler. This function does not imply that the task will 
@@ -89,6 +69,8 @@ public interface Scheduler extends ExecutionListener {
 	 */
 	public void setExecutor(Executor executor);
 
+	public void setSchedulerNotifier(SchedulerNotifier schedulerNotifier); 
+	
 	public SchedulerNotifier getSchedulerNotifier();
 
 	public boolean isRunning();

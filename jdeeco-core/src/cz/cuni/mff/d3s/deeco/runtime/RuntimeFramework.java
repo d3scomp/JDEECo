@@ -14,16 +14,6 @@ import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
  */
 public interface RuntimeFramework extends DEECoPlugin {
 
-	/**
-	 * Starts the execution of the runtime framework
-	 */
-	void start();
-
-	/**
-	 * Stops the execution of the runtime framework
-	 */
-	void stop();
-	
 	Scheduler getScheduler();
 	KnowledgeManagerContainer getContainer();
 	RatingsManager getRatingsManager();

@@ -44,10 +44,10 @@ import cz.cuni.mff.d3s.deeco.network.DataSender;
 import cz.cuni.mff.d3s.deeco.network.DefaultKnowledgeDataManager;
 import cz.cuni.mff.d3s.deeco.runtime.DuplicateEnsembleDefinitionException;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeFrameworkImpl;
-import cz.cuni.mff.d3s.deeco.scheduler.DiscreteEventSimulation;
 import cz.cuni.mff.d3s.deeco.scheduler.NoExecutorAvailableException;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.scheduler.SingleThreadedScheduler;
+import cz.cuni.mff.d3s.deeco.scheduler.notifier.DiscreteEventSchedulerNotifier;
 import cz.cuni.mff.d3s.deeco.security.SecurityHelper;
 import cz.cuni.mff.d3s.deeco.security.SecurityKeyManager;
 import cz.cuni.mff.d3s.deeco.security.SecurityKeyManagerImpl;
@@ -209,7 +209,7 @@ public class SecurityRuntimeModel {
 	public SecurityRuntimeModel() throws KeyStoreException, AnnotationProcessorException, DuplicateEnsembleDefinitionException, NoExecutorAvailableException {
 		securityKeyManager = SecurityKeyManagerImpl.getInstance();
 		executor = new SameThreadExecutor();
-		DiscreteEventSimulation simulation = new DiscreteEventSimulation();
+		DiscreteEventSchedulerNotifier simulation = new DiscreteEventSchedulerNotifier();
 		scheduler = new SingleThreadedScheduler(executor, simulation);
 		securityHelper = new SecurityHelper();
 		

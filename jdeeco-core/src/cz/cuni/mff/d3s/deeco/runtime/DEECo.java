@@ -19,10 +19,11 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
-import cz.cuni.mff.d3s.deeco.scheduler.DiscreteEventSimulation;
 import cz.cuni.mff.d3s.deeco.scheduler.NoExecutorAvailableException;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.scheduler.SingleThreadedScheduler;
+import cz.cuni.mff.d3s.deeco.scheduler.notifier.DiscreteEventSchedulerNotifier;
+import cz.cuni.mff.d3s.deeco.scheduler.notifier.SchedulerNotifier;
 
 /**
  * Main container for a DEECo application.
@@ -32,6 +33,10 @@ import cz.cuni.mff.d3s.deeco.scheduler.SingleThreadedScheduler;
  */
 public class DEECo implements DEECoContainer {
 
+	/** 
+	 * TODO find a way to inject this field from the DEECoRealm (probably via the constructor here?)
+	 */
+	int id;
 	/**
 	 * The metadata model corresponding to the running application.
 	 */
@@ -57,13 +62,13 @@ public class DEECo implements DEECoContainer {
 	 */
 	Map<Class<? extends DEECoPlugin>, DEECoPlugin> pluginsMap;
 	
-	public DEECo(DEECoPlugin... plugins) throws DEECoException {			
+	public DEECo(SchedulerNotifier schedulerNotifier, DEECoPlugin... plugins) throws DEECoException {			
 		pluginsMap= new HashMap<>();
 		model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
 		knowledgeManagerFactory = new CloningKnowledgeManagerFactory();
 		processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE, model, knowledgeManagerFactory);		
 		
-		createRuntime();
+		createRuntime(schedulerNotifier);
 		runtime.init(this);
 		initializePlugins(plugins);
 	}
@@ -75,21 +80,6 @@ public class DEECo implements DEECoContainer {
 	@SuppressWarnings("rawtypes")
 	public EnsembleDefinition deployEnsemble(Class ensemble) throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		return processor.processEnsemble(ensemble);
-	}
-	
-	public void start() throws InvalidOperationException {
-		if(isRunning()) {
-			throw new InvalidOperationException("start");
-		}
-		runtime.start();
-	}
-
-	public void stop() throws InvalidOperationException {
-		if(!isRunning()) {
-			throw new InvalidOperationException("stop");
-		}
-		
-		runtime.stop();
 	}
 	
 	@Override
@@ -112,12 +102,6 @@ public class DEECo implements DEECoContainer {
 	@Override
 	public RuntimeMetadata getRuntimeMetadata() {
 		return model;
-	}
-	
-	@Override
-	public boolean isRunning()
-	{
-		return runtime.getScheduler().isRunning();
 	}
 	
 	class DependencyNode {
@@ -196,18 +180,18 @@ public class DEECo implements DEECoContainer {
 		}	
 	}
 	
-	private void createRuntime() throws NoExecutorAvailableException {
+	private void createRuntime(SchedulerNotifier schedulerNotifier) throws NoExecutorAvailableException {
 		Executor executor = new SameThreadExecutor();
-		DiscreteEventSimulation discreteEventSimulation = new DiscreteEventSimulation();  
-		Scheduler scheduler = new SingleThreadedScheduler(executor, discreteEventSimulation);
+		Scheduler scheduler = new SingleThreadedScheduler(executor, schedulerNotifier);
 		KnowledgeManagerContainer kmContainer = new KnowledgeManagerContainer(knowledgeManagerFactory, model);
 		scheduler.setExecutor(executor);
 		executor.setExecutionListener(scheduler);
 		runtime = new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer);		
 	}
 
-	public void setTerminationTime(long terminationTime) {
-		runtime.getScheduler().getSchedulerNotifier().setTerminationTime(terminationTime);
+	@Override
+	public int getId() {
+		return id;
 	}
 
 }
