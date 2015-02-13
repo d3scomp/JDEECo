@@ -3,7 +3,9 @@ package cz.cuni.mff.d3s.jdeeco.network.l2;
 import java.util.Collection;
 
 /**
- * Interface for Layer 2 network
+ * Interface for Layer 2 network strategy management
+ * 
+ * Provides method for registering/querying/removing Layer 2 strategies
  * 
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *

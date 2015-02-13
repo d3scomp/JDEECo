@@ -7,6 +7,8 @@ import cz.cuni.mff.d3s.jdeeco.network.l1.L1Packet;
 /**
  * Information about received L2 packet
  * 
+ * used to decide about packet by Layer 2 strategies
+ * 
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
  */

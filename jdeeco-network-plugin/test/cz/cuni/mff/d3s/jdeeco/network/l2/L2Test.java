@@ -15,6 +15,7 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import cz.cuni.mff.d3s.jdeeco.network.address.Address;
+import cz.cuni.mff.d3s.jdeeco.network.address.MANETBroadcastAddress;
 import cz.cuni.mff.d3s.jdeeco.network.l1.L1Packet;
 import cz.cuni.mff.d3s.jdeeco.network.l1.Layer1;
 import cz.cuni.mff.d3s.jdeeco.network.marshaller.MarshallerRegistry;
@@ -57,14 +58,20 @@ public class L2Test {
 		l2Layer = new Layer2(layer1, registry);
 	}
 
+	private L2Packet createSampleSourcepacket() {
+		L2Packet packet = new L2Packet(new PacketHeader(L2PacketType.KNOWLEDGE), PAYLOAD);
+		packet.setLayer(l2Layer);
+		assertPayload(packet.getObject());
+		return packet;
+	}
+
 	/**
 	 * Tests L2 packet marshaling availability and consistency
 	 */
 	@Test
 	public void testL2PacketMarshalling() {
 		// Create source packet
-		L2Packet srcPacket = l2Layer.createPacket(new PacketHeader(L2PacketType.KNOWLEDGE), PAYLOAD);
-		assertPayload(srcPacket.getObject());
+		L2Packet srcPacket = createSampleSourcepacket();
 
 		// Create destination packet from source packet binary data
 		L2ReceivedInfo info = new L2ReceivedInfo(new LinkedList<L1Packet>(), (byte) 1, 1);
@@ -79,17 +86,13 @@ public class L2Test {
 	@Test
 	public void testL2PacketSending() {
 		// Create source packet
-		L2Packet srcPacket = l2Layer.createPacket(new PacketHeader(L2PacketType.KNOWLEDGE), PAYLOAD);
-		assertPayload(srcPacket.getObject());
+		L2Packet srcPacket = createSampleSourcepacket();
 
-		// TODO: Address is fake
-		Address address = new Address() {
-		};
-
-		l2Layer.sendL2Packet(srcPacket, address);
+		// Try to send the packet
+		l2Layer.sendL2Packet(srcPacket, MANETBroadcastAddress.INSTANCE);
 
 		// Check packet was passed to layer1
-		Mockito.verify(layer1).sendL2Packet(Matchers.eq(srcPacket), Matchers.eq(address));
+		Mockito.verify(layer1).sendL2Packet(Matchers.eq(srcPacket), Matchers.eq(MANETBroadcastAddress.INSTANCE));
 	}
 
 	/**

@@ -9,7 +9,10 @@ import cz.cuni.mff.d3s.jdeeco.network.l1.L2PacketSender;
 import cz.cuni.mff.d3s.jdeeco.network.marshaller.MarshallerRegistry;
 
 /**
- * Interface for L2 methods to be called from layer 1 or knowledge management
+ * Network Layer 2 implementation
+ * 
+ * The purpose of this layer is to filter complete data belonging to upper layers (for example knowledge) by layer 2
+ * strategies. These strategies are responsible for re-broadcasting ad delivering the data to respective upper layers.
  * 
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
@@ -21,6 +24,9 @@ public class Layer2 implements L2StrategyManager, L1DataProcessor {
 
 	/**
 	 * Creates L2 layer
+	 * 
+	 * @param l2Sender
+	 *            Reference to implementation of lower layer, that can send the L2 packets produced by Layer 2
 	 * 
 	 * @param marshallerRegistry
 	 *            MarshallerRegistry to be used by L2 and L2 packets
@@ -71,7 +77,7 @@ public class Layer2 implements L2StrategyManager, L1DataProcessor {
 	public void sendL2Packet(L2Packet packet, Address address) {
 		// Associate L2 packet with this L2 instance
 		packet.setLayer(this);
-		
+
 		// Pass packet to lower layer
 		l2Sender.sendL2Packet(packet, address);
 	}
