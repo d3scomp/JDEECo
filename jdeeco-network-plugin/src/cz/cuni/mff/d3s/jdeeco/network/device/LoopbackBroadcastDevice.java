@@ -47,6 +47,7 @@ public class LoopbackBroadcastDevice implements Device, DEECoPlugin {
 	public void send(byte[] data, Address address) {
 		System.out.println("Sending broadcast packet to all registered L1 layers");
 		for (Layer1 layer : l1Layers) {
+			System.out.println("	Sending broadcast packet to L1 layers");
 			// TODO: Would be nice to know sender address (have a sending layer/network as a parameter)
 			// BUG: This is using recipient address, which is not correct
 			layer.processL0Packet(data, this, new ReceivedInfo(MANETBroadcastAddress.INSTANCE));
