@@ -71,6 +71,9 @@ public class Layer2 implements L2StrategyManager, L1DataProcessor {
 	 *            destination address for packet
 	 */
 	public void sendL2Packet(L2Packet packet, Address address) {
+		// Associate L2 packet with this L2 instance
+		packet.setLayer(this);
+		
 		// Pass packet to lower layer
 		l2Sender.sendL2Packet(packet, address);
 	}
