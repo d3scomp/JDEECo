@@ -87,13 +87,13 @@ public class L1Packet {
 		return HEADER_SIZE + payloadSize;
 	}
 	
-	private static int decodeIntegerFrom2Bytes(byte [] value) {
+	protected static int decodeIntegerFrom2Bytes(byte [] value) {
 		int high = value[1] >= 0 ? value[1] : 256 + value[1];
 		int low = value[0] >= 0 ? value[0] : 256 + value[0];
 		return low | (high << 8);
 	}
 	
-	private static byte [] encodeIntegerInto2Bytes(int value) {
+	protected static byte [] encodeIntegerInto2Bytes(int value) {
 		byte[] result = new byte[2];
 		result[0] = (byte)(value & 0xFF);
 		result[1] = (byte)((value >> 8) & 0xFF);

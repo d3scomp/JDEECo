@@ -65,14 +65,14 @@ public class DeviceOutputQueue {
 
 	// ------------- PRIVATE METHODS --------------------
 
-	private void send() {
+	protected void send() {
 		if (l0PacketSize > 0) {
 			device.send(l0Packet, address);
 			l0PacketSize = 0;
 		}
 	}
 
-	private void fillL0Packet(L1Packet l1Packet) {
+	protected void fillL0Packet(L1Packet l1Packet) {
 		byte[] bytes = l1Packet.getBytes();
 		// L1 packet is too big to fit into the remaining L0 packet space.
 		if (bytes.length > availableL0Space()) {
