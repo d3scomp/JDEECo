@@ -23,6 +23,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
@@ -52,6 +53,8 @@ public class RuntimeFrameworkImplTest {
 	ComponentProcess process;
 	EnsembleController econtroller;
 	
+	EnsembleDefinition edefinition;
+	
 	KnowledgeManager km;
 	KnowledgeManager kmReplacement;
 	
@@ -69,8 +72,13 @@ public class RuntimeFrameworkImplTest {
 		
 		component = factory.createComponentInstance();		
 
+		edefinition = factory.createEnsembleDefinition();
+		edefinition.setName("dummyName");
+		
 		process = factory.createComponentProcess();
 		econtroller = factory.createEnsembleController();
+		econtroller.setEnsembleDefinition(edefinition);
+		
 		km = mock(KnowledgeManager.class);
 		when(km.getId()).thenReturn("component");
 				
@@ -80,6 +88,7 @@ public class RuntimeFrameworkImplTest {
 		
 		model = factory.createRuntimeMetadata();
 		model.getComponentInstances().add(component);
+		model.getEnsembleDefinitions().add(edefinition);
 		
 		kmReplacement = new BaseKnowledgeManager("component", component);
 		when(kmContainer.createLocal(anyString(), anyObject())).thenReturn(kmReplacement);		
@@ -140,12 +149,12 @@ public class RuntimeFrameworkImplTest {
 		// WHEN a new RuntimeFrameworkImpl is created via the public constructor 		
 		new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, ratingsManager) {
 			@Override
-			void init() {
-				spy.init();
+			public void init(DEECoContainer container) {
+				spy.init(null);
 			}
 		};
 		// THEN the init() gets called
-		verify(spy).init();
+		verify(spy).init(null);
 	}
 	
 	@Test
@@ -155,7 +164,7 @@ public class RuntimeFrameworkImplTest {
 		RuntimeFrameworkImpl tested = new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, ratingsManager, false);
 
 		// WHEN init() is called on the runtime
-		tested.init();
+		tested.init(null);
 		
 		// THEN the runtime sets up an adapter to observe changes of the list of
 		// component instances
@@ -171,7 +180,7 @@ public class RuntimeFrameworkImplTest {
 		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, ratingsManager, false));
 		
 		// WHEN when init is called() on the runtime		
-		tested.init();
+		tested.init(null);
 		
 		// THEN the callback componentInstanceAdded is not called 
 		verify(tested, never()).componentInstanceAdded(any(ComponentInstance.class));		
@@ -183,7 +192,7 @@ public class RuntimeFrameworkImplTest {
 		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, ratingsManager, false));
 		
 		// WHEN when init is called() on the runtime
-		tested.init();
+		tested.init(null);
 		
 		// THEN the component is added via the callback componentInstanceAdded 
 		verify(tested, times(1)).componentInstanceAdded(any(ComponentInstance.class));
@@ -198,7 +207,7 @@ public class RuntimeFrameworkImplTest {
 		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, ratingsManager, false));
 	
 		// WHEN when init is called() on the runtime
-		tested.init();		
+		tested.init(null);		
 		
 		// THEN the components are all added via the callback componentInstanceAdded 
 		verify(tested, times(2)).componentInstanceAdded(any(ComponentInstance.class));
@@ -615,7 +624,7 @@ public class RuntimeFrameworkImplTest {
 		process2.setActive(false);
 		component.getComponentProcesses().add(process2);
 		process.setActive(true);
-		tested.init();		
+		tested.init(null);		
 
 		@SuppressWarnings("unused")
 		ComponentInstanceRecord unused = tested.componentRecords.get(component);

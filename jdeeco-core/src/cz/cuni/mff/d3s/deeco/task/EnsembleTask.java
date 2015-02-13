@@ -707,7 +707,7 @@ public class EnsembleTask extends Task {
 		return null;
 	}
 	
-	public String toString() {
+	public String toString() {		
 		return ensembleController.getEnsembleDefinition().getName();
 	}
 }

@@ -1,28 +1,21 @@
 package cz.cuni.mff.d3s.deeco.demo.convoy;
 
-import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.assertThat;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.StandardOutputStreamLog;
 
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
-import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
-import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerFactory;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
-import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
-import cz.cuni.mff.d3s.deeco.runtime.RuntimeConfiguration;
-import cz.cuni.mff.d3s.deeco.runtime.RuntimeConfiguration.Distribution;
-import cz.cuni.mff.d3s.deeco.runtime.RuntimeConfiguration.Execution;
-import cz.cuni.mff.d3s.deeco.runtime.RuntimeConfiguration.Scheduling;
-import cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework;
-import cz.cuni.mff.d3s.deeco.runtime.RuntimeFrameworkBuilder;
-
+import cz.cuni.mff.d3s.deeco.runtime.DEECo;
+import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
+import cz.cuni.mff.d3s.deeco.runtime.DuplicateEnsembleDefinitionException;
+import cz.cuni.mff.d3s.deeco.runtime.PluginDependencyException;
 
 /**
  * 
- * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
+ * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
  *
  */
 public class ConvoyTest {
@@ -30,29 +23,23 @@ public class ConvoyTest {
 	@Rule
 	public final StandardOutputStreamLog  log = new StandardOutputStreamLog ();
 	
-	public static void main(String[] args) throws AnnotationProcessorException, InterruptedException {
+	public static void main(String[] args) throws AnnotationProcessorException, InterruptedException, DEECoException {
 		new ConvoyTest().testConvoy();
 	}
 	
 	@Test
-	public void testConvoy() throws AnnotationProcessorException, InterruptedException {
+	public void testConvoy() throws AnnotationProcessorException, InterruptedException, DEECoException {
 		
-		RuntimeMetadata model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
-		AnnotationProcessor processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE, model, new CloningKnowledgeManagerFactory());
+		/* create main application container */
+		DEECo deeco = new DEECo();
+		/* deploy components and ensembles */
+		deeco.deployComponent(new Leader());
+		deeco.deployComponent(new Follower());
+		deeco.deployEnsemble(ConvoyEnsemble.class);
 		
-		processor.process(new Leader(), new Follower(), new ConvoyEnsemble());
-		
-		RuntimeFrameworkBuilder builder = new RuntimeFrameworkBuilder(
-				new RuntimeConfiguration(
-						Scheduling.WALL_TIME, 
-						Distribution.LOCAL, 
-						Execution.SINGLE_THREADED), new CloningKnowledgeManagerFactory());
-		RuntimeFramework runtime = builder.build(model); 
-		runtime.start();
-		
+		deeco.start();
 		Thread.sleep(2000);
-		
-		runtime.stop();
+		deeco.stop();
 		
 		// THEN the follower reaches his destination
 		assertThat(log.getLog(), containsString("Follower F: me = (1,3)"));

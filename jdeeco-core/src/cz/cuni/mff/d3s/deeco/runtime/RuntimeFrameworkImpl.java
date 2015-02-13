@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.deeco.runtime;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -151,18 +152,21 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 	 * @throws IllegalArgumentException if either of the arguments is null.
 	 */
 	public RuntimeFrameworkImpl(RuntimeMetadata model, Scheduler scheduler,
+			Executor executor, KnowledgeManagerContainer kmContainer) {
+		this(model, scheduler, executor, kmContainer, null, false);
+	}
+	
+	public RuntimeFrameworkImpl(RuntimeMetadata model, Scheduler scheduler,
 			Executor executor, KnowledgeManagerContainer kmContainer, RatingsManager ratingsManager) {
 		this(model, scheduler, executor, kmContainer, ratingsManager, true);
 	}
-	
 	/**
-	 * Convenience constructor to make the initialization of the runtime upon
-	 * creation optional. The public constructor has it always mandatory.
+	 * FIXME remove this constructor when RatingsManager becomes a plugin
 	 * 
 	 * @see RuntimeFrameworkImpl#RuntimeFrameworkImpl(RuntimeMetadata, Scheduler, Executor, KnowledgeManagerContainer)
-	 * @see RuntimeFrameworkImpl#init()
+	 * @see RuntimeFrameworkImpl#init(DEECoContainer)
 	 */
-	RuntimeFrameworkImpl(RuntimeMetadata model, Scheduler scheduler,
+	public RuntimeFrameworkImpl(RuntimeMetadata model, Scheduler scheduler,
 			Executor executor, KnowledgeManagerContainer kmContainer, RatingsManager ratingsManager, boolean autoInit) {
 		if (model == null)
 			throw new IllegalArgumentException("Model cannot be null");
@@ -181,9 +185,9 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 		
 		//create architecture model 
 		architecture = ArchitectureFactory.eINSTANCE.createArchitecture();
-				
+
 		if (autoInit)
-			init();
+			init(null);
 	}
 
 	/**
@@ -193,7 +197,8 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 	 * Logs errors but does no throw any exceptions.
 	 * </p>
 	 */
-	void init() {		
+	@Override
+	public void init(DEECoContainer container) {		
 		// initialize the components
 		for (ComponentInstance ci: model.getComponentInstances()) {
 			componentInstanceAdded(ci);
@@ -215,8 +220,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 				}
 			}
 		};
-		model.eAdapters().add(componentInstancesAdapter);	
-
+		model.eAdapters().add(componentInstancesAdapter);
 	}
 
 	/**
@@ -267,30 +271,12 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 			componentProcessAdded(instance, p);
 		}
 		
-		// create a new task for each ensemble controller
-		// register ecore adapters to listen to change in EnsembleController.isActive 
 		for (final EnsembleController ec: instance.getEnsembleControllers()) {
-			Task task = new EnsembleTask(ec, scheduler, (ArchitectureObserver) this, kmContainer, ratingsManager);
-			ciRecord.getEnsembleTasks().put(ec, task);
-			scheduler.addTask(task);	
-			
-			// listen to change in EnsembleDefinition.isActive
-			Adapter ensembleDefAdapter = new AdapterImpl() {
-				public void notifyChanged(Notification notification) {
-					super.notifyChanged(notification);
-					if ((notification.getFeatureID(ComponentProcess.class) == RuntimeMetadataPackage.ENSEMBLE_CONTROLLER__ACTIVE)
-							&& (notification.getEventType() == Notification.SET)) {
-						ensembleControllerActiveChanged(instance, ec, notification.getNewBooleanValue());
-					}
-				}
-			};
-			ec.eAdapters().add(ensembleDefAdapter);	
-			ensembleControllerAdapters.put(ec, ensembleDefAdapter);
+			ensembleControllerAdded(instance, ec);
 		}
 						
-		// register adapters to listen for model changes
 		// listen to ADD/REMOVE in ComponentInstance.getComponentProcesses()
-		Adapter componentInstanceAdapter = new AdapterImpl() {
+		Adapter componentProcessAdapter = new AdapterImpl() {
 			public void notifyChanged(Notification notification) {
 				super.notifyChanged(notification);
 				if (notification.getFeature() == instance.eClass().getEStructuralFeature(RuntimeMetadataPackage.COMPONENT_INSTANCE__COMPONENT_PROCESSES)) {
@@ -304,8 +290,29 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 				}
 			}
 		};
-		instance.eAdapters().add(componentInstanceAdapter);	
-		componentInstanceAdapters.put(instance, componentInstanceAdapter);
+		instance.eAdapters().add(componentProcessAdapter);	
+		componentInstanceAdapters.put(instance, componentProcessAdapter);
+		
+		// listen to ADD/REMOVE in ComponentInstance.getEnsembleControllers()
+		Adapter ensembleControllerAdapter = new AdapterImpl() {
+			public void notifyChanged(Notification notification) {
+				super.notifyChanged(notification);
+				if (notification.getFeature() == instance.eClass().getEStructuralFeature(RuntimeMetadataPackage.COMPONENT_INSTANCE__ENSEMBLE_CONTROLLERS)) {
+					// new ensemble controller added
+					if (notification.getEventType() == Notification.ADD) {
+						EnsembleController newController = (EnsembleController) notification.getNewValue();
+						ensembleControllerAdded(newController.getComponentInstance(), newController);
+					// a ensemble controller removed
+					} else if (notification.getEventType() == Notification.REMOVE) {
+						EnsembleController oldController = (EnsembleController) notification.getNewValue();
+						ensembleControllerRemoved(oldController.getComponentInstance(), oldController);
+					}
+				}
+			}
+		};
+		instance.eAdapters().add(ensembleControllerAdapter);	
+		componentInstanceAdapters.put(instance, ensembleControllerAdapter);
+		
 	}
 	
 	/** 
@@ -408,82 +415,56 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 	} 
 	
 	/**
-	 * Implementation of a notification indicating that a process became (in)active.
+	 * Implementation of a notification indicating that a new ensemble controller
+	 * has been added to the model. 
 	 * 
 	 * <p>
-	 * Schedules the corresponding task accordingly.   
+	 * Creates a new task for the ensemble controller and schedules it if the ensemble controller is active.
+	 * Registers an adaptor for listening to changes in the {@code EnsembleController}. 
 	 * </p> 
 	 * <p>
 	 * Logs errors but does not throw any exceptions.
 	 * </p>
 	 * 
-	 * @see Scheduler#addTask(Task)
-	 * @see Scheduler#removeTask(Task) 
-	 * 
+	 * @see RuntimeFrameworkImpl#ensembleControllerActiveChanged(ComponentProcess, boolean) 
 	 */
-	void componentProcessActiveChanged(ComponentInstance instance, ComponentProcess process, boolean active) {		
-		if (process == null) {
-			Log.w("Attempting to to change the activity of a null process.");
-			return;
-		}
-		// the instance is not registered 
-		if ((!componentRecords.containsKey(instance) 
-			// OR the process is not registered
-			|| (!componentRecords.get(instance).getProcessTasks().containsKey(process)))) {
-			Log.w(String.format("Attempting to change the activity of an unregistered process (%s).", process));
+	void ensembleControllerAdded(ComponentInstance instance, EnsembleController controller) {
+		if ((instance == null) || (controller == null)) {
+			Log.w(String.format("Attempting to add an invalid ensemble controller (%s) to an invalid component instance (%s)", controller, instance));
 			return;
 		}
 		
-		Task t = componentRecords.get(instance).getProcessTasks().get(process);
-		
-		Log.d(String.format("Changing the activity of task %s corresponding to process %s to %s.", t, process, active));
-		
-		if (active) {
-			scheduler.addTask(t);
-		} else {
-			scheduler.removeTask(t);
+		ComponentInstanceRecord cir = componentRecords.get(instance);		
+		if (cir == null) {
+			Log.w(String.format("Attempting to add an ensemble controller (%s) to an unregistered instance (%s)", controller, instance));
+			return;
 		}
-	}
+		
+		if (cir.getEnsembleTasks().containsKey(controller)) {
+			Log.w(String.format("Attempting to add an already existing ensemble controller (%s) to instance (%s)", controller, instance));
+			return;
+		}
+		
+		Task task = new EnsembleTask(controller, scheduler, (ArchitectureObserver) this, kmContainer, ratingsManager);
+		cir.getEnsembleTasks().put(controller, task);
+		
+		ensembleControllerActiveChanged(instance, controller, controller.isActive());
 
-	/**
-	 * Implementation of a notification indicating that an ensemble became (in)active.
-	 * 
-	 * <p>
-	 * Schedules the corresponding task accordingly.   
-	 * </p> 
-	 * <p>
-	 * Logs errors but does not throw any exceptions.
-	 * </p>
-	 * @param instance 
-	 * 
-	 * @see Scheduler#addTask(Task)
-	 * @see Scheduler#removeTask(Task) 
-	 */
-	void ensembleControllerActiveChanged(ComponentInstance instance, EnsembleController ec, boolean active) {
-		if (ec == null) {
-			Log.w("Attempting to to change the activity of a null ensemble controller.");
-			return;
-		}
-		// the instance is not registered 
-		if ((!componentRecords.containsKey(instance) 
-			// OR the process is not registered
-			|| (!componentRecords.get(instance).getEnsembleTasks().containsKey(ec)))) {
-			Log.w(String.format("Attempting to change the activity of an unregistered ensemble controller (%s).", ec));
-			return;
-		}
-		
-		Task t = componentRecords.get(instance).getEnsembleTasks().get(ec);
-		
-		Log.i(String.format("Changing the activity of ensemble task %s corresponding to ensemble definition %s to %s.", t, ec.getEnsembleDefinition(), active));
-		
-		if (active) {
-			scheduler.addTask(t);
-		} else {
-			scheduler.removeTask(t);
-		}
-		
+		// register adapters to listen for model changes
+		// listen to change in EnsembleController.isActive
+		Adapter ensembleControllerAdapter = new AdapterImpl() {
+			public void notifyChanged(Notification notification) {
+				super.notifyChanged(notification);
+				if ((notification.getFeatureID(EnsembleController.class) == RuntimeMetadataPackage.ENSEMBLE_CONTROLLER__ACTIVE)
+						&& (notification.getEventType() == Notification.SET)) {
+					ensembleControllerActiveChanged(instance, controller, notification.getNewBooleanValue());
+				}
+			}
+		};
+		controller.eAdapters().add(ensembleControllerAdapter);	
+		ensembleControllerAdapters.put(controller, ensembleControllerAdapter);
 	}
-
+	
 	/**
 	 * Implementation of a notification indicating that an existing component
 	 * instance has been removed from the model.
@@ -583,6 +564,125 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 		cir.getProcessTasks().remove(process);		
 	}
 	
+	/**
+	 * Implementation of a notification indicating that an existing 
+	 * ensemble controller has been removed from the model.
+	 * 
+	 * <p>
+	 * De-schedules and discards the task corresponding to the removed ensemble controller.
+	 * Unregisters the ecore adaptors from the ensemble controller. 
+	 * </p>
+	 * 
+	 * <p>
+	 * Logs errors but does not throw any exceptions.	
+	 * </p>
+	 * 
+	 * @see RuntimeFrameworkImpl#ensembleControllerActiveChanged(ComponentInstance, EnsembleController, boolean)
+	 */
+	void ensembleControllerRemoved(ComponentInstance instance, EnsembleController controller) {
+		if ((instance == null) || (controller == null)) {
+			Log.w(String.format("Attempting to remove an invalid ensemble controller (%s) from an invalid component instance (%s)", controller, instance));
+			return;
+		}
+		
+		ComponentInstanceRecord cir = componentRecords.get(instance);		
+		if (cir == null) {
+			Log.w(String.format("Attempting to remove an ensemble controller (%s) from an unregistered instance (%s)", controller, instance));
+			return;
+		}
+		
+		if (!cir.getEnsembleTasks().containsKey(controller)) {
+			Log.w(String.format("Attempting to remove an unregistered ensemble controller (%s) from instance (%s)", controller, instance));
+			return;
+		}
+		
+		// unregister the adapter before the task is discarded 
+		if (ensembleControllerAdapters.containsKey(controller)) { 
+			controller.eAdapters().remove(ensembleControllerAdapters.get(controller));
+			ensembleControllerAdapters.remove(controller);
+		}	
+		
+		ensembleControllerActiveChanged(instance, controller, false);
+		
+		cir.getEnsembleTasks().remove(controller);	
+	}
+	
+	/**
+	 * Implementation of a notification indicating that a process became (in)active.
+	 * 
+	 * <p>
+	 * Schedules the corresponding task accordingly.   
+	 * </p> 
+	 * <p>
+	 * Logs errors but does not throw any exceptions.
+	 * </p>
+	 * 
+	 * @see Scheduler#addTask(Task)
+	 * @see Scheduler#removeTask(Task) 
+	 * 
+	 */
+	void componentProcessActiveChanged(ComponentInstance instance, ComponentProcess process, boolean active) {		
+		if (process == null) {
+			Log.w("Attempting to to change the activity of a null process.");
+			return;
+		}
+		// the instance is not registered 
+		if ((!componentRecords.containsKey(instance) 
+			// OR the process is not registered
+			|| (!componentRecords.get(instance).getProcessTasks().containsKey(process)))) {
+			Log.w(String.format("Attempting to change the activity of an unregistered process (%s).", process));
+			return;
+		}
+		
+		Task t = componentRecords.get(instance).getProcessTasks().get(process);
+		
+		Log.d(String.format("Changing the activity of task %s corresponding to process %s to %s.", t, process, active));
+		
+		if (active) {
+			scheduler.addTask(t);
+		} else {
+			scheduler.removeTask(t);
+		}
+	}
+
+	/**
+	 * Implementation of a notification indicating that an ensemble became (in)active.
+	 * 
+	 * <p>
+	 * Schedules the corresponding task accordingly.   
+	 * </p> 
+	 * <p>
+	 * Logs errors but does not throw any exceptions.
+	 * </p>
+	 * @param instance 
+	 * 
+	 * @see Scheduler#addTask(Task)
+	 * @see Scheduler#removeTask(Task) 
+	 */
+	void ensembleControllerActiveChanged(ComponentInstance instance, EnsembleController controller, boolean active) {
+		if (controller == null) {
+			Log.w("Attempting to to change the activity of a null ensemble controller.");
+			return;
+		}
+		// the instance is not registered 
+		if ((!componentRecords.containsKey(instance) 
+			// OR the ensenble controller is not registered
+			|| (!componentRecords.get(instance).getEnsembleTasks().containsKey(controller)))) {
+			Log.w(String.format("Attempting to change the activity of an unregistered ensemble controller (%s).", controller));
+			return;
+		}
+		
+		Task t = componentRecords.get(instance).getEnsembleTasks().get(controller);
+		
+		Log.i(String.format("Changing the activity of ensemble task %s corresponding to ensemble definition %s to %s.", t, controller.getEnsembleDefinition(), active));
+		
+		if (active) {
+			scheduler.addTask(t);
+		} else {
+			scheduler.removeTask(t);
+		}		
+	}
+	
 	/* (non-Javadoc)
 	 * @see cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework#start()
 	 */
@@ -659,5 +759,11 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 	@Override
 	public RatingsManager getRatingsManager() {
 		return ratingsManager;
+	}
+
+	@Override
+	public List<Class<? extends DEECoPlugin>> getDependencies() {
+		// this is the core plugin, so it has no dependencies and we return an empty list
+		return new ArrayList<>();
 	}
 }

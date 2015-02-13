@@ -63,18 +63,14 @@ public class ProcessContext {
 		return (RuntimeMetadata) p.getComponentInstance().eContainer();		
 	}
 	
-	public static String startComponent(Object componentDefinition, KnowledgeManagerFactory knowledgeManagerFactory) throws Exception {
+	public void startComponent(Object componentDefinition, KnowledgeManagerFactory knowledgeManagerFactory) throws Exception {
 		// TODO: figure somehow how to get the factory used to create the model
 		RuntimeMetadata model = getModel();
 		AnnotationProcessor processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE,model,knowledgeManagerFactory);
 		try {
-			ComponentInstance ci = processor.processComponentInstance(model, componentDefinition);
+			processor.processComponent(componentDefinition);
 			
 			// TODO: check that the KM created by the processor has been already replaced by the runtime framework
-			if (ci != null)
-				return ci.getKnowledgeManager().getId();
-			else
-				return null;
 		} catch (AnnotationProcessorException e) {
 			Log.e("Component start failed",  e);
 			throw new Exception("Component start failed",  e);
