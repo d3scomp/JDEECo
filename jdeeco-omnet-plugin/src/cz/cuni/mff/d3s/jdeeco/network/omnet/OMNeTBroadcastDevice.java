@@ -1,0 +1,36 @@
+package cz.cuni.mff.d3s.jdeeco.network.omnet;
+
+import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
+import cz.cuni.mff.d3s.jdeeco.network.address.Address;
+import cz.cuni.mff.d3s.jdeeco.network.address.MANETBroadcastAddress;
+
+public class OMNeTBroadcastDevice extends OMNeTDevice {
+	public OMNeTBroadcastDevice(OMNeTSimulation simulation /* , address, frequency, ... */) {
+		super(simulation);
+	}
+
+	@Override
+	public String getId() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public int getMTU() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean canSend(Address address) {
+		return address instanceof MANETBroadcastAddress;
+	}
+
+	@Override
+	public void send(byte[] data, Address address) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void init(DEECoContainer container) {
+		throw new UnsupportedOperationException();
+	}
+}
