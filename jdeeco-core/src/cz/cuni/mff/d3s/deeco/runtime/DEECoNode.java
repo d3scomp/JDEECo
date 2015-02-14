@@ -72,6 +72,11 @@ public class DEECoNode implements DEECoContainer {
 		initializePlugins(plugins);
 	}
 	
+	@Override
+	public int getId() {
+		return id;
+	}
+	
 	public ComponentInstance deployComponent(Object component) throws AnnotationProcessorException {
 		return processor.processComponent(component);
 	}
@@ -186,11 +191,6 @@ public class DEECoNode implements DEECoContainer {
 		scheduler.setExecutor(executor);
 		executor.setExecutionListener(scheduler);
 		runtime = new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer);		
-	}
-
-	@Override
-	public int getId() {
-		return id;
 	}
 
 }
