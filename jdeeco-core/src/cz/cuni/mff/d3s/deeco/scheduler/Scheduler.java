@@ -73,6 +73,4 @@ public interface Scheduler extends ExecutionListener, SchedulerNotifierEventList
 	
 	public SchedulerNotifier getSchedulerNotifier();
 
-	public boolean isRunning();
-
 }

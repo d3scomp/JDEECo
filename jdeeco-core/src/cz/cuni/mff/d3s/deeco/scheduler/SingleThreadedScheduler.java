@@ -28,19 +28,12 @@ public class SingleThreadedScheduler implements Scheduler {
 	private final Map<Task, SchedulerEvent> timeTriggeredEvents;
 	private final Set<Trigger> knowledgeChangeTriggers;
 
-	/**
-	 * True if the scheduler is running.
-	 */
-	private volatile boolean running;
-	
     public SingleThreadedScheduler(Executor executor, SchedulerNotifier schedulerNotifier) throws NoExecutorAvailableException{
 		if (executor == null) {
 			throw new NoExecutorAvailableException();
 		}
-		
     	this.executor = executor;
     	this.schedulerNotifier = schedulerNotifier;
-    	this.running = false;
     	
 		queue = new TreeSet<>();
 		allTasks = new HashSet<>();
@@ -48,10 +41,6 @@ public class SingleThreadedScheduler implements Scheduler {
 		knowledgeChangeTriggers = new HashSet<>();
 		
     }
-
-//		if (!queue.isEmpty()) {
-//			schedulerNotifier.notifyAt(queue.first().nextExecutionTime, this);
-
 
 	@Override
 	public void setExecutor(Executor executor) {
@@ -91,10 +80,7 @@ public class SingleThreadedScheduler implements Scheduler {
 		task.setTriggerListener(new TaskTriggerListener() {
 			@Override
 			public void triggered(Task task, Trigger trigger) {
-				if (!isRunning()) {
-					Log.w("When a triggered task is added to a stopped scheduler and the trigger is triggered, then the process in not scheduled.");
-					return;
-				}
+
 				if (allTasks.contains(task)) {
 					// if the trigger has been already scheduled (i.e., there have been many consecutive 
 					// invocations of that trigger in a row), then skip this event
@@ -172,11 +158,6 @@ public class SingleThreadedScheduler implements Scheduler {
 	
 	public SchedulerNotifier getSchedulerNotifier() {
 		return schedulerNotifier;
-	}
-
-	@Override
-	public boolean isRunning() {
-		return running;
 	}
      
 }

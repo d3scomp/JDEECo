@@ -20,15 +20,15 @@ public class WallTimeSchedulerNotifier extends DiscreteEventSchedulerNotifier {
 		}
 	}
 	
-	public boolean tryToTerminate() {
+	public void setTerminationTime(long terminationTime) {
+		this.terminationTime = terminationTime;
+	}
+	
+	private boolean tryToTerminate() {
 		if (currentTime < terminationTime) {
 			return false;
 		}
 		eventTimes.clear();
 		return true;
-	}
-	
-	public void setTerminationTime(long terminationTime) {
-		this.terminationTime = terminationTime;
 	}
 }

@@ -232,12 +232,6 @@ public class SimulationScheduler implements Scheduler,
 	}
 
 	@Override
-	public boolean isRunning() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public void setSchedulerNotifier(SchedulerNotifier schedulerNotifier) {
 		// TODO Auto-generated method stub
 		

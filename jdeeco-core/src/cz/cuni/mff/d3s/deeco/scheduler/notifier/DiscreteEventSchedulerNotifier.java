@@ -36,19 +36,6 @@ public class DiscreteEventSchedulerNotifier implements SimulationSchedulerNotifi
 		}
 	}
 
-	private boolean tryToTerminate() {
-		if (eventTimes.isEmpty()) {
-			return true;
-		} 
-		EventTime eventTime = eventTimes.peek();
-		if (!eventTime.isTerminationEvent()) {
-			return false;
-		} 
-		currentTime = eventTime.getTimePoint();
-		eventTimes.clear();
-		return true;
-	}
-
 	@Override 
 	public void setTerminationTime(long terminationTime) {
 		eventTimes.add(new EventTime(terminationTime, new SchedulerNotifierEventListener(){
@@ -62,6 +49,19 @@ public class DiscreteEventSchedulerNotifier implements SimulationSchedulerNotifi
 	public void reset() {
 		currentTime = 0;
 		eventTimes.clear();
+	}
+	
+	private boolean tryToTerminate() {
+		if (eventTimes.isEmpty()) {
+			return true;
+		} 
+		EventTime eventTime = eventTimes.peek();
+		if (!eventTime.isTerminationEvent()) {
+			return false;
+		} 
+		currentTime = eventTime.getTimePoint();
+		eventTimes.clear();
+		return true;
 	}
 
 }
