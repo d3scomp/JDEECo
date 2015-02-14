@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.junit.contrib.java.lang.system.StandardOutputStreamLog;
 
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
-import cz.cuni.mff.d3s.deeco.runtime.DEECo;
+import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoSimulationRealm;
 import cz.cuni.mff.d3s.deeco.runtime.SimulationSchedulerNotifier;
@@ -33,7 +33,7 @@ public class ConvoyTest {
 		DEECoSimulationRealm realm = new DEECoSimulationRealm(simulationSchedulerNotifier);
 		
 		/* create one and only deeco node (centralized deployment) */
-		DEECo deeco = realm.createNode();
+		DEECoNode deeco = realm.createNode();
 		/* deploy components and ensembles */
 		deeco.deployComponent(new Leader());
 		deeco.deployComponent(new Follower());

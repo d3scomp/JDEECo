@@ -6,7 +6,7 @@ import java.util.List;
 
 public class DEECoSimulationRealm {
 
-	List<DEECo> nodesList;
+	List<DEECoNode> nodesList;
 	DEECoPlugin[] plugins;
 	SimulationSchedulerNotifier simulationSchedulerNotifier;
 	
@@ -20,8 +20,8 @@ public class DEECoSimulationRealm {
 		simulationSchedulerNotifier.start();
 	}
 
-	public DEECo createNode(DEECoPlugin... extraPlugins) throws DEECoException {
-		DEECo node = new DEECo(simulationSchedulerNotifier, getAllPlugins(extraPlugins));
+	public DEECoNode createNode(DEECoPlugin... extraPlugins) throws DEECoException {
+		DEECoNode node = new DEECoNode(simulationSchedulerNotifier, getAllPlugins(extraPlugins));
 		nodesList.add(node);
 		return node;
 	}

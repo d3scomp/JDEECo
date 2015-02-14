@@ -22,7 +22,6 @@ import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.scheduler.NoExecutorAvailableException;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.scheduler.SingleThreadedScheduler;
-import cz.cuni.mff.d3s.deeco.scheduler.notifier.DiscreteEventSchedulerNotifier;
 import cz.cuni.mff.d3s.deeco.scheduler.notifier.SchedulerNotifier;
 
 /**
@@ -31,7 +30,7 @@ import cz.cuni.mff.d3s.deeco.scheduler.notifier.SchedulerNotifier;
  * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
  * @author Filip Krijt <krijt@d3s.mff.cuni.cz>
  */
-public class DEECo implements DEECoContainer {
+public class DEECoNode implements DEECoContainer {
 
 	/** 
 	 * TODO find a way to inject this field from the DEECoRealm (probably via the constructor here?)
@@ -62,7 +61,7 @@ public class DEECo implements DEECoContainer {
 	 */
 	Map<Class<? extends DEECoPlugin>, DEECoPlugin> pluginsMap;
 	
-	public DEECo(SchedulerNotifier schedulerNotifier, DEECoPlugin... plugins) throws DEECoException {			
+	public DEECoNode(SchedulerNotifier schedulerNotifier, DEECoPlugin... plugins) throws DEECoException {			
 		pluginsMap= new HashMap<>();
 		model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
 		knowledgeManagerFactory = new CloningKnowledgeManagerFactory();
@@ -154,7 +153,7 @@ public class DEECo implements DEECoContainer {
 
 	void initializePlugins(DEECoPlugin[] plugins) throws PluginDependencyException {
 		List<DependencyNode> nodes = constructDependencyNodes(plugins);
-		Queue<DependencyNode> queue = new PriorityQueue<DEECo.DependencyNode>(new DependencyNodeComparator());
+		Queue<DependencyNode> queue = new PriorityQueue<DEECoNode.DependencyNode>(new DependencyNodeComparator());
 		
 		for(DependencyNode n : nodes)
 		{
