@@ -3,8 +3,6 @@ package cz.cuni.mff.d3s.deeco.scheduler.notifier;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
-import cz.cuni.mff.d3s.deeco.runtime.SimulationSchedulerNotifier;
-
 public class DiscreteEventSchedulerNotifier implements SimulationSchedulerNotifier {
 	
 	protected Queue<EventTime> eventTimes;
@@ -60,9 +58,7 @@ public class DiscreteEventSchedulerNotifier implements SimulationSchedulerNotifi
 			}}, true));
 	}
 
-	/*
-	 * This call sets the current time of the simulator to 0. 
-	 */
+	@Override
 	public void reset() {
 		currentTime = 0;
 		eventTimes.clear();
