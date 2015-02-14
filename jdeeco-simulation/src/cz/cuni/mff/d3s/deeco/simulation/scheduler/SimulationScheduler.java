@@ -14,23 +14,24 @@ import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.network.AbstractHost;
-import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.scheduler.SchedulerEvent;
-import cz.cuni.mff.d3s.deeco.scheduler.SchedulerNotifier;
+import cz.cuni.mff.d3s.deeco.scheduler.notifier.CurrentTimeProvider;
+import cz.cuni.mff.d3s.deeco.scheduler.notifier.SchedulerNotifier;
 import cz.cuni.mff.d3s.deeco.simulation.CallbackProvider;
 import cz.cuni.mff.d3s.deeco.simulation.SimulationTimeEventListener;
 import cz.cuni.mff.d3s.deeco.task.Task;
 import cz.cuni.mff.d3s.deeco.task.TaskTriggerListener;
 
 /**
+ * TODO Remove this class, it is no more needed since we have a new scheduler in core.
+ * 
  * The {@link Scheduler} implementation designed for single threaded simulation.
  * This scheduler is suppose to be driven by the simulation through
  * {@link SimulationTimeEventListener} methods.
  * 
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
  * 
- * TODO Remove this class, it is no more needed since we have a new scheduler in core.
  */
 public class SimulationScheduler implements Scheduler,
 		SimulationTimeEventListener {
@@ -58,16 +59,6 @@ public class SimulationScheduler implements Scheduler,
 	
 	public AbstractHost getHost() {
 		return host;
-	}
-
-	@Override
-	public void start() {
-		registerNextExecution(true);
-	}
-
-	@Override
-	public void stop() {
-		Log.d("The simulation scheduler is stopped together with the simulation.");
 	}
 
 	@Override
@@ -244,5 +235,11 @@ public class SimulationScheduler implements Scheduler,
 	public boolean isRunning() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public void setSchedulerNotifier(SchedulerNotifier schedulerNotifier) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -3,7 +3,7 @@ package cz.cuni.mff.d3s.deeco.simulation.omnet;
 import static cz.cuni.mff.d3s.deeco.simulation.Simulation.secondsToMilliseconds;
 import cz.cuni.mff.d3s.deeco.network.Host;
 import cz.cuni.mff.d3s.deeco.network.NetworkProvider;
-import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
+import cz.cuni.mff.d3s.deeco.scheduler.notifier.CurrentTimeProvider;
 import cz.cuni.mff.d3s.deeco.simulation.SimulationTimeEventListener;
 import cz.cuni.mff.d3s.deeco.simulation.SimulationTimeEventListenerHolder;
 
