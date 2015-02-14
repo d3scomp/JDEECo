@@ -56,6 +56,11 @@ public class SingleThreadedScheduler implements Scheduler {
 	}
 	
 	@Override
+	public SchedulerNotifier getSchedulerNotifier() {
+		return schedulerNotifier;
+	}
+	
+	@Override
 	public void addTask(Task task) {
 		if (task == null) {
 			throw new IllegalArgumentException("The task to be added to the scheduler cannot be null");
@@ -154,10 +159,6 @@ public class SingleThreadedScheduler implements Scheduler {
 			
 			executor.execute(event.executable, event.trigger);
 		}
-	}
-	
-	public SchedulerNotifier getSchedulerNotifier() {
-		return schedulerNotifier;
 	}
      
 }
