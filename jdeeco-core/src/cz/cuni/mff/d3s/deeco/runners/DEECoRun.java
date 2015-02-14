@@ -18,7 +18,7 @@ import cz.cuni.mff.d3s.deeco.scheduler.notifier.SchedulerNotifier;
  * 
  * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
  */
-public class DEECoRun implements DEECoRunner {
+public class DEECoRun implements DEECoRunner, DEECoNodeFactory {
 
 	List<DEECoNode> deecoNodes;
 	DEECoPlugin[] nodeWideplugins;

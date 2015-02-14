@@ -13,7 +13,7 @@ import cz.cuni.mff.d3s.deeco.scheduler.notifier.SimulationSchedulerNotifier;
  * 
  * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
  */
-public class DEECoSimulation implements DEECoSimulationRunner {
+public class DEECoSimulation implements DEECoSimulationRunner, DEECoNodeFactory {
 
 	List<DEECoNode> deecoNodes;
 	DEECoPlugin[] nodeWideplugins;
