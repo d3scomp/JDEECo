@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.junit.contrib.java.lang.system.StandardOutputStreamLog;
 
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
-import cz.cuni.mff.d3s.deeco.plugins.realTimeRun.WallTimeSchedulerNotifier;
 import cz.cuni.mff.d3s.deeco.runtime.DEECo;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoSimulationRealm;
@@ -28,26 +27,29 @@ public class ConvoySimulationTest {
 	
 	@Test
 	public void testConvoy() throws AnnotationProcessorException, InterruptedException, DEECoException {
-		
-		SimulationSchedulerNotifier simulationSchedulerNotifier = new DiscreteEventSchedulerNotifier();
-//		SimulationSchedulerNotifier simulationSchedulerNotifier = new WallTimeSchedulerNotifier();
-		DEECoSimulationRealm realm = new DEECoSimulationRealm(simulationSchedulerNotifier);
+
+		/* create main application container */
+		SimulationSchedulerNotifier simulationSchedulerNotifier = new DiscreteEventSchedulerNotifier(); // also "new WallTimeSchedulerNotifier()" 
+ 		DEECoSimulationRealm realm = new DEECoSimulationRealm(simulationSchedulerNotifier);
 		 
-		/* create first deeco node and store it in the realm */
+		/* create first deeco node */
 		DEECo deeco1 = realm.createNode();
 		/* deploy components and ensembles */
 		deeco1.deployComponent(new Leader());
 		deeco1.deployEnsemble(ConvoyEnsemble.class);
 		
-		/* create first deeco node and store it in the realm */
+		/* create second deeco node */
 		DEECo deeco2 = realm.createNode();
 		/* deploy components and ensembles */
 		deeco2.deployComponent(new Follower());
 		deeco2.deployEnsemble(ConvoyEnsemble.class);
 
-		realm.setTerminationTime(10000);
+		/* WHEN simulation is performed */
+		realm.setTerminationTime(2000);
 		realm.start();
 
+		// THEN the follower prints out the following (as there is no network and the components cannot exchange data)
+		assertThat(log.getLog(), containsString("Follower F: me = (1,1) leader = null"));
 	}	
 
 }

@@ -10,6 +10,9 @@ import org.junit.contrib.java.lang.system.StandardOutputStreamLog;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
 import cz.cuni.mff.d3s.deeco.runtime.DEECo;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
+import cz.cuni.mff.d3s.deeco.runtime.DEECoSimulationRealm;
+import cz.cuni.mff.d3s.deeco.runtime.SimulationSchedulerNotifier;
+import cz.cuni.mff.d3s.deeco.scheduler.notifier.DiscreteEventSchedulerNotifier;
 /**
  * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
  */
@@ -26,14 +29,19 @@ public class ConvoyTest {
 	public void testConvoy() throws AnnotationProcessorException, InterruptedException, DEECoException {
 		
 		/* create main application container */
-		DEECo deeco = new DEECo();
+		SimulationSchedulerNotifier simulationSchedulerNotifier = new DiscreteEventSchedulerNotifier();
+		DEECoSimulationRealm realm = new DEECoSimulationRealm(simulationSchedulerNotifier);
+		
+		/* create one and only deeco node (centralized deployment) */
+		DEECo deeco = realm.createNode();
 		/* deploy components and ensembles */
 		deeco.deployComponent(new Leader());
 		deeco.deployComponent(new Follower());
 		deeco.deployEnsemble(ConvoyEnsemble.class);
-		 
-		deeco.setTerminationTime(2000);
-		deeco.start();
+		
+		/* WHEN simulation is performed */
+		realm.setTerminationTime(2000);
+		realm.start();
 		
 		// THEN the follower reaches his destination
 		assertThat(log.getLog(), containsString("Follower F: me = (1,3)"));

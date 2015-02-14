@@ -1,21 +1,23 @@
 package cz.cuni.mff.d3s.deeco.runtime;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
-import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC1;
-import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC2;
-import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectE1;
-import cz.cuni.mff.d3s.deeco.runtime.DEECo;
-import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
-import cz.cuni.mff.d3s.deeco.runtime.PluginDependencyException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.*;
+import org.junit.Test;
 import org.mockito.InOrder;
+
+import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
+import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectE1;
+import cz.cuni.mff.d3s.deeco.scheduler.notifier.DiscreteEventSchedulerNotifier;
+import cz.cuni.mff.d3s.deeco.scheduler.notifier.SchedulerNotifier;
 
 /**
  * Test class for the main DEECo application container.
@@ -39,6 +41,8 @@ public class DEECoTest {
 	interface P8 extends DEECoPlugin{};
 	interface P9 extends DEECoPlugin{};
 	
+	SchedulerNotifier schedulerNotifier = new DiscreteEventSchedulerNotifier();
+	
 	/**
 	 * Tests if the object fields have been initialized correctly. 
 	 * @throws DEECoException 
@@ -46,13 +50,12 @@ public class DEECoTest {
 	@Test
 	public void testFieldInitialization() throws DEECoException
 	{
-		DEECo deeco = new DEECo();
+		DEECo deeco = new DEECo(schedulerNotifier);
 		assertNotNull(deeco.knowledgeManagerFactory);
 		assertNotNull(deeco.model);
 		assertNotNull(deeco.pluginsMap);
 		assertNotNull(deeco.processor);
 		assertNotNull(deeco.runtime);	
-		assertFalse(deeco.isRunning());		
 	}
 	
 	/** 
@@ -79,7 +82,7 @@ public class DEECoTest {
 		
 		InOrder order = inOrder(plugin1, plugin2);
 		
-		DEECo deeco = new DEECo(plugin2, plugin1);
+		DEECo deeco = new DEECo(schedulerNotifier, plugin2, plugin1);
 		
 		verifyPluginInitOrder(order, deeco, plugin1, plugin2);
 	}
@@ -106,7 +109,7 @@ public class DEECoTest {
 		InOrder order3 = inOrder(plugin1, plugin3);
 		InOrder order4 = inOrder(plugin2, plugin3);
 		
-		DEECo deeco = new DEECo(plugin1, pluginBase, plugin2, plugin3);
+		DEECo deeco = new DEECo(schedulerNotifier, plugin1, pluginBase, plugin2, plugin3);
 		
 		verifyPluginInitOrder(order1, deeco, pluginBase, plugin1);
 		verifyPluginInitOrder(order2, deeco, pluginBase, plugin2);
@@ -132,7 +135,7 @@ public class DEECoTest {
 		InOrder order1 = inOrder(pluginBase1, plugin);
 		InOrder order2 = inOrder(pluginBase2, plugin);
 		
-		DEECo deeco = new DEECo(pluginBase2, plugin, pluginBase1);
+		DEECo deeco = new DEECo(schedulerNotifier, pluginBase2, plugin, pluginBase1);
 		
 		verifyPluginInitOrder(order1, deeco, pluginBase1, plugin);
 		verifyPluginInitOrder(order2, deeco, pluginBase2, plugin);			
@@ -156,7 +159,7 @@ public class DEECoTest {
 		InOrder order1 = inOrder(pluginBase, plugin1);
 		InOrder order2 = inOrder(pluginBase, plugin2);
 		
-		DEECo deeco = new DEECo(plugin1, pluginBase, plugin2);
+		DEECo deeco = new DEECo(schedulerNotifier, plugin1, pluginBase, plugin2);
 		
 		verifyPluginInitOrder(order1, deeco, pluginBase, plugin1);
 		verifyPluginInitOrder(order2, deeco, pluginBase, plugin2);
@@ -215,7 +218,7 @@ public class DEECoTest {
 		InOrder order9 = inOrder(independentBase, independentExtension);
 		
 		// Create DEECo
-		DEECo deeco = new DEECo(basePlugin1, basePlugin2, basePlugin3, tier1Plugin1, tier1Plugin2, tier2Plugin1, tier2Plugin2, tier3Plugin1, independentBase, independentExtension);
+		DEECo deeco = new DEECo(schedulerNotifier, basePlugin1, basePlugin2, basePlugin3, tier1Plugin1, tier1Plugin2, tier2Plugin1, tier2Plugin2, tier3Plugin1, independentBase, independentExtension);
 		
 		// Verify ordering
 		verifyPluginInitOrder(order1, deeco, basePlugin1, tier1Plugin1);
@@ -239,7 +242,7 @@ public class DEECoTest {
 	@Test(expected = cz.cuni.mff.d3s.deeco.runtime.DuplicateEnsembleDefinitionException.class)
 	public void testDuplicateEnsembleDefinition() throws DEECoException, AnnotationProcessorException
 	{	
-		DEECo deeco = new DEECo();
+		DEECo deeco = new DEECo(schedulerNotifier);
 		deeco.deployEnsemble(CorrectE1.class);
 		deeco.deployEnsemble(CorrectE1.class);		
 	}
@@ -258,7 +261,7 @@ public class DEECoTest {
 		
 		when(dependentPlugin.getDependencies()).thenReturn(Arrays.asList(basePlugin.getClass()));
 		
-		new DEECo(dependentPlugin);		
+		new DEECo(schedulerNotifier, dependentPlugin);		
 	}
 	
 	/**
@@ -277,7 +280,7 @@ public class DEECoTest {
 		when(plugin2.getDependencies()).thenReturn(Arrays.asList(plugin3.getClass()));
 		when(plugin3.getDependencies()).thenReturn(Arrays.asList(plugin1.getClass()));
 		
-		new DEECo(plugin1, plugin2, plugin3);
+		new DEECo(schedulerNotifier, plugin1, plugin2, plugin3);
 	}
 	
 	/**
@@ -306,7 +309,7 @@ public class DEECoTest {
 		when(pluginBase.getDependencies()).thenReturn(Arrays.asList());
 		when(pluginBase2.getDependencies()).thenReturn(Arrays.asList());
 		
-		new DEECo(plugin1, plugin2, plugin3, pluginBase, pluginBase2, pluginOther);
+		new DEECo(schedulerNotifier, plugin1, plugin2, plugin3, pluginBase, pluginBase2, pluginOther);
 	}
 	
 	/**
@@ -316,86 +319,8 @@ public class DEECoTest {
 	@Test
 	public void testNoPlugins() throws DEECoException
 	{
-		new DEECo();		
+		new DEECo(schedulerNotifier);		
 	}	
-	
-	/**
-	 * Tests if the DEECo supports a basic workflow (first adding components, then ensembles, then starting).
-	 * @throws DEECoException
-	 * @throws AnnotationProcessorException
-	 */
-	@Test
-	public void testBasicWorkflow() throws DEECoException, AnnotationProcessorException
-	{
-		DEECo deeco = new DEECo();		
-		
-		deeco.deployComponent(new CorrectC1());
-		deeco.deployComponent(new CorrectC2());
-		deeco.deployEnsemble(CorrectE1.class);
-		
-		deeco.setTerminationTime(0);
-		deeco.start();
-		// TODO: Is there an easy way to check whether all necessary tasks and definitions have been added? 
-	}
-	
-	/**
-	 * Tests if the DEECo supports a basic workflow (first adding ensembles, then components, then starting).
-	 * @throws DEECoException
-	 * @throws AnnotationProcessorException
-	 */
-	@Test
-	public void testBasicWorkflow2() throws DEECoException, AnnotationProcessorException
-	{
-		DEECo deeco = new DEECo();		
-		
-		deeco.deployEnsemble(CorrectE1.class);
-		deeco.deployComponent(new CorrectC1());		
-		deeco.deployComponent(new CorrectC2());		
-		
-		deeco.setTerminationTime(0);
-		deeco.start();
-		// TODO: Is there an easy way to check whether all necessary tasks and definitions have been added?
-	}
-	
-	/**
-	 * Tests if the DEECo can restart when its run duration is reached.
-	 * @throws DEECoException 
-	 */
-	@Test
-	public void testStartOnRunning() throws DEECoException
-	{
-		DEECo deeco = new DEECo();
-		deeco.setTerminationTime(0);
-		deeco.start();
-		deeco.setTerminationTime(500);
-		deeco.start();		
-	}		
-	
-	/**
-	 * Tests if the DEECo can detect duplicate stop calls and react by throwing a correct exception.
-	 * @throws DEECoException
-	 * @throws InterruptedException 
-	 */
-	@Test(expected = cz.cuni.mff.d3s.deeco.runtime.InvalidOperationException.class)
-	public void testStopOnStopped() throws DEECoException, InterruptedException
-	{
-		DEECo deeco = new DEECo();
-		deeco.setTerminationTime(2000);
-		deeco.start();
-		Thread.sleep(3000);
-		deeco.stop();
-	}
-	
-	/**
-	 * Tests if the DEECo can detect a stop call on an unstarted instance and react by throwing a correct exception.
-	 * @throws DEECoException
-	 */
-	@Test(expected = cz.cuni.mff.d3s.deeco.runtime.InvalidOperationException.class)
-	public void testStopOnNew() throws DEECoException
-	{
-		DEECo deeco = new DEECo();
-		deeco.stop();
-	}
 	
 	/**
 	 * Tests if the plugins injected into the DEECo are visible to the other plugins.
@@ -418,7 +343,7 @@ public class DEECoTest {
 		
 		DEECoPlugin[] pluginArray = plugins.toArray(new DEECoPlugin[0]);
 		
-		DEECo deeco = new DEECo(pluginArray);
+		DEECo deeco = new DEECo(schedulerNotifier, pluginArray);
 		
 		for(DEECoPlugin p : plugins)
 		{
