@@ -464,22 +464,13 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int COMPONENT_INSTANCE__RATINGS_PROCESS = 8;
 
 	/**
-	 * The feature id for the '<em><b>Roles</b></em>' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMPONENT_INSTANCE__ROLES = 9;
-
-	/**
 	 * The number of structural features of the '<em>Component Instance</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_INSTANCE_FEATURE_COUNT = 10;
+	int COMPONENT_INSTANCE_FEATURE_COUNT = 9;
 
 	/**
 	 * The number of operations of the '<em>Component Instance</em>' class.
@@ -1856,17 +1847,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EReference getComponentInstance_RatingsProcess();
 
 	/**
-	 * Returns the meta object for the attribute list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getRoles <em>Roles</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute list '<em>Roles</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getRoles()
-	 * @see #getComponentInstance()
-	 * @generated
-	 */
-	EAttribute getComponentInstance_Roles();
-
-	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition <em>Ensemble Definition</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2770,14 +2750,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * @generated
 		 */
 		EReference COMPONENT_INSTANCE__RATINGS_PROCESS = eINSTANCE.getComponentInstance_RatingsProcess();
-
-		/**
-		 * The meta object literal for the '<em><b>Roles</b></em>' attribute list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute COMPONENT_INSTANCE__ROLES = eINSTANCE.getComponentInstance_Roles();
 
 		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl <em>Ensemble Definition</em>}' class.

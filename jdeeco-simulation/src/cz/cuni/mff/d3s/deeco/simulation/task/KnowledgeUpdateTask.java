@@ -4,7 +4,8 @@ import java.util.Collection;
 
 import cz.cuni.mff.d3s.deeco.network.DataReceiver;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
-import cz.cuni.mff.d3s.deeco.simulation.TimerTaskListener;
+import cz.cuni.mff.d3s.deeco.task.TimerTask;
+import cz.cuni.mff.d3s.deeco.task.TimerTaskListener;
 
 @SuppressWarnings("rawtypes")
 public class KnowledgeUpdateTask extends TimerTask {

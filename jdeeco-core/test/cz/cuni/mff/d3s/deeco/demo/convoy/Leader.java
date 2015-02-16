@@ -19,7 +19,7 @@ import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 @Component
 public class Leader {
 	
-	public String id = "Leader";
+	public String id;
 	public String name;
 	public List<Waypoint> path;
 	public Waypoint position;
@@ -35,7 +35,7 @@ public class Leader {
 				new Waypoint(1, 5));
 				
 		name = "L";
-		id = "Leader";
+		id = "Leader1";
 		position = new Waypoint(3, 1);
 	}
 	

@@ -2,7 +2,6 @@
  */
 package cz.cuni.mff.d3s.deeco.model.runtime.api;
 
-import java.lang.reflect.Type;
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -143,12 +142,12 @@ public interface Parameter extends EObject {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Generic Type</em>' attribute.
-	 * @see #setGenericType(Type)
+	 * @see #setGenericType(java.lang.reflect.Type)
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getParameter_GenericType()
 	 * @model dataType="cz.cuni.mff.d3s.deeco.model.runtime.api.Type" required="true"
 	 * @generated
 	 */
-	Type getGenericType();
+	java.lang.reflect.Type getGenericType();
 
 	/**
 	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter#getGenericType <em>Generic Type</em>}' attribute.
@@ -158,6 +157,6 @@ public interface Parameter extends EObject {
 	 * @see #getGenericType()
 	 * @generated
 	 */
-	void setGenericType(Type value);
+	void setGenericType(java.lang.reflect.Type value);
 
 } // Parameter

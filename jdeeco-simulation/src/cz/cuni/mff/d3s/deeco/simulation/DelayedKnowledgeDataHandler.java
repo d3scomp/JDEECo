@@ -10,9 +10,11 @@ import java.util.Map;
 
 import cz.cuni.mff.d3s.deeco.network.AbstractHost;
 import cz.cuni.mff.d3s.deeco.network.DataReceiver;
+import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.simulation.scheduler.SimulationScheduler;
 import cz.cuni.mff.d3s.deeco.simulation.task.KnowledgeUpdateTask;
-import cz.cuni.mff.d3s.deeco.simulation.task.TimerTask;
+import cz.cuni.mff.d3s.deeco.task.TimerTask;
+import cz.cuni.mff.d3s.deeco.task.TimerTaskListener;
 
 /**
  * @author Michal Kit
@@ -67,8 +69,9 @@ public class DelayedKnowledgeDataHandler extends NetworkDataHandler implements T
 	}
 
 	@Override
-	public TimerTask getInitialTask(SimulationScheduler scheduler) {
-		schedulers.put(scheduler.getHost().getHostId(), scheduler);
+	public TimerTask getInitialTask(Scheduler scheduler) {
+		SimulationScheduler sScheduler = (SimulationScheduler) scheduler;
+		schedulers.put(sScheduler.getHost().getHostId(), sScheduler);
 		return null;
 	}
 	

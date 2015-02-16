@@ -1,7 +1,8 @@
 package cz.cuni.mff.d3s.deeco.simulation.task;
 
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
-import cz.cuni.mff.d3s.deeco.simulation.TimerTaskListener;
+import cz.cuni.mff.d3s.deeco.task.TimerTask;
+import cz.cuni.mff.d3s.deeco.task.TimerTaskListener;
 
 public class SimulationStepTask extends TimerTask {
 	

@@ -53,8 +53,6 @@
         eType="#//SecurityRole" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="ratingsProcess" eType="#//RatingsProcess"
         containment="true" eOpposite="#//RatingsProcess/componentInstance"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="roles" upperBound="-1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaClass"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EnsembleDefinition">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>

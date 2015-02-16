@@ -20,7 +20,6 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
-import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
 import org.eclipse.emf.ecore.util.EcoreEMap;
@@ -42,7 +41,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#isSystemComponent <em>System Component</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getSecurityRoles <em>Security Roles</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getRatingsProcess <em>Ratings Process</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getRoles <em>Roles</em>}</li>
  * </ul>
  * </p>
  *
@@ -178,16 +176,6 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	 * @ordered
 	 */
 	protected RatingsProcess ratingsProcess;
-
-	/**
-	 * The cached value of the '{@link #getRoles() <em>Roles</em>}' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getRoles()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<Class> roles;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -388,18 +376,6 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<Class> getRoles() {
-		if (roles == null) {
-			roles = new EDataTypeUniqueEList<Class>(Class.class, this, RuntimeMetadataPackage.COMPONENT_INSTANCE__ROLES);
-		}
-		return roles;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
@@ -465,8 +441,6 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 				return getSecurityRoles();
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__RATINGS_PROCESS:
 				return getRatingsProcess();
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ROLES:
-				return getRoles();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -510,10 +484,6 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__RATINGS_PROCESS:
 				setRatingsProcess((RatingsProcess)newValue);
 				return;
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ROLES:
-				getRoles().clear();
-				getRoles().addAll((Collection<? extends Class>)newValue);
-				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -553,9 +523,6 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__RATINGS_PROCESS:
 				setRatingsProcess((RatingsProcess)null);
 				return;
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ROLES:
-				getRoles().clear();
-				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -586,8 +553,6 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 				return securityRoles != null && !securityRoles.isEmpty();
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__RATINGS_PROCESS:
 				return ratingsProcess != null;
-			case RuntimeMetadataPackage.COMPONENT_INSTANCE__ROLES:
-				return roles != null && !roles.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
@@ -610,8 +575,6 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 		result.append(shadowKnowledgeManagerRegistry);
 		result.append(", systemComponent: ");
 		result.append(systemComponent);
-		result.append(", roles: ");
-		result.append(roles);
 		result.append(')');
 		return result.toString();
 	}
