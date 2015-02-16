@@ -2,6 +2,7 @@ package cz.cuni.mff.d3s.deeco.security;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -203,8 +204,15 @@ public class ModelSecurityValidator {
 		int result = 1;
 		result = prime * result + ((pathRoot == null) ? 0 : pathRoot.hashCode());
 		result = prime * result + ((exchange == null) ? 0 : exchange.hashCode());
-		result = prime * result + ((component == null) ? 0 : component.hashCode());
-		result = prime * result + ((shadowKnowledgeManager == null) ? 0 : shadowKnowledgeManager.hashCode());
+		
+		try {
+			result = prime * result + ((component == null) ? 0 : component.getKnowledgeManager().get(Collections.emptyList()).hashCode());
+		} catch (KnowledgeNotFoundException e) { }
+		
+		try {
+			result = prime * result + ((shadowKnowledgeManager == null) ? 0 : shadowKnowledgeManager.get(Collections.emptyList()).hashCode());
+		} catch (KnowledgeNotFoundException e) { }
+		
 		return result;
 	}
 
