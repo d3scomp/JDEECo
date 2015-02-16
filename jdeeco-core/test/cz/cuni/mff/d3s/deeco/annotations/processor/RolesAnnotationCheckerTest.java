@@ -44,7 +44,25 @@ public class RolesAnnotationCheckerTest {
 	
 	@Test
 	public void checkRI1WhenNoRolesTest() throws AnnotationProcessorException {
-		CorrectC1 component = new CorrectC1();
+		@Component
+		class ComponentClass {
+			public String id;
+		}
+		
+		ComponentClass component = new ComponentClass();
+		new RolesAnnotationChecker().checkRolesImplementation(component);
+	}
+	
+	@Test
+	public void checkRI1WhenNoMissingIdTest() throws AnnotationProcessorException {
+		@Component
+		class ComponentClass {
+			public String name;
+		}
+		
+		ComponentClass component = new ComponentClass();
+		exception.expect(AnnotationProcessorException.class);
+		exception.expectMessage("The field public String id, which is mandatory in component classes, is missing.");
 		new RolesAnnotationChecker().checkRolesImplementation(component);
 	}
 	
@@ -73,6 +91,7 @@ public class RolesAnnotationCheckerTest {
 		// almost correct, but the @Component annotation is missing
 		@PlaysRole(RoleClass.class)
 		class ComponentClass {
+			public String id;
 			public int x;
 		}
 		
@@ -86,12 +105,14 @@ public class RolesAnnotationCheckerTest {
 	public void checkRI1CorrectComponentWithRoleTest() throws AnnotationProcessorException {
 		@Role
 		class RoleClass {
+			public String id; // not mandatory
 			public int x;
 		}
 		
 		@Component
 		@PlaysRole(RoleClass.class)
 		class ComponentClass {
+			public String id;
 			public int x;
 			public int y;
 		}
@@ -109,6 +130,7 @@ public class RolesAnnotationCheckerTest {
 		@Component
 		@PlaysRole(RoleClass.class)
 		class ComponentClass {
+			public String id;
 			public int x;
 			public int y;
 		}
@@ -129,12 +151,32 @@ public class RolesAnnotationCheckerTest {
 		@Component
 		@PlaysRole(RoleClass.class)
 		class ComponentClass {
+			public String id;
 			public int y;
 		}
 		
 		ComponentClass component = new ComponentClass();
 		exception.expect(AnnotationProcessorException.class);
 		exception.expectMessage("The field RoleClass.x is not implemented (or has a different type than int).");
+		new RolesAnnotationChecker().checkRolesImplementation(component);
+	}
+
+	@Test
+	public void checkRI1MissingIdFieldTest() throws AnnotationProcessorException {
+		@Role
+		class RoleClass {
+			public int x;
+		}
+		
+		@Component
+		@PlaysRole(RoleClass.class)
+		class ComponentClass {
+			public int x;
+		}
+		
+		ComponentClass component = new ComponentClass();
+		exception.expect(AnnotationProcessorException.class);
+		exception.expectMessage("The field public String id, which is mandatory in component classes, is missing.");
 		new RolesAnnotationChecker().checkRolesImplementation(component);
 	}
 	
@@ -148,6 +190,7 @@ public class RolesAnnotationCheckerTest {
 		@Component
 		@PlaysRole(RoleClass.class)
 		class ComponentClass {
+			public String id;
 			public String x;
 			public int y;
 		}
@@ -171,6 +214,7 @@ public class RolesAnnotationCheckerTest {
 		@Component
 		@PlaysRole(RoleClass.class)
 		class ComponentClass {
+			public String id;
 			public Map<String, Integer> map;
 			public String str;
 			public List<List<String>> list;
@@ -194,6 +238,7 @@ public class RolesAnnotationCheckerTest {
 		@Component
 		@PlaysRole(RoleClass.class)
 		class ComponentClass {
+			public String id;
 			public HashMap<String, Integer> map; // this should not be allowed (TODO or should it?)
 			public String str;
 			public List<List<String>> list;
@@ -219,6 +264,7 @@ public class RolesAnnotationCheckerTest {
 		@Component
 		@PlaysRole(RoleClass.class)
 		class ComponentClass {
+			public String id;
 			public Map<String, Long> map; // value type should be Integer
 			public String str;
 			public List<List<String>> list;
@@ -244,6 +290,7 @@ public class RolesAnnotationCheckerTest {
 		@Component
 		@PlaysRole(RoleClass.class)
 		class ComponentClass {
+			public String id;
 			public Map<String, Integer> map;
 			public String str;
 			public List<List<Integer>> list; // inner type should be String
@@ -280,6 +327,7 @@ public class RolesAnnotationCheckerTest {
 		@PlaysRole(RoleClass2.class)
 		@PlaysRole(RoleClass3.class)
 		class ComponentClass {
+			public String id;
 			public int x;
 			public int y;
 			public int z;
@@ -314,6 +362,7 @@ public class RolesAnnotationCheckerTest {
 		@PlaysRole(RoleClass2.class)
 		@PlaysRole(RoleClass3.class)
 		class ComponentClass {
+			public String id;
 			public int x;
 			public int y;
 			public int z;
@@ -345,6 +394,7 @@ public class RolesAnnotationCheckerTest {
 		@PlaysRole(RoleClass1.class)
 		@PlaysRole(RoleClass2.class)
 		class ComponentClass {
+			public String id;
 			public int x;
 			public int y;
 			public long z;
@@ -369,6 +419,7 @@ public class RolesAnnotationCheckerTest {
 		@Component
 		@PlaysRole(RoleClass.class)
 		class ComponentClass {
+			public String id;
 			public int x;
 			public int y;
 		}	
@@ -387,13 +438,14 @@ public class RolesAnnotationCheckerTest {
 		@Component
 		@PlaysRole(RoleClass.class)
 		class ComponentClass {
-			protected int x;
+			protected String id;
+			public int x;
 			public int y;
 		}	
 		
 		ComponentClass component = new ComponentClass();
 		exception.expect(AnnotationProcessorException.class);
-		exception.expectMessage("The field RoleClass.x is not implemented (or has a different type than int).");
+		exception.expectMessage("The field public String id, which is mandatory in component classes, is missing.");
 		new RolesAnnotationChecker().checkRolesImplementation(component);
 	}	
 	
@@ -407,6 +459,7 @@ public class RolesAnnotationCheckerTest {
 		@Component
 		@PlaysRole(RoleClass.class)
 		class ComponentClass {
+			public String id;
 			public static final int x = 0;
 			public int y;
 		}	
@@ -427,6 +480,7 @@ public class RolesAnnotationCheckerTest {
 		@Component
 		@PlaysRole(RoleClass.class)
 		class ComponentClass {
+			public String id;
 			@Local
 			public int x = 0;
 			public int y;

@@ -2,13 +2,13 @@
 <cz.cuni.mff.d3s.deeco.model.runtime:RuntimeMetadata xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:cz.cuni.mff.d3s.deeco.model.runtime="http://cz.cuni.mff.d3s.deeco.model.runtime/1.0">
   <ensembleDefinitions name="cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectE1">
     <membership method="public static boolean cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectE1.process1(java.lang.String,java.lang.String)">
-      <parameters kind="IN" type="java.lang.String">
+      <parameters kind="IN" type="java.lang.String" genericType="class java.lang.String">
         <knowledgePath>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeMember"/>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeComponentId"/>
         </knowledgePath>
       </parameters>
-      <parameters kind="IN" type="java.lang.String">
+      <parameters kind="IN" type="java.lang.String" genericType="class java.lang.String">
         <knowledgePath>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeMember"/>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="name"/>
@@ -16,14 +16,14 @@
       </parameters>
     </membership>
     <knowledgeExchange method="public static void cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectE1.process2(java.lang.String,java.lang.Integer)">
-      <parameters kind="INOUT" type="java.lang.String">
+      <parameters kind="INOUT" type="java.lang.String" genericType="class java.lang.String">
         <knowledgePath>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeCoordinator"/>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="details"/>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="date"/>
         </knowledgePath>
       </parameters>
-      <parameters kind="IN" type="java.lang.Integer">
+      <parameters kind="IN" type="java.lang.Integer" genericType="class java.lang.Integer">
         <knowledgePath>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeMember"/>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeComponentId"/>
@@ -41,13 +41,13 @@
   </ensembleDefinitions>
   <ensembleDefinitions name="cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectE2">
     <membership method="public static boolean cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectE2.process1(java.lang.String,java.lang.String)">
-      <parameters kind="IN" type="java.lang.String">
+      <parameters kind="IN" type="java.lang.String" genericType="class java.lang.String">
         <knowledgePath>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeMember"/>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeComponentId"/>
         </knowledgePath>
       </parameters>
-      <parameters kind="IN" type="java.lang.String">
+      <parameters kind="IN" type="java.lang.String" genericType="class java.lang.String">
         <knowledgePath>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeMember"/>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="name"/>
@@ -55,14 +55,14 @@
       </parameters>
     </membership>
     <knowledgeExchange method="public static void cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectE2.process2(java.lang.String,java.lang.Integer)">
-      <parameters kind="INOUT" type="java.lang.String">
+      <parameters kind="INOUT" type="java.lang.String" genericType="class java.lang.String">
         <knowledgePath>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeCoordinator"/>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="details"/>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="date"/>
         </knowledgePath>
       </parameters>
-      <parameters kind="IN" type="java.lang.Integer">
+      <parameters kind="IN" type="java.lang.Integer" genericType="class java.lang.Integer">
         <knowledgePath>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeMember"/>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeComponentId"/>
@@ -84,7 +84,7 @@
   </ensembleDefinitions>
   <ensembleDefinitions name="cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectE3">
     <membership method="public static boolean cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectE3.process1(java.lang.String,java.lang.String)">
-      <parameters kind="IN" type="java.lang.String">
+      <parameters kind="IN" type="java.lang.String" genericType="class java.lang.String">
         <knowledgePath>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeMember"/>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeMapKey">
@@ -95,7 +95,7 @@
           </nodes>
         </knowledgePath>
       </parameters>
-      <parameters kind="IN" type="java.lang.String">
+      <parameters kind="IN" type="java.lang.String" genericType="class java.lang.String">
         <knowledgePath>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeMember"/>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="name"/>
@@ -103,7 +103,7 @@
       </parameters>
     </membership>
     <knowledgeExchange method="public static void cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectE3.process2(java.lang.String,java.lang.Integer)">
-      <parameters kind="INOUT" type="java.lang.String">
+      <parameters kind="INOUT" type="java.lang.String" genericType="class java.lang.String">
         <knowledgePath>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeCoordinator"/>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="details"/>
@@ -122,7 +122,7 @@
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="date"/>
         </knowledgePath>
       </parameters>
-      <parameters kind="IN" type="java.lang.Integer">
+      <parameters kind="IN" type="java.lang.Integer" genericType="class java.lang.Integer">
         <knowledgePath>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeMember"/>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeComponentId"/>
@@ -144,19 +144,19 @@
   </ensembleDefinitions>
   <componentInstances name="cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC1">
     <componentProcesses method="public static void cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC1.process1(java.lang.Integer,java.lang.String,java.lang.Boolean)" name="process1">
-      <parameters kind="IN" type="java.lang.Integer">
+      <parameters kind="IN" type="java.lang.Integer" genericType="class java.lang.Integer">
         <knowledgePath>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="level1"/>
         </knowledgePath>
       </parameters>
-      <parameters kind="INOUT" type="java.lang.String">
+      <parameters kind="INOUT" type="java.lang.String" genericType="class java.lang.String">
         <knowledgePath>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="level1"/>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="level2"/>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="level3"/>
         </knowledgePath>
       </parameters>
-      <parameters kind="OUT" type="java.lang.Boolean">
+      <parameters kind="OUT" type="java.lang.Boolean" genericType="class java.lang.Boolean">
         <knowledgePath>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="level1"/>
         </knowledgePath>
@@ -174,19 +174,19 @@
   </componentInstances>
   <componentInstances name="cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC2">
     <componentProcesses method="public static void cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC2.process1(java.lang.Integer,java.lang.String,java.lang.Boolean)" name="process1">
-      <parameters kind="IN" type="java.lang.Integer">
+      <parameters kind="IN" type="java.lang.Integer" genericType="class java.lang.Integer">
         <knowledgePath>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="level1"/>
         </knowledgePath>
       </parameters>
-      <parameters kind="INOUT" type="java.lang.String">
+      <parameters kind="INOUT" type="java.lang.String" genericType="class java.lang.String">
         <knowledgePath>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="level1"/>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="level2"/>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="level3"/>
         </knowledgePath>
       </parameters>
-      <parameters kind="OUT" type="java.lang.Boolean">
+      <parameters kind="OUT" type="java.lang.Boolean" genericType="class java.lang.Boolean">
         <knowledgePath>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="level1"/>
         </knowledgePath>
@@ -203,7 +203,7 @@
   </componentInstances>
   <componentInstances name="cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC3">
     <componentProcesses method="public static void cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC3.process1(java.lang.String)" name="process1">
-      <parameters kind="INOUT" type="java.lang.String">
+      <parameters kind="INOUT" type="java.lang.String" genericType="class java.lang.String">
         <knowledgePath>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="level1"/>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeMapKey">

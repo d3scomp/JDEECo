@@ -164,8 +164,6 @@ public class AnnotationProcessor {
 	KnowledgeManagerFactory knowledgeManagerFactory;
 	
 	Cloner cloner;
-
-	RolesAnnotationChecker rolesChecker = new RolesAnnotationChecker();
 	
 	/**
 	 * Initializes the processor with the given model factory (convenience
@@ -368,9 +366,7 @@ public class AnnotationProcessor {
 		ComponentInstance componentInstance = factory.createComponentInstance();
 		componentInstance.setName(clazz.getCanonicalName());
 		
-		try {
-			rolesChecker.checkRolesImplementation(obj);
-		
+		try {		
 			ChangeSet initialK = extractInitialKnowledge(obj, false);			
 			ChangeSet initialLocalK = extractInitialKnowledge(obj, true);
 			String id = getComponentId(initialK);
@@ -799,7 +795,6 @@ public class AnnotationProcessor {
 		
 		try {
 			List<Parameter> parameters = createParameters(m, PathOrigin.ENSEMBLE);
-			rolesChecker.checkRolesImplementation(parameters, coordinatorRoleAnnotations, memberRoleAnnotations);
 			condition.getParameters().addAll(parameters);
 		} catch (AnnotationProcessorException e) {
 			String msg = Membership.class.getSimpleName()+"->"+e.getMessage();

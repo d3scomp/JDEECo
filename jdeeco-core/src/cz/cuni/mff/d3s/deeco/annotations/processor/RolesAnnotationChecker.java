@@ -48,15 +48,15 @@ public class RolesAnnotationChecker {
 		if (!componentClass.isAnnotationPresent(Component.class)) {
 			throw new AnnotationProcessorException("The input instance is not a component (the class is not annotated by the @" + Component.class.getSimpleName() + " annotation).");
 		}
-		
-		PlaysRole[] roleAnnotations = componentClass.getAnnotationsByType(PlaysRole.class);
-		if (roleAnnotations.length == 0) {
-			// no roles, everything ok
-			return;
+
+		// check if the class contains String id
+		List<Field> knowledgeFields = getNonLocalKnowledgeFields(componentClass, false);
+		if (!isRoleFieldImplemented(knowledgeFields, String.class, "id")) {
+			throw new AnnotationProcessorException("The field public String id, which is mandatory in component classes, is missing.");
 		}
 		
-		List<Field> knowledgeFields = getNonLocalKnowledgeFields(componentClass, false);
-		
+		// check if the class contains all fields from the role classes
+		PlaysRole[] roleAnnotations = componentClass.getAnnotationsByType(PlaysRole.class);
 		for (PlaysRole role : roleAnnotations) {
 			Class<?> roleClass = role.value();
 			if (!roleClass.isAnnotationPresent(Role.class)) {
@@ -64,8 +64,7 @@ public class RolesAnnotationChecker {
 			}
 			
 			checkRoleFieldsImplementation(knowledgeFields, roleClass);
-		}
-		
+		}		
 	}
 	
 	public void checkRolesImplementation(List<Parameter> parameters, CoordinatorRole[] coordinatorRoleAnnotations, 
@@ -109,6 +108,7 @@ public class RolesAnnotationChecker {
 		}
 		
 		// go through the path, evaluate inner knowledge paths of PathNodeMapKey-s
+		// TODO extract to individual method and use it to check component processes (that they use only fields available in the component)
 		PathNode second = knowledgePath.getNodes().get(1);
 		List<String> fieldNameSequence = new ArrayList<>();
 		if (second instanceof PathNodeComponentId) {
@@ -187,7 +187,7 @@ public class RolesAnnotationChecker {
 		List<Field> roleFields = getNonLocalKnowledgeFields(roleClass, true);
 		
 		for (Field roleField : roleFields) {
-			if (!isRoleFieldImplemented(knowledgeFields, roleField)) {
+			if (!isRoleFieldImplemented(knowledgeFields, roleField.getGenericType(), roleField.getName())) {
 				throw new AnnotationProcessorException("The field " + roleClass.getSimpleName() + "."
 						+ roleField.getName() + " is not implemented (or has a different type than " 
 						+ roleField.getGenericType() + ").");
@@ -202,15 +202,11 @@ public class RolesAnnotationChecker {
 	 * @param roleField The field that should be implemented (by the role definition)
 	 * @return True if the field is implemented, false otherwise
 	 */
-	private boolean isRoleFieldImplemented(List<Field> knowledgeFields, Field roleField) {
+	private boolean isRoleFieldImplemented(List<Field> knowledgeFields, Type roleFieldType, String roleFieldName) {
 		for (Field knowledgeField : knowledgeFields) {
-			if (knowledgeField.getName().equals(roleField.getName())) {
+			if (knowledgeField.getName().equals(roleFieldName)) {
 				Type knowledgeFieldType = knowledgeField.getGenericType();
-				Type roleFieldType = roleField.getGenericType();
 				return compareTypes(knowledgeFieldType, roleFieldType);
-				/*Class<?> knowledgeFieldClass = knowledgeField.getType();
-				Class<?> roleFieldClass = roleField.getType();
-				return (roleFieldClass.equals(knowledgeFieldClass));*/
 			}
 		}
 		

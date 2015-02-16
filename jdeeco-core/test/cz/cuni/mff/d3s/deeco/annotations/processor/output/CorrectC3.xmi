@@ -2,7 +2,7 @@
 <cz.cuni.mff.d3s.deeco.model.runtime:RuntimeMetadata xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:cz.cuni.mff.d3s.deeco.model.runtime="http://cz.cuni.mff.d3s.deeco.model.runtime/1.0">
   <componentInstances name="cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC3">
     <componentProcesses method="public static void cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC3.process1(java.lang.String)" name="process1">
-      <parameters kind="INOUT" type="java.lang.String">
+      <parameters kind="INOUT" type="java.lang.String" genericType="class java.lang.String">
         <knowledgePath>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeField" name="level1"/>
           <nodes xsi:type="cz.cuni.mff.d3s.deeco.model.runtime:PathNodeMapKey">
