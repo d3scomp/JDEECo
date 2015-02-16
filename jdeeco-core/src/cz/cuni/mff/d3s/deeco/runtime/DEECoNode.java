@@ -22,7 +22,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.scheduler.NoExecutorAvailableException;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.scheduler.SingleThreadedScheduler;
-import cz.cuni.mff.d3s.deeco.scheduler.notifier.SchedulerNotifier;
+import cz.cuni.mff.d3s.deeco.timer.Timer;
 
 /**
  * Main container for a DEECo application.
@@ -61,13 +61,13 @@ public class DEECoNode implements DEECoContainer {
 	 */
 	Map<Class<? extends DEECoPlugin>, DEECoPlugin> pluginsMap;
 	
-	public DEECoNode(SchedulerNotifier schedulerNotifier, DEECoPlugin... plugins) throws DEECoException {			
+	public DEECoNode(Timer Timer, DEECoPlugin... plugins) throws DEECoException {			
 		pluginsMap= new HashMap<>();
 		model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
 		knowledgeManagerFactory = new CloningKnowledgeManagerFactory();
 		processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE, model, knowledgeManagerFactory);		
 		
-		createRuntime(schedulerNotifier);
+		createRuntime(Timer);
 		runtime.init(this);
 		initializePlugins(plugins);
 	}
@@ -184,9 +184,9 @@ public class DEECoNode implements DEECoContainer {
 		}	
 	}
 	
-	private void createRuntime(SchedulerNotifier schedulerNotifier) throws NoExecutorAvailableException {
+	private void createRuntime(Timer timer) throws NoExecutorAvailableException {
 		Executor executor = new SameThreadExecutor();
-		Scheduler scheduler = new SingleThreadedScheduler(executor, schedulerNotifier);
+		Scheduler scheduler = new SingleThreadedScheduler(executor, timer);
 		KnowledgeManagerContainer kmContainer = new KnowledgeManagerContainer(knowledgeManagerFactory, model);
 		scheduler.setExecutor(executor);
 		executor.setExecutionListener(scheduler);

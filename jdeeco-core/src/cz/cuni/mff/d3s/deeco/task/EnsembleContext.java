@@ -1,6 +1,6 @@
 package cz.cuni.mff.d3s.deeco.task;
 
-import cz.cuni.mff.d3s.deeco.scheduler.notifier.CurrentTimeProvider;
+import cz.cuni.mff.d3s.deeco.timer.CurrentTimeProvider;
 
 /**
  * A class providing reflective capabilities to a component process. 

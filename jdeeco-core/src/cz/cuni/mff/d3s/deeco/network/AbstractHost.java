@@ -1,6 +1,6 @@
 package cz.cuni.mff.d3s.deeco.network;
 
-import cz.cuni.mff.d3s.deeco.scheduler.notifier.CurrentTimeProvider;
+import cz.cuni.mff.d3s.deeco.timer.CurrentTimeProvider;
 
 @SuppressWarnings("rawtypes")
 public abstract class AbstractHost implements CurrentTimeProvider {

@@ -169,7 +169,7 @@ public class ProcessTask extends Task {
 		
 		try {
 			// Set the current process's context
-			ProcessContext.addContext(componentProcess, scheduler.getSchedulerNotifier(), architecture);
+			ProcessContext.addContext(componentProcess, scheduler.getTimer(), architecture);
 			
 			// Call the process method
 			componentProcess.getMethod().invoke(null, actualParams);

@@ -9,7 +9,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
-import cz.cuni.mff.d3s.deeco.scheduler.notifier.CurrentTimeProvider;
+import cz.cuni.mff.d3s.deeco.timer.CurrentTimeProvider;
 
 /**
  * A class providing reflective capabilities to a component process. 

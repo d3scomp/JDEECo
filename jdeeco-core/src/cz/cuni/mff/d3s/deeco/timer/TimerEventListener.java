@@ -1,7 +1,7 @@
 /**
  * 
  */
-package cz.cuni.mff.d3s.deeco.scheduler.notifier;
+package cz.cuni.mff.d3s.deeco.timer;
 
 import cz.cuni.mff.d3s.deeco.scheduler.NoExecutorAvailableException;
 
@@ -12,7 +12,7 @@ import cz.cuni.mff.d3s.deeco.scheduler.NoExecutorAvailableException;
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
  * 
  */
-public interface SchedulerNotifierEventListener {
+public interface TimerEventListener {
 
 	/**
 	 * Simulation callback method for the previous registration

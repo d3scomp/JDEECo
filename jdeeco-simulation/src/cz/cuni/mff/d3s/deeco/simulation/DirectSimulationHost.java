@@ -4,7 +4,7 @@ import static cz.cuni.mff.d3s.deeco.simulation.Simulation.secondsToMilliseconds;
 import cz.cuni.mff.d3s.deeco.network.AbstractHost;
 import cz.cuni.mff.d3s.deeco.network.DataReceiver;
 import cz.cuni.mff.d3s.deeco.network.DataSender;
-import cz.cuni.mff.d3s.deeco.scheduler.notifier.CurrentTimeProvider;
+import cz.cuni.mff.d3s.deeco.timer.CurrentTimeProvider;
 
 public class DirectSimulationHost extends AbstractHost implements SimulationTimeEventListenerHolder {
 	

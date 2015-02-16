@@ -16,12 +16,12 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.network.AbstractHost;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.scheduler.SchedulerEvent;
-import cz.cuni.mff.d3s.deeco.scheduler.notifier.CurrentTimeProvider;
-import cz.cuni.mff.d3s.deeco.scheduler.notifier.SchedulerNotifier;
 import cz.cuni.mff.d3s.deeco.simulation.CallbackProvider;
 import cz.cuni.mff.d3s.deeco.simulation.SimulationTimeEventListener;
 import cz.cuni.mff.d3s.deeco.task.Task;
 import cz.cuni.mff.d3s.deeco.task.TaskTriggerListener;
+import cz.cuni.mff.d3s.deeco.timer.CurrentTimeProvider;
+import cz.cuni.mff.d3s.deeco.timer.Timer;
 
 /**
  * TODO Remove this class, it is no more needed since we have a new scheduler in core.
@@ -226,14 +226,9 @@ public class SimulationScheduler implements Scheduler,
 	}
 
 	@Override
-	public SchedulerNotifier getSchedulerNotifier() {
+	public Timer getTimer() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
-	public void setSchedulerNotifier(SchedulerNotifier schedulerNotifier) {
-		// TODO Auto-generated method stub
-		
-	}
 }

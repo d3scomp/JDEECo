@@ -2,9 +2,9 @@ package cz.cuni.mff.d3s.deeco.scheduler;
 
 import cz.cuni.mff.d3s.deeco.executor.ExecutionListener;
 import cz.cuni.mff.d3s.deeco.executor.Executor;
-import cz.cuni.mff.d3s.deeco.scheduler.notifier.SchedulerNotifier;
-import cz.cuni.mff.d3s.deeco.scheduler.notifier.SchedulerNotifierEventListener;
 import cz.cuni.mff.d3s.deeco.task.Task;
+import cz.cuni.mff.d3s.deeco.timer.Timer;
+import cz.cuni.mff.d3s.deeco.timer.TimerEventListener;
 
 /**
  * Scheduler is the abstract base class for all kinds of schedulers which organize 
@@ -30,7 +30,7 @@ import cz.cuni.mff.d3s.deeco.task.Task;
  *
  */
 
-public interface Scheduler extends ExecutionListener, SchedulerNotifierEventListener {
+public interface Scheduler extends ExecutionListener, TimerEventListener {
 	
 	/**
 	 * Adds the task to the scheduler. This function does not imply that the task will 
@@ -68,9 +68,7 @@ public interface Scheduler extends ExecutionListener, SchedulerNotifierEventList
 	 * 
 	 */
 	public void setExecutor(Executor executor);
-
-	public void setSchedulerNotifier(SchedulerNotifier schedulerNotifier); 
 	
-	public SchedulerNotifier getSchedulerNotifier();
+	public Timer getTimer();
 
 }

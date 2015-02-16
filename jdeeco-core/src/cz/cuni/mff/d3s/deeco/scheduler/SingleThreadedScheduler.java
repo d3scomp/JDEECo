@@ -11,9 +11,9 @@ import java.util.TreeSet;
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
-import cz.cuni.mff.d3s.deeco.scheduler.notifier.SchedulerNotifier;
 import cz.cuni.mff.d3s.deeco.task.Task;
 import cz.cuni.mff.d3s.deeco.task.TaskTriggerListener;
+import cz.cuni.mff.d3s.deeco.timer.Timer;
 
 /**
  * TODO
@@ -21,19 +21,19 @@ import cz.cuni.mff.d3s.deeco.task.TaskTriggerListener;
 public class SingleThreadedScheduler implements Scheduler {
 
 	private Executor executor;
-	private SchedulerNotifier schedulerNotifier;
+	private Timer timer;
 	
 	private final TreeSet<SchedulerEvent> queue;
 	private final Set<Task> allTasks;
 	private final Map<Task, SchedulerEvent> timeTriggeredEvents;
 	private final Set<Trigger> knowledgeChangeTriggers;
 
-    public SingleThreadedScheduler(Executor executor, SchedulerNotifier schedulerNotifier) throws NoExecutorAvailableException{
+    public SingleThreadedScheduler(Executor executor, Timer timer) throws NoExecutorAvailableException{
 		if (executor == null) {
 			throw new NoExecutorAvailableException();
 		}
     	this.executor = executor;
-    	this.schedulerNotifier = schedulerNotifier;
+    	this.timer = timer;
     	
 		queue = new TreeSet<>();
 		allTasks = new HashSet<>();
@@ -51,13 +51,8 @@ public class SingleThreadedScheduler implements Scheduler {
 	}
 	
 	@Override
-	public void setSchedulerNotifier(SchedulerNotifier schedulerNotifier) {
-		this.schedulerNotifier = schedulerNotifier;
-	}
-	
-	@Override
-	public SchedulerNotifier getSchedulerNotifier() {
-		return schedulerNotifier;
+	public Timer getTimer() {
+		return timer;
 	}
 	
 	@Override
@@ -72,12 +67,12 @@ public class SingleThreadedScheduler implements Scheduler {
 		
 		if (task.getTimeTrigger() != null) {
 			SchedulerEvent event = new SchedulerEvent(task, task.getTimeTrigger());
-			long executionTime = schedulerNotifier.getCurrentMilliseconds() + task.getTimeTrigger().getOffset();
+			long executionTime = timer.getCurrentMilliseconds() + task.getTimeTrigger().getOffset();
 			event.nextExecutionTime = executionTime;
 			event.nextPeriodStart = executionTime;
 			queue.add(event);
 			
-			schedulerNotifier.notifyAt(event.nextExecutionTime, this);
+			timer.notifyAt(event.nextExecutionTime, this);
 						
 			timeTriggeredEvents.put(task, event);
 		}
@@ -96,7 +91,7 @@ public class SingleThreadedScheduler implements Scheduler {
 					knowledgeChangeTriggers.add(trigger);
 					// schedule immediately, regardless the actual runtime of the process that triggered this trigger
 					SchedulerEvent event = new SchedulerEvent(task, trigger);
-					long executionTime = schedulerNotifier.getCurrentMilliseconds();
+					long executionTime = timer.getCurrentMilliseconds();
 					event.nextExecutionTime = executionTime;
 					event.nextPeriodStart = executionTime;
 					queue.add(event);
@@ -132,8 +127,8 @@ public class SingleThreadedScheduler implements Scheduler {
 		if (!queue.isEmpty()) {
 			long nextExecutionTime = queue.first().nextExecutionTime;
 			// FIXME we need the '=' in the next line if we don't give a random offset
-			if (nextExecutionTime >= schedulerNotifier.getCurrentMilliseconds()) {
-				schedulerNotifier.notifyAt(nextExecutionTime, this);
+			if (nextExecutionTime >= timer.getCurrentMilliseconds()) {
+				timer.notifyAt(nextExecutionTime, this);
 			}
 		}
 	}

@@ -1,7 +1,6 @@
-package cz.cuni.mff.d3s.deeco.scheduler.notifier;
+package cz.cuni.mff.d3s.deeco.timer;
 
 /**
- * TODO(Ilias): Merge this interface with the SchedulerNotifier interface before releasing jDEECo 3.0.
  * 
  * Gives access to current time in milliseconds.
  * 

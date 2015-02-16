@@ -15,7 +15,7 @@ import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.DeecoProperties;
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.scheduler.notifier.CurrentTimeProvider;
+import cz.cuni.mff.d3s.deeco.timer.CurrentTimeProvider;
 
 /**
  * This class enables receiving {@link KnowledgeData} that comes from the

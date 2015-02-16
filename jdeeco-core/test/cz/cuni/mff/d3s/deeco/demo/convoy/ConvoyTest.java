@@ -11,8 +11,8 @@ import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
 import cz.cuni.mff.d3s.deeco.runners.DEECoSimulation;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
-import cz.cuni.mff.d3s.deeco.scheduler.notifier.DiscreteEventSchedulerNotifier;
-import cz.cuni.mff.d3s.deeco.scheduler.notifier.SimulationSchedulerNotifier;
+import cz.cuni.mff.d3s.deeco.timer.DiscreteEventTimer;
+import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
 /**
  * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
  */
@@ -29,8 +29,8 @@ public class ConvoyTest {
 	public void testConvoy() throws AnnotationProcessorException, InterruptedException, DEECoException {
 		
 		/* create main application container */
-		SimulationSchedulerNotifier simulationSchedulerNotifier = new DiscreteEventSchedulerNotifier();
-		DEECoSimulation realm = new DEECoSimulation(simulationSchedulerNotifier);
+		SimulationTimer simulationTimer = new DiscreteEventTimer();
+		DEECoSimulation realm = new DEECoSimulation(simulationTimer);
 		
 		/* create one and only deeco node (centralized deployment) */
 		DEECoNode deeco = realm.createNode();
@@ -40,8 +40,7 @@ public class ConvoyTest {
 		deeco.deployEnsemble(ConvoyEnsemble.class);
 		
 		/* WHEN simulation is performed */
-		realm.setTerminationTime(2000);
-		realm.start();
+		realm.start(2000);
 		
 		// THEN the follower reaches his destination
 		assertThat(log.getLog(), containsString("Follower F: me = (1,3)"));

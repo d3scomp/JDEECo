@@ -1,11 +1,11 @@
-package cz.cuni.mff.d3s.deeco.scheduler.notifier;
+package cz.cuni.mff.d3s.deeco.timer;
 
 public class EventTime implements Comparable<EventTime> {
 	private long timePoint;
-	private SchedulerNotifierEventListener listener;
+	private TimerEventListener listener;
 	private boolean terminationEvent;
 
-	public EventTime(long timePoint, SchedulerNotifierEventListener listener, boolean isTerminationEvent) {
+	public EventTime(long timePoint, TimerEventListener listener, boolean isTerminationEvent) {
 		this.setTimePoint(timePoint);
 		this.listener = listener;
 		this.terminationEvent = isTerminationEvent; 
@@ -19,11 +19,11 @@ public class EventTime implements Comparable<EventTime> {
 		this.timePoint = timePoint;
 	}
 	
-	public SchedulerNotifierEventListener getListener() {
+	public TimerEventListener getListener() {
 		return listener;
 	}
 	
-	public void setListener(SchedulerNotifierEventListener listener) {
+	public void setListener(TimerEventListener listener) {
 		this.listener = listener;
 	}
 	

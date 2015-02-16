@@ -6,47 +6,52 @@ import java.util.List;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
-import cz.cuni.mff.d3s.deeco.scheduler.notifier.SimulationSchedulerNotifier;
+import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
 
 /** 
  * Main entry for launching DEECo simulations.
  * 
  * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
  */
-public class DEECoSimulation implements DEECoSimulationRunner, DEECoNodeFactory {
+public class DEECoSimulation {
 
 	List<DEECoNode> deecoNodes;
 	DEECoPlugin[] nodeWideplugins;
-	
-	SimulationSchedulerNotifier simulationSchedulerNotifier;
-	boolean terminationTimeSet = false;
+	SimulationTimer simulationTimer;
 
-	public DEECoSimulation(SimulationSchedulerNotifier simulationSchedulerNotifier, DEECoPlugin... nodeWideplugins) {
+	public DEECoSimulation(SimulationTimer simulationTimer, DEECoPlugin... nodeWideplugins) {
 		this.nodeWideplugins = nodeWideplugins;
-		this.simulationSchedulerNotifier = simulationSchedulerNotifier;
+		this.simulationTimer = simulationTimer;
 		deecoNodes = new ArrayList<>();
 	}
 
-	@Override
-	public void start() throws TerminationTimeNotSetException {
-		if (!terminationTimeSet) {
-			throw new TerminationTimeNotSetException(
-					"Before starting a simulation you have to specify the termination time.");
-		}
-		simulationSchedulerNotifier.start();
+	public void start(long duration) {
+		simulationTimer.start(duration);
 	}
 
-	@Override
 	public DEECoNode createNode(DEECoPlugin... nodeSpecificPlugins) throws DEECoException {
-		DEECoNode node = new DEECoNode(simulationSchedulerNotifier, DEECoRun.getAllPlugins(nodeWideplugins, nodeSpecificPlugins));
+		DEECoNode node = new DEECoNode(simulationTimer, getAllPlugins(nodeWideplugins, nodeSpecificPlugins));
 		deecoNodes.add(node);
 		return node;
 	}
 	
-	@Override
-	public void setTerminationTime(long terminationTime) {
-		simulationSchedulerNotifier.setTerminationTime(terminationTime);
-		terminationTimeSet  = true;
+	/**
+	 * Helper method that concatenates the array of node-wide plugins with node-specific plugins.
+	 * The returned array is intended to be passed to the DEECoNode() constructor.    
+	 * @param nodeSpecificPlugins extra plugins, not provided by the factory
+	 */
+	private DEECoPlugin[] getAllPlugins(DEECoPlugin[] nodeWideplugins, DEECoPlugin[] nodeSpecificPlugins) {
+		DEECoPlugin[] ret = new DEECoPlugin[nodeSpecificPlugins.length+nodeWideplugins.length];
+		int ind=0;
+		for (int i=0; i<nodeSpecificPlugins.length; i++) {
+			ret[ind] = nodeSpecificPlugins[i];
+			ind++;
+		}
+		for (int j=0; j<nodeWideplugins.length; j++) {
+			ret[ind] = nodeSpecificPlugins[j];
+			ind++;			
+		}
+		return ret;
 	}
 	
 }
