@@ -4,4 +4,6 @@ public interface Notifier {
 	void notifyAt(long time, DummyListener listener);
 
 	long getCurrentTime();
+	
+	void start(long duration);
 }

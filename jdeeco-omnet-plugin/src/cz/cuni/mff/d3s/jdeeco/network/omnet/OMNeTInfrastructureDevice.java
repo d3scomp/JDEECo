@@ -5,8 +5,7 @@ import cz.cuni.mff.d3s.jdeeco.network.address.Address;
 import cz.cuni.mff.d3s.jdeeco.network.address.IPAddress;
 
 public class OMNeTInfrastructureDevice extends OMNeTDevice {
-	public OMNeTInfrastructureDevice(OMNeTSimulation simulation /* , address, virtual lan, ... */) {
-		super(simulation);
+	public OMNeTInfrastructureDevice(/* , address, virtual lan, ... */) {
 	}
 
 	@Override
@@ -31,6 +30,8 @@ public class OMNeTInfrastructureDevice extends OMNeTDevice {
 
 	@Override
 	public void init(DEECoContainer container) {
+		super.init(container);
+
 		throw new UnsupportedOperationException();
 	}
 }

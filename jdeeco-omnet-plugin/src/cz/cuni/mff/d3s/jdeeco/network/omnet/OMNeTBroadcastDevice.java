@@ -5,8 +5,8 @@ import cz.cuni.mff.d3s.jdeeco.network.address.Address;
 import cz.cuni.mff.d3s.jdeeco.network.address.MANETBroadcastAddress;
 
 public class OMNeTBroadcastDevice extends OMNeTDevice {
-	public OMNeTBroadcastDevice(OMNeTSimulation simulation /* , address, frequency, ... */) {
-		super(simulation);
+	public OMNeTBroadcastDevice(/* , address, frequency, ... */) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -31,6 +31,8 @@ public class OMNeTBroadcastDevice extends OMNeTDevice {
 
 	@Override
 	public void init(DEECoContainer container) {
+		super.init(container);
+		
 		throw new UnsupportedOperationException();
 	}
 }
