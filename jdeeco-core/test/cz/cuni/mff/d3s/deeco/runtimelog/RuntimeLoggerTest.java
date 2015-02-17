@@ -173,7 +173,7 @@ public class RuntimeLoggerTest
 
 		runtimeLogger.log(null);
 	}
-	
+	// TODO: test whether the record fields are not null
 	@Test
 	public void log_fullRecord_recordWritten() throws Exception
 	{

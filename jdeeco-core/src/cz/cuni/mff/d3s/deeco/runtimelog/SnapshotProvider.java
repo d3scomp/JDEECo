@@ -16,6 +16,12 @@ public interface SnapshotProvider
 	 */
 	public RuntimeLogRecord getSnapshot();
 	
+	/**
+	 * Provides the type of the {@link RuntimeLogRecord} that is returned
+	 * by the {@link SnapshotProvider#getSnapshot()} method.
+	 * @return The type of the {@link RuntimeLogRecord} that is returned
+	 * by the {@link SnapshotProvider#getSnapshot()} method.
+	 */
 	public Class<? extends RuntimeLogRecord> getRecordClass();
 	
 }

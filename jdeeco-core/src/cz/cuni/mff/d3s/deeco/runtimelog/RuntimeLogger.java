@@ -50,13 +50,13 @@ import cz.cuni.mff.d3s.deeco.task.TimerTaskListener;
  * Each line in this file is a <a href="http://en.wikipedia.org/wiki/XML">XML</a> element in which
  * the values are stored in its attributes. There is an <em>time</em> and <em>offset</em> (number of bytes)
  * referring to the <em>runtime data file</em> stored in each element.</p>
- * <p> The {@link RuntimeLogger#SNAPSHOT_PERIOD_FILE} stores the maximum time offsets
- * for individual <em>events</em>/<em>snapshots</em>. These offsets denotes how much into the
+ * <p> The {@link RuntimeLogger#SNAPSHOT_PERIOD_FILE} stores the maximum time periods
+ * for individual <em>events</em>/<em>snapshots</em>. These periods denotes how much into the
  * past it needs to be looked for a given time, to be able to compute the whole information
  * for the system about the <em>event</em>/<em>snapshot</em>. The maximum of the values in this
  * file is the minimum time offset where to start the computation of the system information
  * to be able to deliver the consistent system state for the specified time. This file contains
- * individual provided time offsets. Each line holds one single number.
+ * individual provided time offsets. Each line holds one single number and type of the corresponding record.
  * 
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  */
@@ -82,7 +82,10 @@ public class RuntimeLogger {
 	 * into the {@link RuntimeLogger#dataWriter}. 
 	 */
 	private long currentDataOffset;
-	
+	/**
+	 * The time when the last record into the {@link RuntimeLogger#DATA_INDEX_FILE}
+	 * was written.
+	 */
 	private long lastIndexTime;
 	/**
 	 * There are {@link SnapshotProvider}s registered on the {@link RuntimeLogger}
@@ -101,8 +104,13 @@ public class RuntimeLogger {
 	 * is cleared.
 	 */
 	private final List<SnapshotTypePeriodPair> snapshotPeriods;
-	
-	
+	/**
+	 * The set of the record types that was registered either via the {@link RuntimeLogger#registerSnapshotPeriod(long, Class)}
+	 * or via the {@link RuntimeLogger#registerSnapshotProvider(SnapshotProvider, long)} method.
+	 * When a record of a type that is stored in this variable is being logged, the
+	 * {@link RuntimeLogger#DATA_INDEX_FILE} is being updated accordingly and both the
+	 * {@link RuntimeLogger#DATA_FILE} and {@link RuntimeLogger#DATA_INDEX_FILE} are flushed.
+	 */
 	private final Set<Class<? extends RuntimeLogRecord>> snapshotTypes;
 	/**
 	 * The {@link CurrentTimeProvider} that is used to add time value into each record
@@ -148,6 +156,11 @@ public class RuntimeLogger {
 	 */
 	private static final String EVENT_RECORD_NAME = "event";
 	/**
+	 * The name of the <a href="http://en.wikipedia.org/wiki/XML">XML</a> element
+	 * that holds a single value from a collection.
+	 */
+	private static final String COLLECION_VALUE_ENCLOSURE = "value";
+	/**
 	 * The name of the <a href="http://en.wikipedia.org/wiki/XML">XML</a> element attribute
 	 * that is used for the ID of the component that is logging the event.
 	 */
@@ -168,6 +181,10 @@ public class RuntimeLogger {
 	 */
 	private static final String RECORD_OFFSET = "offset";
 	
+	/**
+	 * The minimum time difference between records in the {@link RuntimeLogger#DATA_INDEX_FILE}.
+	 * This value limits how often the {@link RuntimeLogger#DATA_INDEX_FILE} is being updated.
+	 */
 	private static final long INDEX_MIN_PERIOD = 10; // milliseconds
 
 	/**
@@ -281,35 +298,16 @@ public class RuntimeLogger {
 		}
 		snapshotPeriodWriter.flush();
 		snapshotPeriods.clear();
-
 	}
 
 	/**
 	 * Writes the data from the given <em>record</em> to the {@link RuntimeLogger#dataWriter}.
 	 * The written record has a format of an <a href="http://en.wikipedia.org/wiki/XML">XML</a>
-	 * element. The values from the given <em>record</em> are stored as attributes of the
-	 * written <a href="http://en.wikipedia.org/wiki/XML">XML</a> element.
-	 * <p> The {@link Writer} is not being flushed when this method is called. </p>
-	 * @param record contains the data that will be logged.
-	 * @throws IOException Thrown if there is a problem writing into the {@link Writer}s
-	 * for the logging.
-	 * @throws IllegalStateException Thrown if the {@link RuntimeLogger#init} method hasn't
-	 * been called before this method is being called.
-	 * @throws IllegalArgumentException Thrown if the given argument is null.
-	 */
-/*	public void log(RuntimeLogRecord record) throws IOException,
-			IllegalStateException {
-		log(record, false);
-	}*/
-
-	/**
-	 * Writes the data from the given <em>record</em> to the {@link RuntimeLogger#dataWriter}.
-	 * The written record has a format of an <a href="http://en.wikipedia.org/wiki/XML">XML</a>
-	 * element. The values from the given <em>record</em> argument are stored as attributes of the
-	 * written <a href="http://en.wikipedia.org/wiki/XML">XML</a> element. If the <em>snapshot</em>
-	 * argument is true also an index record pointing to the current snapshot record is written
+	 * element. The values from the given <em>record</em> argument are stored hierarchically under
+	 * the written <a href="http://en.wikipedia.org/wiki/XML">XML</a> element. If the <em>record</em>
+	 * type is registered as a snapshot, also an index record pointing to the current record is written
 	 * using the {@link RuntimeLogger#indexWriter}.
-	 * <p> The {@link Writer}s are being flushed when the <em>snapshot</em> argument is true. </p> 
+	 * <p> The {@link Writer}s are flushed when the <em>index</em> file is being written into. </p> 
 	 * @param record contains the data that will be logged.
 	 * @throws IOException Thrown if there is a problem writing into the {@link Writer}s
 	 * for the logging.
@@ -345,7 +343,7 @@ public class RuntimeLogger {
 			recordBuilder.append("<")
 				.append(valueKey)
 				.append(">");
-			write(recordBuilder, values.get(valueKey));
+			writeKnowledge(recordBuilder, values.get(valueKey));
 			recordBuilder.append("</")
 				.append(valueKey)
 				.append(">");
@@ -374,6 +372,17 @@ public class RuntimeLogger {
 		}
 	}
 	
+	/**
+	 * Write the <em>currentTime</em> and the <em>dataOffset</em> into the {@link RuntimeLogger#indexWriter}
+	 * and flush both the {@link RuntimeLogger#dataWriter} and the {@link RuntimeLogger#indexWriter}.
+	 * <p> The <em>index</em> file has a format of <a href="http://en.wikipedia.org/wiki/XML">XML</a>. 
+	 * Each <a href="http://en.wikipedia.org/wiki/XML">XML</a> element contains <em>currentTime</em>
+	 * and <em>dataOffset</em> in its attributes. </p>
+	 * @param currentTime is the time to be logged into the {@link RuntimeLogger#indexWriter}.
+	 * @param dataOffset is the byte offset in the <em>data</em> file corresponding to the <em>currentTime</em>. 
+	 * @throws IOException Thrown if there is a problem writing into the {@link RuntimeLogger#indexWriter}
+	 * or flushing the {@link RuntimeLogger#indexWriter} or the {@link RuntimeLogger#dataWriter}.
+	 */
 	private void logIndex(long currentTime, long dataOffset) throws IOException
 	{
 		StringBuilder indexBuilder = new StringBuilder();
@@ -391,28 +400,42 @@ public class RuntimeLogger {
 		lastIndexTime = currentTime;
 	}
 	
+	/**
+	 * Structure and transform the given <em>knowledge</em> into a <a href="http://en.wikipedia.org/wiki/XML">XML</a>
+	 * representation. The <a href="http://en.wikipedia.org/wiki/XML">XML</a> knowledge representation is appended
+	 * into the given <em>builder</em>. The internal pieces of the <em>knowledge</em> are allowed to be one of the
+	 * following form:
+	 * <ul>
+	 * <li>{@link Iterable} - A collection of <em>knowledge</em> (e.g. {@link List}).</li>
+	 * <li>{@link Map} - A collection of pairs <em>name</em> - <em>knowledge</em>.</li>
+	 * <li>Value - A <em>knowledge</em> value that is directly transformed into a string.</li>
+	 * </ul>
+	 * @param builder is the target where the <a href="http://en.wikipedia.org/wiki/XML">XML</a> representation
+	 * of <em>knowledge</em> is appended.
+	 * @param knowledge contains the data that will be transformed.
+	 */
 	@SuppressWarnings("unchecked")
-	private void write(StringBuilder builder, Object obj)
+	private void writeKnowledge(StringBuilder builder, Object knowledge) // TODO: check parameters
 	{
-		if(obj instanceof Iterable)
+		if(knowledge instanceof Iterable)
 		{
-			Iterable<Object> collection = (Iterable<Object>) obj;
+			Iterable<Object> collection = (Iterable<Object>) knowledge;
 			for(Object item : collection)
 			{
-				builder.append("<value>");
-				write(builder, item);
-				builder.append("</value>");
+				builder.append("<").append(COLLECION_VALUE_ENCLOSURE).append(">");
+				writeKnowledge(builder, item);
+				builder.append("</").append(COLLECION_VALUE_ENCLOSURE).append(">");
 			}
 		}
-		else if(obj instanceof Map)
+		else if(knowledge instanceof Map)
 		{
-			Map<String, Object> map = (Map<String, Object>) obj;
+			Map<String, Object> map = (Map<String, Object>) knowledge;
 			for(String valueKey : map.keySet())
 			{
 				builder.append("<")
 					.append(valueKey)
 					.append(">");
-				write(builder, map.get(valueKey));
+				writeKnowledge(builder, map.get(valueKey));
 				builder.append("</")
 					.append(valueKey)
 					.append(">");
@@ -420,7 +443,7 @@ public class RuntimeLogger {
 		}
 		else
 		{
-			builder.append(obj.toString());
+			builder.append(knowledge.toString());
 		}
 	}
 
@@ -428,6 +451,9 @@ public class RuntimeLogger {
 	 * Creates a {@link Task} for the given <em>snapshotProvider</em>
 	 * This {@link Task} will periodically record the snapshots
 	 * using the {@link SnapshotProvider#getSnapshot()} method.
+	 * The <em>snapshotType</em> provided by the given <em>snapshotProvider</em>
+	 * is registered in the {@link RuntimeLogger#snapshotTypes} and the
+	 * {@link RuntimeLogger#log(RuntimeLogRecord)} method handles such records as snapshots.
 	 * <p> This method is save to be called before the {@link RuntimeLogger#init} method is. </p>
 	 * @param snapshotProvider is the {@link SnapshotProvider} that will be registered. 
 	 * @param period specifies the period for the repetitive invocation of the given <em>snapshotProvider</em>.
@@ -455,6 +481,8 @@ public class RuntimeLogger {
 
 	/**
 	 * Writes the given <em>time</em> into the {@link RuntimeLogger#snapshotPeriodWriter}.
+	 * The given <em>snapshotType</em> is registered in the {@link RuntimeLogger#snapshotTypes}
+	 * and the {@link RuntimeLogger#log(RuntimeLogRecord)} method handles such records as snapshots.
 	 * <p> This method is save to be called before the {@link RuntimeLogger#init} method is. </p>
 	 * @param period specifies the time offset to be remembered as a <em>back log offset</em>.
 	 * @throws IOException Thrown if the {@link RuntimeLogger#snapshotPeriodWriter} is unable to be
@@ -604,9 +632,27 @@ public class RuntimeLogger {
 		}	
 	}
 	
+	/**
+	 * This class holds a <em>snapshot type</em> and a <em>period</em> corresponding to it.
+	 * It is basically a customized pair, that is used when registering <em>snapshot period</em>.
+	 * 
+	 * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
+	 */
 	private class SnapshotTypePeriodPair {
+		/**
+		 * The period of the {@link SnapshotTypePeriodPair#snapshotType} being logged.
+		 */
 	    private long period;
+	    /**
+	     * The type of the <em>snapshot record</em>.
+	     */
 	    private Class<? extends RuntimeLogRecord> snapshotType;
+	    
+	    /**
+	     * Constructs new instance of a pair of <em>snapshot type</em> and its <em>period</em>.
+	     * @param period is the period of the {@link SnapshotTypePeriodPair#snapshotType} being logged.
+	     * @param snapshotType is the type of the <em>snapshot record</em>.
+	     */
 	    public SnapshotTypePeriodPair(long period, Class<? extends RuntimeLogRecord> snapshotType){
 	        this.period = period;
 	        this.snapshotType = snapshotType;
