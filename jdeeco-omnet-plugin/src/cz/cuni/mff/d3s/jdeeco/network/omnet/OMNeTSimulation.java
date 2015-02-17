@@ -27,13 +27,11 @@ public class OMNeTSimulation implements SimulationTimer, DEECoPlugin {
 
 	@Override
 	public void notifyAt(long time, TimerEventListener listener) {
-		// TODO Auto-generated method stub
-		
+		// throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void start(long duration) {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException();
 	}
 }
