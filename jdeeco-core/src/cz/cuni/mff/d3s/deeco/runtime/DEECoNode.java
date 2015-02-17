@@ -3,12 +3,10 @@ package cz.cuni.mff.d3s.deeco.runtime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
-import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
@@ -21,8 +19,10 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
+import cz.cuni.mff.d3s.deeco.scheduler.NoExecutorAvailableException;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.scheduler.SingleThreadedScheduler;
+import cz.cuni.mff.d3s.deeco.timer.Timer;
 
 /**
  * Main container for a DEECo application.
@@ -30,8 +30,12 @@ import cz.cuni.mff.d3s.deeco.scheduler.SingleThreadedScheduler;
  * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
  * @author Filip Krijt <krijt@d3s.mff.cuni.cz>
  */
-public class DEECo implements DEECoContainer {
+public class DEECoNode implements DEECoContainer {
 
+	/** 
+	 * TODO find a way to inject this field from the DEECoRealm (probably via the constructor here?)
+	 */
+	int id;
 	/**
 	 * The metadata model corresponding to the running application.
 	 */
@@ -57,27 +61,20 @@ public class DEECo implements DEECoContainer {
 	 */
 	Map<Class<? extends DEECoPlugin>, DEECoPlugin> pluginsMap;
 	
-	/**
-	 * Maintains the set of known ensemble definitions for the purpose of guarding against duplicate deployment of one ensemble.
-	 */
-	Set<Class> knownEnsembleDefinitions;
-	
-	/**
-	 * True if this DEECo application is running.
-	 */
-	protected boolean running = false;
-	
-	
-	public DEECo(DEECoPlugin... plugins) throws PluginDependencyException {			
+	public DEECoNode(Timer Timer, DEECoPlugin... plugins) throws DEECoException {			
 		pluginsMap= new HashMap<>();
-		knownEnsembleDefinitions = new HashSet<Class>();
 		model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
 		knowledgeManagerFactory = new CloningKnowledgeManagerFactory();
 		processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE, model, knowledgeManagerFactory);		
 		
-		createRuntime();
+		createRuntime(Timer);
 		runtime.init(this);
 		initializePlugins(plugins);
+	}
+	
+	@Override
+	public int getId() {
+		return id;
 	}
 	
 	public ComponentInstance deployComponent(Object component) throws AnnotationProcessorException {
@@ -86,28 +83,7 @@ public class DEECo implements DEECoContainer {
 	
 	@SuppressWarnings("rawtypes")
 	public EnsembleDefinition deployEnsemble(Class ensemble) throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
-		if(knownEnsembleDefinitions.contains(ensemble))
-			throw new DuplicateEnsembleDefinitionException(ensemble);
-		
-		EnsembleDefinition ensembleDefinition = processor.processEnsemble(ensemble);
-		knownEnsembleDefinitions.add(ensemble);
-		return ensembleDefinition;
-	}
-	
-	public void start() throws InvalidOperationException {
-		if(running)
-			throw new InvalidOperationException("start");
-		
-		runtime.start();
-		running = true;
-	}
-
-	public void stop() throws InvalidOperationException {
-		if(!running)
-			throw new InvalidOperationException("stop");		
-		
-		runtime.stop();
-		running = false;
+		return processor.processEnsemble(ensemble);
 	}
 	
 	@Override
@@ -130,12 +106,6 @@ public class DEECo implements DEECoContainer {
 	@Override
 	public RuntimeMetadata getRuntimeMetadata() {
 		return model;
-	}
-	
-	@Override
-	public boolean isRunning()
-	{
-		return running;
 	}
 	
 	class DependencyNode {
@@ -188,7 +158,7 @@ public class DEECo implements DEECoContainer {
 
 	void initializePlugins(DEECoPlugin[] plugins) throws PluginDependencyException {
 		List<DependencyNode> nodes = constructDependencyNodes(plugins);
-		Queue<DependencyNode> queue = new PriorityQueue<DEECo.DependencyNode>(new DependencyNodeComparator());
+		Queue<DependencyNode> queue = new PriorityQueue<DEECoNode.DependencyNode>(new DependencyNodeComparator());
 		
 		for(DependencyNode n : nodes)
 		{
@@ -214,9 +184,9 @@ public class DEECo implements DEECoContainer {
 		}	
 	}
 	
-	private void createRuntime() {
-		Scheduler scheduler = new SingleThreadedScheduler();
+	private void createRuntime(Timer timer) throws NoExecutorAvailableException {
 		Executor executor = new SameThreadExecutor();
+		Scheduler scheduler = new SingleThreadedScheduler(executor, timer);
 		KnowledgeManagerContainer kmContainer = new KnowledgeManagerContainer(knowledgeManagerFactory, model);
 		scheduler.setExecutor(executor);
 		executor.setExecutionListener(scheduler);

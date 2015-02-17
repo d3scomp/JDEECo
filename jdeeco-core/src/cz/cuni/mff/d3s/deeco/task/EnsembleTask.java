@@ -642,7 +642,7 @@ public class EnsembleTask extends Task {
 	@Override
 	public void invoke(Trigger trigger) throws TaskInvocationException {
 
-		EnsembleContext.addContext(scheduler);
+		EnsembleContext.addContext(scheduler.getTimer());
 		
 		if (trigger instanceof ShadowKMChangeTrigger) {
 			// If the trigger pertains to a shadow knowledge manager
@@ -672,7 +672,7 @@ public class EnsembleTask extends Task {
 			coordinatorExchangePerformed = performExchange(PathRoot.COORDINATOR, shadowKnowledgeManager);
 			membership = true;
 		}
-		EnsembleLogger.getInstance().logEvent(ensembleController, shadowKnowledgeManager, scheduler, membership, false);
+		EnsembleLogger.getInstance().logEvent(ensembleController, shadowKnowledgeManager, scheduler.getTimer(), membership, false);
 		
 		// Do the same with the roles exchanged
 		membership = false;
@@ -682,7 +682,7 @@ public class EnsembleTask extends Task {
 			memberExchangePerformed = performExchange(PathRoot.MEMBER, shadowKnowledgeManager);
 			membership = true;
 		}
-		EnsembleLogger.getInstance().logEvent(ensembleController, shadowKnowledgeManager, scheduler, membership, true);
+		EnsembleLogger.getInstance().logEvent(ensembleController, shadowKnowledgeManager, scheduler.getTimer(), membership, true);
 		
 		if (coordinatorExchangePerformed || memberExchangePerformed) {
 			invokeRatingsProcess(shadowKnowledgeManager.getId());

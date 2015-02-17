@@ -16,34 +16,39 @@ import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
 /**
  * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
  */
-public class ConvoyTest {
+public class ConvoySimulationTest {
 	
 	@Rule
 	public final StandardOutputStreamLog  log = new StandardOutputStreamLog ();
 	
 	public static void main(String[] args) throws AnnotationProcessorException, InterruptedException, DEECoException {
-		new ConvoyTest().testConvoy();
+		new ConvoySimulationTest().testConvoy();
 	}
 	
 	@Test
 	public void testConvoy() throws AnnotationProcessorException, InterruptedException, DEECoException {
-		
+
 		/* create main application container */
-		SimulationTimer simulationTimer = new DiscreteEventTimer();
-		DEECoSimulation realm = new DEECoSimulation(simulationTimer);
-		
-		/* create one and only deeco node (centralized deployment) */
-		DEECoNode deeco = realm.createNode();
+		SimulationTimer simulationTimer = new DiscreteEventTimer(); // also "new WallTimeSchedulerNotifier()" 
+ 		DEECoSimulation realm = new DEECoSimulation(simulationTimer);
+		 
+		/* create first deeco node */
+		DEECoNode deeco1 = realm.createNode();
 		/* deploy components and ensembles */
-		deeco.deployComponent(new Leader());
-		deeco.deployComponent(new Follower());
-		deeco.deployEnsemble(ConvoyEnsemble.class);
+		deeco1.deployComponent(new Leader());
+		deeco1.deployEnsemble(ConvoyEnsemble.class);
 		
+		/* create second deeco node */
+		DEECoNode deeco2 = realm.createNode();
+		/* deploy components and ensembles */
+		deeco2.deployComponent(new Follower());
+		deeco2.deployEnsemble(ConvoyEnsemble.class);
+
 		/* WHEN simulation is performed */
 		realm.start(2000);
-		
-		// THEN the follower reaches his destination
-		assertThat(log.getLog(), containsString("Follower F: me = (1,3)"));
+
+		// THEN the follower prints out the following (as there is no network and the components cannot exchange data)
+		assertThat(log.getLog(), containsString("Follower F: me = (1,1) leader = null"));
 	}	
 
 }
