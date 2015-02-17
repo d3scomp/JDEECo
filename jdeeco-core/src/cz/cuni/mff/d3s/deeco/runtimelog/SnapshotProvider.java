@@ -15,4 +15,7 @@ public interface SnapshotProvider
 	 * @return The {@link RuntimeLogRecord} containing the knowledge snapshot.
 	 */
 	public RuntimeLogRecord getSnapshot();
+	
+	public Class<? extends RuntimeLogRecord> getRecordClass();
+	
 }

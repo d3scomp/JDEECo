@@ -8,14 +8,18 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.task.CustomStepTask;
 import cz.cuni.mff.d3s.deeco.task.Task;
+import cz.cuni.mff.d3s.deeco.task.TimerTask;
+import cz.cuni.mff.d3s.deeco.task.TimerTaskListener;
 
 /**
  * {@link RuntimeLogger} provides the functionality for the logging of
@@ -24,7 +28,7 @@ import cz.cuni.mff.d3s.deeco.task.Task;
  * <ul>
  * 	<li>{@link RuntimeLogger#DATA_FILE}</li>
  * 	<li>{@link RuntimeLogger#DATA_INDEX_FILE}</li>
- * 	<li>{@link RuntimeLogger#BACK_LOG_OFFSET_TABLE_FILE}</li>
+ * 	<li>{@link RuntimeLogger#SNAPSHOT_PERIOD_FILE}</li>
  * </ul>
  * <p> The log destination can be overridden by corresponding parameters in the
  * {@link RuntimeLogger#init(CurrentTimeProvider, Scheduler, Writer, Writer, Writer)}
@@ -46,7 +50,7 @@ import cz.cuni.mff.d3s.deeco.task.Task;
  * Each line in this file is a <a href="http://en.wikipedia.org/wiki/XML">XML</a> element in which
  * the values are stored in its attributes. There is an <em>time</em> and <em>offset</em> (number of bytes)
  * referring to the <em>runtime data file</em> stored in each element.</p>
- * <p> The {@link RuntimeLogger#BACK_LOG_OFFSET_TABLE_FILE} stores the maximum time offsets
+ * <p> The {@link RuntimeLogger#SNAPSHOT_PERIOD_FILE} stores the maximum time offsets
  * for individual <em>events</em>/<em>snapshots</em>. These offsets denotes how much into the
  * past it needs to be looked for a given time, to be able to compute the whole information
  * for the system about the <em>event</em>/<em>snapshot</em>. The maximum of the values in this
@@ -71,13 +75,15 @@ public class RuntimeLogger {
 	 * in the main log file.
 	 * @see RuntimeLogger 
 	 */
-	private BufferedWriter backLogWriter;
+	private BufferedWriter snapshotPeriodWriter;
 
 	/**
 	 * The size of the data (number of bytes) so far being written
 	 * into the {@link RuntimeLogger#dataWriter}. 
 	 */
 	private long currentDataOffset;
+	
+	private long lastIndexTime;
 	/**
 	 * There are {@link SnapshotProvider}s registered on the {@link RuntimeLogger}
 	 * being held in this collection before the {@link RuntimeLogger#init} method is called.
@@ -91,10 +97,13 @@ public class RuntimeLogger {
 	 * There are the time offsets registered on the {@link RuntimeLogger}
 	 * being held in this collection before the {@link RuntimeLogger#init} method is called.
 	 * After the {@link RuntimeLogger#init} method is called the stored time offsets
-	 * are written using the {@link RuntimeLogger#backLogWriter} and this collection
+	 * are written using the {@link RuntimeLogger#snapshotPeriodWriter} and this collection
 	 * is cleared.
 	 */
-	private final List<Long> backLogOffsets;
+	private final List<SnapshotTypePeriodPair> snapshotPeriods;
+	
+	
+	private final Set<Class<? extends RuntimeLogRecord>> snapshotTypes;
 	/**
 	 * The {@link CurrentTimeProvider} that is used to add time value into each record
 	 * being written using the {@link RuntimeLogger#dataWriter} or {@link RuntimeLogger#indexWriter}. 
@@ -105,13 +114,6 @@ public class RuntimeLogger {
 	 * that are responsible for periodic invocation of the registered {@link SnapshotProvider}s.
 	 */
 	private Scheduler scheduler;
-
-	/**
-	 * The singleton instance of the {@link RuntimeLogger}. This singleton holds the
-	 * {@link Writer}s that access the log files. Multiple access to these files is not
-	 * desirable.
-	 */
-	private static RuntimeLogger instance = new RuntimeLogger();
 
 	/**
 	 * Specifies the default file where the logging records of the runtime events are written.
@@ -133,14 +135,7 @@ public class RuntimeLogger {
 	 * {@link RuntimeLogger#init(CurrentTimeProvider, Scheduler, Writer, Writer, Writer)}
 	 * method.
 	 */
-	private static final File BACK_LOG_OFFSET_TABLE_FILE = new File("logs/backLogOffsetTable.xml");
-	
-	/**
-	 * Specifies whether the log files are supposed to be overwritten (false) or appended (true)
-	 * when a new run of <a href="http://d3s.mff.cuni.cz/projects/components_and_services/deeco/">DEECo</a>
-	 * is issued.
-	 */
-	private static final boolean APPEND_TO_OLD_LOG = false;
+	private static final File SNAPSHOT_PERIOD_FILE = new File("logs/snapshotPeriodTable.xml");
 	/**
 	 * The encoding used to write into each log file. the number of bytes written for each character
 	 * depends on the selected encoding.
@@ -153,15 +148,10 @@ public class RuntimeLogger {
 	 */
 	private static final String EVENT_RECORD_NAME = "event";
 	/**
-	 * The name of the <a href="http://en.wikipedia.org/wiki/XML">XML</a> element
-	 * used for storing the snapshots.
-	 */
-	private static final String SNAPSHOT_RECORD_NAME = "snapshot";
-	/**
 	 * The name of the <a href="http://en.wikipedia.org/wiki/XML">XML</a> element attribute
 	 * that is used for the ID of the component that is logging the event.
 	 */
-	private static final String RECORD_ID = "componentID";
+	private static final String RECORD_ID = "id";
 	/**
 	 * The name of the <a href="http://en.wikipedia.org/wiki/XML">XML</a> element attribute
 	 * that is used for the type of the event that is being logged.
@@ -177,15 +167,18 @@ public class RuntimeLogger {
 	 * that is used for the byte offset when an index record is being written.
 	 */
 	private static final String RECORD_OFFSET = "offset";
+	
+	private static final long INDEX_MIN_PERIOD = 10; // milliseconds
 
 	/**
 	 * Private constructor of the {@link RuntimeLogger} singleton instance.
-	 * The {@link RuntimeLogger#snapshotProviders} and {@link RuntimeLogger#backLogOffsets}
+	 * The {@link RuntimeLogger#snapshotProviders} and {@link RuntimeLogger#snapshotPeriods}
 	 * are being initialized in this constructor. 
 	 */
-	private RuntimeLogger() {
+	public RuntimeLogger() {
 		snapshotProviders = new HashMap<SnapshotProvider, Long>();
-		backLogOffsets = new ArrayList<Long>();
+		snapshotPeriods = new ArrayList<SnapshotTypePeriodPair>();
+		snapshotTypes = new HashSet<Class<? extends RuntimeLogRecord>>();
 	}
 
 	/**
@@ -196,10 +189,9 @@ public class RuntimeLogger {
 	 * @return The {@link Writer} for the given <em>file</em>.
 	 * @throws IOException Thrown is the {@link Writer} cannot be opened for the given <em>file</em>.
 	 */
-	private static Writer openStream(File file) throws IOException {
+	private Writer openStream(File file) throws IOException {
 		try {
-			return new OutputStreamWriter(new FileOutputStream(file,
-					APPEND_TO_OLD_LOG), CHARSET_NAME);
+			return new OutputStreamWriter(new FileOutputStream(file), CHARSET_NAME);
 		} catch (IOException e) {
 			Log.e("Simulation logging not enabled. Failed to open the log file "
 					+ DATA_FILE.getAbsolutePath(), e);
@@ -213,7 +205,7 @@ public class RuntimeLogger {
 	 * {@link RuntimeLogger#logSnapshot(RuntimeLogRecord)} method. In this method
 	 * there are the log files being opened. Also there are created
 	 * {@link Task}s for the registered {@link SnapshotProviders}.
-	 * The registered <em>back log offsets</em> are written into the {@link RuntimeLogger#backLogWriter}.
+	 * The registered <em>back log offsets</em> are written into the {@link RuntimeLogger#snapshotPeriodWriter}.
 	 * @param currentTimeProvider Provides the current time of the
 	 * <a href="http://d3s.mff.cuni.cz/projects/components_and_services/deeco/">DEECo</a> runtime.
 	 * @param scheduler Serves for planning the {@link Task}s for
@@ -221,13 +213,13 @@ public class RuntimeLogger {
 	 * @throws IOException Thrown if any of the log files cannot be opened or written into.
 	 * @throws IllegalArgumentException Thrown if any of the input arguments is null. 
 	 */
-	public static void init(CurrentTimeProvider currentTimeProvider,
+	public void init(CurrentTimeProvider currentTimeProvider,
 			Scheduler scheduler) throws IOException {
 		Writer dataOut = openStream(DATA_FILE);
 		Writer indexOut = openStream(DATA_INDEX_FILE);
-		Writer backLogOut = openStream(BACK_LOG_OFFSET_TABLE_FILE);
+		Writer periodOut = openStream(SNAPSHOT_PERIOD_FILE);
 
-		init(currentTimeProvider, scheduler, dataOut, indexOut, backLogOut);
+		init(currentTimeProvider, scheduler, dataOut, indexOut, periodOut);
 	}
 
 	/**
@@ -236,19 +228,19 @@ public class RuntimeLogger {
 	 * {@link RuntimeLogger#logSnapshot(RuntimeLogRecord)} method. In this method there are the log
 	 * {@link Writer}s being opened. Also there are created {@link Task}s
 	 * for the registered {@link SnapshotProviders}. The registered <em>back log offsets</em>
-	 * are written into the {@link RuntimeLogger#backLogWriter}.
+	 * are written into the {@link RuntimeLogger#snapshotPeriodWriter}.
 	 * @param currentTimeProvider Provides the current time of the
 	 * <a href="http://d3s.mff.cuni.cz/projects/components_and_services/deeco/">DEECo</a> runtime.
 	 * @param scheduler Serves for planning the {@link Task}s for
 	 * @param dataOut specifies the {@link Writer} for the <em>log data</em>.
 	 * @param indexOut specifies the {@link Writer} for the <em>index data</em>.
-	 * @param backLogOut specifies the {@link Writer} for the <em>time offsets</em>.
+	 * @param periodOut specifies the {@link Writer} for the <em>time offsets</em>.
 	 * @throws IOException Thrown if any of the log files cannot be opened or written into.
 	 * @throws IllegalArgumentException Thrown if any of the input arguments is null.
 	 */
-	public static void init(CurrentTimeProvider currentTimeProvider,
+	public void init(CurrentTimeProvider currentTimeProvider,
 			Scheduler scheduler, Writer dataOut, Writer indexOut,
-			Writer backLogOut) throws IOException {
+			Writer periodOut) throws IOException {
 		if (currentTimeProvider == null)
 			throw new IllegalArgumentException(String.format(
 					"The argument \"%s\" is null.", "currentTimeProvider"));
@@ -261,43 +253,35 @@ public class RuntimeLogger {
 		if (indexOut == null)
 			throw new IllegalArgumentException(String.format(
 					"The argument \"%s\" is null.", "indexOut"));
-		if (backLogOut == null)
+		if (periodOut == null)
 			throw new IllegalArgumentException(String.format(
-					"The argument \"%s\" is null.", "backLogOut"));
+					"The argument \"%s\" is null.", "periodOut"));
 
 		// Opening the files in init method to avoid IOException in the constructor
-		instance.dataWriter = new BufferedWriter(dataOut);
-		instance.indexWriter = new BufferedWriter(indexOut);
-		instance.backLogWriter = new BufferedWriter(backLogOut);
+		dataWriter = new BufferedWriter(dataOut);
+		indexWriter = new BufferedWriter(indexOut);
+		snapshotPeriodWriter = new BufferedWriter(periodOut);
 
-		instance.timeProvider = currentTimeProvider;
-		instance.scheduler = scheduler;
+		timeProvider = currentTimeProvider;
+		this.scheduler = scheduler;
 
-		instance.currentDataOffset = 0;
+		currentDataOffset = 0;
+		lastIndexTime = 0;
 
-		for (SnapshotProvider sp : instance.snapshotProviders.keySet()) {
-			long period = instance.snapshotProviders.get(sp);
-			RuntimeLogTimerTaskListener slttListener = new RuntimeLogTimerTaskListener(
-					sp, period);
+		for (SnapshotProvider sp : snapshotProviders.keySet()) {
+			long period = snapshotProviders.get(sp);
+			RuntimeLogTimerTaskListener slttListener = new RuntimeLogTimerTaskListener(sp, period);
 			scheduler.addTask(new CustomStepTask(scheduler, slttListener,
 					period));
 		}
-		instance.snapshotProviders.clear();
+		snapshotProviders.clear();
 
-		for (Long time : instance.backLogOffsets) {
-			instance.backLogWriter.write(String.format("%d\n", time));
+		for (SnapshotTypePeriodPair pair : snapshotPeriods) {
+			snapshotPeriodWriter.write(String.format("%d %s\n", pair.period, pair.snapshotType.getCanonicalName()));
 		}
-		instance.backLogWriter.flush();
-		instance.backLogOffsets.clear();
+		snapshotPeriodWriter.flush();
+		snapshotPeriods.clear();
 
-	}
-
-	/**
-	 * Provides the singleton instance of the {@link RuntimeWriter}.
-	 * @return The singleton instance of the {@link RuntimeWriter}.
-	 */
-	public static RuntimeLogger getInstance() {
-		return instance;
 	}
 
 	/**
@@ -313,29 +297,10 @@ public class RuntimeLogger {
 	 * been called before this method is being called.
 	 * @throws IllegalArgumentException Thrown if the given argument is null.
 	 */
-	public static void log(RuntimeLogRecord record) throws IOException,
+/*	public void log(RuntimeLogRecord record) throws IOException,
 			IllegalStateException {
 		log(record, false);
-	}
-
-	/**
-	 * Writes the data from the given <em>snapshotData</em> argument to the {@link RuntimeLogger#dataWriter}.
-	 * The written record has a format of an <a href="http://en.wikipedia.org/wiki/XML">XML</a>
-	 * element. The values from the given <em>snapshotData</em> argument are stored as attributes of the
-	 * written <a href="http://en.wikipedia.org/wiki/XML">XML</a> element. Also an index record
-	 * pointing to this snapshot record is written using the {@link RuntimeLogger#indexWriter}.
-	 * <p> The {@link Writer}s are being flushed when this method is called. </p>
-	 * @param snapshotData contains the data that will be logged.
-	 * @throws IOException Thrown if there is a problem writing into the {@link Writer}s
-	 * for the logging.
-	 * @throws IllegalStateException Thrown if the {@link RuntimeLogger#init} method hasn't
-	 * been called before this method is being called.
-	 * @throws IllegalArgumentException Thrown if the given argument is null.
-	 */
-	public static void logSnapshot(RuntimeLogRecord snapshotData)
-			throws IOException, IllegalStateException {
-		log(snapshotData, true);
-	}
+	}*/
 
 	/**
 	 * Writes the data from the given <em>record</em> to the {@link RuntimeLogger#dataWriter}.
@@ -346,66 +311,116 @@ public class RuntimeLogger {
 	 * using the {@link RuntimeLogger#indexWriter}.
 	 * <p> The {@link Writer}s are being flushed when the <em>snapshot</em> argument is true. </p> 
 	 * @param record contains the data that will be logged.
-	 * @param snapshot indicates whether the <em>record</em> holds a snapshot (true) or an event (false).
 	 * @throws IOException Thrown if there is a problem writing into the {@link Writer}s
 	 * for the logging.
 	 * @throws IllegalStateException Thrown if the {@link RuntimeLogger#init} method hasn't
 	 * been called before this method is being called.
 	 * @throws IllegalArgumentException Thrown if the given argument is null.
 	 */
-	private static void log(RuntimeLogRecord record, boolean snapshot) // TODO: check whether the record fields are not null
+	public void log(RuntimeLogRecord record) // TODO: check whether the record fields are not null
 			throws IOException, IllegalStateException {
-		if (instance.timeProvider == null)
+		if (timeProvider == null)
 			throw new IllegalStateException(
 					"The SimLogger class not initialized.");
 		if (record == null)
 			throw new IllegalArgumentException(String.format(
 					"The argument \"%s\" is null.", "record"));
-
+		
 		StringBuilder recordBuilder = new StringBuilder();
-		String recordName = snapshot ? SNAPSHOT_RECORD_NAME : EVENT_RECORD_NAME;
-		long currentDataOffset = instance.currentDataOffset;
+		long dataOffset = currentDataOffset;
+		long currentTime = timeProvider.getCurrentMilliseconds(); 
 
-		recordBuilder.append("<").append(recordName).append(" ")
-				.append(RECORD_ID).append("=\"")
-				.append(record.getComponentID()).append("\" ")
-				.append(RECORD_TYPE).append("=\"")
-				.append(record.getEventType()).append("\" ")
+		// Open the record tag
+		recordBuilder.append("<").append(EVENT_RECORD_NAME).append(" ")
 				.append(RECORD_TIME).append("=\"")
-				.append(instance.timeProvider.getCurrentMilliseconds())
-				.append("\" ");
+				.append(currentTime).append("\" ")
+				.append(RECORD_ID).append("=\"")
+				.append(record.getId()).append("\" ")
+				.append(RECORD_TYPE).append("=\"")
+				.append(record.getClass().getCanonicalName()).append("\" >\n");
 
+		// Write the knowledge
 		Map<String, Object> values = record.getValues();
 		for (String valueKey : values.keySet()) {
-			recordBuilder.append(valueKey).append("=\"")
-					.append(values.get(valueKey)).append("\" ");
+			recordBuilder.append("<")
+				.append(valueKey)
+				.append(">");
+			write(recordBuilder, values.get(valueKey));
+			recordBuilder.append("</")
+				.append(valueKey)
+				.append(">");
 		}
 
-		recordBuilder.append("/>\n");
+		// Close the record tag
+		recordBuilder.append("</")
+			.append(EVENT_RECORD_NAME)
+			.append(">\n");
 
 		try {
 			String compiledRecord = recordBuilder.toString();
-			instance.dataWriter.write(compiledRecord);
-			instance.currentDataOffset += compiledRecord.getBytes(CHARSET_NAME).length;
+			dataWriter.write(compiledRecord);
+			currentDataOffset += compiledRecord.getBytes(CHARSET_NAME).length;
 
-			if (snapshot) {
-				StringBuilder indexBuilder = new StringBuilder();
-
-				indexBuilder.append("<").append(SNAPSHOT_RECORD_NAME)
-						.append(" ").append(RECORD_TIME).append("=\"")
-						.append(instance.timeProvider.getCurrentMilliseconds())
-						.append("\" ").append(RECORD_OFFSET).append("=\"")
-						.append(currentDataOffset).append("\" />\n");
-
-				instance.dataWriter.flush();
-				instance.indexWriter.write(indexBuilder.toString());
-				instance.indexWriter.flush();
+			// If a snapshot is being logged and there passed enough time since the last index was written
+			if (snapshotTypes.contains(record.getClass())
+					&& currentTime - lastIndexTime > INDEX_MIN_PERIOD) {
+				logIndex(currentTime, dataOffset);
 			}
 		} catch (IOException e) {
 			Log.e("Failed to write to the log file "
 					+ DATA_FILE.getAbsolutePath() + " or "
 					+ DATA_INDEX_FILE.getAbsolutePath(), e);
 			throw e;
+		}
+	}
+	
+	private void logIndex(long currentTime, long dataOffset) throws IOException
+	{
+		StringBuilder indexBuilder = new StringBuilder();
+
+		indexBuilder.append("<").append(EVENT_RECORD_NAME)
+				.append(" ").append(RECORD_TIME).append("=\"")
+				.append(currentTime)
+				.append("\" ").append(RECORD_OFFSET).append("=\"")
+				.append(dataOffset).append("\" />\n");
+
+		dataWriter.flush();
+		indexWriter.write(indexBuilder.toString());
+		indexWriter.flush();
+		
+		lastIndexTime = currentTime;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void write(StringBuilder builder, Object obj)
+	{
+		if(obj instanceof Iterable)
+		{
+			Iterable<Object> collection = (Iterable<Object>) obj;
+			for(Object item : collection)
+			{
+				builder.append("<value>");
+				write(builder, item);
+				builder.append("</value>");
+			}
+		}
+		else if(obj instanceof Map)
+		{
+			Map<String, Object> map = (Map<String, Object>) obj;
+			for(String valueKey : map.keySet())
+			{
+				builder.append("<")
+					.append(valueKey)
+					.append(">");
+				write(builder, map.get(valueKey));
+				builder.append("</")
+					.append(valueKey)
+					.append(">");
+			}
+		}
+		else
+		{
+			builder.append(obj.toString());
 		}
 	}
 
@@ -416,50 +431,51 @@ public class RuntimeLogger {
 	 * <p> This method is save to be called before the {@link RuntimeLogger#init} method is. </p>
 	 * @param snapshotProvider is the {@link SnapshotProvider} that will be registered. 
 	 * @param period specifies the period for the repetitive invocation of the given <em>snapshotProvider</em>.
-	 * @throws IOException Thrown if the {@link RuntimeLogger#backLogWriter} is unable to be
+	 * @throws IOException Thrown if the {@link RuntimeLogger#snapshotPeriodWriter} is unable to be
 	 * written into.
 	 * @throws IllegalArgumentException Thrown if the <em>snapshotProvider</em> argument is null
 	 * or the <em>time</em> is less or equal to 0.
 	 */
-	public static void registerSnapshotProvider(
+	public void registerSnapshotProvider(
 			SnapshotProvider snapshotProvider, long period) throws IOException {
 		if (snapshotProvider == null)
 			throw new IllegalArgumentException(String.format(
 					"The argument \"%s\" is null.", "snapshotProvider"));
-		if (instance.scheduler == null) // If not initialized, store the snapshot provider for later
+		if (scheduler == null) // If not initialized, store the snapshot provider for later
 		{
-			instance.snapshotProviders.put(snapshotProvider, period);
+			snapshotProviders.put(snapshotProvider, period);
 		} else // If initialized register task for the snapshot provider
 		{
-			RuntimeLogTimerTaskListener slttListener = new RuntimeLogTimerTaskListener(
-					snapshotProvider, period);
-			instance.scheduler.addTask(new CustomStepTask(instance.scheduler,
-					slttListener, period));
+			RuntimeLogTimerTaskListener slttListener = new RuntimeLogTimerTaskListener(snapshotProvider, period);
+			scheduler.addTask(new CustomStepTask(scheduler,	slttListener, period));
 		}
 
-		registerBackLogOffset(period);
+		registerSnapshotPeriod(period, snapshotProvider.getRecordClass());
 	}
 
 	/**
-	 * Writes the given <em>time</em> into the {@link RuntimeLogger#backLogWriter}.
+	 * Writes the given <em>time</em> into the {@link RuntimeLogger#snapshotPeriodWriter}.
 	 * <p> This method is save to be called before the {@link RuntimeLogger#init} method is. </p>
-	 * @param time specifies the time offset to be remembered as a <em>back log offset</em>.
-	 * @throws IOException Thrown if the {@link RuntimeLogger#backLogWriter} is unable to be
+	 * @param period specifies the time offset to be remembered as a <em>back log offset</em>.
+	 * @throws IOException Thrown if the {@link RuntimeLogger#snapshotPeriodWriter} is unable to be
 	 * written into.
 	 * @throws IllegalArgumentException Thrown if the <em>time</em> is less or equal to 0.
 	 */
-	public static void registerBackLogOffset(long time) throws IOException {
-		if (time <= 0)
-			throw new IllegalArgumentException(String.format(
+	public void registerSnapshotPeriod(long period, Class<? extends RuntimeLogRecord> snapshotType) throws IOException { // TODO: chect snapshotType != null
+		if (period <= 0) throw new IllegalArgumentException(String.format(
 					"The argument \"%s\" has to be greater than 0.", "time"));
-		if (instance.scheduler == null) // If not initialized, store the snapshot provider for later
+		if(snapshotType == null) throw new IllegalArgumentException(String.format(
+				"The argument \"%s\" is null.", "snapshotType")); 
+		if (scheduler == null) // If not initialized, store the snapshot provider for later
 		{
-			instance.backLogOffsets.add(time);
+			snapshotPeriods.add(new SnapshotTypePeriodPair(period, snapshotType));
 		} else // If initialized register task for the snapshot provider
 		{
-			instance.backLogWriter.write(String.format("%d\n", time));
-			instance.backLogWriter.flush();
+			snapshotPeriodWriter.write(String.format("%d %s\n", period, snapshotType.getCanonicalName()));
+			snapshotPeriodWriter.flush();
 		}
+		
+		snapshotTypes.add(snapshotType);
 	}
 
 	/**
@@ -467,7 +483,7 @@ public class RuntimeLogger {
 	 * <ul>
 	 * 	<li>{@link RuntimeLogger#DATA_FILE}</li>
 	 * 	<li>{@link RuntimeLogger#DATA_INDEX_FILE}</li>
-	 * 	<li>{@link RuntimeLogger#BACK_LOG_OFFSET_TABLE_FILE}</li>
+	 * 	<li>{@link RuntimeLogger#SNAPSHOT_PERIOD_FILE}</li>
 	 * </ul>
 	 * The {@link Writer}s has to be opened in order the be flushed. See the
 	 * {@link RuntimeLogger#init} method.
@@ -475,19 +491,19 @@ public class RuntimeLogger {
 	 * @throws IllegalStateException Thrown if the {@link RuntimeLogger#init} method hasn't
 	 * been called before this method is being called.
 	 */
-	public static void flush() throws IOException {
-		if (instance.timeProvider == null)
+	public void flush() throws IOException {
+		if (timeProvider == null)
 			throw new IllegalStateException(
 					"The SimLogger class not initialized.");
 
-		if (instance.dataWriter != null) {
-			instance.dataWriter.flush();
+		if (dataWriter != null) {
+			dataWriter.flush();
 		}
-		if (instance.indexWriter != null) {
-			instance.indexWriter.flush();
+		if (indexWriter != null) {
+			indexWriter.flush();
 		}
-		if (instance.backLogWriter != null) {
-			instance.backLogWriter.flush();
+		if (snapshotPeriodWriter != null) {
+			snapshotPeriodWriter.flush();
 		}
 	}
 
@@ -496,7 +512,7 @@ public class RuntimeLogger {
 	 * <ul>
 	 * 	<li>{@link RuntimeLogger#DATA_FILE}</li>
 	 * 	<li>{@link RuntimeLogger#DATA_INDEX_FILE}</li>
-	 * 	<li>{@link RuntimeLogger#BACK_LOG_OFFSET_TABLE_FILE}</li>
+	 * 	<li>{@link RuntimeLogger#SNAPSHOT_PERIOD_FILE}</li>
 	 * </ul>
 	 * The {@link Writer}s has to be opened in order the be closed. See the
 	 * {@link RuntimeLogger#init} method.
@@ -504,34 +520,96 @@ public class RuntimeLogger {
 	 * @throws IllegalStateException Thrown if the {@link RuntimeLogger#init} method hasn't
 	 * been called before this method is being called.
 	 */
-	public static void close() throws IOException {
+	public void close() throws IOException {
 		
-		if (instance.dataWriter != null) {
-			instance.dataWriter.close();
+		if (dataWriter != null) {
+			dataWriter.close();
 		}
-		if (instance.indexWriter != null) {
-			instance.indexWriter.close();
+		if (indexWriter != null) {
+			indexWriter.close();
 		}
-		if (instance.backLogWriter != null) {
-			instance.backLogWriter.close();
+		if (snapshotPeriodWriter != null) {
+			snapshotPeriodWriter.close();
 		}
 	}
 
 	/**
-	 * This method is opposite to the {@link RuntimeLogger#init} method. It doesn't
-	 * supplies the functionality for {@link RuntimeLogger#close} method, that needs
-	 * to be called separately before this method is called. The purpose of this method
-	 * is to uninit the {@link RuntimeLogger} singleton instance. The visibility specifier
-	 * is not defined on purpose - it defines package visibility, therefore this method
-	 * is visible in tests and that is the only place where it should be used.
+	 * The {@link TimerTaskListener} for the {@link SnapshotProvider}s registered
+	 * on {@link RuntimeLogger}. The {@link RuntimeLogTimerTaskListener} invokes
+	 * the {@link RuntimeLogger#logSnapshot(RuntimeLogRecord)} method with the
+	 * snapshot provided by a {@link SnapshotProvider}, when being fired
+	 * by the {@link Scheduler}. After processing the snapshot the
+	 * {@link Task} corresponding to the
+	 * {@link TimerTaskListener} is being planned again for the new period cycle.
+	 * 
+	 * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
 	 */
-	static void unload() 
+	private class RuntimeLogTimerTaskListener implements TimerTaskListener 
 	{
-		instance.timeProvider = null;
-		instance.scheduler = null;
-		instance.currentDataOffset = 0;
-		instance.snapshotProviders.clear();
-		instance.backLogOffsets.clear();
-	}
+		/**
+		 * The {@link SnapshotProvider} for which the {@link TimerTaskListener} instance
+		 * is being fired by the {@link Scheduler}.
+		 */
+		private SnapshotProvider snapshotProvider;
 
+		/**
+		 * The period of the {@link Task} that handles the {@link TimerTaskListener} instance.
+		 */
+		private long period;
+		
+		/**
+		 * Constructs an instance of the {@link RuntimeLogTimerTaskListener} for the
+		 * given <em>snapshotProvider</em> with the given <em>period</em>.
+		 * @param snapshotProvider is the {@link SnapshotProvider} that will be periodically asked for a snapshot.
+		 * @param period specifies the period in which will be the <em>snapshotProvider</em> invoked.
+		 */
+		public RuntimeLogTimerTaskListener(SnapshotProvider snapshotProvider, long period)
+		{
+			this.snapshotProvider = snapshotProvider;
+			this.period = period;
+		}
+		
+		/**
+		 * Logs the snapshot from the {@link RuntimeLogTimerTaskListener#snapshotProvider}
+		 * using the {@link RuntimeLogger}. After the snapshot is processed the {@link Task}
+		 * is planned for the next period.
+		 */
+		@Override
+		public void at(long time, Object triger)
+		{
+			try
+			{
+				RuntimeLogRecord snapshot = snapshotProvider.getSnapshot();
+				log(snapshot);
+			}
+			catch(IOException e)
+			{
+				// If the runtime logging fails interrupt the simulation
+				throw new RuntimeException(e);
+			}
+			
+			CustomStepTask task = (CustomStepTask) triger;
+			task.scheduleNextExecutionAfter(period);
+
+		}
+
+		/**
+		 * Provides the {@link CustomStepTask} for the {@link TimerTaskListener} instance
+		 * that will be fired with the defined period.
+		 */
+		@Override
+		public TimerTask getInitialTask(Scheduler scheduler) 
+		{
+			return new CustomStepTask(scheduler, this, period);
+		}	
+	}
+	
+	private class SnapshotTypePeriodPair {
+	    private long period;
+	    private Class<? extends RuntimeLogRecord> snapshotType;
+	    public SnapshotTypePeriodPair(long period, Class<? extends RuntimeLogRecord> snapshotType){
+	        this.period = period;
+	        this.snapshotType = snapshotType;
+	    }
+	}
 }
