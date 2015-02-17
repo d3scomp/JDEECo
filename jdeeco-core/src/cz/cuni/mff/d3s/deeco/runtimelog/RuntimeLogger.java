@@ -313,9 +313,11 @@ public class RuntimeLogger {
 	 * for the logging.
 	 * @throws IllegalStateException Thrown if the {@link RuntimeLogger#init} method hasn't
 	 * been called before this method is being called.
-	 * @throws IllegalArgumentException Thrown if the given argument is null.
+	 * @throws IllegalArgumentException Thrown if the given argument is null. Or if the <em>record</em>
+	 * returns null when the {@link RuntimeLogRecord#getId()} or the {@link RuntimeLogRecord#getValues()}
+	 * method is called.
 	 */
-	public void log(RuntimeLogRecord record) // TODO: check whether the record fields are not null
+	public void log(RuntimeLogRecord record)
 			throws IOException, IllegalStateException {
 		if (timeProvider == null)
 			throw new IllegalStateException(
@@ -323,6 +325,11 @@ public class RuntimeLogger {
 		if (record == null)
 			throw new IllegalArgumentException(String.format(
 					"The argument \"%s\" is null.", "record"));
+		if(record.getId() == null) throw new IllegalArgumentException(String.format(
+				"The %s method invoked on the %s argument returns null.", "getID()", "record"));
+		if(record.getValues() == null) throw new IllegalArgumentException(String.format(
+				"The %s method invoked on the %s argument returns null.", "getValues()", "record"));
+		
 		
 		StringBuilder recordBuilder = new StringBuilder();
 		long dataOffset = currentDataOffset;
@@ -361,7 +368,7 @@ public class RuntimeLogger {
 
 			// If a snapshot is being logged and there passed enough time since the last index was written
 			if (snapshotTypes.contains(record.getClass())
-					&& currentTime - lastIndexTime > INDEX_MIN_PERIOD) {
+					&& currentTime - lastIndexTime >= INDEX_MIN_PERIOD) {
 				logIndex(currentTime, dataOffset);
 			}
 		} catch (IOException e) {
@@ -413,10 +420,17 @@ public class RuntimeLogger {
 	 * @param builder is the target where the <a href="http://en.wikipedia.org/wiki/XML">XML</a> representation
 	 * of <em>knowledge</em> is appended.
 	 * @param knowledge contains the data that will be transformed.
+	 * @throws IllegalArgumentException Thrown if either the <em>builder</em> or the <em>knowledge</em>
+	 * argument is null.
 	 */
 	@SuppressWarnings("unchecked")
-	private void writeKnowledge(StringBuilder builder, Object knowledge) // TODO: check parameters
+	private void writeKnowledge(StringBuilder builder, Object knowledge)
 	{
+		if(builder == null) throw new IllegalArgumentException(String.format(
+				"The argument \"%s\" is null.", "builder"));
+		if(knowledge == null) throw new IllegalArgumentException(String.format(
+				"The argument \"%s\" is null.", "knowledge"));
+		
 		if(knowledge instanceof Iterable)
 		{
 			Iterable<Object> collection = (Iterable<Object>) knowledge;
@@ -459,14 +473,22 @@ public class RuntimeLogger {
 	 * @param period specifies the period for the repetitive invocation of the given <em>snapshotProvider</em>.
 	 * @throws IOException Thrown if the {@link RuntimeLogger#snapshotPeriodWriter} is unable to be
 	 * written into.
-	 * @throws IllegalArgumentException Thrown if the <em>snapshotProvider</em> argument is null
-	 * or the <em>time</em> is less or equal to 0.
+	 * @throws IllegalArgumentException Thrown if one of the following occurs:
+	 * <ul>
+	 * <li>The <em>snapshotProvider</em> argument is null.</li>
+	 * <li>The <em>period</em> is less or equal to 0.</li>
+	 * <li>The <em>snapshotProvider</em> argument returns null when its {@link SnapshotProvider#getRecordClass()}
+	 * method is called.</li>
+	 * </ul>
 	 */
 	public void registerSnapshotProvider(
 			SnapshotProvider snapshotProvider, long period) throws IOException {
 		if (snapshotProvider == null)
 			throw new IllegalArgumentException(String.format(
 					"The argument \"%s\" is null.", "snapshotProvider"));
+		if(snapshotProvider.getRecordClass() == null) throw new IllegalArgumentException(
+				String.format("The %s method invoked on the %s argument returns null.", "getRecordClass()", "snapshotProvider"));
+		
 		if (scheduler == null) // If not initialized, store the snapshot provider for later
 		{
 			snapshotProviders.put(snapshotProvider, period);
@@ -487,9 +509,10 @@ public class RuntimeLogger {
 	 * @param period specifies the time offset to be remembered as a <em>back log offset</em>.
 	 * @throws IOException Thrown if the {@link RuntimeLogger#snapshotPeriodWriter} is unable to be
 	 * written into.
-	 * @throws IllegalArgumentException Thrown if the <em>time</em> is less or equal to 0.
+	 * @throws IllegalArgumentException Thrown if the <em>time</em> is less or equal to 0
+	 * or the <em>snapshotType</em> argument is null.
 	 */
-	public void registerSnapshotPeriod(long period, Class<? extends RuntimeLogRecord> snapshotType) throws IOException { // TODO: chect snapshotType != null
+	public void registerSnapshotPeriod(long period, Class<? extends RuntimeLogRecord> snapshotType) throws IOException {
 		if (period <= 0) throw new IllegalArgumentException(String.format(
 					"The argument \"%s\" has to be greater than 0.", "time"));
 		if(snapshotType == null) throw new IllegalArgumentException(String.format(

@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -92,7 +93,13 @@ public class RuntimeLoggerTest
 	@After
 	public void tearDown() 
 	{
-		
+		try
+		{
+			dataOut.close();
+			indexOut.close();
+			periodOut.close();
+		}
+		catch(IOException e){}
 	}
 	
 	@Test(expected=IllegalStateException.class)
@@ -173,7 +180,57 @@ public class RuntimeLoggerTest
 
 		runtimeLogger.log(null);
 	}
-	// TODO: test whether the record fields are not null
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void log_recordNullId_throwsException() throws Exception
+	{
+		RuntimeLogRecord record = mock(RuntimeLogRecord.class);
+		Mockito.when(record.getId()).thenAnswer(new Answer<String>() {
+			@Override
+		    public String answer(InvocationOnMock invocation) throws Throwable 
+		    {	
+				return null;
+		    }
+		});
+		Mockito.when(record.getValues()).thenAnswer(new Answer<Map<String, Object>>() {
+			@Override
+		    public Map<String, Object> answer(InvocationOnMock invocation) throws Throwable 
+		    {	
+				return new HashMap<String, Object>();
+		    }
+		});
+		
+		RuntimeLogger runtimeLogger = new RuntimeLogger();
+		runtimeLogger.init(timeProvider, scheduler, dataOut, indexOut, periodOut);
+
+		runtimeLogger.log(record);
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void log_recordNullValues_throwsException() throws Exception
+	{
+		RuntimeLogRecord record = mock(RuntimeLogRecord.class);
+		Mockito.when(record.getId()).thenAnswer(new Answer<String>() {
+			@Override
+		    public String answer(InvocationOnMock invocation) throws Throwable 
+		    {	
+				return "";
+		    }
+		});
+		Mockito.when(record.getValues()).thenAnswer(new Answer<Map<String, Object>>() {
+			@Override
+		    public Map<String, Object> answer(InvocationOnMock invocation) throws Throwable 
+		    {	
+				return null;
+		    }
+		});
+		
+		RuntimeLogger runtimeLogger = new RuntimeLogger();
+		runtimeLogger.init(timeProvider, scheduler, dataOut, indexOut, periodOut);
+
+		runtimeLogger.log(record);
+	}
+	
 	@Test
 	public void log_fullRecord_recordWritten() throws Exception
 	{
@@ -230,6 +287,13 @@ public class RuntimeLoggerTest
 		      return testRecord;
 		    }
 		  });
+		Mockito.when(snapshotProvider.getRecordClass()).thenAnswer(new Answer<Class<? extends RuntimeLogRecord>>(){
+			@Override
+			public Class<? extends RuntimeLogRecord> answer(InvocationOnMock invocation) throws Throwable
+			{
+				return testRecord.getClass();
+			}
+		});
 		long testPeriod = -5;
 
 		RuntimeLogger runtimeLogger = new RuntimeLogger();
@@ -249,6 +313,39 @@ public class RuntimeLoggerTest
 		      return testRecord;
 		    }
 		  });
+		Mockito.when(snapshotProvider.getRecordClass()).thenAnswer(new Answer<Class<? extends RuntimeLogRecord>>(){
+			@Override
+			public Class<? extends RuntimeLogRecord> answer(InvocationOnMock invocation) throws Throwable
+			{
+				return testRecord.getClass();
+			}
+		});
+		long testPeriod = 0;
+
+		RuntimeLogger runtimeLogger = new RuntimeLogger();
+		runtimeLogger.init(timeProvider, scheduler, dataOut, indexOut, periodOut);
+		
+		runtimeLogger.registerSnapshotProvider(snapshotProvider, testPeriod);
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void registerSnapshotProvider_nullRecordType_throwsException() throws Exception
+	{
+		SnapshotProvider snapshotProvider = mock(SnapshotProvider.class);
+		Mockito.when(snapshotProvider.getSnapshot()).thenAnswer(new Answer<RuntimeLogRecord>() {
+		    @Override
+		    public RuntimeLogRecord answer(InvocationOnMock invocation) throws Throwable 
+		    {
+		      return testRecord;
+		    }
+		  });
+		Mockito.when(snapshotProvider.getRecordClass()).thenAnswer(new Answer<Class<? extends RuntimeLogRecord>>(){
+			@Override
+			public Class<? extends RuntimeLogRecord> answer(InvocationOnMock invocation) throws Throwable
+			{
+				return null;
+			}
+		});
 		long testPeriod = 0;
 
 		RuntimeLogger runtimeLogger = new RuntimeLogger();
@@ -260,7 +357,7 @@ public class RuntimeLoggerTest
 	@Test
 	public void registerSnapshotProvider_argumentsOK_providersRegistered() throws Exception
 	{
-		RuntimeLogRecord logRecord1 = mock(RuntimeLogRecord.class);
+		RuntimeLogRecord logRecord1 = new TestLogRecord1("record1", new HashMap<String, Object>());
 		SnapshotProvider snapshotProvider1 = mock(SnapshotProvider.class);
 		Mockito.when(snapshotProvider1.getSnapshot()).thenAnswer(new Answer<RuntimeLogRecord>() {
 		    @Override
@@ -277,7 +374,7 @@ public class RuntimeLoggerTest
 			}
 		});
 
-		RuntimeLogRecord logRecord2 = mock(RuntimeLogRecord.class);
+		RuntimeLogRecord logRecord2 = new TestLogRecord2("record2", new HashMap<String, Object>());
 		SnapshotProvider snapshotProvider2 = mock(SnapshotProvider.class);
 		Mockito.when(snapshotProvider2.getSnapshot()).thenAnswer(new Answer<RuntimeLogRecord>() {
 		    @Override
@@ -294,7 +391,7 @@ public class RuntimeLoggerTest
 			}
 		});
 		
-		RuntimeLogRecord logRecord3 = mock(RuntimeLogRecord.class);
+		RuntimeLogRecord logRecord3 = new TestLogRecord3("record3", new HashMap<String, Object>());
 		SnapshotProvider snapshotProvider3 = mock(SnapshotProvider.class);
 		Mockito.when(snapshotProvider3.getSnapshot()).thenAnswer(new Answer<RuntimeLogRecord>() {
 		    @Override
@@ -372,22 +469,22 @@ public class RuntimeLoggerTest
 	public void registerSnapshotPeriod_argumentsOK_offsetsRegistered() throws Exception
 	{
 		long period1 = 14;
-		RuntimeLogRecord logRecord1 = mock(RuntimeLogRecord.class);
+		RuntimeLogRecord logRecord1 = new TestLogRecord1("record1", new HashMap<String, Object>());
 		
 		long period2 = 15;
-		RuntimeLogRecord logRecord2 = mock(RuntimeLogRecord.class);
+		RuntimeLogRecord logRecord2 = new TestLogRecord2("record2", new HashMap<String, Object>());
 		
 		long period3 = 16;
-		RuntimeLogRecord logRecord3 = mock(RuntimeLogRecord.class);
+		RuntimeLogRecord logRecord3 = new TestLogRecord3("record3", new HashMap<String, Object>());
 		
-		// Register back log offsets before init is called
+		// Register snapshot periods before init is called
 		RuntimeLogger runtimeLogger = new RuntimeLogger();
 		runtimeLogger.registerSnapshotPeriod(period1, logRecord1.getClass());
 		runtimeLogger.registerSnapshotPeriod(period2, logRecord2.getClass());
 
 		runtimeLogger.init(timeProvider, scheduler, dataOut, indexOut, periodOut);
 
-		// Register back log offsets after init was called
+		// Register snapshot period after init was called
 		runtimeLogger.registerSnapshotPeriod(period3, logRecord3.getClass());
 
 		// Assert back log time offsets were written
@@ -398,7 +495,288 @@ public class RuntimeLoggerTest
 				
 		assertEquals(answer.toString(), periodOut.toString());
 	}
+
+	@Test
+	public void log_registeredSnapshotProvider_logWritten() throws Exception
+	{
+		long time1 = 10;
+		long time2 = 15;
+		long time3 = 20;
+		
+		CurrentTimeProvider testTimeProvider = mock(CurrentTimeProvider.class);
+		Mockito.when(testTimeProvider.getCurrentMilliseconds()).thenAnswer(new Answer<Long>(){
+			private int callTimes = 0;
+			@Override
+			public Long answer(InvocationOnMock invocation) throws Throwable {
+				switch(callTimes)
+				{
+				case 0:
+					callTimes++;
+					return time1;
+				case 1:
+					callTimes++;
+					return time2;
+				default:
+					callTimes = 0;
+					return time3;
+				}
+			}});
+		
+		long period1 = 14;
+		RuntimeLogRecord logRecord1 = new TestLogRecord1("record1", new HashMap<String, Object>());
+		logRecord1.getValues().put("v1", 1);
+		logRecord1.getValues().put("v2", "two");
+		SnapshotProvider snapshotProvider1 = mock(SnapshotProvider.class);
+		Mockito.when(snapshotProvider1.getSnapshot()).thenAnswer(new Answer<RuntimeLogRecord>() {
+		    @Override
+		    public RuntimeLogRecord answer(InvocationOnMock invocation) throws Throwable 
+		    {
+		      return logRecord1;
+		    }
+		  });
+		Mockito.when(snapshotProvider1.getRecordClass()).thenAnswer(new Answer<Class<? extends RuntimeLogRecord>>(){
+			@Override
+			public Class<? extends RuntimeLogRecord> answer(InvocationOnMock invocation) throws Throwable
+			{
+				return logRecord1.getClass();
+			}
+		});
+		
+		long period2 = 15;
+		RuntimeLogRecord logRecord2 = new TestLogRecord2("record2", new HashMap<String, Object>());
+		logRecord2.getValues().put("v3", 3);
+		logRecord2.getValues().put("v4", "four");
+		SnapshotProvider snapshotProvider2 = mock(SnapshotProvider.class);
+		Mockito.when(snapshotProvider2.getSnapshot()).thenAnswer(new Answer<RuntimeLogRecord>() {
+		    @Override
+		    public RuntimeLogRecord answer(InvocationOnMock invocation) throws Throwable 
+		    {
+		      return logRecord2;
+		    }
+		  });
+		Mockito.when(snapshotProvider2.getRecordClass()).thenAnswer(new Answer<Class<? extends RuntimeLogRecord>>(){
+			@Override
+			public Class<? extends RuntimeLogRecord> answer(InvocationOnMock invocation) throws Throwable
+			{
+				return logRecord2.getClass();
+			}
+		});
+
+		long period3 = 16;
+		RuntimeLogRecord logRecord3 = new TestLogRecord3("record3", new HashMap<String, Object>());
+		logRecord3.getValues().put("v5", 5);
+		logRecord3.getValues().put("v6", "six");
+		SnapshotProvider snapshotProvider3 = mock(SnapshotProvider.class);
+		Mockito.when(snapshotProvider3.getSnapshot()).thenAnswer(new Answer<RuntimeLogRecord>() {
+		    @Override
+		    public RuntimeLogRecord answer(InvocationOnMock invocation) throws Throwable 
+		    {
+		      return logRecord3;
+		    }
+		  });
+		Mockito.when(snapshotProvider3.getRecordClass()).thenAnswer(new Answer<Class<? extends RuntimeLogRecord>>(){
+			@Override
+			public Class<? extends RuntimeLogRecord> answer(InvocationOnMock invocation) throws Throwable
+			{
+				return logRecord3.getClass();
+			}
+		});
+		
+		// Register snapshot period before init is called
+		RuntimeLogger runtimeLogger = new RuntimeLogger();
+		runtimeLogger.registerSnapshotProvider(snapshotProvider1, period1);
+
+		runtimeLogger.init(testTimeProvider, scheduler, dataOut, indexOut, periodOut);
+
+		// Register snapshot period after init was called
+
+		runtimeLogger.registerSnapshotProvider(snapshotProvider2, period2);
+		runtimeLogger.registerSnapshotProvider(snapshotProvider3, period3);
+
+		// Log record1
+		runtimeLogger.log(logRecord1); // Is supposed to flush and write index
+
+		// Assert log1 written properly - index also written
+		String lastWrittenData = EMPTY_STRING;
+		String lastWrittenIndex = EMPTY_STRING;
+		String writtenData = dataOut.toString();
+		String writtenIndex = indexOut.toString();
+		compareLogs(logRecord1, time1, writtenData, lastWrittenData, writtenIndex, lastWrittenIndex, true);
+
+		lastWrittenData = writtenData;
+		lastWrittenIndex = writtenIndex;
+		
+		// Log record2
+		runtimeLogger.log(logRecord2); // Is not supposed to flush and not to write index
+		runtimeLogger.flush();
+
+		// Assert log2 written properly - index not written
+		writtenData = dataOut.toString();
+		writtenIndex = indexOut.toString();
+		compareLogs(logRecord2, time2, writtenData, lastWrittenData, writtenIndex, lastWrittenIndex, false);
+
+		lastWrittenData = writtenData;
+		lastWrittenIndex = writtenIndex;
+		
+		// Log record3
+		runtimeLogger.log(logRecord3); // Is supposed to flush and write index
+
+		// Assert log3 written properly - index also written
+		writtenData = dataOut.toString();
+		writtenIndex = indexOut.toString();
+		compareLogs(logRecord3, time3, writtenData, lastWrittenData, writtenIndex, lastWrittenIndex, true);
+	}
 	
+	@Test
+	public void log_registeredSnapshotPeriod_logWritten() throws Exception
+	{
+		long time1 = 10;
+		long time2 = 15;
+		long time3 = 20;
+		
+		CurrentTimeProvider testTimeProvider = mock(CurrentTimeProvider.class);
+		Mockito.when(testTimeProvider.getCurrentMilliseconds()).thenAnswer(new Answer<Long>(){
+			private int callTimes = 0;
+			@Override
+			public Long answer(InvocationOnMock invocation) throws Throwable {
+				switch(callTimes)
+				{
+				case 0:
+					callTimes++;
+					return time1;
+				case 1:
+					callTimes++;
+					return time2;
+				default:
+					callTimes = 0;
+					return time3;
+				}
+			}});
+		
+		long period1 = 14;
+		RuntimeLogRecord logRecord1 = new TestLogRecord1("record1", new HashMap<String, Object>());
+		logRecord1.getValues().put("v1", 1);
+		logRecord1.getValues().put("v2", "two");
+		
+		long period2 = 15;
+		RuntimeLogRecord logRecord2 = new TestLogRecord2("record2", new HashMap<String, Object>());
+		logRecord2.getValues().put("v3", 3);
+		logRecord2.getValues().put("v4", "four");
+
+		long period3 = 16;
+		RuntimeLogRecord logRecord3 = new TestLogRecord3("record3", new HashMap<String, Object>());
+		logRecord3.getValues().put("v5", 5);
+		logRecord3.getValues().put("v6", "six");
+		
+		// Register snapshot period before init is called
+		RuntimeLogger runtimeLogger = new RuntimeLogger();
+		runtimeLogger.registerSnapshotPeriod(period1, logRecord1.getClass());
+
+		runtimeLogger.init(testTimeProvider, scheduler, dataOut, indexOut, periodOut);
+
+		// Register snapshot period after init was called
+		runtimeLogger.registerSnapshotPeriod(period2, logRecord2.getClass());
+		runtimeLogger.registerSnapshotPeriod(period3, logRecord3.getClass());
+
+		// Log record1
+		runtimeLogger.log(logRecord1); // Is supposed to flush and write index
+
+		// Assert log1 written properly - index also written
+		String lastWrittenData = EMPTY_STRING;
+		String lastWrittenIndex = EMPTY_STRING;
+		String writtenData = dataOut.toString();
+		String writtenIndex = indexOut.toString();
+		compareLogs(logRecord1, time1, writtenData, lastWrittenData, writtenIndex, lastWrittenIndex, true);
+
+		lastWrittenData = writtenData;
+		lastWrittenIndex = writtenIndex;
+		
+		// Log record2
+		runtimeLogger.log(logRecord2); // Is not supposed to flush and not to write index
+		runtimeLogger.flush();
+
+		// Assert log2 written properly - index not written
+		writtenData = dataOut.toString();
+		writtenIndex = indexOut.toString();
+		compareLogs(logRecord2, time2, writtenData, lastWrittenData, writtenIndex, lastWrittenIndex, false);
+
+		lastWrittenData = writtenData;
+		lastWrittenIndex = writtenIndex;
+		
+		// Log record3
+		runtimeLogger.log(logRecord3); // Is supposed to flush and write index
+
+		// Assert log3 written properly - index also written
+		writtenData = dataOut.toString();
+		writtenIndex = indexOut.toString();
+		compareLogs(logRecord3, time3, writtenData, lastWrittenData, writtenIndex, lastWrittenIndex, true);
+	}
+	
+	/**
+	 * Compare the last content of the <em>writtenData</em> and <em>writtenIndex</em> to expected values
+	 * defined by <em>record</em>, <em>time</em> and <em>indexWritten</em> arguments.
+	 * @param record is the last {@link RuntimeLogRecord} written.
+	 * @param time is the time of the last {@link RuntimeLogRecord} being logged. 
+	 * @param writtenData contains all the written data.
+	 * @param lastWrittenData contains all the data written before the last {@link RuntimeLogRecord} was logged.
+	 * @param writtenIndex contains all the written index data.
+	 * @param lastWrittenIndex contains all the index data written before the last {@link RuntimeLogRecord} was logged.
+	 * @param indexWritten indicates whether the index file was supposed to be appended when the last {@link RuntimeLogRecord} was logged. 
+	 * @throws Exception Thrown if there is a problem building DOM model from the last data/index record.
+	 */
+	private void compareLogs(RuntimeLogRecord record, long time,
+			String writtenData, String lastWrittenData,
+			String writtenIndex, String lastWrittenIndex,
+			boolean indexWritten) throws Exception
+	{
+		String lastWrittenDataRecord = writtenData.substring(lastWrittenData.length(), writtenData.length());
+		String lastWrittenDataIndex = writtenIndex.substring(lastWrittenIndex.length(), writtenIndex.length());
+		
+		// Load the written record to a DOM element node
+		Element node = DocumentBuilderFactory
+				.newInstance()
+				.newDocumentBuilder()
+				.parse(new ByteArrayInputStream(lastWrittenDataRecord.getBytes()))
+				.getDocumentElement();
+		
+		// Assert the written record has all its values correctly written
+		assertEquals(EVENT_RECORD_NAME, node.getNodeName());
+		assertEquals(record.getClass().getCanonicalName(), node.getAttribute(RECORD_TYPE));
+		assertEquals(record.getId(), node.getAttribute(RECORD_ID));
+		assertEquals(time, Long.parseLong(node.getAttribute(RECORD_TIME)));
+		
+		compareKnowledgeValues(record.getValues(), node);
+		
+		// Assert there are no extra attributes
+		assertEquals(3, node.getAttributes().getLength()); // 3 stands for the following attributes: RECORD_TYPE, RECORD_ID, RECORD_TIME		
+		
+		if(indexWritten)
+		{
+			// Load the index to a DOM element node
+			node = DocumentBuilderFactory
+					.newInstance()
+					.newDocumentBuilder()
+					.parse(new ByteArrayInputStream(lastWrittenDataIndex.getBytes()))
+					.getDocumentElement();
+			
+			// Assert index writer was written into
+			assertEquals(EVENT_RECORD_NAME, node.getNodeName());
+			assertEquals(time, Long.parseLong(node.getAttribute(RECORD_TIME)));
+			assertEquals(lastWrittenData.getBytes(CHARSET_NAME).length, Integer.parseInt(node.getAttribute(RECORD_OFFSET)));
+		}
+		else
+		{
+			assertEquals(EMPTY_STRING, lastWrittenDataIndex);
+		}
+	}
+	
+	/**
+	 * Compares the given <em>knowledge</em> and the given DOM <em>node</em> whether
+	 * they contain the same information.
+	 * @param knowledge is the knowledge to be checked.
+	 * @param node is the XML representation of the knowledge to be checked.
+	 * @return True if the given <em>node</em> is not empty. False otherwise.
+	 */
 	@SuppressWarnings("unchecked")
 	private boolean compareKnowledgeValues(Object knowledge, Node node)
 	{
@@ -406,7 +784,6 @@ public class RuntimeLoggerTest
 		if(node.getNodeType() == Node.TEXT_NODE
 				&& node.getTextContent().trim().equals(EMPTY_STRING))
 			return false;
-		
 		if(knowledge instanceof Iterable)
 		{
 			assertEquals(node.getNodeType(), Node.ELEMENT_NODE);
@@ -564,5 +941,27 @@ public class RuntimeLoggerTest
 			System.out.print("  ");
 		}
 	}*/
+	
+	private class TestLogRecord1 extends RuntimeLogRecord
+	{
+		public TestLogRecord1(String id, Map<String, Object> values)
+		{
+			super(id, values);
+		}
+	}
+	private class TestLogRecord2 extends RuntimeLogRecord
+	{
+		public TestLogRecord2(String id, Map<String, Object> values)
+		{
+			super(id, values);
+		}
+	}
+	private class TestLogRecord3 extends RuntimeLogRecord
+	{
+		public TestLogRecord3(String id, Map<String, Object> values)
+		{
+			super(id, values);
+		}
+	}
 	
 }
