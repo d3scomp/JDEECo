@@ -1,6 +1,6 @@
 package cz.cuni.mff.d3s.deeco.simulation.omnet;
 
-public class OMNetSimulation {
+public class OMNeTNative {
 	static {
 		System.loadLibrary("jdeeco-omnetpp");
 	}
