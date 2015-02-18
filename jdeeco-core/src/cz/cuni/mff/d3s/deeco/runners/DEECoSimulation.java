@@ -29,8 +29,8 @@ public class DEECoSimulation {
 		simulationTimer.start(duration);
 	}
 
-	public DEECoNode createNode(DEECoPlugin... nodeSpecificPlugins) throws DEECoException {
-		DEECoNode node = new DEECoNode(simulationTimer, getAllPlugins(nodeWideplugins, nodeSpecificPlugins));
+	public DEECoNode createNode(int id, DEECoPlugin... nodeSpecificPlugins) throws DEECoException {
+		DEECoNode node = new DEECoNode(id, simulationTimer, getAllPlugins(nodeWideplugins, nodeSpecificPlugins));
 		deecoNodes.add(node);
 		return node;
 	}

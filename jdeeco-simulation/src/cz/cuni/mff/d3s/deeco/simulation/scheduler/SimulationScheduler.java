@@ -231,4 +231,10 @@ public class SimulationScheduler implements Scheduler,
 		return null;
 	}
 
+	@Override
+	public int getHostId() {
+		// TODO: Temporary solution
+		return Integer.parseInt(getHost().getHostId());
+	}
+
 }

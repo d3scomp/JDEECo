@@ -11,7 +11,7 @@ public class SingleThreadedSchedulerTest extends SchedulerTest {
 	@Override
 	protected Scheduler setUpTested(Executor executor) throws NoExecutorAvailableException {
 		DiscreteEventTimer simulation = new DiscreteEventTimer();
-		return new SingleThreadedScheduler(executor, simulation);
+		return new SingleThreadedScheduler(executor, simulation, 0);
 	}
 	
 

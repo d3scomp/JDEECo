@@ -25,6 +25,11 @@ public class DiscreteEventTimer implements SimulationTimer {
 			@Override
 			public void at(long time) {
 				// termination time reached, do nothing
+			}
+			@Override
+			public int getHostId() {
+				// TODO: Temporary solution
+				return -1;
 			}}, true));
 
 		while (!tryToTerminate()) {

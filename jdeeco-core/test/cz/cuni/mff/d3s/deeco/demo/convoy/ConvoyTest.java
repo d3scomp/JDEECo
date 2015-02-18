@@ -33,7 +33,7 @@ public class ConvoyTest {
 		DEECoSimulation realm = new DEECoSimulation(simulationTimer);
 		
 		/* create one and only deeco node (centralized deployment) */
-		DEECoNode deeco = realm.createNode();
+		DEECoNode deeco = realm.createNode(0);
 		/* deploy components and ensembles */
 		deeco.deployComponent(new Leader());
 		deeco.deployComponent(new Follower());

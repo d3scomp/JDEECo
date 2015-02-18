@@ -210,7 +210,7 @@ public class SecurityRuntimeModel {
 		securityKeyManager = SecurityKeyManagerImpl.getInstance();
 		executor = new SameThreadExecutor();
 		DiscreteEventTimer simulation = new DiscreteEventTimer();
-		scheduler = new SingleThreadedScheduler(executor, simulation);
+		scheduler = new SingleThreadedScheduler(executor, simulation, -2 /* TODO: Temporary solution */);
 		securityHelper = new SecurityHelper();
 		
 		model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();

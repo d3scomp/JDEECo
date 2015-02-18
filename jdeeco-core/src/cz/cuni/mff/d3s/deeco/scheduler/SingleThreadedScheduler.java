@@ -19,7 +19,8 @@ import cz.cuni.mff.d3s.deeco.timer.Timer;
  * TODO
  */
 public class SingleThreadedScheduler implements Scheduler {
-
+	// TODO: Temporary solution
+	private final int nodeId;
 	private Executor executor;
 	private Timer timer;
 	
@@ -28,12 +29,13 @@ public class SingleThreadedScheduler implements Scheduler {
 	private final Map<Task, SchedulerEvent> timeTriggeredEvents;
 	private final Set<Trigger> knowledgeChangeTriggers;
 
-    public SingleThreadedScheduler(Executor executor, Timer timer) throws NoExecutorAvailableException{
+    public SingleThreadedScheduler(Executor executor, Timer timer, int id) throws NoExecutorAvailableException{
 		if (executor == null) {
 			throw new NoExecutorAvailableException();
 		}
     	this.executor = executor;
     	this.timer = timer;
+    	this.nodeId = id;
     	
 		queue = new TreeSet<>();
 		allTasks = new HashSet<>();
@@ -155,5 +157,9 @@ public class SingleThreadedScheduler implements Scheduler {
 			executor.execute(event.executable, event.trigger);
 		}
 	}
-     
+
+	@Override
+	public int getHostId() {
+		return nodeId;
+	}
 }
