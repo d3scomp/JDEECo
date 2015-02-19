@@ -1,11 +1,13 @@
 #include "JDEECoModule.h"
 
 #include <assert.h>
+#include <limits>
 
 #include "JDEECoRuntime.h"
 
 void JDEECoModule::callAt(double absoluteTime) {
-	//std::cout << "jDEECoCallAt: " << this->getModuleId() << " Begin" << std::endl;
+	//std::cout << "jDEECoCallAt: " << absoluteTime << " Begin" << std::endl;
+	absoluteTime++;
 	if (currentCallAtTime != absoluteTime && simTime().dbl() < absoluteTime) {
 		currentCallAtTime = absoluteTime;
 		cMessage *msg = new cMessage(JDEECO_TIMER_MESSAGE);
@@ -17,7 +19,7 @@ void JDEECoModule::callAt(double absoluteTime) {
 }
 
 void JDEECoModule::onHandleMessage(cMessage *msg, double rssi) {
-	//std::cout << "jDEECoOnHandleMessage: " << this->jDEECoGetModuleId() << " Begin" << std::endl;
+	//std::cout << "jDEECoOnHandleMessage: " << getModuleId() << " Begin" << std::endl;
 	//std::cout << "jDEECoOnHandleMessage" << std::endl;
 	JDEECoRuntime* runtime = JDEECoRuntime::findRuntime(getModuleId());
 	if (runtime != NULL) {
@@ -32,8 +34,7 @@ void JDEECoModule::onHandleMessage(cMessage *msg, double rssi) {
 			if (((long) round(simTime().dbl() * 1000000)) == ((long) round(currentCallAtTime * 1000000))) {
 				//std::cout << "jDEECoOnHandleMessage: " << this->getModuleId() << " Before getting the \"at\" method reference" << std::endl;
 				mid = env->GetMethodID(cls, "at", "(D)V");
-				if (mid == 0)
-					return;
+				assert(mid != NULL);
 				//std::cout << "jDEECoOnHandleMessage: " << this->getModuleId() << " Before calling the \"at\" method" << std::endl;
 				env->CallVoidMethod(runtime->host, mid, currentCallAtTime);
 			} else {
@@ -51,7 +52,7 @@ void JDEECoModule::onHandleMessage(cMessage *msg, double rssi) {
 				buffer[i] = jPacket->getData(i);
 			jbyteArray jArray = env->NewByteArray(jPacket->getDataArraySize());
 			if (jArray == NULL) {
-				std::cout << "onHandleMessage: " << this->getModuleId() << " Cannot create new ByteArray object! Out of memory problem?" << std::endl;
+				std::cerr << "onHandleMessage: " << this->getModuleId() << " Cannot create new ByteArray object! Out of memory problem?" << std::endl;
 				return;
 			}
 			env->SetByteArrayRegion(jArray, 0, jPacket->getDataArraySize(),
@@ -69,15 +70,15 @@ void JDEECoModule::onHandleMessage(cMessage *msg, double rssi) {
 }
 
 void JDEECoModule::initialize() {
-	std::cout << "initialize: " << this->getModuleId() << " Begin" << std::endl;
-	std::cout << "initialize: " << this->getModuleId() << " Initializing jDEECo module: " << this->getModuleId() << std::endl;
+	//std::cout << "initialize: " << this->getModuleId() << " Begin" << std::endl;
+	//std::cout << "initialize: " << this->getModuleId() << " Initializing jDEECo module: " << this->getModuleId() << std::endl;
 	if (!initialized) {
 		JDEECoRuntime *runtime = JDEECoRuntime::findRuntime(getModuleId());
 
 		assert(runtime != NULL);
 
-		if (runtime->firstCallAt >= 0) {
-			std::cout << "adding the first callback: " << this->getModuleId() << std::endl;
+		if (runtime->firstCallAt != std::numeric_limits<double>::min()) {
+			//std::cout << "adding the first callback: " << this->getModuleId() << std::endl;
 			callAt(runtime->firstCallAt);
 		}
 
@@ -85,7 +86,7 @@ void JDEECoModule::initialize() {
 	}
 
 	initialized = true;
-	std::cout << "initialize: " << this->getModuleId() << " End" << std::endl;
+	//std::cout << "initialize: " << this->getModuleId() << " End" << std::endl;
 }
 
 JDEECoModule* JDEECoModule::findModule(JNIEnv *env, jstring id) {

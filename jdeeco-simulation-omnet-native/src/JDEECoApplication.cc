@@ -47,6 +47,7 @@ void JDEECoApplication::initialize(int stage) {
 }
 
 void JDEECoApplication::handleMessage(cMessage *msg) {
+	//std::cout << "jDEECoApplication: handleMessage" << std::endl;
     double rssi = -1.0;
     if (!msg->isSelfMessage()) {
         MacToNetwControlInfo* cInfo = dynamic_cast<MacToNetwControlInfo*>(msg->getControlInfo());
@@ -59,6 +60,7 @@ void JDEECoApplication::handleMessage(cMessage *msg) {
 }
 
 void JDEECoApplication::registerCallbackAt(double absoluteTime, cMessage *msg) {
+	//std::cout << "jDEECoApplication: registerCallbackAt" << std::endl;
     scheduleAt(absoluteTime, msg);
 }
 

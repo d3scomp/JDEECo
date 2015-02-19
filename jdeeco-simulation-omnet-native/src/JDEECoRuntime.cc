@@ -1,12 +1,14 @@
 #include "JDEECoRuntime.h"
 
+#include <limits>
+
 #include <omnetpp.h>
 
 JDEECoRuntime::JDEECoRuntime(jobject host, JavaVM *jvm, const char *id) {
 	this->jvm = jvm;
 	this->host = host;
 	this->id = id;
-	this->firstCallAt = -1.0;
+	this->firstCallAt = std::numeric_limits<double>::min();
 }
 
 JDEECoRuntime* JDEECoRuntime::findRuntime(const char *id) {

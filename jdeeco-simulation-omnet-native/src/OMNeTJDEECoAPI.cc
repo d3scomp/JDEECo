@@ -23,7 +23,7 @@ JNIEXPORT jdouble JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNeTNativ
 
 JNIEXPORT void JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNeTNative_nativeRegister(
 		JNIEnv *env, jclass, jobject object, jstring id) {
-	std::cout << "nativeRegister: Begin" << std::endl;
+	//std::cout << "nativeRegister: Begin" << std::endl;
 
 	if (JDEECoRuntime::findRuntime(env, id) != NULL) {
 		return;
@@ -42,9 +42,9 @@ JNIEXPORT void JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNeTNative_n
 //	env->ReleaseStringUTFChars(id, cstring);
 		std::cout << "nativeRegister: JDEECo runtime created for " << cstring << std::endl;
 	} else {
-		std::cout << "nativeRegister: JVM could not be retrieved" << std::endl;
+		std::cerr << "nativeRegister: JVM could not be retrieved" << std::endl;
 	}
-	std::cout << "nativeRegister: End" << std::endl;
+	//std::cout << "nativeRegister: End" << std::endl;
 }
 
 JNIEXPORT void JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNeTNative_nativeSendPacket(
@@ -88,19 +88,19 @@ JNIEXPORT void JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNeTNative_n
 
 JNIEXPORT void JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNeTNative_nativeCallAt(
 		JNIEnv *env, jclass, jdouble absoluteTime, jstring id) {
-	//std::cout << "nativeCallAt: Begin" << std::endl;
+	//std::cout << "nativeCallAt-C: Begin" << std::endl;
 	if (cSimulation::getActiveSimulation() != NULL) {
 		JDEECoModule *module = JDEECoModule::findModule(env, id);
 
 		if (module != NULL) {
-			//std::cout << "nativeCallAt: " << (*it)->getModuleId() << " will be called at " << absoluteTime << std::endl;
+			//std::cout << "M:nativeCallAt: " << module->getModuleId() << " will be called at " << absoluteTime << std::endl;
 			module->callAt(absoluteTime);
 		}
 	} else {
 		JDEECoRuntime *runtime = JDEECoRuntime::findRuntime(env, id);
 
 		if (runtime != NULL) {
-			//std::cout << "nativeCallAt: " << (*it)->id << " will be first called at " << absoluteTime << std::endl;
+			//std::cout << "RR:nativeCallAt: " << id << " will be first called at " << absoluteTime << std::endl;
 			runtime->firstCallAt = absoluteTime;
 		}
 	}

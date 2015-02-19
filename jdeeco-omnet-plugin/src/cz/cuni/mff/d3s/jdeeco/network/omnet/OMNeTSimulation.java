@@ -1,41 +1,73 @@
 package cz.cuni.mff.d3s.jdeeco.network.omnet;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.simulation.omnet.OMNeTNative;
+import cz.cuni.mff.d3s.deeco.simulation.omnet.OMNeTNativeListener;
 import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
 import cz.cuni.mff.d3s.deeco.timer.TimerEventListener;
 
 public class OMNeTSimulation implements DEECoPlugin {
+	Map<Integer, TimerEventListener> binding = new HashMap<Integer, TimerEventListener>();
+
 	class TimerProvider implements SimulationTimer {
 		@Override
 		public void notifyAt(long time, TimerEventListener listener) {
+			// Bind listener to host id
+			binding.put(listener.getHostId(), listener);
 			
+			// Do the native register
+			OMNeTNative.nativeCallAt(time, String.valueOf(listener.getHostId()));
 		}
 
 		@Override
 		public long getCurrentMilliseconds() {
 			double time = OMNeTNative.nativeGetCurrentTime();
+			if (time < 0) {
+				time = 0;
+			}
 			return (long) (time * 1000);
 		}
 
 		@Override
 		public void start(long duration) {
-			// TODO Auto-generated method stub
-			
+			this.start(duration);
 		}
-		
 	}
-	
+
+	class Host implements OMNeTNativeListener {
+		final int id;
+
+		Host(int id) {
+			this.id = id;
+		}
+
+		public int getId() {
+			return id;
+		}
+
+		@Override
+		public void at(double absoluteTime) {
+			System.out.println(id + " called at: " + absoluteTime);
+			
+			// Invoke the listener
+			binding.get(id).at((long) (absoluteTime * 1000));
+		}
+	}
+
+	private final Map<Integer, Host> hosts = new HashMap<Integer, OMNeTSimulation.Host>();
+
 	private TimerProvider timeProvider = new TimerProvider();
-	
+
 	public SimulationTimer getTimer() {
 		return timeProvider;
 	}
-	
+
 	@Override
 	public List<Class<? extends DEECoPlugin>> getDependencies() {
 		return new LinkedList<Class<? extends DEECoPlugin>>();
@@ -43,6 +75,17 @@ public class OMNeTSimulation implements DEECoPlugin {
 
 	@Override
 	public void init(DEECoContainer container) {
-		throw new UnsupportedOperationException();
+		if (!hosts.containsKey(container.getId())) {
+			Host host = new Host(container.getId());
+			hosts.put(host.getId(), host);
+			OMNeTNative.nativeRegister(host, String.valueOf(host.getId()));
+			System.out.println("Registered host " + host.getId());
+		} else {
+			throw new UnsupportedOperationException("Host with this id is already registered");
+		}
+	}
+
+	public void start(long duration) {
+		OMNeTNative.nativeRun("Cmdenv", "omnetpp.ini");
 	}
 }
