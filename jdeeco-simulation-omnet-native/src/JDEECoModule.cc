@@ -7,17 +7,21 @@
 
 void JDEECoModule::callAt(double absoluteTime) {
 	//std::cout << "jDEECoCallAt: " << absoluteTime << " Begin" << std::endl;
-	if(simTime().dbl() < absoluteTime) {
+
+	// Adjust possible past event time
+	if(simTime().dbl() > absoluteTime) {
+		std::cerr << "Time adjust for event in the past (" << absoluteTime << " -> " << simTime().dbl() << ")" << std::endl;
 		absoluteTime = simTime().dbl();
 	}
-	if (currentCallAtTime != absoluteTime) {
-		currentCallAtTime = absoluteTime;
-		cMessage *msg = new cMessage(JDEECO_TIMER_MESSAGE);
-		currentCallAtMessage = msg;
-		registerCallbackAt(absoluteTime, msg);
-		//std::cout << "jDEECoCallAt: " << this->getModuleId() << " Callback added: " << this->getModuleId() << " for " << absoluteTime << std::endl;
-	}
-	//std::cout << "jDEECoCallAt: " << this->jDEECoGetModuleId() << " End" << std::endl;
+
+	currentCallAtTime = absoluteTime;
+	// TODO: Memory leak here?
+	cMessage *msg = new cMessage(JDEECO_TIMER_MESSAGE);
+	currentCallAtMessage = msg;
+	registerCallbackAt(absoluteTime, msg);
+	//std::cout << "jDEECoCallAt: " << getModuleId() << " Callback added: " << this->getModuleId() << " for " << absoluteTime << std::endl;
+
+	//std::cout << "jDEECoCallAt: " << getModuleId() << " End" << std::endl;
 }
 
 void JDEECoModule::onHandleMessage(cMessage *msg, double rssi) {
@@ -108,6 +112,7 @@ JDEECoModule* JDEECoModule::findModule(JNIEnv *env, jstring id) {
 }
 
 void JDEECoModule::clear() {
+	// TODO: Memory leak here?
 	jDEECoModules.clear();
 }
 

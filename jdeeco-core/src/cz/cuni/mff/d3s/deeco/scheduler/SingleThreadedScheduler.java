@@ -146,6 +146,10 @@ public class SingleThreadedScheduler implements Scheduler {
 		while ((!queue.isEmpty()) && (queue.first().nextExecutionTime<=time)) {
 			SchedulerEvent event = queue.pollFirst(); 
 
+			/* XXX: Does the queue ever gets empty with periodic task? I think it wont,
+			 * thus the Timer is only used once and rest of the simulation is done here,
+			 * which is not correct as we want to let OMNeT do some stuff too (deliver messages).
+			 */
 			if (event.periodic) {
 				// schedule for the next period add a random offset within the period (up to 75% of the period)
 				long period = event.executable.getTimeTrigger().getPeriod();

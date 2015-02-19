@@ -46,6 +46,7 @@ void JDEECoRuntime::addRuntime(JDEECoRuntime* runtime) {
 }
 
 void JDEECoRuntime::clear() {
+	// TODO: Memory leak here?
 	jDEECoRuntimes.clear();
 }
 
