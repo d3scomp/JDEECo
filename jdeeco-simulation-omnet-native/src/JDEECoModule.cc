@@ -7,8 +7,10 @@
 
 void JDEECoModule::callAt(double absoluteTime) {
 	//std::cout << "jDEECoCallAt: " << absoluteTime << " Begin" << std::endl;
-	absoluteTime++;
-	if (currentCallAtTime != absoluteTime && simTime().dbl() < absoluteTime) {
+	if(simTime().dbl() < absoluteTime) {
+		absoluteTime = simTime().dbl();
+	}
+	if (currentCallAtTime != absoluteTime) {
 		currentCallAtTime = absoluteTime;
 		cMessage *msg = new cMessage(JDEECO_TIMER_MESSAGE);
 		currentCallAtMessage = msg;

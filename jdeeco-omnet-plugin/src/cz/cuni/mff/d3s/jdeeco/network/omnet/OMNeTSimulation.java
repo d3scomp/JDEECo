@@ -18,6 +18,8 @@ public class OMNeTSimulation implements DEECoPlugin {
 	class TimerProvider implements SimulationTimer {
 		@Override
 		public void notifyAt(long time, TimerEventListener listener) {
+			System.out.println("Notify at: " + time + " " + listener.getHostId());
+			
 			// Bind listener to host id
 			binding.put(listener.getHostId(), listener);
 			
