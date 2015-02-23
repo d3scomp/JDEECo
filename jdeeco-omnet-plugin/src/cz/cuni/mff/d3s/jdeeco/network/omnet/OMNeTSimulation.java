@@ -56,7 +56,7 @@ public class OMNeTSimulation implements DEECoPlugin {
 
 		@Override
 		public void at(double absoluteTime) {
-			System.out.println("Host " + id + " notified at: " + absoluteTime);
+			System.out.println("Host " + id + " notified at: " + OMNeTNative.timeFromOmnet(absoluteTime));
 			
 			// Invoke the listener
 			binding.get(id).at(OMNeTNative.timeFromOmnet(absoluteTime));

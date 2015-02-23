@@ -116,7 +116,7 @@ public class OMNeTNative {
 	 * @return jDEECo time
 	 */
 	public static long timeFromOmnet(double omnetTime) {
-		return (long) (omnetTime * 1000);
+		return (long) Math.round(omnetTime * 1000);
 	}
 
 	/**
