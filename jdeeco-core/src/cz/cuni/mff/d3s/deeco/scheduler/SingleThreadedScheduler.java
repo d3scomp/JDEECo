@@ -11,6 +11,7 @@ import java.util.TreeSet;
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
+import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
 import cz.cuni.mff.d3s.deeco.task.Task;
 import cz.cuni.mff.d3s.deeco.task.TaskTriggerListener;
 import cz.cuni.mff.d3s.deeco.timer.Timer;
@@ -19,8 +20,7 @@ import cz.cuni.mff.d3s.deeco.timer.Timer;
  * TODO
  */
 public class SingleThreadedScheduler implements Scheduler {
-	// TODO: Temporary solution
-	private final int nodeId;
+	private final DEECoNode node;
 	private Executor executor;
 	private Timer timer;
 	
@@ -29,13 +29,13 @@ public class SingleThreadedScheduler implements Scheduler {
 	private final Map<Task, SchedulerEvent> timeTriggeredEvents;
 	private final Set<Trigger> knowledgeChangeTriggers;
 
-    public SingleThreadedScheduler(Executor executor, Timer timer, int id) throws NoExecutorAvailableException{
+    public SingleThreadedScheduler(Executor executor, Timer timer, DEECoNode node) throws NoExecutorAvailableException{
 		if (executor == null) {
 			throw new NoExecutorAvailableException();
 		}
     	this.executor = executor;
     	this.timer = timer;
-    	this.nodeId = id;
+    	this.node = node;
     	
 		queue = new TreeSet<>();
 		allTasks = new HashSet<>();
@@ -74,7 +74,7 @@ public class SingleThreadedScheduler implements Scheduler {
 			event.nextPeriodStart = executionTime;
 			queue.add(event);
 			
-			timer.notifyAt(event.nextExecutionTime, this);
+			timer.notifyAt(event.nextExecutionTime, this, node);
 						
 			timeTriggeredEvents.put(task, event);
 		}
@@ -130,7 +130,7 @@ public class SingleThreadedScheduler implements Scheduler {
 			long nextExecutionTime = queue.first().nextExecutionTime;
 			// FIXME we need the '=' in the next line if we don't give a random offset
 			if (nextExecutionTime >= timer.getCurrentMilliseconds()) {
-				timer.notifyAt(nextExecutionTime, this);
+				timer.notifyAt(nextExecutionTime, this, node);
 			}
 		}
 	}
@@ -156,10 +156,5 @@ public class SingleThreadedScheduler implements Scheduler {
 			
 			executor.execute(event.executable, event.trigger);
 		}
-	}
-
-	@Override
-	public int getHostId() {
-		return nodeId;
 	}
 }

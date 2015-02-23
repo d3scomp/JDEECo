@@ -22,13 +22,4 @@ public interface TimerEventListener {
 	 * @throws NoExecutorAvailableException 
 	 */
 	void at(long time);
-	
-	/**
-	 * TODO: Temporary solution
-	 * 
-	 * Gets id if the node this listener belongs to
-	 * 
-	 * @return Host id 
-	 */
-	int getHostId();
 }

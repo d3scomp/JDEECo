@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
+import org.mockito.Mockito;
+
 import cz.cuni.mff.d3s.deeco.annotations.Allow;
 import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.Ensemble;
@@ -42,6 +44,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.network.DataSender;
 import cz.cuni.mff.d3s.deeco.network.DefaultKnowledgeDataManager;
+import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
 import cz.cuni.mff.d3s.deeco.runtime.DuplicateEnsembleDefinitionException;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeFrameworkImpl;
 import cz.cuni.mff.d3s.deeco.scheduler.NoExecutorAvailableException;
@@ -210,7 +213,7 @@ public class SecurityRuntimeModel {
 		securityKeyManager = SecurityKeyManagerImpl.getInstance();
 		executor = new SameThreadExecutor();
 		DiscreteEventTimer simulation = new DiscreteEventTimer();
-		scheduler = new SingleThreadedScheduler(executor, simulation, -2 /* TODO: Temporary solution */);
+		scheduler = new SingleThreadedScheduler(executor, simulation, Mockito.mock(DEECoNode.class));
 		securityHelper = new SecurityHelper();
 		
 		model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();

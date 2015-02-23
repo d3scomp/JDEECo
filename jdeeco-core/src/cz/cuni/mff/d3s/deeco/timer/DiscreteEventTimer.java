@@ -3,6 +3,8 @@ package cz.cuni.mff.d3s.deeco.timer;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
+import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
+
 public class DiscreteEventTimer implements SimulationTimer {
 	
 	Queue<EventTime> eventTimes;
@@ -25,11 +27,6 @@ public class DiscreteEventTimer implements SimulationTimer {
 			@Override
 			public void at(long time) {
 				// termination time reached, do nothing
-			}
-			@Override
-			public int getHostId() {
-				// TODO: Temporary solution
-				return -1;
 			}}, true));
 
 		while (!tryToTerminate()) {
@@ -40,7 +37,7 @@ public class DiscreteEventTimer implements SimulationTimer {
 	}
 
 	@Override
-	public void notifyAt(long time, TimerEventListener listener) {
+	public void notifyAt(long time, TimerEventListener listener, DEECoNode node) {
 		EventTime eventTime = new EventTime(time, listener, false);
 		if (!eventTimes.contains(eventTime)) {
 			eventTimes.add(eventTime);

@@ -34,8 +34,10 @@ public class DEECoNode implements DEECoContainer {
 
 	/** 
 	 * TODO find a way to inject this field from the DEECoRealm (probably via the constructor here?)
+	 * TODO decide type of this field
 	 */
 	final int nodeId;
+	
 	/**
 	 * The metadata model corresponding to the running application.
 	 */
@@ -61,8 +63,8 @@ public class DEECoNode implements DEECoContainer {
 	 */
 	Map<Class<? extends DEECoPlugin>, DEECoPlugin> pluginsMap;
 	
-	public DEECoNode(int id /* TODO: Temporary solution */, Timer Timer, DEECoPlugin... plugins) throws DEECoException {
-		this.nodeId = id; // TODO: Temporary solution
+	public DEECoNode(int id, Timer Timer, DEECoPlugin... plugins) throws DEECoException {
+		this.nodeId = id;
 		pluginsMap= new HashMap<>();
 		model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
 		knowledgeManagerFactory = new CloningKnowledgeManagerFactory();
@@ -187,7 +189,7 @@ public class DEECoNode implements DEECoContainer {
 	
 	private void createRuntime(Timer timer) throws NoExecutorAvailableException {
 		Executor executor = new SameThreadExecutor();
-		Scheduler scheduler = new SingleThreadedScheduler(executor, timer, nodeId /* TODO: Temporary solution */);
+		Scheduler scheduler = new SingleThreadedScheduler(executor, timer, this);
 		KnowledgeManagerContainer kmContainer = new KnowledgeManagerContainer(knowledgeManagerFactory, model);
 		scheduler.setExecutor(executor);
 		executor.setExecutionListener(scheduler);

@@ -3,6 +3,8 @@ package cz.cuni.mff.d3s.deeco.timer;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
+import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
+
 
 public class WallTimeTimer implements RunnerTimer {
 
@@ -35,11 +37,10 @@ public class WallTimeTimer implements RunnerTimer {
 	}
 
 	@Override
-	public void notifyAt(long time, TimerEventListener listener) {
+	public void notifyAt(long time, TimerEventListener listener, DEECoNode node) {
 		EventTime eventTime = new EventTime(time, listener, false);
 		if (!eventTimes.contains(eventTime)) {
 			eventTimes.add(eventTime);
 		}
 	}
-
 }

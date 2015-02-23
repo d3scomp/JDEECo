@@ -230,11 +230,4 @@ public class SimulationScheduler implements Scheduler,
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	@Override
-	public int getHostId() {
-		// TODO: Temporary solution
-		return Integer.parseInt(getHost().getHostId());
-	}
-
 }
