@@ -42,7 +42,7 @@ public:
 	virtual void setPosition(double valX, double valY, double valZ) = 0;
 
 	static JDEECoModule* findModule(JNIEnv *env, jstring id);
-	static void clear();
+	static void clearAll();
 
 protected:
 	bool initialized;

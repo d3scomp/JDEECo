@@ -111,7 +111,7 @@ JDEECoModule* JDEECoModule::findModule(JNIEnv *env, jstring id) {
 	return result;
 }
 
-void JDEECoModule::clear() {
+void JDEECoModule::clearAll() {
 	// TODO: Memory leak here?
 	jDEECoModules.clear();
 }

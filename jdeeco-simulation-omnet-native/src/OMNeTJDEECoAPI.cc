@@ -79,8 +79,8 @@ JNIEXPORT void JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNeTNative_n
 	std::cout << "nativeRun: simulate" << std::endl;
 	simulate(cEnv, cConfFile);
 	std::cout << "nativeRun: clearing runtimes" << std::endl;
-	JDEECoModule::clear();
-	JDEECoRuntime::clear();
+	JDEECoModule::clearAll();
+	JDEECoRuntime::clearAll();
 	env->ReleaseStringUTFChars(environment, cEnv);
 	env->ReleaseStringUTFChars(confFile, cConfFile);
 	std::cout << "nativeRun: End" << std::endl;

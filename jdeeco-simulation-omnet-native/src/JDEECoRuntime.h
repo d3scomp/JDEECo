@@ -18,7 +18,7 @@ public:
 	static JDEECoRuntime* findRuntime(const char *id);
 	static JDEECoRuntime* findRuntime(JNIEnv *env, jstring id);
 	static void addRuntime(JDEECoRuntime* runtime);
-	static void clear();
+	static void clearAll();
 
 private:
 	// XXX: This should be a hash map. Having it in a vector will be too slow when we have many nodes.
