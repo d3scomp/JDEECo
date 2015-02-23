@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
+import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.simulation.omnet.OMNeTNative;
 import cz.cuni.mff.d3s.deeco.simulation.omnet.OMNeTNativeListener;
@@ -17,14 +18,14 @@ public class OMNeTSimulation implements DEECoPlugin {
 
 	class TimerProvider implements SimulationTimer {
 		@Override
-		public void notifyAt(long time, TimerEventListener listener) {
-			System.out.println("Notify " + listener.getHostId() + " at: " + time);
+		public void notifyAt(long time, TimerEventListener listener/*, DEECoNode node*/) {
+			System.out.println("Host " + listener.getHostId() + " to be notified at: " + time);
 			
 			// Bind listener to host id
 			binding.put(listener.getHostId(), listener);
 			
 			// Do the native register
-			OMNeTNative.nativeCallAt(time, String.valueOf(listener.getHostId()));
+			OMNeTNative.nativeCallAt(OMNeTNative.timeToOmnet(time), String.valueOf(listener.getHostId()));
 		}
 
 		@Override
@@ -33,7 +34,7 @@ public class OMNeTSimulation implements DEECoPlugin {
 			if (time < 0) {
 				time = 0;
 			}
-			return (long) (time * 1000);
+			return OMNeTNative.timeFromOmnet(time);
 		}
 
 		@Override
@@ -55,10 +56,10 @@ public class OMNeTSimulation implements DEECoPlugin {
 
 		@Override
 		public void at(double absoluteTime) {
-			System.out.println("Host " + id + " called at: " + absoluteTime);
+			System.out.println("Host " + id + " notified at: " + absoluteTime);
 			
 			// Invoke the listener
-			binding.get(id).at((long) (absoluteTime * 1000));
+			binding.get(id).at(OMNeTNative.timeFromOmnet(absoluteTime));
 		}
 	}
 

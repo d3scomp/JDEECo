@@ -107,4 +107,26 @@ public class OMNeTNative {
 	 *            New Z position
 	 */
 	public static native void nativeSetPosition(String nodeId, double valX, double valY, double valZ);
+
+	/**
+	 * Converts OMNeT native time to JDEECo time
+	 * 
+	 * @param omnetTime
+	 *            OMNeT representation of time
+	 * @return jDEECo time
+	 */
+	public static long timeFromOmnet(double omnetTime) {
+		return (long) (omnetTime * 1000);
+	}
+
+	/**
+	 * Converts jDEECo time to OMNet representation
+	 * 
+	 * @param jDEECoTime
+	 *            jDEECo representation of time
+	 * @return OMNeT Time
+	 */
+	public static double timeToOmnet(long jdeecoTime) {
+		return ((double) jdeecoTime) / 1000;
+	}
 }
