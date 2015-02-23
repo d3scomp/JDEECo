@@ -22,13 +22,8 @@ class JDEECoModule {
 	void *currentCallAtMessage;
 
 public:
-	JDEECoModule() {
-		currentCallAtTime = std::numeric_limits<double>::min();
-		currentCallAtMessage = NULL;
-		initialized = false;
-	}
-	virtual ~JDEECoModule() {
-	}
+	JDEECoModule();
+	virtual ~JDEECoModule();
 
 	void callAt(double absoluteTime);
 

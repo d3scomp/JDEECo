@@ -5,12 +5,22 @@
 
 #include "JDEECoRuntime.h"
 
+JDEECoModule::JDEECoModule() {
+	currentCallAtTime = std::numeric_limits<double>::min();
+	currentCallAtMessage = NULL;
+	initialized = false;
+}
+
+JDEECoModule::~JDEECoModule() {
+}
+
 void JDEECoModule::callAt(double absoluteTime) {
 	//std::cout << "jDEECoCallAt: " << absoluteTime << " Begin" << std::endl;
 
 	// Adjust possible past event time
-	if(simTime().dbl() > absoluteTime) {
-		std::cerr << "Time adjust for event in the past (" << absoluteTime << " -> " << simTime().dbl() << ")" << std::endl;
+	if (simTime().dbl() > absoluteTime) {
+		std::cerr << "Time adjust for event in the past (" << absoluteTime
+				<< " -> " << simTime().dbl() << ")" << std::endl;
 		absoluteTime = simTime().dbl();
 	}
 
@@ -37,7 +47,8 @@ void JDEECoModule::onHandleMessage(cMessage *msg, double rssi) {
 		jmethodID mid;
 		if (opp_strcmp(msg->getName(), JDEECO_TIMER_MESSAGE) == 0) {
 			// compare in nanos
-			if (((long) round(simTime().dbl() * 1000000)) == ((long) round(currentCallAtTime * 1000000))) {
+			if (((long) round(simTime().dbl() * 1000000))
+					== ((long) round(currentCallAtTime * 1000000))) {
 				//std::cout << "jDEECoOnHandleMessage: " << this->getModuleId() << " Before getting the \"at\" method reference" << std::endl;
 				mid = env->GetMethodID(cls, "at", "(D)V");
 				assert(mid != NULL);
@@ -48,7 +59,8 @@ void JDEECoModule::onHandleMessage(cMessage *msg, double rssi) {
 			}
 		} else if (opp_strcmp(msg->getName(), JDEECO_DATA_MESSAGE) == 0) {
 			//std::cout << "jDEECoOnHandleMessage: " << this->jDEECoGetModuleId() << " Before getting the \"packetRecived\" method reference" << std::endl;
-			EV << "OMNET++ ("<< simTime() <<") : " << getModuleId() << " received packet with ID = " << msg->getId() << endl;
+			EV << "OMNET++ (" << simTime() << ") : " << getModuleId()
+					<< " received packet with ID = " << msg->getId() << endl;
 			mid = env->GetMethodID(cls, "packetReceived", "([BD)V");
 			if (mid == 0)
 				return;
@@ -58,7 +70,9 @@ void JDEECoModule::onHandleMessage(cMessage *msg, double rssi) {
 				buffer[i] = jPacket->getData(i);
 			jbyteArray jArray = env->NewByteArray(jPacket->getDataArraySize());
 			if (jArray == NULL) {
-				std::cerr << "onHandleMessage: " << this->getModuleId() << " Cannot create new ByteArray object! Out of memory problem?" << std::endl;
+				std::cerr << "onHandleMessage: " << this->getModuleId()
+						<< " Cannot create new ByteArray object! Out of memory problem?"
+						<< std::endl;
 				return;
 			}
 			env->SetByteArrayRegion(jArray, 0, jPacket->getDataArraySize(),
@@ -68,7 +82,7 @@ void JDEECoModule::onHandleMessage(cMessage *msg, double rssi) {
 			//std::cout << "jDEECoOnHandleMessage: " << this->getModuleId() << " After calling the \"packetRecived\" method" << std::endl;
 			env->DeleteLocalRef(jArray);
 			//std::cout << "jDEECoOnHandleMessage: " << this->getModuleId() << " After deleting the array reference" << std::endl;
-			delete [] buffer;
+			delete[] buffer;
 		}
 		env->DeleteLocalRef(cls);
 	}

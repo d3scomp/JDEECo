@@ -6,8 +6,6 @@
 #include <vector>
 #include <algorithm>
 
-#include "JDEECoModule.h"
-#include "JDEECoRuntime.h"
 #include "cmessage.h"
 #include "simulation.h"
 
@@ -36,9 +34,6 @@ Register_GlobalConfigOption(CFGID_CONFIGURATION_CLASS, "configuration-class",
 Register_GlobalConfigOption(CFGID_USER_INTERFACE, "user-interface", CFG_STRING,
 		"",
 		"Selects the user interface to be started. Possible values are Cmdenv and Tkenv. This option is normally left empty, as it is more convenient to specify the user interface via a command-line option or the IDE's Run and Debug dialogs. New user interfaces can be defined by subclassing cRunnableEnvir.");
-
-#include "JDEECoRuntime.h"
-
 
 // helper macro
 #define CREATE_BY_CLASSNAME(var,classname,baseclass,description) \
