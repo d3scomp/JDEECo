@@ -1,11 +1,14 @@
 package cz.cuni.mff.d3s.deeco.annotations.processor;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+import static org.hamcrest.CoreMatchers.isA;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -16,11 +19,13 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
+import org.hamcrest.Matcher;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.InOrder;
 
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
@@ -89,7 +94,7 @@ public class AnnotationProcessorTest {
 	@Test 
 	public void testAllComponentAnnotations() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata(); 
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());
 		
 		CorrectC1 input = new CorrectC1();
 		processor.processComponent(input);
@@ -103,7 +108,7 @@ public class AnnotationProcessorTest {
 	public void testComponentSecurityAnnotations() throws AnnotationProcessorException {
 		// given component with security annotations is processed by the annotations processor
 		RuntimeMetadata model = factory.createRuntimeMetadata(); 
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
 		CorrectC4 input = new CorrectC4();
 		
 		// when process() is called
@@ -160,7 +165,7 @@ public class AnnotationProcessorTest {
 	public void testCloningOfSecurityAnnotations() throws AnnotationProcessorException {
 		// given component with security annotations is processed by the annotations processor
 		RuntimeMetadata model = factory.createRuntimeMetadata(); 
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
 		CorrectC4 input = new CorrectC4();
 		
 		// when process() is called
@@ -193,7 +198,7 @@ public class AnnotationProcessorTest {
 	public void testLockingOfSecurityAnnotations() throws AnnotationProcessorException {
 		// given component with security annotations is processed by the annotations processor
 		RuntimeMetadata model = factory.createRuntimeMetadata(); 
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
 		CorrectC4 input = new CorrectC4();
 		
 		// when process() is called
@@ -212,7 +217,7 @@ public class AnnotationProcessorTest {
 	public void testNonExistingSecurityArgument() throws AnnotationProcessorException {
 		// given component with role, which contains unresolvable argument is processed
 		RuntimeMetadata model = factory.createRuntimeMetadata(); 
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
 		WrongC12 input = new WrongC12();
 		
 		exception.expect(AnnotationProcessorException.class);
@@ -225,7 +230,7 @@ public class AnnotationProcessorTest {
 	@Test
 	public void testSecurityOnNonSerializableField() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata(); 
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
 		WrongC13 input = new WrongC13();
 		
 		exception.expect(AnnotationProcessorException.class);
@@ -239,7 +244,7 @@ public class AnnotationProcessorTest {
 	public void testNonExistingAliasClass() throws AnnotationProcessorException {
 		// given roleAlias refers to something that is not a role definition
 		RuntimeMetadata model = factory.createRuntimeMetadata(); 
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
 		WrongC10 input = new WrongC10();
 		
 		exception.expect(AnnotationProcessorException.class);
@@ -253,7 +258,7 @@ public class AnnotationProcessorTest {
 	public void testComponentSecurityInheritanceAnnotations1() throws AnnotationProcessorException {
 		// given component with security annotations is processed by the annotations processor
 		RuntimeMetadata model = factory.createRuntimeMetadata(); 
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
 		CorrectC5 input = new CorrectC5();
 		
 		// when process() is called
@@ -293,7 +298,7 @@ public class AnnotationProcessorTest {
 	public void testSecurityCompromise() throws AnnotationProcessorException {
 		// given component with role, which contains unresolvable argument is processed
 		RuntimeMetadata model = factory.createRuntimeMetadata(); 
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
 		WrongC11 input = new WrongC11();
 		
 		exception.expect(AnnotationProcessorException.class);
@@ -307,7 +312,7 @@ public class AnnotationProcessorTest {
 	public void testRatingAnnotations() throws AnnotationProcessorException {
 		// given component with rating annotations is processed by the annotations processor
 		RuntimeMetadata model = factory.createRuntimeMetadata(); 
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
 		CorrectC6 input = new CorrectC6();
 		
 		// when process() is called
@@ -341,7 +346,7 @@ public class AnnotationProcessorTest {
 	public void testRatingAnnotationsEnsemble() throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		// given component with rating annotations is processed by the annotations processor
 		RuntimeMetadata model = factory.createRuntimeMetadata(); 
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
 		
 		// when process() is called
 		processor.processEnsemble(CorrectE4.class);
@@ -366,7 +371,7 @@ public class AnnotationProcessorTest {
 	public void testRatingAnnotations_Error1() throws AnnotationProcessorException {
 		// given component with rating annotations is processed by the annotations processor
 		RuntimeMetadata model = factory.createRuntimeMetadata(); 
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
 		WrongC6 input = new WrongC6();
 		
 		exception.expect(AnnotationProcessorException.class);
@@ -380,7 +385,7 @@ public class AnnotationProcessorTest {
 	public void testRatingAnnotations_Error2() throws AnnotationProcessorException {
 		// given component with rating annotations is processed by the annotations processor
 		RuntimeMetadata model = factory.createRuntimeMetadata(); 
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
 		WrongC7 input = new WrongC7();
 		
 		exception.expect(AnnotationProcessorException.class);
@@ -394,7 +399,7 @@ public class AnnotationProcessorTest {
 	public void testRatingAnnotations_Error3() throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		// given component with rating annotations is processed by the annotations processor
 		RuntimeMetadata model = factory.createRuntimeMetadata(); 
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
 		
 		exception.expect(AnnotationProcessorException.class);
 		exception.expectMessage("The rating process method parameter must be of type " + ReadonlyRatingsHolder.class.getSimpleName() + ".");
@@ -407,7 +412,7 @@ public class AnnotationProcessorTest {
 	public void testSecurityAnnotations_Error1() throws AnnotationProcessorException {
 		// given component with security annotations is processed by the annotations processor
 		RuntimeMetadata model = factory.createRuntimeMetadata(); 
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
 		WrongC8 input = new WrongC8();
 		
 		exception.expect(AnnotationProcessorException.class);
@@ -421,7 +426,7 @@ public class AnnotationProcessorTest {
 	public void testSecurityAnnotations_Error2() throws AnnotationProcessorException {
 		// given component with security annotations is processed by the annotations processor
 		RuntimeMetadata model = factory.createRuntimeMetadata(); 
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
 		WrongC9 input = new WrongC9();
 		
 		exception.expect(AnnotationProcessorException.class);
@@ -434,7 +439,7 @@ public class AnnotationProcessorTest {
 	@Test
 	public void testComponentModelInheritance() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata(); 
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
 		
 		CorrectC1 input = new ChildOfCorrectC1();
 		processor.processComponent(input);
@@ -448,7 +453,7 @@ public class AnnotationProcessorTest {
 	@Test 
 	public void testAllEnsembleAnnotations() throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
 		
 		processor.processEnsemble(CorrectE1.class);
 		CorrectE1 input = new CorrectE1();
@@ -460,7 +465,7 @@ public class AnnotationProcessorTest {
 	@Test 
 	public void testModelDirectlyFromEnsembleClassDefinition() throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
 		
 		processor.processEnsemble(CorrectE1.class);
 		CorrectE1 input = new CorrectE1();
@@ -472,7 +477,7 @@ public class AnnotationProcessorTest {
 	@Test
 	public void testSequencialUpdateOfTheSameModel() throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
 
 		Object input = new CorrectC1();
 		processor.processComponent(input);
@@ -492,7 +497,7 @@ public class AnnotationProcessorTest {
 	@Test 
 	public void testEventBasedComponents() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
 
 		// no periodic trigger, 1 knowledge change trigger:
 		CorrectC2 input = new CorrectC2();
@@ -506,7 +511,7 @@ public class AnnotationProcessorTest {
 	@Test 
 	public void testEventBasedEnsembles() throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {		
 		RuntimeMetadata model = factory.createRuntimeMetadata();
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
 
 		// no periodic trigger, 2 knowledge change triggers:
 		processor.processEnsemble(CorrectE2.class);
@@ -520,7 +525,7 @@ public class AnnotationProcessorTest {
 	@Test 
 	public void testParameterWithMapEntry() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
 
 		CorrectC3 input = new CorrectC3();
 		processor.processComponent(input);
@@ -533,7 +538,7 @@ public class AnnotationProcessorTest {
 	@Test 
 	public void testParameterWithNestedMapEntry() throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
 
 		processor.processEnsemble(CorrectE3.class);
 		removeKnowledgeManagersFromComponents(model);
@@ -545,7 +550,7 @@ public class AnnotationProcessorTest {
 	
 	@Test 
 	public void testExceptionsNullModel() throws AnnotationProcessorException {
-		AnnotationProcessor processor = new AnnotationProcessor(factory,null,knowledgeManagerFactory);	
+		AnnotationProcessor processor = new AnnotationProcessor(factory,null,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
 		
 		Object input = new Object();
 		exception.expect(AnnotationProcessorException.class);
@@ -556,7 +561,7 @@ public class AnnotationProcessorTest {
 	@Test 
 	public void testExceptionsNonInitializedComponent() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
 		
 		exception.expect(AnnotationProcessorException.class);
 		exception.expectMessage("Provided component object(s) cannot be classes.");
@@ -566,7 +571,7 @@ public class AnnotationProcessorTest {
 	@Test 
 	public void testExceptionsInClassAnnotations1() throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
 		
 		WrongCE1 input = new WrongCE1();
 		exception.expect(AnnotationProcessorException.class);
@@ -579,7 +584,7 @@ public class AnnotationProcessorTest {
 	@Test 
 	public void testExceptionsInComponentParsing1() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
 		
 		WrongC1 input = new WrongC1();
 		exception.expect(AnnotationProcessorException.class);
@@ -592,7 +597,7 @@ public class AnnotationProcessorTest {
 	@Test 
 	public void testExceptionsInComponentParsing2() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
 		
 		WrongC2 input = new WrongC2();
 		exception.expect(AnnotationProcessorException.class);
@@ -607,7 +612,7 @@ public class AnnotationProcessorTest {
 	@Test 
 	public void testExceptionsInComponentParsing3() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
 		
 		WrongC3 input = new WrongC3();
 		exception.expect(AnnotationProcessorException.class);
@@ -622,7 +627,7 @@ public class AnnotationProcessorTest {
 	@Test 
 	public void testExceptionsInComponentParsing4() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
 		
 		WrongC4 input = new WrongC4();
 		exception.expect(AnnotationProcessorException.class);
@@ -636,7 +641,7 @@ public class AnnotationProcessorTest {
 	@Test 
 	public void testExceptionsInComponentParsing5() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
 		
 		WrongC5 input = new WrongC5();
 		exception.expect(AnnotationProcessorException.class);
@@ -650,7 +655,7 @@ public class AnnotationProcessorTest {
 	@Test 
 	public void testExceptionsInEnsembleParsing1() throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
 		
 		WrongE1 input = new WrongE1();
 		exception.expect(AnnotationProcessorException.class);
@@ -663,7 +668,7 @@ public class AnnotationProcessorTest {
 	@Test 
 	public void testExceptionsInEnsembleParsing2() throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
 		
 		WrongE2 input = new WrongE2();
 		exception.expect(AnnotationProcessorException.class);
@@ -676,7 +681,7 @@ public class AnnotationProcessorTest {
 	@Test 
 	public void testExceptionsInEnsembleParsing3() throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
 		
 		WrongE3 input = new WrongE3();
 		exception.expect(AnnotationProcessorException.class);
@@ -690,7 +695,7 @@ public class AnnotationProcessorTest {
 	public void testExceptionsInEnsembleParsing4()
 			throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
 		
 		WrongE4 input = new WrongE4();
 		exception.expect(AnnotationProcessorException.class);
@@ -704,7 +709,7 @@ public class AnnotationProcessorTest {
 	public void testExceptionsInEnsembleParsing5()
 			throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
 		
 		WrongE5 input = new WrongE5();
 		exception.expect(AnnotationProcessorException.class);
@@ -723,7 +728,7 @@ public class AnnotationProcessorTest {
 	@Test
 	public void testProcessInitialKnowledge() throws AnnotationProcessorException{
 		RuntimeMetadata model = factory.createRuntimeMetadata();
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
 		
 		Object o = new CorrectC1();
 		/*  "CorrectC1" fields are:
@@ -751,12 +756,66 @@ public class AnnotationProcessorTest {
 	@Test 
 	public void testSecurityOfIdField() throws AnnotationProcessorException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
 		
 		WrongC4WithSecurity input = new WrongC4WithSecurity();
 		exception.expect(AnnotationProcessorException.class);
 		exception.expectMessage("The component ID must not be secured");
 		processor.processComponent(input);	
+	}
+	
+	@Test
+	public void testAnnotationCheckers() throws AnnotationProcessorException, DuplicateEnsembleDefinitionException, AnnotationCheckerException {
+		AnnotationChecker checker1 = mock(AnnotationChecker.class);
+		AnnotationChecker checker2 = mock(AnnotationChecker.class);
+		
+		RuntimeMetadata model = factory.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,
+				Arrays.asList(checker1, checker2));
+		
+		CorrectC1 component = new CorrectC1();
+		ComponentInstance componentInstance = processor.processComponent(component);
+		EnsembleDefinition ensembleDefinition = processor.processEnsemble(CorrectE1.class);
+		
+		InOrder io = inOrder(checker1, checker2);
+		io.verify(checker1).validateComponent(component, componentInstance);
+		io.verify(checker2).validateComponent(component, componentInstance);
+		io.verify(checker1).validateEnsemble(CorrectE1.class, ensembleDefinition);
+		io.verify(checker2).validateEnsemble(CorrectE1.class, ensembleDefinition);
+		io.verifyNoMoreInteractions();
+	}
+	
+	@Test
+	public void testAnnotationCheckersComponentException() throws AnnotationProcessorException, AnnotationCheckerException {
+		AnnotationChecker checker1 = mock(AnnotationChecker.class);
+		AnnotationChecker checker2 = mock(AnnotationChecker.class);
+		
+		RuntimeMetadata model = factory.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,
+				Arrays.asList(checker1, checker2));
+		
+		exception.expect(AnnotationProcessorException.class);
+		exception.expectCause(isA(AnnotationCheckerException.class));
+		
+		CorrectC1 component = new CorrectC1();
+		doThrow(new AnnotationCheckerException("(inner)")).when(checker2).validateComponent(eq(component), any());
+		processor.processComponent(component);
+	}
+	
+	@Test
+	public void testAnnotationCheckersEnsembleException() throws AnnotationProcessorException, AnnotationCheckerException, DuplicateEnsembleDefinitionException {
+		AnnotationChecker checker1 = mock(AnnotationChecker.class);
+		AnnotationChecker checker2 = mock(AnnotationChecker.class);
+		
+		RuntimeMetadata model = factory.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,
+				Arrays.asList(checker1, checker2));
+		
+		exception.expect(AnnotationProcessorException.class);
+		exception.expectCause(isA(AnnotationCheckerException.class));
+		
+		doThrow(new AnnotationCheckerException("(inner)")).when(checker1).validateEnsemble(eq(CorrectE1.class), any());
+		processor.processEnsemble(CorrectE1.class);
 	}
 	
 	/*

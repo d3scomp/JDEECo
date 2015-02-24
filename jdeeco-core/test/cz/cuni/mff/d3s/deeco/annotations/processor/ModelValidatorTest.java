@@ -7,6 +7,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.eclipse.emf.ecore.EObject;
 import org.hamcrest.core.StringContains;
@@ -51,7 +52,7 @@ public class ModelValidatorTest {
 	public void setUp() throws Exception {
 		factory = RuntimeMetadataFactory.eINSTANCE;
 		model = factory.createRuntimeMetadata(); 
-		processor = new AnnotationProcessor(factory, model, new CloningKnowledgeManagerFactory());
+		processor = new AnnotationProcessor(factory, model, new CloningKnowledgeManagerFactory(), new ArrayList<AnnotationChecker>());
 		
 		processor.processComponent(new ExampleComponent());
 		component = model.getComponentInstances().get(0);

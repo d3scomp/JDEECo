@@ -14,6 +14,8 @@ import cz.cuni.mff.d3s.deeco.annotations.MemberRole;
 import cz.cuni.mff.d3s.deeco.annotations.PlaysRole;
 import cz.cuni.mff.d3s.deeco.annotations.Role;
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
@@ -30,29 +32,44 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
  * @author Zbyněk Jiráček
  *
  */
-public class RolesAnnotationChecker {
+public class RolesAnnotationChecker implements AnnotationChecker {
+	
+	public void validateComponent(Object componentObj, ComponentInstance componentInstance) throws AnnotationCheckerException {
+		checkRolesImplementation(componentObj);
+	}
+	
+	public void validateEnsemble(Class<?> ensembleClass, EnsembleDefinition ensembleDefinition) throws AnnotationCheckerException {
+		CoordinatorRole[] coordinatorRoles = ensembleClass.getAnnotationsByType(CoordinatorRole.class);
+		MemberRole[] memberRoles = ensembleClass.getAnnotationsByType(MemberRole.class);
+		if (coordinatorRoles.length > 1 || memberRoles.length > 1) {
+			throw new AnnotationCheckerException("Only one CoordinatorRole and one MemberRole annotation is allowed per ensemble.");
+		}
 		
+		checkRolesImplementation(ensembleDefinition.getMembership().getParameters(), coordinatorRoles, memberRoles);
+		checkRolesImplementation(ensembleDefinition.getKnowledgeExchange().getParameters(), coordinatorRoles, memberRoles);
+	}
+	
 	/**
 	 * Checks that a component instance class correctly implements all roles that are declared
 	 * by the {@link PlaysRole} annotation. The function does not return any value, it either
 	 * succeeds or throws an exception.
 	 * @param obj The componentInstance
-	 * @throws AnnotationProcessorException 
+	 * @throws AnnotationCheckerException 
 	 */
-	public void checkRolesImplementation(Object obj) throws AnnotationProcessorException {
+	void checkRolesImplementation(Object obj) throws AnnotationCheckerException {
 		if (obj == null) {
-			throw new AnnotationProcessorException("The input instance cannot be null.");
+			throw new AnnotationCheckerException("The input instance cannot be null.");
 		}
 		
 		Class<?> componentClass = obj.getClass();
 		if (!componentClass.isAnnotationPresent(Component.class)) {
-			throw new AnnotationProcessorException("The input instance is not a component (the class is not annotated by the @" + Component.class.getSimpleName() + " annotation).");
+			throw new AnnotationCheckerException("The input instance is not a component (the class is not annotated by the @" + Component.class.getSimpleName() + " annotation).");
 		}
 
 		// check if the class contains String id
 		List<Field> knowledgeFields = getNonLocalKnowledgeFields(componentClass, false);
 		if (!isRoleFieldImplemented(knowledgeFields, String.class, "id")) {
-			throw new AnnotationProcessorException("The field public String id, which is mandatory in component classes, is missing.");
+			throw new AnnotationCheckerException("The field public String id, which is mandatory in component classes, is missing.");
 		}
 		
 		// check if the class contains all fields from the role classes
@@ -60,23 +77,23 @@ public class RolesAnnotationChecker {
 		for (PlaysRole role : roleAnnotations) {
 			Class<?> roleClass = role.value();
 			if (!roleClass.isAnnotationPresent(Role.class)) {
-				throw new AnnotationProcessorException("The class " + roleClass.getSimpleName() + " is used as a role class, but it is not annotated by the @" + Role.class.getSimpleName() + " annotation.");
+				throw new AnnotationCheckerException("The class " + roleClass.getSimpleName() + " is used as a role class, but it is not annotated by the @" + Role.class.getSimpleName() + " annotation.");
 			}
 			
 			checkRoleFieldsImplementation(knowledgeFields, roleClass);
 		}		
 	}
 	
-	public void checkRolesImplementation(List<Parameter> parameters, CoordinatorRole[] coordinatorRoleAnnotations, 
-			MemberRole[] memberRoleAnnotations) throws AnnotationProcessorException {
+	void checkRolesImplementation(List<Parameter> parameters, CoordinatorRole[] coordinatorRoleAnnotations, 
+			MemberRole[] memberRoleAnnotations) throws AnnotationCheckerException {
 		if (parameters == null) {
-			throw new AnnotationProcessorException("The input parameters cannot be null.");
+			throw new AnnotationCheckerException("The input parameters cannot be null.");
 		}
 		if (coordinatorRoleAnnotations == null) {
-			throw new AnnotationProcessorException("The coordinatorRoles parameter cannot be null.");
+			throw new AnnotationCheckerException("The coordinatorRoles parameter cannot be null.");
 		}
 		if (memberRoleAnnotations == null) {
-			throw new AnnotationProcessorException("The memberRoles parameter cannot be null.");
+			throw new AnnotationCheckerException("The memberRoles parameter cannot be null.");
 		}
 		
 		for (Parameter parameter : parameters) {
@@ -87,9 +104,9 @@ public class RolesAnnotationChecker {
 	}
 	
 	private void checkKnowledgePath(Type type, KnowledgePath knowledgePath, CoordinatorRole[] coordinatorRoleAnnotations, 
-			MemberRole[] memberRoleAnnotations) throws AnnotationProcessorException {
+			MemberRole[] memberRoleAnnotations) throws AnnotationCheckerException {
 		if (knowledgePath.getNodes().size() < 2) {
-			throw new AnnotationProcessorException("A knowledge path must contain at least two elements (coord/member and field name).");
+			throw new AnnotationCheckerException("A knowledge path must contain at least two elements (coord/member and field name).");
 		}
 		
 		// just choose coordinator / member role classes
@@ -104,7 +121,7 @@ public class RolesAnnotationChecker {
 				roleClasses.add(role.value());
 			}
 		} else {
-			throw new AnnotationProcessorException("A knowledge path does not start with coord/member.");
+			throw new AnnotationCheckerException("A knowledge path does not start with coord/member.");
 		}
 		
 		// go through the path, evaluate inner knowledge paths of PathNodeMapKey-s
@@ -125,13 +142,13 @@ public class RolesAnnotationChecker {
 				}
 			}
 		} else {
-			throw new AnnotationProcessorException("A knowledge path's second element should be a field name.");
+			throw new AnnotationCheckerException("A knowledge path's second element should be a field name.");
 		}
 
 		// test the knowledge path against all roles
 		for (Class<?> roleClass : roleClasses) {
 			if (!isFieldInRole(type, fieldNameSequence, roleClass)) {
-				throw new AnnotationProcessorException("The knowledge path '" + knowledgePath.toString() 
+				throw new AnnotationCheckerException("The knowledge path '" + knowledgePath.toString() 
 						+ "' is not valid for the role '" + roleClass.getSimpleName() + "'.");
 			}
 		}
@@ -181,14 +198,14 @@ public class RolesAnnotationChecker {
 	 * The function does not return a value, it either succeeds, or it throws an exception.
 	 * @param knowledgeFields Fields of the component class (can be obtained by {@link RolesAnnotationChecker#getNonLocalKnowledgeFields})
 	 * @param roleClass The class representing a role
-	 * @throws AnnotationProcessorException
+	 * @throws AnnotationCheckerException
 	 */
-	private void checkRoleFieldsImplementation(List<Field> knowledgeFields, Class<?> roleClass) throws AnnotationProcessorException {
+	private void checkRoleFieldsImplementation(List<Field> knowledgeFields, Class<?> roleClass) throws AnnotationCheckerException {
 		List<Field> roleFields = getNonLocalKnowledgeFields(roleClass, true);
 		
 		for (Field roleField : roleFields) {
 			if (!isRoleFieldImplemented(knowledgeFields, roleField.getGenericType(), roleField.getName())) {
-				throw new AnnotationProcessorException("The field " + roleClass.getSimpleName() + "."
+				throw new AnnotationCheckerException("The field " + roleClass.getSimpleName() + "."
 						+ roleField.getName() + " is not implemented (or has a different type than " 
 						+ roleField.getGenericType() + ").");
 			}

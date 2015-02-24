@@ -165,6 +165,8 @@ public class AnnotationProcessor {
 	
 	Cloner cloner;
 	
+	AnnotationChecker[] checkers;
+	
 	/**
 	 * Initializes the processor with the given model factory and extensions.
 	 * All the model elements produced by the processor will be created via the
@@ -178,9 +180,13 @@ public class AnnotationProcessor {
 	 *            one or more classes extending the <code>AnnotationProcessorExtensionPoint</code> that provide additional processing functionality
 	 * @param knowledgeMangerFactory knowledge manager factory to be used
 	 */
-	@SuppressWarnings("rawtypes")
 	public AnnotationProcessor(RuntimeMetadataFactory factory, RuntimeMetadata model, KnowledgeManagerFactory knowledgeMangerFactory, 
 			AnnotationProcessorExtensionPoint... extensions) {
+		this(factory, model, knowledgeMangerFactory, Arrays.asList(new RolesAnnotationChecker()), extensions);
+	}
+	
+	AnnotationProcessor(RuntimeMetadataFactory factory, RuntimeMetadata model, KnowledgeManagerFactory knowledgeMangerFactory, 
+			List<AnnotationChecker> annotationCheckers, AnnotationProcessorExtensionPoint... extensions) {
 		this.factory = factory;
 		this.model = model;
 		if (extensions.length == 0) {
@@ -190,6 +196,12 @@ public class AnnotationProcessor {
 		}
 		this.knowledgeManagerFactory = knowledgeMangerFactory;	
 		this.cloner = new Cloner();
+		if (annotationCheckers != null) {
+			this.checkers = annotationCheckers.toArray(new AnnotationChecker[0]);
+		} else {
+			this.checkers = new AnnotationChecker[0];
+		}
+		
 		knownEnsembleDefinitions = new HashSet<Class>();
 	}
 	
@@ -243,6 +255,15 @@ public class AnnotationProcessor {
 			ci.getEnsembleControllers().add(ec);
 		}
 		
+		for (AnnotationChecker checker : checkers) {
+			try {
+				checker.validateComponent(componentObj, ci);
+			} catch (AnnotationCheckerException e) {
+				throw new AnnotationProcessorException("Component " + componentObj.getClass().getName() + " is invalid. "
+						+ checker.getClass().getSimpleName() + ": " + e.getMessage(), e);
+			}
+		}
+		
 		model.getComponentInstances().add(ci);
 		
 		return ci;
@@ -280,6 +301,16 @@ public class AnnotationProcessor {
 		}
 
 		EnsembleDefinition ed = createEnsembleDefinition(ensembleClass);
+		
+		for (AnnotationChecker checker : checkers) {
+			try {
+				checker.validateEnsemble(ensembleClass, ed);
+			} catch (AnnotationCheckerException e) {
+				throw new AnnotationProcessorException("Ensemble " + ensembleClass.getName() + " is invalid. "
+						+ checker.getClass().getSimpleName() + ": " + e.getMessage(), e);
+			}
+		}
+		
 		model.getEnsembleDefinitions().add(ed);
 		// Create ensemble controllers for all the already-processed component instance definitions
 		for (ComponentInstance ci: model.getComponentInstances()) {
@@ -975,7 +1006,7 @@ public class AnnotationProcessor {
 	 * In case there is <i>not</i> <b>exactly one, public, static</b> method with the requested annotation, it throws an exception.
 	 * </p>
 	 */
-	Method getAnnotatedMethodInEnsemble(Class<?> clazz,
+	static Method getAnnotatedMethodInEnsemble(Class<?> clazz,
 			Class<? extends Annotation> annotationClass)
 			throws AnnotationProcessorException {
 		Method foundMethod = null;
