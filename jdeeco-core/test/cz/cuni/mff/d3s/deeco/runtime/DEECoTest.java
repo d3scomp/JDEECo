@@ -320,64 +320,6 @@ public class DEECoTest {
 	}	
 	
 	/**
-	 * Tests if the DEECo supports a basic legacy workflow (first adding components, then ensembles, then starting).
-	 * @throws DEECoException
-	 * @throws AnnotationProcessorException
-	 */
-	@Test
-	public void testBasicWorkflow() throws DEECoException, AnnotationProcessorException
-	{
-		DEECo deeco = new DEECo();		
-		
-		deeco.deployComponent(new CorrectC1());
-		deeco.deployComponent(new CorrectC2());
-		deeco.deployEnsemble(CorrectE1.class);
-		
-		deeco.start();
-		deeco.stop();
-		// TODO: Is there an easy way to check whether all necessary tasks and definitions have been added? 
-	}
-	
-	/**
-	 * Tests if the DEECo supports a basic legacy workflow (first adding ensembles, then components, then starting).
-	 * @throws DEECoException
-	 * @throws AnnotationProcessorException
-	 */
-	@Test
-	public void testBasicWorkflow2() throws DEECoException, AnnotationProcessorException
-	{
-		DEECo deeco = new DEECo();		
-		
-		deeco.deployEnsemble(CorrectE1.class);
-		deeco.deployComponent(new CorrectC1());		
-		deeco.deployComponent(new CorrectC2());		
-		
-		deeco.start();
-		deeco.stop();
-		// TODO: Is there an easy way to check whether all necessary tasks and definitions have been added?
-	}
-	
-	/**
-	 * Tests if the DEECo supports the dynamic deployment workflow (first starting, then deploying components and ensembles).
-	 * @throws DEECoException
-	 * @throws AnnotationProcessorException
-	 */
-	@Test
-	public void testDynamicDeploymentWorkflow() throws DEECoException, AnnotationProcessorException
-	{
-		DEECo deeco = new DEECo();		
-		deeco.start();
-		
-		deeco.deployComponent(new CorrectC1());
-		deeco.deployComponent(new CorrectC2());
-		deeco.deployEnsemble(CorrectE1.class);
-		
-		deeco.stop();
-		// TODO: Is there an easy way to check whether all necessary tasks and definitions have been added?
-	}
-	
-	
-	/**
 	 * Tests if the DEECo can detect duplicate start calls and react by throwing a correct exception.
 	 * @throws DEECoException
 	 */
