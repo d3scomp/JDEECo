@@ -26,15 +26,13 @@ JNIEXPORT void JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNeTNative_n
 	//std::cout << "nativeRegister: Begin" << std::endl;
 
 	if (JDEECoRuntime::findRuntime(env, id) != NULL) {
-		return;
+		throw "Runtime already registered";
 	}
 
 	JavaVM *jvm;
 	jint status = env->GetJavaVM(&jvm);
 	if (JNI_OK == status) {
 		JDEECoRuntime::addRuntime(new JDEECoRuntime(env->NewGlobalRef(object), jvm, id));
-
-		JDEECoRuntime::findRuntime(env, id);
 
 //  XXX: If simulation is repeated and runtimes are re-registered, then this should be called somewhere in the cleanup
 //	env->ReleaseStringUTFChars(id, cstring);
