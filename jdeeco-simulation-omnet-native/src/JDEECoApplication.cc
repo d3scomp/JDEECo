@@ -25,7 +25,7 @@ Define_Module(JDEECoApplication);
 
 void JDEECoApplication::initialize(int stage) {
     if (stage == 1) {
-        id = par("id").stringValue();
+        id = par("id").longValue();
         lowerLayerIn = findGate("lowerLayerIn");
         lowerLayerOut = findGate("lowerLayerOut");
 
@@ -78,7 +78,7 @@ void JDEECoApplication::sendPacket(JDEECoPacket *packet,
     }
 }
 
-const char * JDEECoApplication::getModuleId() {
+const NodeId JDEECoApplication::getModuleId() {
     return id;
 }
 

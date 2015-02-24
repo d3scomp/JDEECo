@@ -28,7 +28,7 @@ public class OMNeTNative {
 	 * @param host
 	 *            java site host
 	 */
-	public static native void nativeRegister(Object host, String id);
+	public static native void nativeRegister(Object host, int id);
 
 	/**
 	 * Sends given array of bytes to the specified recipient. Do not change this method without changing its C
@@ -41,7 +41,7 @@ public class OMNeTNative {
 	 * @param recipient
 	 *            recipient id
 	 */
-	public static native void nativeSendPacket(String id, byte[] data, String recipient);
+	public static native void nativeSendPacket(int id, byte[] data, String recipient);
 
 	/**
 	 * Starts the simulation and blocks until its finished. Do not change this method without changing its C
@@ -56,7 +56,7 @@ public class OMNeTNative {
 	 * @param absoluteTime
 	 * @param nodeId
 	 */
-	public static native void nativeCallAt(double absoluteTime, String nodeId);
+	public static native void nativeCallAt(double absoluteTime, int nodeId);
 
 	/**
 	 * Checks whenever the position info is available
@@ -65,7 +65,7 @@ public class OMNeTNative {
 	 *            Id of the node to check
 	 * @return True if available, false otherwise
 	 */
-	public native boolean nativeIsPositionInfoAvailable(String nodeId);
+	public native boolean nativeIsPositionInfoAvailable(int nodeId);
 
 	/**
 	 * Gets node position X coordinate
@@ -74,7 +74,7 @@ public class OMNeTNative {
 	 *            Node id
 	 * @return Position in meters
 	 */
-	public static native double nativeGetPositionX(String nodeId);
+	public static native double nativeGetPositionX(int nodeId);
 
 	/**
 	 * Gets node position Y coordinate
@@ -83,7 +83,7 @@ public class OMNeTNative {
 	 *            Node id
 	 * @return Position in meters
 	 */
-	public static native double nativeGetPositionY(String nodeId);
+	public static native double nativeGetPositionY(int nodeId);
 
 	/**
 	 * Gets node position Z coordinate
@@ -92,7 +92,7 @@ public class OMNeTNative {
 	 *            Node id
 	 * @return Position in meters
 	 */
-	public static native double nativeGetPositionZ(String nodeId);
+	public static native double nativeGetPositionZ(int nodeId);
 
 	/**
 	 * Sets native position
@@ -106,7 +106,7 @@ public class OMNeTNative {
 	 * @param valZ
 	 *            New Z position
 	 */
-	public static native void nativeSetPosition(String nodeId, double valX, double valY, double valZ);
+	public static native void nativeSetPosition(int nodeId, double valX, double valY, double valZ);
 
 	/**
 	 * Converts OMNeT native time to JDEECo time

@@ -2,21 +2,22 @@
 #define JDEECORUNTIME_H
 
 #include <jni.h>
-
 #include <vector>
+
+#include "simulation.h"
 
 class JDEECoRuntime {
 public:
 	jobject host;
 	JavaVM *jvm;
-	const char * id;
+	NodeId id;
 	double firstCallAt;
 
-	JDEECoRuntime(jobject host, JavaVM *jvm, const char *id);
+	JDEECoRuntime(jobject host, JavaVM *jvm, NodeId id);
 
 	// Runtime registry
-	static JDEECoRuntime* findRuntime(const char *id);
-	static JDEECoRuntime* findRuntime(JNIEnv *env, jstring id);
+	static JDEECoRuntime* findRuntime(NodeId id);
+	static JDEECoRuntime* findRuntime(JNIEnv *env, NodeId id);
 	static void addRuntime(JDEECoRuntime* runtime);
 	static void clearAll();
 

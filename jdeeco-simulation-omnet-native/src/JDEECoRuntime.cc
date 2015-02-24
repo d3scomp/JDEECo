@@ -4,14 +4,14 @@
 
 #include <omnetpp.h>
 
-JDEECoRuntime::JDEECoRuntime(jobject host, JavaVM *jvm, const char *id) {
+JDEECoRuntime::JDEECoRuntime(jobject host, JavaVM *jvm, NodeId id) {
 	this->jvm = jvm;
 	this->host = host;
 	this->id = id;
 	this->firstCallAt = std::numeric_limits<double>::min();
 }
 
-JDEECoRuntime* JDEECoRuntime::findRuntime(const char *id) {
+JDEECoRuntime* JDEECoRuntime::findRuntime(NodeId id) {
 	JDEECoRuntime *result = NULL;
 
 	//std::cout << "findRuntime: " << id << " Begin" << std::endl;
@@ -21,7 +21,7 @@ JDEECoRuntime* JDEECoRuntime::findRuntime(const char *id) {
 	for (std::vector<JDEECoRuntime *>::iterator it = jDEECoRuntimes.begin();
 			it != jDEECoRuntimes.end(); ++it) {
 		//std::cout << "findRuntime: runtime with id " << (*it)->id << std::endl;
-		if (opp_strcmp((*it)->id, id) == 0) {
+		if ((*it)->id == id) {
 			result = *it;
 			break;
 		}
@@ -31,13 +31,11 @@ JDEECoRuntime* JDEECoRuntime::findRuntime(const char *id) {
 	return result;
 }
 
-JDEECoRuntime* JDEECoRuntime::findRuntime(JNIEnv *env, jstring id) {
+JDEECoRuntime* JDEECoRuntime::findRuntime(JNIEnv *env, NodeId id) {
 	JDEECoRuntime *result = NULL;
-	const char *cstring = env->GetStringUTFChars(id, 0);
 
-	result = findRuntime(cstring);
+	result = findRuntime(id);
 
-	env->ReleaseStringUTFChars(id, cstring);
 	return result;
 }
 

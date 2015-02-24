@@ -25,7 +25,7 @@ public class OMNeTSimulation implements DEECoPlugin {
 			binding.put(node.getId(), listener);
 			
 			// Do the native register
-			OMNeTNative.nativeCallAt(OMNeTNative.timeToOmnet(time), String.valueOf(node.getId()));
+			OMNeTNative.nativeCallAt(OMNeTNative.timeToOmnet(time), node.getId());
 		}
 
 		@Override
@@ -81,7 +81,7 @@ public class OMNeTSimulation implements DEECoPlugin {
 		if (!hosts.containsKey(container.getId())) {
 			Host host = new Host(container.getId());
 			hosts.put(host.getId(), host);
-			OMNeTNative.nativeRegister(host, String.valueOf(host.getId()));
+			OMNeTNative.nativeRegister(host, host.getId());
 			System.out.println("Registered host " + host.getId());
 		} else {
 			throw new UnsupportedOperationException("Host with this id is already registered");

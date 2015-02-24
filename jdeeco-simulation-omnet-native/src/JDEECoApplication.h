@@ -28,7 +28,7 @@
  */
 class JDEECoApplication: public cSimpleModule,
         public JDEECoModule {
-    const char * id;
+    NodeId id;
     std::string color;
     std::string modelURL;
     double modelScale;
@@ -55,7 +55,7 @@ protected:
     virtual void handleMessage(cMessage *msg);
 public:
     JDEECoApplication() {}
-    virtual const char *getModuleId();
+    virtual const NodeId getModuleId();
     virtual void sendPacket(JDEECoPacket *packet, const char *recipient);
     virtual void registerCallbackAt(double absoluteTime, cMessage *msg);
 

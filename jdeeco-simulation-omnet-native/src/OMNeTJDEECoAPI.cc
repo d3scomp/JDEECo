@@ -22,7 +22,7 @@ JNIEXPORT jdouble JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNeTNativ
 }
 
 JNIEXPORT void JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNeTNative_nativeRegister(
-		JNIEnv *env, jclass, jobject object, jstring id) {
+		JNIEnv *env, jclass, jobject object, jint id) {
 	//std::cout << "nativeRegister: Begin" << std::endl;
 
 	if (JDEECoRuntime::findRuntime(env, id) != NULL) {
@@ -32,15 +32,13 @@ JNIEXPORT void JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNeTNative_n
 	JavaVM *jvm;
 	jint status = env->GetJavaVM(&jvm);
 	if (JNI_OK == status) {
-		const char *cstring = env->GetStringUTFChars(id, 0);
-
-		JDEECoRuntime::addRuntime(new JDEECoRuntime(env->NewGlobalRef(object), jvm, cstring));
+		JDEECoRuntime::addRuntime(new JDEECoRuntime(env->NewGlobalRef(object), jvm, id));
 
 		JDEECoRuntime::findRuntime(env, id);
 
 //  XXX: If simulation is repeated and runtimes are re-registered, then this should be called somewhere in the cleanup
 //	env->ReleaseStringUTFChars(id, cstring);
-		std::cout << "nativeRegister: JDEECo runtime created for " << cstring << std::endl;
+		std::cout << "nativeRegister: JDEECo runtime created for " << id << std::endl;
 	} else {
 		std::cerr << "nativeRegister: JVM could not be retrieved" << std::endl;
 	}
@@ -48,7 +46,7 @@ JNIEXPORT void JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNeTNative_n
 }
 
 JNIEXPORT void JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNeTNative_nativeSendPacket(
-		JNIEnv *env, jclass, jstring id, jbyteArray packet,
+		JNIEnv *env, jclass, jint id, jbyteArray packet,
 		jstring recipient) {
 	//std::cout << "nativeSendPacket: Begin" << std::endl;
 	JDEECoModule *module = JDEECoModule::findModule(env, id);
@@ -87,7 +85,7 @@ JNIEXPORT void JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNeTNative_n
 }
 
 JNIEXPORT void JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNeTNative_nativeCallAt(
-		JNIEnv *env, jclass, jdouble absoluteTime, jstring id) {
+		JNIEnv *env, jclass, jdouble absoluteTime, jint id) {
 	//std::cout << "nativeCallAt-C: Begin" << std::endl;
 	if (cSimulation::getActiveSimulation() != NULL) {
 		JDEECoModule *module = JDEECoModule::findModule(env, id);
@@ -108,7 +106,7 @@ JNIEXPORT void JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNeTNative_n
 }
 
 JNIEXPORT jboolean JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNeTNative_nativeIsPositionInfoAvailable(
-		JNIEnv *env, jobject, jstring id) {
+		JNIEnv *env, jobject, jint id) {
 	//std::cout << "nativeIsPositionInfoAvailable: Begin" << std::endl;
 	jboolean result = JNI_FALSE;
 	JDEECoModule *module = JDEECoModule::findModule(env, id);
@@ -124,7 +122,7 @@ JNIEXPORT jboolean JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNeTNati
 // XXX: These three methods should be replaced by one method that returns a triplet (X,Y,Z)
 
 JNIEXPORT jdouble JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNeTNative_nativeGetPositionX(
-		JNIEnv *env, jclass, jstring id) {
+		JNIEnv *env, jclass, jint id) {
 
 	//std::cout << "nativeGetPositionX: Begin" << std::endl;
 	jdouble result = 0;
@@ -139,7 +137,7 @@ JNIEXPORT jdouble JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNeTNativ
 }
 
 JNIEXPORT jdouble JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNeTNative_nativeGetPositionY(
-		JNIEnv *env, jclass, jstring id) {
+		JNIEnv *env, jclass, jint id) {
 	//std::cout << "nativeGetPositionY: Begin" << std::endl;
 	jdouble result = 0;
 	JDEECoModule *module = JDEECoModule::findModule(env, id);
@@ -153,7 +151,7 @@ JNIEXPORT jdouble JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNeTNativ
 }
 
 JNIEXPORT jdouble JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNeTNative_nativeGetPositionZ(
-		JNIEnv *env, jclass, jstring id) {
+		JNIEnv *env, jclass, jint id) {
 	//std::cout << "nativeGetPositionZ: Begin" << std::endl;
 	jdouble result = 0;
 	JDEECoModule *module = JDEECoModule::findModule(env, id);
@@ -167,7 +165,7 @@ JNIEXPORT jdouble JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNeTNativ
 }
 
 JNIEXPORT void JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNeTNative_nativeSetPosition
-(JNIEnv *env, jclass, jstring id, jdouble valX, jdouble valY, jdouble valZ) {
+(JNIEnv *env, jclass, jint id, jdouble valX, jdouble valY, jdouble valZ) {
 	JDEECoModule *module = JDEECoModule::findModule(env, id);
 
 	if (module != NULL) {

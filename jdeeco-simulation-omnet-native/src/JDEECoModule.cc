@@ -109,19 +109,17 @@ void JDEECoModule::initialize() {
 	//std::cout << "initialize: " << this->getModuleId() << " End" << std::endl;
 }
 
-JDEECoModule* JDEECoModule::findModule(JNIEnv *env, jstring id) {
+JDEECoModule* JDEECoModule::findModule(JNIEnv *env, jint id) {
 	JDEECoModule *result = NULL;
-	const char *cstring = env->GetStringUTFChars(id, 0);
 
 	for (std::vector<JDEECoModule *>::iterator it = jDEECoModules.begin();
 			it != jDEECoModules.end(); ++it) {
-		if (opp_strcmp((*it)->getModuleId(), cstring) == 0) {
+		if ((*it)->getModuleId() == id) {
 			result = *it;
 			break;
 		}
 	}
 
-	env->ReleaseStringUTFChars(id, cstring);
 	return result;
 }
 

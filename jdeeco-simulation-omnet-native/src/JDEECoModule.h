@@ -14,6 +14,7 @@
 #include "csimplemodule.h"
 #include "JDEECoPacket_m.h"
 #include "JDEECoRuntime.h"
+#include "simulation.h"
 
 #define JDEECO_TIMER_MESSAGE "@jDEECoTimerMessage@"
 #define JDEECO_DATA_MESSAGE "@jDEECoPacketMessage@"
@@ -28,7 +29,7 @@ public:
 
 	void callAt(double absoluteTime);
 
-	virtual const char * getModuleId() = 0;
+	virtual const NodeId getModuleId() = 0;
 	virtual void sendPacket(JDEECoPacket *packet, const char *recipient) = 0;
 	virtual void registerCallbackAt(double absoluteTime, cMessage *msg) = 0;
 	virtual bool isPositionInfoAvailable() = 0;
@@ -37,7 +38,7 @@ public:
 	virtual double getPositionZ() = 0;
 	virtual void setPosition(double valX, double valY, double valZ) = 0;
 
-	static JDEECoModule* findModule(JNIEnv *env, jstring id);
+	static JDEECoModule* findModule(JNIEnv *env, jint id);
 	static void clearAll();
 
 protected:
