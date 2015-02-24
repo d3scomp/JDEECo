@@ -232,21 +232,6 @@ public class DEECoTest {
 		verifyPluginInitOrder(order9, deeco, independentBase, independentExtension);
 	}
 	
-
-	
-	/**
-	 * Tests if the DEECo can detect a duplicate ensemble definition and react by throwing a correct exception.
-	 * @throws DEECoException
-	 * @throws AnnotationProcessorException
-	 */
-	@Test(expected = cz.cuni.mff.d3s.deeco.runtime.DuplicateEnsembleDefinitionException.class)
-	public void testDuplicateEnsembleDefinition() throws DEECoException, AnnotationProcessorException
-	{	
-		DEECoNode deeco = new DEECoNode(timer);
-		deeco.deployEnsemble(CorrectE1.class);
-		deeco.deployEnsemble(CorrectE1.class);		
-	}
-	
 	/**
 	 * Tests if the DEECo can detect a missing plugin dependency and react by throwing a correct exception.
 	 * @throws DEECoException 
