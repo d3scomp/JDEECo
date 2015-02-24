@@ -84,6 +84,14 @@ public class RolesAnnotationChecker implements AnnotationChecker {
 		}		
 	}
 	
+	/**
+	 * Checks that all of the given parameter's knowledge paths exist in given roles. Works for only for
+	 * ensembles membership condition and knowledge exchange functions.
+	 * @param parameters The processed parameters of the function
+	 * @param coordinatorRoleAnnotations An array of coordinator role annotations
+	 * @param memberRoleAnnotations An array of member role annotations
+	 * @throws AnnotationCheckerException
+	 */
 	void checkRolesImplementation(List<Parameter> parameters, CoordinatorRole[] coordinatorRoleAnnotations, 
 			MemberRole[] memberRoleAnnotations) throws AnnotationCheckerException {
 		if (parameters == null) {
@@ -103,6 +111,15 @@ public class RolesAnnotationChecker implements AnnotationChecker {
 		
 	}
 	
+	/**
+	 * Checks that a given knowledge path is valid in given roles. Works only for ensembles membership
+	 * condition and knowledge exchange functions.
+	 * @param type Type of the expression
+	 * @param knowledgePath The knowledge path
+	 * @param coordinatorRoleAnnotations An array of coordinator role annotations
+	 * @param memberRoleAnnotations An array of member role annotations
+	 * @throws AnnotationCheckerException
+	 */
 	private void checkKnowledgePath(Type type, KnowledgePath knowledgePath, CoordinatorRole[] coordinatorRoleAnnotations, 
 			MemberRole[] memberRoleAnnotations) throws AnnotationCheckerException {
 		if (knowledgePath.getNodes().size() < 2) {
@@ -153,7 +170,7 @@ public class RolesAnnotationChecker implements AnnotationChecker {
 			}
 		}
 	}
-	
+
 	boolean isFieldInRole(Type type, List<String> fieldNameSequence, Class<?> roleClass) {
 		Type fieldType = getTypeInRole(fieldNameSequence, roleClass);
 		if (fieldType == null) {

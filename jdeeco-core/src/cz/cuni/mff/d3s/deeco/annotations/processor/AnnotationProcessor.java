@@ -185,6 +185,22 @@ public class AnnotationProcessor {
 		this(factory, model, knowledgeMangerFactory, Arrays.asList(new RolesAnnotationChecker()), extensions);
 	}
 	
+	/**
+	 * Initializes the processor with the given model factory and extensions.
+	 * All the model elements produced by the processor will be created via the
+	 * provided factory and added to the provided model.
+	 * Additionaly, component/ensemble checkers can be specified (turned off) for testing purposes.
+	 * 
+	 * @param factory
+	 *            EMF runtime metadata factory
+	 * @param model
+	 *            runtime metadata model to be updated by the processor
+	 * @param extensions
+	 *            one or more classes extending the <code>AnnotationProcessorExtensionPoint</code> that provide additional processing functionality
+	 * @param annotationCheckers
+	 * 			  instances of classes that check validity of components/classes.
+	 * @param knowledgeMangerFactory knowledge manager factory to be used
+	 */
 	AnnotationProcessor(RuntimeMetadataFactory factory, RuntimeMetadata model, KnowledgeManagerFactory knowledgeMangerFactory, 
 			List<AnnotationChecker> annotationCheckers, AnnotationProcessorExtensionPoint... extensions) {
 		this.factory = factory;
