@@ -9,6 +9,7 @@ JDEECoModule::JDEECoModule() {
 	currentCallAtTime = std::numeric_limits<double>::min();
 	currentCallAtMessage = NULL;
 	initialized = false;
+	runtime = NULL;
 }
 
 JDEECoModule::~JDEECoModule() {
@@ -37,7 +38,6 @@ void JDEECoModule::callAt(double absoluteTime) {
 void JDEECoModule::onHandleMessage(cMessage *msg, double rssi) {
 	//std::cout << "jDEECoOnHandleMessage: " << getModuleId() << " Begin" << std::endl;
 	//std::cout << "jDEECoOnHandleMessage" << std::endl;
-	JDEECoRuntime* runtime = JDEECoRuntime::findRuntime(getModuleId());
 	if (runtime != NULL) {
 		JNIEnv *env;
 		//std::cout << "jDEECoOnHandleMessage: " << this->getModuleId() << " Before getting the environment" << std::endl;
@@ -93,7 +93,7 @@ void JDEECoModule::initialize() {
 	//std::cout << "initialize: " << this->getModuleId() << " Begin" << std::endl;
 	//std::cout << "initialize: " << this->getModuleId() << " Initializing jDEECo module: " << this->getModuleId() << std::endl;
 	if (!initialized) {
-		JDEECoRuntime *runtime = JDEECoRuntime::findRuntime(getModuleId());
+		runtime = JDEECoRuntime::findRuntime(getModuleId());
 
 		assert(runtime != NULL);
 

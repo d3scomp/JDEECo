@@ -13,6 +13,7 @@
 
 #include "csimplemodule.h"
 #include "JDEECoPacket_m.h"
+#include "JDEECoRuntime.h"
 
 #define JDEECO_TIMER_MESSAGE "@jDEECoTimerMessage@"
 #define JDEECO_DATA_MESSAGE "@jDEECoPacketMessage@"
@@ -41,16 +42,19 @@ public:
 
 protected:
 	bool initialized;
+	JDEECoRuntime *runtime;
 
-	//Needs to be called at the module initialization
+	// Needs to be called at the module initialization
 	void initialize();
-	//Needs to be called from the handleMessage method
+	// Needs to be called from the handleMessage method
 	void onHandleMessage(cMessage *msg, double rssi);
 
 private:
 	// XXX: This should be a hash map. Having it in a vector will be too slow when we have many nodes.
 	// XXX: We would better map java classes to C++ classes by reference, if possible
 	static std::vector<JDEECoModule*> jDEECoModules;
+
+
 };
 
 #endif /* JDEECOMODULE_H */
