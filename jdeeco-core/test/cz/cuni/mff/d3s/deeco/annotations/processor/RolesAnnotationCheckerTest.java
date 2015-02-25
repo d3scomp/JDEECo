@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.hamcrest.Matcher;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -46,6 +47,11 @@ public class RolesAnnotationCheckerTest {
 	@Rule
 	public ExpectedException exception = ExpectedException.none();
 	
+	
+	/*
+	 * Checks for the validateComponent method
+	 */
+	
 	@Test
 	public void checkValidateComponentTest() throws AnnotationCheckerException {
 		@Component
@@ -60,26 +66,43 @@ public class RolesAnnotationCheckerTest {
 		io.verify(rolesChecker).checkRolesImplementation(component);
 		io.verifyNoMoreInteractions();
 	}
+	
+	@Test
+	public void checkValidateComponentNullInstanceTest() throws AnnotationCheckerException {
+		exception.expect(AnnotationCheckerException.class);
+		exception.expectMessage("The input instance cannot be null.");
+		new RolesAnnotationChecker().validateComponent(null, null);
+	}
+	
+	
+	/*
+	 * Checks for the validateEnsemble method
+	 */
 
 	@Test
 	public void checkValidateEnsembleTest() throws AnnotationCheckerException {
+		@Role
+		class RoleClass1 { }
+		
+		@Role
+		class RoleClass2 { }
+		
 		@Ensemble
-		@CoordinatorRole(Integer.class)
-		@MemberRole(String.class) 
+		@CoordinatorRole(RoleClass1.class)
+		@MemberRole(RoleClass2.class) 
 		class EnsembleClass { }
 		
-		class IsListWithCoordinatorRoles extends ArgumentMatcher<CoordinatorRole[]> {
-			@Override
-			public boolean matches(Object argument) {
-				CoordinatorRole[] roles = (CoordinatorRole[]) argument;
-				return roles.length == 1 && roles[0].value() == Integer.class;
+		class IsListWithRoles extends ArgumentMatcher<Class<?>[]> {
+			private Class<?>[] roleList;
+			
+			public IsListWithRoles(Class<?>[] roles) {
+				roleList = roles;
 			}
-		}		
-		class IsListWithMemberRoles extends ArgumentMatcher<MemberRole[]> {
+			
 			@Override
 			public boolean matches(Object argument) {
-				MemberRole[] roles = (MemberRole[]) argument;
-				return roles.length == 1 && roles[0].value() == String.class;
+				Class<?>[] roles = (Class<?>[]) argument;
+				return Arrays.equals(roles, roleList);
 			}
 		}
 		
@@ -92,12 +115,67 @@ public class RolesAnnotationCheckerTest {
 		Mockito.doNothing().when(rolesChecker).checkRolesImplementation(any(), any(), any());
 		rolesChecker.validateEnsemble(EnsembleClass.class, ensembleDefinition);
 
+		IsListWithRoles coordinatorRolesMatcher = new IsListWithRoles(new Class<?>[] {RoleClass1.class});
+		IsListWithRoles memberRolesMatcher = new IsListWithRoles(new Class<?>[] {RoleClass2.class});
 		verify(rolesChecker, times(1)).validateEnsemble(EnsembleClass.class, ensembleDefinition);
 		verify(rolesChecker, times(1)).checkRolesImplementation(Mockito.refEq(ensembleDefinition.getMembership().getParameters()),
-				Mockito.argThat(new IsListWithCoordinatorRoles()), Mockito.argThat(new IsListWithMemberRoles()));
+				Mockito.argThat(coordinatorRolesMatcher), Mockito.argThat(memberRolesMatcher));
 		verify(rolesChecker, times(1)).checkRolesImplementation(Mockito.refEq(ensembleDefinition.getKnowledgeExchange().getParameters()), 
-				Mockito.argThat(new IsListWithCoordinatorRoles()), Mockito.argThat(new IsListWithMemberRoles()));
+				Mockito.argThat(coordinatorRolesMatcher), Mockito.argThat(memberRolesMatcher));
 		verifyNoMoreInteractions(rolesChecker);
+	}
+	
+	@Test
+	public void checkValidateEnsembleNullClassTest() throws AnnotationCheckerException {
+		exception.expect(AnnotationCheckerException.class);
+		exception.expectMessage("The input ensemble class cannot be null.");
+		new RolesAnnotationChecker().validateEnsemble(null, null);
+	}
+	
+	@Test
+	public void checkValidateEnsembleNullDefinitionTest() throws AnnotationCheckerException {
+		@Ensemble
+		class EnsembleClass { }
+		
+		exception.expect(AnnotationCheckerException.class);
+		exception.expectMessage("The input ensemble definition cannot be null.");
+		new RolesAnnotationChecker().validateEnsemble(EnsembleClass.class, null);
+	}
+	
+	@Test
+	public void checkValidateEnsembleInvalidCoordinatorRoleTest() throws AnnotationCheckerException {
+		class RoleClass { }
+		
+		@Ensemble
+		@CoordinatorRole(RoleClass.class)
+		class EnsembleClass { }
+		
+		RuntimeMetadataFactory factory = RuntimeMetadataFactory.eINSTANCE;
+		EnsembleDefinition ensembleDefinition = factory.createEnsembleDefinition();
+		ensembleDefinition.setMembership(factory.createCondition());
+		ensembleDefinition.setKnowledgeExchange(factory.createExchange());
+				
+		exception.expect(AnnotationCheckerException.class);
+		exception.expectMessage("The class RoleClass is used as a role class, but it is not annotated by the @" + Role.class.getSimpleName() + " annotation.");
+		new RolesAnnotationChecker().validateEnsemble(EnsembleClass.class, ensembleDefinition);
+	}
+	
+	@Test
+	public void checkValidateEnsembleInvalidMemRoleTest() throws AnnotationCheckerException {
+		class RoleClass { }
+		
+		@Ensemble
+		@MemberRole(RoleClass.class)
+		class EnsembleClass { }
+		
+		RuntimeMetadataFactory factory = RuntimeMetadataFactory.eINSTANCE;
+		EnsembleDefinition ensembleDefinition = factory.createEnsembleDefinition();
+		ensembleDefinition.setMembership(factory.createCondition());
+		ensembleDefinition.setKnowledgeExchange(factory.createExchange());
+		
+		exception.expect(AnnotationCheckerException.class);
+		exception.expectMessage("The class RoleClass is used as a role class, but it is not annotated by the @" + Role.class.getSimpleName() + " annotation.");
+		new RolesAnnotationChecker().validateEnsemble(EnsembleClass.class, ensembleDefinition);
 	}
 	
 	/*
@@ -565,7 +643,7 @@ public class RolesAnnotationCheckerTest {
 		RolesAnnotationChecker checker = spy(new RolesAnnotationChecker());
 		when(checker.isFieldInRole(any(), any(), any())).thenReturn(true);
 		
-		checker.checkRolesImplementation(new ArrayList<Parameter>(), new CoordinatorRole[0], new MemberRole[0]);
+		checker.checkRolesImplementation(new ArrayList<Parameter>(), new Class<?>[0], new Class<?>[0]);
 		
 		verify(checker, times(1)).checkRolesImplementation(any(), any(), any());
 		verifyNoMoreInteractions(checker);
@@ -575,21 +653,21 @@ public class RolesAnnotationCheckerTest {
 	public void checkRI2NullParametersTest() throws AnnotationCheckerException {
 		exception.expect(AnnotationCheckerException.class);
 		exception.expectMessage("The input parameters cannot be null.");
-		new RolesAnnotationChecker().checkRolesImplementation(null, new CoordinatorRole[0], new MemberRole[0]);
+		new RolesAnnotationChecker().checkRolesImplementation(null, new Class<?>[0], new Class<?>[0]);
 	}	
 	
 	@Test
 	public void checkRI2NullCoordinatorRolesTest() throws AnnotationCheckerException {
 		exception.expect(AnnotationCheckerException.class);
 		exception.expectMessage("The coordinatorRoles parameter cannot be null.");
-		new RolesAnnotationChecker().checkRolesImplementation(new ArrayList<Parameter>(), null, new MemberRole[0]);
+		new RolesAnnotationChecker().checkRolesImplementation(new ArrayList<Parameter>(), null, new Class<?>[0]);
 	}
 	
 	@Test
 	public void checkRI2NullMemberRolesTest() throws AnnotationCheckerException {
 		exception.expect(AnnotationCheckerException.class);
 		exception.expectMessage("The memberRoles parameter cannot be null.");
-		new RolesAnnotationChecker().checkRolesImplementation(new ArrayList<Parameter>(), new CoordinatorRole[0], null);
+		new RolesAnnotationChecker().checkRolesImplementation(new ArrayList<Parameter>(), new Class<?>[0], null);
 	}
 	
 	private List<Parameter> getTestParameters() throws ParseException, AnnotationCheckerException, AnnotationProcessorException {	
@@ -613,7 +691,7 @@ public class RolesAnnotationCheckerTest {
 		RolesAnnotationChecker checker = spy(new RolesAnnotationChecker());
 		when(checker.isFieldInRole(any(), any(), any())).thenReturn(false);
 		
-		checker.checkRolesImplementation(getTestParameters(), new CoordinatorRole[0], new MemberRole[0]);
+		checker.checkRolesImplementation(getTestParameters(), new Class<?>[0], new Class<?>[0]);
 		
 		verify(checker, times(1)).checkRolesImplementation(any(), any(), any());
 		verifyNoMoreInteractions(checker);
@@ -640,13 +718,12 @@ public class RolesAnnotationCheckerTest {
 			}
 		}
 		
-		CoordinatorRole[] coordinatorRoles = new CoordinatorRole[] {new RoleAnnotationImpl()};
-		MemberRole[] memberRoles = new MemberRole[] {new RoleAnnotationImpl()};
+		Class<?>[] roles = new Class<?>[] {RoleClass1.class};
 		
 		RolesAnnotationChecker checker = spy(new RolesAnnotationChecker());
 		when(checker.isFieldInRole(any(), any(), any())).thenReturn(false);
 		
-		checker.checkRolesImplementation(new ArrayList<Parameter>(), coordinatorRoles, memberRoles);
+		checker.checkRolesImplementation(new ArrayList<Parameter>(), roles, roles);
 		
 		verify(checker, times(1)).checkRolesImplementation(any(), any(), any());
 		verifyNoMoreInteractions(checker);
@@ -690,8 +767,8 @@ public class RolesAnnotationCheckerTest {
 			}
 		}
 		
-		CoordinatorRole[] coordinatorRoles = new CoordinatorRole[] {new RoleAnnotationImpl(RoleClass1.class), new RoleAnnotationImpl(RoleClass2.class)};
-		MemberRole[] memberRoles = new MemberRole[] {new RoleAnnotationImpl(RoleClass2.class), new RoleAnnotationImpl(RoleClass3.class)};;
+		Class<?>[] coordinatorRoles = new Class<?>[] {RoleClass1.class, RoleClass2.class};
+		Class<?>[] memberRoles = new Class<?>[] {RoleClass2.class, RoleClass3.class};
 		
 		RolesAnnotationChecker checker = spy(new RolesAnnotationChecker());
 		when(checker.isFieldInRole(any(), any(), any())).thenReturn(true);
@@ -733,8 +810,7 @@ public class RolesAnnotationCheckerTest {
 			}
 		}
 		
-		CoordinatorRole[] coordinatorRoles = new CoordinatorRole[] {new RoleAnnotationImpl()};
-		MemberRole[] memberRoles = new MemberRole[] {new RoleAnnotationImpl()};
+		Class<?>[] roles = new Class<?>[] {RoleClass1.class};
 		
 		Parameter param1 = RuntimeMetadataFactory.eINSTANCE.createParameter();
 		param1.setKind(ParameterKind.IN);
@@ -747,7 +823,7 @@ public class RolesAnnotationCheckerTest {
 		exception.expect(AnnotationCheckerException.class);
 		exception.expectMessage("The knowledge path '<COORDINATOR>.x' is not valid for the role 'RoleClass1'.");
 		
-		checker.checkRolesImplementation(Arrays.asList(param1), coordinatorRoles, memberRoles);
+		checker.checkRolesImplementation(Arrays.asList(param1), roles, roles);
 	}
 	
 }

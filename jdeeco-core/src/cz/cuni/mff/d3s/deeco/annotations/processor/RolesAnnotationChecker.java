@@ -34,13 +34,20 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
  */
 public class RolesAnnotationChecker implements AnnotationChecker {
 	
-	public void validateComponent(Object componentObj, ComponentInstance componentInstance) throws AnnotationCheckerException {
+	public void validateComponent(Object componentObj, ComponentInstance componentInstance) throws AnnotationCheckerException {		
 		checkRolesImplementation(componentObj);
 	}
 	
 	public void validateEnsemble(Class<?> ensembleClass, EnsembleDefinition ensembleDefinition) throws AnnotationCheckerException {
-		CoordinatorRole[] coordinatorRoles = ensembleClass.getAnnotationsByType(CoordinatorRole.class);
-		MemberRole[] memberRoles = ensembleClass.getAnnotationsByType(MemberRole.class);
+		if (ensembleClass == null) {
+			throw new AnnotationCheckerException("The input ensemble class cannot be null.");
+		}
+		if (ensembleDefinition == null) {
+			throw new AnnotationCheckerException("The input ensemble definition cannot be null.");
+		}
+		
+		Class<?>[] coordinatorRoles = RoleAnnotationsHelper.getCoordinatorRoleAnnotations(ensembleClass);
+		Class<?>[] memberRoles = RoleAnnotationsHelper.getMemberRoleAnnotations(ensembleClass);
 		if (coordinatorRoles.length > 1 || memberRoles.length > 1) {
 			throw new AnnotationCheckerException("Only one CoordinatorRole and one MemberRole annotation is allowed per ensemble.");
 		}
@@ -73,13 +80,8 @@ public class RolesAnnotationChecker implements AnnotationChecker {
 		}
 		
 		// check if the class contains all fields from the role classes
-		PlaysRole[] roleAnnotations = componentClass.getAnnotationsByType(PlaysRole.class);
-		for (PlaysRole role : roleAnnotations) {
-			Class<?> roleClass = role.value();
-			if (!roleClass.isAnnotationPresent(Role.class)) {
-				throw new AnnotationCheckerException("The class " + roleClass.getSimpleName() + " is used as a role class, but it is not annotated by the @" + Role.class.getSimpleName() + " annotation.");
-			}
-			
+		Class<?>[] roleAnnotations = RoleAnnotationsHelper.getPlaysRoleAnnotations(componentClass);
+		for (Class<?> roleClass : roleAnnotations) {			
 			checkRoleFieldsImplementation(knowledgeFields, roleClass);
 		}		
 	}
@@ -88,25 +90,25 @@ public class RolesAnnotationChecker implements AnnotationChecker {
 	 * Checks that all of the given parameter's knowledge paths exist in given roles. Works for only for
 	 * ensembles membership condition and knowledge exchange functions.
 	 * @param parameters The processed parameters of the function
-	 * @param coordinatorRoleAnnotations An array of coordinator role annotations
-	 * @param memberRoleAnnotations An array of member role annotations
+	 * @param coordinatorRoleAnnotations An array of coordinator role classes
+	 * @param memberRoleAnnotations An array of member role classes
 	 * @throws AnnotationCheckerException
 	 */
-	void checkRolesImplementation(List<Parameter> parameters, CoordinatorRole[] coordinatorRoleAnnotations, 
-			MemberRole[] memberRoleAnnotations) throws AnnotationCheckerException {
+	void checkRolesImplementation(List<Parameter> parameters, Class<?>[] coordinatorRoles, 
+			Class<?>[] memberRoles) throws AnnotationCheckerException {
 		if (parameters == null) {
 			throw new AnnotationCheckerException("The input parameters cannot be null.");
 		}
-		if (coordinatorRoleAnnotations == null) {
+		if (coordinatorRoles == null) {
 			throw new AnnotationCheckerException("The coordinatorRoles parameter cannot be null.");
 		}
-		if (memberRoleAnnotations == null) {
+		if (memberRoles == null) {
 			throw new AnnotationCheckerException("The memberRoles parameter cannot be null.");
 		}
 		
 		for (Parameter parameter : parameters) {
-			checkKnowledgePath(parameter.getGenericType(), parameter.getKnowledgePath(), coordinatorRoleAnnotations,
-					memberRoleAnnotations);
+			checkKnowledgePath(parameter.getGenericType(), parameter.getKnowledgePath(), 
+					coordinatorRoles, memberRoles);
 		}
 		
 	}
@@ -116,33 +118,30 @@ public class RolesAnnotationChecker implements AnnotationChecker {
 	 * condition and knowledge exchange functions.
 	 * @param type Type of the expression
 	 * @param knowledgePath The knowledge path
-	 * @param coordinatorRoleAnnotations An array of coordinator role annotations
-	 * @param memberRoleAnnotations An array of member role annotations
+	 * @param coordinatorRoleAnnotations An array of coordinator role classes
+	 * @param memberRoleAnnotations An array of member role classes
 	 * @throws AnnotationCheckerException
 	 */
-	private void checkKnowledgePath(Type type, KnowledgePath knowledgePath, CoordinatorRole[] coordinatorRoleAnnotations, 
-			MemberRole[] memberRoleAnnotations) throws AnnotationCheckerException {
+	private void checkKnowledgePath(Type type, KnowledgePath knowledgePath, Class<?>[] coordinatorRoles, 
+			Class<?>[] memberRoles) throws AnnotationCheckerException {
 		if (knowledgePath.getNodes().size() < 2) {
 			throw new AnnotationCheckerException("A knowledge path must contain at least two elements (coord/member and field name).");
 		}
 		
 		// just choose coordinator / member role classes
-		List<Class<?>> roleClasses = new ArrayList<>();
+		Class<?>[] roleClasses;
 		PathNode first = knowledgePath.getNodes().get(0);
 		if (first instanceof PathNodeCoordinator) {
-			for (CoordinatorRole role : coordinatorRoleAnnotations) {
-				roleClasses.add(role.value());
-			}
+			roleClasses = coordinatorRoles;
 		} else if (first instanceof PathNodeMember) {
-			for (MemberRole role : memberRoleAnnotations) {
-				roleClasses.add(role.value());
-			}
+			roleClasses = memberRoles;
 		} else {
 			throw new AnnotationCheckerException("A knowledge path does not start with coord/member.");
 		}
 		
 		// go through the path, evaluate inner knowledge paths of PathNodeMapKey-s
-		// TODO extract to individual method and use it to check component processes (that they use only fields available in the component)
+		// TODO extract to individual method and use it to check component processes 
+		// (that they use only fields available in the component)
 		PathNode second = knowledgePath.getNodes().get(1);
 		List<String> fieldNameSequence = new ArrayList<>();
 		if (second instanceof PathNodeComponentId) {
@@ -153,8 +152,8 @@ public class RolesAnnotationChecker implements AnnotationChecker {
 				if (pn instanceof PathNodeField) {
 					fieldNameSequence.add(((PathNodeField)pn).getName());
 				} else if (pn instanceof PathNodeMapKey) {
-					checkKnowledgePath(/*TODO*/null, ((PathNodeMapKey)pn).getKeyPath(), coordinatorRoleAnnotations,
-							memberRoleAnnotations);
+					checkKnowledgePath(/*TODO*/null, ((PathNodeMapKey)pn).getKeyPath(), 
+							coordinatorRoles, memberRoles);
 					break; // we don't check after [], but we actually could
 				}
 			}
