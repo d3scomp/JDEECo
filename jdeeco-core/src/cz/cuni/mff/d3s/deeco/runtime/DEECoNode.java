@@ -63,14 +63,28 @@ public class DEECoNode implements DEECoContainer {
 	 */
 	Map<Class<? extends DEECoPlugin>, DEECoPlugin> pluginsMap;
 	
-	public DEECoNode(int id, Timer Timer, DEECoPlugin... plugins) throws DEECoException {
+	public DEECoNode(int id, Timer timer, DEECoPlugin... plugins) throws DEECoException {
 		this.nodeId = id;
-		pluginsMap= new HashMap<>();
 		model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
 		knowledgeManagerFactory = new CloningKnowledgeManagerFactory();
-		processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE, model, knowledgeManagerFactory);		
-		
-		createRuntime(Timer);
+		processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE, model, knowledgeManagerFactory);
+		initializeNode(timer, plugins);		
+	}
+	
+	/**
+	 * Internal constructor with dependency injection for testing purposes. 
+	 */
+	DEECoNode(int id, Timer timer, RuntimeMetadata model, KnowledgeManagerFactory factory, AnnotationProcessor processor, DEECoPlugin... plugins) throws DEECoException {
+		this.nodeId = id;
+		this.model = model;
+		this.knowledgeManagerFactory = factory;
+		this.processor = processor;
+		initializeNode(timer, plugins);
+	}
+	
+	private void initializeNode(Timer timer, DEECoPlugin... plugins) throws DEECoException {	
+		pluginsMap= new HashMap<>();
+		createRuntime(timer);
 		runtime.init(this);
 		initializePlugins(plugins);
 	}
