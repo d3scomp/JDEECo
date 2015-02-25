@@ -19,8 +19,6 @@ public class OMNeTSimulation implements DEECoPlugin {
 	class TimerProvider implements SimulationTimer {
 		@Override
 		public void notifyAt(long time, TimerEventListener listener, DEECoNode node) {
-			//System.out.println("Host " + node.getId() + " to be notified at: " + time);
-			
 			// Bind listener to host id
 			binding.put(node.getId(), listener);
 			
@@ -56,10 +54,13 @@ public class OMNeTSimulation implements DEECoPlugin {
 
 		@Override
 		public void at(double absoluteTime) {
-			//System.out.println("Host " + id + " notified at: " + OMNeTNative.timeFromOmnet(absoluteTime));
-			
 			// Invoke the listener
 			binding.get(id).at(OMNeTNative.timeFromOmnet(absoluteTime));
+		}
+
+		@Override
+		public void packetReceived(byte[] packet, double rssi) {
+			System.out.println("Native host: Packet received");			
 		}
 	}
 
