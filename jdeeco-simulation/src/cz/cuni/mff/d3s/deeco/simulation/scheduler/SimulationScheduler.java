@@ -20,8 +20,12 @@ import cz.cuni.mff.d3s.deeco.simulation.CallbackProvider;
 import cz.cuni.mff.d3s.deeco.simulation.SimulationTimeEventListener;
 import cz.cuni.mff.d3s.deeco.task.Task;
 import cz.cuni.mff.d3s.deeco.task.TaskTriggerListener;
+import cz.cuni.mff.d3s.deeco.timer.CurrentTimeProvider;
+import cz.cuni.mff.d3s.deeco.timer.Timer;
 
 /**
+ * TODO Remove this class, it is no more needed since we have a new scheduler in core.
+ * 
  * The {@link Scheduler} implementation designed for single threaded simulation.
  * This scheduler is suppose to be driven by the simulation through
  * {@link SimulationTimeEventListener} methods.
@@ -55,16 +59,6 @@ public class SimulationScheduler implements Scheduler,
 	
 	public AbstractHost getHost() {
 		return host;
-	}
-
-	@Override
-	public void start() {
-		registerNextExecution(true);
-	}
-
-	@Override
-	public void stop() {
-		Log.d("The simulation scheduler is stopped together with the simulation.");
 	}
 
 	@Override
@@ -148,10 +142,6 @@ public class SimulationScheduler implements Scheduler,
 			this.executor.setExecutionListener(this);
 	}
 
-	@Override
-	public void invokeAndWait(Runnable doRun) throws InterruptedException {
-		Log.e("Simulation scheduler is being used! Invoking an external task is not allowed.");
-	}
 
 	@Override
 	public void at(long time) {
@@ -183,16 +173,6 @@ public class SimulationScheduler implements Scheduler,
 				Log.e("The simulation scheduler is associated with no excecutor!");
 			}
 		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider#getCurrentTime()
-	 */
-	@Override
-	public long getCurrentMilliseconds() {
-		return host.getCurrentMilliseconds();
 	}
 
 	// ------Private methods--------
@@ -244,4 +224,11 @@ public class SimulationScheduler implements Scheduler,
 	public String toString() {
 		return "SimulationScheduler of " + host.getHostId();
 	}
+
+	@Override
+	public Timer getTimer() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

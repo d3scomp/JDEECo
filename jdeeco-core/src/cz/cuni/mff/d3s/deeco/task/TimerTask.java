@@ -28,7 +28,7 @@ public abstract class TimerTask extends Task {
 	 */
 	@Override
 	public void invoke(Trigger trigger) throws TaskInvocationException {
-		taskListener.at(scheduler.getCurrentMilliseconds(), this);
+		taskListener.at(scheduler.getTimer().getCurrentMilliseconds(), this);
 	}
 
 	/* (non-Javadoc)

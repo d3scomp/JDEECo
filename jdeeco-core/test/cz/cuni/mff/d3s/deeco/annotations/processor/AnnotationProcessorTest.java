@@ -51,6 +51,8 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.RatingsProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
+import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
+import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
 import cz.cuni.mff.d3s.deeco.runtime.DuplicateEnsembleDefinitionException;
 
 /**
@@ -877,6 +879,18 @@ public class AnnotationProcessorTest {
 				"The path does not start with one of the 'coord' or 'member' keywords.");
 		// false means that the knowledge path is found in an ensemble definition:
 		processor.createKnowledgePath(pathStr, PathOrigin.ENSEMBLE);		
+	}
+	
+	/**
+	 * Tests if the AnnotationProcessor can detect a duplicate ensemble definition and react by throwing a correct exception.
+	 * @throws DEECoException
+	 * @throws AnnotationProcessorException
+	 */
+	@Test(expected = cz.cuni.mff.d3s.deeco.runtime.DuplicateEnsembleDefinitionException.class)
+	public void testDuplicateEnsembleDefinition() throws DEECoException, AnnotationProcessorException {	
+		AnnotationProcessor processor = new AnnotationProcessor(factory, factory.createRuntimeMetadata(), knowledgeManagerFactory);
+		processor.processEnsemble(CorrectE1.class);
+		processor.processEnsemble(CorrectE1.class);		
 	}
 
 	
