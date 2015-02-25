@@ -1,6 +1,8 @@
 package cz.cuni.mff.d3s.deeco.runtimelog;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 import java.io.ByteArrayInputStream;
@@ -22,9 +24,9 @@ import org.mockito.stubbing.Answer;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.task.Task;
+import cz.cuni.mff.d3s.deeco.timer.CurrentTimeProvider;
 
 public class RuntimeLoggerTest
 {

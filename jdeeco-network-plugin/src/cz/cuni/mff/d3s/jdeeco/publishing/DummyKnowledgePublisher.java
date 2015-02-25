@@ -21,10 +21,10 @@ import cz.cuni.mff.d3s.deeco.network.KnowledgeMetaData;
 import cz.cuni.mff.d3s.deeco.network.PublisherTask;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
-import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.task.Task;
 import cz.cuni.mff.d3s.deeco.task.TaskInvocationException;
+import cz.cuni.mff.d3s.deeco.timer.CurrentTimeProvider;
 import cz.cuni.mff.d3s.jdeeco.network.Network;
 import cz.cuni.mff.d3s.jdeeco.network.address.MANETBroadcastAddress;
 import cz.cuni.mff.d3s.jdeeco.network.l2.L2Packet;
@@ -159,7 +159,7 @@ public class DummyKnowledgePublisher implements DEECoPlugin {
 		network = container.getPluginInstance(Network.class);
 		knowledgeManagerContainer = container.getRuntimeFramework().getContainer();
 
-		timeProvider = container.getRuntimeFramework().getScheduler();
+		timeProvider = container.getRuntimeFramework().getScheduler().getTimer();
 
 		// Start publishing task
 		TimeTrigger publisherTrigger = new TimeTriggerExt();

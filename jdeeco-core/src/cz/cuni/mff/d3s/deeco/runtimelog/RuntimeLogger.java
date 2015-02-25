@@ -14,12 +14,12 @@ import java.util.Map;
 import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.task.CustomStepTask;
 import cz.cuni.mff.d3s.deeco.task.Task;
 import cz.cuni.mff.d3s.deeco.task.TimerTask;
 import cz.cuni.mff.d3s.deeco.task.TimerTaskListener;
+import cz.cuni.mff.d3s.deeco.timer.CurrentTimeProvider;
 
 /**
  * {@link RuntimeLogger} provides the functionality for the logging of
