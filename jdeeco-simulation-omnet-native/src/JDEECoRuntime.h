@@ -2,7 +2,7 @@
 #define JDEECORUNTIME_H
 
 #include <jni.h>
-#include <vector>
+#include <unordered_map>
 
 #include "simulation.h"
 
@@ -23,7 +23,7 @@ public:
 
 private:
 	// XXX: This should be a hash map. Having it in a vector will be too slow when we have many nodes.
-	static std::vector<JDEECoRuntime *> jDEECoRuntimes;
+	static std::unordered_map<int, JDEECoRuntime *> jDEECoRuntimes;
 };
 
 #endif // JDEECORUNTIME_H

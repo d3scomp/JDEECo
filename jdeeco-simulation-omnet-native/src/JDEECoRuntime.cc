@@ -1,7 +1,6 @@
 #include "JDEECoRuntime.h"
 
 #include <limits>
-
 #include <omnetpp.h>
 
 JDEECoRuntime::JDEECoRuntime(jobject host, JavaVM *jvm, NodeId id) {
@@ -12,23 +11,13 @@ JDEECoRuntime::JDEECoRuntime(jobject host, JavaVM *jvm, NodeId id) {
 }
 
 JDEECoRuntime* JDEECoRuntime::findRuntime(NodeId id) {
-	JDEECoRuntime *result = NULL;
+	std::unordered_map<int, JDEECoRuntime *>::iterator it = jDEECoRuntimes.find(id);
 
-	//std::cout << "findRuntime: " << id << " Begin" << std::endl;
-
-	//std::cout << "findRuntime: jDEECoRuntimes=" << &jDEECoRuntimes << std::endl;
-
-	for (std::vector<JDEECoRuntime *>::iterator it = jDEECoRuntimes.begin();
-			it != jDEECoRuntimes.end(); ++it) {
-		//std::cout << "findRuntime: runtime with id " << (*it)->id << std::endl;
-		if ((*it)->id == id) {
-			result = *it;
-			break;
-		}
+	if(it == jDEECoRuntimes.end()) {
+		return NULL;
+	} else {
+		return it->second;
 	}
-
-	//std::cout << "findRuntime: End" << std::endl;
-	return result;
 }
 
 JDEECoRuntime* JDEECoRuntime::findRuntime(JNIEnv *env, NodeId id) {
@@ -40,7 +29,7 @@ JDEECoRuntime* JDEECoRuntime::findRuntime(JNIEnv *env, NodeId id) {
 }
 
 void JDEECoRuntime::addRuntime(JDEECoRuntime* runtime) {
-	jDEECoRuntimes.push_back(runtime);
+	jDEECoRuntimes[runtime->id] = runtime;
 }
 
 void JDEECoRuntime::clearAll() {
@@ -48,4 +37,4 @@ void JDEECoRuntime::clearAll() {
 	jDEECoRuntimes.clear();
 }
 
-std::vector<JDEECoRuntime *> JDEECoRuntime::jDEECoRuntimes;
+std::unordered_map<int, JDEECoRuntime *> JDEECoRuntime::jDEECoRuntimes;

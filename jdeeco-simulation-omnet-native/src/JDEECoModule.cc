@@ -102,7 +102,7 @@ void JDEECoModule::initialize() {
 			callAt(runtime->firstCallAt);
 		}
 
-		jDEECoModules.push_back(this);
+		jDEECoModules[getModuleId()] = this;
 	}
 
 	initialized = true;
@@ -110,17 +110,13 @@ void JDEECoModule::initialize() {
 }
 
 JDEECoModule* JDEECoModule::findModule(JNIEnv *env, jint id) {
-	JDEECoModule *result = NULL;
+	std::unordered_map<int, JDEECoModule*>::iterator it = jDEECoModules.find(id);
 
-	for (std::vector<JDEECoModule *>::iterator it = jDEECoModules.begin();
-			it != jDEECoModules.end(); ++it) {
-		if ((*it)->getModuleId() == id) {
-			result = *it;
-			break;
-		}
+	if(it == jDEECoModules.end()) {
+		return NULL;
+	} else {
+		return it->second;
 	}
-
-	return result;
 }
 
 void JDEECoModule::clearAll() {
@@ -128,4 +124,4 @@ void JDEECoModule::clearAll() {
 	jDEECoModules.clear();
 }
 
-std::vector<JDEECoModule*> JDEECoModule::jDEECoModules;
+std::unordered_map<int, JDEECoModule*> JDEECoModule::jDEECoModules;

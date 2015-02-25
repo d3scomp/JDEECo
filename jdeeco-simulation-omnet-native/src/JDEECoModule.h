@@ -53,7 +53,7 @@ protected:
 private:
 	// XXX: This should be a hash map. Having it in a vector will be too slow when we have many nodes.
 	// XXX: We would better map java classes to C++ classes by reference, if possible
-	static std::vector<JDEECoModule*> jDEECoModules;
+	static std::unordered_map<int, JDEECoModule*> jDEECoModules;
 
 
 };
