@@ -137,7 +137,8 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 				fragmentSize = outputQueue.availableL0Space() - L1Packet.HEADER_SIZE;
 				payload = Arrays.copyOfRange(l2Packet.getData(), current,
 						Math.min(current + fragmentSize, l2Packet.getData().length));
-				outputQueue.sendDelayed(new L1Packet(payload, srcNode, dataId, current, totalSize, null));
+				// TODO: Should be sendDelayed, but it do not work for the last packet, please fix once it is ready
+				outputQueue.sendImmediately(new L1Packet(payload, srcNode, dataId, current, totalSize, null));
 				current += fragmentSize;
 			}
 			return true;
