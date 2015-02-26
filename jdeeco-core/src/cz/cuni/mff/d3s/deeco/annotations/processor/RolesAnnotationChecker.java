@@ -1,9 +1,10 @@
 package cz.cuni.mff.d3s.deeco.annotations.processor;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +19,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
@@ -107,8 +109,19 @@ public class RolesAnnotationChecker implements AnnotationChecker {
 		}
 		
 		for (Parameter parameter : parameters) {
-			checkKnowledgePath(parameter.getGenericType(), parameter.getKnowledgePath(), 
-					coordinatorRoles, memberRoles);
+			Type parameterType;
+			if (parameter.getKind() == ParameterKind.IN) {
+				parameterType = parameter.getGenericType();
+			} else {
+				if (!(parameter.getGenericType() instanceof ParameterizedType)) {
+					throw new AnnotationCheckerException("A parameter with different kind than IN must be wrapped in a generic type (ie. ParameterizedType)");
+				}
+				
+				ParameterizedType parameterHolderType = (ParameterizedType) parameter.getGenericType();
+				parameterType = parameterHolderType.getActualTypeArguments()[0];
+			}
+			
+			checkKnowledgePath(parameterType, parameter.getKnowledgePath(), coordinatorRoles, memberRoles);
 		}
 		
 	}
@@ -164,13 +177,31 @@ public class RolesAnnotationChecker implements AnnotationChecker {
 		// test the knowledge path against all roles
 		for (Class<?> roleClass : roleClasses) {
 			if (!isFieldInRole(type, fieldNameSequence, roleClass)) {
-				throw new AnnotationCheckerException("The knowledge path '" + knowledgePath.toString() 
-						+ "' is not valid for the role '" + roleClass.getSimpleName() + "'.");
+				throw new AnnotationCheckerException("The knowledge path '" + knowledgePath.toString() + "'"
+						+ (type != null ? " of type " + type : "") + " is not valid for the role '" + roleClass.getSimpleName() + "'. "
+						+ "Check whether the field (or sequence of fields) exists in the role and that it has correct type(s) and is public, nonstatic and non@Local");
 			}
 		}
 	}
 
-	boolean isFieldInRole(Type type, List<String> fieldNameSequence, Class<?> roleClass) {
+	/**
+	 * Checks whether a field sequence is present in a given role class. Also checks the type
+	 * of the field, if wanted. The given path can contain only field names (not [..]). It not
+	 * only checks whether the given role class contains the first-level field, it also checks
+	 * whether the rest of the path is valid.
+	 * @param type The desired type (or null if the type should not be checked)
+	 * @param fieldNameSequence The knowledge path separated to individual path nodes
+	 * @param roleClass The class that should contain the path
+	 * @return True if the field (of given type) is present in the role, false otherwise.
+	 */
+	boolean isFieldInRole(Type type, List<String> fieldNameSequence, Class<?> roleClass) throws AnnotationCheckerException {	
+		if (fieldNameSequence == null || fieldNameSequence.size() < 1) {
+			throw new AnnotationCheckerException("The field sequence cannot be null or empty.");
+		}
+		if (roleClass == null) {
+			throw new AnnotationCheckerException("The role class cannot be null.");
+		}
+		
 		Type fieldType = getTypeInRole(fieldNameSequence, roleClass);
 		if (fieldType == null) {
 			return false; // field not present in the role class
@@ -181,7 +212,32 @@ public class RolesAnnotationChecker implements AnnotationChecker {
 	}
 	
 	private Type getTypeInRole(List<String> fieldNameSequence, Class<?> roleClass) {
-		return null;
+		if (fieldNameSequence.size() == 1 && fieldNameSequence.get(0).equals("id")) {
+			// id is always present and always of type String
+			return String.class;
+		}
+		
+		return getTypeInClass(fieldNameSequence, roleClass);
+	}
+	
+	private Type getTypeInClass(List<String> fieldNameSequence, Class<?> clazz) {
+		String firstField = fieldNameSequence.get(0);
+		Field field;
+		try {
+			field = clazz.getField(firstField);
+		} catch (NoSuchFieldException | SecurityException e) {
+			return null;
+		}
+		
+		if (!RoleAnnotationsHelper.isPublicAndNonstatic(field)) {
+			return null;
+		}
+		
+		if (fieldNameSequence.size() == 1) {
+			return field.getGenericType();
+		} else {
+			return getTypeInClass(fieldNameSequence.subList(1, fieldNameSequence.size()), field.getType());
+		}
 	}
 
 	/**
@@ -193,7 +249,7 @@ public class RolesAnnotationChecker implements AnnotationChecker {
 	private List<Field> getNonLocalKnowledgeFields(Class<?> clazz, boolean warnings) {
 		List<Field> knowledgeFields = new ArrayList<>();
 		for (Field field : clazz.getFields()) {
-			if (Modifier.isStatic(field.getModifiers()) || !Modifier.isPublic(field.getModifiers())) {
+			if (!RoleAnnotationsHelper.isPublicAndNonstatic(field)) {
 				if (warnings) {
 					Log.i("Class " + clazz.getSimpleName() + ": Field " + field.getName() + " ignored (is it public and non-static?).");
 				}
@@ -247,7 +303,37 @@ public class RolesAnnotationChecker implements AnnotationChecker {
 	}
 	
 	private boolean compareTypes(Type implementationType, Type roleType) {
-		return implementationType.equals(roleType);
+		if (implementationType.equals(roleType)) {
+			return true;
+		}
+		
+		// nonequal types can be equal, if one of them is a generic type (or generically parametrized)
+		if (implementationType instanceof GenericArrayType && roleType instanceof GenericArrayType) {
+			GenericArrayType gType1 = (GenericArrayType) implementationType;
+			GenericArrayType gType2 = (GenericArrayType) roleType;
+			return compareTypes(gType1.getGenericComponentType(), gType2.getGenericComponentType());
+		
+		} else if (implementationType instanceof ParameterizedType && roleType instanceof ParameterizedType) {
+			ParameterizedType pType1 = (ParameterizedType) implementationType;
+			ParameterizedType pType2 = (ParameterizedType) roleType;
+			if (!compareTypes(pType1.getRawType(), pType2.getRawType())) {
+				return false;
+			}
+			
+			assert pType1.getActualTypeArguments().length == pType2.getActualTypeArguments().length;
+			for (int i = 0; i < pType1.getActualTypeArguments().length; i++) {
+				if (!compareTypes(pType1.getActualTypeArguments()[i], pType2.getActualTypeArguments()[i])) {
+					return false;
+				}
+			}
+			
+			return true;
+		
+		} else if (implementationType instanceof TypeVariable || roleType instanceof TypeVariable) {
+			return true;
+		}
+		
+		return false;
 	}
 	
 }

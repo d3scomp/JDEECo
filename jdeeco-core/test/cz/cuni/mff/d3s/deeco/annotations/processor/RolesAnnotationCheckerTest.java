@@ -1,20 +1,21 @@
 package cz.cuni.mff.d3s.deeco.annotations.processor;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.hamcrest.Matcher;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -25,12 +26,8 @@ import org.mockito.Mockito;
 import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.CoordinatorRole;
 import cz.cuni.mff.d3s.deeco.annotations.Ensemble;
-import cz.cuni.mff.d3s.deeco.annotations.In;
-import cz.cuni.mff.d3s.deeco.annotations.InOut;
-import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
 import cz.cuni.mff.d3s.deeco.annotations.Local;
 import cz.cuni.mff.d3s.deeco.annotations.MemberRole;
-import cz.cuni.mff.d3s.deeco.annotations.Membership;
 import cz.cuni.mff.d3s.deeco.annotations.PlaysRole;
 import cz.cuni.mff.d3s.deeco.annotations.Role;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.ParseException;
@@ -41,6 +38,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper;
+import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 
 public class RolesAnnotationCheckerTest {
 	
@@ -641,7 +639,7 @@ public class RolesAnnotationCheckerTest {
 	@Test
 	public void checkRI2NoRolesTest() throws AnnotationCheckerException {
 		RolesAnnotationChecker checker = spy(new RolesAnnotationChecker());
-		when(checker.isFieldInRole(any(), any(), any())).thenReturn(true);
+		Mockito.doReturn(true).when(checker).isFieldInRole(any(), any(), any());
 		
 		checker.checkRolesImplementation(new ArrayList<Parameter>(), new Class<?>[0], new Class<?>[0]);
 		
@@ -670,7 +668,16 @@ public class RolesAnnotationCheckerTest {
 		new RolesAnnotationChecker().checkRolesImplementation(new ArrayList<Parameter>(), new Class<?>[0], null);
 	}
 	
-	private List<Parameter> getTestParameters() throws ParseException, AnnotationCheckerException, AnnotationProcessorException {	
+	private class Struct<T> {
+		public T x;
+	}
+	
+	private class _Struct_String extends Struct<String> { };
+	
+	private List<Parameter> getTestParameters() throws ParseException, AnnotationCheckerException, AnnotationProcessorException {
+		class _ParamHolder_Long extends ParamHolder<Long> { };
+		class _ParamHolder_Struct_String extends ParamHolder<Struct<String>> { };
+		
 		Parameter param1 = RuntimeMetadataFactory.eINSTANCE.createParameter();
 		param1.setKind(ParameterKind.IN);
 		param1.setKnowledgePath(KnowledgePathHelper.createKnowledgePath("coord.x", PathOrigin.ENSEMBLE));
@@ -678,18 +685,22 @@ public class RolesAnnotationCheckerTest {
 		Parameter param2 = RuntimeMetadataFactory.eINSTANCE.createParameter();
 		param2.setKind(ParameterKind.OUT);
 		param2.setKnowledgePath(KnowledgePathHelper.createKnowledgePath("coord.a.b", PathOrigin.ENSEMBLE));
-		param2.setGenericType(Long.class);
+		param2.setGenericType(_ParamHolder_Long.class.getGenericSuperclass());
 		Parameter param3 = RuntimeMetadataFactory.eINSTANCE.createParameter();
-		param3.setKind(ParameterKind.INOUT);
+		param3.setKind(ParameterKind.IN);
 		param3.setKnowledgePath(KnowledgePathHelper.createKnowledgePath("coord.z.[member.y.[coord.id]]", PathOrigin.ENSEMBLE));
 		param3.setGenericType(String.class);
-		return Arrays.asList(param1, param2, param3);
+		Parameter param4 = RuntimeMetadataFactory.eINSTANCE.createParameter();
+		param4.setKind(ParameterKind.INOUT);
+		param4.setKnowledgePath(KnowledgePathHelper.createKnowledgePath("member.s", PathOrigin.ENSEMBLE));
+		param4.setGenericType(_ParamHolder_Struct_String.class.getGenericSuperclass());
+		return Arrays.asList(param1, param2, param3, param4);
 	}
 	
 	@Test
 	public void checkRI2ParametersButNoRolesTest() throws AnnotationCheckerException, ParseException, AnnotationProcessorException {
 		RolesAnnotationChecker checker = spy(new RolesAnnotationChecker());
-		when(checker.isFieldInRole(any(), any(), any())).thenReturn(false);
+		Mockito.doReturn(false).when(checker).isFieldInRole(any(), any(), any());
 		
 		checker.checkRolesImplementation(getTestParameters(), new Class<?>[0], new Class<?>[0]);
 		
@@ -706,22 +717,10 @@ public class RolesAnnotationCheckerTest {
 			public Integer y;
 		}
 		
-		class RoleAnnotationImpl implements CoordinatorRole, MemberRole {
-			@Override
-			public Class<?> value() {
-				return RoleClass1.class;
-			}
-
-			@Override
-			public Class<? extends Annotation> annotationType() {
-				return RoleAnnotationImpl.class;
-			}
-		}
-		
 		Class<?>[] roles = new Class<?>[] {RoleClass1.class};
 		
 		RolesAnnotationChecker checker = spy(new RolesAnnotationChecker());
-		when(checker.isFieldInRole(any(), any(), any())).thenReturn(false);
+		Mockito.doReturn(true).when(checker).isFieldInRole(any(), any(), any());
 		
 		checker.checkRolesImplementation(new ArrayList<Parameter>(), roles, roles);
 		
@@ -749,29 +748,11 @@ public class RolesAnnotationCheckerTest {
 			public String str;
 		}
 		
-		class RoleAnnotationImpl implements CoordinatorRole, MemberRole {
-			private Class<?> roleClass;
-			
-			public RoleAnnotationImpl(Class<?> roleClass) {
-				this.roleClass = roleClass;
-			}
-			
-			@Override
-			public Class<?> value() {
-				return roleClass;
-			}
-
-			@Override
-			public Class<? extends Annotation> annotationType() {
-				return RoleAnnotationImpl.class;
-			}
-		}
-		
 		Class<?>[] coordinatorRoles = new Class<?>[] {RoleClass1.class, RoleClass2.class};
 		Class<?>[] memberRoles = new Class<?>[] {RoleClass2.class, RoleClass3.class};
 		
 		RolesAnnotationChecker checker = spy(new RolesAnnotationChecker());
-		when(checker.isFieldInRole(any(), any(), any())).thenReturn(true);
+		Mockito.doReturn(true).when(checker).isFieldInRole(any(), any(), any());
 		
 		checker.checkRolesImplementation(getTestParameters(), coordinatorRoles, memberRoles);
 		verify(checker, times(1)).isFieldInRole(Integer.class, Arrays.asList("x"), RoleClass1.class);
@@ -784,6 +765,8 @@ public class RolesAnnotationCheckerTest {
 		verify(checker, times(1)).isFieldInRole(null, Arrays.asList("y"), RoleClass3.class);
 		verify(checker, times(1)).isFieldInRole(String.class, Arrays.asList("z"), RoleClass1.class);
 		verify(checker, times(1)).isFieldInRole(String.class, Arrays.asList("z"), RoleClass2.class);
+		verify(checker, times(1)).isFieldInRole(_Struct_String.class.getGenericSuperclass(), Arrays.asList("s"), RoleClass2.class);
+		verify(checker, times(1)).isFieldInRole(_Struct_String.class.getGenericSuperclass(), Arrays.asList("s"), RoleClass3.class);
 		
 		verify(checker, times(1)).checkRolesImplementation(any(), any(), any());
 		verifyNoMoreInteractions(checker);
@@ -818,12 +801,197 @@ public class RolesAnnotationCheckerTest {
 		param1.setType(Integer.class);
 		
 		RolesAnnotationChecker checker = spy(new RolesAnnotationChecker());
-		when(checker.isFieldInRole(any(), any(), any())).thenReturn(false);
+		Mockito.doReturn(false).when(checker).isFieldInRole(any(), any(), any());
 		
 		exception.expect(AnnotationCheckerException.class);
-		exception.expectMessage("The knowledge path '<COORDINATOR>.x' is not valid for the role 'RoleClass1'.");
+		exception.expectMessage("The knowledge path '<COORDINATOR>.x' is not valid for the role 'RoleClass1'. Check whether the field (or sequence of fields) exists in the role and that it has correct type(s) and is public, nonstatic and non@Local");
 		
 		checker.checkRolesImplementation(Arrays.asList(param1), roles, roles);
+	}
+	
+	
+	/*
+	 * Tests for the isFieldInRole method
+	 */
+	
+	@Test
+	public void isFieldInRoleTest() throws AnnotationCheckerException {
+		@Role
+		class RoleClass {
+			public Integer x;
+			protected Integer y;
+		}
+		
+		RolesAnnotationChecker checker = new RolesAnnotationChecker();
+		assertTrue(checker.isFieldInRole(Integer.class, Arrays.asList("x"), RoleClass.class));
+		assertFalse(checker.isFieldInRole(Integer.class, Arrays.asList("y"), RoleClass.class));
+		assertFalse(checker.isFieldInRole(String.class, Arrays.asList("x"), RoleClass.class));
+	}
+	
+	@Test
+	public void isFieldInRoleIdTest() throws AnnotationCheckerException {
+		@Role
+		class RoleClass {
+			public Integer x;
+		}
+		
+		RolesAnnotationChecker checker = new RolesAnnotationChecker();
+		assertTrue(checker.isFieldInRole(String.class, Arrays.asList("id"), RoleClass.class));
+		assertFalse(checker.isFieldInRole(Integer.class, Arrays.asList("id"), RoleClass.class));
+		assertFalse(checker.isFieldInRole(String.class, Arrays.asList("x", "id"), RoleClass.class));
+	}
+	
+	@Test
+	public void isFieldInRoleMultilevelTest() throws AnnotationCheckerException {
+		class Structured1 {
+			public Integer a;
+			public Integer b;
+		}
+		
+		class Structured2 {
+			public Integer u;
+			public Structured1 v;
+			protected Integer w;
+		}
+		
+		@Role
+		class RoleClass {
+			public Integer x;
+			public Structured2 y;
+			public long[] z;
+		}
+		
+		RolesAnnotationChecker checker = new RolesAnnotationChecker();
+		assertTrue(checker.isFieldInRole(Integer.class, Arrays.asList("x"), RoleClass.class));
+		assertTrue(checker.isFieldInRole(Structured2.class, Arrays.asList("y"), RoleClass.class));
+		assertFalse(checker.isFieldInRole(Structured1.class, Arrays.asList("y"), RoleClass.class));
+		assertFalse(checker.isFieldInRole(Integer.class, Arrays.asList("y"), RoleClass.class));
+		assertTrue(checker.isFieldInRole(Integer.class, Arrays.asList("y", "u"), RoleClass.class));
+		assertFalse(checker.isFieldInRole(Structured1.class, Arrays.asList("y", "u"), RoleClass.class));
+		assertTrue(checker.isFieldInRole(Structured1.class, Arrays.asList("y", "v"), RoleClass.class));
+		assertFalse(checker.isFieldInRole(Integer.class, Arrays.asList("y", "v"), RoleClass.class));
+		assertFalse(checker.isFieldInRole(Integer.class, Arrays.asList("y", "w"), RoleClass.class));
+		assertFalse(checker.isFieldInRole(Integer.class, Arrays.asList("y", "t"), RoleClass.class));
+		assertTrue(checker.isFieldInRole(Integer.class, Arrays.asList("y", "v", "a"), RoleClass.class));
+		assertTrue(checker.isFieldInRole(Integer.class, Arrays.asList("y", "v", "b"), RoleClass.class));
+		assertFalse(checker.isFieldInRole(Integer.class, Arrays.asList("y", "v", "c"), RoleClass.class));
+		assertFalse(checker.isFieldInRole(Integer.class, Arrays.asList("y", "v", "a", "a"), RoleClass.class));
+		assertTrue(checker.isFieldInRole(long[].class, Arrays.asList("z"), RoleClass.class));
+		assertFalse(checker.isFieldInRole(Long[].class, Arrays.asList("z"), RoleClass.class));
+		assertFalse(checker.isFieldInRole(int[].class, Arrays.asList("z"), RoleClass.class));
+	}
+
+	@Test
+	public void isFieldInRoleNullFieldTest() throws AnnotationCheckerException {
+		@Role
+		class RoleClass { }
+		
+		RolesAnnotationChecker checker = new RolesAnnotationChecker();
+		exception.expect(AnnotationCheckerException.class);
+		exception.expectMessage("The field sequence cannot be null or empty.");
+		checker.isFieldInRole(Integer.class, null, RoleClass.class);
+	}
+
+	@Test
+	public void isFieldInRoleEmptyFieldTest() throws AnnotationCheckerException {
+		@Role
+		class RoleClass { }
+		
+		RolesAnnotationChecker checker = new RolesAnnotationChecker();
+		exception.expect(AnnotationCheckerException.class);
+		exception.expectMessage("The field sequence cannot be null or empty.");
+		checker.isFieldInRole(Integer.class, new ArrayList<String>(), RoleClass.class);
+	}
+	
+	@Test
+	public void isFieldInRoleEmptyClassTest() throws AnnotationCheckerException {
+		RolesAnnotationChecker checker = new RolesAnnotationChecker();
+		exception.expect(AnnotationCheckerException.class);
+		exception.expectMessage("The role class cannot be null.");
+		checker.isFieldInRole(Integer.class, Arrays.asList("x"), null);
+	}
+	
+	@Test
+	public void isFieldInRoleNullTypeTest() throws AnnotationCheckerException {
+		// should succeed
+		
+		class Structured {
+			public Integer a;
+			public Integer b;
+		}
+		
+		@Role
+		class RoleClass {
+			public Integer x;
+			public Structured y;
+		}
+		
+		RolesAnnotationChecker checker = new RolesAnnotationChecker();
+		assertTrue(checker.isFieldInRole(null, Arrays.asList("x"), RoleClass.class));
+		assertTrue(checker.isFieldInRole(null, Arrays.asList("y"), RoleClass.class));
+		assertTrue(checker.isFieldInRole(null, Arrays.asList("y", "a"), RoleClass.class));
+		assertTrue(checker.isFieldInRole(null, Arrays.asList("y", "b"), RoleClass.class));
+		assertFalse(checker.isFieldInRole(null, Arrays.asList("y", "c"), RoleClass.class));
+		assertFalse(checker.isFieldInRole(null, Arrays.asList("z"), RoleClass.class));
+	}
+
+	interface _I_List_Long extends List<Long> { };
+	interface _I_List_Integer extends List<Integer> { };
+	interface _I_List_String extends List<String> { };
+	interface _I_List_Short extends List<Short> { };
+	
+	@Test
+	public void isFieldInRoleGenericTest() throws AnnotationCheckerException {
+		class Structured<T> {
+			public List<Integer> a;
+			public List<T> b;
+			public T c;
+			public T[] d;
+		}
+		
+		@Role
+		class RoleClass {
+			public List<Long> x;
+			public Structured<String> y;
+			public Structured<Short> z;
+			public Structured[] sa;
+		}
+		
+		class _Structured_String extends Structured<String> { };
+		class _Structured_Short extends Structured<Short> { };
+		
+		Type List_Long = _I_List_Long.class.getGenericInterfaces()[0];
+		Type List_Integer = _I_List_Integer.class.getGenericInterfaces()[0];
+		Type List_String = _I_List_String.class.getGenericInterfaces()[0];
+		Type List_Short = _I_List_Short.class.getGenericInterfaces()[0];
+		Type Structured_String = _Structured_String.class.getGenericSuperclass();
+		Type Structured_Short = _Structured_Short.class.getGenericSuperclass();
+		
+		RolesAnnotationChecker checker = new RolesAnnotationChecker();
+		assertTrue(checker.isFieldInRole(List_Long, Arrays.asList("x"), RoleClass.class));
+		assertFalse(checker.isFieldInRole(List_Integer, Arrays.asList("x"), RoleClass.class));
+		assertTrue(checker.isFieldInRole(Structured_String, Arrays.asList("y"), RoleClass.class));
+		assertFalse(checker.isFieldInRole(Structured_Short, Arrays.asList("y"), RoleClass.class));
+		assertTrue(checker.isFieldInRole(List_Integer, Arrays.asList("y", "a"), RoleClass.class));
+		assertTrue(checker.isFieldInRole(List_String, Arrays.asList("y", "b"), RoleClass.class));
+		//assertFalse(checker.isFieldInRole(List_Short, Arrays.asList("y", "b"), RoleClass.class));
+		assertTrue(checker.isFieldInRole(String.class, Arrays.asList("y", "c"), RoleClass.class));
+		//assertFalse(checker.isFieldInRole(Short.class, Arrays.asList("y", "c"), RoleClass.class));
+		assertTrue(checker.isFieldInRole(Structured_Short, Arrays.asList("z"), RoleClass.class));
+		assertTrue(checker.isFieldInRole(List_Integer, Arrays.asList("z", "a"), RoleClass.class));
+		assertTrue(checker.isFieldInRole(List_Short, Arrays.asList("z", "b"), RoleClass.class));
+		//assertFalse(checker.isFieldInRole(List_String, Arrays.asList("z", "b"), RoleClass.class));
+		assertTrue(checker.isFieldInRole(Short.class, Arrays.asList("z", "c"), RoleClass.class));
+		//assertFalse(checker.isFieldInRole(String.class, Arrays.asList("z", "c"), RoleClass.class));
+		assertTrue(checker.isFieldInRole(Structured[].class, Arrays.asList("sa"), RoleClass.class));
+		assertFalse(checker.isFieldInRole(List_Integer, Arrays.asList("sa", "a"), RoleClass.class));
+		
+		// nulls
+		assertTrue(checker.isFieldInRole(null, Arrays.asList("y", "a"), RoleClass.class));
+		assertTrue(checker.isFieldInRole(null, Arrays.asList("y", "b"), RoleClass.class));
+		assertFalse(checker.isFieldInRole(null, Arrays.asList("y", "b", "c"), RoleClass.class));
+		assertTrue(checker.isFieldInRole(null, Arrays.asList("sa"), RoleClass.class));
+		assertFalse(checker.isFieldInRole(null, Arrays.asList("sa", "a"), RoleClass.class));
 	}
 	
 }
