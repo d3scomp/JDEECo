@@ -34,15 +34,23 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 	private final Map<Address, DeviceOutputQueue> outputQueues;
 	private final Map<CollectorKey, Collector> collectors; 		// collectors that store incoming L1 packets. Grouped by data
 																// ID and Node ID
-	private final L1DataProcessor l1DataProcessor; 				// reference to the upper layer
+	private L1DataProcessor l1DataProcessor; 				// reference to the upper layer
 
-	public Layer1(L1DataProcessor l1DataProcessor, byte nodeId, DataIDSource dataIdSource) {
+	public Layer1(byte nodeId, DataIDSource dataIdSource) {
 		this.outputQueues = new HashMap<Address, DeviceOutputQueue>();
 		this.strategies = new HashSet<L1Strategy>();
 		this.collectors = new HashMap<CollectorKey, Collector>();
 		this.devices = new HashSet<Device>();
 		this.nodeId = nodeId;
 		this.dataIdSource = dataIdSource;
+	}
+	
+	/**
+	 * Sets L1 Data processor
+	 * 
+	 * @param l1DataProcessor L1 data processor to be used by L1 to process received L2 packets
+	 */
+	public void setL1DataProcessor(L1DataProcessor l1DataProcessor) {
 		this.l1DataProcessor = l1DataProcessor;
 	}
 
