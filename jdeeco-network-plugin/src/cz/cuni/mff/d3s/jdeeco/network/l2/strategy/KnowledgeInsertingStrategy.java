@@ -35,24 +35,16 @@ public class KnowledgeInsertingStrategy implements L2Strategy, DEECoPlugin {
 	private KnowledgeManagerContainer knowledgeManagerContainer;
 	private CurrentTimeProvider timeProvider;
 
-	@SuppressWarnings("rawtypes")
 	@Override
 	public void processL2Packet(L2Packet packet) {
 		Object data = packet.getObject();
 		
 		// TODO: Type safety
-		
-		if(!(data instanceof Collection)) {
+		if(!(data instanceof KnowledgeData)) {
 			throw new UnsupportedOperationException();
 		}
-		
-		for(Object d: (Collection)data) {
-			if(!(d instanceof KnowledgeData)) {
-				throw new UnsupportedOperationException();
-			}
 			
-			receiveKnowledge((KnowledgeData) d);
-		}
+		receiveKnowledge((KnowledgeData) data);
 	}
 
 	public KnowledgeInsertingStrategy() {
