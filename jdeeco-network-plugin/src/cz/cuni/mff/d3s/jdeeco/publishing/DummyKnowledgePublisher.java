@@ -3,6 +3,7 @@ package cz.cuni.mff.d3s.jdeeco.publishing;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import cz.cuni.mff.d3s.deeco.DeecoProperties;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
@@ -165,6 +166,7 @@ public class DummyKnowledgePublisher implements DEECoPlugin {
 		TimeTrigger publisherTrigger = new TimeTriggerExt();
 		publisherTrigger.setPeriod(Integer.getInteger(DeecoProperties.PUBLISHING_PERIOD,
 				PublisherTask.DEFAULT_PUBLISHING_PERIOD));
+		publisherTrigger.setOffset(new Random(container.getId()).nextInt((int) publisherTrigger.getPeriod()));
 		PublishTask publisher = this.new PublishTask(container.getRuntimeFramework().getScheduler(), publisherTrigger);
 		container.getRuntimeFramework().getScheduler().addTask(publisher);
 	}
