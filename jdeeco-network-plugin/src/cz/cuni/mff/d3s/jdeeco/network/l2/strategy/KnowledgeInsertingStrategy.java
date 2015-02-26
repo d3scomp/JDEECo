@@ -1,6 +1,7 @@
 package cz.cuni.mff.d3s.jdeeco.network.l2.strategy;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,9 +35,24 @@ public class KnowledgeInsertingStrategy implements L2Strategy, DEECoPlugin {
 	private KnowledgeManagerContainer knowledgeManagerContainer;
 	private CurrentTimeProvider timeProvider;
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void processL2Packet(L2Packet packet) {
-
+		Object data = packet.getObject();
+		
+		// TODO: Type safety
+		
+		if(!(data instanceof Collection)) {
+			throw new UnsupportedOperationException();
+		}
+		
+		for(Object d: (Collection)data) {
+			if(!(d instanceof KnowledgeData)) {
+				throw new UnsupportedOperationException();
+			}
+			
+			receiveKnowledge((KnowledgeData) d);
+		}
 	}
 
 	public KnowledgeInsertingStrategy() {
@@ -49,40 +65,38 @@ public class KnowledgeInsertingStrategy implements L2Strategy, DEECoPlugin {
 	protected final Map<String, KnowledgeMetaData> replicaMetadata;
 
 	// NOTE: Taken from DefaultKnowledgeDataManager
-	public void receiveKnowledge(List<KnowledgeData> data) {
-		for (KnowledgeData kd : data) {
-			KnowledgeMetaData newMetadata = kd.getMetaData();
-			if (knowledgeManagerContainer.hasLocal(newMetadata.componentId)) {
-				if (Log.isDebugLoggable())
-					Log.d("KnowledgeDataManager.receive: Dropping KnowledgeData for local component "
-							+ newMetadata.componentId);
-				continue;
-			}
+	public void receiveKnowledge(KnowledgeData knowledgeData) {
+		KnowledgeMetaData newMetadata = knowledgeData.getMetaData();
+		if (knowledgeManagerContainer.hasLocal(newMetadata.componentId)) {
+			if (Log.isDebugLoggable())
+				Log.d("KnowledgeDataManager.receive: Dropping KnowledgeData for local component "
+						+ newMetadata.componentId);
+			return;
+		}
 
-			KnowledgeMetaData currentMetadata = replicaMetadata.get(newMetadata.componentId);
+		KnowledgeMetaData currentMetadata = replicaMetadata.get(newMetadata.componentId);
 
-			// Accept only fresh knowledge data (drop if we have already a newer value)
-			if ((currentMetadata == null) || (currentMetadata.versionId < newMetadata.versionId)) {
-				for (KnowledgeManager replica : knowledgeManagerContainer.createReplica(newMetadata.componentId)) {
-					try {
-						Map<String, ChangeSet> changeSets = toChangeSets(kd.getKnowledge(), null, null);
-						for (Entry<String, ChangeSet> entry : changeSets.entrySet()) {
-							replica.update(entry.getValue(), entry.getKey());
-						}
-					} catch (KnowledgeUpdateException e) {
-						Log.w(String.format("KnowledgeDataManager.receive: Could not update replica of %s.",
-								newMetadata.componentId), e);
+		// Accept only fresh knowledge data (drop if we have already a newer value)
+		if ((currentMetadata == null) || (currentMetadata.versionId < newMetadata.versionId)) {
+			for (KnowledgeManager replica : knowledgeManagerContainer.createReplica(newMetadata.componentId)) {
+				try {
+					Map<String, ChangeSet> changeSets = toChangeSets(knowledgeData.getKnowledge(), null, null);
+					for (Entry<String, ChangeSet> entry : changeSets.entrySet()) {
+						replica.update(entry.getValue(), entry.getKey());
 					}
+				} catch (KnowledgeUpdateException e) {
+					Log.w(String.format("KnowledgeDataManager.receive: Could not update replica of %s.",
+							newMetadata.componentId), e);
+				}
 
-					// store the metadata without the knowledge values
-					replicaMetadata.put(newMetadata.componentId, newMetadata);
+				// store the metadata without the knowledge values
+				replicaMetadata.put(newMetadata.componentId, newMetadata);
 
-					if (Log.isDebugLoggable()) {
-						Log.d(String.format("Receive (%d) at %s got %sv%d after %dms and %d hops\n",
-								timeProvider.getCurrentMilliseconds(), null, newMetadata.componentId,
-								newMetadata.versionId, timeProvider.getCurrentMilliseconds() - newMetadata.createdAt,
-								newMetadata.hopCount));
-					}
+				if (Log.isDebugLoggable()) {
+					Log.d(String.format("Receive (%d) at %s got %sv%d after %dms and %d hops\n",
+							timeProvider.getCurrentMilliseconds(), null, newMetadata.componentId,
+							newMetadata.versionId, timeProvider.getCurrentMilliseconds() - newMetadata.createdAt,
+							newMetadata.hopCount));
 				}
 			}
 		}

@@ -54,7 +54,8 @@ public class L2Test {
 		registry.registerMarshaller(L2PacketType.KNOWLEDGE, new SerializingMarshaller());
 
 		// Instantiate layer
-		l2Layer = new Layer2(layer1, registry);
+		l2Layer = new Layer2(registry);
+		l2Layer.setL2PacketSender(layer1);
 	}
 
 	private L2Packet createSampleSourcepacket() {
