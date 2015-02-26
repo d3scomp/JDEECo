@@ -13,16 +13,10 @@ import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
 import cz.cuni.mff.d3s.deeco.timer.TimerEventListener;
 
 public class OMNeTSimulation implements DEECoPlugin {
-	Map<Integer, TimerEventListener> binding = new HashMap<Integer, TimerEventListener>();
-
-	class TimerProvider implements SimulationTimer {
+	class OMNeTTimerProvider implements SimulationTimer {
 		@Override
 		public void notifyAt(long time, TimerEventListener listener, DEECoContainer container) {
-			// Bind listener to host id
-			binding.put(container.getId(), listener);
-			
-			// Do the native register
-			OMNeTNative.nativeCallAt(OMNeTNative.timeToOmnet(time), container.getId());
+			hosts.get(container.getId()).setEventListener(time, listener);
 		}
 
 		@Override
@@ -36,38 +30,53 @@ public class OMNeTSimulation implements DEECoPlugin {
 
 		@Override
 		public void start(long duration) {
-			OMNeTSimulation.this.start(duration);
+			// TODO: Duration ignored
+			OMNeTNative.nativeRun("Cmdenv", "omnetpp.ini");
 		}
 	}
 
-	class Host implements OMNeTNativeListener {
+	class OMNeTHost implements OMNeTNativeListener {
 		final int id;
 		
+		TimerEventListener eventListener = null;
+		OMNeTBroadcastDevice broadcastDevice = null;
+		OMNeTInfrastructureDevice infrastructureDevice = null;
 		
-
-		Host(int id) {
+		OMNeTHost(int id) {
 			this.id = id;
 		}
 
 		public int getId() {
 			return id;
 		}
+		
+		public void setEventListener(long time, TimerEventListener listener) {
+			// Register listener and schedule event
+			eventListener = listener;
+			OMNeTNative.nativeCallAt(OMNeTNative.timeToOmnet(time), id);
+		}
+		
+		public void setBroadcastDevice(OMNeTBroadcastDevice device) {
+			broadcastDevice = device;
+		}
+		
+		public void setInfrastructureDevice(OMNeTInfrastructureDevice device) {
+			infrastructureDevice = device;
+		}
 
 		@Override
 		public void at(double absoluteTime) {
-			// Invoke the listener
-			binding.get(id).at(OMNeTNative.timeFromOmnet(absoluteTime));
+			eventListener.at(OMNeTNative.timeFromOmnet(absoluteTime));
 		}
 
 		@Override
 		public void packetReceived(byte[] packet, double rssi) {
-			System.out.println("Native host: Packet received");			
+			System.out.println("Native host: Packet received");
 		}
 	}
-
-	private final Map<Integer, Host> hosts = new HashMap<Integer, OMNeTSimulation.Host>();
-
-	private TimerProvider timeProvider = new TimerProvider();
+	
+	private final Map<Integer, OMNeTHost> hosts = new HashMap<Integer, OMNeTSimulation.OMNeTHost>();
+	private OMNeTTimerProvider timeProvider = new OMNeTTimerProvider();
 
 	public SimulationTimer getTimer() {
 		return timeProvider;
@@ -81,16 +90,12 @@ public class OMNeTSimulation implements DEECoPlugin {
 	@Override
 	public void init(DEECoContainer container) {
 		if (!hosts.containsKey(container.getId())) {
-			Host host = new Host(container.getId());
+			OMNeTHost host = new OMNeTHost(container.getId());
 			hosts.put(host.getId(), host);
 			OMNeTNative.nativeRegister(host, host.getId());
 			System.out.println("Registered host " + host.getId());
 		} else {
 			throw new UnsupportedOperationException("Host with this id is already registered");
 		}
-	}
-
-	public void start(long duration) {
-		OMNeTNative.nativeRun("Cmdenv", "omnetpp.ini");
 	}
 }
