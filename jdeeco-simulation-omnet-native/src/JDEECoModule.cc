@@ -36,7 +36,7 @@ void JDEECoModule::callAt(double absoluteTime) {
 }
 
 void JDEECoModule::onHandleMessage(cMessage *msg, double rssi) {
-	//std::cout << "jDEECoOnHandleMessage: " << getModuleId() << " Begin" << std::endl;
+	//std::cout << "jDEECoOnHandleMessage: " << getModuleId() << " Begin: " << std::endl;
 	//std::cout << "jDEECoOnHandleMessage" << std::endl;
 	if (runtime != NULL) {
 		JNIEnv *env;
@@ -58,7 +58,7 @@ void JDEECoModule::onHandleMessage(cMessage *msg, double rssi) {
 				//Ignore the message as it is not valid any longer.
 			}
 		} else if (opp_strcmp(msg->getName(), JDEECO_DATA_MESSAGE) == 0) {
-			//std::cout << "jDEECoOnHandleMessage: " << this->jDEECoGetModuleId() << " Before getting the \"packetRecived\" method reference" << std::endl;
+			//std::cout << "jDEECoOnHandleMessage: " << this->getModuleId() << " Before getting the \"packetRecived\" method reference" << std::endl;
 			EV << "OMNET++ (" << simTime() << ") : " << getModuleId()
 					<< " received packet with ID = " << msg->getId() << endl;
 			mid = env->GetMethodID(cls, "packetReceived", "([BD)V");

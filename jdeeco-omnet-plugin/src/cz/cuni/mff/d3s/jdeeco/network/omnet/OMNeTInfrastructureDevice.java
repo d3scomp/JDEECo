@@ -34,4 +34,8 @@ public class OMNeTInfrastructureDevice extends OMNeTDevice {
 
 		throw new UnsupportedOperationException();
 	}
+	
+	public void receivePacket(byte[] data) {
+		System.out.println("Received infrastructure packet");
+	}
 }

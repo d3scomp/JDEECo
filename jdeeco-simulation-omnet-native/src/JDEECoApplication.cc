@@ -47,7 +47,7 @@ void JDEECoApplication::initialize(int stage) {
 }
 
 void JDEECoApplication::handleMessage(cMessage *msg) {
-	//std::cout << "jDEECoApplication: handleMessage" << std::endl;
+	//std::cout << "jDEECoApplication: handleMessage:" << msg->getName() << std::endl;
     double rssi = -1.0;
     if (!msg->isSelfMessage()) {
         MacToNetwControlInfo* cInfo = dynamic_cast<MacToNetwControlInfo*>(msg->getControlInfo());
@@ -65,16 +65,16 @@ void JDEECoApplication::registerCallbackAt(double absoluteTime, cMessage *msg) {
 }
 
 void JDEECoApplication::sendPacket(JDEECoPacket *packet,
-        const char *recipient) {
-    if (opp_strcmp("", recipient) == 0) {
-        if (gate(lower802154LayerOut)->isConnected()) {
-            NetwToMacControlInfo::setControlInfo(packet, LAddress::L2BROADCAST);
-            packet->setByteLength(packet802154ByteLength);
-            send(packet, lower802154LayerOut);
-        }
-    } else {
-        packet->setByteLength(packet80211ByteLength);
-        socket.sendTo(packet, IPvXAddressResolver().resolve(recipient).get4(), port);
+		const char *recipient) {
+	if (opp_strcmp("", recipient) == 0) {
+		if (gate(lower802154LayerOut)->isConnected()) {
+			NetwToMacControlInfo::setControlInfo(packet, LAddress::L2BROADCAST);
+			packet->setByteLength(packet802154ByteLength);
+			send(packet, lower802154LayerOut);
+		}
+	} else {
+		packet->setByteLength(packet80211ByteLength);
+		socket.sendTo(packet, IPvXAddressResolver().resolve(recipient).get4(), port);
     }
 }
 

@@ -11,6 +11,7 @@ import cz.cuni.mff.d3s.deeco.simulation.omnet.OMNeTNative;
 import cz.cuni.mff.d3s.deeco.simulation.omnet.OMNeTNativeListener;
 import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
 import cz.cuni.mff.d3s.deeco.timer.TimerEventListener;
+import cz.cuni.mff.d3s.jdeeco.network.address.Address;
 
 public class OMNeTSimulation implements DEECoPlugin {
 	class OMNeTTimerProvider implements SimulationTimer {
@@ -63,6 +64,14 @@ public class OMNeTSimulation implements DEECoPlugin {
 		public void setInfrastructureDevice(OMNeTInfrastructureDevice device) {
 			infrastructureDevice = device;
 		}
+		
+		public void sendInfrastructurePacket(byte[] packet, Address address) {
+			throw new UnsupportedOperationException();
+		}
+		
+		public void sendBroadcastPacket(byte[] packet) {
+			OMNeTNative.nativeSendPacket(id, packet, "");
+		}
 
 		@Override
 		public void at(double absoluteTime) {
@@ -71,7 +80,13 @@ public class OMNeTSimulation implements DEECoPlugin {
 
 		@Override
 		public void packetReceived(byte[] packet, double rssi) {
-			System.out.println("Native host: Packet received");
+			if(rssi == -1 && infrastructureDevice != null) {
+				infrastructureDevice.receivePacket(packet);
+			}
+			
+			if(rssi >= 0 && broadcastDevice != null) {
+				broadcastDevice.receivePacket(packet, rssi);
+			}
 		}
 	}
 	
@@ -80,6 +95,10 @@ public class OMNeTSimulation implements DEECoPlugin {
 
 	public SimulationTimer getTimer() {
 		return timeProvider;
+	}
+	
+	public OMNeTHost getHost(int id) {
+		return hosts.get(id);
 	}
 
 	@Override
