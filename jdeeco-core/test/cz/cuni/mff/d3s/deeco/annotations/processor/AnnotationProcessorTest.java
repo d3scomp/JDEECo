@@ -56,6 +56,8 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.RatingsProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
+import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
+import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
 import cz.cuni.mff.d3s.deeco.runtime.DuplicateEnsembleDefinitionException;
 
 /**
@@ -724,7 +726,7 @@ public class AnnotationProcessorTest {
 	/*
 	 * Unit tests. 
 	 */
-	
+
 	@Test
 	public void testProcessInitialKnowledge() throws AnnotationProcessorException{
 		RuntimeMetadata model = factory.createRuntimeMetadata();

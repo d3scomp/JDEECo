@@ -6,9 +6,9 @@ import java.util.List;
 import cz.cuni.mff.d3s.deeco.integrity.RatingsManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.security.SecurityKeyManager;
+import cz.cuni.mff.d3s.deeco.timer.CurrentTimeProvider;
 
 
 /**
@@ -76,7 +76,7 @@ KnowledgeDataPublisher {
 			RatingsManager ratingsManager) {
 		this.host = host;		
 		this.scheduler = scheduler;
-		this.timeProvider = scheduler;
+		this.timeProvider = scheduler.getTimer();
 		this.kmContainer = kmContainer;
 		this.dataSender = dataSender;
 		this.keyManager = keyManager;

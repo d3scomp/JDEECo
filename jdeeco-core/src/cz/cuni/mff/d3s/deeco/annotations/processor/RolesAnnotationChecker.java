@@ -66,10 +66,18 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
  */
 public class RolesAnnotationChecker implements AnnotationChecker {
 	
+	/*
+	 * (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationChecker#validateComponent(java.lang.Object, cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance)
+	 */
 	public void validateComponent(Object componentObj, ComponentInstance componentInstance) throws AnnotationCheckerException {		
 		checkRolesImplementation(componentObj);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationChecker#validateEnsemble(java.lang.Class, cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition)
+	 */
 	public void validateEnsemble(Class<?> ensembleClass, EnsembleDefinition ensembleDefinition) throws AnnotationCheckerException {
 		if (ensembleClass == null) {
 			throw new AnnotationCheckerException("The input ensemble class cannot be null.");
