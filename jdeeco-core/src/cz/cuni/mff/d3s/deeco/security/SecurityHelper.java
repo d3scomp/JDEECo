@@ -32,7 +32,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
  */
 public class SecurityHelper {
 
-	private final int BLOCK_SIZE = 16;
+	private final int BLOCK_SIZE = 1024;
 	private static SecureRandom secureRandom = new SecureRandom();
 	
 	static {
@@ -85,9 +85,9 @@ public class SecurityHelper {
 	public byte[] transform(byte[] data, Cipher cipher) throws ShortBufferException, IllegalBlockSizeException, BadPaddingException, IOException {
 		byte[] buffer = new byte[BLOCK_SIZE];
 		int noBytes = 0;
-        byte[] cipherBlock = new byte[cipher.getOutputSize(buffer.length)];
+        byte[] cipherBlock = new byte[cipher.getOutputSize(data.length)];
         int cipherBytes;
-       
+      
         ByteArrayInputStream inputStream = null;
         ByteArrayOutputStream outputStream = null;
         
