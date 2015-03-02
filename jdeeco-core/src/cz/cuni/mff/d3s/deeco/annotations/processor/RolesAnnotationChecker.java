@@ -31,6 +31,36 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
  * All checks associated with roles.
  * Used by {@link AnnotationProcessor}.
  * 
+ * Every component can implement a number of roles specified by the {@link PlaysRole}
+ * annotation. A role is a simple class with only public fields (others are ignored)
+ * marked by the {@link Role} annotation. Roles work similarly to an interface 
+ * (all the fields in the role need to be implemented in the component class).
+ * This can be used also in ensembles, where the programmer can define {@link CoordinatorRole}
+ * and {@link MemberRole}. This ensures, that the given ensemble can be formed
+ * only between components that implement the specified roles.
+ * 
+ * This class is used to check that the roles are used correctly. This includes
+ * following checks:
+ * 
+ * 1) All classes used as role classes must be annotated by the {@link Role} attribute.
+ * See {@link RoleAnnotationsHelper} class that implements this.
+ * 
+ * 2) When a component implements a role, all public fields from this role need to be
+ * present also in the component class. For details, see the
+ * {@link RolesAnnotationChecker#checkRolesImplementation(Object)} method.
+ * 
+ * 3) In ensembles where coordinator and member role is specified, knowledge paths
+ * that are used in the membership and knowledge exchange methods are checked to be valid.
+ * This means that the knowledge path must exist in the given role definition.
+ * For details, see the {@link RolesAnnotationChecker#validateEnsemble(Class, EnsembleDefinition)}
+ * and {@link RolesAnnotationChecker#checkRolesImplementation(List, Class[], Class[])} methods.
+ * 
+ * When checking the presence of a particular field, besides the field name, the type of the 
+ * field must match to the type specified in the role class. In this case, inheritance is not
+ * taken into account (the types need to be equal). Generics are considered
+ * (eg. field of type List<<String>> cannot by implemented by a field of type
+ * List<<Integer>>).
+
  * @author Zbyněk Jiráček
  *
  */
@@ -61,7 +91,8 @@ public class RolesAnnotationChecker implements AnnotationChecker {
 	/**
 	 * Checks that a component instance class correctly implements all roles that are declared
 	 * by the {@link PlaysRole} annotation. The function does not return any value, it either
-	 * succeeds or throws an exception.
+	 * succeeds or throws an exception. A role is correctly implemented if all public fields
+	 * from the role class are present in the component class and have same types. 
 	 * @param obj The componentInstance
 	 * @throws AnnotationCheckerException 
 	 */
@@ -90,7 +121,12 @@ public class RolesAnnotationChecker implements AnnotationChecker {
 	
 	/**
 	 * Checks that all of the given parameter's knowledge paths exist in given roles. Works for only for
-	 * ensembles membership condition and knowledge exchange functions.
+	 * ensembles membership condition and knowledge exchange functions. The knowledge path is searched
+	 * using introspection. The type of the expression is also considered and must match. However,
+	 * some components and respective knowledge paths can be too complicated, only implication
+	 * knowledge path valid => method succeeds is ensured. On the other hand, if the method succeeds,
+	 * it does not necessarily mean that the knowledge path is valid. This can happen mostly with extensive
+	 * use of generics.
 	 * @param parameters The processed parameters of the function
 	 * @param coordinatorRoleAnnotations An array of coordinator role classes
 	 * @param memberRoleAnnotations An array of member role classes
@@ -211,6 +247,23 @@ public class RolesAnnotationChecker implements AnnotationChecker {
 		
 	}
 	
+	/**
+	 * Returns the type of a field sequence from a given role class. If the given field sequence
+	 * has only one element "id", String.class is returned (implicit field present in all roles).
+	 * When the field sequence consist of multiple elements, the type of the nested field is returned
+	 * (ie. if the given class contains a field x of type C, class C contains a field y and the 
+	 * input field name sequence is ("x", "y"), then the result is the type of C.y).
+	 * 
+	 * If the given field has generic type, {@link ParameterizedType} is returned, containing
+	 * the type arguments.
+	 * 
+	 * Sometimes generic types cannot be inferred. In that case it is possible, that an unknown
+	 * type is returned. In this case the result is an instance of {@link TypeVariable}.
+	 * 
+	 * @param fieldNameSequence Sequence of fields (knowledge path split by dots)
+	 * @param roleClass The role class
+	 * @return Type of the expression.
+	 */
 	private Type getTypeInRole(List<String> fieldNameSequence, Class<?> roleClass) {
 		if (fieldNameSequence.size() == 1 && fieldNameSequence.get(0).equals("id")) {
 			// id is always present and always of type String
@@ -220,6 +273,22 @@ public class RolesAnnotationChecker implements AnnotationChecker {
 		return getTypeInClass(fieldNameSequence, roleClass);
 	}
 	
+	/**
+	 * Returns the type of a field sequence from a given class. When the field sequence consists
+	 * of multiple elements, the type of the nested field is returned (ie. if the given class
+	 * contains a field x of type C, class C contains a field y and the input field name
+	 * sequence is ("x", "y"), then the result is the type of C.y).
+	 * 
+	 * If the given field has generic type, {@link ParameterizedType} is returned, containing
+	 * the type arguments.
+	 * 
+	 * Sometimes generic types cannot be inferred. In that case it is possible, that an unknown
+	 * type is returned. In this case the result is an instance of {@link TypeVariable}.
+	 * 
+	 * @param fieldNameSequence Sequence of fields (knowledge path split by dots)
+	 * @param clazz The class
+	 * @return Type of the expression.
+	 */
 	private Type getTypeInClass(List<String> fieldNameSequence, Class<?> clazz) {
 		String firstField = fieldNameSequence.get(0);
 		Field field;
@@ -302,12 +371,23 @@ public class RolesAnnotationChecker implements AnnotationChecker {
 		return false; // no field with equal name
 	}
 	
+	/**
+	 * Checks whether a given types are (or can be) equal. This method is used to check whether
+	 * a field of a given type can implement (or reference) a field of a given type from a role
+	 * class. The method returns true, if the types are equal, or in all cases when the types
+	 * cannot be proven to be different (this involves mostly unresolved generic arguments).
+	 * Note that due to technical limitations, type hierarchy is not taken into account
+	 * (ie. for classes A extends B, A and B are not considered equal in any case).
+	 * @param implementationType The type of the field in the class/method
+	 * @param roleType The type of the field as declared in the role
+	 * @return True if types are equal/may be equal, false otherwise
+	 */
 	private boolean compareTypes(Type implementationType, Type roleType) {
 		if (implementationType.equals(roleType)) {
 			return true;
 		}
 		
-		// nonequal types can be equal, if one of them is a generic type (or generically parametrized)
+		// nonequal types can be equal, if one of them is a generic type (or generically parameterized)
 		if (implementationType instanceof GenericArrayType && roleType instanceof GenericArrayType) {
 			GenericArrayType gType1 = (GenericArrayType) implementationType;
 			GenericArrayType gType2 = (GenericArrayType) roleType;

@@ -63,12 +63,14 @@ public class RoleAnnotationsHelper {
 		return result;
 	}
 	
+	// valid = has @Role annotation
 	static void checkRolesAreValid(Class<?>[] roles) throws AnnotationCheckerException {
 		for (Class<?> role : roles) {
 			checkRoleIsValid(role);
 		}
 	}
 	
+	// valid = has @Role annotation
 	static void checkRoleIsValid(Class<?> roleClass) throws AnnotationCheckerException {
 		if (roleClass.getAnnotation(Role.class) == null) {
 			throw new AnnotationCheckerException("The class " + roleClass.getSimpleName() + " is used as a role class, but it is not annotated by the @" + Role.class.getSimpleName() + " annotation.");
@@ -77,29 +79,6 @@ public class RoleAnnotationsHelper {
 
 	static boolean isPublicAndNonstatic(Field field) {
 		return !Modifier.isStatic(field.getModifiers()) && Modifier.isPublic(field.getModifiers());
-	}
-	
-	/**
-	 * Some java black magic.
-	 * 
-	 * If it starts with the string 'class ' or if it contains dots, or if it is a primitive type,
-	 * then the type actually exist. Otherwise it's just a type parameter name.
-	 * 
-	 * @return True, if the given type is not an actual type, but only a type parameter
-	 */
-	static boolean isTypeParameterName(Type type) {
-		String typeString = type.toString();
-		if (typeString.startsWith("class ") || typeString.indexOf('.') >= 0) {
-			return false;
-		}
-		
-		if (typeString.equals("byte") || typeString.equals("short") || typeString.equals("int") 
-				|| typeString.equals("long") || typeString.equals("float") || typeString.equals("double") 
-				|| typeString.equals("char") || typeString.equals("boolean")) {
-			return false;
-		}
-		
-		return true;
 	}
 
 }
