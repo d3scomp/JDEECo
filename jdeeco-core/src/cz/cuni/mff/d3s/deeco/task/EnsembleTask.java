@@ -672,14 +672,17 @@ public class EnsembleTask extends Task {
 			coordinatorExchangePerformed = performExchange(PathRoot.COORDINATOR, shadowKnowledgeManager);
 			membership = true;
 		}
-		EnsembleLogger.getInstance().logEvent(ensembleController, shadowKnowledgeManager, scheduler, membership);
+		EnsembleLogger.getInstance().logEvent(ensembleController, shadowKnowledgeManager, scheduler, membership, false);
 		
 		// Do the same with the roles exchanged
+		membership = false;
 		if (checkMembership(PathRoot.MEMBER, shadowKnowledgeManager) && securityChecker.checkSecurity(PathRoot.MEMBER, shadowKnowledgeManager)) {
 			architectureObserver.ensembleFormed(ensembleController.getEnsembleDefinition(), ensembleController.getComponentInstance(),
 					shadowKnowledgeManager.getId(), ensembleController.getComponentInstance().getKnowledgeManager().getId());
-			memberExchangePerformed = performExchange(PathRoot.MEMBER, shadowKnowledgeManager);			
+			memberExchangePerformed = performExchange(PathRoot.MEMBER, shadowKnowledgeManager);
+			membership = true;
 		}
+		EnsembleLogger.getInstance().logEvent(ensembleController, shadowKnowledgeManager, scheduler, membership, true);
 		
 		if (coordinatorExchangePerformed || memberExchangePerformed) {
 			invokeRatingsProcess(shadowKnowledgeManager.getId());
