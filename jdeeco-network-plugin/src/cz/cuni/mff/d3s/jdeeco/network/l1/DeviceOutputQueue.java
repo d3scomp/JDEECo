@@ -59,7 +59,9 @@ public class DeviceOutputQueue {
 		if (availableL0Space() < Layer1.MINIMUM_DATA_TRANSMISSION_SIZE) {
 			send();
 		} else {
-			// TODO add scheduler task
+			// TODO add scheduler task to send packet
+			// TODO: This is temporaly fix
+			send();
 		}
 	}
 
