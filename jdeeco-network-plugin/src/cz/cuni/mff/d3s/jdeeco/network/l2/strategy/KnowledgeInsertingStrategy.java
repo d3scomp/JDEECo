@@ -100,9 +100,13 @@ public class KnowledgeInsertingStrategy implements L2Strategy, DEECoPlugin {
 			Map<String, ChangeSet> result = new HashMap<>();
 
 			for (KnowledgePath kp : knowledge.getKnowledgePaths()) {
-				String author = (String) authors.getValue(kp);
-				if (author == null)
+				String author = null;
+				if(authors != null) {
+					author = (String) authors.getValue(kp);
+				}
+				if (author == null) {
 					author = metaData.componentId;
+				}
 
 				if (!result.containsKey(author)) {
 					result.put(author, new ChangeSet());
