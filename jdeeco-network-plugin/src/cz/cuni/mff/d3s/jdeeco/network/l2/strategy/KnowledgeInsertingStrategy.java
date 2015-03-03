@@ -18,7 +18,7 @@ import cz.cuni.mff.d3s.deeco.network.KnowledgeData;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeMetaData;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
-import cz.cuni.mff.d3s.deeco.scheduler.CurrentTimeProvider;
+import cz.cuni.mff.d3s.deeco.timer.CurrentTimeProvider;
 import cz.cuni.mff.d3s.jdeeco.network.Network;
 import cz.cuni.mff.d3s.jdeeco.network.l2.L2Packet;
 import cz.cuni.mff.d3s.jdeeco.network.l2.L2Strategy;
@@ -131,7 +131,7 @@ public class KnowledgeInsertingStrategy implements L2Strategy, DEECoPlugin {
 		// Resolve dependencies
 		knowledgeManagerContainer = container.getRuntimeFramework().getContainer();
 		Network network = container.getPluginInstance(Network.class);
-		timeProvider = container.getRuntimeFramework().getScheduler();
+		timeProvider = container.getRuntimeFramework().getScheduler().getTimer();
 
 		// Register as network L2 strategy
 		network.getL2().registerL2Strategy(this);

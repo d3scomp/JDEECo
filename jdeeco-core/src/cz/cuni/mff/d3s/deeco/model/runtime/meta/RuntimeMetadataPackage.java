@@ -857,13 +857,22 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int PARAMETER__TYPE = 2;
 
 	/**
+	 * The feature id for the '<em><b>Generic Type</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PARAMETER__GENERIC_TYPE = 3;
+
+	/**
 	 * The number of structural features of the '<em>Parameter</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PARAMETER_FEATURE_COUNT = 3;
+	int PARAMETER_FEATURE_COUNT = 4;
 
 	/**
 	 * The number of operations of the '<em>Parameter</em>' class.
@@ -1528,6 +1537,17 @@ public interface RuntimeMetadataPackage extends EPackage {
 
 
 	/**
+	 * The meta object id for the '<em>Type</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see java.lang.reflect.Type
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getType()
+	 * @generated
+	 */
+	int TYPE = 36;
+
+
+	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger <em>Time Trigger</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2020,6 +2040,17 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EAttribute getParameter_Type();
 
 	/**
+	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter#getGenericType <em>Generic Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Generic Type</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter#getGenericType()
+	 * @see #getParameter()
+	 * @generated
+	 */
+	EAttribute getParameter_GenericType();
+
+	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Invocable <em>Invocable</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2445,6 +2476,17 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EDataType getRatingsManager();
 
 	/**
+	 * Returns the meta object for data type '{@link java.lang.reflect.Type <em>Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>Type</em>'.
+	 * @see java.lang.reflect.Type
+	 * @model instanceClass="java.lang.reflect.Type"
+	 * @generated
+	 */
+	EDataType getType();
+
+	/**
 	 * Returns the factory that creates the instances of the model.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2864,6 +2906,14 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EAttribute PARAMETER__TYPE = eINSTANCE.getParameter_Type();
 
 		/**
+		 * The meta object literal for the '<em><b>Generic Type</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute PARAMETER__GENERIC_TYPE = eINSTANCE.getParameter_GenericType();
+
+		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.InvocableImpl <em>Invocable</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -3226,6 +3276,16 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * @generated
 		 */
 		EDataType RATINGS_MANAGER = eINSTANCE.getRatingsManager();
+
+		/**
+		 * The meta object literal for the '<em>Type</em>' data type.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see java.lang.reflect.Type
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getType()
+		 * @generated
+		 */
+		EDataType TYPE = eINSTANCE.getType();
 
 	}
 

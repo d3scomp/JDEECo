@@ -15,6 +15,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter#getKind <em>Kind</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter#getKnowledgePath <em>Knowledge Path</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter#getType <em>Type</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter#getGenericType <em>Generic Type</em>}</li>
  * </ul>
  * </p>
  *
@@ -131,5 +132,31 @@ public interface Parameter extends EObject {
 	 * @generated
 	 */
 	void setType(Class value);
+
+	/**
+	 * Returns the value of the '<em><b>Generic Type</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Generic Type</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Generic Type</em>' attribute.
+	 * @see #setGenericType(java.lang.reflect.Type)
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getParameter_GenericType()
+	 * @model dataType="cz.cuni.mff.d3s.deeco.model.runtime.api.Type" required="true"
+	 * @generated
+	 */
+	java.lang.reflect.Type getGenericType();
+
+	/**
+	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter#getGenericType <em>Generic Type</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Generic Type</em>' attribute.
+	 * @see #getGenericType()
+	 * @generated
+	 */
+	void setGenericType(java.lang.reflect.Type value);
 
 } // Parameter

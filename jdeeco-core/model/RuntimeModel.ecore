@@ -89,6 +89,8 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="knowledgePath" lowerBound="1"
         eType="#//KnowledgePath" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaClass"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="genericType" lowerBound="1"
+        eType="#//Type"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Invocable">
     <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"
@@ -153,4 +155,5 @@
     <eLiterals name="LOCAL"/>
     <eLiterals name="SHADOW" value="1"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="Type" instanceClassName="java.lang.reflect.Type"/>
 </ecore:EPackage>

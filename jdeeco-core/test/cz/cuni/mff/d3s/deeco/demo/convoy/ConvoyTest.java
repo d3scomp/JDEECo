@@ -8,15 +8,13 @@ import org.junit.Test;
 import org.junit.contrib.java.lang.system.StandardOutputStreamLog;
 
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
-import cz.cuni.mff.d3s.deeco.runtime.DEECo;
+import cz.cuni.mff.d3s.deeco.runners.DEECoSimulation;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
-import cz.cuni.mff.d3s.deeco.runtime.DuplicateEnsembleDefinitionException;
-import cz.cuni.mff.d3s.deeco.runtime.PluginDependencyException;
-
+import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
+import cz.cuni.mff.d3s.deeco.timer.DiscreteEventTimer;
+import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
 /**
- * 
  * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
- *
  */
 public class ConvoyTest {
 	
@@ -31,17 +29,21 @@ public class ConvoyTest {
 	public void testConvoy() throws AnnotationProcessorException, InterruptedException, DEECoException {
 		
 		/* create main application container */
-		DEECo deeco = new DEECo();
+		SimulationTimer simulationTimer = new DiscreteEventTimer();
+		DEECoSimulation realm = new DEECoSimulation(simulationTimer);
+		
+		/* create one and only deeco node (centralized deployment) */
+		DEECoNode deeco = realm.createNode();
 		/* deploy components and ensembles */
 		deeco.deployComponent(new Leader());
 		deeco.deployComponent(new Follower());
 		deeco.deployEnsemble(ConvoyEnsemble.class);
 		
-		deeco.start();
-		Thread.sleep(2000);
-		deeco.stop();
+		/* WHEN simulation is performed */
+		realm.start(2000);
 		
 		// THEN the follower reaches his destination
 		assertThat(log.getLog(), containsString("Follower F: me = (1,3)"));
 	}	
+
 }
