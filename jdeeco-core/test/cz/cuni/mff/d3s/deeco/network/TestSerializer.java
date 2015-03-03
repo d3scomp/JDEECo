@@ -107,7 +107,8 @@ public class TestSerializer {
 		}
 		
 		// create a new KM with the same id and knowledge values
-		KnowledgeManager km = container.createLocal(component.getKnowledgeManager().getId(), component);
+		KnowledgeManager km = container.createLocal(component.getKnowledgeManager().getId(), component, 
+				component.getKnowledgeManager().getRoles());
 		km.update(cs);
 				
 		List<? extends KnowledgeData> kd = kdManager.prepareLocalKnowledgeData();		

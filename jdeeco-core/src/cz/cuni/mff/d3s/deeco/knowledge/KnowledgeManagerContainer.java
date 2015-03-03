@@ -58,11 +58,11 @@ public class KnowledgeManagerContainer  {
 	 * @return {@link KnowledgeManager} the newly created object containing
 	 *         values for the specified knowledge paths.
 	 */
-	public KnowledgeManager createLocal(String id, ComponentInstance component) {
+	public KnowledgeManager createLocal(String id, ComponentInstance component, Class<?>[] roleClasses) {
 		if (locals.containsKey(id))
 			return locals.get(id);
 		
-		KnowledgeManager result = new CloningKnowledgeManager(id, component);
+		KnowledgeManager result = new CloningKnowledgeManager(id, component, roleClasses);
 		locals.put(id, result);
 		
 		for (LocalListener listener : localListeners) {
@@ -201,7 +201,7 @@ public class KnowledgeManagerContainer  {
 		} else {
 			replicas.put(id, new HashMap<>());
 			for (ComponentInstance component : runtimeModel.getComponentInstances()) {
-				KnowledgeManager result = new CloningKnowledgeManager(id, component);
+				KnowledgeManager result = new CloningKnowledgeManager(id, component, component.getKnowledgeManager().getRoles());
 				replicas.get(id).put(component, result);
 				for (ReplicaListener listener : replicaListeners) {
 					listener.replicaRegistered(result, this);

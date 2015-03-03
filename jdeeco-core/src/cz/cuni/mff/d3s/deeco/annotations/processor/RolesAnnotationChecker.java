@@ -87,7 +87,9 @@ public class RolesAnnotationChecker implements AnnotationChecker {
 		}
 		
 		Class<?>[] coordinatorRoles = RoleAnnotationsHelper.getCoordinatorRoleAnnotations(ensembleClass);
+		RoleAnnotationsHelper.checkRolesAreValid(coordinatorRoles);
 		Class<?>[] memberRoles = RoleAnnotationsHelper.getMemberRoleAnnotations(ensembleClass);
+		RoleAnnotationsHelper.checkRolesAreValid(memberRoles);
 		if (coordinatorRoles.length > 1 || memberRoles.length > 1) {
 			throw new AnnotationCheckerException("Only one CoordinatorRole and one MemberRole annotation is allowed per ensemble.");
 		}
@@ -122,6 +124,7 @@ public class RolesAnnotationChecker implements AnnotationChecker {
 		
 		// check if the class contains all fields from the role classes
 		Class<?>[] roleAnnotations = RoleAnnotationsHelper.getPlaysRoleAnnotations(componentClass);
+		RoleAnnotationsHelper.checkRolesAreValid(roleAnnotations);
 		for (Class<?> roleClass : roleAnnotations) {			
 			checkRoleFieldsImplementation(knowledgeFields, roleClass);
 		}		

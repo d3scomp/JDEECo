@@ -180,7 +180,7 @@ public class RoleHelperTest {
 		role.getArguments().add(createAbsoluteArgument("absolute", 123));
 		
 		// when knowledge manager is prepared
-		KnowledgeManager km = new BaseKnowledgeManager("test", null);
+		KnowledgeManager km = new BaseKnowledgeManager("test", null, null);
 		ChangeSet changeSet = new ChangeSet();
 		changeSet.setValue(RuntimeModelHelper.createKnowledgePath("field"), "field_content");
 		km.update(changeSet);
@@ -207,7 +207,7 @@ public class RoleHelperTest {
 		ComponentInstance component = mock(ComponentInstance.class);
 		
 		// when local knowledge manager is prepared
-		KnowledgeManager km = new BaseKnowledgeManager("test", component);
+		KnowledgeManager km = new BaseKnowledgeManager("test", component, null);
 		ChangeSet changeSet = new ChangeSet();
 		changeSet.setValue(RuntimeModelHelper.createKnowledgePath("field1"), "field1_content");
 		km.update(changeSet);
@@ -219,7 +219,7 @@ public class RoleHelperTest {
 		km.update(changeSet, "SHADOW1");
 		
 		// when the shadow knowledge manager is created
-		KnowledgeManager km_shadow = new BaseKnowledgeManager("SHADOW1", component);
+		KnowledgeManager km_shadow = new BaseKnowledgeManager("SHADOW1", component, null);
 		changeSet = new ChangeSet();
 		changeSet.setValue(RuntimeModelHelper.createKnowledgePath("field2"), "field2_content");
 		km_shadow.update(changeSet);

@@ -90,8 +90,8 @@ public class RuntimeFrameworkImplTest {
 		model.getComponentInstances().add(component);
 		model.getEnsembleDefinitions().add(edefinition);
 		
-		kmReplacement = new BaseKnowledgeManager("component", component);
-		when(kmContainer.createLocal(anyString(), anyObject())).thenReturn(kmReplacement);		
+		kmReplacement = new BaseKnowledgeManager("component", component, null);
+		when(kmContainer.createLocal(anyString(), anyObject(), any())).thenReturn(kmReplacement);		
 		
 		spy = mock(RuntimeFrameworkImpl.class);
 		
@@ -874,7 +874,7 @@ public class RuntimeFrameworkImplTest {
 		tested.replaceKnowledgeManager(component);
 		
 		// THEN the KM of the instance is replaced by a new one created by kmContainer for the instance
-		verify(kmContainer).createLocal(km.getId(), component);
+		verify(kmContainer).createLocal(km.getId(), component, km.getRoles());
 		assertEquals(kmReplacement, component.getKnowledgeManager());		
 	}
 	

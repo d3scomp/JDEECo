@@ -18,21 +18,18 @@ import cz.cuni.mff.d3s.deeco.annotations.Role;
  */
 public class RoleAnnotationsHelper {
 
-	public static Class<?>[] getCoordinatorRoleAnnotations(Class<?> clazz) throws AnnotationCheckerException {
+	public static Class<?>[] getCoordinatorRoleAnnotations(Class<?> clazz) {
 		Class<?>[] result = translateCoordinatorRoles(clazz.getAnnotationsByType(CoordinatorRole.class));
-		checkRolesAreValid(result);
 		return result;
 	}
 
-	public static Class<?>[] getMemberRoleAnnotations(Class<?> clazz) throws AnnotationCheckerException {
+	public static Class<?>[] getMemberRoleAnnotations(Class<?> clazz) {
 		Class<?>[] result = translateMemberRoles(clazz.getAnnotationsByType(MemberRole.class));
-		checkRolesAreValid(result);
 		return result;
 	}
 
-	public static Class<?>[] getPlaysRoleAnnotations(Class<?> clazz) throws AnnotationCheckerException {
+	public static Class<?>[] getPlaysRoleAnnotations(Class<?> clazz) {
 		Class<?>[] result = translatePlaysRole(clazz.getAnnotationsByType(PlaysRole.class));
-		checkRolesAreValid(result);
 		return result;
 	}
 	

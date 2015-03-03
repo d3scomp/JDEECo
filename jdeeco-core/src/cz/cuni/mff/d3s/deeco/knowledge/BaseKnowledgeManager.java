@@ -41,7 +41,7 @@ import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper;
  */
 @SuppressWarnings("unchecked")
 public class BaseKnowledgeManager implements KnowledgeManager {
-
+	
 	private final Map<KnowledgePath, Object> knowledge;
 	private final Map<KnowledgePath, String> knowledgeAuthors;
 	private final Map<PathNodeField, List<SecurityTag>> securityTags;
@@ -51,10 +51,12 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	
 	private final ComponentInstance component;
 	private final String id;
+	private final Class<?>[] roleClasses;
 
-	public BaseKnowledgeManager(String id, ComponentInstance component) {
+	public BaseKnowledgeManager(String id, ComponentInstance component, Class<?>[] roleClasses) {
 		this.id = id;
 		this.component = component;
+		this.roleClasses = roleClasses != null ? roleClasses : new Class<?>[0];
 		this.knowledge = new HashMap<>();
 		this.knowledgeChangeListeners = new HashMap<>();
 		this.localKnowledgePaths = new LinkedList<>();
@@ -808,6 +810,11 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 			throw new IllegalArgumentException("Only absolute knowledge paths can be locked.");
 		}
 		this.lockedKnowledgePaths.add(knowledgePath);
+	}
+
+	@Override
+	public Class<?>[] getRoles() {
+		return roleClasses;
 	}
 
 }

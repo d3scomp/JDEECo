@@ -337,7 +337,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 		}
 		
 		// create a new KM with the same id and knowledge values
-		KnowledgeManager km = kmContainer.createLocal(ci.getKnowledgeManager().getId(), ci);
+		KnowledgeManager km = kmContainer.createLocal(ci.getKnowledgeManager().getId(), ci, ci.getKnowledgeManager().getRoles());
 		km.markAsLocal(ci.getKnowledgeManager().getLocalPaths());
 		
 		if (initialKnowledge != null) {

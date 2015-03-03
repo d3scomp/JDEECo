@@ -57,7 +57,7 @@ public class ModelSecurityValidatorTest {
 		modelSecurityValidator = spy(new ModelSecurityValidator());
 		
 		simpleComponent = factory.createComponentInstance();
-		simpleKnowledgeManager = new BaseKnowledgeManager("ID1", simpleComponent);		
+		simpleKnowledgeManager = new BaseKnowledgeManager("ID1", simpleComponent, null);		
 		process = factory.createComponentProcess();
 		tag_with_path = factory.createKnowledgeSecurityTag();
 		tag_only_role = factory.createKnowledgeSecurityTag();
@@ -110,7 +110,7 @@ public class ModelSecurityValidatorTest {
 		
 		// create complex component to test transitivity
 		complexComponent = factory.createComponentInstance();
-		complexKnowledgeManager = new BaseKnowledgeManager("ID2", complexComponent);
+		complexKnowledgeManager = new BaseKnowledgeManager("ID2", complexComponent, null);
 		process1 = factory.createComponentProcess();
 		process2 = factory.createComponentProcess();
 		process3 = factory.createComponentProcess();
@@ -513,7 +513,7 @@ public class ModelSecurityValidatorTest {
 		exchange.getParameters().add(RuntimeModelHelper.createParameter(ParameterKind.IN, "<M>", "in"));
 		exchange.getParameters().add(RuntimeModelHelper.createParameter(ParameterKind.OUT, "<C>", "out"));
 		
-		KnowledgeManager shadowKnowledgeManager = new BaseKnowledgeManager("shadow123", complexComponent);
+		KnowledgeManager shadowKnowledgeManager = new BaseKnowledgeManager("shadow123", complexComponent, null);
 		
 		shadowKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("in"), Arrays.asList(tag_with_absolute));
 		complexKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("out"), Arrays.asList(tag_with_absolute));
@@ -529,7 +529,7 @@ public class ModelSecurityValidatorTest {
 		exchange.getParameters().add(RuntimeModelHelper.createParameter(ParameterKind.IN, "<M>", "in"));
 		exchange.getParameters().add(RuntimeModelHelper.createParameter(ParameterKind.OUT, "<C>", "out"));
 		
-		KnowledgeManager shadowKnowledgeManager = new BaseKnowledgeManager("shadow123", complexComponent);
+		KnowledgeManager shadowKnowledgeManager = new BaseKnowledgeManager("shadow123", complexComponent, null);
 		
 		// when output is not secured
 		shadowKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("in"), Arrays.asList(tag_with_absolute));
@@ -547,7 +547,7 @@ public class ModelSecurityValidatorTest {
 		exchange.getParameters().add(RuntimeModelHelper.createParameter(ParameterKind.IN, "<M>", "in"));
 		exchange.getParameters().add(RuntimeModelHelper.createParameter(ParameterKind.OUT, "<C>", "in1_1"));
 		
-		KnowledgeManager shadowKnowledgeManager = new BaseKnowledgeManager("shadow123", complexComponent);
+		KnowledgeManager shadowKnowledgeManager = new BaseKnowledgeManager("shadow123", complexComponent, null);
 		
 		shadowKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("in"), Arrays.asList(tag_with_absolute));
 		complexKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("in1_1"), Arrays.asList(tag_with_absolute));
@@ -571,7 +571,7 @@ public class ModelSecurityValidatorTest {
 		exchange.getParameters().add(RuntimeModelHelper.createParameter(ParameterKind.IN, "<M>", "in"));
 		exchange.getParameters().add(RuntimeModelHelper.createParameter(ParameterKind.OUT, "<C>", "in1_1"));
 		
-		KnowledgeManager shadowKnowledgeManager = new BaseKnowledgeManager("shadow123", complexComponent);
+		KnowledgeManager shadowKnowledgeManager = new BaseKnowledgeManager("shadow123", complexComponent, null);
 		
 		shadowKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("in"), Arrays.asList(tag_with_absolute));
 		complexKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("in1_1"), Arrays.asList(tag_with_absolute));
@@ -591,7 +591,7 @@ public class ModelSecurityValidatorTest {
 		exchange.getParameters().add(RuntimeModelHelper.createParameter(ParameterKind.IN, "<M>", "in"));
 		exchange.getParameters().add(RuntimeModelHelper.createParameter(ParameterKind.OUT, "<C>", "in1_1"));
 		
-		KnowledgeManager shadowKnowledgeManager = new BaseKnowledgeManager("shadow123", complexComponent);
+		KnowledgeManager shadowKnowledgeManager = new BaseKnowledgeManager("shadow123", complexComponent, null);
 		
 		shadowKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("in"), Arrays.asList(tag_with_absolute));
 		complexKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("in1_1"), Arrays.asList(tag_with_absolute));
@@ -613,7 +613,7 @@ public class ModelSecurityValidatorTest {
 		exchange.getParameters().add(RuntimeModelHelper.createParameter(ParameterKind.IN, "<M>", "in2"));
 		exchange.getParameters().add(RuntimeModelHelper.createParameter(ParameterKind.OUT, "<C>", "out2_1"));
 		
-		KnowledgeManager shadowKnowledgeManager = new BaseKnowledgeManager("shadow123", complexComponent);
+		KnowledgeManager shadowKnowledgeManager = new BaseKnowledgeManager("shadow123", complexComponent, null);
 		
 		shadowKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("in1"), Arrays.asList(tag_only_role));
 		complexKnowledgeManager.markAsLocal(Arrays.asList(RuntimeModelHelper.createKnowledgePath("out2_1"), RuntimeModelHelper.createKnowledgePath("out1_1")));
@@ -634,7 +634,7 @@ public class ModelSecurityValidatorTest {
 		changeSet.setValue(RuntimeModelHelper.createKnowledgePath("in1"), 123);
 		changeSet.setValue(RuntimeModelHelper.createKnowledgePath("in2"), 456);
 		
-		KnowledgeManager shadowKnowledgeManager = new BaseKnowledgeManager("shadow123", complexComponent);
+		KnowledgeManager shadowKnowledgeManager = new BaseKnowledgeManager("shadow123", complexComponent, null);
 		
 		shadowKnowledgeManager.update(changeSet);
 		shadowKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("in1"), Arrays.asList(tag_only_role));
@@ -654,7 +654,7 @@ public class ModelSecurityValidatorTest {
 		exchange.getParameters().add(RuntimeModelHelper.createParameter(ParameterKind.IN, "<M>", "in2"));
 		exchange.getParameters().add(RuntimeModelHelper.createParameter(ParameterKind.INOUT, "<C>", "out1"));
 				
-		KnowledgeManager shadowKnowledgeManager = new BaseKnowledgeManager("shadow123", complexComponent);
+		KnowledgeManager shadowKnowledgeManager = new BaseKnowledgeManager("shadow123", complexComponent, null);
 		
 		shadowKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("in1"), Arrays.asList(tag_only_role));
 		shadowKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("in2"), Arrays.asList());
@@ -670,7 +670,7 @@ public class ModelSecurityValidatorTest {
 		exchange.getParameters().add(RuntimeModelHelper.createParameter(ParameterKind.IN, "<M>", "in1"));
 		exchange.getParameters().add(RuntimeModelHelper.createParameter(ParameterKind.OUT, "<C>", "out1"));
 				
-		KnowledgeManager shadowKnowledgeManager = new BaseKnowledgeManager("shadow123", complexComponent);
+		KnowledgeManager shadowKnowledgeManager = new BaseKnowledgeManager("shadow123", complexComponent, null);
 		
 		shadowKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("in1"), Arrays.asList(tag_only_role));
 		complexKnowledgeManager.markAsLocal(Arrays.asList(RuntimeModelHelper.createKnowledgePath("out1")));
