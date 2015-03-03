@@ -5,6 +5,7 @@ import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
+import cz.cuni.mff.d3s.deeco.runtimelog.RuntimeLogger;
 
 /**
  * Specifies the entry points of the main DEECo container available to DEECo plugins. 
@@ -37,6 +38,12 @@ public interface DEECoContainer {
 	 * To be used by plugins to connect the main EMF model with its plugin-related extensions.
 	 */
 	public RuntimeMetadata getRuntimeMetadata();
+	
+	/**
+	 * Provides the {@link RuntimeLogger} specific to this DEECo container.
+	 * @return The {@link RuntimeLogger} specific to this DEECo container.
+	 */
+	public RuntimeLogger getRuntimeLogger();
 	
 	/**
 	 * Deploys components to the DEECo runtime by parsing them and adding them to the metadata model.
