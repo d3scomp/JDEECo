@@ -11,6 +11,7 @@ import cz.cuni.mff.d3s.jdeeco.network.Network;
 import cz.cuni.mff.d3s.jdeeco.network.address.Address;
 import cz.cuni.mff.d3s.jdeeco.network.address.MANETBroadcastAddress;
 import cz.cuni.mff.d3s.jdeeco.network.l1.Layer1;
+import cz.cuni.mff.d3s.jdeeco.network.l1.ReceivedInfo;
 
 /**
  * Loop-back broadcast device
@@ -48,7 +49,7 @@ public class LoopbackBroadcastDevice extends Device implements DEECoPlugin {
 			System.out.println("	Sending broadcast packet to L1 layers");
 			// TODO: Would be nice to know sender address (have a sending layer/network as a parameter)
 			// BUG: This is using recipient address, which is not correct
-			receive(data, MANETBroadcastAddress.INSTANCE);
+			layer.processL0Packet(data, this, new ReceivedInfo(MANETBroadcastAddress.INSTANCE));
 		}
 	}
 
