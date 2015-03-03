@@ -72,7 +72,7 @@ public class KnowledgeInsertingStrategy implements L2Strategy, DEECoPlugin {
 		if ((currentMetadata == null) || (currentMetadata.versionId < newMetadata.versionId)) {
 			for (KnowledgeManager replica : knowledgeManagerContainer.createReplica(newMetadata.componentId)) {
 				try {
-					Map<String, ChangeSet> changeSets = toChangeSets(knowledgeData.getKnowledge(), null, null);
+					Map<String, ChangeSet> changeSets = toChangeSets(knowledgeData.getKnowledge(), null, newMetadata);
 					for (Entry<String, ChangeSet> entry : changeSets.entrySet()) {
 						replica.update(entry.getValue(), entry.getKey());
 					}
