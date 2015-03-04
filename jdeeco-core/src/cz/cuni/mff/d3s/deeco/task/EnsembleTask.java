@@ -75,6 +75,11 @@ public class EnsembleTask extends Task {
 	RatingsManager ratingsManager;
 	
 	/**
+	 * Reference to the class that manages memberships and knowledge exchanges
+	 */
+	private EnsembleDataExchange ensembleDataExchange;
+	
+	/**
 	 * A wrapper around a trigger obtained from the local knowledge manager. The sole purpose of this class is to be able to distinguish
 	 * when invoked back by the scheduler/executor whether the trigger came originally from a local knowledge manager or a 
 	 * shadow knowledge manager.
@@ -162,6 +167,7 @@ public class EnsembleTask extends Task {
 		this.ensembleController = ensembleController;
 		this.securityChecker = new LocalSecurityChecker(ensembleController, kmContainer);
 		this.ratingsManager = ratingsManager;
+		this.ensembleDataExchange = new EnsembleDataExchange(ensembleController, ratingsManager);
 	}
 
 	/**
@@ -226,282 +232,6 @@ public class EnsembleTask extends Task {
 				localKM.unregister(strippedTrigger, knowledgeManagerTriggerListener);
 				shadowsKM.unregister(strippedTrigger, shadowsTriggerListener);
 			}
-		}
-	}
-	
-	
-
-	/**
-	 * Checks membership condition on parameters of the local knowledge manager and parameters from a particular shadow knowledge manager.
-	 * It fixes the coordinator/member roles based on the <code>localRole</code> parameter. If <code>localRole</code> is equal to {@link KnowledgePathHelper.PathRoot#COORDINATOR} it
-	 * takes the coordinators parameters from the local knowledge manager and the member parameters from the shadow knowledge manager.
-	 * If <code>localRole</code> is equal to {@link KnowledgePathHelper.PathRoot#MEMBER}, it does it vice-versa.
-	 * 
-	 * It essentially works in the following steps:
-	 * <ol>
-	 *   <li>It resolves the IN paths of the membership condition and retrieves the knowledge from the local knowledge manager and 
-	 *   the shadow knowledge manager with the member/coordinator roles fixed according to the <code>localRole</code> parameter.
-	 *   (Note that INOUT and OUT paths are not allowed. If they are present a {@link TaskInvocationException} is thrown.)</li>
-	 *   <li>If the IN parameters were not found in the knowledge, <code>false</code> is returned.</li>
-	 *   <li>Otherwise, it invokes the membership condition with the values obtained in the previous step and returns its return value.</li>
-	 * </ol>
-	 * 
-	 * @param localRole specifies whether the membership condition is to be evaluated with assuming the local component as a coordinator or member.
-	 * @param shadowKnowledgeManager specifies the shadow knowledge manager which contains data of the opposite component instance. 
-	 * @return <code>true</code> if the membership condition was satisfied. <code>false</code> if it was not satisfied or if the
-	 * IN parameters were not found in the knowledge.
-	 * @throws TaskInvocationException thrown when the membership condition can't be executed (e.g. it does not exist, has another parameters, has INOUT/OUT parameters, etc.)
-	 */
-	private boolean checkMembership(PathRoot localRole, ReadOnlyKnowledgeManager shadowKnowledgeManager) throws TaskInvocationException {
-		List<Parameter> formalParams = ensembleController.getEnsembleDefinition().getMembership().getParameters();
-		Object[] actualParams;
-		try {
-			ParameterKnowledgePaths parameters = getAllPathsWithRoots(localRole, shadowKnowledgeManager, formalParams, false);
-			actualParams = loadActualParams(localRole, shadowKnowledgeManager, parameters);
-		} catch (KnowledgeNotFoundException e) {
-			Log.w(String.format("Input knowledge (%s) of a membership function in %s not found.", 
-					e.getNotFoundPath(), ensembleController.getEnsembleDefinition().getName()));
-			return false;
-		}
-		
-		try {
-			// Call the membership condition
-			return (Boolean)ensembleController.getEnsembleDefinition().getMembership().getMethod().invoke(null, actualParams);
-			
-		} catch (IllegalAccessException | IllegalArgumentException e) {
-			throw new TaskInvocationException("Error when invoking a membership condition.", e);
-		} catch (ClassCastException e) {
-			throw new TaskInvocationException("Membership condition does not return a boolean.", e);			
-		} catch (InvocationTargetException e) {
-			Log.d("Membership condition returned an exception.", e.getTargetException());
-			return false;
-		}
-	}
-	
-	/**
-	 * Performs the knowledge exchange between the local knowledge manager and a particular shadow knowledge manager. Afterwards, it writes new values to 
-	 * the local knowledge manager. Similarly to {@link #checkMembership(PathRoot, ReadOnlyKnowledgeManager)}, it uses the <code>localRole</code>
-	 * parameter to specify, whether the local component instance is assumed to be in member or coordinator role.
-	 * 
-	 * The method essentially works in the following steps:
-	 * <ol>
-	 *   <li>It resolves the IN/INOUT paths of the membership condition and retrieves the knowledge from the local knowledge manager and 
-	 *   the shadow knowledge manager with the member/coordinator roles fixed according to the <code>localRole</code> parameter.
-	 *   <li>It invokes the membership condition with the values obtained in the previous step.</li>
-	 *   <li>It updates the local knowledge manager with the INOUT/OUT data that pertain to the local component.</li>
-	 * </ol>
-	 * 
-	 * Similar to the {@link ProcessTask#invoke(Trigger)}, the INOUT/OUT parameters are wrapped by {@link ParamHolder}. 
-	 * 
-	 * @param localRole specifies whether the knowledge exchange is to be evaluated with assuming the local component as a coordinator or member.
-	 * @param shadowKnowledgeManager specifies the shadow knowledge manager which contains data of the opposite component instance. 
-	 * @return true if the exchange was performed successfully
-	 * @throws TaskInvocationException thrown when the knowledge exchange can't be executed (e.g. it does not exist, has another parameters, has INOUT/OUT parameters, etc.).
-	 * The exception is thrown also in the case when parameters cannot be retrieved from the local/shadow knowledge manager or when the output
-	 * parameters can't be updated in the knowledge manager.
-	 */
-	private void performExchange(PathRoot localRole, ReadOnlyKnowledgeManager shadowKnowledgeManager) throws TaskInvocationException {
-		List<Parameter> formalParams = ensembleController.getEnsembleDefinition().getKnowledgeExchange().getParameters();
-		ParameterKnowledgePaths parameters;
-		Object[] actualParams;
-		try {
-			parameters = getAllPathsWithRoots(localRole, shadowKnowledgeManager, formalParams, true);
-			actualParams = loadActualParams(localRole, shadowKnowledgeManager, parameters);	
-		} catch (KnowledgeNotFoundException e) {
-			throw new TaskInvocationException(
-					String.format("Input knowledge (%s) of a knowledge exchange in %s not found.", 
-					e.getNotFoundPath(), ensembleController.getEnsembleDefinition().getName()),
-					e);
-		}
-		
-		try {			
-			// Call the process method
-			ensembleController.getEnsembleDefinition().getKnowledgeExchange().getMethod().invoke(null, actualParams);
-		} catch (IllegalAccessException | IllegalArgumentException e) {
-			throw new TaskInvocationException(
-					String.format("Error when invoking a knowledge exchange for ensemble: %s", 
-					ensembleController.getEnsembleDefinition().getName()),
-					e);			
-		} catch (InvocationTargetException e) {
-			throw new TaskInvocationException(
-					String.format("Knowledge exchange of the ensemble %s returned an exception.",
-					ensembleController.getEnsembleDefinition().getName()),
-					e.getTargetException());
-		}	
-		
-		try {
-			updateOutParameters(localRole, shadowKnowledgeManager, parameters, actualParams);
-		} catch (KnowledgeUpdateException e) {
-			throw new TaskInvocationException(
-					String.format("Error when updating the knowledge after a knowledge exchange for ensemble: %s", 
-					ensembleController.getEnsembleDefinition().getName()),
-					e);	
-		}
-	}
-	
-	private static class ParameterKnowledgePaths {
-		List<Parameter> formalParams;
-		List<KnowledgePathAndRoot> allPathsWithRoots;
-		// formalParams correspond with allPathsWithRoots 1:1
-		
-		Collection<KnowledgePath> localInPaths;
-		Collection<KnowledgePath> shadowInPaths;
-		// localInPaths and shadowInPaths do not contain out parameters
-		
-		public ParameterKnowledgePaths(List<Parameter> formalParams) {
-			this.formalParams = formalParams;
-			allPathsWithRoots = new LinkedList<KnowledgePathAndRoot>();
-			localInPaths = new LinkedList<KnowledgePath>();
-			shadowInPaths = new LinkedList<KnowledgePath>();
-		}
-	}
-	
-	private ParameterKnowledgePaths getAllPathsWithRoots(PathRoot localRole, ReadOnlyKnowledgeManager shadowKnowledgeManager,
-			List<Parameter> formalParams, boolean allowOutParams) throws TaskInvocationException, KnowledgeNotFoundException {
-
-		KnowledgeManager localKnowledgeManager = ensembleController.getComponentInstance().getKnowledgeManager();
-		ParameterKnowledgePaths result = new ParameterKnowledgePaths(formalParams);
-		
-		for (Parameter formalParam : formalParams) {
-			ParameterKind paramDir = formalParam.getKind();
-
-			if (!allowOutParams && paramDir != ParameterKind.IN && paramDir != ParameterKind.RATING) {
-				throw new TaskInvocationException("Only IN and RATING params allowed in membership condition.");
-			}
-			
-			KnowledgePathAndRoot absoluteKnowledgePathAndRoot;
-			// FIXME: The call to getAbsoluteStrippedPath is in theory wrong, because this way we are not obtaining the
-			// knowledge within one transaction. But fortunately this is not a problem with the single 
-			// threaded scheduler we have at the moment, because once the invoke method starts there is no other
-			// activity whatsoever in the system.
-			if (localRole == PathRoot.COORDINATOR) {
-				absoluteKnowledgePathAndRoot = getAbsoluteStrippedPath(formalParam.getKnowledgePath(), 
-						localKnowledgeManager, shadowKnowledgeManager);
-			} else {
-				absoluteKnowledgePathAndRoot = getAbsoluteStrippedPath(formalParam.getKnowledgePath(),
-						shadowKnowledgeManager, localKnowledgeManager);				
-			}
-			
-			if (paramDir == ParameterKind.OUT || paramDir == ParameterKind.INOUT) {
-				// no paths are locked in shadow knowledge manager
-				if (absoluteKnowledgePathAndRoot.root == localRole 
-						&& localKnowledgeManager.isLocked(absoluteKnowledgePathAndRoot.knowledgePath)) {
-					throw new TaskInvocationException(String.format(
-							"Path %s is used as a parameter of a security role and therefore cannot be modified.", 
-							absoluteKnowledgePathAndRoot.knowledgePath));
-				}
-			}
-
-			if (paramDir == ParameterKind.IN || paramDir == ParameterKind.INOUT || paramDir == ParameterKind.OUT) {
-				if (absoluteKnowledgePathAndRoot == null) {
-					throw new TaskInvocationException("Member/Coordinator prefix required for membership paths.");
-				} 
-				
-				if (paramDir != ParameterKind.OUT) {
-					if (absoluteKnowledgePathAndRoot.root == localRole) {
-						result.localInPaths.add(absoluteKnowledgePathAndRoot.knowledgePath);
-					} else {
-						result.shadowInPaths.add(absoluteKnowledgePathAndRoot.knowledgePath);
-					}
-				}
-			}
-			
-			result.allPathsWithRoots.add(absoluteKnowledgePathAndRoot);
-		}
-		
-		return result;
-	} 
-	
-	private Object[] loadActualParams(PathRoot localRole, ReadOnlyKnowledgeManager shadowKnowledgeManager,
-			ParameterKnowledgePaths parameters) throws KnowledgeNotFoundException, TaskInvocationException {
-		
-		KnowledgeManager localKnowledgeManager = ensembleController.getComponentInstance().getKnowledgeManager();
-		
-		ValueSet localKnowledge = localKnowledgeManager.get(parameters.localInPaths);
-		ValueSet shadowKnowledge = shadowKnowledgeManager.get(parameters.shadowInPaths);
-
-		// Construct the parameters for the process method invocation
-		Object[] actualParams = new Object[parameters.formalParams.size()];
-		
-		int paramIdx = 0;
-		Iterator<KnowledgePathAndRoot> allPathsWithRootsIter = parameters.allPathsWithRoots.iterator(); 
-		for (Parameter formalParam : parameters.formalParams) {
-			ParameterKind paramDir = formalParam.getKind();			
-			KnowledgePathAndRoot absoluteKnowledgePathAndRoot = allPathsWithRootsIter.next();
-			String knowledgeAuthor = null;
-			Object paramValue = null;
-			
-			if (paramDir == ParameterKind.IN || paramDir == ParameterKind.INOUT || paramDir == ParameterKind.RATING) {				
-				if (absoluteKnowledgePathAndRoot.root == localRole) {
-					paramValue = localKnowledge.getValue(absoluteKnowledgePathAndRoot.knowledgePath);
-					knowledgeAuthor = localKnowledgeManager.getAuthor(absoluteKnowledgePathAndRoot.knowledgePath);
-				} else {
-					paramValue = shadowKnowledge.getValue(absoluteKnowledgePathAndRoot.knowledgePath);
-					knowledgeAuthor = shadowKnowledgeManager.getAuthor(absoluteKnowledgePathAndRoot.knowledgePath);
-				}
-			}
-			
-			if (paramDir == ParameterKind.IN) {
-				actualParams[paramIdx] = paramValue;				
-			} else if (paramDir == ParameterKind.OUT) {
-				actualParams[paramIdx] = new ParamHolder<Object>();
-			} else if (paramDir == ParameterKind.INOUT) {
-				actualParams[paramIdx] = new ParamHolder<Object>(paramValue);
-			} else if (paramDir == ParameterKind.RATING) {				
-				actualParams[paramIdx] = ratingsManager.createReadonlyRatingsHolder(knowledgeAuthor, 
-						absoluteKnowledgePathAndRoot.knowledgePath); 			
-			}
-			// TODO: We could have an option of not creating the wrapper. That would make it easier to work with mutable out types.
-			// TODO: We need some way of handling insertions/deletions in a hashmap.
-			
-			paramIdx++;
-		}
-		
-		return actualParams;
-	}
-
-	/**
-	 * @param localRole
-	 * @param shadowKnowledgeManager
-	 * @param formalParams
-	 * @param parameters
-	 * @param actualParams
-	 * @throws TaskInvocationException
-	 */
-	private void updateOutParameters(PathRoot localRole, ReadOnlyKnowledgeManager shadowKnowledgeManager,
-			ParameterKnowledgePaths parameters, Object[] actualParams) throws KnowledgeUpdateException {
-		// Create a changeset
-		Map<String, ChangeSet> localChangeSets = new HashMap<>();
-		KnowledgeManager localKnowledgeManager = ensembleController.getComponentInstance().getKnowledgeManager();
-
-		int paramIdx = 0;
-		Iterator<KnowledgePathAndRoot> allPathsWithRootsIter = parameters.allPathsWithRoots.iterator(); 
-		for (Parameter formalParam : parameters.formalParams) {
-			ParameterKind paramDir = formalParam.getKind();
-			KnowledgePathAndRoot absoluteKnowledgePathAndRoot = allPathsWithRootsIter.next();
-
-			if (absoluteKnowledgePathAndRoot.root == localRole) {
-				if (paramDir == ParameterKind.OUT || paramDir == ParameterKind.INOUT) {
-					
-					String author = shadowKnowledgeManager.getAuthor(absoluteKnowledgePathAndRoot.knowledgePath);
-					if (author == null) {
-						author = shadowKnowledgeManager.getId();
-					}
-					if (!localChangeSets.containsKey(author)) {
-						localChangeSets.put(author, new ChangeSet());
-					}
-					
-					localChangeSets.get(author).setValue(absoluteKnowledgePathAndRoot.knowledgePath, 
-							((ParamHolder<Object>)actualParams[paramIdx]).value);
-				}
-			}
-			
-			paramIdx++;
-		}
-		
-		// Write the changeset back to the knowledge
-		for (Entry<String, ChangeSet> entry : localChangeSets.entrySet()) {
-			localKnowledgeManager.update(entry.getValue(), entry.getKey());
 		}
 	}
 
@@ -645,20 +375,22 @@ public class EnsembleTask extends Task {
 		boolean membership = false;
 		
 		// Invoke the membership condition and if the membership condition returned true, invoke the knowledge exchange
-		if (checkMembership(PathRoot.COORDINATOR, shadowKnowledgeManager) && securityChecker.checkSecurity(PathRoot.COORDINATOR, shadowKnowledgeManager)) {
+		if (ensembleDataExchange.checkMembership(PathRoot.COORDINATOR, shadowKnowledgeManager) 
+				&& securityChecker.checkSecurity(PathRoot.COORDINATOR, shadowKnowledgeManager)) {
 			architectureObserver.ensembleFormed(ensembleController.getEnsembleDefinition(), ensembleController.getComponentInstance(),
 					ensembleController.getComponentInstance().getKnowledgeManager().getId(),shadowKnowledgeManager.getId());
-			performExchange(PathRoot.COORDINATOR, shadowKnowledgeManager);
+			ensembleDataExchange.performExchange(PathRoot.COORDINATOR, shadowKnowledgeManager);
 			coordinatorExchangePerformed = true;
 			membership = true;
 		}
 		EnsembleLogger.getInstance().logEvent(ensembleController, shadowKnowledgeManager, scheduler.getTimer(), membership);
 		
 		// Do the same with the roles exchanged
-		if (checkMembership(PathRoot.MEMBER, shadowKnowledgeManager) && securityChecker.checkSecurity(PathRoot.MEMBER, shadowKnowledgeManager)) {
+		if (ensembleDataExchange.checkMembership(PathRoot.MEMBER, shadowKnowledgeManager)
+				&& securityChecker.checkSecurity(PathRoot.MEMBER, shadowKnowledgeManager)) {
 			architectureObserver.ensembleFormed(ensembleController.getEnsembleDefinition(), ensembleController.getComponentInstance(),
 					shadowKnowledgeManager.getId(), ensembleController.getComponentInstance().getKnowledgeManager().getId());
-			performExchange(PathRoot.MEMBER, shadowKnowledgeManager);
+			ensembleDataExchange.performExchange(PathRoot.MEMBER, shadowKnowledgeManager);
 			memberExchangePerformed = true;
 		}
 		
