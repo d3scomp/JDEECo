@@ -6,7 +6,9 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.CoordinatorRole;
@@ -174,8 +176,13 @@ public class RolesAnnotationChecker implements AnnotationChecker {
 	}
 	
 	/**
-	 * Checks that a given knowledge path is valid in given roles. Works only for ensembles membership
+	 * Checks that a given knowledge path is valid. Works only for ensembles membership
 	 * condition and knowledge exchange functions.
+	 * 
+	 * A valid knowledge path must have at least two nodes (first being coord/member and second being
+	 * a field name). More nodes can be present. A knowledge path must also exist in at least one
+	 * role specified for the member/coordinator. The last condition does not apply if the role list
+	 * for the member/coordinator is empty.
 	 * @param type Type of the expression
 	 * @param knowledgePath The knowledge path
 	 * @param coordinatorRoleAnnotations An array of coordinator role classes
@@ -221,13 +228,24 @@ public class RolesAnnotationChecker implements AnnotationChecker {
 			throw new AnnotationCheckerException("A knowledge path's second element should be a field name.");
 		}
 
-		// test the knowledge path against all roles
+		// Test the knowledge path against all roles
+		// It is sufficient that the field belongs to at least one of the roles
+		boolean satisfiesAnyRole = false;
 		for (Class<?> roleClass : roleClasses) {
-			if (!isFieldInRole(type, fieldNameSequence, roleClass)) {
-				throw new AnnotationCheckerException("The knowledge path '" + knowledgePath.toString() + "'"
-						+ (type != null ? " of type " + type : "") + " is not valid for the role '" + roleClass.getSimpleName() + "'. "
-						+ "Check whether the field (or sequence of fields) exists in the role and that it has correct type(s) and is public, nonstatic and non@Local");
+			if (isFieldInRole(type, fieldNameSequence, roleClass)) {
+				satisfiesAnyRole = true;
+				break; // one role is enough
 			}
+		}
+		
+		String roleClassNames = String.join(", ", 
+				Arrays.asList(roleClasses).stream().map(r -> r.getSimpleName()).collect(Collectors.toList()));
+		
+		if (!satisfiesAnyRole && roleClasses.length > 0) {
+			throw new AnnotationCheckerException("The knowledge path '" + knowledgePath.toString() + "'"
+					+ (type != null ? " of type " + type : "") + " is not valid for any of the roles: " + roleClassNames + ". "
+					+ "Check whether the field (or sequence of fields) exists in the role and that it has correct type(s) and is public, nonstatic and non@Local");
+		
 		}
 	}
 

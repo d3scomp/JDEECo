@@ -753,18 +753,23 @@ public class RolesAnnotationCheckerTest {
 		
 		RolesAnnotationChecker checker = spy(new RolesAnnotationChecker());
 		Mockito.doReturn(true).when(checker).isFieldInRole(any(), any(), any());
+		Mockito.doReturn(false).when(checker).isFieldInRole(any(), any(), Mockito.eq(RoleClass2.class));
 		
+		// It is sufficient if the field is present in at least one role. When the isFieldInRole
+		// method returns always true, only the first role is tested.
+		// When the isFieldRole returns false, then also the second role has to be tested (and this
+		// must return true, else we would get an exception)
 		checker.checkRolesImplementation(getTestParameters(), coordinatorRoles, memberRoles);
 		verify(checker, times(1)).isFieldInRole(Integer.class, Arrays.asList("x"), RoleClass1.class);
-		verify(checker, times(1)).isFieldInRole(Integer.class, Arrays.asList("x"), RoleClass2.class);
+		//verify(checker, times(1)).isFieldInRole(Integer.class, Arrays.asList("x"), RoleClass2.class);
 		verify(checker, times(1)).isFieldInRole(Long.class, Arrays.asList("a", "b"), RoleClass1.class);
-		verify(checker, times(1)).isFieldInRole(Long.class, Arrays.asList("a", "b"), RoleClass2.class);
+		//verify(checker, times(1)).isFieldInRole(Long.class, Arrays.asList("a", "b"), RoleClass2.class);
 		verify(checker, times(1)).isFieldInRole(null, Arrays.asList("id"), RoleClass1.class);
-		verify(checker, times(1)).isFieldInRole(null, Arrays.asList("id"), RoleClass2.class); // TODO this needs subtyping approval
+		//verify(checker, times(1)).isFieldInRole(null, Arrays.asList("id"), RoleClass2.class); // TODO this needs subtyping approval
 		verify(checker, times(1)).isFieldInRole(null, Arrays.asList("y"), RoleClass2.class);
 		verify(checker, times(1)).isFieldInRole(null, Arrays.asList("y"), RoleClass3.class);
 		verify(checker, times(1)).isFieldInRole(String.class, Arrays.asList("z"), RoleClass1.class);
-		verify(checker, times(1)).isFieldInRole(String.class, Arrays.asList("z"), RoleClass2.class);
+		//verify(checker, times(1)).isFieldInRole(String.class, Arrays.asList("z"), RoleClass2.class);
 		verify(checker, times(1)).isFieldInRole(_Struct_String.class.getGenericSuperclass(), Arrays.asList("s"), RoleClass2.class);
 		verify(checker, times(1)).isFieldInRole(_Struct_String.class.getGenericSuperclass(), Arrays.asList("s"), RoleClass3.class);
 		
@@ -781,32 +786,42 @@ public class RolesAnnotationCheckerTest {
 			public Integer y;
 		}
 		
-		class RoleAnnotationImpl implements CoordinatorRole, MemberRole {
-			@Override
-			public Class<?> value() {
-				return RoleClass1.class;
-			}
-
-			@Override
-			public Class<? extends Annotation> annotationType() {
-				return RoleAnnotationImpl.class;
-			}
+		@Role
+		class RoleClass2 {
+			public Integer x;
+			public String z;
+			
 		}
 		
-		Class<?>[] roles = new Class<?>[] {RoleClass1.class};
+		Class<?>[] roles = new Class<?>[] {RoleClass1.class, RoleClass2.class};
 		
 		Parameter param1 = RuntimeMetadataFactory.eINSTANCE.createParameter();
 		param1.setKind(ParameterKind.IN);
 		param1.setKnowledgePath(KnowledgePathHelper.createKnowledgePath("coord.x", PathOrigin.ENSEMBLE));
 		param1.setType(Integer.class);
+		param1.setGenericType(Integer.class);
 		
 		RolesAnnotationChecker checker = spy(new RolesAnnotationChecker());
 		Mockito.doReturn(false).when(checker).isFieldInRole(any(), any(), any());
 		
 		exception.expect(AnnotationCheckerException.class);
-		exception.expectMessage("The knowledge path '<COORDINATOR>.x' is not valid for the role 'RoleClass1'. Check whether the field (or sequence of fields) exists in the role and that it has correct type(s) and is public, nonstatic and non@Local");
+		exception.expectMessage("The knowledge path '<COORDINATOR>.x' of type " + Integer.class + " is not valid for any of the roles: RoleClass1, RoleClass2. Check whether the field (or sequence of fields) exists in the role and that it has correct type(s) and is public, nonstatic and non@Local");
 		
-		checker.checkRolesImplementation(Arrays.asList(param1), roles, roles);
+		AnnotationCheckerException ex = null;
+		try {
+			checker.checkRolesImplementation(Arrays.asList(param1), roles, roles);
+		} catch (AnnotationCheckerException e) {
+			ex = e;
+		}
+		
+		// verify that both roles were tested
+		verify(checker, times(1)).isFieldInRole(Integer.class, Arrays.asList("x"), RoleClass1.class);
+		verify(checker, times(1)).isFieldInRole(Integer.class, Arrays.asList("x"), RoleClass2.class);
+		verify(checker, times(1)).checkRolesImplementation(any(), any(), any());
+		verifyNoMoreInteractions(checker);
+		
+		if (ex != null)
+			throw ex;
 	}
 	
 	
