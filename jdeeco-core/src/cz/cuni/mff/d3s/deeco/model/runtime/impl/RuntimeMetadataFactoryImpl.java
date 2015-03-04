@@ -10,6 +10,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.Map;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
@@ -545,8 +546,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public java.lang.reflect.Type createTypeFromString(EDataType eDataType, String initialValue) {
-		return (java.lang.reflect.Type)super.createFromString(eDataType, initialValue);
+	public Type createTypeFromString(EDataType eDataType, String initialValue) {
+		return (Type)super.createFromString(eDataType, initialValue);
 	}
 
 	/**

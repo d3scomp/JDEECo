@@ -749,6 +749,19 @@ public class AnnotationProcessor {
 			CommunicationBoundaryPredicate cBoundary = createCommunicationBoundary(clazz);			
 			ensembleDefinition.setCommunicationBoundary(cBoundary);
 			
+			// take the first role (if exists)
+			// at current setting, it is not possible to have multiple instances of the same annotation
+			// and if it would be possible, it is checked in RolesAnnotationChecker
+			Class<?>[] coordinatorRoleAnnotations = RoleAnnotationsHelper.getCoordinatorRoleAnnotations(clazz);
+			if (coordinatorRoleAnnotations != null && coordinatorRoleAnnotations.length > 0) {
+				ensembleDefinition.setCoordinatorRole(coordinatorRoleAnnotations[0]);
+			}
+			
+			Class<?>[] memberRoleAnnotations = RoleAnnotationsHelper.getMemberRoleAnnotations(clazz);
+			if (memberRoleAnnotations != null && memberRoleAnnotations.length > 0) {
+				ensembleDefinition.setMemberRole(memberRoleAnnotations[0]);
+			}
+			
 			TimeTrigger periodicEnsembleTrigger = createPeriodicTrigger(clazz);
 			List<KnowledgeChangeTrigger> exchangeKChangeTriggers = createKnowledgeChangeTriggers(exchange.getMethod(), PathOrigin.ENSEMBLE);
 			List<KnowledgeChangeTrigger> conditionKChangeTriggers = createKnowledgeChangeTriggers(condition.getMethod(), PathOrigin.ENSEMBLE);
@@ -961,10 +974,7 @@ public class AnnotationProcessor {
 		for (int i = 0; i < parameterTypes.length; i++) {
 			parameters.add(createParameter(parameterTypes[i], genericTypes[i], i, allAnnotations[i], pathOrigin));
 		}
-		if (parameters.isEmpty()) {
- 			throw new AnnotationProcessorException(
- 					"The "+ (pathOrigin == PathOrigin.COMPONENT ? "component" : "ensemble") + " process cannot have zero parameters.");
-		}
+
 		return parameters;
 	}
 	

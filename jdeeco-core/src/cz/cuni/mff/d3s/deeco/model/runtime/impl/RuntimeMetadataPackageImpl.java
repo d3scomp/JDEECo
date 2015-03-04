@@ -39,6 +39,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.Map;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
@@ -695,6 +696,24 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getEnsembleDefinition_CoordinatorRole() {
+		return (EAttribute)ensembleDefinitionEClass.getEStructuralFeatures().get(6);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getEnsembleDefinition_MemberRole() {
+		return (EAttribute)ensembleDefinitionEClass.getEStructuralFeatures().get(7);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getCondition() {
 		return conditionEClass;
 	}
@@ -1239,6 +1258,8 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		createEReference(ensembleDefinitionEClass, ENSEMBLE_DEFINITION__TRIGGERS);
 		createEAttribute(ensembleDefinitionEClass, ENSEMBLE_DEFINITION__COMMUNICATION_BOUNDARY);
 		createEAttribute(ensembleDefinitionEClass, ENSEMBLE_DEFINITION__PARTITIONED_BY);
+		createEAttribute(ensembleDefinitionEClass, ENSEMBLE_DEFINITION__COORDINATOR_ROLE);
+		createEAttribute(ensembleDefinitionEClass, ENSEMBLE_DEFINITION__MEMBER_ROLE);
 
 		conditionEClass = createEClass(CONDITION);
 
@@ -1407,6 +1428,8 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		initEReference(getEnsembleDefinition_Triggers(), this.getTrigger(), null, "triggers", null, 0, -1, EnsembleDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getEnsembleDefinition_CommunicationBoundary(), this.getCommunicationBoundary(), "communicationBoundary", null, 0, 1, EnsembleDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getEnsembleDefinition_PartitionedBy(), ecorePackage.getEString(), "partitionedBy", null, 0, 1, EnsembleDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEnsembleDefinition_CoordinatorRole(), this.getType(), "coordinatorRole", null, 0, 1, EnsembleDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEnsembleDefinition_MemberRole(), this.getType(), "memberRole", null, 0, 1, EnsembleDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(conditionEClass, Condition.class, "Condition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
@@ -1489,7 +1512,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		initEDataType(shadowKnowledgeManagerRegistryEDataType, ShadowKnowledgeManagerRegistry.class, "ShadowKnowledgeManagerRegistry", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(communicationBoundaryEDataType, CommunicationBoundaryPredicate.class, "CommunicationBoundary", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(ratingsManagerEDataType, RatingsManager.class, "RatingsManager", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-		initEDataType(typeEDataType, java.lang.reflect.Type.class, "Type", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(typeEDataType, Type.class, "Type", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
 		createResource(eNS_URI);

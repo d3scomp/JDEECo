@@ -11,6 +11,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
 
+import java.lang.reflect.Type;
 import java.util.Collection;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -40,6 +41,8 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl#getTriggers <em>Triggers</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl#getCommunicationBoundary <em>Communication Boundary</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl#getPartitionedBy <em>Partitioned By</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl#getCoordinatorRole <em>Coordinator Role</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl#getMemberRole <em>Member Role</em>}</li>
  * </ul>
  * </p>
  *
@@ -135,6 +138,46 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 	 * @ordered
 	 */
 	protected String partitionedBy = PARTITIONED_BY_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getCoordinatorRole() <em>Coordinator Role</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getCoordinatorRole()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final Type COORDINATOR_ROLE_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getCoordinatorRole() <em>Coordinator Role</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getCoordinatorRole()
+	 * @generated
+	 * @ordered
+	 */
+	protected Type coordinatorRole = COORDINATOR_ROLE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getMemberRole() <em>Member Role</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getMemberRole()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final Type MEMBER_ROLE_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getMemberRole() <em>Member Role</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getMemberRole()
+	 * @generated
+	 * @ordered
+	 */
+	protected Type memberRole = MEMBER_ROLE_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -321,6 +364,48 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public Type getCoordinatorRole() {
+		return coordinatorRole;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setCoordinatorRole(Type newCoordinatorRole) {
+		Type oldCoordinatorRole = coordinatorRole;
+		coordinatorRole = newCoordinatorRole;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.ENSEMBLE_DEFINITION__COORDINATOR_ROLE, oldCoordinatorRole, coordinatorRole));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Type getMemberRole() {
+		return memberRole;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setMemberRole(Type newMemberRole) {
+		Type oldMemberRole = memberRole;
+		memberRole = newMemberRole;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.ENSEMBLE_DEFINITION__MEMBER_ROLE, oldMemberRole, memberRole));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -354,6 +439,10 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 				return getCommunicationBoundary();
 			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__PARTITIONED_BY:
 				return getPartitionedBy();
+			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__COORDINATOR_ROLE:
+				return getCoordinatorRole();
+			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__MEMBER_ROLE:
+				return getMemberRole();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -386,6 +475,12 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__PARTITIONED_BY:
 				setPartitionedBy((String)newValue);
 				return;
+			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__COORDINATOR_ROLE:
+				setCoordinatorRole((Type)newValue);
+				return;
+			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__MEMBER_ROLE:
+				setMemberRole((Type)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -416,6 +511,12 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__PARTITIONED_BY:
 				setPartitionedBy(PARTITIONED_BY_EDEFAULT);
 				return;
+			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__COORDINATOR_ROLE:
+				setCoordinatorRole(COORDINATOR_ROLE_EDEFAULT);
+				return;
+			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__MEMBER_ROLE:
+				setMemberRole(MEMBER_ROLE_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -440,6 +541,10 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 				return COMMUNICATION_BOUNDARY_EDEFAULT == null ? communicationBoundary != null : !COMMUNICATION_BOUNDARY_EDEFAULT.equals(communicationBoundary);
 			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__PARTITIONED_BY:
 				return PARTITIONED_BY_EDEFAULT == null ? partitionedBy != null : !PARTITIONED_BY_EDEFAULT.equals(partitionedBy);
+			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__COORDINATOR_ROLE:
+				return COORDINATOR_ROLE_EDEFAULT == null ? coordinatorRole != null : !COORDINATOR_ROLE_EDEFAULT.equals(coordinatorRole);
+			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__MEMBER_ROLE:
+				return MEMBER_ROLE_EDEFAULT == null ? memberRole != null : !MEMBER_ROLE_EDEFAULT.equals(memberRole);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -460,6 +565,10 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 		result.append(communicationBoundary);
 		result.append(", partitionedBy: ");
 		result.append(partitionedBy);
+		result.append(", coordinatorRole: ");
+		result.append(coordinatorRole);
+		result.append(", memberRole: ");
+		result.append(memberRole);
 		result.append(')');
 		return result.toString();
 	}

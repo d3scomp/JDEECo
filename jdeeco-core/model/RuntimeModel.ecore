@@ -65,6 +65,8 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="communicationBoundary"
         eType="#//CommunicationBoundary"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="partitionedBy" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="coordinatorRole" eType="#//Type"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="memberRole" eType="#//Type"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Condition" eSuperTypes="#//Invocable"/>
   <eClassifiers xsi:type="ecore:EClass" name="Exchange" eSuperTypes="#//Invocable"/>

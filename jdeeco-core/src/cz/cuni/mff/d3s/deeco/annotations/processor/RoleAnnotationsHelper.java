@@ -17,7 +17,7 @@ import cz.cuni.mff.d3s.deeco.annotations.Role;
  *
  */
 public class RoleAnnotationsHelper {
-
+	
 	public static Class<?>[] getCoordinatorRoleAnnotations(Class<?> clazz) {
 		Class<?>[] result = translateCoordinatorRoles(clazz.getAnnotationsByType(CoordinatorRole.class));
 		return result;

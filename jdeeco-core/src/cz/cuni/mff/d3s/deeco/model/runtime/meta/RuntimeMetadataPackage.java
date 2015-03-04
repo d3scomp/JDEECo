@@ -546,13 +546,31 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int ENSEMBLE_DEFINITION__PARTITIONED_BY = 5;
 
 	/**
+	 * The feature id for the '<em><b>Coordinator Role</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ENSEMBLE_DEFINITION__COORDINATOR_ROLE = 6;
+
+	/**
+	 * The feature id for the '<em><b>Member Role</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ENSEMBLE_DEFINITION__MEMBER_ROLE = 7;
+
+	/**
 	 * The number of structural features of the '<em>Ensemble Definition</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ENSEMBLE_DEFINITION_FEATURE_COUNT = 6;
+	int ENSEMBLE_DEFINITION_FEATURE_COUNT = 8;
 
 	/**
 	 * The number of operations of the '<em>Ensemble Definition</em>' class.
@@ -1923,6 +1941,28 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EAttribute getEnsembleDefinition_PartitionedBy();
 
 	/**
+	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getCoordinatorRole <em>Coordinator Role</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Coordinator Role</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getCoordinatorRole()
+	 * @see #getEnsembleDefinition()
+	 * @generated
+	 */
+	EAttribute getEnsembleDefinition_CoordinatorRole();
+
+	/**
+	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getMemberRole <em>Member Role</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Member Role</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getMemberRole()
+	 * @see #getEnsembleDefinition()
+	 * @generated
+	 */
+	EAttribute getEnsembleDefinition_MemberRole();
+
+	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Condition <em>Condition</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2808,6 +2848,22 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute ENSEMBLE_DEFINITION__PARTITIONED_BY = eINSTANCE.getEnsembleDefinition_PartitionedBy();
+
+		/**
+		 * The meta object literal for the '<em><b>Coordinator Role</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ENSEMBLE_DEFINITION__COORDINATOR_ROLE = eINSTANCE.getEnsembleDefinition_CoordinatorRole();
+
+		/**
+		 * The meta object literal for the '<em><b>Member Role</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ENSEMBLE_DEFINITION__MEMBER_ROLE = eINSTANCE.getEnsembleDefinition_MemberRole();
 
 		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ConditionImpl <em>Condition</em>}' class.

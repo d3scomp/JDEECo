@@ -27,8 +27,16 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.InOrder;
 
+import cz.cuni.mff.d3s.deeco.annotations.CoordinatorRole;
+import cz.cuni.mff.d3s.deeco.annotations.Ensemble;
+import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
+import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
+import cz.cuni.mff.d3s.deeco.annotations.MemberRole;
+import cz.cuni.mff.d3s.deeco.annotations.Membership;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
+import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
+import cz.cuni.mff.d3s.deeco.annotations.Role;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.ParseException;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.PathOrigin;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.TokenMgrError;
@@ -641,20 +649,6 @@ public class AnnotationProcessorTest {
 	}
 	
 	@Test 
-	public void testExceptionsInComponentParsing5() throws AnnotationProcessorException {
-		RuntimeMetadata model = factory.createRuntimeMetadata();
-		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
-		
-		WrongC5 input = new WrongC5();
-		exception.expect(AnnotationProcessorException.class);
-		exception.expectMessage(
-				"Component: "+input.getClass().getCanonicalName()+"->" +
-				"Process: process1->" +
-				"The component process cannot have zero parameters.");
-		processor.processComponent(input);
-	}
-	
-	@Test 
 	public void testExceptionsInEnsembleParsing1() throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		RuntimeMetadata model = factory.createRuntimeMetadata();
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
@@ -818,6 +812,51 @@ public class AnnotationProcessorTest {
 		
 		doThrow(new AnnotationCheckerException("(inner)")).when(checker1).validateEnsemble(eq(CorrectE1.class), any());
 		processor.processEnsemble(CorrectE1.class);
+	}
+	
+	@Role
+	static class RoleClass1 { }
+	
+	@Role
+	static class RoleClass2 { }
+	
+	@Ensemble
+	@PeriodicScheduling(period=3000)
+	@CoordinatorRole(RoleClass1.class)
+	@MemberRole(RoleClass2.class) 
+	static class EnsembleClass1 { @Membership public static boolean m() { return false; } @KnowledgeExchange public static void pe() { } }
+	
+	@Ensemble
+	@PeriodicScheduling(period=3000)
+	@CoordinatorRole(RoleClass2.class)
+	static class EnsembleClass2 { @Membership public static boolean m() { return false; } @KnowledgeExchange public static void pe() { }}
+	
+	@Ensemble
+	@PeriodicScheduling(period=3000)
+	@MemberRole(RoleClass1.class)
+	static class EnsembleClass3 { @Membership public static boolean m() { return false; } @KnowledgeExchange public static void pe() { }}
+	
+	@Ensemble
+	@PeriodicScheduling(period=3000)
+	static class EnsembleClass4 { @Membership public static boolean m() { return false; } @KnowledgeExchange public static void pe() { }}
+	
+	@Test
+	public void testEnsembleRoles() throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
+		RuntimeMetadata model = factory.createRuntimeMetadata();
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory,new ArrayList<AnnotationChecker>());	
+		EnsembleDefinition ed1 = processor.processEnsemble(EnsembleClass1.class);
+		EnsembleDefinition ed2 = processor.processEnsemble(EnsembleClass2.class);
+		EnsembleDefinition ed3 = processor.processEnsemble(EnsembleClass3.class);
+		EnsembleDefinition ed4 = processor.processEnsemble(EnsembleClass4.class);
+		
+		assertEquals(RoleClass1.class, ed1.getCoordinatorRole());
+		assertEquals(RoleClass2.class, ed1.getMemberRole());
+		assertEquals(RoleClass2.class, ed2.getCoordinatorRole());
+		assertNull(ed2.getMemberRole());
+		assertNull(ed3.getCoordinatorRole());
+		assertEquals(RoleClass1.class, ed3.getMemberRole());
+		assertNull(ed4.getCoordinatorRole());
+		assertNull(ed4.getMemberRole());
 	}
 	
 	/*
