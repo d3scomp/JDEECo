@@ -119,20 +119,4 @@ public class Layer2 implements L2StrategyManager, L1DataProcessor {
 	public boolean unregisterL2Strategy(L2Strategy strategy) {
 		return strategies.remove(strategy);
 	}
-
-	/**
-	 * Creates L2 packet from object
-	 * 
-	 * TODO: Reactor this once this method is really used
-	 * 
-	 * @param object
-	 *            Source object to be stored in packet
-	 * @param header
-	 *            Packet header
-	 */
-	public L2Packet createPacket(PacketHeader header, Object object) {
-		L2Packet packet = new L2Packet(header, object);
-		packet.setLayer(this);
-		return packet;
-	}
 }

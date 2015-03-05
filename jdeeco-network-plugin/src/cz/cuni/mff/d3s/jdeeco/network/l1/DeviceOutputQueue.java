@@ -61,7 +61,7 @@ public class DeviceOutputQueue {
 			send();
 		} else {
 			// TODO add scheduler task to send packet
-			// TODO: This is temporaly fix
+			// TODO: This is temporary fix
 			send();
 		}
 	}
