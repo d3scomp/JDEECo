@@ -71,6 +71,7 @@ public class DummyKnowledgePublisher implements DEECoPlugin {
 	private Network network;
 	private KnowledgeManagerContainer knowledgeManagerContainer;
 	private CurrentTimeProvider timeProvider;
+	private DEECoContainer container;
 
 	@Override
 	public List<Class<? extends DEECoPlugin>> getDependencies() {
@@ -104,18 +105,13 @@ public class DummyKnowledgePublisher implements DEECoPlugin {
 	// NOTE: Taken from DefaultKnowledgeDataManager
 	protected KnowledgeData prepareLocalKnowledgeData(KnowledgeManager km) throws KnowledgeNotFoundException {
 
-		// TODO: We are ignoring security, version and host
+		// TODO: We are ignoring security, and host
+		// TODO: version is implemented by current time
+		long time = timeProvider.getCurrentMilliseconds();
 		return new KnowledgeData(getNonLocalKnowledge(km.get(emptyPath), km), new ValueSet(), new ValueSet(), new KnowledgeMetaData(
-				km.getId(), 0xfa4e, "host here", timeProvider.getCurrentMilliseconds(), 1));
+				km.getId(), time, String.valueOf(container.getId()), time, 1));
 	}
-
-	// NOTE: Taken from DefaultKnowledgeDataManager
-	protected KnowledgeMetaData createKnowledgeMetaData(KnowledgeManager km) {
-
-		// TODO: Fake values here
-		return new KnowledgeMetaData(km.getId(), 0, "ID", timeProvider.getCurrentMilliseconds(), 1);
-	}
-
+	
 	// NOTE: Taken from DefaultKnowledgeDataManager
 	protected ValueSet getNonLocalKnowledge(ValueSet toFilter, KnowledgeManager km) {
 		ValueSet result = new ValueSet();
@@ -158,6 +154,7 @@ public class DummyKnowledgePublisher implements DEECoPlugin {
 		// Resolve dependencies
 		network = container.getPluginInstance(Network.class);
 		knowledgeManagerContainer = container.getRuntimeFramework().getContainer();
+		this.container = container; 
 
 		timeProvider = container.getRuntimeFramework().getScheduler().getTimer();
 
