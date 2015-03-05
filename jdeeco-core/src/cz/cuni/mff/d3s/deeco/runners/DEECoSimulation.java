@@ -1,6 +1,7 @@
 package cz.cuni.mff.d3s.deeco.runners;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
@@ -16,11 +17,11 @@ import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
 public class DEECoSimulation {
 
 	List<DEECoNode> deecoNodes;
-	DEECoPlugin[] nodeWideplugins;
+	List<DEECoPlugin> nodePlugins;
 	SimulationTimer simulationTimer;
 
 	public DEECoSimulation(SimulationTimer simulationTimer, DEECoPlugin... nodeWideplugins) {
-		this.nodeWideplugins = nodeWideplugins;
+		this.nodePlugins = Arrays.asList(nodeWideplugins);
 		this.simulationTimer = simulationTimer;
 		deecoNodes = new ArrayList<>();
 	}
@@ -30,28 +31,10 @@ public class DEECoSimulation {
 	}
 
 	public DEECoNode createNode(DEECoPlugin... nodeSpecificPlugins) throws DEECoException {
-		DEECoNode node = new DEECoNode(simulationTimer, getAllPlugins(nodeWideplugins, nodeSpecificPlugins));
+		nodePlugins.addAll(Arrays.asList(nodeSpecificPlugins));
+		DEECoNode node = new DEECoNode(simulationTimer,(DEECoPlugin[]) (nodePlugins.toArray()));
 		deecoNodes.add(node);
 		return node;
-	}
-	
-	/**
-	 * Helper method that concatenates the array of node-wide plugins with node-specific plugins.
-	 * The returned array is intended to be passed to the DEECoNode() constructor.    
-	 * @param nodeSpecificPlugins extra plugins, not provided by the factory
-	 */
-	private DEECoPlugin[] getAllPlugins(DEECoPlugin[] nodeWideplugins, DEECoPlugin[] nodeSpecificPlugins) {
-		DEECoPlugin[] ret = new DEECoPlugin[nodeSpecificPlugins.length+nodeWideplugins.length];
-		int ind=0;
-		for (int i=0; i<nodeSpecificPlugins.length; i++) {
-			ret[ind] = nodeSpecificPlugins[i];
-			ind++;
-		}
-		for (int j=0; j<nodeWideplugins.length; j++) {
-			ret[ind] = nodeSpecificPlugins[j];
-			ind++;			
-		}
-		return ret;
 	}
 	
 }
