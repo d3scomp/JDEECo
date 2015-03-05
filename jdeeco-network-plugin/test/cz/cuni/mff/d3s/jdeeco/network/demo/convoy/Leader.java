@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.jdeeco.network.convoy;
+package cz.cuni.mff.d3s.jdeeco.network.demo.convoy;
 
 
 
@@ -42,7 +42,7 @@ public class Leader {
 	}
 	
 	@Process
-	@PeriodicScheduling(period=250)
+	@PeriodicScheduling(period=2500)
 	public static void moveProcess(
 			@InOut("path") ParamHolder<List<Waypoint>> path,
 			@In("name") String name,

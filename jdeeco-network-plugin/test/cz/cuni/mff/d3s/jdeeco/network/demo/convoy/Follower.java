@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.jdeeco.network.convoy;
+package cz.cuni.mff.d3s.jdeeco.network.demo.convoy;
 
 
 import cz.cuni.mff.d3s.deeco.annotations.Component;
@@ -23,7 +23,7 @@ public class Follower {
 	public Waypoint leaderPosition;
 			
 	@Process
-	@PeriodicScheduling(period=250)
+	@PeriodicScheduling(period=2500)
 	public static void followProcess(
 		@InOut("position") ParamHolder<Waypoint> me,
 		@In("destination") Waypoint destination, 

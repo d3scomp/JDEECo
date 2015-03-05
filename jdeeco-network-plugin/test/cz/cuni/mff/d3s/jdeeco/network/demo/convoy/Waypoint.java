@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.jdeeco.network.convoy;
+package cz.cuni.mff.d3s.jdeeco.network.demo.convoy;
 
 import java.io.Serializable;
 

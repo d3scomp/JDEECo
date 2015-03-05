@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.jdeeco.network.convoy;
+package cz.cuni.mff.d3s.jdeeco.network.demo.convoy;
 
 
 import java.util.List;
@@ -45,7 +45,7 @@ public class ConvoyEnsemble {
 			@Out("member.leaderPosition") ParamHolder<Waypoint> fLeaderPosition,
 			@In("coord.position") Waypoint lPosition) {
 		
-		System.out.println("membership: "+ memberId + " " + coordId);
+		System.out.println("exchange: "+ memberId + " " + coordId);
 		
 		fLeaderPosition.value = lPosition;
 	}

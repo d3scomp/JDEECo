@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.jdeeco.network.convoy;
+package cz.cuni.mff.d3s.jdeeco.network.demo.convoy;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
@@ -23,10 +23,10 @@ import cz.cuni.mff.d3s.jdeeco.publishing.DummyKnowledgePublisher;
  * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
  *
  */
-public class ConvoyTest {	
+public class ConvoyTest {
 	@Rule
-	public final StandardOutputStreamLog  log = new StandardOutputStreamLog ();
-	
+	public final StandardOutputStreamLog log = new StandardOutputStreamLog();
+
 	public static void main(String[] args) throws AnnotationProcessorException, InterruptedException, DEECoException {
 		ConvoyTest test = new ConvoyTest();
 
@@ -40,22 +40,24 @@ public class ConvoyTest {
 	 * @throws InterruptedException
 	 * @throws DEECoException
 	 */
-	//@Test
+	@Test
 	public void testConvoyLoopback() throws AnnotationProcessorException, InterruptedException, DEECoException {
 		/* create main application container */
-		SimulationTimer simulationTimer = new DiscreteEventTimer(); // also "new WallTimeSchedulerNotifier()" 
- 		DEECoSimulation realm = new DEECoSimulation(simulationTimer);
- 		
- 		LoopbackBroadcastDevice loopback = new LoopbackBroadcastDevice();
-		 
+		SimulationTimer simulationTimer = new DiscreteEventTimer(); // also "new WallTimeSchedulerNotifier()"
+		DEECoSimulation realm = new DEECoSimulation(simulationTimer);
+
+		LoopbackBroadcastDevice loopback = new LoopbackBroadcastDevice();
+
 		/* create first deeco node */
-		DEECoNode deeco1 = realm.createNode(new Network(), new DummyKnowledgePublisher(), new KnowledgeInsertingStrategy(), loopback);
+		DEECoNode deeco1 = realm.createNode(new Network(), new DummyKnowledgePublisher(),
+				new KnowledgeInsertingStrategy(), loopback);
 		/* deploy components and ensembles */
 		deeco1.deployComponent(new Leader());
 		deeco1.deployEnsemble(ConvoyEnsemble.class);
-		
+
 		/* create second deeco node */
-		DEECoNode deeco2 = realm.createNode(new Network(), new DummyKnowledgePublisher(), new KnowledgeInsertingStrategy(), loopback);
+		DEECoNode deeco2 = realm.createNode(new Network(), new DummyKnowledgePublisher(),
+				new KnowledgeInsertingStrategy(), loopback);
 		/* deploy components and ensembles */
 		deeco2.deployComponent(new Follower());
 		deeco2.deployEnsemble(ConvoyEnsemble.class);
@@ -64,6 +66,6 @@ public class ConvoyTest {
 		realm.start(20000);
 
 		// THEN the follower prints out the following (as there is no network and the components cannot exchange data)
-		assertThat(log.getLog(), containsString("Follower F: me = (1,1) leader = null"));
+		assertThat(log.getLog(), containsString("Follower F: me = (1,3) leader = (1,3)"));
 	}
 }
