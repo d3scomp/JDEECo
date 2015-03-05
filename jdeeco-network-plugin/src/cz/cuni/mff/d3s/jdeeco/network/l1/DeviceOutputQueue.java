@@ -1,6 +1,7 @@
 package cz.cuni.mff.d3s.jdeeco.network.l1;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 import cz.cuni.mff.d3s.jdeeco.network.address.Address;
 import cz.cuni.mff.d3s.jdeeco.network.device.Device;
@@ -69,7 +70,8 @@ public class DeviceOutputQueue {
 
 	protected void send() {
 		if (l0PacketSize > 0) {
-			device.send(l0Packet, address);
+			byte[] validL0PacketData = Arrays.copyOfRange(l0Packet, 0, l0PacketSize);
+			device.send(validL0PacketData, address);
 			l0PacketSize = 0;
 		}
 	}
