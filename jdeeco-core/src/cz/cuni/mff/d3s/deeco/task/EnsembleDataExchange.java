@@ -20,6 +20,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind;
@@ -27,22 +28,28 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.KnowledgePathAndRoot;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.PathRoot;
 
+/**
+ * Handles membership and knowledge exchange within an ensemble.
+ * 
+ * @author Zbyněk Jiráček
+ *
+ */
 public class EnsembleDataExchange {
 
 	/**
 	 * Reference to the corresponding {@link EnsembleController} in the runtime metadata 
 	 */
-	EnsembleController ensembleController;
+	EnsembleDefinition ensembleDefinition;
 	
 	/**
 	 * Reference to the ratings manager
 	 */	
 	RatingsManager ratingsManager;
 			
-	public EnsembleDataExchange(EnsembleController ensembleController,
+	public EnsembleDataExchange(EnsembleDefinition ensembleDefinition,
 			RatingsManager ratingsManager) {
 		super();
-		this.ensembleController = ensembleController;
+		this.ensembleDefinition = ensembleDefinition;
 		this.ratingsManager = ratingsManager;
 	}
 
@@ -67,21 +74,27 @@ public class EnsembleDataExchange {
 	 * IN parameters were not found in the knowledge.
 	 * @throws TaskInvocationException thrown when the membership condition can't be executed (e.g. it does not exist, has another parameters, has INOUT/OUT parameters, etc.)
 	 */
-	public boolean checkMembership(PathRoot localRole, ReadOnlyKnowledgeManager shadowKnowledgeManager) throws TaskInvocationException {
-		List<Parameter> formalParams = ensembleController.getEnsembleDefinition().getMembership().getParameters();
+	public boolean checkMembership(PathRoot localRole, KnowledgeManager localKnowledgeManager,
+			ReadOnlyKnowledgeManager shadowKnowledgeManager) throws TaskInvocationException {
+		if (!checkMembershipRoles(localRole, localKnowledgeManager.getRoles(), shadowKnowledgeManager.getRoles())) {
+			return false;
+		}
+		
+		List<Parameter> formalParams = ensembleDefinition.getMembership().getParameters();
 		Object[] actualParams;
 		try {
-			ParameterKnowledgePaths parameters = getAllPathsWithRoots(localRole, shadowKnowledgeManager, formalParams, false);
-			actualParams = loadActualParams(localRole, shadowKnowledgeManager, parameters);
+			ParameterKnowledgePaths parameters = getAllPathsWithRoots(localRole, localKnowledgeManager,
+					shadowKnowledgeManager, formalParams, false);
+			actualParams = loadActualParams(localRole, localKnowledgeManager, shadowKnowledgeManager, parameters);
 		} catch (KnowledgeNotFoundException e) {
 			Log.w(String.format("Input knowledge (%s) of a membership function in %s not found.", 
-					e.getNotFoundPath(), ensembleController.getEnsembleDefinition().getName()));
+					e.getNotFoundPath(), ensembleDefinition.getName()));
 			return false;
 		}
 		
 		try {
 			// Call the membership condition
-			return (Boolean)ensembleController.getEnsembleDefinition().getMembership().getMethod().invoke(null, actualParams);
+			return (Boolean)ensembleDefinition.getMembership().getMethod().invoke(null, actualParams);
 			
 		} catch (IllegalAccessException | IllegalArgumentException e) {
 			throw new TaskInvocationException("Error when invoking a membership condition.", e);
@@ -115,43 +128,72 @@ public class EnsembleDataExchange {
 	 * The exception is thrown also in the case when parameters cannot be retrieved from the local/shadow knowledge manager or when the output
 	 * parameters can't be updated in the knowledge manager.
 	 */
-	public void performExchange(PathRoot localRole, ReadOnlyKnowledgeManager shadowKnowledgeManager) throws TaskInvocationException {
-		List<Parameter> formalParams = ensembleController.getEnsembleDefinition().getKnowledgeExchange().getParameters();
+	public void performExchange(PathRoot localRole, KnowledgeManager localKnowledgeManager,
+			ReadOnlyKnowledgeManager shadowKnowledgeManager) throws TaskInvocationException {
+		List<Parameter> formalParams = ensembleDefinition.getKnowledgeExchange().getParameters();
 		ParameterKnowledgePaths parameters;
 		Object[] actualParams;
 		try {
-			parameters = getAllPathsWithRoots(localRole, shadowKnowledgeManager, formalParams, true);
-			actualParams = loadActualParams(localRole, shadowKnowledgeManager, parameters);	
+			parameters = getAllPathsWithRoots(localRole, localKnowledgeManager, shadowKnowledgeManager, formalParams, true);
+			actualParams = loadActualParams(localRole, localKnowledgeManager, shadowKnowledgeManager, parameters);	
 		} catch (KnowledgeNotFoundException e) {
 			throw new TaskInvocationException(
 					String.format("Input knowledge (%s) of a knowledge exchange in %s not found.", 
-					e.getNotFoundPath(), ensembleController.getEnsembleDefinition().getName()),
+					e.getNotFoundPath(), ensembleDefinition.getName()),
 					e);
 		}
 		
 		try {			
 			// Call the process method
-			ensembleController.getEnsembleDefinition().getKnowledgeExchange().getMethod().invoke(null, actualParams);
+			ensembleDefinition.getKnowledgeExchange().getMethod().invoke(null, actualParams);
 		} catch (IllegalAccessException | IllegalArgumentException e) {
 			throw new TaskInvocationException(
 					String.format("Error when invoking a knowledge exchange for ensemble: %s", 
-					ensembleController.getEnsembleDefinition().getName()),
+					ensembleDefinition.getName()),
 					e);			
 		} catch (InvocationTargetException e) {
 			throw new TaskInvocationException(
 					String.format("Knowledge exchange of the ensemble %s returned an exception.",
-					ensembleController.getEnsembleDefinition().getName()),
+					ensembleDefinition.getName()),
 					e.getTargetException());
 		}	
 		
 		try {
-			updateOutParameters(localRole, shadowKnowledgeManager, parameters, actualParams);
+			updateOutParameters(localRole, localKnowledgeManager, shadowKnowledgeManager, parameters, actualParams);
 		} catch (KnowledgeUpdateException e) {
 			throw new TaskInvocationException(
 					String.format("Error when updating the knowledge after a knowledge exchange for ensemble: %s", 
-					ensembleController.getEnsembleDefinition().getName()),
+					ensembleDefinition.getName()),
 					e);	
 		}
+	}
+	
+	private boolean checkMembershipRoles(PathRoot localRole, Class<?>[] localRoles, Class<?>[] shadowRoles) {
+		Class<?>[] coordinatorRoles, memberRoles;
+		if (localRole == PathRoot.COORDINATOR) {
+			coordinatorRoles = localRoles;
+			memberRoles = shadowRoles;
+		} else {
+			coordinatorRoles = shadowRoles;
+			memberRoles = localRoles;
+		}
+		
+		return checkRoleImplementation(ensembleDefinition.getCoordinatorRole(), coordinatorRoles)
+				&& checkRoleImplementation(ensembleDefinition.getMemberRole(), memberRoles);
+	}
+	
+	private boolean checkRoleImplementation(Class<?> desiredRole, Class<?>[] implementedRoles) {
+		if (desiredRole == null) {
+			return true;
+		}
+		
+		for (Class<?> implementedRole : implementedRoles) {
+			if (implementedRole.equals(desiredRole)) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	private static class ParameterKnowledgePaths {
@@ -171,10 +213,10 @@ public class EnsembleDataExchange {
 		}
 	}
 	
-	private ParameterKnowledgePaths getAllPathsWithRoots(PathRoot localRole, ReadOnlyKnowledgeManager shadowKnowledgeManager,
-			List<Parameter> formalParams, boolean allowOutParams) throws TaskInvocationException, KnowledgeNotFoundException {
+	private ParameterKnowledgePaths getAllPathsWithRoots(PathRoot localRole, KnowledgeManager localKnowledgeManager,
+			ReadOnlyKnowledgeManager shadowKnowledgeManager, List<Parameter> formalParams, boolean allowOutParams)
+					throws TaskInvocationException, KnowledgeNotFoundException {
 
-		KnowledgeManager localKnowledgeManager = ensembleController.getComponentInstance().getKnowledgeManager();
 		ParameterKnowledgePaths result = new ParameterKnowledgePaths(formalParams);
 		
 		for (Parameter formalParam : formalParams) {
@@ -227,11 +269,10 @@ public class EnsembleDataExchange {
 		return result;
 	} 
 	
-	private Object[] loadActualParams(PathRoot localRole, ReadOnlyKnowledgeManager shadowKnowledgeManager,
-			ParameterKnowledgePaths parameters) throws KnowledgeNotFoundException, TaskInvocationException {
-		
-		KnowledgeManager localKnowledgeManager = ensembleController.getComponentInstance().getKnowledgeManager();
-		
+	private Object[] loadActualParams(PathRoot localRole, KnowledgeManager localKnowledgeManager,
+			ReadOnlyKnowledgeManager shadowKnowledgeManager, ParameterKnowledgePaths parameters) 
+					throws KnowledgeNotFoundException, TaskInvocationException {
+				
 		ValueSet localKnowledge = localKnowledgeManager.get(parameters.localInPaths);
 		ValueSet shadowKnowledge = shadowKnowledgeManager.get(parameters.shadowInPaths);
 
@@ -283,11 +324,11 @@ public class EnsembleDataExchange {
 	 * @param actualParams
 	 * @throws TaskInvocationException
 	 */
-	private void updateOutParameters(PathRoot localRole, ReadOnlyKnowledgeManager shadowKnowledgeManager,
-			ParameterKnowledgePaths parameters, Object[] actualParams) throws KnowledgeUpdateException {
+	private void updateOutParameters(PathRoot localRole, KnowledgeManager localKnowledgeManager,
+			ReadOnlyKnowledgeManager shadowKnowledgeManager, ParameterKnowledgePaths parameters, 
+			Object[] actualParams) throws KnowledgeUpdateException {
 		// Create a changeset
 		Map<String, ChangeSet> localChangeSets = new HashMap<>();
-		KnowledgeManager localKnowledgeManager = ensembleController.getComponentInstance().getKnowledgeManager();
 
 		int paramIdx = 0;
 		Iterator<KnowledgePathAndRoot> allPathsWithRootsIter = parameters.allPathsWithRoots.iterator(); 

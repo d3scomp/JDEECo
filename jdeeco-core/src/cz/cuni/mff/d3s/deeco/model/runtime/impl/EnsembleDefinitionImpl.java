@@ -6,25 +6,16 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Condition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Exchange;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
-
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
-
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
-
-import java.lang.reflect.Type;
 import java.util.Collection;
-
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
-
 import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
-
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
-
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
@@ -140,16 +131,6 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 	protected String partitionedBy = PARTITIONED_BY_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #getCoordinatorRole() <em>Coordinator Role</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getCoordinatorRole()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final Type COORDINATOR_ROLE_EDEFAULT = null;
-
-	/**
 	 * The cached value of the '{@link #getCoordinatorRole() <em>Coordinator Role</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -157,17 +138,7 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 	 * @generated
 	 * @ordered
 	 */
-	protected Type coordinatorRole = COORDINATOR_ROLE_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getMemberRole() <em>Member Role</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getMemberRole()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final Type MEMBER_ROLE_EDEFAULT = null;
+	protected Class coordinatorRole;
 
 	/**
 	 * The cached value of the '{@link #getMemberRole() <em>Member Role</em>}' attribute.
@@ -177,7 +148,7 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 	 * @generated
 	 * @ordered
 	 */
-	protected Type memberRole = MEMBER_ROLE_EDEFAULT;
+	protected Class memberRole;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -364,7 +335,7 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Type getCoordinatorRole() {
+	public Class getCoordinatorRole() {
 		return coordinatorRole;
 	}
 
@@ -373,8 +344,8 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setCoordinatorRole(Type newCoordinatorRole) {
-		Type oldCoordinatorRole = coordinatorRole;
+	public void setCoordinatorRole(Class newCoordinatorRole) {
+		Class oldCoordinatorRole = coordinatorRole;
 		coordinatorRole = newCoordinatorRole;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.ENSEMBLE_DEFINITION__COORDINATOR_ROLE, oldCoordinatorRole, coordinatorRole));
@@ -385,7 +356,7 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Type getMemberRole() {
+	public Class getMemberRole() {
 		return memberRole;
 	}
 
@@ -394,8 +365,8 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setMemberRole(Type newMemberRole) {
-		Type oldMemberRole = memberRole;
+	public void setMemberRole(Class newMemberRole) {
+		Class oldMemberRole = memberRole;
 		memberRole = newMemberRole;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.ENSEMBLE_DEFINITION__MEMBER_ROLE, oldMemberRole, memberRole));
@@ -476,10 +447,10 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 				setPartitionedBy((String)newValue);
 				return;
 			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__COORDINATOR_ROLE:
-				setCoordinatorRole((Type)newValue);
+				setCoordinatorRole((Class)newValue);
 				return;
 			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__MEMBER_ROLE:
-				setMemberRole((Type)newValue);
+				setMemberRole((Class)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -512,10 +483,10 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 				setPartitionedBy(PARTITIONED_BY_EDEFAULT);
 				return;
 			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__COORDINATOR_ROLE:
-				setCoordinatorRole(COORDINATOR_ROLE_EDEFAULT);
+				setCoordinatorRole((Class)null);
 				return;
 			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__MEMBER_ROLE:
-				setMemberRole(MEMBER_ROLE_EDEFAULT);
+				setMemberRole((Class)null);
 				return;
 		}
 		super.eUnset(featureID);
@@ -542,9 +513,9 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__PARTITIONED_BY:
 				return PARTITIONED_BY_EDEFAULT == null ? partitionedBy != null : !PARTITIONED_BY_EDEFAULT.equals(partitionedBy);
 			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__COORDINATOR_ROLE:
-				return COORDINATOR_ROLE_EDEFAULT == null ? coordinatorRole != null : !COORDINATOR_ROLE_EDEFAULT.equals(coordinatorRole);
+				return coordinatorRole != null;
 			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__MEMBER_ROLE:
-				return MEMBER_ROLE_EDEFAULT == null ? memberRole != null : !MEMBER_ROLE_EDEFAULT.equals(memberRole);
+				return memberRole != null;
 		}
 		return super.eIsSet(featureID);
 	}

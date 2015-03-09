@@ -167,7 +167,7 @@ public class EnsembleTask extends Task {
 		this.ensembleController = ensembleController;
 		this.securityChecker = new LocalSecurityChecker(ensembleController, kmContainer);
 		this.ratingsManager = ratingsManager;
-		this.ensembleDataExchange = new EnsembleDataExchange(ensembleController, ratingsManager);
+		this.ensembleDataExchange = new EnsembleDataExchange(ensembleController.getEnsembleDefinition(), ratingsManager);
 	}
 
 	/**
@@ -374,23 +374,25 @@ public class EnsembleTask extends Task {
 		boolean memberExchangePerformed = false;
 		boolean membership = false;
 		
+		KnowledgeManager localKnowledgeManager = ensembleController.getComponentInstance().getKnowledgeManager();
+		
 		// Invoke the membership condition and if the membership condition returned true, invoke the knowledge exchange
-		if (ensembleDataExchange.checkMembership(PathRoot.COORDINATOR, shadowKnowledgeManager) 
+		if (ensembleDataExchange.checkMembership(PathRoot.COORDINATOR, localKnowledgeManager, shadowKnowledgeManager) 
 				&& securityChecker.checkSecurity(PathRoot.COORDINATOR, shadowKnowledgeManager)) {
 			architectureObserver.ensembleFormed(ensembleController.getEnsembleDefinition(), ensembleController.getComponentInstance(),
 					ensembleController.getComponentInstance().getKnowledgeManager().getId(),shadowKnowledgeManager.getId());
-			ensembleDataExchange.performExchange(PathRoot.COORDINATOR, shadowKnowledgeManager);
+			ensembleDataExchange.performExchange(PathRoot.COORDINATOR, localKnowledgeManager, shadowKnowledgeManager);
 			coordinatorExchangePerformed = true;
 			membership = true;
 		}
 		EnsembleLogger.getInstance().logEvent(ensembleController, shadowKnowledgeManager, scheduler.getTimer(), membership);
 		
 		// Do the same with the roles exchanged
-		if (ensembleDataExchange.checkMembership(PathRoot.MEMBER, shadowKnowledgeManager)
+		if (ensembleDataExchange.checkMembership(PathRoot.MEMBER, localKnowledgeManager, shadowKnowledgeManager)
 				&& securityChecker.checkSecurity(PathRoot.MEMBER, shadowKnowledgeManager)) {
 			architectureObserver.ensembleFormed(ensembleController.getEnsembleDefinition(), ensembleController.getComponentInstance(),
 					shadowKnowledgeManager.getId(), ensembleController.getComponentInstance().getKnowledgeManager().getId());
-			ensembleDataExchange.performExchange(PathRoot.MEMBER, shadowKnowledgeManager);
+			ensembleDataExchange.performExchange(PathRoot.MEMBER, localKnowledgeManager, shadowKnowledgeManager);
 			memberExchangePerformed = true;
 		}
 		

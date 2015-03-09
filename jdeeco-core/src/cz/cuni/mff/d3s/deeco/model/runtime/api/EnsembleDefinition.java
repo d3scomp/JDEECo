@@ -3,10 +3,7 @@
 package cz.cuni.mff.d3s.deeco.model.runtime.api;
 
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
-
-import java.lang.reflect.Type;
 import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -188,12 +185,12 @@ public interface EnsembleDefinition extends EObject {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Coordinator Role</em>' attribute.
-	 * @see #setCoordinatorRole(Type)
+	 * @see #setCoordinatorRole(Class)
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getEnsembleDefinition_CoordinatorRole()
-	 * @model dataType="cz.cuni.mff.d3s.deeco.model.runtime.api.Type"
+	 * @model
 	 * @generated
 	 */
-	Type getCoordinatorRole();
+	Class getCoordinatorRole();
 
 	/**
 	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getCoordinatorRole <em>Coordinator Role</em>}' attribute.
@@ -203,7 +200,7 @@ public interface EnsembleDefinition extends EObject {
 	 * @see #getCoordinatorRole()
 	 * @generated
 	 */
-	void setCoordinatorRole(Type value);
+	void setCoordinatorRole(Class value);
 
 	/**
 	 * Returns the value of the '<em><b>Member Role</b></em>' attribute.
@@ -214,12 +211,12 @@ public interface EnsembleDefinition extends EObject {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Member Role</em>' attribute.
-	 * @see #setMemberRole(Type)
+	 * @see #setMemberRole(Class)
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getEnsembleDefinition_MemberRole()
-	 * @model dataType="cz.cuni.mff.d3s.deeco.model.runtime.api.Type"
+	 * @model
 	 * @generated
 	 */
-	Type getMemberRole();
+	Class getMemberRole();
 
 	/**
 	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getMemberRole <em>Member Role</em>}' attribute.
@@ -229,6 +226,6 @@ public interface EnsembleDefinition extends EObject {
 	 * @see #getMemberRole()
 	 * @generated
 	 */
-	void setMemberRole(Type value);
+	void setMemberRole(Class value);
 
 } // EnsembleDefinition
