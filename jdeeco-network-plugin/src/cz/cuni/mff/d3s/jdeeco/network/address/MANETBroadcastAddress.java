@@ -8,20 +8,15 @@ package cz.cuni.mff.d3s.jdeeco.network.address;
  *
  */
 public class MANETBroadcastAddress extends Address {
+	public final static MANETBroadcastAddress BROADCAST = new MANETBroadcastAddress("broadcast");
+	
+	private String address;
 
-	public final static MANETBroadcastAddress INSTANCE = new MANETBroadcastAddress();
-
-	private MANETBroadcastAddress() {
-		// Prevents instantiation from outside the class
+	public MANETBroadcastAddress(String address) {
+		this.address = address;
 	}
 	
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		return getClass() == obj.getClass();
+	public String getAddress() {
+		return address;
 	}
-	
 }

@@ -47,7 +47,7 @@ public class LoopbackBroadcastDevice extends Device implements DEECoPlugin {
 		for (Layer1 layer : l1Layers) {
 			// TODO: Would be nice to know sender address (have a sending layer/network as a parameter)
 			// BUG: This is using recipient address, which is not correct
-			layer.processL0Packet(data, this, new ReceivedInfo(MANETBroadcastAddress.INSTANCE));
+			layer.processL0Packet(data, this, new ReceivedInfo(MANETBroadcastAddress.BROADCAST));
 		}
 	}
 

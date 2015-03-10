@@ -145,7 +145,7 @@ public class DummyKnowledgePublisher implements DEECoPlugin {
 
 		for(KnowledgeData data: prepareLocalKnowledgeData()) {
 			network.getL2().sendL2Packet(new L2Packet(new PacketHeader(L2PacketType.KNOWLEDGE), data),
-					MANETBroadcastAddress.INSTANCE);
+					MANETBroadcastAddress.BROADCAST);
 		}
 	}
 
