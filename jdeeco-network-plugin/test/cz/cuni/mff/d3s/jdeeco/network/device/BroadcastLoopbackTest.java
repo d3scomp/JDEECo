@@ -87,7 +87,7 @@ public class BroadcastLoopbackTest {
 	public void testNodeToNodeRouting() {
 		BroadcastLoopback loop = new BroadcastLoopback();
 
-		// Register nodes 0 and 1 with Infrastructure loop-back
+		// Register nodes 0 and 1 with Broadcast loop-back
 		loop.init(node0);
 		loop.init(node1);
 		loop.init(node2);
