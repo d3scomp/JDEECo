@@ -55,6 +55,9 @@ public class InfrastructureLoopback implements DEECoPlugin {
 
 		@Override
 		public void send(byte[] data, Address destination) {
+			if(!(destination instanceof IPAddress)) {
+				throw new UnsupportedOperationException("Required destination address is not IPAddress");
+			}
 			IPAddress ipAddress = (IPAddress) (destination);
 			InfrastructureLoopback.this.route(data, this, ipAddress);
 		}
@@ -83,7 +86,7 @@ public class InfrastructureLoopback implements DEECoPlugin {
 	@Override
 	public List<Class<? extends DEECoPlugin>> getDependencies() {
 		return Arrays.asList(Network.class);
-	}
+	}	
 
 	@Override
 	public void init(DEECoContainer container) {
