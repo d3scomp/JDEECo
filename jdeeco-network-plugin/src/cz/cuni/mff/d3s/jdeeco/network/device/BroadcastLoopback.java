@@ -14,7 +14,7 @@ import cz.cuni.mff.d3s.jdeeco.network.l1.Layer1;
 import cz.cuni.mff.d3s.jdeeco.network.l1.ReceivedInfo;
 
 /**
- * Loop-back broadcast plugin
+ * Loop-back broadcast plug-in
  * 
  * Can be initialized by more DEECo run-times at the same time. Packets send are then instantly delivered to all of
  * them.

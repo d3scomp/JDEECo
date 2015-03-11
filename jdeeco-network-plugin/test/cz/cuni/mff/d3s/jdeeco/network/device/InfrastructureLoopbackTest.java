@@ -11,6 +11,12 @@ import cz.cuni.mff.d3s.jdeeco.network.l1.DefaultDataIDSource;
 import cz.cuni.mff.d3s.jdeeco.network.l1.L1Packet;
 import cz.cuni.mff.d3s.jdeeco.network.l1.Layer1;
 
+/**
+ * Tests infrastructure loop-back networking 
+ * 
+ * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
+ *
+ */
 public class InfrastructureLoopbackTest {
 	// Nodes used in testing scenario
 	DEECoContainer node0;
