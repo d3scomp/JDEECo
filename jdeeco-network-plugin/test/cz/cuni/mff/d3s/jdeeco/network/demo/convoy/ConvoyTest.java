@@ -14,7 +14,7 @@ import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
 import cz.cuni.mff.d3s.deeco.timer.DiscreteEventTimer;
 import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
 import cz.cuni.mff.d3s.jdeeco.network.Network;
-import cz.cuni.mff.d3s.jdeeco.network.device.LoopbackBroadcastDevice;
+import cz.cuni.mff.d3s.jdeeco.network.device.BroadcastLoopback;
 import cz.cuni.mff.d3s.jdeeco.network.l2.strategy.KnowledgeInsertingStrategy;
 import cz.cuni.mff.d3s.jdeeco.publishing.DummyKnowledgePublisher;
 
@@ -46,7 +46,7 @@ public class ConvoyTest {
 		SimulationTimer simulationTimer = new DiscreteEventTimer(); // also "new WallTimeSchedulerNotifier()"
 		DEECoSimulation realm = new DEECoSimulation(simulationTimer);
 
-		LoopbackBroadcastDevice loopback = new LoopbackBroadcastDevice();
+		BroadcastLoopback loopback = new BroadcastLoopback();
 
 		/* create first deeco node */
 		DEECoNode deeco1 = realm.createNode(new Network(), new DummyKnowledgePublisher(),
