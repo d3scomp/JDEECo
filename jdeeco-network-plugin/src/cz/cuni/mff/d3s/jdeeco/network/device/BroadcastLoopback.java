@@ -23,6 +23,8 @@ import cz.cuni.mff.d3s.jdeeco.network.l1.ReceivedInfo;
  *
  */
 public class BroadcastLoopback implements DEECoPlugin {
+	final int PACKET_SIZE = 128;
+	
 	/**
 	 * Loop device used to provide broadcast device to layer 1
 	 */
@@ -45,7 +47,7 @@ public class BroadcastLoopback implements DEECoPlugin {
 
 		@Override
 		public int getMTU() {
-			return 128;
+			return PACKET_SIZE;
 		}
 
 		@Override

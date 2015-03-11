@@ -23,6 +23,8 @@ import cz.cuni.mff.d3s.jdeeco.network.l1.ReceivedInfo;
  *
  */
 public class InfrastructureLoopback implements DEECoPlugin {
+	final int PACKET_SIZE = 128;
+	
 	/**
 	 * Loop device used to provide broadcast device to layer 1
 	 */
@@ -45,7 +47,7 @@ public class InfrastructureLoopback implements DEECoPlugin {
 
 		@Override
 		public int getMTU() {
-			return 128;
+			return PACKET_SIZE;
 		}
 
 		@Override
@@ -80,13 +82,15 @@ public class InfrastructureLoopback implements DEECoPlugin {
 		LoopDevice loop = loops.get(destination);
 		if (loop != null) {
 			loop.layer1.processL0Packet(data, source, new ReceivedInfo(source.address));
+		} else {
+			throw new UnsupportedOperationException("Destination address not found in loop network");
 		}
 	}
 
 	@Override
 	public List<Class<? extends DEECoPlugin>> getDependencies() {
 		return Arrays.asList(Network.class);
-	}	
+	}
 
 	@Override
 	public void init(DEECoContainer container) {
