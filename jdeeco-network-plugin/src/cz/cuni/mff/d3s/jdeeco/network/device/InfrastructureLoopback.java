@@ -20,8 +20,8 @@ import cz.cuni.mff.d3s.jdeeco.network.l1.ReceivedInfo;
 /**
  * Infrastructure loop-back plug-in
  * 
- * Can be initialized by more DEECo run-times at the same time. Packets send are then instantly delivered to destination
- * loop device.
+ * Can be initialized by more DEECo run-times at the same time. Packets send are then delivered (instantly or with
+ * delay) to destination loop device.
  * 
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *

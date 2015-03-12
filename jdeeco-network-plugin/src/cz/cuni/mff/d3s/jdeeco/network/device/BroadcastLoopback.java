@@ -21,8 +21,8 @@ import cz.cuni.mff.d3s.jdeeco.network.l1.ReceivedInfo;
 /**
  * Loop-back broadcast plug-in
  * 
- * Can be initialized by more DEECo run-times at the same time. Packets send are then instantly delivered to all of
- * them.
+ * Can be initialized by more DEECo run-times at the same time. Packets send are then delivered (instantly or with
+ * delay) to all of them.
  * 
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
@@ -68,7 +68,8 @@ public class BroadcastLoopback implements DEECoPlugin {
 
 		@Override
 		public void send(byte[] data, Address addressNotUsed) {
-			Task task = new CustomStepTask(scheduler, new DeliveryListener(constantDelay, new PacketWrapper(data, this)));
+			Task task = new CustomStepTask(scheduler,
+					new DeliveryListener(constantDelay, new PacketWrapper(data, this)));
 			BroadcastLoopback.this.scheduler.addTask(task);
 		}
 	}
