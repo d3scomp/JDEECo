@@ -22,6 +22,7 @@ import cz.cuni.mff.d3s.jdeeco.network.l1.Layer1;
 public class InfrastructureLoopbackTest {
 	// Testing runtime
 	RuntimeFramework runtime;
+	Scheduler scheduler;
 
 	// Nodes used in testing scenario
 	DEECoContainer node0;
@@ -37,7 +38,7 @@ public class InfrastructureLoopbackTest {
 	@Before
 	public void setupRuntime() {
 		// Create mock scheduler
-		Scheduler scheduler = new InstantSchedulerMock();
+		scheduler = new InstantSchedulerMock();
 
 		// Configure runtime
 		runtime = Mockito.mock(RuntimeFramework.class);
@@ -65,7 +66,7 @@ public class InfrastructureLoopbackTest {
 		Mockito.when(node.getRuntimeFramework()).thenReturn(runtime);
 
 		// Configure Network for mocked container
-		Layer1 layer1 = new Layer1((byte) id, DefaultDataIDSource.getInstance());
+		Layer1 layer1 = new Layer1((byte) id, DefaultDataIDSource.getInstance(), scheduler);
 		Network network = Mockito.mock(Network.class);
 		Mockito.when(network.getL1()).thenReturn(layer1);
 		Mockito.when(node.getPluginInstance(Network.class)).thenReturn(network);

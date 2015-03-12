@@ -27,6 +27,7 @@ public class BroadcastLoopbackTest {
 
 	// Mock runtime
 	RuntimeFramework runtime;
+	Scheduler scheduler;
 
 	// Testing packet data
 	byte[] TEST_DATA = { 't', 'e', 's', 't' };
@@ -43,7 +44,7 @@ public class BroadcastLoopbackTest {
 	@Before
 	public void setupRuntime() {
 		// Create mock scheduler
-		Scheduler scheduler = new InstantSchedulerMock();
+		scheduler = new InstantSchedulerMock();
 
 		// Configure runtime
 		runtime = Mockito.mock(RuntimeFramework.class);
@@ -72,7 +73,7 @@ public class BroadcastLoopbackTest {
 		Mockito.when(node.getRuntimeFramework()).thenReturn(runtime);
 
 		// Configure Network for mocked container
-		Layer1 layer1 = new Layer1((byte) 0, DefaultDataIDSource.getInstance());
+		Layer1 layer1 = new Layer1((byte) 0, DefaultDataIDSource.getInstance(), scheduler);
 		Network network = Mockito.mock(Network.class);
 		Mockito.when(network.getL1()).thenReturn(layer1);
 		Mockito.when(node.getPluginInstance(Network.class)).thenReturn(network);

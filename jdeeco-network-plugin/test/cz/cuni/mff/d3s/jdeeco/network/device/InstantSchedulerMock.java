@@ -39,7 +39,6 @@ public class InstantSchedulerMock implements Scheduler {
 
 	@Override
 	public void removeTask(Task task) {
-		throw new UnsupportedOperationException();
 	}
 
 	@Override
