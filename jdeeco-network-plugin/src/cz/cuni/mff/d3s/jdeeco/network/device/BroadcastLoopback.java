@@ -33,7 +33,7 @@ public class BroadcastLoopback implements DEECoPlugin {
 
 	Scheduler scheduler;
 
-	// Layers this device is registered with
+	// Loop devices this loop-back network is registered with
 	private Set<LoopDevice> loops = new HashSet<>();
 
 	/**
