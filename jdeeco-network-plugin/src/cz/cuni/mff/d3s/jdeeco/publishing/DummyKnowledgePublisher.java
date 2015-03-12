@@ -11,10 +11,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
-import cz.cuni.mff.d3s.deeco.model.runtime.custom.TimeTriggerExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeData;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeMetaData;
@@ -22,8 +19,9 @@ import cz.cuni.mff.d3s.deeco.network.PublisherTask;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
-import cz.cuni.mff.d3s.deeco.task.Task;
-import cz.cuni.mff.d3s.deeco.task.TaskInvocationException;
+import cz.cuni.mff.d3s.deeco.task.CustomStepTask;
+import cz.cuni.mff.d3s.deeco.task.TimerTask;
+import cz.cuni.mff.d3s.deeco.task.TimerTaskListener;
 import cz.cuni.mff.d3s.deeco.timer.CurrentTimeProvider;
 import cz.cuni.mff.d3s.jdeeco.network.Network;
 import cz.cuni.mff.d3s.jdeeco.network.address.MANETBroadcastAddress;
@@ -39,35 +37,7 @@ import cz.cuni.mff.d3s.jdeeco.network.l2.PacketHeader;
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
  */
-public class DummyKnowledgePublisher implements DEECoPlugin {
-
-	class PublishTask extends Task {
-		private final TimeTrigger trigger;
-
-		public PublishTask(Scheduler scheduler, TimeTrigger trigger) {
-			super(scheduler);
-			this.trigger = trigger;
-		}
-
-		@Override
-		public void invoke(Trigger trigger) throws TaskInvocationException {
-			DummyKnowledgePublisher.this.publish();
-		}
-
-		@Override
-		protected void registerTriggers() {
-		}
-
-		@Override
-		protected void unregisterTriggers() {
-		}
-
-		@Override
-		public TimeTrigger getTimeTrigger() {
-			return trigger;
-		}
-	}
-
+public class DummyKnowledgePublisher implements DEECoPlugin, TimerTaskListener {
 	private Network network;
 	private KnowledgeManagerContainer knowledgeManagerContainer;
 	private CurrentTimeProvider timeProvider;
@@ -139,14 +109,26 @@ public class DummyKnowledgePublisher implements DEECoPlugin {
 			return kd;
 		}
 	}
+	
 
-	protected void publish() {
-		System.out.println("PUBLISHER CALLED");
+	@Override
+	public void at(long time, Object triger) {
+		System.out.println("Publisher called at: " + time);
 
 		for(KnowledgeData data: prepareLocalKnowledgeData()) {
 			network.getL2().sendL2Packet(new L2Packet(new PacketHeader(L2PacketType.KNOWLEDGE), data),
 					MANETBroadcastAddress.BROADCAST);
 		}
+		
+		Scheduler scheduler = container.getRuntimeFramework().getScheduler();
+		scheduler.addTask(new CustomStepTask(scheduler, this, Integer.getInteger(DeecoProperties.PUBLISHING_PERIOD,
+				PublisherTask.DEFAULT_PUBLISHING_PERIOD)));
+	}
+
+	@Override
+	public TimerTask getInitialTask(Scheduler scheduler) {
+		return new CustomStepTask(scheduler, this, Integer.getInteger(DeecoProperties.PUBLISHING_PERIOD,
+				PublisherTask.DEFAULT_PUBLISHING_PERIOD));
 	}
 
 	@Override
@@ -159,10 +141,7 @@ public class DummyKnowledgePublisher implements DEECoPlugin {
 		timeProvider = container.getRuntimeFramework().getScheduler().getTimer();
 
 		// Start publishing task
-		TimeTrigger publisherTrigger = new TimeTriggerExt();
-		publisherTrigger.setPeriod(Integer.getInteger(DeecoProperties.PUBLISHING_PERIOD,
-				PublisherTask.DEFAULT_PUBLISHING_PERIOD));
-		PublishTask publisher = this.new PublishTask(container.getRuntimeFramework().getScheduler(), publisherTrigger);
-		container.getRuntimeFramework().getScheduler().addTask(publisher);
+		Scheduler scheduler = container.getRuntimeFramework().getScheduler();
+		scheduler.addTask(new CustomStepTask(scheduler, this));
 	}
 }
