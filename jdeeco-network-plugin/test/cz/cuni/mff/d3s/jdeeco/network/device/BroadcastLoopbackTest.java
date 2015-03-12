@@ -4,15 +4,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import cz.cuni.mff.d3s.deeco.executor.Executor;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
-import cz.cuni.mff.d3s.deeco.task.Task;
-import cz.cuni.mff.d3s.deeco.task.TaskInvocationException;
-import cz.cuni.mff.d3s.deeco.timer.Timer;
-import cz.cuni.mff.d3s.deeco.timer.TimerEventListener;
 import cz.cuni.mff.d3s.jdeeco.network.Network;
 import cz.cuni.mff.d3s.jdeeco.network.address.MANETBroadcastAddress;
 import cz.cuni.mff.d3s.jdeeco.network.l1.DefaultDataIDSource;
@@ -49,58 +43,7 @@ public class BroadcastLoopbackTest {
 	@Before
 	public void setupRuntime() {
 		// Create mock scheduler
-		Scheduler scheduler = new Scheduler() {
-			@Override
-			public void at(long time) {
-				throw new UnsupportedOperationException();
-			}
-
-			@Override
-			public void executionFailed(Task task, Trigger trigger, Exception e) {
-				throw new UnsupportedOperationException();
-			}
-
-			@Override
-			public void executionCompleted(Task task, Trigger trigger) {
-				throw new UnsupportedOperationException();
-			}
-
-			@Override
-			public void setExecutor(Executor executor) {
-				throw new UnsupportedOperationException();
-			}
-
-			@Override
-			public void removeTask(Task task) {
-				throw new UnsupportedOperationException();
-			}
-
-			@Override
-			public Timer getTimer() {
-				return new Timer() {
-					@Override
-					public long getCurrentMilliseconds() {
-						// TODO Auto-generated method stub
-						return 0;
-					}
-
-					@Override
-					public void notifyAt(long time, TimerEventListener listener) {
-						throw new UnsupportedOperationException();
-					}
-				};
-			}
-
-			@Override
-			public void addTask(Task task) {
-				// Instantly execute task
-				try {
-					task.invoke(task.getTimeTrigger());
-				} catch (TaskInvocationException e) {
-					e.printStackTrace();
-				}
-			}
-		};
+		Scheduler scheduler = new InstantSchedulerMock();
 
 		// Configure runtime
 		runtime = Mockito.mock(RuntimeFramework.class);
