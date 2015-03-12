@@ -68,37 +68,31 @@ public class BroadcastLoopback implements DEECoPlugin {
 
 		@Override
 		public void send(byte[] data, Address addressNotUsed) {
-			Task task = new CustomStepTask(scheduler, new DeliveryTask(constantDelay, new PacketPackage(data, this)));
+			Task task = new CustomStepTask(scheduler, new DeliveryListener(constantDelay, new PacketWrapper(data, this)));
 			BroadcastLoopback.this.scheduler.addTask(task);
 		}
 	}
 
 	/**
 	 * Packet package used to carry information about packet
-	 * 
-	 * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
-	 *
 	 */
-	private class PacketPackage {
-		public byte[] data;
-		public LoopDevice source;
+	private final class PacketWrapper {
+		public final byte[] data;
+		public final LoopDevice source;
 
-		PacketPackage(byte[] data, LoopDevice source) {
+		PacketWrapper(byte[] data, LoopDevice source) {
 			this.data = data;
 			this.source = source;
 		}
 	}
 
 	/**
-	 * Task used to delayed delivery of data
-	 * 
-	 * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
-	 *
+	 * Listener used to delayed delivery of data
 	 */
-	private class DeliveryTask implements TimerTaskListener {
-		final private PacketPackage packet;
+	private class DeliveryListener implements TimerTaskListener {
+		final private PacketWrapper packet;
 
-		public DeliveryTask(long delay, PacketPackage packet) {
+		public DeliveryListener(long delay, PacketWrapper packet) {
 			this.packet = packet;
 		}
 
@@ -138,7 +132,7 @@ public class BroadcastLoopback implements DEECoPlugin {
 	 * @param packet
 	 *            Container containing packet data and sender information
 	 */
-	public void sendToAll(PacketPackage packet) {
+	public void sendToAll(PacketWrapper packet) {
 		for (LoopDevice loop : loops) {
 			loop.layer1.processL0Packet(packet.data, packet.source, new ReceivedInfo(packet.source.address));
 		}
