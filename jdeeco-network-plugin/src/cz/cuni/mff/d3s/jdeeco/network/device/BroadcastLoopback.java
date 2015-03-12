@@ -39,7 +39,7 @@ public class BroadcastLoopback implements DEECoPlugin {
 	/**
 	 * Loop device used to provide broadcast device to layer 1
 	 */
-	class LoopDevice extends Device {
+	private class LoopDevice extends Device {
 		public Layer1 layer1;
 		public MANETBroadcastAddress address;
 
@@ -79,7 +79,7 @@ public class BroadcastLoopback implements DEECoPlugin {
 	 * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
 	 *
 	 */
-	class PacketPackage {
+	private class PacketPackage {
 		public byte[] data;
 		public LoopDevice source;
 
@@ -95,7 +95,7 @@ public class BroadcastLoopback implements DEECoPlugin {
 	 * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
 	 *
 	 */
-	class DeliveryTask implements TimerTaskListener {
+	private class DeliveryTask implements TimerTaskListener {
 		final private PacketPackage packet;
 
 		public DeliveryTask(long delay, PacketPackage packet) {
@@ -129,7 +129,7 @@ public class BroadcastLoopback implements DEECoPlugin {
 	 * Delivers packets immediately
 	 */
 	public BroadcastLoopback() {
-		this.constantDelay = 0;
+		this(0);
 	}
 
 	/**
