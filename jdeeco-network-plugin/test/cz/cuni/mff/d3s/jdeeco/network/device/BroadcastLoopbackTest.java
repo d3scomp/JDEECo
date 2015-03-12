@@ -4,7 +4,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import cz.cuni.mff.d3s.deeco.executor.Executor;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
+import cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework;
+import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
+import cz.cuni.mff.d3s.deeco.task.Task;
+import cz.cuni.mff.d3s.deeco.task.TaskInvocationException;
+import cz.cuni.mff.d3s.deeco.timer.Timer;
+import cz.cuni.mff.d3s.deeco.timer.TimerEventListener;
 import cz.cuni.mff.d3s.jdeeco.network.Network;
 import cz.cuni.mff.d3s.jdeeco.network.address.MANETBroadcastAddress;
 import cz.cuni.mff.d3s.jdeeco.network.l1.DefaultDataIDSource;
@@ -23,6 +31,9 @@ public class BroadcastLoopbackTest {
 	DEECoContainer node1;
 	DEECoContainer node2;
 
+	// Mock runtime
+	RuntimeFramework runtime;
+
 	// Testing packet data
 	byte[] TEST_DATA = { 't', 'e', 's', 't' };
 	/*
@@ -33,22 +44,97 @@ public class BroadcastLoopbackTest {
 	L1Packet TEST_PACKET = new L1Packet(TEST_DATA, (byte) 0, 0, 0, TEST_DATA.length + 1);
 
 	/**
-	 * Configures node 0 - source node
+	 * Configures runtime
+	 */
+	@Before
+	public void setupRuntime() {
+		// Create mock scheduler
+		Scheduler scheduler = new Scheduler() {
+			@Override
+			public void at(long time) {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public void executionFailed(Task task, Trigger trigger, Exception e) {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public void executionCompleted(Task task, Trigger trigger) {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public void setExecutor(Executor executor) {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public void removeTask(Task task) {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public Timer getTimer() {
+				return new Timer() {
+					@Override
+					public long getCurrentMilliseconds() {
+						// TODO Auto-generated method stub
+						return 0;
+					}
+
+					@Override
+					public void notifyAt(long time, TimerEventListener listener) {
+						throw new UnsupportedOperationException();
+					}
+				};
+			}
+
+			@Override
+			public void addTask(Task task) {
+				// Instantly execute task
+				try {
+					task.invoke(task.getTimeTrigger());
+				} catch (TaskInvocationException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+
+		// Configure runtime
+		runtime = Mockito.mock(RuntimeFramework.class);
+		Mockito.when(runtime.getScheduler()).thenReturn(scheduler);
+
+		// Configure source node
+		node0 = setupSourceNode();
+
+		// Configures all destination nodes
+		node1 = setupDestinationNode(1);
+		node2 = setupDestinationNode(2);
+	}
+
+	/**
+	 * Configures node source node
 	 * 
 	 * Has working layer1, used to send packets
 	 */
-	@Before
-	public void setupNodeSourceNode() {
-		node0 = Mockito.mock(DEECoContainer.class);
+	private DEECoContainer setupSourceNode() {
+		DEECoContainer node = Mockito.mock(DEECoContainer.class);
 
 		// Configure id for mocked container
-		Mockito.when(node0.getId()).thenReturn(0);
+		Mockito.when(node.getId()).thenReturn(0);
+
+		// Configure runtime
+		Mockito.when(node.getRuntimeFramework()).thenReturn(runtime);
 
 		// Configure Network for mocked container
 		Layer1 layer1 = new Layer1((byte) 0, DefaultDataIDSource.getInstance());
 		Network network = Mockito.mock(Network.class);
 		Mockito.when(network.getL1()).thenReturn(layer1);
-		Mockito.when(node0.getPluginInstance(Network.class)).thenReturn(network);
+		Mockito.when(node.getPluginInstance(Network.class)).thenReturn(network);
+
+		return node;
 	}
 
 	/**
@@ -62,6 +148,9 @@ public class BroadcastLoopbackTest {
 		// Configure id for mocked container
 		Mockito.when(node.getId()).thenReturn(id);
 
+		// Configure runtime
+		Mockito.when(node.getRuntimeFramework()).thenReturn(runtime);
+
 		// Configure Network for mocked container
 		Layer1 layer1 = Mockito.mock(Layer1.class);
 		Network network = Mockito.mock(Network.class);
@@ -69,15 +158,6 @@ public class BroadcastLoopbackTest {
 		Mockito.when(node.getPluginInstance(Network.class)).thenReturn(network);
 
 		return node;
-	}
-
-	/**
-	 * Configures all destination nodes
-	 */
-	@Before
-	public void setupDestinationNodes() {
-		node1 = setupDestinationNode(1);
-		node2 = setupDestinationNode(2);
 	}
 
 	/**
@@ -95,7 +175,7 @@ public class BroadcastLoopbackTest {
 		// Send packet from node 0 to node 1
 		Layer1 node0layer1 = node0.getPluginInstance(Network.class).getL1();
 		node0layer1.sendL1Packet(TEST_PACKET, MANETBroadcastAddress.BROADCAST);
-		
+
 		// Test packet was received on node 1
 		Layer1 node1layer1 = node1.getPluginInstance(Network.class).getL1();
 		Mockito.verify(node1layer1, Mockito.atLeastOnce()).processL0Packet(Mockito.any(), Mockito.any(), Mockito.any());

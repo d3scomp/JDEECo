@@ -9,6 +9,7 @@ import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.task.CustomStepTask;
+import cz.cuni.mff.d3s.deeco.task.Task;
 import cz.cuni.mff.d3s.deeco.task.TimerTask;
 import cz.cuni.mff.d3s.deeco.task.TimerTaskListener;
 import cz.cuni.mff.d3s.jdeeco.network.Network;
@@ -67,8 +68,8 @@ public class BroadcastLoopback implements DEECoPlugin {
 
 		@Override
 		public void send(byte[] data, Address addressNotUsed) {
-			BroadcastLoopback.this.scheduler.addTask(new CustomStepTask(scheduler, new DeliveryTask(constantDelay,
-					new PacketPackage(data, this))));
+			Task task = new CustomStepTask(scheduler, new DeliveryTask(constantDelay, new PacketPackage(data, this)));
+			BroadcastLoopback.this.scheduler.addTask(task);
 		}
 	}
 
