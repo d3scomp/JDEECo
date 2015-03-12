@@ -7,6 +7,10 @@ import java.util.Map;
 
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
+import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
+import cz.cuni.mff.d3s.deeco.task.CustomStepTask;
+import cz.cuni.mff.d3s.deeco.task.TimerTask;
+import cz.cuni.mff.d3s.deeco.task.TimerTaskListener;
 import cz.cuni.mff.d3s.jdeeco.network.Network;
 import cz.cuni.mff.d3s.jdeeco.network.address.Address;
 import cz.cuni.mff.d3s.jdeeco.network.address.IPAddress;
@@ -23,12 +27,10 @@ import cz.cuni.mff.d3s.jdeeco.network.l1.ReceivedInfo;
  *
  */
 public class InfrastructureLoopback implements DEECoPlugin {
-	final int PACKET_SIZE = 128;
-	
 	/**
 	 * Loop device used to provide broadcast device to layer 1
 	 */
-	class LoopDevice extends Device {
+	private class LoopDevice extends Device {
 		public Layer1 layer1;
 		public IPAddress address;
 
@@ -57,16 +59,79 @@ public class InfrastructureLoopback implements DEECoPlugin {
 
 		@Override
 		public void send(byte[] data, Address destination) {
-			if(!(destination instanceof IPAddress)) {
+			if (!(destination instanceof IPAddress)) {
 				throw new UnsupportedOperationException("Required destination address is not IPAddress");
 			}
 			IPAddress ipAddress = (IPAddress) (destination);
-			InfrastructureLoopback.this.route(data, this, ipAddress);
+
+			// Schedule packet delivery
+			PacketWrapper packet = new PacketWrapper(data, this, ipAddress);
+			Scheduler scheduler = InfrastructureLoopback.this.scheduler;
+			scheduler.addTask(new CustomStepTask(scheduler, new DeliveryListener(packet)));
 		}
 	}
 
+	/**
+	 * Packet source and destination wrapper
+	 */
+	private final class PacketWrapper {
+		public final byte[] data;
+		public final LoopDevice sender;
+		public final IPAddress destination;
+
+		PacketWrapper(byte[] data, LoopDevice sender, IPAddress destination) {
+			this.data = data;
+			this.sender = sender;
+			this.destination = destination;
+		}
+	}
+
+	/**
+	 * Delayed delivery listener
+	 */
+	private class DeliveryListener implements TimerTaskListener {
+		private final PacketWrapper packet;
+
+		public DeliveryListener(PacketWrapper packet) {
+			this.packet = packet;
+		}
+
+		@Override
+		public void at(long time, Object triger) {
+			InfrastructureLoopback.this.route(packet);
+		}
+
+		@Override
+		public TimerTask getInitialTask(Scheduler scheduler) {
+			return null;
+		}
+	}
+
+	final int PACKET_SIZE = 128;
+
+	final long constantDelay;
+
+	Scheduler scheduler;
+
 	// Layers this device is registered with
 	private Map<IPAddress, LoopDevice> loops = new HashMap<>();
+
+	/**
+	 * Constructs infrastructure loop-back to maintain constant delay
+	 * 
+	 * @param constantDelay
+	 *            Packet delivery delay
+	 */
+	public InfrastructureLoopback(long constantDelay) {
+		this.constantDelay = constantDelay;
+	}
+
+	/**
+	 * Constructs infrastructure loop-back with zero delay
+	 */
+	public InfrastructureLoopback() {
+		this(0);
+	}
 
 	/**
 	 * Routes packet to matching loop device
@@ -78,10 +143,10 @@ public class InfrastructureLoopback implements DEECoPlugin {
 	 * @param destination
 	 *            Destination IP address
 	 */
-	public void route(byte[] data, LoopDevice source, IPAddress destination) {
-		LoopDevice loop = loops.get(destination);
+	public void route(PacketWrapper packet) {
+		LoopDevice loop = loops.get(packet.destination);
 		if (loop != null) {
-			loop.layer1.processL0Packet(data, source, new ReceivedInfo(source.address));
+			loop.layer1.processL0Packet(packet.data, packet.sender, new ReceivedInfo(packet.sender.address));
 		} else {
 			throw new UnsupportedOperationException("Destination address not found in loop network");
 		}
@@ -94,6 +159,7 @@ public class InfrastructureLoopback implements DEECoPlugin {
 
 	@Override
 	public void init(DEECoContainer container) {
+		scheduler = container.getRuntimeFramework().getScheduler();
 		Layer1 l1 = container.getPluginInstance(Network.class).getL1();
 		String name = String.valueOf(container.getId());
 		IPAddress address = new IPAddress(name);
