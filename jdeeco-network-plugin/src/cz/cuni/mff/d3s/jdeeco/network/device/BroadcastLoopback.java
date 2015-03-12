@@ -7,6 +7,10 @@ import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
+import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
+import cz.cuni.mff.d3s.deeco.task.CustomStepTask;
+import cz.cuni.mff.d3s.deeco.task.TimerTask;
+import cz.cuni.mff.d3s.deeco.task.TimerTaskListener;
 import cz.cuni.mff.d3s.jdeeco.network.Network;
 import cz.cuni.mff.d3s.jdeeco.network.address.Address;
 import cz.cuni.mff.d3s.jdeeco.network.address.MANETBroadcastAddress;
@@ -24,14 +28,20 @@ import cz.cuni.mff.d3s.jdeeco.network.l1.ReceivedInfo;
  */
 public class BroadcastLoopback implements DEECoPlugin {
 	final int PACKET_SIZE = 128;
-	
+	final long constantDelay;
+
+	Scheduler scheduler;
+
+	// Layers this device is registered with
+	private Set<LoopDevice> loops = new HashSet<>();
+
 	/**
 	 * Loop device used to provide broadcast device to layer 1
 	 */
 	class LoopDevice extends Device {
 		public Layer1 layer1;
 		public MANETBroadcastAddress address;
-		
+
 		private String id;
 
 		public LoopDevice(String id, Layer1 layer1) {
@@ -57,24 +67,79 @@ public class BroadcastLoopback implements DEECoPlugin {
 
 		@Override
 		public void send(byte[] data, Address addressNotUsed) {
-			BroadcastLoopback.this.sendToAll(data, this);
+			BroadcastLoopback.this.scheduler.addTask(new CustomStepTask(scheduler, new DeliveryTask(constantDelay,
+					new PacketPackage(data, this))));
 		}
 	}
 
-	// Layers this device is registered with
-	private Set<LoopDevice> loops = new HashSet<>();
+	/**
+	 * Packet package used to carry information about packet
+	 * 
+	 * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
+	 *
+	 */
+	class PacketPackage {
+		public byte[] data;
+		public LoopDevice source;
+
+		PacketPackage(byte[] data, LoopDevice source) {
+			this.data = data;
+			this.source = source;
+		}
+	}
+
+	/**
+	 * Task used to delayed delivery of data
+	 * 
+	 * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
+	 *
+	 */
+	class DeliveryTask implements TimerTaskListener {
+		final private PacketPackage packet;
+
+		public DeliveryTask(long delay, PacketPackage packet) {
+			this.packet = packet;
+		}
+
+		@Override
+		public void at(long time, Object triger) {
+			BroadcastLoopback.this.sendToAll(packet);
+		}
+
+		@Override
+		public TimerTask getInitialTask(Scheduler scheduler) {
+			return null;
+		}
+	}
+
+	/**
+	 * Constructs loop-back broadcast
+	 * 
+	 * @param constantDelay
+	 *            Delay between sending and delivering the packets
+	 */
+	public BroadcastLoopback(long constantDelay) {
+		this.constantDelay = constantDelay;
+	}
+
+	/**
+	 * Constructs loop-back broadcast
+	 * 
+	 * Delivers packets immediately
+	 */
+	public BroadcastLoopback() {
+		this.constantDelay = 0;
+	}
 
 	/**
 	 * Sends packet to all registered loop devices
 	 * 
-	 * @param data
-	 *            Packet data
-	 * @param source
-	 *            Source loop device
+	 * @param packet
+	 *            Container containing packet data and sender information
 	 */
-	public void sendToAll(byte[] data, LoopDevice source) {
+	public void sendToAll(PacketPackage packet) {
 		for (LoopDevice loop : loops) {
-			loop.layer1.processL0Packet(data, source, new ReceivedInfo(source.address));
+			loop.layer1.processL0Packet(packet.data, packet.source, new ReceivedInfo(packet.source.address));
 		}
 	}
 
@@ -85,6 +150,7 @@ public class BroadcastLoopback implements DEECoPlugin {
 
 	@Override
 	public void init(DEECoContainer container) {
+		scheduler = container.getRuntimeFramework().getScheduler();
 		Layer1 l1 = container.getPluginInstance(Network.class).getL1();
 		LoopDevice loop = new LoopDevice(String.valueOf(container.getId()), l1);
 		l1.registerDevice(loop);
