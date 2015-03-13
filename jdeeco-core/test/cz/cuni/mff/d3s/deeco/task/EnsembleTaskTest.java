@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -38,6 +39,9 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.runtime.ArchitectureObserver;
+import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
+import cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework;
+import cz.cuni.mff.d3s.deeco.runtimelog.RuntimeLogger;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
 /**
@@ -192,7 +196,35 @@ public class EnsembleTaskTest {
 
 		when(kmContainer.hasReplica(anyString())).thenReturn(true);
 		
+		RuntimeFramework runtimeFramework = mock(RuntimeFramework.class);
+		Mockito.when(runtimeFramework.getScheduler()).thenAnswer(new Answer<Scheduler>() {
+		    @Override
+		    public Scheduler answer(InvocationOnMock invocation) throws Throwable 
+		    {
+		      return scheduler;
+		    }
+		  });
+		
+		RuntimeLogger logger = mock(RuntimeLogger.class);
+		
+		DEECoContainer deecoContainer = mock(DEECoContainer.class);
+		Mockito.when(deecoContainer.getRuntimeFramework()).thenAnswer(new Answer<RuntimeFramework>() {
+		    @Override
+		    public RuntimeFramework answer(InvocationOnMock invocation) throws Throwable 
+		    {
+		      return runtimeFramework;
+		    }
+		  });
+		Mockito.when(deecoContainer.getRuntimeLogger()).thenAnswer(new Answer<RuntimeLogger>() {
+		    @Override
+		    public RuntimeLogger answer(InvocationOnMock invocation) throws Throwable 
+		    {
+		      return logger;
+		    }
+		  });
+		
 		this.task = new EnsembleTask(model.ensembleController, scheduler, architectureObserver, kmContainer, ratingsManager);
+		((EnsembleTask) this.task).init(deecoContainer);
 	}
 	
 	@After

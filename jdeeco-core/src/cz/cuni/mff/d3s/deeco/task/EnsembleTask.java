@@ -2,6 +2,7 @@ package cz.cuni.mff.d3s.deeco.task;
 
 import static cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.getAbsoluteStrippedPath;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -38,6 +39,8 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.impl.TriggerImpl;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.runtime.ArchitectureObserver;
+import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
+import cz.cuni.mff.d3s.deeco.runtimelog.RuntimeLogRecord;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.security.LocalSecurityChecker;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.KnowledgePathAndRoot;
@@ -73,6 +76,11 @@ public class EnsembleTask extends Task {
 	 * Reference to the ratings manager
 	 */
 	RatingsManager ratingsManager;
+
+	/**
+	 * The {@link DEECoContainer} this {@link EnsembleTask} belongs to.
+	 */
+	private DEECoContainer deecoContainer;
 	
 	/**
 	 * A wrapper around a trigger obtained from the local knowledge manager. The sole purpose of this class is to be able to distinguish
@@ -152,6 +160,23 @@ public class EnsembleTask extends Task {
 			}
 		}
 	}
+
+	/**
+	 * The {@link RuntimeLogRecord) specific to the {@link EnsembleTask} ensemble status log message.
+	 * 
+	 * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
+	 */
+	private class EnsembleLogRecord extends RuntimeLogRecord
+	{
+		/**
+		 * Construct the {@link EnsembleLogRecord} instance.
+		 */
+		public EnsembleLogRecord() {
+			super("EnsambleTask", new HashMap<String, Object>());
+		}
+		
+	}
+	
 	ShadowsTriggerListenerImpl shadowsTriggerListener = new ShadowsTriggerListenerImpl();
 
 	public EnsembleTask(EnsembleController ensembleController, Scheduler scheduler, ArchitectureObserver architectureObserver, 
@@ -162,6 +187,16 @@ public class EnsembleTask extends Task {
 		this.ensembleController = ensembleController;
 		this.securityChecker = new LocalSecurityChecker(ensembleController, kmContainer);
 		this.ratingsManager = ratingsManager;
+	}
+	
+	/**
+	 * Initialize the {@link EnsembleTask} with the given {@link DEECoContainer} instance.
+	 * @param deecoContainer The {@link DEECoContainer} to initialize the {@link EnsembleTask} with.
+	 * Shouldn't be null.
+	 */
+	public void init(DEECoContainer deecoContainer)
+	{
+		this.deecoContainer = deecoContainer;
 	}
 
 	/**
@@ -641,7 +676,10 @@ public class EnsembleTask extends Task {
 	 */
 	@Override
 	public void invoke(Trigger trigger) throws TaskInvocationException {
-
+		if (deecoContainer == null)
+			throw new IllegalStateException(String.format(
+					"The %s class is not initialized.", "EnsembleTask"));
+		
 		EnsembleContext.addContext(scheduler.getTimer());
 		
 		if (trigger instanceof ShadowKMChangeTrigger) {
@@ -663,32 +701,71 @@ public class EnsembleTask extends Task {
 	private void evaluateMembershipAndPerformExchange(ReadOnlyKnowledgeManager shadowKnowledgeManager) throws TaskInvocationException {
 		boolean coordinatorExchangePerformed = false;
 		boolean memberExchangePerformed = false;
-		boolean membership = false;
 		
 		// Invoke the membership condition and if the membership condition returned true, invoke the knowledge exchange
 		if (checkMembership(PathRoot.COORDINATOR, shadowKnowledgeManager) && securityChecker.checkSecurity(PathRoot.COORDINATOR, shadowKnowledgeManager)) {
 			architectureObserver.ensembleFormed(ensembleController.getEnsembleDefinition(), ensembleController.getComponentInstance(),
 					ensembleController.getComponentInstance().getKnowledgeManager().getId(),shadowKnowledgeManager.getId());
 			coordinatorExchangePerformed = performExchange(PathRoot.COORDINATOR, shadowKnowledgeManager);
-			membership = true;
+
+			logMembershipStatus(ensembleController.getEnsembleDefinition().getName(),
+					shadowKnowledgeManager.getId(),
+					ensembleController.getComponentInstance().getKnowledgeManager().getId(),
+					true);
 		}
-		EnsembleLogger.getInstance().logEvent(ensembleController, shadowKnowledgeManager, scheduler.getTimer(), membership, false);
-		
+		else
+		{
+			logMembershipStatus(ensembleController.getEnsembleDefinition().getName(),
+					shadowKnowledgeManager.getId(),
+					ensembleController.getComponentInstance().getKnowledgeManager().getId(),
+					false);
+		}
+				
 		// Do the same with the roles exchanged
-		membership = false;
 		if (checkMembership(PathRoot.MEMBER, shadowKnowledgeManager) && securityChecker.checkSecurity(PathRoot.MEMBER, shadowKnowledgeManager)) {
 			architectureObserver.ensembleFormed(ensembleController.getEnsembleDefinition(), ensembleController.getComponentInstance(),
 					shadowKnowledgeManager.getId(), ensembleController.getComponentInstance().getKnowledgeManager().getId());
-			memberExchangePerformed = performExchange(PathRoot.MEMBER, shadowKnowledgeManager);
-			membership = true;
+			memberExchangePerformed = performExchange(PathRoot.MEMBER, shadowKnowledgeManager);			
 		}
-		EnsembleLogger.getInstance().logEvent(ensembleController, shadowKnowledgeManager, scheduler.getTimer(), membership, true);
+		else
+		{
+			logMembershipStatus(ensembleController.getEnsembleDefinition().getName(),
+					ensembleController.getComponentInstance().getKnowledgeManager().getId(),
+					shadowKnowledgeManager.getId(),
+					false);	
+		}
 		
 		if (coordinatorExchangePerformed || memberExchangePerformed) {
 			invokeRatingsProcess(shadowKnowledgeManager.getId());
 		}
 	}
 
+	/**
+	 * Log the current ensemble membership status (ensemble exists/doesn't exist) using the {@link RuntimeLogger}.
+	 * @param ensambleName is the name of tested ensemble.
+	 * @param coordinatorID is the identifier of the coordinator in the tested ensemble.
+	 * @param memberID is the identifier of the member in the tested ensemble.
+	 * @param membership is the membership validity value (ensemble exists(true)/doesn't exist(false)).
+	 * @throws TaskInvocationException Thrown if there is a problem writing into the log files.
+	 */
+	private void logMembershipStatus(String ensambleName, String coordinatorID, String memberID, boolean membership) throws TaskInvocationException
+	{
+		EnsembleLogRecord record = new EnsembleLogRecord();
+		record.getValues().put("ensambleName", ensambleName);
+		record.getValues().put("coordinatorID", coordinatorID);
+		record.getValues().put("memberID", memberID);
+		record.getValues().put("membership", membership);
+		
+		try
+		{
+			deecoContainer.getRuntimeLogger().log(record);
+		}
+		catch(IOException e)
+		{
+			throw new TaskInvocationException(e);
+		}
+		
+	}
 
 	/**
 	 * Returns the period associated with the ensemble in the in the meta-model as the {@link TimeTrigger}. Note that the {@link EnsembleTask} assumes that there is at most

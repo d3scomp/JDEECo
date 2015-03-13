@@ -19,6 +19,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -27,6 +28,10 @@ import cz.cuni.mff.d3s.deeco.integrity.RatingsChangeSet;
 import cz.cuni.mff.d3s.deeco.integrity.ReadonlyRatingsHolder;
 import cz.cuni.mff.d3s.deeco.knowledge.*;
 import cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper;
+import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
+import cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework;
+import cz.cuni.mff.d3s.deeco.runtimelog.RuntimeLogger;
+import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.security.runtime.SecurityRuntimeModel;
 
 /**
@@ -43,8 +48,28 @@ public class DefaultKnowledgeDataManagerTest {
 	@Before
 	public void setUp() throws Exception {	
 		initMocks(this);
+				
+		RuntimeLogger logger = mock(RuntimeLogger.class);
 		
-		this.runtimeModel = new SecurityRuntimeModel();		
+		DEECoContainer deecoContainer = mock(DEECoContainer.class);
+		Mockito.when(deecoContainer.getRuntimeLogger()).thenAnswer(new Answer<RuntimeLogger>() {
+		    @Override
+		    public RuntimeLogger answer(InvocationOnMock invocation) throws Throwable 
+		    {
+		      return logger;
+		    }
+		  });
+		
+		this.runtimeModel = new SecurityRuntimeModel(deecoContainer);
+
+		Mockito.when(deecoContainer.getRuntimeFramework()).thenAnswer(new Answer<RuntimeFramework>() {
+		    @Override
+		    public RuntimeFramework answer(InvocationOnMock invocation) throws Throwable 
+		    {
+		      //return runtimeFramework;
+		    	return runtimeModel.runtime;
+		    }
+		  });
 	}
 
 	@Test

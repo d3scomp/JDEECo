@@ -1,6 +1,7 @@
 package cz.cuni.mff.d3s.deeco.security.runtime;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 
 import java.security.KeyStoreException;
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import org.mockito.Mockito;
 import cz.cuni.mff.d3s.deeco.annotations.Allow;
 import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.Ensemble;
+import cz.cuni.mff.d3s.deeco.annotations.HasRole;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
@@ -20,7 +22,6 @@ import cz.cuni.mff.d3s.deeco.annotations.Local;
 import cz.cuni.mff.d3s.deeco.annotations.Membership;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
-import cz.cuni.mff.d3s.deeco.annotations.HasRole;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.Rating;
 import cz.cuni.mff.d3s.deeco.annotations.RatingsProcess;
@@ -44,6 +45,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.network.DataSender;
 import cz.cuni.mff.d3s.deeco.network.DefaultKnowledgeDataManager;
+import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
 import cz.cuni.mff.d3s.deeco.runtime.DuplicateEnsembleDefinitionException;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeFrameworkImpl;
@@ -189,6 +191,8 @@ public class SecurityRuntimeModel {
 		}
 	}
 	
+	protected DEECoContainer deecoContainer;
+	
 	public RuntimeMetadata model;
 	public AnnotationProcessor processor;
 	public DefaultKnowledgeDataManager knowledgeDataManager;
@@ -209,7 +213,9 @@ public class SecurityRuntimeModel {
 	public SecurityHelper securityHelper;
 	public RatingsManager ratingsManager;
 	
-	public SecurityRuntimeModel() throws KeyStoreException, AnnotationProcessorException, DuplicateEnsembleDefinitionException, NoExecutorAvailableException {
+	public SecurityRuntimeModel(DEECoContainer deecoContainer) throws KeyStoreException, AnnotationProcessorException, DuplicateEnsembleDefinitionException, NoExecutorAvailableException {
+		this.deecoContainer = deecoContainer;
+		
 		securityKeyManager = SecurityKeyManagerImpl.getInstance();
 		executor = new SameThreadExecutor();
 		DiscreteEventTimer simulation = new DiscreteEventTimer();
@@ -238,7 +244,8 @@ public class SecurityRuntimeModel {
 		
 		container = spy(new KnowledgeManagerContainer(new CloningKnowledgeManagerFactory(), model));
 		ratingsManager = RatingsManagerImpl.getInstance();
-		runtime = spy(new RuntimeFrameworkImpl(model, scheduler, executor, container, ratingsManager));		
+		runtime = spy(new RuntimeFrameworkImpl(model, scheduler, executor, container, ratingsManager));
+		runtime.init(deecoContainer);
 		
 		knowledgeDataManager = new DefaultKnowledgeDataManager(model.getEnsembleDefinitions(), null);
 		knowledgeDataManager.initialize(container, dataSender, "1.2.3.4", scheduler, securityKeyManager, ratingsManager);		
@@ -256,6 +263,7 @@ public class SecurityRuntimeModel {
 		
 		for (ComponentInstance ci : model.getComponentInstances()) {
 			Task task = new EnsembleTask(ci.getEnsembleControllers().get(0), scheduler, runtime, container, ratingsManager);
+			((EnsembleTask) task).init(deecoContainer);
 			task.invoke(trigger);
 		}
 	}
@@ -265,6 +273,7 @@ public class SecurityRuntimeModel {
 		
 		for (ComponentInstance ci : model.getComponentInstances()) {
 			Task task = new EnsembleTask(ci.getEnsembleControllers().get(1), scheduler, runtime, container, ratingsManager);
+			((EnsembleTask) task).init(deecoContainer);
 			task.invoke(trigger);
 		}	
 	}
