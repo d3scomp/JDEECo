@@ -17,13 +17,12 @@ import cz.cuni.mff.d3s.jdeeco.network.device.Device;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class DeviceOutputQueueTest {
-	private DeviceOutputQueue queue;
-	private Device device;
-
 	static final int DEVICE_MTU = 256;
-
 	static final byte[] PACKET_DATA = { 't', 'e', 's', 't' };
 	static final L1Packet L1_PACKET = new L1Packet(PACKET_DATA, (byte) 0, 0, 0, PACKET_DATA.length);
+	
+	private DeviceOutputQueue queue;
+	private Device device;
 
 	/**
 	 * Setups device output queue with needed dependencies
