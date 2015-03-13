@@ -16,7 +16,7 @@ import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
 import cz.cuni.mff.d3s.jdeeco.network.Network;
 import cz.cuni.mff.d3s.jdeeco.network.device.BroadcastLoopback;
 import cz.cuni.mff.d3s.jdeeco.network.l2.strategy.KnowledgeInsertingStrategy;
-import cz.cuni.mff.d3s.jdeeco.publishing.DummyKnowledgePublisher;
+import cz.cuni.mff.d3s.jdeeco.publishing.DefaultKnowledgePublisher;
 
 /**
  * 
@@ -49,14 +49,14 @@ public class ConvoyTest {
 		BroadcastLoopback loopback = new BroadcastLoopback();
 
 		/* create first deeco node */
-		DEECoNode deeco1 = realm.createNode(1, new Network(), new DummyKnowledgePublisher(),
+		DEECoNode deeco1 = realm.createNode(1, new Network(), new DefaultKnowledgePublisher(),
 				new KnowledgeInsertingStrategy(), loopback);
 		/* deploy components and ensembles */
 		deeco1.deployComponent(new Leader());
 		deeco1.deployEnsemble(ConvoyEnsemble.class);
 
 		/* create second deeco node */
-		DEECoNode deeco2 = realm.createNode(2, new Network(), new DummyKnowledgePublisher(),
+		DEECoNode deeco2 = realm.createNode(2, new Network(), new DefaultKnowledgePublisher(),
 				new KnowledgeInsertingStrategy(), loopback);
 		/* deploy components and ensembles */
 		deeco2.deployComponent(new Follower());
