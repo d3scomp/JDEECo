@@ -11,7 +11,7 @@ import cz.cuni.mff.d3s.deeco.simulation.omnet.OMNeTNative;
 import cz.cuni.mff.d3s.deeco.simulation.omnet.OMNeTNativeListener;
 import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
 import cz.cuni.mff.d3s.deeco.timer.TimerEventListener;
-import cz.cuni.mff.d3s.jdeeco.network.address.Address;
+import cz.cuni.mff.d3s.jdeeco.network.address.IPAddress;
 
 public class OMNeTSimulation implements DEECoPlugin {
 	class OMNeTTimerProvider implements SimulationTimer {
@@ -65,8 +65,8 @@ public class OMNeTSimulation implements DEECoPlugin {
 			infrastructureDevice = device;
 		}
 		
-		public void sendInfrastructurePacket(byte[] packet, Address address) {
-			throw new UnsupportedOperationException();
+		public void sendInfrastructurePacket(byte[] packet, IPAddress address) {
+			OMNeTNative.nativeSendPacket(id, packet, address.ipAddress);
 		}
 		
 		public void sendBroadcastPacket(byte[] packet) {
