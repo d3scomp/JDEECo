@@ -33,6 +33,9 @@ public class DeviceOutputQueue {
 		}
 	}
 
+	// Default delay between adding packet to queue and physically sending the data
+	private static final int DEFAULT_SEND_DELAY_LIMIT = 100;
+	
 	public final Device device;
 	public final Address address;
 
@@ -42,13 +45,17 @@ public class DeviceOutputQueue {
 	private DelayedSendListener delayedListener = new DelayedSendListener();
 	private final byte[] l0Packet;
 	private int l0PacketSize;
-
+	
 	public DeviceOutputQueue(Device device, Address address, Scheduler scheduler, long timeout) {
 		this.scheduler = scheduler;
 		this.timeout = timeout;
 		this.device = device;
 		this.address = address;
 		this.l0Packet = new byte[device.getMTU()];
+	}
+	
+	public DeviceOutputQueue(Device device, Address address, Scheduler scheduler) {
+		this(device, address, scheduler, DEFAULT_SEND_DELAY_LIMIT);
 	}
 
 	/**

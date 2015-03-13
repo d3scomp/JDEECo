@@ -217,7 +217,7 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 				 */
 				if (device.canSend(address)) {
 					//TODO change the timeout
-					outputQueue = new DeviceOutputQueue(device, address, scheduler, 100);
+					outputQueue = new DeviceOutputQueue(device, address, scheduler);
 					break;
 				}
 			}
