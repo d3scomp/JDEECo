@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.jdeeco.network.device;
+package cz.cuni.mff.d3s.deeco.scheduler;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
