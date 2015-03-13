@@ -24,6 +24,7 @@ import cz.cuni.mff.d3s.deeco.task.TimerTask;
 import cz.cuni.mff.d3s.deeco.task.TimerTaskListener;
 import cz.cuni.mff.d3s.deeco.timer.CurrentTimeProvider;
 import cz.cuni.mff.d3s.jdeeco.network.Network;
+import cz.cuni.mff.d3s.jdeeco.network.address.IPAddress;
 import cz.cuni.mff.d3s.jdeeco.network.address.MANETBroadcastAddress;
 import cz.cuni.mff.d3s.jdeeco.network.l2.L2Packet;
 import cz.cuni.mff.d3s.jdeeco.network.l2.L2PacketType;
@@ -32,7 +33,7 @@ import cz.cuni.mff.d3s.jdeeco.network.l2.PacketHeader;
 /**
  * Dummy implementation of knowledge publishing
  * 
- * This uses only broadcast and ignores security
+ * This uses only broadcast and static list of IP peers, ignores security
  * 
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
@@ -42,6 +43,7 @@ public class DummyKnowledgePublisher implements DEECoPlugin, TimerTaskListener {
 	private KnowledgeManagerContainer knowledgeManagerContainer;
 	private CurrentTimeProvider timeProvider;
 	private DEECoContainer container;
+	private List<IPAddress> infrastructurePeers;
 
 	@Override
 	public List<Class<? extends DEECoPlugin>> getDependencies() {
@@ -49,6 +51,11 @@ public class DummyKnowledgePublisher implements DEECoPlugin, TimerTaskListener {
 	}
 
 	public DummyKnowledgePublisher() {
+		this(new LinkedList<IPAddress>());
+	}
+
+	public DummyKnowledgePublisher(List<IPAddress> peers) {
+		infrastructurePeers = peers;
 		RuntimeMetadataFactory factory = RuntimeMetadataFactoryExt.eINSTANCE;
 		KnowledgePath empty = factory.createKnowledgePath();
 		emptyPath = new LinkedList<>();
@@ -78,10 +85,10 @@ public class DummyKnowledgePublisher implements DEECoPlugin, TimerTaskListener {
 		// TODO: We are ignoring security, and host
 		// TODO: version is implemented by current time
 		long time = timeProvider.getCurrentMilliseconds();
-		return new KnowledgeData(getNonLocalKnowledge(km.get(emptyPath), km), new ValueSet(), new ValueSet(), new KnowledgeMetaData(
-				km.getId(), time, String.valueOf(container.getId()), time, 1));
+		return new KnowledgeData(getNonLocalKnowledge(km.get(emptyPath), km), new ValueSet(), new ValueSet(),
+				new KnowledgeMetaData(km.getId(), time, String.valueOf(container.getId()), time, 1));
 	}
-	
+
 	// NOTE: Taken from DefaultKnowledgeDataManager
 	protected ValueSet getNonLocalKnowledge(ValueSet toFilter, KnowledgeManager km) {
 		ValueSet result = new ValueSet();
@@ -109,17 +116,24 @@ public class DummyKnowledgePublisher implements DEECoPlugin, TimerTaskListener {
 			return kd;
 		}
 	}
-	
 
 	@Override
 	public void at(long time, Object triger) {
 		System.out.println("Publisher called at: " + time);
 
-		for(KnowledgeData data: prepareLocalKnowledgeData()) {
-			network.getL2().sendL2Packet(new L2Packet(new PacketHeader(L2PacketType.KNOWLEDGE), data),
-					MANETBroadcastAddress.BROADCAST);
+		// Get knowledge and distribute it
+		for (KnowledgeData data : prepareLocalKnowledgeData()) {
+			L2Packet packet = new L2Packet(new PacketHeader(L2PacketType.KNOWLEDGE), data);
+
+			// Distribute via broadcast
+			network.getL2().sendL2Packet(packet, MANETBroadcastAddress.BROADCAST);
+
+			// Distribute via infrastructure network
+			for (IPAddress address : getPeers()) {
+				network.getL2().sendL2Packet(packet, address);
+			}
 		}
-		
+
 		Scheduler scheduler = container.getRuntimeFramework().getScheduler();
 		scheduler.addTask(new CustomStepTask(scheduler, this, Integer.getInteger(DeecoProperties.PUBLISHING_PERIOD,
 				PublisherTask.DEFAULT_PUBLISHING_PERIOD)));
@@ -131,12 +145,19 @@ public class DummyKnowledgePublisher implements DEECoPlugin, TimerTaskListener {
 				PublisherTask.DEFAULT_PUBLISHING_PERIOD));
 	}
 
+	/**
+	 * Gets list of infrastructure peers
+	 */
+	protected List<IPAddress> getPeers() {
+		return infrastructurePeers;
+	}
+
 	@Override
 	public void init(DEECoContainer container) {
 		// Resolve dependencies
 		network = container.getPluginInstance(Network.class);
 		knowledgeManagerContainer = container.getRuntimeFramework().getContainer();
-		this.container = container; 
+		this.container = container;
 
 		timeProvider = container.getRuntimeFramework().getScheduler().getTimer();
 
