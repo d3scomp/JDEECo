@@ -53,13 +53,16 @@ JNIEXPORT void JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNeTNative_n
 		int length = env->GetArrayLength(packet);
 		jbyte *buffer = env->GetByteArrayElements(packet, 0);
 		JDEECoPacket *jPacket = new JDEECoPacket(JDEECO_DATA_MESSAGE);
-		//Setting data
+
+		// Setting data
 		jPacket->setDataArraySize(length);
-		for (int i = 0; i < length; i++)
-		jPacket->setData(i, buffer[i]);
+		for (int i = 0; i < length; i++) {
+			jPacket->setData(i, buffer[i]);
+		}
 		const char *cRecipient = env->GetStringUTFChars(recipient, 0);
 		EV << "OMNET++ ("<< simTime() <<") : " << module->getModuleId() << " sending packet with ID = " << jPacket->getId() << endl;
 		module->sendPacket(jPacket, cRecipient);
+
 		env->ReleaseByteArrayElements(packet, buffer, JNI_ABORT);
 		env->ReleaseStringUTFChars(recipient, cRecipient);
 		env->DeleteLocalRef(packet);

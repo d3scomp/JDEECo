@@ -64,8 +64,7 @@ void JDEECoApplication::registerCallbackAt(double absoluteTime, cMessage *msg) {
     scheduleAt(absoluteTime, msg);
 }
 
-void JDEECoApplication::sendPacket(JDEECoPacket *packet,
-		const char *recipient) {
+void JDEECoApplication::sendPacket(JDEECoPacket *packet, const char *recipient) {
 	if (opp_strcmp("", recipient) == 0) {
 		if (gate(lower802154LayerOut)->isConnected()) {
 			NetwToMacControlInfo::setControlInfo(packet, LAddress::L2BROADCAST);
@@ -74,7 +73,10 @@ void JDEECoApplication::sendPacket(JDEECoPacket *packet,
 		}
 	} else {
 		packet->setByteLength(packet80211ByteLength);
-		socket.sendTo(packet, IPvXAddressResolver().resolve(recipient).get4(), port);
+//		std::cout << "X" << std::endl;
+		IPvXAddress ip = IPvXAddressResolver().resolve(recipient).get4();
+//		std::cout << "Y" << std::endl;
+		socket.sendTo(packet, ip, port);
     }
 }
 
