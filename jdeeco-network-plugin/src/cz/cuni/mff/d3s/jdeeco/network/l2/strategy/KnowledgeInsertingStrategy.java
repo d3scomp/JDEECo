@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
@@ -25,7 +24,7 @@ import cz.cuni.mff.d3s.jdeeco.network.l2.L2Strategy;
 /**
  * L2 Strategy and DEECo plug-in for incorporating received knowledge data to knowledge managers
  * 
- * This is implementation is not complete, it just imports old behavior and do not implement security
+ * This is implementation is not complete, it does not implement security
  * 
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
@@ -34,81 +33,77 @@ public class KnowledgeInsertingStrategy implements L2Strategy, DEECoPlugin {
 	private KnowledgeManagerContainer knowledgeManagerContainer;
 	private CurrentTimeProvider timeProvider;
 
+	/**
+	 * Keeps track of versions of the knowledge currently stored
+	 */
+	private Map<String, Long> currentVersions = new HashMap<String, Long>();
+
 	@Override
 	public void processL2Packet(L2Packet packet) {
+		Object data = packet.getObject();
 
+		// TODO: Type safety
+		if (!(data instanceof KnowledgeData)) {
+			throw new UnsupportedOperationException(data.getClass().getName() + " is not a knowledge data");
+		}
+
+		receiveKnowledge((KnowledgeData) data);
 	}
 
-	public KnowledgeInsertingStrategy() {
-		// NOTE: Taken from DefaultKnowledgeDataManager
-		replicaMetadata = new HashMap<>();
-	}
+	/**
+	 * Incorporates knowledge into knowledge managers
+	 * 
+	 * @param knowledgeData
+	 *            Knowledge data to be incorporated
+	 */
+	public void receiveKnowledge(KnowledgeData knowledgeData) {
+		KnowledgeMetaData newMetadata = knowledgeData.getMetaData();
+		if (knowledgeManagerContainer.hasLocal(newMetadata.componentId)) {
+			if (Log.isDebugLoggable())
+				Log.d("KnowledgeDataManager.receive: Dropping KnowledgeData for local component "
+						+ newMetadata.componentId);
+			return;
+		}
 
-	// NOTE: Taken from DefaultKnowledgeDataManager
-	/** Stores received KnowledgeMetaData for replicas (received ValueSet is deleted) */
-	protected final Map<String, KnowledgeMetaData> replicaMetadata;
+		// Accept only fresh knowledge data (drop if we have already a newer value)
+		Long currentVersion = currentVersions.get(newMetadata.componentId);
+		if ((currentVersion == null) || (currentVersion < newMetadata.versionId)) {
+			for (KnowledgeManager replica : knowledgeManagerContainer.createReplica(newMetadata.componentId)) {
+				try {
+					replica.update(toChangeSet(knowledgeData.getKnowledge()));
+				} catch (KnowledgeUpdateException e) {
+					Log.w(String.format("KnowledgeDataManager.receive: Could not update replica of %s.",
+							newMetadata.componentId), e);
+				}
 
-	// NOTE: Taken from DefaultKnowledgeDataManager
-	public void receiveKnowledge(List<KnowledgeData> data) {
-		for (KnowledgeData kd : data) {
-			KnowledgeMetaData newMetadata = kd.getMetaData();
-			if (knowledgeManagerContainer.hasLocal(newMetadata.componentId)) {
-				if (Log.isDebugLoggable())
-					Log.d("KnowledgeDataManager.receive: Dropping KnowledgeData for local component "
-							+ newMetadata.componentId);
-				continue;
-			}
+				// Update current version
+				currentVersions.put(newMetadata.componentId, newMetadata.versionId);
 
-			KnowledgeMetaData currentMetadata = replicaMetadata.get(newMetadata.componentId);
-
-			// Accept only fresh knowledge data (drop if we have already a newer value)
-			if ((currentMetadata == null) || (currentMetadata.versionId < newMetadata.versionId)) {
-				for (KnowledgeManager replica : knowledgeManagerContainer.createReplica(newMetadata.componentId)) {
-					try {
-						Map<String, ChangeSet> changeSets = toChangeSets(kd.getKnowledge(), null, null);
-						for (Entry<String, ChangeSet> entry : changeSets.entrySet()) {
-							replica.update(entry.getValue(), entry.getKey());
-						}
-					} catch (KnowledgeUpdateException e) {
-						Log.w(String.format("KnowledgeDataManager.receive: Could not update replica of %s.",
-								newMetadata.componentId), e);
-					}
-
-					// store the metadata without the knowledge values
-					replicaMetadata.put(newMetadata.componentId, newMetadata);
-
-					if (Log.isDebugLoggable()) {
-						Log.d(String.format("Receive (%d) at %s got %sv%d after %dms and %d hops\n",
-								timeProvider.getCurrentMilliseconds(), null, newMetadata.componentId,
-								newMetadata.versionId, timeProvider.getCurrentMilliseconds() - newMetadata.createdAt,
-								newMetadata.hopCount));
-					}
+				if (Log.isDebugLoggable()) {
+					Log.d(String.format("Receive (%d) at %s got %sv%d after %dms and %d hops\n",
+							timeProvider.getCurrentMilliseconds(), null, newMetadata.componentId,
+							newMetadata.versionId, timeProvider.getCurrentMilliseconds() - newMetadata.createdAt,
+							newMetadata.hopCount));
 				}
 			}
 		}
 	}
 
-	// NOTE: Taken from DefaultKnowledgeDataManager
-	private Map<String, ChangeSet> toChangeSets(ValueSet knowledge, ValueSet authors, KnowledgeMetaData metaData) {
-		if (knowledge != null) {
-			Map<String, ChangeSet> result = new HashMap<>();
+	/**
+	 * Converts value set to change set
+	 * 
+	 * @param knowledge
+	 *            Knowledge
+	 * @return Change set composed from input knowledge
+	 */
+	private ChangeSet toChangeSet(ValueSet knowledge) {
+		ChangeSet result = new ChangeSet();
 
-			for (KnowledgePath kp : knowledge.getKnowledgePaths()) {
-				String author = (String) authors.getValue(kp);
-				if (author == null)
-					author = metaData.componentId;
-
-				if (!result.containsKey(author)) {
-					result.put(author, new ChangeSet());
-				}
-
-				result.get(author).setValue(kp, knowledge.getValue(kp));
-			}
-
-			return result;
-		} else {
-			return null;
+		for (KnowledgePath kp : knowledge.getKnowledgePaths()) {
+			result.setValue(kp, knowledge.getValue(kp));
 		}
+
+		return result;
 	}
 
 	@Override

@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.jdeeco.network.address.Address;
 import cz.cuni.mff.d3s.jdeeco.network.device.Device;
 import cz.cuni.mff.d3s.jdeeco.network.l2.L1DataProcessor;
@@ -27,6 +28,7 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 	protected final static int MINIMUM_PAYLOAD = 1;
 	protected final static int MINIMUM_DATA_TRANSMISSION_SIZE = MINIMUM_PAYLOAD + L1Packet.HEADER_SIZE;
 
+	private final Scheduler scheduler;
 	private final Set<L1Strategy> strategies; 					// registered strategies
 	private final byte nodeId; 									// node ID
 	private final DataIDSource dataIdSource; 					// data ID source
@@ -34,15 +36,24 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 	private final Map<Address, DeviceOutputQueue> outputQueues;
 	private final Map<CollectorKey, Collector> collectors; 		// collectors that store incoming L1 packets. Grouped by data
 																// ID and Node ID
-	private final L1DataProcessor l1DataProcessor; 				// reference to the upper layer
+	private L1DataProcessor l1DataProcessor; 				// reference to the upper layer
 
-	public Layer1(L1DataProcessor l1DataProcessor, byte nodeId, DataIDSource dataIdSource) {
+	public Layer1(byte nodeId, DataIDSource dataIdSource, Scheduler scheduler) {
 		this.outputQueues = new HashMap<Address, DeviceOutputQueue>();
 		this.strategies = new HashSet<L1Strategy>();
 		this.collectors = new HashMap<CollectorKey, Collector>();
 		this.devices = new HashSet<Device>();
 		this.nodeId = nodeId;
 		this.dataIdSource = dataIdSource;
+		this.scheduler = scheduler;
+	}
+	
+	/**
+	 * Sets L1 Data processor
+	 * 
+	 * @param l1DataProcessor L1 data processor to be used by L1 to process received L2 packets
+	 */
+	public void setL1DataProcessor(L1DataProcessor l1DataProcessor) {
 		this.l1DataProcessor = l1DataProcessor;
 	}
 
@@ -128,7 +139,7 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 			while (current < l2Packet.getData().length) {
 				fragmentSize = outputQueue.availableL0Space() - L1Packet.HEADER_SIZE;
 				payload = Arrays.copyOfRange(l2Packet.getData(), current,
-						Math.min(current + fragmentSize, l2Packet.getData().length - 1));
+						Math.min(current + fragmentSize, l2Packet.getData().length));
 				outputQueue.sendDelayed(new L1Packet(payload, srcNode, dataId, current, totalSize, null));
 				current += fragmentSize;
 			}
@@ -206,7 +217,7 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 				 */
 				if (device.canSend(address)) {
 					//TODO change the timeout
-					outputQueue = new DeviceOutputQueue(device, address, -1L);
+					outputQueue = new DeviceOutputQueue(device, address, scheduler, 100);
 					break;
 				}
 			}
@@ -251,7 +262,7 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 		 */
 		public void addL1Packet(L1Packet l1Packet) {
 			isCompleteValid = false;
-			this.l1Packets.addAll(l1Packets);
+			this.l1Packets.add(l1Packet);
 			for (int i = l1Packet.startPos; i < l1Packet.startPos + l1Packet.payloadSize; i++) {
 				map[i] = true;
 			}
