@@ -24,19 +24,19 @@ import cz.cuni.mff.d3s.jdeeco.network.l2.L2ReceivedInfo;
  *
  */
 public class Layer1 implements L2PacketSender, L1StrategyManager {
-	
+
 	protected final static int MINIMUM_PAYLOAD = 1;
 	protected final static int MINIMUM_DATA_TRANSMISSION_SIZE = MINIMUM_PAYLOAD + L1Packet.HEADER_SIZE;
 
 	private final Scheduler scheduler;
-	private final Set<L1Strategy> strategies; 					// registered strategies
-	private final byte nodeId; 									// node ID
-	private final DataIDSource dataIdSource; 					// data ID source
-	private final Set<Device> devices;							// registered devices
+	private final Set<L1Strategy> strategies; // registered strategies
+	private final byte nodeId; // node ID
+	private final DataIDSource dataIdSource; // data ID source
+	private final Set<Device> devices; // registered devices
 	private final Map<Address, DeviceOutputQueue> outputQueues;
-	private final Map<CollectorKey, Collector> collectors; 		// collectors that store incoming L1 packets. Grouped by data
-																// ID and Node ID
-	private L1DataProcessor l1DataProcessor; 				// reference to the upper layer
+	private final Map<CollectorKey, Collector> collectors; // collectors that store incoming L1 packets. Grouped by data
+															// ID and Node ID
+	private L1DataProcessor l1DataProcessor; // reference to the upper layer
 
 	public Layer1(byte nodeId, DataIDSource dataIdSource, Scheduler scheduler) {
 		this.outputQueues = new HashMap<Address, DeviceOutputQueue>();
@@ -47,11 +47,12 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 		this.dataIdSource = dataIdSource;
 		this.scheduler = scheduler;
 	}
-	
+
 	/**
 	 * Sets L1 Data processor
 	 * 
-	 * @param l1DataProcessor L1 data processor to be used by L1 to process received L2 packets
+	 * @param l1DataProcessor
+	 *            L1 data processor to be used by L1 to process received L2 packets
 	 */
 	public void setL1DataProcessor(L1DataProcessor l1DataProcessor) {
 		this.l1DataProcessor = l1DataProcessor;
@@ -103,7 +104,8 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 			device.registerL1(this);
 			devices.add(device);
 		} else {
-			Log.e("The device MTU is too small for the needs of jDEECo data transmission - minimum trasmission size is " + MINIMUM_DATA_TRANSMISSION_SIZE);
+			Log.e("The device MTU is too small for the needs of jDEECo data transmission - minimum trasmission size is "
+					+ MINIMUM_DATA_TRANSMISSION_SIZE);
 		}
 	}
 
@@ -140,8 +142,7 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 				fragmentSize = outputQueue.availableL0Space() - L1Packet.HEADER_SIZE;
 				payload = Arrays.copyOfRange(l2Packet.getData(), current,
 						Math.min(current + fragmentSize, l2Packet.getData().length));
-				// TODO: Should be sendDelayed, but it do not work for the last packet, please fix once it is ready
-				outputQueue.sendImmediately(new L1Packet(payload, srcNode, dataId, current, totalSize, null));
+				outputQueue.sendDelayed(new L1Packet(payload, srcNode, dataId, current, totalSize, null));
 				current += fragmentSize;
 			}
 			return true;
@@ -202,22 +203,23 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 			collector.addL1Packet(l1Packet);
 			if (collector.isComplete()) {
 				// FIX header is unknown at this level
-				l1DataProcessor.processL2Packet(new L2Packet(collector.getMarshalledData(), collector.getL2ReceivedInfo()));
+				l1DataProcessor.processL2Packet(new L2Packet(collector.getMarshalledData(), collector
+						.getL2ReceivedInfo()));
 				collectors.remove(key);
 			}
 			position += l1Packet.payloadSize + L1Packet.HEADER_SIZE;
 		}
 	}
-	
+
 	protected DeviceOutputQueue getDeviceOutputQueue(Address address) {
 		DeviceOutputQueue outputQueue = outputQueues.get(address);
 		if (outputQueue == null) {
 			for (Device device : devices) {
 				/**
-				 * Go through every device and check whether it is capable to send the minimum packet size to the desired address.
+				 * Go through every device and check whether it is capable to send the minimum packet size to the
+				 * desired address.
 				 */
 				if (device.canSend(address)) {
-					//TODO change the timeout
 					outputQueue = new DeviceOutputQueue(device, address, scheduler);
 					break;
 				}
