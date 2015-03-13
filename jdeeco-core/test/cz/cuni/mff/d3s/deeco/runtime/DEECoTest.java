@@ -231,7 +231,7 @@ public class DEECoTest {
 		verifyPluginInitOrder(order8, deeco, tier2Plugin2, tier3Plugin1);
 		verifyPluginInitOrder(order9, deeco, independentBase, independentExtension);
 	}
-	
+
 	/**
 	 * Tests if the DEECo can detect a missing plugin dependency and react by throwing a correct exception.
 	 * @throws DEECoException 

@@ -13,6 +13,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import cz.cuni.mff.d3s.deeco.annotations.pathparser.ParseException;
+import cz.cuni.mff.d3s.deeco.annotations.pathparser.PathOrigin;
+import cz.cuni.mff.d3s.deeco.annotations.pathparser.TokenMgrError;
+import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
+import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
@@ -25,6 +30,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.KnowledgePathAndRoot;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.PathRoot;
@@ -48,6 +54,142 @@ public class KnowledgePathHelperTest {
 
 		factory = RuntimeMetadataFactory.eINSTANCE;
 	}
+	
+	
+	@Test 
+	public void testCreateKnowledgePath() throws ParseException, AnnotationProcessorException {
+		String pathStr = "level1.level2.level3";
+		KnowledgePath kp = KnowledgePathHelper.createKnowledgePath(pathStr, PathOrigin.COMPONENT);
+		assertEquals(kp.getNodes().size(),3);
+		assertEquals(((PathNodeField) kp.getNodes().get(0)).getName(),"level1");
+		assertEquals(((PathNodeField) kp.getNodes().get(1)).getName(),"level2");
+		assertEquals(((PathNodeField) kp.getNodes().get(2)).getName(),"level3");
+		
+		pathStr = "level1.[level21.level22.level23]";
+		kp = KnowledgePathHelper.createKnowledgePath(pathStr, PathOrigin.COMPONENT);
+		assertEquals(kp.getNodes().size(),2);
+		assertEquals(((PathNodeField) kp.getNodes().get(0)).getName(),"level1");
+		assert kp.getNodes().get(1) instanceof PathNodeMapKey;
+		kp = ((PathNodeMapKey) kp.getNodes().get(1)).getKeyPath();
+		assertEquals(kp.getNodes().size(),3);
+		assertEquals(((PathNodeField) kp.getNodes().get(0)).getName(),"level21");
+		assertEquals(((PathNodeField) kp.getNodes().get(1)).getName(),"level22");
+		assertEquals(((PathNodeField) kp.getNodes().get(2)).getName(),"level23");
+		
+		pathStr = "level1.[level21.[level221.level222].level23]";
+		kp = KnowledgePathHelper.createKnowledgePath(pathStr, PathOrigin.COMPONENT);
+		assertEquals(kp.getNodes().size(),2);
+		assertEquals(((PathNodeField) kp.getNodes().get(0)).getName(),"level1");
+		assertTrue(kp.getNodes().get(1) instanceof PathNodeMapKey);
+		kp = ((PathNodeMapKey) kp.getNodes().get(1)).getKeyPath();
+		assertEquals(kp.getNodes().size(),3);
+		assertEquals(((PathNodeField) kp.getNodes().get(0)).getName(),"level21");
+		assertTrue(kp.getNodes().get(1) instanceof PathNodeMapKey);
+		kp = ((PathNodeMapKey) kp.getNodes().get(1)).getKeyPath();
+		assertEquals(kp.getNodes().size(),2);
+		assertEquals(((PathNodeField) kp.getNodes().get(0)).getName(),"level221");
+		assertEquals(((PathNodeField) kp.getNodes().get(1)).getName(),"level222");
+		
+		pathStr = "details.[id]";
+		kp = KnowledgePathHelper.createKnowledgePath(pathStr, PathOrigin.COMPONENT);
+		assertEquals(kp.getNodes().size(),2);
+		assertEquals(((PathNodeField) kp.getNodes().get(0)).getName(),"details");
+		assertTrue(kp.getNodes().get(1) instanceof PathNodeMapKey);
+		kp = ((PathNodeMapKey) kp.getNodes().get(1)).getKeyPath();
+		assertTrue(kp.getNodes().get(0) instanceof PathNodeComponentId);
+
+		pathStr = "level1.id.level2";
+		kp = KnowledgePathHelper.createKnowledgePath(pathStr, PathOrigin.COMPONENT);
+		assertEquals(kp.getNodes().size(),3);
+		assertEquals(((PathNodeField) kp.getNodes().get(0)).getName(),"level1");
+		assertEquals(((PathNodeField) kp.getNodes().get(1)).getName(),"id");
+		assertEquals(((PathNodeField) kp.getNodes().get(2)).getName(),"level2");
+		
+		pathStr = "[coord.names]";
+		kp = KnowledgePathHelper.createKnowledgePath(pathStr, PathOrigin.COMPONENT);
+		assertEquals(kp.getNodes().size(),1);
+		assertTrue(kp.getNodes().get(0) instanceof PathNodeMapKey);
+		kp = ((PathNodeMapKey) kp.getNodes().get(0)).getKeyPath();
+		assertEquals(((PathNodeField) kp.getNodes().get(0)).getName(),"coord");
+		assertEquals(((PathNodeField) kp.getNodes().get(1)).getName(),"names");
+		
+		pathStr = "[coord.names]";
+		kp = KnowledgePathHelper.createKnowledgePath(pathStr, PathOrigin.ENSEMBLE);
+		assertEquals(kp.getNodes().size(),1);
+		assertTrue(kp.getNodes().get(0) instanceof PathNodeMapKey);
+		kp = ((PathNodeMapKey) kp.getNodes().get(0)).getKeyPath();
+		assertTrue(kp.getNodes().get(0) instanceof PathNodeCoordinator);
+		assertEquals(((PathNodeField) kp.getNodes().get(1)).getName(),"names");
+	}
+	
+	@Test 
+	public void testExceptionsInCreateKnowledgePath1() throws ParseException, AnnotationProcessorException {
+		String pathStr = "namesToAddresses[member.name]";
+		exception.expect(ParseException.class);
+		exception.expectMessage(
+				"The structure 'data1[data2]' is not allowed in a path, " +
+				"use the dot separator: 'data1.[data2]'");
+		KnowledgePathHelper.createKnowledgePath(pathStr, PathOrigin.COMPONENT);		
+	}
+	
+	@Test
+	public void testExceptionsInCreateKnowledgePath2() throws ParseException, AnnotationProcessorException {
+		String pathStr = "namesToAddresses.[member.name";
+		exception.expect(ParseException.class);
+		KnowledgePathHelper.createKnowledgePath(pathStr, PathOrigin.COMPONENT);		
+	}
+	
+	@Test
+	public void testExceptionsInCreateKnowledgePath3() throws ParseException, AnnotationProcessorException {
+		String pathStr = "level1..level2";
+		exception.expect(ParseException.class);
+		KnowledgePathHelper.createKnowledgePath(pathStr, PathOrigin.COMPONENT);		
+	}
+	
+	@Test
+	public void testExceptionsInCreateKnowledgePath4() throws ParseException, AnnotationProcessorException {
+		String pathStr = "level1.  .level2";
+		exception.expect(TokenMgrError.class);
+		KnowledgePathHelper.createKnowledgePath(pathStr, PathOrigin.COMPONENT);		
+	}
+	
+	@Test
+	public void testExceptionsInCreateKnowledgePath5() throws ParseException, AnnotationProcessorException {
+		String pathStr = "";
+		exception.expect(ParseException.class);
+		KnowledgePathHelper.createKnowledgePath(pathStr, PathOrigin.COMPONENT);		
+	}
+
+	@Test 
+	public void testExceptionsInCreateKnowledgePath6() throws ParseException, AnnotationProcessorException {
+		String pathStr = "id.level2";
+		exception.expect(AnnotationProcessorException.class);
+		exception.expectMessage(
+				"A component identifier cannot be followed by any other fields in a path.");
+		KnowledgePathHelper.createKnowledgePath(pathStr, PathOrigin.COMPONENT);		
+	}
+	
+	@Test 
+	public void testExceptionsInCreateKnowledgePath7() throws ParseException, AnnotationProcessorException {
+		String pathStr = "details.[id.x]";
+		exception.expect(AnnotationProcessorException.class);
+		exception.expectMessage(
+				"A component identifier cannot be followed by any other fields in a path.");
+		KnowledgePathHelper.createKnowledgePath(pathStr, PathOrigin.COMPONENT);		
+	}
+	
+	@Test 
+	public void testExceptionsInCreateKnowledgePath8() throws ParseException, AnnotationProcessorException {
+		String pathStr = "whatever.level2";
+		exception.expect(AnnotationProcessorException.class);
+		exception.expectMessage(
+				"The path does not start with one of the 'coord' or 'member' keywords.");
+		// false means that the knowledge path is found in an ensemble definition:
+		KnowledgePathHelper.createKnowledgePath(pathStr, PathOrigin.ENSEMBLE);		
+	}
+
+	
+	
 	
 	@Test
 	public void testGetAbsoluteStrippedPath0() throws KnowledgeNotFoundException {

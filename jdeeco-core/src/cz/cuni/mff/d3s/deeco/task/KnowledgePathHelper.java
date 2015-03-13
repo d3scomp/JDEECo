@@ -8,6 +8,15 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import cz.cuni.mff.d3s.deeco.annotations.pathparser.ComponentIdentifier;
+import cz.cuni.mff.d3s.deeco.annotations.pathparser.EEnsembleParty;
+import cz.cuni.mff.d3s.deeco.annotations.pathparser.PNode;
+import cz.cuni.mff.d3s.deeco.annotations.pathparser.ParseException;
+import cz.cuni.mff.d3s.deeco.annotations.pathparser.PathOrigin;
+import cz.cuni.mff.d3s.deeco.annotations.pathparser.PathParser;
+import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
+import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
@@ -28,6 +37,100 @@ import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
  */
 public class KnowledgePathHelper {
 
+	
+	/**
+	 * Creator of a {@link KnowledgePath} from a String.  
+	 *  
+	 * @param path string to be parsed into knowledge path
+	 * @param pathOrigin indicates whether it is being called within the context of {@link #createComponentProcess}, {@link #createEnsembleDefinition} or {@link #addSecurityTags(Class, KnowledgeManager, ChangeSet)} .
+	 */
+	public static KnowledgePath createKnowledgePath(String path, PathOrigin pathOrigin) throws ParseException, AnnotationProcessorException {
+		PNode pNode = PathParser.parse(path);
+		return createKnowledgePath(pNode, pathOrigin);
+	}
+	
+	/**
+	 * Creator of {@link KnowledgePath} from a {@link PNode}.
+	 * <p>
+	 * It throws an exception in the following two cases:
+	 * <ul>
+	 * <li>When it is called in the context of an ensemble process and a (sub-)path does not start with one of the <code>coord</code> or <code>member</code> keywords.</li>
+	 * <li>When a (sub-)path contains the <code>id</code> keyword and it is <b>not</b> in the last position in the (sub-)path.</li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * @param pNode head of the list as retrieved by the {@link PathParser#parse} method.
+	 * @param pathOrigin indicates whether it is being called within the context of {@link #createComponentProcess}, {@link #createEnsembleDefinition} or {@link #addSecurityTags(Class, KnowledgeManager, ChangeSet)} .
+	 */
+	static KnowledgePath createKnowledgePath(PNode pNode, PathOrigin pathOrigin) throws AnnotationProcessorException {
+		RuntimeMetadataFactory factory = RuntimeMetadataFactory.eINSTANCE;
+		KnowledgePath knowledgePath = factory.createKnowledgePath();
+		do {	
+			Object nValue = pNode.value;
+			if (nValue instanceof String) {
+				// check if the first node in an ensemble path is not 'coord' or 'member':
+				if (pathOrigin == PathOrigin.ENSEMBLE && knowledgePath.getNodes().isEmpty()) {
+					throw new AnnotationProcessorException(
+						"The path does not start with one of the '"
+						+ EEnsembleParty.COORDINATOR.toString() + "' or '"
+						+ EEnsembleParty.MEMBER.toString() + "' keywords."); 
+				}
+				// Check if this is a component identifier ("id") node.
+				// In such case, this has to be the final node in the path:
+				if ((nValue.equals(ComponentIdentifier.ID.toString()))
+					&& (((pathOrigin == PathOrigin.COMPONENT || pathOrigin == PathOrigin.SECURITY_ANNOTATION || pathOrigin == PathOrigin.RATING_PROCESS) && knowledgePath.getNodes().isEmpty()) 
+					|| (pathOrigin == PathOrigin.ENSEMBLE && (knowledgePath.getNodes().size() == 1)))) {
+						PathNodeComponentId idField = factory.createPathNodeComponentId();
+						knowledgePath.getNodes().add(idField); 
+						if (pNode.next!=null) {
+							throw new AnnotationProcessorException(
+									"A component identifier cannot be followed by any other fields in a path.");
+						} 
+						return knowledgePath;
+				} 
+				PathNodeField pathNodeField = factory.createPathNodeField();
+				pathNodeField.setName((String) nValue);
+				knowledgePath.getNodes().add(pathNodeField);
+			}
+			if (nValue instanceof EEnsembleParty) {
+				EEnsembleParty ensembleKeyword = (EEnsembleParty) nValue;
+				if (pathOrigin == PathOrigin.ENSEMBLE && knowledgePath.getNodes().isEmpty())  {
+					knowledgePath.getNodes().add(createMemberOrCoordinatorPathNode(ensembleKeyword));
+				} else {
+					PathNodeField pathNodeField = factory.createPathNodeField();
+					pathNodeField.setName(ensembleKeyword.toString());
+					knowledgePath.getNodes().add(pathNodeField);
+				}
+			}
+			if (nValue instanceof PNode) {
+				PathNodeMapKey pathNodeMapKey = factory.createPathNodeMapKey();
+				pathNodeMapKey.setKeyPath(createKnowledgePath((PNode) nValue, pathOrigin));
+				knowledgePath.getNodes().add(pathNodeMapKey);
+			}
+			pNode = pNode.next;
+		} while (!(pNode == null));
+		return knowledgePath;
+	}
+	
+	/**
+	 * Simple creator of either {@link PathNodeCoordinator} or {@link PathNodeMember} object.  
+	 */
+	static PathNode createMemberOrCoordinatorPathNode(EEnsembleParty keyword) throws AnnotationProcessorException {
+		RuntimeMetadataFactory factory = RuntimeMetadataFactory.eINSTANCE;
+		switch (keyword) {
+			case COORDINATOR:
+				return factory.createPathNodeCoordinator();
+			case MEMBER:
+				return factory.createPathNodeMember();
+			default:
+				throw new AnnotationProcessorException(
+						"Invalid identifier: 'coord' or 'member' keyword expected.");
+		}
+	}
+
+	
+	
+	
 	public enum PathRoot {
 		COORDINATOR, MEMBER
 	}

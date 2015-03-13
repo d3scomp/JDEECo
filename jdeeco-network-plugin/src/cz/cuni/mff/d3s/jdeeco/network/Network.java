@@ -39,12 +39,12 @@ public class Network implements DEECoPlugin {
 	@Override
 	public void init(DEECoContainer container) {
 		// Initialize Layer 1
-		// TODO: Data id source and node id should have been set properly
-		l1 = new Layer1((byte) 0, DefaultDataIDSource.getInstance());
+		l1 = new Layer1((byte) container.getId(), DefaultDataIDSource.getInstance(), container.getRuntimeFramework()
+				.getScheduler());
 
 		// Initialize Layer 2
 		l2 = new Layer2(registery);
-		
+
 		l1.setL1DataProcessor(l2);
 		l2.setL2PacketSender(l1);
 

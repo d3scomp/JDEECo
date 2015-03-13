@@ -89,10 +89,10 @@ public class L2Test {
 		L2Packet srcPacket = createSampleSourcepacket();
 
 		// Try to send the packet
-		l2Layer.sendL2Packet(srcPacket, MANETBroadcastAddress.INSTANCE);
+		l2Layer.sendL2Packet(srcPacket, MANETBroadcastAddress.BROADCAST);
 
 		// Check packet was passed to layer1
-		Mockito.verify(layer1).sendL2Packet(Matchers.eq(srcPacket), Matchers.eq(MANETBroadcastAddress.INSTANCE));
+		Mockito.verify(layer1).sendL2Packet(Matchers.eq(srcPacket), Matchers.eq(MANETBroadcastAddress.BROADCAST));
 	}
 
 	/**

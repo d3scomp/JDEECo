@@ -37,6 +37,6 @@ public class OMNeTBroadcastDevice extends OMNeTDevice {
 	
 	public void receivePacket(byte[] data, double rssi) {
 		System.out.println("Received broadcast packet, rssi: " + rssi + " for host " + host.getId());
-		network.getL1().processL0Packet(data, this, new ReceivedInfo(MANETBroadcastAddress.INSTANCE));
+		network.getL1().processL0Packet(data, this, new ReceivedInfo(MANETBroadcastAddress.BROADCAST));
 	}
 }

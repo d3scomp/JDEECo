@@ -15,6 +15,10 @@
       <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//ParameterKind/INOUT"/>
       <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//ParameterKind/RATING"/>
     </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="RuntimeModel.ecore#//ContextKind">
+      <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//ContextKind/LOCAL"/>
+      <genEnumLiterals ecoreEnumLiteral="RuntimeModel.ecore#//ContextKind/SHADOW"/>
+    </genEnums>
     <genDataTypes ecoreDataType="RuntimeModel.ecore#//Method"/>
     <genDataTypes ecoreDataType="RuntimeModel.ecore#//KnowledgeManager"/>
     <genDataTypes ecoreDataType="RuntimeModel.ecore#//ShadowKnowledgeManagerRegistry"/>
@@ -52,9 +56,9 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentInstance/ensembleControllers"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentInstance/internalData"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentInstance/systemComponent"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentInstance/roles"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentInstance/ratingsManager"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentInstance/securityRoles"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentInstance/ratingsProcess"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentInstance/roles"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//EnsembleDefinition">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//EnsembleDefinition/name"/>
@@ -80,6 +84,7 @@
     <genClasses ecoreClass="RuntimeModel.ecore#//Invocable">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//Invocable/parameters"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//Invocable/method"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//Invocable/ignoreKnowledgeCompromise"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//EnsembleController">
       <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference RuntimeModel.ecore#//EnsembleController/componentInstance"/>
@@ -100,12 +105,14 @@
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//SecurityRole/consistsOf"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//SecurityRole/roleName"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//SecurityRole/arguments"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//SecurityRole/aliasRole"/>
     </genClasses>
     <genClasses image="false" ecoreClass="RuntimeModel.ecore#//SecurityRoleArgument">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//SecurityRoleArgument/name"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//PathSecurityRoleArgument">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//PathSecurityRoleArgument/knowledgePath"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//PathSecurityRoleArgument/contextKind"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//BlankSecurityRoleArgument"/>
     <genClasses ecoreClass="RuntimeModel.ecore#//AbsoluteSecurityRoleArgument">
@@ -114,5 +121,7 @@
     <genClasses ecoreClass="RuntimeModel.ecore#//RatingsProcess">
       <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference RuntimeModel.ecore#//RatingsProcess/componentInstance"/>
     </genClasses>
+    <genClasses ecoreClass="RuntimeModel.ecore#//LocalKnowledgeTag"/>
+    <genClasses ecoreClass="RuntimeModel.ecore#//SecurityTag"/>
   </genPackages>
 </genmodel:GenModel>

@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.jdeeco.network.address.Address;
 import cz.cuni.mff.d3s.jdeeco.network.device.Device;
 import cz.cuni.mff.d3s.jdeeco.network.l2.L1DataProcessor;
@@ -27,6 +28,7 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 	protected final static int MINIMUM_PAYLOAD = 1;
 	protected final static int MINIMUM_DATA_TRANSMISSION_SIZE = MINIMUM_PAYLOAD + L1Packet.HEADER_SIZE;
 
+	private final Scheduler scheduler;
 	private final Set<L1Strategy> strategies; 					// registered strategies
 	private final byte nodeId; 									// node ID
 	private final DataIDSource dataIdSource; 					// data ID source
@@ -36,13 +38,14 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 																// ID and Node ID
 	private L1DataProcessor l1DataProcessor; 				// reference to the upper layer
 
-	public Layer1(byte nodeId, DataIDSource dataIdSource) {
+	public Layer1(byte nodeId, DataIDSource dataIdSource, Scheduler scheduler) {
 		this.outputQueues = new HashMap<Address, DeviceOutputQueue>();
 		this.strategies = new HashSet<L1Strategy>();
 		this.collectors = new HashMap<CollectorKey, Collector>();
 		this.devices = new HashSet<Device>();
 		this.nodeId = nodeId;
 		this.dataIdSource = dataIdSource;
+		this.scheduler = scheduler;
 	}
 	
 	/**
@@ -215,7 +218,7 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 				 */
 				if (device.canSend(address)) {
 					//TODO change the timeout
-					outputQueue = new DeviceOutputQueue(device, address, -1L);
+					outputQueue = new DeviceOutputQueue(device, address, scheduler);
 					break;
 				}
 			}
