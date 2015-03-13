@@ -39,43 +39,46 @@ import cz.cuni.mff.d3s.jdeeco.network.l2.PacketHeader;
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
  */
-public class DummyKnowledgePublisher implements DEECoPlugin, TimerTaskListener {
+public class DefaultKnowledgePublisher implements DEECoPlugin, TimerTaskListener {
+	private final static long PUBLISH_PERIOD = Integer.getInteger(DeecoProperties.PUBLISHING_PERIOD,
+			PublisherTask.DEFAULT_PUBLISHING_PERIOD);
+
 	private Network network;
 	private KnowledgeManagerContainer knowledgeManagerContainer;
 	private CurrentTimeProvider timeProvider;
 	private DEECoContainer container;
 	private List<IPAddress> infrastructurePeers;
-	
-	private final static long PUBLISH_PERIOD = Integer.getInteger(DeecoProperties.PUBLISHING_PERIOD,
-			PublisherTask.DEFAULT_PUBLISHING_PERIOD);
+	private final List<KnowledgePath> empty;
 
-	@Override
-	public List<Class<? extends DEECoPlugin>> getDependencies() {
-		return Arrays.asList(Network.class);
-	}
-
-	public DummyKnowledgePublisher() {
+	/**
+	 * Constructs DefaultKnowledgePublisher with broadcast only publishing
+	 */
+	public DefaultKnowledgePublisher() {
 		this(new LinkedList<IPAddress>());
 	}
 
-	public DummyKnowledgePublisher(List<IPAddress> peers) {
+	/**
+	 * Constructs DefaultKnowledgePublisher with broadcast and static infrastructure publishing
+	 * 
+	 * @param peers
+	 *            Infrastructure peers
+	 */
+	public DefaultKnowledgePublisher(List<IPAddress> peers) {
 		infrastructurePeers = peers;
 		RuntimeMetadataFactory factory = RuntimeMetadataFactoryExt.eINSTANCE;
-		KnowledgePath empty = factory.createKnowledgePath();
-		emptyPath = new LinkedList<>();
-		emptyPath.add(empty);
+		empty = new LinkedList<>(Arrays.asList(factory.createKnowledgePath()));
 	}
 
-	// NOTE: Taken from DefaultKnowledgeDataManager
-	protected final List<KnowledgePath> emptyPath;
-
-	// NOTE: Taken from DefaultKnowledgeDataManager
-	protected List<KnowledgeData> prepareLocalKnowledgeData() {
+	/**
+	 * Gets local knowledge data from all knowledge managers
+	 * 
+	 * @return Knowledge data set
+	 */
+	protected List<KnowledgeData> getLocalKnowledgeData() {
 		List<KnowledgeData> result = new LinkedList<>();
 		for (KnowledgeManager km : knowledgeManagerContainer.getLocals()) {
 			try {
-				KnowledgeData kd = prepareLocalKnowledgeData(km);
-				result.add(filterLocalKnowledgeForKnownEnsembles(kd));
+				result.add(getLocalKnowledgeData(km));
 			} catch (Exception e) {
 				Log.e("prepareKnowledgeData error", e);
 			}
@@ -83,42 +86,40 @@ public class DummyKnowledgePublisher implements DEECoPlugin, TimerTaskListener {
 		return result;
 	}
 
-	// NOTE: Taken from DefaultKnowledgeDataManager
-	protected KnowledgeData prepareLocalKnowledgeData(KnowledgeManager km) throws KnowledgeNotFoundException {
-
-		// TODO: We are ignoring security, and host
+	/**
+	 * Gets local knowledge data from specific knowledge manager
+	 * 
+	 * @param km
+	 *            KnowledgeManager to get data from
+	 * @return Knowledge data
+	 * @throws KnowledgeNotFoundException
+	 */
+	protected KnowledgeData getLocalKnowledgeData(KnowledgeManager km) throws KnowledgeNotFoundException {
 		// TODO: version is implemented by current time
 		long time = timeProvider.getCurrentMilliseconds();
-		return new KnowledgeData(getNonLocalKnowledge(km.get(emptyPath), km), new ValueSet(), new ValueSet(),
-				new KnowledgeMetaData(km.getId(), time, String.valueOf(container.getId()), time, 1));
+		ValueSet knowledge = getTransferableKnowledge(km.get(empty), km);
+		String id = String.valueOf(container.getId());
+		return new KnowledgeData(knowledge, new ValueSet(), new ValueSet(), new KnowledgeMetaData(km.getId(), time, id,
+				time, 1));
 	}
 
-	// NOTE: Taken from DefaultKnowledgeDataManager
-	protected ValueSet getNonLocalKnowledge(ValueSet toFilter, KnowledgeManager km) {
+	/**
+	 * Gets knowledge that can be send via network (is not @Local annotated)
+	 * 
+	 * @param source
+	 *            Knowledge values to be stripped of non-transferable knowledge
+	 * @param knowledgeManager
+	 *            Knowledge manager containing the source knowledge
+	 * @return Source knowledge stripped of @Local annotated knowledge
+	 */
+	protected ValueSet getTransferableKnowledge(ValueSet source, KnowledgeManager knowledgeManager) {
 		ValueSet result = new ValueSet();
-		for (KnowledgePath kp : toFilter.getKnowledgePaths()) {
-			if (!km.isLocal(kp)) {
-				result.setValue(kp, toFilter.getValue(kp));
+		for (KnowledgePath kp : source.getKnowledgePaths()) {
+			if (!knowledgeManager.isLocal(kp)) {
+				result.setValue(kp, source.getValue(kp));
 			}
 		}
 		return result;
-	}
-
-	// NOTE: Taken from DefaultKnowledgeDataManager
-	protected KnowledgeData filterLocalKnowledgeForKnownEnsembles(KnowledgeData kd) {
-		// FIXME: make this generic
-		// now we hardcode our demo (we filter the Leader knowledge to only
-		// publish id, team, and position.
-		if (kd.getMetaData().componentId.startsWith("L")) {
-			ValueSet values = kd.getKnowledge();
-			ValueSet newValues = new ValueSet();
-			for (KnowledgePath kp : values.getKnowledgePaths()) {
-				newValues.setValue(kp, values.getValue(kp));
-			}
-			return new KnowledgeData(newValues, kd.getSecuritySet(), kd.getAuthors(), kd.getMetaData());
-		} else {
-			return kd;
-		}
 	}
 
 	@Override
@@ -126,7 +127,7 @@ public class DummyKnowledgePublisher implements DEECoPlugin, TimerTaskListener {
 		System.out.println("Publisher called at: " + time);
 
 		// Get knowledge and distribute it
-		for (KnowledgeData data : prepareLocalKnowledgeData()) {
+		for (KnowledgeData data : getLocalKnowledgeData()) {
 			L2Packet packet = new L2Packet(new PacketHeader(L2PacketType.KNOWLEDGE), data);
 
 			// Distribute via broadcast
@@ -146,6 +147,11 @@ public class DummyKnowledgePublisher implements DEECoPlugin, TimerTaskListener {
 	public TimerTask getInitialTask(Scheduler scheduler) {
 		return new CustomStepTask(scheduler, this, Integer.getInteger(DeecoProperties.PUBLISHING_PERIOD,
 				PublisherTask.DEFAULT_PUBLISHING_PERIOD));
+	}
+
+	@Override
+	public List<Class<? extends DEECoPlugin>> getDependencies() {
+		return Arrays.asList(Network.class);
 	}
 
 	/**
