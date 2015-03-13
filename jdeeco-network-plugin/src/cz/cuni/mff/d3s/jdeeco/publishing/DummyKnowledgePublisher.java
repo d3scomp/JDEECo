@@ -3,6 +3,7 @@ package cz.cuni.mff.d3s.jdeeco.publishing;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import cz.cuni.mff.d3s.deeco.DeecoProperties;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
@@ -44,6 +45,9 @@ public class DummyKnowledgePublisher implements DEECoPlugin, TimerTaskListener {
 	private CurrentTimeProvider timeProvider;
 	private DEECoContainer container;
 	private List<IPAddress> infrastructurePeers;
+	
+	private final static long PUBLISH_PERIOD = Integer.getInteger(DeecoProperties.PUBLISHING_PERIOD,
+			PublisherTask.DEFAULT_PUBLISHING_PERIOD);
 
 	@Override
 	public List<Class<? extends DEECoPlugin>> getDependencies() {
@@ -135,8 +139,7 @@ public class DummyKnowledgePublisher implements DEECoPlugin, TimerTaskListener {
 		}
 
 		Scheduler scheduler = container.getRuntimeFramework().getScheduler();
-		scheduler.addTask(new CustomStepTask(scheduler, this, Integer.getInteger(DeecoProperties.PUBLISHING_PERIOD,
-				PublisherTask.DEFAULT_PUBLISHING_PERIOD)));
+		scheduler.addTask(new CustomStepTask(scheduler, this, PUBLISH_PERIOD));
 	}
 
 	@Override
@@ -163,6 +166,7 @@ public class DummyKnowledgePublisher implements DEECoPlugin, TimerTaskListener {
 
 		// Start publishing task
 		Scheduler scheduler = container.getRuntimeFramework().getScheduler();
-		scheduler.addTask(new CustomStepTask(scheduler, this));
+		long offset = new Random(container.getId()).nextInt((int) PUBLISH_PERIOD);
+		scheduler.addTask(new CustomStepTask(scheduler, this, offset));
 	}
 }
