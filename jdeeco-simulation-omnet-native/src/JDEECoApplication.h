@@ -26,8 +26,7 @@
 /**
  * TODO - Generated class
  */
-class JDEECoApplication: public cSimpleModule,
-        public JDEECoModule {
+class JDEECoApplication: public cSimpleModule, public JDEECoModule {
     NodeId id;
     std::string color;
     std::string modelURL;
