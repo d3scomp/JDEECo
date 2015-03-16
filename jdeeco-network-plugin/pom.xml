@@ -2,13 +2,14 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
-	<artifactId>cz.cuni.mff.d3s.jdeeco.network</artifactId>
-	<version>3.0.0</version>
-	<packaging>jar</packaging>
+	<parent>
+		<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
+		<artifactId>cz.cuni.mff.d3s.jdeeco</artifactId>
+		<version>3.0.0</version>
+		<relativePath>../jdeeco-parent/pom.xml</relativePath>
+	</parent>
 
-	<name>cz.cuni.mff.d3s.jdeeco.network</name>
-	<url>http://maven.apache.org</url>
+	<artifactId>cz.cuni.mff.d3s.jdeeco.network</artifactId>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -45,6 +46,12 @@
 	</build>
 
 	<dependencies>
+		<dependency>
+			<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
+			<artifactId>cz.cuni.mff.d3s.jdeeco.core</artifactId>
+			<version>3.0.0</version>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
