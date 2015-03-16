@@ -21,12 +21,12 @@ public class ConvoySimulationTest {
 	@Rule
 	public final StandardOutputStreamLog  log = new StandardOutputStreamLog ();
 	
-	public static void main(String[] args) throws AnnotationProcessorException, InterruptedException, DEECoException {
+	public static void main(String[] args) throws AnnotationProcessorException, InterruptedException, DEECoException, InstantiationException, IllegalAccessException {
 		new ConvoySimulationTest().testConvoy();
 	}
 	
 	@Test
-	public void testConvoy() throws AnnotationProcessorException, InterruptedException, DEECoException {
+	public void testConvoy() throws AnnotationProcessorException, InterruptedException, DEECoException, InstantiationException, IllegalAccessException {
 
 		/* create main application container */
 		SimulationTimer simulationTimer = new DiscreteEventTimer(); // also "new WallTimeSchedulerNotifier()" 

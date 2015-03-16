@@ -18,24 +18,37 @@ import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
 public class DEECoSimulation {
 
 	List<DEECoNode> deecoNodes;
-	List<DEECoPlugin> nodePlugins;
+	List<DEECoPlugin> instantiatedPlugins;
+	List<Class<? extends DEECoPlugin>> nonInstantiatedPlugins;
 	SimulationTimer simulationTimer;
 
-	public DEECoSimulation(SimulationTimer simulationTimer, DEECoPlugin... nodeWideplugins) {
-		this.nodePlugins = Arrays.asList(nodeWideplugins);
+	public DEECoSimulation(SimulationTimer simulationTimer) {
 		this.simulationTimer = simulationTimer;
+		instantiatedPlugins = new ArrayList<>();
+		nonInstantiatedPlugins = new ArrayList<>();
 		deecoNodes = new ArrayList<>();
+	}
+	
+	public void addPlugin(Class<? extends DEECoPlugin> clazz) {
+		nonInstantiatedPlugins.add(clazz);
+	}
+	
+	public void addPlugin(DEECoPlugin nodeWideplugin) {
+		instantiatedPlugins.add(nodeWideplugin);		
 	}
 
 	public void start(long duration) {
 		simulationTimer.start(duration);
 	}
 
-	public DEECoNode createNode(int id, DEECoPlugin... nodeSpecificPlugins) throws DEECoException {
+	public DEECoNode createNode(int id, DEECoPlugin... nodeSpecificPlugins) throws DEECoException, InstantiationException, IllegalAccessException {
 		// Create list of plug-ins for new node
 		List<DEECoPlugin> plugins = new LinkedList<DEECoPlugin>();
-		plugins.addAll(nodePlugins);
+		plugins.addAll(instantiatedPlugins);
 		plugins.addAll(Arrays.asList(nodeSpecificPlugins));
+		for (Class<? extends DEECoPlugin> c : nonInstantiatedPlugins) {
+			plugins.add(c.newInstance());
+		}
 		
 		DEECoNode node = new DEECoNode(id, simulationTimer, plugins.toArray(new DEECoPlugin[0]));
 		deecoNodes.add(node);
