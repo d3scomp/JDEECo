@@ -52,7 +52,7 @@ public class ModelValidatorTest {
 	public void setUp() throws Exception {
 		factory = RuntimeMetadataFactory.eINSTANCE;
 		model = factory.createRuntimeMetadata(); 
-		processor = new AnnotationProcessor(factory, model, new CloningKnowledgeManagerFactory(), new ArrayList<AnnotationChecker>());
+		processor = new AnnotationProcessor(factory, model, new CloningKnowledgeManagerFactory(), new AnnotationChecker[0]);
 		
 		processor.processComponent(new ExampleComponent());
 		component = model.getComponentInstances().get(0);

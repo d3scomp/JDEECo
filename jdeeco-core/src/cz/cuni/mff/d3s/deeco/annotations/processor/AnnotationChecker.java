@@ -1,5 +1,7 @@
 package cz.cuni.mff.d3s.deeco.annotations.processor;
 
+import java.util.Arrays;
+
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 
@@ -10,6 +12,15 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
  *
  */
 public interface AnnotationChecker {
+	
+	static TypeComparer typeComparer = new GenericTypeComparer();
+	static KnowledgePathChecker knowledgePathChecker = new KnowledgePathCheckerImpl(typeComparer);
+	
+	public static AnnotationChecker[] standardCheckers = new AnnotationChecker[] 
+			{
+				new RolesAnnotationChecker(knowledgePathChecker, typeComparer),
+				//new ComponentProcessChecker()
+			};
 	
 	/**
 	 * Checks that a given component instance is valid.

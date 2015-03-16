@@ -16,6 +16,7 @@ import cz.cuni.mff.d3s.deeco.annotations.Local;
 import cz.cuni.mff.d3s.deeco.annotations.MemberRole;
 import cz.cuni.mff.d3s.deeco.annotations.PlaysRole;
 import cz.cuni.mff.d3s.deeco.annotations.Role;
+import cz.cuni.mff.d3s.deeco.annotations.processor.ParameterKnowledgePathExtractor.KnowledgePathAndType;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
@@ -49,13 +50,13 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
  * 
  * 2) When a component implements a role, all public fields from this role need to be
  * present also in the component class. For details, see the
- * {@link RolesAnnotationChecker#checkRolesImplementation(Object)} method.
+ * {@link RolesAnnotationChecker#checkComponentRolesImplementation(Object)} method.
  * 
  * 3) In ensembles where coordinator and member role is specified, knowledge paths
  * that are used in the membership and knowledge exchange methods are checked to be valid.
  * This means that the knowledge path must exist in the given role definition.
  * For details, see the {@link RolesAnnotationChecker#validateEnsemble(Class, EnsembleDefinition)}
- * and {@link RolesAnnotationChecker#checkRolesImplementation(List, Class[], Class[])} methods.
+ * and {@link RolesAnnotationChecker#checkEnsembleMethodRolesImplementation(List, Class[], Class[])} methods.
  * 
  * When checking the presence of a particular field, besides the field name, the type of the 
  * field must match to the type specified in the role class. In this case, inheritance is not
@@ -68,12 +69,28 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
  */
 public class RolesAnnotationChecker implements AnnotationChecker {
 	
+	private KnowledgePathChecker knowledgePathChecker;
+	private TypeComparer typeComparer;
+	private ParameterKnowledgePathExtractor parameterExtractor;
+	
+	public RolesAnnotationChecker(KnowledgePathChecker knowledgePathChecker, TypeComparer typeComparer) {
+		this(knowledgePathChecker, typeComparer, new ParameterKnowledgePathExtractor());
+	}
+	
+	// used just for tests - to be able to put a mock of ParameterKnowledgePathExtractor
+	RolesAnnotationChecker(KnowledgePathChecker knowledgePathChecker, TypeComparer typeComparer,
+			ParameterKnowledgePathExtractor parameterExtractor) {
+		this.knowledgePathChecker = knowledgePathChecker;
+		this.typeComparer = typeComparer;
+		this.parameterExtractor = parameterExtractor;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationChecker#validateComponent(java.lang.Object, cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance)
 	 */
 	public void validateComponent(Object componentObj, ComponentInstance componentInstance) throws AnnotationCheckerException {		
-		checkRolesImplementation(componentObj);
+		checkComponentRolesImplementation(componentObj);
 	}
 	
 	/*
@@ -96,8 +113,8 @@ public class RolesAnnotationChecker implements AnnotationChecker {
 			throw new AnnotationCheckerException("Only one CoordinatorRole and one MemberRole annotation is allowed per ensemble.");
 		}
 		
-		checkRolesImplementation(ensembleDefinition.getMembership().getParameters(), coordinatorRoles, memberRoles);
-		checkRolesImplementation(ensembleDefinition.getKnowledgeExchange().getParameters(), coordinatorRoles, memberRoles);
+		checkEnsembleMethodRolesImplementation(ensembleDefinition.getMembership().getParameters(), coordinatorRoles, memberRoles);
+		checkEnsembleMethodRolesImplementation(ensembleDefinition.getKnowledgeExchange().getParameters(), coordinatorRoles, memberRoles);
 	}
 	
 	/**
@@ -108,7 +125,7 @@ public class RolesAnnotationChecker implements AnnotationChecker {
 	 * @param obj The componentInstance
 	 * @throws AnnotationCheckerException 
 	 */
-	void checkRolesImplementation(Object obj) throws AnnotationCheckerException {
+	void checkComponentRolesImplementation(Object obj) throws AnnotationCheckerException {
 		if (obj == null) {
 			throw new AnnotationCheckerException("The input instance cannot be null.");
 		}
@@ -145,7 +162,7 @@ public class RolesAnnotationChecker implements AnnotationChecker {
 	 * @param memberRoleAnnotations An array of member role classes
 	 * @throws AnnotationCheckerException
 	 */
-	void checkRolesImplementation(List<Parameter> parameters, Class<?>[] coordinatorRoles, 
+	void checkEnsembleMethodRolesImplementation(List<Parameter> parameters, Class<?>[] coordinatorRoles, 
 			Class<?>[] memberRoles) throws AnnotationCheckerException {
 		if (parameters == null) {
 			throw new AnnotationCheckerException("The input parameters cannot be null.");
@@ -157,22 +174,31 @@ public class RolesAnnotationChecker implements AnnotationChecker {
 			throw new AnnotationCheckerException("The memberRoles parameter cannot be null.");
 		}
 		
+		int i = 0;
 		for (Parameter parameter : parameters) {
-			Type parameterType;
-			if (parameter.getKind() == ParameterKind.IN) {
-				parameterType = parameter.getGenericType();
-			} else {
-				if (!(parameter.getGenericType() instanceof ParameterizedType)) {
-					throw new AnnotationCheckerException("A parameter with different kind than IN must be wrapped in a generic type (ie. ParameterizedType)");
-				}
-				
-				ParameterizedType parameterHolderType = (ParameterizedType) parameter.getGenericType();
-				parameterType = parameterHolderType.getActualTypeArguments()[0];
+			i++;
+			try {
+				checkParameter(parameter, coordinatorRoles, memberRoles);
+			} catch (ParameterException e) {
+				throw new AnnotationCheckerException("Parameter " + i + ": " + e.getMessage(), e);
 			}
-			
-			checkKnowledgePath(parameterType, parameter.getKnowledgePath(), coordinatorRoles, memberRoles);
 		}
 		
+	}
+	
+	void checkParameter(Parameter parameter, Class<?>[] coordinatorRoles, Class<?>[] memberRoles) throws ParameterException {
+		List<KnowledgePathAndType> knowledgePaths = parameterExtractor.extractAllKnowledgePaths(parameter);
+		for (KnowledgePathAndType knowledgePathAndType : knowledgePaths) {
+			try {
+				checkKnowledgePath(knowledgePathAndType.type, knowledgePathAndType.knowledgePath,
+						coordinatorRoles, memberRoles);
+			} catch (KnowledgePathCheckException ex) {
+				String knowledgePathStr = KnowledgePathCheckerImpl.pathNodeSequenceToString(
+						knowledgePathAndType.type, knowledgePathAndType.knowledgePath);
+				throw new ParameterException("Knowledge path " + knowledgePathStr + ": " 
+						+ ex.getMessage(), ex);
+			}
+		}
 	}
 	
 	/**
@@ -189,50 +215,28 @@ public class RolesAnnotationChecker implements AnnotationChecker {
 	 * @param memberRoleAnnotations An array of member role classes
 	 * @throws AnnotationCheckerException
 	 */
-	private void checkKnowledgePath(Type type, KnowledgePath knowledgePath, Class<?>[] coordinatorRoles, 
-			Class<?>[] memberRoles) throws AnnotationCheckerException {
-		if (knowledgePath.getNodes().size() < 2) {
-			throw new AnnotationCheckerException("A knowledge path must contain at least two elements (coord/member and field name).");
+	private void checkKnowledgePath(Type type, List<PathNode> pathNodes, Class<?>[] coordinatorRoles, 
+			Class<?>[] memberRoles) throws KnowledgePathCheckException {
+		if (pathNodes.size() < 2) {
+			throw new KnowledgePathCheckException("The knowledge path must contain at least two elements (coord/member and field name).");
 		}
 		
 		// just choose coordinator / member role classes
 		Class<?>[] roleClasses;
-		PathNode first = knowledgePath.getNodes().get(0);
+		PathNode first = pathNodes.get(0);
 		if (first instanceof PathNodeCoordinator) {
 			roleClasses = coordinatorRoles;
 		} else if (first instanceof PathNodeMember) {
 			roleClasses = memberRoles;
 		} else {
-			throw new AnnotationCheckerException("A knowledge path does not start with coord/member.");
-		}
-		
-		// go through the path, evaluate inner knowledge paths of PathNodeMapKey-s
-		// TODO extract to individual method and use it to check component processes 
-		// (that they use only fields available in the component)
-		PathNode second = knowledgePath.getNodes().get(1);
-		List<String> fieldNameSequence = new ArrayList<>();
-		if (second instanceof PathNodeComponentId) {
-			fieldNameSequence.add("id");
-		} else if (second instanceof PathNodeField) {
-			for (int i = 1; i < knowledgePath.getNodes().size(); i++) {
-				PathNode pn = knowledgePath.getNodes().get(i);
-				if (pn instanceof PathNodeField) {
-					fieldNameSequence.add(((PathNodeField)pn).getName());
-				} else if (pn instanceof PathNodeMapKey) {
-					checkKnowledgePath(/*TODO*/null, ((PathNodeMapKey)pn).getKeyPath(), 
-							coordinatorRoles, memberRoles);
-					break; // we don't check after [], but we actually could
-				}
-			}
-		} else {
-			throw new AnnotationCheckerException("A knowledge path's second element should be a field name.");
+			throw new KnowledgePathCheckException("The knowledge path does not start with coord/member.");
 		}
 
 		// Test the knowledge path against all roles
 		// It is sufficient that the field belongs to at least one of the roles
 		boolean satisfiesAnyRole = false;
 		for (Class<?> roleClass : roleClasses) {
-			if (isFieldInRole(type, fieldNameSequence, roleClass)) {
+			if (knowledgePathChecker.isFieldInClass(type, pathNodes, roleClass)) {
 				satisfiesAnyRole = true;
 				break; // one role is enough
 			}
@@ -242,99 +246,8 @@ public class RolesAnnotationChecker implements AnnotationChecker {
 				Arrays.asList(roleClasses).stream().map(r -> r.getSimpleName()).collect(Collectors.toList()));
 		
 		if (!satisfiesAnyRole && roleClasses.length > 0) {
-			throw new AnnotationCheckerException("The knowledge path '" + knowledgePath.toString() + "'"
-					+ (type != null ? " of type " + type : "") + " is not valid for any of the roles: " + roleClassNames + ". "
+			throw new KnowledgePathCheckException("The knowledge path is not valid for any of the roles: " + roleClassNames + ". "
 					+ "Check whether the field (or sequence of fields) exists in the role and that it has correct type(s) and is public, nonstatic and non@Local");
-		
-		}
-	}
-
-	/**
-	 * Checks whether a field sequence is present in a given role class. Also checks the type
-	 * of the field, if wanted. The given path can contain only field names (not [..]). It not
-	 * only checks whether the given role class contains the first-level field, it also checks
-	 * whether the rest of the path is valid.
-	 * @param type The desired type (or null if the type should not be checked)
-	 * @param fieldNameSequence The knowledge path separated to individual path nodes
-	 * @param roleClass The class that should contain the path
-	 * @return True if the field (of given type) is present in the role, false otherwise.
-	 */
-	boolean isFieldInRole(Type type, List<String> fieldNameSequence, Class<?> roleClass) throws AnnotationCheckerException {	
-		if (fieldNameSequence == null || fieldNameSequence.size() < 1) {
-			throw new AnnotationCheckerException("The field sequence cannot be null or empty.");
-		}
-		if (roleClass == null) {
-			throw new AnnotationCheckerException("The role class cannot be null.");
-		}
-		
-		Type fieldType = getTypeInRole(fieldNameSequence, roleClass);
-		if (fieldType == null) {
-			return false; // field not present in the role class
-		}
-		
-		return type == null || compareTypes(type, fieldType);
-		
-	}
-	
-	/**
-	 * Returns the type of a field sequence from a given role class. If the given field sequence
-	 * has only one element "id", String.class is returned (implicit field present in all roles).
-	 * When the field sequence consist of multiple elements, the type of the nested field is returned
-	 * (ie. if the given class contains a field x of type C, class C contains a field y and the 
-	 * input field name sequence is ("x", "y"), then the result is the type of C.y).
-	 * 
-	 * If the given field has generic type, {@link ParameterizedType} is returned, containing
-	 * the type arguments.
-	 * 
-	 * Sometimes generic types cannot be inferred. In that case it is possible, that an unknown
-	 * type is returned. In this case the result is an instance of {@link TypeVariable}.
-	 * 
-	 * @param fieldNameSequence Sequence of fields (knowledge path split by dots)
-	 * @param roleClass The role class
-	 * @return Type of the expression.
-	 */
-	private Type getTypeInRole(List<String> fieldNameSequence, Class<?> roleClass) {
-		if (fieldNameSequence.size() == 1 && fieldNameSequence.get(0).equals("id")) {
-			// id is always present and always of type String
-			return String.class;
-		}
-		
-		return getTypeInClass(fieldNameSequence, roleClass);
-	}
-	
-	/**
-	 * Returns the type of a field sequence from a given class. When the field sequence consists
-	 * of multiple elements, the type of the nested field is returned (ie. if the given class
-	 * contains a field x of type C, class C contains a field y and the input field name
-	 * sequence is ("x", "y"), then the result is the type of C.y).
-	 * 
-	 * If the given field has generic type, {@link ParameterizedType} is returned, containing
-	 * the type arguments.
-	 * 
-	 * Sometimes generic types cannot be inferred. In that case it is possible, that an unknown
-	 * type is returned. In this case the result is an instance of {@link TypeVariable}.
-	 * 
-	 * @param fieldNameSequence Sequence of fields (knowledge path split by dots)
-	 * @param clazz The class
-	 * @return Type of the expression.
-	 */
-	private Type getTypeInClass(List<String> fieldNameSequence, Class<?> clazz) {
-		String firstField = fieldNameSequence.get(0);
-		Field field;
-		try {
-			field = clazz.getField(firstField);
-		} catch (NoSuchFieldException | SecurityException e) {
-			return null;
-		}
-		
-		if (!RoleAnnotationsHelper.isPublicAndNonstatic(field)) {
-			return null;
-		}
-		
-		if (fieldNameSequence.size() == 1) {
-			return field.getGenericType();
-		} else {
-			return getTypeInClass(fieldNameSequence.subList(1, fieldNameSequence.size()), field.getType());
 		}
 	}
 
@@ -393,56 +306,11 @@ public class RolesAnnotationChecker implements AnnotationChecker {
 		for (Field knowledgeField : knowledgeFields) {
 			if (knowledgeField.getName().equals(roleFieldName)) {
 				Type knowledgeFieldType = knowledgeField.getGenericType();
-				return compareTypes(knowledgeFieldType, roleFieldType);
+				return typeComparer.compareTypes(knowledgeFieldType, roleFieldType);
 			}
 		}
 		
 		return false; // no field with equal name
-	}
-	
-	/**
-	 * Checks whether a given types are (or can be) equal. This method is used to check whether
-	 * a field of a given type can implement (or reference) a field of a given type from a role
-	 * class. The method returns true, if the types are equal, or in all cases when the types
-	 * cannot be proven to be different (this involves mostly unresolved generic arguments).
-	 * Note that due to technical limitations, type hierarchy is not taken into account
-	 * (ie. for classes A extends B, A and B are not considered equal in any case).
-	 * @param implementationType The type of the field in the class/method
-	 * @param roleType The type of the field as declared in the role
-	 * @return True if types are equal/may be equal, false otherwise
-	 */
-	private boolean compareTypes(Type implementationType, Type roleType) {
-		if (implementationType.equals(roleType)) {
-			return true;
-		}
-		
-		// nonequal types can be equal, if one of them is a generic type (or generically parameterized)
-		if (implementationType instanceof GenericArrayType && roleType instanceof GenericArrayType) {
-			GenericArrayType gType1 = (GenericArrayType) implementationType;
-			GenericArrayType gType2 = (GenericArrayType) roleType;
-			return compareTypes(gType1.getGenericComponentType(), gType2.getGenericComponentType());
-		
-		} else if (implementationType instanceof ParameterizedType && roleType instanceof ParameterizedType) {
-			ParameterizedType pType1 = (ParameterizedType) implementationType;
-			ParameterizedType pType2 = (ParameterizedType) roleType;
-			if (!compareTypes(pType1.getRawType(), pType2.getRawType())) {
-				return false;
-			}
-			
-			assert pType1.getActualTypeArguments().length == pType2.getActualTypeArguments().length;
-			for (int i = 0; i < pType1.getActualTypeArguments().length; i++) {
-				if (!compareTypes(pType1.getActualTypeArguments()[i], pType2.getActualTypeArguments()[i])) {
-					return false;
-				}
-			}
-			
-			return true;
-		
-		} else if (implementationType instanceof TypeVariable || roleType instanceof TypeVariable) {
-			return true;
-		}
-		
-		return false;
 	}
 	
 }

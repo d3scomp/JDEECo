@@ -182,7 +182,7 @@ public class AnnotationProcessor {
 	 */
 	public AnnotationProcessor(RuntimeMetadataFactory factory, RuntimeMetadata model, KnowledgeManagerFactory knowledgeMangerFactory, 
 			AnnotationProcessorExtensionPoint... extensions) {
-		this(factory, model, knowledgeMangerFactory, Arrays.asList(new RolesAnnotationChecker()), extensions);
+		this(factory, model, knowledgeMangerFactory, AnnotationChecker.standardCheckers, extensions);
 	}
 	
 	/**
@@ -202,7 +202,7 @@ public class AnnotationProcessor {
 	 * @param knowledgeMangerFactory knowledge manager factory to be used
 	 */
 	AnnotationProcessor(RuntimeMetadataFactory factory, RuntimeMetadata model, KnowledgeManagerFactory knowledgeMangerFactory, 
-			List<AnnotationChecker> annotationCheckers, AnnotationProcessorExtensionPoint... extensions) {
+			AnnotationChecker[] annotationCheckers, AnnotationProcessorExtensionPoint... extensions) {
 		this.factory = factory;
 		this.model = model;
 		if (extensions.length == 0) {
@@ -213,7 +213,7 @@ public class AnnotationProcessor {
 		this.knowledgeManagerFactory = knowledgeMangerFactory;	
 		this.cloner = new Cloner();
 		if (annotationCheckers != null) {
-			this.checkers = annotationCheckers.toArray(new AnnotationChecker[0]);
+			this.checkers = annotationCheckers;
 		} else {
 			this.checkers = new AnnotationChecker[0];
 		}
