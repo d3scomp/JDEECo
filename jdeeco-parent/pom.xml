@@ -11,7 +11,7 @@
 	<modules>
 		<module>../jdeeco-core</module>
 		<!-- <module>../jdeeco-demo</module> <module>../jdeeco-core-osgi</module> -->
-		<!-- <module>../jdeeco-network-plugin</module> -->
+		<module>../jdeeco-network-plugin</module>
 	</modules>
 	<build>
 		<plugins>

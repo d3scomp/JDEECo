@@ -7,8 +7,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import cz.cuni.mff.d3s.deeco.scheduler.InstantSchedulerMock;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
+import cz.cuni.mff.d3s.jdeeco.network.InstantSchedulerMock;
 import cz.cuni.mff.d3s.jdeeco.network.address.MANETBroadcastAddress;
 import cz.cuni.mff.d3s.jdeeco.network.device.Device;
 
