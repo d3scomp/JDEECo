@@ -6,7 +6,10 @@ import cz.cuni.mff.d3s.jdeeco.network.address.IPAddress;
 import cz.cuni.mff.d3s.jdeeco.network.l1.ReceivedInfo;
 
 public class OMNeTInfrastructureDevice extends OMNeTDevice {
-	public OMNeTInfrastructureDevice(/* , address, virtual lan, ... */) {
+	public final IPAddress address;
+	
+	public OMNeTInfrastructureDevice(IPAddress address /* , address, virtual lan, ... */) {
+		this.address = address;
 	}
 
 	@Override

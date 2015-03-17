@@ -1,5 +1,7 @@
 package cz.cuni.mff.d3s.jdeeco.network.omnet;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,8 +33,12 @@ public class OMNeTSimulation implements DEECoPlugin {
 
 		@Override
 		public void start(long duration) {
-			// TODO: Duration ignored
-			OMNeTNative.nativeRun("Cmdenv", "omnetpp.ini");
+			try {
+				File config = OMNeTSimulation.this.getOmnetConfig(duration);
+				OMNeTNative.nativeRun("Cmdenv", config.getAbsolutePath());
+			} catch (IOException e) {
+				System.err.println("Failed to start simulation: " + e.getMessage());
+			}
 		}
 	}
 
@@ -66,7 +72,7 @@ public class OMNeTSimulation implements DEECoPlugin {
 		}
 		
 		public void sendInfrastructurePacket(byte[] packet, IPAddress address) {
-			OMNeTNative.nativeSendPacket(id, packet, "MANET.node[" + address.ipAddress + "]");
+			OMNeTNative.nativeSendPacket(id, packet, address.ipAddress/*"MANET.node[" + address.ipAddress + "]"*/);
 		}
 		
 		public void sendBroadcastPacket(byte[] packet) {
@@ -92,6 +98,16 @@ public class OMNeTSimulation implements DEECoPlugin {
 	
 	private final Map<Integer, OMNeTHost> hosts = new HashMap<Integer, OMNeTSimulation.OMNeTHost>();
 	private OMNeTTimerProvider timeProvider = new OMNeTTimerProvider();
+	
+	public File getOmnetConfig(long limit) throws IOException {
+		OMNeTConfigGenerator generator = new OMNeTConfigGenerator(limit);
+		
+		for(OMNeTHost host: hosts.values()) {
+			generator.addNode(host);
+		}
+		
+		return generator.writeToTemp();
+	}
 
 	public SimulationTimer getTimer() {
 		return timeProvider;

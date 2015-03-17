@@ -73,32 +73,13 @@ void JDEECoApplication::sendPacket(JDEECoPacket *packet, const char *recipient) 
 		}
 	} else {
 		packet->setByteLength(packet80211ByteLength);
-		std::cout << "Going to resolve IP address" << std::endl;
-		IPvXAddress ip = IPvXAddressResolver().resolve(recipient).get4();
-		IPvXAddressResolver resolver;
-//		std::cout << "Z" << std::endl;
-		cModule *module = getModuleByPath(recipient);
-		if(module == NULL) {
-			std::cout << "Not found" << std::endl;
-		}
-/*		std::cout << getParentModule()->getFullName() << std::endl;
-		std::cout << getParentModule()->getFullPath() << std::endl;
-		std::cout << getParentModule()->info() << std::endl;
 
-		std::cout << module->getFullName() << std::endl;
-		std::cout << module->getFullPath() << std::endl;
-		std::cout << module->info() << std::endl;*/
+		// Obtain target IP address
+		IPvXAddress ip;
+		ip.set(recipient);
+//		std::cout << std::endl << "IP address:" << ip.str() << std::endl << std::endl;
 
-//		std::cout << "A" << std::endl;
-//		IRoutingTable *table = resolver.routingTableOf(module);
-
-//		std::cout << "B" << std::endl;
-//		IPvXAddress ip = resolver.addressOf(module, IPvXAddressResolver::ADDR_IPv4).get4();
-//		std::cout << "IP address:" << ip.str() << std::endl;
-
-//		std::cout << "IP address resolved, sending packet" << std::endl;
 		socket.sendTo(packet, ip, port);
-//		std::cout << "Done sending packet" << std::endl;
     }
 }
 
