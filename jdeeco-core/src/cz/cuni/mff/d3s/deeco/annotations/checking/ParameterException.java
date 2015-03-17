@@ -1,6 +1,8 @@
-package cz.cuni.mff.d3s.deeco.annotations.processor;
+package cz.cuni.mff.d3s.deeco.annotations.checking;
 
 public class ParameterException extends Exception {
+
+	private static final long serialVersionUID = 1L;
 
 	public ParameterException() {
 		// TODO Auto-generated constructor stub

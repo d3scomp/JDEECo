@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.deeco.annotations.processor;
+package cz.cuni.mff.d3s.deeco.annotations.checking;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -16,9 +16,12 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import cz.cuni.mff.d3s.deeco.annotations.checking.ParameterException;
+import cz.cuni.mff.d3s.deeco.annotations.checking.ParameterKnowledgePathExtractor;
+import cz.cuni.mff.d3s.deeco.annotations.checking.ParameterKnowledgePathExtractor.KnowledgePathAndType;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.ParseException;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.PathOrigin;
-import cz.cuni.mff.d3s.deeco.annotations.processor.ParameterKnowledgePathExtractor.KnowledgePathAndType;
+import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;

@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.deeco.annotations.processor;
+package cz.cuni.mff.d3s.deeco.annotations.checking;
 
 public class KnowledgePathCheckException extends Exception {
 	

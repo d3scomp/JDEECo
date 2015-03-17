@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.deeco.annotations.processor;
+package cz.cuni.mff.d3s.deeco.annotations.checking;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -10,7 +10,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,18 +31,22 @@ import cz.cuni.mff.d3s.deeco.annotations.Local;
 import cz.cuni.mff.d3s.deeco.annotations.MemberRole;
 import cz.cuni.mff.d3s.deeco.annotations.PlaysRole;
 import cz.cuni.mff.d3s.deeco.annotations.Role;
-import cz.cuni.mff.d3s.deeco.annotations.processor.ParameterKnowledgePathExtractor.KnowledgePathAndType;
+import cz.cuni.mff.d3s.deeco.annotations.checking.AnnotationCheckerException;
+import cz.cuni.mff.d3s.deeco.annotations.checking.KnowledgePathCheckException;
+import cz.cuni.mff.d3s.deeco.annotations.checking.KnowledgePathChecker;
+import cz.cuni.mff.d3s.deeco.annotations.checking.ParameterException;
+import cz.cuni.mff.d3s.deeco.annotations.checking.ParameterKnowledgePathExtractor;
+import cz.cuni.mff.d3s.deeco.annotations.checking.RolesAnnotationChecker;
+import cz.cuni.mff.d3s.deeco.annotations.checking.TypeComparer;
+import cz.cuni.mff.d3s.deeco.annotations.checking.ParameterKnowledgePathExtractor.KnowledgePathAndType;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.ParseException;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.PathOrigin;
+import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
 import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.WrongCE1;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeCoordinator;
-import cz.cuni.mff.d3s.deeco.model.runtime.impl.PathNodeCoordinatorImpl;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper;
-import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 
 public class RolesAnnotationCheckerTest {
 	

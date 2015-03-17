@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.deeco.annotations.processor;
+package cz.cuni.mff.d3s.deeco.annotations.checking;
 
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;

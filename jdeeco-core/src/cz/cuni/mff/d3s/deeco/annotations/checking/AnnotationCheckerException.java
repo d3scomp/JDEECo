@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.deeco.annotations.processor;
+package cz.cuni.mff.d3s.deeco.annotations.checking;
 
 /**
  * Thrown when validating a component/ensemble definition. Used by classes that implement {@link AnnotationChecker}.

@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.deeco.annotations.processor;
+package cz.cuni.mff.d3s.deeco.annotations.checking;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -13,7 +13,6 @@ import static org.mockito.Mockito.times;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 import org.junit.Rule;
@@ -22,9 +21,13 @@ import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 
 import cz.cuni.mff.d3s.deeco.annotations.Role;
+import cz.cuni.mff.d3s.deeco.annotations.checking.KnowledgePathCheckException;
+import cz.cuni.mff.d3s.deeco.annotations.checking.KnowledgePathCheckerImpl;
+import cz.cuni.mff.d3s.deeco.annotations.checking.TypeComparer;
+import cz.cuni.mff.d3s.deeco.annotations.checking.KnowledgePathCheckerImpl.PathNodeCheckingException;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.ParseException;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.PathOrigin;
-import cz.cuni.mff.d3s.deeco.annotations.processor.KnowledgePathCheckerImpl.PathNodeCheckingException;
+import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper;
