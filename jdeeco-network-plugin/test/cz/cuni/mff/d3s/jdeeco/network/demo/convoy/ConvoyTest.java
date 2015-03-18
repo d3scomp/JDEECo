@@ -16,7 +16,7 @@ import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
 import cz.cuni.mff.d3s.jdeeco.network.Network;
 import cz.cuni.mff.d3s.jdeeco.network.device.BroadcastLoopback;
 import cz.cuni.mff.d3s.jdeeco.network.l2.strategy.KnowledgeInsertingStrategy;
-import cz.cuni.mff.d3s.jdeeco.publishing.DummyKnowledgePublisher;
+import cz.cuni.mff.d3s.jdeeco.publishing.DefaultKnowledgePublisher;
 
 /**
  * 
@@ -49,17 +49,17 @@ public class ConvoyTest {
 		DEECoSimulation realm = new DEECoSimulation(simulationTimer);
 		realm.addPlugin(new BroadcastLoopback());
 		realm.addPlugin(Network.class);
-		realm.addPlugin(DummyKnowledgePublisher.class);
+		realm.addPlugin(DefaultKnowledgePublisher.class);
 		realm.addPlugin(KnowledgeInsertingStrategy.class);
 		
 		/* create first deeco node */
-		DEECoNode deeco1 = realm.createNode();
+		DEECoNode deeco1 = realm.createNode(1);
 		/* deploy components and ensembles */
 		deeco1.deployComponent(new Leader());
 		deeco1.deployEnsemble(ConvoyEnsemble.class);
 
 		/* create second deeco node */
-		DEECoNode deeco2 = realm.createNode();
+		DEECoNode deeco2 = realm.createNode(2);
 		/* deploy components and ensembles */
 		deeco2.deployComponent(new Follower());
 		deeco2.deployEnsemble(ConvoyEnsemble.class);

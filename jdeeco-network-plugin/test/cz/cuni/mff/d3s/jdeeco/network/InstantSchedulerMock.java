@@ -2,6 +2,7 @@ package cz.cuni.mff.d3s.jdeeco.network;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
+import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.task.Task;
 import cz.cuni.mff.d3s.deeco.task.TaskInvocationException;
@@ -50,7 +51,7 @@ public class InstantSchedulerMock implements Scheduler {
 			}
 
 			@Override
-			public void notifyAt(long time, TimerEventListener listener) {
+			public void notifyAt(long time, TimerEventListener listener, DEECoContainer node) {
 				throw new UnsupportedOperationException();
 			}
 		};

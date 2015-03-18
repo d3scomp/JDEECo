@@ -25,7 +25,7 @@ Define_Module(JDEECoApplication);
 
 void JDEECoApplication::initialize(int stage) {
     if (stage == 1) {
-        id = par("id").stringValue();
+        id = par("id").longValue();
         lowerLayerIn = findGate("lowerLayerIn");
         lowerLayerOut = findGate("lowerLayerOut");
 
@@ -47,6 +47,7 @@ void JDEECoApplication::initialize(int stage) {
 }
 
 void JDEECoApplication::handleMessage(cMessage *msg) {
+	//std::cout << "jDEECoApplication: handleMessage:" << msg->getName() << std::endl;
     double rssi = -1.0;
     if (!msg->isSelfMessage()) {
         MacToNetwControlInfo* cInfo = dynamic_cast<MacToNetwControlInfo*>(msg->getControlInfo());
@@ -59,24 +60,30 @@ void JDEECoApplication::handleMessage(cMessage *msg) {
 }
 
 void JDEECoApplication::registerCallbackAt(double absoluteTime, cMessage *msg) {
+	//std::cout << "jDEECoApplication: registerCallbackAt" << std::endl;
     scheduleAt(absoluteTime, msg);
 }
 
-void JDEECoApplication::sendPacket(JDEECoPacket *packet,
-        const char *recipient) {
-    if (opp_strcmp("", recipient) == 0) {
-        if (gate(lower802154LayerOut)->isConnected()) {
-            NetwToMacControlInfo::setControlInfo(packet, LAddress::L2BROADCAST);
-            packet->setByteLength(packet802154ByteLength);
-            send(packet, lower802154LayerOut);
-        }
-    } else {
-        packet->setByteLength(packet80211ByteLength);
-        socket.sendTo(packet, IPvXAddressResolver().resolve(recipient).get4(), port);
+void JDEECoApplication::sendPacket(JDEECoPacket *packet, const char *recipient) {
+	if (opp_strcmp("", recipient) == 0) {
+		if (gate(lower802154LayerOut)->isConnected()) {
+			NetwToMacControlInfo::setControlInfo(packet, LAddress::L2BROADCAST);
+			packet->setByteLength(packet802154ByteLength);
+			send(packet, lower802154LayerOut);
+		}
+	} else {
+		packet->setByteLength(packet80211ByteLength);
+
+		// Obtain target IP address
+		IPvXAddress ip;
+		ip.set(recipient);
+//		std::cout << std::endl << "IP address:" << ip.str() << std::endl << std::endl;
+
+		socket.sendTo(packet, ip, port);
     }
 }
 
-const char * JDEECoApplication::getModuleId() {
+const NodeId JDEECoApplication::getModuleId() {
     return id;
 }
 

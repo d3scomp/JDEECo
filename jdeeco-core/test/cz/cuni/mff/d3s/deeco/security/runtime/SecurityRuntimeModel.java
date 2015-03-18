@@ -1,6 +1,7 @@
 package cz.cuni.mff.d3s.deeco.security.runtime;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 
 import java.security.KeyStoreException;
 import java.util.HashMap;
@@ -8,9 +9,12 @@ import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
+import org.mockito.Mockito;
+
 import cz.cuni.mff.d3s.deeco.annotations.Allow;
 import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.Ensemble;
+import cz.cuni.mff.d3s.deeco.annotations.HasRole;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
@@ -18,7 +22,6 @@ import cz.cuni.mff.d3s.deeco.annotations.Local;
 import cz.cuni.mff.d3s.deeco.annotations.Membership;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
-import cz.cuni.mff.d3s.deeco.annotations.HasRole;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.Rating;
 import cz.cuni.mff.d3s.deeco.annotations.RatingsProcess;
@@ -43,6 +46,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.network.DataSender;
 import cz.cuni.mff.d3s.deeco.network.DefaultKnowledgeDataManager;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
+import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
 import cz.cuni.mff.d3s.deeco.runtime.DuplicateEnsembleDefinitionException;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeFrameworkImpl;
 import cz.cuni.mff.d3s.deeco.scheduler.NoExecutorAvailableException;
@@ -215,7 +219,7 @@ public class SecurityRuntimeModel {
 		securityKeyManager = SecurityKeyManagerImpl.getInstance();
 		executor = new SameThreadExecutor();
 		DiscreteEventTimer simulation = new DiscreteEventTimer();
-		scheduler = new SingleThreadedScheduler(executor, simulation);
+		scheduler = new SingleThreadedScheduler(executor, simulation, Mockito.mock(DEECoNode.class));
 		securityHelper = new SecurityHelper();
 		
 		model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();

@@ -720,17 +720,12 @@ public class EnsembleTask extends Task {
 					ensembleController.getComponentInstance().getKnowledgeManager().getId(),
 					false);
 		}
-		
+				
 		// Do the same with the roles exchanged
 		if (checkMembership(PathRoot.MEMBER, shadowKnowledgeManager) && securityChecker.checkSecurity(PathRoot.MEMBER, shadowKnowledgeManager)) {
 			architectureObserver.ensembleFormed(ensembleController.getEnsembleDefinition(), ensembleController.getComponentInstance(),
 					shadowKnowledgeManager.getId(), ensembleController.getComponentInstance().getKnowledgeManager().getId());
 			memberExchangePerformed = performExchange(PathRoot.MEMBER, shadowKnowledgeManager);			
-
-			logMembershipStatus(ensembleController.getEnsembleDefinition().getName(),
-					ensembleController.getComponentInstance().getKnowledgeManager().getId(),
-					shadowKnowledgeManager.getId(),
-					true);
 		}
 		else
 		{

@@ -35,8 +35,10 @@ public class DEECoNode implements DEECoContainer {
 
 	/** 
 	 * TODO find a way to inject this field from the DEECoRealm (probably via the constructor here?)
+	 * TODO decide type of this field
 	 */
-	int id;
+	final int nodeId;
+	
 	/**
 	 * The metadata model corresponding to the running application.
 	 */
@@ -74,7 +76,8 @@ public class DEECoNode implements DEECoContainer {
 	 * @throws DEECoException Thrown if the construction of {@link DEECoNode} fails. In such case
 	 * please see the error output and log file for further information about the failure.
 	 */
-	public DEECoNode(Timer timer, DEECoPlugin... plugins) throws DEECoException {
+	public DEECoNode(int id, Timer timer, DEECoPlugin... plugins) throws DEECoException {
+		this.nodeId = id;
 		model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
 		knowledgeManagerFactory = new CloningKnowledgeManagerFactory();
 		processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE, model, knowledgeManagerFactory);
@@ -97,7 +100,8 @@ public class DEECoNode implements DEECoContainer {
 	 * @throws DEECoException Thrown if the construction of {@link DEECoNode} fails. In such case
 	 * please see the error output and log file for further information about the failure.
 	 */
-	public DEECoNode(Timer timer, RuntimeLogger runtimeLogger, DEECoPlugin... plugins) throws DEECoException {
+	public DEECoNode(int id, Timer timer, RuntimeLogger runtimeLogger, DEECoPlugin... plugins) throws DEECoException {
+		this.nodeId = id;
 		model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
 		knowledgeManagerFactory = new CloningKnowledgeManagerFactory();
 		processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE, model, knowledgeManagerFactory);
@@ -111,7 +115,8 @@ public class DEECoNode implements DEECoContainer {
 	/**
 	 * Internal constructor with dependency injection for testing purposes. 
 	 */
-	DEECoNode(Timer timer, RuntimeMetadata model, KnowledgeManagerFactory factory, AnnotationProcessor processor, DEECoPlugin... plugins) throws DEECoException {
+	DEECoNode(int id, Timer timer, RuntimeMetadata model, KnowledgeManagerFactory factory, AnnotationProcessor processor, DEECoPlugin... plugins) throws DEECoException {
+		this.nodeId = id;
 		this.model = model;
 		this.knowledgeManagerFactory = factory;
 		this.processor = processor;
@@ -125,7 +130,8 @@ public class DEECoNode implements DEECoContainer {
 	 * Internal constructor with dependency injection for testing purposes. 
 	 * Make sure that the {@link RuntimeLogger#init} method is called after this constructor returns.
 	 */
-	DEECoNode(Timer timer, RuntimeMetadata model, KnowledgeManagerFactory factory, AnnotationProcessor processor, RuntimeLogger runtimeLogger, DEECoPlugin... plugins) throws DEECoException {
+	DEECoNode(int id, Timer timer, RuntimeMetadata model, KnowledgeManagerFactory factory, AnnotationProcessor processor, RuntimeLogger runtimeLogger, DEECoPlugin... plugins) throws DEECoException {
+		this.nodeId = id;
 		this.model = model;
 		this.knowledgeManagerFactory = factory;
 		this.processor = processor;
@@ -144,7 +150,7 @@ public class DEECoNode implements DEECoContainer {
 	 */
 	private void initializeRuntime(Timer timer) throws DEECoException {
 		Executor executor = new SameThreadExecutor();
-		Scheduler scheduler = new SingleThreadedScheduler(executor, timer);
+		Scheduler scheduler = new SingleThreadedScheduler(executor, timer, this);
 		KnowledgeManagerContainer kmContainer = new KnowledgeManagerContainer(knowledgeManagerFactory, model);
 		scheduler.setExecutor(executor);
 		executor.setExecutionListener(scheduler);
@@ -207,7 +213,7 @@ public class DEECoNode implements DEECoContainer {
 	
 	@Override
 	public int getId() {
-		return id;
+		return nodeId;
 	}
 	
 	public ComponentInstance deployComponent(Object component) throws AnnotationProcessorException {
@@ -298,5 +304,4 @@ public class DEECoNode implements DEECoContainer {
 		
 		return dependencyNodes;
 	}		
-
 }

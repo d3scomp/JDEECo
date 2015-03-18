@@ -28,4 +28,9 @@ public class IPAddress extends Address {
 	public int hashCode() {
 		return ipAddress.hashCode();
 	}
+	
+	@Override
+	public String toString() {
+		return ipAddress;
+	}
 }

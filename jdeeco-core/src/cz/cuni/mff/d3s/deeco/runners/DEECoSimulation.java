@@ -41,7 +41,7 @@ public class DEECoSimulation {
 		simulationTimer.start(duration);
 	}
 
-	public DEECoNode createNode(DEECoPlugin... nodeSpecificPlugins) throws DEECoException, InstantiationException, IllegalAccessException {
+	public DEECoNode createNode(int id, DEECoPlugin... nodeSpecificPlugins) throws DEECoException, InstantiationException, IllegalAccessException {
 		// Create list of plug-ins for new node
 		List<DEECoPlugin> plugins = new LinkedList<DEECoPlugin>();
 		plugins.addAll(instantiatedPlugins);
@@ -50,7 +50,7 @@ public class DEECoSimulation {
 			plugins.add(c.newInstance());
 		}
 		
-		DEECoNode node = new DEECoNode(simulationTimer, plugins.toArray(new DEECoPlugin[0]));
+		DEECoNode node = new DEECoNode(id, simulationTimer, plugins.toArray(new DEECoPlugin[0]));
 		deecoNodes.add(node);
 		return node;
 	}

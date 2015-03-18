@@ -33,13 +33,13 @@ public class ConvoySimulationTest {
  		DEECoSimulation realm = new DEECoSimulation(simulationTimer);
 		 
 		/* create first deeco node */
-		DEECoNode deeco1 = realm.createNode();
+		DEECoNode deeco1 = realm.createNode(0);
 		/* deploy components and ensembles */
 		deeco1.deployComponent(new Leader());
 		deeco1.deployEnsemble(ConvoyEnsemble.class);
 		
 		/* create second deeco node */
-		DEECoNode deeco2 = realm.createNode();
+		DEECoNode deeco2 = realm.createNode(1);
 		/* deploy components and ensembles */
 		deeco2.deployComponent(new Follower());
 		deeco2.deployEnsemble(ConvoyEnsemble.class);

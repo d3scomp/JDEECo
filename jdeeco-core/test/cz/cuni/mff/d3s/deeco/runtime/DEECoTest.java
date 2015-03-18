@@ -50,7 +50,7 @@ public class DEECoTest {
 	@Test
 	public void testFieldInitialization() throws DEECoException
 	{
-		DEECoNode deeco = new DEECoNode(timer);
+		DEECoNode deeco = new DEECoNode(0, timer);
 		assertNotNull(deeco.knowledgeManagerFactory);
 		assertNotNull(deeco.model);
 		assertNotNull(deeco.pluginsMap);
@@ -82,7 +82,7 @@ public class DEECoTest {
 		
 		InOrder order = inOrder(plugin1, plugin2);
 		
-		DEECoNode deeco = new DEECoNode(timer, plugin2, plugin1);
+		DEECoNode deeco = new DEECoNode(1, timer, plugin2, plugin1);
 		
 		verifyPluginInitOrder(order, deeco, plugin1, plugin2);
 	}
@@ -109,7 +109,7 @@ public class DEECoTest {
 		InOrder order3 = inOrder(plugin1, plugin3);
 		InOrder order4 = inOrder(plugin2, plugin3);
 		
-		DEECoNode deeco = new DEECoNode(timer, plugin1, pluginBase, plugin2, plugin3);
+		DEECoNode deeco = new DEECoNode(2, timer, plugin1, pluginBase, plugin2, plugin3);
 		
 		verifyPluginInitOrder(order1, deeco, pluginBase, plugin1);
 		verifyPluginInitOrder(order2, deeco, pluginBase, plugin2);
@@ -135,7 +135,7 @@ public class DEECoTest {
 		InOrder order1 = inOrder(pluginBase1, plugin);
 		InOrder order2 = inOrder(pluginBase2, plugin);
 		
-		DEECoNode deeco = new DEECoNode(timer, pluginBase2, plugin, pluginBase1);
+		DEECoNode deeco = new DEECoNode(3, timer, pluginBase2, plugin, pluginBase1);
 		
 		verifyPluginInitOrder(order1, deeco, pluginBase1, plugin);
 		verifyPluginInitOrder(order2, deeco, pluginBase2, plugin);			
@@ -159,7 +159,7 @@ public class DEECoTest {
 		InOrder order1 = inOrder(pluginBase, plugin1);
 		InOrder order2 = inOrder(pluginBase, plugin2);
 		
-		DEECoNode deeco = new DEECoNode(timer, plugin1, pluginBase, plugin2);
+		DEECoNode deeco = new DEECoNode(4, timer, plugin1, pluginBase, plugin2);
 		
 		verifyPluginInitOrder(order1, deeco, pluginBase, plugin1);
 		verifyPluginInitOrder(order2, deeco, pluginBase, plugin2);
@@ -218,7 +218,7 @@ public class DEECoTest {
 		InOrder order9 = inOrder(independentBase, independentExtension);
 		
 		// Create DEECo
-		DEECoNode deeco = new DEECoNode(timer, basePlugin1, basePlugin2, basePlugin3, tier1Plugin1, tier1Plugin2, tier2Plugin1, tier2Plugin2, tier3Plugin1, independentBase, independentExtension);
+		DEECoNode deeco = new DEECoNode(5, timer, basePlugin1, basePlugin2, basePlugin3, tier1Plugin1, tier1Plugin2, tier2Plugin1, tier2Plugin2, tier3Plugin1, independentBase, independentExtension);
 		
 		// Verify ordering
 		verifyPluginInitOrder(order1, deeco, basePlugin1, tier1Plugin1);
@@ -246,7 +246,7 @@ public class DEECoTest {
 		
 		when(dependentPlugin.getDependencies()).thenReturn(Arrays.asList(basePlugin.getClass()));
 		
-		new DEECoNode(timer, dependentPlugin);		
+		new DEECoNode(7, timer, dependentPlugin);		
 	}
 	
 	/**
@@ -265,7 +265,7 @@ public class DEECoTest {
 		when(plugin2.getDependencies()).thenReturn(Arrays.asList(plugin3.getClass()));
 		when(plugin3.getDependencies()).thenReturn(Arrays.asList(plugin1.getClass()));
 		
-		new DEECoNode(timer, plugin1, plugin2, plugin3);
+		new DEECoNode(8, timer, plugin1, plugin2, plugin3);
 	}
 	
 	/**
@@ -294,7 +294,7 @@ public class DEECoTest {
 		when(pluginBase.getDependencies()).thenReturn(Arrays.asList());
 		when(pluginBase2.getDependencies()).thenReturn(Arrays.asList());
 		
-		new DEECoNode(timer, plugin1, plugin2, plugin3, pluginBase, pluginBase2, pluginOther);
+		new DEECoNode(9, timer, plugin1, plugin2, plugin3, pluginBase, pluginBase2, pluginOther);
 	}
 	
 	/**
@@ -304,7 +304,7 @@ public class DEECoTest {
 	@Test
 	public void testNoPlugins() throws DEECoException
 	{
-		new DEECoNode(timer);		
+		new DEECoNode(10, timer);		
 	}	
 	
 	/**
@@ -328,7 +328,7 @@ public class DEECoTest {
 		
 		DEECoPlugin[] pluginArray = plugins.toArray(new DEECoPlugin[0]);
 		
-		DEECoNode deeco = new DEECoNode(timer, pluginArray);
+		DEECoNode deeco = new DEECoNode(11, timer, pluginArray);
 		
 		for(DEECoPlugin p : plugins)
 		{

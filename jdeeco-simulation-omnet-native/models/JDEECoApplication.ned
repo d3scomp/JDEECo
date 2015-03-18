@@ -21,7 +21,7 @@ simple JDEECoApplication
 {
     parameters:
         int headerLength = 0;
-        string id = default("not-assigned");
+        int id = default(-1);
         int port = default(2222);
         
         int packet80211ByteLength @unit("B") = default(1000B);
