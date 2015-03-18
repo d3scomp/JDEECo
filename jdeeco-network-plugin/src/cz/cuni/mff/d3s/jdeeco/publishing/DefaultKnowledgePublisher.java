@@ -134,7 +134,7 @@ public class DefaultKnowledgePublisher implements DEECoPlugin, TimerTaskListener
 			network.getL2().sendL2Packet(packet, MANETBroadcastAddress.BROADCAST);
 
 			// Distribute via infrastructure network
-			for (IPAddress address : getPeers()) {
+			for (IPAddress address : getPeers(data)) {
 				network.getL2().sendL2Packet(packet, address);
 			}
 		}
@@ -157,7 +157,7 @@ public class DefaultKnowledgePublisher implements DEECoPlugin, TimerTaskListener
 	/**
 	 * Gets list of infrastructure peers
 	 */
-	protected List<IPAddress> getPeers() {
+	protected List<IPAddress> getPeers(KnowledgeData data) {
 		return infrastructurePeers;
 	}
 
