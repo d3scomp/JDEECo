@@ -51,6 +51,19 @@
 			<artifactId>cz.cuni.mff.d3s.jdeeco.core</artifactId>
 			<version>3.0.0</version>
 		</dependency>
+		
+		<!-- TODO: Do we really want this? -->
+		<dependency>
+			<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
+			<artifactId>cz.cuni.mff.d3s.jdeeco.network</artifactId>
+			<version>3.0.0</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.matsim</groupId>
+			<artifactId>matsim</artifactId>
+			<version>0.5.0</version>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -69,5 +82,21 @@
 			<version>1.6.0</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jfree</groupId>
+			<artifactId>jfreechart</artifactId>
+			<version>1.0.19</version>
+		</dependency>
 	</dependencies>
+	<repositories>
+		<repository>
+			<id>d3s</id>
+			<url>https://gitlab.d3s.mff.cuni.cz:8443/nexus/content/groups/public/</url>
+		</repository>
+	</repositories>
 </project>
