@@ -6,6 +6,7 @@ import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 
+
 /**
  * Simple wrapper of java.util.logging.Logger with lazy-initialized singleton
  * object and thread-safe methods

@@ -675,7 +675,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 	}
 	
 	public void ensembleFormed(final EnsembleDefinition e, final ComponentInstance c, final String coordID, final String memberID) {
-		Log.w("Ensemble "+e+" formed at the side of " + c + " with coord: "+coordID+" and member: "+memberID);
+		Log.i("Ensemble "+e+" formed at the side of " + c + " with coord: "+coordID+" and member: "+memberID);
 
 		EnsembleInstance ensembleInstance = ArchitectureFactory.eINSTANCE.createEnsembleInstance();
 		ensembleInstance.setEnsembleDefinition(e);
