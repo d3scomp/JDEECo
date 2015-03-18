@@ -40,9 +40,9 @@ import cz.cuni.mff.d3s.jdeeco.network.l2.PacketHeader;
  *
  */
 public class DefaultKnowledgePublisher implements DEECoPlugin, TimerTaskListener {
-	private final static long PUBLISH_PERIOD = Integer.getInteger(DeecoProperties.PUBLISHING_PERIOD,
-			PublisherTask.DEFAULT_PUBLISHING_PERIOD);
+	public static final int DEFAULT_PUBLISHING_PERIOD = 1000;
 
+	private final int publishingPeriod;
 	private Network network;
 	private KnowledgeManagerContainer knowledgeManagerContainer;
 	private CurrentTimeProvider timeProvider;
@@ -51,10 +51,24 @@ public class DefaultKnowledgePublisher implements DEECoPlugin, TimerTaskListener
 	private final List<KnowledgePath> empty;
 
 	/**
-	 * Constructs DefaultKnowledgePublisher with broadcast only publishing
+	 * Constructs DefaultKnowledgePublisher with broadcast only publishing and default publishing period
 	 */
 	public DefaultKnowledgePublisher() {
-		this(new LinkedList<IPAddress>());
+		this(new LinkedList<IPAddress>(), DEFAULT_PUBLISHING_PERIOD);
+	}
+
+	/**
+	 * Constructs DefaultKnowledgePublisher with default publishing period
+	 */
+	public DefaultKnowledgePublisher(List<IPAddress> peers) {
+		this(peers, DEFAULT_PUBLISHING_PERIOD);
+	}
+
+	/**
+	 * Constructs DefaultKnowledgePublisher with broadcast only publishing
+	 */
+	public DefaultKnowledgePublisher(int publishingPeriod) {
+		this(new LinkedList<IPAddress>(), publishingPeriod);
 	}
 
 	/**
@@ -63,8 +77,9 @@ public class DefaultKnowledgePublisher implements DEECoPlugin, TimerTaskListener
 	 * @param peers
 	 *            Infrastructure peers
 	 */
-	public DefaultKnowledgePublisher(List<IPAddress> peers) {
-		infrastructurePeers = peers;
+	public DefaultKnowledgePublisher(List<IPAddress> peers, int publishingPeriod) {
+		this.infrastructurePeers = peers;
+		this.publishingPeriod = publishingPeriod;
 		RuntimeMetadataFactory factory = RuntimeMetadataFactoryExt.eINSTANCE;
 		empty = new LinkedList<>(Arrays.asList(factory.createKnowledgePath()));
 	}
@@ -140,7 +155,7 @@ public class DefaultKnowledgePublisher implements DEECoPlugin, TimerTaskListener
 		}
 
 		Scheduler scheduler = container.getRuntimeFramework().getScheduler();
-		scheduler.addTask(new CustomStepTask(scheduler, this, PUBLISH_PERIOD));
+		scheduler.addTask(new CustomStepTask(scheduler, this, publishingPeriod));
 	}
 
 	@Override
@@ -172,7 +187,7 @@ public class DefaultKnowledgePublisher implements DEECoPlugin, TimerTaskListener
 
 		// Start publishing task
 		Scheduler scheduler = container.getRuntimeFramework().getScheduler();
-		long offset = new Random(container.getId()).nextInt((int) PUBLISH_PERIOD);
+		long offset = new Random(container.getId()).nextInt(publishingPeriod);
 		scheduler.addTask(new CustomStepTask(scheduler, this, offset));
 	}
 }
