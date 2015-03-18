@@ -49,5 +49,7 @@ Demo projects for jdeeco can be found in `jdeeco-demos` folder. There are two pr
 ## Eclipse integration
 All of the projects in the repository are the Eclipse projects. As such they can be easily imported to the Eclipse workspace.
 
+In the project there are included custom formatters. One of them colors the logging output that goes into the Eclipse console using ANSI escape sequences. In order to be able to see the output correctly this plugin ([eclipse-plugin-ansi-in-console](http://mihai-nita.net/2013/06/03/eclipse-plugin-ansi-in-console/)) needs to be installed into your Eclipse.
+
 #### CDEECo
 Apart from Java version of DEECo, there is its C++ realization that can be found under: ([http://github.com/d3scomp/CDEECo](http://github.com/d3scomp/CDEECo))
