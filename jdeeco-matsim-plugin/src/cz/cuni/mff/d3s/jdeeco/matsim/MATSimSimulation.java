@@ -8,7 +8,6 @@ import java.util.Map;
 
 import org.matsim.api.core.v01.Id;
 import org.matsim.core.basic.v01.IdImpl;
-import org.matsim.core.utils.geometry.CoordImpl;
 
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
@@ -73,9 +72,9 @@ public class MATSimSimulation implements DEECoPlugin {
 	private final cz.cuni.mff.d3s.jdeeco.matsim.old.matsim.MATSimSimulation oldSimulation;
 	private final JDEECoAgentSource agentSource = new JDEECoAgentSource();
 	private final MATSimRouter router; 
+	private final MATSimDataProviderReceiver matSimProviderReceiver = new MATSimDataProviderReceiver(new LinkedList<String>());
 	
 	public MATSimSimulation(String matsimConfig) {
-		MATSimDataProviderReceiver matSimProviderReceiver = new MATSimDataProviderReceiver(new LinkedList<String>());
 		NetworkDataHandler networkHandler = new DirectKnowledgeDataHandler();
 		
 		oldSimulation = new cz.cuni.mff.d3s.jdeeco.matsim.old.matsim.MATSimSimulation(
@@ -99,6 +98,10 @@ public class MATSimSimulation implements DEECoPlugin {
 	
 	public MATSimRouter getRouter() {
 		return router;
+	}
+	
+	public MATSimDataProviderReceiver getMATSimProviderReceiver() {
+		return matSimProviderReceiver;
 	}
 	
 	public void addVehicle(int vehicleId, Id startLink) {

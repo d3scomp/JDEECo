@@ -6,6 +6,7 @@ import static org.junit.Assert.assertThat;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.StandardOutputStreamLog;
+import org.matsim.api.core.v01.Id;
 import org.matsim.core.utils.geometry.CoordImpl;
 
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
@@ -18,18 +19,20 @@ import cz.cuni.mff.d3s.jdeeco.network.Network;
 import cz.cuni.mff.d3s.jdeeco.network.device.BroadcastLoopback;
 import cz.cuni.mff.d3s.jdeeco.network.l2.strategy.KnowledgeInsertingStrategy;
 import cz.cuni.mff.d3s.jdeeco.publishing.DefaultKnowledgePublisher;
+
 /**
  * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
  */
 public class ConvoySimulationTest {
-	
+
 	@Rule
-	public final StandardOutputStreamLog  log = new StandardOutputStreamLog ();
-	
-	public static void main(String[] args) throws AnnotationProcessorException, InterruptedException, DEECoException, InstantiationException, IllegalAccessException {
+	public final StandardOutputStreamLog log = new StandardOutputStreamLog();
+
+	public static void main(String[] args) throws AnnotationProcessorException, InterruptedException, DEECoException,
+			InstantiationException, IllegalAccessException {
 		new ConvoySimulationTest().testConvoy();
 	}
-	
+
 	@Test
 	public void testConvoy() throws AnnotationProcessorException, InterruptedException, DEECoException, InstantiationException, IllegalAccessException {
 
@@ -43,9 +46,20 @@ public class ConvoySimulationTest {
 		realm.addPlugin(Network.class);
 		realm.addPlugin(DefaultKnowledgePublisher.class);
 		realm.addPlugin(KnowledgeInsertingStrategy.class);
-		 
+		
+		CoordImpl vehicle0StartPos = new CoordImpl(0, 0);
+		CoordImpl vehicle0EndPos = new CoordImpl(100000, 100000);
+		
+		MATSimVehicle vehicle0Plug = new MATSimVehicle(vehicle0StartPos);
+		
+		Id vehicle0StartLinkId = simulation.getRouter().findNearestLink(vehicle0StartPos).getId();
+		Id vehicle0EndLinkId = simulation.getRouter().findNearestLink(vehicle0EndPos).getId();
+		
+		DEECoNode vehicle0 = realm.createNode(42, vehicle0Plug);
+		vehicle0.deployComponent(new Vehicle(String.valueOf(42), vehicle0EndLinkId, vehicle0StartLinkId, vehicle0Plug.getActuatorProvider(), vehicle0Plug.getSensorProvider(), simulation.getRouter(), simulation.getTimer()));
+		
 		/* create first deeco node */
-		DEECoNode deeco1 = realm.createNode(0, new MATSimVehicle(new CoordImpl(0, 0)));
+		DEECoNode deeco1 = realm.createNode(0);
 		/* deploy components and ensembles */
 		deeco1.deployComponent(new Leader());
 		deeco1.deployEnsemble(ConvoyEnsemble.class);
@@ -62,6 +76,4 @@ public class ConvoySimulationTest {
 
 		// THEN the follower prints out the following (as there is no network and the components cannot exchange data)
 		assertThat(log.getLog(), containsString("Follower F: me = (1,3) leader = Leader"));
-	}	
-
-}
+	}}
