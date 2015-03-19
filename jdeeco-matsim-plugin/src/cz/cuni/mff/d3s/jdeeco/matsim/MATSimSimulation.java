@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.matsim.api.core.v01.Id;
 import org.matsim.core.basic.v01.IdImpl;
 import org.matsim.core.utils.geometry.CoordImpl;
 
@@ -70,11 +71,10 @@ public class MATSimSimulation implements DEECoPlugin {
 	
 	private final TimerProvider timer = new TimerProvider();
 	private final cz.cuni.mff.d3s.jdeeco.matsim.old.matsim.MATSimSimulation oldSimulation;
+	private final JDEECoAgentSource agentSource = new JDEECoAgentSource();
+	private final MATSimRouter router; 
 	
 	public MATSimSimulation(String matsimConfig) {
-		
-		JDEECoAgentSource agentSource = new JDEECoAgentSource();
-		
 		MATSimDataProviderReceiver matSimProviderReceiver = new MATSimDataProviderReceiver(new LinkedList<String>());
 		NetworkDataHandler networkHandler = new DirectKnowledgeDataHandler();
 		
@@ -87,17 +87,22 @@ public class MATSimSimulation implements DEECoPlugin {
 				Arrays.asList(agentSource),
 				matsimConfig);
 		
-		MATSimRouter router = new MATSimRouter(
+		router = new MATSimRouter(
 				oldSimulation.getControler(), 
 				oldSimulation.getTravelTime(),
 				10 /* TODO: FAKE VALUE */);
-		
-		// TODO: Add fake agent to make simulation run
-		agentSource.addAgent(new JDEECoAgent(new IdImpl(99), router.findNearestLink(new CoordImpl(0.0d, 0.0d)).getId()));
 	}
 	
 	public SimulationTimer getTimer() {
 		return timer;
+	}
+	
+	public MATSimRouter getRouter() {
+		return router;
+	}
+	
+	public void addVehicle(int vehicleId, Id startLink) {
+		agentSource.addAgent(new JDEECoAgent(new IdImpl(vehicleId), startLink));
 	}
 
 	@Override

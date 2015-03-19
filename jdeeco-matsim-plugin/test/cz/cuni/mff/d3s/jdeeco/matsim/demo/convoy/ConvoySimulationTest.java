@@ -6,12 +6,14 @@ import static org.junit.Assert.assertThat;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.StandardOutputStreamLog;
+import org.matsim.core.utils.geometry.CoordImpl;
 
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
 import cz.cuni.mff.d3s.deeco.runners.DEECoSimulation;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
 import cz.cuni.mff.d3s.jdeeco.matsim.MATSimSimulation;
+import cz.cuni.mff.d3s.jdeeco.matsim.MATSimVehicle;
 import cz.cuni.mff.d3s.jdeeco.network.Network;
 import cz.cuni.mff.d3s.jdeeco.network.device.BroadcastLoopback;
 import cz.cuni.mff.d3s.jdeeco.network.l2.strategy.KnowledgeInsertingStrategy;
@@ -43,7 +45,7 @@ public class ConvoySimulationTest {
 		realm.addPlugin(KnowledgeInsertingStrategy.class);
 		 
 		/* create first deeco node */
-		DEECoNode deeco1 = realm.createNode(0);
+		DEECoNode deeco1 = realm.createNode(0, new MATSimVehicle(new CoordImpl(0, 0)));
 		/* deploy components and ensembles */
 		deeco1.deployComponent(new Leader());
 		deeco1.deployEnsemble(ConvoyEnsemble.class);
