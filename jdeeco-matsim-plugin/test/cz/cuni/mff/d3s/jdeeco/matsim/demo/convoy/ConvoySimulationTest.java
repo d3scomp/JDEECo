@@ -33,7 +33,7 @@ public class ConvoySimulationTest {
 
 	@Test
 	public void testConvoy() throws AnnotationProcessorException, InterruptedException, DEECoException, InstantiationException, IllegalAccessException, IOException {
-		MATSimSimulation matSim = new MATSimSimulation("input/grid.xml");
+		MATSimSimulation matSim = new MATSimSimulation("maps/grid.xml");
 		
 		/* create main application container */
  		DEECoSimulation realm = new DEECoSimulation(matSim.getTimer());
@@ -57,7 +57,7 @@ public class ConvoySimulationTest {
 		
 		
 		// Simulate for specified time
-		realm.start(10000);
+		realm.start(600000);
 
 		// TODO: Check output
 	}}
