@@ -15,12 +15,11 @@ import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 import cz.cuni.mff.d3s.deeco.timer.CurrentTimeProvider;
+import cz.cuni.mff.d3s.jdeeco.matsim.MATSimVehicle;
 import cz.cuni.mff.d3s.jdeeco.matsim.old.matsim.MATSimRouter;
 import cz.cuni.mff.d3s.jdeeco.matsim.old.roadtrains.Actuator;
-import cz.cuni.mff.d3s.jdeeco.matsim.old.roadtrains.ActuatorProvider;
 import cz.cuni.mff.d3s.jdeeco.matsim.old.roadtrains.ActuatorType;
 import cz.cuni.mff.d3s.jdeeco.matsim.old.roadtrains.Sensor;
-import cz.cuni.mff.d3s.jdeeco.matsim.old.roadtrains.SensorProvider;
 import cz.cuni.mff.d3s.jdeeco.matsim.old.roadtrains.SensorType;
 
 @Component
@@ -74,17 +73,15 @@ public class Vehicle {
 	
 	public Long curTime;
 
-	public Vehicle(String id, Id dstLinkId, Id currentLink,
-			ActuatorProvider actuatorProvider, SensorProvider sensorProvider,
-			MATSimRouter router, CurrentTimeProvider clock) {
+	public Vehicle(String id, Coord dst, MATSimVehicle vehiclePlugin) {
 		this.id = id;
-		this.currentLink = currentLink;
-		this.routeActuator = actuatorProvider.createActuator(ActuatorType.ROUTE);
-		this.speedActuator = actuatorProvider.createActuator(ActuatorType.SPEED);
-		this.currentLinkSensor = sensorProvider.createSensor(SensorType.CURRENT_LINK);
-		this.router = router;
-		this.clock = clock;
-		this.dstLinkId = dstLinkId;
+	
+		this.router = vehiclePlugin.getSimulation().getRouter();
+		this.routeActuator = vehiclePlugin.getActuatorProvider().createActuator(ActuatorType.ROUTE);
+		this.speedActuator = vehiclePlugin.getActuatorProvider().createActuator(ActuatorType.SPEED);
+		this.currentLinkSensor = vehiclePlugin.getSensorProvider().createSensor(SensorType.CURRENT_LINK);
+		this.clock = vehiclePlugin.getSimulation().getTimer();
+		this.dstLinkId = router.findNearestLink(dst).getId();
 	}
 
 	/**
@@ -106,14 +103,17 @@ public class Vehicle {
 			@In("router") MATSimRouter router,
 			@In("speed") Double speed) {
 		
-		System.out.println("adasdasdasdasdasdasdas");
-
 		Log.d("Entry [" + id + "]:reportStatus");
 
-		System.out.format("%s [%s] %s, pos: %s, dst: %s(%s), speed: %.0f\n",
-				"asd","sad",
+		Id currentLinkId = currentLinkSensor.read();
+		Coord currentPos = router.findLinkById(currentLinkId).getCoord();
+		
+		System.out.format("[%s] %s, pos: %s (%.0f, %.0f), dst: %s, speed: %.0f\n",
+				formatTime(clock.getCurrentMilliseconds()),
 				id,
-				currentLinkSensor.read(),
+				currentLinkId.toString(),
+				currentPos.getX(),
+				currentPos.getY(),
 				dstLinkId.toString(),
 				speed);
 	}
