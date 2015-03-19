@@ -42,16 +42,16 @@ public class ConvoySimulationTest {
 		realm.addPlugin(KnowledgeInsertingStrategy.class);
 				
 		// Node hosting vehicle A
-		MATSimVehicle vehicleA = new MATSimVehicle(new CoordImpl(0, 0));
-		DEECoNode nodeA = realm.createNode(42, vehicleA);
-		Vehicle vehicleAComponent = new Vehicle("Vehicle A", new CoordImpl(100000, 100000), vehicleA); 
-		nodeA.deployComponent(vehicleAComponent);
+		MATSimVehicle agentA = new MATSimVehicle(new CoordImpl(0, 0));
+		DEECoNode nodeA = realm.createNode(42, agentA);
+		Vehicle vehicleA = new Vehicle("Vehicle A", new CoordImpl(100000, 100000), agentA); 
+		nodeA.deployComponent(vehicleA);
 		
 		// Node hosting vehicle B
-		MATSimVehicle vehicleB = new MATSimVehicle(new CoordImpl(0, 100000));
-		DEECoNode nodeB = realm.createNode(45, vehicleB);
-		Vehicle vehicleBComponent = new Vehicle("Vehicle B", new CoordImpl(0, 100000), vehicleB); 
-		nodeB.deployComponent(vehicleBComponent);
+		MATSimVehicle agentB = new MATSimVehicle(new CoordImpl(0, 100000));
+		DEECoNode nodeB = realm.createNode(45, agentB);
+		Vehicle vehicleB = new Vehicle("Vehicle B", new CoordImpl(0, 100000), agentB); 
+		nodeB.deployComponent(vehicleB);
 		
 		
 		// WHEN simulation is performed
