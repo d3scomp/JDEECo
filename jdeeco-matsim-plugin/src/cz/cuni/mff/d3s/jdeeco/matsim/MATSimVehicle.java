@@ -3,7 +3,6 @@ package cz.cuni.mff.d3s.jdeeco.matsim;
 import java.util.Arrays;
 import java.util.List;
 
-import org.matsim.api.core.v01.Coord;
 import org.matsim.core.basic.v01.IdImpl;
 import org.matsim.core.utils.geometry.CoordImpl;
 

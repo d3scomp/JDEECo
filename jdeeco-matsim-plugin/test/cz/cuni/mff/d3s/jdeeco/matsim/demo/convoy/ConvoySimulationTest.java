@@ -1,5 +1,7 @@
 package cz.cuni.mff.d3s.jdeeco.matsim.demo.convoy;
 
+import java.io.IOException;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.StandardOutputStreamLog;
@@ -25,13 +27,13 @@ public class ConvoySimulationTest {
 	public final StandardOutputStreamLog log = new StandardOutputStreamLog();
 
 	public static void main(String[] args) throws AnnotationProcessorException, InterruptedException, DEECoException,
-			InstantiationException, IllegalAccessException {
+			InstantiationException, IllegalAccessException, IOException {
 		new ConvoySimulationTest().testConvoy();
 	}
 
 	@Test
-	public void testConvoy() throws AnnotationProcessorException, InterruptedException, DEECoException, InstantiationException, IllegalAccessException {
-		MATSimSimulation matSim = new MATSimSimulation("input/config.xml");
+	public void testConvoy() throws AnnotationProcessorException, InterruptedException, DEECoException, InstantiationException, IllegalAccessException, IOException {
+		MATSimSimulation matSim = new MATSimSimulation("input/grid.xml");
 		
 		/* create main application container */
  		DEECoSimulation realm = new DEECoSimulation(matSim.getTimer());
@@ -54,9 +56,8 @@ public class ConvoySimulationTest {
 		nodeB.deployComponent(vehicleB);
 		
 		
-		// WHEN simulation is performed
-		// TODO: TIME IS IGNORED
-		realm.start(600000);
+		// Simulate for specified time
+		realm.start(10000);
 
 		// TODO: Check output
 	}}

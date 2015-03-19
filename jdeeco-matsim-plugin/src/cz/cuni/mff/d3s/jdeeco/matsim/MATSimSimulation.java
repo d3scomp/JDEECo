@@ -1,5 +1,7 @@
 package cz.cuni.mff.d3s.jdeeco.matsim;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -46,6 +48,7 @@ public class MATSimSimulation implements DEECoPlugin {
 
 		@Override
 		public void start(long duration) {
+			MATSimSimulation.this.oldSimulation.getControler().getConfig().getQSimConfigGroup().setEndTime(((double)(duration)) / 1000);
 			MATSimSimulation.this.oldSimulation.run();
 		}
 	}
@@ -74,8 +77,10 @@ public class MATSimSimulation implements DEECoPlugin {
 	private final MATSimRouter router; 
 	private final MATSimDataProviderReceiver matSimProviderReceiver = new MATSimDataProviderReceiver(new LinkedList<String>());
 	
-	public MATSimSimulation(String matsimConfig) {
+	public MATSimSimulation(String mapFile) throws IOException {
 		NetworkDataHandler networkHandler = new DirectKnowledgeDataHandler();
+		
+		File config = MATSimConfigGenerator.writeToTemp(mapFile);
 		
 		oldSimulation = new cz.cuni.mff.d3s.jdeeco.matsim.old.matsim.MATSimSimulation(
 				matSimProviderReceiver,
@@ -84,7 +89,7 @@ public class MATSimSimulation implements DEECoPlugin {
 				new DefaultMATSimExtractor(),
 				networkHandler,
 				Arrays.asList(agentSource),
-				matsimConfig);
+				config.getAbsolutePath());
 		
 		router = new MATSimRouter(
 				oldSimulation.getControler(), 
