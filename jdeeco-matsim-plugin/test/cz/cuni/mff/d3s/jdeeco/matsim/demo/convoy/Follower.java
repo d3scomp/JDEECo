@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.jdeeco.matsim.demo.convoy;
 
+
 import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;

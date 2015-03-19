@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.jdeeco.matsim.demo.convoy;
 
+
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.annotations.Ensemble;
@@ -44,7 +45,7 @@ public class ConvoyEnsemble {
 			@Out("member.leaderPosition") ParamHolder<Waypoint> fLeaderPosition,
 			@In("coord.position") Waypoint lPosition) {
 		
-		System.out.println("membership: "+ memberId + " " + coordId);
+		System.out.println("exchange: "+ memberId + " " + coordId);
 		
 		fLeaderPosition.value = lPosition;
 	}

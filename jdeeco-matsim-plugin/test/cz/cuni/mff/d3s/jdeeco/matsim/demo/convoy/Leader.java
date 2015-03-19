@@ -1,7 +1,9 @@
 package cz.cuni.mff.d3s.jdeeco.matsim.demo.convoy;
 
 
+
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.annotations.Component;
@@ -25,14 +27,14 @@ public class Leader {
 	public Waypoint position;
 	
 	public Leader() {
-		path = Arrays.asList(
+		path = new LinkedList<Waypoint>(Arrays.asList(
 				new Waypoint(3, 1),
 				new Waypoint(2, 1),
 				new Waypoint(1, 1),
 				new Waypoint(1, 2),
 				new Waypoint(1, 3),
 				new Waypoint(1, 4),
-				new Waypoint(1, 5));
+				new Waypoint(1, 5)));
 				
 		name = "L";
 		id = "Leader1";
@@ -48,7 +50,7 @@ public class Leader {
 			) {
 		
 		if (!path.value.isEmpty() && me.value.equals(path.value.get(0))) {
-			path.value = path.value.subList(1, path.value.size());
+			path.value = new LinkedList<Waypoint>(path.value.subList(1, path.value.size()));
 		}
 		
 		if (!path.value.isEmpty()) {

@@ -1,5 +1,8 @@
 package cz.cuni.mff.d3s.jdeeco.matsim.demo.convoy;
 
+import java.io.Serializable;
+
+
 
 /**
  * Represents a position in a 2D plane.
@@ -7,7 +10,8 @@ package cz.cuni.mff.d3s.jdeeco.matsim.demo.convoy;
  * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
  *
  */
-public class Waypoint {
+@SuppressWarnings("serial")
+public class Waypoint implements Serializable {
 	public Waypoint() {	
 	}
 	
