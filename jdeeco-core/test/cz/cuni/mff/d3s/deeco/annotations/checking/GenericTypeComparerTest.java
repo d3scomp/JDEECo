@@ -39,6 +39,7 @@ public class GenericTypeComparerTest {
 	
 	@Test
 	public void inheritanceTest() {
+		// comparison of inherited types (should not work, inherited types are different)
 		
 		class A { };
 		class B extends A { };
@@ -60,6 +61,7 @@ public class GenericTypeComparerTest {
 	
 	@Test
 	public void genericsTest() {
+		// comparison of generic types (should work correctly, ie. List<Integer> != List<String>, etc.)
 		
 		class A { };
 		class B extends A { };
@@ -101,6 +103,7 @@ public class GenericTypeComparerTest {
 	
 	@Test
 	public void genericsWithUnknownsTest() throws NoSuchFieldException, SecurityException {
+		// comparisons with unknown generic types (ie. that List<Integer> == List<T>, etc.)
 		
 		class A { };
 		class B { };

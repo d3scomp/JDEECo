@@ -237,7 +237,8 @@ public class AnnotationProcessor {
 	/**
 	 * Checks if the object is annotated as @{@link Component}/@{@link Ensemble}
 	 * and calls the respective creator. It also creates the appropriate
-	 * {@link EnsembleController}s.
+	 * {@link EnsembleController}s. At the end, the component instance is
+	 * validated using all validators from {@link AnnotationChecker#standardCheckers}.
 	 * <p>
 	 * If both/no such annotations are found, it throws an exception.
 	 * </p>
@@ -291,7 +292,8 @@ public class AnnotationProcessor {
 	/**
 	 * Checks if the object is annotated as @{@link Component}/@{@link Ensemble}
 	 * and calls the respective creator. It also creates the appropriate
-	 * {@link EnsembleController}s.
+	 * {@link EnsembleController}s. In the process, the ensemble definition is
+	 * validated using all validators from {@link AnnotationChecker#standardCheckers}.
 	 * <p>
 	 * If both/no such annotations are found, it throws an exception.
 	 * </p>

@@ -57,6 +57,8 @@ public class KnowledgePathCheckerImplTest {
 	
 	@Test
 	public void isFieldInClassTest() throws KnowledgePathCheckException, PathNodeCheckingException, TestException {
+		// the isFieldInClass method should call the getTypeInClass and if the field is found, and type is not null,
+		// it should call TypeComparer.compareTypes to compare the type of the found field.
 		TypeComparer mock = Mockito.mock(TypeComparer.class);
 		Mockito.when(mock.compareTypes(eq(Long.class), any())).thenReturn(true);
 		Mockito.when(mock.compareTypes(eq(Short.class), any())).thenReturn(false);
@@ -84,6 +86,7 @@ public class KnowledgePathCheckerImplTest {
 	
 	@Test
 	public void isFieldInClassEmptyKnowledgePathTest() throws KnowledgePathCheckException, PathNodeCheckingException {
+		// isFieldInClass should throw an exception when empty field sequence is submitted
 		KnowledgePathCheckerImpl checker = Mockito.spy(new KnowledgePathCheckerImpl(null));
 		Mockito.doReturn(Integer.class).when(checker).getTypeInClass(any(), any());
 		
@@ -109,6 +112,7 @@ public class KnowledgePathCheckerImplTest {
 	
 	@Test
 	public void isFieldInClassNullKnowledgePathTest() throws KnowledgePathCheckException {
+		// isFieldInClass should throw an exception when null field sequence is submitted
 		exception.expect(KnowledgePathCheckException.class);
 		exception.expectMessage("The field sequence cannot be null or empty.");		
 		
@@ -118,6 +122,7 @@ public class KnowledgePathCheckerImplTest {
 	
 	@Test
 	public void isFieldInClassNullClassTest() throws KnowledgePathCheckException, TestException {
+		// isFieldInClass should throw an exception when null class is submitted
 		List<PathNode> list1 = pathNodeListFromString("x");
 
 		exception.expect(KnowledgePathCheckException.class);
@@ -129,7 +134,9 @@ public class KnowledgePathCheckerImplTest {
 	
 	@Test
 	public void isFieldInClassNullTypeTest() throws KnowledgePathCheckException, PathNodeCheckingException, TestException {
-		// this is correct
+		// isFieldInClass should work correctly if null type is submitted
+		// (null works as a wildcard = "any type"). Therefore there should be no interactions with TypeComparer
+		// (no need to compare types if null equals to "any type").
 		TypeComparer mock = Mockito.mock(TypeComparer.class);
 		Mockito.when(mock.compareTypes(any(), any())).thenReturn(false);
 		
@@ -143,10 +150,14 @@ public class KnowledgePathCheckerImplTest {
 		
 		assertTrue(result1);
 		assertTrue(result2);
+		
+		Mockito.verifyNoMoreInteractions(mock);
 	}
 	
 	@Test
 	public void isFieldInClassBadKnowledgePathTest() throws KnowledgePathCheckException, ParseException, AnnotationProcessorException {
+		// isFieldInClass should throw an exception if the field sequence contains different node
+		// than PathNodeField / PathNodeComponentId (in this case PathNodeCoordinator)
 		List<PathNode> list1 = KnowledgePathHelper.createKnowledgePath("coord.x", PathOrigin.ENSEMBLE).getNodes();
 		String coordToStr = list1.get(0).toString();
 		
@@ -160,6 +171,8 @@ public class KnowledgePathCheckerImplTest {
 	
 	@Test
 	public void isFieldInClassBadKnowledgePath2Test() throws KnowledgePathCheckException, TestException {
+		// isFieldInClass should throw an exception if the field sequence contains different node
+		// than PathNodeField / PathNodeComponentId (in this case PathNodeMapKey)
 		class RoleClass {
 			public HashMap<Integer, Integer> x;
 		}
@@ -180,6 +193,7 @@ public class KnowledgePathCheckerImplTest {
 	
 	@Test
 	public void getTypeInClassTest() throws KnowledgePathCheckException, TestException, PathNodeCheckingException {
+		// test that the introspection works
 		@Role
 		class RoleClass {
 			public Integer x;
@@ -194,6 +208,7 @@ public class KnowledgePathCheckerImplTest {
 	
 	@Test
 	public void getTypeInClassIdTest() throws PathNodeCheckingException, TestException {
+		// for the path ["id"], String should be returned (String id is implicit)
 		@Role
 		class RoleClass {
 			public Integer x;
@@ -206,6 +221,7 @@ public class KnowledgePathCheckerImplTest {
 	
 	@Test
 	public void isFieldInRoleMultilevelTest() throws PathNodeCheckingException, TestException {
+		// test introspection for multilevel paths like "a.b.c"
 		class Structured1 {
 			public Integer a;
 			public Integer b;
@@ -245,6 +261,7 @@ public class KnowledgePathCheckerImplTest {
 	
 	@Test
 	public void isFieldInRoleGenericTest() throws PathNodeCheckingException, TestException, NoSuchFieldException, SecurityException {
+		// test that the introspection returns generic type information
 		class Structured<T> {
 			public List<Integer> a;
 			public List<T> b;

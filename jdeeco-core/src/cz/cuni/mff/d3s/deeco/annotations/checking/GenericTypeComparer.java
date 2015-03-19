@@ -5,21 +5,34 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 
+/**
+ * An implementation of the {@link TypeComparer} interface that can work with generic types 
+ * (eg. List<<String>> does not equal to List<<Integer>>).
+ * 
+ * Due to technical limitations, type hierarchy is not taken into account
+ * (ie. for classes A extends B, A and B are not considered equal in any case).
+ * 
+ * When working with generics, it is possible to provide types that are incomplete (containing
+ * or directly being an unresolved generic argument type). In the case such type is found,
+ * it is considered to be potentially equal to any type. This means, for instance, that
+ * T[] equals both to int[] and SomeClass[], even to U[], and so on.
+ * 
+ * @author Zbyněk Jiráček
+ *
+ * @see TypeComparer
+ */
 public class GenericTypeComparer implements TypeComparer {
 
-	/**
-	 * Checks whether a given types are (or can be) equal. This method is used to check whether
-	 * a field of a given type can implement (or reference) a field of a given type from a role
-	 * class. The method returns true, if the types are equal, or in all cases when the types
-	 * cannot be proven to be different (this involves mostly unresolved generic arguments).
-	 * Note that due to technical limitations, type hierarchy is not taken into account
-	 * (ie. for classes A extends B, A and B are not considered equal in any case).
-	 * @param implementationType The type of the field in the class/method
-	 * @param roleType The type of the field as declared in the role
-	 * @return True if types are equal/may be equal, false otherwise
+	/*
+	 * (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.annotations.checking.TypeComparer#compareTypes(java.lang.reflect.Type, java.lang.reflect.Type)
 	 */
 	@Override
 	public boolean compareTypes(Type implementationType, Type roleType) {
+		if (implementationType == null || roleType == null) {
+			throw new IllegalArgumentException("The both types supplied to the GenericTypeComparer.compareTypes method must not be null.");
+		}
+		
 		if (implementationType.equals(roleType)) {
 			return true;
 		}

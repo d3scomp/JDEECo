@@ -12,9 +12,17 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 
 /**
+ * Implementation of {@link KnowledgePathChecker} that uses Java class introspection in order to search
+ * for the given field sequence.
+ * 
+ * The class uses a {@link TypeComparer} when comparing the desired type to the type of the respective field.
+ * 
+ * Note: instead of introspection, KnowledgeManager could be used to find the field. But, knowledge managers
+ * do not store types.
  * 
  * @author Zbyněk Jiráček
  *
+ * @see KnowledgePathChecker
  */
 public class KnowledgePathCheckerImpl implements KnowledgePathChecker {
 
@@ -23,16 +31,25 @@ public class KnowledgePathCheckerImpl implements KnowledgePathChecker {
 
 		public PathNodeCheckingException(String message) {
 			super(message);
-			// TODO Auto-generated constructor stub
 		}
 	}
 	
 	private TypeComparer typeComparer;
-	
+
 	public KnowledgePathCheckerImpl(TypeComparer typeComparer) {
 		this.typeComparer = typeComparer;
 	}
 	
+	/**
+	 * Converts the given field sequence into a string representation. The resulting representation consists
+	 * of the field names joined by dot(s), closed within '' quotation marks. If a type is given, the result
+	 * also contains the text "of type <type-string>" at the end, where <type-string> is acquired by calling
+	 * toString() on the given Type.
+	 * 
+	 * @param type The type of the expression (can be null).
+	 * @param pathNodes List of PathNodes representing the field sequence.
+	 * @return String representation of a field sequence.
+	 */
 	public static String pathNodeSequenceToString(Type type, List<PathNode> pathNodes) {
 		String result = "'" + String.join(".", 
 				pathNodes.stream().map(p -> p.toString()).collect(Collectors.toList())) + "'";
@@ -44,6 +61,10 @@ public class KnowledgePathCheckerImpl implements KnowledgePathChecker {
 		return result;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.annotations.checking.KnowledgePathChecker#isFieldInClass(java.lang.reflect.Type, java.util.List, java.lang.Class)
+	 */
 	@Override
 	public boolean isFieldInClass(Type type, List<PathNode> fieldSequence, Class<?> clazz) throws KnowledgePathCheckException {
 		
@@ -68,11 +89,11 @@ public class KnowledgePathCheckerImpl implements KnowledgePathChecker {
 	}
 	
 	/**
-	 * Returns the type of a field sequence from a given role class. If the given field sequence
-	 * has only one element "id", String.class is returned (implicit field present in all roles).
-	 * When the field sequence consist of multiple elements, the type of the nested field is returned
+	 * Returns the type of a field sequence in a given class. If the given field sequence
+	 * has only one element "id", String.class is returned (implicit field present in all roles/components).
+	 * When the field sequence consists of multiple elements, the type of the nested field is returned
 	 * (ie. if the given class contains a field x of type C, class C contains a field y and the 
-	 * input field name sequence is ("x", "y"), then the result is the type of C.y).
+	 * input field name sequence is ("x.y"), then the result is the type of C.y).
 	 * 
 	 * If the given field has generic type, {@link ParameterizedType} is returned, containing
 	 * the type arguments.
@@ -97,7 +118,7 @@ public class KnowledgePathCheckerImpl implements KnowledgePathChecker {
 	 * Returns the type of a field sequence from a given class. When the field sequence consists
 	 * of multiple elements, the type of the nested field is returned (ie. if the given class
 	 * contains a field x of type C, class C contains a field y and the input field name
-	 * sequence is ("x", "y"), then the result is the type of C.y).
+	 * sequence is ("x.y"), then the result is the type of C.y).
 	 * 
 	 * If the given field has generic type, {@link ParameterizedType} is returned, containing
 	 * the type arguments.
@@ -131,6 +152,12 @@ public class KnowledgePathCheckerImpl implements KnowledgePathChecker {
 		}
 	}
 
+	/**
+	 * Check that a given {@link PathNode} is a {@link PathNodeField} and returns the field name.
+	 * @param pathNode A field name wrapped in a {@link PathNode}.
+	 * @return The field name.
+	 * @throws PathNodeCheckingException
+	 */
 	private String checkAndReadPathNodeField(PathNode pathNode) throws PathNodeCheckingException {
 		if (!(pathNode instanceof PathNodeField)) {
 			throw new PathNodeCheckingException("Invalid path node " + pathNode.toString() + ". Only "

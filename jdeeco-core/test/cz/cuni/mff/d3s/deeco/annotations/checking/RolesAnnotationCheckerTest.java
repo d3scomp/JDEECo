@@ -58,11 +58,9 @@ public class RolesAnnotationCheckerTest {
 	 * Checks for the validateComponent method
 	 */
 	
-	/**
-	 * Checks that the checkValidateComponent method calls the checkComponentRolesImplementation method
-	 */
 	@Test
 	public void checkValidateComponentTest() throws AnnotationCheckerException {
+		// checkValidateComponent method should call the checkComponentRolesImplementation method
 		@Component
 		class ComponentClass { }
 		
@@ -90,6 +88,8 @@ public class RolesAnnotationCheckerTest {
 
 	@Test
 	public void checkValidateEnsembleTest() throws AnnotationCheckerException {
+		// checkValidateEnsemble should call checkEnsembleMethodRolesImplementation twice
+		// (for membership and knowledge exchange functions)
 		@Role
 		class RoleClass1 { }
 		
@@ -703,6 +703,9 @@ public class RolesAnnotationCheckerTest {
 	
 	@Test
 	public void checkRI2ParametersButNoRolesTest() throws AnnotationCheckerException, ParseException, AnnotationProcessorException, ParameterException, KnowledgePathCheckException {
+		// no roles => no checks => no calls to KnowledgePathChecker.isFieldInClass
+		// (when no roles specified, user risks invalid knowledge paths, but it's his problem)
+		
 		ParameterKnowledgePathExtractor extractorMock = getKnowledgeExtractorMock();
 		KnowledgePathChecker checkerMock = Mockito.mock(KnowledgePathChecker.class);
 		Mockito.doReturn(true).when(checkerMock).isFieldInClass(any(), any(), any());
@@ -715,6 +718,7 @@ public class RolesAnnotationCheckerTest {
 	
 	@Test
 	public void checkRI2RolesButNoParametersTest() throws AnnotationCheckerException, ParseException, KnowledgePathCheckException {
+		// no parameters => no checks => no calls to KnowledgePathChecker.isFieldInClass
 		
 		@Role
 		class RoleClass1 {
@@ -735,6 +739,8 @@ public class RolesAnnotationCheckerTest {
 	
 	@Test
 	public void checkRI2ExampleTest() throws AnnotationCheckerException, ParseException, AnnotationProcessorException, KnowledgePathCheckException, ParameterException {
+		// checks that the checkEnsembleMethodRolesImplementation calls KnowledgePathChecker.isFieldInClass
+		// for each parameter for each role
 		
 		@Role
 		class RoleClass1 {
@@ -780,6 +786,8 @@ public class RolesAnnotationCheckerTest {
 	
 	@Test
 	public void checkRI2WrongKnowledgePathTest() throws AnnotationCheckerException, ParseException, AnnotationProcessorException, KnowledgePathCheckException, ParameterException {
+		// checkEnsembleMethodRolesImplementation should throw an exception, if the KnowledgePathChecker.isFieldInClass
+		// fails for ALL roles
 		
 		@Role
 		class RoleClass1 {

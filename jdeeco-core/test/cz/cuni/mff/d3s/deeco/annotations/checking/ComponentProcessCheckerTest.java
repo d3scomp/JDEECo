@@ -35,11 +35,11 @@ public class ComponentProcessCheckerTest {
 	
 	/*
 	 * Tests for the validateComponent method
-	 * TODO rewrite
 	 */
 		
 	@Test
-	public void validateComponentTest() throws AnnotationCheckerException, ParameterException {		
+	public void validateComponentTest() throws AnnotationCheckerException, ParameterException {
+		//the validateComponent method should call checkParameter for each parameter for each process
 		@Component
 		class TestComponent { };
 		
@@ -80,6 +80,7 @@ public class ComponentProcessCheckerTest {
 	
 	@Test
 	public void validateComponentFailureTest() throws AnnotationCheckerException, ParameterException {
+		// validateComponent should throw and exception if any of the checkParameter calls fail
 		@Component
 		class TestComponent { };
 		
@@ -118,6 +119,7 @@ public class ComponentProcessCheckerTest {
 	
 	@Test
 	public void validateComponentNullComponentTest() throws AnnotationCheckerException {
+		// validateComponent should throw an exception if null instance is provided
 		exception.expect(AnnotationCheckerException.class);
 		exception.expectMessage("The input component cannot be null.");
 		
@@ -128,6 +130,7 @@ public class ComponentProcessCheckerTest {
 	
 	@Test
 	public void validateComponentNullInstanceTest() throws AnnotationCheckerException {
+		// validateComponent should throw an exception if null instance is provided
 		@Component
 		class TestComponent { };
 		
@@ -140,8 +143,6 @@ public class ComponentProcessCheckerTest {
 	/*
 	 * Tests for the checkParameter method
 	 */
-	// TODO
-	// only test that it calls isFieldInClass on the submitted KnowledgePathChecker mock	
 
 	private static Parameter testParameter = RuntimeMetadataFactory.eINSTANCE.createParameter(); 
 			// x.[a.b] (see getKnowledgeExtractorMock)
@@ -168,6 +169,7 @@ public class ComponentProcessCheckerTest {
 	
 	@Test
 	public void checkParameterTest() throws ParameterException, KnowledgePathCheckException {
+		// checkParameter should call KnowledgePathChecker.isFieldInClass for each field sequence in the parameter knowledge path
 		ParameterKnowledgePathExtractor extractorMock = getKnowledgeExtractorMock();
 		KnowledgePathChecker kpCheckerMock = Mockito.mock(KnowledgePathChecker.class);
 		Mockito.doReturn(true).when(kpCheckerMock).isFieldInClass(any(), any(), any());			
@@ -183,6 +185,7 @@ public class ComponentProcessCheckerTest {
 	
 	@Test
 	public void checkParameterErrorTest() throws ParameterException, KnowledgePathCheckException {
+		// checkParameter should throw an exception if a check of any of the field seqences fail
 		ParameterKnowledgePathExtractor extractorMock = getKnowledgeExtractorMock();
 		KnowledgePathChecker kpCheckerMock = Mockito.mock(KnowledgePathChecker.class);
 		Mockito.doReturn(true).when(kpCheckerMock).isFieldInClass(any(), any(), any());

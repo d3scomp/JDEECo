@@ -52,10 +52,8 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
  * and {@link RolesAnnotationChecker#checkEnsembleMethodRolesImplementation(List, Class[], Class[])} methods.
  * 
  * When checking the presence of a particular field, besides the field name, the type of the 
- * field must match to the type specified in the role class. In this case, inheritance is not
- * taken into account (the types need to be equal). Generics are considered
- * (eg. field of type List<<String>> cannot by implemented by a field of type
- * List<<Integer>>).
+ * field must match to the type specified in the role class. The type comparisons are delegated
+ * to {@link TypeComparer}.
 
  * @author Zbyněk Jiráček
  *
