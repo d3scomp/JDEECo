@@ -57,6 +57,7 @@ public class ConvoySimulationTest {
 		deeco2.deployEnsemble(ConvoyEnsemble.class);
 
 		/* WHEN simulation is performed */
+		// TODO: TIME IS IGNORED
 		realm.start(600000);
 
 		// THEN the follower prints out the following (as there is no network and the components cannot exchange data)
