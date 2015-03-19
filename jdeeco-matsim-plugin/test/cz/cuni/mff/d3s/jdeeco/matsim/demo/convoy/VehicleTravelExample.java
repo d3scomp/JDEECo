@@ -19,45 +19,52 @@ import cz.cuni.mff.d3s.jdeeco.network.l2.strategy.KnowledgeInsertingStrategy;
 import cz.cuni.mff.d3s.jdeeco.publishing.DefaultKnowledgePublisher;
 
 /**
- * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
+ * Example of vehicles traveling across the map
+ * 
+ * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
+ *
  */
-public class ConvoySimulationTest {
-
+public class VehicleTravelExample {
 	@Rule
 	public final StandardOutputStreamLog log = new StandardOutputStreamLog();
 
 	public static void main(String[] args) throws AnnotationProcessorException, InterruptedException, DEECoException,
 			InstantiationException, IllegalAccessException, IOException {
-		new ConvoySimulationTest().testConvoy();
+		new VehicleTravelExample().testTravel();
 	}
 
 	@Test
-	public void testConvoy() throws AnnotationProcessorException, InterruptedException, DEECoException, InstantiationException, IllegalAccessException, IOException {
+	public void testTravel() throws AnnotationProcessorException, InterruptedException, DEECoException,
+			InstantiationException, IllegalAccessException, IOException {
 		MATSimSimulation matSim = new MATSimSimulation("maps/grid.xml");
+
+		// Create main application container
+		DEECoSimulation realm = new DEECoSimulation(matSim.getTimer());
 		
-		/* create main application container */
- 		DEECoSimulation realm = new DEECoSimulation(matSim.getTimer());
- 		realm.addPlugin(matSim);
- 		realm.addPlugin(new BroadcastLoopback());
+		// Add MATSim plug-in for all nodes
+		realm.addPlugin(matSim);
+		
+		// Configure loop-back networking for all nodes
+		realm.addPlugin(new BroadcastLoopback());
 		realm.addPlugin(Network.class);
 		realm.addPlugin(DefaultKnowledgePublisher.class);
 		realm.addPlugin(KnowledgeInsertingStrategy.class);
-				
+
 		// Node hosting vehicle A
-		MATSimVehicle agentA = new MATSimVehicle(new CoordImpl(0, 0));
-		DEECoNode nodeA = realm.createNode(42, agentA);
-		Vehicle vehicleA = new Vehicle("Vehicle A", new CoordImpl(100000, 100000), agentA); 
+		MATSimVehicle agentA = new MATSimVehicle(new CoordImpl(0, 0)); // MATSim agent with start position
+		DEECoNode nodeA = realm.createNode(42, agentA); // DEECO node with Id and agent as plug-in
+		Vehicle vehicleA = new Vehicle("Vehicle A", new CoordImpl(100000, 100000), agentA); // DEECO component controlling the vehicle
 		nodeA.deployComponent(vehicleA);
-		
+
 		// Node hosting vehicle B
-		MATSimVehicle agentB = new MATSimVehicle(new CoordImpl(0, 100000));
-		DEECoNode nodeB = realm.createNode(45, agentB);
-		Vehicle vehicleB = new Vehicle("Vehicle B", new CoordImpl(0, 100000), agentB); 
+		MATSimVehicle agentB = new MATSimVehicle(new CoordImpl(0, 100000)); // MATSim agent with start position
+		DEECoNode nodeB = realm.createNode(45, agentB); // DEECO node with Id and agent as plug-in
+		Vehicle vehicleB = new Vehicle("Vehicle B", new CoordImpl(0, 100000), agentB); // DEECO component controlling the vehicle
 		nodeB.deployComponent(vehicleB);
-		
-		
+
 		// Simulate for specified time
 		realm.start(600000);
 
 		// TODO: Check output
-	}}
+	}
+}
