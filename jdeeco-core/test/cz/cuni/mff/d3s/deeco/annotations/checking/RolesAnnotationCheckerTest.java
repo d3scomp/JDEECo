@@ -684,7 +684,7 @@ public class RolesAnnotationCheckerTest {
 		try {
 			testKnowledgePaths = new KnowledgePathAndType[] {
 				new KnowledgePathAndType(KnowledgePathHelper.createKnowledgePath("coord.x", PathOrigin.ENSEMBLE).getNodes(), Integer.class),
-				new KnowledgePathAndType(KnowledgePathHelper.createKnowledgePath("coord.a.b", PathOrigin.ENSEMBLE).getNodes(), Long.class),
+				new KnowledgePathAndType(KnowledgePathHelper.createKnowledgePath("coord.a.b", PathOrigin.ENSEMBLE).getNodes(), null),
 				new KnowledgePathAndType(KnowledgePathHelper.createKnowledgePath("member.s", PathOrigin.ENSEMBLE).getNodes(), String.class)
 			};
 		} catch (ParseException | AnnotationProcessorException e) {
