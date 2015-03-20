@@ -36,27 +36,21 @@ public class MATSimSimulation extends Simulation implements MATSimSimulationStep
 	private final Map<String, DirectSimulationHost> hosts;
 	private final MATSimExtractor extractor;
 
-	public MATSimSimulation(MATSimDataReceiver matSimReceiver,
-			MATSimDataProvider matSimProvider, MATSimUpdater updater, MATSimExtractor extractor,
-			final Collection<? extends AdditionAwareAgentSource> agentSources,
-			String matSimConf) {
+	public MATSimSimulation(MATSimDataReceiver matSimReceiver, MATSimDataProvider matSimProvider,
+			MATSimUpdater updater, MATSimExtractor extractor,
+			final Collection<? extends AdditionAwareAgentSource> agentSources, String matSimConf) {
 		this.callbacks = new TreeSet<>();
 		this.hostIdToCallback = new HashMap<>();
 		this.hosts = new HashMap<>();
 
 		this.controler = new MATSimPreloadingControler(matSimConf);
 		this.controler.setOverwriteFiles(true);
-		this.controler.getConfig().getQSimConfigGroup()
-				.setSimStarttimeInterpretation("onlyUseStarttime");
+		this.controler.getConfig().getQSimConfigGroup().setSimStarttimeInterpretation("onlyUseStarttime");
 
-		double end = this.controler.getConfig().getQSimConfigGroup()
-				.getEndTime();
-		double start = this.controler.getConfig().getQSimConfigGroup()
-				.getStartTime();
-		double step = this.controler.getConfig().getQSimConfigGroup()
-				.getTimeStepSize();
-		Log.i("Starting simulation: matsimStartTime: " + start
-				+ " matsimEndTime: " + end);
+		double end = this.controler.getConfig().getQSimConfigGroup().getEndTime();
+		double start = this.controler.getConfig().getQSimConfigGroup().getStartTime();
+		double step = this.controler.getConfig().getQSimConfigGroup().getTimeStepSize();
+		Log.i("Starting simulation: matsimStartTime: " + start + " matsimEndTime: " + end);
 		this.extractor = extractor;
 		this.listener = new JDEECoWithinDayMobsimListener(this, updater, extractor);
 		this.matSimProvider = matSimProvider;
@@ -64,24 +58,18 @@ public class MATSimSimulation extends Simulation implements MATSimSimulationStep
 
 		Set<String> analyzedModes = new HashSet<String>();
 		analyzedModes.add(TransportMode.car);
-		travelTime = new TravelTimeCollectorFactory()
-				.createTravelTimeCollector(controler.getScenario(),
-						analyzedModes);
+		travelTime = new TravelTimeCollectorFactory().createTravelTimeCollector(controler.getScenario(), analyzedModes);
 
 		controler.addControlerListener(new StartupListener() {
 			public void notifyStartup(StartupEvent event) {
-				controler.getEvents().addHandler(
-						(TravelTimeCollector) travelTime);
-				controler.getMobsimListeners().add(
-						(TravelTimeCollector) travelTime);
-				controler.setMobsimFactory(new JDEECoMobsimFactory(listener,
-						agentSources));
+				controler.getEvents().addHandler((TravelTimeCollector) travelTime);
+				controler.getMobsimListeners().add((TravelTimeCollector) travelTime);
+				controler.setMobsimFactory(new JDEECoMobsimFactory(listener, agentSources));
 			}
 		});
 		/**
-		 * Bind MATSim listener with the agent source. It is necessary to let
-		 * the listener know about the jDEECo agents that it needs to update
-		 * with data coming from a jDEECo runtime.
+		 * Bind MATSim listener with the agent source. It is necessary to let the listener know about the jDEECo agents
+		 * that it needs to update with data coming from a jDEECo runtime.
 		 */
 		for (AdditionAwareAgentSource source : agentSources) {
 			if (source instanceof JDEECoAgentSource) {
@@ -90,22 +78,15 @@ public class MATSimSimulation extends Simulation implements MATSimSimulationStep
 		}
 
 		this.simulationStep = secondsToMilliseconds(step);
-		currentMilliseconds = secondsToMilliseconds(controler.getConfig()
-				.getQSimConfigGroup().getStartTime());
+		currentMilliseconds = secondsToMilliseconds(controler.getConfig().getQSimConfigGroup().getStartTime());
 	}
-	
+
 	public void addHost(String id, DirectSimulationHost host) {
 		hosts.put(id, host);
 	}
 
 	public DirectSimulationHost getHost(String id) {
-		
-		DirectSimulationHost host = hosts.get(id);
-		if (host == null) {
-			host = new DirectSimulationHost(id, this);
-			hosts.put(id, host);
-		}
-		return host;
+		return hosts.get(id);
 	}
 
 	public Controler getControler() {
@@ -133,12 +114,12 @@ public class MATSimSimulation extends Simulation implements MATSimSimulationStep
 		}
 		callback = new Callback(hostId, absoluteTime);
 		hostIdToCallback.put(hostId, callback);
-		//System.out.println("For " + absoluteTime);
+		// System.out.println("For " + absoluteTime);
 		callbacks.add(callback);
 	}
 
 	@Override
-	public void at(double seconds, Mobsim mobsim) {	
+	public void at(double seconds, Mobsim mobsim) {
 		// Exchange data with MATSim
 		long milliseconds = secondsToMilliseconds(seconds);
 		matSimReceiver.setMATSimData(extractor.extractFromMATSim(listener.getAllJDEECoAgents(), mobsim));
@@ -154,7 +135,7 @@ public class MATSimSimulation extends Simulation implements MATSimSimulationStep
 				break;
 			}
 			currentMilliseconds = callback.getAbsoluteTime();
-			//System.out.println("At: " + currentMilliseconds);
+			// System.out.println("At: " + currentMilliseconds);
 			host = (DirectSimulationHost) hosts.get(callback.hostId);
 			host.at(millisecondsToSeconds(currentMilliseconds));
 		}
@@ -204,10 +185,8 @@ public class MATSimSimulation extends Simulation implements MATSimSimulationStep
 			final int prime = 31;
 			int result = 1;
 			result = prime * result + getOuterType().hashCode();
-			result = prime * result
-					+ ((hostId == null) ? 0 : hostId.hashCode());
-			result = prime * result
-					+ (int) (milliseconds ^ (milliseconds >>> 32));
+			result = prime * result + ((hostId == null) ? 0 : hostId.hashCode());
+			result = prime * result + (int) (milliseconds ^ (milliseconds >>> 32));
 			return result;
 		}
 
