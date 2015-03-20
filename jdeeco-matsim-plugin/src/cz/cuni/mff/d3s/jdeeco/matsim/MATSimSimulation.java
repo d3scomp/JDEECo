@@ -11,6 +11,7 @@ import java.util.Map;
 import org.matsim.api.core.v01.Id;
 import org.matsim.core.basic.v01.IdImpl;
 
+import cz.cuni.mff.d3s.deeco.network.AbstractHost;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.timer.CurrentTimeProvider;
@@ -22,7 +23,6 @@ import cz.cuni.mff.d3s.jdeeco.matsim.old.matsim.JDEECoAgent;
 import cz.cuni.mff.d3s.jdeeco.matsim.old.matsim.JDEECoAgentSource;
 import cz.cuni.mff.d3s.jdeeco.matsim.old.matsim.MATSimRouter;
 import cz.cuni.mff.d3s.jdeeco.matsim.old.roadtrains.MATSimDataProviderReceiver;
-import cz.cuni.mff.d3s.jdeeco.matsim.old.simulation.DirectSimulationHost;
 
 /**
  * Plug-in providing MATSim simulation
@@ -52,7 +52,7 @@ public class MATSimSimulation implements DEECoPlugin {
 		}
 	}
 
-	class Host extends DirectSimulationHost {
+	public class Host extends AbstractHost {
 		public TimerEventListener listener;
 
 		public Host(String id, CurrentTimeProvider timeProvider) {
@@ -60,7 +60,6 @@ public class MATSimSimulation implements DEECoPlugin {
 			// TODO Auto-generated constructor stub
 		}
 
-		@Override
 		public void at(double absoluteTime) {
 			// System.out.println("CALLBACK CALLED AT: " + getCurrentMilliseconds() + " NODE: " + getHostId());
 			listener.at(getCurrentMilliseconds());

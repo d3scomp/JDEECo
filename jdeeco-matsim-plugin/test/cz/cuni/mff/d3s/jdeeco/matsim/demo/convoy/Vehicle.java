@@ -105,7 +105,6 @@ public class Vehicle {
 			@In("router") MATSimRouter router,
 			@In("speed") Double speed,
 			@In("otherVehicleLink") Id otherVehicleLink) {
-		
 		Log.d("Entry [" + id + "]:reportStatus");
 		
 		System.out.format("%s %s, pos: %s, dst: %s, speed: %.0f, otherPos: %s%n",
