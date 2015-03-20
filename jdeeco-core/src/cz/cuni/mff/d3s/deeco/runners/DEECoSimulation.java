@@ -16,7 +16,7 @@ import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
  * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
  */
 public class DEECoSimulation {
-
+	private int nodeCounter = 0xdec0;
 	List<DEECoNode> deecoNodes;
 	List<DEECoPlugin> instantiatedPlugins;
 	List<Class<? extends DEECoPlugin>> nonInstantiatedPlugins;
@@ -39,6 +39,10 @@ public class DEECoSimulation {
 
 	public void start(long duration) {
 		simulationTimer.start(duration);
+	}
+	
+	public DEECoNode createNode(DEECoPlugin... nodeSpecificPlugins) throws DEECoException, InstantiationException, IllegalAccessException {
+		return createNode(nodeCounter++, nodeSpecificPlugins);
 	}
 
 	public DEECoNode createNode(int id, DEECoPlugin... nodeSpecificPlugins) throws DEECoException, InstantiationException, IllegalAccessException {
