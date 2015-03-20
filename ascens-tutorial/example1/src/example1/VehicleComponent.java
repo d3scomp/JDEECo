@@ -20,8 +20,8 @@ import cz.cuni.mff.d3s.deeco.annotations.Local;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.simulation.matsim.MATSimRouter;
-import cz.cuni.mff.d3s.deeco.simulation.matsim.MATSimTimeProvider;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
+import cz.cuni.mff.d3s.deeco.timer.CurrentTimeProvider;
 
 @Component
 public class VehicleComponent {
@@ -67,11 +67,11 @@ public class VehicleComponent {
 	@Local public Sensor<Integer> currentLinkFreeCapacitySensor;
 	
 	@Local public MATSimRouter router;
-	@Local public MATSimTimeProvider clock;
+	@Local public CurrentTimeProvider clock;
 	
 	@Local public Random random;
 
-	public VehicleComponent(String id, ActuatorProvider actuatorProvider, SensorProvider sensorProvider, MATSimRouter router, MATSimTimeProvider clock) {
+	public VehicleComponent(String id, ActuatorProvider actuatorProvider, SensorProvider sensorProvider, MATSimRouter router, CurrentTimeProvider clock) {
 		this.id = id;
 
 		this.state = State.WAITING;
@@ -100,7 +100,7 @@ public class VehicleComponent {
 			@In("isParkedSensor") Sensor<Boolean> isParkedSensor,
 			@In("destinationLink") Id destinationLink,
 			@In("route") List<Id> route,
-			@In("clock") MATSimTimeProvider clock
+			@In("clock") CurrentTimeProvider clock
 			) {
 		
 		System.out.format("<%s> [%s]  state: %s  currentLink: %s  isParked: %s  destinationLink: %s  route: %s\n", getTime(clock), id, state, currentLinkSensor.read(), isParkedSensor.read(), destinationLink, route);
@@ -120,14 +120,14 @@ public class VehicleComponent {
 			@In("currentLinkSensor") Sensor<Id> currentLinkSensor,
 			@In("isParkedSensor") Sensor<Boolean> isParkedSensor,
 			@In("routeActuator") Actuator<List<Id>> routeActuator,
-			@In("clock") MATSimTimeProvider clock,
+			@In("clock") CurrentTimeProvider clock,
 			@In("router") MATSimRouter router,
 			@In("random") Random random) {
 		
 		Id currentLink = currentLinkSensor.read();
 		boolean isParked = isParkedSensor.read();
 		
-		if (state.value == State.WAITING && clock.getMATSimSeconds() > startTimeSecs.value) {
+		if (state.value == State.WAITING && clock.getCurrentMilliseconds() > startTimeSecs.value) {
 			
 			// Select random destination
 			Set<Id> linkIds = router.getLinks().keySet();			
@@ -147,7 +147,7 @@ public class VehicleComponent {
 			
 		} else if (state.value == State.DRIVING && isParked) {			
 			state.value = State.WAITING;
-			startTimeSecs.value = clock.getMATSimSeconds() + TIME_BETWEEN_DRIVING;
+			startTimeSecs.value = clock.getCurrentMilliseconds() + TIME_BETWEEN_DRIVING;
 
 			System.out.format("<%s> [%s]  vehicle reached its destination\n", getTime(clock), id);
 		}
@@ -158,8 +158,8 @@ public class VehicleComponent {
 		}
 	}
 	
-	private static String getTime(MATSimTimeProvider clock) {
-		long ts = clock.getMATSimMilliseconds();
+	private static String getTime(CurrentTimeProvider clock) {
+		long ts = clock.getCurrentMilliseconds();
 		int msec = (int)(ts % 1000); ts = ts / 1000;
 		int sec = (int)(ts % 60); ts = ts / 60;  
 		int min = (int)(ts % 60); ts = ts / 60;
