@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.jdeeco.matsim.old.matsim;
+package cz.cuni.mff.d3s.deeco.simulation.matsim;
 
 import org.matsim.api.core.v01.Coord;
 import org.matsim.api.core.v01.network.Network;

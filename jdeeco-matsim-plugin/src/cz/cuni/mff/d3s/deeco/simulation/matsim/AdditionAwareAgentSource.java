@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.jdeeco.matsim.old.matsim;
+package cz.cuni.mff.d3s.deeco.simulation.matsim;
 
 import org.matsim.core.mobsim.framework.AgentSource;
 import org.matsim.core.mobsim.qsim.QSim;
