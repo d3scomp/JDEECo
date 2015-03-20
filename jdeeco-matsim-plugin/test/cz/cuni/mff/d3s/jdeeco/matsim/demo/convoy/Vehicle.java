@@ -44,6 +44,8 @@ public class Vehicle {
 	 */
 	public Coord position;
 	
+	public Id otherVehicleLink;
+	
 	/**
 	 * Position of the destination
 	 */
@@ -95,27 +97,32 @@ public class Vehicle {
 	@PeriodicScheduling(period = 5000, order = 10)
 	public static void reportStatus(
 			@In("id") String id,
- 			@In("currentLinkSensor") Sensor<Id> currentLinkSensor,
+ 			@In("currentLink") Id currentLink,
 			@In("position") Coord position,
 			@In("dstLinkId") Id dstLinkId,
 			@In("route") List<Id> route,
 			@In("clock") CurrentTimeProvider clock,
 			@In("router") MATSimRouter router,
-			@In("speed") Double speed) {
+			@In("speed") Double speed,
+			@In("otherVehicleLink") Id otherVehicleLink) {
 		
 		Log.d("Entry [" + id + "]:reportStatus");
-
-		Id currentLinkId = currentLinkSensor.read();
-		Coord currentPos = router.findLinkById(currentLinkId).getCoord();
 		
-		System.out.format("[%s] %s, pos: %s (%.0f, %.0f), dst: %s, speed: %.0f\n",
+		System.out.format("%s %s, pos: %s, dst: %s, speed: %.0f, otherPos: %s%n",
 				formatTime(clock.getCurrentMilliseconds()),
 				id,
-				currentLinkId.toString(),
-				currentPos.getX(),
-				currentPos.getY(),
+				printPos(currentLink, router),
 				dstLinkId.toString(),
-				speed);
+				speed,
+				printPos(otherVehicleLink, router));
+	}
+	
+	private static String printPos(Id linkId, MATSimRouter router) {
+		if(linkId == null) {
+			return "UNKNOWN";
+		}
+		Coord coord = router.findLinkById(linkId).getCoord();
+		return String.format("%s (%.0f, %.0f)", linkId.toString(), coord.getX(), coord.getY());
 	}
 
 	/**

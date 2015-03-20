@@ -55,12 +55,14 @@ public class VehicleTravelExample {
 		DEECoNode nodeA = realm.createNode(42, agentA); // DEECO node with Id and agent as plug-in
 		Vehicle vehicleA = new Vehicle("Vehicle A", new CoordImpl(100000, 100000), agentA); // DEECO component controlling the vehicle
 		nodeA.deployComponent(vehicleA);
+		nodeA.deployEnsemble(OtherVehicleEnsemble.class);
 
 		// Node hosting vehicle B
 		MATSimVehicle agentB = new MATSimVehicle(new CoordImpl(0, 100000)); // MATSim agent with start position
 		DEECoNode nodeB = realm.createNode(45, agentB); // DEECO node with Id and agent as plug-in
 		Vehicle vehicleB = new Vehicle("Vehicle B", new CoordImpl(0, 100000), agentB); // DEECO component controlling the vehicle
 		nodeB.deployComponent(vehicleB);
+		nodeB.deployEnsemble(OtherVehicleEnsemble.class);
 
 		// Simulate for specified time
 		realm.start(600000);
