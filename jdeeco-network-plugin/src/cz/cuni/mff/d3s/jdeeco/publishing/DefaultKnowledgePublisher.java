@@ -139,7 +139,7 @@ public class DefaultKnowledgePublisher implements DEECoPlugin, TimerTaskListener
 
 	@Override
 	public void at(long time, Object triger) {
-		System.out.println("Publisher called at: " + time);
+		Log.d("Publisher called at: " + time);
 
 		// Get knowledge and distribute it
 		for (KnowledgeData data : getLocalKnowledgeData()) {

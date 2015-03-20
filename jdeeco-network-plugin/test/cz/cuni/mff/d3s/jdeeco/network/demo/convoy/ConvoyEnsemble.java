@@ -18,7 +18,7 @@ import cz.cuni.mff.d3s.deeco.task.ParamHolder;
  *
  */
 @Ensemble
-@PeriodicScheduling(period=100)
+@PeriodicScheduling(period=1000)
 public class ConvoyEnsemble {
 
 	@Membership
