@@ -22,9 +22,7 @@ import cz.cuni.mff.d3s.jdeeco.matsim.old.matsim.JDEECoAgent;
 import cz.cuni.mff.d3s.jdeeco.matsim.old.matsim.JDEECoAgentSource;
 import cz.cuni.mff.d3s.jdeeco.matsim.old.matsim.MATSimRouter;
 import cz.cuni.mff.d3s.jdeeco.matsim.old.roadtrains.MATSimDataProviderReceiver;
-import cz.cuni.mff.d3s.jdeeco.matsim.old.simulation.DirectKnowledgeDataHandler;
 import cz.cuni.mff.d3s.jdeeco.matsim.old.simulation.DirectSimulationHost;
-import cz.cuni.mff.d3s.jdeeco.matsim.old.simulation.NetworkDataHandler;
 
 /**
  * Plug-in providing MATSim simulation
@@ -36,7 +34,7 @@ public class MATSimSimulation implements DEECoPlugin {
 	class TimerProvider implements SimulationTimer {
 		@Override
 		public void notifyAt(long time, TimerEventListener listener, DEECoContainer node) {
-//			System.out.println("NOTIFY AT CALLED FOR: " + time + " NODE:" + node.getId());
+			// System.out.println("NOTIFY AT CALLED FOR: " + time + " NODE:" + node.getId());
 			MATSimSimulation.this.oldSimulation.callAt(time, String.valueOf(node.getId()));
 			hosts.get(node.getId()).listener = listener;
 		}
@@ -48,67 +46,59 @@ public class MATSimSimulation implements DEECoPlugin {
 
 		@Override
 		public void start(long duration) {
-			MATSimSimulation.this.oldSimulation.getControler().getConfig().getQSimConfigGroup().setEndTime(((double)(duration)) / 1000);
+			MATSimSimulation.this.oldSimulation.getControler().getConfig().getQSimConfigGroup()
+					.setEndTime(((double) (duration)) / 1000);
 			MATSimSimulation.this.oldSimulation.run();
 		}
 	}
-	
+
 	class Host extends DirectSimulationHost {
 		public TimerEventListener listener;
 
-		public Host(String id, CurrentTimeProvider timeProvider, NetworkDataHandler handler) {
-			super(id, timeProvider, handler);
+		public Host(String id, CurrentTimeProvider timeProvider) {
+			super(id, timeProvider);
 			// TODO Auto-generated constructor stub
 		}
-		
+
 		@Override
 		public void at(double absoluteTime) {
-//			System.out.println("CALLBACK CALLED AT: " + getCurrentMilliseconds() + " NODE: " + getHostId());
+			// System.out.println("CALLBACK CALLED AT: " + getCurrentMilliseconds() + " NODE: " + getHostId());
 			listener.at(getCurrentMilliseconds());
 		}
-		
+
 	}
-	
+
 	private final Map<Integer, Host> hosts = new HashMap<>();
-	
+
 	private final TimerProvider timer = new TimerProvider();
 	private final cz.cuni.mff.d3s.jdeeco.matsim.old.matsim.MATSimSimulation oldSimulation;
 	private final JDEECoAgentSource agentSource = new JDEECoAgentSource();
-	private final MATSimRouter router; 
-	private final MATSimDataProviderReceiver matSimProviderReceiver = new MATSimDataProviderReceiver(new LinkedList<String>());
-	
+	private final MATSimRouter router;
+	private final MATSimDataProviderReceiver matSimProviderReceiver = new MATSimDataProviderReceiver(
+			new LinkedList<String>());
+
 	public MATSimSimulation(String mapFile) throws IOException {
-		NetworkDataHandler networkHandler = new DirectKnowledgeDataHandler();
-		
 		File config = MATSimConfigGenerator.writeToTemp(mapFile);
-		
-		oldSimulation = new cz.cuni.mff.d3s.jdeeco.matsim.old.matsim.MATSimSimulation(
-				matSimProviderReceiver,
-				matSimProviderReceiver,
-				new DefaultMATSimUpdater(),
-				new DefaultMATSimExtractor(),
-				networkHandler,
-				Arrays.asList(agentSource),
-				config.getAbsolutePath());
-		
-		router = new MATSimRouter(
-				oldSimulation.getControler(), 
-				oldSimulation.getTravelTime(),
-				10 /* TODO: FAKE VALUE */);
+
+		oldSimulation = new cz.cuni.mff.d3s.jdeeco.matsim.old.matsim.MATSimSimulation(matSimProviderReceiver,
+				matSimProviderReceiver, new DefaultMATSimUpdater(), new DefaultMATSimExtractor(),
+				Arrays.asList(agentSource), config.getAbsolutePath());
+
+		router = new MATSimRouter(oldSimulation.getControler(), oldSimulation.getTravelTime(), 10 /* TODO: FAKE VALUE */);
 	}
-	
+
 	public SimulationTimer getTimer() {
 		return timer;
 	}
-	
+
 	public MATSimRouter getRouter() {
 		return router;
 	}
-	
+
 	public MATSimDataProviderReceiver getMATSimProviderReceiver() {
 		return matSimProviderReceiver;
 	}
-	
+
 	public void addVehicle(int vehicleId, Id startLink) {
 		agentSource.addAgent(new JDEECoAgent(new IdImpl(vehicleId), startLink));
 	}
@@ -121,10 +111,10 @@ public class MATSimSimulation implements DEECoPlugin {
 
 	@Override
 	public void init(DEECoContainer container) {
-		Host host = new Host(String.valueOf(container.getId()), oldSimulation, null);
-		
+		Host host = new Host(String.valueOf(container.getId()), oldSimulation);
+
 		hosts.put(container.getId(), host);
-		
+
 		oldSimulation.addHost(String.valueOf(container.getId()), host);
 	}
 }

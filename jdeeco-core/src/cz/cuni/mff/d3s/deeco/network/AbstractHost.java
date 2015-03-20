@@ -2,26 +2,19 @@ package cz.cuni.mff.d3s.deeco.network;
 
 import cz.cuni.mff.d3s.deeco.timer.CurrentTimeProvider;
 
-@SuppressWarnings("rawtypes")
 public abstract class AbstractHost implements CurrentTimeProvider {
-
 	protected final String id;
 	protected final CurrentTimeProvider timeProvider;
-	
+
 	protected AbstractHost(String id, CurrentTimeProvider timeProvider) {
 		this.id = id;
 		this.timeProvider = timeProvider;
 	}
-	
+
 	public String getHostId() {
 		return id;
 	}
-	
-	public abstract DataSender getDataSender();
 
-	public abstract void addDataReceiver(DataReceiver dataReceiver);
-
-	
 	public long getCurrentMilliseconds() {
 		return timeProvider.getCurrentMilliseconds();
 	}
@@ -50,6 +43,4 @@ public abstract class AbstractHost implements CurrentTimeProvider {
 			return false;
 		return true;
 	}
-	
-	
 }

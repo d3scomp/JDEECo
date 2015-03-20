@@ -18,7 +18,6 @@ import org.matsim.withinday.trafficmonitoring.TravelTimeCollectorFactory;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.jdeeco.matsim.old.simulation.DirectSimulationHost;
-import cz.cuni.mff.d3s.jdeeco.matsim.old.simulation.NetworkDataHandler;
 import cz.cuni.mff.d3s.jdeeco.matsim.old.simulation.Simulation;
 
 public class MATSimSimulation extends Simulation implements MATSimSimulationStepListener {
@@ -37,13 +36,10 @@ public class MATSimSimulation extends Simulation implements MATSimSimulationStep
 	private final Map<String, DirectSimulationHost> hosts;
 	private final MATSimExtractor extractor;
 
-	private final NetworkDataHandler knowledgeDataHandler;
-
 	public MATSimSimulation(MATSimDataReceiver matSimReceiver,
-			MATSimDataProvider matSimProvider, MATSimUpdater updater, MATSimExtractor extractor, NetworkDataHandler knowledgeDataHandler,
+			MATSimDataProvider matSimProvider, MATSimUpdater updater, MATSimExtractor extractor,
 			final Collection<? extends AdditionAwareAgentSource> agentSources,
 			String matSimConf) {
-		this.knowledgeDataHandler = knowledgeDataHandler;
 		this.callbacks = new TreeSet<>();
 		this.hostIdToCallback = new HashMap<>();
 		this.hosts = new HashMap<>();
@@ -106,7 +102,7 @@ public class MATSimSimulation extends Simulation implements MATSimSimulationStep
 		
 		DirectSimulationHost host = hosts.get(id);
 		if (host == null) {
-			host = new DirectSimulationHost(id, this, knowledgeDataHandler);
+			host = new DirectSimulationHost(id, this);
 			hosts.put(id, host);
 		}
 		return host;
