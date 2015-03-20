@@ -32,10 +32,8 @@ import cz.cuni.mff.d3s.deeco.timer.Timer;
  * @author Filip Krijt <krijt@d3s.mff.cuni.cz>
  */
 public class DEECoNode implements DEECoContainer {
-
 	/** 
-	 * TODO find a way to inject this field from the DEECoRealm (probably via the constructor here?)
-	 * TODO decide type of this field
+	 * Node identification in the network
 	 */
 	final int nodeId;
 	
