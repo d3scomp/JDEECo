@@ -8,10 +8,10 @@ import java.util.Map;
 import org.matsim.api.core.v01.Id;
 import org.matsim.core.basic.v01.IdImpl;
 
-import cz.cuni.mff.d3s.jdeeco.matsim.old.matsim.MATSimDataProvider;
-import cz.cuni.mff.d3s.jdeeco.matsim.old.matsim.MATSimDataReceiver;
-import cz.cuni.mff.d3s.jdeeco.matsim.old.matsim.MATSimInput;
-import cz.cuni.mff.d3s.jdeeco.matsim.old.matsim.MATSimOutput;
+import cz.cuni.mff.d3s.deeco.simulation.matsim.MATSimDataProvider;
+import cz.cuni.mff.d3s.deeco.simulation.matsim.MATSimDataReceiver;
+import cz.cuni.mff.d3s.deeco.simulation.matsim.MATSimInput;
+import cz.cuni.mff.d3s.deeco.simulation.matsim.MATSimOutput;
 
 public class MATSimDataProviderReceiver implements MATSimDataReceiver,
 		MATSimDataProvider {

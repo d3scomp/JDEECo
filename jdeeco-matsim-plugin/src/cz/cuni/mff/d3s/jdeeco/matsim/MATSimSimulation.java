@@ -12,14 +12,14 @@ import org.matsim.core.basic.v01.IdImpl;
 import cz.cuni.mff.d3s.deeco.network.AbstractHost;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
+import cz.cuni.mff.d3s.deeco.simulation.matsim.DefaultMATSimExtractor;
+import cz.cuni.mff.d3s.deeco.simulation.matsim.DefaultMATSimUpdater;
+import cz.cuni.mff.d3s.deeco.simulation.matsim.JDEECoAgent;
+import cz.cuni.mff.d3s.deeco.simulation.matsim.JDEECoAgentSource;
+import cz.cuni.mff.d3s.deeco.simulation.matsim.MATSimRouter;
 import cz.cuni.mff.d3s.deeco.timer.CurrentTimeProvider;
 import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
 import cz.cuni.mff.d3s.deeco.timer.TimerEventListener;
-import cz.cuni.mff.d3s.jdeeco.matsim.old.matsim.DefaultMATSimExtractor;
-import cz.cuni.mff.d3s.jdeeco.matsim.old.matsim.DefaultMATSimUpdater;
-import cz.cuni.mff.d3s.jdeeco.matsim.old.matsim.JDEECoAgent;
-import cz.cuni.mff.d3s.jdeeco.matsim.old.matsim.JDEECoAgentSource;
-import cz.cuni.mff.d3s.jdeeco.matsim.old.matsim.MATSimRouter;
 import cz.cuni.mff.d3s.jdeeco.matsim.old.roadtrains.MATSimDataProviderReceiver;
 
 /**
@@ -66,7 +66,7 @@ public class MATSimSimulation implements DEECoPlugin {
 	}
 	
 	private final TimerProvider timer = new TimerProvider();
-	private final cz.cuni.mff.d3s.jdeeco.matsim.old.matsim.MATSimSimulation oldSimulation;
+	private final cz.cuni.mff.d3s.deeco.simulation.matsim.MATSimSimulation oldSimulation;
 	private final JDEECoAgentSource agentSource = new JDEECoAgentSource();
 	private final MATSimRouter router;
 	private final MATSimDataProviderReceiver matSimProviderReceiver = new MATSimDataProviderReceiver(
@@ -75,7 +75,7 @@ public class MATSimSimulation implements DEECoPlugin {
 	public MATSimSimulation(String mapFile) throws IOException {
 		File config = MATSimConfigGenerator.writeToTemp(mapFile);
 
-		oldSimulation = new cz.cuni.mff.d3s.jdeeco.matsim.old.matsim.MATSimSimulation(matSimProviderReceiver,
+		oldSimulation = new cz.cuni.mff.d3s.deeco.simulation.matsim.MATSimSimulation(matSimProviderReceiver,
 				matSimProviderReceiver, new DefaultMATSimUpdater(), new DefaultMATSimExtractor(),
 				Arrays.asList(agentSource), config.getAbsolutePath());
 

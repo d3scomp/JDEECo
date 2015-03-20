@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.jdeeco.matsim.old.matsim;
+package cz.cuni.mff.d3s.deeco.simulation.matsim;
 
 import java.util.LinkedList;
 import java.util.List;
