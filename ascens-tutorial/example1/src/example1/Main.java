@@ -15,12 +15,10 @@ import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework;
-import cz.cuni.mff.d3s.deeco.simulation.DirectSimulationHost;
-import cz.cuni.mff.d3s.deeco.simulation.SimulationRuntimeBuilder;
-import cz.cuni.mff.d3s.deeco.simulation.matsim.JDEECoAgent;
-import cz.cuni.mff.d3s.deeco.simulation.matsim.JDEECoAgentSource;
-import cz.cuni.mff.d3s.deeco.simulation.matsim.MATSimRouter;
-import cz.cuni.mff.d3s.deeco.simulation.matsim.MATSimSimulation;
+import cz.cuni.mff.d3s.jdeeco.matsim.old.matsim.JDEECoAgent;
+import cz.cuni.mff.d3s.jdeeco.matsim.old.matsim.JDEECoAgentSource;
+import cz.cuni.mff.d3s.jdeeco.matsim.old.matsim.MATSimRouter;
+import cz.cuni.mff.d3s.jdeeco.matsim.old.matsim.MATSimSimulation;
 
 public class Main {
 
