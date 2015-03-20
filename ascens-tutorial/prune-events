@@ -1,0 +1,2 @@
+#!/bin/sh
+gunzip -c $1/matsim/ITERS/it.0/0.events.xml.gz | sed -ne '1,2p;/person="V/p;$p' > $1/matsim/ITERS/it.0/0.events-pruned.xml
