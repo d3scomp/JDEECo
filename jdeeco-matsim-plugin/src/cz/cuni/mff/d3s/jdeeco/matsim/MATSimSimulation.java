@@ -12,6 +12,7 @@ import org.matsim.core.basic.v01.IdImpl;
 import cz.cuni.mff.d3s.deeco.network.AbstractHost;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
+import cz.cuni.mff.d3s.deeco.simulation.matsim.AdditionAwareAgentSource;
 import cz.cuni.mff.d3s.deeco.simulation.matsim.DefaultMATSimExtractor;
 import cz.cuni.mff.d3s.deeco.simulation.matsim.DefaultMATSimUpdater;
 import cz.cuni.mff.d3s.deeco.simulation.matsim.JDEECoAgent;
@@ -72,12 +73,16 @@ public class MATSimSimulation implements DEECoPlugin {
 	private final MATSimDataProviderReceiver matSimProviderReceiver = new MATSimDataProviderReceiver(
 			new LinkedList<String>());
 
-	public MATSimSimulation(String mapFile) throws IOException {
+	public MATSimSimulation(String mapFile, AdditionAwareAgentSource... additionalAgentSources) throws IOException {
 		File config = MATSimConfigGenerator.writeToTemp(mapFile);
+		
+		List<AdditionAwareAgentSource> agentSources = new LinkedList<>();
+		agentSources.add(agentSource);
+		agentSources.addAll(Arrays.asList(additionalAgentSources));
 
 		oldSimulation = new cz.cuni.mff.d3s.deeco.simulation.matsim.MATSimSimulation(matSimProviderReceiver,
 				matSimProviderReceiver, new DefaultMATSimUpdater(), new DefaultMATSimExtractor(),
-				Arrays.asList(agentSource), config.getAbsolutePath());
+				agentSources, config.getAbsolutePath());
 
 		router = new MATSimRouter(oldSimulation.getControler(), oldSimulation.getTravelTime(), 10 /* TODO: FAKE VALUE */);
 	}
