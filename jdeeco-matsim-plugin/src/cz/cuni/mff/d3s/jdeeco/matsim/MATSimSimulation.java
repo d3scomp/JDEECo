@@ -3,10 +3,8 @@ package cz.cuni.mff.d3s.jdeeco.matsim;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.matsim.api.core.v01.Id;
 import org.matsim.core.basic.v01.IdImpl;
@@ -36,7 +34,7 @@ public class MATSimSimulation implements DEECoPlugin {
 		public void notifyAt(long time, TimerEventListener listener, DEECoContainer node) {
 			// System.out.println("NOTIFY AT CALLED FOR: " + time + " NODE:" + node.getId());
 			MATSimSimulation.this.oldSimulation.callAt(time, String.valueOf(node.getId()));
-			hosts.get(node.getId()).listener = listener;
+			oldSimulation.getHost(String.valueOf(node.getId())).listener = listener;
 		}
 
 		@Override
@@ -66,9 +64,7 @@ public class MATSimSimulation implements DEECoPlugin {
 		}
 
 	}
-
-	private final Map<Integer, Host> hosts = new HashMap<>();
-
+	
 	private final TimerProvider timer = new TimerProvider();
 	private final cz.cuni.mff.d3s.jdeeco.matsim.old.matsim.MATSimSimulation oldSimulation;
 	private final JDEECoAgentSource agentSource = new JDEECoAgentSource();
@@ -111,8 +107,6 @@ public class MATSimSimulation implements DEECoPlugin {
 	@Override
 	public void init(DEECoContainer container) {
 		Host host = new Host(String.valueOf(container.getId()), oldSimulation);
-
-		hosts.put(container.getId(), host);
 
 		oldSimulation.addHost(String.valueOf(container.getId()), host);
 	}

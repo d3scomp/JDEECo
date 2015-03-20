@@ -17,7 +17,6 @@ import org.matsim.withinday.trafficmonitoring.TravelTimeCollector;
 import org.matsim.withinday.trafficmonitoring.TravelTimeCollectorFactory;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.network.AbstractHost;
 import cz.cuni.mff.d3s.jdeeco.matsim.old.simulation.Simulation;
 
 public class MATSimSimulation extends Simulation implements MATSimSimulationStepListener {
@@ -33,7 +32,7 @@ public class MATSimSimulation extends Simulation implements MATSimSimulationStep
 	private final JDEECoWithinDayMobsimListener listener;
 	private final MATSimDataProvider matSimProvider;
 	private final MATSimDataReceiver matSimReceiver;
-	private final Map<String, AbstractHost> hosts;
+	private final Map<String, cz.cuni.mff.d3s.jdeeco.matsim.MATSimSimulation.Host> hosts;
 	private final MATSimExtractor extractor;
 
 	public MATSimSimulation(MATSimDataReceiver matSimReceiver, MATSimDataProvider matSimProvider,
@@ -81,11 +80,11 @@ public class MATSimSimulation extends Simulation implements MATSimSimulationStep
 		currentMilliseconds = secondsToMilliseconds(controler.getConfig().getQSimConfigGroup().getStartTime());
 	}
 
-	public void addHost(String id, AbstractHost host) {
+	public void addHost(String id, cz.cuni.mff.d3s.jdeeco.matsim.MATSimSimulation.Host host) {
 		hosts.put(id, host);
 	}
 
-	public AbstractHost getHost(String id) {
+	public cz.cuni.mff.d3s.jdeeco.matsim.MATSimSimulation.Host getHost(String id) {
 		return hosts.get(id);
 	}
 
