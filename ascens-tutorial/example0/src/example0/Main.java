@@ -1,21 +1,15 @@
 package example0;
-import java.io.IOException;
-
-import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
-import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
-import cz.cuni.mff.d3s.deeco.runtime.RuntimeConfiguration;
-import cz.cuni.mff.d3s.deeco.runtime.RuntimeConfiguration.Distribution;
-import cz.cuni.mff.d3s.deeco.runtime.RuntimeConfiguration.Execution;
-import cz.cuni.mff.d3s.deeco.runtime.RuntimeConfiguration.Scheduling;
-import cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework;
-import cz.cuni.mff.d3s.deeco.runtime.RuntimeFrameworkBuilder;
+import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
+import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
+import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
+import cz.cuni.mff.d3s.deeco.timer.DiscreteEventTimer;
+import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
 
 public class Main {
 
-	public static void main(String[] args) throws AnnotationProcessorException,	IOException, InterruptedException {
-		AnnotationProcessor processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE);
+	public static void main(String[] args) throws AnnotationProcessorException, /*IOException, InterruptedException,*/ DEECoException {
+	/*	AnnotationProcessor processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE);
 		RuntimeMetadata model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
 		
 		processor.process(model, new HelloWorld("HELLO"));
@@ -26,6 +20,13 @@ public class Main {
 						Distribution.LOCAL, 
 						Execution.SINGLE_THREADED));
 		RuntimeFramework runtime = builder.build(model); 
-		runtime.start();
+		runtime.start(); */
+		
+		SimulationTimer timer = new DiscreteEventTimer();
+		
+		DEECoContainer node = new DEECoNode(0, timer);
+		node.deployComponent(new HelloWorld("HELLO"));
+		
+		timer.start(10000);
 	}
 }
