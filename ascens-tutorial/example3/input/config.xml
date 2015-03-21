@@ -16,7 +16,8 @@
 	</module>
 	
 	<module name="scenario">
-	  	<param name="useTransit" value="true" />
+		<!--  TODO: Do we want to use transit -->
+	  	<param name="useTransit" value="false" />
  		<param name="useVehicles" value="true" />
 	</module>
 
