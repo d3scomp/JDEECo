@@ -8,12 +8,6 @@ import java.util.Set;
 import org.matsim.api.core.v01.Coord;
 import org.matsim.api.core.v01.Id;
 
-import tutorial.environment.Actuator;
-import tutorial.environment.ActuatorProvider;
-import tutorial.environment.ActuatorType;
-import tutorial.environment.Sensor;
-import tutorial.environment.SensorProvider;
-import tutorial.environment.SensorType;
 import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
@@ -22,8 +16,14 @@ import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.simulation.matsim.MATSimRouter;
-import cz.cuni.mff.d3s.deeco.simulation.matsim.MATSimTimeProvider;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
+import cz.cuni.mff.d3s.deeco.timer.CurrentTimeProvider;
+import cz.cuni.mff.d3s.jdeeco.matsim.old.roadtrains.Actuator;
+import cz.cuni.mff.d3s.jdeeco.matsim.old.roadtrains.ActuatorProvider;
+import cz.cuni.mff.d3s.jdeeco.matsim.old.roadtrains.ActuatorType;
+import cz.cuni.mff.d3s.jdeeco.matsim.old.roadtrains.Sensor;
+import cz.cuni.mff.d3s.jdeeco.matsim.old.roadtrains.SensorProvider;
+import cz.cuni.mff.d3s.jdeeco.matsim.old.roadtrains.SensorType;
 
 @Component
 public class VehicleComponent {
@@ -80,11 +80,11 @@ public class VehicleComponent {
 	@Local public Sensor<Integer> currentLinkFreeCapacitySensor;
 	
 	@Local public MATSimRouter router;
-	@Local public MATSimTimeProvider clock;
+	@Local public CurrentTimeProvider clock;
 
 	@Local public Random random;
 
-	public VehicleComponent(String id, ActuatorProvider actuatorProvider, SensorProvider sensorProvider, MATSimRouter router, MATSimTimeProvider clock) {
+	public VehicleComponent(String id, ActuatorProvider actuatorProvider, SensorProvider sensorProvider, MATSimRouter router, CurrentTimeProvider clock) {
 		this.id = id;
 
 		this.state = State.WAITING;
@@ -114,7 +114,7 @@ public class VehicleComponent {
 			@In("isParkedSensor") Sensor<Boolean> isParkedSensor,
 			@In("destinationLink") Id destinationLink,
 			@In("route") List<Id> route,
-			@In("clock") MATSimTimeProvider clock
+			@In("clock") CurrentTimeProvider clock
 			) {
 		
 		System.out.format("<%s> [%s]  state: %s  currentLink: %s  position: %s  isParked: %s  destinationLink: %s  route: %s\n", getTime(clock), id, state, currentLinkSensor.read(), position, isParkedSensor.read(), destinationLink, route);
@@ -136,7 +136,7 @@ public class VehicleComponent {
 			@In("currentLinkSensor") Sensor<Id> currentLinkSensor,
 			@In("isParkedSensor") Sensor<Boolean> isParkedSensor,
 			@In("routeActuator") Actuator<List<Id>> routeActuator,
-			@In("clock") MATSimTimeProvider clock,
+			@In("clock") CurrentTimeProvider clock,
 			@In("router") MATSimRouter router,
 			@In("random") Random random) {
 		
@@ -147,7 +147,7 @@ public class VehicleComponent {
 			state.value = State.FOLLOWING;
 			destinationLink.value = leaderDestinationLink;
 			
-		} else if (state.value == State.WAITING && clock.getMATSimSeconds() > startTimeSecs.value) {
+		} else if (state.value == State.WAITING && clock.getCurrentMilliseconds() > startTimeSecs.value) {
 			
 			// Select random destination
 			Set<Id> linkIds = router.getLinks().keySet();			
@@ -167,7 +167,7 @@ public class VehicleComponent {
 			
 		} else if (state.value == State.DRIVING && isParked) {			
 			state.value = State.WAITING;
-			startTimeSecs.value = clock.getMATSimSeconds() + TIME_BETWEEN_DRIVING;
+			startTimeSecs.value = clock.getCurrentMilliseconds() + TIME_BETWEEN_DRIVING;
 
 			System.out.format("<%s> [%s]  vehicle reached its destination\n", getTime(clock), id);
 		}
@@ -180,8 +180,8 @@ public class VehicleComponent {
 		position.value = router.getLink(currentLink).getCoord();
 	}
 	
-	private static String getTime(MATSimTimeProvider clock) {
-		long ts = clock.getMATSimMilliseconds();
+	private static String getTime(CurrentTimeProvider clock) {
+		long ts = clock.getCurrentMilliseconds();
 		int msec = (int)(ts % 1000); ts = ts / 1000;
 		int sec = (int)(ts % 60); ts = ts / 60;  
 		int min = (int)(ts % 60); ts = ts / 60;
