@@ -7,12 +7,12 @@ import java.util.Set;
 
 import org.matsim.api.core.v01.Id;
 
-import tutorial.environment.Actuator;
-import tutorial.environment.ActuatorProvider;
-import tutorial.environment.ActuatorType;
-import tutorial.environment.Sensor;
-import tutorial.environment.SensorProvider;
-import tutorial.environment.SensorType;
+//import tutorial.environment.Actuator;
+//import tutorial.environment.ActuatorProvider;
+//import tutorial.environment.ActuatorType;
+//import tutorial.environment.Sensor;
+//import tutorial.environment.SensorProvider;
+//import tutorial.environment.SensorType;
 import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
@@ -22,6 +22,12 @@ import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.simulation.matsim.MATSimRouter;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 import cz.cuni.mff.d3s.deeco.timer.CurrentTimeProvider;
+import cz.cuni.mff.d3s.jdeeco.matsim.old.roadtrains.Actuator;
+import cz.cuni.mff.d3s.jdeeco.matsim.old.roadtrains.ActuatorProvider;
+import cz.cuni.mff.d3s.jdeeco.matsim.old.roadtrains.ActuatorType;
+import cz.cuni.mff.d3s.jdeeco.matsim.old.roadtrains.Sensor;
+import cz.cuni.mff.d3s.jdeeco.matsim.old.roadtrains.SensorProvider;
+import cz.cuni.mff.d3s.jdeeco.matsim.old.roadtrains.SensorType;
 
 @Component
 public class VehicleComponent {
