@@ -65,6 +65,7 @@ public class Main {
 		
 		// Overrides end time specified in the MATSim configuration
 		simulation.start(2900000);
+		Log.i("Simulation Finished");
 		
 		
 	/*	jdeecoAgentSource = new JDEECoAgentSource();
@@ -88,8 +89,9 @@ public class Main {
 		createAndDeployVehicleComponent(3, "22_3");
 		createAndDeployVehicleComponent(4, "59_3");		
 		
-		simulation.run();*/
+		simulation.run();
 		Log.i("Simulation Finished");
+		*/
 	}
 	
 	private static void createAndDeployVehicleComponent(int idx, String sourceLinkIdString) throws AnnotationProcessorException, InstantiationException, IllegalAccessException, DEECoException {
