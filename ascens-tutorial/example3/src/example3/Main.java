@@ -1,6 +1,6 @@
 package example3;
+import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
@@ -9,84 +9,76 @@ import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.population.Population;
 import org.matsim.core.basic.v01.IdImpl;
 
-import tutorial.environment.MATSimDataProviderReceiver;
 import tutorial.matsim.PopulationAgentSource;
-import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
-import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
-import cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework;
-import cz.cuni.mff.d3s.deeco.simulation.DirectSimulationHost;
-import cz.cuni.mff.d3s.deeco.simulation.SimulationRuntimeBuilder;
-import cz.cuni.mff.d3s.deeco.simulation.matsim.JDEECoAgent;
-import cz.cuni.mff.d3s.deeco.simulation.matsim.JDEECoAgentSource;
-import cz.cuni.mff.d3s.deeco.simulation.matsim.MATSimRouter;
-import cz.cuni.mff.d3s.deeco.simulation.matsim.MATSimSimulation;
+import cz.cuni.mff.d3s.deeco.runners.DEECoSimulation;
+import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
+import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
+import cz.cuni.mff.d3s.jdeeco.matsim.MATSimSimulation;
+import cz.cuni.mff.d3s.jdeeco.matsim.MATSimVehicle;
+import cz.cuni.mff.d3s.jdeeco.network.Network;
+import cz.cuni.mff.d3s.jdeeco.network.device.BroadcastLoopback;
+import cz.cuni.mff.d3s.jdeeco.network.l2.strategy.KnowledgeInsertingStrategy;
+import cz.cuni.mff.d3s.jdeeco.publishing.DefaultKnowledgePublisher;
 
 public class Main {
 
 	private static final String MATSIM_CONFIG_CUSTOM = "input/config.xml";
 	
-	private static JDEECoAgentSource jdeecoAgentSource;
-	private static MATSimSimulation simulation;
-	private static MATSimRouter router;
-	private static MATSimDataProviderReceiver matSimProviderReceiver;
-	
-	private static AnnotationProcessor processor;
-	private static SimulationRuntimeBuilder builder;
+	private static MATSimSimulation matSim;
+	private static DEECoSimulation simulation; 
 
 	private static Random random = new Random(329884L);
 	
-	public static void main(String[] args) throws AnnotationProcessorException,	IOException {
+	public static void main(String[] args) throws AnnotationProcessorException,	IOException, InstantiationException, IllegalAccessException, DEECoException {
 		Log.i("Preparing simulation");
-
-		jdeecoAgentSource = new JDEECoAgentSource();
+		
 		PopulationAgentSource populationAgentSource = new PopulationAgentSource();
 		
-		matSimProviderReceiver = new MATSimDataProviderReceiver();
-		simulation = new MATSimSimulation(matSimProviderReceiver, matSimProviderReceiver, Arrays.asList(jdeecoAgentSource, populationAgentSource), MATSIM_CONFIG_CUSTOM);
-		reducePopulation(simulation.getControler().getPopulation());
-		populationAgentSource.setPopulation(simulation.getControler().getPopulation());
+		matSim = new MATSimSimulation(new File(MATSIM_CONFIG_CUSTOM), populationAgentSource);
 		
-		router = new MATSimRouter(simulation.getControler(), simulation.getTravelTime());
-		matSimProviderReceiver.setRouter(router);
-
+		reducePopulation(matSim.getController().getPopulation());
+		populationAgentSource.setPopulation(matSim.getController().getPopulation());
+		
+		simulation = new DEECoSimulation(matSim.getTimer());
+		// Add MATSim plug-in for all nodes
+		simulation.addPlugin(matSim);
+		
+		// Configure loop-back networking for all nodes
+		simulation.addPlugin(new BroadcastLoopback());
+		simulation.addPlugin(Network.class);
+		simulation.addPlugin(DefaultKnowledgePublisher.class);
+		simulation.addPlugin(KnowledgeInsertingStrategy.class);
+		
+		
 		Log.i("Creating components");
-
-		processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE);
-		builder = new SimulationRuntimeBuilder();
-
+		
 		for (int i=1; i <= 20; i++) {
 			createAndDeployVehicleComponent(i, getRandomLink().toString(), "22_3");
 		}
 		
-		simulation.run();
+		// Overrides end time specified in the MATSim configuration
+		simulation.start(2900000);
+		
 		Log.i("Simulation Finished");
 	}
 	
-	private static void createAndDeployVehicleComponent(int idx, String sourceLinkIdString, String destLinkIdString) throws AnnotationProcessorException {
+	private static void createAndDeployVehicleComponent(int idx, String sourceLinkIdString, String destLinkIdString) throws AnnotationProcessorException, InstantiationException, IllegalAccessException, DEECoException {
 		String compIdString = "V" + idx;
-		Id compId = new IdImpl(compIdString);
 		Id sourceLinkId = new IdImpl(sourceLinkIdString);
-		Id destLinkId = new  IdImpl(destLinkIdString);
-
-		jdeecoAgentSource.addAgent(new JDEECoAgent(compId, sourceLinkId));
-
-		VehicleComponent component = new VehicleComponent(compIdString, destLinkId, 
-				matSimProviderReceiver.getActuatorProvider(compId), matSimProviderReceiver.getSensorProvider(compId), router, simulation);
 		
-		RuntimeMetadata model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
-		processor.process(model, component, CapacityExchangeEnsemble.class);
+		MATSimVehicle agent = new MATSimVehicle(sourceLinkId); // MATSim agent with start position
+		DEECoNode node = simulation.createNode(idx, agent); // DEECO node with Id and agent as plug-in
 		
-		DirectSimulationHost host = simulation.getHost(compIdString);
-		RuntimeFramework runtime = builder.build(host, simulation, model, null, null);
-		runtime.start();		
+		VehicleComponent component = new VehicleComponent(compIdString, new IdImpl(destLinkIdString),
+				agent.getActuatorProvider(), agent.getSensorProvider(), matSim.getRouter(), agent.getSimulation().getTimer());
+		node.deployComponent(component);
 	}
 	
 	private static Id getRandomLink() {
 		Id result = null;
-		Set<Id> linkIds = router.getLinks().keySet();			
+		Set<Id> linkIds = matSim.getRouter().getLinks().keySet();			
 
 		int nth = random.nextInt(linkIds.size());
 		for (Iterator<Id> iter = linkIds.iterator(); nth>=0; nth--) {

@@ -15,12 +15,6 @@ import org.matsim.api.core.v01.Coord;
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.network.Link;
 
-import tutorial.environment.Actuator;
-import tutorial.environment.ActuatorProvider;
-import tutorial.environment.ActuatorType;
-import tutorial.environment.Sensor;
-import tutorial.environment.SensorProvider;
-import tutorial.environment.SensorType;
 import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
@@ -30,8 +24,14 @@ import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.simulation.matsim.MATSimRouter;
-import cz.cuni.mff.d3s.deeco.simulation.matsim.MATSimTimeProvider;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
+import cz.cuni.mff.d3s.deeco.timer.CurrentTimeProvider;
+import cz.cuni.mff.d3s.jdeeco.matsim.old.roadtrains.Actuator;
+import cz.cuni.mff.d3s.jdeeco.matsim.old.roadtrains.ActuatorProvider;
+import cz.cuni.mff.d3s.jdeeco.matsim.old.roadtrains.ActuatorType;
+import cz.cuni.mff.d3s.jdeeco.matsim.old.roadtrains.Sensor;
+import cz.cuni.mff.d3s.jdeeco.matsim.old.roadtrains.SensorProvider;
+import cz.cuni.mff.d3s.jdeeco.matsim.old.roadtrains.SensorType;
 
 @Component
 public class VehicleComponent {
@@ -108,9 +108,9 @@ public class VehicleComponent {
 	@Local public Sensor<Integer> currentLinkFreeCapacitySensor;
 	
 	@Local public MATSimRouter router;
-	@Local public MATSimTimeProvider clock;
+	@Local public CurrentTimeProvider clock;
 
-	public VehicleComponent(String id, Id destinationLink, ActuatorProvider actuatorProvider, SensorProvider sensorProvider, MATSimRouter router, MATSimTimeProvider clock) {
+	public VehicleComponent(String id, Id destinationLink, ActuatorProvider actuatorProvider, SensorProvider sensorProvider, MATSimRouter router, CurrentTimeProvider clock) {
 		this.id = id;
 
 		this.destinationLink = destinationLink;
@@ -138,12 +138,12 @@ public class VehicleComponent {
 			@In("destinationLink") Id destinationLink,
 			@In("linkToBeParkedAt") Id linkToBeParkedAt,
 			@In("route") List<Id> route,
-			@In("clock") MATSimTimeProvider clock
+			@In("clock") CurrentTimeProvider clock
 			) {
 		
 		Log.d("Entry [" + id + "]:reportStatus");
 
-		long ts = clock.getMATSimMilliseconds();
+		long ts = clock.getCurrentMilliseconds();
 		int msec = (int)(ts % 1000); ts = ts / 1000;
 		int sec = (int)(ts % 60); ts = ts / 60;  
 		int min = (int)(ts % 60); ts = ts / 60;
@@ -178,17 +178,17 @@ public class VehicleComponent {
 			@In("currentLink") Id currentLink,
 			@In("currentLinkFreeCapacitySensor") Sensor<Integer> currentLinkFreeCapacitySensor,
 			@InOut("linksCapacity") ParamHolder<Map<Id, LinkCapacityEntry>> linksCapacity,
-			@In("clock") MATSimTimeProvider clock) {
+			@In("clock") CurrentTimeProvider clock) {
 		
 		Log.d("Entry [" + id + "]:updateOccupiedLinks");
 
-		linksCapacity.value.put(currentLink, new LinkCapacityEntry(clock.getMATSimMilliseconds(), currentLink, currentLinkFreeCapacitySensor.read()));
+		linksCapacity.value.put(currentLink, new LinkCapacityEntry(clock.getCurrentMilliseconds(), currentLink, currentLinkFreeCapacitySensor.read()));
 		
 		Iterator<Map.Entry<Id, LinkCapacityEntry>> entries = linksCapacity.value.entrySet().iterator();
 		while (entries.hasNext()) {
 		    Map.Entry<Id, LinkCapacityEntry> entry = entries.next();
 		    
-		    if (entry.getValue().timestamp + OCCUPIED_LINK_ENTRY_VALIDITY < clock.getMATSimMilliseconds()) {
+		    if (entry.getValue().timestamp + OCCUPIED_LINK_ENTRY_VALIDITY < clock.getCurrentMilliseconds()) {
 		    	entries.remove();
 		    }
 		}

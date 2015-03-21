@@ -14,5 +14,8 @@
 	<classpathentry kind="lib" path="lib/org.eclipse.emf.ecore-2.9.0-v20130528-0742.jar"/>
 	<classpathentry kind="lib" path="lib/org.eclipse.emf.ecore.xmi-2.9.0-v20130528-0742.jar"/>
 	<classpathentry kind="lib" path="lib/tutorial-common-0.0.1-SNAPSHOT.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/cz.cuni.mff.d3s.jdeeco.core"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/cz.cuni.mff.d3s.jdeeco.matsim"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/cz.cuni.mff.d3s.jdeeco.network"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
