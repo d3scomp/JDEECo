@@ -1,41 +1,39 @@
 package example1;
+import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Iterator;
 
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.population.Population;
-import org.matsim.core.basic.v01.IdImpl;
 
-import tutorial.environment.MATSimDataProviderReceiver;
 import tutorial.matsim.PopulationAgentSource;
-import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
-import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
-import cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework;
-import cz.cuni.mff.d3s.deeco.simulation.matsim.JDEECoAgent;
-import cz.cuni.mff.d3s.deeco.simulation.matsim.JDEECoAgentSource;
-import cz.cuni.mff.d3s.deeco.simulation.matsim.MATSimRouter;
-import cz.cuni.mff.d3s.deeco.simulation.matsim.MATSimSimulation;
+import cz.cuni.mff.d3s.jdeeco.matsim.MATSimSimulation;
 
 public class Main {
 
 	private static final String MATSIM_CONFIG_CUSTOM = "input/config.xml";
 	
-	private static JDEECoAgentSource jdeecoAgentSource;
+	/*private static JDEECoAgentSource jdeecoAgentSource;
 	private static MATSimSimulation simulation;
 	private static MATSimRouter router;
 	private static MATSimDataProviderReceiver matSimProviderReceiver;
 	
 	private static AnnotationProcessor processor;
 	private static SimulationRuntimeBuilder builder;
-
+*/
 	public static void main(String[] args) throws AnnotationProcessorException,	IOException {
 		Log.i("Preparing simulation");
+		
+		PopulationAgentSource populationAgentSource = new PopulationAgentSource();
+		
+		MATSimSimulation simulation = new MATSimSimulation(new File(MATSIM_CONFIG_CUSTOM), populationAgentSource);
+		
+//		reducePopulation(simulation.getControler().getPopulation());
+//		populationAgentSource.setPopulation(simulation.getControler().getPopulation());
 
-		jdeecoAgentSource = new JDEECoAgentSource();
+	/*	jdeecoAgentSource = new JDEECoAgentSource();
 		PopulationAgentSource populationAgentSource = new PopulationAgentSource();
 		
 		matSimProviderReceiver = new MATSimDataProviderReceiver();
@@ -56,12 +54,12 @@ public class Main {
 		createAndDeployVehicleComponent(3, "22_3");
 		createAndDeployVehicleComponent(4, "59_3");		
 		
-		simulation.run();
+		simulation.run();*/
 		Log.i("Simulation Finished");
 	}
 	
 	private static void createAndDeployVehicleComponent(int idx, String sourceLinkIdString) throws AnnotationProcessorException {
-		String compIdString = "V" + idx;
+	/*	String compIdString = "V" + idx;
 		Id compId = new IdImpl(compIdString);
 		Id sourceLinkId = new IdImpl(sourceLinkIdString);
 
@@ -75,7 +73,7 @@ public class Main {
 		
 		DirectSimulationHost host = simulation.getHost(compIdString);
 		RuntimeFramework runtime = builder.build(host, simulation, model, null, null);
-		runtime.start();		
+		runtime.start(); */		
 	}
 
 	/**
