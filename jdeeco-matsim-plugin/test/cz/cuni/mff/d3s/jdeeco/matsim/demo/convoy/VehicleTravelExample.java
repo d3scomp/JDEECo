@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.jdeeco.matsim.demo.convoy;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.junit.Rule;
@@ -36,7 +37,7 @@ public class VehicleTravelExample {
 	@Test
 	public void testTravel() throws AnnotationProcessorException, InterruptedException, DEECoException,
 			InstantiationException, IllegalAccessException, IOException {
-		MATSimSimulation matSim = new MATSimSimulation("maps/grid.xml");
+		MATSimSimulation matSim = new MATSimSimulation(new File("input/config.xml"));
 
 		// Create main application container
 		DEECoSimulation realm = new DEECoSimulation(matSim.getTimer());
