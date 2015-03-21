@@ -45,8 +45,10 @@ public class MATSimSimulation implements DEECoPlugin {
 
 		@Override
 		public void start(long duration) {
-			MATSimSimulation.this.oldSimulation.getControler().getConfig().getQSimConfigGroup()
-					.setEndTime(((double) (duration)) / 1000);
+			double startTime = MATSimSimulation.this.oldSimulation.getControler().getConfig().getQSimConfigGroup()
+					.getStartTime();
+			double endTime = startTime + (((double) (duration)) / 1000);
+			MATSimSimulation.this.oldSimulation.getControler().getConfig().getQSimConfigGroup().setEndTime(endTime);
 			MATSimSimulation.this.oldSimulation.run();
 		}
 	}
@@ -65,7 +67,7 @@ public class MATSimSimulation implements DEECoPlugin {
 		}
 
 	}
-	
+
 	private final TimerProvider timer = new TimerProvider();
 	private final cz.cuni.mff.d3s.deeco.simulation.matsim.MATSimSimulation oldSimulation;
 	private final JDEECoAgentSource agentSource = new JDEECoAgentSource();
@@ -73,16 +75,14 @@ public class MATSimSimulation implements DEECoPlugin {
 	private final MATSimDataProviderReceiver matSimProviderReceiver = new MATSimDataProviderReceiver(
 			new LinkedList<String>());
 
-	public MATSimSimulation(String mapFile, AdditionAwareAgentSource... additionalAgentSources) throws IOException {
-		File config = MATSimConfigGenerator.writeToTemp(mapFile);
-		
+	public MATSimSimulation(File config, AdditionAwareAgentSource... additionalAgentSources) throws IOException {
 		List<AdditionAwareAgentSource> agentSources = new LinkedList<>();
 		agentSources.add(agentSource);
 		agentSources.addAll(Arrays.asList(additionalAgentSources));
 
 		oldSimulation = new cz.cuni.mff.d3s.deeco.simulation.matsim.MATSimSimulation(matSimProviderReceiver,
-				matSimProviderReceiver, new DefaultMATSimUpdater(), new DefaultMATSimExtractor(),
-				agentSources, config.getAbsolutePath());
+				matSimProviderReceiver, new DefaultMATSimUpdater(), new DefaultMATSimExtractor(), agentSources,
+				config.getAbsolutePath());
 
 		router = new MATSimRouter(oldSimulation.getControler(), oldSimulation.getTravelTime(), 10 /* TODO: FAKE VALUE */);
 	}
