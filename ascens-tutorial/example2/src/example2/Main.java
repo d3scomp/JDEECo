@@ -57,6 +57,7 @@ public class Main {
 		
 		// Overrides end time specified in the MATSim configuration
 		simulation.start(2900000);
+		Log.i("Simulation finished");
 	}
 	
 	private static void createAndDeployVehicleComponent(int idx, String sourceLinkIdString) throws AnnotationProcessorException, InstantiationException, IllegalAccessException, DEECoException {
