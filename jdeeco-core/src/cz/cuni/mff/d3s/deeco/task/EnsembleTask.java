@@ -701,39 +701,50 @@ public class EnsembleTask extends Task {
 	private void evaluateMembershipAndPerformExchange(ReadOnlyKnowledgeManager shadowKnowledgeManager) throws TaskInvocationException {
 		boolean coordinatorExchangePerformed = false;
 		boolean memberExchangePerformed = false;
+		//MKIT:  Only for ascens tutorial - visualization support needed.
+		boolean membership = false;
 		
 		// Invoke the membership condition and if the membership condition returned true, invoke the knowledge exchange
 		if (checkMembership(PathRoot.COORDINATOR, shadowKnowledgeManager) && securityChecker.checkSecurity(PathRoot.COORDINATOR, shadowKnowledgeManager)) {
 			architectureObserver.ensembleFormed(ensembleController.getEnsembleDefinition(), ensembleController.getComponentInstance(),
 					ensembleController.getComponentInstance().getKnowledgeManager().getId(),shadowKnowledgeManager.getId());
 			coordinatorExchangePerformed = performExchange(PathRoot.COORDINATOR, shadowKnowledgeManager);
-
-			logMembershipStatus(ensembleController.getEnsembleDefinition().getName(),
-					shadowKnowledgeManager.getId(),
-					ensembleController.getComponentInstance().getKnowledgeManager().getId(),
-					true);
+//MKIT: Disabled only for ascens tutorial - visualization support needed.
+//			logMembershipStatus(ensembleController.getEnsembleDefinition().getName(),
+//					shadowKnowledgeManager.getId(),
+//					ensembleController.getComponentInstance().getKnowledgeManager().getId(),
+//					true);
+			membership = true;
 		}
 		else
 		{
-			logMembershipStatus(ensembleController.getEnsembleDefinition().getName(),
-					shadowKnowledgeManager.getId(),
-					ensembleController.getComponentInstance().getKnowledgeManager().getId(),
-					false);
+//MKIT: Disabled only for ascens tutorial - visualization support needed.
+//			logMembershipStatus(ensembleController.getEnsembleDefinition().getName(),
+//					shadowKnowledgeManager.getId(),
+//					ensembleController.getComponentInstance().getKnowledgeManager().getId(),
+//					false);
 		}
-				
+		
+		EnsembleLogger.getInstance().logEvent(ensembleController, shadowKnowledgeManager, scheduler.getTimer(), membership, false);
+		membership = false;		
 		// Do the same with the roles exchanged
 		if (checkMembership(PathRoot.MEMBER, shadowKnowledgeManager) && securityChecker.checkSecurity(PathRoot.MEMBER, shadowKnowledgeManager)) {
 			architectureObserver.ensembleFormed(ensembleController.getEnsembleDefinition(), ensembleController.getComponentInstance(),
 					shadowKnowledgeManager.getId(), ensembleController.getComponentInstance().getKnowledgeManager().getId());
-			memberExchangePerformed = performExchange(PathRoot.MEMBER, shadowKnowledgeManager);			
+			memberExchangePerformed = performExchange(PathRoot.MEMBER, shadowKnowledgeManager);		
+			//FIX MKIT: Shouldn't be the logMembershipStatus invocation here as well?
+			membership = true;
 		}
 		else
 		{
-			logMembershipStatus(ensembleController.getEnsembleDefinition().getName(),
-					ensembleController.getComponentInstance().getKnowledgeManager().getId(),
-					shadowKnowledgeManager.getId(),
-					false);	
+//MKIT: Disabled only for ascens tutorial - visualization support needed.
+//			logMembershipStatus(ensembleController.getEnsembleDefinition().getName(),
+//					ensembleController.getComponentInstance().getKnowledgeManager().getId(),
+//					shadowKnowledgeManager.getId(),
+//					false);	
 		}
+		
+		EnsembleLogger.getInstance().logEvent(ensembleController, shadowKnowledgeManager, scheduler.getTimer(), membership, false);
 		
 		if (coordinatorExchangePerformed || memberExchangePerformed) {
 			invokeRatingsProcess(shadowKnowledgeManager.getId());
