@@ -11,7 +11,6 @@ import org.matsim.core.basic.v01.IdImpl;
 
 import tutorial.matsim.PopulationAgentSource;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
-import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.runners.DEECoSimulation;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
@@ -32,7 +31,7 @@ public class Main {
 	private static Random random = new Random(329884L);
 	
 	public static void main(String[] args) throws AnnotationProcessorException,	IOException, InstantiationException, IllegalAccessException, DEECoException {
-		Log.i("Preparing simulation");
+		System.out.println("Preparing simulation...");
 		
 		PopulationAgentSource populationAgentSource = new PopulationAgentSource();
 		
@@ -52,16 +51,16 @@ public class Main {
 		simulation.addPlugin(KnowledgeInsertingStrategy.class);
 		
 		
-		Log.i("Creating components");
+		System.out.println("Creating components...");
 		
 		for (int i=1; i <= 20; i++) {
 			createAndDeployVehicleComponent(i, getRandomLink().toString(), "22_3");
 		}
 		
 		// Overrides end time specified in the MATSim configuration
-		simulation.start(2900000);
+		simulation.start(1200000);
 		
-		Log.i("Simulation Finished");
+		System.out.println("Simulation Finished!");
 	}
 	
 	private static void createAndDeployVehicleComponent(int idx, String sourceLinkIdString, String destLinkIdString) throws AnnotationProcessorException, InstantiationException, IllegalAccessException, DEECoException {
@@ -74,6 +73,7 @@ public class Main {
 		VehicleComponent component = new VehicleComponent(compIdString, new IdImpl(destLinkIdString),
 				agent.getActuatorProvider(), agent.getSensorProvider(), matSim.getRouter(), agent.getSimulation().getTimer());
 		node.deployComponent(component);
+		node.deployEnsemble(CapacityExchangeEnsemble.class);
 	}
 	
 	private static Id getRandomLink() {

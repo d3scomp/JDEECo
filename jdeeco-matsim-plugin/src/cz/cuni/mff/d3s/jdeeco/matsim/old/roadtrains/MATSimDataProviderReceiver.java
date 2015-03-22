@@ -16,6 +16,8 @@ import cz.cuni.mff.d3s.deeco.simulation.matsim.MATSimOutput;
 public class MATSimDataProviderReceiver implements MATSimDataReceiver,
 		MATSimDataProvider {
 
+	public static int LINK_PARKING_CAPACITY = 4;
+	
 	// This is coming from MATSim (i.e. its output) = sensors
 	protected final Map<Id, MATSimOutput> outputs;
 	
@@ -129,10 +131,10 @@ public class MATSimDataProviderReceiver implements MATSimDataReceiver,
 				public Integer read() {
 					MATSimOutput mo = outputs.get(requesterId);
 					List<Id> parkedVehicles = parked.get(mo.currentLinkId);
-					if (parkedVehicles == null || parkedVehicles.size() == 0) {
-						return 1;
+					if (parkedVehicles == null) {
+						return LINK_PARKING_CAPACITY;
 					} else {
-						return 0;
+						return LINK_PARKING_CAPACITY - parkedVehicles.size();
 					}
 				}
 			};
@@ -162,7 +164,7 @@ public class MATSimDataProviderReceiver implements MATSimDataReceiver,
 							parkedVehicles = new LinkedList<Id>();
 							parked.put(mo.currentLinkId, parkedVehicles);
 						}
-						if (!parkedVehicles.contains(requesterId) && parkedVehicles.size() == 0) {
+						if (!parkedVehicles.contains(requesterId) && parkedVehicles.size() < LINK_PARKING_CAPACITY) {
 							parkedVehicles.add(requesterId);
 						}
 					}

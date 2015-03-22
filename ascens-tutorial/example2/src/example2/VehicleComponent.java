@@ -98,7 +98,7 @@ public class VehicleComponent {
 		
 		this.router = router;
 		this.clock = clock;
-		this.random = new Random(id.hashCode());
+		this.random = new Random(0);
 	}
 
 	/**
@@ -147,7 +147,7 @@ public class VehicleComponent {
 			state.value = State.FOLLOWING;
 			destinationLink.value = leaderDestinationLink;
 			
-		} else if (state.value == State.WAITING && clock.getCurrentMilliseconds() > startTimeSecs.value) {
+		} else if (state.value == State.WAITING && clock.getCurrentMilliseconds() > (startTimeSecs.value * 1000.0)) {
 			
 			// Select random destination
 			Set<Id> linkIds = router.getLinks().keySet();			
@@ -167,7 +167,7 @@ public class VehicleComponent {
 			
 		} else if (state.value == State.DRIVING && isParked) {			
 			state.value = State.WAITING;
-			startTimeSecs.value = clock.getCurrentMilliseconds() + TIME_BETWEEN_DRIVING;
+			startTimeSecs.value = Math.round(clock.getCurrentMilliseconds() / 1000.0) + TIME_BETWEEN_DRIVING;
 
 			System.out.format("<%s> [%s]  vehicle reached its destination\n", getTime(clock), id);
 		}
