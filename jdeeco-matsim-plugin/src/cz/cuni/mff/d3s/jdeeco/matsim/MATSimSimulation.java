@@ -104,7 +104,7 @@ public class MATSimSimulation implements DEECoPlugin {
 		return matSimProviderReceiver;
 	}
 
-	public void addVehicle(int vehicleId, Id startLink) {
+	public void addVehicle(String vehicleId, Id startLink) {
 		agentSource.addAgent(new JDEECoAgent(new IdImpl(vehicleId), startLink));
 	}
 

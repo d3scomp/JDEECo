@@ -35,11 +35,11 @@ public class MATSimVehicle implements DEECoPlugin {
 	}
 	
 	public SensorProvider getSensorProvider() {
-		return simulation.getMATSimProviderReceiver().getSensorProvider(new IdImpl(container.getId()));
+		return simulation.getMATSimProviderReceiver().getSensorProvider(new IdImpl(getId()));
 	}
 	
 	public ActuatorProvider getActuatorProvider() {
-		return simulation.getMATSimProviderReceiver().getActuatorProvider(new IdImpl(container.getId()));
+		return simulation.getMATSimProviderReceiver().getActuatorProvider(new IdImpl(getId()));
 	}
 	
 	public MATSimSimulation getSimulation() {
@@ -61,7 +61,11 @@ public class MATSimVehicle implements DEECoPlugin {
 		}
 		
 		// Add vehicle to simulation
-		simulation.addVehicle(container.getId(), startLink);
+		simulation.addVehicle(getId(), startLink);
+	}
+	
+	protected String getId() {
+		return "V" + container.getId();
 	}
 
 }
