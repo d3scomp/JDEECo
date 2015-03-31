@@ -9,7 +9,34 @@ package cz.cuni.mff.d3s.deeco.simulation.omnet;
  *
  */
 public class OMNeTNative {
+	public static final String LIB_PATH = "omnet";
+
 	static {
+		// Load windows dependencies (order matters)
+		if (System.getProperty("os.name").contains("Windows")) {
+			System.loadLibrary("libwinpthread-1");
+			System.loadLibrary("libgcc_s_seh-1");
+			System.loadLibrary("libstdc++-6");
+		} else {
+			throw new UnsupportedOperationException("Unsupported OS " + System.getProperty("os.name"));
+		}
+		
+		// Load shared dependencies (order matters)
+		// TODO: What about release flavor?
+		System.loadLibrary("liboppcommond");
+		System.loadLibrary("liboppnedxmld");
+		System.loadLibrary("liboppeventlogd");
+		System.loadLibrary("liboppscaved");
+		System.loadLibrary("libopplayoutd");
+		System.loadLibrary("liboppsimd");
+		System.loadLibrary("liboppenvird");
+		System.loadLibrary("libopptkenvd");
+		System.loadLibrary("liboppcmdenvd");
+		
+		// Load plug-ins (order matters)
+		System.loadLibrary("libinet");
+		System.loadLibrary("libmixim");
+
 		// Load native library when the class is used for first time
 		System.loadLibrary("jdeeco-omnetpp");
 	}

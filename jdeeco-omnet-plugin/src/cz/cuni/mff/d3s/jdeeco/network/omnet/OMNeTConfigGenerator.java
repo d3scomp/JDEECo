@@ -9,6 +9,8 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
 
+import cz.cuni.mff.d3s.deeco.simulation.omnet.OMNeTNative;
+
 public class OMNeTConfigGenerator {
 	class Node {
 		public final int id;
@@ -23,7 +25,7 @@ public class OMNeTConfigGenerator {
 		}
 	}
 
-	static final String DEFAULT_CONTENT = "omnetpp.ini";
+	static final String DEFAULT_CONTENT = String.format("%s%somnetpp.ini", OMNeTNative.LIB_PATH, File.separator);
 
 	private final long limit;
 
@@ -101,7 +103,7 @@ public class OMNeTConfigGenerator {
 
 	public File writeToTemp() throws IOException {
 		// Note: OMNeT finds its parts relative to configuration file
-		File temp = new File(String.format("omnentpp-%d.ini", System.currentTimeMillis()));
+		File temp = new File(String.format("%s%somnentpp-%d.ini", OMNeTNative.LIB_PATH, File.separator, System.currentTimeMillis()));
 		temp.deleteOnExit();
 
 		FileWriter writer = new FileWriter(temp);
