@@ -122,6 +122,7 @@
 									<includes>
 										<inlude>**\*.ned</inlude>
 										<inlude>**\*.xml</inlude>
+										<inlude>**\*.ini</inlude>
 									</includes>
 								</configuration>
 								<goals>
