@@ -29,57 +29,63 @@ cleanall: checkmakefiles
 	rm -rf libs
 	
 install:
-	mkdir -p libs/debug
-	mkdir -p libs/release
-	mkdir -p libs/ned/inet
-	mkdir -p libs/ned/mixim
+	mkdir -p libs/debug/omnet
+	mkdir -p libs/release/omnet
+	mkdir -p libs/ned/omnet/inet
+	mkdir -p libs/ned/omnet/mixim
 	
 	# Copy libraries
 	
 	# libjdeeco
-	cp out/gcc-debug/src/libjdeeco-omnetpp.dll libs/debug/jdeeco-omnetpp.dll
-	cp out/gcc-release/src/libjdeeco-omnetpp.dll libs/release/jdeeco-omnetpp.dll
+	cp out/gcc-debug/src/libjdeeco-omnetpp.dll libs/debug/omnet/jdeeco-omnetpp.dll
+	cp out/gcc-release/src/libjdeeco-omnetpp.dll libs/release/omnet/jdeeco-omnetpp.dll
 	
 	# omnetpp
-	cp ${OMNETPP_ROOT}/out/gcc-debug/src/cmdenv/liboppcmdenvd.dll libs/debug
-	cp ${OMNETPP_ROOT}/out/gcc-debug/src/common/liboppcommond.dll libs/debug
-	cp ${OMNETPP_ROOT}/out/gcc-debug/src/envir/liboppenvird.dll libs/debug
-	cp ${OMNETPP_ROOT}/out/gcc-debug/src/eventlog/liboppeventlogd.dll libs/debug
-	cp ${OMNETPP_ROOT}/out/gcc-debug/src/layout/libopplayoutd.dll libs/debug
-	cp ${OMNETPP_ROOT}/out/gcc-debug/src/nedxml/liboppnedxmld.dll libs/debug
-	cp ${OMNETPP_ROOT}/out/gcc-debug/src/scave/liboppscaved.dll libs/debug
-	cp ${OMNETPP_ROOT}/out/gcc-debug/src/sim/liboppsimd.dll libs/debug
-	cp ${OMNETPP_ROOT}/out/gcc-debug/src/tkenv/libopptkenvd.dll libs/debug
+	cp ${OMNETPP_ROOT}/out/gcc-debug/src/cmdenv/liboppcmdenvd.dll libs/debug/omnet
+	cp ${OMNETPP_ROOT}/out/gcc-debug/src/common/liboppcommond.dll libs/debug/omnet
+	cp ${OMNETPP_ROOT}/out/gcc-debug/src/envir/liboppenvird.dll libs/debug/omnet
+	cp ${OMNETPP_ROOT}/out/gcc-debug/src/eventlog/liboppeventlogd.dll libs/debug/omnet
+	cp ${OMNETPP_ROOT}/out/gcc-debug/src/layout/libopplayoutd.dll libs/debug/omnet
+	cp ${OMNETPP_ROOT}/out/gcc-debug/src/nedxml/liboppnedxmld.dll libs/debug/omnet
+	cp ${OMNETPP_ROOT}/out/gcc-debug/src/scave/liboppscaved.dll libs/debug/omnet
+	cp ${OMNETPP_ROOT}/out/gcc-debug/src/sim/liboppsimd.dll libs/debug/omnet
+	cp ${OMNETPP_ROOT}/out/gcc-debug/src/tkenv/libopptkenvd.dll libs/debug/omnet
 	
-	cp ${OMNETPP_ROOT}/out/gcc-release/src/cmdenv/liboppcmdenv.dll libs/release
-	cp ${OMNETPP_ROOT}/out/gcc-release/src/common/liboppcommon.dll libs/release
-	cp ${OMNETPP_ROOT}/out/gcc-release/src/envir/liboppenvir.dll libs/release
-	cp ${OMNETPP_ROOT}/out/gcc-release/src/eventlog/liboppeventlog.dll libs/release
-	cp ${OMNETPP_ROOT}/out/gcc-release/src/layout/libopplayout.dll libs/release
-	cp ${OMNETPP_ROOT}/out/gcc-release/src/nedxml/liboppnedxml.dll libs/release
-	cp ${OMNETPP_ROOT}/out/gcc-release/src/scave/liboppscave.dll libs/release
-	cp ${OMNETPP_ROOT}/out/gcc-release/src/sim/liboppsim.dll libs/release
-	cp ${OMNETPP_ROOT}/out/gcc-release/src/tkenv/libopptkenv.dll libs/release
+	cp ${OMNETPP_ROOT}/out/gcc-release/src/cmdenv/liboppcmdenv.dll libs/release/omnet
+	cp ${OMNETPP_ROOT}/out/gcc-release/src/common/liboppcommon.dll libs/release/omnet
+	cp ${OMNETPP_ROOT}/out/gcc-release/src/envir/liboppenvir.dll libs/release/omnet
+	cp ${OMNETPP_ROOT}/out/gcc-release/src/eventlog/liboppeventlog.dll libs/release/omnet
+	cp ${OMNETPP_ROOT}/out/gcc-release/src/layout/libopplayout.dll libs/release/omnet
+	cp ${OMNETPP_ROOT}/out/gcc-release/src/nedxml/liboppnedxml.dll libs/release/omnet
+	cp ${OMNETPP_ROOT}/out/gcc-release/src/scave/liboppscave.dll libs/release/omnet
+	cp ${OMNETPP_ROOT}/out/gcc-release/src/sim/liboppsim.dll libs/release/omnet
+	cp ${OMNETPP_ROOT}/out/gcc-release/src/tkenv/libopptkenv.dll libs/release/omnet
 	
 	# inet
-	cp ${INET_DIR}/out/gcc-debug/src/libinet.dll libs/debug
-	cp ${INET_DIR}/out/gcc-release/src/libinet.dll libs/release
+	cp ${INET_DIR}/out/gcc-debug/src/libinet.dll libs/debug/omnet
+	cp ${INET_DIR}/out/gcc-release/src/libinet.dll libs/release/omnet
 	
 	# mixim
-	cp ${MIXIM_DIR}/out/gcc-debug/src/libmixim.dll libs/debug
-	cp ${MIXIM_DIR}/out/gcc-release/src/libmixim.dll libs/release
+	cp ${MIXIM_DIR}/out/gcc-debug/src/libmixim.dll libs/debug/omnet
+	cp ${MIXIM_DIR}/out/gcc-release/src/libmixim.dll libs/release/omnet
 	
 	# gcc
-	cp ${OMNETPP_ROOT}/tools/win32/mingw64/bin/libgcc_s_seh-1.dll libs/debug
-	cp ${OMNETPP_ROOT}/tools/win32/mingw64/bin/libgcc_s_seh-1.dll libs/release
-	cp ${OMNETPP_ROOT}/tools/win32/mingw64/bin/libstdc++-6.dll libs/debug
-	cp ${OMNETPP_ROOT}/tools/win32/mingw64/bin/libstdc++-6.dll libs/release
-	cp ${OMNETPP_ROOT}/tools/win32/mingw64/bin/libwinpthread-1.dll libs/debug
-	cp ${OMNETPP_ROOT}/tools/win32/mingw64/bin/libwinpthread-1.dll libs/release
+	cp ${OMNETPP_ROOT}/tools/win32/mingw64/bin/libgcc_s_seh-1.dll libs/debug/omnet
+	cp ${OMNETPP_ROOT}/tools/win32/mingw64/bin/libgcc_s_seh-1.dll libs/release/omnet
+	cp ${OMNETPP_ROOT}/tools/win32/mingw64/bin/libstdc++-6.dll libs/debug/omnet
+	cp ${OMNETPP_ROOT}/tools/win32/mingw64/bin/libstdc++-6.dll libs/release/omnet
+	cp ${OMNETPP_ROOT}/tools/win32/mingw64/bin/libwinpthread-1.dll libs/debug/omnet
+	cp ${OMNETPP_ROOT}/tools/win32/mingw64/bin/libwinpthread-1.dll libs/release/omnet
 	
 	# ned files
-	echo 'cd ${INET_DIR}/src; find -name "*.ned" -exec cp --parents {} $(shell pwd)/libs/ned/inet ";"' | sh
-	echo 'cd ${MIXIM_DIR}; find -name "*.ned" -exec cp --parents {} $(shell pwd)/libs/ned/mixim ";"' | sh
+	echo 'cd ${INET_DIR}/src; find -name "*.ned" -exec cp --parents {} $(shell pwd)/libs/ned/omnet/inet ";"' | sh
+	echo 'cd ${MIXIM_DIR}; find -name "*.ned" -exec cp --parents {} $(shell pwd)/libs/ned/omnet/mixim ";"' | sh
+	
+	# custom model ned files
+	cp -rv model libs/ned/omnet
+	
+	# custom config files
+	cp -rv configs/* libs/ned/omnet
 	
 
 # Create makefiles that allows building mixim without a separate INET installation.
