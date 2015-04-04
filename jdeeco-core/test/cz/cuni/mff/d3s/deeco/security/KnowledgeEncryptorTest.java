@@ -37,12 +37,14 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.AccessRights;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityTag;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.WildcardSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeData;
@@ -91,6 +93,9 @@ public class KnowledgeEncryptorTest {
 	 	tmpComponent.getSecurityRoles().add(role);
 		when(component.getSecurityRoles()).thenReturn(tmpComponent.getSecurityRoles());
 		
+		localKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("b"), Arrays.asList(createAllowEveryoneTag()));
+		localKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("c"), Arrays.asList(createAllowEveryoneTag()));
+		
 		replicaKnowledgeManager = new BaseKnowledgeManager("receiver_id", component);
 		securityHelper = new SecurityHelper();
 		
@@ -111,6 +116,11 @@ public class KnowledgeEncryptorTest {
 		target = new KnowledgeEncryptor(keyManagerMock);
 	}
 	
+	private WildcardSecurityTag createAllowEveryoneTag() {
+		WildcardSecurityTag tag = factory.createWildcardSecurityTag();
+		tag.setAccessRights(AccessRights.READ_WRITE);		
+		return tag;
+	}
 	
 	@Test
 	public void encryptValueSet_NullTest() throws KnowledgeNotFoundException {
@@ -147,6 +157,9 @@ public class KnowledgeEncryptorTest {
 		// re-create the target to accepted the new system property value
 		target = new KnowledgeEncryptor(keyManagerMock);
 		
+		localKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("secured"), Arrays.asList(createAllowEveryoneTag()));
+		localKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("secured2"), Arrays.asList(createAllowEveryoneTag()));
+		
 		// when encryptValueSet() is called
 		List<KnowledgeData> result = target.encryptValueSet(valueSet, localKnowledgeManager, metaData);
 		
@@ -177,6 +190,9 @@ public class KnowledgeEncryptorTest {
 		
 		// re-create the target to accepted the new system property value
 		target = new KnowledgeEncryptor(keyManagerMock);
+		
+		localKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("secured"), Arrays.asList(createAllowEveryoneTag()));
+		localKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("secured2"), Arrays.asList(createAllowEveryoneTag()));
 		
 		// when encryptValueSet() is called
 		List<KnowledgeData> result = target.encryptValueSet(valueSet, localKnowledgeManager, metaData);
@@ -416,6 +432,8 @@ public class KnowledgeEncryptorTest {
 		tag1.getRequiredRole().setRoleName("testrole1");
 		tags.add(tag1);
 		localKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("secured"), tags);
+		
+		localKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("secured2"), Arrays.asList(createAllowEveryoneTag()));
 		
 		// when data are encrypted
 		List<KnowledgeData> kds = target.encryptValueSet(valueSet, localKnowledgeManager, metaData);

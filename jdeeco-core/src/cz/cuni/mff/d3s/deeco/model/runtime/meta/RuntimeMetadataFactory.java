@@ -27,6 +27,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.WildcardSecurityTag;
 import org.eclipse.emf.ecore.EFactory;
 
 /**
@@ -270,6 +271,15 @@ public interface RuntimeMetadataFactory extends EFactory {
 	 * @generated
 	 */
 	SecurityTag createSecurityTag();
+
+	/**
+	 * Returns a new object of class '<em>Wildcard Security Tag</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Wildcard Security Tag</em>'.
+	 * @generated
+	 */
+	WildcardSecurityTag createWildcardSecurityTag();
 
 	/**
 	 * Returns the package supported by this factory.

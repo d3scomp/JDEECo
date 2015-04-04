@@ -25,6 +25,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityTag;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.WildcardSecurityTag;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.KnowledgePathAndRoot;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper;
 import cz.cuni.mff.d3s.deeco.task.TaskInvocationException;
@@ -135,8 +136,13 @@ public class LocalSecurityChecker {
 				for (SecurityTag securityTag : securityTags) {
 					if (securityTag instanceof LocalKnowledgeTag) {
 						continue;
-					}
-					canAccessAllConditions = canAccessAllConditions && canAccessTag(localRole, parameter, (KnowledgeSecurityTag) securityTag, localKnowledgeManager, shadowKnowledgeManager, securityTagManager);
+					} else if (securityTag instanceof KnowledgeSecurityTag) {
+						canAccessAllConditions = canAccessAllConditions && canAccessTag(localRole, parameter, (KnowledgeSecurityTag) securityTag, localKnowledgeManager, shadowKnowledgeManager, securityTagManager);
+					} else if (securityTag instanceof WildcardSecurityTag) {
+						canAccessAllConditions = canAccessAllConditions && accessRightsMatched(parameter, (WildcardSecurityTag)securityTag);
+					} else {
+						throw new IllegalArgumentException("Unknown security tag type: " + securityTag.getClass().getName());
+					}					
 				}
 				canAccessPath = canAccessPath || canAccessAllConditions;
 				
@@ -256,7 +262,7 @@ public class LocalSecurityChecker {
 	/** 
 	 * Checks if the parameter kind does not violate security access rights 
 	 */
-	private boolean accessRightsMatched(Parameter securedParameter, KnowledgeSecurityTag securityTag) {
+	private boolean accessRightsMatched(Parameter securedParameter, WildcardSecurityTag securityTag) {
 		if (securityTag.getAccessRights() == AccessRights.READ_WRITE) {
 			return true;
 		} else if (securityTag.getAccessRights() == AccessRights.READ && securedParameter.getKind() == ParameterKind.IN) {

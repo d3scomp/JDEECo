@@ -34,6 +34,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathSecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.WildcardSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.PathRoot;
@@ -51,6 +52,7 @@ public class ModelSecurityValidatorTest {
 	private ComponentProcess process, process1, process2, process3;
 	private KnowledgeSecurityTag tag_with_path, tag_only_role, tag_with_blank, tag_with_absolute, inherited_tag;
 	private ModelSecurityValidator modelSecurityValidator;
+	private WildcardSecurityTag wildcard_tag;
 	
 	@Before
 	public void setUp() throws KnowledgeUpdateException {
@@ -65,6 +67,7 @@ public class ModelSecurityValidatorTest {
 		tag_with_blank = factory.createKnowledgeSecurityTag();
 		tag_with_absolute = factory.createKnowledgeSecurityTag();
 		inherited_tag = factory.createKnowledgeSecurityTag();
+		wildcard_tag = factory.createWildcardSecurityTag();
 		
 		// create role1
 		SecurityRole role1 = factory.createSecurityRole();
@@ -487,6 +490,45 @@ public class ModelSecurityValidatorTest {
 		List<String> errors = modelSecurityValidator.validate(simpleComponent).stream().collect(Collectors.toList());
 		assertEquals(1, errors.size());
 		assertEquals("Parameter map2 is not appropriately secured.", errors.get(0));
+	}
+
+	@Test
+	public void validateProcessTest25() {
+		// given wildcard tag is used in input
+		WildcardSecurityTag inputTag = factory.createWildcardSecurityTag();
+		inputTag.setAccessRights(AccessRights.READ);
+
+		WildcardSecurityTag outputTag = factory.createWildcardSecurityTag();
+		outputTag.setAccessRights(AccessRights.READ_WRITE);
+		
+		simpleKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("map1"), Arrays.asList(inputTag));
+		simpleKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("map2"), Arrays.asList(outputTag));
+		
+		process.getParameters().add(createParameter(ParameterKind.IN, createKnowledgePath(new String[] {"map1"})));
+		process.getParameters().add(createParameter(ParameterKind.INOUT, createKnowledgePath(new String[] {"map2"})));
+		
+		List<String> errors = modelSecurityValidator.validate(simpleComponent).stream().collect(Collectors.toList());
+		assertEquals(1, errors.size());
+		assertEquals("Parameter map2 is not appropriately secured.", errors.get(0));
+	}
+	
+	@Test
+	public void validateProcessTest26() {
+		// given wildcard tag is used in input
+		WildcardSecurityTag inputTag = factory.createWildcardSecurityTag();
+		inputTag.setAccessRights(AccessRights.READ_WRITE);
+
+		WildcardSecurityTag outputTag = factory.createWildcardSecurityTag();
+		outputTag.setAccessRights(AccessRights.READ_WRITE);
+		
+		simpleKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("map1"), Arrays.asList(inputTag));
+		simpleKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("map2"), Arrays.asList(outputTag, tag_only_role));
+		
+		process.getParameters().add(createParameter(ParameterKind.IN, createKnowledgePath(new String[] {"map1"})));
+		process.getParameters().add(createParameter(ParameterKind.INOUT, createKnowledgePath(new String[] {"map2"})));
+		
+		List<String> errors = modelSecurityValidator.validate(simpleComponent).stream().collect(Collectors.toList());
+		assertEquals(0, errors.size());
 	}
 	
 	@Test

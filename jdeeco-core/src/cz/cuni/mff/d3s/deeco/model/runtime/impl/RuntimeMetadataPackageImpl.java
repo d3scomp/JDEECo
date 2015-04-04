@@ -36,6 +36,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.WildcardSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
@@ -258,6 +259,13 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * @generated
 	 */
 	private EClass securityTagEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass wildcardSecurityTagEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -939,15 +947,6 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getKnowledgeSecurityTag_AccessRights() {
-		return (EAttribute)knowledgeSecurityTagEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EClass getSecurityRole() {
 		return securityRoleEClass;
 	}
@@ -1085,6 +1084,24 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 */
 	public EClass getSecurityTag() {
 		return securityTagEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getWildcardSecurityTag() {
+		return wildcardSecurityTagEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getWildcardSecurityTag_AccessRights() {
+		return (EAttribute)wildcardSecurityTagEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -1278,7 +1295,6 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 
 		knowledgeSecurityTagEClass = createEClass(KNOWLEDGE_SECURITY_TAG);
 		createEReference(knowledgeSecurityTagEClass, KNOWLEDGE_SECURITY_TAG__REQUIRED_ROLE);
-		createEAttribute(knowledgeSecurityTagEClass, KNOWLEDGE_SECURITY_TAG__ACCESS_RIGHTS);
 
 		securityRoleEClass = createEClass(SECURITY_ROLE);
 		createEReference(securityRoleEClass, SECURITY_ROLE__CONSISTS_OF);
@@ -1304,6 +1320,9 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		localKnowledgeTagEClass = createEClass(LOCAL_KNOWLEDGE_TAG);
 
 		securityTagEClass = createEClass(SECURITY_TAG);
+
+		wildcardSecurityTagEClass = createEClass(WILDCARD_SECURITY_TAG);
+		createEAttribute(wildcardSecurityTagEClass, WILDCARD_SECURITY_TAG__ACCESS_RIGHTS);
 
 		// Create enums
 		parameterKindEEnum = createEEnum(PARAMETER_KIND);
@@ -1357,11 +1376,13 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		pathNodeMemberEClass.getESuperTypes().add(this.getPathNode());
 		pathNodeComponentIdEClass.getESuperTypes().add(this.getPathNode());
 		knowledgeSecurityTagEClass.getESuperTypes().add(this.getSecurityTag());
+		knowledgeSecurityTagEClass.getESuperTypes().add(this.getWildcardSecurityTag());
 		pathSecurityRoleArgumentEClass.getESuperTypes().add(this.getSecurityRoleArgument());
 		blankSecurityRoleArgumentEClass.getESuperTypes().add(this.getSecurityRoleArgument());
 		absoluteSecurityRoleArgumentEClass.getESuperTypes().add(this.getSecurityRoleArgument());
 		ratingsProcessEClass.getESuperTypes().add(this.getInvocable());
 		localKnowledgeTagEClass.getESuperTypes().add(this.getSecurityTag());
+		wildcardSecurityTagEClass.getESuperTypes().add(this.getSecurityTag());
 
 		// Initialize classes, features, and operations; add parameters
 		initEClass(timeTriggerEClass, TimeTrigger.class, "TimeTrigger", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -1446,7 +1467,6 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 
 		initEClass(knowledgeSecurityTagEClass, KnowledgeSecurityTag.class, "KnowledgeSecurityTag", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getKnowledgeSecurityTag_RequiredRole(), this.getSecurityRole(), null, "requiredRole", null, 1, 1, KnowledgeSecurityTag.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getKnowledgeSecurityTag_AccessRights(), this.getAccessRights(), "accessRights", null, 1, 1, KnowledgeSecurityTag.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(securityRoleEClass, SecurityRole.class, "SecurityRole", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getSecurityRole_ConsistsOf(), this.getSecurityRole(), null, "consistsOf", null, 0, -1, SecurityRole.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1472,6 +1492,9 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		initEClass(localKnowledgeTagEClass, LocalKnowledgeTag.class, "LocalKnowledgeTag", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(securityTagEClass, SecurityTag.class, "SecurityTag", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+		initEClass(wildcardSecurityTagEClass, WildcardSecurityTag.class, "WildcardSecurityTag", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getWildcardSecurityTag_AccessRights(), this.getAccessRights(), "accessRights", null, 1, 1, WildcardSecurityTag.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize enums and add enum literals
 		initEEnum(parameterKindEEnum, ParameterKind.class, "ParameterKind");

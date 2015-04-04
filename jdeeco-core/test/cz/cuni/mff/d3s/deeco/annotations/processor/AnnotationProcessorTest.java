@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import junitx.framework.FileAssert;
 
@@ -54,6 +55,8 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.PathSecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RatingsProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.WildcardSecurityTag;
+import cz.cuni.mff.d3s.deeco.model.runtime.impl.WildcardSecurityTagImpl;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 
 /**
@@ -121,38 +124,44 @@ public class AnnotationProcessorTest {
 		ComponentInstance component = model.getComponentInstances().get(0);
 		KnowledgeManager km = component.getKnowledgeManager();
 		
-		List<KnowledgeSecurityTag> nameSecurityTags = km.getKnowledgeSecurityTags(RuntimeModelHelper.createPathNodeField("name"));
-		assertEquals(0, nameSecurityTags.size());
+		List<WildcardSecurityTag> nameSecurityTags = km.getEffectiveSecurityTags(RuntimeModelHelper.createPathNodeField("name"));		
+		assertEquals(1, nameSecurityTags.size());
+		assertEquals(WildcardSecurityTagImpl.class, nameSecurityTags.get(0).getClass());
+		assertEquals(AccessRights.READ_WRITE, nameSecurityTags.get(0).getAccessRights());
 		
-		List<KnowledgeSecurityTag> capacitySecurityTags = km.getKnowledgeSecurityTags(RuntimeModelHelper.createPathNodeField("capacity"));
+		List<WildcardSecurityTag> capacitySecurityTags = km.getEffectiveSecurityTags(RuntimeModelHelper.createPathNodeField("capacity"));
 		assertEquals(2, capacitySecurityTags.size());
-		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role1.class.getName(), capacitySecurityTags.get(0).getRequiredRole().getRoleName());
-		assertEquals(AccessRights.READ, capacitySecurityTags.get(0).getAccessRights());
-		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role3.class.getName(), capacitySecurityTags.get(1).getRequiredRole().getRoleName());
-		assertEquals(AccessRights.WRITE, capacitySecurityTags.get(1).getAccessRights());
-		assertEquals(1, capacitySecurityTags.get(0).getRequiredRole().getArguments().size());
-		assertEquals(0, capacitySecurityTags.get(1).getRequiredRole().getArguments().size());
-		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role3.class.getName(), capacitySecurityTags.get(0).getRequiredRole().getAliasRole().getRoleName());
-		assertEquals(capacitySecurityTags.get(0).getRequiredRole().getAliasRole().getArguments().get(0), capacitySecurityTags.get(0).getRequiredRole().getArguments().get(0));
+		List<KnowledgeSecurityTag> capacityKnowledgeSecurityTags = capacitySecurityTags.stream().map(x -> (KnowledgeSecurityTag)x).collect(Collectors.toList());
 		
-		List<KnowledgeSecurityTag> timeSecurityTags = km.getKnowledgeSecurityTags(RuntimeModelHelper.createPathNodeField("time"));
+		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role1.class.getName(), capacityKnowledgeSecurityTags.get(0).getRequiredRole().getRoleName());
+		assertEquals(AccessRights.READ, capacityKnowledgeSecurityTags.get(0).getAccessRights());
+		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role3.class.getName(), capacityKnowledgeSecurityTags.get(1).getRequiredRole().getRoleName());
+		assertEquals(AccessRights.WRITE, capacityKnowledgeSecurityTags.get(1).getAccessRights());
+		assertEquals(1, capacityKnowledgeSecurityTags.get(0).getRequiredRole().getArguments().size());
+		assertEquals(0, capacityKnowledgeSecurityTags.get(1).getRequiredRole().getArguments().size());
+		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role3.class.getName(), capacityKnowledgeSecurityTags.get(0).getRequiredRole().getAliasRole().getRoleName());
+		assertEquals(capacityKnowledgeSecurityTags.get(0).getRequiredRole().getAliasRole().getArguments().get(0), capacityKnowledgeSecurityTags.get(0).getRequiredRole().getArguments().get(0));
+		
+		List<WildcardSecurityTag> timeSecurityTags = km.getEffectiveSecurityTags(RuntimeModelHelper.createPathNodeField("time"));
 		assertEquals(1, timeSecurityTags.size());
-		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role2.class.getName(), timeSecurityTags.get(0).getRequiredRole().getRoleName());
-		assertEquals(AccessRights.READ_WRITE, timeSecurityTags.get(0).getAccessRights());
-		assertEquals(5, timeSecurityTags.get(0).getRequiredRole().getArguments().size());
+		List<KnowledgeSecurityTag> timeKnowledgeSecurityTags = timeSecurityTags.stream().map(x -> (KnowledgeSecurityTag)x).collect(Collectors.toList());
 		
-		PathSecurityRoleArgument pathArgument = (PathSecurityRoleArgument)timeSecurityTags.get(0).getRequiredRole().getArguments().get(0);
+		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role2.class.getName(), timeKnowledgeSecurityTags.get(0).getRequiredRole().getRoleName());
+		assertEquals(AccessRights.READ_WRITE, timeKnowledgeSecurityTags.get(0).getAccessRights());
+		assertEquals(5, timeKnowledgeSecurityTags.get(0).getRequiredRole().getArguments().size());
+		
+		PathSecurityRoleArgument pathArgument = (PathSecurityRoleArgument)timeKnowledgeSecurityTags.get(0).getRequiredRole().getArguments().get(0);
 		assertEquals(RuntimeModelHelper.createKnowledgePath("name"), pathArgument.getKnowledgePath());
 		assertEquals("name", pathArgument.getName());
-		assertEquals("time", timeSecurityTags.get(0).getRequiredRole().getArguments().get(1).getName());
-		assertTrue(timeSecurityTags.get(0).getRequiredRole().getArguments().get(0) instanceof PathSecurityRoleArgument);
-		assertTrue(timeSecurityTags.get(0).getRequiredRole().getArguments().get(1) instanceof BlankSecurityRoleArgument);
-		assertTrue(timeSecurityTags.get(0).getRequiredRole().getArguments().get(2) instanceof AbsoluteSecurityRoleArgument);
-		assertTrue(timeSecurityTags.get(0).getRequiredRole().getArguments().get(3) instanceof AbsoluteSecurityRoleArgument);
+		assertEquals("time", timeKnowledgeSecurityTags.get(0).getRequiredRole().getArguments().get(1).getName());
+		assertTrue(timeKnowledgeSecurityTags.get(0).getRequiredRole().getArguments().get(0) instanceof PathSecurityRoleArgument);
+		assertTrue(timeKnowledgeSecurityTags.get(0).getRequiredRole().getArguments().get(1) instanceof BlankSecurityRoleArgument);
+		assertTrue(timeKnowledgeSecurityTags.get(0).getRequiredRole().getArguments().get(2) instanceof AbsoluteSecurityRoleArgument);
+		assertTrue(timeKnowledgeSecurityTags.get(0).getRequiredRole().getArguments().get(3) instanceof AbsoluteSecurityRoleArgument);
 		
-		assertEquals(RuntimeModelHelper.createKnowledgePath("name"), ((PathSecurityRoleArgument) timeSecurityTags.get(0).getRequiredRole().getArguments().get(0)).getKnowledgePath());
-		assertEquals(123, ((AbsoluteSecurityRoleArgument) timeSecurityTags.get(0).getRequiredRole().getArguments().get(2)).getValue());
-		assertEquals("some_value", ((AbsoluteSecurityRoleArgument) timeSecurityTags.get(0).getRequiredRole().getArguments().get(3)).getValue());
+		assertEquals(RuntimeModelHelper.createKnowledgePath("name"), ((PathSecurityRoleArgument) timeKnowledgeSecurityTags.get(0).getRequiredRole().getArguments().get(0)).getKnowledgePath());
+		assertEquals(123, ((AbsoluteSecurityRoleArgument) timeKnowledgeSecurityTags.get(0).getRequiredRole().getArguments().get(2)).getValue());
+		assertEquals("some_value", ((AbsoluteSecurityRoleArgument) timeKnowledgeSecurityTags.get(0).getRequiredRole().getArguments().get(3)).getValue());
 		
 		assertEquals(2, component.getSecurityRoles().size());
 		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role1.class.getName(), component.getSecurityRoles().get(0).getRoleName());
@@ -252,8 +261,10 @@ public class AnnotationProcessorTest {
 		ComponentInstance component = model.getComponentInstances().get(0);
 		KnowledgeManager km = component.getKnowledgeManager();
 		
-		List<KnowledgeSecurityTag> timeSecurityTags = km.getKnowledgeSecurityTags(RuntimeModelHelper.createPathNodeField("time"));
-		SecurityRole role = timeSecurityTags.get(0).getRequiredRole();		
+		List<WildcardSecurityTag> timeSecurityTags = km.getEffectiveSecurityTags(RuntimeModelHelper.createPathNodeField("time"));
+		List<KnowledgeSecurityTag> timeKnowledgeSecurityTags = timeSecurityTags.stream().map(x -> (KnowledgeSecurityTag)x).collect(Collectors.toList());
+		
+		SecurityRole role = timeKnowledgeSecurityTags.get(0).getRequiredRole();		
 		AbsoluteSecurityRoleArgument argument = (AbsoluteSecurityRoleArgument) role.getArguments().stream().filter(arg -> arg.getName().equals("x_array")).findFirst().get();
 		
 		// get current content of the tag
@@ -345,8 +356,10 @@ public class AnnotationProcessorTest {
 		ComponentInstance component = model.getComponentInstances().get(0);
 		KnowledgeManager km = component.getKnowledgeManager();
 		
-		List<KnowledgeSecurityTag> nameSecurityTags = km.getKnowledgeSecurityTags(RuntimeModelHelper.createPathNodeField("name"));
-		SecurityRole securityRole = nameSecurityTags.get(0).getRequiredRole();
+		List<WildcardSecurityTag> nameSecurityTags = km.getEffectiveSecurityTags(RuntimeModelHelper.createPathNodeField("name"));
+		List<KnowledgeSecurityTag> nameKnowledgeSecurityTags = nameSecurityTags.stream().map(x -> (KnowledgeSecurityTag)x).collect(Collectors.toList());
+		
+		SecurityRole securityRole = nameKnowledgeSecurityTags.get(0).getRequiredRole();
 		
 		assertEquals(1, nameSecurityTags.size());
 		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC5.Role3.class.getName(), securityRole.getRoleName());
@@ -372,7 +385,6 @@ public class AnnotationProcessorTest {
 	
 	@Test
 	public void testSecurityCompromise() throws AnnotationProcessorException {
-		// given component with role, which contains unresolvable argument is processed
 		RuntimeMetadata model = factory.createRuntimeMetadata(); 
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
 		WrongC11 input = new WrongC11();

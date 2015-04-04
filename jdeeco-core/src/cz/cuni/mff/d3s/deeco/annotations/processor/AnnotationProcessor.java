@@ -28,6 +28,7 @@ import com.rits.cloning.Cloner;
 
 import cz.cuni.mff.d3s.deeco.DeecoProperties;
 import cz.cuni.mff.d3s.deeco.annotations.Allow;
+import cz.cuni.mff.d3s.deeco.annotations.AllowEveryone;
 import cz.cuni.mff.d3s.deeco.annotations.CommunicationBoundary;
 import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.Ensemble;
@@ -61,6 +62,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.AbsoluteSecurityRoleArgument;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.AccessRights;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.BlankSecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
@@ -85,6 +87,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.WildcardSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
 import cz.cuni.mff.d3s.deeco.network.GenericCommunicationBoundaryPredicate;
@@ -767,7 +770,20 @@ public class AnnotationProcessor {
 				km.addSecurityTag(kp, tag);			
 				roleClasses.add(allow.value());				
 			}
-			
+						
+			AllowEveryone everyoneAnnotation = field.getAnnotation(AllowEveryone.class);
+			if (everyoneAnnotation != null) {
+				WildcardSecurityTag tag = factory.createWildcardSecurityTag();
+				tag.setAccessRights(everyoneAnnotation.value());
+				km.addSecurityTag(kp, tag);
+			} else {
+				if (allows.length == 0) {
+					// no Allow now AllowEveryone -> defaults to AllowEveryone(READ_WRITE)
+					WildcardSecurityTag tag = factory.createWildcardSecurityTag();
+					tag.setAccessRights(AccessRights.READ_WRITE);
+					km.addSecurityTag(kp, tag);
+				}
+			}
 		}		
 	}
 	

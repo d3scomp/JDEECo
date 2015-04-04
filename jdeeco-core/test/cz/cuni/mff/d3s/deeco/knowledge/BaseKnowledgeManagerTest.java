@@ -25,6 +25,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityTag;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.WildcardSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 
 /**
@@ -376,7 +377,7 @@ public class BaseKnowledgeManagerTest {
 		
 		// when security tags are then retrieved
 		KnowledgePath kp_same = RuntimeModelHelper.createKnowledgePath("field");
-		List<KnowledgeSecurityTag> actualTags = tested.getKnowledgeSecurityTags((PathNodeField) kp_same.getNodes().get(0));
+		List<WildcardSecurityTag> actualTags = tested.getEffectiveSecurityTags((PathNodeField) kp_same.getNodes().get(0));
 		
 		// then collections are equal
 		assertEquals(expectedTags, actualTags);
@@ -397,7 +398,7 @@ public class BaseKnowledgeManagerTest {
 		
 		// when security tags are then retrieved
 		KnowledgePath kp_same = RuntimeModelHelper.createKnowledgePath("field");
-		List<KnowledgeSecurityTag> actualTags = tested.getKnowledgeSecurityTags((PathNodeField) kp_same.getNodes().get(0));
+		List<WildcardSecurityTag> actualTags = tested.getEffectiveSecurityTags((PathNodeField) kp_same.getNodes().get(0));
 		
 		// then collections are equal
 		assertEquals(2, actualTags.size());

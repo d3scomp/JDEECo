@@ -33,6 +33,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.PathSecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityTag;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.WildcardSecurityTag;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.KnowledgePathAndRoot;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.PathRoot;
@@ -308,23 +309,29 @@ public class ModelSecurityValidator {
 	}
 
 	private boolean satisfies(SecurityTag inTag, SecurityTag outTag) {		
-		if (inTag instanceof KnowledgeSecurityTag && outTag instanceof KnowledgeSecurityTag) {
-			KnowledgeSecurityTag inKnowledgeTag = (KnowledgeSecurityTag) inTag;
-			KnowledgeSecurityTag outKnowledgeTag = (KnowledgeSecurityTag) outTag;
-			
-			List<SecurityRole> transitiveRoles = RoleHelper.getTransitiveRoles(Arrays.asList(outKnowledgeTag.getRequiredRole()));
-			boolean roleMatched = false;
-			
-			// the role of the output role must be more restrictive than the role of the input
-			for (SecurityRole outRole : transitiveRoles) {
-				boolean namesMatch = inKnowledgeTag.getRequiredRole().getRoleName().equals(outRole.getRoleName()); 
-				boolean argumentsMatch = inKnowledgeTag.getRequiredRole().getArguments().stream().allMatch(inArgument -> 
-					outRole.getArguments().stream().anyMatch(outArgument -> satisfies(inArgument, outArgument))
-				);	
-				roleMatched = roleMatched || (namesMatch && argumentsMatch);
+		if (inTag instanceof WildcardSecurityTag && outTag instanceof WildcardSecurityTag) {
+			if (inTag instanceof KnowledgeSecurityTag && outTag instanceof KnowledgeSecurityTag) {
+				KnowledgeSecurityTag inKnowledgeTag = (KnowledgeSecurityTag) inTag;
+				KnowledgeSecurityTag outKnowledgeTag = (KnowledgeSecurityTag) outTag;
+				List<SecurityRole> transitiveRoles = RoleHelper.getTransitiveRoles(Arrays.asList(outKnowledgeTag.getRequiredRole()));
+				boolean roleMatched = false;
+				
+				// the role of the output role must be more restrictive than the role of the input
+				for (SecurityRole outRole : transitiveRoles) {
+					boolean namesMatch = inKnowledgeTag.getRequiredRole().getRoleName().equals(outRole.getRoleName()); 
+					boolean argumentsMatch = inKnowledgeTag.getRequiredRole().getArguments().stream().allMatch(inArgument -> 
+						outRole.getArguments().stream().anyMatch(outArgument -> satisfies(inArgument, outArgument))
+					);	
+					roleMatched = roleMatched || (namesMatch && argumentsMatch);
+				}
+				
+				return roleMatched && accessRightsMatched(inKnowledgeTag, outKnowledgeTag);
+			} else if (!(inTag instanceof KnowledgeSecurityTag))  {
+				WildcardSecurityTag inWildcardTag = (WildcardSecurityTag) inTag;
+				WildcardSecurityTag outWildcardTag = (WildcardSecurityTag) outTag;
+				
+				return accessRightsMatched(inWildcardTag, outWildcardTag);
 			}
-			
-			return roleMatched && accessRightsMatched(inKnowledgeTag, outKnowledgeTag);
 		}
 		return false;
 	}
@@ -332,7 +339,7 @@ public class ModelSecurityValidator {
 	/** 
 	 * Checks if the parameter kind does not violate security access rights 
 	 */
-	private boolean accessRightsMatched(KnowledgeSecurityTag inTag, KnowledgeSecurityTag outTag) {
+	private boolean accessRightsMatched(WildcardSecurityTag inTag, WildcardSecurityTag outTag) {
 		if (inTag.getAccessRights() == outTag.getAccessRights()) {
 			return true;
 		} else if ((outTag.getAccessRights() == AccessRights.READ || outTag.getAccessRights() == AccessRights.WRITE) && (inTag.getAccessRights() == AccessRights.READ_WRITE)) {

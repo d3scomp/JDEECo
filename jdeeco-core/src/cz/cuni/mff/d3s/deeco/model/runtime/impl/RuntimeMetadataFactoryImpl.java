@@ -94,6 +94,7 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 			case RuntimeMetadataPackage.RATINGS_PROCESS: return createRatingsProcess();
 			case RuntimeMetadataPackage.LOCAL_KNOWLEDGE_TAG: return createLocalKnowledgeTag();
 			case RuntimeMetadataPackage.SECURITY_TAG: return createSecurityTag();
+			case RuntimeMetadataPackage.WILDCARD_SECURITY_TAG: return createWildcardSecurityTag();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -415,6 +416,16 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	public SecurityTag createSecurityTag() {
 		SecurityTagImpl securityTag = new SecurityTagImpl();
 		return securityTag;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public WildcardSecurityTag createWildcardSecurityTag() {
+		WildcardSecurityTagImpl wildcardSecurityTag = new WildcardSecurityTagImpl();
+		return wildcardSecurityTag;
 	}
 
 	/**

@@ -1098,22 +1098,22 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int KNOWLEDGE_SECURITY_TAG = 20;
 
 	/**
-	 * The feature id for the '<em><b>Required Role</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int KNOWLEDGE_SECURITY_TAG__REQUIRED_ROLE = SECURITY_TAG_FEATURE_COUNT + 0;
-
-	/**
 	 * The feature id for the '<em><b>Access Rights</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int KNOWLEDGE_SECURITY_TAG__ACCESS_RIGHTS = SECURITY_TAG_FEATURE_COUNT + 1;
+	int KNOWLEDGE_SECURITY_TAG__ACCESS_RIGHTS = SECURITY_TAG_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Required Role</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int KNOWLEDGE_SECURITY_TAG__REQUIRED_ROLE = SECURITY_TAG_FEATURE_COUNT + 1;
 
 	/**
 	 * The number of structural features of the '<em>Knowledge Security Tag</em>' class.
@@ -1465,6 +1465,43 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int LOCAL_KNOWLEDGE_TAG_OPERATION_COUNT = SECURITY_TAG_OPERATION_COUNT + 0;
 
 	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.WildcardSecurityTagImpl <em>Wildcard Security Tag</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.WildcardSecurityTagImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getWildcardSecurityTag()
+	 * @generated
+	 */
+	int WILDCARD_SECURITY_TAG = 29;
+
+	/**
+	 * The feature id for the '<em><b>Access Rights</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WILDCARD_SECURITY_TAG__ACCESS_RIGHTS = SECURITY_TAG_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>Wildcard Security Tag</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WILDCARD_SECURITY_TAG_FEATURE_COUNT = SECURITY_TAG_FEATURE_COUNT + 1;
+
+	/**
+	 * The number of operations of the '<em>Wildcard Security Tag</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WILDCARD_SECURITY_TAG_OPERATION_COUNT = SECURITY_TAG_OPERATION_COUNT + 0;
+
+	/**
 	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind <em>Parameter Kind</em>}' enum.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1472,7 +1509,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getParameterKind()
 	 * @generated
 	 */
-	int PARAMETER_KIND = 29;
+	int PARAMETER_KIND = 30;
 
 	/**
 	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ContextKind <em>Context Kind</em>}' enum.
@@ -1482,7 +1519,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getContextKind()
 	 * @generated
 	 */
-	int CONTEXT_KIND = 30;
+	int CONTEXT_KIND = 31;
 
 	/**
 	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.AccessRights <em>Access Rights</em>}' enum.
@@ -1492,7 +1529,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getAccessRights()
 	 * @generated
 	 */
-	int ACCESS_RIGHTS = 31;
+	int ACCESS_RIGHTS = 32;
 
 	/**
 	 * The meta object id for the '<em>Method</em>' data type.
@@ -1502,7 +1539,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getMethod()
 	 * @generated
 	 */
-	int METHOD = 32;
+	int METHOD = 33;
 
 	/**
 	 * The meta object id for the '<em>Knowledge Manager</em>' data type.
@@ -1512,7 +1549,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getKnowledgeManager()
 	 * @generated
 	 */
-	int KNOWLEDGE_MANAGER = 33;
+	int KNOWLEDGE_MANAGER = 34;
 
 	/**
 	 * The meta object id for the '<em>Shadow Knowledge Manager Registry</em>' data type.
@@ -1522,7 +1559,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getShadowKnowledgeManagerRegistry()
 	 * @generated
 	 */
-	int SHADOW_KNOWLEDGE_MANAGER_REGISTRY = 34;
+	int SHADOW_KNOWLEDGE_MANAGER_REGISTRY = 35;
 
 	/**
 	 * The meta object id for the '<em>Communication Boundary</em>' data type.
@@ -1532,7 +1569,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getCommunicationBoundary()
 	 * @generated
 	 */
-	int COMMUNICATION_BOUNDARY = 35;
+	int COMMUNICATION_BOUNDARY = 36;
 
 
 	/**
@@ -1543,7 +1580,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getRatingsManager()
 	 * @generated
 	 */
-	int RATINGS_MANAGER = 36;
+	int RATINGS_MANAGER = 37;
 
 
 	/**
@@ -2210,17 +2247,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EReference getKnowledgeSecurityTag_RequiredRole();
 
 	/**
-	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag#getAccessRights <em>Access Rights</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Access Rights</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag#getAccessRights()
-	 * @see #getKnowledgeSecurityTag()
-	 * @generated
-	 */
-	EAttribute getKnowledgeSecurityTag_AccessRights();
-
-	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole <em>Security Role</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2387,6 +2413,27 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getSecurityTag();
+
+	/**
+	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.WildcardSecurityTag <em>Wildcard Security Tag</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Wildcard Security Tag</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.WildcardSecurityTag
+	 * @generated
+	 */
+	EClass getWildcardSecurityTag();
+
+	/**
+	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.WildcardSecurityTag#getAccessRights <em>Access Rights</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Access Rights</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.WildcardSecurityTag#getAccessRights()
+	 * @see #getWildcardSecurityTag()
+	 * @generated
+	 */
+	EAttribute getWildcardSecurityTag_AccessRights();
 
 	/**
 	 * Returns the meta object for enum '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind <em>Parameter Kind</em>}'.
@@ -3046,14 +3093,6 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EReference KNOWLEDGE_SECURITY_TAG__REQUIRED_ROLE = eINSTANCE.getKnowledgeSecurityTag_RequiredRole();
 
 		/**
-		 * The meta object literal for the '<em><b>Access Rights</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute KNOWLEDGE_SECURITY_TAG__ACCESS_RIGHTS = eINSTANCE.getKnowledgeSecurityTag_AccessRights();
-
-		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.SecurityRoleImpl <em>Security Role</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -3196,6 +3235,24 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * @generated
 		 */
 		EClass SECURITY_TAG = eINSTANCE.getSecurityTag();
+
+		/**
+		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.WildcardSecurityTagImpl <em>Wildcard Security Tag</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.WildcardSecurityTagImpl
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getWildcardSecurityTag()
+		 * @generated
+		 */
+		EClass WILDCARD_SECURITY_TAG = eINSTANCE.getWildcardSecurityTag();
+
+		/**
+		 * The meta object literal for the '<em><b>Access Rights</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute WILDCARD_SECURITY_TAG__ACCESS_RIGHTS = eINSTANCE.getWildcardSecurityTag_AccessRights();
 
 		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind <em>Parameter Kind</em>}' enum.

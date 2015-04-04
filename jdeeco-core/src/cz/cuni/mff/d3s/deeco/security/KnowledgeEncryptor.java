@@ -29,6 +29,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.WildcardSecurityTag;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeData;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeMetaData;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper;
@@ -153,7 +154,7 @@ public class KnowledgeEncryptor {
 		Map<Integer, ValueSet> hashToAuthors = new HashMap<>();
 		Map<Integer, KnowledgeMetaData> hashToMeta = new HashMap<>();
 		Map<Integer, Cipher> hashToCipher = new HashMap<>();	
-		Map<KnowledgePath, List<KnowledgeSecurityTag>> pathToSecurityTags = new HashMap<>();
+		Map<KnowledgePath, List<WildcardSecurityTag>> pathToSecurityTags = new HashMap<>();
 		
 		for (KnowledgePath kp : valueSet.getKnowledgePaths()) {
 			if (!KnowledgePathHelper.isAbsolutePath(kp)) {
@@ -161,23 +162,16 @@ public class KnowledgeEncryptor {
 			}
 			
 			// get the security tags for the given knowledge path
-			List<KnowledgeSecurityTag> tags = knowledgeManager.getKnowledgeSecurityTags((PathNodeField)kp.getNodes().get(0));
+			List<WildcardSecurityTag> tags = knowledgeManager.getEffectiveSecurityTags((PathNodeField)kp.getNodes().get(0));
+			if (tags == null || tags.isEmpty()) {
+				throw new IllegalArgumentException("At least one security tag expected on "+((PathNodeField)kp.getNodes().get(0)).getName()+".");
+			}
+			
 			pathToSecurityTags.put(kp, tags);
 			
-			if (tags == null || tags.isEmpty()) {
-				if (!hashToKnowledge.containsKey(null)) {
-					hashToKnowledge.put(null, new ValueSet());
-				}
-				if (!hashToAuthors.containsKey(null)) {
-					hashToAuthors.put(null, new ValueSet());
-				}
-				
-				hashToKnowledge.get(null).setValue(kp, valueSet.getValue(kp));
-				hashToMeta.put(null, metaData.clone());
-				hashToAuthors.get(null).setValue(kp, knowledgeManager.getAuthor(kp));
-			} else {
-				for (KnowledgeSecurityTag tag : tags) {
-					Integer roleHash = getRoleKey(kp, knowledgeManager, tag);
+			for (WildcardSecurityTag tag : tags) {
+				if (tag instanceof KnowledgeSecurityTag) {				
+					Integer roleHash = getRoleKey(kp, knowledgeManager, (KnowledgeSecurityTag)tag);
 					
 					// the role and its arguments were not successfully resolved
 					if (roleHash == null) continue;				
@@ -187,7 +181,7 @@ public class KnowledgeEncryptor {
 						hashToAuthors.put(roleHash, new ValueSet());
 						
 						KnowledgeMetaData meta = metaData.clone();
-						Cipher cipher = prepareCipher(kp, knowledgeManager, tag, meta);
+						Cipher cipher = prepareCipher(kp, knowledgeManager, (KnowledgeSecurityTag)tag, meta);
 						
 						hashToCipher.put(roleHash, cipher);
 						hashToMeta.put(roleHash, meta);						
@@ -195,8 +189,21 @@ public class KnowledgeEncryptor {
 					
 					hashToKnowledge.get(roleHash).setValue(kp, valueSet.getValue(kp));
 					hashToAuthors.get(roleHash).setValue(kp, knowledgeManager.getAuthor(kp));
+				} else {
+					// perform no encryption
+					if (!hashToKnowledge.containsKey(null)) {
+						hashToKnowledge.put(null, new ValueSet());
+					}
+					if (!hashToAuthors.containsKey(null)) {
+						hashToAuthors.put(null, new ValueSet());
+					}
+					
+					hashToKnowledge.get(null).setValue(kp, valueSet.getValue(kp));
+					hashToMeta.put(null, metaData.clone());
+					hashToAuthors.get(null).setValue(kp, knowledgeManager.getAuthor(kp));
 				}
 			}
+
 		}
 		
 		
