@@ -56,7 +56,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.RatingsProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.WildcardSecurityTag;
-import cz.cuni.mff.d3s.deeco.model.runtime.impl.WildcardSecurityTagImpl;
+import cz.cuni.mff.d3s.deeco.model.runtime.custom.WildcardSecurityTagExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 
 /**
@@ -126,7 +126,7 @@ public class AnnotationProcessorTest {
 		
 		List<WildcardSecurityTag> nameSecurityTags = km.getEffectiveSecurityTags(RuntimeModelHelper.createPathNodeField("name"));		
 		assertEquals(1, nameSecurityTags.size());
-		assertEquals(WildcardSecurityTagImpl.class, nameSecurityTags.get(0).getClass());
+		assertEquals(WildcardSecurityTagExt.class, nameSecurityTags.get(0).getClass());
 		assertEquals(AccessRights.READ_WRITE, nameSecurityTags.get(0).getAccessRights());
 		
 		List<WildcardSecurityTag> capacitySecurityTags = km.getEffectiveSecurityTags(RuntimeModelHelper.createPathNodeField("capacity"));

@@ -82,17 +82,10 @@ public class LocalSecurityChecker {
 		List<Parameter> exchangeInputParams = formalParamsOfExchange.stream()
 				.collect(Collectors.toList());
 				
-		boolean canAccess;
-		if (kmContainer.hasReplica(shadowKnowledgeManager.getId())) {
-			// if the shadow knowledge manager belongs to a remote component, security is already guaranteed with data encryption in DefaultKnowledgeDataManager
-			canAccess = knowledgePresent(localRole, membershipInputParams.stream().map(Parameter::getKnowledgePath).collect(Collectors.toList()), shadowKnowledgeManager) 
-				 && knowledgePresent(localRole, exchangeInputParams.stream().map(Parameter::getKnowledgePath).collect(Collectors.toList()), shadowKnowledgeManager);
-		} else {						
-			canAccess = knowledgePresent(localRole, membershipInputParams.stream().map(Parameter::getKnowledgePath).collect(Collectors.toList()), shadowKnowledgeManager) 
-					 && knowledgePresent(localRole, exchangeInputParams.stream().map(Parameter::getKnowledgePath).collect(Collectors.toList()), shadowKnowledgeManager) 
-					 && canAccessKnowledge(localRole, formalParamsOfMembership, shadowKnowledgeManager) 
-					 && canAccessKnowledge(localRole, formalParamsOfExchange, shadowKnowledgeManager);					
-		}							
+		boolean canAccess = knowledgePresent(localRole, membershipInputParams.stream().map(Parameter::getKnowledgePath).collect(Collectors.toList()), shadowKnowledgeManager) 
+				 && knowledgePresent(localRole, exchangeInputParams.stream().map(Parameter::getKnowledgePath).collect(Collectors.toList()), shadowKnowledgeManager) 
+				 && canAccessKnowledge(localRole, formalParamsOfMembership, shadowKnowledgeManager) 
+				 && canAccessKnowledge(localRole, formalParamsOfExchange, shadowKnowledgeManager);	
 		
 		if (canAccess) {
 			// validate that knowledge will not be compromised (i.e. moved to a path with lesser security)		

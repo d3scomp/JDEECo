@@ -15,9 +15,7 @@ import java.security.PublicKey;
 import java.security.SignatureException;
 import java.security.cert.CertificateEncodingException;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.crypto.BadPaddingException;
@@ -43,7 +41,6 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.WildcardSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
@@ -426,12 +423,13 @@ public class KnowledgeEncryptorTest {
 	@Test
 	public void encryptDecryptTest() throws KnowledgeNotFoundException {
 		// given local component has testrole1
-		Collection<SecurityTag> tags = new LinkedList<>();
 		KnowledgeSecurityTag tag1 = factory.createKnowledgeSecurityTag();
 		tag1.setRequiredRole(factory.createSecurityRole());
 		tag1.getRequiredRole().setRoleName("testrole1");
-		tags.add(tag1);
-		localKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("secured"), tags);
+		
+		WildcardSecurityTag tag2 = factory.createWildcardSecurityTag();
+		tag2.setAccessRights(AccessRights.READ);
+		localKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("secured"), Arrays.asList(tag1, tag2));
 		
 		localKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("secured2"), Arrays.asList(createAllowEveryoneTag()));
 		
@@ -453,10 +451,12 @@ public class KnowledgeEncryptorTest {
 		// then actual value is restored
 		assertEquals(666, decryptedData.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("secured")));
 		
-		List<KnowledgeSecurityTag> decryptedTags = (List<KnowledgeSecurityTag>) decryptedData.getSecuritySet().getValue(RuntimeModelHelper.createKnowledgePath("secured"));
-		assertEquals(tag1.getRequiredRole().getRoleName(), decryptedTags.get(0).getRequiredRole().getRoleName());
-		assertEquals(tag1.getRequiredRole().getArguments().size(), decryptedTags.get(0).getRequiredRole().getArguments().size());
-		assertEquals(tag1.getRequiredRole().getConsistsOf().size(), decryptedTags.get(0).getRequiredRole().getConsistsOf().size());
+		List<WildcardSecurityTag> decryptedTags = (List<WildcardSecurityTag>) decryptedData.getSecuritySet().getValue(RuntimeModelHelper.createKnowledgePath("secured"));
+		assertEquals(tag1.getRequiredRole().getRoleName(), ((KnowledgeSecurityTag) decryptedTags.get(0)).getRequiredRole().getRoleName());
+		assertEquals(tag1.getRequiredRole().getArguments().size(), ((KnowledgeSecurityTag) decryptedTags.get(0)).getRequiredRole().getArguments().size());
+		assertEquals(tag1.getRequiredRole().getConsistsOf().size(), ((KnowledgeSecurityTag) decryptedTags.get(0)).getRequiredRole().getConsistsOf().size());
+		
+		assertEquals(tag2.getAccessRights(), decryptedTags.get(1).getAccessRights());
 		
 		assertEquals("author_secured", decryptedData.getAuthors().getValue(RuntimeModelHelper.createKnowledgePath("secured")));
 	}

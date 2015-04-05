@@ -52,7 +52,6 @@ public class ModelSecurityValidatorTest {
 	private ComponentProcess process, process1, process2, process3;
 	private KnowledgeSecurityTag tag_with_path, tag_only_role, tag_with_blank, tag_with_absolute, inherited_tag;
 	private ModelSecurityValidator modelSecurityValidator;
-	private WildcardSecurityTag wildcard_tag;
 	
 	@Before
 	public void setUp() throws KnowledgeUpdateException {
@@ -67,7 +66,6 @@ public class ModelSecurityValidatorTest {
 		tag_with_blank = factory.createKnowledgeSecurityTag();
 		tag_with_absolute = factory.createKnowledgeSecurityTag();
 		inherited_tag = factory.createKnowledgeSecurityTag();
-		wildcard_tag = factory.createWildcardSecurityTag();
 		
 		// create role1
 		SecurityRole role1 = factory.createSecurityRole();
@@ -529,6 +527,28 @@ public class ModelSecurityValidatorTest {
 		
 		List<String> errors = modelSecurityValidator.validate(simpleComponent).stream().collect(Collectors.toList());
 		assertEquals(0, errors.size());
+	}
+	
+	@Test
+	public void validateProcessTest27() {
+		// given wildcard tag is used in input
+		WildcardSecurityTag inputTag = factory.createWildcardSecurityTag();
+		inputTag.setAccessRights(AccessRights.READ);
+
+		WildcardSecurityTag outputTag = factory.createWildcardSecurityTag();
+		outputTag.setAccessRights(AccessRights.READ);
+		
+		tag_only_role.setAccessRights(AccessRights.READ_WRITE);
+		
+		simpleKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("map1"), Arrays.asList(inputTag));
+		simpleKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("map2"), Arrays.asList(outputTag, tag_only_role));
+		
+		process.getParameters().add(createParameter(ParameterKind.IN, createKnowledgePath(new String[] {"map1"})));
+		process.getParameters().add(createParameter(ParameterKind.INOUT, createKnowledgePath(new String[] {"map2"})));
+		
+		List<String> errors = modelSecurityValidator.validate(simpleComponent).stream().collect(Collectors.toList());
+		assertEquals(1, errors.size());
+		assertEquals("Parameter map2 is not appropriately secured.", errors.get(0));
 	}
 	
 	@Test
