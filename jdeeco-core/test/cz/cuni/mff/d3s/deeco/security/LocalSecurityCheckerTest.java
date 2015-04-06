@@ -359,12 +359,14 @@ public class LocalSecurityCheckerTest {
 		
 		shadowKnowledgeManager.update(createKnowledge());
 		
+		// attempt to access readonly field with INOUT
+		assertFalse(target.checkSecurity(PathRoot.COORDINATOR, shadowKnowledgeManager));
+		
 		SecurityRole roleB = factory.createSecurityRole();
 		roleB.setRoleName("roleB");
 		localComponent.getSecurityRoles().add(roleB);
 		
-		// attempt to access readonly field with INOUT
-		assertTrue(target.checkSecurity(PathRoot.COORDINATOR, shadowKnowledgeManager));			
+		assertTrue(target.checkSecurity(PathRoot.COORDINATOR, shadowKnowledgeManager));
 	}
 	
 	@Test
