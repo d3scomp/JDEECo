@@ -1,0 +1,12 @@
+diff -Naur a/src/modules/nic/Nic802154_TI_CC2420.ned b/src/modules/nic/Nic802154_TI_CC2420.ned 
+--- a/src/modules/nic/Nic802154_TI_CC2420.ned    2013-03-05 20:57:57.000000000 +0000
++++ b/src/modules/nic/Nic802154_TI_CC2420.ned    2015-04-07 10:09:23.895465600 +0000
+@@ -45,7 +45,7 @@
+         rxTxCurrent          = 18.8 mA; // Upper bound
+         txRxCurrent          = 18.8 mA; // idem
+
+-        phy.decider = xmldoc("Nic802154_TI_CC2420_Decider.xml");
++        phy.decider = default(xmldoc("Nic802154_TI_CC2420_Decider.xml"));
+         //publishRSSIAlways = false;
+         phy.headerLength = 48 bit; // ieee 802.15.4
+         phy.thermalNoise = default(-110 dBm);
