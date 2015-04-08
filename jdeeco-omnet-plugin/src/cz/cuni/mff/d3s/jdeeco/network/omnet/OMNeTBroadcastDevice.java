@@ -12,6 +12,10 @@ public class OMNeTBroadcastDevice extends OMNeTDevice {
 		position = new Position(0, 0, 0);
 	}
 	
+	public OMNeTBroadcastDevice(int x, int y, int z) {
+		this(new Position(x, y, z));
+	}
+	
 	public OMNeTBroadcastDevice(final Position position) {
 		this.position = position;
 	}
