@@ -1,5 +1,7 @@
 package cz.cuni.mff.d3s.deeco.logging;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -20,9 +22,24 @@ public class SimpleFormatter extends Formatter {
         	   .append(formatMessage(record));
     }
     
+    protected void thrownFormat(StringBuilder builder, LogRecord record) {
+    	if(hasException(record)){
+    		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+    		PrintStream printStream = new PrintStream(stream);
+    		record.getThrown().printStackTrace(printStream);
+    		builder.append("\t").append(stream.toString());
+    	}
+    }
+    
+    protected boolean hasException(LogRecord record){
+    	return record.getThrown() != null;
+    }
+    
     public String format(LogRecord record) {
         StringBuilder builder = new StringBuilder();
         preFormat(builder, record);
+        builder.append("\n");
+        thrownFormat(builder, record);
         builder.append("\n");
         return builder.toString();
     }

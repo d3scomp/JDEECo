@@ -87,7 +87,7 @@ public class EnsembleDataExchange {
 					shadowKnowledgeManager, formalParams, false);
 			actualParams = loadActualParams(localRole, localKnowledgeManager, shadowKnowledgeManager, parameters);
 		} catch (KnowledgeNotFoundException e) {
-			Log.w(String.format("Input knowledge (%s) of a membership function in %s not found.", 
+			Log.d(String.format("Input knowledge (%s) of a membership function in %s not found.", 
 					e.getNotFoundPath(), ensembleDefinition.getName()));
 			return false;
 		}
