@@ -55,17 +55,12 @@ import cz.cuni.mff.d3s.jdeeco.matsim.old.simulation.MATSimSimulationStepListener
 public class MATSimSimulation implements DEECoPlugin {
 	private final TreeSet<Callback> callbacks;
 
-	class TimerProvider implements SimulationTimer, CurrentTimeProvider /*
-																		 * TODO: Current time provider or simulation
-																		 * timer
-																		 */, MATSimSimulationStepListener {
+	class TimerProvider implements SimulationTimer, MATSimSimulationStepListener {
 		@Override
 		public void notifyAt(long time, TimerEventListener listener, DEECoContainer node) {
 			// System.out.println("NOTIFY AT CALLED FOR: " + time + " NODE:" + node.getId());
 			// MATSimSimulation.this.oldSimulation.callAt(time, String.valueOf(node.getId()));
-			final String hostId = String.valueOf(node.getId());
-
-			callAt(time, hostId);
+			callAt(time, String.valueOf(node.getId()));
 
 			MATSimSimulation.this.getHost(String.valueOf(node.getId())).listener = listener;
 		}
@@ -88,10 +83,7 @@ public class MATSimSimulation implements DEECoPlugin {
 
 		@Override
 		public void start(long duration) {
-			double startTime = MATSimSimulation.this.getController().getConfig().getQSimConfigGroup().getStartTime();
-			double endTime = startTime + (((double) (duration)) / 1000);
-			MATSimSimulation.this.getController().getConfig().getQSimConfigGroup().setEndTime(endTime);
-			MATSimSimulation.this.getController().run();
+			MATSimSimulation.this.run(duration);
 		}
 
 		@Override
@@ -214,8 +206,6 @@ public class MATSimSimulation implements DEECoPlugin {
 	private final MATSimDataProviderReceiver matSimProviderReceiver = new MATSimDataProviderReceiver(
 			new LinkedList<String>());
 
-	// private final cz.cuni.mff.d3s.deeco.simulation.matsim.MATSimSimulation oldSimulation;
-
 	private static final String SIMULATION_CALLBACK = "SIMULATION_CALLBACK";
 	private long currentMilliseconds;
 	private final long simulationStep; // in milliseconds
@@ -235,11 +225,6 @@ public class MATSimSimulation implements DEECoPlugin {
 		agentSources.add(agentSource);
 		agentSources.addAll(Arrays.asList(additionalAgentSources));
 
-		/*
-		 * oldSimulation = new cz.cuni.mff.d3s.deeco.simulation.matsim.MATSimSimulation(matSimProviderReceiver,
-		 * matSimProviderReceiver, new DefaultMATSimUpdater(), new DefaultMATSimExtractor(), agentSources,
-		 * config.getAbsolutePath());
-		 */
 		// this.exchanger = new Exchanger<Object>();
 
 		this.callbacks = new TreeSet<>();
@@ -283,19 +268,26 @@ public class MATSimSimulation implements DEECoPlugin {
 		this.simulationStep = secondsToMilliseconds(step);
 		currentMilliseconds = secondsToMilliseconds(controler.getConfig().getQSimConfigGroup().getStartTime());
 
-		router = new MATSimRouter(getController(), travelTime, 10 /* TODO: FAKE VALUE */);
+		router = new MATSimRouter(controler, travelTime, 10 /* TODO: FAKE VALUE */);
 	}
 
 	private long secondsToMilliseconds(double seconds) {
 		return (long) (seconds * 1000);
 	}
 
-	public void addHost(String id, cz.cuni.mff.d3s.jdeeco.matsim.MATSimSimulation.Host host) {
+	private void addHost(String id, cz.cuni.mff.d3s.jdeeco.matsim.MATSimSimulation.Host host) {
 		hosts.put(id, host);
 	}
 
-	public Host getHost(String id) {
+	private Host getHost(String id) {
 		return hosts.get(id);
+	}
+	
+	private void run(long duration) {
+		double startTime = controler.getConfig().getQSimConfigGroup().getStartTime();
+		double endTime = startTime + (((double) (duration)) / 1000);
+		controler.getConfig().getQSimConfigGroup().setEndTime(endTime);
+		controler.run();
 	}
 
 	public SimulationTimer getTimer() {
@@ -304,10 +296,6 @@ public class MATSimSimulation implements DEECoPlugin {
 
 	public MATSimRouter getRouter() {
 		return router;
-	}
-
-	public Controler getController() {
-		return controler;
 	}
 
 	public MATSimDataProviderReceiver getMATSimProviderReceiver() {
