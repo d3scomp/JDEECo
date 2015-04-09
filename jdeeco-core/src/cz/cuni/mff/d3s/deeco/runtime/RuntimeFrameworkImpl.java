@@ -131,6 +131,11 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 	 * Keeps track of remote component instances in the architecture model.
 	 */
 	protected Map<String, RemoteComponentInstance> remoteComponentInstances = new HashMap<>();
+	
+	/**
+	 * The {@link DEECoContainer} that contains the instance of {@link RuntimeFramework}.
+	 */
+	protected DEECoContainer deecoContainer;
 
 	/**
 	 * Initializes the runtime with the given internal services and prepares the
@@ -144,30 +149,17 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 	 * 			  the scheduler to be used for scheduling the tasks
 	 * @param executor
 	 * 			  the scheduler to be used for executing the tasks
-	 * @param kmRegistry
-	 *            the KM registry to be used for management of knowledge repositories.
+	 * @param kmContainer
+	 *            The container of knowledge manager.
+	 * @param ratingsManager
+	 * 			  The ratings manager.
 	 * 
 	 * TODO: add synchronizer/network container in the constructor
 	 * 
 	 * @throws IllegalArgumentException if either of the arguments is null.
 	 */
 	public RuntimeFrameworkImpl(RuntimeMetadata model, Scheduler scheduler,
-			Executor executor, KnowledgeManagerContainer kmContainer) {
-		this(model, scheduler, executor, kmContainer, null, false);
-	}
-	
-	public RuntimeFrameworkImpl(RuntimeMetadata model, Scheduler scheduler,
 			Executor executor, KnowledgeManagerContainer kmContainer, RatingsManager ratingsManager) {
-		this(model, scheduler, executor, kmContainer, ratingsManager, true);
-	}
-	/**
-	 * FIXME remove this constructor when RatingsManager becomes a plugin
-	 * 
-	 * @see RuntimeFrameworkImpl#RuntimeFrameworkImpl(RuntimeMetadata, Scheduler, Executor, KnowledgeManagerContainer)
-	 * @see RuntimeFrameworkImpl#init(DEECoContainer)
-	 */
-	public RuntimeFrameworkImpl(RuntimeMetadata model, Scheduler scheduler,
-			Executor executor, KnowledgeManagerContainer kmContainer, RatingsManager ratingsManager, boolean autoInit) {
 		if (model == null)
 			throw new IllegalArgumentException("Model cannot be null");
 		if (scheduler == null)
@@ -185,9 +177,6 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 		
 		//create architecture model 
 		architecture = ArchitectureFactory.eINSTANCE.createArchitecture();
-
-		if (autoInit)
-			init(null);
 	}
 
 	/**
@@ -198,7 +187,8 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 	 * </p>
 	 */
 	@Override
-	public void init(DEECoContainer container) {		
+	public void init(DEECoContainer container) {
+		this.deecoContainer = container;
 		// initialize the components
 		for (ComponentInstance ci: model.getComponentInstances()) {
 			componentInstanceAdded(ci);
@@ -304,7 +294,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 						ensembleControllerAdded(newController.getComponentInstance(), newController);
 					// a ensemble controller removed
 					} else if (notification.getEventType() == Notification.REMOVE) {
-						EnsembleController oldController = (EnsembleController) notification.getNewValue();
+						EnsembleController oldController = (EnsembleController) notification.getOldValue();
 						ensembleControllerRemoved(oldController.getComponentInstance(), oldController);
 					}
 				}
@@ -446,6 +436,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 		}
 		
 		Task task = new EnsembleTask(controller, scheduler, (ArchitectureObserver) this, kmContainer, ratingsManager);
+		((EnsembleTask) task).init(deecoContainer);
 		cir.getEnsembleTasks().put(controller, task);
 		
 		ensembleControllerActiveChanged(instance, controller, controller.isActive());
@@ -684,7 +675,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 	}
 	
 	public void ensembleFormed(final EnsembleDefinition e, final ComponentInstance c, final String coordID, final String memberID) {
-		Log.w("Ensemble "+e+" formed at the side of " + c + " with coord: "+coordID+" and member: "+memberID);
+		Log.i("Ensemble "+e+" formed at the side of " + c + " with coord: "+coordID+" and member: "+memberID);
 
 		EnsembleInstance ensembleInstance = ArchitectureFactory.eINSTANCE.createEnsembleInstance();
 		ensembleInstance.setEnsembleDefinition(e);

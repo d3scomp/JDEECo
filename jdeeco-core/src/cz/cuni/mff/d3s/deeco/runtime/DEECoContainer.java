@@ -5,6 +5,7 @@ import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
+import cz.cuni.mff.d3s.deeco.runtimelog.RuntimeLogger;
 
 /**
  * Specifies the entry points of the main DEECo container available to DEECo plugins. 
@@ -39,6 +40,12 @@ public interface DEECoContainer {
 	public RuntimeMetadata getRuntimeMetadata();
 	
 	/**
+	 * Provides the {@link RuntimeLogger} specific to this DEECo container.
+	 * @return The {@link RuntimeLogger} specific to this DEECo container.
+	 */
+	public RuntimeLogger getRuntimeLogger();
+	
+	/**
 	 * Deploys components to the DEECo runtime by parsing them and adding them to the metadata model.
 	 * As soon as they are added to the model, components are dynamically deployed (relevant tasks are created and scheduled).
 	 * To be used by plugins to deploy "system components" that specify system processes to be scheduled along with application processes.
@@ -59,7 +66,11 @@ public interface DEECoContainer {
 	 */
 	@SuppressWarnings("rawtypes")
 	public EnsembleDefinition deployEnsemble(Class ensembles) throws AnnotationProcessorException, DuplicateEnsembleDefinitionException;
-	
+
+	/**
+	 * Gets identification of DEECo container
+	 * 
+	 * @return Container identification
+	 */
 	public int getId();
-	
 }

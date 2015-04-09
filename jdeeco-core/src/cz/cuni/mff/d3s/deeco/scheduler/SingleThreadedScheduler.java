@@ -11,6 +11,7 @@ import java.util.TreeSet;
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
+import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
 import cz.cuni.mff.d3s.deeco.task.Task;
 import cz.cuni.mff.d3s.deeco.task.TaskTriggerListener;
 import cz.cuni.mff.d3s.deeco.timer.Timer;
@@ -19,7 +20,7 @@ import cz.cuni.mff.d3s.deeco.timer.Timer;
  * TODO
  */
 public class SingleThreadedScheduler implements Scheduler {
-
+	private final DEECoNode node;
 	private Executor executor;
 	private Timer timer;
 	
@@ -28,12 +29,13 @@ public class SingleThreadedScheduler implements Scheduler {
 	private final Map<Task, SchedulerEvent> timeTriggeredEvents;
 	private final Set<Trigger> knowledgeChangeTriggers;
 
-    public SingleThreadedScheduler(Executor executor, Timer timer) throws NoExecutorAvailableException{
+    public SingleThreadedScheduler(Executor executor, Timer timer, DEECoNode node) throws NoExecutorAvailableException{
 		if (executor == null) {
 			throw new NoExecutorAvailableException();
 		}
     	this.executor = executor;
     	this.timer = timer;
+    	this.node = node;
     	
 		queue = new TreeSet<>();
 		allTasks = new HashSet<>();
@@ -72,7 +74,7 @@ public class SingleThreadedScheduler implements Scheduler {
 			event.nextPeriodStart = executionTime;
 			queue.add(event);
 			
-			timer.notifyAt(event.nextExecutionTime, this);
+			timer.notifyAt(event.nextExecutionTime, this, node);
 						
 			timeTriggeredEvents.put(task, event);
 		}
@@ -128,7 +130,7 @@ public class SingleThreadedScheduler implements Scheduler {
 			long nextExecutionTime = queue.first().nextExecutionTime;
 			// FIXME we need the '=' in the next line if we don't give a random offset
 			if (nextExecutionTime >= timer.getCurrentMilliseconds()) {
-				timer.notifyAt(nextExecutionTime, this);
+				timer.notifyAt(nextExecutionTime, this, node);
 			}
 		}
 	}
@@ -142,7 +144,7 @@ public class SingleThreadedScheduler implements Scheduler {
 	@Override
 	public void at(long time) {
 		while ((!queue.isEmpty()) && (queue.first().nextExecutionTime<=time)) {
-			SchedulerEvent event = queue.pollFirst(); 
+			SchedulerEvent event = queue.pollFirst();
 
 			if (event.periodic) {
 				// schedule for the next period add a random offset within the period (up to 75% of the period)
@@ -155,5 +157,4 @@ public class SingleThreadedScheduler implements Scheduler {
 			executor.execute(event.executable, event.trigger);
 		}
 	}
-     
 }

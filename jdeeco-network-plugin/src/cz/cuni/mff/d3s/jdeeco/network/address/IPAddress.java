@@ -6,7 +6,6 @@ package cz.cuni.mff.d3s.jdeeco.network.address;
  *
  */
 public class IPAddress extends Address {
-	
 	public final String ipAddress;
 
 	public IPAddress(String ipAddress) {
@@ -23,5 +22,15 @@ public class IPAddress extends Address {
 			return false;
 		IPAddress other = (IPAddress) obj;
 		return other.ipAddress.equals(ipAddress);
+	}
+	
+	@Override
+	public int hashCode() {
+		return ipAddress.hashCode();
+	}
+	
+	@Override
+	public String toString() {
+		return ipAddress;
 	}
 }

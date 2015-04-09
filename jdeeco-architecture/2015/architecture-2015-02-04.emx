@@ -430,7 +430,7 @@
         <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_rNLVwKx_EeSXlb2XdED6lw" id="(0.9649053627760252,0.29246064623032314)"/>
       </edges>
     </contents>
-    <contents xmi:type="umlnotation:UMLDiagram" xmi:id="_RtDuEK0aEeSX28zN2pXWwA" type="Class" name="RuntimeExtensions">
+    <contents xmi:type="umlnotation:UMLDiagram" xmi:id="_RtDuEK0aEeSX28zN2pXWwA" type="Class" name="PluginArchitecture">
       <children xmi:type="umlnotation:UMLClassifierShape" xmi:id="_Vwmmka0bEeSX28zN2pXWwA" element="_VwmmkK0bEeSX28zN2pXWwA" fontName="Segoe UI" fontHeight="8" showListSignature="true" transparency="0" lineColor="14263149" lineWidth="1" showStereotype="Label" useClassifierShape="true">
         <children xmi:type="notation:DecorationNode" xmi:id="_Vwmmk60bEeSX28zN2pXWwA" type="ImageCompartment">
           <layoutConstraint xmi:type="notation:Size" xmi:id="_VwmmlK0bEeSX28zN2pXWwA" width="530" height="530"/>
@@ -763,7 +763,7 @@
         <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_gKXHQbBeEeStX-sLfNOI2Q" points="[3, -38, -50, 588]$[28, -697, -25, -71]"/>
       </edges>
     </contents>
-    <contents xmi:type="umlnotation:UMLDiagram" xmi:id="_b_PCILRlEeSTkoErfP-E2w" type="Class" name="SchedulerAndSchedulerNotifier">
+    <contents xmi:type="umlnotation:UMLDiagram" xmi:id="_b_PCILRlEeSTkoErfP-E2w" type="Class" name="SchedulerAndTimer">
       <children xmi:type="umlnotation:UMLShape" xmi:id="_gnBFkLRlEeSTkoErfP-E2w" element="_glhQwLRlEeSTkoErfP-E2w" fontName="Segoe UI" fontHeight="8" showListSignature="true" transparency="0" lineColor="14263149" lineWidth="1" showStereotype="Label">
         <children xmi:type="notation:DecorationNode" xmi:id="_gnK2kLRlEeSTkoErfP-E2w" type="ImageCompartment">
           <layoutConstraint xmi:type="notation:Size" xmi:id="_gnK2kbRlEeSTkoErfP-E2w" width="1320" height="1320"/>
@@ -1677,7 +1677,7 @@
       </ownedParameter>
     </ownedOperation>
   </packagedElement>
-  <packagedElement xmi:type="uml:Interface" xmi:id="_lXq7sLRmEeSTkoErfP-E2w" name="SchedulerNotifierEventListener">
+  <packagedElement xmi:type="uml:Interface" xmi:id="_lXq7sLRmEeSTkoErfP-E2w" name="TimerEventListener">
     <ownedOperation xmi:id="_7Azx4LRnEeSTkoErfP-E2w" name="at">
       <ownedParameter xmi:id="_8aHuMLRnEeSTkoErfP-E2w" name="time">
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/JavaPrimitiveTypes.library.uml#long"/>

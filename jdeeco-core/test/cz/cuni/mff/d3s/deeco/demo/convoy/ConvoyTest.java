@@ -21,19 +21,19 @@ public class ConvoyTest {
 	@Rule
 	public final StandardOutputStreamLog  log = new StandardOutputStreamLog ();
 	
-	public static void main(String[] args) throws AnnotationProcessorException, InterruptedException, DEECoException {
+	public static void main(String[] args) throws AnnotationProcessorException, InterruptedException, DEECoException, InstantiationException, IllegalAccessException {
 		new ConvoyTest().testConvoy();
 	}
 	
 	@Test
-	public void testConvoy() throws AnnotationProcessorException, InterruptedException, DEECoException {
+	public void testConvoy() throws AnnotationProcessorException, InterruptedException, DEECoException, InstantiationException, IllegalAccessException {
 		
 		/* create main application container */
 		SimulationTimer simulationTimer = new DiscreteEventTimer();
 		DEECoSimulation realm = new DEECoSimulation(simulationTimer);
 		
 		/* create one and only deeco node (centralized deployment) */
-		DEECoNode deeco = realm.createNode();
+		DEECoNode deeco = realm.createNode(0);
 		/* deploy components and ensembles */
 		deeco.deployComponent(new Leader());
 		deeco.deployComponent(new Follower());

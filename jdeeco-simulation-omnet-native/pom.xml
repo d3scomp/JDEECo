@@ -8,6 +8,18 @@
 		<relativePath>../jdeeco-parent/pom.xml</relativePath>
 	</parent>
 	<artifactId>cz.cuni.mff.d3s.jdeeco.simulation.omnet-native</artifactId>
+	<build>
+		<sourceDirectory>src</sourceDirectory>
+		<testSourceDirectory>test</testSourceDirectory>
+		<resources>
+			<resource>
+				<directory>src</directory>
+				<excludes>
+					<exclude>**/*.java</exclude>
+				</excludes>
+			</resource>
+		</resources>
+	</build>
 	<profiles>
 		<profile>
 			<id>linux-build</id>

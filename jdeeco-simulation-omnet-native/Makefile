@@ -16,10 +16,11 @@ all: checkmakefiles header
 	cd src && $(MAKE) LDFLAGS="$(LDFLAGS)"
 	
 header:
-	$(JDK_HOME)/bin/javah -d src -classpath ../jdeeco-simulation/src cz.cuni.mff.d3s.deeco.simulation.omnet.OMNetSimulation
+	$(JDK_HOME)/bin/javah -o src/OMNeTJDEECoAPI.h -classpath src cz.cuni.mff.d3s.deeco.simulation.omnet.OMNeTNative
 
 clean: checkmakefiles
 	cd src && $(MAKE) clean
+	rm -f src/OMNeTJDEECoAPI.h
 
 cleanall: checkmakefiles
 	cd src && $(MAKE) clean

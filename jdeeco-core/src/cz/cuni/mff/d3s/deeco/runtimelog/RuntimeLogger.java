@@ -124,26 +124,30 @@ public class RuntimeLogger {
 	private Scheduler scheduler;
 
 	/**
+	 * The default directory where the log files are placed.
+	 */
+	private static final String LOG_DIRECTORY = "logs";
+	/**
 	 * Specifies the default file where the logging records of the runtime events are written.
 	 * This file destination can be overridden using the
 	 * {@link RuntimeLogger#init(CurrentTimeProvider, Scheduler, Writer, Writer, Writer)}
 	 * method.
 	 */
-	private static final File DATA_FILE = new File("logs/runtimeData.xml");
+	private static final File DATA_FILE = new File(LOG_DIRECTORY + "/runtimeData.xml");
 	/**
 	 * Specifies the default file where the index of the runtime log is stored.
 	 * This file destination can be overridden using the
 	 * {@link RuntimeLogger#init(CurrentTimeProvider, Scheduler, Writer, Writer, Writer)}
 	 * method.
 	 */
-	private static final File DATA_INDEX_FILE = new File("logs/dataIndex.xml");
+	private static final File DATA_INDEX_FILE = new File(LOG_DIRECTORY + "/dataIndex.xml");
 	/**
 	 * Specifies the default file where the back log time offsets are written.
 	 * This file destination can be overridden using the
 	 * {@link RuntimeLogger#init(CurrentTimeProvider, Scheduler, Writer, Writer, Writer)}
 	 * method.
 	 */
-	private static final File SNAPSHOT_PERIOD_FILE = new File("logs/snapshotPeriodTable.xml");
+	private static final File SNAPSHOT_PERIOD_FILE = new File(LOG_DIRECTORY + "/snapshotPeriodTable.xml");
 	/**
 	 * The encoding used to write into each log file. the number of bytes written for each character
 	 * depends on the selected encoding.
@@ -232,6 +236,13 @@ public class RuntimeLogger {
 	 */
 	public void init(CurrentTimeProvider currentTimeProvider,
 			Scheduler scheduler) throws IOException {
+
+		// Check whether the directory for log files exists and create it if needed
+		File logDirectory = new File(LOG_DIRECTORY);
+		if(!logDirectory.exists() || !logDirectory.isDirectory()){
+			logDirectory.mkdirs();
+		}
+		
 		Writer dataOut = openStream(DATA_FILE);
 		Writer indexOut = openStream(DATA_INDEX_FILE);
 		Writer periodOut = openStream(SNAPSHOT_PERIOD_FILE);
@@ -273,7 +284,7 @@ public class RuntimeLogger {
 		if (periodOut == null)
 			throw new IllegalArgumentException(String.format(
 					"The argument \"%s\" is null.", "periodOut"));
-
+		
 		// Opening the files in init method to avoid IOException in the constructor
 		dataWriter = new BufferedWriter(dataOut);
 		indexWriter = new BufferedWriter(indexOut);

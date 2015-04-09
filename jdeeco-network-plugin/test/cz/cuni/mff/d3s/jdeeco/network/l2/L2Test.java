@@ -54,7 +54,8 @@ public class L2Test {
 		registry.registerMarshaller(L2PacketType.KNOWLEDGE, new SerializingMarshaller());
 
 		// Instantiate layer
-		l2Layer = new Layer2(layer1, registry);
+		l2Layer = new Layer2(registry);
+		l2Layer.setL2PacketSender(layer1);
 	}
 
 	private L2Packet createSampleSourcepacket() {
@@ -88,10 +89,10 @@ public class L2Test {
 		L2Packet srcPacket = createSampleSourcepacket();
 
 		// Try to send the packet
-		l2Layer.sendL2Packet(srcPacket, MANETBroadcastAddress.INSTANCE);
+		l2Layer.sendL2Packet(srcPacket, MANETBroadcastAddress.BROADCAST);
 
 		// Check packet was passed to layer1
-		Mockito.verify(layer1).sendL2Packet(Matchers.eq(srcPacket), Matchers.eq(MANETBroadcastAddress.INSTANCE));
+		Mockito.verify(layer1).sendL2Packet(Matchers.eq(srcPacket), Matchers.eq(MANETBroadcastAddress.BROADCAST));
 	}
 
 	/**

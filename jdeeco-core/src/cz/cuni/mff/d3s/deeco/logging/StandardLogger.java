@@ -1,9 +1,11 @@
 package cz.cuni.mff.d3s.deeco.logging;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
+
 
 /**
  * Simple wrapper of java.util.logging.Logger with lazy-initialized singleton
@@ -14,10 +16,23 @@ import java.util.logging.LogManager;
  */
 enum StandardLogger implements Logger {
 	INSTANCE;
+
+	/**
+	 * The default directory where the log files are placed.
+	 */
+	private static final String LOG_DIRECTORY = "logs";
 	
 	private java.util.logging.Logger logger;
+	
 
 	private StandardLogger() {
+
+		// Check whether the directory for log files exists and create it if needed
+		File logDirectory = new File(LOG_DIRECTORY);
+		if(!logDirectory.exists() || !logDirectory.isDirectory()){
+			logDirectory.mkdirs();
+		}
+		
 		CustomLevel.registerCustomLevels();
 		logger = java.util.logging.Logger.getLogger(getClass().getPackage().getName());
 		String confPath = System.getProperty("java.util.logging.config.file");

@@ -177,13 +177,13 @@
         <element xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//EnsembleDefinition/partitionedBy"/>
         <layoutConstraint xmi:type="notation:Location" xmi:id="_vP7cwGTyEeSotbgE2UC1AQ"/>
       </children>
-      <children xmi:type="notation:Node" xmi:id="_QmJZgMKIEeSrO9KScWtpWg" type="2001">
+      <children xmi:type="notation:Node" xmi:id="_gWUGIN6hEeSCA6PdO7lQkQ" type="2001">
         <element xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//EnsembleDefinition/coordinatorRole"/>
-        <layoutConstraint xmi:type="notation:Location" xmi:id="_QmJZgcKIEeSrO9KScWtpWg"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_gWUGId6hEeSCA6PdO7lQkQ"/>
       </children>
-      <children xmi:type="notation:Node" xmi:id="_W1nzgMKIEeSrO9KScWtpWg" type="2001">
+      <children xmi:type="notation:Node" xmi:id="_ln1DEN6hEeSCA6PdO7lQkQ" type="2001">
         <element xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//EnsembleDefinition/memberRole"/>
-        <layoutConstraint xmi:type="notation:Location" xmi:id="_W1nzgcKIEeSrO9KScWtpWg"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_ln1DEd6hEeSCA6PdO7lQkQ"/>
       </children>
       <styles xmi:type="notation:DrawerStyle" xmi:id="_V0Kr4j28EeO2QcBZHbiySQ"/>
       <styles xmi:type="notation:SortingStyle" xmi:id="_V0Kr4z28EeO2QcBZHbiySQ"/>
@@ -196,7 +196,7 @@
     </children>
     <styles xmi:type="notation:ShapeStyle" xmi:id="_V0KE0T28EeO2QcBZHbiySQ" fontColor="4210752" fontName="Segoe UI" fontHeight="10" fillColor="13761016" lineColor="8421504"/>
     <element xmi:type="ecore:EClass" href="RuntimeModel.ecore#//EnsembleDefinition"/>
-    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_V0KE0j28EeO2QcBZHbiySQ" x="672" y="624" height="123"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_V0KE0j28EeO2QcBZHbiySQ" x="675" y="648" height="99"/>
   </children>
   <children xmi:type="notation:Node" xmi:id="_bcRj4D28EeO2QcBZHbiySQ" type="1001">
     <children xmi:type="notation:Node" xmi:id="_bcSK8D28EeO2QcBZHbiySQ" type="4001"/>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<featuremodel:FeatureModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:featuremodel="http://www.eclipse.org/featuremodel" id="_mJMZANAiEeSe38cKHMmiYw">
+  <root id="_oZluUNAiEeSe38cKHMmiYw" name="DEECo">
+    <children id="_qlEHYdAiEeSe38cKHMmiYw" lower="1">
+      <features id="_qlEHYNAiEeSe38cKHMmiYw" name="Execution">
+        <children id="_Qd3NodAlEeSe38cKHMmiYw" lower="1" upper="1">
+          <features id="_Qd3NoNAlEeSe38cKHMmiYw" name="SingleThreaded"/>
+          <features id="_rxMb8NAlEeSe38cKHMmiYw" name="Multi Threaded"/>
+        </children>
+      </features>
+    </children>
+    <children id="_beQY8dAlEeSe38cKHMmiYw" lower="1">
+      <features id="_beQY8NAlEeSe38cKHMmiYw" name="Scheduling">
+        <children id="_ecY-AdAlEeSe38cKHMmiYw" lower="1" upper="1">
+          <features id="_ecY-ANAlEeSe38cKHMmiYw" name="Discrete"/>
+          <features id="_g7YwANAlEeSe38cKHMmiYw" name="Wall Time"/>
+        </children>
+      </features>
+    </children>
+    <children id="_3QuaUdAlEeSe38cKHMmiYw" lower="1">
+      <features id="_3QuaUNAlEeSe38cKHMmiYw" name="Deployment">
+        <children id="_486PUdAlEeSe38cKHMmiYw" lower="1" upper="1">
+          <features id="_486PUNAlEeSe38cKHMmiYw" name="Centralized (single node)"/>
+          <features id="_7fCN0NAlEeSe38cKHMmiYw" name="Distributed (multiple nodes)"/>
+        </children>
+      </features>
+    </children>
+    <children id="_zDvnEdAmEeSe38cKHMmiYw" lower="1">
+      <features id="_zDvnENAmEeSe38cKHMmiYw" name="Logging">
+        <children id="_1bceQdAmEeSe38cKHMmiYw" lower="1">
+          <features id="_1bceQNAmEeSe38cKHMmiYw" name="Simulation logging"/>
+        </children>
+        <children id="_5Z87MNAmEeSe38cKHMmiYw" lower="1">
+          <features id="_5ZzxQNAmEeSe38cKHMmiYw" name="Debug logging (java.util)"/>
+        </children>
+      </features>
+    </children>
+    <children id="_oaVtgdAoEeSe38cKHMmiYw">
+      <features id="_oaVtgNAoEeSe38cKHMmiYw" name="Plugins">
+        <children id="_AuVc4dApEeSe38cKHMmiYw">
+          <features id="_AuVc4NApEeSe38cKHMmiYw" name="Data Trustworthiness"/>
+        </children>
+        <children id="_CFgrMdApEeSe38cKHMmiYw">
+          <features id="_CFgrMNApEeSe38cKHMmiYw" name="Security"/>
+        </children>
+        <children id="_DzVe8dApEeSe38cKHMmiYw">
+          <features id="_DzVe8NApEeSe38cKHMmiYw" name="Adaptation">
+            <children id="_H6pSkdApEeSe38cKHMmiYw" lower="0" upper="1">
+              <features id="_H6pSkNApEeSe38cKHMmiYw" name="IRM-SA-based">
+                <children id="_LgRVcdApEeSe38cKHMmiYw" lower="1" upper="1">
+                  <features id="_LgRVcNApEeSe38cKHMmiYw" name="Process period adaptation"/>
+                  <features id="_QVn60NApEeSe38cKHMmiYw" name="Condition bounds adaptation"/>
+                </children>
+              </features>
+              <features id="_JxZ_4NApEeSe38cKHMmiYw" name="Correlation-based"/>
+            </children>
+          </features>
+        </children>
+        <children id="_V0Z3sdApEeSe38cKHMmiYw">
+          <features id="_V0Z3sNApEeSe38cKHMmiYw" name="Visualization"/>
+        </children>
+        <children id="_Ye354dApEeSe38cKHMmiYw">
+          <features id="_Ye354NApEeSe38cKHMmiYw" name="Environment simulation">
+            <children id="_fms4MdApEeSe38cKHMmiYw" lower="1">
+              <features id="_fms4MNApEeSe38cKHMmiYw" name="MatSim">
+                <children id="_hUOxAdApEeSe38cKHMmiYw">
+                  <features id="_hUOxANApEeSe38cKHMmiYw" name="Sumo"/>
+                </children>
+              </features>
+            </children>
+          </features>
+        </children>
+        <children id="_jfGtIdApEeSe38cKHMmiYw">
+          <features id="_tRYKYNAnEeSe38cKHMmiYw" name="Network">
+            <children id="_13-z0dAnEeSe38cKHMmiYw" lower="1" upper="1">
+              <features id="_13-z0NAnEeSe38cKHMmiYw" name="OMNET++-based"/>
+              <features id="__sZUMNAnEeSe38cKHMmiYw" name="Loopback-based"/>
+            </children>
+            <children id="_G7h0YdAoEeSe38cKHMmiYw" lower="1">
+              <features id="_G7h0YNAoEeSe38cKHMmiYw" name="Gossip strategy">
+                <children id="_I3g_8NAoEeSe38cKHMmiYw" lower="0" upper="1">
+                  <features id="_I3XO8NAoEeSe38cKHMmiYw" name="MANET-based"/>
+                  <features id="_XtUWkNAoEeSe38cKHMmiYw" name="IP-based"/>
+                </children>
+              </features>
+            </children>
+          </features>
+        </children>
+      </features>
+    </children>
+  </root>
+</featuremodel:FeatureModel>

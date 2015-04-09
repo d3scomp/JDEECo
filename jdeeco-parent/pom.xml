@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>cz.cuni.mff.d3s.jdeeco</artifactId>
-	<version>2.0.0</version>
+	<version>3.0.0</version>
 	<packaging>pom</packaging>
 	<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
 	<properties>
@@ -11,8 +11,7 @@
 	<modules>
 		<module>../jdeeco-core</module>
 		<!-- <module>../jdeeco-demo</module> <module>../jdeeco-core-osgi</module> -->
-		<module>../jdeeco-simulation</module>
-		<!-- <module>../jdeeco-simulation-demo</module> -->
+		<module>../jdeeco-network-plugin</module>
 	</modules>
 	<build>
 		<plugins>

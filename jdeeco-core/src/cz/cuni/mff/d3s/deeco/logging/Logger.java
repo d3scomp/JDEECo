@@ -9,7 +9,7 @@ package cz.cuni.mff.d3s.deeco.logging;
  * 
  */
 interface Logger {
-
+	
 	/**
 	 * Mainly for debugging reasons.
 	 * 

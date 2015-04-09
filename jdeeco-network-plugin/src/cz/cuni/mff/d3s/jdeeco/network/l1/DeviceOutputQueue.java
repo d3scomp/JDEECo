@@ -1,7 +1,12 @@
 package cz.cuni.mff.d3s.jdeeco.network.l1;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
+import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
+import cz.cuni.mff.d3s.deeco.task.CustomStepTask;
+import cz.cuni.mff.d3s.deeco.task.TimerTask;
+import cz.cuni.mff.d3s.deeco.task.TimerTaskListener;
 import cz.cuni.mff.d3s.jdeeco.network.address.Address;
 import cz.cuni.mff.d3s.jdeeco.network.device.Device;
 
@@ -13,19 +18,44 @@ import cz.cuni.mff.d3s.jdeeco.network.device.Device;
  *
  */
 public class DeviceOutputQueue {
+	/**
+	 * Listener used to delayed sending
+	 */
+	private class DelayedSendListener implements TimerTaskListener {
+		@Override
+		public void at(long time, Object triger) {
+			DeviceOutputQueue.this.send();
+		}
 
+		@Override
+		public TimerTask getInitialTask(Scheduler scheduler) {
+			return null;
+		}
+	}
+
+	// Default delay between adding packet to queue and physically sending the data
+	private static final int DEFAULT_SEND_DELAY_LIMIT = 100;
+	
 	public final Device device;
 	public final Address address;
 
+	private Scheduler scheduler;
 	private final long timeout; // in milliseconds
+	private CustomStepTask delayedTask;
+	private DelayedSendListener delayedListener = new DelayedSendListener();
 	private final byte[] l0Packet;
 	private int l0PacketSize;
-
-	public DeviceOutputQueue(Device device, Address address, long timeout) {
+	
+	public DeviceOutputQueue(Device device, Address address, Scheduler scheduler, long timeout) {
+		this.scheduler = scheduler;
 		this.timeout = timeout;
 		this.device = device;
 		this.address = address;
 		this.l0Packet = new byte[device.getMTU()];
+	}
+	
+	public DeviceOutputQueue(Device device, Address address, Scheduler scheduler) {
+		this(device, address, scheduler, DEFAULT_SEND_DELAY_LIMIT);
 	}
 
 	/**
@@ -59,15 +89,33 @@ public class DeviceOutputQueue {
 		if (availableL0Space() < Layer1.MINIMUM_DATA_TRANSMISSION_SIZE) {
 			send();
 		} else {
-			// TODO add scheduler task
+			// Remove previously set send delayed task as we postpone send deadline by adding to this packet
+			removeDelayedSendTask();
+			// Schedule delayed send of packet
+			delayedTask = new CustomStepTask(scheduler, delayedListener, timeout);
+			scheduler.addTask(delayedTask);
 		}
 	}
 
 	// ------------- PRIVATE METHODS --------------------
 
+	/**
+	 * Removes scheduled task used to delayed send if it is set
+	 */
+	private void removeDelayedSendTask() {
+		if (delayedTask != null) {
+			scheduler.removeTask(delayedTask);
+			delayedTask = null;
+		}
+	}
+
 	protected void send() {
+		// We are going to send the packet, no need to send it later
+		removeDelayedSendTask();
+
 		if (l0PacketSize > 0) {
-			device.send(l0Packet, address);
+			byte[] validL0PacketData = Arrays.copyOfRange(l0Packet, 0, l0PacketSize);
+			device.send(validL0PacketData, address);
 			l0PacketSize = 0;
 		}
 	}

@@ -20,7 +20,7 @@ import cz.cuni.mff.d3s.jdeeco.network.marshaller.MarshallerRegistry;
 public class Layer2 implements L2StrategyManager, L1DataProcessor {
 	private final Collection<L2Strategy> strategies = new HashSet<L2Strategy>();
 	private final MarshallerRegistry marshallers;
-	private final L2PacketSender l2Sender;
+	private L2PacketSender l2Sender;
 
 	/**
 	 * Creates L2 layer
@@ -31,9 +31,18 @@ public class Layer2 implements L2StrategyManager, L1DataProcessor {
 	 * @param marshallerRegistry
 	 *            MarshallerRegistry to be used by L2 and L2 packets
 	 */
-	public Layer2(L2PacketSender l2Sender, MarshallerRegistry marshallerRegistry) {
+	public Layer2(MarshallerRegistry marshallerRegistry) {
 		marshallers = marshallerRegistry;
-		this.l2Sender = l2Sender;
+	}
+
+	/**
+	 * Sets l2 packet sender
+	 * 
+	 * @param l2packetSender
+	 *            packet sender used by L2 to send packets towards L1
+	 */
+	public void setL2PacketSender(L2PacketSender l2packetSender) {
+		this.l2Sender = l2packetSender;
 	}
 
 	/**
@@ -109,21 +118,5 @@ public class Layer2 implements L2StrategyManager, L1DataProcessor {
 	 */
 	public boolean unregisterL2Strategy(L2Strategy strategy) {
 		return strategies.remove(strategy);
-	}
-
-	/**
-	 * Creates L2 packet from object
-	 * 
-	 * TODO: Reactor this once this method is really used
-	 * 
-	 * @param object
-	 *            Source object to be stored in packet
-	 * @param header
-	 *            Packet header
-	 */
-	public L2Packet createPacket(PacketHeader header, Object object) {
-		L2Packet packet = new L2Packet(header, object);
-		packet.setLayer(this);
-		return packet;
 	}
 }

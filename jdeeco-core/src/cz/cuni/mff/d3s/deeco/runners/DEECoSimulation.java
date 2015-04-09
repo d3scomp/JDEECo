@@ -1,6 +1,8 @@
 package cz.cuni.mff.d3s.deeco.runners;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
@@ -14,44 +16,47 @@ import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
  * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
  */
 public class DEECoSimulation {
-
+	private int nodeCounter = 0xdec0;
 	List<DEECoNode> deecoNodes;
-	DEECoPlugin[] nodeWideplugins;
+	List<DEECoPlugin> instantiatedPlugins;
+	List<Class<? extends DEECoPlugin>> nonInstantiatedPlugins;
 	SimulationTimer simulationTimer;
 
-	public DEECoSimulation(SimulationTimer simulationTimer, DEECoPlugin... nodeWideplugins) {
-		this.nodeWideplugins = nodeWideplugins;
+	public DEECoSimulation(SimulationTimer simulationTimer) {
 		this.simulationTimer = simulationTimer;
+		instantiatedPlugins = new ArrayList<>();
+		nonInstantiatedPlugins = new ArrayList<>();
 		deecoNodes = new ArrayList<>();
+	}
+	
+	public void addPlugin(Class<? extends DEECoPlugin> clazz) {
+		nonInstantiatedPlugins.add(clazz);
+	}
+	
+	public void addPlugin(DEECoPlugin nodeWideplugin) {
+		instantiatedPlugins.add(nodeWideplugin);		
 	}
 
 	public void start(long duration) {
 		simulationTimer.start(duration);
 	}
+	
+	public DEECoNode createNode(DEECoPlugin... nodeSpecificPlugins) throws DEECoException, InstantiationException, IllegalAccessException {
+		return createNode(nodeCounter++, nodeSpecificPlugins);
+	}
 
-	public DEECoNode createNode(DEECoPlugin... nodeSpecificPlugins) throws DEECoException {
-		DEECoNode node = new DEECoNode(simulationTimer, getAllPlugins(nodeWideplugins, nodeSpecificPlugins));
+	public DEECoNode createNode(int id, DEECoPlugin... nodeSpecificPlugins) throws DEECoException, InstantiationException, IllegalAccessException {
+		// Create list of plug-ins for new node
+		List<DEECoPlugin> plugins = new LinkedList<DEECoPlugin>();
+		plugins.addAll(instantiatedPlugins);
+		plugins.addAll(Arrays.asList(nodeSpecificPlugins));
+		for (Class<? extends DEECoPlugin> c : nonInstantiatedPlugins) {
+			plugins.add(c.newInstance());
+		}
+		
+		DEECoNode node = new DEECoNode(id, simulationTimer, plugins.toArray(new DEECoPlugin[0]));
 		deecoNodes.add(node);
 		return node;
-	}
-	
-	/**
-	 * Helper method that concatenates the array of node-wide plugins with node-specific plugins.
-	 * The returned array is intended to be passed to the DEECoNode() constructor.    
-	 * @param nodeSpecificPlugins extra plugins, not provided by the factory
-	 */
-	private DEECoPlugin[] getAllPlugins(DEECoPlugin[] nodeWideplugins, DEECoPlugin[] nodeSpecificPlugins) {
-		DEECoPlugin[] ret = new DEECoPlugin[nodeSpecificPlugins.length+nodeWideplugins.length];
-		int ind=0;
-		for (int i=0; i<nodeSpecificPlugins.length; i++) {
-			ret[ind] = nodeSpecificPlugins[i];
-			ind++;
-		}
-		for (int j=0; j<nodeWideplugins.length; j++) {
-			ret[ind] = nodeSpecificPlugins[j];
-			ind++;			
-		}
-		return ret;
 	}
 	
 }
