@@ -139,4 +139,29 @@ public class ParameterKnowledgePathExtractorTest {
 		assertEquals(1, result.size());
 		assertKnowledgePathAndType(_Struct_String.class.getGenericSuperclass(), Arrays.asList("coord", "x"), result.get(0));
 	}
+	
+	@Test
+	public void missingParamHolderTest() throws ParseException, AnnotationProcessorException, ParameterException {
+		Parameter param1 = RuntimeMetadataFactory.eINSTANCE.createParameter();
+		param1.setKind(ParameterKind.OUT);
+		param1.setKnowledgePath(KnowledgePathHelper.createKnowledgePath("coord.x", PathOrigin.ENSEMBLE));
+		param1.setGenericType(String.class);
+		
+		exception.expect(ParameterException.class);
+		exception.expectMessage("A parameter with kind than IN or RATING must be wrapped in the "
+						+ ParamHolder.class.getSimpleName() + " class)");
+		List<KnowledgePathAndType> result = new ParameterKnowledgePathExtractor().extractAllKnowledgePaths(param1);
+	}
+	
+	@Test
+	public void nonGenericParamHolderTest() throws ParseException, AnnotationProcessorException, ParameterException {		
+		Parameter param1 = RuntimeMetadataFactory.eINSTANCE.createParameter();
+		param1.setKind(ParameterKind.OUT);
+		param1.setKnowledgePath(KnowledgePathHelper.createKnowledgePath("coord.x", PathOrigin.ENSEMBLE));
+		param1.setGenericType(ParamHolder.class);
+		
+		List<KnowledgePathAndType> result = new ParameterKnowledgePathExtractor().extractAllKnowledgePaths(param1);
+		assertEquals(1, result.size());
+		assertKnowledgePathAndType(null, Arrays.asList("coord", "x"), result.get(0));
+	}
 }

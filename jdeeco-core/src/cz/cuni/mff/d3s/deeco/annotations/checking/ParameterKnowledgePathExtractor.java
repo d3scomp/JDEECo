@@ -48,7 +48,7 @@ public class ParameterKnowledgePathExtractor {
 	}
 	
 	/**
-	 * Parses a parameter and returns a list of field sequences with types. One parameter typically contain
+	 * Parses a parameter and returns a list of field sequences with types. One parameter typically contains
 	 * one field sequence (the whole knowledge path), but when the {@link PathNodeMapKey}s are used (ie. in
 	 * "coord.a.[member.id]"), one parameter in fact references multiple knowledge paths (here "coord.a",
 	 * and "member.id"). These extracted knowledge paths no longer contain map keys. The type of the first
@@ -72,13 +72,18 @@ public class ParameterKnowledgePathExtractor {
 			// TODO what?
 			return new ArrayList<KnowledgePathAndType>();
 		} else {
-			if (!(parameter.getGenericType() instanceof ParameterizedType)) {
-				throw new ParameterException("A parameter with kind than IN or RATING must be wrapped in a generic type (ie. "
-						+ ParamHolder.class.getSimpleName() + ")");
+			// kind = IN | INOUT
+			if (parameter.getGenericType() instanceof ParameterizedType) {
+				ParameterizedType parameterHolderType = (ParameterizedType) parameter.getGenericType();
+				parameterType = parameterHolderType.getActualTypeArguments()[0];
+			} else if (parameter.getGenericType().equals(ParamHolder.class)) {
+				// parameter is at least nongeneric paramholder (necessary for dynamic deployment)
+				parameterType = null;
+			} else {
+				throw new ParameterException("A parameter with kind than IN or RATING must be wrapped in the "
+						+ ParamHolder.class.getSimpleName() + " class)");
 			}
 			
-			ParameterizedType parameterHolderType = (ParameterizedType) parameter.getGenericType();
-			parameterType = parameterHolderType.getActualTypeArguments()[0];
 		}
 		
 		return extractKnowledgePaths(parameterType, parameter.getKnowledgePath());
