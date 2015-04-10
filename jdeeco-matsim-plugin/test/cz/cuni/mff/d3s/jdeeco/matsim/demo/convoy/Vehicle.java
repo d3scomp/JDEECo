@@ -15,12 +15,12 @@ import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 import cz.cuni.mff.d3s.deeco.timer.CurrentTimeProvider;
-import cz.cuni.mff.d3s.jdeeco.matsim.MATSimVehicle;
-import cz.cuni.mff.d3s.jdeeco.matsim.old.roadtrains.Actuator;
-import cz.cuni.mff.d3s.jdeeco.matsim.old.roadtrains.ActuatorType;
-import cz.cuni.mff.d3s.jdeeco.matsim.old.roadtrains.Sensor;
-import cz.cuni.mff.d3s.jdeeco.matsim.old.roadtrains.SensorType;
-import cz.cuni.mff.d3s.jdeeco.matsim.old.simulation.MATSimRouter;
+import cz.cuni.mff.d3s.jdeeco.matsim.dataaccess.Actuator;
+import cz.cuni.mff.d3s.jdeeco.matsim.dataaccess.ActuatorType;
+import cz.cuni.mff.d3s.jdeeco.matsim.dataaccess.Sensor;
+import cz.cuni.mff.d3s.jdeeco.matsim.dataaccess.SensorType;
+import cz.cuni.mff.d3s.jdeeco.matsim.plugin.MATSimVehicle;
+import cz.cuni.mff.d3s.jdeeco.matsim.simulation.MATSimRouter;
 
 @Component
 public class Vehicle {
