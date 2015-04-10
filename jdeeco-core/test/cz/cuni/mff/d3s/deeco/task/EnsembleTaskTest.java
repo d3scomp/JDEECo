@@ -47,7 +47,6 @@ import cz.cuni.mff.d3s.deeco.model.runtime.SampleRuntimeModel;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
-import cz.cuni.mff.d3s.deeco.runtime.ArchitectureObserver;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework;
 import cz.cuni.mff.d3s.deeco.runtimelog.RuntimeLogger;
@@ -79,8 +78,6 @@ public class EnsembleTaskTest {
 	private ArgumentCaptor<Trigger> triggerCaptor;
 	@Mock
 	private Scheduler scheduler;
-	@Mock
-	private ArchitectureObserver architectureObserver;
 	@Mock
 	private KnowledgeManagerContainer kmContainer;
 	
@@ -232,7 +229,7 @@ public class EnsembleTaskTest {
 		    }
 		  });
 		
-		this.task = new EnsembleTask(model.ensembleController, scheduler, architectureObserver, kmContainer, ratingsManager);
+		this.task = new EnsembleTask(model.ensembleController, scheduler, kmContainer, ratingsManager);
 		((EnsembleTask) this.task).init(deecoContainer);
 	}
 	

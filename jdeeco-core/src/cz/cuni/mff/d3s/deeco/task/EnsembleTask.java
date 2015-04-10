@@ -1,7 +1,5 @@
 package cz.cuni.mff.d3s.deeco.task;
 
-import static cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.getAbsoluteStrippedPath;
-
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
@@ -10,17 +8,14 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import cz.cuni.mff.d3s.deeco.integrity.RatingsChangeSet;
 import cz.cuni.mff.d3s.deeco.integrity.RatingsHolder;
 import cz.cuni.mff.d3s.deeco.integrity.RatingsManager;
 import cz.cuni.mff.d3s.deeco.integrity.ReadonlyRatingsHolder;
-import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry;
 import cz.cuni.mff.d3s.deeco.knowledge.ShadowsTriggerListener;
@@ -38,9 +33,9 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.impl.TriggerImpl;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
-import cz.cuni.mff.d3s.deeco.runtime.ArchitectureObserver;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtimelog.RuntimeLogRecord;
+import cz.cuni.mff.d3s.deeco.runtimelog.RuntimeLogger;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.security.LocalSecurityChecker;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.KnowledgePathAndRoot;
@@ -62,11 +57,6 @@ public class EnsembleTask extends Task {
 	 */
 	EnsembleController ensembleController;
 
-	/**
-	 * Reference to the corresponding {@link ArchitectureObserver} 
-	 */
-	ArchitectureObserver architectureObserver;
-	
 	/**
 	 * Reference to the corresponding {@link LocalSecurityChecker} 
 	 */
@@ -184,11 +174,10 @@ public class EnsembleTask extends Task {
 	
 	ShadowsTriggerListenerImpl shadowsTriggerListener = new ShadowsTriggerListenerImpl();
 
-	public EnsembleTask(EnsembleController ensembleController, Scheduler scheduler, ArchitectureObserver architectureObserver, 
+	public EnsembleTask(EnsembleController ensembleController, Scheduler scheduler, 
 			KnowledgeManagerContainer kmContainer, RatingsManager ratingsManager) {
 		super(scheduler);
 		
-		this.architectureObserver = architectureObserver;
 		this.ensembleController = ensembleController;
 		this.securityChecker = new LocalSecurityChecker(ensembleController, kmContainer);
 		this.ratingsManager = ratingsManager;
@@ -416,8 +405,6 @@ public class EnsembleTask extends Task {
 		// Invoke the membership condition and if the membership condition returned true, invoke the knowledge exchange
 		if (ensembleDataExchange.checkMembership(PathRoot.COORDINATOR, localKnowledgeManager, shadowKnowledgeManager) 
 				&& securityChecker.checkSecurity(PathRoot.COORDINATOR, shadowKnowledgeManager)) {
-			architectureObserver.ensembleFormed(ensembleController.getEnsembleDefinition(), ensembleController.getComponentInstance(),
-					ensembleController.getComponentInstance().getKnowledgeManager().getId(),shadowKnowledgeManager.getId());
 			ensembleDataExchange.performExchange(PathRoot.COORDINATOR, localKnowledgeManager, shadowKnowledgeManager);
 			coordinatorExchangePerformed = true;
 
@@ -437,8 +424,6 @@ public class EnsembleTask extends Task {
 		// Do the same with the roles exchanged
 		if (ensembleDataExchange.checkMembership(PathRoot.MEMBER, localKnowledgeManager, shadowKnowledgeManager)
 				&& securityChecker.checkSecurity(PathRoot.MEMBER, shadowKnowledgeManager)) {
-			architectureObserver.ensembleFormed(ensembleController.getEnsembleDefinition(), ensembleController.getComponentInstance(),
-					shadowKnowledgeManager.getId(), ensembleController.getComponentInstance().getKnowledgeManager().getId());
 			ensembleDataExchange.performExchange(PathRoot.MEMBER, localKnowledgeManager, shadowKnowledgeManager);
 			memberExchangePerformed = true;
 		}
