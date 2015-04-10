@@ -37,6 +37,7 @@ public class MATSimDataProviderReceiver implements MATSimDataReceiver, MATSimDat
 	}
 
 	// Here we return next links ids for MATSim agents
+	@Override
 	public Map<Id, MATSimInput> getMATSimData() {
 		Map<Id, MATSimInput> result = new HashMap<Id, MATSimInput>();
 		for (Map.Entry<Id, MATSimInput> entry : inputs.entrySet()) {
@@ -46,8 +47,8 @@ public class MATSimDataProviderReceiver implements MATSimDataReceiver, MATSimDat
 	}
 
 	// Here we update sensors
-	public void setMATSimData(Object data) {
-		Map<Id, MATSimOutput> map = (Map<Id, MATSimOutput>) data;
+	@Override
+	public void setMATSimData(Map<Id, MATSimOutput> map) {
 		outputs.clear();
 		outputs.putAll(map);
 	}

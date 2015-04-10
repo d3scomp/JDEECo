@@ -1,5 +1,9 @@
 package cz.cuni.mff.d3s.jdeeco.matsim.simulation;
 
+import java.util.Map;
+
+import org.matsim.api.core.v01.Id;
+
 
 /**
  * Interface for MATSim data retrieval. This data comes from MATSim side.
@@ -8,5 +12,5 @@ package cz.cuni.mff.d3s.jdeeco.matsim.simulation;
  * 
  */
 public interface MATSimDataReceiver {
-	public void setMATSimData(Object data);
+	public void setMATSimData(Map<Id, MATSimOutput> data);
 }

@@ -43,6 +43,7 @@ import cz.cuni.mff.d3s.jdeeco.matsim.simulation.MATSimExtractor;
 import cz.cuni.mff.d3s.jdeeco.matsim.simulation.MATSimPreloadingControler;
 import cz.cuni.mff.d3s.jdeeco.matsim.simulation.MATSimRouter;
 import cz.cuni.mff.d3s.jdeeco.matsim.simulation.MATSimSimulationStepListener;
+import cz.cuni.mff.d3s.jdeeco.matsim.simulation.Simulation;
 
 /**
  * Plug-in providing MATSim simulation
@@ -55,16 +56,16 @@ import cz.cuni.mff.d3s.jdeeco.matsim.simulation.MATSimSimulationStepListener;
 public class MATSimSimulation implements DEECoPlugin {
 	private final TreeSet<Callback> callbacks;
 
-	class TimerProvider implements SimulationTimer, MATSimSimulationStepListener {
+	class TimerProvider extends Simulation implements SimulationTimer, MATSimSimulationStepListener {
 		@Override
 		public void notifyAt(long time, TimerEventListener listener, DEECoContainer node) {
 			// System.out.println("NOTIFY AT CALLED FOR: " + time + " NODE:" + node.getId());
-			// MATSimSimulation.this.oldSimulation.callAt(time, String.valueOf(node.getId()));
 			callAt(time, String.valueOf(node.getId()));
 
 			MATSimSimulation.this.getHost(String.valueOf(node.getId())).listener = listener;
 		}
 
+		@Override
 		public synchronized void callAt(long absoluteTime, String hostId) {
 			Callback callback = hostIdToCallback.remove(hostId);
 			if (callback != null) {
@@ -107,10 +108,6 @@ public class MATSimSimulation implements DEECoPlugin {
 				host = hosts.get(callback.hostId);
 				host.at(millisecondsToSeconds(currentMilliseconds));
 			}
-		}
-
-		private double millisecondsToSeconds(long milliseconds) {
-			return ((double) (milliseconds)) / 1000;
 		}
 	}
 
@@ -265,14 +262,10 @@ public class MATSimSimulation implements DEECoPlugin {
 			}
 		}
 
-		this.simulationStep = secondsToMilliseconds(step);
-		currentMilliseconds = secondsToMilliseconds(controler.getConfig().getQSimConfigGroup().getStartTime());
+		this.simulationStep = TimerProvider.secondsToMilliseconds(step);
+		currentMilliseconds = TimerProvider.secondsToMilliseconds(controler.getConfig().getQSimConfigGroup().getStartTime());
 
 		router = new MATSimRouter(controler, travelTime, 10 /* TODO: FAKE VALUE */);
-	}
-
-	private long secondsToMilliseconds(double seconds) {
-		return (long) (seconds * 1000);
 	}
 
 	private void addHost(String id, cz.cuni.mff.d3s.jdeeco.matsim.plugin.MATSimSimulation.Host host) {

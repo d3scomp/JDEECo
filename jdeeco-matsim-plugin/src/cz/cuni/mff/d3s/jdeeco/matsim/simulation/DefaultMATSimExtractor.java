@@ -10,7 +10,7 @@ import org.matsim.core.mobsim.framework.Mobsim;
 public class DefaultMATSimExtractor implements MATSimExtractor {
 
 	@Override
-	public Object extractFromMATSim(Collection<JDEECoAgent> agents,
+	public Map<Id, MATSimOutput> extractFromMATSim(Collection<JDEECoAgent> agents,
 			Mobsim mobsim) {
 		Map<Id, MATSimOutput> map = new HashMap<Id, MATSimOutput>();
 		MATSimOutput matSimOutput;
