@@ -1,7 +1,5 @@
 package cz.cuni.mff.d3s.jdeeco.matsim.simulation;
 
-import java.util.List;
-
 import org.matsim.api.core.v01.Id;
 import org.matsim.core.mobsim.framework.MobsimAgent.State;
 
@@ -14,11 +12,9 @@ import org.matsim.core.mobsim.framework.MobsimAgent.State;
 public class MATSimOutput {
 	public Id currentLinkId;
 	public State state;
-	
+
 	public MATSimOutput(Id currentLinkId, State state) {
 		this.currentLinkId = currentLinkId;
 		this.state = state;
 	}
-	
-	
 }

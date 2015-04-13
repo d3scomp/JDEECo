@@ -59,6 +59,7 @@ public class MATSimDataProviderReceiver implements MATSimDataReceiver, MATSimDat
 			private final Map<ActuatorType, Actuator<?>> actuators = new HashMap<ActuatorType, Actuator<?>>();
 
 			public <T> Actuator<T> createActuator(ActuatorType type) {
+				@SuppressWarnings("unchecked")
 				Actuator<T> actuator = (Actuator<T>) getActuatorInternal(ownerId, type, this);
 				actuators.put(type, actuator);
 				return actuator;
@@ -76,6 +77,7 @@ public class MATSimDataProviderReceiver implements MATSimDataReceiver, MATSimDat
 			private final Map<SensorType, Sensor<?>> sensors = new HashMap<SensorType, Sensor<?>>();
 
 			public <T> Sensor<T> createSensor(SensorType type) {
+				@SuppressWarnings("unchecked")
 				Sensor<T> sensor = (Sensor<T>) getSensorInternal(ownerId, type);
 				sensors.put(type, sensor);
 				return sensor;
