@@ -3,7 +3,6 @@ package cz.cuni.mff.d3s.jdeeco.matsim.demo.convoy;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.junit.Rule;
@@ -40,7 +39,7 @@ public class VehicleTravelTest {
 	@Test
 	public void testTravel() throws AnnotationProcessorException, InterruptedException, DEECoException,
 			InstantiationException, IllegalAccessException, IOException {
-		MATSimSimulation matSim = new MATSimSimulation(new File("input/config.xml"));
+		MATSimSimulation matSim = new MATSimSimulation("input/config.xml");
 
 		// Create main application container
 		DEECoSimulation realm = new DEECoSimulation(matSim.getTimer());
