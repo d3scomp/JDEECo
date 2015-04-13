@@ -1,5 +1,8 @@
 package cz.cuni.mff.d3s.jdeeco.matsim.demo.convoy;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.assertThat;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -25,13 +28,13 @@ import cz.cuni.mff.d3s.jdeeco.publishing.DefaultKnowledgePublisher;
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
  */
-public class VehicleTravelExample {
+public class VehicleTravelTest {
 	@Rule
 	public final StandardOutputStreamLog log = new StandardOutputStreamLog();
 
 	public static void main(String[] args) throws AnnotationProcessorException, InterruptedException, DEECoException,
 			InstantiationException, IllegalAccessException, IOException {
-		new VehicleTravelExample().testTravel();
+		new VehicleTravelTest().testTravel();
 	}
 
 	@Test
@@ -61,13 +64,15 @@ public class VehicleTravelExample {
 		// Node hosting vehicle B
 		MATSimVehicle agentB = new MATSimVehicle(0, 100000); // MATSim agent with start position
 		DEECoNode nodeB = realm.createNode(45, agentB); // DEECO node with Id and agent as plug-in
-		Vehicle vehicleB = new Vehicle("Vehicle B", new CoordImpl(0, 100000), agentB); // DEECO component controlling the vehicle
+		Vehicle vehicleB = new Vehicle("Vehicle B", new CoordImpl(100000, 100000), agentB); // DEECO component controlling the vehicle
 		nodeB.deployComponent(vehicleB);
 		nodeB.deployEnsemble(OtherVehicleEnsemble.class);
 
 		// Simulate for specified time
-		realm.start(600000);
+		realm.start(7 * 60000);
 
-		// TODO: Check output
+		// Check both cars reached the destination and know about each other
+		assertThat(log.getLog(), containsString("Vehicle A, pos: 4410 (1995, 2000), dst: 4410, speed: , otherPos: 4410 (1995, 2000)"));
+		assertThat(log.getLog(), containsString("Vehicle B, pos: 4410 (1995, 2000), dst: 4410, speed: , otherPos: 4410 (1995, 2000)"));
 	}
 }
