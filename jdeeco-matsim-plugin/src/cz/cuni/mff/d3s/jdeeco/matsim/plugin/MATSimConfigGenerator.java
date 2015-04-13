@@ -4,7 +4,20 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+/**
+ * Generates simple MATSim configuration using the supplied map file
+ * 
+ * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
+ *
+ */
 public class MATSimConfigGenerator {
+	/**
+	 * Gets configuration content as string
+	 * 
+	 * @param map
+	 *            Street map used by configuration
+	 * @return String representing the created configuration
+	 */
 	public static String getContent(String map) {
 		StringBuilder content = new StringBuilder();
 
@@ -45,10 +58,18 @@ public class MATSimConfigGenerator {
 		content.append(String.format("</module>%n"));
 
 		content.append(String.format("</config>%n"));
-		
+
 		return content.toString();
 	}
 
+	/**
+	 * Write configuration to temporary file
+	 * 
+	 * @param map
+	 *            Street map used by configuration
+	 * @return File representing the created configuration
+	 * @throws IOException
+	 */
 	public static File writeToTemp(String map) throws IOException {
 		File temp = File.createTempFile("config", ".xml");
 		temp.deleteOnExit();

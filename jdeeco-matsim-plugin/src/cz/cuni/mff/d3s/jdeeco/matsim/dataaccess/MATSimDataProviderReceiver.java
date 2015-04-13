@@ -13,6 +13,11 @@ import cz.cuni.mff.d3s.jdeeco.matsim.simulation.MATSimDataReceiver;
 import cz.cuni.mff.d3s.jdeeco.matsim.simulation.MATSimInput;
 import cz.cuni.mff.d3s.jdeeco.matsim.simulation.MATSimOutput;
 
+/**
+ * Input, output handling for MATSim simulation
+ * 
+ * TODO: Handle parked cars in some more systematic way
+ */
 public class MATSimDataProviderReceiver implements MATSimDataReceiver, MATSimDataProvider {
 	// This is coming from MATSim (i.e. its output) = sensors
 	protected final Map<Id, MATSimOutput> outputs;

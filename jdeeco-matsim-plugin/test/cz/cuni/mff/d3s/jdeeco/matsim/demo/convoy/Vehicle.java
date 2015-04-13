@@ -78,11 +78,11 @@ public class Vehicle {
 	public Vehicle(String id, Coord dst, MATSimVehicle vehiclePlugin) {
 		this.id = id;
 	
-		this.router = vehiclePlugin.getSimulation().getRouter();
+		this.router = vehiclePlugin.getRouter();
 		this.routeActuator = vehiclePlugin.getActuatorProvider().createActuator(ActuatorType.ROUTE);
 		this.speedActuator = vehiclePlugin.getActuatorProvider().createActuator(ActuatorType.SPEED);
 		this.currentLinkSensor = vehiclePlugin.getSensorProvider().createSensor(SensorType.CURRENT_LINK);
-		this.clock = vehiclePlugin.getSimulation().getTimer();
+		this.clock = vehiclePlugin.getTimer();
 		this.dstLinkId = router.findNearestLink(dst).getId();
 	}
 
