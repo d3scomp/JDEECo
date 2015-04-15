@@ -8,7 +8,6 @@ import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.jdeeco.network.Network;
 import cz.cuni.mff.d3s.jdeeco.network.device.Device;
 import cz.cuni.mff.d3s.jdeeco.network.omnet.OMNeTSimulation.OMNeTHost;
-import cz.cuni.mff.d3s.jdeeco.position.PositionPlugin;
 
 /**
  * Generic OMNeT network device
@@ -35,7 +34,7 @@ public abstract class OMNeTDevice extends Device implements DEECoPlugin {
 
 	@Override
 	public List<Class<? extends DEECoPlugin>> getDependencies() {
-		return Arrays.asList(Network.class, OMNeTSimulation.class, PositionPlugin.class);
+		return Arrays.asList(Network.class, OMNeTSimulation.class);
 	}
 	
 	@Override

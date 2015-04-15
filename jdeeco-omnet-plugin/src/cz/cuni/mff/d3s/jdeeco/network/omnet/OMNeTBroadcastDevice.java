@@ -1,9 +1,13 @@
 package cz.cuni.mff.d3s.jdeeco.network.omnet;
 
+import java.util.List;
+
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
+import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.jdeeco.network.address.Address;
 import cz.cuni.mff.d3s.jdeeco.network.address.MANETBroadcastAddress;
 import cz.cuni.mff.d3s.jdeeco.network.l1.MANETReceivedInfo;
+import cz.cuni.mff.d3s.jdeeco.position.PositionPlugin;
 
 public class OMNeTBroadcastDevice extends OMNeTDevice {
 	@Override
@@ -23,6 +27,14 @@ public class OMNeTBroadcastDevice extends OMNeTDevice {
 			throw new UnsupportedOperationException();
 		}
 		host.sendBroadcastPacket(data);
+	}
+	
+	@Override
+	public List<Class<? extends DEECoPlugin>> getDependencies() {
+		// Require base dependencies + position
+		List<Class<? extends DEECoPlugin>> dependencies = super.getDependencies();
+		dependencies.add(PositionPlugin.class);
+		return dependencies;
 	}
 
 	@Override
