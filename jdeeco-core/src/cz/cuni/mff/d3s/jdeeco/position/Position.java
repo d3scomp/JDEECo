@@ -16,4 +16,11 @@ public final class Position {
 		this.y = y;
 		this.z = z;
 	}
+	
+	public double euclidDistanceTo(Position position) {
+		double dx = Math.abs(x - position.x);
+		double dy = Math.abs(y - position.y);
+		double dz = Math.abs(z - position.z);
+		return Math.sqrt(dx * dx + dy * dy + dz * dz);
+	}
 }

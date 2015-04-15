@@ -1,6 +1,6 @@
 package cz.cuni.mff.d3s.jdeeco.network.demo.convoy;
 
-import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Rule;
@@ -16,6 +16,7 @@ import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
 import cz.cuni.mff.d3s.jdeeco.network.Network;
 import cz.cuni.mff.d3s.jdeeco.network.device.BroadcastLoopback;
 import cz.cuni.mff.d3s.jdeeco.network.l2.strategy.KnowledgeInsertingStrategy;
+import cz.cuni.mff.d3s.jdeeco.position.PositionPlugin;
 import cz.cuni.mff.d3s.jdeeco.publishing.DefaultKnowledgePublisher;
 
 /**
@@ -36,6 +37,8 @@ public class ConvoyTest {
 	/**
 	 * Test network with broadcasting loop- back device
 	 * 
+	 * This tries to communicate within the broadcast device range => communication should work
+	 * 
 	 * @throws AnnotationProcessorException
 	 * @throws InterruptedException
 	 * @throws DEECoException
@@ -53,13 +56,13 @@ public class ConvoyTest {
 		realm.addPlugin(KnowledgeInsertingStrategy.class);
 		
 		/* create first deeco node */
-		DEECoNode deeco1 = realm.createNode();
+		DEECoNode deeco1 = realm.createNode(new PositionPlugin(0, 0));
 		/* deploy components and ensembles */
 		deeco1.deployComponent(new Leader());
 		deeco1.deployEnsemble(ConvoyEnsemble.class);
 
 		/* create second deeco node */
-		DEECoNode deeco2 = realm.createNode();
+		DEECoNode deeco2 = realm.createNode(new PositionPlugin(0, BroadcastLoopback.RANGE / 2));
 		/* deploy components and ensembles */
 		deeco2.deployComponent(new Follower());
 		deeco2.deployEnsemble(ConvoyEnsemble.class);
@@ -67,7 +70,47 @@ public class ConvoyTest {
 		/* WHEN simulation is performed */
 		realm.start(20000);
 
-		// THEN the follower prints out the following (as there is no network and the components cannot exchange data)
+		// THEN the follower prints out the following (ass the networking should work)
 		assertThat(log.getLog(), containsString("Follower F: me = (1,3) leader = (1,3)"));
+	}
+	
+	/**
+	 * Test network with broadcasting loop- back device
+	 * 
+	 * This tries to communicate out of the broadcast device range => communication should NOT work
+	 * 
+	 * @throws AnnotationProcessorException
+	 * @throws InterruptedException
+	 * @throws DEECoException
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
+	 */
+	@Test
+	public void testConvoyLoopbackOutOfrange() throws AnnotationProcessorException, InterruptedException, DEECoException, InstantiationException, IllegalAccessException {
+		/* create main application container */
+		SimulationTimer simulationTimer = new DiscreteEventTimer(); // also "new WallTimeSchedulerNotifier()"
+		DEECoSimulation realm = new DEECoSimulation(simulationTimer);
+		realm.addPlugin(new BroadcastLoopback());
+		realm.addPlugin(Network.class);
+		realm.addPlugin(DefaultKnowledgePublisher.class);
+		realm.addPlugin(KnowledgeInsertingStrategy.class);
+		
+		/* create first deeco node */
+		DEECoNode deeco1 = realm.createNode(new PositionPlugin(0, BroadcastLoopback.RANGE));
+		/* deploy components and ensembles */
+		deeco1.deployComponent(new Leader());
+		deeco1.deployEnsemble(ConvoyEnsemble.class);
+
+		/* create second deeco node */
+		DEECoNode deeco2 = realm.createNode(new PositionPlugin(BroadcastLoopback.RANGE, 0));
+		/* deploy components and ensembles */
+		deeco2.deployComponent(new Follower());
+		deeco2.deployEnsemble(ConvoyEnsemble.class);
+
+		/* WHEN simulation is performed */
+		realm.start(20000);
+
+		// THEN the follower prints out the following (as the network reach is too short)
+		assertThat(log.getLog(), not(containsString("Follower F: me = (1,3) leader = (1,3)")));
 	}
 }

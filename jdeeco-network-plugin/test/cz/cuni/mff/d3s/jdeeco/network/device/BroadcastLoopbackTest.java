@@ -13,6 +13,7 @@ import cz.cuni.mff.d3s.jdeeco.network.address.MANETBroadcastAddress;
 import cz.cuni.mff.d3s.jdeeco.network.l1.DefaultDataIDSource;
 import cz.cuni.mff.d3s.jdeeco.network.l1.L1Packet;
 import cz.cuni.mff.d3s.jdeeco.network.l1.Layer1;
+import cz.cuni.mff.d3s.jdeeco.position.PositionPlugin;
 
 /**
  * Tests broadcast loop-back networking
@@ -59,12 +60,7 @@ public class BroadcastLoopbackTest {
 		node2 = setupDestinationNode(2);
 	}
 
-	/**
-	 * Configures node source node
-	 * 
-	 * Has working layer1, used to send packets
-	 */
-	private DEECoContainer setupSourceNode() {
+	private DEECoContainer setupBaseNode(double x, double y) {
 		DEECoContainer node = Mockito.mock(DEECoContainer.class);
 
 		// Configure id for mocked container
@@ -72,6 +68,20 @@ public class BroadcastLoopbackTest {
 
 		// Configure runtime
 		Mockito.when(node.getRuntimeFramework()).thenReturn(runtime);
+
+		// Configure position provider plugin
+		Mockito.when(node.getPluginInstance(PositionPlugin.class)).thenReturn(new PositionPlugin(x, y));
+
+		return node;
+	}
+
+	/**
+	 * Configures node source node
+	 * 
+	 * Has working layer1, used to send packets
+	 */
+	private DEECoContainer setupSourceNode() {
+		DEECoContainer node = setupBaseNode(0, BroadcastLoopback.RANGE / 2);
 
 		// Configure Network for mocked container
 		Layer1 layer1 = new Layer1((byte) 0, DefaultDataIDSource.getInstance(), scheduler);
@@ -88,13 +98,7 @@ public class BroadcastLoopbackTest {
 	 * Has mocked layer1, used to confirm packet reception
 	 */
 	private DEECoContainer setupDestinationNode(int id) {
-		DEECoContainer node = Mockito.mock(DEECoContainer.class);
-
-		// Configure id for mocked container
-		Mockito.when(node.getId()).thenReturn(id);
-
-		// Configure runtime
-		Mockito.when(node.getRuntimeFramework()).thenReturn(runtime);
+		DEECoContainer node = setupBaseNode(0, 0);
 
 		// Configure Network for mocked container
 		Layer1 layer1 = Mockito.mock(Layer1.class);

@@ -17,6 +17,8 @@ import cz.cuni.mff.d3s.jdeeco.network.address.Address;
 import cz.cuni.mff.d3s.jdeeco.network.address.MANETBroadcastAddress;
 import cz.cuni.mff.d3s.jdeeco.network.l1.Layer1;
 import cz.cuni.mff.d3s.jdeeco.network.l1.ReceivedInfo;
+import cz.cuni.mff.d3s.jdeeco.position.Position;
+import cz.cuni.mff.d3s.jdeeco.position.PositionPlugin;
 
 /**
  * Loop-back broadcast plug-in
@@ -28,7 +30,8 @@ import cz.cuni.mff.d3s.jdeeco.network.l1.ReceivedInfo;
  *
  */
 public class BroadcastLoopback implements DEECoPlugin {
-	final int PACKET_SIZE = 128;
+	public static final int PACKET_SIZE = 128; // bytes
+	public static final int RANGE = 250; // meters
 	final long constantDelay;
 
 	Scheduler scheduler;
@@ -40,20 +43,19 @@ public class BroadcastLoopback implements DEECoPlugin {
 	 * Loop device used to provide broadcast device to layer 1
 	 */
 	private class LoopDevice extends Device {
-		public Layer1 layer1;
-		public MANETBroadcastAddress address;
+		final Layer1 layer1;
+		final MANETBroadcastAddress address;
+		final DEECoContainer container;
 
-		private String id;
-
-		public LoopDevice(String id, Layer1 layer1) {
-			this.id = id;
+		public LoopDevice(DEECoContainer container) {
+			this.container = container;
 			this.address = new MANETBroadcastAddress(getId());
-			this.layer1 = layer1;
+			this.layer1 = container.getPluginInstance(Network.class).getL1();
 		}
 
 		@Override
 		public String getId() {
-			return id;
+			return String.valueOf(container.getId());
 		}
 
 		@Override
@@ -135,20 +137,26 @@ public class BroadcastLoopback implements DEECoPlugin {
 	 */
 	public void sendToAll(PacketWrapper packet) {
 		for (LoopDevice loop : loops) {
-			loop.layer1.processL0Packet(packet.data, packet.source, new ReceivedInfo(packet.source.address));
+			Position srcPos = packet.source.container.getPluginInstance(PositionPlugin.class).getPosition();
+			Position dstPos = loop.container.getPluginInstance(PositionPlugin.class).getPosition();
+			double distance = srcPos.euclidDistanceTo(dstPos);
+
+			if (distance <= RANGE) {
+				loop.layer1.processL0Packet(packet.data, packet.source, new ReceivedInfo(packet.source.address));
+			}
 		}
 	}
 
 	@Override
 	public List<Class<? extends DEECoPlugin>> getDependencies() {
-		return Arrays.asList(Network.class);
+		return Arrays.asList(Network.class, PositionPlugin.class);
 	}
 
 	@Override
 	public void init(DEECoContainer container) {
 		scheduler = container.getRuntimeFramework().getScheduler();
 		Layer1 l1 = container.getPluginInstance(Network.class).getL1();
-		LoopDevice loop = new LoopDevice(String.valueOf(container.getId()), l1);
+		LoopDevice loop = new LoopDevice(container);
 		l1.registerDevice(loop);
 		loops.add(loop);
 	}
