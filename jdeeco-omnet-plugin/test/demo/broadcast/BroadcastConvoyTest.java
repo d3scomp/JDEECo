@@ -8,7 +8,7 @@ import cz.cuni.mff.d3s.jdeeco.network.Network;
 import cz.cuni.mff.d3s.jdeeco.network.l2.strategy.KnowledgeInsertingStrategy;
 import cz.cuni.mff.d3s.jdeeco.network.omnet.OMNeTBroadcastDevice;
 import cz.cuni.mff.d3s.jdeeco.network.omnet.OMNeTSimulation;
-import cz.cuni.mff.d3s.jdeeco.network.omnet.Position;
+import cz.cuni.mff.d3s.jdeeco.position.PositionPlugin;
 import cz.cuni.mff.d3s.jdeeco.publishing.DefaultKnowledgePublisher;
 
 /**
@@ -37,8 +37,8 @@ public class BroadcastConvoyTest {
 		simulation.addPlugin(DefaultKnowledgePublisher.class);
 		simulation.addPlugin(omnet);
 
-		DEECoNode node0 = simulation.createNode(new OMNeTBroadcastDevice(new Position(100, 0, 0)));
-		DEECoNode node1 = simulation.createNode(new OMNeTBroadcastDevice(new Position(0, 100, 0)));
+		DEECoNode node0 = simulation.createNode(new OMNeTBroadcastDevice(), new PositionPlugin(100, 0));
+		DEECoNode node1 = simulation.createNode(new OMNeTBroadcastDevice(), new PositionPlugin(0, 100));
 
 		// Deploy components and ensembles
 		node0.deployComponent(new Leader());

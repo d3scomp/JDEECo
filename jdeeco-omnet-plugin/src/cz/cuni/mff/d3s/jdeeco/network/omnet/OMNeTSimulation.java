@@ -43,24 +43,24 @@ public class OMNeTSimulation implements DEECoPlugin {
 	}
 
 	class OMNeTHost implements OMNeTNativeListener {
-		final int id;
+		public final DEECoContainer container;
 		
 		TimerEventListener eventListener = null;
 		OMNeTBroadcastDevice broadcastDevice = null;
 		OMNeTInfrastructureDevice infrastructureDevice = null;
 		
-		OMNeTHost(int id) {
-			this.id = id;
+		OMNeTHost(DEECoContainer container) {
+			this.container = container;
 		}
 
 		public int getId() {
-			return id;
+			return container.getId();
 		}
 		
 		public void setEventListener(long time, TimerEventListener listener) {
 			// Register listener and schedule event
 			eventListener = listener;
-			OMNeTNative.nativeCallAt(OMNeTNative.timeToOmnet(time), id);
+			OMNeTNative.nativeCallAt(OMNeTNative.timeToOmnet(time), getId());
 		}
 		
 		public void setBroadcastDevice(OMNeTBroadcastDevice device) {
@@ -72,11 +72,11 @@ public class OMNeTSimulation implements DEECoPlugin {
 		}
 		
 		public void sendInfrastructurePacket(byte[] packet, IPAddress address) {
-			OMNeTNative.nativeSendPacket(id, packet, address.ipAddress/*"MANET.node[" + address.ipAddress + "]"*/);
+			OMNeTNative.nativeSendPacket(getId(), packet, address.ipAddress/*"MANET.node[" + address.ipAddress + "]"*/);
 		}
 		
 		public void sendBroadcastPacket(byte[] packet) {
-			OMNeTNative.nativeSendPacket(id, packet, "");
+			OMNeTNative.nativeSendPacket(getId(), packet, "");
 		}
 
 		@Override
@@ -125,7 +125,7 @@ public class OMNeTSimulation implements DEECoPlugin {
 	@Override
 	public void init(DEECoContainer container) {
 		if (!hosts.containsKey(container.getId())) {
-			OMNeTHost host = new OMNeTHost(container.getId());
+			OMNeTHost host = new OMNeTHost(container);
 			hosts.put(host.getId(), host);
 			OMNeTNative.nativeRegister(host, host.getId());
 			System.out.println("Registered host " + host.getId());

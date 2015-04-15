@@ -8,13 +8,13 @@ import cz.cuni.mff.d3s.jdeeco.network.l1.ReceivedInfo;
 public class OMNeTInfrastructureDevice extends OMNeTDevice {
 	public final IPAddress address;
 	
-	public OMNeTInfrastructureDevice(IPAddress address /* , address, virtual lan, ... */) {
+	public OMNeTInfrastructureDevice(IPAddress address /* , virtual lan, ... */) {
 		this.address = address;
 	}
 
 	@Override
 	public String getId() {
-		return String.valueOf(host.id);
+		return String.format("%d (%s)", host.getId(), address);
 	}
 
 	@Override
@@ -33,7 +33,7 @@ public class OMNeTInfrastructureDevice extends OMNeTDevice {
 		if(!(address instanceof IPAddress)) {
 			throw new UnsupportedOperationException();
 		}
-		System.out.println("Sending ip packet, from host " + host.getId() + " to host " + address);
+		System.out.println("Sending ip packet, from host " + getId() + " to " + address);
 		host.sendInfrastructurePacket(data, (IPAddress) address);
 	}
 

@@ -10,6 +10,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.simulation.omnet.OMNeTNative;
+import cz.cuni.mff.d3s.jdeeco.position.Position;
+import cz.cuni.mff.d3s.jdeeco.position.PositionPlugin;
 
 public class OMNeTConfigGenerator {
 	class Node {
@@ -53,9 +55,9 @@ public class OMNeTConfigGenerator {
 		// Determine node position
 		Position position = new Position(0, 0, 0);
 		if (host.broadcastDevice != null) {
-			position = host.broadcastDevice.position;
+			position = host.container.getPluginInstance(PositionPlugin.class).getInitialPosition();
 		}
-		addNode(new Node(host.id, ip, position));
+		addNode(new Node(host.getId(), ip, position));
 	}
 
 	public String getContent() throws IOException {
@@ -80,9 +82,9 @@ public class OMNeTConfigGenerator {
 		for (Node node : nodes) {
 			node.ordinal = counter++;
 			content.append(String.format("%n%n# Node %d definition%n", node.id));
-			content.append(String.format("**.node[%d].mobility.initialX = %dm%n", node.ordinal, node.position.x));
-			content.append(String.format("**.node[%d].mobility.initialY = %dm%n", node.ordinal, node.position.y));
-			content.append(String.format("**.node[%d].mobility.initialZ = %dm%n", node.ordinal, node.position.z));
+			content.append(String.format("**.node[%d].mobility.initialX = %dm%n", node.ordinal, (int)node.position.x));
+			content.append(String.format("**.node[%d].mobility.initialY = %dm%n", node.ordinal, (int)node.position.y));
+			content.append(String.format("**.node[%d].mobility.initialZ = %dm%n", node.ordinal, (int)node.position.z));
 			content.append(String.format("**.node[%d].appl.id = %d", node.ordinal, node.id));
 		}
 
@@ -103,7 +105,8 @@ public class OMNeTConfigGenerator {
 
 	public File writeToTemp() throws IOException {
 		// Note: OMNeT finds its parts relative to configuration file
-		File temp = new File(String.format("%s%somnentpp-%d.ini", OMNeTNative.LIB_PATH, File.separator, System.currentTimeMillis()));
+		File temp = new File(String.format("%s%somnentpp-%d.ini", OMNeTNative.LIB_PATH, File.separator,
+				System.currentTimeMillis()));
 		temp.deleteOnExit();
 
 		FileWriter writer = new FileWriter(temp);
