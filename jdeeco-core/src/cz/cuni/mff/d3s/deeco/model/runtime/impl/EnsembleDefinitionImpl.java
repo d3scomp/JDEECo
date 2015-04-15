@@ -6,24 +6,16 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Condition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Exchange;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
-
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
-
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
-
 import java.util.Collection;
-
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
-
 import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
-
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
-
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
@@ -40,6 +32,8 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl#getTriggers <em>Triggers</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl#getCommunicationBoundary <em>Communication Boundary</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl#getPartitionedBy <em>Partitioned By</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl#getCoordinatorRole <em>Coordinator Role</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl#getMemberRole <em>Member Role</em>}</li>
  * </ul>
  * </p>
  *
@@ -135,6 +129,26 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 	 * @ordered
 	 */
 	protected String partitionedBy = PARTITIONED_BY_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getCoordinatorRole() <em>Coordinator Role</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getCoordinatorRole()
+	 * @generated
+	 * @ordered
+	 */
+	protected Class coordinatorRole;
+
+	/**
+	 * The cached value of the '{@link #getMemberRole() <em>Member Role</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getMemberRole()
+	 * @generated
+	 * @ordered
+	 */
+	protected Class memberRole;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -321,6 +335,48 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public Class getCoordinatorRole() {
+		return coordinatorRole;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setCoordinatorRole(Class newCoordinatorRole) {
+		Class oldCoordinatorRole = coordinatorRole;
+		coordinatorRole = newCoordinatorRole;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.ENSEMBLE_DEFINITION__COORDINATOR_ROLE, oldCoordinatorRole, coordinatorRole));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Class getMemberRole() {
+		return memberRole;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setMemberRole(Class newMemberRole) {
+		Class oldMemberRole = memberRole;
+		memberRole = newMemberRole;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.ENSEMBLE_DEFINITION__MEMBER_ROLE, oldMemberRole, memberRole));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -354,6 +410,10 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 				return getCommunicationBoundary();
 			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__PARTITIONED_BY:
 				return getPartitionedBy();
+			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__COORDINATOR_ROLE:
+				return getCoordinatorRole();
+			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__MEMBER_ROLE:
+				return getMemberRole();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -386,6 +446,12 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__PARTITIONED_BY:
 				setPartitionedBy((String)newValue);
 				return;
+			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__COORDINATOR_ROLE:
+				setCoordinatorRole((Class)newValue);
+				return;
+			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__MEMBER_ROLE:
+				setMemberRole((Class)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -416,6 +482,12 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__PARTITIONED_BY:
 				setPartitionedBy(PARTITIONED_BY_EDEFAULT);
 				return;
+			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__COORDINATOR_ROLE:
+				setCoordinatorRole((Class)null);
+				return;
+			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__MEMBER_ROLE:
+				setMemberRole((Class)null);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -440,6 +512,10 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 				return COMMUNICATION_BOUNDARY_EDEFAULT == null ? communicationBoundary != null : !COMMUNICATION_BOUNDARY_EDEFAULT.equals(communicationBoundary);
 			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__PARTITIONED_BY:
 				return PARTITIONED_BY_EDEFAULT == null ? partitionedBy != null : !PARTITIONED_BY_EDEFAULT.equals(partitionedBy);
+			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__COORDINATOR_ROLE:
+				return coordinatorRole != null;
+			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__MEMBER_ROLE:
+				return memberRole != null;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -460,6 +536,10 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 		result.append(communicationBoundary);
 		result.append(", partitionedBy: ");
 		result.append(partitionedBy);
+		result.append(", coordinatorRole: ");
+		result.append(coordinatorRole);
+		result.append(", memberRole: ");
+		result.append(memberRole);
 		result.append(')');
 		return result.toString();
 	}

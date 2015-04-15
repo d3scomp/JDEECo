@@ -41,20 +41,15 @@ public class InfrastructureConvoyTest {
 
 		// Node A
 		DEECoNode node0 = simulation.createNode(
-				10,
 				new DefaultKnowledgePublisher(Arrays.asList(new IPAddress("10.0.0.65"))),
-				new OMNeTInfrastructureDevice(new IPAddress("10.0.0.60"))
-		);
+				new OMNeTInfrastructureDevice(new IPAddress("10.0.0.60")));
 		node0.deployComponent(new Leader());
 		node0.deployEnsemble(ConvoyEnsemble.class);
-		
-		
+
 		// Node B
 		DEECoNode node1 = simulation.createNode(
-				11,
 				new DefaultKnowledgePublisher(Arrays.asList(new IPAddress("10.0.0.60"))),
-				new OMNeTInfrastructureDevice(new IPAddress("10.0.0.65"))
-		);
+				new OMNeTInfrastructureDevice(new IPAddress("10.0.0.65")));
 		node1.deployComponent(new Follower());
 		node1.deployEnsemble(ConvoyEnsemble.class);
 

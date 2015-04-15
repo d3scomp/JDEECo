@@ -21,7 +21,7 @@ public class CloningKnowledgeManagerTest {
 
 	@Before
 	public void setUp() throws Exception {
-		tested = new CloningKnowledgeManager("TEST", null);
+		tested = new CloningKnowledgeManager("TEST", null, null);
 		tested.update(BaseKnowledgeManagerTest.createKnowledge());
 	}
 

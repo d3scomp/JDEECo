@@ -96,8 +96,8 @@ public class RuntimeFrameworkImplTest {
 		model.getComponentInstances().add(component);
 		model.getEnsembleDefinitions().add(edefinition);
 		
-		kmReplacement = new BaseKnowledgeManager("component", component);
-		when(kmContainer.createLocal(anyString(), anyObject())).thenReturn(kmReplacement);		
+		kmReplacement = new BaseKnowledgeManager("component", component, null);
+		when(kmContainer.createLocal(anyString(), anyObject(), any())).thenReturn(kmReplacement);		
 		
 		spy = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, ratingsManager));
 		
@@ -868,14 +868,15 @@ public class RuntimeFrameworkImplTest {
 	public void replaceKnowledgeManagerReplacesTheKM() {	
 		// GIVEN a non-initialized runtime
 		KnowledgeManagerContainer testContainer = mock(KnowledgeManagerContainer.class);
-		when(testContainer.createLocal(anyString(), anyObject())).thenReturn(kmReplacement);	
+		when(testContainer.createLocal(anyString(), anyObject(), any())).thenReturn(kmReplacement);	
 		RuntimeFrameworkImpl tested = new RuntimeFrameworkImpl(model, scheduler, executor, testContainer, ratingsManager);	
 		
 		// WHEN the replaceKnowledgeManager is called on an instance
 		tested.replaceKnowledgeManager(component);
 		
 		// THEN the KM of the instance is replaced by a new one created by kmContainer for the instance
-		verify(testContainer).createLocal(km.getId(), component);
+		verify(kmContainer).createLocal(km.getId(), component, km.getRoles());
+
 		assertEquals(kmReplacement, component.getKnowledgeManager());		
 	}
 	
@@ -894,7 +895,7 @@ public class RuntimeFrameworkImplTest {
 		
 		// GIVEN a non-initialized runtime
 		KnowledgeManagerContainer testContainer = mock(KnowledgeManagerContainer.class);
-		when(testContainer.createLocal(anyString(), anyObject())).thenReturn(kmReplacement);
+		when(testContainer.createLocal(anyString(), anyObject(), any())).thenReturn(kmReplacement);
 		
 		EnsembleDefinition testEDefinition = factory.createEnsembleDefinition();
 		testEDefinition.setName("dummyName");

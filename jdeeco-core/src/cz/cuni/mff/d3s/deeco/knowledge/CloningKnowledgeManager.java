@@ -19,8 +19,8 @@ public class CloningKnowledgeManager extends BaseKnowledgeManager {
 
 	private final Cloner c;
 	
-	public CloningKnowledgeManager(String id, ComponentInstance component) {
-		super(id, component);
+	public CloningKnowledgeManager(String id, ComponentInstance component, Class<?>[] roleClasses) {
+		super(id, component, roleClasses);
 		c = new Cloner();
 	}
 	

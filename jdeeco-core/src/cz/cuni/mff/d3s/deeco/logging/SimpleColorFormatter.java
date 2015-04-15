@@ -63,9 +63,16 @@ public class SimpleColorFormatter extends SimpleFormatter {
         	builder.append(LogColor.RED.mark);
         }
         
-        super.preFormat(builder, record);
+        preFormat(builder, record);
+
+        if(hasException(record)){
+    		builder.append("\n")
+        		   .append(LogColor.RED.mark);
+        	thrownFormat(builder, record);
+        }
         
         builder.append(LogColor.DEFAULT.mark).append("\n");
+        
         
         return builder.toString();
     }

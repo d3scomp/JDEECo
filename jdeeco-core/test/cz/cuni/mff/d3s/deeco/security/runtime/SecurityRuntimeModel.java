@@ -262,7 +262,7 @@ public class SecurityRuntimeModel {
 		Trigger trigger = model.getEnsembleDefinitions().get(0).getTriggers().get(0);
 		
 		for (ComponentInstance ci : model.getComponentInstances()) {
-			Task task = new EnsembleTask(ci.getEnsembleControllers().get(0), scheduler, runtime, container, ratingsManager);
+			Task task = new EnsembleTask(ci.getEnsembleControllers().get(0), scheduler, container, ratingsManager);
 			((EnsembleTask) task).init(deecoContainer);
 			task.invoke(trigger);
 		}
@@ -272,7 +272,7 @@ public class SecurityRuntimeModel {
 		Trigger trigger = model.getEnsembleDefinitions().get(1).getTriggers().get(0);
 		
 		for (ComponentInstance ci : model.getComponentInstances()) {
-			Task task = new EnsembleTask(ci.getEnsembleControllers().get(1), scheduler, runtime, container, ratingsManager);
+			Task task = new EnsembleTask(ci.getEnsembleControllers().get(1), scheduler, container, ratingsManager);
 			((EnsembleTask) task).init(deecoContainer);
 			task.invoke(trigger);
 		}	

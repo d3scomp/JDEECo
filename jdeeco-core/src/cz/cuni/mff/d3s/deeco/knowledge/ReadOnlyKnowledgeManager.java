@@ -113,4 +113,10 @@ public interface ReadOnlyKnowledgeManager {
 	 */
 	boolean isLocked(KnowledgePath knowledgePath);
 	
+	/**
+	 * Returns all the roles of the component that created the knowledge.
+	 * @return All the roles of the component that created the knowledge.
+	 */
+	Class<?>[] getRoles();
+	
 }

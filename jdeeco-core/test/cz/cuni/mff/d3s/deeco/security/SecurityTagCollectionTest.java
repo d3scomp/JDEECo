@@ -48,8 +48,8 @@ public class SecurityTagCollectionTest {
 		localComponent = factory.createComponentInstance();
 		shadowComponent = factory.createComponentInstance();
 		
-		localKnowledgeManager = new CloningKnowledgeManager("123", localComponent);						
-		shadowKnowledgeManager = new CloningKnowledgeManager("124", shadowComponent);		
+		localKnowledgeManager = new CloningKnowledgeManager("123", localComponent, null);						
+		shadowKnowledgeManager = new CloningKnowledgeManager("124", shadowComponent, null);		
 		
 		localComponent.setKnowledgeManager(localKnowledgeManager);
 		shadowComponent.setKnowledgeManager(shadowKnowledgeManager);		

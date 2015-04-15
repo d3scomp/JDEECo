@@ -220,8 +220,8 @@ public class KnowledgePathHelperTest {
 		path.getNodes().add(field);
 		
 		// WHEN the id of member is '30'
-		KnowledgeManager memberKnowledgeManager = new CloningKnowledgeManager("30", null);
-		KnowledgeManager coordKnowledgeManager = new CloningKnowledgeManager("1", null);
+		KnowledgeManager memberKnowledgeManager = new CloningKnowledgeManager("30", null, null);
+		KnowledgeManager coordKnowledgeManager = new CloningKnowledgeManager("1", null, null);
 		// THEN absolute path is 'positions.30.x' on the COORDINATOR side
 		
 		String originalPath = path.toString();
@@ -272,8 +272,8 @@ public class KnowledgePathHelperTest {
 		path.getNodes().add(field);
 		
 		// WHEN the id of MEMBER is '4'
-		KnowledgeManager memberKnowledgeManager = new CloningKnowledgeManager("4", null);
-		KnowledgeManager coordKnowledgeManager = new CloningKnowledgeManager("1", null);
+		KnowledgeManager memberKnowledgeManager = new CloningKnowledgeManager("4", null, null);
+		KnowledgeManager coordKnowledgeManager = new CloningKnowledgeManager("1", null, null);
 		
 		// WHEN '[positions.4]' on the COORDINATOR knowledge is evaluated to '50'
 		ChangeSet cs = new ChangeSet();
@@ -316,7 +316,7 @@ public class KnowledgePathHelperTest {
 		// WHEN '[level21.level22]' is evaluated to '5'
 		ChangeSet cs = new ChangeSet();
 		cs.setValue(nestedPath, "5");
-		KnowledgeManager km = new CloningKnowledgeManager("id", null);
+		KnowledgeManager km = new CloningKnowledgeManager("id", null, null);
 		km.update(cs);
 		// THEN absolute path is 'level1.5'
 		KnowledgePath res = KnowledgePathHelper.getAbsolutePath(path, km);
@@ -358,7 +358,7 @@ public class KnowledgePathHelperTest {
 		// WHEN '[level31]' is evaluated to '3'
 		ChangeSet cs = new ChangeSet();
 		cs.setValue(nestedPath2, "3");
-		KnowledgeManager km = new CloningKnowledgeManager("id", null);
+		KnowledgeManager km = new CloningKnowledgeManager("id", null, null);
 		km.update(cs);
 		// WHEN '[level21.level22.3]' is evaluated to '5'
 		KnowledgePath newNestedPath1 = EcoreUtil.copy(nestedPath1);
@@ -402,7 +402,7 @@ public class KnowledgePathHelperTest {
 		path.getNodes().add(field);
 		
 		// WHEN '[id]' is evaluated to '42'
-		KnowledgeManager km = new CloningKnowledgeManager("42", null);
+		KnowledgeManager km = new CloningKnowledgeManager("42", null, null);
 		// THEN absolute path is 'coordinates.42.x'
 		
 		String originalPath = path.toString();
@@ -439,8 +439,8 @@ public class KnowledgePathHelperTest {
 		mapKey.setKeyPath(nestedPath);
 		path.getNodes().add(mapKey);
 		
-		KnowledgeManager memberKnowledgeManager = new CloningKnowledgeManager("1", null);
-		KnowledgeManager coordKnowledgeManager = new CloningKnowledgeManager("2", null);
+		KnowledgeManager memberKnowledgeManager = new CloningKnowledgeManager("1", null, null);
+		KnowledgeManager coordKnowledgeManager = new CloningKnowledgeManager("2", null, null);
 		// WHEN [name] cannot be resolved on the MEMBER's knowledge
 		// THEN a KnowledgeNotFoundException is thrown
 		exception.expect(KnowledgeNotFoundException.class);
@@ -467,7 +467,7 @@ public class KnowledgePathHelperTest {
 		mapKey.setKeyPath(nestedPath);
 		path.getNodes().add(mapKey);
 
-		KnowledgeManager km = new CloningKnowledgeManager("4324", null);
+		KnowledgeManager km = new CloningKnowledgeManager("4324", null, null);
 		// WHEN [name] cannot be resolved ('name' is not present in km's knowledge)
 		// THEN a KnowledgeNotFoundException is thrown
 		exception.expect(KnowledgeNotFoundException.class);

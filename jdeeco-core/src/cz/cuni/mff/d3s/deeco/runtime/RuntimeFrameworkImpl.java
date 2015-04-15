@@ -17,6 +17,8 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
+import cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager;
+import cz.cuni.mff.d3s.deeco.knowledge.ReplicaListener;
 import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistryImpl;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.logging.Log;
@@ -71,7 +73,7 @@ import cz.cuni.mff.d3s.deeco.task.Task;
  * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
  * 
  */
-public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObserver {
+public class RuntimeFrameworkImpl implements RuntimeFramework, ReplicaListener {
 	
 	/**
 	 * The metadata model corresponding to the running application.
@@ -174,6 +176,9 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 		this.model = model;
 		this.executor = executor;
 		this.kmContainer = kmContainer;
+		
+		// register listener to replicas on the kmContainer - necessary for IRM
+		this.kmContainer.registerReplicaListener(this);
 		
 		//create architecture model 
 		architecture = ArchitectureFactory.eINSTANCE.createArchitecture();
@@ -327,7 +332,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 		}
 		
 		// create a new KM with the same id and knowledge values
-		KnowledgeManager km = kmContainer.createLocal(ci.getKnowledgeManager().getId(), ci);
+		KnowledgeManager km = kmContainer.createLocal(ci.getKnowledgeManager().getId(), ci, ci.getKnowledgeManager().getRoles());
 		km.markAsLocal(ci.getKnowledgeManager().getLocalPaths());
 		
 		if (initialKnowledge != null) {
@@ -435,7 +440,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 			return;
 		}
 		
-		Task task = new EnsembleTask(controller, scheduler, (ArchitectureObserver) this, kmContainer, ratingsManager);
+		Task task = new EnsembleTask(controller, scheduler, kmContainer, ratingsManager);
 		((EnsembleTask) task).init(deecoContainer);
 		cir.getEnsembleTasks().put(controller, task);
 		
@@ -674,44 +679,6 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 		}		
 	}
 	
-	public void ensembleFormed(final EnsembleDefinition e, final ComponentInstance c, final String coordID, final String memberID) {
-		Log.i("Ensemble "+e+" formed at the side of " + c + " with coord: "+coordID+" and member: "+memberID);
-
-		EnsembleInstance ensembleInstance = ArchitectureFactory.eINSTANCE.createEnsembleInstance();
-		ensembleInstance.setEnsembleDefinition(e);
-		ensembleInstance.setCoordinator(getComponentInstance(c, coordID));
-		ensembleInstance.getMembers().add((getComponentInstance(c, memberID)));
-		
-		architecture.getEnsembleInstances().add(ensembleInstance);
-		//TODO(IG): wrap the code here into a Runnable and dispatch it through scheduler.invokeAndWait() to make it thread-safe	
-	}
-
-	private cz.cuni.mff.d3s.deeco.model.architecture.api.ComponentInstance getComponentInstance(ComponentInstance c, String id) {
-		cz.cuni.mff.d3s.deeco.model.architecture.api.ComponentInstance instance;
-		if (kmContainer.hasLocal(id)) {
-			LocalComponentInstance localComponentInstance = localComponentInstances.get(id);
-			if (localComponentInstance == null) {
-				localComponentInstance = ArchitectureFactory.eINSTANCE.createLocalComponentInstance();
-				localComponentInstance.setId(id);
-				localComponentInstance.setKnowledgeManager(kmContainer.getLocal(id));
-				localComponentInstance.setRuntimeInstance(c);
-				localComponentInstances.put(id, localComponentInstance);
-			}
-			instance = (cz.cuni.mff.d3s.deeco.model.architecture.api.ComponentInstance) localComponentInstance;
-		} else {
-			RemoteComponentInstance remoteComponentInstance = remoteComponentInstances.get(id);
-			if (remoteComponentInstance == null) {
-				remoteComponentInstance = ArchitectureFactory.eINSTANCE.createRemoteComponentInstance();
-				remoteComponentInstance.setId(id);
-				remoteComponentInstance.setKnowledgeManager(kmContainer.getReplica(c, id));
-				architecture.getComponentInstances().add(remoteComponentInstance);
-				remoteComponentInstances.put(id, remoteComponentInstance);
-			}
-			instance = (cz.cuni.mff.d3s.deeco.model.architecture.api.ComponentInstance) remoteComponentInstance;
-		}
-		return instance;
-	}
-	
 	@Override
 	public Scheduler getScheduler() {
 		return scheduler;
@@ -731,5 +698,28 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ArchitectureObser
 	public List<Class<? extends DEECoPlugin>> getDependencies() {
 		// this is the core plugin, so it has no dependencies and we return an empty list
 		return new ArrayList<>();
+	}
+
+	@Override
+	public void replicaRegistered(KnowledgeManager km, KnowledgeManagerContainer container) {
+		String id = km.getId();
+		RemoteComponentInstance remoteComponentInstance = remoteComponentInstances.get(id);
+		if (remoteComponentInstance == null) {
+			remoteComponentInstance = ArchitectureFactory.eINSTANCE.createRemoteComponentInstance();
+			remoteComponentInstance.setId(id);
+			remoteComponentInstance.setKnowledgeManager(km);
+			architecture.getComponentInstances().add(remoteComponentInstance);
+			remoteComponentInstances.put(id, remoteComponentInstance);
+		}		
+	}
+
+	@Override
+	public void replicaUnregistered(KnowledgeManager km, KnowledgeManagerContainer container) {
+		String id = km.getId();
+		RemoteComponentInstance remoteComponentInstance = remoteComponentInstances.get(id);
+		if (remoteComponentInstance != null) {
+			architecture.getComponentInstances().remove(remoteComponentInstance);
+			remoteComponentInstances.remove(id);
+		}	
 	}
 }

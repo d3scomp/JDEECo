@@ -32,10 +32,147 @@
 			</resource>
 		</resources>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.3</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
+	<profiles>
+		<profile>
+			<id>linux-build</id>
+			<activation>
+				<os>
+					<family>Linux</family>
+				</os>
+			</activation>
+			<properties>
+				<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+				<omnet>/home/vlada/tools/omnetpp-4.6</omnet>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-jar-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>default-jar</id>
+								<phase>none</phase>
+							</execution>
+							<execution>
+								<id>release</id>
+								<configuration>
+									<classifier>natives-linux64-release</classifier>
+									<classesDirectory>${basedir}/libs/release</classesDirectory>
+									<includes>
+										<include>omnet/*.so</include>
+									</includes>
+								</configuration>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>debug</id>
+								<configuration>
+									<classifier>natives-linux64-debug</classifier>
+									<classesDirectory>${basedir}/libs/debug</classesDirectory>
+									<includes>
+										<include>omnet/*.so</include>
+									</includes>
+								</configuration>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>windows-build</id>
+			<activation>
+				<os>
+					<family>Windows</family>
+				</os>
+			</activation>
+			<properties>
+				<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+				<omnet>C:\tools64\omnetpp-4.6</omnet>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-jar-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>ned</id>
+								<configuration>
+									<classifier>natives-common-ned</classifier>
+									<classesDirectory>${basedir}/libs/ned</classesDirectory>
+									<includes>
+										<inlude>**\*.ned</inlude>
+										<inlude>**\*.xml</inlude>
+										<inlude>**\*.ini</inlude>
+									</includes>
+								</configuration>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>release</id>
+								<configuration>
+									<classifier>natives-windows64-release</classifier>
+									<classesDirectory>${basedir}/libs/release</classesDirectory>
+									<includes>
+										<include>omnet/*.dll</include>
+									</includes>
+								</configuration>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>debug</id>
+								<configuration>
+									<classifier>natives-windows64-debug</classifier>
+									<classesDirectory>${basedir}/libs/debug</classesDirectory>
+									<includes>
+										<include>omnet/*.dll</include>
+									</includes>
+								</configuration>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 	<dependencies>
+		<dependency>
+			<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
+			<artifactId>cz.cuni.mff.d3s.jdeeco.core</artifactId>
+			<version>3.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
+			<artifactId>cz.cuni.mff.d3s.jdeeco.network</artifactId>
+			<version>3.0.0</version>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -49,4 +186,12 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
+	<distributionManagement>
+		<repository>
+			<id>d3s</id>
+			<name>D3S maven repository</name>
+			<url>https://gitlab.d3s.mff.cuni.cz:8443/nexus/content/repositories/releases</url>
+		</repository>
+	</distributionManagement>
 </project>

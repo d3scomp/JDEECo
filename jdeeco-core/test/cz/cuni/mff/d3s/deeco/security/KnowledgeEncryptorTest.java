@@ -77,7 +77,7 @@ public class KnowledgeEncryptorTest {
 		metaData = new KnowledgeMetaData("xy", 13, "A", 123456, 45);
 		ComponentInstance component = mock(ComponentInstance.class);
 		
-		localKnowledgeManager = new BaseKnowledgeManager("sender_id", component);
+		localKnowledgeManager = new BaseKnowledgeManager("sender_id", component, null);
 		
 		ChangeSet changeSet = new ChangeSet();
 		changeSet.setValue(RuntimeModelHelper.createKnowledgePath("secured"), "secured_value");
@@ -90,7 +90,7 @@ public class KnowledgeEncryptorTest {
 	 	tmpComponent.getSecurityRoles().add(role);
 		when(component.getSecurityRoles()).thenReturn(tmpComponent.getSecurityRoles());
 		
-		replicaKnowledgeManager = new BaseKnowledgeManager("receiver_id", component);
+		replicaKnowledgeManager = new BaseKnowledgeManager("receiver_id", component, null);
 		securityHelper = new SecurityHelper();
 		
 		KeyPair role1Pair = securityHelper.generateKeyPair();

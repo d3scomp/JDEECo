@@ -17,6 +17,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import cz.cuni.mff.d3s.deeco.annotations.checking.AnnotationChecker;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.ParseException;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.PathOrigin;
 import cz.cuni.mff.d3s.deeco.annotations.processor.ModelValidationError.Severity;
@@ -52,7 +53,7 @@ public class ModelValidatorTest {
 	public void setUp() throws Exception {
 		factory = RuntimeMetadataFactory.eINSTANCE;
 		model = factory.createRuntimeMetadata(); 
-		processor = new AnnotationProcessor(factory, model, new CloningKnowledgeManagerFactory(), new ArrayList<AnnotationChecker>());
+		processor = new AnnotationProcessor(factory, model, new CloningKnowledgeManagerFactory(), new AnnotationChecker[0]);
 		
 		processor.processComponent(new ExampleComponent());
 		component = model.getComponentInstances().get(0);

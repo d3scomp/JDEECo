@@ -43,6 +43,9 @@ import cz.cuni.mff.d3s.deeco.annotations.Role;
 import cz.cuni.mff.d3s.deeco.annotations.RoleDefinition;
 import cz.cuni.mff.d3s.deeco.annotations.RoleParam;
 import cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange;
+import cz.cuni.mff.d3s.deeco.annotations.checking.AnnotationChecker;
+import cz.cuni.mff.d3s.deeco.annotations.checking.AnnotationCheckerException;
+import cz.cuni.mff.d3s.deeco.annotations.checking.RoleAnnotationsHelper;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.ComponentIdentifier;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.ParseException;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.PathOrigin;
@@ -182,7 +185,7 @@ public class AnnotationProcessor {
 	 */
 	public AnnotationProcessor(RuntimeMetadataFactory factory, RuntimeMetadata model, KnowledgeManagerFactory knowledgeMangerFactory, 
 			AnnotationProcessorExtensionPoint... extensions) {
-		this(factory, model, knowledgeMangerFactory, Arrays.asList(new RolesAnnotationChecker()), extensions);
+		this(factory, model, knowledgeMangerFactory, AnnotationChecker.standardCheckers, extensions);
 	}
 	
 	/**
@@ -202,7 +205,7 @@ public class AnnotationProcessor {
 	 * @param knowledgeMangerFactory knowledge manager factory to be used
 	 */
 	AnnotationProcessor(RuntimeMetadataFactory factory, RuntimeMetadata model, KnowledgeManagerFactory knowledgeMangerFactory, 
-			List<AnnotationChecker> annotationCheckers, AnnotationProcessorExtensionPoint... extensions) {
+			AnnotationChecker[] annotationCheckers, AnnotationProcessorExtensionPoint... extensions) {
 		this.factory = factory;
 		this.model = model;
 		if (extensions.length == 0) {
@@ -213,7 +216,7 @@ public class AnnotationProcessor {
 		this.knowledgeManagerFactory = knowledgeMangerFactory;	
 		this.cloner = new Cloner();
 		if (annotationCheckers != null) {
-			this.checkers = annotationCheckers.toArray(new AnnotationChecker[0]);
+			this.checkers = annotationCheckers;
 		} else {
 			this.checkers = new AnnotationChecker[0];
 		}
@@ -234,7 +237,8 @@ public class AnnotationProcessor {
 	/**
 	 * Checks if the object is annotated as @{@link Component}/@{@link Ensemble}
 	 * and calls the respective creator. It also creates the appropriate
-	 * {@link EnsembleController}s.
+	 * {@link EnsembleController}s. At the end, the component instance is
+	 * validated using all validators from {@link AnnotationChecker#standardCheckers}.
 	 * <p>
 	 * If both/no such annotations are found, it throws an exception.
 	 * </p>
@@ -288,7 +292,8 @@ public class AnnotationProcessor {
 	/**
 	 * Checks if the object is annotated as @{@link Component}/@{@link Ensemble}
 	 * and calls the respective creator. It also creates the appropriate
-	 * {@link EnsembleController}s.
+	 * {@link EnsembleController}s. In the process, the ensemble definition is
+	 * validated using all validators from {@link AnnotationChecker#standardCheckers}.
 	 * <p>
 	 * If both/no such annotations are found, it throws an exception.
 	 * </p>
@@ -367,7 +372,9 @@ public class AnnotationProcessor {
 			if (id == null) {
 				id = new StringBuilder().append(clazz.getSimpleName()).append(UUID.randomUUID().toString()).toString();
 			}
-			KnowledgeManager km = knowledgeManagerFactory.create(id, componentInstance);
+			
+			Class<?>[] roles = RoleAnnotationsHelper.getPlaysRoleAnnotations(clazz);
+			KnowledgeManager km = knowledgeManagerFactory.create(id, componentInstance, roles);
 			km.update(initialK);
 			km.markAsLocal(initialLocalK.getUpdatedReferences());
 			km.update(initialLocalK);
@@ -747,6 +754,19 @@ public class AnnotationProcessor {
 			CommunicationBoundaryPredicate cBoundary = createCommunicationBoundary(clazz);			
 			ensembleDefinition.setCommunicationBoundary(cBoundary);
 			
+			// take the first role (if exists)
+			// at current setting, it is not possible to have multiple instances of the same annotation
+			// and if it would be possible, it is checked in RolesAnnotationChecker
+			Class<?>[] coordinatorRoleAnnotations = RoleAnnotationsHelper.getCoordinatorRoleAnnotations(clazz);
+			if (coordinatorRoleAnnotations != null && coordinatorRoleAnnotations.length > 0) {
+				ensembleDefinition.setCoordinatorRole(coordinatorRoleAnnotations[0]);
+			}
+			
+			Class<?>[] memberRoleAnnotations = RoleAnnotationsHelper.getMemberRoleAnnotations(clazz);
+			if (memberRoleAnnotations != null && memberRoleAnnotations.length > 0) {
+				ensembleDefinition.setMemberRole(memberRoleAnnotations[0]);
+			}
+			
 			TimeTrigger periodicEnsembleTrigger = createPeriodicTrigger(clazz);
 			List<KnowledgeChangeTrigger> exchangeKChangeTriggers = createKnowledgeChangeTriggers(exchange.getMethod(), PathOrigin.ENSEMBLE);
 			List<KnowledgeChangeTrigger> conditionKChangeTriggers = createKnowledgeChangeTriggers(condition.getMethod(), PathOrigin.ENSEMBLE);
@@ -959,10 +979,7 @@ public class AnnotationProcessor {
 		for (int i = 0; i < parameterTypes.length; i++) {
 			parameters.add(createParameter(parameterTypes[i], genericTypes[i], i, allAnnotations[i], pathOrigin));
 		}
-		if (parameters.isEmpty()) {
- 			throw new AnnotationProcessorException(
- 					"The "+ (pathOrigin == PathOrigin.COMPONENT ? "component" : "ensemble") + " process cannot have zero parameters.");
-		}
+
 		return parameters;
 	}
 	

@@ -6,6 +6,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
+import java.lang.reflect.Type;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.ecore.EClass;
@@ -87,7 +88,7 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 	 * @generated
 	 * @ordered
 	 */
-	protected static final java.lang.reflect.Type GENERIC_TYPE_EDEFAULT = null;
+	protected static final Type GENERIC_TYPE_EDEFAULT = null;
 
 	/**
 	 * The cached value of the '{@link #getGenericType() <em>Generic Type</em>}' attribute.
@@ -97,7 +98,7 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 	 * @generated
 	 * @ordered
 	 */
-	protected java.lang.reflect.Type genericType = GENERIC_TYPE_EDEFAULT;
+	protected Type genericType = GENERIC_TYPE_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -233,7 +234,7 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public java.lang.reflect.Type getGenericType() {
+	public Type getGenericType() {
 		return genericType;
 	}
 
@@ -242,8 +243,8 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setGenericType(java.lang.reflect.Type newGenericType) {
-		java.lang.reflect.Type oldGenericType = genericType;
+	public void setGenericType(Type newGenericType) {
+		Type oldGenericType = genericType;
 		genericType = newGenericType;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.PARAMETER__GENERIC_TYPE, oldGenericType, genericType));
@@ -301,7 +302,7 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
 				setType((Class)newValue);
 				return;
 			case RuntimeMetadataPackage.PARAMETER__GENERIC_TYPE:
-				setGenericType((java.lang.reflect.Type)newValue);
+				setGenericType((Type)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);

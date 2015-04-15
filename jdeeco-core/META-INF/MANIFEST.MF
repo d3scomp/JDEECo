@@ -22,8 +22,10 @@ Export-Package: cz.cuni.mff.d3s.deeco.annotations,
  cz.cuni.mff.d3s.deeco.model.runtime.custom,
  cz.cuni.mff.d3s.deeco.model.runtime.impl,
  cz.cuni.mff.d3s.deeco.model.runtime.meta,
+ cz.cuni.mff.d3s.deeco.runners,
  cz.cuni.mff.d3s.deeco.runtime,
- cz.cuni.mff.d3s.deeco.task
+ cz.cuni.mff.d3s.deeco.task,
+ cz.cuni.mff.d3s.deeco.timer
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecore;visibility:=reexport,
  org.eclipse.emf.ecore.xmi

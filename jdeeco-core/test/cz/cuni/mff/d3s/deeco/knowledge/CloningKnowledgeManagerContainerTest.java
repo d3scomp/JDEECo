@@ -14,7 +14,9 @@ import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.internal.verification.Times;
+
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
@@ -42,12 +44,17 @@ public class CloningKnowledgeManagerContainerTest {
 		// create runtime with a single component
 		this.runtimeMetaData = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
 		
+		KnowledgeManager mockKnowledgeManager = Mockito.mock(KnowledgeManager.class);
+		Mockito.when(mockKnowledgeManager.getRoles()).thenReturn(null);
+		
 		ComponentInstance component1 = RuntimeMetadataFactoryExt.eINSTANCE.createComponentInstance();
 		component1.setName("C1");
+		component1.setKnowledgeManager(mockKnowledgeManager);
 		this.runtimeMetaData.getComponentInstances().add(component1);
 		
 		ComponentInstance component2 = RuntimeMetadataFactoryExt.eINSTANCE.createComponentInstance();
 		component2.setName("C2");
+		component2.setKnowledgeManager(mockKnowledgeManager);
 		this.runtimeMetaData.getComponentInstances().add(component2);
 		
 		this.tested = new KnowledgeManagerContainer(new CloningKnowledgeManagerFactory(), runtimeMetaData); 
@@ -60,7 +67,7 @@ public class CloningKnowledgeManagerContainerTest {
 		tested.registerLocalListener(localListener);
 		tested.registerReplicaListener(replicaListener);
 		// and WHEN new local knowledge manager has been created
-		KnowledgeManager local = tested.createLocal("L", null);
+		KnowledgeManager local = tested.createLocal("L", null, null);
 		// THEN the listener is notified about this fact
 		verify(localListener).localCreated(local, tested);
 		// and none of the replica listeners is notified
@@ -90,7 +97,7 @@ public class CloningKnowledgeManagerContainerTest {
 		tested.registerLocalListener(localListener);
 		tested.registerReplicaListener(replicaListener);
 		// and WHEN a local knowledge manager has been removed
-		KnowledgeManager local = tested.createLocal("L", null);
+		KnowledgeManager local = tested.createLocal("L", null, null);
 		tested.removeLocal(local);
 		// THEN the listener is notified about this fact
 		verify(localListener).localRemoved(local, tested);
@@ -104,9 +111,9 @@ public class CloningKnowledgeManagerContainerTest {
 		// container instance
 		Collection<KnowledgeManager> locals = new LinkedList<>();
 		KnowledgeManager l1, l2, l3;
-		locals.add(l1 = tested.createLocal("L1", null));
-		locals.add(l2 = tested.createLocal("L2", null));
-		locals.add(l3 = tested.createLocal("L3", null));
+		locals.add(l1 = tested.createLocal("L1", null, null));
+		locals.add(l2 = tested.createLocal("L2", null, null));
+		locals.add(l3 = tested.createLocal("L3", null, null));
 		// WHEN the container is accessed for all local knowledge managers
 		Collection<KnowledgeManager> containerLocals = tested.getLocals();
 		// THEN the container returns all local knowledge managers created

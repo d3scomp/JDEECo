@@ -78,8 +78,8 @@ public class LocalSecurityCheckerTest {
 		localComponent = factory.createComponentInstance();
 		shadowComponent = factory.createComponentInstance();
 		
-		localKnowledgeManager = new CloningKnowledgeManager("123", localComponent);						
-		shadowKnowledgeManager = new CloningKnowledgeManager("124", shadowComponent);		
+		localKnowledgeManager = new CloningKnowledgeManager("123", localComponent, null);						
+		shadowKnowledgeManager = new CloningKnowledgeManager("124", shadowComponent, null);		
 		
 		localComponent.setKnowledgeManager(localKnowledgeManager);
 		shadowComponent.setKnowledgeManager(shadowKnowledgeManager);
@@ -144,7 +144,7 @@ public class LocalSecurityCheckerTest {
 		ensembleDefinition.getKnowledgeExchange().getParameters().add(param3);
 		when(ensembleController.getEnsembleDefinition()).thenReturn(ensembleDefinition);
 		
-		KnowledgeManager shadowKnowledgeManager = new CloningKnowledgeManager("remote", localComponent);
+		KnowledgeManager shadowKnowledgeManager = new CloningKnowledgeManager("remote", localComponent, null);
 		
 		// given necessary data are created
 		ChangeSet changeSet = new ChangeSet();
@@ -282,7 +282,7 @@ public class LocalSecurityCheckerTest {
 		localKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("mapKey"), Arrays.asList(roleTag));		
 		localKnowledgeManager.update(createKnowledge(), "remote_component_ID");
 		
-		KnowledgeManager remoteKnowledgeManager = new BaseKnowledgeManager("remote_component_ID", localKnowledgeManager.getComponent());
+		KnowledgeManager remoteKnowledgeManager = new BaseKnowledgeManager("remote_component_ID", localKnowledgeManager.getComponent(), localKnowledgeManager.getRoles());
 		ChangeSet changeSet = new ChangeSet();
 		changeSet.setValue(RuntimeModelHelper.createKnowledgePath("field_shadow"), 654);
 		remoteKnowledgeManager.update(changeSet);

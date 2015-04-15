@@ -177,6 +177,14 @@
         <element xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//EnsembleDefinition/partitionedBy"/>
         <layoutConstraint xmi:type="notation:Location" xmi:id="_vP7cwGTyEeSotbgE2UC1AQ"/>
       </children>
+      <children xmi:type="notation:Node" xmi:id="_gWUGIN6hEeSCA6PdO7lQkQ" type="2001">
+        <element xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//EnsembleDefinition/coordinatorRole"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_gWUGId6hEeSCA6PdO7lQkQ"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_ln1DEN6hEeSCA6PdO7lQkQ" type="2001">
+        <element xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//EnsembleDefinition/memberRole"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_ln1DEd6hEeSCA6PdO7lQkQ"/>
+      </children>
       <styles xmi:type="notation:DrawerStyle" xmi:id="_V0Kr4j28EeO2QcBZHbiySQ"/>
       <styles xmi:type="notation:SortingStyle" xmi:id="_V0Kr4z28EeO2QcBZHbiySQ"/>
       <styles xmi:type="notation:FilteringStyle" xmi:id="_V0Kr5D28EeO2QcBZHbiySQ"/>
