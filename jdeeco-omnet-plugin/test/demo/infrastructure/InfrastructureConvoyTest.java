@@ -11,6 +11,7 @@ import cz.cuni.mff.d3s.jdeeco.network.address.IPAddress;
 import cz.cuni.mff.d3s.jdeeco.network.l2.strategy.KnowledgeInsertingStrategy;
 import cz.cuni.mff.d3s.jdeeco.network.omnet.OMNeTInfrastructureDevice;
 import cz.cuni.mff.d3s.jdeeco.network.omnet.OMNeTSimulation;
+import cz.cuni.mff.d3s.jdeeco.position.PositionPlugin;
 import cz.cuni.mff.d3s.jdeeco.publishing.DefaultKnowledgePublisher;
 
 /**
@@ -42,14 +43,17 @@ public class InfrastructureConvoyTest {
 		// Node A
 		DEECoNode node0 = simulation.createNode(
 				new DefaultKnowledgePublisher(Arrays.asList(new IPAddress("10.0.0.65"))),
-				new OMNeTInfrastructureDevice(new IPAddress("10.0.0.60")));
+				new OMNeTInfrastructureDevice(new IPAddress("10.0.0.60")),
+				new PositionPlugin(0, 0));
+		
 		node0.deployComponent(new Leader());
 		node0.deployEnsemble(ConvoyEnsemble.class);
 
 		// Node B
 		DEECoNode node1 = simulation.createNode(
 				new DefaultKnowledgePublisher(Arrays.asList(new IPAddress("10.0.0.60"))),
-				new OMNeTInfrastructureDevice(new IPAddress("10.0.0.65")));
+				new OMNeTInfrastructureDevice(new IPAddress("10.0.0.65")),
+				new PositionPlugin(0, 0));
 		node1.deployComponent(new Follower());
 		node1.deployEnsemble(ConvoyEnsemble.class);
 
