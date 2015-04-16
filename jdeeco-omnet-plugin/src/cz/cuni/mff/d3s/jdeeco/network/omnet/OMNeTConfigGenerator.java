@@ -103,7 +103,7 @@ public class OMNeTConfigGenerator {
 		return content.toString();
 	}
 
-	public File writeToTemp() throws IOException {
+	public File writeToOmnet() throws IOException {
 		// Note: OMNeT finds its parts relative to configuration file
 		File temp = new File(String.format("%s%somnentpp-%d.ini", OMNeTNative.LIB_PATH, File.separator,
 				System.currentTimeMillis()));

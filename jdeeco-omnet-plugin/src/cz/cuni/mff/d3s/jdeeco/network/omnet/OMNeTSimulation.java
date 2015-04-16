@@ -106,7 +106,7 @@ public class OMNeTSimulation implements DEECoPlugin {
 			generator.addNode(host);
 		}
 		
-		return generator.writeToTemp();
+		return generator.writeToOmnet();
 	}
 
 	public SimulationTimer getTimer() {

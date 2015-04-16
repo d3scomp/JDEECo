@@ -28,6 +28,8 @@ public class InfrastructureConvoyTest {
 	}
 
 	// TODO: Can we really run OMNeT based integration tests
+	// We are running the broadcast one, so it is not possible to run this one.
+	// Currently we can ruin just one simulation per VM instance
 	// @Test
 	public void testConvoyOmnet() throws AnnotationProcessorException, InterruptedException, DEECoException,
 			InstantiationException, IllegalAccessException {

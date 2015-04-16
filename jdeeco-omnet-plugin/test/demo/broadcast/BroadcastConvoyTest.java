@@ -1,5 +1,12 @@
 package demo.broadcast;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.assertThat;
+
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.contrib.java.lang.system.StandardOutputStreamLog;
+
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
 import cz.cuni.mff.d3s.deeco.runners.DEECoSimulation;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
@@ -18,14 +25,16 @@ import cz.cuni.mff.d3s.jdeeco.publishing.DefaultKnowledgePublisher;
  *
  */
 public class BroadcastConvoyTest {
+	@Rule
+	public final StandardOutputStreamLog log = new StandardOutputStreamLog();
+	
 	public static void main(String[] args) throws AnnotationProcessorException, InterruptedException, DEECoException,
 			InstantiationException, IllegalAccessException {
 		BroadcastConvoyTest test = new BroadcastConvoyTest();
 		test.testConvoyOmnet();
 	}
 
-	// TODO: Can we really run OMNeT based integration tests
-	// @Test
+	@Test
 	public void testConvoyOmnet() throws AnnotationProcessorException, InterruptedException, DEECoException,
 			InstantiationException, IllegalAccessException {
 		OMNeTSimulation omnet = new OMNeTSimulation();
@@ -48,5 +57,8 @@ public class BroadcastConvoyTest {
 		node1.deployEnsemble(ConvoyEnsemble.class);
 
 		simulation.start(60000);
+		
+		// THEN the follower prints out the following (ass the networking should work)
+		assertThat(log.getLog(), containsString("Follower F: me = (1,3) leader = (1,3)"));
 	}
 }
