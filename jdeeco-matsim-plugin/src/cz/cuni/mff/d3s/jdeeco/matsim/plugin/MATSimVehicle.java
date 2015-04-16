@@ -3,6 +3,7 @@ package cz.cuni.mff.d3s.jdeeco.matsim.plugin;
 import java.util.Arrays;
 import java.util.List;
 
+import org.matsim.api.core.v01.Coord;
 import org.matsim.api.core.v01.Id;
 import org.matsim.core.basic.v01.IdImpl;
 import org.matsim.core.utils.geometry.CoordImpl;
@@ -13,6 +14,8 @@ import cz.cuni.mff.d3s.deeco.timer.CurrentTimeProvider;
 import cz.cuni.mff.d3s.jdeeco.matsim.dataaccess.ActuatorProvider;
 import cz.cuni.mff.d3s.jdeeco.matsim.dataaccess.SensorProvider;
 import cz.cuni.mff.d3s.jdeeco.matsim.simulation.MATSimRouter;
+import cz.cuni.mff.d3s.jdeeco.position.Position;
+import cz.cuni.mff.d3s.jdeeco.position.PositionPlugin;
 
 /**
  * jDEECo plug-in that provides MATSim vehicle agent
@@ -23,36 +26,7 @@ import cz.cuni.mff.d3s.jdeeco.matsim.simulation.MATSimRouter;
 public class MATSimVehicle implements DEECoPlugin {
 	private MATSimSimulation simulation;
 	private DEECoContainer container;
-
-	// Initial configuration, either link or coordinates can be provided
-	private Id startLink;
-	private CoordImpl startPosition;
-
-	/**
-	 * Creates vehicle
-	 * 
-	 * Vehicle is initially located at specified coordinates
-	 * 
-	 * @param x
-	 *            position coordinate
-	 * @param y
-	 *            position coordinate
-	 */
-	public MATSimVehicle(double x, double y) {
-		startPosition = new CoordImpl(x, y);
-	}
-
-	/**
-	 * Create vehicle
-	 * 
-	 * Vehicle is initially located on the specified link
-	 * 
-	 * @param startLink
-	 */
-	public MATSimVehicle(Id startLink) {
-		this.startLink = startLink;
-	}
-
+	
 	/**
 	 * Gets vehicle sensor provider
 	 * 
@@ -99,17 +73,27 @@ public class MATSimVehicle implements DEECoPlugin {
 
 	@Override
 	public List<Class<? extends DEECoPlugin>> getDependencies() {
-		return Arrays.asList(MATSimSimulation.class);
+		return Arrays.asList(MATSimSimulation.class, PositionPlugin.class);
+	}
+	
+	private Coord positionToCoord(final Position position) {
+		if(position.z != 0) {
+			throw new UnsupportedOperationException("MATSim cannot handle positions with z != 0");
+		}
+		
+		CoordImpl coordinates = new CoordImpl(position.x, position.y);
+		return coordinates;
 	}
 
 	@Override
 	public void init(DEECoContainer container) {
 		this.container = container;
 		simulation = container.getPluginInstance(MATSimSimulation.class);
-
-		if (startLink == null) {
-			startLink = simulation.getRouter().findNearestLink(startPosition).getId();
-		}
+		
+		// Obtain start position from position plug-in
+		PositionPlugin positionPlugin = container.getPluginInstance(PositionPlugin.class);
+		Coord coord = positionToCoord(positionPlugin.getInitialPosition());
+		Id startLink = simulation.getRouter().findNearestLink(coord).getId();
 
 		// Add vehicle to simulation
 		simulation.addVehicle(container.getId(), startLink);
