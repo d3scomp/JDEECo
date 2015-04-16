@@ -9,7 +9,6 @@ import cz.cuni.mff.d3s.deeco.timer.CurrentTimeProvider;
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
  * 
  */
-@SuppressWarnings("rawtypes")
 public class Host extends AbstractHost implements NetworkInterface {
 
 	private final PacketReceiver packetReceiver;
@@ -28,19 +27,7 @@ public class Host extends AbstractHost implements NetworkInterface {
 	public Host(NetworkProvider networkProvider, CurrentTimeProvider timeProvider, String jDEECoAppModuleId) {
 		this(networkProvider, timeProvider, jDEECoAppModuleId, true, true);
 	}
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.deeco.network.HostDataHandler#getDataSender()
-	 */
-	@Override
-	public DataSender getDataSender() {
-		return packetSender;
-	}
 	
-	@Override
-	public void addDataReceiver(DataReceiver dataReceiver) {
-		packetReceiver.addDataReceiver(dataReceiver);
-	}
-
 	// Method used by the simulation
 	public void packetReceived(byte[] packet, double rssi) {
 		packetReceiver.packetReceived(packet, rssi);
