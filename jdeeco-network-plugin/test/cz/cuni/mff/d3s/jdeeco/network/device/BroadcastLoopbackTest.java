@@ -13,7 +13,7 @@ import cz.cuni.mff.d3s.jdeeco.network.address.MANETBroadcastAddress;
 import cz.cuni.mff.d3s.jdeeco.network.l1.DefaultDataIDSource;
 import cz.cuni.mff.d3s.jdeeco.network.l1.L1Packet;
 import cz.cuni.mff.d3s.jdeeco.network.l1.Layer1;
-import cz.cuni.mff.d3s.jdeeco.position.PositionPlugin;
+import cz.cuni.mff.d3s.jdeeco.position.PositionAware;
 
 /**
  * Tests broadcast loop-back networking
@@ -70,7 +70,7 @@ public class BroadcastLoopbackTest {
 		Mockito.when(node.getRuntimeFramework()).thenReturn(runtime);
 
 		// Configure position provider plugin
-		Mockito.when(node.getPluginInstance(PositionPlugin.class)).thenReturn(new PositionPlugin(x, y));
+		Mockito.when(node.getPluginInstance(PositionAware.class)).thenReturn(new PositionAware(x, y));
 
 		return node;
 	}

@@ -16,7 +16,7 @@ import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
 import cz.cuni.mff.d3s.jdeeco.network.Network;
 import cz.cuni.mff.d3s.jdeeco.network.device.BroadcastLoopback;
 import cz.cuni.mff.d3s.jdeeco.network.l2.strategy.KnowledgeInsertingStrategy;
-import cz.cuni.mff.d3s.jdeeco.position.PositionPlugin;
+import cz.cuni.mff.d3s.jdeeco.position.PositionAware;
 import cz.cuni.mff.d3s.jdeeco.publishing.DefaultKnowledgePublisher;
 
 /**
@@ -56,13 +56,13 @@ public class ConvoyTest {
 		realm.addPlugin(KnowledgeInsertingStrategy.class);
 		
 		/* create first deeco node */
-		DEECoNode deeco1 = realm.createNode(new PositionPlugin(0, 0));
+		DEECoNode deeco1 = realm.createNode(new PositionAware(0, 0));
 		/* deploy components and ensembles */
 		deeco1.deployComponent(new Leader());
 		deeco1.deployEnsemble(ConvoyEnsemble.class);
 
 		/* create second deeco node */
-		DEECoNode deeco2 = realm.createNode(new PositionPlugin(0, BroadcastLoopback.DEFAULT_RANGE / 2));
+		DEECoNode deeco2 = realm.createNode(new PositionAware(0, BroadcastLoopback.DEFAULT_RANGE / 2));
 		/* deploy components and ensembles */
 		deeco2.deployComponent(new Follower());
 		deeco2.deployEnsemble(ConvoyEnsemble.class);
@@ -96,13 +96,13 @@ public class ConvoyTest {
 		realm.addPlugin(KnowledgeInsertingStrategy.class);
 		
 		/* create first deeco node */
-		DEECoNode deeco1 = realm.createNode(new PositionPlugin(0, BroadcastLoopback.DEFAULT_RANGE));
+		DEECoNode deeco1 = realm.createNode(new PositionAware(0, BroadcastLoopback.DEFAULT_RANGE));
 		/* deploy components and ensembles */
 		deeco1.deployComponent(new Leader());
 		deeco1.deployEnsemble(ConvoyEnsemble.class);
 
 		/* create second deeco node */
-		DEECoNode deeco2 = realm.createNode(new PositionPlugin(BroadcastLoopback.DEFAULT_RANGE, 0));
+		DEECoNode deeco2 = realm.createNode(new PositionAware(BroadcastLoopback.DEFAULT_RANGE, 0));
 		/* deploy components and ensembles */
 		deeco2.deployComponent(new Follower());
 		deeco2.deployEnsemble(ConvoyEnsemble.class);

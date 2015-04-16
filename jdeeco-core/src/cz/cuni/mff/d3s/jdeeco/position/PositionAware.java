@@ -6,19 +6,19 @@ import java.util.List;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 
-public class PositionPlugin implements DEECoPlugin, PositionProvider {
+public class PositionAware implements DEECoPlugin, PositionProvider {
 	private final Position inital;
 	private PositionProvider provider;
 	
-	public PositionPlugin(double x, double y) {
+	public PositionAware(double x, double y) {
 		this(new Position(x, y, 0));
 	}
 
-	public PositionPlugin(double x, double y, double z) {
+	public PositionAware(double x, double y, double z) {
 		this(new Position(x, y, z));
 	}
 
-	public PositionPlugin(Position initialPosition) {
+	public PositionAware(Position initialPosition) {
 		inital = initialPosition;
 	}
 

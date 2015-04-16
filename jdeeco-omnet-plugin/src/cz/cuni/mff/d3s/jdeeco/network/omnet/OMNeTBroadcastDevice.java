@@ -8,7 +8,7 @@ import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.jdeeco.network.address.Address;
 import cz.cuni.mff.d3s.jdeeco.network.address.MANETBroadcastAddress;
 import cz.cuni.mff.d3s.jdeeco.network.l1.MANETReceivedInfo;
-import cz.cuni.mff.d3s.jdeeco.position.PositionPlugin;
+import cz.cuni.mff.d3s.jdeeco.position.PositionAware;
 
 public class OMNeTBroadcastDevice extends OMNeTDevice {
 	@Override
@@ -35,7 +35,7 @@ public class OMNeTBroadcastDevice extends OMNeTDevice {
 		// Require base dependencies + position
 		List<Class<? extends DEECoPlugin>> dependencies = new LinkedList<>();
 		dependencies.addAll(super.getDependencies());
-		dependencies.add(PositionPlugin.class);
+		dependencies.add(PositionAware.class);
 		return dependencies;
 	}
 
