@@ -3,6 +3,7 @@ package cz.cuni.mff.d3s.jdeeco.network.device;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
@@ -31,8 +32,13 @@ import cz.cuni.mff.d3s.jdeeco.position.PositionPlugin;
  */
 public class BroadcastLoopback implements DEECoPlugin {
 	public static final int PACKET_SIZE = 128; // bytes
-	public static final int RANGE = 250; // meters
-	final long constantDelay;
+	public static final int DEFAULT_RANGE = 250; // meters
+	public static final long DEFAULT_DELAY_MEAN = 0; // ms
+	public static final long DEFAULT_DELAY_VARIANCE = 0; // ms
+	final long delayMean;
+	final long delayDeviation;
+	final int range;
+	private Random random;
 
 	Scheduler scheduler;
 
@@ -70,8 +76,12 @@ public class BroadcastLoopback implements DEECoPlugin {
 
 		@Override
 		public void send(byte[] data, Address addressNotUsed) {
+			// Get task delay
+			long delay = (long) (random.nextGaussian()) * delayDeviation + delayMean;
+			
+			// Schedule send task
 			Task task = new CustomStepTask(scheduler,
-					new DeliveryListener(constantDelay, new PacketWrapper(data, this)));
+					new DeliveryListener(delay, new PacketWrapper(data, this)));
 			BroadcastLoopback.this.scheduler.addTask(task);
 		}
 	}
@@ -113,20 +123,22 @@ public class BroadcastLoopback implements DEECoPlugin {
 	/**
 	 * Constructs loop-back broadcast
 	 * 
-	 * @param constantDelay
+	 * @param delayMean
 	 *            Delay between sending and delivering the packets
 	 */
-	public BroadcastLoopback(long constantDelay) {
-		this.constantDelay = constantDelay;
+	public BroadcastLoopback(long delayMean, long delayDeviation, int range) {
+		this.delayMean = delayMean;
+		this.delayDeviation = delayDeviation;
+		this.range = range;
 	}
 
 	/**
 	 * Constructs loop-back broadcast
 	 * 
-	 * Delivers packets immediately
+	 * Delivers packets with default values
 	 */
 	public BroadcastLoopback() {
-		this(0);
+		this(DEFAULT_DELAY_MEAN, DEFAULT_DELAY_VARIANCE, DEFAULT_RANGE);
 	}
 
 	/**
@@ -141,7 +153,7 @@ public class BroadcastLoopback implements DEECoPlugin {
 			Position dstPos = loop.container.getPluginInstance(PositionPlugin.class).getPosition();
 			double distance = srcPos.euclidDistanceTo(dstPos);
 
-			if (distance <= RANGE) {
+			if (distance <= range) {
 				loop.layer1.processL0Packet(packet.data, packet.source, new ReceivedInfo(packet.source.address));
 			}
 		}
@@ -154,6 +166,7 @@ public class BroadcastLoopback implements DEECoPlugin {
 
 	@Override
 	public void init(DEECoContainer container) {
+		random = new Random(container.getId());
 		scheduler = container.getRuntimeFramework().getScheduler();
 		Layer1 l1 = container.getPluginInstance(Network.class).getL1();
 		LoopDevice loop = new LoopDevice(container);

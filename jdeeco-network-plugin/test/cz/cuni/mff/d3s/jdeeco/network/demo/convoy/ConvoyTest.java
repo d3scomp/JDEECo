@@ -62,7 +62,7 @@ public class ConvoyTest {
 		deeco1.deployEnsemble(ConvoyEnsemble.class);
 
 		/* create second deeco node */
-		DEECoNode deeco2 = realm.createNode(new PositionPlugin(0, BroadcastLoopback.RANGE / 2));
+		DEECoNode deeco2 = realm.createNode(new PositionPlugin(0, BroadcastLoopback.DEFAULT_RANGE / 2));
 		/* deploy components and ensembles */
 		deeco2.deployComponent(new Follower());
 		deeco2.deployEnsemble(ConvoyEnsemble.class);
@@ -96,13 +96,13 @@ public class ConvoyTest {
 		realm.addPlugin(KnowledgeInsertingStrategy.class);
 		
 		/* create first deeco node */
-		DEECoNode deeco1 = realm.createNode(new PositionPlugin(0, BroadcastLoopback.RANGE));
+		DEECoNode deeco1 = realm.createNode(new PositionPlugin(0, BroadcastLoopback.DEFAULT_RANGE));
 		/* deploy components and ensembles */
 		deeco1.deployComponent(new Leader());
 		deeco1.deployEnsemble(ConvoyEnsemble.class);
 
 		/* create second deeco node */
-		DEECoNode deeco2 = realm.createNode(new PositionPlugin(BroadcastLoopback.RANGE, 0));
+		DEECoNode deeco2 = realm.createNode(new PositionPlugin(BroadcastLoopback.DEFAULT_RANGE, 0));
 		/* deploy components and ensembles */
 		deeco2.deployComponent(new Follower());
 		deeco2.deployEnsemble(ConvoyEnsemble.class);
