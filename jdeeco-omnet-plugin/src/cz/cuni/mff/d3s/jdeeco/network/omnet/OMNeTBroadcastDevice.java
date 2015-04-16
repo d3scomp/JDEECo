@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.jdeeco.network.omnet;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
@@ -32,7 +33,8 @@ public class OMNeTBroadcastDevice extends OMNeTDevice {
 	@Override
 	public List<Class<? extends DEECoPlugin>> getDependencies() {
 		// Require base dependencies + position
-		List<Class<? extends DEECoPlugin>> dependencies = super.getDependencies();
+		List<Class<? extends DEECoPlugin>> dependencies = new LinkedList<>();
+		dependencies.addAll(super.getDependencies());
 		dependencies.add(PositionPlugin.class);
 		return dependencies;
 	}
