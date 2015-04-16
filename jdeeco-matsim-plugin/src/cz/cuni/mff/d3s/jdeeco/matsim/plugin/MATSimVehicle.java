@@ -12,10 +12,13 @@ import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.timer.CurrentTimeProvider;
 import cz.cuni.mff.d3s.jdeeco.matsim.dataaccess.ActuatorProvider;
+import cz.cuni.mff.d3s.jdeeco.matsim.dataaccess.Sensor;
 import cz.cuni.mff.d3s.jdeeco.matsim.dataaccess.SensorProvider;
+import cz.cuni.mff.d3s.jdeeco.matsim.dataaccess.SensorType;
 import cz.cuni.mff.d3s.jdeeco.matsim.simulation.MATSimRouter;
 import cz.cuni.mff.d3s.jdeeco.position.Position;
 import cz.cuni.mff.d3s.jdeeco.position.PositionPlugin;
+import cz.cuni.mff.d3s.jdeeco.position.PositionProvider;
 
 /**
  * jDEECo plug-in that provides MATSim vehicle agent
@@ -23,9 +26,10 @@ import cz.cuni.mff.d3s.jdeeco.position.PositionPlugin;
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
  */
-public class MATSimVehicle implements DEECoPlugin {
+public class MATSimVehicle implements DEECoPlugin, PositionProvider {
 	private MATSimSimulation simulation;
 	private DEECoContainer container;
+	private Sensor<Id> currentLinkSensor;
 	
 	/**
 	 * Gets vehicle sensor provider
@@ -97,5 +101,21 @@ public class MATSimVehicle implements DEECoPlugin {
 
 		// Add vehicle to simulation
 		simulation.addVehicle(container.getId(), startLink);
+		
+		// Setup this as position provider for the node
+		currentLinkSensor = getSensorProvider().createSensor(SensorType.CURRENT_LINK);
+		positionPlugin.setProvider(this);
+	}
+
+	/**
+	 * Gets MATSim agent position from simulation and passes
+	 *  
+	 * @return Current agent position
+	 */
+	@Override
+	public Position getPosition() {
+		Id currentLink = currentLinkSensor.read();
+		Coord coord = getRouter().findLinkById(currentLink).getCoord();
+		return new Position(coord.getX(), coord.getY(), 0);
 	}
 }
