@@ -64,12 +64,12 @@ public class MATSimSimulation implements DEECoPlugin {
 	private final JDEECoWithinDayMobsimListener listener;
 	private final MATSimDataProvider matSimProvider;
 	private final MATSimDataReceiver matSimReceiver;
-	private final Map<Integer, MATSimHost> hosts = new HashMap<>();;
+	private final Map<Integer, MATSimHost> hosts = new HashMap<>();
 	private final MATSimExtractor extractor;
-	// private final Exchanger<Object> exchanger = new Exchanger<Object>();;
+	// private final Exchanger<Object> exchanger = new Exchanger<Object>();
 
-	public MATSimSimulation(String configPath, AdditionAwareAgentSource... additionalAgenSources) throws IOException {
-		this(new File(configPath), additionalAgenSources);
+	public MATSimSimulation(String configPath, AdditionAwareAgentSource... additionalAgentSources) throws IOException {
+		this(new File(configPath), additionalAgentSources);
 	}
 	
 	public MATSimSimulation(File config, AdditionAwareAgentSource... additionalAgentSources) throws IOException {
