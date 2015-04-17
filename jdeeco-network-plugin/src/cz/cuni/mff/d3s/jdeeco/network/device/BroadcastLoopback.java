@@ -17,15 +17,20 @@ import cz.cuni.mff.d3s.jdeeco.network.Network;
 import cz.cuni.mff.d3s.jdeeco.network.address.Address;
 import cz.cuni.mff.d3s.jdeeco.network.address.MANETBroadcastAddress;
 import cz.cuni.mff.d3s.jdeeco.network.l1.Layer1;
-import cz.cuni.mff.d3s.jdeeco.network.l1.ReceivedInfo;
+import cz.cuni.mff.d3s.jdeeco.network.l1.MANETReceivedInfo;
 import cz.cuni.mff.d3s.jdeeco.position.Position;
 import cz.cuni.mff.d3s.jdeeco.position.PositionAware;
 
 /**
  * Loop-back broadcast plug-in
  * 
- * Can be initialized by more DEECo run-times at the same time. Packets send are then delivered (instantly or with
- * delay) to all of them.
+ * Can be initialized by more DEECo run-times at the same time. Packets send are then delivered to the group.
+ * 
+ * Packet delivery can be parameterized with mean and deviation. When not specified the packets are delivered
+ * immediately.
+ * 
+ * Range can be also parameterized. By default the range is 250 meters. The received packets have RSSi set depending on
+ * the distance between sender and receiver.
  * 
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
@@ -78,10 +83,9 @@ public class BroadcastLoopback implements DEECoPlugin {
 		public void send(byte[] data, Address addressNotUsed) {
 			// Get task delay
 			long delay = (long) (random.nextGaussian()) * delayDeviation + delayMean;
-			
+
 			// Schedule send task
-			Task task = new CustomStepTask(scheduler,
-					new DeliveryListener(delay, new PacketWrapper(data, this)));
+			Task task = new CustomStepTask(scheduler, new DeliveryListener(delay, new PacketWrapper(data, this)));
 			BroadcastLoopback.this.scheduler.addTask(task);
 		}
 	}
@@ -153,8 +157,13 @@ public class BroadcastLoopback implements DEECoPlugin {
 			Position dstPos = loop.container.getPluginInstance(PositionAware.class).getPosition();
 			double distance = srcPos.euclidDistanceTo(dstPos);
 
-			if (distance <= range) {
-				loop.layer1.processL0Packet(packet.data, packet.source, new ReceivedInfo(packet.source.address));
+			if (loop != packet.source && distance <= range) {
+				// Calculates logarithmic RSSI
+				double rssi = Math.log(range - distance) / Math.log(range);
+
+				// Receive packet on the destination node
+				loop.layer1.processL0Packet(packet.data, packet.source, new MANETReceivedInfo(packet.source.address,
+						rssi));
 			}
 		}
 	}
