@@ -52,7 +52,7 @@ import cz.cuni.mff.d3s.jdeeco.matsim.simulation.Simulation;
  *
  */
 public class MATSimSimulation implements DEECoPlugin {
-	private final TimerProvider timer = new TimerProvider();
+	private final Timer timer = new Timer();
 	private final JDEECoAgentSource agentSource = new JDEECoAgentSource();
 	private final MATSimRouter router;
 	private final MATSimDataProviderReceiver matSimProviderReceiver = new MATSimDataProviderReceiver(
@@ -115,8 +115,8 @@ public class MATSimSimulation implements DEECoPlugin {
 			}
 		}
 
-		simulationStep = TimerProvider.secondsToMilliseconds(step);
-		currentMilliseconds = TimerProvider.secondsToMilliseconds(controler.getConfig().getQSimConfigGroup().getStartTime());
+		simulationStep = Timer.secondsToMilliseconds(step);
+		currentMilliseconds = Timer.secondsToMilliseconds(controler.getConfig().getQSimConfigGroup().getStartTime());
 
 		router = new MATSimRouter(controler, travelTime, 10 /* TODO: FAKE VALUE */);
 	}
@@ -170,7 +170,7 @@ public class MATSimSimulation implements DEECoPlugin {
 	 * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
 	 *
 	 */
-	class TimerProvider extends Simulation implements SimulationTimer, MATSimSimulationStepListener {
+	public class Timer extends Simulation implements SimulationTimer, MATSimSimulationStepListener {
 		private final TreeSet<Callback> callbacks = new TreeSet<>();
 		private final Map<Integer, Callback> hostIdToCallback = new HashMap<>();
 		

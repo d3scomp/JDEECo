@@ -16,7 +16,7 @@ import cz.cuni.mff.d3s.deeco.timer.TimerEventListener;
 import cz.cuni.mff.d3s.jdeeco.network.address.IPAddress;
 
 public class OMNeTSimulation implements DEECoPlugin {
-	class OMNeTTimerProvider implements SimulationTimer {
+	public class Timer implements SimulationTimer {
 		@Override
 		public void notifyAt(long time, TimerEventListener listener, DEECoContainer container) {
 			hosts.get(container.getId()).setEventListener(time, listener);
@@ -97,7 +97,7 @@ public class OMNeTSimulation implements DEECoPlugin {
 	}
 	
 	private final Map<Integer, OMNeTHost> hosts = new HashMap<Integer, OMNeTSimulation.OMNeTHost>();
-	private OMNeTTimerProvider timeProvider = new OMNeTTimerProvider();
+	private Timer timeProvider = new Timer();
 	
 	public File getOmnetConfig(long limit) throws IOException {
 		OMNeTConfigGenerator generator = new OMNeTConfigGenerator(limit);
