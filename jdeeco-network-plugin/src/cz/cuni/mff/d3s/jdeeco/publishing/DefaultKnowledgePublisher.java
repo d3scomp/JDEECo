@@ -1,6 +1,7 @@
 package cz.cuni.mff.d3s.jdeeco.publishing;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -54,7 +55,7 @@ public class DefaultKnowledgePublisher implements DEECoPlugin, TimerTaskListener
 	 * Constructs DefaultKnowledgePublisher with broadcast only publishing and default publishing period
 	 */
 	public DefaultKnowledgePublisher() {
-		this(new LinkedList<IPAddress>(), DEFAULT_PUBLISHING_PERIOD);
+		this(Collections.emptyList(), DEFAULT_PUBLISHING_PERIOD);
 	}
 
 	/**
@@ -68,7 +69,7 @@ public class DefaultKnowledgePublisher implements DEECoPlugin, TimerTaskListener
 	 * Constructs DefaultKnowledgePublisher with broadcast only publishing
 	 */
 	public DefaultKnowledgePublisher(int publishingPeriod) {
-		this(new LinkedList<IPAddress>(), publishingPeriod);
+		this(Collections.emptyList(), publishingPeriod);
 	}
 
 	/**
