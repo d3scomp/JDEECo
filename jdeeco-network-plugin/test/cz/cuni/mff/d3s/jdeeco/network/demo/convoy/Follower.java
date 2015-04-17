@@ -17,10 +17,18 @@ import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 public class Follower {
 
 	public String id = "Follower";
-	public String name = "F";
+	public final String name;
 	public Waypoint position = new Waypoint(1, 1);
 	public Waypoint destination = new Waypoint(1, 3);
 	public Waypoint leaderPosition;
+	
+	public Follower() {
+		name = "F";
+	}
+	
+	public Follower(String name) {
+		this.name = name;
+	}
 			
 	@Process
 	@PeriodicScheduling(period=2500)
