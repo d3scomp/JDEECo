@@ -200,6 +200,7 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 					collectors.put(key, collector);
 				}
 			}
+			processL1PacketByStrategies(l1Packet);
 			collector.addL1Packet(l1Packet);
 			if (collector.isComplete()) {
 				// FIX header is unknown at this level
@@ -208,6 +209,12 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 				collectors.remove(key);
 			}
 			position += l1Packet.payloadSize + L1Packet.HEADER_SIZE;
+		}
+	}
+	
+	private void processL1PacketByStrategies(L1Packet packet) {
+		for(L1Strategy strategy: getRegisteredL1Strategies()) {
+			strategy.processL1Packet(packet);
 		}
 	}
 
