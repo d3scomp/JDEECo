@@ -1,4 +1,3 @@
-
 package cz.cuni.mff.d3s.deeco.network;
 
 import java.util.Arrays;
@@ -54,6 +53,7 @@ import cz.cuni.mff.d3s.deeco.security.SecurityKeyManager;
  * </p>
  *  
  * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
+ * @author Ondřej Štumpf
  * 
  * @see KnowledgeManagerContainer
  * @see KnowledgeData

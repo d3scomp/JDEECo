@@ -106,6 +106,7 @@ import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper;
  * </p>
  * 
  * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
+ * @author Ondřej Štumpf
  * 
  */
 public class AnnotationProcessor {

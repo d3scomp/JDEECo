@@ -27,7 +27,7 @@ import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
  * local knowledge of the component instance, and (b) to execute the process method when invoked by the scheduler/executor.
  * 
  * @author Tomas Bures <bures@d3s.mff.cuni.cz>
- *
+ * @author Ondřej Štumpf
  */
 public class ProcessTask extends Task {
 	

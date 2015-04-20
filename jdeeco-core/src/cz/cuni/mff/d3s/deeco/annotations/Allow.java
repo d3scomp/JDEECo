@@ -1,3 +1,6 @@
+/**
+ * Annotations used in DEECo components and ensembles.
+ */
 package cz.cuni.mff.d3s.deeco.annotations;
 
 import java.lang.annotation.ElementType;
