@@ -81,4 +81,6 @@ public interface KnowledgeManager extends ReadOnlyKnowledgeManager {
 	 *            the knowledge path
 	 */
 	void lockKnowledgePath(KnowledgePath knowledgePath);
+
+	boolean isOfSystemComponent();
 }

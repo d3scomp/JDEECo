@@ -131,7 +131,7 @@ public class DefaultKnowledgePublisher implements DEECoPlugin, TimerTaskListener
 	protected ValueSet getTransferableKnowledge(ValueSet source, KnowledgeManager knowledgeManager) {
 		ValueSet result = new ValueSet();
 		for (KnowledgePath kp : source.getKnowledgePaths()) {
-			if (!knowledgeManager.isLocal(kp)) {
+			if (!(knowledgeManager.isLocal(kp) || knowledgeManager.isOfSystemComponent())) {
 				result.setValue(kp, source.getValue(kp));
 			}
 		}
