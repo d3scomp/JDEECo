@@ -5,7 +5,9 @@ import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 
+import org.junit.Ignore;
 import org.junit.Rule;
+import org.junit.Test;
 import org.junit.contrib.java.lang.system.StandardOutputStreamLog;
 import org.matsim.core.utils.geometry.CoordImpl;
 
@@ -35,7 +37,7 @@ public class VehicleTravelTest {
 		new VehicleTravelTest().testTravel();
 	}
 
-//	@Test
+	@Test @Ignore("We currently cannot run multiple OMNeT based simulations")
 	public void testTravel() throws AnnotationProcessorException, InterruptedException, DEECoException,
 			InstantiationException, IllegalAccessException, IOException {
 		OMNeTSimulation omnet = new OMNeTSimulation();
