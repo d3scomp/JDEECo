@@ -5,7 +5,6 @@ import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.StandardOutputStreamLog;
@@ -35,11 +34,11 @@ public class VehicleTravelTest {
 
 	public static void main(String[] args) throws AnnotationProcessorException, InterruptedException, DEECoException,
 			InstantiationException, IllegalAccessException, IOException {
-		new VehicleTravelTest().testTravelMobilityLimitedRangeOmnet();
+		new VehicleTravelTest().travelMobilityLimitedRangeOmnetTest();
 	}
 
 	@Test //@Ignore("We currently cannot run multiple OMNeT based simulations AND this is not yet ready to work properly")
-	public void testTravelMobilityLimitedRangeOmnet() throws AnnotationProcessorException, InterruptedException, DEECoException,
+	public void travelMobilityLimitedRangeOmnetTest() throws AnnotationProcessorException, InterruptedException, DEECoException,
 			InstantiationException, IllegalAccessException, IOException {
 		OMNeTSimulation omnet = new OMNeTSimulation();
 				
