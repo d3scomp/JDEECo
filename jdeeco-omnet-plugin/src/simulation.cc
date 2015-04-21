@@ -205,6 +205,9 @@ void simulate(const char * envName, const char * confFile) {
 	cSimulation::setActiveSimulation(NULL);
 	delete simulationobject;  // will delete app as well
 
+	/* TODO: Most probably we should have executed these, but for some reason it is
+		 * not possible to start new simulation in the same VM when these are used. */
+	/*
 	componentTypes.clear();
 	nedFunctions.clear();
 	classes.clear();
@@ -212,5 +215,5 @@ void simulate(const char * envName, const char * confFile) {
 	classDescriptors.clear();
 	configOptions.clear();
 	omnetapps.clear();
-	CodeFragments::executeAll(CodeFragments::SHUTDOWN);
+	CodeFragments::executeAll(CodeFragments::SHUTDOWN); */
 }

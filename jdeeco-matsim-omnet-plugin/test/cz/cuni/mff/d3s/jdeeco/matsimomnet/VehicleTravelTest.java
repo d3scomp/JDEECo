@@ -37,7 +37,7 @@ public class VehicleTravelTest {
 		new VehicleTravelTest().testTravel();
 	}
 
-	@Test @Ignore("We currently cannot run multiple OMNeT based simulations")
+	@Test @Ignore("We currently cannot run multiple OMNeT based simulations AND this is not yet ready to work properly")
 	public void testTravel() throws AnnotationProcessorException, InterruptedException, DEECoException,
 			InstantiationException, IllegalAccessException, IOException {
 		OMNeTSimulation omnet = new OMNeTSimulation();
