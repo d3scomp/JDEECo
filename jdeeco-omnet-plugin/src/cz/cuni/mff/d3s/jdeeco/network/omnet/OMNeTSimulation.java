@@ -102,8 +102,7 @@ public class OMNeTSimulation implements DEECoPlugin {
 		}
 
 		public void sendInfrastructurePacket(byte[] packet, IPAddress address) {
-			OMNeTNative
-					.nativeSendPacket(getId(), packet, address.ipAddress/* "MANET.node[" + address.ipAddress + "]" */);
+			OMNeTNative.nativeSendPacket(getId(), packet, address.ipAddress);
 		}
 
 		public void sendBroadcastPacket(byte[] packet) {
