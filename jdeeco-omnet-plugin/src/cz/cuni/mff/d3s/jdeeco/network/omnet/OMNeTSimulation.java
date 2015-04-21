@@ -16,6 +16,7 @@ import cz.cuni.mff.d3s.deeco.simulation.omnet.OMNeTNativeListener;
 import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
 import cz.cuni.mff.d3s.deeco.timer.TimerEventListener;
 import cz.cuni.mff.d3s.jdeeco.network.address.IPAddress;
+import cz.cuni.mff.d3s.jdeeco.position.Position;
 
 public class OMNeTSimulation implements DEECoPlugin {
 	public interface BindedSimulation {
@@ -106,7 +107,26 @@ public class OMNeTSimulation implements DEECoPlugin {
 		}
 
 		public void sendBroadcastPacket(byte[] packet) {
+			updatePosition();
 			OMNeTNative.nativeSendPacket(getId(), packet, "");
+		}
+
+		public Position getInitialPosition() {
+			if (broadcastDevice == null) {
+				return new Position(0, 0, 0);
+			} else {
+				return broadcastDevice.positionPlugin.getInitialPosition();
+			}
+		}
+
+		/**
+		 * Updates position visible to OMNeT
+		 * 
+		 * Updates according to position provided by PositionAware plug-in.
+		 */
+		private void updatePosition() {
+			Position pos = broadcastDevice.positionPlugin.getPosition();
+			OMNeTNative.nativeSetPosition(getId(), pos.x, pos.y, pos.z);
 		}
 
 		@Override
