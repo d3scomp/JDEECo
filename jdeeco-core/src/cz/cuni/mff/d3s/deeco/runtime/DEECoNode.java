@@ -3,11 +3,11 @@ package cz.cuni.mff.d3s.deeco.runtime;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
@@ -65,7 +65,7 @@ public class DEECoNode implements DEECoContainer {
 	/**
 	 * Contains the initialized plugins for this deeco object.
 	 */
-	Map<Class<? extends DEECoPlugin>, DEECoPlugin> pluginsMap;
+	Set<DEECoPlugin> pluginsSet;
 	
 	/**
 	 * Creates new instance of {@link DEECoNode}.
@@ -180,7 +180,7 @@ public class DEECoNode implements DEECoContainer {
 	 * please see the error output and log file for further information about the failure.
 	 */
 	void initializePlugins(DEECoPlugin[] plugins) throws PluginDependencyException {
-		pluginsMap= new HashMap<>();
+		pluginsSet = new HashSet<>();
 		
 		List<DependencyNode> nodes = constructDependencyNodes(plugins);
 		Queue<DependencyNode> queue = new PriorityQueue<DEECoNode.DependencyNode>(new DependencyNodeComparator());
@@ -195,7 +195,7 @@ public class DEECoNode implements DEECoContainer {
 
 			if (n.dependencyCount == 0) {
 				n.plugin.init(this);
-				pluginsMap.put(n.plugin.getClass(), n.plugin);				
+				pluginsSet.add(n.plugin);				
 
 				for (DependencyNode dependantPlugin : n.dependantPlugins) {
 					queue.remove(dependantPlugin);
@@ -226,7 +226,13 @@ public class DEECoNode implements DEECoContainer {
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T extends DEECoPlugin> T getPluginInstance(Class<T> pluginClass) {
-		return (T) pluginsMap.get(pluginClass);
+		for(DEECoPlugin n: pluginsSet) {
+			if(pluginClass.isAssignableFrom(n.getClass())) {
+				return (T) n; 
+			}
+		}
+		
+		return null;
 	}
 	
 	@Override
@@ -278,27 +284,32 @@ public class DEECoNode implements DEECoContainer {
 		}		
 	}
 	
-	@SuppressWarnings("rawtypes")
 	List<DependencyNode> constructDependencyNodes(DEECoPlugin[] plugins) throws PluginDependencyException {		
 		List<DependencyNode> dependencyNodes = new ArrayList<>();		
-		Map<Class, DependencyNode> knownPlugins = new HashMap<>();
+		Set<DependencyNode> knownPlugins = new HashSet<>();
 		
 		for (DEECoPlugin p: plugins) {
 			DependencyNode node = new DependencyNode(p);
 			
-			knownPlugins.put(p.getClass(),node);
+			knownPlugins.add(node);
 			dependencyNodes.add(node);
 		}
 		
 		for (DependencyNode node: dependencyNodes) {
-			for (Class<? extends DEECoPlugin> pluginClass : node.plugin.getDependencies()) {					
-				if (knownPlugins.containsKey(pluginClass)) {
-					knownPlugins.get(pluginClass).dependantPlugins.add(node);						
+			for (Class<? extends DEECoPlugin> pluginClass : node.plugin.getDependencies()) {
+				DependencyNode found = null;
+				for(DependencyNode n: knownPlugins) {
+					if(pluginClass.isAssignableFrom(n.plugin.getClass())) {
+						found = n;
+					}
+				}
+				if (found != null) {
+					found.dependantPlugins.add(node);
 				} else {
 					throw new MissingDependencyException(node.plugin.getClass(), pluginClass);
 				}
 			}
-		}	
+		}
 		
 		return dependencyNodes;
 	}		
