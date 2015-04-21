@@ -12,8 +12,8 @@ public class DefaultMATSimUpdater implements MATSimUpdater {
 			Map<String, MATSimInput> map = (Map<String, MATSimInput>) input;
 			for (JDEECoAgent agent: agents) {
 					if (map.containsKey(agent.getId())) {
-						agent.setRoute(((MATSimInput) map.get(agent.getId())).route);
-						agent.setSpeed(((MATSimInput) map.get(agent.getId())).speed);
+						agent.setRoute(map.get(agent.getId()).route);
+						agent.setSpeed(map.get(agent.getId()).speed);
 					}
 			}
 		}

@@ -1,6 +1,5 @@
 package cz.cuni.mff.d3s.jdeeco.matsim.plugin;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -10,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.Exchanger;
 
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.TransportMode;
@@ -60,25 +60,26 @@ public class MATSimSimulation implements DEECoPlugin {
 	private long currentMilliseconds;
 	private final long simulationStep; // in milliseconds
 	private final TravelTime travelTime;
-	private final Controler controler;
+	protected final Controler controler;
 	private final JDEECoWithinDayMobsimListener listener;
 	private final MATSimDataProvider matSimProvider;
 	private final MATSimDataReceiver matSimReceiver;
 	private final Map<Integer, MATSimHost> hosts = new HashMap<>();
 	private final MATSimExtractor extractor;
-	// private final Exchanger<Object> exchanger = new Exchanger<Object>();
+	protected final Exchanger<Object> exchanger;
 
 	public MATSimSimulation(String configPath, AdditionAwareAgentSource... additionalAgentSources) throws IOException {
-		this(new File(configPath), additionalAgentSources);
+		this(configPath, null, additionalAgentSources);
 	}
 	
-	public MATSimSimulation(File config, AdditionAwareAgentSource... additionalAgentSources) throws IOException {
+	public MATSimSimulation(String configPath, Exchanger<Object> exchanger, AdditionAwareAgentSource... additionalAgentSources) throws IOException {
+		this.exchanger = exchanger;
 		List<AdditionAwareAgentSource> agentSources = new LinkedList<>();
 		agentSources.add(agentSource);
 		agentSources.addAll(Arrays.asList(additionalAgentSources));
 
 		// Setup MATSim controller
-		controler = new MATSimPreloadingControler(config.getAbsolutePath());
+		controler = new MATSimPreloadingControler(configPath);
 		controler.setOverwriteFiles(true);
 		controler.getConfig().getQSimConfigGroup().setSimStarttimeInterpretation("onlyUseStarttime");
 
@@ -88,10 +89,14 @@ public class MATSimSimulation implements DEECoPlugin {
 		final double step = this.controler.getConfig().getQSimConfigGroup().getTimeStepSize();
 		Log.i("Starting simulation: matsimStartTime: " + start + " matsimEndTime: " + end);
 		
-		this.extractor = new DefaultMATSimExtractor();
-		this.listener = new JDEECoWithinDayMobsimListener(timer, new DefaultMATSimUpdater(), extractor);
-		this.matSimProvider = (MATSimDataProvider) matSimProviderReceiver;
-		this.matSimReceiver = (MATSimDataReceiver) matSimProviderReceiver;
+		extractor = new DefaultMATSimExtractor();
+		if(exchanger == null) {
+			listener = new JDEECoWithinDayMobsimListener(timer, new DefaultMATSimUpdater(), extractor);
+		} else {
+			listener = new JDEECoWithinDayMobsimListener(exchanger, new DefaultMATSimUpdater(), extractor);
+		}
+		matSimProvider = (MATSimDataProvider) matSimProviderReceiver;
+		matSimReceiver = (MATSimDataReceiver) matSimProviderReceiver;
 
 		Set<String> analyzedModes = new HashSet<String>();
 		analyzedModes.add(TransportMode.car);
@@ -121,7 +126,7 @@ public class MATSimSimulation implements DEECoPlugin {
 		router = new MATSimRouter(controler, travelTime, 10 /* TODO: FAKE VALUE */);
 	}
 
-	public SimulationTimer getTimer() {
+	public Timer getTimer() {
 		return timer;
 	}
 

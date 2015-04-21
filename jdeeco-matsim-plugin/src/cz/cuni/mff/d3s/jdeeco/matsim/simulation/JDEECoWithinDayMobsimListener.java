@@ -72,13 +72,15 @@ public class JDEECoWithinDayMobsimListener implements
 
 	@SuppressWarnings("rawtypes")
 	public void notifyMobsimBeforeSimStep(MobsimBeforeSimStepEvent event) {
-		if (this.remainingExchanges == 0) {
+	/*	if (this.remainingExchanges == 0) {
 			return;
-		}
+		}*/
 		if (exchanger != null) {
 			try {
 				//System.out.println("MATSIM before: " + event.getSimulationTime());
-				updateJDEECoAgents(exchanger.exchange(extractor.extractFromMATSim(getAllJDEECoAgents(), event.getQueueSimulation())));
+				Object out = extractor.extractFromMATSim(getAllJDEECoAgents(), event.getQueueSimulation());
+				Object in = exchanger.exchange(out);
+				updateJDEECoAgents(in);
 				//System.out.println("MATSIM after: " + event.getSimulationTime());
 			} catch (Exception e) {
 				Log.e("jDEECoWithinDayMobsimListener: ", e);
