@@ -125,6 +125,8 @@ void JDEECoApplication::setPosition(double valX, double valY, double valZ) {
         newPosition.y = valY;
         newPosition.z = valZ;
         mobility->setCurrentPosition(newPosition);
+    } else {
+    	std::cout << "Attempt to set position with custom mobility == NULL" << std::endl;
     }
 }
 

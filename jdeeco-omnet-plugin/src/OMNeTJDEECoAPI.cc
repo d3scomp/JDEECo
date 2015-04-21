@@ -171,6 +171,8 @@ JNIEXPORT void JNICALL Java_cz_cuni_mff_d3s_deeco_simulation_omnet_OMNeTNative_n
 
 	if (module != NULL) {
 		module->setPosition(valX, valY, valZ);
+	} else {
+		std::cout << "Not setting position for null module !!!!" << std::endl;
 	}
 }
 
