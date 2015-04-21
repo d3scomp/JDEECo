@@ -19,7 +19,7 @@
  	
  	<module name="qsim" >
 		<param name="startTime" value="00:00:00" />
-		<!-- NOTE: End time will be most probably overrided by the value specified in the jdeeco simulation runner  -->
+		<!-- NOTE: End time will be most probably override by the value specified in the jDEECo simulation runner  -->
 		<param name="endTime" value="00:10:00" />
 		<param name="flowCapacityFactor" value="1.00" />
 		<param name="storageCapacityFactor" value="1.00" />
