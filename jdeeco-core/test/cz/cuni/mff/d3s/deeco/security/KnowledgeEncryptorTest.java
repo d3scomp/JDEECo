@@ -97,8 +97,8 @@ public class KnowledgeEncryptorTest {
 		replicaKnowledgeManager = new BaseKnowledgeManager("receiver_id", component);
 		securityHelper = new SecurityHelper();
 		
-		KeyPair role1Pair = securityHelper.generateKeyPair();
-		KeyPair role2Pair = securityHelper.generateKeyPair();
+		KeyPair role1Pair = securityHelper.generateKeyPair("RSA", 1024);
+		KeyPair role2Pair = securityHelper.generateKeyPair("RSA", 1024);
 		KeyPair integrityPair = securityHelper.generateKeyPair();
 		testrole1PublicKey = role1Pair.getPublic();
 		testrole2PublicKey = role2Pair.getPublic();

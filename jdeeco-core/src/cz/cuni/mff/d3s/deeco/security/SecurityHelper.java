@@ -18,6 +18,7 @@ import java.util.Arrays;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.CipherOutputStream;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
@@ -32,7 +33,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
  */
 public class SecurityHelper {
 
-	private final int BLOCK_SIZE = 1024;
+	private final int BLOCK_SIZE = 16;
 	private static SecureRandom secureRandom = new SecureRandom();
 	
 	static {
@@ -85,29 +86,25 @@ public class SecurityHelper {
 	public byte[] transform(byte[] data, Cipher cipher) throws ShortBufferException, IllegalBlockSizeException, BadPaddingException, IOException {
 		byte[] buffer = new byte[BLOCK_SIZE];
 		int noBytes = 0;
-        byte[] cipherBlock = new byte[cipher.getOutputSize(data.length)];
-        int cipherBytes;
-      
+             
         ByteArrayInputStream inputStream = null;
-        ByteArrayOutputStream outputStream = null;
+        CipherOutputStream outputStream = null;
+        ByteArrayOutputStream innerOutputStream = null;
         
         try {
-	        inputStream = new ByteArrayInputStream(data);	        
-	        outputStream = new ByteArrayOutputStream();
+	        inputStream = new ByteArrayInputStream(data);	
+	        innerOutputStream = new ByteArrayOutputStream();
+	        outputStream = new CipherOutputStream(innerOutputStream, cipher);
 	        
-	        while((noBytes = inputStream.read(buffer)) != -1) {
-	           cipherBytes = cipher.update(buffer, 0, noBytes, cipherBlock);
-	           outputStream.write(cipherBlock, 0, cipherBytes);       
-	        }
-	       
-	        cipherBytes = cipher.doFinal(cipherBlock, 0);
-	        outputStream.write(cipherBlock, 0, cipherBytes);
+	        while((noBytes = inputStream.read(buffer)) != -1) {	          
+	           outputStream.write(buffer, 0, noBytes);       
+	        }	       
         } finally {
         	if (inputStream != null) inputStream.close();
         	if (outputStream != null) outputStream.close();
         }
         
-        return outputStream.toByteArray();
+        return innerOutputStream.toByteArray();
 	}
 	
 	/**
@@ -171,7 +168,7 @@ public class SecurityHelper {
 	 * @return the key pair
 	 */
 	public KeyPair generateKeyPair() throws NoSuchAlgorithmException {
-		return generateKeyPair("RSA", 1024);
+		return generateKeyPair("RSA", 512);
 	}
 	
 	/**

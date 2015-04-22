@@ -357,7 +357,7 @@ public class KnowledgeEncryptor {
 				| SignatureException | KeyStoreException | SecurityException
 				| IllegalStateException | IOException e) {
 			throw new SecurityException(e);
-		}		
+		}	
 	}
 	
 	/**
