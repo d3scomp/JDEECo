@@ -381,11 +381,7 @@ public class AnnotationProcessor {
 				for (ComponentInstance ci: model.getComponentInstances()) {
 					for (EnsembleController ec : ci.getEnsembleControllers()) {
 						if(ec.getEnsembleDefinition().equals(oldDefinition)){
-							System.out.println(String.format("ci: %s", ci));
-							System.out.println(String.format("ec.ci: %s", ec.getComponentInstance()));
-							System.out.println(String.format("ec: %s", ec));
 							// ci.getEnsembleControllers().remove(ec);
-							// System.out.println(String.format("ec.ci: %s", ec.getComponentInstance()));
 							// BUG: For unknown reason the ec.getComponentInstance() returns null in all
 							// subsequent calls after ci.getEnsembleControllers().remove(ec)
 							// but it is required to return correct ComponentInstance in after-remove triggers
