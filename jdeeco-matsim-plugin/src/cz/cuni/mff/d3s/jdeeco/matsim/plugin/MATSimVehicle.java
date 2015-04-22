@@ -88,7 +88,7 @@ public class MATSimVehicle implements DEECoPlugin, PositionProvider {
 		CoordImpl coordinates = new CoordImpl(position.x, position.y);
 		return coordinates;
 	}
-
+	
 	@Override
 	public void init(DEECoContainer container) {
 		this.container = container;
@@ -115,6 +115,11 @@ public class MATSimVehicle implements DEECoPlugin, PositionProvider {
 	@Override
 	public Position getPosition() {
 		Id currentLink = currentLinkSensor.read();
+		
+		if(currentLink == null) {
+			return null;
+		}
+		
 		Coord coord = getRouter().findLinkById(currentLink).getCoord();
 		return new Position(coord.getX(), coord.getY(), 0);
 	}

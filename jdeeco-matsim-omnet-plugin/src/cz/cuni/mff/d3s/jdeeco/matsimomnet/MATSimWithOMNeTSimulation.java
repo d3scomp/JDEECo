@@ -3,12 +3,8 @@ package cz.cuni.mff.d3s.jdeeco.matsimomnet;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Exchanger;
+import java.util.concurrent.CyclicBarrier;
 
-import org.matsim.api.core.v01.Id;
-
-import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
@@ -16,10 +12,6 @@ import cz.cuni.mff.d3s.deeco.task.TimerTask;
 import cz.cuni.mff.d3s.deeco.task.TimerTaskListener;
 import cz.cuni.mff.d3s.jdeeco.matsim.plugin.MATSimSimulation;
 import cz.cuni.mff.d3s.jdeeco.matsim.simulation.AdditionAwareAgentSource;
-import cz.cuni.mff.d3s.jdeeco.matsim.simulation.MATSimDataProvider;
-import cz.cuni.mff.d3s.jdeeco.matsim.simulation.MATSimDataReceiver;
-import cz.cuni.mff.d3s.jdeeco.matsim.simulation.MATSimInput;
-import cz.cuni.mff.d3s.jdeeco.matsim.simulation.MATSimOutput;
 import cz.cuni.mff.d3s.jdeeco.network.omnet.OMNeTSimulation;
 import cz.cuni.mff.d3s.jdeeco.network.omnet.OMNeTSimulation.BindedSimulation;
 
@@ -31,7 +23,7 @@ public class MATSimWithOMNeTSimulation extends MATSimSimulation implements Timer
 
 	public MATSimWithOMNeTSimulation(String configPath, AdditionAwareAgentSource... additionalAgentSources)
 			throws IOException {
-		super(configPath, new Exchanger<Object>(), additionalAgentSources);
+		super(configPath, new CyclicBarrier(2), additionalAgentSources);
 	}
 
 	@Override
@@ -77,36 +69,42 @@ public class MATSimWithOMNeTSimulation extends MATSimSimulation implements Timer
 		});
 		matSimThread.start();
 
-		// Do the initial exchange, needed to initialize variables
-		doExchange();
+		// Do the initial sync, just wait for matsim to initialize
+		doSync();
 	}
 
-	@SuppressWarnings("unchecked")
-	private void doExchange() {
+//	@SuppressWarnings("unchecked")
+	private void doSync() {
 		// Do the exchange
-		MATSimDataProvider provider = getMATSimProviderReceiver();
-		MATSimDataReceiver receiver = getMATSimProviderReceiver();
+//		MATSimDataProvider provider = getMATSimProviderReceiver();
+//		MATSimDataReceiver receiver = getMATSimProviderReceiver();
 		if (matSimThread.isAlive() /* && this.remainingExchanges > 0 */) {
 			// System.out.println("OMNet before: " + getCurrentMilliseconds());
 
 			try {
-				Map<Id, MATSimInput> out = provider.getMATSimData();
+			/*	Map<Id, MATSimInput> out = provider.getMATSimData();
 				Object in = exchanger.exchange(out);
-				receiver.setMATSimData((Map<Id, MATSimOutput>) in);
-			} catch (InterruptedException e) {
-				Log.e("MATSimOMNetSimulation", e);
+				receiver.setMATSimData((Map<Id, MATSimOutput>) in); */
+				barrier.await();
+				
+			} catch (Exception e) {
+				// Synchronization is lost, everything is lost
+				e.printStackTrace();
+				System.exit(-1);
 			}
 			// System.out.println("OMNet after: " + getCurrentMilliseconds());
 			// this.remainingExchanges--;
 		}
+		
+		omnet.updatePositions();
 	}
 
 	@Override
 	public void at(long time, Object triger) {
 		// TODO Auto-generated method stub
-		System.out.println("DATA EXCHANGE TASK");
+	//	System.out.println("DATA EXCHANGE TASK");
 
-		doExchange();
+		doSync();
 
 		// Reschedule exchange task
 		SimulationStepTask task = (SimulationStepTask) triger;

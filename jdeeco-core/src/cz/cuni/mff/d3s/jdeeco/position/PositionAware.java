@@ -48,8 +48,14 @@ public class PositionAware implements DEECoPlugin, PositionProvider {
 	public Position getPosition() {
 		if (provider == null) {
 			return inital;
-		} else {
-			return provider.getPosition();
 		}
+		
+		Position fromProvider = provider.getPosition();
+		
+		if(fromProvider == null) {
+			return inital;
+		}
+		
+		return fromProvider;
 	}
 }

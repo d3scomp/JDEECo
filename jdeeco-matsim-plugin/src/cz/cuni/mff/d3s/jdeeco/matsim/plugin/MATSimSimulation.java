@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.Exchanger;
+import java.util.concurrent.CyclicBarrier;
 
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.TransportMode;
@@ -66,14 +66,16 @@ public class MATSimSimulation implements DEECoPlugin {
 	private final MATSimDataReceiver matSimReceiver;
 	private final Map<Integer, MATSimHost> hosts = new HashMap<>();
 	private final MATSimExtractor extractor;
-	protected final Exchanger<Object> exchanger;
+//	protected final Exchanger<Object> exchanger;
+	protected final CyclicBarrier barrier;
 
 	public MATSimSimulation(String configPath, AdditionAwareAgentSource... additionalAgentSources) throws IOException {
 		this(configPath, null, additionalAgentSources);
 	}
 	
-	public MATSimSimulation(String configPath, Exchanger<Object> exchanger, AdditionAwareAgentSource... additionalAgentSources) throws IOException {
-		this.exchanger = exchanger;
+	public MATSimSimulation(String configPath,/* Exchanger<Object> exchanger*/ CyclicBarrier barrier, AdditionAwareAgentSource... additionalAgentSources) throws IOException {
+		//his.exchanger = exchanger;
+		this.barrier = barrier;
 		List<AdditionAwareAgentSource> agentSources = new LinkedList<>();
 		agentSources.add(agentSource);
 		agentSources.addAll(Arrays.asList(additionalAgentSources));
@@ -90,10 +92,10 @@ public class MATSimSimulation implements DEECoPlugin {
 		Log.i("Starting simulation: matsimStartTime: " + start + " matsimEndTime: " + end);
 		
 		extractor = new DefaultMATSimExtractor();
-		if(exchanger == null) {
-			listener = new JDEECoWithinDayMobsimListener(timer, new DefaultMATSimUpdater(), extractor);
+		if(barrier == null) {
+			listener = new JDEECoWithinDayMobsimListener(timer, new DefaultMATSimUpdater());
 		} else {
-			listener = new JDEECoWithinDayMobsimListener(exchanger, new DefaultMATSimUpdater(), extractor);
+			listener = new JDEECoWithinDayMobsimListener(timer, barrier, new DefaultMATSimUpdater());
 		}
 		matSimProvider = (MATSimDataProvider) matSimProviderReceiver;
 		matSimReceiver = (MATSimDataReceiver) matSimProviderReceiver;
