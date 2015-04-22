@@ -43,6 +43,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.WildcardSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
+import cz.cuni.mff.d3s.deeco.model.runtime.custom.WildcardSecurityTagExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeData;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeMetaData;
@@ -199,6 +200,13 @@ public class KnowledgeEncryptorTest {
 		assertEquals(metaData, result.get(0).getMetaData());
 		assertEquals(valueSet, result.get(0).getKnowledge());
 		
+		assertEquals(valueSet.getKnowledgePaths().size(), result.get(0).getSecuritySet().getKnowledgePaths().size());
+		for (KnowledgePath kp : result.get(0).getSecuritySet().getKnowledgePaths()) {
+			@SuppressWarnings("unchecked")
+			List<WildcardSecurityTag> tags = (List<WildcardSecurityTag>)result.get(0).getSecuritySet().getValue(kp);
+			tags.stream().forEach(tag -> assertTrue(tag.getClass().equals(WildcardSecurityTagExt.class)));
+		}
+		
 		assertEquals(4, result.get(0).getAuthors().getKnowledgePaths().size());
 		assertEquals("author_secured", result.get(0).getAuthors().getValue(RuntimeModelHelper.createKnowledgePath("secured")));
 		assertNull(result.get(0).getAuthors().getValue(RuntimeModelHelper.createKnowledgePath("secured2")));
@@ -264,7 +272,7 @@ public class KnowledgeEncryptorTest {
 		assertTrue(securedDataForRole2.getKnowledge().getValue(RuntimeModelHelper.createKnowledgePath("secured2")) instanceof SealedObject);
 		assertEquals(2, securedDataForRole2.getAuthors().getKnowledgePaths().size());
 		
-		assertEquals(0, plainData.getSecuritySet().getKnowledgePaths().size());
+		assertEquals(2, plainData.getSecuritySet().getKnowledgePaths().size());
 		assertEquals(1, securedDataForRole1.getSecuritySet().getKnowledgePaths().size());
 		assertEquals(2, securedDataForRole2.getSecuritySet().getKnowledgePaths().size());
 		

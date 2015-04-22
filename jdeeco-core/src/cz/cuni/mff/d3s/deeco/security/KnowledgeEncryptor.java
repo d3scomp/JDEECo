@@ -43,7 +43,7 @@ public class KnowledgeEncryptor {
 	
 	private final SecurityKeyManager keyManager;
 	private final SecurityHelper securityHelper;
-	private final RemoteSecurityChecker remoteSecurityChecker;
+	private final RemoteSecurityChecker remoteSecurityChecker;	
 	private final boolean signPlaintextMessages;
 	
 	/**
@@ -57,6 +57,7 @@ public class KnowledgeEncryptor {
 		this.securityHelper = new SecurityHelper();	
 		this.remoteSecurityChecker = new RemoteSecurityChecker();
 		this.signPlaintextMessages = Boolean.getBoolean(DeecoProperties.SIGN_PLAINTEXT_MESSAGES);
+		
 	}
 	
 
@@ -216,7 +217,12 @@ public class KnowledgeEncryptor {
 			
 			// no encryption
 			if (entry.getKey() == null) {
-				data = new KnowledgeData(entry.getValue(), new ValueSet(), hashToAuthors.get(null), meta);
+				ValueSet securitySet = new ValueSet();
+				for (KnowledgePath path : entry.getValue().getKnowledgePaths()) {
+					securitySet.setValue(path, pathToSecurityTags.get(path) );
+				}	
+				
+				data = new KnowledgeData(entry.getValue(), securitySet, hashToAuthors.get(null), meta);
 				
 				if (signPlaintextMessages) {
 					sign(data);
