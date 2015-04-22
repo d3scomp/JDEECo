@@ -1,12 +1,5 @@
 /target/
 /.classpath
-/inet/
-/mixim/
-/model/
-/config802154.xml
-/config80211.xml
-/Nic802154_TI_CC2420_Decider.xml
-/omnetpp.ini
 /omnet/
 /logs/
 /results/
