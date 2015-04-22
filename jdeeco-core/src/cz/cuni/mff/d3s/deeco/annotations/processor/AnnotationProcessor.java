@@ -346,6 +346,60 @@ public class AnnotationProcessor {
 		return ed;
 	}
 	
+	@SuppressWarnings("rawtypes")
+	public void removeEnsemble(String ensembleName) throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
+		if (model == null) {
+			throw new AnnotationProcessorException("Provided model cannot be null.");
+		}
+		if (ensembleName == null) {
+			throw new AnnotationProcessorException("Provided class name cannot be null.");
+		}
+
+		Class ensembleClass = null;
+		for(Class c : knownEnsembleDefinitions){
+			if(c.getName().equals(ensembleName)){
+				ensembleClass = c;
+			}
+		}
+		
+		if(ensembleClass != null) {
+			// Remove the existing ensemble definition
+			
+			// Get the existing ensemble definition
+			EnsembleDefinition oldDefinition = null;
+			for(EnsembleDefinition storedDefinition : model.getEnsembleDefinitions()){
+				if(storedDefinition.getName().equals(ensembleName)){
+					oldDefinition = storedDefinition;
+					break;
+				}
+			}
+			if(oldDefinition != null){
+				// Remove the ensemble from model
+				model.getEnsembleDefinitions().remove(oldDefinition);
+				
+				// Remove the ensemble from component instances
+				for (ComponentInstance ci: model.getComponentInstances()) {
+					for (EnsembleController ec : ci.getEnsembleControllers()) {
+						if(ec.getEnsembleDefinition().equals(oldDefinition)){
+							System.out.println(String.format("ci: %s", ci));
+							System.out.println(String.format("ec.ci: %s", ec.getComponentInstance()));
+							System.out.println(String.format("ec: %s", ec));
+							// ci.getEnsembleControllers().remove(ec);
+							// System.out.println(String.format("ec.ci: %s", ec.getComponentInstance()));
+							// BUG: For unknown reason the ec.getComponentInstance() returns null in all
+							// subsequent calls after ci.getEnsembleControllers().remove(ec)
+							// but it is required to return correct ComponentInstance in after-remove triggers
+							ec.setActive(false);
+						}
+					}
+				}		
+			}
+			
+			knownEnsembleDefinitions.remove(ensembleClass);
+		}
+	}
+	
+	
 	/**
 	 * Creator of a single correctly-initialized {@link ComponentInstance} object. 
 	 * It calls all the necessary sub-creators to obtain the full graph of the Ecore object.    

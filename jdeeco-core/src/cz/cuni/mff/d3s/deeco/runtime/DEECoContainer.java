@@ -66,6 +66,8 @@ public interface DEECoContainer {
 	 */
 	@SuppressWarnings("rawtypes")
 	public EnsembleDefinition deployEnsemble(Class ensembles) throws AnnotationProcessorException, DuplicateEnsembleDefinitionException;
+	
+	void undeployEnsemble(String ensembleName) throws AnnotationProcessorException, DuplicateEnsembleDefinitionException;
 
 	/**
 	 * Gets identification of DEECo container
