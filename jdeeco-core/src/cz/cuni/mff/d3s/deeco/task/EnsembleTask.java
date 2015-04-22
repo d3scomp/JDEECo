@@ -244,7 +244,8 @@ public class EnsembleTask extends Task {
 	 */
 	@Override
 	protected void unregisterTriggers() {
-		ComponentInstance componentInstance = ensembleController.getComponentInstance(); 
+		ComponentInstance componentInstance = ensembleController.getComponentInstance();
+		if(componentInstance == null) return;
 		KnowledgeManager localKM = componentInstance.getKnowledgeManager();
 		ShadowKnowledgeManagerRegistry shadowsKM = componentInstance.getShadowKnowledgeManagerRegistry();
 		

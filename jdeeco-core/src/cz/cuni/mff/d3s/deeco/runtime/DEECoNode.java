@@ -223,6 +223,10 @@ public class DEECoNode implements DEECoContainer {
 		return processor.processEnsemble(ensemble);
 	}
 	
+	public void undeployEnsemble(String ensembleName) throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
+		processor.removeEnsemble(ensembleName);
+	}
+	
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T extends DEECoPlugin> T getPluginInstance(Class<T> pluginClass) {
