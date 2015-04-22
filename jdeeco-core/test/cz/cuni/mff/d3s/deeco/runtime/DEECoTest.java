@@ -2,7 +2,6 @@ package cz.cuni.mff.d3s.deeco.runtime;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -14,8 +13,6 @@ import java.util.List;
 import org.junit.Test;
 import org.mockito.InOrder;
 
-import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
-import cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectE1;
 import cz.cuni.mff.d3s.deeco.timer.DiscreteEventTimer;
 import cz.cuni.mff.d3s.deeco.timer.Timer;
 
@@ -53,7 +50,7 @@ public class DEECoTest {
 		DEECoNode deeco = new DEECoNode(0, timer);
 		assertNotNull(deeco.knowledgeManagerFactory);
 		assertNotNull(deeco.model);
-		assertNotNull(deeco.pluginsMap);
+		assertNotNull(deeco.pluginsSet);
 		assertNotNull(deeco.processor);
 		assertNotNull(deeco.runtime);	
 	}
@@ -330,9 +327,7 @@ public class DEECoTest {
 		
 		DEECoNode deeco = new DEECoNode(11, timer, pluginArray);
 		
-		for(DEECoPlugin p : plugins)
-		{
-			assertTrue(deeco.pluginsMap.containsKey(p.getClass()));
+		for(DEECoPlugin p : plugins) {			
 			assertEquals(p, deeco.getPluginInstance(p.getClass()));
 		}			
 	}

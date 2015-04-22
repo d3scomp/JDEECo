@@ -817,4 +817,9 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		return roleClasses;
 	}
 
+	@Override
+	public boolean isOfSystemComponent() {
+		return component.isSystemComponent();
+	}
+
 }

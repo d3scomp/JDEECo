@@ -23,4 +23,9 @@ public final class Position {
 		double dz = Math.abs(z - position.z);
 		return Math.sqrt(dx * dx + dy * dy + dz * dz);
 	}
+	
+	@Override
+	public String toString() {
+		return String.format("[%.1fm, %.1fm, %.1fm]", x, y, z);
+	}
 }

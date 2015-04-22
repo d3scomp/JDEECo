@@ -2,6 +2,8 @@ package demo.infrastructure;
 
 import java.util.Arrays;
 
+import org.junit.Test;
+
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
 import cz.cuni.mff.d3s.deeco.runners.DEECoSimulation;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
@@ -27,10 +29,7 @@ public class InfrastructureConvoyTest {
 		test.testConvoyOmnet();
 	}
 
-	// TODO: Can we really run OMNeT based integration tests
-	// We are running the broadcast one, so it is not possible to run this one.
-	// Currently we can ruin just one simulation per VM instance
-	// @Test
+	@Test
 	public void testConvoyOmnet() throws AnnotationProcessorException, InterruptedException, DEECoException,
 			InstantiationException, IllegalAccessException {
 		OMNeTSimulation omnet = new OMNeTSimulation();

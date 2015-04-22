@@ -12,7 +12,6 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java.library.path>C:\Users\vlada\git\d3scomp\JDEECo\jdeeco-omnet-plugin\omnet</java.library.path>
 	</properties>
 
 	<build>

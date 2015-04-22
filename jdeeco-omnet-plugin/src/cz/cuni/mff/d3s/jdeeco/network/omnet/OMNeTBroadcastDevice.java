@@ -11,6 +11,8 @@ import cz.cuni.mff.d3s.jdeeco.network.l1.MANETReceivedInfo;
 import cz.cuni.mff.d3s.jdeeco.position.PositionAware;
 
 public class OMNeTBroadcastDevice extends OMNeTDevice {
+	public PositionAware positionPlugin;
+	
 	@Override
 	public int getMTU() {
 		// TODO: Read from OMNeT
@@ -43,8 +45,9 @@ public class OMNeTBroadcastDevice extends OMNeTDevice {
 	public void init(DEECoContainer container) {
 		super.init(container);
 		host.setBroadcastDevice(this);
+		positionPlugin = container.getPluginInstance(PositionAware.class);
 	}
-
+	
 	public void receivePacket(byte[] data, double rssi) {
 		// TODO: Get source address from OMNeT
 		network.getL1().processL0Packet(data, this, new MANETReceivedInfo(MANETBroadcastAddress.BROADCAST, rssi));

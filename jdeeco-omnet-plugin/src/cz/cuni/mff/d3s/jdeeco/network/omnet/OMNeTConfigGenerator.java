@@ -11,7 +11,6 @@ import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.simulation.omnet.OMNeTNative;
 import cz.cuni.mff.d3s.jdeeco.position.Position;
-import cz.cuni.mff.d3s.jdeeco.position.PositionAware;
 
 public class OMNeTConfigGenerator {
 	class Node {
@@ -53,11 +52,7 @@ public class OMNeTConfigGenerator {
 		}
 
 		// Determine node position
-		Position position = new Position(0, 0, 0);
-		if (host.broadcastDevice != null) {
-			position = host.container.getPluginInstance(PositionAware.class).getInitialPosition();
-		}
-		addNode(new Node(host.getId(), ip, position));
+		addNode(new Node(host.getId(), ip, host.getInitialPosition()));
 	}
 
 	public String getContent() throws IOException {

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE network SYSTEM "http://www.matsim.org/files/dtd/network_v1.dtd">
+<network name="generated-grid">
+    <nodes>
+        <node id="n1" x="10.0" y="10.0"/>
+        <node id="n2" x="110.0" y="110.0"/>
+    </nodes>
+    <links>
+        <link id="l1" from="n1" to="n2" length="141.4" freespeed="10.0" capacity="5000.0" permlanes="3.0" oneway="1" modes="car"/>
+    </links>
+</network>
