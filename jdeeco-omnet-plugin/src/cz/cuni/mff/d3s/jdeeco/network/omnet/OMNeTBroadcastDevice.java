@@ -8,10 +8,10 @@ import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.jdeeco.network.address.Address;
 import cz.cuni.mff.d3s.jdeeco.network.address.MANETBroadcastAddress;
 import cz.cuni.mff.d3s.jdeeco.network.l1.MANETReceivedInfo;
-import cz.cuni.mff.d3s.jdeeco.position.PositionAware;
+import cz.cuni.mff.d3s.jdeeco.position.PositionPlugin;
 
 public class OMNeTBroadcastDevice extends OMNeTDevice {
-	public PositionAware positionPlugin;
+	public PositionPlugin positionPlugin;
 	
 	@Override
 	public int getMTU() {
@@ -37,7 +37,7 @@ public class OMNeTBroadcastDevice extends OMNeTDevice {
 		// Require base dependencies + position
 		List<Class<? extends DEECoPlugin>> dependencies = new LinkedList<>();
 		dependencies.addAll(super.getDependencies());
-		dependencies.add(PositionAware.class);
+		dependencies.add(PositionPlugin.class);
 		return dependencies;
 	}
 
@@ -45,7 +45,7 @@ public class OMNeTBroadcastDevice extends OMNeTDevice {
 	public void init(DEECoContainer container) {
 		super.init(container);
 		host.setBroadcastDevice(this);
-		positionPlugin = container.getPluginInstance(PositionAware.class);
+		positionPlugin = container.getPluginInstance(PositionPlugin.class);
 	}
 	
 	public void receivePacket(byte[] data, double rssi) {

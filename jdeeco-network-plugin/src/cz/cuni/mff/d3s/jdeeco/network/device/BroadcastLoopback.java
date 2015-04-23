@@ -19,7 +19,7 @@ import cz.cuni.mff.d3s.jdeeco.network.address.MANETBroadcastAddress;
 import cz.cuni.mff.d3s.jdeeco.network.l1.Layer1;
 import cz.cuni.mff.d3s.jdeeco.network.l1.MANETReceivedInfo;
 import cz.cuni.mff.d3s.jdeeco.position.Position;
-import cz.cuni.mff.d3s.jdeeco.position.PositionAware;
+import cz.cuni.mff.d3s.jdeeco.position.PositionPlugin;
 
 /**
  * Loop-back broadcast plug-in
@@ -153,8 +153,8 @@ public class BroadcastLoopback implements DEECoPlugin {
 	 */
 	public void sendToAll(PacketWrapper packet) {
 		for (LoopDevice loop : loops) {
-			Position srcPos = packet.source.container.getPluginInstance(PositionAware.class).getPosition();
-			Position dstPos = loop.container.getPluginInstance(PositionAware.class).getPosition();
+			Position srcPos = packet.source.container.getPluginInstance(PositionPlugin.class).getPosition();
+			Position dstPos = loop.container.getPluginInstance(PositionPlugin.class).getPosition();
 			double distance = srcPos.euclidDistanceTo(dstPos);
 
 			if (loop != packet.source && distance <= range) {
@@ -170,7 +170,7 @@ public class BroadcastLoopback implements DEECoPlugin {
 
 	@Override
 	public List<Class<? extends DEECoPlugin>> getDependencies() {
-		return Arrays.asList(Network.class, PositionAware.class);
+		return Arrays.asList(Network.class, PositionPlugin.class);
 	}
 
 	@Override

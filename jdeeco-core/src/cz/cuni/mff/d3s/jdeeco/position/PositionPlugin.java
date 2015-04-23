@@ -6,20 +6,20 @@ import java.util.List;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 
-public class PositionAware implements DEECoPlugin, PositionProvider {
-	private final Position inital;
+public class PositionPlugin implements DEECoPlugin, PositionProvider {
+	private Position staticPosition;
 	private PositionProvider provider;
 	
-	public PositionAware(double x, double y) {
+	public PositionPlugin(double x, double y) {
 		this(new Position(x, y, 0));
 	}
 
-	public PositionAware(double x, double y, double z) {
+	public PositionPlugin(double x, double y, double z) {
 		this(new Position(x, y, z));
 	}
 
-	public PositionAware(Position initialPosition) {
-		inital = initialPosition;
+	public PositionPlugin(Position initialPosition) {
+		staticPosition = initialPosition;
 	}
 
 	public void setProvider(PositionProvider positionProvider) {
@@ -30,8 +30,20 @@ public class PositionAware implements DEECoPlugin, PositionProvider {
 		provider = positionProvider;
 	}
 
-	public Position getInitialPosition() {
-		return inital;
+	public Position getStaticPosition() {
+		return staticPosition;
+	}
+	
+	public void setStaticPosition(Position position) {
+		staticPosition = position;
+	}
+	
+	public void setStaticPosition(double x, double y) {
+		staticPosition = new Position(x, y, 0);
+	}
+	
+	public void setStaticPosition(double x, double y, double z) {
+		staticPosition = new Position(x, y, z);
 	}
 
 	@Override
@@ -47,7 +59,7 @@ public class PositionAware implements DEECoPlugin, PositionProvider {
 	@Override
 	public Position getPosition() {
 		if (provider == null) {
-			return inital;
+			return staticPosition;
 		} else {
 			return provider.getPosition();
 		}

@@ -19,7 +19,7 @@ import cz.cuni.mff.d3s.jdeeco.network.Network;
 import cz.cuni.mff.d3s.jdeeco.network.l2.strategy.KnowledgeInsertingStrategy;
 import cz.cuni.mff.d3s.jdeeco.network.omnet.OMNeTBroadcastDevice;
 import cz.cuni.mff.d3s.jdeeco.network.omnet.OMNeTSimulation;
-import cz.cuni.mff.d3s.jdeeco.position.PositionAware;
+import cz.cuni.mff.d3s.jdeeco.position.PositionPlugin;
 import cz.cuni.mff.d3s.jdeeco.publishing.DefaultKnowledgePublisher;
 
 /**
@@ -52,14 +52,14 @@ public class VehicleTravelTest {
 		
 		// Node hosting vehicle A
 		MATSimVehicle agentA = new MATSimVehicle(); // MATSim agent with start position
-		DEECoNode nodeA = simulation.createNode(42, agentA, new OMNeTBroadcastDevice(), new PositionAware(0, 0)); // DEECO node with Id and agent as plug-in
+		DEECoNode nodeA = simulation.createNode(42, agentA, new OMNeTBroadcastDevice(), new PositionPlugin(0, 0)); // DEECO node with Id and agent as plug-in
 		Vehicle vehicleA = new Vehicle("Vehicle A", new CoordImpl(1000, 2000), agentA); // DEECO component controlling the vehicle
 		nodeA.deployComponent(vehicleA);
 		nodeA.deployEnsemble(OtherVehicleEnsemble.class);
 
 		// Node hosting vehicle B
 		MATSimVehicle agentB = new MATSimVehicle(); // MATSim agent with start position
-		DEECoNode nodeB = simulation.createNode(45, agentB, new OMNeTBroadcastDevice(), new PositionAware(2000, 0)); // DEECO node with Id and agent as plug-in
+		DEECoNode nodeB = simulation.createNode(45, agentB, new OMNeTBroadcastDevice(), new PositionPlugin(2000, 0)); // DEECO node with Id and agent as plug-in
 		Vehicle vehicleB = new Vehicle("Vehicle B", new CoordImpl(1000, 2000), agentB); // DEECO component controlling the vehicle
 		nodeB.deployComponent(vehicleB);
 		nodeB.deployEnsemble(OtherVehicleEnsemble.class);

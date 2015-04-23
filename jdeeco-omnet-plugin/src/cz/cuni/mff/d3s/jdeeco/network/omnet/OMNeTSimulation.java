@@ -114,7 +114,7 @@ public class OMNeTSimulation implements DEECoPlugin {
 			if (broadcastDevice == null) {
 				return new Position(0, 0, 0);
 			} else {
-				return broadcastDevice.positionPlugin.getInitialPosition();
+				return broadcastDevice.positionPlugin.getStaticPosition();
 			}
 		}
 

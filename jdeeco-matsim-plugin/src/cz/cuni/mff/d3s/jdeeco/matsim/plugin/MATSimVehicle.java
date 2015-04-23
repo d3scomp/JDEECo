@@ -17,7 +17,7 @@ import cz.cuni.mff.d3s.jdeeco.matsim.dataaccess.SensorProvider;
 import cz.cuni.mff.d3s.jdeeco.matsim.dataaccess.SensorType;
 import cz.cuni.mff.d3s.jdeeco.matsim.simulation.MATSimRouter;
 import cz.cuni.mff.d3s.jdeeco.position.Position;
-import cz.cuni.mff.d3s.jdeeco.position.PositionAware;
+import cz.cuni.mff.d3s.jdeeco.position.PositionPlugin;
 import cz.cuni.mff.d3s.jdeeco.position.PositionProvider;
 
 /**
@@ -77,7 +77,7 @@ public class MATSimVehicle implements DEECoPlugin, PositionProvider {
 
 	@Override
 	public List<Class<? extends DEECoPlugin>> getDependencies() {
-		return Arrays.asList(MATSimSimulation.class, PositionAware.class);
+		return Arrays.asList(MATSimSimulation.class, PositionPlugin.class);
 	}
 	
 	private Coord positionToCoord(final Position position) {
@@ -95,8 +95,8 @@ public class MATSimVehicle implements DEECoPlugin, PositionProvider {
 		simulation = container.getPluginInstance(MATSimSimulation.class);
 		
 		// Obtain start position from position plug-in
-		PositionAware positionPlugin = container.getPluginInstance(PositionAware.class);
-		Coord coord = positionToCoord(positionPlugin.getInitialPosition());
+		PositionPlugin positionPlugin = container.getPluginInstance(PositionPlugin.class);
+		Coord coord = positionToCoord(positionPlugin.getStaticPosition());
 		Id startLink = simulation.getRouter().findNearestLink(coord).getId();
 
 		// Add vehicle to simulation

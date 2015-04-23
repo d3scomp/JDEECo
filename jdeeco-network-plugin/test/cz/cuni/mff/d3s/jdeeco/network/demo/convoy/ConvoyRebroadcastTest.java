@@ -17,7 +17,7 @@ import cz.cuni.mff.d3s.jdeeco.network.Network;
 import cz.cuni.mff.d3s.jdeeco.network.device.BroadcastLoopback;
 import cz.cuni.mff.d3s.jdeeco.network.l2.strategy.KnowledgeInsertingStrategy;
 import cz.cuni.mff.d3s.jdeeco.network.l2.strategy.RebroadcastStrategy;
-import cz.cuni.mff.d3s.jdeeco.position.PositionAware;
+import cz.cuni.mff.d3s.jdeeco.position.PositionPlugin;
 import cz.cuni.mff.d3s.jdeeco.publishing.DefaultKnowledgePublisher;
 
 /**
@@ -58,19 +58,19 @@ public class ConvoyRebroadcastTest {
 		realm.addPlugin(DefaultKnowledgePublisher.class);
 		
 		// Create DEECo node 1 - leader
-		DEECoNode deeco1 = realm.createNode(new PositionAware(0, 0));
+		DEECoNode deeco1 = realm.createNode(new PositionPlugin(0, 0));
 		// Deploy components and ensembles
 		deeco1.deployComponent(new Leader());
 		deeco1.deployEnsemble(ConvoyEnsemble.class);
 
 		// Create DEECo node 2 - follower (in range of leader)
-		DEECoNode deeco2 = realm.createNode(new PositionAware(0, BroadcastLoopback.DEFAULT_RANGE * 2/3));
+		DEECoNode deeco2 = realm.createNode(new PositionPlugin(0, BroadcastLoopback.DEFAULT_RANGE * 2/3));
 		// Deploy components and ensembles
 		deeco2.deployComponent(new Follower("F0"));
 		deeco2.deployEnsemble(ConvoyEnsemble.class);
 		
 		// Create DEECo node 3 - follower (out of range of leader)
-		DEECoNode deeco3 = realm.createNode(new PositionAware(0, BroadcastLoopback.DEFAULT_RANGE * 4/3));
+		DEECoNode deeco3 = realm.createNode(new PositionPlugin(0, BroadcastLoopback.DEFAULT_RANGE * 4/3));
 		// Deploy components and ensembles
 		deeco3.deployComponent(new Follower("F1"));
 		deeco3.deployEnsemble(ConvoyEnsemble.class);
