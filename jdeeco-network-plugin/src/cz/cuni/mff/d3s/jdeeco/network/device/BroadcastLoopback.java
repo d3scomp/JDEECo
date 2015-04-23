@@ -20,6 +20,7 @@ import cz.cuni.mff.d3s.jdeeco.network.l1.Layer1;
 import cz.cuni.mff.d3s.jdeeco.network.l1.MANETReceivedInfo;
 import cz.cuni.mff.d3s.jdeeco.position.Position;
 import cz.cuni.mff.d3s.jdeeco.position.PositionPlugin;
+import cz.cuni.mff.d3s.jdeeco.position.PositionProvider;
 
 /**
  * Loop-back broadcast plug-in
@@ -57,11 +58,21 @@ public class BroadcastLoopback implements DEECoPlugin {
 		final Layer1 layer1;
 		final MANETBroadcastAddress address;
 		final DEECoContainer container;
+		private PositionProvider positionProvider;
 
 		public LoopDevice(DEECoContainer container) {
 			this.container = container;
-			this.address = new MANETBroadcastAddress(getId());
-			this.layer1 = container.getPluginInstance(Network.class).getL1();
+			address = new MANETBroadcastAddress(getId());
+			layer1 = container.getPluginInstance(Network.class).getL1();
+			positionProvider = container.getPluginInstance(PositionPlugin.class);
+		}
+
+		public Position getPosition() {
+			if (positionProvider == null) {
+				return null;
+			}
+
+			return positionProvider.getPosition();
 		}
 
 		@Override
@@ -153,24 +164,30 @@ public class BroadcastLoopback implements DEECoPlugin {
 	 */
 	public void sendToAll(PacketWrapper packet) {
 		for (LoopDevice loop : loops) {
-			Position srcPos = packet.source.container.getPluginInstance(PositionPlugin.class).getPosition();
-			Position dstPos = loop.container.getPluginInstance(PositionPlugin.class).getPosition();
-			double distance = srcPos.euclidDistanceTo(dstPos);
+			Position srcPos = packet.source.getPosition();
+			Position dstPos = loop.getPosition();
+
+			// Get distance
+			// 0 means that distance is not relevant and packet should be delivered
+			double distance = 0;
+			if (dstPos != null && srcPos != null) {
+				distance = srcPos.euclidDistanceTo(dstPos);
+			}
 
 			if (loop != packet.source && distance <= range) {
 				// Calculates logarithmic RSSI
 				double rssi = Math.log(range - distance) / Math.log(range);
 
 				// Receive packet on the destination node
-				loop.layer1.processL0Packet(packet.data, packet.source, new MANETReceivedInfo(packet.source.address,
-						rssi));
+				MANETReceivedInfo info = new MANETReceivedInfo(packet.source.address, rssi);
+				loop.layer1.processL0Packet(packet.data, packet.source, info);
 			}
 		}
 	}
 
 	@Override
 	public List<Class<? extends DEECoPlugin>> getDependencies() {
-		return Arrays.asList(Network.class, PositionPlugin.class);
+		return Arrays.asList(Network.class);
 	}
 
 	@Override
