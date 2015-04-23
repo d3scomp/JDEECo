@@ -107,6 +107,7 @@ public class OMNeTSimulation implements DEECoPlugin {
 		}
 
 		public void sendBroadcastPacket(byte[] packet) {
+			updatePosition();
 			OMNeTNative.nativeSendPacket(getId(), packet, "");
 		}
 
@@ -123,7 +124,7 @@ public class OMNeTSimulation implements DEECoPlugin {
 		 * 
 		 * Updates according to position provided by PositionAware plug-in.
 		 */
-		public void updatePosition() {
+		private void updatePosition() {
 			Position pos = broadcastDevice.positionPlugin.getPosition();
 			OMNeTNative.nativeSetPosition(getId(), pos.x, pos.y, pos.z);
 		}
@@ -164,18 +165,6 @@ public class OMNeTSimulation implements DEECoPlugin {
 
 	public OMNeTHost getHost(int id) {
 		return hosts.get(id);
-	}
-
-	/**
-	 * Updates positions
-	 * 
-	 * Updates positions of all hosts according to the position plug-in
-	 * 
-	 */
-	public void updatePositions() {
-		for (OMNeTHost host : hosts.values()) {
-			host.updatePosition();
-		}
 	}
 
 	@Override

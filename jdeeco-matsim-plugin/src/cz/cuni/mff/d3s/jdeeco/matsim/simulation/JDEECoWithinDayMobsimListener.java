@@ -3,10 +3,12 @@ package cz.cuni.mff.d3s.jdeeco.matsim.simulation;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.Exchanger;
 
 import org.matsim.core.mobsim.framework.events.MobsimBeforeSimStepEvent;
 import org.matsim.core.mobsim.framework.listeners.MobsimBeforeSimStepListener;
+
+import cz.cuni.mff.d3s.deeco.logging.Log;
 
 /**
  * 
@@ -21,32 +23,33 @@ import org.matsim.core.mobsim.framework.listeners.MobsimBeforeSimStepListener;
 public class JDEECoWithinDayMobsimListener implements
 		MobsimBeforeSimStepListener {
 
-//	private final Exchanger<Object> exchanger;
-	private final CyclicBarrier barrier;
+	private final Exchanger<Object> exchanger;
 	private final List<JDEECoAgentProvider> agentProviders;
 	private final MATSimSimulationStepListener stepListener;
 	private final MATSimUpdater updater;
+	private final MATSimExtractor extractor;
 	
 	private long remainingExchanges;
 
-	protected JDEECoWithinDayMobsimListener(CyclicBarrier barrier, MATSimSimulationStepListener stepListener, MATSimUpdater updater, long remainingExchanges) {
-		this.barrier = barrier;
+	protected JDEECoWithinDayMobsimListener(Exchanger<Object> exchanger, MATSimSimulationStepListener stepListener, MATSimUpdater updater, MATSimExtractor extractor, long remainingExchanges) {
+		this.exchanger = exchanger;
 		this.agentProviders = new LinkedList<JDEECoAgentProvider>();
 		this.stepListener = stepListener;
 		this.updater = updater;
+		this.extractor = extractor;
 		this.remainingExchanges = remainingExchanges;
 	}
 	
-	public JDEECoWithinDayMobsimListener(MATSimSimulationStepListener stepListener, CyclicBarrier barrier, MATSimUpdater updater) {
-		this(barrier, stepListener, updater, -1);
+	public JDEECoWithinDayMobsimListener(Exchanger<Object> exchanger, MATSimUpdater updater, MATSimExtractor extractor) {
+		this(exchanger, null, updater, extractor, -1);
 	}
 	
-	public JDEECoWithinDayMobsimListener(MATSimSimulationStepListener stepListener, CyclicBarrier barrier, MATSimUpdater updater, long remainingExchanges) {
-		this(barrier, stepListener, updater, remainingExchanges);
+	public JDEECoWithinDayMobsimListener(Exchanger<Object> exchanger, MATSimUpdater updater, MATSimExtractor extractor, long remainingExchanges) {
+		this(exchanger, null, updater, extractor, remainingExchanges);
 	}
 	
-	public JDEECoWithinDayMobsimListener(MATSimSimulationStepListener stepListener, MATSimUpdater updater) {
-		this(null, stepListener, updater, -1);
+	public JDEECoWithinDayMobsimListener(MATSimSimulationStepListener stepListener, MATSimUpdater updater, MATSimExtractor extractor) {
+		this(null, stepListener, updater, extractor, -1);
 	}
 
 	public void registerAgentProvider(JDEECoAgentProvider agentProvider) {
@@ -72,15 +75,17 @@ public class JDEECoWithinDayMobsimListener implements
 	/*	if (this.remainingExchanges == 0) {
 			return;
 		}*/
-		if (barrier != null) {
+		if (exchanger != null) {
 			try {
-				barrier.await();
+				//System.out.println("MATSIM before: " + event.getSimulationTime());
+				Object out = extractor.extractFromMATSim(getAllJDEECoAgents(), event.getQueueSimulation());
+				Object in = exchanger.exchange(out);
+				updateJDEECoAgents(in);
+				//System.out.println("MATSIM after: " + event.getSimulationTime());
 			} catch (Exception e) {
-				// Synchronization is lost, everything is lost
-				e.printStackTrace();
-				System.exit(-1);
+				Log.e("jDEECoWithinDayMobsimListener: ", e);
 			}
-		}
+		} 
 		if (stepListener != null) {
 			stepListener.at(event.getSimulationTime(), event.getQueueSimulation());
 		}

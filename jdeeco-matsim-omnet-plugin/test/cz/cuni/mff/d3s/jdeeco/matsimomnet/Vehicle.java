@@ -138,7 +138,7 @@ public class Vehicle {
 			@In("router") MATSimRouter router,
 			@In("clock") CurrentTimeProvider clock,
 			@Out("curTime") ParamHolder<Long> curTime) {
-//		Log.d("Entry [" + id + "]:updateCurrentLink");
+		Log.d("Entry [" + id + "]:updateCurrentLink");
 		currentLinkHolder.value = currentLinkSensor.read();
 		position.value = router.getLink(currentLinkHolder.value).getCoord();
 		curTime.value = clock.getCurrentMilliseconds();
