@@ -27,7 +27,7 @@ import cz.cuni.mff.d3s.jdeeco.position.PositionProvider;
  *
  */
 public class MATSimVehicle implements DEECoPlugin, PositionProvider {
-	private MATSimSimulation simulation;
+	private IMATSimSimulaton simulation;
 	private DEECoContainer container;
 	private Sensor<Id> currentLinkSensor;
 	
@@ -77,7 +77,7 @@ public class MATSimVehicle implements DEECoPlugin, PositionProvider {
 
 	@Override
 	public List<Class<? extends DEECoPlugin>> getDependencies() {
-		return Arrays.asList(MATSimSimulation.class, PositionPlugin.class);
+		return Arrays.asList(IMATSimSimulaton.class, PositionPlugin.class);
 	}
 	
 	private Coord positionToCoord(final Position position) {
@@ -92,7 +92,7 @@ public class MATSimVehicle implements DEECoPlugin, PositionProvider {
 	@Override
 	public void init(DEECoContainer container) {
 		this.container = container;
-		simulation = container.getPluginInstance(MATSimSimulation.class);
+		simulation = container.getPluginInstance(IMATSimSimulaton.class);
 		
 		// Obtain start position from position plug-in
 		PositionPlugin positionPlugin = container.getPluginInstance(PositionPlugin.class);

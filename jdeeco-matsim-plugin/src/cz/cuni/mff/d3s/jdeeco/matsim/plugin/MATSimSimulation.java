@@ -51,7 +51,7 @@ import cz.cuni.mff.d3s.jdeeco.matsim.simulation.Simulation;
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
  */
-public class MATSimSimulation implements DEECoPlugin {
+public class MATSimSimulation implements IMATSimSimulaton {
 	private final Timer timer = new Timer();
 	private final JDEECoAgentSource agentSource = new JDEECoAgentSource();
 	private final MATSimRouter router;
@@ -140,6 +140,10 @@ public class MATSimSimulation implements DEECoPlugin {
 
 	public void addVehicle(int vehicleId, Id startLink) {
 		agentSource.addAgent(new JDEECoAgent(new IdImpl(vehicleId), startLink));
+	}
+	
+	public long getSimStepSize() {
+		return (long) (controler.getConfig().getQSimConfigGroup().getTimeStepSize() * 1000);
 	}
 
 	@Override

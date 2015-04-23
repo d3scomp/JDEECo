@@ -16,7 +16,7 @@ import cz.cuni.mff.d3s.jdeeco.network.omnet.OMNeTSimulation.OMNeTHost;
  *
  */
 public abstract class OMNeTDevice extends Device implements DEECoPlugin {
-	protected OMNeTSimulation omnet;
+	protected IOMNeTSimulation omnet;
 	protected OMNeTHost host;
 	protected Network network;
 	protected int id;
@@ -34,14 +34,14 @@ public abstract class OMNeTDevice extends Device implements DEECoPlugin {
 
 	@Override
 	public List<Class<? extends DEECoPlugin>> getDependencies() {
-		return Arrays.asList(Network.class, OMNeTSimulation.class);
+		return Arrays.asList(Network.class, IOMNeTSimulation.class);
 	}
 	
 	@Override
 	public void init(DEECoContainer container) {
 		// Resolve dependencies
 		network = container.getPluginInstance(Network.class);
-		omnet = container.getPluginInstance(OMNeTSimulation.class);
+		omnet = container.getPluginInstance(IOMNeTSimulation.class);
 		host = omnet.getHost(container.getId());
 		
 		network.getL1().registerDevice(this);

@@ -18,7 +18,6 @@ import cz.cuni.mff.d3s.jdeeco.matsim.plugin.MATSimVehicle;
 import cz.cuni.mff.d3s.jdeeco.network.Network;
 import cz.cuni.mff.d3s.jdeeco.network.l2.strategy.KnowledgeInsertingStrategy;
 import cz.cuni.mff.d3s.jdeeco.network.omnet.OMNeTBroadcastDevice;
-import cz.cuni.mff.d3s.jdeeco.network.omnet.OMNeTSimulation;
 import cz.cuni.mff.d3s.jdeeco.position.PositionPlugin;
 import cz.cuni.mff.d3s.jdeeco.publishing.DefaultKnowledgePublisher;
 
@@ -40,15 +39,15 @@ public class VehicleTravelTest {
 	@Test //@Ignore("We currently cannot run multiple OMNeT based simulations AND this is not yet ready to work properly")
 	public void travelMobilityLimitedRangeOmnetTest() throws AnnotationProcessorException, InterruptedException, DEECoException,
 			InstantiationException, IllegalAccessException, IOException {
-		OMNeTSimulation omnet = new OMNeTSimulation();
+		// Create joint OMNeT-MATSim simulation plug-in
+		OMNeTMATSimSimulation omnetmatsim = new OMNeTMATSimSimulation("input/config.xml");
 				
 		// Create main application container
-		DEECoSimulation simulation = new DEECoSimulation(omnet.getTimer());
+		DEECoSimulation simulation = new DEECoSimulation(omnetmatsim);
 		simulation.addPlugin(Network.class);
 		simulation.addPlugin(KnowledgeInsertingStrategy.class);
 		simulation.addPlugin(DefaultKnowledgePublisher.class);
-		simulation.addPlugin(omnet);
-		simulation.addPlugin(new MATSimWithOMNeTSimulation("input/config.xml"));
+		simulation.addPlugin(omnetmatsim);
 		
 		// Node hosting vehicle A
 		MATSimVehicle agentA = new MATSimVehicle(); // MATSim agent with start position
