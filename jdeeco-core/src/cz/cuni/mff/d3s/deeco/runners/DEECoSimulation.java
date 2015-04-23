@@ -9,6 +9,7 @@ import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
+import cz.cuni.mff.d3s.jdeeco.simulation.SimulationProvider;
 
 /** 
  * Main entry for launching DEECo simulations.
@@ -21,6 +22,10 @@ public class DEECoSimulation {
 	List<DEECoPlugin> instantiatedPlugins;
 	List<Class<? extends DEECoPlugin>> nonInstantiatedPlugins;
 	SimulationTimer simulationTimer;
+	
+	public DEECoSimulation(SimulationProvider simulationProvider) {
+		this(simulationProvider.getTimer());
+	}
 
 	public DEECoSimulation(SimulationTimer simulationTimer) {
 		this.simulationTimer = simulationTimer;
