@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Exchanger;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.matsim.api.core.v01.Id;
 
@@ -24,6 +26,8 @@ import cz.cuni.mff.d3s.jdeeco.network.omnet.OMNeTSimulation;
 import cz.cuni.mff.d3s.jdeeco.network.omnet.OMNeTSimulation.BindedSimulation;
 
 public class MATSimWithOMNeTSimulation extends MATSimSimulation implements TimerTaskListener {
+	private final long EXCHANGE_TIMEOUT_MS = 5000;
+	
 	private boolean initialized = false;
 	private Thread matSimThread;
 	private OMNeTSimulation omnet;
@@ -86,25 +90,27 @@ public class MATSimWithOMNeTSimulation extends MATSimSimulation implements Timer
 		// Do the exchange
 		MATSimDataProvider provider = getMATSimProviderReceiver();
 		MATSimDataReceiver receiver = getMATSimProviderReceiver();
-		if (matSimThread.isAlive() /* && this.remainingExchanges > 0 */) {
-			// System.out.println("OMNet before: " + getCurrentMilliseconds());
 
+		while(matSimThread.isAlive()) {
 			try {
 				Map<Id, MATSimInput> out = provider.getMATSimData();
-				Object in = exchanger.exchange(out);
+				Object in = exchanger.exchange(out, EXCHANGE_TIMEOUT_MS, TimeUnit.MILLISECONDS);
 				receiver.setMATSimData((Map<Id, MATSimOutput>) in);
-			} catch (InterruptedException e) {
-				Log.e("MATSimOMNetSimulation", e);
+				break;
+			} catch (InterruptedException | TimeoutException e) {
+				Log.e("MATSimWithOMNetSimulation", e);
 			}
-			// System.out.println("OMNet after: " + getCurrentMilliseconds());
-			// this.remainingExchanges--;
 		}
+		
+		omnet.updatePositions();
 	}
 
+	/**
+	 * Periodically exchanges the data
+	 */
 	@Override
 	public void at(long time, Object triger) {
-		// TODO Auto-generated method stub
-		System.out.println("DATA EXCHANGE TASK");
+		Log.d("DataExchangeTask");
 
 		doExchange();
 

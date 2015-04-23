@@ -12,7 +12,6 @@ import cz.cuni.mff.d3s.deeco.annotations.Local;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
-import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 import cz.cuni.mff.d3s.deeco.timer.CurrentTimeProvider;
 import cz.cuni.mff.d3s.jdeeco.matsim.dataaccess.Actuator;
@@ -105,8 +104,6 @@ public class Vehicle {
 			@In("router") MATSimRouter router,
 			@In("speed") Double speed,
 			@In("otherVehicleLink") Id otherVehicleLink) {
-		Log.d("Entry [" + id + "]:reportStatus");
-		
 		System.out.format("%s %s, pos: %s, dst: %s, speed: %.0f, otherPos: %s%n",
 				formatTime(clock.getCurrentMilliseconds()),
 				id,
@@ -138,7 +135,6 @@ public class Vehicle {
 			@In("router") MATSimRouter router,
 			@In("clock") CurrentTimeProvider clock,
 			@Out("curTime") ParamHolder<Long> curTime) {
-		Log.d("Entry [" + id + "]:updateCurrentLink");
 		currentLinkHolder.value = currentLinkSensor.read();
 		position.value = router.getLink(currentLinkHolder.value).getCoord();
 		curTime.value = clock.getCurrentMilliseconds();

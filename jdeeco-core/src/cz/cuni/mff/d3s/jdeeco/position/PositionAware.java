@@ -24,7 +24,7 @@ public class PositionAware implements DEECoPlugin, PositionProvider {
 
 	public void setProvider(PositionProvider positionProvider) {
 		if (provider != null) {
-			throw new UnsupportedOperationException("POisiton provider is already set, sannot add another one.");
+			throw new UnsupportedOperationException("Poisiton provider is already set, cannot add another one.");
 		}
 		
 		provider = positionProvider;

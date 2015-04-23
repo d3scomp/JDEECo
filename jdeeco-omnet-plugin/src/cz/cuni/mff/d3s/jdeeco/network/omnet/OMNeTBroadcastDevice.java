@@ -50,6 +50,8 @@ public class OMNeTBroadcastDevice extends OMNeTDevice {
 	
 	public void receivePacket(byte[] data, double rssi) {
 		// TODO: Get source address from OMNeT
-		network.getL1().processL0Packet(data, this, new MANETReceivedInfo(MANETBroadcastAddress.BROADCAST, rssi));
+		Address source = MANETBroadcastAddress.BROADCAST;
+		
+		network.getL1().processL0Packet(data, this, new MANETReceivedInfo(source, rssi));
 	}
 }
