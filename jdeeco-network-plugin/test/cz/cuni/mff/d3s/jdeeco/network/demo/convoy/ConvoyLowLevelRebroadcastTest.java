@@ -15,7 +15,7 @@ import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
 import cz.cuni.mff.d3s.deeco.timer.DiscreteEventTimer;
 import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
 import cz.cuni.mff.d3s.jdeeco.network.Network;
-import cz.cuni.mff.d3s.jdeeco.network.device.BroadcastLoopback;
+import cz.cuni.mff.d3s.jdeeco.network.device.SimpleBroadcastDevice;
 import cz.cuni.mff.d3s.jdeeco.network.l1.strategy.LowLevelRebroadcastStrategy;
 import cz.cuni.mff.d3s.jdeeco.network.l2.strategy.KnowledgeInsertingStrategy;
 import cz.cuni.mff.d3s.jdeeco.position.PositionPlugin;
@@ -54,7 +54,7 @@ public class ConvoyLowLevelRebroadcastTest {
 		// Create main application container
 		SimulationTimer simulationTimer = new DiscreteEventTimer(); // also "new WallTimeSchedulerNotifier()"
 		DEECoSimulation realm = new DEECoSimulation(simulationTimer);
-		realm.addPlugin(new BroadcastLoopback(100, 10, 250));
+		realm.addPlugin(new SimpleBroadcastDevice(100, 10, 250));
 		realm.addPlugin(Network.class);
 		realm.addPlugin(KnowledgeInsertingStrategy.class);
 		realm.addPlugin(LowLevelRebroadcastStrategy.class);
@@ -66,13 +66,13 @@ public class ConvoyLowLevelRebroadcastTest {
 		deeco1.deployEnsemble(ConvoyEnsemble.class);
 
 		// Create DEECo node 2 - follower (in range of leader)
-		DEECoNode deeco2 = realm.createNode(new PositionPlugin(0, BroadcastLoopback.DEFAULT_RANGE * 2/3), new DefaultKnowledgePublisher(PUBLISH_DELAY));
+		DEECoNode deeco2 = realm.createNode(new PositionPlugin(0, SimpleBroadcastDevice.DEFAULT_RANGE * 2/3), new DefaultKnowledgePublisher(PUBLISH_DELAY));
 		// Deploy components and ensembles
 		deeco2.deployComponent(new Follower("F0"));
 		deeco2.deployEnsemble(ConvoyEnsemble.class);
 		
 		// Create DEECo node 3 - follower (out of range of leader)
-		DEECoNode deeco3 = realm.createNode(new PositionPlugin(0, BroadcastLoopback.DEFAULT_RANGE * 4/3), new DefaultKnowledgePublisher(PUBLISH_DELAY));
+		DEECoNode deeco3 = realm.createNode(new PositionPlugin(0, SimpleBroadcastDevice.DEFAULT_RANGE * 4/3), new DefaultKnowledgePublisher(PUBLISH_DELAY));
 		// Deploy components and ensembles
 		deeco3.deployComponent(new Follower("F1"));
 		deeco3.deployEnsemble(ConvoyEnsemble.class);

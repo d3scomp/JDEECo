@@ -18,7 +18,7 @@ import cz.cuni.mff.d3s.jdeeco.network.l1.Layer1;
 import cz.cuni.mff.d3s.jdeeco.network.l1.ReceivedInfo;
 
 /**
- * Infrastructure loop-back plug-in
+ * Simple infrastructure device plug-in
  * 
  * Can be initialized by more DEECo run-times at the same time. Packets send are then delivered (instantly or with
  * delay) to destination loop device.
@@ -26,7 +26,7 @@ import cz.cuni.mff.d3s.jdeeco.network.l1.ReceivedInfo;
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
  */
-public class InfrastructureLoopback implements DEECoPlugin {
+public class SimpleInfrastructureDevice implements DEECoPlugin {
 	/**
 	 * Loop device used to provide broadcast device to layer 1
 	 */
@@ -66,7 +66,7 @@ public class InfrastructureLoopback implements DEECoPlugin {
 
 			// Schedule packet delivery
 			PacketWrapper packet = new PacketWrapper(data, this, ipAddress);
-			Scheduler scheduler = InfrastructureLoopback.this.scheduler;
+			Scheduler scheduler = SimpleInfrastructureDevice.this.scheduler;
 			scheduler.addTask(new CustomStepTask(scheduler, new DeliveryListener(packet)));
 		}
 	}
@@ -98,7 +98,7 @@ public class InfrastructureLoopback implements DEECoPlugin {
 
 		@Override
 		public void at(long time, Object triger) {
-			InfrastructureLoopback.this.route(packet);
+			SimpleInfrastructureDevice.this.route(packet);
 		}
 
 		@Override
@@ -122,14 +122,14 @@ public class InfrastructureLoopback implements DEECoPlugin {
 	 * @param constantDelay
 	 *            Packet delivery delay
 	 */
-	public InfrastructureLoopback(long constantDelay) {
+	public SimpleInfrastructureDevice(long constantDelay) {
 		this.constantDelay = constantDelay;
 	}
 
 	/**
 	 * Constructs infrastructure loop-back with zero delay
 	 */
-	public InfrastructureLoopback() {
+	public SimpleInfrastructureDevice() {
 		this(0);
 	}
 

@@ -103,7 +103,7 @@ public class InfrastructureLoopbackTest {
 	 */
 	@Test
 	public void testNodeToNodeRouting() {
-		InfrastructureLoopback loop = new InfrastructureLoopback();
+		SimpleInfrastructureDevice loop = new SimpleInfrastructureDevice();
 
 		// Register nodes 0 and 1 with Infrastructure loop-back
 		loop.init(node0);
@@ -123,7 +123,7 @@ public class InfrastructureLoopbackTest {
 	 */
 	@Test(expected = UnsupportedOperationException.class)
 	public void testNodeToVoidRouting() {
-		InfrastructureLoopback loop = new InfrastructureLoopback();
+		SimpleInfrastructureDevice loop = new SimpleInfrastructureDevice();
 
 		// Register nodes 0 with Infrastructure loop-back
 		loop.init(node0);

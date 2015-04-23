@@ -14,7 +14,7 @@ import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
 import cz.cuni.mff.d3s.deeco.timer.DiscreteEventTimer;
 import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
 import cz.cuni.mff.d3s.jdeeco.network.Network;
-import cz.cuni.mff.d3s.jdeeco.network.device.BroadcastLoopback;
+import cz.cuni.mff.d3s.jdeeco.network.device.SimpleBroadcastDevice;
 import cz.cuni.mff.d3s.jdeeco.network.l2.strategy.KnowledgeInsertingStrategy;
 import cz.cuni.mff.d3s.jdeeco.position.PositionPlugin;
 import cz.cuni.mff.d3s.jdeeco.publishing.DefaultKnowledgePublisher;
@@ -50,7 +50,7 @@ public class ConvoyTest {
 		/* create main application container */
 		SimulationTimer simulationTimer = new DiscreteEventTimer(); // also "new WallTimeSchedulerNotifier()"
 		DEECoSimulation realm = new DEECoSimulation(simulationTimer);
-		realm.addPlugin(new BroadcastLoopback());
+		realm.addPlugin(new SimpleBroadcastDevice());
 		realm.addPlugin(Network.class);
 		realm.addPlugin(DefaultKnowledgePublisher.class);
 		realm.addPlugin(KnowledgeInsertingStrategy.class);
@@ -90,19 +90,19 @@ public class ConvoyTest {
 		/* create main application container */
 		SimulationTimer simulationTimer = new DiscreteEventTimer(); // also "new WallTimeSchedulerNotifier()"
 		DEECoSimulation realm = new DEECoSimulation(simulationTimer);
-		realm.addPlugin(new BroadcastLoopback());
+		realm.addPlugin(new SimpleBroadcastDevice());
 		realm.addPlugin(Network.class);
 		realm.addPlugin(DefaultKnowledgePublisher.class);
 		realm.addPlugin(KnowledgeInsertingStrategy.class);
 		
 		/* create first deeco node */
-		DEECoNode deeco1 = realm.createNode(new PositionPlugin(0, BroadcastLoopback.DEFAULT_RANGE));
+		DEECoNode deeco1 = realm.createNode(new PositionPlugin(0, SimpleBroadcastDevice.DEFAULT_RANGE));
 		/* deploy components and ensembles */
 		deeco1.deployComponent(new Leader());
 		deeco1.deployEnsemble(ConvoyEnsemble.class);
 
 		/* create second deeco node */
-		DEECoNode deeco2 = realm.createNode(new PositionPlugin(BroadcastLoopback.DEFAULT_RANGE, 0));
+		DEECoNode deeco2 = realm.createNode(new PositionPlugin(SimpleBroadcastDevice.DEFAULT_RANGE, 0));
 		/* deploy components and ensembles */
 		deeco2.deployComponent(new Follower());
 		deeco2.deployEnsemble(ConvoyEnsemble.class);

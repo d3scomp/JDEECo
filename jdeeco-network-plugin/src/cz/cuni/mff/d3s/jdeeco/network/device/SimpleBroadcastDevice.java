@@ -23,7 +23,7 @@ import cz.cuni.mff.d3s.jdeeco.position.PositionPlugin;
 import cz.cuni.mff.d3s.jdeeco.position.PositionProvider;
 
 /**
- * Loop-back broadcast plug-in
+ * Simple broadcast device plug-in
  * 
  * Can be initialized by more DEECo run-times at the same time. Packets send are then delivered to the group.
  * 
@@ -36,7 +36,7 @@ import cz.cuni.mff.d3s.jdeeco.position.PositionProvider;
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
  */
-public class BroadcastLoopback implements DEECoPlugin {
+public class SimpleBroadcastDevice implements DEECoPlugin {
 	public static final int PACKET_SIZE = 128; // bytes
 	public static final int DEFAULT_RANGE = 250; // meters
 	public static final long DEFAULT_DELAY_MEAN = 0; // ms
@@ -97,7 +97,7 @@ public class BroadcastLoopback implements DEECoPlugin {
 
 			// Schedule send task
 			Task task = new CustomStepTask(scheduler, new DeliveryListener(new PacketWrapper(data, this)), delay);
-			BroadcastLoopback.this.scheduler.addTask(task);
+			SimpleBroadcastDevice.this.scheduler.addTask(task);
 		}
 	}
 
@@ -126,7 +126,7 @@ public class BroadcastLoopback implements DEECoPlugin {
 
 		@Override
 		public void at(long time, Object triger) {
-			BroadcastLoopback.this.sendToAll(packet);
+			SimpleBroadcastDevice.this.sendToAll(packet);
 		}
 
 		@Override
@@ -141,7 +141,7 @@ public class BroadcastLoopback implements DEECoPlugin {
 	 * @param delayMean
 	 *            Delay between sending and delivering the packets
 	 */
-	public BroadcastLoopback(long delayMean, long delayDeviation, int range) {
+	public SimpleBroadcastDevice(long delayMean, long delayDeviation, int range) {
 		this.delayMean = delayMean;
 		this.delayDeviation = delayDeviation;
 		this.range = range;
@@ -152,7 +152,7 @@ public class BroadcastLoopback implements DEECoPlugin {
 	 * 
 	 * Delivers packets with default values
 	 */
-	public BroadcastLoopback() {
+	public SimpleBroadcastDevice() {
 		this(DEFAULT_DELAY_MEAN, DEFAULT_DELAY_VARIANCE, DEFAULT_RANGE);
 	}
 

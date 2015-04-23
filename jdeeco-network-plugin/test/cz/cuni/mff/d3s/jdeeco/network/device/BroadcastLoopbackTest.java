@@ -81,7 +81,7 @@ public class BroadcastLoopbackTest {
 	 * Has working layer1, used to send packets
 	 */
 	private DEECoContainer setupSourceNode() {
-		DEECoContainer node = setupBaseNode(0, BroadcastLoopback.DEFAULT_RANGE / 2);
+		DEECoContainer node = setupBaseNode(0, SimpleBroadcastDevice.DEFAULT_RANGE / 2);
 
 		// Configure Network for mocked container
 		Layer1 layer1 = new Layer1((byte) 0, DefaultDataIDSource.getInstance(), scheduler);
@@ -114,7 +114,7 @@ public class BroadcastLoopbackTest {
 	 */
 	@Test
 	public void testNodeToNodeRouting() {
-		BroadcastLoopback loop = new BroadcastLoopback();
+		SimpleBroadcastDevice loop = new SimpleBroadcastDevice();
 
 		// Register nodes 0 and 1 with Broadcast loop-back
 		loop.init(node0);

@@ -17,7 +17,7 @@ import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
 import cz.cuni.mff.d3s.jdeeco.matsim.plugin.MATSimSimulation;
 import cz.cuni.mff.d3s.jdeeco.matsim.plugin.MATSimVehicle;
 import cz.cuni.mff.d3s.jdeeco.network.Network;
-import cz.cuni.mff.d3s.jdeeco.network.device.BroadcastLoopback;
+import cz.cuni.mff.d3s.jdeeco.network.device.SimpleBroadcastDevice;
 import cz.cuni.mff.d3s.jdeeco.network.l2.strategy.KnowledgeInsertingStrategy;
 import cz.cuni.mff.d3s.jdeeco.position.PositionPlugin;
 import cz.cuni.mff.d3s.jdeeco.publishing.DefaultKnowledgePublisher;
@@ -49,7 +49,7 @@ public class VehicleTravelTest {
 		realm.addPlugin(matSim);
 		
 		// Configure loop-back networking for all nodes
-		realm.addPlugin(new BroadcastLoopback(0, 0, 100000));
+		realm.addPlugin(new SimpleBroadcastDevice(0, 0, 100000));
 		realm.addPlugin(Network.class);
 		realm.addPlugin(DefaultKnowledgePublisher.class);
 		realm.addPlugin(KnowledgeInsertingStrategy.class);
