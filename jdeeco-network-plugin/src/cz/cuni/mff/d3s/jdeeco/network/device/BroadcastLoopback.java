@@ -85,7 +85,7 @@ public class BroadcastLoopback implements DEECoPlugin {
 			long delay = (long) (random.nextGaussian()) * delayDeviation + delayMean;
 
 			// Schedule send task
-			Task task = new CustomStepTask(scheduler, new DeliveryListener(delay, new PacketWrapper(data, this)));
+			Task task = new CustomStepTask(scheduler, new DeliveryListener(new PacketWrapper(data, this)), delay);
 			BroadcastLoopback.this.scheduler.addTask(task);
 		}
 	}
@@ -109,7 +109,7 @@ public class BroadcastLoopback implements DEECoPlugin {
 	private class DeliveryListener implements TimerTaskListener {
 		final private PacketWrapper packet;
 
-		public DeliveryListener(long delay, PacketWrapper packet) {
+		public DeliveryListener(PacketWrapper packet) {
 			this.packet = packet;
 		}
 
