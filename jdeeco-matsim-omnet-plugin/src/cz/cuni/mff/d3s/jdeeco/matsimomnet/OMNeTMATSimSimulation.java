@@ -159,8 +159,10 @@ public class OMNeTMATSimSimulation implements IMATSimSimulaton, IOMNeTSimulation
 				Object in = exchanger.exchange(out, EXCHANGE_TIMEOUT_MS, TimeUnit.MILLISECONDS);
 				receiver.setMATSimData((Map<Id, MATSimOutput>) in);
 				break;
-			} catch (InterruptedException | TimeoutException e) {
-				Log.e("MATSimWithOMNetSimulation", e);
+			} catch(TimeoutException e) {
+				// This is expected when MATSim is busy
+			} catch (InterruptedException e) {
+				Log.e(getClass().getSimpleName(), e);
 			}
 		}
 		
