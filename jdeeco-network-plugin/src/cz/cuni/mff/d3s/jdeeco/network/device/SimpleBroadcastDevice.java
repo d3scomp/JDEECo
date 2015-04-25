@@ -46,7 +46,7 @@ public class SimpleBroadcastDevice implements DEECoPlugin {
 	final int range;
 	private Random random;
 
-	Scheduler scheduler;
+	protected Scheduler scheduler;
 
 	// Loop devices this loop-back network is registered with
 	private Set<LoopDevice> loops = new HashSet<>();
@@ -54,7 +54,7 @@ public class SimpleBroadcastDevice implements DEECoPlugin {
 	/**
 	 * Loop device used to provide broadcast device to layer 1
 	 */
-	private class LoopDevice extends Device {
+	protected class LoopDevice extends Device {
 		final Layer1 layer1;
 		final MANETBroadcastAddress address;
 		final DEECoContainer container;
@@ -104,7 +104,7 @@ public class SimpleBroadcastDevice implements DEECoPlugin {
 	/**
 	 * Packet package used to carry information about packet
 	 */
-	private final class PacketWrapper {
+	protected final class PacketWrapper {
 		public final byte[] data;
 		public final LoopDevice source;
 
