@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
@@ -17,20 +18,19 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
-import cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ReplicaListener;
 import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistryImpl;
+import cz.cuni.mff.d3s.deeco.knowledge.TriggerListener;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.architecture.api.Architecture;
-import cz.cuni.mff.d3s.deeco.model.architecture.api.EnsembleInstance;
 import cz.cuni.mff.d3s.deeco.model.architecture.api.LocalComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.architecture.api.RemoteComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.architecture.meta.ArchitectureFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
@@ -350,6 +350,12 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ReplicaListener {
 			km.update(cs);
 		} catch (KnowledgeUpdateException e) {
 			Log.e("bindKnowledgeManagerContainer: exception when updating the knowledge manager", e);
+		}
+		//Copy listeners
+		for (Entry<KnowledgeChangeTrigger, List<TriggerListener>> entry: ci.getKnowledgeManager().getKnowledgeChangeListeners().entrySet()) {
+			for (TriggerListener listener: entry.getValue()) {
+				km.register(entry.getKey(), listener);
+			}
 		}
 		// replace the KM and the KMView references
 		ci.setKnowledgeManager(km);	

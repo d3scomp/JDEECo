@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerFactory;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
@@ -49,19 +50,26 @@ public class DEECoSimulation {
 	public DEECoNode createNode(DEECoPlugin... nodeSpecificPlugins) throws DEECoException, InstantiationException, IllegalAccessException {
 		return createNode(nodeCounter++, nodeSpecificPlugins);
 	}
+	public DEECoNode createNode(int id, KnowledgeManagerFactory factory, DEECoPlugin... nodeSpecificPlugins) throws DEECoException, InstantiationException, IllegalAccessException {				
+		DEECoNode node = new DEECoNode(id, simulationTimer, factory, getPlugins(nodeSpecificPlugins));
+		deecoNodes.add(node);
+		return node; 
+	}
 
-	public DEECoNode createNode(int id, DEECoPlugin... nodeSpecificPlugins) throws DEECoException, InstantiationException, IllegalAccessException {
-		// Create list of plug-ins for new node
+	public DEECoNode createNode(int id, DEECoPlugin... nodeSpecificPlugins) throws DEECoException, InstantiationException, IllegalAccessException {		
+		DEECoNode node = new DEECoNode(id, simulationTimer, getPlugins(nodeSpecificPlugins));
+		deecoNodes.add(node);
+		return node;
+	}
+	
+	private DEECoPlugin [] getPlugins(DEECoPlugin... nodeSpecificPlugins) throws InstantiationException, IllegalAccessException {
 		List<DEECoPlugin> plugins = new LinkedList<DEECoPlugin>();
 		plugins.addAll(instantiatedPlugins);
 		plugins.addAll(Arrays.asList(nodeSpecificPlugins));
 		for (Class<? extends DEECoPlugin> c : nonInstantiatedPlugins) {
 			plugins.add(c.newInstance());
 		}
-		
-		DEECoNode node = new DEECoNode(id, simulationTimer, plugins.toArray(new DEECoPlugin[0]));
-		deecoNodes.add(node);
-		return node;
+		return  plugins.toArray(new DEECoPlugin[0]);
 	}
 	
 }

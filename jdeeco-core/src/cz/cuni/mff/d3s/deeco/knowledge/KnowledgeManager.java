@@ -1,8 +1,11 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import cz.cuni.mff.d3s.deeco.annotations.Allow;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.LocalKnowledgeTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
@@ -83,4 +86,6 @@ public interface KnowledgeManager extends ReadOnlyKnowledgeManager {
 	void lockKnowledgePath(KnowledgePath knowledgePath);
 
 	boolean isOfSystemComponent();
+	
+	Map<KnowledgeChangeTrigger, List<TriggerListener>> getKnowledgeChangeListeners();
 }

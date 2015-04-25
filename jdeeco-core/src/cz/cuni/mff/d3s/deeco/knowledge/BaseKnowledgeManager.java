@@ -254,6 +254,10 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 			notifyKnowledgeChangeListeners(knowledgePath);
 		}
 	}
+	
+	public Map<KnowledgeChangeTrigger, List<TriggerListener>> getKnowledgeChangeListeners() {
+		return knowledgeChangeListeners;
+	}
 
 	/**
 	 * Removes authors of the given knowledge paths.

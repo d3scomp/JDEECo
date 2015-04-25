@@ -75,9 +75,13 @@ public class DEECoNode implements DEECoContainer {
 	 * please see the error output and log file for further information about the failure.
 	 */
 	public DEECoNode(int id, Timer timer, DEECoPlugin... plugins) throws DEECoException {
+		this(id, timer, new CloningKnowledgeManagerFactory(), plugins);
+	}
+	
+	public DEECoNode(int id, Timer timer, KnowledgeManagerFactory factory, DEECoPlugin... plugins) throws DEECoException {
 		this.nodeId = id;
 		model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
-		knowledgeManagerFactory = new CloningKnowledgeManagerFactory();
+		knowledgeManagerFactory = factory;
 		processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE, model, knowledgeManagerFactory);
 		runtimeLogger = new RuntimeLogger();
 		
@@ -103,7 +107,6 @@ public class DEECoNode implements DEECoContainer {
 		model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
 		knowledgeManagerFactory = new CloningKnowledgeManagerFactory();
 		processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE, model, knowledgeManagerFactory);
-		runtimeLogger = new RuntimeLogger();
 		
 		initializeRuntime(timer);
 		this.runtimeLogger = runtimeLogger;
