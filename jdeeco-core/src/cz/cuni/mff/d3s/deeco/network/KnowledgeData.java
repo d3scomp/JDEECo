@@ -18,6 +18,8 @@ import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
  * 
  * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
+ * @author Ondřej Štumpf
+ * 
  */
 @SuppressWarnings("serial")
 public class KnowledgeData implements Serializable {
