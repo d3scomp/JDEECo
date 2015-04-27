@@ -99,6 +99,7 @@ public class ParameterKnowledgePathExtractor {
 			PathNode pn = knowledgePath.getNodes().get(i);
 			if (pn instanceof PathNodeMapKey) {
 				List<KnowledgePathAndType> subPaths = extractKnowledgePaths(null, ((PathNodeMapKey)pn).getKeyPath());
+				result.get(0).type = null;
 				result.addAll(subPaths);
 				break; // we don't check after [], but we actually could
 			} else {

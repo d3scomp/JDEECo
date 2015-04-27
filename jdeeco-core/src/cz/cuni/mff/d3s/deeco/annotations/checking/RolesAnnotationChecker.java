@@ -227,7 +227,7 @@ public class RolesAnnotationChecker implements AnnotationChecker {
 		// It is sufficient that the field belongs to at least one of the roles
 		boolean satisfiesAnyRole = false;
 		for (Class<?> roleClass : roleClasses) {
-			if (knowledgePathChecker.isFieldInClass(type, pathNodes, roleClass)) {
+			if (knowledgePathChecker.isFieldInClass(type, pathNodes.subList(1, pathNodes.size()), roleClass)) {
 				satisfiesAnyRole = true;
 				break; // one role is enough
 			}

@@ -116,7 +116,7 @@ public class ParameterKnowledgePathExtractorTest {
 		List<KnowledgePathAndType> result = new ParameterKnowledgePathExtractor().extractAllKnowledgePaths(param3);
 		// TODO use something like Collection Assert - so that we don't assume the particular order
 		assertEquals(3, result.size());
-		assertKnowledgePathAndType(String.class, Arrays.asList("coord", "z"), result.get(0));
+		assertKnowledgePathAndType(null, Arrays.asList("coord", "z"), result.get(0));
 		assertKnowledgePathAndType(null, Arrays.asList("member", "y"), result.get(1));
 		assertKnowledgePathAndType(null, Arrays.asList("coord", "id"), result.get(2));
 	}

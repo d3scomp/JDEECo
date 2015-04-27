@@ -774,12 +774,12 @@ public class RolesAnnotationCheckerTest {
 		// When the isFieldRole returns false, then also the second role has to be tested (and this
 		// must return true, else we would get an exception)
 		checker.checkEnsembleMethodRolesImplementation(Arrays.asList(testParameters), coordinatorRoles, memberRoles);	
-		verify(checkerMock, times(1)).isFieldInClass(testKnowledgePaths[0].type, testKnowledgePaths[0].knowledgePath, RoleClass1.class);
-		verify(checkerMock, atMost(1)).isFieldInClass(testKnowledgePaths[0].type, testKnowledgePaths[0].knowledgePath, RoleClass2.class);
-		verify(checkerMock, times(2)).isFieldInClass(testKnowledgePaths[1].type, testKnowledgePaths[1].knowledgePath, RoleClass1.class);
-		verify(checkerMock, atMost(2)).isFieldInClass(testKnowledgePaths[1].type, testKnowledgePaths[1].knowledgePath, RoleClass2.class);
-		verify(checkerMock, times(1)).isFieldInClass(testKnowledgePaths[2].type, testKnowledgePaths[2].knowledgePath, RoleClass2.class);
-		verify(checkerMock, times(1)).isFieldInClass(testKnowledgePaths[2].type, testKnowledgePaths[2].knowledgePath, RoleClass3.class);
+		verify(checkerMock, times(1)).isFieldInClass(testKnowledgePaths[0].type, testKnowledgePaths[0].knowledgePath.subList(1, testKnowledgePaths[0].knowledgePath.size()), RoleClass1.class);
+		verify(checkerMock, atMost(1)).isFieldInClass(testKnowledgePaths[0].type, testKnowledgePaths[0].knowledgePath.subList(1, testKnowledgePaths[0].knowledgePath.size()), RoleClass2.class);
+		verify(checkerMock, times(2)).isFieldInClass(testKnowledgePaths[1].type, testKnowledgePaths[1].knowledgePath.subList(1, testKnowledgePaths[1].knowledgePath.size()), RoleClass1.class);
+		verify(checkerMock, atMost(2)).isFieldInClass(testKnowledgePaths[1].type, testKnowledgePaths[1].knowledgePath.subList(1, testKnowledgePaths[1].knowledgePath.size()), RoleClass2.class);
+		verify(checkerMock, times(1)).isFieldInClass(testKnowledgePaths[2].type, testKnowledgePaths[2].knowledgePath.subList(1, testKnowledgePaths[2].knowledgePath.size()), RoleClass2.class);
+		verify(checkerMock, times(1)).isFieldInClass(testKnowledgePaths[2].type, testKnowledgePaths[2].knowledgePath.subList(1, testKnowledgePaths[2].knowledgePath.size()), RoleClass3.class);
 		
 		verifyNoMoreInteractions(checkerMock);
 	}
