@@ -40,7 +40,7 @@ public class SimpleBroadcastDevice implements DEECoPlugin {
 	public static final int PACKET_SIZE = 128; // bytes
 	public static final int DEFAULT_RANGE = 250; // meters
 	public static final long DEFAULT_DELAY_MEAN = 0; // ms
-	public static final long DEFAULT_DELAY_DEVIATION = 0; // ms
+	public static final long DEFAULT_DELAY_VARIANCE = 0; // ms
 	final long delayMean;
 	final long delayDeviation;
 	final int range;
@@ -93,10 +93,11 @@ public class SimpleBroadcastDevice implements DEECoPlugin {
 		@Override
 		public void send(byte[] data, Address addressNotUsed) {
 			// Get task delay
-			long delay = (long) (random.nextGaussian()) * delayDeviation + delayMean;
+			long deviationMs = (long) (random.nextGaussian() * delayDeviation);
+			long delayMs = delayMean + deviationMs;
 
 			// Schedule send task
-			Task task = new CustomStepTask(scheduler, new DeliveryListener(new PacketWrapper(data, this)), delay);
+			Task task = new CustomStepTask(scheduler, new DeliveryListener(new PacketWrapper(data, this)), delayMs);
 			SimpleBroadcastDevice.this.scheduler.addTask(task);
 		}
 	}
@@ -153,7 +154,7 @@ public class SimpleBroadcastDevice implements DEECoPlugin {
 	 * Delivers packets with default values
 	 */
 	public SimpleBroadcastDevice() {
-		this(DEFAULT_DELAY_MEAN, DEFAULT_DELAY_DEVIATION, DEFAULT_RANGE);
+		this(DEFAULT_DELAY_MEAN, DEFAULT_DELAY_VARIANCE, DEFAULT_RANGE);
 	}
 
 	/**
