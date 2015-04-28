@@ -40,7 +40,7 @@ public class SimpleBroadcastDevice implements DEECoPlugin {
 	public static final int PACKET_SIZE = 128; // bytes
 	public static final int DEFAULT_RANGE = 250; // meters
 	public static final long DEFAULT_DELAY_MEAN = 0; // ms
-	public static final long DEFAULT_DELAY_VARIANCE = 0; // ms
+	public static final long DEFAULT_DELAY_DEVIATION = 0; // ms
 	final long delayMean;
 	final long delayDeviation;
 	final int range;
@@ -153,7 +153,7 @@ public class SimpleBroadcastDevice implements DEECoPlugin {
 	 * Delivers packets with default values
 	 */
 	public SimpleBroadcastDevice() {
-		this(DEFAULT_DELAY_MEAN, DEFAULT_DELAY_VARIANCE, DEFAULT_RANGE);
+		this(DEFAULT_DELAY_MEAN, DEFAULT_DELAY_DEVIATION, DEFAULT_RANGE);
 	}
 
 	/**
