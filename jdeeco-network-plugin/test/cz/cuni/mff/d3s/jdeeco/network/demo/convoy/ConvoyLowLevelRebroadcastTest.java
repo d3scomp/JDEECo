@@ -3,7 +3,6 @@ package cz.cuni.mff.d3s.jdeeco.network.demo.convoy;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
 
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.StandardOutputStreamLog;
@@ -47,10 +46,8 @@ public class ConvoyLowLevelRebroadcastTest {
 	 * @throws IllegalAccessException 
 	 * @throws InstantiationException 
 	 */
-	@Test @Ignore("Nondeterministaly fails, Layer 1 rebroadcasting is not realiabale nor efficient")
+	@Test
 	public void testConvoyLowLevelRebroadcastLoopback() throws AnnotationProcessorException, InterruptedException, DEECoException, InstantiationException, IllegalAccessException {
-		final int PUBLISH_DELAY = 50;
-		
 		// Create main application container
 		SimulationTimer simulationTimer = new DiscreteEventTimer(); // also "new WallTimeSchedulerNotifier()"
 		DEECoSimulation realm = new DEECoSimulation(simulationTimer);
@@ -58,27 +55,28 @@ public class ConvoyLowLevelRebroadcastTest {
 		realm.addPlugin(Network.class);
 		realm.addPlugin(KnowledgeInsertingStrategy.class);
 		realm.addPlugin(LowLevelRebroadcastStrategy.class);
+		realm.addPlugin(DefaultKnowledgePublisher.class);
 		
 		// Create DEECo node 1 - leader
-		DEECoNode deeco1 = realm.createNode(new PositionPlugin(0, 0), new DefaultKnowledgePublisher(PUBLISH_DELAY));
+		DEECoNode deeco1 = realm.createNode(new PositionPlugin(0, 0));
 		// Deploy components and ensembles
 		deeco1.deployComponent(new Leader());
 		deeco1.deployEnsemble(ConvoyEnsemble.class);
 
 		// Create DEECo node 2 - follower (in range of leader)
-		DEECoNode deeco2 = realm.createNode(new PositionPlugin(0, SimpleBroadcastDevice.DEFAULT_RANGE * 2/3), new DefaultKnowledgePublisher(PUBLISH_DELAY));
+		DEECoNode deeco2 = realm.createNode(new PositionPlugin(0, SimpleBroadcastDevice.DEFAULT_RANGE * 2/3));
 		// Deploy components and ensembles
 		deeco2.deployComponent(new Follower("F0"));
 		deeco2.deployEnsemble(ConvoyEnsemble.class);
 		
 		// Create DEECo node 3 - follower (out of range of leader)
-		DEECoNode deeco3 = realm.createNode(new PositionPlugin(0, SimpleBroadcastDevice.DEFAULT_RANGE * 4/3), new DefaultKnowledgePublisher(PUBLISH_DELAY));
+		DEECoNode deeco3 = realm.createNode(new PositionPlugin(0, SimpleBroadcastDevice.DEFAULT_RANGE * 4/3));
 		// Deploy components and ensembles
 		deeco3.deployComponent(new Follower("F1"));
 		deeco3.deployEnsemble(ConvoyEnsemble.class);
 
 		// WHEN simulation is performed
-		realm.start(30000);
+		realm.start(15000);
 
 		// THEN the follower prints out the following (ass the networking should work)
 		assertThat(log.getLog(), containsString("Follower F0: me = (1,3) leader = (1,3)"));
