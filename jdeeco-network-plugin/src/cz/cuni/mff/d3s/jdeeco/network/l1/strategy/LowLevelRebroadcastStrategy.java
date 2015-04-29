@@ -1,15 +1,16 @@
 package cz.cuni.mff.d3s.jdeeco.network.l1.strategy;
 
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
+import java.util.Objects;
+import java.util.TreeSet;
 
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.task.CustomStepTask;
-import cz.cuni.mff.d3s.deeco.task.Task;
 import cz.cuni.mff.d3s.deeco.task.TimerTask;
 import cz.cuni.mff.d3s.deeco.task.TimerTaskListener;
 import cz.cuni.mff.d3s.jdeeco.network.Network;
@@ -23,46 +24,104 @@ import cz.cuni.mff.d3s.jdeeco.network.l1.MANETReceivedInfo;
  * Simple low-level rebroadcast
  * 
  * This rebroadcasts packets received from wireless MANET device. It uses RSSI to calculate rebroadcast time,
- * rebroadcast is performed with delay dependent on RSSI. While packet is in the queue for rebroadcast the same packets
- * are ignored to avoid congestion.
+ * rebroadcast is performed with delay dependent on RSSI. Packets already seen are not processed again. Whether the
+ * packet has been seen is determined by history of limited size. If the packet is older than first record in history
+ * then it is considered seen.
  * 
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
  */
 public class LowLevelRebroadcastStrategy implements DEECoPlugin, L1Strategy {
-	private static long DELAY = 1500;
+	// Base for rebroadcast delay
+	private static final long DELAY = 1500;
+
+	// L1 packet history limit per source node
+	private static final int HISTORY_LIMIT = 32;
+
 	private Layer1 layer1;
 	private Scheduler scheduler;
-	private Set<L1Packet> toRebroadcast = new HashSet<>();
+	/**
+	 * Map of known packets
+	 * 
+	 * SourceNode -> History(datatId, StartPos)
+	 */
+	private Map<Byte, LimitedSet<L1PacketInfo>> known = new HashMap<>();
 
 	@Override
 	public void processL1Packet(L1Packet packet) {
 		// Rebroadcast packet only if received from MANET
 		if (!(packet.receivedInfo instanceof MANETReceivedInfo))
 			return;
-		MANETReceivedInfo info = (MANETReceivedInfo) packet.receivedInfo;
+
+		// Skip rebroadcast if packet is already known to us
+		if (shallDrop(packet))
+			return;
 
 		// Calculate rebroadcast delay
+		MANETReceivedInfo info = (MANETReceivedInfo) packet.receivedInfo;
 		long delayMs = (long) ((1 - info.rssi) * DELAY);
 
 		scheduleRebroadcast(packet, delayMs);
 	}
 
-	private void scheduleRebroadcast(L1Packet packet, long delayMs) {
-		// Skip rebroadcast if packet is already scheduled
-		if (toRebroadcast.contains(packet))
-			return;
+	/**
+	 * Tests whether we shall drop a packet without rebroadcast
+	 * 
+	 * @param packet
+	 * @return
+	 */
+	private boolean shallDrop(L1Packet packet) {
+		if (!known.containsKey(packet.srcNode))
+			return false;
 
+		LimitedSet<L1PacketInfo> set = known.get(packet.srcNode);
+		L1PacketInfo info = new L1PacketInfo(packet);
+
+		// Skip packets that are older than oldest packets from history
+		if (set.first().compareTo(info) > 0) {
+			return true;
+		}
+
+		// If packet is in history range then skip those already in history
+		return set.contains(info);
+	}
+
+	/**
+	 * Make packet known by history
+	 * 
+	 * Used to decide whether to drop packet without rebroadcast
+	 * 
+	 * @param packet
+	 */
+	private void makeKnown(L1Packet packet) {
+		if (!known.containsKey(packet.srcNode)) {
+			known.put(packet.srcNode, new LimitedSet<>(HISTORY_LIMIT));
+		}
+		known.get(packet.srcNode).add(new L1PacketInfo(packet));
+	}
+
+	/**
+	 * Schedule packet for rebroadcast
+	 * 
+	 * @param packet
+	 *            Packet to rebroadcast
+	 * @param delayMs
+	 *            Rebroadcast delay
+	 */
+	private void scheduleRebroadcast(L1Packet packet, long delayMs) {
 		// Schedule delayed rebroadcast
-		toRebroadcast.add(packet);
+		makeKnown(packet);
 		new CustomStepTask(scheduler, new Rebroadcast(packet), delayMs).schedule();
 	}
 
+	/**
+	 * Perform the rebroadcast action
+	 * 
+	 * @param packet
+	 *            Packet to rebroadcast
+	 */
 	private void doRebroadcast(L1Packet packet) {
 		layer1.sendL1Packet(packet, MANETBroadcastAddress.BROADCAST);
-		
-		// TODO: We want to remove packets from history
-		// toRebroadcast.remove(packet);
 	}
 
 	@Override
@@ -100,5 +159,84 @@ public class LowLevelRebroadcastStrategy implements DEECoPlugin, L1Strategy {
 		public TimerTask getInitialTask(Scheduler scheduler) {
 			return null;
 		}
+	}
+}
+
+/**
+ * Information about L1 packets
+ * 
+ * Used to distinguish L1 packet without storing extra information
+ * 
+ * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
+ *
+ */
+class L1PacketInfo implements Comparable<L1PacketInfo> {
+	public final int dataId;
+	public final int startPos;
+
+	public L1PacketInfo(L1Packet packet) {
+		dataId = packet.dataId;
+		startPos = packet.startPos;
+	}
+
+	public L1PacketInfo(int dataId, int startPos) {
+		this.dataId = dataId;
+		this.startPos = startPos;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return Objects.deepEquals(this, obj);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(dataId, startPos);
+	}
+
+	@Override
+	public int compareTo(L1PacketInfo o) {
+		if (dataId < o.dataId) {
+			return -1;
+		} else if (dataId > o.dataId) {
+			return 1;
+		} else if (startPos < o.startPos) {
+			return -1;
+		} else if (startPos > o.startPos) {
+			return 1;
+		} else {
+			return 0;
+		}
+	}
+}
+
+/**
+ * Limited sorted set
+ * 
+ * Holds elements up to the limit. If the limit is reached the least(first) element is removed.
+ * 
+ * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
+ *
+ * @param <E>
+ */
+class LimitedSet<E> extends TreeSet<E> {
+	private static final long serialVersionUID = 1L;
+	private final int limit;
+
+	public LimitedSet(int limit) {
+		if (limit < 1) {
+			throw new UnsupportedOperationException("Cannot create limited set with limit < 1");
+		}
+
+		this.limit = limit;
+	}
+
+	@Override
+	public boolean add(E e) {
+		while (size() >= limit) {
+			remove(first());
+		}
+
+		return super.add(e);
 	}
 }
