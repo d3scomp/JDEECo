@@ -58,4 +58,11 @@ public abstract class TimerTask extends Task {
 	public TimeTrigger getTimeTrigger() {
 		return trigger;
 	}
+	
+	/**
+	 * Schedules this task to be executed
+	 */
+	public void schedule() {
+		scheduler.addTask(this);
+	}
 }

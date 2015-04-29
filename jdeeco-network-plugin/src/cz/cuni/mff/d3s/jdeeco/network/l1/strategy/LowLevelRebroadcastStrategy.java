@@ -55,8 +55,7 @@ public class LowLevelRebroadcastStrategy implements DEECoPlugin, L1Strategy {
 
 		// Schedule delayed rebroadcast
 		toRebroadcast.add(packet);
-		Task task = new CustomStepTask(scheduler, new Rebroadcast(packet), delayMs);
-		scheduler.addTask(task);
+		new CustomStepTask(scheduler, new Rebroadcast(packet), delayMs).schedule();
 	}
 
 	private void doRebroadcast(L1Packet packet) {
