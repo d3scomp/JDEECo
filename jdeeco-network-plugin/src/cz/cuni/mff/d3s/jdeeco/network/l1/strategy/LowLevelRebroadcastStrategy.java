@@ -60,7 +60,9 @@ public class LowLevelRebroadcastStrategy implements DEECoPlugin, L1Strategy {
 
 	private void doRebroadcast(L1Packet packet) {
 		layer1.sendL1Packet(packet, MANETBroadcastAddress.BROADCAST);
-		toRebroadcast.remove(packet);
+		
+		// TODO: We want to remove packets from history
+		// toRebroadcast.remove(packet);
 	}
 
 	@Override
