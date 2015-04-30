@@ -94,7 +94,7 @@ public class SimpleBroadcastDevice implements DEECoPlugin {
 		public void send(byte[] data, Address addressNotUsed) {
 			// Get task delay
 			long deviationMs = (long) (random.nextGaussian() * delayDeviation);
-			long delayMs = delayMean + deviationMs;
+			long delayMs = Math.max(0, delayMean + deviationMs);
 
 			// Schedule send task
 			Task task = new CustomStepTask(scheduler, new DeliveryListener(new PacketWrapper(data, this)), delayMs);
