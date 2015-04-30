@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.TreeSet;
 
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
@@ -19,6 +18,8 @@ import cz.cuni.mff.d3s.jdeeco.network.l1.L1Packet;
 import cz.cuni.mff.d3s.jdeeco.network.l1.L1Strategy;
 import cz.cuni.mff.d3s.jdeeco.network.l1.Layer1;
 import cz.cuni.mff.d3s.jdeeco.network.l1.MANETReceivedInfo;
+import cz.cuni.mff.d3s.jdeeco.network.utils.LimitedSortedSet;
+import cz.cuni.mff.d3s.jdeeco.network.utils.TimeSorted;
 
 /**
  * Simple low-level rebroadcast
@@ -45,7 +46,7 @@ public class LowLevelRebroadcastStrategy implements DEECoPlugin, L1Strategy {
 	 * 
 	 * SourceNode -> History(datatId, StartPos)
 	 */
-	private Map<Byte, LimitedSet<L1PacketInfo>> known = new HashMap<>();
+	private Map<Byte, LimitedSortedSet<L1PacketInfo>> known = new HashMap<>();
 
 	@Override
 	public void processL1Packet(L1Packet packet) {
@@ -74,7 +75,7 @@ public class LowLevelRebroadcastStrategy implements DEECoPlugin, L1Strategy {
 		if (!known.containsKey(packet.srcNode))
 			return false;
 
-		LimitedSet<L1PacketInfo> set = known.get(packet.srcNode);
+		LimitedSortedSet<L1PacketInfo> set = known.get(packet.srcNode);
 		L1PacketInfo info = new L1PacketInfo(packet);
 
 		// Skip packets that are older than oldest packets from history
@@ -95,7 +96,7 @@ public class LowLevelRebroadcastStrategy implements DEECoPlugin, L1Strategy {
 	 */
 	private void makeKnown(L1Packet packet) {
 		if (!known.containsKey(packet.srcNode)) {
-			known.put(packet.srcNode, new LimitedSet<>(HISTORY_LIMIT));
+			known.put(packet.srcNode, new LimitedSortedSet<>(HISTORY_LIMIT));
 		}
 		known.get(packet.srcNode).add(new L1PacketInfo(packet));
 	}
@@ -170,7 +171,7 @@ public class LowLevelRebroadcastStrategy implements DEECoPlugin, L1Strategy {
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
  */
-class L1PacketInfo implements Comparable<L1PacketInfo> {
+class L1PacketInfo implements TimeSorted<L1PacketInfo> {
 	public final int dataId;
 	public final int startPos;
 
@@ -207,36 +208,5 @@ class L1PacketInfo implements Comparable<L1PacketInfo> {
 		} else {
 			return 0;
 		}
-	}
-}
-
-/**
- * Limited sorted set
- * 
- * Holds elements up to the limit. If the limit is reached the least(first) element is removed.
- * 
- * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
- *
- * @param <E>
- */
-class LimitedSet<E> extends TreeSet<E> {
-	private static final long serialVersionUID = 1L;
-	private final int limit;
-
-	public LimitedSet(int limit) {
-		if (limit < 1) {
-			throw new UnsupportedOperationException("Cannot create limited set with limit < 1");
-		}
-
-		this.limit = limit;
-	}
-
-	@Override
-	public boolean add(E e) {
-		while (size() >= limit) {
-			remove(first());
-		}
-
-		return super.add(e);
 	}
 }
