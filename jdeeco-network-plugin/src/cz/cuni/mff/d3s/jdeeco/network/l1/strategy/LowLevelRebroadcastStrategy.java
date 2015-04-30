@@ -41,6 +41,7 @@ public class LowLevelRebroadcastStrategy implements DEECoPlugin, L1Strategy {
 
 	private Layer1 layer1;
 	private Scheduler scheduler;
+	
 	/**
 	 * Map of known packets
 	 * 
