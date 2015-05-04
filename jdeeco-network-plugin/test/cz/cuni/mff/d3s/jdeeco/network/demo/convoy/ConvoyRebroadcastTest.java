@@ -76,7 +76,7 @@ public class ConvoyRebroadcastTest {
 		deeco3.deployEnsemble(ConvoyEnsemble.class);
 
 		// WHEN simulation is performed
-		realm.start(30000);
+		realm.start(15000);
 
 		// THEN the follower prints out the following (ass the networking should work)
 		assertThat(log.getLog(), containsString("Follower F0: me = (1,3) leader = (1,3)"));
