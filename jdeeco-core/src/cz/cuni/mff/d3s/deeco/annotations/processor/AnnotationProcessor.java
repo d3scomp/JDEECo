@@ -1014,8 +1014,6 @@ public class AnnotationProcessor {
 	/**
 	 * Creator a list of {@link Parameter} from a method. 
 	 * <p>
-	 * If the method has no parameters, it throws an exception.
-	 * </p>
 	 * 
 	 * @param method method to be parsed
 	 * @param pathOrigin indicates whether it is being called within the context of {@link #createComponentProcess}, {@link #createEnsembleDefinition} or {@link #addSecurityTags(Class, KnowledgeManager, ChangeSet)} .
