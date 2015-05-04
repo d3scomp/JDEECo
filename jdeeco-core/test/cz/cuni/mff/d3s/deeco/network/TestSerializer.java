@@ -16,6 +16,7 @@ import junitx.framework.ListAssert;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.In;
@@ -37,9 +38,12 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
+import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.security.RatingsEncryptor;
 import cz.cuni.mff.d3s.deeco.security.SecurityKeyManagerImpl;
+import cz.cuni.mff.d3s.deeco.timer.Timer;
+import cz.cuni.mff.d3s.deeco.timer.TimerEventListener;
 
 
 public class TestSerializer {
@@ -90,7 +94,8 @@ public class TestSerializer {
 		KnowledgeManagerContainer container = new KnowledgeManagerContainer(new CloningKnowledgeManagerFactory(), model);
 		List<EnsembleDefinition> ens = Collections.emptyList();
 		DefaultKnowledgeDataManager kdManager = new DefaultKnowledgeDataManager(ens, null);
-		kdManager.initialize(container, null, "", mock(Scheduler.class), null, null);
+		Scheduler scheduler = getFakeScheduler();
+		kdManager.initialize(container, null, "", scheduler, null, null);
 		
 		ValueSet initialKnowledge = null;
 		
@@ -116,6 +121,22 @@ public class TestSerializer {
 		List<? extends KnowledgeData> nkd = (List<? extends KnowledgeData>) Serializer.deserialize(data);
 		
 		ListAssert.assertEquals(kd, nkd);
+	}
+	
+	private Scheduler getFakeScheduler() {
+		Scheduler scheduler = mock(Scheduler.class);
+		Mockito.when(scheduler.getTimer()).thenReturn(new Timer() {
+			@Override
+			public long getCurrentMilliseconds() {
+				return 0;
+			}
+			
+			@Override
+			public void notifyAt(long time, TimerEventListener listener, DEECoContainer node) {
+				throw new UnsupportedOperationException("Fakt timer dows not support notifications");
+			}
+		});
+		return scheduler;
 	}
 	
 	@Test
