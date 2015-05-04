@@ -20,7 +20,14 @@ public class Follower {
 	public Waypoint position = new Waypoint(1, 1);
 	public Waypoint destination = new Waypoint(1, 3);
 	public Waypoint leaderPosition;
+	
+	private static StringBuilder sb;
 			
+	@SuppressWarnings("static-access")
+	public Follower(StringBuilder sb) {
+		this.sb= sb;
+	}
+
 	@Process
 	@PeriodicScheduling(period=250)
 	public static void followProcess(
@@ -35,6 +42,6 @@ public class Follower {
 			me.value.y += Integer.signum(leader.y - me.value.y);
 		}
 
-		System.out.println("Follower " + name + ": me = " + me.value + " leader = " + leader);
+		sb.append("Follower " + name + ": me = " + me.value + " leader = " + leader + "\n");
 	}
 }

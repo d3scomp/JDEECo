@@ -29,8 +29,6 @@ public class ConvoyEnsemble {
 			@In("coord.position") Waypoint lPosition,
 			@In("coord.path") List<Waypoint> lPath) {
 		
-		System.out.println("membership: "+ memberId + " " + coordId);
-
 		return 
 			!fPosition.equals(fDestination) &&
 			(Math.abs(lPosition.x - fPosition.x) + Math.abs(lPosition.y - fPosition.y)) <= 2 &&
@@ -43,8 +41,6 @@ public class ConvoyEnsemble {
 			@In("coord.id") String coordId,
 			@Out("member.leaderPosition") ParamHolder<Waypoint> fLeaderPosition,
 			@In("coord.position") Waypoint lPosition) {
-		
-		System.out.println("membership: "+ memberId + " " + coordId);
 		
 		fLeaderPosition.value = lPosition;
 	}

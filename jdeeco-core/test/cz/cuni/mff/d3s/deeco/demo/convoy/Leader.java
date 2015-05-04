@@ -24,7 +24,12 @@ public class Leader {
 	public List<Waypoint> path;
 	public Waypoint position;
 	
-	public Leader() {
+	private static StringBuilder sb;
+	
+	@SuppressWarnings("static-access")
+	public Leader(StringBuilder sb) {
+		this.sb = sb;
+		
 		path = Arrays.asList(
 				new Waypoint(3, 1),
 				new Waypoint(2, 1),
@@ -57,6 +62,6 @@ public class Leader {
 			me.value.y += Integer.signum(next.y - me.value.y);
 		}
 
-		System.out.println("Leader " + name + ": " + me.value);
+		sb.append("Leader " + name + ": " + me.value + "\n");
 	}
 }
