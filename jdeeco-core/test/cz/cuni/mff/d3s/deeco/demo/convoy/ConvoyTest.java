@@ -3,6 +3,9 @@ package cz.cuni.mff.d3s.deeco.demo.convoy;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+
 import org.junit.Test;
 
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
@@ -17,13 +20,25 @@ import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
 public class ConvoyTest {
 	
 	public static void main(String[] args) throws AnnotationProcessorException, InterruptedException, DEECoException, InstantiationException, IllegalAccessException {
-		new ConvoyTest().testConvoy();
+		new ConvoyTest().testConvoy(false);
 	}
 	
 	@Test
 	public void testConvoy() throws AnnotationProcessorException, InterruptedException, DEECoException, InstantiationException, IllegalAccessException {
-		
-		StringBuilder sb = new StringBuilder(); 
+		testConvoy(true);
+	}
+	
+	private void testConvoy(boolean silent) throws AnnotationProcessorException, InterruptedException, DEECoException, InstantiationException, IllegalAccessException {	
+
+		// In silent mode the output is kept in ByteArrayOutputStream and then tested
+		// whether it's correct. In non-silent mode the output is not tested, but printed to console.
+		PrintStream outputStream;
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		if (silent) {
+			outputStream = new PrintStream(baos);
+		} else {
+			outputStream = System.out;
+		}
 		
 		/* create main application container */
 		SimulationTimer simulationTimer = new DiscreteEventTimer();
@@ -33,15 +48,16 @@ public class ConvoyTest {
 		DEECoNode deeco = realm.createNode(0);
 		/* deploy components and ensembles */
 		
-		deeco.deployComponent(new Leader(sb));
-		deeco.deployComponent(new Follower(sb));
+		deeco.deployComponent(new Leader(outputStream));
+		deeco.deployComponent(new Follower(outputStream));
 		deeco.deployEnsemble(ConvoyEnsemble.class);
 		
 		/* WHEN simulation is performed */
 		realm.start(2000);
 		
 		// THEN the follower reaches his destination
-		assertThat(sb.toString(), containsString("Follower F: me = (1,3)"));
+		if (silent)
+			assertThat(baos.toString(), containsString("Follower F: me = (1,3)"));
 	}	
 
 }

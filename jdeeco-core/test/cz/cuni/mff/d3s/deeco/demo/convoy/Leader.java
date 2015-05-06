@@ -1,6 +1,7 @@
 package cz.cuni.mff.d3s.deeco.demo.convoy;
 
 
+import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,11 +25,10 @@ public class Leader {
 	public List<Waypoint> path;
 	public Waypoint position;
 	
-	private static StringBuilder sb;
+	private static PrintStream output;
 	
-	@SuppressWarnings("static-access")
-	public Leader(StringBuilder sb) {
-		this.sb = sb;
+	public Leader(PrintStream output) {
+		Leader.output = output;
 		
 		path = Arrays.asList(
 				new Waypoint(3, 1),
@@ -62,6 +62,6 @@ public class Leader {
 			me.value.y += Integer.signum(next.y - me.value.y);
 		}
 
-		sb.append("Leader " + name + ": " + me.value + "\n");
+		output.println("Leader " + name + ": " + me.value);
 	}
 }

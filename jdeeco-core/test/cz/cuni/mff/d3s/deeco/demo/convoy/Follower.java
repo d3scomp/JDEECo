@@ -1,5 +1,7 @@
 package cz.cuni.mff.d3s.deeco.demo.convoy;
 
+import java.io.PrintStream;
+
 import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
@@ -21,11 +23,10 @@ public class Follower {
 	public Waypoint destination = new Waypoint(1, 3);
 	public Waypoint leaderPosition;
 	
-	private static StringBuilder sb;
+	private static PrintStream output;
 			
-	@SuppressWarnings("static-access")
-	public Follower(StringBuilder sb) {
-		this.sb= sb;
+	public Follower(PrintStream output) {
+		Follower.output = output;
 	}
 
 	@Process
@@ -42,6 +43,6 @@ public class Follower {
 			me.value.y += Integer.signum(leader.y - me.value.y);
 		}
 
-		sb.append("Follower " + name + ": me = " + me.value + " leader = " + leader + "\n");
+		output.println("Follower " + name + ": me = " + me.value + " leader = " + leader);
 	}
 }
