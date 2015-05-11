@@ -156,6 +156,13 @@ public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 		layer2.sendL2Packet(packet, MANETBroadcastAddress.BROADCAST);
 	}
 
+	/**
+	 * Check whether the packet is blocked by boundary condition
+	 * 
+	 * @param packet
+	 *            Packet to inspect
+	 * @return Whether the packet is blocked by some condition
+	 */
 	private boolean isBounded(L2Packet packet) {
 		Object payload = packet.getObject();
 
@@ -177,6 +184,11 @@ public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 		return true;
 	}
 
+	/**
+	 * Gets the knowledge of the local node
+	 * 
+	 * @return
+	 */
 	private KnowledgeManager getNodeKnowledge() {
 		// FIXME: in the future, we need to unify the knowledge of all the local KMs.
 		return kmContainer.getLocals().iterator().next();
