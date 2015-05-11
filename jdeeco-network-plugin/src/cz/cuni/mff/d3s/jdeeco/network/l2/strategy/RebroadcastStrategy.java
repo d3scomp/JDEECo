@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import cz.cuni.mff.d3s.deeco.annotations.CommunicationBoundary;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
+import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeData;
@@ -30,8 +30,8 @@ import cz.cuni.mff.d3s.jdeeco.network.utils.TimeSorted;
 /**
  * Network Layer 2 rebroadcast strategy
  * 
- * Using RSSSI and delay to determine when to rebroadcast. Already known packets are not processed due to limited history
- * of seen packets.
+ * Using RSSSI and delay to determine when to rebroadcast. Already known packets are not processed due to limited
+ * history of seen packets.
  * 
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
@@ -46,6 +46,7 @@ public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 	private Layer2 layer2;
 	private Scheduler scheduler;
 	private List<EnsembleDefinition> ensembleDefinitions;
+	private KnowledgeManagerContainer kmContainer;
 
 	/**
 	 * Map of known packets
@@ -54,6 +55,12 @@ public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 	 */
 	private Map<Byte, LimitedSortedSet<L2PacketInfo>> known = new HashMap<>();
 
+	/**
+	 * Processes the L2 packet by rebroadcast strategy
+	 * 
+	 * The packet is dropped based on its properties. If none of the filters drop the packet it is scheduled for
+	 * rebroadcast.
+	 */
 	@Override
 	public void processL2Packet(L2Packet packet) {
 		// Get average RSSI
@@ -74,23 +81,26 @@ public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 		// Skip rebroadcast if packet is already known to us
 		if (shallDrop(packet))
 			return;
-		
+
 		// If the packet is blocked by communication boundary
-		if(isBounded(packet))
+		if (isBounded(packet))
 			return;
 
 		// Calculate rebroadcast delay
 		double rssi = rssiVal / rssiCnt;
 		long delayMs = (long) ((1 - rssi) * DELAY);
-		
+
 		scheduleRebroadcast(packet, delayMs);
 	}
 
 	/**
 	 * Tests whether we shall drop a packet without rebroadcast
 	 * 
+	 * This tests whether the packet was already processed in the past. The test is approximation with limited history.
+	 * 
 	 * @param packet
-	 * @return
+	 *            Packet to inspect
+	 * @return Whether we should drop packet as it was already processed.
 	 */
 	private boolean shallDrop(L2Packet packet) {
 		if (!known.containsKey(packet.receivedInfo.srcNode))
@@ -145,26 +155,31 @@ public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 	private void doRebroadcast(L2Packet packet) {
 		layer2.sendL2Packet(packet, MANETBroadcastAddress.BROADCAST);
 	}
-	
+
 	private boolean isBounded(L2Packet packet) {
 		Object payload = packet.getObject();
-		
+
 		// Non knowledge data are not blocked by bound
-		if(!(payload instanceof KnowledgeData)) 
+		if (!(payload instanceof KnowledgeData))
 			return false;
-		
+
 		KnowledgeData knowledgeData = (KnowledgeData) payload;
-		
-		for (EnsembleDefinition ens: ensembleDefinitions) {
+
+		for (EnsembleDefinition ens : ensembleDefinitions) {
 			CommunicationBoundaryPredicate boundary = ens.getCommunicationBoundary();
-		
+
 			// null boundary condition counts as a satisfied one
-			if (boundary == null || boundary.eval(knowledgeData, null /*sender*/)) {
+			if (boundary == null || boundary.eval(knowledgeData, getNodeKnowledge())) {
 				return false;
 			}
 		}
-		
+
 		return true;
+	}
+
+	private KnowledgeManager getNodeKnowledge() {
+		// FIXME: in the future, we need to unify the knowledge of all the local KMs.
+		return kmContainer.getLocals().iterator().next();
 	}
 
 	@Override
@@ -179,6 +194,7 @@ public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 		layer2 = network.getL2();
 		scheduler = container.getRuntimeFramework().getScheduler();
 		ensembleDefinitions = container.getRuntimeMetadata().getEnsembleDefinitions();
+		kmContainer = container.getRuntimeFramework().getContainer();
 
 		// Register this as L2 strategy
 		layer2.registerL2Strategy(this);
