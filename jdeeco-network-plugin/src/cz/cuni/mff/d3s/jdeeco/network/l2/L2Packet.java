@@ -19,10 +19,10 @@ import java.util.Arrays;
  *
  */
 public class L2Packet {
-	// Reference to layer needed for marshalling/unmarshalling packet content
+	// Reference to layer needed for marshaling/unmarshaling packet content
 	private Layer2 l2Layer;
-	public final PacketHeader header;
-	public final L2ReceivedInfo receivedInfo;
+	private final PacketHeader header;
+	private final L2ReceivedInfo receivedInfo;
 
 	// Marshalled packet data
 	private byte[] data;
@@ -33,16 +33,34 @@ public class L2Packet {
 	/**
 	 * Sets reference to Layer 2
 	 * 
-	 * This reference is needed before the packet can be marshalled/unmarshaled.
+	 * This reference is needed before the packet can be marshaled/unmarshaled.
 	 * 
 	 * @see getObject
 	 * @see getData
 	 * 
 	 * @param layer
-	 *            Layer 2 to be used for marshalling/unmarshalling this packet
+	 *            Layer 2 to be used for marshaling/unmarshaling this packet
 	 */
 	void setLayer(Layer2 layer) {
 		l2Layer = layer;
+	}
+
+	/**
+	 * Gets packet header
+	 * 
+	 * @return packet header
+	 */
+	public PacketHeader getHeader() {
+		return header;
+	}
+
+	/**
+	 * Gets packet received info
+	 * 
+	 * @return Packet received info
+	 */
+	public L2ReceivedInfo getReceivedInfo() {
+		return receivedInfo;
 	}
 
 	/**

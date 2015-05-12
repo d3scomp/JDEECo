@@ -1,6 +1,7 @@
 package cz.cuni.mff.d3s.jdeeco.network.l2.strategy;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +46,7 @@ public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 
 	private Layer2 layer2;
 	private Scheduler scheduler;
-	private List<EnsembleDefinition> ensembleDefinitions;
+	private Collection<EnsembleDefinition> ensembleDefinitions;
 	private KnowledgeManagerContainer kmContainer;
 
 	/**
@@ -66,7 +67,7 @@ public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 		// Get average RSSI
 		double rssiVal = 0;
 		int rssiCnt = 0;
-		for (L1Packet l1 : packet.receivedInfo.srcFragments) {
+		for (L1Packet l1 : packet.getReceivedInfo().srcFragments) {
 			if (l1.receivedInfo instanceof MANETReceivedInfo) {
 				MANETReceivedInfo info = (MANETReceivedInfo) l1.receivedInfo;
 				rssiVal += info.rssi;
@@ -103,10 +104,10 @@ public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 	 * @return Whether we should drop packet as it was already processed.
 	 */
 	private boolean shallDrop(L2Packet packet) {
-		if (!known.containsKey(packet.receivedInfo.srcNode))
+		if (!known.containsKey(packet.getReceivedInfo().srcNode))
 			return false;
 
-		LimitedSortedSet<L2PacketInfo> set = known.get(packet.receivedInfo.srcNode);
+		LimitedSortedSet<L2PacketInfo> set = known.get(packet.getReceivedInfo().srcNode);
 		L2PacketInfo info = new L2PacketInfo(packet);
 
 		// Skip packets that are older than oldest packets from history
@@ -126,11 +127,10 @@ public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 	 * @param packet
 	 */
 	private void makeKnown(L2Packet packet) {
-		if (!known.containsKey(packet.receivedInfo.srcNode)) {
-			known.put(packet.receivedInfo.srcNode, new LimitedSortedSet<>(HISTORY_LIMIT));
+		if (!known.containsKey(packet.getReceivedInfo().srcNode)) {
+			known.put(packet.getReceivedInfo().srcNode, new LimitedSortedSet<>(HISTORY_LIMIT));
 		}
-		known.get(packet.receivedInfo.srcNode).add(new L2PacketInfo(packet));
-	}
+		known.get(packet.getReceivedInfo().srcNode).add(new L2PacketInfo(packet));	}
 
 	/**
 	 * Schedule packet for rebroadcast
@@ -181,7 +181,8 @@ public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 			}
 		}
 
-		return true;
+		// When ensemble definition were empty then relay packet
+		return !ensembleDefinitions.isEmpty();
 	}
 
 	/**
@@ -232,6 +233,50 @@ public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 			return null;
 		}
 	}
+
+	/**
+	 * Sets layer 2
+	 * 
+	 * To be used in tests
+	 * 
+	 * @param layer2
+	 */
+	void setLayer2(Layer2 layer2) {
+		this.layer2 = layer2;
+	}
+
+	/**
+	 * Sets scheduler
+	 * 
+	 * To be used in tests
+	 * 
+	 * @param scheduler
+	 */
+	void setScheduler(Scheduler scheduler) {
+		this.scheduler = scheduler;
+	}
+
+	/**
+	 * Sets ensemble definitions
+	 * 
+	 * To be used in tests
+	 * 
+	 * @param ensembleDefinitions
+	 */
+	void setEnsembleDefinitions(Collection<EnsembleDefinition> ensembleDefinitions) {
+		this.ensembleDefinitions = ensembleDefinitions;
+	}
+
+	/**
+	 * Sets KnowledgeManagerContainer
+	 * 
+	 * To be used in tests
+	 * 
+	 * @param kmContainer
+	 */
+	void setKmContainer(KnowledgeManagerContainer kmContainer) {
+		this.kmContainer = kmContainer;
+	}
 }
 
 /**
@@ -243,7 +288,7 @@ class L2PacketInfo implements TimeSorted<L2PacketInfo> {
 	public final int dataId;
 
 	public L2PacketInfo(final L2Packet packet) {
-		dataId = packet.receivedInfo.dataId;
+		dataId = packet.getReceivedInfo().dataId;
 	}
 
 	@Override

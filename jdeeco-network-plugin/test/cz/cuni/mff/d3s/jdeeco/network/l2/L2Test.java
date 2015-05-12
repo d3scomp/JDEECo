@@ -50,7 +50,7 @@ public class L2Test {
 	 */
 	@Before
 	public void initializeL2() {
-		// Setup marshallers to be used by layer
+		// Setup marshalers to be used by layer
 		registry.registerMarshaller(L2PacketType.KNOWLEDGE, new SerializingMarshaller());
 
 		// Instantiate layer

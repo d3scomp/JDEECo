@@ -124,7 +124,7 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 			/**
 			 * Fragment the L2 packet into L1 packets.
 			 */
-			L2ReceivedInfo receivedInfo = l2Packet.receivedInfo;
+			L2ReceivedInfo receivedInfo = l2Packet.getReceivedInfo();
 			int totalSize = l2Packet.getData().length;
 			byte srcNode;
 			int dataId;
