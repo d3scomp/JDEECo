@@ -5,4 +5,4 @@
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
  */
-package cz.cuni.mff.d3s.jdeeco.network.l2.rebroadcast.bounded;
+package cz.cuni.mff.d3s.jdeeco.network.l2.strategy;

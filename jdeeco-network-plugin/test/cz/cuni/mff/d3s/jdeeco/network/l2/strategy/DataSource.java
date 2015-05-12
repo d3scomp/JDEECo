@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.jdeeco.network.l2.rebroadcast.bounded;
+package cz.cuni.mff.d3s.jdeeco.network.l2.strategy;
 
 import cz.cuni.mff.d3s.deeco.annotations.Component;
 

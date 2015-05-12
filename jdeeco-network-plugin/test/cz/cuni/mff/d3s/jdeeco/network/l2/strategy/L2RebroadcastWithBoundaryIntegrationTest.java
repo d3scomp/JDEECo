@@ -6,7 +6,7 @@
  *
  */
 
-package cz.cuni.mff.d3s.jdeeco.network.l2.rebroadcast.bounded;
+package cz.cuni.mff.d3s.jdeeco.network.l2.strategy;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -24,7 +24,7 @@ import cz.cuni.mff.d3s.jdeeco.network.l2.strategy.RebroadcastStrategy;
 import cz.cuni.mff.d3s.jdeeco.position.PositionPlugin;
 import cz.cuni.mff.d3s.jdeeco.publishing.DefaultKnowledgePublisher;
 
-public class L2RebroadcastWithBoundary {
+public class L2RebroadcastWithBoundaryIntegrationTest {
 	@Test
 	public void testBoundedRebroadcast() throws Exception {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
