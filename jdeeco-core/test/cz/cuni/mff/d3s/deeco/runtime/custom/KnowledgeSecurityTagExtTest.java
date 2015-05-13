@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.AbsoluteSecurityRoleArgument;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.AccessRights;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.BlankSecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathSecurityRoleArgument;
@@ -79,6 +80,7 @@ public class KnowledgeSecurityTagExtTest {
 		
 		role.getConsistsOf().add(parentRole);
 		tag.setRequiredRole(role);
+		tag.setAccessRights(AccessRights.READ);
 		return tag;
 	}
 	

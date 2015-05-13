@@ -73,4 +73,12 @@ public interface SecurityKeyManager {
 	 * 			role name and argument values
 	 */
 	RoleWithArguments getRoleByKey(Integer roleKey);
+	
+	/**
+	 * Gets the public key of the CA.
+	 *
+	 * @return the public key
+	 */
+	PublicKey getAuthorityPublicKey() throws InvalidKeyException, CertificateEncodingException, KeyStoreException, NoSuchAlgorithmException, SecurityException, SignatureException, IllegalStateException;
+
 }

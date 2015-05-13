@@ -11,7 +11,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -95,7 +94,7 @@ public class EnsembleTaskTest {
 		initMocks(this);
 		
 		model = new SampleRuntimeModel();
-		ratingsManager = RatingsManagerImpl.getInstance();
+		ratingsManager = new RatingsManagerImpl();
 		
 		List<RatingsChangeSet> initialChangeSets = new ArrayList<>();
 		initialChangeSets.add(new RatingsChangeSet("author1", "KM1", RuntimeModelHelper.createKnowledgePath("level1", "rating"), PathRating.OK));
@@ -195,11 +194,6 @@ public class EnsembleTaskTest {
 		this.task = new EnsembleTask(model.ensembleController, scheduler, architectureObserver, kmContainer, ratingsManager);
 	}
 	
-	@After
-	public void tearDown() {
-		RatingsManagerImpl.resetSingleton();
-	}
-	
 	@Test
 	public void testSchedulingPeriod() {
 		// GIVEN an EnsembleTask initialized with an InstanceEnsemblingController
@@ -265,12 +259,12 @@ public class EnsembleTaskTest {
 		// THEN exchange rating parameters get correct data
 		assertEquals(2, model.getExchangeRatingSum());
 		// THEN it gets the needed local knowledge
-		// 7x = 2x membership (COORD), 2x membership (MEMBER), 1x exchange (COORD), 1x exchange (MEMBER), 1x rating process, 4x knowledge presence checks
-		verify(knowledgeManager, times(11)).get(anyCollectionOf(KnowledgePath.class));
+		// 7x = 2x membership (COORD), 2x membership (MEMBER), 1x exchange (COORD), 1x exchange (MEMBER), 1x rating process, 4x knowledge presence checks, 4x hash code
+		verify(knowledgeManager, times(15)).get(anyCollectionOf(KnowledgePath.class));
 		// AND it retrieves the other knowledge managers
 		verify(shadowReplicasAccess).getShadowKnowledgeManagers();
-		// AND it gets knowledge from them
-		verify(shadowKnowledgeManager1, times(8)).get(anyCollectionOf(KnowledgePath.class));
+		// AND it gets knowledge from them, 4x hash code
+		verify(shadowKnowledgeManager1, times(12)).get(anyCollectionOf(KnowledgePath.class));
 		verify(shadowKnowledgeManager2, times(2)).get(anyCollectionOf(KnowledgePath.class));		
 		// AND it executes the membership (there are four different combinations for an ensemble with the local component acting as coordinator or as a member)
 		assertTrue(model.getMembershipMethodCallCounter() == 4);

@@ -17,13 +17,13 @@ import java.util.stream.Collectors;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.LocalKnowledgeTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeComponentId;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.WildcardSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper;
 
@@ -763,15 +763,15 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	}
 	
 	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager#getKnowledgeSecurityTags(cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField)
+	 * @see cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager#getEffectiveSecurityTags(cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField)
 	 */
 	@Override
-	public List<KnowledgeSecurityTag> getKnowledgeSecurityTags(PathNodeField pathNodeField) {		
+	public List<WildcardSecurityTag> getEffectiveSecurityTags(PathNodeField pathNodeField) {		
 		List<SecurityTag> result = securityTags.get(pathNodeField);
 		if (result == null) {
 			return Collections.emptyList();
 		} else {
-			return result.stream().filter(tag -> tag instanceof KnowledgeSecurityTag).map(tag -> (KnowledgeSecurityTag)tag).collect(Collectors.toList());
+			return result.stream().filter(tag -> tag instanceof WildcardSecurityTag).map(tag -> (WildcardSecurityTag)tag).collect(Collectors.toList());
 		}
 	}
 
@@ -796,7 +796,15 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		if (!KnowledgePathHelper.isAbsolutePath(knowledgePath)) {
 			throw new IllegalArgumentException("Only absolute knowledge paths can be checked for locking.");
 		}
-		return this.lockedKnowledgePaths.contains(knowledgePath);
+		
+		boolean locked = false;
+		KnowledgePath modifiablePath = KnowledgePathHelper.cloneKnowledgePath(knowledgePath);
+		
+		while ( !(locked = lockedKnowledgePaths.contains(modifiablePath)) && modifiablePath.getNodes().size() > 0) {
+			modifiablePath.getNodes().remove(modifiablePath.getNodes().size() - 1);
+		}
+		
+		return locked;
 	}
 
 	/* (non-Javadoc)

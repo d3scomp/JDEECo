@@ -1098,13 +1098,22 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int KNOWLEDGE_SECURITY_TAG = 20;
 
 	/**
+	 * The feature id for the '<em><b>Access Rights</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int KNOWLEDGE_SECURITY_TAG__ACCESS_RIGHTS = SECURITY_TAG_FEATURE_COUNT + 0;
+
+	/**
 	 * The feature id for the '<em><b>Required Role</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int KNOWLEDGE_SECURITY_TAG__REQUIRED_ROLE = SECURITY_TAG_FEATURE_COUNT + 0;
+	int KNOWLEDGE_SECURITY_TAG__REQUIRED_ROLE = SECURITY_TAG_FEATURE_COUNT + 1;
 
 	/**
 	 * The number of structural features of the '<em>Knowledge Security Tag</em>' class.
@@ -1113,7 +1122,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int KNOWLEDGE_SECURITY_TAG_FEATURE_COUNT = SECURITY_TAG_FEATURE_COUNT + 1;
+	int KNOWLEDGE_SECURITY_TAG_FEATURE_COUNT = SECURITY_TAG_FEATURE_COUNT + 2;
 
 	/**
 	 * The number of operations of the '<em>Knowledge Security Tag</em>' class.
@@ -1456,6 +1465,43 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int LOCAL_KNOWLEDGE_TAG_OPERATION_COUNT = SECURITY_TAG_OPERATION_COUNT + 0;
 
 	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.WildcardSecurityTagImpl <em>Wildcard Security Tag</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.WildcardSecurityTagImpl
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getWildcardSecurityTag()
+	 * @generated
+	 */
+	int WILDCARD_SECURITY_TAG = 29;
+
+	/**
+	 * The feature id for the '<em><b>Access Rights</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WILDCARD_SECURITY_TAG__ACCESS_RIGHTS = SECURITY_TAG_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>Wildcard Security Tag</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WILDCARD_SECURITY_TAG_FEATURE_COUNT = SECURITY_TAG_FEATURE_COUNT + 1;
+
+	/**
+	 * The number of operations of the '<em>Wildcard Security Tag</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WILDCARD_SECURITY_TAG_OPERATION_COUNT = SECURITY_TAG_OPERATION_COUNT + 0;
+
+	/**
 	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind <em>Parameter Kind</em>}' enum.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1463,7 +1509,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getParameterKind()
 	 * @generated
 	 */
-	int PARAMETER_KIND = 29;
+	int PARAMETER_KIND = 30;
 
 	/**
 	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ContextKind <em>Context Kind</em>}' enum.
@@ -1473,7 +1519,17 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getContextKind()
 	 * @generated
 	 */
-	int CONTEXT_KIND = 30;
+	int CONTEXT_KIND = 31;
+
+	/**
+	 * The meta object id for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.AccessRights <em>Access Rights</em>}' enum.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.AccessRights
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getAccessRights()
+	 * @generated
+	 */
+	int ACCESS_RIGHTS = 32;
 
 	/**
 	 * The meta object id for the '<em>Method</em>' data type.
@@ -1483,7 +1539,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getMethod()
 	 * @generated
 	 */
-	int METHOD = 31;
+	int METHOD = 33;
 
 	/**
 	 * The meta object id for the '<em>Knowledge Manager</em>' data type.
@@ -1493,7 +1549,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getKnowledgeManager()
 	 * @generated
 	 */
-	int KNOWLEDGE_MANAGER = 32;
+	int KNOWLEDGE_MANAGER = 34;
 
 	/**
 	 * The meta object id for the '<em>Shadow Knowledge Manager Registry</em>' data type.
@@ -1503,7 +1559,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getShadowKnowledgeManagerRegistry()
 	 * @generated
 	 */
-	int SHADOW_KNOWLEDGE_MANAGER_REGISTRY = 33;
+	int SHADOW_KNOWLEDGE_MANAGER_REGISTRY = 35;
 
 	/**
 	 * The meta object id for the '<em>Communication Boundary</em>' data type.
@@ -1513,7 +1569,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getCommunicationBoundary()
 	 * @generated
 	 */
-	int COMMUNICATION_BOUNDARY = 34;
+	int COMMUNICATION_BOUNDARY = 36;
 
 
 	/**
@@ -1524,7 +1580,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getRatingsManager()
 	 * @generated
 	 */
-	int RATINGS_MANAGER = 35;
+	int RATINGS_MANAGER = 37;
 
 
 	/**
@@ -2359,6 +2415,27 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EClass getSecurityTag();
 
 	/**
+	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.WildcardSecurityTag <em>Wildcard Security Tag</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Wildcard Security Tag</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.WildcardSecurityTag
+	 * @generated
+	 */
+	EClass getWildcardSecurityTag();
+
+	/**
+	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.WildcardSecurityTag#getAccessRights <em>Access Rights</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Access Rights</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.WildcardSecurityTag#getAccessRights()
+	 * @see #getWildcardSecurityTag()
+	 * @generated
+	 */
+	EAttribute getWildcardSecurityTag_AccessRights();
+
+	/**
 	 * Returns the meta object for enum '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind <em>Parameter Kind</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2377,6 +2454,16 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 */
 	EEnum getContextKind();
+
+	/**
+	 * Returns the meta object for enum '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.AccessRights <em>Access Rights</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for enum '<em>Access Rights</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.AccessRights
+	 * @generated
+	 */
+	EEnum getAccessRights();
 
 	/**
 	 * Returns the meta object for the containment reference list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole#getConsistsOf <em>Consists Of</em>}'.
@@ -3150,6 +3237,24 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EClass SECURITY_TAG = eINSTANCE.getSecurityTag();
 
 		/**
+		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.WildcardSecurityTagImpl <em>Wildcard Security Tag</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.WildcardSecurityTagImpl
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getWildcardSecurityTag()
+		 * @generated
+		 */
+		EClass WILDCARD_SECURITY_TAG = eINSTANCE.getWildcardSecurityTag();
+
+		/**
+		 * The meta object literal for the '<em><b>Access Rights</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute WILDCARD_SECURITY_TAG__ACCESS_RIGHTS = eINSTANCE.getWildcardSecurityTag_AccessRights();
+
+		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind <em>Parameter Kind</em>}' enum.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -3168,6 +3273,16 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * @generated
 		 */
 		EEnum CONTEXT_KIND = eINSTANCE.getContextKind();
+
+		/**
+		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.AccessRights <em>Access Rights</em>}' enum.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.AccessRights
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getAccessRights()
+		 * @generated
+		 */
+		EEnum ACCESS_RIGHTS = eINSTANCE.getAccessRights();
 
 		/**
 		 * The meta object literal for the '<em><b>Consists Of</b></em>' containment reference list feature.

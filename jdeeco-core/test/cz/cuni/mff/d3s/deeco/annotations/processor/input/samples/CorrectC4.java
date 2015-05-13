@@ -7,6 +7,7 @@ import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.HasRole;
 import cz.cuni.mff.d3s.deeco.annotations.RoleDefinition;
 import cz.cuni.mff.d3s.deeco.annotations.RoleParam;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.AccessRights;
 
 /**
  * @author Ondřej Štumpf
@@ -44,10 +45,10 @@ public class CorrectC4 {
 	
 	public String name;
 	
-	@Allow(Role1.class)
-	@Allow(Role3.class)
+	@Allow(value = Role1.class, accessRights = AccessRights.READ)
+	@Allow(value = Role3.class, accessRights = AccessRights.WRITE)
 	public Integer capacity;
 	
-	@Allow(Role2.class)
+	@Allow(value = Role2.class, accessRights = AccessRights.READ_WRITE)
 	public Date time;
 }

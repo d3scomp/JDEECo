@@ -6,10 +6,10 @@ import java.util.List;
 import cz.cuni.mff.d3s.deeco.annotations.Local;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.WildcardSecurityTag;
 
 /**
  * This interface allows to read the value of a determined knowledgeList. Also, the interface allows 
@@ -88,13 +88,6 @@ public interface ReadOnlyKnowledgeManager {
 	/**
 	 * Gets security annotations associated with given field (setup during annotation processing)
 	 * @param pathNodeField
-	 * @return list of knowledge security tags (without local tags)
-	 */
-	List<KnowledgeSecurityTag> getKnowledgeSecurityTags(PathNodeField pathNodeField);
-	
-	/**
-	 * Gets security annotations associated with given field (setup during annotation processing)
-	 * @param pathNodeField
 	 * @return list of security tags (including local tags)
 	 */
 	List<SecurityTag> getSecurityTags(PathNodeField pathNodeField);
@@ -112,5 +105,12 @@ public interface ReadOnlyKnowledgeManager {
 	 * @return true if the knowledge value cannot be modified
 	 */
 	boolean isLocked(KnowledgePath knowledgePath);
+
+	/**
+	 * Returns the effective security tags associated with the path field, i.e. without the {@link LocalSecurityTag}.
+	 * @param pathNodeField
+	 * @return list of security tags (excluding local tags)
+	 */
+	List<WildcardSecurityTag> getEffectiveSecurityTags(PathNodeField pathNodeField);
 	
 }

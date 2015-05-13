@@ -4,10 +4,13 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import junitx.framework.FileAssert;
 
@@ -22,6 +25,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import cz.cuni.mff.d3s.deeco.DeecoProperties;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.pathparser.ParseException;
@@ -35,6 +39,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.AbsoluteSecurityRoleArgument;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.AccessRights;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.BlankSecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
@@ -50,11 +55,14 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.PathSecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RatingsProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.WildcardSecurityTag;
+import cz.cuni.mff.d3s.deeco.model.runtime.custom.WildcardSecurityTagExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 
 /**
  * 
  * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
+ * @author Ondřej Štumpf
  *
  */
 public class AnnotationProcessorTest {
@@ -76,6 +84,9 @@ public class AnnotationProcessorTest {
 	@After
 	public void tearDown() throws IOException {
 		Files.deleteIfExists(tempFile.toPath());
+		
+		// revert to default setting
+		System.setProperty(DeecoProperties.VERIFY_JARS, "false");
 	}
 	
 	/*
@@ -113,35 +124,44 @@ public class AnnotationProcessorTest {
 		ComponentInstance component = model.getComponentInstances().get(0);
 		KnowledgeManager km = component.getKnowledgeManager();
 		
-		List<KnowledgeSecurityTag> nameSecurityTags = km.getKnowledgeSecurityTags(RuntimeModelHelper.createPathNodeField("name"));
-		assertEquals(0, nameSecurityTags.size());
+		List<WildcardSecurityTag> nameSecurityTags = km.getEffectiveSecurityTags(RuntimeModelHelper.createPathNodeField("name"));		
+		assertEquals(1, nameSecurityTags.size());
+		assertEquals(WildcardSecurityTagExt.class, nameSecurityTags.get(0).getClass());
+		assertEquals(AccessRights.READ_WRITE, nameSecurityTags.get(0).getAccessRights());
 		
-		List<KnowledgeSecurityTag> capacitySecurityTags = km.getKnowledgeSecurityTags(RuntimeModelHelper.createPathNodeField("capacity"));
+		List<WildcardSecurityTag> capacitySecurityTags = km.getEffectiveSecurityTags(RuntimeModelHelper.createPathNodeField("capacity"));
 		assertEquals(2, capacitySecurityTags.size());
-		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role1.class.getName(), capacitySecurityTags.get(0).getRequiredRole().getRoleName());
-		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role3.class.getName(), capacitySecurityTags.get(1).getRequiredRole().getRoleName());
-		assertEquals(1, capacitySecurityTags.get(0).getRequiredRole().getArguments().size());
-		assertEquals(0, capacitySecurityTags.get(1).getRequiredRole().getArguments().size());
-		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role3.class.getName(), capacitySecurityTags.get(0).getRequiredRole().getAliasRole().getRoleName());
-		assertEquals(capacitySecurityTags.get(0).getRequiredRole().getAliasRole().getArguments().get(0), capacitySecurityTags.get(0).getRequiredRole().getArguments().get(0));
+		List<KnowledgeSecurityTag> capacityKnowledgeSecurityTags = capacitySecurityTags.stream().map(x -> (KnowledgeSecurityTag)x).collect(Collectors.toList());
 		
-		List<KnowledgeSecurityTag> timeSecurityTags = km.getKnowledgeSecurityTags(RuntimeModelHelper.createPathNodeField("time"));
+		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role1.class.getName(), capacityKnowledgeSecurityTags.get(0).getRequiredRole().getRoleName());
+		assertEquals(AccessRights.READ, capacityKnowledgeSecurityTags.get(0).getAccessRights());
+		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role3.class.getName(), capacityKnowledgeSecurityTags.get(1).getRequiredRole().getRoleName());
+		assertEquals(AccessRights.WRITE, capacityKnowledgeSecurityTags.get(1).getAccessRights());
+		assertEquals(1, capacityKnowledgeSecurityTags.get(0).getRequiredRole().getArguments().size());
+		assertEquals(0, capacityKnowledgeSecurityTags.get(1).getRequiredRole().getArguments().size());
+		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role3.class.getName(), capacityKnowledgeSecurityTags.get(0).getRequiredRole().getAliasRole().getRoleName());
+		assertEquals(capacityKnowledgeSecurityTags.get(0).getRequiredRole().getAliasRole().getArguments().get(0), capacityKnowledgeSecurityTags.get(0).getRequiredRole().getArguments().get(0));
+		
+		List<WildcardSecurityTag> timeSecurityTags = km.getEffectiveSecurityTags(RuntimeModelHelper.createPathNodeField("time"));
 		assertEquals(1, timeSecurityTags.size());
-		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role2.class.getName(), timeSecurityTags.get(0).getRequiredRole().getRoleName());
-		assertEquals(5, timeSecurityTags.get(0).getRequiredRole().getArguments().size());
+		List<KnowledgeSecurityTag> timeKnowledgeSecurityTags = timeSecurityTags.stream().map(x -> (KnowledgeSecurityTag)x).collect(Collectors.toList());
 		
-		PathSecurityRoleArgument pathArgument = (PathSecurityRoleArgument)timeSecurityTags.get(0).getRequiredRole().getArguments().get(0);
+		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role2.class.getName(), timeKnowledgeSecurityTags.get(0).getRequiredRole().getRoleName());
+		assertEquals(AccessRights.READ_WRITE, timeKnowledgeSecurityTags.get(0).getAccessRights());
+		assertEquals(5, timeKnowledgeSecurityTags.get(0).getRequiredRole().getArguments().size());
+		
+		PathSecurityRoleArgument pathArgument = (PathSecurityRoleArgument)timeKnowledgeSecurityTags.get(0).getRequiredRole().getArguments().get(0);
 		assertEquals(RuntimeModelHelper.createKnowledgePath("name"), pathArgument.getKnowledgePath());
 		assertEquals("name", pathArgument.getName());
-		assertEquals("time", timeSecurityTags.get(0).getRequiredRole().getArguments().get(1).getName());
-		assertTrue(timeSecurityTags.get(0).getRequiredRole().getArguments().get(0) instanceof PathSecurityRoleArgument);
-		assertTrue(timeSecurityTags.get(0).getRequiredRole().getArguments().get(1) instanceof BlankSecurityRoleArgument);
-		assertTrue(timeSecurityTags.get(0).getRequiredRole().getArguments().get(2) instanceof AbsoluteSecurityRoleArgument);
-		assertTrue(timeSecurityTags.get(0).getRequiredRole().getArguments().get(3) instanceof AbsoluteSecurityRoleArgument);
+		assertEquals("time", timeKnowledgeSecurityTags.get(0).getRequiredRole().getArguments().get(1).getName());
+		assertTrue(timeKnowledgeSecurityTags.get(0).getRequiredRole().getArguments().get(0) instanceof PathSecurityRoleArgument);
+		assertTrue(timeKnowledgeSecurityTags.get(0).getRequiredRole().getArguments().get(1) instanceof BlankSecurityRoleArgument);
+		assertTrue(timeKnowledgeSecurityTags.get(0).getRequiredRole().getArguments().get(2) instanceof AbsoluteSecurityRoleArgument);
+		assertTrue(timeKnowledgeSecurityTags.get(0).getRequiredRole().getArguments().get(3) instanceof AbsoluteSecurityRoleArgument);
 		
-		assertEquals(RuntimeModelHelper.createKnowledgePath("name"), ((PathSecurityRoleArgument) timeSecurityTags.get(0).getRequiredRole().getArguments().get(0)).getKnowledgePath());
-		assertEquals(123, ((AbsoluteSecurityRoleArgument) timeSecurityTags.get(0).getRequiredRole().getArguments().get(2)).getValue());
-		assertEquals("some_value", ((AbsoluteSecurityRoleArgument) timeSecurityTags.get(0).getRequiredRole().getArguments().get(3)).getValue());
+		assertEquals(RuntimeModelHelper.createKnowledgePath("name"), ((PathSecurityRoleArgument) timeKnowledgeSecurityTags.get(0).getRequiredRole().getArguments().get(0)).getKnowledgePath());
+		assertEquals(123, ((AbsoluteSecurityRoleArgument) timeKnowledgeSecurityTags.get(0).getRequiredRole().getArguments().get(2)).getValue());
+		assertEquals("some_value", ((AbsoluteSecurityRoleArgument) timeKnowledgeSecurityTags.get(0).getRequiredRole().getArguments().get(3)).getValue());
 		
 		assertEquals(2, component.getSecurityRoles().size());
 		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC4.Role1.class.getName(), component.getSecurityRoles().get(0).getRoleName());
@@ -155,6 +175,77 @@ public class AnnotationProcessorTest {
 		assertEquals("time", component.getSecurityRoles().get(1).getArguments().get(1).getName());		
 	}
 		
+	@Test 
+	public void testSecurityJarVerification1() throws AnnotationProcessorException, ClassNotFoundException, IOException, InstantiationException, IllegalAccessException {
+		// given jar verification is turned on
+		System.setProperty(DeecoProperties.VERIFY_JARS, "true");
+		
+		File jar = new File("test/cz/cuni/mff/d3s/deeco/annotations/processor/input/samples/CorrectUnsigned.jar");
+		URLClassLoader classLoader = new URLClassLoader(new URL[] { jar.toURI().toURL() }, getClass().getClassLoader());
+		
+		// given component is assigned roles but its jar is not signed
+		RuntimeMetadata model = factory.createRuntimeMetadata(); 
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		Object input = classLoader.loadClass("cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectSigned").newInstance();
+		
+		// then exception is thrown
+		exception.expect(AnnotationProcessorException.class);
+		exception.expectMessage("is missing signature attributes.");
+		
+		// when process() is called
+		processor.process(input);
+		
+		// revert to default
+		System.setProperty(DeecoProperties.VERIFY_JARS, "false");
+		classLoader.close();		
+	}
+	
+	@Test 
+	public void testSecurityJarVerification2() throws AnnotationProcessorException, ClassNotFoundException, IOException, InstantiationException, IllegalAccessException {
+		// given jar verification is turned on
+		System.setProperty(DeecoProperties.VERIFY_JARS, "true");
+		
+		// JAR signed using "ca" certificate, from "keystore/keystore.jks". Keystore password is blank, certificate password is "Pa55w0rd".
+		File jar = new File("test/cz/cuni/mff/d3s/deeco/annotations/processor/input/samples/CorrectSigned.jar");
+		URLClassLoader classLoader = new URLClassLoader(new URL[] { jar.toURI().toURL() }, getClass().getClassLoader());
+		
+		// given component is assigned roles but its jar is not signed
+		RuntimeMetadata model = factory.createRuntimeMetadata(); 
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		Object input = classLoader.loadClass("cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectSigned").newInstance();
+		
+		// when process() is called
+		processor.process(input);
+		
+		// then annotations are parsed correctly
+		assertEquals(1, model.getComponentInstances().size());
+		
+		classLoader.close();		
+	}
+	
+	@Test 
+	public void testSecurityJarVerification3() throws AnnotationProcessorException, ClassNotFoundException, IOException, InstantiationException, IllegalAccessException {
+		// given jar verification is turned on
+		System.setProperty(DeecoProperties.VERIFY_JARS, "true");
+		
+		// signed but not with the right certificate
+		File jar = new File("test/cz/cuni/mff/d3s/deeco/annotations/processor/input/samples/WrongSigned.jar");
+		URLClassLoader classLoader = new URLClassLoader(new URL[] { jar.toURI().toURL() }, getClass().getClassLoader());
+		
+		RuntimeMetadata model = factory.createRuntimeMetadata(); 
+		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
+		Object input = classLoader.loadClass("cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectSigned").newInstance();
+		
+		// then exception is thrown
+		exception.expect(AnnotationProcessorException.class);	
+		exception.expectMessage("not signed by CA certificate.");
+		
+		// when process() is called
+		processor.process(input);
+		
+		classLoader.close();		
+	}
+	
 	@Test 
 	public void testCloningOfSecurityAnnotations() throws AnnotationProcessorException {
 		// given component with security annotations is processed by the annotations processor
@@ -170,8 +261,10 @@ public class AnnotationProcessorTest {
 		ComponentInstance component = model.getComponentInstances().get(0);
 		KnowledgeManager km = component.getKnowledgeManager();
 		
-		List<KnowledgeSecurityTag> timeSecurityTags = km.getKnowledgeSecurityTags(RuntimeModelHelper.createPathNodeField("time"));
-		SecurityRole role = timeSecurityTags.get(0).getRequiredRole();		
+		List<WildcardSecurityTag> timeSecurityTags = km.getEffectiveSecurityTags(RuntimeModelHelper.createPathNodeField("time"));
+		List<KnowledgeSecurityTag> timeKnowledgeSecurityTags = timeSecurityTags.stream().map(x -> (KnowledgeSecurityTag)x).collect(Collectors.toList());
+		
+		SecurityRole role = timeKnowledgeSecurityTags.get(0).getRequiredRole();		
 		AbsoluteSecurityRoleArgument argument = (AbsoluteSecurityRoleArgument) role.getArguments().stream().filter(arg -> arg.getName().equals("x_array")).findFirst().get();
 		
 		// get current content of the tag
@@ -263,8 +356,10 @@ public class AnnotationProcessorTest {
 		ComponentInstance component = model.getComponentInstances().get(0);
 		KnowledgeManager km = component.getKnowledgeManager();
 		
-		List<KnowledgeSecurityTag> nameSecurityTags = km.getKnowledgeSecurityTags(RuntimeModelHelper.createPathNodeField("name"));
-		SecurityRole securityRole = nameSecurityTags.get(0).getRequiredRole();
+		List<WildcardSecurityTag> nameSecurityTags = km.getEffectiveSecurityTags(RuntimeModelHelper.createPathNodeField("name"));
+		List<KnowledgeSecurityTag> nameKnowledgeSecurityTags = nameSecurityTags.stream().map(x -> (KnowledgeSecurityTag)x).collect(Collectors.toList());
+		
+		SecurityRole securityRole = nameKnowledgeSecurityTags.get(0).getRequiredRole();
 		
 		assertEquals(1, nameSecurityTags.size());
 		assertEquals(cz.cuni.mff.d3s.deeco.annotations.processor.input.samples.CorrectC5.Role3.class.getName(), securityRole.getRoleName());
@@ -290,7 +385,6 @@ public class AnnotationProcessorTest {
 	
 	@Test
 	public void testSecurityCompromise() throws AnnotationProcessorException {
-		// given component with role, which contains unresolvable argument is processed
 		RuntimeMetadata model = factory.createRuntimeMetadata(); 
 		AnnotationProcessor processor = new AnnotationProcessor(factory,model,knowledgeManagerFactory);	
 		WrongC11 input = new WrongC11();

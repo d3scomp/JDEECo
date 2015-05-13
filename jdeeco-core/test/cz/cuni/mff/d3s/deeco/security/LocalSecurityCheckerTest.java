@@ -22,6 +22,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry;
 import cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.AbsoluteSecurityRoleArgument;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.AccessRights;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ContextKind;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
@@ -34,6 +35,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMapKey;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathSecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.WildcardSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.PathRoot;
 import cz.cuni.mff.d3s.deeco.task.TaskInvocationException;
@@ -62,7 +64,7 @@ public class LocalSecurityCheckerTest {
 	Exchange knowledgeExchange;
 	
 	KnowledgeManager localKnowledgeManager, shadowKnowledgeManager;
-	Parameter param1, param2, param3, param_error, param4;
+	Parameter param1, param2, param3, param_error, param4, param_read;
 	ComponentInstance localComponent, shadowComponent;
 	RuntimeMetadataFactory factory;
 	
@@ -94,9 +96,10 @@ public class LocalSecurityCheckerTest {
 		param1 = factory.createParameter();
 		param2 = factory.createParameter();
 		param3 = factory.createParameter();
-		param4 = factory.createParameter();
+		param4 = factory.createParameter();		
 		param_error = factory.createParameter();
-	
+		param_read = factory.createParameter();
+		
 		param1.setKnowledgePath(RuntimeModelHelper.createKnowledgePath("<C>", "field1_oc"));
 		param1.setKind(ParameterKind.INOUT);
 		param2.setKnowledgePath(RuntimeModelHelper.createKnowledgePath("<M>", "field1_om"));
@@ -114,6 +117,9 @@ public class LocalSecurityCheckerTest {
 		
 		param_error.setKnowledgePath(RuntimeModelHelper.createKnowledgePath("field1"));		
 		
+		param_read.setKnowledgePath(RuntimeModelHelper.createKnowledgePath("<M>", "readonly_field"));
+		param_read.setKind(ParameterKind.IN);
+		
 	}
 	
 	public static ChangeSet createKnowledge() {
@@ -129,6 +135,8 @@ public class LocalSecurityCheckerTest {
 		Map<String, String> mapNested = new HashMap<>();
 		mapNested.put("x", "a");		
 		result.setValue(RuntimeModelHelper.createKnowledgePath("mapNested"), mapNested);
+		result.setValue(RuntimeModelHelper.createKnowledgePath("readonly_field"), "test");
+		result.setValue(RuntimeModelHelper.createKnowledgePath("field1_om"), "test");
 		
 		return result;
 	}
@@ -187,13 +195,16 @@ public class LocalSecurityCheckerTest {
 		shadowKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("field2_oc"), Arrays.asList(roleBTagShadow));
 		localKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("field2_oc"), Arrays.asList(roleBTagLocal));
 
-		ChangeSet changeSet = new ChangeSet();
-		changeSet.setValue(RuntimeModelHelper.createKnowledgePath("some_param"), 123);
-		changeSet.setValue(RuntimeModelHelper.createKnowledgePath("field1_oc"), 123);
-		changeSet.setValue(RuntimeModelHelper.createKnowledgePath("field1_om"), 123);
-		changeSet.setValue(RuntimeModelHelper.createKnowledgePath("field2_oc"), 123);
-		shadowKnowledgeManager.update(changeSet);
-		localKnowledgeManager.update(changeSet);
+		ChangeSet changeSetLocal = new ChangeSet();
+		changeSetLocal.setValue(RuntimeModelHelper.createKnowledgePath("some_param"), 123);
+		changeSetLocal.setValue(RuntimeModelHelper.createKnowledgePath("field1_oc"), 123);		
+		changeSetLocal.setValue(RuntimeModelHelper.createKnowledgePath("field2_oc"), 123);		
+		localKnowledgeManager.update(changeSetLocal);
+		
+		ChangeSet changeSetShadow = new ChangeSet();
+		changeSetShadow.setValue(RuntimeModelHelper.createKnowledgePath("field1_om"), 123);
+		changeSetShadow.setValue(RuntimeModelHelper.createKnowledgePath("some_param"), 123);
+		shadowKnowledgeManager.update(changeSetShadow);
 		
 		SecurityRole roleA = factory.createSecurityRole();
 		roleA.setRoleName("roleA");
@@ -201,37 +212,33 @@ public class LocalSecurityCheckerTest {
 		arg_some_param.setName("roleA_some_param");
 		arg_some_param.setKnowledgePath(RuntimeModelHelper.createKnowledgePath("some_param"));
 		roleA.getArguments().add(arg_some_param);
-		localComponent.getSecurityRoles().add(roleA);
+
+		shadowComponent.getSecurityRoles().add(roleA);
 		
 		SecurityRole roleB = factory.createSecurityRole();
 		roleB.setRoleName("roleB");
-		localComponent.getSecurityRoles().add(roleB);
+		shadowComponent.getSecurityRoles().add(roleB);
 			
 		SecurityRole roleC = factory.createSecurityRole();
 		roleC.setRoleName("roleC");
-		shadowComponent.getSecurityRoles().add(roleC);
+		localComponent.getSecurityRoles().add(roleC);
 		
 		SecurityRole roleC2 = factory.createSecurityRole();
 		roleC2.setRoleName("roleC");
-		localComponent.getSecurityRoles().add(roleC2);
-		
+		shadowComponent.getSecurityRoles().add(roleC2);
+				
 		// when checkSecurity() as coordinator is called
-		assertFalse(target.checkSecurity(PathRoot.COORDINATOR, shadowKnowledgeManager));
-		
-		// when checkSecurity() as member is called
-		assertTrue(target.checkSecurity(PathRoot.MEMBER, shadowKnowledgeManager));
-		
+		assertTrue(target.checkSecurity(PathRoot.COORDINATOR, shadowKnowledgeManager));
+		assertFalse(target.checkSecurity(PathRoot.MEMBER, shadowKnowledgeManager));
 		// switch components
 		when(ensembleController.getComponentInstance()).thenReturn(shadowComponent);
 		
 		// when checkSecurity() as coordinator is called
-		assertTrue(target.checkSecurity(PathRoot.COORDINATOR, localKnowledgeManager));
-		
-		// when checkSecurity() as member is called
-		assertFalse(target.checkSecurity(PathRoot.MEMBER, localKnowledgeManager));
-				
+		assertTrue(target.checkSecurity(PathRoot.MEMBER, localKnowledgeManager));
+		assertFalse(target.checkSecurity(PathRoot.COORDINATOR, localKnowledgeManager));
 	}
-
+	
+	
 	@Test
 	public void checkSecurity_localTest2() throws TaskInvocationException, KnowledgeUpdateException {
 		EnsembleDefinition ensembleDefinition = factory.createEnsembleDefinition();
@@ -261,6 +268,105 @@ public class LocalSecurityCheckerTest {
 		
 		// when checkSecurity() as member is called
 		assertTrue(target.checkSecurity(PathRoot.MEMBER, shadowKnowledgeManager));				
+	}
+	
+	@Test
+	public void checkSecurity_localTest3() throws TaskInvocationException, KnowledgeUpdateException {
+		EnsembleDefinition ensembleDefinition = factory.createEnsembleDefinition();
+		ensembleDefinition.setMembership(factory.createCondition());
+		ensembleDefinition.getMembership().getParameters().add(param4);
+		ensembleDefinition.setKnowledgeExchange(factory.createExchange());
+		when(ensembleController.getEnsembleDefinition()).thenReturn(ensembleDefinition);
+		
+		KnowledgeSecurityTag roleBTagShadow = createSecurityTag("roleB");	
+		
+		// set readonly access
+		roleBTagShadow.setAccessRights(AccessRights.READ);
+		KnowledgeSecurityTag roleCTagShadow = createSecurityTag("roleC");
+		
+		shadowKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("map"), Arrays.asList(roleCTagShadow));
+		shadowKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("mapKey"), Arrays.asList(roleBTagShadow));
+		
+		shadowKnowledgeManager.update(createKnowledge());
+		
+		SecurityRole roleB = factory.createSecurityRole();
+		roleB.setRoleName("roleB");
+		localComponent.getSecurityRoles().add(roleB);
+
+		SecurityRole roleC2 = factory.createSecurityRole();
+		roleC2.setRoleName("roleC");
+		localComponent.getSecurityRoles().add(roleC2);
+		
+		// when checkSecurity() as member is called
+		assertFalse(target.checkSecurity(PathRoot.MEMBER, shadowKnowledgeManager));				
+	}
+
+	@Test
+	public void checkSecurity_everyoneTest1() throws TaskInvocationException, KnowledgeUpdateException {
+		EnsembleDefinition ensembleDefinition = factory.createEnsembleDefinition();
+		ensembleDefinition.setMembership(factory.createCondition());
+		ensembleDefinition.getMembership().getParameters().add(param_read);
+		ensembleDefinition.setKnowledgeExchange(factory.createExchange());
+		when(ensembleController.getEnsembleDefinition()).thenReturn(ensembleDefinition);
+		
+		WildcardSecurityTag everyoneTag = createWildcardTag(AccessRights.READ);	
+		
+		shadowKnowledgeManager.update(createKnowledge());
+		shadowKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("readonly_field"), Arrays.asList(everyoneTag));
+		
+		
+		SecurityRole roleB = factory.createSecurityRole();
+		roleB.setRoleName("roleB");
+		localComponent.getSecurityRoles().add(roleB);
+		
+		// attempt to access readonly field with IN
+		assertTrue(target.checkSecurity(PathRoot.COORDINATOR, shadowKnowledgeManager));			
+	}
+	
+	@Test
+	public void checkSecurity_everyoneTest2() throws TaskInvocationException, KnowledgeUpdateException {
+		EnsembleDefinition ensembleDefinition = factory.createEnsembleDefinition();
+		ensembleDefinition.setMembership(factory.createCondition());
+		ensembleDefinition.getMembership().getParameters().add(param2);
+		ensembleDefinition.setKnowledgeExchange(factory.createExchange());
+		when(ensembleController.getEnsembleDefinition()).thenReturn(ensembleDefinition);
+		
+		WildcardSecurityTag everyoneTag = createWildcardTag(AccessRights.READ);	
+		
+		shadowKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("field1_om"), Arrays.asList(everyoneTag));
+		
+		shadowKnowledgeManager.update(createKnowledge());
+		
+		SecurityRole roleB = factory.createSecurityRole();
+		roleB.setRoleName("roleB");
+		localComponent.getSecurityRoles().add(roleB);
+		
+		// attempt to access readonly field with INOUT
+		assertFalse(target.checkSecurity(PathRoot.COORDINATOR, shadowKnowledgeManager));			
+	}
+	
+	@Test
+	public void checkSecurity_everyoneTest3() throws TaskInvocationException, KnowledgeUpdateException {
+		EnsembleDefinition ensembleDefinition = factory.createEnsembleDefinition();
+		ensembleDefinition.setMembership(factory.createCondition());
+		ensembleDefinition.getMembership().getParameters().add(param2);
+		ensembleDefinition.setKnowledgeExchange(factory.createExchange());
+		when(ensembleController.getEnsembleDefinition()).thenReturn(ensembleDefinition);
+		
+		WildcardSecurityTag everyoneTag = createWildcardTag(AccessRights.READ);	
+		KnowledgeSecurityTag roleTag = createSecurityTag("roleB");
+		shadowKnowledgeManager.setSecurityTags(RuntimeModelHelper.createKnowledgePath("field1_om"), Arrays.asList(everyoneTag, roleTag));
+		
+		shadowKnowledgeManager.update(createKnowledge());
+		
+		// attempt to access readonly field with INOUT
+		assertFalse(target.checkSecurity(PathRoot.COORDINATOR, shadowKnowledgeManager));
+		
+		SecurityRole roleB = factory.createSecurityRole();
+		roleB.setRoleName("roleB");
+		localComponent.getSecurityRoles().add(roleB);
+		
+		assertTrue(target.checkSecurity(PathRoot.COORDINATOR, shadowKnowledgeManager));
 	}
 	
 	@Test
@@ -347,6 +453,12 @@ public class LocalSecurityCheckerTest {
 		
 		// when checkSecurity() as member is called
 		assertTrue(target.checkSecurity(PathRoot.MEMBER, shadowKnowledgeManager));
+	}
+	
+	private WildcardSecurityTag createWildcardTag(AccessRights accessRights) {
+		WildcardSecurityTag tag = factory.createWildcardSecurityTag();
+		tag.setAccessRights(accessRights);
+		return tag;
 	}
 	
 	private KnowledgeSecurityTag createSecurityTag(String roleName, String... args) {

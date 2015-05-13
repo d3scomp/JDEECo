@@ -230,7 +230,7 @@ public class SecurityRuntimeModel {
 		PoliceEverywhereEnsemble.membership = (memberId, coordId) -> (memberId.equals("V1") && coordId.equals("G1")) || (memberId.equals("G1") && coordId.equals("P1"));
 		
 		container = spy(new KnowledgeManagerContainer(new CloningKnowledgeManagerFactory(), model));
-		ratingsManager = RatingsManagerImpl.getInstance();
+		ratingsManager = new RatingsManagerImpl();
 		runtime = spy(new RuntimeFrameworkImpl(model, scheduler, executor, container, ratingsManager));		
 		
 		knowledgeDataManager = new DefaultKnowledgeDataManager(model.getEnsembleDefinitions(), null);

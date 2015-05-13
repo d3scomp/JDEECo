@@ -6,6 +6,7 @@ import java.util.Arrays;
 
 /**
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
+ * @author Ondřej Štumpf
  *
  */
 @SuppressWarnings("serial")

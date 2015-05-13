@@ -1,4 +1,3 @@
-
 package cz.cuni.mff.d3s.deeco.network;
 
 import java.util.Arrays;
@@ -54,6 +53,7 @@ import cz.cuni.mff.d3s.deeco.security.SecurityKeyManager;
  * </p>
  *  
  * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
+ * @author Ondřej Štumpf
  * 
  * @see KnowledgeManagerContainer
  * @see KnowledgeData
@@ -197,7 +197,7 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 		
 		// publish ratings data
 		RatingsData ratingsData = prepareRatingsData();
-		if (!ratingsData.getRatings().isEmpty()) {
+		if (ratingsData != null && !ratingsData.getRatings().isEmpty()) {
 			dataSender.broadcastData(Arrays.asList(ratingsData));
 			// TODO sending directly via sendDirect()?
 		}
@@ -435,11 +435,16 @@ public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 
 	protected RatingsData prepareRatingsData() {
 		List<RatingsChangeSet> changeSets = ratingsManager.getPendingChangeSets();
-		RatingsMetaData metaData = createRatingsMetaData();
-		RatingsData ratingsData = new RatingsData(ratingsEncryptor.encryptRatings(changeSets, metaData), metaData);
 		
-		ratingsManager.getPendingChangeSets().clear();
-		return ratingsData;
+		if (!changeSets.isEmpty()) {	
+			RatingsMetaData metaData = createRatingsMetaData();
+			RatingsData ratingsData = new RatingsData(ratingsEncryptor.encryptRatings(changeSets, metaData), metaData);
+			
+			ratingsManager.getPendingChangeSets().clear();
+			return ratingsData;
+		} else {
+			return null;
+		}
 	}
 	
 	protected List<KnowledgeData> prepareLocalKnowledgeData() {

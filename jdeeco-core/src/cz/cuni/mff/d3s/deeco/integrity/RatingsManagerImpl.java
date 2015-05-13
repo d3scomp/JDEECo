@@ -24,34 +24,13 @@ public class RatingsManagerImpl implements RatingsManager {
 	/** Changes to the ratings container that had not yet been distributed */
 	private List<RatingsChangeSet> pendingChanges;
 	
-	/** singleton instance */
-	private static RatingsManagerImpl instance;
-	
 	/**
 	 * Instantiates a new ratings manager.
 	 */
-	RatingsManagerImpl() {
+	public RatingsManagerImpl() {
 		this.ratings = new HashMap<>();		
 		this.pendingChanges = new ArrayList<>();
-	}
-	
-	/**
-	 * Gets the unique singleton instance.
-	 * @return
-	 */
-	public static synchronized RatingsManagerImpl getInstance() {
-		if (instance == null) {
-			instance = new RatingsManagerImpl();
-		}
-		return instance;
-	}
-	
-	/**
-	 * Drops the current singleton instance. This method should only be used in tests.
-	 */
-	public static void resetSingleton() {
-		instance = null;
-	}
+	}	
 	
 	/**
 	 * Gets the map of ratings, containing ID of the component and the rating this component assigned to the given knowledge in the given component.

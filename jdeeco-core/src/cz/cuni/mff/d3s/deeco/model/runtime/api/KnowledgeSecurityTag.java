@@ -19,7 +19,7 @@ package cz.cuni.mff.d3s.deeco.model.runtime.api;
  * @model
  * @generated
  */
-public interface KnowledgeSecurityTag extends SecurityTag {
+public interface KnowledgeSecurityTag extends SecurityTag, WildcardSecurityTag {
 	/**
 	 * Returns the value of the '<em><b>Required Role</b></em>' containment reference.
 	 * <!-- begin-user-doc -->

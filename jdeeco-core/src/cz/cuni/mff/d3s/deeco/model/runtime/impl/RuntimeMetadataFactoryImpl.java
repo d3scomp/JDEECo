@@ -94,6 +94,7 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 			case RuntimeMetadataPackage.RATINGS_PROCESS: return createRatingsProcess();
 			case RuntimeMetadataPackage.LOCAL_KNOWLEDGE_TAG: return createLocalKnowledgeTag();
 			case RuntimeMetadataPackage.SECURITY_TAG: return createSecurityTag();
+			case RuntimeMetadataPackage.WILDCARD_SECURITY_TAG: return createWildcardSecurityTag();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -111,6 +112,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 				return createParameterKindFromString(eDataType, initialValue);
 			case RuntimeMetadataPackage.CONTEXT_KIND:
 				return createContextKindFromString(eDataType, initialValue);
+			case RuntimeMetadataPackage.ACCESS_RIGHTS:
+				return createAccessRightsFromString(eDataType, initialValue);
 			case RuntimeMetadataPackage.METHOD:
 				return createMethodFromString(eDataType, initialValue);
 			case RuntimeMetadataPackage.KNOWLEDGE_MANAGER:
@@ -138,6 +141,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 				return convertParameterKindToString(eDataType, instanceValue);
 			case RuntimeMetadataPackage.CONTEXT_KIND:
 				return convertContextKindToString(eDataType, instanceValue);
+			case RuntimeMetadataPackage.ACCESS_RIGHTS:
+				return convertAccessRightsToString(eDataType, instanceValue);
 			case RuntimeMetadataPackage.METHOD:
 				return convertMethodToString(eDataType, instanceValue);
 			case RuntimeMetadataPackage.KNOWLEDGE_MANAGER:
@@ -418,6 +423,16 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public WildcardSecurityTag createWildcardSecurityTag() {
+		WildcardSecurityTagImpl wildcardSecurityTag = new WildcardSecurityTagImpl();
+		return wildcardSecurityTag;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public ParameterKind createParameterKindFromString(EDataType eDataType, String initialValue) {
 		ParameterKind result = ParameterKind.get(initialValue);
 		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
@@ -450,6 +465,26 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * @generated
 	 */
 	public String convertContextKindToString(EDataType eDataType, Object instanceValue) {
+		return instanceValue == null ? null : instanceValue.toString();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public AccessRights createAccessRightsFromString(EDataType eDataType, String initialValue) {
+		AccessRights result = AccessRights.get(initialValue);
+		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+		return result;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertAccessRightsToString(EDataType eDataType, Object instanceValue) {
 		return instanceValue == null ? null : instanceValue.toString();
 	}
 

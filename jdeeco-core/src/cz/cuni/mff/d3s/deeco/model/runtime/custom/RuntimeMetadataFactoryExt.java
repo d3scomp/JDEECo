@@ -16,6 +16,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeMember;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathSecurityRoleArgument;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.WildcardSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataFactoryImpl;
 
 /**
@@ -90,6 +91,11 @@ public class RuntimeMetadataFactoryExt extends RuntimeMetadataFactoryImpl {
 		return new KnowledgeSecurityTagExt();
 	}
 
+	@Override
+	public WildcardSecurityTag createWildcardSecurityTag() {
+		return new WildcardSecurityTagExt();
+	}
+	
 	@Override
 	public SecurityRole createSecurityRole() {
 		return new SecurityRoleExt();

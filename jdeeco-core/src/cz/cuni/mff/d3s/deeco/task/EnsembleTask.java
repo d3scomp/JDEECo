@@ -50,7 +50,7 @@ import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.PathRoot;
  * 
  * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
  * @author Tomas Bures <bures@d3s.mff.cuni.cz>
- *
+ * @author Ondřej Štumpf
  */
 public class EnsembleTask extends Task {
 

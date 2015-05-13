@@ -180,7 +180,7 @@ public class RuntimeFrameworkBuilder {
 	 * Creates instance of the ratings manager
 	 */
 	protected void buildRatingsManager() {
-		ratingsManager = RatingsManagerImpl.getInstance();	
+		ratingsManager = new RatingsManagerImpl();	
 	}
 	
 	/**

@@ -1,6 +1,7 @@
 package cz.cuni.mff.d3s.deeco.knowledge;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
@@ -24,6 +25,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityTag;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.WildcardSecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 
 /**
@@ -375,7 +377,7 @@ public class BaseKnowledgeManagerTest {
 		
 		// when security tags are then retrieved
 		KnowledgePath kp_same = RuntimeModelHelper.createKnowledgePath("field");
-		List<KnowledgeSecurityTag> actualTags = tested.getKnowledgeSecurityTags((PathNodeField) kp_same.getNodes().get(0));
+		List<WildcardSecurityTag> actualTags = tested.getEffectiveSecurityTags((PathNodeField) kp_same.getNodes().get(0));
 		
 		// then collections are equal
 		assertEquals(expectedTags, actualTags);
@@ -396,7 +398,7 @@ public class BaseKnowledgeManagerTest {
 		
 		// when security tags are then retrieved
 		KnowledgePath kp_same = RuntimeModelHelper.createKnowledgePath("field");
-		List<KnowledgeSecurityTag> actualTags = tested.getKnowledgeSecurityTags((PathNodeField) kp_same.getNodes().get(0));
+		List<WildcardSecurityTag> actualTags = tested.getEffectiveSecurityTags((PathNodeField) kp_same.getNodes().get(0));
 		
 		// then collections are equal
 		assertEquals(2, actualTags.size());
@@ -511,6 +513,26 @@ public class BaseKnowledgeManagerTest {
 		assertNull(tested.getAuthor(kp2));
 		assertNull(tested.getAuthor(kp));
 	}
+	
+	@Test
+	public void lockPathTest1() {
+		// when knowledge path is locked		
+		tested.lockKnowledgePath(RuntimeModelHelper.createKnowledgePath("map"));
+		
+		// then isLocked returns true
+		assertTrue(tested.isLocked(RuntimeModelHelper.createKnowledgePath("map")));
+		assertFalse(tested.isLocked(RuntimeModelHelper.createKnowledgePath("map_not_locked")));
+	}
+	
+	@Test
+	public void lockPathTest2() {
+		// when parent knowledge path is locked		
+		tested.lockKnowledgePath(RuntimeModelHelper.createKnowledgePath("map"));
+		
+		// then isLocked on nested returns true
+		assertTrue(tested.isLocked(RuntimeModelHelper.createKnowledgePath("map", "a")));		
+	}
+	
 	
 	public static class InnerKnowledge {
 		public String a;

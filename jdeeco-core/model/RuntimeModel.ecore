@@ -115,7 +115,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="CommunicationBoundary" instanceClassName="cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate"/>
-  <eClassifiers xsi:type="ecore:EClass" name="KnowledgeSecurityTag" eSuperTypes="#//SecurityTag">
+  <eClassifiers xsi:type="ecore:EClass" name="KnowledgeSecurityTag" eSuperTypes="#//SecurityTag #//WildcardSecurityTag">
     <eStructuralFeatures xsi:type="ecore:EReference" name="requiredRole" lowerBound="1"
         eType="#//SecurityRole" containment="true"/>
   </eClassifiers>
@@ -152,5 +152,14 @@
   <eClassifiers xsi:type="ecore:EEnum" name="ContextKind">
     <eLiterals name="LOCAL"/>
     <eLiterals name="SHADOW" value="1"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="AccessRights">
+    <eLiterals name="READ_WRITE" value="2"/>
+    <eLiterals name="READ"/>
+    <eLiterals name="WRITE" value="1"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="WildcardSecurityTag" eSuperTypes="#//SecurityTag">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="accessRights" lowerBound="1"
+        eType="#//AccessRights"/>
   </eClassifiers>
 </ecore:EPackage>
