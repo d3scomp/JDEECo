@@ -60,6 +60,7 @@ import cz.cuni.mff.d3s.deeco.security.SecurityKeyManager;
  * @see KnowledgeDataSender
  * @see KnowledgeDataReceiver 
  */
+@Deprecated
 @SuppressWarnings({"unchecked"})
 public class DefaultKnowledgeDataManager extends KnowledgeDataManager {
 	
