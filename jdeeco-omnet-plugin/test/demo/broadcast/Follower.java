@@ -1,6 +1,8 @@
 package demo.broadcast;
 
 
+import java.io.PrintStream;
+
 import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
@@ -21,6 +23,12 @@ public class Follower {
 	public Waypoint position = new Waypoint(1, 1);
 	public Waypoint destination = new Waypoint(1, 3);
 	public Waypoint leaderPosition;
+	
+	private static PrintStream out;
+	
+	public Follower(PrintStream output) {
+		Follower.out = output;
+	}
 			
 	@Process
 	@PeriodicScheduling(period=2500)
@@ -36,6 +44,6 @@ public class Follower {
 			me.value.y += Integer.signum(leader.y - me.value.y);
 		}
 
-		System.out.println("Follower " + name + ": me = " + me.value + " leader = " + leader);
+		out.println("Follower " + name + ": me = " + me.value + " leader = " + leader);
 	}
 }

@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.jdeeco.matsimomnet;
 
+import java.io.PrintStream;
 import java.util.List;
 
 import org.matsim.api.core.v01.Coord;
@@ -73,8 +74,10 @@ public class Vehicle {
 	public CurrentTimeProvider clock;
 	
 	public Long curTime;
+	
+	private static PrintStream out;
 
-	public Vehicle(String id, Coord dst, MATSimVehicle vehiclePlugin) {
+	public Vehicle(String id, Coord dst, MATSimVehicle vehiclePlugin, PrintStream output) {
 		this.id = id;
 	
 		this.router = vehiclePlugin.getRouter();
@@ -83,6 +86,7 @@ public class Vehicle {
 		this.currentLinkSensor = vehiclePlugin.getSensorProvider().createSensor(SensorType.CURRENT_LINK);
 		this.clock = vehiclePlugin.getTimer();
 		this.dstLinkId = router.findNearestLink(dst).getId();
+		Vehicle.out = output;
 	}
 
 	/**
@@ -104,7 +108,7 @@ public class Vehicle {
 			@In("router") MATSimRouter router,
 			@In("speed") Double speed,
 			@In("otherVehicleLink") Id otherVehicleLink) {
-		System.out.format("%s %s, pos: %s, dst: %s, speed: %.0f, otherPos: %s%n",
+		out.format("%s %s, pos: %s, dst: %s, speed: %.0f, otherPos: %s%n",
 				formatTime(clock.getCurrentMilliseconds()),
 				id,
 				printPos(currentLink, router),

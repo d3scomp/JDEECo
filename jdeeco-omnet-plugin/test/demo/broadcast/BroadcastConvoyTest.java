@@ -3,9 +3,10 @@ package demo.broadcast;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
 
-import org.junit.Rule;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+
 import org.junit.Test;
-import org.junit.contrib.java.lang.system.StandardOutputStreamLog;
 
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
 import cz.cuni.mff.d3s.deeco.runners.DEECoSimulation;
@@ -25,18 +26,30 @@ import cz.cuni.mff.d3s.jdeeco.publishing.DefaultKnowledgePublisher;
  *
  */
 public class BroadcastConvoyTest {
-	@Rule
-	public final StandardOutputStreamLog log = new StandardOutputStreamLog();
-	
 	public static void main(String[] args) throws AnnotationProcessorException, InterruptedException, DEECoException,
 			InstantiationException, IllegalAccessException {
 		BroadcastConvoyTest test = new BroadcastConvoyTest();
-		test.testConvoyOmnet();
+		test.convoyOmnet(false);
 	}
 
 	@Test
 	public void testConvoyOmnet() throws AnnotationProcessorException, InterruptedException, DEECoException,
+	InstantiationException, IllegalAccessException {
+		convoyOmnet(true);
+	}
+	
+	public void convoyOmnet(boolean silent) throws AnnotationProcessorException, InterruptedException, DEECoException,
 			InstantiationException, IllegalAccessException {
+		// In silent mode the output is kept in ByteArrayOutputStream and then tested
+		// whether it's correct. In non-silent mode the output is not tested, but printed to console.
+		PrintStream outputStream;
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		if (silent) {
+			outputStream = new PrintStream(baos);
+		} else {
+			outputStream = System.out;
+		}
+		
 		OMNeTSimulation omnet = new OMNeTSimulation();
 
 		// Create main application container
@@ -50,15 +63,16 @@ public class BroadcastConvoyTest {
 		DEECoNode node1 = simulation.createNode(new OMNeTBroadcastDevice(), new PositionPlugin(0, 100));
 
 		// Deploy components and ensembles
-		node0.deployComponent(new Leader());
+		node0.deployComponent(new Leader(outputStream));
 		node0.deployEnsemble(ConvoyEnsemble.class);
 
-		node1.deployComponent(new Follower());
+		node1.deployComponent(new Follower(outputStream));
 		node1.deployEnsemble(ConvoyEnsemble.class);
 
 		simulation.start(60000);
 		
 		// THEN the follower prints out the following (ass the networking should work)
-		assertThat(log.getLog(), containsString("Follower F: me = (1,3) leader = (1,3)"));
+		if(silent)
+			assertThat(baos.toString(), containsString("Follower F: me = (1,3) leader = (1,3)"));
 	}
 }

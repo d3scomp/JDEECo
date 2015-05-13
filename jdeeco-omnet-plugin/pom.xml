@@ -199,12 +199,6 @@
 			<version>1.9.5</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.github.stefanbirkner</groupId>
-			<artifactId>system-rules</artifactId>
-			<version>1.6.0</version>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
 
 	<distributionManagement>

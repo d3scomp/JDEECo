@@ -2,6 +2,7 @@ package demo.broadcast;
 
 
 
+import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,7 +27,9 @@ public class Leader {
 	public List<Waypoint> path;
 	public Waypoint position;
 	
-	public Leader() {
+	private static PrintStream out;
+	
+	public Leader(PrintStream output) {
 		path = new LinkedList<Waypoint>(Arrays.asList(
 				new Waypoint(3, 1),
 				new Waypoint(2, 1),
@@ -39,6 +42,7 @@ public class Leader {
 		name = "L";
 		id = "Leader1";
 		position = new Waypoint(3, 1);
+		Leader.out = output;
 	}
 	
 	@Process
@@ -59,6 +63,6 @@ public class Leader {
 			me.value.y += Integer.signum(next.y - me.value.y);
 		}
 
-		System.out.println("Leader " + name + ": " + me.value);
+		out.println("Leader " + name + ": " + me.value);
 	}
 }
