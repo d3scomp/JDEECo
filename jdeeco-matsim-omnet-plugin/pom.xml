@@ -68,7 +68,7 @@
 				<dependency>
 					<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
 					<artifactId>cz.cuni.mff.d3s.jdeeco.network.omnet</artifactId>
-					<version>3.0.0</version>
+					<version>${project.version}</version>
 					<classifier>natives-linux64-debug</classifier>
 				</dependency>
 			</dependencies>
@@ -84,7 +84,7 @@
 				<dependency>
 					<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
 					<artifactId>cz.cuni.mff.d3s.jdeeco.network.omnet</artifactId>
-					<version>3.0.0</version>
+					<version>${project.version}</version>
 					<classifier>natives-windows64-debug</classifier>
 				</dependency>
 			</dependencies>
@@ -95,28 +95,28 @@
 		<dependency>
 			<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
 			<artifactId>cz.cuni.mff.d3s.jdeeco.core</artifactId>
-			<version>3.0.1</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
 			<artifactId>cz.cuni.mff.d3s.jdeeco.network</artifactId>
-			<version>3.0.1</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
 			<artifactId>cz.cuni.mff.d3s.jdeeco.network.omnet</artifactId>
-			<version>3.0.1</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
 			<artifactId>cz.cuni.mff.d3s.jdeeco.network.omnet</artifactId>
-			<version>3.0.1</version>
+			<version>${project.version}</version>
 			<classifier>natives-common-ned</classifier>
 		</dependency>
 		<dependency>
 			<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
 			<artifactId>cz.cuni.mff.d3s.jdeeco.matsim</artifactId>
-			<version>3.0.1</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.matsim</groupId>

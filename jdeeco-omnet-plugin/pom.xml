@@ -180,12 +180,12 @@
 		<dependency>
 			<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
 			<artifactId>cz.cuni.mff.d3s.jdeeco.core</artifactId>
-			<version>3.0.1</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
 			<artifactId>cz.cuni.mff.d3s.jdeeco.network</artifactId>
-			<version>3.0.1</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
