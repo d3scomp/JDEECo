@@ -2,19 +2,19 @@ package cz.cuni.mff.d3s.deeco.annotations.processor.input.samples;
 
 import cz.cuni.mff.d3s.deeco.annotations.Allow;
 import cz.cuni.mff.d3s.deeco.annotations.Component;
-import cz.cuni.mff.d3s.deeco.annotations.HasRole;
+import cz.cuni.mff.d3s.deeco.annotations.HasSecurityRole;
 import cz.cuni.mff.d3s.deeco.annotations.Local;
-import cz.cuni.mff.d3s.deeco.annotations.RoleDefinition;
+import cz.cuni.mff.d3s.deeco.annotations.SecurityRoleDefinition;
 
 /**
  * @author Ondřej Štumpf
  */
 
 @Component
-@HasRole(WrongC9.Role1.class)
+@HasSecurityRole(WrongC9.Role1.class)
 public class WrongC9 {
 
-	@RoleDefinition
+	@SecurityRoleDefinition
 	public static interface Role1 {
 		
 	}

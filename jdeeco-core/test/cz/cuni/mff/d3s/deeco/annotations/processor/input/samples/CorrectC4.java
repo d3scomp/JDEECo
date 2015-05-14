@@ -4,40 +4,40 @@ import java.util.Date;
 
 import cz.cuni.mff.d3s.deeco.annotations.Allow;
 import cz.cuni.mff.d3s.deeco.annotations.Component;
-import cz.cuni.mff.d3s.deeco.annotations.HasRole;
-import cz.cuni.mff.d3s.deeco.annotations.RoleDefinition;
-import cz.cuni.mff.d3s.deeco.annotations.RoleParam;
+import cz.cuni.mff.d3s.deeco.annotations.HasSecurityRole;
+import cz.cuni.mff.d3s.deeco.annotations.SecurityRoleDefinition;
+import cz.cuni.mff.d3s.deeco.annotations.SecurityRoleParam;
 
 /**
  * @author Ondřej Štumpf
  */
 
 @Component
-@HasRole(CorrectC4.Role1.class)
-@HasRole(CorrectC4.Role2.class)
+@HasSecurityRole(CorrectC4.Role1.class)
+@HasSecurityRole(CorrectC4.Role2.class)
 public class CorrectC4 {
 
-	@RoleDefinition(aliasedBy = Role3.class)
+	@SecurityRoleDefinition(aliasedBy = Role3.class)
 	public static interface Role1 {
-		@RoleParam
+		@SecurityRoleParam
 		public static final String x = null;
 	}
 	
-	@RoleDefinition
+	@SecurityRoleDefinition
 	public static interface Role2 {
-		@RoleParam
+		@SecurityRoleParam
 		public static final String name = "[name]";
-		@RoleParam
+		@SecurityRoleParam
 		public static final String time = null;
-		@RoleParam
+		@SecurityRoleParam
 		public static final Integer x_integer = 123;
-		@RoleParam
+		@SecurityRoleParam
 		public static final String x_string = "some_value";
-		@RoleParam
+		@SecurityRoleParam
 		public static final String[] x_array = {"a", "b", "c"};
 	}
 	
-	@RoleDefinition
+	@SecurityRoleDefinition
 	public static interface Role3 {
 		
 	}

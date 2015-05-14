@@ -288,7 +288,7 @@ public class AnnotationProcessorTest {
 		WrongC10 input = new WrongC10();
 		
 		exception.expect(AnnotationProcessorException.class);
-		exception.expectMessage("Role class must be decoreted with @RoleDefinition.");
+		exception.expectMessage("Security role class must be decoreted with @SecurityRoleDefinition.");
 		
 		// when process() is called
 		processor.processComponent(input);

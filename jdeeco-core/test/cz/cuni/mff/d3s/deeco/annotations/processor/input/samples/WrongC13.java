@@ -2,7 +2,7 @@ package cz.cuni.mff.d3s.deeco.annotations.processor.input.samples;
 
 import cz.cuni.mff.d3s.deeco.annotations.Allow;
 import cz.cuni.mff.d3s.deeco.annotations.Component;
-import cz.cuni.mff.d3s.deeco.annotations.RoleDefinition;
+import cz.cuni.mff.d3s.deeco.annotations.SecurityRoleDefinition;
 
 /**
  * @author Ondřej Štumpf
@@ -11,7 +11,7 @@ import cz.cuni.mff.d3s.deeco.annotations.RoleDefinition;
 @Component
 public class WrongC13 {
 	
-	@RoleDefinition
+	@SecurityRoleDefinition
 	public static interface Role1 {
 		
 	}

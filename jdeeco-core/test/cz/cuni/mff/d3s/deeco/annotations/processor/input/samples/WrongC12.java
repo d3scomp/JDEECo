@@ -5,8 +5,8 @@ import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
-import cz.cuni.mff.d3s.deeco.annotations.RoleDefinition;
-import cz.cuni.mff.d3s.deeco.annotations.RoleParam;
+import cz.cuni.mff.d3s.deeco.annotations.SecurityRoleDefinition;
+import cz.cuni.mff.d3s.deeco.annotations.SecurityRoleParam;
 
 /**
  * @author Ondřej Štumpf
@@ -15,9 +15,9 @@ import cz.cuni.mff.d3s.deeco.annotations.RoleParam;
 @Component
 public class WrongC12 {
 	
-	@RoleDefinition
+	@SecurityRoleDefinition
 	public static interface Role1 {
-		@RoleParam
+		@SecurityRoleParam
 		public static String nonexisting_param = "[no_such_parameter]";
 	}
 	

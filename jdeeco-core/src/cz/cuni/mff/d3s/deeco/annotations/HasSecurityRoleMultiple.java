@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Container of {@link HasRole} annotations, required by Java to enable repeatable annotations.
+ * Container of {@link HasSecurityRole} annotations, required by Java to enable repeatable annotations.
  * 
  * @author Ondřej Štumpf
  * 
@@ -15,6 +15,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface HasRoleMultiple {
-	HasRole[] value();	
+public @interface HasSecurityRoleMultiple {
+	HasSecurityRole[] value();	
 }

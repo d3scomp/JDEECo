@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 
 /**
  * Used to decorate a knowledge field with access restrictions. The parameter
- * is the security interface, i.e. interface decorated with {@link RoleDefinition} with possible parameters {@link RoleParam}. 
+ * is the security interface, i.e. interface decorated with {@link SecurityRoleDefinition} with possible parameters {@link SecurityRoleParam}. 
  * This annotation can be used multiple times on the same field.
  * @author Ondřej Štumpf
  * 

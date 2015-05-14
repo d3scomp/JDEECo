@@ -6,7 +6,7 @@ import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
-import cz.cuni.mff.d3s.deeco.annotations.RoleDefinition;
+import cz.cuni.mff.d3s.deeco.annotations.SecurityRoleDefinition;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 
 /**
@@ -16,7 +16,7 @@ import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 @Component
 public class WrongC11 {
 	
-	@RoleDefinition
+	@SecurityRoleDefinition
 	public static interface Role1 {
 		
 	}

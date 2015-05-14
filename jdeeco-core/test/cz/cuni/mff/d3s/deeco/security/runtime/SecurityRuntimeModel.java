@@ -14,7 +14,7 @@ import org.mockito.Mockito;
 import cz.cuni.mff.d3s.deeco.annotations.Allow;
 import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.Ensemble;
-import cz.cuni.mff.d3s.deeco.annotations.HasRole;
+import cz.cuni.mff.d3s.deeco.annotations.HasSecurityRole;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
@@ -25,8 +25,8 @@ import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.Rating;
 import cz.cuni.mff.d3s.deeco.annotations.RatingsProcess;
-import cz.cuni.mff.d3s.deeco.annotations.RoleDefinition;
-import cz.cuni.mff.d3s.deeco.annotations.RoleParam;
+import cz.cuni.mff.d3s.deeco.annotations.SecurityRoleDefinition;
+import cz.cuni.mff.d3s.deeco.annotations.SecurityRoleParam;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
 import cz.cuni.mff.d3s.deeco.executor.Executor;
@@ -68,21 +68,21 @@ import cz.cuni.mff.d3s.deeco.timer.DiscreteEventTimer;
  */
 public class SecurityRuntimeModel {
 	
-	@RoleDefinition(aliasedBy = PoliceInAuthorsCity.class)
+	@SecurityRoleDefinition(aliasedBy = PoliceInAuthorsCity.class)
 	public static interface PoliceInCity {
-		@RoleParam
+		@SecurityRoleParam
 		public static final String cityId = "[cityId]";
 	}
 	
-	@RoleDefinition
+	@SecurityRoleDefinition
 	public static interface PoliceEverywhere extends PoliceInCity {
-		@RoleParam
+		@SecurityRoleParam
 		public static final String cityId = null;
 	}
 	
-	@RoleDefinition
+	@SecurityRoleDefinition
 	public static interface PoliceInAuthorsCity extends PoliceEverywhere {
-		@RoleParam(ContextKind.SHADOW)
+		@SecurityRoleParam(ContextKind.SHADOW)
 		public static final String cityId = "[cityId]";
 	}
 	
@@ -106,7 +106,7 @@ public class SecurityRuntimeModel {
 	}
 	
 	@Component 
-	@HasRole(PoliceInCity.class)
+	@HasSecurityRole(PoliceInCity.class)
 	public static class PoliceComponent  {
 		public String id;
 		public String cityId;
@@ -140,7 +140,7 @@ public class SecurityRuntimeModel {
 	}
 	
 	@Component 
-	@HasRole(PoliceEverywhere.class)		
+	@HasSecurityRole(PoliceEverywhere.class)		
 	public static class GlobalPoliceComponent  {
 		public String id;
 		

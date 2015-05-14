@@ -25,7 +25,7 @@ import cz.cuni.mff.d3s.deeco.annotations.CommunicationBoundary;
 import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.CoordinatorRole;
 import cz.cuni.mff.d3s.deeco.annotations.Ensemble;
-import cz.cuni.mff.d3s.deeco.annotations.HasRole;
+import cz.cuni.mff.d3s.deeco.annotations.HasSecurityRole;
 import cz.cuni.mff.d3s.deeco.annotations.IgnoreKnowledgeCompromise;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
@@ -40,8 +40,8 @@ import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.Rating;
 import cz.cuni.mff.d3s.deeco.annotations.RatingsProcess;
 import cz.cuni.mff.d3s.deeco.annotations.Role;
-import cz.cuni.mff.d3s.deeco.annotations.RoleDefinition;
-import cz.cuni.mff.d3s.deeco.annotations.RoleParam;
+import cz.cuni.mff.d3s.deeco.annotations.SecurityRoleDefinition;
+import cz.cuni.mff.d3s.deeco.annotations.SecurityRoleParam;
 import cz.cuni.mff.d3s.deeco.annotations.TriggerOnChange;
 import cz.cuni.mff.d3s.deeco.annotations.checking.AnnotationChecker;
 import cz.cuni.mff.d3s.deeco.annotations.checking.AnnotationCheckerException;
@@ -124,7 +124,7 @@ public class AnnotationProcessor {
 	 * Annotations that can appear in a class and can be handled by the main processor (this)
 	 */
 	static final Set<Class<? extends Annotation>> KNOWN_CLASS_ANNOTATIONS = new HashSet<>(
-			Arrays.asList(PeriodicScheduling.class, Component.class, Ensemble.class, HasRole.class,
+			Arrays.asList(PeriodicScheduling.class, Component.class, Ensemble.class, HasSecurityRole.class,
 					Role.class, PlaysRole.class));
 	
 	/**
@@ -480,7 +480,7 @@ public class AnnotationProcessor {
 			}
 			
 			Set<Class<?>> securityRoles = new HashSet<>();
-			for (HasRole role : clazz.getDeclaredAnnotationsByType(HasRole.class)) {
+			for (HasSecurityRole role : clazz.getDeclaredAnnotationsByType(HasSecurityRole.class)) {
 				if (securityRoles.contains(role.value())) {
 					throw new AnnotationProcessorException("The same role cannot be assigned multiply to a component.");
 				}
@@ -535,8 +535,8 @@ public class AnnotationProcessor {
 	 */
 	private SecurityRole createRoleFromClassDefinition(Class<?> roleClass, KnowledgeManager knowledgeManager, SECURITY_ARGUMENT_PATH_VALIDATION argumentValidation, 
 			SECURITY_ROLE_LOAD_TYPE loadType) throws AnnotationProcessorException, ParseException {
-		if (roleClass.getAnnotationsByType(RoleDefinition.class).length == 0) {
-			throw new AnnotationProcessorException("Role class must be decoreted with @RoleDefinition.");
+		if (roleClass.getAnnotationsByType(SecurityRoleDefinition.class).length == 0) {
+			throw new AnnotationProcessorException("Security role class must be decoreted with @SecurityRoleDefinition.");
 		}
 				
 		SecurityRole securityRole = factory.createSecurityRole();
@@ -549,7 +549,7 @@ public class AnnotationProcessor {
 		
 		// select only fields decorated with @RoleParam
 		List<Field> fieldParameters = Arrays.stream(roleClass.getFields())
-				.filter(field -> field.getAnnotationsByType(RoleParam.class).length > 0)				
+				.filter(field -> field.getAnnotationsByType(SecurityRoleParam.class).length > 0)				
 				.collect(Collectors.toList());
 		
 		for (Field field : roleClass.getFields()) {
@@ -605,10 +605,10 @@ public class AnnotationProcessor {
 		}
 		
 		if (loadType == SECURITY_ROLE_LOAD_TYPE.RECURSIVE) {
-			RoleDefinition roleDefinition = roleClass.getAnnotation(RoleDefinition.class);
-			if (!roleDefinition.aliasedBy().equals(RoleDefinition.DEFAULT_ALIAS.class)) {
-				if (roleDefinition.aliasedBy().getAnnotationsByType(RoleDefinition.class).length == 0) {
-					throw new AnnotationProcessorException("Role class must be decoreted with @RoleDefinition.");
+			SecurityRoleDefinition roleDefinition = roleClass.getAnnotation(SecurityRoleDefinition.class);
+			if (!roleDefinition.aliasedBy().equals(SecurityRoleDefinition.DEFAULT_ALIAS.class)) {
+				if (roleDefinition.aliasedBy().getAnnotationsByType(SecurityRoleDefinition.class).length == 0) {
+					throw new AnnotationProcessorException("Security role class must be decoreted with @SecurityRoleDefinition.");
 				}
 				
 				SecurityRole securityAliasRole = factory.createSecurityRole();
@@ -643,7 +643,7 @@ public class AnnotationProcessor {
 					argument = factory.createPathSecurityRoleArgument();
 					argument.setName(field.getName());
 					
-					RoleParam roleParam = field.getAnnotation(RoleParam.class);
+					SecurityRoleParam roleParam = field.getAnnotation(SecurityRoleParam.class);
 					KnowledgePath innerPath = ((PathNodeMapKey)kp.getNodes().get(0)).getKeyPath();					
 					((PathSecurityRoleArgument)argument).setKnowledgePath(innerPath);
 					((PathSecurityRoleArgument)argument).setContextKind(roleParam.value());

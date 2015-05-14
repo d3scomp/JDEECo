@@ -11,7 +11,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ContextKind;
 
 
 /**
- * Used to mark a field within a security interface (interface decorated with {@link RoleDefinition} as a role parameter. 
+ * Used to mark a field within a security interface (interface decorated with {@link SecurityRoleDefinition} as a role parameter. 
  * Such field must be static and final.
  * The field can have following values:
  *  - null, then {@link BlankSecurityRoleArgument} is created. This signals "any value is allowed".
@@ -26,6 +26,6 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ContextKind;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface RoleParam {
+public @interface SecurityRoleParam {
 	ContextKind value() default ContextKind.LOCAL;
 }
