@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
+import cz.cuni.mff.d3s.deeco.executor.TaskExecutionException;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
@@ -137,8 +138,7 @@ public class SingleThreadedScheduler implements Scheduler {
 
 	@Override
 	public void executionFailed(Task task, Trigger trigger, Exception e) {
-		Log.e(e.getMessage());
-		executionCompleted(task, trigger);
+		throw new TaskExecutionException(task, trigger, e);
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package cz.cuni.mff.d3s.jdeeco.network;
 
 import cz.cuni.mff.d3s.deeco.executor.Executor;
+import cz.cuni.mff.d3s.deeco.executor.TaskExecutionException;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
@@ -25,7 +26,7 @@ public class InstantSchedulerMock implements Scheduler {
 
 	@Override
 	public void executionFailed(Task task, Trigger trigger, Exception e) {
-		throw new UnsupportedOperationException();
+		throw new TaskExecutionException(task, trigger, e);
 	}
 
 	@Override
