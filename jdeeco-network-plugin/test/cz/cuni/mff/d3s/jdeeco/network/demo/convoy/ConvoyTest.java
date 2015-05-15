@@ -27,7 +27,7 @@ import cz.cuni.mff.d3s.jdeeco.publishing.DefaultKnowledgePublisher;
  *
  */
 public class ConvoyTest {
-	public static void main(String[] args) throws AnnotationProcessorException, InterruptedException, DEECoException, InstantiationException, IllegalAccessException {
+	public static void main(String[] args) throws Exception {
 		ConvoyTest test = new ConvoyTest();
 
 		test.convoyLoopbackRunner(false);
@@ -45,11 +45,11 @@ public class ConvoyTest {
 	 * @throws InstantiationException 
 	 */
 	@Test
-	public void convoyLoopbackTest() throws AnnotationProcessorException, InterruptedException, DEECoException, InstantiationException, IllegalAccessException {
+	public void convoyLoopbackTest() throws Exception {
 		convoyLoopbackRunner(true);
 	}
 	
-	public void convoyLoopbackRunner(boolean silent) throws AnnotationProcessorException, InterruptedException, DEECoException, InstantiationException, IllegalAccessException {
+	public void convoyLoopbackRunner(boolean silent) throws Exception {
 		// In silent mode the output is kept in ByteArrayOutputStream and then tested
 		// whether it's correct. In non-silent mode the output is not tested, but printed to console.
 		PrintStream outputStream;
@@ -100,10 +100,10 @@ public class ConvoyTest {
 	 */
 	@Test
 	public void convoyLoopbackOutOfrange() throws AnnotationProcessorException, InterruptedException, DEECoException, InstantiationException, IllegalAccessException {
-		convoyLoopbackOutOfrangeRunner(true);
+		convoyLoopbackOutOfRangeRunner(true);
 	}
 	
-	public void convoyLoopbackOutOfrangeRunner(boolean silent) throws AnnotationProcessorException, InterruptedException, DEECoException, InstantiationException, IllegalAccessException {
+	public void convoyLoopbackOutOfRangeRunner(boolean silent) throws AnnotationProcessorException, InterruptedException, DEECoException, InstantiationException, IllegalAccessException {
 		// In silent mode the output is kept in ByteArrayOutputStream and then tested
 		// whether it's correct. In non-silent mode the output is not tested, but printed to console.
 		PrintStream outputStream;
@@ -113,7 +113,6 @@ public class ConvoyTest {
 		} else {
 			outputStream = System.out;
 		}
-		ConvoyEnsemble.out = outputStream;
 		
 		/* create main application container */
 		SimulationTimer simulationTimer = new DiscreteEventTimer(); // also "new WallTimeSchedulerNotifier()"

@@ -1,7 +1,6 @@
 package cz.cuni.mff.d3s.jdeeco.network.demo.convoy;
 
 
-import java.io.PrintStream;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.annotations.Ensemble;
@@ -21,7 +20,6 @@ import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 @Ensemble
 @PeriodicScheduling(period=1000)
 public class ConvoyEnsemble {
-	public static PrintStream out;
 
 	@Membership
 	public static boolean membership(
@@ -31,8 +29,6 @@ public class ConvoyEnsemble {
 			@In("member.destination") Waypoint fDestination,
 			@In("coord.position") Waypoint lPosition,
 			@In("coord.path") List<Waypoint> lPath) {
-		
-		out.println("membership: "+ memberId + " " + coordId);
 
 		return 
 			!fPosition.equals(fDestination) &&
@@ -46,8 +42,6 @@ public class ConvoyEnsemble {
 			@In("coord.id") String coordId,
 			@Out("member.leaderPosition") ParamHolder<Waypoint> fLeaderPosition,
 			@In("coord.position") Waypoint lPosition) {
-		
-		out.println("exchange: "+ memberId + " " + coordId);
 		
 		fLeaderPosition.value = lPosition;
 	}

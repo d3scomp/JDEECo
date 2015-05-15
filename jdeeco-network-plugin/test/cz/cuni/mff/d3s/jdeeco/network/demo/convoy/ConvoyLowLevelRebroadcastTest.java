@@ -49,7 +49,7 @@ public class ConvoyLowLevelRebroadcastTest {
 		convoyLowLevelRebroadcastLoopbackRunner(true);
 	}
 	
-	public void convoyLowLevelRebroadcastLoopbackRunner(boolean silent) throws AnnotationProcessorException, InterruptedException, DEECoException, InstantiationException, IllegalAccessException {
+	private void convoyLowLevelRebroadcastLoopbackRunner(boolean silent) throws AnnotationProcessorException, InterruptedException, DEECoException, InstantiationException, IllegalAccessException {
 		// In silent mode the output is kept in ByteArrayOutputStream and then tested
 		// whether it's correct. In non-silent mode the output is not tested, but printed to console.
 		PrintStream outputStream;
@@ -59,7 +59,6 @@ public class ConvoyLowLevelRebroadcastTest {
 		} else {
 			outputStream = System.out;
 		}
-		ConvoyEnsemble.out = outputStream;
 		
 		// Create main application container
 		SimulationTimer simulationTimer = new DiscreteEventTimer(); // also "new WallTimeSchedulerNotifier()"

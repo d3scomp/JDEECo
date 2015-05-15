@@ -27,7 +27,7 @@ import cz.cuni.mff.d3s.jdeeco.publishing.DefaultKnowledgePublisher;
  *
  */
 public class ConvoyRebroadcastTest {
-	public static void main(String[] args) throws AnnotationProcessorException, InterruptedException, DEECoException, InstantiationException, IllegalAccessException {
+	public static void main(String[] args) throws Exception {
 		ConvoyRebroadcastTest test = new ConvoyRebroadcastTest();
 
 		test.convoyRebroadcastLoopbackRunner(false);
@@ -45,11 +45,11 @@ public class ConvoyRebroadcastTest {
 	 * @throws InstantiationException 
 	 */
 	@Test
-	public void convoyRebroadcastLoopbackTest() throws AnnotationProcessorException, InterruptedException, DEECoException, InstantiationException, IllegalAccessException {
+	public void convoyRebroadcastLoopbackTest() throws Exception {
 		convoyRebroadcastLoopbackRunner(true);
 	}
 	
-	private void convoyRebroadcastLoopbackRunner(boolean silent) throws AnnotationProcessorException, InterruptedException, DEECoException, InstantiationException, IllegalAccessException {
+	private void convoyRebroadcastLoopbackRunner(boolean silent) throws Exception {
 		// In silent mode the output is kept in ByteArrayOutputStream and then tested
 		// whether it's correct. In non-silent mode the output is not tested, but printed to console.
 		PrintStream outputStream;
@@ -63,7 +63,7 @@ public class ConvoyRebroadcastTest {
 		// Create main application container
 		SimulationTimer simulationTimer = new DiscreteEventTimer(); // also "new WallTimeSchedulerNotifier()"
 		DEECoSimulation realm = new DEECoSimulation(simulationTimer);
-		realm.addPlugin(new SimpleBroadcastDevice(100, 10, 250));
+		realm.addPlugin(new SimpleBroadcastDevice());
 		realm.addPlugin(Network.class);
 		realm.addPlugin(KnowledgeInsertingStrategy.class);
 		realm.addPlugin(RebroadcastStrategy.class);
