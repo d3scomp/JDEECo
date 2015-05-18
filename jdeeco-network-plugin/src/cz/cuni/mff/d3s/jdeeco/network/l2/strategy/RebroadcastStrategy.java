@@ -130,7 +130,8 @@ public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 		if (!known.containsKey(packet.getReceivedInfo().srcNode)) {
 			known.put(packet.getReceivedInfo().srcNode, new LimitedSortedSet<>(HISTORY_LIMIT));
 		}
-		known.get(packet.getReceivedInfo().srcNode).add(new L2PacketInfo(packet));	}
+		known.get(packet.getReceivedInfo().srcNode).add(new L2PacketInfo(packet));
+	}
 
 	/**
 	 * Schedule packet for rebroadcast
