@@ -29,7 +29,7 @@ public class Leader {
 	
 	private static PrintStream out;
 	
-	public Leader(PrintStream out) {
+	public Leader(String name, PrintStream out) {
 		path = new LinkedList<Waypoint>(Arrays.asList(
 				new Waypoint(3, 1),
 				new Waypoint(2, 1),
@@ -39,10 +39,14 @@ public class Leader {
 				new Waypoint(1, 4),
 				new Waypoint(1, 5)));
 				
-		name = "L";
+		this.name = name;
 		id = "Leader1";
 		position = new Waypoint(3, 1);
 		Leader.out = out;
+	}
+	
+	public Leader(PrintStream out) {
+		this("L", out);
 	}
 	
 	@Process
