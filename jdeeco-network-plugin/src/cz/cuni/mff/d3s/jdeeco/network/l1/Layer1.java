@@ -10,6 +10,9 @@ import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
+import cz.cuni.mff.d3s.deeco.task.CustomStepTask;
+import cz.cuni.mff.d3s.deeco.task.TimerTask;
+import cz.cuni.mff.d3s.deeco.task.TimerTaskListener;
 import cz.cuni.mff.d3s.jdeeco.network.address.Address;
 import cz.cuni.mff.d3s.jdeeco.network.device.Device;
 import cz.cuni.mff.d3s.jdeeco.network.l2.L1DataProcessor;
@@ -24,7 +27,7 @@ import cz.cuni.mff.d3s.jdeeco.network.l2.L2ReceivedInfo;
  *
  */
 public class Layer1 implements L2PacketSender, L1StrategyManager {
-
+	protected final static long COLLECTOR_LIFETIME_MS = 1000;
 	protected final static int MINIMUM_PAYLOAD = 1;
 	protected final static int MINIMUM_DATA_TRANSMISSION_SIZE = MINIMUM_PAYLOAD + L1Packet.HEADER_SIZE;
 
@@ -196,8 +199,12 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 				key = new CollectorKey(l1Packet.dataId, l1Packet.srcNode);
 				collector = collectors.get(key);
 				if (collector == null) {
+					// Add new collector for key
 					collector = new Collector(l1Packet.totalSize);
 					collectors.put(key, collector);
+					
+					// Schedule collector removal
+					new CollectorReaper(key);
 				}
 			}
 			processL1PacketByStrategies(l1Packet);
@@ -211,9 +218,9 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 			position += l1Packet.payloadSize + L1Packet.HEADER_SIZE;
 		}
 	}
-	
+
 	private void processL1PacketByStrategies(L1Packet packet) {
-		for(L1Strategy strategy: getRegisteredL1Strategies()) {
+		for (L1Strategy strategy : getRegisteredL1Strategies()) {
 			strategy.processL1Packet(packet);
 		}
 	}
@@ -235,10 +242,39 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 		return outputQueue;
 	}
 
+	protected class CollectorReaper implements TimerTaskListener {
+		/** Key for this collector */
+		private final CollectorKey key;
+
+		/** Task used to wipe collector when too old */
+		private final CustomStepTask suicideTask;
+
+		public CollectorReaper(CollectorKey key) {
+			this.key = key;
+
+			// Schedule suicide
+			suicideTask = new CustomStepTask(scheduler, this, COLLECTOR_LIFETIME_MS);
+			suicideTask.schedule();
+		}
+
+		@Override
+		public void at(long time, Object triger) {
+			// Commit suicide
+			Layer1.this.collectors.remove(key);
+			suicideTask.unSchedule();
+		}
+
+		@Override
+		public TimerTask getInitialTask(Scheduler scheduler) {
+			return null;
+		}
+	}
+
 	/**
 	 * Stores incoming L1 packets from the network. It provides facilities that help to assemble L2 packets from
 	 * retrieved L1 packets.
 	 * 
+	 * Collector removes itself from the collectors collection when it reaches its lifetime.
 	 * 
 	 * @author Michal Kit <kit@d3s.mff.cuni.cz>
 	 *
@@ -256,6 +292,7 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 		 * optimization
 		 */
 		private boolean isComplete = false;
+
 		/** Indicates whether the value in the isContinue field is valid */
 		private boolean isCompleteValid = true;
 

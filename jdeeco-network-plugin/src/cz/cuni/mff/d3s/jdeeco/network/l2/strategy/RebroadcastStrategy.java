@@ -142,9 +142,10 @@ public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 	 *            Rebroadcast delay
 	 */
 	private void scheduleRebroadcast(L2Packet packet, long delayMs) {
-		// Schedule delayed rebroadcast
+		// Do not rebroadcast the same packet again
 		makeKnown(packet);
-		new CustomStepTask(scheduler, new Rebroadcast(packet), delayMs).schedule();
+		// Schedule delayed rebroadcast
+		new Rebroadcast(packet, delayMs);
 	}
 
 	/**
@@ -218,15 +219,19 @@ public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 	 * Holds information about packet to be rebroadcast and serves as rebroadcast task listener
 	 */
 	private class Rebroadcast implements TimerTaskListener {
-		private L2Packet packet;
+		private final L2Packet packet;
+		private final CustomStepTask rebroadcastTask;
 
-		public Rebroadcast(L2Packet packet) {
+		public Rebroadcast(L2Packet packet, long delayMs) {
 			this.packet = packet;
+			rebroadcastTask = new CustomStepTask(scheduler, this, delayMs);
+			rebroadcastTask.schedule();
 		}
 
 		@Override
 		public void at(long time, Object triger) {
 			RebroadcastStrategy.this.doRebroadcast(packet);
+			rebroadcastTask.unSchedule();
 		}
 
 		@Override

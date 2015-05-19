@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-import cz.cuni.mff.d3s.deeco.DeecoProperties;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
@@ -17,7 +16,6 @@ import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeData;
 import cz.cuni.mff.d3s.deeco.network.KnowledgeMetaData;
-import cz.cuni.mff.d3s.deeco.network.PublisherTask;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
@@ -50,6 +48,7 @@ public class DefaultKnowledgePublisher implements DEECoPlugin, TimerTaskListener
 	private DEECoContainer container;
 	private List<IPAddress> infrastructurePeers;
 	private final List<KnowledgePath> empty;
+	private CustomStepTask task;
 
 	/**
 	 * Constructs DefaultKnowledgePublisher with broadcast only publishing and default publishing period
@@ -155,14 +154,12 @@ public class DefaultKnowledgePublisher implements DEECoPlugin, TimerTaskListener
 			}
 		}
 
-		Scheduler scheduler = container.getRuntimeFramework().getScheduler();
-		scheduler.addTask(new CustomStepTask(scheduler, this, publishingPeriod));
+		task.scheduleNextExecutionAfter(publishingPeriod);
 	}
 
 	@Override
 	public TimerTask getInitialTask(Scheduler scheduler) {
-		return new CustomStepTask(scheduler, this, Integer.getInteger(DeecoProperties.PUBLISHING_PERIOD,
-				PublisherTask.DEFAULT_PUBLISHING_PERIOD));
+		return task;
 	}
 
 	@Override
@@ -189,6 +186,7 @@ public class DefaultKnowledgePublisher implements DEECoPlugin, TimerTaskListener
 		// Start publishing task
 		Scheduler scheduler = container.getRuntimeFramework().getScheduler();
 		long offset = new Random(container.getId()).nextInt(publishingPeriod);
-		scheduler.addTask(new CustomStepTask(scheduler, this, offset));
+		task = new CustomStepTask(scheduler, this, offset);
+		task.schedule();
 	}
 }

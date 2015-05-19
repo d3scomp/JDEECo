@@ -67,7 +67,7 @@ public class SimpleInfrastructureDevice implements DEECoPlugin {
 			// Schedule packet delivery
 			PacketWrapper packet = new PacketWrapper(data, this, ipAddress);
 			Scheduler scheduler = SimpleInfrastructureDevice.this.scheduler;
-			scheduler.addTask(new CustomStepTask(scheduler, new DeliveryListener(packet)));
+			new DeliveryListener(packet, scheduler);
 		}
 	}
 
@@ -91,14 +91,18 @@ public class SimpleInfrastructureDevice implements DEECoPlugin {
 	 */
 	private class DeliveryListener implements TimerTaskListener {
 		private final PacketWrapper packet;
+		private final CustomStepTask deliveryTask;
 
-		public DeliveryListener(PacketWrapper packet) {
+		public DeliveryListener(PacketWrapper packet, Scheduler scheduler) {
 			this.packet = packet;
+			deliveryTask = new CustomStepTask(scheduler, this);
+			deliveryTask.schedule();
 		}
 
 		@Override
 		public void at(long time, Object triger) {
 			SimpleInfrastructureDevice.this.route(packet);
+			deliveryTask.unSchedule();
 		}
 
 		@Override

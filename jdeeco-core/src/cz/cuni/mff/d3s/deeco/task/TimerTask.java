@@ -65,4 +65,11 @@ public abstract class TimerTask extends Task {
 	public void schedule() {
 		scheduler.addTask(this);
 	}
+	
+	/**
+	 * Remove task from scheduler
+	 */
+	public void unSchedule() {
+		scheduler.removeTask(this);
+	}
 }
