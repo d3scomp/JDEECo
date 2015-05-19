@@ -2,8 +2,6 @@ package cz.cuni.mff.d3s.deeco.scheduler;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -24,26 +22,25 @@ public class SingleThreadedScheduler implements Scheduler {
 	private final DEECoNode node;
 	private Executor executor;
 	private Timer timer;
-	
-	private final TreeSet<SchedulerEvent> queue;
+
+	private final EventQueue queue;
 	private final Set<Task> allTasks;
 	private final Map<Task, SchedulerEvent> timeTriggeredEvents;
 	private final Set<Trigger> knowledgeChangeTriggers;
 
-    public SingleThreadedScheduler(Executor executor, Timer timer, DEECoNode node) throws NoExecutorAvailableException{
+	public SingleThreadedScheduler(Executor executor, Timer timer, DEECoNode node) throws NoExecutorAvailableException {
 		if (executor == null) {
 			throw new NoExecutorAvailableException();
 		}
-    	this.executor = executor;
-    	this.timer = timer;
-    	this.node = node;
-    	
-		queue = new TreeSet<>();
+		this.executor = executor;
+		this.timer = timer;
+		this.node = node;
+
+		queue = new EventQueue();
 		allTasks = new HashSet<>();
 		timeTriggeredEvents = new HashMap<>();
 		knowledgeChangeTriggers = new HashSet<>();
-		
-    }
+	}
 
 	@Override
 	public void setExecutor(Executor executor) {
@@ -52,12 +49,12 @@ public class SingleThreadedScheduler implements Scheduler {
 			this.executor.setExecutionListener(this);
 		}
 	}
-	
+
 	@Override
 	public Timer getTimer() {
 		return timer;
 	}
-	
+
 	@Override
 	public void addTask(Task task) {
 		if (task == null) {
@@ -67,25 +64,25 @@ public class SingleThreadedScheduler implements Scheduler {
 			Log.w("Attempting to re-schedule a task.");
 			return;
 		}
-		
+
 		if (task.getTimeTrigger() != null) {
 			SchedulerEvent event = new SchedulerEvent(task, task.getTimeTrigger());
 			long executionTime = timer.getCurrentMilliseconds() + task.getTimeTrigger().getOffset();
 			event.nextExecutionTime = executionTime;
 			event.nextPeriodStart = executionTime;
 			queue.add(event);
-			
+
 			timer.notifyAt(event.nextExecutionTime, this, node);
-						
+
 			timeTriggeredEvents.put(task, event);
 		}
-		
+
 		task.setTriggerListener(new TaskTriggerListener() {
 			@Override
 			public void triggered(Task task, Trigger trigger) {
 
 				if (allTasks.contains(task)) {
-					// if the trigger has been already scheduled (i.e., there have been many consecutive 
+					// if the trigger has been already scheduled (i.e., there have been many consecutive
 					// invocations of that trigger in a row), then skip this event
 					if (knowledgeChangeTriggers.contains(trigger)) {
 						Log.w("Attempting to re-schedule knowledge change triggered task.");
@@ -97,6 +94,8 @@ public class SingleThreadedScheduler implements Scheduler {
 					long executionTime = timer.getCurrentMilliseconds();
 					event.nextExecutionTime = executionTime;
 					event.nextPeriodStart = executionTime;
+					
+					// add event to queue
 					queue.add(event);
 				}
 			}
@@ -104,7 +103,7 @@ public class SingleThreadedScheduler implements Scheduler {
 
 		allTasks.add(task);
 	}
-	
+
 	@Override
 	public void removeTask(Task task) {
 		if (!allTasks.contains(task)) {
@@ -112,21 +111,18 @@ public class SingleThreadedScheduler implements Scheduler {
 			return;
 		}
 		task.unsetTriggerListener();
-		List<SchedulerEvent> eventsToBeRemoved = new LinkedList<>();
-		for (SchedulerEvent se : queue) {
-			if (se.executable.equals(task)) {
-				eventsToBeRemoved.add(se);
-			}
-		}
-		queue.removeAll(eventsToBeRemoved);
+		
+		// Remove scheduler events for the task
+		queue.removeAllTaskEvents(task);
+		
 		timeTriggeredEvents.remove(task);
 		allTasks.remove(task);
 	}
-	
+
 	@Override
 	public void executionCompleted(Task task, Trigger trigger) {
 		knowledgeChangeTriggers.remove(trigger);
-		
+
 		if (!queue.isEmpty()) {
 			long nextExecutionTime = queue.first().nextExecutionTime;
 			// FIXME we need the '=' in the next line if we don't give a random offset
@@ -143,7 +139,7 @@ public class SingleThreadedScheduler implements Scheduler {
 
 	@Override
 	public void at(long time) {
-		while ((!queue.isEmpty()) && (queue.first().nextExecutionTime<=time)) {
+		while ((!queue.isEmpty()) && (queue.first().nextExecutionTime <= time)) {
 			SchedulerEvent event = queue.pollFirst();
 
 			if (event.periodic) {
@@ -153,8 +149,55 @@ public class SingleThreadedScheduler implements Scheduler {
 				event.nextExecutionTime = event.nextPeriodStart;
 				queue.add(event);
 			}
-			
+
 			executor.execute(event.executable, event.trigger);
 		}
+	}
+}
+
+class EventQueue {
+	private final TreeSet<SchedulerEvent> queue;
+	private final Map<Task, Set<SchedulerEvent>> queueEvents;
+	
+	public EventQueue() {
+		queue = new TreeSet<>();
+		queueEvents = new HashMap<>();
+	}
+	
+	public boolean isEmpty() {
+		return queue.isEmpty();
+	}
+	
+	public SchedulerEvent pollFirst() {
+		return queue.pollFirst();
+	}
+	
+	public SchedulerEvent first() {
+		return queue.first();
+	}
+	
+	/**
+	 * Adds event to queue
+	 * 
+	 * @param event Event to add
+	 * @param task Task owning the event
+	 */
+	public void add(final SchedulerEvent event) {
+		Task task = event.executable;
+		queue.add(event);
+		Set<SchedulerEvent> events = queueEvents.get(task);
+		if(events == null) {
+			events = new HashSet<>();
+			queueEvents.put(task, events);
+		}
+		events.add(event);
+	}
+	
+	public void removeAllTaskEvents(final Task task) {
+		Set<SchedulerEvent> eventsToBeRemoved = queueEvents.get(task);
+		if(eventsToBeRemoved != null) {
+			queue.removeAll(queueEvents.get(task));
+		}
+		queueEvents.remove(task);
 	}
 }
