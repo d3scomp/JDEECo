@@ -33,7 +33,7 @@ public class L2RebroadcastWithBoundaryIntegrationTest {
 		// Create main application container
 		SimulationTimer simulationTimer = new DiscreteEventTimer();
 		DEECoSimulation realm = new DEECoSimulation(simulationTimer);
-		realm.addPlugin(new SimpleBroadcastDevice(100, 10, SimpleBroadcastDevice.DEFAULT_RANGE));
+		realm.addPlugin(new SimpleBroadcastDevice(100, 10, SimpleBroadcastDevice.DEFAULT_RANGE, SimpleBroadcastDevice.DEFAULT_MTU));
 		realm.addPlugin(Network.class);
 		realm.addPlugin(KnowledgeInsertingStrategy.class);
 		realm.addPlugin(RebroadcastStrategy.class);

@@ -29,7 +29,7 @@ public class SimpleBroadcastDeviceDelayedDeliveryTest {
 		// Setup simulation
 		SimulationTimer simulationTimer = new DiscreteEventTimer();
 		DEECoSimulation realm = new DEECoSimulation(simulationTimer);
-		realm.addPlugin(new SimpleBroadcastDevice(TEST_DELAY_MS, 0, 250));
+		realm.addPlugin(new SimpleBroadcastDevice(TEST_DELAY_MS, 0, 250, SimpleBroadcastDevice.DEFAULT_MTU));
 		realm.addPlugin(Network.class);
 
 		// Setup two nodes

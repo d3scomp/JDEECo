@@ -10,7 +10,6 @@ import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.task.CustomStepTask;
-import cz.cuni.mff.d3s.deeco.task.Task;
 import cz.cuni.mff.d3s.deeco.task.TimerTask;
 import cz.cuni.mff.d3s.deeco.task.TimerTaskListener;
 import cz.cuni.mff.d3s.jdeeco.network.Network;
@@ -37,10 +36,12 @@ import cz.cuni.mff.d3s.jdeeco.position.PositionProvider;
  *
  */
 public class SimpleBroadcastDevice implements DEECoPlugin {
-	public static final int PACKET_SIZE = 128; // bytes
+	public static final int DEFAULT_MTU = 128; // bytes
 	public static final int DEFAULT_RANGE = 250; // meters
-	public static final long DEFAULT_DELAY_MEAN = 0; // ms
-	public static final long DEFAULT_DELAY_VARIANCE = 0; // ms
+	public static final long DEFAULT_DELAY_MEAN_MS = 0; // ms
+	public static final long DEFAULT_DELAY_VARIANCE_MS = 0; // ms
+
+	final int mtu;
 	final long delayMean;
 	final long delayDeviation;
 	final int range;
@@ -82,7 +83,7 @@ public class SimpleBroadcastDevice implements DEECoPlugin {
 
 		@Override
 		public int getMTU() {
-			return PACKET_SIZE;
+			return mtu;
 		}
 
 		@Override
@@ -97,8 +98,7 @@ public class SimpleBroadcastDevice implements DEECoPlugin {
 			long delayMs = Math.max(0, delayMean + deviationMs);
 
 			// Schedule send task
-			Task task = new CustomStepTask(scheduler, new DeliveryListener(new PacketWrapper(data, this)), delayMs);
-			SimpleBroadcastDevice.this.scheduler.addTask(task);
+			new DeliveryListener(new PacketWrapper(data, this), scheduler, delayMs);
 		}
 	}
 
@@ -120,14 +120,18 @@ public class SimpleBroadcastDevice implements DEECoPlugin {
 	 */
 	private class DeliveryListener implements TimerTaskListener {
 		final private PacketWrapper packet;
+		final private TimerTask deliveryTask;
 
-		public DeliveryListener(PacketWrapper packet) {
+		public DeliveryListener(PacketWrapper packet, Scheduler scheduler, long delayMs) {
 			this.packet = packet;
+			deliveryTask = new CustomStepTask(scheduler, this, delayMs);
+			deliveryTask.schedule();
 		}
 
 		@Override
 		public void at(long time, Object triger) {
-			SimpleBroadcastDevice.this.sendToAll(packet);
+			sendToAll(packet);
+			deliveryTask.unSchedule();
 		}
 
 		@Override
@@ -139,13 +143,20 @@ public class SimpleBroadcastDevice implements DEECoPlugin {
 	/**
 	 * Constructs loop-back broadcast
 	 * 
-	 * @param delayMean
-	 *            Delay between sending and delivering the packets
+	 * @param delayMeanMs
+	 *            Mean delay between sending and delivering the packets in milliseconds
+	 * @param delayDeviationMs
+	 *            Delay deviation between sending and delivering the packets in milliseconds
+	 * @param range
+	 *            Device range in meters
+	 * @param mtu
+	 *            Device MTU in bytes
 	 */
-	public SimpleBroadcastDevice(long delayMean, long delayDeviation, int range) {
-		this.delayMean = delayMean;
-		this.delayDeviation = delayDeviation;
+	public SimpleBroadcastDevice(long delayMeanMs, long delayDeviationMs, int range, int mtu) {
+		this.delayMean = delayMeanMs;
+		this.delayDeviation = delayDeviationMs;
 		this.range = range;
+		this.mtu = mtu;
 	}
 
 	/**
@@ -154,7 +165,7 @@ public class SimpleBroadcastDevice implements DEECoPlugin {
 	 * Delivers packets with default values
 	 */
 	public SimpleBroadcastDevice() {
-		this(DEFAULT_DELAY_MEAN, DEFAULT_DELAY_VARIANCE, DEFAULT_RANGE);
+		this(DEFAULT_DELAY_MEAN_MS, DEFAULT_DELAY_VARIANCE_MS, DEFAULT_RANGE, DEFAULT_MTU);
 	}
 
 	/**

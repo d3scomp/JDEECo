@@ -49,7 +49,7 @@ public class VehicleTravelTest {
 		realm.addPlugin(matSim);
 		
 		// Configure loop-back networking for all nodes
-		realm.addPlugin(new SimpleBroadcastDevice(0, 0, 100000));
+		realm.addPlugin(new SimpleBroadcastDevice(0, 0, 100000, SimpleBroadcastDevice.DEFAULT_MTU));
 		realm.addPlugin(Network.class);
 		realm.addPlugin(DefaultKnowledgePublisher.class);
 		realm.addPlugin(KnowledgeInsertingStrategy.class);

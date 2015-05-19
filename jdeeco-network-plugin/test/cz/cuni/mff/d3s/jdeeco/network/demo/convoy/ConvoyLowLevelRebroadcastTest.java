@@ -27,7 +27,8 @@ import cz.cuni.mff.d3s.jdeeco.publishing.DefaultKnowledgePublisher;
  *
  */
 public class ConvoyLowLevelRebroadcastTest {
-	public static void main(String[] args) throws AnnotationProcessorException, InterruptedException, DEECoException, InstantiationException, IllegalAccessException {
+	public static void main(String[] args) throws AnnotationProcessorException, InterruptedException, DEECoException,
+			InstantiationException, IllegalAccessException {
 		ConvoyLowLevelRebroadcastTest test = new ConvoyLowLevelRebroadcastTest();
 
 		test.convoyLowLevelRebroadcastLoopbackRunner(false);
@@ -38,18 +39,15 @@ public class ConvoyLowLevelRebroadcastTest {
 	 * 
 	 * This tries to communicate within the broadcast device range => communication should work
 	 * 
-	 * @throws AnnotationProcessorException
-	 * @throws InterruptedException
-	 * @throws DEECoException
-	 * @throws IllegalAccessException 
-	 * @throws InstantiationException 
+	 * @throws Exception
 	 */
 	@Test
-	public void convoyLowLevelRebroadcastLoopbackTest() throws AnnotationProcessorException, InterruptedException, DEECoException, InstantiationException, IllegalAccessException {
+	public void convoyLowLevelRebroadcastLoopbackTest() throws Exception {
 		convoyLowLevelRebroadcastLoopbackRunner(true);
 	}
-	
-	private void convoyLowLevelRebroadcastLoopbackRunner(boolean silent) throws AnnotationProcessorException, InterruptedException, DEECoException, InstantiationException, IllegalAccessException {
+
+	private void convoyLowLevelRebroadcastLoopbackRunner(boolean silent) throws AnnotationProcessorException,
+			InterruptedException, DEECoException, InstantiationException, IllegalAccessException {
 		// In silent mode the output is kept in ByteArrayOutputStream and then tested
 		// whether it's correct. In non-silent mode the output is not tested, but printed to console.
 		PrintStream outputStream;
@@ -59,16 +57,17 @@ public class ConvoyLowLevelRebroadcastTest {
 		} else {
 			outputStream = System.out;
 		}
-		
+
 		// Create main application container
 		SimulationTimer simulationTimer = new DiscreteEventTimer(); // also "new WallTimeSchedulerNotifier()"
 		DEECoSimulation realm = new DEECoSimulation(simulationTimer);
-		realm.addPlugin(new SimpleBroadcastDevice(100, 10, 250));
+		realm.addPlugin(new SimpleBroadcastDevice(100, 10, SimpleBroadcastDevice.DEFAULT_RANGE,
+				SimpleBroadcastDevice.DEFAULT_MTU));
 		realm.addPlugin(Network.class);
 		realm.addPlugin(KnowledgeInsertingStrategy.class);
 		realm.addPlugin(LowLevelRebroadcastStrategy.class);
 		realm.addPlugin(DefaultKnowledgePublisher.class);
-		
+
 		// Create DEECo node 1 - leader
 		DEECoNode deeco1 = realm.createNode(new PositionPlugin(0, 0));
 		// Deploy components and ensembles
@@ -76,13 +75,13 @@ public class ConvoyLowLevelRebroadcastTest {
 		deeco1.deployEnsemble(ConvoyEnsemble.class);
 
 		// Create DEECo node 2 - follower (in range of leader)
-		DEECoNode deeco2 = realm.createNode(new PositionPlugin(0, SimpleBroadcastDevice.DEFAULT_RANGE * 2/3));
+		DEECoNode deeco2 = realm.createNode(new PositionPlugin(0, SimpleBroadcastDevice.DEFAULT_RANGE * 2 / 3));
 		// Deploy components and ensembles
 		deeco2.deployComponent(new Follower("F0", outputStream));
 		deeco2.deployEnsemble(ConvoyEnsemble.class);
-		
+
 		// Create DEECo node 3 - follower (out of range of leader)
-		DEECoNode deeco3 = realm.createNode(new PositionPlugin(0, SimpleBroadcastDevice.DEFAULT_RANGE * 4/3));
+		DEECoNode deeco3 = realm.createNode(new PositionPlugin(0, SimpleBroadcastDevice.DEFAULT_RANGE * 4 / 3));
 		// Deploy components and ensembles
 		deeco3.deployComponent(new Follower("F1", outputStream));
 		deeco3.deployEnsemble(ConvoyEnsemble.class);
