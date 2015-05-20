@@ -14,6 +14,8 @@ import cz.cuni.mff.d3s.deeco.task.TaskInvocationException;
  * Task that periodically triggers publishing of knowledge on the network via
  * the given {@link KnowledgeDataPublisher}.
  * 
+ * @deprecated Replaced by TimerTask in jDEECo 3
+ * 
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
  * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
  * 

@@ -19,7 +19,7 @@ import cz.cuni.mff.d3s.deeco.network.KnowledgeMetaData;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
-import cz.cuni.mff.d3s.deeco.task.CustomStepTask;
+import cz.cuni.mff.d3s.deeco.task.TimerTask;
 import cz.cuni.mff.d3s.deeco.task.TimerTaskListener;
 import cz.cuni.mff.d3s.deeco.timer.CurrentTimeProvider;
 import cz.cuni.mff.d3s.jdeeco.network.Network;
@@ -47,7 +47,6 @@ public class DefaultKnowledgePublisher implements DEECoPlugin, TimerTaskListener
 	private DEECoContainer container;
 	private List<IPAddress> infrastructurePeers;
 	private final List<KnowledgePath> empty;
-	private CustomStepTask task;
 
 	/**
 	 * Constructs DefaultKnowledgePublisher with broadcast only publishing and default publishing period
@@ -139,7 +138,7 @@ public class DefaultKnowledgePublisher implements DEECoPlugin, TimerTaskListener
 	@Override
 	public void at(long time, Object triger) {
 		Log.d("Publisher called at: " + time);
-
+	
 		// Get knowledge and distribute it
 		for (KnowledgeData data : getLocalKnowledgeData()) {
 			L2Packet packet = new L2Packet(new PacketHeader(L2PacketType.KNOWLEDGE), data);
@@ -152,8 +151,6 @@ public class DefaultKnowledgePublisher implements DEECoPlugin, TimerTaskListener
 				network.getL2().sendL2Packet(packet, address);
 			}
 		}
-
-		task.scheduleNextExecutionAfter(publishingPeriod);
 	}
 
 	@Override
@@ -180,7 +177,6 @@ public class DefaultKnowledgePublisher implements DEECoPlugin, TimerTaskListener
 		// Start publishing task
 		Scheduler scheduler = container.getRuntimeFramework().getScheduler();
 		long offset = new Random(container.getId()).nextInt(publishingPeriod);
-		task = new CustomStepTask(scheduler, this, offset);
-		task.schedule();
+		new TimerTask(scheduler, this, offset, publishingPeriod).schedule();
 	}
 }
