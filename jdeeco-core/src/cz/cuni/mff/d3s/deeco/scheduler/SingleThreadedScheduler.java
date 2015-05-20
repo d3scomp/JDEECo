@@ -1,5 +1,7 @@
 package cz.cuni.mff.d3s.deeco.scheduler;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -78,9 +80,9 @@ public class SingleThreadedScheduler implements Scheduler {
 		}
 
 		task.setTriggerListener(new TaskTriggerListener() {
+
 			@Override
 			public void triggered(Task task, Trigger trigger) {
-
 				if (allTasks.contains(task)) {
 					// if the trigger has been already scheduled (i.e., there have been many consecutive
 					// invocations of that trigger in a row), then skip this event
@@ -94,7 +96,7 @@ public class SingleThreadedScheduler implements Scheduler {
 					long executionTime = timer.getCurrentMilliseconds();
 					event.nextExecutionTime = executionTime;
 					event.nextPeriodStart = executionTime;
-					
+
 					// add event to queue
 					queue.add(event);
 				}
@@ -111,10 +113,10 @@ public class SingleThreadedScheduler implements Scheduler {
 			return;
 		}
 		task.unsetTriggerListener();
-		
+
 		// Remove scheduler events for the task
 		queue.removeAllTaskEvents(task);
-		
+
 		timeTriggeredEvents.remove(task);
 		allTasks.remove(task);
 	}
@@ -142,60 +144,92 @@ public class SingleThreadedScheduler implements Scheduler {
 		while ((!queue.isEmpty()) && (queue.first().nextExecutionTime <= time)) {
 			SchedulerEvent event = queue.pollFirst();
 
+			executor.execute(event.executable, event.trigger);
+
 			if (event.periodic) {
 				// schedule for the next period add a random offset within the period (up to 75% of the period)
 				long period = event.executable.getTimeTrigger().getPeriod();
 				event.nextPeriodStart += period;
 				event.nextExecutionTime = event.nextPeriodStart;
 				queue.add(event);
+			} else {
+				// Check if we can remove the task completely as it has no triggers
+				// This is quite important as we can run out of memory if the owner of the task does not remove it
+				// manually
+				if (queue.getTaskEvents(event.executable).isEmpty()) {
+					timeTriggeredEvents.remove(event.executable);
+					allTasks.remove(event.executable);
+				}
 			}
-
-			executor.execute(event.executable, event.trigger);
 		}
 	}
 }
 
 class EventQueue {
-	private final TreeSet<SchedulerEvent> queue;
-	private final Map<Task, Set<SchedulerEvent>> queueEvents;
-	
-	public EventQueue() {
-		queue = new TreeSet<>();
-		queueEvents = new HashMap<>();
-	}
-	
+	private final TreeSet<SchedulerEvent> queue = new TreeSet<>();
+	private final Map<Task, Set<SchedulerEvent>> queueEvents = new HashMap<>();
+
 	public boolean isEmpty() {
 		return queue.isEmpty();
 	}
-	
+
 	public SchedulerEvent pollFirst() {
-		return queue.pollFirst();
+		// Remove the event from events for its task
+		SchedulerEvent event = queue.pollFirst();
+		queueEvents.get(event.executable).remove(event);
+		return event;
 	}
-	
+
 	public SchedulerEvent first() {
 		return queue.first();
 	}
-	
+
+	/**
+	 * Gets all events registered for task
+	 * 
+	 * @param task
+	 *            Task to get events for
+	 * 
+	 * @return Collection of events
+	 */
+	public Collection<SchedulerEvent> getTaskEvents(Task task) {
+		Collection<SchedulerEvent> events = queueEvents.get(task);
+
+		if (events == null) {
+			return Collections.emptyList();
+		} else {
+			return events;
+		}
+	}
+
 	/**
 	 * Adds event to queue
 	 * 
-	 * @param event Event to add
-	 * @param task Task owning the event
+	 * @param event
+	 *            Event to add
+	 * @param task
+	 *            Task owning the event
 	 */
 	public void add(final SchedulerEvent event) {
 		Task task = event.executable;
 		queue.add(event);
 		Set<SchedulerEvent> events = queueEvents.get(task);
-		if(events == null) {
+		if (events == null) {
 			events = new HashSet<>();
 			queueEvents.put(task, events);
 		}
 		events.add(event);
 	}
-	
+
+	/**
+	 * Removes all task events from queue
+	 * 
+	 * @param task
+	 *            Task defining the events to remove
+	 */
 	public void removeAllTaskEvents(final Task task) {
 		Set<SchedulerEvent> eventsToBeRemoved = queueEvents.get(task);
-		if(eventsToBeRemoved != null) {
+		if (eventsToBeRemoved != null) {
 			queue.removeAll(queueEvents.get(task));
 		}
 		queueEvents.remove(task);
