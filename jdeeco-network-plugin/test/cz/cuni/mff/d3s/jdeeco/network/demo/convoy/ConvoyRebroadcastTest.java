@@ -5,9 +5,7 @@ import static org.junit.Assert.assertThat;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.Random;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import cz.cuni.mff.d3s.deeco.runners.DEECoSimulation;
@@ -93,52 +91,5 @@ public class ConvoyRebroadcastTest {
 			assertThat(baos.toString(), containsString("Follower F0: me = (1,3) leader = (1,3)"));
 			assertThat(baos.toString(), containsString("Follower F1: me = (1,3) leader = (1,3)"));
 		}
-	}
-
-	/**
-	 * Tests the performance of the rebroadcast system
-	 * 
-	 * ### This is not to be run automatically. ###
-	 * 
-	 * Instantiates a lot of nodes and tries rebroadcast.
-	 * 
-	 * @throws Exception
-	 * 
-	 */
-	@Test
-	@Ignore("Please use this only to verify performance")
-	public void rebroadcastingPerformanceTest() throws Exception {
-		// Create main application container
-		SimulationTimer simulationTimer = new DiscreteEventTimer(); // also "new WallTimeSchedulerNotifier()"
-		DEECoSimulation realm = new DEECoSimulation(simulationTimer);
-		realm.addPlugin(new SimpleBroadcastDevice(25, 5, 250, 128));
-		realm.addPlugin(Network.class);
-		realm.addPlugin(KnowledgeInsertingStrategy.class);
-		realm.addPlugin(RebroadcastStrategy.class);
-		realm.addPlugin(DefaultKnowledgePublisher.class);
-
-		final int PLAYGROUND_WIDTH = 1000;
-		final int PLAYGROUND_HEIGHT = 1000;
-		final int NODES = 50;
-		final Random rand = new Random(42);
-
-		for (int i = 0; i < NODES; ++i) {
-			// Create DEECo node 1 - leader
-			DEECoNode deeco = realm.createNode(new PositionPlugin(rand.nextInt(PLAYGROUND_WIDTH), rand
-					.nextInt(PLAYGROUND_HEIGHT)));
-
-			if (rand.nextBoolean()) {
-				// Deploy components and ensembles
-				deeco.deployComponent(new Leader("L" + i, System.out, simulationTimer));
-			} else {
-				// Deploy components and ensembles
-				deeco.deployComponent(new Follower("F" + i, System.out, simulationTimer));
-			}
-
-			deeco.deployEnsemble(ConvoyEnsemble.class);
-		}
-
-		// WHEN simulation is performed
-		realm.start(120000);
-	}
+	}	
 }
