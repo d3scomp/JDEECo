@@ -9,7 +9,7 @@ import java.util.Objects;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
-import cz.cuni.mff.d3s.deeco.task.CustomStepTask;
+import cz.cuni.mff.d3s.deeco.task.TimerTask;
 import cz.cuni.mff.d3s.deeco.task.TimerTaskListener;
 import cz.cuni.mff.d3s.jdeeco.network.Network;
 import cz.cuni.mff.d3s.jdeeco.network.address.MANETBroadcastAddress;
@@ -112,7 +112,7 @@ public class LowLevelRebroadcastStrategy implements DEECoPlugin, L1Strategy {
 	private void scheduleRebroadcast(L1Packet packet, long delayMs) {
 		// Schedule delayed rebroadcast
 		makeKnown(packet);
-		new CustomStepTask(scheduler, new Rebroadcast(packet), delayMs).schedule();
+		new TimerTask(scheduler, new Rebroadcast(packet), delayMs).schedule();
 	}
 
 	/**

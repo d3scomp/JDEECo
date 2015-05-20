@@ -4,7 +4,7 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
-import cz.cuni.mff.d3s.deeco.task.CustomStepTask;
+import cz.cuni.mff.d3s.deeco.task.TimerTask;
 import cz.cuni.mff.d3s.deeco.task.TimerTaskListener;
 import cz.cuni.mff.d3s.jdeeco.network.address.Address;
 import cz.cuni.mff.d3s.jdeeco.network.device.Device;
@@ -35,7 +35,7 @@ public class DeviceOutputQueue {
 
 	private Scheduler scheduler;
 	private final long timeout; // in milliseconds
-	private CustomStepTask delayedTask;
+	private TimerTask delayedTask;
 	private DelayedSendListener delayedListener = new DelayedSendListener();
 	private final byte[] l0Packet;
 	private int l0PacketSize;
@@ -86,8 +86,8 @@ public class DeviceOutputQueue {
 			// Remove previously set send delayed task as we postpone send deadline by adding to this packet
 			removeDelayedSendTask();
 			// Schedule delayed send of packet
-			delayedTask = new CustomStepTask(scheduler, delayedListener, timeout);
-			scheduler.addTask(delayedTask);
+			delayedTask = new TimerTask(scheduler, delayedListener, timeout);
+			delayedTask.schedule();
 		}
 	}
 

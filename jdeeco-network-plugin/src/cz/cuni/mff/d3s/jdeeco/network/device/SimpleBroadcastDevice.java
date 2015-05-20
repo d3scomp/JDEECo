@@ -9,7 +9,6 @@ import java.util.Set;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
-import cz.cuni.mff.d3s.deeco.task.CustomStepTask;
 import cz.cuni.mff.d3s.deeco.task.TimerTask;
 import cz.cuni.mff.d3s.deeco.task.TimerTaskListener;
 import cz.cuni.mff.d3s.jdeeco.network.Network;
@@ -124,7 +123,7 @@ public class SimpleBroadcastDevice implements DEECoPlugin {
 
 		public DeliveryListener(PacketWrapper packet, Scheduler scheduler, long delayMs) {
 			this.packet = packet;
-			deliveryTask = new CustomStepTask(scheduler, this, delayMs);
+			deliveryTask = new TimerTask(scheduler, this, delayMs);
 			deliveryTask.schedule();
 		}
 

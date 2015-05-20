@@ -8,7 +8,7 @@ import java.util.Map;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
-import cz.cuni.mff.d3s.deeco.task.CustomStepTask;
+import cz.cuni.mff.d3s.deeco.task.TimerTask;
 import cz.cuni.mff.d3s.deeco.task.TimerTaskListener;
 import cz.cuni.mff.d3s.jdeeco.network.Network;
 import cz.cuni.mff.d3s.jdeeco.network.address.Address;
@@ -90,11 +90,11 @@ public class SimpleInfrastructureDevice implements DEECoPlugin {
 	 */
 	private class DeliveryListener implements TimerTaskListener {
 		private final PacketWrapper packet;
-		private final CustomStepTask deliveryTask;
+		private final TimerTask deliveryTask;
 
 		public DeliveryListener(PacketWrapper packet, Scheduler scheduler) {
 			this.packet = packet;
-			deliveryTask = new CustomStepTask(scheduler, this);
+			deliveryTask = new TimerTask(scheduler, this);
 			deliveryTask.schedule();
 		}
 
