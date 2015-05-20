@@ -11,7 +11,6 @@ import cz.cuni.mff.d3s.jdeeco.network.l2.L2PacketType;
 import cz.cuni.mff.d3s.jdeeco.network.l2.Layer2;
 import cz.cuni.mff.d3s.jdeeco.network.marshaller.FSTMarshaller;
 import cz.cuni.mff.d3s.jdeeco.network.marshaller.MarshallerRegistry;
-import cz.cuni.mff.d3s.jdeeco.network.marshaller.SerializingMarshaller;
 
 /**
  * Provides network plug-in for jDEECO
