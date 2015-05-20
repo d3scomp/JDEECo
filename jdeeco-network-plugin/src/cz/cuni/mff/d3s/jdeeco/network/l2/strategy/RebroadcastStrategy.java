@@ -15,7 +15,6 @@ import cz.cuni.mff.d3s.deeco.network.KnowledgeData;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
-import cz.cuni.mff.d3s.deeco.task.CustomStepTask;
 import cz.cuni.mff.d3s.deeco.task.TimerTask;
 import cz.cuni.mff.d3s.deeco.task.TimerTaskListener;
 import cz.cuni.mff.d3s.jdeeco.network.Network;
@@ -220,11 +219,11 @@ public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 	 */
 	private class Rebroadcast implements TimerTaskListener {
 		private final L2Packet packet;
-		private final CustomStepTask rebroadcastTask;
+		private final TimerTask rebroadcastTask;
 
 		public Rebroadcast(L2Packet packet, long delayMs) {
 			this.packet = packet;
-			rebroadcastTask = new CustomStepTask(scheduler, this, delayMs);
+			rebroadcastTask = new TimerTask(scheduler, this, delayMs);
 			rebroadcastTask.schedule();
 		}
 
