@@ -1,13 +1,15 @@
-package cz.cuni.mff.d3s.jdeeco.network.demo.convoy;
+package cz.cuni.mff.d3s.jdeeco.core.demo.convoy;
 
 import java.io.PrintStream;
 
 import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
+import cz.cuni.mff.d3s.deeco.annotations.Local;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
+import cz.cuni.mff.d3s.deeco.timer.CurrentTimeProvider;
 
 /**
  * 
@@ -23,27 +25,37 @@ public class Follower {
 	public Waypoint destination = new Waypoint(1, 3);
 	public Waypoint leaderPosition;
 
-	private static PrintStream out;
+	@Local
+	public PrintStream out;
+	
+	@Local
+	public CurrentTimeProvider clock;
 
-	public Follower(String name, PrintStream out) {
+	public Follower(String name, PrintStream out, CurrentTimeProvider clock) {
 		this.name = name;
-		Follower.out = out;
+		this.out = out;
+		this.clock = clock;
 	}
 
-	public Follower(PrintStream out) {
-		this("F", out);
+	public Follower(PrintStream out, CurrentTimeProvider clock) {
+		this("F", out, clock);
 	}
 
 	@Process
 	@PeriodicScheduling(period = 2500)
-	public static void followProcess(@InOut("position") ParamHolder<Waypoint> me,
-			@In("destination") Waypoint destination, @In("name") String name, @In("leaderPosition") Waypoint leader) {
+	public static void followProcess(
+			@InOut("position") ParamHolder<Waypoint> me,
+			@In("destination") Waypoint destination,
+			@In("name") String name,
+			@In("leaderPosition") Waypoint leader,
+			@In("out") PrintStream out,
+			@In("clock") CurrentTimeProvider clock) {
 
 		if (!destination.equals(me.value) && leader != null) {
 			me.value.x += Integer.signum(leader.x - me.value.x);
 			me.value.y += Integer.signum(leader.y - me.value.y);
 		}
 
-		out.println("Follower " + name + ": me = " + me.value + " leader = " + leader);
+		out.format("%06d: Follower %s: me = %s leader = %s%n", clock.getCurrentMilliseconds(), name, me.value, leader);
 	}
 }

@@ -14,6 +14,9 @@ import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
 import cz.cuni.mff.d3s.deeco.timer.DiscreteEventTimer;
 import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
+import cz.cuni.mff.d3s.jdeeco.core.demo.convoy.ConvoyEnsemble;
+import cz.cuni.mff.d3s.jdeeco.core.demo.convoy.Follower;
+import cz.cuni.mff.d3s.jdeeco.core.demo.convoy.Leader;
 /**
  * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
  */
@@ -47,13 +50,13 @@ public class ConvoySimulationTest {
 		/* create first deeco node */
 		DEECoNode deeco1 = realm.createNode(0);
 		/* deploy components and ensembles */
-		deeco1.deployComponent(new Leader(outputStream));
+		deeco1.deployComponent(new Leader(outputStream, simulationTimer));
 		deeco1.deployEnsemble(ConvoyEnsemble.class);
 		
 		/* create second deeco node */
 		DEECoNode deeco2 = realm.createNode(1);
 		/* deploy components and ensembles */
-		deeco2.deployComponent(new Follower(outputStream));
+		deeco2.deployComponent(new Follower(outputStream, simulationTimer));
 		deeco2.deployEnsemble(ConvoyEnsemble.class);
 
 		/* WHEN simulation is performed */

@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.jdeeco.network.demo.convoy;
+package cz.cuni.mff.d3s.jdeeco.core.demo.convoy;
 
 
 import java.util.List;

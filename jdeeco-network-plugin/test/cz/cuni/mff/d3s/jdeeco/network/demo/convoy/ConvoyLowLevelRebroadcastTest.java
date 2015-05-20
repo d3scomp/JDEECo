@@ -14,6 +14,9 @@ import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
 import cz.cuni.mff.d3s.deeco.timer.DiscreteEventTimer;
 import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
+import cz.cuni.mff.d3s.jdeeco.core.demo.convoy.ConvoyEnsemble;
+import cz.cuni.mff.d3s.jdeeco.core.demo.convoy.Follower;
+import cz.cuni.mff.d3s.jdeeco.core.demo.convoy.Leader;
 import cz.cuni.mff.d3s.jdeeco.network.Network;
 import cz.cuni.mff.d3s.jdeeco.network.device.SimpleBroadcastDevice;
 import cz.cuni.mff.d3s.jdeeco.network.l1.strategy.LowLevelRebroadcastStrategy;
@@ -71,19 +74,19 @@ public class ConvoyLowLevelRebroadcastTest {
 		// Create DEECo node 1 - leader
 		DEECoNode deeco1 = realm.createNode(new PositionPlugin(0, 0));
 		// Deploy components and ensembles
-		deeco1.deployComponent(new Leader(outputStream));
+		deeco1.deployComponent(new Leader(outputStream, simulationTimer));
 		deeco1.deployEnsemble(ConvoyEnsemble.class);
 
 		// Create DEECo node 2 - follower (in range of leader)
 		DEECoNode deeco2 = realm.createNode(new PositionPlugin(0, SimpleBroadcastDevice.DEFAULT_RANGE * 2 / 3));
 		// Deploy components and ensembles
-		deeco2.deployComponent(new Follower("F0", outputStream));
+		deeco2.deployComponent(new Follower("F0", outputStream, simulationTimer));
 		deeco2.deployEnsemble(ConvoyEnsemble.class);
 
 		// Create DEECo node 3 - follower (out of range of leader)
 		DEECoNode deeco3 = realm.createNode(new PositionPlugin(0, SimpleBroadcastDevice.DEFAULT_RANGE * 4 / 3));
 		// Deploy components and ensembles
-		deeco3.deployComponent(new Follower("F1", outputStream));
+		deeco3.deployComponent(new Follower("F1", outputStream, simulationTimer));
 		deeco3.deployEnsemble(ConvoyEnsemble.class);
 
 		// WHEN simulation is performed

@@ -14,6 +14,9 @@ import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
 import cz.cuni.mff.d3s.deeco.timer.DiscreteEventTimer;
 import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
+import cz.cuni.mff.d3s.jdeeco.core.demo.convoy.ConvoyEnsemble;
+import cz.cuni.mff.d3s.jdeeco.core.demo.convoy.Follower;
+import cz.cuni.mff.d3s.jdeeco.core.demo.convoy.Leader;
 /**
  * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
  */
@@ -48,12 +51,12 @@ public class ConvoyTest {
 		DEECoNode deeco = realm.createNode(0);
 		/* deploy components and ensembles */
 		
-		deeco.deployComponent(new Leader(outputStream));
-		deeco.deployComponent(new Follower(outputStream));
+		deeco.deployComponent(new Leader(outputStream, simulationTimer));
+		deeco.deployComponent(new Follower(outputStream, simulationTimer));
 		deeco.deployEnsemble(ConvoyEnsemble.class);
 		
 		/* WHEN simulation is performed */
-		realm.start(2000);
+		realm.start(10000);
 		
 		// THEN the follower reaches his destination
 		if (silent)

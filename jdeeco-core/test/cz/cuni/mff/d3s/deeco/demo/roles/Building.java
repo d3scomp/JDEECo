@@ -2,7 +2,6 @@ package cz.cuni.mff.d3s.deeco.demo.roles;
 
 import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.PlaysRole;
-import cz.cuni.mff.d3s.deeco.demo.convoy.ConvoyEnsemble;
 
 /**
  * The building class also has capacity and type, therefore it could be a vehicle if we were using duck typing.

@@ -1,4 +1,7 @@
-package cz.cuni.mff.d3s.deeco.demo.convoy;
+package cz.cuni.mff.d3s.jdeeco.core.demo.convoy;
+
+import java.io.Serializable;
+
 
 
 /**
@@ -7,7 +10,8 @@ package cz.cuni.mff.d3s.deeco.demo.convoy;
  * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
  *
  */
-public class Waypoint {
+@SuppressWarnings("serial")
+public class Waypoint implements Serializable {
 	public Waypoint() {	
 	}
 	

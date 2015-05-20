@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.jdeeco.network.demo.convoy;
+package cz.cuni.mff.d3s.jdeeco.core.demo.convoy;
 
 
 
@@ -10,9 +10,11 @@ import java.util.List;
 import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
+import cz.cuni.mff.d3s.deeco.annotations.Local;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
+import cz.cuni.mff.d3s.deeco.timer.CurrentTimeProvider;
 
 /**
  * 
@@ -27,9 +29,13 @@ public class Leader {
 	public List<Waypoint> path;
 	public Waypoint position;
 	
-	private static PrintStream out;
+	@Local
+	public CurrentTimeProvider clock;
 	
-	public Leader(String name, PrintStream out) {
+	@Local
+	public PrintStream out;
+	
+	public Leader(String name, PrintStream out, CurrentTimeProvider clock) {
 		path = new LinkedList<Waypoint>(Arrays.asList(
 				new Waypoint(3, 1),
 				new Waypoint(2, 1),
@@ -42,11 +48,12 @@ public class Leader {
 		this.name = name;
 		id = "Leader1";
 		position = new Waypoint(3, 1);
-		Leader.out = out;
+		this.out = out;
+		this.clock = clock;
 	}
 	
-	public Leader(PrintStream out) {
-		this("L", out);
+	public Leader(PrintStream out, CurrentTimeProvider clock) {
+		this("L", out, clock);
 	}
 	
 	@Process
@@ -54,6 +61,8 @@ public class Leader {
 	public static void moveProcess(
 			@InOut("path") ParamHolder<List<Waypoint>> path,
 			@In("name") String name,
+			@In("clock") CurrentTimeProvider clock,
+			@In("out") PrintStream out,
 			@InOut("position") ParamHolder<Waypoint> me
 			) {
 		
@@ -67,6 +76,6 @@ public class Leader {
 			me.value.y += Integer.signum(next.y - me.value.y);
 		}
 
-		out.println("Leader " + name + ": " + me.value);
+		out.format("%06d: Leader: %s: %s%n", clock.getCurrentMilliseconds(), name, me.value);
 	}
 }

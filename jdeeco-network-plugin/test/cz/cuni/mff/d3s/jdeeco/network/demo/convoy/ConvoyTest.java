@@ -15,6 +15,9 @@ import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
 import cz.cuni.mff.d3s.deeco.timer.DiscreteEventTimer;
 import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
+import cz.cuni.mff.d3s.jdeeco.core.demo.convoy.ConvoyEnsemble;
+import cz.cuni.mff.d3s.jdeeco.core.demo.convoy.Follower;
+import cz.cuni.mff.d3s.jdeeco.core.demo.convoy.Leader;
 import cz.cuni.mff.d3s.jdeeco.network.Network;
 import cz.cuni.mff.d3s.jdeeco.network.device.SimpleBroadcastDevice;
 import cz.cuni.mff.d3s.jdeeco.network.l2.strategy.KnowledgeInsertingStrategy;
@@ -71,13 +74,13 @@ public class ConvoyTest {
 		/* create first deeco node */
 		DEECoNode deeco1 = realm.createNode();
 		/* deploy components and ensembles */
-		deeco1.deployComponent(new Leader(outputStream));
+		deeco1.deployComponent(new Leader(outputStream, simulationTimer));
 		deeco1.deployEnsemble(ConvoyEnsemble.class);
 
 		/* create second deeco node */
 		DEECoNode deeco2 = realm.createNode();
 		/* deploy components and ensembles */
-		deeco2.deployComponent(new Follower(outputStream));
+		deeco2.deployComponent(new Follower(outputStream, simulationTimer));
 		deeco2.deployEnsemble(ConvoyEnsemble.class);
 
 		/* WHEN simulation is performed */
@@ -125,13 +128,13 @@ public class ConvoyTest {
 		/* create first deeco node */
 		DEECoNode deeco1 = realm.createNode(new PositionPlugin(0, SimpleBroadcastDevice.DEFAULT_RANGE));
 		/* deploy components and ensembles */
-		deeco1.deployComponent(new Leader(outputStream));
+		deeco1.deployComponent(new Leader(outputStream, simulationTimer));
 		deeco1.deployEnsemble(ConvoyEnsemble.class);
 
 		/* create second deeco node */
 		DEECoNode deeco2 = realm.createNode(new PositionPlugin(SimpleBroadcastDevice.DEFAULT_RANGE, 0));
 		/* deploy components and ensembles */
-		deeco2.deployComponent(new Follower(outputStream));
+		deeco2.deployComponent(new Follower(outputStream, simulationTimer));
 		deeco2.deployEnsemble(ConvoyEnsemble.class);
 
 		/* WHEN simulation is performed */
