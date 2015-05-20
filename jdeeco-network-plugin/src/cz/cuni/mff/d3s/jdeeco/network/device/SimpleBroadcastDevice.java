@@ -47,8 +47,6 @@ public class SimpleBroadcastDevice implements DEECoPlugin {
 	final int range;
 	private Random random;
 
-	protected Scheduler scheduler;
-
 	// Loop devices this loop-back network is registered with
 	private Set<LoopDevice> loops = new HashSet<>();
 
@@ -60,12 +58,14 @@ public class SimpleBroadcastDevice implements DEECoPlugin {
 		final MANETBroadcastAddress address;
 		final DEECoContainer container;
 		private PositionProvider positionProvider;
+		private final Scheduler scheduler; 
 
 		public LoopDevice(DEECoContainer container) {
 			this.container = container;
 			address = new MANETBroadcastAddress(getId());
 			layer1 = container.getPluginInstance(Network.class).getL1();
 			positionProvider = container.getPluginInstance(PositionPlugin.class);
+			scheduler = container.getRuntimeFramework().getScheduler();
 		}
 
 		public Position getPosition() {
@@ -205,7 +205,6 @@ public class SimpleBroadcastDevice implements DEECoPlugin {
 	@Override
 	public void init(DEECoContainer container) {
 		random = new Random(container.getId());
-		scheduler = container.getRuntimeFramework().getScheduler();
 		Layer1 l1 = container.getPluginInstance(Network.class).getL1();
 		LoopDevice loop = new LoopDevice(container);
 		l1.registerDevice(loop);
