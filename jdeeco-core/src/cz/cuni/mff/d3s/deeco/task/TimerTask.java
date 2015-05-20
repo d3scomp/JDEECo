@@ -56,7 +56,7 @@ public class TimerTask extends Task {
 
 		this.trigger = new TimeTriggerExt();
 		this.trigger.setOffset(delay);
-		this.trigger.setPeriod(0);
+		this.trigger.setPeriod(period);
 		this.taskListener = taskListener;
 	}
 
