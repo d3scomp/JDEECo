@@ -6,11 +6,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
-import cz.cuni.mff.d3s.deeco.task.CustomStepTask;
 import cz.cuni.mff.d3s.deeco.task.TimerTask;
 import cz.cuni.mff.d3s.deeco.task.TimerTaskListener;
 import cz.cuni.mff.d3s.jdeeco.network.address.Address;
@@ -27,7 +27,7 @@ import cz.cuni.mff.d3s.jdeeco.network.l2.L2ReceivedInfo;
  *
  */
 public class Layer1 implements L2PacketSender, L1StrategyManager {
-	protected final static long COLLECTOR_LIFETIME_MS = 1000;
+	protected final static long COLLECTOR_LIFETIME_MS = 5000;
 	protected final static int MINIMUM_PAYLOAD = 1;
 	protected final static int MINIMUM_DATA_TRANSMISSION_SIZE = MINIMUM_PAYLOAD + L1Packet.HEADER_SIZE;
 
@@ -49,6 +49,9 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 		this.nodeId = nodeId;
 		this.dataIdSource = dataIdSource;
 		this.scheduler = scheduler;
+
+		// Start collector removal task
+		new TimerTask(scheduler, new CollectorCleaner(), 0, COLLECTOR_LIFETIME_MS).schedule();
 	}
 
 	/**
@@ -202,9 +205,6 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 					// Add new collector for key
 					collector = new Collector(l1Packet.totalSize);
 					collectors.put(key, collector);
-					
-					// Schedule collector removal
-					new CollectorReaper(key);
 				}
 			}
 			processL1PacketByStrategies(l1Packet);
@@ -242,26 +242,21 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 		return outputQueue;
 	}
 
-	protected class CollectorReaper implements TimerTaskListener {
-		/** Key for this collector */
-		private final CollectorKey key;
-
-		/** Task used to wipe collector when too old */
-		private final CustomStepTask suicideTask;
-
-		public CollectorReaper(CollectorKey key) {
-			this.key = key;
-
-			// Schedule suicide
-			suicideTask = new CustomStepTask(scheduler, this, COLLECTOR_LIFETIME_MS);
-			suicideTask.schedule();
-		}
-
+	/**
+	 * Task listener responsible for removing old collectors
+	 */
+	protected class CollectorCleaner implements TimerTaskListener {
 		@Override
 		public void at(long time, Object triger) {
-			// Commit suicide
-			Layer1.this.collectors.remove(key);
-			suicideTask.unSchedule();
+			// Reap old collectors
+			Collection<CollectorKey> toRemove = new LinkedList<>();
+			for (Entry<CollectorKey, Collector> entry : collectors.entrySet()) {
+				if (entry.getValue().getTimeCreated() + COLLECTOR_LIFETIME_MS > scheduler.getTimer()
+						.getCurrentMilliseconds()) {
+					toRemove.add(entry.getKey());
+				}
+			}
+			collectors.keySet().removeAll(toRemove);
 		}
 
 		@Override
@@ -281,6 +276,7 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 	 */
 	protected class Collector {
 		private final LinkedList<L1Packet> l1Packets; // incoming L1 packets
+		private final long timeCreated;
 
 		/**
 		 * Facility map representing the complete payload. Initially all elements are false indicating no data. While L1
@@ -299,6 +295,16 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 		public Collector(int totalSize) {
 			this.l1Packets = new LinkedList<L1Packet>();
 			this.map = new boolean[totalSize];
+			this.timeCreated = scheduler.getTimer().getCurrentMilliseconds();
+		}
+
+		/**
+		 * Gets collector creation time
+		 * 
+		 * @return Collector's creation time in ms
+		 */
+		public long getTimeCreated() {
+			return timeCreated;
 		}
 
 		/**

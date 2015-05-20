@@ -5,17 +5,54 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.TimeTriggerExt;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
-public abstract class TimerTask extends Task {
-
+public class TimerTask extends Task {
 	protected final TimeTrigger trigger;
 	protected final TimerTaskListener taskListener;
-	
+
+	/**
+	 * Constructs an instant task
+	 * 
+	 * INstant task is executed after 1 ms step in the simulation
+	 * 
+	 * @param scheduler
+	 *            Scheduler used to schedule the task
+	 * @param taskListener
+	 *            Listener to be executed
+	 */
 	public TimerTask(Scheduler scheduler, TimerTaskListener taskListener) {
-		this(scheduler, taskListener, 1);
+		this(scheduler, taskListener, 1, 0);
 	}
-	
+
+	/**
+	 * Constructs a one shot task
+	 * 
+	 * One shot task is executed after specified delay
+	 * 
+	 * @param scheduler
+	 *            Scheduler used to schedule the task
+	 * @param taskListener
+	 *            Listener to be executed
+	 * @param delay
+	 *            Execution delay
+	 */
 	public TimerTask(Scheduler scheduler, TimerTaskListener taskListener, long delay) {
-		super(scheduler);		
+		this(scheduler, taskListener, delay, 0);
+	}
+
+	/**
+	 * Constructs periodic task
+	 * 
+	 * @param scheduler
+	 *            Scheduler used to schedule the task
+	 * @param taskListener
+	 *            Listener to be executed
+	 * @param delay
+	 *            Initial execution delay
+	 * @param period
+	 *            Execution period
+	 */
+	public TimerTask(Scheduler scheduler, TimerTaskListener taskListener, long delay, long period) {
+		super(scheduler);
 
 		this.trigger = new TimeTriggerExt();
 		this.trigger.setOffset(delay);
@@ -23,7 +60,9 @@ public abstract class TimerTask extends Task {
 		this.taskListener = taskListener;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see cz.cuni.mff.d3s.deeco.task.Task#invoke(cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger)
 	 */
 	@Override
@@ -31,7 +70,9 @@ public abstract class TimerTask extends Task {
 		taskListener.at(scheduler.getTimer().getCurrentMilliseconds(), this);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see cz.cuni.mff.d3s.deeco.task.Task#registerTriggers()
 	 */
 	@Override
@@ -41,7 +82,9 @@ public abstract class TimerTask extends Task {
 		 */
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see cz.cuni.mff.d3s.deeco.task.Task#unregisterTriggers()
 	 */
 	@Override
@@ -51,21 +94,23 @@ public abstract class TimerTask extends Task {
 		 */
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see cz.cuni.mff.d3s.deeco.task.Task#getPeriodicTrigger()
 	 */
 	@Override
 	public TimeTrigger getTimeTrigger() {
 		return trigger;
 	}
-	
+
 	/**
 	 * Schedules this task to be executed
 	 */
 	public void schedule() {
 		scheduler.addTask(this);
 	}
-	
+
 	/**
 	 * Remove task from scheduler
 	 */
