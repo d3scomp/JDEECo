@@ -1,15 +1,16 @@
 package cz.cuni.mff.d3s.jdeeco.network.marshaller;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.junit.*;
+import org.junit.Before;
+import org.junit.Test;
 
 import cz.cuni.mff.d3s.jdeeco.network.exceptions.UnregistredPacketType;
 import cz.cuni.mff.d3s.jdeeco.network.l2.L2PacketType;
-import cz.cuni.mff.d3s.jdeeco.network.marshaller.MarshallerRegistry;
-import cz.cuni.mff.d3s.jdeeco.network.marshaller.SerializingMarshaller;
 
 /**
  * Tests data marshaling and related code
@@ -57,7 +58,7 @@ public class MarshallingTest {
 		registry = new MarshallerRegistry();
 
 		// Register marshaler
-		SerializingMarshaller marshaller = new SerializingMarshaller();
+		Marshaller marshaller = new FSTMarshaller();
 		registry.registerMarshaller(L2PacketType.KNOWLEDGE, marshaller);
 	}
 

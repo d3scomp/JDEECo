@@ -17,8 +17,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import cz.cuni.mff.d3s.jdeeco.network.address.MANETBroadcastAddress;
 import cz.cuni.mff.d3s.jdeeco.network.l1.L1Packet;
 import cz.cuni.mff.d3s.jdeeco.network.l1.Layer1;
+import cz.cuni.mff.d3s.jdeeco.network.marshaller.FSTMarshaller;
 import cz.cuni.mff.d3s.jdeeco.network.marshaller.MarshallerRegistry;
-import cz.cuni.mff.d3s.jdeeco.network.marshaller.SerializingMarshaller;
 
 /**
  * Tests for layer 2 jDEECo networking
@@ -51,7 +51,7 @@ public class L2Test {
 	@Before
 	public void initializeL2() {
 		// Setup marshalers to be used by layer
-		registry.registerMarshaller(L2PacketType.KNOWLEDGE, new SerializingMarshaller());
+		registry.registerMarshaller(L2PacketType.KNOWLEDGE, new FSTMarshaller());
 
 		// Instantiate layer
 		l2Layer = new Layer2(registry);
