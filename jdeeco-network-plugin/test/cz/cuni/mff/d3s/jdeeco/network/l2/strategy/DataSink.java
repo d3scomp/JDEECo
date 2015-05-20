@@ -18,12 +18,12 @@ public class DataSink {
 
 	// Output for writing results
 	@Local
-	private static PrintStream out;
+	public PrintStream out;
 
 	public DataSink(String id, PrintStream out) {
 		this.id = id;
 		this.outValue = 0;
-		DataSink.out = out;
+		this.out = out;
 	}
 
 	/**
@@ -31,7 +31,10 @@ public class DataSink {
 	 */
 	@Process
 	@PeriodicScheduling(period = 1000)
-	public static void dataReport(@In("id") String id, @In("outValue") Integer value) {
+	public static void dataReport(
+			@In("id") String id,
+			@In("outValue") Integer value,
+			@In("out") PrintStream out) {
 		out.println(id + ": " + value);
 	}
 }
