@@ -10,6 +10,8 @@ import java.io.ObjectOutputStream;
 /**
  * Trivial implementation of marshaler using the object serialization
  * 
+ * @deprecated Use {@link FSTMarshaller} as it is much faster
+ * 
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
  */
