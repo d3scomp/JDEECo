@@ -9,7 +9,6 @@ import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.task.CustomStepTask;
-import cz.cuni.mff.d3s.deeco.task.TimerTask;
 import cz.cuni.mff.d3s.deeco.task.TimerTaskListener;
 import cz.cuni.mff.d3s.jdeeco.network.Network;
 import cz.cuni.mff.d3s.jdeeco.network.address.Address;
@@ -103,11 +102,6 @@ public class SimpleInfrastructureDevice implements DEECoPlugin {
 		public void at(long time, Object triger) {
 			SimpleInfrastructureDevice.this.route(packet);
 			deliveryTask.unSchedule();
-		}
-
-		@Override
-		public TimerTask getInitialTask(Scheduler scheduler) {
-			return null;
 		}
 	}
 

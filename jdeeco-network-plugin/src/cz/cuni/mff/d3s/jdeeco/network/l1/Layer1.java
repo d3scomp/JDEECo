@@ -258,11 +258,6 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 			}
 			collectors.keySet().removeAll(toRemove);
 		}
-
-		@Override
-		public TimerTask getInitialTask(Scheduler scheduler) {
-			return null;
-		}
 	}
 
 	/**

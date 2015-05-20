@@ -14,7 +14,6 @@ import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
-import cz.cuni.mff.d3s.deeco.task.TimerTask;
 import cz.cuni.mff.d3s.deeco.task.TimerTaskListener;
 import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
 import cz.cuni.mff.d3s.deeco.timer.TimerEventListener;
@@ -73,7 +72,7 @@ public class OMNeTMATSimSimulation implements IMATSimSimulaton, IOMNeTSimulation
 		if(!taskStarted) {
 			taskStarted = true;
 			Scheduler scheduler = container.getRuntimeFramework().getScheduler();
-			scheduler.addTask(getInitialTask(scheduler));
+			scheduler.addTask(new SimulationStepTask(scheduler, this, 0));
 		}
 	}
 
@@ -118,11 +117,6 @@ public class OMNeTMATSimSimulation implements IMATSimSimulaton, IOMNeTSimulation
 		// Reschedule exchange task
 		SimulationStepTask task = (SimulationStepTask) triger;
 		task.scheduleNextExecutionAfter(exchangeInterval);
-	}
-
-	@Override
-	public TimerTask getInitialTask(Scheduler scheduler) {
-		return new SimulationStepTask(scheduler, this, 0);
 	}
 	
 	/**

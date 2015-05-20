@@ -17,7 +17,6 @@ import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.task.CustomStepTask;
 import cz.cuni.mff.d3s.deeco.task.Task;
-import cz.cuni.mff.d3s.deeco.task.TimerTask;
 import cz.cuni.mff.d3s.deeco.task.TimerTaskListener;
 import cz.cuni.mff.d3s.deeco.timer.CurrentTimeProvider;
 
@@ -654,16 +653,6 @@ public class RuntimeLogger {
 			task.scheduleNextExecutionAfter(period);
 
 		}
-
-		/**
-		 * Provides the {@link CustomStepTask} for the {@link TimerTaskListener} instance
-		 * that will be fired with the defined period.
-		 */
-		@Override
-		public TimerTask getInitialTask(Scheduler scheduler) 
-		{
-			return new CustomStepTask(scheduler, this, period);
-		}	
 	}
 	
 	/**

@@ -5,7 +5,6 @@ import java.util.Arrays;
 
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.task.CustomStepTask;
-import cz.cuni.mff.d3s.deeco.task.TimerTask;
 import cz.cuni.mff.d3s.deeco.task.TimerTaskListener;
 import cz.cuni.mff.d3s.jdeeco.network.address.Address;
 import cz.cuni.mff.d3s.jdeeco.network.device.Device;
@@ -25,11 +24,6 @@ public class DeviceOutputQueue {
 		@Override
 		public void at(long time, Object triger) {
 			DeviceOutputQueue.this.send();
-		}
-
-		@Override
-		public TimerTask getInitialTask(Scheduler scheduler) {
-			return null;
 		}
 	}
 

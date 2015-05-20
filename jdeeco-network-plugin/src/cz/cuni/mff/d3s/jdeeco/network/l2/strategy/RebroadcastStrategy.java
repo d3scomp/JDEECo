@@ -233,11 +233,6 @@ public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 			RebroadcastStrategy.this.doRebroadcast(packet);
 			rebroadcastTask.unSchedule();
 		}
-
-		@Override
-		public TimerTask getInitialTask(Scheduler scheduler) {
-			return null;
-		}
 	}
 
 	/**

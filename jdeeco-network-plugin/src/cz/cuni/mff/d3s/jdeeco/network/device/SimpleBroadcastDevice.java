@@ -133,11 +133,6 @@ public class SimpleBroadcastDevice implements DEECoPlugin {
 			sendToAll(packet);
 			deliveryTask.unSchedule();
 		}
-
-		@Override
-		public TimerTask getInitialTask(Scheduler scheduler) {
-			return null;
-		}
 	}
 
 	/**

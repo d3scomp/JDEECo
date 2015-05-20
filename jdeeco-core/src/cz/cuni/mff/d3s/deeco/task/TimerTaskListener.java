@@ -3,7 +3,6 @@
  */
 package cz.cuni.mff.d3s.deeco.task;
 
-import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
 
 /**
@@ -21,6 +20,4 @@ public interface TimerTaskListener {
 	 *            current simulation time
 	 */
 	void at(long time, Object triger);
-	
-	TimerTask getInitialTask(Scheduler scheduler);
 }
