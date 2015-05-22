@@ -77,9 +77,9 @@ public class OMNeTConfigGenerator {
 		for (Node node : nodes) {
 			node.ordinal = counter++;
 			content.append(String.format("%n%n# Node %d definition%n", node.id));
-			content.append(String.format("**.node[%d].mobility.initialX = %dm%n", node.ordinal, (int)node.position.x));
-			content.append(String.format("**.node[%d].mobility.initialY = %dm%n", node.ordinal, (int)node.position.y));
-			content.append(String.format("**.node[%d].mobility.initialZ = %dm%n", node.ordinal, (int)node.position.z));
+			content.append(String.format("**.node[%d].mobility.initialX = %dm%n", node.ordinal, (int) node.position.x));
+			content.append(String.format("**.node[%d].mobility.initialY = %dm%n", node.ordinal, (int) node.position.y));
+			content.append(String.format("**.node[%d].mobility.initialZ = %dm%n", node.ordinal, (int) node.position.z));
 			content.append(String.format("**.node[%d].appl.id = %d", node.ordinal, node.id));
 		}
 
@@ -89,8 +89,13 @@ public class OMNeTConfigGenerator {
 		content.append(String.format("<config>\\%n"));
 		for (Node node : nodes) {
 			if (node.ipAddress != null) {
+				// Assign custom IP address
 				content.append(String.format("\t<interface hosts='**.node[%d]' address='%s' netmask='255.x.x.x'/>\\%n",
 						node.ordinal, node.ipAddress));
+			} else {
+				// Auto assign some IP address
+				content.append(String.format("\t<interface hosts='**.node[%d]' address='10.x.x.x' netmask='255.x.x.x'/>\\%n",
+						node.ordinal));
 			}
 		}
 		content.append("</config>\")");
