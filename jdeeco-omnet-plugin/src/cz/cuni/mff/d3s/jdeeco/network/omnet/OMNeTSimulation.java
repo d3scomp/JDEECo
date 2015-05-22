@@ -144,7 +144,7 @@ public class OMNeTSimulation implements IOMNeTSimulation {
 	public OMNeTHost getHost(int id) {
 		return hosts.get(id);
 	}
-	
+
 	/**
 	 * Updates positions
 	 * 
