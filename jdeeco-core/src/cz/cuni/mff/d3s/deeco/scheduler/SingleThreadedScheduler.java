@@ -73,8 +73,7 @@ public class SingleThreadedScheduler implements Scheduler {
 			event.nextExecutionTime = executionTime;
 			event.nextPeriodStart = executionTime;
 			queue.add(event);
-
-			timer.notifyAt(event.nextExecutionTime, this, node);
+			updateTimer();
 
 			timeTriggeredEvents.put(task, event);
 		}
@@ -99,6 +98,7 @@ public class SingleThreadedScheduler implements Scheduler {
 
 					// add event to queue
 					queue.add(event);
+					updateTimer();
 				}
 			}
 		});
@@ -124,14 +124,6 @@ public class SingleThreadedScheduler implements Scheduler {
 	@Override
 	public void executionCompleted(Task task, Trigger trigger) {
 		knowledgeChangeTriggers.remove(trigger);
-
-		if (!queue.isEmpty()) {
-			long nextExecutionTime = queue.first().nextExecutionTime;
-			// FIXME we need the '=' in the next line if we don't give a random offset
-			if (nextExecutionTime >= timer.getCurrentMilliseconds()) {
-				timer.notifyAt(nextExecutionTime, this, node);
-			}
-		}
 	}
 
 	@Override
@@ -162,6 +154,16 @@ public class SingleThreadedScheduler implements Scheduler {
 				}
 			}
 		}
+		
+		// Schedule next notification
+		updateTimer();
+	}
+	
+	/**
+	 * Update timer to call us at the next queue event
+	 */
+	private void updateTimer() {
+		timer.notifyAt(queue.first().nextExecutionTime, this, node);
 	}
 }
 
