@@ -38,10 +38,20 @@ import cz.cuni.mff.d3s.jdeeco.network.utils.TimeSorted;
  */
 public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 	// Base for rebroadcast delay
-	private static final long DELAY = 1500;
+	private static final long MAX_DELAY = 1500;
 
 	// L1 packet history limit per source node
 	private static final int HISTORY_LIMIT = 32;
+
+	// OMNeT++ measured RSSI distance dependency
+	public static final double RSSI_1m = 1.00e0;
+	public static final double RSSI_2m = 1.74e-5;
+	public static final double RSSI_5m = 1.76e-6;
+	public static final double RSSI_10m = 3.12e-7;
+	public static final double RSSI_20m = 5.52e-8;
+	public static final double RSSI_50m = 5.59e-9;
+	public static final double RSSI_100m = 9.98e-10;
+	public static final double RSSI_250m = 1.11e-10;
 
 	private Layer2 layer2;
 	private Scheduler scheduler;
@@ -64,20 +74,25 @@ public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 	@Override
 	public void processL2Packet(L2Packet packet) {
 		// Get average RSSI
-		double rssiVal = 0;
-		int rssiCnt = 0;
+		double rssiSum = 0;
+		int pktCnt = 0;
 		for (L1Packet l1 : packet.getReceivedInfo().srcFragments) {
 			if (l1.receivedInfo instanceof MANETReceivedInfo) {
 				MANETReceivedInfo info = (MANETReceivedInfo) l1.receivedInfo;
-				rssiVal += info.rssi;
-				rssiCnt++;
+				rssiSum += info.rssi;
+				pktCnt++;
 			}
 		}
+		double rssiAvg = rssiSum / pktCnt;
 
 		// Skip packets formed completely by IP packets
-		if (rssiCnt == 0)
+		if (pktCnt == 0)
 			return;
 
+		// Skip packet if sender is close to us
+		if(rssiAvg > RSSI_10m)
+			return;
+		
 		// Skip rebroadcast if packet is already known to us
 		if (shallDrop(packet))
 			return;
@@ -87,9 +102,8 @@ public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 			return;
 
 		// Calculate rebroadcast delay
-		double rssi = rssiVal / rssiCnt;
-		long delayMs = (long) ((1 - rssi) * DELAY);
-
+		double ratio = Math.abs(Math.log(rssiAvg) / Math.log(RSSI_250m));
+		long delayMs = 1 + (long) ((1 - ratio) * MAX_DELAY);
 		scheduleRebroadcast(packet, delayMs);
 	}
 
@@ -276,6 +290,17 @@ public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 	 */
 	void setKmContainer(KnowledgeManagerContainer kmContainer) {
 		this.kmContainer = kmContainer;
+	}
+
+	/**
+	 * Roughly converts rssi to expected distance
+	 * 
+	 * @param rssi
+	 *            RSSI value
+	 * @return Distance in meters
+	 */
+	double rssiToDist(double rssi) {
+		return 10 * Math.exp(-0.34 * rssi);
 	}
 }
 
