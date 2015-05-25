@@ -25,8 +25,8 @@ public class BroadcastConvoyPerformanceTest {
 	final static long SIMULATION_DURATION_MS = 60000;
 	final static int PLAYGROUND_WIDTH = 1000;
 	final static int PLAYGROUND_HEIGHT = 1000;
-	final static int NODES = 50;
-	
+	final static int NODES = 25;
+
 	public static void main(String[] args) throws Exception {
 		OMNeTSimulation omnet = new OMNeTSimulation();
 
@@ -37,40 +37,39 @@ public class BroadcastConvoyPerformanceTest {
 		simulation.addPlugin(DefaultKnowledgePublisher.class);
 		simulation.addPlugin(RebroadcastStrategy.class);
 		simulation.addPlugin(omnet);
-		
-		
+
 		final Random rand = new Random(42);
 		boolean first = true;
 
 		for (int i = 0; i < NODES; ++i) {
-			// Create DEECo node 1 - leader
-			DEECoNode deeco = simulation.createNode(i,
-					new OMNeTBroadcastDevice(),
-					new PositionPlugin(
-							rand.nextInt(PLAYGROUND_WIDTH),
-							rand.nextInt(PLAYGROUND_HEIGHT)
-					)
-			);
+			double x = rand.nextInt(PLAYGROUND_WIDTH);
+			double y = rand.nextInt(PLAYGROUND_HEIGHT);
 
-			if (rand.nextBoolean() && first) {
+			System.out.format("Placing %d at [%d, %d]%n", i, (int) (x), (int) (y));
+
+			// Create DEECo node 1 - leader
+			DEECoNode deeco = simulation.createNode(new OMNeTBroadcastDevice(), new PositionPlugin(x, y));
+
+			if (first) {
 				first = false;
 				// Deploy components and ensembles
-				deeco.deployComponent(new Leader("L" + i, System.out, omnet.getTimer()));
+				deeco.deployComponent(new Seeder("L" + i, System.out, omnet.getTimer()));
 			} else {
 				// Deploy components and ensembles
-				deeco.deployComponent(new Follower("F" + i, System.out, omnet.getTimer()));
+				deeco.deployComponent(new Grather("F" + i, System.out, omnet.getTimer()));
 			}
 
-			deeco.deployEnsemble(ConvoyEnsemble.class);
-		}
-		
+			deeco.deployEnsemble(DataPass.class);
+		}		
+
 		long startTime = System.currentTimeMillis();
 
 		// Run the simulation
 		simulation.start(SIMULATION_DURATION_MS);
-		
+
 		long endTime = System.currentTimeMillis();
-		
-		System.out.format("Done, %d ms simulated in %d real ms. Sim/Real %f%n", SIMULATION_DURATION_MS, endTime - startTime, (double)(SIMULATION_DURATION_MS) / (endTime - startTime));
+
+		System.out.format("Done, %d ms simulated in %d real ms. Sim/Real %f%n", SIMULATION_DURATION_MS, endTime
+				- startTime, (double) (SIMULATION_DURATION_MS) / (endTime - startTime));
 	}
 }

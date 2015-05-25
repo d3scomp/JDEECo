@@ -63,11 +63,11 @@ public class BroadcastConvoyTest {
 		DEECoNode node1 = simulation.createNode(new OMNeTBroadcastDevice(), new PositionPlugin(0, 100));
 
 		// Deploy components and ensembles
-		node0.deployComponent(new Leader(outputStream));
-		node0.deployEnsemble(ConvoyEnsemble.class);
+		node0.deployComponent(new Seeder("S", outputStream, omnet.getTimer()));
+		node0.deployEnsemble(DataPass.class);
 
-		node1.deployComponent(new Follower(outputStream));
-		node1.deployEnsemble(ConvoyEnsemble.class);
+		node1.deployComponent(new Grather("G", outputStream, omnet.getTimer()));
+		node1.deployEnsemble(DataPass.class);
 
 		simulation.start(60000);
 		
