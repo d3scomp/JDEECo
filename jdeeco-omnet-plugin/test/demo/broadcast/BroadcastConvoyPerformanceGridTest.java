@@ -38,39 +38,32 @@ public class BroadcastConvoyPerformanceGridTest {
 
 		boolean first = true;
 
-		for(int r = 0; r < ROWS; ++r) {
-			for(int c = 0; c < COLUMNS; ++c) {
-				int i = r * COLUMNS + c;
-				if(i % 2 == 0) continue;
-				
-				double x = c * SPACING_X;
-				double y = r * SPACING_Y;
-		
-				System.out.format("Placing %d at [%d, %d]%n", i, (int) (x), (int) (y));
-	
+		for (int row = 0; row < ROWS; ++row) {
+			for (int column = 0; column < COLUMNS; ++column) {
+				int index = row * COLUMNS + column;
+				if (index % 2 == 0)
+					continue;
+
+				double x = column * SPACING_X;
+				double y = row * SPACING_Y;
+
+				System.out.format("Placing %d at [%d, %d]%n", index, (int) (x), (int) (y));
+
 				// Create DEECo node 1 - leader
 				DEECoNode deeco = simulation.createNode(new OMNeTBroadcastDevice(), new PositionPlugin(x, y));
-	
+
 				if (first) {
 					first = false;
 					// Deploy components and ensembles
-					deeco.deployComponent(new Seeder("L" + i, System.out, omnet.getTimer()));
+					deeco.deployComponent(new Seeder("L" + index, System.out, omnet.getTimer()));
 				} else {
 					// Deploy components and ensembles
-					deeco.deployComponent(new Grather("F" + i, System.out, omnet.getTimer()));
+					deeco.deployComponent(new Grather("F" + index, System.out, omnet.getTimer()));
 				}
-	
+
 				deeco.deployEnsemble(DataPass.class);
 			}
 		}
-	/*	
-		DEECoNode deeco0 = simulation.createNode(new OMNeTBroadcastDevice(), new PositionPlugin(0, 0));
-		DEECoNode deeco1 = simulation.createNode(new OMNeTBroadcastDevice(), new PositionPlugin(0, 10));
-			deeco0.deployComponent(new Leader("L", System.out, omnet.getTimer()));
-			deeco1.deployComponent(new Follower("F", System.out, omnet.getTimer()));
-			deeco0.deployEnsemble(ConvoyEnsemble.class);
-			deeco1.deployEnsemble(ConvoyEnsemble.class);*/
-		
 
 		long startTime = System.currentTimeMillis();
 

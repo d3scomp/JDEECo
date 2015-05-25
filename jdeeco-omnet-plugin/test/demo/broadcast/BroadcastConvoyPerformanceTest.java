@@ -4,9 +4,6 @@ import java.util.Random;
 
 import cz.cuni.mff.d3s.deeco.runners.DEECoSimulation;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
-import cz.cuni.mff.d3s.jdeeco.core.demo.convoy.ConvoyEnsemble;
-import cz.cuni.mff.d3s.jdeeco.core.demo.convoy.Follower;
-import cz.cuni.mff.d3s.jdeeco.core.demo.convoy.Leader;
 import cz.cuni.mff.d3s.jdeeco.network.Network;
 import cz.cuni.mff.d3s.jdeeco.network.l2.strategy.KnowledgeInsertingStrategy;
 import cz.cuni.mff.d3s.jdeeco.network.l2.strategy.RebroadcastStrategy;

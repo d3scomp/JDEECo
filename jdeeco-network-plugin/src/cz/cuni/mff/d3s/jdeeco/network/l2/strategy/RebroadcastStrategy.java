@@ -51,6 +51,7 @@ public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 	public static final double RSSI_20m = 5.52e-8;
 	public static final double RSSI_50m = 5.59e-9;
 	public static final double RSSI_100m = 9.98e-10;
+	public static final double RSSI_200m = 1.85e-10;
 	public static final double RSSI_250m = 1.11e-10;
 
 	private Layer2 layer2;
