@@ -12,7 +12,7 @@ import java.util.TreeSet;
  *
  * @param <E>
  */
-public class LimitedSortedSet<E extends TimeSorted<E>> extends TreeSet<E> {
+public class LimitedSortedSet<E extends Comparable<E>> extends TreeSet<E> {
 	private static final long serialVersionUID = 1L;
 	private final int limit;
 

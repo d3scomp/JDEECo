@@ -18,7 +18,6 @@ import cz.cuni.mff.d3s.jdeeco.network.l1.L1Strategy;
 import cz.cuni.mff.d3s.jdeeco.network.l1.Layer1;
 import cz.cuni.mff.d3s.jdeeco.network.l1.MANETReceivedInfo;
 import cz.cuni.mff.d3s.jdeeco.network.utils.LimitedSortedSet;
-import cz.cuni.mff.d3s.jdeeco.network.utils.TimeSorted;
 
 /**
  * Simple low-level rebroadcast
@@ -46,7 +45,7 @@ public class LowLevelRebroadcastStrategy implements DEECoPlugin, L1Strategy {
 	 * 
 	 * SourceNode -> History(datatId, StartPos)
 	 */
-	private Map<Byte, LimitedSortedSet<L1PacketInfo>> known = new HashMap<>();
+	private Map<Byte, LimitedSortedSet<L1PacketKey>> known = new HashMap<>();
 
 	@Override
 	public void processL1Packet(L1Packet packet) {
@@ -75,8 +74,8 @@ public class LowLevelRebroadcastStrategy implements DEECoPlugin, L1Strategy {
 		if (!known.containsKey(packet.srcNode))
 			return false;
 
-		LimitedSortedSet<L1PacketInfo> set = known.get(packet.srcNode);
-		L1PacketInfo info = new L1PacketInfo(packet);
+		LimitedSortedSet<L1PacketKey> set = known.get(packet.srcNode);
+		L1PacketKey info = new L1PacketKey(packet);
 
 		// Skip packets that are older than oldest packets from history
 		if (set.first().compareTo(info) > 0) {
@@ -98,7 +97,7 @@ public class LowLevelRebroadcastStrategy implements DEECoPlugin, L1Strategy {
 		if (!known.containsKey(packet.srcNode)) {
 			known.put(packet.srcNode, new LimitedSortedSet<>(HISTORY_LIMIT));
 		}
-		known.get(packet.srcNode).add(new L1PacketInfo(packet));
+		known.get(packet.srcNode).add(new L1PacketKey(packet));
 	}
 
 	/**
@@ -166,16 +165,16 @@ public class LowLevelRebroadcastStrategy implements DEECoPlugin, L1Strategy {
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
  */
-class L1PacketInfo implements TimeSorted<L1PacketInfo> {
+class L1PacketKey implements Comparable<L1PacketKey> {
 	public final int dataId;
 	public final int startPos;
 
-	public L1PacketInfo(L1Packet packet) {
+	public L1PacketKey(L1Packet packet) {
 		dataId = packet.dataId;
 		startPos = packet.startPos;
 	}
 
-	public L1PacketInfo(int dataId, int startPos) {
+	public L1PacketKey(int dataId, int startPos) {
 		this.dataId = dataId;
 		this.startPos = startPos;
 	}
@@ -191,7 +190,7 @@ class L1PacketInfo implements TimeSorted<L1PacketInfo> {
 	}
 
 	@Override
-	public int compareTo(L1PacketInfo o) {
+	public int compareTo(L1PacketKey o) {
 		if (dataId < o.dataId) {
 			return -1;
 		} else if (dataId > o.dataId) {
