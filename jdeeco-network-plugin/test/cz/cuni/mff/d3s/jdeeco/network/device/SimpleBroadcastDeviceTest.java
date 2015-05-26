@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.jdeeco.network.device;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -13,6 +14,7 @@ import cz.cuni.mff.d3s.jdeeco.network.address.MANETBroadcastAddress;
 import cz.cuni.mff.d3s.jdeeco.network.l1.DefaultDataIDSource;
 import cz.cuni.mff.d3s.jdeeco.network.l1.L1Packet;
 import cz.cuni.mff.d3s.jdeeco.network.l1.Layer1;
+import cz.cuni.mff.d3s.jdeeco.network.l2.strategy.RebroadcastStrategy;
 import cz.cuni.mff.d3s.jdeeco.position.PositionPlugin;
 
 /**
@@ -132,5 +134,20 @@ public class SimpleBroadcastDeviceTest {
 		// Test packet was received on node 2
 		Layer1 node2layer1 = node2.getPluginInstance(Network.class).getL1();
 		Mockito.verify(node2layer1, Mockito.atLeastOnce()).processL0Packet(Mockito.any(), Mockito.any(), Mockito.any());
+	}
+	
+	/**
+	 * Tests RSSI approximation
+	 * 
+	 * Test calculation against constants and allows 10% inaccuracy
+	 */
+	@Test
+	public void testRSSIApprox() {
+		Assert.assertEquals(RebroadcastStrategy.RSSI_10m, SimpleBroadcastDevice.calcRssiForDistance(10), RebroadcastStrategy.RSSI_10m / 10);
+		Assert.assertEquals(RebroadcastStrategy.RSSI_20m, SimpleBroadcastDevice.calcRssiForDistance(20), RebroadcastStrategy.RSSI_20m / 10);
+		Assert.assertEquals(RebroadcastStrategy.RSSI_50m, SimpleBroadcastDevice.calcRssiForDistance(50), RebroadcastStrategy.RSSI_50m / 10);
+		Assert.assertEquals(RebroadcastStrategy.RSSI_100m, SimpleBroadcastDevice.calcRssiForDistance(100), RebroadcastStrategy.RSSI_100m / 10);
+		Assert.assertEquals(RebroadcastStrategy.RSSI_200m, SimpleBroadcastDevice.calcRssiForDistance(200), RebroadcastStrategy.RSSI_200m / 10);
+		Assert.assertEquals(RebroadcastStrategy.RSSI_250m, SimpleBroadcastDevice.calcRssiForDistance(250), RebroadcastStrategy.RSSI_250m / 10);
 	}
 }

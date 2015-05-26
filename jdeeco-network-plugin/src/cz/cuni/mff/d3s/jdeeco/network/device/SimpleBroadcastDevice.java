@@ -16,7 +16,6 @@ import cz.cuni.mff.d3s.jdeeco.network.address.Address;
 import cz.cuni.mff.d3s.jdeeco.network.address.MANETBroadcastAddress;
 import cz.cuni.mff.d3s.jdeeco.network.l1.Layer1;
 import cz.cuni.mff.d3s.jdeeco.network.l1.MANETReceivedInfo;
-import cz.cuni.mff.d3s.jdeeco.network.l2.strategy.RebroadcastStrategy;
 import cz.cuni.mff.d3s.jdeeco.position.Position;
 import cz.cuni.mff.d3s.jdeeco.position.PositionPlugin;
 import cz.cuni.mff.d3s.jdeeco.position.PositionProvider;
@@ -199,7 +198,7 @@ public class SimpleBroadcastDevice implements DEECoPlugin {
 	 * 
 	 * @return Approximated RSSI value
 	 */
-	private double calcRssiForDistance(double distance) {
+	protected static double calcRssiForDistance(double distance) {
 		// Simple approximation with power function fitted to data measured in OMNet++
 		return 1e-04 * Math.pow(distance, -2.483);
 	}
