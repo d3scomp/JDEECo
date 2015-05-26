@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
@@ -25,7 +24,6 @@ import cz.cuni.mff.d3s.jdeeco.network.l2.L2Packet;
 import cz.cuni.mff.d3s.jdeeco.network.l2.L2Strategy;
 import cz.cuni.mff.d3s.jdeeco.network.l2.Layer2;
 import cz.cuni.mff.d3s.jdeeco.network.utils.LimitedSortedSet;
-import cz.cuni.mff.d3s.jdeeco.network.utils.TimeSorted;
 
 /**
  * Network Layer 2 rebroadcast strategy
@@ -38,7 +36,7 @@ import cz.cuni.mff.d3s.jdeeco.network.utils.TimeSorted;
  */
 public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 	// Base for rebroadcast delay
-	private static final long MAX_DELAY = 1500;
+	private static final long MAX_DELAY = 10000;
 
 	// L1 packet history limit per source node
 	private static final int HISTORY_LIMIT = 32;
@@ -62,9 +60,16 @@ public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 	/**
 	 * Map of known packets
 	 * 
-	 * SourceNode -> History(datatId, StartPos)
+	 * SourceNode -> datatId
 	 */
-	private Map<Byte, LimitedSortedSet<L2PacketInfo>> known = new HashMap<>();
+	private Map<Byte, LimitedSortedSet<Integer>> known = new HashMap<>();
+	
+	/**
+	 * Map of packets with pending rebroadcast
+	 * 
+	 * SourceNode -> Scheduled rebroadcast
+	 */
+	private Map<Integer, Rebroadcast> scheduled = new HashMap<>();
 
 	/**
 	 * Processes the L2 packet by rebroadcast strategy
@@ -84,7 +89,13 @@ public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 				pktCnt++;
 			}
 		}
-		double rssiAvg = rssiSum / pktCnt;
+		final double rssiAvg = rssiSum / pktCnt;
+		
+		// Skip packets with pending rebroadcast and cancel the rebroadcast
+		if(scheduled.containsKey(packet.getReceivedInfo().dataId)) {
+			scheduled.get(packet.getReceivedInfo().dataId).cancel();
+			return;
+		}
 
 		// Skip packets formed completely by IP packets
 		if (pktCnt == 0)
@@ -103,7 +114,7 @@ public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 			return;
 
 		// Calculate rebroadcast delay
-		double ratio = Math.abs(Math.log(rssiAvg) / Math.log(RSSI_250m));
+		double ratio = Math.min(1, Math.abs(Math.log(rssiAvg) / Math.log(RSSI_250m)));
 		long delayMs = 1 + (long) ((1 - ratio) * MAX_DELAY);
 		scheduleRebroadcast(packet, delayMs);
 	}
@@ -121,16 +132,15 @@ public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 		if (!known.containsKey(packet.getReceivedInfo().srcNode))
 			return false;
 
-		LimitedSortedSet<L2PacketInfo> set = known.get(packet.getReceivedInfo().srcNode);
-		L2PacketInfo info = new L2PacketInfo(packet);
+		LimitedSortedSet<Integer> set = known.get(packet.getReceivedInfo().srcNode);
 
 		// Skip packets that are older than oldest packets from history
-		if (set.first().compareTo(info) > 0) {
+		if (set.first().compareTo(packet.getReceivedInfo().dataId) > 0) {
 			return true;
 		}
 
 		// If packet is in history range then skip those already in history
-		return set.contains(info);
+		return set.contains(packet.getReceivedInfo().dataId);
 	}
 
 	/**
@@ -144,7 +154,7 @@ public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 		if (!known.containsKey(packet.getReceivedInfo().srcNode)) {
 			known.put(packet.getReceivedInfo().srcNode, new LimitedSortedSet<>(HISTORY_LIMIT));
 		}
-		known.get(packet.getReceivedInfo().srcNode).add(new L2PacketInfo(packet));
+		known.get(packet.getReceivedInfo().srcNode).add(packet.getReceivedInfo().dataId);
 	}
 
 	/**
@@ -158,18 +168,9 @@ public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 	private void scheduleRebroadcast(L2Packet packet, long delayMs) {
 		// Do not rebroadcast the same packet again
 		makeKnown(packet);
+		
 		// Schedule delayed rebroadcast
 		new Rebroadcast(packet, delayMs);
-	}
-
-	/**
-	 * Perform the rebroadcast action
-	 * 
-	 * @param packet
-	 *            Packet to rebroadcast
-	 */
-	private void doRebroadcast(L2Packet packet) {
-		layer2.sendL2Packet(packet, MANETBroadcastAddress.BROADCAST);
 	}
 
 	/**
@@ -207,7 +208,7 @@ public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 	 * @return
 	 */
 	private KnowledgeManager getNodeKnowledge() {
-		// FIXME: in the future, we need to unify the knowledge of all the local KMs.
+		// TODO: FIXME: in the future, we need to unify the knowledge of all the local KMs.
 		return kmContainer.getLocals().iterator().next();
 	}
 
@@ -235,16 +236,28 @@ public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 	private class Rebroadcast implements TimerTaskListener {
 		private final L2Packet packet;
 		private final TimerTask rebroadcastTask;
+		private boolean canceled = false;
 
 		public Rebroadcast(L2Packet packet, long delayMs) {
 			this.packet = packet;
 			rebroadcastTask = new TimerTask(scheduler, this, delayMs);
 			rebroadcastTask.schedule();
+			scheduled.put(packet.getReceivedInfo().dataId, this);
+		}
+		
+		/**
+		 * Cancel rebroadcast 
+		 */
+		public void cancel() {
+			canceled = true;
 		}
 
 		@Override
 		public void at(long time, Object triger) {
-			RebroadcastStrategy.this.doRebroadcast(packet);
+			if(!canceled) { 
+				layer2.sendL2Packet(packet, MANETBroadcastAddress.BROADCAST);
+			}
+			scheduled.remove(packet.getReceivedInfo().dataId);
 			rebroadcastTask.unSchedule();
 		}
 	}
@@ -294,7 +307,7 @@ public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 	}
 
 	/**
-	 * Roughly converts rssi to expected distance
+	 * Roughly converts RSSI to expected distance
 	 * 
 	 * @param rssi
 	 *            RSSI value
@@ -302,33 +315,5 @@ public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 	 */
 	double rssiToDist(double rssi) {
 		return 10 * Math.exp(-0.34 * rssi);
-	}
-}
-
-/**
- * Info about L2 packet
- * 
- * Used to identify L2 packets without storing unnecessary information
- */
-class L2PacketInfo implements TimeSorted<L2PacketInfo> {
-	public final int dataId;
-
-	public L2PacketInfo(final L2Packet packet) {
-		dataId = packet.getReceivedInfo().dataId;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		return Objects.deepEquals(this, obj);
-	}
-
-	@Override
-	public int hashCode() {
-		return dataId;
-	}
-
-	@Override
-	public int compareTo(L2PacketInfo o) {
-		return ((Integer) dataId).compareTo(o.dataId);
 	}
 }
