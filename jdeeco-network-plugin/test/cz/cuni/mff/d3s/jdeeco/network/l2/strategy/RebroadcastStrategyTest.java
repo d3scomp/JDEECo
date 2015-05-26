@@ -72,7 +72,7 @@ public class RebroadcastStrategyTest {
 	private L2Packet getMANETSourcedL2Packet(int dataId) {
 		// Mock received info
 		L1Packet l1Packet = Mockito.mock(L1Packet.class);
-		l1Packet.receivedInfo = new MANETReceivedInfo(MANETBroadcastAddress.BROADCAST, 0.5);
+		l1Packet.receivedInfo = new MANETReceivedInfo(MANETBroadcastAddress.BROADCAST, RebroadcastStrategy.RSSI_100m);
 		L2ReceivedInfo receivedInfo = new L2ReceivedInfo(Arrays.asList(l1Packet), (byte) 0, dataId);
 
 		return getL2Packet(dataId, receivedInfo);
