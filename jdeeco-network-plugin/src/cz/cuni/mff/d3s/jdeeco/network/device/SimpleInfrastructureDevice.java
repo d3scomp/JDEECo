@@ -30,7 +30,6 @@ public class SimpleInfrastructureDevice implements DEECoPlugin {
 	 * Loop device used to provide broadcast device to layer 1
 	 */
 	private class LoopDevice extends Device {
-		public Layer1 layer1;
 		public IPAddress address;
 
 		private String id;
@@ -38,7 +37,6 @@ public class SimpleInfrastructureDevice implements DEECoPlugin {
 		public LoopDevice(String id, IPAddress address, Layer1 layer1) {
 			this.id = id;
 			this.address = address;
-			this.layer1 = layer1;
 		}
 
 		@Override
@@ -144,7 +142,8 @@ public class SimpleInfrastructureDevice implements DEECoPlugin {
 	public void route(PacketWrapper packet) {
 		LoopDevice loop = loops.get(packet.destination);
 		if (loop != null) {
-			loop.layer1.processL0Packet(packet.data, packet.sender, new ReceivedInfo(packet.sender.address));
+			ReceivedInfo info = new ReceivedInfo(packet.sender.address);
+			loop.receive(packet.data, info);
 		} else {
 			throw new UnsupportedOperationException("Destination address not found in loop network");
 		}

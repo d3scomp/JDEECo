@@ -52,8 +52,7 @@ public class SimpleBroadcastDevice implements DEECoPlugin {
 	/**
 	 * Loop device used to provide broadcast device to layer 1
 	 */
-	protected class LoopDevice extends Device {
-		final Layer1 layer1;
+	private class LoopDevice extends Device {
 		final MANETBroadcastAddress address;
 		final DEECoContainer container;
 		private PositionProvider positionProvider;
@@ -62,7 +61,6 @@ public class SimpleBroadcastDevice implements DEECoPlugin {
 		public LoopDevice(DEECoContainer container) {
 			this.container = container;
 			address = new MANETBroadcastAddress(getId());
-			layer1 = container.getPluginInstance(Network.class).getL1();
 			positionProvider = container.getPluginInstance(PositionPlugin.class);
 			scheduler = container.getRuntimeFramework().getScheduler();
 		}
@@ -186,7 +184,7 @@ public class SimpleBroadcastDevice implements DEECoPlugin {
 
 				// Receive packet on the destination node
 				MANETReceivedInfo info = new MANETReceivedInfo(packet.source.address, rssi);
-				loop.layer1.processL0Packet(packet.data, packet.source, info);
+				loop.receive(packet.data, info);
 			}
 		}
 	}
@@ -211,8 +209,8 @@ public class SimpleBroadcastDevice implements DEECoPlugin {
 	@Override
 	public void init(DEECoContainer container) {
 		random = new Random(container.getId());
-		Layer1 l1 = container.getPluginInstance(Network.class).getL1();
 		LoopDevice loop = new LoopDevice(container);
+		Layer1 l1 = container.getPluginInstance(Network.class).getL1();
 		l1.registerDevice(loop);
 		loops.add(loop);
 	}

@@ -103,7 +103,8 @@ public class SimpleBroadcastDeviceTest {
 		DEECoContainer node = setupBaseNode(0, 0);
 
 		// Configure Network for mocked container
-		Layer1 layer1 = Mockito.mock(Layer1.class);
+		Layer1 layer1 = Mockito.spy(new Layer1((byte) 0, DefaultDataIDSource.getInstance(), scheduler));
+		//Layer1 layer1 = Mockito.mock(Layer1.class);
 		Network network = Mockito.mock(Network.class);
 		Mockito.when(network.getL1()).thenReturn(layer1);
 		Mockito.when(node.getPluginInstance(Network.class)).thenReturn(network);

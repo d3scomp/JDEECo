@@ -90,7 +90,8 @@ public class SimpleInfrastructureDeviceTest {
 		Mockito.when(node.getRuntimeFramework()).thenReturn(runtime);
 
 		// Configure Network for mocked container
-		Layer1 layer1 = Mockito.mock(Layer1.class);
+		Layer1 layer1 = Mockito.spy(new Layer1((byte) id, DefaultDataIDSource.getInstance(), scheduler));
+		Mockito.doNothing().when(layer1).processL0Packet(Mockito.any(), Mockito.any(), Mockito.any());
 		Network network = Mockito.mock(Network.class);
 		Mockito.when(network.getL1()).thenReturn(layer1);
 		Mockito.when(node.getPluginInstance(Network.class)).thenReturn(network);
