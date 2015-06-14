@@ -55,6 +55,21 @@
 			<version>1.9.5</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
+			<artifactId>cz.cuni.mff.d3s.jdeeco.network</artifactId>
+			<version>3.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.ros.rosjava_core</groupId>
+			<artifactId>rosjava</artifactId>
+			<version>0.2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>18.0</version>
+		</dependency>
 	</dependencies>
 	
 	<repositories>
@@ -62,5 +77,10 @@
 			<id>d3s</id>
 			<url>https://gitlab.d3s.mff.cuni.cz:8443/nexus/content/groups/public/</url>
 		</repository>
+		<repository>
+                <id>rosjava_mvn_repo</id>
+                <url>https://github.com/rosjava/rosjava_mvn_repo/raw/master</url>
+        </repository>
+		
 	</repositories>
 </project>
