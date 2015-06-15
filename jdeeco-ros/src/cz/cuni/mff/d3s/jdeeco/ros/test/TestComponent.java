@@ -5,7 +5,7 @@ import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
-import cz.cuni.mff.d3s.jdeeco.ros.Dynamics;
+import cz.cuni.mff.d3s.jdeeco.ros.Sensors;
 
 @Component
 public class TestComponent {
@@ -23,9 +23,9 @@ public class TestComponent {
 	@PeriodicScheduling(period = 1000)
 	public static void checkMessage(@InOut("msg") ParamHolder<String> message) {
 		System.out.println(message.value);
-		if (Dynamics.getInstance().getPosition() != null) {
-			message.value = String.format("[%f, %f]", Dynamics.getInstance()
-					.getPosition().getX(), Dynamics.getInstance().getPosition()
+		if (Sensors.getInstance().getPosition() != null) {
+			message.value = String.format("[%f, %f]", Sensors.getInstance()
+					.getPosition().getX(), Sensors.getInstance().getPosition()
 					.getY());
 		}
 		try {

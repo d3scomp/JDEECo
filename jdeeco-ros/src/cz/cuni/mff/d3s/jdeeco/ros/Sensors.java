@@ -6,19 +6,19 @@ import org.ros.message.MessageListener;
 import org.ros.node.ConnectedNode;
 import org.ros.node.topic.Subscriber;
 
-public class Dynamics extends TopicSubscriber {
+public class Sensors extends TopicSubscriber {
 
 	private static final String ODOMETRY_TOPIC = "odom";
 
 	private Point lastPosition;
 
-	private static Dynamics INSTANCE;
+	private static Sensors INSTANCE;
 
-	private Dynamics() {}
+	private Sensors() {}
 
-	public static Dynamics getInstance() {
+	public static Sensors getInstance() {
 		if (INSTANCE == null) {
-			INSTANCE = new Dynamics();
+			INSTANCE = new Sensors();
 		}
 		return INSTANCE;
 	}
@@ -34,9 +34,9 @@ public class Dynamics extends TopicSubscriber {
 
 						lastPosition = message.getPose().getPose()
 								.getPosition();
-						System.out.format("Position: %f,%f%n",
+						/*System.out.format("Position: %f,%f%n",
 								message.getPose().getPose().getPosition().getX(),
-								message.getPose().getPose().getPosition().getY());
+								message.getPose().getPose().getPosition().getY());*/
 					
 						// TODO: make own implementation of Point to lose
 						// dependency on org.ros artifact?

@@ -73,7 +73,7 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 
 	@Override
 	public void onStart(ConnectedNode node) {
-		Dynamics.getInstance().subscribe(node);
+		Sensors.getInstance().subscribe(node);
 		
 	}
 
