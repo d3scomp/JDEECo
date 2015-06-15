@@ -30,7 +30,7 @@ public class TestComponent {
 					.getY());
 		}
 
-		Actuators.getInstance().setVelocity(0,0.5);
+		Actuators.getInstance().setVelocity(0.5,0);
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
