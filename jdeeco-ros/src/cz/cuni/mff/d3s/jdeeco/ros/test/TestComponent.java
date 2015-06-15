@@ -5,6 +5,7 @@ import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
+import cz.cuni.mff.d3s.jdeeco.ros.Actuators;
 import cz.cuni.mff.d3s.jdeeco.ros.Sensors;
 
 @Component
@@ -28,6 +29,8 @@ public class TestComponent {
 					.getPosition().getX(), Sensors.getInstance().getPosition()
 					.getY());
 		}
+
+		Actuators.getInstance().setVelocity(0,0.5);
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
