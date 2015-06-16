@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.jdeeco.ros.test;
 
+import cz.cuni.mff.d3s.jdeeco.ros.datatypes.Sound;
 import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
@@ -18,8 +19,6 @@ public class TestComponent {
 
 	public String msg;
 	
-	private static LedColor led1 = LedColor.GREEN;
-	private static LedColor led2 = LedColor.RED;
 
 	public TestComponent(final String id) {
 		this.id = id;
@@ -43,14 +42,17 @@ public class TestComponent {
 		case CENTER:
 			Actuators.getInstance().setLed(LedId.LED1, LedColor.RED);
 			Actuators.getInstance().setLed(LedId.LED2, LedColor.RED);
+			Actuators.getInstance().playSound(Sound.RECHARGE);
 			break;
 		case LEFT:
 			Actuators.getInstance().setLed(LedId.LED1, LedColor.RED);
 			Actuators.getInstance().setLed(LedId.LED2, LedColor.BLACK);
+			Actuators.getInstance().playSound(Sound.CLEANING_END);
 			break;
 		case RIGHT:
 			Actuators.getInstance().setLed(LedId.LED1, LedColor.BLACK);
 			Actuators.getInstance().setLed(LedId.LED2, LedColor.RED);
+			Actuators.getInstance().playSound(Sound.CLEANING_START);
 			break;
 		default:
 			Actuators.getInstance().setLed(LedId.LED1, LedColor.BLACK);

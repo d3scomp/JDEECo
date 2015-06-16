@@ -13,6 +13,7 @@ import org.ros.node.topic.Publisher;
 
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.LedColor;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.LedId;
+import cz.cuni.mff.d3s.jdeeco.ros.datatypes.Sound;
 
 /**
  * Provides methods to command actuators through ROS. Registration of
@@ -53,6 +54,19 @@ public class Actuators extends TopicSubscriber {
 	private Map<LedId, LedColor> ledColor;
 
 	/**
+	 * The name of the topic for sound messages.
+	 */
+	private static final String SOUND_TOPIC = "/mobile_base/commands/sound";
+	/**
+	 * The sound to be played.
+	 */
+	private Sound sound;
+	/**
+	 * The lock to wait and notify on when a sound should be played.
+	 */
+	private Object soundLock;
+
+	/**
 	 * The singleton instance of the {@link Actuators} class.
 	 */
 	private static Actuators INSTANCE;
@@ -62,6 +76,7 @@ public class Actuators extends TopicSubscriber {
 	 */
 	private Actuators() {
 		ledColor = new HashMap<>();
+		soundLock = new Object();
 	}
 
 	/**
@@ -86,6 +101,7 @@ public class Actuators extends TopicSubscriber {
 	void subscribe(ConnectedNode connectedNode) {
 		subscribeVelocity(connectedNode);
 		subscribeLed(connectedNode);
+		subscribeSound(connectedNode);
 	}
 
 	/**
@@ -136,7 +152,7 @@ public class Actuators extends TopicSubscriber {
 	 */
 	private void subscribeLed(ConnectedNode connectedNode) {
 		for (LedId ledId : LedId.values()) {
-			final Publisher<Led> LedTopic = connectedNode.newPublisher(
+			final Publisher<Led> ledTopic = connectedNode.newPublisher(
 					ledId.topic, Led._TYPE);
 			connectedNode.executeCancellableLoop(new CancellableLoop() {
 				@Override
@@ -146,9 +162,9 @@ public class Actuators extends TopicSubscriber {
 
 				@Override
 				protected void loop() throws InterruptedException {
-					Led led = LedTopic.newMessage();
+					Led led = ledTopic.newMessage();
 					led.setValue(ledColor.get(ledId).value);
-					LedTopic.publish(led);
+					ledTopic.publish(led);
 					// TODO: log
 
 					synchronized (ledId) {
@@ -157,6 +173,38 @@ public class Actuators extends TopicSubscriber {
 				}
 			});
 		}
+	}
+
+	/**
+	 * Subscribe to the ROS topics for sound messages. To publish sound message
+	 * wait until notified by the {@link #playSound(Sound)} setter.
+	 * 
+	 * @param connectedNode
+	 *            The ROS node on which the DEECo node runs.
+	 */
+	private void subscribeSound(ConnectedNode connectedNode) {
+		final Publisher<kobuki_msgs.Sound> soundTopic = connectedNode
+				.newPublisher(SOUND_TOPIC, kobuki_msgs.Sound._TYPE);
+		connectedNode.executeCancellableLoop(new CancellableLoop() {
+			@Override
+			protected void setup() {
+			}
+
+			@Override
+			protected void loop() throws InterruptedException {
+
+				synchronized (soundLock) {
+					soundLock.wait();
+				}
+
+				kobuki_msgs.Sound soundMsg = soundTopic.newMessage();
+				soundMsg.setValue(sound.value);
+				soundTopic.publish(soundMsg);
+				// System.out.println("sound: " + sound);
+				// TODO: log
+
+			}
+		});
 	}
 
 	/**
@@ -198,6 +246,19 @@ public class Actuators extends TopicSubscriber {
 		ledColor.put(ledId, color);
 		synchronized (ledId) {
 			ledId.notify();
+		}
+	}
+
+	/**
+	 * Play the specified sound.
+	 * 
+	 * @param sound
+	 *            The sound to be played.
+	 */
+	public void playSound(Sound sound) {
+		this.sound = sound;
+		synchronized (soundLock) {
+			soundLock.notify();
 		}
 	}
 
