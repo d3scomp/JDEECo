@@ -1,7 +1,12 @@
 package cz.cuni.mff.d3s.jdeeco.ros;
 
 import geometry_msgs.Point;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import kobuki_msgs.BumperEvent;
+import kobuki_msgs.WheelDropEvent;
 import nav_msgs.Odometry;
 
 import org.ros.message.MessageListener;
@@ -9,6 +14,8 @@ import org.ros.node.ConnectedNode;
 import org.ros.node.topic.Subscriber;
 
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.Bumper;
+import cz.cuni.mff.d3s.jdeeco.ros.datatypes.Wheel;
+import cz.cuni.mff.d3s.jdeeco.ros.datatypes.WheelState;
 
 /**
  * Provides methods for obtaining sensed values passed through ROS. Subscription
@@ -39,6 +46,16 @@ public class Sensors extends TopicSubscriber {
 	private Bumper bumper;
 
 	/**
+	 * The name of the topic to report wheel drop changes.
+	 */
+	private static final String WHEEL_DROP_TOPIC = "/mobile_base/events/wheel_drop";
+
+	/**
+	 * The map of wheel states.
+	 */
+	private Map<Wheel, WheelState> wheelState;
+
+	/**
 	 * The singleton instance of the {@link Sensors} class.
 	 */
 	private static Sensors INSTANCE;
@@ -48,6 +65,10 @@ public class Sensors extends TopicSubscriber {
 	 */
 	private Sensors() {
 		bumper = Bumper.RELEASED;
+		wheelState = new HashMap<>();
+		for (Wheel wheel : Wheel.values()) {
+			wheelState.put(wheel, WheelState.RAISED);
+		}
 	}
 
 	/**
@@ -72,6 +93,7 @@ public class Sensors extends TopicSubscriber {
 	void subscribe(ConnectedNode connectedNode) {
 		subscribeOdometry(connectedNode);
 		subscribeBumper(connectedNode);
+		subscribeWheelDrop(connectedNode);
 	}
 
 	/**
@@ -130,6 +152,30 @@ public class Sensors extends TopicSubscriber {
 	}
 
 	/**
+	 * Subscribe to the ROS topic for wheel drop changes.
+	 * 
+	 * @param connectedNode
+	 *            The ROS node on which the DEECo node runs.
+	 */
+	private void subscribeWheelDrop(ConnectedNode connectedNode) {
+		Subscriber<WheelDropEvent> bumperTopic = connectedNode.newSubscriber(
+				WHEEL_DROP_TOPIC, WheelDropEvent._TYPE);
+		bumperTopic.addMessageListener(new MessageListener<WheelDropEvent>() {
+			@Override
+			public void onNewMessage(WheelDropEvent message) {
+
+				Wheel wheel = Wheel.fromByte(message.getWheel());
+				WheelState state = WheelState.fromByte(message.getState());
+				if (wheel != null && state != null) {
+					wheelState.put(wheel, state);
+					// System.out.println(wheel + " wheel state: " + state);
+				}
+				// TODO: log
+			}
+		});
+	}
+
+	/**
 	 * The position published in the odometry topic.
 	 * 
 	 * @return last value of the position published in the odometry topic.
@@ -145,6 +191,20 @@ public class Sensors extends TopicSubscriber {
 	 */
 	public Bumper getBumper() {
 		return bumper;
+	}
+
+	/**
+	 * Get the state of specified wheel of the robot.
+	 * 
+	 * @param wheel
+	 *            The wheel to obtain the state of.
+	 * @return The state of the specified wheel.
+	 */
+	public WheelState getWheelState(Wheel wheel) {
+		if (wheelState.containsKey(wheel)) {
+			return wheelState.get(wheel);
+		}
+		return null;
 	}
 
 }

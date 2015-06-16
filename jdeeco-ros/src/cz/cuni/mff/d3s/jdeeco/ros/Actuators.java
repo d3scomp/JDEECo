@@ -65,7 +65,7 @@ public class Actuators extends TopicSubscriber {
 	 * The lock to wait and notify on when a sound should be played.
 	 */
 	private Object soundLock;
-
+	
 	/**
 	 * The singleton instance of the {@link Actuators} class.
 	 */
