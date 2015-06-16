@@ -28,7 +28,6 @@ public class Actuators extends TopicSubscriber {
 	 * The name of the velocity topic.
 	 */
 	private static final String VELOCITY_TOPIC = "/mobile_base/commands/velocity";
-
 	/**
 	 * The maximum absolute linear speed. Value taken from kobuki_keyop
 	 */
@@ -37,7 +36,6 @@ public class Actuators extends TopicSubscriber {
 	 * The maximum absolute angular speed. Value taken from kobuki_keyop
 	 */
 	private static final double MAX_ANGULAR_VELOCITY = 6.6;
-
 	/**
 	 * Current linear speed. Range from -{@link #MAX_LINEAR_VELOCITY} to +
 	 * {@link #MAX_LINEAR_VELOCITY}.
@@ -49,6 +47,9 @@ public class Actuators extends TopicSubscriber {
 	 */
 	private double angularVelocity;
 
+	/**
+	 * A {@link Map} of available LEDs and theirs assigned colors.
+	 */
 	private Map<LedId, LedColor> ledColor;
 
 	/**
@@ -87,6 +88,12 @@ public class Actuators extends TopicSubscriber {
 		subscribeLed(connectedNode);
 	}
 
+	/**
+	 * Subscribe to the ROS topic for velocity.
+	 * 
+	 * @param connectedNode
+	 *            The ROS node on which the DEECo node runs.
+	 */
 	private void subscribeVelocity(ConnectedNode connectedNode) {
 		final Publisher<Twist> velocityTopic = connectedNode.newPublisher(
 				VELOCITY_TOPIC, Twist._TYPE);
@@ -120,6 +127,13 @@ public class Actuators extends TopicSubscriber {
 		});
 	}
 
+	/**
+	 * Subscribe all the LEDs to ROS topics for them. To publish color changes
+	 * wait until notified by the {@link #setLed(LedId, LedColor)} setter.
+	 * 
+	 * @param connectedNode
+	 *            The ROS node on which the DEECo node runs.
+	 */
 	private void subscribeLed(ConnectedNode connectedNode) {
 		for (LedId ledId : LedId.values()) {
 			final Publisher<Led> LedTopic = connectedNode.newPublisher(
@@ -135,6 +149,7 @@ public class Actuators extends TopicSubscriber {
 					Led led = LedTopic.newMessage();
 					led.setValue(ledColor.get(ledId).value);
 					LedTopic.publish(led);
+					// TODO: log
 
 					synchronized (ledId) {
 						ledId.wait();
@@ -169,6 +184,16 @@ public class Actuators extends TopicSubscriber {
 		angularVelocity = fromNormalized(angular, MAX_ANGULAR_VELOCITY);
 	}
 
+	/**
+	 * Set desired color to a LED of your choice. {@link LedColor#BLACK} turns
+	 * the LED off. Setting the color notifies the appropriate ROS publisher to
+	 * publish the message in the topic for the LED.
+	 * 
+	 * @param ledId
+	 *            The LED to control.
+	 * @param color
+	 *            The desired color of the LED.
+	 */
 	public void setLed(LedId ledId, LedColor color) {
 		ledColor.put(ledId, color);
 		synchronized (ledId) {
