@@ -35,8 +35,10 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 	 * @return the list of {@link TopicSubscriber}s in the DEECo-ROS interface.
 	 */
 	private TopicSubscriber[] topicSubscribers() {
-		return new TopicSubscriber[] { Sensors.getInstance(),
-				Actuators.getInstance() };
+		return new TopicSubscriber[] {
+				Sensors.getInstance(),
+				Actuators.getInstance(),
+				Communication.getInstance()};
 	}
 
 	/**

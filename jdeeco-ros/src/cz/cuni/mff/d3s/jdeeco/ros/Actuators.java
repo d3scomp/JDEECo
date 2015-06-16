@@ -2,9 +2,17 @@ package cz.cuni.mff.d3s.jdeeco.ros;
 
 import geometry_msgs.Twist;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import kobuki_msgs.Led;
+
 import org.ros.concurrent.CancellableLoop;
 import org.ros.node.ConnectedNode;
 import org.ros.node.topic.Publisher;
+
+import cz.cuni.mff.d3s.jdeeco.ros.datatypes.LedColor;
+import cz.cuni.mff.d3s.jdeeco.ros.datatypes.LedId;
 
 /**
  * Provides methods to command actuators through ROS. Registration of
@@ -14,11 +22,13 @@ import org.ros.node.topic.Publisher;
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  */
 public class Actuators extends TopicSubscriber {
+	// TODO: document rosjava types that are seen by the user of this interface
 
 	/**
 	 * The name of the velocity topic.
 	 */
 	private static final String VELOCITY_TOPIC = "/mobile_base/commands/velocity";
+
 	/**
 	 * The maximum absolute linear speed. Value taken from kobuki_keyop
 	 */
@@ -39,6 +49,8 @@ public class Actuators extends TopicSubscriber {
 	 */
 	private double angularVelocity;
 
+	private Map<LedId, LedColor> ledColor;
+
 	/**
 	 * The singleton instance of the {@link Actuators} class.
 	 */
@@ -48,6 +60,7 @@ public class Actuators extends TopicSubscriber {
 	 * Private constructor enables the {@link Actuators} to be a singleton.
 	 */
 	private Actuators() {
+		ledColor = new HashMap<>();
 	}
 
 	/**
@@ -70,9 +83,11 @@ public class Actuators extends TopicSubscriber {
 	 */
 	@Override
 	void subscribe(ConnectedNode connectedNode) {
-		//
-		// VELOCITY topic
-		//
+		subscribeVelocity(connectedNode);
+		subscribeLed(connectedNode);
+	}
+
+	private void subscribeVelocity(ConnectedNode connectedNode) {
 		final Publisher<Twist> velocityTopic = connectedNode.newPublisher(
 				VELOCITY_TOPIC, Twist._TYPE);
 		connectedNode.executeCancellableLoop(new CancellableLoop() {
@@ -103,8 +118,30 @@ public class Actuators extends TopicSubscriber {
 									// turtlebot stops
 			}
 		});
-		//
-		//
+	}
+
+	private void subscribeLed(ConnectedNode connectedNode) {
+		for (LedId ledId : LedId.values()) {
+			final Publisher<Led> LedTopic = connectedNode.newPublisher(
+					ledId.topic, Led._TYPE);
+			connectedNode.executeCancellableLoop(new CancellableLoop() {
+				@Override
+				protected void setup() {
+					ledColor.put(ledId, LedColor.BLACK);
+				}
+
+				@Override
+				protected void loop() throws InterruptedException {
+					Led led = LedTopic.newMessage();
+					led.setValue(ledColor.get(ledId).value);
+					LedTopic.publish(led);
+
+					synchronized (ledId) {
+						ledId.wait();
+					}
+				}
+			});
+		}
 	}
 
 	/**
@@ -112,22 +149,31 @@ public class Actuators extends TopicSubscriber {
 	 * direction and the value percentage of motor power.
 	 * 
 	 * @param linear
-	 *            The linear velocity. Value in [-1, 1].
-	 *            Negative value moves the robot backwards.
-	 *            Positive value moves the robot forwards.
+	 *            The linear velocity. Value in [-1, 1]. Negative value moves
+	 *            the robot backwards. Positive value moves the robot forwards.
 	 * @param angular
-	 *            The angular velocity. Value in [-1, 1].
-	 *            Negative value turns the robot right.
-	 *            Positive value turns the robot left.
+	 *            The angular velocity. Value in [-1, 1]. Negative value turns
+	 *            the robot right. Positive value turns the robot left.
 	 */
 	public void setVelocity(double linear, double angular) {
-		if(linear < -1) linear = -1;
-		if(linear > 1) linear = 1;
-		if(angular < -1) angular = -1;
-		if(angular > 1) angular = 1;
-		
+		if (linear < -1)
+			linear = -1;
+		if (linear > 1)
+			linear = 1;
+		if (angular < -1)
+			angular = -1;
+		if (angular > 1)
+			angular = 1;
+
 		linearVelocity = fromNormalized(linear, MAX_LINEAR_VELOCITY);
 		angularVelocity = fromNormalized(angular, MAX_ANGULAR_VELOCITY);
+	}
+
+	public void setLed(LedId ledId, LedColor color) {
+		ledColor.put(ledId, color);
+		synchronized (ledId) {
+			ledId.notify();
+		}
 	}
 
 	/**

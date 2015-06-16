@@ -14,6 +14,7 @@ import org.ros.node.topic.Subscriber;
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  */
 public class Sensors extends TopicSubscriber {
+	// TODO: document rosjava types that are seen by the user of this interface
 
 	/**
 	 * The name of the odometry topic.

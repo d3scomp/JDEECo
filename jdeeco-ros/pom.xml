@@ -66,6 +66,11 @@
 			<version>0.2.1</version>
 		</dependency>
 		<dependency>
+			<groupId>org.ros.rosjava_messages</groupId>
+			<artifactId>kobuki_msgs</artifactId>
+			<version>0.5.0</version>
+		</dependency>
+		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 			<version>18.0</version>
