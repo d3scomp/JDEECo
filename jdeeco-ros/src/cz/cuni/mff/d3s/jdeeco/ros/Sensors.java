@@ -35,7 +35,7 @@ public class Sensors extends TopicSubscriber {
 	/**
 	 * The last position received in the odometry topic.
 	 */
-	private Point lastPosition;
+	private Point odometry;
 
 	/**
 	 * The name of the bumper topic.
@@ -105,7 +105,7 @@ public class Sensors extends TopicSubscriber {
 			@Override
 			public void onNewMessage(Odometry message) {
 
-				lastPosition = message.getPose().getPose().getPosition();
+				odometry = message.getPose().getPose().getPosition();
 				/*
 				 * System.out.format("Position: %f,%f%n",
 				 * message.getPose().getPose().getPosition().getX(),
@@ -202,8 +202,8 @@ public class Sensors extends TopicSubscriber {
 	 * 
 	 * @return last value of the position published in the odometry topic.
 	 */
-	public Point getPosition() {
-		return lastPosition;
+	public Point getOdometry() {
+		return odometry;
 	}
 
 	/**

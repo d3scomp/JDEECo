@@ -18,7 +18,6 @@ public class Communication extends TopicSubscriber {
  
 * /joint_states
 * /mobile_base/commands/controller_info
-+ /mobile_base/commands/motor_power
 + /mobile_base/commands/reset_odometry
 * /mobile_base/controller_info
 + /mobile_base/events/button
