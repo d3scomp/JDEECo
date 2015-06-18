@@ -6,14 +6,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 import kobuki_msgs.BumperEvent;
+import kobuki_msgs.ButtonEvent;
+import kobuki_msgs.DockInfraRed;
 import kobuki_msgs.WheelDropEvent;
 import nav_msgs.Odometry;
 
+import org.jboss.netty.buffer.ChannelBuffer;
 import org.ros.message.MessageListener;
 import org.ros.node.ConnectedNode;
 import org.ros.node.topic.Subscriber;
 
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.Bumper;
+import cz.cuni.mff.d3s.jdeeco.ros.datatypes.Button;
+import cz.cuni.mff.d3s.jdeeco.ros.datatypes.ButtonState;
+import cz.cuni.mff.d3s.jdeeco.ros.datatypes.DockingIRDiod;
+import cz.cuni.mff.d3s.jdeeco.ros.datatypes.DockingIRSignal;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.MotorPower;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.Wheel;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.WheelState;
@@ -47,6 +54,16 @@ public class Sensors extends TopicSubscriber {
 	private Bumper bumper;
 
 	/**
+	 * The name of the topic for button state updates.
+	 */
+	private static final String BUTTON_TOPIC = "/mobile_base/events/button";
+
+	/**
+	 * The state of turtlebot's buttons.
+	 */
+	private Map<Button, ButtonState> buttonState;
+
+	/**
 	 * The name of the topic to report wheel drop changes.
 	 */
 	private static final String WHEEL_DROP_TOPIC = "/mobile_base/events/wheel_drop";
@@ -60,22 +77,40 @@ public class Sensors extends TopicSubscriber {
 	 * The name of the topic for motor power messages.
 	 */
 	private static final String MOTOR_POWER_TOPIC = "/mobile_base/commands/motor_power";
-	
+
 	/**
 	 * The power state of robot's motor power.
 	 */
 	private MotorPower motorPower;
-	
+
+	/**
+	 * The name of the topic for messages from docking diods.
+	 */
+	private static final String DOCK_IR_TOPIC = "/mobile_base/sensors/dock_ir";
+
+	/**
+	 * The signal from docking diods.
+	 */
+	private Map<DockingIRDiod, DockingIRSignal> dockingIRSignal;
+
 	/**
 	 * Internal constructor enables the {@link Sensors} to be a singleton.
 	 */
 	Sensors() {
 		bumper = Bumper.RELEASED;
+		buttonState = new HashMap<>();
+		for (Button button : Button.values()) {
+			buttonState.put(button, ButtonState.RELEASED);
+		}
 		wheelState = new HashMap<>();
 		for (Wheel wheel : Wheel.values()) {
 			wheelState.put(wheel, WheelState.RAISED);
 		}
 		motorPower = MotorPower.ON;
+		dockingIRSignal = new HashMap<>();
+		for (DockingIRDiod diod : DockingIRDiod.values()) {
+			dockingIRSignal.put(diod, DockingIRSignal.INFINITY);
+		}
 	}
 
 	/**
@@ -88,8 +123,10 @@ public class Sensors extends TopicSubscriber {
 	void subscribe(ConnectedNode connectedNode) {
 		subscribeOdometry(connectedNode);
 		subscribeBumper(connectedNode);
+		subscribeButtons(connectedNode);
 		subscribeWheelDrop(connectedNode);
 		subscribeMotorPower(connectedNode);
+		subscribeDockIr(connectedNode);
 	}
 
 	/**
@@ -135,16 +172,36 @@ public class Sensors extends TopicSubscriber {
 				} else {
 					bumper = Bumper.fromByte(message.getBumper());
 
-					/*if (message.getBumper() == BumperEvent.LEFT) {
-						System.out.println("left");
-					}
-					if (message.getBumper() == BumperEvent.RIGHT) {
-						System.out.println("right");
-					}
-					if (message.getBumper() == BumperEvent.CENTER) {
-						System.out.println("center");
-					}*/
+					/*
+					 * if (message.getBumper() == BumperEvent.LEFT) {
+					 * System.out.println("left"); } if (message.getBumper() ==
+					 * BumperEvent.RIGHT) { System.out.println("right"); } if
+					 * (message.getBumper() == BumperEvent.CENTER) {
+					 * System.out.println("center"); }
+					 */
 
+				}
+				// TODO: log
+			}
+		});
+	}
+
+	/**
+	 * Subscribe to the topic for buttons state updates.
+	 * 
+	 * @param connectedNode
+	 *            The ROS node on which the DEECo node runs.
+	 */
+	private void subscribeButtons(ConnectedNode connectedNode) {
+		Subscriber<ButtonEvent> buttonTopic = connectedNode.newSubscriber(
+				BUTTON_TOPIC, ButtonEvent._TYPE);
+		buttonTopic.addMessageListener(new MessageListener<ButtonEvent>() {
+			@Override
+			public void onNewMessage(ButtonEvent message) {
+				Button button = Button.fromByte(message.getButton());
+				ButtonState state = ButtonState.fromByte(message.getState());
+				if (button != null && state != null) {
+					buttonState.put(button, state);
 				}
 				// TODO: log
 			}
@@ -174,7 +231,7 @@ public class Sensors extends TopicSubscriber {
 			}
 		});
 	}
-	
+
 	/**
 	 * Subscribe to the ROS topic for motor power changes.
 	 * 
@@ -182,16 +239,54 @@ public class Sensors extends TopicSubscriber {
 	 *            The ROS node on which the DEECo node runs.
 	 */
 	private void subscribeMotorPower(ConnectedNode connectedNode) {
-		Subscriber<kobuki_msgs.MotorPower> motorPowerTopic = connectedNode.newSubscriber(
-				MOTOR_POWER_TOPIC, kobuki_msgs.MotorPower._TYPE);
-		motorPowerTopic.addMessageListener(new MessageListener<kobuki_msgs.MotorPower>() {
-			@Override
-			public void onNewMessage(kobuki_msgs.MotorPower message) {
+		Subscriber<kobuki_msgs.MotorPower> motorPowerTopic = connectedNode
+				.newSubscriber(MOTOR_POWER_TOPIC, kobuki_msgs.MotorPower._TYPE);
+		motorPowerTopic
+				.addMessageListener(new MessageListener<kobuki_msgs.MotorPower>() {
+					@Override
+					public void onNewMessage(kobuki_msgs.MotorPower message) {
 
-				MotorPower parsedMotorPower = MotorPower.fromByte(message.getState());
-				if (parsedMotorPower != null) {
-					motorPower = parsedMotorPower;
+						MotorPower parsedMotorPower = MotorPower
+								.fromByte(message.getState());
+						if (parsedMotorPower != null) {
+							motorPower = parsedMotorPower;
+						}
+						// TODO: log
+					}
+				});
+	}
+
+	/**
+	 * Subscribe to the topic for docking infra-red diod signals.
+	 * 
+	 * @param connectedNode
+	 *            The ROS node on which the DEECo node runs.
+	 */
+	private void subscribeDockIr(ConnectedNode connectedNode) {
+		Subscriber<DockInfraRed> dockIrTopic = connectedNode.newSubscriber(
+				DOCK_IR_TOPIC, DockInfraRed._TYPE);
+		dockIrTopic.addMessageListener(new MessageListener<DockInfraRed>() {
+			@Override
+			public void onNewMessage(DockInfraRed message) {
+
+				/*
+				 * System.out.println(String.format(
+				 * "NL: %d\nNC: %d\nNR: %d\nFL: %d\nFC: %d\nFR: %d",
+				 * DockInfraRed.NEAR_LEFT, DockInfraRed.NEAR_CENTER,
+				 * DockInfraRed.NEAR_RIGHT, DockInfraRed.FAR_LEFT,
+				 * DockInfraRed.FAR_CENTER, DockInfraRed.FAR_RIGHT));
+				 */
+				ChannelBuffer b = message.getData();
+
+				for (int i = 0; i < 3; i++) {
+					dockingIRSignal.put(DockingIRDiod.fromIndex(i),
+							DockingIRSignal.fromByte(b.getByte(i)));
+
 				}
+
+				System.out.println("R: " + b.getByte(0));
+				System.out.println("C: " + b.getByte(1));
+				System.out.println("L: " + b.getByte(2));
 				// TODO: log
 			}
 		});
@@ -216,11 +311,27 @@ public class Sensors extends TopicSubscriber {
 	}
 
 	/**
+	 * Get the state of the specified button.
+	 * 
+	 * @param button
+	 *            The required button to get the state of.
+	 * @return The state of the specified button. Null if the specified button
+	 *         is not valid.
+	 */
+	public ButtonState getButtonState(Button button) {
+		if (buttonState.containsKey(button)) {
+			return buttonState.get(button);
+		}
+		return null;
+	}
+
+	/**
 	 * Get the state of specified wheel of the robot.
 	 * 
 	 * @param wheel
 	 *            The wheel to obtain the state of.
-	 * @return The state of the specified wheel.
+	 * @return The state of the specified wheel. Null If the specified wheel is
+	 *         not valid.
 	 */
 	public WheelState getWheelState(Wheel wheel) {
 		if (wheelState.containsKey(wheel)) {
@@ -228,7 +339,7 @@ public class Sensors extends TopicSubscriber {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Get the state of robot's motor power.
 	 * 
@@ -236,6 +347,21 @@ public class Sensors extends TopicSubscriber {
 	 */
 	public MotorPower getMotorPower() {
 		return motorPower;
+	}
+
+	/**
+	 * Get the signal from the specified infra-red docking diod.
+	 * 
+	 * @param diod
+	 *            The diod to get the signal from.
+	 * @return The signal from the specified infra-red docking diod. Null if the
+	 *         specified diod is not valid.
+	 */
+	public DockingIRSignal getDockingIRSignal(DockingIRDiod diod) {
+		if (dockingIRSignal.containsKey(diod)) {
+			return dockingIRSignal.get(diod);
+		}
+		return null;
 	}
 
 }

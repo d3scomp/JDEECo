@@ -18,9 +18,7 @@ public class Communication extends TopicSubscriber {
  
 * /joint_states
 * /mobile_base/commands/controller_info
-+ /mobile_base/commands/reset_odometry
 * /mobile_base/controller_info
-+ /mobile_base/events/button
 + /mobile_base/events/cliff
 * /mobile_base/events/power_system
 * /mobile_base/events/robot_state
@@ -30,6 +28,6 @@ public class Communication extends TopicSubscriber {
 * /mobile_base_nodelet_manager/bond
 * /rosout
 * /rosout_agg
-* /tf
++ /tf
  
 */

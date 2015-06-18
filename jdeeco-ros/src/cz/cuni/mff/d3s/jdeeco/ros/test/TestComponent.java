@@ -9,6 +9,8 @@ import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.jdeeco.ros.Actuators;
 import cz.cuni.mff.d3s.jdeeco.ros.Sensors;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.Bumper;
+import cz.cuni.mff.d3s.jdeeco.ros.datatypes.Button;
+import cz.cuni.mff.d3s.jdeeco.ros.datatypes.ButtonState;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.LedColor;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.LedId;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.MotorPower;
@@ -32,7 +34,7 @@ public class TestComponent {
 	}
 
 	@Process
-	@PeriodicScheduling(period = 200)
+	@PeriodicScheduling(period = 500)
 	public static void checkMessage(@In("sensors") Sensors sensors,
 			@In("actuators") Actuators actuators) {
 		/*
@@ -42,7 +44,23 @@ public class TestComponent {
 		 * .getPosition().getX(), Sensors.getInstance().getPosition() .getY());
 		 * }
 		 */
-		Point p = sensors.getOdometry(); 
+
+		actuators.setLed(LedId.LED1, LedColor.BLACK);
+		
+		ButtonState b0 = sensors.getButtonState(Button.B0);
+		if(b0 == ButtonState.PRESSED){
+			actuators.setLed(LedId.LED1, LedColor.RED);
+		}
+		ButtonState b1 = sensors.getButtonState(Button.B1);
+		if(b1 == ButtonState.PRESSED){
+			actuators.setLed(LedId.LED1, LedColor.ORANGE);
+		}
+		ButtonState b2 = sensors.getButtonState(Button.B2);
+		if(b2 == ButtonState.PRESSED){
+			actuators.setLed(LedId.LED1, LedColor.GREEN);
+		}
+		
+		/*Point p = sensors.getOdometry(); 
 		if(p != null){
 			System.out.println(String.format("[%f, %f]", p.getX(), p.getY()));
 		}
@@ -69,13 +87,13 @@ public class TestComponent {
 			actuators.setLed(LedId.LED1, LedColor.BLACK);
 			actuators.setLed(LedId.LED2, LedColor.BLACK);
 			break;
-		}
+		}*/
 	}
 
-	@Process
+	/*@Process
 	@PeriodicScheduling(period = 5000)
 	public static void switchPower(@In("sensors") Sensors sensors,
 			@In("actuators") Actuators actuators) {
 		actuators.resetOdometry();
-	}
+	}*/
 }
