@@ -66,29 +66,13 @@ public class Actuators extends TopicSubscriber {
 	 */
 	private Object soundLock;
 	
-	/**
-	 * The singleton instance of the {@link Actuators} class.
-	 */
-	private static Actuators INSTANCE;
 
 	/**
-	 * Private constructor enables the {@link Actuators} to be a singleton.
+	 * Internal constructor enables the {@link Actuators} to be a singleton.
 	 */
-	private Actuators() {
+	Actuators() {
 		ledColor = new HashMap<>();
 		soundLock = new Object();
-	}
-
-	/**
-	 * Provides the singleton instance of the {@link Actuators}.
-	 * 
-	 * @return the singleton instance of the {@link Actuators}.
-	 */
-	public static Actuators getInstance() {
-		if (INSTANCE == null) {
-			INSTANCE = new Actuators();
-		}
-		return INSTANCE;
 	}
 
 	/**

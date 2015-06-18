@@ -31,15 +31,16 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 
 	/**
 	 * The list of {@link TopicSubscriber}s in the DEECo-ROS interface.
+	 * This variable is static because the creation of ROS node loads new instance
+	 * of this class an otherwise it initialize different TopicSubscribers
+	 * than the ones available in jDEECo simulation.
 	 * 
 	 * @return the list of {@link TopicSubscriber}s in the DEECo-ROS interface.
 	 */
-	private TopicSubscriber[] topicSubscribers() {
-		return new TopicSubscriber[] {
-				Sensors.getInstance(),
-				Actuators.getInstance(),
-				Communication.getInstance()};
-	}
+	private static TopicSubscriber[] topicSubscribers =  new TopicSubscriber[] {
+				new Sensors(),
+				new Actuators(),
+				new Communication()};
 
 	/**
 	 * A list of DEECo plugins the {@link RosServices} depends on.
@@ -49,6 +50,16 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 	@Override
 	public List<Class<? extends DEECoPlugin>> getDependencies() {
 		return new ArrayList<>();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public<T> T getService(Class<T> serviceType){
+		for(TopicSubscriber service : topicSubscribers){
+			if(service.getClass().equals(serviceType)){
+				return (T) service;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -149,7 +160,7 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 	 */
 	@Override
 	public void onStart(ConnectedNode node) {
-		for (TopicSubscriber subscriber : topicSubscribers()) {
+		for (TopicSubscriber subscriber : topicSubscribers) {
 			subscriber.subscribe(node);
 		}
 	}

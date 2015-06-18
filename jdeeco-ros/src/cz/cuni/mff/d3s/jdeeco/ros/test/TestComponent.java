@@ -1,69 +1,69 @@
 package cz.cuni.mff.d3s.jdeeco.ros.test;
 
-import cz.cuni.mff.d3s.jdeeco.ros.datatypes.Sound;
 import cz.cuni.mff.d3s.deeco.annotations.Component;
-import cz.cuni.mff.d3s.deeco.annotations.InOut;
+import cz.cuni.mff.d3s.deeco.annotations.In;
+import cz.cuni.mff.d3s.deeco.annotations.Local;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
-import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 import cz.cuni.mff.d3s.jdeeco.ros.Actuators;
 import cz.cuni.mff.d3s.jdeeco.ros.Sensors;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.Bumper;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.LedColor;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.LedId;
+import cz.cuni.mff.d3s.jdeeco.ros.datatypes.Sound;
 
 @Component
 public class TestComponent {
 
 	public String id;
 
-	public String msg;
-	
+	@Local
+	public Sensors sensors;
 
-	public TestComponent(final String id) {
+	@Local
+	public Actuators actuators;
+
+	public TestComponent(final String id, Sensors sensors, Actuators actuators) {
 		this.id = id;
-		msg = "initial msg";
+		this.sensors = sensors;
+		this.actuators = actuators;
 	}
 
 	@Process
 	@PeriodicScheduling(period = 200)
-	public static void checkMessage(@InOut("msg") ParamHolder<String> message) {
-		/*System.out.println(message.value);
-		if (Sensors.getInstance().getPosition() != null) {
-			message.value = String.format("[%f, %f]", Sensors.getInstance()
-					.getPosition().getX(), Sensors.getInstance().getPosition()
-					.getY());
-		}*/
+	public static void checkMessage(@In("sensors") Sensors sensors,
+			@In("actuators") Actuators actuators) {
+		/*
+		 * System.out.println(message.value); if
+		 * (Sensors.getInstance().getPosition() != null) { message.value =
+		 * String.format("[%f, %f]", Sensors.getInstance()
+		 * .getPosition().getX(), Sensors.getInstance().getPosition() .getY());
+		 * }
+		 */
 
-		//Actuators.getInstance().setVelocity(0.5,0);
-		Bumper bumper = Sensors.getInstance().getBumper();
-		//System.out.println(bumper);
-		switch(bumper){
+		actuators.setVelocity(0.5, 0);
+		Bumper bumper = sensors.getBumper();
+		// System.out.println(bumper);
+		switch (bumper) {
 		case CENTER:
-			Actuators.getInstance().setLed(LedId.LED1, LedColor.RED);
-			Actuators.getInstance().setLed(LedId.LED2, LedColor.RED);
-			Actuators.getInstance().playSound(Sound.RECHARGE);
+			actuators.setLed(LedId.LED1, LedColor.RED);
+			actuators.setLed(LedId.LED2, LedColor.RED);
+			actuators.playSound(Sound.RECHARGE);
 			break;
 		case LEFT:
-			Actuators.getInstance().setLed(LedId.LED1, LedColor.RED);
-			Actuators.getInstance().setLed(LedId.LED2, LedColor.BLACK);
-			Actuators.getInstance().playSound(Sound.CLEANING_END);
+			actuators.setLed(LedId.LED1, LedColor.RED);
+			actuators.setLed(LedId.LED2, LedColor.BLACK);
+			actuators.playSound(Sound.CLEANING_END);
 			break;
 		case RIGHT:
-			Actuators.getInstance().setLed(LedId.LED1, LedColor.BLACK);
-			Actuators.getInstance().setLed(LedId.LED2, LedColor.RED);
-			Actuators.getInstance().playSound(Sound.CLEANING_START);
+			actuators.setLed(LedId.LED1, LedColor.BLACK);
+			actuators.setLed(LedId.LED2, LedColor.RED);
+			actuators.playSound(Sound.CLEANING_START);
 			break;
 		default:
-			Actuators.getInstance().setLed(LedId.LED1, LedColor.BLACK);
-			Actuators.getInstance().setLed(LedId.LED2, LedColor.BLACK);
+			actuators.setLed(LedId.LED1, LedColor.BLACK);
+			actuators.setLed(LedId.LED2, LedColor.BLACK);
 			break;
-		}
-		try {
-			Thread.sleep(200);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 

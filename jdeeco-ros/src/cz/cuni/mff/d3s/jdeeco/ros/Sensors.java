@@ -56,31 +56,14 @@ public class Sensors extends TopicSubscriber {
 	private Map<Wheel, WheelState> wheelState;
 
 	/**
-	 * The singleton instance of the {@link Sensors} class.
+	 * Internal constructor enables the {@link Sensors} to be a singleton.
 	 */
-	private static Sensors INSTANCE;
-
-	/**
-	 * Private constructor enables the {@link Sensors} to be a singleton.
-	 */
-	private Sensors() {
+	Sensors() {
 		bumper = Bumper.RELEASED;
 		wheelState = new HashMap<>();
 		for (Wheel wheel : Wheel.values()) {
 			wheelState.put(wheel, WheelState.RAISED);
 		}
-	}
-
-	/**
-	 * Provides the singleton instance of the {@link Sensors}.
-	 * 
-	 * @return the singleton instance of the {@link Sensors}.
-	 */
-	public static Sensors getInstance() {
-		if (INSTANCE == null) {
-			INSTANCE = new Sensors();
-		}
-		return INSTANCE;
 	}
 
 	/**
@@ -138,13 +121,17 @@ public class Sensors extends TopicSubscriber {
 					// System.out.println("released");
 				} else {
 					bumper = Bumper.fromByte(message.getBumper());
-					/*
-					 * if (message.getBumper() == BumperEvent.LEFT) {
-					 * System.out.println("left"); } if (message.getBumper() ==
-					 * BumperEvent.RIGHT) { System.out.println("right"); } if
-					 * (message.getBumper() == BumperEvent.CENTER) {
-					 * System.out.println("center"); }
-					 */
+
+					/*if (message.getBumper() == BumperEvent.LEFT) {
+						System.out.println("left");
+					}
+					if (message.getBumper() == BumperEvent.RIGHT) {
+						System.out.println("right");
+					}
+					if (message.getBumper() == BumperEvent.CENTER) {
+						System.out.println("center");
+					}*/
+
 				}
 				// TODO: log
 			}
@@ -168,7 +155,7 @@ public class Sensors extends TopicSubscriber {
 				WheelState state = WheelState.fromByte(message.getState());
 				if (wheel != null && state != null) {
 					wheelState.put(wheel, state);
-					// System.out.println(wheel + " wheel state: " + state);
+					System.out.println(wheel + " wheel state: " + state);
 				}
 				// TODO: log
 			}
