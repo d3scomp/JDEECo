@@ -71,6 +71,7 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 	 */
 	@Override
 	public void init(DEECoContainer container) {
+		// TODO: load ROS node in constructor, wait until launched
 		CommandLineLoader loader = new CommandLineLoader(Arrays.asList(this
 				.getClass().getName()));
 		String nodeClassName = loader.getNodeClassName();

@@ -10,6 +10,7 @@ import cz.cuni.mff.d3s.jdeeco.ros.Sensors;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.Bumper;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.LedColor;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.LedId;
+import cz.cuni.mff.d3s.jdeeco.ros.datatypes.MotorPower;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.Sound;
 
 @Component
@@ -67,4 +68,18 @@ public class TestComponent {
 		}
 	}
 
+	@Process
+	@PeriodicScheduling(period = 5000)
+	public static void switchPower(@In("sensors") Sensors sensors,
+			@In("actuators") Actuators actuators) {
+		MotorPower mp = sensors.getMotorPower();
+		
+		if(mp == MotorPower.ON){
+			actuators.setMotorPower(MotorPower.OFF);
+			System.out.println("Motor power off");
+		} else {
+			actuators.setMotorPower(MotorPower.ON);
+			System.out.println("Motor power on");
+		}
+	}
 }

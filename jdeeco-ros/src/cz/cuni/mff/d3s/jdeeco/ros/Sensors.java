@@ -14,6 +14,7 @@ import org.ros.node.ConnectedNode;
 import org.ros.node.topic.Subscriber;
 
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.Bumper;
+import cz.cuni.mff.d3s.jdeeco.ros.datatypes.MotorPower;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.Wheel;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.WheelState;
 
@@ -56,6 +57,16 @@ public class Sensors extends TopicSubscriber {
 	private Map<Wheel, WheelState> wheelState;
 
 	/**
+	 * The name of the topic for motor power messages.
+	 */
+	private static final String MOTOR_POWER_TOPIC = "/mobile_base/commands/motor_power";
+	
+	/**
+	 * The power state of robot's motor power.
+	 */
+	private MotorPower motorPower;
+	
+	/**
 	 * Internal constructor enables the {@link Sensors} to be a singleton.
 	 */
 	Sensors() {
@@ -64,6 +75,7 @@ public class Sensors extends TopicSubscriber {
 		for (Wheel wheel : Wheel.values()) {
 			wheelState.put(wheel, WheelState.RAISED);
 		}
+		motorPower = MotorPower.ON;
 	}
 
 	/**
@@ -77,6 +89,7 @@ public class Sensors extends TopicSubscriber {
 		subscribeOdometry(connectedNode);
 		subscribeBumper(connectedNode);
 		subscribeWheelDrop(connectedNode);
+		subscribeMotorPower(connectedNode);
 	}
 
 	/**
@@ -161,6 +174,28 @@ public class Sensors extends TopicSubscriber {
 			}
 		});
 	}
+	
+	/**
+	 * Subscribe to the ROS topic for motor power changes.
+	 * 
+	 * @param connectedNode
+	 *            The ROS node on which the DEECo node runs.
+	 */
+	private void subscribeMotorPower(ConnectedNode connectedNode) {
+		Subscriber<kobuki_msgs.MotorPower> motorPowerTopic = connectedNode.newSubscriber(
+				MOTOR_POWER_TOPIC, kobuki_msgs.MotorPower._TYPE);
+		motorPowerTopic.addMessageListener(new MessageListener<kobuki_msgs.MotorPower>() {
+			@Override
+			public void onNewMessage(kobuki_msgs.MotorPower message) {
+
+				MotorPower parsedMotorPower = MotorPower.fromByte(message.getState());
+				if (parsedMotorPower != null) {
+					motorPower = parsedMotorPower;
+				}
+				// TODO: log
+			}
+		});
+	}
 
 	/**
 	 * The position published in the odometry topic.
@@ -192,6 +227,15 @@ public class Sensors extends TopicSubscriber {
 			return wheelState.get(wheel);
 		}
 		return null;
+	}
+	
+	/**
+	 * Get the state of robot's motor power.
+	 * 
+	 * @return the state of motor power.
+	 */
+	public MotorPower getMotorPower() {
+		return motorPower;
 	}
 
 }

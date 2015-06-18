@@ -14,6 +14,7 @@ import org.ros.node.topic.Publisher;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.LedColor;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.LedId;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.Sound;
+import cz.cuni.mff.d3s.jdeeco.ros.datatypes.MotorPower;
 
 /**
  * Provides methods to command actuators through ROS. Registration of
@@ -65,7 +66,19 @@ public class Actuators extends TopicSubscriber {
 	 * The lock to wait and notify on when a sound should be played.
 	 */
 	private Object soundLock;
-	
+
+	/**
+	 * The name of the topic for motor power messages.
+	 */
+	private static final String MOTOR_POWER_TOPIC = "/mobile_base/commands/motor_power";
+	/**
+	 * The state of motor power to be set.
+	 */
+	private MotorPower motorPower;
+	/**
+	 * The lock to wait and notify on when a motor power should be set.
+	 */
+	private Object motorPowerLock;
 
 	/**
 	 * Internal constructor enables the {@link Actuators} to be a singleton.
@@ -73,6 +86,7 @@ public class Actuators extends TopicSubscriber {
 	Actuators() {
 		ledColor = new HashMap<>();
 		soundLock = new Object();
+		motorPowerLock = new Object();
 	}
 
 	/**
@@ -86,6 +100,7 @@ public class Actuators extends TopicSubscriber {
 		subscribeVelocity(connectedNode);
 		subscribeLed(connectedNode);
 		subscribeSound(connectedNode);
+		subscribeMotorPower(connectedNode);
 	}
 
 	/**
@@ -192,6 +207,39 @@ public class Actuators extends TopicSubscriber {
 	}
 
 	/**
+	 * Subscribe to the ROS topic for motor power messages. To publish motor
+	 * power message wait until notified by the
+	 * {@link #setMotorPower(MotorPower)} setter.
+	 * 
+	 * @param connectedNode
+	 *            The ROS node on which the DEECo node runs.
+	 */
+	private void subscribeMotorPower(ConnectedNode connectedNode) {
+		final Publisher<kobuki_msgs.MotorPower> motorPowerTopic = connectedNode
+				.newPublisher(MOTOR_POWER_TOPIC, kobuki_msgs.MotorPower._TYPE);
+		connectedNode.executeCancellableLoop(new CancellableLoop() {
+			@Override
+			protected void setup() {
+			}
+
+			@Override
+			protected void loop() throws InterruptedException {
+
+				synchronized (motorPowerLock) {
+					motorPowerLock.wait();
+				}
+
+				kobuki_msgs.MotorPower motorPowerMsg = motorPowerTopic
+						.newMessage();
+				motorPowerMsg.setState(motorPower.value);
+				motorPowerTopic.publish(motorPowerMsg);
+				// TODO: log
+
+			}
+		});
+	}
+
+	/**
 	 * Set the velocity. Use normalized values from -1 to 1. The sign determines
 	 * direction and the value percentage of motor power.
 	 * 
@@ -243,6 +291,19 @@ public class Actuators extends TopicSubscriber {
 		this.sound = sound;
 		synchronized (soundLock) {
 			soundLock.notify();
+		}
+	}
+
+	/**
+	 * Enable or disable robot's motors.
+	 * 
+	 * @param motorPower
+	 *            The motor power state to be set.
+	 */
+	public void setMotorPower(MotorPower motorPower) {
+		this.motorPower = motorPower;
+		synchronized (motorPowerLock) {
+			motorPowerLock.notify();
 		}
 	}
 
