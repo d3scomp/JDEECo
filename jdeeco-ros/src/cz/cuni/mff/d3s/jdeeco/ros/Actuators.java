@@ -79,6 +79,16 @@ public class Actuators extends TopicSubscriber {
 	 * The lock to wait and notify on when a motor power should be set.
 	 */
 	private Object motorPowerLock;
+	
+	/**
+	 * The name of the topic for odometry resets.
+	 */
+	private static final String RESET_ODOMETRY_TOPIC = "/mobile_base/commands/reset_odometry";
+	
+	/**
+	 * The lock to wait and notify on when a odometry reset is requested.
+	 */
+	private Object resetOdometryLock;
 
 	/**
 	 * Internal constructor enables the {@link Actuators} to be a singleton.
@@ -87,6 +97,7 @@ public class Actuators extends TopicSubscriber {
 		ledColor = new HashMap<>();
 		soundLock = new Object();
 		motorPowerLock = new Object();
+		resetOdometryLock = new Object();
 	}
 
 	/**
@@ -101,6 +112,7 @@ public class Actuators extends TopicSubscriber {
 		subscribeLed(connectedNode);
 		subscribeSound(connectedNode);
 		subscribeMotorPower(connectedNode);
+		subscribeResetOdometry(connectedNode);
 	}
 
 	/**
@@ -240,6 +252,36 @@ public class Actuators extends TopicSubscriber {
 	}
 
 	/**
+	 * Subscribe to the ROS topic for the odometry reset messages.
+	 *
+	 * @param connectedNode
+	 *            The ROS node on which the DEECo node runs.
+	 */
+	private void subscribeResetOdometry(ConnectedNode connectedNode) {
+		final Publisher<std_msgs.Empty> resetOdometryTopic = connectedNode
+				.newPublisher(RESET_ODOMETRY_TOPIC, std_msgs.Empty._TYPE);
+		connectedNode.executeCancellableLoop(new CancellableLoop() {
+			@Override
+			protected void setup() {
+			}
+
+			@Override
+			protected void loop() throws InterruptedException {
+
+				synchronized (resetOdometryLock) {
+					resetOdometryLock.wait();
+				}
+
+				std_msgs.Empty emptyMsg = resetOdometryTopic
+						.newMessage();
+				resetOdometryTopic.publish(emptyMsg);
+				// TODO: log
+
+			}
+		});
+	}
+	
+	/**
 	 * Set the velocity. Use normalized values from -1 to 1. The sign determines
 	 * direction and the value percentage of motor power.
 	 * 
@@ -304,6 +346,15 @@ public class Actuators extends TopicSubscriber {
 		this.motorPower = motorPower;
 		synchronized (motorPowerLock) {
 			motorPowerLock.notify();
+		}
+	}
+	
+	/**
+	 * Reset the odometry counter.
+	 */
+	public void resetOdometry() {
+		synchronized (resetOdometryLock) {
+			resetOdometryLock.notify();
 		}
 	}
 

@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.jdeeco.ros.test;
 
+import geometry_msgs.Point;
 import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.Local;
@@ -41,7 +42,10 @@ public class TestComponent {
 		 * .getPosition().getX(), Sensors.getInstance().getPosition() .getY());
 		 * }
 		 */
-
+		Point p = sensors.getOdometry(); 
+		if(p != null){
+			System.out.println(String.format("[%f, %f]", p.getX(), p.getY()));
+		}
 		actuators.setVelocity(0.5, 0);
 		Bumper bumper = sensors.getBumper();
 		// System.out.println(bumper);
@@ -72,14 +76,6 @@ public class TestComponent {
 	@PeriodicScheduling(period = 5000)
 	public static void switchPower(@In("sensors") Sensors sensors,
 			@In("actuators") Actuators actuators) {
-		MotorPower mp = sensors.getMotorPower();
-		
-		if(mp == MotorPower.ON){
-			actuators.setMotorPower(MotorPower.OFF);
-			System.out.println("Motor power off");
-		} else {
-			actuators.setMotorPower(MotorPower.ON);
-			System.out.println("Motor power on");
-		}
+		actuators.resetOdometry();
 	}
 }
