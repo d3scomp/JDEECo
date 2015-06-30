@@ -75,6 +75,11 @@
 			<artifactId>tf2_msgs</artifactId>
 			<version>0.5.9</version>
 		</dependency>
+		<dependency>
+			<groupId>org.ros.rosjava_messages</groupId>
+			<artifactId>sensor_msgs</artifactId>
+			<version>1.11.7</version>
+		</dependency>
 	</dependencies>
 
 	<repositories>

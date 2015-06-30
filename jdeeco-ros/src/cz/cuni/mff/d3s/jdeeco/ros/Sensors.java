@@ -11,9 +11,12 @@ import kobuki_msgs.ButtonEvent;
 import kobuki_msgs.DockInfraRed;
 import kobuki_msgs.WheelDropEvent;
 import nav_msgs.Odometry;
+import sensor_msgs.NavSatFix;
+import sensor_msgs.TimeReference;
 
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.ros.message.MessageListener;
+import org.ros.message.Time;
 import org.ros.node.ConnectedNode;
 import org.ros.node.topic.Subscriber;
 
@@ -94,6 +97,10 @@ public class Sensors extends TopicSubscriber {
 	 * The signal from docking diods.
 	 */
 	private Map<DockingIRDiod, DockingIRSignal> dockingIRSignal;
+	
+	private NavSatFix gpsPosition;
+	
+	private Time gpsTime;
 
 	/**
 	 * Internal constructor enables the {@link Sensors} to be a singleton.
@@ -130,6 +137,7 @@ public class Sensors extends TopicSubscriber {
 		subscribeMotorPower(connectedNode);
 		subscribeDockIr(connectedNode);
 		subscribeTF(connectedNode);
+		subscribeGPS(connectedNode);
 	}
 
 	/**
@@ -297,6 +305,28 @@ public class Sensors extends TopicSubscriber {
 
 
 	private void subscribeTF(ConnectedNode connectedNode) {
+		Subscriber<NavSatFix> navSatTopic = connectedNode.newSubscriber(
+				"/gps/position", NavSatFix._TYPE);
+		navSatTopic.addMessageListener(new MessageListener<NavSatFix>() {
+			@Override
+			public void onNewMessage(NavSatFix message) {
+				gpsPosition = message;
+			}
+		});
+		
+		Subscriber<TimeReference> timeRefTopic = connectedNode.newSubscriber(
+				"/gps/position", TimeReference._TYPE);
+		timeRefTopic.addMessageListener(new MessageListener<TimeReference>() {
+			@Override
+			public void onNewMessage(TimeReference message) {
+				gpsTime = message.getTimeRef();
+				
+			}
+		});
+	}
+	
+
+	private void subscribeGPS(ConnectedNode connectedNode) {
 		Subscriber<TFMessage> transformTopic = connectedNode.newSubscriber(
 				"/tf", TFMessage._TYPE);
 		transformTopic.addMessageListener(new MessageListener<TFMessage>() {
@@ -378,6 +408,14 @@ public class Sensors extends TopicSubscriber {
 		return motorPower;
 	}
 
+	public NavSatFix getGpsPosition(){
+		return gpsPosition;
+	}
+	
+	public long getGpsTime(){
+		return gpsTime.totalNsecs() * 1000;
+	}
+	
 	/**
 	 * Get the signal from the specified infra-red docking diod.
 	 * 
