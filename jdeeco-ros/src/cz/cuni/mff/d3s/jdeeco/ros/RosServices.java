@@ -1,21 +1,18 @@
 package cz.cuni.mff.d3s.jdeeco.ros;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.ros.exception.RosRuntimeException;
-import org.ros.internal.loader.CommandLineLoader;
 import org.ros.namespace.GraphName;
 import org.ros.node.AbstractNodeMain;
 import org.ros.node.ConnectedNode;
 import org.ros.node.DefaultNodeMainExecutor;
 import org.ros.node.Node;
 import org.ros.node.NodeConfiguration;
-import org.ros.node.NodeMain;
 import org.ros.node.NodeMainExecutor;
-
-import com.google.common.base.Preconditions;
 
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
@@ -29,18 +26,19 @@ import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
  */
 public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 
+	private static final String ROS_HOST = "192.168.0.102";
+	private static final String ROS_MASTER = "http://192.168.0.200:11311";
+
 	/**
-	 * The list of {@link TopicSubscriber}s in the DEECo-ROS interface.
-	 * This variable is static because the creation of ROS node loads new instance
-	 * of this class an otherwise it initialize different TopicSubscribers
-	 * than the ones available in jDEECo simulation.
+	 * The list of {@link TopicSubscriber}s in the DEECo-ROS interface. This
+	 * variable is static because the creation of ROS node loads new instance of
+	 * this class an otherwise it initialize different TopicSubscribers than the
+	 * ones available in jDEECo simulation.
 	 * 
 	 * @return the list of {@link TopicSubscriber}s in the DEECo-ROS interface.
 	 */
-	private static TopicSubscriber[] topicSubscribers =  new TopicSubscriber[] {
-				new Sensors(),
-				new Actuators(),
-				new Communication()};
+	private TopicSubscriber[] topicSubscribers = new TopicSubscriber[] {
+			new Sensors(), new Actuators(), new Communication() };
 
 	/**
 	 * A list of DEECo plugins the {@link RosServices} depends on.
@@ -51,11 +49,11 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 	public List<Class<? extends DEECoPlugin>> getDependencies() {
 		return new ArrayList<>();
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public<T> T getService(Class<T> serviceType){
-		for(TopicSubscriber service : topicSubscribers){
-			if(service.getClass().equals(serviceType)){
+	public <T> T getService(Class<T> serviceType) {
+		for (TopicSubscriber service : topicSubscribers) {
+			if (service.getClass().equals(serviceType)) {
 				return (T) service;
 			}
 		}
@@ -71,31 +69,18 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 	 */
 	@Override
 	public void init(DEECoContainer container) {
-		// TODO: load ROS node in constructor, wait until launched
-		CommandLineLoader loader = new CommandLineLoader(Arrays.asList(this
-				.getClass().getName()));
-		String nodeClassName = loader.getNodeClassName();
-		System.out.println("Loading node class: " + nodeClassName);
-		NodeConfiguration nodeConfiguration = loader.build();
+		// TODO: sensors and actuators do nothing until initializes in the ROS
+		// node
 
-		NodeMain nodeMain = null;
 		try {
-			nodeMain = loader.loadClass(nodeClassName);
-		} catch (ClassNotFoundException e) {
-			throw new RosRuntimeException("Unable to locate node: "
-					+ nodeClassName, e);
-		} catch (InstantiationException e) {
-			throw new RosRuntimeException("Unable to instantiate node: "
-					+ nodeClassName, e);
-		} catch (IllegalAccessException e) {
-			throw new RosRuntimeException("Unable to instantiate node: "
-					+ nodeClassName, e);
+			NodeConfiguration nodeConfig = NodeConfiguration.newPublic(
+					ROS_HOST, new URI(ROS_MASTER));
+			NodeMainExecutor nodeMainExecutor = DefaultNodeMainExecutor.newDefault();
+			nodeMainExecutor.execute(this, nodeConfig);
+		} catch (URISyntaxException e) {
+			throw new RosRuntimeException("Malformed URI: " + ROS_MASTER, e);
 		}
 
-		Preconditions.checkState(nodeMain != null);
-		NodeMainExecutor nodeMainExecutor = DefaultNodeMainExecutor
-				.newDefault();
-		nodeMainExecutor.execute(nodeMain, nodeConfiguration);
 	}
 
 	/**

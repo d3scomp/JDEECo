@@ -1,6 +1,7 @@
 package cz.cuni.mff.d3s.jdeeco.ros;
 
 import geometry_msgs.Point;
+import geometry_msgs.TransformStamped;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,6 +17,7 @@ import org.ros.message.MessageListener;
 import org.ros.node.ConnectedNode;
 import org.ros.node.topic.Subscriber;
 
+import tf2_msgs.TFMessage;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.Bumper;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.Button;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.ButtonState;
@@ -127,6 +129,7 @@ public class Sensors extends TopicSubscriber {
 		subscribeWheelDrop(connectedNode);
 		subscribeMotorPower(connectedNode);
 		subscribeDockIr(connectedNode);
+		subscribeTF(connectedNode);
 	}
 
 	/**
@@ -225,7 +228,7 @@ public class Sensors extends TopicSubscriber {
 				WheelState state = WheelState.fromByte(message.getState());
 				if (wheel != null && state != null) {
 					wheelState.put(wheel, state);
-					System.out.println(wheel + " wheel state: " + state);
+					//System.out.println(wheel + " wheel state: " + state);
 				}
 				// TODO: log
 			}
@@ -284,14 +287,40 @@ public class Sensors extends TopicSubscriber {
 
 				}
 
-				System.out.println("R: " + b.getByte(0));
+				/*System.out.println("R: " + b.getByte(0));
 				System.out.println("C: " + b.getByte(1));
-				System.out.println("L: " + b.getByte(2));
+				System.out.println("L: " + b.getByte(2));*/
 				// TODO: log
 			}
 		});
 	}
 
+
+	private void subscribeTF(ConnectedNode connectedNode) {
+		Subscriber<TFMessage> transformTopic = connectedNode.newSubscriber(
+				"/tf", TFMessage._TYPE);
+		transformTopic.addMessageListener(new MessageListener<TFMessage>() {
+			@Override
+			public void onNewMessage(TFMessage message) {
+
+				/*System.out.println("transform:");
+				for(TransformStamped tfs : message.getTransforms()){
+					System.out.println(tfs.getChildFrameId());
+					System.out.println(String.format("[%f, %f, %f]",
+							tfs.getTransform().getTranslation().getX(),
+							tfs.getTransform().getTranslation().getY(),
+							tfs.getTransform().getTranslation().getZ()));
+					System.out.println(String.format("[%f, %f, %f, %f]",
+							tfs.getTransform().getRotation().getX(),
+							tfs.getTransform().getRotation().getY(),
+							tfs.getTransform().getRotation().getZ(),
+							tfs.getTransform().getRotation().getW()));
+				}
+				System.out.println();*/
+			}
+		});
+	}
+	
 	/**
 	 * The position published in the odometry topic.
 	 * 

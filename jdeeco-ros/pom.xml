@@ -8,7 +8,7 @@
 		<version>3.0.1</version>
 		<relativePath>../jdeeco-parent/pom.xml</relativePath>
 	</parent>
-	
+
 	<artifactId>cz.cuni.mff.d3s.jdeeco.ros</artifactId>
 
 	<name>cz.cuni.mff.d3s.jdeeco.ros</name>
@@ -71,21 +71,21 @@
 			<version>0.5.0</version>
 		</dependency>
 		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>18.0</version>
+			<groupId>org.ros.rosjava_messages</groupId>
+			<artifactId>tf2_msgs</artifactId>
+			<version>0.5.9</version>
 		</dependency>
 	</dependencies>
-	
+
 	<repositories>
 		<repository>
 			<id>d3s</id>
 			<url>https://gitlab.d3s.mff.cuni.cz:8443/nexus/content/groups/public/</url>
 		</repository>
 		<repository>
-                <id>rosjava_mvn_repo</id>
-                <url>https://github.com/rosjava/rosjava_mvn_repo/raw/master</url>
-        </repository>
-		
+			<id>rosjava_mvn_repo</id>
+			<url>https://github.com/rosjava/rosjava_mvn_repo/raw/master</url>
+		</repository>
+
 	</repositories>
 </project>
