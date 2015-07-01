@@ -182,7 +182,7 @@ public class DEECoNode implements DEECoContainer {
 	 * @throws DEECoException Thrown if the construction of {@link DEECoNode} fails. In such case
 	 * please see the error output and log file for further information about the failure.
 	 */
-	void initializePlugins(DEECoPlugin[] plugins) throws PluginDependencyException {
+	void initializePlugins(DEECoPlugin[] plugins) throws PluginDependencyException, PluginInitFailedException {
 		pluginsSet = new HashSet<>();
 		
 		List<DependencyNode> nodes = constructDependencyNodes(plugins);

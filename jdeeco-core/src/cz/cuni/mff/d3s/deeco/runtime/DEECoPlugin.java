@@ -35,5 +35,5 @@ public interface DEECoPlugin {
 	 *  
 	 * @param container main DEECo container that provides the necessary hooks to achieve the above extensions  
 	 */
-	public void init(DEECoContainer container);	
+	public void init(DEECoContainer container) throws PluginInitFailedException;	
 }

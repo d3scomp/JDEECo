@@ -58,7 +58,7 @@ public class DEECoTest {
 	/** 
 	 * Verifies that the dependency and the plugin extending it are initialized in the correct order.
 	 */
-	private void verifyPluginInitOrder(InOrder order, DEECoContainer deeco, DEECoPlugin dependency, DEECoPlugin extension)
+	private void verifyPluginInitOrder(InOrder order, DEECoContainer deeco, DEECoPlugin dependency, DEECoPlugin extension) throws PluginInitFailedException
 	{
 		order.verify(dependency).init(deeco);
 		order.verify(extension).init(deeco);
