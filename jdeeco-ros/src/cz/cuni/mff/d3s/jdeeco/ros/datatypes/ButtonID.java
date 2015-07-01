@@ -7,7 +7,7 @@ import kobuki_msgs.ButtonEvent;
  * 
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  */
-public enum Button {
+public enum ButtonID {
 	/**
 	 * Button 0.
 	 */
@@ -23,21 +23,21 @@ public enum Button {
 
 	/**
 	 * Convert the byte representation of the button in ROS messages to the
-	 * {@link Button} representation. If the byte doesn't represent any
+	 * {@link ButtonID} representation. If the byte doesn't represent any
 	 * turtlebot's button a null is returned.
 	 * 
 	 * @param button
 	 *            The byte representation of the button used in ROS messages.
-	 * @return the {@link Button} enumeration representation of the button.
+	 * @return the {@link ButtonID} enumeration representation of the button.
 	 */
-	public static Button fromByte(byte button) {
+	public static ButtonID fromByte(byte button) {
 		switch (button) {
 		case ButtonEvent.Button0:
-			return Button.B0;
+			return ButtonID.B0;
 		case ButtonEvent.Button1:
-			return Button.B1;
+			return ButtonID.B1;
 		case ButtonEvent.Button2:
-			return Button.B2;
+			return ButtonID.B2;
 		default:
 			return null;
 		}

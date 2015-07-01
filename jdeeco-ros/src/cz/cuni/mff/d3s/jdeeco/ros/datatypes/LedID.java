@@ -5,7 +5,7 @@ package cz.cuni.mff.d3s.jdeeco.ros.datatypes;
  * 
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  */
-public enum LedId {
+public enum LedID {
 	/**
 	 * The LED1.
 	 */
@@ -24,7 +24,7 @@ public enum LedId {
 	 * Assign the correct ROS topic to the LED.
 	 * @param topic the ROS topic for the LED.
 	 */
-	private LedId(String topic){
+	private LedID(String topic){
 		this.topic = topic;
 	}
 }

@@ -7,7 +7,7 @@ import kobuki_msgs.WheelDropEvent;
  * 
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  */
-public enum Wheel {
+public enum WheelID {
 	/**
 	 * The left wheel.
 	 */
@@ -20,7 +20,7 @@ public enum Wheel {
 	/**
 	 * Transform the wheel encoded in a byte from the
 	 * {@link WheelDropEvent#getWheel()} method into an instance of
-	 * {@link Wheel}. If the wheel parameter doesn't equal to either
+	 * {@link WheelID}. If the wheel parameter doesn't equal to either
 	 * {@link WheelDropEvent.LEFT} or {@link WheelDropEvent.RIGHT} then null is
 	 * returned.
 	 * 
@@ -28,12 +28,12 @@ public enum Wheel {
 	 *            The byte representation of the wheel.
 	 * @return An instance of the enumeration of turtlebot's wheels or null.
 	 */
-	public static Wheel fromByte(byte wheel) {
+	public static WheelID fromByte(byte wheel) {
 		switch (wheel) {
 		case WheelDropEvent.LEFT:
-			return Wheel.LEFT;
+			return WheelID.LEFT;
 		case WheelDropEvent.RIGHT:
-			return Wheel.RIGHT;
+			return WheelID.RIGHT;
 		default:
 			return null;
 		}

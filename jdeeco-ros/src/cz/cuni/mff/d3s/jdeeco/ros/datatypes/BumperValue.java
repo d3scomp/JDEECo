@@ -7,7 +7,7 @@ import kobuki_msgs.BumperEvent;
  * 
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  */
-public enum Bumper {
+public enum BumperValue {
 	/**
 	 * Left side of the bumper is pressed.
 	 */
@@ -27,7 +27,7 @@ public enum Bumper {
 
 	/**
 	 * Transform the {@link BumperEvent#getBumper()} state into the
-	 * {@link Bumper} instance. The {@link BumperEvent#getBumper()} has the
+	 * {@link BumperValue} instance. The {@link BumperEvent#getBumper()} has the
 	 * following states:
 	 * <ul>
 	 * <li>{@link BumperEvent#LEFT}</li>
@@ -35,20 +35,20 @@ public enum Bumper {
 	 * <li>{@link BumperEvent#CENTER}</li>
 	 * </ul>
 	 * If a value other the these specified above is passed as an argument
-	 * {@link Bumper#CENTER} is returned.
+	 * {@link BumperValue#CENTER} is returned.
 	 * 
 	 * @param state
 	 *            The bumper state in a form of byte.
 	 * @return The bumper enum instance appropriate to the given bumper state.
 	 */
-	public static Bumper fromByte(byte state) {
+	public static BumperValue fromByte(byte state) {
 		switch (state) {
 		case BumperEvent.LEFT:
-			return Bumper.LEFT;
+			return BumperValue.LEFT;
 		case BumperEvent.RIGHT:
-			return Bumper.RIGHT;
+			return BumperValue.RIGHT;
 		default:
-			return Bumper.CENTER;
+			return BumperValue.CENTER;
 		}
 	}
 }

@@ -7,7 +7,7 @@ public class Communication extends TopicSubscriber {
 	Communication(){}
 	
 	@Override
-	void subscribe(ConnectedNode connectedNode) {
+	protected void subscribeDescendant(ConnectedNode connectedNode) {
 		// TODO Auto-generated method stub
 		
 	}

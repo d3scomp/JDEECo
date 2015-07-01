@@ -5,7 +5,7 @@ package cz.cuni.mff.d3s.jdeeco.ros.datatypes;
  * 
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  */
-public enum Sound {
+public enum SoundValue {
 	/**
 	 * Sound of a button being pressed.
 	 */
@@ -46,7 +46,7 @@ public enum Sound {
 	 * @param value
 	 *            Byte representation of the sound in the ROS topic.
 	 */
-	private Sound(byte value) {
+	private SoundValue(byte value) {
 		this.value = value;
 	}
 }

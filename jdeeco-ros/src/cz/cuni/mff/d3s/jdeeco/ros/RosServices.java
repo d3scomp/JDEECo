@@ -3,9 +3,9 @@ package cz.cuni.mff.d3s.jdeeco.ros;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import org.ros.exception.RosRuntimeException;
 import org.ros.namespace.GraphName;
 import org.ros.node.AbstractNodeMain;
 import org.ros.node.ConnectedNode;
@@ -16,6 +16,7 @@ import org.ros.node.NodeMainExecutor;
 
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
+import cz.cuni.mff.d3s.deeco.runtime.PluginInitFailedException;
 
 /**
  * DEECo plugin that provides an interface between DEECo and ROS. It registers
@@ -26,8 +27,19 @@ import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
  */
 public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 
+	/**
+	 * The address of the host where the DEECo is running.
+	 */
 	private static final String ROS_HOST = "192.168.0.102";
+	/**
+	 * The address of where the ROS master is running.
+	 */
 	private static final String ROS_MASTER = "http://192.168.0.200:11311";
+
+	/**
+	 * The timeout in milliseconds to wait for the ROS topic subscription.
+	 */
+	private final long SUBSCRIPTION_TIMEOUT = 30_000; // Timeout in milliseconds
 
 	/**
 	 * The list of {@link TopicSubscriber}s in the DEECo-ROS interface. This
@@ -38,7 +50,8 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 	 * @return the list of {@link TopicSubscriber}s in the DEECo-ROS interface.
 	 */
 	private TopicSubscriber[] topicSubscribers = new TopicSubscriber[] {
-			new Sensors(), new Actuators(), new Communication() };
+			new Wheels(), new Bumper(), new Buttons(), new DockIR(),
+			new Position(), new LEDs(), new Speeker(), new Communication() };
 
 	/**
 	 * A list of DEECo plugins the {@link RosServices} depends on.
@@ -50,6 +63,13 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 		return new ArrayList<>();
 	}
 
+	/**
+	 * Provides an instance of requested type if registered.
+	 * 
+	 * @param serviceType
+	 *            The type of the requested service.
+	 * @return The instance of requested service if registered. Null otherwise.
+	 */
 	@SuppressWarnings("unchecked")
 	public <T> T getService(Class<T> serviceType) {
 		for (TopicSubscriber service : topicSubscribers) {
@@ -68,19 +88,65 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 	 *            is the DEECo container of this DEECo node.
 	 */
 	@Override
-	public void init(DEECoContainer container) {
-		// TODO: sensors and actuators do nothing until initializes in the ROS
-		// node
-
+	public void init(DEECoContainer container) throws PluginInitFailedException {
 		try {
 			NodeConfiguration nodeConfig = NodeConfiguration.newPublic(
 					ROS_HOST, new URI(ROS_MASTER));
-			NodeMainExecutor nodeMainExecutor = DefaultNodeMainExecutor.newDefault();
+			NodeMainExecutor nodeMainExecutor = DefaultNodeMainExecutor
+					.newDefault();
 			nodeMainExecutor.execute(this, nodeConfig);
+
+			if (!isInitialized()) {
+				throw new PluginInitFailedException(
+						String.format(
+								"The ROS topics were not subscribed within %d milliseconds.",
+								SUBSCRIPTION_TIMEOUT));
+			}
+
 		} catch (URISyntaxException e) {
-			throw new RosRuntimeException("Malformed URI: " + ROS_MASTER, e);
+			throw new PluginInitFailedException("Malformed URI: " + ROS_MASTER,
+					e);
+		}
+	}
+
+	/**
+	 * Check whether all the ROS topics are subscribed within a defined time
+	 * limit.
+	 * 
+	 * @return True if all the ROS topics are subscribed. False otherwise.
+	 */
+	private boolean isInitialized() {
+		final Date startTime = new Date();
+		Date currentTime = new Date();
+
+		while (currentTime.getTime() < startTime.getTime()
+				+ SUBSCRIPTION_TIMEOUT) {
+			try {
+				// Wait a while between checks
+				Thread.sleep(1000);
+
+				// Check whether all ROS topics are subscribed
+				boolean allSubscribed = true;
+				for (TopicSubscriber subscriber : topicSubscribers) {
+					if (!subscriber.isSubscribed()) {
+						allSubscribed = false;
+					}
+				}
+
+				// If all the topics are subscribed return true
+				if (allSubscribed) {
+					return true;
+				}
+
+			} catch (InterruptedException e) {
+				// Ignore interruptions
+			}
+			currentTime = new Date();
 		}
 
+		// If any of the topics is not subscribed within the given time limit
+		// return false
+		return false;
 	}
 
 	/**
