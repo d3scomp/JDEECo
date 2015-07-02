@@ -9,6 +9,7 @@ import cz.cuni.mff.d3s.jdeeco.ros.DockIR;
 import cz.cuni.mff.d3s.jdeeco.ros.LEDs;
 import cz.cuni.mff.d3s.jdeeco.ros.Position;
 import cz.cuni.mff.d3s.jdeeco.ros.RosServices;
+import cz.cuni.mff.d3s.jdeeco.ros.SHT1x;
 import cz.cuni.mff.d3s.jdeeco.ros.Speeker;
 import cz.cuni.mff.d3s.jdeeco.ros.Wheels;
 
@@ -29,6 +30,7 @@ public class TestApp {
 			testComponent.position = services.getService(Position.class);
 			testComponent.speeker = services.getService(Speeker.class);
 			testComponent.wheels = services.getService(Wheels.class);
+			testComponent.sht1x = services.getService(SHT1x.class);
 			
 			node.deployComponent(testComponent);
 

@@ -10,6 +10,7 @@ import cz.cuni.mff.d3s.jdeeco.ros.Buttons;
 import cz.cuni.mff.d3s.jdeeco.ros.DockIR;
 import cz.cuni.mff.d3s.jdeeco.ros.LEDs;
 import cz.cuni.mff.d3s.jdeeco.ros.Position;
+import cz.cuni.mff.d3s.jdeeco.ros.SHT1x;
 import cz.cuni.mff.d3s.jdeeco.ros.Speeker;
 import cz.cuni.mff.d3s.jdeeco.ros.Wheels;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.ButtonID;
@@ -43,6 +44,9 @@ public class TestComponent {
 
 	@Local
 	public Wheels wheels;
+	
+	@Local
+	public SHT1x sht1x;
 
 
 	public TestComponent(final String id) {
@@ -88,4 +92,12 @@ public class TestComponent {
 			break;
 		}
 	}
+	
+	@Process
+	@PeriodicScheduling(period = 500)
+	public static void temperatureHumidity(@In("sht1x") SHT1x sht1x){
+		System.out.println(String.format("Temperature: %f", sht1x.getTemperature()));
+		System.out.println(String.format("Humidity: %f", sht1x.getHumidity()));
+	}
+	
 }
