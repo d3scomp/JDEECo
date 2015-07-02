@@ -13,11 +13,3 @@ public class Communication extends TopicSubscriber {
 	}
 
 }
-
-/* TODO:
- 
-+ /mobile_base/events/cliff
-+ /mobile_base/version_info
-+ /tf
- 
-*/

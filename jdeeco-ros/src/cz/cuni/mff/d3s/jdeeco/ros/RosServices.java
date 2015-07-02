@@ -51,7 +51,7 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 	 */
 	private TopicSubscriber[] topicSubscribers = new TopicSubscriber[] {
 			new Wheels(), new Bumper(), new Buttons(), new DockIR(),
-			new Position(), new LEDs(), new Speeker(), new FloorDistance(), new Communication() };
+			new Position(), new LEDs(), new Speeker(), new FloorDistance(), new Info(), new Communication() };
 
 	/**
 	 * A list of DEECo plugins the {@link RosServices} depends on.

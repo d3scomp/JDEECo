@@ -80,7 +80,7 @@ public class Position extends TopicSubscriber {
 	@Override
 	protected void subscribeDescendant(ConnectedNode connectedNode) {
 		subscribeOdometry(connectedNode);
-		subscribeTF(connectedNode);
+		//subscribeTF(connectedNode);
 		subscribeGPS(connectedNode);
 	}
 
@@ -158,32 +158,16 @@ public class Position extends TopicSubscriber {
 	 * @param connectedNode
 	 *            The ROS node on which the DEECo node runs.
 	 */
-	private void subscribeTF(ConnectedNode connectedNode) {
+	/*private void subscribeTF(ConnectedNode connectedNode) {
 		Subscriber<TFMessage> transformTopic = connectedNode.newSubscriber(
 				TRANSFORMATION_TOPIC, TFMessage._TYPE);
 		transformTopic.addMessageListener(new MessageListener<TFMessage>() {
 			@Override
 			public void onNewMessage(TFMessage message) {
 				// TODO: Build TF tree
-
-				/*
-				 * System.out.println("transform:"); for(TransformStamped tfs :
-				 * message.getTransforms()){
-				 * System.out.println(tfs.getChildFrameId());
-				 * System.out.println(String.format("[%f, %f, %f]",
-				 * tfs.getTransform().getTranslation().getX(),
-				 * tfs.getTransform().getTranslation().getY(),
-				 * tfs.getTransform().getTranslation().getZ()));
-				 * System.out.println(String.format("[%f, %f, %f, %f]",
-				 * tfs.getTransform().getRotation().getX(),
-				 * tfs.getTransform().getRotation().getY(),
-				 * tfs.getTransform().getRotation().getZ(),
-				 * tfs.getTransform().getRotation().getW())); }
-				 * System.out.println();
-				 */
 			}
 		});
-	}
+	}*/
 
 	/**
 	 * Reset the odometry counter.
