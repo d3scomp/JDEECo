@@ -16,17 +16,7 @@ public class TestApp {
 
 	public static void main(String[] args) {
 		try {
-			/*
-			 * final SimulationTimer simulationTimer = new DiscreteEventTimer();
-			 * final DEECoSimulation simulation = new
-			 * DEECoSimulation(simulationTimer);
-			 * simulation.addPlugin(Network.class);
-			 * simulation.addPlugin(DefaultKnowledgePublisher.class);
-			 * simulation.addPlugin(RosServices.class);
-			 */
-
-			// DEECoNode node = simulation.createNode(0);
-
+			
 			WallTimeTimer t = new WallTimeTimer();
 			RosServices services = new RosServices();
 			DEECoNode node = new DEECoNode(0, t, services);
@@ -43,10 +33,9 @@ public class TestApp {
 			node.deployComponent(testComponent);
 
 			Log.i("Simulation started.");
-
 			t.start();
-			// simulation.start(120000);
 			Log.i("Simulation finished.");
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

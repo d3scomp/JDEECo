@@ -62,6 +62,7 @@ public class Speeker extends TopicSubscriber {
 				kobuki_msgs.Sound soundMsg = soundTopic.newMessage();
 				soundMsg.setValue(sound.value);
 				soundTopic.publish(soundMsg);
+				
 				// TODO: log
 			}
 		});
