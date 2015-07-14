@@ -10,6 +10,7 @@ import org.ros.node.ConnectedNode;
 import org.ros.node.Node;
 import org.ros.node.topic.Subscriber;
 
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.FloorSensorID;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.FloorSensorState;
 
@@ -79,7 +80,8 @@ public class FloorDistance extends TopicSubscriber {
 					}
 					floorDistances.put(sensor, message.getBottom());
 				}
-				// TODO: log
+				Log.d(String.format("FloorDistance from sensor %d changed to %d.",
+						message.getSensor(), message.getState()));
 			}
 		});
 	}

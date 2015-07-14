@@ -15,6 +15,7 @@ import org.ros.node.Node;
 import org.ros.node.topic.Publisher;
 import org.ros.node.topic.Subscriber;
 
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import sensor_msgs.NavSatFix;
 import sensor_msgs.TimeReference;
 import tf2_msgs.TFMessage;
@@ -203,7 +204,11 @@ public class Position extends TopicSubscriber {
 			@Override
 			public void onNewMessage(Odometry message) {
 				odometry = message.getPose().getPose().getPosition();
-				// TODO: logging
+
+				Log.d(String.format("Odometry value received: [%f, %f, %f].",
+						odometry.getX(),
+						odometry.getY(),
+						odometry.getZ()));
 			}
 		});
 
@@ -223,7 +228,7 @@ public class Position extends TopicSubscriber {
 
 				std_msgs.Empty emptyMsg = resetOdometryTopic.newMessage();
 				resetOdometryTopic.publish(emptyMsg);
-				// TODO: log
+				Log.d("Odometry reset initiated.");
 			}
 		});
 	}
@@ -242,6 +247,9 @@ public class Position extends TopicSubscriber {
 			@Override
 			public void onNewMessage(NavSatFix message) {
 				gpsPosition = message;
+
+				Log.d(String.format("GPS possition received: [%d, %d, %d].",
+						message.getLatitude(), message.getLongitude(), message.getAltitude()));
 			}
 		});
 
@@ -253,6 +261,7 @@ public class Position extends TopicSubscriber {
 			public void onNewMessage(TimeReference message) {
 				gpsTime = message.getTimeRef();
 
+				Log.d(String.format("GPS time received: %d.", gpsTime.secs));
 			}
 		});
 	}
@@ -271,6 +280,15 @@ public class Position extends TopicSubscriber {
 			@Override
 			public void onNewMessage(PoseWithCovarianceStamped message) {
 				amclPosition = message.getPose();
+
+				Log.d(String.format("AMCL position received: [%f, %f, %f] with orientation [%f, %f, %f, %f].", 
+						amclPosition.getPose().getPosition().getX(), 
+						amclPosition.getPose().getPosition().getY(),
+						amclPosition.getPose().getPosition().getZ(),
+						amclPosition.getPose().getOrientation().getX(),
+						amclPosition.getPose().getOrientation().getY(),
+						amclPosition.getPose().getOrientation().getZ(),
+						amclPosition.getPose().getOrientation().getW()));
 			}
 		});
 	}
@@ -301,7 +319,15 @@ public class Position extends TopicSubscriber {
 				goalMsg.getHeader().setFrameId(MAP_FRAME);
 				goalMsg.getHeader().setStamp(connectedNode.getCurrentTime());
 				goalTopic.publish(goalMsg);
-				// TODO: log
+
+				Log.d(String.format("Simple goal set to position: [%f, %f, %f] with orientation [%f, %f, %f, %f].", 
+						simpleGoal.getPosition().getX(), 
+						simpleGoal.getPosition().getY(),
+						simpleGoal.getPosition().getZ(),
+						simpleGoal.getOrientation().getX(),
+						simpleGoal.getOrientation().getY(),
+						simpleGoal.getOrientation().getZ(),
+						simpleGoal.getOrientation().getW()));
 			}
 		});
 	}
@@ -319,6 +345,8 @@ public class Position extends TopicSubscriber {
 			@Override
 			public void onNewMessage(TFMessage message) {
 				// TODO: Build TF tree
+
+				Log.d("TF frame received.");
 			}
 		});
 	}

@@ -5,6 +5,7 @@ import org.ros.node.ConnectedNode;
 import org.ros.node.Node;
 import org.ros.node.topic.Publisher;
 
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.SoundValue;
 
 /**
@@ -68,8 +69,8 @@ public class Speeker extends TopicSubscriber {
 				kobuki_msgs.Sound soundMsg = soundTopic.newMessage();
 				soundMsg.setValue(sound.value);
 				soundTopic.publish(soundMsg);
-				
-				// TODO: log
+
+				Log.d(String.format("Sound played: %s.", sound));
 			}
 		});
 	}

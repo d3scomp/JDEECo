@@ -7,6 +7,7 @@ import org.ros.node.ConnectedNode;
 import org.ros.node.Node;
 import org.ros.node.topic.Subscriber;
 
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.BumperValue;
 
 /**
@@ -60,7 +61,7 @@ public class Bumper extends TopicSubscriber {
 				} else {
 					bumper = BumperValue.fromByte(message.getBumper());
 				}
-				// TODO: log
+				Log.d(String.format("Bumper state changed to %d.", message.getState()));
 			}
 		});
 	}

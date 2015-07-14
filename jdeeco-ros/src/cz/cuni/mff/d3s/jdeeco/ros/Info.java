@@ -7,6 +7,8 @@ import org.ros.node.ConnectedNode;
 import org.ros.node.Node;
 import org.ros.node.topic.Subscriber;
 
+import cz.cuni.mff.d3s.deeco.logging.Log;
+
 /**
  * Provides methods to obtain information about the robot through ROS.
  * Registration of appropriate ROS topics is handled in the
@@ -65,7 +67,8 @@ public class Info extends TopicSubscriber {
 				firmwareInfo = message.getFirmware();
 				hardwareInfo = message.getHardware();
 				softwareInfo = message.getSoftware();
-				// TODO: log
+
+				Log.d("Mobile base version info received.");
 			}
 		});
 	}

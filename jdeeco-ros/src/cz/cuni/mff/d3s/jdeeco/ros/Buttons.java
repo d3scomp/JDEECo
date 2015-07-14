@@ -10,6 +10,7 @@ import org.ros.node.ConnectedNode;
 import org.ros.node.Node;
 import org.ros.node.topic.Subscriber;
 
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.ButtonID;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.ButtonState;
 
@@ -66,7 +67,8 @@ public class Buttons extends TopicSubscriber {
 				if (button != null && state != null) {
 					buttonState.put(button, state);
 				}
-				// TODO: log
+				Log.d(String.format("Button %d changed state to %d.",
+						message.getButton(), message.getState()));
 			}
 		});
 	}

@@ -11,6 +11,7 @@ import org.ros.node.ConnectedNode;
 import org.ros.node.Node;
 import org.ros.node.topic.Subscriber;
 
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.DockingIRDiod;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.DockingIRSignal;
 
@@ -67,7 +68,8 @@ public class DockIR extends TopicSubscriber {
 					dockingIRSignal.put(DockingIRDiod.fromIndex(i),
 							DockingIRSignal.fromByte(b.getByte(i)));
 				}
-				// TODO: log
+				Log.d(String.format("DockIR changed state to [%d, %d, %d].",
+						b.getByte(0), b.getByte(1), b.getByte(2)));
 			}
 		});
 	}

@@ -19,6 +19,7 @@ import beeclickarm_messages.IEEE802154BroadcastPacket;
 import beeclickarm_messages.IEEE802154BroadcastPacketRequest;
 import beeclickarm_messages.IEEE802154BroadcastPacketResponse;
 import beeclickarm_messages.IEEE802154ReceivedPacket;
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.runtime.PluginInitFailedException;
@@ -138,12 +139,12 @@ public class BeeClickComm extends TopicSubscriber implements DEECoPlugin {
 					new ServiceResponseListener<IEEE802154BroadcastPacketResponse>() {
 						@Override
 						public void onSuccess(IEEE802154BroadcastPacketResponse arg0) {
-							// TODO: log
+							Log.d("BeeClickDevice sucessfully sent data.");
 						}
 
 						@Override
 						public void onFailure(RemoteException arg0) {
-							// TODO: log
+							Log.w("BeeClickDevice failed to send data.");
 						}
 					});
 		}
@@ -157,7 +158,7 @@ public class BeeClickComm extends TopicSubscriber implements DEECoPlugin {
 		public void subscribe(ConnectedNode connectedNode) {
 			// Subscribe packet received topic
 			packetReceiveTopic = connectedNode
-					.newSubscriber(BEE_RECEIVE_TOPIC,IEEE802154ReceivedPacket._TYPE);
+					.newSubscriber(BEE_RECEIVE_TOPIC, IEEE802154ReceivedPacket._TYPE);
 			packetReceiveTopic
 					.addMessageListener(new MessageListener<IEEE802154ReceivedPacket>() {
 						@Override
@@ -177,7 +178,7 @@ public class BeeClickComm extends TopicSubscriber implements DEECoPlugin {
 											String.format("%d", message.getSrcSAddr())));
 								}
 							}, null);
-							// TODO: log
+							Log.d("BeeClickDevice received data.");
 						}
 					});
 

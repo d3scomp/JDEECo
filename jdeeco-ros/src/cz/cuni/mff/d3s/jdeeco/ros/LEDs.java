@@ -10,6 +10,7 @@ import org.ros.node.ConnectedNode;
 import org.ros.node.Node;
 import org.ros.node.topic.Publisher;
 
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.LedColor;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.LedID;
 
@@ -57,7 +58,8 @@ public class LEDs extends TopicSubscriber {
 					Led led = ledTopic.newMessage();
 					led.setValue(ledColor.get(ledId).value);
 					ledTopic.publish(led);
-					// TODO: log
+					Log.d(String.format("%s switched to %d.",
+							ledId, ledColor.get(ledId).value));
 
 					synchronized (ledId) {
 						ledId.wait();

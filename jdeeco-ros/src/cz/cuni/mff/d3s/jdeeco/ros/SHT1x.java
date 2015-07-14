@@ -5,6 +5,7 @@ import org.ros.node.ConnectedNode;
 import org.ros.node.Node;
 import org.ros.node.topic.Subscriber;
 
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import sensor_msgs.RelativeHumidity;
 import sensor_msgs.Temperature;
 
@@ -67,7 +68,8 @@ public class SHT1x extends TopicSubscriber {
 			@Override
 			public void onNewMessage(Temperature message) {
 				temperature = message.getTemperature();
-				// TODO: log
+
+				Log.d(String.format("Temperature received: %f.", temperature));
 			}
 		});
 
@@ -79,7 +81,8 @@ public class SHT1x extends TopicSubscriber {
 					@Override
 					public void onNewMessage(RelativeHumidity message) {
 						humidity = message.getRelativeHumidity();
-						// TODO: log
+
+						Log.d(String.format("Humidity received: %f.", humidity));
 					}
 				});
 	}

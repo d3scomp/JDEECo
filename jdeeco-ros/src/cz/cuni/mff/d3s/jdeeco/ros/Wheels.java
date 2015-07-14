@@ -14,6 +14,7 @@ import org.ros.node.Node;
 import org.ros.node.topic.Publisher;
 import org.ros.node.topic.Subscriber;
 
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.MotorPower;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.WheelID;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.WheelState;
@@ -168,9 +169,12 @@ public class Wheels extends TopicSubscriber {
 				twist.getAngular().setX(0);
 				twist.getAngular().setY(0);
 				twist.getAngular().setZ(angularVelocity);
-				// TODO: logging
+				
 				velocityTopic.publish(twist);
-				Thread.sleep(VELOCITY_UPDATE_PERIOD);
+
+				Log.d(String.format("Velocity set to: %f with yaw: %f.",
+						linearVelocity, angularVelocity));
+				Thread.sleep(VELOCITY_UPDATE_PERIOD); // FIXME: remove the sleep
 			}
 		});
 	}
@@ -203,7 +207,8 @@ public class Wheels extends TopicSubscriber {
 						.newMessage();
 				motorPowerMsg.setState(motorPower.value);
 				motorPowerTopicPub.publish(motorPowerMsg);
-				// TODO: log
+
+				Log.d(String.format("Motor power set to: %d.", motorPower.value));
 			}
 		});
 		
@@ -220,7 +225,9 @@ public class Wheels extends TopicSubscriber {
 						if (parsedMotorPower != null) {
 							motorPower = parsedMotorPower;
 						}
-						// TODO: log
+
+						Log.d(String.format("Motor power change received: %d.",
+								message.getState()));
 					}
 				});
 	}
@@ -243,7 +250,9 @@ public class Wheels extends TopicSubscriber {
 				if (wheel != null && state != null) {
 					wheelState.put(wheel, state);
 				}
-				// TODO: log
+
+				Log.d(String.format("Wheel drop change received: %d on wheel: %d.",
+						message.getState(), message.getWheel()));
 			}
 		});
 	}
