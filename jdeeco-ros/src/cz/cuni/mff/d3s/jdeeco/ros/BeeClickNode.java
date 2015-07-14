@@ -56,7 +56,7 @@ public class BeeClickNode extends AbstractNodeMain {
 	 */
 	@Override
 	public void onShutdown(Node node) {
-		beeClickComm.beePacketService.shutdown();
+		beeClickComm.unsubscribe(node);
 
 	}
 

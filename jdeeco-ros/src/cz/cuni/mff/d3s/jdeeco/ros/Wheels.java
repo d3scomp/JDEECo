@@ -10,6 +10,7 @@ import kobuki_msgs.WheelDropEvent;
 import org.ros.concurrent.CancellableLoop;
 import org.ros.message.MessageListener;
 import org.ros.node.ConnectedNode;
+import org.ros.node.Node;
 import org.ros.node.topic.Publisher;
 import org.ros.node.topic.Subscriber;
 
@@ -38,6 +39,19 @@ public class Wheels extends TopicSubscriber {
 	 * The name of the topic to report wheel drop changes.
 	 */
 	private static final String WHEEL_DROP_TOPIC = "/mobile_base/events/wheel_drop";
+
+	/**
+	 * The velocity topic.
+	 */
+	private Publisher<Twist> velocityTopic = null;
+	/**
+	 * The topic for motor power messages.
+	 */
+	 private Publisher<kobuki_msgs.MotorPower> motorPowerTopicPub = null;
+	/**
+	 * The topic to report wheel drop changes.
+	 */
+	 private Subscriber<WheelDropEvent> wheelDropTopic = null;
 
 	/**
 	 * The maximum absolute linear speed. Value taken from kobuki_keyop.
@@ -109,13 +123,32 @@ public class Wheels extends TopicSubscriber {
 	}
 
 	/**
+	 * Finalize the connection to ROS topics.
+	 * 
+	 * @param node
+	 *            The ROS node on which the DEECo node runs.
+	 */
+	@Override
+	void unsubscribe(Node node) {
+		if(velocityTopic != null){
+			velocityTopic.shutdown();
+		}
+		if(motorPowerTopicPub != null){
+			motorPowerTopicPub.shutdown();
+		}
+		if(wheelDropTopic != null){
+			wheelDropTopic.shutdown();
+		}
+	}
+
+	/**
 	 * Subscribe to the ROS topic for velocity.
 	 * 
 	 * @param connectedNode
 	 *            The ROS node on which the DEECo node runs.
 	 */
 	private void subscribeVelocity(ConnectedNode connectedNode) {
-		final Publisher<Twist> velocityTopic = connectedNode.newPublisher(
+		velocityTopic = connectedNode.newPublisher(
 				VELOCITY_TOPIC, Twist._TYPE);
 		connectedNode.executeCancellableLoop(new CancellableLoop() {
 			@Override
@@ -152,7 +185,7 @@ public class Wheels extends TopicSubscriber {
 	 */
 	private void subscribeMotorPower(ConnectedNode connectedNode) {
 		// Subscribe to publish motor power changes
-		final Publisher<kobuki_msgs.MotorPower> motorPowerTopicPub = connectedNode
+		motorPowerTopicPub = connectedNode
 				.newPublisher(MOTOR_POWER_TOPIC, kobuki_msgs.MotorPower._TYPE);
 		connectedNode.executeCancellableLoop(new CancellableLoop() {
 			@Override
@@ -199,9 +232,9 @@ public class Wheels extends TopicSubscriber {
 	 *            The ROS node on which the DEECo node runs.
 	 */
 	private void subscribeWheelDrop(ConnectedNode connectedNode) {
-		Subscriber<WheelDropEvent> bumperTopic = connectedNode.newSubscriber(
+		wheelDropTopic = connectedNode.newSubscriber(
 				WHEEL_DROP_TOPIC, WheelDropEvent._TYPE);
-		bumperTopic.addMessageListener(new MessageListener<WheelDropEvent>() {
+		wheelDropTopic.addMessageListener(new MessageListener<WheelDropEvent>() {
 			@Override
 			public void onNewMessage(WheelDropEvent message) {
 

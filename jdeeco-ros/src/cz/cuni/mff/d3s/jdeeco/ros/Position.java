@@ -11,6 +11,7 @@ import org.ros.concurrent.CancellableLoop;
 import org.ros.message.MessageListener;
 import org.ros.message.Time;
 import org.ros.node.ConnectedNode;
+import org.ros.node.Node;
 import org.ros.node.topic.Publisher;
 import org.ros.node.topic.Subscriber;
 
@@ -60,13 +61,44 @@ public class Position extends TopicSubscriber {
 	 */
 	private static final String SIMPLE_GOAL_TOPIC = "/move_base_simple/goal";
 	/**
-	 * The frame in which the goal coordinates are given.
-	 */
-	private static final String MAP_FRAME = "map";
-	/**
 	 * The name of the transformation topic.
 	 */
 	private static final String TRANSFORMATION_TOPIC = "/tf";
+	
+	/**
+	 * The frame in which the goal coordinates are given.
+	 */
+	private static final String MAP_FRAME = "map";
+
+	/**
+	 * The odometry topic.
+	 */
+	private Subscriber<Odometry> odometryTopic = null;
+	/**
+	 * The topic for odometry resets.
+	 */
+	private Publisher<std_msgs.Empty> resetOdometryTopic = null;
+	/**
+	 * The GPS position topic.
+	 */
+	private Subscriber<NavSatFix> navSatTopic = null;
+	/**
+	 * The GPS time topic.
+	 */
+	private Subscriber<TimeReference> timeRefTopic = null;
+	/**
+	 * The <a href="http://wiki.ros.org/amcl">AMCL</a> positioning
+	 * topic.
+	 */
+	private Subscriber<PoseWithCovarianceStamped> amclTopic = null;
+	/**
+	 * The topic for simple goals for base movement.
+	 */
+	private Publisher<PoseStamped> goalTopic = null;
+	/**
+	 * The transformation topic.
+	 */
+	private Subscriber<TFMessage> transformTopic = null;
 
 	/**
 	 * The last position received in the odometry topic.
@@ -127,6 +159,37 @@ public class Position extends TopicSubscriber {
 	}
 
 	/**
+	 * Finalize the connection to ROS topics.
+	 * 
+	 * @param node
+	 *            The ROS node on which the DEECo node runs.
+	 */
+	@Override
+	void unsubscribe(Node node) {
+		if(odometryTopic != null){
+			odometryTopic.shutdown();
+		}
+		if(resetOdometryTopic != null){
+			resetOdometryTopic.shutdown();
+		}
+		if(navSatTopic != null){
+			navSatTopic.shutdown();
+		}
+		if(timeRefTopic != null){
+			timeRefTopic.shutdown();
+		}
+		if(amclTopic != null){
+			amclTopic.shutdown();
+		}
+		if(goalTopic != null){
+			goalTopic.shutdown();
+		}
+		if(transformTopic != null){
+			transformTopic.shutdown();
+		}
+	}
+
+	/**
 	 * Subscribe to the ROS odometry topic and for the odometry reset messages.
 	 * 
 	 * @param connectedNode
@@ -134,7 +197,7 @@ public class Position extends TopicSubscriber {
 	 */
 	private void subscribeOdometry(ConnectedNode connectedNode) {
 		// Subscribe to listen on odometry messages
-		Subscriber<Odometry> odometryTopic = connectedNode.newSubscriber(
+		odometryTopic = connectedNode.newSubscriber(
 				ODOMETRY_TOPIC, Odometry._TYPE);
 		odometryTopic.addMessageListener(new MessageListener<Odometry>() {
 			@Override
@@ -145,7 +208,7 @@ public class Position extends TopicSubscriber {
 		});
 
 		// Subscribe to publish odometry reset messages
-		Publisher<std_msgs.Empty> resetOdometryTopic = connectedNode
+		resetOdometryTopic = connectedNode
 				.newPublisher(RESET_ODOMETRY_TOPIC, std_msgs.Empty._TYPE);
 		connectedNode.executeCancellableLoop(new CancellableLoop() {
 			@Override
@@ -173,7 +236,7 @@ public class Position extends TopicSubscriber {
 	 */
 	private void subscribeGPS(ConnectedNode connectedNode) {
 		// Subscribe to the GPS position topic
-		Subscriber<NavSatFix> navSatTopic = connectedNode.newSubscriber(
+		navSatTopic = connectedNode.newSubscriber(
 				GPS_POSITION_TOPIC, NavSatFix._TYPE);
 		navSatTopic.addMessageListener(new MessageListener<NavSatFix>() {
 			@Override
@@ -183,7 +246,7 @@ public class Position extends TopicSubscriber {
 		});
 
 		// Subscribe to the GPS time topic
-		Subscriber<TimeReference> timeRefTopic = connectedNode.newSubscriber(
+		timeRefTopic = connectedNode.newSubscriber(
 				GPS_TIME_TOPIC, TimeReference._TYPE);
 		timeRefTopic.addMessageListener(new MessageListener<TimeReference>() {
 			@Override
@@ -201,7 +264,7 @@ public class Position extends TopicSubscriber {
 	 *            The ROS node on which the DEECo node runs.
 	 */
 	private void subscribeAMCL(ConnectedNode connectedNode) {
-		Subscriber<PoseWithCovarianceStamped> amclTopic = connectedNode
+		amclTopic = connectedNode
 				.newSubscriber(AMCL_POSITION_TOPIC,
 						PoseWithCovarianceStamped._TYPE);
 		amclTopic.addMessageListener(new MessageListener<PoseWithCovarianceStamped>() {
@@ -219,7 +282,7 @@ public class Position extends TopicSubscriber {
 	 *            The ROS node on which the DEECo node runs.
 	 */
 	private void subscribeSimpleGoal(ConnectedNode connectedNode) {
-		Publisher<PoseStamped> goalTopic = connectedNode.newPublisher(
+		goalTopic = connectedNode.newPublisher(
 				SIMPLE_GOAL_TOPIC, PoseStamped._TYPE);
 		connectedNode.executeCancellableLoop(new CancellableLoop() {
 			@Override
@@ -250,7 +313,7 @@ public class Position extends TopicSubscriber {
 	 *            The ROS node on which the DEECo node runs.
 	 */
 	private void subscribeTF(ConnectedNode connectedNode) {
-		Subscriber<TFMessage> transformTopic = connectedNode.newSubscriber(
+		transformTopic = connectedNode.newSubscriber(
 				TRANSFORMATION_TOPIC, TFMessage._TYPE);
 		transformTopic.addMessageListener(new MessageListener<TFMessage>() {
 			@Override

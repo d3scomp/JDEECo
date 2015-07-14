@@ -209,8 +209,9 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 	 */
 	@Override
 	public void onShutdown(Node node) {
-		// Auto-generated method stub
-		// TODO: unsubscribe
+		for (TopicSubscriber subscriber : topicSubscribers) {
+			subscriber.unsubscribe(node);
+		}
 	}
 
 	/**

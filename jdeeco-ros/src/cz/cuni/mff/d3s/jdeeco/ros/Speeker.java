@@ -2,6 +2,7 @@ package cz.cuni.mff.d3s.jdeeco.ros;
 
 import org.ros.concurrent.CancellableLoop;
 import org.ros.node.ConnectedNode;
+import org.ros.node.Node;
 import org.ros.node.topic.Publisher;
 
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.SoundValue;
@@ -19,6 +20,11 @@ public class Speeker extends TopicSubscriber {
 	 * The name of the topic for sound messages.
 	 */
 	private static final String SOUND_TOPIC = "/mobile_base/commands/sound";
+
+	/**
+	 * The topic for sound messages.
+	 */
+	private Publisher<kobuki_msgs.Sound> soundTopic = null;
 
 	/**
 	 * The sound to be played.
@@ -46,7 +52,7 @@ public class Speeker extends TopicSubscriber {
 	 */
 	@Override
 	protected void subscribeDescendant(ConnectedNode connectedNode) {
-		final Publisher<kobuki_msgs.Sound> soundTopic = connectedNode
+		soundTopic = connectedNode
 				.newPublisher(SOUND_TOPIC, kobuki_msgs.Sound._TYPE);
 		connectedNode.executeCancellableLoop(new CancellableLoop() {
 			@Override
@@ -66,6 +72,19 @@ public class Speeker extends TopicSubscriber {
 				// TODO: log
 			}
 		});
+	}
+
+	/**
+	 * Finalize the connection to ROS topics.
+	 * 
+	 * @param node
+	 *            The ROS node on which the DEECo node runs.
+	 */
+	@Override
+	void unsubscribe(Node node) {
+		if(soundTopic != null){
+			soundTopic.shutdown();
+		}
 	}
 
 	/**

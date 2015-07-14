@@ -1,6 +1,7 @@
 package cz.cuni.mff.d3s.jdeeco.ros;
 
 import org.ros.node.ConnectedNode;
+import org.ros.node.Node;
 
 /**
  * An ancestor of classes which register of subscribe to any ROS topic. The
@@ -60,4 +61,12 @@ public abstract class TopicSubscriber {
 	 *            The ROS node on which the DEECo node runs.
 	 */
 	abstract protected void subscribeDescendant(ConnectedNode connectedNode);
+	
+	/**
+	 * Finalize the connection to ROS topics.
+	 * 
+	 * @param node
+	 *            The ROS node on which the DEECo node runs.
+	 */
+	abstract void unsubscribe(Node node);
 }

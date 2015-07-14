@@ -7,6 +7,7 @@ import kobuki_msgs.ButtonEvent;
 
 import org.ros.message.MessageListener;
 import org.ros.node.ConnectedNode;
+import org.ros.node.Node;
 import org.ros.node.topic.Subscriber;
 
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.ButtonID;
@@ -25,6 +26,11 @@ public class Buttons extends TopicSubscriber {
 	 * The name of the topic for button state updates.
 	 */
 	private static final String BUTTON_TOPIC = "/mobile_base/events/button";
+
+	/**
+	 * The topic for button state updates.
+	 */
+	Subscriber<ButtonEvent> buttonTopic = null;
 
 	/**
 	 * The state of turtlebot's buttons.
@@ -50,7 +56,7 @@ public class Buttons extends TopicSubscriber {
 	 */
 	@Override
 	protected void subscribeDescendant(ConnectedNode connectedNode) {
-		Subscriber<ButtonEvent> buttonTopic = connectedNode.newSubscriber(
+		buttonTopic = connectedNode.newSubscriber(
 				BUTTON_TOPIC, ButtonEvent._TYPE);
 		buttonTopic.addMessageListener(new MessageListener<ButtonEvent>() {
 			@Override
@@ -63,6 +69,19 @@ public class Buttons extends TopicSubscriber {
 				// TODO: log
 			}
 		});
+	}
+
+	/**
+	 * Finalize the connection to ROS topics.
+	 * 
+	 * @param node
+	 *            The ROS node on which the DEECo node runs.
+	 */
+	@Override
+	void unsubscribe(Node node) {
+		if(buttonTopic != null){
+			buttonTopic.shutdown();
+		}
 	}
 	
 	/**

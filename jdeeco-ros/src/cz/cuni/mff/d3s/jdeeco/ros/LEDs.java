@@ -7,6 +7,7 @@ import kobuki_msgs.Led;
 
 import org.ros.concurrent.CancellableLoop;
 import org.ros.node.ConnectedNode;
+import org.ros.node.Node;
 import org.ros.node.topic.Publisher;
 
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.LedColor;
@@ -19,11 +20,17 @@ public class LEDs extends TopicSubscriber {
 	private Map<LedID, LedColor> ledColor;
 
 	/**
+	 * The ROS topics for LEDs messages.
+	 */
+	private Map<LedID, Publisher<Led>> ledTopics;
+	
+	/**
 	 * Internal constructor enables the {@link RosServices} to be in the control
 	 * of instantiating {@link LEDs}.
 	 */
 	LEDs(){
 		ledColor = new HashMap<>();
+		ledTopics = new HashMap<>();
 	}
 
 	/**
@@ -38,6 +45,7 @@ public class LEDs extends TopicSubscriber {
 		for (LedID ledId : LedID.values()) {
 			final Publisher<Led> ledTopic = connectedNode.newPublisher(
 					ledId.topic, Led._TYPE);
+			ledTopics.put(ledId, ledTopic);
 			connectedNode.executeCancellableLoop(new CancellableLoop() {
 				@Override
 				protected void setup() {
@@ -56,6 +64,21 @@ public class LEDs extends TopicSubscriber {
 					}
 				}
 			});
+		}
+	}
+
+	/**
+	 * Finalize the connection to ROS topics.
+	 * 
+	 * @param node
+	 *            The ROS node on which the DEECo node runs.
+	 */
+	@Override
+	void unsubscribe(Node node) {
+		for (LedID ledId : LedID.values()) {
+			if(ledTopics.containsKey(ledId)){
+				ledTopics.get(ledId).shutdown();
+			}
 		}
 	}
 

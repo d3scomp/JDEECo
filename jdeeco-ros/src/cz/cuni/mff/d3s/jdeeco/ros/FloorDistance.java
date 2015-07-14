@@ -7,6 +7,7 @@ import kobuki_msgs.CliffEvent;
 
 import org.ros.message.MessageListener;
 import org.ros.node.ConnectedNode;
+import org.ros.node.Node;
 import org.ros.node.topic.Subscriber;
 
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.FloorSensorID;
@@ -26,6 +27,11 @@ public class FloorDistance extends TopicSubscriber {
 	 * the floor.
 	 */
 	private static final String CLIFF_TOPIC = "/mobile_base/events/cliff";
+
+	/**
+	 * The topic for messages from the distance sensors pointed to the floor.
+	 */
+	private Subscriber<CliffEvent> cliffTopic = null;
 
 	/**
 	 * The state sensed by the floor sensors.
@@ -58,7 +64,7 @@ public class FloorDistance extends TopicSubscriber {
 	 */
 	@Override
 	protected void subscribeDescendant(ConnectedNode connectedNode) {
-		Subscriber<CliffEvent> cliffTopic = connectedNode.newSubscriber(
+		cliffTopic = connectedNode.newSubscriber(
 				CLIFF_TOPIC, CliffEvent._TYPE);
 		cliffTopic.addMessageListener(new MessageListener<CliffEvent>() {
 			@Override
@@ -78,6 +84,19 @@ public class FloorDistance extends TopicSubscriber {
 		});
 	}
 
+	/**
+	 * Finalize the connection to ROS topics.
+	 * 
+	 * @param node
+	 *            The ROS node on which the DEECo node runs.
+	 */
+	@Override
+	void unsubscribe(Node node) {
+		if(cliffTopic != null){
+			cliffTopic.shutdown();
+		}
+	}
+	
 	/**
 	 * Get the state sensed by the specified floor sensor.
 	 * 

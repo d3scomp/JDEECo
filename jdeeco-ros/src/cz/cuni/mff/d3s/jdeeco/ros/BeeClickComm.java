@@ -10,6 +10,7 @@ import org.ros.exception.RemoteException;
 import org.ros.exception.ServiceNotFoundException;
 import org.ros.message.MessageListener;
 import org.ros.node.ConnectedNode;
+import org.ros.node.Node;
 import org.ros.node.service.ServiceClient;
 import org.ros.node.service.ServiceResponseListener;
 import org.ros.node.topic.Subscriber;
@@ -47,11 +48,6 @@ public class BeeClickComm extends TopicSubscriber implements DEECoPlugin {
 	private static final String BEE_RECEIVE_TOPIC = "/MRF24J40/received_packets";
 
 	/**
-	 * The ROS service used for broadcasting.
-	 */
-	ServiceClient<IEEE802154BroadcastPacketRequest, IEEE802154BroadcastPacketResponse> beePacketService;
-
-	/**
 	 * The DEECo timer responsible for the invocation of scheduled events.
 	 */
 	private Timer timer;
@@ -62,6 +58,15 @@ public class BeeClickComm extends TopicSubscriber implements DEECoPlugin {
 	 */
 	private class BeeClickDevice extends Device {
 
+		/**
+		 * The ROS service used for broadcasting.
+		 */
+		private ServiceClient<IEEE802154BroadcastPacketRequest, IEEE802154BroadcastPacketResponse> beePacketService = null;
+		/**
+		 * The ROS topic for packet receiving.
+		 */
+		private Subscriber<IEEE802154ReceivedPacket> packetReceiveTopic = null;
+		
 		/**
 		 * The maximum number of bytes that can be sent in a single
 		 * transmission.
@@ -149,9 +154,9 @@ public class BeeClickComm extends TopicSubscriber implements DEECoPlugin {
 		 * @param connectedNode
 		 *            The ROS node on which the DEECo node runs.
 		 */
-		void subscribe(ConnectedNode connectedNode) {
+		public void subscribe(ConnectedNode connectedNode) {
 			// Subscribe packet received topic
-			Subscriber<IEEE802154ReceivedPacket> packetReceiveTopic = connectedNode
+			packetReceiveTopic = connectedNode
 					.newSubscriber(BEE_RECEIVE_TOPIC,IEEE802154ReceivedPacket._TYPE);
 			packetReceiveTopic
 					.addMessageListener(new MessageListener<IEEE802154ReceivedPacket>() {
@@ -175,6 +180,29 @@ public class BeeClickComm extends TopicSubscriber implements DEECoPlugin {
 							// TODO: log
 						}
 					});
+
+			// Subscribe packet sending service
+			try {
+				beePacketService = connectedNode.newServiceClient(BEE_SEND_SERVICE,
+						IEEE802154BroadcastPacket._TYPE);
+			} catch (ServiceNotFoundException e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		/**
+		 * Finalize the ROS subscriptions and registrations.
+		 * 
+		 * @param node
+		 *            The ROS node on which the DEECo node runs.
+		 */
+		public void unsubscribe(Node node) {
+			if(beePacketService != null){
+				beePacketService.shutdown();
+			}
+			if(packetReceiveTopic != null){
+				packetReceiveTopic.shutdown();
+			}
 		}
 	}
 
@@ -189,7 +217,6 @@ public class BeeClickComm extends TopicSubscriber implements DEECoPlugin {
 	 * {@link BeeClickDevice} with it.
 	 */
 	public BeeClickComm() {
-		beePacketService = null;
 		beeClickDevice = new BeeClickDevice();
 	}
 
@@ -202,18 +229,20 @@ public class BeeClickComm extends TopicSubscriber implements DEECoPlugin {
 	 */
 	@Override
 	protected void subscribeDescendant(ConnectedNode connectedNode) {
-		// Subscribe packet received topic
 		beeClickDevice.subscribe(connectedNode);
-
-		// Subscribe packet send service
-		try {
-			beePacketService = connectedNode.newServiceClient(BEE_SEND_SERVICE,
-					IEEE802154BroadcastPacket._TYPE);
-		} catch (ServiceNotFoundException e) {
-			throw new RuntimeException(e);
-		}
 	}
 
+	/**
+	 * Finalize the connection to ROS topics.
+	 * 
+	 * @param node
+	 *            The ROS node on which the DEECo node runs.
+	 */
+	@Override
+	void unsubscribe(Node node) {
+		beeClickDevice.unsubscribe(node);
+	}
+	
 	/**
 	 * A list of DEECo plugins the {@link BeeClickComm} depends on.
 	 * 
@@ -255,5 +284,4 @@ public class BeeClickComm extends TopicSubscriber implements DEECoPlugin {
 					"The BeeClickComm was not subscribed within defined timeout.");
 		}
 	}
-
 }

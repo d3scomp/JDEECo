@@ -4,6 +4,7 @@ import kobuki_msgs.BumperEvent;
 
 import org.ros.message.MessageListener;
 import org.ros.node.ConnectedNode;
+import org.ros.node.Node;
 import org.ros.node.topic.Subscriber;
 
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.BumperValue;
@@ -21,6 +22,12 @@ public class Bumper extends TopicSubscriber {
 	 * The name of the bumper topic.
 	 */
 	private static final String BUMPER_TOPIC = "/mobile_base/events/bumper";
+
+	/**
+	 * The bumper topic.
+	 */
+	private Subscriber<BumperEvent> bumperTopic = null;
+	
 	/**
 	 * The bumper state.
 	 */
@@ -42,7 +49,7 @@ public class Bumper extends TopicSubscriber {
 	 */
 	@Override
 	protected void subscribeDescendant(ConnectedNode connectedNode) {
-		Subscriber<BumperEvent> bumperTopic = connectedNode.newSubscriber(
+		bumperTopic = connectedNode.newSubscriber(
 				BUMPER_TOPIC, BumperEvent._TYPE);
 		bumperTopic.addMessageListener(new MessageListener<BumperEvent>() {
 			@Override
@@ -56,6 +63,19 @@ public class Bumper extends TopicSubscriber {
 				// TODO: log
 			}
 		});
+	}
+
+	/**
+	 * Finalize the connection to ROS topics.
+	 * 
+	 * @param node
+	 *            The ROS node on which the DEECo node runs.
+	 */
+	@Override
+	void unsubscribe(Node node) {
+		if(bumperTopic != null){
+			bumperTopic.shutdown();
+		}
 	}
 
 	/**

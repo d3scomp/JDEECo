@@ -2,6 +2,7 @@ package cz.cuni.mff.d3s.jdeeco.ros;
 
 import org.ros.message.MessageListener;
 import org.ros.node.ConnectedNode;
+import org.ros.node.Node;
 import org.ros.node.topic.Subscriber;
 
 import sensor_msgs.RelativeHumidity;
@@ -25,6 +26,14 @@ public class SHT1x extends TopicSubscriber {
 	 */
 	private static final String HUMIDITY_TOPIC = "/sht1x/humidity";
 
+	/**
+	 * The topic for messages from temperature.
+	 */
+	private Subscriber<Temperature> temperatureTopic = null;
+	/**
+	 * The topic for messages from humidity sensor.
+	 */
+	private Subscriber<RelativeHumidity> humidityTopic = null;
 	/**
 	 * The last measured temperature.
 	 */
@@ -52,7 +61,7 @@ public class SHT1x extends TopicSubscriber {
 	@Override
 	protected void subscribeDescendant(ConnectedNode connectedNode) {
 		// Subscribe for temperature messages
-		Subscriber<Temperature> temperatureTopic = connectedNode.newSubscriber(
+		temperatureTopic = connectedNode.newSubscriber(
 				TEMPERATURE_TOPIC, Temperature._TYPE);
 		temperatureTopic.addMessageListener(new MessageListener<Temperature>() {
 			@Override
@@ -63,7 +72,7 @@ public class SHT1x extends TopicSubscriber {
 		});
 
 		// Subscribe for humidity messages
-		Subscriber<RelativeHumidity> humidityTopic = connectedNode
+		humidityTopic = connectedNode
 				.newSubscriber(HUMIDITY_TOPIC, RelativeHumidity._TYPE);
 		humidityTopic
 				.addMessageListener(new MessageListener<RelativeHumidity>() {
@@ -75,6 +84,22 @@ public class SHT1x extends TopicSubscriber {
 				});
 	}
 
+	/**
+	 * Finalize the connection to ROS topics.
+	 * 
+	 * @param node
+	 *            The ROS node on which the DEECo node runs.
+	 */
+	@Override
+	void unsubscribe(Node node) {
+		if(temperatureTopic != null){
+			temperatureTopic.shutdown();
+		}
+		if(humidityTopic != null){
+			humidityTopic.shutdown();
+		}
+	}
+	
 	/**
 	 * Get the temperature
 	 * 

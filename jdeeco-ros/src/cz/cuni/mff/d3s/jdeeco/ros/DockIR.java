@@ -8,6 +8,7 @@ import kobuki_msgs.DockInfraRed;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.ros.message.MessageListener;
 import org.ros.node.ConnectedNode;
+import org.ros.node.Node;
 import org.ros.node.topic.Subscriber;
 
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.DockingIRDiod;
@@ -26,6 +27,11 @@ public class DockIR extends TopicSubscriber {
 	 * The name of the topic for messages from docking diods.
 	 */
 	private static final String DOCK_IR_TOPIC = "/mobile_base/sensors/dock_ir";
+
+	/**
+	 * The topic for messages from docking diods.
+	 */
+	private Subscriber<DockInfraRed> dockIrTopic = null;
 
 	/**
 	 * The signal from docking diods.
@@ -51,7 +57,7 @@ public class DockIR extends TopicSubscriber {
 	 */
 	@Override
 	protected void subscribeDescendant(ConnectedNode connectedNode) {
-		Subscriber<DockInfraRed> dockIrTopic = connectedNode.newSubscriber(
+		dockIrTopic = connectedNode.newSubscriber(
 				DOCK_IR_TOPIC, DockInfraRed._TYPE);
 		dockIrTopic.addMessageListener(new MessageListener<DockInfraRed>() {
 			@Override
@@ -66,6 +72,19 @@ public class DockIR extends TopicSubscriber {
 		});
 	}
 
+	/**
+	 * Finalize the connection to ROS topics.
+	 * 
+	 * @param node
+	 *            The ROS node on which the DEECo node runs.
+	 */
+	@Override
+	void unsubscribe(Node node) {
+		if(dockIrTopic != null){
+			dockIrTopic.shutdown();
+		}
+	}
+	
 	/**
 	 * Get the signal from the specified infra-red docking diod.
 	 * 

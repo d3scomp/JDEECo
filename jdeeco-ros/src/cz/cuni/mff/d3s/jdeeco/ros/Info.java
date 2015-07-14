@@ -4,6 +4,7 @@ import kobuki_msgs.VersionInfo;
 
 import org.ros.message.MessageListener;
 import org.ros.node.ConnectedNode;
+import org.ros.node.Node;
 import org.ros.node.topic.Subscriber;
 
 /**
@@ -19,6 +20,11 @@ public class Info extends TopicSubscriber {
 	 * The name of the topic for version info messages.
 	 */
 	private static final String INFO_TOPIC = "/mobile_base/version_info";
+	
+	/**
+	 * The topic for version info messages.
+	 */
+	private Subscriber<VersionInfo> infoTopic = null;
 
 	/**
 	 * The firmware info.
@@ -51,7 +57,7 @@ public class Info extends TopicSubscriber {
 	 */
 	@Override
 	protected void subscribeDescendant(ConnectedNode connectedNode) {
-		Subscriber<VersionInfo> infoTopic = connectedNode.newSubscriber(
+		infoTopic = connectedNode.newSubscriber(
 				INFO_TOPIC, VersionInfo._TYPE);
 		infoTopic.addMessageListener(new MessageListener<VersionInfo>() {
 			@Override
@@ -62,6 +68,19 @@ public class Info extends TopicSubscriber {
 				// TODO: log
 			}
 		});
+	}
+
+	/**
+	 * Finalize the connection to ROS topics.
+	 * 
+	 * @param node
+	 *            The ROS node on which the DEECo node runs.
+	 */
+	@Override
+	void unsubscribe(Node node) {
+		if(infoTopic != null){
+			infoTopic.shutdown();
+		}
 	}
 
 	/**
