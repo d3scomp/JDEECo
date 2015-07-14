@@ -62,14 +62,6 @@ public class Wheels extends TopicSubscriber {
 	 * The maximum absolute angular speed. Value taken from kobuki_keyop.
 	 */
 	private static final double MAX_ANGULAR_VELOCITY = 6.6;
-	/**
-	 * The time period (in milliseconds) of sending the velocity updates to the
-	 * robot. If the robot doesn't receive velocity update for 600 ms the motor
-	 * power is automatically being set to 0. The less the period is, the less
-	 * is the latency from a DEECo component setting the value to the change of
-	 * the robot's velocity.
-	 */
-	private static final long VELOCITY_UPDATE_PERIOD = 500;
 
 	/**
 	 * Current linear speed. Range from -{@link #MAX_LINEAR_VELOCITY} to +
@@ -81,6 +73,10 @@ public class Wheels extends TopicSubscriber {
 	 * {@link #MAX_ANGULAR_VELOCITY}.
 	 */
 	private double angularVelocity;
+	/**
+	 * The lock to wait and notify on when a velocity should be set.
+	 */
+	private final Object velocityLock;
 
 	/**
 	 * The state of motor power to be set.
@@ -101,6 +97,7 @@ public class Wheels extends TopicSubscriber {
 	 * of instantiating {@link Wheels}.
 	 */
 	Wheels() {
+		velocityLock = new Object();
 		motorPowerLock = new Object();
 
 		wheelState = new HashMap<>();
@@ -160,6 +157,11 @@ public class Wheels extends TopicSubscriber {
 
 			@Override
 			protected void loop() throws InterruptedException {
+				synchronized (velocityLock) {
+					// Wait until the velocity is set
+					velocityLock.wait();
+				}
+				
 				Twist twist = velocityTopic.newMessage();
 				// Set the linear velocity (X axis)
 				twist.getLinear().setX(linearVelocity);
@@ -174,7 +176,6 @@ public class Wheels extends TopicSubscriber {
 
 				Log.d(String.format("Velocity set to: %f with yaw: %f.",
 						linearVelocity, angularVelocity));
-				Thread.sleep(VELOCITY_UPDATE_PERIOD); // FIXME: remove the sleep
 			}
 		});
 	}
@@ -200,6 +201,7 @@ public class Wheels extends TopicSubscriber {
 			@Override
 			protected void loop() throws InterruptedException {
 				synchronized (motorPowerLock) {
+					// Wait until the motor power is set
 					motorPowerLock.wait();
 				}
 
@@ -262,6 +264,10 @@ public class Wheels extends TopicSubscriber {
 	 * direction and the value percentage of motor power. If a value outside of
 	 * the range is provided it is used the nearest bound value.
 	 * 
+	 * <p>The value has to be set periodically to keep the robot moving. If the
+	 * robot doesn't receive velocity update for longer than 600 ms it stops
+	 * moving.</p>
+	 * 
 	 * @param linear
 	 *            The linear velocity. Value in [-1, 1]. Negative value moves
 	 *            the robot backwards. Positive value moves the robot forwards.
@@ -285,6 +291,10 @@ public class Wheels extends TopicSubscriber {
 
 		linearVelocity = fromNormalized(linear, MAX_LINEAR_VELOCITY);
 		angularVelocity = fromNormalized(angular, MAX_ANGULAR_VELOCITY);
+
+		synchronized (velocityLock) {
+			velocityLock.notify();
+		}
 	}
 
 	/**
