@@ -12,6 +12,13 @@ import org.ros.node.topic.Subscriber;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.ButtonID;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.ButtonState;
 
+/**
+ * Provides methods to check robot's buttons state through ROS. Registration of
+ * appropriate ROS topics is handled in the
+ * {@link #subscribeDescendant(ConnectedNode)} method.
+ * 
+ * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
+ */
 public class Buttons extends TopicSubscriber {
 
 	/**

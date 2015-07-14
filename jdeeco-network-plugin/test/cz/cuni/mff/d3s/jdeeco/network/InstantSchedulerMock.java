@@ -55,6 +55,12 @@ public class InstantSchedulerMock implements Scheduler {
 			public void notifyAt(long time, TimerEventListener listener, DEECoContainer node) {
 				throw new UnsupportedOperationException();
 			}
+
+			@Override
+			public void interruptionEvent(TimerEventListener listener,
+					DEECoContainer node) {
+				throw new UnsupportedOperationException("Fake timer does not support interruptionEvent");
+			}
 		};
 	}
 

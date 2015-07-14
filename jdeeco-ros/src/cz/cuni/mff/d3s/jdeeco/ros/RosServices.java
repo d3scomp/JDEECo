@@ -42,6 +42,16 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 	private final long SUBSCRIPTION_TIMEOUT = 30_000; // Timeout in milliseconds
 
 	/**
+	 * The ROS node running DEECo.
+	 */
+	private NodeMainExecutor rosNode;
+
+	/**
+	 * The configuration of the ROS node running DEECo.
+	 */
+	private NodeConfiguration rosNodeConfig;
+
+	/**
 	 * The list of {@link TopicSubscriber}s in the DEECo-ROS interface. This
 	 * variable is static because the creation of ROS node loads new instance of
 	 * this class an otherwise it initialize different TopicSubscribers than the
@@ -52,7 +62,23 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 	private TopicSubscriber[] topicSubscribers = new TopicSubscriber[] {
 			new Wheels(), new Bumper(), new Buttons(), new DockIR(),
 			new Position(), new LEDs(), new Speeker(), new FloorDistance(),
-			new Info(), new SHT1x(), new Communication() };
+			new Info(), new SHT1x() };
+
+	/**
+	 * Create new instance of the {@link RosServices} class. In the constructor
+	 * there is created new {@link #rosNode} and {@link #rosNodeConfig}. If
+	 * there is a problem with their creation an {@link RuntimeException}
+	 * arises.
+	 */
+	public RosServices() {
+		try {
+			rosNodeConfig = NodeConfiguration.newPublic(ROS_HOST, new URI(
+					ROS_MASTER));
+			rosNode = DefaultNodeMainExecutor.newDefault();
+		} catch (URISyntaxException e) {
+			throw new RuntimeException("Malformed URI: " + ROS_MASTER, e);
+		}
+	}
 
 	/**
 	 * A list of DEECo plugins the {@link RosServices} depends on.
@@ -82,6 +108,17 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 	}
 
 	/**
+	 * Execute the given ROS node in the context of {@link #rosNode} with
+	 * {@link #rosNodeConfig}.
+	 * 
+	 * @param node
+	 *            The ROS node to be launched.
+	 */
+	public void rosExecute(AbstractNodeMain node) {
+		rosNode.execute(node, rosNodeConfig);
+	}
+
+	/**
 	 * Initialize the {@link RosServices} DEECo plugin. Launch the ROS node that
 	 * handles the DEECo-ROS interface.
 	 * 
@@ -90,33 +127,24 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 	 */
 	@Override
 	public void init(DEECoContainer container) throws PluginInitFailedException {
-		try {
-			NodeConfiguration nodeConfig = NodeConfiguration.newPublic(
-					ROS_HOST, new URI(ROS_MASTER));
-			NodeMainExecutor nodeMainExecutor = DefaultNodeMainExecutor
-					.newDefault();
-			nodeMainExecutor.execute(this, nodeConfig);
+		rosExecute(this);
 
-			if (!isInitialized()) {
-				throw new PluginInitFailedException(
-						String.format(
-								"The ROS topics were not subscribed within %d milliseconds.",
-								SUBSCRIPTION_TIMEOUT));
-			}
-
-		} catch (URISyntaxException e) {
-			throw new PluginInitFailedException("Malformed URI: " + ROS_MASTER,
-					e);
+		// Wait defined time until subscribed
+		if (!isInitialized(topicSubscribers)) {
+			throw new PluginInitFailedException(
+					String.format(
+							"The ROS topics were not subscribed within %d milliseconds.",
+							SUBSCRIPTION_TIMEOUT));
 		}
 	}
 
 	/**
-	 * Check whether all the ROS topics are subscribed within a defined time
-	 * limit.
+	 * Check whether all the given ROS topics are subscribed within a defined
+	 * time limit.
 	 * 
 	 * @return True if all the ROS topics are subscribed. False otherwise.
 	 */
-	private boolean isInitialized() {
+	boolean isInitialized(TopicSubscriber... subscribers) {
 		final Date startTime = new Date();
 		Date currentTime = new Date();
 
@@ -128,7 +156,7 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 
 				// Check whether all ROS topics are subscribed
 				boolean allSubscribed = true;
-				for (TopicSubscriber subscriber : topicSubscribers) {
+				for (TopicSubscriber subscriber : subscribers) {
 					if (!subscriber.isSubscribed()) {
 						allSubscribed = false;
 					}
@@ -164,7 +192,7 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 	 */
 	@Override
 	public void onError(Node node, Throwable error) {
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 	}
 
 	/**
@@ -181,8 +209,8 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 	 */
 	@Override
 	public void onShutdown(Node node) {
-		// TODO Auto-generated method stub
-
+		// Auto-generated method stub
+		// TODO: unsubscribe
 	}
 
 	/**
@@ -197,7 +225,7 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 	 */
 	@Override
 	public void onShutdownComplete(Node node) {
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 
 	}
 

@@ -17,4 +17,6 @@ public interface Timer extends CurrentTimeProvider {
 	 *            Node to schedule the even at
 	 */
 	void notifyAt(long time, TimerEventListener listener, DEECoContainer node);
+	
+	void interruptionEvent(TimerEventListener listener, DEECoContainer node);
 }

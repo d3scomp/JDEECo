@@ -60,6 +60,12 @@ public class DiscreteEventTimer implements SimulationTimer {
 		}
 	}
 
+	@Override
+	public void interruptionEvent(TimerEventListener listener, DEECoContainer container){
+		throw new UnsupportedOperationException();
+		// If you are about to implement this method remember to use synchronization
+	}
+
 	boolean tryToTerminate() {
 		if (eventTimes.isEmpty()) {
 			return true;

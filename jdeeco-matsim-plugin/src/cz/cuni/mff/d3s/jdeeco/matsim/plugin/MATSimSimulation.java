@@ -188,6 +188,12 @@ public class MATSimSimulation implements IMATSimSimulaton {
 			callAt(time, node.getId());
 			MATSimSimulation.this.getHost(node.getId()).listener = listener;
 		}
+		
+		@Override
+		public void interruptionEvent(TimerEventListener listener,
+				DEECoContainer node) {
+			throw new UnsupportedOperationException("The Timer for MATSim simulation does not support interruptionEvent");			
+		}
 
 		@Override
 		public synchronized void callAt(long absoluteTime, int hostId) {

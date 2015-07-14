@@ -3,6 +3,9 @@ package cz.cuni.mff.d3s.jdeeco.ros.test;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
 import cz.cuni.mff.d3s.deeco.timer.WallTimeTimer;
+import cz.cuni.mff.d3s.jdeeco.network.Network;
+import cz.cuni.mff.d3s.jdeeco.publishing.DefaultKnowledgePublisher;
+import cz.cuni.mff.d3s.jdeeco.ros.BeeClickComm;
 import cz.cuni.mff.d3s.jdeeco.ros.Bumper;
 import cz.cuni.mff.d3s.jdeeco.ros.Buttons;
 import cz.cuni.mff.d3s.jdeeco.ros.DockIR;
@@ -20,7 +23,7 @@ public class TestApp {
 			
 			WallTimeTimer t = new WallTimeTimer();
 			RosServices services = new RosServices();
-			DEECoNode node = new DEECoNode(0, t, services);
+			DEECoNode node = new DEECoNode(0, t, services, new Network(), new BeeClickComm(), new DefaultKnowledgePublisher());
 			
 			TestComponent testComponent = new TestComponent("testComponent");
 			testComponent.bumper = services.getService(Bumper.class);
@@ -31,7 +34,7 @@ public class TestApp {
 			testComponent.speeker = services.getService(Speeker.class);
 			testComponent.wheels = services.getService(Wheels.class);
 			testComponent.sht1x = services.getService(SHT1x.class);
-			
+						
 			node.deployComponent(testComponent);
 
 			Log.i("Simulation started.");

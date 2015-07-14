@@ -133,7 +133,13 @@ public class TestSerializer {
 			
 			@Override
 			public void notifyAt(long time, TimerEventListener listener, DEECoContainer node) {
-				throw new UnsupportedOperationException("Fakt timer dows not support notifications");
+				throw new UnsupportedOperationException("Fake timer does not support notifications");
+			}
+			
+			@Override
+			public void interruptionEvent(TimerEventListener listener,
+					DEECoContainer node) {
+				throw new UnsupportedOperationException("Fake timer does not support interruptionEvent");
 			}
 		});
 		return scheduler;
