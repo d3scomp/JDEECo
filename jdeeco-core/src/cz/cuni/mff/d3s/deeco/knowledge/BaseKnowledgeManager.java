@@ -51,7 +51,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	
 	private final ComponentInstance component;
 	private final String id;
-	private final Class<?>[] roleClasses;
+	private Class<?>[] roleClasses;
 
 	public BaseKnowledgeManager(String id, ComponentInstance component, Class<?>[] roleClasses) {
 		this.id = id;

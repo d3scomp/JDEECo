@@ -14,6 +14,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SignatureException;
 import java.security.cert.CertificateEncodingException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -240,7 +241,7 @@ public class KnowledgeEncryptorTest {
 		knowledge.setValue(RuntimeModelHelper.createKnowledgePath("b"), "TEST");
 		ValueSet authors = new ValueSet();
 		authors.setValue(RuntimeModelHelper.createKnowledgePath("b"), "AUTHOR");
-		KnowledgeData data = new KnowledgeData(knowledge, new ValueSet(), authors, metaData);
+		KnowledgeData data = new KnowledgeData(knowledge, new ValueSet(), authors, new ArrayList<String>(), metaData);
 		
 		// when decryptValueSet() is called
 		KnowledgeData decryptedData = target.decryptValueSet(data, localKnowledgeManager, metaData);
@@ -281,7 +282,7 @@ public class KnowledgeEncryptorTest {
 		SealedObject sealedAuthor = new SealedObject("author", cipher);
 		authorsSet.setValue(RuntimeModelHelper.createKnowledgePath("secured"), sealedAuthor);	
 		
-		KnowledgeData data = new KnowledgeData(valueSet2, securitySet, authorsSet, metaData);
+		KnowledgeData data = new KnowledgeData(valueSet2, securitySet, authorsSet, new ArrayList<String>(), metaData);
 		
 		assertTrue(valueSet2.getValue(RuntimeModelHelper.createKnowledgePath("secured")) instanceof SealedObject);
 		assertTrue(securitySet.getValue(RuntimeModelHelper.createKnowledgePath("secured")) instanceof SealedObject);
@@ -318,7 +319,7 @@ public class KnowledgeEncryptorTest {
 		
 		ValueSet valueSet2 = new ValueSet();
 		valueSet2.setValue(RuntimeModelHelper.createKnowledgePath("secured"), sealed);
-		KnowledgeData data = new KnowledgeData(valueSet2, new ValueSet(), new ValueSet(), metaData);
+		KnowledgeData data = new KnowledgeData(valueSet2, new ValueSet(), new ValueSet(), new ArrayList<String>(), metaData);
 		
 		assertTrue(valueSet2.getValue(RuntimeModelHelper.createKnowledgePath("secured")) instanceof SealedObject);
 		

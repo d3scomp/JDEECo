@@ -193,7 +193,7 @@ public class KnowledgeManagerContainer  {
 	 * @param id
 	 *            of the replica being registered
 	 */
-	public Collection<KnowledgeManager> createReplica(String id) {
+	public Collection<KnowledgeManager> createReplica(String id, Class<?>[] roles) {
 		if (hasLocal(id)) {
 			throw new RuntimeException("Cannot create replica for a local knowledge manager (id: " + id + ").");
 		} else if (hasReplica(id)) {
@@ -201,7 +201,7 @@ public class KnowledgeManagerContainer  {
 		} else {
 			replicas.put(id, new HashMap<>());
 			for (ComponentInstance component : runtimeModel.getComponentInstances()) {
-				KnowledgeManager result = new CloningKnowledgeManager(id, component, component.getKnowledgeManager().getRoles());
+				KnowledgeManager result = new CloningKnowledgeManager(id, component, roles);
 				replicas.get(id).put(component, result);
 				for (ReplicaListener listener : replicaListeners) {
 					listener.replicaRegistered(result, this);

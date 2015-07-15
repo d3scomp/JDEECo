@@ -1,10 +1,12 @@
 package cz.cuni.mff.d3s.jdeeco.publishing;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
@@ -112,7 +114,8 @@ public class DefaultKnowledgePublisher implements DEECoPlugin, TimerTaskListener
 		long time = timeProvider.getCurrentMilliseconds();
 		ValueSet knowledge = getTransferableKnowledge(km.get(empty), km);
 		String id = String.valueOf(container.getId());
-		return new KnowledgeData(knowledge, new ValueSet(), new ValueSet(), new KnowledgeMetaData(km.getId(), time, id,
+		List<String> roleClasses = Arrays.asList(km.getRoles()).stream().map(c -> c.getName()).collect(Collectors.toList());
+		return new KnowledgeData(knowledge, new ValueSet(), new ValueSet(), roleClasses, new KnowledgeMetaData(km.getId(), time, id,
 				time, 1));
 	}
 
