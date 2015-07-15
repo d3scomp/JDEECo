@@ -29,15 +29,6 @@ import cz.cuni.mff.d3s.deeco.runtime.PluginInitFailedException;
 public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 
 	/**
-	 * The address of the host where the DEECo is running.
-	 */
-	private static final String ROS_HOST = "192.168.0.102";
-	/**
-	 * The address of where the ROS master is running.
-	 */
-	private static final String ROS_MASTER = "http://192.168.0.200:11311";
-
-	/**
 	 * The timeout in milliseconds to wait for the ROS topic subscription.
 	 */
 	private final long SUBSCRIPTION_TIMEOUT = 30_000; // Timeout in milliseconds
@@ -71,13 +62,13 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 	 * there is a problem with their creation an {@link RuntimeException}
 	 * arises.
 	 */
-	public RosServices() {
+	public RosServices(String ros_master, String ros_host) {
 		try {
-			rosNodeConfig = NodeConfiguration.newPublic(ROS_HOST, new URI(
-					ROS_MASTER));
+			rosNodeConfig = NodeConfiguration.newPublic(ros_host, new URI(
+					ros_master));
 			rosNode = DefaultNodeMainExecutor.newDefault();
 		} catch (URISyntaxException e) {
-			throw new RuntimeException("Malformed URI: " + ROS_MASTER, e);
+			throw new RuntimeException("Malformed URI: " + ros_master, e);
 		}
 	}
 

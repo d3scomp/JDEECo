@@ -35,6 +35,21 @@
 				</includes>
 			</resource>
 		</resources>
+		<plugins>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>cz.cuni.mff.d3s.jdeeco.turtlebot.simpleexchange.Run</mainClass>
+						</manifest>
+					</archive>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
 
 	<dependencies>
@@ -58,12 +73,17 @@
 		<dependency>
 			<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
 			<artifactId>cz.cuni.mff.d3s.jdeeco.network</artifactId>
-			<version>3.0.1</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.ros.rosjava_core</groupId>
 			<artifactId>rosjava</artifactId>
 			<version>0.2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
+			<artifactId>cz.cuni.mff.d3s.jdeeco.ros</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.ros.rosjava_messages</groupId>

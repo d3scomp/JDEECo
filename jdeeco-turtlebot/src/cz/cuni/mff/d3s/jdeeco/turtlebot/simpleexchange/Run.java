@@ -1,5 +1,8 @@
 package cz.cuni.mff.d3s.jdeeco.turtlebot.simpleexchange;
 
+import java.net.InetAddress;
+import java.util.Random;
+
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
 import cz.cuni.mff.d3s.deeco.timer.WallTimeTimer;
@@ -35,13 +38,16 @@ public class Run {
 			System.exit(1);
 		}
 
+		Random rand = new Random();
 		WallTimeTimer t = new WallTimeTimer();
 		try {
 			DEECoNode node;
-			RosServices services = new RosServices();
+			RosServices services = new RosServices(
+					 System.getenv("ROS_MASTER_URI"),
+					 InetAddress.getLocalHost().getHostName());
 			switch (args[0]) {
 			case SENSE_SWITCH:
-				node = new DEECoNode(0, t, services, new Network(),
+				node = new DEECoNode(rand.nextInt(), t, services, new Network(),
 						new BeeClickComm(), new DefaultKnowledgePublisher());
 
 				SensingComponent snsComponent = new SensingComponent(
@@ -61,7 +67,7 @@ public class Run {
 				
 				break;
 			case RECEIVE_SWITCH:
-				node = new DEECoNode(0, t, services, new Network(), new BeeClickComm(),
+				node = new DEECoNode(rand.nextInt(), t, services, new Network(), new BeeClickComm(),
 						new DefaultKnowledgePublisher());
 
 				ReceivingComponent recvComponent = new ReceivingComponent(
