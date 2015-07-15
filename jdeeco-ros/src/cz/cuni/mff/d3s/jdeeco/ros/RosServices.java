@@ -150,6 +150,9 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 		final Date startTime = new Date();
 		Date currentTime = new Date();
 
+		Log.i(String.format("Waiting up to %d milliseconds for ROS topic subscriptions.",
+				SUBSCRIPTION_TIMEOUT));
+		
 		while (currentTime.getTime() < startTime.getTime()
 				+ SUBSCRIPTION_TIMEOUT) {
 			try {
