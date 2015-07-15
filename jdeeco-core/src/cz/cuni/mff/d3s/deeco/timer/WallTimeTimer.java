@@ -3,6 +3,7 @@ package cz.cuni.mff.d3s.deeco.timer;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 
 /**
@@ -57,7 +58,7 @@ public class WallTimeTimer implements RunnerTimer {
 			synchronized (eventTimes) {
 				final EventTime nextEvent = eventTimes.peek();
 				if (nextEvent == null) {
-					// TODO: log the state and exit
+					Log.e("No event found in the queue in the WallTimeTimer.");
 					throw new IllegalStateException(
 							"No event found in the queue in the WallTimeTimer.");
 				}
@@ -68,7 +69,13 @@ public class WallTimeTimer implements RunnerTimer {
 					// Wait till the time of the next event
 					if (nextTime > currentTime) {
 						eventTimes.wait(nextTime - currentTime);
-					} // TODO: else log planned time miss
+					}
+					else{
+						Log.w(String.format(
+								"An event missed its time slot and was delayed by %d milliseconds.",
+								currentTime - nextTime));
+						// TODO: add name of the event/process into the EventTime for more descriptive logging
+					}
 					// Take the next event to be executed. Interruption events
 					// notify the wait before the timeout expires
 					eventToProcess = eventTimes.poll();
