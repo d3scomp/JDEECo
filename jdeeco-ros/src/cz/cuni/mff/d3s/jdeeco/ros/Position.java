@@ -384,7 +384,9 @@ public class Position extends TopicSubscriber {
 	 * @return The time measured by GPS.
 	 */
 	public long getGpsTime() {
-		return gpsTime.totalNsecs() * 1000;
+		return gpsTime != null
+			? gpsTime.totalNsecs() * 1000
+			: 0;
 	}
 
 	/**
