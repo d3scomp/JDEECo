@@ -70,7 +70,7 @@ public class WallTimeTimer implements RunnerTimer {
 					if (nextTime > currentTime) {
 						eventTimes.wait(nextTime - currentTime);
 					}
-					else{
+					else if (nextTime != currentTime){
 						Log.w(String.format(
 								"An event missed its time slot and was delayed by %d milliseconds.",
 								currentTime - nextTime));
