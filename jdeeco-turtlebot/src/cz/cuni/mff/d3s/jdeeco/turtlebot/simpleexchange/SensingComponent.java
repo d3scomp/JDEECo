@@ -86,7 +86,7 @@ public class SensingComponent {
 	}
 
 	@Process
-	@PeriodicScheduling(period = 100, offset = 0)
+	@PeriodicScheduling(period = 200, offset = 0)
 	public static void senseBumper(@In("bumper") Bumper bumper,
 			@Out("bumperValue") ParamHolder<BumperValue> bumperValue) {
 		bumperValue.value = bumper.getBumper();
@@ -94,7 +94,7 @@ public class SensingComponent {
 	}
 
 	@Process
-	@PeriodicScheduling(period = 100, offset = 5)
+	@PeriodicScheduling(period = 200, offset = 10)
 	public static void senseButtons(@In("buttons") Buttons buttons,
 			@Out("button0") ParamHolder<ButtonState> button0,
 			@Out("button1") ParamHolder<ButtonState> button1,
@@ -108,7 +108,7 @@ public class SensingComponent {
 	}
 
 	@Process
-	@PeriodicScheduling(period = 100, offset = 10)
+	@PeriodicScheduling(period = 200, offset = 20)
 	public static void senseDock(@In("dockIR") DockIR dockIR,
 			@Out("dockLeft") ParamHolder<DockingIRSignal> dockLeft,
 			@Out("dockCenter") ParamHolder<DockingIRSignal> dockCenter,
@@ -122,7 +122,7 @@ public class SensingComponent {
 	}
 
 	@Process
-	@PeriodicScheduling(period = 100, offset = 15)
+	@PeriodicScheduling(period = 200, offset = 30)
 	public static void senseFloor(
 			@In("floorDistance") FloorDistance floorDistance,
 			@Out("floorLeft") ParamHolder<FloorSensorState> floorLeft,
@@ -140,7 +140,7 @@ public class SensingComponent {
 	}
 
 	@Process
-	@PeriodicScheduling(period = 10000, offset = 20)
+	@PeriodicScheduling(period = 10000, offset = 40)
 	public static void senseInfo(@In("info") Info info,
 			@Out("fwInfo") ParamHolder<String> fwInfo,
 			@Out("swInfo") ParamHolder<String> swInfo,
@@ -154,7 +154,7 @@ public class SensingComponent {
 	}
 
 	@Process
-	@PeriodicScheduling(period = 100, offset = 25)
+	@PeriodicScheduling(period = 200, offset = 50)
 	public static void sensePosition(@In("position") Position position,
 			@Out("gps") ParamHolder<NavSatFix> gps,
 			@Out("gpsTime") ParamHolder<Long> gpsTime,
@@ -183,7 +183,7 @@ public class SensingComponent {
 	}
 
 	@Process
-	@PeriodicScheduling(period = 100, offset = 30)
+	@PeriodicScheduling(period = 200, offset = 60)
 	public static void senseSHT1x(@In("sht1x") SHT1x sht1x,
 			@Out("temperature") ParamHolder<Double> temperature,
 			@Out("humidity") ParamHolder<Double> humidity) {
@@ -194,7 +194,7 @@ public class SensingComponent {
 	}
 
 	@Process
-	@PeriodicScheduling(period = 100, offset = 35)
+	@PeriodicScheduling(period = 200, offset = 70)
 	public static void senseWheels(@In("wheels") Wheels wheels,
 			@Out("wheelLeft") ParamHolder<WheelState> wheelLeft,
 			@Out("wheelRight") ParamHolder<WheelState> wheelRight) {

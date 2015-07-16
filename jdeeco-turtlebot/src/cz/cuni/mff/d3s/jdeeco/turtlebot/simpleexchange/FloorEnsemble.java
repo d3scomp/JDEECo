@@ -10,7 +10,7 @@ import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.FloorSensorState;
 
 @Ensemble
-@PeriodicScheduling(period = 500, offset = 65)
+@PeriodicScheduling(period = 500, offset = 130)
 public class FloorEnsemble {
 
 @Membership

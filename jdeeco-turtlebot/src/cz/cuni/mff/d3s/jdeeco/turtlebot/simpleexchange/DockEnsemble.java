@@ -10,7 +10,7 @@ import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.DockingIRSignal;
 
 @Ensemble
-@PeriodicScheduling(period = 500, offset = 60)
+@PeriodicScheduling(period = 500, offset = 120)
 public class DockEnsemble {
 
 	@Membership

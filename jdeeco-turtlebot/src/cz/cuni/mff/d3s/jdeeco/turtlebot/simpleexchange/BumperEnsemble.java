@@ -10,7 +10,7 @@ import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.BumperValue;
 
 @Ensemble
-@PeriodicScheduling(period = 500, offset = 50)
+@PeriodicScheduling(period = 500, offset = 100)
 public class BumperEnsemble {
 	@Membership
 	public static boolean membership(@In("coord.receiverId") String receiverId,

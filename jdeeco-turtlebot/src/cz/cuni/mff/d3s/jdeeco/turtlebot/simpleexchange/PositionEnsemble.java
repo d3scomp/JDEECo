@@ -12,7 +12,7 @@ import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 
 @Ensemble
-@PeriodicScheduling(period = 500, offset = 75)
+@PeriodicScheduling(period = 500, offset = 150)
 public class PositionEnsemble {
 
 	@Membership

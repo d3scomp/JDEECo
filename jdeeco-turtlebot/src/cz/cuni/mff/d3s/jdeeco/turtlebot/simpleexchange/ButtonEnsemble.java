@@ -11,7 +11,7 @@ import cz.cuni.mff.d3s.jdeeco.ros.datatypes.ButtonState;
 
 
 @Ensemble
-@PeriodicScheduling(period = 500, offset = 55)
+@PeriodicScheduling(period = 500, offset = 110)
 public class ButtonEnsemble {
 
 	@Membership
