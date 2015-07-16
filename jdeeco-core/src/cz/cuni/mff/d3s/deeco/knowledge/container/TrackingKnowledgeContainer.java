@@ -30,44 +30,58 @@ public class TrackingKnowledgeContainer {
 		return result;
 	}
 		
-	public <TRole> Collection<TRole> getUntrackedKnowledgeForRole(Class<TRole> roleClass) {
-		List<TRole> result = new ArrayList<>();
-		
-		for (ReadOnlyKnowledgeWrapper kc : getAllKnowledgeContainers()) {
-			if (kc.hasRole(roleClass)) {
-				result.add(kc.getUntrackedRoleKnowledge(roleClass));
+	public <TRole> Collection<TRole> getUntrackedKnowledgeForRole(Class<TRole> roleClass) throws KnowledgeContainerException {
+		try {
+			List<TRole> result = new ArrayList<>();
+			
+			for (ReadOnlyKnowledgeWrapper kc : getAllKnowledgeContainers()) {
+				if (kc.hasRole(roleClass)) {
+						result.add(kc.getUntrackedRoleKnowledge(roleClass));
+				}
 			}
+			
+			return result;
+			
+		} catch (RoleClassException | KnowledgeAccessException e) {
+			throw new KnowledgeContainerException(e.getMessage(), e);
 		}
-		
-		return result;
 	}
 	
-	public <TRole> Collection<TRole> getTrackedKnowledgeForRole(Class<TRole> roleClass) {
-		List<TRole> result = new ArrayList<>();
-		
-		// the local knowledge changes will be tracked
-		if (localKnowledgeContainer.hasRole(roleClass)) {
-			result.add(localKnowledgeContainer.getTrackedRoleKnowledge(roleClass));
-		}
-		
-		// but the shadow knowledge is read-only, therefore the changes won't be tracked
-		for (ReadOnlyKnowledgeWrapper kc : shadowKnowledgeContainers) {
-			if (kc.hasRole(roleClass)) {
-				result.add(kc.getUntrackedRoleKnowledge(roleClass));
+	public <TRole> Collection<TRole> getTrackedKnowledgeForRole(Class<TRole> roleClass) throws KnowledgeContainerException {
+		try {
+			List<TRole> result = new ArrayList<>();
+			
+			// the local knowledge changes will be tracked
+			if (localKnowledgeContainer.hasRole(roleClass)) {
+				result.add(localKnowledgeContainer.getTrackedRoleKnowledge(roleClass));
 			}
+			
+			// but the shadow knowledge is read-only, therefore the changes won't be tracked
+			for (ReadOnlyKnowledgeWrapper kc : shadowKnowledgeContainers) {
+				if (kc.hasRole(roleClass)) {
+					result.add(kc.getUntrackedRoleKnowledge(roleClass));
+				}
+			}
+			
+			return result;
+			
+		} catch (RoleClassException | KnowledgeAccessException e) {
+			throw new KnowledgeContainerException(e.getMessage(), e);
 		}
-		
-		return result;
 	}
 	
-	public void ResetTracking() {
-		localKnowledgeContainer.ResetTracking();
+	public void resetTracking() {
+		localKnowledgeContainer.resetTracking();
 		// shadow knowledge is read only
 	}
 	
-	public void CommitChanges() {
-		localKnowledgeContainer.CommitChanges();
-		// shadow knowledge is read only
+	public void commitChanges() throws KnowledgeContainerException {
+		try {
+			localKnowledgeContainer.commitChanges();
+			// shadow knowledge is read only
+		} catch (KnowledgeCommitException | KnowledgeAccessException | RoleClassException e) {
+			throw new KnowledgeContainerException(e.getMessage(), e);
+		}
 	}
 
 }
