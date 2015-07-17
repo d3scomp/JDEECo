@@ -18,12 +18,23 @@ public class TrackingKnowledgeContainer {
 	private final TrackingKnowledgeWrapper localKnowledgeContainer;
 	private final Collection<ReadOnlyKnowledgeWrapper> shadowKnowledgeContainers; 
 	
-	public TrackingKnowledgeContainer(KnowledgeManager localKnowledgeManager, 
+	public static TrackingKnowledgeContainer createFromKnowledgeManagers(
+			KnowledgeManager localKnowledgeManager, 
 			Collection<ReadOnlyKnowledgeManager> shadowKnowledgeManagers) {
-		localKnowledgeContainer = new TrackingKnowledgeWrapper(localKnowledgeManager);
-		shadowKnowledgeContainers = shadowKnowledgeManagers.stream().map(km -> new ReadOnlyKnowledgeWrapper(km)).collect(Collectors.toList());
+		
+		TrackingKnowledgeWrapper localKnowledgeContainer = new TrackingKnowledgeWrapper(localKnowledgeManager);
+		Collection<ReadOnlyKnowledgeWrapper> shadowKnowledgeContainers = shadowKnowledgeManagers.stream().map(km -> new ReadOnlyKnowledgeWrapper(km)).collect(Collectors.toList());
+		return new TrackingKnowledgeContainer(localKnowledgeContainer, shadowKnowledgeContainers); 
 	}
 	
+	public TrackingKnowledgeContainer(
+			TrackingKnowledgeWrapper localKnowledgeContainer,
+			Collection<ReadOnlyKnowledgeWrapper> shadowKnowledgeContainers) {
+		
+		this.localKnowledgeContainer = localKnowledgeContainer;
+		this.shadowKnowledgeContainers = shadowKnowledgeContainers;
+	}
+
 	private Collection<ReadOnlyKnowledgeWrapper> getAllKnowledgeContainers() {
 		List<ReadOnlyKnowledgeWrapper> result = new ArrayList<>(shadowKnowledgeContainers);
 		result.add(localKnowledgeContainer);
@@ -36,7 +47,7 @@ public class TrackingKnowledgeContainer {
 			
 			for (ReadOnlyKnowledgeWrapper kc : getAllKnowledgeContainers()) {
 				if (kc.hasRole(roleClass)) {
-						result.add(kc.getUntrackedRoleKnowledge(roleClass));
+					result.add(kc.getUntrackedRoleKnowledge(roleClass));
 				}
 			}
 			

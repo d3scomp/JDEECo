@@ -23,11 +23,17 @@ public class TrackingKnowledgeWrapper extends ReadOnlyKnowledgeWrapper {
 
 	private final KnowledgeManager knowledgeManager;
 	private List<Object> trackedInstances;
+	private final RoleDisjointednessChecker roleDisjointednessChecker;
 	
-	public TrackingKnowledgeWrapper(KnowledgeManager km){
+	public TrackingKnowledgeWrapper(KnowledgeManager km, RoleDisjointednessChecker roleDisjointednessChecker) {
 		super(km);
 		knowledgeManager = km;
 		trackedInstances = new ArrayList<Object>();
+		this.roleDisjointednessChecker = roleDisjointednessChecker;
+	}
+	
+	public TrackingKnowledgeWrapper(KnowledgeManager km) {
+		this(km, new RoleDisjointednessChecker());
 	}
 	
 	public <TRole> TRole getTrackedRoleKnowledge(Class<TRole> roleClass) throws RoleClassException, KnowledgeAccessException {
@@ -42,7 +48,7 @@ public class TrackingKnowledgeWrapper extends ReadOnlyKnowledgeWrapper {
 	
 	public void commitChanges() throws KnowledgeCommitException, KnowledgeAccessException, RoleClassException {
 		List<Class<?>> trackedRoleClasses = trackedInstances.stream().map(o -> o.getClass()).collect(Collectors.toList());
-		checkMembersAreDisjunctive(trackedRoleClasses);
+		roleDisjointednessChecker.checkRolesAreDisjoint(trackedRoleClasses);
 		
 		for (Object trackedInstance : trackedInstances) {
 			Class<?> roleClass = trackedInstance.getClass();
@@ -57,10 +63,6 @@ public class TrackingKnowledgeWrapper extends ReadOnlyKnowledgeWrapper {
 						getComponentId(), e.getMessage()), e);
 			}
 		}
-	}
-	
-	private void checkMembersAreDisjunctive(Collection<Class<?>> roleClasses) throws KnowledgeCommitException {
-		// TODO
 	}
 	
 	private ChangeSet createChangeSet(Map<Field, KnowledgePath> fieldKnowledgePaths, Object trackedInstance) throws RoleClassException {
