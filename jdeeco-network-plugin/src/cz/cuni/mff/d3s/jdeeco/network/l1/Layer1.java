@@ -51,7 +51,7 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 		this.scheduler = scheduler;
 
 		// Start collector removal task
-		new TimerTask(scheduler, new CollectorCleaner(), 0, COLLECTOR_LIFETIME_MS).schedule();
+		new TimerTask(scheduler, new CollectorCleaner(), "CollectorCleaner_l1", 0, COLLECTOR_LIFETIME_MS).schedule();
 	}
 
 	/**

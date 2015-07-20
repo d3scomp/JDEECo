@@ -176,7 +176,7 @@ public class EnsembleTask extends Task {
 
 	public EnsembleTask(EnsembleController ensembleController, Scheduler scheduler, 
 			KnowledgeManagerContainer kmContainer, RatingsManager ratingsManager) {
-		super(scheduler);
+		super(scheduler, ensembleController.getEnsembleDefinition().getName());
 		
 		this.ensembleController = ensembleController;
 		this.securityChecker = new LocalSecurityChecker(ensembleController, kmContainer);

@@ -3,11 +3,13 @@ package cz.cuni.mff.d3s.deeco.timer;
 public class EventTime implements Comparable<EventTime> {
 	private long timePoint;
 	private TimerEventListener listener;
+	private String eventName;
 	private boolean terminationEvent;
 
-	public EventTime(long timePoint, TimerEventListener listener, boolean isTerminationEvent) {
+	public EventTime(long timePoint, TimerEventListener listener, String eventName, boolean isTerminationEvent) {
 		this.setTimePoint(timePoint);
 		this.listener = listener;
+		this.eventName = eventName;
 		this.terminationEvent = isTerminationEvent; 
 	}
 
@@ -25,6 +27,10 @@ public class EventTime implements Comparable<EventTime> {
 	
 	public void setListener(TimerEventListener listener) {
 		this.listener = listener;
+	}
+	
+	public String getEventName(){
+		return eventName;
 	}
 	
 	public boolean isTerminationEvent() {

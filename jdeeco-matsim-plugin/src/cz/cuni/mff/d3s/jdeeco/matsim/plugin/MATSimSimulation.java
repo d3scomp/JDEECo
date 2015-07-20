@@ -184,13 +184,13 @@ public class MATSimSimulation implements IMATSimSimulaton {
 		private final Map<Integer, Callback> hostIdToCallback = new HashMap<>();
 		
 		@Override
-		public void notifyAt(long time, TimerEventListener listener, DEECoContainer node) {
+		public void notifyAt(long time, TimerEventListener listener, String eventName, DEECoContainer node) {
 			callAt(time, node.getId());
 			MATSimSimulation.this.getHost(node.getId()).listener = listener;
 		}
 		
 		@Override
-		public void interruptionEvent(TimerEventListener listener,
+		public void interruptionEvent(TimerEventListener listener, String eventName,
 				DEECoContainer node) {
 			throw new UnsupportedOperationException("The Timer for MATSim simulation does not support interruptionEvent");			
 		}

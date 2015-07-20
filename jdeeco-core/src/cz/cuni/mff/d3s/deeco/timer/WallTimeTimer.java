@@ -72,9 +72,8 @@ public class WallTimeTimer implements RunnerTimer {
 					}
 					else if (nextTime != currentTime){
 						Log.w(String.format(
-								"An event missed its time slot and was delayed by %d milliseconds.",
-								currentTime - nextTime));
-						// TODO: add name of the event/process into the EventTime for more descriptive logging
+								"An event \"%s\" missed its time slot and was delayed by %d milliseconds.",
+								nextEvent.getEventName(), currentTime - nextTime));
 					}
 					// Take the next event to be executed. Interruption events
 					// notify the wait before the timeout expires
@@ -96,10 +95,10 @@ public class WallTimeTimer implements RunnerTimer {
 	}
 
 	@Override
-	public void notifyAt(long time, TimerEventListener listener,
+	public void notifyAt(long time, TimerEventListener listener, String eventName,
 			DEECoContainer container) {
 		synchronized (eventTimes) {
-			EventTime eventTime = new EventTime(time, listener, false);
+			EventTime eventTime = new EventTime(time, listener, eventName, false);
 			if (!eventTimes.contains(eventTime)) {
 				eventTimes.add(eventTime);
 			}
@@ -116,10 +115,11 @@ public class WallTimeTimer implements RunnerTimer {
 	 *            The DEECoContainer is not used in this method.
 	 */
 	@Override
-	public void interruptionEvent(TimerEventListener listener,
+	public void interruptionEvent(TimerEventListener listener, String eventName,
 			DEECoContainer node) {
 		synchronized (eventTimes) {
-			EventTime event = new EventTime(currentTime, listener, false);
+			adjustCurrentTime();
+			EventTime event = new EventTime(currentTime, listener, eventName, false);
 			eventTimes.add(event);
 			eventTimes.notify();
 		}

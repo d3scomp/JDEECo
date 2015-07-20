@@ -68,7 +68,7 @@ public class ProcessTask extends Task {
 	KnowledgeManagerTriggerListenerImpl knowledgeManagerTriggerListener = new KnowledgeManagerTriggerListenerImpl();
 	
 	public ProcessTask(ComponentProcess componentProcess, Scheduler scheduler, Architecture architecture, RatingsManager ratingsManager) {
-		super(scheduler);
+		super(scheduler, componentProcess.getName());
 		this.architecture = architecture;
 		this.componentProcess = componentProcess;
 		this.ratingsManager = ratingsManager;		

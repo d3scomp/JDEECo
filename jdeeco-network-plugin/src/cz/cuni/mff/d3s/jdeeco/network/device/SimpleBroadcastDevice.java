@@ -123,7 +123,7 @@ public class SimpleBroadcastDevice implements DEECoPlugin {
 
 		public DeliveryListener(PacketWrapper packet, Scheduler scheduler, long delayMs) {
 			this.packet = packet;
-			deliveryTask = new TimerTask(scheduler, this, delayMs);
+			deliveryTask = new TimerTask(scheduler, this, "SimpleBroadcastDevice_delivery", delayMs);
 			deliveryTask.schedule();
 		}
 

@@ -177,7 +177,7 @@ public class BeeClickComm extends TopicSubscriber implements DEECoPlugin {
 									receive(messageData, new MANETBroadcastAddress(
 											String.format("%d", message.getSrcSAddr())));
 								}
-							}, null);
+							}, "BeeClickComm_receive", null);
 							Log.d("BeeClickDevice received data.");
 						}
 					});

@@ -163,7 +163,7 @@ public class SingleThreadedScheduler implements Scheduler {
 	 * Update timer to call us at the next queue event
 	 */
 	private void updateTimer() {
-		timer.notifyAt(queue.first().nextExecutionTime, this, node);
+		timer.notifyAt(queue.first().nextExecutionTime, this, queue.first().executable.getName(), node);
 	}
 }
 

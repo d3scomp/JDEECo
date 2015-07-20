@@ -15,7 +15,7 @@ public class RebroadcastTask extends Task {
 	private final NICType nicType;
 	
 	public RebroadcastTask(Scheduler scheduler, KnowledgeDataPublisher  publisher, int rebroadcastAfter, KnowledgeMetaData metadata, NICType nicType) {
-		super(scheduler);
+		super(scheduler, "rebroadcast");
 		this.dataToRebroadcast = metadata;
 		this.publisher = publisher;
 		this.nicType = nicType;

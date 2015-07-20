@@ -9,6 +9,8 @@ import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 
 public class DiscreteEventTimer implements SimulationTimer {
 
+	private static final String TERMINATION_EVENT_NAME = "termination_event";
+	
 	Queue<EventTime> eventTimes;
 	Map<DEECoContainer, EventTime> containerEvents;
 	long currentTime;
@@ -32,7 +34,7 @@ public class DiscreteEventTimer implements SimulationTimer {
 			public void at(long time) {
 				// termination time reached, do nothing
 			}
-		}, true));
+		}, TERMINATION_EVENT_NAME, true));
 
 		while (!tryToTerminate()) {
 			EventTime eventTime = eventTimes.remove();
@@ -47,8 +49,8 @@ public class DiscreteEventTimer implements SimulationTimer {
 	 * NOTE: Only one event per container is registered
 	 */
 	@Override
-	public void notifyAt(long time, TimerEventListener listener, DEECoContainer container) {
-		EventTime eventTime = new EventTime(time, listener, false);
+	public void notifyAt(long time, TimerEventListener listener, String eventName, DEECoContainer container) {
+		EventTime eventTime = new EventTime(time, listener, eventName, false);
 		if (!eventTimes.contains(eventTime)) {
 			// Replace old event for container by the new one
 			eventTimes.add(eventTime);
@@ -61,7 +63,7 @@ public class DiscreteEventTimer implements SimulationTimer {
 	}
 
 	@Override
-	public void interruptionEvent(TimerEventListener listener, DEECoContainer container){
+	public void interruptionEvent(TimerEventListener listener, String eventName, DEECoContainer container){
 		throw new UnsupportedOperationException();
 		// If you are about to implement this method remember to use synchronization
 	}

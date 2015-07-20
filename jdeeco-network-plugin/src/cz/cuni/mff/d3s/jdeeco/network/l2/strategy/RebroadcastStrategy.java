@@ -240,7 +240,7 @@ public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 
 		public Rebroadcast(L2Packet packet, long delayMs) {
 			this.packet = packet;
-			rebroadcastTask = new TimerTask(scheduler, this, delayMs);
+			rebroadcastTask = new TimerTask(scheduler, this, "delayed_rebroadcast_l2", delayMs);
 			rebroadcastTask.schedule();
 			scheduled.put(packet.getReceivedInfo().dataId, this);
 		}

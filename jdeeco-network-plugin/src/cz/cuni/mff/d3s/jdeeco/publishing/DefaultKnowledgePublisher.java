@@ -177,6 +177,6 @@ public class DefaultKnowledgePublisher implements DEECoPlugin, TimerTaskListener
 		// Start publishing task
 		Scheduler scheduler = container.getRuntimeFramework().getScheduler();
 		long offset = new Random(container.getId()).nextInt(publishingPeriod);
-		new TimerTask(scheduler, this, offset, publishingPeriod).schedule();
+		new TimerTask(scheduler, this, "DefaultKnowledgePublisher_publish", offset, publishingPeriod).schedule();
 	}
 }

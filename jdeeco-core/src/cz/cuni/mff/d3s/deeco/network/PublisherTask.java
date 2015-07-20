@@ -27,7 +27,7 @@ public class PublisherTask extends Task {
 	private final TimeTrigger trigger;
 	
 	public PublisherTask(Scheduler scheduler, KnowledgeDataPublisher publisher, TimeTrigger trigger, String host) {
-		super(scheduler);		
+		super(scheduler, String.format("publisher_task(%s)", host));		
 
 		this.trigger = trigger;
 		this.publisher = publisher;
