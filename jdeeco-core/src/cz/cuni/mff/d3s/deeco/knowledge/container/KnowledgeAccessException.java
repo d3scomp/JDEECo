@@ -2,6 +2,11 @@ package cz.cuni.mff.d3s.deeco.knowledge.container;
 
 public class KnowledgeAccessException extends Exception {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1874118337683034543L;
+
 	public KnowledgeAccessException() {
 	}
 

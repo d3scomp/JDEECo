@@ -9,6 +9,11 @@ package cz.cuni.mff.d3s.deeco.knowledge.container;
  */
 public class KnowledgeContainerException extends Exception {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -9219992641061413076L;
+
 	public KnowledgeContainerException() {
 	}
 

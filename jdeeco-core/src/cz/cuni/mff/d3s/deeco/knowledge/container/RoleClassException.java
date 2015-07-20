@@ -2,6 +2,11 @@ package cz.cuni.mff.d3s.deeco.knowledge.container;
 
 public class RoleClassException extends Exception {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7039246181045851157L;
+
 	public RoleClassException() {
 		// TODO Auto-generated constructor stub
 	}

@@ -34,7 +34,7 @@ public class ReadOnlyKnowledgeWrapper {
 		return knowledgeManager.getId();
 	}
 
-	public Collection<Class<?>> getRoles() {
+	protected Collection<Class<?>> getRoles() {
 		return Arrays.asList(knowledgeManager.getRoles());
 	}
 	

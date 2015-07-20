@@ -166,6 +166,34 @@ public class TrackingKnowledgeContainerTest {
 		Mockito.verifyNoMoreInteractions(localWrapperMock, shadowWrapperMocks.get(0), shadowWrapperMocks.get(1), shadowWrapperMocks.get(2));
 	}
 	
+	@Test
+	public void commitChangesTest() throws KnowledgeContainerException, KnowledgeCommitException, KnowledgeAccessException, RoleClassException {
+		TrackingKnowledgeWrapper localWrapperMock = Mockito.mock(TrackingKnowledgeWrapper.class);
+		List<ReadOnlyKnowledgeWrapper> shadowWrapperMocks = Arrays.asList(
+				Mockito.mock(ReadOnlyKnowledgeWrapper.class), Mockito.mock(ReadOnlyKnowledgeWrapper.class)
+				);
+		
+		TrackingKnowledgeContainer target = new TrackingKnowledgeContainer(localWrapperMock, shadowWrapperMocks);
+		target.commitChanges();
+		
+		Mockito.verify(localWrapperMock, times(1)).commitChanges();
+		Mockito.verifyNoMoreInteractions(localWrapperMock, shadowWrapperMocks.get(0), shadowWrapperMocks.get(1));
+	}
+	
+	@Test
+	public void resetTrackingTest() throws KnowledgeContainerException, KnowledgeCommitException, KnowledgeAccessException, RoleClassException {
+		TrackingKnowledgeWrapper localWrapperMock = Mockito.mock(TrackingKnowledgeWrapper.class);
+		List<ReadOnlyKnowledgeWrapper> shadowWrapperMocks = Arrays.asList(
+				Mockito.mock(ReadOnlyKnowledgeWrapper.class), Mockito.mock(ReadOnlyKnowledgeWrapper.class)
+				);
+		
+		TrackingKnowledgeContainer target = new TrackingKnowledgeContainer(localWrapperMock, shadowWrapperMocks);
+		target.resetTracking();
+		
+		Mockito.verify(localWrapperMock, times(1)).resetTracking();
+		Mockito.verifyNoMoreInteractions(localWrapperMock, shadowWrapperMocks.get(0), shadowWrapperMocks.get(1));
+	}
+	
 	// TODO implement tests for reset and commit
 
 }

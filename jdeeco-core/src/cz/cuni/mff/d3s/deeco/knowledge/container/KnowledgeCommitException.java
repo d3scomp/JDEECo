@@ -2,6 +2,11 @@ package cz.cuni.mff.d3s.deeco.knowledge.container;
 
 public class KnowledgeCommitException extends Exception {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3266548012554156432L;
+
 	public KnowledgeCommitException() {
 	}
 
