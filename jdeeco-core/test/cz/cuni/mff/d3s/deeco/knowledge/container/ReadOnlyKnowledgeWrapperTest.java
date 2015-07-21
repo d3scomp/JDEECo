@@ -3,6 +3,7 @@ package cz.cuni.mff.d3s.deeco.knowledge.container;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.atMost;
@@ -14,6 +15,7 @@ import static org.mockito.Mockito.times;
 import java.util.Collection;
 
 import org.junit.Test;
+import org.mockito.ArgumentMatcher;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -55,22 +57,16 @@ public class ReadOnlyKnowledgeWrapperTest {
 	
 	public static KnowledgeManager getTestRoleKnowledgeManager() throws KnowledgeNotFoundException {
 		KnowledgeManager kmMock = Mockito.mock(KnowledgeManager.class);
-		Mockito.when(kmMock.getRoles()).thenReturn(new Class<?>[] {TestRole.class});
-		Mockito.when(kmMock.get(Matchers.anyCollectionOf(KnowledgePath.class))).then(new Answer<ValueSet>() {
+		Mockito.doReturn(new Class<?>[] {TestRole.class}).when(kmMock).getRoles();
+		Mockito.doAnswer(new Answer<ValueSet>() {
 			@Override
 			public ValueSet answer(InvocationOnMock invocation) throws Throwable {
 				ValueSet valueSet = new ValueSet();
-				KnowledgePath kp1 = KnowledgePathHelper.createKnowledgePath("s", PathOrigin.COMPONENT);
-				KnowledgePath kp2 = KnowledgePathHelper.createKnowledgePath("i", PathOrigin.COMPONENT);
-				Collection<KnowledgePath> inputArgument = (Collection<KnowledgePath>) invocation.getArguments()[0];
-				assertTrue(inputArgument.size() == 2);
-				assertTrue(inputArgument.contains(kp1));
-				assertTrue(inputArgument.contains(kp2));
-				valueSet.setValue(kp1, "test");
-				valueSet.setValue(kp2, 42);
+				valueSet.setValue(TestRole.kps, "test");
+				valueSet.setValue(TestRole.kpi, 42);
 				return valueSet;
 			} 
-		});
+		}).when(kmMock).get(argThat(new CollectionMatcher<KnowledgePath>(TestRole.kps, TestRole.kpi)));
 		
 		return kmMock;
 	}
