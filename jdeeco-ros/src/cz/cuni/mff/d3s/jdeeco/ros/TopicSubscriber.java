@@ -1,7 +1,14 @@
 package cz.cuni.mff.d3s.jdeeco.ros;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ros.node.ConnectedNode;
 import org.ros.node.Node;
+
+import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
+import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
+import cz.cuni.mff.d3s.deeco.runtime.PluginInitFailedException;
 
 /**
  * An ancestor of classes which register of subscribe to any ROS topic. The
@@ -13,7 +20,7 @@ import org.ros.node.Node;
  * 
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  */
-public abstract class TopicSubscriber {
+public abstract class TopicSubscriber implements DEECoPlugin {
 
 	/**
 	 * Indicates whether the {@link #subscribe(ConnectedNode)} method has been
@@ -69,4 +76,38 @@ public abstract class TopicSubscriber {
 	 *            The ROS node on which the DEECo node runs.
 	 */
 	abstract void unsubscribe(Node node);
+	
+
+	/**
+	 * A list of DEECo plugins the {@link TopicSubscriber} instance depends on.
+	 * Each {@link TopicSubscriber} depends on {@link RosServices}.
+	 * 
+	 * @return a list of DEECo plugins the {@link TopicSubscriber} depends on.
+	 */
+	@Override
+	public List<Class<? extends DEECoPlugin>> getDependencies() {
+		List<Class<? extends DEECoPlugin>> dependencies = new ArrayList<>();
+		dependencies.add(RosServices.class);
+		return dependencies;
+	}
+
+	/**
+	 * Initialize the {@link TopicSubscriber} instance DEECo plugin.
+	 * Subscribe it to ROS node topics and services.
+	 * 
+	 * @param container
+	 *            is the DEECo container of this DEECo node.
+	 */
+	@Override
+	public void init(DEECoContainer container) throws PluginInitFailedException {
+		RosServices rosServices = container.getPluginInstance(RosServices.class);
+		try{
+			rosServices.register(this);
+		} catch(IllegalStateException e){
+			throw new PluginInitFailedException(String.format(
+					"The %s plugin couldn't be initialized.",
+					this.getClass().getName()), e);
+		}
+		
+	}
 }

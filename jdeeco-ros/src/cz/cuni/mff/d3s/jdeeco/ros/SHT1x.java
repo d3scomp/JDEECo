@@ -45,10 +45,9 @@ public class SHT1x extends TopicSubscriber {
 	private double humidity;
 
 	/**
-	 * Internal constructor enables the {@link RosServices} to be in the control
-	 * of instantiating {@link SHT1x}.
+	 * Create a new instance of {@link SHT1x}.
 	 */
-	SHT1x() {
+	public SHT1x() {
 		temperature = 0;
 		humidity = 0;
 	}

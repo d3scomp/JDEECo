@@ -35,10 +35,9 @@ public class Bumper extends TopicSubscriber {
 	private BumperValue bumper;
 
 	/**
-	 * Internal constructor enables the {@link RosServices} to be in the control
-	 * of instantiating {@link Bumper}.
+	 * Create a new instance of {@link Bumper}.
 	 */
-	Bumper() {
+	public Bumper() {
 		bumper = BumperValue.RELEASED;
 	}
 

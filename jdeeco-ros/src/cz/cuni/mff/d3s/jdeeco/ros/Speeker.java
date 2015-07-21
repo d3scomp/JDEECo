@@ -37,10 +37,9 @@ public class Speeker extends TopicSubscriber {
 	private final Object soundLock;
 
 	/**
-	 * Internal constructor enables the {@link RosServices} to be in the control
-	 * of instantiating {@link Speeker}.
+	 * Create a new instance of {@link Speeker}.
 	 */
-	Speeker() {
+	public Speeker() {
 		soundLock = new Object();
 	}
 

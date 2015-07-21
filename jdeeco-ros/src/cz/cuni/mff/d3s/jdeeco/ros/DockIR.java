@@ -40,10 +40,9 @@ public class DockIR extends TopicSubscriber {
 	private Map<DockingIRDiod, DockingIRSignal> dockingIRSignal;
 
 	/**
-	 * Internal constructor enables the {@link RosServices} to be in the control
-	 * of instantiating {@link DockIR}.
+	 * Create a new instance of {@link DockIR}.
 	 */
-	DockIR() {
+	public DockIR() {
 		dockingIRSignal = new HashMap<>();
 		for (DockingIRDiod diod : DockingIRDiod.values()) {
 			dockingIRSignal.put(diod, DockingIRSignal.INFINITY);

@@ -48,11 +48,11 @@ public class Wheels extends TopicSubscriber {
 	/**
 	 * The topic for motor power messages.
 	 */
-	 private Publisher<kobuki_msgs.MotorPower> motorPowerTopicPub = null;
+	private Publisher<kobuki_msgs.MotorPower> motorPowerTopicPub = null;
 	/**
 	 * The topic to report wheel drop changes.
 	 */
-	 private Subscriber<WheelDropEvent> wheelDropTopic = null;
+	private Subscriber<WheelDropEvent> wheelDropTopic = null;
 
 	/**
 	 * The maximum absolute linear speed. Value taken from kobuki_keyop.
@@ -93,10 +93,9 @@ public class Wheels extends TopicSubscriber {
 	private Map<WheelID, WheelState> wheelState;
 
 	/**
-	 * Internal constructor enables the {@link RosServices} to be in the control
-	 * of instantiating {@link Wheels}.
+	 * Create a new instance of  {@link Wheels}.
 	 */
-	Wheels() {
+	public Wheels() {
 		velocityLock = new Object();
 		motorPowerLock = new Object();
 
@@ -128,13 +127,13 @@ public class Wheels extends TopicSubscriber {
 	 */
 	@Override
 	void unsubscribe(Node node) {
-		if(velocityTopic != null){
+		if (velocityTopic != null) {
 			velocityTopic.shutdown();
 		}
-		if(motorPowerTopicPub != null){
+		if (motorPowerTopicPub != null) {
 			motorPowerTopicPub.shutdown();
 		}
-		if(wheelDropTopic != null){
+		if (wheelDropTopic != null) {
 			wheelDropTopic.shutdown();
 		}
 	}
@@ -146,8 +145,7 @@ public class Wheels extends TopicSubscriber {
 	 *            The ROS node on which the DEECo node runs.
 	 */
 	private void subscribeVelocity(ConnectedNode connectedNode) {
-		velocityTopic = connectedNode.newPublisher(
-				VELOCITY_TOPIC, Twist._TYPE);
+		velocityTopic = connectedNode.newPublisher(VELOCITY_TOPIC, Twist._TYPE);
 		connectedNode.executeCancellableLoop(new CancellableLoop() {
 			@Override
 			protected void setup() {
@@ -161,7 +159,7 @@ public class Wheels extends TopicSubscriber {
 					// Wait until the velocity is set
 					velocityLock.wait();
 				}
-				
+
 				Twist twist = velocityTopic.newMessage();
 				// Set the linear velocity (X axis)
 				twist.getLinear().setX(linearVelocity);
@@ -171,7 +169,7 @@ public class Wheels extends TopicSubscriber {
 				twist.getAngular().setX(0);
 				twist.getAngular().setY(0);
 				twist.getAngular().setZ(angularVelocity);
-				
+
 				velocityTopic.publish(twist);
 
 				Log.d(String.format("Velocity set to: %f with yaw: %f.",
@@ -190,8 +188,8 @@ public class Wheels extends TopicSubscriber {
 	 */
 	private void subscribeMotorPower(ConnectedNode connectedNode) {
 		// Subscribe to publish motor power changes
-		motorPowerTopicPub = connectedNode
-				.newPublisher(MOTOR_POWER_TOPIC, kobuki_msgs.MotorPower._TYPE);
+		motorPowerTopicPub = connectedNode.newPublisher(MOTOR_POWER_TOPIC,
+				kobuki_msgs.MotorPower._TYPE);
 		connectedNode.executeCancellableLoop(new CancellableLoop() {
 			@Override
 			protected void setup() {
@@ -210,10 +208,11 @@ public class Wheels extends TopicSubscriber {
 				motorPowerMsg.setState(motorPower.value);
 				motorPowerTopicPub.publish(motorPowerMsg);
 
-				Log.d(String.format("Motor power set to: %d.", motorPower.value));
+				Log.d(String
+						.format("Motor power set to: %d.", motorPower.value));
 			}
 		});
-		
+
 		// Subscribe to listen on motor power changes
 		Subscriber<kobuki_msgs.MotorPower> motorPowerTopicSub = connectedNode
 				.newSubscriber(MOTOR_POWER_TOPIC, kobuki_msgs.MotorPower._TYPE);
@@ -233,7 +232,7 @@ public class Wheels extends TopicSubscriber {
 					}
 				});
 	}
-	
+
 	/**
 	 * Subscribe to the ROS topic for wheel drop changes.
 	 * 
@@ -241,22 +240,25 @@ public class Wheels extends TopicSubscriber {
 	 *            The ROS node on which the DEECo node runs.
 	 */
 	private void subscribeWheelDrop(ConnectedNode connectedNode) {
-		wheelDropTopic = connectedNode.newSubscriber(
-				WHEEL_DROP_TOPIC, WheelDropEvent._TYPE);
-		wheelDropTopic.addMessageListener(new MessageListener<WheelDropEvent>() {
-			@Override
-			public void onNewMessage(WheelDropEvent message) {
+		wheelDropTopic = connectedNode.newSubscriber(WHEEL_DROP_TOPIC,
+				WheelDropEvent._TYPE);
+		wheelDropTopic
+				.addMessageListener(new MessageListener<WheelDropEvent>() {
+					@Override
+					public void onNewMessage(WheelDropEvent message) {
 
-				WheelID wheel = WheelID.fromByte(message.getWheel());
-				WheelState state = WheelState.fromByte(message.getState());
-				if (wheel != null && state != null) {
-					wheelState.put(wheel, state);
-				}
+						WheelID wheel = WheelID.fromByte(message.getWheel());
+						WheelState state = WheelState.fromByte(message
+								.getState());
+						if (wheel != null && state != null) {
+							wheelState.put(wheel, state);
+						}
 
-				Log.d(String.format("Wheel drop change received: %d on wheel: %d.",
-						message.getState(), message.getWheel()));
-			}
-		});
+						Log.d(String.format(
+								"Wheel drop change received: %d on wheel: %d.",
+								message.getState(), message.getWheel()));
+					}
+				});
 	}
 
 	/**
@@ -264,9 +266,11 @@ public class Wheels extends TopicSubscriber {
 	 * direction and the value percentage of motor power. If a value outside of
 	 * the range is provided it is used the nearest bound value.
 	 * 
-	 * <p>The value has to be set periodically to keep the robot moving. If the
+	 * <p>
+	 * The value has to be set periodically to keep the robot moving. If the
 	 * robot doesn't receive velocity update for longer than 600 ms it stops
-	 * moving.</p>
+	 * moving.
+	 * </p>
 	 * 
 	 * @param linear
 	 *            The linear velocity. Value in [-1, 1]. Negative value moves
@@ -318,7 +322,7 @@ public class Wheels extends TopicSubscriber {
 	public MotorPower getMotorPower() {
 		return motorPower;
 	}
-	
+
 	/**
 	 * Get the state of specified wheel of the robot.
 	 * 

@@ -26,10 +26,9 @@ public class LEDs extends TopicSubscriber {
 	private Map<LedID, Publisher<Led>> ledTopics;
 	
 	/**
-	 * Internal constructor enables the {@link RosServices} to be in the control
-	 * of instantiating {@link LEDs}.
+	 * Create a new instance of  {@link LEDs}.
 	 */
-	LEDs(){
+	public LEDs(){
 		ledColor = new HashMap<>();
 		ledTopics = new HashMap<>();
 	}

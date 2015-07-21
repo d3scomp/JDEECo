@@ -37,7 +37,7 @@ import cz.cuni.mff.d3s.jdeeco.network.l1.Layer1;
  * 
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  */
-public class BeeClickComm extends TopicSubscriber implements DEECoPlugin {
+public class BeeClick extends TopicSubscriber {
 
 	/**
 	 * The name of ROS service used for broadcasting.
@@ -67,7 +67,7 @@ public class BeeClickComm extends TopicSubscriber implements DEECoPlugin {
 		 * The ROS topic for packet receiving.
 		 */
 		private Subscriber<IEEE802154ReceivedPacket> packetReceiveTopic = null;
-		
+
 		/**
 		 * The maximum number of bytes that can be sent in a single
 		 * transmission.
@@ -82,7 +82,7 @@ public class BeeClickComm extends TopicSubscriber implements DEECoPlugin {
 
 		/**
 		 * Provides the unique identifier of the device. The identifier is not v
-		 * until the {@link BeeClickComm#init(DEECoContainer)} method is called.
+		 * until the {@link BeeClick#init(DEECoContainer)} method is called.
 		 * 
 		 * @return The unique identifier of the device.
 		 */
@@ -130,23 +130,27 @@ public class BeeClickComm extends TopicSubscriber implements DEECoPlugin {
 			}
 
 			// Create new message
-			IEEE802154BroadcastPacketRequest request = beePacketService.newMessage();
+			IEEE802154BroadcastPacketRequest request = beePacketService
+					.newMessage();
 			// Fill the data into the message
-			request.setData(ChannelBuffers.wrappedBuffer(ByteOrder.LITTLE_ENDIAN, data));
+			request.setData(ChannelBuffers.wrappedBuffer(
+					ByteOrder.LITTLE_ENDIAN, data));
 
 			// Send the message, don't wait for the result
-			beePacketService.call(request,
-					new ServiceResponseListener<IEEE802154BroadcastPacketResponse>() {
-						@Override
-						public void onSuccess(IEEE802154BroadcastPacketResponse arg0) {
-							Log.d("BeeClickDevice sucessfully sent data.");
-						}
+			beePacketService
+					.call(request,
+							new ServiceResponseListener<IEEE802154BroadcastPacketResponse>() {
+								@Override
+								public void onSuccess(
+										IEEE802154BroadcastPacketResponse arg0) {
+									Log.d("BeeClickDevice sucessfully sent data.");
+								}
 
-						@Override
-						public void onFailure(RemoteException arg0) {
-							Log.w("BeeClickDevice failed to send data.");
-						}
-					});
+								@Override
+								public void onFailure(RemoteException arg0) {
+									Log.w("BeeClickDevice failed to send data.");
+								}
+							});
 		}
 
 		/**
@@ -157,25 +161,30 @@ public class BeeClickComm extends TopicSubscriber implements DEECoPlugin {
 		 */
 		public void subscribe(ConnectedNode connectedNode) {
 			// Subscribe packet received topic
-			packetReceiveTopic = connectedNode
-					.newSubscriber(BEE_RECEIVE_TOPIC, IEEE802154ReceivedPacket._TYPE);
+			packetReceiveTopic = connectedNode.newSubscriber(BEE_RECEIVE_TOPIC,
+					IEEE802154ReceivedPacket._TYPE);
 			packetReceiveTopic
 					.addMessageListener(new MessageListener<IEEE802154ReceivedPacket>() {
 						@Override
-						public void onNewMessage(IEEE802154ReceivedPacket message) {
+						public void onNewMessage(
+								IEEE802154ReceivedPacket message) {
 							// Inject new event into the timer
 							timer.interruptionEvent(new TimerEventListener() {
 								@Override
 								public void at(long time) {
 									// When the event is invoked process the
 									// received data
-									ChannelBuffer bufferData = message.getData();
+									ChannelBuffer bufferData = message
+											.getData();
 									byte[] backingArray = bufferData.array();
-									byte[] messageData = Arrays.copyOfRange(backingArray,
-																bufferData.arrayOffset(),
-																backingArray.length);
-									receive(messageData, new MANETBroadcastAddress(
-											String.format("%d", message.getSrcSAddr())));
+									byte[] messageData = Arrays.copyOfRange(
+											backingArray,
+											bufferData.arrayOffset(),
+											backingArray.length);
+									receive(messageData,
+											new MANETBroadcastAddress(String
+													.format("%d", message
+															.getSrcSAddr())));
 								}
 							}, "BeeClickComm_receive", null);
 							Log.d("BeeClickDevice received data.");
@@ -184,8 +193,8 @@ public class BeeClickComm extends TopicSubscriber implements DEECoPlugin {
 
 			// Subscribe packet sending service
 			try {
-				beePacketService = connectedNode.newServiceClient(BEE_SEND_SERVICE,
-						IEEE802154BroadcastPacket._TYPE);
+				beePacketService = connectedNode.newServiceClient(
+						BEE_SEND_SERVICE, IEEE802154BroadcastPacket._TYPE);
 			} catch (ServiceNotFoundException e) {
 				throw new RuntimeException(e);
 			}
@@ -198,26 +207,26 @@ public class BeeClickComm extends TopicSubscriber implements DEECoPlugin {
 		 *            The ROS node on which the DEECo node runs.
 		 */
 		public void unsubscribe(Node node) {
-			if(beePacketService != null){
+			if (beePacketService != null) {
 				beePacketService.shutdown();
 			}
-			if(packetReceiveTopic != null){
+			if (packetReceiveTopic != null) {
 				packetReceiveTopic.shutdown();
 			}
 		}
 	}
 
 	/**
-	 * The {@link BeeClickDevice} associated with this {@link BeeClickComm}
+	 * The {@link BeeClickDevice} associated with this {@link BeeClick}
 	 * instance.
 	 */
 	public final BeeClickDevice beeClickDevice;
 
 	/**
-	 * Initialize new {@link BeeClickComm} instance and associate new
+	 * Initialize new {@link BeeClick} instance and associate new
 	 * {@link BeeClickDevice} with it.
 	 */
-	public BeeClickComm() {
+	public BeeClick() {
 		beeClickDevice = new BeeClickDevice();
 	}
 
@@ -243,20 +252,23 @@ public class BeeClickComm extends TopicSubscriber implements DEECoPlugin {
 	void unsubscribe(Node node) {
 		beeClickDevice.unsubscribe(node);
 	}
-	
+
 	/**
-	 * A list of DEECo plugins the {@link BeeClickComm} depends on.
+	 * A list of DEECo plugins the {@link BeeClick} depends on.
 	 * 
-	 * @return a list of DEECo plugins the {@link BeeClickComm} depends on.
+	 * @return a list of DEECo plugins the {@link BeeClick} depends on.
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<Class<? extends DEECoPlugin>> getDependencies() {
-		return Arrays.asList(new Class[] { Network.class, RosServices.class });
+		List<Class<? extends DEECoPlugin>> dependencies = super.getDependencies();
+		if (!dependencies.contains(Network.class)) {
+			dependencies.add(Network.class);
+		}
+		return dependencies;
 	}
 
 	/**
-	 * Initialize the {@link BeeClickComm} DEECo plugin. Launch the ROS node
+	 * Initialize the {@link BeeClick} DEECo plugin. Launch the ROS node
 	 * that handles the Bee Click device.
 	 * 
 	 * @param contained
@@ -264,6 +276,8 @@ public class BeeClickComm extends TopicSubscriber implements DEECoPlugin {
 	 */
 	@Override
 	public void init(DEECoContainer container) throws PluginInitFailedException {
+		super.init(container);
+		
 		// Assign the device ID
 		beeClickDevice.container = container;
 
@@ -272,17 +286,5 @@ public class BeeClickComm extends TopicSubscriber implements DEECoPlugin {
 		// Register BeeClickDevice
 		Layer1 l1 = container.getPluginInstance(Network.class).getL1();
 		l1.registerDevice(beeClickDevice);
-
-		// Subscribe to ROS
-		RosServices rosServices = container
-				.getPluginInstance(RosServices.class);
-		BeeClickNode beeClickNode = new BeeClickNode(this);
-		rosServices.rosExecute(beeClickNode);
-
-		// Wait defined time until subscribed
-		if (!rosServices.isInitialized(this)) {
-			throw new PluginInitFailedException(
-					"The BeeClickComm was not subscribed within defined timeout.");
-		}
 	}
 }

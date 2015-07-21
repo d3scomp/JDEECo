@@ -45,10 +45,9 @@ public class FloorDistance extends TopicSubscriber {
 	private Map<FloorSensorID, Short> floorDistances;
 
 	/**
-	 * Internal constructor enables the {@link RosServices} to be in the control
-	 * of instantiating {@link FloorDistance}.
+	 * Create a new instance of  {@link FloorDistance}.
 	 */
-	FloorDistance() {
+	public FloorDistance() {
 		floorSensorStates = new HashMap<>();
 		floorDistances = new HashMap<>();
 		for (FloorSensorID sensor : FloorSensorID.values()) {

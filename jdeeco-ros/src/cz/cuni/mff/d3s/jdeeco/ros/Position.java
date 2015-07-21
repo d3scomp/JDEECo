@@ -133,10 +133,9 @@ public class Position extends TopicSubscriber {
 	private final Object simpleGoalLock;
 
 	/**
-	 * Internal constructor enables the {@link RosServices} to be in the control
-	 * of instantiating {@link Position}.
+	 * Create a new instance of {@link Position}.
 	 */
-	Position() {
+	public Position() {
 		resetOdometryLock = new Object();
 		simpleGoalLock = new Object();
 	}

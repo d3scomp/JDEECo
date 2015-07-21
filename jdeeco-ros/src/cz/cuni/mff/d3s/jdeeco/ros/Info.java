@@ -42,10 +42,9 @@ public class Info extends TopicSubscriber {
 	private String softwareInfo;
 
 	/**
-	 * Internal constructor enables the {@link RosServices} to be in the control
-	 * of instantiating {@link Info}.
+	 * Create a new instance of  {@link Info}.
 	 */
-	Info() {
+	public Info() {
 		firmwareInfo = "";
 		hardwareInfo = "";
 		softwareInfo = "";

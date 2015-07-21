@@ -39,10 +39,9 @@ public class Buttons extends TopicSubscriber {
 	private Map<ButtonID, ButtonState> buttonState;
 
 	/**
-	 * Internal constructor enables the {@link RosServices} to be in the control
-	 * of instantiating {@link Buttons}.
+	 * Create a new instance of  {@link Buttons}.
 	 */
-	Buttons(){
+	public Buttons(){
 		buttonState = new HashMap<>();
 		for (ButtonID button : ButtonID.values()) {
 			buttonState.put(button, ButtonState.RELEASED);
