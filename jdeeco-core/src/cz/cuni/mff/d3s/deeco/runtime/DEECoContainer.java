@@ -2,6 +2,7 @@ package cz.cuni.mff.d3s.deeco.runtime;
 
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
+import cz.cuni.mff.d3s.deeco.ensembles.EnsembleFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
@@ -68,11 +69,13 @@ public interface DEECoContainer {
 	public EnsembleDefinition deployEnsemble(Class ensembles) throws AnnotationProcessorException, DuplicateEnsembleDefinitionException;
 	
 	void undeployEnsemble(String ensembleName) throws AnnotationProcessorException, DuplicateEnsembleDefinitionException;
+	
+	public void deployEnsembleFactory(EnsembleFactory factory);
 
 	/**
 	 * Gets identification of DEECo container
 	 * 
 	 * @return Container identification
 	 */
-	public int getId();
+	public int getId();	
 }

@@ -1,14 +1,17 @@
 package cz.cuni.mff.d3s.deeco.runtime;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
+import cz.cuni.mff.d3s.deeco.task.EnsembleFormationTask;
 import cz.cuni.mff.d3s.deeco.task.Task;
 
 /**
@@ -32,7 +35,12 @@ class ComponentInstanceRecord {
 	/**
 	 * @see ComponentInstanceRecord#getEnsembleTasks()
 	 */
-	Map<EnsembleController, Task> ensembleTasks = new HashMap<>();	
+	Map<EnsembleController, Task> ensembleTasks = new HashMap<>();
+	
+	/**
+	 * @see ComponentInstanceRecord#getEnsembleFormationTasks()
+	 */
+	List<EnsembleFormationTask> ensembleFormationTasks = new ArrayList<>();	
 
 		
 	public ComponentInstanceRecord(ComponentInstance componentInstance) {
@@ -60,6 +68,10 @@ class ComponentInstanceRecord {
 	public Map<EnsembleController, Task> getEnsembleTasks() {
 		return ensembleTasks;
 	}
+	
+	public List<EnsembleFormationTask> getEnsembleFormationTasks() {
+		return ensembleFormationTasks;
+	}
 
 
 	/**
@@ -69,10 +81,10 @@ class ComponentInstanceRecord {
 	public Collection<Task> getAllTasks() {
 		Set<Task> all = new HashSet<>();
 		all.addAll(processTasks.values());
-		all.addAll(ensembleTasks.values());		
-		return all;
-	}
-	
+		all.addAll(ensembleTasks.values());	
+		all.addAll(ensembleFormationTasks);
 		
+		return all;
+	}	
 	
 }
