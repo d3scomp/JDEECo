@@ -9,13 +9,15 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager;
 
 /**
- * Knowledge container is useful when operating with multiple component's knowledge (one local knowledge and multiple
- * shadow knowledge instances).
+ * An implementation of the {@link KnowledgeContainer} interface that is using knowledge managers.
  * 
- * A knowledge container creates a wrapper above all knowledge managers and allows for acquiring the knowledge of
- * the components in an object-oriented way using roles.
+ * The tracking knowledge container creates a wrapper above all knowledge managers (one local and multiple shadow)
+ * and allows for acquiring the knowledge of the components in an object-oriented way using roles.
  * 
  * @author Zbyněk Jiráček
+ * 
+ * @see KnowledgeContainer
+ * @see KnowledgeManager
  *
  */
 public class TrackingKnowledgeContainer implements KnowledgeContainer {
@@ -103,8 +105,11 @@ public class TrackingKnowledgeContainer implements KnowledgeContainer {
 		// shadow knowledge is read only
 	}
 	
-	/* (non-Javadoc)
+	/**
 	 * @see cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainer#commitChanges()
+
+	 * PLEASE NOTE that currently, only data from the local knowledge manager can be updated. Shadow knowledge managers
+	 * are just read-only, therefore the changes to the shadow knowledge are discarded.
 	 */
 	@Override
 	public void commitChanges() throws KnowledgeContainerException {
