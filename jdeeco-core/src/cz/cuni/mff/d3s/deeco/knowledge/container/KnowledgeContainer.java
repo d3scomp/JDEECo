@@ -1,0 +1,58 @@
+package cz.cuni.mff.d3s.deeco.knowledge.container;
+
+import java.util.Collection;
+
+public interface KnowledgeContainer {
+
+	/**
+	 * Traverses through all underlying knowledge managers and for each knowledge implementing the specified
+	 * role it returns an instance of the role class. This instance represents a view on the component's
+	 * knowledge.
+	 * @param roleClass The role class.
+	 * @return Instances of the role class for each component that implements the specified role.
+	 * @throws KnowledgeContainerException
+	 */
+	public abstract <TRole> Collection<TRole> getUntrackedKnowledgeForRole(
+			Class<TRole> roleClass) throws KnowledgeContainerException;
+
+	/**
+	 * Similarly to the {@link #getUntrackedKnowledgeForRole(Class)} it returns role view on the components'
+	 * knowledge. Additionally, the returned instances are tracked, which means that if the caller modifies
+	 * the returned instances and calls the {@link #commitChanges()} method, the changes will be propagated
+	 * into the component knowledge manager.
+	 * @param roleClass The role class.
+	 * @return Instances of the role class for each component that implements the specified role.
+	 * @throws KnowledgeContainerException
+	 *
+	 * @see #getUntrackedKnowledgeForRole(Class)
+	 * @see #commitChanges()
+	 * @see #resetTracking()
+	 */
+	public abstract <TRole> Collection<TRole> getTrackedKnowledgeForRole(
+			Class<TRole> roleClass) throws KnowledgeContainerException;
+
+	/**
+	 * Clears the list of tracked role class instances returned by the {@link #getTrackedKnowledgeForRole(Class)} method.
+	 * Consequently, changes to the earlier returned role class instances cannot be committed into the knowledge manager anymore.
+	 * 
+	 * @see #commitChanges()
+	 * @see #getTrackedKnowledgeForRole(Class)
+	 */
+	public abstract void resetTracking();
+
+	/**
+	 * Commits all the changes made to the tracked role class instances returned by the {@link #getTrackedKnowledgeForRole(Class)}
+	 * method (if the tracking was not reset by the {@link #resetTracking()} method). All values in the tracked role
+	 * class instances are stored into the respective knowledge managers.
+	 * 
+	 * PLEASE NOTE that currently, only data from the local knowledge manager can be updated. Shadow knowledge managers
+	 * are just read-only, therefore the changes to the shadow knowledge are discarded.
+	 * 
+	 * @throws KnowledgeContainerException
+	 * 
+	 * @see #getTrackedKnowledgeForRole(Class)
+	 * @see #resetTracking()
+	 */
+	public abstract void commitChanges() throws KnowledgeContainerException;
+
+}
