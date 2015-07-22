@@ -1,5 +1,12 @@
 package cz.cuni.mff.d3s.deeco.knowledge.container;
 
+/**
+ * Thrown when a knowledge cannot be commited back into the knowledge manager.
+ * 
+ * @author Zbyněk Jiráček
+ *
+ * @see TrackingKnowledgeWrapper#commitChanges()
+ */
 public class KnowledgeCommitException extends Exception {
 
 	/**

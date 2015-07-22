@@ -1,11 +1,15 @@
-/**
- * 
- */
 package cz.cuni.mff.d3s.deeco.knowledge.container;
 
 /**
+ * General exception thrown by the {@link TrackingKnowledgeContainer} class.
+ * The exception message and the inner exception contain the details.
+ * 
+ * Possible causes are: {@link KnowledgeAccessException}, {@link KnowledgeCommitException},
+ * {@link RoleClassException}
+ * 
  * @author Zbyněk Jiráček
  *
+ * @see TrackingKnowledgeContainer
  */
 public class KnowledgeContainerException extends Exception {
 

@@ -1,5 +1,12 @@
 package cz.cuni.mff.d3s.deeco.knowledge.container;
 
+/**
+ * Thrown when a knowledge container is unable to read some knowledge.
+ * 
+ * @author Zbyněk Jiráček
+ *
+ * @see ReadOnlyKnowledgeWrapper#getUntrackedRoleKnowledge(Class)
+ */
 public class KnowledgeAccessException extends Exception {
 
 	/**
