@@ -11,6 +11,7 @@ import org.junit.Test;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
+import cz.cuni.mff.d3s.deeco.task.EnsembleFormationTask;
 import cz.cuni.mff.d3s.deeco.task.Task;
 
 /**
@@ -44,6 +45,7 @@ public class ComponentInstanceRecordTest {
 			put(mock(ComponentProcess.class), pt1);
 			put(mock(ComponentProcess.class), pt2);			
 		}});
+		
 		// AND a non empty list of ensemble tasks
 		final Task et1 = mock(Task.class);
 		final Task et2 = mock(Task.class);
@@ -51,13 +53,17 @@ public class ComponentInstanceRecordTest {
 			put(mock(EnsembleController.class), et1);
 			put(mock(EnsembleController.class), et2);			
 		}});
+		
+		// AND an ensemble formation task
+		final EnsembleFormationTask eft = mock(EnsembleFormationTask.class);
+		tested.getEnsembleFormationTasks().add(eft);
+		
 		// THEN the getAllTasks() returns exactly all the tasks
-		assertEquals(4, tested.getAllTasks().size());
+		assertEquals(5, tested.getAllTasks().size());
 		assertTrue(tested.getAllTasks().contains(pt1));
 		assertTrue(tested.getAllTasks().contains(pt2));
 		assertTrue(tested.getAllTasks().contains(et1));
 		assertTrue(tested.getAllTasks().contains(et2));
-		
+		assertTrue(tested.getAllTasks().contains(eft));		
 	}
-
 }

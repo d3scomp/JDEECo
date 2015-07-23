@@ -218,6 +218,7 @@ public class DEECoNode implements DEECoContainer {
 		return nodeId;
 	}	
 	
+	@Override
 	public ComponentInstance deployComponent(Object component) throws AnnotationProcessorException {
 		return processor.processComponent(component);
 	}
@@ -227,6 +228,7 @@ public class DEECoNode implements DEECoContainer {
 		return processor.processEnsemble(ensemble);
 	}	
 	
+	@Override
 	public void undeployEnsemble(String ensembleName) throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		processor.removeEnsemble(ensembleName);
 	}

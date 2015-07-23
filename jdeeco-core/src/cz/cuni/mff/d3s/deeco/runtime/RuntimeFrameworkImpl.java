@@ -321,11 +321,19 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ReplicaListener {
 		instance.eAdapters().add(ensembleControllerAdapter);	
 		componentInstanceAdapters.put(instance, ensembleControllerAdapter);
 		
-	}
+	}	
 	
+	/**
+	 * Registers the provided factory with this runtime instance. An {@link EnsembleFormationTask} is immediately created 
+	 * for each existing component and associated with it. The factory is stored in the runtime, and an additional task
+	 * is created whenever a new component is added.
+	 */
 	@Override
 	public void registerEnsembleFactory(EnsembleFactory factory) {
-		// TODO Guards		
+		if (factory == null)
+			throw new IllegalArgumentException("Attempted to pass a null factory argument.");
+		if (registeredEnsembleFactories.contains(factory))
+			throw new IllegalStateException("Cannot register the same factory object twice");
 		
 		for(ComponentInstance instance : componentRecords.keySet()) {
 			EnsembleFormationTask newTask = new EnsembleFormationTask(scheduler, factory, instance);

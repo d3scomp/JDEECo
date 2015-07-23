@@ -69,6 +69,10 @@ class ComponentInstanceRecord {
 		return ensembleTasks;
 	}
 	
+	/**
+	 * Gets all ensemble formation tasks associated with this instance.
+	 * @return Associated ensemble formation tasks.
+	 */
 	public List<EnsembleFormationTask> getEnsembleFormationTasks() {
 		return ensembleFormationTasks;
 	}

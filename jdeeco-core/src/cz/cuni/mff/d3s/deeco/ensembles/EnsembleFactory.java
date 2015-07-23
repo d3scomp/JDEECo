@@ -18,16 +18,17 @@ public interface EnsembleFactory {
 	 * Returns a collection of ensemble instances that should exist in the system at the moment, given the knowledge stored in the container parameter.
 	 * @param container - a knowledge container containing the current state of the system (i.e. knowledge from the POV of a single component).
 	 * @return Currently existing ensemble instances.
+	 * @throws EnsembleFormationException
 	 */
-	Collection<EnsembleInstance> createInstances(KnowledgeContainer container);
+	Collection<EnsembleInstance> createInstances(KnowledgeContainer container) throws EnsembleFormationException;
 	/**
-	 * Gets the initial offset of the ensemble formation.
+	 * Gets the initial scheduling offset of the ensemble formation.
 	 * @return Ensemble formation offset.
 	 */
-	int getOffset();
+	int getSchedulingOffset();
 	/**
-	 * Gets the period after which the ensemble formation is invoked again.
+	 * Gets the period after which the ensemble formation is scheduled again.
 	 * @return Ensemble formation period.
 	 */
-	int getPeriod();
+	int getSchedulingPeriod();
 }
