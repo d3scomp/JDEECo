@@ -3,6 +3,7 @@ package cz.cuni.mff.d3s.deeco.task;
 import java.util.Collection;
 
 import cz.cuni.mff.d3s.deeco.ensembles.EnsembleFactory;
+import cz.cuni.mff.d3s.deeco.ensembles.EnsembleFormationException;
 import cz.cuni.mff.d3s.deeco.ensembles.EnsembleInstance;
 import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainerException;
@@ -42,19 +43,19 @@ public class EnsembleFormationTask extends Task {
 	}
 
 	@Override
-	public void invoke(Trigger trigger) throws TaskInvocationException {
-		KnowledgeContainer container = TrackingKnowledgeContainer.createFromKnowledgeManagers(componentInstance.getKnowledgeManager(), 
-				componentInstance.getShadowKnowledgeManagerRegistry().getShadowKnowledgeManagers());
-		
-		Collection<EnsembleInstance> instances = factory.createInstances(container);
-		
-		for(EnsembleInstance instance : instances) {
-			instance.performKnowledgeExchange();
-		}
+	public void invoke(Trigger trigger) throws TaskInvocationException {		
 		
 		try {
+			KnowledgeContainer container = TrackingKnowledgeContainer.createFromKnowledgeManagers(componentInstance.getKnowledgeManager(), 
+					componentInstance.getShadowKnowledgeManagerRegistry().getShadowKnowledgeManagers());
+			
+			Collection<EnsembleInstance> instances = factory.createInstances(container);
+			
+			for(EnsembleInstance instance : instances) {
+				instance.performKnowledgeExchange();
+			}
 			container.commitChanges();
-		} catch (KnowledgeContainerException e) {
+		} catch (KnowledgeContainerException | EnsembleFormationException e) {
 			throw new TaskInvocationException(e);
 		}
 	}

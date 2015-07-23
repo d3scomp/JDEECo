@@ -6,6 +6,6 @@ public class SimpleEnsemble implements EnsembleInstance {
 
 	@Override
 	public void performKnowledgeExchange() {
-		//System.out.println("Knowledge ex!");		
+		SimpleEnsembleFactory.outputStream.println("Knowledge exchange performed!");		
 	}
 }
