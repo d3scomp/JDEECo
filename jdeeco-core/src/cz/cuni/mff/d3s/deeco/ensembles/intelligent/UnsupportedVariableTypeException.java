@@ -1,6 +1,8 @@
 package cz.cuni.mff.d3s.deeco.ensembles.intelligent;
 
-public class UnsupportedVariableTypeException extends Exception {
+import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
+
+public class UnsupportedVariableTypeException extends DEECoException {
 
 	/**
 	 * 
@@ -35,12 +37,6 @@ public class UnsupportedVariableTypeException extends Exception {
 
 	public UnsupportedVariableTypeException(Class<?> usedType, String descriptionMessage, Throwable cause) {
 		super(descriptionMessage + " " + defaultMessage(usedType), cause);
-		this.usedType = usedType;
-	}
-
-	public UnsupportedVariableTypeException(Class<?> usedType, String descriptionMessage, Throwable cause,
-			boolean enableSuppression, boolean writableStackTrace) {
-		super(descriptionMessage + " " + defaultMessage(usedType), cause, enableSuppression, writableStackTrace);
 		this.usedType = usedType;
 	}
 

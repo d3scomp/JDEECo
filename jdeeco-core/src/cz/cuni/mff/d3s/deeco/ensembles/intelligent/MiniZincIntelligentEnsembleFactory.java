@@ -3,6 +3,7 @@ package cz.cuni.mff.d3s.deeco.ensembles.intelligent;
 import java.util.Collection;
 
 import cz.cuni.mff.d3s.deeco.ensembles.EnsembleFactory;
+import cz.cuni.mff.d3s.deeco.ensembles.EnsembleFormationException;
 import cz.cuni.mff.d3s.deeco.ensembles.EnsembleInstance;
 import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainer;
 
@@ -18,14 +19,18 @@ public abstract class MiniZincIntelligentEnsembleFactory implements EnsembleFact
 	public MiniZincIntelligentEnsembleFactory(MznScriptRunner scriptRunner) {
 		this.scriptRunner = scriptRunner;
 	}
-			
-	protected abstract ScriptInputVariableRegistry parseInput(KnowledgeContainer knowledgeContainer);
 	
-	protected abstract Collection<EnsembleInstance> createInstancesFromOutput(ScriptOutputVariableRegistry scriptOutput);
+	public MiniZincIntelligentEnsembleFactory(String scriptPath) {
+		this(new MznScriptRunner(scriptPath));
+	}
+			
+	protected abstract ScriptInputVariableRegistry parseInput(KnowledgeContainer knowledgeContainer) throws EnsembleFormationException;
+	
+	protected abstract Collection<EnsembleInstance> createInstancesFromOutput(ScriptOutputVariableRegistry scriptOutput) throws EnsembleFormationException;
 
 
 	@Override
-	public Collection<EnsembleInstance> createInstances(KnowledgeContainer container) {
+	public Collection<EnsembleInstance> createInstances(KnowledgeContainer container) throws EnsembleFormationException {
 		
 		ScriptInputVariableRegistry inputVars = parseInput(container);
 		

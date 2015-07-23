@@ -1,7 +1,14 @@
 package cz.cuni.mff.d3s.deeco.ensembles.intelligent;
 
-public class OutputVariableParseException extends Exception {
+import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
 
+public class OutputVariableParseException extends DEECoException {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3372224239114525697L;
+	
 	private String variableName;
 	private Class<?> desiredType;
 	
@@ -37,13 +44,6 @@ public class OutputVariableParseException extends Exception {
 
 	public OutputVariableParseException(String variableName, Class<?> desiredType, String additionalMessage, Throwable cause) {
 		super(defaultMessage(variableName, desiredType) + additionalMessage, cause);
-		this.variableName = variableName;
-		this.desiredType = desiredType;
-	}
-
-	public OutputVariableParseException(String variableName, Class<?> desiredType, String additionalMessage, Throwable cause,
-			boolean enableSuppression, boolean writableStackTrace) {
-		super(defaultMessage(variableName, desiredType) + additionalMessage, cause, enableSuppression, writableStackTrace);
 		this.variableName = variableName;
 		this.desiredType = desiredType;
 	}

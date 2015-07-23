@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.deeco.demo.intelligent;
+package cz.cuni.mff.d3s.deeco.demo.ensembles;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
 import cz.cuni.mff.d3s.deeco.ensembles.EnsembleFactory;

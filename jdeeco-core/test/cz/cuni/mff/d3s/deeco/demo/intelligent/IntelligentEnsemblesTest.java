@@ -1,12 +1,10 @@
 package cz.cuni.mff.d3s.deeco.demo.intelligent;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-
 import org.junit.Test;
 
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
-import cz.cuni.mff.d3s.deeco.demo.roles.BoardingEnsemble;
+import cz.cuni.mff.d3s.deeco.demo.ensembles.Robot;
+import cz.cuni.mff.d3s.deeco.demo.ensembles.SimpleEnsembleFactory;
 import cz.cuni.mff.d3s.deeco.runners.DEECoSimulation;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
@@ -19,7 +17,8 @@ public class IntelligentEnsemblesTest {
 		new IntelligentEnsemblesTest().testEnsembles(false);
 	}
 	
-	@Test
+	//@Test
+	// TODO finish the integration test
 	public void testEnsembles() throws InstantiationException, IllegalAccessException, DEECoException, AnnotationProcessorException {
 		testEnsembles(true);
 	}
@@ -34,13 +33,16 @@ public class IntelligentEnsemblesTest {
 		DEECoNode deeco = realm.createNode(0);
 		/* deploy components and ensemble factories */
 		
-		deeco.deployComponent(new Robot("Wall-E"));
-		deeco.deployComponent(new Robot("Gizmo"));		
-		deeco.deployEnsembleFactory(new SimpleEnsembleFactory());
-		deeco.deployComponent(new Robot("R2"));
+		deeco.deployComponent(new RescuerComponent("1", 30));
+		deeco.deployComponent(new RescuerComponent("2", 0));
+		deeco.deployComponent(new RescuerComponent("3", 100));
+		deeco.deployComponent(new RescuerComponent("4", 600));
+		deeco.deployComponent(new RescuerComponent("5", 70));
+		deeco.deployComponent(new RescuerComponent("6", 80));
+		deeco.deployEnsembleFactory(new IntelligentEnsembleFactory());
 		
 		/* WHEN simulation is performed */
-		realm.start(999);
+		realm.start(1001);
 		
 		if (silent) {
 			// TODO test assertions

@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.deeco.demo.intelligent;
+package cz.cuni.mff.d3s.deeco.demo.ensembles;
 
 import cz.cuni.mff.d3s.deeco.annotations.Component;
 
@@ -6,12 +6,11 @@ import cz.cuni.mff.d3s.deeco.annotations.Component;
 public class Robot {
 	public String id;
 	
-	
 	public Robot(String name) {
 		this.id = name;
 	}
 	
 	public String getName() {
-		return id;		
+		return id;
 	}
 }

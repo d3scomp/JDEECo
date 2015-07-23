@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.deeco.demo.intelligent;
+package cz.cuni.mff.d3s.deeco.demo.ensembles;
 
 import java.io.PrintStream;
 import java.util.Arrays;
