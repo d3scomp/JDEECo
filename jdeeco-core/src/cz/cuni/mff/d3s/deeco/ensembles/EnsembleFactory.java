@@ -21,13 +21,13 @@ public interface EnsembleFactory {
 	 */
 	Collection<EnsembleInstance> createInstances(KnowledgeContainer container);
 	/**
-	 * Gets the initial offset of the ensemble formation.
+	 * Gets the initial scheduling offset of the ensemble formation.
 	 * @return Ensemble formation offset.
 	 */
-	int getOffset();
+	int getSchedulingOffset();
 	/**
-	 * Gets the period after which the ensemble formation is invoked again.
+	 * Gets the period after which the ensemble formation is scheduled again.
 	 * @return Ensemble formation period.
 	 */
-	int getPeriod();
+	int getSchedulingPeriod();
 }

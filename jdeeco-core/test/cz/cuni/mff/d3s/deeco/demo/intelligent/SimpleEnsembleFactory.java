@@ -16,12 +16,12 @@ public class SimpleEnsembleFactory implements EnsembleFactory {
 	}
 
 	@Override
-	public int getOffset() {		
+	public int getSchedulingOffset() {		
 		return 42;
 	}
 
 	@Override
-	public int getPeriod() {
+	public int getSchedulingPeriod() {
 		return 1000;
 	}
 }

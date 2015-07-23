@@ -57,7 +57,7 @@ public interface DEECoContainer {
 	public ComponentInstance deployComponent(Object components) throws AnnotationProcessorException;
 	
 	/**
-	 * Deploys ensembles to the DEECo rutime by parsing them and adding them to the metadata model.
+	 * Deploys ensembles to the DEECo runtime by parsing them and adding them to the metadata model.
 	 * As soon as they are added to the model, ensembles are dynamically deployed (relevant tasks are created and scheduled).
 	 * To be used by plugins to deploy "system ensembles" that specify knowledge exchange between "system components" and are scheduled along with application ensembles.
 	 * 
@@ -70,6 +70,11 @@ public interface DEECoContainer {
 	
 	void undeployEnsemble(String ensembleName) throws AnnotationProcessorException, DuplicateEnsembleDefinitionException;
 	
+	/**
+	 * Deploys an ensemble factory to this DEECo container, immediately registering it with the runtime and creating and scheduling the relevant tasks. 
+	 * Note that unlike the {@link #deployEnsemble} method, no information is added to the metadata model.
+	 * @param factory {@link EnsembleFactory} implementor used for specific ensemble formation.
+	 */
 	public void deployEnsembleFactory(EnsembleFactory factory);
 
 	/**
