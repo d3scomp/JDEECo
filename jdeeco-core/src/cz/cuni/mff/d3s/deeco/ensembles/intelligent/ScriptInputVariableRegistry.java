@@ -2,11 +2,9 @@ package cz.cuni.mff.d3s.deeco.ensembles.intelligent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 
 public class ScriptInputVariableRegistry {
@@ -19,22 +17,35 @@ public class ScriptInputVariableRegistry {
 			name = name2;
 			value = value2;
 		}
+		
+		@Override
+		public String toString() {
+			return String.format("%s=%s", name, value);
+		}
 	}
 	
 	private List<Entry> inputVariables;
-	
-	public List<Entry> getInputVariables() {
-		return inputVariables;
-	}
 	
 	// supported primitive types (for others -> exception)
 	// for each there needs to be an overload of the addVariable function
 	// supported are also arrays and sets
 	public static final Set<Class<?>> supportedPrimitiveTypes
 			= new HashSet<Class<?>>(Arrays.asList(Boolean.class, Integer.class, Float.class, ScriptIdentifier.class));
+
+	/**
+	 * Just for testing purposes. Use the parameterless constructor instead
+	 * @param entryList
+	 */
+	public ScriptInputVariableRegistry(List<Entry> entryList) {
+		this.inputVariables = entryList;
+	}
 	
 	public ScriptInputVariableRegistry() {
-		inputVariables = new ArrayList<>();
+		this(new ArrayList<Entry>());
+	}
+	
+	public List<Entry> getInputVariables() {
+		return inputVariables;
 	}
 		
 	private void addVariable(String name, Object value) {
@@ -72,7 +83,7 @@ public class ScriptInputVariableRegistry {
 		// TODO
 	}
 	
-	public void addVariable(String name, Set<?> value) throws UnsupportedVariableTypeException {
+	public void addVariable(String name, Set<Integer> value) throws UnsupportedVariableTypeException {
 		// TODO
 	}
 

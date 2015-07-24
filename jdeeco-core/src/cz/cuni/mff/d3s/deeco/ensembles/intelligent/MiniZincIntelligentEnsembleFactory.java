@@ -36,8 +36,6 @@ public abstract class MiniZincIntelligentEnsembleFactory implements EnsembleFact
 		
 		ScriptOutputVariableRegistry outputVars = scriptRunner.runScript(inputVars);
 		
-		createInstancesFromOutput(outputVars);
-		
-		return null;
+		return createInstancesFromOutput(outputVars);
 	}
 }

@@ -60,7 +60,7 @@ public class ScriptOutputVariableRegistry {
 		return null;
 	} 
 	
-	public <T> Set<T> getSetValue(String varName, Class<T> innerType)
+	public Set<Integer> getSetValue(String varName)
 			throws OutputVariableParseException, UnsupportedVariableTypeException {
 		// TODO
 		return null;
