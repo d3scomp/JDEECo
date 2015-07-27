@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import cz.cuni.mff.d3s.deeco.ensembles.EnsembleFormationException;
 import cz.cuni.mff.d3s.deeco.ensembles.EnsembleInstance;
+import cz.cuni.mff.d3s.deeco.ensembles.intelligent.HeterogeneousArrayException;
 import cz.cuni.mff.d3s.deeco.ensembles.intelligent.MiniZincIntelligentEnsembleFactory;
 import cz.cuni.mff.d3s.deeco.ensembles.intelligent.MznScriptRunner;
 import cz.cuni.mff.d3s.deeco.ensembles.intelligent.OutputVariableParseException;
@@ -46,7 +47,7 @@ public class IntelligentEnsembleFactory extends MiniZincIntelligentEnsembleFacto
 			result.addVariable("train_pos", trainPositions);
 			return result;
 			
-		} catch (UnsupportedVariableTypeException | KnowledgeContainerException e) {
+		} catch (UnsupportedVariableTypeException | KnowledgeContainerException | HeterogeneousArrayException e) {
 			throw new EnsembleFormationException(e);
 		}
 	}

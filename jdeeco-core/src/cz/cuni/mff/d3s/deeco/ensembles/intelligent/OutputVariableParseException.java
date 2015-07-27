@@ -10,39 +10,39 @@ public class OutputVariableParseException extends DEECoException {
 	private static final long serialVersionUID = -3372224239114525697L;
 	
 	private String variableName;
-	private Class<?> desiredType;
+	private String desiredType;
 	
 	public String getVariableName() {
 		return variableName;
 	}
 	
-	public Class<?> getDesiredType() {
+	public String getDesiredType() {
 		return desiredType;
 	}
 	
-	private static String defaultMessage(String variableName, Class<?> desiredType) {
-		return String.format("Error parsing variable %s of a desired type %s. ", variableName, desiredType.getName());
+	private static String defaultMessage(String variableName, String desiredType) {
+		return String.format("Error parsing variable %s. The given value cannot be parsed as %s. ", variableName, desiredType);
 	}
 	
-	public OutputVariableParseException(String variableName, Class<?> desiredType) {
+	public OutputVariableParseException(String variableName, String desiredType) {
 		super(defaultMessage(variableName, desiredType));
 		this.variableName = variableName;
 		this.desiredType = desiredType;
 	}
 
-	public OutputVariableParseException(String variableName, Class<?> desiredType, String additionalMessage) {
+	public OutputVariableParseException(String variableName, String desiredType, String additionalMessage) {
 		super(defaultMessage(variableName, desiredType) + additionalMessage);
 		this.variableName = variableName;
 		this.desiredType = desiredType;
 	}
 
-	public OutputVariableParseException(String variableName, Class<?> desiredType, Throwable cause) {
+	public OutputVariableParseException(String variableName, String desiredType, Throwable cause) {
 		super(cause);
 		this.variableName = variableName;
 		this.desiredType = desiredType;
 	}
 
-	public OutputVariableParseException(String variableName, Class<?> desiredType, String additionalMessage, Throwable cause) {
+	public OutputVariableParseException(String variableName, String desiredType, String additionalMessage, Throwable cause) {
 		super(defaultMessage(variableName, desiredType) + additionalMessage, cause);
 		this.variableName = variableName;
 		this.desiredType = desiredType;

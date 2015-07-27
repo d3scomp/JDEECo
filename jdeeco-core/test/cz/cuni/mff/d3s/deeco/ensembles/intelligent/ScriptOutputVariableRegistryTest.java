@@ -37,12 +37,14 @@ public class ScriptOutputVariableRegistryTest {
 		outputVariables.put("f1", "3.14");
 		outputVariables.put("f2", "0.0");
 		outputVariables.put("a1d1", "array1d(1..2, [4, 5])");
-		outputVariables.put("a1d2", "array1d(1..4, [false, true])");
+		outputVariables.put("a1d2", "array1d(1..2, [false, true])");
+		outputVariables.put("a1d3", "array1d(,[])");
 		outputVariables.put("unsupp", "array1d(1..3, [a, b, c])");
 		outputVariables.put("a2d", "array2d(1..2 ,1..3 ,[2, 3, 4, 3, 4, 5])");
 		outputVariables.put("s1", "{2, 4}");
-		outputVariables.put("s2", "3..6");
+		outputVariables.put("s2", "-1..3");
 		outputVariables.put("s3", "{2.4,4.2}");
+		outputVariables.put("s4", "{}");
 		
 		target = new ScriptOutputVariableRegistry(outputVariables);
 	}
@@ -78,9 +80,11 @@ public class ScriptOutputVariableRegistryTest {
 	public void getArray1dValueTest() throws OutputVariableParseException, UnsupportedVariableTypeException {
 		Integer[] a1d1 = target.getArray1dValue("a1d1", Integer.class);
 		Boolean[] a1d2 = target.getArray1dValue("a1d2", Boolean.class);
+		Float[] a1d3 = target.getArray1dValue("a1d3", Float.class);
 		
 		Assert.assertArrayEquals(new Integer[] {4, 5}, a1d1);
 		Assert.assertArrayEquals(new Boolean[] {false, true}, a1d2);
+		assertEquals(0, a1d3.length);
 	}
 	
 	@Test(expected = OutputVariableParseException.class)
@@ -103,16 +107,20 @@ public class ScriptOutputVariableRegistryTest {
 	public void getSetValueTest() throws OutputVariableParseException, UnsupportedVariableTypeException {
 		Set<Integer> s1 = target.getSetValue("s1");
 		Set<Integer> s2 = target.getSetValue("s2");
+		Set<Integer> s4 = target.getSetValue("s4");
 
 		assertEquals(2, s1.size());
 		assertTrue(s1.contains(2));
 		assertTrue(s1.contains(4));
 
-		assertEquals(4, s2.size());
+		assertEquals(5, s2.size());
+		assertTrue(s2.contains(-1));
+		assertTrue(s2.contains(0));
+		assertTrue(s2.contains(1));
+		assertTrue(s2.contains(2));
 		assertTrue(s2.contains(3));
-		assertTrue(s2.contains(4));
-		assertTrue(s2.contains(5));
-		assertTrue(s2.contains(6));
+		
+		assertEquals(0, s4.size());
 	}
 	
 	@Test(expected = OutputVariableParseException.class)

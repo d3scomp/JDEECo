@@ -109,29 +109,53 @@ public class ScriptInputVariableRegistryTest {
 	}
 	
 	@Test
-	public void addVariableArray1dTest() throws UnsupportedVariableTypeException {
+	public void addVariableArray1dTest() throws UnsupportedVariableTypeException, HeterogeneousArrayException {
 		target.addVariable("a1d1", new Integer[] {12, 13});
-		target.addVariable("a1d2", new ScriptIdentifier[] {new ScriptIdentifier("train"), new ScriptIdentifier("car")});
+		target.addVariable("a1d2", new Object[] {new ScriptIdentifier("train"), new ScriptIdentifier("car")});
 		
 		verifyInteractions(new EntryMatcher("a1d1", "[12, 13]"), new EntryMatcher("a1d2", "[train, car]"));
 	}
 	
 	@Test(expected = UnsupportedVariableTypeException.class)
-	public void addVariableArray1dWrongInnerTypeTest() throws UnsupportedVariableTypeException {
+	public void addVariableArray1dWrongInnerTypeTest() throws UnsupportedVariableTypeException, HeterogeneousArrayException {
 		target.addVariable("a", new String[] {"x", "y"});
 	}
 	
+	@Test(expected = HeterogeneousArrayException.class)
+	public void addVariableArray1dHeteroTest() throws UnsupportedVariableTypeException, HeterogeneousArrayException {
+		target.addVariable("a", new Object[] {new Integer(14), new Integer(15), new Float(16.1f)});
+	}
+	
 	@Test
-	public void addVariableArray2dTest() throws UnsupportedVariableTypeException {
+	public void addVariableArray1dEmptyTest() throws UnsupportedVariableTypeException, HeterogeneousArrayException {
+		target.addVariable("a1d", new Integer[0]);
+		verifyInteractions(new EntryMatcher("a1d", "[]"));
+	}
+	
+	@Test
+	public void addVariableArray2dTest() throws UnsupportedVariableTypeException, HeterogeneousArrayException {
 		target.addVariable("a2d", new Float[][] {{4f, 5f, 6f}, {0.5f, 1f, 0f}});
 		verifyInteractions(new EntryMatcher("a2d", "[| 4.0, 5.0, 6.0 | 0.5, 1.0, 0.0 |]"));
+	}
+	
+	@Test(expected = HeterogeneousArrayException.class)
+	public void addVariableArray2dHeteroTest() throws UnsupportedVariableTypeException, HeterogeneousArrayException {
+		target.addVariable("a2d", new Float[][] {{4f, 5f}, {0.5f, 1f, 0f}});
+	}
+
+	@Test
+	public void addVariableArray2dEmptyTest() throws UnsupportedVariableTypeException, HeterogeneousArrayException {
+		target.addVariable("a1d", new Integer[0][0]);
+		verifyInteractions(new EntryMatcher("a1d", "[]"));
 	}
 	
 	@Test
 	public void addVariableIntegerSetTest() throws UnsupportedVariableTypeException {
 		target.addVariable("s1", new HashSet<Integer>(Arrays.asList(3)));
 		target.addVariable("s2", new HashSet<Integer>(Arrays.asList(7, 8)));
-		verifyInteractions(new EntryMatcher("s1", "{3}"));
-		verifyInteractions(new EntryMatcher("s1", "{7, 8}")); // NOTE: this is implementation-specific - {8, 7} is also correct
+		target.addVariable("s3", new HashSet<Integer>());
+		verifyInteractions(new EntryMatcher("s1", "{3}"),
+				new EntryMatcher("s2", "{7, 8}"), // NOTE: this is implementation-specific - {8, 7} is also correct
+				new EntryMatcher("s3", "{}"));
 	}
 }
