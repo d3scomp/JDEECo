@@ -83,6 +83,26 @@ public class ScriptOutputVariableRegistry {
 		return getPrimitiveValue(varName, Float.class);
 	}
 	
+	private static class Interval {
+		public int low;
+		public int high;
+		
+		public int count() { return high - low + 1; }
+		
+		public static Interval parseFromString(String intervalStr) throws NumberFormatException {
+			Pattern pattern = Pattern.compile("(\\-?[0-9]+)\\.\\.(\\-?[0-9]+)");
+			Matcher matcher = pattern.matcher(intervalStr);
+			if (!matcher.find()) {
+				return null;
+			}
+			
+			Interval result = new Interval();
+			result.low = Integer.parseInt(matcher.group(1));
+			result.high = Integer.parseInt(matcher.group(2));
+			return result;
+		}
+	}
+	
 	@SuppressWarnings("unchecked")
 	public <T> T[] getArray1dValue(String varName, Class<T> innerType)
 			throws OutputVariableParseException, UnsupportedVariableTypeException {
@@ -91,30 +111,32 @@ public class ScriptOutputVariableRegistry {
 			return (T[]) Array.newInstance(innerType, 0);
 		}
 		
-		Pattern pattern = Pattern.compile("array1d\\(([0-9]+)\\.\\.([0-9]+),\\[(.*)\\]\\)", Pattern.CASE_INSENSITIVE);
+		Pattern pattern = Pattern.compile("array1d\\((.+),\\[(.*)\\]\\)", Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(value);
 		if (!matcher.find()) {
 			throw new OutputVariableParseException(varName, "an array");
 		}
 		
-		int low, high;
+		Interval interval; 
 		try {
-			low = Integer.parseInt(matcher.group(1));
-			high = Integer.parseInt(matcher.group(2));
+			interval = Interval.parseFromString(matcher.group(1));
 		} catch (NumberFormatException e) {
+			throw new OutputVariableParseException(varName, "an array", "The key set should be in the format LO..HI (LO and HI being integers).", e);
+		}
+		
+		if (interval == null) {
 			throw new OutputVariableParseException(varName, "an array", "The key set should be in the format LO..HI.");
 		}
 		
-		int count = high - low + 1;
-		String[] values = matcher.group(3).split(",");
-		if (values.length != count) {
+		String[] values = matcher.group(2).split(",");
+		if (values.length != interval.count()) {
 			throw new OutputVariableParseException(varName, "an array",
 					String.format("The number of the items (%d) does not match to the key set (%d..%d).",
-							values.length, low, high));
+							values.length, interval.low, interval.high));
 		}
 		
-		T[] result = (T[]) Array.newInstance(innerType, count);
-		for (int i = 0; i < count; i++) {
+		T[] result = (T[]) Array.newInstance(innerType, interval.count());
+		for (int i = 0; i < interval.count(); i++) {
 			result[i] = parseValue(varName, values[i], innerType);
 		}
 		
@@ -129,35 +151,35 @@ public class ScriptOutputVariableRegistry {
 			return (T[][]) Array.newInstance(innerType, 0, 0);
 		}
 		
-		Pattern pattern = Pattern.compile("array2d\\(([0-9]+)\\.\\.([0-9]+),([0-9]+)\\.\\.([0-9]+),\\[(.*)\\]\\)", Pattern.CASE_INSENSITIVE);
+		Pattern pattern = Pattern.compile("array2d\\((.+),(.+),\\[(.*)\\]\\)", Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(value);
 		if (!matcher.find()) {
 			throw new OutputVariableParseException(varName, "an array");
 		}
 		
-		int low1, high1, low2, high2;
+		Interval firstInterval, secondInterval;
 		try {
-			low1 = Integer.parseInt(matcher.group(1));
-			high1 = Integer.parseInt(matcher.group(2));
-			low2 = Integer.parseInt(matcher.group(3));
-			high2 = Integer.parseInt(matcher.group(4));
+			firstInterval = Interval.parseFromString(matcher.group(1));
+			secondInterval = Interval.parseFromString(matcher.group(2));
 		} catch (NumberFormatException e) {
+			throw new OutputVariableParseException(varName, "an array", "The key set should be in the format LO1..HI1, LO2..HI2 (LO and HI being integers).", e);
+		}
+		
+		if (firstInterval == null || secondInterval == null) {
 			throw new OutputVariableParseException(varName, "an array", "The key set should be in the format LO1..HI1, LO2..HI2.");
 		}
 		
-		int count1 = high1 - low1 + 1;
-		int count2 = high2 - low2 + 1;
-		String[] values = matcher.group(5).split(",");
-		if (values.length != count1 * count2) {
+		String[] values = matcher.group(3).split(",");
+		if (values.length != firstInterval.count() * secondInterval.count()) {
 			throw new OutputVariableParseException(varName, "an array", 
 					String.format("The number of the items (%d) does not match to the key set (%d..%d, %d..%d).",
-							values.length, low1, high1, low2, high2));
+							values.length, firstInterval.low, firstInterval.high, secondInterval.low, secondInterval.high));
 		}
 		
-		T[][] result = (T[][]) Array.newInstance(innerType, count1, count2);
-		for (int i = 0; i < count1; i++) {
-			for (int j = 0; j < count2; j++) {
-				result[i][j] = parseValue(varName, values[i * count2 + j], innerType);
+		T[][] result = (T[][]) Array.newInstance(innerType, firstInterval.count(), secondInterval.count());
+		for (int i = 0; i < firstInterval.count(); i++) {
+			for (int j = 0; j < secondInterval.count(); j++) {
+				result[i][j] = parseValue(varName, values[i * secondInterval.count() + j], innerType);
 			}
 		}
 		
@@ -189,21 +211,17 @@ public class ScriptOutputVariableRegistry {
 			
 		} else {
 			// alternative pattern (LO..HI)
-			pattern = Pattern.compile("(\\-?[0-9]+)\\.\\.(\\-?[0-9]+)");
-			matcher = pattern.matcher(value);
-			if (!matcher.find()) {
-				throw new OutputVariableParseException(varName, "a set of integers");
-			}
-			
-			int low, high;
+			Interval interval;
 			try {
-				low = Integer.parseInt(matcher.group(1));
-				high = Integer.parseInt(matcher.group(2));
+				interval = Interval.parseFromString(value);
+				if (interval == null) {
+					throw new OutputVariableParseException(varName, "a set of integers");
+				}
 			} catch (NumberFormatException e) {
 				throw new OutputVariableParseException(varName, "an set of integers", "If using the LO..HI format the LO and HI must be integers.");
 			}
 			
-			for (int i = low; i <= high; i++) {
+			for (int i = interval.low; i <= interval.high; i++) {
 				result.add(i);
 			}		
 		}
