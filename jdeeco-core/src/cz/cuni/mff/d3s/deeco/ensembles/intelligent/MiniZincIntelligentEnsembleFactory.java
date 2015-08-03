@@ -1,6 +1,7 @@
 package cz.cuni.mff.d3s.deeco.ensembles.intelligent;
 
 import java.util.Collection;
+import java.util.Map;
 
 import cz.cuni.mff.d3s.deeco.ensembles.EnsembleFactory;
 import cz.cuni.mff.d3s.deeco.ensembles.EnsembleFormationException;
@@ -34,8 +35,13 @@ public abstract class MiniZincIntelligentEnsembleFactory implements EnsembleFact
 		
 		ScriptInputVariableRegistry inputVars = parseInput(container);
 		
-		ScriptOutputVariableRegistry outputVars = scriptRunner.runScript(inputVars);
-		
-		return createInstancesFromOutput(outputVars);
+		try {
+			Map<String, String> output = scriptRunner.runScript(inputVars);
+			ScriptOutputVariableRegistry outputVars = new ScriptOutputVariableRegistry(output);
+			return createInstancesFromOutput(outputVars);
+			
+		} catch (ScriptExecutionException e) {
+			throw new EnsembleFormationException("Failed to create ensemble instance (" + this.getClass().getName() + ")", e);
+		}
 	}
 }

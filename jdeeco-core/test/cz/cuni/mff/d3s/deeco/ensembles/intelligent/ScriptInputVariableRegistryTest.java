@@ -113,7 +113,7 @@ public class ScriptInputVariableRegistryTest {
 		target.addVariable("a1d1", new Integer[] {12, 13});
 		target.addVariable("a1d2", new Object[] {new ScriptIdentifier("train"), new ScriptIdentifier("car")});
 		
-		verifyInteractions(new EntryMatcher("a1d1", "[12, 13]"), new EntryMatcher("a1d2", "[train, car]"));
+		verifyInteractions(new EntryMatcher("a1d1", "[12,13]"), new EntryMatcher("a1d2", "[train,car]"));
 	}
 	
 	@Test(expected = UnsupportedVariableTypeException.class)
@@ -135,7 +135,7 @@ public class ScriptInputVariableRegistryTest {
 	@Test
 	public void addVariableArray2dTest() throws UnsupportedVariableTypeException, HeterogeneousArrayException {
 		target.addVariable("a2d", new Float[][] {{4f, 5f, 6f}, {0.5f, 1f, 0f}});
-		verifyInteractions(new EntryMatcher("a2d", "[| 4.0, 5.0, 6.0 | 0.5, 1.0, 0.0 |]"));
+		verifyInteractions(new EntryMatcher("a2d", "[|4.0,5.0,6.0|0.5,1.0,0.0|]"));
 	}
 	
 	@Test(expected = HeterogeneousArrayException.class)
@@ -155,7 +155,7 @@ public class ScriptInputVariableRegistryTest {
 		target.addVariable("s2", new HashSet<Integer>(Arrays.asList(7, 8)));
 		target.addVariable("s3", new HashSet<Integer>());
 		verifyInteractions(new EntryMatcher("s1", "{3}"),
-				new EntryMatcher("s2", "{7, 8}"), // NOTE: this is implementation-specific - {8, 7} is also correct
+				new EntryMatcher("s2", "{7,8}"), // NOTE: this is implementation-specific - {8, 7} is also correct
 				new EntryMatcher("s3", "{}"));
 	}
 }

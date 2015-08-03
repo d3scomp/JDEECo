@@ -16,6 +16,8 @@ import static org.mockito.Mockito.times;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.management.openmbean.InvalidOpenTypeException;
 
@@ -64,21 +66,21 @@ public class MiniZincIntelligentEnsembleFactoryTest {
 	}
 	
 	@Test
-	public void createInstancesTest() throws EnsembleFormationException {
+	public void createInstancesTest() throws EnsembleFormationException, ScriptExecutionException {
 		KnowledgeContainer container = Mockito.mock(KnowledgeContainer.class);
 		ScriptInputVariableRegistry inputVars = Mockito.mock(ScriptInputVariableRegistry.class);
-		ScriptOutputVariableRegistry outputVars = Mockito.mock(ScriptOutputVariableRegistry.class);
+		Map<String, String> output = new HashMap<String, String>();
 		Collection<EnsembleInstance> resultCollection = new ArrayList<EnsembleInstance>();
-		
+		// TODO correct
 		MznScriptRunner runnerMock = Mockito.mock(MznScriptRunner.class);
-		Mockito.doReturn(outputVars).when(runnerMock).runScript(any());
+		Mockito.doReturn(output).when(runnerMock).runScript(any());
 		
 		MiniZincIntelligentEnsembleFactory target = Mockito.spy(
 				new MiniZincIntelligentEnsembleFactoryMock(runnerMock, inputVars, resultCollection));
 		Collection<EnsembleInstance> returnValue = target.createInstances(container);
 		
 		Mockito.verify(target, times(1)).parseInput(refEq(container));
-		Mockito.verify(target, times(1)).createInstancesFromOutput(refEq(outputVars));
+		Mockito.verify(target, times(1)).createInstancesFromOutput(any());
 		Mockito.verify(target, times(1)).createInstances(any());
 		Mockito.verify(runnerMock, times(1)).runScript(refEq(inputVars));
 		Mockito.verifyNoMoreInteractions(target, runnerMock);

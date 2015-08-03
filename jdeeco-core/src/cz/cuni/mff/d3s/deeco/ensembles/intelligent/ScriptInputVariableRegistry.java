@@ -9,7 +9,7 @@ import java.util.Set;
 
 public class ScriptInputVariableRegistry {
 
-	class Entry {
+	static class Entry {
 		String name;
 		String value;
 		
@@ -99,7 +99,7 @@ public class ScriptInputVariableRegistry {
 			valuesStr[i] = valueToStr(value[i]);
 		}
 		
-		String result = String.format("[%s]", String.join(", ", valuesStr));
+		String result = String.format("[%s]", String.join(",", valuesStr));
 		inputVariables.add(new Entry(name, result));
 	}
 	
@@ -126,7 +126,7 @@ public class ScriptInputVariableRegistry {
 				valuesStr[j] = valueToStr(value[i][j]);
 			}
 			
-			result.append(String.format("| %s ", String.join(", ", valuesStr)));
+			result.append(String.format("|%s", String.join(",", valuesStr)));
 		}
 		
 		if (innerLength > 0) {
@@ -149,7 +149,7 @@ public class ScriptInputVariableRegistry {
 			}
 		}
 		
-		String result = String.format("{%s}", String.join(", ", valuesStr));
+		String result = String.format("{%s}", String.join(",", valuesStr));
 		inputVariables.add(new Entry(name, result));
 	}
 
