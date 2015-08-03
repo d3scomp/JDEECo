@@ -14,44 +14,90 @@ import java.util.regex.Pattern;
 import cz.cuni.mff.d3s.deeco.ensembles.intelligent.ScriptInputVariableRegistry.Entry;
 
 
+/**
+ * Executes MiniZinc script and returns the result.
+ * 
+ * A MiniZinc script is executed in two steps:
+ * First, the mzn2fzn application is executed, that transforms the input MiniZinc file into FlatZinc format.
+ * Then, the FlatZinc file is solved by the Gecode solver.
+ * 
+ * Internally, this class does not execute the applications; it uses {@link ExternalAppRunner} class to do so.
+ * 
+ * The location of the mzn2fzn application and Gecode solver is obtained from minizinc.properties file located
+ * in the jdeeco core project root.
+ * 
+ * @author Zbyněk Jiráček
+ *
+ */
 public class MznScriptRunner {
 
 	private String scriptPath;
 	private ExternalAppRunner appRunner;
 	private String tempFilePath;
 	
+	/**
+	 * A key in minizinc.properties file containing path to the mzn2fzn program.
+	 */
 	public static String MZN2FZN_PATH_PROPERTY = "mzn2fznPath";
+	
+	/**
+	 * A key in minizinc.properties file containing path to the Gecode solver (can be replaced by a different one).
+	 */
 	public static String FZN_SOLVER_PATH_PROPERTY = "fznSolverPath";
+	
+	/**
+	 * Not used (TODO)
+	 */
 	public static String TEMP_FOLDER_PROPERTY = "tempPath";
 	
-	// scriptPath without quotes!
+	/**
+	 * Creates runner instance.
+	 * @param scriptPath The script file path (without any enclosing quotes!)
+	 */
 	public MznScriptRunner(String scriptPath) {
 		this(scriptPath, new ExternalAppRunner(), generateTempFilePath());
 	}
 	
-	// scriptPath without quotes! tempPath with quotes if necessary!
+	/**
+	 * Creates runner instance (used for tests only)
+	 * @param scriptPath The script file path (without any enclosing quotes!)
+	 * @param appRunner An instance of the {@link ExternalAppRunner} (can be replaced by a mock)
+	 * @param tempFilePath
+	 */
 	public MznScriptRunner(String scriptPath, ExternalAppRunner appRunner, String tempFilePath) {
 		this.scriptPath = scriptPath;
 		this.appRunner = appRunner;
 		this.tempFilePath = tempFilePath;
 	}
 	
+	/**
+	 * Gets the script file path.
+	 * @return The script file path.
+	 */
 	public String getScriptPath() {
 		return scriptPath;
 	}
 	
-	// file paths are expected to contain quotes if necessary
+	/**
+	 * Reads the necessary properties from the minizinc.properties file.
+	 * @return The properties.
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
 	public static Properties getProperties() throws FileNotFoundException, IOException {
 		Properties properties = new Properties();
 		properties.load(new FileInputStream("minizinc.properties"));
 		return properties;
 	}
 	
+	/**
+	 * Executes MiniZinc script and returns the output variables with their respective values.
+	 * 
+	 * @param inputParams Value registry that contains input variable values.
+	 * @return A map containing all output variables (keys) and their respective values.
+	 * @throws ScriptExecutionException
+	 */
 	public Map<String, String> runScript(ScriptInputVariableRegistry inputParams) throws ScriptExecutionException {
-		/*
-		ExternalAppRunner ear = new ExternalAppRunner("\"c:\\Program Files (x86)\\MiniZinc IDE (bundled)\\mzn2fzn.exe "
-				+ " -o temp.fzn " + scriptPath);
-		*/
 				
 		Properties properties;
 		try {
@@ -71,11 +117,13 @@ public class MznScriptRunner {
 	
 		try {
 			String[] result = fznSolve(properties);
-			Pattern pattern = Pattern.compile("^([A-Za-z0-9]+)=(.*)$");
+			
+			// parse the result into Map
+			Pattern pattern = Pattern.compile("^([A-Za-z0-9_]+)=(.*)$");
 			Map<String, String> resultMap = new HashMap<>();
 			for (String line : result) {
 				String trimmedLine = line.replace(" ", "");
-				if (trimmedLine.equals("")) {
+				if (trimmedLine.equals("") || trimmedLine.startsWith("--") || trimmedLine.startsWith("==")) {
 					continue;
 				}
 				
@@ -102,6 +150,17 @@ public class MznScriptRunner {
 		return "temp.fzn";
 	}
 	
+	/**
+	 * Runs the mzn2fzn application with following arguments
+	 *  - the input MiniZinc file
+	 *  - a temporary file for FlatZinc output
+	 *  - all input variable values
+	 *  
+	 * @param inputParams The input variable values.
+	 * @param properties Properties containing the mzn2fzn file path.
+	 * @return Output of the mzn2fzn application (should be empty).
+	 * @throws IOException
+	 */
 	private String mzn2fzn(ScriptInputVariableRegistry inputParams, Properties properties) throws IOException {
 		List<Entry> inputVariables = inputParams.getInputVariables();
 		String[] parameterList = new String[2 + inputVariables.size()];
@@ -116,6 +175,12 @@ public class MznScriptRunner {
 		return String.join("\n", result);
 	}
 	
+	/**
+	 * Runs the Gecode solver providing it the FlatZinc file created by mzn2fzn.
+	 * @param properties Properties containing the solver file path.
+	 * @return Solver output (split by lines).
+	 * @throws IOException
+	 */
 	private String[] fznSolve(Properties properties) throws IOException {
 		String[] parameterList = new String[1];
 		parameterList[0] = tempFilePath;		

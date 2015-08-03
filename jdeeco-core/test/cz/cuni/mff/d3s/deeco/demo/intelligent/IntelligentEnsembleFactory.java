@@ -23,7 +23,7 @@ public class IntelligentEnsembleFactory extends MiniZincIntelligentEnsembleFacto
 	private static final Integer[] trainPositions = {50, 25};
 	
 	public IntelligentEnsembleFactory() {
-		super("cz/cuni/mff/d3s/deeco/demo/intelligent/IntelligentEnsemble.mzn");
+		super("test/cz/cuni/mff/d3s/deeco/demo/intelligent/IntelligentEnsemble.mzn");
 	}
 
 	@Override
@@ -64,7 +64,7 @@ public class IntelligentEnsembleFactory extends MiniZincIntelligentEnsembleFacto
 			}
 			
 			for (int j = 0; j < componentPlacement.length; j++) {
-				((IntelligentEnsemble) result.get(componentPlacement[j])).members.add(rescuers.get(j));
+				((IntelligentEnsemble) result.get(componentPlacement[j] - 1)).members.add(rescuers.get(j));
 			}
 			
 			return result;

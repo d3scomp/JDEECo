@@ -2,6 +2,13 @@ package cz.cuni.mff.d3s.deeco.ensembles.intelligent;
 
 import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
 
+/**
+ * Thrown by the {@link ScriptInputVariableRegistry} and {@link ScriptOutputVariableRegistry} classes if
+ * an unsupported type is used.
+ * 
+ * @author Zbyněk Jiráček
+ *
+ */
 public class UnsupportedVariableTypeException extends DEECoException {
 
 	/**

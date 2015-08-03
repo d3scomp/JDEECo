@@ -7,10 +7,21 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Contains all output variables obtained by the script. It also provides methods for acquiring values
+ * of the output variables.
+ * 
+ * @author Zbyněk Jiráček
+ *
+ */
 public class ScriptOutputVariableRegistry {
 
 	private Map<String, String> outputVariables;
 	
+	/**
+	 * Creates a new variable registry.
+	 * @param outputVariables A map where [key = variable name, value = variable value].
+	 */
 	public ScriptOutputVariableRegistry(Map<String, String> outputVariables) {
 		this.outputVariables = outputVariables;
 	}
@@ -71,14 +82,35 @@ public class ScriptOutputVariableRegistry {
 		}
 	}
 	
+	/**
+	 * Gets a value of a boolean variable. If the variable is not present in the output or it is not
+	 * of boolean type, exception is thrown.
+	 * @param varName The name of the variable from the script output.
+	 * @return The boolean value
+	 * @throws OutputVariableParseException
+	 */
 	public Boolean getBooleanValue(String varName) throws OutputVariableParseException {
 		return getPrimitiveValue(varName, Boolean.class);
 	}
 	
+	/**
+	 * Gets a value of an integer variable. If the variable is not present in the output or it is not
+	 * of integer type, exception is thrown.
+	 * @param varName The name of the variable from the script output.
+	 * @return The integer value
+	 * @throws OutputVariableParseException
+	 */
 	public Integer getIntegerValue(String varName) throws OutputVariableParseException {
 		return getPrimitiveValue(varName, Integer.class);
 	}
 	
+	/**
+	 * Gets a value of a float variable. If the variable is not present in the output or it is not
+	 * of float type, exception is thrown.
+	 * @param varName The name of the variable from the script output.
+	 * @return The float value
+	 * @throws OutputVariableParseException
+	 */
 	public Float getFloatValue(String varName) throws OutputVariableParseException {
 		return getPrimitiveValue(varName, Float.class);
 	}
@@ -103,6 +135,15 @@ public class ScriptOutputVariableRegistry {
 		}
 	}
 	
+	/**
+	 * Gets a value of an array variable. If the variable is not present in the output or it is not
+	 * of 1D array type, exception is thrown. The exception is thrown also if the inner type is
+	 * specified incorrectly.
+	 * @param varName The name of the variable from the script output.
+	 * @param innerType The type of the elements in the array.
+	 * @return The array.
+	 * @throws OutputVariableParseException
+	 */
 	@SuppressWarnings("unchecked")
 	public <T> T[] getArray1dValue(String varName, Class<T> innerType)
 			throws OutputVariableParseException, UnsupportedVariableTypeException {
@@ -143,6 +184,18 @@ public class ScriptOutputVariableRegistry {
 		return result;
 	}
 	
+	/**
+	 * Gets a value of a 2D array variable. If the variable is not present in the output or it is not
+	 * of 2D array type, exception is thrown. The exception is thrown also if the inner type is
+	 * specified incorrectly.
+	 * 
+	 * TODO allow array of sets
+	 * 
+	 * @param varName The name of the variable from the script output.
+	 * @param innerType The type of the elements in the array.
+	 * @return The array.
+	 * @throws OutputVariableParseException
+	 */
 	@SuppressWarnings("unchecked")
 	public <T> T[][] getArray2dValue(String varName, Class<T> innerType)
 			throws OutputVariableParseException, UnsupportedVariableTypeException {
@@ -186,6 +239,13 @@ public class ScriptOutputVariableRegistry {
 		return result;
 	} 
 	
+	/**
+	 * Gets a value of a set variable. If the variable is not present in the output or it is not
+	 * of the set type, exception is thrown. The inner type of sets is always integer.
+	 * @param varName The name of the variable from the script output.
+	 * @return The set.
+	 * @throws OutputVariableParseException
+	 */
 	public Set<Integer> getSetValue(String varName) throws OutputVariableParseException {
 		String value = getVarValue(varName, Object[].class).replace(" ", "");
 		Set<Integer> result = new HashSet<>();

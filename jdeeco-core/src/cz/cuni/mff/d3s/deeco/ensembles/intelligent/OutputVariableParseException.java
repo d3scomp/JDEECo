@@ -2,6 +2,12 @@ package cz.cuni.mff.d3s.deeco.ensembles.intelligent;
 
 import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
 
+/**
+ * Used by {@link ScriptOutputVariableRegistry} when a variable has a different type than expected.
+ * 
+ * @author Zbyněk Jiráček
+ *
+ */
 public class OutputVariableParseException extends DEECoException {
 
 	/**

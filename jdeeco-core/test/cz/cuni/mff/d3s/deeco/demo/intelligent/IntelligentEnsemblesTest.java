@@ -6,6 +6,9 @@ import static org.junit.Assert.assertThat;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
+import org.junit.Assume;
+import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
@@ -24,6 +27,7 @@ public class IntelligentEnsemblesTest {
 	}
 	
 	@Test
+	@Ignore
 	public void testEnsembles() throws InstantiationException, IllegalAccessException, DEECoException, AnnotationProcessorException {
 		testEnsembles(true);
 	}
@@ -54,7 +58,7 @@ public class IntelligentEnsemblesTest {
 		deeco.deployEnsembleFactory(new IntelligentEnsembleFactory());
 		
 		/* WHEN simulation is performed */
-		realm.start(1002);
+		realm.start(999);
 		
 		if (silent) {
 			assertThat(baos.toString(), containsString("Rescuer 1: train 2"));

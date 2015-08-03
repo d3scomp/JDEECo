@@ -2,6 +2,12 @@ package cz.cuni.mff.d3s.deeco.ensembles.intelligent;
 
 import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
 
+/**
+ * Thrown by {@link MznScriptRunner} if a script cannot be executed (due to bad settings or error in the script).
+ * 
+ * @author Zbyněk Jiráček
+ *
+ */
 public class ScriptExecutionException extends DEECoException {
 
 	/**

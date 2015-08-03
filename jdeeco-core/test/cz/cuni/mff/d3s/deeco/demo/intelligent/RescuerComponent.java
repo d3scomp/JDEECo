@@ -29,7 +29,7 @@ public class RescuerComponent {
 	@PeriodicScheduling(period = 1000, offset = 1)
 	public static void printTrainId(@In("id") String id, @In("trainId") Integer trainId) {
 		if (trainId > 0) {
-			outputStream.printf("Rescuer %s: train %d", id, trainId);
+			outputStream.printf("Rescuer %s: train %d\n", id, trainId);
 		}
 	}
 
