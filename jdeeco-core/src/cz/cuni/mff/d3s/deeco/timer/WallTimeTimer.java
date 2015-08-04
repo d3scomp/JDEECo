@@ -1,5 +1,7 @@
 package cz.cuni.mff.d3s.deeco.timer;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
@@ -17,6 +19,7 @@ import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 public class WallTimeTimer implements RunnerTimer {
 
 	protected final Queue<EventTime> eventTimes;
+	Map<DEECoContainer, EventTime> containerEvents;
 	protected long startTime;
 	protected long currentTime;
 	protected boolean running;
@@ -26,6 +29,7 @@ public class WallTimeTimer implements RunnerTimer {
 		currentTime = 0;
 		running = false;
 		eventTimes = new PriorityQueue<>();
+		containerEvents = new HashMap<>();
 	}
 
 	/**
@@ -105,6 +109,19 @@ public class WallTimeTimer implements RunnerTimer {
 	protected void stop() {
 		running = false;
 	}
+	
+	/**
+	 * Replaces event for container
+	 */
+	private void replaceEvent(EventTime eventTime, DEECoContainer container) {
+		// Replace old event for container by the new one
+		eventTimes.add(eventTime);
+		EventTime old = containerEvents.get(container);
+		if (old != null) {
+			eventTimes.remove(old);
+		}
+		containerEvents.put(container, eventTime);
+	}
 
 	@Override
 	public void notifyAt(long time, TimerEventListener listener, String eventName,
@@ -112,7 +129,7 @@ public class WallTimeTimer implements RunnerTimer {
 		synchronized (eventTimes) {
 			EventTime eventTime = new EventTime(time, listener, eventName, false);
 			if (!eventTimes.contains(eventTime)) {
-				eventTimes.add(eventTime);
+				replaceEvent(eventTime, container);
 			}
 		}
 	}
@@ -128,11 +145,11 @@ public class WallTimeTimer implements RunnerTimer {
 	 */
 	@Override
 	public void interruptionEvent(TimerEventListener listener, String eventName,
-			DEECoContainer node) {
+			DEECoContainer container) {
 		synchronized (eventTimes) {
 			adjustCurrentTime();
-			EventTime event = new EventTime(currentTime, listener, eventName, false);
-			eventTimes.add(event);
+			EventTime eventTime = new EventTime(currentTime, listener, eventName, false);
+			replaceEvent(eventTime, container);
 			eventTimes.notify();
 		}
 	}
