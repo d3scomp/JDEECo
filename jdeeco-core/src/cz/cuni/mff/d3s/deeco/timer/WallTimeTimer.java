@@ -19,10 +19,12 @@ public class WallTimeTimer implements RunnerTimer {
 	protected final Queue<EventTime> eventTimes;
 	protected long startTime;
 	protected long currentTime;
+	protected boolean running;
 
 	public WallTimeTimer() {
 		startTime = 0;
 		currentTime = 0;
+		running = false;
 		eventTimes = new PriorityQueue<>();
 	}
 
@@ -48,9 +50,10 @@ public class WallTimeTimer implements RunnerTimer {
 	}
 
 	public void start() {
+		running = true;
 		// Save the current time as the start time of the timer
 		startTime = System.currentTimeMillis();
-		while (true) {
+		while (running) {
 			// The next event to be processed. Assigned when its execution time
 			// arises
 			EventTime eventToProcess = null;
@@ -92,6 +95,15 @@ public class WallTimeTimer implements RunnerTimer {
 			// Adjust the current time after the event execution
 			adjustCurrentTime();
 		}
+	}
+	
+	/**
+	 * Stops infinite wait for next event
+	 * 
+	 * This is supposed to be called from tests.
+	 */
+	protected void stop() {
+		running = false;
 	}
 
 	@Override
