@@ -92,6 +92,7 @@ public class MznScriptRunner {
 	
 	/**
 	 * Executes MiniZinc script and returns the output variables with their respective values.
+	 * If the result is "unsatisfiable", the method returns an empty map.
 	 * 
 	 * @param inputParams Value registry that contains input variable values.
 	 * @return A map containing all output variables (keys) and their respective values.

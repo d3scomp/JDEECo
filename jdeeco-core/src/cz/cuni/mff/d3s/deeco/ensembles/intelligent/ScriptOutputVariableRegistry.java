@@ -83,6 +83,22 @@ public class ScriptOutputVariableRegistry {
 	}
 	
 	/**
+	 * Returns true if the output does not contain any data (it typically means unsat result), false otherwise.
+	 */
+	public Boolean isEmpty() {
+		return outputVariables.isEmpty();
+	}
+	
+	/**
+	 * Checks whether the result contains a variable of the given name.
+	 * @param varName The desired variable name
+	 * @return True, if varName is present, false otherwise.
+	 */
+	public Boolean containsVariable(String varName) {
+		return outputVariables.containsKey(varName);
+	}
+	
+	/**
 	 * Gets a value of a boolean variable. If the variable is not present in the output or it is not
 	 * of boolean type, exception is thrown.
 	 * @param varName The name of the variable from the script output.
