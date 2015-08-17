@@ -6,6 +6,7 @@ import org.ros.node.Node;
 import org.ros.node.topic.Subscriber;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.jdeeco.ros.datatypes.Weather;
 import sensor_msgs.RelativeHumidity;
 import sensor_msgs.Temperature;
 
@@ -61,8 +62,7 @@ public class SHT1x extends TopicSubscriber {
 	@Override
 	protected void subscribeDescendant(ConnectedNode connectedNode) {
 		// Subscribe for temperature messages
-		temperatureTopic = connectedNode.newSubscriber(
-				TEMPERATURE_TOPIC, Temperature._TYPE);
+		temperatureTopic = connectedNode.newSubscriber(TEMPERATURE_TOPIC, Temperature._TYPE);
 		temperatureTopic.addMessageListener(new MessageListener<Temperature>() {
 			@Override
 			public void onNewMessage(Temperature message) {
@@ -73,17 +73,15 @@ public class SHT1x extends TopicSubscriber {
 		});
 
 		// Subscribe for humidity messages
-		humidityTopic = connectedNode
-				.newSubscriber(HUMIDITY_TOPIC, RelativeHumidity._TYPE);
-		humidityTopic
-				.addMessageListener(new MessageListener<RelativeHumidity>() {
-					@Override
-					public void onNewMessage(RelativeHumidity message) {
-						humidity = message.getRelativeHumidity();
+		humidityTopic = connectedNode.newSubscriber(HUMIDITY_TOPIC, RelativeHumidity._TYPE);
+		humidityTopic.addMessageListener(new MessageListener<RelativeHumidity>() {
+			@Override
+			public void onNewMessage(RelativeHumidity message) {
+				humidity = message.getRelativeHumidity();
 
-						Log.d(String.format("Humidity received: %f.", humidity));
-					}
-				});
+				Log.d(String.format("Humidity received: %f.", humidity));
+			}
+		});
 	}
 
 	/**
@@ -94,29 +92,21 @@ public class SHT1x extends TopicSubscriber {
 	 */
 	@Override
 	void unsubscribe(Node node) {
-		if(temperatureTopic != null){
+		if (temperatureTopic != null) {
 			temperatureTopic.shutdown();
 		}
-		if(humidityTopic != null){
+		if (humidityTopic != null) {
 			humidityTopic.shutdown();
 		}
 	}
-	
-	/**
-	 * Get the temperature
-	 * 
-	 * @return The last measured temperature.
-	 */
-	public double getTemperature() {
-		return temperature;
-	}
 
 	/**
-	 * Get the humidity.
+	 * Get the weather measured by SHT1x board. The weather consists of humidity
+	 * and temperature.
 	 * 
-	 * @return The last measured humidity.
+	 * @return The last measured weather values.
 	 */
-	public double getHumidity() {
-		return humidity;
+	public Weather getWeather() {
+		return new Weather(humidity, temperature);
 	}
 }
