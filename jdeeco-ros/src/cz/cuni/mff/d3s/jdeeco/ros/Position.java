@@ -1,11 +1,5 @@
 package cz.cuni.mff.d3s.jdeeco.ros;
 
-import geometry_msgs.Pose;
-import geometry_msgs.PoseStamped;
-import geometry_msgs.PoseWithCovariance;
-import geometry_msgs.PoseWithCovarianceStamped;
-import nav_msgs.Odometry;
-
 import org.ros.concurrent.CancellableLoop;
 import org.ros.message.MessageListener;
 import org.ros.message.Time;
@@ -14,8 +8,14 @@ import org.ros.node.Node;
 import org.ros.node.topic.Publisher;
 import org.ros.node.topic.Subscriber;
 
-import cz.cuni.mff.d3s.jdeeco.ros.datatypes.Point;
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.jdeeco.ros.datatypes.GpsData;
+import cz.cuni.mff.d3s.jdeeco.ros.datatypes.Point;
+import geometry_msgs.Pose;
+import geometry_msgs.PoseStamped;
+import geometry_msgs.PoseWithCovariance;
+import geometry_msgs.PoseWithCovarianceStamped;
+import nav_msgs.Odometry;
 import sensor_msgs.NavSatFix;
 import sensor_msgs.TimeReference;
 import tf2_msgs.TFMessage;
@@ -352,21 +352,20 @@ public class Position extends TopicSubscriber {
 	}
 
 	/**
-	 * Read the GPS position.
+	 * Read the GPS position and time.
 	 * 
-	 * @return The position measured by GPS.
+	 * @return The position and time measured by the GPS module.
 	 */
-	public NavSatFix getGpsPosition() {
-		return gpsPosition;
-	}
-
-	/**
-	 * Get the time read by the GPS sensor.
-	 * 
-	 * @return The time measured by GPS.
-	 */
-	public long getGpsTime() {
-		return gpsTime != null ? gpsTime.totalNsecs() * 1000 : 0;
+	public GpsData getGpsData() {
+		long msTime = gpsTime != null
+				? gpsTime.totalNsecs() * 1000
+				: 0;
+				
+		return new GpsData(
+				gpsPosition.getLatitude(),
+				gpsPosition.getLongitude(),
+				gpsPosition.getAltitude(),
+				msTime);
 	}
 
 	/**
