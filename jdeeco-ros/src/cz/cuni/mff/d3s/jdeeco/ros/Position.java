@@ -1,6 +1,5 @@
 package cz.cuni.mff.d3s.jdeeco.ros;
 
-import geometry_msgs.Point;
 import geometry_msgs.Pose;
 import geometry_msgs.PoseStamped;
 import geometry_msgs.PoseWithCovariance;
@@ -15,6 +14,7 @@ import org.ros.node.Node;
 import org.ros.node.topic.Publisher;
 import org.ros.node.topic.Subscriber;
 
+import cz.cuni.mff.d3s.jdeeco.ros.datatypes.Point;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import sensor_msgs.NavSatFix;
 import sensor_msgs.TimeReference;
@@ -65,7 +65,7 @@ public class Position extends TopicSubscriber {
 	 * The name of the transformation topic.
 	 */
 	private static final String TRANSFORMATION_TOPIC = "/tf";
-	
+
 	/**
 	 * The frame in which the goal coordinates are given.
 	 */
@@ -88,8 +88,7 @@ public class Position extends TopicSubscriber {
 	 */
 	private Subscriber<TimeReference> timeRefTopic = null;
 	/**
-	 * The <a href="http://wiki.ros.org/amcl">AMCL</a> positioning
-	 * topic.
+	 * The <a href="http://wiki.ros.org/amcl">AMCL</a> positioning topic.
 	 */
 	private Subscriber<PoseWithCovarianceStamped> amclTopic = null;
 	/**
@@ -166,25 +165,25 @@ public class Position extends TopicSubscriber {
 	 */
 	@Override
 	void unsubscribe(Node node) {
-		if(odometryTopic != null){
+		if (odometryTopic != null) {
 			odometryTopic.shutdown();
 		}
-		if(resetOdometryTopic != null){
+		if (resetOdometryTopic != null) {
 			resetOdometryTopic.shutdown();
 		}
-		if(navSatTopic != null){
+		if (navSatTopic != null) {
 			navSatTopic.shutdown();
 		}
-		if(timeRefTopic != null){
+		if (timeRefTopic != null) {
 			timeRefTopic.shutdown();
 		}
-		if(amclTopic != null){
+		if (amclTopic != null) {
 			amclTopic.shutdown();
 		}
-		if(goalTopic != null){
+		if (goalTopic != null) {
 			goalTopic.shutdown();
 		}
-		if(transformTopic != null){
+		if (transformTopic != null) {
 			transformTopic.shutdown();
 		}
 	}
@@ -197,23 +196,19 @@ public class Position extends TopicSubscriber {
 	 */
 	private void subscribeOdometry(ConnectedNode connectedNode) {
 		// Subscribe to listen on odometry messages
-		odometryTopic = connectedNode.newSubscriber(
-				ODOMETRY_TOPIC, Odometry._TYPE);
+		odometryTopic = connectedNode.newSubscriber(ODOMETRY_TOPIC, Odometry._TYPE);
 		odometryTopic.addMessageListener(new MessageListener<Odometry>() {
 			@Override
 			public void onNewMessage(Odometry message) {
-				odometry = message.getPose().getPose().getPosition();
+				odometry = pointFromMessage(message.getPose().getPose().getPosition());
 
 				Log.d(String.format("Odometry value received: [%f, %f, %f].",
-						odometry.getX(),
-						odometry.getY(),
-						odometry.getZ()));
+						odometry.x, odometry.y, odometry.z));
 			}
 		});
 
 		// Subscribe to publish odometry reset messages
-		resetOdometryTopic = connectedNode
-				.newPublisher(RESET_ODOMETRY_TOPIC, std_msgs.Empty._TYPE);
+		resetOdometryTopic = connectedNode.newPublisher(RESET_ODOMETRY_TOPIC, std_msgs.Empty._TYPE);
 		connectedNode.executeCancellableLoop(new CancellableLoop() {
 			@Override
 			protected void setup() {
@@ -240,21 +235,19 @@ public class Position extends TopicSubscriber {
 	 */
 	private void subscribeGPS(ConnectedNode connectedNode) {
 		// Subscribe to the GPS position topic
-		navSatTopic = connectedNode.newSubscriber(
-				GPS_POSITION_TOPIC, NavSatFix._TYPE);
+		navSatTopic = connectedNode.newSubscriber(GPS_POSITION_TOPIC, NavSatFix._TYPE);
 		navSatTopic.addMessageListener(new MessageListener<NavSatFix>() {
 			@Override
 			public void onNewMessage(NavSatFix message) {
 				gpsPosition = message;
 
-				Log.d(String.format("GPS possition received: [%d, %d, %d].",
-						message.getLatitude(), message.getLongitude(), message.getAltitude()));
+				Log.d(String.format("GPS possition received: [%d, %d, %d].", message.getLatitude(),
+						message.getLongitude(), message.getAltitude()));
 			}
 		});
 
 		// Subscribe to the GPS time topic
-		timeRefTopic = connectedNode.newSubscriber(
-				GPS_TIME_TOPIC, TimeReference._TYPE);
+		timeRefTopic = connectedNode.newSubscriber(GPS_TIME_TOPIC, TimeReference._TYPE);
 		timeRefTopic.addMessageListener(new MessageListener<TimeReference>() {
 			@Override
 			public void onNewMessage(TimeReference message) {
@@ -272,21 +265,16 @@ public class Position extends TopicSubscriber {
 	 *            The ROS node on which the DEECo node runs.
 	 */
 	private void subscribeAMCL(ConnectedNode connectedNode) {
-		amclTopic = connectedNode
-				.newSubscriber(AMCL_POSITION_TOPIC,
-						PoseWithCovarianceStamped._TYPE);
+		amclTopic = connectedNode.newSubscriber(AMCL_POSITION_TOPIC, PoseWithCovarianceStamped._TYPE);
 		amclTopic.addMessageListener(new MessageListener<PoseWithCovarianceStamped>() {
 			@Override
 			public void onNewMessage(PoseWithCovarianceStamped message) {
 				amclPosition = message.getPose();
 
-				Log.d(String.format("AMCL position received: [%f, %f, %f] with orientation [%f, %f, %f, %f].", 
-						amclPosition.getPose().getPosition().getX(), 
-						amclPosition.getPose().getPosition().getY(),
-						amclPosition.getPose().getPosition().getZ(),
-						amclPosition.getPose().getOrientation().getX(),
-						amclPosition.getPose().getOrientation().getY(),
-						amclPosition.getPose().getOrientation().getZ(),
+				Log.d(String.format("AMCL position received: [%f, %f, %f] with orientation [%f, %f, %f, %f].",
+						amclPosition.getPose().getPosition().getX(), amclPosition.getPose().getPosition().getY(),
+						amclPosition.getPose().getPosition().getZ(), amclPosition.getPose().getOrientation().getX(),
+						amclPosition.getPose().getOrientation().getY(), amclPosition.getPose().getOrientation().getZ(),
 						amclPosition.getPose().getOrientation().getW()));
 			}
 		});
@@ -299,8 +287,7 @@ public class Position extends TopicSubscriber {
 	 *            The ROS node on which the DEECo node runs.
 	 */
 	private void subscribeSimpleGoal(ConnectedNode connectedNode) {
-		goalTopic = connectedNode.newPublisher(
-				SIMPLE_GOAL_TOPIC, PoseStamped._TYPE);
+		goalTopic = connectedNode.newPublisher(SIMPLE_GOAL_TOPIC, PoseStamped._TYPE);
 		connectedNode.executeCancellableLoop(new CancellableLoop() {
 			@Override
 			protected void setup() {
@@ -319,13 +306,10 @@ public class Position extends TopicSubscriber {
 				goalMsg.getHeader().setStamp(connectedNode.getCurrentTime());
 				goalTopic.publish(goalMsg);
 
-				Log.d(String.format("Simple goal set to position: [%f, %f, %f] with orientation [%f, %f, %f, %f].", 
-						simpleGoal.getPosition().getX(), 
-						simpleGoal.getPosition().getY(),
-						simpleGoal.getPosition().getZ(),
-						simpleGoal.getOrientation().getX(),
-						simpleGoal.getOrientation().getY(),
-						simpleGoal.getOrientation().getZ(),
+				Log.d(String.format("Simple goal set to position: [%f, %f, %f] with orientation [%f, %f, %f, %f].",
+						simpleGoal.getPosition().getX(), simpleGoal.getPosition().getY(),
+						simpleGoal.getPosition().getZ(), simpleGoal.getOrientation().getX(),
+						simpleGoal.getOrientation().getY(), simpleGoal.getOrientation().getZ(),
 						simpleGoal.getOrientation().getW()));
 			}
 		});
@@ -338,8 +322,7 @@ public class Position extends TopicSubscriber {
 	 *            The ROS node on which the DEECo node runs.
 	 */
 	private void subscribeTF(ConnectedNode connectedNode) {
-		transformTopic = connectedNode.newSubscriber(
-				TRANSFORMATION_TOPIC, TFMessage._TYPE);
+		transformTopic = connectedNode.newSubscriber(TRANSFORMATION_TOPIC, TFMessage._TYPE);
 		transformTopic.addMessageListener(new MessageListener<TFMessage>() {
 			@Override
 			public void onNewMessage(TFMessage message) {
@@ -383,14 +366,12 @@ public class Position extends TopicSubscriber {
 	 * @return The time measured by GPS.
 	 */
 	public long getGpsTime() {
-		return gpsTime != null
-			? gpsTime.totalNsecs() * 1000
-			: 0;
+		return gpsTime != null ? gpsTime.totalNsecs() * 1000 : 0;
 	}
 
 	/**
-	 * Probabilistic position of the robot computed by the <a
-	 * href="http://wiki.ros.org/amcl">AMCL</a> algorithm.
+	 * Probabilistic position of the robot computed by the
+	 * <a href="http://wiki.ros.org/amcl">AMCL</a> algorithm.
 	 * 
 	 * @return The probabilistic position of the robot.
 	 */
@@ -419,8 +400,8 @@ public class Position extends TopicSubscriber {
 	 * @param oriW
 	 *            The W coordinate for orientation.
 	 */
-	public void setSimpleGoal(double posX, double posY, double posZ,
-			double oriX, double oriY, double oriZ, double oriW) {
+	public void setSimpleGoal(double posX, double posY, double posZ, double oriX, double oriY, double oriZ,
+			double oriW) {
 		simpleGoal.getPosition().setX(posX);
 		simpleGoal.getPosition().setY(posY);
 		simpleGoal.getPosition().setZ(posZ);
@@ -432,6 +413,18 @@ public class Position extends TopicSubscriber {
 		synchronized (simpleGoalLock) {
 			simpleGoalLock.notify();
 		}
+	}
+
+	/**
+	 * Transform given {@link geometry_msgs.Point} into {@link Point} instance.
+	 * 
+	 * @param point
+	 *            The {@link geometry_msgs.Point} to be transformed.
+	 * @return A {@link Point} with the values taken from the given point
+	 *         argument.
+	 */
+	private Point pointFromMessage(geometry_msgs.Point point) {
+		return new Point(point.getX(), point.getY(), point.getZ());
 	}
 
 }
