@@ -10,10 +10,11 @@ import org.ros.node.topic.Subscriber;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.GpsData;
+import cz.cuni.mff.d3s.jdeeco.ros.datatypes.Orientation;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.Point;
+import cz.cuni.mff.d3s.jdeeco.ros.datatypes.PoseWithCovariance;
 import geometry_msgs.Pose;
 import geometry_msgs.PoseStamped;
-import geometry_msgs.PoseWithCovariance;
 import geometry_msgs.PoseWithCovarianceStamped;
 import nav_msgs.Odometry;
 import sensor_msgs.NavSatFix;
@@ -28,7 +29,6 @@ import tf2_msgs.TFMessage;
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  */
 public class Position extends TopicSubscriber {
-	// TODO: document rosjava types that are seen by the user of this interface
 
 	/**
 	 * A switch that guards the subscription to "tf" (transformations) topic. If
@@ -202,8 +202,7 @@ public class Position extends TopicSubscriber {
 			public void onNewMessage(Odometry message) {
 				odometry = pointFromMessage(message.getPose().getPose().getPosition());
 
-				Log.d(String.format("Odometry value received: [%f, %f, %f].",
-						odometry.x, odometry.y, odometry.z));
+				Log.d(String.format("Odometry value received: [%f, %f, %f].", odometry.x, odometry.y, odometry.z));
 			}
 		});
 
@@ -269,13 +268,13 @@ public class Position extends TopicSubscriber {
 		amclTopic.addMessageListener(new MessageListener<PoseWithCovarianceStamped>() {
 			@Override
 			public void onNewMessage(PoseWithCovarianceStamped message) {
-				amclPosition = message.getPose();
+				amclPosition = pointFromMessage(message.getPose());
 
 				Log.d(String.format("AMCL position received: [%f, %f, %f] with orientation [%f, %f, %f, %f].",
-						amclPosition.getPose().getPosition().getX(), amclPosition.getPose().getPosition().getY(),
-						amclPosition.getPose().getPosition().getZ(), amclPosition.getPose().getOrientation().getX(),
-						amclPosition.getPose().getOrientation().getY(), amclPosition.getPose().getOrientation().getZ(),
-						amclPosition.getPose().getOrientation().getW()));
+						amclPosition.position.x, amclPosition.position.y,
+						amclPosition.position.z, amclPosition.orientation.x,
+						amclPosition.orientation.y, amclPosition.orientation.z,
+						amclPosition.orientation.w));
 			}
 		});
 	}
@@ -357,15 +356,9 @@ public class Position extends TopicSubscriber {
 	 * @return The position and time measured by the GPS module.
 	 */
 	public GpsData getGpsData() {
-		long msTime = gpsTime != null
-				? gpsTime.totalNsecs() * 1000
-				: 0;
-				
-		return new GpsData(
-				gpsPosition.getLatitude(),
-				gpsPosition.getLongitude(),
-				gpsPosition.getAltitude(),
-				msTime);
+		long msTime = gpsTime != null ? gpsTime.totalNsecs() * 1000 : 0;
+
+		return new GpsData(gpsPosition.getLatitude(), gpsPosition.getLongitude(), gpsPosition.getAltitude(), msTime);
 	}
 
 	/**
@@ -424,6 +417,25 @@ public class Position extends TopicSubscriber {
 	 */
 	private Point pointFromMessage(geometry_msgs.Point point) {
 		return new Point(point.getX(), point.getY(), point.getZ());
+	}
+
+	/**
+	 * Transform given {@link geometry_msgs.PoseWithCovariance} into
+	 * {@link PoseWithCovariance} instance.
+	 * 
+	 * @param pose
+	 *            The {@link geometry_msgs.PoseWithCovariance} to be transformed.
+	 * @return A {@link PoseWithCovariance} with the values taken from the given point
+	 *         argument.
+	 */
+	private PoseWithCovariance pointFromMessage(geometry_msgs.PoseWithCovariance pose) {
+		geometry_msgs.Point point = pose.getPose().getPosition();
+		geometry_msgs.Quaternion orientation = pose.getPose().getOrientation();
+		return new PoseWithCovariance(
+				new Point(point.getX(), point.getY(), point.getZ()),
+				new Orientation(orientation.getX(), orientation.getY(),
+						orientation.getZ(), orientation.getW()),
+				pose.getCovariance());
 	}
 
 }
