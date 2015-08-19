@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.jdeeco.ros;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,7 +46,7 @@ public class FloorDistance extends TopicSubscriber {
 	private Map<FloorSensorID, Short> floorDistances;
 
 	/**
-	 * Create a new instance of  {@link FloorDistance}.
+	 * Create a new instance of {@link FloorDistance}.
 	 */
 	public FloorDistance() {
 		floorSensorStates = new HashMap<>();
@@ -64,23 +65,20 @@ public class FloorDistance extends TopicSubscriber {
 	 */
 	@Override
 	protected void subscribeDescendant(ConnectedNode connectedNode) {
-		cliffTopic = connectedNode.newSubscriber(
-				CLIFF_TOPIC, CliffEvent._TYPE);
+		cliffTopic = connectedNode.newSubscriber(CLIFF_TOPIC, CliffEvent._TYPE);
 		cliffTopic.addMessageListener(new MessageListener<CliffEvent>() {
 			@Override
 			public void onNewMessage(CliffEvent message) {
-				FloorSensorID sensor = FloorSensorID.fromByte(message
-						.getSensor());
-				FloorSensorState state = FloorSensorState.fromByte(message
-						.getState());
+				FloorSensorID sensor = FloorSensorID.fromByte(message.getSensor());
+				FloorSensorState state = FloorSensorState.fromByte(message.getState());
 				if (sensor != null) {
 					if (state != null) {
 						floorSensorStates.put(sensor, state);
 					}
 					floorDistances.put(sensor, message.getBottom());
 				}
-				Log.d(String.format("FloorDistance from sensor %d changed to %d.",
-						message.getSensor(), message.getState()));
+				Log.d(String.format("FloorDistance from sensor %d changed to %d.", message.getSensor(),
+						message.getState()));
 			}
 		});
 	}
@@ -93,11 +91,11 @@ public class FloorDistance extends TopicSubscriber {
 	 */
 	@Override
 	void unsubscribe(Node node) {
-		if(cliffTopic != null){
+		if (cliffTopic != null) {
 			cliffTopic.shutdown();
 		}
 	}
-	
+
 	/**
 	 * Get the state sensed by the specified floor sensor.
 	 * 
@@ -111,6 +109,15 @@ public class FloorDistance extends TopicSubscriber {
 			return floorSensorStates.get(sensor);
 		}
 		return null;
+	}
+
+	/**
+	 * Get states from all the floor sensors.
+	 * 
+	 * @return The states from all the floor sensors.
+	 */
+	public Map<FloorSensorID, FloorSensorState> getAllFloorStates() {
+		return Collections.unmodifiableMap(floorSensorStates);
 	}
 
 	/**
@@ -128,5 +135,14 @@ public class FloorDistance extends TopicSubscriber {
 			return floorDistances.get(sensor);
 		}
 		return null;
+	}
+
+	/**
+	 * Get distances from all the floor sensors.
+	 * 
+	 * @return The distances from all the floor sensors.
+	 */
+	public Map<FloorSensorID, Short> getAllFloorDistances() {
+		return Collections.unmodifiableMap(floorDistances);
 	}
 }

@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.jdeeco.ros;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -99,6 +100,15 @@ public class DockIR extends TopicSubscriber {
 			return dockingIRSignal.get(diod);
 		}
 		return null;
+	}
+	
+	/**
+	 * Get all the docking IR signals measured by the robot.
+	 * 
+	 * @return All the docking IR signals measured by the robot.
+	 */
+	public Map<DockingIRDiod, DockingIRSignal> getAllDockIR(){
+		return Collections.unmodifiableMap(dockingIRSignal);
 	}
 
 }

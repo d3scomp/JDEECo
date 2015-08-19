@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.jdeeco.ros;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -98,5 +99,14 @@ public class Buttons extends TopicSubscriber {
 			return buttonState.get(button);
 		}
 		return null;
+	}
+	
+	/**
+	 * Get the state of all robot's buttons.
+	 * 
+	 * @return The state of all robot's buttons.
+	 */
+	public Map<ButtonID, ButtonState> getAllButtons(){
+		return Collections.unmodifiableMap(buttonState);
 	}
 }

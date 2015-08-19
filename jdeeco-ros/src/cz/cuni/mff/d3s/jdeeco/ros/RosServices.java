@@ -37,35 +37,37 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 	 * The ROS_MASTER_URI value.
 	 */
 	private String ros_master;
-	
+
 	/**
 	 * he ROS_HOST address.
 	 */
 	private String ros_host;
-	
+
 	/**
 	 * After {@link #onStart(ConnectedNode)} is called by ROS the connected
-	 * contains a reference to the corresponding ROS node.  
+	 * contains a reference to the corresponding ROS node.
 	 */
 	private ConnectedNode connectedNode;
-	
+
 	/**
-	 * A list of {@link TopicSubscriber}s that was registered in the 
-	 * {@link #register(TopicSubscriber)} method. Serves for correct
-	 * termination of all the connection made to the ROS node.
+	 * A list of {@link TopicSubscriber}s that was registered in the
+	 * {@link #register(TopicSubscriber)} method. Serves for correct termination
+	 * of all the connection made to the ROS node.
 	 */
 	private List<TopicSubscriber> topicSubscribers;
 
 	/**
 	 * Create new instance of the {@link RosServices} class.
 	 * 
-	 * @param ros_master The ROS_MASTER_URI value.
-	 * @param ros_host The ROS_HOST address.
+	 * @param ros_master
+	 *            The ROS_MASTER_URI value.
+	 * @param ros_host
+	 *            The ROS_HOST address.
 	 */
 	public RosServices(String ros_master, String ros_host) {
 		connectedNode = null;
 		topicSubscribers = new ArrayList<>();
-		
+
 		this.ros_master = ros_master;
 		this.ros_host = ros_host;
 	}
@@ -81,31 +83,54 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 	}
 
 	/**
-	 * Register the given @{link TopicSubscriber}. This method is allowed
-	 * to be called after {@link #onStart(ConnectedNode)} was invoked by ROS,
-	 * but before {@link #onShutdown(Node)} is called.
+	 * Register the given @{link TopicSubscriber}. This method is allowed to be
+	 * called after {@link #onStart(ConnectedNode)} was invoked by ROS, but
+	 * before {@link #onShutdown(Node)} is called.
 	 * 
-	 * @param subscriber The {@link TopicSubscriber} to be subscribed to
-	 * ROS topics and services.
+	 * @param subscriber
+	 *            The {@link TopicSubscriber} to be subscribed to ROS topics and
+	 *            services.
 	 * 
-	 * @throws IllegalArgumentException If the subscriber argument is null.
-	 * @throws IllegalStateException If the {@link #connectedNode} was not
-	 * initialized (in {@link #onStart(ConnectedNode)} method) or was terminated
-	 * (in {@link #onShutdown(Node)}) method.
+	 * @throws IllegalArgumentException
+	 *             If the subscriber argument is null.
+	 * @throws IllegalStateException
+	 *             If the {@link #connectedNode} was not initialized (in
+	 *             {@link #onStart(ConnectedNode)} method) or was terminated (in
+	 *             {@link #onShutdown(Node)}) method.
 	 */
 	public void register(TopicSubscriber subscriber) {
 		if (subscriber == null) {
-			throw new IllegalArgumentException(String.format(
-					"The \"%s\" argument cannot be null.", "subscriber"));
+			throw new IllegalArgumentException(String.format("The \"%s\" argument cannot be null.", "subscriber"));
 		}
 		if (connectedNode == null) {
-			throw new IllegalStateException(String.format(
-					"No ROS node connected. %s are either not initialized or ROS node was shutdown.",
-					this.getClass().getName()));
+			throw new IllegalStateException(
+					String.format("No ROS node connected. %s are either not initialized or ROS node was shutdown.",
+							this.getClass().getName()));
 		}
-		
+
 		topicSubscribers.add(subscriber);
 		subscriber.subscribe(connectedNode);
+	}
+
+	/**
+	 * Provides an instance of a ROS service if the requested service is
+	 * registered. If the requested service has not been registered a null is
+	 * returned.
+	 * 
+	 * @param serviceType
+	 *            The class of the requested ROS service.
+	 * @return An instance of the requested ROS service if such a service has
+	 *         been registered, null otherwise.
+	 */
+	@SuppressWarnings("unchecked")
+	public <T extends TopicSubscriber> T getService(Class<T> serviceType) {
+		for (TopicSubscriber service : topicSubscribers) {
+			if (service.getClass() == serviceType) {
+				return (T) service;
+			}
+		}
+
+		return null;
 	}
 
 	/**
@@ -114,28 +139,27 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 	 * 
 	 * @param contained
 	 *            is the DEECo container of this DEECo node.
-	 * @throws PluginInitFailedException if the {@link #ros_master} URI is malformed
-	 * or the ROS node couldn't be started within {@link #ROS_START_TIMEOUT}. 
+	 * @throws PluginInitFailedException
+	 *             if the {@link #ros_master} URI is malformed or the ROS node
+	 *             couldn't be started within {@link #ROS_START_TIMEOUT}.
 	 */
 	@Override
 	public void init(DEECoContainer container) throws PluginInitFailedException {
 		Log.i("Starting ROS node.");
 
 		try {
-			NodeConfiguration rosNodeConfig = NodeConfiguration.newPublic(
-					ros_host, new URI(ros_master));
+			NodeConfiguration rosNodeConfig = NodeConfiguration.newPublic(ros_host, new URI(ros_master));
 			NodeMainExecutor rosNode = DefaultNodeMainExecutor.newDefault();
 
 			rosNode.execute(this, rosNodeConfig);
 		} catch (URISyntaxException e) {
 			throw new PluginInitFailedException("Malformed URI: " + ros_master, e);
 		}
-		
+
 		// Wait defined timeout till the ROS node is started
-		if(!isStarted()){
-			throw new PluginInitFailedException(String.format(
-					"The ROS node not started within %d milliseconds.",
-					ROS_START_TIMEOUT));
+		if (!isStarted()) {
+			throw new PluginInitFailedException(
+					String.format("The ROS node not started within %d milliseconds.", ROS_START_TIMEOUT));
 		}
 	}
 
@@ -148,12 +172,9 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 		final Date startTime = new Date();
 		Date currentTime = new Date();
 
-		Log.i(String.format(
-				"Waiting up to %d milliseconds for ROS node to be started.",
-				ROS_START_TIMEOUT));
+		Log.i(String.format("Waiting up to %d milliseconds for ROS node to be started.", ROS_START_TIMEOUT));
 
-		while (currentTime.getTime() < startTime.getTime()
-				+ ROS_START_TIMEOUT) {
+		while (currentTime.getTime() < startTime.getTime() + ROS_START_TIMEOUT) {
 			try {
 				// Wait a while between checks
 				Thread.sleep(1000);
@@ -188,8 +209,7 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 	 */
 	@Override
 	public void onError(Node node, Throwable error) {
-		Log.e(String.format("ROS node experienced an error: %s",
-				error.getMessage()));
+		Log.e(String.format("ROS node experienced an error: %s", error.getMessage()));
 	}
 
 	/**

@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.jdeeco.ros;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -301,6 +302,15 @@ public class Wheels extends TopicSubscriber {
 			return wheelState.get(wheel);
 		}
 		return null;
+	}
+	
+	/**
+	 * Get state of all the wheels.
+	 * 
+	 * @return The state of all the wheels.
+	 */
+	public Map<WheelID, WheelState> getAllWheels(){
+		return Collections.unmodifiableMap(wheelState);
 	}
 
 	/**
