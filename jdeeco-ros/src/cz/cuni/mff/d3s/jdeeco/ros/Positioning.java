@@ -268,12 +268,11 @@ public class Positioning extends TopicSubscriber {
 		amclTopic.addMessageListener(new MessageListener<PoseWithCovarianceStamped>() {
 			@Override
 			public void onNewMessage(PoseWithCovarianceStamped message) {
-				amclPosition = pointFromMessage(message.getPose());
+				amclPosition = poseFromMessage(message.getPose());
 
 				Log.d(String.format("AMCL position received: [%f, %f, %f] with orientation [%f, %f, %f, %f].",
-						amclPosition.position.x, amclPosition.position.y,
-						amclPosition.position.z, amclPosition.orientation.x,
-						amclPosition.orientation.y, amclPosition.orientation.z,
+						amclPosition.position.x, amclPosition.position.y, amclPosition.position.z,
+						amclPosition.orientation.x, amclPosition.orientation.y, amclPosition.orientation.z,
 						amclPosition.orientation.w));
 			}
 		});
@@ -374,33 +373,21 @@ public class Positioning extends TopicSubscriber {
 	/**
 	 * Set a goal for the "move base" service. After the goal is set the robot
 	 * starts to move to reach it. The goal consist of a position and an
-	 * orientation. The position is expressed by three cartesian coordinates (X,
-	 * Y, Z). The orientation is expressed by quaternion (X, Y, Z, W).
+	 * orientation.
 	 * 
-	 * @param posX
-	 *            The X coordinate for position.
-	 * @param posY
-	 *            The Y coordinate for position.
-	 * @param posZ
-	 *            The Z coordinate for position.
-	 * @param oriX
-	 *            The X coordinate for orientation.
-	 * @param oriY
-	 *            The Y coordinate for orientation.
-	 * @param oriZ
-	 *            The Z coordinate for orientation.
-	 * @param oriW
-	 *            The W coordinate for orientation.
+	 * @param position
+	 *            The desired position of the robot.
+	 * @param orientation
+	 *            The desired orientation of the robot.
 	 */
-	public void setSimpleGoal(double posX, double posY, double posZ, double oriX, double oriY, double oriZ,
-			double oriW) {
-		simpleGoal.getPosition().setX(posX);
-		simpleGoal.getPosition().setY(posY);
-		simpleGoal.getPosition().setZ(posZ);
-		simpleGoal.getOrientation().setX(oriX);
-		simpleGoal.getOrientation().setY(oriY);
-		simpleGoal.getOrientation().setZ(oriZ);
-		simpleGoal.getOrientation().setW(oriW);
+	public void setSimpleGoal(Position position, Orientation orientation) {
+		simpleGoal.getPosition().setX(position.x);
+		simpleGoal.getPosition().setY(position.y);
+		simpleGoal.getPosition().setZ(position.z);
+		simpleGoal.getOrientation().setX(orientation.x);
+		simpleGoal.getOrientation().setY(orientation.y);
+		simpleGoal.getOrientation().setZ(orientation.z);
+		simpleGoal.getOrientation().setW(orientation.w);
 
 		synchronized (simpleGoalLock) {
 			simpleGoalLock.notify();
@@ -408,7 +395,8 @@ public class Positioning extends TopicSubscriber {
 	}
 
 	/**
-	 * Transform given {@link geometry_msgs.Point} into {@link Position} instance.
+	 * Transform given {@link geometry_msgs.Point} into {@link Position}
+	 * instance.
 	 * 
 	 * @param point
 	 *            The {@link geometry_msgs.Point} to be transformed.
@@ -424,17 +412,16 @@ public class Positioning extends TopicSubscriber {
 	 * {@link PoseWithCovariance} instance.
 	 * 
 	 * @param pose
-	 *            The {@link geometry_msgs.PoseWithCovariance} to be transformed.
-	 * @return A {@link PoseWithCovariance} with the values taken from the given point
-	 *         argument.
+	 *            The {@link geometry_msgs.PoseWithCovariance} to be
+	 *            transformed.
+	 * @return A {@link PoseWithCovariance} with the values taken from the given
+	 *         point argument.
 	 */
-	private PoseWithCovariance pointFromMessage(geometry_msgs.PoseWithCovariance pose) {
+	private PoseWithCovariance poseFromMessage(geometry_msgs.PoseWithCovariance pose) {
 		geometry_msgs.Point point = pose.getPose().getPosition();
 		geometry_msgs.Quaternion orientation = pose.getPose().getOrientation();
-		return new PoseWithCovariance(
-				new Position(point.getX(), point.getY(), point.getZ()),
-				new Orientation(orientation.getX(), orientation.getY(),
-						orientation.getZ(), orientation.getW()),
+		return new PoseWithCovariance(new Position(point.getX(), point.getY(), point.getZ()),
+				new Orientation(orientation.getX(), orientation.getY(), orientation.getZ(), orientation.getW()),
 				pose.getCovariance());
 	}
 
