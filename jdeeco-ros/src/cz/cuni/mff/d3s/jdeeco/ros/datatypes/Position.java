@@ -3,13 +3,13 @@ package cz.cuni.mff.d3s.jdeeco.ros.datatypes;
 import java.io.Serializable;
 
 /**
- * {@link Point} contains Cartesian coordinates X, Y and Z to determine a
+ * {@link Position} contains Cartesian coordinates X, Y and Z to determine a
  * position.
  * 
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  *
  */
-public class Point implements Serializable {
+public class Position implements Serializable {
 
 	/**
 	 * Generated UID.
@@ -32,7 +32,7 @@ public class Point implements Serializable {
 	public final double z;
 
 	/**
-	 * Create a new {@link Point} with the given coordinate values.
+	 * Create a new {@link Position} with the given coordinate values.
 	 * 
 	 * @param x
 	 *            The X coordinate.
@@ -41,7 +41,7 @@ public class Point implements Serializable {
 	 * @param z
 	 *            The Z coordinate.
 	 */
-	public Point(double x, double y, double z) {
+	public Position(double x, double y, double z) {
 		this.x = x;
 		this.y = y;
 		this.z = z;

@@ -11,7 +11,7 @@ import org.ros.node.topic.Subscriber;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.GpsData;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.Orientation;
-import cz.cuni.mff.d3s.jdeeco.ros.datatypes.Point;
+import cz.cuni.mff.d3s.jdeeco.ros.datatypes.Position;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.PoseWithCovariance;
 import geometry_msgs.Pose;
 import geometry_msgs.PoseStamped;
@@ -28,11 +28,11 @@ import tf2_msgs.TFMessage;
  * 
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  */
-public class Position extends TopicSubscriber {
+public class Positioning extends TopicSubscriber {
 
 	/**
 	 * A switch that guards the subscription to "tf" (transformations) topic. If
-	 * true then the {@link Position} object is subscribed to the "tf" topic.
+	 * true then the {@link Positioning} object is subscribed to the "tf" topic.
 	 */
 	private static final boolean ENABLE_TF_LISTENER = false;
 
@@ -103,7 +103,7 @@ public class Position extends TopicSubscriber {
 	/**
 	 * The last position received in the odometry topic.
 	 */
-	private Point odometry;
+	private Position odometry;
 	/**
 	 * The lock to wait and notify on when a odometry reset is requested.
 	 */
@@ -132,9 +132,9 @@ public class Position extends TopicSubscriber {
 	private final Object simpleGoalLock;
 
 	/**
-	 * Create a new instance of {@link Position}.
+	 * Create a new instance of {@link Positioning}.
 	 */
-	public Position() {
+	public Positioning() {
 		resetOdometryLock = new Object();
 		simpleGoalLock = new Object();
 	}
@@ -346,7 +346,7 @@ public class Position extends TopicSubscriber {
 	 * 
 	 * @return last value of the position published in the odometry topic.
 	 */
-	public Point getOdometry() {
+	public Position getOdometry() {
 		return odometry;
 	}
 
@@ -408,15 +408,15 @@ public class Position extends TopicSubscriber {
 	}
 
 	/**
-	 * Transform given {@link geometry_msgs.Point} into {@link Point} instance.
+	 * Transform given {@link geometry_msgs.Point} into {@link Position} instance.
 	 * 
 	 * @param point
 	 *            The {@link geometry_msgs.Point} to be transformed.
-	 * @return A {@link Point} with the values taken from the given point
+	 * @return A {@link Position} with the values taken from the given point
 	 *         argument.
 	 */
-	private Point pointFromMessage(geometry_msgs.Point point) {
-		return new Point(point.getX(), point.getY(), point.getZ());
+	private Position pointFromMessage(geometry_msgs.Point point) {
+		return new Position(point.getX(), point.getY(), point.getZ());
 	}
 
 	/**
@@ -432,7 +432,7 @@ public class Position extends TopicSubscriber {
 		geometry_msgs.Point point = pose.getPose().getPosition();
 		geometry_msgs.Quaternion orientation = pose.getPose().getOrientation();
 		return new PoseWithCovariance(
-				new Point(point.getX(), point.getY(), point.getZ()),
+				new Position(point.getX(), point.getY(), point.getZ()),
 				new Orientation(orientation.getX(), orientation.getY(),
 						orientation.getZ(), orientation.getW()),
 				pose.getCovariance());
