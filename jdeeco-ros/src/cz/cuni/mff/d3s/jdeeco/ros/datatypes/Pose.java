@@ -1,6 +1,7 @@
 package cz.cuni.mff.d3s.jdeeco.ros.datatypes;
 
 import java.io.Serializable;
+import java.util.Locale;
 
 /**
  * {@link Pose} contains Cartesian coordinates to determine a
@@ -38,4 +39,11 @@ public class Pose implements Serializable {
 		this.position = position;
 		this.orientation = orientation;
 	}
+	
+	@Override
+	public String toString() {
+		return String.format(Locale.ENGLISH,
+				"Position: %s Orientation: %s", position, orientation);
+	}
+	
 }

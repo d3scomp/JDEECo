@@ -1,6 +1,7 @@
 package cz.cuni.mff.d3s.jdeeco.ros.datatypes;
 
 import java.io.Serializable;
+import java.util.Locale;
 
 /**
  * {@link Position} contains Cartesian coordinates X, Y and Z to determine a
@@ -47,4 +48,8 @@ public class Position implements Serializable {
 		this.z = z;
 	}
 
+	@Override
+	public String toString() {
+		return String.format(Locale.ENGLISH, "[%f, %f, %f]", x, y, z);
+	}
 }

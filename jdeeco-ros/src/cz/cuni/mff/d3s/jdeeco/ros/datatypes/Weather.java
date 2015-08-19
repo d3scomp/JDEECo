@@ -1,6 +1,7 @@
 package cz.cuni.mff.d3s.jdeeco.ros.datatypes;
 
 import java.io.Serializable;
+import java.util.Locale;
 
 /**
  * Contains values provided by the SHT1x board. These values include humidity
@@ -36,4 +37,10 @@ public class Weather implements Serializable {
 		this.temperature = temperature;
 	}
 
+	@Override
+	public String toString() {
+		return String.format(Locale.ENGLISH, 
+				"Temperature: %f Humidity: %f",
+				temperature, humidity);
+	}
 }

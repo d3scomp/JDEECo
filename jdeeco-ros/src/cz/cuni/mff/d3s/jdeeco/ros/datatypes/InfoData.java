@@ -46,4 +46,10 @@ public class InfoData implements Serializable {
 		softwareInfo = software;
 		hardwareInfo = hardware;
 	}
+	
+	@Override
+	public String toString() {
+		return String.format("Firmware: %s Software: %s Hardware: %s",
+				firmwareInfo, softwareInfo, hardwareInfo);
+	}
 }

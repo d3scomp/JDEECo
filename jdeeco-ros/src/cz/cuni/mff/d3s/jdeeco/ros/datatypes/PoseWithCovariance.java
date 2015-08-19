@@ -1,5 +1,8 @@
 package cz.cuni.mff.d3s.jdeeco.ros.datatypes;
 
+import java.util.Formatter;
+import java.util.Locale;
+
 /**
  * {@link PoseWithCovariance} contains Cartesian coordinates to determine a
  * position and orientation provides the certainty covariance of the pose.
@@ -34,4 +37,23 @@ public class PoseWithCovariance extends Pose {
 		this.covariance = cov;
 	}
 
+	@Override
+	public String toString() {
+		String pose = super.toString();
+		StringBuilder cov = new StringBuilder();
+		try(Formatter formatter = new Formatter(cov, Locale.ENGLISH)){		
+			formatter.format("[");
+			boolean firstIteration = true;
+			for(double d : covariance){
+				if(firstIteration){
+					firstIteration = false;
+				} else {
+					formatter.format(", ");
+				}
+				formatter.format("%f", d);
+			}
+			formatter.format("]");
+		}
+		return String.format("%s Covariance: %s", pose, cov);
+	}
 }

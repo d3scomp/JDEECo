@@ -1,6 +1,7 @@
 package cz.cuni.mff.d3s.jdeeco.ros.datatypes;
 
 import java.io.Serializable;
+import java.util.Locale;
 
 /**
  * {@link Orientation} contains Cartesian coordinates X, Y, Z and W to determine
@@ -55,4 +56,8 @@ public class Orientation implements Serializable {
 		this.w = w;
 	}
 
+	@Override
+	public String toString() {
+		return String.format(Locale.ENGLISH, "[%f, %f, %f, %f]", x, y, z, w);
+	}
 }

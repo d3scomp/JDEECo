@@ -1,6 +1,7 @@
 package cz.cuni.mff.d3s.jdeeco.ros.datatypes;
 
 import java.io.Serializable;
+import java.util.Locale;
 
 /**
  * Encapsulates values that determine the velocity of Turtlebot. The velocity is
@@ -98,5 +99,12 @@ public class Velocity implements Serializable {
 		
 		this.linear = linear;
 		this.angular = angular;
+	}
+	
+	@Override
+	public String toString() {
+		return String.format(Locale.ENGLISH,
+				"Linear: %.3f Angular: %3.f",
+				linear, angular);
 	}
 }

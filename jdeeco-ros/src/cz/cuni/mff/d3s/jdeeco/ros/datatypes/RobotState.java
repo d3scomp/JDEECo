@@ -149,4 +149,40 @@ public class RobotState implements Serializable {
 			wheelStates = null;
 		}
 	}
+	
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Bumper: ").append(bumper).append("\n");
+		for(ButtonID buttonId : buttons.keySet()){
+			builder.append("Button ").append(buttonId).append(": ");
+			builder.append(buttons.get(buttonId)).append("\n");
+		}
+		for(DockingIRDiod diodId : dockIR.keySet()){
+			builder.append("Dock IR ").append(diodId).append(": ");
+			builder.append(dockIR.get(diodId)).append("\n");
+		}
+		for(FloorSensorID floorId : floorStates.keySet()){
+			builder.append("Floor sensor ").append(floorId).append(": ");
+			builder.append(floorStates.get(floorId)).append(" (");
+			if(floorDistances.containsKey(floorId)){
+				builder.append(floorDistances.get(floorId));
+			} else {
+				builder.append("null");
+			}
+			builder.append(")\n");
+		}
+		builder.append("Version: ").append(versionInfo).append("\n");
+		builder.append("Odometry: ").append(odometry).append("\n");
+		builder.append("GPS: ").append(gpsData).append("\n");
+		builder.append("Position: ").append(position).append("\n");
+		builder.append(weather).append("\n");
+		builder.append("Motor power: ").append(motorPower).append("\n");
+		for(WheelID wheelId : wheelStates.keySet()){
+			builder.append(wheelId).append("Wheel ").append(": ");
+			builder.append(wheelStates.get(wheelId)).append("\n");
+		}
+		
+		return builder.toString();
+	}
 }
