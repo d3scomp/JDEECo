@@ -1,13 +1,13 @@
 package cz.cuni.mff.d3s.jdeeco.ros;
 
-import kobuki_msgs.VersionInfo;
-
 import org.ros.message.MessageListener;
 import org.ros.node.ConnectedNode;
 import org.ros.node.Node;
 import org.ros.node.topic.Subscriber;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.jdeeco.ros.datatypes.InfoData;
+import kobuki_msgs.VersionInfo;
 
 /**
  * Provides methods to obtain information about the robot through ROS.
@@ -29,25 +29,15 @@ public class Info extends TopicSubscriber {
 	private Subscriber<VersionInfo> infoTopic = null;
 
 	/**
-	 * The firmware info.
+	 * The robot's version information.
 	 */
-	private String firmwareInfo;
-	/**
-	 * The hardware info.
-	 */
-	private String hardwareInfo;
-	/**
-	 * The software info.
-	 */
-	private String softwareInfo;
-
+	private InfoData infoData;
+	
 	/**
 	 * Create a new instance of  {@link Info}.
 	 */
 	public Info() {
-		firmwareInfo = "";
-		hardwareInfo = "";
-		softwareInfo = "";
+		infoData = new InfoData("", "", "");
 	}
 
 	/**
@@ -63,9 +53,10 @@ public class Info extends TopicSubscriber {
 		infoTopic.addMessageListener(new MessageListener<VersionInfo>() {
 			@Override
 			public void onNewMessage(VersionInfo message) {
-				firmwareInfo = message.getFirmware();
-				hardwareInfo = message.getHardware();
-				softwareInfo = message.getSoftware();
+				infoData = new InfoData(
+						message.getFirmware(),
+						message.getHardware(),
+						message.getSoftware());
 
 				Log.d("Mobile base version info received.");
 			}
@@ -86,29 +77,12 @@ public class Info extends TopicSubscriber {
 	}
 
 	/**
-	 * Get the firmware info.
+	 * Get robot's version information.
 	 * 
-	 * @return The firmware info.
+	 * @return The robot's version information.
 	 */
-	public String getFirmwareInfo() {
-		return firmwareInfo;
+	public InfoData getInfo(){
+		return infoData;
 	}
-
-	/**
-	 * Get the hardware info.
-	 * 
-	 * @return The hardware info.
-	 */
-	public String getHardwareInfo() {
-		return hardwareInfo;
-	}
-
-	/**
-	 * Get the software info.
-	 * 
-	 * @return The software info.
-	 */
-	public String getSoftwareInfo() {
-		return softwareInfo;
-	}
+	
 }
