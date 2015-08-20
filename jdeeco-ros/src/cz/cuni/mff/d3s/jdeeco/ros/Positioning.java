@@ -356,8 +356,17 @@ public class Positioning extends TopicSubscriber {
 	 */
 	public GpsData getGpsData() {
 		long msTime = gpsTime != null ? gpsTime.totalNsecs() * 1000 : 0;
-
-		return new GpsData(gpsPosition.getLatitude(), gpsPosition.getLongitude(), gpsPosition.getAltitude(), msTime);
+		double lat, lon, alt;
+		if(gpsPosition != null){
+			lat = gpsPosition.getLatitude();
+			lon = gpsPosition.getLongitude();
+			alt = gpsPosition.getAltitude();
+		} else {
+			lat = 0;
+			lon = 0;
+			alt = 0;
+		}
+		return new GpsData(lat, lon, alt, msTime);
 	}
 
 	/**
