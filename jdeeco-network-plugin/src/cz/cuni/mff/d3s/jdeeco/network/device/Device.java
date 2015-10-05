@@ -66,7 +66,7 @@ public abstract class Device {
 	 * @param srcAddress
 	 *            source address
 	 */
-	protected void receive(byte[] data, Address srcAddress) {
-		layer1.processL0Packet(data, this, new ReceivedInfo(srcAddress));
+	protected void receive(byte[] data, ReceivedInfo info) {
+		layer1.processL0Packet(data, this, info);
 	}
 }
