@@ -261,7 +261,7 @@ public class CorrelationEnsembleFactory {
 		// Add the method into the ensemble class
 		ensembleClass.addMethod(mapMethod);
 
-		ensembleClass.writeFile();
+		ensembleClass.writeFile(); // TODO: store the ensemble class files in tmp folder that will be excluded from GIT
 		CorrelationClassLoader loader = new CorrelationClassLoader(CorrelationClassLoader.class.getClassLoader());
 		return loader.loadClass(ensembleClass.getName());
 	}
