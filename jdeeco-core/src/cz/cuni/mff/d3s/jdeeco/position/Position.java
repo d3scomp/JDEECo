@@ -10,7 +10,7 @@ import java.util.Locale;
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  *
  */
-public final class Position implements Serializable, Cloneable {
+public class Position implements Serializable, Cloneable {
 
 	/**
 	 * Generated serial version UID.
