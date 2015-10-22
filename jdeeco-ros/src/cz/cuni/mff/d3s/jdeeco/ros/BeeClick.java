@@ -30,6 +30,7 @@ import cz.cuni.mff.d3s.jdeeco.network.address.Address;
 import cz.cuni.mff.d3s.jdeeco.network.address.MANETBroadcastAddress;
 import cz.cuni.mff.d3s.jdeeco.network.device.Device;
 import cz.cuni.mff.d3s.jdeeco.network.l1.Layer1;
+import cz.cuni.mff.d3s.jdeeco.network.l1.ReceivedInfo;
 
 /**
  * The Bee Click (MRF24J40) networking device. This device can be used for DEECo
@@ -181,10 +182,8 @@ public class BeeClick extends TopicSubscriber {
 											backingArray,
 											bufferData.arrayOffset(),
 											backingArray.length);
-									receive(messageData,
-											new MANETBroadcastAddress(String
-													.format("%d", message
-															.getSrcSAddr())));
+									Address sourceAddress = new MANETBroadcastAddress(String.format("%d", message.getSrcSAddr()));
+									receive(messageData, new ReceivedInfo(sourceAddress));
 								}
 							}, "BeeClickComm_receive", null);
 							Log.d("BeeClickDevice received data.");
