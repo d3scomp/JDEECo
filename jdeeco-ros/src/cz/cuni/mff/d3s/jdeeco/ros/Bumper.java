@@ -22,7 +22,7 @@ public class Bumper extends TopicSubscriber {
 	/**
 	 * The name of the bumper topic.
 	 */
-	private static final String BUMPER_TOPIC = "/mobile_base/events/bumper";
+	private static final String BUMPER_TOPIC = "mobile_base/events/bumper";
 
 	/**
 	 * The bumper topic.
@@ -50,7 +50,7 @@ public class Bumper extends TopicSubscriber {
 	@Override
 	protected void subscribeDescendant(ConnectedNode connectedNode) {
 		bumperTopic = connectedNode.newSubscriber(
-				BUMPER_TOPIC, BumperEvent._TYPE);
+				rosServices.getNamespace() + BUMPER_TOPIC, BumperEvent._TYPE);
 		bumperTopic.addMessageListener(new MessageListener<BumperEvent>() {
 			@Override
 			public void onNewMessage(BumperEvent message) {

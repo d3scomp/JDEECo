@@ -27,7 +27,7 @@ public class Buttons extends TopicSubscriber {
 	/**
 	 * The name of the topic for button state updates.
 	 */
-	private static final String BUTTON_TOPIC = "/mobile_base/events/button";
+	private static final String BUTTON_TOPIC = "mobile_base/events/button";
 
 	/**
 	 * The topic for button state updates.
@@ -58,7 +58,7 @@ public class Buttons extends TopicSubscriber {
 	@Override
 	protected void subscribeDescendant(ConnectedNode connectedNode) {
 		buttonTopic = connectedNode.newSubscriber(
-				BUTTON_TOPIC, ButtonEvent._TYPE);
+				rosServices.getNamespace() + BUTTON_TOPIC, ButtonEvent._TYPE);
 		buttonTopic.addMessageListener(new MessageListener<ButtonEvent>() {
 			@Override
 			public void onNewMessage(ButtonEvent message) {

@@ -21,7 +21,7 @@ public class Info extends TopicSubscriber {
 	/**
 	 * The name of the topic for version info messages.
 	 */
-	private static final String INFO_TOPIC = "/mobile_base/version_info";
+	private static final String INFO_TOPIC = "mobile_base/version_info";
 	
 	/**
 	 * The topic for version info messages.
@@ -49,7 +49,7 @@ public class Info extends TopicSubscriber {
 	@Override
 	protected void subscribeDescendant(ConnectedNode connectedNode) {
 		infoTopic = connectedNode.newSubscriber(
-				INFO_TOPIC, VersionInfo._TYPE);
+				rosServices.getNamespace() + INFO_TOPIC, VersionInfo._TYPE);
 		infoTopic.addMessageListener(new MessageListener<VersionInfo>() {
 			@Override
 			public void onNewMessage(VersionInfo message) {

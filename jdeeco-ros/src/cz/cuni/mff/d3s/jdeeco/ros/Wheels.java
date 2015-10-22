@@ -31,15 +31,15 @@ public class Wheels extends TopicSubscriber {
 	/**
 	 * The name of the velocity topic.
 	 */
-	private static final String VELOCITY_TOPIC = "/mobile_base/commands/velocity";
+	private static final String VELOCITY_TOPIC = "mobile_base/commands/velocity";
 	/**
 	 * The name of the topic for motor power messages.
 	 */
-	private static final String MOTOR_POWER_TOPIC = "/mobile_base/commands/motor_power";
+	private static final String MOTOR_POWER_TOPIC = "mobile_base/commands/motor_power";
 	/**
 	 * The name of the topic to report wheel drop changes.
 	 */
-	private static final String WHEEL_DROP_TOPIC = "/mobile_base/events/wheel_drop";
+	private static final String WHEEL_DROP_TOPIC = "mobile_base/events/wheel_drop";
 
 	/**
 	 * The velocity topic.
@@ -145,7 +145,7 @@ public class Wheels extends TopicSubscriber {
 	 *            The ROS node on which the DEECo node runs.
 	 */
 	private void subscribeVelocity(ConnectedNode connectedNode) {
-		velocityTopic = connectedNode.newPublisher(VELOCITY_TOPIC, Twist._TYPE);
+		velocityTopic = connectedNode.newPublisher(rosServices.getNamespace() + VELOCITY_TOPIC, Twist._TYPE);
 		connectedNode.executeCancellableLoop(new CancellableLoop() {
 			@Override
 			protected void setup() {
@@ -187,7 +187,7 @@ public class Wheels extends TopicSubscriber {
 	 */
 	private void subscribeMotorPower(ConnectedNode connectedNode) {
 		// Subscribe to publish motor power changes
-		motorPowerTopicPub = connectedNode.newPublisher(MOTOR_POWER_TOPIC, kobuki_msgs.MotorPower._TYPE);
+		motorPowerTopicPub = connectedNode.newPublisher(rosServices.getNamespace() + MOTOR_POWER_TOPIC, kobuki_msgs.MotorPower._TYPE);
 		connectedNode.executeCancellableLoop(new CancellableLoop() {
 			@Override
 			protected void setup() {
@@ -210,7 +210,7 @@ public class Wheels extends TopicSubscriber {
 		});
 
 		// Subscribe to listen on motor power changes
-		Subscriber<kobuki_msgs.MotorPower> motorPowerTopicSub = connectedNode.newSubscriber(MOTOR_POWER_TOPIC,
+		Subscriber<kobuki_msgs.MotorPower> motorPowerTopicSub = connectedNode.newSubscriber(rosServices.getNamespace() + MOTOR_POWER_TOPIC,
 				kobuki_msgs.MotorPower._TYPE);
 		motorPowerTopicSub.addMessageListener(new MessageListener<kobuki_msgs.MotorPower>() {
 			@Override
@@ -233,7 +233,7 @@ public class Wheels extends TopicSubscriber {
 	 *            The ROS node on which the DEECo node runs.
 	 */
 	private void subscribeWheelDrop(ConnectedNode connectedNode) {
-		wheelDropTopic = connectedNode.newSubscriber(WHEEL_DROP_TOPIC, WheelDropEvent._TYPE);
+		wheelDropTopic = connectedNode.newSubscriber(rosServices.getNamespace() + WHEEL_DROP_TOPIC, WheelDropEvent._TYPE);
 		wheelDropTopic.addMessageListener(new MessageListener<WheelDropEvent>() {
 			@Override
 			public void onNewMessage(WheelDropEvent message) {

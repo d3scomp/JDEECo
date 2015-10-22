@@ -43,11 +43,11 @@ public class BeeClick extends TopicSubscriber {
 	/**
 	 * The name of ROS service used for broadcasting.
 	 */
-	private static final String BEE_SEND_SERVICE = "/MRF24J40/broadcast_packet";
+	private static final String BEE_SEND_SERVICE = "MRF24J40/broadcast_packet";
 	/**
 	 * The name of ROS topic used for receiving broadcasted data.
 	 */
-	private static final String BEE_RECEIVE_TOPIC = "/MRF24J40/received_packets";
+	private static final String BEE_RECEIVE_TOPIC = "MRF24J40/received_packets";
 
 	/**
 	 * The DEECo timer responsible for the invocation of scheduled events.
@@ -162,7 +162,7 @@ public class BeeClick extends TopicSubscriber {
 		 */
 		public void subscribe(ConnectedNode connectedNode) {
 			// Subscribe packet received topic
-			packetReceiveTopic = connectedNode.newSubscriber(BEE_RECEIVE_TOPIC,
+			packetReceiveTopic = connectedNode.newSubscriber(rosServices.getNamespace() + BEE_RECEIVE_TOPIC,
 					IEEE802154ReceivedPacket._TYPE);
 			packetReceiveTopic
 					.addMessageListener(new MessageListener<IEEE802154ReceivedPacket>() {
@@ -193,7 +193,7 @@ public class BeeClick extends TopicSubscriber {
 			// Subscribe packet sending service
 			try {
 				beePacketService = connectedNode.newServiceClient(
-						BEE_SEND_SERVICE, IEEE802154BroadcastPacket._TYPE);
+						rosServices.getNamespace() + BEE_SEND_SERVICE, IEEE802154BroadcastPacket._TYPE);
 			} catch (ServiceNotFoundException e) {
 				throw new RuntimeException(e);
 			}

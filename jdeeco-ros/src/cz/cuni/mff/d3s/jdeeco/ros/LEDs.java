@@ -44,7 +44,7 @@ public class LEDs extends TopicSubscriber {
 	protected void subscribeDescendant(ConnectedNode connectedNode) {
 		for (LedID ledId : LedID.values()) {
 			final Publisher<Led> ledTopic = connectedNode.newPublisher(
-					ledId.topic, Led._TYPE);
+					rosServices.getNamespace() + ledId.topic, Led._TYPE);
 			ledTopics.put(ledId, ledTopic);
 			connectedNode.executeCancellableLoop(new CancellableLoop() {
 				@Override

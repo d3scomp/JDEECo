@@ -27,6 +27,11 @@ public abstract class TopicSubscriber implements DEECoPlugin {
 	 * called (true) or not (false).
 	 */
 	private boolean subscribed;
+	
+	/**
+	 * Reference to rosServices used by this subscriber
+	 */
+	RosServices rosServices;
 
 	/**
 	 * Initialize new @{link TopicSubscriber} object.
@@ -100,7 +105,7 @@ public abstract class TopicSubscriber implements DEECoPlugin {
 	 */
 	@Override
 	public void init(DEECoContainer container) throws PluginInitFailedException {
-		RosServices rosServices = container.getPluginInstance(RosServices.class);
+		rosServices = container.getPluginInstance(RosServices.class);
 		try{
 			rosServices.register(this);
 		} catch(IllegalStateException e){

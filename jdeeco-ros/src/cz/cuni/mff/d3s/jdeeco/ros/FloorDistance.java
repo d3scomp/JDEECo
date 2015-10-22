@@ -28,7 +28,7 @@ public class FloorDistance extends TopicSubscriber {
 	 * The name of the topic for messages from the distance sensors pointed to
 	 * the floor.
 	 */
-	private static final String CLIFF_TOPIC = "/mobile_base/events/cliff";
+	private static final String CLIFF_TOPIC = "mobile_base/events/cliff";
 
 	/**
 	 * The topic for messages from the distance sensors pointed to the floor.
@@ -65,7 +65,7 @@ public class FloorDistance extends TopicSubscriber {
 	 */
 	@Override
 	protected void subscribeDescendant(ConnectedNode connectedNode) {
-		cliffTopic = connectedNode.newSubscriber(CLIFF_TOPIC, CliffEvent._TYPE);
+		cliffTopic = connectedNode.newSubscriber(rosServices.getNamespace() + CLIFF_TOPIC, CliffEvent._TYPE);
 		cliffTopic.addMessageListener(new MessageListener<CliffEvent>() {
 			@Override
 			public void onNewMessage(CliffEvent message) {

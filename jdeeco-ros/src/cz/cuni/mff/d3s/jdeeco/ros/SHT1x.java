@@ -22,11 +22,11 @@ public class SHT1x extends TopicSubscriber {
 	/**
 	 * The name of the topic for messages from temperature.
 	 */
-	private static final String TEMPERATURE_TOPIC = "/sht1x/temperature";
+	private static final String TEMPERATURE_TOPIC = "sht1x/temperature";
 	/**
 	 * The name of the topic for messages from humidity sensor.
 	 */
-	private static final String HUMIDITY_TOPIC = "/sht1x/humidity";
+	private static final String HUMIDITY_TOPIC = "sht1x/humidity";
 
 	/**
 	 * The topic for messages from temperature.
@@ -62,7 +62,7 @@ public class SHT1x extends TopicSubscriber {
 	@Override
 	protected void subscribeDescendant(ConnectedNode connectedNode) {
 		// Subscribe for temperature messages
-		temperatureTopic = connectedNode.newSubscriber(TEMPERATURE_TOPIC, Temperature._TYPE);
+		temperatureTopic = connectedNode.newSubscriber(rosServices.getNamespace() + TEMPERATURE_TOPIC, Temperature._TYPE);
 		temperatureTopic.addMessageListener(new MessageListener<Temperature>() {
 			@Override
 			public void onNewMessage(Temperature message) {
@@ -73,7 +73,7 @@ public class SHT1x extends TopicSubscriber {
 		});
 
 		// Subscribe for humidity messages
-		humidityTopic = connectedNode.newSubscriber(HUMIDITY_TOPIC, RelativeHumidity._TYPE);
+		humidityTopic = connectedNode.newSubscriber(rosServices.getNamespace() + HUMIDITY_TOPIC, RelativeHumidity._TYPE);
 		humidityTopic.addMessageListener(new MessageListener<RelativeHumidity>() {
 			@Override
 			public void onNewMessage(RelativeHumidity message) {

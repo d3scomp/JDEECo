@@ -20,7 +20,7 @@ public class Speeker extends TopicSubscriber {
 	/**
 	 * The name of the topic for sound messages.
 	 */
-	private static final String SOUND_TOPIC = "/mobile_base/commands/sound";
+	private static final String SOUND_TOPIC = "mobile_base/commands/sound";
 
 	/**
 	 * The topic for sound messages.
@@ -53,7 +53,7 @@ public class Speeker extends TopicSubscriber {
 	@Override
 	protected void subscribeDescendant(ConnectedNode connectedNode) {
 		soundTopic = connectedNode
-				.newPublisher(SOUND_TOPIC, kobuki_msgs.Sound._TYPE);
+				.newPublisher(rosServices.getNamespace() + SOUND_TOPIC, kobuki_msgs.Sound._TYPE);
 		connectedNode.executeCancellableLoop(new CancellableLoop() {
 			@Override
 			protected void setup() {

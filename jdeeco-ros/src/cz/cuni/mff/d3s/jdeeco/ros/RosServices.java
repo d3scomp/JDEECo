@@ -39,9 +39,16 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 	private String ros_master;
 
 	/**
-	 * he ROS_HOST address.
+	 * The ROS_HOST address.
 	 */
 	private String ros_host;
+	
+	/**
+	 * Node namespace
+	 * 
+	 * Topics can use this value to register and publish with this prefix
+	 */
+	private String namespace;
 
 	/**
 	 * After {@link #onStart(ConnectedNode)} is called by ROS the connected
@@ -63,13 +70,24 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 	 *            The ROS_MASTER_URI value.
 	 * @param ros_host
 	 *            The ROS_HOST address.
+	 * @param namespace
+	 *            Node namespace in ROS
 	 */
-	public RosServices(String ros_master, String ros_host) {
+	public RosServices(String ros_master, String ros_host, String namespace) {
 		connectedNode = null;
 		topicSubscribers = new ArrayList<>();
+		
+		// Ensure namespace ends with /
+		if(!namespace.endsWith("/"))
+			namespace += "/";
 
 		this.ros_master = ros_master;
 		this.ros_host = ros_host;
+		this.namespace = namespace;
+	}
+	
+	public RosServices(String ros_master, String ros_host) {
+		this(ros_master, ros_host, "");
 	}
 
 	/**
@@ -110,6 +128,13 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 
 		topicSubscribers.add(subscriber);
 		subscriber.subscribe(connectedNode);
+	}
+	
+	/**
+	 * Gets node namespace
+	 */
+	public String getNamespace() {
+		return namespace;
 	}
 
 	/**
@@ -271,7 +296,7 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 	 */
 	@Override
 	public GraphName getDefaultNodeName() {
-		return GraphName.of("RosServices");
+		return GraphName.of(getNamespace() + "RosServices");
 	}
 
 }

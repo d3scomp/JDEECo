@@ -28,7 +28,7 @@ public class DockIR extends TopicSubscriber {
 	/**
 	 * The name of the topic for messages from docking diods.
 	 */
-	private static final String DOCK_IR_TOPIC = "/mobile_base/sensors/dock_ir";
+	private static final String DOCK_IR_TOPIC = "mobile_base/sensors/dock_ir";
 
 	/**
 	 * The topic for messages from docking diods.
@@ -59,7 +59,7 @@ public class DockIR extends TopicSubscriber {
 	@Override
 	protected void subscribeDescendant(ConnectedNode connectedNode) {
 		dockIrTopic = connectedNode.newSubscriber(
-				DOCK_IR_TOPIC, DockInfraRed._TYPE);
+				rosServices.getNamespace() + DOCK_IR_TOPIC, DockInfraRed._TYPE);
 		dockIrTopic.addMessageListener(new MessageListener<DockInfraRed>() {
 			@Override
 			public void onNewMessage(DockInfraRed message) {
