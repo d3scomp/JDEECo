@@ -8,6 +8,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 import java.security.cert.CertificateEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -74,7 +75,7 @@ public class KnowledgeEncryptor {
 		ValueSet decryptedSecuritySet = decrypt(kd.getSecuritySet(), replica, metaData);
 		ValueSet decryptedAuthors = decrypt(kd.getAuthors(), replica, metaData);
 		
-		return new KnowledgeData(decryptedKnowledge, decryptedSecuritySet, decryptedAuthors, metaData);
+		return new KnowledgeData(decryptedKnowledge, decryptedSecuritySet, decryptedAuthors, new ArrayList<String>(), metaData);
 	}
 	
 	/**
@@ -184,7 +185,7 @@ public class KnowledgeEncryptor {
 			
 			// no encryption
 			if (entry.getKey() == null) {
-				result.add(new KnowledgeData(entry.getValue(), new ValueSet(), hashToAuthors.get(null), meta));
+				result.add(new KnowledgeData(entry.getValue(), new ValueSet(), hashToAuthors.get(null), new ArrayList<String>(), meta));
 			} else {				
 				ValueSet knowledgeSet = entry.getValue();
 				Cipher cipher = hashToCipher.get(entry.getKey());
@@ -199,7 +200,7 @@ public class KnowledgeEncryptor {
 				seal(knowledgeSet, cipher);
 				seal(securitySet, cipher);
 				seal(authors, cipher);
-				result.add(new KnowledgeData(knowledgeSet, securitySet, authors, meta));
+				result.add(new KnowledgeData(knowledgeSet, securitySet, authors, new ArrayList<String>(), meta));
 			}
 		}
 		

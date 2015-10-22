@@ -44,7 +44,6 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.network.DataSender;
-import cz.cuni.mff.d3s.deeco.network.DefaultKnowledgeDataManager;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
 import cz.cuni.mff.d3s.deeco.runtime.DuplicateEnsembleDefinitionException;
@@ -195,7 +194,6 @@ public class SecurityRuntimeModel {
 	
 	public RuntimeMetadata model;
 	public AnnotationProcessor processor;
-	public DefaultKnowledgeDataManager knowledgeDataManager;
 	
 	public DataSender dataSender;
 	public SecurityKeyManager securityKeyManager;
@@ -245,10 +243,7 @@ public class SecurityRuntimeModel {
 		container = spy(new KnowledgeManagerContainer(new CloningKnowledgeManagerFactory(), model));
 		ratingsManager = RatingsManagerImpl.getInstance();
 		runtime = spy(new RuntimeFrameworkImpl(model, scheduler, executor, container, ratingsManager));
-		runtime.init(deecoContainer);
-		
-		knowledgeDataManager = new DefaultKnowledgeDataManager(model.getEnsembleDefinitions(), null);
-		knowledgeDataManager.initialize(container, dataSender, "1.2.3.4", scheduler, securityKeyManager, ratingsManager);		
+		runtime.init(deecoContainer);	
 	}
 	
 	public void invokeEnsembleTasks() throws TaskInvocationException {

@@ -81,7 +81,7 @@ public class CloningKnowledgeManagerContainerTest {
 		tested.registerReplicaListener(replicaListener);
 		tested.registerLocalListener(localListener);
 		// and WHEN new replica knowledge manager has been created
-		Collection<KnowledgeManager> replicas = tested.createReplica("T1");
+		Collection<KnowledgeManager> replicas = tested.createReplica("T1", null);
 		// THEN the listener is notified about this fact
 		for (KnowledgeManager replica : replicas) {
 			verify(replicaListener, new Times(2)).replicaRegistered(replica, tested);
@@ -131,9 +131,9 @@ public class CloningKnowledgeManagerContainerTest {
 		
 		Collection<KnowledgeManager> r1, r2, r3;
 
-		r1 = tested.createReplica("R1");
-		r2 = tested.createReplica("R2");
-		r3 = tested.createReplica("R3");
+		r1 = tested.createReplica("R1", null);
+		r2 = tested.createReplica("R2", null);
+		r3 = tested.createReplica("R3", null);
 				
 		// WHEN the container is accessed for all replica knowledge managers
 		Collection<KnowledgeManager> containerReplicas = tested.getReplicas();

@@ -68,7 +68,8 @@ public class KnowledgeInsertingStrategy implements L2Strategy, DEECoPlugin {
 		// Accept only fresh knowledge data (drop if we have already a newer value)
 		Long currentVersion = currentVersions.get(newMetadata.componentId);
 		if ((currentVersion == null) || (currentVersion < newMetadata.versionId)) {
-			for (KnowledgeManager replica : knowledgeManagerContainer.createReplica(newMetadata.componentId)) {
+			for (KnowledgeManager replica : knowledgeManagerContainer.createReplica(newMetadata.componentId,
+					toRoleArray(knowledgeData.getRoleClasses(), newMetadata.componentId))) {
 				try {
 					replica.update(toChangeSet(knowledgeData.getKnowledge()));
 				} catch (KnowledgeUpdateException e) {
@@ -87,6 +88,21 @@ public class KnowledgeInsertingStrategy implements L2Strategy, DEECoPlugin {
 				}
 			}
 		}
+	}
+
+	private Class<?>[] toRoleArray(List<String> roleClasses, String componentId) {
+		Class<?>[] result = new Class<?>[roleClasses.size()];
+		int i = 0;
+		for(String roleClassName : roleClasses) {
+			try {
+				result[i++] = Class.forName(roleClassName);
+			} catch (ClassNotFoundException e) {
+				Log.w(String.format("Role class '%s' declared by component with id '%s' does not exist.",
+						roleClassName, componentId));
+			}
+		}
+		
+		return result;
 	}
 
 	/**
