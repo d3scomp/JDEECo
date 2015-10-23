@@ -2,6 +2,7 @@ package cz.cuni.mff.d3s.jdeeco.position;
 
 import java.io.Serializable;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * Represents coordinates in Cartesian coordinate system.
@@ -71,5 +72,20 @@ public final class Position implements Serializable, Cloneable {
 		} catch (CloneNotSupportedException e) {
 			return null; //should never happen
 		}
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof Position) {
+			Position other = (Position)obj;
+			return other.x == x && other.y == y && other.z == z;
+		} else {
+			return super.equals(obj);
+		}
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(x, y, z);
 	}
 }
