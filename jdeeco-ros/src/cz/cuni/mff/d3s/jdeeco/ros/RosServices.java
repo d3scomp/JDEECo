@@ -200,19 +200,28 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 		Log.i(String.format("Waiting up to %d milliseconds for ROS node to be started.", ROS_START_TIMEOUT));
 
 		while (currentTime.getTime() < startTime.getTime() + ROS_START_TIMEOUT) {
+			currentTime = new Date();
+			
 			try {
 				// Wait a while between checks
 				Thread.sleep(1000);
-
-				// If all the topics are subscribed return true
-				if (connectedNode != null) {
-					return true;
-				}
-
 			} catch (InterruptedException e) {
 				// Ignore interruptions
 			}
-			currentTime = new Date();
+
+			// If all the topics are not subscribed try again later
+			if (connectedNode == null) {
+				continue;
+			}
+			
+			// If time is not yet available try again later
+			try {
+				connectedNode.getCurrentTime();
+			} catch(Exception e) {
+				continue;
+			}
+			
+			return true;
 		}
 
 		// If any of the topics is not subscribed within the given time limit
