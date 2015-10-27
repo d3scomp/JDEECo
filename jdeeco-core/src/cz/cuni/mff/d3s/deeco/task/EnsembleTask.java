@@ -167,7 +167,7 @@ public class EnsembleTask extends Task {
 		 * Construct the {@link EnsembleLogRecord} instance.
 		 */
 		public EnsembleLogRecord() {
-			super("EnsambleTask", new HashMap<String, Object>());
+			super("EnsembleTask", new HashMap<String, Object>());
 		}
 		
 	}
@@ -443,16 +443,16 @@ public class EnsembleTask extends Task {
 
 	/**
 	 * Log the current ensemble membership status (ensemble exists/doesn't exist) using the {@link RuntimeLogger}.
-	 * @param ensambleName is the name of tested ensemble.
+	 * @param ensembleName is the name of tested ensemble.
 	 * @param coordinatorID is the identifier of the coordinator in the tested ensemble.
 	 * @param memberID is the identifier of the member in the tested ensemble.
 	 * @param membership is the membership validity value (ensemble exists(true)/doesn't exist(false)).
 	 * @throws TaskInvocationException Thrown if there is a problem writing into the log files.
 	 */
-	private void logMembershipStatus(String ensambleName, String coordinatorID, String memberID, boolean membership) throws TaskInvocationException
+	private void logMembershipStatus(String ensembleName, String coordinatorID, String memberID, boolean membership) throws TaskInvocationException
 	{
 		EnsembleLogRecord record = new EnsembleLogRecord();
-		record.getValues().put("ensambleName", ensambleName);
+		record.getValues().put("ensembleName", ensembleName);
 		record.getValues().put("coordinatorID", coordinatorID);
 		record.getValues().put("memberID", memberID);
 		record.getValues().put("membership", membership);

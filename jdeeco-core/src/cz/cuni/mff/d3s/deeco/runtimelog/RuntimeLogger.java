@@ -125,7 +125,7 @@ public class RuntimeLogger {
 	/**
 	 * The default directory where the log files are placed.
 	 */
-	private static final String LOG_DIRECTORY = "logs";
+	private static final String LOG_DIRECTORY = "logs/runtime";
 	/**
 	 * Specifies the default file where the logging records of the runtime events are written.
 	 * This file destination can be overridden using the
@@ -357,13 +357,13 @@ public class RuntimeLogger {
 		// Write the knowledge
 		Map<String, Object> values = record.getValues();
 		for (String valueKey : values.keySet()) {
-			recordBuilder.append("<")
+			recordBuilder.append("\t<")
 				.append(valueKey)
 				.append(">");
 			writeKnowledge(recordBuilder, values.get(valueKey));
 			recordBuilder.append("</")
 				.append(valueKey)
-				.append(">");
+				.append(">\n");
 		}
 
 		// Close the record tag
