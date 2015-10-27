@@ -20,7 +20,7 @@ public abstract class RuntimeLogRecord
 	 * The <em>field</em> represents the name of the components field and the <em>value</em>
 	 * its value.
 	 */
-	private Map<String, Object> recordValues;
+	protected Map<String, Object> recordValues;
 	
 	/**
 	 * Constructs an instance of the {@link RuntimeLogRecord} with the given values.

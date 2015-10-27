@@ -34,6 +34,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.impl.TriggerImpl;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
+import cz.cuni.mff.d3s.deeco.runtimelog.EnsembleLogRecord;
 import cz.cuni.mff.d3s.deeco.runtimelog.RuntimeLogRecord;
 import cz.cuni.mff.d3s.deeco.runtimelog.RuntimeLogger;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
@@ -156,22 +157,6 @@ public class EnsembleTask extends Task {
 		}
 	}
 
-	/**
-	 * The {@link RuntimeLogRecord) specific to the {@link EnsembleTask} ensemble status log message.
-	 * 
-	 * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
-	 */
-	private class EnsembleLogRecord extends RuntimeLogRecord
-	{
-		/**
-		 * Construct the {@link EnsembleLogRecord} instance.
-		 */
-		public EnsembleLogRecord() {
-			super("EnsembleTask", new HashMap<String, Object>());
-		}
-		
-	}
-	
 	ShadowsTriggerListenerImpl shadowsTriggerListener = new ShadowsTriggerListenerImpl();
 
 	public EnsembleTask(EnsembleController ensembleController, Scheduler scheduler, 
@@ -452,10 +437,10 @@ public class EnsembleTask extends Task {
 	private void logMembershipStatus(String ensembleName, String coordinatorID, String memberID, boolean membership) throws TaskInvocationException
 	{
 		EnsembleLogRecord record = new EnsembleLogRecord();
-		record.getValues().put("ensembleName", ensembleName);
-		record.getValues().put("coordinatorID", coordinatorID);
-		record.getValues().put("memberID", memberID);
-		record.getValues().put("membership", membership);
+		record.setEnsembleName(ensembleName);
+		record.setCoordinatorID(coordinatorID);
+		record.setMemberID(memberID);
+		record.setMembership(membership);
 		
 		try
 		{
