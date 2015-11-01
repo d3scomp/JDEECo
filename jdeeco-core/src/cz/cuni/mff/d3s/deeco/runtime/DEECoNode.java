@@ -16,6 +16,7 @@ import cz.cuni.mff.d3s.deeco.executor.SameThreadExecutor;
 import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerFactory;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerFactory;
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
@@ -173,6 +174,18 @@ public class DEECoNode implements DEECoContainer {
 			runtimeLogger.init(timer, runtime.getScheduler());
 		} catch (IOException e) {
 			throw new DEECoException(e);
+		}
+	}
+	
+	/**
+	 * After the simulation finish the {@link RuntimeLogger} needs to be closed.
+	 */
+	public void finalize(){
+		try {
+			runtimeLogger.close();
+		} catch (IOException e) {
+			Log.e("Unable to close Runtime logger.");
+			e.printStackTrace();
 		}
 	}
 

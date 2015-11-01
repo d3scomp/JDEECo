@@ -45,6 +45,9 @@ public class DEECoSimulation {
 
 	public void start(long duration) {
 		simulationTimer.start(duration);
+		for(DEECoNode n : deecoNodes){
+			n.finalize();
+		}
 	}
 	
 	public DEECoNode createNode(DEECoPlugin... nodeSpecificPlugins) throws DEECoException, InstantiationException, IllegalAccessException {

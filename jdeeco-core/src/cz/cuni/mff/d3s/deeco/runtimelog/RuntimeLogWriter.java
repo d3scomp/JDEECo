@@ -87,6 +87,12 @@ class RuntimeLogWriter {
 	private long lastIndexTime;
 
 	/**
+	 * The name of the <a href="http://en.wikipedia.org/wiki/XML">XML</a> element
+	 * used as the root in the data file.
+	 */
+	private static final String ROOT_ELEMENT_NAME = "events";
+
+	/**
 	 * The default instance of {@link RuntimeLogWriter}.
 	 */
 	private static RuntimeLogWriter INSTANCE = null;
@@ -125,8 +131,9 @@ class RuntimeLogWriter {
 	 *            The writer for index.
 	 * @param periodOut
 	 *            The writer for snapshot periods.
+	 * @throws IOException  Thrown if there is a problem using the writers.
 	 */
-	public RuntimeLogWriter(Writer dataOut, Writer indexOut, Writer periodOut) {
+	public RuntimeLogWriter(Writer dataOut, Writer indexOut, Writer periodOut) throws IOException {
 		if (dataOut == null)
 			throw new IllegalArgumentException(String.format("The argument \"%s\" is null.", "dataOut"));
 		if (indexOut == null)
@@ -142,6 +149,16 @@ class RuntimeLogWriter {
 
 		currentDataOffset = 0;
 		lastIndexTime = 0;
+		
+		writeStartElement();
+	}
+	
+	private void writeStartElement() throws IOException {
+		dataWriter.write(String.format("<%s>\n", ROOT_ELEMENT_NAME));
+	}
+	
+	private void writeEndElement() throws IOException {
+		dataWriter.write(String.format("</%s>\n", ROOT_ELEMENT_NAME));
 	}
 
 	/**
@@ -277,13 +294,17 @@ class RuntimeLogWriter {
 	 */
 	public synchronized void closeWriters() throws IOException {
 		if (dataWriter != null) {
+			writeEndElement();
 			dataWriter.close();
+			dataWriter = null;
 		}
 		if (indexWriter != null) {
 			indexWriter.close();
+			indexWriter = null;
 		}
 		if (snapshotPeriodWriter != null) {
 			snapshotPeriodWriter.close();
+			snapshotPeriodWriter = null;
 		}
 	}
 
