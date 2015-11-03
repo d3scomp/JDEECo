@@ -204,13 +204,14 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 			
 			try {
 				// Wait a while between checks
-				Thread.sleep(1000);
+				Thread.sleep(250);
 			} catch (InterruptedException e) {
 				// Ignore interruptions
 			}
 
 			// If all the topics are not subscribed try again later
 			if (connectedNode == null) {
+				Log.i("Waiting for node to connect...");
 				continue;
 			}
 			
@@ -218,6 +219,7 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 			try {
 				connectedNode.getCurrentTime();
 			} catch(Exception e) {
+				Log.i("Waiting for node to provide current time...");
 				continue;
 			}
 			
