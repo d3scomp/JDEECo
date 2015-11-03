@@ -1,6 +1,5 @@
 package cz.cuni.mff.d3s.deeco.runtimelog;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -58,22 +57,9 @@ class RuntimeLogWriter {
 	private static final String CHARSET_NAME = "UTF-8";
 
 	/**
-	 * This {@link Writer} is used to write into the file for the runtime events
-	 * being logged.
+	 * This {@link Writer} is used to write into the files for the runtime logs.
 	 */
-	private BufferedWriter dataWriter;
-	/**
-	 * This {@link Writer} is used to write into the file where the index of the
-	 * log records is stored.
-	 */
-	private BufferedWriter indexWriter;
-	/**
-	 * This {@link Writer} serves for writing the time offsets for backward
-	 * jumps in the main log file.
-	 * 
-	 * @see RuntimeLogger
-	 */
-	private BufferedWriter snapshotPeriodWriter;
+	private RuntimeLogWriters writers;
 
 	/**
 	 * The size of the data (number of bytes) so far being written into the
@@ -96,6 +82,11 @@ class RuntimeLogWriter {
 	 * The default instance of {@link RuntimeLogWriter}.
 	 */
 	private static RuntimeLogWriter INSTANCE = null;
+	
+	/**
+	 * The counter of references pointing to the instance of {@link RuntimeLogWriter}
+	 */
+	private int referenceCounter;
 
 	/**
 	 * Provides the default instance of {@link RuntimeLogWriter}.
@@ -117,7 +108,9 @@ class RuntimeLogWriter {
 			Writer defaultIndexWriter = openStream(DATA_INDEX_FILE);
 			Writer defaultSnapshotPeriodWriter = openStream(SNAPSHOT_PERIOD_FILE);
 
-			INSTANCE = new RuntimeLogWriter(defaultDataWriter, defaultIndexWriter, defaultSnapshotPeriodWriter);
+			INSTANCE = new RuntimeLogWriter(new RuntimeLogWriters(defaultDataWriter, defaultIndexWriter, defaultSnapshotPeriodWriter));
+		} else {
+			INSTANCE.referenceCounter++;
 		}
 		return INSTANCE;
 	}
@@ -125,40 +118,31 @@ class RuntimeLogWriter {
 	/**
 	 * Create a new instance of {@link RuntimeLogWriter} with given writers.
 	 * 
-	 * @param dataOut
-	 *            The writer for data.
-	 * @param indexOut
-	 *            The writer for index.
-	 * @param periodOut
-	 *            The writer for snapshot periods.
+	 * @param writers
+	 *            The writer for the runtime data.
 	 * @throws IOException  Thrown if there is a problem using the writers.
+	 * @throws IllegalArgumentException Thrown if the writers argument is null.
 	 */
-	public RuntimeLogWriter(Writer dataOut, Writer indexOut, Writer periodOut) throws IOException {
-		if (dataOut == null)
-			throw new IllegalArgumentException(String.format("The argument \"%s\" is null.", "dataOut"));
-		if (indexOut == null)
-			throw new IllegalArgumentException(String.format("The argument \"%s\" is null.", "indexOut"));
-		if (periodOut == null)
-			throw new IllegalArgumentException(String.format("The argument \"%s\" is null.", "periodOut"));
+	public RuntimeLogWriter(RuntimeLogWriters writers) throws IOException {
+		if (writers == null)
+			throw new IllegalArgumentException(String.format("The argument \"%s\" is null.", "writers"));
 
-		// Opening the files in init method to avoid IOException in the
-		// constructor
-		dataWriter = new BufferedWriter(dataOut);
-		indexWriter = new BufferedWriter(indexOut);
-		snapshotPeriodWriter = new BufferedWriter(periodOut);
+		this.writers = writers;
 
 		currentDataOffset = 0;
 		lastIndexTime = 0;
+		
+		referenceCounter = 1;
 		
 		writeStartElement();
 	}
 	
 	private void writeStartElement() throws IOException {
-		dataWriter.write(String.format("<%s>\n", ROOT_ELEMENT_NAME));
+		writeData(String.format("<%s>\n", ROOT_ELEMENT_NAME));
 	}
 	
 	private void writeEndElement() throws IOException {
-		dataWriter.write(String.format("</%s>\n", ROOT_ELEMENT_NAME));
+		writeData(String.format("</%s>\n", ROOT_ELEMENT_NAME));
 	}
 
 	/**
@@ -212,7 +196,7 @@ class RuntimeLogWriter {
 	 */
 	public synchronized void writeData(String entry) throws IOException {
 		try {
-			dataWriter.write(entry);
+			writers.dataWriter.write(entry);
 			currentDataOffset += entry.getBytes(CHARSET_NAME).length;
 		} catch (IOException e) {
 			Log.e("Failed to write to the log file " + DATA_FILE.getAbsolutePath(), e);
@@ -227,7 +211,7 @@ class RuntimeLogWriter {
 	 *             Thrown if the data file cannot be flushed.
 	 */
 	public synchronized void flushData() throws IOException {
-		dataWriter.flush();
+		writers.dataWriter.flush();
 	}
 
 	/**
@@ -240,7 +224,7 @@ class RuntimeLogWriter {
 	 */
 	public synchronized void writeIndex(String entry, long currentTime) throws IOException {
 		try {
-			indexWriter.write(entry);
+			writers.indexWriter.write(entry);
 			lastIndexTime = currentTime;
 		} catch (IOException e) {
 			Log.e("Failed to write to the log file " + DATA_INDEX_FILE.getAbsolutePath(), e);
@@ -255,7 +239,7 @@ class RuntimeLogWriter {
 	 *             Thrown if the index file cannot be flushed.
 	 */
 	public synchronized void flushIndex() throws IOException {
-		indexWriter.flush();
+		writers.indexWriter.flush();
 	}
 
 	/**
@@ -268,7 +252,7 @@ class RuntimeLogWriter {
 	 */
 	public synchronized void writeSnapshotPeriod(String entry) throws IOException {
 		try {
-			snapshotPeriodWriter.write(entry);
+			writers.snapshotPeriodWriter.write(entry);
 		} catch (IOException e) {
 			Log.e("Failed to write to the log file " + SNAPSHOT_PERIOD_FILE.getAbsolutePath(), e);
 			throw e;
@@ -282,7 +266,7 @@ class RuntimeLogWriter {
 	 *             Thrown if the snapshot period file cannot be flushed.
 	 */
 	public synchronized void flushSnapshotPeriod() throws IOException {
-		snapshotPeriodWriter.flush();
+		writers.snapshotPeriodWriter.flush();
 	}
 
 	/**
@@ -293,19 +277,11 @@ class RuntimeLogWriter {
 	 *             cannot be closed.
 	 */
 	public synchronized void closeWriters() throws IOException {
-		if (dataWriter != null) {
-			writeEndElement();
-			dataWriter.close();
-			dataWriter = null;
+		referenceCounter--;
+		if(referenceCounter > 0){
+			return;
 		}
-		if (indexWriter != null) {
-			indexWriter.close();
-			indexWriter = null;
-		}
-		if (snapshotPeriodWriter != null) {
-			snapshotPeriodWriter.close();
-			snapshotPeriodWriter = null;
-		}
+		writeEndElement();
+		writers.close();
 	}
-
 }

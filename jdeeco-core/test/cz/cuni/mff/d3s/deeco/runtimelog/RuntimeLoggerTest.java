@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -23,6 +24,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.task.Task;
@@ -34,6 +36,7 @@ public class RuntimeLoggerTest
 	private Scheduler scheduler;
 
 	private final String CHARSET_NAME = "UTF-8";
+	private final String EVENTS_ROOT_NAME = "events";
 	private final String EVENT_RECORD_NAME = "event";
 	private final String VALUE_RECORD_NAME = "value";
 	private final String RECORD_ID = "id";
@@ -50,8 +53,10 @@ public class RuntimeLoggerTest
 	private StringWriter indexOut;
 	private StringWriter periodOut;
 	
+	private RuntimeLogWriters writers;
+	
 	@Before
-	public void setUp()
+	public void setUp() throws IOException
 	{	
 		scheduler = mock(Scheduler.class);
 		timeProvider = mock(CurrentTimeProvider.class);
@@ -90,6 +95,8 @@ public class RuntimeLoggerTest
 		dataOut = new StringWriter();
 		indexOut = new StringWriter();
 		periodOut = new StringWriter();
+		
+		writers = new RuntimeLogWriters(dataOut, indexOut, periodOut);
 	}
 	
 	@After
@@ -97,88 +104,64 @@ public class RuntimeLoggerTest
 	{
 		try
 		{
-			dataOut.close();
-			indexOut.close();
-			periodOut.close();
+			writers.close();
 		}
 		catch(IOException e){}
 	}
 	
-	@Test(expected=IllegalStateException.class)
-	public void log_initSkipped_throwsException() throws Exception
+	@Test(expected=IllegalArgumentException.class)
+	public void contructor_nullArguments_throwsException() throws Exception
 	{
-		RuntimeLogger runtimeLogger = new RuntimeLogger();
-		runtimeLogger.log(testRecord);
+		@SuppressWarnings("unused")
+		RuntimeLogger runtimeLogger = new RuntimeLogger(null, null);
+	}
+
+	@Test(expected=IllegalArgumentException.class)
+	public void construstor_nullTimeProvider_throwsException() throws Exception
+	{
+		@SuppressWarnings("unused")
+		RuntimeLogger runtimeLogger = new RuntimeLogger(null, scheduler);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
-	public void init_nullArguments_throwsException() throws Exception
+	public void construstor_nullScheduler_throwsException() throws Exception
 	{
-		RuntimeLogger runtimeLogger = new RuntimeLogger();
-		runtimeLogger.init(null, null);
-	}
-
-	@Test(expected=IllegalArgumentException.class)
-	public void init_nullTimeProvider_throwsException() throws Exception
-	{
-		RuntimeLogger runtimeLogger = new RuntimeLogger();
-		runtimeLogger.init(null, scheduler);
+		@SuppressWarnings("unused")
+		RuntimeLogger runtimeLogger = new RuntimeLogger(timeProvider, null);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
-	public void init_nullScheduler_throwsException() throws Exception
+	public void construstor_nullArgumentsExtended_throwsException() throws Exception
 	{
-		RuntimeLogger runtimeLogger = new RuntimeLogger();
-		runtimeLogger.init(timeProvider, null);
+		@SuppressWarnings("unused")
+		RuntimeLogger runtimeLogger = new RuntimeLogger(null, null, null);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
-	public void init_nullArgumentsExtended_throwsException() throws Exception
+	public void construstor_nullTimeProviderExtended_throwsException() throws Exception
 	{
-		RuntimeLogger runtimeLogger = new RuntimeLogger();
-		runtimeLogger.init(null, null, null, null, null);
-	}
-	
-	@Test(expected=IllegalArgumentException.class)
-	public void init_nullTimeProviderExtended_throwsException() throws Exception
-	{
-		RuntimeLogger runtimeLogger = new RuntimeLogger();
-		runtimeLogger.init(null, scheduler, dataOut, indexOut, periodOut);
+		@SuppressWarnings("unused")
+		RuntimeLogger runtimeLogger = new RuntimeLogger(null, scheduler, writers);
 	}
 
 	@Test(expected=IllegalArgumentException.class)
-	public void init_nullSchedulerExtended_throwsException() throws Exception
+	public void construstor_nullSchedulerExtended_throwsException() throws Exception
 	{
-		RuntimeLogger runtimeLogger = new RuntimeLogger();
-		runtimeLogger.init(timeProvider, null, dataOut, indexOut, periodOut);
+		@SuppressWarnings("unused")
+		RuntimeLogger runtimeLogger = new RuntimeLogger(timeProvider, null, writers);
 	}
 
 	@Test(expected=IllegalArgumentException.class)
-	public void init_nullDataOutExtended_throwsException() throws Exception
+	public void construstor_nullWritersExtended_throwsException() throws Exception
 	{
-		RuntimeLogger runtimeLogger = new RuntimeLogger();
-		runtimeLogger.init(timeProvider, scheduler, null, indexOut, periodOut);
-	}
-
-	@Test(expected=IllegalArgumentException.class)
-	public void init_nullIndexOutExtended_throwsException() throws Exception
-	{
-		RuntimeLogger runtimeLogger = new RuntimeLogger();
-		runtimeLogger.init(timeProvider, scheduler, dataOut, null, periodOut);
-	}
-
-	@Test(expected=IllegalArgumentException.class)
-	public void init_nullPeriodOutExtended_throwsException() throws Exception
-	{
-		RuntimeLogger runtimeLogger = new RuntimeLogger();
-		runtimeLogger.init(timeProvider, scheduler, dataOut, indexOut, null);
+		@SuppressWarnings("unused")
+		RuntimeLogger runtimeLogger = new RuntimeLogger(timeProvider, scheduler, null);
 	}
 
 	@Test(expected=IllegalArgumentException.class)
 	public void log_nullArgument_throwsException() throws Exception
 	{
-		RuntimeLogger runtimeLogger = new RuntimeLogger();
-		runtimeLogger.init(timeProvider, scheduler, dataOut, indexOut, periodOut);
+		RuntimeLogger runtimeLogger = new RuntimeLogger(timeProvider, scheduler, writers);
 
 		runtimeLogger.log(null);
 	}
@@ -202,8 +185,7 @@ public class RuntimeLoggerTest
 		    }
 		});
 		
-		RuntimeLogger runtimeLogger = new RuntimeLogger();
-		runtimeLogger.init(timeProvider, scheduler, dataOut, indexOut, periodOut);
+		RuntimeLogger runtimeLogger = new RuntimeLogger(timeProvider, scheduler, writers);
 
 		runtimeLogger.log(record);
 	}
@@ -227,8 +209,7 @@ public class RuntimeLoggerTest
 		    }
 		});
 		
-		RuntimeLogger runtimeLogger = new RuntimeLogger();
-		runtimeLogger.init(timeProvider, scheduler, dataOut, indexOut, periodOut);
+		RuntimeLogger runtimeLogger = new RuntimeLogger(timeProvider, scheduler, writers);
 
 		runtimeLogger.log(record);
 	}
@@ -236,12 +217,11 @@ public class RuntimeLoggerTest
 	@Test
 	public void log_fullRecord_recordWritten() throws Exception
 	{
-		RuntimeLogger runtimeLogger = new RuntimeLogger();
-		runtimeLogger.init(timeProvider, scheduler, dataOut, indexOut, periodOut);
+		RuntimeLogger runtimeLogger = new RuntimeLogger(timeProvider, scheduler, writers);
 
 		// Write and flush the record
 		runtimeLogger.log(testRecord);
-		runtimeLogger.flush();
+		runtimeLogger.close();
 		
 		// Load the record to a DOM element node
 		// There has to be only one element written in order to be a valid XML
@@ -251,7 +231,13 @@ public class RuntimeLoggerTest
 				.parse(new ByteArrayInputStream(dataOut.toString().getBytes()))
 				.getDocumentElement();
 		
+		// The root node should be <events>
+		assertEquals(EVENTS_ROOT_NAME, node.getNodeName());
 		// Assert the written record has all its values correctly written
+		// Get the <event> child node
+		List<Element> childs = getChildElements(node);
+		assertEquals(1, childs.size());
+		node = childs.get(0);
 		assertEquals(EVENT_RECORD_NAME, node.getNodeName());
 		assertEquals(testRecord.getClass().getCanonicalName(), node.getAttribute(RECORD_TYPE));
 		assertEquals(testRecord.getId(), node.getAttribute(RECORD_ID));
@@ -272,8 +258,7 @@ public class RuntimeLoggerTest
 	{
 		long testPeriod = 14;
 
-		RuntimeLogger runtimeLogger = new RuntimeLogger();
-		runtimeLogger.init(timeProvider, scheduler, dataOut, indexOut, periodOut);
+		RuntimeLogger runtimeLogger = new RuntimeLogger(timeProvider, scheduler, writers);
 		
 		runtimeLogger.registerSnapshotProvider(null, testPeriod);
 	}
@@ -298,8 +283,7 @@ public class RuntimeLoggerTest
 		});
 		long testPeriod = -5;
 
-		RuntimeLogger runtimeLogger = new RuntimeLogger();
-		runtimeLogger.init(timeProvider, scheduler, dataOut, indexOut, periodOut);
+		RuntimeLogger runtimeLogger = new RuntimeLogger(timeProvider, scheduler, writers);
 		
 		runtimeLogger.registerSnapshotProvider(snapshotProvider, testPeriod);
 	}
@@ -324,8 +308,7 @@ public class RuntimeLoggerTest
 		});
 		long testPeriod = 0;
 
-		RuntimeLogger runtimeLogger = new RuntimeLogger();
-		runtimeLogger.init(timeProvider, scheduler, dataOut, indexOut, periodOut);
+		RuntimeLogger runtimeLogger = new RuntimeLogger(timeProvider, scheduler, writers);
 		
 		runtimeLogger.registerSnapshotProvider(snapshotProvider, testPeriod);
 	}
@@ -350,8 +333,7 @@ public class RuntimeLoggerTest
 		});
 		long testPeriod = 0;
 
-		RuntimeLogger runtimeLogger = new RuntimeLogger();
-		runtimeLogger.init(timeProvider, scheduler, dataOut, indexOut, periodOut);
+		RuntimeLogger runtimeLogger = new RuntimeLogger(timeProvider, scheduler, writers);
 		
 		runtimeLogger.registerSnapshotProvider(snapshotProvider, testPeriod);
 	}
@@ -414,14 +396,9 @@ public class RuntimeLoggerTest
 		long snapshotPeriod2 = 2;
 		long snapshotPeriod3 = 3;
 		
-		// Register snapshot providers before init is called
-		RuntimeLogger runtimeLogger = new RuntimeLogger();
+		RuntimeLogger runtimeLogger = new RuntimeLogger(timeProvider, scheduler, writers);
 		runtimeLogger.registerSnapshotProvider(snapshotProvider1, snapshotPeriod1);
 		runtimeLogger.registerSnapshotProvider(snapshotProvider2, snapshotPeriod2);
-		
-		runtimeLogger.init(timeProvider, scheduler, dataOut, indexOut, periodOut);
-		
-		// Register snapshot provider after init was called
 		runtimeLogger.registerSnapshotProvider(snapshotProvider3, snapshotPeriod3);
 		
 		// Assert the tasks for registered snapshot providers were scheduled
@@ -441,7 +418,7 @@ public class RuntimeLoggerTest
 	{
 		long testPeriod = -5;
 
-		RuntimeLogger runtimeLogger = new RuntimeLogger();
+		RuntimeLogger runtimeLogger = new RuntimeLogger(timeProvider, scheduler, writers);
 		runtimeLogger.registerSnapshotPeriod(testPeriod, testRecord.getClass());
 	}
 
@@ -450,8 +427,7 @@ public class RuntimeLoggerTest
 	{
 		long testPeriod = 0;
 
-		RuntimeLogger runtimeLogger = new RuntimeLogger();
-		runtimeLogger.init(timeProvider, scheduler, dataOut, indexOut, periodOut);
+		RuntimeLogger runtimeLogger = new RuntimeLogger(timeProvider, scheduler, writers);
 		
 		runtimeLogger.registerSnapshotPeriod(testPeriod, testRecord.getClass());
 	}
@@ -461,8 +437,7 @@ public class RuntimeLoggerTest
 	{
 		long testPeriod = 14;
 
-		RuntimeLogger runtimeLogger = new RuntimeLogger();
-		runtimeLogger.init(timeProvider, scheduler, dataOut, indexOut, periodOut);
+		RuntimeLogger runtimeLogger = new RuntimeLogger(timeProvider, scheduler, writers);
 		
 		runtimeLogger.registerSnapshotPeriod(testPeriod, null);
 	}
@@ -480,12 +455,10 @@ public class RuntimeLoggerTest
 		RuntimeLogRecord logRecord3 = new TestLogRecord3("record3", new HashMap<String, Object>());
 		
 		// Register snapshot periods before init is called
-		RuntimeLogger runtimeLogger = new RuntimeLogger();
+		RuntimeLogger runtimeLogger = new RuntimeLogger(timeProvider, scheduler, writers);
 		runtimeLogger.registerSnapshotPeriod(period1, logRecord1.getClass());
 		runtimeLogger.registerSnapshotPeriod(period2, logRecord2.getClass());
-
-		runtimeLogger.init(timeProvider, scheduler, dataOut, indexOut, periodOut);
-
+		
 		// Register snapshot period after init was called
 		runtimeLogger.registerSnapshotPeriod(period3, logRecord3.getClass());
 
@@ -585,10 +558,8 @@ public class RuntimeLoggerTest
 		});
 		
 		// Register snapshot period before init is called
-		RuntimeLogger runtimeLogger = new RuntimeLogger();
+		RuntimeLogger runtimeLogger = new RuntimeLogger(testTimeProvider, scheduler, writers);
 		runtimeLogger.registerSnapshotProvider(snapshotProvider1, period1);
-
-		runtimeLogger.init(testTimeProvider, scheduler, dataOut, indexOut, periodOut);
 
 		// Register snapshot period after init was called
 
@@ -599,7 +570,7 @@ public class RuntimeLoggerTest
 		runtimeLogger.log(logRecord1); // Is supposed to flush and write index
 
 		// Assert log1 written properly - index also written
-		String lastWrittenData = EMPTY_STRING;
+		String lastWrittenData = initLogElement();
 		String lastWrittenIndex = EMPTY_STRING;
 		String writtenData = dataOut.toString();
 		String writtenIndex = indexOut.toString();
@@ -671,10 +642,8 @@ public class RuntimeLoggerTest
 		logRecord3.getValues().put("v6", "six");
 		
 		// Register snapshot period before init is called
-		RuntimeLogger runtimeLogger = new RuntimeLogger();
+		RuntimeLogger runtimeLogger = new RuntimeLogger(testTimeProvider, scheduler, writers);
 		runtimeLogger.registerSnapshotPeriod(period1, logRecord1.getClass());
-
-		runtimeLogger.init(testTimeProvider, scheduler, dataOut, indexOut, periodOut);
 
 		// Register snapshot period after init was called
 		runtimeLogger.registerSnapshotPeriod(period2, logRecord2.getClass());
@@ -684,7 +653,7 @@ public class RuntimeLoggerTest
 		runtimeLogger.log(logRecord1); // Is supposed to flush and write index
 
 		// Assert log1 written properly - index also written
-		String lastWrittenData = EMPTY_STRING;
+		String lastWrittenData = initLogElement();
 		String lastWrittenIndex = EMPTY_STRING;
 		String writtenData = dataOut.toString();
 		String writtenIndex = indexOut.toString();
@@ -835,6 +804,21 @@ public class RuntimeLoggerTest
 		}
 		
 		return true;
+	}
+	
+	private String initLogElement(){
+		return String.format("<%s>\n", EVENTS_ROOT_NAME);
+	}
+	
+	private List<Element> getChildElements(Node n){
+		NodeList ch = n.getChildNodes();
+		List<Element> e = new ArrayList<>();
+		for(int i = 0; i < ch.getLength(); i++){
+			if(ch.item(i).getNodeType() == Node.ELEMENT_NODE){
+				e.add((Element) ch.item(i));
+			}
+		}
+		return e;
 	}
 	
 	// The code below is only for debugging purposes

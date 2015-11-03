@@ -5,14 +5,17 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
 import cz.cuni.mff.d3s.deeco.runners.DEECoSimulation;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
+import cz.cuni.mff.d3s.deeco.runtimelog.RuntimeLogWritersMock;
 import cz.cuni.mff.d3s.deeco.timer.DiscreteEventTimer;
 import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
 import cz.cuni.mff.d3s.jdeeco.core.demo.convoy.ConvoyEnsemble;
@@ -30,6 +33,14 @@ import cz.cuni.mff.d3s.jdeeco.publishing.DefaultKnowledgePublisher;
  *
  */
 public class ConvoyTest {
+
+	RuntimeLogWritersMock runtimeLogWriters;
+	
+	@Before
+	public void setUp() throws IOException{
+		runtimeLogWriters = new RuntimeLogWritersMock();
+	}
+	
 	public static void main(String[] args) throws Exception {
 		ConvoyTest test = new ConvoyTest();
 
@@ -72,13 +83,13 @@ public class ConvoyTest {
 		realm.addPlugin(KnowledgeInsertingStrategy.class);
 		
 		/* create first deeco node */
-		DEECoNode deeco1 = realm.createNode();
+		DEECoNode deeco1 = realm.createNode(runtimeLogWriters);
 		/* deploy components and ensembles */
 		deeco1.deployComponent(new Leader(outputStream, simulationTimer));
 		deeco1.deployEnsemble(ConvoyEnsemble.class);
 
 		/* create second deeco node */
-		DEECoNode deeco2 = realm.createNode();
+		DEECoNode deeco2 = realm.createNode(runtimeLogWriters);
 		/* deploy components and ensembles */
 		deeco2.deployComponent(new Follower(outputStream, simulationTimer));
 		deeco2.deployEnsemble(ConvoyEnsemble.class);
@@ -126,13 +137,13 @@ public class ConvoyTest {
 		realm.addPlugin(KnowledgeInsertingStrategy.class);
 		
 		/* create first deeco node */
-		DEECoNode deeco1 = realm.createNode(new PositionPlugin(0, SimpleBroadcastDevice.DEFAULT_RANGE));
+		DEECoNode deeco1 = realm.createNode(runtimeLogWriters, new PositionPlugin(0, SimpleBroadcastDevice.DEFAULT_RANGE));
 		/* deploy components and ensembles */
 		deeco1.deployComponent(new Leader(outputStream, simulationTimer));
 		deeco1.deployEnsemble(ConvoyEnsemble.class);
 
 		/* create second deeco node */
-		DEECoNode deeco2 = realm.createNode(new PositionPlugin(SimpleBroadcastDevice.DEFAULT_RANGE, 0));
+		DEECoNode deeco2 = realm.createNode(runtimeLogWriters, new PositionPlugin(SimpleBroadcastDevice.DEFAULT_RANGE, 0));
 		/* deploy components and ensembles */
 		deeco2.deployComponent(new Follower(outputStream, simulationTimer));
 		deeco2.deployEnsemble(ConvoyEnsemble.class);

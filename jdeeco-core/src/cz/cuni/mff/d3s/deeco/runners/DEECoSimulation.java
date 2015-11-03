@@ -9,10 +9,11 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerFactory;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
+import cz.cuni.mff.d3s.deeco.runtimelog.RuntimeLogWriters;
 import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
 import cz.cuni.mff.d3s.jdeeco.simulation.SimulationProvider;
 
-/** 
+/**
  * Main entry for launching DEECo simulations.
  * 
  * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
@@ -23,7 +24,7 @@ public class DEECoSimulation {
 	List<DEECoPlugin> instantiatedPlugins;
 	List<Class<? extends DEECoPlugin>> nonInstantiatedPlugins;
 	SimulationTimer simulationTimer;
-	
+
 	public DEECoSimulation(SimulationProvider simulationProvider) {
 		this(simulationProvider.getTimer());
 	}
@@ -34,45 +35,69 @@ public class DEECoSimulation {
 		nonInstantiatedPlugins = new ArrayList<>();
 		deecoNodes = new ArrayList<>();
 	}
-	
+
 	public void addPlugin(Class<? extends DEECoPlugin> clazz) {
 		nonInstantiatedPlugins.add(clazz);
 	}
-	
+
 	public void addPlugin(DEECoPlugin nodeWideplugin) {
-		instantiatedPlugins.add(nodeWideplugin);		
+		instantiatedPlugins.add(nodeWideplugin);
 	}
 
 	public void start(long duration) {
 		simulationTimer.start(duration);
-		for(DEECoNode n : deecoNodes){
+		for (DEECoNode n : deecoNodes) {
 			n.finalize();
 		}
 	}
-	
-	public DEECoNode createNode(DEECoPlugin... nodeSpecificPlugins) throws DEECoException, InstantiationException, IllegalAccessException {
+
+	public DEECoNode createNode(DEECoPlugin... nodeSpecificPlugins)
+			throws DEECoException, InstantiationException, IllegalAccessException {
 		return createNode(nodeCounter++, nodeSpecificPlugins);
 	}
-	public DEECoNode createNode(int id, KnowledgeManagerFactory factory, DEECoPlugin... nodeSpecificPlugins) throws DEECoException, InstantiationException, IllegalAccessException {				
-		DEECoNode node = new DEECoNode(id, simulationTimer, factory, getPlugins(nodeSpecificPlugins));
-		deecoNodes.add(node);
-		return node; 
+
+	public DEECoNode createNode(RuntimeLogWriters runtimeLogWriters, DEECoPlugin... nodeSpecificPlugins)
+			throws DEECoException, InstantiationException, IllegalAccessException {
+		return createNode(nodeCounter++, runtimeLogWriters, nodeSpecificPlugins);
 	}
 
-	public DEECoNode createNode(int id, DEECoPlugin... nodeSpecificPlugins) throws DEECoException, InstantiationException, IllegalAccessException {		
+	public DEECoNode createNode(int id, KnowledgeManagerFactory factory, DEECoPlugin... nodeSpecificPlugins)
+			throws DEECoException, InstantiationException, IllegalAccessException {
+		DEECoNode node = new DEECoNode(id, simulationTimer, factory, getPlugins(nodeSpecificPlugins));
+		deecoNodes.add(node);
+		return node;
+	}
+
+	public DEECoNode createNode(int id, KnowledgeManagerFactory factory, RuntimeLogWriters runtimeLogWriters,
+			DEECoPlugin... nodeSpecificPlugins) throws DEECoException, InstantiationException, IllegalAccessException {
+		DEECoNode node = new DEECoNode(id, simulationTimer, factory, runtimeLogWriters, getPlugins(nodeSpecificPlugins));
+		deecoNodes.add(node);
+		return node;
+	}
+
+	public DEECoNode createNode(int id, DEECoPlugin... nodeSpecificPlugins)
+			throws DEECoException, InstantiationException, IllegalAccessException {
 		DEECoNode node = new DEECoNode(id, simulationTimer, getPlugins(nodeSpecificPlugins));
 		deecoNodes.add(node);
 		return node;
 	}
+
+	public DEECoNode createNode(int id, RuntimeLogWriters runtimeLogWriters, DEECoPlugin... nodeSpecificPlugins)
+			throws DEECoException, InstantiationException, IllegalAccessException {
+		DEECoNode node = new DEECoNode(id, simulationTimer, runtimeLogWriters, getPlugins(nodeSpecificPlugins));
+		deecoNodes.add(node);
+		return node;
+	}
 	
-	private DEECoPlugin [] getPlugins(DEECoPlugin... nodeSpecificPlugins) throws InstantiationException, IllegalAccessException {
+	private DEECoPlugin[] getPlugins(DEECoPlugin... nodeSpecificPlugins)
+			throws InstantiationException, IllegalAccessException {
 		List<DEECoPlugin> plugins = new LinkedList<DEECoPlugin>();
 		plugins.addAll(instantiatedPlugins);
 		plugins.addAll(Arrays.asList(nodeSpecificPlugins));
 		for (Class<? extends DEECoPlugin> c : nonInstantiatedPlugins) {
 			plugins.add(c.newInstance());
 		}
-		return  plugins.toArray(new DEECoPlugin[0]);
+		return plugins.toArray(new DEECoPlugin[0]);
 	}
-	
+
 }

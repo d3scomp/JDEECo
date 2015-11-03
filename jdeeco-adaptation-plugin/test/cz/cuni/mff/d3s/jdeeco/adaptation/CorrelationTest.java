@@ -1,14 +1,21 @@
 package cz.cuni.mff.d3s.jdeeco.adaptation;
 
+
+import static org.mockito.Mockito.mock;
+
+import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
 import cz.cuni.mff.d3s.deeco.runners.DEECoSimulation;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
+import cz.cuni.mff.d3s.deeco.runtimelog.RuntimeLogWriters;
 import cz.cuni.mff.d3s.deeco.timer.DiscreteEventTimer;
 import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
 import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.CorrelationPlugin;
@@ -26,7 +33,14 @@ import cz.cuni.mff.d3s.jdeeco.publishing.DefaultKnowledgePublisher;
  */
 public class CorrelationTest {
 
-	@SuppressWarnings("unchecked")
+	RuntimeLogWriters runtimeLogWriters;
+	
+	@Before
+	public void setUp() throws IOException{
+		Writer mockOut = mock(Writer.class);
+		runtimeLogWriters = new RuntimeLogWriters(mockOut, mockOut, mockOut);
+	}
+	
 	@Test
 	public void acceptanceTest() throws DEECoException, AnnotationProcessorException, InstantiationException, IllegalAccessException {
 
@@ -40,15 +54,15 @@ public class CorrelationTest {
 		realm.addPlugin(KnowledgeInsertingStrategy.class);
 		realm.addPlugin(new PositionPlugin(0.0,0.0));
 
-		DEECoNode deeco1 = realm.createNode(1);
+		DEECoNode deeco1 = realm.createNode(1, runtimeLogWriters);
 		nodesInRealm.add(deeco1);
 		deeco1.deployComponent(new GroupMember("1"));
 
-		DEECoNode deeco2 = realm.createNode(2);
+		DEECoNode deeco2 = realm.createNode(2, runtimeLogWriters);
 		nodesInRealm.add(deeco2);
 		deeco2.deployComponent(new GroupMember("2"));
 
-		DEECoNode deeco3 = realm.createNode(3);
+		DEECoNode deeco3 = realm.createNode(3, runtimeLogWriters);
 		nodesInRealm.add(deeco3);
 		deeco3.deployComponent(new GroupLeader("3"));
 
@@ -72,7 +86,7 @@ public class CorrelationTest {
 		KnowledgeMetadataHolder.setBoundAndMetric(batteryLabel, batteryBoundary, simpleMetric, batteryConfidence);
 
 		/* Create node that holds the correlation component */
-		DEECoNode deeco4 = realm.createNode(4,
+		DEECoNode deeco4 = realm.createNode(4, runtimeLogWriters,
 				new CorrelationPlugin(nodesInRealm));
 		// FIXME these two ensembles could be unified if we implement the "member.*" in knowledge exchange parameters
 		deeco4.deployEnsemble(GroupMemberDataAggregation.class);

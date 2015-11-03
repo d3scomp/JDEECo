@@ -21,6 +21,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
+import cz.cuni.mff.d3s.deeco.runtimelog.RuntimeLogWriters;
 import cz.cuni.mff.d3s.deeco.runtimelog.RuntimeLogger;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.scheduler.SingleThreadedScheduler;
@@ -84,62 +85,65 @@ public class DEECoNode implements DEECoContainer {
 		model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
 		knowledgeManagerFactory = factory;
 		processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE, model, knowledgeManagerFactory);
-		runtimeLogger = new RuntimeLogger();
-		
+				
 		initializeRuntime(timer);
-		initializeRuntimeLogger(timer);
+		// The runtime logger has to be assigned after the scheduler is availabe.
+		assignRuntimeLogger(timer, null);
+		
 		initializePlugins(plugins);
 	}
-	
+
+	public DEECoNode(int id, Timer timer, KnowledgeManagerFactory factory, RuntimeLogWriters runtimeLogWriters, DEECoPlugin... plugins) throws DEECoException {
+		this.nodeId = id;
+		model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
+		knowledgeManagerFactory = factory;
+		processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE, model, knowledgeManagerFactory);
+				
+		initializeRuntime(timer);
+		// The runtime logger has to be assigned after the scheduler is availabe.
+		assignRuntimeLogger(timer, runtimeLogWriters);
+		
+		initializePlugins(plugins);
+	}
 
 	/**
 	 * Creates new instance of {@link DEECoNode} with the specified instance of {@link RuntimeLogger}.
 	 * Make sure that the {@link RuntimeLogger#init} method is called after this constructor returns.
 	 * @param timer is the {@link Timer} that will be used in the created {@link DEECoNode} instance.
-	 * @param runtimeLogger is the {@link RuntimeLogger} specifically provided for the instance
-	 * of {@link DEECoNode} being created. Make sure that the {@link RuntimeLogger#init}
-	 * method is called after this constructor returns.
+	 * @param runtimeLogWriters is the {@link RuntimeLogWriters} specifically provided for the instance
+	 * of {@link DEECoNode} being created.
 	 * @param plugins are the plugins that will be loaded into the {@link DEECoNode} instance.
 	 * @throws DEECoException Thrown if the construction of {@link DEECoNode} fails. In such case
 	 * please see the error output and log file for further information about the failure.
 	 */
-	public DEECoNode(int id, Timer timer, RuntimeLogger runtimeLogger, DEECoPlugin... plugins) throws DEECoException {
+	public DEECoNode(int id, Timer timer, RuntimeLogWriters runtimeLogWriters, DEECoPlugin... plugins) throws DEECoException {
 		this.nodeId = id;
 		model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
 		knowledgeManagerFactory = new CloningKnowledgeManagerFactory();
 		processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE, model, knowledgeManagerFactory);
 		
 		initializeRuntime(timer);
-		this.runtimeLogger = runtimeLogger;
+		// The runtime logger has to be assigned after the scheduler is availabe.
+		assignRuntimeLogger(timer, runtimeLogWriters);
+		
 		initializePlugins(plugins);
 	}
 	
 	/**
 	 * Internal constructor with dependency injection for testing purposes. 
 	 */
-	DEECoNode(int id, Timer timer, RuntimeMetadata model, KnowledgeManagerFactory factory, AnnotationProcessor processor, DEECoPlugin... plugins) throws DEECoException {
+	DEECoNode(int id, Timer timer, RuntimeMetadata model,
+			KnowledgeManagerFactory factory, AnnotationProcessor processor,
+			RuntimeLogWriters runtimeLogWriters, DEECoPlugin... plugins) throws DEECoException {
 		this.nodeId = id;
 		this.model = model;
 		this.knowledgeManagerFactory = factory;
 		this.processor = processor;
 
 		initializeRuntime(timer);
-		initializeRuntimeLogger(timer);
-		initializePlugins(plugins);
-	}
-	
-	/**
-	 * Internal constructor with dependency injection for testing purposes. 
-	 * Make sure that the {@link RuntimeLogger#init} method is called after this constructor returns.
-	 */
-	DEECoNode(int id, Timer timer, RuntimeMetadata model, KnowledgeManagerFactory factory, AnnotationProcessor processor, RuntimeLogger runtimeLogger, DEECoPlugin... plugins) throws DEECoException {
-		this.nodeId = id;
-		this.model = model;
-		this.knowledgeManagerFactory = factory;
-		this.processor = processor;
-
-		initializeRuntime(timer);
-		this.runtimeLogger = runtimeLogger;
+		// The runtime logger has to be assigned after the scheduler is availabe.
+		assignRuntimeLogger(timer, runtimeLogWriters);
+		
 		initializePlugins(plugins);
 	}
 	
@@ -162,16 +166,22 @@ public class DEECoNode implements DEECoContainer {
 	
 	/**
 	 * Initialize the {@link RuntimeLogger} contained in the instance of {@link DEECoNode}.
+	 * The {@link RuntimeLogger} has to be initialized the {@link #initializeRuntime(Timer)}
+	 * method is invoked.
 	 * @param timer is the {@link Timer} that will be used by the {@link RuntimeLogger}
-	 * specific to the instance of {@link DEECoNode}. 
+	 * specific to the instance of {@link DEECoNode}.
+	 * @param writers is the {@link RuntimeLogWriters} specifically provided for the instance.
+	 * 			If null, the default writers are initialized.
 	 * @throws DEECoException Thrown if the construction of {@link DEECoNode} fails. In such case
 	 * please see the error output and log file for further information about the failure.
 	 */
-	private void initializeRuntimeLogger(Timer timer) throws DEECoException {
-
+	private void assignRuntimeLogger(Timer timer, RuntimeLogWriters writers) throws DEECoException {
 		try {
-			runtimeLogger = new RuntimeLogger();
-			runtimeLogger.init(timer, runtime.getScheduler());
+			if(writers != null){
+				runtimeLogger = new RuntimeLogger(timer, runtime.getScheduler(), writers);
+			} else {
+				runtimeLogger = new RuntimeLogger(timer, runtime.getScheduler());
+			}
 		} catch (IOException e) {
 			throw new DEECoException(e);
 		}
