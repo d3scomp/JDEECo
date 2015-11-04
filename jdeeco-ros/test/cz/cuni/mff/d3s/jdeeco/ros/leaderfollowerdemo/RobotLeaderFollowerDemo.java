@@ -9,6 +9,7 @@ import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
 import cz.cuni.mff.d3s.jdeeco.network.Network;
 import cz.cuni.mff.d3s.jdeeco.network.device.SimpleBroadcastDevice;
 import cz.cuni.mff.d3s.jdeeco.network.l2.strategy.KnowledgeInsertingStrategy;
+import cz.cuni.mff.d3s.jdeeco.position.PositionPlugin;
 import cz.cuni.mff.d3s.jdeeco.publishing.DefaultKnowledgePublisher;
 import cz.cuni.mff.d3s.jdeeco.ros.Positioning;
 import cz.cuni.mff.d3s.jdeeco.ros.RosServices;
@@ -43,13 +44,13 @@ public class RobotLeaderFollowerDemo {
 		
 		Positioning robot0Pos = new Positioning();
 		RosServices robot0Services = rosSim.createROSServices("/robot_0");
-		DEECoNode robot0 = realm.createNode(0, robot0Pos, robot0Services);
+		DEECoNode robot0 = realm.createNode(0, robot0Pos, robot0Services, new PositionPlugin(12, 12));
 		robot0.deployComponent(new LeaderRobot("robot_0", robot0Pos));
 		robot0.deployEnsemble(LeaderFollowerEnsemble.class);
 		
 		Positioning robot1Pos = new Positioning();
 		RosServices robot1Services = rosSim.createROSServices("/robot_1");
-		DEECoNode robot1 = realm.createNode(1, robot1Pos, robot1Services);
+		DEECoNode robot1 = realm.createNode(1, robot1Pos, robot1Services, new PositionPlugin(25, 12));
 		robot1.deployComponent(new FollowerRobot("robot_1", robot1Pos));
 		robot1.deployEnsemble(LeaderFollowerEnsemble.class);
 		

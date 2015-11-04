@@ -3,6 +3,7 @@ package cz.cuni.mff.d3s.jdeeco.position;
 import java.util.Collections;
 import java.util.List;
 
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 
@@ -17,6 +18,7 @@ import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
  *
  */
 public class PositionPlugin implements DEECoPlugin, PositionProvider {
+	private DEECoContainer container;
 	private Position staticPosition;
 	private PositionProvider provider = null;
 
@@ -43,8 +45,9 @@ public class PositionPlugin implements DEECoPlugin, PositionProvider {
 		if (provider != null) {
 			throw new UnsupportedOperationException("Poisiton provider is already set, cannot add another one.");
 		}
-
 		provider = positionProvider;
+		Log.i(container.getId() + ": " + this.getClass().getSimpleName() + " now using "
+				+ provider.getClass().getSimpleName() + " as node positoin provider.");
 	}
 
 	/**
@@ -77,7 +80,7 @@ public class PositionPlugin implements DEECoPlugin, PositionProvider {
 
 	@Override
 	public void init(DEECoContainer container) {
-		// nothing to do here
+		this.container = container;
 	}
 
 	@Override

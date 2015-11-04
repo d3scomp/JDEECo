@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
@@ -56,13 +57,20 @@ public class SimpleBroadcastDevice implements DEECoPlugin {
 		final MANETBroadcastAddress address;
 		final DEECoContainer container;
 		private PositionProvider positionProvider;
-		private final Scheduler scheduler; 
+		private final Scheduler scheduler;
 
 		public LoopDevice(DEECoContainer container) {
 			this.container = container;
 			address = new MANETBroadcastAddress(getId());
 			positionProvider = container.getPluginInstance(PositionPlugin.class);
 			scheduler = container.getRuntimeFramework().getScheduler();
+
+			if (positionProvider != null) {
+				Log.i(container.getId() + ": " + LoopDevice.class.getSimpleName() + " using node position information provided by "
+						+ positionProvider.getClass().getSimpleName());
+			} else {
+				Log.i(container.getId() + ": " + LoopDevice.class.getSimpleName() + " not using node position information");
+			}
 		}
 
 		public Position getPosition() {
@@ -188,11 +196,12 @@ public class SimpleBroadcastDevice implements DEECoPlugin {
 			}
 		}
 	}
-	
+
 	/**
 	 * Calculates approximate RSSI for given distance
 	 * 
-	 * @param distance Source to destination distance
+	 * @param distance
+	 *            Source to destination distance
 	 * 
 	 * @return Approximated RSSI value
 	 */
