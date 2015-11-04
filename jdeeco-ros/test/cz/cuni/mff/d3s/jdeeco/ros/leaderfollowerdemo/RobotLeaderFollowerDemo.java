@@ -30,11 +30,10 @@ public class RobotLeaderFollowerDemo {
 	public void testTravel() throws AnnotationProcessorException, InterruptedException, DEECoException,
 			InstantiationException, IllegalAccessException, IOException {
 	
-		ROSSimulation rosSim = new ROSSimulation("http://192.168.56.101:11311", "192.168.56.1");
+		ROSSimulation rosSim = new ROSSimulation("192.168.56.101", 11311, "192.168.56.1");
 
 		// Create main application container
 		DEECoSimulation realm = new DEECoSimulation(rosSim.getTimer());
-		
 		
 		// Configure loop-back networking for all nodes
 		realm.addPlugin(Network.class);
