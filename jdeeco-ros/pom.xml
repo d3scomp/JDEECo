@@ -81,6 +81,11 @@
 			<version>1.11.7</version>
 		</dependency>
 		<dependency>
+			<groupId>org.ros.rosjava_messages</groupId>
+			<artifactId>move_base_msgs</artifactId>
+			<version>1.12.2</version>
+		</dependency>
+		<dependency>
 			<groupId>beeclickarmROS</groupId>
 			<artifactId>beeclickarmROS</artifactId>
 			<version>0.0.1-SNAPSHOT</version>

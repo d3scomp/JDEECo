@@ -10,12 +10,14 @@ import org.ros.node.topic.Subscriber;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.GpsData;
+import cz.cuni.mff.d3s.jdeeco.ros.datatypes.MoveResult;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.Orientation;
-import cz.cuni.mff.d3s.jdeeco.ros.datatypes.Position;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.PoseWithCovariance;
+import cz.cuni.mff.d3s.jdeeco.ros.datatypes.Position;
 import geometry_msgs.Pose;
 import geometry_msgs.PoseStamped;
 import geometry_msgs.PoseWithCovarianceStamped;
+import move_base_msgs.MoveBaseActionResult;
 import nav_msgs.Odometry;
 import sensor_msgs.NavSatFix;
 import sensor_msgs.TimeReference;
@@ -62,6 +64,10 @@ public class Positioning extends TopicSubscriber {
 	 */
 	private static final String SIMPLE_GOAL_TOPIC = "move_base_simple/goal";
 	/**
+	 * The name of the topic for move_base result
+	 */
+	private static final String MOVE_BASE_RESULT_TOPIC = "move_base/result";
+	/**
 	 * The name of the transformation topic.
 	 */
 	private static final String TRANSFORMATION_TOPIC = "tf";
@@ -96,6 +102,10 @@ public class Positioning extends TopicSubscriber {
 	 */
 	private Publisher<PoseStamped> goalTopic = null;
 	/**
+	 * The topic for simple goals for base movement.
+	 */
+	private Subscriber<MoveBaseActionResult> moveBaseResultTopic = null;
+	/**
 	 * The transformation topic.
 	 */
 	private Subscriber<TFMessage> transformTopic = null;
@@ -127,6 +137,10 @@ public class Positioning extends TopicSubscriber {
 	 */
 	private Pose simpleGoal;
 	/**
+	 * Move base result
+	 */
+	private MoveResult moveBaseResult;
+	/**
 	 * The lock to wait and notify on when a simple goal is set.
 	 */
 	private final Object simpleGoalLock;
@@ -151,6 +165,7 @@ public class Positioning extends TopicSubscriber {
 		subscribeGPS(connectedNode);
 		subscribeAMCL(connectedNode);
 		subscribeSimpleGoal(connectedNode);
+		subscribeMoveBaseResult(connectedNode);
 
 		if (ENABLE_TF_LISTENER) {
 			subscribeTF(connectedNode);
@@ -312,6 +327,24 @@ public class Positioning extends TopicSubscriber {
 			}
 		});
 	}
+	
+	/**
+	 * Subscribe for the move_base result messages.
+	 * 
+	 * @param connectedNode
+	 *            The ROS node on which the DEECo node runs.
+	 */
+	private void subscribeMoveBaseResult(ConnectedNode connectedNode) {
+		moveBaseResultTopic = connectedNode.newSubscriber(rosServices.getNamespace() + MOVE_BASE_RESULT_TOPIC, MoveBaseActionResult._TYPE);
+		moveBaseResultTopic.addMessageListener(new MessageListener<MoveBaseActionResult>() {
+			@Override
+			public void onNewMessage(MoveBaseActionResult message) {
+				moveBaseResult = MoveResult.fromMoveBaseActionResult(message);
+
+				Log.d(String.format("MoveBaseResult received: [%s]", moveBaseResult.toString()));
+			}
+		});
+	}
 
 	/**
 	 * Subscribe for the transformation messages.
@@ -377,6 +410,15 @@ public class Positioning extends TopicSubscriber {
 	 */
 	public PoseWithCovariance getPosition() {
 		return amclPosition;
+	}
+	
+	/**
+	 * Move base result
+	 * 
+	 * @return Move base result
+	 */
+	public MoveResult getMoveBaseResult() {
+		return moveBaseResult;
 	}
 
 	/**
