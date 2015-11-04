@@ -10,6 +10,7 @@ import cz.cuni.mff.d3s.deeco.annotations.Local;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
+import cz.cuni.mff.d3s.deeco.timer.CurrentTimeProvider;
 import cz.cuni.mff.d3s.jdeeco.position.Position;
 import cz.cuni.mff.d3s.jdeeco.ros.Positioning;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.Orientation;
@@ -33,11 +34,15 @@ public class LeaderRobot {
 	
 	@Local
 	public Position goal;
+	
+	@Local
+	public CurrentTimeProvider clock;
 		
-	public LeaderRobot(String id, Positioning positioning) {
+	public LeaderRobot(String id, Positioning positioning, CurrentTimeProvider clock) {
 		this.id = id;
 		this.positioning = positioning;
 		this.position = new Position(0, 0, 0);
+		this.clock = clock;
 		
 		route = new LinkedList<>();				
 		route.add(new Position(13, 2, 0));
@@ -60,9 +65,10 @@ public class LeaderRobot {
 	@PeriodicScheduling(period = 1000)
 	public static void reportStatus(
 			@In("id") String id,
-			@In("position") Position position) {
+			@In("position") Position position,
+			@In("clock") CurrentTimeProvider clock) {
 		
-		System.out.format("Leader: Id: %s, pos: %s%n", id, position.toString());		
+		System.out.format("%d: Leader: Id: %s, pos: %s%n", clock.getCurrentMilliseconds(), id, position.toString());		
 	}
 	
 	@Process
@@ -72,7 +78,8 @@ public class LeaderRobot {
 			@In("position") Position position,
 			@In("positioning") Positioning positioning,
 			@InOut("route") ParamHolder<List<Position>> route,
-			@InOut("goal") ParamHolder<Position> goal) throws Exception {
+			@InOut("goal") ParamHolder<Position> goal,
+			@In("clock") CurrentTimeProvider clock) throws Exception {
 				
 		// If goal not set go to the first one
 		if(goal.value == null) {
@@ -86,7 +93,7 @@ public class LeaderRobot {
 			switch(positioning.getMoveBaseResult().status) {
 			case Succeeded:
 				Position reached = route.value.get(0);
-				System.out.format("Leader: At: %s reached %s%n", position, reached);
+				System.out.format(clock.getCurrentMilliseconds() + ": Leader: At: %s reached %s%n", position, reached);
 				route.value.remove(reached);
 				route.value.add(reached);
 				goal.value = route.value.get(0);
@@ -101,7 +108,7 @@ public class LeaderRobot {
 			default:
 			}
 		
-			System.out.println("Leader: result: " + positioning.getMoveBaseResult().toString());
+			System.out.println(clock.getCurrentMilliseconds() + ": Leader: result: " + positioning.getMoveBaseResult().toString());
 		}
 	}
 }

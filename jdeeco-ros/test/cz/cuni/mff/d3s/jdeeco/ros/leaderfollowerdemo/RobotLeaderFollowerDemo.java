@@ -44,13 +44,13 @@ public class RobotLeaderFollowerDemo {
 		Positioning robot0Pos = new Positioning();
 		RosServices robot0Services = rosSim.createROSServices("/robot_0");
 		DEECoNode robot0 = realm.createNode(0, robot0Pos, robot0Services, new PositionPlugin(12, 12));
-		robot0.deployComponent(new LeaderRobot("robot_0", robot0Pos));
+		robot0.deployComponent(new LeaderRobot("robot_0", robot0Pos, rosSim.getTimer()));
 		robot0.deployEnsemble(LeaderFollowerEnsemble.class);
 		
 		Positioning robot1Pos = new Positioning();
 		RosServices robot1Services = rosSim.createROSServices("/robot_1");
 		DEECoNode robot1 = realm.createNode(1, robot1Pos, robot1Services, new PositionPlugin(25, 12));
-		robot1.deployComponent(new FollowerRobot("robot_1", robot1Pos));
+		robot1.deployComponent(new FollowerRobot("robot_1", robot1Pos, rosSim.getTimer()));
 		robot1.deployEnsemble(LeaderFollowerEnsemble.class);
 		
 		// Simulate for specified time

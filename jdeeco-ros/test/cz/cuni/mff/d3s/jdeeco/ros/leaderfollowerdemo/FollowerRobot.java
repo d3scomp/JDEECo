@@ -9,6 +9,7 @@ import cz.cuni.mff.d3s.deeco.annotations.Local;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
+import cz.cuni.mff.d3s.deeco.timer.CurrentTimeProvider;
 import cz.cuni.mff.d3s.jdeeco.position.Position;
 import cz.cuni.mff.d3s.jdeeco.ros.Positioning;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.Orientation;
@@ -41,11 +42,14 @@ public class FollowerRobot {
 	@Local
 	public static Random rand = new Random(42);
 	
+	@Local
+	public CurrentTimeProvider clock;
 	
-	public FollowerRobot(String id, Positioning positioning) {
+	public FollowerRobot(String id, Positioning positioning, CurrentTimeProvider clock) {
 		this.id = id;
 		this.positioning = positioning;
 		this.position = new Position(0, 0, 0);
+		this.clock = clock;
 	}
 	
 	@Process
@@ -61,9 +65,10 @@ public class FollowerRobot {
 	@PeriodicScheduling(period = 1000)
 	public static void reportStatus(
 			@In("id") String id,
-			@In("position") Position position) {
+			@In("position") Position position,
+			@In("clock") CurrentTimeProvider clock) {
 		
-		System.out.format("Follower: Id: %s, pos: %s%n", id, position.toString());
+		System.out.format("%d: Follower: Id: %s, pos: %s%n", clock.getCurrentMilliseconds(), id, position.toString());
 	}
 	
 	@Process
@@ -73,10 +78,11 @@ public class FollowerRobot {
 			@In("position") Position position,
 			@In("positioning") Positioning positioning,
 			@In("destination") Position destination,
-			@InOut("goal") ParamHolder<Position> goal) throws Exception {
+			@InOut("goal") ParamHolder<Position> goal,
+			@In("clock") CurrentTimeProvider clock) throws Exception {
 		// If we have the leader position
 		if(destination != null) {
-			System.out.format("Follower: Leader at: %s %n", destination);
+			System.out.format(clock.getCurrentMilliseconds() + ": Follower: Leader at: %s %n", destination);
 			
 			goal.value = destination;
 			positioning.setSimpleGoal(new ROSPosition(
@@ -84,9 +90,9 @@ public class FollowerRobot {
 					goal.value.y + rand.nextDouble() - 0.5,
 					goal.value.z),
 					new Orientation(0, 0, 0, 1));
-			System.out.println("Follower: Goal set: " + goal.value.toString());
+			System.out.println(clock.getCurrentMilliseconds() + ": Follower: Goal set: " + goal.value.toString());
 		} else {
-			System.out.println("Follower: No leader position !!!");
+			System.out.println(clock.getCurrentMilliseconds() + ": Follower: No leader position !!!");
 		}
 	}
 }
