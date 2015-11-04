@@ -6,7 +6,6 @@ import cz.cuni.mff.d3s.jdeeco.ros.RosServices;
 import cz.cuni.mff.d3s.jdeeco.simulation.SimulationProvider;
 
 public class ROSSimulation implements SimulationProvider {
-
 	/**
 	 * The ROS_MASTER_URI value.
 	 */
@@ -16,7 +15,15 @@ public class ROSSimulation implements SimulationProvider {
 	 * The ROS_HOST address.
 	 */
 	private String ros_host;
-	
+
+	/**
+	 * Creates ROS simulation
+	 * 
+	 * 
+	 * 
+	 * @param ros_master
+	 * @param ros_host
+	 */
 	public ROSSimulation(String ros_master, String ros_host) {
 		this.ros_master = ros_master;
 		this.ros_host = ros_host;
