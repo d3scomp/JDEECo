@@ -3,7 +3,6 @@ package cz.cuni.mff.d3s.jdeeco.ros;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.ros.namespace.GraphName;
@@ -194,13 +193,13 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 	 * @return True if the ROS node starts. False otherwise.
 	 */
 	private boolean isStarted() {
-		final Date startTime = new Date();
-		Date currentTime = new Date();
-
+		final long startTime = System.currentTimeMillis();
+		
 		Log.i(String.format("Waiting up to %d milliseconds for ROS node to be started.", ROS_START_TIMEOUT));
 
-		while (currentTime.getTime() < startTime.getTime() + ROS_START_TIMEOUT) {
-			currentTime = new Date();
+		long remainingMs = ROS_START_TIMEOUT;
+		while (remainingMs > 0) {
+			remainingMs = ROS_START_TIMEOUT - (System.currentTimeMillis() - startTime);
 			
 			try {
 				// Wait a while between checks
@@ -211,7 +210,7 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 
 			// If all the topics are not subscribed try again later
 			if (connectedNode == null) {
-				Log.i("Waiting for node to connect...");
+				Log.i("Waiting for node to connect... " + remainingMs + "ms remaining");
 				continue;
 			}
 			
@@ -219,7 +218,7 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 			try {
 				connectedNode.getCurrentTime();
 			} catch(Exception e) {
-				Log.i("Waiting for node to provide current time...");
+				Log.i("Waiting for node to provide current time... " + remainingMs + "ms remaining");
 				continue;
 			}
 			
@@ -307,7 +306,7 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 	 */
 	@Override
 	public GraphName getDefaultNodeName() {
-		return GraphName.of(getNamespace() + "RosServices");
+		return GraphName.of(getNamespace() + this.getClass().getSimpleName());
 	}
 
 }
