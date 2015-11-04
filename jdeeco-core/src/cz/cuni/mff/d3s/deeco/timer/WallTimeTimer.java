@@ -19,7 +19,7 @@ import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 public class WallTimeTimer implements RunnerTimer {
 
 	protected final Queue<EventTime> eventTimes;
-	Map<DEECoContainer, EventTime> containerEvents;
+	protected final Map<DEECoContainer, EventTime> containerEvents;
 	protected long startTime;
 	protected long currentTime;
 	protected boolean running;
