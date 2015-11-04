@@ -20,7 +20,7 @@ public class Pose implements Serializable {
 	/**
 	 * The position coordinates.
 	 */
-	public final Position position;
+	public final ROSPosition position;
 
 	/**
 	 * The orientation coordinates.
@@ -35,7 +35,7 @@ public class Pose implements Serializable {
 	 * @param orientation
 	 *            The orientation coordinates.
 	 */
-	public Pose(Position position, Orientation orientation){
+	public Pose(ROSPosition position, Orientation orientation){
 		this.position = position;
 		this.orientation = orientation;
 	}

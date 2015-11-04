@@ -11,18 +11,18 @@ import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 import cz.cuni.mff.d3s.jdeeco.position.Position;
 
 @Ensemble
-@PeriodicScheduling(period = 100)
+@PeriodicScheduling(period = 1000)
 public class LeaderFollowerEnsemble {
 	@Membership
 	public static boolean membership(@In("coord.id") String coordId, @In("coord.position") Position coordPosition,
 			@In("member.id") String memberId, @In("member.position") Position memberPosition) {
-		Log.i(LeaderFollowerEnsemble.class.getName() + " MEMBERSHIP");
+		Log.d(LeaderFollowerEnsemble.class.getName() + " MEMBERSHIP");
 		return coordId.equals("robot_0") && memberId.equals("robot_1") && coordPosition.euclidDistanceTo(memberPosition) < 200;
 	}
 	
 	@KnowledgeExchange
 	public static void exchange(@In("coord.position") Position coordPosition, @Out("member.destination") ParamHolder<Position> memberPosition) {
-		Log.i(LeaderFollowerEnsemble.class.getName() + " EXCHANGE");
+		Log.d(LeaderFollowerEnsemble.class.getName() + " EXCHANGE");
 		memberPosition.value = coordPosition;
 	}
 }

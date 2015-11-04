@@ -13,7 +13,7 @@ import cz.cuni.mff.d3s.jdeeco.ros.datatypes.GpsData;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.MoveResult;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.Orientation;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.PoseWithCovariance;
-import cz.cuni.mff.d3s.jdeeco.ros.datatypes.Position;
+import cz.cuni.mff.d3s.jdeeco.ros.datatypes.ROSPosition;
 import geometry_msgs.Pose;
 import geometry_msgs.PoseStamped;
 import geometry_msgs.PoseWithCovarianceStamped;
@@ -113,7 +113,7 @@ public class Positioning extends TopicSubscriber {
 	/**
 	 * The last position received in the odometry topic.
 	 */
-	private Position odometry;
+	private ROSPosition odometry;
 	/**
 	 * The lock to wait and notify on when a odometry reset is requested.
 	 */
@@ -378,7 +378,7 @@ public class Positioning extends TopicSubscriber {
 	 * 
 	 * @return last value of the position published in the odometry topic.
 	 */
-	public Position getOdometry() {
+	public ROSPosition getOdometry() {
 		return odometry;
 	}
 
@@ -431,7 +431,7 @@ public class Positioning extends TopicSubscriber {
 	 * @param orientation
 	 *            The desired orientation of the robot.
 	 */
-	public void setSimpleGoal(Position position, Orientation orientation) {
+	public void setSimpleGoal(ROSPosition position, Orientation orientation) {
 		simpleGoal.getPosition().setX(position.x);
 		simpleGoal.getPosition().setY(position.y);
 		simpleGoal.getPosition().setZ(position.z);
@@ -446,16 +446,16 @@ public class Positioning extends TopicSubscriber {
 	}
 
 	/**
-	 * Transform given {@link geometry_msgs.Point} into {@link Position}
+	 * Transform given {@link geometry_msgs.Point} into {@link ROSPosition}
 	 * instance.
 	 * 
 	 * @param point
 	 *            The {@link geometry_msgs.Point} to be transformed.
-	 * @return A {@link Position} with the values taken from the given point
+	 * @return A {@link ROSPosition} with the values taken from the given point
 	 *         argument.
 	 */
-	private Position pointFromMessage(geometry_msgs.Point point) {
-		return new Position(point.getX(), point.getY(), point.getZ());
+	private ROSPosition pointFromMessage(geometry_msgs.Point point) {
+		return new ROSPosition(point.getX(), point.getY(), point.getZ());
 	}
 
 	/**
@@ -471,7 +471,7 @@ public class Positioning extends TopicSubscriber {
 	private PoseWithCovariance poseFromMessage(geometry_msgs.PoseWithCovariance pose) {
 		geometry_msgs.Point point = pose.getPose().getPosition();
 		geometry_msgs.Quaternion orientation = pose.getPose().getOrientation();
-		return new PoseWithCovariance(new Position(point.getX(), point.getY(), point.getZ()),
+		return new PoseWithCovariance(new ROSPosition(point.getX(), point.getY(), point.getZ()),
 				new Orientation(orientation.getX(), orientation.getY(), orientation.getZ(), orientation.getW()),
 				pose.getCovariance());
 	}

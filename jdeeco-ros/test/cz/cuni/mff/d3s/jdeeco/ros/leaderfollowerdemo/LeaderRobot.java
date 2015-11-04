@@ -14,6 +14,7 @@ import cz.cuni.mff.d3s.jdeeco.position.Position;
 import cz.cuni.mff.d3s.jdeeco.ros.Positioning;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.Orientation;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.PoseWithCovariance;
+import cz.cuni.mff.d3s.jdeeco.ros.datatypes.ROSPosition;
 
 @Component
 public class LeaderRobot {
@@ -77,10 +78,7 @@ public class LeaderRobot {
 		if(goal.value == null) {
 			goal.value = route.value.get(0);
 			
-			positioning.setSimpleGoal(new cz.cuni.mff.d3s.jdeeco.ros.datatypes.Position(
-					goal.value.x,
-					goal.value.y,
-					goal.value.z),
+			positioning.setSimpleGoal(ROSPosition.fromPosition(goal.value),
 					new Orientation(0, 0, 0, 1));
 		}
 		
@@ -93,17 +91,11 @@ public class LeaderRobot {
 				route.value.add(reached);
 				goal.value = route.value.get(0);
 				
-				positioning.setSimpleGoal(new cz.cuni.mff.d3s.jdeeco.ros.datatypes.Position(
-						goal.value.x,
-						goal.value.y,
-						goal.value.z),
+				positioning.setSimpleGoal(ROSPosition.fromPosition(goal.value),
 						new Orientation(0, 0, 0, 1));
 			break;
 			case Rejected:
-				positioning.setSimpleGoal(new cz.cuni.mff.d3s.jdeeco.ros.datatypes.Position(
-						goal.value.x,
-						goal.value.y,
-						goal.value.z),
+				positioning.setSimpleGoal(ROSPosition.fromPosition(goal.value),
 						new Orientation(0, 0, 0, 1));
 			break;
 			default:

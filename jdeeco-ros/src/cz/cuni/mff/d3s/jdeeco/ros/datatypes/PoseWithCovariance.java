@@ -32,7 +32,7 @@ public class PoseWithCovariance extends Pose {
 	 * @param cov
 	 *            The covariance.
 	 */
-	public PoseWithCovariance(Position position, Orientation orientation, double[] cov) {
+	public PoseWithCovariance(ROSPosition position, Orientation orientation, double[] cov) {
 		super(position, orientation);
 		this.covariance = cov;
 	}

@@ -62,7 +62,7 @@ public class RobotState implements Serializable {
 	/**
 	 * Position computed by the odometry.
 	 */
-	public final Position odometry;
+	public final ROSPosition odometry;
 
 	/**
 	 * Data measured by the GPS module.

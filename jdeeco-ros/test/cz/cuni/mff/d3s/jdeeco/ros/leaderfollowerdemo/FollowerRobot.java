@@ -13,6 +13,7 @@ import cz.cuni.mff.d3s.jdeeco.position.Position;
 import cz.cuni.mff.d3s.jdeeco.ros.Positioning;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.Orientation;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.PoseWithCovariance;
+import cz.cuni.mff.d3s.jdeeco.ros.datatypes.ROSPosition;
 
 @Component
 public class FollowerRobot {
@@ -78,7 +79,7 @@ public class FollowerRobot {
 			System.out.format("Follower: Leader at: %s %n", destination);
 			
 			goal.value = destination;
-			positioning.setSimpleGoal(new cz.cuni.mff.d3s.jdeeco.ros.datatypes.Position(
+			positioning.setSimpleGoal(new ROSPosition(
 					goal.value.x + rand.nextDouble() - 0.5,
 					goal.value.y + rand.nextDouble() - 0.5,
 					goal.value.z),
