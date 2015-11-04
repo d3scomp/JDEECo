@@ -21,7 +21,11 @@ import cz.cuni.mff.d3s.deeco.runtime.PluginInitFailedException;
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  */
 public abstract class TopicSubscriber implements DEECoPlugin {
-
+	/**
+	 * Instance of DEECo container this plugin belongs to
+	 */
+	protected DEECoContainer container;
+	
 	/**
 	 * Indicates whether the {@link #subscribe(ConnectedNode)} method has been
 	 * called (true) or not (false).
@@ -105,6 +109,7 @@ public abstract class TopicSubscriber implements DEECoPlugin {
 	 */
 	@Override
 	public void init(DEECoContainer container) throws PluginInitFailedException {
+		this.container = container;
 		rosServices = container.getPluginInstance(RosServices.class);
 		try{
 			rosServices.register(this);

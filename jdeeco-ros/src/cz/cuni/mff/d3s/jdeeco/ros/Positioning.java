@@ -9,6 +9,9 @@ import org.ros.node.topic.Publisher;
 import org.ros.node.topic.Subscriber;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.jdeeco.position.Position;
+import cz.cuni.mff.d3s.jdeeco.position.PositionPlugin;
+import cz.cuni.mff.d3s.jdeeco.position.PositionProvider;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.GpsData;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.MoveResult;
 import cz.cuni.mff.d3s.jdeeco.ros.datatypes.Orientation;
@@ -24,17 +27,15 @@ import sensor_msgs.TimeReference;
 import tf2_msgs.TFMessage;
 
 /**
- * Provides methods for obtaining sensed values passed through ROS. Subscription
- * to the appropriate ROS topics is handled in the
- * {@link #subscribe(ConnectedNode)} method.
+ * Provides methods for obtaining sensed values passed through ROS. Subscription to the appropriate ROS topics is
+ * handled in the {@link #subscribe(ConnectedNode)} method.
  * 
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  */
-public class Positioning extends TopicSubscriber {
-
+public class Positioning extends TopicSubscriber implements PositionProvider {
 	/**
-	 * A switch that guards the subscription to "tf" (transformations) topic. If
-	 * true then the {@link Positioning} object is subscribed to the "tf" topic.
+	 * A switch that guards the subscription to "tf" (transformations) topic. If true then the {@link Positioning}
+	 * object is subscribed to the "tf" topic.
 	 */
 	private static final boolean ENABLE_TF_LISTENER = false;
 
@@ -55,8 +56,7 @@ public class Positioning extends TopicSubscriber {
 	 */
 	private static final String GPS_TIME_TOPIC = "gps/time";
 	/**
-	 * The name of the <a href="http://wiki.ros.org/amcl">AMCL</a> positioning
-	 * topic.
+	 * The name of the <a href="http://wiki.ros.org/amcl">AMCL</a> positioning topic.
 	 */
 	private static final String AMCL_POSITION_TOPIC = "amcl_pose";
 	/**
@@ -128,8 +128,8 @@ public class Positioning extends TopicSubscriber {
 	 */
 	private Time gpsTime;
 	/**
-	 * The most probable position of the robot based on the
-	 * <a href="http://wiki.ros.org/amcl">AMCL</a> positioning algorithm.
+	 * The most probable position of the robot based on the <a href="http://wiki.ros.org/amcl">AMCL</a> positioning
+	 * algorithm.
 	 */
 	private PoseWithCovariance amclPosition;
 	/**
@@ -169,6 +169,18 @@ public class Positioning extends TopicSubscriber {
 
 		if (ENABLE_TF_LISTENER) {
 			subscribeTF(connectedNode);
+		}
+		
+		// Try to register as position provider and obtain initial position
+		PositionPlugin positionPlugin = this.container.getPluginInstance(PositionPlugin.class);
+		if(positionPlugin != null) {
+			// Grab initial position
+			amclPosition = new PoseWithCovariance(
+					ROSPosition.fromPosition(positionPlugin.getStaticPosition()),
+					new Orientation(0, 0, 0, 1),
+					new double[]{1});
+			// Register as position provider 
+			positionPlugin.setProvider(this);
 		}
 	}
 
@@ -222,7 +234,8 @@ public class Positioning extends TopicSubscriber {
 		});
 
 		// Subscribe to publish odometry reset messages
-		resetOdometryTopic = connectedNode.newPublisher(rosServices.getNamespace() + RESET_ODOMETRY_TOPIC, std_msgs.Empty._TYPE);
+		resetOdometryTopic = connectedNode.newPublisher(rosServices.getNamespace() + RESET_ODOMETRY_TOPIC,
+				std_msgs.Empty._TYPE);
 		connectedNode.executeCancellableLoop(new CancellableLoop() {
 			@Override
 			protected void setup() {
@@ -279,7 +292,8 @@ public class Positioning extends TopicSubscriber {
 	 *            The ROS node on which the DEECo node runs.
 	 */
 	private void subscribeAMCL(ConnectedNode connectedNode) {
-		amclTopic = connectedNode.newSubscriber(rosServices.getNamespace() + AMCL_POSITION_TOPIC, PoseWithCovarianceStamped._TYPE);
+		amclTopic = connectedNode.newSubscriber(rosServices.getNamespace() + AMCL_POSITION_TOPIC,
+				PoseWithCovarianceStamped._TYPE);
 		amclTopic.addMessageListener(new MessageListener<PoseWithCovarianceStamped>() {
 			@Override
 			public void onNewMessage(PoseWithCovarianceStamped message) {
@@ -327,7 +341,7 @@ public class Positioning extends TopicSubscriber {
 			}
 		});
 	}
-	
+
 	/**
 	 * Subscribe for the move_base result messages.
 	 * 
@@ -335,7 +349,8 @@ public class Positioning extends TopicSubscriber {
 	 *            The ROS node on which the DEECo node runs.
 	 */
 	private void subscribeMoveBaseResult(ConnectedNode connectedNode) {
-		moveBaseResultTopic = connectedNode.newSubscriber(rosServices.getNamespace() + MOVE_BASE_RESULT_TOPIC, MoveBaseActionResult._TYPE);
+		moveBaseResultTopic = connectedNode.newSubscriber(rosServices.getNamespace() + MOVE_BASE_RESULT_TOPIC,
+				MoveBaseActionResult._TYPE);
 		moveBaseResultTopic.addMessageListener(new MessageListener<MoveBaseActionResult>() {
 			@Override
 			public void onNewMessage(MoveBaseActionResult message) {
@@ -353,7 +368,8 @@ public class Positioning extends TopicSubscriber {
 	 *            The ROS node on which the DEECo node runs.
 	 */
 	private void subscribeTF(ConnectedNode connectedNode) {
-		transformTopic = connectedNode.newSubscriber(rosServices.getNamespace() + TRANSFORMATION_TOPIC, TFMessage._TYPE);
+		transformTopic = connectedNode.newSubscriber(rosServices.getNamespace() + TRANSFORMATION_TOPIC,
+				TFMessage._TYPE);
 		transformTopic.addMessageListener(new MessageListener<TFMessage>() {
 			@Override
 			public void onNewMessage(TFMessage message) {
@@ -390,7 +406,7 @@ public class Positioning extends TopicSubscriber {
 	public GpsData getGpsData() {
 		long msTime = gpsTime != null ? gpsTime.totalNsecs() * 1000 : 0;
 		double lat, lon, alt;
-		if(gpsPosition != null){
+		if (gpsPosition != null) {
 			lat = gpsPosition.getLatitude();
 			lon = gpsPosition.getLongitude();
 			alt = gpsPosition.getAltitude();
@@ -403,15 +419,24 @@ public class Positioning extends TopicSubscriber {
 	}
 
 	/**
-	 * Probabilistic position of the robot computed by the
-	 * <a href="http://wiki.ros.org/amcl">AMCL</a> algorithm.
+	 * Probabilistic position with covariance of the robot computed by the <a href="http://wiki.ros.org/amcl">AMCL</a>
+	 * algorithm as provided by ROS.
 	 * 
 	 * @return The probabilistic position of the robot.
 	 */
-	public PoseWithCovariance getPosition() {
+	public PoseWithCovariance getPoseWithCovariance() {
 		return amclPosition;
 	}
-	
+
+	/**
+	 * Probabilistic position of the robot computed by the <a href="http://wiki.ros.org/amcl">AMCL</a> algorithm.
+	 * 
+	 * @return The probabilistic position of the robot.
+	 */
+	public Position getPosition() {
+		return new Position(amclPosition.position.x, amclPosition.position.y, amclPosition.position.z);
+	}
+
 	/**
 	 * Move base result
 	 * 
@@ -422,9 +447,8 @@ public class Positioning extends TopicSubscriber {
 	}
 
 	/**
-	 * Set a goal for the "move base" service. After the goal is set the robot
-	 * starts to move to reach it. The goal consist of a position and an
-	 * orientation.
+	 * Set a goal for the "move base" service. After the goal is set the robot starts to move to reach it. The goal
+	 * consist of a position and an orientation.
 	 * 
 	 * @param position
 	 *            The desired position of the robot.
@@ -446,27 +470,22 @@ public class Positioning extends TopicSubscriber {
 	}
 
 	/**
-	 * Transform given {@link geometry_msgs.Point} into {@link ROSPosition}
-	 * instance.
+	 * Transform given {@link geometry_msgs.Point} into {@link ROSPosition} instance.
 	 * 
 	 * @param point
 	 *            The {@link geometry_msgs.Point} to be transformed.
-	 * @return A {@link ROSPosition} with the values taken from the given point
-	 *         argument.
+	 * @return A {@link ROSPosition} with the values taken from the given point argument.
 	 */
 	private ROSPosition pointFromMessage(geometry_msgs.Point point) {
 		return new ROSPosition(point.getX(), point.getY(), point.getZ());
 	}
 
 	/**
-	 * Transform given {@link geometry_msgs.PoseWithCovariance} into
-	 * {@link PoseWithCovariance} instance.
+	 * Transform given {@link geometry_msgs.PoseWithCovariance} into {@link PoseWithCovariance} instance.
 	 * 
 	 * @param pose
-	 *            The {@link geometry_msgs.PoseWithCovariance} to be
-	 *            transformed.
-	 * @return A {@link PoseWithCovariance} with the values taken from the given
-	 *         point argument.
+	 *            The {@link geometry_msgs.PoseWithCovariance} to be transformed.
+	 * @return A {@link PoseWithCovariance} with the values taken from the given point argument.
 	 */
 	private PoseWithCovariance poseFromMessage(geometry_msgs.PoseWithCovariance pose) {
 		geometry_msgs.Point point = pose.getPose().getPosition();

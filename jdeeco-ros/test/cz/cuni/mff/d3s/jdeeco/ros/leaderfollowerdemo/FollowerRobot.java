@@ -51,7 +51,7 @@ public class FollowerRobot {
 	@Process
 	@PeriodicScheduling(period = 100)
 	public static void sense(@InOut("position") ParamHolder<Position> position, @In("positioning") Positioning positioning) {
-		PoseWithCovariance pos = positioning.getPosition();
+		PoseWithCovariance pos = positioning.getPoseWithCovariance();
 		if(pos != null) {
 			position.value = new Position(pos.position.x, pos.position.y, pos.position.z);
 		}

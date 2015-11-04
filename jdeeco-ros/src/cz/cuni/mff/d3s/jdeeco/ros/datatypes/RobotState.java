@@ -130,7 +130,7 @@ public class RobotState implements Serializable {
 		if (positioningService != null) {
 			odometry = positioningService.getOdometry();
 			gpsData = positioningService.getGpsData();
-			position = positioningService.getPosition();
+			position = positioningService.getPoseWithCovariance();
 		} else {
 			odometry = null;
 			gpsData = null;
