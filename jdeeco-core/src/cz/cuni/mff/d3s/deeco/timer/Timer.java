@@ -4,6 +4,13 @@ import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 
 public interface Timer extends CurrentTimeProvider {
 	/**
+	 * Interface for timer shutdown listeners
+	 */
+	interface ShutdownListener {
+		void onShutdown();
+	}
+	
+	/**
 	 * Set next notification time for node
 	 * 
 	 * The timer is supposed to provide only one notification time per node.
@@ -38,4 +45,12 @@ public interface Timer extends CurrentTimeProvider {
 	 */
 	void interruptionEvent(TimerEventListener listener, String eventName,
 			DEECoContainer node);
+	
+	/**
+	 * Adds timer shutdown listener
+	 * 
+	 * Shutdown listeners are executed when the timer reaches its time limit
+	 * or is stopped from some other reason.
+	 */
+	void addShutdownListener(ShutdownListener listener);
 }

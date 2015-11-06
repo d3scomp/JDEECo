@@ -20,6 +20,7 @@ import org.ros.node.topic.Subscriber;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
+import cz.cuni.mff.d3s.deeco.timer.BaseTimer;
 import cz.cuni.mff.d3s.deeco.timer.EventTime;
 import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
 import cz.cuni.mff.d3s.deeco.timer.TimerEventListener;
@@ -34,7 +35,7 @@ import rosgraph_msgs.Clock;
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
  */
-public class ROSTimer implements SimulationTimer, NodeMain {
+public class ROSTimer extends BaseTimer implements SimulationTimer, NodeMain  {
 	/**
 	 * Queue of events
 	 */
@@ -163,9 +164,9 @@ public class ROSTimer implements SimulationTimer, NodeMain {
 		runSimulation();
 		Log.i("Simulation time limit reached");
 		
-		// Disconnect from ROS
-		disconnectROS();
-
+		// Shutdown system
+		runShutdownListeners();
+		
 		// Simulation is done lets tear down ROS simulation on remote machine
 		// TODO: Stop the simulation
 	}
@@ -212,18 +213,19 @@ public class ROSTimer implements SimulationTimer, NodeMain {
 		try {
 			NodeConfiguration rosNodeConfig = NodeConfiguration.newPublic(ros_host, new URI(ros_master_uri));
 			rosNodeExecutor = DefaultNodeMainExecutor.newDefault();
+			
+			// Shutdown ROS node when simulation ends
+			addShutdownListener(new ShutdownListener() {
+				@Override
+				public void onShutdown() {
+					rosNodeExecutor.shutdown();
+				}
+			});
 
 			rosNodeExecutor.execute(this, rosNodeConfig);
 		} catch (URISyntaxException e) {
 			throw new RuntimeException("Malformed URI: " + ros_master_uri, e);
 		}
-	}
-	
-	/**
-	 * Shutdown ROS node
-	 */
-	private void disconnectROS() {
-		rosNodeExecutor.shutdown();
 	}
 
 	/**

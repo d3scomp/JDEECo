@@ -6,13 +6,12 @@ import cz.cuni.mff.d3s.deeco.task.TimerTask;
 import cz.cuni.mff.d3s.deeco.task.TimerTaskListener;
 
 public class SimulationStepTask extends TimerTask {
-	
 	public SimulationStepTask(Scheduler scheduler, TimerTaskListener taskListener) {
 		this(scheduler, taskListener, 1);
 	}
 	
 	public SimulationStepTask(Scheduler scheduler, TimerTaskListener taskListener, long delay) {
-		super(scheduler, taskListener, delay);
+		super(scheduler, taskListener, "StepTask", delay);
 		((TimeTrigger) this.trigger).setOrder(Integer.MIN_VALUE);
 	}
 	

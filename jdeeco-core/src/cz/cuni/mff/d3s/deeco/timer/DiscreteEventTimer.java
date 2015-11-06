@@ -7,7 +7,7 @@ import java.util.Queue;
 
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 
-public class DiscreteEventTimer implements SimulationTimer {
+public class DiscreteEventTimer extends BaseTimer implements SimulationTimer {
 
 	private static final String TERMINATION_EVENT_NAME = "termination_event";
 	
@@ -41,6 +41,8 @@ public class DiscreteEventTimer implements SimulationTimer {
 			currentTime = eventTime.getTimePoint();
 			eventTime.getListener().at(currentTime);
 		}
+		
+		runShutdownListeners();
 	}
 
 	/**

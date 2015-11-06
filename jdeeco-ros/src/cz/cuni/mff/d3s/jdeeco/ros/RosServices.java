@@ -174,12 +174,20 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 		try {
 			NodeConfiguration rosNodeConfig = NodeConfiguration.newPublic(ros_host, new URI(ros_master));
 			NodeMainExecutor rosNode = DefaultNodeMainExecutor.newDefault();
+			
+			// Shutdown local ROS node when DEECo container is shutting down
+			container.addShutdownListener(new DEECoContainer.ShutdownListener() {
+				@Override
+				public void onShutdown() {
+					rosNode.shutdown();
+				}
+			});
 
 			rosNode.execute(this, rosNodeConfig);
 		} catch (URISyntaxException e) {
 			throw new PluginInitFailedException("Malformed URI: " + ros_master, e);
 		}
-
+		
 		// Wait defined timeout till the ROS node is started
 		if (!isStarted()) {
 			throw new PluginInitFailedException(
@@ -279,8 +287,6 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 	 */
 	@Override
 	public void onShutdownComplete(Node node) {
-		// Auto-generated method stub
-
 	}
 
 	/**

@@ -61,6 +61,11 @@ public class InstantSchedulerMock implements Scheduler {
 					DEECoContainer node) {
 				throw new UnsupportedOperationException("Fake timer does not support interruptionEvent");
 			}
+
+			@Override
+			public void addShutdownListener(ShutdownListener listener) {
+				throw new UnsupportedOperationException("Fake timer does not support shutdown");
+			}
 		};
 	}
 

@@ -63,9 +63,14 @@ public class DEECoNode implements DEECoContainer {
 	KnowledgeManagerFactory knowledgeManagerFactory;
 	
 	/**
-	 * Contains the initialized plugins for this deeco object.
+	 * Contains the initialized plugins for this DEECo object.
 	 */
 	Set<DEECoPlugin> pluginsSet;
+	
+	/**
+	 * Contains node shutdown handlers
+	 */
+	Set<DEECoContainer.ShutdownListener> shutdownListeners = new HashSet<>();
 	
 	/**
 	 * Creates new instance of {@link DEECoNode}.
@@ -157,6 +162,12 @@ public class DEECoNode implements DEECoContainer {
 		executor.setExecutionListener(scheduler);
 		runtime = new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, null);
 		runtime.init(this);
+		timer.addShutdownListener(new Timer.ShutdownListener() {
+			@Override
+			public void onShutdown() {
+				shutdownPlugins();
+			}
+		});
 	}
 	
 	/**
@@ -210,6 +221,15 @@ public class DEECoNode implements DEECoContainer {
 				throw new CycleDetectedException();
 			}
 		}	
+	}
+	
+	/**
+	 * Shutdowns all plugins once simulation is over
+	 */
+	private void shutdownPlugins() {
+		for(ShutdownListener listener: shutdownListeners) {
+			listener.onShutdown();
+		}
 	}
 	
 	@Override
@@ -319,5 +339,10 @@ public class DEECoNode implements DEECoContainer {
 		}
 		
 		return dependencyNodes;
-	}		
+	}
+
+	@Override
+	public void addShutdownListener(ShutdownListener listener) {
+		shutdownListeners.add(listener);
+	}
 }

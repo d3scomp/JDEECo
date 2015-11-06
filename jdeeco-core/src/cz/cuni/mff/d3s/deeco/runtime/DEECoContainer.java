@@ -14,6 +14,12 @@ import cz.cuni.mff.d3s.deeco.runtimelog.RuntimeLogger;
  * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
  */
 public interface DEECoContainer {
+	/**
+	 * Interface for container shutdown listener
+	 */
+	public static interface ShutdownListener {
+		public void onShutdown();
+	}
 	
 	/**
 	 * Returns the instance of the initialized plugin of type <code>pluginClass</code>.
@@ -75,4 +81,11 @@ public interface DEECoContainer {
 	 * @return Container identification
 	 */
 	public int getId();
+	
+	/**
+	 * Registers handler for container shutdown
+	 * 
+	 * Handler execution order is not guaranteed.
+	 */
+	public void addShutdownListener(ShutdownListener listener);
 }

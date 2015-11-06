@@ -2,10 +2,10 @@ package cz.cuni.mff.d3s.jdeeco.matsim.simulation;
 
 import cz.cuni.mff.d3s.deeco.timer.CurrentTimeProvider;
 
-public abstract class Simulation implements CurrentTimeProvider,
+public abstract interface SimulationUtils extends CurrentTimeProvider,
 		CallbackProvider {
 
-	protected static final int MILLIS_IN_SECOND = 1000;
+	static final int MILLIS_IN_SECOND = 1000;
 	
 	public static double millisecondsToSeconds(long time) {
 		return time * 1.0 / MILLIS_IN_SECOND;

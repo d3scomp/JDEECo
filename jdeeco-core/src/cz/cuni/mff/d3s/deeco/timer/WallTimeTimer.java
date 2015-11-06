@@ -16,7 +16,7 @@ import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
  * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  */
-public class WallTimeTimer implements RunnerTimer {
+public class WallTimeTimer extends BaseTimer implements RunnerTimer {
 
 	protected final Queue<EventTime> eventTimes;
 	protected final Map<DEECoContainer, EventTime> containerEvents;
@@ -99,6 +99,8 @@ public class WallTimeTimer implements RunnerTimer {
 			// Adjust the current time after the event execution
 			adjustCurrentTime();
 		}
+		
+		runShutdownListeners();
 	}
 	
 	/**

@@ -11,17 +11,18 @@ import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.simulation.omnet.OMNeTNative;
 import cz.cuni.mff.d3s.deeco.simulation.omnet.OMNeTNativeListener;
+import cz.cuni.mff.d3s.deeco.timer.BaseTimer;
 import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
 import cz.cuni.mff.d3s.deeco.timer.TimerEventListener;
 import cz.cuni.mff.d3s.jdeeco.network.address.IPAddress;
 import cz.cuni.mff.d3s.jdeeco.position.Position;
 
 public class OMNeTSimulation implements IOMNeTSimulation {
-	public class Timer implements SimulationTimer {
+	public class Timer extends BaseTimer implements SimulationTimer {
 		private long duration;
 
 		@Override
-		public void notifyAt(long time, TimerEventListener listener, DEECoContainer container) {
+		public void notifyAt(long time, TimerEventListener listener, String eventName, DEECoContainer container) {
 			hosts.get(container.getId()).setEventListener(time, listener);
 		}
 
@@ -43,11 +44,18 @@ public class OMNeTSimulation implements IOMNeTSimulation {
 				OMNeTNative.nativeRun("Cmdenv", config.getAbsolutePath());
 			} catch (IOException e) {
 				System.err.println("Failed to start simulation: " + e.getMessage());
+			} finally {
+				runShutdownListeners();
 			}
 		}
 
 		public long getDuration() {
 			return duration;
+		}
+
+		@Override
+		public void interruptionEvent(TimerEventListener listener, String eventName, DEECoContainer node) {
+			throw new UnsupportedOperationException("OMNeTSimualtion down not support interruption events, yet?"); 			
 		}
 	}
 
