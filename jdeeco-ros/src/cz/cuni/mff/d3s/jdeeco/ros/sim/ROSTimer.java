@@ -236,7 +236,8 @@ public class ROSTimer implements SimulationTimer, NodeMain {
 	 * Runs the simulation
 	 */
 	private void runSimulation() {
-		while (true) {
+		// While time limit is not exceeded
+		while (getCurrentMilliseconds() < durationMs) {
 			// The next event to be processed. Assigned when its execution time
 			// arises
 			EventTime eventToProcess = null;
@@ -267,11 +268,6 @@ public class ROSTimer implements SimulationTimer, NodeMain {
 					} catch (InterruptedException e) {
 						Log.e("Failed waiting for next clock message from ROS", e);
 					}
-				}
-				
-				// End simulation when time limit is exceeded
-				if(getCurrentMilliseconds() - startTimeMs > durationMs) {
-					break;
 				}
 			}
 		}
