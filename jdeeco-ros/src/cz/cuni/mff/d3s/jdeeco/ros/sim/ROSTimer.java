@@ -35,7 +35,7 @@ import rosgraph_msgs.Clock;
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
  */
-public class ROSTimer extends BaseTimer implements SimulationTimer, NodeMain  {
+public class ROSTimer extends BaseTimer implements SimulationTimer, NodeMain {
 	/**
 	 * Queue of events
 	 */
@@ -163,10 +163,10 @@ public class ROSTimer extends BaseTimer implements SimulationTimer, NodeMain  {
 		startTimeMs = getCurrentROSTime();
 		runSimulation();
 		Log.i("Simulation time limit reached");
-		
+
 		// Shutdown system
 		runShutdownListeners();
-		
+
 		// Simulation is done lets tear down ROS simulation on remote machine
 		// TODO: Stop the simulation
 	}
@@ -213,7 +213,7 @@ public class ROSTimer extends BaseTimer implements SimulationTimer, NodeMain  {
 		try {
 			NodeConfiguration rosNodeConfig = NodeConfiguration.newPublic(ros_host, new URI(ros_master_uri));
 			rosNodeExecutor = DefaultNodeMainExecutor.newDefault();
-			
+
 			// Shutdown ROS node when simulation ends
 			addShutdownListener(new ShutdownListener() {
 				@Override
@@ -262,8 +262,9 @@ public class ROSTimer extends BaseTimer implements SimulationTimer, NodeMain  {
 			synchronized (eventTimes) {
 				final EventTime nextEvent = eventTimes.peek();
 				if (nextEvent == null) {
-					Log.e("No event found in the queue in the WallTimeTimer.");
-					throw new IllegalStateException("No event found in the queue in the WallTimeTimer.");
+					Log.e("No event found in the queue in the " + this.getClass().getSimpleName());
+					throw new IllegalStateException(
+							"No event found in the queue in the " + this.getClass().getSimpleName());
 				}
 
 				// Get the time of the next event
