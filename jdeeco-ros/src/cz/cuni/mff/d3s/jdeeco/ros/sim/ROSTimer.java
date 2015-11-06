@@ -69,16 +69,21 @@ public class ROSTimer implements SimulationTimer, NodeMain {
 	 * IP or hostname for local ROS node
 	 */
 	private final String ros_host;
-	
+
 	/**
 	 * Simulation start time
 	 */
 	private long startTimeMs;
-	
+
 	/**
 	 * Simulation duration
 	 */
 	private long durationMs;
+
+	/**
+	 * ROS node executor used to execute timer reading node
+	 */
+	private NodeMainExecutor rosNodeExecutor;
 
 	/**
 	 * Creates ROS timer
@@ -101,7 +106,7 @@ public class ROSTimer implements SimulationTimer, NodeMain {
 	private void onROSStep(Clock newClock) {
 		currentClockMessage = newClock;
 		Log.d("Now, ROS time is: " + getCurrentMilliseconds() + " ms");
-		
+
 		// Wake-up timer queue
 		synchronized (eventTimes) {
 			eventTimes.notify();
@@ -129,13 +134,13 @@ public class ROSTimer implements SimulationTimer, NodeMain {
 
 	@Override
 	public long getCurrentMilliseconds() {
-		if(currentClockMessage != null) {
+		if (currentClockMessage != null) {
 			return getCurrentROSTime() - startTimeMs;
 		} else {
 			return 0;
 		}
 	}
-	
+
 	private long getCurrentROSTime() {
 		return currentClockMessage.getClock().totalNsecs() / 1000000;
 	}
@@ -143,7 +148,7 @@ public class ROSTimer implements SimulationTimer, NodeMain {
 	@Override
 	public void start(long duration) {
 		durationMs = duration;
-		
+
 		// First start the simulation by running ROS on the remote machine
 		// TODO: Run the simulation (this is a BIG TODO)
 
@@ -152,12 +157,15 @@ public class ROSTimer implements SimulationTimer, NodeMain {
 
 		// Finally wait for clock to actually start working
 		waitForTime();
-		
+
 		// Run jDEECo simulation
 		startTimeMs = getCurrentROSTime();
 		runSimulation();
 		Log.i("Simulation time limit reached");
 		
+		// Disconnect from ROS
+		disconnectROS();
+
 		// Simulation is done lets tear down ROS simulation on remote machine
 		// TODO: Stop the simulation
 	}
@@ -203,12 +211,19 @@ public class ROSTimer implements SimulationTimer, NodeMain {
 	private void connectROS() {
 		try {
 			NodeConfiguration rosNodeConfig = NodeConfiguration.newPublic(ros_host, new URI(ros_master_uri));
-			NodeMainExecutor rosNode = DefaultNodeMainExecutor.newDefault();
+			rosNodeExecutor = DefaultNodeMainExecutor.newDefault();
 
-			rosNode.execute(this, rosNodeConfig);
+			rosNodeExecutor.execute(this, rosNodeConfig);
 		} catch (URISyntaxException e) {
 			throw new RuntimeException("Malformed URI: " + ros_master_uri, e);
 		}
+	}
+	
+	/**
+	 * Shutdown ROS node
+	 */
+	private void disconnectROS() {
+		rosNodeExecutor.shutdown();
 	}
 
 	/**
