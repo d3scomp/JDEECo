@@ -15,8 +15,10 @@ import org.ros.node.NodeMainExecutor;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
+import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer.StartupListener;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.runtime.PluginInitFailedException;
+import cz.cuni.mff.d3s.deeco.runtime.PluginStartupFailedException;
 
 /**
  * DEECo plugin that provides an interface between DEECo and ROS. It registers
@@ -169,30 +171,36 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 	 */
 	@Override
 	public void init(DEECoContainer container) throws PluginInitFailedException {
-		Log.i("Starting ROS node.");
+		RosServices rosServices = this;
+		container.addStartupListener(new StartupListener() {
+			@Override
+			public void onStartup() throws PluginStartupFailedException {
+				Log.i("Starting ROS node.");
+				try {
+					NodeConfiguration rosNodeConfig = NodeConfiguration.newPublic(ros_host, new URI(ros_master));
+					NodeMainExecutor rosNode = DefaultNodeMainExecutor.newDefault();
+					
+					// Shutdown local ROS node when DEECo container is shutting down
+					container.addShutdownListener(new DEECoContainer.ShutdownListener() {
+						@Override
+						public void onShutdown() {
+							rosNode.shutdown();
+						}
+					});
 
-		try {
-			NodeConfiguration rosNodeConfig = NodeConfiguration.newPublic(ros_host, new URI(ros_master));
-			NodeMainExecutor rosNode = DefaultNodeMainExecutor.newDefault();
-			
-			// Shutdown local ROS node when DEECo container is shutting down
-			container.addShutdownListener(new DEECoContainer.ShutdownListener() {
-				@Override
-				public void onShutdown() {
-					rosNode.shutdown();
+					rosNode.execute(rosServices, rosNodeConfig);
+				} catch (URISyntaxException e) {
+					throw new PluginStartupFailedException("Malformed URI: " + ros_master, e);
 				}
-			});
-
-			rosNode.execute(this, rosNodeConfig);
-		} catch (URISyntaxException e) {
-			throw new PluginInitFailedException("Malformed URI: " + ros_master, e);
-		}
+				
+				// Wait defined timeout till the ROS node is started
+				if (!isStarted()) {
+					throw new PluginStartupFailedException(
+							String.format("The ROS node not started within %d milliseconds.", ROS_START_TIMEOUT));
+				}
+			}
+		});
 		
-		// Wait defined timeout till the ROS node is started
-		if (!isStarted()) {
-			throw new PluginInitFailedException(
-					String.format("The ROS node not started within %d milliseconds.", ROS_START_TIMEOUT));
-		}
 	}
 
 	/**

@@ -7,8 +7,10 @@ import org.ros.node.ConnectedNode;
 import org.ros.node.Node;
 
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
+import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer.StartupListener;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.runtime.PluginInitFailedException;
+import cz.cuni.mff.d3s.deeco.runtime.PluginStartupFailedException;
 
 /**
  * An ancestor of classes which register of subscribe to any ROS topic. The
@@ -111,13 +113,19 @@ public abstract class TopicSubscriber implements DEECoPlugin {
 	public void init(DEECoContainer container) throws PluginInitFailedException {
 		this.container = container;
 		rosServices = container.getPluginInstance(RosServices.class);
-		try{
-			rosServices.register(this);
-		} catch(IllegalStateException e){
-			throw new PluginInitFailedException(String.format(
-					"The %s plugin couldn't be initialized.",
-					this.getClass().getName()), e);
-		}
 		
+		TopicSubscriber topicSubscriber = this;
+		container.addStartupListener(new StartupListener() {
+			@Override
+			public void onStartup() throws PluginStartupFailedException {
+				try{
+					rosServices.register(topicSubscriber);
+				} catch(IllegalStateException e){
+					throw new PluginStartupFailedException(String.format(
+							"The %s plugin couldn't be initialized.",
+							this.getClass().getName()), e);
+				}
+			}
+		});
 	}
 }

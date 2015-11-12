@@ -90,6 +90,11 @@
 			<artifactId>beeclickarmROS</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>ROSRemote</groupId>
+			<artifactId>ROSRemote</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 
 	<repositories>
