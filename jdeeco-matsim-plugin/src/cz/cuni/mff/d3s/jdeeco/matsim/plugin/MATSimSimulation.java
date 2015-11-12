@@ -214,6 +214,7 @@ public class MATSimSimulation implements IMATSimSimulaton {
 
 		@Override
 		public void start(long duration) {
+			runStartupListeners();
 			MATSimSimulation.this.run(duration);
 			runShutdownListeners();
 		}

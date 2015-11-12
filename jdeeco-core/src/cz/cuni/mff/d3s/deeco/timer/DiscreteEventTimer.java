@@ -28,6 +28,7 @@ public class DiscreteEventTimer extends BaseTimer implements SimulationTimer {
 
 	@Override
 	public void start(long duration) {
+		runStartupListeners();
 
 		eventTimes.add(new EventTime(duration, new TimerEventListener() {
 			@Override

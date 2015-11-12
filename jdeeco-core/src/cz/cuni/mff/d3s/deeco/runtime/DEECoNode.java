@@ -73,6 +73,11 @@ public class DEECoNode implements DEECoContainer {
 	Set<DEECoContainer.ShutdownListener> shutdownListeners = new HashSet<>();
 	
 	/**
+	 * Contains node start handlers
+	 */
+	Set<DEECoContainer.StartupListener> startupListeners = new HashSet<>();
+	
+	/**
 	 * Creates new instance of {@link DEECoNode}.
 	 * @param timer is the {@link Timer} that will be used in the created {@link DEECoNode} instance.
 	 * @param plugins are the plugins that will be loaded into the {@link DEECoNode} instance.
@@ -162,6 +167,12 @@ public class DEECoNode implements DEECoContainer {
 		executor.setExecutionListener(scheduler);
 		runtime = new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, null);
 		runtime.init(this);
+		timer.addStartupListener(new Timer.StartupListener() {
+			@Override
+			public void onStartup() {
+				startupPlugins();
+			}
+		});
 		timer.addShutdownListener(new Timer.ShutdownListener() {
 			@Override
 			public void onShutdown() {
@@ -229,6 +240,15 @@ public class DEECoNode implements DEECoContainer {
 	private void shutdownPlugins() {
 		for(ShutdownListener listener: shutdownListeners) {
 			listener.onShutdown();
+		}
+	}
+	
+	/**
+	 * Startup all plugins before simulation starts
+	 */
+	private void startupPlugins() {
+		for(StartupListener listener: startupListeners) {
+			listener.onStartup();
 		}
 	}
 	
@@ -344,5 +364,10 @@ public class DEECoNode implements DEECoContainer {
 	@Override
 	public void addShutdownListener(ShutdownListener listener) {
 		shutdownListeners.add(listener);
+	}
+
+	@Override
+	public void addStartupListener(StartupListener listener) {
+		startupListeners.add(listener);
 	}
 }

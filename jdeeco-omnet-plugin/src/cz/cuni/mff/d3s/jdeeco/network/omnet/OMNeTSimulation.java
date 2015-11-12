@@ -38,7 +38,8 @@ public class OMNeTSimulation implements IOMNeTSimulation {
 		@Override
 		public void start(long duration) {
 			this.duration = duration;
-
+			
+			runStartupListeners();
 			try {
 				File config = OMNeTSimulation.this.getOmnetConfig(duration);
 				OMNeTNative.nativeRun("Cmdenv", config.getAbsolutePath());

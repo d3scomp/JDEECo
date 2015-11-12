@@ -11,6 +11,13 @@ public interface Timer extends CurrentTimeProvider {
 	}
 	
 	/**
+	 * Interface for timer startup listeners
+	 */
+	interface StartupListener {
+		void onStartup();
+	}
+	
+	/**
 	 * Set next notification time for node
 	 * 
 	 * The timer is supposed to provide only one notification time per node.
@@ -49,8 +56,14 @@ public interface Timer extends CurrentTimeProvider {
 	/**
 	 * Adds timer shutdown listener
 	 * 
-	 * Shutdown listeners are executed when the timer reaches its time limit
-	 * or is stopped from some other reason.
+	 * Shutdown listeners are executed when the timer reaches its time limit or is stopped from some other reason.
 	 */
 	void addShutdownListener(ShutdownListener listener);
+
+	/**
+	 * Adds timer startup listener
+	 * 
+	 * Startup listeners are executed right before the timer starts executing tasks.
+	 */
+	void addStartupListener(StartupListener listener);
 }

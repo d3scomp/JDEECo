@@ -101,6 +101,7 @@ public class OMNeTMATSimSimulation implements IMATSimSimulaton, IOMNeTSimulation
 
 		@Override
 		public void start(long duration) {
+			runStartupListeners();
 			OMNeTMATSimSimulation.this.runMATSim(duration);
 			omnet.getTimer().start(duration);
 			runShutdownListeners();

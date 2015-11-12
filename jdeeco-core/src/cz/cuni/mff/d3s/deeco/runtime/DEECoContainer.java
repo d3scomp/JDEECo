@@ -22,6 +22,13 @@ public interface DEECoContainer {
 	}
 	
 	/**
+	 * Interface for container start listener
+	 */
+	public static interface StartupListener {
+		public void onStartup();
+	}
+	
+	/**
 	 * Returns the instance of the initialized plugin of type <code>pluginClass</code>.
 	 * To be called from the <code>init()</code> method of a plugin that depends on a plugin of type <code>pluginClass</code>.
 	 */
@@ -88,4 +95,11 @@ public interface DEECoContainer {
 	 * Handler execution order is not guaranteed.
 	 */
 	public void addShutdownListener(ShutdownListener listener);
+	
+	/**
+	 * Registers handler for container start
+	 * 
+	 * Handler execution order is not guaranteed.
+	 */
+	public void addStartupListener(StartupListener listener);
 }

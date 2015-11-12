@@ -66,6 +66,11 @@ public class InstantSchedulerMock implements Scheduler {
 			public void addShutdownListener(ShutdownListener listener) {
 				throw new UnsupportedOperationException("Fake timer does not support shutdown");
 			}
+
+			@Override
+			public void addStartupListener(StartupListener listener) {
+				throw new UnsupportedOperationException("Fake timer does not support startup");
+			}
 		};
 	}
 

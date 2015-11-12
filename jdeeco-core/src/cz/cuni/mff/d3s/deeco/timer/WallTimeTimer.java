@@ -54,6 +54,8 @@ public class WallTimeTimer extends BaseTimer implements RunnerTimer {
 	}
 
 	public void start() {
+		runStartupListeners();
+		
 		running = true;
 		// Save the current time as the start time of the timer
 		startTime = System.currentTimeMillis();
