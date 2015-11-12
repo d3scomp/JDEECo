@@ -25,7 +25,7 @@ public interface DEECoContainer {
 	 * Interface for container start listener
 	 */
 	public static interface StartupListener {
-		public void onStartup();
+		public void onStartup() throws PluginStartupFailedException;
 	}
 	
 	/**

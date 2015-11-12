@@ -248,7 +248,11 @@ public class DEECoNode implements DEECoContainer {
 	 */
 	private void startupPlugins() {
 		for(StartupListener listener: startupListeners) {
-			listener.onStartup();
+			try {
+				listener.onStartup();
+			} catch (PluginStartupFailedException e) {
+				throw new DEECoRuntimeException("Plugin startup listener failed with exception", e);	
+			}
 		}
 	}
 	
