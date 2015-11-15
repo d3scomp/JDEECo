@@ -13,6 +13,7 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getName <em>Name</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getMembership <em>Membership</em>}</li>
@@ -23,7 +24,6 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getCoordinatorRole <em>Coordinator Role</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getMemberRole <em>Member Role</em>}</li>
  * </ul>
- * </p>
  *
  * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getEnsembleDefinition()
  * @model

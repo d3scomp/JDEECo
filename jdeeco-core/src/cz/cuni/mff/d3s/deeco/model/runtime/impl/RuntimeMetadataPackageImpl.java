@@ -2,6 +2,8 @@
  */
 package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 
+import cz.cuni.mff.d3s.deeco.annotations.DEECoMode;
+import cz.cuni.mff.d3s.deeco.annotations.ModeChart;
 import cz.cuni.mff.d3s.deeco.integrity.RatingsManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry;
@@ -314,6 +316,20 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * @generated
 	 */
 	private EDataType typeEDataType = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType deeCoModeEDataType = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType modeChartEDataType = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -633,6 +649,15 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getComponentInstance_Modechart() {
+		return (EAttribute)componentInstanceEClass.getEStructuralFeatures().get(9);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getEnsembleDefinition() {
 		return ensembleDefinitionEClass;
 	}
@@ -770,6 +795,15 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 */
 	public EReference getComponentProcess_Triggers() {
 		return (EReference)componentProcessEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getComponentProcess_Mode() {
+		return (EAttribute)componentProcessEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -1191,6 +1225,24 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EDataType getDEECoMode() {
+		return deeCoModeEDataType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EDataType getModeChart() {
+		return modeChartEDataType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public RuntimeMetadataFactory getRuntimeMetadataFactory() {
 		return (RuntimeMetadataFactory)getEFactoryInstance();
 	}
@@ -1250,6 +1302,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		createEAttribute(componentInstanceEClass, COMPONENT_INSTANCE__SYSTEM_COMPONENT);
 		createEReference(componentInstanceEClass, COMPONENT_INSTANCE__SECURITY_ROLES);
 		createEReference(componentInstanceEClass, COMPONENT_INSTANCE__RATINGS_PROCESS);
+		createEAttribute(componentInstanceEClass, COMPONENT_INSTANCE__MODECHART);
 
 		ensembleDefinitionEClass = createEClass(ENSEMBLE_DEFINITION);
 		createEAttribute(ensembleDefinitionEClass, ENSEMBLE_DEFINITION__NAME);
@@ -1270,6 +1323,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		createEReference(componentProcessEClass, COMPONENT_PROCESS__COMPONENT_INSTANCE);
 		createEAttribute(componentProcessEClass, COMPONENT_PROCESS__ACTIVE);
 		createEReference(componentProcessEClass, COMPONENT_PROCESS__TRIGGERS);
+		createEAttribute(componentProcessEClass, COMPONENT_PROCESS__MODE);
 
 		parameterEClass = createEClass(PARAMETER);
 		createEAttribute(parameterEClass, PARAMETER__KIND);
@@ -1336,6 +1390,8 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		communicationBoundaryEDataType = createEDataType(COMMUNICATION_BOUNDARY);
 		ratingsManagerEDataType = createEDataType(RATINGS_MANAGER);
 		typeEDataType = createEDataType(TYPE);
+		deeCoModeEDataType = createEDataType(DEE_CO_MODE);
+		modeChartEDataType = createEDataType(MODE_CHART);
 	}
 
 	/**
@@ -1420,6 +1476,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		initEAttribute(getComponentInstance_SystemComponent(), ecorePackage.getEBoolean(), "systemComponent", "false", 0, 1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getComponentInstance_SecurityRoles(), this.getSecurityRole(), null, "securityRoles", null, 0, -1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getComponentInstance_RatingsProcess(), this.getRatingsProcess(), this.getRatingsProcess_ComponentInstance(), "ratingsProcess", null, 0, 1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getComponentInstance_Modechart(), this.getModeChart(), "modechart", null, 0, 1, ComponentInstance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(ensembleDefinitionEClass, EnsembleDefinition.class, "EnsembleDefinition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getEnsembleDefinition_Name(), ecorePackage.getEString(), "name", null, 1, 1, EnsembleDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1440,6 +1497,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		initEReference(getComponentProcess_ComponentInstance(), this.getComponentInstance(), this.getComponentInstance_ComponentProcesses(), "componentInstance", null, 1, 1, ComponentProcess.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getComponentProcess_Active(), ecorePackage.getEBoolean(), "active", "true", 1, 1, ComponentProcess.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getComponentProcess_Triggers(), this.getTrigger(), null, "triggers", null, 0, -1, ComponentProcess.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getComponentProcess_Mode(), this.getDEECoMode(), "mode", null, 0, 1, ComponentProcess.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(parameterEClass, Parameter.class, "Parameter", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getParameter_Kind(), this.getParameterKind(), "kind", "INOUT", 1, 1, Parameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1513,6 +1571,8 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		initEDataType(communicationBoundaryEDataType, CommunicationBoundaryPredicate.class, "CommunicationBoundary", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(ratingsManagerEDataType, RatingsManager.class, "RatingsManager", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(typeEDataType, Type.class, "Type", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(deeCoModeEDataType, DEECoMode.class, "DEECoMode", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(modeChartEDataType, ModeChart.class, "ModeChart", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
 		createResource(eNS_URI);

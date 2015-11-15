@@ -2,6 +2,7 @@
  */
 package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 
+import cz.cuni.mff.d3s.deeco.annotations.ModeChart;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
@@ -31,6 +32,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getComponentProcesses <em>Component Processes</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getName <em>Name</em>}</li>
@@ -41,8 +43,8 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#isSystemComponent <em>System Component</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getSecurityRoles <em>Security Roles</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getRatingsProcess <em>Ratings Process</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentInstanceImpl#getModechart <em>Modechart</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */
@@ -176,6 +178,26 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	 * @ordered
 	 */
 	protected RatingsProcess ratingsProcess;
+
+	/**
+	 * The default value of the '{@link #getModechart() <em>Modechart</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getModechart()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final ModeChart MODECHART_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getModechart() <em>Modechart</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getModechart()
+	 * @generated
+	 * @ordered
+	 */
+	protected ModeChart modechart = MODECHART_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -376,6 +398,27 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public ModeChart getModechart() {
+		return modechart;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setModechart(ModeChart newModechart) {
+		ModeChart oldModechart = modechart;
+		modechart = newModechart;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT_INSTANCE__MODECHART, oldModechart, modechart));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
@@ -441,6 +484,8 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 				return getSecurityRoles();
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__RATINGS_PROCESS:
 				return getRatingsProcess();
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__MODECHART:
+				return getModechart();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -484,6 +529,9 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__RATINGS_PROCESS:
 				setRatingsProcess((RatingsProcess)newValue);
 				return;
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__MODECHART:
+				setModechart((ModeChart)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -523,6 +571,9 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__RATINGS_PROCESS:
 				setRatingsProcess((RatingsProcess)null);
 				return;
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__MODECHART:
+				setModechart(MODECHART_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -553,6 +604,8 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 				return securityRoles != null && !securityRoles.isEmpty();
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__RATINGS_PROCESS:
 				return ratingsProcess != null;
+			case RuntimeMetadataPackage.COMPONENT_INSTANCE__MODECHART:
+				return MODECHART_EDEFAULT == null ? modechart != null : !MODECHART_EDEFAULT.equals(modechart);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -575,6 +628,8 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 		result.append(shadowKnowledgeManagerRegistry);
 		result.append(", systemComponent: ");
 		result.append(systemComponent);
+		result.append(", modechart: ");
+		result.append(modechart);
 		result.append(')');
 		return result.toString();
 	}

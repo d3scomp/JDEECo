@@ -2,6 +2,7 @@
  */
 package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 
+import cz.cuni.mff.d3s.deeco.annotations.DEECoMode;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
@@ -23,13 +24,14 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getName <em>Name</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getComponentInstance <em>Component Instance</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#isActive <em>Active</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getTriggers <em>Triggers</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getMode <em>Mode</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */
@@ -83,6 +85,26 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 	 * @ordered
 	 */
 	protected EList<Trigger> triggers;
+
+	/**
+	 * The default value of the '{@link #getMode() <em>Mode</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getMode()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final DEECoMode MODE_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getMode() <em>Mode</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getMode()
+	 * @generated
+	 * @ordered
+	 */
+	protected DEECoMode mode = MODE_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -203,6 +225,27 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public DEECoMode getMode() {
+		return mode;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setMode(DEECoMode newMode) {
+		DEECoMode oldMode = mode;
+		mode = newMode;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT_PROCESS__MODE, oldMode, mode));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -260,6 +303,8 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 				return isActive();
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__TRIGGERS:
 				return getTriggers();
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__MODE:
+				return getMode();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -286,6 +331,9 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 				getTriggers().clear();
 				getTriggers().addAll((Collection<? extends Trigger>)newValue);
 				return;
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__MODE:
+				setMode((DEECoMode)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -310,6 +358,9 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__TRIGGERS:
 				getTriggers().clear();
 				return;
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__MODE:
+				setMode(MODE_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -330,6 +381,8 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 				return active != ACTIVE_EDEFAULT;
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__TRIGGERS:
 				return triggers != null && !triggers.isEmpty();
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__MODE:
+				return MODE_EDEFAULT == null ? mode != null : !MODE_EDEFAULT.equals(mode);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -348,6 +401,8 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 		result.append(name);
 		result.append(", active: ");
 		result.append(active);
+		result.append(", mode: ");
+		result.append(mode);
 		result.append(')');
 		return result.toString();
 	}

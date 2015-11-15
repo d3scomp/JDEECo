@@ -24,6 +24,9 @@
     <genDataTypes ecoreDataType="RuntimeModel.ecore#//ShadowKnowledgeManagerRegistry"/>
     <genDataTypes ecoreDataType="RuntimeModel.ecore#//CommunicationBoundary"/>
     <genDataTypes ecoreDataType="RuntimeModel.ecore#//RatingsManager"/>
+    <genDataTypes ecoreDataType="RuntimeModel.ecore#//Type"/>
+    <genDataTypes ecoreDataType="RuntimeModel.ecore#//DEECoMode"/>
+    <genDataTypes ecoreDataType="RuntimeModel.ecore#//ModeChart"/>
     <genClasses ecoreClass="RuntimeModel.ecore#//TimeTrigger">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//TimeTrigger/period"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//TimeTrigger/offset"/>
@@ -58,7 +61,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentInstance/systemComponent"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentInstance/securityRoles"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentInstance/ratingsProcess"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentInstance/roles"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentInstance/modechart"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//EnsembleDefinition">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//EnsembleDefinition/name"/>
@@ -67,6 +70,8 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//EnsembleDefinition/triggers"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//EnsembleDefinition/communicationBoundary"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//EnsembleDefinition/partitionedBy"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//EnsembleDefinition/coordinatorRole"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//EnsembleDefinition/memberRole"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//Condition"/>
     <genClasses ecoreClass="RuntimeModel.ecore#//Exchange"/>
@@ -75,11 +80,13 @@
       <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentProcess/componentInstance"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentProcess/active"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentProcess/triggers"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentProcess/mode"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//Parameter">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//Parameter/kind"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//Parameter/knowledgePath"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//Parameter/type"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//Parameter/genericType"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//Invocable">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//Invocable/parameters"/>

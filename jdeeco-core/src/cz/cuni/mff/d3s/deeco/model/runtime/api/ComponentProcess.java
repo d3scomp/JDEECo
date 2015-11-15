@@ -2,6 +2,7 @@
  */
 package cz.cuni.mff.d3s.deeco.model.runtime.api;
 
+import cz.cuni.mff.d3s.deeco.annotations.DEECoMode;
 import org.eclipse.emf.common.util.EList;
 
 /**
@@ -11,13 +12,14 @@ import org.eclipse.emf.common.util.EList;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getName <em>Name</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getComponentInstance <em>Component Instance</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#isActive <em>Active</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getTriggers <em>Triggers</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getMode <em>Mode</em>}</li>
  * </ul>
- * </p>
  *
  * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentProcess()
  * @model
@@ -120,5 +122,31 @@ public interface ComponentProcess extends Invocable {
 	 * @generated
 	 */
 	EList<Trigger> getTriggers();
+
+	/**
+	 * Returns the value of the '<em><b>Mode</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Mode</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Mode</em>' attribute.
+	 * @see #setMode(DEECoMode)
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentProcess_Mode()
+	 * @model dataType="cz.cuni.mff.d3s.deeco.model.runtime.api.DEECoMode"
+	 * @generated
+	 */
+	DEECoMode getMode();
+
+	/**
+	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getMode <em>Mode</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Mode</em>' attribute.
+	 * @see #getMode()
+	 * @generated
+	 */
+	void setMode(DEECoMode value);
 
 } // ComponentProcess

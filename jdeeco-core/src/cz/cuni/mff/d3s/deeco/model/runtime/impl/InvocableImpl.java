@@ -23,12 +23,12 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.InvocableImpl#getParameters <em>Parameters</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.InvocableImpl#getMethod <em>Method</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.InvocableImpl#isIgnoreKnowledgeCompromise <em>Ignore Knowledge Compromise</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */
