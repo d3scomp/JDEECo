@@ -5,7 +5,9 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
+import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoRuntimeException;
+import cz.cuni.mff.d3s.deeco.runtime.PluginInitFailedException;
 import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
 import cz.cuni.mff.d3s.jdeeco.ros.RosServices;
 import cz.cuni.mff.d3s.jdeeco.simulation.SimulationProvider;
@@ -71,7 +73,13 @@ public class ROSSimulation implements SimulationProvider {
 	 * @return RosServices instance for robot
 	 */
 	public RosServices createROSServices(String namespace) {
-		return new RosServices(ros_master_uri, ros_host, namespace);
+		return new RosServices(ros_master_uri, ros_host, namespace) {
+			@Override
+			public void init(DEECoContainer container) throws PluginInitFailedException {
+				super.init(container);
+				// TODO: Add probes in order to detect simulation configuration
+			}
+		};
 	}
 
 	/**
