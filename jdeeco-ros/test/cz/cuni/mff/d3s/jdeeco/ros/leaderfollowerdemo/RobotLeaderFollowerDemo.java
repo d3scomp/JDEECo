@@ -54,7 +54,7 @@ public class RobotLeaderFollowerDemo {
 		robot1.deployEnsemble(LeaderFollowerEnsemble.class);
 		
 		// Simulate for specified time
-		realm.start(10 * 60000);
+		realm.start(30_000);
 			
 		System.out.println("!#!@!#!@!#@!@#!@#!@#!#!@!#!@!#@!@#!@#!@#!#!@!#!@!#@!@#!@#!@#!#!@!#!@!#@!@#!@#!@#!#!@!#!@!#@!@#!@#!@#!#!@!#!@!#@!@#");
 		System.out.println("!@!#!@!#@!@#!@#!@# As we cannot make ROS exit nicely we are now going to terminate the whole JVM !@#!@#!@#!@#!@#!@#");

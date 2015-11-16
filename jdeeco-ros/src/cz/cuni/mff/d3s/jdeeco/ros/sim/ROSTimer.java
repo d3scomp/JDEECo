@@ -152,9 +152,19 @@ public class ROSTimer extends BaseTimer implements SimulationTimer, NodeMain {
 
 		// Finally wait for clock to actually start working
 		waitForTime();
-		
+
 		// Startup system
 		runStartupListeners();
+
+		// Wait a while for ROS bindings to settle
+		// TODO: Do we have something to check here? Unfortunately for some reason initial published messages are lost
+		// if we do not wait here.
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		// Run jDEECo simulation
 		startTimeMs = getCurrentROSTime();
