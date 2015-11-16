@@ -12,7 +12,6 @@ import cz.cuni.mff.d3s.jdeeco.network.l2.strategy.KnowledgeInsertingStrategy;
 import cz.cuni.mff.d3s.jdeeco.position.PositionPlugin;
 import cz.cuni.mff.d3s.jdeeco.publishing.DefaultKnowledgePublisher;
 import cz.cuni.mff.d3s.jdeeco.ros.Positioning;
-import cz.cuni.mff.d3s.jdeeco.ros.RosServices;
 import cz.cuni.mff.d3s.jdeeco.ros.sim.ROSSimulation;
 
 /**
@@ -30,7 +29,7 @@ public class RobotLeaderFollowerDemo {
 	public void testTravel() throws AnnotationProcessorException, InterruptedException, DEECoException,
 			InstantiationException, IllegalAccessException, IOException {
 	
-		ROSSimulation rosSim = new ROSSimulation("192.168.56.101", 11311, "192.168.56.1");
+		ROSSimulation rosSim = new ROSSimulation("192.168.56.101", 11311, "192.168.56.1", "corridor", 0.02, 100);
 
 		// Create main application container
 		DEECoSimulation realm = new DEECoSimulation(rosSim.getTimer());
@@ -42,14 +41,12 @@ public class RobotLeaderFollowerDemo {
 		realm.addPlugin(new SimpleBroadcastDevice(0, 0, 100000, SimpleBroadcastDevice.DEFAULT_MTU));
 		
 		Positioning robot0Pos = new Positioning();
-		RosServices robot0Services = rosSim.createROSServices("/robot_0");
-		DEECoNode robot0 = realm.createNode(0, robot0Pos, robot0Services, new PositionPlugin(12, 12));
+		DEECoNode robot0 = realm.createNode(0, robot0Pos, rosSim.createROSServices("red"), new PositionPlugin(12, 12));
 		robot0.deployComponent(new LeaderRobot("robot_0", robot0Pos, rosSim.getTimer()));
 		robot0.deployEnsemble(LeaderFollowerEnsemble.class);
 		
 		Positioning robot1Pos = new Positioning();
-		RosServices robot1Services = rosSim.createROSServices("/robot_1");
-		DEECoNode robot1 = realm.createNode(1, robot1Pos, robot1Services, new PositionPlugin(25, 12));
+		DEECoNode robot1 = realm.createNode(1, robot1Pos, rosSim.createROSServices("blue"), new PositionPlugin(26, 12));
 		robot1.deployComponent(new FollowerRobot("robot_1", robot1Pos, rosSim.getTimer()));
 		robot1.deployEnsemble(LeaderFollowerEnsemble.class);
 		
