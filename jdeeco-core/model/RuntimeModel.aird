@@ -1396,9 +1396,9 @@
           </ownedStyle>
           <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='EC%20EAttribute']"/>
         </ownedElements>
-        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_V6uJEIuMEeWen-bBtF_3DA" name="modechart : ModeChart" tooltipText="">
-          <target xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//ComponentInstance/modechart"/>
-          <semanticElements xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//ComponentInstance/modechart"/>
+        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_V6uJEIuMEeWen-bBtF_3DA" name="modeChart : ModeChart" tooltipText="">
+          <target xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//ComponentInstance/modeChart"/>
+          <semanticElements xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//ComponentInstance/modeChart"/>
           <ownedStyle xmi:type="diagram:BundledImage" xmi:id="_V6uJEYuMEeWen-bBtF_3DA" labelAlignment="LEFT">
             <description xmi:type="style:BundledImageDescription" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='EC%20EAttribute']/@style"/>
           </ownedStyle>
@@ -1492,9 +1492,9 @@
           </ownedStyle>
           <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='EC%20EAttribute']"/>
         </ownedElements>
-        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_V60PsIuMEeWen-bBtF_3DA" name="mode : DEECoMode" tooltipText="">
-          <target xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//ComponentProcess/mode"/>
-          <semanticElements xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//ComponentProcess/mode"/>
+        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_V60PsIuMEeWen-bBtF_3DA" name="modes : DEECoMode" tooltipText="">
+          <target xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//ComponentProcess/modes"/>
+          <semanticElements xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//ComponentProcess/modes"/>
           <ownedStyle xmi:type="diagram:BundledImage" xmi:id="_V60PsYuMEeWen-bBtF_3DA" labelAlignment="LEFT">
             <description xmi:type="style:BundledImageDescription" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='EC%20EAttribute']/@style"/>
           </ownedStyle>

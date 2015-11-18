@@ -53,7 +53,7 @@
         eType="#//SecurityRole" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="ratingsProcess" eType="#//RatingsProcess"
         containment="true" eOpposite="#//RatingsProcess/componentInstance"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="modechart" eType="#//ModeChart"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="modeChart" eType="#//ModeChart"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EnsembleDefinition">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -79,7 +79,8 @@
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean" defaultValueLiteral="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="triggers" upperBound="-1"
         eType="#//Trigger" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="mode" eType="#//DEECoMode"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="modes" upperBound="-1"
+        eType="#//DEECoMode"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="ParameterKind">
     <eLiterals name="IN"/>

@@ -18,7 +18,7 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getComponentInstance <em>Component Instance</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#isActive <em>Active</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getTriggers <em>Triggers</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getMode <em>Mode</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getModes <em>Modes</em>}</li>
  * </ul>
  *
  * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentProcess()
@@ -124,29 +124,19 @@ public interface ComponentProcess extends Invocable {
 	EList<Trigger> getTriggers();
 
 	/**
-	 * Returns the value of the '<em><b>Mode</b></em>' attribute.
+	 * Returns the value of the '<em><b>Modes</b></em>' attribute list.
+	 * The list contents are of type {@link cz.cuni.mff.d3s.deeco.annotations.DEECoMode}.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Mode</em>' attribute isn't clear,
+	 * If the meaning of the '<em>Modes</em>' attribute list isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Mode</em>' attribute.
-	 * @see #setMode(DEECoMode)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentProcess_Mode()
+	 * @return the value of the '<em>Modes</em>' attribute list.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentProcess_Modes()
 	 * @model dataType="cz.cuni.mff.d3s.deeco.model.runtime.api.DEECoMode"
 	 * @generated
 	 */
-	DEECoMode getMode();
-
-	/**
-	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getMode <em>Mode</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Mode</em>' attribute.
-	 * @see #getMode()
-	 * @generated
-	 */
-	void setMode(DEECoMode value);
+	EList<DEECoMode> getModes();
 
 } // ComponentProcess

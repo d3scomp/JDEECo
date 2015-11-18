@@ -61,7 +61,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentInstance/systemComponent"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentInstance/securityRoles"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeModel.ecore#//ComponentInstance/ratingsProcess"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentInstance/modechart"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//ComponentInstance/modeChart"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeModel.ecore#//EnsembleDefinition">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeModel.ecore#//EnsembleDefinition/name"/>

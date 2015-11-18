@@ -464,13 +464,13 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int COMPONENT_INSTANCE__RATINGS_PROCESS = 8;
 
 	/**
-	 * The feature id for the '<em><b>Modechart</b></em>' attribute.
+	 * The feature id for the '<em><b>Mode Chart</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_INSTANCE__MODECHART = 9;
+	int COMPONENT_INSTANCE__MODE_CHART = 9;
 
 	/**
 	 * The number of structural features of the '<em>Component Instance</em>' class.
@@ -829,13 +829,13 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int COMPONENT_PROCESS__TRIGGERS = INVOCABLE_FEATURE_COUNT + 3;
 
 	/**
-	 * The feature id for the '<em><b>Mode</b></em>' attribute.
+	 * The feature id for the '<em><b>Modes</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_PROCESS__MODE = INVOCABLE_FEATURE_COUNT + 4;
+	int COMPONENT_PROCESS__MODES = INVOCABLE_FEATURE_COUNT + 4;
 
 	/**
 	 * The number of structural features of the '<em>Component Process</em>' class.
@@ -1904,15 +1904,15 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EReference getComponentInstance_RatingsProcess();
 
 	/**
-	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getModechart <em>Modechart</em>}'.
+	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getModeChart <em>Mode Chart</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Modechart</em>'.
+	 * @return the meta object for the attribute '<em>Mode Chart</em>'.
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getModeChart()
 	 * @see #getComponentInstance()
 	 * @generated
 	 */
-	EAttribute getComponentInstance_Modechart();
+	EAttribute getComponentInstance_ModeChart();
 
 	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition <em>Ensemble Definition</em>}'.
@@ -2087,15 +2087,15 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EReference getComponentProcess_Triggers();
 
 	/**
-	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getMode <em>Mode</em>}'.
+	 * Returns the meta object for the attribute list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getModes <em>Modes</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Mode</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getMode()
+	 * @return the meta object for the attribute list '<em>Modes</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getModes()
 	 * @see #getComponentProcess()
 	 * @generated
 	 */
-	EAttribute getComponentProcess_Mode();
+	EAttribute getComponentProcess_Modes();
 
 	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter <em>Parameter</em>}'.
@@ -2875,12 +2875,12 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EReference COMPONENT_INSTANCE__RATINGS_PROCESS = eINSTANCE.getComponentInstance_RatingsProcess();
 
 		/**
-		 * The meta object literal for the '<em><b>Modechart</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Mode Chart</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute COMPONENT_INSTANCE__MODECHART = eINSTANCE.getComponentInstance_Modechart();
+		EAttribute COMPONENT_INSTANCE__MODE_CHART = eINSTANCE.getComponentInstance_ModeChart();
 
 		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl <em>Ensemble Definition</em>}' class.
@@ -3019,12 +3019,12 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EReference COMPONENT_PROCESS__TRIGGERS = eINSTANCE.getComponentProcess_Triggers();
 
 		/**
-		 * The meta object literal for the '<em><b>Mode</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Modes</b></em>' attribute list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute COMPONENT_PROCESS__MODE = eINSTANCE.getComponentProcess_Mode();
+		EAttribute COMPONENT_PROCESS__MODES = eINSTANCE.getComponentProcess_Modes();
 
 		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ParameterImpl <em>Parameter</em>}' class.

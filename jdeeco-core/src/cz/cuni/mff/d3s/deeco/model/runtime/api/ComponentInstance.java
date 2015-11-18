@@ -27,7 +27,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#isSystemComponent <em>System Component</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getSecurityRoles <em>Security Roles</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getRatingsProcess <em>Ratings Process</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getModechart <em>Modechart</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getModeChart <em>Mode Chart</em>}</li>
  * </ul>
  *
  * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance()
@@ -238,26 +238,26 @@ public interface ComponentInstance extends EObject {
 	void setRatingsProcess(RatingsProcess value);
 
 	/**
-	 * Returns the value of the '<em><b>Modechart</b></em>' attribute.
+	 * Returns the value of the '<em><b>Mode Chart</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Modechart</em>' attribute isn't clear,
+	 * If the meaning of the '<em>Mode Chart</em>' attribute isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Modechart</em>' attribute.
+	 * @return the value of the '<em>Mode Chart</em>' attribute.
 	 * @see #setModeChart(ModeChart)
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance_Modechart()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance_ModeChart()
 	 * @model dataType="cz.cuni.mff.d3s.deeco.model.runtime.api.ModeChart"
 	 * @generated
 	 */
 	ModeChart getModeChart();
 
 	/**
-	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getModechart <em>Modechart</em>}' attribute.
+	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getModeChart <em>Mode Chart</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Modechart</em>' attribute.
+	 * @param value the new value of the '<em>Mode Chart</em>' attribute.
 	 * @see #getModeChart()
 	 * @generated
 	 */

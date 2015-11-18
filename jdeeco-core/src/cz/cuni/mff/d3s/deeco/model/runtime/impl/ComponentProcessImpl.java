@@ -14,6 +14,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.InternalEList;
@@ -30,7 +31,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getComponentInstance <em>Component Instance</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#isActive <em>Active</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getTriggers <em>Triggers</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getMode <em>Mode</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getModes <em>Modes</em>}</li>
  * </ul>
  *
  * @generated
@@ -87,24 +88,14 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 	protected EList<Trigger> triggers;
 
 	/**
-	 * The default value of the '{@link #getMode() <em>Mode</em>}' attribute.
+	 * The cached value of the '{@link #getModes() <em>Modes</em>}' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getMode()
+	 * @see #getModes()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final DEECoMode MODE_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getMode() <em>Mode</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getMode()
-	 * @generated
-	 * @ordered
-	 */
-	protected DEECoMode mode = MODE_EDEFAULT;
+	protected EList<DEECoMode> modes;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -225,20 +216,11 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public DEECoMode getMode() {
-		return mode;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setMode(DEECoMode newMode) {
-		DEECoMode oldMode = mode;
-		mode = newMode;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT_PROCESS__MODE, oldMode, mode));
+	public EList<DEECoMode> getModes() {
+		if (modes == null) {
+			modes = new EDataTypeUniqueEList<DEECoMode>(DEECoMode.class, this, RuntimeMetadataPackage.COMPONENT_PROCESS__MODES);
+		}
+		return modes;
 	}
 
 	/**
@@ -303,8 +285,8 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 				return isActive();
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__TRIGGERS:
 				return getTriggers();
-			case RuntimeMetadataPackage.COMPONENT_PROCESS__MODE:
-				return getMode();
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__MODES:
+				return getModes();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -331,8 +313,9 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 				getTriggers().clear();
 				getTriggers().addAll((Collection<? extends Trigger>)newValue);
 				return;
-			case RuntimeMetadataPackage.COMPONENT_PROCESS__MODE:
-				setMode((DEECoMode)newValue);
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__MODES:
+				getModes().clear();
+				getModes().addAll((Collection<? extends DEECoMode>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -358,8 +341,8 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__TRIGGERS:
 				getTriggers().clear();
 				return;
-			case RuntimeMetadataPackage.COMPONENT_PROCESS__MODE:
-				setMode(MODE_EDEFAULT);
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__MODES:
+				getModes().clear();
 				return;
 		}
 		super.eUnset(featureID);
@@ -381,8 +364,8 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 				return active != ACTIVE_EDEFAULT;
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__TRIGGERS:
 				return triggers != null && !triggers.isEmpty();
-			case RuntimeMetadataPackage.COMPONENT_PROCESS__MODE:
-				return MODE_EDEFAULT == null ? mode != null : !MODE_EDEFAULT.equals(mode);
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__MODES:
+				return modes != null && !modes.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
@@ -401,8 +384,8 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 		result.append(name);
 		result.append(", active: ");
 		result.append(active);
-		result.append(", mode: ");
-		result.append(mode);
+		result.append(", modes: ");
+		result.append(modes);
 		result.append(')');
 		return result.toString();
 	}
