@@ -1908,7 +1908,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Modechart</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getModechart()
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getModeChart()
 	 * @see #getComponentInstance()
 	 * @generated
 	 */

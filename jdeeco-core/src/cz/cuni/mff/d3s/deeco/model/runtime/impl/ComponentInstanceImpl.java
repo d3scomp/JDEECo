@@ -180,20 +180,20 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	protected RatingsProcess ratingsProcess;
 
 	/**
-	 * The default value of the '{@link #getModechart() <em>Modechart</em>}' attribute.
+	 * The default value of the '{@link #getModeChart() <em>Modechart</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getModechart()
+	 * @see #getModeChart()
 	 * @generated
 	 * @ordered
 	 */
 	protected static final ModeChart MODECHART_EDEFAULT = null;
 
 	/**
-	 * The cached value of the '{@link #getModechart() <em>Modechart</em>}' attribute.
+	 * The cached value of the '{@link #getModeChart() <em>Modechart</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getModechart()
+	 * @see #getModeChart()
 	 * @generated
 	 * @ordered
 	 */
@@ -398,7 +398,7 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public ModeChart getModechart() {
+	public ModeChart getModeChart() {
 		return modechart;
 	}
 
@@ -407,7 +407,7 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setModechart(ModeChart newModechart) {
+	public void setModeChart(ModeChart newModechart) {
 		ModeChart oldModechart = modechart;
 		modechart = newModechart;
 		if (eNotificationRequired())
@@ -485,7 +485,7 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__RATINGS_PROCESS:
 				return getRatingsProcess();
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__MODECHART:
-				return getModechart();
+				return getModeChart();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -530,7 +530,7 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 				setRatingsProcess((RatingsProcess)newValue);
 				return;
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__MODECHART:
-				setModechart((ModeChart)newValue);
+				setModeChart((ModeChart)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -572,7 +572,7 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 				setRatingsProcess((RatingsProcess)null);
 				return;
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__MODECHART:
-				setModechart(MODECHART_EDEFAULT);
+				setModeChart(MODECHART_EDEFAULT);
 				return;
 		}
 		super.eUnset(featureID);

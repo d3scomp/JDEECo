@@ -246,21 +246,21 @@ public interface ComponentInstance extends EObject {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Modechart</em>' attribute.
-	 * @see #setModechart(ModeChart)
+	 * @see #setModeChart(ModeChart)
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance_Modechart()
 	 * @model dataType="cz.cuni.mff.d3s.deeco.model.runtime.api.ModeChart"
 	 * @generated
 	 */
-	ModeChart getModechart();
+	ModeChart getModeChart();
 
 	/**
 	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getModechart <em>Modechart</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Modechart</em>' attribute.
-	 * @see #getModechart()
+	 * @see #getModeChart()
 	 * @generated
 	 */
-	void setModechart(ModeChart value);
+	void setModeChart(ModeChart value);
 
 } // ComponentInstance
