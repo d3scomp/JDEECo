@@ -1,7 +1,7 @@
 package cz.cuni.mff.d3s.deeco.timer;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Shared base for common timer types. Implements basic timer behavior such as registering shutdown and startup listeners.
@@ -12,12 +12,12 @@ public abstract class BaseTimer implements Timer {
 	/**
 	 * Timer shutdown listener
 	 */
-	private Set<ShutdownListener> shutdownListeners = new HashSet<>();
+	private List<ShutdownListener> shutdownListeners = new LinkedList<>();
 	
 	/**
 	 * Timer startup listener
 	 */
-	private Set<StartupListener> startupListeners = new HashSet<>();
+	private List<StartupListener> startupListeners = new LinkedList<>();
 
 	/**
 	 * Registers new shutdown listener

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
@@ -70,12 +71,12 @@ public class DEECoNode implements DEECoContainer {
 	/**
 	 * Contains node shutdown handlers
 	 */
-	Set<DEECoContainer.ShutdownListener> shutdownListeners = new HashSet<>();
+	List<DEECoContainer.ShutdownListener> shutdownListeners = new LinkedList<>();
 	
 	/**
 	 * Contains node start handlers
 	 */
-	Set<DEECoContainer.StartupListener> startupListeners = new HashSet<>();
+	List<DEECoContainer.StartupListener> startupListeners = new LinkedList<>();
 	
 	/**
 	 * Creates new instance of {@link DEECoNode}.

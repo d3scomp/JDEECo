@@ -194,8 +194,6 @@ public class ROSSimulation implements SimulationProvider {
 			server = (ServerIntf) Naming.lookup(String.format("//%s/ROSRemote", ros_master));
 
 			ConfigIntf conf = server.createConfig(mapPrefix, resolution, intervalMs);
-			//conf.addTurtlebot(12, 12);
-			//conf.addTurtlebot(25, 12);
 			for(SimulationROSServices simROSService: simulationROSServices) {
 				simROSService.configureTurtlebot(conf);
 			}

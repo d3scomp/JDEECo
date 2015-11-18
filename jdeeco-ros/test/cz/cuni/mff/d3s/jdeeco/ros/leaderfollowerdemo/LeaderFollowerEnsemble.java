@@ -17,7 +17,7 @@ public class LeaderFollowerEnsemble {
 	public static boolean membership(@In("coord.id") String coordId, @In("coord.position") Position coordPosition,
 			@In("member.id") String memberId, @In("member.position") Position memberPosition) {
 		Log.d(LeaderFollowerEnsemble.class.getName() + " MEMBERSHIP");
-		return coordId.equals("robot_0") && memberId.equals("robot_1") && coordPosition.euclidDistanceTo(memberPosition) < 200;
+		return coordId.equals("robot_0") && !memberId.equals("robot_0") && coordPosition.euclidDistanceTo(memberPosition) < 200;
 	}
 	
 	@KnowledgeExchange

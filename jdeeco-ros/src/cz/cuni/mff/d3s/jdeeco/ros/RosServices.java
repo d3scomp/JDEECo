@@ -124,7 +124,7 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 		if (connectedNode == null) {
 			throw new IllegalStateException(
 					String.format("No ROS node connected. %s are either not initialized or ROS node was shutdown.",
-							this.getClass().getName()));
+							getDefaultNodeName().toString()));
 		}
 
 		topicSubscribers.add(subscriber);
@@ -226,7 +226,7 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 
 			// If all the topics are not subscribed try again later
 			if (connectedNode == null) {
-				Log.i("Waiting for node to connect... " + remainingMs + "ms remaining");
+				Log.i("Waiting for node to connect... " + remainingMs + " ms remaining (namespace = " + namespace + ")");
 				continue;
 			}
 			
@@ -234,10 +234,11 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 			try {
 				connectedNode.getCurrentTime();
 			} catch(Exception e) {
-				Log.i("Waiting for node to provide current time... " + remainingMs + "ms remaining");
+				Log.i("Waiting for node to provide current time... " + remainingMs + " ms remaining (namespace = " + namespace + ")");
 				continue;
 			}
 			
+			System.out.println(namespace + " is started returns true");
 			return true;
 		}
 
