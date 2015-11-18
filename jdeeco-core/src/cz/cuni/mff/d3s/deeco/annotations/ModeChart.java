@@ -1,6 +1,6 @@
 package cz.cuni.mff.d3s.deeco.annotations;
 
-import java.util.Collection;
+import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 
@@ -26,7 +26,7 @@ public abstract class ModeChart {
 	/**
 	 * @return all the modes that are included in this mode chart
 	 */
-	public abstract Collection<Class<? extends DEECoMode>> getModes();
+	public abstract Set<Class<? extends DEECoMode>> getModes();
 	
 	public abstract Class<? extends DEECoMode> findSetAndReturnCurrentMode();
 	
