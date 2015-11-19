@@ -71,7 +71,7 @@ In order to automatically generate the copyright in newly created classes, you n
 Go to **Window->Preferences->Java->Code Style->Code Templates->Comments->File** and **Edit** it. Copy there the following text:
 
 	/*******************************************************************************
-	 * Copyright ${date} Charles University in Prague
+	 * Copyright ${year} Charles University in Prague
 	 *  
 	 *  Licensed under the Apache License, Version 2.0 (the "License");
 	 *  you may not use this file except in compliance with the License.
