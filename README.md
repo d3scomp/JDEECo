@@ -85,8 +85,8 @@ Go to **Window->Preferences->Java->Code Style->Code Templates->Comments->File** 
 	 *  See the License for the specific language governing permissions and
 	 *  limitations under the License.
 	 *******************************************************************************/
-	 
-And when creating new Java file don't forget to check **Generate comments** check box.
+
+Then check the "Automatically add comments for new methods and types" on the bottom.	 
 
 #### CDEECo
 Apart from Java version of DEECo, there is its C++ realization that can be found under: ([http://github.com/d3scomp/CDEECo](http://github.com/d3scomp/CDEECo))
