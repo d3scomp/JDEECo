@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.deeco.annotations;
+package cz.cuni.mff.d3s.deeco.modes;
 
 /**
  * 

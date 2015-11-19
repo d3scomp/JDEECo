@@ -2,9 +2,10 @@
  */
 package cz.cuni.mff.d3s.deeco.model.runtime.api;
 
-import cz.cuni.mff.d3s.deeco.annotations.ModeChart;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry;
+import cz.cuni.mff.d3s.deeco.modes.ModeChart;
+
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EObject;

@@ -2,14 +2,14 @@
  */
 package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 
-import cz.cuni.mff.d3s.deeco.annotations.DEECoMode;
-import cz.cuni.mff.d3s.deeco.annotations.ModeChart;
 import cz.cuni.mff.d3s.deeco.integrity.RatingsManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.*;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
+import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
+import cz.cuni.mff.d3s.deeco.modes.ModeChart;
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;

@@ -577,7 +577,7 @@
               <styles xmi:type="notation:FilteringStyle" xmi:id="_V9B2M4uMEeWen-bBtF_3DA"/>
             </children>
             <styles xmi:type="notation:ShapeStyle" xmi:id="_V9BPKIuMEeWen-bBtF_3DA" fontName="Segoe UI" fontHeight="8"/>
-            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_V9BPKYuMEeWen-bBtF_3DA" x="1920"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_V9BPKYuMEeWen-bBtF_3DA" x="912" y="1321"/>
           </children>
           <children xmi:type="notation:Node" xmi:id="_V9B2NIuMEeWen-bBtF_3DA" visible="false" type="2003" element="_V597IIuMEeWen-bBtF_3DA">
             <children xmi:type="notation:Node" xmi:id="_V9CdQIuMEeWen-bBtF_3DA" type="5007"/>
@@ -590,7 +590,7 @@
               <styles xmi:type="notation:FilteringStyle" xmi:id="_V9CdQ4uMEeWen-bBtF_3DA"/>
             </children>
             <styles xmi:type="notation:ShapeStyle" xmi:id="_V9B2NYuMEeWen-bBtF_3DA" fontName="Segoe UI" fontHeight="8"/>
-            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_V9B2NouMEeWen-bBtF_3DA" x="2208" width="140" height="50"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_V9B2NouMEeWen-bBtF_3DA" x="1764" y="1128" width="219" height="75"/>
           </children>
           <styles xmi:type="notation:DiagramStyle" xmi:id="_J22HgouMEeWen-bBtF_3DA"/>
           <edges xmi:type="notation:Edge" xmi:id="_V9cs8IuMEeWen-bBtF_3DA" type="4001" element="_V7jPgIuMEeWen-bBtF_3DA" source="_V8nmg4uMEeWen-bBtF_3DA" target="_V8oNlIuMEeWen-bBtF_3DA">
@@ -1893,12 +1893,15 @@
       <ownedDiagramElements xmi:type="diagram:DNodeList" xmi:id="_V58tAIuMEeWen-bBtF_3DA" name="DEECoMode" visible="false" tooltipText="" width="14" height="5">
         <target xmi:type="ecore:EDataType" href="RuntimeModel.ecore#//DEECoMode"/>
         <semanticElements xmi:type="ecore:EDataType" href="RuntimeModel.ecore#//DEECoMode"/>
-        <graphicalFilters xmi:type="diagram:HideFilter" xmi:id="_ni-ZMYuMEeWen-bBtF_3DA"/>
+        <graphicalFilters xmi:type="diagram:HideFilter" xmi:id="_vv0hwI6gEeW9b_ahYi0bPg"/>
+        <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
+        <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
+        <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
         <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_V59UEIuMEeWen-bBtF_3DA" borderColor="125,125,125" backgroundStyle="Liquid" foregroundColor="255,250,191">
           <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EDataType']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EDataType']"/>
-        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_V7KN8ouMEeWen-bBtF_3DA" name="cz.cuni.mff.d3s.deeco.annotations.DEECoMode" visible="false" tooltipText="">
+        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_V7KN8ouMEeWen-bBtF_3DA" name="cz.cuni.mff.d3s.deeco.modes.DEECoMode" visible="false" tooltipText="">
           <target xmi:type="ecore:EDataType" href="RuntimeModel.ecore#//DEECoMode"/>
           <semanticElements xmi:type="ecore:EDataType" href="RuntimeModel.ecore#//DEECoMode"/>
           <decorations xmi:type="viewpoint:Decoration" xmi:id="_V7NRQ4uMEeWen-bBtF_3DA">
@@ -1914,12 +1917,15 @@
       <ownedDiagramElements xmi:type="diagram:DNodeList" xmi:id="_V597IIuMEeWen-bBtF_3DA" name="ModeChart" visible="false" tooltipText="" width="14" height="5">
         <target xmi:type="ecore:EDataType" href="RuntimeModel.ecore#//ModeChart"/>
         <semanticElements xmi:type="ecore:EDataType" href="RuntimeModel.ecore#//ModeChart"/>
-        <graphicalFilters xmi:type="diagram:HideFilter" xmi:id="_ni-ZMouMEeWen-bBtF_3DA"/>
+        <graphicalFilters xmi:type="diagram:HideFilter" xmi:id="_vJVwkI6gEeW9b_ahYi0bPg"/>
+        <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
+        <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
+        <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
         <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_V597IYuMEeWen-bBtF_3DA" borderColor="125,125,125" backgroundStyle="Liquid" foregroundColor="255,250,191">
           <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EDataType']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EDataType']"/>
-        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_V7LcEIuMEeWen-bBtF_3DA" name="cz.cuni.mff.d3s.deeco.annotations.ModeChart" visible="false" tooltipText="">
+        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_V7LcEIuMEeWen-bBtF_3DA" name="cz.cuni.mff.d3s.deeco.modes.ModeChart" visible="false" tooltipText="">
           <target xmi:type="ecore:EDataType" href="RuntimeModel.ecore#//ModeChart"/>
           <semanticElements xmi:type="ecore:EDataType" href="RuntimeModel.ecore#//ModeChart"/>
           <decorations xmi:type="viewpoint:Decoration" xmi:id="_V7NRRIuMEeWen-bBtF_3DA">

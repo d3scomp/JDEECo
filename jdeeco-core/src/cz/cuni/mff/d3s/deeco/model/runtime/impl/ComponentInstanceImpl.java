@@ -2,7 +2,6 @@
  */
 package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 
-import cz.cuni.mff.d3s.deeco.annotations.ModeChart;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
@@ -11,6 +10,8 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RatingsProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
+import cz.cuni.mff.d3s.deeco.modes.ModeChart;
+
 import java.util.Collection;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;

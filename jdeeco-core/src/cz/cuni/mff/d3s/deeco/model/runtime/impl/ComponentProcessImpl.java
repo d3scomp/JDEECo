@@ -2,11 +2,12 @@
  */
 package cz.cuni.mff.d3s.deeco.model.runtime.impl;
 
-import cz.cuni.mff.d3s.deeco.annotations.DEECoMode;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
+import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
+
 import java.util.Collection;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;

@@ -161,6 +161,6 @@
     <eLiterals name="SHADOW" value="1"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="Type" instanceClassName="java.lang.reflect.Type"/>
-  <eClassifiers xsi:type="ecore:EDataType" name="DEECoMode" instanceClassName="cz.cuni.mff.d3s.deeco.annotations.DEECoMode"/>
-  <eClassifiers xsi:type="ecore:EDataType" name="ModeChart" instanceClassName="cz.cuni.mff.d3s.deeco.annotations.ModeChart"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="DEECoMode" instanceClassName="cz.cuni.mff.d3s.deeco.modes.DEECoMode"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="ModeChart" instanceClassName="cz.cuni.mff.d3s.deeco.modes.ModeChart"/>
 </ecore:EPackage>

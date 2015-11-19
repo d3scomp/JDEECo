@@ -2,8 +2,9 @@
  */
 package cz.cuni.mff.d3s.deeco.model.runtime.api;
 
-import cz.cuni.mff.d3s.deeco.annotations.DEECoMode;
 import org.eclipse.emf.common.util.EList;
+
+import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
 
 /**
  * <!-- begin-user-doc -->
@@ -125,7 +126,7 @@ public interface ComponentProcess extends Invocable {
 
 	/**
 	 * Returns the value of the '<em><b>Modes</b></em>' attribute list.
-	 * The list contents are of type {@link cz.cuni.mff.d3s.deeco.annotations.DEECoMode}.
+	 * The list contents are of type {@link cz.cuni.mff.d3s.deeco.modes.DEECoMode}.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Modes</em>' attribute list isn't clear,

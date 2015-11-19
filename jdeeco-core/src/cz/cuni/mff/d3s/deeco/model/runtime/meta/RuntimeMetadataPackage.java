@@ -1587,7 +1587,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * The meta object id for the '<em>DEE Co Mode</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.deeco.annotations.DEECoMode
+	 * @see cz.cuni.mff.d3s.deeco.modes.DEECoMode
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getDEECoMode()
 	 * @generated
 	 */
@@ -1597,7 +1597,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * The meta object id for the '<em>Mode Chart</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see cz.cuni.mff.d3s.deeco.annotations.ModeChart
+	 * @see cz.cuni.mff.d3s.deeco.modes.ModeChart
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getModeChart()
 	 * @generated
 	 */
@@ -2588,23 +2588,23 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EDataType getType();
 
 	/**
-	 * Returns the meta object for data type '{@link cz.cuni.mff.d3s.deeco.annotations.DEECoMode <em>DEE Co Mode</em>}'.
+	 * Returns the meta object for data type '{@link cz.cuni.mff.d3s.deeco.modes.DEECoMode <em>DEE Co Mode</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for data type '<em>DEE Co Mode</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.annotations.DEECoMode
-	 * @model instanceClass="cz.cuni.mff.d3s.deeco.annotations.DEECoMode"
+	 * @see cz.cuni.mff.d3s.deeco.modes.DEECoMode
+	 * @model instanceClass="cz.cuni.mff.d3s.deeco.modes.DEECoMode"
 	 * @generated
 	 */
 	EDataType getDEECoMode();
 
 	/**
-	 * Returns the meta object for data type '{@link cz.cuni.mff.d3s.deeco.annotations.ModeChart <em>Mode Chart</em>}'.
+	 * Returns the meta object for data type '{@link cz.cuni.mff.d3s.deeco.modes.ModeChart <em>Mode Chart</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for data type '<em>Mode Chart</em>'.
-	 * @see cz.cuni.mff.d3s.deeco.annotations.ModeChart
-	 * @model instanceClass="cz.cuni.mff.d3s.deeco.annotations.ModeChart"
+	 * @see cz.cuni.mff.d3s.deeco.modes.ModeChart
+	 * @model instanceClass="cz.cuni.mff.d3s.deeco.modes.ModeChart"
 	 * @generated
 	 */
 	EDataType getModeChart();
@@ -3446,7 +3446,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * The meta object literal for the '<em>DEE Co Mode</em>' data type.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see cz.cuni.mff.d3s.deeco.annotations.DEECoMode
+		 * @see cz.cuni.mff.d3s.deeco.modes.DEECoMode
 		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getDEECoMode()
 		 * @generated
 		 */
@@ -3456,7 +3456,7 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * The meta object literal for the '<em>Mode Chart</em>' data type.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see cz.cuni.mff.d3s.deeco.annotations.ModeChart
+		 * @see cz.cuni.mff.d3s.deeco.modes.ModeChart
 		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getModeChart()
 		 * @generated
 		 */
