@@ -826,4 +826,9 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 		return component.isSystemComponent();
 	}
 
+	@Override
+	public void updateRoles(Class<?>[] newRoleClasses) {
+		this.roleClasses = newRoleClasses != null ? newRoleClasses : new Class<?>[0];
+	}
+
 }
