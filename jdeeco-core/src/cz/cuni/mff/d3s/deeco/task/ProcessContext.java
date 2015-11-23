@@ -5,10 +5,10 @@ import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerFactory;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.architecture.api.Architecture;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
+import cz.cuni.mff.d3s.deeco.runtimelog.RuntimeLogger;
 import cz.cuni.mff.d3s.deeco.timer.CurrentTimeProvider;
 
 /**
@@ -23,15 +23,17 @@ public class ProcessContext {
 	private Architecture architecture;
 	private ComponentProcess process;
 	private CurrentTimeProvider currentTimeProvider;
+	private RuntimeLogger runtimeLogger;
 	
-	private ProcessContext(ComponentProcess process, CurrentTimeProvider currentTimeProvider, Architecture architecture) {
+	private ProcessContext(ComponentProcess process, CurrentTimeProvider currentTimeProvider, Architecture architecture, RuntimeLogger runtimeLogger) {
 		this.architecture = architecture;
 		this.process = process;		
 		this.currentTimeProvider = currentTimeProvider;
+		this.runtimeLogger = runtimeLogger;
 	}
 	
-	static void addContext(ComponentProcess process, CurrentTimeProvider currentTimeProvider, Architecture architecture) {
-		context.set(new ProcessContext(process, currentTimeProvider, architecture));		
+	static void addContext(ComponentProcess process, CurrentTimeProvider currentTimeProvider, Architecture architecture, RuntimeLogger runtimeLogger) {
+		context.set(new ProcessContext(process, currentTimeProvider, architecture, runtimeLogger));		
 	}	
 	
 	public static ComponentProcess getCurrentProcess() {
@@ -61,6 +63,13 @@ public class ProcessContext {
 			return null;
 		
 		return (RuntimeMetadata) p.getComponentInstance().eContainer();		
+	}
+	
+	public static RuntimeLogger getRuntimeLogger() {
+		if (context.get() != null)
+			return context.get().runtimeLogger;
+		else 
+			return null;
 	}
 	
 	public void startComponent(Object componentDefinition, KnowledgeManagerFactory knowledgeManagerFactory) throws Exception {

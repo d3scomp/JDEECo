@@ -20,6 +20,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
+import cz.cuni.mff.d3s.deeco.runtimelog.RuntimeLogger;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
 /**
@@ -40,6 +41,11 @@ public class ProcessTask extends Task {
 	 * Reference to the architecture model.
 	 */
 	Architecture architecture;
+	
+	/**
+	 * Reference to the runtime logger.
+	 */
+	RuntimeLogger runtimeLogger;
 	
 	/**
 	 * Reference to the ratings manager
@@ -67,10 +73,11 @@ public class ProcessTask extends Task {
 	}
 	KnowledgeManagerTriggerListenerImpl knowledgeManagerTriggerListener = new KnowledgeManagerTriggerListenerImpl();
 	
-	public ProcessTask(ComponentProcess componentProcess, Scheduler scheduler, Architecture architecture, RatingsManager ratingsManager) {
+	public ProcessTask(ComponentProcess componentProcess, Scheduler scheduler, Architecture architecture, RuntimeLogger runtimeLogger, RatingsManager ratingsManager) {
 		super(scheduler);
 		this.architecture = architecture;
 		this.componentProcess = componentProcess;
+		this.runtimeLogger = runtimeLogger;
 		this.ratingsManager = ratingsManager;		
 	}
 
@@ -169,7 +176,7 @@ public class ProcessTask extends Task {
 		
 		try {
 			// Set the current process's context
-			ProcessContext.addContext(componentProcess, scheduler.getTimer(), architecture);
+			ProcessContext.addContext(componentProcess, scheduler.getTimer(), architecture, runtimeLogger);
 			
 			// Call the process method
 			componentProcess.getMethod().invoke(null, actualParams);

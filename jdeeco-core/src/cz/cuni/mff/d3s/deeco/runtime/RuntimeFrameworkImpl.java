@@ -37,6 +37,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
+import cz.cuni.mff.d3s.deeco.runtimelog.RuntimeLogger;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.task.EnsembleTask;
 import cz.cuni.mff.d3s.deeco.task.ProcessTask;
@@ -100,6 +101,11 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ReplicaListener {
 	protected final KnowledgeManagerContainer kmContainer;
 	
 	/**
+	 * The runtime logger used by the runtime.
+	 */
+	protected final RuntimeLogger runtimeLogger;
+	
+	/**
 	 * The manager of knowledge ratings
 	 */
 	protected final RatingsManager ratingsManager;
@@ -161,7 +167,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ReplicaListener {
 	 * @throws IllegalArgumentException if either of the arguments is null.
 	 */
 	public RuntimeFrameworkImpl(RuntimeMetadata model, Scheduler scheduler,
-			Executor executor, KnowledgeManagerContainer kmContainer, RatingsManager ratingsManager) {
+			Executor executor, KnowledgeManagerContainer kmContainer, RuntimeLogger runtimeLogger, RatingsManager ratingsManager) {
 		if (model == null)
 			throw new IllegalArgumentException("Model cannot be null");
 		if (scheduler == null)
@@ -176,7 +182,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ReplicaListener {
 		this.model = model;
 		this.executor = executor;
 		this.kmContainer = kmContainer;
-		
+		this.runtimeLogger = runtimeLogger;
 		// register listener to replicas on the kmContainer - necessary for IRM
 		this.kmContainer.registerReplicaListener(this);
 		
@@ -395,7 +401,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ReplicaListener {
 			return;
 		}
 		
-		final Task newTask = new ProcessTask(process, scheduler, architecture, ratingsManager);
+		final Task newTask = new ProcessTask(process, scheduler, architecture, runtimeLogger, ratingsManager);
 		cir.getProcessTasks().put(process, newTask);
 		
 		componentProcessActiveChanged(instance, process, process.isActive());

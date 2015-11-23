@@ -86,10 +86,7 @@ public class DEECoNode implements DEECoContainer {
 		knowledgeManagerFactory = factory;
 		processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE, model, knowledgeManagerFactory);
 				
-		initializeRuntime(timer);
-		// The runtime logger has to be assigned after the scheduler is availabe.
-		assignRuntimeLogger(timer, null);
-		
+		initializeRuntime(timer, null);
 		initializePlugins(plugins);
 	}
 
@@ -99,10 +96,7 @@ public class DEECoNode implements DEECoContainer {
 		knowledgeManagerFactory = factory;
 		processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE, model, knowledgeManagerFactory);
 				
-		initializeRuntime(timer);
-		// The runtime logger has to be assigned after the scheduler is availabe.
-		assignRuntimeLogger(timer, runtimeLogWriters);
-		
+		initializeRuntime(timer, runtimeLogWriters);
 		initializePlugins(plugins);
 	}
 
@@ -122,10 +116,7 @@ public class DEECoNode implements DEECoContainer {
 		knowledgeManagerFactory = new CloningKnowledgeManagerFactory();
 		processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE, model, knowledgeManagerFactory);
 		
-		initializeRuntime(timer);
-		// The runtime logger has to be assigned after the scheduler is availabe.
-		assignRuntimeLogger(timer, runtimeLogWriters);
-		
+		initializeRuntime(timer, runtimeLogWriters);		
 		initializePlugins(plugins);
 	}
 	
@@ -140,10 +131,7 @@ public class DEECoNode implements DEECoContainer {
 		this.knowledgeManagerFactory = factory;
 		this.processor = processor;
 
-		initializeRuntime(timer);
-		// The runtime logger has to be assigned after the scheduler is availabe.
-		assignRuntimeLogger(timer, runtimeLogWriters);
-		
+		initializeRuntime(timer, runtimeLogWriters);
 		initializePlugins(plugins);
 	}
 	
@@ -154,37 +142,23 @@ public class DEECoNode implements DEECoContainer {
 	 * @throws DEECoException Thrown if the construction of {@link DEECoNode} fails. In such case
 	 * please see the error output and log file for further information about the failure.
 	 */
-	private void initializeRuntime(Timer timer) throws DEECoException {
+	private void initializeRuntime(Timer timer, RuntimeLogWriters writers) throws DEECoException {
 		Executor executor = new SameThreadExecutor();
 		Scheduler scheduler = new SingleThreadedScheduler(executor, timer, this);
-		KnowledgeManagerContainer kmContainer = new KnowledgeManagerContainer(knowledgeManagerFactory, model);
-		scheduler.setExecutor(executor);
-		executor.setExecutionListener(scheduler);
-		runtime = new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, null);
-		runtime.init(this);
-	}
-	
-	/**
-	 * Initialize the {@link RuntimeLogger} contained in the instance of {@link DEECoNode}.
-	 * The {@link RuntimeLogger} has to be initialized the {@link #initializeRuntime(Timer)}
-	 * method is invoked.
-	 * @param timer is the {@link Timer} that will be used by the {@link RuntimeLogger}
-	 * specific to the instance of {@link DEECoNode}.
-	 * @param writers is the {@link RuntimeLogWriters} specifically provided for the instance.
-	 * 			If null, the default writers are initialized.
-	 * @throws DEECoException Thrown if the construction of {@link DEECoNode} fails. In such case
-	 * please see the error output and log file for further information about the failure.
-	 */
-	private void assignRuntimeLogger(Timer timer, RuntimeLogWriters writers) throws DEECoException {
 		try {
 			if(writers != null){
-				runtimeLogger = new RuntimeLogger(timer, runtime.getScheduler(), writers);
+				runtimeLogger = new RuntimeLogger(timer, scheduler, writers);
 			} else {
-				runtimeLogger = new RuntimeLogger(timer, runtime.getScheduler());
+				runtimeLogger = new RuntimeLogger(timer, scheduler);
 			}
 		} catch (IOException e) {
 			throw new DEECoException(e);
 		}
+		KnowledgeManagerContainer kmContainer = new KnowledgeManagerContainer(knowledgeManagerFactory, model);
+		scheduler.setExecutor(executor);
+		executor.setExecutionListener(scheduler);
+		runtime = new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, runtimeLogger, null);
+		runtime.init(this);
 	}
 	
 	/**

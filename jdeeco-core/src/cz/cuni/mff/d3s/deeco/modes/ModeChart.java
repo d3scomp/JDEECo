@@ -1,5 +1,7 @@
 package cz.cuni.mff.d3s.deeco.modes;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
@@ -14,6 +16,8 @@ public abstract class ModeChart {
 
 	protected ComponentInstance component;
 	protected Class<? extends DEECoMode> currentMode;
+	protected Map<Class<? extends DEECoMode>, Map<Class<? extends DEECoMode>,
+				List<ModeTransitionListener>>> transitionListeners;
 		
 	public ComponentInstance getComponent() {
 		return component;
