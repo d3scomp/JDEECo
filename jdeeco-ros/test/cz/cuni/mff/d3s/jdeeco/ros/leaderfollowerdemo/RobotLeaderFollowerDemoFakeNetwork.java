@@ -7,10 +7,10 @@ import cz.cuni.mff.d3s.deeco.runners.DEECoSimulation;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
 import cz.cuni.mff.d3s.jdeeco.network.Network;
+import cz.cuni.mff.d3s.jdeeco.network.device.SimpleBroadcastDevice;
 import cz.cuni.mff.d3s.jdeeco.network.l2.strategy.KnowledgeInsertingStrategy;
 import cz.cuni.mff.d3s.jdeeco.position.PositionPlugin;
 import cz.cuni.mff.d3s.jdeeco.publishing.DefaultKnowledgePublisher;
-import cz.cuni.mff.d3s.jdeeco.ros.BeeClick;
 import cz.cuni.mff.d3s.jdeeco.ros.Positioning;
 import cz.cuni.mff.d3s.jdeeco.ros.sim.ROSSimulation;
 
@@ -20,10 +20,10 @@ import cz.cuni.mff.d3s.jdeeco.ros.sim.ROSSimulation;
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
  */
-public class RobotLeaderFollowerDemo {
+public class RobotLeaderFollowerDemoFakeNetwork {
 	public static void main(String[] args) throws AnnotationProcessorException, InterruptedException, DEECoException,
 			InstantiationException, IllegalAccessException, IOException {
-		new RobotLeaderFollowerDemo().testTravel();
+		new RobotLeaderFollowerDemoFakeNetwork().testTravel();
 	}
 
 	public void testTravel() throws AnnotationProcessorException, InterruptedException, DEECoException,
@@ -38,8 +38,7 @@ public class RobotLeaderFollowerDemo {
 		realm.addPlugin(Network.class);
 		realm.addPlugin(DefaultKnowledgePublisher.class);
 		realm.addPlugin(KnowledgeInsertingStrategy.class);
-		//realm.addPlugin(new SimpleBroadcastDevice(0, 0, 100000, SimpleBroadcastDevice.DEFAULT_MTU));
-		realm.addPlugin(BeeClick.class);
+		realm.addPlugin(new SimpleBroadcastDevice(0, 0, 100000, SimpleBroadcastDevice.DEFAULT_MTU));
 		
 		Positioning robot0Pos = new Positioning();
 		DEECoNode robot0 = realm.createNode(0, robot0Pos, rosSim.createROSServices("red"), new PositionPlugin(12, 12));
