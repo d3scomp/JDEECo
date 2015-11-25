@@ -38,7 +38,6 @@ public class RobotLeaderFollowerDemo {
 		realm.addPlugin(Network.class);
 		realm.addPlugin(DefaultKnowledgePublisher.class);
 		realm.addPlugin(KnowledgeInsertingStrategy.class);
-		//realm.addPlugin(new SimpleBroadcastDevice(0, 0, 100000, SimpleBroadcastDevice.DEFAULT_MTU));
 		realm.addPlugin(BeeClick.class);
 		
 		Positioning robot0Pos = new Positioning();
