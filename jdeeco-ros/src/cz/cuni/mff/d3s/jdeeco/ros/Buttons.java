@@ -70,7 +70,7 @@ public class Buttons extends TopicSubscriber {
 				Log.d(String.format("Button %d changed state to %d.",
 						message.getButton(), message.getState()));
 			}
-		});
+		}, MESSAGE_QUEUE_LIMIT);
 	}
 
 	/**

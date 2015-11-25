@@ -60,7 +60,7 @@ public class Info extends TopicSubscriber {
 
 				Log.d("Mobile base version info received.");
 			}
-		});
+		}, MESSAGE_QUEUE_LIMIT);
 	}
 
 	/**

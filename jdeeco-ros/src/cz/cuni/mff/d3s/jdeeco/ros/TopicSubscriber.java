@@ -24,6 +24,11 @@ import cz.cuni.mff.d3s.deeco.runtime.PluginStartupFailedException;
  */
 public abstract class TopicSubscriber implements DEECoPlugin {
 	/**
+	 * Size of topic listener message queue
+	 */
+	public static final int MESSAGE_QUEUE_LIMIT = 1000;
+	
+	/**
 	 * Instance of DEECo container this plugin belongs to
 	 */
 	protected DEECoContainer container;

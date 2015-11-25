@@ -231,7 +231,7 @@ public class Positioning extends TopicSubscriber implements PositionProvider {
 
 				Log.d(String.format("Odometry value received: [%f, %f, %f].", odometry.x, odometry.y, odometry.z));
 			}
-		});
+		}, MESSAGE_QUEUE_LIMIT);
 
 		// Subscribe to publish odometry reset messages
 		resetOdometryTopic = connectedNode.newPublisher(rosServices.getNamespace() + RESET_ODOMETRY_TOPIC,
@@ -271,7 +271,7 @@ public class Positioning extends TopicSubscriber implements PositionProvider {
 				Log.d(String.format("GPS possition received: [%d, %d, %d].", message.getLatitude(),
 						message.getLongitude(), message.getAltitude()));
 			}
-		});
+		}, MESSAGE_QUEUE_LIMIT);
 
 		// Subscribe to the GPS time topic
 		timeRefTopic = connectedNode.newSubscriber(rosServices.getNamespace() + GPS_TIME_TOPIC, TimeReference._TYPE);
@@ -282,7 +282,7 @@ public class Positioning extends TopicSubscriber implements PositionProvider {
 
 				Log.d(String.format("GPS time received: %d.", gpsTime.secs));
 			}
-		});
+		}, MESSAGE_QUEUE_LIMIT);
 	}
 
 	/**
@@ -304,7 +304,7 @@ public class Positioning extends TopicSubscriber implements PositionProvider {
 						amclPosition.orientation.x, amclPosition.orientation.y, amclPosition.orientation.z,
 						amclPosition.orientation.w));
 			}
-		});
+		}, MESSAGE_QUEUE_LIMIT);
 	}
 
 	/**
@@ -358,7 +358,7 @@ public class Positioning extends TopicSubscriber implements PositionProvider {
 
 				Log.d(String.format("MoveBaseResult received: [%s]", moveBaseResult.toString()));
 			}
-		});
+		}, MESSAGE_QUEUE_LIMIT);
 	}
 
 	/**
@@ -377,7 +377,7 @@ public class Positioning extends TopicSubscriber implements PositionProvider {
 
 				Log.d("TF frame received.");
 			}
-		});
+		}, MESSAGE_QUEUE_LIMIT);
 	}
 
 	/**

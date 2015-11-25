@@ -70,7 +70,7 @@ public class SHT1x extends TopicSubscriber {
 
 				Log.d(String.format("Temperature received: %f.", temperature));
 			}
-		});
+		}, MESSAGE_QUEUE_LIMIT);
 
 		// Subscribe for humidity messages
 		humidityTopic = connectedNode.newSubscriber(rosServices.getNamespace() + HUMIDITY_TOPIC, RelativeHumidity._TYPE);
@@ -81,7 +81,7 @@ public class SHT1x extends TopicSubscriber {
 
 				Log.d(String.format("Humidity received: %f.", humidity));
 			}
-		});
+		}, MESSAGE_QUEUE_LIMIT);
 	}
 
 	/**

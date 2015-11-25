@@ -223,7 +223,7 @@ public class Wheels extends TopicSubscriber {
 
 				Log.d(String.format("Motor power change received: %d.", message.getState()));
 			}
-		});
+		}, MESSAGE_QUEUE_LIMIT);
 	}
 
 	/**
@@ -247,7 +247,7 @@ public class Wheels extends TopicSubscriber {
 				Log.d(String.format("Wheel drop change received: %d on wheel: %d.", message.getState(),
 						message.getWheel()));
 			}
-		});
+		}, MESSAGE_QUEUE_LIMIT);
 	}
 
 	/**

@@ -62,7 +62,7 @@ public class Bumper extends TopicSubscriber {
 				}
 				Log.d(String.format("Bumper state changed to %d.", message.getState()));
 			}
-		});
+		}, MESSAGE_QUEUE_LIMIT);
 	}
 
 	/**

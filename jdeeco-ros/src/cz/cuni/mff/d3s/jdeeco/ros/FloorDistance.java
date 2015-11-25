@@ -80,7 +80,7 @@ public class FloorDistance extends TopicSubscriber {
 				Log.d(String.format("FloorDistance from sensor %d changed to %d.", message.getSensor(),
 						message.getState()));
 			}
-		});
+		}, MESSAGE_QUEUE_LIMIT);
 	}
 
 	/**

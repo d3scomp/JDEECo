@@ -71,7 +71,7 @@ public class DockIR extends TopicSubscriber {
 				Log.d(String.format("DockIR changed state to [%d, %d, %d].",
 						b.getByte(0), b.getByte(1), b.getByte(2)));
 			}
-		});
+		}, MESSAGE_QUEUE_LIMIT);
 	}
 
 	/**

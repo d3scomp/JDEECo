@@ -188,7 +188,7 @@ public class BeeClick extends TopicSubscriber {
 							}, "BeeClickComm_receive", null);
 							Log.d("BeeClickDevice received data.");
 						}
-					});
+					}, MESSAGE_QUEUE_LIMIT);
 
 			// Subscribe packet sending service
 			try {
