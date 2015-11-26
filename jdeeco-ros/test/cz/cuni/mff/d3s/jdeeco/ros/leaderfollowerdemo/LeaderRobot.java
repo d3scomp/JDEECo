@@ -47,9 +47,7 @@ public class LeaderRobot {
 		route = new LinkedList<>();
 		route.add(new Position(13, 2, 0));
 		route.add(new Position(3, 14, 0));
-		route.add(new Position(17, 4, 0));
-		route.add(new Position(13, 2, 0));
-		route.add(new Position(28, 14, 0));
+		route.add(new Position(27, 14, 0));
 	}
 
 	@Process
