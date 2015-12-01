@@ -415,6 +415,8 @@ public class AnnotationProcessor {
 		ComponentInstance componentInstance = factory.createComponentInstance();
 		componentInstance.setName(clazz.getCanonicalName());
 		
+		callExtensions(ParsingEvent.ON_COMPONENT_CREATION, componentInstance, getUnknownAnnotations(clazz));
+		
 		try {		
 			ChangeSet initialK = extractInitialKnowledge(obj, false);			
 			ChangeSet initialLocalK = extractInitialKnowledge(obj, true);
@@ -494,8 +496,6 @@ public class AnnotationProcessor {
 			if (!compromitationErrors.isEmpty()) {
 				throw new AnnotationProcessorException("Running component " + componentInstance.getName() + " would result into data compromise: " + compromitationErrors.stream().collect(Collectors.joining(", ")));
 			}
-			
-			callExtensions(ParsingEvent.ON_COMPONENT_CREATION, componentInstance, getUnknownAnnotations(clazz));
 			
 		} catch (KnowledgeUpdateException | AnnotationProcessorException
 				| ParseException | NoSuchFieldException e) {
