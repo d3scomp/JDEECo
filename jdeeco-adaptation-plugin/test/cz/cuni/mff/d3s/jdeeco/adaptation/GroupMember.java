@@ -10,29 +10,29 @@ import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 import cz.cuni.mff.d3s.deeco.task.ProcessContext;
 import cz.cuni.mff.d3s.jdeeco.adaptation.CorrelationTest.Variances;
-import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.MetadataWrapper;
+import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationMetadataWrapper;
 
 @Component
 public class GroupMember {
 
 	public String id;
 
-	public MetadataWrapper<Integer> position;
-	public MetadataWrapper<Integer> temperature;
-	public MetadataWrapper<Integer> battery;
+	public CorrelationMetadataWrapper<Integer> position;
+	public CorrelationMetadataWrapper<Integer> temperature;
+	public CorrelationMetadataWrapper<Integer> battery;
 
 	public GroupMember(String id) {
 		this.id = id;
-		position = new MetadataWrapper<>(0);
-		temperature = new MetadataWrapper<>(0);
-		battery = new MetadataWrapper<>(0);
+		position = new CorrelationMetadataWrapper<>(0);
+		temperature = new CorrelationMetadataWrapper<>(0);
+		battery = new CorrelationMetadataWrapper<>(0);
 	}
 
 	@Process
 	@PeriodicScheduling(period=500)
 	public static void changePosition(
 			@In("id") String id,
-			@InOut("position") ParamHolder<MetadataWrapper<Integer>> position) {
+			@InOut("position") ParamHolder<CorrelationMetadataWrapper<Integer>> position) {
 
 		Random rand = new Random();
 		int seed = rand.nextInt(Variances.SMALL_VARIANCE);
@@ -45,7 +45,7 @@ public class GroupMember {
 	@PeriodicScheduling(period=500)
 	public static void changeTemperature(
 			@In("id") String id,
-			@InOut("temperature") ParamHolder<MetadataWrapper<Integer>> temperature) {
+			@InOut("temperature") ParamHolder<CorrelationMetadataWrapper<Integer>> temperature) {
 
 		if(id.equals("1") && ProcessContext.getTimeProvider().getCurrentMilliseconds() > 10000){
 			temperature.value.malfunction();
@@ -64,7 +64,7 @@ public class GroupMember {
 	@PeriodicScheduling(period=500)
 	public static void changeBattery(
 			@In("id") String id,
-			@InOut("battery") ParamHolder<MetadataWrapper<Integer>> battery) {
+			@InOut("battery") ParamHolder<CorrelationMetadataWrapper<Integer>> battery) {
 
 		Random rand = new Random();
 		int seed = rand.nextInt(Variances.LARGE_VARIANCE);

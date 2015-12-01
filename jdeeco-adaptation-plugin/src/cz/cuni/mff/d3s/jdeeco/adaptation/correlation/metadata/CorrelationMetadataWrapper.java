@@ -11,7 +11,7 @@ import java.io.Serializable;
  * @param <T> The type of the knowledge that is wrapped.
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  */
-public class MetadataWrapper<T> implements Serializable{
+public class CorrelationMetadataWrapper<T> implements Serializable{
 	/**
 	 * Generated serial version UID.
 	 */
@@ -31,11 +31,11 @@ public class MetadataWrapper<T> implements Serializable{
 	private boolean operational;
 	
 	/**
-	 * Wrap the knowledge field value into the {@link MetadataWrapper}.
+	 * Wrap the knowledge field value into the {@link CorrelationMetadataWrapper}.
 	 * The wrapper is created with the timestamp = 0 and operational = true.
 	 * @param value The knowledge field value to be wrapped.
 	 */
-	public MetadataWrapper(T value){
+	public CorrelationMetadataWrapper(T value){
 		this.value = value;
 		timestamp = 0;
 		operational = true;

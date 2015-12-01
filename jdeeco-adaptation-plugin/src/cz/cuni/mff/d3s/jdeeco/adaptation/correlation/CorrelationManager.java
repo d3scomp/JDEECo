@@ -30,7 +30,7 @@ import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.DistancePair;
 import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.KnowledgeMetadataHolder;
 import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.KnowledgeQuadruple;
 import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.LabelPair;
-import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.MetadataWrapper;
+import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationMetadataWrapper;
 
 @Component
 @SystemComponent
@@ -74,7 +74,7 @@ public class CorrelationManager implements AdaptationManager {
 	 * String - Label of a knowledge field of the component
 	 * MetadataWrapper - knowledge field value together with its meta data
 	 */
-	public Map<String, Map<String, List<MetadataWrapper<? extends Object>>>> knowledgeHistoryOfAllComponents;
+	public Map<String, Map<String, List<CorrelationMetadataWrapper<? extends Object>>>> knowledgeHistoryOfAllComponents;
 
 	/**
 	 * Computed distance bounds that ensures the correlation between the data satisfies given confidence level.
@@ -130,12 +130,15 @@ public class CorrelationManager implements AdaptationManager {
 	 * For quick debugging.
 	 * Uncomment the annotations to enable this method.
 	 */
-//	@Process
-//	@PeriodicScheduling(period=1000)
+	@Process
+	@PeriodicScheduling(period=1000)
 	public static void printHistory(
-			@In("knowledgeHistoryOfAllComponents") Map<String, Map<String, List<MetadataWrapper<? extends Object>>>> history,
+			@In("knowledgeHistoryOfAllComponents") Map<String, Map<String, List<CorrelationMetadataWrapper<? extends Object>>>> history,
 			@In("distanceBounds") Map<LabelPair, BoundaryValueHolder> bounds){
-
+		if(!dumpValues){
+			return;
+		}
+		
 		StringBuilder b = new StringBuilder(1024);
 		b.append("Printing global history...\n");
 
@@ -143,18 +146,18 @@ public class CorrelationManager implements AdaptationManager {
 
 			b.append("Component " + id + "\n");
 
-			Map<String, List<MetadataWrapper<? extends Object>>> componentHistory = history.get(id);
+			Map<String, List<CorrelationMetadataWrapper<? extends Object>>> componentHistory = history.get(id);
 			for (String field : componentHistory.keySet()) {
 				b.append("\t" + field + ":\n");
 
 				b.append("\ttime: ");
-				List<MetadataWrapper<? extends Object>> values = componentHistory.get(field);
-				for (MetadataWrapper<? extends Object> value : values) {
+				List<CorrelationMetadataWrapper<? extends Object>> values = componentHistory.get(field);
+				for (CorrelationMetadataWrapper<? extends Object> value : values) {
 					b.append(value.getTimestamp() + ", ");
 				}
 				b.delete(b.length()-2, b.length());
 				b.append("\n\tvalues: ");
-				for (MetadataWrapper<? extends Object> value : values) {
+				for (CorrelationMetadataWrapper<? extends Object> value : values) {
 					b.append(value.getValue() + ", ");
 				}
 				b.delete(b.length()-2, b.length());
@@ -169,7 +172,7 @@ public class CorrelationManager implements AdaptationManager {
 			b.append(String.format("%s -> %s : %.2f\n",
 					labels.getFirstLabel(),
 					labels.getSecondLabel(),
-					bounds.get(labels)));
+					bounds.get(labels).getBoundary()));
 		}
 
 		System.out.println(b.toString());
@@ -178,12 +181,12 @@ public class CorrelationManager implements AdaptationManager {
 	@Process
 	@PeriodicScheduling(period=1000)
 	public static void calculateCorrelation(
-			@In("knowledgeHistoryOfAllComponents") Map<String, Map<String, List<MetadataWrapper<?>>>> history) {
+			@In("knowledgeHistoryOfAllComponents") Map<String, Map<String, List<CorrelationMetadataWrapper<?>>>> history) {
 		boolean done = true;
 		for (String s1 : history.keySet()) {
-			final Map<String, List<MetadataWrapper<?>>> map = history.get(s1);
+			final Map<String, List<CorrelationMetadataWrapper<?>>> map = history.get(s1);
 			for (String s2 : map.keySet()) {
-				final List<MetadataWrapper<?>> list = map.get(s2);
+				final List<CorrelationMetadataWrapper<?>> list = map.get(s2);
 				if (!list.isEmpty()) {
 					done &= list.get(list.size() - 1).isOperational();
 				}
@@ -203,7 +206,7 @@ public class CorrelationManager implements AdaptationManager {
 	@Process
 	@PeriodicScheduling(period=1000)
 	public static void calculateCorrelation(
-			@In("knowledgeHistoryOfAllComponents") Map<String, Map<String, List<MetadataWrapper<?>>>> history,
+			@In("knowledgeHistoryOfAllComponents") Map<String, Map<String, List<CorrelationMetadataWrapper<?>>>> history,
 			@InOut("distanceBounds") ParamHolder<Map<LabelPair, BoundaryValueHolder>> bounds){
 
 		System.out.println("Correlation process started...");
@@ -282,7 +285,7 @@ public class CorrelationManager implements AdaptationManager {
 	 * All the pairs are inserted in both the possible ways [a,b] and [b,a].
 	 */
 	private static List<LabelPair> getLabelPairs(
-			Map<String, Map<String, List<MetadataWrapper<? extends Object>>>> history,
+			Map<String, Map<String, List<CorrelationMetadataWrapper<? extends Object>>>> history,
 			ComponentPair components){
 		List<LabelPair> labelPairs = new ArrayList<LabelPair>();
 
@@ -313,7 +316,7 @@ public class CorrelationManager implements AdaptationManager {
 	 * @return The set of all label pairs available among all the components in the system.
 	 */
 	private static Set<LabelPair> getAllLabelPairs(
-			Map<String, Map<String, List<MetadataWrapper<? extends Object>>>> history){
+			Map<String, Map<String, List<CorrelationMetadataWrapper<? extends Object>>>> history){
 		Set<LabelPair> labelPairs = new HashSet<LabelPair>();
 
 		for(ComponentPair components : getComponentPairs(history.keySet()))
@@ -351,7 +354,7 @@ public class CorrelationManager implements AdaptationManager {
 	 * @return All the components containing the given pair of knowledge fields.
 	 */
 	private static Set<String> getComponents(
-			Map<String, Map<String, List<MetadataWrapper<? extends Object>>>> history,
+			Map<String, Map<String, List<CorrelationMetadataWrapper<? extends Object>>>> history,
 			LabelPair labels){
 
 		Set<String> components = new HashSet<>(history.keySet());
@@ -375,18 +378,18 @@ public class CorrelationManager implements AdaptationManager {
 	 * @return The list of knowledge values identified by given labels from given components.
 	 */
 	private static List<KnowledgeQuadruple> extractKnowledgeHistory(
-			Map<String, Map<String, List<MetadataWrapper<? extends Object>>>> history,
+			Map<String, Map<String, List<CorrelationMetadataWrapper<? extends Object>>>> history,
 			ComponentPair components,
 			LabelPair labels){
 
 		List<KnowledgeQuadruple> knowledgeVectors = new ArrayList<>();
-		List<MetadataWrapper<? extends Object>> c1Values1 = new ArrayList<>(
+		List<CorrelationMetadataWrapper<? extends Object>> c1Values1 = new ArrayList<>(
 				history.get(components.component1Id).get(labels.getFirstLabel()));
-		List<MetadataWrapper<? extends Object>> c1Values2 = new ArrayList<>(
+		List<CorrelationMetadataWrapper<? extends Object>> c1Values2 = new ArrayList<>(
 				history.get(components.component1Id).get(labels.getSecondLabel()));
-		List<MetadataWrapper<? extends Object>> c2Values1 = new ArrayList<>(
+		List<CorrelationMetadataWrapper<? extends Object>> c2Values1 = new ArrayList<>(
 				history.get(components.component2Id).get(labels.getFirstLabel()));
-		List<MetadataWrapper<? extends Object>> c2Values2 = new ArrayList<>(
+		List<CorrelationMetadataWrapper<? extends Object>> c2Values2 = new ArrayList<>(
 				history.get(components.component2Id).get(labels.getSecondLabel()));
 
 		KnowledgeQuadruple values = getMinCommonTimeSlotValues(
@@ -421,7 +424,7 @@ public class CorrelationManager implements AdaptationManager {
 	 * @return The matrix of distances and distance classes for given knowledge fields among all the components.
 	 */
 	private static List<DistancePair> computeDistances(
-			Map<String, Map<String, List<MetadataWrapper<? extends Object>>>> history,
+			Map<String, Map<String, List<CorrelationMetadataWrapper<? extends Object>>>> history,
 			LabelPair labels){
 
 		List<KnowledgeQuadruple> knowledgeVectors = new ArrayList<>();
@@ -540,18 +543,18 @@ public class CorrelationManager implements AdaptationManager {
 	 * @return A quadruple of values with the smallest common time slot.
 	 */
 	private static KnowledgeQuadruple getMinCommonTimeSlotValues(
-			List<MetadataWrapper<? extends Object>> c1Values1,
-			List<MetadataWrapper<? extends Object>> c1Values2,
-			List<MetadataWrapper<? extends Object>> c2Values1,
-			List<MetadataWrapper<? extends Object>> c2Values2){
+			List<CorrelationMetadataWrapper<? extends Object>> c1Values1,
+			List<CorrelationMetadataWrapper<? extends Object>> c1Values2,
+			List<CorrelationMetadataWrapper<? extends Object>> c2Values1,
+			List<CorrelationMetadataWrapper<? extends Object>> c2Values2){
 		// Supposing that c1Values1 are sorted by timestamps
-		for(MetadataWrapper<? extends Object> c1Value1 : c1Values1){
+		for(CorrelationMetadataWrapper<? extends Object> c1Value1 : c1Values1){
 			long timeSlot = c1Value1.getTimestamp() / TIME_SLOT_DURATION;
-			MetadataWrapper<? extends Object> c1Value2 =
+			CorrelationMetadataWrapper<? extends Object> c1Value2 =
 					getFirstValueForTimeSlot(c1Values2, timeSlot);
-			MetadataWrapper<? extends Object> c2Value1 =
+			CorrelationMetadataWrapper<? extends Object> c2Value1 =
 					getFirstValueForTimeSlot(c2Values1, timeSlot);
-			MetadataWrapper<? extends Object> c2Value2 =
+			CorrelationMetadataWrapper<? extends Object> c2Value2 =
 					getFirstValueForTimeSlot(c2Values2, timeSlot);
 			if(c1Value2 != null && c2Value1 != null && c2Value2 != null){
 				return new KnowledgeQuadruple(c1Value1, c1Value2,
@@ -567,10 +570,10 @@ public class CorrelationManager implements AdaptationManager {
 	 * @param timeSlot The required time slot for the extracted value.
 	 * @return The first value within the given time slot.
 	 */
-	private static MetadataWrapper<? extends Object> getFirstValueForTimeSlot(
-			List<MetadataWrapper<? extends Object>> values, long timeSlot){
-		MetadataWrapper<? extends Object> earliestValue = null;
-		for(MetadataWrapper<? extends Object> value : values){
+	private static CorrelationMetadataWrapper<? extends Object> getFirstValueForTimeSlot(
+			List<CorrelationMetadataWrapper<? extends Object>> values, long timeSlot){
+		CorrelationMetadataWrapper<? extends Object> earliestValue = null;
+		for(CorrelationMetadataWrapper<? extends Object> value : values){
 			long valueTimeSlot = value.getTimestamp() / TIME_SLOT_DURATION;
 			if(valueTimeSlot == timeSlot){
 				if(earliestValue == null
@@ -591,9 +594,9 @@ public class CorrelationManager implements AdaptationManager {
 	 * be removed.
 	 */
 	private static void removeEarlierValuesForTimeSlot(
-			List<MetadataWrapper<? extends Object>> values, long timeSlot){
-		List<MetadataWrapper<? extends Object>> toRemove = new ArrayList<>();
-		for(MetadataWrapper<? extends Object> value : values){
+			List<CorrelationMetadataWrapper<? extends Object>> values, long timeSlot){
+		List<CorrelationMetadataWrapper<? extends Object>> toRemove = new ArrayList<>();
+		for(CorrelationMetadataWrapper<? extends Object> value : values){
 			long valueTimeSlot = value.getTimestamp() / TIME_SLOT_DURATION;
 			if(valueTimeSlot <= timeSlot){
 				toRemove.add(value);

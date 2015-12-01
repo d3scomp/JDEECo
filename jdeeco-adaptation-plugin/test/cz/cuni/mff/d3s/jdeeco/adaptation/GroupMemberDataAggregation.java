@@ -13,7 +13,7 @@ import cz.cuni.mff.d3s.deeco.annotations.Membership;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
-import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.MetadataWrapper;
+import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationMetadataWrapper;
 
 @Ensemble
 @PeriodicScheduling(period = 1000)
@@ -22,29 +22,29 @@ public class GroupMemberDataAggregation {
 	@Membership
 	public static boolean membership(
 			@In("member.id") String memberId,
-			@In("member.battery") MetadataWrapper<Integer> battery, // just to rule out
+			@In("member.battery") CorrelationMetadataWrapper<Integer> battery, // just to rule out
 													// GroupLeaders
-			@In("coord.knowledgeHistoryOfAllComponents") Map<String, Map<String, List<MetadataWrapper<? extends Object>>>> knowledgeHistoryOfAllComponents) {
+			@In("coord.knowledgeHistoryOfAllComponents") Map<String, Map<String, List<CorrelationMetadataWrapper<? extends Object>>>> knowledgeHistoryOfAllComponents) {
 		return true;
 	}
 
 	@KnowledgeExchange
 	public static void map(
 			@In("member.id") String memberId,
-			@In("member.position") MetadataWrapper<Integer> position,
-			@In("member.temperature") MetadataWrapper<Integer> temperature,
-			@In("member.battery") MetadataWrapper<Integer> battery, 
-			@InOut("coord.knowledgeHistoryOfAllComponents") ParamHolder<Map<String, Map<String, List<MetadataWrapper<? extends Object>>>>> knowledgeHistoryOfAllComponents) throws KnowledgeNotFoundException {
+			@In("member.position") CorrelationMetadataWrapper<Integer> position,
+			@In("member.temperature") CorrelationMetadataWrapper<Integer> temperature,
+			@In("member.battery") CorrelationMetadataWrapper<Integer> battery, 
+			@InOut("coord.knowledgeHistoryOfAllComponents") ParamHolder<Map<String, Map<String, List<CorrelationMetadataWrapper<? extends Object>>>>> knowledgeHistoryOfAllComponents) throws KnowledgeNotFoundException {
 		
 		System.out.println("KnowledgeExchange for component " + memberId);
 
-		Map<String, List<MetadataWrapper<? extends Object>>> memberKnowledgeHistory = knowledgeHistoryOfAllComponents.value.get(memberId);
+		Map<String, List<CorrelationMetadataWrapper<? extends Object>>> memberKnowledgeHistory = knowledgeHistoryOfAllComponents.value.get(memberId);
 		if (memberKnowledgeHistory == null) {
 			memberKnowledgeHistory = new HashMap<>();
 		}
 
 		String field = "position";
-		List<MetadataWrapper<? extends Object>> fieldHistory = memberKnowledgeHistory.get(field);
+		List<CorrelationMetadataWrapper<? extends Object>> fieldHistory = memberKnowledgeHistory.get(field);
 		if (fieldHistory == null) {
 			fieldHistory = new ArrayList<>();
 		}

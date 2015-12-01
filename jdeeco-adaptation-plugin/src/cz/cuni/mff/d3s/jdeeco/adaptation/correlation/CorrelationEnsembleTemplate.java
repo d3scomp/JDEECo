@@ -9,7 +9,7 @@ import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.KnowledgeMetadataHolder;
-import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.MetadataWrapper;
+import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationMetadataWrapper;
 import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationLevel.DistanceClass;
 
 // This class is not used. It only illustrates what is being created inside the CorrelationEnsembleFactory
@@ -19,10 +19,10 @@ public class CorrelationEnsembleTemplate {
 
 	@Membership
 	public static boolean membership(
-			@In("member.position") MetadataWrapper<Integer> memberPosition,
-			@In("member.temperature") MetadataWrapper<Integer> memberTemperature,
-			@In("coord.position") MetadataWrapper<Integer> coordPosition,
-			@In("coord.temperature") MetadataWrapper<Integer> coordTemperature) {
+			@In("member.position") CorrelationMetadataWrapper<Integer> memberPosition,
+			@In("member.temperature") CorrelationMetadataWrapper<Integer> memberTemperature,
+			@In("coord.position") CorrelationMetadataWrapper<Integer> coordPosition,
+			@In("coord.temperature") CorrelationMetadataWrapper<Integer> coordTemperature) {
 
 		return (!memberTemperature.isOperational()
 				&& coordTemperature.isOperational()
@@ -33,8 +33,8 @@ public class CorrelationEnsembleTemplate {
 	public static void map(
 			@In("member.id") String memberId,
 			@In("coord.id") String coordId,
-			@In("coord.temperature") MetadataWrapper<Integer> coordTemperature,
-			@Out("member.temperature") ParamHolder<MetadataWrapper<Integer>> memberTemperature) throws KnowledgeNotFoundException {
+			@In("coord.temperature") CorrelationMetadataWrapper<Integer> coordTemperature,
+			@Out("member.temperature") ParamHolder<CorrelationMetadataWrapper<Integer>> memberTemperature) throws KnowledgeNotFoundException {
 
 		System.out.println("Knowledge injection " + coordId + " -> " + memberId + " temperature " + coordTemperature.getValue() + " at " + coordTemperature.getTimestamp());
 

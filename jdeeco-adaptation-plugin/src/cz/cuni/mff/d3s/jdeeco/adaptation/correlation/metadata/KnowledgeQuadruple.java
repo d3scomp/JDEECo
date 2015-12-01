@@ -22,19 +22,19 @@ public class KnowledgeQuadruple implements Serializable {
 	/**
 	 * The value of the one of the knowledge fields in component 1.
 	 */
-	public final MetadataWrapper<? extends Object> c1Value1;
+	public final CorrelationMetadataWrapper<? extends Object> c1Value1;
 	/**
 	 * The value of the other of the knowledge field in component 1.
 	 */
-	public final MetadataWrapper<? extends Object> c1Value2;
+	public final CorrelationMetadataWrapper<? extends Object> c1Value2;
 	/**
 	 * The value of the one of the knowledge fields in component 2.
 	 */
-	public final MetadataWrapper<? extends Object> c2Value1;
+	public final CorrelationMetadataWrapper<? extends Object> c2Value1;
 	/**
 	 * The value of the other of the knowledge field in component 2.
 	 */
-	public final MetadataWrapper<? extends Object> c2Value2;
+	public final CorrelationMetadataWrapper<? extends Object> c2Value2;
 	
 	/**
 	 * Creates a new instance of {@link KnowledgeQuadruple} with the provided
@@ -45,10 +45,10 @@ public class KnowledgeQuadruple implements Serializable {
 	 * @param c2Value2 The value of the other of the knowledge field in component 2.
 	 * @param timeSlot The time slot into which the contained knowledge values belong.
 	 */
-	public KnowledgeQuadruple(MetadataWrapper<? extends Object> c1Value1,
-							  MetadataWrapper<? extends Object> c1Value2,
-							  MetadataWrapper<? extends Object> c2Value1,
-							  MetadataWrapper<? extends Object> c2Value2,
+	public KnowledgeQuadruple(CorrelationMetadataWrapper<? extends Object> c1Value1,
+							  CorrelationMetadataWrapper<? extends Object> c1Value2,
+							  CorrelationMetadataWrapper<? extends Object> c2Value1,
+							  CorrelationMetadataWrapper<? extends Object> c2Value2,
 							  long timeSlot){
 		this.timeSlot = timeSlot;
 		this.c1Value1 = c1Value1;

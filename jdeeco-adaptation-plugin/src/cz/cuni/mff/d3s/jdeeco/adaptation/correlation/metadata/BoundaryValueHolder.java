@@ -12,6 +12,11 @@ import java.io.Serializable;
 public class BoundaryValueHolder implements Serializable {
 	
 	/**
+	 * Generated UID.
+	 */
+	private static final long serialVersionUID = -6438264656364851855L;
+
+	/**
 	 * The limit beyond which two doubles are considered equal.
 	 * The value of this constant influences the granularity of changing
 	 * the boundary.
