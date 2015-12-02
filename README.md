@@ -49,7 +49,44 @@ Demo projects for jdeeco can be found in `jdeeco-demos` folder. There are two pr
 ## Eclipse integration
 All of the projects in the repository are the Eclipse projects. As such they can be easily imported to the Eclipse workspace.
 
-In the project there are included custom formatters. One of them colors the logging output that goes into the Eclipse console using ANSI escape sequences. In order to be able to see the output correctly this plugin ([eclipse-plugin-ansi-in-console](http://mihai-nita.net/2013/06/03/eclipse-plugin-ansi-in-console/)) needs to be installed into your Eclipse.
+In the project there are included custom formatters. One of them colors the logging output that goes into the Eclipse console using ANSI escape sequences. In order to be able to see the output correctly this plugin ([ansi-in-console](http://mihai-nita.net/2013/06/03/eclipse-plugin-ansi-in-console/)) needs to be installed into your Eclipse.
+
+Our work is licensed under the Apache License. To make the process of adding the license information easier use the [releng tool](https://wiki.eclipse.org/Development_Resources/How_to_Use_Eclipse_Copyright_Tool) plugin and configure it with the following text:
+
+    Copyright ${date} Charles University in Prague
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+    
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+	
+In order to automatically generate the copyright in newly created classes, you need to configure the code templates in Eclipse.
+Go to **Window->Preferences->Java->Code Style->Code Templates->Comments->File** and **Edit** it. Copy there the following text:
+
+	/*******************************************************************************
+	 * Copyright ${year} Charles University in Prague
+	 *  
+	 *  Licensed under the Apache License, Version 2.0 (the "License");
+	 *  you may not use this file except in compliance with the License.
+	 *  You may obtain a copy of the License at
+	 *  
+	 *      http://www.apache.org/licenses/LICENSE-2.0
+	 *  
+	 *  Unless required by applicable law or agreed to in writing, software
+	 *  distributed under the License is distributed on an "AS IS" BASIS,
+	 *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 *  See the License for the specific language governing permissions and
+	 *  limitations under the License.
+	 *******************************************************************************/
+
+Then check the "Automatically add comments for new methods and types" on the bottom.	 
 
 #### CDEECo
 Apart from Java version of DEECo, there is its C++ realization that can be found under: ([http://github.com/d3scomp/CDEECo](http://github.com/d3scomp/CDEECo))

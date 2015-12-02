@@ -48,12 +48,12 @@ public class SimpleBroadcastDevice implements DEECoPlugin {
 	private Random random;
 
 	// Loop devices this loop-back network is registered with
-	private Set<LoopDevice> loops = new HashSet<>();
+	protected Set<LoopDevice> loops = new HashSet<>();
 
 	/**
 	 * Loop device used to provide broadcast device to layer 1
 	 */
-	private class LoopDevice extends Device {
+	public class LoopDevice extends Device {
 		final MANETBroadcastAddress address;
 		final DEECoContainer container;
 		private PositionProvider positionProvider;
@@ -71,6 +71,10 @@ public class SimpleBroadcastDevice implements DEECoPlugin {
 			} else {
 				Log.i(container.getId() + ": " + LoopDevice.class.getSimpleName() + " not using node position information");
 			}
+		}
+		
+		public Scheduler getScheduler() {
+			return scheduler;
 		}
 
 		public Position getPosition() {

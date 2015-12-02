@@ -9,6 +9,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import cz.cuni.mff.d3s.jdeeco.network.exceptions.PacketTooBig;
+
 /**
  * Tests the L1Packet methods
  * 
@@ -24,6 +26,12 @@ public class L1PacketTest {
 		byte [] expectedResult = new byte [] {10, 0};
 		byte [] actualResult = L1Packet.encodeIntegerInto2Bytes(testedValue);
 		assertTrue(Arrays.equals(expectedResult, actualResult));
+	}
+	
+	@Test(expected = PacketTooBig.class)
+	public void encodeIntegerInto2BytesOverflowTest() {
+		int testedValue = 0xffff1;
+		L1Packet.encodeIntegerInto2Bytes(testedValue);
 	}
 	
 	@Test
