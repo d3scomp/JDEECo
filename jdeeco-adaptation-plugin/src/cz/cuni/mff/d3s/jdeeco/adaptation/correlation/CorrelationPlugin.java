@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
+import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorExtensionPoint;
+import cz.cuni.mff.d3s.deeco.annotations.processor.CorrelationAwareAnnotationProcessorExtension;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
@@ -28,6 +30,9 @@ public class CorrelationPlugin implements DEECoPlugin {
 
 	@Override
 	public void init(DEECoContainer container) {
+		AnnotationProcessorExtensionPoint correlationAwareAnnotationProcessorExtension = new CorrelationAwareAnnotationProcessorExtension();
+		container.getProcessor().addExtension(correlationAwareAnnotationProcessorExtension);
+		
 		try {
 			final CorrelationManager manager = new CorrelationManager(deecoNodes);
 			container.deployComponent(manager);

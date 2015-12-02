@@ -24,7 +24,7 @@ public class KnowledgeMetadataHolder {
 		/**
 		 * The distance bound delimiting close and far distance.
 		 */
-		private int bound;
+		private double bound;
 		/**
 		 * The metric to compute the distance of values of the knowledge field.
 		 */
@@ -46,7 +46,7 @@ public class KnowledgeMetadataHolder {
 		 * 		The correlation itself reflects the percentage of "close" values when
 		 * 		the filtering values are "close".
 		 */
-		public KnowledgeMetadata(int bound, Metric metric, double confidence){
+		public KnowledgeMetadata(double bound, Metric metric, double confidence){
 			this.bound = bound;
 			this.metric = metric;
 			confidenceLevel = confidence;
@@ -56,7 +56,7 @@ public class KnowledgeMetadataHolder {
 		 * The distance bound delimiting close and far distance.
 		 * @return The distance bound delimiting close and far distance.
 		 */
-		public int getBound(){
+		public double getBound(){
 			return bound;
 		}
 		
@@ -95,7 +95,7 @@ public class KnowledgeMetadataHolder {
 	 * 		The correlation itself reflects the percentage of "close" values when
 	 * 		the filtering values are "close".
 	 */
-	public static void setBoundAndMetric(String label, int bound, Metric metric, double confidence){
+	public static void setBoundAndMetric(String label, double bound, Metric metric, double confidence){
 		knowledgeMetadata.put(label, new KnowledgeMetadata(bound, metric, confidence));
 	}
 	
@@ -106,7 +106,7 @@ public class KnowledgeMetadataHolder {
 	 * @return The distance bound delimiting close and far distance for the knowledge
 	 * field identified by the given label.
 	 */
-	public static int getBound(String label){
+	public static double getBound(String label){
 		if(knowledgeMetadata.containsKey(label)){
 			return knowledgeMetadata.get(label).getBound();
 		}
@@ -169,7 +169,7 @@ public class KnowledgeMetadataHolder {
 	public static DistanceClass classifyDistance(String label, Object value1, Object value2){
 		if(containsLabel(label)){
 			Metric metric = getMetric(label);
-			int bound = getBound(label);
+			double bound = getBound(label);
 			
 			if(metric.distance(value1, value2) <= bound){
 				return DistanceClass.Close;
