@@ -4,6 +4,8 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Objects;
 
+import cz.cuni.mff.d3s.jdeeco.network.exceptions.PacketTooBig;
+
 /**
  * L1 packet
  * 
@@ -98,6 +100,9 @@ public class L1Packet {
 	}
 
 	protected static byte[] encodeIntegerInto2Bytes(int value) {
+		if(value > 0xffff) {
+			throw new PacketTooBig("Cannot encode size value " + value + " into 2 bytes. Network L2 packet too big?");
+		}
 		byte[] result = new byte[2];
 		result[0] = (byte) (value & 0xFF);
 		result[1] = (byte) ((value >> 8) & 0xFF);

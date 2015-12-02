@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.jdeeco.network.exceptions;
 
+import cz.cuni.mff.d3s.deeco.runtime.DEECoRuntimeException;
 import cz.cuni.mff.d3s.jdeeco.network.l2.L2PacketType;
 
 /**
@@ -8,7 +9,7 @@ import cz.cuni.mff.d3s.jdeeco.network.l2.L2PacketType;
  * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
  *
  */
-public class UnregistredPacketType extends RuntimeException {
+public class UnregistredPacketType extends DEECoRuntimeException {
 	private static final long serialVersionUID = 1L;
 	private L2PacketType value;
 
@@ -19,6 +20,7 @@ public class UnregistredPacketType extends RuntimeException {
 	 *            Packet type that was not registered
 	 */
 	public UnregistredPacketType(L2PacketType value) {
+		super("Unregistered packet type");
 		this.value = value;
 	}
 
