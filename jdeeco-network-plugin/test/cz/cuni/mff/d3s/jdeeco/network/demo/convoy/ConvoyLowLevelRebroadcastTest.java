@@ -9,14 +9,14 @@ import java.io.PrintStream;
 import org.junit.Test;
 
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
+import cz.cuni.mff.d3s.deeco.demo.convoy.ConvoyEnsemble;
+import cz.cuni.mff.d3s.deeco.demo.convoy.Follower;
+import cz.cuni.mff.d3s.deeco.demo.convoy.Leader;
 import cz.cuni.mff.d3s.deeco.runners.DEECoSimulation;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
 import cz.cuni.mff.d3s.deeco.timer.DiscreteEventTimer;
 import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
-import cz.cuni.mff.d3s.jdeeco.core.demo.convoy.ConvoyEnsemble;
-import cz.cuni.mff.d3s.jdeeco.core.demo.convoy.Follower;
-import cz.cuni.mff.d3s.jdeeco.core.demo.convoy.Leader;
 import cz.cuni.mff.d3s.jdeeco.network.Network;
 import cz.cuni.mff.d3s.jdeeco.network.device.SimpleBroadcastDevice;
 import cz.cuni.mff.d3s.jdeeco.network.l1.strategy.LowLevelRebroadcastStrategy;

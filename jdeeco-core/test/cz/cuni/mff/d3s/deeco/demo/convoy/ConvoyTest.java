@@ -14,9 +14,6 @@ import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
 import cz.cuni.mff.d3s.deeco.timer.DiscreteEventTimer;
 import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
-import cz.cuni.mff.d3s.jdeeco.core.demo.convoy.ConvoyEnsemble;
-import cz.cuni.mff.d3s.jdeeco.core.demo.convoy.Follower;
-import cz.cuni.mff.d3s.jdeeco.core.demo.convoy.Leader;
 /**
  * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
  */
