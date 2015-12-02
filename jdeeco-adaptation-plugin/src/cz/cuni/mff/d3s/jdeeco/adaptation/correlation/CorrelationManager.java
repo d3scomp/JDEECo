@@ -74,6 +74,7 @@ public class CorrelationManager implements AdaptationManager {
 	 * String - Label of a knowledge field of the component
 	 * MetadataWrapper - knowledge field value together with its meta data
 	 */
+	@Local
 	public Map<String, Map<String, List<CorrelationMetadataWrapper<? extends Object>>>> knowledgeHistoryOfAllComponents;
 
 	/**
