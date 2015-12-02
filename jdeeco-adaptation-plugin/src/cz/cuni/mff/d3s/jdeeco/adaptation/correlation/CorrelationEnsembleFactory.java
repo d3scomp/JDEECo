@@ -87,10 +87,10 @@ public class CorrelationEnsembleFactory {
 		// TODO: infer the types dynamically
 		String methodBody = String.format(Locale.ENGLISH,
 				"public static boolean membership(\n"
-				+ "		cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.MetadataWrapper member%1$s,\n"
-				+ "		cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.MetadataWrapper member%2$s,\n"
-				+ "		cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.MetadataWrapper coord%1$s,\n"
-				+ "		cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.MetadataWrapper coord%2$s) {\n"
+				+ "		cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationMetadataWrapper member%1$s,\n"
+				+ "		cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationMetadataWrapper member%2$s,\n"
+				+ "		cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationMetadataWrapper coord%1$s,\n"
+				+ "		cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationMetadataWrapper coord%2$s) {\n"
 				+ " final double %1$s_bound = %3$f;\n"
 //				+ "	System.out.println(\"Membership for %1$s -> %2$s with %1$s_bound = %3$.1f\");\n"
 				+ " return (!member%2$s.isOperational()\n"
@@ -186,10 +186,10 @@ public class CorrelationEnsembleFactory {
 		// Membership method
 		CtMethod membershipMethod = CtNewMethod.make(String.format(
 				"public static boolean membership("
-				+ "		cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.MetadataWrapper member%1$s,"
-				+ "		cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.MetadataWrapper member%2$s,"
-				+ "		cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.MetadataWrapper coord%1$s,"
-				+ "		cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.MetadataWrapper coord%2$s) {"
+				+ "		cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationMetadataWrapper member%1$s,"
+				+ "		cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationMetadataWrapper member%2$s,"
+				+ "		cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationMetadataWrapper coord%1$s,"
+				+ "		cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationMetadataWrapper coord%2$s) {"
 				+ " return (!member%2$s.isOperational()"
 				+ "		&& coord%2$s.isOperational()"
 				+ "		&& cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.KnowledgeMetadataHolder.classifyDistance("
@@ -229,11 +229,11 @@ public class CorrelationEnsembleFactory {
 				"public static void map("
 				+ "		String memberId,"
 				+ "		String coordId,"
-				+ "		cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.MetadataWrapper coord%1$s,"
+				+ "		cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationMetadataWrapper coord%1$s,"
 				+ "		cz.cuni.mff.d3s.deeco.task.ParamHolder member%1$s) {"
 				+ " System.out.println(\"Knowledge injection \" + coordId + \" -> \" + memberId + \" %1$s \" + coord%1$s.getValue() + \" at \" +  coord%1$s.getTimestamp() + \" based on \" + \"%2$s\");"
 				+ "	member%1$s.value = coord%1$s; "
-				+ " ((cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.MetadataWrapper) member%1$s.value).malfunction();}",
+				+ " ((cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationMetadataWrapper) member%1$s.value).malfunction();}",
 					correlationSubject, correlationFilter),
 				ensembleClass);
 		// KnowledgeExchange annotation for the map method
