@@ -2,6 +2,7 @@ package cz.cuni.mff.d3s.deeco.security;
 
 import static cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.getAbsoluteStrippedPath;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -10,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
@@ -23,10 +25,10 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityTag;
-import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.KnowledgePathAndRoot;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper;
-import cz.cuni.mff.d3s.deeco.task.TaskInvocationException;
+import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.KnowledgePathAndRoot;
 import cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.PathRoot;
+import cz.cuni.mff.d3s.deeco.task.TaskInvocationException;
 
 /**
  * Performs security checks before knowledge exchange between two local components.
@@ -169,9 +171,9 @@ public class LocalSecurityChecker {
 				}
 			
 				if (absoluteKnowledgePathAndRoot.root == localRole) {
-					localPaths.add(absoluteKnowledgePathAndRoot.knowledgePath);					
+					localPaths.addAll(getKnowledgePaths(localKnowledgeManager, absoluteKnowledgePathAndRoot.knowledgePath));					
 				} else {
-					shadowPaths.add(absoluteKnowledgePathAndRoot.knowledgePath);					
+					shadowPaths.addAll(getKnowledgePaths(shadowKnowledgeManager, absoluteKnowledgePathAndRoot.knowledgePath));					
 				}			
 			}
 		
@@ -182,6 +184,21 @@ public class LocalSecurityChecker {
 		} catch (KnowledgeNotFoundException e) {
 			return false;
 		}		
+	}
+
+	/**
+	 * @param knowledgeManager
+	 * @param knowledgePath
+	 * @return
+	 */
+	private Collection<KnowledgePath> getKnowledgePaths(ReadOnlyKnowledgeManager knowledgeManager, KnowledgePath knowledgePath) {
+		Collection<KnowledgePath> ret = new ArrayList<>();
+		if (knowledgePath.toString().equals(AnnotationProcessor.ALL_FIELDS_TOKEN)) {
+			ret.addAll(knowledgeManager.getAllPaths());
+		} else {
+			ret.add(knowledgePath);
+		}
+		return ret;
 	}
 
 	/**

@@ -3,6 +3,7 @@ package cz.cuni.mff.d3s.deeco.task;
 import static cz.cuni.mff.d3s.deeco.task.KnowledgePathHelper.getAbsoluteStrippedPath;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
 import cz.cuni.mff.d3s.deeco.integrity.RatingsManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
@@ -272,9 +274,9 @@ public class EnsembleDataExchange {
 	private Object[] loadActualParams(PathRoot localRole, KnowledgeManager localKnowledgeManager,
 			ReadOnlyKnowledgeManager shadowKnowledgeManager, ParameterKnowledgePaths parameters) 
 					throws KnowledgeNotFoundException, TaskInvocationException {
-				
-		ValueSet localKnowledge = localKnowledgeManager.get(parameters.localInPaths);
-		ValueSet shadowKnowledge = shadowKnowledgeManager.get(parameters.shadowInPaths);
+		
+		ValueSet localKnowledge = getKnowledge(localKnowledgeManager, parameters.localInPaths);
+		ValueSet shadowKnowledge = getKnowledge(shadowKnowledgeManager, parameters.shadowInPaths);
 
 		// Construct the parameters for the process method invocation
 		Object[] actualParams = new Object[parameters.formalParams.size()];
@@ -289,10 +291,10 @@ public class EnsembleDataExchange {
 			
 			if (paramDir == ParameterKind.IN || paramDir == ParameterKind.INOUT || paramDir == ParameterKind.RATING) {				
 				if (absoluteKnowledgePathAndRoot.root == localRole) {
-					paramValue = localKnowledge.getValue(absoluteKnowledgePathAndRoot.knowledgePath);
+					paramValue = getParamValue(localKnowledge, localKnowledgeManager, absoluteKnowledgePathAndRoot.knowledgePath);
 					knowledgeAuthor = localKnowledgeManager.getAuthor(absoluteKnowledgePathAndRoot.knowledgePath);
 				} else {
-					paramValue = shadowKnowledge.getValue(absoluteKnowledgePathAndRoot.knowledgePath);
+					paramValue = getParamValue(shadowKnowledge, shadowKnowledgeManager, absoluteKnowledgePathAndRoot.knowledgePath);
 					knowledgeAuthor = shadowKnowledgeManager.getAuthor(absoluteKnowledgePathAndRoot.knowledgePath);
 				}
 			}
@@ -314,6 +316,47 @@ public class EnsembleDataExchange {
 		}
 		
 		return actualParams;
+	}
+
+	/**
+	 * @param knowledgeManager
+	 * @param paths
+	 * @return
+	 * @throws KnowledgeNotFoundException 
+	 */
+	private ValueSet getKnowledge(ReadOnlyKnowledgeManager knowledgeManager,
+			Collection<KnowledgePath> paths) throws KnowledgeNotFoundException {
+		Collection<KnowledgePath> allPaths = new ArrayList<>(); 
+		for (KnowledgePath p : paths) {
+			if (p.toString().equals(AnnotationProcessor.ALL_FIELDS_TOKEN)) {
+				allPaths.addAll(knowledgeManager.getAllPaths());
+			} else {
+				allPaths.add(p);
+			}
+		}
+		return knowledgeManager.get(allPaths);
+	}
+
+	/**
+	 * @param knowledge
+	 * @param knowledgeManager 
+	 * @param knowledgePath
+	 * @return
+	 */
+	private Object getParamValue(ValueSet knowledge, ReadOnlyKnowledgeManager knowledgeManager, KnowledgePath knowledgePath) {
+		Object ret = null;
+		if (knowledgePath.toString().equals(AnnotationProcessor.ALL_FIELDS_TOKEN)) {
+		
+			List<Object> correlationDataValues = new ArrayList<>();
+			for (KnowledgePath path: knowledgeManager.getAllPaths()) {
+				correlationDataValues.add(knowledge.getValue(path));
+
+			}
+			ret = correlationDataValues.toArray();
+		} else {
+			ret = knowledge.getValue(knowledgePath);
+		}
+		return ret;
 	}
 
 	/**

@@ -140,6 +140,8 @@ public class AnnotationProcessor {
 	static final Set<Class<? extends Annotation>> KNOWN_FIELD_ANNOTATIONS = new HashSet<>(
 			Arrays.asList(Local.class));
 
+	public static final String ALL_FIELDS_TOKEN = "ALL_FIELDS_TOKEN";
+
 	/**
 	 *  Places in the parsing process where the processor's extensions are called. 
 	 */
@@ -1059,6 +1061,11 @@ public class AnnotationProcessor {
 			Annotation directionAnnotation = getKindAnnotation(parameterAnnotations);
 			parameter.setKind(parameterAnnotationsToParameterKinds.get(directionAnnotation.annotationType()));
 			String path = getKindAnnotationValue(directionAnnotation);
+			if (path.equals("member.*")) {
+				path = "member." + ALL_FIELDS_TOKEN;
+			} else if (path.equals("coord.*")) {
+				path = "coord." + ALL_FIELDS_TOKEN;
+			}
 			parameter.setKnowledgePath(KnowledgePathHelper.createKnowledgePath(path,pathOrigin));
 			parameter.setType(type);
 			parameter.setGenericType(genericType);

@@ -79,6 +79,12 @@ public interface ReadOnlyKnowledgeManager {
 	public Collection<KnowledgePath> getLocalPaths();
 	
 	/**
+	 * Gets all the knowledge paths
+	 * @return the list of knowledge paths
+	 */
+	Collection<KnowledgePath> getAllPaths();
+	
+	/**
 	 * Local knowledge managers are associated with their local components; replica knowledge managers
 	 * are associated with such local component that was used to decrypt the knowledge.
 	 * @return component
