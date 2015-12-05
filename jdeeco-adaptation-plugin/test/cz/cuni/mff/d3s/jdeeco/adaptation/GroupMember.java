@@ -23,9 +23,9 @@ public class GroupMember {
 
 	public GroupMember(String id) {
 		this.id = id;
-		position = new CorrelationMetadataWrapper<>(0);
-		temperature = new CorrelationMetadataWrapper<>(0);
-		battery = new CorrelationMetadataWrapper<>(0);
+		position = new CorrelationMetadataWrapper<>(0,"position");
+		temperature = new CorrelationMetadataWrapper<>(0,"temperature");
+		battery = new CorrelationMetadataWrapper<>(0,"battery");
 	}
 
 	@Process

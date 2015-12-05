@@ -10,6 +10,7 @@ import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
+import cz.cuni.mff.d3s.deeco.runtime.DuplicateEnsembleDefinitionException;
 
 public class CorrelationPlugin implements DEECoPlugin {
 
@@ -36,7 +37,8 @@ public class CorrelationPlugin implements DEECoPlugin {
 		try {
 			final CorrelationManager manager = new CorrelationManager(deecoNodes);
 			container.deployComponent(manager);
-		} catch (AnnotationProcessorException e) {
+			container.deployEnsemble(CorrelationDataAggregation.class);
+		} catch (AnnotationProcessorException | DuplicateEnsembleDefinitionException e) {
 			Log.e("Error while trying to deploy AdaptationManager", e);
 		}
 	}

@@ -22,6 +22,10 @@ public class CorrelationMetadataWrapper<T> implements Serializable{
 	 */
 	private T value;
 	/**
+	 * The name of the wrapped knowledge field.
+	 */
+	private String name;
+	/**
 	 * The time when the knowledge value has been obtained.
 	 */
 	private long timestamp;
@@ -35,8 +39,9 @@ public class CorrelationMetadataWrapper<T> implements Serializable{
 	 * The wrapper is created with the timestamp = 0 and operational = true.
 	 * @param value The knowledge field value to be wrapped.
 	 */
-	public CorrelationMetadataWrapper(T value){
+	public CorrelationMetadataWrapper(T value, String name){
 		this.value = value;
+		this.name = name;
 		timestamp = 0;
 		operational = true;
 	}
@@ -47,6 +52,14 @@ public class CorrelationMetadataWrapper<T> implements Serializable{
 	 */
 	public T getValue(){
 		return value;
+	}
+	
+	/**
+	 * Get the knowledge field name.
+	 * @return The knowledge field name.
+	 */
+	public String getName(){
+		return name;
 	}
 	
 	/**
