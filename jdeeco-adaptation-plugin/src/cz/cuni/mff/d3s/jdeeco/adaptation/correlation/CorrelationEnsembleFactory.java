@@ -31,6 +31,8 @@ import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 @PeriodicScheduling(period = 1000)
 public class CorrelationEnsembleFactory {
 
+	private static final String OUTPUT_DIRECTORY = "target/correlation-classes";
+	
 	/**
 	 * Once a new class is created it is stored here ready for further retrieval.
 	 */
@@ -134,7 +136,7 @@ public class CorrelationEnsembleFactory {
 		if(bufferedClasses.containsKey(className)){
 			bufferedClasses.remove(className);
 		}
-		ensembleClass.writeFile();
+		ensembleClass.writeFile(OUTPUT_DIRECTORY);
 		CorrelationClassLoader loader = new CorrelationClassLoader(CorrelationClassLoader.class.getClassLoader());
 		Class loadedClass = loader.loadClass(className);
 		bufferedClasses.put(className, loadedClass);
@@ -261,7 +263,7 @@ public class CorrelationEnsembleFactory {
 		// Add the method into the ensemble class
 		ensembleClass.addMethod(mapMethod);
 
-		ensembleClass.writeFile(); // TODO: store the ensemble class files in tmp folder that will be excluded from GIT
+		ensembleClass.writeFile(OUTPUT_DIRECTORY);
 		CorrelationClassLoader loader = new CorrelationClassLoader(CorrelationClassLoader.class.getClassLoader());
 		return loader.loadClass(ensembleClass.getName());
 	}
