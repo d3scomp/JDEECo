@@ -19,6 +19,7 @@ import javassist.bytecode.annotation.LongMemberValue;
 import javassist.bytecode.annotation.StringMemberValue;
 import cz.cuni.mff.d3s.deeco.annotations.Ensemble;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
+import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationMetadataWrapper;
 
 /**
  * This class provides method for creating an ensemble definition at runtime.
@@ -31,7 +32,10 @@ import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 @PeriodicScheduling(period = 1000)
 public class CorrelationEnsembleFactory {
 
-	private static final String OUTPUT_DIRECTORY = "target/correlation-classes";
+	/**
+	 * The output directory for generated classes.
+	 */
+	static final String CLASS_DIRECTORY = "target/correlation-classes";
 	
 	/**
 	 * Once a new class is created it is stored here ready for further retrieval.
@@ -86,6 +90,8 @@ public class CorrelationEnsembleFactory {
 			ensembleMethods.remove(oldMembershipMethod);
 		}
 
+		//String wrapperClass = CorrelationMetadataWrapper.class.getCanonicalName();
+		
 		// TODO: infer the types dynamically
 		String methodBody = String.format(Locale.ENGLISH,
 				"public static boolean membership(\n"
@@ -136,7 +142,7 @@ public class CorrelationEnsembleFactory {
 		if(bufferedClasses.containsKey(className)){
 			bufferedClasses.remove(className);
 		}
-		ensembleClass.writeFile(OUTPUT_DIRECTORY);
+		ensembleClass.writeFile(CLASS_DIRECTORY);
 		CorrelationClassLoader loader = new CorrelationClassLoader(CorrelationClassLoader.class.getClassLoader());
 		Class loadedClass = loader.loadClass(className);
 		bufferedClasses.put(className, loadedClass);
@@ -263,7 +269,7 @@ public class CorrelationEnsembleFactory {
 		// Add the method into the ensemble class
 		ensembleClass.addMethod(mapMethod);
 
-		ensembleClass.writeFile(OUTPUT_DIRECTORY);
+		ensembleClass.writeFile(CLASS_DIRECTORY);
 		CorrelationClassLoader loader = new CorrelationClassLoader(CorrelationClassLoader.class.getClassLoader());
 		return loader.loadClass(ensembleClass.getName());
 	}

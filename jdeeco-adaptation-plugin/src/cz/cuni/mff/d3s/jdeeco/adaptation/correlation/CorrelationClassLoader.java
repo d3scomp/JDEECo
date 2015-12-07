@@ -19,7 +19,8 @@ public class CorrelationClassLoader extends ClassLoader {
             return super.loadClass(name);
     	
         try {
-            InputStream input = new FileInputStream(String.format("%s.class", name));
+            InputStream input = new FileInputStream(String.format("%s/%s.class",
+            		CorrelationEnsembleFactory.CLASS_DIRECTORY, name));
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
             int data = input.read();
 
