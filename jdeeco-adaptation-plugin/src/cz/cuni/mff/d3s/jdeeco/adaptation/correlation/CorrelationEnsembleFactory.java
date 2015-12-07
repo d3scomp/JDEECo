@@ -18,8 +18,15 @@ import javassist.bytecode.annotation.Annotation;
 import javassist.bytecode.annotation.LongMemberValue;
 import javassist.bytecode.annotation.StringMemberValue;
 import cz.cuni.mff.d3s.deeco.annotations.Ensemble;
+import cz.cuni.mff.d3s.deeco.annotations.In;
+import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
+import cz.cuni.mff.d3s.deeco.annotations.Membership;
+import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
+import cz.cuni.mff.d3s.deeco.task.ParamHolder;
+import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationLevel;
 import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationMetadataWrapper;
+import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.KnowledgeMetadataHolder;
 
 /**
  * This class provides method for creating an ensemble definition at runtime.
@@ -90,29 +97,32 @@ public class CorrelationEnsembleFactory {
 			ensembleMethods.remove(oldMembershipMethod);
 		}
 
-		//String wrapperClass = CorrelationMetadataWrapper.class.getCanonicalName();
+		final String wrapperClass = CorrelationMetadataWrapper.class.getCanonicalName();
+		final String holderClass = KnowledgeMetadataHolder.class.getCanonicalName();
 		
-		// TODO: infer the types dynamically
 		String methodBody = String.format(Locale.ENGLISH,
 				"public static boolean membership(\n"
-				+ "		cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationMetadataWrapper member%1$s,\n"
-				+ "		cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationMetadataWrapper member%2$s,\n"
-				+ "		cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationMetadataWrapper coord%1$s,\n"
-				+ "		cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationMetadataWrapper coord%2$s) {\n"
+				+ "		" + wrapperClass + " member%1$s,\n"
+				+ "		" + wrapperClass + " member%2$s,\n"
+				+ "		" + wrapperClass + " coord%1$s,\n"
+				+ "		" + wrapperClass + " coord%2$s) {\n"
 				+ " final double %1$s_bound = %3$f;\n"
 //				+ "	System.out.println(\"Membership for %1$s -> %2$s with %1$s_bound = %3$.1f\");\n"
 				+ " return (!member%2$s.isOperational()\n"
 				+ "		&& coord%2$s.isOperational()\n"
-				+ "		&& cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.KnowledgeMetadataHolder.distance(\n"
+				+ "		&& " + holderClass + ".distance(\n"
 				+ "			\"%1$s\", member%1$s.getValue(), coord%1$s.getValue()) < %1$s_bound);}",
 					correlationFilter, correlationSubject, boundary);
 
 //		System.out.println(methodBody);
 
+		final String membershipClass = Membership.class.getCanonicalName();
+		final String inClass = In.class.getCanonicalName();
+		
 		// Create new Membership method
 		CtMethod membershipMethod = CtNewMethod.make(methodBody, ensembleClass);
 		// Membership annotation for the membership method
-		Annotation membershipAnnotation = new Annotation("cz.cuni.mff.d3s.deeco.annotations.Membership", constPool);
+		Annotation membershipAnnotation = new Annotation(membershipClass, constPool);
 		AnnotationsAttribute membershipAttribute = new AnnotationsAttribute(constPool, AnnotationsAttribute.visibleTag);
 		membershipAttribute.addAnnotation(membershipAnnotation);
 		membershipMethod.getMethodInfo().addAttribute(membershipAttribute);
@@ -120,16 +130,16 @@ public class CorrelationEnsembleFactory {
 		ParameterAnnotationsAttribute membershipParamAnnotations = new ParameterAnnotationsAttribute(constPool,
 				ParameterAnnotationsAttribute.visibleTag);
 		Annotation[][] membershipParamAnnotationsInfo = new Annotation[4][1];
-		membershipParamAnnotationsInfo[0][0] = new Annotation("cz.cuni.mff.d3s.deeco.annotations.In", constPool);
+		membershipParamAnnotationsInfo[0][0] = new Annotation(inClass, constPool);
 		membershipParamAnnotationsInfo[0][0].addMemberValue("value", new StringMemberValue(
 				String.format("member.%s", correlationFilter), constPool));
-		membershipParamAnnotationsInfo[1][0] = new Annotation("cz.cuni.mff.d3s.deeco.annotations.In", constPool);
+		membershipParamAnnotationsInfo[1][0] = new Annotation(inClass, constPool);
 		membershipParamAnnotationsInfo[1][0].addMemberValue("value", new StringMemberValue(
 				String.format("member.%s", correlationSubject), constPool));
-		membershipParamAnnotationsInfo[2][0] = new Annotation("cz.cuni.mff.d3s.deeco.annotations.In", constPool);
+		membershipParamAnnotationsInfo[2][0] = new Annotation(inClass, constPool);
 		membershipParamAnnotationsInfo[2][0].addMemberValue("value", new StringMemberValue(
 				String.format("coord.%s", correlationFilter), constPool));
-		membershipParamAnnotationsInfo[3][0] = new Annotation("cz.cuni.mff.d3s.deeco.annotations.In", constPool);
+		membershipParamAnnotationsInfo[3][0] = new Annotation(inClass, constPool);
 		membershipParamAnnotationsInfo[3][0].addMemberValue("value", new StringMemberValue(
 				String.format("coord.%s", correlationSubject), constPool));
 		membershipParamAnnotations.setAnnotations(membershipParamAnnotationsInfo);
@@ -180,33 +190,46 @@ public class CorrelationEnsembleFactory {
 		ClassFile classFile = ensembleClass.getClassFile();
 		ConstPool constPool = classFile.getConstPool();
 
+		final String ensembleClassName = Ensemble.class.getCanonicalName();
+		final String schedulingClassName = PeriodicScheduling.class.getCanonicalName();
+		
 		// Ensemble annotation for the class
-		Annotation ensembleAnnotation = new Annotation("cz.cuni.mff.d3s.deeco.annotations.Ensemble", constPool);
+		Annotation ensembleAnnotation = new Annotation(ensembleClassName, constPool);
 		AnnotationsAttribute ensembleAttribute = new AnnotationsAttribute(constPool, AnnotationsAttribute.visibleTag);
 		ensembleAttribute.addAnnotation(ensembleAnnotation);
 		// Scheduling annotation for the class
-		Annotation schedulingAnnotation = new Annotation("cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling", constPool);
+		Annotation schedulingAnnotation = new Annotation(schedulingClassName, constPool);
 		schedulingAnnotation.addMemberValue("period", new LongMemberValue(schedulingPeriod, constPool));
 		ensembleAttribute.addAnnotation(schedulingAnnotation);
 		// Add the class annotations
 		classFile.addAttribute(ensembleAttribute);
 
+		final String wrapperClass = CorrelationMetadataWrapper.class.getCanonicalName();
+		final String holderClass = KnowledgeMetadataHolder.class.getCanonicalName();
+		final String distanceClose = String.format("%s.%s",
+				CorrelationLevel.DistanceClass.class.getCanonicalName(),
+				CorrelationLevel.DistanceClass.Close.toString());
+		
 		// Membership method
 		CtMethod membershipMethod = CtNewMethod.make(String.format(
 				"public static boolean membership("
-				+ "		cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationMetadataWrapper member%1$s,"
-				+ "		cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationMetadataWrapper member%2$s,"
-				+ "		cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationMetadataWrapper coord%1$s,"
-				+ "		cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationMetadataWrapper coord%2$s) {"
+				+ "		" + wrapperClass + " member%1$s,"
+				+ "		" + wrapperClass + " member%2$s,"
+				+ "		" + wrapperClass + " coord%1$s,"
+				+ "		" + wrapperClass + " coord%2$s) {"
 				+ " return (!member%2$s.isOperational()"
 				+ "		&& coord%2$s.isOperational()"
-				+ "		&& cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.KnowledgeMetadataHolder.classifyDistance("
+				+ "		&& " + holderClass + ".classifyDistance("
 				+ "			\"%1$s\", member%1$s.getValue(), coord%1$s.getValue())"
-				+ "			 == cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationLevel.DistanceClass.Close);}",
+				+ "			 == " + distanceClose + ");}",
 					correlationFilter, correlationSubject),
 				ensembleClass);
+
+		final String membershipClass = Membership.class.getCanonicalName();
+		final String inClass = In.class.getCanonicalName();
+		
 		// Membership annotation for the membership method
-		Annotation membershipAnnotation = new Annotation("cz.cuni.mff.d3s.deeco.annotations.Membership", constPool);
+		Annotation membershipAnnotation = new Annotation(membershipClass, constPool);
 		AnnotationsAttribute membershipAttribute = new AnnotationsAttribute(constPool, AnnotationsAttribute.visibleTag);
 		membershipAttribute.addAnnotation(membershipAnnotation);
 		membershipMethod.getMethodInfo().addAttribute(membershipAttribute);
@@ -214,16 +237,16 @@ public class CorrelationEnsembleFactory {
 		ParameterAnnotationsAttribute membershipParamAnnotations = new ParameterAnnotationsAttribute(constPool,
 				ParameterAnnotationsAttribute.visibleTag);
 		Annotation[][] membershipParamAnnotationsInfo = new Annotation[4][1];
-		membershipParamAnnotationsInfo[0][0] = new Annotation("cz.cuni.mff.d3s.deeco.annotations.In", constPool);
+		membershipParamAnnotationsInfo[0][0] = new Annotation(inClass, constPool);
 		membershipParamAnnotationsInfo[0][0].addMemberValue("value", new StringMemberValue(
 				String.format("member.%s", correlationFilter), constPool));
-		membershipParamAnnotationsInfo[1][0] = new Annotation("cz.cuni.mff.d3s.deeco.annotations.In", constPool);
+		membershipParamAnnotationsInfo[1][0] = new Annotation(inClass, constPool);
 		membershipParamAnnotationsInfo[1][0].addMemberValue("value", new StringMemberValue(
 				String.format("member.%s", correlationSubject), constPool));
-		membershipParamAnnotationsInfo[2][0] = new Annotation("cz.cuni.mff.d3s.deeco.annotations.In", constPool);
+		membershipParamAnnotationsInfo[2][0] = new Annotation(inClass, constPool);
 		membershipParamAnnotationsInfo[2][0].addMemberValue("value", new StringMemberValue(
 				String.format("coord.%s", correlationFilter), constPool));
-		membershipParamAnnotationsInfo[3][0] = new Annotation("cz.cuni.mff.d3s.deeco.annotations.In", constPool);
+		membershipParamAnnotationsInfo[3][0] = new Annotation(inClass, constPool);
 		membershipParamAnnotationsInfo[3][0].addMemberValue("value", new StringMemberValue(
 				String.format("coord.%s", correlationSubject), constPool));
 		membershipParamAnnotations.setAnnotations(membershipParamAnnotationsInfo);
@@ -232,20 +255,26 @@ public class CorrelationEnsembleFactory {
 		// Add the method into the ensemble class
 		ensembleClass.addMethod(membershipMethod);
 
+		final String paramHolderClass = ParamHolder.class.getCanonicalName();
+		
 		// Map method
 		CtMethod mapMethod = CtNewMethod.make(String.format(
 				"public static void map("
 				+ "		String memberId,"
 				+ "		String coordId,"
-				+ "		cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationMetadataWrapper coord%1$s,"
-				+ "		cz.cuni.mff.d3s.deeco.task.ParamHolder member%1$s) {"
+				+ "		" + wrapperClass + " coord%1$s,"
+				+ "		" + paramHolderClass + " member%1$s) {"
 				+ " System.out.println(\"Knowledge injection \" + coordId + \" -> \" + memberId + \" %1$s \" + coord%1$s.getValue() + \" at \" +  coord%1$s.getTimestamp() + \" based on \" + \"%2$s\");"
 				+ "	member%1$s.value = coord%1$s; "
-				+ " ((cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationMetadataWrapper) member%1$s.value).malfunction();}",
+				+ " ((" + wrapperClass + ") member%1$s.value).malfunction();}",
 					correlationSubject, correlationFilter),
 				ensembleClass);
+		
+		final String knowledgeExchangeClass = KnowledgeExchange.class.getCanonicalName();
+		final String outClass = Out.class.getCanonicalName();
+		
 		// KnowledgeExchange annotation for the map method
-		Annotation mapAnnotation = new Annotation("cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange", constPool);
+		Annotation mapAnnotation = new Annotation(knowledgeExchangeClass, constPool);
 		AnnotationsAttribute mapAttribute = new AnnotationsAttribute(constPool, AnnotationsAttribute.visibleTag);
 		mapAttribute.addAnnotation(mapAnnotation);
 		mapMethod.getMethodInfo().addAttribute(mapAttribute);
@@ -253,14 +282,14 @@ public class CorrelationEnsembleFactory {
 		ParameterAnnotationsAttribute mapParamAnnotations = new ParameterAnnotationsAttribute(constPool,
 				ParameterAnnotationsAttribute.visibleTag);
 		Annotation[][] mapParamAnnotationsInfo = new Annotation[4][1];
-		mapParamAnnotationsInfo[0][0] = new Annotation("cz.cuni.mff.d3s.deeco.annotations.In", constPool);
+		mapParamAnnotationsInfo[0][0] = new Annotation(inClass, constPool);
 		mapParamAnnotationsInfo[0][0].addMemberValue("value", new StringMemberValue("member.id", constPool));
-		mapParamAnnotationsInfo[1][0] = new Annotation("cz.cuni.mff.d3s.deeco.annotations.In", constPool);
+		mapParamAnnotationsInfo[1][0] = new Annotation(inClass, constPool);
 		mapParamAnnotationsInfo[1][0].addMemberValue("value", new StringMemberValue("coord.id", constPool));
-		mapParamAnnotationsInfo[2][0] = new Annotation("cz.cuni.mff.d3s.deeco.annotations.In", constPool);
+		mapParamAnnotationsInfo[2][0] = new Annotation(inClass, constPool);
 		mapParamAnnotationsInfo[2][0].addMemberValue("value", new StringMemberValue(
 				String.format("coord.%s", correlationSubject), constPool));
-		mapParamAnnotationsInfo[3][0] = new Annotation("cz.cuni.mff.d3s.deeco.annotations.Out", constPool);
+		mapParamAnnotationsInfo[3][0] = new Annotation(outClass, constPool);
 		mapParamAnnotationsInfo[3][0].addMemberValue("value", new StringMemberValue(
 				String.format("member.%s", correlationSubject), constPool));
 		mapParamAnnotations.setAnnotations(mapParamAnnotationsInfo);
