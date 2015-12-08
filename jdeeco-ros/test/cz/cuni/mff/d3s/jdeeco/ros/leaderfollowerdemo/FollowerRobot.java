@@ -84,13 +84,36 @@ public class FollowerRobot {
 		if(destination != null) {
 			System.out.format(clock.getCurrentMilliseconds() + ": Follower: Leader at: %s %n", destination);
 			
-			goal.value = destination;
-			positioning.setSimpleGoal(new ROSPosition(
-					goal.value.x + rand.nextDouble() - 0.5,
-					goal.value.y + rand.nextDouble() - 0.5,
-					goal.value.z),
-					new Orientation(0, 0, 0, 1));
-			System.out.println(clock.getCurrentMilliseconds() + ": Follower: Goal set: " + goal.value.toString());
+			if (positioning.getMoveBaseResult() != null) {
+				switch (positioning.getMoveBaseResult().status) {
+				case Succeeded:
+				case Rejected:
+					goal.value = destination;
+					positioning.setSimpleGoal(new ROSPosition(
+							goal.value.x + rand.nextDouble() - 0.5,
+							goal.value.y + rand.nextDouble() - 0.5,
+							goal.value.z),
+							new Orientation(0, 0, 0, 1));
+					System.out.println(clock.getCurrentMilliseconds() + ": Follower: Goal set: " + goal.value.toString());
+				default:
+					System.out.println(clock.getCurrentMilliseconds() + ": Leader: unknown result: "
+							+ positioning.getMoveBaseResult().toString());
+				}
+
+				System.out.println(clock.getCurrentMilliseconds() + ": Leader: result: " + positioning.getMoveBaseResult().toString());
+			}
+			
+			if(goal.value == null || !goal.value.equals(destination)) {
+				goal.value = destination;
+				positioning.setSimpleGoal(new ROSPosition(
+						goal.value.x + rand.nextDouble() - 0.5,
+						goal.value.y + rand.nextDouble() - 0.5,
+						goal.value.z),
+						new Orientation(0, 0, 0, 1));
+				System.out.println(clock.getCurrentMilliseconds() + ": Follower: Goal set: " + goal.value.toString());
+			}
+			
+						
 		} else {
 			System.out.println(clock.getCurrentMilliseconds() + ": Follower: No leader position !!!");
 		}
