@@ -15,6 +15,8 @@
  *******************************************************************************/
 package cz.cuni.mff.d3s.deeco.modes;
 
+import cz.cuni.mff.d3s.deeco.task.ParamHolder;
+
 /**
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  *
@@ -23,5 +25,5 @@ public interface ModeTransitionListener {
 
 	String[] getKnowledgeNames();
 	
-	void transitionTaken(Object [] knowledgeValues);
+	void transitionTaken(ParamHolder<?>[] knowledgeValues);
 }
