@@ -626,7 +626,7 @@ public class RuntimeFrameworkImplTest {
 		assertNotNull(tested.componentProcessAdapters.get(process2));
 		assertTrue(process2.eAdapters().contains(tested.componentProcessAdapters.get(process2)));
 		// AND componentProcessActiveChanged was called on the process
-		verify(tested).componentProcessActiveChanged(component, process2, process.isActive());
+		verify(tested).componentProcessActiveChanged(component, process2, process.isActive(), false);
 	}	
 	
 	@Test
@@ -646,8 +646,8 @@ public class RuntimeFrameworkImplTest {
 		ComponentInstanceRecord unused = tested.componentRecords.get(component);
 		
 		// THEN componentProcessActiveChanged is called with the right arguments
-		verify(tested).componentProcessActiveChanged(component, process, true);
-		verify(tested).componentProcessActiveChanged(component, process2, false);
+		verify(tested).componentProcessActiveChanged(component, process, true, false);
+		verify(tested).componentProcessActiveChanged(component, process2, false, false);
 	}
 	
 	@Test
@@ -733,7 +733,7 @@ public class RuntimeFrameworkImplTest {
 		tested.componentProcessRemoved(component, process);		
 		
 		// THEN the process is deactivated 
-		verify(tested).componentProcessActiveChanged(component, process, false); 
+		verify(tested).componentProcessActiveChanged(component, process, false, false); 
 		// AND the associated task is removed from the ComponentInstanceRecord
 		assertFalse(cir.getProcessTasks().containsKey(process));
 		// AND a the ecore adapter is removed to the process
@@ -768,7 +768,7 @@ public class RuntimeFrameworkImplTest {
 		reset(scheduler);
 		
 		// WHEN changing the activity of a null process 
-		tested.componentProcessActiveChanged(component, null, false);
+		tested.componentProcessActiveChanged(component, null, false, false);
 		
 		// THEN nothing happens
 		verifyZeroInteractions(scheduler);		
@@ -782,7 +782,7 @@ public class RuntimeFrameworkImplTest {
 		reset(scheduler);
 		
 		// WHEN changing the activity of a process whose instance is not registered
-		tested.componentProcessActiveChanged(component, process, false);
+		tested.componentProcessActiveChanged(component, process, false, false);
 		
 		// THEN nothing happens
 		verifyZeroInteractions(scheduler);		
@@ -798,7 +798,7 @@ public class RuntimeFrameworkImplTest {
 		
 		// WHEN changing the activity of an unregistered process
 		tested.componentRecords.get(process.getComponentInstance()).getProcessTasks().remove(process);
-		tested.componentProcessActiveChanged(component, process, false);
+		tested.componentProcessActiveChanged(component, process, false, false);
 		
 		// THEN nothing happens
 		verifyZeroInteractions(scheduler);		
@@ -813,11 +813,17 @@ public class RuntimeFrameworkImplTest {
 		reset(scheduler);
 		Task processTask = tested.componentRecords.get(component).getProcessTasks().get(process);
 		
-		// WHEN changing the activity of a registered process to true		
-		tested.componentProcessActiveChanged(component, process, true);
+		// WHEN changing the activity of a registered process to true on hibernate mode		
+		tested.componentProcessActiveChanged(component, process, true, true);
 		
-		// THEN the task associated with process gets scheduled
-		verify(scheduler).addTask(processTask);		
+		// THEN the task associated with process gets dehibernated
+		verify(scheduler).deHibernateTask(processTask);
+		
+		// WHEN changing the activity of a registered process to true on non-hibernate mode		
+		tested.componentProcessActiveChanged(component, process, true, false);
+		
+		// THEN the task associated with process gets added to the scheduler's queue
+		verify(scheduler).addTask(processTask);
 	}
 	
 	@Test
@@ -832,11 +838,17 @@ public class RuntimeFrameworkImplTest {
 
 		tested.init(deecoContainer);
 		
-		// WHEN changing the activity of a registered process to false		
-		tested.componentProcessActiveChanged(component, process, false);
+		// WHEN changing the activity of a registered process to false on hibernate mode	
+		tested.componentProcessActiveChanged(component, process, false, true);
+
+		// THEN the task associated with process is hibernated, but not removed from the scheduler
+		verify(scheduler).hibernateTask(processTask);	
 		
+		// WHEN changing the activity of a registered process to false on non-hibernate mode	
+		tested.componentProcessActiveChanged(component, process, false, false);
+
 		// THEN the task associated with process is removed from the scheduler
-		verify(scheduler).removeTask(processTask);		
+		verify(scheduler).removeTask(processTask);	
 	}
 	
 	@Test
@@ -848,7 +860,7 @@ public class RuntimeFrameworkImplTest {
 		process.setActive(true);
 		
 		// THEN the componentProcessActiveChanged is called on the runtime
-		verify(spy).componentProcessActiveChanged(component, process, true);
+		verify(spy).componentProcessActiveChanged(component, process, true, true);
 		// AND no errors were printed
 		assertTrue(log.getLog().isEmpty());
 		
@@ -856,7 +868,7 @@ public class RuntimeFrameworkImplTest {
 		process.setActive(false);
 		
 		// THEN the componentProcessActiveChanged is called on the runtime
-		verify(spy).componentProcessActiveChanged(component, process, false);
+		verify(spy).componentProcessActiveChanged(component, process, false, true);
 		// AND no errors were printed
 		assertTrue(log.getLog().isEmpty());
 	}
