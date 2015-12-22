@@ -122,20 +122,6 @@ public class SingleThreadedScheduler implements Scheduler {
 	}
 
 	@Override
-	public void hibernateTask(Task task) {
-		if (task == null) {
-			throw new IllegalArgumentException("The task to be hibernated cannot be null");
-		}
-		if (!allTasks.contains(task)) {
-			Log.w("Attempting to hibernate a non-existing task.");
-			return;
-		}
-		for (SchedulerEvent event: queue.getTaskEvents(task)) {
-			event.state = SchedulerEvent.HIBERNATED;
-		}
-	}
-
-	@Override
 	public void deHibernateTask(Task task) {
 		if (task == null) {
 			throw new IllegalArgumentException("The task to be dehibernated cannot be null");
@@ -149,6 +135,20 @@ public class SingleThreadedScheduler implements Scheduler {
 		}
 	}
 	
+	@Override
+	public void hibernateTask(Task task) {
+		if (task == null) {
+			throw new IllegalArgumentException("The task to be hibernated cannot be null");
+		}
+		if (!allTasks.contains(task)) {
+			Log.w("Attempting to hibernate a non-existing task.");
+			return;
+		}
+		for (SchedulerEvent event: queue.getTaskEvents(task)) {
+			event.state = SchedulerEvent.HIBERNATED;
+		}
+	}
+
 	@Override
 	public void executionCompleted(Task task, Trigger trigger) {
 		knowledgeChangeTriggers.remove(trigger);
