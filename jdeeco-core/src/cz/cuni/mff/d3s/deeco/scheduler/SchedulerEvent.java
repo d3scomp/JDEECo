@@ -23,7 +23,8 @@ public class SchedulerEvent implements Comparable<SchedulerEvent> {
     static final int CANCELLED = 2;
     static final int EXECUTED = 3;
     static final int RUNNING = 4;    
-    static final int FAILED = 5;    
+    static final int FAILED = 5;
+    static final int HIBERNATED = 6;
     
     /**
      * Next execution time for this task in the format returned by

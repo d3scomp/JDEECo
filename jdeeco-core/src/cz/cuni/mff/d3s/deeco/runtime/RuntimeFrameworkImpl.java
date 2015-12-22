@@ -647,9 +647,9 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ReplicaListener {
 		Log.d(String.format("Changing the activity of task %s corresponding to process %s to %s.", t, process, active));
 		
 		if (active) {
-			scheduler.addTask(t);
+			scheduler.deHibernateTask(t);
 		} else {
-			scheduler.removeTask(t);
+			scheduler.hibernateTask(t);
 		}
 	}
 

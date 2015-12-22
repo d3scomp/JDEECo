@@ -122,6 +122,34 @@ public class SingleThreadedScheduler implements Scheduler {
 	}
 
 	@Override
+	public void hibernateTask(Task task) {
+		if (task == null) {
+			throw new IllegalArgumentException("The task to be hibernated cannot be null");
+		}
+		if (!allTasks.contains(task)) {
+			Log.w("Attempting to hibernate a non-existing task.");
+			return;
+		}
+		for (SchedulerEvent event: queue.getTaskEvents(task)) {
+			event.state = SchedulerEvent.HIBERNATED;
+		}
+	}
+
+	@Override
+	public void deHibernateTask(Task task) {
+		if (task == null) {
+			throw new IllegalArgumentException("The task to be dehibernated cannot be null");
+		}
+		if (!allTasks.contains(task)) {
+			Log.w("Attempting to dehibernate a non-existing task.");
+			return;
+		}
+		for (SchedulerEvent event: queue.getTaskEvents(task)) {
+			event.state = SchedulerEvent.RUNNING;
+		}
+	}
+	
+	@Override
 	public void executionCompleted(Task task, Trigger trigger) {
 		knowledgeChangeTriggers.remove(trigger);
 	}
@@ -136,7 +164,9 @@ public class SingleThreadedScheduler implements Scheduler {
 		while ((!queue.isEmpty()) && (queue.first().nextExecutionTime <= time)) {
 			SchedulerEvent event = queue.pollFirst();
 
-			executor.execute(event.executable, event.trigger);
+			if (event.state != SchedulerEvent.HIBERNATED) {
+				executor.execute(event.executable, event.trigger);
+			}
 
 			if (event.periodic) {
 				// schedule for the next period add a random offset within the period (up to 75% of the period)

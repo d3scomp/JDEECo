@@ -70,5 +70,9 @@ public interface Scheduler extends ExecutionListener, TimerEventListener {
 	public void setExecutor(Executor executor);
 	
 	public Timer getTimer();
+	
+	public void hibernateTask( Task task );
+	
+	public void deHibernateTask( Task task );
 
 }
