@@ -685,9 +685,9 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ReplicaListener {
 		Log.i(String.format("Changing the activity of ensemble task %s corresponding to ensemble definition %s to %s.", t, controller.getEnsembleDefinition(), active));
 		
 		if (active) {
-			scheduler.addTask(t);
+			scheduler.deHibernateTask(t);
 		} else {
-			scheduler.removeTask(t);
+			scheduler.hibernateTask(t);
 		}		
 	}
 	
