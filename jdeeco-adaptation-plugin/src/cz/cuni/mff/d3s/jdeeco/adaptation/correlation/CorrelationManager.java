@@ -40,10 +40,10 @@ public class CorrelationManager implements AdaptationManager {
 	 * Specify whether to print the values being processed by the correlation computation.
 	 */
 	@Local
-	private static final boolean dumpValues = true;
+	private static final boolean dumpValues = false;
 
 	@Local
-	private static final boolean verbose = true;
+	private static final boolean verbose = false;
 
 	/** Run flag stored in internal data under this key. */
 	@Local
@@ -184,7 +184,7 @@ public class CorrelationManager implements AdaptationManager {
 
 	@Process
 	@PeriodicScheduling(period=1000)
-	public static void calculateCorrelation(
+	public static void checkDone(
 			@In("knowledgeHistoryOfAllComponents") Map<String, Map<String, List<CorrelationMetadataWrapper<?>>>> history) {
 		boolean done = true;
 		for (String s1 : history.keySet()) {
