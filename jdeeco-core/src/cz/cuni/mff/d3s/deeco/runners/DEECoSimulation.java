@@ -82,6 +82,13 @@ public class DEECoSimulation {
 		return node;
 	}
 
+	public DEECoNode createNode(int id, String logPath, DEECoPlugin... nodeSpecificPlugins)
+			throws DEECoException, InstantiationException, IllegalAccessException {
+		DEECoNode node = new DEECoNode(id, simulationTimer, getPlugins(nodeSpecificPlugins));
+		deecoNodes.add(node);
+		return node;
+	}
+	
 	public DEECoNode createNode(int id, RuntimeLogWriters runtimeLogWriters, DEECoPlugin... nodeSpecificPlugins)
 			throws DEECoException, InstantiationException, IllegalAccessException {
 		DEECoNode node = new DEECoNode(id, simulationTimer, runtimeLogWriters, getPlugins(nodeSpecificPlugins));

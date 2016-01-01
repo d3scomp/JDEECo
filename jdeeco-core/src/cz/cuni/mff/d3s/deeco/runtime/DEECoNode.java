@@ -79,6 +79,10 @@ public class DEECoNode implements DEECoContainer {
 	public DEECoNode(int id, Timer timer, DEECoPlugin... plugins) throws DEECoException {
 		this(id, timer, new CloningKnowledgeManagerFactory(), plugins);
 	}
+
+	public DEECoNode(int id, Timer timer, String logPath, DEECoPlugin... plugins) throws DEECoException {
+		this(id, timer, new CloningKnowledgeManagerFactory(), plugins);
+	}
 	
 	public DEECoNode(int id, Timer timer, KnowledgeManagerFactory factory, DEECoPlugin... plugins) throws DEECoException {
 		this.nodeId = id;

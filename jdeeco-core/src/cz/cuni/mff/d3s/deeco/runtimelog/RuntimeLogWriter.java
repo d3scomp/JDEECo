@@ -26,37 +26,6 @@ import cz.cuni.mff.d3s.deeco.timer.CurrentTimeProvider;
 class RuntimeLogWriter {
 
 	/**
-	 * The default directory where the log files are placed.
-	 */
-	private static final String LOG_DIRECTORY = "logs/runtime";
-	/**
-	 * Specifies the default file where the logging records of the runtime
-	 * events are written. This file destination can be overridden using the
-	 * {@link RuntimeLogger#init(CurrentTimeProvider, Scheduler, Writer, Writer, Writer)}
-	 * method.
-	 */
-	private static final File DATA_FILE = new File(LOG_DIRECTORY + "/runtimeData.xml");
-	/**
-	 * Specifies the default file where the index of the runtime log is stored.
-	 * This file destination can be overridden using the
-	 * {@link RuntimeLogger#init(CurrentTimeProvider, Scheduler, Writer, Writer, Writer)}
-	 * method.
-	 */
-	private static final File DATA_INDEX_FILE = new File(LOG_DIRECTORY + "/dataIndex.xml");
-	/**
-	 * Specifies the default file where the back log time offsets are written.
-	 * This file destination can be overridden using the
-	 * {@link RuntimeLogger#init(CurrentTimeProvider, Scheduler, Writer, Writer, Writer)}
-	 * method.
-	 */
-	private static final File SNAPSHOT_PERIOD_FILE = new File(LOG_DIRECTORY + "/snapshotPeriodTable.xml");
-	/**
-	 * The encoding used to write into each log file. the number of bytes
-	 * written for each character depends on the selected encoding.
-	 */
-	private static final String CHARSET_NAME = "UTF-8";
-
-	/**
 	 * This {@link Writer} is used to write into the files for the runtime logs.
 	 */
 	private RuntimeLogWriters writers;
@@ -97,18 +66,7 @@ class RuntimeLogWriter {
 	 */
 	public static synchronized RuntimeLogWriter getDefaultWriter() throws IOException {
 		if (INSTANCE == null) {
-			// Check whether the directory for log files exists and create it if
-			// needed
-			File logDirectory = new File(LOG_DIRECTORY);
-			if (!logDirectory.exists() || !logDirectory.isDirectory()) {
-				logDirectory.mkdirs();
-			}
-
-			Writer defaultDataWriter = openStream(DATA_FILE);
-			Writer defaultIndexWriter = openStream(DATA_INDEX_FILE);
-			Writer defaultSnapshotPeriodWriter = openStream(SNAPSHOT_PERIOD_FILE);
-
-			INSTANCE = new RuntimeLogWriter(new RuntimeLogWriters(defaultDataWriter, defaultIndexWriter, defaultSnapshotPeriodWriter));
+			INSTANCE = new RuntimeLogWriter(new RuntimeLogWriters());
 		} else {
 			INSTANCE.referenceCounter++;
 		}
@@ -146,27 +104,6 @@ class RuntimeLogWriter {
 	}
 
 	/**
-	 * Provides an {@link Writer} for the given <em>file</em>. If there arise an
-	 * {@link Exception} during the creating of the {@link Writer} it is being
-	 * logged and propagated outwards from this method.
-	 * 
-	 * @param file
-	 *            specifies the file to be used for the {@link Writer}.
-	 * @return The {@link Writer} for the given <em>file</em>.
-	 * @throws IOException
-	 *             Thrown is the {@link Writer} cannot be opened for the given
-	 *             <em>file</em>.
-	 */
-	private static Writer openStream(File file) throws IOException {
-		try {
-			return new OutputStreamWriter(new FileOutputStream(file), CHARSET_NAME);
-		} catch (IOException e) {
-			Log.e("Simulation logging not enabled. Failed to open the log file " + file.getAbsolutePath(), e);
-			throw e;
-		}
-	}
-
-	/**
 	 * Provides the {@link #lastIndexTime} that was written into the index file.
 	 * 
 	 * @return The {@link #lastIndexTime} that was written into the index file.
@@ -197,9 +134,9 @@ class RuntimeLogWriter {
 	public synchronized void writeData(String entry) throws IOException {
 		try {
 			writers.dataWriter.write(entry);
-			currentDataOffset += entry.getBytes(CHARSET_NAME).length;
+			currentDataOffset += entry.getBytes(RuntimeLogWriters.CHARSET_NAME).length;
 		} catch (IOException e) {
-			Log.e("Failed to write to the log file " + DATA_FILE.getAbsolutePath(), e);
+			Log.e("Failed to write to the log file " + writers.logPath + RuntimeLogWriters.DEFAULT_DATA_FILE_PATH, e);
 			throw e;
 		}
 	}
@@ -227,7 +164,7 @@ class RuntimeLogWriter {
 			writers.indexWriter.write(entry);
 			lastIndexTime = currentTime;
 		} catch (IOException e) {
-			Log.e("Failed to write to the log file " + DATA_INDEX_FILE.getAbsolutePath(), e);
+			Log.e("Failed to write to the log file " + writers.logPath + RuntimeLogWriters.DEFAULT_INDEX_FILE_PATH, e);
 			throw e;
 		}
 	}
@@ -254,7 +191,7 @@ class RuntimeLogWriter {
 		try {
 			writers.snapshotPeriodWriter.write(entry);
 		} catch (IOException e) {
-			Log.e("Failed to write to the log file " + SNAPSHOT_PERIOD_FILE.getAbsolutePath(), e);
+			Log.e("Failed to write to the log file " + writers.logPath + RuntimeLogWriters.DEFAULT_PERIOD_FILE_PATH, e);
 			throw e;
 		}
 	}
