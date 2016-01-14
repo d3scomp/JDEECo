@@ -36,7 +36,7 @@ public class CorrelationEnsembleTemplate {
 			@In("coord.temperature") CorrelationMetadataWrapper<Integer> coordTemperature,
 			@Out("member.temperature") ParamHolder<CorrelationMetadataWrapper<Integer>> memberTemperature) throws KnowledgeNotFoundException {
 
-		System.out.println("Knowledge injection " + coordId + " -> " + memberId + " temperature " + coordTemperature.getValue() + " at " + coordTemperature.getTimestamp());
+//		System.out.println("Knowledge injection " + coordId + " -> " + memberId + " temperature " + coordTemperature.getValue() + " at " + coordTemperature.getTimestamp());
 
 		memberTemperature.value = coordTemperature;
 		memberTemperature.value.malfunction();
