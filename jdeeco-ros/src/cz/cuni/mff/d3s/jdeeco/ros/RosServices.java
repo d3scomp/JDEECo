@@ -219,7 +219,7 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 			
 			try {
 				// Wait a while between checks
-				Thread.sleep(250);
+				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				// Ignore interruptions
 			}
