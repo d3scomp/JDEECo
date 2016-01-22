@@ -73,7 +73,7 @@ public class BeeClick extends TopicSubscriber {
 		 * The maximum number of bytes that can be sent in a single
 		 * transmission.
 		 */
-		private static final int MTU = 100;
+		private static final int MTU = 1000;
 
 		/**
 		 * The {@link DEECoContainer} associated with the instance of
