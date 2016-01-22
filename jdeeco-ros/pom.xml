@@ -86,14 +86,14 @@
 			<version>1.12.2</version>
 		</dependency>
 		<dependency>
-			<groupId>beeclickarmROS</groupId>
-			<artifactId>beeclickarmROS</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<groupId>cz.cuni.mff.d3s.ros</groupId>
+			<artifactId>cz.cuni.mff.d3s.ros.beeclickarmROS</artifactId>
+			<version>0.1.0</version>
 		</dependency>
 		<dependency>
-			<groupId>ROSRemote</groupId>
-			<artifactId>ROSRemote</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<groupId>cz.cuni.mff.d3s.ros</groupId>
+			<artifactId>cz.cuni.mff.d3s.ros.rosremote</artifactId>
+			<version>0.1.0</version>
 		</dependency>
 	</dependencies>
 
