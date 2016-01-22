@@ -238,6 +238,17 @@ public class RosServices extends AbstractNodeMain implements DEECoPlugin {
 				continue;
 			}
 			
+			boolean allSubscribed = true;
+			for(TopicSubscriber subscriber: topicSubscribers) {
+				if(!subscriber.isSubscribed()) {
+					allSubscribed = false;
+				}	
+			}
+			if(!allSubscribed) {
+				Log.i("Waiting for all subscribers to subscribe... " + remainingMs + " ms remaining (namespace = " + namespace + ")");
+				continue;
+			}
+			
 			System.out.println(namespace + " is started returns true");
 			return true;
 		}
