@@ -264,7 +264,7 @@ public class CorrelationEnsembleFactory {
 				+ "		String coordId,"
 				+ "		" + wrapperClass + " coord%1$s,"
 				+ "		" + paramHolderClass + " member%1$s) {"
-				+ " System.out.println(\"Knowledge injection \" + coordId + \" -> \" + memberId + \" %1$s \" + coord%1$s.getValue() + \" at \" +  coord%1$s.getTimestamp() + \" based on \" + \"%2$s\");"
+			//	+ " System.out.println(\"Knowledge injection \" + coordId + \" -> \" + memberId + \" %1$s \" + coord%1$s.getValue() + \" at \" +  coord%1$s.getTimestamp() + \" based on \" + \"%2$s\");"
 				+ "	member%1$s.value = coord%1$s; "
 				+ " ((" + wrapperClass + ") member%1$s.value).malfunction();}",
 					correlationSubject, correlationFilter),
