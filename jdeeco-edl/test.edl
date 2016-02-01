@@ -1,0 +1,21 @@
+ensemble BuildingEnsemble
+	id buildingId : int := one_of(allExplorers.buildingId)
+	parent of
+		roomTeams [1..*] : RoomEnsemble
+		defuseTeams [0..*] : DefuseTeamEnsemble
+		dissemination [1..1] : DisseminationEnsemble
+		distressCalls [0..*] : DistressEnsemble
+	alias
+		map = one_of(allExplorers.map) // maybe use just Relays instead?
+		bombs = one_of(allExplorers.bombs) // - they have authoritative info
+										// or move this into DisseminationEnsemble?
+
+		optDensity = count(allExplorers) // TODO: Arithmetic
+	membership
+		roles
+			allExplorers [1..*] : Explorer
+		constraints
+			allEqual(allExplorers.buildingId)
+			setsEqual(dissemination.members, roomTeams.relay)
+		fitness 42			
+end

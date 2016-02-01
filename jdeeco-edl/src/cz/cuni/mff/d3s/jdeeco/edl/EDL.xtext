@@ -1,0 +1,159 @@
+grammar cz.cuni.mff.d3s.jdeeco.edl.EDL with org.eclipse.xtext.common.Terminals
+
+import "platform:/resource/cz.cuni.mff.d3s.jdeeco.edl.model/model/edl.ecore" 
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+
+EdlDocument returns EdlDocument:
+	{EdlDocument}	
+		(ensembles+=EnsembleDefinition (ensembles+=EnsembleDefinition)*)?
+	;
+
+Constraint returns Constraint:
+	FunctionCall | RelationOperator | LogicalOperator | Negation;
+
+Query returns Query:
+	FunctionCall | NumericLiteral | BoolLiteral | StringLiteral | FloatLiteral;
+
+// TODO: FunctionCall and KnowledgeVariable disambiguation
+
+//Query returns Query:
+//	FunctionCall | KnowledgeVariable | NumericLiteral | BoolLiteral | StringLiteral | FloatLiteral | AdditiveOperator | MultiplicativeOperator | AdditiveInverse;
+
+
+
+OrdinalQuery returns OrdinalQuery:
+	FunctionCall | NumericLiteral | BoolLiteral;
+
+//OrdinalQuery returns OrdinalQuery:
+//	FunctionCall | KnowledgeVariable | NumericLiteral | BoolLiteral | AdditiveOperator | MultiplicativeOperator | AdditiveInverse;
+
+
+EnsembleDefinition returns EnsembleDefinition:
+	'ensemble'
+	    name=ID
+	    'id' id=IdDefinition
+		('child of' parentEnsemble=EString)?
+		('parent of' childEnsembles+=ChildDefinition (childEnsembles+=ChildDefinition)*)?
+		('alias' aliases+=AliasDefinition (aliases+=AliasDefinition)*)?
+		'membership'
+		  'roles' roles+=RoleDefinition (roles+=RoleDefinition)*		
+		  ('constraints' constraints+=Constraint (constraints+=Constraint)*)?
+		  ('fitness' fitness=Query)?
+		'knowledge exchange' exchangeRules+=ExchangeRule (exchangeRules+=ExchangeRule)*
+	 'end'	
+;	
+
+EString returns ecore::EString:
+	STRING | ID;
+
+ChildDefinition returns ChildDefinition:
+	name = ID '[' cardinalityMin=EInt '..' cardinalityMax=EInt ']' ':' type = QualifiedName	
+;
+
+RoleDefinition returns RoleDefinition:
+	exclusive?='exclusive'
+	name = ID '[' cardinalityMin=EInt '..' cardinalityMax=EInt ']' ':' type = QualifiedName	
+;
+
+AliasDefinition returns AliasDefinition:
+	aliasId = ID '=' aliasValue = Query	
+;
+
+IdDefinition returns IdDefinition:
+	fieldName=EString ':' type = QualifiedName  (isAssigned?= ':=' value = Query)?
+;
+
+ExchangeRule returns ExchangeRule:
+	field = QualifiedName ':=' query = Query
+;
+
+EInt returns ecore::EInt:
+	'-'? INT;
+
+QualifiedName returns QualifiedName:
+	{QualifiedName}
+	(prefix+=EString (prefix+=EString)*)?
+	name=EString;
+
+EBoolean returns ecore::EBoolean:
+	'true' | 'false';
+
+FunctionCall returns FunctionCall:
+	{FunctionCall}
+	name = ID'(' parameters += Query (',' parameters += (Query))* ')'
+;
+
+KnowledgeVariable returns KnowledgeVariable:
+		path=QualifiedName
+;	
+
+NumericLiteral returns NumericLiteral:
+		value=EInt
+;
+
+BoolLiteral returns BoolLiteral:
+	value = EBoolean
+;
+
+enum BinaryOperatorType returns BinaryOperatorType:
+				Addition = 'Addition' | Subtraction = 'Subtraction' | Multiplication = 'Multiplication' | Division = 'Division';
+
+enum BoolOperatorType returns BoolOperatorType:
+				And = 'And' | Or = 'Or';
+
+StringLiteral returns StringLiteral:
+	'"' value=EString '"'
+;
+
+FloatLiteral returns FloatLiteral:
+	value=EFloat
+;
+
+EFloat returns ecore::EFloat:
+	'-'? INT? '.' INT (('E'|'e') '-'? INT)?;
+	
+	
+//TODO:
+
+RelationOperator returns RelationOperator:
+	'RelationOperator'
+	'{'
+		'left' left=OrdinalQuery
+		'right' right=OrdinalQuery
+	'}';
+
+LogicalOperator returns LogicalOperator:
+	'LogicalOperator'
+	'{'
+		'type' type=BoolOperatorType
+		'left' left=Constraint
+		'right' right=Constraint
+	'}';
+
+Negation returns Negation:
+	'Negation'
+	'{'
+		'nested' nested=Constraint
+	'}';
+
+	AdditiveOperator returns AdditiveOperator:
+	'AdditiveOperator'
+	'{'
+		('operatorType' operatorType=BinaryOperatorType)?
+		'left' left=Query
+		'right' right=Query
+	'}';
+
+MultiplicativeOperator returns MultiplicativeOperator:
+	'MultiplicativeOperator'
+	'{'
+		('operatorType' operatorType=BinaryOperatorType)?
+		'left' left=Query
+		'right' right=Query
+	'}';
+
+AdditiveInverse returns AdditiveInverse:
+	'AdditiveInverse'
+	'{'
+		'nested' nested=Query
+	'}';
