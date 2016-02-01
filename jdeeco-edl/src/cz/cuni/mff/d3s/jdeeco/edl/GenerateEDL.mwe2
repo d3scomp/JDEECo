@@ -7,7 +7,7 @@ import org.eclipse.xtext.ui.generator.*
 var grammarURI = "classpath:/cz/cuni/mff/d3s/jdeeco/edl/EDL.xtext"
 var fileExtensions = "edl"
 var projectName = "cz.cuni.mff.d3s.jdeeco.edl"
-var runtimeProject = "../${projectName}"
+var runtimeProject = "../jdeeco-edl"
 var generateXtendStub = true
 
 Workflow {
@@ -23,13 +23,13 @@ Workflow {
 	}
 
 	component = DirectoryCleaner {
-		directory = "${runtimeProject}.ui/src-gen"
+		directory = "${runtimeProject}-ui/src-gen"
 	}
 
 	component = Generator {
 		pathRtProject = runtimeProject
-		pathUiProject = "${runtimeProject}.ui"
-		pathTestProject = "${runtimeProject}.tests"
+		pathUiProject = "${runtimeProject}-ui"
+		pathTestProject = "${runtimeProject}-tests"
 		projectNameRt = projectName
 		projectNameUi = "${projectName}.ui"
 		language = auto-inject {
