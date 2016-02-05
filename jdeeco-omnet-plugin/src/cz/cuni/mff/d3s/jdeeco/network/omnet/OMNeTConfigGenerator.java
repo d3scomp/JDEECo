@@ -7,8 +7,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
+import cz.cuni.mff.d3s.deeco.annotations.Local;
 import cz.cuni.mff.d3s.deeco.simulation.omnet.OMNeTNative;
 import cz.cuni.mff.d3s.jdeeco.position.Position;
 
@@ -70,7 +72,7 @@ public class OMNeTConfigGenerator {
 		content.append(String.format("**.numNodes = %d%n", nodes.size()));
 
 		// Add time limit
-		content.append(String.format("sim-time-limit = %fs%n", (double) limit / 1000));
+		content.append(String.format(Locale.US, "sim-time-limit = %fs%n", (double) limit / 1000));
 
 		// Add nodes
 		int counter = 0;
