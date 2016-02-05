@@ -72,7 +72,9 @@ public class BroadcastConvoyTest {
 		simulation.start(60000);
 		
 		// THEN the follower prints out the following (ass the networking should work)
-		if(silent)
-			assertThat(baos.toString(), containsString("Follower F: me = (1,3) leader = (1,3)"));
+		if(silent) {
+			assertThat(baos.toString(), containsString("Seeder S: 23"));
+			assertThat(baos.toString(), containsString("Grather G: 23"));
+		}
 	}
 }
