@@ -12,17 +12,17 @@ Constraint returns Constraint:
 	FunctionCall | RelationOperator | LogicalOperator | Negation;
 
 Query returns Query:
-	FunctionCall | NumericLiteral | BoolLiteral | StringLiteral | FloatLiteral;
-
-// TODO: FunctionCall and KnowledgeVariable disambiguation
+	MultiplicativeQuery
+	(({AdditiveOperator.left=current}
+	('+' | '-'))
+	right=MultiplicativeQuery)*
+;
 
 //Query returns Query:
 //	FunctionCall | KnowledgeVariable | NumericLiteral | BoolLiteral | StringLiteral | FloatLiteral | AdditiveOperator | MultiplicativeOperator | AdditiveInverse;
 
-
-
 OrdinalQuery returns OrdinalQuery:
-	FunctionCall | NumericLiteral | BoolLiteral;
+	BoolLiteral | NumericLiteral | FunctionCall | KnowledgeVariable; 
 
 //OrdinalQuery returns OrdinalQuery:
 //	FunctionCall | KnowledgeVariable | NumericLiteral | BoolLiteral | AdditiveOperator | MultiplicativeOperator | AdditiveInverse;
@@ -47,12 +47,17 @@ EString returns ecore::EString:
 	STRING | ID;
 
 ChildDefinition returns ChildDefinition:
-	name = ID '[' cardinalityMin=EInt '..' cardinalityMax=EInt ']' ':' type = QualifiedName	
+	name = ID '[' cardinalityMin=EInt '..' cardinalityMax=Cardinality ']' ':' type = QualifiedName	
 ;
 
 RoleDefinition returns RoleDefinition:
-	exclusive?='exclusive'
-	name = ID '[' cardinalityMin=EInt '..' cardinalityMax=EInt ']' ':' type = QualifiedName	
+	(exclusive?='exclusive')?
+	name = ID '[' cardinalityMin=EInt '..' cardinalityMax=Cardinality ']' ':' type = QualifiedName	
+;
+
+// TODO: Solve *, probably via an IValueConverter
+Cardinality returns ecore::EInt:
+    EInt | ('*')
 ;
 
 AliasDefinition returns AliasDefinition:
@@ -68,12 +73,13 @@ ExchangeRule returns ExchangeRule:
 ;
 
 EInt returns ecore::EInt:
-	'-'? INT;
+	INT;
 
 QualifiedName returns QualifiedName:
 	{QualifiedName}
-	(prefix+=EString (prefix+=EString)*)?
-	name=EString;
+	(prefix+=ID '.' (prefix+=ID '.')*)?	
+	name=ID
+;
 
 EBoolean returns ecore::EBoolean:
 	'true' | 'false';
@@ -84,11 +90,11 @@ FunctionCall returns FunctionCall:
 ;
 
 KnowledgeVariable returns KnowledgeVariable:
-		path=QualifiedName
+	path=QualifiedName
 ;	
 
 NumericLiteral returns NumericLiteral:
-		value=EInt
+	value=EInt
 ;
 
 BoolLiteral returns BoolLiteral:
@@ -99,10 +105,10 @@ enum BinaryOperatorType returns BinaryOperatorType:
 				Addition = 'Addition' | Subtraction = 'Subtraction' | Multiplication = 'Multiplication' | Division = 'Division';
 
 enum BoolOperatorType returns BoolOperatorType:
-				And = 'And' | Or = 'Or';
+				And = 'and' | Or = 'or';
 
 StringLiteral returns StringLiteral:
-	'"' value=EString '"'
+	value=STRING
 ;
 
 FloatLiteral returns FloatLiteral:
@@ -110,7 +116,30 @@ FloatLiteral returns FloatLiteral:
 ;
 
 EFloat returns ecore::EFloat:
-	'-'? INT? '.' INT (('E'|'e') '-'? INT)?;
+	INT? '.' INT (('E'|'e') '-'? INT)?;
+
+Negation returns Negation:
+	'not' nested=Constraint;
+
+
+MultiplicativeQuery returns Query:		
+	AdditiveInverseQuery
+	(({MultiplicativeOperator.left=current}
+	('*' | '/'))
+	right=AdditiveInverseQuery)*
+;
+
+AdditiveInverseQuery returns Query:
+	AdditiveInverse | BaseQuery
+;
+
+AdditiveInverse returns AdditiveInverse:
+	'-' nested=BaseQuery
+;
+
+BaseQuery returns Query:
+	StringLiteral | BoolLiteral | FloatLiteral | NumericLiteral | FunctionCall | KnowledgeVariable | '('Query')'
+;
 	
 	
 //TODO:
@@ -128,32 +157,4 @@ LogicalOperator returns LogicalOperator:
 		'type' type=BoolOperatorType
 		'left' left=Constraint
 		'right' right=Constraint
-	'}';
-
-Negation returns Negation:
-	'Negation'
-	'{'
-		'nested' nested=Constraint
-	'}';
-
-	AdditiveOperator returns AdditiveOperator:
-	'AdditiveOperator'
-	'{'
-		('operatorType' operatorType=BinaryOperatorType)?
-		'left' left=Query
-		'right' right=Query
-	'}';
-
-MultiplicativeOperator returns MultiplicativeOperator:
-	'MultiplicativeOperator'
-	'{'
-		('operatorType' operatorType=BinaryOperatorType)?
-		'left' left=Query
-		'right' right=Query
-	'}';
-
-AdditiveInverse returns AdditiveInverse:
-	'AdditiveInverse'
-	'{'
-		'nested' nested=Query
 	'}';
