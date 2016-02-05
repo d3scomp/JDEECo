@@ -14,7 +14,7 @@ Workflow {
 	bean = StandaloneSetup {
 		scanClassPath  = true
 		platformUri = "${runtimeProject}/.."
-		//registerGeneratedEPackage = "edl.EdlPackage"
+		registerGeneratedEPackage = "cz.cuni.mff.d3s.jdeeco.edl.model.edl.EdlPackage"
 		registerGenModelFile = "platform:/resource/cz.cuni.mff.d3s.jdeeco.edl.model/model/edl.genmodel"
 	}
 

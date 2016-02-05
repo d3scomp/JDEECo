@@ -17,5 +17,7 @@ ensemble BuildingEnsemble
 		constraints
 			allEqual(allExplorers.buildingId)
 			setsEqual(dissemination.members, roomTeams.relay)
-		fitness 42			
+		fitness 42
+	knowledge exchange
+	    x := y				
 end
