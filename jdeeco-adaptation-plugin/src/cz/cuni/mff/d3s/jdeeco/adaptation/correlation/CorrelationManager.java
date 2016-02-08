@@ -40,10 +40,10 @@ public class CorrelationManager implements AdaptationManager {
 	 * Specify whether to print the values being processed by the correlation computation.
 	 */
 	@Local
-	private static final boolean dumpValues = false;
+	static boolean dumpValues = false;
 
 	@Local
-	private static final boolean verbose = false;
+	static boolean verbose = false;
 
 	/** Run flag stored in internal data under this key. */
 	@Local

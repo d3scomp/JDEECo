@@ -14,6 +14,9 @@ import cz.cuni.mff.d3s.deeco.runtime.DuplicateEnsembleDefinitionException;
 
 public class CorrelationPlugin implements DEECoPlugin {
 
+	private boolean verbose;
+	private boolean dumpValues;
+	
 	/** Plugin dependencies. */
 	static private final List<Class<? extends DEECoPlugin>> DEPENDENCIES =
 			Collections.emptyList();
@@ -22,6 +25,29 @@ public class CorrelationPlugin implements DEECoPlugin {
 
 	public CorrelationPlugin(List<DEECoNode> nodesInRealm){
 		deecoNodes = nodesInRealm;
+		
+		verbose = false;
+		dumpValues = false;
+	}
+	
+	/**
+	 * Specify the verbosity of the correlation process.
+	 * @param verbose True to be verbose, false to be still.
+	 * @return The self instance of {@link CorrelationPlugin} 
+	 */
+	public CorrelationPlugin withVerbosity(boolean verbose){
+		this.verbose = verbose;
+		return this;
+	}
+
+	/**
+	 * Specify whether the correlation process should dump values while computing.
+	 * @param dumpValues True to dump values, false to hold it.
+	 * @return The self instance of {@link CorrelationPlugin} 
+	 */
+	public CorrelationPlugin withDumping(boolean dumpValues){
+		this.dumpValues = dumpValues;
+		return this;
 	}
 
 	@Override
@@ -36,6 +62,9 @@ public class CorrelationPlugin implements DEECoPlugin {
 		
 		try {
 			final CorrelationManager manager = new CorrelationManager(deecoNodes);
+			CorrelationManager.verbose = verbose;
+			CorrelationManager.dumpValues = dumpValues;
+			
 			container.deployComponent(manager);
 			container.deployEnsemble(CorrelationDataAggregation.class);
 		} catch (AnnotationProcessorException | DuplicateEnsembleDefinitionException e) {
