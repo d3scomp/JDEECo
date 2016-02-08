@@ -179,7 +179,7 @@ public class CorrelationManager implements AdaptationManager {
 					bounds.get(labels).getBoundary()));
 		}
 
-		System.out.println(b.toString());
+		Log.i(b.toString());
 	}
 
 	@Process
@@ -214,15 +214,15 @@ public class CorrelationManager implements AdaptationManager {
 			@InOut("distanceBounds") ParamHolder<Map<LabelPair, BoundaryValueHolder>> bounds){
 
 		if(verbose){
-			System.out.println("Correlation process started...");
+			Log.i("Correlation process started...");
 		}
 
 		for(LabelPair labels : getAllLabelPairs(history)){
 			List<DistancePair> distances = computeDistances(history, labels);
 			double boundary = getDistanceBoundary(distances, labels);
 			if(verbose){
-				System.out.println(String.format("%s -> %s", labels.getFirstLabel(), labels.getSecondLabel()));
-				System.out.println(String.format("Boundary: %f", boundary));
+				Log.i(String.format("%s -> %s", labels.getFirstLabel(), labels.getSecondLabel()));
+				Log.i(String.format("Boundary: %f", boundary));
 			}
 			if(bounds.value.containsKey(labels)){
 				// Update existing boundary (automatically handles "hasChanged" flag)
@@ -247,9 +247,9 @@ public class CorrelationManager implements AdaptationManager {
 			@InOut("distanceBounds") ParamHolder<Map<LabelPair, BoundaryValueHolder>> bounds,
 			@In("otherNodes") List<DEECoNode> deecoNodes) throws Exception {
 
-		final boolean run = true; // TODO: initialize properly
+		final boolean run = true;
 		if(verbose){
-			System.out.println("Correlation ensembles management process started...");
+			Log.i("Correlation ensembles management process started...");
 		}
 
 		for(LabelPair labels : bounds.value.keySet()){
@@ -260,7 +260,7 @@ public class CorrelationManager implements AdaptationManager {
 					.composeClassName(correlationFilter, correlationSubject);
 			if (!distance.isValid() || !run) {
 				if(verbose){
-					System.out.println(String.format("Undeploying ensemble %s",	ensembleName));
+					Log.i(String.format("Undeploying ensemble %s",	ensembleName));
 				}
 				// Undeploy the ensemble if the meta-adaptation is stopped or the correlation between the data is not reliable
 				for (DEECoNode node : deecoNodes) {
@@ -271,7 +271,7 @@ public class CorrelationManager implements AdaptationManager {
 				CorrelationEnsembleFactory.setEnsembleMembershipBoundary(correlationFilter, correlationSubject, distance.getBoundary());
 				Class<?> ensemble = CorrelationEnsembleFactory.getEnsembleDefinition(correlationFilter, correlationSubject);
 				if(verbose){
-					System.out.println(String.format("Deploying ensemble %s", ensembleName));
+					Log.i(String.format("Deploying ensemble %s", ensembleName));
 				}
 				// Deploy the ensemble if the correlation is reliable enough and the meta-adaptation is running
 				for(DEECoNode node : deecoNodes){
@@ -282,7 +282,7 @@ public class CorrelationManager implements AdaptationManager {
 				// Mark the boundary as !hasChanged since the new value is used
 				bounds.value.get(labels).boundaryUsed();
 			} else if(verbose){
-				System.out.println(String.format(
+				Log.i(String.format(
 						"Omitting deployment of ensemble %s since the bound hasn't changed (much).",
 						ensembleName));
 			}
@@ -471,7 +471,7 @@ public class CorrelationManager implements AdaptationManager {
 			StringBuilder b = new StringBuilder();
 			b.append("Computed distances\n");
 			fillDistances(distancePairs, b);
-			System.out.print(b.toString());
+			Log.i(b.toString());
 		}
 
 		return distancePairs;
@@ -495,7 +495,7 @@ public class CorrelationManager implements AdaptationManager {
 			StringBuilder b = new StringBuilder();
 			b.append("Sorted distances\n");
 			fillDistances(distancePairs, b);
-			System.out.print(b.toString());
+			Log.i(b.toString());
 		}
 		// Count the correlation for all the distances based on all smaller distances than the computed one
 		List<Double> correlations = new ArrayList<>(Collections.nCopies(distancePairs.size(), Double.NaN));
