@@ -26,12 +26,12 @@ EnsembleDefinition returns EnsembleDefinition:
 
 
 ChildDefinition returns ChildDefinition:
-	name = ID '[' cardinalityMin=EInt '..' cardinalityMax=Cardinality ']' ':' type = QualifiedName	
+	name = ID ('[' cardinalityMin=EInt '..' cardinalityMax=Cardinality ']')? ':' type = QualifiedName	
 ;
 
 RoleDefinition returns RoleDefinition:
 	(exclusive?='exclusive')?
-	name = ID '[' cardinalityMin=EInt '..' cardinalityMax=Cardinality ']' ':' type = QualifiedName	
+	name = ID ('[' cardinalityMin=EInt '..' cardinalityMax=Cardinality ']')? ':' type = QualifiedName	
 ;
 
 // TODO: Solve *, probably via an IValueConverter
@@ -125,10 +125,10 @@ LogicalTerm returns Constraint:
 	RelationOperator
 ;
 
-RelationOperator returns RelationOperator:		
-	left=OrdinalQuery	
-	('==' | '!=' | '<' | '>' | '<=' | '>=')
-	right=OrdinalQuery
+RelationOperator returns Constraint:		
+	OrdinalQuery	
+	({RelationOperator.left = current} ('==' | '!=' | '<' | '>' | '<=' | '>=')
+	right=OrdinalQuery)?
 ;
 
 enum BoolOperatorType returns BoolOperatorType:

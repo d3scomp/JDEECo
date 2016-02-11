@@ -63,7 +63,7 @@
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="FunctionCall" eSuperTypes="#//OrdinalQuery #//Constraint">
+  <eClassifiers xsi:type="ecore:EClass" name="FunctionCall" eSuperTypes="#//OrdinalQuery">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"
         eType="#//Query" containment="true"/>
@@ -115,7 +115,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="OrdinalQuery" abstract="true" interface="true"
-      eSuperTypes="#//Query"/>
+      eSuperTypes="#//Query #//Constraint"/>
   <eClassifiers xsi:type="ecore:EClass" name="AdditiveOperator" eSuperTypes="#//BinaryOperator"/>
   <eClassifiers xsi:type="ecore:EClass" name="MultiplicativeOperator" eSuperTypes="#//BinaryOperator"/>
   <eClassifiers xsi:type="ecore:EClass" name="AdditiveInverse" eSuperTypes="#//OrdinalQuery">
