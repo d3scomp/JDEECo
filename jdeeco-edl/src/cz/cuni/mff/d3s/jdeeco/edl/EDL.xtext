@@ -92,8 +92,12 @@ BoolLiteral returns BoolLiteral:
 	value = EBoolean
 ;
 
-enum BinaryOperatorType returns BinaryOperatorType:
-				Addition = 'Addition' | Subtraction = 'Subtraction' | Multiplication = 'Multiplication' | Division = 'Division';
+enum AdditiveOperatorType returns BinaryOperatorType:
+				Addition = '+' | Subtraction = '-';
+
+enum MultiplicativeOperatorType returns BinaryOperatorType:
+				Multiplication = '*' | Division = '/';
+
 
 StringLiteral returns StringLiteral:
 	value=STRING
@@ -105,96 +109,97 @@ FloatLiteral returns FloatLiteral:
 
 // ===== Constraints =====
 
-ConstraintDeclaration returns Constraint:
+ConstraintDeclaration returns EquitableQuery:
 	'constraint ' Constraint
 ;
 
-Constraint returns Constraint:
-	LogicalOperator
-;
-
-
-LogicalOperator returns Constraint:	
-	LogicalTerm
+Constraint returns EquitableQuery:
+	RelationOperator
 	(({LogicalOperator.left = current}
 		type=BoolOperatorType)
-	right=LogicalTerm)*
+	right=RelationOperator)*
 ;
 
-LogicalTerm returns Constraint:
-	RelationOperator
-;
-
-RelationOperator returns Constraint:		
+RelationOperator returns EquitableQuery:		
 	OrdinalQuery	
 	({RelationOperator.left = current} ('==' | '!=' | '<' | '>' | '<=' | '>=')
 	right=OrdinalQuery)?
 ;
 
 enum BoolOperatorType returns BoolOperatorType:
-	And = 'and' | Or = 'or';
+	And = '&&' | Or = '||';
 
-Negation returns Negation:
-	'not' nested=Constraint;
 
 
 // ===== Ordinal query (Fitness function, constraints) =====
 
-OrdinalQuery returns OrdinalQuery:
+OrdinalQuery returns EquitableQuery:
 	MultiplicativeOrdinalQuery
 	(({AdditiveOperator.left=current}
-	('+' | '-'))
+	operatorType = AdditiveOperatorType)
 	right=MultiplicativeOrdinalQuery)*
 ;
 
-MultiplicativeOrdinalQuery returns OrdinalQuery:		
+MultiplicativeOrdinalQuery returns EquitableQuery:		
 	AdditiveInverseOrdinalQuery
 	(({MultiplicativeOperator.left=current}
-	('*' | '/'))
+	operatorType = MultiplicativeOperatorType)
 	right=AdditiveInverseOrdinalQuery)*
 ;
 
-AdditiveInverseOrdinalQuery returns OrdinalQuery:
-	AdditiveInverseOrdinal | BaseOrdinalQuery
+AdditiveInverseOrdinalQuery returns EquitableQuery:
+	InverseOrdinal | BaseOrdinalQuery
 ;
 
-AdditiveInverseOrdinal returns AdditiveInverse:
-	'-' nested=BaseOrdinalQuery
-;
+InverseOrdinal returns EquitableQuery:
+	'-' {AdditiveInverse} nested=BaseOrdinalQuery | '!' {Negation} nested=BaseOrdinalQuery;
 
-BaseOrdinalQuery returns OrdinalQuery:
-	BoolLiteral | NumericLiteral | OrdinalFunctionCall | KnowledgeVariable | '(' OrdinalQuery ')'
+
+BaseOrdinalQuery returns EquitableQuery:
+	BoolLiteral | NumericLiteral | OrdinalFunctionCall | KnowledgeVariable | '(' Constraint ')'
 ;
 
 OrdinalFunctionCall returns FunctionCall:
 	{FunctionCall}
-	name = ID '(' parameters += OrdinalQuery (',' parameters += (OrdinalQuery))* ')'
+	name = ID '(' parameters += Constraint (',' parameters += (Constraint))* ')'
 ;
 
 // ===== General query (knowledge exchange, aliasing) =====
 
-Query returns Query:
+Query returns EquitableQuery:	
+	RelationOperatorQuery
+	(({LogicalOperator.left = current}
+		type=BoolOperatorType)
+	right=RelationOperatorQuery)*
+;
+
+RelationOperatorQuery returns EquitableQuery:		
+	ArithmeticQuery	
+	({RelationOperator.left = current} ('==' | '!=' | '<' | '>' | '<=' | '>=')
+	right=ArithmeticQuery)?
+;
+
+ArithmeticQuery returns EquitableQuery:
 	MultiplicativeQuery
 	(({AdditiveOperator.left=current}
-	('+' | '-'))
+	operatorType = AdditiveOperatorType)
 	right=MultiplicativeQuery)*
 ;
 
-MultiplicativeQuery returns Query:		
-	AdditiveInverseQuery
+MultiplicativeQuery returns EquitableQuery:		
+	InverseQuery
 	(({MultiplicativeOperator.left=current}
-	('*' | '/'))
-	right=AdditiveInverseQuery)*
+	operatorType = MultiplicativeOperatorType)
+	right=InverseQuery)*
 ;
 
-AdditiveInverseQuery returns Query:
-	AdditiveInverse | BaseQuery
+InverseQuery returns EquitableQuery:
+	Inverse | BaseQuery
 ;
 
-AdditiveInverse returns AdditiveInverse:
-	'-' nested=BaseQuery
-;
+Inverse returns EquitableQuery:
+	'-' {AdditiveInverse} nested=BaseOrdinalQuery | '!' {Negation} nested=BaseOrdinalQuery; 
 
-BaseQuery returns Query:
+BaseQuery returns EquitableQuery:
 	StringLiteral | BoolLiteral | FloatLiteral | NumericLiteral | FunctionCall | KnowledgeVariable | '('Query')'
 ;

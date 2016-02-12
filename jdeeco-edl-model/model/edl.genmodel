@@ -74,7 +74,7 @@
     <genClasses ecoreClass="edl.ecore#//NumericLiteral">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute edl.ecore#//NumericLiteral/value"/>
     </genClasses>
-    <genClasses image="false" ecoreClass="edl.ecore#//Constraint"/>
+    <genClasses image="false" ecoreClass="edl.ecore#//EquitableQuery"/>
     <genClasses ecoreClass="edl.ecore#//BoolLiteral">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute edl.ecore#//BoolLiteral/value"/>
     </genClasses>
@@ -96,7 +96,7 @@
     <genClasses ecoreClass="edl.ecore#//FloatLiteral">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute edl.ecore#//FloatLiteral/value"/>
     </genClasses>
-    <genClasses image="false" ecoreClass="edl.ecore#//OrdinalQuery"/>
+    <genClasses image="false" ecoreClass="edl.ecore#//ComparableQuery"/>
     <genClasses ecoreClass="edl.ecore#//AdditiveOperator"/>
     <genClasses ecoreClass="edl.ecore#//MultiplicativeOperator"/>
     <genClasses ecoreClass="edl.ecore#//AdditiveInverse">
