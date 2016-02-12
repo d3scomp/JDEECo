@@ -15,8 +15,8 @@ ensemble BuildingEnsemble
 		roles
 			allExplorers [1..*] : Explorer
 		constraints
-			allEqual(allExplorers.buildingId)
-			setsEqual(dissemination.members, roomTeams.relay)
+			constraint allEqual(allExplorers.buildingId)
+			constraint setsEqual(dissemination.members, roomTeams.relay)
 		fitness 42
 	knowledge exchange
 	    x := y				
