@@ -122,12 +122,17 @@ Constraint returns EquitableQuery:
 
 RelationOperator returns EquitableQuery:		
 	OrdinalQuery	
-	({RelationOperator.left = current} ('==' | '!=' | '<' | '>' | '<=' | '>=')
+	({RelationOperator.left = current} type = RelationOperatorType
 	right=OrdinalQuery)?
 ;
 
 enum BoolOperatorType returns BoolOperatorType:
 	And = '&&' | Or = '||';
+	
+enum RelationOperatorType returns RelationOperatorType:
+	Equality = '==' | NonEquality = '!=' | GreaterThan = '>' | LessThan = '<' | GreaterOrEqual = '>=' | LessOrEqual = '<='
+;
+
 
 
 
@@ -175,7 +180,7 @@ Query returns EquitableQuery:
 
 RelationOperatorQuery returns EquitableQuery:		
 	ArithmeticQuery	
-	({RelationOperator.left = current} ('==' | '!=' | '<' | '>' | '<=' | '>=')
+	({RelationOperator.left = current} type = RelationOperatorType
 	right=ArithmeticQuery)?
 ;
 

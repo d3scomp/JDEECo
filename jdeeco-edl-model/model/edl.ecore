@@ -93,6 +93,8 @@
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="right" lowerBound="1" eType="#//EquitableQuery"
         containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" lowerBound="1" eType="#//RelationOperatorType"
+        defaultValueLiteral="=="/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="LogicalOperator" eSuperTypes="#//EquitableQuery">
     <eStructuralFeatures xsi:type="ecore:EReference" name="left" lowerBound="1" eType="#//EquitableQuery"
@@ -128,5 +130,13 @@
     <eLiterals name="Subtraction" value="1" literal="-"/>
     <eLiterals name="Multiplication" value="2" literal="*"/>
     <eLiterals name="Division" value="3" literal="/"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="RelationOperatorType">
+    <eLiterals name="Equality" literal="=="/>
+    <eLiterals name="NonEquality" value="1" literal="!="/>
+    <eLiterals name="GreaterThan" value="2" literal=">"/>
+    <eLiterals name="LessThan" value="3" literal="&lt;"/>
+    <eLiterals name="GreaterOrEqual" value="4" literal=">="/>
+    <eLiterals name="LessOrEqual" value="5" literal="&lt;="/>
   </eClassifiers>
 </ecore:EPackage>
