@@ -43,11 +43,11 @@ public class PositionPlugin implements DEECoPlugin, PositionProvider {
 	 */
 	public void setProvider(PositionProvider positionProvider) {
 		if (provider != null) {
-			throw new UnsupportedOperationException("Poisiton provider is already set, cannot add another one.");
+			throw new UnsupportedOperationException("Position provider is already set, cannot add another one.");
 		}
 		provider = positionProvider;
 		Log.i(container.getId() + ": " + this.getClass().getSimpleName() + " now using "
-				+ provider.getClass().getSimpleName() + " as node positoin provider.");
+				+ provider.getClass().getSimpleName() + " as node position provider.");
 	}
 
 	/**
