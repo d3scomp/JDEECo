@@ -131,12 +131,21 @@ public class OMNeTSimulation implements IOMNeTSimulation {
 			}
 		}
 	}
-
+	
 	private final Map<Integer, OMNeTHost> hosts = new HashMap<Integer, OMNeTSimulation.OMNeTHost>();
 	private Timer timeProvider = new Timer();
+	private Double txPower802154 = null;
+	
+	public void set80154txPower(double txPower_mw) {
+		txPower802154 = txPower_mw;
+	}
 
-	public File getOmnetConfig(long limit) throws IOException {
+	File getOmnetConfig(long limit) throws IOException {
 		OMNeTConfigGenerator generator = new OMNeTConfigGenerator(limit);
+		
+		if(txPower802154 != null) {
+			generator.set802154TxPower(txPower802154);
+		}
 
 		for (OMNeTHost host : hosts.values()) {
 			generator.addNode(host);
