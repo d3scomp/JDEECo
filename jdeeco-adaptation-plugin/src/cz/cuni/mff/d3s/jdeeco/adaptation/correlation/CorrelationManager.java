@@ -44,6 +44,9 @@ public class CorrelationManager implements AdaptationManager {
 
 	@Local
 	static boolean verbose = false;
+	
+	@Local
+	static boolean logGeneratedEnsembles = false;
 
 	/** Run flag stored in internal data under this key. */
 	@Local
@@ -268,8 +271,8 @@ public class CorrelationManager implements AdaptationManager {
 				}
 			} else if (distance.hasChanged()) {
 				// Re-deploy the ensemble only if the distance has changed since the last time and if it is valid
-				CorrelationEnsembleFactory.setEnsembleMembershipBoundary(correlationFilter, correlationSubject, distance.getBoundary());
-				Class<?> ensemble = CorrelationEnsembleFactory.getEnsembleDefinition(correlationFilter, correlationSubject);
+				CorrelationEnsembleFactory.setEnsembleMembershipBoundary(correlationFilter, correlationSubject, distance.getBoundary(), logGeneratedEnsembles);
+				Class<?> ensemble = CorrelationEnsembleFactory.getEnsembleDefinition(correlationFilter, correlationSubject, logGeneratedEnsembles);
 				if(verbose){
 					Log.i(String.format("Deploying ensemble %s", ensembleName));
 				}

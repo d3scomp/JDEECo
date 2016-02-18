@@ -13,7 +13,7 @@ import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationMetadat
 import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationLevel.DistanceClass;
 
 // This class is not used. It only illustrates what is being created inside the CorrelationEnsembleFactory
-@Ensemble
+@Ensemble(enableLogging=false)
 @PeriodicScheduling(period = 1000)
 public class CorrelationEnsembleTemplate {
 

@@ -5,18 +5,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.CtMethod;
-import javassist.CtNewMethod;
-import javassist.bytecode.AnnotationsAttribute;
-import javassist.bytecode.ClassFile;
-import javassist.bytecode.ConstPool;
-import javassist.bytecode.MethodInfo;
-import javassist.bytecode.ParameterAnnotationsAttribute;
-import javassist.bytecode.annotation.Annotation;
-import javassist.bytecode.annotation.LongMemberValue;
-import javassist.bytecode.annotation.StringMemberValue;
 import cz.cuni.mff.d3s.deeco.annotations.Ensemble;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
@@ -27,6 +15,19 @@ import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationLevel;
 import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationMetadataWrapper;
 import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.KnowledgeMetadataHolder;
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.CtMethod;
+import javassist.CtNewMethod;
+import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.ClassFile;
+import javassist.bytecode.ConstPool;
+import javassist.bytecode.MethodInfo;
+import javassist.bytecode.ParameterAnnotationsAttribute;
+import javassist.bytecode.annotation.Annotation;
+import javassist.bytecode.annotation.BooleanMemberValue;
+import javassist.bytecode.annotation.LongMemberValue;
+import javassist.bytecode.annotation.StringMemberValue;
 
 /**
  * This class provides method for creating an ensemble definition at runtime.
@@ -62,14 +63,15 @@ public class CorrelationEnsembleFactory {
 	 * 		In our example this refers to "position".
 	 * @param correlationSubject Name of the knowledge field used for the calculation of data correlation after
 	 * 		the values has been filtered. In our example this refers to "temperature".
+	 * @param enableLogging Specifies whether the generated ensemble will be logged in the runtime log.
 	 * @return A class that defines an ensemble for data exchange given by the specified knowledge fields.
 	 * @throws Exception If there is a problem creating the ensemble class.
 	 */
-	public static Class<?> getEnsembleDefinition(String correlationFilter, String correlationSubject) throws Exception {
+	public static Class<?> getEnsembleDefinition(String correlationFilter, String correlationSubject, boolean enableLogging) throws Exception {
 		String className = composeClassName(correlationFilter, correlationSubject);
 		Class<?> requestedClass;
 		if(!bufferedClasses.containsKey(className)){
-			requestedClass = createEnsembleDefinition(correlationFilter, correlationSubject);
+			requestedClass = createEnsembleDefinition(correlationFilter, correlationSubject, enableLogging);
 			bufferedClasses.put(className, requestedClass);
 		}
 		else {
@@ -80,8 +82,8 @@ public class CorrelationEnsembleFactory {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public static void setEnsembleMembershipBoundary(String correlationFilter, String correlationSubject, double boundary) throws Exception {
-		Class<?> requestedClass = CorrelationEnsembleFactory.getEnsembleDefinition(correlationFilter, correlationSubject);
+	public static void setEnsembleMembershipBoundary(String correlationFilter, String correlationSubject, double boundary, boolean enableLogging) throws Exception {
+		Class<?> requestedClass = CorrelationEnsembleFactory.getEnsembleDefinition(correlationFilter, correlationSubject, enableLogging);
 		String className = requestedClass.getName();
 
 		ClassPool classPool = ClassPool.getDefault();
@@ -176,12 +178,13 @@ public class CorrelationEnsembleFactory {
 	 * @param correlationFilter Name of the knowledge field used for data filtering when calculating correlation.
 	 * 		In our example this refers to "position".
 	 * @param correlationSubject Name of the knowledge field used for the calculation of data correlation after
-	 * 		the values has been filtered. In our example this refers to "temperature".
+	 * 		the values has been filtered. In our example this refers to "temperature". 
+	 * @param enableLogging Specifies whether the generated ensemble will be logged in the runtime log.
 	 * @return The ensemble class definition for the knowledge fields of given names.
 	 * @throws Exception If there is a problem creating the ensemble class.
 	 */
 	@SuppressWarnings("rawtypes")
-	private static Class createEnsembleDefinition(String correlationFilter, String correlationSubject) throws Exception {
+	private static Class createEnsembleDefinition(String correlationFilter, String correlationSubject, boolean enableLogging) throws Exception {
 
 		// Create the class defining the ensemble
 		ClassPool classPool = ClassPool.getDefault();
@@ -190,11 +193,13 @@ public class CorrelationEnsembleFactory {
 		ClassFile classFile = ensembleClass.getClassFile();
 		ConstPool constPool = classFile.getConstPool();
 
-		final String ensembleClassName = Ensemble.class.getCanonicalName();
+		final String ensembleClassName = Ensemble.class.getCanonicalName();		
 		final String schedulingClassName = PeriodicScheduling.class.getCanonicalName();
 		
 		// Ensemble annotation for the class
 		Annotation ensembleAnnotation = new Annotation(ensembleClassName, constPool);
+		ensembleAnnotation.addMemberValue("enableLogging", new BooleanMemberValue (enableLogging, constPool));
+				
 		AnnotationsAttribute ensembleAttribute = new AnnotationsAttribute(constPool, AnnotationsAttribute.visibleTag);
 		ensembleAttribute.addAnnotation(ensembleAnnotation);
 		// Scheduling annotation for the class
@@ -297,7 +302,7 @@ public class CorrelationEnsembleFactory {
 
 		// Add the method into the ensemble class
 		ensembleClass.addMethod(mapMethod);
-
+		
 		ensembleClass.writeFile(CLASS_DIRECTORY);
 		CorrelationClassLoader loader = new CorrelationClassLoader(CorrelationClassLoader.class.getClassLoader());
 		return loader.loadClass(ensembleClass.getName());

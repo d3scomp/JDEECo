@@ -16,6 +16,7 @@ public class CorrelationPlugin implements DEECoPlugin {
 
 	private boolean verbose;
 	private boolean dumpValues;
+	private boolean logGeneratedEnsembles;
 	
 	/** Plugin dependencies. */
 	static private final List<Class<? extends DEECoPlugin>> DEPENDENCIES =
@@ -28,6 +29,7 @@ public class CorrelationPlugin implements DEECoPlugin {
 		
 		verbose = false;
 		dumpValues = false;
+		logGeneratedEnsembles = false;
 	}
 	
 	/**
@@ -49,6 +51,11 @@ public class CorrelationPlugin implements DEECoPlugin {
 		this.dumpValues = dumpValues;
 		return this;
 	}
+	
+	public CorrelationPlugin withGeneratedEnsemblesLogging(boolean enableLogging){
+		this.logGeneratedEnsembles = enableLogging;
+		return this;
+	}
 
 	@Override
 	public List<Class<? extends DEECoPlugin>> getDependencies() {
@@ -64,6 +71,7 @@ public class CorrelationPlugin implements DEECoPlugin {
 			final CorrelationManager manager = new CorrelationManager(deecoNodes);
 			CorrelationManager.verbose = verbose;
 			CorrelationManager.dumpValues = dumpValues;
+			CorrelationManager.logGeneratedEnsembles = logGeneratedEnsembles;
 			
 			container.deployComponent(manager);
 			container.deployEnsemble(CorrelationDataAggregation.class);
