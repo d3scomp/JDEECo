@@ -24,6 +24,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
@@ -35,7 +36,6 @@ import cz.cuni.mff.d3s.deeco.model.runtime.impl.TriggerImpl;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtimelog.EnsembleLogRecord;
-import cz.cuni.mff.d3s.deeco.runtimelog.RuntimeLogRecord;
 import cz.cuni.mff.d3s.deeco.runtimelog.RuntimeLogger;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.security.LocalSecurityChecker;
@@ -394,14 +394,14 @@ public class EnsembleTask extends Task {
 			ensembleDataExchange.performExchange(PathRoot.COORDINATOR, localKnowledgeManager, shadowKnowledgeManager);
 			coordinatorExchangePerformed = true;
 
-			logMembershipStatus(ensembleController.getEnsembleDefinition().getName(),
+			logMembershipStatus(ensembleController.getEnsembleDefinition(),
 					shadowKnowledgeManager.getId(),
 					ensembleController.getComponentInstance().getKnowledgeManager().getId(),
 					true);
 		}
 		else
 		{
-			logMembershipStatus(ensembleController.getEnsembleDefinition().getName(),
+			logMembershipStatus(ensembleController.getEnsembleDefinition(),
 					shadowKnowledgeManager.getId(),
 					ensembleController.getComponentInstance().getKnowledgeManager().getId(),
 					false);
@@ -415,7 +415,7 @@ public class EnsembleTask extends Task {
 		}
 		else
 		{
-			logMembershipStatus(ensembleController.getEnsembleDefinition().getName(),
+			logMembershipStatus(ensembleController.getEnsembleDefinition(),
 					ensembleController.getComponentInstance().getKnowledgeManager().getId(),
 					shadowKnowledgeManager.getId(),
 					false);	
@@ -428,14 +428,21 @@ public class EnsembleTask extends Task {
 
 	/**
 	 * Log the current ensemble membership status (ensemble exists/doesn't exist) using the {@link RuntimeLogger}.
-	 * @param ensembleName is the name of tested ensemble.
+	 * @param ensembleDefinition is the tested ensemble.
 	 * @param coordinatorID is the identifier of the coordinator in the tested ensemble.
 	 * @param memberID is the identifier of the member in the tested ensemble.
 	 * @param membership is the membership validity value (ensemble exists(true)/doesn't exist(false)).
 	 * @throws TaskInvocationException Thrown if there is a problem writing into the log files.
 	 */
-	private void logMembershipStatus(String ensembleName, String coordinatorID, String memberID, boolean membership) throws TaskInvocationException
+	private void logMembershipStatus(EnsembleDefinition ensembleDefinition, String coordinatorID, String memberID, boolean membership) throws TaskInvocationException
 	{
+		if(!ensembleDefinition.isLoggingEnabled()){
+			// Don't log if not enabled for the ensemble
+			return;
+		}
+		
+		String ensembleName = ensembleDefinition.getName();
+		
 		EnsembleLogRecord record = new EnsembleLogRecord();
 		record.setEnsembleName(ensembleName);
 		record.setCoordinatorID(coordinatorID);

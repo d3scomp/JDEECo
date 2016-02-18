@@ -739,6 +739,15 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getEnsembleDefinition_LoggingEnabled() {
+		return (EAttribute)ensembleDefinitionEClass.getEStructuralFeatures().get(8);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getCondition() {
 		return conditionEClass;
 	}
@@ -1313,6 +1322,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		createEAttribute(ensembleDefinitionEClass, ENSEMBLE_DEFINITION__PARTITIONED_BY);
 		createEAttribute(ensembleDefinitionEClass, ENSEMBLE_DEFINITION__COORDINATOR_ROLE);
 		createEAttribute(ensembleDefinitionEClass, ENSEMBLE_DEFINITION__MEMBER_ROLE);
+		createEAttribute(ensembleDefinitionEClass, ENSEMBLE_DEFINITION__LOGGING_ENABLED);
 
 		conditionEClass = createEClass(CONDITION);
 
@@ -1487,6 +1497,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		initEAttribute(getEnsembleDefinition_PartitionedBy(), ecorePackage.getEString(), "partitionedBy", null, 0, 1, EnsembleDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getEnsembleDefinition_CoordinatorRole(), ecorePackage.getEJavaClass(), "coordinatorRole", null, 0, 1, EnsembleDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getEnsembleDefinition_MemberRole(), ecorePackage.getEJavaClass(), "memberRole", null, 0, 1, EnsembleDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEnsembleDefinition_LoggingEnabled(), ecorePackage.getEBoolean(), "loggingEnabled", "false", 0, 1, EnsembleDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(conditionEClass, Condition.class, "Condition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 

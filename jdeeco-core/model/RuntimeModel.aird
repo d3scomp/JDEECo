@@ -235,6 +235,10 @@
                 <styles xmi:type="notation:FontStyle" xmi:id="_V9JK8YuMEeWen-bBtF_3DA" fontName="Segoe UI" fontHeight="8"/>
                 <layoutConstraint xmi:type="notation:Location" xmi:id="_V9JK8ouMEeWen-bBtF_3DA"/>
               </children>
+              <children xmi:type="notation:Node" xmi:id="_gsgnoNY-EeW7PvDPoYo1hg" type="3010" element="_grSfoNY-EeW7PvDPoYo1hg">
+                <styles xmi:type="notation:FontStyle" xmi:id="_gsgnodY-EeW7PvDPoYo1hg" fontColor="2697711" fontName="Segoe UI" fontHeight="8"/>
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_gsgnotY-EeW7PvDPoYo1hg"/>
+              </children>
               <styles xmi:type="notation:SortingStyle" xmi:id="_V8wJYouMEeWen-bBtF_3DA"/>
               <styles xmi:type="notation:FilteringStyle" xmi:id="_V8wJY4uMEeWen-bBtF_3DA"/>
             </children>
@@ -1408,7 +1412,7 @@
       <ownedDiagramElements xmi:type="diagram:DNodeList" xmi:id="_V4RSAIuMEeWen-bBtF_3DA" name="EnsembleDefinition" tooltipText="&#xA;WARNING : The generic type associated with the 'EJavaClass' classifier should have 1 type argument(s) to match the number of type parameter(s) of the classifier &#xA;WARNING : The generic type associated with the 'EJavaClass' classifier should have 1 type argument(s) to match the number of type parameter(s) of the classifier " outgoingEdges="_V7wq4IuMEeWen-bBtF_3DA _V7x5AIuMEeWen-bBtF_3DA _V7zHIIuMEeWen-bBtF_3DA" incomingEdges="_V7sZcIuMEeWen-bBtF_3DA _V74msIuMEeWen-bBtF_3DA" width="12" height="10">
         <target xmi:type="ecore:EClass" href="RuntimeModel.ecore#//EnsembleDefinition"/>
         <semanticElements xmi:type="ecore:EClass" href="RuntimeModel.ecore#//EnsembleDefinition"/>
-        <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_V42g0IuMEeWen-bBtF_3DA" backgroundStyle="Liquid" foregroundColor="255,252,216">
+        <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_jpdg8NY-EeW7PvDPoYo1hg" backgroundStyle="Liquid" foregroundColor="255,252,216">
           <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']"/>
@@ -1448,6 +1452,14 @@
           <target xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//EnsembleDefinition/memberRole"/>
           <semanticElements xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//EnsembleDefinition/memberRole"/>
           <ownedStyle xmi:type="diagram:BundledImage" xmi:id="_V6xzcIuMEeWen-bBtF_3DA" labelAlignment="LEFT">
+            <description xmi:type="style:BundledImageDescription" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='EC%20EAttribute']/@style"/>
+          </ownedStyle>
+          <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='EC%20EAttribute']"/>
+        </ownedElements>
+        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_grSfoNY-EeW7PvDPoYo1hg" name="loggingEnabled : EBoolean = false" tooltipText="">
+          <target xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//EnsembleDefinition/loggingEnabled"/>
+          <semanticElements xmi:type="ecore:EAttribute" href="RuntimeModel.ecore#//EnsembleDefinition/loggingEnabled"/>
+          <ownedStyle xmi:type="diagram:BundledImage" xmi:id="_jpogENY-EeW7PvDPoYo1hg" labelAlignment="LEFT">
             <description xmi:type="style:BundledImageDescription" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='EC%20EAttribute']/@style"/>
           </ownedStyle>
           <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='EC%20EAttribute']"/>

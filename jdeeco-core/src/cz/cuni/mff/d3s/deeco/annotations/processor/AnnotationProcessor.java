@@ -792,6 +792,13 @@ public class AnnotationProcessor {
 		EnsembleDefinition ensembleDefinition = factory.createEnsembleDefinition();
 		ensembleDefinition.setName(clazz.getCanonicalName());
 		
+		// Set enableLogging
+		Ensemble ensembleAnnotations[] = clazz.getAnnotationsByType(Ensemble.class);
+		if(ensembleAnnotations.length != 1) {
+			throw new AnnotationProcessorException("One @Ensemble annotation required for the class " + clazz.getName());
+		}
+		ensembleDefinition.setLoggingEnabled(ensembleAnnotations[0].enableLogging());
+		
 		try {
 
 			Method[] allMethods = clazz.getMethods();

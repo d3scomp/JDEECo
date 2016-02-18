@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getPartitionedBy <em>Partitioned By</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getCoordinatorRole <em>Coordinator Role</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#getMemberRole <em>Member Role</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#isLoggingEnabled <em>Logging Enabled</em>}</li>
  * </ul>
  *
  * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getEnsembleDefinition()
@@ -227,5 +228,32 @@ public interface EnsembleDefinition extends EObject {
 	 * @generated
 	 */
 	void setMemberRole(Class value);
+
+	/**
+	 * Returns the value of the '<em><b>Logging Enabled</b></em>' attribute.
+	 * The default value is <code>"false"</code>.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Logging Enabled</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Logging Enabled</em>' attribute.
+	 * @see #setLoggingEnabled(boolean)
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getEnsembleDefinition_LoggingEnabled()
+	 * @model default="false"
+	 * @generated
+	 */
+	boolean isLoggingEnabled();
+
+	/**
+	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#isLoggingEnabled <em>Logging Enabled</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Logging Enabled</em>' attribute.
+	 * @see #isLoggingEnabled()
+	 * @generated
+	 */
+	void setLoggingEnabled(boolean value);
 
 } // EnsembleDefinition

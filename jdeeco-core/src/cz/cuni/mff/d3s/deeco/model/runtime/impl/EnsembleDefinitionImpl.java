@@ -35,6 +35,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl#getPartitionedBy <em>Partitioned By</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl#getCoordinatorRole <em>Coordinator Role</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl#getMemberRole <em>Member Role</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl#isLoggingEnabled <em>Logging Enabled</em>}</li>
  * </ul>
  *
  * @generated
@@ -149,6 +150,26 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 	 * @ordered
 	 */
 	protected Class memberRole;
+
+	/**
+	 * The default value of the '{@link #isLoggingEnabled() <em>Logging Enabled</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isLoggingEnabled()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean LOGGING_ENABLED_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isLoggingEnabled() <em>Logging Enabled</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isLoggingEnabled()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean loggingEnabled = LOGGING_ENABLED_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -377,6 +398,27 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public boolean isLoggingEnabled() {
+		return loggingEnabled;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setLoggingEnabled(boolean newLoggingEnabled) {
+		boolean oldLoggingEnabled = loggingEnabled;
+		loggingEnabled = newLoggingEnabled;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.ENSEMBLE_DEFINITION__LOGGING_ENABLED, oldLoggingEnabled, loggingEnabled));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -414,6 +456,8 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 				return getCoordinatorRole();
 			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__MEMBER_ROLE:
 				return getMemberRole();
+			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__LOGGING_ENABLED:
+				return isLoggingEnabled();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -452,6 +496,9 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__MEMBER_ROLE:
 				setMemberRole((Class)newValue);
 				return;
+			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__LOGGING_ENABLED:
+				setLoggingEnabled((Boolean)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -488,6 +535,9 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__MEMBER_ROLE:
 				setMemberRole((Class)null);
 				return;
+			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__LOGGING_ENABLED:
+				setLoggingEnabled(LOGGING_ENABLED_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -516,6 +566,8 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 				return coordinatorRole != null;
 			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__MEMBER_ROLE:
 				return memberRole != null;
+			case RuntimeMetadataPackage.ENSEMBLE_DEFINITION__LOGGING_ENABLED:
+				return loggingEnabled != LOGGING_ENABLED_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -540,6 +592,8 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 		result.append(coordinatorRole);
 		result.append(", memberRole: ");
 		result.append(memberRole);
+		result.append(", loggingEnabled: ");
+		result.append(loggingEnabled);
 		result.append(')');
 		return result.toString();
 	}
