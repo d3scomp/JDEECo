@@ -13,13 +13,13 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole#getConsistsOf <em>Consists Of</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole#getRoleName <em>Role Name</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole#getArguments <em>Arguments</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole#getAliasRole <em>Alias Role</em>}</li>
  * </ul>
- * </p>
  *
  * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getSecurityRole()
  * @model

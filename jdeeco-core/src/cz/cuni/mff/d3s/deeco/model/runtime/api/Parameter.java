@@ -12,13 +12,13 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter#getKind <em>Kind</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter#getKnowledgePath <em>Knowledge Path</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter#getType <em>Type</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter#getGenericType <em>Generic Type</em>}</li>
  * </ul>
- * </p>
  *
  * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getParameter()
  * @model

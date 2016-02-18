@@ -83,4 +83,14 @@ public class InstantSchedulerMock implements Scheduler {
 			e.printStackTrace();
 		}
 	}
+
+	@Override
+	public void hibernateTask(Task task) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void deHibernateTask(Task task) {
+		throw new UnsupportedOperationException();
+	}
 }

@@ -85,6 +85,15 @@ public interface KnowledgeManager extends ReadOnlyKnowledgeManager {
 	 */
 	void lockKnowledgePath(KnowledgePath knowledgePath);
 
+	/**
+	 * Updates the role/roles of the component corresponding to this
+	 * KnowledgeManager by overwriting the existing ones.
+	 * 
+	 * @param newRoleClasses
+	 *            if null, then all roles are removed
+	 */
+	void updateRoles(Class<?>[] newRoleClasses); 
+	
 	boolean isOfSystemComponent();
 	
 	Map<KnowledgeChangeTrigger, List<TriggerListener>> getKnowledgeChangeListeners();

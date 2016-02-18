@@ -11,10 +11,10 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRoleArgument#getName <em>Name</em>}</li>
  * </ul>
- * </p>
  *
  * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getSecurityRoleArgument()
  * @model abstract="true"

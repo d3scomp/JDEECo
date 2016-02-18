@@ -6,6 +6,8 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
+import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
+
 import java.util.Collection;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -13,6 +15,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.InternalEList;
@@ -23,13 +26,14 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getName <em>Name</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getComponentInstance <em>Component Instance</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#isActive <em>Active</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getTriggers <em>Triggers</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ComponentProcessImpl#getModes <em>Modes</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */
@@ -83,6 +87,16 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 	 * @ordered
 	 */
 	protected EList<Trigger> triggers;
+
+	/**
+	 * The cached value of the '{@link #getModes() <em>Modes</em>}' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getModes()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<DEECoMode> modes;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -203,6 +217,18 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EList<DEECoMode> getModes() {
+		if (modes == null) {
+			modes = new EDataTypeUniqueEList<DEECoMode>(DEECoMode.class, this, RuntimeMetadataPackage.COMPONENT_PROCESS__MODES);
+		}
+		return modes;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -260,6 +286,8 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 				return isActive();
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__TRIGGERS:
 				return getTriggers();
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__MODES:
+				return getModes();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -286,6 +314,10 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 				getTriggers().clear();
 				getTriggers().addAll((Collection<? extends Trigger>)newValue);
 				return;
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__MODES:
+				getModes().clear();
+				getModes().addAll((Collection<? extends DEECoMode>)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -310,6 +342,9 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__TRIGGERS:
 				getTriggers().clear();
 				return;
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__MODES:
+				getModes().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -330,6 +365,8 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 				return active != ACTIVE_EDEFAULT;
 			case RuntimeMetadataPackage.COMPONENT_PROCESS__TRIGGERS:
 				return triggers != null && !triggers.isEmpty();
+			case RuntimeMetadataPackage.COMPONENT_PROCESS__MODES:
+				return modes != null && !modes.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
@@ -348,6 +385,8 @@ public class ComponentProcessImpl extends InvocableImpl implements ComponentProc
 		result.append(name);
 		result.append(", active: ");
 		result.append(active);
+		result.append(", modes: ");
+		result.append(modes);
 		result.append(')');
 		return result.toString();
 	}

@@ -48,6 +48,7 @@ import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
 import cz.cuni.mff.d3s.deeco.runtime.DuplicateEnsembleDefinitionException;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeFrameworkImpl;
+import cz.cuni.mff.d3s.deeco.runtimelog.RuntimeLogger;
 import cz.cuni.mff.d3s.deeco.scheduler.NoExecutorAvailableException;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.scheduler.SingleThreadedScheduler;
@@ -209,6 +210,7 @@ public class SecurityRuntimeModel {
 	
 	public RuntimeFrameworkImpl runtime;
 	public SecurityHelper securityHelper;
+	public RuntimeLogger runtimeLogger;
 	public RatingsManager ratingsManager;
 	
 	public SecurityRuntimeModel(DEECoContainer deecoContainer) throws KeyStoreException, AnnotationProcessorException, DuplicateEnsembleDefinitionException, NoExecutorAvailableException {
@@ -242,7 +244,7 @@ public class SecurityRuntimeModel {
 		
 		container = spy(new KnowledgeManagerContainer(new CloningKnowledgeManagerFactory(), model));
 		ratingsManager = RatingsManagerImpl.getInstance();
-		runtime = spy(new RuntimeFrameworkImpl(model, scheduler, executor, container, ratingsManager));
+		runtime = spy(new RuntimeFrameworkImpl(model, scheduler, executor, container, runtimeLogger, ratingsManager));
 		runtime.init(deecoContainer);	
 	}
 	

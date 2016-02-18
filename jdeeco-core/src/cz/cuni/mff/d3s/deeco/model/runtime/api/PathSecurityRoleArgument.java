@@ -10,11 +10,11 @@ package cz.cuni.mff.d3s.deeco.model.runtime.api;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.PathSecurityRoleArgument#getKnowledgePath <em>Knowledge Path</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.PathSecurityRoleArgument#getContextKind <em>Context Kind</em>}</li>
  * </ul>
- * </p>
  *
  * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getPathSecurityRoleArgument()
  * @model

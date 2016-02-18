@@ -25,12 +25,12 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleControllerImpl#getComponentInstance <em>Component Instance</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleControllerImpl#getEnsembleDefinition <em>Ensemble Definition</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleControllerImpl#isActive <em>Active</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

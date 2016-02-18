@@ -21,11 +21,11 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataImpl#getEnsembleDefinitions <em>Ensemble Definitions</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataImpl#getComponentInstances <em>Component Instances</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

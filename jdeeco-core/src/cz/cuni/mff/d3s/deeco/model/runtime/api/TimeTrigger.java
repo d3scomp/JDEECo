@@ -10,13 +10,13 @@ package cz.cuni.mff.d3s.deeco.model.runtime.api;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger#getPeriod <em>Period</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger#getOffset <em>Offset</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger#getOrder <em>Order</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger#getWcet <em>Wcet</em>}</li>
  * </ul>
- * </p>
  *
  * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getTimeTrigger()
  * @model

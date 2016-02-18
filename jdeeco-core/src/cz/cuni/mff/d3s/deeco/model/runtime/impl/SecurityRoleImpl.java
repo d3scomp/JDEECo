@@ -22,13 +22,13 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.SecurityRoleImpl#getConsistsOf <em>Consists Of</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.SecurityRoleImpl#getRoleName <em>Role Name</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.SecurityRoleImpl#getArguments <em>Arguments</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.SecurityRoleImpl#getAliasRole <em>Alias Role</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */
