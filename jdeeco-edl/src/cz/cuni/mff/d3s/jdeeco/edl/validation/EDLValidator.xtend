@@ -7,8 +7,6 @@ import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EnsembleDefinition
 import org.eclipse.xtext.validation.Check
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.*
 
-//import org.eclipse.xtext.validation.Check
-
 /**
  * Custom validation rules. 
  *
@@ -57,10 +55,10 @@ class EDLValidator extends AbstractEDLValidator {
  				var String r = checkTypes(query.right)
  				
  				if(!l.equals("bool"))
- 					error("A parameter of a logical operator must be a logical value.", query, EdlPackage.Literals.LOGICAL_OPERATOR.EAllStructuralFeatures.get(0))
+ 					error("A parameter of a logical operator must be a logical value.", query, EdlPackage.Literals.LOGICAL_OPERATOR__LEFT)
  				
  				if(!r.equals("bool"))
- 					error("A parameter of a logical operator must be a logical value.", query, EdlPackage.Literals.LOGICAL_OPERATOR.EAllStructuralFeatures.get(1))
+ 					error("A parameter of a logical operator must be a logical value.", query, EdlPackage.Literals.LOGICAL_OPERATOR__RIGHT)
  				
  				"bool"
  			} 			
@@ -71,7 +69,7 @@ class EDLValidator extends AbstractEDLValidator {
  				
  				if(!l.equals(r))
  				{
- 					error("Both parameters of a relation must be of the same type.", query, EdlPackage.Literals.RELATION_OPERATOR.EAllStructuralFeatures.get(0));
+ 					error("Both parameters of a relation must be of the same type.", query, EdlPackage.Literals.RELATION_OPERATOR__LEFT);
  				}
  				
 				"bool"
@@ -82,16 +80,16 @@ class EDLValidator extends AbstractEDLValidator {
  				var String r = checkTypes(query.right);
  				
  				if(!(l.equals("int") || l.equals("float")))
- 					error("A parameter of a binary operator must be numeric.", query, EdlPackage.Literals.BINARY_OPERATOR.EAllStructuralFeatures.get(0))
+ 					error("A parameter of a binary operator must be numeric.", query, EdlPackage.Literals.BINARY_OPERATOR__LEFT)
  				
  				
  				if(!(r.equals("int") || r.equals("float")))
- 					error("A parameter of a binary operator must be numeric.", query, EdlPackage.Literals.BINARY_OPERATOR.EAllStructuralFeatures.get(1))
+ 					error("A parameter of a binary operator must be numeric.", query, EdlPackage.Literals.BINARY_OPERATOR__RIGHT)
  				
  				
  				if(!l.equals(r))
  				{
- 					error("Both parameters of a binary operator must be of the same numeric type.", query, EdlPackage.Literals.BINARY_OPERATOR.EAllStructuralFeatures.get(0));
+ 					error("Both parameters of a binary operator must be of the same numeric type.", query, EdlPackage.Literals.BINARY_OPERATOR__LEFT);
  				}
  				
 				l		
@@ -101,7 +99,7 @@ class EDLValidator extends AbstractEDLValidator {
 				var String inner = checkTypes(query.nested);
 				
 				if(!inner.equals("int") && !inner.equals("float"))
-					error("The nested expression of a additive inverse must be a numeric expression.", query, EdlPackage.Literals.ADDITIVE_INVERSE.EAllStructuralFeatures.get(0))								
+					error("The nested expression of a additive inverse must be a numeric expression.", query, EdlPackage.Literals.ADDITIVE_INVERSE__NESTED)								
 				inner
 			}
 		Negation:
@@ -109,7 +107,7 @@ class EDLValidator extends AbstractEDLValidator {
 				var String inner = checkTypes(query.nested);
 				
 				if(!inner.equals("bool"))
-					error("The nested expression of a negation must be logical expression.", query, EdlPackage.Literals.NEGATION.EAllStructuralFeatures.get(0))								
+					error("The nested expression of a negation must be logical expression.", query, EdlPackage.Literals.NEGATION__NESTED)								
 				"bool"
 			}
 		FunctionCall:
