@@ -94,6 +94,7 @@ public class OMNeTSimulation implements IOMNeTSimulation {
 		}
 
 		public void sendBroadcastPacket(byte[] packet) {
+			updatePositions();
 			OMNeTNative.nativeSendPacket(getId(), packet, "");
 		}
 
