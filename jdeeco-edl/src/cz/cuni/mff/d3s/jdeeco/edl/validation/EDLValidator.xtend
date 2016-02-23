@@ -16,10 +16,11 @@ class EDLValidator extends AbstractEDLValidator {
 	
 	@Check
 	def ensembleTypeInformation(EnsembleDefinition ensemble) {
-				
-		val type = checkTypes(ensemble.fitness)
-		if (!type.equals("int"))
-			error("Fitness function must be a numeric expression.", ensemble.fitness, EdlPackage.Literals.ENSEMBLE_DEFINITION__FITNESS)
+		if (ensemble.fitness != null) {
+			val type = checkTypes(ensemble.fitness)
+			if (!type.equals("int"))
+				error("Fitness function must be a numeric expression.", ensemble.fitness, EdlPackage.Literals.ENSEMBLE_DEFINITION__FITNESS)
+		}
 		
 		for (Query c : ensemble.constraints) {
 			checkTypes(c)
