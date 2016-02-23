@@ -6,6 +6,8 @@
         eType="#//EnsembleDefinition" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="dataContracts" upperBound="-1"
         eType="#//DataContractDefinition" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="package" lowerBound="1"
+        eType="#//QualifiedName" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EnsembleDefinition">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
