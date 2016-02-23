@@ -1,0 +1,12 @@
+ensemble PendolinoEnsemble
+	id trainId : int
+	membership
+		roles
+			rescuers [3..3] : Rescuer
+		constraints
+			constraint true
+		fitness 0
+		
+	knowledge exchange
+		x := x
+end
