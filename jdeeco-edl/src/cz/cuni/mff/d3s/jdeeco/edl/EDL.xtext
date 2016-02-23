@@ -34,9 +34,8 @@ RoleDefinition returns RoleDefinition:
 	name = ID ('[' cardinalityMin=EInt '..' cardinalityMax=Cardinality ']')? ':' type = QualifiedName	
 ;
 
-// TODO: Solve *, probably via an IValueConverter
 Cardinality returns ecore::EInt:
-    EInt | ('*')
+    EInt | "*"
 ;
 
 AliasDefinition returns AliasDefinition:
