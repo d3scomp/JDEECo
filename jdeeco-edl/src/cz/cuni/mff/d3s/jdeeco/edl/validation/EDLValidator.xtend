@@ -6,6 +6,8 @@ package cz.cuni.mff.d3s.jdeeco.edl.validation
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EnsembleDefinition
 import org.eclipse.xtext.validation.Check
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.*
+import java.util.Map
+import java.util.HashMap
 
 /**
  * Custom validation rules. 
@@ -14,30 +16,111 @@ import cz.cuni.mff.d3s.jdeeco.edl.model.edl.*
  */
 class EDLValidator extends AbstractEDLValidator {
 	
+	Map<String, DataContractDefinition> dataTypes;
+	
+	@Check
+	def generateDocumentInfo(EdlDocument document) {
+		dataTypes = new HashMap();
+		for (DataContractDefinition d : document.dataContracts) {
+			dataTypes.put(d.name, d);			
+		}		
+	}
+	
 	@Check
 	def ensembleTypeInformation(EnsembleDefinition ensemble) {
 		if (ensemble.fitness != null) {
-			val type = checkTypes(ensemble.fitness)
+			val type = checkTypes(ensemble.fitness, ensemble)
 			if (!type.equals("int"))
 				error("Fitness function must be a numeric expression.", ensemble.fitness, EdlPackage.Literals.ENSEMBLE_DEFINITION__FITNESS)
 		}
 		
 		for (Query c : ensemble.constraints) {
-			checkTypes(c)
+			checkTypes(c, ensemble)
 		}	
 		
 		for (AliasDefinition a : ensemble.aliases) {
-			checkTypes(a.aliasValue)
+			checkTypes(a.aliasValue, ensemble)
 		}
 		
 		for (ExchangeRule rule : ensemble.exchangeRules) {
-			checkTypes(rule.query)
+			var queryType = checkTypes(rule.query, ensemble)
+			var fieldType = getKnowledgeType(rule.field, ensemble)
+			
+			if (!queryType.equals(fieldType)) {
+				error("Invalid assignment - field and query types do not correspond.", rule, EdlPackage.Literals.EXCHANGE_RULE__FIELD)
+			}
 		}
 		
-		checkTypes(ensemble.id.value)		
+		checkTypes(ensemble.id.value, ensemble)		
 	}
 	
-	def String checkTypes(Query query) {		
+	def String getKnowledgeType(QualifiedName name, DataContractDefinition contract, int position) {
+		if (position >= name.prefix.length) {			
+			var FieldDeclaration f = contract.fields.findFirst[it.name.equals(name.name)]
+			if (f != null) {
+				return f.type.name.toLowerCase();
+			}
+			else {
+				error("The specified data type does not contain a field of this name.", name, EdlPackage.Literals.QUALIFIED_NAME__NAME)
+			}			
+		}
+		else {
+			var FieldDeclaration f = contract.fields.findFirst[it.name.equals(name.prefix.get(position))]
+			if (f != null) {
+				if(dataTypes.containsKey(f.type.name)) {
+					var type = dataTypes.get(f.type.name)					
+					return getKnowledgeType(name, type, position+1)					
+				}
+				else {
+					error("A data contract with this name was not found in the package.", name, EdlPackage.Literals.QUALIFIED_NAME__PREFIX)
+				}
+			}
+			else {
+				error("The specified data type does not contain a field of this name.", name, EdlPackage.Literals.QUALIFIED_NAME__PREFIX)
+			}
+		}
+		
+		"unknown"
+	}
+	
+	def String getKnowledgeType(QualifiedName name, EnsembleDefinition ensemble) {		
+		if (name.prefix.length == 0) {
+			if(ensemble.id.fieldName.equals(name.name))
+				return ensemble.id.type.name
+			
+			 var alias = ensemble.aliases.findFirst[it.aliasId.equals(name.name)]
+			 if (alias != null)
+			 	return checkTypes(alias.aliasValue, ensemble)	
+			 	
+			 var role = ensemble.roles.findFirst[it.name.equals(name.name)]
+			 if (role != null) {									
+					return role.type.name				
+			}
+			else {
+				error("An element with this name was not found in the ensemble.", name, EdlPackage.Literals.QUALIFIED_NAME__NAME)
+			}			 						
+		}
+		else {
+			var role = ensemble.roles.findFirst[it.name.equals(name.prefix.findFirst[true])]
+			if (role != null) {
+				if(dataTypes.containsKey(role.type.name)) {
+					var roleType = dataTypes.get(role.type.name)
+					return getKnowledgeType(name, roleType, 1)
+					
+				}
+				else {
+					error("Could not resolve the field path.", role.type, EdlPackage.Literals.QUALIFIED_NAME__PREFIX)
+				}				
+			}
+			else {
+				error("A role with this name was not found in the ensemble.", name, EdlPackage.Literals.QUALIFIED_NAME__PREFIX)
+			}
+		}
+		
+		"unknown"	
+	}
+	
+	def String checkTypes(Query query, EnsembleDefinition ensemble) {		
 		switch(query) {
 		BoolLiteral:
 			"bool"			
@@ -48,12 +131,14 @@ class EDLValidator extends AbstractEDLValidator {
 		FloatLiteral:
 			"float"
 		KnowledgeVariable: 
-			// TODO: Return correct type of knowledge, needs info on roles and structured types 
-			"knowledge"
+			{
+				var QualifiedName name = query.path				 
+				getKnowledgeType(name, ensemble)
+			}
 		LogicalOperator:
 			{
-				var String l = checkTypes(query.left)
- 				var String r = checkTypes(query.right)
+				var String l = checkTypes(query.left, ensemble)
+ 				var String r = checkTypes(query.right, ensemble)
  				
  				if(!l.equals("bool"))
  					error("A parameter of a logical operator must be a logical value.", query, EdlPackage.Literals.LOGICAL_OPERATOR__LEFT)
@@ -65,20 +150,29 @@ class EDLValidator extends AbstractEDLValidator {
  			} 			
 		RelationOperator:
 			{
-				var String l = checkTypes(query.left);
- 				var String r = checkTypes(query.right); 				
+				var String l = checkTypes(query.left, ensemble);
+ 				var String r = checkTypes(query.right, ensemble); 				
  				
  				if(!l.equals(r))
  				{
  					error("Both parameters of a relation must be of the same type.", query, EdlPackage.Literals.RELATION_OPERATOR__LEFT);
  				}
  				
+ 				if(query.type.equals(RelationOperatorType.EQUALITY) || query.type.equals(RelationOperatorType.NON_EQUALITY)) {
+ 					if ((query.left as EquitableQuery) == null)
+ 						error("Parameters of this type of relation must be equitable.", query, EdlPackage.Literals.RELATION_OPERATOR__LEFT);
+ 				}
+ 				else {
+ 					if ((query.left as ComparableQuery) == null)
+ 						error("Parameters of this type of relation must be comparable.", query, EdlPackage.Literals.RELATION_OPERATOR__LEFT);
+ 				}
+ 				
 				"bool"
 			}
 		BinaryOperator:	
 			{
-				var String l = checkTypes(query.left);
- 				var String r = checkTypes(query.right);
+				var String l = checkTypes(query.left, ensemble);
+ 				var String r = checkTypes(query.right, ensemble);
  				
  				if(!(l.equals("int") || l.equals("float")))
  					error("A parameter of a binary operator must be numeric.", query, EdlPackage.Literals.BINARY_OPERATOR__LEFT)
@@ -97,7 +191,7 @@ class EDLValidator extends AbstractEDLValidator {
 			}
 		AdditiveInverse:
 			{
-				var String inner = checkTypes(query.nested);
+				var String inner = checkTypes(query.nested, ensemble);
 				
 				if(!inner.equals("int") && !inner.equals("float"))
 					error("The nested expression of a additive inverse must be a numeric expression.", query, EdlPackage.Literals.ADDITIVE_INVERSE__NESTED)								
@@ -105,7 +199,7 @@ class EDLValidator extends AbstractEDLValidator {
 			}
 		Negation:
 			{
-				var String inner = checkTypes(query.nested);
+				var String inner = checkTypes(query.nested, ensemble);
 				
 				if(!inner.equals("bool"))
 					error("The nested expression of a negation must be logical expression.", query, EdlPackage.Literals.NEGATION__NESTED)								
