@@ -8,6 +8,8 @@ import org.eclipse.xtext.validation.Check
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.*
 import java.util.Map
 import java.util.HashMap
+import java.util.Set
+import java.util.HashSet
 
 /**
  * Custom validation rules. 
@@ -17,17 +19,52 @@ import java.util.HashMap
 class EDLValidator extends AbstractEDLValidator {
 	
 	Map<String, DataContractDefinition> dataTypes;
+	Set<String> ensembleNames
 	
 	@Check
 	def generateDocumentInfo(EdlDocument document) {
 		dataTypes = new HashMap();
+		ensembleNames = new HashSet();
+		
+		
 		for (DataContractDefinition d : document.dataContracts) {
-			dataTypes.put(d.name, d);			
+			if (!dataTypes.containsKey(d.name)) {
+				dataTypes.put(d.name, d);
+			} 
+			else {
+				error("Duplicate data contract definition.", d, EdlPackage.Literals.DATA_CONTRACT_DEFINITION__NAME)
+			}							
 		}		
+		
+		for (EnsembleDefinition d : document.ensembles) {
+			if (!ensembleNames.contains(d.name)) {
+				ensembleNames.add(d.name);
+			} 
+			else {
+				error("Duplicate ensemble definition.", d, EdlPackage.Literals.ENSEMBLE_DEFINITION__NAME)
+			}							
+		}
 	}
 	
 	@Check
-	def ensembleTypeInformation(EnsembleDefinition ensemble) {
+	def validateDataContractDefinition(DataContractDefinition contract) {				
+		for (FieldDeclaration d : contract.fields) {			
+			switch (d.type.name) {
+				case "int",
+				case "string",
+				case "float",
+				case "bool":
+					{}
+				default:
+					if(!dataTypes.containsKey(d.type.name)) {
+						error("Field type must be either a primitive type or an existing structured type.", d, EdlPackage.Literals.FIELD_DECLARATION__TYPE)
+					}
+			}
+		}
+	}
+	
+	@Check
+	def validateEnsembleTypeInformation(EnsembleDefinition ensemble) {
 		if (ensemble.fitness != null) {
 			val type = checkTypes(ensemble.fitness, ensemble)
 			if (!type.equals("int"))
@@ -109,7 +146,7 @@ class EDLValidator extends AbstractEDLValidator {
 					
 				}
 				else {
-					error("Could not resolve the field path.", role.type, EdlPackage.Literals.QUALIFIED_NAME__PREFIX)
+					error("Could not resolve the path.", role.type, EdlPackage.Literals.QUALIFIED_NAME__PREFIX)
 				}				
 			}
 			else {
