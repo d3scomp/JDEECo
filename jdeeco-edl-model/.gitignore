@@ -1,1 +1,3 @@
-src/
+src/cz/cuni/mff/d3s/jdeeco/edl/model/edl/*
+src/cz/cuni/mff/d3s/jdeeco/edl/model/edl/util/*
+!src/cz/cuni/mff/d3s/jdeeco/edl/model/edl/impl

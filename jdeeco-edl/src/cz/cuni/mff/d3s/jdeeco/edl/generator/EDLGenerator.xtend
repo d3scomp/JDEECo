@@ -7,7 +7,6 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.*
-import java.util.ArrayList
 
 /**
  * Generates code from your model files on save.
@@ -18,8 +17,7 @@ class EDLGenerator implements IGenerator {
 	
 	override void doGenerate(Resource resource, IFileSystemAccess fsa) {
 		var document = resource.contents.filter(typeof(EdlDocument)).findFirst[true];
-		var allParts = new ArrayList<String>(document.package.prefix);
-		allParts.add(document.package.name);			
+		var allParts = document.package.toParts()			
 		
 		var packageString = String.join(".", allParts);
 		var path = String.join("/", allParts) + "/";		

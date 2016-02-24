@@ -105,6 +105,12 @@
               <children xmi:type="notation:Node" xmi:id="_F08AwMRBEeWKnZeyzrS8_A" type="3010" element="_F0k0YMRBEeWKnZeyzrS8_A">
                 <layoutConstraint xmi:type="notation:Location" xmi:id="_F08AwcRBEeWKnZeyzrS8_A"/>
               </children>
+              <children xmi:type="notation:Node" xmi:id="_qTMDcNsfEeWtBvAec6jJ7Q" type="3010" element="_qSQPUNsfEeWtBvAec6jJ7Q">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_qTMDcdsfEeWtBvAec6jJ7Q"/>
+              </children>
+              <children xmi:type="notation:Node" xmi:id="_8dfbQNsgEeWtBvAec6jJ7Q" type="3010" element="_8cq74NsgEeWtBvAec6jJ7Q">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_8dfbQdsgEeWtBvAec6jJ7Q"/>
+              </children>
               <styles xmi:type="notation:SortingStyle" xmi:id="_tElFgsRAEeWKnZeyzrS8_A"/>
               <styles xmi:type="notation:FilteringStyle" xmi:id="_tElFg8RAEeWKnZeyzrS8_A"/>
             </children>
@@ -2141,6 +2147,28 @@
           </ownedStyle>
           <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='EC%20EAttribute']"/>
         </ownedElements>
+        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_qSQPUNsfEeWtBvAec6jJ7Q" name="toString() : EString" tooltipText="toString() : EString">
+          <target xmi:type="ecore:EOperation" href="edl.ecore#//QualifiedName/toString"/>
+          <semanticElements xmi:type="ecore:EOperation" href="edl.ecore#//QualifiedName/toString"/>
+          <ownedStyle xmi:type="diagram:BundledImage" xmi:id="_qSSEgNsfEeWtBvAec6jJ7Q" labelAlignment="LEFT">
+            <labelColor xmi:type="viewpoint:RGBValues" xmi:id="_qSSEgdsfEeWtBvAec6jJ7Q"/>
+            <description xmi:type="style:BundledImageDescription" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='Operation']/@style"/>
+            <borderColor xmi:type="viewpoint:RGBValues" xmi:id="_qSSEgtsfEeWtBvAec6jJ7Q"/>
+            <color xmi:type="viewpoint:RGBValues" xmi:id="_qSSEg9sfEeWtBvAec6jJ7Q"/>
+          </ownedStyle>
+          <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='Operation']"/>
+        </ownedElements>
+        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_8cq74NsgEeWtBvAec6jJ7Q" name="toParts() : EString" tooltipText="toParts() : EString">
+          <target xmi:type="ecore:EOperation" href="edl.ecore#//QualifiedName/toParts"/>
+          <semanticElements xmi:type="ecore:EOperation" href="edl.ecore#//QualifiedName/toParts"/>
+          <ownedStyle xmi:type="diagram:BundledImage" xmi:id="_8csxENsgEeWtBvAec6jJ7Q" labelAlignment="LEFT">
+            <labelColor xmi:type="viewpoint:RGBValues" xmi:id="_8ctYINsgEeWtBvAec6jJ7Q"/>
+            <description xmi:type="style:BundledImageDescription" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='Operation']/@style"/>
+            <borderColor xmi:type="viewpoint:RGBValues" xmi:id="_8ctYIdsgEeWtBvAec6jJ7Q"/>
+            <color xmi:type="viewpoint:RGBValues" xmi:id="_8ctYItsgEeWtBvAec6jJ7Q"/>
+          </ownedStyle>
+          <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='Operation']"/>
+        </ownedElements>
       </ownedDiagramElements>
       <ownedDiagramElements xmi:type="diagram:DNodeList" xmi:id="_NEeSIMRYEeWKnZeyzrS8_A" name="FunctionCall" tooltipText="" outgoingEdges="_CYwKgMUBEeWkGO2CfUA7Hw _LxVqgMUBEeWkGO2CfUA7Hw" width="12" height="10">
         <target xmi:type="ecore:EClass" href="edl.ecore#//FunctionCall"/>
@@ -3119,7 +3147,7 @@
           <foregroundColor xmi:type="viewpoint:RGBValues" xmi:id="_WaK6ZNpKEeWNkqn3bcs8gQ" red="255" green="252" blue="216"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']"/>
-        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_QyvX0NpKEeWNkqn3bcs8gQ" name="name : EString" tooltipText="&#xA;ERROR : The required feature 'eAttributeType' of 'org.eclipse.emf.ecore.impl.EAttributeImpl@53c894be{platform:/resource/cz.cuni.mff.d3s.jdeeco.edl.model/model/edl.ecore#//DataContract/newAttribute}' must be set&#xA;ERROR : The typed element must have a type">
+        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_QyvX0NpKEeWNkqn3bcs8gQ" name="name : EString" tooltipText="">
           <target xmi:type="ecore:EAttribute" href="edl.ecore#//DataContractDefinition/name"/>
           <semanticElements xmi:type="ecore:EAttribute" href="edl.ecore#//DataContractDefinition/name"/>
           <ownedStyle xmi:type="diagram:BundledImage" xmi:id="_WaOkwNpKEeWNkqn3bcs8gQ" labelFormat="bold" labelAlignment="LEFT" description="_WaN9sNpKEeWNkqn3bcs8gQ">
@@ -3160,7 +3188,7 @@
           <foregroundColor xmi:type="viewpoint:RGBValues" xmi:id="_FoQcZNpKEeWNkqn3bcs8gQ" red="255" green="252" blue="216"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']"/>
-        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_syk8QNpJEeWNkqn3bcs8gQ" name="name : EString" tooltipText="&#xA;ERROR : The required feature 'eAttributeType' of 'org.eclipse.emf.ecore.impl.EAttributeImpl@3024d254{platform:/resource/cz.cuni.mff.d3s.jdeeco.edl.model/model/edl.ecore#//FieldDeclaration/newAttribute}' must be set&#xA;ERROR : The typed element must have a type">
+        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_syk8QNpJEeWNkqn3bcs8gQ" name="name : EString" tooltipText="">
           <target xmi:type="ecore:EAttribute" href="edl.ecore#//FieldDeclaration/name"/>
           <semanticElements xmi:type="ecore:EAttribute" href="edl.ecore#//FieldDeclaration/name"/>
           <ownedStyle xmi:type="diagram:BundledImage" xmi:id="_Foj-YNpKEeWNkqn3bcs8gQ" labelFormat="bold" labelAlignment="LEFT" description="_FojXUNpKEeWNkqn3bcs8gQ">

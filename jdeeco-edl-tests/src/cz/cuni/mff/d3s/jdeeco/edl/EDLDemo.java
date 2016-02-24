@@ -32,18 +32,10 @@ public class EDLDemo {
             throw new ParseException("Provided input contains syntax errors.");
         }
         return result.getRootASTElement();
-	}
-	
-	// Most likely a candidate for a toString on QualifiedName 
+	}	
+	 
 	private static String getFullName(QualifiedName name) {
-		StringBuilder b = new StringBuilder();
-		for(String part : name.getPrefix()) {
-			b.append(part);
-			b.append('.');
-		}
-		
-		b.append(name.getName());
-		return b.toString();
+		return name.toString();
 	}
 	
 	// Just a quick ugly test hack - should be replaced with a virtual dispatch or, even better, a visitor 
