@@ -200,11 +200,11 @@ class EDLValidator extends AbstractEDLValidator {
  				}
  				
  				if(query.type.equals(RelationOperatorType.EQUALITY) || query.type.equals(RelationOperatorType.NON_EQUALITY)) {
- 					if ((query.left as EquitableQuery) == null)
+ 					if (!(query.left instanceof EquitableQuery))
  						error("Parameters of this type of relation must be equitable.", query, EdlPackage.Literals.RELATION_OPERATOR__LEFT);
  				}
  				else {
- 					if ((query.left as ComparableQuery) == null)
+ 					if (!(query.left instanceof ComparableQuery))
  						error("Parameters of this type of relation must be comparable.", query, EdlPackage.Literals.RELATION_OPERATOR__LEFT);
  				}
  				

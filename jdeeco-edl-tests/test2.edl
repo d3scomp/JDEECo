@@ -1,3 +1,5 @@
+package ie.test2
+
 ensemble BuildingEnsemble
 	id buildingId : int := one_of(allExplorers.buildingId)
 	parent of
