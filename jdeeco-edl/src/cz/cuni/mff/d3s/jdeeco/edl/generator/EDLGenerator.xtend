@@ -18,15 +18,23 @@ class EDLGenerator implements IGenerator {
 	
 	override void doGenerate(Resource resource, IFileSystemAccess fsa) {
 		var document = resource.contents.filter(typeof(EdlDocument)).findFirst[true];
+		var allParts = new ArrayList<String>(document.package.prefix);
+		allParts.add(document.package.name);			
+		
+		var packageString = String.join(".", allParts);
+		var path = String.join("/", allParts) + "/";		
 		
 		for(EnsembleDefinition e : document.ensembles) {
-			var allParts = new ArrayList<String>(document.package.prefix);
-			allParts.add(document.package.name);			
-			
-			var packageString = String.join(".", allParts);
-			var path = String.join("/", allParts) + "/"; 		
-			
-			fsa.generateFile(path+e.name + ".java", 
+			generateEnsemble(e, fsa, path, packageString);			
+		}
+		
+		for(DataContractDefinition d : document.dataContracts) {
+			generateDataContract(d, fsa, path, packageString)
+		}		
+	}
+	
+	def void generateEnsemble(EnsembleDefinition e, IFileSystemAccess fsa, String path, String packageString) {
+		fsa.generateFile(path+e.name + ".java", 
 			
 '''package «packageString»;
 
@@ -60,12 +68,19 @@ public class «e.name» implements EnsembleInstance {
 	}		
 }'''
 			);
-		}
-		
-//		fsa.generateFile('ensembles.txt', 'Ensembles: ' + 
-//			resource.allContents
-//				.filter(typeof(EnsembleDefinition))
-//				.map[name]
-//				.join(', '))
 	}
+	
+	def void generateDataContract(DataContractDefinition d, IFileSystemAccess fsa, String path, String packageString) {
+		fsa.generateFile(path+d.name + ".java", 
+			
+'''package «packageString»;
+
+public class «d.name» {	
+	«FOR f : d.fields»				
+	public «f.type.name» «f.name»;				
+	«ENDFOR»				
+}'''
+			);
+	}
+	
 }
