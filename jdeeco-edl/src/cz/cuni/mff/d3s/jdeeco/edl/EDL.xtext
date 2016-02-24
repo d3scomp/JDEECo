@@ -33,7 +33,7 @@ DataContractDefinition returns DataContractDefinition:
 ;	
 
 FieldDeclaration returns FieldDeclaration:
-	name=ID ":" type=QualifiedName
+	name=ID ":" type=TypeName
 ;
 
 
@@ -55,7 +55,7 @@ AliasDefinition returns AliasDefinition:
 ;
 
 IdDefinition returns IdDefinition:
-	fieldName=EString ':' type = QualifiedName  (isAssigned?= ':=' value = Query)?
+	fieldName=EString ':' type = TypeName  (isAssigned?= ':=' value = Query)?
 ;
 
 ExchangeRule returns ExchangeRule:
@@ -66,6 +66,10 @@ QualifiedName returns QualifiedName:
 	{QualifiedName}
 	(prefix+=ID '.' (prefix+=ID '.')*)?	
 	name=ID
+;
+
+TypeName returns QualifiedName:
+	name = ("int" | "float" | "string" | "bool") | QualifiedName
 ;
 
 

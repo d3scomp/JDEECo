@@ -64,7 +64,7 @@ class EDLValidator extends AbstractEDLValidator {
 	}
 	
 	@Check
-	def validateEnsembleTypeInformation(EnsembleDefinition ensemble) {
+	def validateEnsembleDefinition(EnsembleDefinition ensemble) {
 		if (ensemble.fitness != null) {
 			val type = checkTypes(ensemble.fitness, ensemble)
 			if (!type.equals("int"))
@@ -72,7 +72,11 @@ class EDLValidator extends AbstractEDLValidator {
 		}
 		
 		for (Query c : ensemble.constraints) {
-			checkTypes(c, ensemble)
+			val type = checkTypes(c, ensemble)
+			// TODO: Improve model so the constraint errors can be reported per constraint
+//			if (!type.equals("bool")) {
+//				error("Constraint must be a logical expression. - " + type, ensemble, EdlPackage.Literals.ENSEMBLE_DEFINITION__CONSTRAINTS)
+//			}
 		}	
 		
 		for (AliasDefinition a : ensemble.aliases) {

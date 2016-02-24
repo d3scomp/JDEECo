@@ -43,9 +43,9 @@ import java.util.List;
 import cz.cuni.mff.d3s.deeco.ensembles.EnsembleInstance;
 
 public class «e.name» implements EnsembleInstance {
-	public «e.id.type.name» «e.id.fieldName»;
+	public «getJavaTypeName(e.id.type.name)» «e.id.fieldName»;
 	
-	public «e.name»(«e.id.type.name» «e.id.fieldName») {
+	public «e.name»(«getJavaTypeName(e.id.type.name)» «e.id.fieldName») {
 		this.«e.id.fieldName» = «e.id.fieldName»;
 		«FOR r : e.roles»
 		«IF r.cardinalityMax != 1»		
@@ -77,10 +77,17 @@ public class «e.name» implements EnsembleInstance {
 
 public class «d.name» {	
 	«FOR f : d.fields»				
-	public «f.type.name» «f.name»;				
+	public «getJavaTypeName(f.type.name)» «f.name»;				
 	«ENDFOR»				
 }'''
 			);
+	}
+	
+	def String getJavaTypeName(String type) {
+		if (type.equals("string"))
+			"String"
+		else
+			type
 	}
 	
 }
