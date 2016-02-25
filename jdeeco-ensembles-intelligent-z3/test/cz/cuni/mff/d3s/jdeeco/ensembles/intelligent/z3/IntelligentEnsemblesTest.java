@@ -6,6 +6,7 @@ import static org.junit.Assert.assertThat;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Reader;
 
@@ -30,17 +31,17 @@ import cz.cuni.mff.d3s.jdeeco.ensembles.intelligent.z3.Z3IntelligentEnsembleFact
 
 public class IntelligentEnsemblesTest {
 
-	public static void main(String[] args) throws InstantiationException, IllegalAccessException, DEECoException, AnnotationProcessorException, FileNotFoundException {
+	public static void main(String[] args) throws InstantiationException, IllegalAccessException, DEECoException, AnnotationProcessorException, IOException {
 		new IntelligentEnsemblesTest().testEnsembles(false);
 	}
 	
 	@Test
 	@Ignore
-	public void testEnsembles() throws InstantiationException, IllegalAccessException, DEECoException, AnnotationProcessorException, FileNotFoundException {
+	public void testEnsembles() throws InstantiationException, IllegalAccessException, DEECoException, AnnotationProcessorException, IOException {
 		testEnsembles(true);
 	}
 	
-	private void testEnsembles(boolean silent) throws InstantiationException, IllegalAccessException, DEECoException, AnnotationProcessorException, FileNotFoundException {		
+	private void testEnsembles(boolean silent) throws InstantiationException, IllegalAccessException, DEECoException, AnnotationProcessorException, IOException {		
 		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		if (silent) {
@@ -75,9 +76,7 @@ public class IntelligentEnsemblesTest {
 
 		cz.cuni.mff.d3s.jdeeco.edl.model.edl.EdlPackage.eINSTANCE.eClass();		
 		
-		EDLReader demo = new EDLReader();
-		Reader reader = new FileReader("test/cz/cuni/mff/d3s/jdeeco/ensembles/intelligent/z3/pendolino.edl");
-		EdlDocument model = (EdlDocument) demo.parse(reader);
+		EdlDocument model = (EdlDocument) new EDLReader().readDocument("test/cz/cuni/mff/d3s/jdeeco/ensembles/intelligent/z3/pendolino.edl");
 
 		deeco.deployEnsembleFactory(new Z3IntelligentEnsembleFactory(model));
 		
