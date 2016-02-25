@@ -61,6 +61,16 @@ public class IntelligentEnsemblesTest {
 		deeco.deployComponent(new RescuerComponent("4", 60));
 		deeco.deployComponent(new RescuerComponent("5", 70));
 		deeco.deployComponent(new RescuerComponent("6", 80));
+		deeco.deployComponent(new RescuerComponent("7", 80));
+		deeco.deployComponent(new RescuerComponent("8", 80));
+		deeco.deployComponent(new RescuerComponent("9", 80));
+		deeco.deployComponent(new RescuerComponent("10", 80));
+		deeco.deployComponent(new RescuerComponent("11", 80));
+		deeco.deployComponent(new RescuerComponent("12", 80));
+		deeco.deployComponent(new RescuerComponent("13", 80));
+		deeco.deployComponent(new RescuerComponent("14", 80));
+		deeco.deployComponent(new RescuerComponent("15", 80));
+
 		
 		cz.cuni.mff.d3s.jdeeco.edl.model.edl.EdlPackage.eINSTANCE.eClass();		
 		

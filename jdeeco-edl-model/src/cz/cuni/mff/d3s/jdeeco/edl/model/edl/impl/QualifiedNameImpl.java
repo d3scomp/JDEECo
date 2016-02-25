@@ -4,11 +4,8 @@ package cz.cuni.mff.d3s.jdeeco.edl.model.edl.impl;
 
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EdlPackage;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.QualifiedName;
-
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Collection;
-
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
