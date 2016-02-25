@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.deeco.ensembles.z3;
+package cz.cuni.mff.d3s.jdeeco.ensembles.intelligent.z3;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
@@ -26,6 +26,7 @@ import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
 import cz.cuni.mff.d3s.jdeeco.edl.EDLDemo;
 import cz.cuni.mff.d3s.jdeeco.edl.EDLReader;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EdlDocument;
+import cz.cuni.mff.d3s.jdeeco.ensembles.intelligent.z3.Z3IntelligentEnsembleFactory;
 
 public class IntelligentEnsemblesTest {
 
@@ -75,7 +76,7 @@ public class IntelligentEnsemblesTest {
 		cz.cuni.mff.d3s.jdeeco.edl.model.edl.EdlPackage.eINSTANCE.eClass();		
 		
 		EDLReader demo = new EDLReader();
-		Reader reader = new FileReader("test/cz/cuni/mff/d3s/deeco/ensembles/z3/pendolino.edl");
+		Reader reader = new FileReader("test/cz/cuni/mff/d3s/jdeeco/ensembles/intelligent/z3/pendolino.edl");
 		EdlDocument model = (EdlDocument) demo.parse(reader);
 
 		deeco.deployEnsembleFactory(new Z3IntelligentEnsembleFactory(model));

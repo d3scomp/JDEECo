@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.deeco.ensembles.z3;
+package cz.cuni.mff.d3s.jdeeco.ensembles.intelligent.z3;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,6 +31,8 @@ import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainerException;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EdlDocument;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EnsembleDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.RoleDefinition;
+import cz.cuni.mff.d3s.jdeeco.ensembles.intelligent.z3.IntelligentEnsemble;
+import cz.cuni.mff.d3s.jdeeco.ensembles.intelligent.z3.Rescuer;
 
 public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 

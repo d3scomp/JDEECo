@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.deeco.ensembles.z3;
+package cz.cuni.mff.d3s.jdeeco.ensembles.intelligent.z3;
 
 import java.util.ArrayList;
 import java.util.List;
