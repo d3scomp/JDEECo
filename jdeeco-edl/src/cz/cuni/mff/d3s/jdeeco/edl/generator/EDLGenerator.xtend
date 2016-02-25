@@ -29,6 +29,10 @@ class EDLGenerator implements IGenerator {
 		for(DataContractDefinition d : document.dataContracts) {
 			generateDataContract(d, fsa, path, packageString)
 		}		
+		
+		for(TypeDefinition d : document.knowledgeTypes) {
+			generateType(d, fsa, path, packageString)
+		}
 	}
 	
 	def void generateEnsemble(EnsembleDefinition e, IFileSystemAccess fsa, String path, String packageString) {
@@ -69,6 +73,27 @@ public class «e.name» implements EnsembleInstance {
 	}
 	
 	def void generateDataContract(DataContractDefinition d, IFileSystemAccess fsa, String path, String packageString) {
+		val containsId = d.fields.exists[it.name.equals("id") && it.type.equals("string")];
+		
+		fsa.generateFile(path+d.name + ".java", 
+			
+'''package «packageString»;
+
+import cz.cuni.mff.d3s.deeco.annotations.Role;
+
+@Role
+public class «d.name» {	
+	«IF !containsId»
+	public String id;
+	«ENDIF»
+	«FOR f : d.fields»					
+	public «getJavaTypeName(f.type.name)» «f.name»;				
+	«ENDFOR»				
+}'''
+			);
+	}
+	
+	def void generateType(TypeDefinition d, IFileSystemAccess fsa, String path, String packageString) {
 		fsa.generateFile(path+d.name + ".java", 
 			
 '''package «packageString»;
@@ -82,10 +107,14 @@ public class «d.name» {
 	}
 	
 	def String getJavaTypeName(String type) {
-		if (type.equals("string"))
-			"String"
-		else
-			type
+		switch type {
+			case "string":
+				"String"
+			case "bool":
+				"boolean"
+			default:
+				type
+		}			
 	}
 	
 }
