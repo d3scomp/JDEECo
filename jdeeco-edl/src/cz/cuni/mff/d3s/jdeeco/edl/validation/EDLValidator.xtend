@@ -18,7 +18,7 @@ import java.util.HashSet
  */
 class EDLValidator extends AbstractEDLValidator {
 	
-	Map<String, DataContractDefinition> dataTypes;
+	Map<String, TypeDefinition> dataTypes;
 	Set<String> ensembleNames
 	
 	@Check
@@ -32,9 +32,18 @@ class EDLValidator extends AbstractEDLValidator {
 				dataTypes.put(d.name, d);
 			} 
 			else {
-				error("Duplicate data contract definition.", d, EdlPackage.Literals.DATA_CONTRACT_DEFINITION__NAME)
+				error("Duplicate data type definition.", d, EdlPackage.Literals.TYPE_DEFINITION__NAME)
 			}							
-		}		
+		}				
+		
+		for (TypeDefinition d : document.knowledgeTypes) {
+			if (!dataTypes.containsKey(d.name)) {
+				dataTypes.put(d.name, d);
+			} 
+			else {
+				error("Duplicate data type definition.", d, EdlPackage.Literals.TYPE_DEFINITION__NAME)
+			}							
+		}
 		
 		for (EnsembleDefinition d : document.ensembles) {
 			if (!ensembleNames.contains(d.name)) {
@@ -44,10 +53,10 @@ class EDLValidator extends AbstractEDLValidator {
 				error("Duplicate ensemble definition.", d, EdlPackage.Literals.ENSEMBLE_DEFINITION__NAME)
 			}							
 		}
-	}
+	}	
 	
 	@Check
-	def validateDataContractDefinition(DataContractDefinition contract) {				
+	def validateType(TypeDefinition contract) {				
 		for (FieldDeclaration d : contract.fields) {			
 			switch (d.type.name) {
 				case "int",
@@ -57,7 +66,12 @@ class EDLValidator extends AbstractEDLValidator {
 					{}
 				default:
 					if(!dataTypes.containsKey(d.type.name)) {
-						error("Field type must be either a primitive type or an existing structured type.", d, EdlPackage.Literals.FIELD_DECLARATION__TYPE)
+						error("Field type must be either a primitive type or an existing knowledge type.", d, EdlPackage.Literals.FIELD_DECLARATION__TYPE)						
+					}
+					else {
+						if (dataTypes.get(d.type.name) instanceof DataContractDefinition) {
+							error("Field type must be a knowledge type, not a data contract.", d, EdlPackage.Literals.FIELD_DECLARATION__TYPE)
+						}
 					}
 			}
 		}
@@ -92,12 +106,21 @@ class EDLValidator extends AbstractEDLValidator {
 			}
 		}
 		
+		for (RoleDefinition roleDefinition : ensemble.roles) {
+			if (dataTypes.containsKey(roleDefinition.type.name)) {
+				if (!(dataTypes.get(roleDefinition.type.name) instanceof DataContractDefinition))
+					error("The type is present, but is not a data contract.", roleDefinition, EdlPackage.Literals.CHILD_DEFINITION__TYPE)				
+			}			
+			else
+				error("This data contract is not present in the package.", roleDefinition, EdlPackage.Literals.CHILD_DEFINITION__TYPE)
+		}
+		
 		checkTypes(ensemble.id.value, ensemble)		
 	}
 	
-	def String getKnowledgeType(QualifiedName name, DataContractDefinition contract, int position) {
+	def String getKnowledgeType(QualifiedName name, TypeDefinition type, int position) {
 		if (position >= name.prefix.length) {			
-			var FieldDeclaration f = contract.fields.findFirst[it.name.equals(name.name)]
+			var FieldDeclaration f = type.fields.findFirst[it.name.equals(name.name)]
 			if (f != null) {
 				return f.type.name.toLowerCase();
 			}
@@ -106,14 +129,14 @@ class EDLValidator extends AbstractEDLValidator {
 			}			
 		}
 		else {
-			var FieldDeclaration f = contract.fields.findFirst[it.name.equals(name.prefix.get(position))]
+			var FieldDeclaration f = type.fields.findFirst[it.name.equals(name.prefix.get(position))]
 			if (f != null) {
 				if(dataTypes.containsKey(f.type.name)) {
-					var type = dataTypes.get(f.type.name)					
-					return getKnowledgeType(name, type, position+1)					
+					var nestedType = dataTypes.get(f.type.name)										
+					return getKnowledgeType(name, nestedType, position+1)					
 				}
 				else {
-					error("A data contract with this name was not found in the package.", name, EdlPackage.Literals.QUALIFIED_NAME__PREFIX)
+					error("A data type with this name was not found in the package.", name, EdlPackage.Literals.QUALIFIED_NAME__PREFIX)
 				}
 			}
 			else {
@@ -150,7 +173,7 @@ class EDLValidator extends AbstractEDLValidator {
 					
 				}
 				else {
-					error("Could not resolve the path.", role.type, EdlPackage.Literals.QUALIFIED_NAME__PREFIX)
+					error("Could not resolve the name.", role.type, EdlPackage.Literals.QUALIFIED_NAME__PREFIX)
 				}				
 			}
 			else {
