@@ -87,7 +87,17 @@
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="operatorType" eType="#//BinaryOperatorType"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Query" abstract="true" interface="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Query" abstract="true" interface="true">
+    <eOperations name="accept">
+      <eGenericType eTypeParameter="#//Query/accept/T"/>
+      <eTypeParameters name="T"/>
+      <eParameters name="visitor">
+        <eGenericType eClassifier="#//ExpressionVisitor">
+          <eTypeArguments eTypeParameter="#//Query/accept/T"/>
+        </eGenericType>
+      </eParameters>
+    </eOperations>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="NumericLiteral" eSuperTypes="#//ComparableQuery">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
   </eClassifiers>
@@ -157,5 +167,52 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="fields" upperBound="-1"
         eType="#//FieldDeclaration" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ExpressionVisitor" abstract="true" interface="true">
+    <eTypeParameters name="T"/>
+    <eOperations name="visit">
+      <eGenericType eTypeParameter="#//ExpressionVisitor/T"/>
+      <eParameters name="query" eType="#//AdditiveInverse"/>
+    </eOperations>
+    <eOperations name="visit">
+      <eGenericType eTypeParameter="#//ExpressionVisitor/T"/>
+      <eParameters name="query" eType="#//BinaryOperator"/>
+    </eOperations>
+    <eOperations name="visit">
+      <eGenericType eTypeParameter="#//ExpressionVisitor/T"/>
+      <eParameters name="query" eType="#//BoolLiteral"/>
+    </eOperations>
+    <eOperations name="visit">
+      <eGenericType eTypeParameter="#//ExpressionVisitor/T"/>
+      <eParameters name="query" eType="#//FloatLiteral"/>
+    </eOperations>
+    <eOperations name="visit">
+      <eGenericType eTypeParameter="#//ExpressionVisitor/T"/>
+      <eParameters name="query" eType="#//FunctionCall"/>
+    </eOperations>
+    <eOperations name="visit">
+      <eGenericType eTypeParameter="#//ExpressionVisitor/T"/>
+      <eParameters name="query" eType="#//KnowledgeVariable"/>
+    </eOperations>
+    <eOperations name="visit">
+      <eGenericType eTypeParameter="#//ExpressionVisitor/T"/>
+      <eParameters name="query" eType="#//LogicalOperator"/>
+    </eOperations>
+    <eOperations name="visit">
+      <eGenericType eTypeParameter="#//ExpressionVisitor/T"/>
+      <eParameters name="query" eType="#//Negation"/>
+    </eOperations>
+    <eOperations name="visit">
+      <eGenericType eTypeParameter="#//ExpressionVisitor/T"/>
+      <eParameters name="query" eType="#//NumericLiteral"/>
+    </eOperations>
+    <eOperations name="visit">
+      <eGenericType eTypeParameter="#//ExpressionVisitor/T"/>
+      <eParameters name="query" eType="#//RelationOperator"/>
+    </eOperations>
+    <eOperations name="visit">
+      <eGenericType eTypeParameter="#//ExpressionVisitor/T"/>
+      <eParameters name="query" eType="#//StringLiteral"/>
+    </eOperations>
   </eClassifiers>
 </ecore:EPackage>
