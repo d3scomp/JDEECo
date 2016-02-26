@@ -38,58 +38,8 @@ public class EDLDemo {
 		return name.toString();
 	}
 	
-	// Just a quick ugly test hack - should be replaced with a virtual dispatch or, even better, a visitor 
-	
 	private static String getQuery(Query query) {
-		switch(query.eClass().getName()) {
-		case "BoolLiteral":
-			return ((BoolLiteral) query).isValue() + "";
-		case "NumericLiteral":
-			return ((NumericLiteral) query).getValue() + "";			
-		case "StringLiteral":
-			return "\"" + ((StringLiteral) query).getValue() + "\"";
-		case "FloatLiteral":
-			return ((FloatLiteral) query).getValue() + "";
-		case "KnowledgeVariable": 
-			return getFullName(((KnowledgeVariable) query).getPath());
-		case "LogicalOperator":
-			LogicalOperator op = (LogicalOperator) query;
-			return '(' + getQuery(op.getLeft()) + ')' + op.getType().toString() + '(' + getQuery(op.getRight()) + ')';
-		case "RelationOperator":
-			RelationOperator rop = (RelationOperator) query;
-			return '(' + getQuery(rop.getLeft()) + ')' + rop.getType().toString() + '(' + getQuery(rop.getRight()) + ')';		
-		case "AdditiveOperator":
-			AdditiveOperator op1 = (AdditiveOperator) query;
-			return '(' + getQuery(op1.getLeft()) + ')' + op1.getOperatorType().toString() + '(' + getQuery(op1.getRight()) + ')';
-		case "MultiplicativeOperator":
-			MultiplicativeOperator op2 = (MultiplicativeOperator) query;
-			return '(' + getQuery(op2.getLeft()) + ')' + op2.getOperatorType().toString() + '(' + getQuery(op2.getRight()) + ')';
-		case "AdditiveInverse":
-			AdditiveInverse op3 = (AdditiveInverse) query;
-			return "(-" + getQuery(op3.getNested()) + ')';
-		case "Negation":
-			Negation op4 = (Negation) query;
-			return "(!" + getQuery(op4.getNested()) + ')';
-		case "FunctionCall":
-			FunctionCall call = (FunctionCall) query;
-			StringBuilder b = new StringBuilder();			
-			b.append(call.getName());
-			b.append('(');
-			
-			List<String> paramValues = new ArrayList<String>();
-			
-			for (Query param : call.getParameters()) {
-				paramValues.add(getQuery(param));				
-			}
-			
-			b.append(String.join(",", paramValues));
-			
-			b.append(')');
-			return b.toString();
-			
-		default:
-			return query.eClass().getName();
-		}				
+		return query.accept(new ToStringVisitor());		
 	}
 	
 	
