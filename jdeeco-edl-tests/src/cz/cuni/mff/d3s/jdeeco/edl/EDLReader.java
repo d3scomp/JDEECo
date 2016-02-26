@@ -25,7 +25,7 @@ public class EDLReader {
         injector.injectMembers(this);
 	}
 	
-	public EObject parse(Reader reader) {
+	private EObject parse(Reader reader) {
 		IParseResult result = parser.parse(reader);
         if(result.hasSyntaxErrors())
         {
@@ -35,12 +35,10 @@ public class EDLReader {
 	}
 
 	public EdlDocument readDocument(String fileName) throws IOException {		
-		EDLReader demo = new EDLReader();		
-		
 		// This must be invoked before working with the model - for some reason, external model registration is done as a side-effect of accessing eInstance
 		cz.cuni.mff.d3s.jdeeco.edl.model.edl.EdlPackage.eINSTANCE.eClass();		
 		
-		EdlDocument model = (EdlDocument) demo.parse(new FileReader(fileName));
+		EdlDocument model = (EdlDocument) parse(new FileReader(fileName));
 		return model;
 	}
 }

@@ -37,9 +37,54 @@ import cz.cuni.mff.d3s.jdeeco.ensembles.intelligent.z3.Rescuer;
 public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 
 	private EdlDocument ensemblesDefinition;
+	private Context ctx;
+	private Optimize opt;
 	
 	public Z3IntelligentEnsembleFactory(EdlDocument ensemblesDefinition) {
 		this.ensemblesDefinition = ensemblesDefinition;
+	}
+	
+	private void initConfiguration() {
+		HashMap<String, String> cfg = new HashMap<String, String>();
+        cfg.put("model", "true");
+        ctx = new Context(cfg);
+        opt = ctx.mkOptimize();
+	}
+		
+	private BoolExpr[][] createAssignmentMatrix(String roleName, int maxEnsembleCount, int componentCount) {
+		BoolExpr[][] assignments = new BoolExpr[maxEnsembleCount][];
+		for (int i = 0; i < maxEnsembleCount; i++) {
+			assignments[i] = new BoolExpr[componentCount];
+			for (int j = 0; j < componentCount; j++) {
+				assignments[i][j] = ctx.mkBoolConst("assignment_" + roleName + "_e" + i + "_c" + j);
+			}
+		}
+		
+		return assignments;
+	}
+		
+	// assignment counters for each rescuer and train: int[#trains][#rescuers]
+	//  assignmentTempCounters[T][0] = 0 if not assignments[T][0], otherwise 1
+	//  assignmentTempCounters[T][R] = assignmentTempCounters[T][R-1], if not assignments[T][R], otherwise it's +1
+	// therefore assignmentTempCounters[T][#rescuers-1] = number of rescuers for train T
+	private IntExpr createCounter(BoolExpr[] assignments, int length, int index) {
+		ArrayExpr tempCounts = ctx.mkArrayConst("_tmp_ensemble_assignment_count_" + index, ctx.getIntSort(), ctx.getIntSort());
+		
+		BoolExpr firstInSet = assignments[0];
+		opt.Add(ctx.mkImplies(firstInSet, ctx.mkEq(ctx.mkSelect(tempCounts, ctx.mkInt(0)), ctx.mkInt(1))));
+		opt.Add(ctx.mkImplies(ctx.mkNot(firstInSet), ctx.mkEq(ctx.mkSelect(tempCounts, ctx.mkInt(0)), ctx.mkInt(0))));
+		for (int j = 1; j < length; j++) {
+			BoolExpr isInSet = assignments[j];
+			IntExpr current = (IntExpr) ctx.mkSelect(tempCounts, ctx.mkInt(j));
+			IntExpr prev = (IntExpr) ctx.mkSelect(tempCounts, ctx.mkInt(j-1));
+			opt.Add(ctx.mkImplies(isInSet, 
+					ctx.mkEq(current, ctx.mkAdd(prev, ctx.mkInt(1)))));
+			opt.Add(ctx.mkImplies(ctx.mkNot(isInSet),
+					ctx.mkEq(current, prev)));
+		}
+		
+		IntExpr assignedCount = (IntExpr) ctx.mkSelect(tempCounts, ctx.mkInt(length-1));
+		return assignedCount;
 	}
 
 	@Override
@@ -47,16 +92,14 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 		try {
 long time_milis = System.currentTimeMillis();
 
+			initConfiguration();
+
 			Collection<Rescuer> rescuersUnsorted = container.getTrackedKnowledgeForRole(Rescuer.class);
 			Rescuer[] rescuers = new Rescuer[rescuersUnsorted.size()];
 			for (Rescuer rescuer : rescuersUnsorted) {
 				rescuers[Integer.parseInt(rescuer.id)-1] = rescuer;
 			}
-			
-			HashMap<String, String> cfg = new HashMap<String, String>();
-	        cfg.put("model", "true");
-	        Context ctx = new Context(cfg);
-
+	        
 	        EnsembleDefinition ensembleDefinition = ensemblesDefinition.getEnsembles().get(0);	        
 	        
 	        RoleDefinition roleDefinition = ensembleDefinition.getRoles().get(0);
@@ -64,17 +107,15 @@ long time_milis = System.currentTimeMillis();
 			int[] positions = new int[rescuers.length];
 			int maxEnsembleCount = positions.length / Math.max(1, roleDefinition.getCardinalityMin());
 			
-			// positions of rescuers: int[#rescuers]
+			/*// positions of rescuers: int[#rescuers]
 			IntNum[] positionExprs = new IntNum[positions.length];
 			for (int i = 0; i < positions.length; i++) {
 				positionExprs[i] = ctx.mkInt(positions[i]);
-			}
+			}*/
 			
 			// assignments for each rescuer and train: bool[#trains][#rescuers]
-			ArrayExpr[] assignments = new ArrayExpr[maxEnsembleCount];
-			for (int i = 0; i < maxEnsembleCount; i++) {
-				assignments[i] = ctx.mkArrayConst("train_" + i, ctx.getIntSort(), ctx.getBoolSort());
-			}
+			//ArrayExpr[] assignments = createAssignmentMatrix_("rescuer", maxEnsembleCount);
+			BoolExpr[][] assignments = createAssignmentMatrix("rescuer", maxEnsembleCount, positions.length);
 			
 			// existence of individual ensembles
 			BoolExpr[] ensembleExists = new BoolExpr[maxEnsembleCount];
@@ -82,38 +123,18 @@ long time_milis = System.currentTimeMillis();
 				ensembleExists[i] = ctx.mkBoolConst("ensemble_exists_" + i);
 			}
 	
-			Optimize opt = ctx.mkOptimize();
-	
-			// assignment counters for each rescuer and train: int[#trains][#rescuers]
-			//  assignmentTempCounters[T][0] = 0 if not assignments[T][0], otherwise 1
-			//  assignmentTempCounters[T][R] = assignmentTempCounters[T][R-1], if not assignments[T][R], otherwise it's +1
-			// therefore assignmentTempCounters[T][#rescuers-1] = number of rescuers for train T
-			ArrayExpr[] assignmentTempCounts = new ArrayExpr[maxEnsembleCount];
+			IntExpr[] assignmentCounts = new IntExpr[maxEnsembleCount];
 			for (int i = 0; i < maxEnsembleCount; i++) {
-				assignmentTempCounts[i] = ctx.mkArrayConst("train_temp_count_" + i, ctx.getIntSort(), ctx.getIntSort());
-				
-				BoolExpr firstInSet = (BoolExpr) ctx.mkSelect(assignments[i], ctx.mkInt(0));
-				opt.Add(ctx.mkImplies(firstInSet, ctx.mkEq(ctx.mkSelect(assignmentTempCounts[i], ctx.mkInt(0)), ctx.mkInt(1))));
-				opt.Add(ctx.mkImplies(ctx.mkNot(firstInSet), ctx.mkEq(ctx.mkSelect(assignmentTempCounts[i], ctx.mkInt(0)), ctx.mkInt(0))));
-				for (int j = 1; j < positions.length; j++) {
-					BoolExpr isInSet = (BoolExpr) ctx.mkSelect(assignments[i], ctx.mkInt(j));
-					IntExpr current = (IntExpr) ctx.mkSelect(assignmentTempCounts[i], ctx.mkInt(j));
-					IntExpr prev = (IntExpr) ctx.mkSelect(assignmentTempCounts[i], ctx.mkInt(j-1));
-					opt.Add(ctx.mkImplies(isInSet, 
-							ctx.mkEq(current, ctx.mkAdd(prev, ctx.mkInt(1)))));
-					opt.Add(ctx.mkImplies(ctx.mkNot(isInSet),
-							ctx.mkEq(current, prev)));
-				}
+				assignmentCounts[i] = createCounter(assignments[i], positions.length, i);
 			}
 			
-			// number of rescuers is 3
+			// number of rescuers is within cardinality conditions
 			for (int i = 0; i < maxEnsembleCount; i++) {
-				ArithExpr rescuerCount = (ArithExpr) ctx.mkSelect(assignmentTempCounts[i], ctx.mkInt(positions.length-1));
-				BoolExpr le = ctx.mkLe(rescuerCount, ctx.mkInt(roleDefinition.getCardinalityMax())); //!!!!!!!
-				BoolExpr ge = ctx.mkGe(rescuerCount, ctx.mkInt(roleDefinition.getCardinalityMin())); //!!!!!!!
+				BoolExpr le = ctx.mkLe(assignmentCounts[i], ctx.mkInt(roleDefinition.getCardinalityMax()));
+				BoolExpr ge = ctx.mkGe(assignmentCounts[i], ctx.mkInt(roleDefinition.getCardinalityMin()));
 				BoolExpr cardinalityOk = ctx.mkAnd(le, ge);
 				opt.Add(ctx.mkImplies(ensembleExists[i], cardinalityOk));
-				BoolExpr ensembleEmpty = ctx.mkEq(rescuerCount, ctx.mkInt(0));
+				BoolExpr ensembleEmpty = ctx.mkEq(assignmentCounts[i], ctx.mkInt(0));
 				opt.Add(ctx.mkImplies(ctx.mkNot(ensembleExists[i]), ensembleEmpty));
 			}
 
@@ -127,7 +148,7 @@ long time_milis = System.currentTimeMillis();
 				IntNum posExpr = ctx.mkInt(i);
 				BoolExpr[] assigned = new BoolExpr[maxEnsembleCount];
 				for (int j = 0; j < maxEnsembleCount; j++) {
-					assigned[j] = ctx.mkSetMembership(posExpr, assignments[j]);
+					assigned[j] = assignments[j][i];
 				}
 							
 				opt.Add(ctx.mkOr(assigned));
@@ -147,24 +168,24 @@ long time_milis = System.currentTimeMillis();
 			Status status = opt.Check();
 			if (status == Status.SATISFIABLE) {
 				Model m = opt.getModel();
-				for (int i = 0; i < maxEnsembleCount; i++)
-					System.out.println("train " + i + ": " + m.getFuncInterp(assignments[i].getFuncDecl()));
-				for (int i = 0; i < maxEnsembleCount; i++)
-					System.out.println("train " + i + " temp counts: " + m.getFuncInterp(assignmentTempCounts[i].getFuncDecl()));
+				for (int i = 0; i < maxEnsembleCount; i++) {
+					System.out.print("train " + i + ": [");
+					for (int j = 0; j < positions.length; j++) {
+						System.out.print(m.getConstInterp(assignments[i][j]).getBoolValue() + " ");
+					}
+					
+					System.out.println("]");
+				}
 				
 				// create ensembles
 				List<EnsembleInstance> result = new ArrayList<>();
 				for (int i = 0; i < maxEnsembleCount; i++) {
 					IntelligentEnsemble ie = new IntelligentEnsemble(i + 1);
 					ie.members = new ArrayList<>();
-					FuncInterp fi = m.getFuncInterp(assignments[i].getFuncDecl());
-					Entry[] entries = fi.getEntries();
-					for (int j = 0; j < fi.getNumEntries(); j++) {
-						Expr[] a = entries[j].getArgs();
-						Expr v = entries[j].getValue();
+					for (int j = 0; j < positions.length; j++) {
+						Expr v = m.getConstInterp(assignments[i][j]);
 						if (v.getBoolValue() == Z3_lbool.Z3_L_TRUE) {
-							int componentId = Integer.parseInt(a[0].toString());
-							ie.members.add(rescuers[componentId]);
+							ie.members.add(rescuers[j]);
 						}
 					}
 					
