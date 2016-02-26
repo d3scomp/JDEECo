@@ -4,7 +4,7 @@ ensemble PendolinoEnsemble
 	id trainId : int
 	membership
 		roles
-			rescuers [6..15] : Rescuer
+			rescuers [6..7] : Rescuer
 		fitness 0
 		
 	knowledge exchange
