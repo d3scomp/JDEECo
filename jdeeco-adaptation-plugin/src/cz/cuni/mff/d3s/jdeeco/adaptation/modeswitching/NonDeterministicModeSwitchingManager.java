@@ -16,6 +16,7 @@
 package cz.cuni.mff.d3s.jdeeco.adaptation.modeswitching;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -77,11 +78,14 @@ public class NonDeterministicModeSwitchingManager {
 	
 	
 	
-	public NonDeterministicModeSwitchingManager(long startTime) {
+	public NonDeterministicModeSwitchingManager(long startTime, Class<? extends NonDetModeSwitchEval> evalClass) {
 		this.startTime = startTime;
+		this.evalClass = evalClass;
 		
 		currentNonDeterminismLevel = NonDetModeSwitchAnnealStateSpace.startingNondeterminism;
 		stateSpace = new NonDetModeSwitchAnnealStateSpace();
+		evaluators = new HashMap<>();
+		energies = new HashMap<>();
 	}
 	
 	@Process

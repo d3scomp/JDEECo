@@ -34,14 +34,16 @@ import cz.cuni.mff.d3s.jdeeco.modes.ModeSwitchingPlugin;
 public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin {
 
 	private long startTime = 0;
+	Class<? extends NonDetModeSwitchEval> evalClass = null;
 	
 	/** Plugin dependencies. */
 	@SuppressWarnings("unchecked")
 	static private final List<Class<? extends DEECoPlugin>> DEPENDENCIES =
 			Arrays.asList(new Class[]{ModeSwitchingPlugin.class});
 	
-	public NonDeterministicModeSwitchingPlugin startAt(long startTime) {
+	public NonDeterministicModeSwitchingPlugin startAt(long startTime, Class<? extends NonDetModeSwitchEval> evalClass) {
 		this.startTime = startTime;
+		this.evalClass = evalClass;
 		return this;
 	}
 	
@@ -62,7 +64,7 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin {
 		container.getProcessor().addExtension(nonDetModeAwareAnnotationProcessor);
 		
 		try {
-			final NonDeterministicModeSwitchingManager manager = new NonDeterministicModeSwitchingManager(startTime);
+			final NonDeterministicModeSwitchingManager manager = new NonDeterministicModeSwitchingManager(startTime, evalClass);
 			
 			container.deployComponent(manager);
 		} catch (AnnotationProcessorException e) {
