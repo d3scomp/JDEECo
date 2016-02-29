@@ -1,24 +1,12 @@
 package cz.cuni.mff.d3s.jdeeco.edl;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.eclipse.emf.common.notify.Adapter;
-import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.common.util.TreeIterator;
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EOperation;
-import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.resource.Resource;
 
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.AdditiveInverse;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.BinaryOperator;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.BoolLiteral;
-import cz.cuni.mff.d3s.jdeeco.edl.model.edl.ExpressionVisitor;
+import cz.cuni.mff.d3s.jdeeco.edl.model.edl.QueryVisitor;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.FloatLiteral;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.FunctionCall;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.KnowledgeVariable;
@@ -28,8 +16,9 @@ import cz.cuni.mff.d3s.jdeeco.edl.model.edl.NumericLiteral;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.Query;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.RelationOperator;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.StringLiteral;
+import cz.cuni.mff.d3s.jdeeco.edl.model.edl.impl.QueryVisitorImpl;
 
-public class ToStringVisitor implements ExpressionVisitor<String> {
+public class ToStringVisitor extends QueryVisitorImpl<String> implements QueryVisitor<String> {
 
 	public ToStringVisitor() {
 		// TODO Auto-generated constructor stub
@@ -103,120 +92,4 @@ public class ToStringVisitor implements ExpressionVisitor<String> {
 	public String visit(StringLiteral query) {
 		return "\"" + ((StringLiteral) query).getValue() + "\"";
 	}
-
-	@Override
-	public EClass eClass() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Resource eResource() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public EObject eContainer() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public EStructuralFeature eContainingFeature() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public EReference eContainmentFeature() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public EList<EObject> eContents() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public TreeIterator<EObject> eAllContents() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean eIsProxy() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public EList<EObject> eCrossReferences() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Object eGet(EStructuralFeature feature) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Object eGet(EStructuralFeature feature, boolean resolve) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void eSet(EStructuralFeature feature, Object newValue) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public boolean eIsSet(EStructuralFeature feature) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void eUnset(EStructuralFeature feature) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public Object eInvoke(EOperation operation, EList<?> arguments)
-			throws InvocationTargetException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public EList<Adapter> eAdapters() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean eDeliver() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void eSetDeliver(boolean deliver) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void eNotify(Notification notification) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

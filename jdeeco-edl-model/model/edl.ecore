@@ -92,7 +92,7 @@
       <eGenericType eTypeParameter="#//Query/accept/T"/>
       <eTypeParameters name="T"/>
       <eParameters name="visitor">
-        <eGenericType eClassifier="#//ExpressionVisitor">
+        <eGenericType eClassifier="#//QueryVisitor">
           <eTypeArguments eTypeParameter="#//Query/accept/T"/>
         </eGenericType>
       </eParameters>
@@ -168,50 +168,50 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="fields" upperBound="-1"
         eType="#//FieldDeclaration" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ExpressionVisitor" abstract="true" interface="true">
+  <eClassifiers xsi:type="ecore:EClass" name="QueryVisitor" abstract="true">
     <eTypeParameters name="T"/>
     <eOperations name="visit">
-      <eGenericType eTypeParameter="#//ExpressionVisitor/T"/>
+      <eGenericType eTypeParameter="#//QueryVisitor/T"/>
       <eParameters name="query" eType="#//AdditiveInverse"/>
     </eOperations>
     <eOperations name="visit">
-      <eGenericType eTypeParameter="#//ExpressionVisitor/T"/>
+      <eGenericType eTypeParameter="#//QueryVisitor/T"/>
       <eParameters name="query" eType="#//BinaryOperator"/>
     </eOperations>
     <eOperations name="visit">
-      <eGenericType eTypeParameter="#//ExpressionVisitor/T"/>
+      <eGenericType eTypeParameter="#//QueryVisitor/T"/>
       <eParameters name="query" eType="#//BoolLiteral"/>
     </eOperations>
     <eOperations name="visit">
-      <eGenericType eTypeParameter="#//ExpressionVisitor/T"/>
+      <eGenericType eTypeParameter="#//QueryVisitor/T"/>
       <eParameters name="query" eType="#//FloatLiteral"/>
     </eOperations>
     <eOperations name="visit">
-      <eGenericType eTypeParameter="#//ExpressionVisitor/T"/>
+      <eGenericType eTypeParameter="#//QueryVisitor/T"/>
       <eParameters name="query" eType="#//FunctionCall"/>
     </eOperations>
     <eOperations name="visit">
-      <eGenericType eTypeParameter="#//ExpressionVisitor/T"/>
+      <eGenericType eTypeParameter="#//QueryVisitor/T"/>
       <eParameters name="query" eType="#//KnowledgeVariable"/>
     </eOperations>
     <eOperations name="visit">
-      <eGenericType eTypeParameter="#//ExpressionVisitor/T"/>
+      <eGenericType eTypeParameter="#//QueryVisitor/T"/>
       <eParameters name="query" eType="#//LogicalOperator"/>
     </eOperations>
     <eOperations name="visit">
-      <eGenericType eTypeParameter="#//ExpressionVisitor/T"/>
+      <eGenericType eTypeParameter="#//QueryVisitor/T"/>
       <eParameters name="query" eType="#//Negation"/>
     </eOperations>
     <eOperations name="visit">
-      <eGenericType eTypeParameter="#//ExpressionVisitor/T"/>
+      <eGenericType eTypeParameter="#//QueryVisitor/T"/>
       <eParameters name="query" eType="#//NumericLiteral"/>
     </eOperations>
     <eOperations name="visit">
-      <eGenericType eTypeParameter="#//ExpressionVisitor/T"/>
+      <eGenericType eTypeParameter="#//QueryVisitor/T"/>
       <eParameters name="query" eType="#//RelationOperator"/>
     </eOperations>
     <eOperations name="visit">
-      <eGenericType eTypeParameter="#//ExpressionVisitor/T"/>
+      <eGenericType eTypeParameter="#//QueryVisitor/T"/>
       <eParameters name="query" eType="#//StringLiteral"/>
     </eOperations>
   </eClassifiers>

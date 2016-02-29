@@ -4,7 +4,7 @@ package cz.cuni.mff.d3s.jdeeco.edl.model.edl.impl;
 
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EdlPackage;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EquitableQuery;
-import cz.cuni.mff.d3s.jdeeco.edl.model.edl.ExpressionVisitor;
+import cz.cuni.mff.d3s.jdeeco.edl.model.edl.QueryVisitor;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.Negation;
 import java.lang.reflect.InvocationTargetException;
 import org.eclipse.emf.common.notify.Notification;
@@ -106,7 +106,7 @@ public class NegationImpl extends MinimalEObjectImpl.Container implements Negati
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
-	public <T> T accept(ExpressionVisitor<T> visitor) {
+	public <T> T accept(QueryVisitor<T> visitor) {
 		return visitor.visit(this);
 	}
 
@@ -192,7 +192,7 @@ public class NegationImpl extends MinimalEObjectImpl.Container implements Negati
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
 			case EdlPackage.NEGATION___ACCEPT__EXPRESSIONVISITOR:
-				return accept((ExpressionVisitor)arguments.get(0));
+				return accept((QueryVisitor)arguments.get(0));
 		}
 		return super.eInvoke(operationID, arguments);
 	}

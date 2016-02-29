@@ -3,7 +3,7 @@
 package cz.cuni.mff.d3s.jdeeco.edl.model.edl.impl;
 
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EdlPackage;
-import cz.cuni.mff.d3s.jdeeco.edl.model.edl.ExpressionVisitor;
+import cz.cuni.mff.d3s.jdeeco.edl.model.edl.QueryVisitor;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.KnowledgeVariable;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.QualifiedName;
 
@@ -109,7 +109,7 @@ public class KnowledgeVariableImpl extends MinimalEObjectImpl.Container implemen
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
-	public <T> T accept(ExpressionVisitor<T> visitor) {
+	public <T> T accept(QueryVisitor<T> visitor) {
 		return visitor.visit(this);
 	}
 
@@ -195,7 +195,7 @@ public class KnowledgeVariableImpl extends MinimalEObjectImpl.Container implemen
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
 			case EdlPackage.KNOWLEDGE_VARIABLE___ACCEPT__EXPRESSIONVISITOR:
-				return accept((ExpressionVisitor)arguments.get(0));
+				return accept((QueryVisitor)arguments.get(0));
 		}
 		return super.eInvoke(operationID, arguments);
 	}

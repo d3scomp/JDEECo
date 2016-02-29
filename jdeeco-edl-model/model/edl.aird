@@ -2377,7 +2377,7 @@
           <foregroundColor xmi:type="viewpoint:RGBValues" xmi:id="_8h2otNviEeWaisKNj03p0w" red="228" green="228" blue="228"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']"/>
-        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_k-_KWNydEeWbnqCWZUWqaA" name="accept(visitor ExpressionVisitor) : T" tooltipText="accept(visitor) : T">
+        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_k-_KWNydEeWbnqCWZUWqaA" name="accept(visitor QueryVisitor) : T" tooltipText="accept(visitor) : T">
           <target xmi:type="ecore:EOperation" href="edl.ecore#//Query/accept"/>
           <semanticElements xmi:type="ecore:EOperation" href="edl.ecore#//Query/accept"/>
           <semanticElements xmi:type="ecore:EParameter" href="edl.ecore#//Query/accept/visitor"/>
@@ -3406,12 +3406,12 @@
         </ownedStyle>
         <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@edgeMappings[name='EC_EReference']"/>
       </ownedDiagramElements>
-      <ownedDiagramElements xmi:type="diagram:DNodeList" xmi:id="_aLbyINviEeWaisKNj03p0w" name="ExpressionVisitor" tooltipText="" width="12" height="10">
-        <target xmi:type="ecore:EClass" href="edl.ecore#//ExpressionVisitor"/>
-        <semanticElements xmi:type="ecore:EClass" href="edl.ecore#//ExpressionVisitor"/>
+      <ownedDiagramElements xmi:type="diagram:DNodeList" xmi:id="_aLbyINviEeWaisKNj03p0w" name="QueryVisitor" tooltipText="" width="12" height="10">
+        <target xmi:type="ecore:EClass" href="edl.ecore#//QueryVisitor"/>
+        <semanticElements xmi:type="ecore:EClass" href="edl.ecore#//QueryVisitor"/>
         <ownedBorderedNodes xmi:type="diagram:DNode" xmi:id="_lCzkUNviEeWaisKNj03p0w" name="T" width="3" height="3" resizeKind="NSEW">
-          <target xmi:type="ecore:ETypeParameter" href="edl.ecore#//ExpressionVisitor/T"/>
-          <semanticElements xmi:type="ecore:ETypeParameter" href="edl.ecore#//ExpressionVisitor/T"/>
+          <target xmi:type="ecore:ETypeParameter" href="edl.ecore#//QueryVisitor/T"/>
+          <semanticElements xmi:type="ecore:ETypeParameter" href="edl.ecore#//QueryVisitor/T"/>
           <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
           <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
           <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
@@ -3425,18 +3425,18 @@
         <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
         <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
         <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
-        <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_nVXVcNvlEeWaisKNj03p0w" labelFormat="italic" iconPath="/org.eclipse.emf.ecoretools.design/icons/full/obj16/EClass_interface.gif" backgroundStyle="Liquid">
-          <labelColor xmi:type="viewpoint:RGBValues" xmi:id="_nVXVcdvlEeWaisKNj03p0w"/>
-          <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@conditionnalStyles.0/@style"/>
-          <borderColor xmi:type="viewpoint:RGBValues" xmi:id="_nVXVctvlEeWaisKNj03p0w" red="125" green="125" blue="125"/>
-          <backgroundColor xmi:type="viewpoint:RGBValues" xmi:id="_nVXVc9vlEeWaisKNj03p0w" red="255" green="255" blue="255"/>
-          <foregroundColor xmi:type="viewpoint:RGBValues" xmi:id="_nVXVdNvlEeWaisKNj03p0w" red="228" green="228" blue="228"/>
+        <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_qtININ7zEeWjnM18fvnBcQ" labelFormat="italic" iconPath="/org.eclipse.emf.ecoretools.design/icons/full/obj16/EClass_abstract.gif" backgroundStyle="Liquid">
+          <labelColor xmi:type="viewpoint:RGBValues" xmi:id="_qtINId7zEeWjnM18fvnBcQ"/>
+          <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@conditionnalStyles.1/@style"/>
+          <borderColor xmi:type="viewpoint:RGBValues" xmi:id="_qtINIt7zEeWjnM18fvnBcQ" red="125" green="125" blue="125"/>
+          <backgroundColor xmi:type="viewpoint:RGBValues" xmi:id="_qtINI97zEeWjnM18fvnBcQ" red="255" green="255" blue="255"/>
+          <foregroundColor xmi:type="viewpoint:RGBValues" xmi:id="_qtINJN7zEeWjnM18fvnBcQ" red="228" green="228" blue="228"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']"/>
         <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_n3sGwNviEeWaisKNj03p0w" name="visit(query AdditiveInverse) : T" tooltipText="visit(query) : T">
-          <target xmi:type="ecore:EOperation" href="edl.ecore#//ExpressionVisitor/visit"/>
-          <semanticElements xmi:type="ecore:EOperation" href="edl.ecore#//ExpressionVisitor/visit"/>
-          <semanticElements xmi:type="ecore:EParameter" href="edl.ecore#//ExpressionVisitor/visit/query"/>
+          <target xmi:type="ecore:EOperation" href="edl.ecore#//QueryVisitor/visit"/>
+          <semanticElements xmi:type="ecore:EOperation" href="edl.ecore#//QueryVisitor/visit"/>
+          <semanticElements xmi:type="ecore:EParameter" href="edl.ecore#//QueryVisitor/visit/query"/>
           <ownedStyle xmi:type="diagram:BundledImage" xmi:id="_n3st0NviEeWaisKNj03p0w" labelAlignment="LEFT">
             <labelColor xmi:type="viewpoint:RGBValues" xmi:id="_n3st0dviEeWaisKNj03p0w"/>
             <description xmi:type="style:BundledImageDescription" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='Operation']/@style"/>
@@ -3446,9 +3446,9 @@
           <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='Operation']"/>
         </ownedElements>
         <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_fzZu4NygEeWbnqCWZUWqaA" name="visit(query BinaryOperator) : T" tooltipText="visit(query) : T">
-          <target xmi:type="ecore:EOperation" href="edl.ecore#//ExpressionVisitor/visit.1"/>
-          <semanticElements xmi:type="ecore:EOperation" href="edl.ecore#//ExpressionVisitor/visit.1"/>
-          <semanticElements xmi:type="ecore:EParameter" href="edl.ecore#//ExpressionVisitor/visit.1/query"/>
+          <target xmi:type="ecore:EOperation" href="edl.ecore#//QueryVisitor/visit.1"/>
+          <semanticElements xmi:type="ecore:EOperation" href="edl.ecore#//QueryVisitor/visit.1"/>
+          <semanticElements xmi:type="ecore:EParameter" href="edl.ecore#//QueryVisitor/visit.1/query"/>
           <ownedStyle xmi:type="diagram:BundledImage" xmi:id="_fzZu4dygEeWbnqCWZUWqaA" labelAlignment="LEFT">
             <labelColor xmi:type="viewpoint:RGBValues" xmi:id="_fzZu4tygEeWbnqCWZUWqaA"/>
             <description xmi:type="style:BundledImageDescription" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='Operation']/@style"/>
@@ -3458,9 +3458,9 @@
           <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='Operation']"/>
         </ownedElements>
         <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_fzZu5dygEeWbnqCWZUWqaA" name="visit(query BoolLiteral) : T" tooltipText="visit(query) : T">
-          <target xmi:type="ecore:EOperation" href="edl.ecore#//ExpressionVisitor/visit.2"/>
-          <semanticElements xmi:type="ecore:EOperation" href="edl.ecore#//ExpressionVisitor/visit.2"/>
-          <semanticElements xmi:type="ecore:EParameter" href="edl.ecore#//ExpressionVisitor/visit.2/query"/>
+          <target xmi:type="ecore:EOperation" href="edl.ecore#//QueryVisitor/visit.2"/>
+          <semanticElements xmi:type="ecore:EOperation" href="edl.ecore#//QueryVisitor/visit.2"/>
+          <semanticElements xmi:type="ecore:EParameter" href="edl.ecore#//QueryVisitor/visit.2/query"/>
           <ownedStyle xmi:type="diagram:BundledImage" xmi:id="_fzZu5tygEeWbnqCWZUWqaA" labelAlignment="LEFT">
             <labelColor xmi:type="viewpoint:RGBValues" xmi:id="_fzZu59ygEeWbnqCWZUWqaA"/>
             <description xmi:type="style:BundledImageDescription" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='Operation']/@style"/>
@@ -3470,9 +3470,9 @@
           <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='Operation']"/>
         </ownedElements>
         <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_fzZu6tygEeWbnqCWZUWqaA" name="visit(query FloatLiteral) : T" tooltipText="visit(query) : T">
-          <target xmi:type="ecore:EOperation" href="edl.ecore#//ExpressionVisitor/visit.3"/>
-          <semanticElements xmi:type="ecore:EOperation" href="edl.ecore#//ExpressionVisitor/visit.3"/>
-          <semanticElements xmi:type="ecore:EParameter" href="edl.ecore#//ExpressionVisitor/visit.3/query"/>
+          <target xmi:type="ecore:EOperation" href="edl.ecore#//QueryVisitor/visit.3"/>
+          <semanticElements xmi:type="ecore:EOperation" href="edl.ecore#//QueryVisitor/visit.3"/>
+          <semanticElements xmi:type="ecore:EParameter" href="edl.ecore#//QueryVisitor/visit.3/query"/>
           <ownedStyle xmi:type="diagram:BundledImage" xmi:id="_fzaV8NygEeWbnqCWZUWqaA" labelAlignment="LEFT">
             <labelColor xmi:type="viewpoint:RGBValues" xmi:id="_fzaV8dygEeWbnqCWZUWqaA"/>
             <description xmi:type="style:BundledImageDescription" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='Operation']/@style"/>
@@ -3482,9 +3482,9 @@
           <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='Operation']"/>
         </ownedElements>
         <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_fzaV9NygEeWbnqCWZUWqaA" name="visit(query FunctionCall) : T" tooltipText="visit(query) : T">
-          <target xmi:type="ecore:EOperation" href="edl.ecore#//ExpressionVisitor/visit.4"/>
-          <semanticElements xmi:type="ecore:EOperation" href="edl.ecore#//ExpressionVisitor/visit.4"/>
-          <semanticElements xmi:type="ecore:EParameter" href="edl.ecore#//ExpressionVisitor/visit.4/query"/>
+          <target xmi:type="ecore:EOperation" href="edl.ecore#//QueryVisitor/visit.4"/>
+          <semanticElements xmi:type="ecore:EOperation" href="edl.ecore#//QueryVisitor/visit.4"/>
+          <semanticElements xmi:type="ecore:EParameter" href="edl.ecore#//QueryVisitor/visit.4/query"/>
           <ownedStyle xmi:type="diagram:BundledImage" xmi:id="_fzaV9dygEeWbnqCWZUWqaA" labelAlignment="LEFT">
             <labelColor xmi:type="viewpoint:RGBValues" xmi:id="_fzaV9tygEeWbnqCWZUWqaA"/>
             <description xmi:type="style:BundledImageDescription" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='Operation']/@style"/>
@@ -3494,9 +3494,9 @@
           <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='Operation']"/>
         </ownedElements>
         <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_fzaV-dygEeWbnqCWZUWqaA" name="visit(query KnowledgeVariable) : T" tooltipText="visit(query) : T">
-          <target xmi:type="ecore:EOperation" href="edl.ecore#//ExpressionVisitor/visit.5"/>
-          <semanticElements xmi:type="ecore:EOperation" href="edl.ecore#//ExpressionVisitor/visit.5"/>
-          <semanticElements xmi:type="ecore:EParameter" href="edl.ecore#//ExpressionVisitor/visit.5/query"/>
+          <target xmi:type="ecore:EOperation" href="edl.ecore#//QueryVisitor/visit.5"/>
+          <semanticElements xmi:type="ecore:EOperation" href="edl.ecore#//QueryVisitor/visit.5"/>
+          <semanticElements xmi:type="ecore:EParameter" href="edl.ecore#//QueryVisitor/visit.5/query"/>
           <ownedStyle xmi:type="diagram:BundledImage" xmi:id="_fzaV-tygEeWbnqCWZUWqaA" labelAlignment="LEFT">
             <labelColor xmi:type="viewpoint:RGBValues" xmi:id="_fzaV-9ygEeWbnqCWZUWqaA"/>
             <description xmi:type="style:BundledImageDescription" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='Operation']/@style"/>
@@ -3506,9 +3506,9 @@
           <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='Operation']"/>
         </ownedElements>
         <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_fzaV_tygEeWbnqCWZUWqaA" name="visit(query LogicalOperator) : T" tooltipText="visit(query) : T">
-          <target xmi:type="ecore:EOperation" href="edl.ecore#//ExpressionVisitor/visit.6"/>
-          <semanticElements xmi:type="ecore:EOperation" href="edl.ecore#//ExpressionVisitor/visit.6"/>
-          <semanticElements xmi:type="ecore:EParameter" href="edl.ecore#//ExpressionVisitor/visit.6/query"/>
+          <target xmi:type="ecore:EOperation" href="edl.ecore#//QueryVisitor/visit.6"/>
+          <semanticElements xmi:type="ecore:EOperation" href="edl.ecore#//QueryVisitor/visit.6"/>
+          <semanticElements xmi:type="ecore:EParameter" href="edl.ecore#//QueryVisitor/visit.6/query"/>
           <ownedStyle xmi:type="diagram:BundledImage" xmi:id="_fzaV_9ygEeWbnqCWZUWqaA" labelAlignment="LEFT">
             <labelColor xmi:type="viewpoint:RGBValues" xmi:id="_fzaWANygEeWbnqCWZUWqaA"/>
             <description xmi:type="style:BundledImageDescription" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='Operation']/@style"/>
@@ -3518,9 +3518,9 @@
           <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='Operation']"/>
         </ownedElements>
         <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_fza9ANygEeWbnqCWZUWqaA" name="visit(query Negation) : T" tooltipText="visit(query) : T">
-          <target xmi:type="ecore:EOperation" href="edl.ecore#//ExpressionVisitor/visit.7"/>
-          <semanticElements xmi:type="ecore:EOperation" href="edl.ecore#//ExpressionVisitor/visit.7"/>
-          <semanticElements xmi:type="ecore:EParameter" href="edl.ecore#//ExpressionVisitor/visit.7/query"/>
+          <target xmi:type="ecore:EOperation" href="edl.ecore#//QueryVisitor/visit.7"/>
+          <semanticElements xmi:type="ecore:EOperation" href="edl.ecore#//QueryVisitor/visit.7"/>
+          <semanticElements xmi:type="ecore:EParameter" href="edl.ecore#//QueryVisitor/visit.7/query"/>
           <ownedStyle xmi:type="diagram:BundledImage" xmi:id="_fza9AdygEeWbnqCWZUWqaA" labelAlignment="LEFT">
             <labelColor xmi:type="viewpoint:RGBValues" xmi:id="_fza9AtygEeWbnqCWZUWqaA"/>
             <description xmi:type="style:BundledImageDescription" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='Operation']/@style"/>
@@ -3530,9 +3530,9 @@
           <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='Operation']"/>
         </ownedElements>
         <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_fza9BdygEeWbnqCWZUWqaA" name="visit(query NumericLiteral) : T" tooltipText="visit(query) : T">
-          <target xmi:type="ecore:EOperation" href="edl.ecore#//ExpressionVisitor/visit.8"/>
-          <semanticElements xmi:type="ecore:EOperation" href="edl.ecore#//ExpressionVisitor/visit.8"/>
-          <semanticElements xmi:type="ecore:EParameter" href="edl.ecore#//ExpressionVisitor/visit.8/query"/>
+          <target xmi:type="ecore:EOperation" href="edl.ecore#//QueryVisitor/visit.8"/>
+          <semanticElements xmi:type="ecore:EOperation" href="edl.ecore#//QueryVisitor/visit.8"/>
+          <semanticElements xmi:type="ecore:EParameter" href="edl.ecore#//QueryVisitor/visit.8/query"/>
           <ownedStyle xmi:type="diagram:BundledImage" xmi:id="_fza9BtygEeWbnqCWZUWqaA" labelAlignment="LEFT">
             <labelColor xmi:type="viewpoint:RGBValues" xmi:id="_fza9B9ygEeWbnqCWZUWqaA"/>
             <description xmi:type="style:BundledImageDescription" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='Operation']/@style"/>
@@ -3542,9 +3542,9 @@
           <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='Operation']"/>
         </ownedElements>
         <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_fza9CtygEeWbnqCWZUWqaA" name="visit(query RelationOperator) : T" tooltipText="visit(query) : T">
-          <target xmi:type="ecore:EOperation" href="edl.ecore#//ExpressionVisitor/visit.9"/>
-          <semanticElements xmi:type="ecore:EOperation" href="edl.ecore#//ExpressionVisitor/visit.9"/>
-          <semanticElements xmi:type="ecore:EParameter" href="edl.ecore#//ExpressionVisitor/visit.9/query"/>
+          <target xmi:type="ecore:EOperation" href="edl.ecore#//QueryVisitor/visit.9"/>
+          <semanticElements xmi:type="ecore:EOperation" href="edl.ecore#//QueryVisitor/visit.9"/>
+          <semanticElements xmi:type="ecore:EParameter" href="edl.ecore#//QueryVisitor/visit.9/query"/>
           <ownedStyle xmi:type="diagram:BundledImage" xmi:id="_fzbkENygEeWbnqCWZUWqaA" labelAlignment="LEFT">
             <labelColor xmi:type="viewpoint:RGBValues" xmi:id="_fzbkEdygEeWbnqCWZUWqaA"/>
             <description xmi:type="style:BundledImageDescription" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='Operation']/@style"/>
@@ -3554,9 +3554,9 @@
           <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='Operation']"/>
         </ownedElements>
         <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_3tqvoNygEeWbnqCWZUWqaA" name="visit(query StringLiteral) : T" tooltipText="visit(query) : T">
-          <target xmi:type="ecore:EOperation" href="edl.ecore#//ExpressionVisitor/visit.10"/>
-          <semanticElements xmi:type="ecore:EOperation" href="edl.ecore#//ExpressionVisitor/visit.10"/>
-          <semanticElements xmi:type="ecore:EParameter" href="edl.ecore#//ExpressionVisitor/visit.10/query"/>
+          <target xmi:type="ecore:EOperation" href="edl.ecore#//QueryVisitor/visit.10"/>
+          <semanticElements xmi:type="ecore:EOperation" href="edl.ecore#//QueryVisitor/visit.10"/>
+          <semanticElements xmi:type="ecore:EParameter" href="edl.ecore#//QueryVisitor/visit.10/query"/>
           <ownedStyle xmi:type="diagram:BundledImage" xmi:id="_3tqvodygEeWbnqCWZUWqaA" labelAlignment="LEFT">
             <labelColor xmi:type="viewpoint:RGBValues" xmi:id="_3tqvotygEeWbnqCWZUWqaA"/>
             <description xmi:type="style:BundledImageDescription" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='Operation']/@style"/>
