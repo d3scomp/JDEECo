@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  *******************************************************************************/
-package cz.cuni.mff.d3s.deeco.modes;
+package cz.cuni.mff.d3s.jdeeco.modes;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,10 +33,13 @@ import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
+import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
+import cz.cuni.mff.d3s.deeco.modes.ModeChart;
+import cz.cuni.mff.d3s.deeco.modes.ModeTransitionListener;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 
 // TODO: make tests
-class ModeChartImpl extends ModeChart{
+public class ModeChartImpl extends ModeChart{
 	
 	public static final double MODE_NOT_FOUND = -1;
 	
@@ -44,7 +47,12 @@ class ModeChartImpl extends ModeChart{
 	
 	public static final Random rand = new Random(78631);
 	
-	Map<Class<? extends DEECoMode>, Set<ModeSuccessor>> modes;
+	public Map<Class<? extends DEECoMode>, Set<ModeSuccessor>> modes;
+	
+	/**
+	 * Indicates whether the mode chart was modified at runtime
+	 */
+	private boolean modified;
 	
 	/**
 	 * Internal constructor enables {@link ModeChartFactory} to be the
@@ -54,6 +62,15 @@ class ModeChartImpl extends ModeChart{
 		currentMode = null;
 		modes = new HashMap<>();
 		transitionListeners = new HashMap<>();
+		modified = false;
+	}
+	
+	public void wasModified(){
+		modified = true;
+	}
+	
+	public boolean isModified(){
+		return modified;
 	}
 	
 	void setInitialNode(Class<? extends DEECoMode> mode){

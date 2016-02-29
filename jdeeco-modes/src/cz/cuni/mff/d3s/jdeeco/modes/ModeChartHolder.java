@@ -13,18 +13,15 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  *******************************************************************************/
-package cz.cuni.mff.d3s.deeco.modes;
+package cz.cuni.mff.d3s.jdeeco.modes;
 
-public class TrueGuard implements ModeGuard {
+import cz.cuni.mff.d3s.deeco.modes.ModeChart;
 
-	@Override
-	public String[] getKnowledgeNames() {
-		return new String[]{"id"};
+public abstract class ModeChartHolder {
+
+	protected ModeChart modeChart;
+	
+	public ModeChart getModeChart(){
+		return modeChart;
 	}
-
-	@Override
-	public boolean isSatisfied(Object[] knowledgeValue) {
-		return true;
-	}
-
 }

@@ -13,29 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  *******************************************************************************/
-package cz.cuni.mff.d3s.jdeeco.adaptation.search.annealing;
-
-import cz.cuni.mff.d3s.deeco.search.SearchState;
+package cz.cuni.mff.d3s.jdeeco.adaptation.modeswitching;
 
 /**
- * Computes the energy of a state in simulated annealing.
- * 
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  *
  */
-public interface AnnealingState extends SearchState {
-
-	/**
-	 * Provides the energy of the state in the range from 0 to 1.
-	 * 
-	 * @return The energy of the state
-	 */
-	double getEnergy();
-
-	/**
-	 * Provides the set of neighbors of the state.
-	 * 
-	 * @return The set of neighbors of the state.
-	 */
-	AnnealingState[] getNeighbors();
+public interface NonDetModeSwitchEval {
+	String[] getKnowledgeNames();	
+	NonDetModeSwitchPerformance getEnergy(long currentTime, Object [] knowledgeValues);
 }

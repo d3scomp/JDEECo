@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package cz.cuni.mff.d3s.deeco.annotations.processor;
+package cz.cuni.mff.d3s.jdeeco.annotations.processor;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
@@ -21,17 +21,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import cz.cuni.mff.d3s.deeco.annotations.ComponentModeChart;
-import cz.cuni.mff.d3s.deeco.annotations.ExcludeMode;
-import cz.cuni.mff.d3s.deeco.annotations.ExcludeModes;
-import cz.cuni.mff.d3s.deeco.annotations.Mode;
-import cz.cuni.mff.d3s.deeco.annotations.Modes;
+import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
+import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorExtensionPoint;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
 import cz.cuni.mff.d3s.deeco.modes.ModeChart;
-import cz.cuni.mff.d3s.deeco.modes.ModeChartHolder;
+import cz.cuni.mff.d3s.jdeeco.annotations.ComponentModeChart;
+import cz.cuni.mff.d3s.jdeeco.annotations.ExcludeMode;
+import cz.cuni.mff.d3s.jdeeco.annotations.ExcludeModes;
+import cz.cuni.mff.d3s.jdeeco.annotations.Mode;
+import cz.cuni.mff.d3s.jdeeco.annotations.Modes;
+import cz.cuni.mff.d3s.jdeeco.modes.ModeChartHolder;
 
 /**
  * Processes the annotations related to DEECo processes' modes.

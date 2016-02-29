@@ -13,13 +13,23 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  *******************************************************************************/
-package cz.cuni.mff.d3s.deeco.modes;
+package cz.cuni.mff.d3s.jdeeco.modes;
 
-class ModeSuccessor {
+import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
+import cz.cuni.mff.d3s.deeco.modes.ModeGuard;
 
-	final double probability;
+public class ModeSuccessor {
+
+	double probability;
 	
 	final ModeGuard guard;
+	
+	/**
+	 * Indicates whether the transition is static (false),
+	 * that means specified in the mode chart by the designer,
+	 * or dynamic (true) added by the system at runtime.
+	 */
+	private boolean dynamic;
 	
 	public final Class<? extends DEECoMode> successor;
 	
@@ -28,13 +38,26 @@ class ModeSuccessor {
 		this.successor = successor;
 		this.probability = probability;
 		this.guard = guard;
+		dynamic = false;
 	}
 	
 	public double getProbability(){
 		return probability;
 	}
 	
+	public void setProbability(double probability){
+		this.probability = probability;
+	}
+	
 	public String getTypeName(){
 		return successor.getTypeName();
+	}
+	
+	public boolean isDynamic(){
+		return dynamic;
+	}
+	
+	public void setDynamic(boolean dynamic){
+		this.dynamic = dynamic;
 	}
 }

@@ -13,29 +13,33 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  *******************************************************************************/
-package cz.cuni.mff.d3s.jdeeco.adaptation.search.annealing;
+package cz.cuni.mff.d3s.jdeeco.adaptation.modeswitching;
 
-import cz.cuni.mff.d3s.deeco.search.SearchState;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Computes the energy of a state in simulated annealing.
- * 
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  *
  */
-public interface AnnealingState extends SearchState {
+public class NonDetModeSwitchAnnealStateSpace {
 
-	/**
-	 * Provides the energy of the state in the range from 0 to 1.
-	 * 
-	 * @return The energy of the state
-	 */
-	double getEnergy();
-
-	/**
-	 * Provides the set of neighbors of the state.
-	 * 
-	 * @return The set of neighbors of the state.
-	 */
-	AnnealingState[] getNeighbors();
+	public static final double startingNondeterminism = 0.0001;
+	
+	private Map<Double, NonDetModeSwitchAnnealState> states;
+	
+	public NonDetModeSwitchAnnealStateSpace(){
+		states = new HashMap<>();
+	}
+	
+	public NonDetModeSwitchAnnealState getState(double nondeterminism){
+		if(states.containsKey(nondeterminism)){
+			return states.get(nondeterminism);
+		} else {
+			NonDetModeSwitchAnnealState newState =
+					new NonDetModeSwitchAnnealState(nondeterminism, this);
+			states.put(nondeterminism, newState);
+			return newState;
+		}
+	}
 }

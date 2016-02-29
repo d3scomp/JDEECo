@@ -13,23 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package cz.cuni.mff.d3s.deeco.annotations;
+package cz.cuni.mff.d3s.jdeeco.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
+import cz.cuni.mff.d3s.jdeeco.modes.ModeChartHolder;
 
 /**
- * Used to declare the mode to which a DEECo process belongs.
+ * Used to mark a class to be a DEECo component.
  * 
  * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface Mode {
-	Class<? extends DEECoMode> value();
+@Target(ElementType.TYPE)
+public @interface ComponentModeChart {
+	Class<? extends ModeChartHolder> value();
 }

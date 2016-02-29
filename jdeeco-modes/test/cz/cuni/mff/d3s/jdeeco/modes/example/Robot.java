@@ -20,14 +20,14 @@ import java.util.List;
 import java.util.Map;
 
 import cz.cuni.mff.d3s.deeco.annotations.Component;
-import cz.cuni.mff.d3s.deeco.annotations.ComponentModeChart;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
-import cz.cuni.mff.d3s.deeco.annotations.Mode;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 import cz.cuni.mff.d3s.deeco.task.ProcessContext;
+import cz.cuni.mff.d3s.jdeeco.annotations.ComponentModeChart;
+import cz.cuni.mff.d3s.jdeeco.annotations.Mode;
 import cz.cuni.mff.d3s.jdeeco.modes.example.modechart.Cleaning;
 import cz.cuni.mff.d3s.jdeeco.modes.example.modechart.RobotModeChartHolder;
 import cz.cuni.mff.d3s.jdeeco.modes.example.modechart.Searching;

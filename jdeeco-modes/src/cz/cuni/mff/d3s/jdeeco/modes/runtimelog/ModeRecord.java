@@ -13,13 +13,30 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  *******************************************************************************/
-package cz.cuni.mff.d3s.deeco.modes;
+package cz.cuni.mff.d3s.jdeeco.modes.runtimelog;
 
-public abstract class ModeChartHolder {
+import java.util.HashMap;
 
-	protected ModeChart modeChart;
-	
-	public ModeChart getModeChart(){
-		return modeChart;
+import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
+import cz.cuni.mff.d3s.deeco.runtimelog.RuntimeLogRecord;
+
+/**
+ * 
+ * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
+ *
+ */
+public class ModeRecord extends RuntimeLogRecord {
+
+	public ModeRecord(String id) {
+		super(id, new HashMap<>());
 	}
+	
+	public void setOldMode(Class<? extends DEECoMode> mode){
+		recordValues.put("oldMode", mode.getName());
+	}
+	
+	public void setNewMode(Class<? extends DEECoMode> mode){
+		recordValues.put("newMode", mode.getName());
+	}
+	
 }

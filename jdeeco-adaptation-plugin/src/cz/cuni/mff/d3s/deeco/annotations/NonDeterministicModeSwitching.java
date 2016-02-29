@@ -13,29 +13,26 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  *******************************************************************************/
-package cz.cuni.mff.d3s.jdeeco.adaptation.search.annealing;
+package cz.cuni.mff.d3s.deeco.annotations;
 
-import cz.cuni.mff.d3s.deeco.search.SearchState;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import cz.cuni.mff.d3s.deeco.search.EmptyParameters;
+import cz.cuni.mff.d3s.deeco.search.SearchParameters;
+import cz.cuni.mff.d3s.deeco.search.StateSpaceSearch;
 
 /**
- * Computes the energy of a state in simulated annealing.
+ * Used to mark the component to be adapted by non-deterministic mode switching.
  * 
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  *
  */
-public interface AnnealingState extends SearchState {
-
-	/**
-	 * Provides the energy of the state in the range from 0 to 1.
-	 * 
-	 * @return The energy of the state
-	 */
-	double getEnergy();
-
-	/**
-	 * Provides the set of neighbors of the state.
-	 * 
-	 * @return The set of neighbors of the state.
-	 */
-	AnnealingState[] getNeighbors();
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+public @interface NonDeterministicModeSwitching {
+	Class<? extends StateSpaceSearch> searchEngine();
+	Class<? extends SearchParameters> searchParameters() default EmptyParameters.class;
 }

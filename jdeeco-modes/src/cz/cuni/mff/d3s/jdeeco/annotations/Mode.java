@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package cz.cuni.mff.d3s.deeco.annotations;
+package cz.cuni.mff.d3s.jdeeco.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -30,6 +30,6 @@ import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface ExcludeModes {
-	Class<? extends DEECoMode> [] value();
+public @interface Mode {
+	Class<? extends DEECoMode> value();
 }

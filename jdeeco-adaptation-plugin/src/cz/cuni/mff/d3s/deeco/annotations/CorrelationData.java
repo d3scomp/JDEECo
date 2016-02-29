@@ -24,9 +24,9 @@ import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metric.DifferenceMetric;
 import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metric.Metric;
 
 /**
- * Used to mark a knowledge field as non-serializable.
+ * Used to mark a knowledge field to be considered in correlation process.
  * 
- * @author Michal Kit
+ * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)

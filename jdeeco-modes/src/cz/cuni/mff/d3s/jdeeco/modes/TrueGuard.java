@@ -13,18 +13,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  *******************************************************************************/
-package cz.cuni.mff.d3s.jdeeco.modes.example.modechart;
+package cz.cuni.mff.d3s.jdeeco.modes;
 
-import cz.cuni.mff.d3s.jdeeco.modes.ModeChartFactory;
-import cz.cuni.mff.d3s.jdeeco.modes.ModeChartHolder;
+import cz.cuni.mff.d3s.deeco.modes.ModeGuard;
 
-public class RobotModeChartHolder extends ModeChartHolder {
+public class TrueGuard implements ModeGuard {
 
-	public RobotModeChartHolder(){
-		ModeChartFactory factory = new ModeChartFactory();
-		factory.addTransitionWithGuard(Searching.class, Cleaning.class, new CleaningGuard());
-		factory.addInitialMode(Searching.class);
-		
-		modeChart = factory.create();
+	@Override
+	public String[] getKnowledgeNames() {
+		return new String[]{"id"};
 	}
+
+	@Override
+	public boolean isSatisfied(Object[] knowledgeValue) {
+		return true;
+	}
+
 }

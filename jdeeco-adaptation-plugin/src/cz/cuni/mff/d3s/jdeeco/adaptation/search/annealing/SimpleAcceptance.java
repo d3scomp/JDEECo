@@ -15,27 +15,26 @@
  *******************************************************************************/
 package cz.cuni.mff.d3s.jdeeco.adaptation.search.annealing;
 
-import cz.cuni.mff.d3s.deeco.search.SearchState;
-
 /**
- * Computes the energy of a state in simulated annealing.
- * 
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  *
  */
-public interface AnnealingState extends SearchState {
+public class SimpleAcceptance implements AcceptanceProbabilityFunction {
 
-	/**
-	 * Provides the energy of the state in the range from 0 to 1.
-	 * 
-	 * @return The energy of the state
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.jdeeco.adaptation.search.annealing.AcceptanceProbabilityFunction#getAcceptanceProbability(cz.cuni.mff.d3s.jdeeco.adaptation.search.annealing.AnnealingState, cz.cuni.mff.d3s.jdeeco.adaptation.search.annealing.AnnealingState, cz.cuni.mff.d3s.jdeeco.adaptation.search.annealing.Temperature)
 	 */
-	double getEnergy();
+	@Override
+	public double getAcceptanceProbability(AnnealingState currentState, AnnealingState newState,
+			Temperature temperature) {
+		
+		if(newState.getEnergy() >= currentState.getEnergy()){
+			// It gets harder to switch to worse state as temperature cools down
+			return temperature.getTemperature();
+		} else {
+			// It gets easier to switch to better state as temperature cools down
+			return 1 - temperature.getTemperature();
+		}
+	}
 
-	/**
-	 * Provides the set of neighbors of the state.
-	 * 
-	 * @return The set of neighbors of the state.
-	 */
-	AnnealingState[] getNeighbors();
 }

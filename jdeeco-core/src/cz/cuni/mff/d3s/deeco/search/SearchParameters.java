@@ -13,29 +13,35 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  *******************************************************************************/
-package cz.cuni.mff.d3s.jdeeco.adaptation.search.annealing;
+package cz.cuni.mff.d3s.deeco.search;
 
-import cz.cuni.mff.d3s.deeco.search.SearchState;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Computes the energy of a state in simulated annealing.
+ * A class that holds parameters for the state space search engine.
  * 
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  *
  */
-public interface AnnealingState extends SearchState {
-
+public abstract class SearchParameters {
+	
+	protected Map<String, Object> parameters;
+	
+	public SearchParameters(){
+		parameters = new HashMap<>();
+	}
+	
 	/**
-	 * Provides the energy of the state in the range from 0 to 1.
+	 * Provides the value of the specified parameter if present.
 	 * 
-	 * @return The energy of the state
+	 * @param name the name of the required parameter.
+	 * @return The value of the specified parameter if present,
+	 * null otherwise.
 	 */
-	double getEnergy();
-
-	/**
-	 * Provides the set of neighbors of the state.
-	 * 
-	 * @return The set of neighbors of the state.
-	 */
-	AnnealingState[] getNeighbors();
+	public Object getParameter(String name){
+		return parameters.containsKey(name)
+			? parameters.get(name)
+			: null;
+	}
 }
