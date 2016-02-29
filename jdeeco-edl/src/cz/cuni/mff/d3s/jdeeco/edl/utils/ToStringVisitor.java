@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.jdeeco.edl;
+package cz.cuni.mff.d3s.jdeeco.edl.utils;
 
 import java.util.ArrayList;
 import java.util.List;

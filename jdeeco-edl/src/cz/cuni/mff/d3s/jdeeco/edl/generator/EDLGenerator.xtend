@@ -7,6 +7,7 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.*
+import cz.cuni.mff.d3s.jdeeco.edl.utils.ToStringVisitor
 
 /**
  * Generates code from your model files on save.
@@ -66,7 +67,9 @@ public class «e.name» implements EnsembleInstance {
 
 	@Override
 	public void performKnowledgeExchange() {
-		// TODO Knowledge exchange
+		«FOR rule : e.exchangeRules»
+		«rule.field.toString()» = «rule.query.accept(new ToStringVisitor())»;
+		«ENDFOR»		
 	}		
 }'''
 			);

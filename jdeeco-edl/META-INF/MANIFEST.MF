@@ -30,11 +30,12 @@ Import-Package: org.apache.log4j,
  org.hamcrest.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: cz.cuni.mff.d3s.jdeeco.edl,
- cz.cuni.mff.d3s.jdeeco.edl.services,
- cz.cuni.mff.d3s.jdeeco.edl.serializer,
+ cz.cuni.mff.d3s.jdeeco.edl.formatting,
+ cz.cuni.mff.d3s.jdeeco.edl.generator,
  cz.cuni.mff.d3s.jdeeco.edl.parser.antlr,
  cz.cuni.mff.d3s.jdeeco.edl.parser.antlr.internal,
- cz.cuni.mff.d3s.jdeeco.edl.validation,
  cz.cuni.mff.d3s.jdeeco.edl.scoping,
- cz.cuni.mff.d3s.jdeeco.edl.generator,
- cz.cuni.mff.d3s.jdeeco.edl.formatting
+ cz.cuni.mff.d3s.jdeeco.edl.serializer,
+ cz.cuni.mff.d3s.jdeeco.edl.services,
+ cz.cuni.mff.d3s.jdeeco.edl.utils,
+ cz.cuni.mff.d3s.jdeeco.edl.validation

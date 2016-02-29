@@ -14,6 +14,7 @@ import com.google.inject.Injector;
 
 import cz.cuni.mff.d3s.jdeeco.edl.EDLStandaloneSetup;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.*;
+import cz.cuni.mff.d3s.jdeeco.edl.utils.ToStringVisitor;
 
 public class EDLDemo {
 	
