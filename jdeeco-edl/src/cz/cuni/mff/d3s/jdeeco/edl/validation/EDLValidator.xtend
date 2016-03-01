@@ -10,19 +10,27 @@ import java.util.Map
 import java.util.HashMap
 import java.util.Set
 import java.util.HashSet
+import com.google.inject.Inject
+import cz.cuni.mff.d3s.jdeeco.edl.IFunctionRegistry
+import cz.cuni.mff.d3s.jdeeco.edl.utils.ITypeResolutionContext
+import cz.cuni.mff.d3s.jdeeco.edl.model.edl.QualifiedName
+import cz.cuni.mff.d3s.jdeeco.edl.utils.EDLUtils
+import org.eclipse.emf.ecore.EStructuralFeature
+import org.eclipse.emf.ecore.EObject
 
 /**
  * Custom validation rules. 
  *
  * see http://www.eclipse.org/Xtext/documentation.html#validation
  */
-class EDLValidator extends AbstractEDLValidator {
+class EDLValidator extends AbstractEDLValidator implements ITypeResolutionContext {	
 	
 	Map<String, TypeDefinition> dataTypes;
 	Set<String> ensembleNames
 	
 	@Check
 	def generateDocumentInfo(EdlDocument document) {
+			
 		dataTypes = new HashMap();
 		ensembleNames = new HashSet();
 		
@@ -80,13 +88,13 @@ class EDLValidator extends AbstractEDLValidator {
 	@Check
 	def validateEnsembleDefinition(EnsembleDefinition ensemble) {
 		if (ensemble.fitness != null) {
-			val type = checkTypes(ensemble.fitness, ensemble)
+			val type = EDLUtils.getType(this, ensemble.fitness, ensemble)
 			if (!type.equals("int"))
 				error("Fitness function must be a numeric expression.", ensemble.fitness, EdlPackage.Literals.ENSEMBLE_DEFINITION__FITNESS)
 		}
 		
 		for (Query c : ensemble.constraints) {
-			val type = checkTypes(c, ensemble)
+			val type = EDLUtils.getType(this, c, ensemble)
 			// TODO: Improve model so the constraint errors can be reported per constraint
 //			if (!type.equals("bool")) {
 //				error("Constraint must be a logical expression. - " + type, ensemble, EdlPackage.Literals.ENSEMBLE_DEFINITION__CONSTRAINTS)
@@ -94,12 +102,12 @@ class EDLValidator extends AbstractEDLValidator {
 		}	
 		
 		for (AliasDefinition a : ensemble.aliases) {
-			checkTypes(a.aliasValue, ensemble)
+			EDLUtils.getType(this, a.aliasValue, ensemble)
 		}
 		
 		for (ExchangeRule rule : ensemble.exchangeRules) {
-			var queryType = checkTypes(rule.query, ensemble)
-			var fieldType = getKnowledgeType(rule.field, ensemble)
+			var queryType = EDLUtils.getType(this, rule.query, ensemble)
+			var fieldType = EDLUtils.getKnowledgeType(this, rule.field, ensemble)
 			
 			if (!queryType.equals(fieldType)) {
 				error("Invalid assignment - field and query types do not correspond.", rule, EdlPackage.Literals.EXCHANGE_RULE__FIELD)
@@ -115,167 +123,18 @@ class EDLValidator extends AbstractEDLValidator {
 				error("This data contract is not present in the package.", roleDefinition, EdlPackage.Literals.CHILD_DEFINITION__TYPE)
 		}
 		
-		checkTypes(ensemble.id.value, ensemble)		
+		EDLUtils.getType(this, ensemble.id.value, ensemble)		
 	}
 	
-	def String getKnowledgeType(QualifiedName name, TypeDefinition type, int position) {
-		if (position >= name.prefix.length) {			
-			var FieldDeclaration f = type.fields.findFirst[it.name.equals(name.name)]
-			if (f != null) {
-				return f.type.name.toLowerCase();
-			}
-			else {
-				error("The specified data type does not contain a field of this name.", name, EdlPackage.Literals.QUALIFIED_NAME__NAME)
-			}			
-		}
-		else {
-			var FieldDeclaration f = type.fields.findFirst[it.name.equals(name.prefix.get(position))]
-			if (f != null) {
-				if(dataTypes.containsKey(f.type.name)) {
-					var nestedType = dataTypes.get(f.type.name)										
-					return getKnowledgeType(name, nestedType, position+1)					
-				}
-				else {
-					error("A data type with this name was not found in the package.", name, EdlPackage.Literals.QUALIFIED_NAME__PREFIX)
-				}
-			}
-			else {
-				error("The specified data type does not contain a field of this name.", name, EdlPackage.Literals.QUALIFIED_NAME__PREFIX)
-			}
-		}
-		
-		"unknown"
+	override isKnownType(QualifiedName name) {
+		return dataTypes.containsKey(name.name);
 	}
 	
-	def String getKnowledgeType(QualifiedName name, EnsembleDefinition ensemble) {		
-		if (name.prefix.length == 0) {
-			if(ensemble.id.fieldName.equals(name.name))
-				return ensemble.id.type.name
-			
-			 var alias = ensemble.aliases.findFirst[it.aliasId.equals(name.name)]
-			 if (alias != null)
-			 	return checkTypes(alias.aliasValue, ensemble)	
-			 	
-			 var role = ensemble.roles.findFirst[it.name.equals(name.name)]
-			 if (role != null) {									
-					return role.type.name				
-			}
-			else {
-				error("An element with this name was not found in the ensemble.", name, EdlPackage.Literals.QUALIFIED_NAME__NAME)
-			}			 						
-		}
-		else {
-			var role = ensemble.roles.findFirst[it.name.equals(name.prefix.findFirst[true])]
-			if (role != null) {
-				if(dataTypes.containsKey(role.type.name)) {
-					var roleType = dataTypes.get(role.type.name)
-					return getKnowledgeType(name, roleType, 1)
-					
-				}
-				else {
-					error("Could not resolve the name.", role.type, EdlPackage.Literals.QUALIFIED_NAME__PREFIX)
-				}				
-			}
-			else {
-				error("A role with this name was not found in the ensemble.", name, EdlPackage.Literals.QUALIFIED_NAME__PREFIX)
-			}
-		}
-		
-		"unknown"	
+	override getDataType(QualifiedName name) {
+		return dataTypes.get(name.name);
 	}
 	
-	def String checkTypes(Query query, EnsembleDefinition ensemble) {		
-		switch(query) {
-		BoolLiteral:
-			"bool"			
-		NumericLiteral:
-			"int"			
-		StringLiteral:
-			"string"
-		FloatLiteral:
-			"float"
-		KnowledgeVariable: 
-			{
-				var QualifiedName name = query.path				 
-				getKnowledgeType(name, ensemble)
-			}
-		LogicalOperator:
-			{
-				var String l = checkTypes(query.left, ensemble)
- 				var String r = checkTypes(query.right, ensemble)
- 				
- 				if(!l.equals("bool"))
- 					error("A parameter of a logical operator must be a logical value.", query, EdlPackage.Literals.LOGICAL_OPERATOR__LEFT)
- 				
- 				if(!r.equals("bool"))
- 					error("A parameter of a logical operator must be a logical value.", query, EdlPackage.Literals.LOGICAL_OPERATOR__RIGHT)
- 				
- 				"bool"
- 			} 			
-		RelationOperator:
-			{
-				var String l = checkTypes(query.left, ensemble);
- 				var String r = checkTypes(query.right, ensemble); 				
- 				
- 				if(!l.equals(r))
- 				{
- 					error("Both parameters of a relation must be of the same type.", query, EdlPackage.Literals.RELATION_OPERATOR__LEFT);
- 				}
- 				
- 				if(query.type.equals(RelationOperatorType.EQUALITY) || query.type.equals(RelationOperatorType.NON_EQUALITY)) {
- 					if (!(query.left instanceof EquitableQuery))
- 						error("Parameters of this type of relation must be equitable.", query, EdlPackage.Literals.RELATION_OPERATOR__LEFT);
- 				}
- 				else {
- 					if (!(query.left instanceof ComparableQuery))
- 						error("Parameters of this type of relation must be comparable.", query, EdlPackage.Literals.RELATION_OPERATOR__LEFT);
- 				}
- 				
-				"bool"
-			}
-		BinaryOperator:	
-			{
-				var String l = checkTypes(query.left, ensemble);
- 				var String r = checkTypes(query.right, ensemble);
- 				
- 				if(!(l.equals("int") || l.equals("float")))
- 					error("A parameter of a binary operator must be numeric.", query, EdlPackage.Literals.BINARY_OPERATOR__LEFT)
- 				
- 				
- 				if(!(r.equals("int") || r.equals("float")))
- 					error("A parameter of a binary operator must be numeric.", query, EdlPackage.Literals.BINARY_OPERATOR__RIGHT)
- 				
- 				
- 				if(!l.equals(r))
- 				{
- 					error("Both parameters of a binary operator must be of the same numeric type.", query, EdlPackage.Literals.BINARY_OPERATOR__LEFT);
- 				}
- 				
-				l		
-			}
-		AdditiveInverse:
-			{
-				var String inner = checkTypes(query.nested, ensemble);
-				
-				if(!inner.equals("int") && !inner.equals("float"))
-					error("The nested expression of a additive inverse must be a numeric expression.", query, EdlPackage.Literals.ADDITIVE_INVERSE__NESTED)								
-				inner
-			}
-		Negation:
-			{
-				var String inner = checkTypes(query.nested, ensemble);
-				
-				if(!inner.equals("bool"))
-					error("The nested expression of a negation must be logical expression.", query, EdlPackage.Literals.NEGATION__NESTED)								
-				"bool"
-			}
-		FunctionCall:
-		// TODO: Check function calls, needs info on available functions and their typing.
-			
-			"goo"			
-		default:
-			"unknown"
-			
-		}
-	}
+	override reportError(String message, EObject source, EStructuralFeature feature) {
+		error(message, source, feature)
+	}	
 }
