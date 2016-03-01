@@ -100,7 +100,8 @@ public class NonDeterministicModeSwitchingManager {
 		
 		ComponentInstance component = ProcessContext.getCurrentProcess().getComponentInstance();
 		RuntimeMetadata runtime = (RuntimeMetadata) component.eContainer();
-
+		long currentTime = ProcessContext.getTimeProvider().getCurrentMilliseconds();
+		
 		for (ComponentInstance c : runtime.getComponentInstances()) {
 			ModeChart modeChart = c.getModeChart();
 			if (modeChart != null) {
@@ -113,7 +114,6 @@ public class NonDeterministicModeSwitchingManager {
 					NonDetModeSwitchEval evaluator = evaluators.value.get(c);
 					String[] knowledge = evaluator.getKnowledgeNames();
 					Object[] values = getValues(c, knowledge);
-					long currentTime = ProcessContext.getTimeProvider().getCurrentMilliseconds();
 					NonDetModeSwitchPerformance energy = evaluator.getEnergy(currentTime, values);
 					
 					if(energies.value.containsKey(currentNonDeterminismLevel)){
@@ -124,8 +124,12 @@ public class NonDeterministicModeSwitchingManager {
 						energies.value.put(currentNonDeterminismLevel, energy);
 					}
 					
+					double energyValue = energies.value.get(currentNonDeterminismLevel).getEnergy(); 
 					stateSpace.value.getState(currentNonDeterminismLevel).setEnergy(
-							energies.value.get(currentNonDeterminismLevel).getEnergy());
+							energyValue);
+					Log.i(String.format("Non-deterministic mode switching energy for the"
+							+ "non-deterministic level %f at %d is %f",
+							currentNonDeterminismLevel, currentTime, energyValue));
 				}
 			}
 		}
@@ -151,6 +155,7 @@ public class NonDeterministicModeSwitchingManager {
 		
 		ComponentInstance component = ProcessContext.getCurrentProcess().getComponentInstance();
 		RuntimeMetadata runtime = (RuntimeMetadata) component.eContainer();
+		long currentTime = ProcessContext.getTimeProvider().getCurrentMilliseconds();
 
 		for (ComponentInstance c : runtime.getComponentInstances()) {
 			ModeChart modeChart = c.getModeChart();
@@ -171,6 +176,10 @@ public class NonDeterministicModeSwitchingManager {
 					currentNonDeterminismLevel.value = nextState.getNondeterminism();
 					
 					reconfigureModeChart((ModeChartImpl)modeChart, currentNonDeterminismLevel.value);
+
+					Log.i(String.format("Non-deterministic mode switching the"
+							+ "non-deterministic level of component %s set to %f at %d",
+							c.getName(), currentNonDeterminismLevel, currentTime));
 				}
 			}
 		}
