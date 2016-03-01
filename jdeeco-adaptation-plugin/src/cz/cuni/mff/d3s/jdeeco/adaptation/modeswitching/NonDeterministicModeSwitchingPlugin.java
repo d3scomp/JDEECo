@@ -22,9 +22,14 @@ import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorExtensionPoint;
 import cz.cuni.mff.d3s.deeco.annotations.processor.NonDetModeSwitchAwareAnnotationProcessorExtension;
 import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.runtime.PluginInitFailedException;
+import cz.cuni.mff.d3s.jdeeco.modes.ModeSwitchingManager;
 import cz.cuni.mff.d3s.jdeeco.modes.ModeSwitchingPlugin;
 
 /**
@@ -34,18 +39,34 @@ import cz.cuni.mff.d3s.jdeeco.modes.ModeSwitchingPlugin;
 public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin {
 
 	private long startTime = 0;
-	Class<? extends NonDetModeSwitchEval> evalClass = null;
+	private Class<? extends NonDetModeSwitchEval> evalClass = null;
+	private long evalPeriod = 100;
+	private long reconfPeriod = 1000;
 	
 	/** Plugin dependencies. */
 	@SuppressWarnings("unchecked")
 	static private final List<Class<? extends DEECoPlugin>> DEPENDENCIES =
 			Arrays.asList(new Class[]{ModeSwitchingPlugin.class});
 	
-	public NonDeterministicModeSwitchingPlugin startAt(long startTime, Class<? extends NonDetModeSwitchEval> evalClass) {
-		this.startTime = startTime;
+	public NonDeterministicModeSwitchingPlugin(Class<? extends NonDetModeSwitchEval> evalClass){
 		this.evalClass = evalClass;
+	}
+	
+	public NonDeterministicModeSwitchingPlugin startAt(long startTime) {
+		this.startTime = startTime;
 		return this;
 	}
+	
+	public NonDeterministicModeSwitchingPlugin withEvalPeriod(long evalPeriod) {
+		this.evalPeriod = evalPeriod;
+		return this;
+	}
+	
+	public NonDeterministicModeSwitchingPlugin withReconfigPeriod(long reconfPeriod) {
+		this.reconfPeriod = reconfPeriod;
+		return this;
+	}
+	
 	
 	/* (non-Javadoc)
 	 * @see cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin#getDependencies()
@@ -69,6 +90,29 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin {
 			container.deployComponent(manager);
 		} catch (AnnotationProcessorException e) {
 			Log.e("Error while trying to deploy AdaptationManager", e);
+		}
+		
+		for (ComponentInstance c : container.getRuntimeMetadata().getComponentInstances()) {
+			if (c.getName().equals(NonDeterministicModeSwitchingManager.class.getName())) {
+
+				for (ComponentProcess p: c.getComponentProcesses()) {
+					Long period = null;
+					if(p.getName().equals("evaluate")){
+						period = evalPeriod;
+					}
+					if(p.getName().equals("reason")){
+						period = reconfPeriod;
+					}
+					
+					if(period != null){
+						for (Trigger t : p.getTriggers()){
+							if (t instanceof TimeTrigger) {
+								((TimeTrigger) t).setPeriod(period);
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 

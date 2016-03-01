@@ -25,6 +25,7 @@ import java.util.Set;
 import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
+import cz.cuni.mff.d3s.deeco.annotations.Local;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.SystemComponent;
@@ -62,18 +63,25 @@ public class NonDeterministicModeSwitchingManager {
 	 */
 	public String id = "NonDeterministicModeSwitchingManager";
 	
+	@Local
 	public NonDetModeSwitchAnnealStateSpace stateSpace;
 	
+	@Local
 	public static final double DEFAULT_ENERGY = 1;
 	
+	@Local
 	public final long startTime;
-		
-	public double currentNonDeterminismLevel;
 	
+	@Local
+	public Double currentNonDeterminismLevel;
+	
+	@Local
 	public Map<ComponentInstance, NonDetModeSwitchEval> evaluators;
 
+	@Local
 	public Class<? extends NonDetModeSwitchEval> evalClass;
 	
+	@Local
 	public Map<Double, NonDetModeSwitchPerformance> energies;
 	
 	
@@ -89,13 +97,13 @@ public class NonDeterministicModeSwitchingManager {
 	}
 	
 	@Process
-	@PeriodicScheduling(period = 100) // TODO: parametrize
+	@PeriodicScheduling(period = 100)
 	public static void evaluate(
-			@In("currentNonDeterminismLevel") double currentNonDeterminismLevel,
+			@In("currentNonDeterminismLevel") Double currentNonDeterminismLevel,
 			@InOut("energies") ParamHolder<Map<Double, NonDetModeSwitchPerformance>> energies,
 			@InOut("evaluators") ParamHolder<Map<ComponentInstance, NonDetModeSwitchEval>> evaluators,
 			@In("evalClass") Class<? extends NonDetModeSwitchEval> evalClass,
-			@InOut("evaluators") ParamHolder<NonDetModeSwitchAnnealStateSpace> stateSpace)
+			@InOut("stateSpace") ParamHolder<NonDetModeSwitchAnnealStateSpace> stateSpace)
 					throws InstantiationException, IllegalAccessException{
 		
 		ComponentInstance component = ProcessContext.getCurrentProcess().getComponentInstance();
@@ -142,7 +150,7 @@ public class NonDeterministicModeSwitchingManager {
 	 * @param id
 	 */
 	@Process
-	@PeriodicScheduling(period = 100) // TODO: parametrize
+	@PeriodicScheduling(period = 1000)
 	public static void reason(@In("id") String id,
 			@In("startTime") long startTime,
 			@InOut("stateSpace") ParamHolder<NonDetModeSwitchAnnealStateSpace> stateSpace,
