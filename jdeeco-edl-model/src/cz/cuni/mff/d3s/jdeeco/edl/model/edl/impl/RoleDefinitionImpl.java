@@ -2,59 +2,55 @@
  */
 package cz.cuni.mff.d3s.jdeeco.edl.model.edl.impl;
 
-import cz.cuni.mff.d3s.jdeeco.edl.model.edl.BoolLiteral;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EdlPackage;
+import cz.cuni.mff.d3s.jdeeco.edl.model.edl.RoleDefinition;
 
-import cz.cuni.mff.d3s.jdeeco.edl.model.edl.QueryVisitor;
-import java.lang.reflect.InvocationTargetException;
 import org.eclipse.emf.common.notify.Notification;
 
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Bool Literal</b></em>'.
+ * An implementation of the model object '<em><b>Role Definition</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link cz.cuni.mff.d3s.jdeeco.edl.model.edl.impl.BoolLiteralImpl#isValue <em>Value</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.jdeeco.edl.model.edl.impl.RoleDefinitionImpl#isExclusive <em>Exclusive</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class BoolLiteralImpl extends MinimalEObjectImpl.Container implements BoolLiteral {
+public class RoleDefinitionImpl extends ChildDefinitionImpl implements RoleDefinition {
 	/**
-	 * The default value of the '{@link #isValue() <em>Value</em>}' attribute.
+	 * The default value of the '{@link #isExclusive() <em>Exclusive</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #isValue()
+	 * @see #isExclusive()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final boolean VALUE_EDEFAULT = false;
+	protected static final boolean EXCLUSIVE_EDEFAULT = false;
 
 	/**
-	 * The cached value of the '{@link #isValue() <em>Value</em>}' attribute.
+	 * The cached value of the '{@link #isExclusive() <em>Exclusive</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #isValue()
+	 * @see #isExclusive()
 	 * @generated
 	 * @ordered
 	 */
-	protected boolean value = VALUE_EDEFAULT;
+	protected boolean exclusive = EXCLUSIVE_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected BoolLiteralImpl() {
+	protected RoleDefinitionImpl() {
 		super();
 	}
 
@@ -65,7 +61,7 @@ public class BoolLiteralImpl extends MinimalEObjectImpl.Container implements Boo
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return EdlPackage.Literals.BOOL_LITERAL;
+		return EdlPackage.Literals.ROLE_DEFINITION;
 	}
 
 	/**
@@ -73,8 +69,8 @@ public class BoolLiteralImpl extends MinimalEObjectImpl.Container implements Boo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public boolean isValue() {
-		return value;
+	public boolean isExclusive() {
+		return exclusive;
 	}
 
 	/**
@@ -82,20 +78,11 @@ public class BoolLiteralImpl extends MinimalEObjectImpl.Container implements Boo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setValue(boolean newValue) {
-		boolean oldValue = value;
-		value = newValue;
+	public void setExclusive(boolean newExclusive) {
+		boolean oldExclusive = exclusive;
+		exclusive = newExclusive;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, EdlPackage.BOOL_LITERAL__VALUE, oldValue, value));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated NOT
-	 */
-	public <T> T accept(QueryVisitor<T> visitor) {
-		return visitor.visit(this);
+			eNotify(new ENotificationImpl(this, Notification.SET, EdlPackage.ROLE_DEFINITION__EXCLUSIVE, oldExclusive, exclusive));
 	}
 
 	/**
@@ -106,8 +93,8 @@ public class BoolLiteralImpl extends MinimalEObjectImpl.Container implements Boo
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case EdlPackage.BOOL_LITERAL__VALUE:
-				return isValue();
+			case EdlPackage.ROLE_DEFINITION__EXCLUSIVE:
+				return isExclusive();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -120,8 +107,8 @@ public class BoolLiteralImpl extends MinimalEObjectImpl.Container implements Boo
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case EdlPackage.BOOL_LITERAL__VALUE:
-				setValue((Boolean)newValue);
+			case EdlPackage.ROLE_DEFINITION__EXCLUSIVE:
+				setExclusive((Boolean)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -135,8 +122,8 @@ public class BoolLiteralImpl extends MinimalEObjectImpl.Container implements Boo
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case EdlPackage.BOOL_LITERAL__VALUE:
-				setValue(VALUE_EDEFAULT);
+			case EdlPackage.ROLE_DEFINITION__EXCLUSIVE:
+				setExclusive(EXCLUSIVE_EDEFAULT);
 				return;
 		}
 		super.eUnset(featureID);
@@ -150,25 +137,10 @@ public class BoolLiteralImpl extends MinimalEObjectImpl.Container implements Boo
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case EdlPackage.BOOL_LITERAL__VALUE:
-				return value != VALUE_EDEFAULT;
+			case EdlPackage.ROLE_DEFINITION__EXCLUSIVE:
+				return exclusive != EXCLUSIVE_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	@SuppressWarnings({"rawtypes", "unchecked" })
-	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
-		switch (operationID) {
-			case EdlPackage.BOOL_LITERAL___ACCEPT__QUERYVISITOR:
-				return accept((QueryVisitor)arguments.get(0));
-		}
-		return super.eInvoke(operationID, arguments);
 	}
 
 	/**
@@ -181,10 +153,10 @@ public class BoolLiteralImpl extends MinimalEObjectImpl.Container implements Boo
 		if (eIsProxy()) return super.toString();
 
 		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (value: ");
-		result.append(value);
+		result.append(" (exclusive: ");
+		result.append(exclusive);
 		result.append(')');
 		return result.toString();
 	}
 
-} //BoolLiteralImpl
+} //RoleDefinitionImpl

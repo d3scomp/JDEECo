@@ -194,7 +194,7 @@ public class AdditiveInverseImpl extends MinimalEObjectImpl.Container implements
 	@SuppressWarnings({"rawtypes", "unchecked" })
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
-			case EdlPackage.ADDITIVE_INVERSE___ACCEPT__EXPRESSIONVISITOR:
+			case EdlPackage.ADDITIVE_INVERSE___ACCEPT__QUERYVISITOR:
 				return accept((QueryVisitor)arguments.get(0));
 		}
 		return super.eInvoke(operationID, arguments);

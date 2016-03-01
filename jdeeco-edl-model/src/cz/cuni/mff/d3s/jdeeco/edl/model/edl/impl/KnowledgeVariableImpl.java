@@ -194,7 +194,7 @@ public class KnowledgeVariableImpl extends MinimalEObjectImpl.Container implemen
 	@SuppressWarnings({"rawtypes", "unchecked" })
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
-			case EdlPackage.KNOWLEDGE_VARIABLE___ACCEPT__EXPRESSIONVISITOR:
+			case EdlPackage.KNOWLEDGE_VARIABLE___ACCEPT__QUERYVISITOR:
 				return accept((QueryVisitor)arguments.get(0));
 		}
 		return super.eInvoke(operationID, arguments);

@@ -3,11 +3,9 @@
 package cz.cuni.mff.d3s.jdeeco.edl.model.edl.impl;
 
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EdlPackage;
-import cz.cuni.mff.d3s.jdeeco.edl.model.edl.QueryVisitor;
-import cz.cuni.mff.d3s.jdeeco.edl.model.edl.FunctionCall;
-import cz.cuni.mff.d3s.jdeeco.edl.model.edl.Query;
+import cz.cuni.mff.d3s.jdeeco.edl.model.edl.FieldDeclaration;
+import cz.cuni.mff.d3s.jdeeco.edl.model.edl.TypeDefinition;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -26,19 +24,19 @@ import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Function Call</b></em>'.
+ * An implementation of the model object '<em><b>Type Definition</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link cz.cuni.mff.d3s.jdeeco.edl.model.edl.impl.FunctionCallImpl#getName <em>Name</em>}</li>
- *   <li>{@link cz.cuni.mff.d3s.jdeeco.edl.model.edl.impl.FunctionCallImpl#getParameters <em>Parameters</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.jdeeco.edl.model.edl.impl.TypeDefinitionImpl#getName <em>Name</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.jdeeco.edl.model.edl.impl.TypeDefinitionImpl#getFields <em>Fields</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class FunctionCallImpl extends MinimalEObjectImpl.Container implements FunctionCall {
+public class TypeDefinitionImpl extends MinimalEObjectImpl.Container implements TypeDefinition {
 	/**
 	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -60,21 +58,21 @@ public class FunctionCallImpl extends MinimalEObjectImpl.Container implements Fu
 	protected String name = NAME_EDEFAULT;
 
 	/**
-	 * The cached value of the '{@link #getParameters() <em>Parameters</em>}' containment reference list.
+	 * The cached value of the '{@link #getFields() <em>Fields</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getParameters()
+	 * @see #getFields()
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<Query> parameters;
+	protected EList<FieldDeclaration> fields;
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected FunctionCallImpl() {
+	protected TypeDefinitionImpl() {
 		super();
 	}
 
@@ -85,7 +83,7 @@ public class FunctionCallImpl extends MinimalEObjectImpl.Container implements Fu
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return EdlPackage.Literals.FUNCTION_CALL;
+		return EdlPackage.Literals.TYPE_DEFINITION;
 	}
 
 	/**
@@ -106,7 +104,7 @@ public class FunctionCallImpl extends MinimalEObjectImpl.Container implements Fu
 		String oldName = name;
 		name = newName;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, EdlPackage.FUNCTION_CALL__NAME, oldName, name));
+			eNotify(new ENotificationImpl(this, Notification.SET, EdlPackage.TYPE_DEFINITION__NAME, oldName, name));
 	}
 
 	/**
@@ -114,20 +112,11 @@ public class FunctionCallImpl extends MinimalEObjectImpl.Container implements Fu
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<Query> getParameters() {
-		if (parameters == null) {
-			parameters = new EObjectContainmentEList<Query>(Query.class, this, EdlPackage.FUNCTION_CALL__PARAMETERS);
+	public EList<FieldDeclaration> getFields() {
+		if (fields == null) {
+			fields = new EObjectContainmentEList<FieldDeclaration>(FieldDeclaration.class, this, EdlPackage.TYPE_DEFINITION__FIELDS);
 		}
-		return parameters;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated NOT
-	 */
-	public <T> T accept(QueryVisitor<T> visitor) {
-		return visitor.visit(this);
+		return fields;
 	}
 
 	/**
@@ -138,8 +127,8 @@ public class FunctionCallImpl extends MinimalEObjectImpl.Container implements Fu
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case EdlPackage.FUNCTION_CALL__PARAMETERS:
-				return ((InternalEList<?>)getParameters()).basicRemove(otherEnd, msgs);
+			case EdlPackage.TYPE_DEFINITION__FIELDS:
+				return ((InternalEList<?>)getFields()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -152,10 +141,10 @@ public class FunctionCallImpl extends MinimalEObjectImpl.Container implements Fu
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case EdlPackage.FUNCTION_CALL__NAME:
+			case EdlPackage.TYPE_DEFINITION__NAME:
 				return getName();
-			case EdlPackage.FUNCTION_CALL__PARAMETERS:
-				return getParameters();
+			case EdlPackage.TYPE_DEFINITION__FIELDS:
+				return getFields();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -169,12 +158,12 @@ public class FunctionCallImpl extends MinimalEObjectImpl.Container implements Fu
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case EdlPackage.FUNCTION_CALL__NAME:
+			case EdlPackage.TYPE_DEFINITION__NAME:
 				setName((String)newValue);
 				return;
-			case EdlPackage.FUNCTION_CALL__PARAMETERS:
-				getParameters().clear();
-				getParameters().addAll((Collection<? extends Query>)newValue);
+			case EdlPackage.TYPE_DEFINITION__FIELDS:
+				getFields().clear();
+				getFields().addAll((Collection<? extends FieldDeclaration>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -188,11 +177,11 @@ public class FunctionCallImpl extends MinimalEObjectImpl.Container implements Fu
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case EdlPackage.FUNCTION_CALL__NAME:
+			case EdlPackage.TYPE_DEFINITION__NAME:
 				setName(NAME_EDEFAULT);
 				return;
-			case EdlPackage.FUNCTION_CALL__PARAMETERS:
-				getParameters().clear();
+			case EdlPackage.TYPE_DEFINITION__FIELDS:
+				getFields().clear();
 				return;
 		}
 		super.eUnset(featureID);
@@ -206,27 +195,12 @@ public class FunctionCallImpl extends MinimalEObjectImpl.Container implements Fu
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case EdlPackage.FUNCTION_CALL__NAME:
+			case EdlPackage.TYPE_DEFINITION__NAME:
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-			case EdlPackage.FUNCTION_CALL__PARAMETERS:
-				return parameters != null && !parameters.isEmpty();
+			case EdlPackage.TYPE_DEFINITION__FIELDS:
+				return fields != null && !fields.isEmpty();
 		}
 		return super.eIsSet(featureID);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	@SuppressWarnings({"rawtypes", "unchecked" })
-	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
-		switch (operationID) {
-			case EdlPackage.FUNCTION_CALL___ACCEPT__QUERYVISITOR:
-				return accept((QueryVisitor)arguments.get(0));
-		}
-		return super.eInvoke(operationID, arguments);
 	}
 
 	/**
@@ -245,4 +219,4 @@ public class FunctionCallImpl extends MinimalEObjectImpl.Container implements Fu
 		return result.toString();
 	}
 
-} //FunctionCallImpl
+} //TypeDefinitionImpl

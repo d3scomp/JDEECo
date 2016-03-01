@@ -313,7 +313,7 @@ public abstract class BinaryOperatorImpl extends MinimalEObjectImpl.Container im
 	@SuppressWarnings({"rawtypes", "unchecked" })
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
-			case EdlPackage.BINARY_OPERATOR___ACCEPT__EXPRESSIONVISITOR:
+			case EdlPackage.BINARY_OPERATOR___ACCEPT__QUERYVISITOR:
 				return accept((QueryVisitor)arguments.get(0));
 		}
 		return super.eInvoke(operationID, arguments);

@@ -165,7 +165,7 @@ public class FloatLiteralImpl extends MinimalEObjectImpl.Container implements Fl
 	@SuppressWarnings({"rawtypes", "unchecked" })
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
-			case EdlPackage.FLOAT_LITERAL___ACCEPT__EXPRESSIONVISITOR:
+			case EdlPackage.FLOAT_LITERAL___ACCEPT__QUERYVISITOR:
 				return accept((QueryVisitor)arguments.get(0));
 		}
 		return super.eInvoke(operationID, arguments);

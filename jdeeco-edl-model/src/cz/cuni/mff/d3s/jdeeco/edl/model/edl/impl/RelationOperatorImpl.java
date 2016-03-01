@@ -310,7 +310,7 @@ public class RelationOperatorImpl extends MinimalEObjectImpl.Container implement
 	@SuppressWarnings({"rawtypes", "unchecked" })
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
-			case EdlPackage.RELATION_OPERATOR___ACCEPT__EXPRESSIONVISITOR:
+			case EdlPackage.RELATION_OPERATOR___ACCEPT__QUERYVISITOR:
 				return accept((QueryVisitor)arguments.get(0));
 		}
 		return super.eInvoke(operationID, arguments);
