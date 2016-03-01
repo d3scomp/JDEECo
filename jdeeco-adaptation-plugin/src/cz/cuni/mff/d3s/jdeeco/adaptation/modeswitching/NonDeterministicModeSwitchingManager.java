@@ -85,13 +85,27 @@ public class NonDeterministicModeSwitchingManager {
 	public Map<Double, NonDetModeSwitchFitness> energies;
 	
 	
-	
-	public NonDeterministicModeSwitchingManager(long startTime, Class<? extends NonDetModeSwitchFitnessEval> evalClass) {
+	public NonDeterministicModeSwitchingManager(long startTime,
+			Class<? extends NonDetModeSwitchFitnessEval> evalClass) {
 		this.startTime = startTime;
+		
+		init(NonDetModeSwitchAnnealStateSpace.DEFAULT_STARTING_NONDETERMINISM,
+				evalClass);
+	}
+
+	public NonDeterministicModeSwitchingManager(long startTime,
+			double startingNondeterminism,
+			Class<? extends NonDetModeSwitchFitnessEval> evalClass) {
+		this.startTime = startTime;
+		init(startingNondeterminism, evalClass);
+	}
+	
+	public void init(double startingNondeterminism,
+			Class<? extends NonDetModeSwitchFitnessEval> evalClass) {
 		this.evalClass = evalClass;
 		
-		currentNonDeterminismLevel = NonDetModeSwitchAnnealStateSpace.startingNondeterminism;
-		stateSpace = new NonDetModeSwitchAnnealStateSpace();
+		stateSpace = new NonDetModeSwitchAnnealStateSpace(startingNondeterminism);
+		currentNonDeterminismLevel = startingNondeterminism;
 		evaluators = new HashMap<>();
 		energies = new HashMap<>();
 	}

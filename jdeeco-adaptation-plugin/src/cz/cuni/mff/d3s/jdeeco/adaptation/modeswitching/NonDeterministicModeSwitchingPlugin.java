@@ -41,6 +41,7 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin {
 	private Class<? extends NonDetModeSwitchFitnessEval> evalClass = null;
 	private long evalPeriod = 100;
 	private long reconfPeriod = 1000;
+	private double startingNondeterminism = 0.0001;
 	
 	/** Plugin dependencies. */
 	@SuppressWarnings("unchecked")
@@ -66,6 +67,10 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin {
 		return this;
 	}
 	
+	public NonDeterministicModeSwitchingPlugin withStartingNondetermoinism(double nondeterminism) {
+		this.startingNondeterminism = nondeterminism;
+		return this;
+	}
 	
 	/* (non-Javadoc)
 	 * @see cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin#getDependencies()
@@ -84,7 +89,9 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin {
 		container.getProcessor().addExtension(nonDetModeAwareAnnotationProcessor);
 		
 		try {
-			final NonDeterministicModeSwitchingManager manager = new NonDeterministicModeSwitchingManager(startTime, evalClass);
+			final NonDeterministicModeSwitchingManager manager =
+					new NonDeterministicModeSwitchingManager(startTime,
+							startingNondeterminism, evalClass);
 			
 			container.deployComponent(manager);
 		} catch (AnnotationProcessorException e) {
