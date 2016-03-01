@@ -14,6 +14,8 @@ public class IntelligentEnsemble implements EnsembleInstance {
 		members = new ArrayList<>();
 	}
 	
+	public Rescuer leader;
+	
 	public List<Rescuer> members;
 
 	@Override
