@@ -19,7 +19,7 @@ package cz.cuni.mff.d3s.jdeeco.adaptation.modeswitching;
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  *
  */
-public interface NonDetModeSwitchEval {
+public interface NonDetModeSwitchFitnessEval {
 	String[] getKnowledgeNames();	
-	NonDetModeSwitchPerformance getEnergy(long currentTime, Object [] knowledgeValues);
+	NonDetModeSwitchFitness getFitness(long currentTime, Object [] knowledgeValues);
 }

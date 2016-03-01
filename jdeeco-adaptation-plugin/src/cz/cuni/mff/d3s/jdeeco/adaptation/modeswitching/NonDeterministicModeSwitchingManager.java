@@ -76,17 +76,17 @@ public class NonDeterministicModeSwitchingManager {
 	public Double currentNonDeterminismLevel;
 	
 	@Local
-	public Map<ComponentInstance, NonDetModeSwitchEval> evaluators;
+	public Map<ComponentInstance, NonDetModeSwitchFitnessEval> evaluators;
 
 	@Local
-	public Class<? extends NonDetModeSwitchEval> evalClass;
+	public Class<? extends NonDetModeSwitchFitnessEval> evalClass;
 	
 	@Local
-	public Map<Double, NonDetModeSwitchPerformance> energies;
+	public Map<Double, NonDetModeSwitchFitness> energies;
 	
 	
 	
-	public NonDeterministicModeSwitchingManager(long startTime, Class<? extends NonDetModeSwitchEval> evalClass) {
+	public NonDeterministicModeSwitchingManager(long startTime, Class<? extends NonDetModeSwitchFitnessEval> evalClass) {
 		this.startTime = startTime;
 		this.evalClass = evalClass;
 		
@@ -100,9 +100,9 @@ public class NonDeterministicModeSwitchingManager {
 	@PeriodicScheduling(period = 100)
 	public static void evaluate(
 			@In("currentNonDeterminismLevel") Double currentNonDeterminismLevel,
-			@InOut("energies") ParamHolder<Map<Double, NonDetModeSwitchPerformance>> energies,
-			@InOut("evaluators") ParamHolder<Map<ComponentInstance, NonDetModeSwitchEval>> evaluators,
-			@In("evalClass") Class<? extends NonDetModeSwitchEval> evalClass,
+			@InOut("energies") ParamHolder<Map<Double, NonDetModeSwitchFitness>> energies,
+			@InOut("evaluators") ParamHolder<Map<ComponentInstance, NonDetModeSwitchFitnessEval>> evaluators,
+			@In("evalClass") Class<? extends NonDetModeSwitchFitnessEval> evalClass,
 			@InOut("stateSpace") ParamHolder<NonDetModeSwitchAnnealStateSpace> stateSpace)
 					throws InstantiationException, IllegalAccessException{
 		
@@ -119,20 +119,20 @@ public class NonDeterministicModeSwitchingManager {
 						evaluators.value.put(c, evalClass.newInstance());
 					}
 					
-					NonDetModeSwitchEval evaluator = evaluators.value.get(c);
+					NonDetModeSwitchFitnessEval evaluator = evaluators.value.get(c);
 					String[] knowledge = evaluator.getKnowledgeNames();
 					Object[] values = getValues(c, knowledge);
-					NonDetModeSwitchPerformance energy = evaluator.getEnergy(currentTime, values);
+					NonDetModeSwitchFitness energy = evaluator.getFitness(currentTime, values);
 					
 					if(energies.value.containsKey(currentNonDeterminismLevel)){
-						NonDetModeSwitchPerformance p = energy.combineEnergies(
+						NonDetModeSwitchFitness p = energy.combineFitness(
 								energies.value.get(currentNonDeterminismLevel));
 						energies.value.put(currentNonDeterminismLevel, p);
 					} else {
 						energies.value.put(currentNonDeterminismLevel, energy);
 					}
 					
-					double energyValue = energies.value.get(currentNonDeterminismLevel).getEnergy(); 
+					double energyValue = energies.value.get(currentNonDeterminismLevel).getFitness(); 
 					stateSpace.value.getState(currentNonDeterminismLevel).setEnergy(
 							energyValue);
 					Log.i(String.format("Non-deterministic mode switching energy for the"

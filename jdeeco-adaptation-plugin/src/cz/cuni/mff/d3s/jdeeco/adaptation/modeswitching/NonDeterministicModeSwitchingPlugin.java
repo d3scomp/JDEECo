@@ -29,7 +29,6 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.runtime.PluginInitFailedException;
-import cz.cuni.mff.d3s.jdeeco.modes.ModeSwitchingManager;
 import cz.cuni.mff.d3s.jdeeco.modes.ModeSwitchingPlugin;
 
 /**
@@ -39,7 +38,7 @@ import cz.cuni.mff.d3s.jdeeco.modes.ModeSwitchingPlugin;
 public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin {
 
 	private long startTime = 0;
-	private Class<? extends NonDetModeSwitchEval> evalClass = null;
+	private Class<? extends NonDetModeSwitchFitnessEval> evalClass = null;
 	private long evalPeriod = 100;
 	private long reconfPeriod = 1000;
 	
@@ -48,7 +47,7 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin {
 	static private final List<Class<? extends DEECoPlugin>> DEPENDENCIES =
 			Arrays.asList(new Class[]{ModeSwitchingPlugin.class});
 	
-	public NonDeterministicModeSwitchingPlugin(Class<? extends NonDetModeSwitchEval> evalClass){
+	public NonDeterministicModeSwitchingPlugin(Class<? extends NonDetModeSwitchFitnessEval> evalClass){
 		this.evalClass = evalClass;
 	}
 	

@@ -19,8 +19,8 @@ package cz.cuni.mff.d3s.jdeeco.adaptation.modeswitching;
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  *
  */
-public interface NonDetModeSwitchPerformance {
+public interface NonDetModeSwitchFitness {
 
-	NonDetModeSwitchPerformance combineEnergies(NonDetModeSwitchPerformance other);
-	double getEnergy();
+	NonDetModeSwitchFitness combineFitness(NonDetModeSwitchFitness other);
+	double getFitness();
 }
