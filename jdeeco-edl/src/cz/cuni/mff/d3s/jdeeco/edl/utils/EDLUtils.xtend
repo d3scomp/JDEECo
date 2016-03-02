@@ -1,6 +1,8 @@
 package cz.cuni.mff.d3s.jdeeco.edl.utils
 
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.*
+import java.util.List
+import java.util.Collections
 
 class EDLUtils {	
 	def static String getKnowledgeType(ITypeResolutionContext ctx, QualifiedName name, TypeDefinition type, int position) {
@@ -43,7 +45,10 @@ class EDLUtils {
 			 	
 			 var role = ensemble.roles.findFirst[it.name.equals(name.name)]
 			 if (role != null) {									
-					return role.type.name				
+					if(role.cardinalityMax == 1)
+						return role.type.name
+					else
+						return "set"				
 			}
 			else {
 				ctx.reportError("An element with this name was not found in the ensemble.", name, EdlPackage.Literals.QUALIFIED_NAME__NAME)
@@ -155,12 +160,23 @@ class EDLUtils {
 				"bool"
 			}
 		FunctionCall:
-		// TODO: Check function calls, needs info on available functions and their typing.
-			
-			"goo"			
+			{
+				if (ctx.functionRegistry.containsFunction(query.name)) {				
+					val function = ctx.functionRegistry.getFunction(query.name)
+					if(!function.parameterTypes.equals(query.parameters.map[getType(ctx, it, ensemble)].toList())) {
+						ctx.reportError("The parameter types do not correspond to the expected formal parameters.", query, EdlPackage.Literals.FUNCTION_CALL__PARAMETERS)
+					}				
+					
+					ctx.functionRegistry.getFunctionReturnType(query.name);				
+				} 
+				else {
+					ctx.reportError("Unknown function name: " + query.name, query, EdlPackage.Literals.FUNCTION_CALL__NAME);
+					"unknown"
+				}
+			}
+					
 		default:
-			"unknown"
-			
+			"unknown"			
 		}
 	}
 	
@@ -183,6 +199,9 @@ class EDLUtils {
 			
 		var remainder = parts.drop(1)	
 		
-		result + String.join(".", remainder)
+		if (remainder.length > 0)
+			result + "." +String.join(".", remainder)
+		else
+			result
 	}
 }

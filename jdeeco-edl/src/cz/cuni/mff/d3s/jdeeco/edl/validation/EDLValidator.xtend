@@ -28,6 +28,9 @@ class EDLValidator extends AbstractEDLValidator implements ITypeResolutionContex
 	Map<String, TypeDefinition> dataTypes;
 	Set<String> ensembleNames
 	
+	@Inject
+	IFunctionRegistry registry;
+	
 	@Check
 	def generateDocumentInfo(EdlDocument document) {
 			
@@ -136,5 +139,10 @@ class EDLValidator extends AbstractEDLValidator implements ITypeResolutionContex
 	
 	override reportError(String message, EObject source, EStructuralFeature feature) {
 		error(message, source, feature)
-	}	
+	}
+	
+	override functionRegistry() {
+		return registry
+	}
+	
 }

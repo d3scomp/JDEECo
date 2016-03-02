@@ -13,6 +13,8 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EStructuralFeature
 import java.util.HashMap
 import java.util.Map
+import com.google.inject.Inject
+import cz.cuni.mff.d3s.jdeeco.edl.IFunctionRegistry
 
 /**
  * Generates code from your model files on save.
@@ -22,6 +24,9 @@ import java.util.Map
 class EDLGenerator implements IGenerator, ITypeResolutionContext {
 	
 	Map<String, TypeDefinition> dataTypes;
+	
+	@Inject
+	IFunctionRegistry registry;
 	
 	override void doGenerate(Resource resource, IFileSystemAccess fsa) {
 		dataTypes = new HashMap();
@@ -162,6 +167,10 @@ public class «d.name» {
 	
 	override reportError(String message, EObject source, EStructuralFeature feature) {
 		// Left intentionally empty - no need to report type errors during generation, document should be valid at this point
+	}
+	
+	override functionRegistry() {
+		return registry;
 	}
 	
 }
