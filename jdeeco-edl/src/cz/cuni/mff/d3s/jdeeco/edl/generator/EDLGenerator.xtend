@@ -48,6 +48,8 @@ class EDLGenerator implements IGenerator, ITypeResolutionContext {
 	}
 	
 	def void generateEnsemble(EnsembleDefinition e, IFileSystemAccess fsa, String path, String packageString) {
+		var generatorVisitor = new CodeGeneratorVisitor(this, e)
+		
 		fsa.generateFile(path+e.name + ".java", 
 			
 '''package «packageString»;
@@ -58,7 +60,7 @@ import cz.cuni.mff.d3s.deeco.ensembles.EnsembleInstance;
 
 public class «e.name» implements EnsembleInstance {
 	// Ensemble ID
-	public «getJavaTypeName(e.id.type.name)» «e.id.fieldName»;
+	public final «getJavaTypeName(e.id.type.name)» «e.id.fieldName»;
 	
 	public «e.name»(«getJavaTypeName(e.id.type.name)» «e.id.fieldName») {
 		this.«e.id.fieldName» = «e.id.fieldName»;
@@ -72,7 +74,7 @@ public class «e.name» implements EnsembleInstance {
 	// Aliases
 	«FOR a : e.aliases»	
 	public «getJavaTypeName(EDLUtils.getType(this, a.aliasValue, e))» «a.aliasId»() {
-		return «a.aliasValue.accept(new ToStringVisitor())»;
+		return «a.aliasValue.accept(generatorVisitor)»;
 	}
 		
 	«ENDFOR»		  
@@ -94,10 +96,10 @@ public class «e.name» implements EnsembleInstance {
 		«var role = e.roles.findFirst[it.name.equals(rule.field.toParts().get(0))]»
 		«IF (role.cardinalityMax != 1)»
 		for («role.type.toString()» x : «role.name») {
-			x.«String.join(".", rule.field.toParts().drop(1))» = «rule.query.accept(new ToStringVisitor())»;
+			x.«String.join(".", rule.field.toParts().drop(1))» = «rule.query.accept(generatorVisitor)»;
 		} 
 		«ELSE»
-		«rule.field.toString()» = «rule.query.accept(new ToStringVisitor())»;
+		«rule.field.toString()» = «rule.query.accept(generatorVisitor)»;
 		«ENDIF»				
 		«ENDFOR»		
 	}		
@@ -148,7 +150,7 @@ public class «d.name» {
 			default:
 				type
 		}			
-	}
+	}	
 	
 	override getDataType(QualifiedName name) {
 		return dataTypes.get(name.name);

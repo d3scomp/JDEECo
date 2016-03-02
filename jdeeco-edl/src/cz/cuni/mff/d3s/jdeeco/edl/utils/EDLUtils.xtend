@@ -2,7 +2,7 @@ package cz.cuni.mff.d3s.jdeeco.edl.utils
 
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.*
 
-class EDLUtils {
+class EDLUtils {	
 	def static String getKnowledgeType(ITypeResolutionContext ctx, QualifiedName name, TypeDefinition type, int position) {
 		if (position >= name.prefix.length) {			
 			var FieldDeclaration f = type.fields.findFirst[it.name.equals(name.name)]
@@ -162,5 +162,27 @@ class EDLUtils {
 			"unknown"
 			
 		}
+	}
+	
+	def static String getAccessPath(ITypeResolutionContext ctx, QualifiedName name, EnsembleDefinition ensemble) {
+		var parts = name.toParts();
+		var String result;
+		
+		val first = parts.findFirst[true]
+		
+		if(ensemble.id.fieldName.equals(first))
+			result = ensemble.id.fieldName
+		
+		var alias = ensemble.aliases.findFirst[it.aliasId.equals(first)]
+		if (alias != null)
+		 	result = alias.aliasId + "()"	
+		 	
+		var role = ensemble.roles.findFirst[it.name.equals(first)]
+		if (role != null)									
+			result = role.name
+			
+		var remainder = parts.drop(1)	
+		
+		result + String.join(".", remainder)
 	}
 }

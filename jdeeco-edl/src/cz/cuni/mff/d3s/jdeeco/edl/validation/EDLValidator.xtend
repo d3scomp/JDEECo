@@ -95,10 +95,10 @@ class EDLValidator extends AbstractEDLValidator implements ITypeResolutionContex
 		
 		for (Query c : ensemble.constraints) {
 			val type = EDLUtils.getType(this, c, ensemble)
-			// TODO: Improve model so the constraint errors can be reported per constraint
-//			if (!type.equals("bool")) {
-//				error("Constraint must be a logical expression. - " + type, ensemble, EdlPackage.Literals.ENSEMBLE_DEFINITION__CONSTRAINTS)
-//			}
+			
+			if (!type.equals("bool")) {
+				error("Constraint must be a logical expression. - " + type, ensemble, EdlPackage.Literals.ENSEMBLE_DEFINITION__CONSTRAINTS, ensemble.constraints.indexOf(c))
+			}
 		}	
 		
 		for (AliasDefinition a : ensemble.aliases) {
