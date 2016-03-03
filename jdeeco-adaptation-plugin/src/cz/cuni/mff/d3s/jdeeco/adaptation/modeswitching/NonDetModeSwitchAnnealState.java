@@ -15,6 +15,9 @@
  *******************************************************************************/
 package cz.cuni.mff.d3s.jdeeco.adaptation.modeswitching;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import cz.cuni.mff.d3s.jdeeco.adaptation.search.annealing.AnnealingState;
 
 /**
@@ -60,11 +63,18 @@ public class NonDetModeSwitchAnnealState implements AnnealingState {
 	 */
 	@Override
 	public AnnealingState[] getNeighbors() {
-		NonDetModeSwitchAnnealState neighbors[] = {
-				stateSpace.getState(nondeterminism/2),
-				stateSpace.getState(nondeterminism*2)
-		};
-		return neighbors;
+		if(nondeterminism == 0){
+			return new NonDetModeSwitchAnnealState[]{};
+		}
+
+		List<NonDetModeSwitchAnnealState> neighbors = 
+			new ArrayList<>();
+		neighbors.add(stateSpace.getState(nondeterminism/2));
+		if(nondeterminism <= 0.5){
+			neighbors.add(stateSpace.getState(nondeterminism*2));
+		}
+		
+		return neighbors.toArray(new NonDetModeSwitchAnnealState[]{});
 	}
 
 	/* (non-Javadoc)
@@ -88,5 +98,14 @@ public class NonDetModeSwitchAnnealState implements AnnealingState {
 	@Override
 	public int hashCode() {
 		return Double.hashCode(nondeterminism);
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return String.format("NonDetModeSwitchAnnealState with non-determinism == %f",
+				nondeterminism);
 	}
 }
