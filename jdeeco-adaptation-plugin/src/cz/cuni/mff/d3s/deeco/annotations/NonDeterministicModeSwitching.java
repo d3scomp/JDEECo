@@ -31,7 +31,7 @@ import cz.cuni.mff.d3s.deeco.search.StateSpaceSearch;
  *
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
+@Target(ElementType.TYPE)
 public @interface NonDeterministicModeSwitching {
 	Class<? extends StateSpaceSearch> searchEngine();
 	Class<? extends SearchParameters> searchParameters() default EmptyParameters.class;
