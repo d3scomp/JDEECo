@@ -43,6 +43,8 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin {
 	private long reconfPeriod = 1000;
 	private double startingNondeterminism = 0.0001;
 	
+	private boolean verbose = false;
+	
 	/** Plugin dependencies. */
 	@SuppressWarnings("unchecked")
 	static private final List<Class<? extends DEECoPlugin>> DEPENDENCIES =
@@ -72,6 +74,11 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin {
 		return this;
 	}
 	
+	public NonDeterministicModeSwitchingPlugin withVerbosity(boolean verbosity){
+		verbose = verbosity;
+		return this;
+	}
+	
 	/* (non-Javadoc)
 	 * @see cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin#getDependencies()
 	 */
@@ -92,6 +99,7 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin {
 			final NonDeterministicModeSwitchingManager manager =
 					new NonDeterministicModeSwitchingManager(startTime,
 							startingNondeterminism, evalClass);
+			NonDeterministicModeSwitchingManager.verbose = verbose;
 			
 			container.deployComponent(manager);
 		} catch (AnnotationProcessorException e) {

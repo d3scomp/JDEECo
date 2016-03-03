@@ -58,6 +58,8 @@ import cz.cuni.mff.d3s.jdeeco.modes.runtimelog.ModeTransitionLogger;
 @SystemComponent
 public class NonDeterministicModeSwitchingManager {
 
+	static boolean verbose = false;
+	
 	/**
 	 * Mandatory knowledge field - id of the component.
 	 */
@@ -149,9 +151,12 @@ public class NonDeterministicModeSwitchingManager {
 					double energyValue = energies.value.get(currentNonDeterminismLevel).getFitness(); 
 					stateSpace.value.getState(currentNonDeterminismLevel).setEnergy(
 							energyValue);
-					Log.i(String.format("Non-deterministic mode switching energy for the"
+					
+					if(verbose){
+						Log.i(String.format("Non-deterministic mode switching energy for the"
 							+ "non-deterministic level %f at %d is %f",
 							currentNonDeterminismLevel, currentTime, energyValue));
+					}
 				}
 			}
 		}
@@ -199,9 +204,11 @@ public class NonDeterministicModeSwitchingManager {
 					
 					reconfigureModeChart((ModeChartImpl)modeChart, currentNonDeterminismLevel.value);
 
-					Log.i(String.format("Non-deterministic mode switching the"
+					if(verbose) {
+						Log.i(String.format("Non-deterministic mode switching the"
 							+ "non-deterministic level of component %s set to %f at %d",
 							c.getName(), currentNonDeterminismLevel.value, currentTime));
+					}
 				}
 			}
 		}
