@@ -7,36 +7,54 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.*
-import cz.cuni.mff.d3s.jdeeco.edl.utils.ToStringVisitor
+import cz.cuni.mff.d3s.jdeeco.edl.utils.*
+import cz.cuni.mff.d3s.jdeeco.edl.model.edl.QualifiedName
+import org.eclipse.emf.ecore.EObject
+import org.eclipse.emf.ecore.EStructuralFeature
+import java.util.HashMap
+import java.util.Map
+import com.google.inject.Inject
+import cz.cuni.mff.d3s.jdeeco.edl.IFunctionRegistry
 
 /**
  * Generates code from your model files on save.
  * 
  * see http://www.eclipse.org/Xtext/documentation.html#TutorialCodeGeneration
  */
-class EDLGenerator implements IGenerator {
+class EDLGenerator implements IGenerator, ITypeResolutionContext {
+	
+	Map<String, TypeDefinition> dataTypes;
+	
+	@Inject
+	IFunctionRegistry registry;
 	
 	override void doGenerate(Resource resource, IFileSystemAccess fsa) {
+		dataTypes = new HashMap();
+		
 		var document = resource.contents.filter(typeof(EdlDocument)).findFirst[true];
 		var allParts = document.package.toParts()			
 		
 		var packageString = String.join(".", allParts);
 		var path = String.join("/", allParts) + "/";		
 		
-		for(EnsembleDefinition e : document.ensembles) {
-			generateEnsemble(e, fsa, path, packageString);			
+		for(TypeDefinition d : document.knowledgeTypes) {
+			generateType(d, fsa, path, packageString)
+			dataTypes.put(d.name, d);
 		}
 		
 		for(DataContractDefinition d : document.dataContracts) {
 			generateDataContract(d, fsa, path, packageString)
-		}		
+			dataTypes.put(d.name, d);
+		}
 		
-		for(TypeDefinition d : document.knowledgeTypes) {
-			generateType(d, fsa, path, packageString)
+		for(EnsembleDefinition e : document.ensembles) {
+			generateEnsemble(e, fsa, path, packageString);			
 		}
 	}
 	
 	def void generateEnsemble(EnsembleDefinition e, IFileSystemAccess fsa, String path, String packageString) {
+		var generatorVisitor = new CodeGeneratorVisitor(this, e)
+		
 		fsa.generateFile(path+e.name + ".java", 
 			
 '''package «packageString»;
@@ -46,7 +64,8 @@ import java.util.List;
 import cz.cuni.mff.d3s.deeco.ensembles.EnsembleInstance;
 
 public class «e.name» implements EnsembleInstance {
-	public «getJavaTypeName(e.id.type.name)» «e.id.fieldName»;
+	// Ensemble ID
+	public final «getJavaTypeName(e.id.type.name)» «e.id.fieldName»;
 	
 	public «e.name»(«getJavaTypeName(e.id.type.name)» «e.id.fieldName») {
 		this.«e.id.fieldName» = «e.id.fieldName»;
@@ -55,8 +74,17 @@ public class «e.name» implements EnsembleInstance {
 		«r.name» = new ArrayList<>();
 		«ENDIF»		
 		«ENDFOR»
-	}  
-			
+	}
+	
+	// Aliases
+	«FOR a : e.aliases»	
+	public «getJavaTypeName(EDLUtils.getType(this, a.aliasValue, e))» «a.aliasId»() {
+		return «a.aliasValue.accept(generatorVisitor)»;
+	}
+		
+	«ENDFOR»		  
+	
+	// Ensemble roles		
 	«FOR r : e.roles»
 	«IF r.cardinalityMax == 1»
 	public «r.type.name» «r.name»;
@@ -65,10 +93,19 @@ public class «e.name» implements EnsembleInstance {
 	«ENDIF»
 	«ENDFOR»
 
+	// Knowledge exchange
+
 	@Override
 	public void performKnowledgeExchange() {
 		«FOR rule : e.exchangeRules»
-		«rule.field.toString()» = «rule.query.accept(new ToStringVisitor())»;
+		«var role = e.roles.findFirst[it.name.equals(rule.field.toParts().get(0))]»
+		«IF (role.cardinalityMax != 1)»
+		for («role.type.toString()» x : «role.name») {
+			x.«String.join(".", rule.field.toParts().drop(1))» = «rule.query.accept(generatorVisitor)»;
+		} 
+		«ELSE»
+		«rule.field.toString()» = «rule.query.accept(generatorVisitor)»;
+		«ENDIF»				
 		«ENDFOR»		
 	}		
 }'''
@@ -118,6 +155,22 @@ public class «d.name» {
 			default:
 				type
 		}			
+	}	
+	
+	override getDataType(QualifiedName name) {
+		return dataTypes.get(name.name);
+	}
+	
+	override isKnownType(QualifiedName name) {
+		return dataTypes.containsKey(name.name);
+	}
+	
+	override reportError(String message, EObject source, EStructuralFeature feature) {
+		// Left intentionally empty - no need to report type errors during generation, document should be valid at this point
+	}
+	
+	override functionRegistry() {
+		return registry;
 	}
 	
 }

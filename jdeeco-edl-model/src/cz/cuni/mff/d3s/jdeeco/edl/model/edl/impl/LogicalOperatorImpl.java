@@ -310,7 +310,7 @@ public class LogicalOperatorImpl extends MinimalEObjectImpl.Container implements
 	@SuppressWarnings({"rawtypes", "unchecked" })
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
-			case EdlPackage.LOGICAL_OPERATOR___ACCEPT__EXPRESSIONVISITOR:
+			case EdlPackage.LOGICAL_OPERATOR___ACCEPT__QUERYVISITOR:
 				return accept((QueryVisitor)arguments.get(0));
 		}
 		return super.eInvoke(operationID, arguments);

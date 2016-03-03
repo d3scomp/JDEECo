@@ -191,7 +191,7 @@ public class NegationImpl extends MinimalEObjectImpl.Container implements Negati
 	@SuppressWarnings({"rawtypes", "unchecked" })
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
-			case EdlPackage.NEGATION___ACCEPT__EXPRESSIONVISITOR:
+			case EdlPackage.NEGATION___ACCEPT__QUERYVISITOR:
 				return accept((QueryVisitor)arguments.get(0));
 		}
 		return super.eInvoke(operationID, arguments);

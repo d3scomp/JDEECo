@@ -5,6 +5,8 @@ package cz.cuni.mff.d3s.jdeeco.edl;
 
 import org.eclipse.xtext.conversion.IValueConverterService;
 
+import com.google.inject.Binder;
+
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
  */
@@ -12,5 +14,11 @@ public class EDLRuntimeModule extends cz.cuni.mff.d3s.jdeeco.edl.AbstractEDLRunt
 	@Override
     public Class<? extends IValueConverterService> bindIValueConverterService() {		
         return EDLValueConverter.class;
-    }
+    }	
+	
+	@Override
+	public void configure(Binder binder) {	
+		super.configure(binder);
+		binder.bind(IFunctionRegistry.class).to(DefaultFunctionRegistry.class);
+	}
 }

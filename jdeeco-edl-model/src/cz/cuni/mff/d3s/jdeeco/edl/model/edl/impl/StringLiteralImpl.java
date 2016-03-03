@@ -165,7 +165,7 @@ public class StringLiteralImpl extends MinimalEObjectImpl.Container implements S
 	@SuppressWarnings({"rawtypes", "unchecked" })
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
-			case EdlPackage.STRING_LITERAL___ACCEPT__EXPRESSIONVISITOR:
+			case EdlPackage.STRING_LITERAL___ACCEPT__QUERYVISITOR:
 				return accept((QueryVisitor)arguments.get(0));
 		}
 		return super.eInvoke(operationID, arguments);
