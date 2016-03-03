@@ -5,7 +5,7 @@ ensemble PendolinoEnsemble
 	membership
 		roles
 			leader : Rescuer
-			rescuers [3..7] : Rescuer
+			rescuers [3..4] : Rescuer
 		fitness 0
 		
 	knowledge exchange

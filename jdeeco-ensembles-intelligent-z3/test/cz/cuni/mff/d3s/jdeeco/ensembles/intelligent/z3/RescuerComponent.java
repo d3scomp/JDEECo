@@ -18,18 +18,25 @@ public class RescuerComponent {
 	
 	public Integer pos;
 	
+	public Boolean isLeader;
+	
 	public Integer trainId;
 	
 	public RescuerComponent(String id, Integer pos) {
 		this.id = id;
 		this.pos = pos;
+		this.isLeader = false;
 	}
 	
 	@Process
 	@PeriodicScheduling(period = 1000, offset = 1)
-	public static void printTrainId(@In("id") String id, @In("trainId") Integer trainId) {
+	public static void printTrainId(@In("id") String id, @In("isLeader") Boolean isLeader, @In("trainId") Integer trainId) {
 		if (trainId > 0) {
-			outputStream.printf("Rescuer %s: train %d\n", id, trainId);
+			outputStream.printf("Rescuer %s: train %d", id, trainId);
+			if (isLeader) {
+				outputStream.print(" (leader)");
+			}
+			outputStream.println();
 		}
 	}
 

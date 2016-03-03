@@ -9,6 +9,8 @@ public class Rescuer {
 	
 	public Integer pos;
 	
+	public Boolean isLeader;
+	
 	public Integer trainId;
 
 }

@@ -11,16 +11,23 @@ public class IntelligentEnsemble implements EnsembleInstance {
 	
 	public IntelligentEnsemble(int trainId) {
 		this.trainId = trainId;
-		members = new ArrayList<>();
+		rescuers = new ArrayList<>();
 	}
 	
 	public Rescuer leader;
 	
-	public List<Rescuer> members;
+	public List<Rescuer> rescuers;
 
 	@Override
 	public void performKnowledgeExchange() {
-		for (Rescuer member : members) {
+		if (leader != null) {
+			leader.trainId = trainId;
+			leader.isLeader = true;
+		} else {
+			System.out.println("Ensemble " + trainId + " has no leader!!");
+		}		
+		
+		for (Rescuer member : rescuers) {
 			member.trainId = trainId;
 		}
 	}
