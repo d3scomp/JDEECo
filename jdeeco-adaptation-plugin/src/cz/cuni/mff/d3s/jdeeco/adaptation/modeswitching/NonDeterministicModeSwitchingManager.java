@@ -201,7 +201,7 @@ public class NonDeterministicModeSwitchingManager {
 
 					Log.i(String.format("Non-deterministic mode switching the"
 							+ "non-deterministic level of component %s set to %f at %d",
-							c.getName(), currentNonDeterminismLevel, currentTime));
+							c.getName(), currentNonDeterminismLevel.value, currentTime));
 				}
 			}
 		}

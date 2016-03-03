@@ -15,6 +15,8 @@
  *******************************************************************************/
 package cz.cuni.mff.d3s.jdeeco.adaptation.search.annealing;
 
+import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
+
 /**
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  *
@@ -22,17 +24,24 @@ package cz.cuni.mff.d3s.jdeeco.adaptation.search.annealing;
 public class LinearTemperature implements Temperature {
 
 	/**
-	 * The number of steps the temperature takes to cool down.
+	 * The time of the cool down.
 	 */
-	private int stepCnt;
+	private long coolDownTime;
+	
+	private long coolStartTime;
+	
+	private SimulationTimer timer;
 		
 	/**
-	 * The temperature cools from 1 to 0 in the given number of steps.
+	 * The temperature cools from 1 to 0 linearly in the given amount of time.
 	 * 
-	 * @param stepCnt the number of steps the temperature takes to cool down.
+	 * @param start The time when the cooling starts.
+	 * @param finish The time when the cooling ends.
 	 */
-	public LinearTemperature(int stepCnt){
-		this.stepCnt = stepCnt;
+	public LinearTemperature(long start, long finish, SimulationTimer timer){
+		coolStartTime = start;
+		coolDownTime = finish;
+		this.timer = timer;
 	}
 	
 	/* (non-Javadoc)
@@ -40,13 +49,8 @@ public class LinearTemperature implements Temperature {
 	 */
 	@Override
 	public double getTemperature() {
-		
-		if(stepCnt > 1){
-			// Decrease the stepCnt step by step until it equals 1
-			stepCnt--;
-		}
-		
-		return getCurrentTemperature();
+						
+		return getCurrentTemperature(timer.getCurrentMilliseconds());
 	}
 	
 	/**
@@ -54,13 +58,15 @@ public class LinearTemperature implements Temperature {
 	 * 
 	 * @return The current temperature.
 	 */
-	private double getCurrentTemperature(){
-		if(stepCnt < 1){
-			throw new IllegalStateException(String.format(
-					"The %s variable cannot drop below 1.", "stepCnt"));
+	private double getCurrentTemperature(long currentTime){
+		if(currentTime < coolStartTime){
+			return 1;
+		}
+		if(currentTime > coolDownTime){
+			return 0;
 		}
 		
-		return 1 - 1/stepCnt;
+		return 1 - ((currentTime - coolStartTime) / (coolDownTime - coolStartTime));
 	}
 	
 	/* (non-Javadoc)
@@ -68,7 +74,8 @@ public class LinearTemperature implements Temperature {
 	 */
 	@Override
 	public String toString() {
-		return Double.toString(getCurrentTemperature());
+		return Double.toString(getCurrentTemperature(
+				timer.getCurrentMilliseconds()));
 	}
 
 }
