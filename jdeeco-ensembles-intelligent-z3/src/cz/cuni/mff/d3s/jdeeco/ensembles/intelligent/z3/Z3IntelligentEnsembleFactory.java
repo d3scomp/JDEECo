@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.emf.common.util.EList;
 
@@ -28,101 +29,55 @@ import cz.cuni.mff.d3s.deeco.ensembles.EnsembleFormationException;
 import cz.cuni.mff.d3s.deeco.ensembles.EnsembleInstance;
 import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainerException;
+import cz.cuni.mff.d3s.jdeeco.edl.model.edl.DataContractDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EdlDocument;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EnsembleDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.RoleDefinition;
 import cz.cuni.mff.d3s.jdeeco.ensembles.intelligent.z3.IntelligentEnsemble;
 import cz.cuni.mff.d3s.jdeeco.ensembles.intelligent.z3.Rescuer;
 
-class ComponentAssignmentSet {
-	// for each component a boolean expression determining whether the component is
-	// in the ensemble (in the particular role)
-	private BoolExpr[] assignmentSet;
-	
-	public static ComponentAssignmentSet create(Context ctx, int ensembleIndex, String roleName, int componentCount) {
-		BoolExpr[] assignments = new BoolExpr[componentCount];
-		for (int j = 0; j < componentCount; j++) {
-			assignments[j] = ctx.mkBoolConst("assignment_e" + ensembleIndex + "_" + roleName + "_c" + j);
-		}
+class KnowledgeFieldVector {
+	private ArrayExpr values; // for individual components
 		
-		return new ComponentAssignmentSet(assignments);
-	}
-	
-	public ComponentAssignmentSet(BoolExpr[] assignment) {
-		this.assignmentSet = assignment;
-	}
-	
-	public BoolExpr get(int componentIndex) {
-		return assignmentSet[componentIndex];
+	public Expr get(Context ctx, Expr componentIndex) {
+		return ctx.mkSelect(values, componentIndex);
 	}
 }
 
-class EnsembleRoleAssignmentMatrix {
-	private ComponentAssignmentSet[] assignmentMatrix;
+class DataContractInstancesContainer {
+	private Object[] instances;
+	private Map<String, KnowledgeFieldVector> knowledgeFields;
 	
-	public static EnsembleRoleAssignmentMatrix create(Context ctx, int ensembleIndex, List<RoleDefinition> roleList, int componentCount) {
-		ComponentAssignmentSet[] assignments = new ComponentAssignmentSet[roleList.size()];
-		for (int i = 0; i < roleList.size(); i++) {
-			assignments[i] = ComponentAssignmentSet.create(ctx, ensembleIndex, roleList.get(i).getName(), componentCount);
-		}
-		
-		return new EnsembleRoleAssignmentMatrix(assignments);
+	public DataContractInstancesContainer(DataContractDefinition dataContractDefinition, KnowledgeContainer knowledgeContainer) {
+		// TODO
 	}
 	
-	public EnsembleRoleAssignmentMatrix(ComponentAssignmentSet[] assignmentMatrix) {
-		this.assignmentMatrix = assignmentMatrix;
+	public Expr get(Context ctx, String fieldName, Expr componentIndex) {
+		return knowledgeFields.get(fieldName).get(ctx, componentIndex);
 	}
 	
-	public int getRoleCount() {
-		return assignmentMatrix.length;
-	}
-	
-	public ComponentAssignmentSet get(int roleIndex) {
-		return assignmentMatrix[roleIndex];
-	}
-	
-	public BoolExpr get(int roleIndex, int componentIndex) {
-		return get(roleIndex).get(componentIndex);
-	}
 }
 
-class EnsembleAssignmentMatrix {
-	private EnsembleRoleAssignmentMatrix[] assignmentMatrix;
+class DataContainer {
+	private Map<String, DataContractInstancesContainer> containers;
 	
-	public static EnsembleAssignmentMatrix create(Context ctx, int maxEnsembleCount, List<RoleDefinition> roleList, int componentCount) {
-		EnsembleRoleAssignmentMatrix[] assignments = new EnsembleRoleAssignmentMatrix[maxEnsembleCount];
-		for (int i = 0; i < maxEnsembleCount; i++) {
-			assignments[i] = EnsembleRoleAssignmentMatrix.create(ctx, i, roleList, componentCount);
-		}
-		
-		return new EnsembleAssignmentMatrix(assignments);
+	public DataContainer(Collection<DataContractDefinition> dataContractDefinition, KnowledgeContainer knowledgeContainer) {
+		// TODO
 	}
 	
-	public EnsembleAssignmentMatrix(EnsembleRoleAssignmentMatrix[] assignmentMatrix) {
-		this.assignmentMatrix = assignmentMatrix;
-	}
-	
-	public EnsembleRoleAssignmentMatrix get(int ensembleIndex) {
-		return assignmentMatrix[ensembleIndex];
-	}
-	
-	public ComponentAssignmentSet get(int ensembleIndex, int roleIndex) {
-		return get(ensembleIndex).get(roleIndex);
-	}
-		
-	public BoolExpr get(int ensembleIndex, int roleIndex, int componentIndex) {
-		return get(ensembleIndex, roleIndex).get(componentIndex);
+	public Expr get(Context ctx, String dataContractName, String fieldName, Expr componentIndex) {
+		return containers.get(dataContractName).get(ctx, fieldName, componentIndex);
 	}
 }
 
 public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 
-	private EdlDocument ensemblesDefinition;
+	private EdlDocument edlDocument;
 	private Context ctx;
 	private Optimize opt;
 	
-	public Z3IntelligentEnsembleFactory(EdlDocument ensemblesDefinition) {
-		this.ensemblesDefinition = ensemblesDefinition;
+	public Z3IntelligentEnsembleFactory(EdlDocument edlDocument) {
+		this.edlDocument = edlDocument;
 	}
 	
 	private void initConfiguration() {
@@ -131,7 +86,7 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
         ctx = new Context(cfg);
         opt = ctx.mkOptimize();
 	}
-		
+			
 	// assignment counters for each rescuer and train: int[#trains][#rescuers]
 	//  assignmentTempCounters[T][0] = 0 if not assignments[T][0], otherwise 1
 	//  assignmentTempCounters[T][R] = assignmentTempCounters[T][R-1], if not assignments[T][R], otherwise it's +1
@@ -162,7 +117,7 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 long time_milis = System.currentTimeMillis();
 
 			initConfiguration();
-
+			
 			Collection<Rescuer> rescuersUnsorted = container.getTrackedKnowledgeForRole(Rescuer.class);
 			Rescuer[] rescuers = new Rescuer[rescuersUnsorted.size()];
 			for (Rescuer rescuer : rescuersUnsorted) {
@@ -171,7 +126,7 @@ long time_milis = System.currentTimeMillis();
 	        
 			int[] positions = new int[rescuers.length];
 			
-	        EnsembleDefinition ensembleDefinition = ensemblesDefinition.getEnsembles().get(0);	        
+	        EnsembleDefinition ensembleDefinition = edlDocument.getEnsembles().get(0);	        
 	        
 	        List<RoleDefinition> roles = ensembleDefinition.getRoles();
 	        int minCardinalitiesSum = 0;
@@ -246,6 +201,8 @@ long time_milis = System.currentTimeMillis();
 					opt.Add(ctx.mkImplies(assigned.get(j), ctx.mkNot(ctx.mkOr(assignedOthers))));
 				}
 			}
+			
+			new ConstraintParser(ctx, opt).parseConstraints(ensembleDefinition);
 								
 			Status status = opt.Check();
 			if (status == Status.SATISFIABLE) {

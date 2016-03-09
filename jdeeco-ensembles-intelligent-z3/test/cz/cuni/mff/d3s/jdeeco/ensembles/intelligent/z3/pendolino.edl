@@ -1,11 +1,21 @@
 package cz.cuni.mff.d3s.deeco.ensembles.z3
 
+data contract Rescuer
+	pos : int
+	isLeader : bool
+	trainId : int
+end
+
 ensemble PendolinoEnsemble
 	id trainId : int
 	membership
 		roles
 			leader : Rescuer
 			rescuers [3..4] : Rescuer
+		
+		constraints
+			constraint !(-(2 + 2) < -(5 * 1 - 4 / 2) && 2 >= 3)
+			
 		fitness 0
 		
 	knowledge exchange
