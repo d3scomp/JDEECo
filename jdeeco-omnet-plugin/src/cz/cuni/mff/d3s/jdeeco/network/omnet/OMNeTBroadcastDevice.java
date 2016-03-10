@@ -16,7 +16,7 @@ public class OMNeTBroadcastDevice extends OMNeTDevice {
 	@Override
 	public int getMTU() {
 		// TODO: Read from OMNeT
-		return 128;
+		return 1024;
 	}
 
 	@Override
