@@ -36,10 +36,10 @@ import cz.cuni.mff.d3s.jdeeco.network.utils.LimitedSortedSet;
  */
 public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 	// Base for rebroadcast delay
-	private static final long MAX_DELAY = 10000;
+	protected static final long MAX_DELAY = 10000;
 
 	// L1 packet history limit per source node
-	private static final int HISTORY_LIMIT = 32;
+	protected static final int HISTORY_LIMIT = 32;
 
 	// OMNeT++ measured RSSI distance dependency
 	public static final double RSSI_1m = 1.00e0;
@@ -52,24 +52,24 @@ public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 	public static final double RSSI_200m = 1.85e-10;
 	public static final double RSSI_250m = 1.11e-10;
 
-	private Layer2 layer2;
-	private Scheduler scheduler;
-	private Collection<EnsembleDefinition> ensembleDefinitions;
-	private KnowledgeManagerContainer kmContainer;
+	protected Layer2 layer2;
+	protected Scheduler scheduler;
+	protected Collection<EnsembleDefinition> ensembleDefinitions;
+	protected KnowledgeManagerContainer kmContainer;
 
 	/**
 	 * Map of known packets
 	 * 
 	 * SourceNode -> datatId
 	 */
-	private Map<Byte, LimitedSortedSet<Integer>> known = new HashMap<>();
+	protected Map<Byte, LimitedSortedSet<Integer>> known = new HashMap<>();
 	
 	/**
 	 * Map of packets with pending rebroadcast
 	 * 
 	 * SourceNode -> Scheduled rebroadcast
 	 */
-	private Map<Integer, Rebroadcast> scheduled = new HashMap<>();
+	protected Map<Integer, Rebroadcast> scheduled = new HashMap<>();
 
 	/**
 	 * Processes the L2 packet by rebroadcast strategy
@@ -128,7 +128,7 @@ public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 	 *            Packet to inspect
 	 * @return Whether we should drop packet as it was already processed.
 	 */
-	private boolean shallDrop(L2Packet packet) {
+	protected boolean shallDrop(L2Packet packet) {
 		if (!known.containsKey(packet.getReceivedInfo().srcNode))
 			return false;
 
@@ -165,7 +165,7 @@ public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 	 * @param delayMs
 	 *            Rebroadcast delay
 	 */
-	private void scheduleRebroadcast(L2Packet packet, long delayMs) {
+	protected void scheduleRebroadcast(L2Packet packet, long delayMs) {
 		// Do not rebroadcast the same packet again
 		makeKnown(packet);
 		
@@ -180,7 +180,7 @@ public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 	 *            Packet to inspect
 	 * @return Whether the packet is blocked by some condition
 	 */
-	private boolean isBounded(L2Packet packet) {
+	protected boolean isBounded(L2Packet packet) {
 		Object payload = packet.getObject();
 
 		// Non knowledge data are not blocked by bound
@@ -233,7 +233,7 @@ public class RebroadcastStrategy implements DEECoPlugin, L2Strategy {
 	/**
 	 * Holds information about packet to be rebroadcast and serves as rebroadcast task listener
 	 */
-	private class Rebroadcast implements TimerTaskListener {
+	protected class Rebroadcast implements TimerTaskListener {
 		private final L2Packet packet;
 		private final TimerTask rebroadcastTask;
 		private boolean canceled = false;
