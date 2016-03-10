@@ -97,6 +97,15 @@ class EDLValidator extends AbstractEDLValidator implements ITypeResolutionContex
 				error("Fitness function must be a numeric expression.", ensemble.fitness, EdlPackage.Literals.ENSEMBLE_DEFINITION__FITNESS)
 		}
 		
+		if (ensemble.id.isIsAssigned) {
+			var queryType = EDLUtils.getType(this, ensemble.id.value, ensemble)
+			var fieldType = ensemble.id.type;
+			
+			if (!EDLUtils.convertible(queryType, fieldType.name)) {
+				error("Invalid assignment - Id and query types do not correspond. Id type: " + fieldType + " Query type: " + queryType, ensemble.id, EdlPackage.Literals.ID_DEFINITION__VALUE)
+			}
+		}		
+		
 		for (Query c : ensemble.constraints) {
 			val type = EDLUtils.getType(this, c, ensemble)
 			
@@ -113,8 +122,8 @@ class EDLValidator extends AbstractEDLValidator implements ITypeResolutionContex
 			var queryType = EDLUtils.getType(this, rule.query, ensemble)
 			var fieldType = EDLUtils.getKnowledgeType(this, rule.field, ensemble)
 			
-			if (!queryType.equals(fieldType)) {
-				error("Invalid assignment - field and query types do not correspond.", rule, EdlPackage.Literals.EXCHANGE_RULE__FIELD)
+			if (!EDLUtils.convertible(queryType, fieldType)) {
+				error("Invalid assignment - field and query types do not correspond. Field type: " + fieldType + " Query type: " + queryType, rule, EdlPackage.Literals.EXCHANGE_RULE__FIELD)
 			}
 		}
 		
