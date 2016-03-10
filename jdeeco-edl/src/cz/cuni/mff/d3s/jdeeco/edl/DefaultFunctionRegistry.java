@@ -3,9 +3,14 @@ package cz.cuni.mff.d3s.jdeeco.edl;
 import java.util.HashMap;
 import java.util.Map;
 
+import cz.cuni.mff.d3s.jdeeco.edl.functions.Count;
 import cz.cuni.mff.d3s.jdeeco.edl.functions.IConstraintFunction;
 import cz.cuni.mff.d3s.jdeeco.edl.functions.IFunction;
+import cz.cuni.mff.d3s.jdeeco.edl.functions.OneOf;
 import cz.cuni.mff.d3s.jdeeco.edl.functions.SetsEqual;
+import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EnsembleDefinition;
+import cz.cuni.mff.d3s.jdeeco.edl.model.edl.Query;
+import cz.cuni.mff.d3s.jdeeco.edl.utils.ITypeResolutionContext;
 
 public class DefaultFunctionRegistry implements IFunctionRegistry {
 	private Map<String, IFunction> allFunctions;
@@ -19,6 +24,8 @@ public class DefaultFunctionRegistry implements IFunctionRegistry {
 
 	private void initialize() {		
 		registerFunction("setsEqual", new SetsEqual());
+		registerFunction("oneOf", new OneOf());
+		registerFunction("count", new Count());
 	}
 	
 	private void registerFunction(String name, IConstraintFunction f) {
@@ -31,8 +38,8 @@ public class DefaultFunctionRegistry implements IFunctionRegistry {
 	}
 	
 	@Override
-	public String getFunctionReturnType(String name) {
-		return allFunctions.get(name).getReturnType();	
+	public String getFunctionReturnType(ITypeResolutionContext ctx, EnsembleDefinition ensemble, String name, Query... params) {
+		return allFunctions.get(name).getReturnType(ctx, ensemble, params);	
 	}
 
 	@Override

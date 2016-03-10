@@ -5,7 +5,33 @@ import java.util.List
 import java.util.Collections
 import cz.cuni.mff.d3s.jdeeco.edl.PrimitiveTypes
 
-class EDLUtils {	
+class EDLUtils {
+	def static String stripSet(String setType) {
+		setType.subSequence(4, setType.length-1).toString();
+	}
+	
+		
+	def static boolean convertible(String src, String target) {
+		if (src == null || target == null)
+		 	return false
+		
+		if (src.equals(target))
+			return true;
+			
+		if (target.startsWith("set")) {
+			if (target.equals("set"))
+				return true;
+			
+			var String subType = stripSet(target) 			
+			
+			if (convertible(src, subType)) { 
+				return true;				
+			}
+		}
+			
+		return false;
+	}
+	
 	def static String getKnowledgeType(ITypeResolutionContext ctx, QualifiedName name, TypeDefinition type, int position) {
 		if (position >= name.prefix.length) {			
 			var FieldDeclaration f = type.fields.findFirst[it.name.equals(name.name)]
@@ -49,10 +75,11 @@ class EDLUtils {
 					if(role.cardinalityMax == 1)
 						return role.type.name
 					else
-						return "set"				
+						return "set<" + role.type.name + ">";
+						//ctx.reportError("Accessing a role with non-unique cardinality directly is not allowed.", name, EdlPackage.Literals.QUALIFIED_NAME__NAME) 				
 			}
 			else {
-				ctx.reportError("An element with this name was not found in the ensemble.", name, EdlPackage.Literals.QUALIFIED_NAME__NAME)
+				ctx.reportError("An element with this name was not found in the ensemble: " + name, name, EdlPackage.Literals.QUALIFIED_NAME__NAME)
 			}			 						
 		}
 		else {
@@ -60,15 +87,18 @@ class EDLUtils {
 			if (role != null) {
 				if(ctx.isKnownType(role.type)) {
 					var roleType = ctx.getDataType(role.type)
-					return getKnowledgeType(ctx, name, roleType, 1)
 					
+					if(role.cardinalityMax == 1)
+						return getKnowledgeType(ctx, name, roleType, 1)
+					else
+						return "set<" + getKnowledgeType(ctx, name, roleType, 1) + ">"
 				}
 				else {
-					ctx.reportError("Could not resolve the name.", role.type, EdlPackage.Literals.QUALIFIED_NAME__PREFIX)
+					ctx.reportError("Could not resolve the name: " + role.type, role.type, EdlPackage.Literals.QUALIFIED_NAME__PREFIX)
 				}				
 			}
 			else {
-				ctx.reportError("A role with this name was not found in the ensemble.", name, EdlPackage.Literals.QUALIFIED_NAME__PREFIX)
+				ctx.reportError("A role with this name was not found in the ensemble: " + name, name, EdlPackage.Literals.QUALIFIED_NAME__PREFIX)
 			}
 		}
 		
@@ -157,18 +187,44 @@ class EDLUtils {
 				var String inner = cz.cuni.mff.d3s.jdeeco.edl.utils.EDLUtils.getType(ctx, query.nested, ensemble);
 				
 				if(!inner.equals(PrimitiveTypes.BOOL))
-					ctx.reportError("The nested expression of a negation must be logical expression.", query, EdlPackage.Literals.NEGATION__NESTED)								
+					ctx.reportError("The nested expression of a negation must be logical expression. Actual type: " + inner, query, EdlPackage.Literals.NEGATION__NESTED)								
 				PrimitiveTypes.BOOL
 			}
 		FunctionCall:
 			{
 				if (ctx.functionRegistry.containsFunction(query.name)) {				
 					val function = ctx.functionRegistry.getFunction(query.name)
-					if(!function.parameterTypes.equals(query.parameters.map[getType(ctx, it, ensemble)].toList())) {
-						ctx.reportError("The parameter types do not correspond to the expected formal parameters.", query, EdlPackage.Literals.FUNCTION_CALL__PARAMETERS)
-					}				
 					
-					ctx.functionRegistry.getFunctionReturnType(query.name);				
+					val formalParams = function.parameterTypes;
+					
+					if (formalParams == null) {
+						ctx.reportError("The function reports null as its parameters. Until this is fixed in the function definition, the function cannot be used.", 
+							query, EdlPackage.Literals.FUNCTION_CALL__NAME);
+							
+						return "unknown"  
+					}
+					
+					if (formalParams.length != query.parameters.length)
+						ctx.reportError("Incorrect number of parameters. Expected: " + formalParams.length + " Actual:" + query.parameters.length, 
+							query, EdlPackage.Literals.FUNCTION_CALL__PARAMETERS)
+					else {					
+						for (var int i = 0; i < formalParams.length; i++) {
+							if(!convertible(getType(ctx, query.parameters.get(i), ensemble), formalParams.get(i))) {
+							ctx.reportError("The parameter types do not correspond to the expected formal parameters.", query, EdlPackage.Literals.FUNCTION_CALL__PARAMETERS)
+							}							
+						}					
+					}
+					
+					val returnType = ctx.functionRegistry.getFunctionReturnType(ctx, ensemble, query.name, query.parameters);
+					
+					if (returnType != null) {
+						returnType;
+						
+					}
+					else {
+						ctx.reportError("Return type of a function must not be null. Until this is fixed, the function cannot be used.", query, EdlPackage.Literals.FUNCTION_CALL__NAME);
+						"unknown"
+					}	
 				} 
 				else {
 					ctx.reportError("Unknown function name: " + query.name, query, EdlPackage.Literals.FUNCTION_CALL__NAME);

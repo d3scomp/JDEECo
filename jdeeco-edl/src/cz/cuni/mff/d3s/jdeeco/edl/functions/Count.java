@@ -6,16 +6,14 @@ import java.util.List;
 import cz.cuni.mff.d3s.jdeeco.edl.PrimitiveTypes;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EnsembleDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.Query;
-import cz.cuni.mff.d3s.jdeeco.edl.utils.EDLUtils;
 import cz.cuni.mff.d3s.jdeeco.edl.utils.ITypeResolutionContext;
 
-public class SetsEqual implements IConstraintFunction {
-	
+public class Count implements IFunction {
+
 	private List<String> params;
 
-	public SetsEqual() {
+	public Count() {
 		params = new ArrayList<String>();
-		params.add("set");
 		params.add("set");
 	}
 
@@ -25,19 +23,15 @@ public class SetsEqual implements IConstraintFunction {
 	}
 
 	@Override
-	public void generateFormula(Object... params) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public Object evaluate(Object... params) {
 		// TODO Auto-generated method stub
-		return false;
+		return ((List) params[0]).size();
 	}
 
 	@Override
-	public String getReturnType(ITypeResolutionContext ctx, EnsembleDefinition ensemble, Query... params) {
-		return PrimitiveTypes.BOOL;		
+	public String getReturnType(ITypeResolutionContext ctx,
+			EnsembleDefinition ensemble, Query... params) {
+		return PrimitiveTypes.INT;
 	}
+
 }
