@@ -61,7 +61,7 @@ void JDEECoModule::onHandleMessage(cMessage *msg, double rssi) {
 			//std::cout << "jDEECoOnHandleMessage: " << this->getModuleId() << " Before getting the \"packetRecived\" method reference" << std::endl;
 			EV << "OMNET++ (" << simTime() << ") : " << getModuleId()
 					<< " received packet with ID = " << msg->getId() << endl;
-			mid = env->GetMethodID(cls, "packetReceived", "([BD)V");
+			mid = env->GetMethodID(cls, "packetReceived", "([BDI)V");
 			if (mid == 0)
 				return;
 			JDEECoPacket *jPacket = check_and_cast<JDEECoPacket *>(msg);
@@ -78,7 +78,7 @@ void JDEECoModule::onHandleMessage(cMessage *msg, double rssi) {
 			env->SetByteArrayRegion(jArray, 0, jPacket->getDataArraySize(),
 					buffer);
 			//std::cout << "jDEECoOnHandleMessage: " << this->getModuleId() << " Before calling the \"packetRecived\" method" << std::endl;
-			env->CallVoidMethod(runtime->host, mid, jArray, rssi);
+			env->CallVoidMethod(runtime->host, mid, jArray, rssi, jPacket->getSender());
 			//std::cout << "jDEECoOnHandleMessage: " << this->getModuleId() << " After calling the \"packetRecived\" method" << std::endl;
 			env->DeleteLocalRef(jArray);
 			//std::cout << "jDEECoOnHandleMessage: " << this->getModuleId() << " After deleting the array reference" << std::endl;
