@@ -3,6 +3,7 @@ package cz.cuni.mff.d3s.jdeeco.edl.utils
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.*
 import java.util.List
 import java.util.Collections
+import cz.cuni.mff.d3s.jdeeco.edl.PrimitiveTypes
 
 class EDLUtils {	
 	def static String getKnowledgeType(ITypeResolutionContext ctx, QualifiedName name, TypeDefinition type, int position) {
@@ -77,13 +78,13 @@ class EDLUtils {
 	def static String getType(ITypeResolutionContext ctx, Query query, EnsembleDefinition ensemble) {		
 		switch(query) {
 		BoolLiteral:
-			"bool"			
+			PrimitiveTypes.BOOL			
 		NumericLiteral:
-			"int"			
+			PrimitiveTypes.INT	
 		StringLiteral:
-			"string"
+			PrimitiveTypes.STRING
 		FloatLiteral:
-			"float"
+			PrimitiveTypes.FLOAT
 		KnowledgeVariable: 
 			{
 				var QualifiedName name = query.path				 
@@ -94,13 +95,13 @@ class EDLUtils {
 				var String l = cz.cuni.mff.d3s.jdeeco.edl.utils.EDLUtils.getType(ctx, query.left, ensemble)
  				var String r = cz.cuni.mff.d3s.jdeeco.edl.utils.EDLUtils.getType(ctx, query.right, ensemble)
  				
- 				if(!l.equals("bool"))
+ 				if(!l.equals(PrimitiveTypes.BOOL))
  					ctx.reportError("A parameter of a logical operator must be a logical value.", query, EdlPackage.Literals.LOGICAL_OPERATOR__LEFT)
  				
- 				if(!r.equals("bool"))
+ 				if(!r.equals(PrimitiveTypes.BOOL))
  					ctx.reportError("A parameter of a logical operator must be a logical value.", query, EdlPackage.Literals.LOGICAL_OPERATOR__RIGHT)
  				
- 				"bool"
+ 				PrimitiveTypes.BOOL
  			} 			
 		RelationOperator:
 			{
@@ -121,18 +122,18 @@ class EDLUtils {
  						ctx.reportError("Parameters of this type of relation must be comparable.", query, EdlPackage.Literals.RELATION_OPERATOR__LEFT);
  				}
  				
-				"bool"
+				PrimitiveTypes.BOOL
 			}
 		BinaryOperator:	
 			{
 				var String l = cz.cuni.mff.d3s.jdeeco.edl.utils.EDLUtils.getType(ctx, query.left, ensemble);
  				var String r = cz.cuni.mff.d3s.jdeeco.edl.utils.EDLUtils.getType(ctx, query.right, ensemble);
  				
- 				if(!(l.equals("int") || l.equals("float")))
+ 				if(!(l.equals(PrimitiveTypes.INT) || l.equals(PrimitiveTypes.FLOAT)))
  					ctx.reportError("A parameter of a binary operator must be numeric.", query, EdlPackage.Literals.BINARY_OPERATOR__LEFT)
  				
  				
- 				if(!(r.equals("int") || r.equals("float")))
+ 				if(!(r.equals(PrimitiveTypes.INT) || r.equals(PrimitiveTypes.FLOAT)))
  					ctx.reportError("A parameter of a binary operator must be numeric.", query, EdlPackage.Literals.BINARY_OPERATOR__RIGHT)
  				
  				
@@ -147,7 +148,7 @@ class EDLUtils {
 			{
 				var String inner = cz.cuni.mff.d3s.jdeeco.edl.utils.EDLUtils.getType(ctx, query.nested, ensemble);
 				
-				if(!inner.equals("int") && !inner.equals("float"))
+				if(!inner.equals(PrimitiveTypes.INT) && !inner.equals(PrimitiveTypes.FLOAT))
 					ctx.reportError("The nested expression of a additive inverse must be a numeric expression.", query, EdlPackage.Literals.ADDITIVE_INVERSE__NESTED)								
 				inner
 			}
@@ -155,9 +156,9 @@ class EDLUtils {
 			{
 				var String inner = cz.cuni.mff.d3s.jdeeco.edl.utils.EDLUtils.getType(ctx, query.nested, ensemble);
 				
-				if(!inner.equals("bool"))
+				if(!inner.equals(PrimitiveTypes.BOOL))
 					ctx.reportError("The nested expression of a negation must be logical expression.", query, EdlPackage.Literals.NEGATION__NESTED)								
-				"bool"
+				PrimitiveTypes.BOOL
 			}
 		FunctionCall:
 			{

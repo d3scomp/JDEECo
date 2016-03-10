@@ -17,6 +17,7 @@ import cz.cuni.mff.d3s.jdeeco.edl.model.edl.QualifiedName
 import cz.cuni.mff.d3s.jdeeco.edl.utils.EDLUtils
 import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.emf.ecore.EObject
+import cz.cuni.mff.d3s.jdeeco.edl.PrimitiveTypes
 
 /**
  * Custom validation rules. 
@@ -70,10 +71,10 @@ class EDLValidator extends AbstractEDLValidator implements ITypeResolutionContex
 	def validateType(TypeDefinition contract) {				
 		for (FieldDeclaration d : contract.fields) {			
 			switch (d.type.name) {
-				case "int",
-				case "string",
-				case "float",
-				case "bool":
+				case PrimitiveTypes.INT,
+				case PrimitiveTypes.STRING,
+				case PrimitiveTypes.FLOAT,
+				case PrimitiveTypes.BOOL:
 					{}
 				default:
 					if(!dataTypes.containsKey(d.type.name)) {
@@ -92,14 +93,14 @@ class EDLValidator extends AbstractEDLValidator implements ITypeResolutionContex
 	def validateEnsembleDefinition(EnsembleDefinition ensemble) {
 		if (ensemble.fitness != null) {
 			val type = EDLUtils.getType(this, ensemble.fitness, ensemble)
-			if (!type.equals("int"))
+			if (!type.equals(PrimitiveTypes.INT))
 				error("Fitness function must be a numeric expression.", ensemble.fitness, EdlPackage.Literals.ENSEMBLE_DEFINITION__FITNESS)
 		}
 		
 		for (Query c : ensemble.constraints) {
 			val type = EDLUtils.getType(this, c, ensemble)
 			
-			if (!type.equals("bool")) {
+			if (!type.equals(PrimitiveTypes.BOOL)) {
 				error("Constraint must be a logical expression. - " + type, ensemble, EdlPackage.Literals.ENSEMBLE_DEFINITION__CONSTRAINTS, ensemble.constraints.indexOf(c))
 			}
 		}	

@@ -34,6 +34,7 @@ import cz.cuni.mff.d3s.deeco.ensembles.intelligent.UnsupportedVariableTypeExcept
 import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainerException;
 import cz.cuni.mff.d3s.jdeeco.edl.BaseDataContract;
+import cz.cuni.mff.d3s.jdeeco.edl.PrimitiveTypes;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.DataContractDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EdlDocument;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EnsembleDefinition;
@@ -52,9 +53,9 @@ class KnowledgeFieldVector {
 		this.ctx = ctx;
 		
 		Sort sort;
-		if ("bool".equals(fieldType)) {
+		if (PrimitiveTypes.BOOL.equals(fieldType)) {
 			sort = ctx.mkBoolSort();
-		} else if ("int".equals(fieldType)) {
+		} else if (PrimitiveTypes.INT.equals(fieldType)) {
 			sort = ctx.mkIntSort();
 		} else {
 			throw new UnsupportedDataTypeException(fieldType);
@@ -96,10 +97,10 @@ class DataContractInstancesContainer {
 			knowledgeFields.put(fieldName, field);
 			for (int i = 0; i < instances.length; i++) {
 				Expr expr;
-				if ("bool".equals(fieldType)) {
+				if (PrimitiveTypes.BOOL.equals(fieldType)) {
 					Boolean value = readField(fieldName, Boolean.class);
 					expr = ctx.mkBool(value.booleanValue());
-				} else if ("int".equals(fieldType)) {
+				} else if (PrimitiveTypes.INT.equals(fieldType)) {
 					Integer value = readField(fieldName, Integer.class);
 					expr = ctx.mkInt(value.intValue());
 				} else {

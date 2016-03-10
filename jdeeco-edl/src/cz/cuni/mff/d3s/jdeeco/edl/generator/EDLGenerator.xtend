@@ -15,6 +15,7 @@ import java.util.HashMap
 import java.util.Map
 import com.google.inject.Inject
 import cz.cuni.mff.d3s.jdeeco.edl.IFunctionRegistry
+import cz.cuni.mff.d3s.jdeeco.edl.PrimitiveTypes
 
 /**
  * Generates code from your model files on save.
@@ -113,21 +114,17 @@ public class «e.name» implements EnsembleInstance {
 	}
 	
 	def void generateDataContract(DataContractDefinition d, IFileSystemAccess fsa, String path, String packageString) {
-		val containsId = d.fields.exists[it.name.equals("id") && it.type.equals("string")];
-		
 		fsa.generateFile(path+d.name + ".java", 
 			
 '''package «packageString»;
 
 import cz.cuni.mff.d3s.deeco.annotations.Role;
+import cz.cuni.mff.d3s.jdeeco.edl;
 
 @Role
-public class «d.name» {	
-	«IF !containsId»
-	public String id;
-	«ENDIF»
+public class «d.name» extends BaseDataContract {
 	«FOR f : d.fields»					
-	public «getJavaTypeName(f.type.name)» «f.name»;				
+	public «getJavaTypeName(f.type.name)» «f.name»;
 	«ENDFOR»				
 }'''
 			);
@@ -140,7 +137,7 @@ public class «d.name» {
 
 public class «d.name» {	
 	«FOR f : d.fields»				
-	public «getJavaTypeName(f.type.name)» «f.name»;				
+	public «getJavaTypeName(f.type.name)» «f.name»;
 	«ENDFOR»				
 }'''
 			);
@@ -148,9 +145,9 @@ public class «d.name» {
 	
 	def String getJavaTypeName(String type) {
 		switch type {
-			case "string":
+			case PrimitiveTypes.STRING:
 				"String"
-			case "bool":
+			case PrimitiveTypes.BOOL:
 				"boolean"
 			default:
 				type
