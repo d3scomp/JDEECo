@@ -16,6 +16,11 @@ LDFLAGS += -Wl,--allow-multiple-definition,--kill-at
 all: checkmakefiles header
 	cd src && $(MAKE) LDFLAGS="$(LDFLAGS)"
 	
+copy: omnet\jdeeco-omnetpp.dll
+
+omnet\jdeeco-omnetpp.dll: out\gcc-debug\src\libjdeeco-omnetpp.dll
+	cp out/gcc-debug/src/libjdeeco-omnetpp.dll omnet/jdeeco-omnetpp.dll
+	
 header:
 	$(JAVA_HOME)/bin/javah -o src/OMNeTJDEECoAPI.h -classpath src cz.cuni.mff.d3s.deeco.simulation.omnet.OMNeTNative
 
