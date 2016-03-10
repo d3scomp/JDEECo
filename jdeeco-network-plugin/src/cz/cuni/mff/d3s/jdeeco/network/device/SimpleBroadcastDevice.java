@@ -44,7 +44,7 @@ public class SimpleBroadcastDevice implements DEECoPlugin {
 	final int mtu;
 	final long delayMean;
 	final long delayDeviation;
-	final int range;
+	final double rangeM;
 	private Random random;
 
 	// Loop devices this loop-back network is registered with
@@ -151,15 +151,15 @@ public class SimpleBroadcastDevice implements DEECoPlugin {
 	 *            Mean delay between sending and delivering the packets in milliseconds
 	 * @param delayDeviationMs
 	 *            Delay deviation between sending and delivering the packets in milliseconds
-	 * @param range
+	 * @param rangeM
 	 *            Device range in meters
 	 * @param mtu
 	 *            Device MTU in bytes
 	 */
-	public SimpleBroadcastDevice(long delayMeanMs, long delayDeviationMs, int range, int mtu) {
+	public SimpleBroadcastDevice(long delayMeanMs, long delayDeviationMs, double rangeM, int mtu) {
 		this.delayMean = delayMeanMs;
 		this.delayDeviation = delayDeviationMs;
-		this.range = range;
+		this.rangeM = rangeM;
 		this.mtu = mtu;
 	}
 
@@ -190,9 +190,9 @@ public class SimpleBroadcastDevice implements DEECoPlugin {
 				distance = srcPos.euclidDistanceTo(dstPos);
 			}
 
-			if (loop != packet.source && distance <= range) {
+			if (loop != packet.source && distance <= rangeM) {
 				// Calculates logarithmic RSSI
-				double rssi = calcRssiForDistance(range);
+				double rssi = calcRssiForDistance(rangeM);
 
 				// Receive packet on the destination node
 				MANETReceivedInfo info = new MANETReceivedInfo(packet.source.address, rssi);
